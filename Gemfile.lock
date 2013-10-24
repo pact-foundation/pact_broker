@@ -100,6 +100,8 @@ GEM
     rspec-fire (1.2.0)
       rspec (~> 2.11)
     rspec-mocks (2.14.4)
+    shotgun (0.9)
+      rack (>= 1.0)
     simplecov (0.7.1)
       multi_json (~> 1.0)
       simplecov-html (~> 0.7.1)
@@ -130,4 +132,5 @@ DEPENDENCIES
   pry
   rake (~> 10.0.3)
   rspec-fire
+  shotgun
   simplecov

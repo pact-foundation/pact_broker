@@ -1,6 +1,7 @@
 require 'grape'
 
 require_relative 'api/index_api'
+require_relative 'api/pacticipant_api'
 
 module PactBroker
   class API < Grape::API
@@ -9,6 +10,7 @@ module PactBroker
     default_format :json
 
     mount Api::IndexApi
+    mount Api::PacticipantApi
 
   end
 end

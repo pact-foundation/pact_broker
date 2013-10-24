@@ -3,7 +3,6 @@ require 'sequel/connection_pool/threaded'
 require 'yaml'
 require 'pact_broker/logging'
 
-=begin
 module DB
   include PactBroker::Logging
   ##
@@ -41,4 +40,3 @@ module DB
     end
   end
 end
-=end
