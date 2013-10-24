@@ -100,6 +100,10 @@ GEM
     rspec-fire (1.2.0)
       rspec (~> 2.11)
     rspec-mocks (2.14.4)
+    simplecov (0.7.1)
+      multi_json (~> 1.0)
+      simplecov-html (~> 0.7.1)
+    simplecov-html (0.7.1)
     slop (3.4.6)
     thin (1.6.0)
       daemons (>= 1.0.9)
@@ -126,3 +130,4 @@ DEPENDENCIES
   pry
   rake (~> 10.0.3)
   rspec-fire
+  simplecov
