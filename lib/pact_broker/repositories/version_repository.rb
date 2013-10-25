@@ -10,6 +10,7 @@ module PactBroker
       end
 
       def create args
+        PactBroker.logger.info "Creating version #{args[:number]} for pacticipant_id=#{args[:pacticipant_id]}"
         PactBroker::Models::Version.new(number: args[:number], pacticipant_id: args[:pacticipant_id]).save
       end
 
