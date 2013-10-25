@@ -49,6 +49,17 @@ require File.join(File.dirname(__FILE__), 'config/boot')
 
 
 namespace :db do
+  desc 'drop and recreate DB'
+  task :recreate => [:drop, :migrate]
+
+  desc 'drop DB'
+  task :drop do
+    require 'yaml'
+    db_file = YAML.load(ERB.new(File.read(File.join('./config', 'database.yml'))).result)[RACK_ENV]["database"]
+    puts "Removing database #{db_file}"
+    FileUtils.rm_f db_file
+  end
+
   desc 'DB migrations'
   task :migrate do
     require 'sequel'

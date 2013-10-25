@@ -1,6 +1,3 @@
-require_relative 'pact_helper'
-
-
 Pact.provider_states_for "Pact Broker Client" do
   provider_state "the 'Pricing Service' does not exist in the pact-broker" do
     no_op
@@ -11,6 +8,4 @@ Pact.provider_states_for "Pact Broker Client" do
       PactBroker::Models::Pacticipant.new(:name => 'Pricing Service', :repository_url => 'git@git.realestate.com.au:business-systems/condor.git').save(raise_on_save_failure: true)
     end
   end
-
-
 end
