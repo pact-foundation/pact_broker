@@ -39,9 +39,15 @@ module PactBroker
           #param :repository_url, String, required: false, blank: false
 
           logger.info "Recieved request to patch #{params[:name]} with #{params}"
-          pacticipant = PactBroker::Models::Pacticipant.new(name: params[:name], repository_url: params[:repository_url])
-          pacticipant.save
-          status 201
+          pacticipant = PactBroker::Models::Pacticipant.where(name: params[:name]).single_record
+          if pacticipant
+            pacticipant.update(repository_url: params[:repository_url])
+            status 200
+          else
+            pacticipant = PactBroker::Models::Pacticipant.new(name: params[:name], repository_url: params[:repository_url])
+            pacticipant.save(raise_on_failure: true)
+            status 201
+          end
           json pacticipant
         end
       end
