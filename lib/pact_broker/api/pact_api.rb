@@ -1,16 +1,13 @@
 require 'pact_broker/logging'
+require 'pact_broker/repositories'
 require 'sequel'
 require 'pact_broker/db'
 require 'sinatra'
 require 'sinatra/json'
 require 'sinatra/namespace'
 require 'sinatra/param'
-require 'pact_broker/models'
-require 'pact_broker/repositories/pacticipant_repository'
-require 'pact_broker/repositories/version_repository'
 
 module PactBroker
-
 
   module Api
 
@@ -18,14 +15,7 @@ module PactBroker
 
       helpers do
         include PactBroker::Logging
-
-        def pacticipant_respository
-          PactBroker::Repositories::PacticipantRepository.new
-        end
-
-        def version_repository
-          PactBroker::Repositories::VersionRepository.new
-        end
+        include PactBroker::Repositories
 
         def put_pact params
           pacticipant = pacticipant_respository.create name: params[:name]

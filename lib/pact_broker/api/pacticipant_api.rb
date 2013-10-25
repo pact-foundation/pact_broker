@@ -1,14 +1,13 @@
 require 'pact_broker/logging'
+require 'pact_broker/repositories'
 require 'sequel'
 require 'pact_broker/db'
 require 'sinatra'
 require 'sinatra/json'
 require 'sinatra/namespace'
 require 'sinatra/param'
-require 'pact_broker/models'
 
 module PactBroker
-
 
   module Api
 
@@ -16,6 +15,7 @@ module PactBroker
 
       helpers do
         include PactBroker::Logging
+        include PactBroker::Repositories
       end
 
       helpers Sinatra::JSON
@@ -25,7 +25,7 @@ module PactBroker
       namespace '/pacticipant' do
         get '/:name/repository_url' do
           logger.info "GET REPOSTORY URL #{params}"
-          pacticipant = PactBroker::Models::Pacticipant.where(:name => params[:name]).first
+          pacticipant = pacticipant_respository.find_by_name(params[:name])
           logger.info "Found pacticipant #{pacticipant}"
           if pacticipant && pacticipant.repository_url
             content_type 'text/plain'
@@ -36,16 +36,13 @@ module PactBroker
         end
 
         patch '/:name' do
-          #param :repository_url, String, required: false, blank: false
-
           logger.info "Recieved request to patch #{params[:name]} with #{params}"
-          pacticipant = PactBroker::Models::Pacticipant.where(name: params[:name]).single_record
+          pacticipant = pacticipant_respository.find_by_name(params[:name])
           if pacticipant
             pacticipant.update(repository_url: params[:repository_url])
             status 200
           else
-            pacticipant = PactBroker::Models::Pacticipant.new(name: params[:name], repository_url: params[:repository_url])
-            pacticipant.save(raise_on_failure: true)
+            pacticipant = pacticipant_respository.create(name: params[:name], repository_url: params[:repository_url])
             status 201
           end
           json pacticipant
