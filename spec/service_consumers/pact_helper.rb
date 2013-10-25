@@ -23,6 +23,9 @@ RSpec.configure do | config |
   end
 
   config.before :each do
+    DB::PACT_BROKER_DB[:pacts].truncate
+    DB::PACT_BROKER_DB[:tags].truncate
+    DB::PACT_BROKER_DB[:versions].truncate
     DB::PACT_BROKER_DB[:pacticipants].truncate
   end
 

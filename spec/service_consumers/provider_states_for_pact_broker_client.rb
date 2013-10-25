@@ -13,5 +13,10 @@ Pact.provider_states_for "Pact Broker Client" do
     end
   end
 
+  provider_state "an error occurs while publishing a pact" do
+    set_up do
+      # Your set up code goes here
+    end
+  end
 
 end
