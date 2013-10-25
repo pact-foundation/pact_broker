@@ -6,11 +6,11 @@ module PactBroker
     class PacticipantRepository
 
       def find_by_name name
-        PactBroker::Models::Pacticipant.where(name: name).first
+        PactBroker::Models::Pacticipant.where(name: name).single_record
       end
 
       def create args
-        PactBroker::Models::Pacticipant.new(name: args[:name]).save
+        PactBroker::Models::Pacticipant.new(name: args[:name], repository_url: args[:repository_url]).save(raise_on_save_failure: true)
       end
 
     end
