@@ -24,6 +24,8 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'json'
   gem.add_runtime_dependency 'grape'
   gem.add_runtime_dependency 'grape-entity'
+  gem.add_runtime_dependency 'sequel'
+  gem.add_runtime_dependency 'sqlite3'
 
   gem.add_development_dependency 'rake', '~> 10.0.3'
   gem.add_development_dependency 'pry'

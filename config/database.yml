@@ -1,0 +1,13 @@
+default: &default
+  adapter: sqlite
+  database: db/pact_broker_database.sqlite3
+
+test:
+  <<: *default
+  database: tmp/pact_broker_database_test.sqlite3
+
+development:
+  <<: *default
+
+production:
+  <<: *default

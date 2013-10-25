@@ -46,3 +46,15 @@ if ENV['RACK_ENV'] != 'production'
 end
 
 require File.join(File.dirname(__FILE__), 'config/boot')
+
+
+namespace :db do
+  desc 'DB migrations'
+  task :migrate do
+    require 'sequel'
+    require 'pact_broker/db'
+
+    Sequel.extension :migration
+    Sequel::Migrator.run(DB::PACT_BROKER_DB, "db/migrations")
+  end
+end

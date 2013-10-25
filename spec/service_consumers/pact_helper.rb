@@ -1,6 +1,26 @@
 require './spec/spec_helper'
 require 'pact/provider/rspec'
-require_relative 'provider_states_for_my_consumer'
+require 'sequel'
+require 'pact_broker/db'
+require 'pact_broker/api'
+require_relative 'provider_states_for_pact_broker_client'
+
+Sequel.extension :migration
+
+
+RSpec.configure do | config |
+  config.before :suite do
+
+    puts "RUNNING DB SETUP"
+    raise "Wrong environment!!! Don't run this script!! ENV['RACK_ENV'] is #{ENV['RACK_ENV']} and RACK_ENV is #{RACK_ENV}" if ENV['RACK_ENV'] != 'test' || RACK_ENV != 'test'
+
+    db_file = File.expand_path File.join(File.dirname(__FILE__), '../../tmp/pact_broker_database_test.sqlite3')
+    puts "DB FILE IS #{db_file}"
+    FileUtils.rm_rf db_file
+    Sequel::Migrator.run(DB::PACT_BROKER_DB, "db/migrations")
+  end
+
+end
 
 
 Pact.service_provider "Pact Broker" do

@@ -1,7 +1,8 @@
 require 'grape/api'
 require 'grape-entity'
 require 'pact_broker/logging'
-require 'ostruct'
+require 'sequel'
+require 'pact_broker/db'
 
 
 
@@ -9,7 +10,7 @@ module PactBroker
 
 
 
-  class Pacticipant < OpenStruct
+  class Pacticipant < Sequel::Model(::DB::PACT_BROKER_DB[:pacticipants])
     #attr_accessor :name, :repository_url
   end
 
@@ -35,7 +36,7 @@ module PactBroker
       format :json
 
       resource :pacticipant do
-        desc 'rea-rels:links'
+        desc 'Updates the pacticipant resource'
         params do
           requires :name, type: String, desc: "Name of the pacticipant"
           optional :repository_url, type: String
@@ -43,7 +44,8 @@ module PactBroker
         patch ':name' do
           logger.info "Recieved request to patch #{params[:name]} with #{params}"
           pacticipant = Pacticipant.new(name: params[:name], repository_url: params[:repository_url])
-
+          pacticipant.save
+          status 201
           present pacticipant, with: Entities::Pacticipant
         end
       end
