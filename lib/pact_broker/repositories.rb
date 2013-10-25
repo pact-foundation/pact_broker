@@ -4,18 +4,14 @@ require 'pact_broker/repositories/version_repository'
 
 module PactBroker
   module Repositories
-    def self.included(base)
-      base.extend(self)
-    end
-
-    def pacticipant_respository
-      PactBroker::Repositories::PacticipantRepository.new
+    def pacticipant_repository
+      PacticipantRepository.new
     end
 
     def version_repository
-      PactBroker::Repositories::VersionRepository.new
+      VersionRepository.new
     end
-  end
 
-  include Repositories
+    extend self
+  end
 end

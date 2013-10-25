@@ -18,7 +18,7 @@ module PactBroker
         include PactBroker::Repositories
 
         def put_pact params
-          pacticipant = pacticipant_respository.create name: params[:name]
+          pacticipant = pacticipant_repository.create name: params[:name]
           logger.info "Created pacticipant #{pacticipant}"
 
           version = version_repository.create(pacticipant_id: pacticipant.id, number: params[:number])
@@ -27,10 +27,10 @@ module PactBroker
         end
 
         # def find_or_create_consumer params
-        #   pacticipant = pacticipant_respository.find_by_name params[:name]
+        #   pacticipant = pacticipant_repository.find_by_name params[:name]
         #   puts "In pact api, pacticipant #{pacticipant}"
         #   if pacticipant == nil
-        #     pacticipant = pacticipant_respository.create name: params[:name]
+        #     pacticipant = pacticipant_repository.create name: params[:name]
         #   else
         #     pacticipant
         #   end

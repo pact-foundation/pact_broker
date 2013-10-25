@@ -25,7 +25,7 @@ module PactBroker
       namespace '/pacticipant' do
         get '/:name/repository_url' do
           logger.info "GET REPOSTORY URL #{params}"
-          pacticipant = pacticipant_respository.find_by_name(params[:name])
+          pacticipant = pacticipant_repository.find_by_name(params[:name])
           logger.info "Found pacticipant #{pacticipant}"
           if pacticipant && pacticipant.repository_url
             content_type 'text/plain'
@@ -37,12 +37,12 @@ module PactBroker
 
         patch '/:name' do
           logger.info "Recieved request to patch #{params[:name]} with #{params}"
-          pacticipant = pacticipant_respository.find_by_name(params[:name])
+          pacticipant = pacticipant_repository.find_by_name(params[:name])
           if pacticipant
             pacticipant.update(repository_url: params[:repository_url])
             status 200
           else
-            pacticipant = pacticipant_respository.create(name: params[:name], repository_url: params[:repository_url])
+            pacticipant = pacticipant_repository.create(name: params[:name], repository_url: params[:repository_url])
             status 201
           end
           json pacticipant
