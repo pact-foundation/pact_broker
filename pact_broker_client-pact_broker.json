@@ -6,6 +6,23 @@
     "name": "Pact Broker Client"
   },
   "interactions": [
+  {
+    "description": "a request to retrieve the repository URL of the 'Pricing Service'",
+    "provider_state": "the 'Pricing Service' does not exist in the pact-broker",
+    "request": {
+      "method": "get",
+      "path": "/pacticipant/Pricing%20Service/repository_url",
+      "headers": {
+        "X-Pact-Broker-Client-Version": "2.0.0",
+        "Accept": "text/plain"
+      }
+    },
+    "response": {
+      "status": 404,
+      "headers": {
+      }
+    }
+  },
 
     {
       "description": "a request to register the repository URL of a pacticipant",
@@ -24,7 +41,25 @@
       "response": {
         "status": 201
       }
+    },
+  {
+    "description": "a request to retrieve the repository URL of the 'Pricing Service'",
+    "provider_state": "the 'Pricing Service' already exists in the pact-broker",
+    "request": {
+      "method": "get",
+      "path": "/pacticipant/Pricing%20Service/repository_url",
+      "headers": {
+        "X-Pact-Broker-Client-Version": "2.0.0",
+        "Accept": "text/plain"
+      }
+    },
+    "response": {
+      "status": 200,
+      "headers": {"Content-Type": "text/plain;charset=utf-8"
+      },
+      "body": "git@git.realestate.com.au:business-systems/condor.git"
     }
+  }
   ],
   "metadata": {
     "pact_gem": {

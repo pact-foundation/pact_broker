@@ -1,7 +1,3 @@
-db_file = File.expand_path File.join(File.dirname(__FILE__), '../../tmp/pact_broker_database_test.sqlite3')
-FileUtils.rm_rf db_file
-FileUtils.touch db_file
-
 require './spec/spec_helper'
 require 'pact/provider/rspec'
 require 'sequel'
@@ -32,6 +28,10 @@ RSpec.configure do | config |
 
 end
 
+
+Pact.configure do | config |
+  config.logger.level = Logger::DEBUG
+end
 
 Pact.service_provider "Pact Broker" do
   app { PactBroker::API.new }

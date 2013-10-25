@@ -1,16 +1,16 @@
-require 'grape'
+require 'sinatra'
 
 require_relative 'api/index_api'
 require_relative 'api/pacticipant_api'
 
 module PactBroker
-  class API < Grape::API
-    content_type :json, 'application/json'
-    content_type :xml, 'text/xml'
-    default_format :json
+  class API < Sinatra::Base
+#    content_type :json, 'application/json'
+#    content_type :xml, 'text/xml'
+#    default_format :json
 
-    mount Api::IndexApi
-    mount Api::PacticipantApi
+    use Api::IndexApi
+    use Api::PacticipantApi
 
   end
 end

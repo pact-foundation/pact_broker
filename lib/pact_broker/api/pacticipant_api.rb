@@ -1,10 +1,10 @@
-require 'grape/api'
-require 'grape-entity'
 require 'pact_broker/logging'
 require 'sequel'
 require 'pact_broker/db'
-
-
+require 'sinatra'
+require 'sinatra/json'
+require 'sinatra/namespace'
+require 'sinatra/param'
 
 module PactBroker
 
@@ -12,41 +12,45 @@ module PactBroker
 
   class Pacticipant < Sequel::Model(::DB::PACT_BROKER_DB[:pacticipants])
     #attr_accessor :name, :repository_url
-  end
 
-  module Entities
-    class Pacticipant < Grape::Entity
-      expose :name
-      expose :repository_url
+    def as_json
+      {name: name, repository_url: repository_url}
     end
   end
 
   module Api
 
-    class PacticipantApi < Grape::API
+    class PacticipantApi < Sinatra::Base
 
       helpers do
         include PactBroker::Logging
       end
 
-      content_type :html, 'text/html'
-      content_type :json, 'application/json' # Grape seems to be upset if we specify HTML without JSON
+      helpers Sinatra::JSON
+      helpers Sinatra::Param
+      register Sinatra::Namespace
 
-      default_format :json
-      format :json
-
-      resource :pacticipant do
-        desc 'Updates the pacticipant resource'
-        params do
-          requires :name, type: String, desc: "Name of the pacticipant"
-          optional :repository_url, type: String
+      namespace '/pacticipant' do
+        get '/:name/repository_url' do
+          logger.info "GET REPOSTORY URL #{params}"
+          pacticipant = Pacticipant.where(:name => params[:name]).first
+          logger.info "Found pacticipant #{pacticipant}"
+          if pacticipant && pacticipant.repository_url
+            content_type 'text/plain'
+            pacticipant.repository_url
+          else
+            status 404
+          end
         end
-        patch ':name' do
+
+        patch '/:name' do
+          #param :repository_url, String, required: false, blank: false
+
           logger.info "Recieved request to patch #{params[:name]} with #{params}"
           pacticipant = Pacticipant.new(name: params[:name], repository_url: params[:repository_url])
           pacticipant.save
           status 201
-          present pacticipant, with: Entities::Pacticipant
+          json pacticipant.as_json
         end
       end
 

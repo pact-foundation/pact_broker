@@ -22,8 +22,9 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'pact'
   gem.add_runtime_dependency 'httparty'
   gem.add_runtime_dependency 'json'
-  gem.add_runtime_dependency 'grape'
-  gem.add_runtime_dependency 'grape-entity'
+  gem.add_runtime_dependency 'sinatra'
+  gem.add_runtime_dependency 'sinatra-contrib'
+  gem.add_runtime_dependency 'sinatra-param'
   gem.add_runtime_dependency 'sequel'
   gem.add_runtime_dependency 'sqlite3'
 
