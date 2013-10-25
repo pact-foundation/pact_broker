@@ -1,3 +1,7 @@
+db_file = File.expand_path File.join(File.dirname(__FILE__), '../../tmp/pact_broker_database_test.sqlite3')
+FileUtils.rm_rf db_file
+FileUtils.touch db_file
+
 require './spec/spec_helper'
 require 'pact/provider/rspec'
 require 'sequel'
@@ -11,12 +15,11 @@ Sequel.extension :migration
 RSpec.configure do | config |
   config.before :suite do
 
-    puts "BLAH"
+    # puts caller.take 20
+
+    puts "Running before suite"
     raise "Wrong environment!!! Don't run this script!! ENV['RACK_ENV'] is #{ENV['RACK_ENV']} and RACK_ENV is #{RACK_ENV}" if ENV['RACK_ENV'] != 'test' || RACK_ENV != 'test'
     begin
-      db_file = File.expand_path File.join(File.dirname(__FILE__), '../../tmp/pact_broker_database_test.sqlite3')
-      FileUtils.rm_rf db_file
-      FileUtils.touch db_file
       Sequel::Migrator.run(DB::PACT_BROKER_DB, "./db/migrations")
     rescue StandardError => e
       puts e

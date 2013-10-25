@@ -31,6 +31,7 @@ module DB
 
   PACT_BROKER_DB ||= begin
     config = YAML.load(ERB.new(File.read(File.join('./config', 'database.yml'))).result)
+    puts "Connecting using config #{config[RACK_ENV]}"
     connect config[RACK_ENV]
   end
 
