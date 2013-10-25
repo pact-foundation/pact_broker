@@ -22,10 +22,7 @@
         }
       },
       "response": {
-        "status": 201,
-        "headers": {
-          "X-Pact-Broker-Version": "1.0.0"
-        }
+        "status": 201
       }
     }
   ],
