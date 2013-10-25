@@ -8,7 +8,7 @@ Pact.provider_states_for "Pact Broker Client" do
 
   provider_state "the 'Pricing Service' already exists in the pact-broker" do
     set_up do
-      PactBroker::Repositories.pacticipant_repository.create(:name => 'Pricing Service', :repository_url => 'git@git.realestate.com.au:business-systems/condor.git')
+      PactBroker::Repositories.pacticipant_repository.create(name: 'Pricing Service', repository_url: 'git@git.realestate.com.au:business-systems/condor.git')
     end
   end
 
@@ -20,7 +20,10 @@ Pact.provider_states_for "Pact Broker Client" do
 
   provider_state "a pact between Condor and the Pricing Service exists" do
     set_up do
-      PactBroker::Repositories.pacticipant_repository.create(:name => 'Pricing Service', :repository_url => 'git@git.realestate.com.au:business-systems/condor.git')
+      consumer = PactBroker::Repositories.pacticipant_repository.create(name: 'Condor', repository_url: 'git@git.realestate.com.au:business-systems/condor.git')
+      version = PactBroker::Repositories.version_repository.create(number: '2.0.0', pacticipant_id: consumer.id)
+      provider = PactBroker::Repositories.pacticipant_repository.create(name: 'Pricing Service', repository_url: 'git@git.realestate.com.au:business-systems/pricing_service.git')
+      PactBroker::Repositories.pact_repository.create(version_id: version.id, provider_id: provider.id, json_content: "[{}]")
     end
   end
 

@@ -46,10 +46,21 @@ module PactBroker
       helpers Sinatra::Param
       register Sinatra::Namespace
 
-      namespace '/pacticipant/:name/versions/:number/pacts' do
+      namespace '/pacticipant/:consumer/versions/:number/pacts' do
         put '/:provider' do
           put_pact params
           status 201
+        end
+
+        get '/:provider' do
+          pact = nil
+          pact = pact_repository.find_latest_version(params[:consumer], params[:provider]) if params[:number] == 'last'
+          if pact
+            status 200
+            json pact
+          else
+            status 404
+          end
         end
       end
     end
