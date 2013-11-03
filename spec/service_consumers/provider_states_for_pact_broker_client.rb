@@ -13,7 +13,16 @@ def create_version number, pacticipant_id
 end
 
 def create_pact version_id, provider_id
-  PactBroker::Models::Pact.new(version_id: version_id, provider_id: provider_id, json_content: '').save.id
+  json_content = {
+    "consumer"     => {
+       "name" => "Condor"
+     },
+     "provider"     => {
+       "name" => "Pricing Service"
+     },
+     "interactions" => []
+   }.to_json
+  PactBroker::Models::Pact.new(version_id: version_id, provider_id: provider_id, json_content: json_content).save.id
 end
 
 Pact.provider_states_for "Pact Broker Client" do
@@ -31,16 +40,24 @@ Pact.provider_states_for "Pact Broker Client" do
   provider_state "an error occurs while publishing a pact" do
     set_up do
       PactBroker::Services::PactService.stub(:create_or_update_pact).and_raise("an error")
-      # Your set up code goes here
     end
   end
 
   provider_state "a pact between Condor and the Pricing Service exists" do
     set_up do
+      json_content = {
+        "consumer"     => {
+           "name" => "Condor"
+         },
+         "provider"     => {
+           "name" => "Pricing Service"
+         },
+         "interactions" => []
+       }.to_json
       consumer = PactBroker::Repositories.pacticipant_repository.create(name: 'Condor', repository_url: 'git@git.realestate.com.au:business-systems/condor.git')
-      version = PactBroker::Repositories.version_repository.create(number: '2.0.0', pacticipant_id: consumer.id)
+      version = PactBroker::Repositories.version_repository.create(number: '1.3.0', pacticipant_id: consumer.id)
       provider = PactBroker::Repositories.pacticipant_repository.create(name: 'Pricing Service', repository_url: 'git@git.realestate.com.au:business-systems/pricing_service.git')
-      PactBroker::Repositories.pact_repository.create(version_id: version.id, provider_id: provider.id, json_content: "[{}]")
+      PactBroker::Repositories.pact_repository.create(version_id: version.id, provider_id: provider.id, json_content: json_content)
     end
   end
 

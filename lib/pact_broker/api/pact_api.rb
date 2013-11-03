@@ -18,9 +18,10 @@ module PactBroker
 
         get '/:provider' do
           pact = nil
-          pact = pact_repository.find_latest_version(params[:consumer], params[:provider]) if params[:number] == 'last'
+          pact = pact_service.find_pact(consumer: params[:consumer], provider: params[:provider], number: params[:number])
           if pact
             status 200
+            headers 'X-Pact-Consumer-Version' => pact.consumer_version_number
             json pact
           else
             status 404

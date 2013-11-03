@@ -9,6 +9,14 @@ module PactBroker
 
       extend PactBroker::Repositories
 
+      def find_pact params
+        if params[:number] == 'last'
+          pact_repository.find_latest_version(params[:consumer], params[:provider])
+        else
+          raise NotImplementedError
+        end
+      end
+
       def create_or_update_pact params
         provider = pacticipant_repository.find_by_name_or_create params[:provider]
         consumer = pacticipant_repository.find_by_name_or_create params[:consumer]
