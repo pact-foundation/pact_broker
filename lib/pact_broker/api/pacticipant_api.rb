@@ -7,7 +7,7 @@ module PactBroker
 
     class PacticipantApi < BaseApi
 
-      namespace '/pacticipant' do
+      namespace '/pacticipants' do
         get '/:name/repository_url' do
           repository_url = pacticipant_service.find_pacticipant_repository_url_by_pacticipant_name(params[:name])
           if repository_url

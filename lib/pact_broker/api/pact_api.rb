@@ -6,7 +6,7 @@ module PactBroker
 
     class PactApi < BaseApi
 
-      namespace '/pacticipant/:consumer/versions/:number/pacts' do
+      namespace '/pacticipants/:consumer/versions/:number/pacts' do
         put '/:provider' do
           pact, created = pact_service.create_or_update_pact(
             provider: params[:provider],
