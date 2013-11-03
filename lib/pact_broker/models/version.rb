@@ -1,3 +1,5 @@
+require 'sequel'
+
 module PactBroker
 
   module Models

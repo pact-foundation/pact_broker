@@ -17,16 +17,16 @@ module PactBroker
 
       attr_accessor :database_connection
 
-      def initialize
-        yield self
-        rake_task
+      def initialize &block
+        rake_task &block
       end
 
-      def rake_task
+      def rake_task &block
         namespace :pact_broker do
           namespace :db do
             desc "Run sequel migrations for pact broker database"
             task :migrate do
+              instance_eval(&block)
               require 'sequel'
               Sequel.extension :migration
               db_migrations_dir = File.expand_path("../../../../db/migrations", __FILE__)
