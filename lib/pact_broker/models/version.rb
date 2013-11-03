@@ -1,10 +1,8 @@
-require 'pact_broker/db'
-
 module PactBroker
 
   module Models
 
-    class Version < Sequel::Model(::DB::PACT_BROKER_DB[:versions])
+    class Version < Sequel::Model
 
       one_to_many :pacts
 

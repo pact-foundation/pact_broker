@@ -15,12 +15,12 @@ class ProviderStateBuilder
   end
 
   def create_condor_version number
-    @condor_version_id = version_repository.create(number: number, pacticipant_id: @condor_id).save.id
+    @condor_version_id = version_repository.create(number: number, pacticipant_id: @condor_id).id
     self
   end
 
   def create_pact
-    @pact_id = pact_repository.create(version_id: @condor_version_id, provider_id: @pricing_service_id, json_content: json_content).save.id
+    @pact_id = pact_repository.create(version_id: @condor_version_id, provider_id: @pricing_service_id, json_content: json_content).id
     self
   end
 

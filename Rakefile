@@ -31,46 +31,11 @@ rescue Bundler::BundlerError => e
 end
 require 'rake'
 
-ENV['CI_REPORTS']="reports"
 
-# Put tasks that should be available in production as well as dev/test (such as db:migrate) in libs/tasks/production
-FileList['lib/tasks/production/**/*.rake'].each { |task| load task }
+FileList['lib/tasks/**/*.rake'].each { |task| load "#{Dir.pwd}/#{task}" }
+FileList['tasks/**/*.rake'].each { |task| load "#{Dir.pwd}/#{task}" }
 
-# Gems in development/test won't be loaded by Bundler in production, make sure we don't try to load a task that doesn't exist
-if ENV['RACK_ENV'] != 'production'
-
-  FileList['lib/tasks/**/*.rake'].exclude(%r{/production/}).each { |task| load task }
-  require 'pact/tasks'
-
-  task :default => [:spec, 'pact:verify']
-end
+task :default => [:spec, 'pact:verify']
 
 require File.join(File.dirname(__FILE__), 'config/boot')
 
-
-namespace :db do
-  desc 'drop and recreate DB'
-  task :recreate => [:drop, :migrate]
-
-  desc 'drop DB'
-  task :drop do
-    require 'yaml'
-    puts "Removing database #{db_file}"
-    FileUtils.rm_f db_file
-  end
-
-  desc 'DB migrations'
-  task :migrate do
-    require 'sequel'
-    require 'pact_broker/db'
-
-    FileUtils.mkdir_p File.dirname(db_file)
-
-    Sequel.extension :migration
-    Sequel::Migrator.run(DB::PACT_BROKER_DB, "db/migrations")
-  end
-
-  def db_file
-    @@db_file ||= YAML.load(ERB.new(File.read(File.join('./config', 'database.yml'))).result)[RACK_ENV]["database"]
-  end
-end

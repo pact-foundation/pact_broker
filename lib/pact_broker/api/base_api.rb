@@ -1,7 +1,6 @@
 require 'pact_broker/logging'
 require 'pact_broker/repositories'
 require 'sequel'
-require 'pact_broker/db'
 require 'sinatra'
 require 'sinatra/json'
 require 'sinatra/namespace'

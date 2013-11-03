@@ -1,9 +1,8 @@
-require 'pact_broker/db'
 
 module PactBroker
 
   module Models
-    class Pact < Sequel::Model(::DB::PACT_BROKER_DB[:pacts])
+    class Pact < Sequel::Model
 
       #Need to work out how to do this properly!
       def consumer_version_number

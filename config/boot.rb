@@ -14,5 +14,4 @@ if File.exists?(ENV['BUNDLE_GEMFILE'])
   Bundler.require
 end
 
-# Load Stencil
 require 'pact_broker'
