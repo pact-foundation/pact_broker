@@ -55,7 +55,6 @@ namespace :db do
   desc 'drop DB'
   task :drop do
     require 'yaml'
-    db_file = YAML.load(ERB.new(File.read(File.join('./config', 'database.yml'))).result)[RACK_ENV]["database"]
     puts "Removing database #{db_file}"
     FileUtils.rm_f db_file
   end
@@ -65,7 +64,13 @@ namespace :db do
     require 'sequel'
     require 'pact_broker/db'
 
+    FileUtils.mkdir_p File.dirname(db_file)
+
     Sequel.extension :migration
     Sequel::Migrator.run(DB::PACT_BROKER_DB, "db/migrations")
+  end
+
+  def db_file
+    @@db_file ||= YAML.load(ERB.new(File.read(File.join('./config', 'database.yml'))).result)[RACK_ENV]["database"]
   end
 end
