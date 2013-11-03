@@ -9,8 +9,20 @@ module PactBroker
         PactBroker::Models::Pacticipant.where(name: name).single_record
       end
 
+      def find_by_name_or_create name
+        if pacticipant = find_by_name(name)
+          pacticipant
+        else
+          create name: name
+        end
+      end
+
       def create args
         PactBroker::Models::Pacticipant.new(name: args[:name], repository_url: args[:repository_url]).save(raise_on_save_failure: true)
+      end
+
+      def find_last_version name
+
       end
 
     end

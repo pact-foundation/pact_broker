@@ -8,7 +8,7 @@ $LOAD_PATH << File.expand_path(File.dirname(__FILE__) + '/../lib')
 RACK_ENV = ENV['RACK_ENV'] || 'development' unless defined? RACK_ENV
 
 # Set up gems listed in the Gemfile.
-ENV['BUNDLE_GEMFILE'] ||= File.join(App.root_path, 'Gemfile')
+ENV['BUNDLE_GEMFILE'] ||= File.expand_path('../../Gemfile', __FILE__)
 if File.exists?(ENV['BUNDLE_GEMFILE'])
   require 'bundler/setup'
   Bundler.require

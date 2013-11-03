@@ -1,4 +1,4 @@
-require 'sequel'
+require 'pact_broker/db'
 
 module PactBroker
 

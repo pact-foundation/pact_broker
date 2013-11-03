@@ -7,6 +7,70 @@
   },
   "interactions": [
   {
+    "description": "a request to publish a pact",
+    "request": {
+      "method": "put",
+      "path": "/pacticipant/Condor/versions/1.3.0/pacts/Pricing%20Service",
+      "body": {
+        "consumer": {
+          "name": "Condor"
+        },
+        "provider": {
+          "name": "Pricing Service"
+        },
+        "interactions": [
+
+        ]
+      },
+      "headers": {
+        "X-Pact-Broker-Client-Version": "2.0.0",
+        "Content-Type": "application/json"
+      }
+    },
+    "response": {
+      "headers": {
+      },
+      "status": 201
+    }
+  },
+  {
+    "description": "a request to publish a pact",
+    "provider_state": "an error occurs while publishing a pact",
+    "request": {
+      "method": "put",
+      "path": "/pacticipant/Condor/versions/1.3.0/pacts/Pricing%20Service",
+      "body": {
+        "consumer": {
+          "name": "Condor"
+        },
+        "provider": {
+          "name": "Pricing Service"
+        },
+        "interactions": [
+
+        ]
+      },
+      "headers": {
+        "X-Pact-Broker-Client-Version": "2.0.0",
+        "Content-Type": "application/json"
+      }
+    },
+    "response": {
+      "status": 500,
+      "headers": {
+      },
+      "body": {
+        "error": {
+          "json_class": "Pact::Term",
+          "data": {
+            "generate": "An error occurred",
+            "matcher": {"json_class":"Regexp","o":0,"s":".*"}
+          }
+        }
+      }
+    }
+  },
+  {
     "description": "a request to retrieve the repository URL of the 'Pricing Service'",
     "provider_state": "the 'Pricing Service' does not exist in the pact-broker",
     "request": {

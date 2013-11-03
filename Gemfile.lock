@@ -4,12 +4,24 @@ PATH
     pact_broker (0.0.1)
       httparty
       json
-      pact
       sequel
       sinatra
       sinatra-contrib
       sinatra-param
       sqlite3
+
+PATH
+  remote: ../pact
+  specs:
+    pact (1.0.20)
+      awesome_print (~> 1.1.0)
+      find_a_port (~> 1.0.1)
+      json
+      rack-test (~> 0.6.2)
+      randexp (~> 0.1.7)
+      rspec (~> 2.12)
+      thin
+      thor
 
 GEM
   remote: https://rubygems.org/
@@ -39,15 +51,6 @@ GEM
     method_source (0.8.2)
     multi_json (1.8.2)
     multi_xml (0.5.5)
-    pact (1.0.15)
-      awesome_print (~> 1.1.0)
-      find_a_port (~> 1.0.1)
-      json
-      rack-test (~> 0.6.2)
-      randexp (~> 0.1.7)
-      rspec (~> 2.12)
-      thin
-      thor
     pry (0.9.12.2)
       coderay (~> 1.0.5)
       method_source (~> 0.8)
@@ -105,6 +108,7 @@ DEPENDENCIES
   ci_reporter
   debugger
   fakefs (~> 0.4)
+  pact!
   pact_broker!
   pry
   rake (~> 10.0.3)

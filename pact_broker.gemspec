@@ -19,7 +19,7 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.license       = 'MIT'
 
-  gem.add_runtime_dependency 'pact'
+  #gem.add_runtime_dependency 'pact'
   gem.add_runtime_dependency 'httparty'
   gem.add_runtime_dependency 'json'
   gem.add_runtime_dependency 'sinatra'
