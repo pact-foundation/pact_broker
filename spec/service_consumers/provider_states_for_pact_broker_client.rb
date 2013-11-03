@@ -1,29 +1,46 @@
 require 'pact_broker/repositories'
 
-def create_pricing_service
-  PactBroker::Models::Pacticipant.new(:name => 'Pricing Service', :repository_url => 'git@git.realestate.com.au:business-systems/condor.git').save(raise_on_save_failure: true).id
+class ProviderStateBuilder
+
+  include PactBroker::Repositories
+
+  def create_pricing_service
+    @pricing_service_id = pacticipant_repository.create(:name => 'Pricing Service', :repository_url => 'git@git.realestate.com.au:business-systems/condor.git').save(raise_on_save_failure: true).id
+    self
+  end
+
+  def create_condor
+    @condor_id = pacticipant_repository.create(:name => 'Condor').save(raise_on_save_failure: true).id
+    self
+  end
+
+  def create_condor_version number
+    @condor_version_id = version_repository.create(number: number, pacticipant_id: @condor_id).save.id
+    self
+  end
+
+  def create_pact
+    @pact_id = pact_repository.create(version_id: @condor_version_id, provider_id: @pricing_service_id, json_content: json_content).save.id
+    self
+  end
+
+  private
+
+  def json_content
+    json_content = {
+      "consumer"     => {
+         "name" => "Condor"
+       },
+       "provider"     => {
+         "name" => "Pricing Service"
+       },
+       "interactions" => []
+     }.to_json
+   end
+
 end
 
-def create_condor
-  PactBroker::Models::Pacticipant.new(:name => 'Condor').save(raise_on_save_failure: true).id
-end
 
-def create_version number, pacticipant_id
-  PactBroker::Models::Version.new(number: number, pacticipant_id: pacticipant_id).save.id
-end
-
-def create_pact version_id, provider_id
-  json_content = {
-    "consumer"     => {
-       "name" => "Condor"
-     },
-     "provider"     => {
-       "name" => "Pricing Service"
-     },
-     "interactions" => []
-   }.to_json
-  PactBroker::Models::Pact.new(version_id: version_id, provider_id: provider_id, json_content: json_content).save.id
-end
 
 Pact.provider_states_for "Pact Broker Client" do
 
@@ -33,7 +50,7 @@ Pact.provider_states_for "Pact Broker Client" do
 
   provider_state "the 'Pricing Service' already exists in the pact-broker" do
     set_up do
-      PactBroker::Repositories.pacticipant_repository.create(name: 'Pricing Service', repository_url: 'git@git.realestate.com.au:business-systems/condor.git')
+      ProviderStateBuilder.new.create_pricing_service
     end
   end
 
@@ -45,19 +62,11 @@ Pact.provider_states_for "Pact Broker Client" do
 
   provider_state "a pact between Condor and the Pricing Service exists" do
     set_up do
-      json_content = {
-        "consumer"     => {
-           "name" => "Condor"
-         },
-         "provider"     => {
-           "name" => "Pricing Service"
-         },
-         "interactions" => []
-       }.to_json
-      consumer = PactBroker::Repositories.pacticipant_repository.create(name: 'Condor', repository_url: 'git@git.realestate.com.au:business-systems/condor.git')
-      version = PactBroker::Repositories.version_repository.create(number: '1.3.0', pacticipant_id: consumer.id)
-      provider = PactBroker::Repositories.pacticipant_repository.create(name: 'Pricing Service', repository_url: 'git@git.realestate.com.au:business-systems/pricing_service.git')
-      PactBroker::Repositories.pact_repository.create(version_id: version.id, provider_id: provider.id, json_content: json_content)
+      ProviderStateBuilder.new
+        .create_condor
+        .create_condor_version('1.3.0')
+        .create_pricing_service
+        .create_pact
     end
   end
 
@@ -67,22 +76,23 @@ Pact.provider_states_for "Pact Broker Client" do
 
   provider_state "the 'Pricing Service' and 'Condor' already exist in the pact-broker, and Condor already has a pact published for version 1.3.0" do
     set_up do
-      pricing_service_id = create_pricing_service
-      condor_id = create_condor
-      version_id = create_version '1.3.0', condor_id
-      create_pact version_id, pricing_service_id
+      ProviderStateBuilder.new
+        .create_condor
+        .create_condor_version('1.3.0')
+        .create_pricing_service
+        .create_pact
     end
   end
 
   provider_state "'Condor' already exist in the pact-broker, but the 'Pricing Service' does not" do
     set_up do
-      create_condor
+      ProviderStateBuilder.new.create_condor
     end
   end
 
   provider_state "'Condor' exists in the pact-broker" do
     set_up do
-      create_condor
+      ProviderStateBuilder.new.create_condor
     end
   end
 
@@ -103,8 +113,6 @@ Pact.provider_states_for "Pact Broker Client" do
    end
 
    provider_state "no version exists for the Pricing Service" do
-     set_up do
-       # Your set up code goes here
-     end
+     no_op
    end
 end
