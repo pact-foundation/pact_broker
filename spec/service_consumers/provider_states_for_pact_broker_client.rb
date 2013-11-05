@@ -5,7 +5,7 @@ class ProviderStateBuilder
   include PactBroker::Repositories
 
   def create_pricing_service
-    @pricing_service_id = pacticipant_repository.create(:name => 'Pricing Service', :repository_url => 'git@git.realestate.com.au:business-systems/condor.git').save(raise_on_save_failure: true).id
+    @pricing_service_id = pacticipant_repository.create(:name => 'Pricing Service', :repository_url => 'git@git.realestate.com.au:business-systems/pricing-service').save(raise_on_save_failure: true).id
     self
   end
 
@@ -16,6 +16,11 @@ class ProviderStateBuilder
 
   def create_condor_version number
     @condor_version_id = version_repository.create(number: number, pacticipant_id: @condor_id).id
+    self
+  end
+
+  def create_pricing_service_version number
+    @pricing_service_version_id = version_repository.create(number: number, pacticipant_id: @pricing_service_id).id
     self
   end
 
@@ -50,7 +55,7 @@ Pact.provider_states_for "Pact Broker Client" do
 
   provider_state "the 'Pricing Service' already exists in the pact-broker" do
     set_up do
-      ProviderStateBuilder.new.create_pricing_service
+      ProviderStateBuilder.new.create_pricing_service.create_pricing_service_version("1.3.0")
     end
   end
 
@@ -92,7 +97,7 @@ Pact.provider_states_for "Pact Broker Client" do
 
   provider_state "'Condor' exists in the pact-broker" do
     set_up do
-      ProviderStateBuilder.new.create_condor
+      ProviderStateBuilder.new.create_condor.create_condor_version('1.3.0')
     end
   end
 

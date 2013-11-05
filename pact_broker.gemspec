@@ -25,6 +25,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'sinatra'
   gem.add_runtime_dependency 'sinatra-contrib'
   gem.add_runtime_dependency 'sinatra-param'
+  gem.add_runtime_dependency 'roar'
   gem.add_runtime_dependency 'sequel'
   gem.add_runtime_dependency 'sqlite3'
 

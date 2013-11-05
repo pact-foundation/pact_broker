@@ -9,6 +9,10 @@ module PactBroker
         PactBroker::Models::Pacticipant.where(name: name).single_record
       end
 
+      def find_all
+        PactBroker::Models::Pacticipant.order(:name).all
+      end
+
       def find_by_name_or_create name
         if pacticipant = find_by_name(name)
           pacticipant
