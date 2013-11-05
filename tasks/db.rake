@@ -15,6 +15,7 @@ namespace :db do
     require 'yaml'
     puts "Removing database #{db_file}"
     FileUtils.rm_f db_file
+    FileUtils.mkdir_p File.dirname(db_file)
   end
 
   def db_file
