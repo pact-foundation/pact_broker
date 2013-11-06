@@ -3,4 +3,4 @@ source 'https://rubygems.org'
 
 gemspec
 
-gem 'pact', :path => '../pact'
+#gem 'pact', :path => '../pact'

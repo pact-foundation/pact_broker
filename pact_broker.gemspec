@@ -37,4 +37,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'ci_reporter'
   gem.add_development_dependency 'simplecov'
   gem.add_development_dependency 'shotgun'
+  gem.add_development_dependency 'pact'
 end
