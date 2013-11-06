@@ -5,24 +5,6 @@ require 'pact_broker/db'
 require 'pact_broker/api'
 require_relative 'provider_states_for_pact_broker_client'
 
-Sequel.extension :migration
-
-
-RSpec.configure do | config |
-  config.before :suite do
-    raise "Wrong environment!!! Don't run this script!! ENV['RACK_ENV'] is #{ENV['RACK_ENV']} and RACK_ENV is #{RACK_ENV}" if ENV['RACK_ENV'] != 'test' || RACK_ENV != 'test'
-    # puts caller.take 20
-  end
-
-  config.before :each do
-    DB::PACT_BROKER_DB[:pacts].truncate
-    DB::PACT_BROKER_DB[:tags].truncate
-    DB::PACT_BROKER_DB[:versions].truncate
-    DB::PACT_BROKER_DB[:pacticipants].truncate
-  end
-
-end
-
 
 Pact.configure do | config |
   config.logger.level = Logger::DEBUG
