@@ -17,7 +17,7 @@ module PactBroker
           join(:pacticipants, {:id => :provider_id}, {:table_alias => :providers, implicit_qualifier: :pacts}).
           where('providers.name = ?', provider_name).
           where('consumers.name = ?', consumer_name).
-          order(:versions_id).
+          order(:version_id).
           last
       end
 
