@@ -26,6 +26,14 @@ module PactBroker
         "#{pacticipant_url(version.pacticipant)}/versions/#{version.number}"
       end
 
+      def pact_url pact
+        "#{versions_url(pact.consumer_version)}/#{url_encode(pact.provider.name)}"
+      end
+
+      def latest_pacts_url
+        "/pacts/latest"
+      end
+
       def url_encode param
         ERB::Util.url_encode param
       end

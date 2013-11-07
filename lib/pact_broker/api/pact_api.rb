@@ -34,6 +34,7 @@ module PactBroker
           created ? status(201) : status(200)
         end
 
+        # Deprecate???
         get '/:provider' do
           pact = nil
           pact = pact_service.find_pact(consumer: params[:consumer], provider: params[:provider], number: params[:number])
