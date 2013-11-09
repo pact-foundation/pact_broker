@@ -1,6 +1,7 @@
 require 'roar/representer/json/hal'
 require_relative 'pact_broker_urls'
 require_relative 'version_representor'
+require_relative 'pact_representor'
 
 module PactBroker
 
@@ -24,7 +25,7 @@ module PactBroker
         end
 
         links :pacts do
-          collect{ | pacts | {:href => pact_url(pact) } }
+          collect{ | pact | {:href => pact_url(pact) } }
         end
 
       end

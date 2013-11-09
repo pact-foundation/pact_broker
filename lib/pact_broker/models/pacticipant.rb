@@ -6,6 +6,8 @@ module PactBroker
 
     class Pacticipant < Sequel::Model
 
+      set_primary_key :id
+
       one_to_many :versions, :order => :id, :reciprocal => :pacticipant
       one_to_many :pacts
 

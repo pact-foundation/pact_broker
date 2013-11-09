@@ -1,4 +1,5 @@
 require_relative 'base_api'
+require 'pact_broker/api/representors/representable_pact'
 
 module PactBroker
 
@@ -6,19 +7,32 @@ module PactBroker
 
     class PactApi < BaseApi
 
+      helpers do
+        def create_representable_pact pact
+          Representors::RepresentablePact.new(pact)
+        end
+      end
+
       namespace '/pacts' do
         get '/latest' do
           param :consumer, String
           param :provider, String
 
-          pact = nil
-          pact = pact_service.find_pact(consumer: params[:consumer], provider: params[:provider], number: 'last')
-          if pact
-            status 200
-            headers 'X-Pact-Consumer-Version' => pact.consumer_version_number
-            json pact
+          if params[:consumer] || params[:provider]
+            pact = nil
+            pact = pact_service.find_pact(consumer: params[:consumer], provider: params[:provider], number: 'last')
+            if pact
+              status 200
+              headers 'X-Pact-Consumer-Version' => pact.consumer_version_number
+              json pact
+            else
+              status 404
+            end
           else
-            status 404
+            pacts = pact_service.find_latest_pacts.collect{ | pact | create_representable_pact(pact) }
+            pacts.extend(Representors::PactCollectionRepresenter)
+            content_type 'application/json+hal;charset=utf-8'
+            pacts.to_json
           end
 
         end

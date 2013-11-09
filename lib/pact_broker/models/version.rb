@@ -6,6 +6,7 @@ module PactBroker
 
     class Version < Sequel::Model
 
+      set_primary_key :id
       one_to_many :pacts
       associate(:many_to_one, :pacticipant, :class => "PactBroker::Models::Pacticipant", :key => :pacticipant_id, :primary_key => :id)
 

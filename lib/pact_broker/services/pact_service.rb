@@ -17,6 +17,10 @@ module PactBroker
         end
       end
 
+      def find_latest_pacts
+        pact_repository.find_latest_pacts
+      end
+
       def create_or_update_pact params
         provider = pacticipant_repository.find_by_name_or_create params[:provider]
         consumer = pacticipant_repository.find_by_name_or_create params[:consumer]

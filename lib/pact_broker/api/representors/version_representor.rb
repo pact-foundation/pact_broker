@@ -8,6 +8,7 @@ module PactBroker
         include Roar::Representer::JSON::HAL
         include Roar::Representer::JSON::HAL::Links
         include PactBroker::Api::PactBrokerUrls
+
         property :number
 
         link :self do

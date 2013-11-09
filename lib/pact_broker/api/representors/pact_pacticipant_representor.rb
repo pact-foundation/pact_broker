@@ -15,10 +15,7 @@ module PactBroker
 
         property :name
         property :repository_url
-
-        def version
-
-        end
+        property :version, :class => "PactBroker::Models::Version", :extend => PactBroker::Api::Representors::VersionRepresenter, :embedded => true
 
         link :self do
           pacticipant_url(self)
