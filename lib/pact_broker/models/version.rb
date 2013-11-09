@@ -7,7 +7,7 @@ module PactBroker
     class Version < Sequel::Model
 
       one_to_many :pacts
-      associate(:one_to_one, :pacticipant, :class => "PactBroker::Models::Pacticipant", :key => :id, :primary_key => :pacticipant_id)
+      associate(:many_to_one, :pacticipant, :class => "PactBroker::Models::Pacticipant", :key => :pacticipant_id, :primary_key => :id)
 
       def to_s
         "Version: number=#{number}, pacticipant=#{pacticipant_id}"
