@@ -16,7 +16,7 @@ module PactBroker
 
       #FIX to hal+json
       def content_types_provided
-        [["application/json+hal", :to_json]]
+        [["application/hal+json", :to_json]]
       end
 
       def allowed_methods
