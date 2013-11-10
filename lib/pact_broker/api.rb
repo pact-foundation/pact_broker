@@ -1,8 +1,3 @@
-require 'sinatra'
-
-require_relative 'api/index_api'
-require_relative 'api/pacticipant_api'
-require_relative 'api/pact_api'
 require 'pact_broker/resources/pact'
 require 'pact_broker/resources/latest_pact'
 require 'pact_broker/resources/latest_pacts'
@@ -13,7 +8,7 @@ require 'webmachine/adapters/rack'
 
 module PactBroker
 
-  def self.pact_api
+  API ||= begin
     pact_api = Webmachine::Application.new do |app|
       app.routes do
         add(['trace', '*'], Webmachine::Trace::TraceResource) unless ENV['RACK_ENV'] == 'production'

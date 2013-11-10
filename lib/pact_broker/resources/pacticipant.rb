@@ -12,15 +12,11 @@ module PactBroker
 
     class Pacticipant < Webmachine::Resource
 
-      def trace?
-        true
-      end
-
       include PactBroker::Services
       include PactBroker::Resources::PathInfo
 
       def content_types_provided
-        [["application/json", :to_json]]
+        [["application/json+hal", :to_json]]
       end
 
       def content_types_accepted

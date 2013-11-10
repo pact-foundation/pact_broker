@@ -13,7 +13,7 @@ Pact.configure do | config |
 end
 
 Pact.service_provider "Pact Broker" do
-  app { PactBroker.pact_api }
+  app { PactBroker::API }
 
   # honours_pact_with "Pact Broker Client" do
   #   pact_uri "../pact_broker-client/spec/pacts/pact_broker_client-pact_broker.json"

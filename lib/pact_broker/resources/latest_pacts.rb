@@ -24,7 +24,11 @@ module PactBroker
       end
 
       def to_json
-        pacts = pact_service.find_latest_pacts.collect{ | pact | create_representable_pact(pact) }
+        generate_json(pact_service.find_latest_pacts)
+      end
+
+      def generate_json pacts
+        pacts = pacts.collect{ | pact | create_representable_pact(pact) }
         pacts.extend(PactBroker::Api::Representors::PactCollectionRepresenter)
         pacts.to_json
       end

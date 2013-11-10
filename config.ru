@@ -7,6 +7,5 @@ require 'pact_broker/resources/pact'
 use Rack::Static, root: 'public', urls: ['/favicon.ico']
 
 run Rack::URLMap.new(
-  '/' => PactBroker.pact_api
-  # '/' => PactBroker::API
+  '/' => PactBroker::API
 )
