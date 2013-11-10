@@ -23,15 +23,12 @@ module PactBroker
           where('versions.id in ?', latest_versions).all
       end
 
-      def find_latest_version(consumer_name, provider_name)
-        PactBroker::Models::Pact.select(:pacts__id, :pacts__json_content, :pacts__version_id, :pacts__provider_id, :versions__number___consumer_version_number).
-          join(:versions, {:id => :version_id}, {implicit_qualifier: :pacts}).
-          join(:pacticipants, {:id => :pacticipant_id}, {:table_alias => :consumers, implicit_qualifier: :versions}).
-          join(:pacticipants, {:id => :provider_id}, {:table_alias => :providers, implicit_qualifier: :pacts}).
-          where('providers.name = ?', provider_name).
-          where('consumers.name = ?', consumer_name).
-          order(:version_id).
-          last
+      def find_latest_pact(consumer_name, provider_name)
+        pact_finder(consumer_name, provider_name).order(:version_id).last
+      end
+
+      def find_pact consumer_name, consumer_version, provider_name
+        pact_finder(consumer_name, provider_name).where('versions.number = ?', consumer_version).single_record
       end
 
       def create params
@@ -44,6 +41,17 @@ module PactBroker
         else
           create params
         end
+      end
+
+      private
+
+      def pact_finder consumer_name, provider_name
+        PactBroker::Models::Pact.select(:pacts__id, :pacts__json_content, :pacts__version_id, :pacts__provider_id, :versions__number___consumer_version_number).
+          join(:versions, {:id => :version_id}, {implicit_qualifier: :pacts}).
+          join(:pacticipants, {:id => :pacticipant_id}, {:table_alias => :consumers, implicit_qualifier: :versions}).
+          join(:pacticipants, {:id => :provider_id}, {:table_alias => :providers, implicit_qualifier: :pacts}).
+          where('providers.name = ?', provider_name).
+          where('consumers.name = ?', consumer_name)
       end
 
     end

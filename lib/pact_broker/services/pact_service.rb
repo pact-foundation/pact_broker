@@ -11,9 +11,9 @@ module PactBroker
 
       def find_pact params
         if params[:number] == 'last'
-          pact_repository.find_latest_version(params[:consumer], params[:provider])
+          pact_repository.find_latest_pact(params[:consumer], params[:provider])
         else
-          raise NotImplementedError
+          pact_repository.find_pact(params[:consumer], params[:consumer_version_number], params[:provider])
         end
       end
 
