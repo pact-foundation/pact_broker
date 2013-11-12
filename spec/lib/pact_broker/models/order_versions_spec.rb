@@ -1,8 +1,8 @@
 require 'spec_helper'
 require 'spec/support/provider_state_builder'
-require 'pact_broker/models/sort_versions.rb'
+require 'pact_broker/models/order_versions.rb'
 
-describe PactBroker::Models::SortVersions do
+describe PactBroker::Models::OrderVersions do
 
 
   before do

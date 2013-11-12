@@ -1,5 +1,5 @@
 require 'sequel'
-require 'pact_broker/models/sort_versions'
+require 'pact_broker/models/order_versions'
 
 module PactBroker
 
@@ -12,7 +12,7 @@ module PactBroker
       associate(:many_to_one, :pacticipant, :class => "PactBroker::Models::Pacticipant", :key => :pacticipant_id, :primary_key => :id)
 
       def after_create
-        SortVersions.(self.pacticipant_id)
+        OrderVersions.(self.pacticipant_id)
       end
 
       def to_s

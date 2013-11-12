@@ -2,14 +2,14 @@ require 'versionomy'
 
 module PactBroker
   module Models
-    class SortVersions
+    class OrderVersions
 
       def self.call pacticipant_id
-        versions = PactBroker::Models::Version.where(:pacticipant_id => pacticipant_id).all.collect{| version | SortableVersion.new(version) }
+        versions = PactBroker::Models::Version.where(:pacticipant_id => pacticipant_id).all.collect{| version | OrderableVersion.new(version) }
         versions.sort.each_with_index{ | version, i | version.update_model(i) }
       end
 
-      class SortableVersion
+      class OrderableVersion
 
         attr_accessor :version_model, :sortable_number
 
