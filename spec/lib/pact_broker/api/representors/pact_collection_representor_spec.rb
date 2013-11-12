@@ -15,7 +15,7 @@ module PactBroker::Api::Representors
       pact
     end
 
-    it "should description" do
+    xit "should description" do
       puts [pact].extend(PactCollectionRepresenter).to_json
     end
   end

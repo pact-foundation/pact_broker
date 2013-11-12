@@ -23,6 +23,8 @@ module PactBroker
         end
 
         def update_model new_order
+          # Sequel will only run the update if the column value has changed, so in 99% of
+          # cases, only one update will occur.
           version_model.update(:order => new_order)
         end
       end
