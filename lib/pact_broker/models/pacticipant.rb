@@ -8,7 +8,7 @@ module PactBroker
 
       set_primary_key :id
 
-      one_to_many :versions, :order => :id, :reciprocal => :pacticipant
+      one_to_many :versions, :order => :order, :reciprocal => :pacticipant
       one_to_many :pacts
 
       def last_version

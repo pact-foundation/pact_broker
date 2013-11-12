@@ -16,7 +16,7 @@ describe PactBroker::Models::OrderVersions do
   let(:ordered_versions) { PactBroker::Models::Version.order(:order).all.collect(&:number) }
   let(:condor) { PactBroker::Models::Pacticipant.where(name: 'Condor').single_record }
 
-  it "sorts the versions" do
+  it "orders the versions so they can be loaded from the database in order" do
     expect(ordered_versions).to eq(['1.3.0','1.4.0', '1.5.0'])
   end
 

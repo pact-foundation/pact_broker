@@ -24,7 +24,7 @@ module PactBroker
       end
 
       def find_latest_pact(consumer_name, provider_name)
-        pact_finder(consumer_name, provider_name).order(:version_id).last
+        pact_finder(consumer_name, provider_name).order(:order).last
       end
 
       def find_pact consumer_name, consumer_version, provider_name
