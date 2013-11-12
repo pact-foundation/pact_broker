@@ -1,4 +1,5 @@
 require 'sequel'
+require 'pact_broker/logging'
 
 module PactBroker
   module Repositories
