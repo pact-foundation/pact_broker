@@ -7,6 +7,7 @@ PATH
       roar
       sequel
       sqlite3
+      versionomy
       webmachine
 
 GEM
@@ -14,6 +15,7 @@ GEM
   specs:
     as-notifications (1.0.1)
     awesome_print (1.1.0)
+    blockenspiel (0.4.5)
     builder (3.2.2)
     ci_reporter (1.9.0)
       builder (>= 2.1.2)
@@ -88,6 +90,8 @@ GEM
       eventmachine (>= 1.0.0)
       rack (>= 1.0.0)
     thor (0.18.1)
+    versionomy (0.4.4)
+      blockenspiel (>= 0.4.5)
     webmachine (1.2.1)
       as-notifications (~> 1.0)
       i18n (>= 0.4.0)
