@@ -13,7 +13,6 @@ module PactBroker
         include Roar::Representer::JSON::HAL
         include PactBroker::Api::PactBrokerUrls
 
-
         collection :pacts, :class => PactBroker::Models::Pact, :extend => PactBroker::Api::Representors::PactRepresenter
 
         def pacts
@@ -24,8 +23,9 @@ module PactBroker
           latest_pacts_url
         end
 
+        # This is the LATEST pact URL
         links :pacts do
-          collect{ | pact | {:href => pact_url(pact) } }
+          collect{ | pact | {:href => latest_pact_url(pact), :consumer => pact.consumer.name, :provider => pact.provider.name } }
         end
 
       end
