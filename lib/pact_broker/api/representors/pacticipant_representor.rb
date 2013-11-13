@@ -1,4 +1,5 @@
 require 'roar/representer/json/hal'
+require 'roar/decorator'
 require_relative 'pact_broker_urls'
 require_relative 'version_representor'
 
@@ -8,7 +9,7 @@ module PactBroker
 
     module Representors
 
-      module PacticipantRepresenter
+      class PacticipantRepresenter < Roar::Decorator
         include Roar::Representer::JSON::HAL
         include Roar::Representer::JSON::HAL::Links
         include PactBroker::Api::PactBrokerUrls
@@ -19,15 +20,15 @@ module PactBroker
         property :last_version, :class => PactBroker::Models::Version, :extend => PactBroker::Api::Representors::VersionRepresenter, :embedded => true
 
         link :self do
-          pacticipant_url(self)
+          pacticipant_url(represented)
         end
 
         link :last_version do
-          last_version_url(self)
+          last_version_url(represented)
         end
 
         link :versions do
-          versions_url(self)
+          versions_url(represented)
         end
       end
     end

@@ -66,8 +66,7 @@ module PactBroker
       end
 
       def generate_json pacticipant
-        pacticipant.extend(PactBroker::Api::Representors::PacticipantRepresenter)
-        pacticipant.to_json
+        PactBroker::Api::Representors::PacticipantRepresenter.new(pacticipant).to_json
       end
 
       def params

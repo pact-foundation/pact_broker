@@ -27,11 +27,21 @@ module PactBroker
       end
 
       def pact_url pact
-        "#{version_url(pact.consumer_version)}/pacts/#{url_encode(pact.provider.name)}"
+        "#{pactigration_base_url(pact)}/version/#{pact.consumer.version.number}"
+      end
+
+      def latest_pact_url pact
+        "#{pactigration_base_url(pact)}/latest"
       end
 
       def latest_pacts_url
         "#{base_url}/pacts/latest"
+      end
+
+      private
+
+      def pactigration_base_url pact
+        "#{base_url}/pact/provider/#{url_encode(pact.provider.name)}/consumer/#{url_encode(pact.consumer.name)}"
       end
 
       def url_encode param
