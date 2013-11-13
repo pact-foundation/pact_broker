@@ -47,6 +47,11 @@ module PactBroker
           collect{ | pacticipant | {:href => pacticipant_url(pacticipant), :name => pacticipant.name } }
         end
 
+        def to_json base_url
+          json = super()
+          json.gsub('http://localhost:1234', base_url)
+        end
+
       end
     end
   end

@@ -5,6 +5,7 @@ require 'pact_broker/services'
 require 'pact_broker/resources/json_resource'
 
 require 'pact_broker/api/representors/representable_pact'
+require 'pact_broker/resources/base_url'
 
 module PactBroker
 
@@ -13,6 +14,7 @@ module PactBroker
     class LatestPacts < Webmachine::Resource
 
       include PactBroker::Services
+      include PactBroker::Resources::BaseUrl
 
       #FIX to hal+json
       def content_types_provided
@@ -30,7 +32,7 @@ module PactBroker
       def generate_json pacts
         pacts = pacts.collect{ | pact | create_representable_pact(pact) }
         pacts.extend(PactBroker::Api::Representors::PactCollectionRepresenter)
-        pacts.to_json
+        pacts.to_json(base_url)
       end
 
       def handle_exception e

@@ -28,6 +28,11 @@ module PactBroker
           collect{ | pact | {:href => latest_pact_url(pact), :consumer => pact.consumer.name, :provider => pact.provider.name } }
         end
 
+        def to_json base_url
+          json = super()
+          json.gsub('http://localhost:1234', base_url)
+        end
+
       end
     end
   end

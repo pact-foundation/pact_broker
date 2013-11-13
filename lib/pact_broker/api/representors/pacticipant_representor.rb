@@ -30,6 +30,11 @@ module PactBroker
         link :versions do
           versions_url(represented)
         end
+
+        def to_json(base_url)
+          json = super()
+          json.gsub('http://localhost:1234', base_url)
+        end
       end
     end
   end

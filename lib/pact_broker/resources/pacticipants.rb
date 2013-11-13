@@ -3,6 +3,7 @@ require 'json'
 
 require 'pact_broker/services'
 require 'pact_broker/resources/json_resource'
+require 'pact_broker/resources/base_url'
 require 'pact_broker/api/representors'
 
 module PactBroker
@@ -13,6 +14,7 @@ module PactBroker
 
       include PactBroker::Services
       include PactBroker::Resources::PathInfo
+      include PactBroker::Resources::BaseUrl
 
       def content_types_provided
         [["application/hal+json", :to_json]]
@@ -32,7 +34,7 @@ module PactBroker
 
       def generate_json pacticipants
         pacticipants.extend(PactBroker::Api::Representors::PacticipantCollectionRepresenter)
-        pacticipants.to_json
+        pacticipants.to_json(base_url)
       end
 
     end
