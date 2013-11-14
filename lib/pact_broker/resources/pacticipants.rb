@@ -33,8 +33,7 @@ module PactBroker
       end
 
       def generate_json pacticipants
-        pacticipants.extend(PactBroker::Api::Representors::PacticipantCollectionRepresenter)
-        pacticipants.to_json(base_url)
+        PactBroker::Api::Representors::PacticipantCollectionRepresenter.new(pacticipants).to_json(base_url)
       end
 
     end

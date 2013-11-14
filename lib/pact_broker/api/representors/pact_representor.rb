@@ -8,7 +8,7 @@ module PactBroker
 
     module Representors
 
-      module PactRepresenter
+      class PactRepresenter < Roar::Decorator
         include Roar::Representer::JSON::HAL
         include Roar::Representer::JSON::HAL::Links
         include PactBroker::Api::PactBrokerUrls
@@ -18,7 +18,7 @@ module PactBroker
         property :provider, :extend => PactBroker::Api::Representors::PactPacticipantRepresenter, :embedded => true
 
         link :self do
-          pact_url(self)
+          pact_url(represented)
         end
 
       end
