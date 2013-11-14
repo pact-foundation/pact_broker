@@ -1,8 +1,8 @@
 require 'spec_helper'
 require 'spec/support/provider_state_builder'
-require 'pact_broker/api/representors/representable_pact'
+require 'pact_broker/api/decorators/representable_pact'
 
-module PactBroker::Api::Representors
+module PactBroker::Api::Decorators
   describe RepresentablePact do
     let(:pact) { ProviderStateBuilder.new.create_pact_with_hierarchy 'Consumer', '1.2.3', 'Provider' }
 

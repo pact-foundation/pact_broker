@@ -1,12 +1,12 @@
 require 'roar/decorator'
 require 'roar/representer/json/hal'
-require 'pact_broker/api/representors/pact_broker_urls'
+require 'pact_broker/api/decorators/pact_broker_urls'
 
 module PactBroker
 
   module Api
 
-    module Representors
+    module Decorators
 
       class BaseDecorator < Roar::Decorator
         include Roar::Representer::JSON::HAL

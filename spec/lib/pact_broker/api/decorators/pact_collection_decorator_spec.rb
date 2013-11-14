@@ -1,9 +1,9 @@
 require 'spec_helper'
 
 require 'pact_broker/models'
-require 'pact_broker/api/representors'
+require 'pact_broker/api/decorators'
 
-module PactBroker::Api::Representors
+module PactBroker::Api::Decorators
 
   describe PactCollectionRepresenter do
 

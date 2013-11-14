@@ -1,18 +1,18 @@
 require_relative 'base_decorator'
-require_relative 'version_representor'
+require_relative 'version_decorator'
 
 module PactBroker
 
   module Api
 
-    module Representors
+    module Decorators
 
       class PacticipantRepresenter < BaseDecorator
 
         property :name
         property :repository_url
 
-        property :last_version, :class => PactBroker::Models::Version, :extend => PactBroker::Api::Representors::VersionRepresenter, :embedded => true
+        property :last_version, :class => PactBroker::Models::Version, :extend => PactBroker::Api::Decorators::VersionRepresenter, :embedded => true
 
         link :self do
           pacticipant_url(represented)

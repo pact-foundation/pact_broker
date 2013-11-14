@@ -4,7 +4,7 @@ require 'json'
 require 'pact_broker/services'
 require 'pact_broker/resources/json_resource'
 require 'pact_broker/resources/base_url'
-require 'pact_broker/api/representors'
+require 'pact_broker/api/decorators'
 
 module PactBroker
 
@@ -33,7 +33,7 @@ module PactBroker
       end
 
       def generate_json pacticipants
-        PactBroker::Api::Representors::PacticipantCollectionRepresenter.new(pacticipants).to_json(base_url)
+        PactBroker::Api::Decorators::PacticipantCollectionRepresenter.new(pacticipants).to_json(base_url)
       end
 
     end

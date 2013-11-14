@@ -1,6 +1,6 @@
 require 'roar/representer/json/hal'
 require_relative 'pact_broker_urls'
-require_relative 'version_representor'
+require_relative 'version_decorator'
 
 module Roar
   module Representer
@@ -26,11 +26,11 @@ module PactBroker
 
   module Api
 
-    module Representors
+    module Decorators
 
       class PacticipantCollectionRepresenter < BaseDecorator
 
-        collection :pacticipants, decorator_scope: true, :class => PactBroker::Models::Pacticipant, :extend => PactBroker::Api::Representors::PacticipantRepresenter
+        collection :pacticipants, decorator_scope: true, :class => PactBroker::Models::Pacticipant, :extend => PactBroker::Api::Decorators::PacticipantRepresenter
 
         def pacticipants
           represented

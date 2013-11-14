@@ -28,7 +28,7 @@ module PactBroker
       end
 
       def generate_json pacts
-        PactBroker::Api::Representors::PactCollectionRepresenter.new(pacts).to_json(base_url)
+        PactBroker::Api::Decorators::PactCollectionRepresenter.new(pacts).to_json(base_url)
       end
 
       def handle_exception e

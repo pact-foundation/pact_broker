@@ -2,7 +2,7 @@ require 'ostruct'
 
 module PactBroker
   module Api
-    module Representors
+    module Decorators
       class RepresentablePact
 
         attr_reader :consumer, :provider, :consumer_version

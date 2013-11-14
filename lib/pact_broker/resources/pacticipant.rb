@@ -4,7 +4,7 @@ require 'cgi'
 
 require 'pact_broker/services'
 require 'pact_broker/resources/json_resource'
-require 'pact_broker/api/representors'
+require 'pact_broker/api/decorators'
 require 'pact_broker/resources/base_url'
 
 module Webmachine
@@ -70,7 +70,7 @@ module PactBroker
       end
 
       def generate_json pacticipant
-        PactBroker::Api::Representors::PacticipantRepresenter.new(pacticipant).to_json(base_url)
+        PactBroker::Api::Decorators::PacticipantRepresenter.new(pacticipant).to_json(base_url)
       end
 
       def params
