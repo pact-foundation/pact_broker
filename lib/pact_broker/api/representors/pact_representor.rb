@@ -1,5 +1,4 @@
-require 'roar/representer/json/hal'
-require_relative 'pact_broker_urls'
+require_relative 'base_decorator'
 require_relative 'pact_pacticipant_representor'
 
 module PactBroker
@@ -8,11 +7,7 @@ module PactBroker
 
     module Representors
 
-      class PactRepresenter < Roar::Decorator
-        include Roar::Representer::JSON::HAL
-        include Roar::Representer::JSON::HAL::Links
-        include PactBroker::Api::PactBrokerUrls
-
+      class PactRepresenter < BaseDecorator
 
         property :consumer, :extend => PactBroker::Api::Representors::PactPacticipantRepresenter, :embedded => true
         property :provider, :extend => PactBroker::Api::Representors::PactPacticipantRepresenter, :embedded => true

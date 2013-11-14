@@ -28,10 +28,7 @@ module PactBroker
 
     module Representors
 
-      class PacticipantCollectionRepresenter < Roar::Decorator
-        include Roar::Representer::JSON::HAL
-        include PactBroker::Api::PactBrokerUrls
-
+      class PacticipantCollectionRepresenter < BaseDecorator
 
         collection :pacticipants, decorator_scope: true, :class => PactBroker::Models::Pacticipant, :extend => PactBroker::Api::Representors::PacticipantRepresenter
 
@@ -45,11 +42,6 @@ module PactBroker
 
         links :pacticipants do
           represented.collect{ | pacticipant | {:href => pacticipant_url(pacticipant), :name => pacticipant.name } }
-        end
-
-        def to_json base_url
-          json = super()
-          json.gsub('http://localhost:1234', base_url)
         end
 
       end

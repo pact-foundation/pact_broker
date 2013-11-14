@@ -1,13 +1,9 @@
-require 'roar/representer/json/hal'
-require_relative 'pact_broker_urls'
+require_relative 'base_decorator'
 
 module PactBroker
   module Api
     module Representors
-      class VersionRepresenter < Roar::Decorator
-        include Roar::Representer::JSON::HAL
-        include Roar::Representer::JSON::HAL::Links
-        include PactBroker::Api::PactBrokerUrls
+      class VersionRepresenter < BaseDecorator
 
         property :number
 

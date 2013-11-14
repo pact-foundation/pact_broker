@@ -1,6 +1,4 @@
-require 'roar/representer/json/hal'
-require 'roar/decorator'
-require_relative 'pact_broker_urls'
+require_relative 'base_decorator'
 require_relative 'version_representor'
 
 module PactBroker
@@ -9,10 +7,7 @@ module PactBroker
 
     module Representors
 
-      class PacticipantRepresenter < Roar::Decorator
-        include Roar::Representer::JSON::HAL
-        include Roar::Representer::JSON::HAL::Links
-        include PactBroker::Api::PactBrokerUrls
+      class PacticipantRepresenter < BaseDecorator
 
         property :name
         property :repository_url
@@ -31,10 +26,6 @@ module PactBroker
           versions_url(represented)
         end
 
-        def to_json(base_url)
-          json = super()
-          json.gsub('http://localhost:1234', base_url)
-        end
       end
     end
   end

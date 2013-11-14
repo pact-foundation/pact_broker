@@ -1,7 +1,7 @@
-require 'roar/representer/json/hal'
-require_relative 'pact_broker_urls'
+require_relative 'base_decorator'
 require_relative 'version_representor'
 require_relative 'pact_representor'
+require_relative 'representable_pact'
 
 module PactBroker
 
@@ -9,14 +9,18 @@ module PactBroker
 
     module Representors
 
-      module PactCollectionRepresenter
+      class PactCollectionRepresenter < BaseDecorator
         include Roar::Representer::JSON::HAL
         include PactBroker::Api::PactBrokerUrls
 
-        collection :pacts, :class => PactBroker::Models::Pact, :extend => PactBroker::Api::Representors::PactRepresenter
+        collection :pacts, decorator_scope: true, :class => PactBroker::Models::Pact, :extend => PactBroker::Api::Representors::PactRepresenter
 
         def pacts
-          self
+          represented.collect{ | pact | create_representable_pact(pact) }
+        end
+
+        def create_representable_pact pact
+          PactBroker::Api::Representors::RepresentablePact.new(pact)
         end
 
         link :self do
@@ -25,12 +29,7 @@ module PactBroker
 
         # This is the LATEST pact URL
         links :pacts do
-          collect{ | pact | {:href => latest_pact_url(pact), :consumer => pact.consumer.name, :provider => pact.provider.name } }
-        end
-
-        def to_json base_url
-          json = super()
-          json.gsub('http://localhost:1234', base_url)
+          represented.collect{ | pact | {:href => latest_pact_url(pact), :consumer => pact.consumer.name, :provider => pact.provider.name } }
         end
 
       end
