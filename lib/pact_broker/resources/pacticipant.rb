@@ -7,6 +7,14 @@ require 'pact_broker/resources/json_resource'
 require 'pact_broker/api/representors'
 require 'pact_broker/resources/base_url'
 
+module Webmachine
+  class Request
+    def put?
+      method == "PUT" || method == "PATCH"
+    end
+  end
+end
+
 module PactBroker
 
   module Resources
@@ -50,17 +58,6 @@ module PactBroker
         if @manual_response_code
           response.code = @manual_response_code
         end
-      end
-
-      def resource_exists?
-        #Terrible hack to allow Webmachine to continue when a PATCH is used - does not seem to support it
-        if request.method == 'PATCH'
-          def request.method
-            'PUT'
-          end
-        end
-        @pacticipant = pacticipant_service.find_pacticipant_by_name(identifier_from_path[:name])
-        @pacticipant != nil
       end
 
       def to_json
