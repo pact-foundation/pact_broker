@@ -13,9 +13,18 @@ module PactBroker
         include Roar::Representer::JSON::HAL::Links
         include PactBroker::Api::PactBrokerUrls
 
-        def to_json real_base_url
+        def initialize represented, base_url = nil
+          super(represented)
+          @base_url = base_url
+        end
+
+        def to_json
           json = super()
-          json.gsub(base_url, real_base_url)
+          if @base_url
+            json.gsub(base_url_placeholder, @base_url)
+          else
+            json
+          end
         end
 
       end

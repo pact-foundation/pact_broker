@@ -2,12 +2,14 @@ module PactBroker
   module Api
     module PactBrokerUrls
 
-      def base_url
-        "http://localhost:1234"
+      BASE_URL_PLACEHOLDER = "http://_______PACT_BROKER_BASE_URL_PLACEHOLDER_TO_BE_REPLACED_AFTER_TO_JSON_______"
+
+      def base_url_placeholder
+        BASE_URL_PLACEHOLDER
       end
 
       def pacticipants_url
-        "#{base_url}/pacticipants"
+        "#{base_url_placeholder}/pacticipants"
       end
 
       def pacticipant_url pacticipant
@@ -35,13 +37,13 @@ module PactBroker
       end
 
       def latest_pacts_url
-        "#{base_url}/pacts/latest"
+        "#{base_url_placeholder}/pacts/latest"
       end
 
       private
 
       def pactigration_base_url pact
-        "#{base_url}/pact/provider/#{url_encode(pact.provider.name)}/consumer/#{url_encode(pact.consumer.name)}"
+        "#{base_url_placeholder}/pact/provider/#{url_encode(pact.provider.name)}/consumer/#{url_encode(pact.consumer.name)}"
       end
 
       def url_encode param
