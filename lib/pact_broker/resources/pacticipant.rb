@@ -54,6 +54,11 @@ module PactBroker
         response.body = generate_json(pacticipant)
       end
 
+      def resource_exists?
+        @pacticipant = pacticipant_service.find_pacticipant_by_name(identifier_from_path[:name])
+        @pacticipant != nil
+      end
+
       def finish_request
         if @manual_response_code
           response.code = @manual_response_code
