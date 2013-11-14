@@ -1,17 +1,10 @@
-require 'webmachine'
-require 'json'
-
-require 'pact_broker/services'
-require 'pact_broker/resources/json_resource'
+require 'pact_broker/resources/base_resource'
 
 module PactBroker
 
   module Resources
 
-    class LatestPact < Webmachine::Resource
-
-      include PactBroker::Services
-      include PactBroker::Resources::PathInfo
+    class LatestPact < BaseResource
 
       def content_types_provided
         [["application/json", :to_json]]
@@ -29,10 +22,6 @@ module PactBroker
       def to_json
         response.headers['X-Pact-Consumer-Version'] = @pact.consumer_version_number
         @pact.json_content
-      end
-
-      def handle_exception e
-        PactBroker::Resources::ErrorHandler.handle_exception(e, response)
       end
 
     end

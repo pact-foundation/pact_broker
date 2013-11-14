@@ -1,17 +1,10 @@
 require 'webmachine'
-require 'json'
+require 'pact_broker/services'
+require 'pact_broker/api/decorators'
 
 module PactBroker
 
   module Resources
-
-    module PathInfo
-      def identifier_from_path
-        request.path_info.each_with_object({}) do | pair, hash|
-          hash[pair.first] = CGI::unescape(pair.last)
-        end
-      end
-    end
 
     class ErrorHandler
       def self.handle_exception e, response
@@ -20,13 +13,18 @@ module PactBroker
       end
     end
 
-    class JsonResource < Webmachine::Resource
-      def content_types_provided
-        [["application/json", :to_json]]
+    class BaseResource < Webmachine::Resource
+
+      include PactBroker::Services
+
+      def identifier_from_path
+        request.path_info.each_with_object({}) do | pair, hash|
+          hash[pair.first] = CGI::unescape(pair.last)
+        end
       end
 
-      def content_types_accepted
-        [["application/json", :from_json]]
+      def request_base_url
+        request.uri.to_s.gsub(/#{request.uri.path}$/,'')
       end
 
       def handle_exception e

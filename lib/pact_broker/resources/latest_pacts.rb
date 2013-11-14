@@ -1,20 +1,11 @@
-require 'webmachine'
-require 'json'
-
-require 'pact_broker/services'
-require 'pact_broker/resources/json_resource'
-require 'pact_broker/resources/base_url'
+require 'pact_broker/resources/base_resource'
 
 module PactBroker
 
   module Resources
 
-    class LatestPacts < Webmachine::Resource
+    class LatestPacts < BaseResource
 
-      include PactBroker::Services
-      include PactBroker::Resources::BaseUrl
-
-      #FIX to hal+json
       def content_types_provided
         [["application/hal+json", :to_json]]
       end
@@ -28,11 +19,7 @@ module PactBroker
       end
 
       def generate_json pacts
-        PactBroker::Api::Decorators::PactCollectionRepresenter.new(pacts, base_url).to_json
-      end
-
-      def handle_exception e
-        PactBroker::Resources::ErrorHandler.handle_exception(e, response)
+        PactBroker::Api::Decorators::PactCollectionRepresenter.new(pacts, request_base_url).to_json
       end
 
     end
