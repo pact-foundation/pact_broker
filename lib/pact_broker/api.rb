@@ -3,6 +3,7 @@ require 'pact_broker/resources/latest_pact'
 require 'pact_broker/resources/latest_pacts'
 require 'pact_broker/resources/pacticipant'
 require 'pact_broker/resources/pacticipants'
+require 'pact_broker/resources/index'
 
 require 'webmachine/adapters/rack'
 
@@ -17,6 +18,7 @@ module PactBroker
         add ['pacts', 'latest'], Resources::LatestPacts
         add ['pacticipants'], Resources::Pacticipants
         add ['pacticipants', :name], Resources::Pacticipant
+        add [], Resources::Index
       end
     end
 
