@@ -1,4 +1,4 @@
-require 'pact_broker/resources/base_resource'
+require 'pact_broker/api/resources/base_resource'
 
 module Webmachine
   class Request
@@ -8,7 +8,7 @@ module Webmachine
   end
 end
 
-module PactBroker
+module PactBroker::Api
 
   module Resources
 

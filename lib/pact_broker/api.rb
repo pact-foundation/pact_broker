@@ -1,9 +1,9 @@
-require 'pact_broker/resources/pact'
-require 'pact_broker/resources/latest_pact'
-require 'pact_broker/resources/latest_pacts'
-require 'pact_broker/resources/pacticipant'
-require 'pact_broker/resources/pacticipants'
-require 'pact_broker/resources/index'
+require 'pact_broker/api/resources/pact'
+require 'pact_broker/api/resources/latest_pact'
+require 'pact_broker/api/resources/latest_pacts'
+require 'pact_broker/api/resources/pacticipant'
+require 'pact_broker/api/resources/pacticipants'
+require 'pact_broker/api/resources/index'
 
 require 'webmachine/adapters/rack'
 
@@ -13,12 +13,12 @@ module PactBroker
     pact_api = Webmachine::Application.new do |app|
       app.routes do
         add(['trace', '*'], Webmachine::Trace::TraceResource) unless ENV['RACK_ENV'] == 'production'
-        add ['pact', 'provider', :provider_name, 'consumer', :consumer_name, 'version', :consumer_version_number], Resources::Pact
-        add ['pact', 'provider', :provider_name, 'consumer', :consumer_name, 'latest'], Resources::LatestPact
-        add ['pacts', 'latest'], Resources::LatestPacts
-        add ['pacticipants'], Resources::Pacticipants
-        add ['pacticipants', :name], Resources::Pacticipant
-        add [], Resources::Index
+        add ['pact', 'provider', :provider_name, 'consumer', :consumer_name, 'version', :consumer_version_number], Api::Resources::Pact
+        add ['pact', 'provider', :provider_name, 'consumer', :consumer_name, 'latest'], Api::Resources::LatestPact
+        add ['pacts', 'latest'], Api::Resources::LatestPacts
+        add ['pacticipants'], Api::Resources::Pacticipants
+        add ['pacticipants', :name], Api::Resources::Pacticipant
+        add [], Api::Resources::Index
       end
     end
 

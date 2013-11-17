@@ -2,7 +2,7 @@ require 'webmachine'
 require 'pact_broker/services'
 require 'pact_broker/api/decorators'
 
-module PactBroker
+module PactBroker::Api
 
   module Resources
 
@@ -28,7 +28,7 @@ module PactBroker
       end
 
       def handle_exception e
-        PactBroker::Resources::ErrorHandler.handle_exception(e, response)
+        PactBroker::Api::Resources::ErrorHandler.handle_exception(e, response)
       end
     end
   end

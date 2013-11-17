@@ -6,7 +6,7 @@ require 'pact_broker/api'
 require 'uri'
 require_relative 'provider_states_for_pact_broker_client'
 
-require 'pact_broker/resources/pact'
+require 'pact_broker/api/resources/pact'
 
 Pact.configure do | config |
   config.logger.level = Logger::DEBUG

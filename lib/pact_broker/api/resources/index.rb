@@ -1,7 +1,7 @@
-require 'pact_broker/resources/base_resource'
+require 'pact_broker/api/resources/base_resource'
 require 'json'
 
-module PactBroker
+module PactBroker::Api
 
   module Resources
 
