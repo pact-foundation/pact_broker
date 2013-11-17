@@ -41,7 +41,7 @@ module PactBroker
         end
 
         links :pacticipants do
-          represented.collect{ | pacticipant | {:href => pacticipant_url(pacticipant), :name => pacticipant.name } }
+          represented.collect{ | pacticipant | {:href => pacticipant_url(pacticipant), :title => pacticipant.name } }
         end
 
       end
