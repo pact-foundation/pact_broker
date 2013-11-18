@@ -25,7 +25,7 @@ module PactBroker
         PactBroker::Models::Pacticipant.new(name: args[:name], repository_url: args[:repository_url]).save(raise_on_save_failure: true)
       end
 
-      def find_last_version name
+      def find_latest_version name
 
       end
 

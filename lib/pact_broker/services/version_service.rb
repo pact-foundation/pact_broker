@@ -7,7 +7,7 @@ module PactBroker
 
       extend PactBroker::Repositories
 
-      def self.find_last_version name
+      def self.find_latest_version name
 
       end
     end

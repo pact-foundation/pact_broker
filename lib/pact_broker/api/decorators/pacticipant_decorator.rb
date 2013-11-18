@@ -12,14 +12,14 @@ module PactBroker
         property :name
         property :repository_url
 
-        property :last_version, :class => PactBroker::Models::Version, :extend => PactBroker::Api::Decorators::VersionRepresenter, :embedded => true
+        property :latest_version, :class => PactBroker::Models::Version, :extend => PactBroker::Api::Decorators::VersionRepresenter, :embedded => true
 
         link :self do
           pacticipant_url(represented)
         end
 
-        link :last_version do
-          last_version_url(represented)
+        link :latest_version do
+          latest_version_url(represented)
         end
 
         link :versions do

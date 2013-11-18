@@ -16,8 +16,8 @@ module PactBroker
         "#{pacticipants_url}/#{url_encode(pacticipant.name)}"
       end
 
-      def last_version_url pacticipant
-        "#{pacticipant_url(pacticipant)}/versions/last"
+      def latest_version_url pacticipant
+        "#{pacticipant_url(pacticipant)}/versions/latest"
       end
 
       def versions_url pacticipant

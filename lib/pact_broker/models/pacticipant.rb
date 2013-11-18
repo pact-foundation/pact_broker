@@ -11,7 +11,7 @@ module PactBroker
       one_to_many :versions, :order => :order, :reciprocal => :pacticipant
       one_to_many :pacts
 
-      def last_version
+      def latest_version
         versions.last
       end
 

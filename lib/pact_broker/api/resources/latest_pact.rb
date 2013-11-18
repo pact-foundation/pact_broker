@@ -15,7 +15,7 @@ module PactBroker::Api
       end
 
       def resource_exists?
-        @pact = pact_service.find_pact(identifier_from_path.merge(:consumer_version_number => 'last'))
+        @pact = pact_service.find_pact(identifier_from_path.merge(:consumer_version_number => 'latest'))
         @pact != nil
       end
 
