@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    pact_broker (0.0.7)
+    pact_broker (0.0.8)
       httparty
       json
       roar

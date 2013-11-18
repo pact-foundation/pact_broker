@@ -2,6 +2,12 @@ Do this to generate your change history
 
     $ git log --date=relative --pretty=format:'  * %h - %s (%an, %ad)' 'package/pact-broker-0.0.PRODVERSION'..'package/pact-broker-0.0.NEWVERSION'
 
+#### 0.0.8 (2013-11-18)
+
+* 6022baa - Changed name to title in list pacticipants response (Beth, 7 hours ago)
+* 13fde52 - Moving resources module under the Api module. (Beth, 8 hours ago)
+* f52c572 - Added HAL index (Beth, 8 hours ago)
+
 #### 0.0.7 (2013-11-15)
 
 * 7984d86 - Added title to each item in the pacts/latest links array (Beth, 83 seconds ago)
