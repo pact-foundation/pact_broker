@@ -36,12 +36,12 @@ module PactBroker
           represented
         end
 
-        link :self do
-          pacticipants_url
+        link :self do | options |
+          pacticipants_url options[:base_url]
         end
 
-        links :pacticipants do
-          represented.collect{ | pacticipant | {:href => pacticipant_url(pacticipant), :title => pacticipant.name } }
+        links :pacticipants do | options |
+          represented.collect{ | pacticipant | {:href => pacticipant_url(options[:base_url], pacticipant), :title => pacticipant.name } }
         end
 
       end

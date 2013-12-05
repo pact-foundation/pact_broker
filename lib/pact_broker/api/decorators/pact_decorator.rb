@@ -12,8 +12,8 @@ module PactBroker
         property :consumer, :extend => PactBroker::Api::Decorators::PactPacticipantRepresenter, :embedded => true
         property :provider, :extend => PactBroker::Api::Decorators::PactPacticipantRepresenter, :embedded => true
 
-        link :self do
-          pact_url(represented)
+        link :self do | options |
+          pact_url(options[:base_url], represented)
         end
 
       end

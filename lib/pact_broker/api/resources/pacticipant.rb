@@ -55,7 +55,7 @@ module PactBroker::Api
       end
 
       def generate_json pacticipant
-        PactBroker::Api::Decorators::PacticipantRepresenter.new(pacticipant, request_base_url).to_json
+        PactBroker::Api::Decorators::PacticipantRepresenter.new(pacticipant).to_json(base_url: request_base_url)
       end
 
       def params

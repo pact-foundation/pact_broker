@@ -19,7 +19,7 @@ module PactBroker::Api
       end
 
       def generate_json pacts
-        PactBroker::Api::Decorators::PactCollectionRepresenter.new(pacts, request_base_url).to_json
+        PactBroker::Api::Decorators::PactCollectionRepresenter.new(pacts).to_json(base_url: request_base_url)
       end
 
     end

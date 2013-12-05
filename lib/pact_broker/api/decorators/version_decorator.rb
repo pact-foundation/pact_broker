@@ -7,8 +7,8 @@ module PactBroker
 
         property :number
 
-        link :self do
-          version_url(represented)
+        link :self do | options |
+          version_url(options[:base_url], represented)
         end
       end
     end

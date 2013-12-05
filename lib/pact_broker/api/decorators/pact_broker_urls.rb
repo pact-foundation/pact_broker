@@ -2,48 +2,42 @@ module PactBroker
   module Api
     module PactBrokerUrls
 
-      BASE_URL_PLACEHOLDER = "http://_______PACT_BROKER_BASE_URL_PLACEHOLDER_TO_BE_REPLACED_AFTER_TO_JSON_______"
-
-      def base_url_placeholder
-        BASE_URL_PLACEHOLDER
+      def pacticipants_url base_url
+        "#{base_url}/pacticipants"
       end
 
-      def pacticipants_url
-        "#{base_url_placeholder}/pacticipants"
+      def pacticipant_url base_url, pacticipant
+        "#{pacticipants_url(base_url)}/#{url_encode(pacticipant.name)}"
       end
 
-      def pacticipant_url pacticipant
-        "#{pacticipants_url}/#{url_encode(pacticipant.name)}"
+      def latest_version_url base_url, pacticipant
+        "#{pacticipant_url(base_url, pacticipant)}/versions/latest"
       end
 
-      def latest_version_url pacticipant
-        "#{pacticipant_url(pacticipant)}/versions/latest"
+      def versions_url base_url, pacticipant
+        "#{pacticipant_url(base_url, pacticipant)}/versions"
       end
 
-      def versions_url pacticipant
-        "#{pacticipant_url(pacticipant)}/versions"
+      def version_url base_url, version
+        "#{pacticipant_url(base_url, version.pacticipant)}/versions/#{version.number}"
       end
 
-      def version_url version
-        "#{pacticipant_url(version.pacticipant)}/versions/#{version.number}"
+      def pact_url base_url, pact
+        "#{pactigration_base_url(base_url, pact)}/version/#{pact.consumer.version.number}"
       end
 
-      def pact_url pact
-        "#{pactigration_base_url(pact)}/version/#{pact.consumer.version.number}"
+      def latest_pact_url base_url, pact
+        "#{pactigration_base_url(base_url, pact)}/latest"
       end
 
-      def latest_pact_url pact
-        "#{pactigration_base_url(pact)}/latest"
-      end
-
-      def latest_pacts_url
-        "#{base_url_placeholder}/pacts/latest"
+      def latest_pacts_url base_url
+        "#{base_url}/pacts/latest"
       end
 
       private
 
-      def pactigration_base_url pact
-        "#{base_url_placeholder}/pact/provider/#{url_encode(pact.provider.name)}/consumer/#{url_encode(pact.consumer.name)}"
+      def pactigration_base_url base_url, pact
+        "#{base_url}/pact/provider/#{url_encode(pact.provider.name)}/consumer/#{url_encode(pact.consumer.name)}"
       end
 
       def url_encode param

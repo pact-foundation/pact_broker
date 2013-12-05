@@ -23,13 +23,13 @@ module PactBroker
           PactBroker::Api::Decorators::RepresentablePact.new(pact)
         end
 
-        link :self do
-          latest_pacts_url
+        link :self do | options |
+          latest_pacts_url(options[:base_url])
         end
 
         # This is the LATEST pact URL
-        links :pacts do
-          represented.collect{ | pact | {:href => latest_pact_url(pact), :title => "Latest pact between #{pact.consumer.name} and #{pact.provider.name}" } }
+        links :pacts do | options |
+          represented.collect{ | pact | {:href => latest_pact_url(options[:base_url], pact), :title => "Latest pact between #{pact.consumer.name} and #{pact.provider.name}" } }
         end
 
       end
