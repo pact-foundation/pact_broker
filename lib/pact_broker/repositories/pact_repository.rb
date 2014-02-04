@@ -15,7 +15,7 @@ module PactBroker
 
         # TODO Work out a more elegant and efficient way of executing this query.
         # Haven't found a max/group by combination that works with Sequel Models
-        latest_versions = PactBroker::Models::Version.new.db.execute('select max(id) as id from versions where id in (select distinct(version_id) from pacts) group by pacticipant_id').collect{ | it | it }.flatten
+        latest_versions = PactBroker::Models::Version.new.db.fetch('select max(id) as id from versions where id in (select distinct(version_id) from pacts) group by pacticipant_id').collect{ | it | it[:id] }.flatten
 
         PactBroker::Models::Pact.select(:pacts__id, :pacts__json_content, :pacts__version_id, :pacts__provider_id, :versions__number___consumer_version_number).
           join(:versions, {:id => :version_id}, {implicit_qualifier: :pacts}).
