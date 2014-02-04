@@ -15,6 +15,7 @@ module PactBroker::Api
         ["GET"]
       end
 
+      # TODO change to use request.base_url to avoid params getting included!!!
       def to_json
         {
           _links: {
