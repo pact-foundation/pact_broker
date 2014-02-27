@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    pact_broker (0.0.8)
+    pact_broker (0.0.9)
       httparty
       json
       roar
@@ -33,13 +33,13 @@ GEM
     httparty (0.12.0)
       json (~> 1.8)
       multi_xml (>= 0.5.2)
-    i18n (0.6.5)
+    i18n (0.6.9)
     json (1.8.1)
     method_source (0.8.2)
     mini_portile (0.5.2)
     multi_json (1.8.2)
     multi_xml (0.5.5)
-    nokogiri (1.6.0)
+    nokogiri (1.6.1)
       mini_portile (~> 0.5.0)
     pact (1.0.26)
       awesome_print (~> 1.1)
@@ -74,7 +74,7 @@ GEM
     rspec-fire (1.2.0)
       rspec (~> 2.11)
     rspec-mocks (2.14.4)
-    sequel (4.4.0)
+    sequel (4.7.0)
     shotgun (0.9)
       rack (>= 1.0)
     simplecov (0.7.1)
@@ -86,7 +86,7 @@ GEM
     thor (0.18.1)
     versionomy (0.4.4)
       blockenspiel (>= 0.4.5)
-    webmachine (1.2.1)
+    webmachine (1.2.2)
       as-notifications (~> 1.0)
       i18n (>= 0.4.0)
       multi_json
