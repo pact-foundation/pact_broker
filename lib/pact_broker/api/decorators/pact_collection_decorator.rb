@@ -1,6 +1,6 @@
 require_relative 'base_decorator'
 require_relative 'version_decorator'
-require_relative 'pact_decorator'
+require_relative 'latest_pact_decorator'
 require_relative 'representable_pact'
 
 module PactBroker
@@ -9,11 +9,11 @@ module PactBroker
 
     module Decorators
 
-      class PactCollectionRepresenter < BaseDecorator
+      class PactCollectionDecorator < BaseDecorator
         include Roar::Representer::JSON::HAL
         include PactBroker::Api::PactBrokerUrls
 
-        collection :pacts, decorator_scope: true, :class => PactBroker::Models::Pact, :extend => PactBroker::Api::Decorators::PactRepresenter
+        collection :pacts, decorator_scope: true, :class => PactBroker::Models::Pact, :extend => PactBroker::Api::Decorators::LatestPactDecorator
 
         def pacts
           represented.collect{ | pact | create_representable_pact(pact) }

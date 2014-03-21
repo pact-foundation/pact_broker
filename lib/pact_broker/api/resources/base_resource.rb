@@ -23,7 +23,7 @@ module PactBroker::Api
         end
       end
 
-      def request_base_url
+      def resource_url
         request.uri.to_s.gsub(/#{request.uri.path}$/,'')
       end
 

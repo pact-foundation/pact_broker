@@ -7,7 +7,7 @@ module PactBroker
 
     module Decorators
 
-      class PactRepresenter < BaseDecorator
+      class PactDecorator < BaseDecorator
 
         property :consumer, :extend => PactBroker::Api::Decorators::PactPacticipantRepresenter, :embedded => true
         property :provider, :extend => PactBroker::Api::Decorators::PactPacticipantRepresenter, :embedded => true

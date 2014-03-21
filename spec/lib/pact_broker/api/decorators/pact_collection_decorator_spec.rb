@@ -5,7 +5,7 @@ require 'pact_broker/api/decorators'
 
 module PactBroker::Api::Decorators
 
-  describe PactCollectionRepresenter do
+  describe PactCollectionDecorator do
 
     let(:pact) do
       provider = PactBroker::Models::Pacticipant.create(:name => 'Pricing Service')
@@ -16,7 +16,7 @@ module PactBroker::Api::Decorators
     end
 
     xit "should description" do
-      puts PactCollectionRepresenter.new([pact]).to_json
+      puts PactCollectionDecorator.new([pact]).to_json
     end
   end
 
