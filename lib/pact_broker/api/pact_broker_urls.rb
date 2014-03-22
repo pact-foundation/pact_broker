@@ -23,7 +23,8 @@ module PactBroker
       end
 
       def pact_url base_url, pact
-        "#{pactigration_base_url(base_url, pact)}/version/#{pact.consumer.version.number}"
+        representable_pact = representable_pact(pact)
+        "#{pactigration_base_url(base_url, representable_pact)}/version/#{representable_pact.consumer.version.number}"
       end
 
       def latest_pact_url base_url, pact
@@ -43,6 +44,10 @@ module PactBroker
       end
 
       private
+
+      def representable_pact pact
+        Decorators::RepresentablePact === pact ? pact : Decorators::RepresentablePact.new(pact)
+      end
 
       def pactigration_base_url base_url, pact
         "#{base_url}/pact/provider/#{url_encode(pact.provider.name)}/consumer/#{url_encode(pact.consumer.name)}"

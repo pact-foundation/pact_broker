@@ -1,4 +1,4 @@
-require_relative 'pact_broker_urls'
+require 'pact_broker/api/pact_broker_urls'
 require_relative 'version_decorator'
 require_relative 'base_decorator'
 

@@ -2,6 +2,7 @@ require 'webmachine'
 require 'pact_broker/services'
 require 'pact_broker/api/decorators'
 require 'pact_broker/logging'
+require 'pact_broker/api/pact_broker_urls'
 
 module PactBroker::Api
 
@@ -23,6 +24,7 @@ module PactBroker::Api
     class BaseResource < Webmachine::Resource
 
       include PactBroker::Services
+      include PactBroker::Api::PactBrokerUrls
 
       def identifier_from_path
         request.path_info.each_with_object({}) do | pair, hash|

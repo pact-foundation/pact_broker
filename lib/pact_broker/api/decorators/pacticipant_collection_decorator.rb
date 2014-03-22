@@ -1,5 +1,5 @@
 require 'roar/representer/json/hal'
-require_relative 'pact_broker_urls'
+require 'pact_broker/api/pact_broker_urls'
 require_relative 'version_decorator'
 
 module Roar

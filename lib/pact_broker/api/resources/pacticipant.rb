@@ -35,7 +35,7 @@ module PactBroker::Api
           @pacticipant = pacticipant_service.update params.merge(name: identifier_from_path[:name])
         else
           @pacticipant = pacticipant_service.create params.merge(name: identifier_from_path[:name])
-          @created = true
+          response.headers["Location"] = pacticipant_url(resource_url, @pacticipant)
         end
         response.body = to_json
       end
@@ -43,10 +43,6 @@ module PactBroker::Api
       def resource_exists?
         @pacticipant = pacticipant_service.find_pacticipant_by_name(identifier_from_path[:name])
         @pacticipant != nil
-      end
-
-      def finish_request
-        response.code = 201 if @created
       end
 
       def to_json

@@ -21,13 +21,9 @@ module PactBroker::Api
       def from_json
         unless @tag
           @tag = tag_service.create identifier_from_path
-          @created = true
+          response.headers["Location"] = tag_url(resource_url, @tag)
         end
         response.body = generate_json @tag
-      end
-
-      def finish_request
-        response.code = 201 if @created
       end
 
       def resource_exists?

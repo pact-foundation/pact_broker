@@ -52,7 +52,11 @@ module PactBroker
         end
 
         describe "PUT" do
+
+          let(:tag_url) { 'http://example.org/tag/url'}
+
           before do
+            allow_any_instance_of(PactBroker::Api::Resources::Tag).to receive(:tag_url).and_return(tag_url)
             allow(Services::TagService).to receive(:find).and_return(tag)
             allow(PactBroker::Api::Decorators::TagDecorator).to receive(:new).and_return(tag_decorator)
           end
