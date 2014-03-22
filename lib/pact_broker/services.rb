@@ -1,5 +1,6 @@
 require 'pact_broker/services/pact_service'
 require 'pact_broker/services/pacticipant_service'
+require 'pact_broker/services/tag_service'
 
 module PactBroker
   module Services
@@ -9,6 +10,10 @@ module PactBroker
 
     def pacticipant_service
       PacticipantService
+    end
+
+    def tag_service
+      TagService
     end
   end
 end

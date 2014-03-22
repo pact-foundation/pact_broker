@@ -34,6 +34,14 @@ module PactBroker
         "#{base_url}/pacts/latest"
       end
 
+      def tags_url base_url, version
+        "#{version_url(base_url, version)}/tags"
+      end
+
+      def tag_url base_url, tag
+        "#{tags_url(base_url, tag.version)}/#{tag.name}"
+      end
+
       private
 
       def pactigration_base_url base_url, pact

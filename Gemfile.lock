@@ -20,6 +20,7 @@ GEM
     ci_reporter (1.9.0)
       builder (>= 2.1.2)
     coderay (1.0.9)
+    colored (1.2)
     columnize (0.3.6)
     debugger (1.6.2)
       columnize (>= 0.3.1)
@@ -41,8 +42,9 @@ GEM
     multi_xml (0.5.5)
     nokogiri (1.6.1)
       mini_portile (~> 0.5.0)
-    pact (1.0.26)
+    pact (1.1.0.rc1)
       awesome_print (~> 1.1)
+      colored
       find_a_port (~> 1.0.1)
       json
       rack-test (~> 0.6.2)
@@ -99,7 +101,7 @@ DEPENDENCIES
   ci_reporter
   debugger
   fakefs (~> 0.4)
-  pact
+  pact (= 1.1.0.rc1)
   pact_broker!
   pry
   rake (~> 10.0.3)

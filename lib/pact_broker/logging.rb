@@ -12,6 +12,10 @@ module PactBroker
       base.extend(self)
     end
 
+    def logger= logger
+      @@logger = logger
+    end
+
     def logger
       @@logger ||= begin
         FileUtils.mkdir_p(LOG_DIR)

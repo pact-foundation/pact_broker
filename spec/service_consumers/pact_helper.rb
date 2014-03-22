@@ -10,6 +10,7 @@ require 'pact_broker/api/resources/pact'
 
 Pact.configure do | config |
   config.logger.level = Logger::DEBUG
+  #config.diff_format = :plus_and_minus
 end
 
 Pact.service_provider "Pact Broker" do

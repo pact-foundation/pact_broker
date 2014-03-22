@@ -54,6 +54,15 @@ Pact.provider_states_for "Pact Broker Client" do
     end
   end
 
+  provider_state "'Condor' exists in the pact-broker with version 1.3.0, tagged with 'prod'" do
+    set_up do
+      ProviderStateBuilder.new
+        .create_pacticipant("Condor")
+        .create_version('1.3.0')
+        .create_tag('prod')
+    end
+  end
+
   provider_state "'Condor' does not exist in the pact-broker" do
      no_op
    end

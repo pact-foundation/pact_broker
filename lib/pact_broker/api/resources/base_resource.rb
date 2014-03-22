@@ -1,13 +1,20 @@
 require 'webmachine'
 require 'pact_broker/services'
 require 'pact_broker/api/decorators'
+require 'pact_broker/logging'
 
 module PactBroker::Api
 
   module Resources
 
+
     class ErrorHandler
+
+      include PactBroker::Logging
+
       def self.handle_exception e, response
+        logger.error e
+        logger.error e.backtrace
         response.body = {:message => e.message, :backtrace => e.backtrace }.to_json
         response.code = 500
       end

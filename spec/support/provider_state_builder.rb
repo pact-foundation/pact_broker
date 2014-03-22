@@ -62,6 +62,31 @@ class ProviderStateBuilder
     PactBroker::Models::Pact.create(:consumer_version => version, :provider => provider)
   end
 
+  def create_version_with_hierarchy pacticipant_name, pacticipant_version
+    pacticipant = PactBroker::Models::Pacticipant.create(:name => pacticipant_name)
+    PactBroker::Models::Version.create(:number => pacticipant_version, :pacticipant => pacticipant)
+  end
+
+  def create_tag_with_hierarchy pacticipant_name, pacticipant_version, tag_name
+    version = create_version_with_hierarchy pacticipant_name, pacticipant_version
+    PactBroker::Models::Tag.create(name: tag_name, version: version)
+  end
+
+  def create_pacticipant pacticipant_name
+    @pacticipant = PactBroker::Models::Pacticipant.create(:name => pacticipant_name)
+    self
+  end
+
+  def create_version version_number
+    @version = PactBroker::Models::Version.create(:number => version_number, :pacticipant => @pacticipant)
+    self
+  end
+
+  def create_tag tag_name
+    @tag = PactBroker::Models::Tag.create(name: tag_name, version: @version)
+    self
+  end
+
   private
 
   # def create_pacticipant name

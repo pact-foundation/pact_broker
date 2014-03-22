@@ -3,6 +3,7 @@ require 'pact_broker/api/resources/latest_pact'
 require 'pact_broker/api/resources/latest_pacts'
 require 'pact_broker/api/resources/pacticipant'
 require 'pact_broker/api/resources/pacticipants'
+require 'pact_broker/api/resources/tag'
 require 'pact_broker/api/resources/index'
 
 require 'webmachine/adapters/rack'
@@ -18,6 +19,7 @@ module PactBroker
         add ['pacts', 'latest'], Api::Resources::LatestPacts
         add ['pacticipants'], Api::Resources::Pacticipants
         add ['pacticipants', :name], Api::Resources::Pacticipant
+        add ['pacticipants', :pacticipant_name, 'versions', :pacticipant_version_number, 'tags', :tag_name], Api::Resources::Tag
         add [], Api::Resources::Index
       end
     end

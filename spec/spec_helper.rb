@@ -4,7 +4,11 @@ RACK_ENV = 'test'
 
 $: << File.expand_path("../../", __FILE__)
 
+require 'rack/test'
 require 'pact_broker/db'
+require './spec/support/provider_state_builder'
+require 'pact_broker/api'
+require 'rspec/fire'
 
 RSpec.configure do | config |
   config.before :suite do
@@ -19,4 +23,10 @@ RSpec.configure do | config |
     DB::PACT_BROKER_DB[:pacticipants].truncate
   end
 
+  config.include Rack::Test::Methods
+  config.include RSpec::Fire
+
+  def app
+    PactBroker::API
+  end
 end
