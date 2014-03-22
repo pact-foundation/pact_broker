@@ -24,16 +24,16 @@ module PactBroker
         end
       end
 
-      def self.create_or_update_pacticipant params
-        pacticipant = pacticipant_repository.find_by_name(params[:name])
-        if pacticipant
-          pacticipant.update(repository_url: params[:repository_url])
-          return pacticipant, false
-        else
-          pacticipant = pacticipant_repository.create(name: params[:name], repository_url: params[:repository_url])
-          return pacticipant, true
-        end
+      def self.update params
+        pacticipant = pacticipant_repository.find_by_name(params.fetch(:name))
+        pacticipant.update(params)
+        pacticipant_repository.find_by_name(params.fetch(:name))
       end
+
+      def self.create params
+        pacticipant_repository.create(params)
+      end
+
     end
   end
 end

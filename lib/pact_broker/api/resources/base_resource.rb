@@ -37,6 +37,10 @@ module PactBroker::Api
       def handle_exception e
         PactBroker::Api::Resources::ErrorHandler.handle_exception(e, response)
       end
+
+      def params
+        JSON.parse(request.body.to_s, symbolize_names: true)
+      end
     end
   end
 end

@@ -31,12 +31,13 @@ module PactBroker::Api
       end
 
       def from_json
-        pacticipant, created = pacticipant_service.create_or_update_pacticipant(
-          name: identifier_from_path[:name],
-          repository_url: params[:repository_url]
-        )
-        @manual_response_code = 201 if created
-        response.body = generate_json(pacticipant)
+        if @pacticipant
+          @pacticipant = pacticipant_service.update params.merge(name: identifier_from_path[:name])
+        else
+          @pacticipant = pacticipant_service.create params.merge(name: identifier_from_path[:name])
+          @created = true
+        end
+        response.body = to_json
       end
 
       def resource_exists?
@@ -45,21 +46,11 @@ module PactBroker::Api
       end
 
       def finish_request
-        if @manual_response_code
-          response.code = @manual_response_code
-        end
+        response.code = 201 if @created
       end
 
       def to_json
-        generate_json(@pacticipant)
-      end
-
-      def generate_json pacticipant
-        PactBroker::Api::Decorators::PacticipantRepresenter.new(pacticipant).to_json(base_url: resource_url)
-      end
-
-      def params
-        JSON.parse(request.body.to_s)
+        PactBroker::Api::Decorators::PacticipantRepresenter.new(@pacticipant).to_json(base_url: resource_url)
       end
 
     end
