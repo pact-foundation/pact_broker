@@ -2,6 +2,20 @@ Do this to generate your change history
 
     $ git log --date=relative --pretty=format:'  * %h - %s (%an, %ad)' 'package/pact-broker-0.0.PRODVERSION'..'package/pact-broker-0.0.NEWVERSION'
 
+#### 0.0.10 (2014-03-24)
+
+* 7aee2ae - Implemented version tagging (Beth, 2 days ago)
+* cc78f92 - Added 'latest' pact url to pact representation in the 'latest pacts' response (Beth, 2 days ago)
+
+#### 0.0.9 (2014-02-27)
+
+* d07f4b7 - Using default gem publish tasks (Beth, 4 weeks ago)
+* d60b7ee - Comment (Beth, 7 weeks ago)
+* 836347c - Using local pacts (Beth, 7 weeks ago)
+* a2cb2bb - Fixed bug querying mysql DB, rather than sqlite (Beth, 7 weeks ago)
+* 9d5f83b - Using the to_json options to pass in the base_url instead of the nasty hack. (Beth, 4 months ago)
+* adb6148 - Changed 'last' to 'latest' (Beth, 4 months ago)
+
 #### 0.0.8 (2013-11-18)
 
 * 6022baa - Changed name to title in list pacticipants response (Beth, 7 hours ago)
