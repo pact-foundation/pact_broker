@@ -1,10 +1,9 @@
 require File.dirname(__FILE__) + '/config/boot'
 require 'db'
 require 'pact_broker/api'
-require 'pact_broker/api/resources/pact'
+require 'rack/hal_browser'
 
-
-use Rack::Static, root: 'public', urls: ['/favicon.ico']
+use Rack::HalBrowser::Redirect, :exclude => ['/diagnostic', '/trace']
 
 run Rack::URLMap.new(
   '/' => PactBroker::API
