@@ -16,7 +16,7 @@ require 'rake'
 FileList['lib/tasks/**/*.rake'].each { |task| load "#{Dir.pwd}/#{task}" }
 FileList['tasks/**/*.rake'].each { |task| load "#{Dir.pwd}/#{task}" }
 
-task :default => [:spec, 'pact:verify']
+task :default => [:spec]
 
 require File.join(File.dirname(__FILE__), 'config/boot')
 

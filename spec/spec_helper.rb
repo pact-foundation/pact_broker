@@ -1,4 +1,3 @@
-require 'simplecov' # At the top because simplecov needs to watch files being loaded
 ENV['RACK_ENV'] = 'test'
 RACK_ENV = 'test'
 
@@ -13,7 +12,6 @@ require 'rspec/fire'
 RSpec.configure do | config |
   config.before :suite do
     raise "Wrong environment!!! Don't run this script!! ENV['RACK_ENV'] is #{ENV['RACK_ENV']} and RACK_ENV is #{RACK_ENV}" if ENV['RACK_ENV'] != 'test' || RACK_ENV != 'test'
-    # puts caller.take 20
   end
 
   config.before :each do
