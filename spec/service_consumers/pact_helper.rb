@@ -1,7 +1,7 @@
 require './spec/spec_helper'
 require 'pact/provider/rspec'
 require 'sequel'
-require 'pact_broker/db'
+require 'db'
 require 'pact_broker/api'
 require 'uri'
 require_relative 'provider_states_for_pact_broker_client'

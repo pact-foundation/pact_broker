@@ -1,5 +1,5 @@
 require File.dirname(__FILE__) + '/config/boot'
-require 'pact_broker/db'
+require 'db'
 require 'pact_broker/api'
 require 'pact_broker/api/resources/pact'
 

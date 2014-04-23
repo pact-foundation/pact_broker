@@ -5,7 +5,7 @@ RACK_ENV = 'test'
 $: << File.expand_path("../../", __FILE__)
 
 require 'rack/test'
-require 'pact_broker/db'
+require 'db'
 require './spec/support/provider_state_builder'
 require 'pact_broker/api'
 require 'rspec/fire'

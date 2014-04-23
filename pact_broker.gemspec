@@ -27,6 +27,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'sqlite3'
   gem.add_runtime_dependency 'webmachine'
   gem.add_runtime_dependency 'versionomy'
+  gem.add_runtime_dependency 'rack'
 
   gem.add_development_dependency 'rake', '~> 10.0.3'
   gem.add_development_dependency 'pry'
@@ -36,5 +37,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'ci_reporter'
   gem.add_development_dependency 'simplecov'
   gem.add_development_dependency 'shotgun'
-  gem.add_development_dependency 'pact', '1.1.0.rc1'
+  gem.add_development_dependency 'pact', '1.1.0.rc2'
 end

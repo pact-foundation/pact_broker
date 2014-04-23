@@ -24,3 +24,5 @@ doc/
 *.sublime*
 *.swp
 .idea
+
+db/*.sqlite

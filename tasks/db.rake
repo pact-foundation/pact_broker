@@ -1,7 +1,7 @@
 require 'pact_broker/tasks'
 
 PactBroker::DB::MigrationTask.new do | task |
-  require 'pact_broker/db'
+  require 'db'
   task.database_connection = DB::PACT_BROKER_DB
 end
 
