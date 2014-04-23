@@ -30,7 +30,7 @@ module PactBroker
 
       class PacticipantCollectionRepresenter < BaseDecorator
 
-        collection :pacticipants, decorator_scope: true, :class => PactBroker::Models::Pacticipant, :extend => PactBroker::Api::Decorators::PacticipantRepresenter
+        collection :pacticipants, exec_context: :decorator, :class => PactBroker::Models::Pacticipant, :extend => PactBroker::Api::Decorators::PacticipantRepresenter
 
         def pacticipants
           represented
