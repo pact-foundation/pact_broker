@@ -4,21 +4,23 @@ require 'sequel'
 require 'pact_broker'
 require 'rack/hal_browser'
 
-FileUtils.mkdir_p "./log"
-PactBroker.logger = Logger.new(File.join("./log/pact_broker.log"))
-
 # Create a real database, and set the credentials for it here
-db_credentials = {database: "pact_broker_database.sqlite3", adapter: "sqlite"}
-connection = Sequel.connect(db_credentials.merge(:logger => PactBroker.logger))
+DATABASE_CREDENTIALS = {database: "pact_broker_database.sqlite3", adapter: "sqlite"}
+LOG_DIR = "./log"
 
-Sequel.extension :migration
-Sequel::Migrator.run(connection, PactBroker::DB::MIGRATIONS_DIR)
+# Configure application and setup database
+FileUtils.mkdir_p LOG_DIR
+PactBroker.logger = Logger.new(File.join(LOG_DIR, "pact_broker.log"))
+PactBroker::DB.connection = Sequel.connect(DATABASE_CREDENTIALS.merge(:logger => PactBroker.logger))
+PactBroker::DB.run_migrations
 
-# Require the Pact Broker API, must be done AFTER the DB connection has been made
+# Require API after the DB connection has been made so Sequel Model can work
 require 'pact_broker/api'
 
+# Set up HAL browser
 use Rack::HalBrowser::Redirect, :exclude => ['/trace']
 
+# Mount API
 run Rack::URLMap.new(
   '/' => PactBroker::API
 )
