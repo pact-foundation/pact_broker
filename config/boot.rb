@@ -14,4 +14,8 @@ if File.exists?(ENV['BUNDLE_GEMFILE'])
   Bundler.require
 end
 
+if defined?(I18n)
+  I18n.enforce_available_locales = false
+end
+
 require 'pact_broker'

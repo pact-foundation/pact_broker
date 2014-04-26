@@ -7,7 +7,7 @@ require 'erb'
 module DB
   include PactBroker::Logging
   ##
-  # Sequel by default does not test connections in its' connection pool before
+  # Sequel by default does not test connections in its connection pool before
   # handing them to a client. To enable connection testing you need to load the
   # "connection_validator" extension like below. The connection validator
   # extension is configurable, by default it only checks connections once per
