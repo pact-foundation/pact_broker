@@ -21,10 +21,10 @@ See the [Pact Broker Client](https://github.com/bethesque/pact_broker-client) fo
 
 ## Usage
 
-Copy the [example](/example) directory to your workstation.
-Modify the config.ru and Gemfile as desired (eg. choose database driver gem)
-Run `bundle`
-Run `bundle exec rackup`
-Open [http://localhost:9292](http://localhost:9292) and you should see the HAL browser.
+* Copy the [example](/example) directory to your workstation.
+* Modify the config.ru and Gemfile as desired (eg. choose database driver gem)
+* Run `bundle`
+* Run `bundle exec rackup`
+* Open [http://localhost:9292](http://localhost:9292) and you should see the HAL browser.
 
 For production usage, use a web application server like Phusion Passenger to serve the Pact Broker application.
