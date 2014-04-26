@@ -1,6 +1,8 @@
 # Pact Broker
 
-The Pact Broker provides a repository for pacts created using the pact gem. When a consumer CI build is configured to publish its pacts to a Pact Broker, it allows the provider to always be verified against the latest version of the pact. Once the required development work has been done, it will also allow providers to be verified against the "production" version of a pact, giving confidence when deploying that a new version of a provider will work against the production version of a consumer.
+The Pact Broker provides a repository for pacts created using the pact gem. It solves the problem of how to share pacts between consumer and provider projects.
+
+When a consumer CI build is configured to publish its pacts to a Pact Broker, it allows the provider to always be verified against the latest version of the pact. Once the required development work has been done, it will also allow providers to be verified against the "production" version of a pact, giving confidence when deploying that a new version of a provider will work against the production version of a consumer.
 
 It provides endpoints for the following:
 
@@ -8,6 +10,8 @@ It provides endpoints for the following:
 * Retrieve the latest pact between a consumer and a provider.
 * View a list of published pacts.
 * View a list of "pacticipants" (consumers and providers).
+
+See the [Pact Broker Client](https://github.com/bethesque/pact_broker-client) for documentation on how to publish a pact to the Pact Broker, and configure the URLs in the provider project.
 
 ### Upcoming development
 
