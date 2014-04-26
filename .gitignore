@@ -25,5 +25,5 @@ doc/
 *.swp
 .idea
 
-db/*.sqlite
+*.sqlite
 Gemfile.lock
