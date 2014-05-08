@@ -15,7 +15,7 @@ module PactBroker
         def to_csv
 
           CSV.generate do |csv|
-            csv << ["source", "target", "value"]
+            csv << ["source", "target", "weight"]
             pacts.each do | pact |
               csv << [pact.consumer.name, pact.provider.name, 1]
             end
