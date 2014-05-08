@@ -27,7 +27,7 @@ module Rack
 
       def prefers_html?(request)
         # TODO: actually follow real HTTP content negotiation rules
-        request.env.fetch('HTTP_ACCEPT', '').start_with? 'text/html'
+        request.env.fetch('HTTP_ACCEPT', '').start_with?('text/html') && request.env.fetch('HTTP_ACCEPT', '').include?('json')
       end
 
       def path_not_excluded?(request)

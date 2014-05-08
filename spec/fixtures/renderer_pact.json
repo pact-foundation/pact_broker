@@ -1,0 +1,34 @@
+{
+  "provider": {
+    "name": "Some Provider"
+  },
+  "consumer": {
+    "name": "Some Consumer"
+  },
+  "interactions": [
+    {
+      "description": "a request for alligators",
+      "provider_state": "alligators exist",
+      "request": {
+        "method": "get",
+        "path": "/alligators"
+      },
+      "response": {
+        "headers" : {"Content-Type": "application/json"},
+        "status" : 200,
+        "body" : {
+          "alligators": [{
+            "name": "Bob",
+            "phoneNumber" : {
+              "json_class": "Pact::Term",
+              "data": {
+                "generate": "12345678",
+                "matcher": {"json_class":"Regexp","o":0,"s":"\\d+"}
+              }
+            }
+          }]
+        }
+      }
+    }
+  ]
+}

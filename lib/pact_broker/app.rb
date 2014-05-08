@@ -1,5 +1,7 @@
 require 'pact_broker/configuration'
 require 'pact_broker/db'
+require 'pact_broker/project_root'
+require 'rack/hal_browser'
 
 module PactBroker
 
@@ -37,6 +39,8 @@ module PactBroker
 
     def build_app
       @app = Rack::Builder.new
+
+      @app.use Rack::Static, :urls => ["/stylesheets", "/images"], :root => PactBroker.project_root.join("public")
 
       if configuration.use_hal_browser
         logger.info "Mounting HAL browser"

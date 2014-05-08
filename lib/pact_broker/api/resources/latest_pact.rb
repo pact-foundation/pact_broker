@@ -1,4 +1,5 @@
 require 'pact_broker/api/resources/base_resource'
+require 'pact_broker/api/renderers/html_pact_renderer'
 
 module PactBroker::Api
 
@@ -7,7 +8,8 @@ module PactBroker::Api
     class LatestPact < BaseResource
 
       def content_types_provided
-        [["application/json", :to_json]]
+        [["application/json", :to_json],
+        ["text/html", :to_html]]
       end
 
       def allowed_methods
@@ -22,6 +24,10 @@ module PactBroker::Api
       def to_json
         response.headers['X-Pact-Consumer-Version'] = @pact.consumer_version_number
         @pact.json_content
+      end
+
+      def to_html
+        PactBroker::Api::Renderer::HtmlPactRenderer.call(@pact.json_content)
       end
 
     end
