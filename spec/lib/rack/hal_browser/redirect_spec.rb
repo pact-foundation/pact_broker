@@ -19,16 +19,16 @@ module Rack
         expect(last_response.body).to eq 'All good!'
       end
 
-      context "when client accepts html" do
+      context "when client accepts html and json" do
 
         it "redirects to the HAL browser" do
-          get '/', {}, 'HTTP_ACCEPT' => 'text/html'
+          get '/', {}, 'HTTP_ACCEPT' => 'text/html,application/hal+json'
           follow_redirect!
           expect(last_request.url).to eq 'http://example.org/hal-browser/browser.html'
         end
 
         it "passes the original request path to the HAL browser via the fragment" do
-          get '/foo', {}, 'HTTP_ACCEPT' => 'text/html'
+          get '/foo', {}, 'HTTP_ACCEPT' => 'text/html,application/hal+json'
           expect(last_response.headers['Location']).to eq '/hal-browser/browser.html#/foo'
         end
 
