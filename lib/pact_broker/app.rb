@@ -2,6 +2,7 @@ require 'pact_broker/configuration'
 require 'pact_broker/db'
 require 'pact_broker/project_root'
 require 'rack/hal_browser'
+require 'pact_broker/ui/controllers/relationships'
 
 module PactBroker
 
@@ -40,13 +41,19 @@ module PactBroker
     def build_app
       @app = Rack::Builder.new
 
-      @app.use Rack::Static, :urls => ["/stylesheets", "/images"], :root => PactBroker.project_root.join("public")
+      @app.use Rack::Static, :urls => ["/stylesheets", "/images", "/css", "/fonts", "/js"], :root => PactBroker.project_root.join("public")
 
       if configuration.use_hal_browser
         logger.info "Mounting HAL browser"
         @app.use Rack::HalBrowser::Redirect, :exclude => ['/trace']
       else
         logger.info "Not mounting HAL browser"
+      end
+
+      logger.info "Mounting UI"
+
+      @app.map "/ui/relationships" do
+        run PactBroker::UI::Controllers::Relationships
       end
 
       logger.info "Mounting PactBroker::API"

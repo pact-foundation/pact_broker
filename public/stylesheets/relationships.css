@@ -1,0 +1,12 @@
+.table-striped>tbody>tr>td.pact, .table-striped>thead>tr>th.pact {
+  border-left: none;
+  border-right: none;
+}
+
+.table-striped>tbody>tr>td.consumer, .table-striped>thead>tr>th.consumer {
+  border-right: none;
+}
+
+.table-striped>tbody>tr>td.provider, .table-striped>thead>tr>th.provider {
+  border-left: none;
+}

@@ -1,0 +1,27 @@
+%head
+  %title
+    Relationships
+  %link{rel: 'stylesheet', href: '/css/bootstrap.min.css'}
+  %link{rel: 'stylesheet', href: '/stylesheets/relationships.css'}
+%body
+  .container
+    %h1 Relationships
+    %table.table.table-bordered.table-striped
+      %thead
+        %th.consumer
+          Consumer
+        %th.pact
+
+        %th.provider
+          Provider
+      %tbody
+
+      - relationships.each do | relationship |
+        %tr
+          %td.consumer
+            = relationship.consumer_name
+          %td.pact
+            %a.btn.btn-primary{:href => relationship.latest_pact_url}
+              %span.glyphicon.glyphicon-circle-arrow-right
+          %td.provider
+            = relationship.provider_name
