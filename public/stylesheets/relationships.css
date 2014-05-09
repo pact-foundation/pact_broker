@@ -11,4 +11,8 @@
   border-left: none;
 }
 
+.relationships-sort {
+  padding-left:10px;
+}
+
 body { padding-top: 10px; }
