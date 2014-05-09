@@ -2,7 +2,6 @@ require 'pact_broker/configuration'
 require 'pact_broker/db'
 require 'pact_broker/project_root'
 require 'rack/hal_browser'
-require 'pact_broker/ui/controllers/relationships'
 
 module PactBroker
 
@@ -51,7 +50,7 @@ module PactBroker
       end
 
       logger.info "Mounting UI"
-
+      require 'pact_broker/ui/controllers/relationships'
       @app.map "/ui/relationships" do
         run PactBroker::UI::Controllers::Relationships
       end
