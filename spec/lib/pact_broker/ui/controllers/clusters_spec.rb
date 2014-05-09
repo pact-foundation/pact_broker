@@ -14,7 +14,7 @@ module PactBroker
         describe "/" do
           describe "GET" do
 
-            it "does something" do
+            xit "does something" do
               get "/"
               puts last_response.body
             end
