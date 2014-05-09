@@ -1,8 +1,12 @@
 module PactBroker
 
+  def self.configuration
+    @@configuration ||= Configuration.default_configuration
+  end
+
   class Configuration
 
-    attr_accessor :log_dir, :database_connection, :auto_migrate_db, :use_hal_browser
+    attr_accessor :log_dir, :database_connection, :auto_migrate_db, :use_hal_browser, :html_pact_renderer
     attr_writer :logger
 
     def logger
@@ -14,7 +18,15 @@ module PactBroker
       config.log_dir = File.expand_path("./log")
       config.auto_migrate_db = true
       config.use_hal_browser = true
+      config.html_pact_renderer = default_html_pact_render
       config
+    end
+
+    def self.default_html_pact_render
+      lambda { |json_content|
+        require 'pact_broker/api/renderers/html_pact_renderer'
+        PactBroker::Api::Renderers::HtmlPactRenderer.call json_content
+      }
     end
 
     private

@@ -40,7 +40,7 @@ module PactBroker
     def build_app
       @app = Rack::Builder.new
 
-      @app.use Rack::Static, :urls => ["/stylesheets", "/images"], :root => PactBroker.project_root.join("public")
+      @app.use Rack::Static, :urls => ["/stylesheets", "/images", "/css", "/fonts", "/js", "/javascripts"], :root => PactBroker.project_root.join("public")
 
       if configuration.use_hal_browser
         logger.info "Mounting HAL browser"
@@ -49,10 +49,31 @@ module PactBroker
         logger.info "Not mounting HAL browser"
       end
 
+      logger.info "Mounting UI"
+      require 'pact_broker/ui/controllers/relationships'
+
+      ui = Rack::Builder.new {
+        map "/ui/relationships" do
+          run PactBroker::UI::Controllers::Relationships
+        end
+        map "/" do
+          run lambda { |env|
+            if (env['PATH_INFO'] == "/" || env['PATH_INFO'] == "") && !env['HTTP_ACCEPT'].include?("json")
+              [303, {'Location' => 'ui/relationships'},[]]
+            else
+              [404, {},[]]
+            end
+          }
+        end
+      }
+
       logger.info "Mounting PactBroker::API"
       require 'pact_broker/api'
+
+      apps = [ui, PactBroker::API]
+
       @app.map "/" do
-        run PactBroker::API
+        run Rack::Cascade.new(apps)
       end
 
     end

@@ -1,0 +1,224 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Force based label placement</title>
+    <!--
+    <script type="text/javascript" src="http://mbostock.github.com/d3/d3.js?3.0.0"></script>
+  -->
+    <script src="http://d3js.org/d3.v3.js" charset="utf-8"></script>
+  </head>
+  <body>
+<script type="text/javascript" charset="utf-8">
+
+d3.csv("relationships", function(error, relationships) {
+      var w = 960, h = 500;
+
+      var labelDistance = 0;
+
+      var vis = d3.select("body").append("svg:svg").attr("width", w).attr("height", h);
+
+      var nodes = [];
+      var labelAnchors = [];
+      var labelAnchorLinks = [];
+      var links = [];
+
+/* *
+      for(var i = 0; i < 4; i++) {
+        var node = {
+          label : "node " + i
+        };
+        nodes.push(node);
+        labelAnchors.push({
+          node : node
+        });
+        labelAnchors.push({
+          node : node
+        });
+      };
+
+
+
+      for(var i = 0; i < nodes.length; i++) {
+        for(var j = 0; j < i; j++) {
+          if(Math.random() > .5)
+            links.push({
+              source : i,
+              target : j,
+              weight : 1 //Math.random()
+            });
+        }
+        labelAnchorLinks.push({
+          source : i * 2,
+          target : i * 2 + 1,
+          weight : 1
+        });
+      };
+
+      links = [{
+              source : 0,
+              target : 1,
+              weight : 1 //Math.random()
+            },{
+              source : 0,
+              target : 2,
+              weight : 1 //Math.random()
+            },{
+              source : 0,
+              target : 3,
+              weight : 1 //Math.random()
+            }
+
+      ];
+/* */
+
+/*
+nodes
+[{"label":"node 0"},{"label":"node 1"},{"label":"node 2"},{"label":"node 3"}]
+links
+[{"source":1,"target":0,"weight":0.5917420655023307},{"source":2,"target":0,"weight":0.8654833608306944},{"source":3,"target":0,"weight":0.0552730702329427},{"source":3,"target":2,"weight":0.2258284434210509}]
+labelAnchorLinks
+[{"source":0,"target":1,"weight":1},{"source":2,"target":3,"weight":1},{"source":4,"target":5,"weight":1},{"source":6,"target":7,"weight":1}]
+labelAnchors
+[{"node":{"label":"node 0"}},{"node":{"label":"node 0"}},{"node":{"label":"node 1"}},{"node":{"label":"node 1"}},{"node":{"label":"node 2"}},{"node":{"label":"node 2"}},{"node":{"label":"node 3"}},{"node":{"label":"node 3"}}]
+
+
+nodes index2.html:136
+[{"label":"Media Proposal Sync"},{"label":"Media Projects"},{"label":"Media Opportunity Events"},{"label":"Media Advertising"}] index2.html:137
+links index2.html:138
+[{"source":0,"target":1,"value":1},{"source":0,"target":2,"value":1},{"source":0,"target":3,"value":1}] index2.html:139
+labelAnchorLinks index2.html:140
+[{"source":0,"target":1,"weight":1},{"source":2,"target":3,"weight":1},{"source":4,"target":5,"weight":1},{"source":6,"target":7,"weight":1}] index2.html:141
+labelAnchors index2.html:142
+[{"node":{"label":"Media Proposal Sync"}},{"node":{"label":"Media Proposal Sync"}},{"node":{"label":"Media Projects"}},{"node":{"label":"Media Projects"}},{"node":{"label":"Media Opportunity Events"}},{"node":{"label":"Media Opportunity Events"}},{"node":{"label":"Media Advertising"}},{"node":{"label":"Media Advertising"}}]
+
+JSON.stringify(nodes)
+JSON.stringify(links)
+JSON.stringify(labelAnchorLinks)
+JSON.stringify(labelAnchors)
+
+/* */
+
+
+
+      var allLabels = [];
+
+      relationships.forEach(function(relationship) {
+          allLabels.push(relationship.source);
+          allLabels.push(relationship.target);
+      });
+
+      var labels = d3.set(allLabels).values();
+
+      labels.forEach(function(label, i){
+        var node = {
+          label: label
+        };
+        nodes.push(node)
+
+        labelAnchors.push({
+          node : node
+        });
+
+        labelAnchors.push({
+          node : node
+        });
+
+        labelAnchorLinks.push({
+          source : i * 2,
+          target : i * 2 + 1,
+          weight : 1
+        });
+      });
+
+      links = relationships;
+      // Compute the distinct nodes from the links.
+      relationships.forEach(function(relationship, i) {
+          relationship.source = labels.indexOf(relationship.source);
+          relationship.target = labels.indexOf(relationship.target);;
+          relationship.value = +relationship.value;
+      });
+
+
+      var force = d3.layout.force().size([w, h]).nodes(nodes).links(links).gravity(1).linkDistance(100).charge(-3000).linkStrength(function(x) {
+        return x.weight * 10
+      });
+
+
+      force.start();
+
+      var force2 = d3.layout.force().nodes(labelAnchors).links(labelAnchorLinks).gravity(0).linkDistance(0).linkStrength(8).charge(-300).size([w, h]);
+      force2.start();
+
+      var link = vis.selectAll("line.link").data(links).enter().append("svg:line").attr("class", "link").style("stroke", "#CCC");
+
+      var node = vis.selectAll("g.node").data(force.nodes()).enter().append("svg:g").attr("class", "node");
+      node.append("svg:circle").attr("r", 5).style("fill", "#555").style("stroke", "#FFF").style("stroke-width", 3);
+      node.call(force.drag);
+
+
+      var anchorLink = vis.selectAll("line.anchorLink").data(labelAnchorLinks)//.enter().append("svg:line").attr("class", "anchorLink").style("stroke", "#999");
+
+      var anchorNode = vis.selectAll("g.anchorNode").data(force2.nodes()).enter().append("svg:g").attr("class", "anchorNode");
+      anchorNode.append("svg:circle").attr("r", 0).style("fill", "#FFF");
+        anchorNode.append("svg:text").text(function(d, i) {
+        return i % 2 == 0 ? "" : d.node.label
+      }).style("fill", "#555").style("font-family", "Arial").style("font-size", 12);
+
+      var updateLink = function() {
+        this.attr("x1", function(d) {
+          return d.source.x;
+        }).attr("y1", function(d) {
+          return d.source.y;
+        }).attr("x2", function(d) {
+          return d.target.x;
+        }).attr("y2", function(d) {
+          return d.target.y;
+        });
+
+      }
+
+      var updateNode = function() {
+        this.attr("transform", function(d) {
+          return "translate(" + d.x + "," + d.y + ")";
+        });
+
+      }
+
+
+      force.on("tick", function() {
+
+        force2.start();
+
+        node.call(updateNode);
+
+        anchorNode.each(function(d, i) {
+          if(i % 2 == 0) {
+            d.x = d.node.x;
+            d.y = d.node.y;
+          } else {
+            var b = this.childNodes[1].getBBox();
+
+            var diffX = d.x - d.node.x;
+            var diffY = d.y - d.node.y;
+
+            var dist = Math.sqrt(diffX * diffX + diffY * diffY);
+
+            var shiftX = b.width * (diffX - dist) / (dist * 2);
+            shiftX = Math.max(-b.width, Math.min(0, shiftX));
+            var shiftY = 5;
+            this.childNodes[1].setAttribute("transform", "translate(" + shiftX + "," + shiftY + ")");
+          }
+        });
+
+
+        anchorNode.call(updateNode);
+
+        link.call(updateLink);
+        anchorLink.call(updateLink);
+
+      });
+      });
+    </script>
+  </body>
+</html>

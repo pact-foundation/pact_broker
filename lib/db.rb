@@ -3,6 +3,7 @@ require 'sequel/connection_pool/threaded'
 require 'yaml'
 require 'pact_broker/logging'
 require 'erb'
+require 'pact_broker/project_root'
 
 module DB
   include PactBroker::Logging
@@ -30,12 +31,18 @@ module DB
     con
   end
 
-  PACT_BROKER_DB ||= begin
-    config = YAML.load(::ERB.new(File.read(File.join('./config', 'database.yml'))).result)
-    rack_env = ENV['RACK_ENV'] || 'development'
-    puts "Connecting using config #{rack_env}"
-    connect config[rack_env]
+  def self.connection_for_env env
+    logger.info "Connecting to #{env} database."
+    connect configuration_for_env(env)
   end
+
+  def self.configuration_for_env env
+    database_yml = PactBroker.project_root.join('config','database.yml')
+    config = YAML.load(ERB.new(File.read(database_yml)).result)
+    config.fetch(env)
+  end
+
+  PACT_BROKER_DB ||= connection_for_env ENV.fetch('RACK_ENV')
 
   def self.health_check
     PACT_BROKER_DB.synchronize do |c| c

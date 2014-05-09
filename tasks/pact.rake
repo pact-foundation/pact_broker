@@ -5,7 +5,7 @@ Pact::VerificationTask.new(:dev) do | pact |
 end
 
 namespace :pact do
-  task :prepare => [:overwrite_rack_env, 'db:recreate']
+  #task :prepare => [:overwrite_rack_env, 'db:recreate']
   task :verify => :prepare
   task 'verify:at' => :prepare
   task 'verify:dev' => :prepare

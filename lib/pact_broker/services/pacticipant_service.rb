@@ -1,10 +1,12 @@
 require 'pact_broker/repositories'
+require 'pact_broker/models/relationship'
 
 module PactBroker
 
   module Services
     class PacticipantService
 
+      extend PactBroker::Repositories
       extend PactBroker::Repositories
 
       def self.find_all_pacticipants
@@ -22,6 +24,10 @@ module PactBroker
         else
           nil
         end
+      end
+
+      def self.find_relationships
+        pact_repository.find_latest_pacts.collect{ | pact| PactBroker::Models::Relationship.create pact.consumer, pact.provider }
       end
 
       def self.update params

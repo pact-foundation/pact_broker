@@ -1,0 +1,44 @@
+%head
+  %title
+    Relationships
+  %link{rel: 'stylesheet', href: '/css/bootstrap.min.css'}
+  %link{rel: 'stylesheet', href: '/stylesheets/relationships.css'}
+  %script{type: 'text/javascript', src:'/javascripts/jquery-2.1.1.min.js'}
+  %script{type: 'text/javascript', src:'/javascripts/jquery.tablesorter.min.js'}
+%body
+  %nav.navbase-default.navbar-right{role: "navigation"}
+    .container
+      %ul
+        %li.navbar-right
+          %a{href: '/hal-browser/browser.html'}
+            HAL Browser
+  .container
+    %h1.page-header
+      Relationships
+    %table.table.table-bordered.table-striped{id: 'relationships'}
+      %thead
+        %th.consumer
+          Consumer
+          %span.glyphicon.glyphicon-sort.relationships-sort
+        %th.pact
+
+        %th.provider
+          Provider
+          %span.glyphicon.glyphicon-sort.relationships-sort
+      %tbody
+
+      - relationships.each do | relationship |
+        %tr
+          %td.consumer
+            = relationship.consumer_name
+          %td.pact
+            %a.btn.btn-primary{:href => relationship.latest_pact_url}
+              %span.glyphicon.glyphicon-arrow-right
+          %td.provider
+            = relationship.provider_name
+
+:javascript
+$(function(){
+  $("#relationships").tablesorter();
+});
+

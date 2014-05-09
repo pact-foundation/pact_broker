@@ -4,7 +4,7 @@ require 'redcarpet'
 
 module PactBroker
   module Api
-    module Renderer
+    module Renderers
       class HtmlPactRenderer
 
         def self.call json_content

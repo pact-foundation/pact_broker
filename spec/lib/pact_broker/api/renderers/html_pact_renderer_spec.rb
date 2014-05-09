@@ -3,7 +3,7 @@ require 'pact_broker/api/renderers/html_pact_renderer'
 
 module PactBroker
   module Api
-    module Renderer
+    module Renderers
       describe HtmlPactRenderer do
 
         let(:json_content) { load_fixture('renderer_pact.json') }
