@@ -1,5 +1,5 @@
 require 'pact_broker/api/resources/base_resource'
-require 'pact_broker/api/renderers/html_pact_renderer'
+require 'pact_broker/configuration'
 
 module PactBroker::Api
 
@@ -27,7 +27,7 @@ module PactBroker::Api
       end
 
       def to_html
-        PactBroker::Api::Renderer::HtmlPactRenderer.call(@pact.json_content)
+        PactBroker.configuration.html_pact_renderer.call(@pact.json_content)
       end
 
     end
