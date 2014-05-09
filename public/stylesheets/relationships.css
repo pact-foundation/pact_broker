@@ -10,3 +10,5 @@
 .table-striped>tbody>tr>td.provider, .table-striped>thead>tr>th.provider {
   border-left: none;
 }
+
+body { padding-top: 10px; }
