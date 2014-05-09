@@ -10,7 +10,6 @@ module PactBroker
 
         set :root, File.join(File.dirname(__FILE__), '..')
 
-
         get "/" do
           view_model = ViewModels::Relationships.new(pacticipant_service.find_relationships)
           render 'relationships/show', locals: {relationships: view_model}, layout: 'layouts/main'
