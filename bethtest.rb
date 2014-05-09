@@ -63,24 +63,27 @@ def split_into_clusters_of_nodes links
   groups
 end
 
-def split_into_clusters_of_links links
-
-  link_pool = links.dup
-  groups = []
-
-  while link_pool.any?
-    group = []
-    groups << group
-    connected_links = [link_pool.first]
-
-    while connected_links.any?
-      group.concat(connected_links)
-      link_pool = link_pool - connected_links
-      connected_links = connected_links_still_within_pool connected_links, link_pool
-    end
+def recurse link, link_pool
+  connected_links = link_pool.select{ | candidate| candidate.connected?(link) }
+  if connected_links.empty?
+    [link]
+  else
+    ([link] + connected_links.map{| connected_link| recurse(connected_link, link_pool - connected_links)}.flatten).uniq
   end
+end
 
-  groups
+def recurse_groups groups, link_pool
+  if link_pool.empty?
+    groups
+  else
+    first, *rest = *link_pool
+    group = recurse first, rest
+    recurse_groups(groups + [group], link_pool - group)
+  end
+end
+
+def split_into_clusters_of_links links
+  recurse_groups [], links.dup
 end
 
 links = [Link.new('A', 'B'), Link.new('A', 'C'), Link.new('C', 'D'), Link.new('D', 'E'), Link.new('E','A'),
@@ -94,8 +97,6 @@ puts groups.collect{ | group| "group = #{group.join(" ")}"}
 
 groups = split_into_clusters_of_links links
 puts groups.collect{ | group| "group = #{group.join(", ")}"}
-
-
 
 
 
