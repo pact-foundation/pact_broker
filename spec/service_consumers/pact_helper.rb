@@ -21,7 +21,7 @@ Pact.service_provider "Pact Broker" do
   end
 
   # honours_pact_with "Pact Broker Client", :ref => :head do
-  #   pact_uri URI.encode("http://rea-pact-broker.biq.vpc.realestate.com.au/pact/provider/Pact Broker/consumer/Pact Broker Client/latest")
+  #   pact_uri URI.encode("http://rea-pact-broker.biq.vpc.realestate.com.au/pacts/provider/Pact Broker/consumer/Pact Broker Client/latest")
   # end
 
 end

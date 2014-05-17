@@ -9,6 +9,9 @@ require './spec/support/provider_state_builder'
 require 'pact_broker/api'
 require 'rspec/fire'
 
+YAML::ENGINE.yamler = 'psych'
+I18n.config.enforce_available_locales = false
+
 def load_fixture(file_name)
   File.read(File.expand_path(File.join(File.dirname(__FILE__), 'fixtures', file_name)))
 end

@@ -14,7 +14,7 @@ module PactBroker
 
         its(:consumer_name) { should eq 'consumer_name'}
         its(:provider_name) { should eq 'provider_name'}
-        its(:latest_pact_url) { should eq "/pact/provider/provider_name/consumer/consumer_name/latest" }
+        its(:latest_pact_url) { should eq "/pacts/provider/provider_name/consumer/consumer_name/latest" }
 
         describe "<=>" do
 

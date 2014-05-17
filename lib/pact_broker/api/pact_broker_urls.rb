@@ -50,7 +50,7 @@ module PactBroker
       end
 
       def pactigration_base_url base_url, pact
-        "#{base_url}/pact/provider/#{url_encode(pact.provider.name)}/consumer/#{url_encode(pact.consumer.name)}"
+        "#{base_url}/pacts/provider/#{url_encode(pact.provider.name)}/consumer/#{url_encode(pact.consumer.name)}"
       end
 
       def url_encode param

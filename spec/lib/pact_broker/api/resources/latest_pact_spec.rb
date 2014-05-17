@@ -26,7 +26,7 @@ module PactBroker::Api
             allow(PactBroker.configuration.html_pact_renderer).to receive(:call).and_return(html)
           end
 
-          subject { get "/pact/provider/provider_name/consumer/consumer_name/latest",{}, {'HTTP_ACCEPT' => "text/html"} }
+          subject { get "/pacts/provider/provider_name/consumer/consumer_name/latest",{}, {'HTTP_ACCEPT' => "text/html"} }
 
           it "find the pact" do
             expect(PactBroker::Services::PactService).to receive(:find_pact).with(pact_id_params)
