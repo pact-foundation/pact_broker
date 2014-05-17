@@ -24,7 +24,7 @@ Pact.provider_states_for "Pact Broker Client" do
         .create_condor
         .create_condor_version('1.3.0')
         .create_pricing_service
-        .create_pact
+        .create_condor_pricing_service_pact
     end
   end
 
@@ -38,7 +38,7 @@ Pact.provider_states_for "Pact Broker Client" do
         .create_condor
         .create_condor_version('1.3.0')
         .create_pricing_service
-        .create_pact
+        .create_condor_pricing_service_pact
     end
   end
 
@@ -69,17 +69,22 @@ Pact.provider_states_for "Pact Broker Client" do
 
    provider_state "a pact between Condor and the Pricing Service exists for the production version of Condor" do
      set_up do
-       # Your set up code goes here
+      ProviderStateBuilder.new
+        .create_consumer("Condor")
+        .create_consumer_version('1.3.0')
+        .create_consumer_version_tag('prod')
+        .create_provider("Pricing Service")
+        .create_pact
      end
    end
 
-   provider_state "a version with production details exists for the Pricing Service" do
+   provider_state "a pacticipant version with production details exists for the Pricing Service" do
      set_up do
        # Your set up code goes here
      end
    end
 
-   provider_state "no version exists for the Pricing Service" do
+   provider_state "no pacticipant version exists for the Pricing Service" do
      no_op
    end
 end

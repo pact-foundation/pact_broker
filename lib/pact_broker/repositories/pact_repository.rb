@@ -24,8 +24,10 @@ module PactBroker
           where('versions.id in ?', latest_versions).all
       end
 
-      def find_latest_pact(consumer_name, provider_name)
-        pact_finder(consumer_name, provider_name).order(:order).last
+      def find_latest_pact(consumer_name, provider_name, tag = nil)
+        finder = pact_finder(consumer_name, provider_name)
+        finder = add_tag_criteria(finder, tag) unless tag.nil?
+        finder.order(:order).last
       end
 
       def find_pact consumer_name, consumer_version, provider_name
@@ -53,6 +55,12 @@ module PactBroker
           join(:pacticipants, {:id => :provider_id}, {:table_alias => :providers, implicit_qualifier: :pacts}).
           where('providers.name = ?', provider_name).
           where('consumers.name = ?', consumer_name)
+      end
+
+      def add_tag_criteria pact_finder, tag
+        pact_finder.
+          join(:tags, {:version_id => :id}, {implicit_qualifier: :versions}).
+          where('tags.name = ?', tag)
       end
 
     end

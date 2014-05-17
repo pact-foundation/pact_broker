@@ -50,7 +50,7 @@ class ProviderStateBuilder
     self
   end
 
-  def create_pact
+  def create_condor_pricing_service_pact
     @pact_id = pact_repository.create(version_id: @condor_version_id, provider_id: @pricing_service_id, json_content: json_content).id
     self
   end
@@ -77,13 +77,40 @@ class ProviderStateBuilder
     self
   end
 
+  def create_consumer consumer_name
+    create_pacticipant consumer_name
+    @consumer = @pacticipant
+    self
+  end
+
+  def create_provider provider_name
+    create_pacticipant provider_name
+    @provider = @pacticipant
+    self
+  end
+
   def create_version version_number
     @version = PactBroker::Models::Version.create(:number => version_number, :pacticipant => @pacticipant)
     self
   end
 
+  def create_consumer_version version_number
+    @consumer_version = PactBroker::Models::Version.create(:number => version_number, :pacticipant => @consumer)
+    self
+  end
+
   def create_tag tag_name
     @tag = PactBroker::Models::Tag.create(name: tag_name, version: @version)
+    self
+  end
+
+  def create_consumer_version_tag tag_name
+    @tag = PactBroker::Models::Tag.create(name: tag_name, version: @consumer_version)
+    self
+  end
+
+  def create_pact
+    @pact = PactBroker::Models::Pact.create(consumer_version: @consumer_version, provider: @provider, json_content: json_content)
     self
   end
 
@@ -97,7 +124,7 @@ class ProviderStateBuilder
   #   version_repository.create(number: number, pacticipant: pacticipant)
   # end
 
-  # def create_pact version, provider
+  # def create_condor_pricing_service_pact version, provider
   #   pact_repository.create(consumer_version: version, provider: provider, json_content: json_content)
   # end
 

@@ -4,15 +4,41 @@ require 'spec/support/provider_state_builder'
 module PactBroker
   module Repositories
     describe PactRepository do
+
+      describe "find_latest_pact" do
+
+        context "with a tag" do
+          context "when a version with a pact exists with the given tag" do
+            before do
+              ProviderStateBuilder.new
+                .create_consumer("Consumer")
+                .create_consumer_version("2.3.4")
+                .create_provider("Provider")
+                .create_pact
+                .create_consumer_version("1.2.3")
+                .create_consumer_version_tag("prod")
+                .create_pact
+            end
+
+            let(:latest_prod_pact) { PactRepository.new.find_latest_pact("Consumer", "Provider", "prod") }
+
+            it "returns the pact for the latest tagged version" do
+              expect(latest_prod_pact.consumer_version.number).to eq("1.2.3")
+            end
+          end
+
+        end
+      end
+
       describe "find_latest_pacts" do
         before do
           ProviderStateBuilder.new
             .create_condor
             .create_condor_version('1.3.0')
             .create_pricing_service
-            .create_pact
+            .create_condor_pricing_service_pact
             .create_condor_version('1.4.0')
-            .create_pact
+            .create_condor_pricing_service_pact
             .create_contract_email_service
             .create_contract_email_service_version('2.6.0')
             .create_contract_proposal_service

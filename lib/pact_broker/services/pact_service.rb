@@ -9,16 +9,16 @@ module PactBroker
 
       extend PactBroker::Repositories
 
-      def find_pact params
-        if params[:consumer_version_number] == 'latest'
-          pact_repository.find_latest_pact(params[:consumer_name], params[:provider_name])
-        else
-          pact_repository.find_pact(params[:consumer_name], params[:consumer_version_number], params[:provider_name])
-        end
+      def find_latest_pact params
+        pact_repository.find_latest_pact(params[:consumer_name], params[:provider_name], params[:tag])
       end
 
       def find_latest_pacts
         pact_repository.find_latest_pacts
+      end
+
+      def find_pact params
+        pact_repository.find_pact(params[:consumer_name], params[:consumer_version_number], params[:provider_name])
       end
 
       def create_or_update_pact params
