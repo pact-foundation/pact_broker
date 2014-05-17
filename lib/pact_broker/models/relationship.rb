@@ -22,6 +22,24 @@ module PactBroker
         eq?(other)
       end
 
+      def consumer_name
+        consumer.name
+      end
+
+      def provider_name
+        provider.name
+      end
+
+      def pacticipants
+        [consumer, provider]
+      end
+
+      def <=> other
+        comp = consumer_name <=> other.consumer_name
+        return comp unless comp == 0
+        provider_name <=> other.provider_name
+      end
+
     end
   end
 end

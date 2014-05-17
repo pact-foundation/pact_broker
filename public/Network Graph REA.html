@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Graph of OHSU social networks. Data is fake to demonstrate chart functionality">
 <meta name="author" content="Duncan Alexander">
-<script type="text/javascript" src="d3.v3.js.pagespeed.ce.dFNRrGTALe.js"></script>
+<script type="text/javascript" src="javascripts/d3.v3.js.pagespeed.ce.dFNRrGTALe.js"></script>
 <style>body{font-family:"Helvetica Neue",Arial,sans-serif;font-size:.75em;font-weight:bold;padding:2em}#legend{display:inline-block;width:600;height:200}</style>
 <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
 <!--[if lt IE 9]>
@@ -19,7 +19,7 @@
 <h1>Network Graph</h1>
 <p>Developed for Oregon Health and Science University. This version of the graph uses example data to demonstrate chart functionality.</p>
 <div id="legend" </div>
-<script type="text/javascript">var w,h,svg;window.onload=function(){w=window.innerWidth;h=window.innerHeight;svg=d3.select("body").append("svg").attr("width",w).attr("height",h).attr("version",1.1).attr("xmlns","http://www.w3.org/2000/svg");var people=[];var maxgrant=0;var maxrad=0;var arraydepts=[];var maxorder=0;d3.text("rea.csv",function(unparsedData){var data=d3.csv.parseRows(unparsedData);data.forEach(function(d){var person={id:d[0],department:d[1],interviewed:parseInt(d[2]),grants:parseInt(d[3])||0,order:parseInt(d[5]),children:d.slice(6).filter(function(e){if(parseInt(e)!=NaN){return e;}})};if(person.grants>maxgrant){maxgrant=person.grants;}
+<script type="text/javascript">var w,h,svg;window.onload=function(){w=window.innerWidth;h=window.innerHeight;svg=d3.select("body").append("svg").attr("width",w).attr("height",h).attr("version",1.1).attr("xmlns","http://www.w3.org/2000/svg");var people=[];var maxgrant=0;var maxrad=0;var arraydepts=[];var maxorder=0;d3.text("relationships",function(unparsedData){var data=d3.csv.parseRows(unparsedData);data.forEach(function(d){var person={id:d[0],department:d[1],interviewed:parseInt(d[2]),grants:parseInt(d[3])||0,order:parseInt(d[5]),children:d.slice(6).filter(function(e){if(parseInt(e)!=NaN){return e;}})};if(person.grants>maxgrant){maxgrant=person.grants;}
 if(person.order>maxorder){maxorder=person.order;}
 if(arraydepts.indexOf(person.department)==-1){arraydepts.push(person.department);}
 people.push(person);});people.sort(function(a,b){return d3.ascending(a.order,b.order);});var lookup={};var radius=Math.max(100,people.length*2.5);if(3*radius>w){w=3*radius;svg.attr("width",w);}

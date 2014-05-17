@@ -11,16 +11,31 @@ module PactBroker
 
         let(:pact) { ProviderStateBuilder.new.create_pact_with_hierarchy "My Consumer", "1.0", "My Provider"}
         let(:pacts) { [pact]}
-        let(:line_1) { 'source,target,weight'}
-        let(:line_2) { 'My Consumer,My Provider,1' }
-        let(:expected_text) { [line_1, line_2].join("\n") + "\n" }
+
 
         subject { RelationshipsCsvDecorator.new(pacts) }
 
 
         describe "#to_csv" do
+
+          let(:line_1) { '1,My Consumer,1,3158419,0,1,2,0,0,0,0,0,0,0,0'}
+          let(:line_2) { '2,My Provider,1,3158419,0,2,0,0,0,0,0,0,0,0,0' }
+          let(:expected_text) { [line_1, line_2].join("\n") + "\n" }
+
           it "returns the relationships as CSV" do
             expect(subject.to_csv).to eq expected_text
+          end
+        end
+
+
+        describe "#to_csv_old" do
+
+          let(:line_1) { 'source,target,weight'}
+          let(:line_2) { 'My Consumer,My Provider,1' }
+          let(:expected_text) { [line_1, line_2].join("\n") + "\n" }
+
+          it "returns the relationships as CSV" do
+            expect(subject.to_csv_old).to eq expected_text
           end
         end
 
