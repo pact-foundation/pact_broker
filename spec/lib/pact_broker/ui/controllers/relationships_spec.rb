@@ -26,7 +26,8 @@ module PactBroker
 
             it "does something" do
               get "/"
-              puts last_response.body
+              expect(last_response.body).to include("Relationships")
+              expect(last_response.status).to eq(200)
             end
 
           end

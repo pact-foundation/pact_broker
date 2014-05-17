@@ -1,5 +1,6 @@
 require 'pact_broker/ui/controllers/base_controller'
 require 'pact_broker/ui/view_models/relationships'
+require 'haml'
 
 module PactBroker
   module UI
@@ -12,7 +13,8 @@ module PactBroker
 
         get "/" do
           view_model = ViewModels::Relationships.new(pacticipant_service.find_relationships)
-          render 'relationships/show', locals: {relationships: view_model}, layout: 'layouts/main'
+
+          haml :'relationships/show', {locals: {relationships: view_model}}, {layout: 'layouts/main'}
         end
 
       end

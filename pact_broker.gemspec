@@ -30,7 +30,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'rack'
   gem.add_runtime_dependency 'redcarpet', '~>3.1.1'
   gem.add_runtime_dependency 'pact', '~>1.1.0'
-  gem.add_runtime_dependency 'padrino', '~>0.9.29'
+  gem.add_runtime_dependency 'padrino', '~>0.12'
   gem.add_runtime_dependency 'haml'
 
   gem.add_development_dependency 'pry'
@@ -38,5 +38,6 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'fakefs', '~>0.4'
   gem.add_development_dependency 'rspec-fire', '~>1.2.0'
   gem.add_development_dependency 'mysql2', '~>0.3.15'
+  gem.add_development_dependency 'pact', '~>1.1'
 
 end
