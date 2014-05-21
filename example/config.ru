@@ -2,7 +2,6 @@ require 'fileutils'
 require 'logger'
 require 'sequel'
 require 'pact_broker'
-require 'rack/hal_browser'
 
 # Create a real database, and set the credentials for it here
 DATABASE_CREDENTIALS = {database: "pact_broker_database.sqlite3", adapter: "sqlite"}
