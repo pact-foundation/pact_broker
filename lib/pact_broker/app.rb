@@ -42,13 +42,6 @@ module PactBroker
 
       @app.use Rack::Static, :urls => ["/stylesheets", "/images", "/css", "/fonts", "/js", "/javascripts"], :root => PactBroker.project_root.join("public")
 
-      if configuration.use_hal_browser
-        logger.info "Mounting HAL browser"
-        @app.use Rack::HalBrowser::Redirect, :exclude => ['/trace']
-      else
-        logger.info "Not mounting HAL browser"
-      end
-
       logger.info "Mounting UI"
       require 'pact_broker/ui/controllers/relationships'
 
@@ -56,6 +49,11 @@ module PactBroker
         map "/ui/relationships" do
           run PactBroker::UI::Controllers::Relationships
         end
+
+        map '/network-graph' do
+          run Rack::File.new("#{PactBroker.project_root}/public/network-graph.html")
+        end
+
         map "/" do
           run lambda { |env|
             if (env['PATH_INFO'] == "/" || env['PATH_INFO'] == "") && !env['HTTP_ACCEPT'].include?("json")
@@ -66,6 +64,13 @@ module PactBroker
           }
         end
       }
+
+      if configuration.use_hal_browser
+        logger.info "Mounting HAL browser"
+        @app.use Rack::HalBrowser::Redirect, :exclude => ['/trace', '/network-graph', '/ui']
+      else
+        logger.info "Not mounting HAL browser"
+      end
 
       logger.info "Mounting PactBroker::API"
       require 'pact_broker/api'

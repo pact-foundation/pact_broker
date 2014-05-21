@@ -17,8 +17,6 @@ module PactBroker
         def to_csv
           hash = {}
           pacticipants = @relationships.collect{|r| r.pacticipants}.flatten.uniq
-          puts pacticipants
-
 
           @relationships.each do | relationship |
             hash[relationship.consumer.id] ||= pacticipant_array(relationship.consumer, hash.size + 1)
