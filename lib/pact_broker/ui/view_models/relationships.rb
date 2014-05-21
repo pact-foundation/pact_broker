@@ -8,7 +8,7 @@ module PactBroker
         attr_reader :relationships
 
         def initialize relationships
-          @relationships = relationships.collect{ |relationship| Relationship.new(relationship) }
+          @relationships = relationships.collect{ |relationship| Relationship.new(relationship) }.sort
         end
 
         def each(&block)

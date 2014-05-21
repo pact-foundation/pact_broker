@@ -12,11 +12,11 @@ module PactBroker
         end
 
         def consumer_name
-          @relationship.consumer.name
+          @relationship.consumer_name
         end
 
         def provider_name
-          @relationship.provider.name
+          @relationship.provider_name
         end
 
         def latest_pact_url
@@ -24,9 +24,9 @@ module PactBroker
         end
 
         def <=> other
-          comp = consumer_name <=> other.consumer_name
+          comp = consumer_name.downcase <=> other.consumer_name.downcase
           return comp unless comp == 0
-          provider_name <=> other.provider_name
+          provider_name.downcase <=> other.provider_name.downcase
         end
 
       end
