@@ -52,10 +52,12 @@ module PactBroker
           pacts = PactRepository.new.find_latest_pacts
 
           expect(pacts[0].consumer_version.pacticipant.name).to eq("Condor")
+          expect(pacts[0].consumer.name).to eq("Condor")
           expect(pacts[0].provider.name).to eq("Pricing Service")
           expect(pacts[0].consumer_version.number).to eq("1.4.0")
 
           expect(pacts[1].consumer_version.pacticipant.name).to eq("Contract Email Service")
+          expect(pacts[1].consumer.name).to eq("Contract Email Service")
           expect(pacts[1].provider.name).to eq("Contract Proposal Service")
           expect(pacts[1].consumer_version.number).to eq("2.7.0")
         end

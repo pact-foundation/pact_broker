@@ -1,5 +1,6 @@
 require 'sequel'
 require 'pact_broker/logging'
+require 'ostruct'
 
 module PactBroker
   module Repositories
@@ -13,15 +14,13 @@ module PactBroker
 
       def find_latest_pacts
 
-        # TODO Work out a more elegant and efficient way of executing this query.
-        # Haven't found a max/group by combination that works with Sequel Models
-        latest_versions = PactBroker::Models::Version.new.db.fetch('select max(id) as id from versions where id in (select distinct(version_id) from pacts) group by pacticipant_id').collect{ | it | it[:id] }.flatten
+        db[:latest_pacts].select(:id, :consumer_name, :provider_name, :consumer_version_number).all.collect do | row |
+          consumer = OpenStruct.new(name: row[:"`consumer_name`"])
+          provider = OpenStruct.new(name: row[:"`provider_name`"])
+          consumer_version = OpenStruct.new(number: row[:"`consumer_version_number`"], pacticipant: consumer)
+          pact = OpenStruct.new(id: row[:id], consumer: consumer, consumer_version: consumer_version, provider: provider)
+        end
 
-        PactBroker::Models::Pact.select(:pacts__id, :pacts__json_content, :pacts__version_id, :pacts__provider_id, :versions__number___consumer_version_number).
-          join(:versions, {:id => :version_id}, {implicit_qualifier: :pacts}).
-          join(:pacticipants, {:id => :pacticipant_id}, {:table_alias => :consumers, implicit_qualifier: :versions}).
-          join(:pacticipants, {:id => :provider_id}, {:table_alias => :providers, implicit_qualifier: :pacts}).
-          where('versions.id in ?', latest_versions).all
       end
 
       def find_latest_pact(consumer_name, provider_name, tag = nil)
@@ -47,6 +46,10 @@ module PactBroker
       end
 
       private
+
+      def db
+        PactBroker::Models::Version.new.db
+      end
 
       def pact_finder consumer_name, provider_name
         PactBroker::Models::Pact.select(:pacts__id, :pacts__json_content, :pacts__version_id, :pacts__provider_id, :versions__number___consumer_version_number).
