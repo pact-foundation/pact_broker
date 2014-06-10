@@ -26,7 +26,7 @@ module PactBroker
         end
 
         def markdown
-          Pact::Doc::Markdown::InteractionsRenderer.call consumer_contract
+          renderer.call consumer_contract
         end
 
         def html
@@ -35,6 +35,16 @@ module PactBroker
 
         def consumer_contract
           Pact::ConsumerContract.from_json(@json_content)
+        end
+
+        def renderer
+          # InteractionsRenderer got renamed to ConsumerContractRenderer
+          if defined? Pact::Doc::Markdown::InteractionsRenderer
+            Pact::Doc::Markdown::InteractionsRenderer
+          else
+            Pact::Doc::Markdown::ConsumerContractRenderer
+          end
+
         end
 
       end
