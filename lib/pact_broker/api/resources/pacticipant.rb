@@ -23,7 +23,7 @@ module PactBroker::Api
       end
 
       def allowed_methods
-        ["GET", "PATCH"]
+        ["GET", "PATCH", "DELETE"]
       end
 
       def known_methods
@@ -32,21 +32,30 @@ module PactBroker::Api
 
       def from_json
         if @pacticipant
-          @pacticipant = pacticipant_service.update params.merge(name: identifier_from_path[:name])
+          @pacticipant = pacticipant_service.update params.merge(name: pacticipant_name)
         else
-          @pacticipant = pacticipant_service.create params.merge(name: identifier_from_path[:name])
+          @pacticipant = pacticipant_service.create params.merge(name: pacticipant_name)
           response.headers["Location"] = pacticipant_url(resource_url, @pacticipant)
         end
         response.body = to_json
       end
 
       def resource_exists?
-        @pacticipant = pacticipant_service.find_pacticipant_by_name(identifier_from_path[:name])
+        @pacticipant = pacticipant_service.find_pacticipant_by_name(pacticipant_name)
         @pacticipant != nil
+      end
+
+      def delete_resource
+        pacticipant_service.delete pacticipant_name
+        true
       end
 
       def to_json
         PactBroker::Api::Decorators::PacticipantRepresenter.new(@pacticipant).to_json(base_url: resource_url)
+      end
+
+      def pacticipant_name
+        identifier_from_path[:name]
       end
 
     end

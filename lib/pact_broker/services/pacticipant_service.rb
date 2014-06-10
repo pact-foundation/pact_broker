@@ -40,6 +40,15 @@ module PactBroker
         pacticipant_repository.create(params)
       end
 
+      def self.delete name
+        connection = PactBroker::Models::Pacticipant.new.db
+        connection.run("delete from tags where version_id IN (select id from versions where pacticipant_id IN (select id from pacticipants where name = '#{name}'))")
+        connection.run("delete from pacts where version_id IN (select id from versions where pacticipant_id IN (select id from pacticipants where name = '#{name}'))")
+        connection.run("delete from pacts where provider_id IN (select id from pacticipants where name = '#{name}')")
+        connection.run("delete from versions where pacticipant_id IN (select id from pacticipants where name = '#{name}')")
+        connection.run("delete from pacticipants where name = '#{name}'")
+      end
+
     end
   end
 end
