@@ -1,6 +1,7 @@
 require 'pact/consumer_contract'
 require 'pact/reification'
 require 'redcarpet'
+require 'pact/doc/markdown/consumer_contract_renderer'
 
 module PactBroker
   module Api
@@ -26,7 +27,7 @@ module PactBroker
         end
 
         def markdown
-          Pact::Doc::Markdown::InteractionsRenderer.call consumer_contract
+          Pact::Doc::Markdown::ConsumerContractRenderer.call consumer_contract
         end
 
         def html
