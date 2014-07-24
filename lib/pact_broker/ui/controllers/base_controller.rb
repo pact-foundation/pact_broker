@@ -8,6 +8,7 @@ module PactBroker
       class Base < Padrino::Application
 
         set :root, File.join(File.dirname(__FILE__), '..')
+        set :show_exceptions, true
 
       end
     end
