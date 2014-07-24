@@ -15,9 +15,9 @@ module PactBroker
       def find_latest_pacts
 
         db[:latest_pacts].select(:id, :consumer_name, :provider_name, :consumer_version_number).all.collect do | row |
-          consumer = OpenStruct.new(name: row[:"`consumer_name`"])
-          provider = OpenStruct.new(name: row[:"`provider_name`"])
-          consumer_version = OpenStruct.new(number: row[:"`consumer_version_number`"], pacticipant: consumer)
+          consumer = OpenStruct.new(name: row[:"consumer_name"])
+          provider = OpenStruct.new(name: row[:"provider_name"])
+          consumer_version = OpenStruct.new(number: row[:"consumer_version_number"], pacticipant: consumer)
           pact = OpenStruct.new(id: row[:id], consumer: consumer, consumer_version: consumer_version, provider: provider)
         end
 
