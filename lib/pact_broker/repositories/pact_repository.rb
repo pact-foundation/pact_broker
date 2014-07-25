@@ -13,11 +13,11 @@ module PactBroker
       end
 
       def find_latest_pacts
-
-        db[:latest_pacts].select(:id, :consumer_name, :provider_name, :consumer_version_number).all.collect do | row |
-          consumer = OpenStruct.new(name: row[:"consumer_name"])
-          provider = OpenStruct.new(name: row[:"provider_name"])
-          consumer_version = OpenStruct.new(number: row[:"consumer_version_number"], pacticipant: consumer)
+        # Need to use aliases because sqlite returns row with `` in the column name, mysql does not
+        db[:latest_pacts].select(:id, :consumer_name___cn, :provider_name___pn, :consumer_version_number___cvn).all.collect do | row |
+          consumer = OpenStruct.new(name: row[:cn])
+          provider = OpenStruct.new(name: row[:pn])
+          consumer_version = OpenStruct.new(number: row[:cvn], pacticipant: consumer)
           pact = OpenStruct.new(id: row[:id], consumer: consumer, consumer_version: consumer_version, provider: provider)
         end
 
