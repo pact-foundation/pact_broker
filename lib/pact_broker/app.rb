@@ -56,7 +56,9 @@ module PactBroker
 
         map "/" do
           run lambda { |env|
-            if (env['PATH_INFO'] == "/" || env['PATH_INFO'] == "") && !env['HTTP_ACCEPT'].include?("json")
+            # A request for the root path in the browser (not the json index) should
+            # redirect to ui/relationships
+            if (env['PATH_INFO'].chomp("/") == "") && !env['HTTP_ACCEPT'].include?("json")
               [303, {'Location' => 'ui/relationships'},[]]
             else
               [404, {},[]]
