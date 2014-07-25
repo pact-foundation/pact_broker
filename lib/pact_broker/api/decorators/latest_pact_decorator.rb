@@ -1,4 +1,4 @@
-require_relative 'pact_decorator'
+require_relative 'pact_details_decorator'
 
 module PactBroker
 
@@ -6,7 +6,7 @@ module PactBroker
 
     module Decorators
 
-      class LatestPactDecorator < PactDecorator
+      class LatestPactDecorator < PactDetailsDecorator
 
         links :self do | options |
           [
