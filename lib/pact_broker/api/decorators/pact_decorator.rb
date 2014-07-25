@@ -1,5 +1,4 @@
 require_relative 'base_decorator'
-require_relative 'pact_pacticipant_decorator'
 
 module PactBroker
 
@@ -7,13 +6,13 @@ module PactBroker
 
     module Decorators
 
-      class TagDecorator < BaseDecorator
+      class PactDecorator < BaseDecorator
 
         property :createdAt, getter: lambda { |_|  created_at.xmlschema }
         property :updatedAt, getter: lambda { |_| updated_at.xmlschema }
 
-        link :self do | options |
-          tag_url(options[:base_url], represented)
+        def to_hash(options = {})
+          ::JSON.parse(represented.json_content).merge super
         end
 
       end

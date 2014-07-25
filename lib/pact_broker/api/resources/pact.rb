@@ -1,5 +1,6 @@
 require 'cgi'
 require 'pact_broker/api/resources/base_resource'
+require 'pact_broker/api/decorators/pact_decorator'
 
 module PactBroker::Api
 
@@ -31,7 +32,7 @@ module PactBroker::Api
       end
 
       def to_json
-        @pact.json_content
+        PactBroker::Api::Decorators::PactDecorator.new(@pact).to_json
       end
 
       def pact_content

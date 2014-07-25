@@ -19,7 +19,7 @@ module PactBroker
       end
 
       def to_s
-        "Pact: provider_id=#{provider_id}"
+        "Pact: provider_id=#{provider_id} created_at=#{created_at} updated_at=#{updated_at}"
       end
 
       def to_json options = {}

@@ -52,7 +52,9 @@ module PactBroker
       end
 
       def pact_finder consumer_name, provider_name
-        PactBroker::Models::Pact.select(:pacts__id, :pacts__json_content, :pacts__version_id, :pacts__provider_id, :versions__number___consumer_version_number).
+        PactBroker::Models::Pact.select(
+            :pacts__id, :pacts__json_content, :pacts__version_id, :pacts__provider_id, :pacts__created_at, :pacts__updated_at,
+            :versions__number___consumer_version_number).
           join(:versions, {:id => :version_id}, {implicit_qualifier: :pacts}).
           join(:pacticipants, {:id => :pacticipant_id}, {:table_alias => :consumers, implicit_qualifier: :versions}).
           join(:pacticipants, {:id => :provider_id}, {:table_alias => :providers, implicit_qualifier: :pacts}).

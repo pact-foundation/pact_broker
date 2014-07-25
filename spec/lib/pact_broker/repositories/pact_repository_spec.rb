@@ -25,6 +25,10 @@ module PactBroker
             it "returns the pact for the latest tagged version" do
               expect(latest_prod_pact.consumer_version.number).to eq("1.2.3")
             end
+
+            xit "has timestamps" do
+
+            end
           end
 
         end
@@ -62,6 +66,13 @@ module PactBroker
           expect(pacts[1].consumer.name).to eq("Contract Email Service")
           expect(pacts[1].provider.name).to eq("Contract Proposal Service")
           expect(pacts[1].consumer_version.number).to eq("2.7.0")
+        end
+
+        xit "includes the timestamps" do
+          pacts = PactRepository.new.find_latest_pacts
+
+          expect(pacts[0].updated_at).to be_instance_of DateTime
+          expect(pacts[0].created_at).to be_instance_of DateTime
         end
       end
     end
