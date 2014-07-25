@@ -53,7 +53,9 @@ module PactBroker
 
           expect(pacts[0].consumer_version.pacticipant.name).to eq("Condor")
           expect(pacts[0].consumer.name).to eq("Condor")
+          expect(pacts[0].consumer.id).to_not be nil
           expect(pacts[0].provider.name).to eq("Pricing Service")
+          expect(pacts[0].provider.id).to_not be nil
           expect(pacts[0].consumer_version.number).to eq("1.4.0")
 
           expect(pacts[1].consumer_version.pacticipant.name).to eq("Contract Email Service")
