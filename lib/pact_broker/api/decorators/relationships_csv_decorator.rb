@@ -41,7 +41,7 @@ module PactBroker
         end
 
         def pacticipant_array pacticipant, order
-          [pacticipant.id, pacticipant.name,1,3158419, 0, order]
+          [pacticipant.id, pacticipant.name, 1, 1, 0, order]
         end
 
         def to_csv_old
