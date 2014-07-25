@@ -1,4 +1,4 @@
-require 'sequel'
+require 'pact_broker/db'
 require 'pact_broker/models/order_versions'
 
 module PactBroker
@@ -19,5 +19,7 @@ module PactBroker
         "Version: number=#{number}, pacticipant=#{pacticipant_id}"
       end
     end
+
+    Version.plugin :timestamps, :update_on_create=>true
   end
 end

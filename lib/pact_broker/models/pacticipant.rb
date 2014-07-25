@@ -1,4 +1,4 @@
-require 'sequel'
+require 'pact_broker/db'
 
 module PactBroker
 
@@ -19,5 +19,7 @@ module PactBroker
         "Pacticipant: id=#{id}, name=#{name}"
       end
     end
+
+    Pacticipant.plugin :timestamps, :update_on_create=>true
   end
 end

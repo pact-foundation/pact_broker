@@ -1,4 +1,4 @@
-require 'sequel'
+require 'pact_broker/db'
 
 module PactBroker
 
@@ -11,5 +11,7 @@ module PactBroker
 
 
     end
+
+    Tag.plugin :timestamps, :update_on_create=>true
   end
 end

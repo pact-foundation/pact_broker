@@ -10,15 +10,17 @@ module PactBroker
       class PacticipantRepresenter < BaseDecorator
 
         property :name
-        property :repository_url
+        property :repository_url, as: :repositoryUrl
 
-        property :latest_version, :class => PactBroker::Models::Version, :extend => PactBroker::Api::Decorators::VersionRepresenter, :embedded => true
+        property :latest_version, as: :latestVersion, :class => PactBroker::Models::Version, :extend => PactBroker::Api::Decorators::VersionRepresenter, :embedded => true
+
+        property :createdAt, getter: lambda { | _ | created_at.xmlschema }
 
         link :self do | options |
           pacticipant_url(options[:base_url], represented)
         end
 
-        link :latest_version do | options |
+        link 'latest-version' do | options |
           latest_version_url(options[:base_url], represented)
         end
 

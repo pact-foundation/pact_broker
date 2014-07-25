@@ -1,5 +1,7 @@
 require 'sequel'
 
+Sequel.datetime_class = DateTime
+
 module PactBroker
   module DB
 

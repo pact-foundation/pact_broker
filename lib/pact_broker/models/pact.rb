@@ -1,4 +1,4 @@
-require 'sequel'
+require 'pact_broker/db'
 
 module PactBroker
 
@@ -26,5 +26,7 @@ module PactBroker
         json_content
       end
     end
+
+    Pact.plugin :timestamps, :update_on_create=>true
   end
 end
