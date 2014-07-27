@@ -6,6 +6,7 @@ require 'pact_broker/api/resources/pacticipants'
 require 'pact_broker/api/resources/tag'
 require 'pact_broker/api/resources/index'
 require 'pact_broker/api/resources/relationships'
+require 'pact_broker/api/resources/group'
 
 require 'webmachine/adapters/rack'
 
@@ -27,6 +28,7 @@ module PactBroker
         add ['pacticipants', :name], Api::Resources::Pacticipant
         add ['pacticipants', :pacticipant_name, 'versions', :pacticipant_version_number, 'tags', :tag_name], Api::Resources::Tag
         add ['relationships'], Api::Resources::Relationships
+        add ['groups', :pacticipant_name], Api::Resources::Group
         add [], Api::Resources::Index
       end
     end
