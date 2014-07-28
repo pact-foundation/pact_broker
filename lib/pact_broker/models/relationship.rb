@@ -38,6 +38,10 @@ module PactBroker
         (self.to_a & other.to_a).any?
       end
 
+      def include? pacticipant
+        pacticipant == consumer || pacticipant == provider
+      end
+
       def <=> other
         comp = consumer_name <=> other.consumer_name
         return comp unless comp == 0

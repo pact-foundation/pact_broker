@@ -38,9 +38,9 @@ module PactBroker
 
         it "separates the relationships into isolated groups" do
           groups = Groupify.call(relationships)
-          expect(groups[0]).to eq([relationship_1, relationship_4, relationship_2])
-          expect(groups[1]).to eq([relationship_3])
-          expect(groups[2]).to eq([relationship_5, relationship_6])
+          expect(groups[0]).to eq(Models::Group.new(relationship_1, relationship_4, relationship_2))
+          expect(groups[1]).to eq(Models::Group.new(relationship_3))
+          expect(groups[2]).to eq(Models::Group.new(relationship_5, relationship_6))
         end
 
       end
