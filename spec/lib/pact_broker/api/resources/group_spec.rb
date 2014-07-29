@@ -17,27 +17,61 @@ module PactBroker::Api
         let(:group) { double('group') }
         let(:decorator) { instance_double(PactBroker::Api::Decorators::RelationshipsCsvDecorator) }
         let(:csv) { 'csv' }
+        let(:pacticipant) { double('pacticipant')}
 
         before do
+          allow(PactBroker::Services::PacticipantService).to receive(:find_pacticipant_by_name).and_return(pacticipant)
           allow(PactBroker::Services::GroupService).to receive(:find_group_containing).and_return(group)
           allow(PactBroker::Api::Decorators::RelationshipsCsvDecorator).to receive(:new).and_return(decorator)
           allow(decorator).to receive(:to_csv).and_return(csv)
         end
 
-        it "returns a CSV of pacticipants that are in the same group as the given pacticipant" do
-          get "/groups/Some%20Service"
-          expect(last_response.body).to eq csv
+        subject { get "/groups/Some%20Service" }
+
+        context "when the pacticipant exists" do
+
+          it "looks up the pacticipant by name" do
+            expect(PactBroker::Services::PacticipantService).to receive(:find_pacticipant_by_name).with('Some Service')
+            subject
+          end
+
+          it "finds the group containing the pacticipant" do
+            expect(PactBroker::Services::GroupService).to receive(:find_group_containing).with(pacticipant)
+            subject
+          end
+
+          it "creates a CSV from the group" do
+            expect(PactBroker::Api::Decorators::RelationshipsCsvDecorator).to receive(:new).with(group)
+            subject
+          end
+
+          it "returns a 200 response" do
+            subject
+            expect(last_response.status).to eq 200
+          end
+
+          it "returns a CSV content type" do
+            subject
+            expect(last_response.headers['Content-Type']).to eq 'text/csv'
+          end
+
+          it "returns a CSV of pacticipants that are in the same group as the given pacticipant" do
+            subject
+            expect(last_response.body).to eq csv
+          end
+
         end
 
-        it "returns a CSV content type" do
-          get "/groups/Some%20Service"
-          expect(last_response.headers['Content-Type']).to eq 'text/csv'
+        context "when the pacticipant does not exist" do
+          let(:pacticipant) { nil }
+
+          it "returns a 404 response" do
+            subject
+            expect(last_response.status).to eq 404
+          end
         end
 
-        it "creates a CSV from the group" do
-          expect(PactBroker::Api::Decorators::RelationshipsCsvDecorator).to receive(:new).with(group)
-          get "/groups/Some%20Service"
-        end
+
       end
 
     end

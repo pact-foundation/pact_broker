@@ -24,39 +24,26 @@ module PactBroker
         let(:relationship_list) { double('relationship list') }
         let(:groups) { [group_1, group_2]}
 
-        subject  { GroupService.find_group_containing(consumer_b.name) }
+        subject  { GroupService.find_group_containing(consumer_b) }
 
         before do
           allow(PacticipantService).to receive(:find_relationships).and_return(relationship_list)
-          allow(PacticipantService).to receive(:find_pacticipant_by_name).and_return(consumer_b)
           allow(Functions::Groupify).to receive(:call).and_return(groups)
         end
 
-        context "when a pacticipant with the given name exists" do
-          it "finds the pacticipant by name" do
-            expect(PacticipantService).to receive(:find_pacticipant_by_name).with(consumer_b.name)
-            subject
-          end
-
-          it "retrieves a list of the relationships" do
-            allow(PacticipantService).to receive(:find_relationships)
-            subject
-          end
-
-          it "turns the relationships into groups" do
-            expect(Functions::Groupify).to receive(:call).with(relationship_list)
-            subject
-          end
-
-          it "returns the Group containing the given pacticipant" do
-            expect(subject).to be group_2
-          end
+        it "retrieves a list of the relationships" do
+          allow(PacticipantService).to receive(:find_relationships)
+          subject
         end
 
-        context "when a pacticipant with the given name does not exist" do
-          it "returns nil"
+        it "turns the relationships into groups" do
+          expect(Functions::Groupify).to receive(:call).with(relationship_list)
+          subject
         end
 
+        it "returns the Group containing the given pacticipant" do
+          expect(subject).to be group_2
+        end
 
       end
 

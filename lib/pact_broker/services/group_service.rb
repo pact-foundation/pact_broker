@@ -11,8 +11,7 @@ module PactBroker
       extend PactBroker::Repositories
       extend PactBroker::Services
 
-      def find_group_containing pacticipant_name
-        pacticipant = pacticipant_service.find_pacticipant_by_name pacticipant_name
+      def find_group_containing pacticipant
         groups.find { | group | group.include_pacticipant? pacticipant }
       end
 
