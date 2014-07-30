@@ -39,7 +39,7 @@ module PactBroker
       end
 
       def include? pacticipant
-        pacticipant == consumer || pacticipant == provider
+        pacticipant.id == consumer.id || pacticipant.id == provider.id
       end
 
       def <=> other
