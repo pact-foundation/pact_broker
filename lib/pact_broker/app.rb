@@ -37,6 +37,27 @@ module PactBroker
       end
     end
 
+    class HtmlFilter
+
+      def initialize app
+        @app = app
+      end
+
+      def call env
+        if accepts_html_and_not_json_or_csv env
+          @app.call(env)
+        else
+          [404, {},[]]
+        end
+      end
+
+      def accepts_html_and_not_json_or_csv env
+        accept = env['HTTP_ACCEPT'] || ''
+        accept.include?("html") && !accept.include?("json") && !accept.include?("csv")
+      end
+
+    end
+
     def build_app
       @app = Rack::Builder.new
 
@@ -44,10 +65,17 @@ module PactBroker
 
       logger.info "Mounting UI"
       require 'pact_broker/ui/controllers/relationships'
+      require 'pact_broker/ui/controllers/groups'
 
       ui = Rack::Builder.new {
+        use HtmlFilter
+
         map "/ui/relationships" do
           run PactBroker::UI::Controllers::Relationships
+        end
+
+        map "/groups" do
+          run PactBroker::UI::Controllers::Groups
         end
 
         map '/network-graph' do

@@ -18,7 +18,9 @@
 <body>
 <h1>Network graph of pacticipant relationships</h1>
 <div id="legend" </div>
-<script type="text/javascript">var w,h,svg;window.onload=function(){w=window.innerWidth;h=window.innerHeight;svg=d3.select("body").append("svg").attr("width",w).attr("height",h).attr("version",1.1).attr("xmlns","http://www.w3.org/2000/svg");var people=[];var maxgrant=0;var maxrad=0;var arraydepts=[];var maxorder=0;d3.text("relationships",function(unparsedData){var data=d3.csv.parseRows(unparsedData);data.forEach(function(d){var person={id:d[0],department:d[1],interviewed:parseInt(d[2]),grants:parseInt(d[3])||0,order:parseInt(d[5]),children:d.slice(6).filter(function(e){if(parseInt(e)!=NaN){return e;}})};if(person.grants>maxgrant){maxgrant=person.grants;}
+<script type="text/javascript">var w,h,svg;window.onload=function(){w=window.innerWidth;h=window.innerHeight;svg=d3.select("body").append("svg").attr("width",w).attr("height",h).attr("version",1.1).attr("xmlns","http://www.w3.org/2000/svg");var people=[];var maxgrant=0;var maxrad=0;var arraydepts=[];var maxorder=0;
+
+d3.text("relationships",function(unparsedData){var data=d3.csv.parseRows(unparsedData);data.forEach(function(d){var person={id:d[0],department:d[1],interviewed:parseInt(d[2]),grants:parseInt(d[3])||0,order:parseInt(d[5]),children:d.slice(6).filter(function(e){if(parseInt(e)!=NaN){return e;}})};if(person.grants>maxgrant){maxgrant=person.grants;}
 if(person.order>maxorder){maxorder=person.order;}
 if(arraydepts.indexOf(person.department)==-1){arraydepts.push(person.department);}
 people.push(person);});people.sort(function(a,b){return d3.ascending(a.order,b.order);});var lookup={};var radius=Math.max(100,people.length*2.5);if(3*radius>w){w=3*radius;svg.attr("width",w);}
