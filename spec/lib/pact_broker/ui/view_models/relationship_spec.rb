@@ -6,15 +6,17 @@ module PactBroker
     module ViewModels
       describe Relationship do
 
-        let(:consumer) { instance_double("PactBroker::Models::Pacticipant", name: 'consumer_name')}
-        let(:provider) { instance_double("PactBroker::Models::Pacticipant", name: 'provider_name')}
+        let(:consumer) { instance_double("PactBroker::Models::Pacticipant", name: 'Consumer Name')}
+        let(:provider) { instance_double("PactBroker::Models::Pacticipant", name: 'Provider Name')}
         let(:relationship) { PactBroker::Models::Relationship.new(consumer, provider)}
 
         subject { Relationship.new(relationship) }
 
-        its(:consumer_name) { should eq 'consumer_name'}
-        its(:provider_name) { should eq 'provider_name'}
-        its(:latest_pact_url) { should eq "/pacts/provider/provider_name/consumer/consumer_name/latest" }
+        its(:consumer_name) { should eq 'Consumer Name'}
+        its(:provider_name) { should eq 'Provider Name'}
+        its(:latest_pact_url) { should eq "/pacts/provider/Provider%20Name/consumer/Consumer%20Name/latest" }
+        its(:consumer_group_url) { should eq "/groups/Consumer%20Name" }
+        its(:provider_group_url) { should eq "/groups/Provider%20Name" }
 
         describe "<=>" do
 

@@ -1,4 +1,5 @@
 require 'pact_broker/api/pact_broker_urls'
+require 'pact_broker/ui/helpers/url_helper'
 
 module PactBroker
   module UI
@@ -17,6 +18,14 @@ module PactBroker
 
         def provider_name
           @relationship.provider_name
+        end
+
+        def consumer_group_url
+          Helpers::URLHelper.group_url consumer_name
+        end
+
+        def provider_group_url
+          Helpers::URLHelper.group_url provider_name
         end
 
         def latest_pact_url

@@ -12,9 +12,6 @@
         %li.navbar-right
           %a{href: '/hal-browser/browser.html'}
             HAL Browser
-        %li.navbar-right.hack
-          %a{href: '/network-graph'}
-            Network Graph
   .container
     %h1.page-header
       Relationships
@@ -33,12 +30,14 @@
       - relationships.each do | relationship |
         %tr
           %td.consumer
-            = relationship.consumer_name
+            %a{:href => relationship.consumer_group_url}
+              = relationship.consumer_name
           %td.pact
             %a.btn.btn-primary{:href => relationship.latest_pact_url}
               %span.glyphicon.glyphicon-arrow-right
           %td.provider
-            = relationship.provider_name
+            %a{:href => relationship.provider_group_url}
+              = relationship.provider_name
 
 :javascript
 $(function(){

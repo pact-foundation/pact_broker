@@ -9,10 +9,8 @@ module PactBroker
 
         include PactBroker::Services
 
-        set :root, File.join(File.dirname(__FILE__), '..')
-
         get ":name" do
-          erb :'group/show.html', {locals: {csv_path: "/groups/#{params[:name]}"}}, {layout: 'layouts/main'}
+          erb :'groups/show.html', {locals: {csv_path: "/groups/#{params[:name]}"}}, {layout: 'layouts/main'}
         end
 
       end

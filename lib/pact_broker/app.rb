@@ -37,27 +37,6 @@ module PactBroker
       end
     end
 
-    class HtmlFilter
-
-      def initialize app
-        @app = app
-      end
-
-      def call env
-        if accepts_html_and_not_json_or_csv env
-          @app.call(env)
-        else
-          [404, {},[]]
-        end
-      end
-
-      def accepts_html_and_not_json_or_csv env
-        accept = env['HTTP_ACCEPT'] || ''
-        accept.include?("html") && !accept.include?("json") && !accept.include?("csv")
-      end
-
-    end
-
     def build_app
       @app = Rack::Builder.new
 
@@ -68,6 +47,7 @@ module PactBroker
       require 'pact_broker/ui/controllers/groups'
 
       ui = Rack::Builder.new {
+
         use HtmlFilter
 
         map "/ui/relationships" do
@@ -78,15 +58,11 @@ module PactBroker
           run PactBroker::UI::Controllers::Groups
         end
 
-        map '/network-graph' do
-          run Rack::File.new("#{PactBroker.project_root}/public/network-graph.html")
-        end
-
         map "/" do
           run lambda { |env|
             # A request for the root path in the browser (not the json index) should
             # redirect to ui/relationships
-            if (env['PATH_INFO'].chomp("/") == "") && !env['HTTP_ACCEPT'].include?("json")
+            if (env['PATH_INFO'].chomp("/") == "")
               [303, {'Location' => 'ui/relationships'},[]]
             else
               [404, {},[]]
@@ -109,6 +85,27 @@ module PactBroker
 
       @app.map "/" do
         run Rack::Cascade.new(apps)
+      end
+
+    end
+
+    class HtmlFilter
+
+      def initialize app
+        @app = app
+      end
+
+      def call env
+        if accepts_html_and_not_json_or_csv env
+          @app.call(env)
+        else
+          [404, {},[]]
+        end
+      end
+
+      def accepts_html_and_not_json_or_csv env
+        accept = env['HTTP_ACCEPT'] || ''
+        accept.include?("html") && !accept.include?("json") && !accept.include?("csv")
       end
 
     end
