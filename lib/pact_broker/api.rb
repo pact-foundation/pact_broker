@@ -29,6 +29,10 @@ module PactBroker
         add ['pacticipants', :pacticipant_name, 'versions', :pacticipant_version_number, 'tags', :tag_name], Api::Resources::Tag
         add ['relationships'], Api::Resources::Relationships
         add ['groups', :pacticipant_name], Api::Resources::Group
+        # If the HTML and the CSV resources are both requested by the browser,
+        # Chrome gets confused by the content types, and when you click back, it tries to load the CSV
+        # instead of the HTML page. So we have to give it a different URL.
+        add ['groups', :pacticipant_name, 'csv'], Api::Resources::Group
         add [], Api::Resources::Index
       end
     end
