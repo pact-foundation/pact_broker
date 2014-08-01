@@ -20,6 +20,17 @@ module PactBroker::Api
         ["GET", "PUT"]
       end
 
+      def malformed_request?
+        begin
+          JSON.load(pact_content)
+          false
+        rescue
+          response.headers['Content-Type'] = 'application/json'
+          response.body = {error: 'Invalid JSON'}.to_json
+          true
+        end
+      end
+
       def resource_exists?
         @pact = pact_service.find_pact(identifier_from_path)
         @pact != nil
