@@ -27,10 +27,13 @@ RSpec.configure do | config |
   end
 
   config.before :each do
+    # TODO: Change this to transactional!
     DB::PACT_BROKER_DB[:pacts].truncate
     DB::PACT_BROKER_DB[:tags].truncate
     DB::PACT_BROKER_DB[:versions].truncate
     DB::PACT_BROKER_DB[:pacticipants].truncate
+    DB::PACT_BROKER_DB[:webhooks].truncate
+    DB::PACT_BROKER_DB[:webhook_headers].truncate
   end
 
   config.include Rack::Test::Methods

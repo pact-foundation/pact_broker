@@ -9,7 +9,7 @@ Sequel.migration do
       foreign_key :provider_id, :pacticipants, null: false
     end
 
-    create_table(:webhooks_headers) do
+    create_table(:webhook_headers) do
       String :name, null: false
       String :value
       foreign_key :webhook_id, :webhooks, null: false
