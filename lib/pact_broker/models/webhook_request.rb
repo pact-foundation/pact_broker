@@ -14,8 +14,8 @@ module PactBroker
       attr_accessor :method, :url, :headers, :body
 
       def initialize attributes = {}
-        @method = attributes.fetch(:method)
-        @url = attributes.fetch(:url)
+        @method = attributes[:method]
+        @url = attributes[:url]
         @headers = attributes[:headers]
         @body = attributes[:body]
       end
