@@ -1,5 +1,5 @@
 require 'sequel'
-require 'pact_broker/models/webook'
+require 'pact_broker/models/webhook'
 
 module PactBroker
   module Repositories

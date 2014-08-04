@@ -3,6 +3,8 @@ require 'pact_broker/repositories/pacticipant_repository'
 require 'pact_broker/repositories/version_repository'
 require 'pact_broker/repositories/pact_repository'
 require 'pact_broker/repositories/tag_repository'
+require 'pact_broker/repositories/webhook_repository'
+
 
 module PactBroker
   module Repositories
@@ -20,6 +22,10 @@ module PactBroker
 
     def tag_repository
       TagRepository.new
+    end
+
+    def webhook_repository
+      WebhookRepository.new
     end
 
     extend self
