@@ -28,9 +28,7 @@ module PactBroker::Api
 
         subject { post path, webhook_json, headers }
 
-        it "creates a webhook" do
-
-        end
+        it "creates a webhook"
 
         context "with malformed JSON" do
           let(:webhook_json) { "{" }

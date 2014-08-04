@@ -5,8 +5,7 @@ module PactBroker
   module Repositories
     class WebhookRepository
 
-      def save webhook
-
+      def create webhook
 
       end
 

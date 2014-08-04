@@ -8,12 +8,27 @@ module PactBroker
     describe Webhook do
 
       describe "#validate" do
-        subject { Webhook.new(request: ) }
-        context "with a nil method" do
-          it "returns an error message" do
+        let(:request) { instance_double(PactBroker::Models::WebhookRequest)}
+        let(:errors) { ['errors'] }
 
+        subject { Webhook.new(request: request) }
+
+        context "when the request is not present" do
+          let(:request) { nil }
+
+          it "returns an error message" do
+            expect(subject.validate).to include "Missing required attribute 'request'"
           end
         end
+
+        context "when the request is present" do
+
+          it "validates the request" do
+            expect(request).to receive(:validate).and_return(errors)
+            expect(subject.validate).to eq errors
+          end
+        end
+
       end
     end
 

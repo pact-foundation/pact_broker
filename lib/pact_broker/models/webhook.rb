@@ -17,7 +17,10 @@ module PactBroker
       end
 
       def validate
-        [message('errors.validation.attribute_missing', attribute: 'method')]
+        messages = []
+        messages << message('errors.validation.attribute_missing', attribute: 'request') unless request
+        messages.concat request.validate if request
+        messages
       end
     end
 
