@@ -76,7 +76,15 @@ module PactBroker::Api
         end
 
 
-        context "with missing attributes" do
+        context "with invalid attributes" do
+
+          let(:errors) { ['errors'] }
+
+          before do
+            allow_any_instance_of(PactBroker::Models::Webhook).to receive(:validate).and_return(errors)
+          end
+
+          it "returns a 400"
 
         end
 
