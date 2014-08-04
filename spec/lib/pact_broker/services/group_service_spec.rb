@@ -9,11 +9,11 @@ module PactBroker
 
       describe "#find_group_containing" do
 
-        let(:consumer_a) { double('consumer a', name: 'consumer a')}
-        let(:consumer_b) { double('consumer b', name: 'consumer b')}
+        let(:consumer_a) { double('consumer a', name: 'consumer a', id: 1)}
+        let(:consumer_b) { double('consumer b', name: 'consumer b', id: 2)}
 
-        let(:provider_x) { double('provider x', name: 'provider x')}
-        let(:provider_y) { double('provider y', name: 'provider y')}
+        let(:provider_x) { double('provider x', name: 'provider x', id: 3)}
+        let(:provider_y) { double('provider y', name: 'provider y', id: 4)}
 
         let(:relationship_1) { Models::Relationship.new(consumer_a, provider_x) }
         let(:relationship_2) { Models::Relationship.new(consumer_b, provider_y) }

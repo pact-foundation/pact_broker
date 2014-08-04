@@ -2,12 +2,11 @@ ENV['RACK_ENV'] = 'test'
 RACK_ENV = 'test'
 
 $: << File.expand_path("../../", __FILE__)
-
 require 'rack/test'
 require 'db'
 require './spec/support/provider_state_builder'
 require 'pact_broker/api'
-require 'rspec/fire'
+require 'rspec/its'
 
 YAML::ENGINE.yamler = 'psych'
 I18n.config.enforce_available_locales = false
@@ -37,7 +36,9 @@ RSpec.configure do | config |
   end
 
   config.include Rack::Test::Methods
-  config.include RSpec::Fire
+  config.mock_with :rspec do |mocks|
+    mocks.verify_partial_doubles = true
+  end
 
   def app
     PactBroker::API
