@@ -1,5 +1,6 @@
 require 'pact_broker/models/webhook_request_header'
 require 'pact_broker/logging'
+require 'pact_broker/messages'
 
 module PactBroker
 
@@ -10,6 +11,7 @@ module PactBroker
     class WebhookRequest
 
       include PactBroker::Logging
+      include PactBroker::Messages
 
       attr_accessor :method, :url, :headers, :body
 
@@ -45,6 +47,15 @@ module PactBroker
 
       end
 
+      def validate
+        messages = []
+        messages << message('errors.validation.attribute_missing', attribute: 'method') unless method
+        messages << message('errors.validation.attribute_missing', attribute: 'url') unless url
+        messages << message('errors.validation.invalid_http_method', method: method) unless method && method_valid?
+        messages << message('errors.validation.invalid_url', url: url) unless url && url_valid?
+        messages
+      end
+
       private
 
       def to_s
@@ -53,6 +64,14 @@ module PactBroker
 
       def http_request
         Net::HTTP.const_get(method.capitalize).new(url)
+      end
+
+      def method_valid?
+        Net::HTTP.const_defined?(method.capitalize)
+      end
+
+      def url_valid?
+        uri.scheme && uri.host
       end
 
       def uri
