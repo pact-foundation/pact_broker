@@ -9,6 +9,10 @@ module PactBroker
         PactBroker::Models::Pacticipant.where(name: name).single_record
       end
 
+      def find_by_id id
+        PactBroker::Models::Pacticipant.where(id: id).single_record
+      end
+
       def find_all
         PactBroker::Models::Pacticipant.order(:name).all
       end

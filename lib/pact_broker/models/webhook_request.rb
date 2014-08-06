@@ -18,7 +18,7 @@ module PactBroker
       def initialize attributes = {}
         @method = attributes[:method]
         @url = attributes[:url]
-        @headers = attributes[:headers]
+        @headers = attributes[:headers] || {}
         @body = attributes[:body]
       end
 

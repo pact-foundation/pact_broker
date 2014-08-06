@@ -9,11 +9,13 @@ module PactBroker
 
       include Messages
 
-      attr_accessor :id, :uuid, :consumer, :provider, :request
+      attr_accessor :uuid, :consumer, :provider, :request
 
       def initialize attributes = {}
-        @id = attributes[:id]
+        @uuid = attributes[:uuid]
         @request = attributes[:request]
+        @consumer = attributes[:consumer]
+        @provider = attributes[:provider]
       end
 
       def validate
