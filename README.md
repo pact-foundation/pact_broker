@@ -28,4 +28,4 @@ See the [Pact Broker Client](https://github.com/bethesque/pact_broker-client) fo
 * Run `bundle exec rackup`
 * Open [http://localhost:9292](http://localhost:9292) and you should see the HAL browser.
 
-For production usage, use a web application server like Phusion Passenger to serve the Pact Broker application.
+For production usage, use a web application server like [Phusion Passenger](https://www.phusionpassenger.com) to serve the Pact Broker application.
