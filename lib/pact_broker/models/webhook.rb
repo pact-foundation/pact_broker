@@ -9,7 +9,7 @@ module PactBroker
 
       include Messages
 
-      attr_accessor :id, :consumer_id, :provider_id, :request
+      attr_accessor :id, :uuid, :consumer, :provider, :request
 
       def initialize attributes = {}
         @id = attributes[:id]
