@@ -22,6 +22,7 @@ See the [Pact Broker Client](https://github.com/bethesque/pact_broker-client) fo
 ## Usage
 
 * Create a database using a product that is supported by the Sequel gem (listed on this page http://sequel.jeremyevans.net/rdoc/files/README_rdoc.html). At time of writing, Sequel has adapters for:  ADO, Amalgalite, CUBRID, DataObjects, DB2, DBI, Firebird, IBM_DB, Informix, JDBC, MySQL, Mysql2, ODBC, OpenBase, Oracle, PostgreSQL, SQLAnywhere, SQLite3, Swift, and TinyTDS
+* Install ruby 1.9.3 or later
 * Copy the [example](/example) directory to your workstation.
 * Modify the config.ru and Gemfile as desired (eg. choose database driver gem, set your database credentials)
 * Run `bundle`
