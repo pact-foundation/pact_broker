@@ -7,10 +7,6 @@ module PactBroker::Api
 
     class Webhooks < BaseResource
 
-      # def content_types_accepted
-      #   [["application/json", :from_json]]
-      # end
-
       def allowed_methods
         ["POST"]
       end
@@ -36,9 +32,9 @@ module PactBroker::Api
       end
 
       def process_post
-        saved_webhook = webhook_service.create webhook, @consumer, @provider
+        saved_webhook = webhook_service.create webhook, consumer, provider
         response.headers['Content-Type'] = 'application/json'
-        response.headers['Location'] = 'new-location'
+        response.headers['Location'] = webhook_url saved_webhook, resource_url
         response.body = Decorators::WebhookDecorator.new(saved_webhook).to_json(base_url: resource_url)
         true
       end
@@ -49,6 +45,8 @@ module PactBroker::Api
       end
 
       private
+
+      attr_reader :consumer, :provider
 
       def set_json_error_message message
         response.headers['Content-Type'] = 'application/json'

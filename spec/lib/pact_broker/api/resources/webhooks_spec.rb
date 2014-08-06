@@ -17,7 +17,7 @@ module PactBroker::Api
         let(:path) { "/webhooks/provider/Some%20Provider/consumer/Some%20Consumer" }
         let(:headers) { {'CONTENT_TYPE' => 'application/json'} }
         let(:webhook) { double('webhook')}
-        let(:saved_webhook) { double('saved_webhook')}
+        let(:saved_webhook) { double('saved_webhook', uuid: 'webhook-uuid')}
         let(:provider) { instance_double(PactBroker::Models::Pacticipant)}
         let(:consumer) { instance_double(PactBroker::Models::Pacticipant)}
         let(:errors) { [] }
@@ -116,6 +116,11 @@ module PactBroker::Api
           it "returns a 201 response" do
             subject
             expect(last_response.status).to be 201
+          end
+
+          it "returns the Location header" do
+            subject
+            expect(last_response.headers['Location']).to include('webhook-uuid')
           end
 
           it "returns a JSON content type" do

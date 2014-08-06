@@ -43,6 +43,10 @@ module PactBroker
         "#{tags_url(base_url, tag.version)}/#{tag.name}"
       end
 
+      def webhook_url webhook, base_url
+        "#{base_url}/#{webhook.uuid}"
+      end
+
       private
 
       def representable_pact pact

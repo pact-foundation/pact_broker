@@ -2,6 +2,7 @@ Sequel.migration do
   change do
     create_table(:webhooks) do
       primary_key :id
+      String :uuid, null: false
       String :method, null: false
       String :url, null: false
       String :body
