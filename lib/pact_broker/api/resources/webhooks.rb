@@ -7,9 +7,9 @@ module PactBroker::Api
 
     class Webhooks < BaseResource
 
-      def content_types_accepted
-        [["application/json", :from_json]]
-      end
+      # def content_types_accepted
+      #   [["application/json", :from_json]]
+      # end
 
       def allowed_methods
         ["POST"]
@@ -23,37 +23,50 @@ module PactBroker::Api
       def malformed_request?
         if request.post?
           begin
-            @webhook = Decorators::WebhookDecorator.new(PactBroker::Models::Webhook.new).from_json(request.body.to_s)
-            false
+            if (errors = webhook.validate).any?
+              set_json_validation_error_messages errors
+              return true
+            end
           rescue
             set_json_error_message 'Invalid JSON'
-            true
+            return true
           end
         end
+        false
       end
+
+      def process_post
+        saved_webhook = webhook_service.create webhook, @consumer, @provider
+        response.headers['Content-Type'] = 'application/json'
+        response.headers['Location'] = 'new-location'
+        response.body = Decorators::WebhookDecorator.new(saved_webhook).to_json(base_url: resource_url)
+        true
+      end
+
+
+      def webhook
+        @webhook ||= Decorators::WebhookDecorator.new(PactBroker::Models::Webhook.new).from_json(request.body.to_s)
+      end
+
+      private
 
       def set_json_error_message message
         response.headers['Content-Type'] = 'application/json'
         response.body = {error: message}.to_json
       end
 
-      def process_post
-        true
+      def set_json_validation_error_messages errors
+        response.headers['Content-Type'] = 'application/json'
+        response.body = {errors: errors}.to_json
       end
-
-      def from_json
-
-      end
-
-      private
 
       def find_pacticipant name, role
         pacticipant = pacticipant_service.find_pacticipant_by_name name
         if pacticipant.nil?
           set_json_error_message "No #{role} with name '#{name}' found"
-          false
+          nil
         else
-          true
+          pacticipant
         end
       end
 
