@@ -23,16 +23,18 @@ end
 RSpec.configure do | config |
   config.before :suite do
     raise "Wrong environment!!! Don't run this script!! ENV['RACK_ENV'] is #{ENV['RACK_ENV']} and RACK_ENV is #{RACK_ENV}" if ENV['RACK_ENV'] != 'test' || RACK_ENV != 'test'
+    PactBroker::DB.connection = DB::PACT_BROKER_DB
   end
+
 
   config.before :each do
     # TODO: Change this to transactional!
+    DB::PACT_BROKER_DB[:webhook_headers].truncate
+    DB::PACT_BROKER_DB[:webhooks].truncate
     DB::PACT_BROKER_DB[:pacts].truncate
     DB::PACT_BROKER_DB[:tags].truncate
     DB::PACT_BROKER_DB[:versions].truncate
     DB::PACT_BROKER_DB[:pacticipants].truncate
-    DB::PACT_BROKER_DB[:webhooks].truncate
-    DB::PACT_BROKER_DB[:webhook_headers].truncate
   end
 
   config.include Rack::Test::Methods

@@ -5,6 +5,8 @@ class ProviderStateBuilder
 
   include PactBroker::Repositories
 
+  attr_reader :pacticipant
+
   def create_pricing_service
     @pricing_service_id = pacticipant_repository.create(:name => 'Pricing Service', :repository_url => 'git@git.realestate.com.au:business-systems/pricing-service').save(raise_on_save_failure: true).id
     self

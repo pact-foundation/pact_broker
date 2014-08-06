@@ -21,8 +21,8 @@ module PactBroker::Api
         let(:provider) { instance_double(PactBroker::Models::Pacticipant)}
         let(:consumer) { instance_double(PactBroker::Models::Pacticipant)}
         let(:errors) { [] }
+
         before do
-          #allow(SecureRandom).to receive(:urlsafe_base64).and_return(uuid)
           allow(PactBroker::Services::WebhookService).to receive(:create).and_return(saved_webhook)
           allow(PactBroker::Services::PacticipantService).to receive(:find_pacticipant_by_name).with("Some Provider").and_return(provider)
           allow(PactBroker::Services::PacticipantService).to receive(:find_pacticipant_by_name).with("Some Consumer").and_return(consumer)
