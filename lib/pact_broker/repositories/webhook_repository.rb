@@ -13,14 +13,11 @@ module PactBroker
       include Repositories
 
       def create webhook, consumer, provider
-        db_webhook = Webhook.from_model webhook
-        db_webhook.consumer_id = consumer.id
-        db_webhook.provider_id = provider.id
+        db_webhook = Webhook.from_model webhook, consumer, provider
         db_webhook.uuid = SecureRandom.urlsafe_base64
         db_webhook.save
-
         webhook.request.headers.each_pair do | name, value |
-          WebhookHeader.from_model(name, value, db_webhook.id).save
+          db_webhook.add_header WebhookHeader.from_model(name, value, db_webhook.id)
         end
 
         find_by_uuid db_webhook.uuid
@@ -32,6 +29,10 @@ module PactBroker
         db_webhook.to_model
       end
 
+      def delete_by_uuid uuid
+        Webhook.where(uuid: uuid).destroy
+      end
+
     end
 
     class Webhook < Sequel::Model
@@ -39,17 +40,24 @@ module PactBroker
       set_primary_key :id
       associate(:many_to_one, :provider, :class => "PactBroker::Models::Pacticipant", :key => :provider_id, :primary_key => :id)
       associate(:many_to_one, :consumer, :class => "PactBroker::Models::Pacticipant", :key => :consumer_id, :primary_key => :id)
+      one_to_many :headers, :class => "PactBroker::Repositories::WebhookHeader", :reciprocal => :webhook
 
+      def before_destroy
+        WebhookHeader.where(webhook_id: id).destroy
+      end
 
-      def self.from_model webhook
+      def self.from_model webhook, consumer, provider
         is_json_request_body = !(String === webhook.request.body || webhook.request.body.nil?) # Can't rely on people to set content type
-          new(
-            uuid: webhook.uuid,
-            method: webhook.request.method,
-            url: webhook.request.url,
-            body: (is_json_request_body ? webhook.request.body.to_json : webhook.request.body),
-            is_json_request_body: is_json_request_body
-          )
+        new(
+          uuid: webhook.uuid,
+          method: webhook.request.method,
+          url: webhook.request.url,
+          body: (is_json_request_body ? webhook.request.body.to_json : webhook.request.body),
+          is_json_request_body: is_json_request_body
+        ).tap do | db_webhook |
+          db_webhook.consumer_id = consumer.id
+          db_webhook.provider_id = provider.id
+        end
       end
 
       def to_model
@@ -61,10 +69,10 @@ module PactBroker
       end
 
       def request_attributes
-        values.merge(headers: headers, body: parsed_body)
+        values.merge(headers: parsed_headers, body: parsed_body)
       end
 
-      def headers
+      def parsed_headers
         WebhookHeader.where(webhook_id: id).all.each_with_object({}) do | header, hash |
           hash[header[:name]] = header[:value]
         end
