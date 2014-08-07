@@ -1,3 +1,4 @@
+
 require 'pact_broker/api/resources/base_resource'
 require 'pact_broker/api/decorators/webhook_decorator'
 
@@ -39,12 +40,11 @@ module PactBroker::Api
         true
       end
 
+      private
 
       def webhook
         @webhook ||= Decorators::WebhookDecorator.new(PactBroker::Models::Webhook.new).from_json(request.body.to_s)
       end
-
-      private
 
       attr_reader :consumer, :provider
 
