@@ -6,8 +6,6 @@ module PactBroker
     module Decorators
       class WebhooksDecorator < BaseDecorator
 
-        # collection :entries, embedded: true, as: :webhooks, :extend => PactBroker::Api::Decorators::WebhookDecorator
-
         links :webhooks do | options |
           represented.entries.collect do | webhook |
             {
