@@ -12,14 +12,33 @@ module PactBroker
               method: 'POST',
               url: 'http://example.org/hook',
               headers: {:'Content-Type' => 'application/json'},
-              body: { some: 'body' },
+              body: { some: 'body' }
             },
+
+            _embedded: {
+              consumer: {
+                name: 'Consumer',
+                :_links => {
+                  :self => {
+                    :href=>"http://example.org/pacticipants/Consumer"
+                    }
+                  }
+                },
+                provider: {
+                  name: 'Provider',
+                  :_links => {
+                    :self => {
+                      :href=>"http://example.org/pacticipants/Provider"
+                    }
+                  }
+                }
+              },
+
             _links: {
               :self => {
                 href: 'http://example.org/webhooks/some-uuid'
               }
             }
-
           }
         end
 
@@ -27,8 +46,11 @@ module PactBroker
           Models::WebhookRequest.new(hash[:request])
         end
 
+        let(:consumer) { Models::Pacticipant.new(name: 'Consumer') }
+        let(:provider) { Models::Pacticipant.new(name: 'Provider') }
+
         let(:webhook) do
-          Models::Webhook.new(request: webhook_request, uuid: 'some-uuid')
+          Models::Webhook.new(request: webhook_request, uuid: 'some-uuid', consumer: consumer, provider: provider)
         end
 
         subject { WebhookDecorator.new(webhook) }
