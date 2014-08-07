@@ -7,6 +7,7 @@ require 'pact_broker/api/resources/tag'
 require 'pact_broker/api/resources/index'
 require 'pact_broker/api/resources/relationships'
 require 'pact_broker/api/resources/group'
+require 'pact_broker/api/resources/pact_webhooks'
 require 'pact_broker/api/resources/webhooks'
 require 'pact_broker/api/resources/webhook'
 
@@ -35,8 +36,9 @@ module PactBroker
         # Chrome gets confused by the content types, and when you click back, it tries to load the CSV
         # instead of the HTML page. So we have to give it a different URL.
         add ['groups', :pacticipant_name, 'csv'], Api::Resources::Group
-        add ['webhooks', 'provider', :provider_name, 'consumer', :consumer_name ], Api::Resources::Webhooks
+        add ['webhooks', 'provider', :provider_name, 'consumer', :consumer_name ], Api::Resources::PactWebhooks
         add ['webhooks', :uuid ], Api::Resources::Webhook
+        add ['webhooks'], Api::Resources::Webhooks
         add [], Api::Resources::Index
       end
     end

@@ -6,12 +6,13 @@ module PactBroker
     module Decorators
       describe WebhookDecorator do
 
+        let(:headers) { {:'Content-Type' => 'application/json'} }
         let(:hash) do
           {
             request: {
               method: 'POST',
               url: 'http://example.org/hook',
-              headers: {:'Content-Type' => 'application/json'},
+              headers: headers,
               body: { some: 'body' }
             },
 
@@ -61,6 +62,13 @@ module PactBroker
 
           it "serialises the webhook to JSON" do
             expect(parsed_json).to eq hash
+          end
+
+          context "when the headers are empty" do
+            let(:headers) { nil }
+            it "does not include the headers" do
+              expect(parsed_json[:request]).to_not have_key :headers
+            end
           end
 
         end

@@ -24,6 +24,10 @@ module PactBroker
         messages.concat request.validate if request
         messages
       end
+
+      def description
+        "A webhook for the pact between #{consumer.name} and #{provider.name}"
+      end
     end
 
   end

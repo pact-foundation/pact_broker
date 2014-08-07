@@ -7,11 +7,14 @@ module PactBroker
 
     describe Webhook do
 
+      let(:consumer) { Pacticipant.new(name: 'Consumer')}
+      let(:provider) { Pacticipant.new(name: 'Provider')}
+      let(:request) { instance_double(PactBroker::Models::WebhookRequest)}
+      subject { Webhook.new(request: request, consumer: consumer, provider: provider) }
+
       describe "#validate" do
-        let(:request) { instance_double(PactBroker::Models::WebhookRequest)}
         let(:errors) { ['errors'] }
 
-        subject { Webhook.new(request: request) }
 
         context "when the request is not present" do
           let(:request) { nil }
@@ -28,7 +31,12 @@ module PactBroker
             expect(subject.validate).to eq errors
           end
         end
+      end
 
+      describe "description" do
+        it "returns a description of the webhook" do
+          expect(subject.description).to eq "A webhook for the pact between Consumer and Provider"
+        end
       end
     end
 

@@ -19,27 +19,30 @@ module PactBroker::Api
       def to_json
         {
           _links: {
-            'index' => [
-              {
-                href: request.uri.to_s,
-                title: 'The index page',
-                templated: false
-              }
-            ],
-            'latest-pacts' => [
-              {
-                href: request.uri.to_s + 'pacts/latest',
-                title: 'Retrieve latest pacts',
-                templated: false
-              }
-            ],
-            'pacticpants' => [
-              {
-                href: request.uri.to_s + 'pacticipants',
-                title: 'Retrieve pacticipants',
-                templated: false
-              }
-            ]
+            'index' =>
+            {
+              href: request.uri.to_s,
+              title: 'The index page',
+              templated: false
+            },
+            'latest-pacts' =>
+            {
+              href: request.uri.to_s + 'pacts/latest',
+              title: 'Retrieve latest pacts',
+              templated: false
+            },
+            'pacticpants' =>
+            {
+              href: request.uri.to_s + 'pacticipants',
+              title: 'Retrieve pacticipants',
+              templated: false
+            },
+            'pact-webhooks' =>
+            {
+              href: request.uri.to_s + 'webhooks/provider/{providerName}/consumer/{consumerName}',
+              title: 'Pact Webhooks related to a specific Consumer/Provider pair',
+              templated: true
+            }
           }
         }.to_json
       end

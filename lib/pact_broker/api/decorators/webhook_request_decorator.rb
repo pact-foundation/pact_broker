@@ -7,7 +7,7 @@ module PactBroker
 
           property :method
           property :url
-          property :headers
+          property :headers, getter: lambda { | _ | headers.empty? ? nil : headers }
           property :body
 
       end

@@ -1,0 +1,74 @@
+
+require 'pact_broker/api/resources/base_resource'
+require 'pact_broker/api/decorators/webhook_decorator'
+
+module PactBroker::Api
+
+  module Resources
+
+    class PactWebhooks < BaseResource
+
+      def allowed_methods
+        ["POST"]
+      end
+
+      def resource_exists?
+        (@consumer = find_pacticipant(identifier_from_path[:consumer_name], "consumer")) &&
+          (@provider = find_pacticipant(identifier_from_path[:provider_name], "provider"))
+      end
+
+      def malformed_request?
+        if request.post?
+          begin
+            if (errors = webhook.validate).any?
+              set_json_validation_error_messages errors
+              return true
+            end
+          rescue
+            set_json_error_message 'Invalid JSON'
+            return true
+          end
+        end
+        false
+      end
+
+      def process_post
+        saved_webhook = webhook_service.create webhook, consumer, provider
+        response.headers['Content-Type'] = 'application/json'
+        response.headers['Location'] = webhook_url saved_webhook, resource_url
+        response.body = Decorators::WebhookDecorator.new(saved_webhook).to_json(base_url: resource_url)
+        true
+      end
+
+      private
+
+      def webhook
+        @webhook ||= Decorators::WebhookDecorator.new(PactBroker::Models::Webhook.new).from_json(request.body.to_s)
+      end
+
+      attr_reader :consumer, :provider
+
+      def set_json_error_message message
+        response.headers['Content-Type'] = 'application/json'
+        response.body = {error: message}.to_json
+      end
+
+      def set_json_validation_error_messages errors
+        response.headers['Content-Type'] = 'application/json'
+        response.body = {errors: errors}.to_json
+      end
+
+      def find_pacticipant name, role
+        pacticipant = pacticipant_service.find_pacticipant_by_name name
+        if pacticipant.nil?
+          set_json_error_message "No #{role} with name '#{name}' found"
+          nil
+        else
+          pacticipant
+        end
+      end
+
+    end
+  end
+
+end

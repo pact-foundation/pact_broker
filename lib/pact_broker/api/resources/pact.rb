@@ -43,7 +43,7 @@ module PactBroker::Api
       end
 
       def to_json
-        PactBroker::Api::Decorators::PactDecorator.new(@pact).to_json
+        PactBroker::Api::Decorators::PactDecorator.new(@pact).to_json(base_url: resource_url)
       end
 
       def pact_content

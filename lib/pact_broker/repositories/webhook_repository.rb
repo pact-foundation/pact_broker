@@ -33,6 +33,10 @@ module PactBroker
         Webhook.where(uuid: uuid).destroy
       end
 
+      def find_all
+        Webhook.all.collect { | db_webhook| db_webhook.to_model }
+      end
+
     end
 
     class Webhook < Sequel::Model

@@ -15,6 +15,10 @@ module PactBroker
           ::JSON.parse(represented.json_content).merge super
         end
 
+        link :webhooks do | options |
+          webhooks_for_pact_url represented, options.fetch(:base_url)
+        end
+
       end
     end
   end

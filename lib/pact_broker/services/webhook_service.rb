@@ -18,6 +18,10 @@ module PactBroker
       def self.delete_by_uuid uuid
         webhook_repository.delete_by_uuid uuid
       end
+
+      def self.find_all
+        webhook_repository.find_all
+      end
     end
   end
 end

@@ -140,6 +140,21 @@ module PactBroker
 
       end
 
+      describe "find_all" do
+        before do
+          allow(SecureRandom).to receive(:urlsafe_base64).and_return(uuid, 'some-other-uuid')
+          WebhookRepository.new.create webhook, consumer, provider
+          WebhookRepository.new.create webhook, consumer, provider
+        end
+
+        subject { WebhookRepository.new.find_all }
+
+        it "returns a list of webhooks" do
+          expect(subject.size).to be 2
+          expect(subject.first).to be_instance_of Models::Webhook
+        end
+      end
+
     end
   end
 end

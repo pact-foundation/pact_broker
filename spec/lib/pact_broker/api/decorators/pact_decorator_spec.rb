@@ -37,6 +37,10 @@ module PactBroker
           it "includes the createdAt date" do
             expect(subject[:createdAt]).to eq created_at.xmlschema
           end
+
+          it "includes a link to the webhooks for this pact" do
+            expect(subject[:_links][:webhooks][:href]).to eq "http://example.org/webhooks/provider/Provider/consumer/Consumer"
+          end
         end
 
       end
