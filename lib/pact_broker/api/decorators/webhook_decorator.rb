@@ -9,6 +9,9 @@ module PactBroker
 
         property :request, :class => PactBroker::Models::WebhookRequest, :extend => WebhookRequestDecorator
 
+        link :self do | options |
+          webhook_url(represented, options[:base_url])
+        end
 
       end
     end

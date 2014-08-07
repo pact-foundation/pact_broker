@@ -44,7 +44,7 @@ module PactBroker
       end
 
       def webhook_url webhook, base_url
-        "#{base_url}/#{webhook.uuid}"
+        "#{base_url}/webhooks/#{webhook.uuid}"
       end
 
       private

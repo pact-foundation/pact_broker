@@ -12,8 +12,14 @@ module PactBroker
               method: 'POST',
               url: 'http://example.org/hook',
               headers: {:'Content-Type' => 'application/json'},
-              body: { some: 'body' }
+              body: { some: 'body' },
+            },
+            _links: {
+              :self => {
+                href: 'http://example.org/webhooks/some-uuid'
+              }
             }
+
           }
         end
 
@@ -22,14 +28,14 @@ module PactBroker
         end
 
         let(:webhook) do
-          Models::Webhook.new(request: webhook_request)
+          Models::Webhook.new(request: webhook_request, uuid: 'some-uuid')
         end
 
         subject { WebhookDecorator.new(webhook) }
 
         describe "to_json" do
 
-          let(:parsed_json) { JSON.parse(subject.to_json, symbolize_names: true)}
+          let(:parsed_json) { JSON.parse(subject.to_json(base_url: 'http://example.org'), symbolize_names: true)}
 
           it "serialises the webhook to JSON" do
             expect(parsed_json).to eq hash
