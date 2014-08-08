@@ -25,19 +25,25 @@ module PactBroker
         webhook_repository.find_all
       end
 
-      def self.execute_webhook pact
-        webhook = webhook_repository.find_by_consumer_and_provider pact.consumer, pact.provider
-        if webhook
-          run_later(webhook)
+      def self.execute_webhooks pact
+        webhooks = webhook_repository.find_by_consumer_and_provider pact.consumer, pact.provider
+        if webhooks.any?
+          run_later(webhooks)
         else
           logger.debug "No webhook found for consumer \"#{pact.consumer.name}\" and provider \"#{pact.provider.name}\""
         end
       end
 
       # TODO background job?
-      def self.run_later webhook
+      def self.run_later webhooks
         Thread.new do
-          webhook.execute
+          webhooks.each do | webhook |
+            begin
+              webhook.execute
+            rescue StandardError => e
+              # Exceptions are already logged, no need to log again.
+            end
+          end
         end
       end
     end

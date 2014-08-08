@@ -38,7 +38,7 @@ module PactBroker
       end
 
       def find_by_consumer_and_provider consumer, provider
-
+        Webhook.where(consumer_id: consumer.id, provider_id: provider.id).collect { | db_webhook| db_webhook.to_model }
       end
 
     end

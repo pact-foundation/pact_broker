@@ -156,11 +156,41 @@ module PactBroker
       end
 
       describe "find_by_consumer_and_provider" do
+        let(:test_data_builder) { ProviderStateBuilder.new }
+        subject { WebhookRepository.new.find_by_consumer_and_provider test_data_builder.consumer, test_data_builder.provider}
+
         context "when a webhook exists with a matching consumer and provider" do
-          it "returns the webhook"
+
+          before do
+            allow(SecureRandom).to receive(:urlsafe_base64).and_call_original
+            test_data_builder
+              .create_consumer("Consumer")
+              .create_provider("Another Provider")
+              .create_webhook
+              .create_provider("Provider")
+              .create_webhook
+          end
+
+
+          it "returns an array of webhooks" do
+            expect(subject).to be_instance_of Array
+            expect(subject.first.uuid).to eq test_data_builder.webhook.uuid
+          end
         end
+
         context "when a webhook does not exist with a matching consumer and provider" do
-          it "returns nil"
+
+          before do
+            test_data_builder
+              .create_consumer("Consumer")
+              .create_provider("Provider")
+              .create_webhook
+              .create_provider("Another Provider")
+          end
+
+          it "returns an empty array" do
+            expect(subject).to eq []
+          end
         end
       end
 

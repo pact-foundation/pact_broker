@@ -6,6 +6,9 @@ class ProviderStateBuilder
   include PactBroker::Repositories
 
   attr_reader :pacticipant
+  attr_reader :consumer
+  attr_reader :provider
+  attr_reader :webhook
 
   def create_pricing_service
     @pricing_service_id = pacticipant_repository.create(:name => 'Pricing Service', :repository_url => 'git@git.realestate.com.au:business-systems/pricing-service').save(raise_on_save_failure: true).id
@@ -113,6 +116,12 @@ class ProviderStateBuilder
 
   def create_pact
     @pact = PactBroker::Models::Pact.create(consumer_version: @consumer_version, provider: @provider, json_content: json_content)
+    self
+  end
+
+  def create_webhook
+    request = PactBroker::Models::WebhookRequest.new(method: 'POST', url: 'http://example.org')
+    @webhook = WebhookRepository.new.create PactBroker::Models::Webhook.new(request: request), @consumer, @provider
     self
   end
 
