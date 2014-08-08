@@ -21,14 +21,16 @@ module PactBroker::Api
       end
 
       def malformed_request?
-        begin
-          JSON.parse(pact_content) #Not load! Otherwise it will try to load Ruby classes.
-          false
-        rescue StandardError => e
-          logger.error "Error parsing JSON #{e} - #{pact_content}"
-          response.headers['Content-Type'] = 'application/json'
-          response.body = {error: 'Invalid JSON'}.to_json
-          true
+        if request.put?
+          begin
+            JSON.parse(pact_content) #Not load! Otherwise it will try to load Ruby classes.
+            false
+          rescue StandardError => e
+            logger.error "Error parsing JSON #{e} - #{pact_content}"
+            response.headers['Content-Type'] = 'application/json'
+            response.body = {error: 'Invalid JSON'}.to_json
+            true
+          end
         end
       end
 
