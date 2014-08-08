@@ -12,7 +12,7 @@ module PactBroker::Api
       end
 
       def allowed_methods
-        ["GET"]
+        ["GET", "DELETE"]
       end
 
       def resource_exists?
@@ -22,6 +22,13 @@ module PactBroker::Api
       def to_json
         Decorators::WebhookDecorator.new(webhook).to_json(base_url: resource_url)
       end
+
+      def delete_resource
+        webhook_service.delete_by_uuid uuid
+        true
+      end
+
+      private
 
       def webhook
         @webhook ||= webhook_service.find_by_uuid uuid
