@@ -25,16 +25,13 @@ module PactBroker
       def create_or_update_pact params
         provider = pacticipant_repository.find_by_name_or_create params[:provider_name]
         consumer = pacticipant_repository.find_by_name_or_create params[:consumer_name]
-        version = version_repository.find_by_pacticipant_id_and_number_or_create consumer.id, params[:consumer_version_number]
+        consumer_version = version_repository.find_by_pacticipant_id_and_number_or_create consumer.id, params[:consumer_version_number]
+        pact = pact_repository.find_by_version_and_provider(consumer_version.id, provider.id)
 
-        if pact = pact_repository.find_by_version_and_provider(version.id, provider.id)
-          pact.update(json_content: params[:json_content])
-          execute_webhooks pact
-          return pact, false
+        if pact
+          return update_pact params, pact
         else
-          pact = pact_repository.create json_content: params[:json_content], version_id: version.id, provider_id: provider.id
-          execute_webhooks pact
-          return pact, true
+          return create_pact params, consumer_version, provider
         end
 
       end
@@ -45,6 +42,23 @@ module PactBroker
       end
 
       private
+
+      def update_pact params, pact
+        previous_json_content = pact.json_content
+        pact.update(json_content: params[:json_content])
+        if previous_json_content != params[:json_content]
+          webhook_service.execute_webhooks pact
+        end
+        return pact, false
+      end
+
+      def create_pact params, version, provider
+        pact = pact_repository.create json_content: params[:json_content], version_id: version.id, provider_id: provider.id
+        execute_webhooks pact
+        return pact, true
+      end
+
+
 
       def execute_webhooks pact
         if pact_has_changed_since_previous_version? pact
