@@ -32,6 +32,7 @@ module PactBroker::Api
             expect(JSON.parse(last_response.body)).to eq "error" => "Invalid JSON"
           end
         end
+
       end
 
     end
