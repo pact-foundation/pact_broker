@@ -36,6 +36,11 @@ module PactBroker
 
       end
 
+      def pact_has_changed_since_previous_version? pact
+        previous_pact = pact_repository.find_previous_pact pact
+        previous_pact && pact.json_content != previous_pact.json_content
+      end
+
     end
   end
 end

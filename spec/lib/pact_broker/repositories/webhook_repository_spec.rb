@@ -155,6 +155,15 @@ module PactBroker
         end
       end
 
+      describe "find_by_consumer_and_provider" do
+        context "when a webhook exists with a matching consumer and provider" do
+          it "returns the webhook"
+        end
+        context "when a webhook does not exist with a matching consumer and provider" do
+          it "returns nil"
+        end
+      end
+
     end
   end
 end

@@ -37,6 +37,10 @@ module PactBroker
         Webhook.all.collect { | db_webhook| db_webhook.to_model }
       end
 
+      def find_by_consumer_and_provider consumer, provider
+
+      end
+
     end
 
     class Webhook < Sequel::Model
