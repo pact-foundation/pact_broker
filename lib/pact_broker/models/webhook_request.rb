@@ -39,7 +39,7 @@ module PactBroker
 
         logger.info "Received response status=#{response.code} body=#{response.body}"
 
-        if Net::HTTPOK === response
+        if response.code.to_i < 400
           true
         else
           raise WebhookRequestError.new("status=#{response.code} body=#{response.body}")

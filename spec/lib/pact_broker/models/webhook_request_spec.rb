@@ -18,7 +18,7 @@ module PactBroker
         let!(:http_request) do
           stub_request(:post, "http://example.org/hook").
             with(:headers => {'Content-Type'=>'text/plain'}, :body => 'body').
-            to_return(:status => 200, :body => "respbod", :headers => {})
+            to_return(:status => 302, :body => "respbod", :headers => {})
         end
 
         it "executes the configured request" do
@@ -34,7 +34,7 @@ module PactBroker
 
         it "logs the response" do
           allow(PactBroker.logger).to receive(:info)
-          expect(PactBroker.logger).to receive(:info).with(/response.*200.*respbod/)
+          expect(PactBroker.logger).to receive(:info).with(/response.*302.*respbod/)
           subject.execute
         end
 
