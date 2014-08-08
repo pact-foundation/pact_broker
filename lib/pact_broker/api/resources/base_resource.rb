@@ -25,6 +25,7 @@ module PactBroker::Api
 
       include PactBroker::Services
       include PactBroker::Api::PactBrokerUrls
+      include PactBroker::Logging
 
       def identifier_from_path
         request.path_info.each_with_object({}) do | pair, hash|
