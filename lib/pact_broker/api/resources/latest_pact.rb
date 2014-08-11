@@ -23,7 +23,7 @@ module PactBroker::Api
 
       def to_json
         response.headers['X-Pact-Consumer-Version'] = @pact.consumer_version_number
-        PactBroker::Api::Decorators::PactDecorator.new(@pact).to_json(base_url: resource_url)
+        PactBroker::Api::Decorators::PactDecorator.new(@pact).to_json(base_url: base_url)
       end
 
       def to_html

@@ -34,8 +34,12 @@ module PactBroker::Api
       end
 
       # This should be called base_url
-      def resource_url
+      def base_url
         request.uri.to_s.gsub(/#{request.uri.path}$/,'')
+      end
+
+      def resource_url
+        request.uri.to_s
       end
 
       def handle_exception e

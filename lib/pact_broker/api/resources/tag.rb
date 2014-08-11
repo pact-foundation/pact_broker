@@ -21,7 +21,7 @@ module PactBroker::Api
       def from_json
         unless @tag
           @tag = tag_service.create identifier_from_path
-          response.headers["Location"] = tag_url(resource_url, @tag)
+          response.headers["Location"] = tag_url(base_url, @tag)
         end
         response.body = generate_json @tag
       end
@@ -35,7 +35,7 @@ module PactBroker::Api
       end
 
       def generate_json tag
-        PactBroker::Api::Decorators::TagDecorator.new(tag).to_json(base_url: resource_url)
+        PactBroker::Api::Decorators::TagDecorator.new(tag).to_json(base_url: base_url)
       end
 
     end

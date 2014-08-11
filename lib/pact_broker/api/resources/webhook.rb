@@ -20,7 +20,7 @@ module PactBroker::Api
       end
 
       def to_json
-        Decorators::WebhookDecorator.new(webhook).to_json(base_url: resource_url)
+        Decorators::WebhookDecorator.new(webhook).to_json(base_url: base_url)
       end
 
       def delete_resource

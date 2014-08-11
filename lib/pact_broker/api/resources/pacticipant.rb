@@ -35,7 +35,7 @@ module PactBroker::Api
           @pacticipant = pacticipant_service.update params.merge(name: pacticipant_name)
         else
           @pacticipant = pacticipant_service.create params.merge(name: pacticipant_name)
-          response.headers["Location"] = pacticipant_url(resource_url, @pacticipant)
+          response.headers["Location"] = pacticipant_url(base_url, @pacticipant)
         end
         response.body = to_json
       end
@@ -51,7 +51,7 @@ module PactBroker::Api
       end
 
       def to_json
-        PactBroker::Api::Decorators::PacticipantRepresenter.new(@pacticipant).to_json(base_url: resource_url)
+        PactBroker::Api::Decorators::PacticipantRepresenter.new(@pacticipant).to_json(base_url: base_url)
       end
 
       def pacticipant_name

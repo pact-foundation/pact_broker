@@ -41,12 +41,12 @@ module PactBroker::Api
 
       def from_json
         @pact, created = pact_service.create_or_update_pact(identifier_from_path.merge(:json_content => pact_content))
-        response.headers["Location"] = pact_url(resource_url, @pact) if created
+        response.headers["Location"] = pact_url(base_url, @pact) if created
         response.body = to_json
       end
 
       def to_json
-        PactBroker::Api::Decorators::PactDecorator.new(@pact).to_json(base_url: resource_url)
+        PactBroker::Api::Decorators::PactDecorator.new(@pact).to_json(base_url: base_url)
       end
 
       def pact_content

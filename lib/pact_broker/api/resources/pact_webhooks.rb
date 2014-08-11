@@ -35,8 +35,8 @@ module PactBroker::Api
       def process_post
         saved_webhook = webhook_service.create webhook, consumer, provider
         response.headers['Content-Type'] = 'application/json'
-        response.headers['Location'] = webhook_url saved_webhook, resource_url
-        response.body = Decorators::WebhookDecorator.new(saved_webhook).to_json(base_url: resource_url)
+        response.headers['Location'] = webhook_url saved_webhook, base_url
+        response.body = Decorators::WebhookDecorator.new(saved_webhook).to_json(base_url: base_url)
         true
       end
 
