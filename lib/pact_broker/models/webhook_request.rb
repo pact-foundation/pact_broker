@@ -30,6 +30,10 @@ module PactBroker
         @body = attributes[:body]
       end
 
+      def description
+        "#{method.upcase} #{URI(url).host}"
+      end
+
       def execute
 
         begin

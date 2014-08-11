@@ -33,6 +33,10 @@ module PactBroker
         webhook.execute
       end
 
+      def self.find_by_consumer_and_provider consumer, provider
+        webhook_repository.find_by_consumer_and_provider consumer, provider
+      end
+
       def self.execute_webhooks pact
         webhooks = webhook_repository.find_by_consumer_and_provider pact.consumer, pact.provider
         if webhooks.any?

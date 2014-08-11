@@ -16,7 +16,7 @@ module PactBroker::Api
       end
 
       def to_json
-        Decorators::WebhooksDecorator.new(webhooks).to_json(base_url: base_url)
+        Decorators::WebhooksDecorator.new(webhooks).to_json(decorator_context(resource_title: "Webhooks"))
       end
 
       def webhooks

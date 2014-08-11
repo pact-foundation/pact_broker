@@ -8,10 +8,16 @@ module PactBroker
 
     describe WebhookRequest do
 
-      subject { WebhookRequest.new(method: 'POST',
+      subject { WebhookRequest.new(method: 'post',
         url: 'http://example.org/hook',
         headers: {'Content-type' => 'text/plain'},
         body: 'body')}
+
+      describe "description" do
+        it "returns a brief description of the HTTP request" do
+          expect(subject.description).to eq 'POST example.org'
+        end
+      end
 
       describe "execute" do
 

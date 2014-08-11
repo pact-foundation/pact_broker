@@ -6,11 +6,20 @@ module PactBroker
     module Decorators
       class WebhooksDecorator < BaseDecorator
 
-        links :webhooks do | options |
+
+        link :self do | context |
+          {
+            title: context.resource_title,
+            href: context.resource_url
+          }
+        end
+
+        links :webhooks do | context |
           represented.entries.collect do | webhook |
             {
               title: webhook.description,
-              href: webhook_url(webhook, options.fetch(:base_url))
+              name: webhook.request_description,
+              href: webhook_url(webhook, context.base_url)
             }
           end
         end

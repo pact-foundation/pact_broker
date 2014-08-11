@@ -6,6 +6,50 @@ module PactBroker::Api
 
     describe PactWebhooks do
 
+      let(:uuid) { '1483234k24DKFGJ45K' }
+      let(:path) { "/webhooks/provider/Some%20Provider/consumer/Some%20Consumer" }
+      let(:headers) { {'CONTENT_TYPE' => 'application/json'} }
+      let(:webhook) { double('webhook')}
+      let(:saved_webhook) { double('saved_webhook', uuid: 'webhook-uuid')}
+      let(:provider) { instance_double(PactBroker::Models::Pacticipant)}
+      let(:consumer) { instance_double(PactBroker::Models::Pacticipant)}
+
+      before do
+        allow(PactBroker::Services::PacticipantService).to receive(:find_pacticipant_by_name).with("Some Provider").and_return(provider)
+        allow(PactBroker::Services::PacticipantService).to receive(:find_pacticipant_by_name).with("Some Consumer").and_return(consumer)
+      end
+
+      describe "GET" do
+        let(:webhooks) { double('webhooks') }
+        let(:json) { {some: 'webhooks'}.to_json }
+        let(:decorator) { instance_double(Decorators::WebhooksDecorator, to_json: json) }
+
+        before do
+          allow(PactBroker::Services::WebhookService).to receive(:find_by_consumer_and_provider).and_return(webhooks)
+          allow(Decorators::WebhooksDecorator).to receive(:new).and_return(decorator)
+        end
+
+        subject { get path }
+
+        it "returns a 200 HAL JSON response" do
+          subject
+          expect(last_response).to be_a_hal_json_success_response
+        end
+
+        it "generates a JSON body" do
+          expect(Decorators::WebhooksDecorator).to receive(:new).with(webhooks)
+          expect(decorator).to receive(:to_json).with(instance_of(Decorators::DecoratorContext))
+          subject
+        end
+
+        it "includes the generated JSON in the response body" do
+          subject
+          expect(last_response.body).to eq json
+        end
+
+
+      end
+
       describe "POST" do
         let(:webhook_json) do
           {
@@ -13,19 +57,10 @@ module PactBroker::Api
           }.to_json
         end
 
-        let(:uuid) { '1483234k24DKFGJ45K' }
-        let(:path) { "/webhooks/provider/Some%20Provider/consumer/Some%20Consumer" }
-        let(:headers) { {'CONTENT_TYPE' => 'application/json'} }
-        let(:webhook) { double('webhook')}
-        let(:saved_webhook) { double('saved_webhook', uuid: 'webhook-uuid')}
-        let(:provider) { instance_double(PactBroker::Models::Pacticipant)}
-        let(:consumer) { instance_double(PactBroker::Models::Pacticipant)}
         let(:errors) { [] }
 
         before do
           allow(PactBroker::Services::WebhookService).to receive(:create).and_return(saved_webhook)
-          allow(PactBroker::Services::PacticipantService).to receive(:find_pacticipant_by_name).with("Some Provider").and_return(provider)
-          allow(PactBroker::Services::PacticipantService).to receive(:find_pacticipant_by_name).with("Some Consumer").and_return(consumer)
           allow(webhook).to receive(:validate).and_return(errors)
           allow(PactBroker::Models::Webhook).to receive(:new).and_return(webhook)
         end

@@ -1,6 +1,7 @@
 
 require 'pact_broker/api/resources/base_resource'
 require 'pact_broker/api/decorators/webhook_decorator'
+require 'pact_broker/api/decorators/webhooks_decorator'
 
 module PactBroker::Api
 
@@ -9,7 +10,11 @@ module PactBroker::Api
     class PactWebhooks < BaseResource
 
       def allowed_methods
-        ["POST"]
+        ["POST", "GET"]
+      end
+
+      def content_types_provided
+        [["application/hal+json", :to_json]]
       end
 
       def resource_exists?
@@ -40,13 +45,21 @@ module PactBroker::Api
         true
       end
 
+      def to_json
+        Decorators::WebhooksDecorator.new(webhooks).to_json(decorator_context(resource_title: 'Pact webhooks'))
+      end
+
       private
+
+      attr_reader :consumer, :provider
+
+      def webhooks
+        webhook_service.find_by_consumer_and_provider consumer, provider
+      end
 
       def webhook
         @webhook ||= Decorators::WebhookDecorator.new(PactBroker::Models::Webhook.new).from_json(request.body.to_s)
       end
-
-      attr_reader :consumer, :provider
 
       def set_json_error_message message
         response.headers['Content-Type'] = 'application/json'

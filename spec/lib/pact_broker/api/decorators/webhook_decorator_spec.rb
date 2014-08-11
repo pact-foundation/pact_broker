@@ -61,6 +61,16 @@ module PactBroker
 
           it "includes a link to itself" do
             expect(parsed_json[:_links][:self][:href]).to eq 'http://example.org/webhooks/some-uuid'
+            expect(parsed_json[:_links][:self][:title]).to_not be_nil
+          end
+
+          it "includes a link to its parent collection" do
+            expect(parsed_json[:_links][:'pact-webhooks'][:href]).to_not be_nil
+          end
+
+
+          it "includes a link to the webhooks resource" do
+            expect(parsed_json[:_links][:webhooks][:href]).to_not be_nil
           end
 
           it "includes a link to execute the webhook directly" do

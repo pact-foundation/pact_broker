@@ -39,7 +39,7 @@ module PactBroker
           end
 
           it "includes a link to the webhooks for this pact" do
-            expect(subject[:_links][:webhooks][:href]).to eq "http://example.org/webhooks/provider/Provider/consumer/Consumer"
+            expect(subject[:_links][:'pact-webhooks'][:href]).to eq "http://example.org/webhooks/provider/Provider/consumer/Consumer"
           end
         end
 

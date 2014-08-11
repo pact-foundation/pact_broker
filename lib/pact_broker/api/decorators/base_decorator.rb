@@ -1,7 +1,7 @@
 require 'roar/decorator'
 require 'roar/representer/json/hal'
 require 'pact_broker/api/pact_broker_urls'
-
+require 'pact_broker/api/decorators/decorator_context'
 
 module PactBroker
 

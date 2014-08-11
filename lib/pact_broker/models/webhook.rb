@@ -31,6 +31,10 @@ module PactBroker
         "A webhook for the pact between #{consumer.name} and #{provider.name}"
       end
 
+      def request_description
+        request && request.description
+      end
+
       #TODO retries
       def execute
         logger.info "Executing #{self}"
