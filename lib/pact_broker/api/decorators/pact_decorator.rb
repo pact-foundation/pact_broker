@@ -16,7 +16,10 @@ module PactBroker
         end
 
         link :webhooks do | options |
-          webhooks_for_pact_url represented, options.fetch(:base_url)
+          {
+            title: 'POST to this resource to create a new webhook for this pact',
+            href: webhooks_for_pact_url(represented, options.fetch(:base_url))
+          }
         end
 
       end
