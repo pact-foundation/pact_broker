@@ -120,7 +120,7 @@ class ProviderStateBuilder
   end
 
   def create_webhook
-    request = PactBroker::Models::WebhookRequest.new(method: 'POST', url: 'http://example.org')
+    request = PactBroker::Models::WebhookRequest.new(method: 'POST', url: 'http://example.org', headers: {'Content-Type' => 'application/json'})
     @webhook = WebhookRepository.new.create PactBroker::Models::Webhook.new(request: request), @consumer, @provider
     self
   end

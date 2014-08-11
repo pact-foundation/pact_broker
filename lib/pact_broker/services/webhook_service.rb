@@ -21,6 +21,10 @@ module PactBroker
         webhook_repository.delete_by_uuid uuid
       end
 
+      def self.delete_by_pacticipant pacticipant
+        webhook_repository.delete_by_pacticipant pacticipant
+      end
+
       def self.find_all
         webhook_repository.find_all
       end

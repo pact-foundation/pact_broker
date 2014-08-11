@@ -33,6 +33,11 @@ module PactBroker
         Webhook.where(uuid: uuid).destroy
       end
 
+      def delete_by_pacticipant pacticipant
+        Webhook.where(consumer_id: pacticipant.id).destroy
+        Webhook.where(provider_id: pacticipant.id).destroy
+      end
+
       def find_all
         Webhook.all.collect { | db_webhook| db_webhook.to_model }
       end

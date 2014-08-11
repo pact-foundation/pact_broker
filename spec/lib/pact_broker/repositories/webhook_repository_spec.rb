@@ -77,6 +77,39 @@ module PactBroker
         end
       end
 
+      describe "delete_by_pacticipant" do
+
+        before do
+          allow(SecureRandom).to receive(:urlsafe_base64).and_return(uuid, 'another-uuid')
+          WebhookRepository.new.create webhook, consumer, provider
+        end
+
+        context "when the pacticipant is the consumer" do
+
+          subject { WebhookRepository.new.delete_by_pacticipant consumer }
+
+          it "deletes the webhook" do
+            expect { subject }.to change {
+              ::DB::PACT_BROKER_DB[:webhooks].where(uuid: uuid).count
+              }.by(-1)
+          end
+        end
+
+        context "when the pacticipant is the provider" do
+
+          subject { WebhookRepository.new.delete_by_pacticipant provider }
+
+          it "deletes the webhook" do
+            expect { subject }.to change {
+              ::DB::PACT_BROKER_DB[:webhooks].where(uuid: uuid).count
+              }.by(-1)
+          end
+        end
+
+      end
+
+
+
       describe "find_by_uuid" do
 
 

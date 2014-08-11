@@ -39,6 +39,7 @@ module PactBroker
             .create_consumer_version("1.2.3")
             .create_consumer_version_tag("prod")
             .create_pact
+            .create_webhook
         end
 
         let(:delete_pacticipant) { subject.delete "Consumer" }
@@ -58,6 +59,12 @@ module PactBroker
         it "deletes the child tags" do
           expect{ delete_pacticipant }.to change{
             PactBroker::Models::Tag.where(name: "prod").count
+            }.by(-1)
+        end
+
+        it "deletes the webhooks" do
+          expect{ delete_pacticipant }.to change{
+            PactBroker::Repositories::Webhook.count
             }.by(-1)
         end
 
