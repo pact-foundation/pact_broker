@@ -24,11 +24,10 @@ module PactBroker
 
       def execute
         #TODO make it work with https
-        #TODO validation of method
         req = http_request
 
-        headers.each do | header |
-          req[header.name] = header.value
+        headers.each_pair do | name, value |
+          req[name] = value
         end
         req.body = body
 

@@ -10,7 +10,7 @@ module PactBroker
 
       subject { WebhookRequest.new(method: 'POST',
         url: 'http://example.org/hook',
-        headers: [WebhookRequestHeader.new('Content-type', 'text/plain')],
+        headers: {'Content-type' => 'text/plain'},
         body: 'body')}
 
       describe "execute" do
