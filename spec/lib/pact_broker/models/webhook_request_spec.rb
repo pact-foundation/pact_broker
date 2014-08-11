@@ -18,7 +18,7 @@ module PactBroker
         let!(:http_request) do
           stub_request(:post, "http://example.org/hook").
             with(:headers => {'Content-Type'=>'text/plain'}, :body => 'body').
-            to_return(:status => 302, :body => "respbod", :headers => {})
+            to_return(:status => 302, :body => "respbod", :headers => {'Content-Type' => 'text/plain, blah'})
         end
 
         it "executes the configured request" do
@@ -39,8 +39,12 @@ module PactBroker
         end
 
         context "when the request is successful" do
-          it "returns true" do
-            expect(subject.execute).to be true
+          it "returns a WebhookExecutionResult with success=true" do
+            expect(subject.execute.success?).to be true
+          end
+
+          it "sets the response on the result" do
+            expect(subject.execute.response).to be_instance_of(Net::HTTPFound)
           end
         end
 
@@ -52,8 +56,35 @@ module PactBroker
               to_return(:status => 500, :body => "An error")
           end
 
-          it "raises an error" do
-            expect { subject.execute }.to raise_error WebhookRequestError, /500.*An error/
+          it "returns a WebhookExecutionResult with success=false" do
+            expect(subject.execute.success?).to be false
+          end
+
+          it "sets the response on the result" do
+            expect(subject.execute.response).to be_instance_of(Net::HTTPInternalServerError)
+          end
+        end
+
+        context "when an error occurs executing the request" do
+
+          class WebhookTestError < StandardError; end
+
+          before do
+            allow(subject).to receive(:http_request).and_raise(WebhookTestError.new("blah"))
+          end
+
+          it "logs the error" do
+            allow(PactBroker.logger).to receive(:error)
+            expect(PactBroker.logger).to receive(:error).with(/Error.*WebhookTestError.*blah/)
+            subject.execute
+          end
+
+          it "returns a WebhookExecutionResult with success=false" do
+            expect(subject.execute.success?).to be false
+          end
+
+          it "returns a WebhookExecutionResult with an error" do
+            expect(subject.execute.error).to be_instance_of WebhookTestError
           end
         end
 

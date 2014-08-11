@@ -1,4 +1,5 @@
 require 'pact_broker/models/webhook_request_header'
+require 'pact_broker/models/webhook_execution_result'
 require 'pact_broker/logging'
 require 'pact_broker/messages'
 
@@ -6,7 +7,14 @@ module PactBroker
 
   module Models
 
-    class WebhookRequestError < StandardError; end
+    class WebhookRequestError < StandardError
+
+      def initialize message, response
+        super message
+        @response = response
+      end
+
+    end
 
     class WebhookRequest
 
@@ -23,25 +31,28 @@ module PactBroker
       end
 
       def execute
-        #TODO make it work with https
-        req = http_request
 
-        headers.each_pair do | name, value |
-          req[name] = value
-        end
-        req.body = body
+        begin
+          #TODO make it work with https
+          req = http_request
 
-        logger.info "Making webhook request #{to_s}"
-        response = Net::HTTP.start(uri.hostname, uri.port) do |http|
-          http.request req
-        end
+          headers.each_pair do | name, value |
+            req[name] = value
+          end
+          req.body = body
 
-        logger.info "Received response status=#{response.code} body=#{response.body}"
+          logger.info "Making webhook request #{to_s}"
+          response = Net::HTTP.start(uri.hostname, uri.port) do |http|
+            http.request req
+          end
 
-        if response.code.to_i < 400
-          true
-        else
-          raise WebhookRequestError.new("status=#{response.code} body=#{response.body}")
+          logger.info "Received response status=#{response.code} body=#{response.body}"
+          WebhookExecutionResult.new(response)
+
+        rescue StandardError => e
+          logger.error "Error executing webhook #{e.class.name} - #{e.message}"
+          logger.error e.backtrace.join("\n")
+          WebhookExecutionResult.new(nil, e)
         end
 
       end

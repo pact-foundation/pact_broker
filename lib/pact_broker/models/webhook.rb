@@ -34,14 +34,7 @@ module PactBroker
       #TODO retries
       def execute
         logger.info "Executing #{self}"
-        begin
-          request.execute
-          logger.info "Successfully executed #{self}"
-        rescue StandardError => e
-          logger.error "Error executing webhook #{e.class.name} - #{e.message}"
-          logger.error e.backtrace.join("\n")
-          raise e
-        end
+        request.execute
       end
 
       def to_s

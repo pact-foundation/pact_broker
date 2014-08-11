@@ -47,6 +47,10 @@ module PactBroker
         "#{base_url}/webhooks/#{webhook.uuid}"
       end
 
+      def webhook_execution_url webhook, base_url
+        "#{base_url}/webhooks/#{webhook.uuid}/execute"
+      end
+
       def webhooks_for_pact_url pact, base_url
         representable_pact = representable_pact(pact)
         "#{base_url}/webhooks/provider/#{representable_pact.provider.name}/consumer/#{representable_pact.consumer.name}"

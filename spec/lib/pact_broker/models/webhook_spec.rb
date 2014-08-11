@@ -46,36 +46,11 @@ module PactBroker
           subject.execute
         end
 
-        context "when successful" do
-          it "logs before and after" do
-            expect(PactBroker.logger).to receive(:info).with(/Executing/)
-            expect(PactBroker.logger).to receive(:info).with(/Successfully/)
-            subject.execute
-          end
+        it "logs before and after" do
+          expect(PactBroker.logger).to receive(:info).with(/Executing/)
+          subject.execute
         end
 
-        context "when an error occurs" do
-
-          class WebhookTestError < StandardError; end
-
-          before do
-            allow(request).to receive(:execute).and_raise(WebhookTestError.new("blah"))
-          end
-
-          it "logs the error" do
-            allow(PactBroker.logger).to receive(:error)
-            expect(PactBroker.logger).to receive(:error).with(/Error.*WebhookTestError.*blah/)
-            begin
-              subject.execute
-            rescue WebhookTestError => e
-              # do nothing
-            end
-          end
-
-          it "re-raises the error" do
-            expect { subject.execute }.to raise_error WebhookTestError
-          end
-        end
       end
     end
 

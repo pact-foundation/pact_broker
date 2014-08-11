@@ -17,6 +17,10 @@ module PactBroker
           webhook_url(represented, options[:base_url])
         end
 
+        link :execute do | options |
+          webhook_execution_url(represented, options[:base_url])
+        end
+
       end
     end
   end

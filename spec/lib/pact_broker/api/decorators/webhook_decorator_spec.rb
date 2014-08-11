@@ -7,44 +7,17 @@ module PactBroker
       describe WebhookDecorator do
 
         let(:headers) { {:'Content-Type' => 'application/json'} }
-        let(:hash) do
+        let(:request) do
           {
-            request: {
-              method: 'POST',
-              url: 'http://example.org/hook',
-              headers: headers,
-              body: { some: 'body' }
-            },
-
-            _embedded: {
-              consumer: {
-                name: 'Consumer',
-                :_links => {
-                  :self => {
-                    :href=>"http://example.org/pacticipants/Consumer"
-                    }
-                  }
-                },
-                provider: {
-                  name: 'Provider',
-                  :_links => {
-                    :self => {
-                      :href=>"http://example.org/pacticipants/Provider"
-                    }
-                  }
-                }
-              },
-
-            _links: {
-              :self => {
-                href: 'http://example.org/webhooks/some-uuid'
-              }
-            }
+            method: 'POST',
+            url: 'http://example.org/hook',
+            headers: headers,
+            body: { some: 'body' }
           }
         end
 
         let(:webhook_request) do
-          Models::WebhookRequest.new(hash[:request])
+          Models::WebhookRequest.new(request)
         end
 
         let(:consumer) { Models::Pacticipant.new(name: 'Consumer') }
@@ -60,8 +33,38 @@ module PactBroker
 
           let(:parsed_json) { JSON.parse(subject.to_json(base_url: 'http://example.org'), symbolize_names: true)}
 
-          it "serialises the webhook to JSON" do
-            expect(parsed_json).to eq hash
+          it "includes the request" do
+            expect(parsed_json[:request]).to eq request
+          end
+
+          it "includes an embedded consumer" do
+            expect(parsed_json[:_embedded][:consumer]).to eq ({
+                name: 'Consumer',
+                :_links => {
+                  :self => {
+                    :href=>"http://example.org/pacticipants/Consumer"
+                    }
+                  }
+                })
+          end
+
+          it "includes an embedded provider" do
+            expect(parsed_json[:_embedded][:provider]).to eq ({
+                name: 'Provider',
+                :_links => {
+                  :self => {
+                    :href=>"http://example.org/pacticipants/Provider"
+                    }
+                  }
+                })
+          end
+
+          it "includes a link to itself" do
+            expect(parsed_json[:_links][:self][:href]).to eq 'http://example.org/webhooks/some-uuid'
+          end
+
+          it "includes a link to execute the webhook directly" do
+            expect(parsed_json[:_links][:execute][:href]).to eq 'http://example.org/webhooks/some-uuid/execute'
           end
 
           context "when the headers are empty" do
@@ -74,6 +77,7 @@ module PactBroker
         end
 
         describe "from_json" do
+          let(:hash) { { request: request } }
           let(:json) { hash.to_json }
           let(:webhook) { Models::Webhook.new }
           let(:parsed_object) { subject.from_json(json) }
