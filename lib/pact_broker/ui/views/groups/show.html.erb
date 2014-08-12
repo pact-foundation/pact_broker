@@ -18,15 +18,16 @@
 <h1>Network graph of pacticipant relationships</h1>
 <div id="legend" </div>
 <script type="text/javascript">
-var w, h, svg;
+var windowWidth, windowHeight, svg;
 window.onload = function() {
-    w = window.innerWidth;
-    h = window.innerHeight - 200;
-    svg = d3.select("body").append("svg").attr("width", w).attr("height", h).attr("version", 1.1).attr("xmlns", "http://www.w3.org/2000/svg");
+    var legendHeight = 200;
+    windowWidth = window.innerWidth;
+    windowHeight = window.innerHeight - legendHeight;
+    svg = d3.select("body").append("svg").attr("width", windowWidth).attr("height", windowHeight).attr("version", 1.1).attr("xmlns", "http://www.w3.org/2000/svg");
     var people = [];
     var maxgrant = 0;
     var maxrad = 0;
-    var arraydepts = [];
+    var arrayPacticipants = [];
     var maxorder = 0;
 
 
@@ -37,9 +38,9 @@ window.onload = function() {
             function(d) {
                 var person = {
                     id: d[0],
-                    department: d[1],
-                    interviewed: parseInt(d[2]),
-                    grants: parseInt(d[3]) || 0,
+                    pacticipant: d[1],
+                    // interviewed: parseInt(d[2]),
+                    grants: 1,
                     order: parseInt(d[5]),
                     children: d.slice(6).filter(function(e) {
                         if (parseInt(e) != NaN) {
@@ -54,29 +55,30 @@ window.onload = function() {
                 if (person.order > maxorder) {
                     maxorder = person.order;
                 }
-                if (arraydepts.indexOf(person.department) == -1) {
-                    arraydepts.push(person.department);
+                if (arrayPacticipants.indexOf(person.pacticipant) == -1) {
+                    arrayPacticipants.push(person.pacticipant);
                 }
                 people.push(person);
             });
         people.sort(function(a, b) {
             return d3.ascending(a.order, b.order);
         });
+        var circleMinRadius = 100;
         var lookup = {};
-        var radius = Math.max(100, people.length * 2.5);
-        if (3 * radius > w) {
-            w = 3 * radius;
-            svg.attr("width", w);
+        var radius = Math.max(circleMinRadius, people.length * 2.5);
+        if (3 * radius > windowWidth) {
+            windowWidth = 3 * radius;
+            svg.attr("width", windowWidth);
         }
-        if (3.5 * radius > h) {
-            h = 3.5 * radius;
-            svg.attr("height", h);
+        if (3.5 * radius > windowHeight) {
+            windowHeight = 3.5 * radius;
+            svg.attr("height", windowHeight);
         }
         maxrad = (radius * Math.PI / people.length) + 2;
-        lastdept = '';
+        lastPacticipant = '';
         var g = svg.selectAll("g").data(people).enter().append("g").attr("transform", function(d, i) {
-            var x = radius * Math.sin(2 * Math.PI * (i / people.length)) + w / 2;
-            var y = radius * Math.cos(2 * Math.PI * (i / people.length)) + h / 2;
+            var x = radius * Math.sin(2 * Math.PI * (i / people.length)) + windowWidth / 2;
+            var y = radius * Math.cos(2 * Math.PI * (i / people.length)) + windowHeight / 2;
             lookup[d.id] = {
                 x: x,
                 y: y,
@@ -86,9 +88,9 @@ window.onload = function() {
         }).attr("id", function(d, i) {
             return i;
         }).attr("class", function(d) {
-            if (d.department != lastdept) {
-                lastdept = d.department;
-                return lastdept;
+            if (d.pacticipant != lastPacticipant) {
+                lastPacticipant = d.pacticipant;
+                return lastPacticipant;
             } else {
                 return "";
             }
@@ -158,22 +160,29 @@ window.onload = function() {
         }).attr("stroke-width", ".35").attr("opacity", ".5").attr("fill", "none").attr("class", function(d) {
             return d[0] + " " + d[1] + " " + lookup[d[0]].i;
         });
-        var ordcols = d3.scale.category10().domain([0, arraydepts.length]);
+        var ordcols = d3.scale.category10().domain([0, arrayPacticipants.length]);
 
         var cirscale = d3.scale.quantile().domain([0, 1000000, 5000000, 15000000, 70000000]).range([3, maxrad / 3, maxrad / 2, 3 * maxrad / 4, maxrad]);
+
         var circles = g.append("circle").attr("r", function(d) {
-            return cirscale(d.grants);
-        }).attr("fill", function(d) {
-            if (d.interviewed) {
-                return ordcols(arraydepts.indexOf(d.department));
-            } else {
-                return "white";
-            }
-        }).attr("stroke", function(d) {
-            return ordcols(arraydepts.indexOf(d.department));
-        }).attr("stroke-width", 2).attr("cx", function(d, i) {
+            // console.debug(d);
+            //circle size
+            return 4; //cirscale(d.grants);
+        })
+        .attr("fill", function(d) {
+            // if (d.interviewed) {
+                return ordcols(arrayPacticipants.indexOf(d.pacticipant));
+            // } else {
+                // return "white";
+            // }
+        })
+        .attr("stroke", function(d) {
+            return ordcols(arrayPacticipants.indexOf(d.pacticipant));
+        })
+        .attr("stroke-width", 2).attr("cx", function(d, i) {
             return cirscale(d.grants) * Math.sin(2 * Math.PI * i / people.length);
-        }).attr("cy", function(d, i) {
+        })
+        .attr("cy", function(d, i) {
             return cirscale(d.grants) * Math.cos(2 * Math.PI * i / people.length);
         });
         var text = g.append("text").text(function(d) {
@@ -197,37 +206,37 @@ window.onload = function() {
                 return "rotate(" + -90 * Math.cos(2 * Math.PI * i / people.length) + ")";
             }
         }).attr("fill", function(d) {
-            return ordcols(arraydepts.indexOf(d.department));
+            return ordcols(arrayPacticipants.indexOf(d.pacticipant));
         });
         circles.on("mouseover", function() {
             svg.selectAll("path").transition().duration(500).attr("opacity", "0.1");
             d3.select(this.parentNode).selectAll("path").transition().duration(500).attr("opacity", "1").attr("stroke-width", "1");
-            d3.select(this.parentNode).selectAll("text").transition().duration(500).text(function(d) {
-                return this.parentNode.className.animVal + " ID: " + d.id;
-            });
+            // d3.select(this.parentNode).selectAll("text").transition().duration(500); //.text(function(d) {
+            //     return this.parentNode.className.animVal + " ID: " + d.id;
+            // });
         }).on("mouseout", function() {
             svg.selectAll("path").transition().duration(500).attr("stroke-width", ".35").attr("opacity", ".5");
-            d3.select(this.parentNode).selectAll("text").transition().duration(500).text(function(d) {
-                return this.parentNode.className.animVal;
-            });
+            // d3.select(this.parentNode).selectAll("text").transition().duration(500); //.text(function(d) {
+            //     return this.parentNode.className.animVal;
+            // });
         });
         legend = d3.select("#legend").append("svg").attr("width", 600).attr("height", 70);
         var circlekey = [70000000, 15000000, 5000000, 1000000, 0];
 
-        function commaRound(num) {
-            var count = 0;
-            var beforeperiod = '';
-            var numstr = Math.round(num).toString();
-            for (var i = numstr.length - 1; i >= 0; i--) {
-                beforeperiod = numstr.charAt(i) + beforeperiod;
-                count += 1;
-                if (count > 2 && i > 0) {
-                    beforeperiod = ',' + beforeperiod;
-                    count = 0;
-                }
-            }
-            return beforeperiod;
-        }
+        // function commaRound(num) {
+        //     var count = 0;
+        //     var beforeperiod = '';
+        //     var numstr = Math.round(num).toString();
+        //     for (var i = numstr.length - 1; i >= 0; i--) {
+        //         beforeperiod = numstr.charAt(i) + beforeperiod;
+        //         count += 1;
+        //         if (count > 2 && i > 0) {
+        //             beforeperiod = ',' + beforeperiod;
+        //             count = 0;
+        //         }
+        //     }
+        //     return beforeperiod;
+        // }
 
         var lineLength = 20;
 
