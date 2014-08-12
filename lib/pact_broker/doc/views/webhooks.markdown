@@ -1,6 +1,6 @@
 # Webhooks
 
-## Creating
+### Creating
 
 1. To create a webhook, navigate to the pact you want to create the webhook for
 (Click "Go to Entry Point", then select "latest-pacts", then select the pact you want to create the webhook for.)
@@ -35,6 +35,14 @@ To create an Authorisation header, run:
 
     ruby -e "require 'base64'; puts ('Basic ' + Base64.strict_encode64('your-username:your-password'))"
 
-## Testing
+### Testing
 
 To test a webhook, navigate to the webhook in the HAL browser, then make a POST request to the "execute" relation. The response or error will be shown in the window.
+
+### Deleting
+
+Send a DELETE request to the webhook URL.
+
+### Updating
+
+Currently not implemented. You will need to delete and re-create the webhook.
