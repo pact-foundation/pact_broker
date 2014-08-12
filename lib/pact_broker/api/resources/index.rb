@@ -37,15 +37,21 @@ module PactBroker::Api
               title: 'Retrieve pacticipants',
               templated: false
             },
-            'webhooks' =>
+            'pb:webhooks' =>
             {
               href: request.uri.to_s + 'webhooks',
               title: 'Webhooks',
               templated: false
-            }
+            },'curies' =>
+            [{
+              name: 'pb',
+              href: request.uri.to_s + 'doc/{rel}',
+              templated: true
+            }]
           }
         }.to_json
       end
+
 
     end
   end
