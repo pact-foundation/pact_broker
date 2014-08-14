@@ -17,6 +17,9 @@ body{
 .pacticpantLabel {
     cursor: default
  }
+ .relationship {
+    cursor: pointer;
+ }
 </style>
 <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
 <!--[if lt IE 9]>
@@ -69,8 +72,8 @@ var getPacticipantNames = function (pacticipants) {
 };
 
 var relationshipPath = function(relationship, nodeLocations, pacticipants) {
-    var dx = nodeLocations[relationship[1]].x - nodeLocations[relationship[0]].x;
-    var dy = nodeLocations[relationship[1]].y - nodeLocations[relationship[0]].y;
+    var dx = nodeLocations[relationship.endId].x - nodeLocations[relationship.startId].x;
+    var dy = nodeLocations[relationship.endId].y - nodeLocations[relationship.startId].y;
     var dr = Math.sqrt(dx * dx + dy * dy);
     var inout = 1;
 
@@ -86,12 +89,11 @@ var relationshipPath = function(relationship, nodeLocations, pacticipants) {
 
 var relationshipData = function(pacticipant, relationships) {
     var relationshipsInvolvingPacticipant = [];
+    var relationshipLinks = [];
     relationships.forEach(function(relationship) {
         var dummyRelationship = {};
         if (relationship.consumerId == pacticipant.id) {
-            dummyRelationship[0] = relationship.consumerId;
             dummyRelationship.startId = relationship.consumerId;
-            dummyRelationship[1] = relationship.providerId;
             dummyRelationship.endId = relationship.providerId;
             if (relationship.relationshipType) {
                 dummyRelationship.relationshipType = relationship.relationshipType;
@@ -99,11 +101,14 @@ var relationshipData = function(pacticipant, relationships) {
                 dummyRelationship.relationshipType = 'consumer';
             }
             relationshipsInvolvingPacticipant.push(dummyRelationship);
+            var relationshipLink = {};
+            relationshipLink.startId = relationship.consumerId;
+            relationshipLink.endId = relationship.providerId;
+            relationshipLink.relationshipType = 'link';
+            relationshipLinks.push(relationshipLink);
         }
         else if (relationship.providerId == pacticipant.id) {
-            dummyRelationship[0] = relationship.providerId;
             dummyRelationship.startId = relationship.providerId;
-            dummyRelationship[1] = relationship.consumerId;
             dummyRelationship.endId = relationship.consumerId;
             if (relationship.relationshipType) {
                 dummyRelationship.relationshipType = relationship.relationshipType;
@@ -113,36 +118,25 @@ var relationshipData = function(pacticipant, relationships) {
             relationshipsInvolvingPacticipant.push(dummyRelationship);
         }
     });
-    return relationshipsInvolvingPacticipant;
+    return relationshipLinks.concat(relationshipsInvolvingPacticipant);
 };
 
 var createRelationships = function (pacticipants) {
     var relationships = [];
     pacticipants.forEach(function(d) {
         d.connectedPacticipantIds.forEach(function(connectedPacticipantId) {
-            relationships.push([d.id, connectedPacticipantId]);
+            // relationships.push([d.id, connectedPacticipantId]);
             relationships.push(
             {
-                0: d.id,
-                1: connectedPacticipantId,
                 consumerId: d.id,
                 providerId: connectedPacticipantId
             }
             );
         });
     });
-    relationships.forEach(function(relationship) {
-        for (var i = 0; i < relationships.length; i++) {
-            if (relationship.consumerId == relationships[i].providerId
-                && relationship.providerId == relationships[i].consumerId) {
-                relationships.splice(i, 1);
-                relationship[2] = 2;
-                relationship.relationshipType = 'bidirectional';
-            }
-        }
-    });
+
     relationships.sort(function(a, b) {
-        return d3.ascending(a[0], b[0]);
+        return d3.ascending(a.consumerId, b.providerId);
     });
 
     return relationships;
@@ -166,19 +160,23 @@ var relationshipColour = function(relationship) {
 };
 
 var pacticipantMouseover = function() {
-    svg.selectAll(".relationship")
+    svg.selectAll(".relationship.consumer, .relationship.provider")
         .transition()
         .duration(TRANSITION_TIME)
         .attr("opacity", OPACITY_FADED)
         .attr("stroke-width", RELATIONSHIP_STROKE_FADED);
-    d3.select(this.parentNode).selectAll("path")
+    d3.select(this.parentNode).selectAll(".relationship.consumer, .relationship.provider")
         .transition()
         .duration(TRANSITION_TIME)
         .attr("opacity", OPACITY_DARK)
         .attr("stroke-width", RELATIONSHIP_STROKE_DARK);
 };
 var pacticipantMouseout = function() {
-    svg.selectAll("path").transition().duration(TRANSITION_TIME).attr("stroke-width", RELATIONSHIP_STROKE_NORMAL).attr("opacity", OPACITY_NORMAL);
+    svg.selectAll(".relationship.consumer, .relationship.provider").transition().duration(TRANSITION_TIME).attr("stroke-width", RELATIONSHIP_STROKE_NORMAL).attr("opacity", OPACITY_NORMAL);
+};
+
+var relationshipOnclick = function() {
+    alert('clicked!');
 };
 
 var textContent = function(d, i) { return this.parentNode.className.animVal; };
@@ -251,19 +249,27 @@ window.onload = function() {
 
         relationships = createRelationships(pacticipants);
 
-        g.selectAll("path").data(function(pacticipant){
-            return relationshipData(pacticipant, relationships);
-        }).enter()
-        .append("path")
-        .attr("d", function(relationship){ return relationshipPath(relationship, nodeLocations, pacticipants); })
-        .attr("class", function(relationship) {
-            return relationship[0] + " " + relationship[1] + " " + nodeLocations[relationship[0]].i + " " + relationship.relationshipType + " relationship";
-        })
+        g.selectAll("path")
+            .data(function(pacticipant){ return relationshipData(pacticipant, relationships); }).enter()
+            .append("path")
+            .attr("d", function(relationship){ return relationshipPath(relationship, nodeLocations, pacticipants); })
+            .attr("class", function(relationship) {
+                return relationship.startId + " " + relationship.endId + " " + nodeLocations[relationship.startId].i + " " + relationship.relationshipType + " relationship";
+            })
+            .attr("fill", "none");
 
-        .attr("stroke", relationshipColour)
-        .attr("stroke-width", RELATIONSHIP_STROKE_NORMAL)
-        .attr("opacity", OPACITY_NORMAL)
-        .attr("fill", "none");
+        g.selectAll(".consumer, .provider")
+            .attr("stroke", relationshipColour)
+            .attr("stroke-width", RELATIONSHIP_STROKE_NORMAL)
+            .attr("opacity", OPACITY_NORMAL);
+
+        g.selectAll(".relationship.link")
+            .attr("stroke-width", 10)
+            .attr("opacity", 0)
+            .attr("stroke", 'white');
+
+        g.selectAll(".relationship").on("click", relationshipOnclick);
+
 
         svg.selectAll(".consumer").attr("marker-end", "url(#arrowGrayStart)");
         svg.selectAll(".provider").attr("marker-start", "url(#arrowGrayEnd)");
