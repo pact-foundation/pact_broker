@@ -15,7 +15,7 @@
 <!-- developed by Duncan Alexander - hypothete.com -->
 </head>
 <body>
-<h1>Network graph of pacticipantName relationships</h1>
+<h1>Network graph of <%= pacticipant_name %> relationships</h1>
 <div id="legend" </div>
 <script type="text/javascript">
 var windowWidth, windowHeight, svg;
@@ -170,7 +170,7 @@ window.onload = function() {
     var pacticipants = [];
     var maxrad = 0;
     var pacticipantNameArray = [];
-    var circleMinRadius = 150;
+    var circleMinRadius = 200;
 
     d3.text("<%= csv_path %>", "text/csv", function(unparsedData) {
         var data=d3.csv.parseRows(unparsedData);
@@ -217,16 +217,16 @@ window.onload = function() {
 
         var circleXOffset = function(d, i) {
             //controls the positioning in regards to the edge of the circle
-            return 3 * Math.cos(2 * Math.PI * i / pacticipants.length);
+            return 6 * Math.cos(2 * Math.PI * i / pacticipants.length);
         };
 
         var circleYOffset = function(d, i) {
             //controls the positioning in regards to the edge of the circle
-            return 3 * Math.sin(2 * Math.PI * i / pacticipants.length);
+            return 6 * Math.sin(2 * Math.PI * i / pacticipants.length);
         };
 
         var circles = g.append("circle")
-        .attr("r", function(pacticipant) { return 4; })
+        .attr("r", function(pacticipant) { return 6; })
         .attr("fill", textFill)
         .attr("stroke", textFill)
         .attr("stroke-width", 2)
