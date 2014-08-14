@@ -59,14 +59,13 @@ var getPacticipantNames = function (pacticipants) {
     return pacticipants.map(function(p){ return p.pacticipantName });
 };
 
-var pactPath = function(d, nodeLocations, pacticipants) {
-    var dx = nodeLocations[d[1]].x - nodeLocations[d[0]].x;
-    var dy = nodeLocations[d[1]].y - nodeLocations[d[0]].y;
+var relationshipPath = function(relationship, nodeLocations, pacticipants) {
+    var dx = nodeLocations[relationship[1]].x - nodeLocations[relationship[0]].x;
+    var dy = nodeLocations[relationship[1]].y - nodeLocations[relationship[0]].y;
     var dr = Math.sqrt(dx * dx + dy * dy);
-    var inout = 0;
-    var bigsmall = 0;
-    if ((nodeLocations[d[1]].i > nodeLocations[d[0]].i && Math.abs(nodeLocations[d[1]].i - nodeLocations[d[0]].i) <= pacticipants.length / 2) || (nodeLocations[d[1]].i < nodeLocations[d[0]].i && Math.abs(nodeLocations[d[1]].i - nodeLocations[d[0]].i) >= pacticipants.length / 2)) {
-        inout = 1;
+    var inout = 1;
+    if ((nodeLocations[relationship[1]].i > nodeLocations[relationship[0]].i && Math.abs(nodeLocations[relationship[1]].i - nodeLocations[relationship[0]].i) <= pacticipants.length / 2) || (nodeLocations[relationship[1]].i < nodeLocations[relationship[0]].i && Math.abs(nodeLocations[relationship[1]].i - nodeLocations[relationship[0]].i) >= pacticipants.length / 2)) {
+        inout = 0;
     }
     return "M" + 0 + "," + 0 + "A" + dr + ", " + dr + " 0 0," + inout + " " + dx + "," + dy;
 };
@@ -161,6 +160,8 @@ var pacticipantMouseout = function() {
     svg.selectAll("path").transition().duration(500).attr("stroke-width", ".35").attr("opacity", ".5");
 };
 
+var textContent = function(d, i) { return this.parentNode.className.animVal; };
+
 window.onload = function() {
     var legendHeight = 200;
     windowWidth = window.innerWidth;
@@ -169,7 +170,7 @@ window.onload = function() {
     var pacticipants = [];
     var maxrad = 0;
     var pacticipantNameArray = [];
-    var circleMinRadius = 100;
+    var circleMinRadius = 150;
 
     d3.text("<%= csv_path %>", "text/csv", function(unparsedData) {
         var data=d3.csv.parseRows(unparsedData);
@@ -196,7 +197,7 @@ window.onload = function() {
             return relationshipData(pacticipant, relationships);
         }).enter()
         .append("path")
-        .attr("d", function(d){ return pactPath(d, nodeLocations, pacticipants); })
+        .attr("d", function(d){ return relationshipPath(d, nodeLocations, pacticipants); })
         .attr("stroke", relationshipColour).attr("stroke-width", ".35")
         .attr("opacity", ".5")
         .attr("fill", "none")
@@ -232,13 +233,13 @@ window.onload = function() {
         .attr("cx", circleXOffset)
         .attr("cy", circleYOffset);
 
-        var textRotation = function(d, i) {
-            if(onRight(i)){
-                return "rotate(" + 90 * Math.sin(2 * Math.PI * i / pacticipants.length) + ")";
-            } else {
-                return "rotate(" + -90 * Math.sin(2 * Math.PI * i / pacticipants.length) + ")";
-            }
-        };
+        // var textRotation = function(d, i) {
+        //     if(onRight(i)){
+        //         return "rotate(" + 90 * Math.sin(2 * Math.PI * i / pacticipants.length) + ")";
+        //     } else {
+        //         return "rotate(" + -90 * Math.sin(2 * Math.PI * i / pacticipants.length) + ")";
+        //     }
+        // };
 
         var textAnchor = function(d, i) {
             if (onRight(i)) {
@@ -248,20 +249,45 @@ window.onload = function() {
             }
         };
 
-        var textX = function(d, i, maxrad) {
-            if (onRight(i)) {
-                return Math.min(50, 2 * maxrad);
-            } else {
-                return Math.max(-50, -2 * maxrad);
-            }
+        var textXOffset = function(d, i) {
+            //controls the positioning in regards to the edge of the circle
+            return 40 * Math.cos(2 * Math.PI * i / pacticipants.length);
         };
 
-        var textContent = function(d, i) { return this.parentNode.className.animVal; };
+        var isFinite = function(num) {
+            return !(num == Number.POSITIVE_INFINITY || num == Number.NEGATIVE_INFINITY)
+        };
+
+
+        var textYOffset = function(d, i) {
+            var thing = 4 * Math.PI * i / pacticipants.length;
+            var counterOffset = 0;
+
+            counterOffset = (0.2 / (20 * Math.tan(thing/2))) * 1000;
+
+            if(!isFinite(counterOffset)) { //Right, middle node
+                counterOffset = 0;
+            } else {
+                //Near the asymptotes, it gets bigger really quickly, if it's a big number,
+                //it's likely it should actually be on the asymptote, and therefore, have no counterOffset
+                if(Math.abs(counterOffset) > 30) {
+                    //Left, middle node
+                    counterOffset = 0;
+                }
+            }
+
+            return (40 * Math.sin(2 * Math.PI * i / pacticipants.length)) - counterOffset;
+        };
+
+        var textYOffset2 = function(d, i) {
+            console.debug(d.pacticipantName, i, (40 * Math.sin(2 * Math.PI * i / pacticipants.length)))
+            return (40 * Math.sin(2 * Math.PI * i / pacticipants.length));
+        };
 
         var text = g.append("text").text(textContent)
-        .attr("x", function(d, i) { return textX(d, i, maxrad); })
+        .attr("x", function(d, i) { return textXOffset(d, i, maxrad); })
+        .attr("y", function(d, i) { return textYOffset(d, i, maxrad); })
         .attr("text-anchor", textAnchor)
-        .attr("transform", textRotation)
         .attr("fill", textFill);
 
         circles.on("mouseover", pacticipantMouseover).on("mouseout", pacticipantMouseout);
