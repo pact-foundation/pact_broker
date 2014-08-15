@@ -97,6 +97,7 @@ var relationshipData = function(pacticipant, relationships) {
     var relationshipLinks = [];
     relationships.forEach(function(relationship) {
         var dummyRelationship = {};
+        dummyRelationship.id = relationship.id;
         if (relationship.consumerId == pacticipant.id) {
             dummyRelationship.startId = relationship.consumerId;
             dummyRelationship.endId = relationship.providerId;
@@ -112,6 +113,7 @@ var relationshipData = function(pacticipant, relationships) {
             relationshipLink.endId = relationship.providerId;
             relationshipLink.relationshipType = 'link';
             relationshipLink.href = relationship.href;
+            relationshipLink.id = relationship.id;
             relationshipLinks.push(relationshipLink);
         }
         else if (relationship.providerId == pacticipant.id) {
@@ -138,9 +140,9 @@ var createRelationships = function (pacticipants) {
     };
     pacticipants.forEach(function(d) {
         d.connectedPacticipantIds.forEach(function(connectedPacticipantId) {
-            // relationships.push([d.id, connectedPacticipantId]);
             relationships.push(
             {
+                id: ['c', d.id, 'p', connectedPacticipantId].join(''),
                 consumerId: d.id,
                 providerId: connectedPacticipantId,
                 href: latestPactUrl(d.pacticipantName, findPacticipantById(connectedPacticipantId).pacticipantName)
@@ -152,7 +154,6 @@ var createRelationships = function (pacticipants) {
     relationships.sort(function(a, b) {
         return d3.ascending(a.consumerId, b.providerId);
     });
-    console.debug(relationships);
     return relationships;
 
 };
@@ -173,20 +174,46 @@ var relationshipColour = function(relationship) {
     return "gray";
 };
 
-var pacticipantMouseover = function() {
-    svg.selectAll(".relationship.consumer, .relationship.provider")
+var fadeAllRelationships = function() {
+    svg.selectAll(".relationship.visible")
         .transition()
         .duration(TRANSITION_TIME)
         .attr("opacity", OPACITY_FADED)
         .attr("stroke-width", RELATIONSHIP_STROKE_FADED);
-    d3.select(this.parentNode).selectAll(".relationship.consumer, .relationship.provider")
-        .transition()
+};
+
+var boldRelationships = function(relationships) {
+    relationships.transition()
         .duration(TRANSITION_TIME)
         .attr("opacity", OPACITY_DARK)
         .attr("stroke-width", RELATIONSHIP_STROKE_DARK);
 };
+
+var normalizeRelationships = function() {
+    svg.selectAll(".relationship.visible")
+        .transition()
+        .duration(TRANSITION_TIME)
+        .attr("stroke-width", RELATIONSHIP_STROKE_NORMAL)
+        .attr("opacity", OPACITY_NORMAL);
+};
+
+var pacticipantMouseover = function() {
+    fadeAllRelationships();
+    boldRelationships(
+        d3.select(this.parentNode)
+            .selectAll(".relationship.visible"));
+};
 var pacticipantMouseout = function() {
-    svg.selectAll(".relationship.consumer, .relationship.provider").transition().duration(TRANSITION_TIME).attr("stroke-width", RELATIONSHIP_STROKE_NORMAL).attr("opacity", OPACITY_NORMAL);
+    normalizeRelationships();
+};
+
+var relationshipMouseover = function(relationship) {
+    fadeAllRelationships();
+    boldRelationships( svg.selectAll("." + relationship.id + ".visible") );
+};
+
+var relationshipMouseout = function() {
+    normalizeRelationships();
 };
 
 var relationshipOnclick = function(relationship) {
@@ -195,7 +222,7 @@ var relationshipOnclick = function(relationship) {
 
 var textContent = function(d, i) { return this.parentNode.className.animVal; };
 
-var OPACITY_FADED = 0.1; //0.1;
+var OPACITY_FADED = 0.3; //0.1;
 var OPACITY_NORMAL = 0.75; //0.75;
 var OPACITY_DARK = 1;
 var RELATIONSHIP_STROKE_DARK = 1;
@@ -268,7 +295,11 @@ window.onload = function() {
             .append("path")
             .attr("d", function(relationship){ return relationshipPath(relationship, nodeLocations, pacticipants); })
             .attr("class", function(relationship) {
-                return relationship.startId + " " + relationship.endId + " " + nodeLocations[relationship.startId].i + " " + relationship.relationshipType + " relationship";
+                var clazz = relationship.id + " " + relationship.relationshipType + " relationship";
+                if(relationship.relationshipType !== 'link') {
+                    clazz += ' visible';
+                }
+                return clazz;
             })
             .attr("fill", "none");
 
@@ -278,11 +309,14 @@ window.onload = function() {
             .attr("opacity", OPACITY_NORMAL);
 
         g.selectAll(".relationship.link")
-            .attr("stroke-width", 10)
+            .attr("stroke-width", 14)
             .attr("opacity", 0)
             .attr("stroke", 'white');
 
-        g.selectAll(".relationship").on("click", relationshipOnclick);
+        g.selectAll(".relationship")
+            .on("click", relationshipOnclick)
+            .on("mouseover", relationshipMouseover)
+            .on("mouseout", relationshipMouseout);
 
 
         svg.selectAll(".consumer").attr("marker-end", "url(#arrowGrayStart)");
@@ -355,7 +389,6 @@ window.onload = function() {
         };
 
         var textYOffset2 = function(d, i) {
-            console.debug(d.pacticipantName, i, (40 * Math.sin(2 * Math.PI * i / pacticipants.length)))
             return (40 * Math.sin(2 * Math.PI * i / pacticipants.length));
         };
 
