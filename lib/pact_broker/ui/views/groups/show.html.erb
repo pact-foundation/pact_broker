@@ -89,7 +89,7 @@ var relationshipPath = function(relationship, nodeLocations, pacticipants) {
 
 var latestPactUrl = function (consumerName, providerName) {
     //TODO send this with the relationship data
-    return 'http://localhost:9292/pacts/provider/' + providerName + '/consumer/' + consumerName + '/latest';
+    return '/pacts/provider/' + providerName + '/consumer/' + consumerName + '/latest';
 };
 
 var relationshipData = function(pacticipant, relationships) {
