@@ -87,6 +87,11 @@ var relationshipPath = function(relationship, nodeLocations, pacticipants) {
     return "M" + 0 + "," + 0 + "A" + dr + ", " + dr + " 0 0," + inout + " " + dx + "," + dy;
 };
 
+var latestPactUrl = function (consumerName, providerName) {
+    //TODO send this with the relationship data
+    return 'http://localhost:9292/pacts/provider/' + providerName + '/consumer/' + consumerName + '/latest';
+};
+
 var relationshipData = function(pacticipant, relationships) {
     var relationshipsInvolvingPacticipant = [];
     var relationshipLinks = [];
@@ -100,11 +105,13 @@ var relationshipData = function(pacticipant, relationships) {
             } else {
                 dummyRelationship.relationshipType = 'consumer';
             }
+            dummyRelationship.href = relationship.href;
             relationshipsInvolvingPacticipant.push(dummyRelationship);
             var relationshipLink = {};
             relationshipLink.startId = relationship.consumerId;
             relationshipLink.endId = relationship.providerId;
             relationshipLink.relationshipType = 'link';
+            relationshipLink.href = relationship.href;
             relationshipLinks.push(relationshipLink);
         }
         else if (relationship.providerId == pacticipant.id) {
@@ -115,6 +122,7 @@ var relationshipData = function(pacticipant, relationships) {
             } else {
                 dummyRelationship.relationshipType = 'provider';
             }
+            dummyRelationship.href = relationship.href;
             relationshipsInvolvingPacticipant.push(dummyRelationship);
         }
     });
@@ -123,13 +131,19 @@ var relationshipData = function(pacticipant, relationships) {
 
 var createRelationships = function (pacticipants) {
     var relationships = [];
+    var findPacticipantById = function (id) {
+        return pacticipants.filter(function (pacticipant) {
+            return pacticipant.id == id;
+        })[0];
+    };
     pacticipants.forEach(function(d) {
         d.connectedPacticipantIds.forEach(function(connectedPacticipantId) {
             // relationships.push([d.id, connectedPacticipantId]);
             relationships.push(
             {
                 consumerId: d.id,
-                providerId: connectedPacticipantId
+                providerId: connectedPacticipantId,
+                href: latestPactUrl(d.pacticipantName, findPacticipantById(connectedPacticipantId).pacticipantName)
             }
             );
         });
@@ -138,7 +152,7 @@ var createRelationships = function (pacticipants) {
     relationships.sort(function(a, b) {
         return d3.ascending(a.consumerId, b.providerId);
     });
-
+    console.debug(relationships);
     return relationships;
 
 };
@@ -175,8 +189,8 @@ var pacticipantMouseout = function() {
     svg.selectAll(".relationship.consumer, .relationship.provider").transition().duration(TRANSITION_TIME).attr("stroke-width", RELATIONSHIP_STROKE_NORMAL).attr("opacity", OPACITY_NORMAL);
 };
 
-var relationshipOnclick = function() {
-    alert('clicked!');
+var relationshipOnclick = function(relationship) {
+    location.href = relationship.href;
 };
 
 var textContent = function(d, i) { return this.parentNode.className.animVal; };
