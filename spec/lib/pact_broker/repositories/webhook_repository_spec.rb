@@ -29,7 +29,7 @@ module PactBroker
         :method=>"post",
         :url=>"http://example.org",
         :username => 'username',
-        :password => 'password',
+        :password => "cGFzc3dvcmQ=",
         :body=>body.to_json,
         :consumer_id=> consumer.id,
         :provider_id=> provider.id } }
@@ -148,6 +148,15 @@ module PactBroker
 
           it "returns a webhook with the headers set" do
             expect(subject.request.headers).to eq headers
+          end
+
+
+          it "returns a webhook with the username set" do
+            expect(subject.request.username).to eq 'username'
+          end
+
+          it "returns a webhook with the password set" do
+            expect(subject.request.password).to eq 'password'
           end
 
           it "returns a webhook with the url set" do

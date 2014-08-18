@@ -1,6 +1,7 @@
 require 'sequel'
 require 'pact_broker/models/webhook'
 require 'pact_broker/db'
+require 'base64'
 
 module PactBroker
   module Repositories
@@ -66,13 +67,17 @@ module PactBroker
           method: webhook.request.method,
           url: webhook.request.url,
           username: webhook.request.username,
-          password: webhook.request.password,
+          password: not_plain_text_password(webhook.request.password),
           body: (is_json_request_body ? webhook.request.body.to_json : webhook.request.body),
           is_json_request_body: is_json_request_body
         ).tap do | db_webhook |
           db_webhook.consumer_id = consumer.id
           db_webhook.provider_id = provider.id
         end
+      end
+
+      def self.not_plain_text_password password
+        password.nil? ? nil : Base64.strict_encode64(password)
       end
 
       def to_model
@@ -86,7 +91,11 @@ module PactBroker
       end
 
       def request_attributes
-        values.merge(headers: parsed_headers, body: parsed_body)
+        values.merge(headers: parsed_headers, body: parsed_body, password: plain_text_password)
+      end
+
+      def plain_text_password
+        password.nil? ? nil : Base64.strict_decode64(password)
       end
 
       def parsed_headers

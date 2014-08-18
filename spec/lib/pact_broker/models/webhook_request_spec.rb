@@ -27,6 +27,20 @@ module PactBroker
         end
       end
 
+      describe "display_password" do
+        context "when a password is set" do
+          let(:password) { 'password' }
+          it "returns stars" do
+            expect(subject.display_password).to eq "**********"
+          end
+        end
+        context "when a password is not set" do
+          it "returns nil" do
+            expect(subject.display_password).to eq nil
+          end
+        end
+      end
+
       describe "execute" do
 
         let!(:http_request) do
