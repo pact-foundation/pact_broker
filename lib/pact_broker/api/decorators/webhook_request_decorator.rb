@@ -5,12 +5,12 @@ module PactBroker
     module Decorators
       class WebhookRequestDecorator < BaseDecorator
 
-          property :method
-          property :url
-          property :headers, getter: lambda { | _ | headers.empty? ? nil : headers }
-          property :body
-          property :username
-          property :password
+        property :method
+        property :url
+        property :headers, getter: lambda { | _ | headers.empty? ? nil : headers }
+        property :body
+        property :username
+        property :password, getter: lambda { | _ | password.nil? ? nil : "*****" }
 
       end
     end

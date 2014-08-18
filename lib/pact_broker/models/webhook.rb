@@ -11,13 +11,15 @@ module PactBroker
       include Messages
       include Logging
 
-      attr_accessor :uuid, :consumer, :provider, :request
+      attr_accessor :uuid, :consumer, :provider, :request, :created_at, :updated_at
 
       def initialize attributes = {}
         @uuid = attributes[:uuid]
         @request = attributes[:request]
         @consumer = attributes[:consumer]
         @provider = attributes[:provider]
+        @created_at = attributes[:created_at]
+        @updated_at = attributes[:updated_at]
       end
 
       def validate

@@ -118,8 +118,6 @@ module PactBroker
 
       end
 
-
-
       describe "find_by_uuid" do
 
 
@@ -154,6 +152,14 @@ module PactBroker
 
           it "returns a webhook with the url set" do
             expect(subject.request.url).to eq url
+          end
+
+          it "returns a webhook with a created_at date" do
+            expect(subject.created_at).to be_instance_of(DateTime)
+          end
+
+          it "returns a webhook with a updated_at date" do
+            expect(subject.updated_at).to be_instance_of(DateTime)
           end
 
           context "when the body is a XML string" do

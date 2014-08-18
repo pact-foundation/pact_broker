@@ -24,7 +24,13 @@ module PactBroker
         let(:provider) { Models::Pacticipant.new(name: 'Provider') }
 
         let(:webhook) do
-          Models::Webhook.new(request: webhook_request, uuid: 'some-uuid', consumer: consumer, provider: provider)
+          Models::Webhook.new(
+            request: webhook_request,
+            uuid: 'some-uuid',
+            consumer: consumer,
+            provider: provider,
+            created_at: DateTime.now,
+            updated_at: DateTime.now)
         end
 
         subject { WebhookDecorator.new(webhook) }
