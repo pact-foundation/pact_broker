@@ -36,6 +36,10 @@ module PactBroker
         "#{method.upcase} #{URI(url).host}"
       end
 
+      def display_password
+        password.nil? ? nil : "**********"
+      end
+
       def execute
 
         begin
@@ -78,7 +82,7 @@ module PactBroker
       private
 
       def to_s
-        "#{method.upcase} #{url}, headers=#{headers}, body=#{body}"
+        "#{method.upcase} #{url}, username=#{username}, password=#{display_password}, headers=#{headers}, body=#{body}"
       end
 
       def http_request

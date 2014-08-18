@@ -8,12 +8,12 @@ module PactBroker
       describe WebhookRequestDecorator do
 
         let(:username) { 'username' }
-        let(:password) { 'password' }
+        let(:display_password) { '*****' }
         let(:webhook_request) do
           instance_double(
             PactBroker::Models::WebhookRequest,
             username: username,
-            password: password,
+            display_password: display_password,
             method: 'POST',
             url: 'url',
             body: 'body',
@@ -31,12 +31,12 @@ module PactBroker
           end
 
           it "includes the username starred out" do
-            expect(subject[:password]).to eq "*****"
+            expect(subject[:password]).to eq display_password
           end
 
           context "when there is no password" do
 
-            let(:password) { nil }
+            let(:display_password) { nil }
 
             it "does not include a password key" do
               expect(subject).to_not have_key(:password)
@@ -45,6 +45,7 @@ module PactBroker
         end
 
         describe "from_json" do
+          let(:password) { 'password' }
           let(:hash) do
             {
               username: username,

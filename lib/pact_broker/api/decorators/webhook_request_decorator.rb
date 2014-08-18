@@ -10,7 +10,7 @@ module PactBroker
         property :headers, getter: lambda { | _ | headers.empty? ? nil : headers }
         property :body
         property :username
-        property :password, getter: lambda { | _ | password.nil? ? nil : "*****" }
+        property :password, getter: lambda { | _ | display_password }
 
       end
     end
