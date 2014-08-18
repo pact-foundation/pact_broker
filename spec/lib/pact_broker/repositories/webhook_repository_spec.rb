@@ -8,7 +8,15 @@ module PactBroker
       let(:url) { 'http://example.org' }
       let(:body) { {'some' => 'json' } }
       let(:headers) { {'Content-Type' => 'application/json', 'Accept' => 'application/json'} }
-      let(:request) { Models::WebhookRequest.new(method: 'post', url: url, headers: headers, body: body)}
+      let(:request) do
+        Models::WebhookRequest.new(
+          method: 'post',
+          url: url,
+          headers: headers,
+          username: 'username',
+          password: 'password',
+          body: body)
+      end
       let(:webhook) { Models::Webhook.new(request: request)}
       let(:test_data_builder) { ProviderStateBuilder.new }
       let(:consumer) { test_data_builder.create_pacticipant 'Consumer'; test_data_builder.pacticipant}
@@ -20,6 +28,8 @@ module PactBroker
         :uuid=>"the-uuid",
         :method=>"post",
         :url=>"http://example.org",
+        :username => 'username',
+        :password => 'password',
         :body=>body.to_json,
         :consumer_id=> consumer.id,
         :provider_id=> provider.id } }

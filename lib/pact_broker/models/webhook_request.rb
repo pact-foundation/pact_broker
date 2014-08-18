@@ -21,11 +21,13 @@ module PactBroker
       include PactBroker::Logging
       include PactBroker::Messages
 
-      attr_accessor :method, :url, :headers, :body
+      attr_accessor :method, :url, :headers, :body, :username, :password
 
       def initialize attributes = {}
         @method = attributes[:method]
         @url = attributes[:url]
+        @username = attributes[:username]
+        @password = attributes[:password]
         @headers = attributes[:headers] || {}
         @body = attributes[:body]
       end
@@ -43,6 +45,9 @@ module PactBroker
           headers.each_pair do | name, value |
             req[name] = value
           end
+
+          req.basic_auth(username, password) if username
+
           req.body = body
 
           logger.info "Making webhook request #{to_s}"

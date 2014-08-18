@@ -65,6 +65,8 @@ module PactBroker
           uuid: webhook.uuid,
           method: webhook.request.method,
           url: webhook.request.url,
+          username: webhook.request.username,
+          password: webhook.request.password,
           body: (is_json_request_body ? webhook.request.body.to_json : webhook.request.body),
           is_json_request_body: is_json_request_body
         ).tap do | db_webhook |
@@ -100,6 +102,8 @@ module PactBroker
       end
 
     end
+
+    Webhook.plugin :timestamps, :update_on_create=>true
 
     class WebhookHeader < Sequel::Model
 

@@ -9,6 +9,8 @@ module PactBroker
           property :url
           property :headers, getter: lambda { | _ | headers.empty? ? nil : headers }
           property :body
+          property :username
+          property :password
 
       end
     end

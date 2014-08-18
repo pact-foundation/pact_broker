@@ -8,10 +8,18 @@ module PactBroker
 
     describe WebhookRequest do
 
-      subject { WebhookRequest.new(method: 'post',
-        url: 'http://example.org/hook',
-        headers: {'Content-type' => 'text/plain'},
-        body: 'body')}
+      let(:username) { nil }
+      let(:password) { nil }
+
+      subject do
+        WebhookRequest.new(
+          method: 'post',
+          url: 'http://example.org/hook',
+          headers: {'Content-type' => 'text/plain'},
+          username: username,
+          password: password,
+          body: 'body')
+      end
 
       describe "description" do
         it "returns a brief description of the HTTP request" do
@@ -42,6 +50,25 @@ module PactBroker
           allow(PactBroker.logger).to receive(:info)
           expect(PactBroker.logger).to receive(:info).with(/response.*302.*respbod/)
           subject.execute
+        end
+
+        context "when a username and password are specified" do
+
+          let(:username) { 'username' }
+          let(:password) { 'password' }
+
+          let!(:http_request_with_basic_auth) do
+            stub_request(:post, "http://username:password@example.org/hook").
+              with(
+                :headers => {'Content-Type'=>'text/plain'},
+                :body => 'body').
+              to_return(:status => 302, :body => "respbod", :headers => {'Content-Type' => 'text/plain, blah'})
+          end
+
+          it "uses the credentials" do
+            subject.execute
+            expect(http_request_with_basic_auth).to have_been_made
+          end
         end
 
         context "when the request is successful" do
