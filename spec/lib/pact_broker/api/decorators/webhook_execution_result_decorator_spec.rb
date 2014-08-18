@@ -10,7 +10,8 @@ module PactBroker
 
           let(:webhook_execution_result) { PactBroker::Models::WebhookExecutionResult.new(response, error)}
           let(:headers) { { "Something" => ["blah", "thing"]} }
-          let(:response) { double('http_response', code: '200', body: 'body', to_hash: headers) }
+          let(:response) { double('http_response', code: '200', body: response_body, to_hash: headers) }
+          let(:response_body) { 'body' }
           let(:error) { nil }
           let(:webhook) { instance_double(PactBroker::Models::Webhook, uuid: 'some-uuid')}
           let(:json) {
@@ -49,7 +50,15 @@ module PactBroker
               expect(subject[:response][:headers]).to eq :'Something' => "blah, thing"
             end
             it "includes the response body" do
-              expect(subject[:response][:body]).to eq 'body'
+              expect(subject[:response][:body]).to eq response_body
+            end
+
+            context "when the response body is JSON" do
+              let(:response_body_hash) { {some: 'json'} }
+              let(:response_body) { response_body_hash.to_json }
+              it "returns the response as JSON" do
+                expect(subject[:response][:body]).to eq response_body_hash
+              end
             end
           end
         end

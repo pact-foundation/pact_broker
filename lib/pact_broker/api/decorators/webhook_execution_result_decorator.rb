@@ -1,4 +1,5 @@
 require_relative 'base_decorator'
+require 'json'
 
 module PactBroker
   module Api
@@ -17,12 +18,20 @@ module PactBroker
 
           property :status, :getter => lambda { |_| code.to_i }
           property :headers, exec_context: :decorator
-          property :body
+          property :body, exec_context: :decorator
 
           def headers
             headers_hash = represented.to_hash
             headers_hash.keys.each_with_object({}) do | name, new_headers_hash|
               new_headers_hash[name] = headers_hash[name].join(", ")
+            end
+          end
+
+          def body
+            begin
+              ::JSON.parse(represented.body)
+            rescue StandardError => e
+              represented.body
             end
           end
 
