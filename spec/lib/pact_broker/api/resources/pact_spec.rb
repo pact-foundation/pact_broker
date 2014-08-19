@@ -29,7 +29,7 @@ module PactBroker::Api
           end
 
           it "returns an error message" do
-            expect(JSON.parse(last_response.body)).to eq "error" => "Invalid JSON"
+            expect(JSON.parse(last_response.body)["error"]).to match /Invalid JSON/
           end
         end
 

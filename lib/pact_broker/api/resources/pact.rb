@@ -1,6 +1,7 @@
 require 'cgi'
 require 'pact_broker/api/resources/base_resource'
 require 'pact_broker/api/decorators/pact_decorator'
+require 'pact_broker/json'
 
 module PactBroker::Api
 
@@ -23,12 +24,12 @@ module PactBroker::Api
       def malformed_request?
         if request.put?
           begin
-            JSON.parse(pact_content) #Not load! Otherwise it will try to load Ruby classes.
+            JSON.parse(pact_content, PactBroker::PACT_PARSING_OPTIONS) #Not load! Otherwise it will try to load Ruby classes.
             false
           rescue StandardError => e
             logger.error "Error parsing JSON #{e} - #{pact_content}"
             response.headers['Content-Type'] = 'application/json'
-            response.body = {error: 'Invalid JSON'}.to_json
+            response.body = {error: "Invalid JSON - #{e.message}"}.to_json
             true
           end
         end
