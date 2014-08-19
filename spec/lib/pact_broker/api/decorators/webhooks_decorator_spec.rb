@@ -25,13 +25,17 @@ module PactBroker
           subject { JSON.parse(json, symbolize_names: true) }
 
           it "includes a link to itself with a title" do
-            expect(subject[:_links][:self][:href]).to eq resource_url
-            expect(subject[:_links][:self][:title]).to eq 'Title'
+            expect(subject[:_links][:'pb:self'][:href]).to eq resource_url
+            expect(subject[:_links][:'pb:self'][:title]).to eq 'Title'
           end
 
           it "includes a list of links to the webhooks" do
             expect(subject[:_links][:webhooks]).to be_instance_of(Array)
             expect(subject[:_links][:webhooks].first).to eq title: 'description', name: 'request description', href: 'http://example.org/webhooks/some-uuid'
+          end
+
+          it "includes curies" do
+            expect(subject[:_links][:curies]).to eq [{:name=>"pb", :href=>"http://example.org/doc/webhooks"}]
           end
 
         end

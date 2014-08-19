@@ -1,5 +1,6 @@
 require 'sequel'
 require 'pact_broker/models/webhook'
+require 'pact_broker/models/pacticipant'
 require 'pact_broker/db'
 require 'base64'
 

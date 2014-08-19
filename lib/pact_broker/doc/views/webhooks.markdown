@@ -13,8 +13,10 @@ An example webhook to trigger a Bamboo job.
       "request": {
         "method": "POST",
         "url": "http://master.ci.my.domain:8085/rest/api/latest/queue/SOME-PROJECT?os_authType=basic",
+        "username": "username",
+        "password": "password",
         "headers": {
-          "Authorization": "Basic dXNlcm5hbWU6cGFzc3dvcmQ="
+          "Accept": "application/json"
         }
       }
     }
@@ -31,9 +33,7 @@ A request body can be specified as well.
       }
     }
 
-To create an Authorisation header, run:
-
-    ruby -e "require 'base64'; puts ('Basic ' + Base64.strict_encode64('your-username:your-password'))"
+**BEWARE** The password can be reverse engineered from the database, so make a separate account for the Pact Broker to use, don't use your personal account!
 
 ### Testing
 

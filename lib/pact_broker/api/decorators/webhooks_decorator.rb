@@ -7,7 +7,7 @@ module PactBroker
       class WebhooksDecorator < BaseDecorator
 
 
-        link :self do | context |
+        link :'pb:self' do | context |
           {
             title: context.resource_title,
             href: context.resource_url
@@ -23,6 +23,14 @@ module PactBroker
             }
           end
         end
+
+        curies do | context |
+          [{
+            name: :pb,
+            href: context.base_url + '/doc/webhooks',
+          }]
+        end
+
       end
     end
   end
