@@ -7,7 +7,20 @@
 <meta name="description" content="">
 <meta name="author" content="Duncan Alexander">
 <script type="text/javascript" src="/javascripts/d3.v3.js.pagespeed.ce.dFNRrGTALe.js"></script>
-<style>body{font-family:"Helvetica Neue",Arial,sans-serif;font-size:.75em;font-weight:bold;padding:2em}#legend{display:inline-block;width:600;height:70}</style>
+<style>
+body{
+    font-family:"Helvetica Neue",Arial,sans-serif;
+    font-size:.95em;
+    font-weight:bold;
+    padding:2em
+}
+.pacticpantLabel {
+    cursor: default
+ }
+ .relationship {
+    cursor: pointer;
+ }
+</style>
 <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
 <!--[if lt IE 9]>
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -15,237 +28,381 @@
 <!-- developed by Duncan Alexander - hypothete.com -->
 </head>
 <body>
-<h1>Network graph of pacticipant relationships</h1>
-<div id="legend" </div>
+<h1>Network graph of <%= pacticipant_name %> relationships</h1>
 <script type="text/javascript">
-var w, h, svg;
-window.onload = function() {
-    w = window.innerWidth;
-    h = window.innerHeight - 200;
-    svg = d3.select("body").append("svg").attr("width", w).attr("height", h).attr("version", 1.1).attr("xmlns", "http://www.w3.org/2000/svg");
-    var people = [];
-    var maxgrant = 0;
-    var maxrad = 0;
-    var arraydepts = [];
-    var maxorder = 0;
+var windowWidth, windowHeight, svg;
 
+var enlargeCanvasToFit = function (radius) {
+    //Make SVG canvas bigger if it won't fit
+    if (3 * radius > windowWidth) {
+        windowWidth = 3 * radius;
+        svg.attr("width", windowWidth);
+    }
+    if (3.5 * radius > windowHeight) {
+        windowHeight = 3.5 * radius;
+        svg.attr("height", windowHeight);
+    }
+};
+
+var parseCSV = function (data) {
+    var pacticipants = [];
+    data.forEach(
+        function(row) {
+            var pacticipant = {
+                id: row[0],
+                pacticipantName: row[1],
+                order: parseInt(row[5]),
+                connectedPacticipantIds: row.slice(6).filter(function(e) {
+                    if (parseInt(e) != NaN && parseInt(e) > 0) {
+                        return e;
+                    }
+                })
+            };
+
+            pacticipants.push(pacticipant);
+        });
+    pacticipants.sort(function(a, b) {
+        return d3.ascending(a.order, b.order);
+    });
+    return pacticipants;
+};
+
+var getPacticipantNames = function (pacticipants) {
+    return pacticipants.map(function(p){ return p.pacticipantName });
+};
+
+var relationshipPath = function(relationship, nodeLocations, pacticipants) {
+    var dx = nodeLocations[relationship.endId].x - nodeLocations[relationship.startId].x;
+    var dy = nodeLocations[relationship.endId].y - nodeLocations[relationship.startId].y;
+    var dr = Math.sqrt(dx * dx + dy * dy);
+    var inout = 1;
+
+    var indexOfEndGreaterThanIndexOfStart = nodeLocations[relationship.endId].i > nodeLocations[relationship.startId].i;
+    var differenceBetweenStartAndEndIndexes = Math.abs(nodeLocations[relationship.endId].i - nodeLocations[relationship.startId].i);
+    var indexOfEndLessThanIndexOfStart = nodeLocations[relationship.endId].i < nodeLocations[relationship.startId].i
+
+    if ((indexOfEndGreaterThanIndexOfStart && differenceBetweenStartAndEndIndexes <= pacticipants.length / 2) || (indexOfEndLessThanIndexOfStart && differenceBetweenStartAndEndIndexes > pacticipants.length / 2)) {
+        inout = 0;
+    }
+    return "M" + 0 + "," + 0 + "A" + dr + ", " + dr + " 0 0," + inout + " " + dx + "," + dy;
+};
+
+var latestPactUrl = function (consumerName, providerName) {
+    //TODO send this with the relationship data
+    return '/pacts/provider/' + providerName + '/consumer/' + consumerName + '/latest';
+};
+
+var relationshipData = function(pacticipant, relationships) {
+    var relationshipsInvolvingPacticipant = [];
+    var relationshipLinks = [];
+    relationships.forEach(function(relationship) {
+        var dummyRelationship = {};
+        dummyRelationship.id = relationship.id;
+        if (relationship.consumerId == pacticipant.id) {
+            dummyRelationship.startId = relationship.consumerId;
+            dummyRelationship.endId = relationship.providerId;
+            if (relationship.relationshipType) {
+                dummyRelationship.relationshipType = relationship.relationshipType;
+            } else {
+                dummyRelationship.relationshipType = 'consumer';
+            }
+            dummyRelationship.href = relationship.href;
+            relationshipsInvolvingPacticipant.push(dummyRelationship);
+            var relationshipLink = {};
+            relationshipLink.startId = relationship.consumerId;
+            relationshipLink.endId = relationship.providerId;
+            relationshipLink.relationshipType = 'link';
+            relationshipLink.href = relationship.href;
+            relationshipLink.id = relationship.id;
+            relationshipLinks.push(relationshipLink);
+        }
+        else if (relationship.providerId == pacticipant.id) {
+            dummyRelationship.startId = relationship.providerId;
+            dummyRelationship.endId = relationship.consumerId;
+            if (relationship.relationshipType) {
+                dummyRelationship.relationshipType = relationship.relationshipType;
+            } else {
+                dummyRelationship.relationshipType = 'provider';
+            }
+            dummyRelationship.href = relationship.href;
+            relationshipsInvolvingPacticipant.push(dummyRelationship);
+        }
+    });
+    return relationshipLinks.concat(relationshipsInvolvingPacticipant);
+};
+
+var createRelationships = function (pacticipants) {
+    var relationships = [];
+    var findPacticipantById = function (id) {
+        return pacticipants.filter(function (pacticipant) {
+            return pacticipant.id == id;
+        })[0];
+    };
+    pacticipants.forEach(function(d) {
+        d.connectedPacticipantIds.forEach(function(connectedPacticipantId) {
+            relationships.push(
+            {
+                id: ['c', d.id, 'p', connectedPacticipantId].join(''),
+                consumerId: d.id,
+                providerId: connectedPacticipantId,
+                href: latestPactUrl(d.pacticipantName, findPacticipantById(connectedPacticipantId).pacticipantName)
+            }
+            );
+        });
+    });
+
+    relationships.sort(function(a, b) {
+        return d3.ascending(a.consumerId, b.providerId);
+    });
+    return relationships;
+
+};
+
+var transformPacticipantNode = function (d, i, radius, pacticipants, nodeLocations) {
+    //Node locations - makes the big circle
+    var x = radius * Math.cos(2 * Math.PI * (i / pacticipants.length)) + windowWidth / 2;
+    var y = radius * Math.sin(2 * Math.PI * (i / pacticipants.length)) + windowHeight / 2;
+    nodeLocations[d.id] = {
+        x: x,
+        y: y,
+        i: i
+    };
+    return "translate(" + x + "," + y + ")";
+};
+
+var relationshipColour = function(relationship) {
+    return "gray";
+};
+
+var fadeAllRelationships = function() {
+    svg.selectAll(".relationship.visible")
+        .transition()
+        .duration(TRANSITION_TIME)
+        .attr("opacity", OPACITY_FADED)
+        .attr("stroke-width", RELATIONSHIP_STROKE_FADED);
+};
+
+var boldRelationships = function(relationships) {
+    relationships.transition()
+        .duration(TRANSITION_TIME)
+        .attr("opacity", OPACITY_DARK)
+        .attr("stroke-width", RELATIONSHIP_STROKE_DARK);
+};
+
+var normalizeRelationships = function() {
+    svg.selectAll(".relationship.visible")
+        .transition()
+        .duration(TRANSITION_TIME)
+        .attr("stroke-width", RELATIONSHIP_STROKE_NORMAL)
+        .attr("opacity", OPACITY_NORMAL);
+};
+
+var pacticipantMouseover = function() {
+    fadeAllRelationships();
+    boldRelationships(
+        d3.select(this.parentNode)
+            .selectAll(".relationship.visible"));
+};
+var pacticipantMouseout = function() {
+    normalizeRelationships();
+};
+
+var relationshipMouseover = function(relationship) {
+    fadeAllRelationships();
+    boldRelationships( svg.selectAll("." + relationship.id + ".visible") );
+};
+
+var relationshipMouseout = function() {
+    normalizeRelationships();
+};
+
+var relationshipOnclick = function(relationship) {
+    location.href = relationship.href;
+};
+
+var textContent = function(d, i) { return this.parentNode.className.animVal; };
+
+var OPACITY_FADED = 0.3; //0.1;
+var OPACITY_NORMAL = 0.75; //0.75;
+var OPACITY_DARK = 1;
+var RELATIONSHIP_STROKE_DARK = 1;
+var RELATIONSHIP_STROKE_NORMAL = 0.75;
+var RELATIONSHIP_STROKE_FADED = 0.35;
+var TRANSITION_TIME = 400;
+
+window.onload = function() {
+    var titleHeight = 250;
+    windowWidth = window.innerWidth - titleHeight;
+    windowHeight = window.innerHeight;
+    svg = d3.select("body").append("svg").attr("width", windowWidth).attr("height", windowHeight).attr("version", 1.1).attr("xmlns", "http://www.w3.org/2000/svg");
+    var pacticipants = [];
+    var maxrad = 0;
+    var pacticipantNameArray = [];
+    var circleMinRadius = 200;
+
+
+    var defs = svg.append('defs');
+        defs.append("marker")
+        .attr("id", "arrowGrayStart")
+        .attr("viewBox","0 0 10 10")
+        .attr("refX","10")
+        .attr("refY","5")
+        .attr("markerUnits","strokeWidth")
+        .attr("markerWidth","15")
+        .attr("markerHeight","15")
+        .attr("orient","auto")
+        .append("path")
+        .attr("d","M 0 0 L 10 5 L 0 10 z")
+        .attr("fill", "#A0A0A0");
+
+    defs.append("marker")
+        .attr("id", "arrowGrayEnd")
+        .attr("viewBox","0 0 10 10")
+        .attr("refX","0")
+        .attr("refY","5")
+        .attr("markerUnits","strokeWidth")
+        .attr("markerWidth","15")
+        .attr("markerHeight","15")
+        .attr("orient","auto")
+        .append("path")
+        .attr("d","M 10 0 L 10 10 L 0 5 z")
+        .attr("fill", "#A0A0A0");
 
 
     d3.text("<%= csv_path %>", "text/csv", function(unparsedData) {
         var data=d3.csv.parseRows(unparsedData);
-        data.forEach(
-            function(d) {
-                var person = {
-                    id: d[0],
-                    department: d[1],
-                    interviewed: parseInt(d[2]),
-                    grants: parseInt(d[3]) || 0,
-                    order: parseInt(d[5]),
-                    children: d.slice(6).filter(function(e) {
-                        if (parseInt(e) != NaN) {
-                            return e;
-                        }
-                    })
-                };
-                if (person.grants > maxgrant) {
-                    maxgrant = person.grants;
-                }
+        pacticipants = parseCSV(data);
+        pacticipantNameArray = getPacticipantNames(pacticipants);
 
-                if (person.order > maxorder) {
-                    maxorder = person.order;
-                }
-                if (arraydepts.indexOf(person.department) == -1) {
-                    arraydepts.push(person.department);
-                }
-                people.push(person);
-            });
-        people.sort(function(a, b) {
-            return d3.ascending(a.order, b.order);
-        });
-        var lookup = {};
-        var radius = Math.max(100, people.length * 2.5);
-        if (3 * radius > w) {
-            w = 3 * radius;
-            svg.attr("width", w);
-        }
-        if (3.5 * radius > h) {
-            h = 3.5 * radius;
-            svg.attr("height", h);
-        }
-        maxrad = (radius * Math.PI / people.length) + 2;
-        lastdept = '';
-        var g = svg.selectAll("g").data(people).enter().append("g").attr("transform", function(d, i) {
-            var x = radius * Math.sin(2 * Math.PI * (i / people.length)) + w / 2;
-            var y = radius * Math.cos(2 * Math.PI * (i / people.length)) + h / 2;
-            lookup[d.id] = {
-                x: x,
-                y: y,
-                i: i
-            };
-            return "translate(" + x + "," + y + ")";
+        var nodeLocations = {};
+        var radius = Math.max(circleMinRadius, pacticipants.length * 2.5);
+
+        enlargeCanvasToFit(radius, windowWidth, windowHeight, svg);
+
+        maxrad = (radius * Math.PI / pacticipants.length) + 2;
+        var g = svg.selectAll("g").data(pacticipants).enter().append("g").attr("transform", function(d, i) {
+            return transformPacticipantNode(d, i, radius, pacticipants, nodeLocations);
         }).attr("id", function(d, i) {
             return i;
-        }).attr("class", function(d) {
-            if (d.department != lastdept) {
-                lastdept = d.department;
-                return lastdept;
-            } else {
-                return "";
-            }
+        }).attr("class", function(pacticipant) {
+            return pacticipant.pacticipantName;
         });
-        var pairs = [];
-        people.forEach(function(d) {
-            d.children.forEach(function(e) {
-                if (lookup[e]) {
-                    pairs.push([d.id, e]);
-                }
-            });
-        });
-        pairs.forEach(function(f) {
-            for (var i = 0; i < pairs.length; i++) {
-                if (f[0] == pairs[i][1] && f[1] == pairs[i][0]) {
-                    pairs.splice(i, 1);
-                    f[2] = 2;
-                }
-            }
-        });
-        pairs.sort(function(a, b) {
-            return d3.ascending(a[0], b[0]);
-        });
-        var lineo = g.selectAll("path").data(function(d) {
-            var mypairs = [];
-            pairs.forEach(function(g) {
-                var dummypair = [];
-                if (g[0] == d.id) {
-                    dummypair[0] = g[0];
-                    dummypair[1] = g[1];
-                    if (g[2]) {
-                        dummypair[2] = g[2];
-                    } else {
-                        dummypair[2] = 0;
-                    }
-                    mypairs.push(dummypair);
-                } else if (g[1] == d.id) {
-                    dummypair[0] = g[1];
-                    dummypair[1] = g[0];
-                    if (g[2]) {
-                        dummypair[2] = g[2];
-                    } else {
-                        dummypair[2] = 1;
-                    }
-                    mypairs.push(dummypair);
-                }
-            });
-            return mypairs;
-        }).enter().append("path").attr("d", function(d) {
-            var dx = lookup[d[1]].x - lookup[d[0]].x;
-            var dy = lookup[d[1]].y - lookup[d[0]].y;
-            var dr = Math.sqrt(dx * dx + dy * dy);
-            var inout = 0;
-            var bigsmall = 0;
-            if ((lookup[d[1]].i > lookup[d[0]].i && Math.abs(lookup[d[1]].i - lookup[d[0]].i) <= people.length / 2) || (lookup[d[1]].i < lookup[d[0]].i && Math.abs(lookup[d[1]].i - lookup[d[0]].i) >= people.length / 2)) {
-                inout = 1;
-            }
-            return "M" + 0 + "," + 0 + "A" + dr + ", " + dr + " 0 0," + inout + " " + dx + "," + dy;
-        }).attr("stroke", function(d) {
-            if (d[2] == 0) {
-                return "red";
-            } else if (d[2] == 1) {
-                return "teal";
-            } else {
-                return "purple";
-            }
-        }).attr("stroke-width", ".35").attr("opacity", ".5").attr("fill", "none").attr("class", function(d) {
-            return d[0] + " " + d[1] + " " + lookup[d[0]].i;
-        });
-        var ordcols = d3.scale.category10().domain([0, arraydepts.length]);
 
-        var cirscale = d3.scale.quantile().domain([0, 1000000, 5000000, 15000000, 70000000]).range([3, maxrad / 3, maxrad / 2, 3 * maxrad / 4, maxrad]);
-        var circles = g.append("circle").attr("r", function(d) {
-            return cirscale(d.grants);
-        }).attr("fill", function(d) {
-            if (d.interviewed) {
-                return ordcols(arraydepts.indexOf(d.department));
-            } else {
-                return "white";
-            }
-        }).attr("stroke", function(d) {
-            return ordcols(arraydepts.indexOf(d.department));
-        }).attr("stroke-width", 2).attr("cx", function(d, i) {
-            return cirscale(d.grants) * Math.sin(2 * Math.PI * i / people.length);
-        }).attr("cy", function(d, i) {
-            return cirscale(d.grants) * Math.cos(2 * Math.PI * i / people.length);
-        });
-        var text = g.append("text").text(function(d) {
-            return this.parentNode.className.animVal;
-        }).attr("x", function(d, i) {
-            if (i <= people.length / 2) {
-                return 2 * maxrad;
-            } else {
-                return -2 * maxrad;
-            }
-        }).attr("text-anchor", function(d, i) {
-            if (i <= people.length / 2) {
+        relationships = createRelationships(pacticipants);
+
+        g.selectAll("path")
+            .data(function(pacticipant){ return relationshipData(pacticipant, relationships); }).enter()
+            .append("path")
+            .attr("d", function(relationship){ return relationshipPath(relationship, nodeLocations, pacticipants); })
+            .attr("class", function(relationship) {
+                var clazz = relationship.id + " " + relationship.relationshipType + " relationship";
+                if(relationship.relationshipType !== 'link') {
+                    clazz += ' visible';
+                }
+                return clazz;
+            })
+            .attr("fill", "none");
+
+        g.selectAll(".consumer, .provider")
+            .attr("stroke", relationshipColour)
+            .attr("stroke-width", RELATIONSHIP_STROKE_NORMAL)
+            .attr("opacity", OPACITY_NORMAL);
+
+        g.selectAll(".relationship.link")
+            .attr("stroke-width", 14)
+            .attr("opacity", 0)
+            .attr("stroke", 'white');
+
+        g.selectAll(".relationship")
+            .on("click", relationshipOnclick)
+            .on("mouseover", relationshipMouseover)
+            .on("mouseout", relationshipMouseout);
+
+
+        svg.selectAll(".consumer").attr("marker-end", "url(#arrowGrayStart)");
+        svg.selectAll(".provider").attr("marker-start", "url(#arrowGrayEnd)");
+
+        var pacticipantColour = d3.scale.category10().domain([0, pacticipants.length]);
+
+        var onRight = function (i) {
+            return i <= pacticipants.length / 4 || i >= pacticipants.length * 3 / 4;
+        };
+
+        var textFill = function(pacticipant) {
+            return pacticipantColour(pacticipant.order);
+        }
+
+        var circleXOffset = function(d, i) {
+            //controls the positioning in regards to the edge of the circle
+            return 6 * Math.cos(2 * Math.PI * i / pacticipants.length);
+        };
+
+        var circleYOffset = function(d, i) {
+            //controls the positioning in regards to the edge of the circle
+            return 6 * Math.sin(2 * Math.PI * i / pacticipants.length);
+        };
+
+        var circles = g.append("circle")
+        .attr("r", function(pacticipant) { return 6; })
+        .attr("fill", textFill)
+        .attr("stroke", textFill)
+        .attr("stroke-width", 2)
+        .attr("cx", circleXOffset)
+        .attr("cy", circleYOffset);
+
+        var textAnchor = function(d, i) {
+            if (onRight(i)) {
                 return "start";
             } else {
                 return "end";
             }
-        }).attr("transform", function(d, i) {
-            if (i <= people.length / 2) {
-                return "rotate(" + 90 * Math.cos(2 * Math.PI * i / people.length) + ")";
-            } else {
-                return "rotate(" + -90 * Math.cos(2 * Math.PI * i / people.length) + ")";
-            }
-        }).attr("fill", function(d) {
-            return ordcols(arraydepts.indexOf(d.department));
-        });
-        circles.on("mouseover", function() {
-            svg.selectAll("path").transition().duration(500).attr("opacity", "0.1");
-            d3.select(this.parentNode).selectAll("path").transition().duration(500).attr("opacity", "1").attr("stroke-width", "1");
-            d3.select(this.parentNode).selectAll("text").transition().duration(500).text(function(d) {
-                return this.parentNode.className.animVal + " ID: " + d.id;
-            });
-        }).on("mouseout", function() {
-            svg.selectAll("path").transition().duration(500).attr("stroke-width", ".35").attr("opacity", ".5");
-            d3.select(this.parentNode).selectAll("text").transition().duration(500).text(function(d) {
-                return this.parentNode.className.animVal;
-            });
-        });
-        legend = d3.select("#legend").append("svg").attr("width", 600).attr("height", 70);
-        var circlekey = [70000000, 15000000, 5000000, 1000000, 0];
+        };
 
-        function commaRound(num) {
-            var count = 0;
-            var beforeperiod = '';
-            var numstr = Math.round(num).toString();
-            for (var i = numstr.length - 1; i >= 0; i--) {
-                beforeperiod = numstr.charAt(i) + beforeperiod;
-                count += 1;
-                if (count > 2 && i > 0) {
-                    beforeperiod = ',' + beforeperiod;
-                    count = 0;
+        var textXOffset = function(d, i) {
+            //controls the positioning in regards to the edge of the circle
+            return 40 * Math.cos(2 * Math.PI * i / pacticipants.length);
+        };
+
+        var isFinite = function(num) {
+            return !(num == Number.POSITIVE_INFINITY || num == Number.NEGATIVE_INFINITY)
+        };
+
+
+        var textYOffset = function(d, i) {
+            var thing = 4 * Math.PI * i / pacticipants.length;
+            var counterOffset = 0;
+
+            counterOffset = (0.2 / (20 * Math.tan(thing/2))) * 1000;
+
+            if(!isFinite(counterOffset)) { //Right, middle node
+                counterOffset = 0;
+            } else {
+                //Near the asymptotes, it gets bigger really quickly, if it's a big number,
+                //it's likely it should actually be on the asymptote, and therefore, have no counterOffset
+                if(Math.abs(counterOffset) > 30) {
+                    //Left, middle node
+                    counterOffset = 0;
                 }
             }
-            return beforeperiod;
-        }
 
-        var lineLength = 20;
+            return (40 * Math.sin(2 * Math.PI * i / pacticipants.length)) - counterOffset;
+        };
 
-        var connlines = legend.selectAll("line").data([0, 1, 2]).enter().append("line").attr("x1", lineLength).attr("y1", function(d, i) {
-            return 5 + 25 * d;
-        }).attr("x2", lineLength * 4).attr("y2", function(d, i) {
-            return 5 + 25 * d;
-        }).attr("stroke", function(d) {
-            if (d == 0) {
-                return "red";
-            } else if (d == 1) {
-                return "teal";
-            }
-            return "purple";
-        }).attr("stroke-width", 2);
-        legend.append("text").text("is a consumer of").attr("x", lineLength * 5).attr("y", 10).attr("fill", "black");
-        legend.append("text").text("is a provider for").attr("x", lineLength * 5).attr("y", 35).attr("fill", "black");
-        legend.append("text").text("is a consumer and a provider of").attr("x", lineLength * 5).attr("y", 60).attr("fill", "black");
+        var textYOffset2 = function(d, i) {
+            return (40 * Math.sin(2 * Math.PI * i / pacticipants.length));
+        };
+
+        var text = g.append("text").text(textContent)
+        .attr("x", function(d, i) { return textXOffset(d, i, maxrad); })
+        .attr("y", function(d, i) { return textYOffset(d, i, maxrad); })
+        .attr("text-anchor", textAnchor)
+        .attr("fill", textFill)
+        // .attr("font-size", function(){ return 15; });
+        .attr("class", function() { return "pacticpantLabel"; });
+
+        circles.on("mouseover", pacticipantMouseover).on("mouseout", pacticipantMouseout);
+        text.on("mouseover", pacticipantMouseover).on("mouseout", pacticipantMouseout);
+
     });
 }</script>
 </body>

@@ -10,7 +10,13 @@ module PactBroker
         include PactBroker::Services
 
         get ":name" do
-          erb :'groups/show.html', {locals: {csv_path: "/groups/#{params[:name]}/csv"}}, {layout: 'layouts/main'}
+          erb :'groups/show.html', {
+            locals: {
+              csv_path: "/groups/#{params[:name]}/csv",
+              pacticipant_name: params[:name]}
+            }, {
+              layout: 'layouts/main'
+            }
         end
 
       end

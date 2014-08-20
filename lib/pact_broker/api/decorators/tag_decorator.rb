@@ -9,8 +9,8 @@ module PactBroker
 
       class TagDecorator < BaseDecorator
 
-        property :createdAt, getter: lambda { |_|  created_at.xmlschema }
-        property :updatedAt, getter: lambda { |_| updated_at.xmlschema }
+        property :createdAt, getter: lambda { |_| created_at ? created_at.xmlschema : nil }
+        property :updatedAt, getter: lambda { |_| updated_at ? updated_at.xmlschema : nil }
 
         link :self do | options |
           tag_url(options[:base_url], represented)

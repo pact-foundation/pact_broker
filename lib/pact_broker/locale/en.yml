@@ -1,0 +1,23 @@
+en:
+  pact_broker:
+    errors:
+      validation:
+        attribute_missing: "Missing required attribute '%{attribute}'"
+        invalid_http_method: "Invalid HTTP method '%{method}'"
+        invalid_url: "Invalid URL '%{url}'. Expected format: http://example.org"
+      "400":
+        title: 400 Malformed Request
+        message: The request was malformed and could not be processed.
+      "404":
+        title: 404 Not Found
+        message: The requested document was not found on this server.
+      "500":
+        title: 500 Internal Server Error
+        message: "The server encountered an error while processing this request: <pre>%{error}</pre>"
+      "501":
+        title: 501 Not Implemented
+        message: "The server does not support the %{method} method."
+      "503":
+        title: 503 Service Unavailable
+        message: The server is currently unable to handle the request due to a temporary overloading or maintenance of the server.
+

@@ -11,7 +11,7 @@ module PactBroker
 
         property :name
         property :repository_url, as: :repositoryUrl
-        property :latest_version, as: :latestVersion, :class => PactBroker::Models::Version, :extend => PactBroker::Api::Decorators::VersionRepresenter, :embedded => true
+        property :latest_version, as: :'latest-version', :class => PactBroker::Models::Version, :extend => PactBroker::Api::Decorators::VersionRepresenter, :embedded => true
         property :createdAt, getter: lambda { |_|  created_at.xmlschema }
         property :updatedAt, getter: lambda { |_| updated_at.xmlschema }
 

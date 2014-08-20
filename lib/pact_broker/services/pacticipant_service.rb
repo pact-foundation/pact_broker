@@ -7,7 +7,7 @@ module PactBroker
     class PacticipantService
 
       extend PactBroker::Repositories
-      extend PactBroker::Repositories
+      extend PactBroker::Services
 
       def self.find_all_pacticipants
         pacticipant_repository.find_all
@@ -41,11 +41,13 @@ module PactBroker
       end
 
       def self.delete name
+        pacticipant = find_pacticipant_by_name name
         connection = PactBroker::Models::Pacticipant.new.db
         connection.run("delete from tags where version_id IN (select id from versions where pacticipant_id IN (select id from pacticipants where name = '#{name}'))")
         connection.run("delete from pacts where version_id IN (select id from versions where pacticipant_id IN (select id from pacticipants where name = '#{name}'))")
         connection.run("delete from pacts where provider_id IN (select id from pacticipants where name = '#{name}')")
         connection.run("delete from versions where pacticipant_id IN (select id from pacticipants where name = '#{name}')")
+        webhook_service.delete_by_pacticipant pacticipant
         connection.run("delete from pacticipants where name = '#{name}'")
       end
 

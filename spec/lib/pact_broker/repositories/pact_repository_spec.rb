@@ -5,6 +5,32 @@ module PactBroker
   module Repositories
     describe PactRepository do
 
+      describe "find_previous_pact" do
+        before do
+          ProviderStateBuilder.new
+            .create_consumer("Consumer")
+            .create_consumer_version("1.2.2")
+            .create_provider("Provider")
+            .create_pact
+            .create_consumer_version("1.2.4")
+            .create_pact
+            .create_consumer_version("1.2.6")
+            .create_pact
+            .create_provider("Another Provider")
+            .create_consumer_version("1.2.5")
+            .create_pact
+        end
+
+        let(:pact) { PactRepository.new.find_latest_pact "Consumer", "Provider"  }
+
+        subject  { PactRepository.new.find_previous_pact pact }
+
+        it "finds the previous pact" do
+          expect(subject.consumer_version_number).to eq "1.2.4"
+          expect(subject.consumer_version.number).to eq "1.2.4"
+        end
+      end
+
       describe "find_latest_pact" do
 
         context "with a tag" do
@@ -61,6 +87,7 @@ module PactBroker
           expect(pacts[0].provider.name).to eq("Pricing Service")
           expect(pacts[0].provider.id).to_not be nil
           expect(pacts[0].consumer_version.number).to eq("1.4.0")
+          expect(pacts[0].consumer_version_number).to eq("1.4.0")
 
           expect(pacts[1].consumer_version.pacticipant.name).to eq("Contract Email Service")
           expect(pacts[1].consumer.name).to eq("Contract Email Service")

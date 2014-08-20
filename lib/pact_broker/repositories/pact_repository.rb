@@ -14,15 +14,11 @@ module PactBroker
 
       def find_latest_pacts
         # Need to use aliases because sqlite returns row with `` in the column name, mysql does not
-        db[:latest_pacts].select(:id, :consumer_id___cid, :consumer_name___cn, :provider_id___pid, :provider_name___pn, :consumer_version_number___cvn).all.collect do | row |
-          # Equality fails inside Relationship.connected if using OpenStruct, can't seem to duplicate it
-          # in a test though.
-          consumer = Models::Pacticipant.new(name: row[:cn])
-          consumer.id = row[:cid]
-          provider = Models::Pacticipant.new(name: row[:pn])
-          provider.id = row[:pid]
-          consumer_version = OpenStruct.new(number: row[:cvn], pacticipant: consumer)
-          pact = OpenStruct.new(id: row[:id], consumer: consumer, consumer_version: consumer_version, provider: provider)
+        db[:latest_pacts].select(:id,
+          :consumer_id___consumer_id, :consumer_name___consumer_name,
+          :provider_id___provider_id, :provider_name___provider_name,
+          :consumer_version_number___consumer_version_number).all.collect do | row |
+          row_to_pact row
         end
 
       end
@@ -49,6 +45,11 @@ module PactBroker
         end
       end
 
+      def find_previous_pact pact
+        previous_pact = db[:all_pacts].where(:consumer_id => pact.consumer.id, :provider_id => pact.provider.id).where('consumer_version_order < ?', pact.consumer_version.order).order(:consumer_version_order).last
+        previous_pact ? row_to_pact(previous_pact) : nil
+      end
+
       private
 
       def db
@@ -70,6 +71,17 @@ module PactBroker
         pact_finder.
           join(:tags, {:version_id => :id}, {implicit_qualifier: :versions}).
           where('tags.name = ?', tag)
+      end
+
+      def row_to_pact row
+        # Equality fails inside Relationship.connected if using OpenStruct, can't seem to duplicate it
+        # in a test though.
+        consumer = Models::Pacticipant.new(name: row[:consumer_name])
+        consumer.id = row[:consumer_id]
+        provider = Models::Pacticipant.new(name: row[:provider_name])
+        provider.id = row[:provider_id]
+        consumer_version = OpenStruct.new(number: row[:consumer_version_number], pacticipant: consumer)
+        pact = OpenStruct.new(id: row[:id], consumer: consumer, consumer_version: consumer_version, provider: provider, consumer_version_number: row[:consumer_version_number])
       end
 
     end

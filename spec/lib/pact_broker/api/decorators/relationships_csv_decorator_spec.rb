@@ -27,18 +27,6 @@ module PactBroker
           end
         end
 
-
-        describe "#to_csv_old" do
-
-          let(:line_1) { 'source,target,weight'}
-          let(:line_2) { 'My Consumer,My Provider,1' }
-          let(:expected_text) { [line_1, line_2].join("\n") + "\n" }
-
-          it "returns the relationships as CSV" do
-            expect(subject.to_csv_old).to eq expected_text
-          end
-        end
-
       end
     end
   end

@@ -28,6 +28,7 @@ module PactBroker
 
     def post_configure
       PactBroker.logger = configuration.logger
+      PactBroker::DB.connection = configuration.database_connection
 
       if configuration.auto_migrate_db
         logger.info "Migrating database"
@@ -45,6 +46,7 @@ module PactBroker
       logger.info "Mounting UI"
       require 'pact_broker/ui/controllers/relationships'
       require 'pact_broker/ui/controllers/groups'
+      require 'pact_broker/doc/controllers/app'
 
       ui = Rack::Builder.new {
 
@@ -56,6 +58,10 @@ module PactBroker
 
         map "/groups" do
           run PactBroker::UI::Controllers::Groups
+        end
+
+        map "/doc" do
+          run PactBroker::Doc::Controllers::App
         end
 
         map "/" do

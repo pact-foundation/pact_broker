@@ -44,15 +44,6 @@ module PactBroker
           [pacticipant.id, pacticipant.name, 1, 1, 0, order]
         end
 
-        def to_csv_old
-          CSV.generate do |csv|
-            csv << ["source", "target", "weight"]
-            pacts.each do | pact |
-              csv << [pact.consumer.name, pact.provider.name, 1]
-            end
-          end
-        end
-
         private
 
         attr_accessor :pacts
