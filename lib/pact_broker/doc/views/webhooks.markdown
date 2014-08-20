@@ -2,7 +2,7 @@
 
 ### Creating
 
-1. To create a webhook, navigate to the pact you want to create the webhook for
+1. To create a webhook, in the HAL Browser, navigate to the pact you want to create the webhook for
 (Click "Go to Entry Point", then select "latest-pacts", then select the pact you want to create the webhook for.)
 2. Click the "NON-GET" button for the "pact-webhooks" relation.
 3. Paste in the webhook JSON (example shown below) in the body section and click "Make Request".
