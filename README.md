@@ -11,6 +11,9 @@ The Pact Broker:
 
 See the [Pact Broker Client](https://github.com/bethesque/pact_broker-client) for documentation on how to publish a pact to the Pact Broker, and configure the URLs in the provider project.
 
+## Documentation
+
+See the [wiki](https://github.com/bethesque/pact_broker/wiki) for documentation.
 
 ## Usage
 
