@@ -8,12 +8,12 @@ module PactBroker
     module Renderers
       class HtmlPactRenderer
 
-        def self.call json_content
-          new(json_content).call
+        def self.call pact
+          new(pact).call
         end
 
-        def initialize json_content
-          @json_content = json_content
+        def initialize pact
+          @json_content = pact.json_content
         end
 
         def call

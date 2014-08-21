@@ -8,11 +8,11 @@ module PactBroker
     context "default configuration" do
       describe ".html_pact_renderer" do
 
-        let(:json_content) { {a: 'b'}.to_json }
+        let(:pact) { double('pact') }
 
         it "calls the inbuilt HtmlPactRenderer" do
-          expect(PactBroker::Api::Renderers::HtmlPactRenderer).to receive(:call).with(json_content)
-          PactBroker.configuration.html_pact_renderer.call json_content
+          expect(PactBroker::Api::Renderers::HtmlPactRenderer).to receive(:call).with(pact)
+          PactBroker.configuration.html_pact_renderer.call pact
         end
 
       end

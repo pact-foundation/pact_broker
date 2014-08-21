@@ -7,8 +7,9 @@ module PactBroker
       describe HtmlPactRenderer do
 
         let(:json_content) { load_fixture('renderer_pact.json') }
+        let(:pact) { double('pact', json_content: json_content )}
 
-        subject { HtmlPactRenderer.call json_content }
+        subject { HtmlPactRenderer.call pact }
 
         describe ".call" do
           it "renders the pact as HTML" do

@@ -27,7 +27,7 @@ module PactBroker::Api
       end
 
       def to_html
-        PactBroker.configuration.html_pact_renderer.call(@pact.json_content)
+        PactBroker.configuration.html_pact_renderer.call(@pact)
       end
 
     end

@@ -34,7 +34,7 @@ module PactBroker::Api
           end
 
           it "uses the configured HTML renderer" do
-            expect(PactBroker.configuration.html_pact_renderer).to receive(:call).with(json_content)
+            expect(PactBroker.configuration.html_pact_renderer).to receive(:call).with(pact)
             subject
           end
 

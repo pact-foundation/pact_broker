@@ -23,9 +23,9 @@ module PactBroker
     end
 
     def self.default_html_pact_render
-      lambda { |json_content|
+      lambda { |pact|
         require 'pact_broker/api/renderers/html_pact_renderer'
-        PactBroker::Api::Renderers::HtmlPactRenderer.call json_content
+        PactBroker::Api::Renderers::HtmlPactRenderer.call pact
       }
     end
 
