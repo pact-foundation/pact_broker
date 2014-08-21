@@ -2,6 +2,7 @@ require 'pact/consumer_contract'
 require 'pact/reification'
 require 'redcarpet'
 require 'pact/doc/markdown/consumer_contract_renderer'
+require 'pact_broker/api/pact_broker_urls'
 
 module PactBroker
   module Api
@@ -14,16 +15,44 @@ module PactBroker
 
         def initialize pact
           @json_content = pact.json_content
+          @pact = pact
         end
 
         def call
-          "<html><head>#{head}</head><body>#{html}</body></html>"
+          "<html><head>#{head}</head><body>#{pact_metadata}#{html}</body></html>"
         end
 
         private
 
         def head
-          '<link rel="stylesheet" type="text/css" href="/stylesheets/github.css">'
+          '<link rel="stylesheet" type="text/css" href="/stylesheets/github.css">' + "\n" +
+          '<link rel="stylesheet" type="text/css" href="/stylesheets/pact.css">'
+        end
+
+        def pact_metadata
+          "<div class='pact-metadata'>
+            <ul>
+              <li>
+                <span class='name'>#{@pact.consumer.name} version:</span>
+                <span class='value'>#{@pact.consumer_version_number}</span>
+              </li>
+              <li>
+                <span class='name'>Date published:</span>
+                <span class='value'>#{@pact.created_at.to_time.localtime.to_datetime.strftime("%d/%m/%Y %l:%M%p %:z")}</span>
+              </li>
+              <li>
+                <a href=\"#{json_url}\">View in HAL Browser</a>
+              </li>
+            </ul>
+          </div>"
+        end
+
+        def json_url
+          PactBroker::Api::PactBrokerUrls.hal_browser_url pact_url
+        end
+
+        def pact_url
+          PactBroker::Api::PactBrokerUrls.pact_url '', @pact
         end
 
         def markdown

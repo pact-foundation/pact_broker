@@ -2,6 +2,8 @@ module PactBroker
   module Api
     module PactBrokerUrls
 
+      extend self
+
       def pacticipants_url base_url
         "#{base_url}/pacticipants"
       end
@@ -57,6 +59,10 @@ module PactBroker
 
       def webhooks_for_pact_url consumer, provider, base_url
         "#{base_url}/webhooks/provider/#{provider.name}/consumer/#{consumer.name}"
+      end
+
+      def hal_browser_url target_url
+        "/hal-browser/browser.html#" + target_url
       end
 
       private

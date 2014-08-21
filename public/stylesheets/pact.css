@@ -1,0 +1,12 @@
+div.pact-metadata {
+  float: right;
+}
+
+div.pact-metadata li {
+  list-style-type: none ;
+  text-align: right
+}
+
+div.pact-metadata span.name {
+  font-weight: bold ;
+}
