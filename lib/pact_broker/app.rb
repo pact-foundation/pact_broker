@@ -29,6 +29,7 @@ module PactBroker
     def post_configure
       PactBroker.logger = configuration.logger
       PactBroker::DB.connection = configuration.database_connection
+      PactBroker::DB.connection.timezone = :utc
 
       if configuration.auto_migrate_db
         logger.info "Migrating database"
