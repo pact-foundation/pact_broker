@@ -65,6 +65,10 @@ module PactBroker
         "/hal-browser/browser.html#" + target_url
       end
 
+      def url_encode param
+        ERB::Util.url_encode param
+      end
+
       private
 
       def representable_pact pact
@@ -73,10 +77,6 @@ module PactBroker
 
       def pactigration_base_url base_url, pact
         "#{base_url}/pacts/provider/#{url_encode(pact.provider.name)}/consumer/#{url_encode(pact.consumer.name)}"
-      end
-
-      def url_encode param
-        ERB::Util.url_encode param
       end
     end
   end

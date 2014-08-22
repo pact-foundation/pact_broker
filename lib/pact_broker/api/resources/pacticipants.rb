@@ -1,4 +1,6 @@
 require 'pact_broker/api/resources/base_resource'
+require 'pact_broker/api/decorators/pacticipant_decorator'
+require 'pact_broker/models/pacticipant'
 
 module PactBroker
   module Api
@@ -10,8 +12,41 @@ module PactBroker
           [["application/hal+json", :to_json]]
         end
 
+        def content_types_accepted
+          [["application/json", :from_json]]
+        end
+
         def allowed_methods
-          ["GET"]
+          ["GET", "POST"]
+        end
+
+        def malformed_request?
+          if request.post?
+            return invalid_json? || validation_errors?
+          end
+          false
+        end
+
+        def validation_errors?
+          if (errors = new_model.validate).any?
+            set_json_validation_error_messages errors
+            true
+          else
+            false
+          end
+        end
+
+        def post_is_create?
+          true
+        end
+
+        def from_json
+          created_model = pacticipant_service.create params
+          response.body = model_decorator_class.new(created_model).to_json(decorator_context)
+        end
+
+        def create_path
+          "/pacticpants/#{url_encode(params[:name])}"
         end
 
         def to_json
@@ -20,6 +55,18 @@ module PactBroker
 
         def generate_json pacticipants
           PactBroker::Api::Decorators::PacticipantCollectionRepresenter.new(pacticipants).to_json(base_url: base_url)
+        end
+
+        def model_decorator_class
+          PactBroker::Api::Decorators::PacticipantRepresenter
+        end
+
+        def new_model
+          @new_model ||= model_decorator_class.new(PactBroker::Models::Pacticipant.new).from_json(request.body.to_s)
+        end
+
+        def create_model
+          pacticipant_service.create params
         end
 
       end

@@ -1,10 +1,13 @@
 require 'pact_broker/db'
+require 'pact_broker/messages'
 
 module PactBroker
 
   module Models
 
     class Pacticipant < Sequel::Model
+
+      include Messages
 
       set_primary_key :id
 
@@ -17,6 +20,12 @@ module PactBroker
 
       def to_s
         "Pacticipant: id=#{id}, name=#{name}"
+      end
+
+      def validate
+        messages = []
+        messages << message('errors.validation.attribute_missing', attribute: 'name') unless name
+        messages
       end
     end
 

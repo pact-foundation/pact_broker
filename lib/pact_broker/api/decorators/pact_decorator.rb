@@ -9,8 +9,8 @@ module PactBroker
 
       class PactDecorator < BaseDecorator
 
-        property :createdAt, getter: lambda { |_|  created_at.xmlschema }
-        property :updatedAt, getter: lambda { |_| updated_at.xmlschema }
+        property :createdAt, getter: lambda { |_|  created_at.xmlschema }, writeable: false
+        property :updatedAt, getter: lambda { |_| updated_at.xmlschema }, writeable: false
 
         def to_hash(options = {})
           ::JSON.parse(represented.json_content, PACT_PARSING_OPTIONS).merge super

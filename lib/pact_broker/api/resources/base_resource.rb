@@ -4,11 +4,14 @@ require 'pact_broker/api/decorators'
 require 'pact_broker/logging'
 require 'pact_broker/api/pact_broker_urls'
 require 'pact_broker/api/decorators/decorator_context'
+require 'pact_broker/json'
 
 module PactBroker
 
   module Api
     module Resources
+
+      class InvalidJsonError < StandardError ; end
 
       class ErrorHandler
 
@@ -52,8 +55,29 @@ module PactBroker
         end
 
         def params
-          JSON.parse(request.body.to_s, symbolize_names: true)
+          @params ||= JSON.parse(request.body.to_s, {symbolize_names: true}.merge(PACT_PARSING_OPTIONS))
         end
+
+        def set_json_error_message message
+          response.headers['Content-Type'] = 'application/json'
+          response.body = {error: message}.to_json
+        end
+
+        def set_json_validation_error_messages errors
+          response.headers['Content-Type'] = 'application/json'
+          response.body = {errors: errors}.to_json
+        end
+
+        def invalid_json?
+          begin
+            JSON.parse(request.body.to_s, PACT_PARSING_OPTIONS)
+            false
+          rescue StandardError => e
+            set_json_error_message "Invalid JSON - #{e.message}"
+            true
+          end
+        end
+
       end
     end
   end
