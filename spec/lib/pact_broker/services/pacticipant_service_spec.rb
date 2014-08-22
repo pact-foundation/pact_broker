@@ -11,6 +11,43 @@ module PactBroker
 
       subject{ PacticipantService }
 
+      describe ".find_potential_duplicate_pacticipants" do
+        let(:pacticipant_name) { 'pacticipant_name' }
+        let(:duplicates) { ["Fred", "Mary"] }
+        let(:pacticipant_names) { double("pacticipant_names") }
+        let(:fred) { double('fred pacticipant')}
+        let(:mary) { double('mary pacticipant')}
+        let(:pacticipant_repository) { instance_double(PactBroker::Repositories::PacticipantRepository)}
+
+        before do
+          allow(PactBroker::Functions::FindPotentialDuplicatePacticipantNames).to receive(:call).and_return(duplicates)
+          allow(PactBroker::Repositories::PacticipantRepository).to receive(:new).and_return(pacticipant_repository)
+          allow(pacticipant_repository).to receive(:pacticipant_names).and_return(pacticipant_names)
+          allow(pacticipant_repository).to receive(:find_by_name).with("Fred").and_return(fred)
+          allow(pacticipant_repository).to receive(:find_by_name).with("Mary").and_return(mary)
+        end
+
+        it "finds all the pacticipant names" do
+          expect(pacticipant_repository).to receive(:pacticipant_names)
+          subject.find_potential_duplicate_pacticipants pacticipant_name
+        end
+
+        it "calculates the duplicates" do
+          expect(PactBroker::Functions::FindPotentialDuplicatePacticipantNames).to receive(:call).with(pacticipant_name, pacticipant_names)
+          subject.find_potential_duplicate_pacticipants pacticipant_name
+        end
+
+        it "retrieves the pacticipants by name" do
+          expect(pacticipant_repository).to receive(:find_by_name).with("Fred")
+          expect(pacticipant_repository).to receive(:find_by_name).with("Mary")
+          subject.find_potential_duplicate_pacticipants pacticipant_name
+        end
+
+        it "returns the duplicate pacticipants" do
+          expect(subject.find_potential_duplicate_pacticipants(pacticipant_name)).to eq [fred, mary]
+        end
+      end
+
       describe ".find_relationships" do
 
         let(:consumer) { instance_double("PactBroker::Models::Pacticpant")}

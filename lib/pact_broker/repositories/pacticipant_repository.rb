@@ -29,6 +29,10 @@ module PactBroker
         PactBroker::Models::Pacticipant.new(name: args[:name], repository_url: args[:repository_url]).save(raise_on_save_failure: true)
       end
 
+      def pacticipant_names
+        PactBroker::Models::Pacticipant.select(:name).order(:name).collect{ | pacticipant| pacticipant.name }
+      end
+
       def find_latest_version name
 
       end

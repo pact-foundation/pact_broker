@@ -1,5 +1,6 @@
 require 'pact_broker/repositories'
 require 'pact_broker/models/relationship'
+require 'pact_broker/functions/find_potential_duplicate_pacticipant_names'
 
 module PactBroker
 
@@ -8,6 +9,12 @@ module PactBroker
 
       extend PactBroker::Repositories
       extend PactBroker::Services
+
+      def self.find_potential_duplicate_pacticipants pacticipant_name
+        PactBroker::Functions::FindPotentialDuplicatePacticipantNames
+          .call(pacticipant_name, pacticipant_names)
+          .collect{ | name | pacticipant_repository.find_by_name(name) }
+      end
 
       def self.find_all_pacticipants
         pacticipant_repository.find_all
@@ -49,6 +56,10 @@ module PactBroker
         connection.run("delete from versions where pacticipant_id IN (select id from pacticipants where name = '#{name}')")
         webhook_service.delete_by_pacticipant pacticipant
         connection.run("delete from pacticipants where name = '#{name}'")
+      end
+
+      def self.pacticipant_names
+        pacticipant_repository.pacticipant_names
       end
 
     end
