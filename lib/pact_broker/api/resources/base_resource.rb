@@ -68,12 +68,18 @@ module PactBroker
           response.body = {errors: errors}.to_json
         end
 
+        def request_body
+          @request_body ||= request.body.to_s
+        end
+
         def invalid_json?
           begin
-            JSON.parse(request.body.to_s, PACT_PARSING_OPTIONS)
+            JSON.parse(request_body, PACT_PARSING_OPTIONS) #Not load! Otherwise it will try to load Ruby classes.
             false
           rescue StandardError => e
-            set_json_error_message "Invalid JSON - #{e.message}"
+            logger.error "Error parsing JSON #{e} - #{request_body}"
+            set_json_error_message "Error parsing JSON - #{e.message}"
+            response.headers['Content-Type'] = 'application/json'
             true
           end
         end

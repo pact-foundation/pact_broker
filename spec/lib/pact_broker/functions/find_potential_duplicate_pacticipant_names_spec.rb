@@ -11,6 +11,15 @@ module PactBroker
 
         subject { FindPotentialDuplicatePacticipantNames.call(new_name, existing_names) }
 
+        context "when an existing name exactly equals the new name" do
+          let(:new_name) { 'Contracts Service' }
+          let(:existing_names) { ['Contracts Service', 'Contracts', 'Something'] }
+
+          it "does not return any potential duplicate names" do
+            expect(subject).to eq []
+          end
+        end
+
         context "when an existing name mostly includes the new name" do
           let(:new_name) { 'Contracts' }
           let(:existing_names) { ['Contract Service', 'Contacts', 'Something'] }

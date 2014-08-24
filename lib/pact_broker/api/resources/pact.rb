@@ -1,5 +1,6 @@
 require 'cgi'
 require 'pact_broker/api/resources/base_resource'
+require 'pact_broker/api/resources/pacticipant_resource_methods'
 require 'pact_broker/api/decorators/pact_decorator'
 require 'pact_broker/json'
 
@@ -9,6 +10,8 @@ module PactBroker
     module Resources
 
       class Pact < BaseResource
+
+        include PacticipantResourceMethods
 
         def content_types_provided
           [["application/json", :to_json]]
@@ -24,15 +27,10 @@ module PactBroker
 
         def malformed_request?
           if request.put?
-            begin
-              JSON.parse(pact_content, PactBroker::PACT_PARSING_OPTIONS) #Not load! Otherwise it will try to load Ruby classes.
-              false
-            rescue StandardError => e
-              logger.error "Error parsing JSON #{e} - #{pact_content}"
-              response.headers['Content-Type'] = 'application/json'
-              response.body = {error: "Invalid JSON - #{e.message}"}.to_json
-              true
-            end
+            return invalid_json? ||
+              potential_duplicate_pacticipants?([identifier_from_path[:consumer_name], identifier_from_path[:provider_name]])
+          else
+            false
           end
         end
 
@@ -42,17 +40,13 @@ module PactBroker
         end
 
         def from_json
-          @pact, created = pact_service.create_or_update_pact(identifier_from_path.merge(:json_content => pact_content))
+          @pact, created = pact_service.create_or_update_pact(identifier_from_path.merge(:json_content => request_body))
           response.headers["Location"] = pact_url(base_url, @pact) if created
           response.body = to_json
         end
 
         def to_json
           PactBroker::Api::Decorators::PactDecorator.new(@pact).to_json(base_url: base_url)
-        end
-
-        def pact_content
-          request.body.to_s
         end
 
       end

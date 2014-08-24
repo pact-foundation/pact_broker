@@ -1,4 +1,5 @@
 require 'pact_broker/repositories'
+require 'pact_broker/messages'
 require 'pact_broker/models/relationship'
 require 'pact_broker/functions/find_potential_duplicate_pacticipant_names'
 
@@ -9,6 +10,17 @@ module PactBroker
 
       extend PactBroker::Repositories
       extend PactBroker::Services
+
+      def self.messages_for_potential_duplicate_pacticipants pacticipant_names, base_url
+        messages = []
+        pacticipant_names.each do | name |
+          potential_duplicate_pacticipants = find_potential_duplicate_pacticipants(name)
+          if potential_duplicate_pacticipants.any?
+            messages << Messages.potential_duplicate_pacticipant_message(name, potential_duplicate_pacticipants, base_url)
+          end
+        end
+        messages
+      end
 
       def self.find_potential_duplicate_pacticipants pacticipant_name
         PactBroker::Functions::FindPotentialDuplicatePacticipantNames

@@ -11,25 +11,54 @@ module PactBroker::Api
       include Rack::Test::Methods
 
       let(:app) { PactBroker::API }
+      let(:json) { {some: 'json'}.to_json }
 
       describe "PUT" do
 
-        context "with invalid JSON" do
+        subject { put "/pacts/provider/Provider/consumer/Consumer/version/1.2", json, {'CONTENT_TYPE' => "application/json"} }
 
-          before do
-            put "/pacts/provider/Provider/consumer/Consumer/version/1.2", '{', {'CONTENT_TYPE' => "application/json"}
-          end
+        let(:response) { subject; last_response }
+
+        context "with invalid JSON" do
+          let(:json) { '{' }
 
           it "returns a 400 response" do
-            expect(last_response.status).to eq 400
+            expect(response.status).to eq 400
           end
 
           it "returns a JSON content type" do
-            expect(last_response.headers['Content-Type']).to eq "application/json"
+            expect(response.headers['Content-Type']).to eq "application/json"
           end
 
           it "returns an error message" do
-            expect(JSON.parse(last_response.body)["error"]).to match /Invalid JSON/
+            expect(JSON.parse(response.body)["error"]).to match /Error parsing JSON/
+          end
+        end
+
+        context "with a potential duplicate pacticipant" do
+
+          let(:pacticipant_service) { PactBroker::Services::PacticipantService }
+          let(:messages) { ["message1", "message2"] }
+
+          before do
+            allow(pacticipant_service).to receive(:messages_for_potential_duplicate_pacticipants).and_return(messages)
+          end
+
+          it "checks for duplicates" do
+            expect(pacticipant_service).to receive(:messages_for_potential_duplicate_pacticipants).with(['Consumer', 'Provider'], 'http://example.org')
+            response
+          end
+
+          it "returns a 400 response" do
+            expect(response.status).to eq 400
+          end
+
+          it "returns a text response" do
+            expect(response.headers['Content-Type']).to eq 'text/plain'
+          end
+
+          it "returns the messages in the response body" do
+            expect(response.body).to eq "message1\nmessage2"
           end
         end
 

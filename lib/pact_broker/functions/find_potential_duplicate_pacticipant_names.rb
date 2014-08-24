@@ -13,7 +13,7 @@ module PactBroker
       attr_reader :new_name, :existing_names
 
       def initialize new_name, existing_names
-        @new_name = clean new_name
+        @new_name = new_name
         @existing_names = existing_names
       end
 
@@ -22,7 +22,11 @@ module PactBroker
       end
 
       def call
-        existing_names.select{ | existing_name | similar?(new_name, clean(existing_name)) }
+        return [] if existing_names.include?(new_name)
+
+        existing_names.select do | existing_name |
+          similar?(clean(new_name), clean(existing_name))
+        end
       end
 
       def similar?(new_name, existing_name)
