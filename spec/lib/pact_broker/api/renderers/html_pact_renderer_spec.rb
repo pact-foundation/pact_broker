@@ -9,7 +9,7 @@ module PactBroker
         let(:consumer) { double('consumer', name: 'Consumer')}
         let(:created_at) { DateTime.now }
         let(:json_content) { load_fixture('renderer_pact.json') }
-        let(:pact) { double('pact', json_content: json_content, created_at: created_at, consumer_version_number: '1.2.3', consumer: consumer)}
+        let(:pact) { double('pact', json_content: json_content, updated_at: created_at, consumer_version_number: '1.2.3', consumer: consumer)}
         let(:pact_url) { '/pact/url' }
 
         before do
