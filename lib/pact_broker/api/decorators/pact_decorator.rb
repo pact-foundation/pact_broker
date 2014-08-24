@@ -18,7 +18,7 @@ module PactBroker
 
         link :'latest-pact' do | options |
           {
-            title: "Latest pact between #{represented.consumer.name} and #{represented.provider.name}",
+            title: "Latest version of the pact between #{represented.consumer.name} and #{represented.provider.name}",
             href: latest_pact_url(options.fetch(:base_url), represented)
 
           }
@@ -26,7 +26,7 @@ module PactBroker
 
         link :'pact-webhooks' do | options |
           {
-            title: 'Webhooks for the pact between #{represented.consumer.name} and #{represented.provider.name}',
+            title: "Webhooks for the pact between #{represented.consumer.name} and #{represented.provider.name}",
             href: webhooks_for_pact_url(represented.consumer, represented.provider, options.fetch(:base_url))
           }
         end
