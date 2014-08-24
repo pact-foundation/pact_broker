@@ -14,8 +14,8 @@ module PactBroker
       describe ".messages_for_potential_duplicate_pacticipants" do
 
         let(:base_url) { 'http://example.org' }
-        let(:fred_duplicates) { [double('Fred pacticipant')] }
-        let(:mary_dulicates) { [double('Mary pacticipant')] }
+        let(:fred_duplicates) { [double('Frederich pacticipant')] }
+        let(:mary_dulicates) { [double('Marta pacticipant')] }
 
         before do
           allow(PacticipantService).to receive(:find_potential_duplicate_pacticipants).with("Fred").and_return(fred_duplicates)
@@ -88,6 +88,11 @@ module PactBroker
 
         it "returns the duplicate pacticipants" do
           expect(subject.find_potential_duplicate_pacticipants(pacticipant_name)).to eq [fred, mary]
+        end
+
+        it "logs the names" do
+          expect(PactBroker.logger).to receive(:info).with(/pacticipant_name.*Fred, Mary/)
+          subject.find_potential_duplicate_pacticipants pacticipant_name
         end
       end
 

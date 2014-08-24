@@ -1,4 +1,5 @@
 require 'pact_broker/repositories'
+require 'pact_broker/logging'
 require 'pact_broker/messages'
 require 'pact_broker/models/relationship'
 require 'pact_broker/functions/find_potential_duplicate_pacticipant_names'
@@ -10,6 +11,7 @@ module PactBroker
 
       extend PactBroker::Repositories
       extend PactBroker::Services
+      extend PactBroker::Logging
 
       def self.messages_for_potential_duplicate_pacticipants pacticipant_names, base_url
         messages = []
@@ -24,8 +26,11 @@ module PactBroker
 
       def self.find_potential_duplicate_pacticipants pacticipant_name
         PactBroker::Functions::FindPotentialDuplicatePacticipantNames
-          .call(pacticipant_name, pacticipant_names)
-          .collect{ | name | pacticipant_repository.find_by_name(name) }
+          .call(pacticipant_name, pacticipant_names).tap { | names|
+            if names.any?
+              logger.info "The following potential duplicate pacticipants were found for #{pacticipant_name}: #{names.join(", ")}"
+            end
+          } .collect{ | name | pacticipant_repository.find_by_name(name) }
       end
 
       def self.find_all_pacticipants
