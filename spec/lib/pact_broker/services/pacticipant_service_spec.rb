@@ -98,8 +98,8 @@ module PactBroker
 
       describe ".find_relationships" do
 
-        let(:consumer) { instance_double("PactBroker::Models::Pacticpant")}
-        let(:provider) { instance_double("PactBroker::Models::Pacticpant")}
+        let(:consumer) { instance_double("PactBroker::Models::Pacticipant")}
+        let(:provider) { instance_double("PactBroker::Models::Pacticipant")}
         let(:pact) { instance_double("PactBroker::Models::Pact", consumer: consumer, provider: provider)}
         let(:pacts) { [pact]}
 
