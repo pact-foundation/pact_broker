@@ -24,6 +24,13 @@ module PactBroker
           }
         end
 
+        link :'pact-versions' do | options |
+          {
+            title: "All versions of the pact between #{represented.consumer.name} and #{represented.provider.name}",
+            href: pact_versions_url(represented.consumer.name, represented.provider.name, options.fetch(:base_url))
+          }
+        end
+
         link :'pact-webhooks' do | options |
           {
             title: "Webhooks for the pact between #{represented.consumer.name} and #{represented.provider.name}",

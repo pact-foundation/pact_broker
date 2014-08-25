@@ -46,6 +46,11 @@ module PactBroker
             expect(subject[:_links][:'latest-pact'][:title]).to eq "Latest version of the pact between Consumer and Provider"
             expect(subject[:_links][:'latest-pact'][:href]).to eq "http://example.org/pacts/provider/Provider/consumer/Consumer/latest"
           end
+
+          it "includes a link to the pact versions" do
+            expect(subject[:_links][:'pact-versions'][:title]).to eq "All versions of the pact between Consumer and Provider"
+            expect(subject[:_links][:'pact-versions'][:href]).to eq "http://example.org/pacts/provider/Provider/consumer/Consumer/versions"
+          end
         end
 
       end
