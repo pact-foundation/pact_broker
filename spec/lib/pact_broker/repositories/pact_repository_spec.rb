@@ -5,6 +5,35 @@ module PactBroker
   module Repositories
     describe PactRepository do
 
+      describe "#find_all_pacts_between" do
+        let(:consumer_name) { 'Consumer' }
+        let(:provider_name) { 'Provider' }
+
+        before do
+          ProviderStateBuilder.new
+            .create_consumer(consumer_name)
+            .create_consumer_version("1.2.3")
+            .create_provider(provider_name)
+            .create_pact
+            .create_consumer_version("2.3.4")
+            .create_consumer_version_tag("prod")
+            .create_pact
+            .create_provider("Another Provider")
+            .create_pact
+        end
+
+        subject { PactRepository.new.find_all_pacts_between consumer_name, :and => provider_name }
+
+        it "returns the pacts between the specified consumer and provider" do
+          expect(subject.size).to eq 2
+          expect(subject.first.consumer.name).to eq consumer_name
+          expect(subject.first.provider.name).to eq provider_name
+          expect(subject.first.consumer_version.number).to eq "2.3.4"
+          expect(subject.first.consumer_version.tags.first.name).to eq "prod"
+        end
+
+      end
+
       describe "find_previous_pact" do
         before do
           ProviderStateBuilder.new

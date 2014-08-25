@@ -8,6 +8,12 @@ module PactBroker
 
       include PactBroker::Logging
 
+      def find_all_pacts_between consumer_name, options
+        pact_finder(consumer_name, options.fetch(:and))
+          .left_outer_join(:tags, {:version_id => :id}, {implicit_qualifier: :versions})
+          .reverse_order(:order).all
+      end
+
       def find_by_version_and_provider version_id, provider_id
         PactBroker::Models::Pact.where(version_id: version_id, provider_id: provider_id).single_record
       end

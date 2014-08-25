@@ -10,6 +10,7 @@ module PactBroker
       set_primary_key :id
       one_to_many :pacts
       associate(:many_to_one, :pacticipant, :class => "PactBroker::Models::Pacticipant", :key => :pacticipant_id, :primary_key => :id)
+      one_to_many :tags, :reciprocal => :version
 
       def after_create
         OrderVersions.(self.pacticipant_id)

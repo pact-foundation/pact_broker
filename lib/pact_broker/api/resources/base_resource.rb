@@ -72,6 +72,14 @@ module PactBroker
           @request_body ||= request.body.to_s
         end
 
+        def consumer_name
+          identifier_from_path[:consumer_name]
+        end
+
+        def provider_name
+          identifier_from_path[:provider_name]
+        end
+
         def invalid_json?
           begin
             JSON.parse(request_body, PACT_PARSING_OPTIONS) #Not load! Otherwise it will try to load Ruby classes.

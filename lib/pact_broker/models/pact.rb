@@ -25,6 +25,14 @@ module PactBroker
       def to_json options = {}
         json_content
       end
+
+      def name
+        "Pact between #{consumer.name} (v#{consumer_version_number}) and #{provider.name}"
+      end
+
+      def version_and_updated_date
+        "Version #{consumer_version_number} - #{updated_at.localtime.strftime("%d/%m/%Y")}"
+      end
     end
 
     Pact.plugin :timestamps, :update_on_create=>true

@@ -6,7 +6,7 @@ module PactBroker
 
         attr_reader :base_url, :resource_url, :resource_title
 
-        def initialize base_url, resource_url, options
+        def initialize base_url, resource_url, options = {}
           @base_url = base_url
           @resource_url = resource_url
           @resource_title = options[:resource_title]
