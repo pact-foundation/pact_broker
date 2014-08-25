@@ -16,6 +16,11 @@ module PactBroker
           ["GET"]
         end
 
+        def resource_exists?
+          pacticipant_service.find_pacticipant_by_name(consumer_name) &&
+            pacticipant_service.find_pacticipant_by_name(provider_name)
+        end
+
         def to_json
           PactBroker::Api::Decorators::PactVersionsDecorator.new(pacts).to_json(decorator_context(identifier_from_path))
         end
