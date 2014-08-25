@@ -36,7 +36,7 @@ class ProviderStateBuilder
   end
 
   def create_ces_cps_pact
-    @pact_id = pact_repository.create(version_id: @contract_email_service_version_id, provider_id: @contract_proposal_service_id, json_content: json_content).id
+    @pact_id = pact_repository.create(version_id: @contract_email_service_version_id, provider_id: @contract_proposal_service_id, json_content: default_json_content).id
     self
   end
 
@@ -56,7 +56,7 @@ class ProviderStateBuilder
   end
 
   def create_condor_pricing_service_pact
-    @pact_id = pact_repository.create(version_id: @condor_version_id, provider_id: @pricing_service_id, json_content: json_content).id
+    @pact_id = pact_repository.create(version_id: @condor_version_id, provider_id: @pricing_service_id, json_content: default_json_content).id
     self
   end
 
@@ -114,7 +114,7 @@ class ProviderStateBuilder
     self
   end
 
-  def create_pact
+  def create_pact json_content = default_json_content
     @pact = PactBroker::Models::Pact.create(consumer_version: @consumer_version, provider: @provider, json_content: json_content)
     self
   end
@@ -136,11 +136,11 @@ class ProviderStateBuilder
   # end
 
   # def create_condor_pricing_service_pact version, provider
-  #   pact_repository.create(consumer_version: version, provider: provider, json_content: json_content)
+  #   pact_repository.create(consumer_version: version, provider: provider, json_content: default_json_content)
   # end
 
-  def json_content
-    json_content = {
+  def default_json_content
+    {
       "consumer"     => {
          "name" => "Condor"
        },

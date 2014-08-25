@@ -6,6 +6,26 @@ module PactBroker
   module Services
     module PactService
 
+      describe "find_distinct_pacts_between" do
+        let(:pact_1) { double('pact 1', json_content: 'content 1')}
+        let(:pact_2) { double('pact 2', json_content: 'content 2')}
+        let(:pact_3) { double('pact 3', json_content: 'content 2')}
+        let(:pact_4) { double('pact 4', json_content: 'content 3')}
+
+        let(:all_pacts) { [pact_4, pact_3, pact_2, pact_1]}
+
+        before do
+          allow_any_instance_of(Repositories::PactRepository).to receive(:find_all_pacts_between).and_return(all_pacts)
+        end
+
+        subject { PactService.find_distinct_pacts_between 'consumer', :and => 'provider' }
+
+        it "returns the distinct pacts" do
+          expect(subject).to eq [pact_4, pact_2, pact_1]
+        end
+
+      end
+
       describe "#pact_has_changed_since_previous_version?" do
 
         let(:json_content) { { 'some' => 'json'}.to_json }

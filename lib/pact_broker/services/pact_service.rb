@@ -40,6 +40,22 @@ module PactBroker
         pact_repository.find_all_pacts_between consumer, options
       end
 
+      def find_distinct_pacts_between consumer, options
+        # Assumes pacts are sorted from newest to oldest
+        all = pact_repository.find_all_pacts_between consumer, options
+        distinct = []
+        (0...all.size).each do | i |
+          if i == all.size - 1
+            distinct << all[i]
+          else
+            if all[i].json_content != all[i+1].json_content
+              distinct << all[i]
+            end
+          end
+        end
+        distinct
+      end
+
       def pact_has_changed_since_previous_version? pact
         previous_pact = pact_repository.find_previous_pact pact
         previous_pact && pact.json_content != previous_pact.json_content
