@@ -28,7 +28,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'versionomy'
   gem.add_runtime_dependency 'rack'
   gem.add_runtime_dependency 'redcarpet', '~>3.1'
-  gem.add_runtime_dependency 'pact', '~>1.3'
+  gem.add_runtime_dependency 'pact', '~>1.3', '>=1.3.2'
   gem.add_runtime_dependency 'padrino', '~>0.12'
   gem.add_runtime_dependency 'haml'
 
