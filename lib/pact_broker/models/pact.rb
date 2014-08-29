@@ -31,7 +31,7 @@ module PactBroker
       end
 
       def version_and_updated_date
-        "Version #{consumer_version_number} - #{updated_at.localtime.strftime("%d/%m/%Y")}"
+        "Version #{consumer_version_number} - #{updated_at.to_time.localtime.strftime("%d/%m/%Y")}"
       end
     end
 
