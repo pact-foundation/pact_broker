@@ -43,7 +43,7 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: bold;
   -webkit-font-smoothing: antialiased;
   cursor: text;
-  position: relative;
+  /* position: relative; Beth: this makes the View In HAL Browser link unclickable */
 }
 
 h2:first-child, h1:first-child, h1:first-child + h2, h3:first-child, h4:first-child, h5:first-child, h6:first-child {
