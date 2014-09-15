@@ -92,6 +92,15 @@ module PactBroker
           end
         end
 
+        def validation_errors? model
+          if (errors = model.validate).any?
+            set_json_validation_error_messages errors
+            true
+          else
+            false
+          end
+        end
+
       end
     end
   end

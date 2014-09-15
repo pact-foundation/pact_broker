@@ -22,18 +22,9 @@ module PactBroker
 
         def malformed_request?
           if request.post?
-            return invalid_json? || validation_errors?
+            return invalid_json? || validation_errors?(new_model)
           end
           false
-        end
-
-        def validation_errors?
-          if (errors = new_model.validate).any?
-            set_json_validation_error_messages errors
-            true
-          else
-            false
-          end
         end
 
         def post_is_create?
@@ -42,7 +33,7 @@ module PactBroker
 
         def from_json
           created_model = pacticipant_service.create params
-          response.body = model_decorator_class.new(created_model).to_json(decorator_context)
+          response.body = decorator_for(created_model).to_json(decorator_context)
         end
 
         def create_path
@@ -57,16 +48,12 @@ module PactBroker
           PactBroker::Api::Decorators::PacticipantCollectionRepresenter.new(pacticipants).to_json(base_url: base_url)
         end
 
-        def model_decorator_class
-          PactBroker::Api::Decorators::PacticipantRepresenter
+        def decorator_for model
+          PactBroker::Api::Decorators::PacticipantRepresenter.new(model)
         end
 
         def new_model
-          @new_model ||= model_decorator_class.new(PactBroker::Models::Pacticipant.new).from_json(request.body.to_s)
-        end
-
-        def create_model
-          pacticipant_service.create params
+          @new_model ||= decorator_for(PactBroker::Models::Pacticipant.new).from_json(request.body.to_s)
         end
 
       end

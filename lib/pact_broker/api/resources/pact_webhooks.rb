@@ -25,15 +25,7 @@ module PactBroker
 
         def malformed_request?
           if request.post?
-            begin
-              if (errors = webhook.validate).any?
-                set_json_validation_error_messages errors
-                return true
-              end
-            rescue
-              set_json_error_message 'Invalid JSON'
-              return true
-            end
+            return invalid_json? || validation_errors?(webhook)
           end
           false
         end
