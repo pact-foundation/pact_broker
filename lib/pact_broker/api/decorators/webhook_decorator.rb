@@ -19,7 +19,7 @@ module PactBroker
         link :self do | options |
           {
             title: represented.description,
-            href: webhook_url(represented, options[:base_url])
+            href: webhook_url(represented.uuid, options[:base_url])
           }
 
         end

@@ -10,7 +10,7 @@ module PactBroker::Api
       let(:path) { "/webhooks/provider/Some%20Provider/consumer/Some%20Consumer" }
       let(:headers) { {'CONTENT_TYPE' => 'application/json'} }
       let(:webhook) { double('webhook')}
-      let(:saved_webhook) { double('saved_webhook', uuid: 'webhook-uuid')}
+      let(:saved_webhook) { double('saved_webhook')}
       let(:provider) { instance_double(PactBroker::Models::Pacticipant)}
       let(:consumer) { instance_double(PactBroker::Models::Pacticipant)}
 
@@ -56,11 +56,13 @@ module PactBroker::Api
             some: 'json'
           }.to_json
         end
+        let(:next_uuid) { '123k2nvkkwjrwk34' }
 
         let(:errors) { [] }
 
         before do
           allow(PactBroker::Services::WebhookService).to receive(:create).and_return(saved_webhook)
+          allow(PactBroker::Services::WebhookService).to receive(:next_uuid).and_return(next_uuid)
           allow(webhook).to receive(:validate).and_return(errors)
           allow(PactBroker::Models::Webhook).to receive(:new).and_return(webhook)
         end
@@ -144,7 +146,7 @@ module PactBroker::Api
           end
 
           it "saves the webhook" do
-            expect(PactBroker::Services::WebhookService).to receive(:create).with(webhook, consumer, provider)
+            expect(PactBroker::Services::WebhookService).to receive(:create).with(next_uuid, webhook, consumer, provider)
             subject
           end
 
@@ -155,12 +157,12 @@ module PactBroker::Api
 
           it "returns the Location header" do
             subject
-            expect(last_response.headers['Location']).to include('webhook-uuid')
+            expect(last_response.headers['Location']).to include(next_uuid)
           end
 
           it "returns a JSON content type" do
             subject
-            expect(last_response.headers['Content-Type']).to eq 'application/json'
+            expect(last_response.headers['Content-Type']).to eq 'application/hal+json'
           end
 
           it "generates the JSON response body" do

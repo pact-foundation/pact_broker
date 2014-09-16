@@ -34,19 +34,10 @@ module PactBroker
         :consumer_id=> consumer.id,
         :provider_id=> provider.id } }
 
-      before do
-        allow(SecureRandom).to receive(:urlsafe_base64).and_return(uuid)
-      end
-
       describe "#create" do
 
-        subject { WebhookRepository.new.create webhook, consumer, provider }
+        subject { WebhookRepository.new.create uuid, webhook, consumer, provider }
 
-
-        it "generates a UUID" do
-          expect(SecureRandom).to receive(:urlsafe_base64)
-          subject
-        end
 
         it "saves webhook" do
           subject
@@ -67,9 +58,8 @@ module PactBroker
       describe "delete_by_uuid" do
 
         before do
-          allow(SecureRandom).to receive(:urlsafe_base64).and_return(uuid, 'another-uuid')
-          WebhookRepository.new.create webhook, consumer, provider
-          WebhookRepository.new.create webhook, consumer, provider
+          WebhookRepository.new.create uuid, webhook, consumer, provider
+          WebhookRepository.new.create 'another-uuid', webhook, consumer, provider
         end
 
         subject { WebhookRepository.new.delete_by_uuid uuid }
@@ -91,7 +81,7 @@ module PactBroker
 
         before do
           allow(SecureRandom).to receive(:urlsafe_base64).and_return(uuid, 'another-uuid')
-          WebhookRepository.new.create webhook, consumer, provider
+          WebhookRepository.new.create uuid, webhook, consumer, provider
         end
 
         context "when the pacticipant is the consumer" do
@@ -125,7 +115,7 @@ module PactBroker
 
         context "when a webhook is found" do
           before do
-            WebhookRepository.new.create webhook, consumer, provider
+            WebhookRepository.new.create uuid, webhook, consumer, provider
           end
 
           it "returns a webhook with the consumer set" do
@@ -200,9 +190,8 @@ module PactBroker
 
       describe "find_all" do
         before do
-          allow(SecureRandom).to receive(:urlsafe_base64).and_return(uuid, 'some-other-uuid')
-          WebhookRepository.new.create webhook, consumer, provider
-          WebhookRepository.new.create webhook, consumer, provider
+          WebhookRepository.new.create uuid, webhook, consumer, provider
+          WebhookRepository.new.create 'some-other-uuid', webhook, consumer, provider
         end
 
         subject { WebhookRepository.new.find_all }

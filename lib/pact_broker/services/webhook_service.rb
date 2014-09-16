@@ -1,5 +1,6 @@
 require 'pact_broker/repositories'
 require 'pact_broker/logging'
+require 'base64'
 
 module PactBroker
 
@@ -9,8 +10,12 @@ module PactBroker
       extend Repositories
       include Logging
 
-      def self.create webhook, consumer, provider
-        webhook_repository.create webhook, consumer, provider
+      def self.next_uuid
+        SecureRandom.urlsafe_base64
+      end
+
+      def self.create uuid, webhook, consumer, provider
+        webhook_repository.create uuid, webhook, consumer, provider
       end
 
       def self.find_by_uuid uuid

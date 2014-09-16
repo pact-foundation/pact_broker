@@ -18,6 +18,10 @@ module PactBroker
           [["application/hal+json", :to_json]]
         end
 
+        def content_types_accepted
+          [["application/json", :from_json]]
+        end
+
         def resource_exists?
           (@consumer = find_pacticipant(identifier_from_path[:consumer_name], "consumer")) &&
             (@provider = find_pacticipant(identifier_from_path[:provider_name], "provider"))
@@ -30,10 +34,16 @@ module PactBroker
           false
         end
 
-        def process_post
-          saved_webhook = webhook_service.create webhook, consumer, provider
-          response.headers['Content-Type'] = 'application/json'
-          response.headers['Location'] = webhook_url saved_webhook, base_url
+        def create_path
+          webhook_url next_uuid, base_url
+        end
+
+        def post_is_create?
+          true
+        end
+
+        def from_json
+          saved_webhook = webhook_service.create next_uuid, webhook, consumer, provider
           response.body = Decorators::WebhookDecorator.new(saved_webhook).to_json(base_url: base_url)
           true
         end
@@ -51,16 +61,16 @@ module PactBroker
         end
 
         def webhook
-          @webhook ||= Decorators::WebhookDecorator.new(PactBroker::Models::Webhook.new).from_json(request.body.to_s)
+          @webhook ||= Decorators::WebhookDecorator.new(PactBroker::Models::Webhook.new).from_json(request_body)
+        end
+
+        def next_uuid
+          @next_uuid ||= webhook_service.next_uuid
         end
 
         def find_pacticipant name, role
-          pacticipant = pacticipant_service.find_pacticipant_by_name name
-          if pacticipant.nil?
-            set_json_error_message "No #{role} with name '#{name}' found"
-            nil
-          else
-            pacticipant
+          pacticipant_service.find_pacticipant_by_name(name).tap do | pacticipant |
+            set_json_error_message("No #{role} with name '#{name}' found") if pacticipant.nil?
           end
         end
 

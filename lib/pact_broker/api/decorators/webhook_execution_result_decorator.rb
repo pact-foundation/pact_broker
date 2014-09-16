@@ -42,7 +42,7 @@ module PactBroker
 
         link :webhook do | options |
           {
-            href: webhook_url(options.fetch(:webhook), options.fetch(:base_url))
+            href: webhook_url(options.fetch(:webhook).uuid, options.fetch(:base_url))
           }
         end
 

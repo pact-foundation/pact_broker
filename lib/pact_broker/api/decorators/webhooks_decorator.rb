@@ -19,7 +19,7 @@ module PactBroker
             {
               title: webhook.description,
               name: webhook.request_description,
-              href: webhook_url(webhook, context.base_url)
+              href: webhook_url(webhook.uuid, context.base_url)
             }
           end
         end

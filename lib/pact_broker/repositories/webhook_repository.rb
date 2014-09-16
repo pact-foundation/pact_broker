@@ -2,7 +2,6 @@ require 'sequel'
 require 'pact_broker/models/webhook'
 require 'pact_broker/models/pacticipant'
 require 'pact_broker/db'
-require 'base64'
 
 module PactBroker
   module Repositories
@@ -14,9 +13,9 @@ module PactBroker
 
       include Repositories
 
-      def create webhook, consumer, provider
+      def create uuid, webhook, consumer, provider
         db_webhook = Webhook.from_model webhook, consumer, provider
-        db_webhook.uuid = SecureRandom.urlsafe_base64
+        db_webhook.uuid = uuid
         db_webhook.save
         webhook.request.headers.each_pair do | name, value |
           db_webhook.add_header WebhookHeader.from_model(name, value, db_webhook.id)
