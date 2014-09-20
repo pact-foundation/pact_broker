@@ -26,7 +26,7 @@ module PactBroker::Api
           allow(decorator).to receive(:to_csv).and_return(csv)
         end
 
-        subject { get "/groups/Some%20Service" }
+        subject { get "/groups/Some%20Service", '', {"HTTP_X_My_App_Version" => '2'} }
 
         context "when the pacticipant exists" do
 

@@ -21,7 +21,6 @@ module PactBroker
           logger.error e
           logger.error e.backtrace
           response.body = {:message => e.message, :backtrace => e.backtrace }.to_json
-          response.code = 500
         end
       end
 
@@ -33,7 +32,7 @@ module PactBroker
 
         def identifier_from_path
           request.path_info.each_with_object({}) do | pair, hash|
-            hash[pair.first] = CGI::unescape(pair.last)
+            hash[pair.first] = URI.decode(pair.last)
           end
         end
 
