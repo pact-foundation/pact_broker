@@ -19,14 +19,22 @@ module PactBroker
         end
 
         def call
-          "<html><head>#{head}</head><body>#{pact_metadata}#{html}</body></html>"
+          "<html>
+            <head>#{head}</head>
+            <body>
+              #{pact_metadata}#{html}
+            </body>
+          </html>"
         end
 
         private
 
         def head
-          '<link rel="stylesheet" type="text/css" href="/stylesheets/github.css">' + "\n" +
-          '<link rel="stylesheet" type="text/css" href="/stylesheets/pact.css">'
+         "<link rel='stylesheet' type='text/css' href='/stylesheets/github.css'>
+          <link rel='stylesheet' type='text/css' href='/stylesheets/pact.css'>
+          <link rel='stylesheet' type='text/css' href='/stylesheets/github-json.css'>
+          <script src='/javascripts/highlight.pack.js'></script>
+          <script>hljs.initHighlightingOnLoad();</script>"
         end
 
         def pact_metadata

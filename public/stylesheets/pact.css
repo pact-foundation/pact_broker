@@ -10,3 +10,7 @@ div.pact-metadata li {
 div.pact-metadata span.name {
   font-weight: bold ;
 }
+
+pre {
+  font-size: 1em
+}
