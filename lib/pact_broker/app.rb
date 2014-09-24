@@ -42,53 +42,24 @@ module PactBroker
     def build_app
       @app = Rack::Builder.new
 
-      @app.use Rack::Static, :urls => ["/stylesheets", "/images", "/css", "/fonts", "/js", "/javascripts"], :root => PactBroker.project_root.join("public")
+      @app.use Rack::Static, :urls => ["/stylesheets", "/css", "/fonts", "/js", "/javascripts"], :root => PactBroker.project_root.join("public")
 
       logger.info "Mounting UI"
-      require 'pact_broker/ui/controllers/relationships'
-      require 'pact_broker/ui/controllers/groups'
-      require 'pact_broker/doc/controllers/app'
-
-      ui = Rack::Builder.new {
-
-        use HtmlFilter
-
-        map "/ui/relationships" do
-          run PactBroker::UI::Controllers::Relationships
-        end
-
-        map "/groups" do
-          run PactBroker::UI::Controllers::Groups
-        end
-
-        map "/doc" do
-          run PactBroker::Doc::Controllers::App
-        end
-
-        map "/" do
-          run lambda { |env|
-            # A request for the root path in the browser (not the json index) should
-            # redirect to ui/relationships
-            if (env['PATH_INFO'].chomp("/") == "")
-              [303, {'Location' => 'ui/relationships'},[]]
-            else
-              [404, {},[]]
-            end
-          }
-        end
-      }
 
       if configuration.use_hal_browser
         logger.info "Mounting HAL browser"
-        @app.use Rack::HalBrowser::Redirect, :exclude => ['/trace', '/network-graph', '/ui']
+        @app.use Rack::HalBrowser::Redirect
       else
         logger.info "Not mounting HAL browser"
       end
 
+      logger.info "Mounting UI"
+      require 'pact_broker/ui/app'
+
       logger.info "Mounting PactBroker::API"
       require 'pact_broker/api'
 
-      apps = [ui, PactBroker::API]
+      apps = [PactBroker::UI::App.new, PactBroker::API]
 
       @app.map "/" do
         run Rack::Cascade.new(apps)
@@ -96,26 +67,6 @@ module PactBroker
 
     end
 
-    class HtmlFilter
-
-      def initialize app
-        @app = app
-      end
-
-      def call env
-        if accepts_html_and_not_json_or_csv env
-          @app.call(env)
-        else
-          [404, {},[]]
-        end
-      end
-
-      def accepts_html_and_not_json_or_csv env
-        accept = env['HTTP_ACCEPT'] || ''
-        accept.include?("html") && !accept.include?("json") && !accept.include?("csv")
-      end
-
-    end
   end
 
 end
