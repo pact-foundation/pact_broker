@@ -44,8 +44,6 @@ module PactBroker
 
       @app.use Rack::Static, :urls => ["/stylesheets", "/css", "/fonts", "/js", "/javascripts"], :root => PactBroker.project_root.join("public")
 
-      logger.info "Mounting UI"
-
       if configuration.use_hal_browser
         logger.info "Mounting HAL browser"
         @app.use Rack::HalBrowser::Redirect
