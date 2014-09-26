@@ -15,37 +15,36 @@ module PactBroker
           ["GET"]
         end
 
-        # TODO change to use request.base_url to avoid params getting included!!!
         def to_json
           {
             _links: {
               'pb:self' =>
               {
-                href: request.uri.to_s,
+                href: base_url,
                 title: 'The Pact Broker index page',
                 templated: false
               },
               'pb:latest-pacts' =>
               {
-                href: request.uri.to_s + 'pacts/latest',
+                href: base_url + 'pacts/latest',
                 title: 'Retrieve latest pacts',
                 templated: false
               },
               'pb:pacticipants' =>
               {
-                href: request.uri.to_s + 'pacticipants',
+                href: base_url + 'pacticipants',
                 title: 'Retrieve pacticipants',
                 templated: false
               },
               'pb:webhooks' =>
               {
-                href: request.uri.to_s + 'webhooks',
+                href: base_url + 'webhooks',
                 title: 'Webhooks',
                 templated: false
               },'curies' =>
               [{
                 name: 'pb',
-                href: request.uri.to_s + 'doc/{rel}',
+                href: base_url + 'doc/{rel}',
                 templated: true
               }]
             }

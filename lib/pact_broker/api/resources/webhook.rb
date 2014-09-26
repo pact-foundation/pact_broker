@@ -16,7 +16,7 @@ module PactBroker
         end
 
         def resource_exists?
-          !webhook.nil?
+          webhook
         end
 
         def to_json

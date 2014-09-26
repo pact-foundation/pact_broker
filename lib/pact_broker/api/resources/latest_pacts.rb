@@ -15,11 +15,11 @@ module PactBroker
         end
 
         def to_json
-          generate_json(pact_service.find_latest_pacts)
+          PactBroker::Api::Decorators::PactCollectionDecorator.new(pacts).to_json(base_url: base_url)
         end
 
-        def generate_json pacts
-          PactBroker::Api::Decorators::PactCollectionDecorator.new(pacts).to_json(base_url: base_url)
+        def pacts
+          pact_service.find_latest_pacts
         end
 
       end

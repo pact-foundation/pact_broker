@@ -16,21 +16,26 @@ module PactBroker
           ["GET"]
         end
 
-        def to_csv
-          generate_csv(group_service.find_group_containing @pacticipant)
+        def resource_exists?
+          pacticipant
         end
 
-        def generate_csv group
+        def to_csv
           PactBroker::Api::Decorators::RelationshipsCsvDecorator.new(group).to_csv
         end
+
+        private
 
         def pacticipant_name
           identifier_from_path[:pacticipant_name]
         end
 
-        def resource_exists?
-          @pacticipant = pacticipant_service.find_pacticipant_by_name(pacticipant_name)
-          @pacticipant != nil
+        def pacticipant
+          @pacticipant ||= pacticipant_service.find_pacticipant_by_name(pacticipant_name)
+        end
+
+        def group
+          @group ||= group_service.find_group_containing pacticipant
         end
 
       end

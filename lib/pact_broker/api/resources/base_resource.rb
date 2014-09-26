@@ -36,7 +36,6 @@ module PactBroker
           end
         end
 
-        # This should be called base_url
         def base_url
           request.uri.to_s.gsub(/#{request.uri.path}$/,'')
         end

@@ -19,7 +19,7 @@ module PactBroker
         end
 
         def resource_exists?
-          !webhook.nil?
+          webhook
         end
 
         private

@@ -17,17 +17,20 @@ module PactBroker
         end
 
         def resource_exists?
-          @pact = pact_service.find_latest_pact(identifier_from_path)
-          @pact != nil
+          pact
         end
 
         def to_json
-          response.headers['X-Pact-Consumer-Version'] = @pact.consumer_version_number
-          PactBroker::Api::Decorators::PactDecorator.new(@pact).to_json(base_url: base_url)
+          response.headers['X-Pact-Consumer-Version'] = pact.consumer_version_number
+          PactBroker::Api::Decorators::PactDecorator.new(pact).to_json(base_url: base_url)
         end
 
         def to_html
-          PactBroker.configuration.html_pact_renderer.call(@pact)
+          PactBroker.configuration.html_pact_renderer.call(pact)
+        end
+
+        def pact
+          @pact ||= pact_service.find_latest_pact(identifier_from_path)
         end
 
       end

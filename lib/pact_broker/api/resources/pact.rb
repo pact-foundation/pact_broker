@@ -35,18 +35,21 @@ module PactBroker
         end
 
         def resource_exists?
-          @pact = pact_service.find_pact(identifier_from_path)
-          @pact != nil
+          pact
         end
 
         def from_json
           @pact, created = pact_service.create_or_update_pact(identifier_from_path.merge(:json_content => request_body))
-          response.headers["Location"] = pact_url(base_url, @pact) if created
+          response.headers["Location"] = pact_url(base_url, pact) if created # Setting Location header causes a 201
           response.body = to_json
         end
 
         def to_json
-          PactBroker::Api::Decorators::PactDecorator.new(@pact).to_json(base_url: base_url)
+          PactBroker::Api::Decorators::PactDecorator.new(pact).to_json(base_url: base_url)
+        end
+
+        def pact
+          @pact ||= pact_service.find_pact(identifier_from_path)
         end
 
       end

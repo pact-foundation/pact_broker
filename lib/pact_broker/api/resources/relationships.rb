@@ -16,11 +16,11 @@ module PactBroker
         end
 
         def to_csv
-          generate_csv(pact_service.find_latest_pacts)
+          PactBroker::Api::Decorators::RelationshipsCsvDecorator.new(pacts).to_csv
         end
 
-        def generate_csv pacts
-          PactBroker::Api::Decorators::RelationshipsCsvDecorator.new(pacts).to_csv
+        def pacts
+          pact_service.find_latest_pacts
         end
 
       end

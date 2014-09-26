@@ -23,8 +23,7 @@ module PactBroker
         end
 
         def resource_exists?
-          (@consumer = find_pacticipant(identifier_from_path[:consumer_name], "consumer")) &&
-            (@provider = find_pacticipant(identifier_from_path[:provider_name], "provider"))
+          consumer && provider
         end
 
         def malformed_request?
@@ -45,7 +44,6 @@ module PactBroker
         def from_json
           saved_webhook = webhook_service.create next_uuid, webhook, consumer, provider
           response.body = Decorators::WebhookDecorator.new(saved_webhook).to_json(base_url: base_url)
-          true
         end
 
         def to_json
@@ -53,8 +51,6 @@ module PactBroker
         end
 
         private
-
-        attr_reader :consumer, :provider
 
         def webhooks
           webhook_service.find_by_consumer_and_provider consumer, provider
@@ -66,6 +62,14 @@ module PactBroker
 
         def next_uuid
           @next_uuid ||= webhook_service.next_uuid
+        end
+
+        def consumer
+          @consumer ||= find_pacticipant(identifier_from_path[:consumer_name], "consumer")
+        end
+
+        def provider
+          @provider ||= find_pacticipant(identifier_from_path[:provider_name], "provider")
         end
 
         def find_pacticipant name, role

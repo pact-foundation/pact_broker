@@ -31,18 +31,17 @@ module PactBroker
         end
 
         def from_json
-          if @pacticipant
+          if pacticipant
             @pacticipant = pacticipant_service.update params.merge(name: pacticipant_name)
           else
             @pacticipant = pacticipant_service.create params.merge(name: pacticipant_name)
-            response.headers["Location"] = pacticipant_url(base_url, @pacticipant)
+            response.headers["Location"] = pacticipant_url(base_url, pacticipant)
           end
           response.body = to_json
         end
 
         def resource_exists?
-          @pacticipant = pacticipant_service.find_pacticipant_by_name(pacticipant_name)
-          @pacticipant != nil
+          pacticipant
         end
 
         def delete_resource
@@ -51,7 +50,13 @@ module PactBroker
         end
 
         def to_json
-          PactBroker::Api::Decorators::PacticipantRepresenter.new(@pacticipant).to_json(base_url: base_url)
+          PactBroker::Api::Decorators::PacticipantRepresenter.new(pacticipant).to_json(base_url: base_url)
+        end
+
+        private
+
+        def pacticipant
+          @pacticipant ||= pacticipant_service.find_pacticipant_by_name(pacticipant_name)
         end
 
         def pacticipant_name
