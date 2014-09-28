@@ -6,7 +6,7 @@ module PactBroker
     class App
 
       def initialize
-        @app = Rack::Builder.new {
+        @app = ::Rack::Builder.new {
 
           use HtmlFilter
 
@@ -62,7 +62,15 @@ module PactBroker
 
         def accepts_html_and_not_json_or_csv env
           accept = env['HTTP_ACCEPT'] || ''
-          accept.include?("html") && !accept.include?("json") && !accept.include?("csv")
+          accepts_html(accept) && !accepts_json_or_csv(accept)
+        end
+
+        def accepts_html(accept)
+          accept.include?("html")
+        end
+
+        def accepts_json_or_csv accept
+          accept.include?("json") || accept.include?("csv")
         end
 
       end

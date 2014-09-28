@@ -2,6 +2,7 @@ require 'pact_broker/configuration'
 require 'pact_broker/db'
 require 'pact_broker/project_root'
 require 'rack/hal_browser'
+require 'rack/pact_broker/convert_file_extension_to_accept_header'
 
 module PactBroker
 
@@ -43,6 +44,7 @@ module PactBroker
       @app = Rack::Builder.new
 
       @app.use Rack::Static, :urls => ["/stylesheets", "/css", "/fonts", "/js", "/javascripts"], :root => PactBroker.project_root.join("public")
+      @app.use Rack::PactBroker::ConvertFileExtensionToAcceptHeader
 
       if configuration.use_hal_browser
         logger.info "Mounting HAL browser"

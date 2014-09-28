@@ -114,6 +114,16 @@ module PactBroker
         end
       end
 
+      context "when a .csv extension is specified" do
+
+        let(:path) { '/groups/Some%20Consumer.csv' }
+
+        it "returns the CSV Content-Type" do
+          expect(subject.status).to eq 200
+          expect(subject.headers['Content-Type']).to eq "text/csv"
+        end
+      end
+
     end
 
     context "when no Accept header is specified" do
