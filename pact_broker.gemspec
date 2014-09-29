@@ -22,7 +22,7 @@ Gem::Specification.new do |gem|
   #gem.add_runtime_dependency 'pact'
   gem.add_runtime_dependency 'httparty'
   gem.add_runtime_dependency 'json'
-  gem.add_runtime_dependency 'roar'
+  # gem.add_runtime_dependency 'roar'
   gem.add_runtime_dependency 'sequel', '~> 4.12'
   gem.add_runtime_dependency 'webmachine'
   gem.add_runtime_dependency 'versionomy'

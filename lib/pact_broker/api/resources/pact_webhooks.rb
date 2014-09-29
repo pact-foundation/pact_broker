@@ -2,6 +2,7 @@
 require 'pact_broker/api/resources/base_resource'
 require 'pact_broker/api/decorators/webhook_decorator'
 require 'pact_broker/api/decorators/webhooks_decorator'
+require 'pact_broker/api/contracts/webhook_contract'
 
 module PactBroker
 
@@ -31,6 +32,14 @@ module PactBroker
             return invalid_json? || validation_errors?(webhook)
           end
           false
+        end
+
+        def validation_errors? webhook
+           contract = PactBroker::Api::Contracts::WebhookContract.new(webhook)
+          !contract.validate.tap do | valid |
+            response.headers['Content-Type'] = 'application/json'
+            response.body = {errors: contract.errors.messages }.to_json
+          end
         end
 
         def create_path
