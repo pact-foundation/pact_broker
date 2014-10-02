@@ -9,8 +9,8 @@ module PactBroker
 
         link :'pb:self' do | context |
           {
-            title: context.resource_title,
-            href: context.resource_url
+            title: context[:resource_title],
+            href: context[:resource_url]
           }
         end
 
@@ -19,7 +19,7 @@ module PactBroker
             {
               title: webhook.description,
               name: webhook.request_description,
-              href: webhook_url(webhook.uuid, context.base_url)
+              href: webhook_url(webhook.uuid, context[:base_url])
             }
           end
         end
@@ -27,7 +27,7 @@ module PactBroker
         curies do | context |
           [{
             name: :pb,
-            href: context.base_url + '/doc/webhooks',
+            href: context[:base_url] + '/doc/webhooks',
           }]
         end
 

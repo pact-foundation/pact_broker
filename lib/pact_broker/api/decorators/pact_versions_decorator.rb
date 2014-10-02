@@ -14,21 +14,21 @@ module PactBroker
 
         link :self do | context |
           {
-            href: context.resource_url,
+            href: context[:resource_url],
             title: "All versions of the pact between #{context[:consumer_name]} and #{context[:provider_name]}"
           }
         end
 
         link :consumer do | context |
           {
-            href: pacticipant_url(context.base_url, OpenStruct.new(name: context[:consumer_name])),
+            href: pacticipant_url(context[:base_url], OpenStruct.new(name: context[:consumer_name])),
             title: context[:consumer_name]
           }
         end
 
         link :provider do | context |
           {
-            href: pacticipant_url(context.base_url, OpenStruct.new(name: context[:provider_name])),
+            href: pacticipant_url(context[:base_url], OpenStruct.new(name: context[:provider_name])),
             title: context[:provider_name]
           }
         end
@@ -36,7 +36,7 @@ module PactBroker
         links :'pact-versions' do | context |
           represented.collect do | pact |
             {
-              :href => pact_url(context.base_url, pact),
+              :href => pact_url(context[:base_url], pact),
               :title => pact.version_and_updated_date
             }
           end

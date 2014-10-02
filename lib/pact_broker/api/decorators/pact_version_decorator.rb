@@ -27,7 +27,7 @@ module PactBroker
 
         link :self do | options |
           {
-            href: pact_url(options.base_url, represented),
+            href: pact_url(options[:base_url], represented),
             title: represented.name
           }
 
