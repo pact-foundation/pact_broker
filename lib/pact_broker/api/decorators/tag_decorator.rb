@@ -1,5 +1,6 @@
 require_relative 'base_decorator'
 require_relative 'pact_pacticipant_decorator'
+require_relative 'timestamps'
 
 module PactBroker
 
@@ -9,8 +10,7 @@ module PactBroker
 
       class TagDecorator < BaseDecorator
 
-        property :createdAt, getter: lambda { |_| created_at ? created_at.xmlschema : nil }
-        property :updatedAt, getter: lambda { |_| updated_at ? updated_at.xmlschema : nil }
+        include Timestamps
 
         link :self do | options |
           tag_url(options[:base_url], represented)

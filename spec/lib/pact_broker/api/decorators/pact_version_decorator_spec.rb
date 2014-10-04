@@ -43,6 +43,11 @@ module PactBroker
           expect(subject[:_embedded][:consumerVersion][:_links][:self][:href]).to eq "http://example.org/pacticipants/Consumer/versions/1234"
         end
 
+        it "includes timestamps" do
+          expect(subject[:createdAt]).to_not be_nil
+          expect(subject[:updatedAt]).to_not be_nil
+        end
+
       end
     end
   end

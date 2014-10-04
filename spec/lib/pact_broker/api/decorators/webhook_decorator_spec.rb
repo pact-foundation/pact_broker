@@ -22,6 +22,8 @@ module PactBroker
 
         let(:consumer) { Models::Pacticipant.new(name: 'Consumer') }
         let(:provider) { Models::Pacticipant.new(name: 'Provider') }
+        let(:created_at) { DateTime.now }
+        let(:updated_at) { created_at + 1 }
 
         let(:webhook) do
           Models::Webhook.new(
@@ -29,8 +31,8 @@ module PactBroker
             uuid: 'some-uuid',
             consumer: consumer,
             provider: provider,
-            created_at: DateTime.now,
-            updated_at: DateTime.now)
+            created_at: created_at,
+            updated_at: updated_at)
         end
 
         subject { WebhookDecorator.new(webhook) }
@@ -81,6 +83,11 @@ module PactBroker
 
           it "includes a link to execute the webhook directly" do
             expect(parsed_json[:_links][:execute][:href]).to eq 'http://example.org/webhooks/some-uuid/execute'
+          end
+
+          it "includes timestamps" do
+            expect(parsed_json[:createdAt]).to eq created_at.xmlschema
+            expect(parsed_json[:updatedAt]).to eq updated_at.xmlschema
           end
 
           context "when the headers are empty" do

@@ -1,5 +1,6 @@
 require_relative 'base_decorator'
 require 'pact_broker/json'
+require 'pact_broker/api/decorators/timestamps'
 
 module PactBroker
 
@@ -9,8 +10,7 @@ module PactBroker
 
       class PactDecorator < BaseDecorator
 
-        property :createdAt, getter: lambda { |_|  created_at.xmlschema }, writeable: false
-        property :updatedAt, getter: lambda { |_| updated_at.xmlschema }, writeable: false
+        include Timestamps
 
         def to_hash(options = {})
           ::JSON.parse(represented.json_content, PACT_PARSING_OPTIONS).merge super

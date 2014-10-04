@@ -1,5 +1,6 @@
 require_relative 'base_decorator'
 require 'pact_broker/api/decorators/webhook_request_decorator'
+require 'pact_broker/api/decorators/timestamps'
 require 'pact_broker/models/webhook_request'
 require 'pact_broker/api/decorators/basic_pacticipant_decorator'
 
@@ -10,8 +11,7 @@ module PactBroker
 
         property :request, :class => PactBroker::Models::WebhookRequest, :extend => WebhookRequestDecorator
 
-        property :createdAt, getter: lambda { |_| created_at.xmlschema }, writeable: false
-        property :updatedAt, getter: lambda { |_| updated_at.xmlschema }, writeable: false
+        include Timestamps
 
         property :consumer, :extend => PactBroker::Api::Decorators::BasicPacticipantRepresenter, :embedded => true, writeable: false
         property :provider, :extend => PactBroker::Api::Decorators::BasicPacticipantRepresenter, :embedded => true, writeable: false

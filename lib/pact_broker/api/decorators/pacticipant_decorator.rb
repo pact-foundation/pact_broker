@@ -1,5 +1,6 @@
 require_relative 'base_decorator'
 require_relative 'version_decorator'
+require 'pact_broker/api/decorators/timestamps'
 
 module PactBroker
 
@@ -13,8 +14,8 @@ module PactBroker
         property :repository_url, as: :repositoryUrl
 
         property :latest_version, as: :'latest-version', :class => PactBroker::Models::Version, :extend => PactBroker::Api::Decorators::VersionRepresenter, :embedded => true, writeable: false
-        property :createdAt, getter: lambda { |_|  created_at.xmlschema }, writeable: false
-        property :updatedAt, getter: lambda { |_| updated_at.xmlschema }, writeable: false
+
+        include Timestamps
 
         link :self do | options |
           pacticipant_url(options[:base_url], represented)

@@ -1,5 +1,6 @@
 require_relative 'base_decorator'
 require_relative 'pact_pacticipant_decorator'
+require 'pact_broker/api/decorators/timestamps'
 
 module PactBroker
 
@@ -18,9 +19,7 @@ module PactBroker
 
       class PactVersionDecorator < BaseDecorator
 
-
-        property :createdAt, getter: lambda { |_|  created_at.to_time.localtime.xmlschema }, writeable: false
-        property :updatedAt, getter: lambda { |_| updated_at.to_time.localtime.xmlschema }, writeable: false
+        include Timestamps
 
         property :consumer_version, as: :consumerVersion, embedded: true, decorator: EmbeddedVersionDecorator
 

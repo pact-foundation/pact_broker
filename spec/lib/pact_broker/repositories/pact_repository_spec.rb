@@ -144,7 +144,6 @@ module PactBroker
           expect(pacts[0].provider.name).to eq("Pricing Service")
           expect(pacts[0].provider.id).to_not be nil
           expect(pacts[0].consumer_version.number).to eq("1.4.0")
-          expect(pacts[0].consumer_version_number).to eq("1.4.0")
 
           expect(pacts[1].consumer_version.pacticipant.name).to eq("Contract Email Service")
           expect(pacts[1].consumer.name).to eq("Contract Email Service")
@@ -152,7 +151,7 @@ module PactBroker
           expect(pacts[1].consumer_version.number).to eq("2.7.0")
         end
 
-        xit "includes the timestamps - need to update view" do
+        it "includes the timestamps - need to update view" do
           pacts = PactRepository.new.find_latest_pacts
 
           expect(pacts[0].updated_at).to be_instance_of DateTime
