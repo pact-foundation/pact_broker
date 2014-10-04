@@ -5,6 +5,33 @@ module PactBroker
   module Repositories
     describe PactRepository do
 
+      describe "create" do
+        let(:consumer) { PacticipantRepository.new.create name: 'Consumer' }
+        let(:provider) { PacticipantRepository.new.create name: 'Provider' }
+        let(:version) { VersionRepository.new.create number: '1.2.3', pacticipant_id: consumer.id }
+        let(:json_content) { {some: 'json'}.to_json }
+
+        subject { PactRepository.new.create version_id: version.id, provider_id: provider.id, json_content: json_content}
+
+        it "saves the pact" do
+          expect{subject}.to change{ Pact.count }.by(1)
+        end
+
+        it "returns a Pact::Model" do
+          expect(subject).to be_instance_of(PactBroker::Models::Pact)
+        end
+
+        it "sets all the Pact::Model attributes" do
+          expect(subject.consumer).to eq consumer
+          expect(subject.provider).to eq provider
+          expect(subject.consumer_version_number).to eq '1.2.3'
+          expect(subject.consumer_version).to eq version
+          expect(subject.json_content).to eq json_content
+          expect(subject.created_at).to be_instance_of(DateTime)
+          expect(subject.updated_at).to be_instance_of(DateTime)
+        end
+      end
+
       describe "#find_all_pacts_between" do
         let(:consumer_name) { 'Consumer' }
         let(:provider_name) { 'Provider' }
@@ -81,8 +108,9 @@ module PactBroker
               expect(latest_prod_pact.consumer_version.number).to eq("1.2.3")
             end
 
-            xit "has timestamps" do
-
+            it "has timestamps" do
+              expect(latest_prod_pact.created_at).to be_instance_of(DateTime)
+              expect(latest_prod_pact.updated_at).to be_instance_of(DateTime)
             end
           end
 
@@ -124,7 +152,7 @@ module PactBroker
           expect(pacts[1].consumer_version.number).to eq("2.7.0")
         end
 
-        xit "includes the timestamps" do
+        xit "includes the timestamps - need to update view" do
           pacts = PactRepository.new.find_latest_pacts
 
           expect(pacts[0].updated_at).to be_instance_of DateTime

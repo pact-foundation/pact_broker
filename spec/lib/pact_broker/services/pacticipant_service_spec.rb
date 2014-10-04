@@ -155,7 +155,7 @@ module PactBroker
 
         it "deletes the child pacts" do
           expect{ delete_pacticipant }.to change{
-            PactBroker::Models::Pact.count
+            PactBroker::Repositories::Pact.count
             }.by(-2)
         end
       end

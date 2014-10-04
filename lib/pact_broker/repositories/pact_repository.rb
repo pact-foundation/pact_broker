@@ -1,6 +1,7 @@
 require 'sequel'
 require 'pact_broker/logging'
 require 'ostruct'
+require 'pact_broker/repositories/pact'
 
 module PactBroker
   module Repositories
@@ -11,11 +12,11 @@ module PactBroker
       def find_all_pacts_between consumer_name, options
         pact_finder(consumer_name, options.fetch(:and))
           .left_outer_join(:tags, {:version_id => :id}, {implicit_qualifier: :versions})
-          .reverse_order(:order).all
+          .reverse_order(:order).collect(&:to_model)
       end
 
       def find_by_version_and_provider version_id, provider_id
-        PactBroker::Models::Pact.where(version_id: version_id, provider_id: provider_id).single_record
+        PactBroker::Repositories::Pact.where(version_id: version_id, provider_id: provider_id).single_record.to_model
       end
 
       def find_latest_pacts
@@ -32,20 +33,21 @@ module PactBroker
       def find_latest_pact(consumer_name, provider_name, tag = nil)
         finder = pact_finder(consumer_name, provider_name)
         finder = add_tag_criteria(finder, tag) unless tag.nil?
-        finder.order(:order).last
+        finder.order(:order).last.to_model
       end
 
       def find_pact consumer_name, consumer_version, provider_name
-        pact_finder(consumer_name, provider_name).where('versions.number = ?', consumer_version).single_record
+        pact_finder(consumer_name, provider_name).where('versions.number = ?', consumer_version).single_record.to_model
       end
 
       def create params
-        PactBroker::Models::Pact.new(version_id: params[:version_id], provider_id: params[:provider_id], json_content: params[:json_content]).save
+        db_pact = Pact.new(version_id: params[:version_id], provider_id: params[:provider_id], json_content: params[:json_content]).save
+        db_pact.to_model
       end
 
       def create_or_update params
         if pact = find_by_version_and_provider(params[:version_id], params[:provider_id])
-          pact.update_fields(json_content: params[:json_content])
+          pact.update_fields(json_content: params[:json_content]).to_model
         else
           create params
         end
@@ -63,7 +65,7 @@ module PactBroker
       end
 
       def pact_finder consumer_name, provider_name
-        PactBroker::Models::Pact.select(
+        PactBroker::Repositories::Pact.select(
             :pacts__id, :pacts__json_content, :pacts__version_id, :pacts__provider_id, :pacts__created_at, :pacts__updated_at,
             :versions__number___consumer_version_number).
           join(:versions, {:id => :version_id}, {implicit_qualifier: :pacts}).
@@ -87,7 +89,7 @@ module PactBroker
         provider = Models::Pacticipant.new(name: row[:provider_name])
         provider.id = row[:provider_id]
         consumer_version = OpenStruct.new(number: row[:consumer_version_number], pacticipant: consumer)
-        pact = OpenStruct.new(id: row[:id], consumer: consumer, consumer_version: consumer_version, provider: provider, consumer_version_number: row[:consumer_version_number])
+        pact = Models::Pact.new(id: row[:id], consumer: consumer, consumer_version: consumer_version, provider: provider, consumer_version_number: row[:consumer_version_number])
       end
 
     end

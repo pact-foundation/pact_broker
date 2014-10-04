@@ -3,15 +3,14 @@ require 'pact_broker/db'
 module PactBroker
 
   module Models
-    class Pact < Sequel::Model
+    class Pact
 
-      set_primary_key :id
-      associate(:many_to_one, :provider, :class => "PactBroker::Models::Pacticipant", :key => :provider_id, :primary_key => :id)
-      associate(:many_to_one, :consumer_version, :class => "PactBroker::Models::Version", :key => :version_id, :primary_key => :id)
+      attr_accessor :id, :provider, :consumer_version, :consumer, :updated_at, :created_at, :json_content, :consumer_version_number
 
-      #Need to work out how to do this properly!
-      def consumer_version_number
-        values[:consumer_version_number]
+      def initialize attributes
+        attributes.each_pair do | key, value |
+          self.send(key.to_s + "=", value)
+        end
       end
 
       def consumer
@@ -35,6 +34,5 @@ module PactBroker
       end
     end
 
-    Pact.plugin :timestamps, :update_on_create=>true
   end
 end
