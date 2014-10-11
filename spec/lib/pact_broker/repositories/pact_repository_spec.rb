@@ -53,17 +53,40 @@ module PactBroker
 
         subject { PactRepository.new.update existing_pact.id, json_content: json_content }
 
-        it "updates the existing content" do
-          expect(subject.json_content).to eq json_content
+        context "when the attributes have changed" do
+
+          it "updates the existing content" do
+            expect(subject.json_content).to eq json_content
+          end
+
+          it "updates the updated_at timestamp" do
+            expect(subject.updated_at).to_not eq updated_at
+          end
+
+          it "does not update the created_at timestamp" do
+            expect(subject.created_at).to eq created_at
+          end
+
         end
 
-        it "updates the updated_at timestamp" do
-          expect(subject.updated_at).to_not eq updated_at
+        context "when the attributes have not changed" do
+          before do
+            ::DB::PACT_BROKER_DB[:pacts]
+              .where(id: existing_pact.id)
+              .update(
+                json_content: json_content)
+          end
+
+          it "does not update the updated_at timestamp" do
+            expect(subject.updated_at).to eq updated_at
+          end
+
+          it "does not update the created_at timestamp" do
+            expect(subject.created_at).to eq created_at
+          end
+
         end
 
-        it "does not update the created_at timestamp" do
-          expect(subject.created_at).to eq created_at
-        end
       end
 
       describe "#find_all_pacts_between" do

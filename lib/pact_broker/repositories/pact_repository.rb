@@ -65,7 +65,9 @@ module PactBroker
 
       def update id, params
         to_model do
-          Pact.find(id: id).update(json_content: params[:json_content])
+          Pact.find(id: id).tap do | pact |
+            pact.update(json_content: params[:json_content])
+          end
         end
       end
 
