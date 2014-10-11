@@ -11,7 +11,7 @@ module PactBroker
 
       def find args
         PactBroker::Models::Tag
-          .select(:tags__name, :tags__version_id)
+          .select(:tags__name, :tags__version_id, :tags__created_at, :tags__updated_at)
           .join(:versions, {id: :version_id})
           .join(:pacticipants, {pacticipants__id: :versions__pacticipant_id})
           .where(:tags__name => args.fetch(:tag_name))
