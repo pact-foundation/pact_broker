@@ -32,6 +32,40 @@ module PactBroker
         end
       end
 
+      describe "update" do
+
+        let(:existing_pact) do
+          ProviderStateBuilder.new.create_pact_with_hierarchy "A Consumer", "1.2.3", "A Provider"
+        end
+
+        before do
+          ::DB::PACT_BROKER_DB[:pacts]
+            .where(id: existing_pact.id)
+            .update(
+              created_at: created_at,
+              updated_at: updated_at)
+        end
+
+        let(:created_at) { DateTime.new(2014, 3, 2) }
+        let(:updated_at) { DateTime.new(2014, 3, 4) }
+
+        let(:json_content) { {some: 'json'}.to_json }
+
+        subject { PactRepository.new.update existing_pact.id, json_content: json_content }
+
+        it "updates the existing content" do
+          expect(subject.json_content).to eq json_content
+        end
+
+        it "updates the updated_at timestamp" do
+          expect(subject.updated_at).to_not eq updated_at
+        end
+
+        it "does not update the created_at timestamp" do
+          expect(subject.created_at).to eq created_at
+        end
+      end
+
       describe "#find_all_pacts_between" do
         let(:consumer_name) { 'Consumer' }
         let(:provider_name) { 'Provider' }

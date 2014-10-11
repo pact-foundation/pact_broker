@@ -39,9 +39,10 @@ module PactBroker
         end
 
         def from_json
-          @pact, created = pact_service.create_or_update_pact(identifier_from_path.merge(:json_content => request_body))
-          response.headers["Location"] = pact_url(base_url, pact) if created # Setting Location header causes a 201
+          response_code = pact ? 200 : 201
+          @pact = pact_service.create_or_update_pact(identifier_from_path.merge(:json_content => request_body))
           response.body = to_json
+          response_code
         end
 
         def to_json
