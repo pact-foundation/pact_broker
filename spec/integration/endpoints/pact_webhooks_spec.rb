@@ -21,7 +21,7 @@ module PactBroker::Api
 
         context "with invalid attributes" do
 
-          let(:errors) { {:request=>["can't be blank"]} }
+          let(:errors) { ["Request can't be blank"] }
 
           let(:webhook_json) do
             {

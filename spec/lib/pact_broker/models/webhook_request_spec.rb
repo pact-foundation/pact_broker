@@ -137,37 +137,6 @@ module PactBroker
 
       end
 
-
-      describe "validate" do
-        let(:method) { 'POST' }
-        let(:url) { "http://example.org" }
-        subject { WebhookRequest.new(method: method, url: url)}
-        context "with a missing method" do
-          let(:method) { nil }
-          it "returns an error" do
-            expect(subject.validate.first).to eq "Missing required attribute 'method'"
-          end
-        end
-        context "with an invalid method" do
-          let(:method) { 'INVALID' }
-          it "returns an error" do
-            expect(subject.validate.first).to eq "Invalid HTTP method 'INVALID'"
-          end
-        end
-        context "with a missing url" do
-          let(:url) { nil }
-          it "returns an error" do
-            expect(subject.validate.first).to eq "Missing required attribute 'url'"
-          end
-        end
-        context "with a URL that is missing the scheme" do
-          let(:url) { "example.org" }
-          it "returns an error" do
-            expect(subject.validate.first).to eq "Invalid URL 'example.org'. Expected format: http://example.org"
-          end
-        end
-
-      end
     end
 
   end

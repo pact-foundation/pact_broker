@@ -6,6 +6,8 @@ module PactBroker::Api
 
     describe PactWebhooks do
 
+
+      let(:webhook_service) { PactBroker::Services::WebhookService }
       let(:uuid) { '1483234k24DKFGJ45K' }
       let(:path) { "/webhooks/provider/Some%20Provider/consumer/Some%20Consumer" }
       let(:headers) { {'CONTENT_TYPE' => 'application/json'} }
@@ -25,7 +27,7 @@ module PactBroker::Api
         let(:decorator) { instance_double(Decorators::WebhooksDecorator, to_json: json) }
 
         before do
-          allow(PactBroker::Services::WebhookService).to receive(:find_by_consumer_and_provider).and_return(webhooks)
+          allow(webhook_service).to receive(:find_by_consumer_and_provider).and_return(webhooks)
           allow(Decorators::WebhooksDecorator).to receive(:new).and_return(decorator)
         end
 
@@ -58,12 +60,13 @@ module PactBroker::Api
         end
         let(:next_uuid) { '123k2nvkkwjrwk34' }
 
-        let(:errors) { [] }
+        let(:valid) { true }
+        let(:errors) { double("errors", any?: !valid, full_messages: ['messages']) }
 
         before do
-          allow(PactBroker::Services::WebhookService).to receive(:create).and_return(saved_webhook)
-          allow(PactBroker::Services::WebhookService).to receive(:next_uuid).and_return(next_uuid)
-          allow(webhook).to receive(:validate).and_return(errors)
+          allow(webhook_service).to receive(:create).and_return(saved_webhook)
+          allow(webhook_service).to receive(:next_uuid).and_return(next_uuid)
+          allow(webhook_service).to receive(:errors).and_return(errors)
           allow(PactBroker::Models::Webhook).to receive(:new).and_return(webhook)
         end
 
@@ -117,7 +120,7 @@ module PactBroker::Api
 
         context "with invalid attributes" do
 
-          let(:errors) { ['errors'] }
+          let(:valid) { false }
 
           it "returns a 400" do
             subject
@@ -131,7 +134,7 @@ module PactBroker::Api
 
           it "returns the validation errors" do
             subject
-            expect(JSON.parse(last_response.body, symbolize_names: true)).to eq errors: errors
+            expect(JSON.parse(last_response.body, symbolize_names: true)).to eq errors: ['messages']
           end
 
         end
@@ -146,7 +149,7 @@ module PactBroker::Api
           end
 
           it "saves the webhook" do
-            expect(PactBroker::Services::WebhookService).to receive(:create).with(next_uuid, webhook, consumer, provider)
+            expect(webhook_service).to receive(:create).with(next_uuid, webhook, consumer, provider)
             subject
           end
 

@@ -1,6 +1,7 @@
 require 'pact_broker/models/webhook_request'
 require 'pact_broker/messages'
 require 'pact_broker/logging'
+require 'pact_broker/api/contracts/webhook_contract'
 
 module PactBroker
 
@@ -22,13 +23,6 @@ module PactBroker
         @updated_at = attributes[:updated_at]
       end
 
-      def validate
-        messages = []
-        messages << message('errors.validation.attribute_missing', attribute: 'request') unless request
-        messages.concat request.validate if request
-        messages
-      end
-
       def description
         "A webhook for the pact between #{consumer.name} and #{provider.name}"
       end
@@ -44,7 +38,15 @@ module PactBroker
       end
 
       def to_s
-        "webhook for consumer=#{consumer.name} provider=#{provider.name} uuid=#{uuid} request=#{request}"
+        "webhook for consumer=#{consumer_name} provider=#{provider_name} uuid=#{uuid} request=#{request}"
+      end
+
+      def consumer_name
+        consumer && consumer.name
+      end
+
+      def provider_name
+        provider && provider.name
       end
     end
 

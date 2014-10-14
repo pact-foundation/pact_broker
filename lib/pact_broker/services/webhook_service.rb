@@ -14,6 +14,12 @@ module PactBroker
         SecureRandom.urlsafe_base64
       end
 
+      def self.errors webhook
+        contract = PactBroker::Api::Contracts::WebhookContract.new(webhook)
+        contract.validate
+        contract.errors
+      end
+
       def self.create uuid, webhook, consumer, provider
         webhook_repository.create uuid, webhook, consumer, provider
       end

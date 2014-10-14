@@ -35,11 +35,11 @@ module PactBroker
         end
 
         def validation_errors? webhook
-           contract = PactBroker::Api::Contracts::WebhookContract.new(webhook)
-          !contract.validate.tap do | valid |
+          if (errors = webhook_service.errors(webhook)).any?
             response.headers['Content-Type'] = 'application/json'
-            response.body = {errors: contract.errors.messages }.to_json
+            response.body = {errors: errors.full_messages }.to_json
           end
+          errors.any?
         end
 
         def create_path

@@ -23,6 +23,10 @@ module PactBroker
 
       attr_accessor :method, :url, :headers, :body, :username, :password
 
+      # Reform gets confused by the :method method, as :method is a standard
+      # Ruby method.
+      alias_method :http_method, :method
+
       def initialize attributes = {}
         @method = attributes[:method]
         @url = attributes[:url]
@@ -70,15 +74,6 @@ module PactBroker
 
       end
 
-      def validate
-        messages = []
-        messages << message('errors.validation.attribute_missing', attribute: 'method') unless method
-        messages << message('errors.validation.attribute_missing', attribute: 'url') unless url
-        messages << message('errors.validation.invalid_http_method', method: method) unless method && method_valid?
-        messages << message('errors.validation.invalid_url', url: url) unless url && url_valid?
-        messages
-      end
-
       private
 
       def to_s
@@ -87,14 +82,6 @@ module PactBroker
 
       def http_request
         Net::HTTP.const_get(method.capitalize).new(url)
-      end
-
-      def method_valid?
-        Net::HTTP.const_defined?(method.capitalize)
-      end
-
-      def url_valid?
-        uri.scheme && uri.host
       end
 
       def uri
