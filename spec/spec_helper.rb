@@ -18,17 +18,6 @@ RSpec.configure do | config |
     PactBroker::DB.connection = DB::PACT_BROKER_DB
   end
 
-
-  config.before :each do
-    # TODO: Change this to transactional!
-    DB::PACT_BROKER_DB[:webhook_headers].truncate
-    DB::PACT_BROKER_DB[:webhooks].truncate
-    DB::PACT_BROKER_DB[:pacts].truncate
-    DB::PACT_BROKER_DB[:tags].truncate
-    DB::PACT_BROKER_DB[:versions].truncate
-    DB::PACT_BROKER_DB[:pacticipants].truncate
-  end
-
   config.include Rack::Test::Methods
   config.mock_with :rspec do |mocks|
     mocks.verify_partial_doubles = true

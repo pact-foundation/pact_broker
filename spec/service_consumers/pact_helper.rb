@@ -1,27 +1,12 @@
 require './spec/spec_helper'
 require 'pact/provider/rspec'
-require 'sequel'
-require 'db'
-require 'pact_broker/api'
-require 'uri'
+
 require_relative 'provider_states_for_pact_broker_client'
 
-require 'pact_broker/api/resources/pact'
-
-Pact.configure do | config |
-  config.logger.level = Logger::DEBUG
-  #config.diff_format = :plus_and_minus
-end
-
 Pact.service_provider "Pact Broker" do
-#  app { PactBroker::API }
 
   honours_pact_with "Pact Broker Client" do
-    pact_uri "../pact_broker-client/spec/pacts/pact_broker_client-pact_broker.json"
+    pact_uri "https://raw.githubusercontent.com/bethesque/pact_broker-client/master/spec/pacts/pact_broker_client-pact_broker.json"
   end
-
-  # honours_pact_with "Pact Broker Client", :ref => :head do
-  #   pact_uri URI.encode("http://rea-pact-broker.biq.vpc.realestate.com.au/pacts/provider/Pact Broker/consumer/Pact Broker Client/latest")
-  # end
 
 end

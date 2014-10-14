@@ -69,7 +69,8 @@ class ProviderStateBuilder
 
   def create_version_with_hierarchy pacticipant_name, pacticipant_version
     pacticipant = PactBroker::Models::Pacticipant.create(:name => pacticipant_name)
-    PactBroker::Models::Version.create(:number => pacticipant_version, :pacticipant => pacticipant)
+    version = PactBroker::Models::Version.create(:number => pacticipant_version, :pacticipant => pacticipant)
+    PactBroker::Models::Version.find(id: version.id) # Get version with populated order
   end
 
   def create_tag_with_hierarchy pacticipant_name, pacticipant_version, tag_name
