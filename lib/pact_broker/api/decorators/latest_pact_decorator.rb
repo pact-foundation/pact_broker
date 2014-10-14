@@ -1,4 +1,5 @@
 require_relative 'pact_details_decorator'
+require 'pact_broker/api/decorators/timestamps'
 
 module PactBroker
 
@@ -7,6 +8,8 @@ module PactBroker
     module Decorators
 
       class LatestPactDecorator < PactDetailsDecorator
+
+        include Timestamps
 
         links :self do | options |
           [

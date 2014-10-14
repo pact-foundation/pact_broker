@@ -46,13 +46,17 @@ module PactBroker
               </li>
               <li>
                 <span class='name'>Date published:</span>
-                <span class='value'>#{@pact.updated_at.to_time.localtime.to_datetime.strftime("%d/%m/%Y %l:%M%p %:z")}</span>
+                <span class='value'>#{published_date}</span>
               </li>
               <li>
                 <a href=\"#{json_url}\">View in HAL Browser</a>
               </li>
             </ul>
           </div>"
+        end
+
+        def published_date
+          @pact.updated_at.to_time.localtime.to_datetime.strftime("%d/%m/%Y %l:%M%p %:z")
         end
 
         def json_url

@@ -64,12 +64,13 @@ class ProviderStateBuilder
     provider = PactBroker::Models::Pacticipant.create(:name => provider_name)
     consumer = PactBroker::Models::Pacticipant.create(:name => consumer_name)
     version = PactBroker::Models::Version.create(:number => consumer_version, :pacticipant => consumer)
-    PactBroker::Models::Pact.create(:consumer_version => version, :provider => provider, :json_content => default_json_content)
+    PactBroker::Repositories::Pact.create(:consumer_version => version, :provider => provider, :json_content => default_json_content).to_model
   end
 
   def create_version_with_hierarchy pacticipant_name, pacticipant_version
     pacticipant = PactBroker::Models::Pacticipant.create(:name => pacticipant_name)
-    PactBroker::Models::Version.create(:number => pacticipant_version, :pacticipant => pacticipant)
+    version = PactBroker::Models::Version.create(:number => pacticipant_version, :pacticipant => pacticipant)
+    PactBroker::Models::Version.find(id: version.id) # Get version with populated order
   end
 
   def create_tag_with_hierarchy pacticipant_name, pacticipant_version, tag_name
@@ -115,7 +116,7 @@ class ProviderStateBuilder
   end
 
   def create_pact json_content = default_json_content
-    @pact = PactBroker::Models::Pact.create(consumer_version: @consumer_version, provider: @provider, json_content: json_content)
+    @pact = PactBroker::Repositories::Pact.create(consumer_version: @consumer_version, provider: @provider, json_content: json_content)
     self
   end
 
@@ -126,18 +127,6 @@ class ProviderStateBuilder
   end
 
   private
-
-  # def create_pacticipant name
-  #   pacticipant_repository.create(:name => name)
-  # end
-
-  # def create_version number, pacticipant
-  #   version_repository.create(number: number, pacticipant: pacticipant)
-  # end
-
-  # def create_condor_pricing_service_pact version, provider
-  #   pact_repository.create(consumer_version: version, provider: provider, json_content: default_json_content)
-  # end
 
   def default_json_content
     {

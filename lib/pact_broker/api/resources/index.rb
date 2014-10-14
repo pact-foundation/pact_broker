@@ -26,25 +26,25 @@ module PactBroker
               },
               'pb:latest-pacts' =>
               {
-                href: base_url + 'pacts/latest',
+                href: base_url + '/pacts/latest',
                 title: 'Retrieve latest pacts',
                 templated: false
               },
               'pb:pacticipants' =>
               {
-                href: base_url + 'pacticipants',
+                href: base_url + '/pacticipants',
                 title: 'Retrieve pacticipants',
                 templated: false
               },
               'pb:webhooks' =>
               {
-                href: base_url + 'webhooks',
+                href: base_url + '/webhooks',
                 title: 'Webhooks',
                 templated: false
               },'curies' =>
               [{
                 name: 'pb',
-                href: base_url + 'doc/{rel}',
+                href: base_url + '/doc/{rel}',
                 templated: true
               }]
             }

@@ -26,3 +26,5 @@ _yardoc
 
 *.sqlite
 Gemfile.lock
+
+bethtest/

@@ -16,8 +16,9 @@ module PactBroker
 
         subject { JSON.parse PacticipantRepresenter.new(pacticipant).to_json, symbolize_names: true }
 
-        it "includes the createdAt timestamp" do
+        it "includes timestamps" do
           expect(subject[:createdAt]).to eq created_at.xmlschema
+          expect(subject[:updatedAt]).to eq updated_at.xmlschema
         end
       end
     end

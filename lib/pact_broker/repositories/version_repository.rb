@@ -19,7 +19,8 @@ module PactBroker
 
       def create args
         PactBroker.logger.info "Creating version #{args[:number]} for pacticipant_id=#{args[:pacticipant_id]}"
-        PactBroker::Models::Version.new(number: args[:number], pacticipant_id: args[:pacticipant_id]).save
+        version = PactBroker::Models::Version.new(number: args[:number], pacticipant_id: args[:pacticipant_id]).save
+        PactBroker::Models::Version.find(id: version.id) # Need to reload with populated order
       end
 
       def find_by_pacticipant_id_and_number_or_create pacticipant_id, number
