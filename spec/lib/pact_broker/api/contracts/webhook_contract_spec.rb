@@ -47,9 +47,7 @@ module PactBroker
             end
 
             it "contains an error for missing method" do
-              puts json
-              puts subject.validate
-              expect(subject.errors[:"request.method"]).to eq ["can't be blank"]
+              expect(subject.errors[:"request.http_method"]).to eq ["can't be blank"]
             end
           end
 
@@ -73,8 +71,6 @@ module PactBroker
             end
 
             it "contains an error for missing URL" do
-              puts json
-              puts subject.validate
               expect(subject.errors[:"request.url"]).to eq ["can't be blank"]
             end
           end

@@ -1,5 +1,6 @@
 require 'reform'
 require 'reform/contract'
+require 'net/http'
 
 module PactBroker
   module Api

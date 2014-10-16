@@ -2,6 +2,7 @@ require 'pact_broker/models/webhook_request_header'
 require 'pact_broker/models/webhook_execution_result'
 require 'pact_broker/logging'
 require 'pact_broker/messages'
+require 'net/http'
 
 module PactBroker
 

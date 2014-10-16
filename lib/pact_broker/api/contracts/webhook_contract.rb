@@ -8,14 +8,18 @@ module PactBroker
 
       class WebhookContract < Reform::Contract
 
+        property :request
         validates :request, presence: true
 
         property :request do
 
           include RequestValidations
 
-          property :url, presence: true
-          property :http_method, presence: true
+          property :url
+          property :http_method
+
+          validates :url, presence: true
+          validates :http_method, presence: true
 
           validate :method_is_valid
           validate :url_is_valid
