@@ -11,26 +11,31 @@ module PactBroker
 
       class PutPactParamsContract < PostPactParamsContract
 
-        property :consumer_name_in_pact
-        property :provider_name_in_pact
-
         validate :consumer_name_in_path_matches_consumer_name_in_pact
         validate :provider_name_in_path_matches_provider_name_in_pact
 
         def consumer_name_in_path_matches_consumer_name_in_pact
-          if !empty?(consumer_name) && !empty?(consumer_name_in_pact)
-            if consumer_name != consumer_name_in_pact
-              errors.add(:base, validation_message('pacticipant_name_mismatch', pacticipant: 'consumer', name_in_pact: consumer_name_in_pact, name: consumer_name).capitalize)
+          name_in_path_matches_name_in_pact consumer
+        end
+
+        def provider_name_in_path_matches_provider_name_in_pact
+          name_in_path_matches_name_in_pact provider
+        end
+
+        def name_in_path_matches_name_in_pact pacticipant
+          if present?(pacticipant.name) && present?(pacticipant.name_in_pact)
+            if pacticipant.name != pacticipant.name_in_pact
+              errors.add(:base, validation_message('pacticipant_name_mismatch', pacticipant.to_h).capitalize)
             end
           end
         end
 
-        def provider_name_in_path_matches_provider_name_in_pact
-          if !empty?(provider_name) && !empty?(provider_name_in_pact)
-            if provider_name != provider_name_in_pact
-              errors.add(:base, validation_message('pacticipant_name_mismatch', pacticipant: 'provider', name_in_pact: provider_name_in_pact, name: provider_name).capitalize)
-            end
-          end
+        def blank? string
+          string && string.strip.empty?
+        end
+
+        def present? string
+          string && !blank?(string)
         end
 
       end

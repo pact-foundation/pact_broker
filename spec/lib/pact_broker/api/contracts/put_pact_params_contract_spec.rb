@@ -6,6 +6,7 @@ module PactBroker
     module Contracts
 
       describe PutPactParamsContract do
+
         let(:json_content) { {'some' => 'json' }.to_json }
         let(:consumer_version_number) { '1.2.3' }
         let(:pact_params) { Pacts::PactParams.new(attributes) }
@@ -62,7 +63,7 @@ module PactBroker
             end
           end
 
-          context "when the consumer name in the pact is empty" do
+          context "when the consumer name in the pact is not present" do
 
             let(:attributes) do
               valid_attributes.tap do | atts |
@@ -75,7 +76,7 @@ module PactBroker
             end
           end
 
-          context "when the provider name in the pact is empty" do
+          context "when the provider name in the pact is not present" do
 
             let(:attributes) do
               valid_attributes.tap do | atts |

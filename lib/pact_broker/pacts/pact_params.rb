@@ -1,5 +1,6 @@
 require 'pact_broker/json'
 require 'pact_broker/constants'
+require 'ostruct'
 
 module PactBroker
   module Pacts
@@ -67,6 +68,22 @@ module PactBroker
 
       def provider_name_in_pact
         self[:provider_name_in_pact]
+      end
+
+      def consumer
+        OpenStruct.new(
+          name: consumer_name,
+          name_in_pact: consumer_name_in_pact,
+          pacticipant: 'consumer'
+        )
+      end
+
+      def provider
+        OpenStruct.new(
+          name: provider_name,
+          name_in_pact: provider_name_in_pact,
+          pacticipant: 'provider'
+        )
       end
 
     end

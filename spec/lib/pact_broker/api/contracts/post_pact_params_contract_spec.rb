@@ -48,27 +48,27 @@ module PactBroker
 
           context "with no consumer name" do
             it "returns an error" do
-              expect(subject.errors[:'pact.consumer.name']).to include "was not found at expected path $.consumer.name in the submitted pact file."
+              expect(subject.errors[:'consumer.name']).to include "was not found at expected path $.consumer.name in the submitted pact file."
             end
           end
 
           context "with a blank consumer name" do
             let(:attributes) { { consumer_name: '' } }
             it "returns an error" do
-              expect(subject.errors[:'pact.consumer.name']).to include "cannot be blank."
+              expect(subject.errors[:'consumer.name']).to include "cannot be blank."
             end
           end
 
           context "with no provider name" do
             it "returns an error" do
-              expect(subject.errors[:'pact.provider.name']).to include "was not found at expected path $.provider.name in the submitted pact file."
+              expect(subject.errors[:'provider.name']).to include "was not found at expected path $.provider.name in the submitted pact file."
             end
           end
 
           context "with a blank provider name" do
             let(:attributes) { { provider_name: '' } }
             it "returns an error" do
-              expect(subject.errors[:'pact.provider.name']).to include "cannot be blank."
+              expect(subject.errors[:'provider.name']).to include "cannot be blank."
             end
           end
 
