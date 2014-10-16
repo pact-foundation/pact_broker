@@ -36,6 +36,8 @@ module PactBroker
           end
         end
 
+        alias_method :path_info, :identifier_from_path
+
         def base_url
           request.uri.to_s.gsub(/#{request.uri.path}$/,'')
         end

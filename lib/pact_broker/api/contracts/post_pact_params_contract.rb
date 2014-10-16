@@ -8,16 +8,19 @@ module PactBroker
   module Api
     module Contracts
 
-      class CreatePactRequestContract < Reform::Contract
+      class PostPactParamsContract < Reform::Contract
 
         include PactBroker::Messages
 
-        property :headers
-        property :body
+        property :consumer_name
+        property :provider_name
+        property :consumer_version_number
 
         validate :consumer_version_number_present
         validate :consumer_version_number_valid
+        validate :consumer_name_not_blank
         validate :consumer_name_present
+        validate :provider_name_not_blank
         validate :provider_name_present
 
         def consumer_version_number_present
@@ -41,32 +44,36 @@ module PactBroker
           end
         end
 
-        def consumer_version_number
-          headers[CONSUMER_VERSION_HEADER]
-        end
-
         def consumer_name_present
           unless consumer_name
-            errors.add(:'pact.consumer.name', validation_message('pact_missing_consumer_name'))
+            errors.add(:'pact.consumer.name', validation_message('pact_missing_pacticipant_name', pacticipant: 'consumer'))
           end
         end
 
         def provider_name_present
           unless provider_name
-            errors.add(:'pact.provider.name', validation_message('pact_missing_provider_name'))
+            errors.add(:'pact.provider.name', validation_message('pact_missing_pacticipant_name', pacticipant: 'provider'))
           end
         end
 
-        def consumer_name
-          pact_hash.fetch('consumer', {})['name']
+        def consumer_name_not_blank
+          if blank? consumer_name
+            errors.add(:'pact.consumer.name', validation_message('blank'))
+          end
         end
 
-        def provider_name
-          pact_hash.fetch('provider', {})['name']
+        def blank? string
+          string && string.strip.empty?
         end
 
-        def pact_hash
-          @pact_hash = JSON.parse(body.to_s, PACT_PARSING_OPTIONS)
+        def empty? string
+          string.nil? || blank?(string)
+        end
+
+        def provider_name_not_blank
+          if blank? provider_name
+            errors.add(:'pact.provider.name', validation_message('blank'))
+          end
         end
 
         def consumer_version_number_validation_message

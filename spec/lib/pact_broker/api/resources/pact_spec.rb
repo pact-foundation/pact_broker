@@ -15,7 +15,7 @@ module PactBroker::Api
 
       describe "PUT" do
 
-        subject { put "/pacts/provider/Provider/consumer/Consumer/version/1.2", json, {'CONTENT_TYPE' => "application/json"} }
+        subject { put "/pacts/provider/Provider/consumer/Consumer/version/1.2", json, {'CONTENT_TYPE' => "application/json"} ; last_response }
 
         let(:response) { subject; last_response }
 
@@ -32,6 +32,20 @@ module PactBroker::Api
 
           it "returns an error message" do
             expect(JSON.parse(response.body)["error"]).to match /Error parsing JSON/
+          end
+        end
+
+        context "with validation errors" do
+
+          let(:errors) { double(:errors, full_messages: ['messages']) }
+
+          before do
+            allow_any_instance_of(Contracts::PutPactParamsContract).to receive(:validate).and_return(false)
+            allow_any_instance_of(Contracts::PutPactParamsContract).to receive(:errors).and_return(errors)
+          end
+
+          it "returns a 400 error" do
+            expect(subject).to be_a_json_error_response 'messages'
           end
         end
 

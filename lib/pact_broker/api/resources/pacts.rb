@@ -1,6 +1,6 @@
 require 'pact_broker/api/resources/base_resource'
 require 'pact_broker/pacts/pact_params'
-require 'pact_broker/api/contracts/create_pact_request_contract'
+require 'pact_broker/api/contracts/post_pact_params_contract'
 require 'pact_broker/constants'
 
 module PactBroker
@@ -18,7 +18,7 @@ module PactBroker
         end
 
         def malformed_request?
-          contract_validation_errors? Contracts::CreatePactRequestContract.new(request)
+          contract_validation_errors? Contracts::PostPactParamsContract.new(pact_params)
         end
 
         def post_is_create?
@@ -35,30 +35,12 @@ module PactBroker
           response.body = decorate(pact).to_json(base_url: base_url)
         end
 
-        def pact_params
-          {
-            consumer_name: consumer_name,
-            consumer_version_number: consumer_version_number,
-            provider_name: provider_name,
-            json_content: request_body
-          }
-        end
-
-        def consumer_version_number
-          request.headers[CONSUMER_VERSION_HEADER]
-        end
-
-        # Naughty inspecting the Pact content directly...
-        def consumer_name
-          params[:consumer][:name]
-        end
-
-        def provider_name
-          params[:provider][:name]
-        end
-
         def decorate pact
           PactBroker::Api::Decorators::PactDecorator.new(pact)
+        end
+
+        def pact_params
+          @pact_params ||= PactBroker::Pacts::PactParams.from_post_request request
         end
 
       end

@@ -24,8 +24,8 @@ module PactBroker
             let(:errors) { double('errors', full_messages: ['messages'] ) }
 
             before do
-              allow_any_instance_of(Contracts::CreatePactRequestContract).to receive(:validate).and_return(false)
-              allow_any_instance_of(Contracts::CreatePactRequestContract).to receive(:errors).and_return(errors)
+              allow_any_instance_of(Contracts::PostPactParamsContract).to receive(:validate).and_return(false)
+              allow_any_instance_of(Contracts::PostPactParamsContract).to receive(:errors).and_return(errors)
             end
 
             it "returns a 400 error response" do
@@ -42,7 +42,7 @@ module PactBroker
 
             before do
               allow(PactBroker::Api::Decorators::PactDecorator).to receive(:new).and_return(decorator)
-              allow_any_instance_of(Contracts::CreatePactRequestContract).to receive(:validate).and_return(true)
+              allow_any_instance_of(Contracts::PostPactParamsContract).to receive(:validate).and_return(true)
               allow(pact_service).to receive(:create_or_update_pact).and_return(created_pact)
             end
 

@@ -3,6 +3,8 @@ require 'pact_broker/api/resources/base_resource'
 require 'pact_broker/api/resources/pacticipant_resource_methods'
 require 'pact_broker/api/decorators/pact_decorator'
 require 'pact_broker/json'
+require 'pact_broker/pacts/pact_params'
+require 'pact_broker/api/contracts/put_pact_params_contract'
 
 module PactBroker
 
@@ -28,7 +30,8 @@ module PactBroker
         def malformed_request?
           if request.put?
             return invalid_json? ||
-              potential_duplicate_pacticipants?([identifier_from_path[:consumer_name], identifier_from_path[:provider_name]])
+              contract_validation_errors?(Contracts::PutPactParamsContract.new(pact_params)) ||
+              potential_duplicate_pacticipants?(pact_params.pacticipant_names)
           else
             false
           end
@@ -40,7 +43,7 @@ module PactBroker
 
         def from_json
           response_code = pact ? 200 : 201
-          @pact = pact_service.create_or_update_pact(identifier_from_path.merge(:json_content => request_body))
+          @pact = pact_service.create_or_update_pact(pact_params)
           response.body = to_json
           response_code
         end
@@ -50,7 +53,11 @@ module PactBroker
         end
 
         def pact
-          @pact ||= pact_service.find_pact(identifier_from_path)
+          @pact ||= pact_service.find_pact(pact_params)
+        end
+
+        def pact_params
+          @pact_params ||= PactBroker::Pacts::PactParams.from_request request, path_info
         end
 
       end
