@@ -12,7 +12,11 @@ module PactBroker
 
       def self.from_post_request request
         json_content = request.body.to_s
-        pact_hash = JSON.parse(json_content, PACT_PARSING_OPTIONS)
+        pact_hash = begin
+          JSON.parse(json_content, PACT_PARSING_OPTIONS)
+        rescue
+          {}
+        end
 
         new(
           consumer_name: pact_hash.fetch('consumer',{})['name'],
