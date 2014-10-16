@@ -5,8 +5,8 @@ module PactBroker
 
         include PactBroker::Messages
 
-        def name_present
-          unless name
+        def name_in_pact_present
+          unless name_in_pact
             errors.add(:'name', validation_message('pact_missing_pacticipant_name', pacticipant: pacticipant))
           end
         end

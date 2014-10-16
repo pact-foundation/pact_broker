@@ -4,10 +4,24 @@ require 'versionomy'
 require 'pact_broker/messages'
 require 'pact_broker/constants'
 require 'pact_broker/api/contracts/pacticipant_name_validation'
+require 'pact_broker/api/contracts/pacticipant_name_contract'
+require 'pact_broker/api/contracts/consumer_version_number_validation'
 
 module PactBroker
   module Api
     module Contracts
+
+      class PostPacticipantNameContract < PacticipantNameContract
+
+        validate :name_in_pact_present
+        validates :name_in_pact, blank: false
+
+        def name_in_pact_present
+          unless name_in_pact
+            errors.add(:'name', validation_message('pact_missing_pacticipant_name', pacticipant: pacticipant))
+          end
+        end
+      end
 
       class PostPactParamsContract < Reform::Contract
 
@@ -18,60 +32,14 @@ module PactBroker
         validate :consumer_version_number_present
         validate :consumer_version_number_valid
 
-        property :consumer do
+        property :consumer, form: PostPacticipantNameContract
+        property :provider, form: PostPacticipantNameContract
 
-          property :name
-          property :name_in_pact
-          property :pacticipant
-          property :to_h
-
-          validate :name_present
-          validate :name_not_blank
-
-          include PacticipantNameValidation
-
-        end
-
-        property :provider do
-
-          property :name
-          property :name_in_pact
-          property :pacticipant
-          property :to_h
-
-          validate :name_present
-          validate :name_not_blank
-
-          include PacticipantNameValidation
-
-        end
-
-
-        def consumer_version_number_present
-          unless consumer_version_number
-            errors.add(:base, validation_message('consumer_version_number_missing'))
-          end
-        end
-
-        def consumer_version_number_valid
-          if consumer_version_number && invalid_consumer_version_number?
-            errors.add(:base, consumer_version_number_validation_message)
-          end
-        end
-
-        def invalid_consumer_version_number?
-          begin
-            Versionomy.parse(consumer_version_number)
-            false
-          rescue Versionomy::Errors::ParseError => e
-            true
-          end
-        end
+        include ConsumerVersionNumberValidation
 
         def consumer_version_number_validation_message
-          validation_message('consumer_version_number_invalid', consumer_version_number: consumer_version_number)
+          validation_message('consumer_version_number_header_invalid', consumer_version_number: consumer_version_number)
         end
-
       end
     end
   end

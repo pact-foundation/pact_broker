@@ -8,8 +8,9 @@ en:
         invalid_url: "Invalid URL '%{url}'. Expected format: http://example.org"
         pact_missing_pacticipant_name: "was not found at expected path $.%{pacticipant}.name in the submitted pact file."
         consumer_version_number_missing: "Please specify the consumer version number by setting the X-Pact-Consumer-Version header."
-        consumer_version_number_invalid: "X-Pact-Consumer-Version '%{consumer_version_number}' is not recognised as a standard semantic version. eg. 1.3.0 or 2.0.4.rc1"
-        pacticipant_name_mismatch: "%{pacticipant} name in pact ('%{name_in_pact}') does not match %{pacticipant} name in path ('%{name}')."
+        consumer_version_number_header_invalid: "X-Pact-Consumer-Version '%{consumer_version_number}' is not recognised as a standard semantic version. eg. 1.3.0 or 2.0.4.rc1"
+        consumer_version_number_invalid: "Consumer version number '%{consumer_version_number}' is not recognised as a standard semantic version. eg. 1.3.0 or 2.0.4.rc1"
+        pacticipant_name_mismatch: "in pact ('%{name_in_pact}') does not match %{pacticipant} name in path ('%{name}')."
       duplicate_pacticipant: |
         This is the first time a pact has been published for "%{new_name}".
         The name "%{new_name}" is very similar to the following existing consumers/providers:

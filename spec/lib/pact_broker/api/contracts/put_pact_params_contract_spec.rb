@@ -8,7 +8,6 @@ module PactBroker
       describe PutPactParamsContract do
 
         let(:json_content) { {'some' => 'json' }.to_json }
-        let(:consumer_version_number) { '1.2.3' }
         let(:pact_params) { Pacts::PactParams.new(attributes) }
 
         let(:valid_attributes) do
@@ -39,6 +38,34 @@ module PactBroker
             end
           end
 
+          context "with a nil consumer version number" do
+            let(:attributes) do
+              valid_attributes.merge(consumer_version_number: nil)
+            end
+
+            it "returns an error" do
+              expect(subject.errors.full_messages).to include "Consumer version number can't be blank"
+            end
+          end
+
+          context "with an empty consumer version number" do
+            let(:attributes) do
+              valid_attributes.merge(consumer_version_number: '')
+            end
+
+            it "returns an error" do
+              expect(subject.errors.full_messages).to include "Consumer version number can't be blank"
+            end
+          end
+
+          context "with an invalid version number" do
+            let(:attributes) { {consumer_version_number: 'blah'} }
+
+            it "returns an error" do
+              expect(subject.errors[:base]).to include "Consumer version number 'blah' is not recognised as a standard semantic version. eg. 1.3.0 or 2.0.4.rc1"
+            end
+          end
+
           context "with a consumer name in the pact that does not match the consumer name in the path" do
 
             let(:attributes) do
@@ -46,8 +73,7 @@ module PactBroker
             end
 
             it "returns an error" do
-
-              expect(subject.errors[:base]).to include "Consumer name in pact ('consumer') does not match consumer name in path ('another consumer')."
+              expect(subject.errors.full_messages).to include "Consumer name in pact ('consumer') does not match consumer name in path ('another consumer')."
             end
           end
 
@@ -58,8 +84,7 @@ module PactBroker
             end
 
             it "returns an error" do
-
-              expect(subject.errors[:base]).to include "Provider name in pact ('provider') does not match provider name in path ('another provider')."
+              expect(subject.errors.full_messages).to include "Provider name in pact ('provider') does not match provider name in path ('another provider')."
             end
           end
 
