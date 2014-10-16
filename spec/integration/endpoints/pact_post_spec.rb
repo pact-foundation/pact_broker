@@ -1,5 +1,5 @@
 describe "pacts" do
-  xdescribe "POST" do
+  describe "POST" do
 
     let(:pact_content) { load_fixture('consumer-provider.json') }
     let(:path) { "/pacts" }
@@ -13,7 +13,7 @@ describe "pacts" do
       end
 
       it "returns a json body" do
-        expect(subject.headers['Content-Type']).to eq "application/json"
+        expect(subject.headers['Content-Type']).to eq "application/hal+json"
       end
 
       it "returns the pact in the body" do
@@ -21,7 +21,7 @@ describe "pacts" do
       end
     end
 
-    context "when the pact does exist" do
+    xcontext "when the pact already exists" do
 
       before do
         ProviderStateBuilder.new.create_pact_with_hierarchy "A Consumer", "1.2.3", "A Provider"

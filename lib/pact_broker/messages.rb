@@ -19,6 +19,10 @@ module PactBroker
       ::I18n.t(key, options.merge(:scope => :pact_broker))
     end
 
+    def validation_message key, options = {}
+      message('errors.validation.' + key, options)
+    end
+
     def potential_duplicate_pacticipant_message new_name, potential_duplicate_pacticipants, base_url
       existing_names = potential_duplicate_pacticipants.
         collect{ | p | "* #{p.name}"  }.join("\n")

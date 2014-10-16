@@ -29,6 +29,13 @@ module PactBroker
         "#{pactigration_base_url(base_url, representable_pact)}/version/#{representable_pact.consumer.version.number}"
       end
 
+      def pact_url_from_params base_url, params
+        [ base_url, 'pacts',
+          'provider', url_encode(params[:provider_name]),
+          'consumer', url_encode(params[:consumer_name]),
+          'version', url_encode(params[:consumer_version_number]) ].join('/')
+      end
+
       def latest_pact_url base_url, pact
         "#{pactigration_base_url(base_url, pact)}/latest"
       end

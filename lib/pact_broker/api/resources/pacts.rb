@@ -1,4 +1,7 @@
 require 'pact_broker/api/resources/base_resource'
+require 'pact_broker/pacts/pact_params'
+require 'pact_broker/api/contracts/create_pact_request_contract'
+require 'pact_broker/constants'
 
 module PactBroker
   module Api
@@ -15,7 +18,7 @@ module PactBroker
         end
 
         def malformed_request?
-          invalid_consumer_version? || missing_pacticipant_names?
+          contract_validation_errors? Contracts::CreatePactRequestContract.new(request)
         end
 
         def post_is_create?
@@ -23,44 +26,39 @@ module PactBroker
         end
 
         def create_path
-
+          pact_url_from_params base_url, pact_params
         end
 
         def from_json
-
+          pact = pact_service.create_or_update_pact(pact_params)
+          response.headers['Content-Type'] = "application/hal+json"
+          response.body = decorate(pact).to_json(base_url: base_url)
         end
 
-        def missing_pacticipant_names?
-
-          false
-        end
-
-        def invalid_consumer_version?
-          missing_consumer_version_number? || invalid_version_number?
-        end
-
-        def missing_consumer_version_number?
-          if consumer_version_number.nil?
-            set_json_error_message("Please specify the consumer version number by setting the X-Pact-Consumer-Version header.")
-          end
-        end
-
-        def invalid_version_number?
-          begin
-            Versionomy.parse(consumer_version_number)
-            false
-          rescue Versionomy::Errors::ParseError => e
-            set_json_error_message "X-Pact-Consumer-Version '#{consumer_version_number}' is not recognised as a standard semantic version. eg. 1.3.0 or 2.0.4.rc1"
-            true
-          end
+        def pact_params
+          {
+            consumer_name: consumer_name,
+            consumer_version_number: consumer_version_number,
+            provider_name: provider_name,
+            json_content: request_body
+          }
         end
 
         def consumer_version_number
-          request.headers['X-Pact-Consumer-Version']
+          request.headers[CONSUMER_VERSION_HEADER]
         end
 
-        def pact
+        # Naughty inspecting the Pact content directly...
+        def consumer_name
+          params[:consumer][:name]
+        end
 
+        def provider_name
+          params[:provider][:name]
+        end
+
+        def decorate pact
+          PactBroker::Api::Decorators::PactDecorator.new(pact)
         end
 
       end
