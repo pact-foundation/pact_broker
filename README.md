@@ -2,6 +2,8 @@
 
 The Pact Broker provides a repository for pacts created using the pact gem. It solves the problem of how to share pacts between consumer and provider projects.
 
+Travis CI Status: [![Build Status](https://travis-ci.org/bethesque/pact_broker.svg?branch=master)](https://travis-ci.org/bethesque/pact_broker)
+
 The Pact Broker:
 
 * Enables pacts to be shared between consumer and provider projects.
@@ -18,7 +20,7 @@ See the [wiki](https://github.com/bethesque/pact_broker/wiki) for documentation.
 
 ## Usage
 
-* Create a database using a product that is supported by the Sequel gem (listed on this page http://sequel.jeremyevans.net/rdoc/files/README_rdoc.html). At time of writing, Sequel has adapters for:  ADO, Amalgalite, CUBRID, DataObjects, DB2, DBI, Firebird, IBM_DB, Informix, JDBC, MySQL, Mysql2, ODBC, OpenBase, Oracle, PostgreSQL, SQLAnywhere, SQLite3, Swift, and TinyTDS. 
+* Create a database using a product that is supported by the Sequel gem (listed on this page http://sequel.jeremyevans.net/rdoc/files/README_rdoc.html). At time of writing, Sequel has adapters for:  ADO, Amalgalite, CUBRID, DataObjects, DB2, DBI, Firebird, IBM_DB, Informix, JDBC, MySQL, Mysql2, ODBC, OpenBase, Oracle, PostgreSQL, SQLAnywhere, SQLite3, Swift, and TinyTDS.
 * __Note:__ It is recommended to use __PostgreSQL__ as it will support JSON search features that are planned in a future release.
 * Install ruby 1.9.3 or later
 * Copy the [example](/example) directory to your workstation.
