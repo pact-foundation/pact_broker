@@ -10,24 +10,6 @@ module PactBroker
         merge!(attributes)
       end
 
-      def self.from_post_request request
-        json_content = request.body.to_s
-        pact_hash = begin
-          JSON.parse(json_content, PACT_PARSING_OPTIONS)
-        rescue
-          {}
-        end
-
-        new(
-          consumer_name: pact_hash.fetch('consumer',{})['name'],
-          provider_name: pact_hash.fetch('provider',{})['name'],
-          consumer_version_number: request.headers[CONSUMER_VERSION_HEADER],
-          consumer_name_in_pact: pact_hash.fetch('consumer',{})['name'],
-          provider_name_in_pact: pact_hash.fetch('provider',{})['name'],
-          json_content: json_content
-        )
-      end
-
       def self.from_request request, path_info
         json_content = request.body.to_s
         pact_hash = begin

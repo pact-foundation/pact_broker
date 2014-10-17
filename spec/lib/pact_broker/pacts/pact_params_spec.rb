@@ -46,53 +46,23 @@ module PactBroker
           it "extracts the provider name from the pact" do
             expect(subject.provider_name_in_pact).to eq "A Provider"
           end
-        end
 
-      end
+          context "with missing data" do
+            let(:body){ '' }
 
-      describe "from_post_request" do
+            it "the consumer name from the pact is nil" do
+              expect(subject.consumer_name_in_pact).to be nil
+            end
 
-        let(:request) { Webmachine::Request.new("POST", "/pacts", headers, body)}
+            it "the provider name from the pact is nil" do
+              expect(subject.provider_name_in_pact).to be nil
+            end
 
-        subject { PactParams.from_post_request(request) }
-
-        it "extracts the consumer name" do
-          expect(subject.consumer_name).to eq "A Consumer"
-        end
-
-        it "extracts the provider name" do
-          expect(subject.provider_name).to eq "A Provider"
-        end
-
-        it "extracts the consumer_version_number" do
-          expect(subject.consumer_version_number).to eq "1.2.3"
-        end
-
-        it "extracts the json_content" do
-          expect(subject.json_content).to eq body
-        end
-
-
-        context "with missing data" do
-          let(:request) { Webmachine::Request.new("POST", "/pacts", {}, {}.to_json )}
-
-          it "the consumer name is nil" do
-            expect(subject.consumer_name).to be nil
-          end
-
-          it "the provider name is nil" do
-            expect(subject.provider_name).to be nil
-          end
-
-          it "the consumer_version_number is nil" do
-            expect(subject.consumer_version_number).to be nil
-          end
-
-          it "extracts the json_content" do
-            expect(subject.json_content).to eq '{}'
+            it "extracts the json_content" do
+              expect(subject.json_content).to eq ''
+            end
           end
         end
-
       end
     end
   end
