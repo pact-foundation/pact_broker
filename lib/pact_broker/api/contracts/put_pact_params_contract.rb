@@ -18,7 +18,7 @@ module PactBroker
         def name_in_path_matches_name_in_pact
           if present?(name) && present?(name_in_pact)
             if name != name_in_pact
-              errors.add(:name, validation_message('pacticipant_name_mismatch', to_h))
+              errors.add(:name, validation_message('pacticipant_name_mismatch', message_args))
             end
           end
         end

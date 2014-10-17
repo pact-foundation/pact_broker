@@ -9,7 +9,7 @@ module PactBroker
         property :name
         property :name_in_pact
         property :pacticipant
-        property :to_h
+        property :message_args
 
 
         include PactBroker::Messages

@@ -75,19 +75,21 @@ module PactBroker
       end
 
       def consumer
-        OpenStruct.new(
-          name: consumer_name,
-          name_in_pact: consumer_name_in_pact,
-          pacticipant: 'consumer'
-        )
+        PacticipantName.new(consumer_name, consumer_name_in_pact, 'consumer')
       end
 
       def provider
-        OpenStruct.new(
-          name: provider_name,
-          name_in_pact: provider_name_in_pact,
-          pacticipant: 'provider'
-        )
+        PacticipantName.new(provider_name, provider_name_in_pact, 'provider')
+      end
+
+      class PacticipantName < Struct.new(:name, :name_in_pact, :pacticipant)
+        def message_args
+          {
+            name: name,
+            name_in_pact: name_in_pact,
+            pacticipant: pacticipant
+          }
+        end
       end
 
     end
