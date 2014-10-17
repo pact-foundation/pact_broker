@@ -1,5 +1,4 @@
 require 'pact_broker/api/resources/pact'
-require 'pact_broker/api/resources/pacts'
 require 'pact_broker/api/resources/latest_pact'
 require 'pact_broker/api/resources/latest_pacts'
 require 'pact_broker/api/resources/pacticipant'
@@ -24,7 +23,6 @@ module PactBroker
         add(['trace', '*'], Webmachine::Trace::TraceResource) unless ENV['RACK_ENV'] == 'production'
         # Support both /pact and /pacts
         # /pact will be deprecated
-        add ['pacts'], Api::Resources::Pacts
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'latest'], Api::Resources::LatestPact
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'latest', :tag], Api::Resources::LatestPact
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'version', :consumer_version_number], Api::Resources::Pact

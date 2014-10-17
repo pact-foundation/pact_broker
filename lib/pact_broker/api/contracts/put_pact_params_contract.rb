@@ -3,7 +3,8 @@ require 'reform/contract'
 require 'versionomy'
 require 'pact_broker/messages'
 require 'pact_broker/constants'
-require 'pact_broker/api/contracts/post_pact_params_contract'
+require 'pact_broker/api/contracts/pacticipant_name_contract'
+require 'pact_broker/api/contracts/consumer_version_number_validation'
 
 module PactBroker
   module Api
