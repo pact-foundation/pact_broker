@@ -2,6 +2,12 @@ Do this to generate your change history
 
     $ git log --pretty=format:'  * %h - %s (%an, %ad)'
 
+#### 1.3.1 (2014-10-23)
+
+* e61b40e - Added Travis configuration. (Beth, Fri Oct 17 16:32:26 2014 +1100)
+* b320fe4 - Fixed pact publish validation for ruby 1.9.3 (Beth, Fri Oct 17 16:31:41 2014 +1100)
+* b9b4d2b - Added validation to ensure that the participant names in the path match the participant names in the pact. (Beth, Thu Oct 16 20:21:10 2014 +1100)
+
 #### 1.3.0 (2014-10-14)
 
 * ed08811 - Converted raw SQL create view statements to Sequel so they will run on Postgres (Beth, Sat Oct 11 22:07:37 2014 +1100)
