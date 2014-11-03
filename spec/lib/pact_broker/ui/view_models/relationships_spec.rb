@@ -27,6 +27,29 @@ module PactBroker
           end
         end
 
+        describe "size_label" do
+          context "when there is 1 relationship" do
+            subject { Relationships.new([relationship_model_1]) }
+
+            it "returns '1 pact'" do
+              expect(subject.size_label).to eq "1 pact"
+            end
+          end
+          context "when there are 0 relationships" do
+            subject { Relationships.new([]) }
+
+            it "returns '0 pacts'" do
+              expect(subject.size_label).to eq "0 pacts"
+            end
+          end
+          context "when there is more than 1 relationship" do
+            subject { Relationships.new([relationship_model_1, relationship_model_1]) }
+
+            it "returns 'x pacts'" do
+              expect(subject.size_label).to eq "2 pacts"
+            end
+          end
+        end
       end
     end
   end

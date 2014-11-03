@@ -11,6 +11,11 @@
   border-left: none;
 }
 
+.relationships-size {
+  text-align: right;
+  color: gray;
+}
+
 .relationships-sort {
   padding-left:10px;
 }

@@ -5,8 +5,6 @@ module PactBroker
     module ViewModels
       class Relationships
 
-        attr_reader :relationships
-
         def initialize relationships
           @relationships = relationships.collect{ |relationship| Relationship.new(relationship) }.sort
         end
@@ -15,6 +13,17 @@ module PactBroker
           relationships.each(&block)
         end
 
+        def size_label
+          case relationships.size
+          when 1 then "1 pact"
+          else
+            "#{relationships.size} pacts"
+          end
+        end
+
+        private
+
+        attr_reader :relationships
       end
     end
   end

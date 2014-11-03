@@ -38,6 +38,8 @@
           %td.provider
             %a{:href => relationship.provider_group_url}
               = relationship.provider_name
+    %div.relationships-size
+      = relationships.size_label
 
 :javascript
 $(function(){
