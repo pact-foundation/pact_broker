@@ -19,7 +19,6 @@ module PactBroker
         config.use_hal_browser = hal_browser_enabled
         config.database_connection = ::DB::PACT_BROKER_DB
       end
-
     end
 
     context "when Accept includes text/html" do
@@ -159,7 +158,5 @@ module PactBroker
       end
 
     end
-
   end
-
 end
