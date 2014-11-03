@@ -10,7 +10,7 @@ module PactBroker
       include PactBroker::Logging
 
       def find_all_pacts_between consumer_name, options
-        to_models do
+        to_domains do
           pact_finder(consumer_name, options.fetch(:and))
             .left_outer_join(:tags, {:version_id => :id}, {implicit_qualifier: :versions})
             .reverse_order(:order)
@@ -18,7 +18,7 @@ module PactBroker
       end
 
       def find_by_version_and_provider version_id, provider_id
-        to_model do
+        to_domain do
           PactBroker::Repositories::Pact.where(version_id: version_id, provider_id: provider_id).single_record
         end
       end
@@ -38,7 +38,7 @@ module PactBroker
       end
 
       def find_latest_pact(consumer_name, provider_name, tag = nil)
-        to_model do
+        to_domain do
           finder = pact_finder(consumer_name, provider_name)
           finder = add_tag_criteria(finder, tag) unless tag.nil?
           finder.order(:order).last
@@ -46,7 +46,7 @@ module PactBroker
       end
 
       def find_pact consumer_name, consumer_version, provider_name
-        to_model do
+        to_domain do
           pact_finder(consumer_name, provider_name)
             .where('versions.number = ?', consumer_version)
             .single_record
@@ -54,7 +54,7 @@ module PactBroker
       end
 
       def create params
-        to_model do
+        to_domain do
           Pact.new(
             version_id: params[:version_id],
             provider_id: params[:provider_id],
@@ -64,7 +64,7 @@ module PactBroker
       end
 
       def update id, params
-        to_model do
+        to_domain do
           Pact.find(id: id).tap do | pact |
             pact.update(json_content: params[:json_content])
           end
@@ -84,14 +84,14 @@ module PactBroker
 
       private
 
-      def to_model
+      def to_domain
         database_model = yield
-        database_model ? database_model.to_model : nil
+        database_model ? database_model.to_domain : nil
       end
 
-      def to_models
+      def to_domains
         database_models = yield
-        database_models.collect(&:to_model)
+        database_models.collect(&:to_domain)
       end
 
       def db
