@@ -2,7 +2,7 @@ require 'pact_broker/db'
 
 module PactBroker
 
-  module Models
+  module Domain
     class Pact
 
       attr_accessor :id, :provider, :consumer_version, :consumer, :updated_at, :created_at, :json_content, :consumer_version_number

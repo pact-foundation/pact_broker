@@ -1,11 +1,11 @@
-require 'pact_broker/models/webhook_request'
+require 'pact_broker/domain/webhook_request'
 require 'pact_broker/messages'
 require 'pact_broker/logging'
 require 'pact_broker/api/contracts/webhook_contract'
 
 module PactBroker
 
-  module Models
+  module Domain
 
     class Webhook
 

@@ -61,25 +61,25 @@ class ProviderStateBuilder
   end
 
   def create_pact_with_hierarchy consumer_name, consumer_version, provider_name
-    provider = PactBroker::Models::Pacticipant.create(:name => provider_name)
-    consumer = PactBroker::Models::Pacticipant.create(:name => consumer_name)
-    version = PactBroker::Models::Version.create(:number => consumer_version, :pacticipant => consumer)
+    provider = PactBroker::Domain::Pacticipant.create(:name => provider_name)
+    consumer = PactBroker::Domain::Pacticipant.create(:name => consumer_name)
+    version = PactBroker::Domain::Version.create(:number => consumer_version, :pacticipant => consumer)
     PactBroker::Repositories::Pact.create(:consumer_version => version, :provider => provider, :json_content => default_json_content).to_model
   end
 
   def create_version_with_hierarchy pacticipant_name, pacticipant_version
-    pacticipant = PactBroker::Models::Pacticipant.create(:name => pacticipant_name)
-    version = PactBroker::Models::Version.create(:number => pacticipant_version, :pacticipant => pacticipant)
-    PactBroker::Models::Version.find(id: version.id) # Get version with populated order
+    pacticipant = PactBroker::Domain::Pacticipant.create(:name => pacticipant_name)
+    version = PactBroker::Domain::Version.create(:number => pacticipant_version, :pacticipant => pacticipant)
+    PactBroker::Domain::Version.find(id: version.id) # Get version with populated order
   end
 
   def create_tag_with_hierarchy pacticipant_name, pacticipant_version, tag_name
     version = create_version_with_hierarchy pacticipant_name, pacticipant_version
-    PactBroker::Models::Tag.create(name: tag_name, version: version)
+    PactBroker::Domain::Tag.create(name: tag_name, version: version)
   end
 
   def create_pacticipant pacticipant_name
-    @pacticipant = PactBroker::Models::Pacticipant.create(:name => pacticipant_name)
+    @pacticipant = PactBroker::Domain::Pacticipant.create(:name => pacticipant_name)
     self
   end
 
@@ -96,22 +96,22 @@ class ProviderStateBuilder
   end
 
   def create_version version_number
-    @version = PactBroker::Models::Version.create(:number => version_number, :pacticipant => @pacticipant)
+    @version = PactBroker::Domain::Version.create(:number => version_number, :pacticipant => @pacticipant)
     self
   end
 
   def create_consumer_version version_number
-    @consumer_version = PactBroker::Models::Version.create(:number => version_number, :pacticipant => @consumer)
+    @consumer_version = PactBroker::Domain::Version.create(:number => version_number, :pacticipant => @consumer)
     self
   end
 
   def create_tag tag_name
-    @tag = PactBroker::Models::Tag.create(name: tag_name, version: @version)
+    @tag = PactBroker::Domain::Tag.create(name: tag_name, version: @version)
     self
   end
 
   def create_consumer_version_tag tag_name
-    @tag = PactBroker::Models::Tag.create(name: tag_name, version: @consumer_version)
+    @tag = PactBroker::Domain::Tag.create(name: tag_name, version: @consumer_version)
     self
   end
 
@@ -121,8 +121,8 @@ class ProviderStateBuilder
   end
 
   def create_webhook
-    request = PactBroker::Models::WebhookRequest.new(method: 'POST', url: 'http://example.org', headers: {'Content-Type' => 'application/json'})
-    @webhook = WebhookRepository.new.create PactBroker::Services::WebhookService.next_uuid, PactBroker::Models::Webhook.new(request: request), @consumer, @provider
+    request = PactBroker::Domain::WebhookRequest.new(method: 'POST', url: 'http://example.org', headers: {'Content-Type' => 'application/json'})
+    @webhook = WebhookRepository.new.create PactBroker::Services::WebhookService.next_uuid, PactBroker::Domain::Webhook.new(request: request), @consumer, @provider
     self
   end
 

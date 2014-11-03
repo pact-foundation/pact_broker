@@ -3,7 +3,7 @@ require 'pact_broker/messages'
 
 module PactBroker
 
-  module Models
+  module Domain
 
     class Pacticipant < Sequel::Model
 

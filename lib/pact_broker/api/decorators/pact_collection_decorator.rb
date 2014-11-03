@@ -13,7 +13,7 @@ module PactBroker
         include Roar::Representer::JSON::HAL
         include PactBroker::Api::PactBrokerUrls
 
-        collection :pacts, exec_context: :decorator, :class => PactBroker::Models::Pact, :extend => PactBroker::Api::Decorators::LatestPactDecorator
+        collection :pacts, exec_context: :decorator, :class => PactBroker::Domain::Pact, :extend => PactBroker::Api::Decorators::LatestPactDecorator
 
         def pacts
           represented.collect{ | pact | create_representable_pact(pact) }

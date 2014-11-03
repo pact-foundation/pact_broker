@@ -1,6 +1,6 @@
 require 'pact_broker/api/resources/base_resource'
 require 'pact_broker/api/decorators/pacticipant_decorator'
-require 'pact_broker/models/pacticipant'
+require 'pact_broker/domain/pacticipant'
 
 module PactBroker
   module Api
@@ -53,7 +53,7 @@ module PactBroker
         end
 
         def new_model
-          @new_model ||= decorator_for(PactBroker::Models::Pacticipant.new).from_json(request.body.to_s)
+          @new_model ||= decorator_for(PactBroker::Domain::Pacticipant.new).from_json(request.body.to_s)
         end
 
       end

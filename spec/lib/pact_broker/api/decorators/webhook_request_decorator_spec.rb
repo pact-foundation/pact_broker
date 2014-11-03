@@ -11,7 +11,7 @@ module PactBroker
         let(:display_password) { '*****' }
         let(:webhook_request) do
           instance_double(
-            PactBroker::Models::WebhookRequest,
+            PactBroker::Domain::WebhookRequest,
             username: username,
             display_password: display_password,
             method: 'POST',
@@ -58,7 +58,7 @@ module PactBroker
           end
 
           let(:json) { hash.to_json }
-          let(:webhook_request) { PactBroker::Models::WebhookRequest.new }
+          let(:webhook_request) { PactBroker::Domain::WebhookRequest.new }
 
           subject { WebhookRequestDecorator.new(webhook_request).from_json(json) }
 

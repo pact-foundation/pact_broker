@@ -15,11 +15,11 @@ module PactBroker
         let(:provider_x) { double('provider x', name: 'provider x', id: 3)}
         let(:provider_y) { double('provider y', name: 'provider y', id: 4)}
 
-        let(:relationship_1) { Models::Relationship.new(consumer_a, provider_x) }
-        let(:relationship_2) { Models::Relationship.new(consumer_b, provider_y) }
+        let(:relationship_1) { Domain::Relationship.new(consumer_a, provider_x) }
+        let(:relationship_2) { Domain::Relationship.new(consumer_b, provider_y) }
 
-        let(:group_1) { Models::Group.new(relationship_1) }
-        let(:group_2) { Models::Group.new(relationship_2) }
+        let(:group_1) { Domain::Group.new(relationship_1) }
+        let(:group_2) { Domain::Group.new(relationship_2) }
 
         let(:relationship_list) { double('relationship list') }
         let(:groups) { [group_1, group_2]}

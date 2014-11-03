@@ -13,7 +13,7 @@ module PactBroker
           let(:model) { instance_double(model_class, validate: errors) }
           let(:created_model) { instance_double(model_class) }
           let(:errors) { [] }
-          let(:model_class) { PactBroker::Models::Pacticipant }
+          let(:model_class) { PactBroker::Domain::Pacticipant }
           let(:decorator_class) { PactBroker::Api::Decorators::PacticipantRepresenter }
           let(:decorator) { instance_double(decorator_class, to_json: response_json, from_json: model) }
           let(:response_json) { {some: 'json'}.to_json }

@@ -1,4 +1,4 @@
-require 'pact_broker/models/tag'
+require 'pact_broker/domain/tag'
 
 module PactBroker
   module Repositories
@@ -6,11 +6,11 @@ module PactBroker
 
 
       def create args
-        Models::Tag.new(name: args.fetch(:name), version: args.fetch(:version)).save
+        Domain::Tag.new(name: args.fetch(:name), version: args.fetch(:version)).save
       end
 
       def find args
-        PactBroker::Models::Tag
+        PactBroker::Domain::Tag
           .select(:tags__name, :tags__version_id, :tags__created_at, :tags__updated_at)
           .join(:versions, {id: :version_id})
           .join(:pacticipants, {pacticipants__id: :versions__pacticipant_id})

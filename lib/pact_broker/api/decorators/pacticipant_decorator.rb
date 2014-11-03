@@ -13,7 +13,7 @@ module PactBroker
         property :name
         property :repository_url, as: :repositoryUrl
 
-        property :latest_version, as: :'latest-version', :class => PactBroker::Models::Version, :extend => PactBroker::Api::Decorators::VersionRepresenter, :embedded => true, writeable: false
+        property :latest_version, as: :'latest-version', :class => PactBroker::Domain::Version, :extend => PactBroker::Api::Decorators::VersionRepresenter, :embedded => true, writeable: false
 
         include Timestamps
 

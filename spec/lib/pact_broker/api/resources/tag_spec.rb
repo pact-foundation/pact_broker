@@ -8,7 +8,7 @@ module PactBroker
 
       describe Tag do
 
-        let(:tag) { double("PactBroker::Models::Tag") }
+        let(:tag) { double("PactBroker::Domain::Tag") }
         let(:tag_decorator) { instance_double("PactBroker::Api::Decorators::TagDecorator", :to_json => tag_json) }
         let(:tag_json) { {"some" => "tag"}.to_json }
         let(:tag_attributes) {

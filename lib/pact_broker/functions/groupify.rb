@@ -1,4 +1,4 @@
-require 'pact_broker/models/group'
+require 'pact_broker/domain/group'
 
 =begin
   Splits all relationships up into groups of non-connecting relationships.
@@ -11,7 +11,7 @@ module PactBroker
     class Groupify
 
       def self.call relationships
-        recurse_groups([], relationships.dup).collect{ | group | Models::Group.new(group) }
+        recurse_groups([], relationships.dup).collect{ | group | Domain::Group.new(group) }
       end
 
       def self.recurse_groups groups, relationship_pool

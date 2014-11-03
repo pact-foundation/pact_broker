@@ -1,11 +1,11 @@
 require 'versionomy'
 
 module PactBroker
-  module Models
+  module Domain
     class OrderVersions
 
       def self.call pacticipant_id
-        orderable_versions = PactBroker::Models::Version.where(:pacticipant_id => pacticipant_id).all.collect{| version | OrderableVersion.new(version) }
+        orderable_versions = PactBroker::Domain::Version.where(:pacticipant_id => pacticipant_id).all.collect{| version | OrderableVersion.new(version) }
         orderable_versions.sort.each_with_index{ | version, i | version.update_model(i) }
       end
 

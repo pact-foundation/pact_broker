@@ -7,7 +7,7 @@ module PactBroker
       describe WebhooksDecorator do
 
         let(:webhook) do
-          instance_double(Models::Webhook, uuid: 'some-uuid', description: 'description', request_description: 'request description')
+          instance_double(Domain::Webhook, uuid: 'some-uuid', description: 'description', request_description: 'request description')
         end
         let(:base_url) { 'http://example.org' }
         let(:resource_url) { 'http://example.org/webhooks' }

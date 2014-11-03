@@ -1,6 +1,6 @@
 require 'sequel'
-require 'pact_broker/models/webhook'
-require 'pact_broker/models/pacticipant'
+require 'pact_broker/domain/webhook'
+require 'pact_broker/domain/pacticipant'
 require 'pact_broker/db'
 
 module PactBroker
@@ -52,8 +52,8 @@ module PactBroker
     class Webhook < Sequel::Model
 
       set_primary_key :id
-      associate(:many_to_one, :provider, :class => "PactBroker::Models::Pacticipant", :key => :provider_id, :primary_key => :id)
-      associate(:many_to_one, :consumer, :class => "PactBroker::Models::Pacticipant", :key => :consumer_id, :primary_key => :id)
+      associate(:many_to_one, :provider, :class => "PactBroker::Domain::Pacticipant", :key => :provider_id, :primary_key => :id)
+      associate(:many_to_one, :consumer, :class => "PactBroker::Domain::Pacticipant", :key => :consumer_id, :primary_key => :id)
       one_to_many :headers, :class => "PactBroker::Repositories::WebhookHeader", :reciprocal => :webhook
 
       def before_destroy
@@ -81,11 +81,11 @@ module PactBroker
       end
 
       def to_model
-        Models::Webhook.new(
+        Domain::Webhook.new(
           uuid: uuid,
           consumer: consumer,
           provider: provider,
-          request: Models::WebhookRequest.new(request_attributes),
+          request: Domain::WebhookRequest.new(request_attributes),
           created_at: created_at,
           updated_at: updated_at)
       end

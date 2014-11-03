@@ -1,9 +1,9 @@
 require 'spec_helper'
-require 'pact_broker/models/pacticipant'
+require 'pact_broker/domain/pacticipant'
 
 module PactBroker
 
-  module Models
+  module Domain
 
     describe Pacticipant do
 

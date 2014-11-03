@@ -66,7 +66,7 @@ module PactBroker
         end
 
         def webhook
-          @webhook ||= Decorators::WebhookDecorator.new(PactBroker::Models::Webhook.new).from_json(request_body)
+          @webhook ||= Decorators::WebhookDecorator.new(PactBroker::Domain::Webhook.new).from_json(request_body)
         end
 
         def next_uuid

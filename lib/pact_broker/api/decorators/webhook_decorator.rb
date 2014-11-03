@@ -1,7 +1,7 @@
 require_relative 'base_decorator'
 require 'pact_broker/api/decorators/webhook_request_decorator'
 require 'pact_broker/api/decorators/timestamps'
-require 'pact_broker/models/webhook_request'
+require 'pact_broker/domain/webhook_request'
 require 'pact_broker/api/decorators/basic_pacticipant_decorator'
 
 module PactBroker
@@ -9,7 +9,7 @@ module PactBroker
     module Decorators
       class WebhookDecorator < BaseDecorator
 
-        property :request, :class => PactBroker::Models::WebhookRequest, :extend => WebhookRequestDecorator
+        property :request, :class => PactBroker::Domain::WebhookRequest, :extend => WebhookRequestDecorator
 
         include Timestamps
 

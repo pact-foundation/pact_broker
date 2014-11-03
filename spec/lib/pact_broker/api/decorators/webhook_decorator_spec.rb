@@ -1,5 +1,5 @@
 require 'pact_broker/api/decorators/webhook_decorator'
-require 'pact_broker/models/webhook'
+require 'pact_broker/domain/webhook'
 
 module PactBroker
   module Api
@@ -17,16 +17,16 @@ module PactBroker
         end
 
         let(:webhook_request) do
-          Models::WebhookRequest.new(request)
+          Domain::WebhookRequest.new(request)
         end
 
-        let(:consumer) { Models::Pacticipant.new(name: 'Consumer') }
-        let(:provider) { Models::Pacticipant.new(name: 'Provider') }
+        let(:consumer) { Domain::Pacticipant.new(name: 'Consumer') }
+        let(:provider) { Domain::Pacticipant.new(name: 'Provider') }
         let(:created_at) { DateTime.now }
         let(:updated_at) { created_at + 1 }
 
         let(:webhook) do
-          Models::Webhook.new(
+          Domain::Webhook.new(
             request: webhook_request,
             uuid: 'some-uuid',
             consumer: consumer,
@@ -102,7 +102,7 @@ module PactBroker
         describe "from_json" do
           let(:hash) { { request: request } }
           let(:json) { hash.to_json }
-          let(:webhook) { Models::Webhook.new }
+          let(:webhook) { Domain::Webhook.new }
           let(:parsed_object) { subject.from_json(json) }
 
           it "parses the request method" do

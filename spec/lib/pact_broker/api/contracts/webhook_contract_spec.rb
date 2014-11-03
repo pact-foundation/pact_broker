@@ -8,7 +8,7 @@ module PactBroker
       describe WebhookContract do
 
         let(:json) { load_fixture 'webhook_valid.json' }
-        let(:webhook) { PactBroker::Api::Decorators::WebhookDecorator.new(Models::Webhook.new).from_json(json) }
+        let(:webhook) { PactBroker::Api::Decorators::WebhookDecorator.new(Domain::Webhook.new).from_json(json) }
         let(:subject) { WebhookContract.new(webhook) }
 
         def valid_webhook_with

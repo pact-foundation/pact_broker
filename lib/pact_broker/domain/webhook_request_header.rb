@@ -1,5 +1,5 @@
 module PactBroker
-  module Models
+  module Domain
     class WebhookRequestHeader
 
       attr_accessor :name, :value

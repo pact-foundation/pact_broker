@@ -15,9 +15,9 @@ module PactBroker
         describe "/" do
           describe "GET" do
 
-            let(:consumer) { instance_double("PactBroker::Models::Pacticipant", name: 'consumer_name')}
-            let(:provider) { instance_double("PactBroker::Models::Pacticipant", name: 'provider_name')}
-            let(:relationship) { PactBroker::Models::Relationship.new(consumer, provider)}
+            let(:consumer) { instance_double("PactBroker::Domain::Pacticipant", name: 'consumer_name')}
+            let(:provider) { instance_double("PactBroker::Domain::Pacticipant", name: 'provider_name')}
+            let(:relationship) { PactBroker::Domain::Relationship.new(consumer, provider)}
             let(:relationships) { [relationship] }
 
             before do

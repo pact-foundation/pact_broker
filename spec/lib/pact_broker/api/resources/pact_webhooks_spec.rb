@@ -13,8 +13,8 @@ module PactBroker::Api
       let(:headers) { {'CONTENT_TYPE' => 'application/json'} }
       let(:webhook) { double('webhook')}
       let(:saved_webhook) { double('saved_webhook')}
-      let(:provider) { instance_double(PactBroker::Models::Pacticipant)}
-      let(:consumer) { instance_double(PactBroker::Models::Pacticipant)}
+      let(:provider) { instance_double(PactBroker::Domain::Pacticipant)}
+      let(:consumer) { instance_double(PactBroker::Domain::Pacticipant)}
 
       before do
         allow(PactBroker::Services::PacticipantService).to receive(:find_pacticipant_by_name).with("Some Provider").and_return(provider)
@@ -67,7 +67,7 @@ module PactBroker::Api
           allow(webhook_service).to receive(:create).and_return(saved_webhook)
           allow(webhook_service).to receive(:next_uuid).and_return(next_uuid)
           allow(webhook_service).to receive(:errors).and_return(errors)
-          allow(PactBroker::Models::Webhook).to receive(:new).and_return(webhook)
+          allow(PactBroker::Domain::Webhook).to receive(:new).and_return(webhook)
         end
 
         subject { post path, webhook_json, headers }

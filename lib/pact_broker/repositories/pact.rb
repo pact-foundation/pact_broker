@@ -1,4 +1,4 @@
-require 'pact_broker/models/pact'
+require 'pact_broker/domain/pact'
 
 module PactBroker
   module Repositories
@@ -6,13 +6,13 @@ module PactBroker
     class Pact < Sequel::Model
 
       set_primary_key :id
-      associate(:many_to_one, :provider, :class => "PactBroker::Models::Pacticipant", :key => :provider_id, :primary_key => :id)
-      associate(:many_to_one, :consumer_version, :class => "PactBroker::Models::Version", :key => :version_id, :primary_key => :id)
+      associate(:many_to_one, :provider, :class => "PactBroker::Domain::Pacticipant", :key => :provider_id, :primary_key => :id)
+      associate(:many_to_one, :consumer_version, :class => "PactBroker::Domain::Version", :key => :version_id, :primary_key => :id)
 
       Pact.plugin :timestamps, :update_on_create=>true
 
       def to_model
-        PactBroker::Models::Pact.new(
+        PactBroker::Domain::Pact.new(
           id: id,
           provider: provider,
           consumer: consumer_version.pacticipant,

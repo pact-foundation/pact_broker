@@ -95,7 +95,7 @@ module PactBroker
       end
 
       def db
-        PactBroker::Models::Version.new.db
+        PactBroker::Domain::Version.new.db
       end
 
       def pact_finder consumer_name, provider_name
@@ -119,14 +119,14 @@ module PactBroker
       def row_to_pact row
         # Equality fails inside Relationship.connected if using OpenStruct, can't seem to duplicate it
         # in a test though.
-        consumer = Models::Pacticipant.new(name: row[:consumer_name])
+        consumer = Domain::Pacticipant.new(name: row[:consumer_name])
         consumer.id = row[:consumer_id]
-        provider = Models::Pacticipant.new(name: row[:provider_name])
+        provider = Domain::Pacticipant.new(name: row[:provider_name])
         provider.id = row[:provider_id]
         consumer_version = OpenStruct.new(
           number: row[:consumer_version_number],
           pacticipant: consumer)
-        pact = Models::Pact.new(id: row[:id],
+        pact = Domain::Pact.new(id: row[:id],
           consumer: consumer,
           consumer_version: consumer_version,
           provider: provider,

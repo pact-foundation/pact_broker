@@ -18,7 +18,7 @@ module PactBroker
         end
 
         get "/" do
-          view_model = ViewModels::Relationships.new(pacticipant_service.find_relationships)
+          view_model = ViewDomain::Relationships.new(pacticipant_service.find_relationships)
           haml 'clusters/show', locals: {relationships: view_model}
         end
 

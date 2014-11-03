@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'pact_broker/services/pacticipant_service'
-require 'pact_broker/models/tag'
-require 'pact_broker/models/pact'
+require 'pact_broker/domain/tag'
+require 'pact_broker/domain/pact'
 
 
 module PactBroker
@@ -98,9 +98,9 @@ module PactBroker
 
       describe ".find_relationships" do
 
-        let(:consumer) { instance_double("PactBroker::Models::Pacticipant")}
-        let(:provider) { instance_double("PactBroker::Models::Pacticipant")}
-        let(:pact) { instance_double("PactBroker::Models::Pact", consumer: consumer, provider: provider)}
+        let(:consumer) { instance_double("PactBroker::Domain::Pacticipant")}
+        let(:provider) { instance_double("PactBroker::Domain::Pacticipant")}
+        let(:pact) { instance_double("PactBroker::Domain::Pact", consumer: consumer, provider: provider)}
         let(:pacts) { [pact]}
 
         before do
@@ -108,7 +108,7 @@ module PactBroker
         end
 
         it "returns a list of relationships" do
-          expect(subject.find_relationships).to eq([PactBroker::Models::Relationship.create(consumer, provider)])
+          expect(subject.find_relationships).to eq([PactBroker::Domain::Relationship.create(consumer, provider)])
         end
 
       end
@@ -131,19 +131,19 @@ module PactBroker
 
         it "deletes the pacticipant" do
           expect{ delete_pacticipant }.to change{
-              PactBroker::Models::Pacticipant.all.count
+              PactBroker::Domain::Pacticipant.all.count
             }.by(-1)
         end
 
         it "deletes the child versions" do
           expect{ delete_pacticipant }.to change{
-            PactBroker::Models::Version.where(number: "1.2.3").count
+            PactBroker::Domain::Version.where(number: "1.2.3").count
             }.by(-1)
         end
 
         it "deletes the child tags" do
           expect{ delete_pacticipant }.to change{
-            PactBroker::Models::Tag.where(name: "prod").count
+            PactBroker::Domain::Tag.where(name: "prod").count
             }.by(-1)
         end
 

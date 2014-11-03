@@ -3,12 +3,12 @@ require 'pact_broker/ui/view_models/relationship'
 
 module PactBroker
   module UI
-    module ViewModels
+    module ViewDomain
       describe Relationship do
 
-        let(:consumer) { instance_double("PactBroker::Models::Pacticipant", name: 'Consumer Name')}
-        let(:provider) { instance_double("PactBroker::Models::Pacticipant", name: 'Provider Name')}
-        let(:relationship) { PactBroker::Models::Relationship.new(consumer, provider)}
+        let(:consumer) { instance_double("PactBroker::Domain::Pacticipant", name: 'Consumer Name')}
+        let(:provider) { instance_double("PactBroker::Domain::Pacticipant", name: 'Provider Name')}
+        let(:relationship) { PactBroker::Domain::Relationship.new(consumer, provider)}
 
         subject { Relationship.new(relationship) }
 
@@ -20,10 +20,10 @@ module PactBroker
 
         describe "<=>" do
 
-          let(:relationship_model_4) { double("PactBroker::Models::Relationship", consumer_name: "A", provider_name: "X") }
-          let(:relationship_model_2) { double("PactBroker::Models::Relationship", consumer_name: "a", provider_name: "y") }
-          let(:relationship_model_3) { double("PactBroker::Models::Relationship", consumer_name: "A", provider_name: "Z") }
-          let(:relationship_model_1) { double("PactBroker::Models::Relationship", consumer_name: "C", provider_name: "A") }
+          let(:relationship_model_4) { double("PactBroker::Domain::Relationship", consumer_name: "A", provider_name: "X") }
+          let(:relationship_model_2) { double("PactBroker::Domain::Relationship", consumer_name: "a", provider_name: "y") }
+          let(:relationship_model_3) { double("PactBroker::Domain::Relationship", consumer_name: "A", provider_name: "Z") }
+          let(:relationship_model_1) { double("PactBroker::Domain::Relationship", consumer_name: "C", provider_name: "A") }
 
           let(:relationship_models) { [relationship_model_1, relationship_model_3, relationship_model_4, relationship_model_2] }
           let(:ordered_view_models) { [relationship_model_4, relationship_model_2, relationship_model_3, relationship_model_1] }

@@ -1,4 +1,4 @@
-require 'pact_broker/models'
+require 'pact_broker/domain'
 require 'pact_broker/repositories/pacticipant_repository'
 require 'pact_broker/repositories/version_repository'
 require 'pact_broker/repositories/pact_repository'

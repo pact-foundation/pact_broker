@@ -11,7 +11,7 @@ module PactBroker
 
         def initialize pacts
           @pacts = pacts
-          @relationships = pacts.collect{|pact| PactBroker::Models::Relationship.new(pact.consumer,pact.provider)}
+          @relationships = pacts.collect{|pact| PactBroker::Domain::Relationship.new(pact.consumer,pact.provider)}
         end
 
         def to_csv

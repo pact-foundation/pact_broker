@@ -1,6 +1,6 @@
 require 'spec_helper'
 require 'pact_broker/api/decorators/pacticipant_decorator'
-require 'pact_broker/models/pacticipant'
+require 'pact_broker/domain/pacticipant'
 
 module PactBroker
 
@@ -12,7 +12,7 @@ module PactBroker
 
         let(:created_at) { Time.new(2014, 3, 4) }
         let(:updated_at) { Time.new(2014, 3, 5) }
-        let(:pacticipant) { PactBroker::Models::Pacticipant.new(name: 'Name', updated_at: updated_at, created_at: created_at)}
+        let(:pacticipant) { PactBroker::Domain::Pacticipant.new(name: 'Name', updated_at: updated_at, created_at: created_at)}
 
         subject { JSON.parse PacticipantRepresenter.new(pacticipant).to_json, symbolize_names: true }
 

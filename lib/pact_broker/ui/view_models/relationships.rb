@@ -2,7 +2,7 @@ require 'pact_broker/ui/view_models/relationship'
 
 module PactBroker
   module UI
-    module ViewModels
+    module ViewDomain
       class Relationships
 
         def initialize relationships

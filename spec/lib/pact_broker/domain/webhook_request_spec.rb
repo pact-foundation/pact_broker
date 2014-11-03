@@ -1,10 +1,10 @@
 require 'spec_helper'
-require 'pact_broker/models/webhook_request'
+require 'pact_broker/domain/webhook_request'
 require 'webmock/rspec'
 
 module PactBroker
 
-  module Models
+  module Domain
 
     describe WebhookRequest do
 

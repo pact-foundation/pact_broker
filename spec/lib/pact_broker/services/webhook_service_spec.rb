@@ -8,11 +8,11 @@ module PactBroker
 
       describe ".execute_webhooks" do
 
-        let(:pact) { instance_double(PactBroker::Models::Pact, consumer: consumer, provider: provider, consumer_version: consumer_version)}
-        let(:consumer_version) { PactBroker::Models::Version.new(number: '1.2.3') }
-        let(:consumer) { PactBroker::Models::Pacticipant.new(name: 'Consumer') }
-        let(:provider) { PactBroker::Models::Pacticipant.new(name: 'Provider') }
-        let(:webhooks) { [instance_double(PactBroker::Models::Webhook)]}
+        let(:pact) { instance_double(PactBroker::Domain::Pact, consumer: consumer, provider: provider, consumer_version: consumer_version)}
+        let(:consumer_version) { PactBroker::Domain::Version.new(number: '1.2.3') }
+        let(:consumer) { PactBroker::Domain::Pacticipant.new(name: 'Consumer') }
+        let(:provider) { PactBroker::Domain::Pacticipant.new(name: 'Provider') }
+        let(:webhooks) { [instance_double(PactBroker::Domain::Webhook)]}
 
         before do
           allow_any_instance_of(PactBroker::Repositories::WebhookRepository).to receive(:find_by_consumer_and_provider).and_return(webhooks)

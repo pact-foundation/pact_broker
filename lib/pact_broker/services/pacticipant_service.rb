@@ -1,7 +1,7 @@
 require 'pact_broker/repositories'
 require 'pact_broker/logging'
 require 'pact_broker/messages'
-require 'pact_broker/models/relationship'
+require 'pact_broker/domain/relationship'
 require 'pact_broker/functions/find_potential_duplicate_pacticipant_names'
 
 module PactBroker
@@ -51,7 +51,7 @@ module PactBroker
       end
 
       def self.find_relationships
-        pact_repository.find_latest_pacts.collect{ | pact| PactBroker::Models::Relationship.create pact.consumer, pact.provider }
+        pact_repository.find_latest_pacts.collect{ | pact| PactBroker::Domain::Relationship.create pact.consumer, pact.provider }
       end
 
       def self.update params
@@ -66,7 +66,7 @@ module PactBroker
 
       def self.delete name
         pacticipant = find_pacticipant_by_name name
-        connection = PactBroker::Models::Pacticipant.new.db
+        connection = PactBroker::Domain::Pacticipant.new.db
         connection.run("delete from tags where version_id IN (select id from versions where pacticipant_id IN (select id from pacticipants where name = '#{name}'))")
         connection.run("delete from pacts where version_id IN (select id from versions where pacticipant_id IN (select id from pacticipants where name = '#{name}'))")
         connection.run("delete from pacts where provider_id IN (select id from pacticipants where name = '#{name}')")

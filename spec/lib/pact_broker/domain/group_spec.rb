@@ -1,9 +1,9 @@
 require 'spec_helper'
-require 'pact_broker/models/group'
-require 'pact_broker/models/relationship'
+require 'pact_broker/domain/group'
+require 'pact_broker/domain/relationship'
 
 module PactBroker
-  module Models
+  module Domain
     describe Group do
 
 
@@ -15,8 +15,8 @@ module PactBroker
         let(:provider_x) { double('provider x') }
         let(:provider_y) { double('provider y') }
 
-        let(:relationship_1) { Models::Relationship.new(consumer_a, provider_x)}
-        let(:relationship_2) { Models::Relationship.new(consumer_b, provider_y)}
+        let(:relationship_1) { Domain::Relationship.new(consumer_a, provider_x)}
+        let(:relationship_2) { Domain::Relationship.new(consumer_b, provider_y)}
 
         subject { Group.new(relatio)}
       end

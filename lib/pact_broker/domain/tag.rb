@@ -2,12 +2,12 @@ require 'pact_broker/db'
 
 module PactBroker
 
-  module Models
+  module Domain
     class Tag < Sequel::Model
 
       unrestrict_primary_key
 
-      associate(:many_to_one, :version, :class => "PactBroker::Models::Version", :key => :version_id, :primary_key => :id)
+      associate(:many_to_one, :version, :class => "PactBroker::Domain::Version", :key => :version_id, :primary_key => :id)
 
 
     end

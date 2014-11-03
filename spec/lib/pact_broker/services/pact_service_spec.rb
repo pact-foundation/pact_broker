@@ -29,7 +29,7 @@ module PactBroker
       describe "#pact_has_changed_since_previous_version?" do
 
         let(:json_content) { { 'some' => 'json'}.to_json }
-        let(:pact) { instance_double(PactBroker::Models::Pact, json_content: json_content)}
+        let(:pact) { instance_double(PactBroker::Domain::Pact, json_content: json_content)}
 
         before do
           allow_any_instance_of(Repositories::PactRepository).to receive(:find_previous_pact).and_return(previous_pact)
@@ -38,7 +38,7 @@ module PactBroker
         subject { PactService.pact_has_changed_since_previous_version? pact }
 
         context "when a previous pact is found" do
-          let(:previous_pact) { instance_double(PactBroker::Models::Pact, json_content: previous_json_content)}
+          let(:previous_pact) { instance_double(PactBroker::Domain::Pact, json_content: previous_json_content)}
           let(:previous_json_content) { {'some' => 'json'}.to_json }
 
           context "when the json_content is the same" do

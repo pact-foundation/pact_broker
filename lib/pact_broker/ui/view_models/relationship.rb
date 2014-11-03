@@ -3,7 +3,7 @@ require 'pact_broker/ui/helpers/url_helper'
 
 module PactBroker
   module UI
-    module ViewModels
+    module ViewDomain
       class Relationship
 
         include PactBroker::Api::PactBrokerUrls

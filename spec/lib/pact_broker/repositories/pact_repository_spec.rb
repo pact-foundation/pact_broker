@@ -18,7 +18,7 @@ module PactBroker
         end
 
         it "returns a Pact::Model" do
-          expect(subject).to be_instance_of(PactBroker::Models::Pact)
+          expect(subject).to be_instance_of(PactBroker::Domain::Pact)
         end
 
         it "sets all the Pact::Model attributes" do

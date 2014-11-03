@@ -1,4 +1,4 @@
-require 'pact_broker/models/group'
+require 'pact_broker/domain/group'
 
 =begin
 

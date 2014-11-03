@@ -1,6 +1,6 @@
 module PactBroker
 
-  module Models
+  module Domain
 
     class WebhookExecutionResult
 

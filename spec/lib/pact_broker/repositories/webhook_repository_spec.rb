@@ -9,7 +9,7 @@ module PactBroker
       let(:body) { {'some' => 'json' } }
       let(:headers) { {'Content-Type' => 'application/json', 'Accept' => 'application/json'} }
       let(:request) do
-        Models::WebhookRequest.new(
+        Domain::WebhookRequest.new(
           method: 'post',
           url: url,
           headers: headers,
@@ -17,7 +17,7 @@ module PactBroker
           password: 'password',
           body: body)
       end
-      let(:webhook) { Models::Webhook.new(request: request)}
+      let(:webhook) { Domain::Webhook.new(request: request)}
       let(:test_data_builder) { ProviderStateBuilder.new }
       let(:consumer) { test_data_builder.create_pacticipant 'Consumer'; test_data_builder.pacticipant}
       let(:provider) { test_data_builder.create_pacticipant 'Provider'; test_data_builder.pacticipant}
@@ -198,7 +198,7 @@ module PactBroker
 
         it "returns a list of webhooks" do
           expect(subject.size).to be 2
-          expect(subject.first).to be_instance_of Models::Webhook
+          expect(subject.first).to be_instance_of Domain::Webhook
         end
       end
 

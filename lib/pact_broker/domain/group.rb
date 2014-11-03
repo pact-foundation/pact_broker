@@ -1,7 +1,7 @@
 require 'versionomy'
 
 module PactBroker
-  module Models
+  module Domain
     class Group < Array
 
       def initialize *relationships

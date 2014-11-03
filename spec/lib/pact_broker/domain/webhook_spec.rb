@@ -1,15 +1,15 @@
 require 'spec_helper'
-require 'pact_broker/models/webhook'
+require 'pact_broker/domain/webhook'
 
 module PactBroker
 
-  module Models
+  module Domain
 
     describe Webhook do
 
       let(:consumer) { Pacticipant.new(name: 'Consumer')}
       let(:provider) { Pacticipant.new(name: 'Provider')}
-      let(:request) { instance_double(PactBroker::Models::WebhookRequest, execute: nil)}
+      let(:request) { instance_double(PactBroker::Domain::WebhookRequest, execute: nil)}
       subject { Webhook.new(request: request, consumer: consumer, provider: provider,) }
 
       describe "description" do
