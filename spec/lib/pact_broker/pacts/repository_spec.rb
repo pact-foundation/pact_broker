@@ -1,20 +1,20 @@
-require 'spec_helper'
+require 'pact_broker/pacts/repository'
 require 'spec/support/provider_state_builder'
 
 module PactBroker
-  module Repositories
-    describe PactRepository do
+  module Pacts
+    describe Repository do
 
       describe "create" do
-        let(:consumer) { PacticipantRepository.new.create name: 'Consumer' }
-        let(:provider) { PacticipantRepository.new.create name: 'Provider' }
-        let(:version) { VersionRepository.new.create number: '1.2.3', pacticipant_id: consumer.id }
+        let(:consumer) { Repositories::PacticipantRepository.new.create name: 'Consumer' }
+        let(:provider) { Repositories::PacticipantRepository.new.create name: 'Provider' }
+        let(:version) { Repositories::VersionRepository.new.create number: '1.2.3', pacticipant_id: consumer.id }
         let(:json_content) { {some: 'json'}.to_json }
 
-        subject { PactRepository.new.create version_id: version.id, provider_id: provider.id, json_content: json_content}
+        subject { Repository.new.create version_id: version.id, provider_id: provider.id, json_content: json_content}
 
         it "saves the pact" do
-          expect{subject}.to change{ Pact.count }.by(1)
+          expect{subject}.to change{ Repositories::Pact.count }.by(1)
         end
 
         it "returns a Pact::Model" do
@@ -51,7 +51,7 @@ module PactBroker
 
         let(:json_content) { {some: 'json'}.to_json }
 
-        subject { PactRepository.new.update existing_pact.id, json_content: json_content }
+        subject { Repository.new.update existing_pact.id, json_content: json_content }
 
         context "when the attributes have changed" do
 
@@ -106,7 +106,7 @@ module PactBroker
             .create_pact
         end
 
-        subject { PactRepository.new.find_all_pacts_between consumer_name, :and => provider_name }
+        subject { Repository.new.find_all_pacts_between consumer_name, :and => provider_name }
 
         it "returns the pacts between the specified consumer and provider" do
           expect(subject.size).to eq 2
@@ -134,9 +134,9 @@ module PactBroker
             .create_pact
         end
 
-        let(:pact) { PactRepository.new.find_latest_pact "Consumer", "Provider"  }
+        let(:pact) { Repository.new.find_latest_pact "Consumer", "Provider"  }
 
-        subject  { PactRepository.new.find_previous_pact pact }
+        subject  { Repository.new.find_previous_pact pact }
 
         it "finds the previous pact" do
           expect(subject.consumer_version_number).to eq "1.2.4"
@@ -159,7 +159,7 @@ module PactBroker
                 .create_pact
             end
 
-            let(:latest_prod_pact) { PactRepository.new.find_latest_pact("Consumer", "Provider", "prod") }
+            let(:latest_prod_pact) { Repository.new.find_latest_pact("Consumer", "Provider", "prod") }
 
             it "returns the pact for the latest tagged version" do
               expect(latest_prod_pact.consumer_version.number).to eq("1.2.3")
@@ -193,7 +193,7 @@ module PactBroker
         end
 
         it "finds the latest pact for each consumer/provider pair" do
-          pacts = PactRepository.new.find_latest_pacts
+          pacts = Repository.new.find_latest_pacts
 
           expect(pacts[0].consumer_version.pacticipant.name).to eq("Condor")
           expect(pacts[0].consumer.name).to eq("Condor")
@@ -209,7 +209,7 @@ module PactBroker
         end
 
         it "includes the timestamps - need to update view" do
-          pacts = PactRepository.new.find_latest_pacts
+          pacts = Repository.new.find_latest_pacts
 
           expect(pacts[0].updated_at).to be_instance_of DateTime
           expect(pacts[0].created_at).to be_instance_of DateTime

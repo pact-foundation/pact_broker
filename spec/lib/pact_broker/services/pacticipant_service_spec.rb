@@ -104,7 +104,7 @@ module PactBroker
         let(:pacts) { [pact]}
 
         before do
-          allow_any_instance_of(PactBroker::Repositories::PactRepository).to receive(:find_latest_pacts).and_return(pacts)
+          allow_any_instance_of(PactBroker::Pacts::Repository).to receive(:find_latest_pacts).and_return(pacts)
         end
 
         it "returns a list of relationships" do

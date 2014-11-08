@@ -4,8 +4,8 @@ require 'ostruct'
 require 'pact_broker/repositories/pact'
 
 module PactBroker
-  module Repositories
-    class PactRepository
+  module Pacts
+    class Repository
 
       include PactBroker::Logging
 
@@ -55,7 +55,7 @@ module PactBroker
 
       def create params
         to_domain do
-          Pact.new(
+          PactBroker::Repositories::Pact.new(
             version_id: params[:version_id],
             provider_id: params[:provider_id],
             json_content: params[:json_content]
@@ -65,7 +65,7 @@ module PactBroker
 
       def update id, params
         to_domain do
-          Pact.find(id: id).tap do | pact |
+          PactBroker::Repositories::Pact.find(id: id).tap do | pact |
             pact.update(json_content: params[:json_content])
           end
         end
