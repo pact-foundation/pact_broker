@@ -1,7 +1,7 @@
 require 'sequel'
 require 'pact_broker/logging'
 require 'ostruct'
-require 'pact_broker/repositories/pact'
+require 'pact_broker/pacts/database_model'
 
 module PactBroker
   module Pacts
@@ -19,7 +19,7 @@ module PactBroker
 
       def find_by_version_and_provider version_id, provider_id
         to_domain do
-          PactBroker::Repositories::Pact.where(version_id: version_id, provider_id: provider_id).single_record
+          DatabaseModel.where(version_id: version_id, provider_id: provider_id).single_record
         end
       end
 
@@ -55,7 +55,7 @@ module PactBroker
 
       def create params
         to_domain do
-          PactBroker::Repositories::Pact.new(
+          DatabaseModel.new(
             version_id: params[:version_id],
             provider_id: params[:provider_id],
             json_content: params[:json_content]
@@ -65,7 +65,7 @@ module PactBroker
 
       def update id, params
         to_domain do
-          PactBroker::Repositories::Pact.find(id: id).tap do | pact |
+          DatabaseModel.find(id: id).tap do | pact |
             pact.update(json_content: params[:json_content])
           end
         end
@@ -99,7 +99,7 @@ module PactBroker
       end
 
       def pact_finder consumer_name, provider_name
-        PactBroker::Repositories::Pact.select(
+        DatabaseModel.select(
             :pacts__id, :pacts__json_content, :pacts__version_id, :pacts__provider_id,
             :pacts__created_at, :pacts__updated_at,
             :versions__number___consumer_version_number).

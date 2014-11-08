@@ -14,7 +14,7 @@ module PactBroker
         subject { Repository.new.create version_id: version.id, provider_id: provider.id, json_content: json_content}
 
         it "saves the pact" do
-          expect{subject}.to change{ Repositories::Pact.count }.by(1)
+          expect{subject}.to change{ DatabaseModel.count }.by(1)
         end
 
         it "returns a Pact::Model" do
