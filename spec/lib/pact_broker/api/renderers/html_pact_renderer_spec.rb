@@ -38,7 +38,7 @@ module PactBroker
             expect(subject).to match /<h\d>.*Some Consumer/
             expect(subject).to match /<h\d>.*Some Provider/
             expect(subject).to include("Date published:")
-            expect(subject).to include("27/02/2014 11:00AM +11:00")
+            expect(subject).to include("Thu 27 Feb 2014, 11:00am +11:00")
           end
         end
 
