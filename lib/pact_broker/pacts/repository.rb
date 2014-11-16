@@ -10,11 +10,9 @@ module PactBroker
       include PactBroker::Logging
 
       def find_all_pacts_between consumer_name, options
-        to_domains do
-          pact_finder(consumer_name, options.fetch(:and))
-            .left_outer_join(:tags, {:version_id => :id}, {implicit_qualifier: :versions})
-            .reverse_order(:order)
-        end
+        pact_finder(consumer_name, options.fetch(:and))
+          .left_outer_join(:tags, {:version_id => :id}, {implicit_qualifier: :versions})
+          .reverse_order(:order).collect(&:to_domain)
       end
 
       def find_by_version_and_provider version_id, provider_id
@@ -55,10 +53,11 @@ module PactBroker
 
       def create params
         to_domain do
+          pact_version_content = PactVersionContent.new(content: params[:json_content]).save
           DatabaseModel.new(
             version_id: params[:version_id],
             provider_id: params[:provider_id],
-            json_content: params[:json_content]
+            pact_version_content: pact_version_content,
           ).save
         end
       end
@@ -66,7 +65,8 @@ module PactBroker
       def update id, params
         to_domain do
           DatabaseModel.find(id: id).tap do | pact |
-            pact.update(json_content: params[:json_content])
+            pact.pact_version_content.update(content: params[:json_content])
+            pact.update(updated_at: pact.pact_version_content.updated_at)
           end
         end
       end
@@ -100,7 +100,7 @@ module PactBroker
 
       def pact_finder consumer_name, provider_name
         DatabaseModel.select(
-            :pacts__id, :pacts__json_content, :pacts__version_id, :pacts__provider_id,
+            :pacts__id, :pacts__pact_version_content_id, :pacts__version_id, :pacts__provider_id,
             :pacts__created_at, :pacts__updated_at,
             :versions__number___consumer_version_number).
           join(:versions, {:id => :version_id}, {implicit_qualifier: :pacts}).

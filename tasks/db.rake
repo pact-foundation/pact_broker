@@ -37,7 +37,7 @@ namespace :db do
   end
 
   desc 'Prepare the test database for running specs - RACK_ENV will be hardcoded to "test"'
-  task 'prepare:test' => ['db:set_test_env','db:prepare_dir','db:migrate']
+  task 'prepare:test' => ['db:set_test_env','db:prepare_dir','db:delete','db:migrate']
 
   desc 'Reset the database (rollback then migrate) - uses RACK_ENV, defaulting to "development"'
   task :reset => ['db:rollback', 'db:migrate']
@@ -50,7 +50,6 @@ namespace :db do
   # Private: Ensure the dev/test database directory exists
   task 'prepare_dir' => 'db:env' do
     PactBroker::Database.ensure_database_dir_exists
-    PactBroker::Database.delete_database_file
   end
 
   # Private

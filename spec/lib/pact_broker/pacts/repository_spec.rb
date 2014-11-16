@@ -44,6 +44,10 @@ module PactBroker
             .update(
               created_at: created_at,
               updated_at: updated_at)
+          ::DB::PACT_BROKER_DB[:pact_version_contents]
+              .update(
+                created_at: created_at,
+                updated_at: updated_at)
         end
 
         let(:created_at) { DateTime.new(2014, 3, 2) }
@@ -71,10 +75,10 @@ module PactBroker
 
         context "when the attributes have not changed" do
           before do
-            ::DB::PACT_BROKER_DB[:pacts]
-              .where(id: existing_pact.id)
+
+            ::DB::PACT_BROKER_DB[:pact_version_contents]
               .update(
-                json_content: json_content)
+                content: json_content)
           end
 
           it "does not update the updated_at timestamp" do

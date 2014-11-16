@@ -1,0 +1,5 @@
+Sequel.migration do
+  change do
+    add_column(:tag, :value, String)
+  end
+end
