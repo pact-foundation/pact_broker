@@ -1,4 +1,5 @@
 require 'pact_broker/domain/pact'
+require 'pact_broker/pacts/pact_version_content'
 
 module PactBroker
   module Pacts
@@ -30,12 +31,5 @@ module PactBroker
       end
 
     end
-
-    class PactVersionContent < Sequel::Model(:pact_version_contents)
-      set_primary_key :id
-    end
-
-    PactVersionContent.plugin :timestamps, :update_on_create=>true
-
   end
 end

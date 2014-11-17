@@ -19,9 +19,10 @@ module PactBroker
       end
 
       def find_by_version_and_provider version_id, provider_id
-        to_domain do
-          DatabaseModel.where(version_id: version_id, provider_id: provider_id).single_record
-        end
+        AllPacts
+          .eager(:tags)
+          .where(consumer_version_id: version_id, provider_id: provider_id)
+          .limit(1).collect(&:to_domain)[0]
       end
 
       def find_latest_pacts
@@ -39,11 +40,10 @@ module PactBroker
       end
 
       def find_pact consumer_name, consumer_version, provider_name
-        other_pact_finder(:all_pacts)
-          .where('provider_name = ?', provider_name)
-          .where('consumer_name = ?', consumer_name)
-          .where('consumer_version_number = ?', consumer_version)
-          .limit(1).collect{ |row| row_to_pact(row) }[0]
+        AllPacts
+          .eager(:tags)
+          .where(consumer_name: consumer_name, provider_name: provider_name, consumer_version_number: consumer_version)
+          .limit(1).collect(&:to_domain_with_content)[0]
       end
 
       def create params
