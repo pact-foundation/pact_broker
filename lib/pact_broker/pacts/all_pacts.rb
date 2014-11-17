@@ -13,8 +13,8 @@ module PactBroker
       associate(:one_to_many, :tags, :class => "PactBroker::Domain::Tag", :reciprocal => :version, :key => :version_id, :primary_key => :consumer_version_id)
       associate(:many_to_one, :pact_version_content, :key => :pact_version_content_id, :primary_key => :id)
 
-      # dataset_module do
-      #   def latest
+      dataset_module do
+      #   def latest_versions
       #     join(:latest_pact_consumer_version_orders,
       #       {
       #         consumer_id: :consumer_id,
@@ -24,7 +24,32 @@ module PactBroker
       #       {table_alias: :lp}
       #     )
       #   end
-      # end
+
+        def consumer consumer_name
+          filter(consumer_name: consumer_name)
+        end
+
+        def provider provider_name
+          filter(provider_name: provider_name)
+        end
+
+        def tag tag_name
+          join(:tags, {version_id: :consumer_version_id})
+          .where('tags.name = ?', tag_name)
+        end
+
+        def consumer_version_number number
+          filter(consumer_version_number: number)
+        end
+
+        def consumer_version_order_before order
+          where('consumer_version_order < ?', order)
+        end
+
+        def latest
+          reverse_order(:consumer_version_order).limit(1)
+        end
+      end
 
       def to_domain
         consumer = Domain::Pacticipant.new(name: consumer_name)
