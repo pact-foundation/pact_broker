@@ -25,7 +25,7 @@ module PactBroker
           expect(subject.consumer).to eq consumer
           expect(subject.provider).to eq provider
           expect(subject.consumer_version_number).to eq '1.2.3'
-          expect(subject.consumer_version).to eq version
+          expect(subject.consumer_version.number).to eq '1.2.3'
           expect(subject.json_content).to eq json_content
           expect(subject.created_at).to be_instance_of(DateTime)
           expect(subject.updated_at).to be_instance_of(DateTime)
@@ -105,6 +105,7 @@ module PactBroker
             .create_pact
             .create_consumer_version("2.3.4")
             .create_consumer_version_tag("prod")
+            .create_consumer_version_tag("branch")
             .create_pact
             .create_provider("Another Provider")
             .create_pact
@@ -118,8 +119,35 @@ module PactBroker
           expect(subject.first.provider.name).to eq provider_name
           expect(subject.first.consumer_version.number).to eq "2.3.4"
           expect(subject.first.consumer_version.tags.first.name).to eq "prod"
+          expect(subject.first.consumer_version.tags.last.name).to eq "branch"
         end
 
+      end
+
+      describe "find_pact" do
+        before do
+          ProviderStateBuilder.new
+            .create_consumer("Consumer")
+            .create_consumer_version("1.2.2")
+            .create_provider("Provider")
+            .create_pact
+            .create_consumer_version("1.2.4")
+            .create_pact
+            .create_consumer_version("1.2.6")
+            .create_pact
+            .create_provider("Another Provider")
+            .create_consumer_version("1.2.5")
+            .create_pact
+        end
+
+        subject  { Repository.new.find_pact "Consumer", "1.2.4", "Provider" }
+
+        it "finds the pact with the given version" do
+          expect(subject.consumer.name).to eq "Consumer"
+          expect(subject.provider.name).to eq "Provider"
+          expect(subject.consumer_version_number).to eq "1.2.4"
+          expect(subject.consumer_version.number).to eq "1.2.4"
+        end
       end
 
       describe "find_previous_pact" do

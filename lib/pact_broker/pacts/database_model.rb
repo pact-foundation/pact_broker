@@ -18,12 +18,17 @@ module PactBroker
           provider: provider,
           consumer: consumer_version.pacticipant,
           consumer_version_number: consumer_version.number,
-          consumer_version: consumer_version,
+          consumer_version: to_version_domain,
           json_content: pact_version_content.content,
           updated_at: updated_at,
           created_at: created_at
           )
       end
+
+      def to_version_domain
+        OpenStruct.new(number: consumer_version.number, pacticipant: consumer_version.pacticipant, tags: consumer_version.tags)
+      end
+
     end
 
     class PactVersionContent < Sequel::Model(:pact_version_contents)
