@@ -8,8 +8,23 @@ module PactBroker
 
     class AllPacts < Sequel::Model(:all_pacts)
 
+
+      set_primary_key :id
       associate(:one_to_many, :tags, :class => "PactBroker::Domain::Tag", :reciprocal => :version, :key => :version_id, :primary_key => :consumer_version_id)
       associate(:many_to_one, :pact_version_content, :key => :pact_version_content_id, :primary_key => :id)
+
+      # dataset_module do
+      #   def latest
+      #     join(:latest_pact_consumer_version_orders,
+      #       {
+      #         consumer_id: :consumer_id,
+      #         provider_id: :provider_id,
+      #         latest_consumer_version_order: :consumer_version_order
+      #       },
+      #       {table_alias: :lp}
+      #     )
+      #   end
+      # end
 
       def to_domain
         consumer = Domain::Pacticipant.new(name: consumer_name)

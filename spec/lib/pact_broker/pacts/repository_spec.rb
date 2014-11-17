@@ -200,6 +200,10 @@ module PactBroker
               expect(latest_prod_pact.consumer_version.number).to eq("1.2.3")
             end
 
+            it "has JSON content" do
+              expect(latest_prod_pact.json_content).to_not be nil
+            end
+
             it "has timestamps" do
               expect(latest_prod_pact.created_at).to be_instance_of(DateTime)
               expect(latest_prod_pact.updated_at).to be_instance_of(DateTime)
