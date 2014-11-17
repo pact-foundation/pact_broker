@@ -2,6 +2,7 @@ require 'sequel'
 require 'pact_broker/logging'
 require 'ostruct'
 require 'pact_broker/pacts/database_model'
+require 'pact_broker/pacts/all_pacts'
 
 module PactBroker
   module Pacts
@@ -10,14 +11,11 @@ module PactBroker
       include PactBroker::Logging
 
       def find_all_pacts_between consumer_name, options
-        pact_finder(consumer_name, options.fetch(:and))
-          .left_outer_join(:tags, {:version_id => :id}, {implicit_qualifier: :versions})
-          .reverse_order(:order).all.chunk(&:id).collect do | key, rows |
-            domains = rows.collect(&:to_domain)
-            tags = domains.collect{ |domain| domain.consumer_version.tags }.flatten
-            domains.first.consumer_version.tags = tags
-            domains.first
-          end
+        AllPacts
+          .eager(:tags)
+          .where(consumer_name: consumer_name, provider_name: options.fetch(:and))
+          .reverse_order(:consumer_version_order)
+          .all.collect(&:to_domain)
       end
 
       def find_by_version_and_provider version_id, provider_id
@@ -69,14 +67,12 @@ module PactBroker
       end
 
       def find_previous_pact pact
-        previous_pact = db[:all_pacts]
-          .where(
-            :consumer_id => pact.consumer.id,
-            :provider_id => pact.provider.id)
+        AllPacts
+          .eager(:tags)
+          .where(consumer_name: pact.consumer.name, provider_name: pact.provider.name)
           .where('consumer_version_order < ?', pact.consumer_version.order)
-          .order(:consumer_version_order)
-          .last
-        previous_pact ? row_to_pact(previous_pact) : nil
+          .reverse_order(:consumer_version_order)
+          .limit(1).collect(&:to_domain)[0]
       end
 
       private
@@ -99,7 +95,7 @@ module PactBroker
         DatabaseModel.select(
             :pacts__id, :pacts__pact_version_content_id, :pacts__version_id, :pacts__provider_id,
             :pacts__created_at, :pacts__updated_at,
-            :versions__number___consumer_version_number).
+            :versions__number___consumer_version_number, :versions__order___consumer_version_order).
           join(:versions, {:id => :version_id}, {implicit_qualifier: :pacts}).
           join(:pacticipants, {:id => :pacticipant_id}, {:table_alias => :consumers, implicit_qualifier: :versions}).
           join(:pacticipants, {:id => :provider_id}, {:table_alias => :providers, implicit_qualifier: :pacts}).
@@ -113,7 +109,7 @@ module PactBroker
         db[table].select(:id,
           :consumer_id___consumer_id, :consumer_name___consumer_name,
           :provider_id___provider_id, :provider_name___provider_name,
-          :consumer_version_number___consumer_version_number,
+          :consumer_version_number___consumer_version_number, :consumer_version_order___consumer_version_order,
           :created_at___created_at,
           :updated_at___updated_at)
       end
@@ -133,6 +129,7 @@ module PactBroker
         provider.id = row[:provider_id]
         consumer_version = OpenStruct.new(
           number: row[:consumer_version_number],
+          order: row[:consumer_version_order],
           pacticipant: consumer)
         pact = Domain::Pact.new(id: row[:id],
           consumer: consumer,

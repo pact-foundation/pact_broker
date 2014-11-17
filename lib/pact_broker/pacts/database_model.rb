@@ -26,7 +26,7 @@ module PactBroker
       end
 
       def to_version_domain
-        OpenStruct.new(number: consumer_version.number, pacticipant: consumer_version.pacticipant, tags: consumer_version.tags)
+        OpenStruct.new(number: consumer_version.number, pacticipant: consumer_version.pacticipant, tags: consumer_version.tags, order: consumer_version.order)
       end
 
     end
