@@ -147,6 +147,7 @@ module PactBroker
           expect(subject.provider.name).to eq "Provider"
           expect(subject.consumer_version_number).to eq "1.2.4"
           expect(subject.consumer_version.number).to eq "1.2.4"
+          expect(subject.json_content).to_not be_nil
         end
       end
 

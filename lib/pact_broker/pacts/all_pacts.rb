@@ -24,6 +24,7 @@ module PactBroker
           consumer_version: consumer_version,
           provider: provider,
           consumer_version_number: consumer_version_number,
+          json_content: json_content,
           created_at: created_at,
           updated_at: updated_at)
       end

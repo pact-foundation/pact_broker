@@ -110,6 +110,7 @@ module PactBroker
           :consumer_id___consumer_id, :consumer_name___consumer_name,
           :provider_id___provider_id, :provider_name___provider_name,
           :consumer_version_number___consumer_version_number, :consumer_version_order___consumer_version_order,
+          :json_content___json_content,
           :created_at___created_at,
           :updated_at___updated_at)
       end
@@ -136,6 +137,7 @@ module PactBroker
           consumer_version: consumer_version,
           provider: provider,
           consumer_version_number: row[:consumer_version_number],
+          json_content: row[:json_content],
           created_at: row[:created_at],
           updated_at: row[:updated_at])
       end
