@@ -4,7 +4,7 @@ require 'sequel'
 require 'pact_broker'
 
 # Create a real database, and set the credentials for it here
-DATABASE_CREDENTIALS = {database: "pact_broker_database.sqlite3", adapter: "sqlite"}
+DATABASE_CREDENTIALS = {database: "pact_broker_database.sqlite3", adapter: "sqlite", :encoding => 'utf8'}
 
 # Have a look at the Sequel documentation to make decisions about things like connection pooling
 # and connection validation.
