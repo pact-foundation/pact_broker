@@ -36,6 +36,7 @@ See the [wiki](https://github.com/bethesque/pact_broker/wiki) for documentation.
 * Install ruby 1.9.3 or later
 * Copy the [example](/example) directory to your workstation.
 * Modify the config.ru and Gemfile as desired (eg. choose database driver gem, set your database credentials)
+* Please ensure you use `encoding: 'utf8'` in your Sequel options to avoid encoding issues.
 * Run `bundle`
 * Run `bundle exec rackup`
 * Open [http://localhost:9292](http://localhost:9292) and you should see the HAL browser.
