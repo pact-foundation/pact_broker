@@ -77,13 +77,14 @@ module PactBroker
 
       def find_or_create_pact_version_content json_content
         sha = Digest::SHA1.hexdigest(json_content)
-        pact_version_content = PactVersionContent.find(sha: sha)
-        unless pact_version_content
-          pact_version_content = PactVersionContent.new(content: json_content)
-          pact_version_content[:sha] = sha
-          pact_version_content.save
-        end
-        pact_version_content
+        PactVersionContent.find(sha: sha) || create_pact_version_content(sha, json_content)
+      end
+
+      def create_pact_version_content sha, json_content
+        PactBroker.logger.debug("Creating new PactVersionContent for sha #{sha}")
+        pact_version_content = PactVersionContent.new(content: json_content)
+        pact_version_content[:sha] = sha
+        pact_version_content.save
       end
 
       def to_domain

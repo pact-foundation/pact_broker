@@ -115,16 +115,14 @@ module PactBroker
             expect(subject.json_content).to eq original_json_content
           end
 
-          it "updates the updated_at timestamp for some reason" do
-            expect(subject.updated_at).to_not eq updated_at
+          it "does not update the timestamp" do
+            expect(subject.updated_at).to eq updated_at
           end
 
           it "does not update the created_at timestamp" do
             expect(subject.created_at).to eq created_at
           end
-
         end
-
       end
 
       describe "#find_all_pacts_between" do
