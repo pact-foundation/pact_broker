@@ -9,7 +9,7 @@ module PactBroker
       set_primary_key :id
       associate(:many_to_one, :provider, :class => "PactBroker::Domain::Pacticipant", :key => :provider_id, :primary_key => :id)
       associate(:many_to_one, :consumer_version, :class => "PactBroker::Domain::Version", :key => :version_id, :primary_key => :id)
-      associate(:many_to_one, :pact_version_content, :key => :pact_version_content_id, :primary_key => :id)
+      associate(:many_to_one, :pact_version_content, :key => :pact_version_content_sha, :primary_key => :sha)
 
       DatabaseModel.plugin :timestamps, :update_on_create=>true
 

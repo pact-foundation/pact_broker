@@ -11,7 +11,7 @@ module PactBroker
         let(:version) { Repositories::VersionRepository.new.create number: '1.2.3', pacticipant_id: consumer.id }
         let(:json_content) { {some: 'json'}.to_json }
 
-        subject { Repository.new.create version_id: version.id, provider_id: provider.id, json_content: json_content}
+        subject { Repository.new.create version_id: version.id, provider_id: provider.id, json_content: json_content }
 
         it "saves the pact" do
           expect{subject}.to change{ DatabaseModel.count }.by(1)
@@ -30,12 +30,44 @@ module PactBroker
           expect(subject.created_at).to be_instance_of(DateTime)
           expect(subject.updated_at).to be_instance_of(DateTime)
         end
+
+        context "when a pact already exists with the same content" do
+          let(:another_version) { Repositories::VersionRepository.new.create number: '2.0.0', pacticipant_id: consumer.id }
+
+          before do
+            Repository.new.create version_id: version.id, provider_id: provider.id, json_content: json_content
+          end
+
+          subject do
+            Repository.new.create version_id: another_version.id, provider_id: provider.id, json_content: json_content
+          end
+
+          it "reuses the same PactVersionContent to save room" do
+            expect { subject }.to change{ PactVersionContent.count }.by(0)
+          end
+        end
+
+        context "when a pact already exists with different content" do
+          let(:another_version) { Repositories::VersionRepository.new.create number: '2.0.0', pacticipant_id: consumer.id }
+
+          before do
+            Repository.new.create version_id: version.id, provider_id: provider.id, json_content: {some_other: 'json_content'}.to_json
+          end
+
+          subject do
+            Repository.new.create version_id: another_version.id, provider_id: provider.id, json_content: json_content
+          end
+
+          it "creates a new PactVersionContent" do
+            expect { subject }.to change{ PactVersionContent.count }.by(1)
+          end
+        end
       end
 
       describe "update" do
 
         let(:existing_pact) do
-          ProviderStateBuilder.new.create_pact_with_hierarchy "A Consumer", "1.2.3", "A Provider"
+          ProviderStateBuilder.new.create_pact_with_hierarchy "A Consumer", "1.2.3", "A Provider", original_json_content
         end
 
         before do
@@ -53,11 +85,13 @@ module PactBroker
         let(:created_at) { DateTime.new(2014, 3, 2) }
         let(:updated_at) { DateTime.new(2014, 3, 4) }
 
-        let(:json_content) { {some: 'json'}.to_json }
+        let(:original_json_content) { {some: 'json'}.to_json }
+        let(:json_content) { {some_other: 'json'}.to_json }
 
-        subject { Repository.new.update existing_pact.id, json_content: json_content }
 
         context "when the attributes have changed" do
+
+          subject { Repository.new.update existing_pact.id, json_content: json_content }
 
           it "updates the existing content" do
             expect(subject.json_content).to eq json_content
@@ -73,16 +107,16 @@ module PactBroker
 
         end
 
-        context "when the attributes have not changed" do
-          before do
+        context "when the content has not changed" do
 
-            ::DB::PACT_BROKER_DB[:pact_version_contents]
-              .update(
-                content: json_content)
+          subject { Repository.new.update existing_pact.id, json_content: original_json_content }
+
+          it "the json_content is the same" do
+            expect(subject.json_content).to eq original_json_content
           end
 
-          it "does not update the updated_at timestamp" do
-            expect(subject.updated_at).to eq updated_at
+          it "updates the updated_at timestamp for some reason" do
+            expect(subject.updated_at).to_not eq updated_at
           end
 
           it "does not update the created_at timestamp" do

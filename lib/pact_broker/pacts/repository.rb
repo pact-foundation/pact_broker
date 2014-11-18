@@ -1,6 +1,7 @@
+require 'digest/sha1'
 require 'sequel'
-require 'pact_broker/logging'
 require 'ostruct'
+require 'pact_broker/logging'
 require 'pact_broker/pacts/database_model'
 require 'pact_broker/pacts/all_pacts'
 require 'pact_broker/pacts/latest_pacts'
@@ -12,18 +13,17 @@ module PactBroker
       include PactBroker::Logging
 
       def create params
-        pact_version_content = PactVersionContent.new(content: params[:json_content]).save
         DatabaseModel.new(
           version_id: params[:version_id],
           provider_id: params[:provider_id],
-          pact_version_content: pact_version_content,
+          pact_version_content: find_or_create_pact_version_content(params[:json_content]),
         ).save.to_domain
       end
 
       def update id, params
         DatabaseModel.find(id: id).tap do | pact |
-          pact.pact_version_content.update(content: params[:json_content])
-          pact.update(updated_at: pact.pact_version_content.updated_at)
+          pact_version_content = find_or_create_pact_version_content(params[:json_content])
+          pact.update(pact_version_content: pact_version_content)
         end.to_domain
       end
 
@@ -74,6 +74,17 @@ module PactBroker
       end
 
       private
+
+      def find_or_create_pact_version_content json_content
+        sha = Digest::SHA1.hexdigest(json_content)
+        pact_version_content = PactVersionContent.find(sha: sha)
+        unless pact_version_content
+          pact_version_content = PactVersionContent.new(content: json_content)
+          pact_version_content[:sha] = sha
+          pact_version_content.save
+        end
+        pact_version_content
+      end
 
       def to_domain
         database_model = yield
