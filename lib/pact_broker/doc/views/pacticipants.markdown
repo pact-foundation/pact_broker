@@ -7,4 +7,6 @@ Participants are created automatically when a pact is published to the pact brok
 
 
 ### Deleting pacticipants
-Deleting a pacticipant will delete all associated pacts, versions, tags and webhooks. To delete a pacticipant, send a DELETE request to the relevant pacticipant URL via the HAL browser.
+Deleting a pacticipant will delete all associated pacts, versions, tags and webhooks. To delete a pacticipant, send a DELETE request to the relevant pacticipant URL via the HAL browser or any other HTTP client.
+
+    $ curl -X DELETE http://pact-broker/pacticipants/My%20Consumer
