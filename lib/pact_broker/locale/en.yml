@@ -11,6 +11,7 @@ en:
         consumer_version_number_header_invalid: "X-Pact-Consumer-Version '%{consumer_version_number}' is not recognised as a standard semantic version. eg. 1.3.0 or 2.0.4.rc1"
         consumer_version_number_invalid: "Consumer version number '%{consumer_version_number}' is not recognised as a standard semantic version. eg. 1.3.0 or 2.0.4.rc1"
         pacticipant_name_mismatch: "in pact ('%{name_in_pact}') does not match %{pacticipant} name in path ('%{name}')."
+        connection_encoding_not_utf8: "The Sequel connection encoding (%{encoding}) is strongly recommended to be \"utf8\". If you need to set it to %{encoding} for some particular reason, then disable this check by setting config.validate_database_connection_config = false"
       duplicate_pacticipant: |
         This is the first time a pact has been published for "%{new_name}".
         The name "%{new_name}" is very similar to the following existing consumers/providers:
