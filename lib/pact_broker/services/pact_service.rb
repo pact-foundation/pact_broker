@@ -22,6 +22,10 @@ module PactBroker
         pact_repository.find_pact(params[:consumer_name], params[:consumer_version_number], params[:provider_name])
       end
 
+      def delete params
+        pact_repository.delete(params)
+      end
+
       def create_or_update_pact params
         provider = pacticipant_repository.find_by_name_or_create params[:provider_name]
         consumer = pacticipant_repository.find_by_name_or_create params[:consumer_name]

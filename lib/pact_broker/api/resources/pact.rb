@@ -24,7 +24,7 @@ module PactBroker
         end
 
         def allowed_methods
-          ["GET", "PUT"]
+          ["GET", "PUT", "DELETE"]
         end
 
         def malformed_request?
@@ -51,6 +51,13 @@ module PactBroker
         def to_json
           PactBroker::Api::Decorators::PactDecorator.new(pact).to_json(base_url: base_url)
         end
+
+        def delete_resource
+          pact_service.delete(pact_params)
+          true
+        end
+
+        private
 
         def pact
           @pact ||= pact_service.find_pact(pact_params)

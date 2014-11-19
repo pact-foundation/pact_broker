@@ -78,7 +78,40 @@ module PactBroker::Api
 
       end
 
+      describe "DELETE" do
+
+        subject { delete "/pacts/provider/Provider/consumer/Consumer/version/1.2", json, {'CONTENT_TYPE' => "application/json"} ; last_response }
+
+        let(:pact) { double('pact') }
+        let(:pact_service) { PactBroker::Services::PactService }
+        let(:response) { subject; last_response }
+
+        before do
+          allow(pact_service).to receive(:find_pact).and_return(pact)
+          allow(pact_service).to receive(:delete)
+        end
+
+        context "when the pact exists" do
+
+          it "deletes the pact using the pact service" do
+            expect(pact_service).to receive(:delete).with(instance_of(PactBroker::Pacts::PactParams))
+            subject
+          end
+
+          it "returns a 204" do
+            expect(subject.status).to eq 204
+          end
+        end
+
+        context "when the pact does not exist" do
+          let(:pact) { nil }
+
+          it "returns a 404" do
+            expect(subject.status).to eq 404
+          end
+
+        end
+      end
     end
   end
-
 end

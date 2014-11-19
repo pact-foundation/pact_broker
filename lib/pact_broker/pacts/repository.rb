@@ -27,6 +27,15 @@ module PactBroker
         end.to_domain
       end
 
+      def delete params
+        id = AllPacts
+          .consumer(params.consumer_name)
+          .provider(params.provider_name)
+          .consumer_version_number(params.consumer_version_number)
+          .limit(1).first.id
+        DatabaseModel.where(id: id).delete
+      end
+
       def find_all_pacts_between consumer_name, options
         AllPacts
           .eager(:tags)

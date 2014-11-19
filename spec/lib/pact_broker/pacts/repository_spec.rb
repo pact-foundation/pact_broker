@@ -1,9 +1,13 @@
 require 'pact_broker/pacts/repository'
 require 'spec/support/provider_state_builder'
+require 'pact_broker/pacts/pact_params'
 
 module PactBroker
   module Pacts
     describe Repository do
+
+      let(:consumer_name) { 'Consumer' }
+      let(:provider_name) { 'Provider' }
 
       describe "create" do
         let(:consumer) { Repositories::PacticipantRepository.new.create name: 'Consumer' }
@@ -125,9 +129,34 @@ module PactBroker
         end
       end
 
+      describe "delete" do
+        before do
+          ProviderStateBuilder.new
+            .create_consumer(consumer_name)
+            .create_consumer_version("1.2.3")
+            .create_provider(provider_name)
+            .create_pact
+            .create_consumer_version("2.3.4")
+            .create_pact
+            .create_provider("Another Provider")
+            .create_pact
+        end
+
+        let(:pact_params) { PactBroker::Pacts::PactParams.new(consumer_name: consumer_name, provider_name: provider_name, consumer_version_number: '1.2.3') }
+
+        subject { Repository.new.delete pact_params }
+
+        it "deletes the Pact" do
+          expect { subject }.to change { DatabaseModel.count }.by(-1)
+        end
+
+        it "does not delete the content because it may be used by another pact" do
+          expect { subject }.to change { PactVersionContent.count }.by(0)
+        end
+
+      end
+
       describe "#find_all_pacts_between" do
-        let(:consumer_name) { 'Consumer' }
-        let(:provider_name) { 'Provider' }
 
         before do
           ProviderStateBuilder.new
