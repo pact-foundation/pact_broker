@@ -1,4 +1,4 @@
-describe "Publishing a pact" do
+xdescribe "Publishing a pact" do
 
   let(:request_body) { load_fixture('update_pacticipant.json') }
   let(:path) { "/pacticipants/Some%20Consumer" }
