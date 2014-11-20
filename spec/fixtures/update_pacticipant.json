@@ -1,0 +1,5 @@
+[
+  {"op": "replace", "path": "/repository/type", "value": "git" },
+  {"op": "replace", "path": "/repository/uri", "value": "git@github.com/foo/some-consumer" },
+  {"op": "replace", "path": "/repository/doc", "value": "https://github.com/foo/some-consumer" }
+]

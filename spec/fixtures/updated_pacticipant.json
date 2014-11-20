@@ -1,0 +1,11 @@
+{
+  "repository": {
+    "type": "git",
+    "uri" : "git@github.com/foo/some-consumer"
+  },
+  "_links": {
+    "doc" : {
+      "href": "https://github.com/foo/some-consumer"
+    }
+  }
+}
