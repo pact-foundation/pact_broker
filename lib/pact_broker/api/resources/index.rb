@@ -18,7 +18,7 @@ module PactBroker
         def to_json
           {
             _links: {
-              'pb:self' =>
+              'self' =>
               {
                 href: base_url,
                 title: 'The Pact Broker index page',
