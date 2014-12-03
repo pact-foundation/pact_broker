@@ -2,6 +2,17 @@ Do this to generate your change history
 
     $ git log --pretty=format:'  * %h - %s (%an, %ad)'
 
+#### 1.3.2.rc1 (2014-12-03)
+
+* a2413f4 - Stop Padrino trying to create a log file in the gem directory https://github.com/bethesque/pact_broker/issues/13 (Beth, Wed Dec 3 13:16:06 2014 +1100)
+* abf9459 - Added DELETE endpoint for pact resource (Beth, Wed Nov 19 17:45:34 2014 +1100)
+* 1d01937 - Set default encoding to utf-8 in example app. This is required for the sha foreign key to work between the pact table and the pact_version_content table. (Beth, Tue Nov 18 22:35:51 2014 +1100)
+* 9e3401e - Save all the space! Reuse the same pact_version_content when one with the same sha1 already exists in the database. (Beth, Tue Nov 18 20:27:59 2014 +1100)
+* 84ab8ad - Creating example pact_broker_database.sqlite3 with the Zoo App/Animal Service pact (Beth, Tue Nov 18 17:30:25 2014 +1100)
+* d767b0d - Fixed query for all pacts when pact has more than one tag (Beth, Mon Nov 17 20:44:01 2014 +1100)
+* 21563c6 - Changed date to use day name and month name instead of numbers (Beth, Wed Nov 12 16:19:19 2014 +1100)
+* 7766b77 - Added count to relationships page. (Beth, Mon Nov 3 11:06:05 2014 +1100)
+
 #### 1.3.1 (2014-10-23)
 
 * e61b40e - Added Travis configuration. (Beth, Fri Oct 17 16:32:26 2014 +1100)
