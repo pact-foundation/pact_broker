@@ -10,5 +10,5 @@ unless defined? PADRINO_LOGGER
   }
 end
 
-require 'pact_broker/ui/controllers/relationships'
-require 'pact_broker/ui/controllers/groups'
+require 'pact_broker/ui/app'
+

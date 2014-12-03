@@ -54,7 +54,7 @@ module PactBroker
       end
 
       logger.info "Mounting UI"
-      require 'pact_broker/ui/app'
+      require 'pact_broker/ui'
 
       logger.info "Mounting PactBroker::API"
       require 'pact_broker/api'

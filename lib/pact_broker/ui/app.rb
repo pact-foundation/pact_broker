@@ -1,4 +1,5 @@
-require 'pact_broker/ui'
+require 'pact_broker/ui/controllers/relationships'
+require 'pact_broker/ui/controllers/groups'
 require 'pact_broker/doc/controllers/app'
 
 module PactBroker
