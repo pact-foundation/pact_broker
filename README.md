@@ -17,18 +17,22 @@ Features:
 * Enables a pact version to be tagged (ie. "prod") so a provider can verify itself against a fixed version of a pact to ensure backwards compatibility.
 * Webhooks to trigger a provider build when a consumer publishes a change to a pact.
 
-See the [Pact Broker Client](https://github.com/bethesque/pact_broker-client) for documentation on how to publish a pact to the Pact Broker, and configure the URLs in the provider project.
-
 ### How would I use the Pact Broker?
 
 #### Step 1. Consumer CI build
 1. The consumer project runs its tests using the [Pact][pact] library to provide a mock service.
 2. While the tests run, the mock service writes the requests and the expected responses to a "pact" file - this is the consumer contract.
-3. The generated pact is then published to the Pact Broker
+3. The generated pact is then published to the Pact Broker. This is simply a PUT to a resource that specifies the consumer name and version, and the provider name. eg `http://my-pact-broker/pacts/provider/Animal%20Service/consumer/Zoo%20App/version/1.0.0`
 
 #### Step 2. Provider CI build
-1. The provider has a verification task that is configured with the URL of the latest pact between itself and the consumer.
+1. The provider has a verification task that is configured with the URL of the latest pact between itself and the consumer. eg `http://my-pact-broker/pacts/provider/Animal%20Service/consumer/Zoo%20App/latest`
 2. The provider build runs the pact verification task, which retrieves the pact from the Pact Broker, replayes each request against the provider, and checks that the responses match the expected responses.
+
+## Documentation
+
+See the [Pact Broker Client](https://github.com/bethesque/pact_broker-client) for documentation on how to publish a pact to the Pact Broker, and configure the URLs in the provider project.
+
+See the [wiki](https://github.com/bethesque/pact_broker/wiki) for documentation related to the Pact Broker itself.
 
 ### Screenshots
 
@@ -40,10 +44,6 @@ See the [Pact Broker Client](https://github.com/bethesque/pact_broker-client) fo
 
 #### Network diagram
 <img src="https://raw.githubusercontent.com/wiki/bethesque/pact_broker/images/network_diagram.png"/>
-
-## Documentation
-
-See the [wiki](https://github.com/bethesque/pact_broker/wiki) for documentation.
 
 ## Usage
 
