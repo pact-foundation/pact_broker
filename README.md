@@ -52,6 +52,19 @@ Paste the pact URL into a browser to view a HTML version of the pact.
 #### Network diagram
 <img src="https://raw.githubusercontent.com/wiki/bethesque/pact_broker/images/network_diagram.png"/>
 
+#### HAL browser
+
+Use the embedded HAL browser to nagivate the API.
+
+<img src="https://raw.githubusercontent.com/wiki/bethesque/pact_broker/images/hal_browser.png"/>
+
+#### HAL documentation
+
+Use the HAL browser to view documentation as you browse.
+
+<img src="https://raw.githubusercontent.com/wiki/bethesque/pact_broker/images/hal_documentation.png"/>
+
+
 ## Usage
 
 ### To have a play around on your local machine
