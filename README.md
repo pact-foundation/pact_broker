@@ -1,6 +1,6 @@
 # Pact Broker
 
-The Pact Broker provides a repository for consumer driven contracts created using the pact gem. It 
+The Pact Broker provides a repository for consumer driven contracts created using the pact gem. It: 
 
 * solves the problem of how to share pacts between consumer and provider projects
 * allows you to [decouple your service release cycyles][decouple]
