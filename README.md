@@ -7,8 +7,6 @@ The Pact Broker provides a repository for consumer driven contracts created usin
 * provides documentation that is guaranteed to be up-to date
 * allows you to visualise the relationships between your services
 
-Travis CI Status: [![Build Status](https://travis-ci.org/bethesque/pact_broker.svg?branch=master)](https://travis-ci.org/bethesque/pact_broker)
-
 Features:
 
 * A RESTful API for publishing and retrieving pacts.
