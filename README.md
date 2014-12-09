@@ -28,6 +28,9 @@ Features:
 #### Step 2. Provider CI build
 1. The provider has a verification task that is configured with the URL to retrieve the dynamically calculated latest pact between itself and the consumer. eg `http://my-pact-broker/pacts/provider/Animal%20Service/consumer/Zoo%20App/latest`. The "latest" version is determined by the Pact Broker by inspecting the consumer version number specified when each pact was published.
 2. The provider build runs the pact verification task, which retrieves the pact from the Pact Broker, replayes each request against the provider, and checks that the responses match the expected responses.
+3. If the pact verification fails, the build fails. The [Pact Broker CI Nerf Gun][nerf] magically determines who caused the verification to fail, and shoots them.
+
+If you don't have a [Pact Broker CI Nerf Gun][nerf], you'll probably want to read about using pact when the consumer and provider are being written by [different teams][different-teams].
 
 ## Documentation
 
@@ -76,3 +79,5 @@ Paste the pact URL into a browser to view a HTML version of the pact.
 
 [decouple]: http://techblog.realestate.com.au/enter-the-pact-matrix-or-how-to-decouple-the-release-cycles-of-your-microservices/
 [pact]: https://github.com/realestate-com-au/pact
+[nerf]: https://github.com/bethesque/pact_broker/wiki/pact-broker-ci-nerf-gun
+[different-teams]: https://github.com/realestate-com-au/pact/wiki/Using-pact-where-the-consumer-team-is-different-from-the-provider-team
