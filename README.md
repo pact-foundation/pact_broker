@@ -60,3 +60,4 @@ See the [wiki](https://github.com/bethesque/pact_broker/wiki) for documentation.
 For production usage, use a web application server like [Phusion Passenger](https://www.phusionpassenger.com) to serve the Pact Broker application.
 
 [decouple]: http://techblog.realestate.com.au/enter-the-pact-matrix-or-how-to-decouple-the-release-cycles-of-your-microservices/
+[pact]: https://github.com/realestate-com-au/pact
