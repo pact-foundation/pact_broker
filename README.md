@@ -19,6 +19,8 @@ Features:
 * Enables a pact version to be tagged (ie. "prod") so a provider can verify itself against a fixed version of a pact to ensure backwards compatibility.
 * Webhooks to trigger a provider build when a consumer publishes a change to a pact.
 
+Travis CI Status: [![Build Status](https://travis-ci.org/bethesque/pact_broker.svg?branch=master)](https://travis-ci.org/bethesque/pact_broker)
+
 ### How would I use the Pact Broker?
 
 #### Step 1. Consumer CI build
