@@ -1,5 +1,5 @@
 require_relative 'base_decorator'
-require_relative 'version_decorator'
+require_relative 'embedded_version_decorator'
 require 'pact_broker/api/decorators/timestamps'
 
 module PactBroker
@@ -13,7 +13,7 @@ module PactBroker
         property :name
         property :repository_url, as: :repositoryUrl
 
-        property :latest_version, as: :'latest-version', :class => PactBroker::Domain::Version, :extend => PactBroker::Api::Decorators::VersionRepresenter, :embedded => true, writeable: false
+        property :latest_version, as: :'latest-version', :class => PactBroker::Domain::Version, :extend => PactBroker::Api::Decorators::EmbeddedVersionDecorator, :embedded => true, writeable: false
 
         include Timestamps
 

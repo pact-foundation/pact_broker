@@ -1,5 +1,5 @@
 require 'pact_broker/api/pact_broker_urls'
-require_relative 'version_decorator'
+require_relative 'embedded_version_decorator'
 require_relative 'base_decorator'
 
 
@@ -13,7 +13,7 @@ module PactBroker
 
         property :name
         property :repository_url
-        property :version, :class => "PactBroker::Domain::Version", :extend => PactBroker::Api::Decorators::VersionRepresenter, :embedded => true
+        property :version, :class => "PactBroker::Domain::Version", :extend => PactBroker::Api::Decorators::EmbeddedVersionDecorator, :embedded => true
 
         link :self do | options |
           pacticipant_url(options[:base_url], represented)

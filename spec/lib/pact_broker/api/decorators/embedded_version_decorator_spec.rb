@@ -1,10 +1,10 @@
 require 'spec_helper'
-require 'pact_broker/api/decorators/version_decorator'
+require 'pact_broker/api/decorators/embedded_version_decorator'
 
 module PactBroker
   module Api
     module Decorators
-      describe VersionRepresenter do
+      describe EmbeddedVersionDecorator do
 
         let(:version) do
           ProviderStateBuilder.new
@@ -15,14 +15,22 @@ module PactBroker
 
         let(:options) { {base_url: 'http://example.org' }}
 
-        subject { JSON.parse VersionRepresenter.new(version).to_json(options), symbolize_names: true }
+        subject { JSON.parse EmbeddedVersionDecorator.new(version).to_json(options), symbolize_names: true }
 
         it "includes a link to itself" do
           expect(subject[:_links][:self][:href]).to eq "http://example.org/pacticipants/Consumer/versions/1.2.3"
         end
 
-        it "includes the version number" do
+        xit "includes the version number in the link" do
           expect(subject[:_links][:self][:name]).to eq "1.2.3"
+        end
+
+        xit "includes its title in the link" do
+          expect(subject[:_links][:self][:title]).to eq "Version"
+        end
+
+        it "includes the version number" do
+          expect(subject[:number]).to eq "1.2.3"
         end
 
       end

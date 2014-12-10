@@ -1,5 +1,5 @@
 require 'pact_broker/services'
-require 'pact_broker/api/decorators/version_decorator'
+require 'pact_broker/api/decorators/embedded_version_decorator'
 
 module PactBroker
   module Api
@@ -20,7 +20,7 @@ module PactBroker
         end
 
         def to_json
-          Decorators::VersionRepresenter.new(version).to_json(base_url: base_url)
+          Decorators::EmbeddedVersionDecorator.new(version).to_json(base_url: base_url)
         end
 
         private

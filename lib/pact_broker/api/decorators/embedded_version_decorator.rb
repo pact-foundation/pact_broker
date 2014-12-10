@@ -3,7 +3,7 @@ require_relative 'base_decorator'
 module PactBroker
   module Api
     module Decorators
-      class VersionRepresenter < BaseDecorator
+      class EmbeddedVersionDecorator < BaseDecorator
 
         property :number
 
