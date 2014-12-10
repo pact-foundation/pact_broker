@@ -21,19 +21,19 @@ module PactBroker
               'self' =>
               {
                 href: base_url,
-                title: 'The Pact Broker index page',
+                title: 'Index',
                 templated: false
               },
               'pb:latest-pacts' =>
               {
                 href: base_url + '/pacts/latest',
-                title: 'Retrieve latest pacts',
+                title: 'Latest pacts',
                 templated: false
               },
               'pb:pacticipants' =>
               {
                 href: base_url + '/pacticipants',
-                title: 'Retrieve pacticipants',
+                title: 'Pacticipants',
                 templated: false
               },
               'pb:webhooks' =>
