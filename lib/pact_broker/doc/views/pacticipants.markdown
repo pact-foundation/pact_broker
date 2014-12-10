@@ -1,5 +1,7 @@
 # Pacticipants
 
+Allowed methods: GET, PATCH, DELETE
+
 "Pacticipant" - a party that participates in a pact (ie. a Consumer or a Provider).
 
 ### Creating pacticipants

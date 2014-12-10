@@ -16,7 +16,21 @@ module PactBroker
           ::JSON.parse(represented.json_content, PACT_PARSING_OPTIONS).merge super
         end
 
-        link :'latest-pact' do | options |
+        link :'pb:tag-prod-version' do | options |
+          {
+            title: "Tag version as production",
+            href: tags_url(options.fetch(:base_url), represented.consumer_version) + "/prod"
+          }
+        end
+
+        link :'pb:tag-version' do | options |
+          {
+            title: "Tag version",
+            href: tags_url(options.fetch(:base_url), represented.consumer_version) + "/{tag}"
+          }
+        end
+
+        link :'pb:latest-pact' do | options |
           {
             title: "Latest version of the pact between #{represented.consumer.name} and #{represented.provider.name}",
             href: latest_pact_url(options.fetch(:base_url), represented)
@@ -24,18 +38,26 @@ module PactBroker
           }
         end
 
-        link :'pact-versions' do | options |
+        link :'pb:pact-versions' do | options |
           {
             title: "All versions of the pact between #{represented.consumer.name} and #{represented.provider.name}",
             href: pact_versions_url(represented.consumer.name, represented.provider.name, options.fetch(:base_url))
           }
         end
 
-        link :'pact-webhooks' do | options |
+        link :'pb:pact-webhooks' do | options |
           {
             title: "Webhooks for the pact between #{represented.consumer.name} and #{represented.provider.name}",
             href: webhooks_for_pact_url(represented.consumer, represented.provider, options.fetch(:base_url))
           }
+        end
+
+        curies do | options |
+          [{
+            name: :pb,
+            href: options[:base_url] + '/doc/{rel}',
+            templated: true
+          }]
         end
 
       end

@@ -13,7 +13,27 @@ module PactBroker
         include Timestamps
 
         link :self do | options |
-          tag_url(options[:base_url], represented)
+          {
+            title: 'Tag',
+            name: represented.name,
+            href: tag_url(options[:base_url], represented)
+          }
+        end
+
+        link :version do | options |
+          {
+            title: 'Version',
+            name: represented.version.number,
+            href: version_url(options.fetch(:base_url), represented.version)
+          }
+        end
+
+        link :pacticipant do | options |
+          {
+            title: 'Pacticipant',
+            name: represented.version.pacticipant.name,
+            href: pacticipant_url(options.fetch(:base_url), represented.version.pacticipant)
+          }
         end
 
       end

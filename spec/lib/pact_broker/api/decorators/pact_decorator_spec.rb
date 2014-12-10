@@ -24,7 +24,7 @@ module PactBroker
         let(:pact) { double('pact', json_content: json_content, created_at: created_at, updated_at: updated_at, consumer: consumer, provider: provider, consumer_version: consumer_version)}
         let(:consumer) { instance_double(PactBroker::Domain::Pacticipant, name: 'Consumer')}
         let(:provider) { instance_double(PactBroker::Domain::Pacticipant, name: 'Provider')}
-        let(:consumer_version) { instance_double(PactBroker::Domain::Version, number: '1234')}
+        let(:consumer_version) { instance_double(PactBroker::Domain::Version, number: '1234', pacticipant: consumer)}
 
         subject { JSON.parse PactDecorator.new(pact).to_json(base_url: base_url), symbolize_names: true}
 
@@ -38,18 +38,26 @@ module PactBroker
             expect(subject[:createdAt]).to eq created_at.xmlschema
           end
 
+          it "includes a link to tag this version" do
+            expect(subject[:_links][:'pb:tag-version'][:href]).to eq "http://example.org/pacticipants/Consumer/versions/1234/tags/{tag}"
+          end
+
           it "includes a link to the webhooks for this pact" do
-            expect(subject[:_links][:'pact-webhooks'][:href]).to eq "http://example.org/webhooks/provider/Provider/consumer/Consumer"
+            expect(subject[:_links][:'pb:pact-webhooks'][:href]).to eq "http://example.org/webhooks/provider/Provider/consumer/Consumer"
           end
 
           it "includes a link to the latest pact" do
-            expect(subject[:_links][:'latest-pact'][:title]).to eq "Latest version of the pact between Consumer and Provider"
-            expect(subject[:_links][:'latest-pact'][:href]).to eq "http://example.org/pacts/provider/Provider/consumer/Consumer/latest"
+            expect(subject[:_links][:'pb:latest-pact'][:title]).to eq "Latest version of the pact between Consumer and Provider"
+            expect(subject[:_links][:'pb:latest-pact'][:href]).to eq "http://example.org/pacts/provider/Provider/consumer/Consumer/latest"
           end
 
           it "includes a link to the pact versions" do
-            expect(subject[:_links][:'pact-versions'][:title]).to eq "All versions of the pact between Consumer and Provider"
-            expect(subject[:_links][:'pact-versions'][:href]).to eq "http://example.org/pacts/provider/Provider/consumer/Consumer/versions"
+            expect(subject[:_links][:'pb:pact-versions'][:title]).to eq "All versions of the pact between Consumer and Provider"
+            expect(subject[:_links][:'pb:pact-versions'][:href]).to eq "http://example.org/pacts/provider/Provider/consumer/Consumer/versions"
+          end
+
+          it "includes a curie" do
+            expect(subject[:_links][:curies]).to eq [{ name: "pb", href: "http://example.org/doc/{rel}", templated: true }]
           end
         end
 

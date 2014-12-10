@@ -1,5 +1,7 @@
 # Webhooks
 
+Allowed methods: GET, POST, DELETE
+
 ### Creating
 
 1. To create a webhook, in the HAL Browser, navigate to the pact you want to create the webhook for
