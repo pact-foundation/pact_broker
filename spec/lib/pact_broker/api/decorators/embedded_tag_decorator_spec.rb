@@ -1,6 +1,5 @@
-require 'pact_broker/api/decorators/tag_decorator'
+require 'pact_broker/api/decorators/embedded_tag_decorator'
 require 'pact_broker/repositories/tag_repository'
-
 require 'support/provider_state_builder'
 
 module PactBroker
@@ -9,7 +8,7 @@ module PactBroker
 
     module Decorators
 
-      describe TagDecorator do
+      describe EmbeddedTagDecorator do
 
         let(:tag) do
           ProviderStateBuilder.new
@@ -33,22 +32,6 @@ module PactBroker
 
         it "includes the tag name" do
           expect(subject[:_links][:self][:name]).to eq "prod"
-        end
-
-        it "includes a link to the version" do
-          expect(subject[:_links][:version][:href]).to eq "http://example.org/pacticipants/Consumer/versions/1.2.3"
-        end
-
-        it "includes the version number" do
-          expect(subject[:_links][:version][:name]).to eq "1.2.3"
-        end
-
-        it "includes a link to the pacticipant" do
-          expect(subject[:_links][:pacticipant][:href]).to eq "http://example.org/pacticipants/Consumer"
-        end
-
-        it "includes the pacticipant name" do
-          expect(subject[:_links][:pacticipant][:name]).to eq "Consumer"
         end
 
       end

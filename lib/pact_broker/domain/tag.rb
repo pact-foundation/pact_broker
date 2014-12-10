@@ -9,7 +9,6 @@ module PactBroker
 
       associate(:many_to_one, :version, :class => "PactBroker::Domain::Version", :key => :version_id, :primary_key => :id)
 
-
     end
 
     Tag.plugin :timestamps, :update_on_create=>true

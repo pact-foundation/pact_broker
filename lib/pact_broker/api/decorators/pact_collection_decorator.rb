@@ -29,7 +29,13 @@ module PactBroker
 
         # This is the LATEST pact URL
         links :pacts do | options |
-          represented.collect{ | pact | {:href => latest_pact_url(options[:base_url], pact), :title => "Latest pact between #{pact.consumer.name} and #{pact.provider.name}" } }
+          represented.collect do | pact |
+            {
+              :href => latest_pact_url(options[:base_url], pact),
+              :name => "Latest pact between #{pact.consumer.name} and #{pact.provider.name}",
+              :title => "Pact"
+            }
+          end
         end
 
       end

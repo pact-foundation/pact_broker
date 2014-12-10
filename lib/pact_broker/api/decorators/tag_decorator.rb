@@ -10,7 +10,10 @@ module PactBroker
 
       class TagDecorator < BaseDecorator
 
+        property :name
+
         include Timestamps
+
 
         link :self do | options |
           {

@@ -69,7 +69,7 @@ module PactBroker
       end
 
       def webhooks_for_pact_url consumer, provider, base_url
-        "#{base_url}/webhooks/provider/#{provider.name}/consumer/#{consumer.name}"
+        "#{base_url}/webhooks/provider/#{url_encode(provider.name)}/consumer/#{url_encode(consumer.name)}"
       end
 
       def hal_browser_url target_url

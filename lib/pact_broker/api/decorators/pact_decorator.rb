@@ -16,6 +16,22 @@ module PactBroker
           ::JSON.parse(represented.json_content, PACT_PARSING_OPTIONS).merge super
         end
 
+        link :'pb:consumer' do | options |
+          {
+            title: "Consumer",
+            name: represented.consumer.name,
+            href: pacticipant_url(options.fetch(:base_url), represented.consumer)
+          }
+        end
+
+        link :'pb:provider' do | options |
+          {
+            title: "Provider",
+            name: represented.provider.name,
+            href: pacticipant_url(options.fetch(:base_url), represented.provider)
+          }
+        end
+
         link :'pb:tag-prod-version' do | options |
           {
             title: "Tag version as production",

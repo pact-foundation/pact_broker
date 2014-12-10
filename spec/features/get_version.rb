@@ -6,9 +6,11 @@ describe "Get version" do
 
     before do
       ProviderStateBuilder.new
+        .create_consumer("Another Consumer")
         .create_consumer("Consumer")
-        .create_version("1.2.3")
-        .create_version("1.2.4")
+        .create_consumer_version("1.2.3")
+        .create_consumer_version_tag("prod")
+        .create_consumer_version("1.2.4")
     end
 
     let(:path) { "/pacticipants/Consumer/versions/1.2.3" }
@@ -22,6 +24,10 @@ describe "Get version" do
 
     it "returns the JSON representation of the version" do
       expect(last_response_body).to include number: '1.2.3'
+    end
+
+    xit "includes the tags" do
+      expect(last_response_body[:_embedded][:tags].first[:name]).to eq "prod"
     end
 
   end
