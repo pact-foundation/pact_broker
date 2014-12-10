@@ -8,7 +8,11 @@ module PactBroker
         property :number
 
         link :self do | options |
-          version_url(options[:base_url], represented)
+          {
+            title: 'Version',
+            name: represented.number,
+            href: version_url(options.fetch(:base_url), represented)
+          }
         end
       end
     end

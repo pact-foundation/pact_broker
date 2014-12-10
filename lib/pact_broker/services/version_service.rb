@@ -7,8 +7,8 @@ module PactBroker
 
       extend PactBroker::Repositories
 
-      def self.find_latest_version name
-
+      def self.find_by_pacticipant_name_and_number params
+        version_repository.find_by_pacticipant_name_and_number params.fetch(:pacticipant_name), params.fetch(:pacticipant_version_number)
       end
     end
   end
