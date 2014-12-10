@@ -10,8 +10,6 @@ module PactBroker
 
       class EmbeddedTagDecorator < BaseDecorator
 
-        include Timestamps
-
         property :name
 
         link :self do | options |

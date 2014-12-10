@@ -11,6 +11,7 @@ module PactBroker
 
       def find_by_pacticipant_name_and_number pacticipant_name, number
         PactBroker::Domain::Version
+          .select(:versions__id, :versions__number, :versions__pacticipant_id, :versions__order, :versions__created_at, :versions__updated_at)
           .where(number: number)
           .join(:pacticipants, {id: :pacticipant_id})
           .where(name: pacticipant_name)

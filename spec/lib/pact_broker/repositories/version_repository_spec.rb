@@ -31,13 +31,21 @@ module PactBroker
 
         context "when the version exists" do
           before do
-            ProviderStateBuilder.new.create_version_with_hierarchy "other_pacticipant", version_number
-            ProviderStateBuilder.new.create_version_with_hierarchy pacticipant_name, version_number
+            ProviderStateBuilder.new
+              .create_consumer("Another Consumer")
+              .create_consumer(pacticipant_name)
+              .create_consumer_version(version_number)
+              .create_consumer_version_tag("prod")
+              .create_consumer_version("1.2.4")
+              .create_consumer("Yet Another Consumer")
+              .create_consumer_version(version_number)
           end
 
           it "returns the version" do
+            expect(subject.id).to eq 1
             expect(subject.number).to eq version_number
             expect(subject.pacticipant.name).to eq pacticipant_name
+            expect(subject.tags.first.name).to eq "prod"
             expect(subject.order).to eq 0
           end
         end

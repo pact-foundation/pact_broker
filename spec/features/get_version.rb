@@ -26,10 +26,6 @@ describe "Get version" do
       expect(last_response_body).to include number: '1.2.3'
     end
 
-    xit "includes the tags" do
-      expect(last_response_body[:_embedded][:tags].first[:name]).to eq "prod"
-    end
-
   end
 
   context "when the version does not exist" do
