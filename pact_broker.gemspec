@@ -22,7 +22,7 @@ Gem::Specification.new do |gem|
   #gem.add_runtime_dependency 'pact'
   gem.add_runtime_dependency 'httparty'
   gem.add_runtime_dependency 'json'
-  gem.add_runtime_dependency 'roar', '~> 0.12.9'
+  gem.add_runtime_dependency 'roar', '~> 1.0.0.beta2'
   gem.add_runtime_dependency 'reform', '~> 1.0'
   gem.add_runtime_dependency 'sequel', '~> 4.12'
   gem.add_runtime_dependency 'webmachine', '~> 1.2'
@@ -32,6 +32,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'pact', '~>1.3', '>=1.3.2'
   gem.add_runtime_dependency 'padrino', '~>0.12'
   gem.add_runtime_dependency 'haml'
+  gem.add_runtime_dependency 'trailblazer', '~>0.1.0'
 
   gem.add_development_dependency 'sqlite3'
   gem.add_development_dependency 'pry'

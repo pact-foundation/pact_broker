@@ -1,4 +1,4 @@
-require 'roar/representer/json'
+require 'roar/json'
 
 module PactBroker
 
@@ -8,7 +8,7 @@ module PactBroker
 
       module Timestamps
 
-        include Roar::Representer::JSON
+        include Roar::JSON
 
         property :optional_updated_at, as: :updatedAt, exec_context: :decorator, writeable: false
         property :createdAt, getter: lambda { |_|  created_at.xmlschema }, writeable: false

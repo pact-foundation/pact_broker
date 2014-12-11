@@ -10,7 +10,7 @@ module PactBroker
     module Decorators
 
       class PactCollectionDecorator < BaseDecorator
-        include Roar::Representer::JSON::HAL
+        include Roar::JSON::HAL
         include PactBroker::Api::PactBrokerUrls
 
         collection :pacts, exec_context: :decorator, :class => PactBroker::Domain::Pact, :extend => PactBroker::Api::Decorators::LatestPactDecorator
