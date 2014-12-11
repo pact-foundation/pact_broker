@@ -1,6 +1,6 @@
 describe "Publishing a pact" do
 
-  let(:pact_content) { load_fixture('consumer-provider.json') }
+  let(:pact_content) { load_fixture('a_consumer-a_provider.json') }
   let(:path) { "/pacts/provider/A%20Provider/consumer/A%20Consumer/version/1.2.3" }
   let(:response_body_json) { JSON.parse(subject.body) }
 

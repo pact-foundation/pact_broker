@@ -5,7 +5,7 @@ module PactBroker
   module Pacts
     describe PactParams do
 
-      let(:body) { load_fixture('consumer-provider.json') }
+      let(:body) { load_fixture('a_consumer-a_provider.json') }
       let(:consumer_version_number) { '1.2.3' }
       let(:headers) { { 'X-Pact-Consumer-Version' => consumer_version_number } }
 
