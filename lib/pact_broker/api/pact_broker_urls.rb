@@ -25,8 +25,7 @@ module PactBroker
       end
 
       def pact_url base_url, pact
-        representable_pact = representable_pact(pact)
-        "#{pactigration_base_url(base_url, representable_pact)}/version/#{representable_pact.consumer.version.number}"
+        "#{pactigration_base_url(base_url, pact)}/version/#{pact.consumer_version_number}"
       end
 
       def pact_url_from_params base_url, params
@@ -46,6 +45,10 @@ module PactBroker
 
       def pact_versions_url consumer_name, provider_name, base_url
         "#{base_url}/pacts/provider/#{url_encode(provider_name)}/consumer/#{url_encode(consumer_name)}/versions"
+      end
+
+      def previous_distinct_diff_url pact, base_url
+        pact_url(base_url, pact) + "/diff/previous-distinct"
       end
 
       def tags_url base_url, version

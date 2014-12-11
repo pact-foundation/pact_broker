@@ -16,6 +16,14 @@ module PactBroker
           ::JSON.parse(represented.json_content, PACT_PARSING_OPTIONS).merge super
         end
 
+        link :self do | options |
+          {
+            title: 'Pact',
+            name: represented.name,
+            href: pact_url(options.fetch(:base_url), represented)
+          }
+        end
+
         link :'pb:consumer' do | options |
           {
             title: "Consumer",
@@ -48,8 +56,18 @@ module PactBroker
 
         link :'pb:latest-pact' do | options |
           {
-            title: "Latest version of the pact between #{represented.consumer.name} and #{represented.provider.name}",
+            title: "Latest pact version",
+            name: represented.name,
             href: latest_pact_url(options.fetch(:base_url), represented)
+
+          }
+        end
+
+        link :'pb:diff-previous-distinct' do | options |
+          {
+            title: "Diff",
+            name: "Diff with previous distinct pact version",
+            href: previous_distinct_diff_url(represented, options.fetch(:base_url))
 
           }
         end

@@ -21,7 +21,16 @@ module PactBroker
         let(:base_url) { 'http://example.org' }
         let(:created_at) { Time.new(2014, 3, 4) }
         let(:updated_at) { Time.new(2014, 3, 5) }
-        let(:pact) { double('pact', json_content: json_content, created_at: created_at, updated_at: updated_at, consumer: consumer, provider: provider, consumer_version: consumer_version)}
+        let(:pact) { double('pact',
+          json_content: json_content,
+          created_at: created_at,
+          updated_at: updated_at,
+          consumer: consumer,
+          provider: provider,
+          consumer_version: consumer_version,
+          consumer_version_number: '1234',
+          name: 'A Pact'
+        )}
         let(:consumer) { instance_double(PactBroker::Domain::Pacticipant, name: 'A Consumer')}
         let(:provider) { instance_double(PactBroker::Domain::Pacticipant, name: 'A Provider')}
         let(:consumer_version) { instance_double(PactBroker::Domain::Version, number: '1234', pacticipant: consumer)}
@@ -36,6 +45,16 @@ module PactBroker
 
           it "includes the createdAt date" do
             expect(subject[:createdAt]).to eq created_at.xmlschema
+          end
+
+          it "includes a link to itself" do
+            expect(subject[:_links][:self]).to eq href: 'http://example.org/pacts/provider/A%20Provider/consumer/A%20Consumer/version/1234', name: 'A Pact', title: 'Pact'
+          end
+
+          it "includes a link to the diff with the previous distinct version" do
+            expect(subject[:_links][:'pb:diff-previous-distinct']).to eq({href: 'http://example.org/pacts/provider/A%20Provider/consumer/A%20Consumer/version/1234/diff/previous-distinct',
+              title: 'Diff',
+              name: 'Diff with previous distinct pact version'})
           end
 
           it "includes a link to tag this version" do
@@ -55,7 +74,8 @@ module PactBroker
           end
 
           it "includes a link to the latest pact" do
-            expect(subject[:_links][:'pb:latest-pact'][:title]).to eq "Latest version of the pact between A Consumer and A Provider"
+            expect(subject[:_links][:'pb:latest-pact'][:title]).to eq "Latest pact version"
+            expect(subject[:_links][:'pb:latest-pact'][:name]).to eq "A Pact"
             expect(subject[:_links][:'pb:latest-pact'][:href]).to eq "http://example.org/pacts/provider/A%20Provider/consumer/A%20Consumer/latest"
           end
 

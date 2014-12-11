@@ -21,7 +21,15 @@ module PactBroker
         let(:base_url) { 'http://example.org' }
         let(:created_at) { Time.new(2014, 3, 4) }
         let(:updated_at) { Time.new(2014, 3, 5) }
-        let(:pact) { double('pact', json_content: json_content, created_at: created_at, updated_at: updated_at, consumer: consumer, provider: provider, consumer_version: consumer_version, name: 'pact_name')}
+        let(:pact) { double('pact',
+          json_content: json_content,
+          created_at: created_at,
+          updated_at: updated_at,
+          consumer: consumer,
+          provider: provider,
+          consumer_version: consumer_version,
+          consumer_version_number: '1234',
+          name: 'pact_name')}
         let(:consumer) { instance_double(PactBroker::Domain::Pacticipant, name: 'Consumer')}
         let(:provider) { instance_double(PactBroker::Domain::Pacticipant, name: 'Provider')}
         let(:consumer_version) { instance_double(PactBroker::Domain::Version, number: '1234', pacticipant: consumer)}
