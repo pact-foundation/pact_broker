@@ -2,6 +2,11 @@ require 'spec/support/provider_state_builder'
 
 describe "Get version" do
 
+  let(:path) { "/pacticipants/Consumer/versions/1.2.3" }
+  let(:last_response_body) { JSON.parse(subject.body, symbolize_names: true) }
+
+  subject { get path; last_response }
+
   context "when the version exists" do
 
     before do
@@ -13,10 +18,6 @@ describe "Get version" do
         .create_consumer_version("1.2.4")
     end
 
-    let(:path) { "/pacticipants/Consumer/versions/1.2.3" }
-    let(:last_response_body) { JSON.parse(subject.body, symbolize_names: true) }
-
-    subject { get path; last_response }
 
     it "returns a 200 HAL JSON response" do
       expect(subject).to be_a_hal_json_success_response
@@ -35,10 +36,6 @@ describe "Get version" do
         .create_consumer("Consumer")
         .create_version("1.2.4")
     end
-
-    let(:path) { "/pacticipants/Consumer/versions/1.2.3" }
-
-    subject { get path; last_response }
 
     it "returns a 404 response" do
       expect(subject).to be_a_404_response
