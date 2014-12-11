@@ -97,7 +97,7 @@ module PactBroker
           .consumer_version_order_before(pact.consumer_version.order)
           .where('pact_version_content_sha != ?', current_pact_content_sha)
           .latest
-          .collect(&:to_domain)[0]
+          .collect(&:to_domain_with_content)[0]
       end
 
       private

@@ -272,6 +272,9 @@ module PactBroker
           it "returns the previous pact with different content" do
             expect(subject.consumer_version_number).to eq("1")
           end
+          it "returns json_content" do
+            expect(subject.json_content).to_not be nil
+          end
         end
 
         context "when there isn't a previous distinct version" do
