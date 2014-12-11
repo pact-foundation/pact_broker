@@ -13,6 +13,7 @@ require 'pact_broker/api/resources/webhooks'
 require 'pact_broker/api/resources/webhook'
 require 'pact_broker/api/resources/webhook_execution'
 require 'pact_broker/api/resources/version'
+require 'pact_broker/api/resources/pact_content_diff'
 
 require 'webmachine/adapters/rack'
 
@@ -24,10 +25,13 @@ module PactBroker
         add(['trace', '*'], Webmachine::Trace::TraceResource) unless ENV['RACK_ENV'] == 'production'
         # Support both /pact and /pacts
         # /pact will be deprecated
+        # Todo, rename /version/ to /versions
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'latest'], Api::Resources::LatestPact
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'latest', :tag], Api::Resources::LatestPact
-        add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'version', :consumer_version_number], Api::Resources::Pact
-        add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'versions'], Api::Resources::PactVersions
+        add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'version', :consumer_version_number], Api::Resources::Pact # Deprecate
+        add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'versions', :consumer_version_number], Api::Resources::Pact
+        add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'version', :consumer_version_number, 'diff', 'previous-distinct'], Api::Resources::PactContentDiff
+
         add ['pact', 'provider', :provider_name, 'consumer', :consumer_name, 'version', :consumer_version_number], Api::Resources::Pact
         add ['pact', 'provider', :provider_name, 'consumer', :consumer_name, 'latest'], Api::Resources::LatestPact
         add ['pacts', 'latest'], Api::Resources::LatestPacts
