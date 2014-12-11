@@ -262,9 +262,11 @@ module PactBroker
             .create_pact(pact_content_version_2)
             .create_consumer_version("3")
             .create_pact(pact_content_version_3)
+            .create_consumer_version("4")
+            .create_pact(pact_content_version_1)
         end
 
-        let(:pact) { Repository.new.find_latest_pact "Consumer", "Provider"  }
+        let(:pact) { Repository.new.find_pact "Consumer", "3", "Provider"  }
 
         subject  { Repository.new.find_previous_distinct_pact pact }
 
