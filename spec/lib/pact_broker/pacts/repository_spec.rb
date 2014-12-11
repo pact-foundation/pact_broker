@@ -1,3 +1,5 @@
+# Yes, I know this file is too bug, but cmd+shift+t is too useful!
+
 require 'pact_broker/pacts/repository'
 require 'spec/support/provider_state_builder'
 require 'pact_broker/pacts/pact_params'
@@ -238,6 +240,48 @@ module PactBroker
           expect(subject.consumer_version_number).to eq "1.2.4"
           expect(subject.consumer_version.number).to eq "1.2.4"
         end
+      end
+
+      describe "find_previous_distinct_pact" do
+
+        let(:pact_content_version_1) { load_fixture('consumer-provider.json') }
+        let(:pact_content_version_2) do
+          hash = load_json_fixture('consumer-provider.json')
+          hash['interactions'].first['request']['method'] = 'post'
+          hash.to_json
+        end
+        let(:pact_content_version_3) { pact_content_version_2 }
+
+        before do
+          ProviderStateBuilder.new
+            .create_consumer("Consumer")
+            .create_provider("Provider")
+            .create_consumer_version("1")
+            .create_pact(pact_content_version_1)
+            .create_consumer_version("2")
+            .create_pact(pact_content_version_2)
+            .create_consumer_version("3")
+            .create_pact(pact_content_version_3)
+        end
+
+        let(:pact) { Repository.new.find_latest_pact "Consumer", "Provider"  }
+
+        subject  { Repository.new.find_previous_distinct_pact pact }
+
+        context "when there is a previous distinct version" do
+          it "returns the previous pact with different content" do
+            expect(subject.consumer_version_number).to eq("1")
+          end
+        end
+
+        context "when there isn't a previous distinct version" do
+          let(:pact_content_version_2) { load_fixture('consumer-provider.json') }
+
+          it "returns nil" do
+            expect(subject).to be nil
+          end
+        end
+
       end
 
       describe "find_latest_pact" do
