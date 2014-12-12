@@ -12,7 +12,11 @@ module PactBroker
         pact_hash = JSON.load(pact_json_content, nil, PactBroker::PACT_PARSING_OPTIONS)
         previous_pact_hash = JSON.load(previous_pact_json_content, nil, PactBroker::PACT_PARSING_OPTIONS)
         difference = diff(pact_hash, previous_pact_hash)
-        Pact::Matchers::EmbeddedDiffFormatter.call(difference, colour: false)
+        replace_keys Pact::Matchers::EmbeddedDiffFormatter.call(difference, colour: false)
+      end
+
+      def self.replace_keys string
+        string.gsub('"EXPECTED"', '"NEW"').gsub('"ACTUAL"', '"OLD')
       end
 
     end
