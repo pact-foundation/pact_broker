@@ -123,7 +123,7 @@
     <h2>Response Headers</h2>
     <pre><%= status.code %> <%= status.text %>
 
-<%= headers %></pre>
+<%= _.escape(headers) %></pre>
   </script>
 
   <script id="response-body-template" type="text/template">
@@ -191,7 +191,7 @@ Content-Type: application/json
 
   <script id="embedded-resource-template" type="text/template">
     <div class="accordion-heading">
-      <a class="accordion-toggle" href="#"><%= resource.identifier %>
+      <a class="accordion-toggle" href="#"><%= resource.identifier %><% if (resource.title) { %>: <span class="embedded-resource-title"><%- resource.title %></span><% } %>
       <% if (HAL.isUrl(resource.embed_rel)) { %>
         <span class="dox pull-right" data-href="<%= HAL.buildUrl(resource.embed_rel) %>">
           <i class="icon-book"></i>
@@ -201,7 +201,8 @@ Content-Type: application/json
     </div>
   </script>
 
-  <script src="vendor/js/jquery-1.9.1.js"></script>
+
+  <script src="vendor/js/jquery-1.10.2.min.js"></script>
   <script src="vendor/js/underscore.js"></script>
   <script src="vendor/js/backbone.js"></script>
   <script src="vendor/js/uritemplates.js"></script>

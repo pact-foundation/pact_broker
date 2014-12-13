@@ -24,6 +24,7 @@ HAL.Views.EmbeddedResource = Backbone.View.extend({
     this.$accordionBody.collapse('toggle');
   },
 
+
   onDoxClick: function(e) {
     e.preventDefault();
     this.vent.trigger('show-docs', {
