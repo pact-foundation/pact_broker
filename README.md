@@ -91,8 +91,8 @@ Use the HAL browser to view documentation as you browse.
 * Create a database using a product that is supported by the Sequel gem (listed on this page http://sequel.jeremyevans.net/rdoc/files/README_rdoc.html). The migrations have been tested on MySQL and PostgreSQL - your milage will vary on other databases.
 * __Note:__ It is recommended to use __PostgreSQL__ as it will support JSON search features that are planned in a future release, however MySQL the other well supported database.
 * Install ruby 1.9.3 or later
-* Copy the [example](/example) directory to a new project.
-* Modify the config.ru and Gemfile as desired (eg. choose database driver gem, set your database credentials)
+* Copy the [example](/example) directory to the location you want to install the application.
+* Modify the config.ru and Gemfile as desired (eg. choose database driver gem, set your database credentials. Use the "pg" gem if using Postgres.)
 * Please ensure you use `encoding: 'utf8'` in your Sequel options to avoid encoding issues.
 * For production usage, use a web application server like [Phusion Passenger](https://www.phusionpassenger.com) or [Nginx][http://nginx.org/] to serve the Pact Broker application.
 * Deploy to your location of choice.
