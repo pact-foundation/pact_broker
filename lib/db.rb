@@ -28,6 +28,7 @@ module DB
     con = Sequel.connect(db_credentials.merge(:logger => logger, :pool_class => Sequel::ThreadedConnectionPool))
     con.extension(:connection_validator)
     con.pool.connection_validation_timeout = -1 #Check the connection on every request
+    con.timezone = :utc
     con
   end
 
