@@ -46,8 +46,16 @@ module PactBroker
           where('consumer_version_order < ?', order)
         end
 
+        def consumer_version_order_after order
+          where('consumer_version_order > ?', order)
+        end
+
         def latest
           reverse_order(:consumer_version_order).limit(1)
+        end
+
+        def earliest
+          order(:consumer_version_order).limit(1)
         end
       end
 

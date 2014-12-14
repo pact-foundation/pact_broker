@@ -242,6 +242,31 @@ module PactBroker
         end
       end
 
+      describe "find_next_pact" do
+        before do
+          ProviderStateBuilder.new
+            .create_consumer("Consumer")
+            .create_consumer_version("1.2.2")
+            .create_provider("Provider")
+            .create_pact
+            .create_consumer_version("1.2.4")
+            .create_pact
+            .create_consumer_version("1.2.6")
+            .create_pact
+            .create_provider("Another Provider")
+            .create_consumer_version("1.2.5")
+            .create_pact
+        end
+
+        let(:pact) { Repository.new.find_pact "Consumer", "1.2.4", "Provider"  }
+
+        subject  { Repository.new.find_next_pact pact }
+
+        it "finds the next pact" do
+          expect(subject.consumer_version_number).to eq "1.2.6"
+        end
+      end
+
       describe "find_previous_distinct_pact" do
 
         let(:pact_content_version_1) { load_fixture('consumer-provider.json') }

@@ -9,7 +9,7 @@ module PactBroker
       class PactContentDiff < BaseResource
 
         def content_types_provided
-          [["application/hal+json", :to_json]]
+          [["text/plain", :to_text]]
         end
 
         def allowed_methods
@@ -21,11 +21,10 @@ module PactBroker
             pacticipant_service.find_pacticipant_by_name(provider_name)
         end
 
-        def to_json
-          _, body = PactBroker::Pacts::Diff.run pact_params
+        def to_text
+          _, body = PactBroker::Pacts::Diff.run pact_params, base_url: base_url
           response.body = body
         end
-
 
         def pact
           @pact ||= pact_service.find_pact(pact_params)

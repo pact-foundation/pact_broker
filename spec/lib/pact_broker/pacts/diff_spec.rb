@@ -34,9 +34,14 @@ module PactBroker
             .create_pact(pact_content_version_2)
             .create_consumer_version("3")
             .create_pact(pact_content_version_3)
+          allow(DateHelper).to receive(:local_date_in_words).and_return("a date")
         end
 
-        subject { Diff.new.process(pact_params) }
+        subject { Diff.new.process(pact_params, base_url: 'http://example.org') }
+
+        it "indicates when the previous change was made" do
+          expect(subject).to include "The following changes were made less than a minute ago (a date)"
+        end
 
         it "returns the formatted diff" do
           expect(subject).to include 'interactions'

@@ -82,6 +82,15 @@ module PactBroker
           .latest.collect(&:to_domain)[0]
       end
 
+      def find_next_pact pact
+        AllPacts
+          .eager(:tags)
+          .consumer(pact.consumer.name)
+          .provider(pact.provider.name)
+          .consumer_version_order_after(pact.consumer_version.order)
+          .earliest.collect(&:to_domain)[0]
+      end
+
       def find_previous_distinct_pact pact
         current_pact_content_sha =
           AllPacts.select(:pact_version_content_sha)

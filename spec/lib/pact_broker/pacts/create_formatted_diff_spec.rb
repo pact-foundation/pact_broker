@@ -22,10 +22,8 @@ module PactBroker
           expect(subject).to include 'interactions'
           expect(subject).to include 'post'
           expect(subject).to include 'get'
-          expect(subject).to include 'OLD'
-          expect(subject).to_not include 'ACTUAL'
-          expect(subject).to include 'NEW'
-          expect(subject).to_not include 'EXPECTED'
+          expect(subject).to include '+'
+          expect(subject).to include '-'
         end
 
       end
