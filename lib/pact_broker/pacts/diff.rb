@@ -59,10 +59,9 @@ module PactBroker
         end
 
         def header
-          title = "Diff between version #{previous_distinct_pact.consumer_version_number} and version #{pact.consumer_version_number}"
-          hr = "=" * title.size
+          title = "# Diff between versions #{previous_distinct_pact.consumer_version_number} and #{pact.consumer_version_number} of the pact between #{pact.consumer.name} and #{pact.provider.name}"
           description = "The following changes were made #{change_date_ago_in_words} ago (#{change_date_in_words})"
-          title + "\n" + hr + "\n\n" + description
+          title +  "\n\n" + description
         end
 
         def links
@@ -81,9 +80,7 @@ module PactBroker
               "href" => previous_distinct_url
             }
           }
-          "Links\n=====\n" + YAML.dump(links).gsub(/---/,'')
-          #
-          #JSON.pretty_generate(links)
+          "## Links\n" + YAML.dump(links).gsub(/---/,'')
         end
 
         def diff
