@@ -43,7 +43,7 @@ module PactBroker
         it "returns the relationships page" do
           expect(subject.status).to eq 200
           expect(subject.headers['Content-Type']).to include 'text/html'
-          expect(subject.body).to include 'Relationships'
+          expect(subject.body).to include 'Pacts'
         end
       end
 
