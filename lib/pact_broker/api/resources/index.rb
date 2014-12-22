@@ -24,10 +24,10 @@ module PactBroker
                 title: 'Index',
                 templated: false
               },
-              'pb:latest-pacts' =>
+              'pb:latest-pact-versions' =>
               {
                 href: base_url + '/pacts/latest',
-                title: 'Latest pacts',
+                title: 'Latest pact versions',
                 templated: false
               },
               'pb:pacticipants' =>

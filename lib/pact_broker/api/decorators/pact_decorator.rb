@@ -42,7 +42,7 @@ module PactBroker
 
         link :'pb:tag-prod-version' do | options |
           {
-            title: "Tag version as production",
+            title: "Tag this version as 'production'",
             href: tags_url(options.fetch(:base_url), represented.consumer_version) + "/prod"
           }
         end
@@ -54,10 +54,9 @@ module PactBroker
           }
         end
 
-        link :'pb:latest-pact' do | options |
+        link :'pb:latest-pact-version' do | options |
           {
-            title: "Latest pact version",
-            name: represented.name,
+            title: "Latest version of this pact",
             href: latest_pact_url(options.fetch(:base_url), represented)
 
           }

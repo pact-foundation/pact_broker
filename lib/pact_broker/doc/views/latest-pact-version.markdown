@@ -1,4 +1,4 @@
-# Latest pact
+# Latest pact version
 
 Allowed methods: GET
 
