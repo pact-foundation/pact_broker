@@ -51,6 +51,10 @@ module PactBroker
         pact_url(base_url, pact) + "/diff/previous-distinct"
       end
 
+      def previous_distinct_pact_version_url pact, base_url
+        pact_url(base_url, pact) + "/previous-distinct"
+      end
+
       def tags_url base_url, version
         "#{version_url(base_url, version)}/tags"
       end

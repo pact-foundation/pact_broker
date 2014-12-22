@@ -40,32 +40,27 @@ module PactBroker
           }
         end
 
-        link :'pb:tag-prod-version' do | options |
-          {
-            title: "Tag this version as 'production'",
-            href: tags_url(options.fetch(:base_url), represented.consumer_version) + "/prod"
-          }
-        end
-
-        link :'pb:tag-version' do | options |
-          {
-            title: "Tag version",
-            href: tags_url(options.fetch(:base_url), represented.consumer_version) + "/{tag}"
-          }
-        end
-
         link :'pb:latest-pact-version' do | options |
           {
-            title: "Latest version of this pact",
+            title: "Pact",
+            name: "Latest version of this pact",
             href: latest_pact_url(options.fetch(:base_url), represented)
 
+          }
+        end
+
+        link :'pb:previous-distinct' do | options |
+          {
+            title: "Pact",
+            name: "Previous distinct version of this pact",
+            href: previous_distinct_pact_version_url(represented, options.fetch(:base_url))
           }
         end
 
         link :'pb:diff-previous-distinct' do | options |
           {
             title: "Diff",
-            name: "Diff with previous distinct pact version",
+            name: "Diff with previous distinct version of this pact",
             href: previous_distinct_diff_url(represented, options.fetch(:base_url))
 
           }
@@ -82,6 +77,20 @@ module PactBroker
           {
             title: "Webhooks for the pact between #{represented.consumer.name} and #{represented.provider.name}",
             href: webhooks_for_pact_url(represented.consumer, represented.provider, options.fetch(:base_url))
+          }
+        end
+
+        link :'pb:tag-prod-version' do | options |
+          {
+            title: "Tag this version as 'production'",
+            href: tags_url(options.fetch(:base_url), represented.consumer_version) + "/prod"
+          }
+        end
+
+        link :'pb:tag-version' do | options |
+          {
+            title: "Tag version",
+            href: tags_url(options.fetch(:base_url), represented.consumer_version) + "/{tag}"
           }
         end
 

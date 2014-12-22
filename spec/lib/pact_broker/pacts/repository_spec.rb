@@ -240,6 +240,10 @@ module PactBroker
           expect(subject.consumer_version_number).to eq "1.2.4"
           expect(subject.consumer_version.number).to eq "1.2.4"
         end
+
+        it "sets the json_content" do
+          expect(subject.json_content).to_not be nil
+        end
       end
 
       describe "find_next_pact" do
@@ -264,6 +268,10 @@ module PactBroker
 
         it "finds the next pact" do
           expect(subject.consumer_version_number).to eq "1.2.6"
+        end
+
+        it "sets the json_content" do
+          expect(subject.json_content).to_not be nil
         end
       end
 

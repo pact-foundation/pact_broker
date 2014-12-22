@@ -43,6 +43,12 @@ module PactBroker
         pact_repository.find_all_pacts_between consumer, options
       end
 
+      def find_previous_distinct_pact_version params
+        pact = find_pact params
+        return nil if pact.nil?
+        pact_repository.find_previous_distinct_pact pact
+      end
+
       def find_distinct_pacts_between consumer, options
         # Assumes pacts are sorted from newest to oldest
         all = pact_repository.find_all_pacts_between consumer, options

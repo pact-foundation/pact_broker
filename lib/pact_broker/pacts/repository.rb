@@ -49,7 +49,7 @@ module PactBroker
         AllPacts
           .eager(:tags)
           .where(consumer_version_id: version_id, provider_id: provider_id)
-          .limit(1).collect(&:to_domain)[0]
+          .limit(1).collect(&:to_domain_with_content)[0]
       end
 
       def find_latest_pacts
@@ -79,7 +79,7 @@ module PactBroker
           .consumer(pact.consumer.name)
           .provider(pact.provider.name)
           .consumer_version_order_before(pact.consumer_version.order)
-          .latest.collect(&:to_domain)[0]
+          .latest.collect(&:to_domain_with_content)[0]
       end
 
       def find_next_pact pact
@@ -88,7 +88,7 @@ module PactBroker
           .consumer(pact.consumer.name)
           .provider(pact.provider.name)
           .consumer_version_order_after(pact.consumer_version.order)
-          .earliest.collect(&:to_domain)[0]
+          .earliest.collect(&:to_domain_with_content)[0]
       end
 
       def find_previous_distinct_pact pact
@@ -121,11 +121,6 @@ module PactBroker
         pact_version_content = PactVersionContent.new(content: json_content)
         pact_version_content[:sha] = sha
         pact_version_content.save
-      end
-
-      def to_domain
-        database_model = yield
-        database_model ? database_model.to_domain : nil
       end
 
     end
