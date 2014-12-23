@@ -2,6 +2,8 @@ require 'padrino'
 require 'haml'
 require 'pact_broker/services'
 
+Tilt.prefer Tilt::ERBTemplate, :erb #
+
 module PactBroker
   module UI
     module Controllers

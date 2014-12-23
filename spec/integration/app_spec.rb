@@ -56,6 +56,11 @@ module PactBroker
           expect(subject.body).to include 'Network graph'
           expect(subject.body).to include 'Some Consumer'
         end
+
+        it "does not screw up the HTML escaping, haven't you heard of semantic versioning padrino?? Seriously." do
+          expect(subject.body).to include "<html"
+          expect(subject.body).to_not include "&lt;html"
+        end
       end
 
       describe "a request for /doc/:rel_name" do
