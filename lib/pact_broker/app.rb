@@ -43,7 +43,7 @@ module PactBroker
     def build_app
       @app = Rack::Builder.new
 
-      @app.use Rack::Static, :urls => ["/stylesheets", "/css", "/fonts", "/js", "/javascripts"], :root => PactBroker.project_root.join("public")
+      @app.use Rack::Static, :urls => ["/stylesheets", "/css", "/fonts", "/js", "/javascripts", "/images"], :root => PactBroker.project_root.join("public")
       @app.use Rack::PactBroker::ConvertFileExtensionToAcceptHeader
 
       if configuration.use_hal_browser

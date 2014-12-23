@@ -25,3 +25,16 @@
 }
 
 body { padding-top: 10px; }
+
+.consumer, .provider {
+  text-align: center;
+}
+
+span.pact {
+  background-repeat: none;
+  background-image: url(/images/doc-text.svg);
+  background-size: 30px 30px;
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+}
