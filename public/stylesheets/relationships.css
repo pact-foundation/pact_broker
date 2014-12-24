@@ -31,10 +31,24 @@ body { padding-top: 10px; }
 }
 
 span.pact {
-  background-repeat: none;
-  background-image: url(/images/doc-text.svg);
-  background-size: 30px 30px;
   display: inline-block;
-  width: 30px;
-  height: 30px;
+}
+
+span.pact svg {
+  width: 20px !important;
+  height: 20px !important;
+  overflow: visible;
+}
+
+span.pact svg path {
+  transform: skewX(0deg);
+}
+
+span.pact:hover {
+  transform: translate(3px, 0);
+}
+
+span.pact:hover svg path {
+  fill: #2a6496;
+  transform: skewX(-10deg);
 }
