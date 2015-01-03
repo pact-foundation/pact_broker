@@ -1,4 +1,4 @@
-require 'padrino'
+require 'padrino-core'
 require 'redcarpet'
 
 Tilt.prefer Tilt::RedcarpetTemplate

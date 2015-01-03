@@ -1,4 +1,4 @@
-require 'padrino'
+require 'padrino-core'
 require 'haml'
 require 'pact_broker/services'
 
