@@ -11,6 +11,25 @@
   border-left: none;
 }
 
+table#relationships {
+  table-layout: fixed;
+}
+
+table#relationships td,
+table#relationships th {
+  text-align: left;
+}
+
+table#relationships th,
+table#relationships td {
+  border-right: none;
+  border-left: none;
+}
+
+table#relationships td.pact {
+  text-align: center;
+}
+
 .relationships-size {
   text-align: right;
   color: gray;
@@ -28,6 +47,7 @@ body { padding-top: 10px; }
 
 .consumer, .provider {
   text-align: center;
+  white-space: nowrap;
 }
 
 span.pact {
@@ -41,14 +61,9 @@ span.pact svg {
 }
 
 span.pact svg path {
-  transform: skewX(0deg);
-}
-
-span.pact:hover {
-  transform: translate(3px, 0);
+  fill: #111111;
 }
 
 span.pact:hover svg path {
   fill: #2a6496;
-  transform: skewX(-10deg);
 }

@@ -17,6 +17,7 @@
       Pacts
     %table.table.table-bordered.table-striped{id: 'relationships'}
       %thead
+        %th
         %th.consumer
           Consumer
           %span.glyphicon.glyphicon-sort.relationships-sort
@@ -25,19 +26,22 @@
         %th.provider
           Provider
           %span.glyphicon.glyphicon-sort.relationships-sort
+        %th
       %tbody
 
       - relationships.each do | relationship |
         %tr
+          %td
           %td.consumer
             %a{:href => relationship.consumer_group_url}
               = relationship.consumer_name
           %td.pact
-            %a{:href => relationship.latest_pact_url}
+            %a{:href => relationship.latest_pact_url, :title => "View pact"}
               %span.pact
           %td.provider
             %a{:href => relationship.provider_group_url}
               = relationship.provider_name
+          %td
     %div.relationships-size
       = relationships.size_label
 
