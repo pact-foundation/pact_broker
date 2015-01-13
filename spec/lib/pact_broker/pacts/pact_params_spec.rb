@@ -7,7 +7,7 @@ module PactBroker
 
       let(:body) { load_fixture('a_consumer-a_provider.json') }
       let(:consumer_version_number) { '1.2.3' }
-      let(:headers) { { 'X-Pact-Consumer-Version' => consumer_version_number } }
+      let(:headers) { { 'X-Pact-Consumer-Version' => consumer_version_number, 'Host' => 'example.org' } }
 
       describe "from_request" do
 
