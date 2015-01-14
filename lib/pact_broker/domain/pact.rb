@@ -1,4 +1,5 @@
 require 'pact_broker/db'
+require 'pact_broker/json'
 
 module PactBroker
 
@@ -31,6 +32,10 @@ module PactBroker
 
       def version_and_updated_date
         "Version #{consumer_version_number} - #{updated_at.to_time.localtime.strftime("%d/%m/%Y")}"
+      end
+
+      def content_hash
+        JSON.parse(json_content, PACT_PARSING_OPTIONS)
       end
     end
 

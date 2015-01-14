@@ -5,6 +5,7 @@ require 'pact_broker/logging'
 require 'pact_broker/pacts/database_model'
 require 'pact_broker/pacts/all_pacts'
 require 'pact_broker/pacts/latest_pacts'
+require 'pact/shared/json_differ'
 
 module PactBroker
   module Pacts
@@ -92,6 +93,17 @@ module PactBroker
       end
 
       def find_previous_distinct_pact pact
+        previous, current = nil, pact
+        loop do
+          previous = find_previous_distinct_pact_by_sha current
+          return previous if previous.nil? || different?(current, previous)
+          current = previous
+        end
+      end
+
+      private
+
+      def find_previous_distinct_pact_by_sha pact
         current_pact_content_sha =
           AllPacts.select(:pact_version_content_sha)
           .consumer(pact.consumer.name)
@@ -109,7 +121,9 @@ module PactBroker
           .collect(&:to_domain_with_content)[0]
       end
 
-      private
+      def different? pact, other_pact
+        Pact::JsonDiffer.(pact.content_hash, other_pact.content_hash, allow_unexpected_keys: false).any?
+      end
 
       def find_or_create_pact_version_content json_content
         sha = Digest::SHA1.hexdigest(json_content)
