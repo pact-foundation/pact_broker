@@ -16,14 +16,6 @@ module PactBroker
         let(:pact_content_version_2) { load_fixture('consumer-provider.json') }
         let(:pact_content_version_3) { pact_content_version_2 }
 
-        let(:pact_params) do
-          PactBroker::Pacts::PactParams.new(
-            consumer_name: 'Consumer',
-            provider_name: 'Provider',
-            consumer_version_number: '3'
-          )
-        end
-
         before do
           ProviderStateBuilder.new
             .create_consumer("Consumer")
@@ -39,16 +31,40 @@ module PactBroker
 
         subject { Diff.new.process(pact_params, base_url: 'http://example.org') }
 
-        it "indicates when the previous change was made" do
-          expect(subject).to include "The following changes were made less than a minute ago (a date)"
+        context "when there is a previous distinct version" do
+
+          let(:pact_params) do
+            PactBroker::Pacts::PactParams.new(
+              consumer_name: 'Consumer',
+              provider_name: 'Provider',
+              consumer_version_number: '3'
+            )
+          end
+
+          it "indicates when the previous change was made" do
+            expect(subject).to include "The following changes were made less than a minute ago (a date)"
+          end
+
+          it "returns the formatted diff" do
+            expect(subject).to include 'interactions'
+            expect(subject).to include 'post'
+            expect(subject).to include 'get'
+          end
         end
 
-        it "returns the formatted diff" do
-          expect(subject).to include 'interactions'
-          expect(subject).to include 'post'
-          expect(subject).to include 'get'
-        end
+        context "when there is not a previous distinct version (this needs to be moved into the resource)" do
+          let(:pact_params) do
+            PactBroker::Pacts::PactParams.new(
+              consumer_name: 'Consumer',
+              provider_name: 'Provider',
+              consumer_version_number: '1'
+            )
+          end
 
+          it "returns a message indicating there was no previous distinct version found" do
+            expect(subject).to include("No previous distinct version was found")
+          end
+        end
       end
 
     end

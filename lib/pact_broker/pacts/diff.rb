@@ -17,8 +17,16 @@ module PactBroker
       def process params, options
         pact = pact_repository.find_pact(params.consumer_name, params.consumer_version_number, params.provider_name)
         previous_distinct_pact = pact_repository.find_previous_distinct_pact pact
-        next_pact = pact_repository.find_next_pact previous_distinct_pact
-        DiffDecorator.new(pact, previous_distinct_pact, next_pact, options[:base_url]).to_text
+        if previous_distinct_pact
+          next_pact = pact_repository.find_next_pact previous_distinct_pact
+          DiffDecorator.new(pact, previous_distinct_pact, next_pact, options[:base_url]).to_text
+        else
+          no_previous_version_message pact
+        end
+      end
+
+      def no_previous_version_message pact
+        "No previous distinct version was found for #{pact.name}"
       end
 
       private
