@@ -12,7 +12,7 @@ module PactBroker
         pact_hash = JSON.load(pact_json_content, nil, PactBroker::PACT_PARSING_OPTIONS)
         previous_pact_hash = JSON.load(previous_pact_json_content, nil, PactBroker::PACT_PARSING_OPTIONS)
         difference = diff(previous_pact_hash, pact_hash)
-        Pact::Matchers::UnixDiffFormatter.call(difference, colour: false)
+        Pact::Matchers::UnixDiffFormatter.call(difference, colour: false, include_explanation: false)
       end
 
     end

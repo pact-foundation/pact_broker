@@ -19,11 +19,11 @@ module PactBroker
         subject { CreateFormattedDiff.call(pact_content_version_2, pact_content_version_1) }
 
         it "returns the formatted diff" do
+          puts subject
           expect(subject).to include 'interactions'
-          expect(subject).to include 'post'
-          expect(subject).to include 'get'
-          expect(subject).to include '+'
-          expect(subject).to include '-'
+          expect(subject).to match /\-.*post/
+          expect(subject).to match /\+.*get/
+          expect(subject).to_not include 'Key'
         end
 
       end
