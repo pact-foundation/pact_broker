@@ -6,7 +6,7 @@ require 'pact_broker/domain/group'
 
 module PactBroker
 
-  module Functions
+  module Relationships
 
     class Groupify
 

@@ -28,7 +28,7 @@ module PactBroker
 
         before do
           allow(PacticipantService).to receive(:find_relationships).and_return(relationship_list)
-          allow(Functions::Groupify).to receive(:call).and_return(groups)
+          allow(Relationships::Groupify).to receive(:call).and_return(groups)
         end
 
         it "retrieves a list of the relationships" do
@@ -37,7 +37,7 @@ module PactBroker
         end
 
         it "turns the relationships into groups" do
-          expect(Functions::Groupify).to receive(:call).with(relationship_list)
+          expect(Relationships::Groupify).to receive(:call).with(relationship_list)
           subject
         end
 

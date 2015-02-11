@@ -1,10 +1,10 @@
 require 'spec_helper'
-require 'pact_broker/functions/groupify'
+require 'pact_broker/relationships/groupify'
 require 'pact_broker/domain/relationship'
 
 module PactBroker
 
-  module Functions
+  module Relationships
 
     describe Groupify do
 

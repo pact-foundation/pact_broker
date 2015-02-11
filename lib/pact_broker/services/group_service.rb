@@ -1,5 +1,5 @@
 require 'pact_broker/repositories'
-require 'pact_broker/functions/groupify'
+require 'pact_broker/relationships/groupify'
 
 module PactBroker
 
@@ -16,7 +16,7 @@ module PactBroker
       end
 
       def groups
-        Functions::Groupify.call pacticipant_service.find_relationships
+        Relationships::Groupify.call pacticipant_service.find_relationships
       end
 
     end
