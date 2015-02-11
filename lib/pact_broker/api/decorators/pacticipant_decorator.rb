@@ -8,7 +8,7 @@ module PactBroker
 
     module Decorators
 
-      class PacticipantRepresenter < BaseDecorator
+      class PacticipantDecorator < BaseDecorator
 
         property :name
         property :repository_url, as: :repositoryUrl

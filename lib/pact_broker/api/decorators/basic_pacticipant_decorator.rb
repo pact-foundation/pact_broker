@@ -6,7 +6,7 @@ module PactBroker
 
     module Decorators
 
-      class BasicPacticipantRepresenter < BaseDecorator
+      class BasicPacticipantDecorator < BaseDecorator
 
         property :name
 

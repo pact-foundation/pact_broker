@@ -45,11 +45,11 @@ module PactBroker
         end
 
         def generate_json pacticipants
-          PactBroker::Api::Decorators::PacticipantCollectionRepresenter.new(pacticipants).to_json(base_url: base_url)
+          PactBroker::Api::Decorators::PacticipantCollectionDecorator.new(pacticipants).to_json(base_url: base_url)
         end
 
         def decorator_for model
-          PactBroker::Api::Decorators::PacticipantRepresenter.new(model)
+          PactBroker::Api::Decorators::PacticipantDecorator.new(model)
         end
 
         def new_model

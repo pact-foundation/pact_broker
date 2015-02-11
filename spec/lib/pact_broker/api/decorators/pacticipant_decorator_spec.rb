@@ -8,13 +8,13 @@ module PactBroker
 
     module Decorators
 
-      describe PacticipantRepresenter do
+      describe PacticipantDecorator do
 
         let(:created_at) { Time.new(2014, 3, 4) }
         let(:updated_at) { Time.new(2014, 3, 5) }
         let(:pacticipant) { PactBroker::Domain::Pacticipant.new(name: 'Name', updated_at: updated_at, created_at: created_at)}
 
-        subject { JSON.parse PacticipantRepresenter.new(pacticipant).to_json, symbolize_names: true }
+        subject { JSON.parse PacticipantDecorator.new(pacticipant).to_json, symbolize_names: true }
 
         it "includes timestamps" do
           expect(subject[:createdAt]).to eq created_at.xmlschema

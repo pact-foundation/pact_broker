@@ -8,9 +8,9 @@ module PactBroker
 
     module Decorators
 
-      describe PacticipantCollectionRepresenter do
+      describe PacticipantCollectionDecorator do
 
-        subject { JSON.parse PacticipantCollectionRepresenter.new(pacticipants).to_json, symbolize_names: true }
+        subject { JSON.parse PacticipantCollectionDecorator.new(pacticipants).to_json, symbolize_names: true }
 
         context "with no pacticipants" do
           let(:pacticipants) { [] }

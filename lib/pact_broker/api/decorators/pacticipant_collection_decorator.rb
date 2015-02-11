@@ -8,9 +8,9 @@ module PactBroker
 
     module Decorators
 
-      class PacticipantCollectionRepresenter < BaseDecorator
+      class PacticipantCollectionDecorator < BaseDecorator
 
-        collection :entries, :as => :pacticipants, :class => PactBroker::Domain::Pacticipant, :extend => PactBroker::Api::Decorators::PacticipantRepresenter
+        collection :entries, :as => :pacticipants, :class => PactBroker::Domain::Pacticipant, :extend => PactBroker::Api::Decorators::PacticipantDecorator
 
         link :self do | options |
           pacticipants_url options[:base_url]

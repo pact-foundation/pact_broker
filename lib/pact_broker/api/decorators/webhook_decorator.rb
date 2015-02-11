@@ -13,8 +13,8 @@ module PactBroker
 
         include Timestamps
 
-        property :consumer, :extend => PactBroker::Api::Decorators::BasicPacticipantRepresenter, :embedded => true, writeable: false
-        property :provider, :extend => PactBroker::Api::Decorators::BasicPacticipantRepresenter, :embedded => true, writeable: false
+        property :consumer, :extend => PactBroker::Api::Decorators::BasicPacticipantDecorator, :embedded => true, writeable: false
+        property :provider, :extend => PactBroker::Api::Decorators::BasicPacticipantDecorator, :embedded => true, writeable: false
 
         link :self do | options |
           {
