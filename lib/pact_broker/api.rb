@@ -24,7 +24,7 @@ module PactBroker
   API ||= begin
     pact_api = Webmachine::Application.new do |app|
       app.routes do
-        add(['trace', '*'], Webmachine::Trace::TraceResource) unless ENV['RACK_ENV'] == 'production'
+        add(['trace', :*], Webmachine::Trace::TraceResource) unless ENV['RACK_ENV'] == 'production'
         # Support both /pact and /pacts
         # /pact will be deprecated
         # Todo, rename /version/ to /versions
