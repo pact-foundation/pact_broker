@@ -1,12 +1,8 @@
 require 'pact_broker/domain/group'
 
-=begin
-
-=end
-
 module PactBroker
 
-  module Functions
+  module Pacticipants
 
     class FindPotentialDuplicatePacticipantNames
 

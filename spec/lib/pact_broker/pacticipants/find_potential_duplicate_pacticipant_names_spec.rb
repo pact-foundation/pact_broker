@@ -1,9 +1,9 @@
 require 'spec_helper'
-require 'pact_broker/functions/find_potential_duplicate_pacticipant_names'
+require 'pact_broker/pacticipants/find_potential_duplicate_pacticipant_names'
 
 module PactBroker
 
-  module Functions
+  module Pacticipants
 
     describe FindPotentialDuplicatePacticipantNames do
 

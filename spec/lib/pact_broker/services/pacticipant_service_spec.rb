@@ -63,7 +63,7 @@ module PactBroker
         let(:pacticipant_repository) { instance_double(PactBroker::Repositories::PacticipantRepository)}
 
         before do
-          allow(PactBroker::Functions::FindPotentialDuplicatePacticipantNames).to receive(:call).and_return(duplicates)
+          allow(PactBroker::Pacticipants::FindPotentialDuplicatePacticipantNames).to receive(:call).and_return(duplicates)
           allow(PactBroker::Repositories::PacticipantRepository).to receive(:new).and_return(pacticipant_repository)
           allow(pacticipant_repository).to receive(:pacticipant_names).and_return(pacticipant_names)
           allow(pacticipant_repository).to receive(:find_by_name).with("Fred").and_return(fred)
@@ -76,7 +76,7 @@ module PactBroker
         end
 
         it "calculates the duplicates" do
-          expect(PactBroker::Functions::FindPotentialDuplicatePacticipantNames).to receive(:call).with(pacticipant_name, pacticipant_names)
+          expect(PactBroker::Pacticipants::FindPotentialDuplicatePacticipantNames).to receive(:call).with(pacticipant_name, pacticipant_names)
           subject.find_potential_duplicate_pacticipants pacticipant_name
         end
 
