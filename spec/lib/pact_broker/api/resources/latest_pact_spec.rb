@@ -22,14 +22,14 @@ module PactBroker::Api
           let(:pact_id_params) { {:provider_name=>"provider_name", :consumer_name=>"consumer_name"} }
 
           before do
-            allow(PactBroker::Services::PactService).to receive(:find_latest_pact).and_return(pact)
+            allow(PactBroker::Pacts::Service).to receive(:find_latest_pact).and_return(pact)
             allow(PactBroker.configuration.html_pact_renderer).to receive(:call).and_return(html)
           end
 
           subject { get "/pacts/provider/provider_name/consumer/consumer_name/latest",{}, {'HTTP_ACCEPT' => "text/html"} }
 
           it "find the pact" do
-            expect(PactBroker::Services::PactService).to receive(:find_latest_pact).with(pact_id_params)
+            expect(PactBroker::Pacts::Service).to receive(:find_latest_pact).with(pact_id_params)
             subject
           end
 

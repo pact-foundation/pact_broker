@@ -1,10 +1,10 @@
 require 'spec_helper'
-require 'pact_broker/services/pact_service'
+require 'pact_broker/pacts/service'
 
 module PactBroker
 
-  module Services
-    module PactService
+  module Pacts
+    module Service
 
       describe "find_distinct_pacts_between" do
         let(:pact_1) { double('pact 1', json_content: 'content 1')}
@@ -18,7 +18,7 @@ module PactBroker
           allow_any_instance_of(Pacts::Repository).to receive(:find_all_pacts_between).and_return(all_pacts)
         end
 
-        subject { PactService.find_distinct_pacts_between 'consumer', :and => 'provider' }
+        subject { Service.find_distinct_pacts_between 'consumer', :and => 'provider' }
 
         it "returns the distinct pacts" do
           expect(subject).to eq [pact_4, pact_2, pact_1]
@@ -35,7 +35,7 @@ module PactBroker
           allow_any_instance_of(Pacts::Repository).to receive(:find_previous_pact).and_return(previous_pact)
         end
 
-        subject { PactService.pact_has_changed_since_previous_version? pact }
+        subject { Service.pact_has_changed_since_previous_version? pact }
 
         context "when a previous pact is found" do
           let(:previous_pact) { instance_double(PactBroker::Domain::Pact, json_content: previous_json_content)}

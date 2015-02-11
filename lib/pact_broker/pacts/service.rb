@@ -1,14 +1,14 @@
 require 'pact_broker/repositories'
+require 'pact_broker/services'
 
 module PactBroker
-
-  module Services
-    module PactService
+  module Pacts
+    module Service
 
       extend self
 
-      extend Repositories
-      extend Services
+      extend PactBroker::Repositories
+      extend PactBroker::Services
 
       def find_latest_pact params
         pact_repository.find_latest_pact(params[:consumer_name], params[:provider_name], params[:tag])

@@ -83,7 +83,7 @@ module PactBroker::Api
         subject { delete "/pacts/provider/Provider/consumer/Consumer/version/1.2", json, {'CONTENT_TYPE' => "application/json"} ; last_response }
 
         let(:pact) { double('pact') }
-        let(:pact_service) { PactBroker::Services::PactService }
+        let(:pact_service) { PactBroker::Pacts::Service }
         let(:response) { subject; last_response }
 
         before do
