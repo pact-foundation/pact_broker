@@ -10,7 +10,7 @@ module PactBroker
         end
 
         def content_types_provided
-          [["application/json+hal", :to_json]]
+          [["application/hal+json", :to_json]]
         end
 
         def to_json
