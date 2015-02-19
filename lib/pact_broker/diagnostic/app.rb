@@ -1,4 +1,5 @@
 require 'pact_broker/diagnostic/resources/heartbeat'
+require 'pact_broker/diagnostic/resources/dependencies'
 require 'webmachine/adapters/rack'
 
 module PactBroker
@@ -21,6 +22,7 @@ module PactBroker
         app = Webmachine::Application.new do |app|
           app.routes do
             add ['diagnostic','status','heartbeat'], Diagnostic::Resources::Heartbeat
+            add ['diagnostic','status','dependencies'], Diagnostic::Resources::Dependencies
           end
         end
 
