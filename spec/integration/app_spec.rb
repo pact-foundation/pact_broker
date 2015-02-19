@@ -12,12 +12,14 @@ module PactBroker
 
     let(:hal_browser_enabled) { true }
     let(:group_url) { '/groups/Some%20Consumer' }
+    let(:enable_diagnostic_endpoints) { false }
 
     let(:app) do
       app = PactBroker::App.new do | config |
         config.auto_migrate_db = false
         config.use_hal_browser = hal_browser_enabled
         config.database_connection = ::DB::PACT_BROKER_DB
+        config.enable_diagnostic_endpoints = enable_diagnostic_endpoints
       end
     end
 
@@ -162,6 +164,22 @@ module PactBroker
         end
       end
 
+    end
+
+    context "when the diagnostic endpoints are enabled" do
+      let(:enable_diagnostic_endpoints) { true }
+
+      it "returns a 200 to /diagnostic/status/heartbeat" do
+        get "/diagnostic/status/heartbeat"
+        expect(last_response.status).to eq 200
+      end
+    end
+
+    context "when the diagnostic endpoints are not enabled" do
+      it "returns a 404 to /diagnostic/status/heartbeat" do
+        get "/diagnostic/status/heartbeat"
+        expect(last_response.status).to eq 404
+      end
     end
   end
 end

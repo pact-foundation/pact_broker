@@ -60,7 +60,15 @@ module PactBroker
       logger.info "Mounting PactBroker::API"
       require 'pact_broker/api'
 
-      apps = [PactBroker::UI::App.new, PactBroker::API]
+      apps = []
+
+      if configuration.enable_diagnostic_endpoints
+        require 'pact_broker/diagnostic/app'
+        apps << PactBroker::Diagnostic::App.new
+      end
+
+      apps << PactBroker::UI::App.new
+      apps << PactBroker::API
 
       @app.map "/" do
         run Rack::Cascade.new(apps)

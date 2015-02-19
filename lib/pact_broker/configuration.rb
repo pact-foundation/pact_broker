@@ -6,7 +6,8 @@ module PactBroker
 
   class Configuration
 
-    attr_accessor :log_dir, :database_connection, :auto_migrate_db, :use_hal_browser, :html_pact_renderer, :validate_database_connection_config
+    attr_accessor :log_dir, :database_connection, :auto_migrate_db, :use_hal_browser, :html_pact_renderer
+    attr_accessor :validate_database_connection_config, :enable_diagnostic_endpoints
     attr_writer :logger
 
     def logger
@@ -20,6 +21,7 @@ module PactBroker
       config.use_hal_browser = true
       config.html_pact_renderer = default_html_pact_render
       config.validate_database_connection_config = true
+      config.enable_diagnostic_endpoints = true
       config
     end
 
