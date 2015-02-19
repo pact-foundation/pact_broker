@@ -18,12 +18,13 @@ module PactBroker
         end
 
         def content_types_provided
-          [["application/json+hal", :to_json]]
+          [["application/hal+json", :to_json]]
         end
 
         def to_json
+          ok, report = database_connectivity_status
           response.body = {
-            "database" => database_connectivity_status,
+            "database" => report,
             "_links" => {
               "self" => {
                 "href" => request.uri.to_s
@@ -31,7 +32,7 @@ module PactBroker
             }
           }.to_json
 
-          @return_status
+          ok ? 200 : 500
         end
 
         private
@@ -39,19 +40,16 @@ module PactBroker
         def database_connectivity_status
           begin
             valid = valid_database_connection?
-            @return_status = 500 unless valid
-            {
-              "ok" => valid
-            }
+            return valid, { "ok" => valid }
           rescue => e
             logger.error "#{e.class} - #{e.message}\n#{e.backtrace.join("\n")}"
-            @return_status = 500
-            {
+            report = {
               "ok" => false,
               "error" => {
                 "message" => "#{e.class} - #{e.message}"
               }
             }
+            return false, report
           end
         end
 
@@ -61,7 +59,6 @@ module PactBroker
             connection.valid_connection? synchronized_connection
           end
         end
-
       end
     end
   end
