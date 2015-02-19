@@ -10,10 +10,18 @@ module PactBroker
         end
 
         def content_types_provided
-          [["application/json", :to_json]]
+          [["application/json+hal", :to_json]]
         end
 
         def to_json
+          {
+            "ok" => true,
+            "_links" => {
+              "self" => {
+                "href" => request.uri.to_s
+              }
+            }
+          }.to_json
         end
 
       end
