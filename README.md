@@ -94,7 +94,7 @@ Use the HAL browser to view documentation as you browse.
 * Copy the [example](/example) directory to the location you want to install the application.
 * Modify the config.ru and Gemfile as desired (eg. choose database driver gem, set your database credentials. Use the "pg" gem if using Postgres.)
 * Please ensure you use `encoding: 'utf8'` in your Sequel options to avoid encoding issues.
-* For production usage, use a web application server like [Phusion Passenger](https://www.phusionpassenger.com) or [Nginx][http://nginx.org/] to serve the Pact Broker application.
+* For production usage, use a web application server like [Phusion Passenger](https://www.phusionpassenger.com) or [Nginx](http://nginx.org/) to serve the Pact Broker application.
 * Deploy to your location of choice.
 
 [decouple]: http://techblog.realestate.com.au/enter-the-pact-matrix-or-how-to-decouple-the-release-cycles-of-your-microservices/
