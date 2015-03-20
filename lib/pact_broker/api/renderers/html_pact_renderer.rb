@@ -9,6 +9,8 @@ module PactBroker
     module Renderers
       class HtmlPactRenderer
 
+        class NotAPactError < StandardError; end
+
         def self.call pact
           new(pact).call
         end
@@ -69,6 +71,11 @@ module PactBroker
 
         def markdown
           Pact::Doc::Markdown::ConsumerContractRenderer.call consumer_contract
+        rescue NotAPactError
+          heading = "### A contract between #{@pact.consumer.name} and #{@pact.provider.name}"
+          warning = "_Note: this contract could not be parsed to a Pact, showing raw content instead._"
+          pretty_json = JSON.pretty_generate(@pact.content_hash)
+          "#{heading}\n#{warning}\n```json\n#{pretty_json}\n```\n"
         end
 
         def html
@@ -77,6 +84,8 @@ module PactBroker
 
         def consumer_contract
           Pact::ConsumerContract.from_json(@json_content)
+        rescue
+          raise NotAPactError
         end
 
       end

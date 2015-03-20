@@ -16,9 +16,10 @@ module PactBroker
         end
 
         let(:consumer) { double('consumer', name: 'Consumer')}
+        let(:provider) { double('provider', name: 'Provider')}
         let(:created_at) { DateTime.new(2014, 02, 27) }
         let(:json_content) { load_fixture('renderer_pact.json') }
-        let(:pact) { double('pact', json_content: json_content, updated_at: created_at, consumer_version_number: '1.2.3', consumer: consumer)}
+        let(:pact) { double('pact', json_content: json_content, updated_at: created_at, consumer_version_number: '1.2.3', consumer: consumer, provider: provider)}
         let(:pact_url) { '/pact/url' }
 
         before do
@@ -39,6 +40,26 @@ module PactBroker
             expect(subject).to match /<h\d>.*Some Provider/
             expect(subject).to include("Date published:")
             expect(subject).to include("Thu 27 Feb 2014, 11:00am +11:00")
+          end
+
+          context "when the content is not a valid pact, but is still JSON" do
+            before do
+              allow(pact).to receive(:content_hash).and_return(content_hash)
+            end
+            let(:json_content) { '[1]' }
+            let(:content_hash) { [1] }
+
+            it "includes a dismissive title" do
+              expect(subject).to include "A contract between Consumer and Provider"
+            end
+
+            it "includes a warning" do
+              expect(subject).to include "Note:"
+            end
+
+            it "renders the JSON in HTML" do
+              expect(subject).to match /\[\s+1\s+\]/m
+            end
           end
         end
 

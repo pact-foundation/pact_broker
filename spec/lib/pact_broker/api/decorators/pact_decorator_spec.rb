@@ -9,20 +9,20 @@ module PactBroker
 
       describe PactDecorator do
 
-        let(:json_content) {
+        let(:content_hash) {
           {
             'consumer' => {'name' => 'Consumer'},
             'provider' => {'name' => 'Provider'},
             'interactions' => [],
             'metadata' => {}
-          }.to_json
+          }
         }
 
         let(:base_url) { 'http://example.org' }
         let(:created_at) { Time.new(2014, 3, 4) }
         let(:updated_at) { Time.new(2014, 3, 5) }
         let(:pact) { double('pact',
-          json_content: json_content,
+          content_hash: content_hash,
           created_at: created_at,
           updated_at: updated_at,
           consumer: consumer,
@@ -92,6 +92,13 @@ module PactBroker
 
           it "includes a curie" do
             expect(subject[:_links][:curies]).to eq [{ name: "pb", href: "http://example.org/doc/{rel}", templated: true }]
+          end
+
+          context "when the json_content is not a Hash" do
+            let(:content_hash) { [1] }
+            it "returns the plain JSON without any links" do
+              expect(subject).to eq content_hash
+            end
           end
         end
 

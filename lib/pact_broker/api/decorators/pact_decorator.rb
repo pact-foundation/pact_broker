@@ -13,7 +13,12 @@ module PactBroker
         include Timestamps
 
         def to_hash(options = {})
-          ::JSON.parse(represented.json_content, PACT_PARSING_OPTIONS).merge super
+          parsed_content = represented.content_hash
+          if parsed_content.is_a?(::Hash)
+            parsed_content.merge super
+          else
+            parsed_content
+          end
         end
 
         link :self do | options |

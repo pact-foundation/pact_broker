@@ -46,13 +46,4 @@ describe "Publishing a pact" do
       expect(subject).to be_a_json_error_response "does not match"
     end
   end
-
-  context "when the pact is another type of CDC that doesn't have the Consumer or Provider names in the expected places" do
-    let(:pact_content) { {}.to_json }
-
-    it "accepts the un-pact Pact" do
-      expect(subject.status).to be 201
-    end
-  end
-
 end

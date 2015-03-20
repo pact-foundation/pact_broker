@@ -12,18 +12,21 @@ module PactBroker
 
       def self.from_request request, path_info
         json_content = request.body.to_s
-        pact_hash = begin
+        parsed_content = begin
           JSON.parse(json_content, PACT_PARSING_OPTIONS)
         rescue
           {}
         end
 
+        consumer_name_in_pact = parsed_content.is_a?(Hash) ? parsed_content.fetch('consumer',{})['name'] : nil
+        provider_name_in_pact = parsed_content.is_a?(Hash) ? parsed_content.fetch('provider',{})['name'] : nil
+
         new(
           consumer_name: path_info.fetch(:consumer_name),
           provider_name: path_info.fetch(:provider_name),
           consumer_version_number: path_info.fetch(:consumer_version_number),
-          consumer_name_in_pact: pact_hash.fetch('consumer',{})['name'],
-          provider_name_in_pact: pact_hash.fetch('provider',{})['name'],
+          consumer_name_in_pact: consumer_name_in_pact,
+          provider_name_in_pact: provider_name_in_pact,
           json_content: json_content
         )
       end
