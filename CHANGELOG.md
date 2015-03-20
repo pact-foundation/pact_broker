@@ -1,6 +1,10 @@
 Do this to generate your change history
 
-    $ git log --pretty=format:'  * %h - %s (%an, %ad)'
+    $ git log --pretty=format:'  * %h - %s (%an, %ad)' vX.Y.Z..HEAD
+
+#### 1.6.0 (2015-03-20)
+
+* e20e657 - Added support for JSON contracts that are not in the Pact format (e.g. top level is an array) (Beth Skurrie, Fri Mar 20 19:12:46 2015 +1100)
 
 #### 1.5.0 (2015-02-20)
 
