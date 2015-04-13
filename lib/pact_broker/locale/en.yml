@@ -8,8 +8,8 @@ en:
         invalid_url: "Invalid URL '%{url}'. Expected format: http://example.org"
         pact_missing_pacticipant_name: "was not found at expected path $.%{pacticipant}.name in the submitted pact file."
         consumer_version_number_missing: "Please specify the consumer version number by setting the X-Pact-Consumer-Version header."
-        consumer_version_number_header_invalid: "X-Pact-Consumer-Version '%{consumer_version_number}' is not recognised as a standard semantic version. eg. 1.3.0 or 2.0.4.rc1"
-        consumer_version_number_invalid: "Consumer version number '%{consumer_version_number}' is not recognised as a standard semantic version. eg. 1.3.0 or 2.0.4.rc1"
+        consumer_version_number_header_invalid: "X-Pact-Consumer-Version '%{consumer_version_number}' cannot be parsed to a version number. The expected format (unless this configuration has been overridden) is a semantic version. eg. 1.3.0 or 2.0.4.rc1"
+        consumer_version_number_invalid: "Consumer version number '%{consumer_version_number}' cannot be parsed to a version number. The expected format (unless this configuration has been overridden) is a semantic version. eg. 1.3.0 or 2.0.4.rc1"
         pacticipant_name_mismatch: "in pact ('%{name_in_pact}') does not match %{pacticipant} name in path ('%{name}')."
         connection_encoding_not_utf8: "The Sequel connection encoding (%{encoding}) is strongly recommended to be \"utf8\". If you need to set it to %{encoding} for some particular reason, then disable this check by setting config.validate_database_connection_config = false"
       duplicate_pacticipant: |

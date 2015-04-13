@@ -62,7 +62,7 @@ module PactBroker
             let(:attributes) { {consumer_version_number: 'blah'} }
 
             it "returns an error" do
-              expect(subject.errors[:base]).to include "Consumer version number 'blah' is not recognised as a standard semantic version. eg. 1.3.0 or 2.0.4.rc1"
+              expect(subject.errors[:base].first).to include "Consumer version number 'blah' cannot be parsed to a version number."
             end
           end
 
