@@ -11,7 +11,7 @@ module PactBroker
     attr_accessor :configuration
 
     def initialize &block
-      @configuration = Configuration.default_configuration
+      @configuration = PactBroker.configuration
       yield configuration
       post_configure
       build_app

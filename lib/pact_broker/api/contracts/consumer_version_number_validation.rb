@@ -18,14 +18,9 @@ module PactBroker
         end
 
         def invalid_consumer_version_number?
-          begin
-            Versionomy.parse(consumer_version_number)
-            false
-          rescue Versionomy::Errors::ParseError => e
-            true
-          end
+          parsed_version_number = PactBroker.configuration.version_parser.call consumer_version_number
+          parsed_version_number.nil?
         end
-
       end
     end
   end

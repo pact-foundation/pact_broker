@@ -1,5 +1,3 @@
-require 'versionomy'
-
 module PactBroker
   module Domain
     class Group < Array

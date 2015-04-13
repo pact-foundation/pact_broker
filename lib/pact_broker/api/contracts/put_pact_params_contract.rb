@@ -1,6 +1,5 @@
 require 'reform'
 require 'reform/contract'
-require 'versionomy'
 require 'pact_broker/messages'
 require 'pact_broker/constants'
 require 'pact_broker/api/contracts/pacticipant_name_contract'

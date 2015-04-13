@@ -7,7 +7,7 @@ module PactBroker
   class Configuration
 
     attr_accessor :log_dir, :database_connection, :auto_migrate_db, :use_hal_browser, :html_pact_renderer
-    attr_accessor :validate_database_connection_config, :enable_diagnostic_endpoints
+    attr_accessor :validate_database_connection_config, :enable_diagnostic_endpoints, :version_parser
     attr_writer :logger
 
     def logger
@@ -15,6 +15,7 @@ module PactBroker
     end
 
     def self.default_configuration
+      require 'pact_broker/versions/parse_semantic_version'
       config = Configuration.new
       config.log_dir = File.expand_path("./log")
       config.auto_migrate_db = true
@@ -22,6 +23,7 @@ module PactBroker
       config.html_pact_renderer = default_html_pact_render
       config.validate_database_connection_config = true
       config.enable_diagnostic_endpoints = true
+      config.version_parser = PactBroker::Versions::ParseSemanticVersion
       config
     end
 

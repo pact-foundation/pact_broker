@@ -1,4 +1,4 @@
-require 'versionomy'
+require 'pact_broker/configuration'
 
 module PactBroker
   module Domain
@@ -15,7 +15,7 @@ module PactBroker
 
         def initialize version_model
           @version_model = version_model
-          @sortable_number = Versionomy.parse(version_model.number)
+          @sortable_number = PactBroker.configuration.version_parser.call version_model.number
         end
 
         def <=> other
