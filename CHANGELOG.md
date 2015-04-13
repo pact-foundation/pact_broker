@@ -2,6 +2,10 @@ Do this to generate your change history
 
     $ git log --pretty=format:'  * %h - %s (%an, %ad)' vX.Y.Z..HEAD
 
+#### 1.7.0 (2015-03-20)
+
+* a26402c - Allow configuration of version parsing. (Beth Skurrie, Tue Apr 14 09:39:05 2015 +1000)
+
 #### 1.6.0 (2015-03-20)
 
 * e20e657 - Added support for JSON contracts that are not in the Pact format (e.g. top level is an array) (Beth Skurrie, Fri Mar 20 19:12:46 2015 +1100)
