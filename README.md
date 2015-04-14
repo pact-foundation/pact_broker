@@ -18,6 +18,7 @@ Features:
 * Dynamically generated network diagrams.
 * Enables a pact version to be tagged (ie. "prod") so a provider can verify itself against a fixed version of a pact to ensure backwards compatibility.
 * Webhooks to trigger a provider build when a consumer publishes a change to a pact.
+* [Docker Pact Broker][docker]
 
 Travis CI Status: [![Build Status](https://travis-ci.org/bethesque/pact_broker.svg?branch=master)](https://travis-ci.org/bethesque/pact_broker)
 
@@ -88,6 +89,8 @@ Use the HAL browser to view documentation as you browse.
 
 ### For reals
 
+You can use the [Pact Broker Docker container][docker] or...
+
 * Create a database using a product that is supported by the Sequel gem (listed on this page http://sequel.jeremyevans.net/rdoc/files/README_rdoc.html). The migrations have been tested on MySQL and PostgreSQL - your milage will vary on other databases.
 * __Note:__ It is recommended to use __PostgreSQL__ as it will support JSON search features that are planned in a future release, however MySQL the other well supported database.
 * Install ruby 1.9.3 or later
@@ -101,3 +104,4 @@ Use the HAL browser to view documentation as you browse.
 [pact]: https://github.com/realestate-com-au/pact
 [nerf]: https://github.com/bethesque/pact_broker/wiki/pact-broker-ci-nerf-gun
 [different-teams]: https://github.com/realestate-com-au/pact/wiki/Using-pact-where-the-consumer-team-is-different-from-the-provider-team
+[docker]: https://registry.hub.docker.com/u/dius/pact_broker/
