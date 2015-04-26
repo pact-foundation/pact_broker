@@ -15,7 +15,7 @@ $ gid add .
 $ git commit -m "Initial commit"
 ```
 
-It's now time to deploy to heroku! Assuming you lready have an account, you need to create a new application with a postgres add-on:
+It's now time to deploy to heroku! Assuming you already have an account, you need to create a new application with a postgres add-on:
 ```
 $ gem install heroku
 $ heroku create
