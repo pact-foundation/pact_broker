@@ -39,8 +39,12 @@ module PactBroker
         end
       end
 
-      def find_all_pacts_between consumer, options
-        pact_repository.find_all_pacts_between consumer, options
+      def find_all_pact_versions_between consumer, options
+        pact_repository.find_all_pact_versions_between consumer, options
+      end
+
+      def find_latest_pact_versions_for_provider provider_name, options = {}
+        pact_repository.find_latest_pact_versions_for_provider provider_name, options
       end
 
       def find_previous_distinct_pact_version params
@@ -51,7 +55,7 @@ module PactBroker
 
       def find_distinct_pacts_between consumer, options
         # Assumes pacts are sorted from newest to oldest
-        all = pact_repository.find_all_pacts_between consumer, options
+        all = pact_repository.find_all_pact_versions_between consumer, options
         distinct = []
         (0...all.size).each do | i |
           if i == all.size - 1

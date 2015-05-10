@@ -15,6 +15,7 @@ require 'pact_broker/api/resources/webhook_execution'
 require 'pact_broker/api/resources/version'
 require 'pact_broker/api/resources/pact_content_diff'
 require 'pact_broker/api/resources/previous_distinct_pact_version'
+require 'pact_broker/api/resources/latest_provider_pacts'
 
 
 require 'webmachine/adapters/rack'
@@ -34,6 +35,7 @@ module PactBroker
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'versions', :consumer_version_number], Api::Resources::Pact
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'version', :consumer_version_number, 'previous-distinct'], Api::Resources::PreviousDistinctPactVersion
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'version', :consumer_version_number, 'diff', 'previous-distinct'], Api::Resources::PactContentDiff
+        add ['pacts', 'provider', :provider_name, 'latest'], Api::Resources::LatestProviderPacts
 
         add ['pact', 'provider', :provider_name, 'consumer', :consumer_name, 'version', :consumer_version_number], Api::Resources::Pact
         add ['pact', 'provider', :provider_name, 'consumer', :consumer_name, 'latest'], Api::Resources::LatestPact

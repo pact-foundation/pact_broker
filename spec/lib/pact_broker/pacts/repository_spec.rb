@@ -158,7 +158,7 @@ module PactBroker
 
       end
 
-      describe "#find_all_pacts_between" do
+      describe "#find_all_pact_versions_between" do
 
         before do
           ProviderStateBuilder.new
@@ -174,7 +174,7 @@ module PactBroker
             .create_pact
         end
 
-        subject { Repository.new.find_all_pacts_between consumer_name, :and => provider_name }
+        subject { Repository.new.find_all_pact_versions_between consumer_name, :and => provider_name }
 
         it "returns the pacts between the specified consumer and provider" do
           expect(subject.size).to eq 2
@@ -185,6 +185,33 @@ module PactBroker
           expect(subject.first.consumer_version.tags.last.name).to eq "branch"
         end
 
+      end
+
+      describe "#find_latest_pact_versions_for_provider" do
+
+        before do
+          ProviderStateBuilder.new
+            .create_consumer(consumer_name)
+            .create_consumer_version("1.2.3")
+            .create_provider(provider_name)
+            .create_pact
+            .create_consumer("another consumer")
+            .create_consumer_version("4.5.6")
+            .create_pact
+            .create_provider("not the provider")
+            .create_pact
+        end
+
+        subject { Repository.new.find_latest_pact_versions_for_provider provider_name }
+
+        it "returns the pacts between the specified consumer and provider" do
+          expect(subject.size).to eq 2
+          expect(subject.first.consumer.name).to eq consumer_name
+          expect(subject.first.provider.name).to eq provider_name
+          expect(subject.first.consumer_version.number).to eq "1.2.3"
+          expect(subject.first.json_content).to be nil
+          expect(subject.last.consumer.name).to eq "another consumer"
+        end
       end
 
       describe "find_pact" do

@@ -15,7 +15,7 @@ module PactBroker
         let(:all_pacts) { [pact_4, pact_3, pact_2, pact_1]}
 
         before do
-          allow_any_instance_of(Pacts::Repository).to receive(:find_all_pacts_between).and_return(all_pacts)
+          allow_any_instance_of(Pacts::Repository).to receive(:find_all_pact_versions_between).and_return(all_pacts)
         end
 
         subject { Service.find_distinct_pacts_between 'consumer', :and => 'provider' }

@@ -36,6 +36,12 @@ module PactBroker
                 title: 'Pacticipants',
                 templated: false
               },
+              'pb:latest-provider-pacts' =>
+              {
+                href: base_url + '/pacts/provider/{provider}/latest',
+                title: 'Latest pacts by provider',
+                templated: true
+              },
               'pb:webhooks' =>
               {
                 href: base_url + '/webhooks',

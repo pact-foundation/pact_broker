@@ -30,7 +30,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'rack'
   gem.add_runtime_dependency 'redcarpet', '~>3.1'
   gem.add_runtime_dependency 'pact', '~>1.4'
-  gem.add_runtime_dependency 'pact-support', '~>0.1', '>=0.1.4'
+  gem.add_runtime_dependency 'pact-support', '~>0.4', '>=0.4.2'
   gem.add_runtime_dependency 'padrino-core', '~>0.12.4'
   gem.add_runtime_dependency 'haml'
   gem.add_runtime_dependency 'trailblazer', '~>0.1.0'

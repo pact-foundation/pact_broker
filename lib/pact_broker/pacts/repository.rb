@@ -37,12 +37,18 @@ module PactBroker
         DatabaseModel.where(id: id).delete
       end
 
-      def find_all_pacts_between consumer_name, options
+      def find_all_pact_versions_between consumer_name, options
         AllPacts
           .eager(:tags)
           .consumer(consumer_name)
           .provider(options.fetch(:and))
           .reverse_order(:consumer_version_order)
+          .collect(&:to_domain)
+      end
+
+      def find_latest_pact_versions_for_provider provider_name, options = {}
+        LatestPacts
+          .provider(provider_name)
           .collect(&:to_domain)
       end
 
