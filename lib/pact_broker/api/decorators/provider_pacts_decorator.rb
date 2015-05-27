@@ -11,9 +11,10 @@ module PactBroker
       class ProviderPactsDecorator < BaseDecorator
 
         link :self do | context |
+          suffix = context[:tag] ? " with tag '#{context[:tag]}'" : ""
           {
             href: context[:resource_url],
-            title: "Latest pact versions for the provider #{context[:provider_name]}"
+            title: "Latest pact versions for the provider #{context[:provider_name]}#{suffix}"
           }
         end
 

@@ -25,7 +25,7 @@ module PactBroker
         end
 
         def pacts
-          pact_service.find_latest_pact_versions_for_provider provider_name
+          pact_service.find_latest_pact_versions_for_provider provider_name, tag: identifier_from_path[:tag]
         end
 
       end

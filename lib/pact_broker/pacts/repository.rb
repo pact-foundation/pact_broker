@@ -5,6 +5,7 @@ require 'pact_broker/logging'
 require 'pact_broker/pacts/database_model'
 require 'pact_broker/pacts/all_pacts'
 require 'pact_broker/pacts/latest_pacts'
+require 'pact_broker/pacts/latest_tagged_pacts'
 require 'pact/shared/json_differ'
 
 module PactBroker
@@ -46,10 +47,12 @@ module PactBroker
           .collect(&:to_domain)
       end
 
-      def find_latest_pact_versions_for_provider provider_name, options = {}
-        LatestPacts
-          .provider(provider_name)
-          .collect(&:to_domain)
+      def find_latest_pact_versions_for_provider provider_name, tag = nil
+        if tag
+          LatestTaggedPacts.provider(provider_name).where(tag_name: tag).collect(&:to_domain)
+        else
+          LatestPacts.provider(provider_name).collect(&:to_domain)
+        end
       end
 
       def find_by_version_and_provider version_id, provider_id

@@ -44,7 +44,7 @@ module PactBroker
       end
 
       def find_latest_pact_versions_for_provider provider_name, options = {}
-        pact_repository.find_latest_pact_versions_for_provider provider_name, options
+        pact_repository.find_latest_pact_versions_for_provider provider_name, options[:tag]
       end
 
       def find_previous_distinct_pact_version params
