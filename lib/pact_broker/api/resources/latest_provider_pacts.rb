@@ -1,6 +1,6 @@
 require 'pact_broker/api/resources/base_resource'
 require 'pact_broker/configuration'
-require 'pact_broker/api/decorators/pact_versions_decorator'
+require 'pact_broker/api/decorators/provider_pacts_decorator'
 
 module PactBroker
   module Api
@@ -21,7 +21,7 @@ module PactBroker
         end
 
         def to_json
-          PactBroker::Api::Decorators::PactVersionsDecorator.new(pacts).to_json(decorator_context(identifier_from_path))
+          PactBroker::Api::Decorators::ProviderPactsDecorator.new(pacts).to_json(decorator_context(identifier_from_path))
         end
 
         def pacts
