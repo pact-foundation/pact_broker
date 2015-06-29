@@ -63,7 +63,7 @@ module PactBroker
       end
 
       def find_latest_pacts
-        LatestPacts.collect(&:to_domain)
+        LatestPacts.collect(&:to_domain_without_tags)
       end
 
       def find_latest_pact(consumer_name, provider_name, tag = nil)

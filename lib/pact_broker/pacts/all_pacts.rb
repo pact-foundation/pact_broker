@@ -60,6 +60,12 @@ module PactBroker
       end
 
       def to_domain
+        domain = to_domain_without_tags
+        domain.consumer_version.tags = tags
+        domain
+      end
+
+      def to_domain_without_tags
         consumer = Domain::Pacticipant.new(name: consumer_name)
         consumer.id = consumer_id
         provider = Domain::Pacticipant.new(name: provider_name)
@@ -68,7 +74,7 @@ module PactBroker
           number: consumer_version_number,
           order: consumer_version_order,
           pacticipant: consumer,
-          tags: tags)
+          tags: nil)
         Domain::Pact.new(id: id,
           consumer: consumer,
           consumer_version: consumer_version,
