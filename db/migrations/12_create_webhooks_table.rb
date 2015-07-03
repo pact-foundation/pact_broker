@@ -1,6 +1,6 @@
 Sequel.migration do
   change do
-    create_table(:webhooks) do
+    create_table(:webhooks, charset: 'utf8') do
       primary_key :id
       String :uuid, null: false, unique: true, unique_constraint_name: 'uq_webhook_uuid'
       String :method, null: false
@@ -11,7 +11,7 @@ Sequel.migration do
       foreign_key :provider_id, :pacticipants, null: false, foreign_key_constraint_name: 'fk_webhooks_provider'
     end
 
-    create_table(:webhook_headers) do
+    create_table(:webhook_headers, charset: 'utf8') do
       String :name, null: false
       String :value
       foreign_key :webhook_id, :webhooks, null: false, foreign_key_constraint_name: 'fk_webhookheaders_webhooks'
