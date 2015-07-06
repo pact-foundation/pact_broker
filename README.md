@@ -18,6 +18,7 @@ Features:
 * Dynamically generated network diagrams.
 * Enables a pact version to be tagged (ie. "prod") so a provider can verify itself against a fixed version of a pact to ensure backwards compatibility.
 * Webhooks to trigger a provider build when a consumer publishes a change to a pact.
+* Tracks changes between Pact versions so you can tell when a consumer has changed its expectations.
 * [Docker Pact Broker][docker]
 
 Travis CI Status: [![Build Status](https://travis-ci.org/bethesque/pact_broker.svg?branch=master)](https://travis-ci.org/bethesque/pact_broker)
