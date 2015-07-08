@@ -1,5 +1,6 @@
 require 'pact_broker/repositories'
 require 'pact_broker/services'
+require 'pact_broker/logging'
 
 module PactBroker
   module Pacts
@@ -9,6 +10,7 @@ module PactBroker
 
       extend PactBroker::Repositories
       extend PactBroker::Services
+      include PactBroker::Logging
 
       def find_latest_pact params
         pact_repository.find_latest_pact(params[:consumer_name], params[:provider_name], params[:tag])
@@ -23,6 +25,7 @@ module PactBroker
       end
 
       def delete params
+        logger.info "Deleting pact version with params #{params}"
         pact_repository.delete(params)
       end
 
@@ -77,6 +80,7 @@ module PactBroker
       private
 
       def update_pact params, existing_pact
+        logger.info "Updating existing pact version with params #{params}"
         updated_pact = pact_repository.update existing_pact.id, params
 
         if existing_pact.json_content != updated_pact.json_content
@@ -87,6 +91,7 @@ module PactBroker
       end
 
       def create_pact params, version, provider
+        logger.info "Creating new pact version with params #{params}"
         pact = pact_repository.create json_content: params[:json_content], version_id: version.id, provider_id: provider.id
         trigger_webhooks pact
         pact
