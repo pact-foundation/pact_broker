@@ -60,6 +60,12 @@ module PactBroker
             it "renders the JSON in HTML" do
               expect(subject).to match /\[\s+1\s+\]/m
             end
+
+            it "logs a warning" do
+              allow(PactBroker.logger).to receive(:warn).with(/Error/)
+              expect(PactBroker.logger).to receive(:warn).with(/Could not parse/)
+              subject
+            end
           end
         end
 

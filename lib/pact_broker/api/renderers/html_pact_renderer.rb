@@ -3,6 +3,7 @@ require 'pact/reification'
 require 'redcarpet'
 require 'pact/doc/markdown/consumer_contract_renderer'
 require 'pact_broker/api/pact_broker_urls'
+require 'pact_broker/logging'
 
 module PactBroker
   module Api
@@ -10,6 +11,8 @@ module PactBroker
       class HtmlPactRenderer
 
         class NotAPactError < StandardError; end
+
+        include PactBroker::Logging
 
         def self.call pact
           new(pact).call
@@ -84,7 +87,9 @@ module PactBroker
 
         def consumer_contract
           Pact::ConsumerContract.from_json(@json_content)
-        rescue
+        rescue => e
+          logger.warn "#{e.class} #{e.message} #{e.backtrace.join("\n")}"
+          logger.warn "Could not parse the following content to a Pact, showing raw content instead: #{@json_content}"
           raise NotAPactError
         end
 
