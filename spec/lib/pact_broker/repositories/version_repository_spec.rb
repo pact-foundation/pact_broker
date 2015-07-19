@@ -26,7 +26,6 @@ module PactBroker
 
       describe "#find_by_pacticipant_name_and_number" do
 
-
         subject { described_class.new.find_by_pacticipant_name_and_number pacticipant_name, version_number }
 
         context "when the version exists" do
@@ -48,6 +47,18 @@ module PactBroker
             expect(subject.tags.first.name).to eq "prod"
             expect(subject.order).to eq 0
           end
+
+          context "when case sensitivity is turned off and names with different cases are used" do
+            before do
+              allow(PactBroker.configuration).to receive(:use_case_sensitive_resource_names).and_return(false)
+            end
+
+            subject { described_class.new.find_by_pacticipant_name_and_number pacticipant_name.upcase, version_number.upcase }
+
+            it "returns the version" do
+              expect(subject).to_not be nil
+            end
+          end
         end
 
         context "when the version doesn't exist" do
@@ -55,10 +66,7 @@ module PactBroker
             expect(subject).to be_nil
           end
         end
-
       end
-
-
     end
   end
 end

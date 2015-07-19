@@ -1,9 +1,12 @@
 require 'sequel'
 require 'pact_broker/domain/version'
+require 'pact_broker/repositories/tag_repository'
 
 module PactBroker
   module Repositories
     class VersionRepository
+
+      include Helpers
 
       def find_by_pacticipant_id_and_number pacticipant_id, number
         PactBroker::Domain::Version.where(number: number, pacticipant_id: pacticipant_id).single_record
@@ -12,9 +15,9 @@ module PactBroker
       def find_by_pacticipant_name_and_number pacticipant_name, number
         PactBroker::Domain::Version
           .select(:versions__id, :versions__number, :versions__pacticipant_id, :versions__order, :versions__created_at, :versions__updated_at)
-          .where(number: number)
           .join(:pacticipants, {id: :pacticipant_id})
-          .where(name: pacticipant_name)
+          .where(name_like(:number, number))
+          .where(name_like(:name, pacticipant_name))
           .single_record
       end
 
@@ -31,7 +34,6 @@ module PactBroker
           create(pacticipant_id: pacticipant_id, number: number)
         end
       end
-
     end
   end
 end

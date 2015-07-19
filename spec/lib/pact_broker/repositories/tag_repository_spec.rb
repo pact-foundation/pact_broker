@@ -8,7 +8,7 @@ module PactBroker
       describe ".find" do
 
         let(:pacticipant_name) { "test_pacticipant" }
-        let(:version_number) { "1.2.3" }
+        let(:version_number) { "1.2.3a" }
         let(:tag_name) { "prod" }
 
         subject { TagRepository.new }
@@ -41,6 +41,18 @@ module PactBroker
             expect(find_tag.updated_at).to be_instance_of(DateTime)
           end
 
+          context "when case sensitivity is turned off and a name with different case is used" do
+            before do
+              allow(PactBroker.configuration).to receive(:use_case_sensitive_resource_names).and_return(false)
+            end
+
+            let(:options) { {pacticipant_name: pacticipant_name.upcase, pacticipant_version_number: version_number.upcase, tag_name: tag_name.upcase} }
+
+            it "returns the tag" do
+              expect(find_tag).to_not be nil
+              expect(find_tag.name).to eq tag_name
+            end
+          end
         end
 
         context "when the tag does not exist" do

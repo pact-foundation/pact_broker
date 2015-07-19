@@ -1,12 +1,15 @@
 require 'sequel'
 require 'pact_broker/domain/pacticipant'
+require 'pact_broker/repositories/helpers'
 
 module PactBroker
   module Repositories
     class PacticipantRepository
 
+      include Helpers
+
       def find_by_name name
-        PactBroker::Domain::Pacticipant.where(name: name).single_record
+        PactBroker::Domain::Pacticipant.where(name_like(:name, name)).single_record
       end
 
       def find_by_id id
@@ -36,7 +39,6 @@ module PactBroker
       def find_latest_version name
 
       end
-
     end
   end
 end
