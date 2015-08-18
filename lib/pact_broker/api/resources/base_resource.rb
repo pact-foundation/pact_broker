@@ -39,7 +39,7 @@ module PactBroker
         alias_method :path_info, :identifier_from_path
 
         def base_url
-          request.uri.to_s.gsub(/#{request.uri.path}$/,'')
+          request.base_uri.to_s.chomp('/')
         end
 
         def resource_url

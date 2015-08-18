@@ -1,6 +1,6 @@
 require 'pact_broker/diagnostic/resources/heartbeat'
 require 'pact_broker/diagnostic/resources/dependencies'
-require 'webmachine/adapters/rack'
+require 'webmachine/adapters/rack_mapped'
 
 module PactBroker
   module Diagnostic
@@ -27,7 +27,7 @@ module PactBroker
         end
 
         app.configure do |config|
-          config.adapter = :Rack
+          config.adapter = :RackMapped
         end
 
         app.adapter

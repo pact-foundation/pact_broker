@@ -25,7 +25,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'roar', '~> 1.0.0.beta2'
   gem.add_runtime_dependency 'reform', '~> 1.0'
   gem.add_runtime_dependency 'sequel', '~> 4.23'
-  gem.add_runtime_dependency 'webmachine', '1.3.1'
+  gem.add_runtime_dependency 'webmachine', '1.4.0'
   gem.add_runtime_dependency 'versionomy', '~> 0.4'
   gem.add_runtime_dependency 'rack'
   gem.add_runtime_dependency 'redcarpet', '~>3.1'

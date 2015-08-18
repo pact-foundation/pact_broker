@@ -34,7 +34,7 @@ module PactBroker
 
         it "redirects to /ui/relationships" do
           expect(subject.status).to eq 303
-          expect(subject.headers['Location']).to eq 'ui/relationships'
+          expect(subject.headers['Location']).to eq '/ui/relationships'
         end
 
       end

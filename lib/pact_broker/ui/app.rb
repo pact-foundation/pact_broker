@@ -39,7 +39,7 @@ module PactBroker
           # A request for the root path in the browser (not the json index) should
           # redirect to ui/relationships
           if (env['PATH_INFO'].chomp("/") == "")
-            [303, {'Location' => 'ui/relationships'},[]]
+            [303, {'Location' =>  "#{env['SCRIPT_NAME']}/ui/relationships"},[]]
           else
             [404, {},[]]
           end

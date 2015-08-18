@@ -18,7 +18,7 @@ require 'pact_broker/api/resources/previous_distinct_pact_version'
 require 'pact_broker/api/resources/latest_provider_pacts'
 
 
-require 'webmachine/adapters/rack'
+require 'webmachine/adapters/rack_mapped'
 
 module PactBroker
 
@@ -56,7 +56,7 @@ module PactBroker
     end
 
     pact_api.configure do |config|
-      config.adapter = :Rack
+      config.adapter = :RackMapped
     end
 
     pact_api.adapter
