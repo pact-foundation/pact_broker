@@ -28,3 +28,4 @@ _yardoc
 Gemfile.lock
 
 bethtest/
+bin/
