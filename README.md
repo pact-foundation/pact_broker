@@ -1,6 +1,6 @@
 # Pact Broker
 
-[![Join the chat at https://gitter.im/bethesque/pact_broker](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/bethesque/pact_broker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Build Status](https://travis-ci.org/bethesque/pact_broker.svg?branch=master)](https://travis-ci.org/bethesque/pact_broker) [![Join the chat at https://gitter.im/bethesque/pact_broker](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/bethesque/pact_broker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 The Pact Broker provides a repository for consumer driven contracts created using the pact gem. 
 
