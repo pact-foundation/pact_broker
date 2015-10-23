@@ -48,7 +48,6 @@ module PactBroker
       def execute
 
         begin
-          #TODO make it work with https
           req = http_request
 
           headers.each_pair do | name, value |
@@ -60,7 +59,8 @@ module PactBroker
           req.body = body
 
           logger.info "Making webhook request #{to_s}"
-          response = Net::HTTP.start(uri.hostname, uri.port) do |http|
+          response = Net::HTTP.start(uri.hostname, uri.port,
+            :use_ssl => uri.scheme == 'https') do |http|
             http.request req
           end
 
