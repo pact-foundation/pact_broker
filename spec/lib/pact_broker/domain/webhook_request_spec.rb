@@ -10,11 +10,12 @@ module PactBroker
 
       let(:username) { nil }
       let(:password) { nil }
+      let(:url) { 'http://example.org/hook' }
 
       subject do
         WebhookRequest.new(
           method: 'post',
-          url: 'http://example.org/hook',
+          url: url,
           headers: {'Content-type' => 'text/plain'},
           username: username,
           password: password,
@@ -82,6 +83,22 @@ module PactBroker
           it "uses the credentials" do
             subject.execute
             expect(http_request_with_basic_auth).to have_been_made
+          end
+        end
+
+        context "when the URL has a https scheme" do
+          let(:url) { 'https://example.org/hook' }
+
+          let!(:https_request) do
+            # webmock will set the request signature scheme to 'https' _only_ if the use_ssl option is set
+            stub_request(:post, "https://example.org/hook").
+              with(:headers => {'Content-Type'=>'text/plain'}, :body => 'body').
+              to_return(:status => 302, :body => "respbod", :headers => {'Content-Type' => 'text/plain, blah'})
+          end
+
+          it "uses SSL" do
+            subject.execute
+            expect(https_request).to have_been_made
           end
         end
 
