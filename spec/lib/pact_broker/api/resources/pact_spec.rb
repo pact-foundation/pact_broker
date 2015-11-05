@@ -1,6 +1,7 @@
 require 'spec_helper'
 require 'pact_broker/api/resources/pact'
 require 'rack/test'
+require 'pact_broker/pacts/service'
 
 module PactBroker::Api
 
@@ -63,8 +64,8 @@ module PactBroker::Api
             response
           end
 
-          it "returns a 400 response" do
-            expect(response.status).to eq 400
+          it "returns a 409 response" do
+            expect(response.status).to eq 409
           end
 
           it "returns a text response" do

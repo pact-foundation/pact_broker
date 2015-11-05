@@ -27,11 +27,14 @@ module PactBroker
           ["GET", "PUT", "DELETE"]
         end
 
+        def is_conflict?
+          potential_duplicate_pacticipants?(pact_params.pacticipant_names)
+        end
+
         def malformed_request?
           if request.put?
             return invalid_json? ||
-              contract_validation_errors?(Contracts::PutPactParamsContract.new(pact_params)) ||
-              potential_duplicate_pacticipants?(pact_params.pacticipant_names)
+              contract_validation_errors?(Contracts::PutPactParamsContract.new(pact_params))
           else
             false
           end
