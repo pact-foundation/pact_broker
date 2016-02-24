@@ -35,7 +35,7 @@ module PactBroker
       end
 
       def connected? other
-        (self.to_a & other.to_a).any?
+        include?(other.consumer) || include?(other.provider)
       end
 
       def include? pacticipant
