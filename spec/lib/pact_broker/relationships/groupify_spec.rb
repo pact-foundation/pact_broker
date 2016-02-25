@@ -10,18 +10,18 @@ module PactBroker
 
       describe ".call" do
 
-        let(:consumer_a) { double('consumer a', name: 'consumer a') }
-        let(:consumer_b) { double('consumer b', name: 'consumer b') }
-        let(:consumer_c) { double('consumer c', name: 'consumer c') }
+        let(:consumer_a) { double('consumer a', id: 1, name: 'consumer a') }
+        let(:consumer_b) { double('consumer b', id: 2, name: 'consumer b') }
+        let(:consumer_c) { double('consumer c', id: 3, name: 'consumer c') }
 
-        let(:consumer_l) { double('consumer l', name: 'consumer l') }
-        let(:consumer_m) { double('consumer m', name: 'consumer m') }
+        let(:consumer_l) { double('consumer l', id: 4, name: 'consumer l') }
+        let(:consumer_m) { double('consumer m', id: 5, name: 'consumer m') }
 
-        let(:provider_p) { double('provider p', name: 'provider p') }
+        let(:provider_p) { double('provider p', id: 6, name: 'provider p') }
 
-        let(:provider_x) { double('provider x', name: 'provider x') }
-        let(:provider_y) { double('provider y', name: 'provider y') }
-        let(:provider_z) { double('provider z', name: 'provider z') }
+        let(:provider_x) { double('provider x', id: 7, name: 'provider x') }
+        let(:provider_y) { double('provider y', id: 8, name: 'provider y') }
+        let(:provider_z) { double('provider z', id: 9, name: 'provider z') }
 
 
         let(:relationship_1) { Domain::Relationship.new(consumer_a, provider_x) }
@@ -34,7 +34,7 @@ module PactBroker
         let(:relationship_5) { Domain::Relationship.new(consumer_l, provider_p) }
         let(:relationship_6) { Domain::Relationship.new(consumer_m, provider_p) }
 
-        let(:relationships) { [relationship_1, relationship_2, relationship_3, relationship_4, relationship_5, relationship_6 ]}
+        let(:relationships) { [relationship_1, relationship_2, relationship_3, relationship_4, relationship_5, relationship_6] }
 
         it "separates the relationships into isolated groups" do
           groups = Groupify.call(relationships)
