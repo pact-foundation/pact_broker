@@ -9,7 +9,6 @@ require 'rspec/its'
 
 Dir.glob("./spec/support/**/*.rb") { |file| require file  }
 
-YAML::ENGINE.yamler = 'psych'
 I18n.config.enforce_available_locales = false
 
 RSpec.configure do | config |
