@@ -20,14 +20,14 @@ end
 
 RSpec::Matchers.define :be_a_json_response do
   match do | actual |
-    expect(actual.headers['Content-Type']).to eq 'application/json'
+    expect(actual.headers['Content-Type']).to eq 'application/json;charset=utf-8'
   end
 end
 
 RSpec::Matchers.define :be_a_json_error_response do | message |
   match do | actual |
     expect(actual.status).to be 400
-    expect(actual.headers['Content-Type']).to eq 'application/json'
+    expect(actual.headers['Content-Type']).to eq 'application/json;charset=utf-8'
     expect(actual.body).to include message
   end
 end

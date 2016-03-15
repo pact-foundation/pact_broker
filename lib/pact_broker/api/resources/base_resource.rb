@@ -68,12 +68,12 @@ module PactBroker
         end
 
         def set_json_error_message message
-          response.headers['Content-Type'] = 'application/json'
+          response.headers['Content-Type'] = 'application/json;charset=utf-8'
           response.body = {error: message}.to_json
         end
 
         def set_json_validation_error_messages errors
-          response.headers['Content-Type'] = 'application/json'
+          response.headers['Content-Type'] = 'application/json;charset=utf-8'
           response.body = {errors: errors}.to_json
         end
 
@@ -96,7 +96,7 @@ module PactBroker
           rescue StandardError => e
             logger.error "Error parsing JSON #{e} - #{request_body}"
             set_json_error_message "Error parsing JSON - #{e.message}"
-            response.headers['Content-Type'] = 'application/json'
+            response.headers['Content-Type'] = 'application/json;charset=utf-8'
             true
           end
         end

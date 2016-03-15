@@ -24,7 +24,7 @@ describe "Creating a webhook" do
 
     it "returns a JSON content type" do
       subject
-      expect(last_response.headers['Content-Type']).to eq 'application/json'
+      expect(last_response.headers['Content-Type']).to eq 'application/json;charset=utf-8'
     end
 
     it "returns the validation errors" do
