@@ -42,6 +42,15 @@ module PactBroker
           request.base_uri.to_s.chomp('/')
         end
 
+        def charsets_provided
+          [['utf-8', :encode]]
+        end
+
+        # We only use utf-8 so leave encoding as it is
+        def encode(body)
+          body
+        end
+
         def resource_url
           request.uri.to_s
         end

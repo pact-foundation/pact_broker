@@ -14,7 +14,7 @@ require 'rspec/expectations'
 RSpec::Matchers.define :be_a_hal_json_success_response do
   match do | actual |
     expect(actual.status).to be 200
-    expect(actual.headers['Content-Type']).to eq 'application/hal+json'
+    expect(actual.headers['Content-Type']).to eq 'application/hal+json;charset=utf-8'
   end
 end
 

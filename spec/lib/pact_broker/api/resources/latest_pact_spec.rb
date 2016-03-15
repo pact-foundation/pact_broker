@@ -45,7 +45,7 @@ module PactBroker::Api
 
           it "returns a content type of HTML" do
             subject
-            expect(last_response.headers['Content-Type']).to eq 'text/html'
+            expect(last_response.headers['Content-Type']).to eq 'text/html;charset=utf-8'
           end
 
         end

@@ -126,7 +126,7 @@ module PactBroker
 
         it "returns the CSV Content-Type" do
           expect(subject.status).to eq 200
-          expect(subject.headers['Content-Type']).to eq "text/csv"
+          expect(subject.headers['Content-Type']).to eq "text/csv;charset=utf-8"
         end
       end
 

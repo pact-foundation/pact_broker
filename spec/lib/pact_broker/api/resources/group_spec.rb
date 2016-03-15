@@ -52,7 +52,7 @@ module PactBroker::Api
 
           it "returns a CSV content type" do
             subject
-            expect(last_response.headers['Content-Type']).to eq 'text/csv'
+            expect(last_response.headers['Content-Type']).to eq 'text/csv;charset=utf-8'
           end
 
           it "returns a CSV of pacticipants that are in the same group as the given pacticipant" do

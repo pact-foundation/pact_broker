@@ -12,7 +12,7 @@ describe "Publishing a pact" do
     end
 
     it "returns a json body" do
-      expect(subject.headers['Content-Type']).to eq "application/json"
+      expect(subject.headers['Content-Type']).to eq "application/json;charset=utf-8"
     end
 
     it "returns the pact in the body" do
@@ -31,7 +31,7 @@ describe "Publishing a pact" do
     end
 
     it "returns an application/json Content-Type" do
-      expect(subject.headers['Content-Type']).to eq "application/json"
+      expect(subject.headers['Content-Type']).to eq "application/json;charset=utf-8"
     end
 
     it "returns the pact in the response body" do

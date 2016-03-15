@@ -65,7 +65,7 @@ describe "Creating a webhook" do
 
     it "returns a JSON Content Type" do
       subject
-      expect(last_response.headers['Content-Type']).to eq 'application/hal+json'
+      expect(last_response.headers['Content-Type']).to eq 'application/hal+json;charset=utf-8'
     end
 
     it "returns the newly created webhook" do
