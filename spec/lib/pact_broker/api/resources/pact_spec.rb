@@ -28,7 +28,7 @@ module PactBroker::Api
           end
 
           it "returns a JSON content type" do
-            expect(response.headers['Content-Type']).to eq "application/json"
+            expect(response.headers['Content-Type']).to eq "application/json;charset=utf-8"
           end
 
           it "returns an error message" do

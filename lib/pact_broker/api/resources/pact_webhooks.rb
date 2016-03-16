@@ -36,7 +36,7 @@ module PactBroker
 
         def validation_errors? webhook
           if (errors = webhook_service.errors(webhook)).any?
-            response.headers['Content-Type'] = 'application/json'
+            response.headers['Content-Type'] = 'application/json;charset=utf-8'
             response.body = {errors: errors.full_messages }.to_json
           end
           errors.any?

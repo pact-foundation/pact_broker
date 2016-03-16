@@ -63,7 +63,7 @@ module PactBroker
 
             it "returns a Content-Type of application/hal+json" do
               subject
-              expect(last_response.headers['Content-Type']).to eq 'application/hal+json'
+              expect(last_response.headers['Content-Type']).to eq 'application/hal+json;charset=utf-8'
             end
 
             it "creates a JSON representation of the new pacticipant" do

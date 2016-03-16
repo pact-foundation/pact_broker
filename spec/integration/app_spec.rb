@@ -15,7 +15,7 @@ module PactBroker
     let(:enable_diagnostic_endpoints) { false }
 
     let(:app) do
-      app = PactBroker::App.new do | config |
+      PactBroker::App.new do | config |
         config.auto_migrate_db = false
         config.use_hal_browser = hal_browser_enabled
         config.database_connection = ::DB::PACT_BROKER_DB
@@ -126,7 +126,7 @@ module PactBroker
 
         it "returns the CSV Content-Type" do
           expect(subject.status).to eq 200
-          expect(subject.headers['Content-Type']).to eq "text/csv"
+          expect(subject.headers['Content-Type']).to eq "text/csv;charset=utf-8"
         end
       end
 
