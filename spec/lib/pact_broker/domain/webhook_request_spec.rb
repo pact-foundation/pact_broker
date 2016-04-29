@@ -73,8 +73,9 @@ module PactBroker
           let(:password) { 'password' }
 
           let!(:http_request_with_basic_auth) do
-            stub_request(:post, "http://username:password@example.org/hook").
+            stub_request(:post, "http://example.org/hook").
               with(
+                basic_auth: [username, password],
                 :headers => {'Content-Type'=>'text/plain'},
                 :body => 'body').
               to_return(:status => 302, :body => "respbod", :headers => {'Content-Type' => 'text/plain, blah'})
