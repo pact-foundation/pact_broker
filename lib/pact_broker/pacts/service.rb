@@ -1,6 +1,7 @@
 require 'pact_broker/repositories'
 require 'pact_broker/services'
 require 'pact_broker/logging'
+require 'pact_broker/pact_merger'
 
 module PactBroker
   module Pacts
@@ -40,6 +41,17 @@ module PactBroker
         else
           create_pact params, consumer_version, provider
         end
+      end
+
+      def merge_pact params
+        provider = pacticipant_repository.find_by_name_or_create params[:provider_name]
+        consumer = pacticipant_repository.find_by_name_or_create params[:consumer_name]
+        consumer_version = version_repository.find_by_pacticipant_id_and_number_or_create consumer.id, params[:consumer_version_number]
+        existing_pact = pact_repository.find_by_version_and_provider(consumer_version.id, provider.id)
+
+        params.merge!(json_content: PactMerger.merge_pacts(params[:json_content], existing_pact.json_content))
+
+        update_pact params, existing_pact
       end
 
       def find_all_pact_versions_between consumer, options
@@ -102,7 +114,6 @@ module PactBroker
           webhook_service.execute_webhooks pact
         end
       end
-
     end
   end
 end

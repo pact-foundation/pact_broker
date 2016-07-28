@@ -14,9 +14,8 @@ module PactBroker::Api
       let(:app) { PactBroker::API }
       let(:json) { {some: 'json'}.to_json }
 
-      describe "PUT" do
-
-        subject { put "/pacts/provider/Provider/consumer/Consumer/version/1.2", json, {'CONTENT_TYPE' => "application/json"} ; last_response }
+      shared_examples "an update endpoint" do |http_method|
+        subject { self.send http_method, "/pacts/provider/Provider/consumer/Consumer/version/1.2", json, {'CONTENT_TYPE' => "application/json"} ; last_response }
 
         let(:response) { subject; last_response }
 
@@ -76,7 +75,14 @@ module PactBroker::Api
             expect(response.body).to eq "message1\nmessage2"
           end
         end
+      end
 
+      describe "PUT" do
+        it_behaves_like "an update endpoint", :put
+      end
+
+      describe "PATCH" do
+        it_behaves_like "an update endpoint", :patch
       end
 
       describe "DELETE" do
