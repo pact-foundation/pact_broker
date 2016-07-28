@@ -2,7 +2,6 @@ require 'spec_helper'
 require 'spec/support/provider_state_builder'
 require 'pact_broker/pact_merger'
 require 'json'
-require 'byebug'
 
 module PactBroker
   describe PactMerger do
