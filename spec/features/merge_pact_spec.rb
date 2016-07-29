@@ -1,3 +1,5 @@
+require 'spec/support/provider_state_builder'
+
 describe "Merging a pact" do
 
   let(:pact_content) { load_fixture('a_consumer-a_provider.json') }
