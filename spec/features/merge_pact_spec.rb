@@ -43,10 +43,6 @@ describe "Merging a pact" do
     end
   end
 
-  context "when there are multiple patches to the same pact" do
-    # [ThePletch] Tests that race conditions won't cause patches to be dropped
-  end
-
   context "when the pacticipant names in the path do not match those in the pact" do
     let(:path) { "/pacts/provider/Another%20Provider/consumer/A%20Consumer/version/1.2.3" }
 

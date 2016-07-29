@@ -1,7 +1,7 @@
 require 'pact_broker/repositories'
 require 'pact_broker/services'
 require 'pact_broker/logging'
-require 'pact_broker/pact_merger'
+require 'pact_broker/pacts/merger'
 
 module PactBroker
   module Pacts
@@ -49,7 +49,7 @@ module PactBroker
         consumer_version = version_repository.find_by_pacticipant_id_and_number_or_create consumer.id, params[:consumer_version_number]
         existing_pact = pact_repository.find_by_version_and_provider(consumer_version.id, provider.id)
 
-        params.merge!(json_content: PactMerger.merge_pacts(params[:json_content], existing_pact.json_content))
+        params.merge!(json_content: Merger.merge_pacts(params[:json_content], existing_pact.json_content))
 
         update_pact params, existing_pact
       end
