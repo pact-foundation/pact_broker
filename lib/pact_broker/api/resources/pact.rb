@@ -6,6 +6,14 @@ require 'pact_broker/json'
 require 'pact_broker/pacts/pact_params'
 require 'pact_broker/api/contracts/put_pact_params_contract'
 
+module Webmachine
+  class Request
+    def patch?
+      method == "PATCH"
+    end
+  end
+end
+
 module PactBroker
 
   module Api
@@ -24,7 +32,11 @@ module PactBroker
         end
 
         def allowed_methods
-          ["GET", "PUT", "DELETE"]
+          ["GET", "PUT", "DELETE", "PATCH"]
+        end
+
+        def known_methods
+          super + ['PATCH']
         end
 
         def is_conflict?
@@ -32,8 +44,8 @@ module PactBroker
         end
 
         def malformed_request?
-          if request.put?
-            return invalid_json? ||
+          if request.patch? || request.put?
+            invalid_json? ||
               contract_validation_errors?(Contracts::PutPactParamsContract.new(pact_params))
           else
             false
@@ -41,12 +53,18 @@ module PactBroker
         end
 
         def resource_exists?
-          pact
+          !!pact
         end
 
         def from_json
           response_code = pact ? 200 : 201
-          @pact = pact_service.create_or_update_pact(pact_params)
+
+          if request.patch? && resource_exists?
+            @pact = pact_service.merge_pact(pact_params)
+          else
+            @pact = pact_service.create_or_update_pact(pact_params)
+          end
+
           response.body = to_json
           response_code
         end
