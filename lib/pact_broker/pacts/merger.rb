@@ -6,6 +6,17 @@ module PactBroker
 
       extend self
 
+      def conflict? original_json, additional_json
+        original, additional = [original_json, additional_json].map{|str| JSON.parse(str, PACT_PARSING_OPTIONS) }
+
+        additional["interactions"].any? do |new_interaction|
+          original["interactions"].any? do |original_interaction|
+            same_description_and_state?(original_interaction, new_interaction) &&
+              !same_request_properties?(original_interaction["request"], new_interaction["request"])
+          end
+        end
+      end
+
       # Accepts two hashes representing pacts, outputs a merged hash
       # Does not make any guarantees about order of interactions
       def merge_pacts original_json, additional_json
@@ -16,7 +27,7 @@ module PactBroker
         additional["interactions"].each do |new_interaction|
           # check to see if this interaction matches an existing interaction
           overwrite_index = original["interactions"].find_index do |original_interaction|
-            matching_request?(original_interaction, new_interaction)
+            same_description_and_state?(original_interaction, new_interaction)
           end
 
           # overwrite existing interaction if a match is found, otherwise appends the new interaction
@@ -31,11 +42,6 @@ module PactBroker
       end
 
       private
-
-      def matching_request? original_interaction, new_interaction
-        same_description_and_state?(original_interaction, new_interaction) &&
-          same_request_properties?(original_interaction["request"], new_interaction["request"])
-      end
 
       def same_description_and_state? original, additional
         original["description"] == additional["description"] &&

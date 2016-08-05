@@ -40,7 +40,10 @@ module PactBroker
         end
 
         def is_conflict?
-          potential_duplicate_pacticipants?(pact_params.pacticipant_names)
+          merge_conflict = request.patch? && resource_exists? &&
+            Pacts::Merger.conflict?(pact.json_content, pact_params.json_content)
+
+          potential_duplicate_pacticipants?(pact_params.pacticipant_names) || merge_conflict
         end
 
         def malformed_request?

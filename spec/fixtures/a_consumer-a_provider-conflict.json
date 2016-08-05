@@ -10,20 +10,8 @@
       "description" : "a request for something",
       "provider_state": null,
       "request": {
-        "method": "get",
+        "method": "post",
         "path" : "/something"
-      },
-      "response": {
-        "status": 200,
-        "body" : "something"
-      }
-    },
-    {
-      "description" : "another request for something",
-      "provider_state": null,
-      "request": {
-        "method": "get",
-        "path" : "/something_else"
       },
       "response": {
         "status": 200,
