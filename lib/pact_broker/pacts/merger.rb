@@ -49,10 +49,9 @@ module PactBroker
       end
 
       def same_request_properties? original, additional
-        method_matches = original["method"] == additional["method"]
-        path_matches = original["path"] == additional["path"]
-
-        method_matches && path_matches && original["headers"] == additional["headers"]
+        attributes_match = %w(method path query body headers).all? do |attribute|
+          original[attribute] == additional[attribute]
+        end
       end
     end
   end

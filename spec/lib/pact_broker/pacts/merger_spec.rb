@@ -98,6 +98,16 @@ module PactBroker
             expect(compare_pacts(example_pact, @pact_to_compare)).to eq false
           end
 
+          it "returns true if requests have a different query" do
+            @pact_to_compare["interactions"][0]["request"]["query"] = "foo=bar&baz=qux"
+            expect(compare_pacts(example_pact, @pact_to_compare)).to eq true
+          end
+
+          it "returns true if requests have a different body" do
+            @pact_to_compare["interactions"][0]["request"]["body"] = { "something" => { "nested" => "deeply" } }
+            expect(compare_pacts(example_pact, @pact_to_compare)).to eq true
+          end
+
           it "returns true if request method is different" do
             @pact_to_compare["interactions"][0]["request"]["method"] = "post"
             expect(compare_pacts(example_pact, @pact_to_compare)).to eq true
