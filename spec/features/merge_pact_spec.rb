@@ -25,7 +25,7 @@ describe "Merging a pact" do
   end
 
   context "when a pact for this consumer version does exist" do
-    let(:existing_pact_content) { load_fixture('a_consumer-a_provider-2.json') }
+    let(:existing_pact_content) { load_fixture('a_consumer-a_provider-3.json') }
     let(:merged_pact_content) { load_fixture('a_consumer-a_provider-merged.json') }
 
     before do
@@ -42,6 +42,14 @@ describe "Merging a pact" do
 
     it "returns the merged pact in the response body" do
       expect(response_body_json).to contain_hash JSON.parse(merged_pact_content)
+    end
+
+    context "with a conflicting request" do
+      let(:existing_pact_content) { load_fixture('a_consumer-a_provider-conflict.json') }
+
+      it "returns a 409 Conflict" do
+        expect(subject.status).to be 409
+      end
     end
   end
 

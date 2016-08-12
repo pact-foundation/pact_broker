@@ -11,7 +11,10 @@
       "provider_state": null,
       "request": {
         "method": "get",
-        "path" : "/something"
+        "path" : "/something",
+        "headers" : {
+          "Content-Type" : "application/json"
+        }
       },
       "response": {
         "status": 200,

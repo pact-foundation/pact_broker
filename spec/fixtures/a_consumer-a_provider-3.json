@@ -7,18 +7,6 @@
   },
   "interactions": [
     {
-      "description" : "a request for something",
-      "provider_state": null,
-      "request": {
-        "method": "get",
-        "path" : "/something"
-      },
-      "response": {
-        "status": 200,
-        "body" : "something"
-      }
-    },
-    {
       "description" : "another request for something",
       "provider_state": null,
       "request": {
