@@ -56,7 +56,7 @@ module PactBroker
 
           req.basic_auth(username, password) if username
 
-          req.body = body
+          req.body = body.to_query
 
           logger.info "Making webhook request #{to_s}"
           response = Net::HTTP.start(uri.hostname, uri.port,
