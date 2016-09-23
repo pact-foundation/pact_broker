@@ -5,7 +5,7 @@ require 'rack/hal_browser'
 require 'pact_broker/ui/controllers/relationships'
 
 
-use Rack::Static, :urls => ["/stylesheets", "/css", "/fonts", "/js", "/javascripts"], :root => "public"
+use Rack::Static, :urls => ["/stylesheets", "/css", "/fonts", "/js", "/javascripts", "/images"], :root => "public"
 use Rack::HalBrowser::Redirect, :exclude => ['/diagnostic', '/trace','/index']
 
 run Rack::URLMap.new(
