@@ -57,7 +57,7 @@ module PactBroker
           req.basic_auth(username, password) if username
 
          unless body.nil?
-            req.body = body.to_query
+            req.body = body #.to_query Beth: work out what's going on here with https://github.com/bethesque/pact_broker/issues/59 Should have read PR and issue properly before merging.
           end
 
           logger.info "Making webhook request #{to_s}"
