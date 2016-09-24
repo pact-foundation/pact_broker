@@ -1,16 +1,19 @@
 require 'pact_broker/json'
 require 'pact_broker/constants'
+require 'pact_broker/api/pact_broker_urls'
 require 'ostruct'
 
 module PactBroker
   module Pacts
     class PactParams < Hash
 
+      extend PactBroker::Api::PactBrokerUrls
+
       def initialize attributes
         merge!(attributes)
       end
 
-      def self.from_request request, path_info
+      def self.from_request request, path_info, base_url
         json_content = request.body.to_s
         parsed_content = begin
           JSON.parse(json_content, PACT_PARSING_OPTIONS)
@@ -21,7 +24,7 @@ module PactBroker
         consumer_name_in_pact = parsed_content.is_a?(Hash) ? parsed_content.fetch('consumer',{})['name'] : nil
         provider_name_in_pact = parsed_content.is_a?(Hash) ? parsed_content.fetch('provider',{})['name'] : nil
 
-        new(
+        pact_params = new(
           consumer_name: path_info.fetch(:consumer_name),
           provider_name: path_info.fetch(:provider_name),
           consumer_version_number: path_info.fetch(:consumer_version_number),
@@ -29,6 +32,8 @@ module PactBroker
           provider_name_in_pact: provider_name_in_pact,
           json_content: json_content
         )
+        pact_params[:pact_version_url] = pact_url_from_params(base_url, pact_params)
+        pact_params
       end
 
       def pacticipant_names
@@ -57,6 +62,10 @@ module PactBroker
 
       def provider_name_in_pact
         self[:provider_name_in_pact]
+      end
+
+      def pact_version_url
+        self[:pact_version_url]
       end
 
       def consumer

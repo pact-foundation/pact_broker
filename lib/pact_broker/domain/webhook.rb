@@ -32,9 +32,9 @@ module PactBroker
       end
 
       #TODO retries
-      def execute
+      def execute pact_version_url
         logger.info "Executing #{self}"
-        request.execute
+        request.execute pact_version_url
       end
 
       def to_s

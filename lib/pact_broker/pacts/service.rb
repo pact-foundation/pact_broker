@@ -96,7 +96,7 @@ module PactBroker
         updated_pact = pact_repository.update existing_pact.id, params
 
         if existing_pact.json_content != updated_pact.json_content
-          webhook_service.execute_webhooks updated_pact
+          webhook_service.execute_webhooks updated_pact, params[:pact_version_url]
         end
 
         updated_pact
@@ -105,13 +105,13 @@ module PactBroker
       def create_pact params, version, provider
         logger.info "Creating new pact version with params #{params}"
         pact = pact_repository.create json_content: params[:json_content], version_id: version.id, provider_id: provider.id
-        trigger_webhooks pact
+        trigger_webhooks pact, params
         pact
       end
 
-      def trigger_webhooks pact
+      def trigger_webhooks pact, params
         if pact_has_changed_since_previous_version? pact
-          webhook_service.execute_webhooks pact
+          webhook_service.execute_webhooks pact, params[:pact_version_url]
         end
       end
     end

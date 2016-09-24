@@ -8,18 +8,19 @@ module PactBroker
 
       describe ".execute_webhooks" do
 
-        let(:pact) { instance_double(PactBroker::Domain::Pact, consumer: consumer, provider: provider, consumer_version: consumer_version)}
+        let(:pact) { instance_double(PactBroker::Domain::Pact, consumer: consumer, provider: provider, consumer_version: consumer_version) }
         let(:consumer_version) { PactBroker::Domain::Version.new(number: '1.2.3') }
         let(:consumer) { PactBroker::Domain::Pacticipant.new(name: 'Consumer') }
         let(:provider) { PactBroker::Domain::Pacticipant.new(name: 'Provider') }
         let(:webhooks) { [instance_double(PactBroker::Domain::Webhook)]}
+        let(:pact_version_url) { 'http://pact-version-url' }
 
         before do
           allow_any_instance_of(PactBroker::Repositories::WebhookRepository).to receive(:find_by_consumer_and_provider).and_return(webhooks)
           allow(WebhookService).to receive(:run_later)
         end
 
-        subject { WebhookService.execute_webhooks pact }
+        subject { WebhookService.execute_webhooks pact, pact_version_url }
 
         it "finds the webhooks" do
           expect_any_instance_of(PactBroker::Repositories::WebhookRepository).to receive(:find_by_consumer_and_provider).with(consumer, provider)
@@ -28,7 +29,7 @@ module PactBroker
 
         context "when webhooks are found" do
           it "executes the webhook" do
-            expect(WebhookService).to receive(:run_later).with(webhooks)
+            expect(WebhookService).to receive(:run_later).with(webhooks, pact_version_url)
             subject
           end
         end

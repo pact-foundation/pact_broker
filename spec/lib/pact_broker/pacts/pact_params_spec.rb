@@ -20,8 +20,9 @@ module PactBroker
               consumer_version_number: '1.2.3'
             }
           end
+          let(:base_url) { 'http://pact-broker' }
 
-          subject { PactParams.from_request(request, path_info) }
+          subject { PactParams.from_request(request, path_info, base_url) }
 
           it "extracts the consumer name from the path" do
             expect(subject.consumer_name).to eq "Consumer"
@@ -45,6 +46,10 @@ module PactBroker
 
           it "extracts the provider name from the pact" do
             expect(subject.provider_name_in_pact).to eq "A Provider"
+          end
+
+          it "constructs the URL of the pact that will be created" do
+            expect(subject.pact_version_url).to eq 'http://pact-broker/pacts/provider/Provider/consumer/Consumer/version/1.2.3'
           end
 
           context "with missing data" do

@@ -45,10 +45,11 @@ module PactBroker
         password.nil? ? nil : "**********"
       end
 
-      def execute
+      def execute pact_version_url
 
         begin
-          req = http_request
+          uri = build_uri(pact_version_url)
+          req = http_request(uri)
 
           headers.each_pair do | name, value |
             req[name] = value
@@ -56,7 +57,7 @@ module PactBroker
 
           req.basic_auth(username, password) if username
 
-          req.body = body
+          req.body = build_body(pact_version_url)
 
           logger.info "Making webhook request #{to_s}"
           response = Net::HTTP.start(uri.hostname, uri.port,
@@ -81,12 +82,17 @@ module PactBroker
         "#{method.upcase} #{url}, username=#{username}, password=#{display_password}, headers=#{headers}, body=#{body}"
       end
 
-      def http_request
-        Net::HTTP.const_get(method.capitalize).new(url)
+      def http_request uri
+        Net::HTTP.const_get(method.capitalize).new(uri)
       end
 
-      def uri
-        URI(url)
+      def build_uri(pact_version_url)
+        encoded_pact_version_url = ERB::Util.url_encode(pact_version_url)
+        URI(url.gsub("${PACT_VERSION_URL}", encoded_pact_version_url))
+      end
+
+      def build_body(pact_version_url)
+        body.gsub("${PACT_VERSION_URL}", pact_version_url) unless body.nil?
       end
     end
 
