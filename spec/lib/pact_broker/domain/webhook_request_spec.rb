@@ -11,6 +11,7 @@ module PactBroker
       let(:username) { nil }
       let(:password) { nil }
       let(:url) { 'http://example.org/hook' }
+      let(:body) { 'body' }
 
       subject do
         WebhookRequest.new(
@@ -19,7 +20,7 @@ module PactBroker
           headers: {'Content-type' => 'text/plain'},
           username: username,
           password: password,
-          body: 'body')
+          body: body)
       end
 
       describe "description" do
@@ -100,6 +101,36 @@ module PactBroker
           it "uses SSL" do
             subject.execute
             expect(https_request).to have_been_made
+          end
+        end
+
+        context "when the request has a JSONable body" do
+          let(:body) { [{"some": "json"}] }
+
+          let!(:http_request) do
+            stub_request(:post, "http://example.org/hook").
+              with(:headers => {'Content-Type'=>'text/plain'}, :body => body.to_json).
+              to_return(:status => 302, :body => "respbod", :headers => {'Content-Type' => 'text/plain, blah'})
+          end
+
+          it "converts the body to JSON before submitting the request" do
+            subject.execute
+            expect(http_request).to have_been_made
+          end
+        end
+
+        context "when the request has a nil body" do
+          let(:body) { nil }
+
+          let!(:http_request) do
+            stub_request(:post, "http://example.org/hook").
+              with(:headers => {'Content-Type'=>'text/plain'}, :body => nil).
+              to_return(:status => 302, :body => "respbod", :headers => {'Content-Type' => 'text/plain, blah'})
+          end
+
+          it "executes the request without a body" do
+            subject.execute
+            expect(http_request).to have_been_made
           end
         end
 
