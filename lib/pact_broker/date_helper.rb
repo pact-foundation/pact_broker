@@ -62,7 +62,7 @@ module PactBroker
         # 60 days up to 365 days
         when 86400...525600   then locale.t :x_months,       :count => (distance_in_minutes.to_f / 43200.0).round
         else
-          if from_time.acts_like?(:time) && to_time.acts_like?(:time)
+          if from_time.respond_to?(:acts_like_time?) && to_time.respond_to?(:acts_like_time?)
             fyear = from_time.year
             fyear += 1 if from_time.month >= 3
             tyear = to_time.year
