@@ -22,8 +22,8 @@ module PactBroker
         end
 
         def to_text
-          _, body = PactBroker::Pacts::Diff.run pact_params, base_url: base_url
-          response.body = body
+          _, operation = PactBroker::Pacts::Diff.run pact_params, base_url: base_url
+          response.body = operation.output
         end
 
         def pact

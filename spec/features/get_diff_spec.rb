@@ -4,7 +4,7 @@ describe "Get diff between versions" do
 
   let(:path) { "/pacts/provider/Provider/consumer/Consumer/version/3/diff/previous-distinct" }
 
-  let(:last_response_body) { JSON.parse(subject.body, symbolize_names: true) }
+  let(:last_response_body) { subject.body }
 
   subject { get path; last_response }
 
@@ -30,12 +30,13 @@ describe "Get diff between versions" do
 
   context "when the versions exist" do
 
-    it "returns a 200 HAL JSON response" do
-      expect(subject).to be_a_hal_json_success_response
+    it "returns a 200 text response" do
+      expect(subject.headers['Content-Type']).to eq "text/plain;charset=utf-8"
     end
 
     it "returns the JSON representation of the diff" do
-      expect(last_response_body).to include({})
+      expect(last_response_body).to include('"method": "post"')
+      expect(last_response_body).to include('"method": "get"')
     end
 
   end
@@ -44,7 +45,7 @@ describe "Get diff between versions" do
 
     let(:path) { "/pacts/provider/Provider/consumer/Consumer/versions/1/diff/previous-distinct" }
 
-    xit "returns a 404 response" do
+    it "returns a 404 response" do
       expect(subject).to be_a_404_response
     end
 
