@@ -88,4 +88,25 @@ Pact.provider_states_for "Pact Broker Client" do
    provider_state "no pacticipant version exists for the Pricing Service" do
      no_op
    end
+
+  provider_state "a latest pact between Condor and the Pricing Service exists" do
+    set_up do
+      ProviderStateBuilder.new
+          .create_consumer("Condor")
+          .create_consumer_version('1.3.0')
+          .create_provider("Pricing Service")
+          .create_pact
+    end
+  end
+
+  provider_state "tagged as prod pact between Condor and the Pricing Service exists" do
+    set_up do
+      ProviderStateBuilder.new
+          .create_consumer("Condor")
+          .create_consumer_version('1.3.0')
+          .create_consumer_version_tag('prod')
+          .create_provider("Pricing Service")
+          .create_pact
+    end
+  end
 end
