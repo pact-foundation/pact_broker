@@ -42,6 +42,12 @@ module PactBroker
                 title: 'Latest pacts by provider',
                 templated: true
               },
+              'pb:latest-provider-pacts-with-tag' =>
+              {
+                href: base_url + '/pacts/provider/{provider}/latest/{tag}',
+                title: 'Latest pacts by provider with a specified tag',
+                templated: true
+              },
               'pb:webhooks' =>
               {
                 href: base_url + '/webhooks',
