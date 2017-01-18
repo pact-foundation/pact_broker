@@ -26,7 +26,7 @@ module PactBroker
         end
 
         def pacts
-          pact_service.find_all_pacts_between consumer_name, :and => provider_name
+          pact_service.find_all_pact_versions_between consumer_name, :and => provider_name
         end
 
       end
