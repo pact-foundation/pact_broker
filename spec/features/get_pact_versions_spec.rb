@@ -19,7 +19,7 @@ describe "Get pact versions" do
         .create_pact
     end
 
-    it "returns a 200 HAL JSON response" do
+    it "returns a 200 response" do
       expect(subject.status).to be 200
     end
 
