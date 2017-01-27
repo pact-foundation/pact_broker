@@ -19,6 +19,60 @@ module PactBroker
           }
         }
 
+        describe "DELETE" do
+          before do
+            allow(Services::TagService).to receive(:find).and_return(tag)
+            allow(Services::TagService).to receive(:delete)
+          end
+
+          subject { delete("/pacticipants/Condor/versions/1.3.0/tags/prod" ) }
+
+          context "when the tag exists" do
+            it "deletes the tag by name" do
+              expect(Services::TagService).to receive(:delete) .with("prod")
+              subject
+            end
+
+            it "returns a 204 OK" do
+              subject
+              expect(last_response.status).to eq 204
+            end
+          end
+
+          context "when the tag doesn't exist" do
+
+            let(:tag) { nil }
+
+            it "returns a 404 Not Found" do
+              subject
+              expect(last_response.status).to eq 404
+            end
+          end
+
+          context "when an error occurs" do
+            before do
+              allow(Services::TagService).to receive(:delete).and_raise("An error")
+            end
+
+            let(:response_body) { JSON.parse(last_response.body, symbolize_names: true) }
+
+            it "returns a 500 Internal Server Error" do
+              subject
+              expect(last_response.status).to eq 500
+            end
+
+            it "returns an error message" do
+              subject
+              expect(response_body[:message]).to eq "An error"
+            end
+
+            it "returns the backtrace" do
+              subject
+              expect(response_body[:backtrace]).to be_instance_of(Array)
+            end
+          end
+        end
+
         describe "GET" do
           before do
             allow(Services::TagService).to receive(:find).and_return(tag)

@@ -19,6 +19,11 @@ module PactBroker
         tag_repository.find args
       end
 
+      def delete name
+        connection = PactBroker::Domain::Tag.new.db
+        connection.run("delete from tags where name = '#{name}'")
+      end
+
     end
   end
 
