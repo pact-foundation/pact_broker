@@ -29,7 +29,7 @@ module PactBroker
 
           context "when the tag exists" do
             it "deletes the tag by name" do
-              expect(Services::TagService).to receive(:delete) .with("prod")
+              expect(Services::TagService).to receive(:delete) .with("prod", "Condor", "1.3.0")
               subject
             end
 

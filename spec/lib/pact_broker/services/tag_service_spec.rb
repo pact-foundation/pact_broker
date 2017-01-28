@@ -28,14 +28,19 @@ module PactBroker
 
       describe "delete" do
 
+        let(:second_pacticipant_name) { "second_test_pacticipant" }
+        let(:second_version_number) { "4.5.6" }
+        let(:second_options_same_tag_name) { {pacticipant_name: second_pacticipant_name, pacticipant_version_number: second_version_number, tag_name: tag_name}}
+
         before do
           TagService.create(options)
+          TagService.create(second_options_same_tag_name)
         end
 
-        let(:delete_tag) { subject.delete "prod" }
+        let(:delete_tag_for_particpant_and_version) { subject.delete tag_name, second_pacticipant_name, second_version_number}
 
-        it "deletes the tag" do
-          expect{ delete_tag }.to change{
+        it "deletes the tag for the particpiant and the version" do
+          expect{ delete_tag_for_particpant_and_version }.to change{
             PactBroker::Domain::Tag.all.count
           }.by(-1)
         end

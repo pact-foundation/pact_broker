@@ -40,12 +40,20 @@ module PactBroker
         end
 
         def delete_resource
-          tag_service.delete tag_name
+          tag_service.delete tag_name, pacticipant_name, pacticipant_version_number
           true
         end
 
         def tag_name
           identifier_from_path[:tag_name]
+        end
+
+        def pacticipant_name
+          identifier_from_path[:pacticipant_name]
+        end
+
+        def pacticipant_version_number
+          identifier_from_path[:pacticipant_version_number]
         end
 
       end

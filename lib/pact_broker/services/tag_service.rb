@@ -19,9 +19,10 @@ module PactBroker
         tag_repository.find args
       end
 
-      def delete name
+      def delete tag_name, pacticipant_name, pacticipant_version_number
+        version = version_repository.find_by_pacticipant_name_and_number pacticipant_name, pacticipant_version_number
         connection = PactBroker::Domain::Tag.new.db
-        connection.run("delete from tags where name = '#{name}'")
+        connection.run("delete from tags where name = '#{tag_name}' and version_id = '#{version.id}'")
       end
 
     end
