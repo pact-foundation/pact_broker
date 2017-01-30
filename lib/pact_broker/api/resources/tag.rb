@@ -15,7 +15,7 @@ module PactBroker
         end
 
         def allowed_methods
-          ["GET","PUT"]
+          ["GET","PUT","DELETE"]
         end
 
         def from_json
@@ -37,6 +37,11 @@ module PactBroker
 
         def tag
           @tag ||= tag_service.find identifier_from_path
+        end
+
+        def delete_resource
+          tag_service.delete identifier_from_path
+          true
         end
 
       end
