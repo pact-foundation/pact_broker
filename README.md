@@ -80,7 +80,7 @@ Use the HAL browser to view documentation as you browse.
 
 ### To have a play around on your local machine
 
-* Install ruby 1.9.3 or later and bundler >= 1.12.0
+* Install ruby 1.9.3 or later and bundler >= 1.12.0 (NOTE! Currently broken on ruby 2.4.0. See [issue 78](https://github.com/bethesque/pact_broker/issues/78). )
 * Run `git clone git@github.com:bethesque/pact_broker.git && cd pact_broker/example`
 * Run `bundle`
 * Run `bundle exec rackup -p 8080`
