@@ -90,6 +90,11 @@ Use the HAL browser to view documentation as you browse.
 * Click on the HAL Browser link to have a poke around the API.
 * Click on the book icon under "docs" to view documentation related to a given relation.
 
+### Hosted
+
+In a hurry? Hate having to run your own infrastructure? Check out
+the [Hosted Pact Broker](https://pact.dius.com.au/?utm_source=github&utm_campaign=GITHUB_BROKER&utm_medium=github) - it's fast, it's secure and it's free!
+
 ### For reals
 
 You can use the [Pact Broker Docker container][docker] or [Terraform on AWS][terraform] or to roll your own...
@@ -109,4 +114,3 @@ You can use the [Pact Broker Docker container][docker] or [Terraform on AWS][ter
 [different-teams]: https://github.com/realestate-com-au/pact/wiki/Using-pact-where-the-consumer-team-is-different-from-the-provider-team
 [docker]: https://registry.hub.docker.com/u/dius/pact_broker/
 [terraform]: https://github.com/nadnerb/terraform-pact-broker
-
