@@ -1,4 +1,8 @@
 en:
+  errors:
+    filled?: "can't be blank"
+    valid_method?: "is not a recognised HTTP method"
+    valid_url?: "is not a valid URL eg. http://example.org"
   pact_broker:
     errors:
       validation:

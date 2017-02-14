@@ -1,31 +1,45 @@
 require 'reform'
-require 'reform/contract'
+require 'reform/form'
 require 'pact_broker/api/contracts/request_validations'
 
 module PactBroker
   module Api
     module Contracts
-
-      class WebhookContract < Reform::Contract
-
+      class WebhookContract < Reform::Form
         property :request
-        validates :request, presence: true
+
+        validation do
+          configure do
+            config.messages_file = File.expand_path("../../../locale/en.yml", __FILE__)
+          end
+
+          required(:request).filled
+        end
 
         property :request do
-
-          include RequestValidations
-
           property :url
           property :http_method
 
-          validates :url, presence: true
-          validates :http_method, presence: true
+          validation do
+            configure do
+              config.messages_file = File.expand_path("../../../locale/en.yml", __FILE__)
 
-          validate :method_is_valid
-          validate :url_is_valid
+              def valid_method?(value)
+                Net::HTTP.const_defined?(value.capitalize)
+              end
 
+              def valid_url?(value)
+                uri = URI(value)
+                uri.scheme && uri.host
+              rescue URI::InvalidURIError
+                false
+              end
+            end
+
+            required(:http_method).filled(:valid_method?)
+            required(:url).filled(:valid_url?)
+          end
         end
-
       end
     end
   end

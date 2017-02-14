@@ -6,8 +6,8 @@ module PactBroker
   module Api
     module Contracts
       describe WebhookContract do
-
         let(:json) { load_fixture 'webhook_valid.json' }
+        let(:hash) { JSON.parse(json) }
         let(:webhook) { PactBroker::Api::Decorators::WebhookDecorator.new(Domain::Webhook.new).from_json(json) }
         let(:subject) { WebhookContract.new(webhook) }
 
@@ -20,21 +20,19 @@ module PactBroker
         describe "errors" do
 
           before do
-            subject.validate
+            subject.validate(hash)
           end
 
           context "with valid fields" do
             it "is empty" do
-              expect(subject.errors.any?).to be false
+              expect(subject.errors).to be_empty
             end
           end
 
           context "with no request defined" do
-
             let(:json) { {}.to_json }
 
             it "contains an error for missing request" do
-              subject.validate
               expect(subject.errors[:request]).to eq ["can't be blank"]
             end
           end
@@ -47,7 +45,7 @@ module PactBroker
             end
 
             it "contains an error for missing method" do
-              expect(subject.errors[:"request.http_method"]).to eq ["can't be blank"]
+              expect(subject.errors[:"request.http_method"]).to include "can't be blank"
             end
           end
 
@@ -59,7 +57,7 @@ module PactBroker
             end
 
             it "contains an error for invalid method" do
-              expect(subject.errors[:"request.method"]).to eq ["is not a recognised HTTP method"]
+              expect(subject.errors[:"request.http_method"]).to include "is not a recognised HTTP method"
             end
           end
 
@@ -71,7 +69,7 @@ module PactBroker
             end
 
             it "contains an error for missing URL" do
-              expect(subject.errors[:"request.url"]).to eq ["can't be blank"]
+              expect(subject.errors[:"request.url"]).to include "can't be blank"
             end
           end
 

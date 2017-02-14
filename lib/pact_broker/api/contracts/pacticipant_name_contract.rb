@@ -1,16 +1,14 @@
 require 'reform'
-require 'reform/contract'
+require 'reform/form'
 
 module PactBroker
   module Api
     module Contracts
-
-      class PacticipantNameContract < Reform::Contract
+      class PacticipantNameContract < Reform::Form
         property :name
         property :name_in_pact
         property :pacticipant
         property :message_args
-
 
         include PactBroker::Messages
 
