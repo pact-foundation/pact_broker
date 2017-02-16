@@ -3,6 +3,10 @@ en:
     filled?: "can't be blank"
     valid_method?: "is not a recognised HTTP method"
     valid_url?: "is not a valid URL eg. http://example.org"
+
+    name_in_path_matches_name_in_pact?: "does not match %{left} name in path ('%{right}')."
+    valid_consumer_version_number?: "Consumer version number '%{value}' cannot be parsed to a version number. The expected format (unless this configuration has been overridden) is a semantic version. eg. 1.3.0 or 2.0.4.rc1"
+
   pact_broker:
     errors:
       validation:
