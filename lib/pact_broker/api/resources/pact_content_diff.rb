@@ -22,7 +22,7 @@ module PactBroker
         end
 
         def to_text
-          _, operation = PactBroker::Pacts::Diff.run pact_params, base_url: base_url
+          _, operation = PactBroker::Pacts::Diff.run pact_params.merge(base_url: base_url)
           response.body = operation.output
         end
 

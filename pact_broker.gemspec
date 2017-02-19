@@ -36,7 +36,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'pact-support', '~>0.4', '>=0.4.2'
   gem.add_runtime_dependency 'padrino-core', '~>0.12.4'
   gem.add_runtime_dependency 'haml'
-  gem.add_runtime_dependency 'trailblazer', '~>0.3.0'
+  gem.add_runtime_dependency 'trailblazer', '~> 1.1.0'
 
   gem.add_development_dependency 'sqlite3'
   gem.add_development_dependency 'pry'
@@ -47,5 +47,4 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'rspec', '~>3.0'
   gem.add_development_dependency 'rspec-its'
   gem.add_development_dependency 'database_cleaner'
-
 end
