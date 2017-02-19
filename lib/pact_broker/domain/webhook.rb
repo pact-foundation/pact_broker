@@ -13,8 +13,10 @@ module PactBroker
       include Logging
 
       attr_accessor :uuid, :consumer, :provider, :request, :created_at, :updated_at
+      attr_reader :attributes
 
       def initialize attributes = {}
+        @attributes = attributes
         @uuid = attributes[:uuid]
         @request = attributes[:request]
         @consumer = attributes[:consumer]

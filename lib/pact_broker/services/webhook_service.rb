@@ -16,7 +16,7 @@ module PactBroker
 
       def self.errors webhook
         contract = PactBroker::Api::Contracts::WebhookContract.new(webhook)
-        contract.validate
+        contract.validate(webhook.attributes)
         contract.errors
       end
 
