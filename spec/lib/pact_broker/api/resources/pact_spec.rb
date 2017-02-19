@@ -31,13 +31,12 @@ module PactBroker::Api
           end
 
           it "returns an error message" do
-            expect(JSON.parse(response.body)["error"]).to match /Error parsing JSON/
+            expect(JSON.parse(response.body)["error"]).to match(/Error parsing JSON/)
           end
         end
 
         context "with validation errors" do
-
-          let(:errors) { double(:errors, full_messages: ['messages']) }
+          let(:errors) { double(:errors, messages: ['messages']) }
 
           before do
             allow_any_instance_of(Contracts::PutPactParamsContract).to receive(:validate).and_return(false)

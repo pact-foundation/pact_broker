@@ -35,11 +35,14 @@ module PactBroker
         end
 
         def validation_errors? webhook
-          if (errors = webhook_service.errors(webhook)).any?
+          errors = webhook_service.errors(webhook)
+
+          unless errors.empty?
             response.headers['Content-Type'] = 'application/json;charset=utf-8'
-            response.body = {errors: errors.full_messages }.to_json
+            response.body = { errors: errors.messages }.to_json
           end
-          errors.any?
+
+          !errors.empty?
         end
 
         def create_path

@@ -29,7 +29,7 @@ module PactBroker
           allow(DateHelper).to receive(:local_date_in_words).and_return("a date")
         end
 
-        subject { Diff.new.process(pact_params, base_url: 'http://example.org') }
+        subject { Diff.new({}).process(pact_params.merge(base_url: 'http://example.org')) }
 
         context "when there is a previous distinct version" do
 

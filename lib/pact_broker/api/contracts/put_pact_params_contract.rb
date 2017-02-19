@@ -25,8 +25,6 @@ module PactBroker
       end
 
       class PutPactParamsContract < Reform::Form
-        include PactBroker::Messages
-
         property :consumer_version_number
         property :consumer, form: PutPacticipantNameContract
         property :provider, form: PutPacticipantNameContract

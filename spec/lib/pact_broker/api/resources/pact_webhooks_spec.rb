@@ -61,7 +61,7 @@ module PactBroker::Api
         let(:next_uuid) { '123k2nvkkwjrwk34' }
 
         let(:valid) { true }
-        let(:errors) { double("errors", any?: !valid, full_messages: ['messages']) }
+        let(:errors) { double("errors", empty?: valid, messages: ['messages']) }
 
         before do
           allow(webhook_service).to receive(:create).and_return(saved_webhook)
