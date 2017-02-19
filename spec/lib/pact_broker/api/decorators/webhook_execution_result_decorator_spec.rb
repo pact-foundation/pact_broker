@@ -16,7 +16,7 @@ module PactBroker
           let(:webhook) { instance_double(PactBroker::Domain::Webhook, uuid: 'some-uuid')}
           let(:json) {
             WebhookExecutionResultDecorator.new(webhook_execution_result)
-            .to_json(base_url: 'http://example.org', webhook: webhook)
+            .to_json(user_options: { base_url: 'http://example.org', webhook: webhook })
           }
 
           let(:subject) { JSON.parse(json, symbolize_names: true)}

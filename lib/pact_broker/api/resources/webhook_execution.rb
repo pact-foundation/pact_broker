@@ -25,7 +25,7 @@ module PactBroker
         private
 
         def post_response_body webhook_execution_result
-          Decorators::WebhookExecutionResultDecorator.new(webhook_execution_result).to_json(base_url: base_url, webhook: webhook)
+          Decorators::WebhookExecutionResultDecorator.new(webhook_execution_result).to_json(user_options: { base_url: base_url, webhook: webhook })
         end
 
         def webhook

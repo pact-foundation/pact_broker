@@ -35,7 +35,7 @@ module PactBroker
         let(:provider) { instance_double(PactBroker::Domain::Pacticipant, name: 'A Provider')}
         let(:consumer_version) { instance_double(PactBroker::Domain::Version, number: '1234', pacticipant: consumer)}
 
-        subject { JSON.parse PactDecorator.new(pact).to_json(base_url: base_url), symbolize_names: true}
+        subject { JSON.parse PactDecorator.new(pact).to_json(user_options: { base_url: base_url }), symbolize_names: true}
 
         describe "#to_json" do
 

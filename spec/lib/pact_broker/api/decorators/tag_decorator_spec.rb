@@ -19,7 +19,7 @@ module PactBroker
           PactBroker::Repositories::TagRepository.new.find tag_name: 'prod', pacticipant_version_number: '1.2.3', pacticipant_name: 'Consumer'
         end
 
-        let(:options) { {base_url: 'http://example.org' }}
+        let(:options) { { user_options: { base_url: 'http://example.org' } } }
 
         subject { JSON.parse TagDecorator.new(tag).to_json(options), symbolize_names: true }
 

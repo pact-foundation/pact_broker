@@ -43,7 +43,7 @@ module PactBroker
               end
 
               it "generates a JSON response body for the execution result" do
-                expect(decorator).to receive(:to_json).with(base_url: 'http://example.org', webhook: webhook)
+                expect(decorator).to receive(:to_json).with(user_options: { base_url: 'http://example.org', webhook: webhook })
                 subject
               end
 
