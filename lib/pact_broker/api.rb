@@ -13,6 +13,7 @@ require 'pact_broker/api/resources/webhooks'
 require 'pact_broker/api/resources/webhook'
 require 'pact_broker/api/resources/webhook_execution'
 require 'pact_broker/api/resources/version'
+require 'pact_broker/api/resources/versions'
 require 'pact_broker/api/resources/pact_content_diff'
 require 'pact_broker/api/resources/previous_distinct_pact_version'
 require 'pact_broker/api/resources/latest_provider_pacts'
@@ -44,6 +45,7 @@ module PactBroker
         add ['pacts', 'latest'], Api::Resources::LatestPacts
         add ['pacticipants'], Api::Resources::Pacticipants
         add ['pacticipants', :name], Api::Resources::Pacticipant
+        add ['pacticipants', :pacticipant_name, 'versions'], Api::Resources::Versions
         add ['pacticipants', :pacticipant_name, 'versions', :pacticipant_version_number], Api::Resources::Version
         add ['pacticipants', :pacticipant_name, 'versions', :pacticipant_version_number, 'tags', :tag_name], Api::Resources::Tag
         add ['relationships'], Api::Resources::Relationships
