@@ -41,6 +41,10 @@ module PactBroker
         pacticipant_repository.find_by_name(name)
       end
 
+      def self.find_all_pacticipant_versions name
+        pacticipant_repository.find_all_pacticipant_versions(name)
+      end
+
       def self.find_pacticipant_repository_url_by_pacticipant_name name
         pacticipant = pacticipant_repository.find_by_name(name)
         if pacticipant && pacticipant.repository_url
