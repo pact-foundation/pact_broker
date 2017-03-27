@@ -1,6 +1,5 @@
 require 'reform'
 require 'reform/form'
-require 'pact_broker/api/contracts/request_validations'
 
 module PactBroker
   module Api
