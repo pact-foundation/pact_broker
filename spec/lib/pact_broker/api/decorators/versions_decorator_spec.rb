@@ -12,7 +12,7 @@ module PactBroker
 
         let(:options) { {base_url: 'http://example.org', pacticipant_name: "Consumer" }}
 
-        subject { JSON.parse VersionsDecorator.new(versions).to_json(options), symbolize_names: true }
+        subject { JSON.parse VersionsDecorator.new(versions).to_json(user_options: options), symbolize_names: true }
 
         context "with no versions" do
           let(:versions) { [] }

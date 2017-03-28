@@ -20,7 +20,7 @@ module PactBroker
         end
 
         def to_json
-          Decorators::VersionDecorator.new(version).to_json(base_url: base_url)
+          Decorators::VersionDecorator.new(version).to_json(user_options: {base_url: base_url})
         end
 
         private
