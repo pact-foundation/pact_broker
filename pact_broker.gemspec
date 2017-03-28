@@ -41,7 +41,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'rake', '~>10.0'
   gem.add_development_dependency 'fakefs', '~>0.4'
   gem.add_development_dependency 'mysql2', '~>0.3.15'
-  gem.add_development_dependency 'webmock', '~>2.0.0'
+  gem.add_development_dependency 'webmock', '~>2.3'
   gem.add_development_dependency 'rspec', '~>3.0'
   gem.add_development_dependency 'rspec-its'
   gem.add_development_dependency 'database_cleaner'
