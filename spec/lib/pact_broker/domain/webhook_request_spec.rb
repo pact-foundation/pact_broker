@@ -2,6 +2,28 @@ require 'spec_helper'
 require 'pact_broker/domain/webhook_request'
 require 'webmock/rspec'
 
+# StubSocket::close method is required for ruby 2.4.0 as do_finish in net/http.rb has changed from
+#
+# def do_finish
+#   @started = false
+#   @socket.close if @socket and not @socket.closed?
+#   @socket = nil
+# end
+#
+# to
+#
+# def do_finish
+#   @started = false
+#   @socket.close if @socket
+#   @socket = nil
+# end
+#
+
+class StubSocket
+  def close
+  end
+end
+
 module PactBroker
 
   module Domain
