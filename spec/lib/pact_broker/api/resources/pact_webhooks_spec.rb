@@ -40,7 +40,7 @@ module PactBroker::Api
 
         it "generates a JSON body" do
           expect(Decorators::WebhooksDecorator).to receive(:new).with(webhooks)
-          expect(decorator).to receive(:to_json).with(instance_of(Decorators::DecoratorContext))
+          expect(decorator).to receive(:to_json).with(user_options: instance_of(Decorators::DecoratorContext))
           subject
         end
 
@@ -61,7 +61,7 @@ module PactBroker::Api
         let(:next_uuid) { '123k2nvkkwjrwk34' }
 
         let(:valid) { true }
-        let(:errors) { double("errors", any?: !valid, full_messages: ['messages']) }
+        let(:errors) { double("errors", empty?: valid, messages: ['messages']) }
 
         before do
           allow(webhook_service).to receive(:create).and_return(saved_webhook)
@@ -171,7 +171,7 @@ module PactBroker::Api
           it "generates the JSON response body" do
             allow(Decorators::WebhookDecorator).to receive(:new).and_call_original #Deserialise
             expect(Decorators::WebhookDecorator).to receive(:new).with(saved_webhook).and_return(decorator) #Serialize
-            expect(decorator).to receive(:to_json).with(base_url: 'http://example.org')
+            expect(decorator).to receive(:to_json).with(user_options: { base_url: 'http://example.org' })
             subject
           end
 

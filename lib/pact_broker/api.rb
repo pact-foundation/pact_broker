@@ -1,3 +1,9 @@
+require 'reform'
+require 'reform/form/dry'
+Reform::Form.class_eval do
+  feature Reform::Form::Dry
+end
+
 require 'pact_broker/api/resources/pact'
 require 'pact_broker/api/resources/latest_pact'
 require 'pact_broker/api/resources/latest_pacts'
@@ -16,7 +22,6 @@ require 'pact_broker/api/resources/version'
 require 'pact_broker/api/resources/pact_content_diff'
 require 'pact_broker/api/resources/previous_distinct_pact_version'
 require 'pact_broker/api/resources/latest_provider_pacts'
-
 
 require 'webmachine/adapters/rack_mapped'
 

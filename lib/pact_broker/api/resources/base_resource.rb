@@ -110,9 +110,9 @@ module PactBroker
           end
         end
 
-        def contract_validation_errors? contract
-          if (invalid = !contract.validate)
-            set_json_validation_error_messages contract.errors.full_messages
+        def contract_validation_errors? contract, pact_params
+          if (invalid = !contract.validate(pact_params))
+            set_json_validation_error_messages contract.errors.messages
           end
           invalid
         end

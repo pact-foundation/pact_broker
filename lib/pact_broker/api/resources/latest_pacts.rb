@@ -15,7 +15,7 @@ module PactBroker
         end
 
         def to_json
-          PactBroker::Api::Decorators::PactCollectionDecorator.new(pacts).to_json(base_url: base_url)
+          PactBroker::Api::Decorators::PactCollectionDecorator.new(pacts).to_json(user_options: { base_url: base_url })
         end
 
         def pacts

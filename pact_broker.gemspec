@@ -1,4 +1,3 @@
-
 # -*- encoding: utf-8 -*-
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
@@ -24,8 +23,9 @@ Gem::Specification.new do |gem|
   #gem.add_runtime_dependency 'pact'
   gem.add_runtime_dependency 'httparty'
   gem.add_runtime_dependency 'json'
-  gem.add_runtime_dependency 'roar', '~> 1.0.0.beta2'
-  gem.add_runtime_dependency 'reform', '~> 1.0'
+  gem.add_runtime_dependency 'roar', '~> 1.1'
+  gem.add_runtime_dependency 'reform', '~> 2.2.0'
+  gem.add_runtime_dependency 'dry-validation', '~> 0.10.5'
   gem.add_runtime_dependency 'sequel', '~> 4.23'
   gem.add_runtime_dependency 'webmachine', '1.4.0'
   gem.add_runtime_dependency 'versionomy', '~> 0.4'
@@ -35,7 +35,6 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'pact-support', '~>0.4', '>=0.4.2'
   gem.add_runtime_dependency 'padrino-core', '~>0.12.4'
   gem.add_runtime_dependency 'haml'
-  gem.add_runtime_dependency 'trailblazer', '~>0.3.0'
 
   gem.add_development_dependency 'sqlite3'
   gem.add_development_dependency 'pry'
@@ -46,5 +45,4 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'rspec', '~>3.0'
   gem.add_development_dependency 'rspec-its'
   gem.add_development_dependency 'database_cleaner'
-
 end

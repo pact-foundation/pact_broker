@@ -49,7 +49,7 @@ module PactBroker
         def malformed_request?
           if request.patch? || request.put?
             invalid_json? ||
-              contract_validation_errors?(Contracts::PutPactParamsContract.new(pact_params))
+              contract_validation_errors?(Contracts::PutPactParamsContract.new(pact_params), pact_params)
           else
             false
           end
@@ -73,7 +73,7 @@ module PactBroker
         end
 
         def to_json
-          PactBroker::Api::Decorators::PactDecorator.new(pact).to_json(base_url: base_url)
+          PactBroker::Api::Decorators::PactDecorator.new(pact).to_json(user_options: { base_url: base_url })
         end
 
         def delete_resource

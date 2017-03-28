@@ -20,7 +20,7 @@ module PactBroker
 
         describe "to_json" do
 
-          let(:json) { WebhooksDecorator.new(webhooks).to_json(decorator_context) }
+          let(:json) { WebhooksDecorator.new(webhooks).to_json(user_options: decorator_context) }
 
           subject { JSON.parse(json, symbolize_names: true) }
 

@@ -5,9 +5,7 @@ require 'pact_broker/pacts/diff'
 module PactBroker
   module Api
     module Resources
-
       class PactContentDiff < BaseResource
-
         def content_types_provided
           [["text/plain", :to_text]]
         end
@@ -22,8 +20,8 @@ module PactBroker
         end
 
         def to_text
-          _, operation = PactBroker::Pacts::Diff.run pact_params, base_url: base_url
-          response.body = operation.output
+          output = PactBroker::Pacts::Diff.new.process pact_params.merge(base_url: base_url)
+          response.body = output
         end
 
         def pact
@@ -33,7 +31,6 @@ module PactBroker
         def pact_params
           @pact_params ||= PactBroker::Pacts::PactParams.from_request request, path_info
         end
-
       end
     end
   end

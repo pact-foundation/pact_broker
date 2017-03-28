@@ -1,54 +1,47 @@
 require 'reform'
-require 'reform/contract'
-require 'pact_broker/messages'
-require 'pact_broker/constants'
-require 'pact_broker/api/contracts/pacticipant_name_contract'
-require 'pact_broker/api/contracts/consumer_version_number_validation'
+require 'reform/form'
 
 module PactBroker
   module Api
     module Contracts
+      class PutPacticipantNameContract < Reform::Form
+        property :name
+        property :name_in_pact
+        property :pacticipant
+        property :message_args
 
-      class PutPacticipantNameContract < PacticipantNameContract
+        validation do
+          configure do
+            config.messages_file = File.expand_path("../../../locale/en.yml", __FILE__)
+          end
 
-        validates :name, presence: true, blank: false
-        validate :name_in_path_matches_name_in_pact
+          required(:name).maybe
+          required(:name_in_pact).maybe
 
-        def name_in_path_matches_name_in_pact
-          if present?(name) && present?(name_in_pact)
-            if name != name_in_pact
-              errors.add(:name, validation_message('pacticipant_name_mismatch', message_args))
-            end
+          rule(name_in_path_matches_name_in_pact?: [:name, :name_in_pact]) do |name, name_in_pact|
+            name_in_pact.filled?.then(name.eql?(value(:name_in_pact)))
           end
         end
-
-        def present? string
-          string && !blank?(string)
-        end
-
       end
 
-      class PutPactParamsContract < Reform::Contract
-
-        include PactBroker::Messages
-
+      class PutPactParamsContract < Reform::Form
         property :consumer_version_number
         property :consumer, form: PutPacticipantNameContract
         property :provider, form: PutPacticipantNameContract
 
-        validates :consumer_version_number, presence: true
-        validate :consumer_version_number_valid
+        validation do
+          configure do
+            config.messages_file = File.expand_path("../../../locale/en.yml", __FILE__)
 
+            def valid_consumer_version_number?(value)
+              parsed_version_number = PactBroker.configuration.version_parser.call(value)
+              !parsed_version_number.nil?
+            end
+          end
 
-        include ConsumerVersionNumberValidation
-
-        def consumer_version_number_validation_message
-          validation_message('consumer_version_number_invalid', consumer_version_number: consumer_version_number)
+          required(:consumer_version_number).filled(:valid_consumer_version_number?)
         end
-
       end
-
-
     end
   end
 end

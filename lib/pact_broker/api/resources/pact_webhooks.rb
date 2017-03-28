@@ -35,11 +35,14 @@ module PactBroker
         end
 
         def validation_errors? webhook
-          if (errors = webhook_service.errors(webhook)).any?
+          errors = webhook_service.errors(webhook)
+
+          unless errors.empty?
             response.headers['Content-Type'] = 'application/json;charset=utf-8'
-            response.body = {errors: errors.full_messages }.to_json
+            response.body = { errors: errors.messages }.to_json
           end
-          errors.any?
+
+          !errors.empty?
         end
 
         def create_path
@@ -52,11 +55,11 @@ module PactBroker
 
         def from_json
           saved_webhook = webhook_service.create next_uuid, webhook, consumer, provider
-          response.body = Decorators::WebhookDecorator.new(saved_webhook).to_json(base_url: base_url)
+          response.body = Decorators::WebhookDecorator.new(saved_webhook).to_json(user_options: { base_url: base_url })
         end
 
         def to_json
-          Decorators::WebhooksDecorator.new(webhooks).to_json(decorator_context(resource_title: 'Pact webhooks'))
+          Decorators::WebhooksDecorator.new(webhooks).to_json(user_options: decorator_context(resource_title: 'Pact webhooks'))
         end
 
         private

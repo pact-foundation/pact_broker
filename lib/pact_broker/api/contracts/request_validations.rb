@@ -8,9 +8,7 @@ module PactBroker
 
       module RequestValidations
         def method_is_valid
-          if http_method && !valid_method?
-            errors.add(:method, "is not a recognised HTTP method")
-          end
+          http_method && !valid_method?
         end
 
         def valid_method?
@@ -18,9 +16,7 @@ module PactBroker
         end
 
         def url_is_valid
-          if url && !url_valid?
-            errors.add(:url, "is not a valid URL eg. http://example.org")
-          end
+          url && !url_valid?
         end
 
         def url_valid?
@@ -28,11 +24,9 @@ module PactBroker
         end
 
         def uri
-          begin
-            URI(url)
-          rescue URI::InvalidURIError
-            nil
-          end
+          URI(url)
+        rescue URI::InvalidURIError
+          nil
         end
       end
     end

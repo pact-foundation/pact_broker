@@ -13,7 +13,7 @@ module PactBroker
           PactBroker::Repositories::VersionRepository.new.find_by_pacticipant_name_and_number "Consumer", "1.2.3"
         end
 
-        let(:options) { {base_url: 'http://example.org' }}
+        let(:options) { { user_options: { base_url: 'http://example.org' } } }
 
         subject { JSON.parse EmbeddedVersionDecorator.new(version).to_json(options), symbolize_names: true }
 
