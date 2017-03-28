@@ -19,6 +19,10 @@ module PactBroker
       def to_s
         "Version: number=#{number}, pacticipant=#{pacticipant_id}"
       end
+
+      def version_and_updated_date
+        "Version #{number} - #{updated_at.to_time.localtime.strftime("%d/%m/%Y")}"
+      end
     end
 
     Version.plugin :timestamps, :update_on_create=>true
