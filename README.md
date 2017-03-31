@@ -2,9 +2,9 @@
 
 [![Build Status](https://travis-ci.org/bethesque/pact_broker.svg?branch=master)](https://travis-ci.org/bethesque/pact_broker) [![Join the chat at https://gitter.im/bethesque/pact_broker](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/bethesque/pact_broker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-The Pact Broker provides a repository for consumer driven contracts created using the pact gem. 
+The Pact Broker provides a repository for consumer driven contracts created using the pact gem.
 
-It: 
+It:
 
 * solves the problem of how to share pacts between consumer and provider projects
 * allows you to [decouple your service release cycles][decouple]
@@ -80,7 +80,7 @@ Use the HAL browser to view documentation as you browse.
 
 ### To have a play around on your local machine
 
-* Install ruby 1.9.3 or later and bundler >= 1.12.0 (NOTE! Currently broken on ruby 2.4.0. See [issue 78](https://github.com/bethesque/pact_broker/issues/78). )
+* Install ruby 1.9.3 or later and bundler >= 1.12.0
 * Run `git clone git@github.com:bethesque/pact_broker.git && cd pact_broker/example`
 * Run `bundle`
 * Run `bundle exec rackup -p 8080`
