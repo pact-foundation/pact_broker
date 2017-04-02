@@ -2,8 +2,8 @@ require 'pact_broker/repositories'
 
 module PactBroker
 
-  module Services
-    class VersionService
+  module Versions
+    class Service
 
       extend PactBroker::Repositories
 

@@ -1,6 +1,5 @@
 require 'pact_broker/services/tag_service'
 require 'pact_broker/services/group_service'
-require 'pact_broker/services/version_service'
 
 module PactBroker
   module Services
@@ -30,7 +29,8 @@ module PactBroker
     end
 
     def version_service
-      VersionService
+      require 'pact_broker/versions/service'
+      Versions::Service
     end
   end
 end
