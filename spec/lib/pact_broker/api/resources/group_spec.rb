@@ -21,7 +21,7 @@ module PactBroker::Api
 
         before do
           allow(PactBroker::Pacticipants::Service).to receive(:find_pacticipant_by_name).and_return(pacticipant)
-          allow(PactBroker::Services::GroupService).to receive(:find_group_containing).and_return(group)
+          allow(PactBroker::Groups::Service).to receive(:find_group_containing).and_return(group)
           allow(PactBroker::Api::Decorators::RelationshipsCsvDecorator).to receive(:new).and_return(decorator)
           allow(decorator).to receive(:to_csv).and_return(csv)
         end
@@ -36,7 +36,7 @@ module PactBroker::Api
           end
 
           it "finds the group containing the pacticipant" do
-            expect(PactBroker::Services::GroupService).to receive(:find_group_containing).with(pacticipant)
+            expect(PactBroker::Groups::Service).to receive(:find_group_containing).with(pacticipant)
             subject
           end
 

@@ -3,8 +3,8 @@ require 'pact_broker/relationships/groupify'
 
 module PactBroker
 
-  module Services
-    module GroupService
+  module Groups
+    module Service
 
       extend self
 

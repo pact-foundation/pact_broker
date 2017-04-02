@@ -1,5 +1,3 @@
-require 'pact_broker/services/group_service'
-
 module PactBroker
   module Services
 
@@ -20,7 +18,8 @@ module PactBroker
     end
 
     def group_service
-      GroupService
+      require 'pact_broker/groups/service'
+      Groups::Service
     end
 
     def webhook_service

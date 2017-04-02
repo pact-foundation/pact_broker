@@ -1,6 +1,7 @@
 require_relative 'base_decorator'
 require_relative 'embedded_version_decorator'
 require 'pact_broker/api/decorators/timestamps'
+require 'pact_broker/domain'
 
 module PactBroker
 

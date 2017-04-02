@@ -1,10 +1,10 @@
 require 'spec_helper'
-require 'pact_broker/services/group_service'
+require 'pact_broker/groups/service'
 
 module PactBroker
 
-  module Services
-    describe GroupService do
+  module Groups
+    describe Service do
 
 
       describe "#find_group_containing" do
@@ -24,7 +24,7 @@ module PactBroker
         let(:relationship_list) { double('relationship list') }
         let(:groups) { [group_1, group_2]}
 
-        subject  { GroupService.find_group_containing(consumer_b) }
+        subject  { Service.find_group_containing(consumer_b) }
 
         before do
           allow(Pacticipants::Service).to receive(:find_relationships).and_return(relationship_list)
