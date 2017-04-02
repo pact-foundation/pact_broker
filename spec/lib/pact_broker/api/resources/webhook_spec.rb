@@ -8,7 +8,7 @@ module PactBroker::Api
     describe Webhook do
 
       before do
-        allow(PactBroker::Services::WebhookService).to receive(:find_by_uuid).and_return(webhook)
+        allow(PactBroker::Webhooks::Service).to receive(:find_by_uuid).and_return(webhook)
       end
 
       subject { get '/webhooks/some-uuid' }
@@ -33,7 +33,7 @@ module PactBroker::Api
         end
 
         it "finds the webhook by UUID" do
-          expect(PactBroker::Services::WebhookService).to receive(:find_by_uuid).with('some-uuid')
+          expect(PactBroker::Webhooks::Service).to receive(:find_by_uuid).with('some-uuid')
           subject
         end
 

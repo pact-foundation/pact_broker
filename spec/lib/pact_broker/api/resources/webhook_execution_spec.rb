@@ -10,7 +10,7 @@ module PactBroker
         describe "POST" do
 
           before do
-            allow(PactBroker::Services::WebhookService).to receive(:find_by_uuid).and_return(webhook)
+            allow(PactBroker::Webhooks::Service).to receive(:find_by_uuid).and_return(webhook)
           end
 
           subject { post "/webhooks/some-uuid/execute"}
@@ -32,7 +32,7 @@ module PactBroker
             let(:decorator) { instance_double(PactBroker::Api::Decorators::WebhookExecutionResultDecorator, to_json: json)}
 
             before do
-              allow(PactBroker::Services::WebhookService).to receive(:execute_webhook_now).and_return(execution_result)
+              allow(PactBroker::Webhooks::Service).to receive(:execute_webhook_now).and_return(execution_result)
               allow(PactBroker::Api::Decorators::WebhookExecutionResultDecorator).to receive(:new).and_return(decorator)
             end
 

@@ -17,7 +17,7 @@ module PactBroker::Api
 
         before do
           allow(Decorators::WebhooksDecorator).to receive(:new).and_return(decorator)
-          allow(PactBroker::Services::WebhookService).to receive(:find_all).and_return(webhooks)
+          allow(PactBroker::Webhooks::Service).to receive(:find_all).and_return(webhooks)
         end
 
         it "returns a 200 HAL JSON response" do

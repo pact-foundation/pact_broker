@@ -4,8 +4,8 @@ require 'base64'
 
 module PactBroker
 
-  module Services
-    class WebhookService
+  module Webhooks
+    class Service
 
       extend Repositories
       include Logging

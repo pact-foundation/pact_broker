@@ -7,7 +7,7 @@ module PactBroker::Api
     describe PactWebhooks do
 
 
-      let(:webhook_service) { PactBroker::Services::WebhookService }
+      let(:webhook_service) { PactBroker::Webhooks::Service }
       let(:uuid) { '1483234k24DKFGJ45K' }
       let(:path) { "/webhooks/provider/Some%20Provider/consumer/Some%20Consumer" }
       let(:headers) { {'CONTENT_TYPE' => 'application/json'} }

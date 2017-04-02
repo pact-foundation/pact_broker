@@ -1,6 +1,5 @@
 require 'pact_broker/services/tag_service'
 require 'pact_broker/services/group_service'
-require 'pact_broker/services/webhook_service'
 require 'pact_broker/services/version_service'
 
 module PactBroker
@@ -26,7 +25,8 @@ module PactBroker
     end
 
     def webhook_service
-      WebhookService
+      require 'pact_broker/webhooks/service'
+      Webhooks::Service
     end
 
     def version_service
