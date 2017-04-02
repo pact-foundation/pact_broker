@@ -1,4 +1,3 @@
-require 'pact_broker/services/pacticipant_service'
 require 'pact_broker/services/tag_service'
 require 'pact_broker/services/group_service'
 require 'pact_broker/services/webhook_service'
@@ -14,7 +13,8 @@ module PactBroker
     end
 
     def pacticipant_service
-      PacticipantService
+      require 'pact_broker/pacticipants/service'
+      Pacticipants::Service
     end
 
     def tag_service

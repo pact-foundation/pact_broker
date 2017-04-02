@@ -17,8 +17,8 @@ module PactBroker::Api
       let(:consumer) { instance_double(PactBroker::Domain::Pacticipant)}
 
       before do
-        allow(PactBroker::Services::PacticipantService).to receive(:find_pacticipant_by_name).with("Some Provider").and_return(provider)
-        allow(PactBroker::Services::PacticipantService).to receive(:find_pacticipant_by_name).with("Some Consumer").and_return(consumer)
+        allow(PactBroker::Pacticipants::Service).to receive(:find_pacticipant_by_name).with("Some Provider").and_return(provider)
+        allow(PactBroker::Pacticipants::Service).to receive(:find_pacticipant_by_name).with("Some Consumer").and_return(consumer)
       end
 
       describe "GET" do

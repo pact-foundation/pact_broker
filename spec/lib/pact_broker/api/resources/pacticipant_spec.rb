@@ -13,15 +13,15 @@ module PactBroker::Api
         let(:pacticpant) { double("pacticpant") }
 
         before do
-          allow(PactBroker::Services::PacticipantService).to receive(:delete)
-          allow(PactBroker::Services::PacticipantService).to receive(:find_pacticipant_by_name).and_return(pacticpant)
+          allow(PactBroker::Pacticipants::Service).to receive(:delete)
+          allow(PactBroker::Pacticipants::Service).to receive(:find_pacticipant_by_name).and_return(pacticpant)
         end
 
         subject { delete("/pacticipants/Some%20Service" ) }
 
         context "when the resource exists" do
           it "deletes the pacticpant by name" do
-            expect(PactBroker::Services::PacticipantService).to receive(:delete).with("Some Service")
+            expect(PactBroker::Pacticipants::Service).to receive(:delete).with("Some Service")
             subject
           end
 
@@ -43,7 +43,7 @@ module PactBroker::Api
 
         context "when an error occurs" do
           before do
-            allow(PactBroker::Services::PacticipantService).to receive(:delete).and_raise("An error")
+            allow(PactBroker::Pacticipants::Service).to receive(:delete).and_raise("An error")
           end
 
           let(:response_body) { JSON.parse(last_response.body, symbolize_names: true) }

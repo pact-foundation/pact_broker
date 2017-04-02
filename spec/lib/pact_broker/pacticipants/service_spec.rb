@@ -1,15 +1,15 @@
 require 'spec_helper'
-require 'pact_broker/services/pacticipant_service'
+require 'pact_broker/pacticipants/service'
 require 'pact_broker/domain/tag'
 require 'pact_broker/domain/pact'
 
 
 module PactBroker
 
-  module Services
-    describe PacticipantService do
+  module Pacticipants
+    describe Service do
 
-      subject{ PacticipantService }
+      subject{ Service }
 
       describe ".messages_for_potential_duplicate_pacticipants" do
 
@@ -18,16 +18,16 @@ module PactBroker
         let(:mary_dulicates) { [double('Marta pacticipant')] }
 
         before do
-          allow(PacticipantService).to receive(:find_potential_duplicate_pacticipants).with("Fred").and_return(fred_duplicates)
-          allow(PacticipantService).to receive(:find_potential_duplicate_pacticipants).with("Mary").and_return(mary_dulicates)
+          allow(Service).to receive(:find_potential_duplicate_pacticipants).with("Fred").and_return(fred_duplicates)
+          allow(Service).to receive(:find_potential_duplicate_pacticipants).with("Mary").and_return(mary_dulicates)
           allow(Messages).to receive(:potential_duplicate_pacticipant_message).and_return("message1", "message2")
         end
 
-        subject { PacticipantService.messages_for_potential_duplicate_pacticipants ["Fred", "Mary"], base_url }
+        subject { Service.messages_for_potential_duplicate_pacticipants ["Fred", "Mary"], base_url }
 
         it "finds the potential duplicates for each name" do
-          expect(PacticipantService).to receive(:find_potential_duplicate_pacticipants).with("Fred")
-          expect(PacticipantService).to receive(:find_potential_duplicate_pacticipants).with("Mary")
+          expect(Service).to receive(:find_potential_duplicate_pacticipants).with("Fred")
+          expect(Service).to receive(:find_potential_duplicate_pacticipants).with("Mary")
           subject
         end
 

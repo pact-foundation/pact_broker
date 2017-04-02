@@ -20,7 +20,7 @@ module PactBroker::Api
         let(:pacticipant) { double('pacticipant')}
 
         before do
-          allow(PactBroker::Services::PacticipantService).to receive(:find_pacticipant_by_name).and_return(pacticipant)
+          allow(PactBroker::Pacticipants::Service).to receive(:find_pacticipant_by_name).and_return(pacticipant)
           allow(PactBroker::Services::GroupService).to receive(:find_group_containing).and_return(group)
           allow(PactBroker::Api::Decorators::RelationshipsCsvDecorator).to receive(:new).and_return(decorator)
           allow(decorator).to receive(:to_csv).and_return(csv)
@@ -31,7 +31,7 @@ module PactBroker::Api
         context "when the pacticipant exists" do
 
           it "looks up the pacticipant by name" do
-            expect(PactBroker::Services::PacticipantService).to receive(:find_pacticipant_by_name).with('Some Service')
+            expect(PactBroker::Pacticipants::Service).to receive(:find_pacticipant_by_name).with('Some Service')
             subject
           end
 

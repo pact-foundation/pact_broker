@@ -21,7 +21,7 @@ module PactBroker
             let(:relationships) { [relationship] }
 
             before do
-              allow(PactBroker::Services::PacticipantService).to receive(:find_relationships).and_return(relationships)
+              allow(PactBroker::Pacticipants::Service).to receive(:find_relationships).and_return(relationships)
             end
 
             it "does something" do

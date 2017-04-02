@@ -6,8 +6,8 @@ require 'pact_broker/pacticipants/find_potential_duplicate_pacticipant_names'
 
 module PactBroker
 
-  module Services
-    class PacticipantService
+  module Pacticipants
+    class Service
 
       extend PactBroker::Repositories
       extend PactBroker::Services

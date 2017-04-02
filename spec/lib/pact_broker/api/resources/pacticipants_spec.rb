@@ -20,7 +20,7 @@ module PactBroker
 
           before do
             allow(model_class).to receive(:new).and_return(model)
-            allow(PactBroker::Services::PacticipantService).to receive(:create).and_return(created_model)
+            allow(PactBroker::Pacticipants::Service).to receive(:create).and_return(created_model)
             allow(decorator_class).to receive(:new).with(model).and_return(decorator)
             allow(decorator_class).to receive(:new).with(created_model).and_return(decorator)
           end
@@ -47,7 +47,7 @@ module PactBroker
 
           context "with valid JSON" do
             it "creates the pacticipant" do
-              expect(PactBroker::Services::PacticipantService).to receive(:create).with(params)
+              expect(PactBroker::Pacticipants::Service).to receive(:create).with(params)
               subject
             end
 

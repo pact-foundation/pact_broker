@@ -50,7 +50,7 @@ module PactBroker::Api
 
         context "with a potential duplicate pacticipant" do
 
-          let(:pacticipant_service) { PactBroker::Services::PacticipantService }
+          let(:pacticipant_service) { PactBroker::Pacticipants::Service }
           let(:messages) { ["message1", "message2"] }
 
           before do
