@@ -1,9 +1,9 @@
 require 'spec_helper'
-require 'pact_broker/services/tag_service'
+require 'pact_broker/tags/service'
 
 module PactBroker
-  module Services
-    describe TagService do
+  module Tags
+    describe Service do
 
       let(:pacticipant_name) { "test_pacticipant" }
       let(:version_number) { "1.2.3" }
@@ -14,7 +14,7 @@ module PactBroker
 
       describe ".create" do
 
-        subject { TagService.create(options) }
+        subject { Service.create(options) }
 
         # Naughty integration test... didn't seem much point unit testing this
 
@@ -33,8 +33,8 @@ module PactBroker
         let(:second_options_same_tag_name) { {pacticipant_name: second_pacticipant_name, pacticipant_version_number: second_version_number, tag_name: tag_name}}
 
         before do
-          TagService.create(options)
-          TagService.create(second_options_same_tag_name)
+          Service.create(options)
+          Service.create(second_options_same_tag_name)
         end
 
         let(:delete_tag_for_particpant_and_version) { subject.delete second_options_same_tag_name}

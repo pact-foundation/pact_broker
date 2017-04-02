@@ -2,8 +2,8 @@ require 'pact_broker/repositories'
 
 module PactBroker
 
-  module Services
-    module TagService
+  module Tags
+    module Service
 
       extend self
 

@@ -1,4 +1,3 @@
-require 'pact_broker/services/tag_service'
 require 'pact_broker/services/group_service'
 
 module PactBroker
@@ -16,7 +15,8 @@ module PactBroker
     end
 
     def tag_service
-      TagService
+      require 'pact_broker/tags/service'
+      Tags::Service
     end
 
     def group_service

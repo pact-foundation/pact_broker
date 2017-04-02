@@ -21,15 +21,15 @@ module PactBroker
 
         describe "DELETE" do
           before do
-            allow(Services::TagService).to receive(:find).and_return(tag)
-            allow(Services::TagService).to receive(:delete)
+            allow(Tags::Service).to receive(:find).and_return(tag)
+            allow(Tags::Service).to receive(:delete)
           end
 
           subject { delete("/pacticipants/Condor/versions/1.3.0/tags/prod" ) }
 
           context "when the tag exists" do
             it "deletes the tag by name" do
-              expect(Services::TagService).to receive(:delete) .with(tag_attributes)
+              expect(Tags::Service).to receive(:delete) .with(tag_attributes)
               subject
             end
 
@@ -51,7 +51,7 @@ module PactBroker
 
           context "when an error occurs" do
             before do
-              allow(Services::TagService).to receive(:delete).and_raise("An error")
+              allow(Tags::Service).to receive(:delete).and_raise("An error")
             end
 
             let(:response_body) { JSON.parse(last_response.body, symbolize_names: true) }
@@ -75,7 +75,7 @@ module PactBroker
 
         describe "GET" do
           before do
-            allow(Services::TagService).to receive(:find).and_return(tag)
+            allow(Tags::Service).to receive(:find).and_return(tag)
             allow(PactBroker::Api::Decorators::TagDecorator).to receive(:new).and_return(tag_decorator)
           end
 
@@ -111,7 +111,7 @@ module PactBroker
 
           before do
             allow_any_instance_of(PactBroker::Api::Resources::Tag).to receive(:tag_url).and_return(tag_url)
-            allow(Services::TagService).to receive(:find).and_return(tag)
+            allow(Tags::Service).to receive(:find).and_return(tag)
             allow(PactBroker::Api::Decorators::TagDecorator).to receive(:new).and_return(tag_decorator)
           end
 
@@ -139,13 +139,13 @@ module PactBroker
 
           context "when the tag does not exist" do
             before do
-              allow(Services::TagService).to receive(:find).and_return(nil)
-              allow(Services::TagService).to receive(:create).and_return(tag)
+              allow(Tags::Service).to receive(:find).and_return(nil)
+              allow(Tags::Service).to receive(:create).and_return(tag)
             end
 
 
             it "creates the tag" do
-              expect(Services::TagService).to receive(:create).with(tag_attributes)
+              expect(Tags::Service).to receive(:create).with(tag_attributes)
               subject
             end
 
