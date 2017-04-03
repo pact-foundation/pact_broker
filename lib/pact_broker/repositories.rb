@@ -1,7 +1,5 @@
 require 'pact_broker/domain'
 require 'pact_broker/pacts/repository'
-require 'pact_broker/repositories/webhook_repository'
-
 
 module PactBroker
   module Repositories
@@ -25,7 +23,8 @@ module PactBroker
     end
 
     def webhook_repository
-      WebhookRepository.new
+      require 'pact_broker/webhooks/repository'
+      Webhooks::Repository.new
     end
 
     extend self

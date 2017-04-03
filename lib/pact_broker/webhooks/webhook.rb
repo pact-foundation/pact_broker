@@ -3,13 +3,13 @@ require 'pact_broker/domain/webhook'
 require 'pact_broker/domain/pacticipant'
 
 module PactBroker
-  module Repositories
+  module Webhooks
     class Webhook < Sequel::Model
 
       set_primary_key :id
       associate(:many_to_one, :provider, :class => "PactBroker::Domain::Pacticipant", :key => :provider_id, :primary_key => :id)
       associate(:many_to_one, :consumer, :class => "PactBroker::Domain::Pacticipant", :key => :consumer_id, :primary_key => :id)
-      one_to_many :headers, :class => "PactBroker::Repositories::WebhookHeader", :reciprocal => :webhook
+      one_to_many :headers, :class => "PactBroker::Webhooks::WebhookHeader", :reciprocal => :webhook
 
       def before_destroy
         WebhookHeader.where(webhook_id: id).destroy

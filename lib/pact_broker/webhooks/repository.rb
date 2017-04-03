@@ -2,13 +2,13 @@ require 'sequel'
 require 'pact_broker/domain/webhook'
 require 'pact_broker/domain/pacticipant'
 require 'pact_broker/db'
-require 'pact_broker/repositories/webhook'
+require 'pact_broker/webhooks/webhook'
 
 
 module PactBroker
-  module Repositories
+  module Webhooks
 
-    class WebhookRepository
+    class Repository
 
       include Repositories
 
@@ -17,7 +17,7 @@ module PactBroker
         db_webhook.uuid = uuid
         db_webhook.save
         webhook.request.headers.each_pair do | name, value |
-          db_webhook.add_header WebhookHeader.from_domain(name, value, db_webhook.id)
+          db_webhook.add_header PactBroker::Webhooks::WebhookHeader.from_domain(name, value, db_webhook.id)
         end
         find_by_uuid db_webhook.uuid
       end

@@ -149,7 +149,7 @@ module PactBroker
 
         it "deletes the webhooks" do
           expect{ delete_pacticipant }.to change{
-            PactBroker::Repositories::Webhook.count
+            PactBroker::Webhooks::Webhook.count
             }.by(-1)
         end
 

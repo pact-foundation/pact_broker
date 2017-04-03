@@ -1,9 +1,9 @@
 require 'spec_helper'
-require 'pact_broker/repositories/webhook_repository'
+require 'pact_broker/webhooks/repository'
 
 module PactBroker
-  module Repositories
-    describe WebhookRepository do
+  module Webhooks
+    describe Repository do
 
       let(:url) { 'http://example.org' }
       let(:body) { {'some' => 'json' } }
@@ -36,7 +36,7 @@ module PactBroker
 
       describe "#create" do
 
-        subject { WebhookRepository.new.create uuid, webhook, consumer, provider }
+        subject { Repository.new.create uuid, webhook, consumer, provider }
 
 
         it "saves webhook" do
@@ -58,11 +58,11 @@ module PactBroker
       describe "delete_by_uuid" do
 
         before do
-          WebhookRepository.new.create uuid, webhook, consumer, provider
-          WebhookRepository.new.create 'another-uuid', webhook, consumer, provider
+          Repository.new.create uuid, webhook, consumer, provider
+          Repository.new.create 'another-uuid', webhook, consumer, provider
         end
 
-        subject { WebhookRepository.new.delete_by_uuid uuid }
+        subject { Repository.new.delete_by_uuid uuid }
 
         it "deletes the webhook headers" do
           expect { subject }.to change {
@@ -81,12 +81,12 @@ module PactBroker
 
         before do
           allow(SecureRandom).to receive(:urlsafe_base64).and_return(uuid, 'another-uuid')
-          WebhookRepository.new.create uuid, webhook, consumer, provider
+          Repository.new.create uuid, webhook, consumer, provider
         end
 
         context "when the pacticipant is the consumer" do
 
-          subject { WebhookRepository.new.delete_by_pacticipant consumer }
+          subject { Repository.new.delete_by_pacticipant consumer }
 
           it "deletes the webhook" do
             expect { subject }.to change {
@@ -97,7 +97,7 @@ module PactBroker
 
         context "when the pacticipant is the provider" do
 
-          subject { WebhookRepository.new.delete_by_pacticipant provider }
+          subject { Repository.new.delete_by_pacticipant provider }
 
           it "deletes the webhook" do
             expect { subject }.to change {
@@ -111,11 +111,11 @@ module PactBroker
       describe "find_by_uuid" do
 
 
-        subject { WebhookRepository.new.find_by_uuid uuid }
+        subject { Repository.new.find_by_uuid uuid }
 
         context "when a webhook is found" do
           before do
-            WebhookRepository.new.create uuid, webhook, consumer, provider
+            Repository.new.create uuid, webhook, consumer, provider
           end
 
           it "returns a webhook with the consumer set" do
@@ -190,11 +190,11 @@ module PactBroker
 
       describe "find_all" do
         before do
-          WebhookRepository.new.create uuid, webhook, consumer, provider
-          WebhookRepository.new.create 'some-other-uuid', webhook, consumer, provider
+          Repository.new.create uuid, webhook, consumer, provider
+          Repository.new.create 'some-other-uuid', webhook, consumer, provider
         end
 
-        subject { WebhookRepository.new.find_all }
+        subject { Repository.new.find_all }
 
         it "returns a list of webhooks" do
           expect(subject.size).to be 2
@@ -204,7 +204,7 @@ module PactBroker
 
       describe "find_by_consumer_and_provider" do
         let(:test_data_builder) { ProviderStateBuilder.new }
-        subject { WebhookRepository.new.find_by_consumer_and_provider test_data_builder.consumer, test_data_builder.provider}
+        subject { Repository.new.find_by_consumer_and_provider test_data_builder.consumer, test_data_builder.provider}
 
         context "when a webhook exists with a matching consumer and provider" do
 

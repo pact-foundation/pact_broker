@@ -122,7 +122,7 @@ class ProviderStateBuilder
 
   def create_webhook
     request = PactBroker::Domain::WebhookRequest.new(method: 'POST', url: 'http://example.org', headers: {'Content-Type' => 'application/json'})
-    @webhook = WebhookRepository.new.create PactBroker::Webhooks::Service.next_uuid, PactBroker::Domain::Webhook.new(request: request), @consumer, @provider
+    @webhook = PactBroker::Webhooks::Repository.new.create PactBroker::Webhooks::Service.next_uuid, PactBroker::Domain::Webhook.new(request: request), @consumer, @provider
     self
   end
 

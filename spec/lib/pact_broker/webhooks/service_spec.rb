@@ -15,14 +15,14 @@ module PactBroker
         let(:webhooks) { [instance_double(PactBroker::Domain::Webhook)]}
 
         before do
-          allow_any_instance_of(PactBroker::Repositories::WebhookRepository).to receive(:find_by_consumer_and_provider).and_return(webhooks)
+          allow_any_instance_of(PactBroker::Webhooks::Repository).to receive(:find_by_consumer_and_provider).and_return(webhooks)
           allow(Service).to receive(:run_later)
         end
 
         subject { Service.execute_webhooks pact }
 
         it "finds the webhooks" do
-          expect_any_instance_of(PactBroker::Repositories::WebhookRepository).to receive(:find_by_consumer_and_provider).with(consumer, provider)
+          expect_any_instance_of(PactBroker::Webhooks::Repository).to receive(:find_by_consumer_and_provider).with(consumer, provider)
           subject
         end
 
