@@ -1,9 +1,9 @@
 require 'spec_helper'
-require 'pact_broker/repositories/version_repository'
+require 'pact_broker/versions/repository'
 
 module PactBroker
-  module Repositories
-    describe VersionRepository do
+  module Versions
+    describe Repository do
 
       let(:pacticipant_name) { "test_pacticipant" }
       let(:version_number) { "1.2.3" }
@@ -15,7 +15,7 @@ module PactBroker
             ProviderStateBuilder.new.create_version_with_hierarchy pacticipant_name, version_number
           end
 
-          subject { VersionRepository.new.create pacticipant_id: existing_order.pacticipant_id, number: "1.2.4" }
+          subject { Repository.new.create pacticipant_id: existing_order.pacticipant_id, number: "1.2.4" }
 
           it "sets the order to the previous version's order plus one" do
             expect(subject.order).to eq existing_order.order + 1

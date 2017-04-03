@@ -14,7 +14,7 @@ module PactBroker
       describe "create" do
         let(:consumer) { Pacticipants::Repository.new.create name: 'Consumer' }
         let(:provider) { Pacticipants::Repository.new.create name: 'Provider' }
-        let(:version) { Repositories::VersionRepository.new.create number: '1.2.3', pacticipant_id: consumer.id }
+        let(:version) { Versions::Repository.new.create number: '1.2.3', pacticipant_id: consumer.id }
         let(:json_content) { {some: 'json'}.to_json }
 
         subject { Repository.new.create version_id: version.id, provider_id: provider.id, json_content: json_content }
@@ -38,7 +38,7 @@ module PactBroker
         end
 
         context "when a pact already exists with the same content" do
-          let(:another_version) { Repositories::VersionRepository.new.create number: '2.0.0', pacticipant_id: consumer.id }
+          let(:another_version) { Versions::Repository.new.create number: '2.0.0', pacticipant_id: consumer.id }
 
           before do
             Repository.new.create version_id: version.id, provider_id: provider.id, json_content: json_content
@@ -54,7 +54,7 @@ module PactBroker
         end
 
         context "when a pact already exists with different content" do
-          let(:another_version) { Repositories::VersionRepository.new.create number: '2.0.0', pacticipant_id: consumer.id }
+          let(:another_version) { Versions::Repository.new.create number: '2.0.0', pacticipant_id: consumer.id }
 
           before do
             Repository.new.create version_id: version.id, provider_id: provider.id, json_content: {some_other: 'json_content'}.to_json

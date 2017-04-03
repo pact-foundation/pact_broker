@@ -10,7 +10,7 @@ module PactBroker
           ProviderStateBuilder.new
             .create_consumer("Consumer")
             .create_version("1.2.3")
-          PactBroker::Repositories::VersionRepository.new.find_by_pacticipant_name_and_number "Consumer", "1.2.3"
+          PactBroker::Versions::Repository.new.find_by_pacticipant_name_and_number "Consumer", "1.2.3"
         end
 
         let(:options) { { user_options: { base_url: 'http://example.org' } } }

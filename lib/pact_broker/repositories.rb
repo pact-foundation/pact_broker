@@ -1,5 +1,4 @@
 require 'pact_broker/domain'
-require 'pact_broker/repositories/version_repository'
 require 'pact_broker/pacts/repository'
 require 'pact_broker/repositories/webhook_repository'
 
@@ -12,7 +11,8 @@ module PactBroker
     end
 
     def version_repository
-      VersionRepository.new
+      require 'pact_broker/versions/repository'
+      Versions::Repository.new
     end
 
     def pact_repository

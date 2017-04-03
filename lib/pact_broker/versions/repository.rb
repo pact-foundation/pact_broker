@@ -3,10 +3,10 @@ require 'pact_broker/domain/version'
 require 'pact_broker/tags/repository'
 
 module PactBroker
-  module Repositories
-    class VersionRepository
+  module Versions
+    class Repository
 
-      include Helpers
+      include PactBroker::Repositories::Helpers
 
       def find_by_pacticipant_id_and_number pacticipant_id, number
         PactBroker::Domain::Version.where(number: number, pacticipant_id: pacticipant_id).single_record
