@@ -1,17 +1,17 @@
 require 'spec_helper'
-require 'pact_broker/repositories/pacticipant_repository'
+require 'pact_broker/pacticipants/repository'
 require 'support/provider_state_builder'
 
 module PactBroker
-  module Repositories
-    describe PacticipantRepository do
+  module Pacticipants
+    describe Repository do
 
       describe "#find_by_name" do
         before do
           ProviderStateBuilder.new.create_pacticipant("Foo Bar")
         end
 
-        subject { PacticipantRepository.new.find_by_name('foo bar') }
+        subject { Repository.new.find_by_name('foo bar') }
 
         context "when the name is a different case" do
           context "with case sensitivity turned on" do
@@ -45,7 +45,7 @@ module PactBroker
             .create_pacticipant("Animals")
         end
 
-        subject { PacticipantRepository.new.pacticipant_names }
+        subject { Repository.new.pacticipant_names }
 
         it "returns an array of pacticipant names" do
           expect(subject).to eq ["Animals", "Plants"]

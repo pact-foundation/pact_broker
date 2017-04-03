@@ -60,11 +60,11 @@ module PactBroker
         let(:pacticipant_names) { double("pacticipant_names") }
         let(:fred) { double('fred pacticipant')}
         let(:mary) { double('mary pacticipant')}
-        let(:pacticipant_repository) { instance_double(PactBroker::Repositories::PacticipantRepository)}
+        let(:pacticipant_repository) { instance_double(PactBroker::Pacticipants::Repository)}
 
         before do
           allow(PactBroker::Pacticipants::FindPotentialDuplicatePacticipantNames).to receive(:call).and_return(duplicates)
-          allow(PactBroker::Repositories::PacticipantRepository).to receive(:new).and_return(pacticipant_repository)
+          allow(PactBroker::Pacticipants::Repository).to receive(:new).and_return(pacticipant_repository)
           allow(pacticipant_repository).to receive(:pacticipant_names).and_return(pacticipant_names)
           allow(pacticipant_repository).to receive(:find_by_name).with("Fred").and_return(fred)
           allow(pacticipant_repository).to receive(:find_by_name).with("Mary").and_return(mary)

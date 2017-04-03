@@ -3,10 +3,10 @@ require 'pact_broker/domain/pacticipant'
 require 'pact_broker/repositories/helpers'
 
 module PactBroker
-  module Repositories
-    class PacticipantRepository
+  module Pacticipants
+    class Repository
 
-      include Helpers
+      include PactBroker::Repositories::Helpers
 
       def find_by_name name
         PactBroker::Domain::Pacticipant.where(name_like(:name, name)).single_record

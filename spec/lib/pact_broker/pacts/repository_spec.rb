@@ -12,8 +12,8 @@ module PactBroker
       let(:provider_name) { 'Provider' }
 
       describe "create" do
-        let(:consumer) { Repositories::PacticipantRepository.new.create name: 'Consumer' }
-        let(:provider) { Repositories::PacticipantRepository.new.create name: 'Provider' }
+        let(:consumer) { Pacticipants::Repository.new.create name: 'Consumer' }
+        let(:provider) { Pacticipants::Repository.new.create name: 'Provider' }
         let(:version) { Repositories::VersionRepository.new.create number: '1.2.3', pacticipant_id: consumer.id }
         let(:json_content) { {some: 'json'}.to_json }
 
