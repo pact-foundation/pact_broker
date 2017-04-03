@@ -3,10 +3,10 @@ require 'pact_broker/repositories/helpers'
 
 
 module PactBroker
-  module Repositories
-    class TagRepository
+  module Tags
+    class Repository
 
-      include Helpers
+      include PactBroker::Repositories::Helpers
 
       def create args
         Domain::Tag.new(name: args.fetch(:name), version: args.fetch(:version)).save

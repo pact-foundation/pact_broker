@@ -1,9 +1,9 @@
 require 'spec_helper'
-require 'pact_broker/repositories/tag_repository'
+require 'pact_broker/tags/repository'
 
 module PactBroker
-  module Repositories
-    describe TagRepository do
+  module Tags
+    describe Repository do
 
       describe ".find" do
 
@@ -11,7 +11,7 @@ module PactBroker
         let(:version_number) { "1.2.3a" }
         let(:tag_name) { "prod" }
 
-        subject { TagRepository.new }
+        subject { Repository.new }
         let(:options) { {pacticipant_name: pacticipant_name, pacticipant_version_number: version_number, tag_name: tag_name} }
         let(:find_tag) { subject.find options }
 

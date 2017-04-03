@@ -1,6 +1,6 @@
 require 'sequel'
 require 'pact_broker/domain/version'
-require 'pact_broker/repositories/tag_repository'
+require 'pact_broker/tags/repository'
 
 module PactBroker
   module Repositories

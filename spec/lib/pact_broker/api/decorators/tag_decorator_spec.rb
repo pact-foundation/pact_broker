@@ -1,5 +1,5 @@
 require 'pact_broker/api/decorators/tag_decorator'
-require 'pact_broker/repositories/tag_repository'
+require 'pact_broker/tags/repository'
 
 require 'support/provider_state_builder'
 
@@ -16,7 +16,7 @@ module PactBroker
             .create_consumer("Consumer")
             .create_version("1.2.3")
             .create_tag("prod")
-          PactBroker::Repositories::TagRepository.new.find tag_name: 'prod', pacticipant_version_number: '1.2.3', pacticipant_name: 'Consumer'
+          PactBroker::Tags::Repository.new.find tag_name: 'prod', pacticipant_version_number: '1.2.3', pacticipant_name: 'Consumer'
         end
 
         let(:options) { { user_options: { base_url: 'http://example.org' } } }
