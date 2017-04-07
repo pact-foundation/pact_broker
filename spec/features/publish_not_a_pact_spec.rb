@@ -1,6 +1,6 @@
 describe "Publishing a contract that is not a pact" do
 
-  let(:path) { "/pacts/provider/A%20Provider/consumer/A%20Consumer/version/1.2.3" }
+  let(:path) { "/pacts/provider/A%20Provider/consumer/A%20Consumer/versions/1.2.3" }
   let(:parsed_response_body) { JSON.parse(subject.body) }
 
   subject { put path, pact_content, {'CONTENT_TYPE' => 'application/json' }; last_response  }
