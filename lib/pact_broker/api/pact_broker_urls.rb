@@ -59,6 +59,10 @@ module PactBroker
         "#{version_url(base_url, version)}/tags"
       end
 
+      def new_verification_url params, number, base_url
+        pact_url_from_params(base_url, params) + "/verifications/" + number
+      end
+
       def tag_url base_url, tag
         "#{tags_url(base_url, tag.version)}/#{tag.name}"
       end

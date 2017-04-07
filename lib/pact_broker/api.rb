@@ -23,6 +23,7 @@ require 'pact_broker/api/resources/versions'
 require 'pact_broker/api/resources/pact_content_diff'
 require 'pact_broker/api/resources/previous_distinct_pact_version'
 require 'pact_broker/api/resources/latest_provider_pacts'
+require 'pact_broker/api/resources/verifications'
 
 require 'webmachine/adapters/rack_mapped'
 
@@ -39,6 +40,7 @@ module PactBroker
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'latest', :tag], Api::Resources::LatestPact
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'version', :consumer_version_number], Api::Resources::Pact # Deprecate, singular version
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'versions', :consumer_version_number], Api::Resources::Pact
+        add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'versions', :consumer_version_number, 'verifications'], Api::Resources::Verifications
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'versions'], Api::Resources::PactVersions
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'version', :consumer_version_number, 'previous-distinct'], Api::Resources::PreviousDistinctPactVersion
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'version', :consumer_version_number, 'diff', 'previous-distinct'], Api::Resources::PactContentDiff

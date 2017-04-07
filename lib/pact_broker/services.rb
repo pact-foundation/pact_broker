@@ -31,5 +31,10 @@ module PactBroker
       require 'pact_broker/versions/service'
       Versions::Service
     end
+
+    def verification_service
+      require 'pact_broker/verifications/service'
+      Verifications::Service
+    end
   end
 end
