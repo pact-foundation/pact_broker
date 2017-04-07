@@ -37,7 +37,7 @@ module PactBroker
         # Todo, rename /version/ to /versions
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'latest'], Api::Resources::LatestPact
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'latest', :tag], Api::Resources::LatestPact
-        add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'version', :consumer_version_number], Api::Resources::Pact # Deprecate
+        add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'version', :consumer_version_number], Api::Resources::Pact # Deprecate, singular version
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'versions', :consumer_version_number], Api::Resources::Pact
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'versions'], Api::Resources::PactVersions
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'version', :consumer_version_number, 'previous-distinct'], Api::Resources::PreviousDistinctPactVersion
@@ -45,7 +45,7 @@ module PactBroker
         add ['pacts', 'provider', :provider_name, 'latest'], Api::Resources::LatestProviderPacts
         add ['pacts', 'provider', :provider_name, 'latest', :tag], Api::Resources::LatestProviderPacts
 
-        add ['pact', 'provider', :provider_name, 'consumer', :consumer_name, 'version', :consumer_version_number], Api::Resources::Pact
+        add ['pact', 'provider', :provider_name, 'consumer', :consumer_name, 'version', :consumer_version_number], Api::Resources::Pact # Deprecate, singular /pact
         add ['pact', 'provider', :provider_name, 'consumer', :consumer_name, 'latest'], Api::Resources::LatestPact
         add ['pacts', 'latest'], Api::Resources::LatestPacts
         add ['pacticipants'], Api::Resources::Pacticipants
