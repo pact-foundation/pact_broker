@@ -22,5 +22,4 @@ xdescribe "Publishing a pact" do
       expect(subject.status).to be 404
     end
   end
-
 end
