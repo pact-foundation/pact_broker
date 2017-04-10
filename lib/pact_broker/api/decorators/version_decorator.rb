@@ -18,14 +18,6 @@ module PactBroker
           }
         end
 
-        link :self do | options |
-          {
-            title: 'Version',
-            name: represented.number,
-            href: version_url(options.fetch(:base_url), represented)
-          }
-        end
-
         link :pacticipant do | options |
           {
             title: 'Pacticipant',
