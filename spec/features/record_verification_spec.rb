@@ -1,3 +1,5 @@
+require 'pact_broker/domain/verification'
+
 describe "Recording a pact verification" do
 
   let(:path) { "/pacts/provider/Provider/consumer/Consumer/versions/1.2.3/verifications" }
@@ -11,11 +13,12 @@ describe "Recording a pact verification" do
   end
 
   context "" do
-    xit "Reponds with a 201 Created" do
+    it "Responds with a 201 Created" do
       expect(subject.status).to be 201
     end
 
-    xit "saves a verification against the pact" do
+    it "saves a verification against the pact" do
+      expect { subject }.to change { PactBroker::Domain::Verification.count }.by(1)
     end
   end
 end

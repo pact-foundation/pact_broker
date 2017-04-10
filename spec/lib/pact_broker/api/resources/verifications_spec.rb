@@ -17,11 +17,11 @@ module PactBroker
           subject { post url, request_body, {'CONTENT_TYPE' => 'application/json' }; last_response }
           let(:response_body) { JSON.parse(subject.body, {symbolize_names: true}) }
           let(:verification) { double(PactBroker::Domain::Verification) }
-          let(:any_errors) { false }
+          let(:errors_empty) { true }
 
           before do
             allow(PactBroker::Verifications::Service).to receive(:create).and_return(verification)
-            allow(PactBroker::Verifications::Service).to receive(:errors).and_return(double(:errors, messages: ['errors'], any?: any_errors))
+            allow(PactBroker::Verifications::Service).to receive(:errors).and_return(double(:errors, messages: ['errors'], empty?: errors_empty))
           end
 
           it "looks up the specified pact" do
@@ -75,7 +75,7 @@ module PactBroker
           end
 
           context "when invalid parameters are used" do
-            let(:any_errors) { true }
+            let(:errors_empty) { false }
 
             it "returns a 400 status" do
               expect(subject.status).to eq 400

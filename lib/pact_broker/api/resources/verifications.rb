@@ -30,7 +30,7 @@ module PactBroker
           if request.post?
             return true if invalid_json?
             errors = verification_service.errors(params)
-            if errors.any?
+            if !errors.empty?
               set_json_validation_error_messages(errors.messages)
               return true
             end
@@ -44,7 +44,7 @@ module PactBroker
 
         def from_json
           verification = verification_service.create(next_verification_number, params_with_string_keys, pact)
-          response.body = decorator_for(verification).to_json
+          response.body = decorator_for(verification).to_json(user_options: {base_url: base_url})
           true
         end
 

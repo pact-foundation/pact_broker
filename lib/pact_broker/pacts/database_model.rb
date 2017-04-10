@@ -1,10 +1,15 @@
 require 'pact_broker/domain/pact'
 require 'pact_broker/pacts/pact_version_content'
+require 'forwardable'
 
 module PactBroker
   module Pacts
 
     class DatabaseModel < Sequel::Model(:pacts)
+
+      extend Forwardable
+
+      delegate [:consumer, :consumer_version_number, :name] => :cached_domain_for_delegation
 
       set_primary_key :id
       associate(:many_to_one, :provider, :class => "PactBroker::Domain::Pacticipant", :key => :provider_id, :primary_key => :id)
@@ -30,6 +35,11 @@ module PactBroker
         OpenStruct.new(number: consumer_version.number, pacticipant: consumer_version.pacticipant, tags: consumer_version.tags, order: consumer_version.order)
       end
 
+      private
+
+      def cached_domain_for_delegation
+        @domain_object ||= to_domain
+      end
     end
   end
 end

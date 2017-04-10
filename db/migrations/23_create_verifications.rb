@@ -6,7 +6,7 @@ Sequel.migration do
       Boolean :success, null: false
       String :providerVersion
       String :buildUrl
-      foreign_key :pact_id, :pacts
+      foreign_key :pact_id, :pacts, null: false
       index [:pact_id, :number], unique: true
     end
   end

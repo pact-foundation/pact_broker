@@ -19,6 +19,7 @@ module PactBroker
         verification = PactBroker::Domain::Verification.new
         PactBroker::Api::Decorators::VerificationDecorator.new(verification).from_hash(params)
         verification.number = next_verification_number
+        verification.pact_id = pact.id
         verification.save
       end
 

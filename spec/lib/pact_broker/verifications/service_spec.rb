@@ -32,10 +32,16 @@ module PactBroker
           create_verification
         end
 
-        it "foo" do
+        it "sets the verification attributes" do
           verification = create_verification
           expect(verification.success).to be true
           expect(verification.number).to eq 3
+        end
+
+        it "sets the pact for the verification" do
+          verification = create_verification
+          expect(verification.pact_id).to_not be_nil
+          expect(verification.pact.id).to eq pact.id
         end
       end
     end
