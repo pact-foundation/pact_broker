@@ -68,6 +68,10 @@ module PactBroker
           @params ||= JSON.parse(request.body.to_s, {symbolize_names: true}.merge(PACT_PARSING_OPTIONS))
         end
 
+        def params_with_string_keys
+          JSON.parse(request.body.to_s, {symbolize_names: false}.merge(PACT_PARSING_OPTIONS))
+        end
+
         def pact_params
           @pact_params ||= PactBroker::Pacts::PactParams.from_request request, path_info
         end

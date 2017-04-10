@@ -27,6 +27,11 @@ module PactBroker
       Webhooks::Repository.new
     end
 
+    def verification_repository
+      require 'pact_broker/verifications/repository'
+      Verifications::Repository.new
+    end
+
     extend self
   end
 end

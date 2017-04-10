@@ -60,7 +60,7 @@ class ProviderStateBuilder
     self
   end
 
-  def create_pact_with_hierarchy consumer_name, consumer_version, provider_name, json_content = default_json_content
+  def create_pact_with_hierarchy consumer_name = "Consumer", consumer_version = "1.2.3", provider_name = "Provider", json_content = default_json_content
     provider = PactBroker::Domain::Pacticipant.create(:name => provider_name)
     consumer = PactBroker::Domain::Pacticipant.create(:name => consumer_name)
     version = PactBroker::Domain::Version.create(:number => consumer_version, :pacticipant => consumer)

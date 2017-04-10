@@ -59,7 +59,7 @@ module PactBroker
             end
 
             it "stores the verification in the database" do
-              expect(PactBroker::Verifications::Service).to receive(:create).with(next_verification_number, hash_including(some: 'params'), pact)
+              expect(PactBroker::Verifications::Service).to receive(:create).with(next_verification_number, hash_including('some' => 'params'), pact)
               subject
             end
 
