@@ -24,7 +24,8 @@ module PactBroker
         include PacticipantResourceMethods
 
         def content_types_provided
-          [["application/json", :to_json]]
+          [["application/json", :to_json],
+           ["text/html", :to_html]]
         end
 
         def content_types_accepted
@@ -74,6 +75,10 @@ module PactBroker
 
         def to_json
           PactBroker::Api::Decorators::PactDecorator.new(pact).to_json(user_options: { base_url: base_url })
+        end
+
+        def to_html
+          PactBroker.configuration.html_pact_renderer.call(pact)
         end
 
         def delete_resource

@@ -2,6 +2,8 @@ require 'spec_helper'
 require 'pact_broker/api/resources/pact'
 require 'rack/test'
 require 'pact_broker/pacts/service'
+require 'pact_broker/pacticipants/service'
+
 
 module PactBroker::Api
 
@@ -13,6 +15,46 @@ module PactBroker::Api
 
       let(:app) { PactBroker::API }
       let(:json) { {some: 'json'}.to_json }
+
+      describe "GET" do
+
+        context "Accept: text/html" do
+
+          let(:json_content) { 'json_content' }
+          let(:pact) { double("pact", json_content: json_content)}
+          let(:html) { 'html' }
+          let(:pact_id_params) { {provider_name: "provider_name", consumer_name: "consumer_name", consumer_version_number: "1.2.3"} }
+
+          before do
+            allow(PactBroker::Pacts::Service).to receive(:find_pact).and_return(pact)
+            allow(PactBroker.configuration.html_pact_renderer).to receive(:call).and_return(html)
+          end
+
+          subject { get "/pacts/provider/provider_name/consumer/consumer_name/versions/1.2.3",{}, {'HTTP_ACCEPT' => "text/html"} }
+
+          it "find the pact" do
+            expect(PactBroker::Pacts::Service).to receive(:find_pact).with(hash_including(pact_id_params))
+            subject
+          end
+
+          it "uses the configured HTML renderer" do
+            expect(PactBroker.configuration.html_pact_renderer).to receive(:call).with(pact)
+            subject
+          end
+
+          it "returns a HTML body" do
+            subject
+            expect(last_response.body).to eq html
+          end
+
+          it "returns a content type of HTML" do
+            subject
+            expect(last_response.headers['Content-Type']).to eq 'text/html;charset=utf-8'
+          end
+
+        end
+      end
+
 
       shared_examples "an update endpoint" do |http_method|
         subject { self.send http_method, "/pacts/provider/Provider/consumer/Consumer/version/1.2", json, {'CONTENT_TYPE' => "application/json"} ; last_response }
