@@ -5,6 +5,7 @@ require 'pact_broker/logging'
 require 'pact_broker/api/pact_broker_urls'
 require 'pact_broker/api/decorators/decorator_context'
 require 'pact_broker/json'
+require 'pact_broker/pacts/pact_params'
 
 module PactBroker
 
@@ -67,6 +68,10 @@ module PactBroker
           @params ||= JSON.parse(request.body.to_s, {symbolize_names: true}.merge(PACT_PARSING_OPTIONS))
         end
 
+        def pact_params
+          @pact_params ||= PactBroker::Pacts::PactParams.from_request request, path_info
+        end
+
         def set_json_error_message message
           response.headers['Content-Type'] = 'application/json;charset=utf-8'
           response.body = {error: message}.to_json
@@ -114,8 +119,8 @@ module PactBroker
           end
         end
 
-        def contract_validation_errors? contract, pact_params
-          if (invalid = !contract.validate(pact_params))
+        def contract_validation_errors? contract, params
+          if (invalid = !contract.validate(params))
             set_json_validation_error_messages contract.errors.messages
           end
           invalid

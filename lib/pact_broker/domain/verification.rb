@@ -5,7 +5,7 @@ module PactBroker
   module Domain
     class Verification < Sequel::Model
 
-      primary_key :id
+      set_primary_key :id
       associate(:many_to_one, :pact, class: "PactBroker::Pacts::DatabaseModel", key: :pact_id, primary_key: :id)
 
     end

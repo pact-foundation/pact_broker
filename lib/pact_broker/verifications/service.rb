@@ -13,10 +13,14 @@ module PactBroker
 
       end
 
-      def create args
+      def create next_verification_number, params, pact
 
       end
 
+      def errors params
+        contract = PactBroker::Api::Contracts::VerificationContract.new(PactBroker::Domain::Verification.new)
+        contract.errors
+      end
     end
   end
 
