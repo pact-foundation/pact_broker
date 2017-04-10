@@ -2,7 +2,7 @@ require 'pact_broker/domain/verification'
 
 describe "Recording a pact verification" do
 
-  let(:path) { "/pacts/provider/Provider/consumer/Consumer/versions/1.2.3/verifications" }
+  let(:path) { "/pacts/provider/Provider/consumer/Consumer/version/1.2.3/verifications" }
   let(:verification_content) { load_fixture('record_verification.json') }
   let(:parsed_response_body) { JSON.parse(subject.body) }
 

@@ -33,34 +33,44 @@ module PactBroker
     pact_api = Webmachine::Application.new do |app|
       app.routes do
         add(['trace', :*], Webmachine::Trace::TraceResource) unless ENV['RACK_ENV'] == 'production'
-        # Support both /pact and /pacts
-        # /pact will be deprecated
-        # Todo, rename /version/ to /versions
-        add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'latest'], Api::Resources::LatestPact
-        add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'latest', :tag], Api::Resources::LatestPact
-        add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'version', :consumer_version_number], Api::Resources::Pact
-        add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'versions', :consumer_version_number], Api::Resources::Pact # Not the standard URL, but keep for backwards compatibility
-add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'versions', :consumer_version_number, 'verifications'], Api::Resources::Verifications
+
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'versions'], Api::Resources::PactVersions
+        add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'versions', :consumer_version_number], Api::Resources::Pact # Not the standard URL, but keep for backwards compatibility
+
+        # Pacts
+        add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'version', :consumer_version_number], Api::Resources::Pact
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'version', :consumer_version_number, 'previous-distinct'], Api::Resources::PreviousDistinctPactVersion
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'version', :consumer_version_number, 'diff', 'previous-distinct'], Api::Resources::PactContentDiff
+        add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'version', :consumer_version_number, 'verifications'], Api::Resources::Verifications
+
+        # Latest pacts
+        add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'latest'], Api::Resources::LatestPact
+        add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'latest', :tag], Api::Resources::LatestPact
         add ['pacts', 'provider', :provider_name, 'latest'], Api::Resources::LatestProviderPacts
         add ['pacts', 'provider', :provider_name, 'latest', :tag], Api::Resources::LatestProviderPacts
+        add ['pacts', 'latest'], Api::Resources::LatestPacts
 
+        # Deprecated pact
         add ['pact', 'provider', :provider_name, 'consumer', :consumer_name, 'version', :consumer_version_number], Api::Resources::Pact # Deprecate, singular /pact
         add ['pact', 'provider', :provider_name, 'consumer', :consumer_name, 'latest'], Api::Resources::LatestPact
-        add ['pacts', 'latest'], Api::Resources::LatestPacts
+
+        # Pacticipants
         add ['pacticipants'], Api::Resources::Pacticipants
         add ['pacticipants', :name], Api::Resources::Pacticipant
         add ['pacticipants', :pacticipant_name, 'versions'], Api::Resources::Versions
         add ['pacticipants', :pacticipant_name, 'versions', :pacticipant_version_number], Api::Resources::Version
         add ['pacticipants', :pacticipant_name, 'versions', :pacticipant_version_number, 'tags', :tag_name], Api::Resources::Tag
-        add ['relationships'], Api::Resources::Relationships
-        add ['groups', :pacticipant_name], Api::Resources::Group
+
+
+        # Webhooks
         add ['webhooks', 'provider', :provider_name, 'consumer', :consumer_name ], Api::Resources::PactWebhooks
         add ['webhooks', :uuid ], Api::Resources::Webhook
         add ['webhooks', :uuid, 'execute' ], Api::Resources::WebhookExecution
         add ['webhooks'], Api::Resources::Webhooks
+
+        add ['relationships'], Api::Resources::Relationships
+        add ['groups', :pacticipant_name], Api::Resources::Group
+
         add [], Api::Resources::Index
       end
     end
