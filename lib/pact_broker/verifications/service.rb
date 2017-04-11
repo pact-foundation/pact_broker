@@ -27,6 +27,10 @@ module PactBroker
         contract = PactBroker::Api::Contracts::VerificationContract.new(PactBroker::Domain::Verification.new)
         contract.errors
       end
+
+      def find_latest_verifications_for_consumer_version params
+
+      end
     end
   end
 end
