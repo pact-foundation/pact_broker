@@ -18,7 +18,7 @@ module PactBroker
           end
 
           it "looks up the consumer version" do
-            expect(PactBroker::Versions::Service).to receive(:find_by_pacticipant_name_and_number).with(hash_including(consumer_name: 'Consumer', consumer_version_number: '1.2.3'))
+            expect(PactBroker::Versions::Service).to receive(:find_by_pacticipant_name_and_number).with(hash_including(pacticipant_name: 'Consumer', pacticipant_version_number: '1.2.3'))
             subject
           end
 
@@ -41,7 +41,7 @@ module PactBroker
 
             it "serialises the verifications" do
               expect(PactBroker::Api::Decorators::VerificationsDecorator).to receive(:new).with(verifications)
-              expect(decorator).to receive(:to_json).with(user_options: {base_url: 'http://example.org'})
+              expect(decorator).to receive(:to_json).with(user_options: instance_of(Decorators::DecoratorContext))
               subject
             end
 

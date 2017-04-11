@@ -22,14 +22,12 @@ describe "Get verifications for consumer version" do
         .create_verification(number: 1)
     end
 
-
-
-    xit "returns a 200 HAL JSON response" do
+    it "returns a 200 HAL JSON response" do
       expect(subject).to be_a_hal_json_success_response
     end
 
-    xit "returns a list of verifications" do
-      expect(last_response_body[:verifications].size).to eq 2
+    it "returns a list of verifications" do
+      expect(last_response_body[:_embedded][:verifications].size).to eq 2
     end
   end
 end

@@ -19,12 +19,13 @@ module PactBroker
         end
 
         def resource_exists?
-          !!version_service.find_by_pacticipant_name_and_number(identifier_from_path)
+          version_params = {pacticipant_name: identifier_from_path[:consumer_name], pacticipant_version_number: identifier_from_path[:consumer_version_number]}
+          !!version_service.find_by_pacticipant_name_and_number(version_params)
         end
 
         def to_json
           verifications = verification_service.find_latest_verifications_for_consumer_version(identifier_from_path)
-          decorator_for(verifications).to_json(user_options: { base_url: base_url})
+          decorator_for(verifications).to_json(user_options: decorator_context)
         end
 
         private

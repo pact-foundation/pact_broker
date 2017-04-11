@@ -29,7 +29,7 @@ module PactBroker
       end
 
       def find_latest_verifications_for_consumer_version params
-
+        verification_repository.find_latest_verifications_for_consumer_version params[:consumer_name], params[:consumer_version_number]
       end
     end
   end
