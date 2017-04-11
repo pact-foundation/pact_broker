@@ -67,6 +67,10 @@ module PactBroker
         pact_url(base_url, verification.pact) + "/verifications/#{verification.number}"
       end
 
+      def latest_verifications_for_consumer_version_url version, base_url
+        "#{base_url}/pacts/consumer/#{url_encode(version.pacticipant.name)}/versions/#{version.number}/verifications/latest"
+      end
+
       def tag_url base_url, tag
         "#{tags_url(base_url, tag.version)}/#{tag.name}"
       end

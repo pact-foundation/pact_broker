@@ -1,5 +1,11 @@
 require 'pact_broker/repositories'
 require 'json'
+require 'pact_broker/versions/repository'
+require 'pact_broker/pacts/repository'
+require 'pact_broker/pacticipants/repository'
+require 'pact_broker/verifications/repository'
+require 'pact_broker/tags/repository'
+require 'pact_broker/webhooks/repository'
 
 class ProviderStateBuilder
 

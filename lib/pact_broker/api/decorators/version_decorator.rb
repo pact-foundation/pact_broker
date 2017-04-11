@@ -18,6 +18,13 @@ module PactBroker
           }
         end
 
+        link :'pb:latest-verifications' do | options |
+          {
+            title: "Latest verifications for consumer version",
+            href: latest_verifications_for_consumer_version_url(represented, options.fetch(:base_url))
+          }
+        end
+
         link :pacticipant do | options |
           {
             title: 'Pacticipant',
@@ -26,6 +33,13 @@ module PactBroker
           }
         end
 
+        curies do | options |
+          [{
+            name: :pb,
+            href: options.fetch(:base_url) + '/doc/{rel}',
+            templated: true
+          }]
+        end
       end
     end
   end
