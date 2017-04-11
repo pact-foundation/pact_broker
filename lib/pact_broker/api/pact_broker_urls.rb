@@ -102,7 +102,9 @@ module PactBroker
       end
 
       def pactigration_base_url base_url, pact
-        "#{base_url}/pacts/provider/#{url_encode(pact.provider.name)}/consumer/#{url_encode(pact.consumer.name)}"
+        provider_name = pact.respond_to?(:provider_name) ? pact.provider_name : pact.provider.name
+        consumer_name = pact.respond_to?(:consumer_name) ? pact.consumer_name : pact.consumer.name
+        "#{base_url}/pacts/provider/#{url_encode(provider_name)}/consumer/#{url_encode(consumer_name)}"
       end
     end
   end

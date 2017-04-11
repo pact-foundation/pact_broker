@@ -14,6 +14,14 @@ module PactBroker
         end
       end
 
+      def consumer_name
+        consumer.name
+      end
+
+      def provider_name
+        provider.name
+      end
+
       def consumer
         consumer_version.pacticipant
       end

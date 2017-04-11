@@ -17,9 +17,9 @@ module PactBroker
         let(:pact) do
           instance_double('PactBroker::Domain::Pact',
             name: 'A pact',
-            provider: double(name: 'Provider'),
-            consumer: double(name: 'Consumer'),
-              consumer_version_number: '1.2.3'
+            provider_name: 'Provider',
+            consumer_name: 'Consumer',
+            consumer_version_number: '1.2.3'
           )
         end
 
@@ -41,6 +41,10 @@ module PactBroker
 
         it "includes a link to itself" do
           expect(subject[:_links][:self][:href]).to match %r{http://example.org/.*/verifications/1}
+        end
+
+        it "includes a link to its pact" do
+          expect(subject[:_links][:'pb:pact-version'][:href]).to match %r{http://example.org/pacts/}
         end
       end
     end

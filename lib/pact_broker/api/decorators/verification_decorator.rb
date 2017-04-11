@@ -24,7 +24,6 @@ module PactBroker
             href: pact_url(options.fetch(:base_url), represented.pact)
           }
         end
-
       end
     end
   end
