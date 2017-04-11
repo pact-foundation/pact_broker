@@ -9,8 +9,8 @@ module PactBroker
           instance_double('PactBroker::Domain::Verification',
             number: 1,
             success: true,
-            providerVersion: "4.5.6",
-            buildUrl: 'http://build-url',
+            provider_version: "4.5.6",
+            build_url: 'http://build-url',
             pact: pact)
         end
 

@@ -4,8 +4,8 @@ Sequel.migration do
       primary_key :id
       Integer :number
       Boolean :success, null: false
-      String :providerVersion
-      String :buildUrl
+      String :provider_version
+      String :build_url
       foreign_key :pact_id, :pacts, null: false
       index [:pact_id, :number], unique: true
     end

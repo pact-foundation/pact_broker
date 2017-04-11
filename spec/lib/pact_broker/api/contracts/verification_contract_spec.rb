@@ -50,7 +50,7 @@ module PactBroker
           context "when buildUrl is not a URL" do
             let(:build_url) { "foo bar" }
             it "has an error" do
-              expect(subject.errors[:buildUrl]).to include(match("URL"))
+              expect(subject.errors[:build_url]).to include(match("URL"))
             end
           end
 

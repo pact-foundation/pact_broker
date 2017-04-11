@@ -6,8 +6,8 @@ module PactBroker
       class VerificationDecorator < BaseDecorator
 
         property :success
-        property :providerVersion
-        property :buildUrl
+        property :provider_version, as: :providerVersion
+        property :build_url, as: :buildUrl
 
         link :self do | options |
           {

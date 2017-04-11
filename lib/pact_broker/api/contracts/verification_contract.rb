@@ -8,8 +8,8 @@ module PactBroker
       class VerificationContract < Reform::Form
 
         property :success
-        property :providerVersion
-        property :buildUrl
+        property :provider_version, as: :providerVersion
+        property :build_url, as: :buildUrl
 
         validation do
           configure do
@@ -23,7 +23,7 @@ module PactBroker
           end
 
           required(:success).filled(:bool?)
-          optional(:buildUrl).maybe(:valid_url?)
+          optional(:build_url).maybe(:valid_url?)
         end
       end
     end
