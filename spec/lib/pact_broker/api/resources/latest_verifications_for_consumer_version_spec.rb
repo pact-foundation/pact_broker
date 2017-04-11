@@ -41,7 +41,12 @@ module PactBroker
 
             it "serialises the verifications" do
               expect(PactBroker::Api::Decorators::VerificationsDecorator).to receive(:new).with(verifications)
-              expect(decorator).to receive(:to_json).with(user_options: instance_of(Decorators::DecoratorContext))
+              expect(decorator).to receive(:to_json) do | args |
+                expect(args[:user_options][:consumer_name]).to eq 'Consumer'
+                expect(args[:user_options][:consumer_version_number]).to eq '1.2.3'
+                expect(args[:user_options][:resource_url]).to include(url)
+                expect(args[:user_options][:base_url]).to eq "http://example.org"
+              end
               subject
             end
 

@@ -11,8 +11,8 @@ module PactBroker
 
         link :self do | context |
           {
-            href: context[:resource_url],
-            title: "Latest verifications for consumer #{context[:consumer_name]} version #{context[:consumer_version_number]}"
+            href: context.fetch(:resource_url),
+            title: "Latest verifications for consumer #{context.fetch(:consumer_name)} version #{context.fetch(:consumer_version_number)}"
           }
         end
       end

@@ -25,7 +25,7 @@ module PactBroker
 
         def to_json
           verifications = verification_service.find_latest_verifications_for_consumer_version(identifier_from_path)
-          decorator_for(verifications).to_json(user_options: decorator_context)
+          decorator_for(verifications).to_json(user_options: decorator_context(identifier_from_path))
         end
 
         private
