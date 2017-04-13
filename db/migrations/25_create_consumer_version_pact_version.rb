@@ -13,6 +13,6 @@ Sequel.migration do
   end
 
   down do
-    drop_table(:consumer_version_pact_versions)
+    drop_table(:consumer_versions_pact_versions)
   end
 end
