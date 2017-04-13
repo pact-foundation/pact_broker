@@ -8,11 +8,15 @@ RSpec.configure do |config|
     end
   end
 
-  config.before(:each) do
-    DatabaseCleaner.start if defined?(::DB)
+  config.before(:each) do | example |
+    unless example.metadata[:no_db_clean]
+      DatabaseCleaner.start if defined?(::DB)
+    end
   end
 
-  config.after(:each) do
-    DatabaseCleaner.clean if defined?(::DB)
+  config.after(:each) do | example |
+    unless example.metadata[:no_db_clean]
+      DatabaseCleaner.clean if defined?(::DB)
+    end
   end
 end
