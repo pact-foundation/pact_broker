@@ -30,36 +30,40 @@ describe 'migrate to pact versions', no_db_clean: :true do
   let!(:pact_2) { create(:pacts, {version_id: consumer_version_2[:id], provider_id: provider[:id], pact_version_content_sha: '1234', created_at: now, updated_at: pact_updated_at}) }
 
 
-  let(:do_migration) { PactBroker::Database.migrate(27) }
+  let(:do_migration) do
+    PactBroker::Database.migrate(27)
+    Sequel::Model.db.schema(:all_pacts, reload: true)
+  end
 
   it "keeps the same number of pacts" do
     do_migration
-    expect(Sequel::Model.db[:new_all_pacts].count).to eq 2
+    expect(Sequel::Model.db[:all_pacts].count).to eq 2
   end
 
   it "migrates the values correctly for the first pact" do
-    do_migration
     old_all_pact = Sequel::Model.db[:all_pacts].order(:id).first
     old_all_pact.delete(:updated_at)
     old_all_pact.delete(:created_at)
-    new_all_pact = Sequel::Model.db[:new_all_pacts].order(:id).first
+    do_migration
+    Sequel::Model.db[:all_pacts]
+    new_all_pact = Sequel::Model.db[:all_pacts].order(:id).first
     new_all_pact.delete(:created_at)
-    expect(old_all_pact).to eq new_all_pact
+    expect(new_all_pact).to eq old_all_pact
   end
 
   it "uses the old updated date for the new creation date" do
     do_migration
-    expect(Sequel::Model.db[:new_all_pacts].order(:id).first[:created_at]).to eq pact_updated_at
+    expect(Sequel::Model.db[:all_pacts].order(:id).first[:created_at]).to eq pact_updated_at
   end
 
   it "migrates the values correctly for the second pact" do
-    do_migration
     old_all_pact = Sequel::Model.db[:all_pacts].order(:id).last
     old_all_pact.delete(:updated_at)
     old_all_pact.delete(:created_at)
-    new_all_pact = Sequel::Model.db[:new_all_pacts].order(:id).last
+    do_migration
+    new_all_pact = Sequel::Model.db[:all_pacts].order(:id).last
     new_all_pact.delete(:created_at)
-    expect(old_all_pact).to eq new_all_pact
+    expect(new_all_pact).to eq old_all_pact
   end
 
   after do
