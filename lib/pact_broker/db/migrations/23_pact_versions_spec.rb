@@ -3,20 +3,25 @@ require 'tasks/database'
 describe 'migrate to pact versions', no_db_clean: :true do
 
   def create table_name, params, id_column_name = :id
-    Sequel::Model.db[table_name].insert(params);
-    Sequel::Model.db[table_name].order(id_column_name).last
+    database[table_name].insert(params);
+    database[table_name].order(id_column_name).last
   end
 
   def clean table_name
-    Sequel::Model.db[table_name].delete rescue puts "Error cleaning #{table_name} #{$!}"
+    database[table_name].delete rescue puts "Error cleaning #{table_name} #{$!}"
   end
 
+  def new_connection
+    DB.connection_for_env 'test'
+  end
+
+  let(:database) { new_connection }
+
   before do
+    PactBroker::Database.delete_database_file
+    PactBroker::Database.ensure_database_dir_exists
+    database = new_connection
     PactBroker::Database.migrate(22)
-    clean :pact_version_contents
-    clean :pacts
-    clean :versions
-    clean :pacticipants
   end
 
   let(:now) { DateTime.new }
@@ -32,36 +37,36 @@ describe 'migrate to pact versions', no_db_clean: :true do
 
   let(:do_migration) do
     PactBroker::Database.migrate(27)
-    Sequel::Model.db.schema(:all_pacts, reload: true)
+    database.schema(:all_pacts, reload: true)
   end
 
   it "keeps the same number of pacts" do
     do_migration
-    expect(Sequel::Model.db[:all_pacts].count).to eq 2
+    expect(database[:all_pacts].count).to eq 2
   end
 
   it "migrates the values correctly for the first pact" do
-    old_all_pact = Sequel::Model.db[:all_pacts].order(:id).first
+    old_all_pact = database[:all_pacts].order(:id).first
     old_all_pact.delete(:updated_at)
     old_all_pact.delete(:created_at)
     do_migration
-    Sequel::Model.db[:all_pacts]
-    new_all_pact = Sequel::Model.db[:all_pacts].order(:id).first
+    database[:all_pacts]
+    new_all_pact = database[:all_pacts].order(:id).first
     new_all_pact.delete(:created_at)
     expect(new_all_pact).to eq old_all_pact
   end
 
   it "uses the old updated date for the new creation date" do
     do_migration
-    expect(Sequel::Model.db[:all_pacts].order(:id).first[:created_at]).to eq pact_updated_at
+    expect(database[:all_pacts].order(:id).first[:created_at]).to eq pact_updated_at
   end
 
   it "migrates the values correctly for the second pact" do
-    old_all_pact = Sequel::Model.db[:all_pacts].order(:id).last
+    old_all_pact = database[:all_pacts].order(:id).last
     old_all_pact.delete(:updated_at)
     old_all_pact.delete(:created_at)
     do_migration
-    new_all_pact = Sequel::Model.db[:all_pacts].order(:id).last
+    new_all_pact = database[:all_pacts].order(:id).last
     new_all_pact.delete(:created_at)
     expect(new_all_pact).to eq old_all_pact
   end
