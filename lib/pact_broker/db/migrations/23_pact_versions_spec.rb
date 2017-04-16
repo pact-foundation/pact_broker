@@ -36,7 +36,7 @@ describe 'migrate to pact versions', no_db_clean: :true do
 
 
   let(:do_migration) do
-    PactBroker::Database.migrate(27)
+    PactBroker::Database.migrate(29)
     database.schema(:all_pacts, reload: true)
   end
 
@@ -74,8 +74,6 @@ describe 'migrate to pact versions', no_db_clean: :true do
   after do
     clean :pact_versions
     clean :pact_contents
-    clean :pacts
-    clean :pact_version_contents
     clean :versions
     clean :pacticipants
     PactBroker::Database.migrate
