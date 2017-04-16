@@ -72,7 +72,7 @@ describe 'migrate to pact versions', no_db_clean: :true do
   end
 
   after do
-    clean :consumer_versions_pact_contents
+    clean :pact_versions
     clean :pact_contents
     clean :pacts
     clean :pact_version_contents
