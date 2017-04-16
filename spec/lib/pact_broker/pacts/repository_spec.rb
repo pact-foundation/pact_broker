@@ -3,6 +3,8 @@
 require 'pact_broker/pacts/repository'
 require 'spec/support/provider_state_builder'
 require 'pact_broker/pacts/pact_params'
+require 'pact_broker/versions/repository'
+require 'pact_broker/pacticipants/repository'
 
 module PactBroker
   module Pacts
@@ -14,7 +16,7 @@ module PactBroker
       describe "create" do
         let(:consumer) { Pacticipants::Repository.new.create name: 'Consumer' }
         let(:provider) { Pacticipants::Repository.new.create name: 'Provider' }
-        let(:version) { Versions::Repository.new.create number: '1.2.3', pacticipant_id: consumer.id }
+        let(:version) { PactBroker::Versions::Repository.new.create number: '1.2.3', pacticipant_id: consumer.id }
         let(:json_content) { {some: 'json'}.to_json }
 
         subject { Repository.new.create version_id: version.id, provider_id: provider.id, json_content: json_content }
@@ -34,7 +36,6 @@ module PactBroker
           expect(subject.consumer_version.number).to eq '1.2.3'
           expect(subject.json_content).to eq json_content
           expect(subject.created_at).to be_instance_of(DateTime)
-          expect(subject.updated_at).to be_instance_of(DateTime)
         end
 
         context "when a pact already exists with the same content" do
@@ -77,19 +78,16 @@ module PactBroker
         end
 
         before do
-          ::DB::PACT_BROKER_DB[:pacts]
+          ::DB::PACT_BROKER_DB[:pact_versions]
             .where(id: existing_pact.id)
             .update(
-              created_at: created_at,
-              updated_at: updated_at)
+              created_at: created_at)
           ::DB::PACT_BROKER_DB[:pact_version_contents]
               .update(
-                created_at: created_at,
-                updated_at: updated_at)
+                created_at: created_at)
         end
 
         let(:created_at) { DateTime.new(2014, 3, 2) }
-        let(:updated_at) { DateTime.new(2014, 3, 4) }
 
         let(:original_json_content) { {some: 'json'}.to_json }
         let(:json_content) { {some_other: 'json'}.to_json }
@@ -103,14 +101,9 @@ module PactBroker
             expect(subject.json_content).to eq json_content
           end
 
-          it "updates the updated_at timestamp" do
-            expect(subject.updated_at).to_not eq updated_at
-          end
-
           it "does not update the created_at timestamp" do
             expect(subject.created_at).to eq created_at
           end
-
         end
 
         context "when the content has not changed" do
@@ -119,10 +112,6 @@ module PactBroker
 
           it "the json_content is the same" do
             expect(subject.json_content).to eq original_json_content
-          end
-
-          it "does not update the timestamp" do
-            expect(subject.updated_at).to eq updated_at
           end
 
           it "does not update the created_at timestamp" do
@@ -425,7 +414,6 @@ module PactBroker
 
             it "has timestamps" do
               expect(latest_prod_pact.created_at).to be_instance_of(DateTime)
-              expect(latest_prod_pact.updated_at).to be_instance_of(DateTime)
             end
           end
 
@@ -470,7 +458,6 @@ module PactBroker
         it "includes the timestamps - need to update view" do
           pacts = Repository.new.find_latest_pacts
 
-          expect(pacts[0].updated_at).to be_instance_of DateTime
           expect(pacts[0].created_at).to be_instance_of DateTime
         end
       end

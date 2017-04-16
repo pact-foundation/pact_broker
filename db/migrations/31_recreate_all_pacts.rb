@@ -9,7 +9,7 @@ Sequel.migration do
       join(:versions, {:id => :consumer_version_id}, {:table_alias => :cv, implicit_qualifier: :pact_versions}).
       join(:pacticipants, {:id => :pacticipant_id}, {:table_alias => :c, implicit_qualifier: :cv}).
       join(:pacticipants, {:id => :provider_id}, {:table_alias => :p, implicit_qualifier: :pact_versions}).
-      join(:pact_version_contents, {:id => :pact_version_id}, {:table_alias => :pv, implicit_qualifier: :pact_versions})
+      join(:pact_version_contents, {:id => :pact_version_content_id}, {:table_alias => :pv, implicit_qualifier: :pact_versions})
     )
   end
 end

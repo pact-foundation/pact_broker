@@ -7,6 +7,7 @@ require 'pact_broker/pacts/all_pacts'
 require 'pact_broker/pacts/latest_pacts'
 require 'pact_broker/pacts/latest_tagged_pacts'
 require 'pact/shared/json_differ'
+require 'pact_broker/domain'
 
 module PactBroker
   module Pacts
@@ -16,7 +17,7 @@ module PactBroker
 
       def create params
         DatabaseModel.new(
-          version_id: params[:version_id],
+          consumer_version_id: params[:version_id],
           provider_id: params[:provider_id],
           pact_version_content: find_or_create_pact_version_content(params[:json_content]),
         ).save.to_domain

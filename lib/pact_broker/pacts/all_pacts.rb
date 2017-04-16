@@ -81,8 +81,7 @@ module PactBroker
           consumer_version: consumer_version,
           provider: provider,
           consumer_version_number: consumer_version_number,
-          created_at: created_at,
-          updated_at: updated_at)
+          created_at: created_at)
       end
 
       def to_domain_with_content
