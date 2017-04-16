@@ -1,6 +1,3 @@
-require 'digest/sha1'
-require_relative 'migration_helper'
-
 Sequel.migration do
   up do
     create_or_replace_view(:all_pacts,
