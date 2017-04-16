@@ -20,11 +20,9 @@ module PactBroker
 
         let(:base_url) { 'http://example.org' }
         let(:created_at) { Time.new(2014, 3, 4) }
-        let(:updated_at) { Time.new(2014, 3, 5) }
         let(:pact) { double('pact',
           json_content: json_content,
           created_at: created_at,
-          updated_at: updated_at,
           consumer: consumer,
           provider: provider,
           consumer_version: consumer_version,
@@ -53,7 +51,6 @@ module PactBroker
 
         it "includes timestamps" do
           expect(subject[:createdAt]).to_not be_nil
-          expect(subject[:updatedAt]).to_not be_nil
         end
 
       end

@@ -3,7 +3,6 @@ require 'pact_broker/pacticipants/service'
 require 'pact_broker/domain/tag'
 require 'pact_broker/domain/pact'
 
-
 module PactBroker
 
   module Pacticipants

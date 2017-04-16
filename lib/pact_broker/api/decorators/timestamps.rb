@@ -14,7 +14,7 @@ module PactBroker
         property :createdAt, getter: lambda { |_|  created_at.xmlschema }, writeable: false
 
         def optional_updated_at
-          if represented.updated_at != represented.created_at
+          if represented.respond_to?(:updated_at) && represented.updated_at != represented.created_at
             represented.updated_at.xmlschema
           end
         end

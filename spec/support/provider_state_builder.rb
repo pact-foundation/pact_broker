@@ -1,4 +1,15 @@
 require 'pact_broker/repositories'
+require 'pact_broker/webhooks/repository'
+require 'pact_broker/webhooks/service'
+require 'pact_broker/pacts/repository'
+require 'pact_broker/pacts/service'
+require 'pact_broker/pacticipants/repository'
+require 'pact_broker/pacticipants/service'
+require 'pact_broker/versions/repository'
+require 'pact_broker/versions/service'
+require 'pact_broker/tags/repository'
+require 'pact_broker/tags/service'
+require 'pact_broker/domain'
 require 'json'
 
 class ProviderStateBuilder

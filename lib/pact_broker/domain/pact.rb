@@ -6,7 +6,7 @@ module PactBroker
   module Domain
     class Pact
 
-      attr_accessor :id, :provider, :consumer_version, :consumer, :updated_at, :created_at, :json_content, :consumer_version_number
+      attr_accessor :id, :provider, :consumer_version, :consumer, :created_at, :json_content, :consumer_version_number
 
       def initialize attributes
         attributes.each_pair do | key, value |
@@ -31,7 +31,7 @@ module PactBroker
       end
 
       def version_and_updated_date
-        "Version #{consumer_version_number} - #{updated_at.to_time.localtime.strftime("%d/%m/%Y")}"
+        "Version #{consumer_version_number} - #{created_at.to_time.localtime.strftime("%d/%m/%Y")}"
       end
 
       def content_hash
