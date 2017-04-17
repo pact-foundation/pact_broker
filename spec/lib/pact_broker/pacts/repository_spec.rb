@@ -97,18 +97,45 @@ module PactBroker
 
           subject { Repository.new.update existing_pact.id, json_content: json_content }
 
-          it "updates the existing content" do
+          it "creates a new PactVersion" do
+            expect { subject }.to change{ PactBroker::Pacts::DatabaseModel.count }.by(1)
+          end
+
+          it "creates a new PactVersionContent" do
+            expect { subject }.to change{ PactBroker::Pacts::PactVersionContent.count }.by(1)
+          end
+
+          it "does not change the existing PactVersionContent" do
+            existing_pvc = PactBroker::Pacts::PactVersionContent.order(:id).last
+            subject
+            existing_pvc_reloaded = PactBroker::Pacts::PactVersionContent.find(id: existing_pvc[:id])
+            expect(existing_pvc_reloaded).to eq(existing_pvc)
+          end
+
+          it "updates the existing content on the returned model" do
             expect(subject.json_content).to eq json_content
           end
 
-          it "does not update the created_at timestamp" do
-            expect(subject.created_at).to eq created_at
+          it "sets the created_at timestamp" do
+            expect(subject.created_at).to_not eq created_at
+          end
+
+          it "increments the revision_number by 1" do
+            expect(subject.revision_number).to eq 2
           end
         end
 
         context "when the content has not changed" do
 
           subject { Repository.new.update existing_pact.id, json_content: original_json_content }
+
+          it "does not create a new PactVersion" do
+            expect { subject }.to_not change{ PactBroker::Pacts::DatabaseModel.count }
+          end
+
+          it "does not create a new PactVersionContent" do
+            expect { subject }.to_not change{ PactBroker::Pacts::PactVersionContent.count }
+          end
 
           it "the json_content is the same" do
             expect(subject.json_content).to eq original_json_content

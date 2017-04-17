@@ -81,6 +81,7 @@ module PactBroker
           consumer_version: consumer_version,
           provider: provider,
           consumer_version_number: consumer_version_number,
+          revision_number: revision_number,
           created_at: created_at)
       end
 

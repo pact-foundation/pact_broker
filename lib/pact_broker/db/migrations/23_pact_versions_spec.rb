@@ -1,6 +1,6 @@
 require 'tasks/database'
 
-describe 'migrate to pact versions', no_db_clean: :true do
+describe 'migrate to pact versions (migrate 22-31)', no_db_clean: :true do
 
   def create table_name, params, id_column_name = :id
     database[table_name].insert(params);
@@ -45,6 +45,17 @@ describe 'migrate to pact versions', no_db_clean: :true do
     expect(database[:all_pacts].count).to eq 2
   end
 
+  it "uses the old updated date for the new creation date" do
+    do_migration
+    expect(database[:all_pacts].order(:id).first[:created_at]).to eq pact_updated_at
+  end
+
+  it "sets each revision number to 1" do
+    do_migration
+    expect(database[:all_pacts].order(:id).first[:revision_number]).to eq 1
+    expect(database[:all_pacts].order(:id).last[:revision_number]).to eq 1
+  end
+
   it "migrates the values correctly for the first pact" do
     old_all_pact = database[:all_pacts].order(:id).first
     old_all_pact.delete(:updated_at)
@@ -53,12 +64,8 @@ describe 'migrate to pact versions', no_db_clean: :true do
     database[:all_pacts]
     new_all_pact = database[:all_pacts].order(:id).first
     new_all_pact.delete(:created_at)
+    new_all_pact.delete(:revision_number)
     expect(new_all_pact).to eq old_all_pact
-  end
-
-  it "uses the old updated date for the new creation date" do
-    do_migration
-    expect(database[:all_pacts].order(:id).first[:created_at]).to eq pact_updated_at
   end
 
   it "migrates the values correctly for the second pact" do
@@ -68,6 +75,7 @@ describe 'migrate to pact versions', no_db_clean: :true do
     do_migration
     new_all_pact = database[:all_pacts].order(:id).last
     new_all_pact.delete(:created_at)
+    new_all_pact.delete(:revision_number)
     expect(new_all_pact).to eq old_all_pact
   end
 

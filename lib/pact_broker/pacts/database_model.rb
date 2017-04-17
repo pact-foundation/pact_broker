@@ -25,6 +25,7 @@ module PactBroker
           consumer: consumer_version.pacticipant,
           consumer_version_number: consumer_version.number,
           consumer_version: to_version_domain,
+          revision_number: revision_number,
           json_content: pact_version_content.content,
           created_at: created_at
           )

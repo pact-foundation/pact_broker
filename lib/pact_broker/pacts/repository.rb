@@ -24,10 +24,18 @@ module PactBroker
       end
 
       def update id, params
-        DatabaseModel.find(id: id).tap do | pact |
-          pact_version_content = find_or_create_pact_version_content(params[:json_content])
-          pact.update(pact_version_content: pact_version_content)
-        end.to_domain
+        existing_model = DatabaseModel.find(id: id)
+        pact_version_content = find_or_create_pact_version_content(params[:json_content])
+        if existing_model.pact_version_content_id != pact_version_content.id
+          DatabaseModel.new(
+            consumer_version_id: existing_model.consumer_version_id,
+            provider_id: existing_model.provider_id,
+            revision_number: (existing_model.revision_number + 1),
+            pact_version_content: pact_version_content,
+          ).save.to_domain
+        else
+          existing_model.to_domain
+        end
       end
 
       def delete params
