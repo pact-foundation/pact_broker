@@ -62,7 +62,7 @@ module PactBroker
         attr_reader :pact, :previous_distinct_pact, :next_pact, :base_url
 
         def change_date_in_words
-          DateHelper.local_date_in_words next_pact.updated_at
+          DateHelper.local_date_in_words next_pact.created_at
         end
 
         def now
@@ -100,7 +100,7 @@ module PactBroker
         end
 
         def change_date_ago_in_words
-          DateHelper.distance_of_time_in_words next_pact.updated_at, now
+          DateHelper.distance_of_time_in_words next_pact.created_at, now
         end
       end
     end

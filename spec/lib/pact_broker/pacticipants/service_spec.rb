@@ -3,7 +3,6 @@ require 'pact_broker/pacticipants/service'
 require 'pact_broker/domain/tag'
 require 'pact_broker/domain/pact'
 
-
 module PactBroker
 
   module Pacticipants
@@ -155,7 +154,7 @@ module PactBroker
 
         it "deletes the child pacts" do
           expect{ delete_pacticipant }.to change{
-            PactBroker::Pacts::DatabaseModel.count
+            PactBroker::Pacts::PactRevision.count
             }.by(-2)
         end
       end

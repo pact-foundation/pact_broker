@@ -9,11 +9,13 @@ require 'pact_broker'
 DATABASE_CREDENTIALS = {adapter: "sqlite", database: "pact_broker_database.sqlite3", :encoding => 'utf8'}
 
 # For postgres:
+#
 # $ psql postgres
 # > create database pact_broker;
 # > CREATE USER pact_broker WITH PASSWORD 'pact_broker';
 # > GRANT ALL PRIVILEGES ON DATABASE pact_broker to pact_broker;
-# > DATABASE_CREDENTIALS = {adapter: "postgres", database: "pact_broker", username: 'pact_broker', password: 'pact_broker', :encoding => 'utf8'}
+#
+# DATABASE_CREDENTIALS = {adapter: "postgres", database: "pact_broker", username: 'pact_broker', password: 'pact_broker', :encoding => 'utf8'}
 
 # Have a look at the Sequel documentation to make decisions about things like connection pooling
 # and connection validation.

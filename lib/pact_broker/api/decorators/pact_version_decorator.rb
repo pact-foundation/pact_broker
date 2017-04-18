@@ -29,7 +29,6 @@ module PactBroker
             href: pact_url(options[:base_url], represented),
             title: represented.name
           }
-
         end
 
       end

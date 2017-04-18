@@ -1,4 +1,15 @@
 require 'pact_broker/repositories'
+require 'pact_broker/webhooks/repository'
+require 'pact_broker/webhooks/service'
+require 'pact_broker/pacts/repository'
+require 'pact_broker/pacts/service'
+require 'pact_broker/pacticipants/repository'
+require 'pact_broker/pacticipants/service'
+require 'pact_broker/versions/repository'
+require 'pact_broker/versions/service'
+require 'pact_broker/tags/repository'
+require 'pact_broker/tags/service'
+require 'pact_broker/domain'
 require 'json'
 require 'pact_broker/versions/repository'
 require 'pact_broker/pacts/repository'
@@ -123,6 +134,12 @@ class ProviderStateBuilder
 
   def create_pact json_content = default_json_content
     @pact = PactBroker::Pacts::Repository.new.create(version_id: @consumer_version.id, provider_id: @provider.id, json_content: json_content)
+    self
+  end
+
+  def create_pact_revision json_content = nil
+    json_content = json_content ? json_content : {random: rand}.to_json
+    @pact = PactBroker::Pacts::Repository.new.update(@pact.id, json_content: json_content)
     self
   end
 

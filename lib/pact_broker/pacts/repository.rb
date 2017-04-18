@@ -2,11 +2,13 @@ require 'digest/sha1'
 require 'sequel'
 require 'ostruct'
 require 'pact_broker/logging'
-require 'pact_broker/pacts/database_model'
+require 'pact_broker/pacts/pact_revision'
+require 'pact_broker/pacts/all_pact_revisions'
 require 'pact_broker/pacts/all_pacts'
 require 'pact_broker/pacts/latest_pacts'
 require 'pact_broker/pacts/latest_tagged_pacts'
 require 'pact/shared/json_differ'
+require 'pact_broker/domain'
 
 module PactBroker
   module Pacts
@@ -15,27 +17,35 @@ module PactBroker
       include PactBroker::Logging
 
       def create params
-        DatabaseModel.new(
-          version_id: params[:version_id],
+        PactRevision.new(
+          consumer_version_id: params[:version_id],
           provider_id: params[:provider_id],
           pact_version_content: find_or_create_pact_version_content(params[:json_content]),
         ).save.to_domain
       end
 
       def update id, params
-        DatabaseModel.find(id: id).tap do | pact |
-          pact_version_content = find_or_create_pact_version_content(params[:json_content])
-          pact.update(pact_version_content: pact_version_content)
-        end.to_domain
+        existing_model = PactRevision.find(id: id)
+        pact_version_content = find_or_create_pact_version_content(params[:json_content])
+        if existing_model.pact_version_content_id != pact_version_content.id
+          PactRevision.new(
+            consumer_version_id: existing_model.consumer_version_id,
+            provider_id: existing_model.provider_id,
+            revision_number: (existing_model.revision_number + 1),
+            pact_version_content: pact_version_content,
+          ).save.to_domain
+        else
+          existing_model.to_domain
+        end
       end
 
       def delete params
-        id = AllPacts
+        id = AllPactRevisions
           .consumer(params.consumer_name)
           .provider(params.provider_name)
           .consumer_version_number(params.consumer_version_number)
-          .limit(1).first.id
-        DatabaseModel.where(id: id).delete
+          .select(:id)
+        PactRevision.where(id: id).delete
       end
 
       def find_all_pact_versions_between consumer_name, options

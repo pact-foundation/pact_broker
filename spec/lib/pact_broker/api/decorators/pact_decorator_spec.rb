@@ -20,11 +20,9 @@ module PactBroker
 
         let(:base_url) { 'http://example.org' }
         let(:created_at) { Time.new(2014, 3, 4) }
-        let(:updated_at) { Time.new(2014, 3, 5) }
         let(:pact) { double('pact',
           content_hash: content_hash,
           created_at: created_at,
-          updated_at: updated_at,
           consumer: consumer,
           provider: provider,
           consumer_version: consumer_version,

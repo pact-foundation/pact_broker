@@ -61,7 +61,7 @@ module PactBroker
         end
 
         def published_date
-          @pact.updated_at.to_time.localtime.to_datetime.strftime("%a %d %b %Y, %l:%M%P %:z")
+          @pact.created_at.to_time.localtime.to_datetime.strftime("%a %d %b %Y, %l:%M%P %:z")
         end
 
         def json_url

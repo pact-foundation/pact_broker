@@ -7,7 +7,7 @@ module PactBroker
     module Decorators
       class RepresentablePact
 
-        attr_reader :consumer, :provider, :consumer_version, :consumer_version_number, :created_at, :updated_at, :consumer_name, :provider_name
+        attr_reader :consumer, :provider, :consumer_version, :consumer_version_number, :created_at, :consumer_name, :provider_name
 
         def initialize pact
           @consumer_version = pact.consumer_version
@@ -17,7 +17,6 @@ module PactBroker
           @consumer_name = pact.consumer.name
           @provider_name = pact.provider.name
           @created_at = pact.created_at
-          @updated_at = pact.updated_at
         end
 
       end
