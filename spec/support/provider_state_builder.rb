@@ -150,7 +150,7 @@ class ProviderStateBuilder
   end
 
   def create_verification parameters = {}
-    default_parameters = {success: true, provider_version: '4.5.6', number: 1, pact_id: @pact.id}
+    default_parameters = {success: true, provider_version: '4.5.6', number: 1, pact_revision_id: @pact.id}
     @verification = PactBroker::Domain::Verification.create(default_parameters.merge(parameters))
     self
   end

@@ -40,8 +40,8 @@ module PactBroker
 
         it "sets the pact for the verification" do
           verification = create_verification
-          expect(verification.pact_id).to_not be_nil
-          expect(verification.pact.id).to eq pact.id
+          expect(verification.pact_revision_id).to_not be_nil
+          expect(verification.pact_revision.id).to eq pact.id
         end
       end
     end

@@ -6,12 +6,8 @@ Sequel.migration do
       Boolean :success, null: false
       String :provider_version
       String :build_url
-      foreign_key :pact_id, :pacts, null: false
-      index [:pact_id, :number], unique: true
+      foreign_key :pact_revision_id, :pact_revisions, null: false
+      index [:pact_revision_id, :number], unique: true
     end
-  end
-
-  down do
-    drop_table(:verifications)
   end
 end

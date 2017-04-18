@@ -11,7 +11,7 @@ module PactBroker
             success: true,
             provider_version: "4.5.6",
             build_url: 'http://build-url',
-            pact: pact)
+            pact_revision: pact)
         end
 
         let(:pact) do

@@ -20,8 +20,8 @@ module PactBroker
         link 'pb:pact-version' do | options |
           {
             title: 'Pact',
-            name: represented.pact.name,
-            href: pact_url(options.fetch(:base_url), represented.pact)
+            name: represented.pact_revision.name,
+            href: pact_url(options.fetch(:base_url), represented.pact_revision)
           }
         end
       end
