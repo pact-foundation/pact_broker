@@ -78,7 +78,7 @@ module PactBroker
         end
 
         before do
-          ::DB::PACT_BROKER_DB[:pact_versions]
+          ::DB::PACT_BROKER_DB[:pact_revisions]
             .where(id: existing_pact.id)
             .update(
               created_at: created_at)

@@ -27,15 +27,15 @@ describe 'using pact revisions (migrate 31-32)', no_db_clean: :true do
   let!(:consumer_version_1) { create(:versions, {number: '1.2.3', order: 1, pacticipant_id: consumer_1[:id], created_at: now, updated_at: now}) }
   let!(:consumer_version_2) { create(:versions, {number: '4.5.6', order: 2, pacticipant_id: consumer_1[:id], created_at: now, updated_at: now}) }
   let!(:pact_version_content_1) { create(:pact_version_contents, {content: {some: 'json'}.to_json, sha: '1234', created_at: now}) }
-  let!(:pact_version_1_revision_1) { create(:pact_versions, {consumer_version_id: consumer_version_1[:id], provider_id: provider_1[:id], pact_version_content_id: pact_version_content_1[:id], created_at: now, revision_number: 1}) }
-  let!(:pact_version_2_revision_1) { create(:pact_versions, {consumer_version_id: consumer_version_2[:id], provider_id: provider_1[:id], pact_version_content_id: pact_version_content_1[:id], created_at: now, revision_number: 1}) }
-  let!(:pact_version_2_revision_2) { create(:pact_versions, {consumer_version_id: consumer_version_2[:id], provider_id: provider_1[:id], pact_version_content_id: pact_version_content_1[:id], created_at: now, revision_number: 2}) }
+  let!(:pact_version_1_revision_1) { create(:pact_revisions, {consumer_version_id: consumer_version_1[:id], provider_id: provider_1[:id], pact_version_content_id: pact_version_content_1[:id], created_at: now, revision_number: 1}) }
+  let!(:pact_version_2_revision_1) { create(:pact_revisions, {consumer_version_id: consumer_version_2[:id], provider_id: provider_1[:id], pact_version_content_id: pact_version_content_1[:id], created_at: now, revision_number: 1}) }
+  let!(:pact_version_2_revision_2) { create(:pact_revisions, {consumer_version_id: consumer_version_2[:id], provider_id: provider_1[:id], pact_version_content_id: pact_version_content_1[:id], created_at: now, revision_number: 2}) }
 
   let!(:consumer_2) { create(:pacticipants, {name: 'Consumer 2', created_at: now, updated_at: now}) }
   let!(:provider_2) { create(:pacticipants, {name: 'Provider 2', created_at: now, updated_at: now}) }
   let!(:consumer_version_3) { create(:versions, {number: '4.5.6', order: 1, pacticipant_id: consumer_2[:id], created_at: now, updated_at: now}) }
   let!(:pact_version_content_2) { create(:pact_version_contents, {content: {some: 'json'}.to_json, sha: '4567', created_at: now}) }
-  let!(:pact_version_3_revision_1) { create(:pact_versions, {consumer_version_id: consumer_version_3[:id], provider_id: provider_2[:id], pact_version_content_id: pact_version_content_2[:id], created_at: now, revision_number: 1}) }
+  let!(:pact_version_3_revision_1) { create(:pact_revisions, {consumer_version_id: consumer_version_3[:id], provider_id: provider_2[:id], pact_version_content_id: pact_version_content_2[:id], created_at: now, revision_number: 1}) }
 
   let(:do_migration) do
     PactBroker::Database.migrate(32)

@@ -4,7 +4,7 @@ require 'pact_broker/pacts/pact_version_content'
 module PactBroker
   module Pacts
 
-    class DatabaseModel < Sequel::Model(:pact_versions)
+    class DatabaseModel < Sequel::Model(:pact_revisions)
 
       set_primary_key :id
       associate(:many_to_one, :provider, :class => "PactBroker::Domain::Pacticipant", :key => :provider_id, :primary_key => :id)
