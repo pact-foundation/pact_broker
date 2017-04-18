@@ -31,16 +31,21 @@
     * a `name`
     * a reference to the `pacticipant version`
 
- Note that a `version` is tagged, rather than a `pact_version`. This is because we may implement the ability to tag provider versions as well as consumer versions when verifications are implemented.
+ Note that a `consumer version` is tagged, rather than a `pact_version`. This means that when a given version is marked as the "prod" one, all the pacts for that version are considered the "prod" pacts, rather than having to tag them individually.
 
 ### Views
 
-* `all_pacts` - A denormalised view the one-to-one attributes of a `pact_revision`, including:
+* `all_pact_revisions` - A denormalised view the one-to-one attributes of a `pact_revision`, including:
 
     * `provider name` and `provider id`
     * `consumer name` and `consumer id`
     * `consumer version number` and `consumer version order`
+    * `revision_number`
+
+* `all_pacts` - This view has the same columns as `all_pact_revisions`, but it only contains the latest (current) revision of the pact for each provider/consumer/version. It maps to what a user would consider the "pact" resource ie. `/pacts/provider/Provider/consumer/Consumer/version/1.2.3`
 
  The AllPacts Sequel model in the code is what is used when querying data for displaying in a response, rather than the normalised separate PactRevision and PactVersionContent models.
 
-* `latest_pacts` - This view has the same columns as `all_pacts`, but it only contains the latest revision of the pact for the latest consumer version for each consumer/provider pair. It is what a user would consider the "latest pact".
+* `latest_pacts` - This view has the same columns as `all_pact_revisions`, but it only contains the latest revision of the pact for the latest consumer version for each consumer/provider pair. It is what a user would consider the "latest pact", and maps to the resource at `/pacts/provider/Provider/consumer/Consumer/latest`
+
+* `latest_tagged_pacts` - This view has the same columns as `all_pact_revisions`, plus a `tag_name` column. It is used to return the pact for the latest tagged version of a consumer.

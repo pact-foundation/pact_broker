@@ -131,6 +131,12 @@ class ProviderStateBuilder
     self
   end
 
+  def create_pact_revision json_content = nil
+    json_content = json_content ? json_content : {random: rand}.to_json
+    @pact = PactBroker::Pacts::Repository.new.update(@pact.id, json_content: json_content)
+    self
+  end
+
   def create_webhook
     request = PactBroker::Domain::WebhookRequest.new(method: 'POST', url: 'http://example.org', headers: {'Content-Type' => 'application/json'})
     @webhook = PactBroker::Webhooks::Repository.new.create PactBroker::Webhooks::Service.next_uuid, PactBroker::Domain::Webhook.new(request: request), @consumer, @provider

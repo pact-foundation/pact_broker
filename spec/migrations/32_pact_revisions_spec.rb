@@ -43,10 +43,17 @@ describe 'using pact revisions (migrate 31-32)', no_db_clean: :true do
     database.schema(:latest_pact_revision_numbers, reload: true)
   end
 
-  describe "all_pacts" do
+  describe "all_pact_revisions" do
     it "has a row for every revision" do
       do_migration
-      expect(database[:all_pacts].count).to eq 4
+      expect(database[:all_pact_revisions].count).to eq 4
+    end
+  end
+
+  describe "all_pacts" do
+    it "has a row for every pact" do
+      do_migration
+      expect(database[:all_pacts].count).to eq 3
     end
   end
 

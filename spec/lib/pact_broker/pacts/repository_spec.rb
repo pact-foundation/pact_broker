@@ -154,6 +154,7 @@ module PactBroker
             .create_consumer_version("1.2.3")
             .create_provider(provider_name)
             .create_pact
+            .create_pact_revision
             .create_consumer_version("2.3.4")
             .create_pact
             .create_provider("Another Provider")
@@ -164,8 +165,8 @@ module PactBroker
 
         subject { Repository.new.delete pact_params }
 
-        it "deletes the Pact" do
-          expect { subject }.to change { PactRevision.count }.by(-1)
+        it "deletes all PactRevision for the specified consumer version" do
+          expect { subject }.to change { PactRevision.count }.by(-2)
         end
 
         it "does not delete the content because it may be used by another pact" do

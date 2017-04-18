@@ -3,6 +3,7 @@ require 'sequel'
 require 'ostruct'
 require 'pact_broker/logging'
 require 'pact_broker/pacts/pact_revision'
+require 'pact_broker/pacts/all_pact_revisions'
 require 'pact_broker/pacts/all_pacts'
 require 'pact_broker/pacts/latest_pacts'
 require 'pact_broker/pacts/latest_tagged_pacts'
@@ -39,11 +40,11 @@ module PactBroker
       end
 
       def delete params
-        id = AllPacts
+        id = AllPactRevisions
           .consumer(params.consumer_name)
           .provider(params.provider_name)
           .consumer_version_number(params.consumer_version_number)
-          .limit(1).first.id
+          .select(:id)
         PactRevision.where(id: id).delete
       end
 
