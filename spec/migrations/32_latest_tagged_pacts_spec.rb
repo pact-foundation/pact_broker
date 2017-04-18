@@ -47,11 +47,6 @@ describe 'using pact revisions (migrate 31-32)', no_db_clean: :true do
   # Consumer 2/Provider 2 version 7.8.9
   let!(:tag_4) { create(:tags, {version_id: consumer_version_3[:id], name: 'prod', created_at: now, updated_at: now}, :created_at) } #included
 
-  let(:do_migration) do
-    PactBroker::Database.migrate(33)
-    database.schema(:latest_tagged_pacts, reload: true)
-  end
-
   describe "latest_tagged_pact_consumer_version_orders" do
     it "contains a row with the latest consumer version order for each consumer/provider/tag combination" do
       expect(database[:latest_tagged_pact_consumer_version_orders].where(
@@ -75,8 +70,6 @@ describe 'using pact revisions (migrate 31-32)', no_db_clean: :true do
 
   describe "latest_tagged_pacts" do
     it "only contains the latest revision of the pact for the latest consumer version with each tag" do
-      do_migration
-
       expect(database[:latest_tagged_pacts].where(
         provider_name: 'Provider 1', consumer_name: 'Consumer 1',
         consumer_version_number: '4.5.6', revision_number: 2, tag_name: 'prod'

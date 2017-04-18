@@ -99,7 +99,6 @@ describe 'using pact revisions (migrate 31-32)', no_db_clean: :true do
     end
   end
 
-
   after do
     PactBroker::Database.delete_database_file
     PactBroker::Database.ensure_database_dir_exists
