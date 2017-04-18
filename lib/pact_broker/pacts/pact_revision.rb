@@ -4,14 +4,14 @@ require 'pact_broker/pacts/pact_version_content'
 module PactBroker
   module Pacts
 
-    class DatabaseModel < Sequel::Model(:pact_revisions)
+    class PactRevision < Sequel::Model(:pact_revisions)
 
       set_primary_key :id
       associate(:many_to_one, :provider, :class => "PactBroker::Domain::Pacticipant", :key => :provider_id, :primary_key => :id)
       associate(:many_to_one, :consumer_version, :class => "PactBroker::Domain::Version", :key => :consumer_version_id, :primary_key => :id)
       associate(:many_to_one, :pact_version_content, class: "PactBroker::Pacts::PactVersionContent", :key => :pact_version_content_id, :primary_key => :id)
 
-      DatabaseModel.plugin :timestamps, :update_on_create=>true
+      PactRevision.plugin :timestamps, :update_on_create=>true
 
       def before_create
         super

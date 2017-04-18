@@ -22,7 +22,7 @@ module PactBroker
         subject { Repository.new.create version_id: version.id, provider_id: provider.id, json_content: json_content }
 
         it "saves the pact" do
-          expect{subject}.to change{ DatabaseModel.count }.by(1)
+          expect{subject}.to change{ PactRevision.count }.by(1)
         end
 
         it "returns a Pact::Model" do
@@ -98,7 +98,7 @@ module PactBroker
           subject { Repository.new.update existing_pact.id, json_content: json_content }
 
           it "creates a new PactVersion" do
-            expect { subject }.to change{ PactBroker::Pacts::DatabaseModel.count }.by(1)
+            expect { subject }.to change{ PactBroker::Pacts::PactRevision.count }.by(1)
           end
 
           it "creates a new PactVersionContent" do
@@ -130,7 +130,7 @@ module PactBroker
           subject { Repository.new.update existing_pact.id, json_content: original_json_content }
 
           it "does not create a new PactVersion" do
-            expect { subject }.to_not change{ PactBroker::Pacts::DatabaseModel.count }
+            expect { subject }.to_not change{ PactBroker::Pacts::PactRevision.count }
           end
 
           it "does not create a new PactVersionContent" do
@@ -165,7 +165,7 @@ module PactBroker
         subject { Repository.new.delete pact_params }
 
         it "deletes the Pact" do
-          expect { subject }.to change { DatabaseModel.count }.by(-1)
+          expect { subject }.to change { PactRevision.count }.by(-1)
         end
 
         it "does not delete the content because it may be used by another pact" do

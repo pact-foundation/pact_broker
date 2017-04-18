@@ -12,7 +12,7 @@ describe "Deleting a pact" do
     end
 
     it "deletes the pact" do
-      expect{ subject }.to change{ PactBroker::Pacts::DatabaseModel.count }.by(-1)
+      expect{ subject }.to change{ PactBroker::Pacts::PactRevision.count }.by(-1)
     end
 
     it "returns a 204" do
