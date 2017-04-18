@@ -24,8 +24,8 @@ describe 'migrate to pact versions (migrate 22-31)', no_db_clean: :true do
     PactBroker::Database.migrate(22)
   end
 
-  let(:now) { DateTime.new }
-  let(:pact_updated_at) { DateTime.new + 1}
+  let(:now) { DateTime.now }
+  let(:pact_updated_at) { DateTime.now + 1}
   let!(:consumer) { create(:pacticipants, {name: 'Consumer', created_at: now, updated_at: now}) }
   let!(:provider) { create(:pacticipants, {name: 'Provider', created_at: now, updated_at: now}) }
   let!(:consumer_version_1) { create(:versions, {number: '1.2.3', order: 1, pacticipant_id: consumer[:id], created_at: now, updated_at: now}) }
