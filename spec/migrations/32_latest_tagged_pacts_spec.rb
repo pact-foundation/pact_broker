@@ -18,6 +18,8 @@ describe 'using pact revisions (migrate 31-32)', no_db_clean: :true do
     PactBroker::Database.ensure_database_dir_exists
     database = new_connection
     PactBroker::Database.migrate(32)
+    # database.schema(:latest_tagged_pact_consumer_version_orders, reload: true)
+    # database.schema(:latest_tagged_pacts, reload: true)
   end
 
   let(:now) { DateTime.new }
@@ -91,6 +93,13 @@ describe 'using pact revisions (migrate 31-32)', no_db_clean: :true do
       expect(database[:latest_tagged_pacts].count).to eq 3
     end
 
+    it "has a created_at column" do
+      expect(database[:latest_tagged_pacts].order(:id).first).to have_key(:created_at)
+    end
+
+    it "doesn't have an updated_at column" do
+      expect(database[:latest_tagged_pacts].order(:id).first).to_not have_key(:updated_at)
+    end
   end
 
   after do
