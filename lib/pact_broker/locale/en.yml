@@ -1,5 +1,6 @@
 en:
   errors:
+    not_blank?: "can't be blank"
     filled?: "can't be blank"
     valid_method?: "is not a recognised HTTP method"
     valid_url?: "is not a valid URL eg. http://example.org"

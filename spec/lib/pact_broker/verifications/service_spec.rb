@@ -22,9 +22,9 @@ module PactBroker
       end
 
       describe "#create" do
-        let(:json) { {'success' => true} }
+        let(:params) { {'success' => true, 'providerVersion' => '4.5.6'} }
         let(:pact) { ProviderStateBuilder.new.create_pact_with_hierarchy }
-        let(:create_verification) { subject.create 3, json, pact }
+        let(:create_verification) { subject.create 3, params, pact }
 
         it "logs the creation" do
           allow(PactBroker.logger).to receive(:info).and_call_original

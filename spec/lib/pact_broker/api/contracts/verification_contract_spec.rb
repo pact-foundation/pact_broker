@@ -63,6 +63,20 @@ module PactBroker
             let(:params) { modify valid_params, without: :buildUrl }
             its(:errors) { is_expected.to be_empty }
           end
+
+          context "when the providerVersion is not present" do
+            let(:params) { modify valid_params, without: :providerVersion }
+            it "has an error" do
+              expect(subject.errors[:provider_version]).to include(match("can't be blank"))
+            end
+          end
+
+          context "when the providerVersion is blank" do
+            let(:provider_version) { " " }
+            it "has an error" do
+              expect(subject.errors[:provider_version]).to include(match("can't be blank"))
+            end
+          end
         end
       end
     end
