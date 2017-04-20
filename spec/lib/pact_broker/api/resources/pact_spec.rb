@@ -57,7 +57,7 @@ module PactBroker::Api
 
 
       shared_examples "an update endpoint" do |http_method|
-        subject { self.send http_method, "/pacts/provider/Provider/consumer/Consumer/version/1.2", json, {'CONTENT_TYPE' => "application/json"} ; last_response }
+        subject { self.send http_method, "/pacts/provider/Provider/consumer/Consumer/version/1.2.3", json, {'CONTENT_TYPE' => "application/json"} ; last_response }
 
         let(:response) { subject; last_response }
 
