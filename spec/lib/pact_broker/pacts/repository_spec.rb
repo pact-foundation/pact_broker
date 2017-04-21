@@ -282,6 +282,7 @@ module PactBroker
             .create_consumer_version("1.2.4")
             .create_consumer_version_tag("prod")
             .create_pact
+            .create_pact_revision
             .create_consumer_version("1.2.6")
             .create_pact
             .create_provider("Another Provider")
@@ -298,6 +299,18 @@ module PactBroker
           expect(subject.consumer_version.number).to eq "1.2.4"
           expect(subject.consumer_version.tags.first.name).to eq "prod"
           expect(subject.json_content).to_not be_nil
+        end
+
+        context "with a revision number" do
+          subject  { Repository.new.find_pact "Consumer", "1.2.4", "Provider", 2 }
+
+          it "finds the pact with the given version and revision" do
+            expect(subject.revision_number).to eq 2
+            expect(subject.consumer.name).to eq "Consumer"
+            expect(subject.provider.name).to eq "Provider"
+            expect(subject.consumer_version_number).to eq "1.2.4"
+
+          end
         end
       end
 

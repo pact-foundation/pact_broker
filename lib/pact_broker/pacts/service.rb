@@ -22,7 +22,7 @@ module PactBroker
       end
 
       def find_pact params
-        pact_repository.find_pact(params[:consumer_name], params[:consumer_version_number], params[:provider_name])
+        pact_repository.find_pact(params[:consumer_name], params[:consumer_version_number], params[:provider_name], params[:revision_number])
       end
 
       def delete params

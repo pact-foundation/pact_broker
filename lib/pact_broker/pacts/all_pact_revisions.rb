@@ -33,6 +33,10 @@ module PactBroker
           where(name_like(:consumer_version_number, number))
         end
 
+        def revision_number number
+          where(revision_number: number)
+        end
+
         def consumer_version_order_before order
           where('consumer_version_order < ?', order)
         end

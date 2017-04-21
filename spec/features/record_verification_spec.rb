@@ -2,14 +2,19 @@ require 'pact_broker/domain/verification'
 
 describe "Recording a pact verification" do
 
-  let(:path) { "/pacts/provider/Provider/consumer/Consumer/version/1.2.3/verifications" }
+  let(:path) { "/pacts/provider/Provider/consumer/Consumer/version/1.2.3/revision/2/verifications" }
   let(:verification_content) { load_fixture('record_verification.json') }
   let(:parsed_response_body) { JSON.parse(subject.body) }
 
   subject { post path, verification_content, {'CONTENT_TYPE' => 'application/json' }; last_response  }
 
   before do
-    ProviderStateBuilder.new.create_pact_with_hierarchy "Consumer", "1.2.3", "Provider"
+    ProviderStateBuilder.new
+      .create_provider("Provider")
+      .create_consumer("Consumer")
+      .create_consumer_version("1.2.3")
+      .create_pact
+      .create_pact_revision
   end
 
   context "" do

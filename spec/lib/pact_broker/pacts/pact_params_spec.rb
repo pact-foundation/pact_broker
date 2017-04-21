@@ -8,6 +8,7 @@ module PactBroker
       let(:body) { load_fixture('a_consumer-a_provider.json') }
       let(:consumer_version_number) { '1.2.3' }
       let(:headers) { { 'X-Pact-Consumer-Version' => consumer_version_number, 'Host' => 'example.org' } }
+      let(:revision_number) { '1' }
 
       describe "from_request" do
 
@@ -17,7 +18,8 @@ module PactBroker
             {
               consumer_name: 'Consumer',
               provider_name: 'Provider',
-              consumer_version_number: '1.2.3'
+              consumer_version_number: '1.2.3',
+              revision_number: revision_number
             }
           end
 
@@ -35,6 +37,10 @@ module PactBroker
             expect(subject.consumer_version_number).to eq "1.2.3"
           end
 
+          it "extracts the revision_number from the path" do
+            expect(subject.revision_number).to eq "1"
+          end
+
           it "extracts the json_content" do
             expect(subject.json_content).to eq body
           end
@@ -45,6 +51,13 @@ module PactBroker
 
           it "extracts the provider name from the pact" do
             expect(subject.provider_name_in_pact).to eq "A Provider"
+          end
+
+          context "with no revision_number" do
+            let(:revision_number) { nil }
+            it "the revision_number is null" do
+              expect(subject.revision_number).to be nil
+            end
           end
 
           context "with missing data" do
