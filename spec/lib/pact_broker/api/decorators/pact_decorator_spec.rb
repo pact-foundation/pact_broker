@@ -27,6 +27,7 @@ module PactBroker
           provider: provider,
           consumer_version: consumer_version,
           consumer_version_number: '1234',
+          revision_number: 2,
           name: 'A Pact'
         )}
         let(:consumer) { instance_double(PactBroker::Domain::Pacticipant, name: 'A Consumer')}
@@ -86,6 +87,10 @@ module PactBroker
           xit "includes a link to the pact versions" do
             expect(subject[:_links][:'pb:pact-versions'][:title]).to eq "All versions of the pact between A Consumer and A Provider"
             expect(subject[:_links][:'pb:pact-versions'][:href]).to eq "http://example.org/pacts/provider/A%20Provider/consumer/A%20Consumer/versions"
+          end
+
+          it "includes a link to publish a verification" do
+            expect(subject[:_links][:'pb:publish-verification'][:href]).to match %r{http://example.org/.*/verifications}
           end
 
           it "includes a curie" do

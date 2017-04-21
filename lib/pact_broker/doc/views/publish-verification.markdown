@@ -1,0 +1,13 @@
+# Publish pact verification
+
+Allowed methods: POST
+
+Use this endpoint to publish the results (either success or failure) of a pact verification. The body of the request must include the success (true or false) and the provider version that the pact was verified against. It may also include the build URL to facilitate debugging when failures occur.
+
+    {
+      success: true,
+      providerVersion: "4.5.6",
+      buildUrl: "http://my-ci.org/build/3456"
+    }
+
+Multiple verifications may be published for the same pact resource.
