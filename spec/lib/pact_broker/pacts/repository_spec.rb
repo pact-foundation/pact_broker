@@ -19,7 +19,7 @@ module PactBroker
         let(:version) { PactBroker::Versions::Repository.new.create number: '1.2.3', pacticipant_id: consumer.id }
         let(:json_content) { {some: 'json'}.to_json }
 
-        subject { Repository.new.create version_id: version.id, provider_id: provider.id, json_content: json_content }
+        subject { Repository.new.create version_id: version.id, consumer_id: consumer.id, provider_id: provider.id, json_content: json_content }
 
         it "saves the pact" do
           expect{subject}.to change{ PactRevision.count }.by(1)
@@ -42,11 +42,11 @@ module PactBroker
           let(:another_version) { Versions::Repository.new.create number: '2.0.0', pacticipant_id: consumer.id }
 
           before do
-            Repository.new.create version_id: version.id, provider_id: provider.id, json_content: json_content
+            Repository.new.create version_id: version.id, consumer_id: consumer.id, provider_id: provider.id, json_content: json_content
           end
 
           subject do
-            Repository.new.create version_id: another_version.id, provider_id: provider.id, json_content: json_content
+            Repository.new.create version_id: another_version.id, consumer_id: consumer.id, provider_id: provider.id, json_content: json_content
           end
 
           it "reuses the same PactVersionContent to save room" do
@@ -54,15 +54,31 @@ module PactBroker
           end
         end
 
+        context "when a pact already exists with the same content but with a different consumer/provider" do
+          let(:another_version) { Versions::Repository.new.create number: '2.0.0', pacticipant_id: consumer.id }
+          let(:another_provider) { Pacticipants::Repository.new.create name: 'Provider2' }
+          before do
+            Repository.new.create version_id: version.id, consumer_id: consumer.id, provider_id: another_provider.id, json_content: json_content
+          end
+
+          subject do
+            Repository.new.create version_id: another_version.id, consumer_id: consumer.id, provider_id: provider.id, json_content: json_content
+          end
+
+          it "does not reuse the same PactVersionContent to save room" do
+            expect { subject }.to change{ PactVersionContent.count }.by(1)
+          end
+        end
+
         context "when a pact already exists with different content" do
           let(:another_version) { Versions::Repository.new.create number: '2.0.0', pacticipant_id: consumer.id }
 
           before do
-            Repository.new.create version_id: version.id, provider_id: provider.id, json_content: {some_other: 'json_content'}.to_json
+            Repository.new.create version_id: version.id, consumer_id: consumer.id, provider_id: provider.id, json_content: {some_other: 'json_content'}.to_json
           end
 
           subject do
-            Repository.new.create version_id: another_version.id, provider_id: provider.id, json_content: json_content
+            Repository.new.create version_id: another_version.id, consumer_id: consumer.id, provider_id: provider.id, json_content: json_content
           end
 
           it "creates a new PactVersionContent" do

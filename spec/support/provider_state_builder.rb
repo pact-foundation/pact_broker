@@ -47,7 +47,7 @@ class ProviderStateBuilder
   end
 
   def create_ces_cps_pact
-    @pact_id = pact_repository.create(version_id: @contract_email_service_version_id, provider_id: @contract_proposal_service_id, json_content: default_json_content).id
+    @pact_id = pact_repository.create(version_id: @contract_email_service_version_id, consumer_id: @contract_email_service_id, provider_id: @contract_proposal_service_id, json_content: default_json_content).id
     self
   end
 
@@ -67,7 +67,7 @@ class ProviderStateBuilder
   end
 
   def create_condor_pricing_service_pact
-    @pact_id = pact_repository.create(version_id: @condor_version_id, provider_id: @pricing_service_id, json_content: default_json_content).id
+    @pact_id = pact_repository.create(version_id: @condor_version_id, consumer_id: @condor_id, provider_id: @pricing_service_id, json_content: default_json_content).id
     self
   end
 
@@ -75,7 +75,7 @@ class ProviderStateBuilder
     provider = PactBroker::Domain::Pacticipant.create(:name => provider_name)
     consumer = PactBroker::Domain::Pacticipant.create(:name => consumer_name)
     version = PactBroker::Domain::Version.create(:number => consumer_version, :pacticipant => consumer)
-    PactBroker::Pacts::Repository.new.create(version_id: version.id, provider_id: provider.id, json_content: json_content)
+    PactBroker::Pacts::Repository.new.create(version_id: version.id, consumer_id: consumer.id, provider_id: provider.id, json_content: json_content)
   end
 
   def create_version_with_hierarchy pacticipant_name, pacticipant_version
@@ -127,7 +127,7 @@ class ProviderStateBuilder
   end
 
   def create_pact json_content = default_json_content
-    @pact = PactBroker::Pacts::Repository.new.create(version_id: @consumer_version.id, provider_id: @provider.id, json_content: json_content)
+    @pact = PactBroker::Pacts::Repository.new.create(version_id: @consumer_version.id, consumer_id: @consumer.id, provider_id: @provider.id, json_content: json_content)
     self
   end
 
@@ -153,7 +153,9 @@ class ProviderStateBuilder
        "provider"     => {
          "name" => "Pricing Service"
        },
-       "interactions" => []
+       "interactions" => [],
+       "random": rand
+
      }.to_json
    end
 
