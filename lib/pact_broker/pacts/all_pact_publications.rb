@@ -7,7 +7,7 @@ require 'pact_broker/repositories/helpers'
 module PactBroker
   module Pacts
 
-    class AllPactRevisions < Sequel::Model(:all_pact_revisions)
+    class AllPactPublications < Sequel::Model(:all_pact_publications)
 
       set_primary_key :id
       associate(:one_to_many, :tags, :class => "PactBroker::Domain::Tag", :reciprocal => :version, :key => :version_id, :primary_key => :consumer_version_id)

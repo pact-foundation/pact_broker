@@ -131,7 +131,7 @@ class ProviderStateBuilder
     self
   end
 
-  def create_pact_revision json_content = nil
+  def revise_pact json_content = nil
     json_content = json_content ? json_content : {random: rand}.to_json
     @pact = PactBroker::Pacts::Repository.new.update(@pact.id, json_content: json_content)
     self

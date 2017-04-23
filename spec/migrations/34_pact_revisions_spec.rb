@@ -1,6 +1,6 @@
 require 'tasks/database'
 
-describe 'using pact revisions (migrate 31-32)', no_db_clean: :true do
+describe 'using pact publications (migrate 31-32)', no_db_clean: :true do
 
   def create table_name, params, id_column_name = :id
     database[table_name].insert(params);
@@ -26,26 +26,26 @@ describe 'using pact revisions (migrate 31-32)', no_db_clean: :true do
   let!(:consumer_version_1) { create(:versions, {number: '1.2.3', order: 1, pacticipant_id: consumer_1[:id], created_at: now, updated_at: now}) }
   let!(:consumer_version_2) { create(:versions, {number: '4.5.6', order: 2, pacticipant_id: consumer_1[:id], created_at: now, updated_at: now}) }
   let!(:pact_version_content_1) { create(:pact_version_contents, {content: {some: 'json'}.to_json, sha: '1234', consumer_id: consumer_1[:id], provider_id: provider_1[:id], created_at: now}) }
-  let!(:pact_version_1_revision_1) { create(:pact_revisions, {consumer_version_id: consumer_version_1[:id], provider_id: provider_1[:id], pact_version_content_id: pact_version_content_1[:id], created_at: now, revision_number: 1}) }
-  let!(:pact_version_2_revision_1) { create(:pact_revisions, {consumer_version_id: consumer_version_2[:id], provider_id: provider_1[:id], pact_version_content_id: pact_version_content_1[:id], created_at: now, revision_number: 1}) }
-  let!(:pact_version_2_revision_2) { create(:pact_revisions, {consumer_version_id: consumer_version_2[:id], provider_id: provider_1[:id], pact_version_content_id: pact_version_content_1[:id], created_at: now, revision_number: 2}) }
+  let!(:pact_version_1_revision_1) { create(:pact_publications, {consumer_version_id: consumer_version_1[:id], provider_id: provider_1[:id], pact_version_content_id: pact_version_content_1[:id], created_at: now, revision_number: 1}) }
+  let!(:pact_version_2_revision_1) { create(:pact_publications, {consumer_version_id: consumer_version_2[:id], provider_id: provider_1[:id], pact_version_content_id: pact_version_content_1[:id], created_at: now, revision_number: 1}) }
+  let!(:pact_version_2_revision_2) { create(:pact_publications, {consumer_version_id: consumer_version_2[:id], provider_id: provider_1[:id], pact_version_content_id: pact_version_content_1[:id], created_at: now, revision_number: 2}) }
 
   let!(:consumer_2) { create(:pacticipants, {name: 'Consumer 2', created_at: now, updated_at: now}) }
   let!(:provider_2) { create(:pacticipants, {name: 'Provider 2', created_at: now, updated_at: now}) }
   let!(:consumer_version_3) { create(:versions, {number: '4.5.6', order: 1, pacticipant_id: consumer_2[:id], created_at: now, updated_at: now}) }
   let!(:pact_version_content_2) { create(:pact_version_contents, {content: {some: 'json'}.to_json, sha: '4567', consumer_id: consumer_2[:id], provider_id: provider_2[:id], created_at: now}) }
-  let!(:pact_version_3_revision_1) { create(:pact_revisions, {consumer_version_id: consumer_version_3[:id], provider_id: provider_2[:id], pact_version_content_id: pact_version_content_2[:id], created_at: now, revision_number: 1}) }
+  let!(:pact_version_3_revision_1) { create(:pact_publications, {consumer_version_id: consumer_version_3[:id], provider_id: provider_2[:id], pact_version_content_id: pact_version_content_2[:id], created_at: now, revision_number: 1}) }
 
   let(:do_migration) do
     PactBroker::Database.migrate(34)
     database.schema(:all_pacts, reload: true)
-    database.schema(:latest_pact_revision_numbers, reload: true)
+    database.schema(:latest_pact_publication_revision_numbers, reload: true)
   end
 
-  describe "all_pact_revisions" do
+  describe "all_pact_publications" do
     it "has a row for every revision" do
       do_migration
-      expect(database[:all_pact_revisions].count).to eq 4
+      expect(database[:all_pact_publications].count).to eq 4
     end
   end
 
@@ -56,20 +56,20 @@ describe 'using pact revisions (migrate 31-32)', no_db_clean: :true do
     end
   end
 
-  describe "latest_pact_revision_numbers" do
+  describe "latest_pact_publication_revision_numbers" do
     it "contains the latest revision number for each consumer version" do
       do_migration
-      expect(database[:latest_pact_revision_numbers].where(
+      expect(database[:latest_pact_publication_revision_numbers].where(
         provider_id: provider_1[:id], consumer_id: consumer_1[:id],
         consumer_version_order: 1, latest_revision_number: 1
         ).count
       ).to eq 1
-      expect(database[:latest_pact_revision_numbers].where(
+      expect(database[:latest_pact_publication_revision_numbers].where(
         provider_id: provider_1[:id], consumer_id: consumer_1[:id],
         consumer_version_order: 2, latest_revision_number: 2
         ).count
       ).to eq 1
-      expect(database[:latest_pact_revision_numbers].where(
+      expect(database[:latest_pact_publication_revision_numbers].where(
         provider_id: provider_2[:id], consumer_id: consumer_2[:id],
         consumer_version_order: 1, latest_revision_number: 1
         ).count

@@ -2,8 +2,8 @@ require 'digest/sha1'
 require 'sequel'
 require 'ostruct'
 require 'pact_broker/logging'
-require 'pact_broker/pacts/pact_revision'
-require 'pact_broker/pacts/all_pact_revisions'
+require 'pact_broker/pacts/pact_publication'
+require 'pact_broker/pacts/all_pact_publications'
 require 'pact_broker/pacts/all_pacts'
 require 'pact_broker/pacts/latest_pacts'
 require 'pact_broker/pacts/latest_tagged_pacts'
@@ -17,7 +17,7 @@ module PactBroker
       include PactBroker::Logging
 
       def create params
-        PactRevision.new(
+        PactPublication.new(
           consumer_version_id: params[:version_id],
           provider_id: params[:provider_id],
           pact_version_content: find_or_create_pact_version_content(params.fetch(:consumer_id), params.fetch(:provider_id), params[:json_content]),
@@ -25,10 +25,10 @@ module PactBroker
       end
 
       def update id, params
-        existing_model = PactRevision.find(id: id)
+        existing_model = PactPublication.find(id: id)
         pact_version_content = find_or_create_pact_version_content(existing_model.consumer_version.pacticipant_id, existing_model.provider_id, params[:json_content])
         if existing_model.pact_version_content_id != pact_version_content.id
-          PactRevision.new(
+          PactPublication.new(
             consumer_version_id: existing_model.consumer_version_id,
             provider_id: existing_model.provider_id,
             revision_number: (existing_model.revision_number + 1),
@@ -40,12 +40,12 @@ module PactBroker
       end
 
       def delete params
-        id = AllPactRevisions
+        id = AllPactPublications
           .consumer(params.consumer_name)
           .provider(params.provider_name)
           .consumer_version_number(params.consumer_version_number)
           .select(:id)
-        PactRevision.where(id: id).delete
+        PactPublication.where(id: id).delete
       end
 
       def find_all_pact_versions_between consumer_name, options

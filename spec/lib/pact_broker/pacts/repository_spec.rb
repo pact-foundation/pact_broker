@@ -22,7 +22,7 @@ module PactBroker
         subject { Repository.new.create version_id: version.id, consumer_id: consumer.id, provider_id: provider.id, json_content: json_content }
 
         it "saves the pact" do
-          expect{subject}.to change{ PactRevision.count }.by(1)
+          expect{subject}.to change{ PactPublication.count }.by(1)
         end
 
         it "returns a Pact::Model" do
@@ -94,7 +94,7 @@ module PactBroker
         end
 
         before do
-          ::DB::PACT_BROKER_DB[:pact_revisions]
+          ::DB::PACT_BROKER_DB[:pact_publications]
             .where(id: existing_pact.id)
             .update(
               created_at: created_at)
@@ -114,7 +114,7 @@ module PactBroker
           subject { Repository.new.update existing_pact.id, json_content: json_content }
 
           it "creates a new PactVersion" do
-            expect { subject }.to change{ PactBroker::Pacts::PactRevision.count }.by(1)
+            expect { subject }.to change{ PactBroker::Pacts::PactPublication.count }.by(1)
           end
 
           it "creates a new PactVersionContent" do
@@ -146,7 +146,7 @@ module PactBroker
           subject { Repository.new.update existing_pact.id, json_content: original_json_content }
 
           it "does not create a new PactVersion" do
-            expect { subject }.to_not change{ PactBroker::Pacts::PactRevision.count }
+            expect { subject }.to_not change{ PactBroker::Pacts::PactPublication.count }
           end
 
           it "does not create a new PactVersionContent" do
@@ -170,7 +170,7 @@ module PactBroker
             .create_consumer_version("1.2.3")
             .create_provider(provider_name)
             .create_pact
-            .create_pact_revision
+            .revise_pact
             .create_consumer_version("2.3.4")
             .create_pact
             .create_provider("Another Provider")
@@ -181,8 +181,8 @@ module PactBroker
 
         subject { Repository.new.delete pact_params }
 
-        it "deletes all PactRevision for the specified consumer version" do
-          expect { subject }.to change { PactRevision.count }.by(-2)
+        it "deletes all PactPublication for the specified consumer version" do
+          expect { subject }.to change { PactPublication.count }.by(-2)
         end
 
         it "does not delete the content because it may be used by another pact" do

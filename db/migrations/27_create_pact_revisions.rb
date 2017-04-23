@@ -1,6 +1,6 @@
 Sequel.migration do
   up do
-    create_table(:pact_revisions, charset: 'utf8') do
+    create_table(:pact_publications, charset: 'utf8') do
       primary_key :id
       foreign_key :consumer_version_id, :versions, null: false
       foreign_key :provider_id, :pacticipants, null: false
@@ -13,6 +13,6 @@ Sequel.migration do
   end
 
   down do
-    drop_table(:pact_revisions)
+    drop_table(:pact_publications)
   end
 end
