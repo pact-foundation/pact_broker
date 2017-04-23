@@ -64,7 +64,7 @@ module PactBroker
       end
 
       def verification_url verification, base_url
-        pact_url(base_url, verification.pact_revision) + "/verifications/#{verification.number}"
+        pact_url(base_url, verification.pact_publication) + "/verifications/#{verification.number}"
       end
 
       def latest_verifications_for_consumer_version_url version, base_url

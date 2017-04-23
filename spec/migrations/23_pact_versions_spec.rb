@@ -24,8 +24,8 @@ describe 'migrate to pact versions (migrate 22-31)', no_db_clean: :true do
     PactBroker::Database.migrate(22)
   end
 
-  let(:now) { DateTime.now }
-  let(:pact_updated_at) { DateTime.now + 1}
+  let(:now) { DateTime.new(2017, 1, 1) }
+  let(:pact_updated_at) { DateTime.new(2017, 1, 2) }
   let!(:consumer) { create(:pacticipants, {name: 'Consumer', created_at: now, updated_at: now}) }
   let!(:provider) { create(:pacticipants, {name: 'Provider', created_at: now, updated_at: now}) }
   let!(:consumer_version_1) { create(:versions, {number: '1.2.3', order: 1, pacticipant_id: consumer[:id], created_at: now, updated_at: now}) }
@@ -36,7 +36,7 @@ describe 'migrate to pact versions (migrate 22-31)', no_db_clean: :true do
 
 
   let(:do_migration) do
-    PactBroker::Database.migrate(31)
+    PactBroker::Database.migrate(34)
     database.schema(:all_pacts, reload: true)
   end
 
@@ -60,6 +60,7 @@ describe 'migrate to pact versions (migrate 22-31)', no_db_clean: :true do
     old_all_pact = database[:all_pacts].order(:id).first
     old_all_pact.delete(:updated_at)
     old_all_pact.delete(:created_at)
+    old_all_pact[:pact_version_sha] = old_all_pact.delete(:pact_version_content_sha)
     do_migration
     database[:all_pacts]
     new_all_pact = database[:all_pacts].order(:id).first
@@ -72,6 +73,7 @@ describe 'migrate to pact versions (migrate 22-31)', no_db_clean: :true do
     old_all_pact = database[:all_pacts].order(:id).last
     old_all_pact.delete(:updated_at)
     old_all_pact.delete(:created_at)
+    old_all_pact[:pact_version_sha] = old_all_pact.delete(:pact_version_content_sha)
     do_migration
     new_all_pact = database[:all_pacts].order(:id).last
     new_all_pact.delete(:created_at)

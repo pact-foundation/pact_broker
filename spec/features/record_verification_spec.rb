@@ -14,7 +14,7 @@ describe "Recording a pact verification" do
       .create_consumer("Consumer")
       .create_consumer_version("1.2.3")
       .create_pact
-      .create_pact_revision
+      .revise_pact
   end
 
   context "" do

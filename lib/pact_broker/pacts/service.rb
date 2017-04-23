@@ -104,7 +104,7 @@ module PactBroker
 
       def create_pact params, version, provider
         logger.info "Creating new pact version with params #{params}"
-        pact = pact_repository.create json_content: params[:json_content], version_id: version.id, provider_id: provider.id
+        pact = pact_repository.create json_content: params[:json_content], version_id: version.id, provider_id: provider.id, consumer_id: version.pacticipant_id
         trigger_webhooks pact
         pact
       end

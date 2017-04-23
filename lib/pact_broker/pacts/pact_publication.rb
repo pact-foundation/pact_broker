@@ -1,11 +1,10 @@
 require 'pact_broker/domain/pact'
-require 'pact_broker/pacts/pact_version_content'
-require 'forwardable'
+require 'pact_broker/pacts/pact_version'
 
 module PactBroker
   module Pacts
 
-    class PactRevision < Sequel::Model(:pact_revisions)
+    class PactPublication < Sequel::Model(:pact_publications)
 
       extend Forwardable
 
@@ -14,9 +13,9 @@ module PactBroker
       set_primary_key :id
       associate(:many_to_one, :provider, :class => "PactBroker::Domain::Pacticipant", :key => :provider_id, :primary_key => :id)
       associate(:many_to_one, :consumer_version, :class => "PactBroker::Domain::Version", :key => :consumer_version_id, :primary_key => :id)
-      associate(:many_to_one, :pact_version_content, class: "PactBroker::Pacts::PactVersionContent", :key => :pact_version_content_id, :primary_key => :id)
+      associate(:many_to_one, :pact_version, class: "PactBroker::Pacts::PactVersion", :key => :pact_version_id, :primary_key => :id)
 
-      PactRevision.plugin :timestamps, :update_on_create=>true
+      PactPublication.plugin :timestamps, :update_on_create=>true
 
       def before_create
         super
@@ -31,7 +30,7 @@ module PactBroker
           consumer_version_number: consumer_version.number,
           consumer_version: to_version_domain,
           revision_number: revision_number,
-          json_content: pact_version_content.content,
+          json_content: pact_version.content,
           created_at: created_at
           )
       end

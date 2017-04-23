@@ -6,7 +6,7 @@ module PactBroker
     class Verification < Sequel::Model
 
       set_primary_key :id
-      associate(:many_to_one, :pact_revision, class: "PactBroker::Pacts::PactRevision", key: :pact_revision_id, primary_key: :id)
+      associate(:many_to_one, :pact_publication, class: "PactBroker::Pacts::PactPublication", key: :pact_publication_id, primary_key: :id)
 
     end
 

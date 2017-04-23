@@ -19,10 +19,10 @@ module PactBroker
         let(:version) { PactBroker::Versions::Repository.new.create number: '1.2.3', pacticipant_id: consumer.id }
         let(:json_content) { {some: 'json'}.to_json }
 
-        subject { Repository.new.create version_id: version.id, provider_id: provider.id, json_content: json_content }
+        subject { Repository.new.create version_id: version.id, consumer_id: consumer.id, provider_id: provider.id, json_content: json_content }
 
         it "saves the pact" do
-          expect{subject}.to change{ PactRevision.count }.by(1)
+          expect{subject}.to change{ PactPublication.count }.by(1)
         end
 
         it "returns a Pact::Model" do
@@ -42,15 +42,31 @@ module PactBroker
           let(:another_version) { Versions::Repository.new.create number: '2.0.0', pacticipant_id: consumer.id }
 
           before do
-            Repository.new.create version_id: version.id, provider_id: provider.id, json_content: json_content
+            Repository.new.create version_id: version.id, consumer_id: consumer.id, provider_id: provider.id, json_content: json_content
           end
 
           subject do
-            Repository.new.create version_id: another_version.id, provider_id: provider.id, json_content: json_content
+            Repository.new.create version_id: another_version.id, consumer_id: consumer.id, provider_id: provider.id, json_content: json_content
           end
 
-          it "reuses the same PactVersionContent to save room" do
-            expect { subject }.to change{ PactVersionContent.count }.by(0)
+          it "reuses the same PactVersion to save room" do
+            expect { subject }.to change{ PactVersion.count }.by(0)
+          end
+        end
+
+        context "when a pact already exists with the same content but with a different consumer/provider" do
+          let(:another_version) { Versions::Repository.new.create number: '2.0.0', pacticipant_id: consumer.id }
+          let(:another_provider) { Pacticipants::Repository.new.create name: 'Provider2' }
+          before do
+            Repository.new.create version_id: version.id, consumer_id: consumer.id, provider_id: another_provider.id, json_content: json_content
+          end
+
+          subject do
+            Repository.new.create version_id: another_version.id, consumer_id: consumer.id, provider_id: provider.id, json_content: json_content
+          end
+
+          it "does not reuse the same PactVersion to save room" do
+            expect { subject }.to change{ PactVersion.count }.by(1)
           end
         end
 
@@ -58,15 +74,15 @@ module PactBroker
           let(:another_version) { Versions::Repository.new.create number: '2.0.0', pacticipant_id: consumer.id }
 
           before do
-            Repository.new.create version_id: version.id, provider_id: provider.id, json_content: {some_other: 'json_content'}.to_json
+            Repository.new.create version_id: version.id, consumer_id: consumer.id, provider_id: provider.id, json_content: {some_other: 'json_content'}.to_json
           end
 
           subject do
-            Repository.new.create version_id: another_version.id, provider_id: provider.id, json_content: json_content
+            Repository.new.create version_id: another_version.id, consumer_id: consumer.id, provider_id: provider.id, json_content: json_content
           end
 
-          it "creates a new PactVersionContent" do
-            expect { subject }.to change{ PactVersionContent.count }.by(1)
+          it "creates a new PactVersion" do
+            expect { subject }.to change{ PactVersion.count }.by(1)
           end
         end
       end
@@ -78,11 +94,11 @@ module PactBroker
         end
 
         before do
-          ::DB::PACT_BROKER_DB[:pact_revisions]
+          ::DB::PACT_BROKER_DB[:pact_publications]
             .where(id: existing_pact.id)
             .update(
               created_at: created_at)
-          ::DB::PACT_BROKER_DB[:pact_version_contents]
+          ::DB::PACT_BROKER_DB[:pact_versions]
               .update(
                 created_at: created_at)
         end
@@ -98,17 +114,17 @@ module PactBroker
           subject { Repository.new.update existing_pact.id, json_content: json_content }
 
           it "creates a new PactVersion" do
-            expect { subject }.to change{ PactBroker::Pacts::PactRevision.count }.by(1)
+            expect { subject }.to change{ PactBroker::Pacts::PactPublication.count }.by(1)
           end
 
-          it "creates a new PactVersionContent" do
-            expect { subject }.to change{ PactBroker::Pacts::PactVersionContent.count }.by(1)
+          it "creates a new PactVersion" do
+            expect { subject }.to change{ PactBroker::Pacts::PactVersion.count }.by(1)
           end
 
-          it "does not change the existing PactVersionContent" do
-            existing_pvc = PactBroker::Pacts::PactVersionContent.order(:id).last
+          it "does not change the existing PactVersion" do
+            existing_pvc = PactBroker::Pacts::PactVersion.order(:id).last
             subject
-            existing_pvc_reloaded = PactBroker::Pacts::PactVersionContent.find(id: existing_pvc[:id])
+            existing_pvc_reloaded = PactBroker::Pacts::PactVersion.find(id: existing_pvc[:id])
             expect(existing_pvc_reloaded).to eq(existing_pvc)
           end
 
@@ -130,11 +146,11 @@ module PactBroker
           subject { Repository.new.update existing_pact.id, json_content: original_json_content }
 
           it "does not create a new PactVersion" do
-            expect { subject }.to_not change{ PactBroker::Pacts::PactRevision.count }
+            expect { subject }.to_not change{ PactBroker::Pacts::PactPublication.count }
           end
 
-          it "does not create a new PactVersionContent" do
-            expect { subject }.to_not change{ PactBroker::Pacts::PactVersionContent.count }
+          it "does not create a new PactVersion" do
+            expect { subject }.to_not change{ PactBroker::Pacts::PactVersion.count }
           end
 
           it "the json_content is the same" do
@@ -154,7 +170,7 @@ module PactBroker
             .create_consumer_version("1.2.3")
             .create_provider(provider_name)
             .create_pact
-            .create_pact_revision
+            .revise_pact
             .create_consumer_version("2.3.4")
             .create_pact
             .create_provider("Another Provider")
@@ -165,12 +181,12 @@ module PactBroker
 
         subject { Repository.new.delete pact_params }
 
-        it "deletes all PactRevision for the specified consumer version" do
-          expect { subject }.to change { PactRevision.count }.by(-2)
+        it "deletes all PactPublication for the specified consumer version" do
+          expect { subject }.to change { PactPublication.count }.by(-2)
         end
 
         it "does not delete the content because it may be used by another pact" do
-          expect { subject }.to change { PactVersionContent.count }.by(0)
+          expect { subject }.to change { PactVersion.count }.by(0)
         end
 
       end
@@ -282,7 +298,7 @@ module PactBroker
             .create_consumer_version("1.2.4")
             .create_consumer_version_tag("prod")
             .create_pact
-            .create_pact_revision
+            .revise_pact
             .create_consumer_version("1.2.6")
             .create_pact
             .create_provider("Another Provider")
