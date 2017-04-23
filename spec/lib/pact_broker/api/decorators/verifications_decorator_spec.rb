@@ -5,7 +5,19 @@ module PactBroker
     module Decorators
       describe VerificationsDecorator do
         let(:verifications) { [verification] }
-        let(:verification) { instance_double("PactBroker::Domain::Verification", success: true, number: 1, provider_version: '4.5.6', build_url: 'http://some-build', pact_revision: pact) }
+        let(:verification) do
+          instance_double("PactBroker::Domain::Verification",
+            success: true, number: 1,
+            provider_version: '4.5.6',
+            build_url: 'http://some-build',
+            latest_pact_revision: pact,
+            provider_name: 'provider',
+            consumer_name: 'consumer',
+            pact_version_content: pact_version_content)
+        end
+        let(:pact_version_content) do
+          instance_double("PactBroker::Pacts::PactVersionContent", sha: '1234', name: 'Name')
+        end
         let(:pact) { instance_double("PactBroker::Domain::Pact", name: "Some pact", consumer_name: "Foo", provider_name: "Bar", consumer_version_number: "1.2.3") }
         let(:options) { {base_url: 'http://example.org', consumer_name: "Foo", consumer_version_number: "1.2.3", resource_url: "http://self"} }
 

@@ -60,11 +60,21 @@ module PactBroker
       end
 
       def new_verification_url params, number, base_url
-        pact_url_from_params(base_url, params) + "/verifications/#{number}"
+        [ base_url, 'pacts',
+          'provider', url_encode(params[:provider_name]),
+          'consumer', url_encode(params[:consumer_name]),
+          'sha', params[:sha],
+          'verifications', number
+        ].join('/')
       end
 
       def verification_url verification, base_url
-        pact_url(base_url, verification.pact_revision) + "/verifications/#{verification.number}"
+        [ base_url, 'pacts',
+          'provider', url_encode(verification.provider_name),
+          'consumer', url_encode(verification.consumer_name),
+          'sha', verification.pact_version_content.sha,
+          'verifications', verification.number
+        ].join('/')
       end
 
       def latest_verifications_for_consumer_version_url version, base_url
@@ -113,6 +123,13 @@ module PactBroker
         provider_name = pact.respond_to?(:provider_name) ? pact.provider_name : pact.provider.name
         consumer_name = pact.respond_to?(:consumer_name) ? pact.consumer_name : pact.consumer.name
         "#{base_url}/pacts/provider/#{url_encode(provider_name)}/consumer/#{url_encode(consumer_name)}"
+      end
+
+      def pactigration_base_url_from_params base_url, params
+        [ base_url, 'pacts',
+          'provider', url_encode(params[:provider_name]),
+          'consumer', url_encode(params[:consumer_name])
+        ].join('/')
       end
     end
   end

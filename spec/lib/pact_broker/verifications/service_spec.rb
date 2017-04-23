@@ -38,10 +38,10 @@ module PactBroker
           expect(verification.number).to eq 3
         end
 
-        it "sets the pact for the verification" do
+        it "sets the pact content for the verification" do
           verification = create_verification
-          expect(verification.pact_revision_id).to_not be_nil
-          expect(verification.pact_revision.id).to eq pact.id
+          expect(verification.pact_version_content_id).to_not be_nil
+          expect(verification.pact_version_content).to eq PactBroker::Pacts::PactVersionContent.order(:id).first
         end
       end
     end

@@ -65,6 +65,7 @@ describe 'migrate to pact versions (migrate 22-31)', no_db_clean: :true do
     new_all_pact = database[:all_pacts].order(:id).first
     new_all_pact.delete(:created_at)
     new_all_pact.delete(:revision_number)
+    new_all_pact.delete(:pact_version_content_id)
     expect(new_all_pact).to eq old_all_pact
   end
 
@@ -76,6 +77,7 @@ describe 'migrate to pact versions (migrate 22-31)', no_db_clean: :true do
     new_all_pact = database[:all_pacts].order(:id).last
     new_all_pact.delete(:created_at)
     new_all_pact.delete(:revision_number)
+    new_all_pact.delete(:pact_version_content_id)
     expect(new_all_pact).to eq old_all_pact
   end
 

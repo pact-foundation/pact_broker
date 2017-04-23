@@ -15,6 +15,7 @@ require 'pact_broker/versions/repository'
 require 'pact_broker/pacts/repository'
 require 'pact_broker/pacticipants/repository'
 require 'pact_broker/verifications/repository'
+require 'pact_broker/verifications/service'
 require 'pact_broker/tags/repository'
 require 'pact_broker/webhooks/repository'
 
@@ -100,13 +101,13 @@ class ProviderStateBuilder
     self
   end
 
-  def create_consumer consumer_name
+  def create_consumer consumer_name = "Consumer #{(rand*1000).floor}"
     create_pacticipant consumer_name
     @consumer = @pacticipant
     self
   end
 
-  def create_provider provider_name
+  def create_provider provider_name = "Provider #{(rand*1000).floor}"
     create_pacticipant provider_name
     @provider = @pacticipant
     self
@@ -117,7 +118,7 @@ class ProviderStateBuilder
     self
   end
 
-  def create_consumer_version version_number
+  def create_consumer_version version_number = "1.0.#{(rand*1000).floor}"
     @consumer_version = PactBroker::Domain::Version.create(:number => version_number, :pacticipant => @consumer)
     self
   end
@@ -150,9 +151,14 @@ class ProviderStateBuilder
   end
 
   def create_verification parameters = {}
-    default_parameters = {success: true, provider_version: '4.5.6', number: 1, pact_revision_id: @pact.id}
-    @verification = PactBroker::Domain::Verification.create(default_parameters.merge(parameters))
+    default_parameters = {success: true, provider_version: '4.5.6', number: 1}
+    verification = PactBroker::Domain::Verification.new(default_parameters.merge(parameters))
+    @verification =  PactBroker::Verifications::Repository.new.create(verification, @pact)
     self
+  end
+
+  def and_return(instance_variable_name)
+    instance_variable_get("@#{instance_variable_name}")
   end
 
   private
@@ -165,7 +171,8 @@ class ProviderStateBuilder
        "provider"     => {
          "name" => "Pricing Service"
        },
-       "interactions" => []
+       "interactions" => [],
+       "random" => rand
      }.to_json
    end
 

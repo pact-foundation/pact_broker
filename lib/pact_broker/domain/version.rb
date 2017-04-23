@@ -8,7 +8,7 @@ module PactBroker
     class Version < Sequel::Model
 
       set_primary_key :id
-      one_to_many :pacts
+      one_to_many :pact_revisions, order: :revision_number, class: "PactBroker::Pacts::PactRevision", key: :consumer_version_id
       associate(:many_to_one, :pacticipant, :class => "PactBroker::Domain::Pacticipant", :key => :pacticipant_id, :primary_key => :id)
       one_to_many :tags, :reciprocal => :version
 
@@ -22,6 +22,11 @@ module PactBroker
 
       def version_and_updated_date
         "Version #{number} - #{updated_at.to_time.localtime.strftime("%d/%m/%Y")}"
+      end
+
+      # What about provider??? This makes no sense
+      def latest_pact_revision
+        pact_revisions.last
       end
     end
 
