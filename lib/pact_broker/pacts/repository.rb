@@ -20,19 +20,19 @@ module PactBroker
         PactPublication.new(
           consumer_version_id: params[:version_id],
           provider_id: params[:provider_id],
-          pact_version_content: find_or_create_pact_version_content(params.fetch(:consumer_id), params.fetch(:provider_id), params[:json_content]),
+          pact_version: find_or_create_pact_version(params.fetch(:consumer_id), params.fetch(:provider_id), params[:json_content]),
         ).save.to_domain
       end
 
       def update id, params
         existing_model = PactPublication.find(id: id)
-        pact_version_content = find_or_create_pact_version_content(existing_model.consumer_version.pacticipant_id, existing_model.provider_id, params[:json_content])
-        if existing_model.pact_version_content_id != pact_version_content.id
+        pact_version = find_or_create_pact_version(existing_model.consumer_version.pacticipant_id, existing_model.provider_id, params[:json_content])
+        if existing_model.pact_version_id != pact_version.id
           PactPublication.new(
             consumer_version_id: existing_model.consumer_version_id,
             provider_id: existing_model.provider_id,
             revision_number: (existing_model.revision_number + 1),
-            pact_version_content: pact_version_content,
+            pact_version: pact_version,
           ).save.to_domain
         else
           existing_model.to_domain
@@ -124,7 +124,7 @@ module PactBroker
 
       def find_previous_distinct_pact_by_sha pact
         current_pact_content_sha =
-          AllPacts.select(:pact_version_content_sha)
+          AllPacts.select(:pact_version_sha)
           .consumer(pact.consumer.name)
           .provider(pact.provider.name)
           .consumer_version_number(pact.consumer_version_number)
@@ -135,7 +135,7 @@ module PactBroker
           .consumer(pact.consumer.name)
           .provider(pact.provider.name)
           .consumer_version_order_before(pact.consumer_version.order)
-          .where('pact_version_content_sha != ?', current_pact_content_sha)
+          .where('pact_version_sha != ?', current_pact_content_sha)
           .latest
           .collect(&:to_domain_with_content)[0]
       end
@@ -144,15 +144,15 @@ module PactBroker
         Pact::JsonDiffer.(pact.content_hash, other_pact.content_hash, allow_unexpected_keys: false).any?
       end
 
-      def find_or_create_pact_version_content consumer_id, provider_id, json_content
+      def find_or_create_pact_version consumer_id, provider_id, json_content
         sha = Digest::SHA1.hexdigest(json_content)
-        PactVersionContent.find(sha: sha, consumer_id: consumer_id, provider_id: provider_id) || create_pact_version_content(consumer_id, provider_id, sha, json_content)
+        PactVersion.find(sha: sha, consumer_id: consumer_id, provider_id: provider_id) || create_pact_version(consumer_id, provider_id, sha, json_content)
       end
 
-      def create_pact_version_content consumer_id, provider_id, sha, json_content
-        PactBroker.logger.debug("Creating new PactVersionContent for sha #{sha}")
-        pact_version_content = PactVersionContent.new(consumer_id: consumer_id, provider_id: provider_id, sha: sha, content: json_content)
-        pact_version_content.save
+      def create_pact_version consumer_id, provider_id, sha, json_content
+        PactBroker.logger.debug("Creating new PactVersion for sha #{sha}")
+        pact_version = PactVersion.new(consumer_id: consumer_id, provider_id: provider_id, sha: sha, content: json_content)
+        pact_version.save
       end
 
     end

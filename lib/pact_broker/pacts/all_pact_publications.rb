@@ -1,7 +1,7 @@
 require 'pact_broker/domain/tag'
 require 'pact_broker/domain/pacticipant'
 require 'pact_broker/domain/version'
-require 'pact_broker/pacts/pact_version_content'
+require 'pact_broker/pacts/pact_version'
 require 'pact_broker/repositories/helpers'
 
 module PactBroker
@@ -11,7 +11,7 @@ module PactBroker
 
       set_primary_key :id
       associate(:one_to_many, :tags, :class => "PactBroker::Domain::Tag", :reciprocal => :version, :key => :version_id, :primary_key => :consumer_version_id)
-      associate(:many_to_one, :pact_version_content, :key => :pact_version_content_sha, :primary_key => :sha)
+      associate(:many_to_one, :pact_version, :key => :pact_version_sha, :primary_key => :sha)
 
       dataset_module do
         include PactBroker::Repositories::Helpers
@@ -77,7 +77,7 @@ module PactBroker
 
       def to_domain_with_content
         to_domain.tap do | pact |
-          pact.json_content = pact_version_content.content
+          pact.json_content = pact_version.content
         end
       end
 

@@ -32,12 +32,11 @@ describe 'migrate to pact versions (migrate 22-24)', no_db_clean: :true do
 
   let(:do_migration) do
     PactBroker::Database.migrate(34)
-    database.schema(:pact_version_contents, reload: true)
   end
 
-  it "deletes orphan pact_version_contents" do
+  it "deletes orphan pact_versions" do
     do_migration
-    expect(database[:pact_version_contents].count).to eq 1
+    expect(database[:pact_versions].count).to eq 1
   end
 
   after do

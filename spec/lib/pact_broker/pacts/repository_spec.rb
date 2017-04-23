@@ -49,8 +49,8 @@ module PactBroker
             Repository.new.create version_id: another_version.id, consumer_id: consumer.id, provider_id: provider.id, json_content: json_content
           end
 
-          it "reuses the same PactVersionContent to save room" do
-            expect { subject }.to change{ PactVersionContent.count }.by(0)
+          it "reuses the same PactVersion to save room" do
+            expect { subject }.to change{ PactVersion.count }.by(0)
           end
         end
 
@@ -65,8 +65,8 @@ module PactBroker
             Repository.new.create version_id: another_version.id, consumer_id: consumer.id, provider_id: provider.id, json_content: json_content
           end
 
-          it "does not reuse the same PactVersionContent to save room" do
-            expect { subject }.to change{ PactVersionContent.count }.by(1)
+          it "does not reuse the same PactVersion to save room" do
+            expect { subject }.to change{ PactVersion.count }.by(1)
           end
         end
 
@@ -81,8 +81,8 @@ module PactBroker
             Repository.new.create version_id: another_version.id, consumer_id: consumer.id, provider_id: provider.id, json_content: json_content
           end
 
-          it "creates a new PactVersionContent" do
-            expect { subject }.to change{ PactVersionContent.count }.by(1)
+          it "creates a new PactVersion" do
+            expect { subject }.to change{ PactVersion.count }.by(1)
           end
         end
       end
@@ -98,7 +98,7 @@ module PactBroker
             .where(id: existing_pact.id)
             .update(
               created_at: created_at)
-          ::DB::PACT_BROKER_DB[:pact_version_contents]
+          ::DB::PACT_BROKER_DB[:pact_versions]
               .update(
                 created_at: created_at)
         end
@@ -117,14 +117,14 @@ module PactBroker
             expect { subject }.to change{ PactBroker::Pacts::PactPublication.count }.by(1)
           end
 
-          it "creates a new PactVersionContent" do
-            expect { subject }.to change{ PactBroker::Pacts::PactVersionContent.count }.by(1)
+          it "creates a new PactVersion" do
+            expect { subject }.to change{ PactBroker::Pacts::PactVersion.count }.by(1)
           end
 
-          it "does not change the existing PactVersionContent" do
-            existing_pvc = PactBroker::Pacts::PactVersionContent.order(:id).last
+          it "does not change the existing PactVersion" do
+            existing_pvc = PactBroker::Pacts::PactVersion.order(:id).last
             subject
-            existing_pvc_reloaded = PactBroker::Pacts::PactVersionContent.find(id: existing_pvc[:id])
+            existing_pvc_reloaded = PactBroker::Pacts::PactVersion.find(id: existing_pvc[:id])
             expect(existing_pvc_reloaded).to eq(existing_pvc)
           end
 
@@ -149,8 +149,8 @@ module PactBroker
             expect { subject }.to_not change{ PactBroker::Pacts::PactPublication.count }
           end
 
-          it "does not create a new PactVersionContent" do
-            expect { subject }.to_not change{ PactBroker::Pacts::PactVersionContent.count }
+          it "does not create a new PactVersion" do
+            expect { subject }.to_not change{ PactBroker::Pacts::PactVersion.count }
           end
 
           it "the json_content is the same" do
@@ -186,7 +186,7 @@ module PactBroker
         end
 
         it "does not delete the content because it may be used by another pact" do
-          expect { subject }.to change { PactVersionContent.count }.by(0)
+          expect { subject }.to change { PactVersion.count }.by(0)
         end
 
       end

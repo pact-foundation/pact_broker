@@ -74,8 +74,8 @@ module PactBroker
         connection.run("delete from tags where version_id IN (select id from versions where pacticipant_id IN (select id from pacticipants where name = '#{name}'))")
         connection.run("delete from pact_publications where consumer_version_id IN (select id from versions where pacticipant_id IN (select id from pacticipants where name = '#{name}'))")
         connection.run("delete from pact_publications where provider_id IN (select id from pacticipants where name = '#{name}')")
-        connection.run("delete from pact_version_contents where provider_id IN (select id from pacticipants where name = '#{name}')")
-        connection.run("delete from pact_version_contents where consumer_id IN (select id from pacticipants where name = '#{name}')")
+        connection.run("delete from pact_versions where provider_id IN (select id from pacticipants where name = '#{name}')")
+        connection.run("delete from pact_versions where consumer_id IN (select id from pacticipants where name = '#{name}')")
         connection.run("delete from versions where pacticipant_id IN (select id from pacticipants where name = '#{name}')")
         webhook_service.delete_by_pacticipant pacticipant
         connection.run("delete from pacticipants where name = '#{name}'")
