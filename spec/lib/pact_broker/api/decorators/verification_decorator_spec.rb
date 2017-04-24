@@ -10,13 +10,22 @@ module PactBroker
             number: 1,
             success: true,
             provider_version: "4.5.6",
+            provider_name: 'Provider',
+            consumer_name: 'Consumer',
             build_url: 'http://build-url',
-            pact_publication: pact)
+            pact_version: pact_version,
+            latest_pact_publication: pact_publication)
         end
 
-        let(:pact) do
-          instance_double('PactBroker::Domain::Pact',
-            name: 'A pact',
+        let(:pact_version) do
+          instance_double('PactBroker::Pacts::PactVersion',
+            sha: '1234'
+          )
+        end
+
+        let(:pact_publication) do
+          instance_double('PactBroker::Pacts::PactPublication',
+            name: 'A name',
             provider_name: 'Provider',
             consumer_name: 'Consumer',
             consumer_version_number: '1.2.3'

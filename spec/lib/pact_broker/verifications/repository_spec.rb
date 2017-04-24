@@ -5,11 +5,25 @@ module PactBroker
     describe Repository do
 
       describe "#verification_count_for_pact" do
-        let!(:pact_1) { ProviderStateBuilder.new.create_pact_with_hierarchy }
-        let!(:pact_2) { ProviderStateBuilder.new.create_pact_with_hierarchy "Foo", "1.3.4", "Bar" }
-        let!(:verification_1) { PactBroker::Domain::Verification.new(pact_publication_id: pact_1.id, success: true, provider_version: '1.2.3').save }
-        let!(:verification_2) { PactBroker::Domain::Verification.new(pact_publication_id: pact_1.id, success: true, provider_version: '1.2.3').save }
-        let!(:verification_3) { PactBroker::Domain::Verification.new(pact_publication_id: pact_2.id, success: true, provider_version: '1.2.3').save }
+        let!(:pact_1) do
+          ProviderStateBuilder.new
+            .create_consumer("Consumer")
+            .create_provider("Provider")
+            .create_consumer_version("1.2.3")
+            .create_pact
+            .create_verification(number: 1)
+            .create_verification(number: 2)
+            .and_return(:pact)
+        end
+        let!(:pact_2) do
+          ProviderStateBuilder.new
+            .create_consumer("Foo")
+            .create_provider("Bar")
+            .create_consumer_version("4.5.6")
+            .create_pact
+            .create_verification(number: 1)
+            .and_return(:pact)
+        end
 
         it "returns the number of verifications for the given pact" do
           expect(Repository.new.verification_count_for_pact(pact_1)).to eq 2
@@ -45,10 +59,6 @@ module PactBroker
         it "finds the latest verifications for the given consumer version" do
           expect(latest_verifications.first.provider_version).to eq "7.8.9"
           expect(latest_verifications.last.provider_version).to eq "6.5.4"
-        end
-
-        it "loads the pact and pacticipant details" do
-          expect(latest_verifications.first.pact_publication.consumer.name).to eq "Consumer1"
         end
       end
     end

@@ -15,6 +15,7 @@ require 'pact_broker/versions/repository'
 require 'pact_broker/pacts/repository'
 require 'pact_broker/pacticipants/repository'
 require 'pact_broker/verifications/repository'
+require 'pact_broker/verifications/service'
 require 'pact_broker/tags/repository'
 require 'pact_broker/webhooks/repository'
 
@@ -100,24 +101,24 @@ class ProviderStateBuilder
     self
   end
 
-  def create_consumer consumer_name
+  def create_consumer consumer_name = "Consumer #{model_counter}"
     create_pacticipant consumer_name
     @consumer = @pacticipant
     self
   end
 
-  def create_provider provider_name
+  def create_provider provider_name = "Provider #{model_counter}"
     create_pacticipant provider_name
     @provider = @pacticipant
     self
   end
 
-  def create_version version_number
+  def create_version version_number = "1.0.#{model_counter}"
     @version = PactBroker::Domain::Version.create(:number => version_number, :pacticipant => @pacticipant)
     self
   end
 
-  def create_consumer_version version_number
+  def create_consumer_version version_number = "1.0.#{model_counter}"
     @consumer_version = PactBroker::Domain::Version.create(:number => version_number, :pacticipant => @consumer)
     self
   end
@@ -150,9 +151,20 @@ class ProviderStateBuilder
   end
 
   def create_verification parameters = {}
-    default_parameters = {success: true, provider_version: '4.5.6', number: 1, pact_publication_id: @pact.id}
-    @verification = PactBroker::Domain::Verification.create(default_parameters.merge(parameters))
+    default_parameters = {success: true, provider_version: '4.5.6', number: 1}
+    verification = PactBroker::Domain::Verification.new(default_parameters.merge(parameters))
+    @verification = PactBroker::Verifications::Repository.new.create(verification, @pact)
     self
+  end
+
+  def model_counter
+    @@model_counter ||= 0
+    @@model_counter += 1
+    @@model_counter
+  end
+
+  def and_return instance_variable_name
+    instance_variable_get("@#{instance_variable_name}")
   end
 
   private
@@ -166,8 +178,7 @@ class ProviderStateBuilder
          "name" => "Pricing Service"
        },
        "interactions" => [],
-       "random": rand
-
+       "random" => rand
      }.to_json
    end
 
