@@ -80,7 +80,7 @@ Use the HAL browser to view documentation as you browse.
 
 ### To have a play around on your local machine
 
-* Install ruby 1.9.3 or later and bundler >= 1.12.0
+* Install ruby 2.2.0 or later and bundler >= 1.12.0
 * Run `git clone git@github.com:bethesque/pact_broker.git && cd pact_broker/example`
 * Run `bundle`
 * Run `bundle exec rackup -p 8080`
@@ -101,7 +101,7 @@ You can use the [Pact Broker Docker container][docker] or [Terraform on AWS][ter
 
 * Create a database using a product that is supported by the Sequel gem (listed on this page http://sequel.jeremyevans.net/rdoc/files/README_rdoc.html). The migrations have been tested on MySQL and PostgreSQL - your milage will vary on other databases.
 * __Note:__ It is recommended to use __PostgreSQL__ as it will support JSON search features that are planned in a future release, however MySQL the other [semi supported](https://github.com/bethesque/pact_broker/issues/33) database.
-* Install ruby 1.9.3 or later and bundler >= 1.12.0
+* Install ruby 2.2.0 or later and bundler >= 1.12.0
 * Copy the [example](/example) directory to the location you want to install the application.
 * Modify the config.ru and Gemfile as desired (eg. choose database driver gem, set your database credentials. Use the "pg" gem if using Postgres.)
 * Please ensure you use `encoding: 'utf8'` in your Sequel options to avoid encoding issues.
