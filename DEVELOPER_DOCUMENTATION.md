@@ -49,3 +49,5 @@
 * `latest_pacts` - This view has the same columns as `all_pact_revisions`, but it only contains the latest revision of the pact for the latest consumer version for each consumer/provider pair. It is what a user would consider the "latest pact", and maps to the resource at `/pacts/provider/Provider/consumer/Consumer/latest`
 
 * `latest_tagged_pacts` - This view has the same columns as `all_pact_revisions`, plus a `tag_name` column. It is used to return the pact for the latest tagged version of a consumer.
+
+* `latest_verifications` - The most recent verification for each pact version.
