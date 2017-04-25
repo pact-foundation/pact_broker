@@ -8,6 +8,11 @@ module PactBroker
       set_primary_key :id
       associate(:many_to_one, :pact_version, class: "PactBroker::Pacts::PactVersion", key: :pact_version_id, primary_key: :id)
 
+      def before_create
+        super
+        self.execution_date ||= DateTime.now
+      end
+
       def consumer_name
         consumer.name
       end
