@@ -28,6 +28,15 @@ module PactBroker
           .order(:provider_name)
       end
 
+      def find_latest_verification_for consumer_name, provider_name
+        query = LatestVerifications
+          .join(PactBroker::Pacts::AllPactPublications, pact_version_id: :pact_version_id)
+          .consumer(consumer_name)
+          .provider(provider_name)
+          .latest
+          query.first
+      end
+
       def pact_version_id_for pact
         PactBroker::Pacts::PactPublication.select(:pact_version_id).where(id: pact.id)
       end

@@ -100,14 +100,16 @@ module PactBroker
         let(:consumer) { instance_double("PactBroker::Domain::Pacticipant")}
         let(:provider) { instance_double("PactBroker::Domain::Pacticipant")}
         let(:pact) { instance_double("PactBroker::Domain::Pact", consumer: consumer, provider: provider)}
+        let(:verification) { instance_double("PactBroker::Domain::Verification")}
         let(:pacts) { [pact]}
 
         before do
           allow_any_instance_of(PactBroker::Pacts::Repository).to receive(:find_latest_pacts).and_return(pacts)
+          allow(PactBroker::Verifications::Service).to receive(:find_latest_verification_for).and_return(verification)
         end
 
         it "returns a list of relationships" do
-          expect(subject.find_relationships).to eq([PactBroker::Domain::Relationship.create(consumer, provider)])
+          expect(subject.find_relationships).to eq([PactBroker::Domain::Relationship.create(consumer, provider, pact, verification)])
         end
 
       end

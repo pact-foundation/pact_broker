@@ -5,17 +5,20 @@ module PactBroker
 
       attr_reader :consumer, :provider
 
-      def initialize consumer, provider
+      def initialize consumer, provider, latest_pact = nil, latest_verification = nil
         @consumer = consumer
         @provider = provider
+        @latest_pact = latest_pact
+        @latest_verification = latest_verification
       end
 
-      def self.create consumer, provider
-        new consumer, provider
+      def self.create consumer, provider, latest_pact, latest_verification
+        new consumer, provider, latest_pact, latest_verification
       end
 
       def eq? other
-        Relationship === other && other.consumer == consumer && other.provider == provider
+        Relationship === other && other.consumer == consumer && other.provider == provider &&
+          other.latest_pact == latest_pact && other.latest_verification == latest_verification
       end
 
       def == other
@@ -28,6 +31,26 @@ module PactBroker
 
       def provider_name
         provider.name
+      end
+
+      def latest_pact
+        @latest_pact
+      end
+
+      def ever_verified?
+        !!latest_verification
+      end
+
+      def latest_verification
+        @latest_verification
+      end
+
+      def latest_verification_successful?
+        latest_verification.success
+      end
+
+      def pact_changed_since_last_verification?
+        latest_verification.pact_version_sha != latest_pact.pact_version_sha
       end
 
       def pacticipants

@@ -61,6 +61,32 @@ module PactBroker
           expect(latest_verifications.last.provider_version).to eq "6.5.4"
         end
       end
+
+      describe "#find_latest_verification_for" do
+        before do
+          ProviderStateBuilder.new
+            .create_provider("Provider1")
+            .create_consumer("Consumer1")
+            .create_consumer_version("1.2.3")
+            .create_pact
+            .create_verification(number: 1, provider_version: "2.3.4")
+            .create_verification(number: 2, provider_version: "7.8.9")
+            .create_consumer_version("1.0.0")
+            .create_pact
+            .create_verification(number: 1, provider_version: "5.4.3")
+            .create_provider("Provider2")
+            .create_pact
+            .create_verification(number: 1, provider_version: "6.5.4")
+            .create_consumer_version("2.0.0")
+            .create_pact
+        end
+
+        let(:latest_verification) { Repository.new.find_latest_verification_for("Consumer1", "Provider1")}
+
+        it "finds the latest verifications for the given consumer version" do
+          expect(latest_verification.provider_version).to eq "7.8.9"
+        end
+      end
     end
   end
 end

@@ -8,15 +8,55 @@ module PactBroker
 
         let(:consumer) { instance_double("PactBroker::Domain::Pacticipant", name: 'Consumer Name')}
         let(:provider) { instance_double("PactBroker::Domain::Pacticipant", name: 'Provider Name')}
-        let(:relationship) { PactBroker::Domain::Relationship.new(consumer, provider)}
+        let(:latest_pact) { instance_double("PactBroker::Domain::Pact") }
+        let(:latest_verification) { instance_double("PactBroker::Domain::Verification") }
+        let(:domain_relationship) { PactBroker::Domain::Relationship.new(consumer, provider, latest_pact, latest_verification)}
 
-        subject { Relationship.new(relationship) }
+        subject { Relationship.new(domain_relationship) }
 
         its(:consumer_name) { should eq 'Consumer Name'}
         its(:provider_name) { should eq 'Provider Name'}
         its(:latest_pact_url) { should eq "/pacts/provider/Provider%20Name/consumer/Consumer%20Name/latest" }
         its(:consumer_group_url) { should eq "/groups/Consumer%20Name" }
         its(:provider_group_url) { should eq "/groups/Provider%20Name" }
+
+        describe "verification_status" do
+          let(:domain_relationship) do
+            instance_double("PactBroker::Domain::Relationship",
+              ever_verified?: ever_verified,
+              pact_changed_since_last_verification?: pact_changed,
+              latest_verification_successful?: success)
+          end
+          let(:ever_verified) { true }
+          let(:pact_changed) { false }
+          let(:success) { true }
+
+          subject { Relationship.new(domain_relationship) }
+
+          context "when the pact has never been verified" do
+            let(:ever_verified) { false }
+            its(:verification_status) { is_expected.to eq "" }
+            its(:warning?) { is_expected.to be false }
+          end
+
+          context "when the pact has changed since the last successful verification" do
+            let(:pact_changed) { true }
+            its(:verification_status) { is_expected.to eq "warning" }
+            its(:warning?) { is_expected.to be true }
+          end
+
+          context "when the pact has not changed since the last successful verification" do
+            let(:pact_changed) { false }
+            its(:verification_status) { is_expected.to eq "success" }
+            its(:warning?) { is_expected.to be false }
+          end
+
+          context "when the pact verification failed" do
+            let(:success) { false }
+            its(:verification_status) { is_expected.to eq "danger" }
+            its(:warning?) { is_expected.to be false }
+          end
+        end
 
         describe "<=>" do
 

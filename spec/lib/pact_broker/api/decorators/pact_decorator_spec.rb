@@ -27,6 +27,7 @@ module PactBroker
           provider: provider,
           consumer_version: consumer_version,
           consumer_version_number: '1234',
+          pact_version_sha: '9999',
           revision_number: 2,
           name: 'A Pact'
         )}

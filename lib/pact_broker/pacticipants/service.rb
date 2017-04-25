@@ -55,7 +55,11 @@ module PactBroker
       end
 
       def self.find_relationships
-        pact_repository.find_latest_pacts.collect{ | pact| PactBroker::Domain::Relationship.create pact.consumer, pact.provider }
+        pact_repository.find_latest_pacts
+          .collect do | pact|
+            latest_verification = verification_service.find_latest_verification_for(pact.consumer, pact.provider)
+            PactBroker::Domain::Relationship.create pact.consumer, pact.provider, pact, latest_verification
+          end
       end
 
       def self.update params

@@ -1,5 +1,6 @@
 require 'pact_broker/api/pact_broker_urls'
 require 'pact_broker/ui/helpers/url_helper'
+require 'pact_broker/date_helper'
 
 module PactBroker
   module UI
@@ -30,6 +31,32 @@ module PactBroker
 
         def latest_pact_url
           "#{pactigration_base_url('', @relationship)}/latest"
+        end
+
+        def last_verified_date
+          if @relationship.ever_verified?
+            date = @relationship.latest_verification.execution_date
+            PactBroker::DateHelper.distance_of_time_in_words(date, DateTime.now) + " ago"
+          else
+            ""
+          end
+        end
+
+        def verification_status
+          return "" unless @relationship.ever_verified?
+          if @relationship.latest_verification_successful?
+            if @relationship.pact_changed_since_last_verification?
+              "warning"
+            else
+              "success"
+            end
+          else
+            "danger"
+          end
+        end
+
+        def warning?
+          verification_status == 'warning'
         end
 
         def <=> other

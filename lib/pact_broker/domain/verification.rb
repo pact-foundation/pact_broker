@@ -1,4 +1,5 @@
 require 'pact_broker/db'
+require 'pact_broker/repositories/helpers'
 
 module PactBroker
 
@@ -11,6 +12,38 @@ module PactBroker
       def before_create
         super
         self.execution_date ||= DateTime.now
+      end
+
+      dataset_module do
+        include PactBroker::Repositories::Helpers
+
+        # Expects to be joined with AllPactPublications or subclass
+        # Beware that when columns with the same name exist in both datasets
+        # you may get the wrong column back in your model.
+
+        def consumer consumer_name
+          where(name_like(:consumer_name, consumer_name))
+        end
+
+        def provider provider_name
+          where(name_like(:provider_name, provider_name))
+        end
+
+        def consumer_version_number number
+          where(name_like(:consumer_version_number, number))
+        end
+
+        def pact_version_sha sha
+          where(pact_version_sha: sha)
+        end
+
+        def latest
+          reverse_order(:consumer_version_order, :number).limit(1)
+        end
+      end
+
+      def pact_version_sha
+        pact_version.sha
       end
 
       def consumer_name
@@ -39,6 +72,6 @@ module PactBroker
 
     end
 
-    Verification.plugin :timestamps, update_on_create: true
+    Verification.plugin :timestamps
   end
 end

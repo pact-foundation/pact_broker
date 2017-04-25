@@ -27,6 +27,8 @@
           Provider
           %span.glyphicon.glyphicon-sort.relationships-sort
         %th
+        %th
+          Last verified
       %tbody
 
       - relationships.each do | relationship |
@@ -42,6 +44,10 @@
             %a{:href => relationship.provider_group_url}
               = relationship.provider_name
           %td
+          %td{class: relationship.verification_status}
+            = relationship.last_verified_date
+            - if relationship.warning?
+              %span.glyphicon.glyphicon-warning-sign{'aria-hidden':true}
     %div.relationships-size
       = relationships.size_label
 
