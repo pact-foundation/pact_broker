@@ -44,7 +44,7 @@ module PactBroker
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'version', :consumer_version_number, 'diff', 'previous-distinct'], Api::Resources::PactContentDiff
 
         # Verifications
-        add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'version', :consumer_version_number, 'revision', :revision_number, 'verifications'], Api::Resources::Verifications
+        add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'pact-version-sha', :pact_version_sha, 'verifications'], Api::Resources::Verifications
         add ['pacts', 'consumer', :consumer_name, 'versions', :consumer_version_number, 'verifications', 'latest'], Api::Resources::LatestVerificationsForConsumerVersion
 
         # Latest pacts

@@ -31,6 +31,7 @@ module PactBroker
           consumer_version: to_version_domain,
           revision_number: revision_number,
           json_content: pact_version.content,
+          pact_version_sha: pact_version.sha,
           created_at: created_at
           )
       end

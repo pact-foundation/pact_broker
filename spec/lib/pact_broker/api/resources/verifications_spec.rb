@@ -12,7 +12,7 @@ module PactBroker
 
         describe "post" do
 
-          let(:url) { "/pacts/provider/Provider/consumer/Consumer/version/1.2.3/revision/1/verifications" }
+          let(:url) { "/pacts/provider/Provider/consumer/Consumer/pact-version-sha/1234/verifications" }
           let(:request_body) { {some: 'params'}.to_json }
           subject { post url, request_body, {'CONTENT_TYPE' => 'application/json' }; last_response }
           let(:response_body) { JSON.parse(subject.body, {symbolize_names: true}) }

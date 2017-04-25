@@ -25,7 +25,8 @@ module PactBroker
           consumer_name: path_info.fetch(:consumer_name),
           provider_name: path_info.fetch(:provider_name),
           revision_number: path_info[:revision_number],
-          consumer_version_number: path_info.fetch(:consumer_version_number),
+          consumer_version_number: path_info[:consumer_version_number],
+          pact_version_sha: path_info[:pact_version_sha],
           consumer_name_in_pact: consumer_name_in_pact,
           provider_name_in_pact: provider_name_in_pact,
           json_content: json_content
@@ -46,6 +47,10 @@ module PactBroker
 
       def consumer_version_number
         self[:consumer_version_number]
+      end
+
+      def pact_version_sha
+        self[:pact_version_sha]
       end
 
       def revision_number

@@ -289,8 +289,9 @@ module PactBroker
       end
 
       describe "find_pact" do
-        before do
-          ProviderStateBuilder.new
+        let!(:pact) do
+          builder = ProviderStateBuilder.new
+          pact = builder
             .create_consumer("Consumer")
             .create_consumer_version("1.2.2")
             .create_provider("Provider")
@@ -299,11 +300,14 @@ module PactBroker
             .create_consumer_version_tag("prod")
             .create_pact
             .revise_pact
+            .and_return(:pact)
+          builder
             .create_consumer_version("1.2.6")
             .create_pact
             .create_provider("Another Provider")
             .create_consumer_version("1.2.5")
             .create_pact
+          pact
         end
 
         subject  { Repository.new.find_pact "Consumer", "1.2.4", "Provider" }
@@ -317,14 +321,15 @@ module PactBroker
           expect(subject.json_content).to_not be_nil
         end
 
-        context "with a revision number" do
-          subject  { Repository.new.find_pact "Consumer", "1.2.4", "Provider", 2 }
+        context "with a pact_version_sha" do
+          subject  { Repository.new.find_pact "Consumer", nil, "Provider", pact.pact_version_sha }
 
           it "finds the pact with the given version and revision" do
-            expect(subject.revision_number).to eq 2
+            expect(subject.pact_version_sha).to eq pact.pact_version_sha
             expect(subject.consumer.name).to eq "Consumer"
             expect(subject.provider.name).to eq "Provider"
             expect(subject.consumer_version_number).to eq "1.2.4"
+            expect(subject.revision_number).to eq 2
 
           end
         end

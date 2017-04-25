@@ -37,6 +37,10 @@ module PactBroker
           where(revision_number: number)
         end
 
+        def pact_version_sha sha
+          where(pact_version_sha: sha)
+        end
+
         def consumer_version_order_before order
           where('consumer_version_order < ?', order)
         end
@@ -76,7 +80,7 @@ module PactBroker
           provider: provider,
           consumer_version_number: consumer_version_number,
           revision_number: revision_number,
-          sha: pact_version_sha,
+          pact_version_sha: pact_version_sha,
           created_at: created_at)
       end
 

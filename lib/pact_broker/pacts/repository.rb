@@ -84,14 +84,14 @@ module PactBroker
         query.latest.all.collect(&:to_domain_with_content)[0]
       end
 
-      def find_pact consumer_name, consumer_version, provider_name, revision_number = nil
-        query = revision_number ? AllPactPublications.revision_number(revision_number) : AllPacts
-        query
+      def find_pact consumer_name, consumer_version, provider_name, pact_version_sha = nil
+        query = pact_version_sha ? AllPactPublications.pact_version_sha(pact_version_sha) : AllPacts
+        query = query
           .eager(:tags)
           .consumer(consumer_name)
           .provider(provider_name)
-          .consumer_version_number(consumer_version)
-          .limit(1).collect(&:to_domain_with_content)[0]
+        query = query.consumer_version_number(consumer_version) if consumer_version
+        query.limit(1).collect(&:to_domain_with_content)[0]
       end
 
       def find_previous_pact pact
