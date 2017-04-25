@@ -18,13 +18,11 @@ describe "Recording a pact verification" do
       .and_return(:pact)
   end
 
-  context "" do
-    it "Responds with a 201 Created" do
-      expect(subject.status).to be 201
-    end
+  it "Responds with a 201 Created" do
+    expect(subject.status).to be 201
+  end
 
-    it "saves a verification against the pact" do
-      expect { subject }.to change { PactBroker::Domain::Verification.count }.by(1)
-    end
+  it "saves a verification against the pact" do
+    expect { subject }.to change { PactBroker::Domain::Verification.count }.by(1)
   end
 end
