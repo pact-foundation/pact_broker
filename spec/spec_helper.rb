@@ -31,13 +31,18 @@ end
 
 class DateTime
   def self.parse *args
-    if args[0] == "1234"
+    begin
+      super
+    rescue StandardError => e
       pp args
+      puts "HERE!!!! #{e.class.name} #{e.message}"
+      return args[0]
     end
-    super
   end
 end
 
+DateTime.parse("foo")
+require 'pry'; pry(binding);
 require 'sequel/adapters/sqlite'
 module Sequel::DeprecatedIdentifierMangling::DatasetMethods
   def fetch_rows(sql)
@@ -46,20 +51,25 @@ module Sequel::DeprecatedIdentifierMangling::DatasetMethods
       cps = db.conversion_procs
       type_procs = result.types.map{|t| cps[base_type_name(t)]}
       cols = result.columns.map{|c| i+=1; [output_identifier(c), i, type_procs[i]]}
+      puts sql
       self.columns = cols.map(&:first)
       result.each do |values|
         row = {}
         cols.each do |name,id,type_proc|
           v = values[id]
-          if v == "1234"
-            puts sql
-            puts "#{name}: #{v}"
-          end
+          puts "HERE!!!!" if v == "1234"
+          p "#{name}: #{v}, "
+          # if v == "1234"
+          #   puts sql
+          #   puts
+          # end
           if type_proc && v
             v = type_proc.call(v)
           end
           row[name] = v
         end
+        puts ""
+        # pp row
         yield row
       end
     end

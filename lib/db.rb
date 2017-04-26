@@ -25,6 +25,9 @@ module DB
   # pool, as noted in the documentation for the extension.
   #
   def self.connect db_credentials
+    if ENV.fetch('RACK_ENV') == 'test'
+      logger = Logger.new($stdout)
+    end
     con = Sequel.connect(db_credentials.merge(:logger => logger, :pool_class => Sequel::ThreadedConnectionPool, :encoding => 'utf8'))
     con.extension(:connection_validator)
     con.pool.connection_validation_timeout = -1 #Check the connection on every request
