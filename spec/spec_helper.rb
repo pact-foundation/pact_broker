@@ -28,3 +28,10 @@ RSpec.configure do | config |
     PactBroker::API
   end
 end
+
+class DateTime
+  def self.parse *args
+    pp args
+    super
+  end
+end
