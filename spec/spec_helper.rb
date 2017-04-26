@@ -41,8 +41,6 @@ class DateTime
   end
 end
 
-DateTime.parse("foo")
-require 'pry'; pry(binding);
 require 'sequel/adapters/sqlite'
 module Sequel::DeprecatedIdentifierMangling::DatasetMethods
   def fetch_rows(sql)
