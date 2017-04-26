@@ -2,8 +2,9 @@
 
 Allowed methods: POST
 
-Use this endpoint to publish the results (either success or failure) of a pact verification. The body of the request must include the success (true or false) and the provider version that the pact was verified against. It may also include the build URL to facilitate debugging when failures occur.
+Use the `pb:publish-verification` link in the pact resource to publish the results (either success or failure) of a pact verification. The body of the request must include the success (true or false) and the provider application version that the pact was verified against. It may also include the build URL to facilitate debugging when failures occur.
 
+    POST http://broker/pacts/provider/Foo/consumer/Bar/pact-version-sha/1234
     {
       success: true,
       providerVersion: "4.5.6",
