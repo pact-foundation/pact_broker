@@ -12,6 +12,7 @@ describe 'migrate to pact versions (migrate 22-31)', no_db_clean: :true do
   end
 
   def new_connection
+    # Sequel::DATABASES.clear
     DB.connection_for_env 'test'
   end
 
@@ -36,8 +37,10 @@ describe 'migrate to pact versions (migrate 22-31)', no_db_clean: :true do
 
 
   let(:do_migration) do
+    schema1 = database.schema(:all_pacts, reload: false)
     PactBroker::Database.migrate(34)
-    database.schema(:all_pacts, reload: true)
+    schema2 = database.schema(:all_pacts, reload: false)
+    expect(schema1.map(&:first)).to_not eq schema2.map(&:first)
     database = new_connection
   end
 
