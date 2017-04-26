@@ -31,7 +31,38 @@ end
 
 class DateTime
   def self.parse *args
-    pp args
+    if args[0] == "1234"
+      pp args
+    end
     super
   end
+end
+
+require 'sequel/adapters/sqlite'
+module Sequel::DeprecatedIdentifierMangling::DatasetMethods
+  def fetch_rows(sql)
+    execute(sql) do |result|
+      i = -1
+      cps = db.conversion_procs
+      type_procs = result.types.map{|t| cps[base_type_name(t)]}
+      cols = result.columns.map{|c| i+=1; [output_identifier(c), i, type_procs[i]]}
+      self.columns = cols.map(&:first)
+      result.each do |values|
+        row = {}
+        cols.each do |name,id,type_proc|
+          v = values[id]
+          if v == "1234"
+            puts sql
+            puts "#{name}: #{v}"
+          end
+          if type_proc && v
+            v = type_proc.call(v)
+          end
+          row[name] = v
+        end
+        yield row
+      end
+    end
+  end
+
 end
