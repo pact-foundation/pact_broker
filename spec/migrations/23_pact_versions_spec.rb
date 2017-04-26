@@ -37,11 +37,13 @@ describe 'migrate to pact versions (migrate 22-31)', no_db_clean: :true do
 
   let(:do_migration) do
     PactBroker::Database.migrate(34)
+    database = new_connection
     database.schema(:all_pacts, reload: true)
   end
 
   it "keeps the same number of pacts" do
     do_migration
+    puts "FINISHED"
     expect(database[:all_pacts].count).to eq 2
   end
 
