@@ -5,6 +5,7 @@
   %link{rel: 'stylesheet', href: '/stylesheets/relationships.css'}
   %script{type: 'text/javascript', src:'/javascripts/jquery-2.1.1.min.js'}
   %script{type: 'text/javascript', src:'/javascripts/jquery.tablesorter.min.js'}
+  %script{type: 'text/javascript', src:'/js/bootstrap.min.js'}
 %body
   %nav.navbase-default.navbar-right{role: "navigation"}
     .container
@@ -44,10 +45,12 @@
             %a{:href => relationship.provider_group_url}
               = relationship.provider_name
           %td
+          - title = relationship.warning? ? "Pact has changed since last successful verification" : nil
           %td{class: relationship.verification_status}
-            = relationship.last_verified_date
-            - if relationship.warning?
-              %span.glyphicon.glyphicon-warning-sign{'aria-hidden':true}
+            %div{title: title, "data-toggle": "tooltip", "data-placement": "left"}
+              = relationship.last_verified_date
+              - if relationship.warning?
+                %span.glyphicon.glyphicon-warning-sign{'aria-hidden':true}
     %div.relationships-size
       = relationships.size_label
 
@@ -56,6 +59,7 @@
     $("#relationships").tablesorter();
   });
 
-  $(document).load(function(){
+  $(document).ready(function(){
     $("span.pact").load("/images/doc-text.svg");
+    $('[data-toggle="tooltip"]').tooltip();
   });
