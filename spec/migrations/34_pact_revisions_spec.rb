@@ -89,11 +89,11 @@ describe 'using pact publications (migrate 31-32)', no_db_clean: :true do
     end
   end
 
-  describe "latest_pacts" do
+  describe "latest_pact_publications" do
     it "only contains the latest revision of the pact for the latest consumer version" do
       do_migration
-      expect(database[:latest_pacts].count).to eq 2
-      expect(database[:latest_pacts].where(provider_id: provider_1[:id], consumer_id: consumer_1[:id]).count).to eq 1
+      expect(database[:latest_pact_publications].count).to eq 2
+      expect(database[:latest_pact_publications].where(provider_id: provider_1[:id], consumer_id: consumer_1[:id]).count).to eq 1
     end
   end
 
