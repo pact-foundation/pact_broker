@@ -38,7 +38,6 @@ describe 'using pact publications (migrate 31-32)', no_db_clean: :true do
 
   let(:do_migration) do
     PactBroker::Database.migrate(34)
-    database.schema(:all_pacts, reload: true)
     database.schema(:latest_pact_publication_revision_numbers, reload: true)
   end
 
@@ -49,10 +48,10 @@ describe 'using pact publications (migrate 31-32)', no_db_clean: :true do
     end
   end
 
-  describe "all_pacts" do
+  describe "latest_pact_publications_by_consumer_versions" do
     it "has a row for every pact" do
       do_migration
-      expect(database[:all_pacts].count).to eq 3
+      expect(database[:latest_pact_publications_by_consumer_versions].count).to eq 3
     end
   end
 
@@ -90,11 +89,11 @@ describe 'using pact publications (migrate 31-32)', no_db_clean: :true do
     end
   end
 
-  describe "latest_pacts" do
+  describe "latest_pact_publications" do
     it "only contains the latest revision of the pact for the latest consumer version" do
       do_migration
-      expect(database[:latest_pacts].count).to eq 2
-      expect(database[:latest_pacts].where(provider_id: provider_1[:id], consumer_id: consumer_1[:id]).count).to eq 1
+      expect(database[:latest_pact_publications].count).to eq 2
+      expect(database[:latest_pact_publications].where(provider_id: provider_1[:id], consumer_id: consumer_1[:id]).count).to eq 1
     end
   end
 

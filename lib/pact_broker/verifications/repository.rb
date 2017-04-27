@@ -22,7 +22,7 @@ module PactBroker
 
       def find_latest_verifications_for_consumer_version consumer_name, consumer_version_number
         LatestVerifications
-          .join(PactBroker::Pacts::AllPacts, pact_version_id: :pact_version_id)
+          .join(PactBroker::Pacts::LatestPactPublicationsByConsumerVersion, pact_version_id: :pact_version_id)
           .where(name_like(:consumer_name, consumer_name))
           .where(consumer_version_number: consumer_version_number)
           .order(:provider_name)

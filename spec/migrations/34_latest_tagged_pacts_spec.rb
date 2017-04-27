@@ -67,35 +67,35 @@ describe 'using pact publications (migrate 31-32)', no_db_clean: :true do
     end
   end
 
-  describe "latest_tagged_pacts" do
+  describe "latest_tagged_pact_publications" do
     it "only contains the latest revision of the pact for the latest consumer version with each tag" do
-      expect(database[:latest_tagged_pacts].where(
+      expect(database[:latest_tagged_pact_publications].where(
         provider_name: 'Provider 1', consumer_name: 'Consumer 1',
         consumer_version_number: '4.5.6', revision_number: 2, tag_name: 'prod'
         ).count
       ).to eq 1
 
-      expect(database[:latest_tagged_pacts].where(
+      expect(database[:latest_tagged_pact_publications].where(
         provider_name: 'Provider 1', consumer_name: 'Consumer 1',
         consumer_version_number: '4.5.6', revision_number: 2, tag_name: 'master'
         ).count
       ).to eq 1
 
-      expect(database[:latest_tagged_pacts].where(
+      expect(database[:latest_tagged_pact_publications].where(
         provider_name: 'Provider 2', consumer_name: 'Consumer 2',
         consumer_version_number: '7.8.9', revision_number: 1,  tag_name: 'prod'
         ).count
       ).to eq 1
 
-      expect(database[:latest_tagged_pacts].count).to eq 3
+      expect(database[:latest_tagged_pact_publications].count).to eq 3
     end
 
     it "has a created_at column" do
-      expect(database[:latest_tagged_pacts].order(:id).first).to have_key(:created_at)
+      expect(database[:latest_tagged_pact_publications].order(:id).first).to have_key(:created_at)
     end
 
     it "doesn't have an updated_at column" do
-      expect(database[:latest_tagged_pacts].order(:id).first).to_not have_key(:updated_at)
+      expect(database[:latest_tagged_pact_publications].order(:id).first).to_not have_key(:updated_at)
     end
   end
 
