@@ -12,7 +12,7 @@ Gem::Specification.new do |gem|
   gem.summary       = %q{See description}
   gem.homepage      = "https://github.com/bethesque/pact_broker"
 
-  gem.required_ruby_version = '>= 2.0'
+  gem.required_ruby_version = '>= 2.2.0'
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
@@ -21,8 +21,8 @@ Gem::Specification.new do |gem|
   gem.license       = 'MIT'
 
   #gem.add_runtime_dependency 'pact'
-  gem.add_runtime_dependency 'httparty'
-  gem.add_runtime_dependency 'json'
+  gem.add_runtime_dependency 'httparty', '~> 0.14'
+  gem.add_runtime_dependency 'json', '> 1.8', '< 3.0'
   gem.add_runtime_dependency 'roar', '~> 1.1'
   gem.add_runtime_dependency 'reform', '~> 2.2.0'
   gem.add_runtime_dependency 'dry-validation', '~> 0.10.5'
@@ -30,12 +30,12 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'webmachine', '1.4.0'
   gem.add_runtime_dependency 'versionomy', '~> 0.4'
   gem.add_runtime_dependency 'semver2', '~> 3.4.2'
-  gem.add_runtime_dependency 'rack'
+  gem.add_runtime_dependency 'rack', '< 3.0'
   gem.add_runtime_dependency 'redcarpet', '~>3.1'
   gem.add_runtime_dependency 'pact', '~>1.4'
   gem.add_runtime_dependency 'pact-support', '~>0.4', '>=0.4.2'
   gem.add_runtime_dependency 'padrino-core', '~>0.12.4'
-  gem.add_runtime_dependency 'haml'
+  gem.add_runtime_dependency 'haml', '~>4.0'
 
   gem.add_development_dependency 'sqlite3'
   gem.add_development_dependency 'pry'

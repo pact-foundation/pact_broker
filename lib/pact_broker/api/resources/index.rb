@@ -24,6 +24,11 @@ module PactBroker
                 title: 'Index',
                 templated: false
               },
+              'pb:publish-pact' => {
+                href: base_url + '/pacts/provider/{provider}/consumer/{consumer}/version/{consumerApplicationVersion}',
+                title: 'Publish a pact',
+                templated: true
+              },
               'pb:latest-pact-versions' =>
               {
                 href: base_url + '/pacts/latest',
