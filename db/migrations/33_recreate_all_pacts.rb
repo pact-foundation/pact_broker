@@ -1,5 +1,6 @@
 Sequel.migration do
   up do
+    # The denormalised pact publication details for each publication
     create_or_replace_view(:all_pact_publications,
       Sequel::Model.db[:pact_publications].select(:pact_publications__id,
       :c__id___consumer_id, :c__name___consumer_name,
@@ -19,14 +20,33 @@ Sequel.migration do
       group by provider_id, consumer_id, consumer_version_order"
     )
 
-    create_or_replace_view(:all_pacts,
-      "select apr.*
-      from all_pact_publications apr
+    # Latest pact_publication details for each consumer version
+    create_or_replace_view(:latest_pact_publications_by_consumer_versions,
+      "select app.*
+      from all_pact_publications app
       inner join latest_pact_publication_revision_numbers lr
-      on apr.consumer_id = lr.consumer_id
-        and apr.provider_id = lr.provider_id
-        and apr.consumer_version_order = lr.consumer_version_order
-        and apr.revision_number = lr.latest_revision_number"
+      on app.consumer_id = lr.consumer_id
+        and app.provider_id = lr.provider_id
+        and app.consumer_version_order = lr.consumer_version_order
+        and app.revision_number = lr.latest_revision_number"
         )
+
+
+    create_or_replace_view(:latest_pact_consumer_version_orders,
+      "select provider_id, consumer_id, max(consumer_version_order) as latest_consumer_version_order
+      from all_pact_publications
+      group by provider_id, consumer_id"
+    )
+
+    # Latest pact publications by consumer/provider
+    create_or_replace_view(:latest_pact_publications,
+      "select lpcv.*
+      from latest_pact_publications_by_consumer_versions lpcv
+      inner join latest_pact_consumer_version_orders lp
+      on lpcv.consumer_id = lp.consumer_id
+           and lpcv.provider_id = lp.provider_id
+           and lpcv.consumer_version_order = latest_consumer_version_order"
+    )
+
   end
 end

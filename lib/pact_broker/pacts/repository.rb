@@ -4,9 +4,9 @@ require 'ostruct'
 require 'pact_broker/logging'
 require 'pact_broker/pacts/pact_publication'
 require 'pact_broker/pacts/all_pact_publications'
-require 'pact_broker/pacts/all_pacts'
-require 'pact_broker/pacts/latest_pacts'
-require 'pact_broker/pacts/latest_tagged_pacts'
+require 'pact_broker/pacts/latest_pact_publications_by_consumer_version'
+require 'pact_broker/pacts/latest_pact_publications'
+require 'pact_broker/pacts/latest_tagged_pact_publications'
 require 'pact/shared/json_differ'
 require 'pact_broker/domain'
 
@@ -49,7 +49,7 @@ module PactBroker
       end
 
       def find_all_pact_versions_between consumer_name, options
-        AllPacts
+        LatestPactPublicationsByConsumerVersion
           .eager(:tags)
           .consumer(consumer_name)
           .provider(options.fetch(:and))
@@ -59,25 +59,25 @@ module PactBroker
 
       def find_latest_pact_versions_for_provider provider_name, tag = nil
         if tag
-          LatestTaggedPacts.provider(provider_name).where(tag_name: tag).collect(&:to_domain)
+          LatestTaggedPactPublications.provider(provider_name).where(tag_name: tag).collect(&:to_domain)
         else
-          LatestPacts.provider(provider_name).collect(&:to_domain)
+          LatestPactPublications.provider(provider_name).collect(&:to_domain)
         end
       end
 
       def find_by_version_and_provider version_id, provider_id
-        AllPacts
+        LatestPactPublicationsByConsumerVersion
           .eager(:tags)
           .where(consumer_version_id: version_id, provider_id: provider_id)
           .limit(1).collect(&:to_domain_with_content)[0]
       end
 
       def find_latest_pacts
-        LatestPacts.collect(&:to_domain_without_tags)
+        LatestPactPublications.collect(&:to_domain_without_tags)
       end
 
       def find_latest_pact(consumer_name, provider_name, tag = nil)
-        query = AllPacts
+        query = LatestPactPublicationsByConsumerVersion
           .consumer(consumer_name)
           .provider(provider_name)
         query = query.tag(tag) unless tag.nil?
@@ -85,7 +85,7 @@ module PactBroker
       end
 
       def find_pact consumer_name, consumer_version, provider_name
-        AllPacts
+        LatestPactPublicationsByConsumerVersion
           .eager(:tags)
           .consumer(consumer_name)
           .provider(provider_name)
@@ -94,7 +94,7 @@ module PactBroker
       end
 
       def find_previous_pact pact
-        AllPacts
+        LatestPactPublicationsByConsumerVersion
           .eager(:tags)
           .consumer(pact.consumer.name)
           .provider(pact.provider.name)
@@ -103,7 +103,7 @@ module PactBroker
       end
 
       def find_next_pact pact
-        AllPacts
+        LatestPactPublicationsByConsumerVersion
           .eager(:tags)
           .consumer(pact.consumer.name)
           .provider(pact.provider.name)
@@ -124,13 +124,13 @@ module PactBroker
 
       def find_previous_distinct_pact_by_sha pact
         current_pact_content_sha =
-          AllPacts.select(:pact_version_sha)
+          LatestPactPublicationsByConsumerVersion.select(:pact_version_sha)
           .consumer(pact.consumer.name)
           .provider(pact.provider.name)
           .consumer_version_number(pact.consumer_version_number)
           .limit(1)
 
-        AllPacts
+        LatestPactPublicationsByConsumerVersion
           .eager(:tags)
           .consumer(pact.consumer.name)
           .provider(pact.provider.name)

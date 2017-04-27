@@ -37,49 +37,47 @@ describe 'migrate to pact versions (migrate 22-31)', no_db_clean: :true do
 
 
   let(:do_migration) do
-    schema1 = database.schema(:all_pacts, reload: false)
     PactBroker::Database.migrate(34)
-    schema2 = database.schema(:all_pacts, reload: true)
-    schema2 = new_connection.schema(:all_pacts, reload: true)
-    expect(schema1.map(&:first)).to_not eq schema2.map(&:first)
   end
 
   it "keeps the same number of pacts" do
     do_migration
-    expect(new_connection[:all_pacts].count).to eq 2
+    expect(database[:latest_pact_publications_by_consumer_versions].count).to eq 2
   end
 
   it "uses the old updated date for the new creation date" do
     do_migration
-    expect(new_connection[:all_pacts].order(:id).first[:created_at]).to eq pact_updated_at
+    # expect(new_connection[:latest_pact_publications_by_consumer_versions].order(:id).first[:created_at]).to eq pact_updated_at
+    expect(database[:latest_pact_publications_by_consumer_versions].order(:id).first[:created_at]).to eq pact_updated_at
   end
 
   it "sets each revision number to 1" do
     do_migration
-    expect(new_connection[:all_pacts].order(:id).first[:revision_number]).to eq 1
-    expect(new_connection[:all_pacts].order(:id).last[:revision_number]).to eq 1
+    expect(database[:latest_pact_publications_by_consumer_versions].order(:id).first[:revision_number]).to eq 1
+    expect(database[:latest_pact_publications_by_consumer_versions].order(:id).last[:revision_number]).to eq 1
   end
 
   it "migrates the values correctly for the first pact" do
-    old_all_pact = new_connection[:all_pacts].order(:id).first
+
+    old_all_pact = database[:all_pacts].order(:id).first
     old_all_pact.delete(:updated_at)
     old_all_pact.delete(:created_at)
     old_all_pact[:pact_version_sha] = old_all_pact.delete(:pact_version_content_sha)
     do_migration
-    new_connection[:all_pacts]
-    new_all_pact = new_connection[:all_pacts].order(:id).first
+    database[:latest_pact_publications_by_consumer_versions]
+    new_all_pact = database[:latest_pact_publications_by_consumer_versions].order(:id).first
     new_all_pact.delete(:created_at)
     new_all_pact.delete(:revision_number)
     expect(new_all_pact).to eq old_all_pact
   end
 
   it "migrates the values correctly for the second pact" do
-    old_all_pact = new_connection[:all_pacts].order(:id).last
+    old_all_pact = database[:all_pacts].order(:id).last
     old_all_pact.delete(:updated_at)
     old_all_pact.delete(:created_at)
     old_all_pact[:pact_version_sha] = old_all_pact.delete(:pact_version_content_sha)
     do_migration
-    new_all_pact = new_connection[:all_pacts].order(:id).last
+    new_all_pact = database[:latest_pact_publications_by_consumer_versions].order(:id).last
     new_all_pact.delete(:created_at)
     new_all_pact.delete(:revision_number)
     expect(new_all_pact).to eq old_all_pact

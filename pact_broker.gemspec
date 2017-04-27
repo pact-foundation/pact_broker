@@ -36,7 +36,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'padrino-core', '~>0.12.4'
   gem.add_runtime_dependency 'haml'
 
-  gem.add_development_dependency 'sqlite3'
+  gem.add_development_dependency 'sqlite3', '~>1.3'
   gem.add_development_dependency 'pry'
   gem.add_development_dependency 'rake', '~>10.0'
   gem.add_development_dependency 'fakefs', '~>0.4'
