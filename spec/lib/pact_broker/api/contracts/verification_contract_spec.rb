@@ -64,17 +64,24 @@ module PactBroker
             its(:errors) { is_expected.to be_empty }
           end
 
-          context "when the providerVersion is not present" do
+          context "when the providerApplicationVersion is not present" do
             let(:params) { modify valid_params, without: :providerApplicationVersion }
             it "has an error" do
               expect(subject.errors[:provider_version]).to include(match("can't be blank"))
             end
           end
 
-          context "when the providerVersion is blank" do
+          context "when the providerApplicationVersion is blank" do
             let(:provider_version) { " " }
             it "has an error" do
               expect(subject.errors[:provider_version]).to include(match("can't be blank"))
+            end
+          end
+
+          context "when the providerApplicationVersion is not a semantic version" do
+            let(:provider_version) { "#" }
+            it "has an error" do
+              expect(subject.errors[:provider_version]).to include(match("#.*cannot be parsed"))
             end
           end
         end

@@ -24,10 +24,15 @@ module PactBroker
             rescue URI::InvalidURIError
               nil
             end
+
+            def valid_version_number?(value)
+              parsed_version_number = PactBroker.configuration.version_parser.call(value)
+              !!parsed_version_number
+            end
           end
 
           required(:success).filled(:bool?)
-          required(:provider_version).filled(:not_blank?)
+          required(:provider_version) { not_blank? & valid_version_number? }
           optional(:build_url).maybe(:valid_url?)
         end
       end

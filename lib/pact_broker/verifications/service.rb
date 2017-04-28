@@ -24,6 +24,7 @@ module PactBroker
 
       def errors params
         contract = PactBroker::Api::Contracts::VerificationContract.new(PactBroker::Domain::Verification.new)
+        contract.validate(params)
         contract.errors
       end
 
