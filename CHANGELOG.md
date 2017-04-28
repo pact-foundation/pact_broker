@@ -2,6 +2,21 @@ Do this to generate your change history
 
     $ git log --pretty=format:'  * %h - %s (%an, %ad)' vX.Y.Z..HEAD
 
+#### 2.0.0.beta.1 (2017-04-28)
+
+* 049bc5c - Added tooltip to verification date to show provider version. (Beth Skurrie, Fri Apr 28 10:05:13 2017 +1000)
+* 4287c99 - Add tooltip text to last verified date when pact has changed since last verification. (Beth Skurrie, Fri Apr 28 09:02:59 2017 +1000)
+* 7351ec8 - Add restrictions for all gem versions in gemspec. Fix formatting in haml file. (Beth Skurrie, Thu Apr 27 19:55:04 2017 +1000)
+* a836b56 - Add last verified date for each pact to landing page of application UI. (Beth Skurrie, Tue Apr 25 17:03:06 2017 +1000)
+* c7589c9 - Use latest ruby-2.3.4 for development. (Tan Le, Mon Apr 24 23:05:27 2017 +1000)
+* 46b87f9 - Use latest ruby patches for CI. (Tan Le, Mon Apr 24 23:00:12 2017 +1000)
+* 7c17c62 - Required at least ruby-2.2.0 as we move along ruby release schedule. (Tan Le, Mon Apr 24 22:54:52 2017 +1000)
+* 66a2f3b - Added pb:publish-verification HAL link to pact resource. (Beth Skurrie, Fri Apr 21 16:09:55 2017 +1000)
+* f2110ac - Replacing versionomy with semver2 for parsing version numbers according to semver 2.0.0 (http://semver.org) (Danilo Sato, Thu Apr 20 11:48:49 2017 -0400)
+* 1f6045a - Added DEVELOPER_DOCUMENTATION.md with information about the tables and views. (Beth Skurrie, Tue Apr 18 11:35:39 2017 +1000)
+* 77eaf7b - Added pb:latest-verifications link to version resource. (Beth Skurrie, Tue Apr 11 16:25:45 2017 +1000)
+* aaf44d9 - Added endpoint to view the latest verifications for a given consumer version. (Beth Skurrie, Tue Apr 11 11:16:03 2017 +1000)
+
 #### 1.17.0 (2017-04-26)
 * 5cbb9da - Added pb:publish-pact to HAL index (Beth Skurrie, Wed Apr 26 08:39:15 2017 +1000)
 * 36842d1 - Set database connection timezone to UTC in example config.ru (Beth Skurrie, Tue Apr 25 16:18:58 2017 +1000)
