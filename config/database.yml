@@ -6,6 +6,13 @@ test:
   <<: *default
   database: tmp/pact_broker_database_test.sqlite3
 
+# test:
+#   adapter: "postgres"
+#   database: "pact_broker"
+#   username: 'pact_broker'
+#   password: 'pact_broker'
+#   encoding: 'utf8'
+
 development:
   <<: *default
 

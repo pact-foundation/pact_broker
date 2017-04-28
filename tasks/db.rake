@@ -52,6 +52,10 @@ namespace :db do
     PactBroker::Database.ensure_database_dir_exists
   end
 
+  task :create => 'db:env' do
+    PactBroker::Database.create
+  end
+
   # Private
   task :set_test_env do
     ENV['RACK_ENV'] = 'test'

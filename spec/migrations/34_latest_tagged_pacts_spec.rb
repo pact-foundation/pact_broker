@@ -7,16 +7,10 @@ describe 'using pact publications (migrate 31-32)', no_db_clean: :true do
     database[table_name].order(id_column_name).last
   end
 
-  def new_connection
-    DB.connection_for_env 'test'
-  end
-
-  let(:database) { new_connection }
+  let(:database) { DB.connection_for_env 'test' }
 
   before do
-    PactBroker::Database.delete_database_file
-    PactBroker::Database.ensure_database_dir_exists
-    database = new_connection
+    PactBroker::Database.drop_objects
     PactBroker::Database.migrate(34)
   end
 
@@ -100,9 +94,7 @@ describe 'using pact publications (migrate 31-32)', no_db_clean: :true do
   end
 
   after do
-    PactBroker::Database.delete_database_file
-    PactBroker::Database.ensure_database_dir_exists
-    database = new_connection
     PactBroker::Database.migrate
+    PactBroker::Database.truncate
   end
 end

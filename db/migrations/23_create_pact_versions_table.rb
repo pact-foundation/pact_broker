@@ -2,7 +2,7 @@ require_relative 'migration_helper'
 
 Sequel.migration do
   up do
-    create_table(:pact_contents, charset: 'utf8') do
+    create_table(:pact_versions, charset: 'utf8') do
       primary_key :id
       foreign_key :consumer_id, :pacticipants
       foreign_key :provider_id, :pacticipants
@@ -14,6 +14,6 @@ Sequel.migration do
   end
 
   down do
-    drop_table(:pact_contents)
+
   end
 end

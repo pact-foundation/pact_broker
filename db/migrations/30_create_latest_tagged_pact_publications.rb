@@ -8,7 +8,7 @@ Sequel.migration do
       group by provider_id, consumer_id, t.name"
     )
 
-    create_or_replace_view(:latest_tagged_pact_publications,
+    create_view(:latest_tagged_pact_publications,
       "select lp.*, o.tag_name
       from latest_pact_publications_by_consumer_versions lp
       inner join latest_tagged_pact_consumer_version_orders o
@@ -16,8 +16,5 @@ Sequel.migration do
         and lp.provider_id = o.provider_id
         and lp.consumer_version_order = latest_consumer_version_order"
     )
-
-    drop_view(:all_pacts)
-    drop_view(:latest_pacts)
   end
 end

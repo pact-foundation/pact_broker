@@ -10,7 +10,6 @@ module PactBroker
             success: true, number: 1,
             provider_version: '4.5.6',
             build_url: 'http://some-build',
-            latest_pact_publication: pact,
             provider_name: 'provider',
             consumer_name: 'consumer',
             pact_version: pact_version,

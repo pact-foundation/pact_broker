@@ -11,17 +11,10 @@ describe 'migrate to pact versions (migrate 22-31)', no_db_clean: :true do
     database[table_name].delete rescue puts "Error cleaning #{table_name} #{$!}"
   end
 
-  def new_connection
-    Sequel::DATABASES.clear
-    DB.connection_for_env 'test'
-  end
-
-  let(:database) { new_connection }
+  let(:database) { DB.connection_for_env 'test' }
 
   before do
-    PactBroker::Database.delete_database_file
-    PactBroker::Database.ensure_database_dir_exists
-    database = new_connection
+    PactBroker::Database.drop_objects
     PactBroker::Database.migrate(22)
   end
 
@@ -47,7 +40,6 @@ describe 'migrate to pact versions (migrate 22-31)', no_db_clean: :true do
 
   it "uses the old updated date for the new creation date" do
     do_migration
-    # expect(new_connection[:latest_pact_publications_by_consumer_versions].order(:id).first[:created_at]).to eq pact_updated_at
     expect(database[:latest_pact_publications_by_consumer_versions].order(:id).first[:created_at]).to eq pact_updated_at
   end
 
@@ -87,9 +79,7 @@ describe 'migrate to pact versions (migrate 22-31)', no_db_clean: :true do
   end
 
   after do
-    PactBroker::Database.delete_database_file
-    PactBroker::Database.ensure_database_dir_exists
-    database = new_connection
     PactBroker::Database.migrate
+    PactBroker::Database.truncate
   end
 end
