@@ -29,7 +29,7 @@ module PactBroker
       end
 
       def pact_version_url pact, base_url
-        "#{pactigration_base_url(base_url, path)}/pact-version-sha/#{pact.sha}"
+        "#{pactigration_base_url(base_url, path)}/pact-version/#{pact.sha}"
       end
 
       def pact_url_from_params base_url, params
@@ -67,7 +67,7 @@ module PactBroker
         [ base_url, 'pacts',
           'provider', url_encode(params[:provider_name]),
           'consumer', url_encode(params[:consumer_name]),
-          'pact-version-sha', params[:sha],
+          'pact-version', params[:sha],
           'verifications', number
         ].join('/')
       end
@@ -76,7 +76,7 @@ module PactBroker
         [ base_url, 'pacts',
           'provider', url_encode(verification.provider_name),
           'consumer', url_encode(verification.consumer_name),
-          'pact-version-sha', verification.pact_version.sha,
+          'pact-version', verification.pact_version.sha,
           'verifications', verification.number
         ].join('/')
       end
@@ -86,7 +86,7 @@ module PactBroker
       end
 
       def verification_publication_url pact, base_url
-        "#{pactigration_base_url(base_url, pact)}/pact-version-sha/#{pact.pact_version_sha}/verifications"
+        "#{pactigration_base_url(base_url, pact)}/pact-version/#{pact.pact_version_sha}/verifications"
       end
 
       def tag_url base_url, tag
