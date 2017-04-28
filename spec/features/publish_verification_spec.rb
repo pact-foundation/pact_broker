@@ -3,7 +3,7 @@ require 'pact_broker/domain/verification'
 describe "Recording a pact verification" do
 
   let(:path) { "/pacts/provider/Provider/consumer/Consumer/pact-version/#{pact.pact_version_sha}/verifications" }
-  let(:verification_content) { load_fixture('record_verification.json') }
+  let(:verification_content) { load_fixture('verification.json') }
   let(:parsed_response_body) { JSON.parse(subject.body) }
 
   subject { post path, verification_content, {'CONTENT_TYPE' => 'application/json' }; last_response  }

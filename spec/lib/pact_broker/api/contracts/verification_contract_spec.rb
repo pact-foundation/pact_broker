@@ -9,7 +9,7 @@ module PactBroker
 
         subject { VerificationContract.new(verification) }
         let(:verification) { PactBroker::Domain::Verification.new }
-        let(:valid_params) { {success: success, providerVersion: provider_version, buildUrl: build_url} }
+        let(:valid_params) { {success: success, providerApplicationVersion: provider_version, buildUrl: build_url} }
         let(:params) { valid_params }
 
 
@@ -65,7 +65,7 @@ module PactBroker
           end
 
           context "when the providerVersion is not present" do
-            let(:params) { modify valid_params, without: :providerVersion }
+            let(:params) { modify valid_params, without: :providerApplicationVersion }
             it "has an error" do
               expect(subject.errors[:provider_version]).to include(match("can't be blank"))
             end

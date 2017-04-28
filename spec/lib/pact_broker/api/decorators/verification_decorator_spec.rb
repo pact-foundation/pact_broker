@@ -41,7 +41,7 @@ module PactBroker
         end
 
         it "includes the provider version" do
-          expect(subject[:providerVersion]).to eq "4.5.6"
+          expect(subject[:providerApplicationVersion]).to eq "4.5.6"
         end
 
         it "includes the build URL" do

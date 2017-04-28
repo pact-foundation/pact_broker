@@ -22,7 +22,7 @@ module PactBroker
       end
 
       describe "#create" do
-        let(:params) { {'success' => true, 'providerVersion' => '4.5.6'} }
+        let(:params) { {'success' => true, 'providerApplicationVersion' => '4.5.6'} }
         let(:pact) { ProviderStateBuilder.new.create_pact_with_hierarchy }
         let(:create_verification) { subject.create 3, params, pact }
 

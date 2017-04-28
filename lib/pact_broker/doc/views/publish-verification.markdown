@@ -7,7 +7,7 @@ Use the `pb:publish-verification` link in the pact resource to publish the resul
     POST http://broker/pacts/provider/Foo/consumer/Bar/pact-version/1234
     {
       success: true,
-      providerVersion: "4.5.6",
+      providerApplicationVersion: "4.5.6",
       buildUrl: "http://my-ci.org/build/3456"
     }
 

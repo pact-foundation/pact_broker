@@ -8,7 +8,7 @@ module PactBroker
       class VerificationContract < Reform::Form
 
         property :success
-        property :provider_version, as: :providerVersion
+        property :provider_version, as: :providerApplicationVersion
         property :build_url, as: :buildUrl
 
         validation do
