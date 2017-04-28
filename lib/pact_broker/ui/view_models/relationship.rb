@@ -59,6 +59,17 @@ module PactBroker
           verification_status == 'warning'
         end
 
+        def verification_tooltip
+          return nil unless @relationship.ever_verified?
+          if warning?
+            "Pact has changed since last successful verification by #{provider_name} (v#{@relationship.latest_verification_provider_version})"
+          elsif @relationship.latest_verification_successful?
+            "Successfully verified by #{provider_name} (v#{@relationship.latest_verification_provider_version})"
+          elsif !@relationship.latest_verification_successful?
+            "Verification by #{provider_name} (v#{@relationship.latest_verification_provider_version}) failed"
+          end
+        end
+
         def <=> other
           comp = consumer_name.downcase <=> other.consumer_name.downcase
           return comp unless comp == 0

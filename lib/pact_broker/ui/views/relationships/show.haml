@@ -45,9 +45,8 @@
             %a{:href => relationship.provider_group_url}
               = relationship.provider_name
           %td
-          - title = relationship.warning? ? "Pact has changed since last successful verification" : nil
           %td{class: relationship.verification_status}
-            %div{title: title, "data-toggle": "tooltip", "data-placement": "left"}
+            %div{title: relationship.verification_tooltip, "data-toggle": "tooltip", "data-placement": "left"}
               = relationship.last_verified_date
               - if relationship.warning?
                 %span.glyphicon.glyphicon-warning-sign{'aria-hidden':true}

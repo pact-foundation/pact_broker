@@ -25,7 +25,9 @@ module PactBroker
             instance_double("PactBroker::Domain::Relationship",
               ever_verified?: ever_verified,
               pact_changed_since_last_verification?: pact_changed,
-              latest_verification_successful?: success)
+              latest_verification_successful?: success,
+              provider_name: "Foo",
+              latest_verification_provider_version: "4.5.6")
           end
           let(:ever_verified) { true }
           let(:pact_changed) { false }
@@ -37,24 +39,28 @@ module PactBroker
             let(:ever_verified) { false }
             its(:verification_status) { is_expected.to eq "" }
             its(:warning?) { is_expected.to be false }
+            its(:verification_tooltip) { is_expected.to eq nil }
           end
 
           context "when the pact has changed since the last successful verification" do
             let(:pact_changed) { true }
             its(:verification_status) { is_expected.to eq "warning" }
             its(:warning?) { is_expected.to be true }
+            its(:verification_tooltip) { is_expected.to eq "Pact has changed since last successful verification by Foo (v4.5.6)" }
           end
 
           context "when the pact has not changed since the last successful verification" do
             let(:pact_changed) { false }
             its(:verification_status) { is_expected.to eq "success" }
             its(:warning?) { is_expected.to be false }
+            its(:verification_tooltip) { is_expected.to eq "Successfully verified by Foo (v4.5.6)" }
           end
 
           context "when the pact verification failed" do
             let(:success) { false }
             its(:verification_status) { is_expected.to eq "danger" }
             its(:warning?) { is_expected.to be false }
+            its(:verification_tooltip) { is_expected.to eq "Verification by Foo (v4.5.6) failed" }
           end
         end
 

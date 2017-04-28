@@ -53,6 +53,10 @@ module PactBroker
         latest_verification.pact_version_sha != latest_pact.pact_version_sha
       end
 
+      def latest_verification_provider_version
+        latest_verification.provider_version
+      end
+
       def pacticipants
         [consumer, provider]
       end
