@@ -2,6 +2,9 @@ Do this to generate your change history
 
     $ git log --pretty=format:'  * %h - %s (%an, %ad)' vX.Y.Z..HEAD
 
+#### 2.0.0.beta.3 (2017-04-29)
+* 7059a7e - Insert pact_publications without a specified ID so that the inbuilt sequence is kept in sync. (Beth Skurrie, Sat Apr 29 15:16:12 2017 +1000)
+
 #### 2.0.0.beta.2 (2017-04-29)
 * 1dfef17 - Cleaned up migrations and ensured migrations run on postgresql. (Beth Skurrie, Fri Apr 28 21:24:20 2017 +1000)
 
