@@ -78,6 +78,14 @@ describe 'migrate to pact versions (migrate 22-31)', no_db_clean: :true do
     expect(new_all_pact).to eq old_all_pact
   end
 
+  it "allows a new pact to be inserted with no duplicate ID error" do
+    do_migration
+
+    PactBroker::Pacts::Service.create_or_update_pact(
+      consumer_id: consumer[:id], provider_id: provider[:id], consumer_version_number: '1.2.3', json_content: load_fixture('a_consumer-a_provider.json')
+    )
+  end
+
   after do
     PactBroker::Database.migrate
     PactBroker::Database.truncate
