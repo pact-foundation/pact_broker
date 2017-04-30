@@ -37,6 +37,10 @@ module PactBroker
           where(pact_version_sha: sha)
         end
 
+        def verification_number number
+          where("`verifications`.`number` = ? ", number)
+        end
+
         def latest
           reverse_order(:consumer_version_order, :number).limit(1)
         end

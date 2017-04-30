@@ -30,6 +30,42 @@ module PactBroker
         end
       end
 
+      describe "#find" do
+        let!(:pact) do
+          builder = ProviderStateBuilder.new
+          pact = builder
+            .create_provider("Provider1")
+            .create_consumer("Consumer1")
+            .create_consumer_version("1.0.0")
+            .create_pact
+            .and_return(:pact)
+
+          builder
+            .create_verification(number: 1)
+            .create_verification(number: 2, provider_version: '3.7.4')
+            .create_consumer_version("1.2.3")
+            .create_pact
+            .create_verification(number: 1)
+
+            ProviderStateBuilder.new
+            .create_provider("Provider3")
+            .create_consumer("Consumer2")
+            .create_consumer_version("1.2.3")
+            .create_pact
+            .create_verification(number: 1)
+          pact
+        end
+
+        let(:verification) { Repository.new.find "Consumer1", "Provider1", pact.pact_version_sha, 2}
+
+        it "finds the latest verifications for the given consumer version" do
+          expect(verification.provider_version).to eq "3.7.4"
+          expect(verification.consumer_name).to eq "Consumer1"
+          expect(verification.provider_name).to eq "Provider1"
+          expect(verification.pact_version_sha).to eq pact.pact_version_sha
+        end
+      end
+
       describe "#find_latest_verifications_for_consumer_version" do
         before do
           ProviderStateBuilder.new

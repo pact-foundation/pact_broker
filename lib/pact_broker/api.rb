@@ -24,6 +24,7 @@ require 'pact_broker/api/resources/pact_content_diff'
 require 'pact_broker/api/resources/previous_distinct_pact_version'
 require 'pact_broker/api/resources/latest_provider_pacts'
 require 'pact_broker/api/resources/verifications'
+require 'pact_broker/api/resources/verification'
 require 'pact_broker/api/resources/latest_verifications_for_consumer_version'
 
 require 'webmachine/adapters/rack_mapped'
@@ -45,6 +46,7 @@ module PactBroker
 
         # Verifications
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'pact-version', :pact_version_sha, 'verifications'], Api::Resources::Verifications
+        add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'pact-version', :pact_version_sha, 'verifications', :verification_number], Api::Resources::Verification
         add ['pacts', 'consumer', :consumer_name, 'versions', :consumer_version_number, 'verifications', 'latest'], Api::Resources::LatestVerificationsForConsumerVersion
 
         # Latest pacts
