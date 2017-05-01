@@ -82,7 +82,7 @@ module PactBroker
       end
 
       def latest_verifications_for_consumer_version_url version, base_url
-        "#{base_url}/pacts/consumer/#{url_encode(version.pacticipant.name)}/versions/#{version.number}/verifications/latest"
+        "#{base_url}/verifications/consumer/#{url_encode(version.pacticipant.name)}/version/#{version.number}/latest"
       end
 
       def verification_publication_url pact, base_url

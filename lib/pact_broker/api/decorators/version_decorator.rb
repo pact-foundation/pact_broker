@@ -18,7 +18,7 @@ module PactBroker
           }
         end
 
-        link :'pb:latest-verifications' do | options |
+        link :'pb:latest-verifications-where-pacticipant-is-consumer' do | options |
           {
             title: "Latest verifications for consumer version",
             href: latest_verifications_for_consumer_version_url(represented, options.fetch(:base_url))

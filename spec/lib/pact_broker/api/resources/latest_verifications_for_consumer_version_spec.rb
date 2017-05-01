@@ -7,7 +7,7 @@ module PactBroker
 
       describe LatestVerificationsForConsumerVersion do
         describe "GET" do
-          let(:url) { '/pacts/consumer/Consumer/versions/1.2.3/verifications/latest' }
+          let(:url) { '/verifications/consumer/Consumer/version/1.2.3/latest' }
           let(:response_body) { JSON.parse(subject.body, {symbolize_names: true}) }
           let(:version) { double(:version) }
 

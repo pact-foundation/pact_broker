@@ -44,7 +44,7 @@ module PactBroker
         end
 
         it "includes a link to the latest verifications for the pacts for this version" do
-          expect(subject[:_links][:'pb:latest-verifications'][:href]).to match(%r{http://.*/verifications/latest})
+          expect(subject[:_links][:'pb:latest-verifications-where-pacticipant-is-consumer'][:href]).to match(%r{http://.*/verifications/.*/latest})
         end
 
       end

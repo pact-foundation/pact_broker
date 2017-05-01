@@ -1,15 +1,12 @@
 require 'sequel'
 require 'pact_broker/domain/verification'
+require 'pact_broker/verifications/latest_verifications_by_consumer_version'
 
 module PactBroker
   module Verifications
     class Repository
 
       include PactBroker::Repositories::Helpers
-
-      class LatestVerifications < PactBroker::Domain::Verification
-        set_dataset(:latest_verifications)
-      end
 
       def create verification, pact
         verification.pact_version_id = pact_version_id_for(pact)
@@ -30,15 +27,17 @@ module PactBroker
       end
 
       def find_latest_verifications_for_consumer_version consumer_name, consumer_version_number
-        LatestVerifications
+        # Use LatestPactPublicationsByConsumerVersion not AllPactPublcations because we don't
+        # want verifications for shadowed revisions as it would be misleading.
+        LatestVerificationsByConsumerVersion
           .join(PactBroker::Pacts::LatestPactPublicationsByConsumerVersion, pact_version_id: :pact_version_id)
-          .where(name_like(:consumer_name, consumer_name))
-          .where(consumer_version_number: consumer_version_number)
+          .consumer(consumer_name)
+          .consumer_version_number(consumer_version_number)
           .order(:provider_name)
       end
 
       def find_latest_verification_for consumer_name, provider_name
-        query = LatestVerifications
+        query = LatestVerificationsByConsumerVersion
           .join(PactBroker::Pacts::AllPactPublications, pact_version_id: :pact_version_id)
           .consumer(consumer_name)
           .provider(provider_name)

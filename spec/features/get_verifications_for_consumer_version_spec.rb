@@ -2,7 +2,7 @@ require 'spec/support/provider_state_builder'
 
 describe "Get verifications for consumer version" do
 
-  let(:path) { "/pacts/consumer/Consumer/versions/1.2.3/verifications/latest" }
+  let(:path) { "/verifications/consumer/Consumer/version/1.2.3/latest" }
   let(:last_response_body) { JSON.parse(subject.body, symbolize_names: true) }
 
   subject { get path; last_response }

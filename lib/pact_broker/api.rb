@@ -47,7 +47,7 @@ module PactBroker
         # Verifications
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'pact-version', :pact_version_sha, 'verifications'], Api::Resources::Verifications
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'pact-version', :pact_version_sha, 'verifications', :verification_number], Api::Resources::Verification
-        add ['pacts', 'consumer', :consumer_name, 'versions', :consumer_version_number, 'verifications', 'latest'], Api::Resources::LatestVerificationsForConsumerVersion
+        add ['verifications', 'consumer', :consumer_name, 'version', :consumer_version_number,'latest'], Api::Resources::LatestVerificationsForConsumerVersion
 
         # Latest pacts
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'latest'], Api::Resources::LatestPact
