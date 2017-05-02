@@ -49,7 +49,7 @@ module PactBroker
         end
 
         it "includes a link to itself" do
-          expect(subject[:_links][:self][:href]).to match %r{http://example.org/.*/verifications/1}
+          expect(subject[:_links][:self][:href]).to match %r{http://example.org/.*/verification-results/1}
         end
 
         it "includes a link to its pact" do

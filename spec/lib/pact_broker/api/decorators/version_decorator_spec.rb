@@ -43,8 +43,8 @@ module PactBroker
           expect(subject[:_embedded][:tags].first[:name]).to eq "prod"
         end
 
-        it "includes a link to the latest verifications for the pacts for this version" do
-          expect(subject[:_links][:'pb:latest-verifications-where-pacticipant-is-consumer'][:href]).to match(%r{http://.*/verifications/.*/latest})
+        it "includes a link to the latest verification results for the pacts for this version" do
+          expect(subject[:_links][:'pb:latest-verification-results-where-pacticipant-is-consumer'][:href]).to match(%r{http://.*/verification-results/.*/latest})
         end
 
       end

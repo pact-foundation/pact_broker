@@ -11,7 +11,7 @@ module PactBroker
 
         link :self do | options |
           {
-            title: 'Verification',
+            title: 'Verification result',
             name: represented.number,
             href: verification_url(represented, options.fetch(:base_url), )
           }

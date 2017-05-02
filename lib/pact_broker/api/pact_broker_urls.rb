@@ -68,7 +68,7 @@ module PactBroker
           'provider', url_encode(params[:provider_name]),
           'consumer', url_encode(params[:consumer_name]),
           'pact-version', params[:sha],
-          'verifications', number
+          'verification-results', number
         ].join('/')
       end
 
@@ -77,16 +77,16 @@ module PactBroker
           'provider', url_encode(verification.provider_name),
           'consumer', url_encode(verification.consumer_name),
           'pact-version', verification.pact_version.sha,
-          'verifications', verification.number
+          'verification-results', verification.number
         ].join('/')
       end
 
       def latest_verifications_for_consumer_version_url version, base_url
-        "#{base_url}/verifications/consumer/#{url_encode(version.pacticipant.name)}/version/#{version.number}/latest"
+        "#{base_url}/verification-results/consumer/#{url_encode(version.pacticipant.name)}/version/#{version.number}/latest"
       end
 
       def verification_publication_url pact, base_url
-        "#{pactigration_base_url(base_url, pact)}/pact-version/#{pact.pact_version_sha}/verifications"
+        "#{pactigration_base_url(base_url, pact)}/pact-version/#{pact.pact_version_sha}/verification-results"
       end
 
       def tag_url base_url, tag

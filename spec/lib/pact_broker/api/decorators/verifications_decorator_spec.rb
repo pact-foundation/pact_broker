@@ -23,13 +23,13 @@ module PactBroker
 
         subject { JSON.parse VerificationsDecorator.new(verifications).to_json(user_options: options), symbolize_names: true }
 
-        it "includes a list of verifications" do
-          expect(subject[:_embedded][:verifications]).to be_instance_of(Array)
-          expect(subject[:_embedded][:verifications].size).to eq 1
+        it "includes a list of verification results" do
+          expect(subject[:_embedded][:'verification-results']).to be_instance_of(Array)
+          expect(subject[:_embedded][:'verification-results'].size).to eq 1
         end
 
         it "includes a title" do
-          expect(subject[:_links][:self][:title]).to eq "Latest verifications for consumer Foo version 1.2.3"
+          expect(subject[:_links][:self][:title]).to eq "Latest verification results for consumer Foo version 1.2.3"
         end
 
         it "includes a link to itself" do

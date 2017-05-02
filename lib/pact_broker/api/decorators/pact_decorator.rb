@@ -99,7 +99,7 @@ module PactBroker
           }
         end
 
-        link :'pb:publish-verification' do | options |
+        link :'pb:publish-verification-result' do | options |
           {
             title: "Publish verification",
             href: verification_publication_url(represented, options.fetch(:base_url))
