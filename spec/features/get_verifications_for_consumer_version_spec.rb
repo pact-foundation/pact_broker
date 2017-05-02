@@ -27,7 +27,7 @@ describe "Get verifications for consumer version" do
     end
 
     it "returns a list of verifications" do
-      expect(last_response_body[:_embedded][:verifications].size).to eq 2
+      expect(last_response_body[:_embedded][:'verification-results'].size).to eq 2
     end
   end
 end
