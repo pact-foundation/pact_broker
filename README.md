@@ -112,5 +112,5 @@ You can use the [Pact Broker Docker container][docker] or [Terraform on AWS][ter
 [pact]: https://github.com/realestate-com-au/pact
 [nerf]: https://github.com/bethesque/pact_broker/wiki/pact-broker-ci-nerf-gun
 [different-teams]: https://github.com/realestate-com-au/pact/wiki/Using-pact-where-the-consumer-team-is-different-from-the-provider-team
-[docker]: https://registry.hub.docker.com/u/dius/pact_broker/
+[docker]: https://hub.docker.com/r/dius/pact-broker
 [terraform]: https://github.com/nadnerb/terraform-pact-broker
