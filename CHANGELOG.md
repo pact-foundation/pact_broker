@@ -2,6 +2,10 @@ Do this to generate your change history
 
     $ git log --pretty=format:'  * %h - %s (%an, %ad)' vX.Y.Z..HEAD
 
+#### 2.0.0.beta.4 (2017-05-02)
+* e5c14d1 - Renamed verification to verification-result in link relations and URLs (Beth Skurrie, Tue May 2 13:04:01 2017 +1000)
+* 803ea44 - Add endpoint to show a verification. (Beth Skurrie, Mon May 1 08:52:12 2017 +1000)
+
 #### 2.0.0.beta.3 (2017-04-29)
 * 7059a7e - Insert pact_publications without a specified ID so that the inbuilt sequence is kept in sync. (Beth Skurrie, Sat Apr 29 15:16:12 2017 +1000)
 
