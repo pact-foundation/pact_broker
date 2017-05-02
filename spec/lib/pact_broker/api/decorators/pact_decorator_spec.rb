@@ -91,7 +91,7 @@ module PactBroker
           end
 
           it "includes a link to publish a verification" do
-            expect(subject[:_links][:'pb:publish-verification-result'][:href]).to match %r{http://example.org/.*/verification-results}
+            expect(subject[:_links][:'pb:publish-verification-results'][:href]).to match %r{http://example.org/.*/verification-results}
           end
 
           it "includes a curie" do
