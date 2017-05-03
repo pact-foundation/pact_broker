@@ -14,7 +14,8 @@ module PactBroker
             consumer_name: 'Consumer',
             build_url: 'http://build-url',
             pact_version: pact_version,
-            latest_pact_publication: pact_publication)
+            latest_pact_publication: pact_publication,
+            execution_date: DateTime.now)
         end
 
         let(:pact_version) do

@@ -13,7 +13,8 @@ module PactBroker
             provider_name: 'provider',
             consumer_name: 'consumer',
             pact_version: pact_version,
-            latest_pact_publication: pact)
+            latest_pact_publication: pact,
+            execution_date: DateTime.now)
         end
         let(:pact_version) do
           instance_double("PactBroker::Pacts::PactVersion", sha: '1234', name: 'Name')
