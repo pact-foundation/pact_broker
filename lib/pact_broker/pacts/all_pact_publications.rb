@@ -9,6 +9,10 @@ module PactBroker
 
     class AllPactPublications < Sequel::Model(:all_pact_publications)
 
+      extend Forwardable
+
+      def_delegators :cached_domain, :name
+
       set_primary_key :id
       associate(:one_to_many, :tags, :class => "PactBroker::Domain::Tag", :reciprocal => :version, :key => :version_id, :primary_key => :consumer_version_id)
       associate(:many_to_one, :pact_version, :key => :pact_version_sha, :primary_key => :sha)
@@ -88,6 +92,12 @@ module PactBroker
         to_domain.tap do | pact |
           pact.json_content = pact_version.content
         end
+      end
+
+      private
+
+      def cached_domain
+        @cached_domain ||= to_domain
       end
 
     end

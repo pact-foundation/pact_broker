@@ -19,7 +19,30 @@ module PactBroker
       end
 
       describe "#latest_pact_publication" do
+        before do
+          ProviderStateBuilder.new
+            .create_provider("Bar")
+            .create_consumer("Foo")
+            .create_consumer_version("1.2.100")
+            .create_pact
+            .revise_pact
+            .create_consumer_version("1.2.101")
+            .create_pact
+            .create_consumer_version("1.2.102")
+            .create_pact
+            .revise_pact
+            .create_provider("Animals")
+            .create_pact
+            .create_provider("Wiffles")
+            .create_pact
+        end
 
+        it "returns the latest pact publication for the given pact version" do
+          pact = PactBroker::Pacts::Repository.new.find_pact("Foo", "1.2.102", "Animals")
+          pact_version = PactBroker::Pacts::PactVersion.find(sha: pact.pact_version_sha)
+          latest_pact_publication = pact_version.latest_pact_publication
+          expect(latest_pact_publication.id).to eq pact.id
+        end
       end
 
       describe "#latest_consumer_version_number" do
