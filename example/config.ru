@@ -27,8 +27,6 @@ app = PactBroker::App.new do | config |
   # config.use_hal_browser = true
   config.database_connection = Sequel.connect(DATABASE_CREDENTIALS.merge(:logger => config.logger))
   config.database_connection.timezone = :utc
-  # See configuration section of wiki for more basic auth configuration options
-  # config.protect_with_basic_auth :app_read, {username: 'username', password: 'password'}
 end
 
 run app
