@@ -2,9 +2,6 @@ Do this to generate your change history
 
     $ git log --pretty=format:'  * %h - %s (%an, %ad)' vX.Y.Z..HEAD
 
-#### 1.18.0.beta.1 (2017-05-05)
-* 99e825b - Add in-built configuration for basic auth. (Beth Skurrie, Fri May 5 10:22:53 2017 +1000)
-
 #### 1.17.2 (2017-05-04)
 * b8f45e1 - fix issue with pact document link not displaying #94 (Matt Fellows, Wed May 3 11:23:09 2017 +1000)
 
