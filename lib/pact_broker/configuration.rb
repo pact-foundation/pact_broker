@@ -24,9 +24,9 @@ module PactBroker
       @basic_auth_config = {}
       @basic_auth_predicates = [
         [:diagnostic,  ->(env) { env[PATH_INFO].start_with? DIAGNOSTIC }],
-        [:app,         ->(env) { !env[PATH_INFO].start_with? DIAGNOSTIC } ],
         [:app_read,    ->(env) { env[REQUEST_METHOD] == GET }],
         [:app_write,   ->(env) { env[REQUEST_METHOD] != GET }],
+        [:app,         ->(env) { !env[PATH_INFO].start_with? DIAGNOSTIC } ],
         [:all,         ->(env) { true }]
       ]
     end
@@ -60,19 +60,18 @@ module PactBroker
     # public
     def protect_with_basic_auth scopes, credentials
       [*scopes].each do | scope |
-        basic_auth_config[scope] ||= []
-        basic_auth_config[scope] << credentials
+        basic_auth_config[scope] = credentials
       end
     end
 
     # private
     def protect_with_basic_auth? scope
-      !!basic_auth_credentials_list_for(scope)
+      !!basic_auth_credentials_for(scope)
     end
 
     # private
-    def basic_auth_credentials_list_for scope
-      basic_auth_config[scope]
+    def basic_auth_credentials_for scope
+      basic_auth_config[scope] || basic_auth_config[:all]
     end
 
     private

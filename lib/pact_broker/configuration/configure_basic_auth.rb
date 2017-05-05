@@ -10,42 +10,25 @@ module PactBroker
         @predicates = []
       end
 
-      def protect credentials_list, &predicate
+      def protect credentials, &predicate
         basic_auth_proxy = ::Rack::Auth::Basic.new(app) do | username, password |
-          credentials_list.any? do | credentials |
-            username == credentials[:username] && password == credentials[:password]
-          end
+          username == credentials[:username] && password == credentials[:password]
         end
         predicates << [predicate, basic_auth_proxy]
       end
 
       def call(env)
-        predicates = matching_predicates(env)
-        if predicates.any?
-          cascade(predicates, env)
-        else
-          app.call(env)
+        predicates.each do | predicate, auth_proxy |
+          if predicate.call(env)
+            return auth_proxy.call(env)
+          end
         end
+        app.call(env)
       end
 
       private
 
       attr_accessor :app, :predicates
-
-      def matching_predicates env
-        predicates.select do | predicate, basic_auth_proxy |
-          predicate.call(env)
-        end
-      end
-
-      def cascade predicates, env
-        response = nil
-        predicates.each do | predicate, basic_auth_proxy |
-          response = basic_auth_proxy.call(env)
-          return response if response.first != 401
-        end
-        response
-      end
 
     end
 
@@ -74,7 +57,7 @@ module PactBroker
 
       def configure_basic_auth_for_scope scope, &predicate
         if configuration.protect_with_basic_auth?(scope)
-          credentials = configuration.basic_auth_credentials_list_for(scope)
+          credentials = configuration.basic_auth_credentials_for(scope)
           basic_auth_proxy.protect(credentials, &predicate)
         end
       end
