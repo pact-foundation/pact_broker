@@ -3,7 +3,6 @@ require 'pact_broker/db'
 require 'pact_broker/project_root'
 require 'rack/hal_browser'
 require 'rack/pact_broker/convert_file_extension_to_accept_header'
-require 'pact_broker/configuration/configure_basic_auth'
 
 module PactBroker
 
@@ -71,12 +70,12 @@ module PactBroker
       apps << PactBroker::UI::App.new
       apps << PactBroker::API
 
-      cascade = Rack::Cascade.new(apps)
-      app_with_basic_auth = PactBroker::Configuration::ConfigureBasicAuth.call(cascade, configuration)
-
       @app.map "/" do
-        run app_with_basic_auth
+        run Rack::Cascade.new(apps)
       end
+
     end
+
   end
+
 end
