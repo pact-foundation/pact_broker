@@ -27,7 +27,7 @@ $ git push heroku master
 Your Pact Broker instance is now available!
 
 ## Publish consumer pacts - consumer side
-You will need to set these environment variables with your basic auth credentials 
+You will need to set these environment variables with your basic auth credentials
 ```
 export PACT_BROKER_USERNAME=admin
 export PACT_BROKER_PASSWORD=changeme
