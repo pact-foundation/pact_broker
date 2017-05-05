@@ -12,7 +12,7 @@ module PactBroker
 
       def protect credentials, &predicate
         basic_auth_proxy = ::Rack::Auth::Basic.new(app) do | username, password |
-          username == credentials[:username] && password == credentials[:password]
+          username = credentials[:username] && password == credentials[:password]
         end
         predicates << [predicate, basic_auth_proxy]
       end
