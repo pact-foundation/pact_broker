@@ -2,6 +2,9 @@ Do this to generate your change history
 
     $ git log --pretty=format:'  * %h - %s (%an, %ad)' vX.Y.Z..HEAD
 
+#### 2.0.0.beta.5 (2017-05-08)
+* 4b88c4d - Add success flag to the resource for the latest verifications for a consumer version to indicate the overall success or failure of the verification results for that version. (Beth Skurrie, Mon May 8 10:54:31 2017 +1000)
+
 #### 2.0.0.beta.4 (2017-05-02)
 * e5c14d1 - Renamed verification to verification-result in link relations and URLs (Beth Skurrie, Tue May 2 13:04:01 2017 +1000)
 * 803ea44 - Add endpoint to show a verification. (Beth Skurrie, Mon May 1 08:52:12 2017 +1000)
