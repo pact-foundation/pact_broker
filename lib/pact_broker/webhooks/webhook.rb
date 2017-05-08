@@ -46,7 +46,7 @@ module PactBroker
       end
 
       def request_attributes
-        values.merge(headers: parsed_headers, body: parsed_body, password: plain_text_password)
+        values.merge(headers: parsed_headers, body: parsed_body, password: plain_text_password, uuid: uuid)
       end
 
       def plain_text_password

@@ -6,6 +6,8 @@ module PactBroker
   module Webhooks
     class Job
 
+      BACKOFF_TIMES = [10, 60, 120, 300, 600, 1200] #10 sec, 1 min, 2 min, 5 min, 10 min, 20 min => 38 minutes
+
       include SuckerPunch::Job
       include PactBroker::Logging
 
@@ -13,7 +15,8 @@ module PactBroker
         @webhook = data[:webhook]
         @error_count = data[:error_count] || 0
         begin
-          PactBroker::Webhooks::Service.execute_webhook_now webhook
+          webhook_execution_result = PactBroker::Webhooks::Service.execute_webhook_now webhook
+          reschedule_job unless webhook_execution_result.success?
         rescue StandardError => e
           handle_error e
         end
@@ -24,14 +27,17 @@ module PactBroker
       attr_reader :webhook, :error_count
 
       def handle_error e
-        logger.log_error e
-        backoff_times = [10, 60, 120, 300, 600, 1200] #10 sec, 1 min, 2 min, 5 min, 10 min, 20 min => 38 minutes
+        log_error e
+        reschedule_job
+      end
+
+      def reschedule_job
         case error_count
-        when 0...backoff_times.size
-          logger.debug "Re-enqeuing job to run in #{backoff_times[error_count]} seconds"
-          Job.perform_in(backoff_times[error_count], {webhook: webhook, error_count: error_count+1})
+        when 0...BACKOFF_TIMES.size
+          logger.debug "Re-enqeuing job for webhook #{webhook.uuid} to run in #{BACKOFF_TIMES[error_count]} seconds"
+          Job.perform_in(BACKOFF_TIMES[error_count], {webhook: webhook, error_count: error_count+1})
         else
-          logger.error "Failed to execute webhook after #{backoff_times.size} times."
+          logger.error "Failed to execute webhook #{webhook.uuid} after #{BACKOFF_TIMES.size} times."
         end
       end
 

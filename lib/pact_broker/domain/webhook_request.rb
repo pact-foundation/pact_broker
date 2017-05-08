@@ -22,7 +22,7 @@ module PactBroker
       include PactBroker::Logging
       include PactBroker::Messages
 
-      attr_accessor :method, :url, :headers, :body, :username, :password
+      attr_accessor :method, :url, :headers, :body, :username, :password, :uuid
 
       # Reform gets confused by the :method method, as :method is a standard
       # Ruby method.
@@ -35,6 +35,7 @@ module PactBroker
         @password = attributes[:password]
         @headers = attributes[:headers] || {}
         @body = attributes[:body]
+        @uuid = attributes[:uuid]
       end
 
       def description
@@ -64,17 +65,18 @@ module PactBroker
             end
           end
 
-          logger.info "Making webhook request #{to_s}"
+          logger.info "Making webhook #{uuid} request #{to_s}"
           response = Net::HTTP.start(uri.hostname, uri.port,
             :use_ssl => uri.scheme == 'https') do |http|
             http.request req
           end
 
-          logger.info "Received response status=#{response.code} body=#{response.body}"
+          logger.info "Received response for webhook #{uuid} status=#{response.code}"
+          logger.debug "body=#{response.body}"
           WebhookExecutionResult.new(response)
 
         rescue StandardError => e
-          logger.error "Error executing webhook #{e.class.name} - #{e.message}"
+          logger.error "Error executing webhook #{uuid} #{e.class.name} - #{e.message}"
           logger.error e.backtrace.join("\n")
           WebhookExecutionResult.new(nil, e)
         end

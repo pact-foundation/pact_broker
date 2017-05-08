@@ -17,14 +17,15 @@ module PactBroker
       @@logger = logger
     end
 
+    def log_error e
+      logger.error "#{e.class} #{e.message} #{e.backtrace.join("\n")}"
+    end
+
     def logger
       @@logger ||= begin
         FileUtils.mkdir_p(LOG_DIR)
         logger = Logger.new(File.join(LOG_DIR, LOG_FILE_NAME))
         logger.level = Logger::DEBUG
-        def logger.log_error e
-          error "#{e.class} #{e.message} #{e.backtrace.join("\n")}"
-        end
         logger
       end
     end

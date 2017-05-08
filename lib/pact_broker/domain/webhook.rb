@@ -33,7 +33,6 @@ module PactBroker
         request && request.description
       end
 
-      #TODO retries
       def execute
         logger.info "Executing #{self}"
         request.execute
