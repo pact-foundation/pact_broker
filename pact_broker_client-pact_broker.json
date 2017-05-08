@@ -35,7 +35,7 @@
   },
   {
     "description": "a request to publish a pact",
-    "provider_state": "an error occurs while publishing a pact",
+    "providerState": "an error occurs while publishing a pact",
     "request": {
       "method": "put",
       "path": "/pacticipant/Condor/versions/1.3.0/pacts/Pricing%20Service",
@@ -72,7 +72,7 @@
   },
   {
     "description": "a request to retrieve the repository URL of the 'Pricing Service'",
-    "provider_state": "the 'Pricing Service' does not exist in the pact-broker",
+    "providerState": "the 'Pricing Service' does not exist in the pact-broker",
     "request": {
       "method": "get",
       "path": "/pacticipant/Pricing%20Service/repository_url",
@@ -90,7 +90,7 @@
 
     {
       "description": "a request to register the repository URL of a pacticipant",
-      "provider_state": "the 'Pricing Service' does not exist in the pact-broker",
+      "providerState": "the 'Pricing Service' does not exist in the pact-broker",
       "request": {
         "method": "patch",
         "path": "/pacticipant/Pricing%20Service",
@@ -108,7 +108,7 @@
     },
   {
     "description": "a request to retrieve the repository URL of the 'Pricing Service'",
-    "provider_state": "the 'Pricing Service' already exists in the pact-broker",
+    "providerState": "the 'Pricing Service' already exists in the pact-broker",
     "request": {
       "method": "get",
       "path": "/pacticipant/Pricing%20Service/repository_url",
