@@ -36,6 +36,18 @@ module PactBroker
         it "includes a link to itself" do
           expect(subject[:_links][:self][:href]).to eq "http://self"
         end
+
+        it "includes a flag to indicate the overall success or failure of all the verification results" do
+          expect(subject[:success]).to be true
+        end
+
+        context "when there are no verifications" do
+          let(:verifications) { [] }
+
+          it "does not include a flag to indicate the overall success or failure of all the verification results" do
+            expect(subject).to_not have_key(:success)
+          end
+        end
       end
     end
   end
