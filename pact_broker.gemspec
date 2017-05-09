@@ -35,9 +35,10 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'pact-support', '~>0.4', '>=0.4.2'
   gem.add_runtime_dependency 'padrino-core', '~>0.12.4'
   gem.add_runtime_dependency 'haml', '~>4.0'
+  gem.add_runtime_dependency 'sucker_punch', '~>2.0'
 
   gem.add_development_dependency 'sqlite3'
-  gem.add_development_dependency 'pry'
+  gem.add_development_dependency 'pry-byebug'
   gem.add_development_dependency 'rake', '~>10.0'
   gem.add_development_dependency 'fakefs', '~>0.4'
   gem.add_development_dependency 'mysql2', '~>0.3.15'

@@ -1,5 +1,21 @@
 require 'pact_broker/repositories'
+require 'pact_broker/webhooks/repository'
+require 'pact_broker/webhooks/service'
+require 'pact_broker/pacts/repository'
+require 'pact_broker/pacts/service'
+require 'pact_broker/pacticipants/repository'
+require 'pact_broker/pacticipants/service'
+require 'pact_broker/versions/repository'
+require 'pact_broker/versions/service'
+require 'pact_broker/tags/repository'
+require 'pact_broker/tags/service'
+require 'pact_broker/domain'
 require 'json'
+require 'pact_broker/versions/repository'
+require 'pact_broker/pacts/repository'
+require 'pact_broker/pacticipants/repository'
+require 'pact_broker/tags/repository'
+require 'pact_broker/webhooks/repository'
 
 class ProviderStateBuilder
 
@@ -83,24 +99,24 @@ class ProviderStateBuilder
     self
   end
 
-  def create_consumer consumer_name
+  def create_consumer consumer_name = "Consumer #{model_counter}"
     create_pacticipant consumer_name
     @consumer = @pacticipant
     self
   end
 
-  def create_provider provider_name
+  def create_provider provider_name = "Provider #{model_counter}"
     create_pacticipant provider_name
     @provider = @pacticipant
     self
   end
 
-  def create_version version_number
+  def create_version version_number = "1.0.#{model_counter}"
     @version = PactBroker::Domain::Version.create(:number => version_number, :pacticipant => @pacticipant)
     self
   end
 
-  def create_consumer_version version_number
+  def create_consumer_version version_number = "1.0.#{model_counter}"
     @consumer_version = PactBroker::Domain::Version.create(:number => version_number, :pacticipant => @consumer)
     self
   end
@@ -120,10 +136,21 @@ class ProviderStateBuilder
     self
   end
 
-  def create_webhook
-    request = PactBroker::Domain::WebhookRequest.new(method: 'POST', url: 'http://example.org', headers: {'Content-Type' => 'application/json'})
+  def create_webhook params = {}
+    default_params = {method: 'POST', url: 'http://example.org', headers: {'Content-Type' => 'application/json'}}
+    request = PactBroker::Domain::WebhookRequest.new(default_params.merge(params))
     @webhook = PactBroker::Webhooks::Repository.new.create PactBroker::Webhooks::Service.next_uuid, PactBroker::Domain::Webhook.new(request: request), @consumer, @provider
     self
+  end
+
+  def model_counter
+    @@model_counter ||= 0
+    @@model_counter += 1
+    @@model_counter
+  end
+
+  def and_return instance_variable_name
+    instance_variable_get("@#{instance_variable_name}")
   end
 
   private
@@ -136,7 +163,8 @@ class ProviderStateBuilder
        "provider"     => {
          "name" => "Pricing Service"
        },
-       "interactions" => []
+       "interactions" => [],
+       "random" => rand
      }.to_json
    end
 

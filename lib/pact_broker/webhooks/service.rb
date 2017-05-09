@@ -1,6 +1,8 @@
 require 'pact_broker/repositories'
 require 'pact_broker/logging'
+require 'pact_broker/webhooks/job'
 require 'base64'
+require 'securerandom'
 
 module PactBroker
 
@@ -50,6 +52,7 @@ module PactBroker
 
       def self.execute_webhooks pact
         webhooks = webhook_repository.find_by_consumer_and_provider pact.consumer, pact.provider
+
         if webhooks.any?
           run_later(webhooks)
         else
@@ -57,15 +60,13 @@ module PactBroker
         end
       end
 
-      # TODO background job?
       def self.run_later webhooks
-        Thread.new do
-          webhooks.each do | webhook |
-            begin
-              webhook.execute
-            rescue StandardError => e
-              # Exceptions are already logged, no need to log again.
-            end
+        webhooks.each do | webhook |
+          begin
+            logger.info "Scheduling job for #{webhook.description} with uuid #{webhook.uuid}"
+            Job.perform_async webhook: webhook
+          rescue StandardError => e
+            log_error e
           end
         end
       end

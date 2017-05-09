@@ -64,7 +64,9 @@ module PactBroker
 
         it "logs the response" do
           allow(PactBroker.logger).to receive(:info)
-          expect(PactBroker.logger).to receive(:info).with(/response.*302.*respbod/)
+          allow(PactBroker.logger).to receive(:debug)
+          expect(PactBroker.logger).to receive(:info).with(/response.*302/)
+          expect(PactBroker.logger).to receive(:debug).with(/respbod/)
           subject.execute
         end
 

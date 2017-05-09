@@ -3,6 +3,7 @@ require 'pact_broker/db'
 require 'pact_broker/project_root'
 require 'rack/hal_browser'
 require 'rack/pact_broker/convert_file_extension_to_accept_header'
+require 'sucker_punch'
 
 module PactBroker
 
@@ -32,6 +33,7 @@ module PactBroker
       PactBroker::DB.connection = configuration.database_connection
       PactBroker::DB.connection.timezone = :utc
       PactBroker::DB.validate_connection_config if configuration.validate_database_connection_config
+      SuckerPunch.logger = configuration.logger
 
       if configuration.auto_migrate_db
         logger.info "Migrating database"
