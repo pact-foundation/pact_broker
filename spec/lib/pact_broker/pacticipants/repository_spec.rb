@@ -53,6 +53,22 @@ module PactBroker
 
       end
 
+      describe "#find_all_pacticipant_versions_in_reverse_order" do
+        before do
+          ProviderStateBuilder.new
+            .create_consumer("Foo")
+            .create_consumer_version("1.2.3")
+            .create_consumer_version("4.5.6")
+            .create_consumer("Bar")
+            .create_consumer_version("8.9.0")
+        end
+
+        subject { Repository.new.find_all_pacticipant_versions_in_reverse_order "Foo" }
+
+        it "returns all the application versions for the given consumer" do
+          expect(subject.collect(&:number)).to eq ["4.5.6", "1.2.3"]
+        end
+      end
 
     end
   end

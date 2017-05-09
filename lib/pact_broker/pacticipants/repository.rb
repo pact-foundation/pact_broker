@@ -20,11 +20,12 @@ module PactBroker
         PactBroker::Domain::Pacticipant.order(:name).all
       end
 
-      def find_all_pacticipant_versions name
+      def find_all_pacticipant_versions_in_reverse_order name
         PactBroker::Domain::Version
           .select(:versions__id, :versions__number, :versions__pacticipant_id, :versions__order, :versions__created_at, :versions__updated_at)
           .join(:pacticipants, {id: :pacticipant_id})
           .where(name_like(:name, name))
+          .reverse_order(:order)
       end
 
       def find_by_name_or_create name
