@@ -16,7 +16,7 @@ describe "Merging a pact" do
     end
 
     it "returns a json body" do
-      expect(subject.headers['Content-Type']).to eq "application/json;charset=utf-8"
+      expect(subject.headers['Content-Type']).to eq "application/hal+json;charset=utf-8"
     end
 
     it "returns the pact in the body" do
@@ -37,7 +37,7 @@ describe "Merging a pact" do
     end
 
     it "returns an application/json Content-Type" do
-      expect(subject.headers['Content-Type']).to eq "application/json;charset=utf-8"
+      expect(subject.headers['Content-Type']).to eq "application/hal+json;charset=utf-8"
     end
 
     it "returns the merged pact in the response body" do
