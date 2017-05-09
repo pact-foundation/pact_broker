@@ -1,13 +1,15 @@
 Sequel.migration do
   change do
     create_or_replace_view(:all_pacts,
-      Sequel::Model.db[:pacts].select(:pacts__id, :c__id___consumer_id, :c__name___consumer_name,
-      :cv__number___consumer_version_number, :cv__order___consumer_version_order,
-      :p__id___provider_id, :p__name___provider_name,
-      :pacts__json_content, :pacts__created_at, :pacts__updated_at).
-      join(:versions, {:id => :version_id}, {:table_alias => :cv, implicit_qualifier: :pacts}).
-      join(:pacticipants, {:id => :pacticipant_id}, {:table_alias => :c, implicit_qualifier: :cv}).
-      join(:pacticipants, {:id => :provider_id}, {:table_alias => :p, implicit_qualifier: :pacts}))
+      "select pacts.id,
+      c.id as consumer_id, c.name as consumer_name,
+      cv.number as consumer_version_number, cv.`order` as consumer_version_order,
+      p.id as provider_id, p.name as provider_name,
+      pacts.json_content, pacts.created_at, pacts.updated_at
+      from pacts
+      inner join versions as cv on (cv.id = pacts.version_id)
+      inner join pacticipants as c on (c.id = cv.pacticipant_id)
+      inner join pacticipants as p on (p.id = pacts.provider_id)")
 
     create_or_replace_view(:latest_pact_consumer_version_orders,
       "select provider_id, consumer_id, max(consumer_version_order) as latest_consumer_version_order

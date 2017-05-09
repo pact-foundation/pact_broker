@@ -14,12 +14,12 @@ module PactBroker
 
       def find args
         PactBroker::Domain::Tag
-          .select(:tags__name, :tags__version_id, :tags__created_at, :tags__updated_at)
+          .select(Sequel.qualify("tags", "name"), Sequel.qualify("tags", "version_id"), Sequel.qualify("tags", "created_at"), Sequel.qualify("tags", "updated_at"))
           .join(:versions, {id: :version_id})
-          .join(:pacticipants, {pacticipants__id: :versions__pacticipant_id})
-          .where(name_like(:tags__name, args.fetch(:tag_name)))
-          .where(name_like(:versions__number, args.fetch(:pacticipant_version_number)))
-          .where(name_like(:pacticipants__name, args.fetch(:pacticipant_name)))
+          .join(:pacticipants, {Sequel.qualify("pacticipants", "id") => Sequel.qualify("versions", "pacticipant_id")})
+          .where(name_like(Sequel.qualify("tags", "name"), args.fetch(:tag_name)))
+          .where(name_like(Sequel.qualify("versions", "number"), args.fetch(:pacticipant_version_number)))
+          .where(name_like(Sequel.qualify("pacticipants", "name"), args.fetch(:pacticipant_name)))
           .single_record
       end
     end
