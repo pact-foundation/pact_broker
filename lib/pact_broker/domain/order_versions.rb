@@ -4,17 +4,17 @@ module PactBroker
   module Domain
     class OrderVersions
 
+      include PactBroker::Logging
       # TODO select for update
       def self.call pacticipant_id
-        PactBroker::Domain::Version.db.transaction do
-          orderable_versions = PactBroker::Domain::Version.for_update.where(:pacticipant_id => pacticipant_id).order(:created_at, :id).collect{| version | OrderableVersion.new(version) }
-          ordered_versions = if PactBroker.configuration.order_versions_by_date
-            orderable_versions # already ordered in SQL
-          else
-            orderable_versions.sort
-          end
-          ordered_versions.each_with_index{ | version, i | version.update_model(i) }
+
+        orderable_versions = PactBroker::Domain::Version.for_update.where(:pacticipant_id => pacticipant_id).order(:created_at, :id).collect{| version | OrderableVersion.new(version) }
+        ordered_versions = if PactBroker.configuration.order_versions_by_date
+          orderable_versions # already ordered in SQL
+        else
+          orderable_versions.sort
         end
+        ordered_versions.each_with_index{ | version, i | version.update_model(i) }
       end
 
       class OrderableVersion
