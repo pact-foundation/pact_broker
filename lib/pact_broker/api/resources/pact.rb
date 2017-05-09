@@ -24,7 +24,8 @@ module PactBroker
         include PacticipantResourceMethods
 
         def content_types_provided
-          [["application/json", :to_json],
+          [["application/hal+json", :to_json],
+           ["application/json", :to_json],
            ["text/html", :to_html]]
         end
 
