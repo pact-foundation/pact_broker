@@ -90,6 +90,7 @@ module PactBroker
         end
 
         it "logs the names" do
+          allow(PactBroker.logger).to receive(:info)
           expect(PactBroker.logger).to receive(:info).with(/pacticipant_name.*Fred, Mary/)
           subject.find_potential_duplicate_pacticipants pacticipant_name
         end
@@ -126,39 +127,88 @@ module PactBroker
             .create_consumer_version_tag("prod")
             .create_pact
             .create_webhook
+            .create_verification
         end
 
-        let(:delete_pacticipant) { subject.delete "Consumer" }
+        let(:delete_consumer) { subject.delete "Consumer" }
+        let(:delete_provider) { subject.delete "Provider" }
 
-        it "deletes the pacticipant" do
-          expect{ delete_pacticipant }.to change{
-              PactBroker::Domain::Pacticipant.all.count
-            }.by(-1)
+        context "deleting a consumer" do
+          it "deletes the pacticipant" do
+            expect{ delete_consumer }.to change{
+                PactBroker::Domain::Pacticipant.all.count
+              }.by(-1)
+          end
+
+          it "deletes the child versions" do
+            expect{ delete_consumer }.to change{
+              PactBroker::Domain::Version.where(number: "1.2.3").count
+              }.by(-1)
+          end
+
+          it "deletes the child tags" do
+            expect{ delete_consumer }.to change{
+              PactBroker::Domain::Tag.where(name: "prod").count
+              }.by(-1)
+          end
+
+          it "deletes the webhooks" do
+            expect{ delete_consumer }.to change{
+              PactBroker::Webhooks::Webhook.count
+              }.by(-1)
+          end
+
+          it "deletes the child pacts" do
+            expect{ delete_consumer }.to change{
+              PactBroker::Pacts::PactPublication.count
+              }.by(-2)
+          end
+
+          it "deletes the verifications" do
+            expect{ delete_consumer }.to change{
+              PactBroker::Domain::Verification.count
+              }.by(-1)
+          end
         end
 
-        it "deletes the child versions" do
-          expect{ delete_pacticipant }.to change{
-            PactBroker::Domain::Version.where(number: "1.2.3").count
-            }.by(-1)
+        context "deleting a provider" do
+          it "deletes the pacticipant" do
+            expect{ delete_provider }.to change{
+                PactBroker::Domain::Pacticipant.all.count
+              }.by(-1)
+          end
+
+          it "does not delete any versions" do
+            expect{ delete_provider }.to change{
+              PactBroker::Domain::Version.where(number: "1.2.3").count
+              }.by(0)
+          end
+
+          it "deletes the child tags only if there are any" do
+            expect{ delete_provider }.to change{
+              PactBroker::Domain::Tag.where(name: "prod").count
+              }.by(0)
+          end
+
+          it "deletes the webhooks" do
+            expect{ delete_provider }.to change{
+              PactBroker::Webhooks::Webhook.count
+              }.by(-1)
+          end
+
+          it "deletes the child pacts" do
+            expect{ delete_provider }.to change{
+              PactBroker::Pacts::PactPublication.count
+              }.by(-2)
+          end
+
+          it "deletes the verifications" do
+            expect{ delete_provider }.to change{
+              PactBroker::Domain::Verification.count
+              }.by(-1)
+          end
         end
 
-        it "deletes the child tags" do
-          expect{ delete_pacticipant }.to change{
-            PactBroker::Domain::Tag.where(name: "prod").count
-            }.by(-1)
-        end
-
-        it "deletes the webhooks" do
-          expect{ delete_pacticipant }.to change{
-            PactBroker::Webhooks::Webhook.count
-            }.by(-1)
-        end
-
-        it "deletes the child pacts" do
-          expect{ delete_pacticipant }.to change{
-            PactBroker::Pacts::PactPublication.count
-            }.by(-2)
-        end
       end
 
     end

@@ -75,14 +75,17 @@ module PactBroker
       def self.delete name
         pacticipant = find_pacticipant_by_name name
         connection = PactBroker::Domain::Pacticipant.new.db
-        connection.run("delete from tags where version_id IN (select id from versions where pacticipant_id IN (select id from pacticipants where name = '#{name}'))")
-        connection.run("delete from pact_publications where consumer_version_id IN (select id from versions where pacticipant_id IN (select id from pacticipants where name = '#{name}'))")
-        connection.run("delete from pact_publications where provider_id IN (select id from pacticipants where name = '#{name}')")
-        connection.run("delete from pact_versions where provider_id IN (select id from pacticipants where name = '#{name}')")
-        connection.run("delete from pact_versions where consumer_id IN (select id from pacticipants where name = '#{name}')")
-        connection.run("delete from versions where pacticipant_id IN (select id from pacticipants where name = '#{name}')")
+        select_pacticipant = "select id from pacticipants where name = '#{name}'"
+        connection.run("delete from tags where version_id IN (select id from versions where pacticipant_id = #{pacticipant.id})")
+        connection.run("delete from pact_publications where consumer_version_id IN (select id from versions where pacticipant_id = #{pacticipant.id})")
+        connection.run("delete from pact_publications where provider_id = #{pacticipant.id}")
+        connection.run("delete from verifications where pact_version_id IN (select id from pact_versions where provider_id = #{pacticipant.id})")
+        connection.run("delete from verifications where pact_version_id IN (select id from pact_versions where consumer_id = #{pacticipant.id})")
+        connection.run("delete from pact_versions where provider_id = #{pacticipant.id}")
+        connection.run("delete from pact_versions where consumer_id = #{pacticipant.id}")
+        connection.run("delete from versions where pacticipant_id = #{pacticipant.id}")
         webhook_service.delete_by_pacticipant pacticipant
-        connection.run("delete from pacticipants where name = '#{name}'")
+        connection.run("delete from pacticipants where id = #{pacticipant.id}")
       end
 
       def self.pacticipant_names
