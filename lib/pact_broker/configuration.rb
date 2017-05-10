@@ -9,6 +9,7 @@ module PactBroker
     attr_accessor :log_dir, :database_connection, :auto_migrate_db, :use_hal_browser, :html_pact_renderer
     attr_accessor :validate_database_connection_config, :enable_diagnostic_endpoints, :version_parser
     attr_accessor :use_case_sensitive_resource_names, :order_versions_by_date
+    attr_accessor :semver_formats
     attr_writer :logger
 
     def logger
@@ -29,6 +30,7 @@ module PactBroker
       # Not recommended to set this to true unless there is no way to
       # consistently extract an orderable object from the consumer application version number.
       config.order_versions_by_date = false
+      config.semver_formats = ["%M.%m.%p%s%d","%M.%m", "%M"]
       config
     end
 

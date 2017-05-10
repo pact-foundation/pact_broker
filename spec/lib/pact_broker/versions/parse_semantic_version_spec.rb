@@ -22,10 +22,13 @@ module PactBroker
             expect(subject).to be < ParseSemanticVersion.call("1.3.1")
           end
 
+          it "allows versions with one or two parts for backwards compatibility" do
+            expect(ParseSemanticVersion.call("1")).to eq ::SemVer.new(1,0,0)
+            expect(ParseSemanticVersion.call("1.2")).to eq ::SemVer.new(1,2,0)
+          end
+
           it "returns nil when version is invalid" do
             expect(ParseSemanticVersion.call("abc")).to be_nil
-            expect(ParseSemanticVersion.call("1")).to be_nil
-            expect(ParseSemanticVersion.call("1.2")).to be_nil
           end
 
           it "accepts semver metadata" do
