@@ -26,8 +26,9 @@ namespace :db do
   end
 
   desc 'Migrate the Database'
-  task :migrate => 'db:env' do
-    PactBroker::Database.migrate
+  task :migrate, [:target] => 'db:env' do |t, args|
+    target = args[:target] ? args[:target].to_i : nil
+    PactBroker::Database.migrate(target)
   end
 
   desc 'Rollback database to specified version'

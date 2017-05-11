@@ -1,5 +1,7 @@
 require 'spec_helper'
 require 'pact_broker/webhooks/service'
+require 'webmock/rspec'
+require 'sucker_punch/testing/inline'
 
 module PactBroker
 
@@ -12,11 +14,11 @@ module PactBroker
         let(:consumer_version) { PactBroker::Domain::Version.new(number: '1.2.3') }
         let(:consumer) { PactBroker::Domain::Pacticipant.new(name: 'Consumer') }
         let(:provider) { PactBroker::Domain::Pacticipant.new(name: 'Provider') }
-        let(:webhooks) { [instance_double(PactBroker::Domain::Webhook)]}
+        let(:webhooks) { [instance_double(PactBroker::Domain::Webhook, description: 'description', uuid: '1244')]}
 
         before do
           allow_any_instance_of(PactBroker::Webhooks::Repository).to receive(:find_by_consumer_and_provider).and_return(webhooks)
-          allow(Service).to receive(:run_later)
+          allow(Job).to receive(:perform_async)
         end
 
         subject { Service.execute_webhooks pact }
@@ -44,6 +46,41 @@ module PactBroker
             expect(PactBroker.logger).to receive(:debug).with(/No webhook found/)
             subject
           end
+        end
+
+        context "when there is a scheduling error" do
+          before do
+            allow(Job).to receive(:perform_async).and_raise("an error")
+          end
+
+          it "logs the error" do
+            allow(Service.logger).to receive(:error)
+            expect(Service.logger).to receive(:error).with(/an error/)
+            subject
+          end
+        end
+      end
+
+      describe ".execute_webhooks integration test" do
+        let!(:http_request) do
+          stub_request(:get, "http://example.org").
+            to_return(:status => 200)
+        end
+
+        let(:pact) do
+          ProviderStateBuilder.new
+            .create_consumer
+            .create_provider
+            .create_consumer_version
+            .create_pact
+            .create_webhook(method: 'GET', url: 'http://example.org')
+            .and_return(:pact)
+        end
+
+
+        it "executes the HTTP request of the webhook" do
+          PactBroker::Webhooks::Service.execute_webhooks pact
+          expect(http_request).to have_been_made
         end
       end
     end

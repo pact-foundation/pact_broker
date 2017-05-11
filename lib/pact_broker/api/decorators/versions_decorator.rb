@@ -15,7 +15,7 @@ module PactBroker
         link :self do | context |
           {
             href: context[:resource_url],
-            title: "All versions of the pacticipant #{context[:pacticipant_name]}"
+            title: "All application versions of #{context[:pacticipant_name]}"
           }
         end
 

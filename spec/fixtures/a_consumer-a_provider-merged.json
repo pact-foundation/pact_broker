@@ -8,7 +8,7 @@
   "interactions": [
     {
       "description" : "a request for something",
-      "provider_state": null,
+      "providerState": null,
       "request": {
         "method": "get",
         "path" : "/something"
@@ -20,7 +20,7 @@
     },
     {
       "description" : "another request for something",
-      "provider_state": null,
+      "providerState": null,
       "request": {
         "method": "get",
         "path" : "/something_else"

@@ -1,10 +1,10 @@
 Sequel.migration do
   change do
     create_view(:all_pacts,
-      Sequel::Model.db[:pacts].select(:pacts__id, :c__id___consumer_id, :c__name___consumer_name,
-      :cv__number___consumer_version_number, :cv__order___consumer_version_order,
-      :p__id___provider_id, :p__name___provider_name,
-      :pacts__json_content).
+      Sequel::Model.db[:pacts].select(Sequel[:pacts][:id], Sequel[:c][:id].as(:consumer_id), Sequel[:c][:name].as(:consumer_name),
+      Sequel[:cv][:number].as(:consumer_version_number), Sequel[:cv][:order].as(:consumer_version_order),
+      Sequel[:p][:id].as(:provider_id), Sequel[:p][:name].as(:provider_name),
+      Sequel[:pacts][:json_content]).
       join(:versions, {:id => :version_id}, {:table_alias => :cv, implicit_qualifier: :pacts}).
       join(:pacticipants, {:id => :pacticipant_id}, {:table_alias => :c, implicit_qualifier: :cv}).
       join(:pacticipants, {:id => :provider_id}, {:table_alias => :p, implicit_qualifier: :pacts}))

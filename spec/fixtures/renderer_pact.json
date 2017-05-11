@@ -8,7 +8,7 @@
   "interactions": [
     {
       "description": "a request for alligators",
-      "provider_state": "alligators exist",
+      "providerState": "alligators exist",
       "request": {
         "method": "get",
         "path": "/alligators"

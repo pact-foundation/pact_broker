@@ -46,11 +46,11 @@ module PactBroker
         end
 
         def consumer_version_order_before order
-          where('consumer_version_order < ?', order)
+          where(Sequel.lit("consumer_version_order < ?", order))
         end
 
         def consumer_version_order_after order
-          where('consumer_version_order > ?', order)
+          where(Sequel.lit("consumer_version_order > ?", order))
         end
 
         def latest
