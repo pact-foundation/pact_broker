@@ -4,17 +4,17 @@ require_relative 'migration_helper'
 Sequel.migration do
   change do
     create_or_replace_view(:all_pacts,
-      "select pacts.id,
-      c.id as consumer_id, c.name as consumer_name,
-      cv.id as consumer_version_id, cv.number as consumer_version_number, cv.`order` as consumer_version_order,
-      p.id as provider_id, p.name as provider_name,
-      pvc.sha as pact_version_content_sha,
-      pacts.created_at, pacts.updated_at
-      from pacts
-        inner join versions as cv on (cv.id = pacts.version_id)
-        inner join pacticipants as c on (c.id = cv.pacticipant_id)
-        inner join pacticipants as p on (p.id = pacts.provider_id)
-        inner join pact_version_contents as pvc on (pvc.sha = pacts.pact_version_content_sha)")
+        Sequel::Model.db[:pacts].select(
+        Sequel[:pacts][:id],
+        Sequel[:c][:id].as(:consumer_id), Sequel[:c][:name].as(:consumer_name),
+        Sequel[:cv][:id].as(:consumer_version_id), Sequel[:cv][:number].as(:consumer_version_number), Sequel[:cv][:order].as(:consumer_version_order),
+        Sequel[:p][:id].as(:provider_id), Sequel[:p][:name].as(:provider_name),
+        Sequel[:pvc][:sha].as(:pact_version_content_sha), Sequel[:pacts][:created_at], Sequel[:pacts][:updated_at]).
+        join(:versions, {:id => :version_id}, {:table_alias => :cv, implicit_qualifier: :pacts}).
+        join(:pacticipants, {:id => :pacticipant_id}, {:table_alias => :c, implicit_qualifier: :cv}).
+        join(:pacticipants, {:id => :provider_id}, {:table_alias => :p, implicit_qualifier: :pacts}).
+        join(:pact_version_contents, {:sha => :pact_version_content_sha}, {:table_alias => :pvc, implicit_qualifier: :pacts})
+      )
 
   end
 end
