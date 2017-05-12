@@ -19,7 +19,7 @@ module PactBroker
 
       def find consumer_name, provider_name, pact_version_sha, verification_number
         PactBroker::Domain::Verification
-          .join(PactBroker::Pacts::AllPactPublications, pact_version_id: :pact_version_id)
+          .join(:all_pact_publications, pact_version_id: :pact_version_id)
           .consumer(consumer_name)
           .provider(provider_name)
           .pact_version_sha(pact_version_sha)
@@ -30,7 +30,7 @@ module PactBroker
         # Use LatestPactPublicationsByConsumerVersion not AllPactPublcations because we don't
         # want verifications for shadowed revisions as it would be misleading.
         LatestVerificationsByConsumerVersion
-          .join(PactBroker::Pacts::LatestPactPublicationsByConsumerVersion, pact_version_id: :pact_version_id)
+          .join(:latest_pact_publications_by_consumer_versions, pact_version_id: :pact_version_id)
           .consumer(consumer_name)
           .consumer_version_number(consumer_version_number)
           .order(:provider_name)
@@ -38,7 +38,7 @@ module PactBroker
 
       def find_latest_verification_for consumer_name, provider_name
         query = LatestVerificationsByConsumerVersion
-          .join(PactBroker::Pacts::AllPactPublications, pact_version_id: :pact_version_id)
+          .join(:all_pact_publications, pact_version_id: :pact_version_id)
           .consumer(consumer_name)
           .provider(provider_name)
           .latest

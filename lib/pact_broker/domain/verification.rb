@@ -38,7 +38,7 @@ module PactBroker
         end
 
         def verification_number number
-          where("`verifications`.`number` = ? ", number)
+          where(Sequel.qualify("verifications", "number") => number)
         end
 
         def latest
