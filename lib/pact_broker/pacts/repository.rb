@@ -49,10 +49,11 @@ module PactBroker
       end
 
       def find_all_pact_versions_between consumer_name, options
+        provider_name = options.fetch(:and)
         LatestPactPublicationsByConsumerVersion
           .eager(:tags)
           .consumer(consumer_name)
-          .provider(options.fetch(:and))
+          .provider(provider_name)
           .reverse_order(:consumer_version_order)
           .collect(&:to_domain)
       end
@@ -63,6 +64,14 @@ module PactBroker
         else
           LatestPactPublications.provider(provider_name).order(:consumer_name).collect(&:to_domain)
         end
+      end
+
+      # Returns latest pact version for the consumer_version_number
+      def find_by_consumer_version consumer_name, consumer_version_number
+        LatestPactPublicationsByConsumerVersion
+          .consumer(consumer_name)
+          .consumer_version_number(consumer_version_number)
+          .collect(&:to_domain_with_content)
       end
 
       def find_by_version_and_provider version_id, provider_id

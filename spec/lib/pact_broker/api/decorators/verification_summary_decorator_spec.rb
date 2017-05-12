@@ -1,17 +1,21 @@
-require 'pact_broker/api/decorators/verifications_decorator'
+require 'pact_broker/api/decorators/verification_summary_decorator'
 
 module PactBroker
   module Api
     module Decorators
-      describe VerificationsDecorator do
+      describe VerificationSummaryDecorator do
+        let(:summary) { instance_double("PactBroker::Verification::SummaryForConsumerVersion", verifications: verifications, success: true, provider_summary: provider_summary) }
+        let(:provider_summary) {
+          instance_double("provider summary", successful: ["Successful provider"], failed: ["Failed provider"], unknown: ["Unknown provider"])
+        }
         let(:verifications) { [verification] }
         let(:verification) do
           instance_double("PactBroker::Domain::Verification",
             success: true, number: 1,
             provider_version: '4.5.6',
             build_url: 'http://some-build',
-            provider_name: 'provider',
-            consumer_name: 'consumer',
+            provider_name: 'Provider',
+            consumer_name: 'Consumer',
             pact_version: pact_version,
             latest_pact_publication: pact,
             execution_date: DateTime.now)
@@ -19,14 +23,15 @@ module PactBroker
         let(:pact_version) do
           instance_double("PactBroker::Pacts::PactVersion", sha: '1234', name: 'Name')
         end
+
         let(:pact) { instance_double("PactBroker::Domain::Pact", name: "Some pact", consumer_name: "Foo", provider_name: "Bar", consumer_version_number: "1.2.3") }
         let(:options) { {base_url: 'http://example.org', consumer_name: "Foo", consumer_version_number: "1.2.3", resource_url: "http://self"} }
 
-        subject { JSON.parse VerificationsDecorator.new(verifications).to_json(user_options: options), symbolize_names: true }
+        subject { JSON.parse VerificationSummaryDecorator.new(summary).to_json(user_options: options), symbolize_names: true }
 
         it "includes a list of verification results" do
-          expect(subject[:_embedded][:'verification-results']).to be_instance_of(Array)
-          expect(subject[:_embedded][:'verification-results'].size).to eq 1
+          expect(subject[:_embedded][:verificationResults]).to be_instance_of(Array)
+          expect(subject[:_embedded][:verificationResults].size).to eq 1
         end
 
         it "includes a title" do
@@ -41,12 +46,10 @@ module PactBroker
           expect(subject[:success]).to be true
         end
 
-        context "when there are no verifications" do
-          let(:verifications) { [] }
-
-          it "does not include a flag to indicate the overall success or failure of all the verification results" do
-            expect(subject).to_not have_key(:success)
-          end
+        it "includes a provider summary" do
+          expect(subject[:providerSummary][:successful]).to eq ["Successful provider"]
+          expect(subject[:providerSummary][:failed]).to eq ["Failed provider"]
+          expect(subject[:providerSummary][:unknown]).to eq ["Unknown provider"]
         end
       end
     end

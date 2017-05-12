@@ -25,6 +25,10 @@ module PactBroker
         pact_repository.find_pact(params[:consumer_name], params[:consumer_version_number], params[:provider_name], params[:revision_number])
       end
 
+      def find_by_consumer_version params
+        pact_repository.find_by_consumer_version(params[:consumer_name], params[:consumer_version_number])
+      end
+
       def delete params
         logger.info "Deleting pact version with params #{params}"
         pact_repository.delete(params)

@@ -24,23 +24,23 @@ module PactBroker
 
           context "when the consumer version exists" do
             let(:decorator) { double(:decorator, to_json: json) }
-            let(:verifications) { double(:verifications) }
+            let(:summary) { double(:summary) }
             let(:json) { {some: 'json'}.to_json }
 
             before do
-              allow(PactBroker::Api::Decorators::VerificationsDecorator).to receive(:new).and_return(decorator)
-              allow(PactBroker::Verifications::Service).to receive(:find_latest_verifications_for_consumer_version).and_return(verifications)
+              allow(PactBroker::Api::Decorators::VerificationSummaryDecorator).to receive(:new).and_return(decorator)
+              allow(PactBroker::Verifications::Service).to receive(:verification_summary_for_consumer_version).and_return(summary)
             end
 
             it { is_expected.to be_a_hal_json_success_response }
 
             it "finds the latest verifications for the consumer version" do
-              expect(PactBroker::Verifications::Service).to receive(:find_latest_verifications_for_consumer_version).with(hash_including(consumer_name: 'Consumer', consumer_version_number: '1.2.3'))
+              expect(PactBroker::Verifications::Service).to receive(:verification_summary_for_consumer_version).with(hash_including(consumer_name: 'Consumer', consumer_version_number: '1.2.3'))
               subject
             end
 
             it "serialises the verifications" do
-              expect(PactBroker::Api::Decorators::VerificationsDecorator).to receive(:new).with(verifications)
+              expect(PactBroker::Api::Decorators::VerificationSummaryDecorator).to receive(:new).with(summary)
               expect(decorator).to receive(:to_json) do | args |
                 expect(args[:user_options][:consumer_name]).to eq 'Consumer'
                 expect(args[:user_options][:consumer_version_number]).to eq '1.2.3'

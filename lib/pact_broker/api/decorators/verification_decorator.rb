@@ -27,9 +27,6 @@ module PactBroker
           }
         end
 
-        def provider_name
-          represented.provider_name
-        end
       end
     end
   end

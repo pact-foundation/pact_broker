@@ -34,6 +34,7 @@ module PactBroker
           .consumer(consumer_name)
           .consumer_version_number(consumer_version_number)
           .order(:provider_name)
+          .all
       end
 
       def find_latest_verification_for consumer_name, provider_name
