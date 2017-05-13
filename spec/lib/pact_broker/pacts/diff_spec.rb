@@ -21,11 +21,11 @@ module PactBroker
             .create_consumer("Consumer")
             .create_provider("Provider")
             .create_consumer_version("1")
-            .create_pact(pact_content_version_1)
+            .create_pact(json_content: pact_content_version_1)
             .create_consumer_version("2")
-            .create_pact(pact_content_version_2)
+            .create_pact(json_content: pact_content_version_2)
             .create_consumer_version("3")
-            .create_pact(pact_content_version_3)
+            .create_pact(json_content: pact_content_version_3)
           allow(DateHelper).to receive(:local_date_in_words).and_return("a date")
         end
 

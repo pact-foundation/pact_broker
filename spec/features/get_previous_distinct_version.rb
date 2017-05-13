@@ -20,11 +20,11 @@ describe "Get previous distinct version of pact" do
       .create_consumer("Consumer")
       .create_provider("Provider")
       .create_consumer_version("1")
-      .create_pact(pact_content_version_1)
+      .create_pact(json_content: pact_content_version_1)
       .create_consumer_version("2")
-      .create_pact(pact_content_version_2)
+      .create_pact(json_content: pact_content_version_2)
       .create_consumer_version("3")
-      .create_pact(pact_content_version_3)
+      .create_pact(json_content: pact_content_version_3)
   end
 
   context "when the pact version exists" do

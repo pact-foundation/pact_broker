@@ -133,8 +133,11 @@ class ProviderStateBuilder
     self
   end
 
-  def create_pact json_content = default_json_content
-    @pact = PactBroker::Pacts::Repository.new.create(version_id: @consumer_version.id, consumer_id: @consumer.id, provider_id: @provider.id, json_content: json_content)
+  def create_pact params = {}
+    @pact = PactBroker::Pacts::Repository.new.create({version_id: @consumer_version.id, consumer_id: @consumer.id, provider_id: @provider.id, json_content: params[:json_content] || default_json_content})
+    set_created_at_if_set params[:created_at], :pact_publications, {id: @pact.id}
+    set_created_at_if_set params[:created_at], :pact_versions, {sha: @pact.pact_version_sha}
+    @pact = PactBroker::Pacts::PactPublication.find(id: @pact.id).to_domain
     self
   end
 
@@ -169,6 +172,12 @@ class ProviderStateBuilder
   end
 
   private
+
+  def set_created_at_if_set created_at, table_name, selector
+    if created_at
+      Sequel::Model.db.run("update #{table_name} set created_at = \"#{created_at.xmlschema}\" where #{selector.keys.first} = \"#{selector.values.first}\"")
+    end
+  end
 
   def default_json_content
     {
