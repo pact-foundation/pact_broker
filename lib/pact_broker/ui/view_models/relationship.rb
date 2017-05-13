@@ -42,6 +42,11 @@ module PactBroker
           end
         end
 
+        def publication_date_of_latest_pact
+          date = @relationship.latest_pact.created_at
+          PactBroker::DateHelper.distance_of_time_in_words(date, DateTime.now) + " ago"
+        end
+
         def verification_status
           return "" unless @relationship.ever_verified?
           if @relationship.latest_verification_successful?

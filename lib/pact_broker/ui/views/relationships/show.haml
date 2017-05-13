@@ -29,6 +29,8 @@
           %span.glyphicon.glyphicon-sort.relationships-sort
         %th
         %th
+          Latest pact published
+        %th
           Last verified
       %tbody
 
@@ -45,8 +47,10 @@
             %a{:href => relationship.provider_group_url}
               = relationship.provider_name
           %td
-          %td{class: relationship.verification_status}
-            %div{title: relationship.verification_tooltip, "data-toggle": "tooltip", "data-placement": "left"}
+          %td
+            = relationship.publication_date_of_latest_pact
+          %td{class: relationship.verification_status, title: relationship.verification_tooltip, "data-toggle": "tooltip", "data-placement": "left"}
+            %div
               = relationship.last_verified_date
               - if relationship.warning?
                 %span.glyphicon.glyphicon-warning-sign{'aria-hidden':true}
@@ -60,5 +64,9 @@
 
   $(document).ready(function(){
     $("span.pact").load("/images/doc-text.svg");
-    $('[data-toggle="tooltip"]').tooltip();
+    $('td[data-toggle="tooltip"]').each(function(index, td){
+      //appended tooltip div screws up table if it's appended after a
+      //td, so need to append it to a div
+      $(td).tooltip({container: $(td).first()});
+    });
   });
