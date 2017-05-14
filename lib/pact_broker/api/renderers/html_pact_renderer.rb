@@ -38,6 +38,9 @@ module PactBroker
          "<link rel='stylesheet' type='text/css' href='/stylesheets/github.css'>
           <link rel='stylesheet' type='text/css' href='/stylesheets/pact.css'>
           <link rel='stylesheet' type='text/css' href='/stylesheets/github-json.css'>
+          <script src='/javascripts/jquery-2.1.1.min.js'></script>
+          <script src='/javascripts/jquery-dateFormat.min.js'></script>
+          <script src='/javascripts/pact.js'></script>
           <script src='/javascripts/highlight.pack.js'></script>
           <script>hljs.initHighlightingOnLoad();</script>"
         end
@@ -51,7 +54,7 @@ module PactBroker
               </li>
               <li>
                 <span class='name'>Date published:</span>
-                <span class='value'>#{published_date}</span>
+                <span class='value longLocalDateFormat'>#{published_date}</span>
               </li>
               <li>
                 <a href=\"#{json_url}\">View in HAL Browser</a>
@@ -61,7 +64,7 @@ module PactBroker
         end
 
         def published_date
-          @pact.updated_at.to_time.localtime.to_datetime.strftime("%a %d %b %Y, %l:%M%P %:z")
+          @pact.updated_at.to_time.xmlschema
         end
 
         def json_url
