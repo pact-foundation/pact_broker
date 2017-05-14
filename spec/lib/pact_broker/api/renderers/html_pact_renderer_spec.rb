@@ -39,7 +39,7 @@ module PactBroker
             expect(subject).to match /<h\d>.*Some Consumer/
             expect(subject).to match /<h\d>.*Some Provider/
             expect(subject).to include("Date published:")
-            expect(subject).to include("2014-02-27T00:00:00+00:00")
+            expect(subject).to include("Thu 27 Feb 2014, 11:00am +11:00")
           end
 
           context "when the content is not a valid pact, but is still JSON" do
