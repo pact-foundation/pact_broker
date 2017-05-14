@@ -31,10 +31,8 @@ module PactBroker
 
     def post_configure
       PactBroker.logger = configuration.logger
-      PactBroker::DB.connection = configuration.database_connection
-      PactBroker::DB.connection.timezone = :utc
-      PactBroker::DB.validate_connection_config if configuration.validate_database_connection_config
       SuckerPunch.logger = configuration.logger
+      configure_database_connection
 
       if configuration.auto_migrate_db
         logger.info "Migrating database"
@@ -42,6 +40,15 @@ module PactBroker
       else
         logger.info "Skipping database migrations"
       end
+    end
+
+    def configure_database_connection
+      PactBroker::DB.connection = configuration.database_connection
+      PactBroker::DB.connection.timezone = :utc
+      PactBroker::DB.validate_connection_config if configuration.validate_database_connection_config
+      Sequel.database_timezone = :utc # Store all dates in UTC, assume any date without a TZ is UTC
+      Sequel.application_timezone = :local # Convert dates to localtime when retrieving from database
+      Sequel.typecast_timezone = :utc # If no timezone specified on dates going into the database, assume they are UTC
     end
 
     def build_app
