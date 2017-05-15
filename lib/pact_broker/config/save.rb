@@ -63,8 +63,12 @@ module PactBroker
       def get_db_value setting_name
         val = get_value(setting_name)
         case val
-        when String, Integer, Float, TrueClass, FalseClass, NilClass
+        when String, Integer, Float, NilClass
           val
+        when TrueClass
+          "1"
+        when FalseClass
+          "0"
         when Array, Hash
           val.to_json
         else
