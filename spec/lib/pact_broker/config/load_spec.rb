@@ -10,7 +10,6 @@ module PactBroker
           attr_accessor :foo, :bar, :nana, :meep, :lalala, :meow, :peebo
         end
 
-        let(:configuration) { MockConfig.new }
         before do
           Setting.create(name: 'foo', type: 'json', value: {"a" => "thing"}.to_json)
           Setting.create(name: 'bar', type: 'string', value: "bar")
@@ -21,6 +20,8 @@ module PactBroker
           Setting.create(name: 'peebo', type: 'string', value: nil)
           Setting.create(name: 'unknown', type: 'string', value: nil)
         end
+
+        let(:configuration) { MockConfig.new }
 
         subject { Load.call(configuration) }
 
