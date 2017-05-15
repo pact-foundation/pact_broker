@@ -2,6 +2,7 @@ require 'pact_broker/configuration'
 require 'pact_broker/db'
 require 'pact_broker/project_root'
 require 'rack/hal_browser'
+require 'rack/pact_broker/add_pact_broker_version_header'
 require 'rack/pact_broker/convert_file_extension_to_accept_header'
 require 'sucker_punch'
 
@@ -30,10 +31,8 @@ module PactBroker
 
     def post_configure
       PactBroker.logger = configuration.logger
-      PactBroker::DB.connection = configuration.database_connection
-      PactBroker::DB.connection.timezone = :utc
-      PactBroker::DB.validate_connection_config if configuration.validate_database_connection_config
       SuckerPunch.logger = configuration.logger
+      configure_database_connection
 
       if configuration.auto_migrate_db
         logger.info "Migrating database"
@@ -43,9 +42,19 @@ module PactBroker
       end
     end
 
+    def configure_database_connection
+      PactBroker::DB.connection = configuration.database_connection
+      PactBroker::DB.connection.timezone = :utc
+      PactBroker::DB.validate_connection_config if configuration.validate_database_connection_config
+      Sequel.database_timezone = :utc # Store all dates in UTC, assume any date without a TZ is UTC
+      Sequel.application_timezone = :local # Convert dates to localtime when retrieving from database
+      Sequel.typecast_timezone = :utc # If no timezone specified on dates going into the database, assume they are UTC
+    end
+
     def build_app
       @app = Rack::Builder.new
 
+      @app.use Rack::PactBroker::AddPactBrokerVersionHeader
       @app.use Rack::Static, :urls => ["/stylesheets", "/css", "/fonts", "/js", "/javascripts", "/images"], :root => PactBroker.project_root.join("public")
       @app.use Rack::PactBroker::ConvertFileExtensionToAcceptHeader
 

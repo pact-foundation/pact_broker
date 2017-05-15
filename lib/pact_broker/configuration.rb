@@ -6,6 +6,8 @@ module PactBroker
 
   class Configuration
 
+    SAVABLE_SETTING_NAMES = [:order_versions_by_date, :use_case_sensitive_resource_names]
+
     attr_accessor :log_dir, :database_connection, :auto_migrate_db, :use_hal_browser, :html_pact_renderer
     attr_accessor :validate_database_connection_config, :enable_diagnostic_endpoints, :version_parser
     attr_accessor :use_case_sensitive_resource_names, :order_versions_by_date
@@ -39,6 +41,18 @@ module PactBroker
         require 'pact_broker/api/renderers/html_pact_renderer'
         PactBroker::Api::Renderers::HtmlPactRenderer.call pact
       }
+    end
+
+    def save_to_database
+      # Can't require a Sequel::Model class before the connection has been set
+      require 'pact_broker/config/save'
+      PactBroker::Config::Save.call(self, SAVABLE_SETTING_NAMES)
+    end
+
+    def load_from_database!
+      # Can't require a Sequel::Model class before the connection has been set
+      require 'pact_broker/config/load'
+      PactBroker::Config::Load.call(self)
     end
 
     private

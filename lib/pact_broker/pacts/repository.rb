@@ -60,7 +60,7 @@ module PactBroker
 
       def find_latest_pact_versions_for_provider provider_name, tag = nil
         if tag
-          LatestTaggedPactPublications.provider(provider_name).where(tag_name: tag).order(:consumer_name).collect(&:to_domain)
+          LatestTaggedPactPublications.provider(provider_name).order(:consumer_name).where(tag_name: tag).order(:consumer_name).collect(&:to_domain)
         else
           LatestPactPublications.provider(provider_name).order(:consumer_name).collect(&:to_domain)
         end
