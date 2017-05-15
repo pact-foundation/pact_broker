@@ -24,49 +24,49 @@ module PactBroker
         it "saves a false config setting to the database" do
           subject
           setting = Setting.find(name: 'foo')
-          expect(setting.type).to eq 'Boolean'
+          expect(setting.type).to eq 'boolean'
           expect(setting.value).to eq '1'
         end
 
         it "saves a true config setting to the database" do
           subject
           setting = Setting.find(name: 'bar')
-          expect(setting.type).to eq 'Boolean'
+          expect(setting.type).to eq 'boolean'
           expect(setting.value).to eq '0'
         end
 
         it "saves an array to the database" do
           subject
           setting = Setting.find(name: 'wiffle')
-          expect(setting.type).to eq 'JSON'
+          expect(setting.type).to eq 'json'
           expect(setting.value).to eq '["a","b","c"]'
         end
 
         it "saves a hash to the database" do
           subject
           setting = Setting.find(name: 'meep')
-          expect(setting.type).to eq 'JSON'
+          expect(setting.type).to eq 'json'
           expect(setting.value).to eq "{\"a\":\"thing\"}"
         end
 
         it "saves a nil to the database" do
           subject
           setting = Setting.find(name: 'flop')
-          expect(setting.type).to eq 'String'
+          expect(setting.type).to eq 'string'
           expect(setting.value).to eq nil
         end
 
         it "saves an Integer to the database" do
           subject
           setting = Setting.find(name: 'peebo')
-          expect(setting.type).to eq 'Integer'
+          expect(setting.type).to eq 'integer'
           expect(setting.value).to eq '1'
         end
 
         it "saves a Float to the database" do
           subject
           setting = Setting.find(name: 'lalala')
-          expect(setting.type).to eq 'Float'
+          expect(setting.type).to eq 'float'
           expect(setting.value).to eq '1.2'
         end
 

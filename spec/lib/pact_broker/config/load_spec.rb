@@ -12,14 +12,14 @@ module PactBroker
 
         let(:configuration) { MockConfig.new }
         before do
-          Setting.create(name: 'foo', type: 'JSON', value: {"a" => "thing"}.to_json)
-          Setting.create(name: 'bar', type: 'String', value: "bar")
-          Setting.create(name: 'nana', type: 'Integer', value: "1")
-          Setting.create(name: 'meep', type: 'Float', value: "1.2")
-          Setting.create(name: 'lalala', type: 'Boolean', value: "1")
-          Setting.create(name: 'meow', type: 'Boolean', value: "0")
-          Setting.create(name: 'peebo', type: 'String', value: nil)
-          Setting.create(name: 'unknown', type: 'String', value: nil)
+          Setting.create(name: 'foo', type: 'json', value: {"a" => "thing"}.to_json)
+          Setting.create(name: 'bar', type: 'string', value: "bar")
+          Setting.create(name: 'nana', type: 'integer', value: "1")
+          Setting.create(name: 'meep', type: 'float', value: "1.2")
+          Setting.create(name: 'lalala', type: 'boolean', value: "1")
+          Setting.create(name: 'meow', type: 'boolean', value: "0")
+          Setting.create(name: 'peebo', type: 'string', value: nil)
+          Setting.create(name: 'unknown', type: 'string', value: nil)
         end
 
         subject { Load.call(configuration) }

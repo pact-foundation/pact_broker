@@ -46,15 +46,15 @@ module PactBroker
         val = get_value(setting_name)
         case val
           when true, false
-            'Boolean'
+            'boolean'
           when String, nil
-            'String'
+            'string'
           when Array, Hash
-            'JSON'
+            'json'
           when Integer
-            'Integer'
+            'integer'
           when Float
-            'Float'
+            'float'
           else
             nil
           end

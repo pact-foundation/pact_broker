@@ -40,15 +40,15 @@ module PactBroker
 
       def get_value_from_setting setting
         case setting.type
-        when 'JSON'
+        when 'json'
           JSON.parse(setting.value, symbolize_names: true)
-        when 'String'
+        when 'string'
           setting.value
-        when 'Integer'
+        when 'integer'
           Integer(setting.value)
-        when 'Float'
+        when 'float'
           Float(setting.value)
-        when 'Boolean'
+        when 'boolean'
           setting.value == "1"
         end
       end
