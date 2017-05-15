@@ -8,7 +8,7 @@ Sequel.extension :migration
 module PactBroker
   module Database
 
-    TABLES = [:pacts, :pact_version_contents, :tags, :verifications, :pact_publications, :pact_versions,  :webhook_headers, :webhooks, :versions, :pacticipants].freeze
+    TABLES = [:config, :pacts, :pact_version_contents, :tags, :verifications, :pact_publications, :pact_versions,  :webhook_headers, :webhooks, :versions, :pacticipants].freeze
 
     extend self
 

@@ -17,7 +17,8 @@ module PactBroker
 
             let(:consumer) { instance_double("PactBroker::Domain::Pacticipant", name: 'consumer_name')}
             let(:provider) { instance_double("PactBroker::Domain::Pacticipant", name: 'provider_name')}
-            let(:relationship) { PactBroker::Domain::Relationship.new(consumer, provider)}
+            let(:pact) { instance_double("PactBroker::Domain::Pact", created_at: Date.new(2017))}
+            let(:relationship) { PactBroker::Domain::Relationship.new(consumer, provider, pact)}
             let(:relationships) { [relationship] }
 
             before do
