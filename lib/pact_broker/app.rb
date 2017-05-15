@@ -5,6 +5,7 @@ require 'rack/hal_browser'
 require 'rack/pact_broker/add_pact_broker_version_header'
 require 'rack/pact_broker/convert_file_extension_to_accept_header'
 require 'rack/pact_broker/database_transaction'
+require 'rack/pact_broker/invalid_uri_protection'
 require 'sucker_punch'
 
 module PactBroker
@@ -55,6 +56,7 @@ module PactBroker
     def build_app
       @app = Rack::Builder.new
 
+      @app.use Rack::PactBroker::InvalidUriProtection
       @app.use Rack::PactBroker::AddPactBrokerVersionHeader
       @app.use Rack::Static, :urls => ["/stylesheets", "/css", "/fonts", "/js", "/javascripts", "/images"], :root => PactBroker.project_root.join("public")
       @app.use Rack::PactBroker::ConvertFileExtensionToAcceptHeader
