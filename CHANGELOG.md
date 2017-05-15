@@ -2,6 +2,12 @@ Do this to generate your change history
 
     $ git log --pretty=format:'  * %h - %s (%an, %ad)' vX.Y.Z..HEAD
 
+#### 2.0.0.beta.8 (2017-05-15)
+* e931b48 - Enable configuration settings to be saved to and loaded from the database. (Beth Skurrie, Mon May 15 12:34:44 2017 +1000)
+* c3976e4 - Set timezones so dates in the UI and API are shown in the configured local time. (Beth Skurrie, Mon May 15 08:53:13 2017 +1000)
+* 4da62e8 - Add publication date of latest pact to UI front page. (Beth Skurrie, Sun May 14 08:38:42 2017 +1000)
+* 8633b08 - Set X-Pact-Broker-Version header in all responses (Beth Skurrie, Fri May 12 16:39:09 2017 +1000)
+
 #### 2.0.0.beta.7 (2017-05-12)
 * 741bf96 - Include information about missing verifications in the latest verifications resource. Only set success to be true when all pacts have been successfully verified. (Beth Skurrie, Fri May 12 14:59:48 2017 +1000)
 * 64f20c6 - Allow one, two or three "parts" in the application version number. Eg. 12, 3.4 and 1.2.400 are all valid. (Beth Skurrie, Wed May 10 16:19:07 2017 +1000)
