@@ -41,13 +41,13 @@ module PactBroker
       }
     end
 
-    def save
+    def save_to_database
       # Can't require a Sequel::Model class before the connection has been set
       require 'pact_broker/config/save'
       PactBroker::Config::Save.call(self, SAVABLE_SETTING_NAMES)
     end
 
-    def load!
+    def load_from_database!
       # Can't require a Sequel::Model class before the connection has been set
       require 'pact_broker/config/load'
       PactBroker::Config::Load.call(self)
