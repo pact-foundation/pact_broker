@@ -6,8 +6,7 @@ module Rack
     class DatabaseTransaction
 
       REQUEST_METHOD = "REQUEST_METHOD".freeze
-      GET = "GET".freeze
-      HEAD = "HEAD".freeze
+      TRANS_METHODS = %{POST PUT PATCH DELETE}.freeze
 
       def initialize app, database_connection
         @app = app
@@ -15,11 +14,15 @@ module Rack
       end
 
       def call env
-        if env[REQUEST_METHOD] != GET && env[REQUEST_METHOD] != HEAD
+        if use_transaction? env
           call_with_transaction env
         else
           call_without_transaction env
         end
+      end
+
+      def use_transaction? env
+        TRANS_METHODS.include? env[REQUEST_METHOD]
       end
 
       def call_without_transaction env
