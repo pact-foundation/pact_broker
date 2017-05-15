@@ -8,18 +8,17 @@ module PactBroker
 
       include PactBroker::Logging
 
-      SETTING_NAMES = [:order_versions_by_date, :use_case_sensitive_resource_names]
-
-      def self.call configuration
-        new(configuration).call
+      def self.call configuration, setting_names
+        new(configuration, setting_names).call
       end
 
-      def initialize configuration
+      def initialize configuration, setting_names
         @configuration = configuration
+        @setting_names = setting_names
       end
 
       def call
-        SETTING_NAMES.each do | setting_name |
+        setting_names.each do | setting_name |
           if class_supported?(setting_name)
             create_or_update_setting(setting_name)
           else
@@ -30,7 +29,7 @@ module PactBroker
 
       private
 
-      attr_reader :configuration
+      attr_reader :configuration, :setting_names
 
       def create_or_update_setting setting_name
         setting = Setting.find(name: setting_name.to_s) || Setting.new(name: setting_name.to_s)

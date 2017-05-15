@@ -5,23 +5,8 @@ module PactBroker
   module Config
     describe Save do
 
-      describe "SETTING_NAMES" do
-        let(:configuration) { PactBroker::Configuration.new}
-
-        Save::SETTING_NAMES.each do | setting_name |
-          describe setting_name do
-            it "exists as a method on a PactBroker::Configuration instance" do
-              expect(configuration).to respond_to(setting_name)
-            end
-          end
-        end
-
-      end
-
       describe "#call" do
-        before do
-          stub_const("PactBroker::Config::Save::SETTING_NAMES", [:foo, :bar, :wiffle, :meep, :flop, :peebo, :lalala, :meow])
-        end
+        let(:setting_names) { [:foo, :bar, :wiffle, :meep, :flop, :peebo, :lalala, :meow] }
         let(:configuration) do
           double("PactBroker::Configuration",
             foo: true,
@@ -34,7 +19,7 @@ module PactBroker
             meow: Object.new)
         end
 
-        subject { Save.call(configuration) }
+        subject { Save.call(configuration, setting_names) }
 
         it "saves a false config setting to the database" do
           subject

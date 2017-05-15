@@ -16,6 +16,19 @@ module PactBroker
         end
 
       end
+
+      describe "SETTING_NAMES" do
+        let(:configuration) { PactBroker::Configuration.new}
+
+        Configuration::SAVABLE_SETTING_NAMES.each do | setting_name |
+          describe setting_name do
+            it "exists as a method on a PactBroker::Configuration instance" do
+              expect(configuration).to respond_to(setting_name)
+            end
+          end
+        end
+
+      end
     end
   end
 end

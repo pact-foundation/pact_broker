@@ -1,4 +1,3 @@
-require 'lib/pact_broker/configuration'
 module PactBroker
   module Config
     class Setting < Sequel::Model(:config)
