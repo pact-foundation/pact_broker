@@ -3,15 +3,49 @@ require 'pact_broker/app'
 module PactBroker
   describe App do
 
+    class TestApp < PactBroker::App
+
+      def configure_database_connection
+        # do nothing
+      end
+
+      def post_configure
+        # do nothing
+      end
+
+    end
+
     let(:app) do
-      PactBroker::App.new do | configuration |
+      TestApp.new do | configuration |
         configuration.database_connection = PactBroker::DB.connection
+        configuration.auto_migrate_db = false
       end
     end
 
     it "adds the X-Pact-Broker-Version header" do
       get "/"
       expect(last_response.headers['X-Pact-Broker-Version']).to match /\d/
+    end
+
+    describe "transactions", no_db_clean: true do
+      let(:pact_content) { load_fixture('a_consumer-a_provider.json') }
+      let(:path) { "/pacts/provider/A%20Provider/consumer/A%20Consumer/versions/1.2.3" }
+      let(:response_body_json) { JSON.parse(subject.body) }
+
+      before do
+        PactBroker::Database.truncate
+        allow_any_instance_of(PactBroker::Pacts::Repository).to receive(:create).and_raise("an error")
+      end
+
+      after do
+        PactBroker::Database.truncate
+      end
+
+      subject { put path, pact_content, {'CONTENT_TYPE' => 'application/json' }; last_response  }
+
+      it "wraps the API with a database transaction" do
+        expect { subject }.to_not change { PactBroker::Domain::Pacticipant.count }
+      end
     end
 
   end

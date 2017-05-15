@@ -4,6 +4,7 @@ require 'pact_broker/project_root'
 require 'rack/hal_browser'
 require 'rack/pact_broker/add_pact_broker_version_header'
 require 'rack/pact_broker/convert_file_extension_to_accept_header'
+require 'rack/pact_broker/database_transaction'
 require 'sucker_punch'
 
 module PactBroker
@@ -79,7 +80,7 @@ module PactBroker
       end
 
       apps << PactBroker::UI::App.new
-      apps << PactBroker::API
+      apps << Rack::PactBroker::DatabaseTransaction.new(PactBroker::API, configuration.database_connection)
 
       @app.map "/" do
         run Rack::Cascade.new(apps)
