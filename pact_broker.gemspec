@@ -36,6 +36,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'padrino-core', '~>0.12.4'
   gem.add_runtime_dependency 'haml', '~>4.0'
   gem.add_runtime_dependency 'sucker_punch', '~>2.0'
+  gem.add_runtime_dependency 'rack-protection', '~>1.5'
 
   gem.add_development_dependency 'sqlite3'
   gem.add_development_dependency 'pry-byebug'
