@@ -25,7 +25,7 @@ module PactBroker
           }
         end
 
-        link :pacticipant do | options |
+        link :'pb:pacticipant' do | options |
           {
             title: 'Pacticipant',
             name: represented.pacticipant.name,

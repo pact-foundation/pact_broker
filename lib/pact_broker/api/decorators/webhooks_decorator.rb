@@ -14,7 +14,14 @@ module PactBroker
           }
         end
 
-        links :webhooks do | context |
+        link :'pb:create' do | context |
+          {
+            title: "POST to create a webhook",
+            href: context[:resource_url]
+          }
+        end
+
+        links :'pb:webhooks' do | context |
           represented.entries.collect do | webhook |
             {
               title: webhook.description,
@@ -27,7 +34,8 @@ module PactBroker
         curies do | context |
           [{
             name: :pb,
-            href: context[:base_url] + '/doc/webhooks',
+            href: context[:base_url] + '/doc/webhooks-{rel}',
+            templated: true
           }]
         end
 
