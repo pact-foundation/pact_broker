@@ -3,7 +3,7 @@ module PactBroker
 
     class Relationship
 
-      attr_reader :consumer, :provider
+      attr_reader :consumer, :provider, :latest_pact, :latest_verification, :webhooks
 
       def initialize consumer, provider, latest_pact = nil, latest_verification = nil, webhooks = []
         @consumer = consumer
@@ -88,10 +88,6 @@ module PactBroker
       def to_a
         [consumer, provider]
       end
-
-      protected
-
-      attr_reader :latest_pact, :latest_verification, :webhooks
 
     end
   end
