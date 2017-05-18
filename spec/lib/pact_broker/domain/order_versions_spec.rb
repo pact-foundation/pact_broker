@@ -40,4 +40,21 @@ describe PactBroker::Domain::OrderVersions do
 
   end
 
+  context "when an existing version number can't be parsed into a semantic version" do
+    let!(:consumer) do
+      ProviderStateBuilder.new
+        .create_consumer
+        .create_consumer_version('1.3.0')
+        .and_return(:consumer)
+    end
+
+    let(:ordered_versions) { PactBroker::Domain::Version.order(:order).all.collect(&:number) }
+
+    it "sorts the unparseable version as being first" do
+      Sequel::Model.db[:versions].update(number: 'a')
+      PactBroker::Domain::Version.create(number: '1.2', pacticipant_id: consumer.id)
+      expect(ordered_versions).to eq(['a', '1.2'])
+    end
+  end
+
 end
