@@ -15,10 +15,12 @@ module PactBroker
         describe "/" do
           describe "GET" do
 
+            # TODO Relationship should be mocked
             let(:consumer) { instance_double("PactBroker::Domain::Pacticipant", name: 'consumer_name')}
             let(:provider) { instance_double("PactBroker::Domain::Pacticipant", name: 'provider_name')}
-            let(:pact) { instance_double("PactBroker::Domain::Pact", created_at: Date.new(2017))}
-            let(:relationship) { PactBroker::Domain::Relationship.new(consumer, provider, pact)}
+            let(:pact) { instance_double("PactBroker::Domain::Pact", created_at: Date.new(2017), consumer: consumer, provider: provider)}
+            let(:webhooks) { [instance_double("PactBroker::Domain::Webhook", consumer: consumer, provider: provider)]}
+            let(:relationship) { PactBroker::Domain::Relationship.new(consumer, provider, pact, nil, webhooks)}
             let(:relationships) { [relationship] }
 
             before do

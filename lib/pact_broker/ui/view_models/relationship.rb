@@ -33,6 +33,15 @@ module PactBroker
           "#{pactigration_base_url('', @relationship)}/latest"
         end
 
+        def any_webhooks?
+          @relationship.any_webhooks?
+        end
+
+        def webhooks_url
+          url = PactBroker::Api::PactBrokerUrls.webhooks_for_pact_url @relationship.latest_pact.consumer, @relationship.latest_pact.provider, ''
+          "/hal-browser/browser.html##{url}"
+        end
+
         def last_verified_date
           if @relationship.ever_verified?
             date = @relationship.latest_verification.execution_date

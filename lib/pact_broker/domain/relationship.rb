@@ -5,20 +5,22 @@ module PactBroker
 
       attr_reader :consumer, :provider
 
-      def initialize consumer, provider, latest_pact = nil, latest_verification = nil
+      def initialize consumer, provider, latest_pact = nil, latest_verification = nil, webhooks = []
         @consumer = consumer
         @provider = provider
         @latest_pact = latest_pact
         @latest_verification = latest_verification
+        @webhooks = webhooks
       end
 
-      def self.create consumer, provider, latest_pact, latest_verification
-        new consumer, provider, latest_pact, latest_verification
+      def self.create consumer, provider, latest_pact, latest_verification, webhooks
+        new consumer, provider, latest_pact, latest_verification, webhooks
       end
 
       def eq? other
         Relationship === other && other.consumer == consumer && other.provider == provider &&
-          other.latest_pact == latest_pact && other.latest_verification == latest_verification
+          other.latest_pact == latest_pact && other.latest_verification == latest_verification &&
+          other.webhooks == webhooks
       end
 
       def == other
@@ -35,6 +37,10 @@ module PactBroker
 
       def latest_pact
         @latest_pact
+      end
+
+      def any_webhooks?
+        @webhooks.any?
       end
 
       def ever_verified?
@@ -82,6 +88,10 @@ module PactBroker
       def to_a
         [consumer, provider]
       end
+
+      protected
+
+      attr_reader :latest_pact, :latest_verification, :webhooks
 
     end
   end

@@ -18,6 +18,7 @@ table#relationships {
 table#relationships td,
 table#relationships th {
   text-align: left;
+  vertical-align: middle
 }
 
 table#relationships th,
