@@ -22,6 +22,10 @@ module PactBroker
           .where(name_like(Sequel.qualify("pacticipants", "name"), args.fetch(:pacticipant_name)))
           .single_record
       end
+
+      def delete_by_version_id version_id
+        Sequel::Model.db[:tags].where(version_id: version_id).delete
+      end
     end
   end
 end

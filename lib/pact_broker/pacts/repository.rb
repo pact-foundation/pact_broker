@@ -48,6 +48,10 @@ module PactBroker
         PactPublication.where(id: id).delete
       end
 
+      def delete_by_version_id version_id
+        Sequel::Model.db[:pact_publications].where(consumer_version_id: version_id).delete
+      end
+
       def find_all_pact_versions_between consumer_name, options
         provider_name = options.fetch(:and)
         LatestPactPublicationsByConsumerVersion

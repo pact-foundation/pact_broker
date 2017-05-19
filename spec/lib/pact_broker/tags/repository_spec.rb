@@ -62,6 +62,27 @@ module PactBroker
         end
       end
 
+      describe "delete_by_version_id" do
+        let!(:version) do
+          ProviderStateBuilder.new
+            .create_consumer
+            .create_provider
+            .create_consumer_version("4.5.6")
+            .create_consumer_version_tag("prod")
+            .create_consumer_version("1.2.3")
+            .create_consumer_version_tag("prod")
+            .create_consumer_version_tag("foo")
+            .and_return(:consumer_version)
+        end
+
+        subject { Repository.new.delete_by_version_id(version.id) }
+
+        it "deletes the tag" do
+          expect{ subject }.to change { PactBroker::Domain::Tag.count }.by(-2)
+        end
+
+      end
+
     end
   end
 end
