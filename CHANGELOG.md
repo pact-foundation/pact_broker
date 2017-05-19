@@ -2,6 +2,9 @@ Do this to generate your change history
 
     $ git log --pretty=format:'  * %h - %s (%an, %ad)' vX.Y.Z..HEAD
 
+#### 2.0.2 (2017-05-17)
+* 0e4d4bf - Add missing require for migration_helper (Beth Skurrie, Fri May 19 14:16:38 2017 +1000)
+
 #### 2.0.1 (2017-05-17)
 * 8d105aa - Allow an application version to be deleted via the API. (Beth Skurrie, Fri May 19 10:39:16 2017 +1000)
 * 025b0f7 - Ensure version numbers that don't conform to the semver2 spec don't cause errors when sorting versions. #103 (Beth Skurrie, Fri May 19 09:58:50 2017 +1000)
