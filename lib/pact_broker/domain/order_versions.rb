@@ -26,8 +26,22 @@ module PactBroker
           @sortable_number = PactBroker.configuration.version_parser.call version_model.number
         end
 
+        # Incoming version numbers are rejected if they can't be parsed by the version parser,
+        # however, the change from Versionomy to SemVer for version parsing means that some
+        # existing version numbers cannot be parsed and are returning nil.
+        # The main reason to sort the versions is to that we can get the "latest" pact.
+        # Any existing version with a number that cannot be parsed will almost definitely not
+        # be the "latest", so sort them first.
         def <=> other
-          self.sortable_number <=> other.sortable_number
+          if sortable_number.nil? && other.sortable_number.nil?
+            0
+          elsif sortable_number.nil?
+            -1
+          elsif other.sortable_number.nil?
+            1
+          else
+            self.sortable_number <=> other.sortable_number
+          end
         end
 
         def update_model new_order

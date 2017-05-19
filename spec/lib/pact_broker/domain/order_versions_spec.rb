@@ -40,20 +40,25 @@ describe PactBroker::Domain::OrderVersions do
 
   end
 
-  context "when an existing version number can't be parsed into a semantic version" do
+  context "when an existing version number in the database that Versionomy could parse cannot be parsed by SemVer" do
     let!(:consumer) do
       ProviderStateBuilder.new
         .create_consumer
-        .create_consumer_version('1.3.0')
+        .create_consumer_version('1')
+        .create_consumer_version('2')
+        .create_consumer_version('3')
+        .create_consumer_version('4')
         .and_return(:consumer)
     end
 
     let(:ordered_versions) { PactBroker::Domain::Version.order(:order).all.collect(&:number) }
 
-    it "sorts the unparseable version as being first" do
-      Sequel::Model.db[:versions].update(number: 'a')
-      PactBroker::Domain::Version.create(number: '1.2', pacticipant_id: consumer.id)
-      expect(ordered_versions).to eq(['a', '1.2'])
+    it "sorts the unparseable version as being first and maintains their relative order" do
+      Sequel::Model.db[:versions].where(number: '1').update(number: 'z')
+      Sequel::Model.db[:versions].where(number: '2').update(number: 'a')
+      Sequel::Model.db[:versions].where(number: '4').update(number: 'h')
+      PactBroker::Domain::Version.create(number: '5', pacticipant_id: consumer.id)
+      expect(ordered_versions).to eq(['z', 'a', 'h', '3', '5'])
     end
   end
 

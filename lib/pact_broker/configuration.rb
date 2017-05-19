@@ -32,7 +32,7 @@ module PactBroker
       # Not recommended to set this to true unless there is no way to
       # consistently extract an orderable object from the consumer application version number.
       config.order_versions_by_date = false
-      config.semver_formats = ["%M.%m.%p%s%d","%M.%m", "%M", "%d"]
+      config.semver_formats = ["%M.%m.%p%s%d","%M.%m", "%M"]
       config
     end
 
