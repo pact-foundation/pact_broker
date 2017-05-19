@@ -1,3 +1,5 @@
+require_relative 'migration_helper'
+
 Sequel.migration do
   up do
     create_table(:config, charset: 'utf8') do
