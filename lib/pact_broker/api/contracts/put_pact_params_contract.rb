@@ -34,6 +34,7 @@ module PactBroker
             config.messages_file = File.expand_path("../../../locale/en.yml", __FILE__)
 
             def valid_consumer_version_number?(value)
+              return true if PactBroker.configuration.order_versions_by_date
               parsed_version_number = PactBroker.configuration.version_parser.call(value)
               !parsed_version_number.nil?
             end
