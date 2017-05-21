@@ -5,9 +5,30 @@ module PactBroker
     class OrderVersions
 
       include PactBroker::Logging
-      # TODO select for update
-      def self.call pacticipant_id
 
+      # TODO select for update
+      def self.call new_version
+        PactBroker::Domain::Version.for_update.where(pacticipant_id: new_version.pacticipant_id).all
+        latest_version_for_pacticipant = latest_version_for(new_version.pacticipant)
+
+        if new_version_after_previous_latest_version? new_version, latest_version_for_pacticipant
+          new_version.update(order: latest_version_for_pacticipant.order + 1)
+        else
+          reorder_all_versions_for_pacticipant new_version.pacticipant_id
+        end
+      end
+
+      def self.new_version_after_previous_latest_version? new_version, latest_version_for_pacticipant
+        return false unless latest_version_for_pacticipant
+        OrderableVersion.new(new_version).after?(OrderableVersion.new(latest_version_for_pacticipant))
+      end
+
+      def self.latest_version_for pacticipant
+        max_order_for_pacticipant = PactBroker::Domain::Version.where(pacticipant_id: pacticipant.id).exclude(order: nil).max(:order)
+        PactBroker::Domain::Version.where(pacticipant_id: pacticipant.id, order: max_order_for_pacticipant).exclude(order: nil).single_record
+      end
+
+      def self.reorder_all_versions_for_pacticipant pacticipant_id
         orderable_versions = PactBroker::Domain::Version.for_update.where(:pacticipant_id => pacticipant_id).order(:created_at, :id).collect{| version | OrderableVersion.new(version) }
         ordered_versions = if PactBroker.configuration.order_versions_by_date
           orderable_versions # already ordered in SQL
@@ -42,6 +63,10 @@ module PactBroker
           else
             self.sortable_number <=> other.sortable_number
           end
+        end
+
+        def after? other
+          (self <=> other) == -1
         end
 
         def update_model new_order
