@@ -9,7 +9,7 @@ Sequel.migration do
       String :value, type: PactBroker::MigrationHelper.large_text_type
       DateTime :created_at, null: false
       DateTime :updated_at, null: false
-      index [:name], unique: true, unique_constraint_name: 'unq_config_name'
+      index [:name], unique: true, name: 'unq_config_name'
     end
   end
 end
