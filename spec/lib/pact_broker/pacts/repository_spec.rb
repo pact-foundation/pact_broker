@@ -191,6 +191,29 @@ module PactBroker
 
       end
 
+      describe "delete_by_version_id" do
+        let!(:version) do
+          ProviderStateBuilder.new
+            .create_consumer
+            .create_provider
+            .create_consumer_version("4.5.6")
+            .create_pact
+            .create_consumer_version("1.2.3")
+            .create_pact
+            .and_return(:consumer_version)
+        end
+
+        subject { Repository.new.delete_by_version_id(version.id) }
+
+        it "deletes the pact publication" do
+          expect{ subject }.to change { PactPublication.count }.by(-1)
+        end
+
+        it "does not delete the content because it may be used by another pact" do
+          expect { subject }.to change { PactVersion.count }.by(0)
+        end
+      end
+
       describe "#find_all_pact_versions_between" do
 
         before do

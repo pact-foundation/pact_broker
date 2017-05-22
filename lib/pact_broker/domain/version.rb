@@ -13,7 +13,7 @@ module PactBroker
       one_to_many :tags, :reciprocal => :version
 
       def after_create
-        OrderVersions.(self.pacticipant_id)
+        OrderVersions.(self)
       end
 
       def to_s

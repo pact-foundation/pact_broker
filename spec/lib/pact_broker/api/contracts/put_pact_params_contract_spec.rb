@@ -5,8 +5,13 @@ module PactBroker
   module Api
     module Contracts
       describe PutPactParamsContract do
+        before do
+          allow(PactBroker.configuration).to receive(:order_versions_by_date).and_return(order_versions_by_date)
+        end
+
         let(:json_content) { {'some' => 'json' }.to_json }
         let(:pact_params) { Pacts::PactParams.new(attributes) }
+        let(:order_versions_by_date) { false }
 
         let(:valid_attributes) do
           {
@@ -64,6 +69,21 @@ module PactBroker
               expect(subject.errors[:consumer_version_number]).to include(/Consumer version number 'blah' cannot be parsed to a version number/)
             end
           end
+
+          context "when order_versions_by_date is true" do
+            let(:order_versions_by_date) { true }
+
+            context "with an invalid version number" do
+              let(:attributes) do
+                valid_attributes.merge(consumer_version_number: 'blah')
+              end
+
+              it "does not return an error" do
+                expect(subject.errors[:consumer_version_number]).to be_empty
+              end
+            end
+          end
+
 
           context "with a consumer name in the pact that does not match the consumer name in the path" do
             let(:attributes) do

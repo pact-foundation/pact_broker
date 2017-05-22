@@ -12,7 +12,7 @@ module PactBroker
         end
 
         def allowed_methods
-          ["GET"]
+          ["GET", "DELETE"]
         end
 
         def resource_exists?
@@ -21,6 +21,11 @@ module PactBroker
 
         def to_json
           Decorators::VersionDecorator.new(version).to_json(user_options: {base_url: base_url})
+        end
+
+        def delete_resource
+          version_service.delete version
+          true
         end
 
         private

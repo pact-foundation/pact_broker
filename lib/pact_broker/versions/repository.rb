@@ -34,6 +34,10 @@ module PactBroker
           create(pacticipant_id: pacticipant_id, number: number)
         end
       end
+
+      def delete_by_id version_ids
+        Sequel::Model.db[:versions].where(id: version_ids).delete
+      end
     end
   end
 end

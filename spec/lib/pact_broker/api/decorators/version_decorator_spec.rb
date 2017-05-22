@@ -35,7 +35,7 @@ module PactBroker
         end
 
         it "includes a link to the pacticipant" do
-          expect(subject[:_links][:pacticipant]).to eq title: "Pacticipant", name: "Consumer", href: "http://example.org/pacticipants/Consumer"
+          expect(subject[:_links][:'pb:pacticipant']).to eq title: "Pacticipant", name: "Consumer", href: "http://example.org/pacticipants/Consumer"
         end
 
         it "includes a list of the tags" do

@@ -24,6 +24,22 @@ module PactBroker
         end
       end
 
+      describe "#delete_by_id" do
+        let!(:version) do
+          ProviderStateBuilder.new
+            .create_consumer
+            .create_consumer_version("1.2.3")
+            .create_consumer_version("4.5.6")
+            .and_return(:consumer_version)
+        end
+
+        subject { Repository.new.delete_by_id version.id }
+
+        it "deletes the version" do
+          expect { subject }.to change{ PactBroker::Domain::Version.count }.by(-1)
+        end
+      end
+
       describe "#find_by_pacticipant_name_and_number" do
 
         subject { described_class.new.find_by_pacticipant_name_and_number pacticipant_name, version_number }

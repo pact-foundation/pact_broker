@@ -1,3 +1,4 @@
+set -e
 psql postgres -c "DROP DATABASE pact_broker;"
 psql postgres -c "CREATE DATABASE pact_broker;"
 psql postgres -c "GRANT ALL PRIVILEGES ON DATABASE pact_broker TO pact_broker;"

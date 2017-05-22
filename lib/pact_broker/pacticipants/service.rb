@@ -76,15 +76,17 @@ module PactBroker
       def self.delete name
         pacticipant = find_pacticipant_by_name name
         connection = PactBroker::Domain::Pacticipant.new.db
+        version_ids = PactBroker::Domain::Version.where(pacticipant_id: pacticipant.id).select(:id)
         select_pacticipant = "select id from pacticipants where name = '#{name}'"
-        connection.run("delete from tags where version_id IN (select id from versions where pacticipant_id = #{pacticipant.id})")
-        connection.run("delete from pact_publications where consumer_version_id IN (select id from versions where pacticipant_id = #{pacticipant.id})")
+        tag_repository.delete_by_version_id version_ids
+        pact_repository.delete_by_version_id version_ids
         connection.run("delete from pact_publications where provider_id = #{pacticipant.id}")
         connection.run("delete from verifications where pact_version_id IN (select id from pact_versions where provider_id = #{pacticipant.id})")
         connection.run("delete from verifications where pact_version_id IN (select id from pact_versions where consumer_id = #{pacticipant.id})")
         connection.run("delete from pact_versions where provider_id = #{pacticipant.id}")
         connection.run("delete from pact_versions where consumer_id = #{pacticipant.id}")
         connection.run("delete from versions where pacticipant_id = #{pacticipant.id}")
+        version_repository.delete_by_id version_ids
         webhook_service.delete_by_pacticipant pacticipant
         connection.run("delete from pacticipants where id = #{pacticipant.id}")
       end

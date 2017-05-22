@@ -72,15 +72,15 @@ module PactBroker
           end
 
           it 'includes a link to its parent collection' do
-            expect(parsed_json[:_links][:'pact-webhooks'][:href]).to_not be_nil
+            expect(parsed_json[:_links][:'pb:pact-webhooks'][:href]).to_not be_nil
           end
 
           it 'includes a link to the webhooks resource' do
-            expect(parsed_json[:_links][:webhooks][:href]).to_not be_nil
+            expect(parsed_json[:_links][:'pb:webhooks'][:href]).to_not be_nil
           end
 
           it 'includes a link to execute the webhook directly' do
-            expect(parsed_json[:_links][:execute][:href]).to eq 'http://example.org/webhooks/some-uuid/execute'
+            expect(parsed_json[:_links][:'pb:execute'][:href]).to eq 'http://example.org/webhooks/some-uuid/execute'
           end
 
           it 'includes timestamps' do
