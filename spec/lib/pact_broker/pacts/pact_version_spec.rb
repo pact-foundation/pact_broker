@@ -48,7 +48,7 @@ module PactBroker
       describe "#latest_consumer_version_number" do
         before do
           builder = ProviderStateBuilder.new
-            builder
+          builder
             .create_consumer
             .create_provider
             .create_consumer_version("1.0.1")

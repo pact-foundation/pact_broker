@@ -6,36 +6,25 @@ module PactBroker
 
       include PactBroker::Logging
 
-      # TODO select for update
       def self.call new_version
-        PactBroker::Domain::Version.for_update.where(pacticipant_id: new_version.pacticipant_id).all
-        latest_version_for_pacticipant = latest_version_for(new_version.pacticipant)
+        new_version.lock!
+        PactBroker::Domain::Version.for_update.where(pacticipant_id: new_version.pacticipant_id).exclude(order: nil).reverse(:order).each do | existing_version |
+          if new_version_after_existing_version? new_version, existing_version
+            new_version.update(order: existing_version.order + 1)
+            break
+          else
+            existing_version.update(order: existing_version.order + 1)
+          end
+        end
 
-        if new_version_after_previous_latest_version? new_version, latest_version_for_pacticipant
-          new_version.update(order: latest_version_for_pacticipant.order + 1)
-        else
-          reorder_all_versions_for_pacticipant new_version.pacticipant_id
+        if new_version.order.nil?
+          new_version.update(order: 0)
         end
       end
 
-      def self.new_version_after_previous_latest_version? new_version, latest_version_for_pacticipant
-        return false unless latest_version_for_pacticipant
-        OrderableVersion.new(new_version).after?(OrderableVersion.new(latest_version_for_pacticipant))
-      end
-
-      def self.latest_version_for pacticipant
-        max_order_for_pacticipant = PactBroker::Domain::Version.where(pacticipant_id: pacticipant.id).exclude(order: nil).max(:order)
-        PactBroker::Domain::Version.where(pacticipant_id: pacticipant.id, order: max_order_for_pacticipant).exclude(order: nil).single_record
-      end
-
-      def self.reorder_all_versions_for_pacticipant pacticipant_id
-        orderable_versions = PactBroker::Domain::Version.for_update.where(:pacticipant_id => pacticipant_id).order(:created_at, :id).collect{| version | OrderableVersion.new(version) }
-        ordered_versions = if PactBroker.configuration.order_versions_by_date
-          orderable_versions # already ordered in SQL
-        else
-          orderable_versions.sort
-        end
-        ordered_versions.each_with_index{ | version, i | version.update_model(i) }
+      def self.new_version_after_existing_version? new_version, existing_version
+        return true if PactBroker.configuration.order_versions_by_date
+        return OrderableVersion.new(new_version).after?(OrderableVersion.new(existing_version))
       end
 
       class OrderableVersion
@@ -66,15 +55,7 @@ module PactBroker
         end
 
         def after? other
-          (self <=> other) == -1
-        end
-
-        def update_model new_order
-          if version_model.order != new_order
-            # Avoid modifying the updated_at flag by doing a manual update
-            # In 99% of cases, this will only set the order of the most recent version
-            PactBroker::Domain::Version.where(id: version_model.id).update(order: new_order)
-          end
+          (self <=> other) == 1
         end
       end
     end
