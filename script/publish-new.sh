@@ -7,3 +7,4 @@ curl -v -XPUT \-H "Content-Type: application/json" \
 -d@tmp.json \
 http://127.0.0.1:9292/pacts/provider/Bar/consumer/Foo/version/${next_version}
 rm tmp.json
+echo ""
