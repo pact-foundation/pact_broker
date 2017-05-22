@@ -32,7 +32,7 @@ module PactBroker
         it "does not allow two versions with the same pacticipant and order" do
           Sequel::Model.db[:versions].insert(number: '1', order: 0, pacticipant_id: consumer.id, created_at: DateTime.new(2017), updated_at: DateTime.new(2017))
           expect { Sequel::Model.db[:versions].insert(number: '2', order: 0, pacticipant_id: consumer.id, created_at: DateTime.new(2017), updated_at: DateTime.new(2017)) }
-            .to raise_error(/uq_ver_ppt_ord/)
+            .to raise_error(Sequel::UniqueConstraintViolation)
         end
       end
     end
