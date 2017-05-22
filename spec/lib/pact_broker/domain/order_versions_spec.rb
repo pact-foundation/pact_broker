@@ -11,9 +11,9 @@ describe PactBroker::Domain::OrderVersions do
     before do
       ProviderStateBuilder.new
         .create_condor
-        .create_condor_version('1.3.0')
         .create_condor_version('1.5.0')
         .create_condor_version('1.4.0')
+        .create_condor_version('1.3.0')
         .create_condor_version('1.6.0')
     end
 

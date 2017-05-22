@@ -8,18 +8,34 @@ module PactBroker
 
       def self.call new_version
         new_version.lock!
+        order_set = false
+
         PactBroker::Domain::Version.for_update.where(pacticipant_id: new_version.pacticipant_id).exclude(order: nil).reverse(:order).each do | existing_version |
           if new_version_after_existing_version? new_version, existing_version
-            new_version.update(order: existing_version.order + 1)
+            set_order_after_existing_version_order new_version, existing_version
+            order_set = true
             break
           else
-            existing_version.update(order: existing_version.order + 1)
+            increment_existing_version_order existing_version
           end
         end
 
-        if new_version.order.nil?
-          new_version.update(order: 0)
+        if !order_set
+          set_order new_version, 0
         end
+      end
+
+      def self.increment_existing_version_order existing_version
+        set_order existing_version, existing_version.order + 1
+      end
+
+      def self.set_order_after_existing_version_order new_version, existing_version
+        set_order new_version, existing_version.order + 1
+      end
+
+      def self.set_order version, order
+        # Use dataset method so we don't trigger an update to the updated_at column
+        Sequel::Model.db[:versions].where(id: version.id).update(order: order)
       end
 
       def self.new_version_after_existing_version? new_version, existing_version
