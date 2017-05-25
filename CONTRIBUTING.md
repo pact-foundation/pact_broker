@@ -12,3 +12,4 @@ Please provide the following information with your issue to enable us to respond
 
 [wiki]: https://github.com/pact-foundation/pact_broker/wiki
 [stackoverflow]: https://stackoverflow.com/questions/tagged/pact-broker
+[pact-ruby-end-to-end-example]: https://github.com/pact-foundation/pact-ruby-end-to-end-example
