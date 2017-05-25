@@ -4,8 +4,9 @@ module PactBroker
 
     class WebhookExecutionResult
 
-      def initialize response, error = nil
+      def initialize response, logs, error = nil
         @response = response
+        @logs = logs
         @error = error
       end
 
@@ -19,6 +20,10 @@ module PactBroker
 
       def error
         @error
+      end
+
+      def logs
+        @logs
       end
 
     end

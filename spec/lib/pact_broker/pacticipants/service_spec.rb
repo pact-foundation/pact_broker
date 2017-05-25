@@ -139,6 +139,7 @@ module PactBroker
             .create_consumer_version_tag("prod")
             .create_pact
             .create_webhook
+            .create_webhook_execution
             .create_verification
         end
 
@@ -167,6 +168,12 @@ module PactBroker
           it "deletes the webhooks" do
             expect{ delete_consumer }.to change{
               PactBroker::Webhooks::Webhook.count
+              }.by(-1)
+          end
+
+          it "deletes the webhook executions" do
+            expect{ delete_consumer }.to change{
+              PactBroker::Webhooks::Execution.count
               }.by(-1)
           end
 
@@ -208,6 +215,12 @@ module PactBroker
               }.by(-1)
           end
 
+          it "deletes the webhook executions" do
+            expect{ delete_provider }.to change{
+              PactBroker::Webhooks::Execution.count
+              }.by(-1)
+          end
+
           it "deletes the child pacts" do
             expect{ delete_provider }.to change{
               PactBroker::Pacts::PactPublication.count
@@ -219,10 +232,9 @@ module PactBroker
               PactBroker::Domain::Verification.count
               }.by(-1)
           end
+
         end
-
       end
-
     end
   end
 end

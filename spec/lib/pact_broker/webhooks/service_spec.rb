@@ -77,10 +77,15 @@ module PactBroker
             .and_return(:pact)
         end
 
+        subject { PactBroker::Webhooks::Service.execute_webhooks pact }
 
         it "executes the HTTP request of the webhook" do
-          PactBroker::Webhooks::Service.execute_webhooks pact
+          subject
           expect(http_request).to have_been_made
+        end
+
+        it "saves the execution" do
+          expect { subject }.to change { PactBroker::Webhooks::Execution.count }.by(1)
         end
       end
     end

@@ -1,6 +1,7 @@
 require 'pact_broker/repositories'
 require 'pact_broker/webhooks/repository'
 require 'pact_broker/webhooks/service'
+require 'pact_broker/domain/webhook_execution_result'
 require 'pact_broker/pacts/repository'
 require 'pact_broker/pacts/service'
 require 'pact_broker/pacticipants/repository'
@@ -18,6 +19,7 @@ require 'pact_broker/verifications/repository'
 require 'pact_broker/verifications/service'
 require 'pact_broker/tags/repository'
 require 'pact_broker/webhooks/repository'
+require 'ostruct'
 
 class ProviderStateBuilder
 
@@ -151,6 +153,12 @@ class ProviderStateBuilder
     default_params = {method: 'POST', url: 'http://example.org', headers: {'Content-Type' => 'application/json'}}
     request = PactBroker::Domain::WebhookRequest.new(default_params.merge(params))
     @webhook = PactBroker::Webhooks::Repository.new.create PactBroker::Webhooks::Service.next_uuid, PactBroker::Domain::Webhook.new(request: request), @consumer, @provider
+    self
+  end
+
+  def create_webhook_execution
+    webhook_execution_result = PactBroker::Domain::WebhookExecutionResult.new(OpenStruct.new(code: "200"), "logs", nil)
+    @webhook_execution = PactBroker::Webhooks::Repository.new.create_execution @webhook, webhook_execution_result
     self
   end
 

@@ -48,10 +48,15 @@ module PactBroker
 
       def execute
 
+        logs = StringIO.new
+        execution_logger = Logger.new(logs)
+
         begin
           req = http_request
+          execution_logger.info "HTTP/1.1 #{method.upcase} #{url_with_credentials}"
 
           headers.each_pair do | name, value |
+            execution_logger.info "#{name}: #{value}"
             req[name] = value
           end
 
@@ -65,20 +70,31 @@ module PactBroker
             end
           end
 
+          execution_logger.info req.body
+
           logger.info "Making webhook #{uuid} request #{to_s}"
+
           response = Net::HTTP.start(uri.hostname, uri.port,
             :use_ssl => uri.scheme == 'https') do |http|
             http.request req
           end
 
+          execution_logger.info(" ")
           logger.info "Received response for webhook #{uuid} status=#{response.code}"
+          execution_logger.info "HTTP/#{response.http_version} #{response.code} #{response.message}"
+          response.each_header do | header |
+            execution_logger.info "#{header.split("-").collect(&:capitalize).join('-')}: #{response[header]}"
+          end
           logger.debug "body=#{response.body}"
-          WebhookExecutionResult.new(response)
+          execution_logger.info response.body
+          WebhookExecutionResult.new(response, logs.string)
 
         rescue StandardError => e
           logger.error "Error executing webhook #{uuid} #{e.class.name} - #{e.message}"
+          execution_logger.error "Error executing webhook #{uuid} #{e.class.name} - #{e.message}"
           logger.error e.backtrace.join("\n")
-          WebhookExecutionResult.new(nil, e)
+          execution_logger.error e.backtrace.join("\n")
+          WebhookExecutionResult.new(nil, logs.string, e)
         end
 
       end
@@ -95,6 +111,12 @@ module PactBroker
 
       def uri
         URI(url)
+      end
+
+      def url_with_credentials
+        u = URI(url)
+        u.userinfo = "#{username}:#{display_password}" if username
+        u
       end
     end
 
