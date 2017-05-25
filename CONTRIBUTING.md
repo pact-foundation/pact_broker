@@ -7,9 +7,9 @@ Please provide the following information with your issue to enable us to respond
 
 * The relevant versions of the gems or packages you are using.
 * The steps to recreate your issue.
-* An executable code example where possible. You can use the [pact-ruby-end-to-end-example] codebase to quickly recreate your issue.
+* An executable code example where possible. You can use the [pact-ruby-e2e-example] codebase to quickly recreate your issue.
 * Where you are using a pact broker deployed on third party infrastructure, please include the relevant details.
 
 [wiki]: https://github.com/pact-foundation/pact_broker/wiki
 [stackoverflow]: https://stackoverflow.com/questions/tagged/pact-broker
-[pact-ruby-end-to-end-example]: https://github.com/pact-foundation/pact-ruby-end-to-end-example
+[pact-ruby-e2e-example]: https://github.com/pact-foundation/pact-ruby-e2e-example
