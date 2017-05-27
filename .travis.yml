@@ -7,7 +7,7 @@ services:
   - postgresql
 before_script:
   - psql -U postgres -c "CREATE DATABASE pact_broker;"
-  - psql -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE pact_broker TO pact_broker;
+  - psql -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE pact_broker TO pact_broker;"
 script:
   - bundle exec rake
 env:
