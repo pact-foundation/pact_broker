@@ -12,12 +12,23 @@ test:
     # username: pact_broker
     # password: pact_broker
     encoding: utf8
+  mysql:
+    adapter: mysql2
+    database: pact_broker
+    username: travis
+    encoding: utf8
 
 development:
   default:
     <<: *default
   postgres:
     adapter: postgres
+    database: pact_broker
+    username: pact_broker
+    password: pact_broker
+    encoding: utf8
+  mysql:
+    adapter: mysql2
     database: pact_broker
     username: pact_broker
     password: pact_broker
