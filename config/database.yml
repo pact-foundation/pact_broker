@@ -9,8 +9,8 @@ test:
   postgres:
     adapter: postgres
     database: pact_broker
-    username: pact_broker
-    password: pact_broker
+    # username: pact_broker
+    # password: pact_broker
     encoding: utf8
 
 development:
