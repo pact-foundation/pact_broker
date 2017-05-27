@@ -123,7 +123,8 @@ module PactBroker
     def configuration_for_env env
       database_yml = PactBroker.project_root.join('config','database.yml')
       config = YAML.load(ERB.new(File.read(database_yml)).result)
-      config.fetch(env)
+      adapter = ENV.fetch('DATABASE_ADAPTER','default')
+      config.fetch(env)[adapter]
     end
 
     def env

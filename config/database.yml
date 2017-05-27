@@ -3,18 +3,26 @@ default: &default
   database: db/pact_broker_database.sqlite3
 
 test:
-  <<: *default
-  database: tmp/pact_broker_database_test.sqlite3
-
-# test:
-#   adapter: "postgres"
-#   database: "pact_broker"
-#   username: 'pact_broker'
-#   password: 'pact_broker'
-#   encoding: 'utf8'
+  default:
+    <<: *default
+    database: tmp/pact_broker_database_test.sqlite3
+  postgres:
+    adapter: postgres
+    database: pact_broker
+    username: pact_broker
+    password: pact_broker
+    encoding: utf8
 
 development:
-  <<: *default
+  default:
+    <<: *default
+  postgres:
+    adapter: postgres
+    database: pact_broker
+    username: pact_broker
+    password: pact_broker
+    encoding: utf8
 
 production:
-  <<: *default
+  default:
+    <<: *default

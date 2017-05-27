@@ -20,6 +20,20 @@ namespace :db do
     require File.dirname(__FILE__) + '/database.rb'
   end
 
+  task :create do
+    Rake::Task["db:create:#{ENV.fetch('DATABASE_ADAPTER', 'default')}"].invoke
+  end
+
+  namespace :create do
+    task :default do
+    end
+
+    task :postgres do
+      puts `psql postgres -c "CREATE DATABASE pact_broker;"`
+      puts `psql postgres -c "GRANT ALL PRIVILEGES ON DATABASE pact_broker TO pact_broker;"`
+    end
+  end
+
   desc 'Print current schema version'
   task :version => 'db:env' do
     puts "Schema Version: #{PactBroker::Database.version}"
@@ -53,9 +67,9 @@ namespace :db do
     PactBroker::Database.ensure_database_dir_exists
   end
 
-  task :create => 'db:env' do
-    PactBroker::Database.create
-  end
+  # task :create => 'db:env' do
+  #   PactBroker::Database.create
+  # end
 
   # Private
   task :set_test_env do

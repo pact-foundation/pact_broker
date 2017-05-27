@@ -1,5 +1,13 @@
 language: ruby
 rvm:
-  - 2.2.7
-  - 2.3.4
+  # - 2.2.7
+  # - 2.3.4
   - 2.4.1
+services:
+  - postgresql
+before_script:
+  - bundle exec rake db:create
+script:
+  - bundle exec rake
+env:
+  - DATABASE_ADAPTER=default DATABASE_ADAPTER=postgres

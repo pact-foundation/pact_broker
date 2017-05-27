@@ -40,7 +40,7 @@ module DB
   def self.configuration_for_env env
     database_yml = PactBroker.project_root.join('config','database.yml')
     config = YAML.load(ERB.new(File.read(database_yml)).result)
-    config.fetch(env)
+    config.fetch(env).fetch(ENV.fetch('DATABASE_ADAPTER','default'))
   end
 
   PACT_BROKER_DB ||= connection_for_env ENV.fetch('RACK_ENV')
