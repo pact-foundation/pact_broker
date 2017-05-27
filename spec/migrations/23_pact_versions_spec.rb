@@ -40,7 +40,7 @@ describe 'migrate to pact versions (migrate 22-31)', no_db_clean: :true do
 
   it "uses the old updated date for the new creation date" do
     do_migration
-    expect(database[:latest_pact_publications_by_consumer_versions].order(:id).first[:created_at]).to eq pact_updated_at
+    expect(database[:latest_pact_publications_by_consumer_versions].order(:id).first[:created_at].to_datetime).to eq pact_updated_at
   end
 
   it "sets each revision number to 1" do
