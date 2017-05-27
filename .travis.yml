@@ -6,8 +6,10 @@ rvm:
 services:
   - postgresql
 before_script:
-  - bundle exec rake db:create
+  - psql -U postgres -c "CREATE DATABASE pact_broker;"
+  - psql -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE pact_broker TO pact_broker;
 script:
   - bundle exec rake
 env:
-  - DATABASE_ADAPTER=default DATABASE_ADAPTER=postgres
+  - DATABASE_ADAPTER=default
+  - DATABASE_ADAPTER=postgres
