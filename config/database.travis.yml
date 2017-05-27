@@ -1,0 +1,13 @@
+test:
+  default:
+    adapter: sqlite
+    database: tmp/pact_broker_database_test.sqlite3
+  postgres:
+    adapter: postgres
+    database: pact_broker
+    encoding: utf8
+  mysql:
+    adapter: mysql2
+    database: pact_broker
+    username: travis
+    encoding: utf8

@@ -6,12 +6,13 @@ rvm:
 services:
   - postgresql
   - mysql
-before_script:
-  - psql -U postgres -c "CREATE DATABASE pact_broker;"
-  - mysql -e 'CREATE DATABASE pact_broker;'
-script:
-  - bundle exec rake
 env:
   - DATABASE_ADAPTER=default RUBYOPT="-W0"
   - DATABASE_ADAPTER=postgres RUBYOPT="-W0"
   - DATABASE_ADAPTER=mysql RUBYOPT="-W0"
+before_script:
+  - cp config/database.travis.yml config/database.yml
+  - psql -U postgres -c "CREATE DATABASE pact_broker;"
+  - mysql -e 'CREATE DATABASE pact_broker;'
+script:
+  - bundle exec rake
