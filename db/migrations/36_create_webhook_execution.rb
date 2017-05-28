@@ -5,6 +5,7 @@ Sequel.migration do
     create_table(:webhook_executions, charset: 'utf8') do
       primary_key :id
       foreign_key :webhook_id, :webhooks
+      String :webhook_uuid, null: false #keep so we can group executions even when webhook is deleted
       foreign_key :pact_publication_id, :pact_publications
       foreign_key :consumer_id, :pacticipants, null: false
       foreign_key :provider_id, :pacticipants, null: false

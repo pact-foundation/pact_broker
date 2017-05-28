@@ -47,6 +47,7 @@ module PactBroker
         db_webhook = Webhook.where(uuid: webhook.uuid).single_record
         execution = Execution.create(
           webhook: db_webhook,
+          webhook_uuid: db_webhook.uuid,
           consumer: db_webhook.consumer,
           provider: db_webhook.provider,
           success: webhook_execution_result.success?,
@@ -60,6 +61,10 @@ module PactBroker
 
       def unlink_executions_by_webhook_uuid uuid
         Execution.where(webhook: Webhook.where(uuid: uuid)).update(webhook_id: nil)
+      end
+
+      def find_webhook_executions_after date_time, consumer_id, provider_id
+        Execution.where(consumer_id: consumer_id, provider_id: provider_id).where("created_at > ?", date_time)
       end
     end
   end

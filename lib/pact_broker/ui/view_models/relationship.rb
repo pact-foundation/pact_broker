@@ -37,6 +37,24 @@ module PactBroker
           @relationship.any_webhooks?
         end
 
+        def webhook_status
+          if any_webhooks?
+            ["success", "danger",""][rand(3)]
+          else
+            ""
+          end
+        end
+
+        def webhook_last_execution_date
+
+          if any_webhooks?
+            publication_date_of_latest_pact
+          else
+            "None created"
+          end
+
+        end
+
         def webhooks_url
           url = PactBroker::Api::PactBrokerUrls.webhooks_for_pact_url @relationship.latest_pact.consumer, @relationship.latest_pact.provider, ''
           "/hal-browser/browser.html##{url}"

@@ -254,6 +254,10 @@ module PactBroker
           expect(subject.webhook.uuid).to eq webhook_domain.uuid
         end
 
+        it "sets the webhook_uuid" do
+          expect(subject.webhook_uuid).to eq webhook_domain.uuid
+        end
+
         it "sets the success" do
           expect(subject.success).to be true
         end

@@ -59,6 +59,7 @@ module PactBroker
           .collect do | pact|
             latest_verification = verification_service.find_latest_verification_for(pact.consumer, pact.provider)
             webhooks = webhook_service.find_by_consumer_and_provider pact.consumer, pact.provider
+                       webhook_service.find_webhook_executions_after_current_pact_version_created pact
             PactBroker::Domain::Relationship.create pact.consumer, pact.provider, pact, latest_verification, webhooks
           end
       end
