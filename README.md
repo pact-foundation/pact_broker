@@ -90,20 +90,23 @@ Use the HAL browser to view documentation as you browse.
 * Click on the HAL Browser link to have a poke around the API.
 * Click on the book icon under "docs" to view documentation related to a given relation.
 
-### Hosted
-
-In a hurry? Hate having to run your own infrastructure? Check out
-the [Hosted Pact Broker](https://pact.dius.com.au/?utm_source=github&utm_campaign=GITHUB_BROKER&utm_medium=github) - it's fast, it's secure and it's free!
-
 ### For reals
 
-You can use the [Pact Broker Docker container][docker] or [Terraform on AWS][terraform] or to roll your own...
+## Hosted
 
-* Create a database using a product that is supported by the Sequel gem (listed on this page http://sequel.jeremyevans.net/rdoc/files/README_rdoc.html). The migrations have been tested on MySQL and PostgreSQL - your mileage will vary on other databases.
-* __Note:__ It is recommended to use __PostgreSQL__ as it will support JSON search features that are planned in a future release, however MySQL the other [semi supported](https://github.com/pact-foundation/pact_broker/issues/33) database.
+In a hurry? Hate having to run your own infrastructure? Check out the [Hosted Pact Broker][hosted] - it's fast, it's secure and it's free!
+
+## Container solutions
+
+You can use the [Pact Broker Docker container][docker] or [Terraform on AWS][terraform] 
+
+## Rolling your own
+
+* Create a PostgreSQL (recommended) or MySQL (not recommended, see following note) database.
+* __Note:__ It is recommended to use __PostgreSQL__ as it will support JSON search features that are planned in the future, however MySQL the other [semi supported](https://github.com/pact-foundation/pact_broker/issues/33) database.
 * Install ruby 2.2.0 or later and bundler >= 1.12.0
 * Copy the [example](/example) directory to the location you want to install the application.
-* Modify the config.ru and Gemfile as desired (eg. choose database driver gem, set your database credentials. Use the "pg" gem if using Postgres.)
+* Modify the config.ru and Gemfile as desired (eg. choose database driver gem, set your database credentials. Use the "pg" gem if using Postgres and the "mysql2" gem if using MySQL)
 * Please ensure you use `encoding: 'utf8'` in your Sequel options to avoid encoding issues.
 * For production usage, use a web application server like [Phusion Passenger](https://www.phusionpassenger.com) or [Nginx](http://nginx.org/) to serve the Pact Broker application.
 * Deploy to your location of choice.
@@ -114,3 +117,4 @@ You can use the [Pact Broker Docker container][docker] or [Terraform on AWS][ter
 [different-teams]: https://github.com/realestate-com-au/pact/wiki/Using-pact-where-the-consumer-team-is-different-from-the-provider-team
 [docker]: https://hub.docker.com/r/dius/pact-broker
 [terraform]: https://github.com/nadnerb/terraform-pact-broker
+[hosted]:(https://pact.dius.com.au/?utm_source=github&utm_campaign=GITHUB_BROKER&utm_medium=github)
