@@ -21,6 +21,8 @@ module PactBroker
     attr_accessor :app_builder, :diagnostic_builder, :ui_builder, :api_builder
 
     def initialize
+      @before_resource_hook = ->(resource){}
+      @after_resource_hook = ->(resource){}
       @app_builder = ::Rack::Builder.new
       @diagnostic_builder = ::Rack::Builder.new
       @ui_builder = ::Rack::Builder.new
@@ -54,6 +56,22 @@ module PactBroker
         require 'pact_broker/api/renderers/html_pact_renderer'
         PactBroker::Api::Renderers::HtmlPactRenderer.call pact
       }
+    end
+
+    def before_resource &block
+      if block_given?
+        @before_resource_hook = block
+      else
+        @before_resource_hook
+      end
+    end
+
+    def after_resource &block
+      if block_given?
+        @after_resource_hook = block
+      else
+        @after_resource_hook
+      end
     end
 
     def save_to_database

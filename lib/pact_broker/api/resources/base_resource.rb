@@ -31,6 +31,14 @@ module PactBroker
         include PactBroker::Api::PactBrokerUrls
         include PactBroker::Logging
 
+        def initialize
+          PactBroker.configuration.before_resource.call(self)
+        end
+
+        def finish_request
+          PactBroker.configuration.after_resource.call(self)
+        end
+
         def identifier_from_path
           request.path_info.each_with_object({}) do | pair, hash|
             hash[pair.first] = URI.decode(pair.last)

@@ -29,7 +29,7 @@ module PactBroker
 
           context "when the tag exists" do
             it "deletes the tag by name" do
-              expect(Tags::Service).to receive(:delete) .with(tag_attributes)
+              expect(Tags::Service).to receive(:delete) .with(hash_including(tag_attributes))
               subject
             end
 
@@ -145,7 +145,7 @@ module PactBroker
 
 
             it "creates the tag" do
-              expect(Tags::Service).to receive(:create).with(tag_attributes)
+              expect(Tags::Service).to receive(:create).with(hash_including(tag_attributes))
               subject
             end
 

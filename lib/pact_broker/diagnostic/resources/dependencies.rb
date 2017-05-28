@@ -1,11 +1,11 @@
-require 'webmachine'
+require 'pact_broker/diagnostic/resources/base_resource'
 require 'pact_broker/db'
 require 'pact_broker/logging'
 
 module PactBroker
   module Diagnostic
     module Resources
-      class Dependencies < Webmachine::Resource
+      class Dependencies < BaseResource
 
         include Logging
 
