@@ -76,7 +76,7 @@ module PactBroker
       def self.delete name
         pacticipant = find_pacticipant_by_name name
         connection = PactBroker::Domain::Pacticipant.new.db
-        version_ids = PactBroker::Domain::Version.where(pacticipant_id: pacticipant.id).select(:id)
+        version_ids = PactBroker::Domain::Version.where(pacticipant_id: pacticipant.id).select_for_subquery(:id) #stupid mysql doesn't allow subqueries
         select_pacticipant = "select id from pacticipants where name = '#{name}'"
         tag_repository.delete_by_version_id version_ids
         webhook_repository.delete_executions_by_pacticipant pacticipant

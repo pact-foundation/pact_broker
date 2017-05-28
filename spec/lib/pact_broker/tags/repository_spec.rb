@@ -37,8 +37,8 @@ module PactBroker
             expect(find_tag.name).to eq tag_name
             expect(find_tag.version.number).to eq version_number
             expect(find_tag.version.pacticipant.name).to eq pacticipant_name
-            expect(find_tag.created_at).to be_instance_of(DateTime)
-            expect(find_tag.updated_at).to be_instance_of(DateTime)
+            expect(find_tag.created_at).to be_datey
+            expect(find_tag.updated_at).to be_datey
           end
 
           context "when case sensitivity is turned off and a name with different case is used" do

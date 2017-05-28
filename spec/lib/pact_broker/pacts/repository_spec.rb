@@ -35,7 +35,7 @@ module PactBroker
           expect(subject.consumer_version_number).to eq '1.2.3'
           expect(subject.consumer_version.number).to eq '1.2.3'
           expect(subject.json_content).to eq json_content
-          expect(subject.created_at).to be_instance_of(DateTime)
+          expect(subject.created_at).to be_datey
         end
 
         context "when a pact already exists with the same content" do
@@ -158,7 +158,7 @@ module PactBroker
           end
 
           it "does not update the created_at timestamp" do
-            expect(subject.created_at).to eq created_at
+            expect(subject.created_at.to_datetime).to eq created_at
           end
         end
       end
@@ -237,8 +237,8 @@ module PactBroker
           expect(subject.first.consumer.name).to eq consumer_name
           expect(subject.first.provider.name).to eq provider_name
           expect(subject.first.consumer_version.number).to eq "2.3.4"
-          expect(subject.first.consumer_version.tags.first.name).to eq "prod"
-          expect(subject.first.consumer_version.tags.last.name).to eq "branch"
+          expect(subject.first.consumer_version.tags.first.name).to eq "branch"
+          expect(subject.first.consumer_version.tags.last.name).to eq "prod"
         end
 
       end
@@ -254,7 +254,7 @@ module PactBroker
               .create_pact
               .create_consumer_version("1.2.3")
               .create_pact
-              .create_consumer("another consumer")
+              .create_consumer("wiffle consumer")
               .create_consumer_version("4.0.0")
               .create_pact
               .create_consumer_version("4.5.6")
@@ -271,7 +271,7 @@ module PactBroker
             expect(subject.first.provider.name).to eq provider_name
             expect(subject.first.consumer_version.number).to eq "1.2.3"
             expect(subject.first.json_content).to be nil
-            expect(subject.last.consumer.name).to eq "another consumer"
+            expect(subject.last.consumer.name).to eq "wiffle consumer"
           end
         end
 
@@ -285,7 +285,7 @@ module PactBroker
               .create_pact
               .create_consumer_version("2.0.0")
               .create_pact
-              .create_consumer("another consumer")
+              .create_consumer("wiffle consumer")
               .create_consumer_version("4.5.6")
               .create_pact
               .create_consumer_version("5.0.0")
@@ -304,7 +304,7 @@ module PactBroker
             expect(subject.first.consumer.name).to eq consumer_name
             expect(subject.first.consumer_version.number).to eq "1.2.3"
             expect(subject.first.json_content).to be nil
-            expect(subject.last.consumer.name).to eq "another consumer"
+            expect(subject.last.consumer.name).to eq "wiffle consumer"
             expect(subject.last.consumer_version.number).to eq "5.0.0"
           end
         end
@@ -498,7 +498,7 @@ module PactBroker
             end
 
             it "has timestamps" do
-              expect(latest_prod_pact.created_at).to be_instance_of(DateTime)
+              expect(latest_prod_pact.created_at).to be_datey
             end
           end
 
@@ -543,7 +543,7 @@ module PactBroker
         it "includes the timestamps - need to update view" do
           pacts = Repository.new.find_latest_pacts
 
-          expect(pacts[0].created_at).to be_instance_of DateTime
+          expect(pacts[0].created_at).to be_datey
         end
       end
     end

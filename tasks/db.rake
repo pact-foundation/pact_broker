@@ -36,7 +36,25 @@ namespace :db do
     task :mysql do
       puts `mysql -h localhost -u root -e "CREATE DATABASE IF NOT EXISTS pact_broker"`
       puts `mysql -h localhost -u root -e "GRANT ALL PRIVILEGES ON pact_broker.* TO 'pact_broker'@'localhost' identified by 'pact_broker';"`
+    end
+  end
 
+  task :drop do
+    Rake::Task["db:drop:#{ENV.fetch('DATABASE_ADAPTER', 'default')}"].invoke
+  end
+
+  namespace :drop do
+    desc 'Delete the dev/test database - uses RACK_ENV, defaulting to "development"'
+    task :default => 'db:env' do
+      PactBroker::Database.delete_database_file
+    end
+
+    task :postgres do
+      puts `psql postgres -c "drop DATABASE pact_broker;"`
+    end
+
+    task :mysql do
+      puts `mysql -h localhost -u root -e "DROP DATABASE IF EXISTS pact_broker"`
     end
   end
 

@@ -1,5 +1,6 @@
 require 'pact_broker/db'
 require 'pact_broker/domain/order_versions'
+require 'pact_broker/repositories/helpers'
 
 module PactBroker
 
@@ -11,6 +12,10 @@ module PactBroker
       one_to_many :pact_publications, order: :revision_number, class: "PactBroker::Pacts::PactPublication", key: :consumer_version_id
       associate(:many_to_one, :pacticipant, :class => "PactBroker::Domain::Pacticipant", :key => :pacticipant_id, :primary_key => :id)
       one_to_many :tags, :reciprocal => :version
+
+      dataset_module do
+        include PactBroker::Repositories::Helpers
+      end
 
       def after_create
         OrderVersions.(self)

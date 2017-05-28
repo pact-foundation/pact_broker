@@ -44,7 +44,7 @@ module PactBroker
           .consumer(params.consumer_name)
           .provider(params.provider_name)
           .consumer_version_number(params.consumer_version_number)
-          .select(:id)
+          .select_for_subquery(:id)
         PactPublication.where(id: id).delete
       end
 
@@ -64,9 +64,9 @@ module PactBroker
 
       def find_latest_pact_versions_for_provider provider_name, tag = nil
         if tag
-          LatestTaggedPactPublications.provider(provider_name).order(:consumer_name).where(tag_name: tag).order(:consumer_name).collect(&:to_domain)
+          LatestTaggedPactPublications.provider(provider_name).order_ignore_case(:consumer_name).where(tag_name: tag).collect(&:to_domain)
         else
-          LatestPactPublications.provider(provider_name).order(:consumer_name).collect(&:to_domain)
+          LatestPactPublications.provider(provider_name).order_ignore_case(:consumer_name).collect(&:to_domain)
         end
       end
 
