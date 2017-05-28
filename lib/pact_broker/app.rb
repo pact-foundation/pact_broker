@@ -19,7 +19,7 @@ module PactBroker
       @configuration = PactBroker.configuration
       yield configuration
       post_configure
-      build_app
+      build_app configuration
     end
 
     def call env
@@ -55,8 +55,8 @@ module PactBroker
       Sequel.typecast_timezone = :utc # If no timezone specified on dates going into the database, assume they are UTC
     end
 
-    def build_app
-      @app = Rack::Builder.new
+    def build_app configuration
+      @app = configuration.app_builder
 
       @app.use Rack::Protection, except: [:remote_token, :session_hijacking]
       @app.use Rack::PactBroker::InvalidUriProtection
@@ -81,18 +81,24 @@ module PactBroker
 
       if configuration.enable_diagnostic_endpoints
         require 'pact_broker/diagnostic/app'
-        apps << PactBroker::Diagnostic::App.new
+        diagnostic_builder = configuration.diagnostic_builder
+        diagnostic_builder.run PactBroker::Diagnostic::App.new
+        apps << diagnostic_builder
       end
 
-      apps << PactBroker::UI::App.new
-      apps << Rack::PactBroker::DatabaseTransaction.new(PactBroker::API, configuration.database_connection)
+      ui_builder = configuration.ui_builder
+      ui_builder.run PactBroker::UI::App.new
 
+      api_builder = configuration.api_builder
+      api_builder.use Rack::PactBroker::DatabaseTransaction, configuration.database_connection
+      api_builder.run PactBroker::API
+
+      apps << ui_builder
+      apps << api_builder
       @app.map "/" do
         run Rack::Cascade.new(apps)
       end
 
     end
-
   end
-
 end

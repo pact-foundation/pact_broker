@@ -18,6 +18,10 @@ RSpec.configure do | config |
     PactBroker::DB.connection = PactBroker::Database.database = DB::PACT_BROKER_DB
   end
 
+  config.before :each do
+    PactBroker.reset_configuration
+  end
+
   config.include Rack::Test::Methods
   config.mock_with :rspec do |mocks|
     mocks.verify_partial_doubles = true
