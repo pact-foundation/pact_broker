@@ -25,6 +25,7 @@ module DB
   # pool, as noted in the documentation for the extension.
   #
   def self.connect db_credentials
+    Sequel.datetime_class = DateTime
     con = Sequel.connect(db_credentials.merge(:logger => logger, :pool_class => Sequel::ThreadedConnectionPool, :encoding => 'utf8'))
     con.extension(:connection_validator)
     con.pool.connection_validation_timeout = -1 #Check the connection on every request
@@ -40,7 +41,11 @@ module DB
   def self.configuration_for_env env
     database_yml = PactBroker.project_root.join('config','database.yml')
     config = YAML.load(ERB.new(File.read(database_yml)).result)
-    config.fetch(env)
+    config.fetch(env).fetch(ENV.fetch('DATABASE_ADAPTER','default'))
+  end
+
+  def self.mysql?
+    PACT_BROKER_DB.adapter_scheme.to_s =~ /mysql/
   end
 
   PACT_BROKER_DB ||= connection_for_env ENV.fetch('RACK_ENV')

@@ -26,6 +26,7 @@ module PactBroker
         end
 
         it "logs before and after" do
+          allow(PactBroker.logger).to receive(:info)
           expect(PactBroker.logger).to receive(:info).with(/Executing/)
           subject.execute
         end

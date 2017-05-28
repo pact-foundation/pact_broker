@@ -58,7 +58,8 @@ module PactBroker
         pact_repository.find_latest_pacts
           .collect do | pact|
             latest_verification = verification_service.find_latest_verification_for(pact.consumer, pact.provider)
-            PactBroker::Domain::Relationship.create pact.consumer, pact.provider, pact, latest_verification
+            webhooks = webhook_service.find_by_consumer_and_provider pact.consumer, pact.provider
+            PactBroker::Domain::Relationship.create pact.consumer, pact.provider, pact, latest_verification, webhooks
           end
       end
 
@@ -75,9 +76,10 @@ module PactBroker
       def self.delete name
         pacticipant = find_pacticipant_by_name name
         connection = PactBroker::Domain::Pacticipant.new.db
-        version_ids = PactBroker::Domain::Version.where(pacticipant_id: pacticipant.id).select(:id)
+        version_ids = PactBroker::Domain::Version.where(pacticipant_id: pacticipant.id).select_for_subquery(:id) #stupid mysql doesn't allow subqueries
         select_pacticipant = "select id from pacticipants where name = '#{name}'"
         tag_repository.delete_by_version_id version_ids
+        webhook_repository.delete_executions_by_pacticipant pacticipant
         pact_repository.delete_by_version_id version_ids
         connection.run("delete from pact_publications where provider_id = #{pacticipant.id}")
         connection.run("delete from verifications where pact_version_id IN (select id from pact_versions where provider_id = #{pacticipant.id})")

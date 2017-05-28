@@ -64,7 +64,7 @@ module PactBroker
 
       def to_domain
         domain = to_domain_without_tags
-        domain.consumer_version.tags = tags
+        domain.consumer_version.tags = tags.sort
         domain
       end
 

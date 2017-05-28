@@ -8,7 +8,8 @@ module PactBroker
 
         describe "to_json" do
 
-          let(:webhook_execution_result) { PactBroker::Domain::WebhookExecutionResult.new(response, error)}
+          let(:webhook_execution_result) { PactBroker::Domain::WebhookExecutionResult.new(response, logs, error)}
+          let(:logs) { "logs" }
           let(:headers) { { "Something" => ["blah", "thing"]} }
           let(:response) { double('http_response', code: '200', body: response_body, to_hash: headers) }
           let(:response_body) { 'body' }

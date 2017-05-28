@@ -49,6 +49,7 @@ module PactBroker
       PactBroker::DB.connection = configuration.database_connection
       PactBroker::DB.connection.timezone = :utc
       PactBroker::DB.validate_connection_config if configuration.validate_database_connection_config
+      Sequel.datetime_class = DateTime
       Sequel.database_timezone = :utc # Store all dates in UTC, assume any date without a TZ is UTC
       Sequel.application_timezone = :local # Convert dates to localtime when retrieving from database
       Sequel.typecast_timezone = :utc # If no timezone specified on dates going into the database, assume they are UTC

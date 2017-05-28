@@ -3,7 +3,7 @@ require 'pact_broker/domain/webhook'
 require 'pact_broker/domain/pacticipant'
 require 'pact_broker/db'
 require 'pact_broker/webhooks/webhook'
-
+require 'pact_broker/webhooks/execution'
 
 module PactBroker
   module Webhooks
@@ -43,6 +43,24 @@ module PactBroker
         Webhook.where(consumer_id: consumer.id, provider_id: provider.id).collect(&:to_domain)
       end
 
+      def create_execution webhook, webhook_execution_result
+        db_webhook = Webhook.where(uuid: webhook.uuid).single_record
+        execution = Execution.create(
+          webhook: db_webhook,
+          consumer: db_webhook.consumer,
+          provider: db_webhook.provider,
+          success: webhook_execution_result.success?,
+          logs: webhook_execution_result.logs)
+      end
+
+      def delete_executions_by_pacticipant pacticipant
+        Execution.where(consumer: pacticipant).delete
+        Execution.where(provider: pacticipant).delete
+      end
+
+      def unlink_executions_by_webhook_uuid uuid
+        Execution.where(webhook: Webhook.where(uuid: uuid)).update(webhook_id: nil)
+      end
     end
   end
 end

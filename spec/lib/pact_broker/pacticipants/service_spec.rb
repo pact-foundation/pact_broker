@@ -103,14 +103,26 @@ module PactBroker
         let(:pact) { instance_double("PactBroker::Domain::Pact", consumer: consumer, provider: provider)}
         let(:verification) { instance_double("PactBroker::Domain::Verification")}
         let(:pacts) { [pact]}
+        let(:webhooks) { [instance_double("PactBroker::Domain::Webhook")]}
 
         before do
           allow_any_instance_of(PactBroker::Pacts::Repository).to receive(:find_latest_pacts).and_return(pacts)
           allow(PactBroker::Verifications::Service).to receive(:find_latest_verification_for).and_return(verification)
+          allow(PactBroker::Webhooks::Service).to receive(:find_by_consumer_and_provider).and_return(webhooks)
+        end
+
+        it "retrieves the webhooks for the pact" do
+          expect(PactBroker::Webhooks::Service).to receive(:find_by_consumer_and_provider).with(consumer, provider)
+          subject.find_relationships
+        end
+
+        it "retrieves the latest verification for the pact" do
+          expect(PactBroker::Verifications::Service).to receive(:find_latest_verification_for).with(consumer, provider)
+          subject.find_relationships
         end
 
         it "returns a list of relationships" do
-          expect(subject.find_relationships).to eq([PactBroker::Domain::Relationship.create(consumer, provider, pact, verification)])
+          expect(subject.find_relationships).to eq([PactBroker::Domain::Relationship.create(consumer, provider, pact, verification, webhooks)])
         end
 
       end
@@ -127,6 +139,7 @@ module PactBroker
             .create_consumer_version_tag("prod")
             .create_pact
             .create_webhook
+            .create_webhook_execution
             .create_verification
         end
 
@@ -155,6 +168,12 @@ module PactBroker
           it "deletes the webhooks" do
             expect{ delete_consumer }.to change{
               PactBroker::Webhooks::Webhook.count
+              }.by(-1)
+          end
+
+          it "deletes the webhook executions" do
+            expect{ delete_consumer }.to change{
+              PactBroker::Webhooks::Execution.count
               }.by(-1)
           end
 
@@ -196,6 +215,12 @@ module PactBroker
               }.by(-1)
           end
 
+          it "deletes the webhook executions" do
+            expect{ delete_provider }.to change{
+              PactBroker::Webhooks::Execution.count
+              }.by(-1)
+          end
+
           it "deletes the child pacts" do
             expect{ delete_provider }.to change{
               PactBroker::Pacts::PactPublication.count
@@ -207,10 +232,9 @@ module PactBroker
               PactBroker::Domain::Verification.count
               }.by(-1)
           end
+
         end
-
       end
-
     end
   end
 end

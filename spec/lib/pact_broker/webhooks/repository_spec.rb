@@ -38,7 +38,6 @@ module PactBroker
 
         subject { Repository.new.create uuid, webhook, consumer, provider }
 
-
         it "saves webhook" do
           subject
           expect(created_webhook_record).to include expected_webhook_record
@@ -154,11 +153,11 @@ module PactBroker
           end
 
           it "returns a webhook with a created_at date" do
-            expect(subject.created_at).to be_instance_of(DateTime)
+            expect(subject.created_at).to be_datey
           end
 
           it "returns a webhook with a updated_at date" do
-            expect(subject.updated_at).to be_instance_of(DateTime)
+            expect(subject.updated_at).to be_datey
           end
 
           context "when the body is a XML string" do
@@ -241,6 +240,55 @@ module PactBroker
         end
       end
 
+      describe "create_execution" do
+        let(:webhook_domain) { Repository.new.create uuid, webhook, consumer, provider }
+        let(:webhook_execution_result) { instance_double("PactBroker::Domain::WebhookExecutionResult", success?: true, logs: "logs") }
+
+        subject { Repository.new.create_execution webhook_domain, webhook_execution_result }
+
+        it "saves a new webhook execution " do
+          expect { subject }.to change { Execution.count }.by(1)
+        end
+
+        it "sets the webhook" do
+          expect(subject.webhook.uuid).to eq webhook_domain.uuid
+        end
+
+        it "sets the success" do
+          expect(subject.success).to be true
+        end
+
+        it "sets the logs" do
+          expect(subject.logs).to eq "logs"
+        end
+
+        it "sets the consumer" do
+          expect(subject.consumer).to eq consumer
+        end
+
+        it "sets the provider" do
+          expect(subject.provider).to eq provider
+        end
+
+        it "sets the PactPublication" do
+          expect(subject.pact_publication)
+        end
+      end
+
+      describe "unlink_executions_by_webhook_uuid" do
+        let!(:webhook_domain) { Repository.new.create uuid, webhook, consumer, provider }
+        let!(:webhook_execution_result) { instance_double("PactBroker::Domain::WebhookExecutionResult", success?: true, logs: "logs") }
+        let!(:webhook_execution) { Repository.new.create_execution webhook_domain, webhook_execution_result }
+
+        subject { Repository.new.unlink_executions_by_webhook_uuid uuid }
+
+        it "sets the webhook id to nil" do
+          webhook_id = Webhook.find(uuid: uuid).id
+          expect { subject }.to change {
+              Execution.find(id: webhook_execution.id).webhook_id
+            }.from(webhook_id).to(nil)
+        end
+      end
     end
   end
 end

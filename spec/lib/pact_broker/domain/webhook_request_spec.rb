@@ -12,12 +12,14 @@ module PactBroker
       let(:password) { nil }
       let(:url) { 'http://example.org/hook' }
       let(:body) { 'body' }
+      let(:logs) { StringIO.new }
+      let(:execution_logger) { Logger.new(logs) }
 
       subject do
         WebhookRequest.new(
           method: 'post',
           url: url,
-          headers: {'Content-type' => 'text/plain'},
+          headers: {'Content-Type' => 'text/plain'},
           username: username,
           password: password,
           body: body)
@@ -48,7 +50,7 @@ module PactBroker
         let!(:http_request) do
           stub_request(:post, "http://example.org/hook").
             with(:headers => {'Content-Type'=>'text/plain'}, :body => 'body').
-            to_return(:status => 302, :body => "respbod", :headers => {'Content-Type' => 'text/plain, blah'})
+            to_return(:status => 302, :body => "respbod", :headers => {'Content-Type' => 'text/foo, blah'})
         end
 
         it "executes the configured request" do
@@ -70,6 +72,47 @@ module PactBroker
           subject.execute
         end
 
+        describe "execution logs" do
+          before do
+
+          end
+
+          let(:logs) { subject.execute.logs }
+
+          it "logs the request method and path" do
+            expect(logs).to include "POST http://example.org/hook"
+          end
+
+          it "logs the request headers" do
+            expect(logs).to include "Content-Type: text/plain"
+          end
+
+          it "logs the request body" do
+            expect(logs).to include body
+          end
+
+          it "logs the response status" do
+            expect(logs).to include "HTTP/1.0 302"
+          end
+
+          it "logs the response headers" do
+            expect(logs).to include "Content-Type: text/foo, blah"
+          end
+
+          it "logs the response body" do
+            expect(logs).to include "respbod"
+          end
+
+          context "with basic auth" do
+            let(:username) { 'username' }
+            let(:password) { 'password' }
+
+            it "logs the username and a starred password" do
+              expect(logs).to include "POST http://username:**********@example.org/hook"
+            end
+          end
+        end
+
         context "when a username and password are specified" do
 
           let(:username) { 'username' }
@@ -81,7 +124,7 @@ module PactBroker
                 basic_auth: [username, password],
                 :headers => {'Content-Type'=>'text/plain'},
                 :body => 'body').
-              to_return(:status => 302, :body => "respbod", :headers => {'Content-Type' => 'text/plain, blah'})
+              to_return(:status => 302, :body => "respbod", :headers => {'Content-Type' => 'text/foo, blah'})
           end
 
           it "uses the credentials" do
@@ -97,7 +140,7 @@ module PactBroker
             # webmock will set the request signature scheme to 'https' _only_ if the use_ssl option is set
             stub_request(:post, "https://example.org/hook").
               with(:headers => {'Content-Type'=>'text/plain'}, :body => 'body').
-              to_return(:status => 302, :body => "respbod", :headers => {'Content-Type' => 'text/plain, blah'})
+              to_return(:status => 302, :body => "respbod", :headers => {'Content-Type' => 'text/foo, blah'})
           end
 
           it "uses SSL" do
@@ -112,7 +155,7 @@ module PactBroker
           let!(:http_request) do
             stub_request(:post, "http://example.org/hook").
               with(:headers => {'Content-Type'=>'text/plain'}, :body => body.to_json).
-              to_return(:status => 302, :body => "respbod", :headers => {'Content-Type' => 'text/plain, blah'})
+              to_return(:status => 302, :body => "respbod", :headers => {'Content-Type' => 'text/foo, blah'})
           end
 
           it "converts the body to JSON before submitting the request" do
@@ -127,7 +170,7 @@ module PactBroker
           let!(:http_request) do
             stub_request(:post, "http://example.org/hook").
               with(:headers => {'Content-Type'=>'text/plain'}, :body => nil).
-              to_return(:status => 302, :body => "respbod", :headers => {'Content-Type' => 'text/plain, blah'})
+              to_return(:status => 302, :body => "respbod", :headers => {'Content-Type' => 'text/foo, blah'})
           end
 
           it "executes the request without a body" do

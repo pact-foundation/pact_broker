@@ -15,14 +15,14 @@ module PactBroker
         describe "/" do
           describe "GET" do
 
-            let(:consumer) { instance_double("PactBroker::Domain::Pacticipant", name: 'consumer_name')}
-            let(:provider) { instance_double("PactBroker::Domain::Pacticipant", name: 'provider_name')}
-            let(:pact) { instance_double("PactBroker::Domain::Pact", created_at: Date.new(2017))}
-            let(:relationship) { PactBroker::Domain::Relationship.new(consumer, provider, pact)}
-            let(:relationships) { [relationship] }
-
             before do
-              allow(PactBroker::Pacticipants::Service).to receive(:find_relationships).and_return(relationships)
+              ProviderStateBuilder.new
+                .create_consumer
+                .create_provider
+                .create_consumer_version
+                .create_pact
+                .create_webhook
+                .create_verification
             end
 
             it "does something" do

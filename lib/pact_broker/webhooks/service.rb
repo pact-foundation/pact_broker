@@ -31,6 +31,7 @@ module PactBroker
       end
 
       def self.delete_by_uuid uuid
+        webhook_repository.delete_executions_by_webhook_uuid uuid
         webhook_repository.delete_by_uuid uuid
       end
 
@@ -43,7 +44,9 @@ module PactBroker
       end
 
       def self.execute_webhook_now webhook
-        webhook.execute
+        webhook_execution_result = webhook.execute
+        webhook_repository.create_execution webhook, webhook_execution_result
+        webhook_execution_result
       end
 
       def self.find_by_consumer_and_provider consumer, provider

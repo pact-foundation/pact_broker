@@ -8,7 +8,7 @@ Sequel.extension :migration
 module PactBroker
   module Database
 
-    TABLES = [:config, :pacts, :pact_version_contents, :tags, :verifications, :pact_publications, :pact_versions,  :webhook_headers, :webhooks, :versions, :pacticipants].freeze
+    TABLES = [:webhook_executions, :config, :pacts, :pact_version_contents, :tags, :verifications, :pact_publications, :pact_versions,  :webhook_headers, :webhooks, :versions, :pacticipants].freeze
 
     extend self
 
@@ -123,7 +123,8 @@ module PactBroker
     def configuration_for_env env
       database_yml = PactBroker.project_root.join('config','database.yml')
       config = YAML.load(ERB.new(File.read(database_yml)).result)
-      config.fetch(env)
+      adapter = ENV.fetch('DATABASE_ADAPTER','default')
+      config.fetch(env)[adapter]
     end
 
     def env
