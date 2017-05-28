@@ -92,15 +92,15 @@ Use the HAL browser to view documentation as you browse.
 
 ### For reals
 
-## Hosted
+#### Hosted
 
 In a hurry? Hate having to run your own infrastructure? Check out the [Hosted Pact Broker][hosted] - it's fast, it's secure and it's free!
 
-## Container solutions
+#### Container solutions
 
 You can use the [Pact Broker Docker container][docker] or [Terraform on AWS][terraform] 
 
-## Rolling your own
+#### Rolling your own
 
 * Create a PostgreSQL (recommended) or MySQL (not recommended, see following note) database.
 * __Note:__ It is recommended to use __PostgreSQL__ as it will support JSON search features that are planned in the future, however MySQL the other [semi supported](https://github.com/pact-foundation/pact_broker/issues/33) database.
