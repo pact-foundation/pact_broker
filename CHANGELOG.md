@@ -2,6 +2,15 @@ Do this to generate your change history
 
     $ git log --pretty=format:'  * %h - %s (%an, %ad)' vX.Y.Z..HEAD
 
+#### 2.0.3 (2017-05-17)
+* c03b871 - Make specs pass for sqlite, postgres and mysql. At the same time. Amazing. (Beth Skurrie, Sun May 28 10:22:20 2017 +1000)
+* ae2b62f - Remove inner query from latest_verifications definition for MySQL (#105) (Beth Skurrie, Sat May 27 15:11:26 2017 +1000)
+* f451d35 - Add mysql build to travis for #106 (Beth Skurrie, Sat May 27 15:09:42 2017 +1000)
+* 91178c2 - Altering config and travis to run against sqlite and postgres. (Beth Skurrie, Sat May 27 14:08:34 2017 +1000)
+* 4c52061 - Use a simpler and more efficient algorithm for updating version orders. (Beth Skurrie, Mon May 22 13:29:07 2017 +1000)
+* ba5b60c - Created indexes on pacticipant, version and tag tables. #87 (Beth Skurrie, Sun May 21 16:18:49 2017 +1000)
+* 0ffad10 - Do not validate incoming consumer version number if order_versions_by_date is true. (Beth Skurrie, Sun May 21 15:46:54 2017 +1000)
+
 #### 2.0.2 (2017-05-17)
 * 0e4d4bf - Add missing require for migration_helper (Beth Skurrie, Fri May 19 14:16:38 2017 +1000)
 
