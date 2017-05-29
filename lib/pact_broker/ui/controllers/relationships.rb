@@ -12,7 +12,7 @@ module PactBroker
         get "/" do
           view_model = ViewDomain::Relationships.new(pacticipant_service.find_relationships)
 
-          haml :'relationships/show', {locals: {relationships: view_model}}, {layout: 'layouts/main'}
+          haml :'relationships/show', {locals: {relationships: view_model, title: "Pacts"}, layout: :'layouts/main'}
         end
 
       end
