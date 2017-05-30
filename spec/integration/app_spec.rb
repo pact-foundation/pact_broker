@@ -23,6 +23,11 @@ module PactBroker
       end
     end
 
+    it "exposes a favicon.ico file" do
+      get "/favicon.ico"
+      expect(last_response.headers['Content-Type']).to eq "image/x-icon"
+    end
+
     context "when Accept includes text/html" do
       let(:env) { {'HTTP_ACCEPT' => 'text/html'} }
 

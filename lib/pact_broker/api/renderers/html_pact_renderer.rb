@@ -35,7 +35,8 @@ module PactBroker
         private
 
         def head
-         "<link rel='stylesheet' type='text/css' href='/stylesheets/github.css'>
+         "<title>#{title}</title>
+          <link rel='stylesheet' type='text/css' href='/stylesheets/github.css'>
           <link rel='stylesheet' type='text/css' href='/stylesheets/pact.css'>
           <link rel='stylesheet' type='text/css' href='/stylesheets/github-json.css'>
           <script src='/javascripts/highlight.pack.js'></script>
@@ -58,6 +59,10 @@ module PactBroker
               </li>
             </ul>
           </div>"
+        end
+
+        def title
+          "Pact between #{@pact.consumer.name} and #{@pact.provider.name}"
         end
 
         def published_date

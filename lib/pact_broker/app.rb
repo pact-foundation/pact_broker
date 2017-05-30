@@ -62,6 +62,7 @@ module PactBroker
       @app.use Rack::PactBroker::InvalidUriProtection
       @app.use Rack::PactBroker::AddPactBrokerVersionHeader
       @app.use Rack::Static, :urls => ["/stylesheets", "/css", "/fonts", "/js", "/javascripts", "/images"], :root => PactBroker.project_root.join("public")
+      @app.use Rack::Static, :urls => ["/favicon.ico"], :root => PactBroker.project_root.join("public/images"), header_rules: [[:all, {'Content-Type' => 'image/x-icon'}]]
       @app.use Rack::PactBroker::ConvertFileExtensionToAcceptHeader
 
       if configuration.use_hal_browser
