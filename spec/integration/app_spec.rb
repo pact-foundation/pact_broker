@@ -37,9 +37,10 @@ module PactBroker
 
         let(:path) { '/' }
 
-        it "redirects to /ui/relationships" do
-          expect(subject.status).to eq 303
-          expect(subject.headers['Location']).to eq '/ui/relationships'
+        it "returns the relationships page" do
+          expect(subject.status).to eq 200
+          expect(subject.headers['Content-Type']).to include 'text/html'
+          expect(subject.body).to include 'Pacts'
         end
 
       end

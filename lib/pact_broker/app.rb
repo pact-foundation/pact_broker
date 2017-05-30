@@ -7,6 +7,7 @@ require 'rack/pact_broker/add_pact_broker_version_header'
 require 'rack/pact_broker/convert_file_extension_to_accept_header'
 require 'rack/pact_broker/database_transaction'
 require 'rack/pact_broker/invalid_uri_protection'
+require 'rack/pact_broker/accepts_html_filter'
 require 'sucker_punch'
 
 module PactBroker
@@ -65,6 +66,17 @@ module PactBroker
     end
 
     def prepare_app
+      configure_middleware
+
+      if configuration.enable_diagnostic_endpoints
+        @cascade_apps << build_diagnostic
+      end
+
+      @cascade_apps << build_ui
+      @cascade_apps << build_api
+    end
+
+    def configure_middleware
       @app_builder.use Rack::Protection, except: [:remote_token, :session_hijacking]
       @app_builder.use Rack::PactBroker::InvalidUriProtection
       @app_builder.use Rack::PactBroker::AddPactBrokerVersionHeader
@@ -78,24 +90,31 @@ module PactBroker
       else
         logger.info "Not mounting HAL browser"
       end
+    end
 
+    def build_ui
       logger.info "Mounting UI"
       require 'pact_broker/ui'
+      builder = ::Rack::Builder.new
+      builder.use Rack::PactBroker::AcceptsHtmlFilter
+      builder.run PactBroker::UI::App.new
+      builder
+    end
 
+    def build_api
       logger.info "Mounting PactBroker::API"
       require 'pact_broker/api'
+      builder = ::Rack::Builder.new
+      builder.use Rack::PactBroker::DatabaseTransaction, configuration.database_connection
+      builder.run PactBroker::API
+      builder
+    end
 
-      if configuration.enable_diagnostic_endpoints
-        require 'pact_broker/diagnostic/app'
-        @cascade_apps << PactBroker::Diagnostic::App.new
-      end
-
-      api_builder = ::Rack::Builder.new
-      api_builder.use Rack::PactBroker::DatabaseTransaction, configuration.database_connection
-      api_builder.run PactBroker::API
-
-      @cascade_apps << PactBroker::UI::App.new
-      @cascade_apps << api_builder
+    def build_diagnostic
+      require 'pact_broker/diagnostic/app'
+      builder = ::Rack::Builder.new
+      builder.run PactBroker::Diagnostic::App.new
+      builder
     end
 
     def running_app
