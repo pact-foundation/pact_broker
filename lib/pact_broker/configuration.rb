@@ -18,15 +18,10 @@ module PactBroker
     attr_accessor :use_case_sensitive_resource_names, :order_versions_by_date
     attr_accessor :semver_formats
     attr_writer :logger
-    attr_accessor :app_builder, :diagnostic_builder, :ui_builder, :api_builder
 
     def initialize
       @before_resource_hook = ->(resource){}
       @after_resource_hook = ->(resource){}
-      @app_builder = ::Rack::Builder.new
-      @diagnostic_builder = ::Rack::Builder.new
-      @ui_builder = ::Rack::Builder.new
-      @api_builder = ::Rack::Builder.new
     end
 
     def logger

@@ -56,7 +56,7 @@ module PactBroker
     end
 
     def build_app configuration
-      @app = configuration.app_builder
+      @app = ::Rack::Builder.new
 
       @app.use Rack::Protection, except: [:remote_token, :session_hijacking]
       @app.use Rack::PactBroker::InvalidUriProtection
@@ -81,19 +81,14 @@ module PactBroker
 
       if configuration.enable_diagnostic_endpoints
         require 'pact_broker/diagnostic/app'
-        diagnostic_builder = configuration.diagnostic_builder
-        diagnostic_builder.run PactBroker::Diagnostic::App.new
-        apps << diagnostic_builder
+        apps << PactBroker::Diagnostic::App.new
       end
 
-      ui_builder = configuration.ui_builder
-      ui_builder.run PactBroker::UI::App.new
-
-      api_builder = configuration.api_builder
+      api_builder = ::Rack::Builder.new
       api_builder.use Rack::PactBroker::DatabaseTransaction, configuration.database_connection
       api_builder.run PactBroker::API
 
-      apps << ui_builder
+      apps << PactBroker::UI::App.new
       apps << api_builder
       @app.map "/" do
         run Rack::Cascade.new(apps)
