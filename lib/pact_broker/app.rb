@@ -16,14 +16,21 @@ module PactBroker
     attr_accessor :configuration
 
     def initialize &block
+      @app_builder = ::Rack::Builder.new
+      @cascade_apps = []
       @configuration = PactBroker.configuration
       yield configuration
       post_configure
-      build_app
+      migrate_database
+      prepare_app
+    end
+
+    def use *args, &block
+      @app_builder.use *args, &block
     end
 
     def call env
-      @app.call env
+      running_app.call env
     end
 
     private
@@ -36,7 +43,9 @@ module PactBroker
       PactBroker.logger = configuration.logger
       SuckerPunch.logger = configuration.logger
       configure_database_connection
+    end
 
+    def migrate_database
       if configuration.auto_migrate_db
         logger.info "Migrating database"
         PactBroker::DB.run_migrations configuration.database_connection
@@ -55,19 +64,17 @@ module PactBroker
       Sequel.typecast_timezone = :utc # If no timezone specified on dates going into the database, assume they are UTC
     end
 
-    def build_app
-      @app = ::Rack::Builder.new
-
-      @app.use Rack::Protection, except: [:remote_token, :session_hijacking]
-      @app.use Rack::PactBroker::InvalidUriProtection
-      @app.use Rack::PactBroker::AddPactBrokerVersionHeader
-      @app.use Rack::Static, :urls => ["/stylesheets", "/css", "/fonts", "/js", "/javascripts", "/images"], :root => PactBroker.project_root.join("public")
-      @app.use Rack::Static, :urls => ["/favicon.ico"], :root => PactBroker.project_root.join("public/images"), header_rules: [[:all, {'Content-Type' => 'image/x-icon'}]]
-      @app.use Rack::PactBroker::ConvertFileExtensionToAcceptHeader
+    def prepare_app
+      @app_builder.use Rack::Protection, except: [:remote_token, :session_hijacking]
+      @app_builder.use Rack::PactBroker::InvalidUriProtection
+      @app_builder.use Rack::PactBroker::AddPactBrokerVersionHeader
+      @app_builder.use Rack::Static, :urls => ["/stylesheets", "/css", "/fonts", "/js", "/javascripts", "/images"], :root => PactBroker.project_root.join("public")
+      @app_builder.use Rack::Static, :urls => ["/favicon.ico"], :root => PactBroker.project_root.join("public/images"), header_rules: [[:all, {'Content-Type' => 'image/x-icon'}]]
+      @app_builder.use Rack::PactBroker::ConvertFileExtensionToAcceptHeader
 
       if configuration.use_hal_browser
         logger.info "Mounting HAL browser"
-        @app.use Rack::HalBrowser::Redirect
+        @app_builder.use Rack::HalBrowser::Redirect
       else
         logger.info "Not mounting HAL browser"
       end
@@ -78,23 +85,28 @@ module PactBroker
       logger.info "Mounting PactBroker::API"
       require 'pact_broker/api'
 
-      apps = []
-
       if configuration.enable_diagnostic_endpoints
         require 'pact_broker/diagnostic/app'
-        apps << PactBroker::Diagnostic::App.new
+        @cascade_apps << PactBroker::Diagnostic::App.new
       end
 
       api_builder = ::Rack::Builder.new
       api_builder.use Rack::PactBroker::DatabaseTransaction, configuration.database_connection
       api_builder.run PactBroker::API
 
-      apps << PactBroker::UI::App.new
-      apps << api_builder
-      @app.map "/" do
-        run Rack::Cascade.new(apps)
-      end
-
+      @cascade_apps << PactBroker::UI::App.new
+      @cascade_apps << api_builder
     end
+
+    def running_app
+      @running_app ||= begin
+        apps = @cascade_apps
+        @app_builder.map "/" do
+          run Rack::Cascade.new(apps)
+        end
+        @app_builder
+      end
+    end
+
   end
 end

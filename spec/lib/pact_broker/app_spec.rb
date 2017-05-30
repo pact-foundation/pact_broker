@@ -9,7 +9,7 @@ module PactBroker
         # do nothing
       end
 
-      def post_configure
+      def migrate_database
         # do nothing
       end
 
@@ -18,13 +18,33 @@ module PactBroker
     let(:app) do
       TestApp.new do | configuration |
         configuration.database_connection = PactBroker::DB.connection
-        configuration.auto_migrate_db = false
       end
     end
 
     it "adds the X-Pact-Broker-Version header" do
       get "/"
       expect(last_response.headers['X-Pact-Broker-Version']).to match /\d/
+    end
+
+    class Middleware
+
+      def initialize app
+        @app = app
+      end
+
+      def call env
+        self.class.calls << env
+        @app.call(env)
+      end
+
+      def self.calls
+        @calls ||= []
+      end
+    end
+
+    it "acts like a ::Rack::Builder" do
+      app.use Middleware
+      expect { get "/" }.to change { Middleware.calls.count }.by(1)
     end
 
     describe "before_resource and after_resource" do
