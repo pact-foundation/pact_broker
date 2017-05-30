@@ -19,7 +19,7 @@ module PactBroker
       @configuration = PactBroker.configuration
       yield configuration
       post_configure
-      build_app configuration
+      build_app
     end
 
     def call env
@@ -55,7 +55,7 @@ module PactBroker
       Sequel.typecast_timezone = :utc # If no timezone specified on dates going into the database, assume they are UTC
     end
 
-    def build_app configuration
+    def build_app
       @app = ::Rack::Builder.new
 
       @app.use Rack::Protection, except: [:remote_token, :session_hijacking]

@@ -27,6 +27,19 @@ module PactBroker
       expect(last_response.headers['X-Pact-Broker-Version']).to match /\d/
     end
 
+    describe "before_resource and after_resource" do
+      CALLBACKS = []
+      before do
+        PactBroker.configuration.before_resource { | resource | CALLBACKS << "before" }
+        PactBroker.configuration.after_resource { | resource | CALLBACKS << "after" }
+      end
+
+      it "executes the callbacks" do
+        get "/"
+        expect(CALLBACKS).to eq ["before", "after"]
+      end
+    end
+
     describe "transactions", no_db_clean: true do
       let(:pact_content) { load_fixture('a_consumer-a_provider.json') }
       let(:path) { "/pacts/provider/A%20Provider/consumer/A%20Consumer/versions/1.2.3" }

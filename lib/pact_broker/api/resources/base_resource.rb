@@ -41,7 +41,7 @@ module PactBroker
 
         def identifier_from_path
           request.path_info.each_with_object({}) do | pair, hash|
-            hash[pair.first] = URI.decode(pair.last)
+            hash[pair.first] = pair.last === String ? URI.decode(pair.last) : pair.last
           end
         end
 
