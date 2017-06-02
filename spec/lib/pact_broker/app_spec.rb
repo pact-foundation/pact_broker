@@ -60,6 +60,51 @@ module PactBroker
       end
     end
 
+    describe "authenticate_with_basic_auth" do
+      before do
+        PactBroker.configuration.authenticate_with_basic_auth do | username, password, resource |
+          resource.user = Object.new
+          username == 'username' && password == 'password'
+        end
+      end
+
+      context "with incorrect username or password" do
+        it "returns a 401" do
+          basic_authorize 'foo', 'password'
+          get "/"
+          expect(last_response.status).to eq 401
+        end
+      end
+
+      context "with matching username and password" do
+        it "returns a 200" do
+          basic_authorize 'username', 'password'
+          get "/"
+          expect(last_response.status).to eq 200
+        end
+      end
+    end
+
+    describe "authorize" do
+      PactBroker.configuration.authorize do | resource |
+        resource.request.get?
+      end
+
+      context "with an an authorized request" do
+        it "returns a 200" do
+          get "/"
+          expect(last_response.status).to eq 200
+        end
+      end
+
+      context "with an an aunauthorized request" do
+        it "returns a 405" do
+          put "/"
+          expect(last_response.status).to eq 405
+        end
+      end
+    end
+
     describe "transactions", no_db_clean: true do
       let(:pact_content) { load_fixture('a_consumer-a_provider.json') }
       let(:path) { "/pacts/provider/A%20Provider/consumer/A%20Consumer/versions/1.2.3" }

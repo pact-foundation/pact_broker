@@ -22,6 +22,8 @@ module PactBroker
     def initialize
       @before_resource_hook = ->(resource){}
       @after_resource_hook = ->(resource){}
+      @authenticate_with_basic_auth = nil
+      @authorize = nil
     end
 
     def logger
@@ -51,6 +53,22 @@ module PactBroker
         require 'pact_broker/api/renderers/html_pact_renderer'
         PactBroker::Api::Renderers::HtmlPactRenderer.call pact
       }
+    end
+
+    def authenticate_with_basic_auth &block
+      if block_given?
+        @authenticate_with_basic_auth = block
+      else
+        @authenticate_with_basic_auth
+      end
+    end
+
+    def authorize &block
+      if block_given?
+        @authorize = block
+      else
+        @authorize
+      end
     end
 
     def before_resource &block

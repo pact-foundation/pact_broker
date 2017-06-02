@@ -30,6 +30,9 @@ module PactBroker
         include PactBroker::Services
         include PactBroker::Api::PactBrokerUrls
         include PactBroker::Logging
+        include Webmachine::Resource::Authentication
+
+        attr_accessor :user
 
         def initialize
           PactBroker.configuration.before_resource.call(self)
@@ -37,6 +40,18 @@ module PactBroker
 
         def finish_request
           PactBroker.configuration.after_resource.call(self)
+        end
+
+        def is_authorized?(authorization_header)
+          return true if PactBroker.configuration.authenticate_with_basic_auth.nil?
+          basic_auth(authorization_header, "Pact Broker") do |username, password|
+            PactBroker.configuration.authenticate_with_basic_auth.call(username, password, self)
+          end
+        end
+
+        def forbidden?
+          return false if PactBroker.configuration.authorize.nil?
+          !PactBroker.configuration.authorize.call(self)
         end
 
         def identifier_from_path
