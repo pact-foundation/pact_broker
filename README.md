@@ -30,12 +30,14 @@ Travis CI Status: [![Build Status](https://travis-ci.org/pact-foundation/pact_br
 #### Step 1. Consumer CI build
 1. The consumer project runs its tests using the [Pact][pact] library to provide a mock service.
 2. While the tests run, the mock service writes the requests and the expected responses to a JSON "pact" file - this is the consumer contract.
-3. The generated pact is then published to the Pact Broker. This is simply a PUT to a resource that specifies the consumer name and version, and the provider name. eg `http://my-pact-broker/pacts/provider/Animal%20Service/consumer/Zoo%20App/version/1.0.0`
+3. The generated pact is then published to the Pact Broker. This is simply a `PUT` to a resource that specifies the consumer name and version, and the provider name. eg `http://my-pact-broker/pacts/provider/Animal%20Service/consumer/Zoo%20App/version/1.0.0`
+4. When a pact is published, a webhook in the Pact Broker kicks off a build of the provider project if the pact content has changed since the previous version.
 
 #### Step 2. Provider CI build
-1. The provider has a verification task that is configured with the URL to retrieve the dynamically calculated latest pact between itself and the consumer. eg `http://my-pact-broker/pacts/provider/Animal%20Service/consumer/Zoo%20App/latest`. The "latest" version is determined by the Pact Broker by inspecting the consumer version number specified when each pact was published.
+1. The provider has a verification task that is configured with the URL to retrieve the latest pact between itself and the consumer. eg `http://my-pact-broker/pacts/provider/Animal%20Service/consumer/Zoo%20App/latest`.
 2. The provider build runs the pact verification task, which retrieves the pact from the Pact Broker, replays each request against the provider, and checks that the responses match the expected responses.
 3. If the pact verification fails, the build fails. The [Pact Broker CI Nerf Gun][nerf] magically determines who caused the verification to fail, and shoots them.
+4. The results of the verification are published back to the Pact Broker by the pact verification tool, so the consumer team will know if the code they have written will work IRL.
 
 If you don't have a [Pact Broker CI Nerf Gun][nerf], you'll probably want to read about using pact when the consumer and provider are being written by [different teams][different-teams].
 
