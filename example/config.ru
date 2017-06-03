@@ -1,19 +1,19 @@
 require 'fileutils'
 require 'logger'
 require 'sequel'
-# require 'pg' # for postgres
+require 'pg' # for postgres
 require 'pact_broker'
 
 # Create a real database, and set the credentials for it here
 # It is highly recommended to set the encoding to utf8
-DATABASE_CREDENTIALS = {adapter: "sqlite", database: "pact_broker_database.sqlite3", :encoding => 'utf8'}
+# DATABASE_CREDENTIALS = {adapter: "sqlite", database: "pact_broker_database.sqlite3", :encoding => 'utf8'}
 
 # For postgres:
 #
 # $ psql postgres -c "CREATE DATABASE pact_broker;"
 # $ psql postgres -c "GRANT ALL PRIVILEGES ON DATABASE pact_broker TO pact_broker;"
 #
-# DATABASE_CREDENTIALS = {adapter: "postgres", database: "pact_broker", username: 'pact_broker', password: 'pact_broker', :encoding => 'utf8'}
+DATABASE_CREDENTIALS = {adapter: "postgres", database: "pact_broker", username: 'pact_broker', password: 'pact_broker', :encoding => 'utf8'}
 
 # Have a look at the Sequel documentation to make decisions about things like connection pooling
 # and connection validation.

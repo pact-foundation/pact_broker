@@ -1,9 +1,9 @@
 require 'pact/consumer_contract'
 require 'pact/reification'
-require 'redcarpet'
 require 'pact/doc/markdown/consumer_contract_renderer'
 require 'pact_broker/api/pact_broker_urls'
 require 'pact_broker/logging'
+require 'kramdown'
 
 module PactBroker
   module Api
@@ -87,7 +87,7 @@ module PactBroker
         end
 
         def html
-          Redcarpet::Markdown.new(Redcarpet::Render::HTML, :fenced_code_blocks => true, :lax_spacing => true).render(markdown)
+          Kramdown::Document.new(markdown).to_html
         end
 
         def consumer_contract
