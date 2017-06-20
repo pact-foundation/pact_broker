@@ -60,9 +60,31 @@ module PactBroker
       end
     end
 
+    describe "authenticate" do
+      before do
+        PactBroker.configuration.authenticate do | resource, authorization_header, options |
+          authorization_header == 'letmein'
+        end
+      end
+
+      context "with an invalid Authorization header" do
+        it "returns a 401" do
+          get "/", {}, {'HTTP_AUTHORIZATION' => 'wrong'}
+          expect(last_response.status).to eq 401
+        end
+      end
+
+      context "with valid Authorization header" do
+        it "returns a 200" do
+          get "/", {}, {'HTTP_AUTHORIZATION' => 'letmein'}
+          expect(last_response.status).to eq 200
+        end
+      end
+    end
+
     describe "authenticate_with_basic_auth" do
       before do
-        PactBroker.configuration.authenticate_with_basic_auth do | username, password, resource |
+        PactBroker.configuration.authenticate_with_basic_auth do | resource, username, password, options |
           resource.user = Object.new
           username == 'username' && password == 'password'
         end
@@ -86,7 +108,7 @@ module PactBroker
     end
 
     describe "authorize" do
-      PactBroker.configuration.authorize do | resource |
+      PactBroker.configuration.authorize do | resource, options |
         resource.request.get?
       end
 

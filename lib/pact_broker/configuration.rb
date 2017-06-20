@@ -55,12 +55,28 @@ module PactBroker
       }
     end
 
+    def authentication_configured?
+      !!authenticate || !!authenticate_with_basic_auth
+    end
+
+    def authenticate &block
+      if block_given?
+        @authenticate = block
+      else
+        @authenticate
+      end
+    end
+
     def authenticate_with_basic_auth &block
       if block_given?
         @authenticate_with_basic_auth = block
       else
         @authenticate_with_basic_auth
       end
+    end
+
+    def authorization_configured?
+      !!authorize
     end
 
     def authorize &block

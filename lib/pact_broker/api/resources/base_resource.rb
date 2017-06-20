@@ -6,6 +6,7 @@ require 'pact_broker/api/pact_broker_urls'
 require 'pact_broker/api/decorators/decorator_context'
 require 'pact_broker/json'
 require 'pact_broker/pacts/pact_params'
+require 'pact_broker/api/resources/authentication'
 
 module PactBroker
 
@@ -29,8 +30,9 @@ module PactBroker
 
         include PactBroker::Services
         include PactBroker::Api::PactBrokerUrls
+        include PactBroker::Api::Resources::Authentication
         include PactBroker::Logging
-        include Webmachine::Resource::Authentication
+
 
         attr_accessor :user
 
@@ -43,15 +45,12 @@ module PactBroker
         end
 
         def is_authorized?(authorization_header)
-          return true if PactBroker.configuration.authenticate_with_basic_auth.nil?
-          basic_auth(authorization_header, "Pact Broker") do |username, password|
-            PactBroker.configuration.authenticate_with_basic_auth.call(username, password, self)
-          end
+          authenticated?(self, authorization_header)
         end
 
         def forbidden?
           return false if PactBroker.configuration.authorize.nil?
-          !PactBroker.configuration.authorize.call(self)
+          !PactBroker.configuration.authorize.call(self, {})
         end
 
         def identifier_from_path
