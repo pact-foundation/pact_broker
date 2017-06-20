@@ -183,7 +183,7 @@ class ProviderStateBuilder
 
   def set_created_at_if_set created_at, table_name, selector
     if created_at
-      Sequel::Model.db.run("update #{table_name} set created_at = \"#{created_at.xmlschema}\" where #{selector.keys.first} = \"#{selector.values.first}\"")
+      Sequel::Model.db[table_name].where(selector.keys.first => selector.values.first).update(created_at: created_at.xmlschema)
     end
   end
 
