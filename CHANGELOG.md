@@ -1,6 +1,14 @@
 Do this to generate your change history
 
-    $ git log --pretty=format:'  * %h - %s (%an, %ad)' vX.Y.Z..HEAD
+    $ git log --pretty=format:'  * %h - %s (%an, %ad)'
+
+#### 2.0.5 (2017-06-15)
+* e924c96 - Fixed webhook deletion bug (Beth Skurrie, Tue Jun 13 10:04:33 2017 +1000)
+
+#### 2.0.4 (2017-06-02)
+* 99e1c25 - Turn off http_origin checking for https://github.com/pact-foundation/pact_broker/issues/108 (Beth Skurrie, Fri Jun 2 16:27:38 2017 +1000)
+* e58f609 - Add favicon.ico (Beth Skurrie, Mon May 29 15:02:22 2017 +1000)
+* 2780f0a - Add pull request guidelines. (Beth Skurrie, Mon May 29 11:45:04 2017 +1000)
 
 #### 2.0.3 (2017-05-17)
 * c03b871 - Make specs pass for sqlite, postgres and mysql. At the same time. Amazing. (Beth Skurrie, Sun May 28 10:22:20 2017 +1000)

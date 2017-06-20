@@ -6,6 +6,8 @@ rvm:
 services:
   - postgresql
   - mysql
+addons:
+  postgresql: "9.5"
 env:
   - DATABASE_ADAPTER=default RUBYOPT="-W0"
   - DATABASE_ADAPTER=postgres RUBYOPT="-W0"
