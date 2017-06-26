@@ -85,12 +85,11 @@ module PactBroker
     describe "authenticate_with_basic_auth" do
       before do
         PactBroker.configuration.authenticate_with_basic_auth do | resource, username, password, options |
-          resource.user = Object.new
           username == 'username' && password == 'password'
         end
       end
 
-      context "with incorrect username or password" do
+      context "with a request for the API with incorrect username or password" do
         it "returns a 401" do
           basic_authorize 'foo', 'password'
           get "/"
@@ -98,31 +97,93 @@ module PactBroker
         end
       end
 
-      context "with matching username and password" do
+      context "with a request for the UI with incorrect username or password" do
+        it "returns a 401" do
+          basic_authorize 'foo', 'password'
+          get "/", nil, {'HTTP_ACCEPT' => 'text/html'}
+          expect(last_response.status).to eq 401
+        end
+      end
+
+      context "with a request for diagnostics with incorrect username or password" do
+        it "returns a 401" do
+          basic_authorize 'foo', 'password'
+          get "/diagnostic/status/heartbeat"
+          expect(last_response.status).to eq 401
+        end
+      end
+
+      context "with a request for the API with correct username and password" do
         it "returns a 200" do
           basic_authorize 'username', 'password'
           get "/"
           expect(last_response.status).to eq 200
         end
       end
-    end
 
-    describe "authorize" do
-      PactBroker.configuration.authorize do | resource, options |
-        resource.request.get?
-      end
-
-      context "with an an authorized request" do
+      context "with a request for the UI with correct username or password" do
         it "returns a 200" do
-          get "/"
+          basic_authorize 'username', 'password'
+          get "/", nil, {'HTTP_ACCEPT' => 'text/html'}
           expect(last_response.status).to eq 200
         end
       end
 
-      context "with an an aunauthorized request" do
-        it "returns a 405" do
-          put "/"
-          expect(last_response.status).to eq 405
+      context "with a request for diagnostics with correct username or password" do
+        it "returns a 200" do
+          basic_authorize 'username', 'password'
+          get "/diagnostic/status/heartbeat"
+          expect(last_response.status).to eq 200
+        end
+      end
+    end
+
+    describe "authorize" do
+      before do
+        PactBroker.configuration.authorize do | resource, options |
+          resource.request.headers['Role'] == 'important'
+        end
+      end
+
+      context "with a request for the API with an authorized request" do
+        it "returns a 200" do
+          get "/", nil, {'HTTP_ROLE' => 'important'}
+          expect(last_response.status).to eq 200
+        end
+      end
+
+      context "with a request for the UI with an authorized request" do
+        it "returns a 200" do
+          get "/", nil, {'HTTP_ACCEPT' => 'text/html', 'HTTP_ROLE' => 'important'}
+          expect(last_response.status).to eq 200
+        end
+      end
+
+      context "with a request for diagnostics with an authorized request" do
+        it "returns a 200" do
+          get "/diagnostic/status/heartbeat", nil, {'HTTP_ROLE' => 'important'}
+          expect(last_response.status).to eq 200
+        end
+      end
+
+      context "with a request for the API with an unauthorized request" do
+        it "returns a 403" do
+          get "/"
+          expect(last_response.status).to eq 403
+        end
+      end
+
+      context "with a request for the UI with an unauthorized request" do
+        it "returns a 200 because there's no point doing authorization on the UI at the moment" do
+          get "/", nil, {'HTTP_ACCEPT' => 'text/html'}
+          expect(last_response.status).to eq 200
+        end
+      end
+
+      context "with a request for diagnostics with an unauthorized request" do
+        it "returns a 403" do
+          get "/diagnostic/status/heartbeat"
+          expect(last_response.status).to eq 403
         end
       end
     end

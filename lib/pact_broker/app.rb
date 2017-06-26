@@ -8,6 +8,7 @@ require 'rack/pact_broker/convert_file_extension_to_accept_header'
 require 'rack/pact_broker/database_transaction'
 require 'rack/pact_broker/invalid_uri_protection'
 require 'rack/pact_broker/accepts_html_filter'
+require 'rack/pact_broker/ui_authentication'
 require 'sucker_punch'
 
 module PactBroker
@@ -97,6 +98,7 @@ module PactBroker
       require 'pact_broker/ui'
       builder = ::Rack::Builder.new
       builder.use Rack::PactBroker::AcceptsHtmlFilter
+      builder.use Rack::PactBroker::UIAuthentication
       builder.run PactBroker::UI::App.new
       builder
     end

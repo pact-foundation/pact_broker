@@ -1,3 +1,5 @@
+require 'webmachine/resource/authentication'
+
 module PactBroker
   module Api
     module Resources
