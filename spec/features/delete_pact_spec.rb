@@ -8,7 +8,7 @@ describe "Deleting a pact" do
 
   context "when the pact exists" do
     before do
-      ProviderStateBuilder.new.create_pact_with_hierarchy "A Consumer", "1.2.3", "A Provider"
+      TestDataBuilder.new.create_pact_with_hierarchy "A Consumer", "1.2.3", "A Provider"
     end
 
     it "deletes the pact" do

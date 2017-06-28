@@ -7,7 +7,7 @@ module PactBroker
       describe VersionDecorator do
 
         let(:version) do
-          ProviderStateBuilder.new
+          TestDataBuilder.new
             .create_consumer("Consumer")
             .create_consumer_version("1.2.3")
             .create_consumer_version_tag("prod")

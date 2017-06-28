@@ -1,9 +1,9 @@
-require 'support/provider_state_builder'
+require 'support/test_data_builder'
 
 describe "Creating a webhook" do
 
   before do
-    ProviderStateBuilder.new.create_pact_with_hierarchy("Some Consumer", "1", "Some Provider")
+    TestDataBuilder.new.create_pact_with_hierarchy("Some Consumer", "1", "Some Provider")
   end
 
   let(:path) { "/webhooks/provider/Some%20Provider/consumer/Some%20Consumer" }

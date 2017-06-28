@@ -9,7 +9,7 @@ describe "Recording a pact verification" do
   subject { post path, verification_content, {'CONTENT_TYPE' => 'application/json' }; last_response  }
 
   let(:pact) do
-    ProviderStateBuilder.new
+    TestDataBuilder.new
       .create_provider("Provider")
       .create_consumer("Consumer")
       .create_consumer_version("1.2.3")

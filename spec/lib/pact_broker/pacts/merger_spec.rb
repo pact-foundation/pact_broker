@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'spec/support/provider_state_builder'
+require 'spec/support/test_data_builder'
 require 'pact_broker/pacts/merger'
 require 'json'
 

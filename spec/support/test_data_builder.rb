@@ -21,7 +21,7 @@ require 'pact_broker/tags/repository'
 require 'pact_broker/webhooks/repository'
 require 'ostruct'
 
-class ProviderStateBuilder
+class TestDataBuilder
 
   include PactBroker::Repositories
 

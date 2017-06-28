@@ -7,7 +7,7 @@ module PactBroker
       describe EmbeddedVersionDecorator do
 
         let(:version) do
-          ProviderStateBuilder.new
+          TestDataBuilder.new
             .create_consumer("Consumer")
             .create_version("1.2.3")
           PactBroker::Versions::Repository.new.find_by_pacticipant_name_and_number "Consumer", "1.2.3"

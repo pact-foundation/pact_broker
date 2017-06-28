@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'spec/support/provider_state_builder'
+require 'spec/support/test_data_builder'
 require 'pact_broker/domain/order_versions.rb'
 
 describe PactBroker::Domain::OrderVersions do
@@ -9,7 +9,7 @@ describe PactBroker::Domain::OrderVersions do
   end
   context "when order_versions_by_date is false (the default)" do
     before do
-      ProviderStateBuilder.new
+      TestDataBuilder.new
         .create_condor
         .create_condor_version('1.5.0')
         .create_condor_version('1.4.0')
@@ -28,7 +28,7 @@ describe PactBroker::Domain::OrderVersions do
     before do
       allow(PactBroker.configuration).to receive(:order_versions_by_date).and_return(true)
     end
-    let(:consumer) { ProviderStateBuilder.new.create_consumer.and_return(:consumer) }
+    let(:consumer) { TestDataBuilder.new.create_consumer.and_return(:consumer) }
     let!(:version_1) { PactBroker::Domain::Version.create(pacticipant_id: consumer.id, number: '2') }
     let!(:version_2) { PactBroker::Domain::Version.create(pacticipant_id: consumer.id, number: '1') }
     let!(:version_3) { PactBroker::Domain::Version.create(pacticipant_id: consumer.id, number: '3') }
@@ -44,7 +44,7 @@ describe PactBroker::Domain::OrderVersions do
 
   context "when an existing version number in the database that Versionomy could parse cannot be parsed by SemVer" do
     let!(:consumer) do
-      ProviderStateBuilder.new
+      TestDataBuilder.new
         .create_consumer
         .create_consumer_version('1')
         .create_consumer_version('2')

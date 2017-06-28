@@ -6,7 +6,7 @@ module PactBroker
 
       describe "#verification_count_for_pact" do
         let!(:pact_1) do
-          ProviderStateBuilder.new
+          TestDataBuilder.new
             .create_consumer("Consumer")
             .create_provider("Provider")
             .create_consumer_version("1.2.3")
@@ -16,7 +16,7 @@ module PactBroker
             .and_return(:pact)
         end
         let!(:pact_2) do
-          ProviderStateBuilder.new
+          TestDataBuilder.new
             .create_consumer("Foo")
             .create_provider("Bar")
             .create_consumer_version("4.5.6")
@@ -32,7 +32,7 @@ module PactBroker
 
       describe "#find" do
         let!(:pact) do
-          builder = ProviderStateBuilder.new
+          builder = TestDataBuilder.new
           pact = builder
             .create_provider("Provider1")
             .create_consumer("Consumer1")
@@ -47,7 +47,7 @@ module PactBroker
             .create_pact
             .create_verification(number: 1)
 
-            ProviderStateBuilder.new
+            TestDataBuilder.new
             .create_provider("Provider3")
             .create_consumer("Consumer2")
             .create_consumer_version("1.2.3")
@@ -68,7 +68,7 @@ module PactBroker
 
       describe "#find_latest_verifications_for_consumer_version" do
         before do
-          ProviderStateBuilder.new
+          TestDataBuilder.new
             .create_provider("Provider1")
             .create_consumer("Consumer1")
             .create_consumer_version("1.0.0")
@@ -82,7 +82,7 @@ module PactBroker
             .create_pact
             .create_verification(number: 1, provider_version: "6.5.4")
 
-            ProviderStateBuilder.new
+            TestDataBuilder.new
             .create_provider("Provider3")
             .create_consumer("Consumer2")
             .create_consumer_version("1.2.3")
@@ -100,7 +100,7 @@ module PactBroker
 
       describe "#find_latest_verification_for" do
         before do
-          ProviderStateBuilder.new
+          TestDataBuilder.new
             .create_provider("Provider1")
             .create_consumer("Consumer1")
             .create_consumer_version("1.2.3")

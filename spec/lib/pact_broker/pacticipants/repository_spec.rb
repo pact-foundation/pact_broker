@@ -1,6 +1,6 @@
 require 'spec_helper'
 require 'pact_broker/pacticipants/repository'
-require 'support/provider_state_builder'
+require 'support/test_data_builder'
 
 module PactBroker
   module Pacticipants
@@ -8,7 +8,7 @@ module PactBroker
 
       describe "#find_by_name" do
         before do
-          ProviderStateBuilder.new.create_pacticipant("Foo Bar")
+          TestDataBuilder.new.create_pacticipant("Foo Bar")
         end
 
         subject { Repository.new.find_by_name('foo bar') }
@@ -40,7 +40,7 @@ module PactBroker
       describe "#pacticipant_names" do
 
         before do
-          ProviderStateBuilder.new
+          TestDataBuilder.new
             .create_pacticipant("Plants")
             .create_pacticipant("Animals")
         end
@@ -55,7 +55,7 @@ module PactBroker
 
       describe "#find_all_pacticipant_versions_in_reverse_order" do
         before do
-          ProviderStateBuilder.new
+          TestDataBuilder.new
             .create_consumer("Foo")
             .create_consumer_version("1.2.3")
             .create_consumer_version("4.5.6")

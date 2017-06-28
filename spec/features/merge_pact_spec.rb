@@ -1,4 +1,4 @@
-require 'spec/support/provider_state_builder'
+require 'spec/support/test_data_builder'
 
 describe "Merging a pact" do
 
@@ -29,7 +29,7 @@ describe "Merging a pact" do
     let(:merged_pact_content) { load_fixture('a_consumer-a_provider-merged.json') }
 
     before do
-      ProviderStateBuilder.new.create_pact_with_hierarchy "A Consumer", "1.2.3", "A Provider", existing_pact_content
+      TestDataBuilder.new.create_pact_with_hierarchy "A Consumer", "1.2.3", "A Provider", existing_pact_content
     end
 
     it "returns a 200 Success" do

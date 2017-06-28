@@ -7,7 +7,7 @@ module PactBroker
     describe Version do
       describe "#latest_pact_publication" do
         let!(:pact) do
-          ProviderStateBuilder.new
+          TestDataBuilder.new
             .create_consumer
             .create_provider
             .create_consumer_version
@@ -24,7 +24,7 @@ module PactBroker
 
       describe "uq_ver_ppt_ord" do
         let(:consumer) do
-          ProviderStateBuilder.new
+          TestDataBuilder.new
             .create_consumer
             .and_return(:consumer)
         end
