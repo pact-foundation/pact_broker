@@ -14,12 +14,12 @@ module PactBroker
 
     def migrate target = nil
       opts = target ? {target: target} : {}
-      Sequel::Migrator.run(database, migrations_dir, opts)
+      Sequel::TimestampMigrator.new(database, migrations_dir, opts).run
     end
 
     def version
-      if database.tables.include?(:schema_info)
-        database[:schema_info].first[:version]
+      if database.tables.include?(:schema_migrations)
+        database[:schema_migrations].order(:filename).last
       else
         0
       end
@@ -41,7 +41,7 @@ module PactBroker
     end
 
     def drop_tables
-      (TABLES + [:schema_info]).each do | table_name |
+      (TABLES + [:schema_info, :schema_migrations]).each do | table_name |
         if database.table_exists?(table_name)
           database.drop_table(table_name, cascade: psql?)
         end
