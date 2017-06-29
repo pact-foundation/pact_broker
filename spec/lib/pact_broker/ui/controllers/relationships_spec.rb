@@ -16,7 +16,7 @@ module PactBroker
           describe "GET" do
 
             before do
-              ProviderStateBuilder.new
+              TestDataBuilder.new
                 .create_consumer
                 .create_provider
                 .create_consumer_version

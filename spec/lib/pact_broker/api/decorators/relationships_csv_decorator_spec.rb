@@ -9,7 +9,7 @@ module PactBroker
 
       describe RelationshipsCsvDecorator do
 
-        let(:pact) { ProviderStateBuilder.new.create_pact_with_hierarchy "My Consumer", "1.0", "My Provider"}
+        let(:pact) { TestDataBuilder.new.create_pact_with_hierarchy "My Consumer", "1.0", "My Provider"}
         let(:pacts) { [pact]}
 
 

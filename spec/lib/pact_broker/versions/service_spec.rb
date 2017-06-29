@@ -7,7 +7,7 @@ module PactBroker
 
       describe ".delete" do
         let!(:version) do
-          ProviderStateBuilder.new
+          TestDataBuilder.new
             .create_consumer
             .create_provider
             .create_consumer_version("1.2.3")

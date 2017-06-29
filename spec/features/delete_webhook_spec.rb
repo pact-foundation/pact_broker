@@ -1,9 +1,9 @@
-require 'support/provider_state_builder'
+require 'support/test_data_builder'
 
 describe "Delete a webhook" do
 
   let!(:webhook) do
-    ProviderStateBuilder.new
+    TestDataBuilder.new
       .create_consumer("Some Consumer")
       .create_consumer_version("Some Provider")
       .create_provider

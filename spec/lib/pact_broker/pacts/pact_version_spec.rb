@@ -6,7 +6,7 @@ module PactBroker
 
       describe "pacticipant names" do
         subject(:pact_version) do
-          ProviderStateBuilder.new
+          TestDataBuilder.new
             .create_consumer("consumer")
             .create_provider("provider")
             .create_consumer_version("1.0.1")
@@ -20,7 +20,7 @@ module PactBroker
 
       describe "#latest_pact_publication" do
         before do
-          ProviderStateBuilder.new
+          TestDataBuilder.new
             .create_provider("Bar")
             .create_consumer("Foo")
             .create_consumer_version("1.2.100")
@@ -47,7 +47,7 @@ module PactBroker
 
       describe "#latest_consumer_version_number" do
         before do
-          builder = ProviderStateBuilder.new
+          builder = TestDataBuilder.new
           builder
             .create_consumer
             .create_provider

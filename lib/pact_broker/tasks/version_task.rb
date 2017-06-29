@@ -4,7 +4,7 @@ require 'rake/tasklib'
 
 require 'pact_broker/tasks'
 
-PactBroker::DB::MigrationTask.new do | task |
+PactBroker::DB::VersionTask.new do | task |
   require 'my_app/db'
   task.database_connection = MyApp::DB
 end
@@ -13,7 +13,7 @@ end
 
 module PactBroker
   module DB
-    class MigrationTask < ::Rake::TaskLib
+    class VersionTask < ::Rake::TaskLib
 
       attr_accessor :database_connection
 
@@ -24,15 +24,11 @@ module PactBroker
       def rake_task &block
         namespace :pact_broker do
           namespace :db do
-            desc "Run sequel migrations for pact broker database"
-            task :migrate, [:target] do | t, args |
-              require 'pact_broker/db/migrate'
+            desc "Display the current database migration version"
+            task :version do
               instance_eval(&block)
-              options = {}
-              if args[:target]
-                options[:target] = args[:target].to_i
-              end
-              PactBroker::DB::Migrate.call(database_connection, options)
+              require 'pact_broker/db/version'
+              puts PactBroker::DB::Version.call(database_connection)
             end
           end
         end

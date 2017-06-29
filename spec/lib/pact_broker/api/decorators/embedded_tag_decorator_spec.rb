@@ -1,6 +1,6 @@
 require 'pact_broker/api/decorators/embedded_tag_decorator'
 require 'pact_broker/tags/repository'
-require 'support/provider_state_builder'
+require 'support/test_data_builder'
 
 module PactBroker
 
@@ -11,7 +11,7 @@ module PactBroker
       describe EmbeddedTagDecorator do
 
         let(:tag) do
-          ProviderStateBuilder.new
+          TestDataBuilder.new
             .create_consumer("Consumer")
             .create_version("1.2.3")
             .create_tag("prod")

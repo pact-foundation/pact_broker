@@ -18,7 +18,7 @@ module PactBroker
           body: body)
       end
       let(:webhook) { Domain::Webhook.new(request: request)}
-      let(:test_data_builder) { ProviderStateBuilder.new }
+      let(:test_data_builder) { TestDataBuilder.new }
       let(:consumer) { test_data_builder.create_pacticipant 'Consumer'; test_data_builder.pacticipant}
       let(:provider) { test_data_builder.create_pacticipant 'Provider'; test_data_builder.pacticipant}
       let(:uuid) { 'the-uuid' }
@@ -202,7 +202,7 @@ module PactBroker
       end
 
       describe "find_by_consumer_and_provider" do
-        let(:test_data_builder) { ProviderStateBuilder.new }
+        let(:test_data_builder) { TestDataBuilder.new }
         subject { Repository.new.find_by_consumer_and_provider test_data_builder.consumer, test_data_builder.provider}
 
         context "when a webhook exists with a matching consumer and provider" do

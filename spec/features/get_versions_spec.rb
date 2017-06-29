@@ -1,4 +1,4 @@
-require 'spec/support/provider_state_builder'
+require 'spec/support/test_data_builder'
 
 describe "Get versions" do
 
@@ -10,7 +10,7 @@ describe "Get versions" do
   context "when the pacticipant exists" do
 
     before do
-      ProviderStateBuilder.new
+      TestDataBuilder.new
         .create_consumer("Consumer")
         .create_consumer_version("1.0.0")
         .create_consumer_version("1.0.1")

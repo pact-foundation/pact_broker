@@ -1,4 +1,4 @@
-require 'spec/support/provider_state_builder'
+require 'spec/support/test_data_builder'
 
 describe "Get version" do
 
@@ -10,7 +10,7 @@ describe "Get version" do
   context "when the version exists" do
 
     before do
-      ProviderStateBuilder.new
+      TestDataBuilder.new
         .create_consumer("Another Consumer")
         .create_consumer("Consumer")
         .create_consumer_version("1.2.3")
@@ -32,7 +32,7 @@ describe "Get version" do
   context "when the version does not exist" do
 
     before do
-      ProviderStateBuilder.new
+      TestDataBuilder.new
         .create_consumer("Consumer")
         .create_version("1.2.4")
     end
