@@ -1,0 +1,5 @@
+source 'https://rubygems.org'
+
+gem "rake", "~>12.0"
+gem "pact_broker", git: "https://github.com/pact-foundation/pact_broker.git", ref: "30a09e76b6eb495db7424baec62de5ed05fe7dff"
+gem "sqlite3", "~>1.3"

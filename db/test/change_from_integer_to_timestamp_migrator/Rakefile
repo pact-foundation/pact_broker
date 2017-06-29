@@ -1,0 +1,18 @@
+require 'bundler/setup'
+require 'pact_broker/tasks'
+require 'sequel'
+
+PactBroker::DB::MigrationTask.new do | task |
+  require_relative 'db'
+  task.database_connection = DB
+end
+
+PactBroker::DB::VersionTask.new do | task |
+  require_relative 'db'
+  task.database_connection = DB
+end
+
+task 'pact_broker:version' do
+  require 'pact_broker/version'
+  puts PactBroker::VERSION
+end
