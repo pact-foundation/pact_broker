@@ -29,3 +29,4 @@ Gemfile.lock
 
 bethtest/
 bin/
+db/test/change_migration_strategy/pact_broker_database.sqlite3

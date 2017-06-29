@@ -1,23 +1,12 @@
 require 'fileutils'
-require 'tasks/database'
 
 describe "changing from integer to timestamp migrations", no_db_clean: true do
 
-  TEST_DIR = "db/test/change_from_integer_to_timestamp_migrator"
+  TEST_DIR = "db/test/change_migration_strategy"
   DATABASE_PATH = "#{TEST_DIR}/pact_broker_database.sqlite3"
   DATABASE_CONFIG = {adapter: "sqlite", database: DATABASE_PATH, :encoding => 'utf8'}
-  #DATABASE_CONFIG = {adapter: "postgres", database: "pact_broker", username: 'pact_broker', password: 'pact_broker', :encoding => 'utf8'}
-
-  before(:all) do
-    #PactBroker::Database.drop_objects
-  end
-
-  after(:all) do
-    #PactBroker::Database.drop_objects
-  end
 
   before do
-    # @db = DB.connection_for_env 'test' #Sequel.connect(DATABASE_CONFIG)
     @db = Sequel.connect(DATABASE_CONFIG)
   end
 
@@ -32,6 +21,7 @@ describe "changing from integer to timestamp migrations", no_db_clean: true do
   it "uses pact_broker v 2.0.5" do
     Dir.chdir(TEST_DIR) do
       Bundler.with_clean_env do
+        `bundle install --gemfile before/Gemfile`
         expect(`BUNDLE_GEMFILE=before/Gemfile bundle exec rake pact_broker:version`.strip).to eq '2.0.5'
       end
     end
