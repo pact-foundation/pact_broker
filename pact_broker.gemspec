@@ -48,4 +48,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'rspec-its'
   gem.add_development_dependency 'database_cleaner'
   gem.add_development_dependency 'pg'
+  gem.add_development_dependency 'dry-types', '~> 0.10.3' # https://travis-ci.org/pact-foundation/pact_broker/jobs/249448621
 end
