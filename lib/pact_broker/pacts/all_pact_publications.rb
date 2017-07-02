@@ -33,6 +33,11 @@ module PactBroker
           join(:tags, {version_id: :consumer_version_id}).where(filter)
         end
 
+        def untagged
+          left_outer_join(:tags, {version_id: :consumer_version_id})
+            .where(Sequel.qualify(:tags, :name) => nil)
+        end
+
         def consumer_version_number number
           where(name_like(:consumer_version_number, number))
         end

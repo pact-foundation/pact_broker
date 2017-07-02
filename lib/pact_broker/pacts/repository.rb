@@ -91,9 +91,14 @@ module PactBroker
 
       def find_latest_pact(consumer_name, provider_name, tag = nil)
         query = LatestPactPublicationsByConsumerVersion
+          .select_all_qualified
           .consumer(consumer_name)
           .provider(provider_name)
-        query = query.tag(tag) unless tag.nil?
+        if tag == :untagged
+          query = query.untagged
+        elsif tag
+          query = query.tag(tag)
+        end
         query.latest.all.collect(&:to_domain_with_content)[0]
       end
 
