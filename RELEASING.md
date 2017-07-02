@@ -8,7 +8,7 @@
 3. Add files to git
 
       $ git add CHANGELOG.md lib/pact_broker/version.rb
-      $ git commit -m "Releasing version X.Y.Z"
+      $ git commit -m "Releasing version $(ruby -r ./lib/pact_broker/version.rb -e "puts PactBroker::VERSION")"
 
 3. Release:
 
