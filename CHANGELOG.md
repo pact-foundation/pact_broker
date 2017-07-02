@@ -2,6 +2,11 @@ Do this to generate your change history
 
     $ git log --pretty=format:'  * %h - %s (%an, %ad)'
 
+#### 2.1.0 (2017-07-03)
+* 53f0b5e - feat(get latest untagged pact): Add /latest-untagged endpoint to return the latest untagged pact (Beth Skurrie, Mon Jul 3 08:31:18 2017 +1000)
+* a963fce - Add pact_broker:db:version task. (Beth Skurrie, Thu Jun 29 20:29:55 2017 +1000)
+* 7ee134f - Add basic auth (authentication) to the UI, but no authorization (Beth Skurrie, Mon Jun 26 10:44:07 2017 +1000)
+
 #### 2.0.5 (2017-06-15)
 * e924c96 - Fixed webhook deletion bug (Beth Skurrie, Tue Jun 13 10:04:33 2017 +1000)
 
