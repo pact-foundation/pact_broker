@@ -37,6 +37,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'haml', '~>4.0'
   gem.add_runtime_dependency 'sucker_punch', '~>2.0'
   gem.add_runtime_dependency 'rack-protection', '~>1.5'
+  gem.add_runtime_dependency 'dry-types', '~> 0.10.3' # https://travis-ci.org/pact-foundation/pact_broker/jobs/249448621
 
   gem.add_development_dependency 'sqlite3'
   gem.add_development_dependency 'pry-byebug'
@@ -48,5 +49,4 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'rspec-its'
   gem.add_development_dependency 'database_cleaner'
   gem.add_development_dependency 'pg'
-  gem.add_development_dependency 'dry-types', '~> 0.10.3' # https://travis-ci.org/pact-foundation/pact_broker/jobs/249448621
 end
