@@ -33,12 +33,28 @@ module PactBroker
           }
         end
 
+        links :'pb:pact-versions' do | context |
+          sorted_pacts.collect do | pact |
+            {
+              title: "Pact",
+              name: pact.name,
+              href: pact_url(context[:base_url], pact),
+            }
+          end
+        end
+
         curies do | options |
           [{
             name: :pb,
             href: options.fetch(:base_url) + '/doc/{rel}',
             templated: true
           }]
+        end
+
+        private
+
+        def sorted_pacts
+          represented.pact_publications.sort{ |a, b| a.provider_name.downcase <=> b.provider_name.downcase }
         end
       end
     end
