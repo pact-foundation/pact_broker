@@ -18,18 +18,18 @@ module PactBroker
           }
         end
 
-        link :'pb:latest-verification-results-where-pacticipant-is-consumer' do | options |
-          {
-            title: "Latest verification results for consumer version",
-            href: latest_verifications_for_consumer_version_url(represented, options.fetch(:base_url))
-          }
-        end
-
         link :'pb:pacticipant' do | options |
           {
             title: 'Pacticipant',
             name: represented.pacticipant.name,
             href: pacticipant_url(options.fetch(:base_url), represented.pacticipant)
+          }
+        end
+
+        link :'pb:latest-verification-results-where-pacticipant-is-consumer' do | options |
+          {
+            title: "Latest verification results for consumer version",
+            href: latest_verifications_for_consumer_version_url(represented, options.fetch(:base_url))
           }
         end
 
