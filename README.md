@@ -127,7 +127,7 @@ You can use the [Pact Broker Docker container][docker] or [Terraform on AWS][ter
 [docker]: https://hub.docker.com/r/dius/pact-broker
 [terraform]: https://github.com/nadnerb/terraform-pact-broker
 [hosted]: https://pact.dius.com.au/?utm_source=github&utm_campaign=GITHUB_BROKER&utm_medium=github
-[wiki]: (https://github.com/pact-foundation/pact_broker/wiki)
+[wiki]: https://github.com/pact-foundation/pact_broker/wiki
 [stackoverflow]: http://stackoverflow.com/questions/tagged/pact-broker
 [twitter]: https://twitter.com/pact_up
 [gitter]: https://gitter.im/realestate-com-au/pact
