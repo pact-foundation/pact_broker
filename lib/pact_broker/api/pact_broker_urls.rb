@@ -43,6 +43,10 @@ module PactBroker
         "#{pactigration_base_url(base_url, pact)}/latest"
       end
 
+      def latest_untagged_pact_url pact, base_url
+        "#{pactigration_base_url(base_url, pact)}/latest-untagged"
+      end
+
       def latest_pacts_url base_url
         "#{base_url}/pacts/latest"
       end

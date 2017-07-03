@@ -37,6 +37,14 @@ module PactBroker
           }
         end
 
+        link :'pb:consumer-version' do | options |
+          {
+            title: "Consumer version",
+            name: represented.consumer_version_number,
+            href: version_url(options.fetch(:base_url), represented.consumer_version)
+          }
+        end
+
         link :'pb:provider' do | options |
           {
             title: "Provider",
@@ -45,12 +53,30 @@ module PactBroker
           }
         end
 
+
         link :'pb:latest-pact-version' do | options |
           {
             title: "Pact",
             name: "Latest version of this pact",
             href: latest_pact_url(options.fetch(:base_url), represented)
 
+          }
+        end
+
+        link :'pb:latest-untagged-pact-version' do | options |
+          {
+            title: "Pact",
+            name: "Latest untagged version of this pact",
+            href: latest_untagged_pact_url(represented, options.fetch(:base_url))
+          }
+        end
+
+        link :'pb:latest-tagged-pact-version' do | options |
+          {
+            title: "Pact",
+            name: "Latest tagged version of this pact",
+            href: "#{latest_pact_url(options.fetch(:base_url), represented)}/{tag}",
+            templated: true
           }
         end
 
@@ -71,13 +97,6 @@ module PactBroker
           }
         end
 
-        # link :'pb:pact-versions' do | options |
-        #   {
-        #     title: "All versions of the pact between #{represented.consumer.name} and #{represented.provider.name}",
-        #     href: pact_versions_url(represented.consumer.name, represented.provider.name, options.fetch(:base_url))
-        #   }
-        # end
-
         link :'pb:pact-webhooks' do | options |
           {
             title: "Webhooks for the pact between #{represented.consumer.name} and #{represented.provider.name}",
@@ -87,14 +106,14 @@ module PactBroker
 
         link :'pb:tag-prod-version' do | options |
           {
-            title: "Tag this version as 'production'",
+            title: "PUT to this resource to tag this consumer version as 'production'",
             href: tags_url(options.fetch(:base_url), represented.consumer_version) + "/prod"
           }
         end
 
         link :'pb:tag-version' do | options |
           {
-            title: "Tag version",
+            title: "PUT to this resource to tag this consumer version",
             href: tags_url(options.fetch(:base_url), represented.consumer_version) + "/{tag}"
           }
         end
