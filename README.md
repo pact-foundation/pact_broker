@@ -49,7 +49,7 @@ See the [wiki][wiki] for documentation on the Pact Broker.
 ## Support
 
 * Check the [wiki][wiki] first.
-* See if there is an existing or closed [issue](issues) and raise a new issue if not.
+* See if there is an existing or closed [issue][issues] and raise a new issue if not.
 * See if there is an existing question on [stackoverflow][stackoverflow] tagged with `pact-broker`, and ask a new question if not.
 * Have a chat to us on the Pact [gitter][gitter].
 * Tweet us at [@pact_up][twitter] on the twitters.
@@ -131,3 +131,4 @@ You can use the [Pact Broker Docker container][docker] or [Terraform on AWS][ter
 [stackoverflow]: http://stackoverflow.com/questions/tagged/pact-broker
 [twitter]: https://twitter.com/pact_up
 [gitter]: https://gitter.im/realestate-com-au/pact
+[issues]: https://github.com/pact-foundation/pact_broker/issues
