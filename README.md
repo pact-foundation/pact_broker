@@ -44,9 +44,15 @@ If you don't have a [Pact Broker CI Nerf Gun][nerf], you'll probably want to rea
 
 ## Documentation
 
-See the [Pact Broker Client](https://github.com/pact-foundation/pact_broker-client) for documentation on how to publish a pact to the Pact Broker, and configure the URLs in the provider project.
+See the [wiki][wiki] for documentation on the Pact Broker.
 
-See the [wiki](https://github.com/pact-foundation/pact_broker/wiki) for documentation related to the Pact Broker itself.
+## Support
+
+* Check the [wiki][wiki] first.
+* See if there is an existing or closed [issue](issues) and raise a new issue if not.
+* See if there is an existing question on [stackoverflow][stackoverflow] tagged with `pact-broker`, and ask a new question if not.
+* Have a chat to us on the Pact [gitter][gitter].
+* Tweet us at [@pact_up][twitter] on the twitters.
 
 ### Screenshots
 
@@ -121,3 +127,7 @@ You can use the [Pact Broker Docker container][docker] or [Terraform on AWS][ter
 [docker]: https://hub.docker.com/r/dius/pact-broker
 [terraform]: https://github.com/nadnerb/terraform-pact-broker
 [hosted]: https://pact.dius.com.au/?utm_source=github&utm_campaign=GITHUB_BROKER&utm_medium=github
+[wiki]: (https://github.com/pact-foundation/pact_broker/wiki)
+[stackoverflow]: http://stackoverflow.com/questions/tagged/pact-broker
+[twitter]: https://twitter.com/pact_up
+[gitter]: https://gitter.im/realestate-com-au/pact
