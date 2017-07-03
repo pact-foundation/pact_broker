@@ -8,8 +8,8 @@ engines:
       languages:
       - ruby
       - javascript
-      - python
-      - php
+      exclude_paths:
+      - spec/
   eslint:
     enabled: true
   fixme:
@@ -29,4 +29,5 @@ ratings:
 exclude_paths:
 - script/
 - vendor/
-- public/Network%20Graph_files/
+- public/Network Graph_files/
+- public/js/bootstrap*
