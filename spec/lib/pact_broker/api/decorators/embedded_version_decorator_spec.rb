@@ -21,11 +21,11 @@ module PactBroker
           expect(subject[:_links][:self][:href]).to eq "http://example.org/pacticipants/Consumer/versions/1.2.3"
         end
 
-        xit "includes the version number in the link" do
+        it "includes the version number in the link" do
           expect(subject[:_links][:self][:name]).to eq "1.2.3"
         end
 
-        xit "includes its title in the link" do
+        it "includes its title in the link" do
           expect(subject[:_links][:self][:title]).to eq "Version"
         end
 
