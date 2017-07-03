@@ -57,6 +57,9 @@ module PactBroker
               <li>
                 <a href=\"#{json_url}\">View in HAL Browser</a>
               </li>
+              <li>
+                <a href=\"/\">Home</a>
+              </li>
             </ul>
           </div>"
         end
