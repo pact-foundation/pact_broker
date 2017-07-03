@@ -29,3 +29,4 @@ Gemfile.lock
 
 bethtest/
 bin/
+coverage
