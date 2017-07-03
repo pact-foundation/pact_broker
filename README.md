@@ -2,6 +2,12 @@
 
 [![Build Status](https://travis-ci.org/pact-foundation/pact_broker.svg?branch=master)](https://travis-ci.org/pact-foundation/pact_broker) [![Join the chat at https://gitter.im/pact-foundation/pact_broker](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/pact-foundation/pact_broker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
+[![Code Climate](https://codeclimate.com/github/pact-foundation/pact_broker/badges/gpa.svg)](https://codeclimate.com/github/pact-foundation/pact_broker)
+
+[![Test Coverage](https://codeclimate.com/github/pact-foundation/pact_broker/badges/coverage.svg)](https://codeclimate.com/github/pact-foundation/pact_broker/coverage)
+
+[![Issue Count](https://codeclimate.com/github/pact-foundation/pact_broker/badges/issue_count.svg)](https://codeclimate.com/github/pact-foundation/pact_broker)
+
 The Pact Broker provides a repository for consumer driven contracts created using the pact gem.
 
 It:
@@ -107,7 +113,7 @@ In a hurry? Hate having to run your own infrastructure? Check out the [Hosted Pa
 
 #### Container solutions
 
-You can use the [Pact Broker Docker container][docker] or [Terraform on AWS][terraform] 
+You can use the [Pact Broker Docker container][docker] or [Terraform on AWS][terraform]
 
 #### Rolling your own
 
