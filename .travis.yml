@@ -24,5 +24,5 @@ before_script:
   - chmod +x ./cc-test-reporter
 script:
   - bundle exec rake
-  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
+  - if [ "$DATABASE_ADAPTER" == "postgres" ]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi
   - bundle exec bundle-audit update && bundle exec bundle-audit
