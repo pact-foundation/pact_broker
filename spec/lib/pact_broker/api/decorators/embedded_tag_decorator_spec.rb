@@ -19,8 +19,9 @@ module PactBroker
         end
 
         let(:options) { { user_options: { base_url: 'http://example.org' } } }
+        let(:json) { EmbeddedTagDecorator.new(tag).to_json(options) }
 
-        subject { JSON.parse TagDecorator.new(tag).to_json(options), symbolize_names: true }
+        subject { JSON.parse json, symbolize_names: true }
 
         it "includes the tag name" do
           expect(subject[:name]).to eq "prod"
