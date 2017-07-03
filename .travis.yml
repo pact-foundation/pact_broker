@@ -18,3 +18,4 @@ before_script:
   - mysql -e 'CREATE DATABASE pact_broker;'
 script:
   - bundle exec rake
+  - bundle exec bundle-audit update && bundle exec bundle-audit

@@ -39,6 +39,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'rack-protection', '~>1.5'
   gem.add_runtime_dependency 'dry-types', '~> 0.10.3' # https://travis-ci.org/pact-foundation/pact_broker/jobs/249448621
 
+  gem.add_development_dependency 'bundler-audit', '~>0.4'
   gem.add_development_dependency 'sqlite3'
   gem.add_development_dependency 'pry-byebug'
   gem.add_development_dependency 'rake', '~>10.0'
