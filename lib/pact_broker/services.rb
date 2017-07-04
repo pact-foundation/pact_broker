@@ -36,5 +36,10 @@ module PactBroker
       require 'pact_broker/verifications/service'
       Verifications::Service
     end
+
+    def badges_service
+      require 'pact_broker/badges/service'
+      Badges::Service
+    end
   end
 end
