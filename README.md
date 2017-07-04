@@ -4,6 +4,7 @@
  [![Code Climate](https://codeclimate.com/github/pact-foundation/pact_broker/badges/gpa.svg)](https://codeclimate.com/github/pact-foundation/pact_broker)
  [![Test Coverage](https://codeclimate.com/github/pact-foundation/pact_broker/badges/coverage.svg)](https://codeclimate.com/github/pact-foundation/pact_broker/coverage)
  [![Issue Count](https://codeclimate.com/github/pact-foundation/pact_broker/badges/issue_count.svg)](https://codeclimate.com/github/pact-foundation/pact_broker)
+ [![Dependency Status](https://gemnasium.com/badges/github.com/pact-foundation/pact_broker.svg)](https://gemnasium.com/github.com/pact-foundation/pact_broker)
 
 The Pact Broker provides a repository for consumer driven contracts created using the pact gem.
 
