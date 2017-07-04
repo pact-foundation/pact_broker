@@ -26,6 +26,7 @@ require 'pact_broker/api/resources/latest_provider_pacts'
 require 'pact_broker/api/resources/verifications'
 require 'pact_broker/api/resources/verification'
 require 'pact_broker/api/resources/latest_verifications_for_consumer_version'
+require 'pact_broker/api/resources/latest_verification_for_pact'
 
 require 'webmachine/adapters/rack_mapped'
 
@@ -48,6 +49,8 @@ module PactBroker
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'pact-version', :pact_version_sha, 'verification-results'], Api::Resources::Verifications, {resource_name: "verification_results"}
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'pact-version', :pact_version_sha, 'verification-results', :verification_number], Api::Resources::Verification, {resource_name: "verification_result"}
         add ['verification-results', 'consumer', :consumer_name, 'version', :consumer_version_number,'latest'], Api::Resources::LatestVerificationsForConsumerVersion, {resource_name: "verification_results_for_consumer_version"}
+
+        add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'latest', 'verification-results'], Api::Resources::LatestVerificationForPact, {resource_name: "latest_pact_publication"}
 
         # Latest pacts
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'latest'], Api::Resources::LatestPact, {resource_name: "latest_pact_publication"}

@@ -57,15 +57,11 @@ module PactBroker
         end
 
         def verification_status
-          return "" unless @relationship.ever_verified?
-          if @relationship.latest_verification_successful?
-            if @relationship.pact_changed_since_last_verification?
-              "warning"
-            else
-              "success"
-            end
-          else
-            "danger"
+          case @relationship.verification_status
+            when :success then "success"
+            when :stale then "warning"
+            when :failed then "danger"
+            else ""
           end
         end
 
@@ -74,13 +70,15 @@ module PactBroker
         end
 
         def verification_tooltip
-          return nil unless @relationship.ever_verified?
-          if warning?
-            "Pact has changed since last successful verification by #{provider_name} (v#{@relationship.latest_verification_provider_version})"
-          elsif @relationship.latest_verification_successful?
+          case @relationship.verification_status
+          when :success
             "Successfully verified by #{provider_name} (v#{@relationship.latest_verification_provider_version})"
-          elsif !@relationship.latest_verification_successful?
+          when :stale
+            "Pact has changed since last successful verification by #{provider_name} (v#{@relationship.latest_verification_provider_version})"
+          when :failed
             "Verification by #{provider_name} (v#{@relationship.latest_verification_provider_version}) failed"
+          else
+            nil
           end
         end
 
