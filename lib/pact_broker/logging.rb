@@ -17,8 +17,10 @@ module PactBroker
       @@logger = logger
     end
 
-    def log_error e
-      logger.error "#{e.class} #{e.message} #{e.backtrace.join("\n")}"
+    def log_error e, description = nil
+      message = "#{e.class} #{e.message} #{e.backtrace.join("\n")}"
+      message = "#{description} - #{message}" if description
+      logger.error message
     end
 
     def logger
