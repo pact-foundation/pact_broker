@@ -5,7 +5,7 @@ module PactBroker
   module Api
     module Resources
 
-      class LatestVerificationForPact < BaseResource
+      class Badge < BaseResource
 
         def allowed_methods
           ["GET"]
@@ -19,10 +19,18 @@ module PactBroker
           true
         end
 
+        def is_authorized?(authorization_header)
+          true
+        end
+
+        def forbidden?
+          false
+        end
+
         private
 
         def to_svg
-          File.read(svg_file)
+          badges_service.pact_verification_badge pact, pacticipant_role, verification_status
         end
 
         def pact
@@ -38,14 +46,8 @@ module PactBroker
           @verification_status ||= PactBroker::Verifications::Status.new(pact, latest_verification).to_sym
         end
 
-        def svg_file
-          svg = case verification_status.to_sym
-            when :never then "pacts-unknown-lightgrey.svg"
-            when :success then "pacts-verified-brightgreen.svg"
-            when :stale then "pacts-unknown-orange.svg"
-            when :failed then "pacts-failed-red.svg"
-          end
-          PactBroker.project_root.join("public", "images", svg)
+        def pacticipant_role
+          request.query['pacticipant']
         end
       end
     end

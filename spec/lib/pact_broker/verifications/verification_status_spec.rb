@@ -13,6 +13,11 @@ module PactBroker
 
         subject { PactBroker::Verifications::Status.new(latest_pact, latest_verification) }
 
+        context "when the pact is nil (used in badge resource)" do
+          let(:latest_pact) { nil }
+          its(:to_sym) { is_expected.to eq :never }
+        end
+
         context "when the pact has never been verified" do
           let(:latest_verification) { nil }
           its(:to_sym) { is_expected.to eq :never }

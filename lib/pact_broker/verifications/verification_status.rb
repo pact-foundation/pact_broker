@@ -14,6 +14,7 @@ module PactBroker
       end
 
       def to_sym
+        return :never unless latest_pact
         return :never unless ever_verified?
         if latest_verification_successful?
           if pact_changed_since_last_verification?
