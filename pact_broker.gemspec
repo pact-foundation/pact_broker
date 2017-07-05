@@ -30,7 +30,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'webmachine', '1.4.0'
   gem.add_runtime_dependency 'semver2', '~> 3.4.2'
   gem.add_runtime_dependency 'rack', '~>2.0'
-  gem.add_runtime_dependency 'redcarpet', '~>3.3', '>=3.3.2'
+  gem.add_runtime_dependency 'redcarpet', '>=3.3.2', '~>3.3'
   gem.add_runtime_dependency 'pact', '~>1.14'
   gem.add_runtime_dependency 'padrino-core', '~>0.14.1'
   gem.add_runtime_dependency 'haml', '~>4.0'
