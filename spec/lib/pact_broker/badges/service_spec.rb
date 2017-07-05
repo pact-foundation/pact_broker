@@ -8,6 +8,7 @@ module PactBroker
         let(:pacticipant_name) { "Foo-Bar_Thing Service" }
         let(:pact) { double("pact", consumer_name: "Foo-Bar", provider_name: "Thing_Blah") }
         let(:label) { nil }
+        let(:initials) { false }
         let(:verification_status) { :success }
 
         let(:expected_url) { "https://img.shields.io/badge/#{expected_left_text}-#{expected_right_text}-#{expected_color}.svg" }
@@ -19,7 +20,7 @@ module PactBroker
           stub_request(:get, expected_url).to_return(:status => response_status, :body => "svg")
         end
 
-        let(:subject) { PactBroker::Badges::Service.pact_verification_badge pact, label, verification_status }
+        let(:subject) { PactBroker::Badges::Service.pact_verification_badge pact, label, initials, verification_status }
 
         it "returns the svg file" do
            expect(subject).to eq "svg"
@@ -29,6 +30,27 @@ module PactBroker
           it "creates a badge with the consumer and provider names" do
             subject
             expect(http_request).to have_been_made
+          end
+
+          context "when initials is true" do
+            let(:expected_left_text) { "fb%2Ftb%20pact" }
+            let(:initials) { true }
+
+            it "creates a badge with the consumer and provider initials" do
+              subject
+              expect(http_request).to have_been_made
+            end
+          end
+
+          context "when initials is true but the consumer and provider names only contain one word" do
+            let(:expected_left_text) { "foo%2Fbar%20pact" }
+            let(:initials) { true }
+            let(:pact) { double("pact", consumer_name: "Foo", provider_name: "Bar") }
+
+            it "creates a badge with the consumer and provider names, not initials" do
+              subject
+              expect(http_request).to have_been_made
+            end
           end
         end
 
@@ -40,6 +62,16 @@ module PactBroker
             subject
             expect(http_request).to have_been_made
           end
+
+          context "when initials is true" do
+            let(:expected_left_text) { "fb%20pact" }
+            let(:initials) { true }
+
+            it "creates a badge with only the consumer initials" do
+              subject
+              expect(http_request).to have_been_made
+            end
+          end
         end
 
         context "when label is provider" do
@@ -49,6 +81,16 @@ module PactBroker
           it "creates a badge with only the provider name" do
             subject
             expect(http_request).to have_been_made
+          end
+
+          context "when initials is true" do
+            let(:expected_left_text) { "tb%20pact" }
+            let(:initials) { true }
+
+            it "creates a badge with only the provider initials" do
+              subject
+              expect(http_request).to have_been_made
+            end
           end
         end
 

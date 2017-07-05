@@ -12,10 +12,10 @@ module PactBroker
 
       # TODO timeout
 
-      def pact_verification_badge pact, label, verification_status
+      def pact_verification_badge pact, label, initials, verification_status
         return static_svg(pact, verification_status) unless pact
 
-        title = badge_title pact, label
+        title = badge_title pact, label, initials
         status = badge_status verification_status
         color = badge_color verification_status
 
@@ -24,13 +24,23 @@ module PactBroker
 
       private
 
-      def badge_title pact, label
+      def badge_title pact, label, initials
         title = case (label || '').downcase
-          when 'consumer' then pact.consumer_name
-          when 'provider' then pact.provider_name
-          else "#{pact.consumer_name}%2F#{pact.provider_name}"
+          when 'consumer' then prepare_name(pact.consumer_name, initials)
+          when 'provider' then prepare_name(pact.provider_name, initials)
+          else "#{prepare_name(pact.consumer_name, initials)}%2F#{prepare_name(pact.provider_name, initials)}"
         end
         "#{title} pact".downcase
+      end
+
+      def prepare_name name, initials
+        if initials
+          parts = name.split(/[\s_\-]/)
+          if parts.size > 1
+            return parts.collect{ |p| p[0] }.join.downcase
+          end
+        end
+        name.downcase
       end
 
       def badge_status verification_status

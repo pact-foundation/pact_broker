@@ -8,11 +8,11 @@ module PactBroker
       class Badge < BaseResource
 
         def allowed_methods
-          ["GET"]
+          ['GET']
         end
 
         def content_types_provided
-          [["image/svg+xml", :to_svg]]
+          [['image/svg+xml', :to_svg]]
         end
 
         def resource_exists?
@@ -30,7 +30,7 @@ module PactBroker
         private
 
         def to_svg
-          badges_service.pact_verification_badge pact, label, verification_status
+          badges_service.pact_verification_badge pact, label, initials, verification_status
         end
 
         def pact
@@ -48,6 +48,10 @@ module PactBroker
 
         def label
           request.query['label']
+        end
+
+        def initials
+          request.query['initials'] == 'true'
         end
       end
     end
