@@ -7,7 +7,7 @@ module PactBroker
       describe "#pact_verification_badge" do
         let(:pacticipant_name) { "Foo-Bar_Thing Service" }
         let(:pact) { double("pact", consumer_name: "Foo-Bar", provider_name: "Thing_Blah") }
-        let(:pacticipant_role) { nil }
+        let(:label) { nil }
         let(:verification_status) { :success }
 
         let(:expected_url) { "https://img.shields.io/badge/#{expected_left_text}-#{expected_right_text}-#{expected_color}.svg" }
@@ -19,34 +19,34 @@ module PactBroker
           stub_request(:get, expected_url).to_return(:status => response_status, :body => "svg")
         end
 
-        let(:subject) { PactBroker::Badges::Service.pact_verification_badge pact, pacticipant_role, verification_status }
+        let(:subject) { PactBroker::Badges::Service.pact_verification_badge pact, label, verification_status }
 
         it "returns the svg file" do
            expect(subject).to eq "svg"
         end
 
-        context "when the pacticipant_role is not specified" do
+        context "when the label is not specified" do
           it "creates a badge with the consumer and provider names" do
             subject
             expect(http_request).to have_been_made
           end
         end
 
-        context "when pacticipant_role is consumer" do
-          let(:expected_left_text) { "thing__blah%20pact" }
-          let(:pacticipant_role) { 'consumer' }
+        context "when label is consumer" do
+          let(:expected_left_text) { "foo--bar%20pact" }
+          let(:label) { 'consumer' }
 
-          it "creates a badge with the provider name" do
+          it "creates a badge with only the consumer name" do
             subject
             expect(http_request).to have_been_made
           end
         end
 
-        context "when pacticipant_role is provider" do
-          let(:expected_left_text) { "foo--bar%20pact" }
-          let(:pacticipant_role) { 'provider' }
+        context "when label is provider" do
+          let(:expected_left_text) { "thing__blah%20pact" }
+          let(:label) { 'provider' }
 
-          it "creates a badge with the consumer name" do
+          it "creates a badge with only the provider name" do
             subject
             expect(http_request).to have_been_made
           end

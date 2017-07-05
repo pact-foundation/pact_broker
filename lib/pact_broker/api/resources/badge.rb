@@ -30,7 +30,7 @@ module PactBroker
         private
 
         def to_svg
-          badges_service.pact_verification_badge pact, pacticipant_role, verification_status
+          badges_service.pact_verification_badge pact, label, verification_status
         end
 
         def pact
@@ -46,8 +46,8 @@ module PactBroker
           @verification_status ||= PactBroker::Verifications::Status.new(pact, latest_verification).to_sym
         end
 
-        def pacticipant_role
-          request.query['pacticipant']
+        def label
+          request.query['label']
         end
       end
     end

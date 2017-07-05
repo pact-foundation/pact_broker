@@ -10,10 +10,12 @@ module PactBroker
       extend self
       include PactBroker::Logging
 
-      def pact_verification_badge pact, pacticipant_role, verification_status
+      # TODO timeout
+
+      def pact_verification_badge pact, label, verification_status
         return static_svg(pact, verification_status) unless pact
 
-        title = badge_title pact, pacticipant_role
+        title = badge_title pact, label
         status = badge_status verification_status
         color = badge_color verification_status
 
@@ -22,10 +24,10 @@ module PactBroker
 
       private
 
-      def badge_title pact, pacticipant_role
-        title = case (pacticipant_role || '').downcase
-          when 'consumer' then pact.provider_name
-          when 'provider' then pact.consumer_name
+      def badge_title pact, label
+        title = case (label || '').downcase
+          when 'consumer' then pact.consumer_name
+          when 'provider' then pact.provider_name
           else "#{pact.consumer_name}%2F#{pact.provider_name}"
         end
         "#{title} pact".downcase
