@@ -6,9 +6,9 @@ Use the `pb:publish-verification-results` link in the pact resource to publish t
 
     POST http://broker/pacts/provider/Foo/consumer/Bar/pact-version/1234
     {
-      success: true,
-      providerApplicationVersion: "4.5.6",
-      buildUrl: "http://my-ci.org/build/3456"
+      "success": true,
+      "providerApplicationVersion": "4.5.6",
+      "buildUrl": "http://my-ci.org/build/3456"
     }
 
-Multiple verification results may be published for the same pact resource.
+Multiple verification results may be published for the same pact resource. The most recently published one will be considered to reflect the current status of verification.
