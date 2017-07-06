@@ -126,9 +126,9 @@ module PactBroker
         context "when the verification_status is :stale" do
           let(:verification_status) { :stale }
           let(:expected_color) { "orange" }
-          let(:expected_right_text) { "unknown" }
+          let(:expected_right_text) { "changed" }
 
-          it "create a orange badge with left text 'unknown'" do
+          it "create a orange badge with left text 'changed'" do
             subject
             expect(http_request).to have_been_made
           end
@@ -172,7 +172,7 @@ module PactBroker
 
             it "returns a static stale image" do
               expect(subject).to include ">pact</"
-              expect(subject).to include ">unknown</"
+              expect(subject).to include ">changed</"
             end
           end
 

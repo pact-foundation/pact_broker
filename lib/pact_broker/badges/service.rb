@@ -47,6 +47,7 @@ module PactBroker
         case verification_status
           when :success then "verified"
           when :failed then "failed"
+          when :stale then "changed"
           else "unknown"
         end
       end
@@ -93,7 +94,7 @@ module PactBroker
         file_name = case verification_status
           when :success then "pact-verified-brightgreen.svg"
           when :failed then "pact-failed-red.svg"
-          when :stale then "pact-unknown-orange.svg"
+          when :stale then "pact-changed-orange.svg"
           else "pact-unknown-lightgrey.svg"
         end
         file_name = "pact_not_found-unknown-lightgrey.svg" unless pact
