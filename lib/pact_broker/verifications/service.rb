@@ -38,8 +38,8 @@ module PactBroker
         verification_repository.find_latest_verifications_for_consumer_version params[:consumer_name], params[:consumer_version_number]
       end
 
-      def find_latest_verification_for consumer, provider
-        verification_repository.find_latest_verification_for consumer.name, provider.name
+      def find_latest_verification_for consumer, provider, tag = nil
+        verification_repository.find_latest_verification_for consumer.name, provider.name, tag
       end
 
       def verification_summary_for_consumer_version params

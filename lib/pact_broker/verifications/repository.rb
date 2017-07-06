@@ -23,7 +23,7 @@ module PactBroker
           .consumer(consumer_name)
           .provider(provider_name)
           .pact_version_sha(pact_version_sha)
-          .verification_number(verification_number).first
+          .verification_number(verification_number).single_record
       end
 
       def find_latest_verifications_for_consumer_version consumer_name, consumer_version_number
@@ -37,13 +37,13 @@ module PactBroker
           .all
       end
 
-      def find_latest_verification_for consumer_name, provider_name
+      def find_latest_verification_for consumer_name, provider_name, tag = nil
         query = LatestVerificationsByConsumerVersion
           .join(:all_pact_publications, pact_version_id: :pact_version_id)
           .consumer(consumer_name)
           .provider(provider_name)
-          .latest
-          query.first
+        query = query.tag(tag) if tag
+        query.latest.single_record
       end
 
       def pact_version_id_for pact

@@ -41,7 +41,7 @@ module PactBroker
           end
 
           it "retrieves the latest verification for the pact's consumer and provider" do
-            expect(PactBroker::Verifications::Service).to receive(:find_latest_verification_for).with(consumer, provider)
+            expect(PactBroker::Verifications::Service).to receive(:find_latest_verification_for).with(consumer, provider, nil)
             subject
           end
 
@@ -86,6 +86,15 @@ module PactBroker
 
             it "returns a 200 status" do
               expect(subject.status).to eq 200
+            end
+          end
+
+          context "when retrieving the badge for the latest pact with a tag" do
+            let(:path) { "/pacts/provider/provider/consumer/consumer/latest/prod/badge" }
+
+            it "retrieves the latest verification for the pact's consumer and provider and specified tag" do
+              expect(PactBroker::Verifications::Service).to receive(:find_latest_verification_for).with(anything, anything, 'prod')
+              subject
             end
           end
         end

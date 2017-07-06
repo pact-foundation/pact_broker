@@ -25,8 +25,10 @@ module PactBroker
             .and_return(:pact)
         end
 
+        subject { Repository.new.verification_count_for_pact(pact_1) }
+
         it "returns the number of verifications for the given pact" do
-          expect(Repository.new.verification_count_for_pact(pact_1)).to eq 2
+          expect(subject).to eq 2
         end
       end
 
@@ -56,13 +58,13 @@ module PactBroker
           pact
         end
 
-        let(:verification) { Repository.new.find "Consumer1", "Provider1", pact.pact_version_sha, 2}
+        subject { Repository.new.find "Consumer1", "Provider1", pact.pact_version_sha, 2}
 
         it "finds the latest verifications for the given consumer version" do
-          expect(verification.provider_version).to eq "3.7.4"
-          expect(verification.consumer_name).to eq "Consumer1"
-          expect(verification.provider_name).to eq "Provider1"
-          expect(verification.pact_version_sha).to eq pact.pact_version_sha
+          expect(subject.provider_version).to eq "3.7.4"
+          expect(subject.consumer_name).to eq "Consumer1"
+          expect(subject.provider_name).to eq "Provider1"
+          expect(subject.pact_version_sha).to eq pact.pact_version_sha
         end
       end
 
@@ -90,37 +92,78 @@ module PactBroker
             .create_verification(number: 1)
         end
 
-        let(:latest_verifications) { Repository.new.find_latest_verifications_for_consumer_version("Consumer1", "1.2.3")}
+        subject { Repository.new.find_latest_verifications_for_consumer_version("Consumer1", "1.2.3")}
 
         it "finds the latest verifications for the given consumer version" do
-          expect(latest_verifications.first.provider_version).to eq "7.8.9"
-          expect(latest_verifications.last.provider_version).to eq "6.5.4"
+          expect(subject.first.provider_version).to eq "7.8.9"
+          expect(subject.last.provider_version).to eq "6.5.4"
         end
       end
 
       describe "#find_latest_verification_for" do
-        before do
-          TestDataBuilder.new
-            .create_provider("Provider1")
-            .create_consumer("Consumer1")
-            .create_consumer_version("1.2.3")
-            .create_pact
-            .create_verification(number: 1, provider_version: "2.3.4")
-            .create_verification(number: 2, provider_version: "7.8.9")
-            .create_consumer_version("1.0.0")
-            .create_pact
-            .create_verification(number: 1, provider_version: "5.4.3")
-            .create_provider("Provider2")
-            .create_pact
-            .create_verification(number: 1, provider_version: "6.5.4")
-            .create_consumer_version("2.0.0")
-            .create_pact
+        context "when no tag is specified" do
+          before do
+            TestDataBuilder.new
+              .create_provider("Provider1")
+              .create_consumer("Consumer1")
+              .create_consumer_version("1.2.3")
+              .create_pact
+              .create_verification(number: 1, provider_version: "2.3.4")
+              .create_verification(number: 2, provider_version: "7.8.9")
+              .create_consumer_version("1.0.0")
+              .create_pact
+              .create_verification(number: 1, provider_version: "5.4.3")
+              .create_provider("Provider2")
+              .create_pact
+              .create_verification(number: 1, provider_version: "6.5.4")
+              .create_consumer_version("2.0.0")
+              .create_pact
+          end
+
+          subject { Repository.new.find_latest_verification_for("Consumer1", "Provider1")}
+
+          it "finds the latest verifications for the given consumer version" do
+            expect(subject.provider_version).to eq "7.8.9"
+          end
         end
 
-        let(:latest_verification) { Repository.new.find_latest_verification_for("Consumer1", "Provider1")}
+        context "when a tag is specified" do
+          before do
+            TestDataBuilder.new
+              .create_provider("Provider1")
+              .create_consumer("Consumer1")
+              .create_consumer_version("1.0.0")
+              .create_consumer_version_tag("prod")
+              .create_pact
+              .create_verification(number: 1, provider_version: "1.0.0")
+              .create_verification(number: 2, provider_version: "5.4.3")
+              .create_consumer_version("1.1.0")
+              .create_consumer_version_tag("prod")
+              .create_pact
+              .create_consumer_version("1.2.3")
+              .create_pact
+              .create_verification(number: 1, provider_version: "2.3.4")
+              .create_verification(number: 2, provider_version: "7.8.9")
+              .create_provider("Provider2")
+              .create_pact
+              .create_verification(number: 1, provider_version: "6.5.4")
+              .create_consumer_version("2.0.0")
+              .create_pact
+          end
 
-        it "finds the latest verifications for the given consumer version" do
-          expect(latest_verification.provider_version).to eq "7.8.9"
+          subject { Repository.new.find_latest_verification_for("Consumer1", "Provider1", 'prod')}
+
+          it "finds the latest verifications for the given consumer version with the specified tag" do
+            expect(subject.provider_version).to eq "5.4.3"
+          end
+
+          context "when no verification exists" do
+            subject { Repository.new.find_latest_verification_for("Consumer1", "Provider1", 'foo')}
+
+            it "returns nil" do
+              expect(subject).to be nil
+            end
+          end
         end
       end
     end

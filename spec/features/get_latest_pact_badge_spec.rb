@@ -1,6 +1,6 @@
 require 'webmock/rspec'
 
-describe "get pact badge" do
+describe "get latest pact badge" do
 
   before do
     PactBroker.configuration.enable_badge_resources = true

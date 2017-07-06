@@ -40,7 +40,7 @@ module PactBroker
 
         def latest_verification
           return nil unless pact
-          @verification ||= verification_service.find_latest_verification_for(pact.consumer, pact.provider)
+          @verification ||= verification_service.find_latest_verification_for(pact.consumer, pact.provider, identifier_from_path[:tag])
         end
 
         def verification_status
