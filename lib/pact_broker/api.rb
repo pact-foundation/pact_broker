@@ -50,7 +50,8 @@ module PactBroker
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'pact-version', :pact_version_sha, 'verification-results', :verification_number], Api::Resources::Verification, {resource_name: "verification_result"}
         add ['verification-results', 'consumer', :consumer_name, 'version', :consumer_version_number,'latest'], Api::Resources::LatestVerificationsForConsumerVersion, {resource_name: "verification_results_for_consumer_version"}
 
-        add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'latest', 'badge'], Api::Resources::Badge, {resource_name: "latest_pact_publication"}
+        # Badges
+        add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'latest', 'badge'], Api::Resources::Badge, {resource_name: "latest_pact_badge"}
 
         # Latest pacts
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'latest'], Api::Resources::LatestPact, {resource_name: "latest_pact_publication"}
