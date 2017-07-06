@@ -1,5 +1,6 @@
 require 'pact_broker/api/resources/base_resource'
 require 'pact_broker/verifications/verification_status'
+require 'pact_broker/configuration'
 
 module PactBroker
   module Api
@@ -16,7 +17,7 @@ module PactBroker
         end
 
         def resource_exists?
-          true
+          PactBroker.configuration.enable_badge_resources
         end
 
         def is_authorized?(authorization_header)

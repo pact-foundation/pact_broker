@@ -3,6 +3,7 @@ require 'webmock/rspec'
 describe "get pact badge" do
 
   before do
+    PactBroker.configuration.enable_badge_resources = true
     TestDataBuilder.new
       .create_consumer('consumer')
       .create_provider('provider')
@@ -22,11 +23,31 @@ describe "get pact badge" do
 
   subject { get path, nil, {'HTTP_ACCEPT' => "image/svg+xml"}; last_response  }
 
+  it "returns a 200 status" do
+    expect(subject.status).to eq 200
+  end
+
   it "returns an svg/xml response" do
     expect(subject.headers['Content-Type']).to include("image/svg+xml")
   end
 
   it "returns an svg body" do
     expect(subject.body).to include "<svg/>"
+  end
+
+  context "when the pact doesn't exist" do
+    let(:path) { "/pacts/provider/foo/consumer/bar/latest/badge" }
+
+    it "returns a 200 status" do
+      expect(subject.status).to eq 200
+    end
+
+    it "returns an svg/xml response" do
+      expect(subject.headers['Content-Type']).to include("image/svg+xml")
+    end
+
+    it "returns a static svg image" do
+      expect(subject.body).to include ">unknown<"
+    end
   end
 end
