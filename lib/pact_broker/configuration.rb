@@ -17,7 +17,7 @@ module PactBroker
     attr_accessor :validate_database_connection_config, :enable_diagnostic_endpoints, :version_parser
     attr_accessor :use_case_sensitive_resource_names, :order_versions_by_date
     attr_accessor :semver_formats
-    attr_accessor :enable_badge_resources
+    attr_accessor :enable_badge_resources, :shields_io_base_url
     attr_writer :logger
 
     def initialize
@@ -40,6 +40,7 @@ module PactBroker
       config.validate_database_connection_config = true
       config.enable_diagnostic_endpoints = true
       config.enable_badge_resources = false # For security
+      config.shields_io_base_url = "https://img.shields.io".freeze
       config.use_case_sensitive_resource_names = true
       config.html_pact_renderer = default_html_pact_render
       config.version_parser = PactBroker::Versions::ParseSemanticVersion
@@ -129,7 +130,5 @@ module PactBroker
     def log_path
       log_dir + "/pact_broker.log"
     end
-
   end
-
 end

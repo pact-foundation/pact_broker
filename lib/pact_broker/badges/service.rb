@@ -2,6 +2,7 @@ require 'net/http'
 require 'uri'
 require 'pact_broker/project_root'
 require 'pact_broker/logging'
+require 'pact_broker/configuration'
 
 module PactBroker
   module Badges
@@ -73,7 +74,7 @@ module PactBroker
       end
 
       def build_uri left_text, right_text, color
-        shield_base_url = "https://img.shields.io"
+        shield_base_url = PactBroker.configuration.shields_io_base_url
         path = "/badge/#{escape_text(left_text)}-#{escape_text(right_text)}-#{color}.svg"
         URI.parse(shield_base_url + path)
       end
