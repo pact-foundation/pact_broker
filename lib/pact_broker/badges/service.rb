@@ -63,6 +63,7 @@ module PactBroker
       end
 
       def dynamic_svg left_text, right_text, color
+        return nil unless PactBroker.configuration.shields_io_base_url
         uri = build_uri(left_text, right_text, color)
         begin
           response = do_request(uri)

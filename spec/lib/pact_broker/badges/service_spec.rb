@@ -200,6 +200,22 @@ module PactBroker
             expect(subject).to include ">pact</"
           end
         end
+
+        context "when the shields_io_base_url is not configured" do
+          before do
+            PactBroker.configuration.shields_io_base_url = nil
+          end
+
+          it "does not make an http request" do
+            subject
+            expect(http_request).to_not have_been_made
+          end
+
+          it "returns a static image" do
+            expect(subject).to include ">pact</"
+            expect(subject).to include ">verified</"
+          end
+        end
       end
     end
   end
