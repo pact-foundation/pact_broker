@@ -52,6 +52,28 @@ module PactBroker
               expect(http_request).to have_been_made
             end
           end
+
+          context "when initials is true but the consumer and provider names are one camel cased word" do
+            let(:expected_left_text) { "fa%2Fbp%20pact" }
+            let(:initials) { true }
+            let(:pact) { double("pact", consumer_name: "FooApp", provider_name: "barProvider") }
+
+            it "creates a badge with the consumer and provider names, not initials" do
+              subject
+              expect(http_request).to have_been_made
+            end
+          end
+
+          context "when initials is true but the consumer and provider names are one camel cased word" do
+            let(:expected_left_text) { "fa%2Fdat%20pact" }
+            let(:initials) { true }
+            let(:pact) { double("pact", consumer_name: "FooApp", provider_name: "doAThing") }
+
+            it "creates a badge with the consumer and provider names, not initials", pending: "Need to make regexp smarter" do
+              subject
+              expect(http_request).to have_been_made
+            end
+          end
         end
 
         context "when label is consumer" do
