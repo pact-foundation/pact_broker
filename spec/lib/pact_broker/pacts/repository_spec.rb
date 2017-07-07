@@ -473,7 +473,6 @@ module PactBroker
       end
 
       describe "find_latest_pact" do
-
         context "with a tag" do
           context "when a version with a pact exists with the given tag" do
             before do
@@ -502,6 +501,54 @@ module PactBroker
             end
           end
 
+        end
+
+        context "without a tag" do
+          context "when one or more versions of a pact exist without any tags" do
+            before do
+              TestDataBuilder.new
+                .create_consumer("Consumer")
+                .create_provider("Provider")
+                .create_consumer_version("1.0.0")
+                .create_pact
+                .create_consumer_version("1.2.3")
+                .create_pact
+                .create_consumer_version("2.3.4")
+                .create_consumer_version_tag("prod")
+                .create_pact
+            end
+
+            let(:pact) { Repository.new.find_latest_pact("Consumer", "Provider", :untagged) }
+
+            it "returns the latest" do
+              expect(pact.consumer_version.number).to eq("1.2.3")
+            end
+
+            it "has JSON content" do
+              expect(pact.json_content).to_not be nil
+            end
+
+            it "has timestamps" do
+              expect(pact.created_at).to be_datey
+            end
+          end
+
+          context "when all versions have a tag" do
+            before do
+              TestDataBuilder.new
+                .create_consumer("Consumer")
+                .create_provider("Provider")
+                .create_consumer_version("2.3.4")
+                .create_consumer_version_tag("prod")
+                .create_pact
+            end
+
+            let(:pact) { Repository.new.find_latest_pact("Consumer", "Provider", :untagged) }
+
+            it "returns nil" do
+              expect(pact).to be nil
+            end
+          end
         end
       end
 

@@ -19,7 +19,7 @@ module PactBroker
         let(:provider) { double('provider', name: 'Provider')}
         let(:created_at) { DateTime.new(2014, 02, 27) }
         let(:json_content) { load_fixture('renderer_pact.json') }
-        let(:pact) { double('pact', json_content: json_content, consumer_version_number: '1.2.3', consumer: consumer, provider: provider, created_at: created_at)}
+        let(:pact) { double('pact', json_content: json_content, consumer_version_number: '1.2.3', consumer: consumer, provider: provider, consumer_version_tag_names: ['prod', 'master'], created_at: created_at)}
         let(:pact_url) { '/pact/url' }
 
         before do
@@ -41,6 +41,7 @@ module PactBroker
             expect(subject).to include("Date published:")
             expect(subject).to include("Thu 27 Feb 2014, 11:00am +11:00")
             expect(subject).to match /title.*Pact between Consumer and Provider/
+            expect(subject).to match /prod, master/
           end
 
           context "when the content is not a valid pact, but is still JSON" do

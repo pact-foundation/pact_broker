@@ -1,6 +1,10 @@
 # Pact Broker
-
-[![Build Status](https://travis-ci.org/pact-foundation/pact_broker.svg?branch=master)](https://travis-ci.org/pact-foundation/pact_broker) [![Join the chat at https://gitter.im/pact-foundation/pact_broker](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/pact-foundation/pact_broker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Gem Version](https://badge.fury.io/rb/pact_broker.svg)](http://badge.fury.io/rb/pact_broker)
+ [![Build Status](https://travis-ci.org/pact-foundation/pact_broker.svg?branch=master)](https://travis-ci.org/pact-foundation/pact_broker) [![Join the chat at https://gitter.im/pact-foundation/pact_broker](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/pact-foundation/pact_broker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+ [![Code Climate](https://codeclimate.com/github/pact-foundation/pact_broker/badges/gpa.svg)](https://codeclimate.com/github/pact-foundation/pact_broker)
+ [![Test Coverage](https://codeclimate.com/github/pact-foundation/pact_broker/badges/coverage.svg)](https://codeclimate.com/github/pact-foundation/pact_broker/coverage)
+ [![Issue Count](https://codeclimate.com/github/pact-foundation/pact_broker/badges/issue_count.svg)](https://codeclimate.com/github/pact-foundation/pact_broker)
+ [![Dependency Status](https://gemnasium.com/badges/github.com/pact-foundation/pact_broker.svg)](https://gemnasium.com/github.com/pact-foundation/pact_broker)
 
 The Pact Broker provides a repository for consumer driven contracts created using the pact gem.
 
@@ -44,9 +48,15 @@ If you don't have a [Pact Broker CI Nerf Gun][nerf], you'll probably want to rea
 
 ## Documentation
 
-See the [Pact Broker Client](https://github.com/pact-foundation/pact_broker-client) for documentation on how to publish a pact to the Pact Broker, and configure the URLs in the provider project.
+See the [wiki][wiki] for documentation on the Pact Broker.
 
-See the [wiki](https://github.com/pact-foundation/pact_broker/wiki) for documentation related to the Pact Broker itself.
+## Support
+
+* Check the [wiki][wiki] first.
+* See if there is an existing or closed [issue][issues] and raise a new issue if not.
+* See if there is an existing question on [stackoverflow][stackoverflow] tagged with `pact-broker`, and ask a new question if not.
+* Have a chat to us on the Pact [gitter][gitter].
+* Tweet us at [@pact_up][twitter] on the twitters.
 
 ### Screenshots
 
@@ -101,7 +111,7 @@ In a hurry? Hate having to run your own infrastructure? Check out the [Hosted Pa
 
 #### Container solutions
 
-You can use the [Pact Broker Docker container][docker] or [Terraform on AWS][terraform] 
+You can use the [Pact Broker Docker container][docker] or [Terraform on AWS][terraform]
 
 #### Rolling your own
 
@@ -121,3 +131,8 @@ You can use the [Pact Broker Docker container][docker] or [Terraform on AWS][ter
 [docker]: https://hub.docker.com/r/dius/pact-broker
 [terraform]: https://github.com/nadnerb/terraform-pact-broker
 [hosted]: https://pact.dius.com.au/?utm_source=github&utm_campaign=GITHUB_BROKER&utm_medium=github
+[wiki]: https://github.com/pact-foundation/pact_broker/wiki
+[stackoverflow]: http://stackoverflow.com/questions/tagged/pact-broker
+[twitter]: https://twitter.com/pact_up
+[gitter]: https://gitter.im/realestate-com-au/pact
+[issues]: https://github.com/pact-foundation/pact_broker/issues

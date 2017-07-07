@@ -1,7 +1,7 @@
 require_relative 'migration_helper'
 
 Sequel.migration do
-  up do
+  change do
     create_table(:pact_versions, charset: 'utf8') do
       primary_key :id
       foreign_key :consumer_id, :pacticipants
@@ -11,9 +11,5 @@ Sequel.migration do
       index [:consumer_id, :provider_id, :sha], unique: true, name: 'unq_pvc_con_prov_sha'
       DateTime :created_at, null: false
     end
-  end
-
-  down do
-
   end
 end

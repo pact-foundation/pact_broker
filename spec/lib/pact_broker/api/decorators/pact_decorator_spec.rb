@@ -85,9 +85,18 @@ module PactBroker
             expect(subject[:_links][:'pb:latest-pact-version'][:href]).to eq "http://example.org/pacts/provider/A%20Provider/consumer/A%20Consumer/latest"
           end
 
-          xit "includes a link to the pact versions" do
-            expect(subject[:_links][:'pb:pact-versions'][:title]).to eq "All versions of the pact between A Consumer and A Provider"
-            expect(subject[:_links][:'pb:pact-versions'][:href]).to eq "http://example.org/pacts/provider/A%20Provider/consumer/A%20Consumer/versions"
+          it "includes a link to the pact version" do
+            expect(subject[:_links][:'pb:consumer-version'][:title]).to eq "Consumer version"
+            expect(subject[:_links][:'pb:consumer-version'][:name]).to eq "1234"
+            expect(subject[:_links][:'pb:consumer-version'][:href]).to eq "http://example.org/pacticipants/A%20Consumer/versions/1234"
+          end
+
+          it "includes a link to the latest untagged version" do
+            expect(subject[:_links][:'pb:latest-untagged-pact-version'][:href]).to eq "http://example.org/pacts/provider/A%20Provider/consumer/A%20Consumer/latest-untagged"
+          end
+
+          it "includes a link to the latest tagged version" do
+            expect(subject[:_links][:'pb:latest-tagged-pact-version'][:href]).to eq "http://example.org/pacts/provider/A%20Provider/consumer/A%20Consumer/latest/{tag}"
           end
 
           it "includes a link to publish a verification" do

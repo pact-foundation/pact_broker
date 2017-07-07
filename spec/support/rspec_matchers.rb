@@ -4,6 +4,6 @@ RSpec::Matchers.define :be_datey do |expected|
   end
 
   failure_message do |actual|
-    "expected #{actual} to be an instance of DateTime or Time"
+    "expected #{actual.inspect} to be an instance of DateTime or Time"
   end
 end

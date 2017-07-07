@@ -48,7 +48,7 @@ module PactBroker
             <ul>
               <li>
                 <span class='name'>#{@pact.consumer.name} version:</span>
-                <span class='value'>#{@pact.consumer_version_number}</span>
+                <span class='value'>#{@pact.consumer_version_number}#{tags}</span>
               </li>
               <li>
                 <span class='name'>Date published:</span>
@@ -56,6 +56,9 @@ module PactBroker
               </li>
               <li>
                 <a href=\"#{json_url}\">View in HAL Browser</a>
+              </li>
+              <li>
+                <a href=\"/\">Home</a>
               </li>
             </ul>
           </div>"
@@ -75,6 +78,14 @@ module PactBroker
 
         def pact_url
           PactBroker::Api::PactBrokerUrls.pact_url '', @pact
+        end
+
+        def tags
+          if @pact.consumer_version_tag_names.any?
+            " (#{@pact.consumer_version_tag_names.join(", ")})"
+          else
+            ""
+          end
         end
 
         def markdown

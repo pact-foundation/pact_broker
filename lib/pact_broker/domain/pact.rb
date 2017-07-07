@@ -26,6 +26,10 @@ module PactBroker
         consumer_version.pacticipant
       end
 
+      def consumer_version_tag_names
+        consumer_version.tags.collect(&:name)
+      end
+
       def to_s
         "Pact: consumer=#{consumer.name} provider=#{provider.name}"
       end

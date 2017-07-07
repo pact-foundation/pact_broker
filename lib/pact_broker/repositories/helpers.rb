@@ -20,6 +20,10 @@ module PactBroker
         Sequel::Model.db.adapter_scheme.to_s =~ /mysql/
       end
 
+      def select_all_qualified
+        select(Sequel[model.table_name].*)
+      end
+
       def select_for_subquery column
         if mysql? #stoopid mysql doesn't allow subqueries
           select(column).collect{ | it | it[column] }

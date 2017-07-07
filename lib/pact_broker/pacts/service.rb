@@ -22,7 +22,7 @@ module PactBroker
       end
 
       def find_pact params
-        pact_repository.find_pact(params[:consumer_name], params[:consumer_version_number], params[:provider_name], params[:revision_number])
+        pact_repository.find_pact(params[:consumer_name], params[:consumer_version_number], params[:provider_name], params[:pact_version_sha])
       end
 
       def find_by_consumer_version params
