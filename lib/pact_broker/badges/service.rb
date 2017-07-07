@@ -11,8 +11,6 @@ module PactBroker
       extend self
       include PactBroker::Logging
 
-      # TODO timeout
-
       def pact_verification_badge pact, label, initials, verification_status
         return static_svg(pact, verification_status) unless pact
 
