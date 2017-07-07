@@ -165,6 +165,37 @@ module PactBroker
             end
           end
         end
+
+        context "when the latest untagged verification is required" do
+          before do
+            TestDataBuilder.new
+              .create_provider("Provider1")
+              .create_consumer("Consumer1")
+              .create_consumer_version("1.0.0")
+              .create_pact
+              .create_verification(number: 1, provider_version: "1.0.0")
+              .create_verification(number: 2, provider_version: "5.4.3")
+              .create_consumer_version("1.1.0")
+              .create_consumer_version_tag("prod")
+              .create_pact
+              .create_consumer_version("1.2.3")
+              .create_consumer_version_tag("prod")
+              .create_pact
+              .create_verification(number: 1, provider_version: "2.3.4")
+              .create_verification(number: 2, provider_version: "7.8.9")
+              .create_provider("Provider2")
+              .create_pact
+              .create_verification(number: 1, provider_version: "6.5.4")
+              .create_consumer_version("2.0.0")
+              .create_pact
+          end
+
+          subject { Repository.new.find_latest_verification_for("Consumer1", "Provider1", :untagged)}
+
+          it "finds the latest verifications for the given consumer version with no tag" do
+            expect(subject.provider_version).to eq "5.4.3"
+          end
+        end
       end
     end
   end

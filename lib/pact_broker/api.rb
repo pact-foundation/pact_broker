@@ -53,6 +53,7 @@ module PactBroker
         # Badges
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'latest', 'badge'], Api::Resources::Badge, {resource_name: "latest_pact_badge"}
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'latest', :tag, 'badge'], Api::Resources::Badge, {resource_name: "latest_tagged_pact_badge"}
+        add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'latest-untagged', 'badge'], Api::Resources::Badge, {resource_name: "latest_untagged_pact_badge", tag: :untagged}
 
         # Latest pacts
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'latest'], Api::Resources::LatestPact, {resource_name: "latest_pact_publication"}

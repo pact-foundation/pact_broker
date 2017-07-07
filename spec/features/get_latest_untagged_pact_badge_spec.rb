@@ -1,6 +1,6 @@
 require 'webmock/rspec'
 
-describe "get latest tagged pact badge" do
+describe "get latest untagged pact badge" do
 
   before do
     PactBroker.configuration.enable_badge_resources = true
@@ -9,15 +9,15 @@ describe "get latest tagged pact badge" do
       .create_consumer('consumer')
       .create_provider('provider')
       .create_consumer_version('1.0.0')
-      .create_consumer_version_tag('prod')
       .create_pact
       .create_verification(success: true)
       .create_consumer_version('1.2.3')
+      .create_consumer_version_tag('prod')
       .create_pact
       .create_verification(success: false)
   end
 
-  let(:path) { "/pacts/provider/provider/consumer/consumer/latest/prod/badge" }
+  let(:path) { "/pacts/provider/provider/consumer/consumer/latest-untagged/badge" }
 
   # In the full app, the .svg extension is turned into an Accept header
   # by ConvertFileExtensionToAcceptHeader

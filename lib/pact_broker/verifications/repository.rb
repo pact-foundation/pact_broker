@@ -42,7 +42,11 @@ module PactBroker
           .join(:all_pact_publications, pact_version_id: :pact_version_id)
           .consumer(consumer_name)
           .provider(provider_name)
-        query = query.tag(tag) if tag
+        if tag == :untagged
+          query = query.untagged
+        elsif tag
+          query = query.tag(tag)
+        end
         query.latest.single_record
       end
 
