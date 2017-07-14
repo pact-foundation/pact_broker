@@ -11,7 +11,7 @@ module PactBroker
 
   class Configuration
 
-    SAVABLE_SETTING_NAMES = [:order_versions_by_date, :use_case_sensitive_resource_names]
+    SAVABLE_SETTING_NAMES = [:order_versions_by_date, :use_case_sensitive_resource_names, :enable_badge_resources, :shields_io_base_url]
 
     attr_accessor :log_dir, :database_connection, :auto_migrate_db, :use_hal_browser, :html_pact_renderer
     attr_accessor :validate_database_connection_config, :enable_diagnostic_endpoints, :version_parser
