@@ -12,7 +12,6 @@ module PactBroker
       include PactBroker::Logging
 
       SPACE_DASH_UNDERSCORE = /[\s_\-]/
-      LOWER_TO_UPPERCASE = /[a-zA-Z](?=[A-Z])/
 
       def pact_verification_badge pact, label, initials, verification_status
         return static_svg(pact, verification_status) unless pact
@@ -37,11 +36,22 @@ module PactBroker
 
       def prepare_name name, initials
         if initials
-          parts = name.split(SPACE_DASH_UNDERSCORE)
-          parts = name.split(LOWER_TO_UPPERCASE) if parts.size == 1
+          parts = split_space_dash_underscore(name)
+          parts = split_camel_case(name) if parts.size == 1
           return parts.collect{ |p| p[0] }.join.downcase if parts.size > 1
         end
         name.downcase
+      end
+
+      def split_space_dash_underscore name
+        name.split(SPACE_DASH_UNDERSCORE)
+      end
+
+      def split_camel_case name
+        name.gsub(/([A-Z]+)([A-Z][a-z])/, '\1_\2')
+            .gsub(/([a-z\d])([A-Z])/, '\1_\2')
+            .tr('-', '_')
+            .split('_')
       end
 
       def badge_status verification_status

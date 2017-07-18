@@ -69,7 +69,7 @@ module PactBroker
             let(:initials) { true }
             let(:pact) { double("pact", consumer_name: "FooApp", provider_name: "doAThing") }
 
-            it "creates a badge with the consumer and provider names, not initials", pending: "Need to make regexp smarter" do
+            it "creates a badge with the consumer and provider names, not initials" do
               subject
               expect(http_request).to have_been_made
             end
