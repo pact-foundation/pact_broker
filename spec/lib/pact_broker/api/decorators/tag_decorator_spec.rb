@@ -16,7 +16,7 @@ module PactBroker
             .create_consumer("Consumer")
             .create_version("1.2.3")
             .create_tag("prod")
-          PactBroker::Tags::Repository.new.find tag_name: 'prod', pacticipant_version_number: '1.2.3', pacticipant_name: 'Consumer'
+            .and_return(:tag)
         end
 
         let(:options) { { user_options: { base_url: 'http://example.org' } } }

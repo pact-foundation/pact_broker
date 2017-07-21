@@ -10,6 +10,7 @@ require 'pact_broker/api/resources/latest_pacts'
 require 'pact_broker/api/resources/pacticipant'
 require 'pact_broker/api/resources/pacticipants'
 require 'pact_broker/api/resources/tag'
+require 'pact_broker/api/resources/label'
 require 'pact_broker/api/resources/index'
 require 'pact_broker/api/resources/relationships'
 require 'pact_broker/api/resources/group'
@@ -73,6 +74,7 @@ module PactBroker
         add ['pacticipants', :pacticipant_name, 'versions'], Api::Resources::Versions, {resource_name: "pacticipant_versions"}
         add ['pacticipants', :pacticipant_name, 'versions', :pacticipant_version_number], Api::Resources::Version, {resource_name: "pacticipant_version"}
         add ['pacticipants', :pacticipant_name, 'versions', :pacticipant_version_number, 'tags', :tag_name], Api::Resources::Tag, {resource_name: "pacticipant_version_tag"}
+        add ['pacticipants', :pacticipant_name, 'labels', :label_name], Api::Resources::Label, {resource_name: "pacticipant_label"}
 
         # Webhooks
         add ['webhooks', 'provider', :provider_name, 'consumer', :consumer_name ], Api::Resources::PactWebhooks, {resource_name: "pact_webhooks"}
