@@ -2,12 +2,8 @@ require_relative 'base_decorator'
 require_relative 'pact_version_decorator'
 
 module PactBroker
-
   module Api
-
     module Decorators
-
-
       class PactVersionsDecorator < BaseDecorator
 
         collection :entries, as: :pacts, embedded: true, :extend => PactBroker::Api::Decorators::PactVersionDecorator
@@ -45,7 +41,6 @@ module PactBroker
             }
           end
         end
-
       end
     end
   end
