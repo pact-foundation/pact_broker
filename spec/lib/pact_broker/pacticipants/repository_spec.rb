@@ -6,6 +6,25 @@ module PactBroker
   module Pacticipants
     describe Repository do
 
+      describe "#find" do
+        before do
+          TestDataBuilder.new
+            .create_pacticipant("Foo")
+            .create_label("in")
+            .create_pacticipant("Bar")
+            .create_label("in")
+            .create_label("blah")
+            .create_pacticipant("Wiffle")
+            .create_label("out")
+        end
+
+        subject { Repository.new.find label_name: "in" }
+
+        it "returns the pacticipants with the given label" do
+          expect(subject.collect(&:name)).to eq ["Bar", "Foo"]
+        end
+
+      end
       describe "#find_by_name" do
         before do
           TestDataBuilder.new.create_pacticipant("Foo Bar")

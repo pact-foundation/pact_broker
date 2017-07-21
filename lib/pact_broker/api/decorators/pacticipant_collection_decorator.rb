@@ -10,7 +10,7 @@ module PactBroker
 
       class PacticipantCollectionDecorator < BaseDecorator
 
-        collection :entries, :as => :pacticipants, :class => PactBroker::Domain::Pacticipant, :extend => PactBroker::Api::Decorators::PacticipantDecorator
+        collection :entries, :as => :pacticipants, :class => PactBroker::Domain::Pacticipant, :extend => PactBroker::Api::Decorators::PacticipantDecorator, embedded: true
 
         link :self do | options |
           pacticipants_url options[:base_url]
@@ -20,6 +20,11 @@ module PactBroker
           represented.collect{ | pacticipant | {:href => pacticipant_url(options[:base_url], pacticipant), :title => pacticipant.name } }
         end
 
+      end
+
+      # TODO deprecate this - breaking change for v 3.0
+      class DeprecatedPacticipantCollectionDecorator < PacticipantCollectionDecorator
+        collection :entries, :as => :pacticipants, :class => PactBroker::Domain::Pacticipant, :extend => PactBroker::Api::Decorators::PacticipantDecorator, embedded: false
       end
     end
   end
