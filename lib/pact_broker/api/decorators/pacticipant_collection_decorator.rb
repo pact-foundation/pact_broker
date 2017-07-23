@@ -16,6 +16,14 @@ module PactBroker
           pacticipants_url options[:base_url]
         end
 
+        link :'pb:pacticipants-with-label' do | options |
+          {
+            title: "Find pacticipants by label",
+            href: "#{pacticipants_url(options[:base_url])}/label/{label}",
+            templated: true
+          }
+        end
+
         links :'pb:pacticipants' do | options |
           represented.collect{ | pacticipant | {:href => pacticipant_url(options[:base_url], pacticipant), title: 'Pacticipant', name: pacticipant.name } }
         end

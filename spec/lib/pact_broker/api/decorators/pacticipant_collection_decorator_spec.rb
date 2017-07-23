@@ -12,6 +12,10 @@ module PactBroker
 
         subject { JSON.parse json, symbolize_names: true }
 
+        it "includes a link to find pacticipants by label" do
+          expect(subject[:_links][:'pb:pacticipants-with-label'][:href]).to match %r{http://.*label/{label}}
+        end
+
         context "with no pacticipants" do
           it "doesn't blow up" do
             subject
