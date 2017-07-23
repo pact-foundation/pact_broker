@@ -5,13 +5,14 @@ require 'pact_broker/domain/pacticipant'
 module PactBroker
   module Api
     module Decorators
-
       describe PacticipantCollectionDecorator do
-        subject { JSON.parse PacticipantCollectionDecorator.new(pacticipants).to_json, symbolize_names: true }
+        let(:options) { {user_options: {base_url: 'http://example.org'} } }
+        let(:pacticipants) { [] }
+        let(:json) { PacticipantCollectionDecorator.new(pacticipants).to_json(options) }
+
+        subject { JSON.parse json, symbolize_names: true }
 
         context "with no pacticipants" do
-          let(:pacticipants) { [] }
-
           it "doesn't blow up" do
             subject
           end
@@ -29,17 +30,27 @@ module PactBroker
       end
 
       describe DeprecatedPacticipantCollectionDecorator do
+        let(:options) { {user_options: {base_url: 'http://example.org'} } }
         let(:pacticipant) { PactBroker::Domain::Pacticipant.new(name: 'Name', created_at: DateTime.new, updated_at: DateTime.new)}
         let(:pacticipants) { [pacticipant] }
+        let(:json) { DeprecatedPacticipantCollectionDecorator.new(pacticipants).to_json(options) }
 
-        subject { JSON.parse DeprecatedPacticipantCollectionDecorator.new(pacticipants).to_json, symbolize_names: true }
+        subject { JSON.parse json, symbolize_names: true }
 
-        it "doesn't put the pacticipants under the _embedded key" do
-          expect(subject).to_not have_key(:_embedded)
+        it "includes the pacticipants under the _embedded key" do
+          expect(subject[:_embedded][:pacticipants]).to be_instance_of(Array)
         end
 
-        it "puts the pacticipants under the pacticipants key" do
+        it "includes the pacticipants under the pacticipants key" do
           expect(subject[:pacticipants]).to be_instance_of(Array)
+        end
+
+        it "includes a deprecation warning in the pacticipants links" do
+          expect(subject[:_links][:pacticipants].first[:name]).to include "DEPRECATED"
+        end
+
+        it "includes a deprecation warning in the non-embedded pacticipant title" do
+          expect(subject[:pacticipants].first[:title]).to include "DEPRECATED"
         end
       end
     end

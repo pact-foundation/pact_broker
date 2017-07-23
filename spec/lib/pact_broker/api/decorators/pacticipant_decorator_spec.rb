@@ -10,8 +10,9 @@ module PactBroker
 
       describe PacticipantDecorator do
 
+        let(:test_data_builder) { TestDataBuilder.new }
         let(:pacticipant) do
-          TestDataBuilder.new
+          test_data_builder
             .create_pacticipant('Name')
             .create_label('foo')
             .and_return(:pacticipant)
@@ -35,6 +36,28 @@ module PactBroker
         it "includes embedded labels" do
           expect(subject[:_embedded][:labels].first).to include name: 'foo'
           expect(subject[:_embedded][:labels].first[:_links][:self][:href]).to match %r{http://example.org/.*foo}
+        end
+
+        context "when there is a latest_version" do
+          before { test_data_builder.create_version("1.2.107") }
+          it "includes an embedded latestVersion" do
+            expect(subject[:_embedded][:latestVersion]).to include number: "1.2.107"
+          end
+
+          it "includes an embedded latest-version for backwards compatibility" do
+            expect(subject[:_embedded][:'latest-version']).to include number: "1.2.107"
+          end
+
+          it "includes a deprecation warning" do
+            expect(subject[:_embedded][:'latest-version']).to include title: "DEPRECATED - please use latestVersion"
+          end
+        end
+
+        context "when there is no latest_version" do
+          it "doesn't blow up" do
+            expect(subject[:_embedded]).to_not have_key(:latestVersion)
+            expect(subject[:_embedded]).to_not have_key(:'latest-version')
+          end
         end
       end
     end
