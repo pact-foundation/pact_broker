@@ -3,6 +3,7 @@ HAL.Models.Resource = Backbone.Model.extend({
     representation = representation || {};
     this.links = representation._links;
     this.title = representation.title;
+    this.name = representation.name;
     if(representation._embedded !== undefined) {
       this.embeddedResources = this.buildEmbeddedResources(representation._embedded);
     }
