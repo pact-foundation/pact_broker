@@ -9,6 +9,7 @@ require 'pact_broker/pacticipants/service'
 require 'pact_broker/versions/repository'
 require 'pact_broker/versions/service'
 require 'pact_broker/tags/repository'
+require 'pact_broker/labels/repository'
 require 'pact_broker/tags/service'
 require 'pact_broker/domain'
 require 'json'
@@ -132,6 +133,11 @@ class TestDataBuilder
 
   def create_consumer_version_tag tag_name
     @tag = PactBroker::Domain::Tag.create(name: tag_name, version: @consumer_version)
+    self
+  end
+
+  def create_label label_name
+    @label = PactBroker::Domain::Label.create(name: label_name, pacticipant: @pacticipant)
     self
   end
 

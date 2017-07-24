@@ -97,6 +97,14 @@ module PactBroker
         "#{tags_url(base_url, tag.version)}/#{tag.name}"
       end
 
+      def label_url label, base_url
+        "#{labels_url(label.pacticipant, base_url)}/#{label.name}"
+      end
+
+      def labels_url pacticipant, base_url
+        "#{pacticipant_url(base_url, pacticipant)}/labels"
+      end
+
       def webhooks_url base_url
         "#{base_url}/webhooks"
       end

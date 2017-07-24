@@ -22,6 +22,11 @@ module PactBroker
       Tags::Repository.new
     end
 
+    def label_repository
+      require 'pact_broker/labels/repository'
+      Labels::Repository.new
+    end
+
     def webhook_repository
       require 'pact_broker/webhooks/repository'
       Webhooks::Repository.new

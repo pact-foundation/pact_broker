@@ -17,6 +17,11 @@ module PactBroker
       Tags::Service
     end
 
+    def label_service
+      require 'pact_broker/labels/service'
+      Labels::Service
+    end
+
     def group_service
       require 'pact_broker/groups/service'
       Groups::Service

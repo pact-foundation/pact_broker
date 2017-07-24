@@ -4,11 +4,8 @@ require_relative 'latest_pact_decorator'
 require_relative 'representable_pact'
 
 module PactBroker
-
   module Api
-
     module Decorators
-
       class PactCollectionDecorator < BaseDecorator
         include Roar::JSON::HAL
         include PactBroker::Api::PactBrokerUrls
@@ -37,7 +34,6 @@ module PactBroker
             }
           end
         end
-
       end
     end
   end
