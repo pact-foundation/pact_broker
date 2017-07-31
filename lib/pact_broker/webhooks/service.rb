@@ -43,9 +43,9 @@ module PactBroker
         webhook_repository.find_all
       end
 
-      def self.execute_webhook_now webhook
+      def self.execute_webhook_now webhook, pact
         webhook_execution_result = webhook.execute
-        webhook_repository.create_execution webhook, webhook_execution_result
+        webhook_repository.create_execution webhook, webhook_execution_result, pact
         webhook_execution_result
       end
 
@@ -57,17 +57,17 @@ module PactBroker
         webhooks = webhook_repository.find_by_consumer_and_provider pact.consumer, pact.provider
 
         if webhooks.any?
-          run_later(webhooks)
+          run_later(webhooks, pact)
         else
           logger.debug "No webhook found for consumer \"#{pact.consumer.name}\" and provider \"#{pact.provider.name}\""
         end
       end
 
-      def self.run_later webhooks
+      def self.run_later webhooks, pact
         webhooks.each do | webhook |
           begin
             logger.info "Scheduling job for #{webhook.description} with uuid #{webhook.uuid}"
-            Job.perform_async webhook: webhook
+            Job.perform_async webhook: webhook, pact: pact
           rescue StandardError => e
             log_error e
           end
@@ -75,7 +75,7 @@ module PactBroker
       end
 
       def self.find_webhook_executions_after_current_pact_version_created pact
-        webhook_repository.find_webhook_executions_after PactBroker::Pacts::PactVersion.find(pact_version_sha: pact.pact_version_sha).created_at, pact.consumer.name, pact.provider.name
+        webhook_repository.find_webhook_executions_after PactBroker::Pacts::PactVersion.find(sha: pact.pact_version_sha).created_at, pact.consumer.name, pact.provider.name
       end
     end
   end

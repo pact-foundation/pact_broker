@@ -12,7 +12,7 @@ module PactBroker
         end
 
         def process_post
-          webhook_execution_result = webhook_service.execute_webhook_now webhook
+          webhook_execution_result = webhook_service.execute_webhook_now webhook, pact
           response.headers['Content-Type'] = 'application/hal+json;charset=utf-8'
           response.body = post_response_body webhook_execution_result
           webhook_execution_result.success? ? true : 500
@@ -30,6 +30,10 @@ module PactBroker
 
         def webhook
           @webhook ||= webhook_service.find_by_uuid uuid
+        end
+
+        def pact
+          @pact ||= pact_service.find_latest_pact consumer_name: webhook.consumer_name, provider_name: webhook.provider_name
         end
 
         def uuid

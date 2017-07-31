@@ -241,10 +241,19 @@ module PactBroker
       end
 
       describe "create_execution" do
-        let(:webhook_domain) { Repository.new.create uuid, webhook, consumer, provider }
-        let(:webhook_execution_result) { instance_double("PactBroker::Domain::WebhookExecutionResult", success?: true, logs: "logs") }
+        before do
+          td.create_consumer
+            .create_provider
+            .create_consumer_version
+            .create_pact
+            .create_webhook
+        end
 
-        subject { Repository.new.create_execution webhook_domain, webhook_execution_result }
+        let(:webhook_domain) { Repository.new.find_by_uuid td.webhook.uuid }
+        let(:webhook_execution_result) { instance_double("PactBroker::Domain::WebhookExecutionResult", success?: true, logs: "logs") }
+        let(:td) { TestDataBuilder.new }
+
+        subject { Repository.new.create_execution webhook_domain, webhook_execution_result, td.pact }
 
         it "saves a new webhook execution " do
           expect { subject }.to change { Execution.count }.by(1)
@@ -267,40 +276,48 @@ module PactBroker
         end
 
         it "sets the consumer" do
-          expect(subject.consumer).to eq consumer
+          expect(subject.consumer).to eq td.consumer
         end
 
         it "sets the provider" do
-          expect(subject.provider).to eq provider
+          expect(subject.provider).to eq td.provider
         end
 
         it "sets the PactPublication" do
-          expect(subject.pact_publication)
+          expect(subject.pact_publication.id).to eq td.pact.id
         end
       end
 
       describe "unlink_executions_by_webhook_uuid" do
-        let!(:webhook_domain) { Repository.new.create uuid, webhook, consumer, provider }
-        let!(:webhook_execution_result) { instance_double("PactBroker::Domain::WebhookExecutionResult", success?: true, logs: "logs") }
-        let!(:webhook_execution) { Repository.new.create_execution webhook_domain, webhook_execution_result }
+        let(:td) { TestDataBuilder.new }
 
-        subject { Repository.new.unlink_executions_by_webhook_uuid uuid }
+        before do
+          td.create_consumer
+            .create_provider
+            .create_consumer_version
+            .create_pact
+            .create_webhook
+            .create_webhook_execution
+        end
+
+        subject { Repository.new.unlink_executions_by_webhook_uuid td.webhook.uuid }
 
         it "sets the webhook id to nil" do
-          webhook_id = Webhook.find(uuid: uuid).id
+          webhook_id = Webhook.find(uuid: td.webhook.uuid).id
           expect { subject }.to change {
-              Execution.find(id: webhook_execution.id).webhook_id
+              Execution.find(id: td.webhook_execution.id).webhook_id
             }.from(webhook_id).to(nil)
         end
       end
 
       describe "find_webhook_executions_after" do
-        let(:test_data_builder) { TestDataBuilder.new }
-        let!(:consumer) { test_data_builder.create_consumer.and_return(:consumer) }
-        let!(:provider) { test_data_builder.create_provider.and_return(:provider) }
+        let(:td) { TestDataBuilder.new }
 
         let!(:webhook_execution) do
-          test_data_builder
+          td.create_consumer
+            .create_provider
+            .create_consumer_version
+            .create_pact
             .create_webhook
             .create_webhook_execution(created_at: DateTime.new(2017))
             .create_webhook_execution(created_at: DateTime.new(2018))
@@ -308,8 +325,8 @@ module PactBroker
         end
 
         let(:search_date) { DateTime.new(2017, 12, 31, 23, 59) }
-        let(:consumer_id) { consumer.id }
-        let(:provider_id) { provider.id }
+        let(:consumer_id) { td.consumer.id }
+        let(:provider_id) { td.provider.id }
 
         subject { Repository.new.find_webhook_executions_after search_date, consumer_id, provider_id }
 
@@ -326,7 +343,7 @@ module PactBroker
         end
 
         context "when the consumer id does not match" do
-          let(:consumer_id) { consumer.id + 1 }
+          let(:consumer_id) { td.consumer.id + 1 }
 
           it "returns an empty collection" do
             expect(subject).to eq []
@@ -334,7 +351,7 @@ module PactBroker
         end
 
         context "when the provider id does not match" do
-          let(:provider_id) { provider.id + 1 }
+          let(:provider_id) { td.provider.id + 1 }
 
           it "returns an empty collection" do
             expect(subject).to eq []

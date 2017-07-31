@@ -30,7 +30,7 @@ module PactBroker
 
         context "when webhooks are found" do
           it "executes the webhook" do
-            expect(Service).to receive(:run_later).with(webhooks)
+            expect(Service).to receive(:run_later).with(webhooks, pact)
             subject
           end
         end

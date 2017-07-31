@@ -43,13 +43,14 @@ module PactBroker
         Webhook.where(consumer_id: consumer.id, provider_id: provider.id).collect(&:to_domain)
       end
 
-      def create_execution webhook, webhook_execution_result
+      def create_execution webhook, webhook_execution_result, pact
         db_webhook = Webhook.where(uuid: webhook.uuid).single_record
         execution = Execution.create(
           webhook: db_webhook,
           webhook_uuid: db_webhook.uuid,
           consumer: db_webhook.consumer,
           provider: db_webhook.provider,
+          pact_publication_id: pact.id,
           success: webhook_execution_result.success?,
           logs: webhook_execution_result.logs)
       end

@@ -8,6 +8,7 @@ module PactBroker
         allow(PactBroker::Webhooks::Service).to receive(:execute_webhook_now)
       end
 
+      let(:pact) { double("pact")}
       let(:webhook) { double("webhook", uuid: '1234') }
 
       context "when an error occurs for the first time" do
@@ -16,8 +17,8 @@ module PactBroker
         end
 
         it "reschedules the job in 10 seconds" do
-          expect(Job).to receive(:perform_in).with(10, {webhook: webhook, error_count: 1})
-          Job.new.perform(webhook: webhook)
+          expect(Job).to receive(:perform_in).with(10, {webhook: webhook, pact: pact, error_count: 1})
+          Job.new.perform(webhook: webhook, pact: pact)
         end
       end
 
@@ -27,8 +28,8 @@ module PactBroker
         end
 
         it "reschedules the job in 10 seconds" do
-          expect(Job).to receive(:perform_in).with(10, {webhook: webhook, error_count: 1})
-          Job.new.perform(webhook: webhook)
+          expect(Job).to receive(:perform_in).with(10, {webhook: webhook, pact: pact, error_count: 1})
+          Job.new.perform(webhook: webhook, pact: pact)
         end
       end
 
@@ -38,8 +39,8 @@ module PactBroker
         end
 
         it "reschedules the job in 60 seconds" do
-          expect(Job).to receive(:perform_in).with(60, {webhook: webhook, error_count: 2  })
-          Job.new.perform(webhook: webhook, error_count: 1)
+          expect(Job).to receive(:perform_in).with(60, {webhook: webhook, pact: pact, error_count: 2  })
+          Job.new.perform(webhook: webhook, pact: pact, error_count: 1)
         end
       end
 
@@ -48,7 +49,7 @@ module PactBroker
           allow(PactBroker::Webhooks::Service).to receive(:execute_webhook_now).and_raise("an error")
         end
 
-        subject { Job.new.perform(webhook: webhook, error_count: 6) }
+        subject { Job.new.perform(webhook: webhook, pact: pact, error_count: 6) }
 
         it "does not reschedule the job" do
           expect(Job).to_not receive(:perform_in)

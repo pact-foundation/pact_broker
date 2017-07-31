@@ -29,7 +29,9 @@ class TestDataBuilder
   attr_reader :pacticipant
   attr_reader :consumer
   attr_reader :provider
+  attr_reader :pact
   attr_reader :webhook
+  attr_reader :webhook_execution
 
   def create_pricing_service
     @pricing_service_id = pacticipant_repository.create(:name => 'Pricing Service', :repository_url => 'git@git.realestate.com.au:business-systems/pricing-service').save(raise_on_save_failure: true).id
@@ -164,7 +166,7 @@ class TestDataBuilder
 
   def create_webhook_execution params = {}
     webhook_execution_result = PactBroker::Domain::WebhookExecutionResult.new(OpenStruct.new(code: "200"), "logs", nil)
-    @webhook_execution = PactBroker::Webhooks::Repository.new.create_execution @webhook, webhook_execution_result
+    @webhook_execution = PactBroker::Webhooks::Repository.new.create_execution @webhook, webhook_execution_result, @pact
     set_created_at_if_set params[:created_at], :webhook_executions, {id: @webhook_execution.id}
     @webhook_execution = PactBroker::Webhooks::Execution.find(id: @webhook_execution.id)
     self

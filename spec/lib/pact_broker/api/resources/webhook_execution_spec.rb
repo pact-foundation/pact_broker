@@ -28,12 +28,26 @@ module PactBroker
             let(:success) { true }
             let(:execution_result) { double('execution_result', success?: success, to_json: json)}
             let(:json) { {some: 'json'}.to_json }
-            let(:webhook) { double("webhook") }
+            let(:webhook) { double("webhook", consumer_name: consumer_name, provider_name: provider_name) }
             let(:decorator) { instance_double(PactBroker::Api::Decorators::WebhookExecutionResultDecorator, to_json: json)}
+            let(:pact) { instance_double("PactBroker::Domain::Pact") }
+            let(:consumer_name) { "foo" }
+            let(:provider_name) { "bar" }
 
             before do
               allow(PactBroker::Webhooks::Service).to receive(:execute_webhook_now).and_return(execution_result)
               allow(PactBroker::Api::Decorators::WebhookExecutionResultDecorator).to receive(:new).and_return(decorator)
+              allow(PactBroker::Pacts::Service).to receive(:find_latest_pact).and_return(pact)
+            end
+
+            it "finds the latest pact for the webhook" do
+              expect(PactBroker::Pacts::Service).to receive(:find_latest_pact).with(consumer_name: consumer_name, provider_name: provider_name)
+              subject
+            end
+
+            it "executes the webhook" do
+              expect(PactBroker::Webhooks::Service).to receive(:execute_webhook_now).with(webhook, pact)
+              subject
             end
 
             context "when execution is successful" do
