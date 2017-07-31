@@ -43,6 +43,10 @@ module PactBroker
         "#{pactigration_base_url(base_url, pact)}/latest"
       end
 
+      def latest_untagged_pact_url pact, base_url
+        "#{pactigration_base_url(base_url, pact)}/latest-untagged"
+      end
+
       def latest_pacts_url base_url
         "#{base_url}/pacts/latest"
       end
@@ -63,11 +67,11 @@ module PactBroker
         "#{version_url(base_url, version)}/tags"
       end
 
-      def new_verification_url params, number, base_url
+      def new_verification_url pact, number, base_url
         [ base_url, 'pacts',
-          'provider', url_encode(params[:provider_name]),
-          'consumer', url_encode(params[:consumer_name]),
-          'pact-version', params[:sha],
+          'provider', url_encode(pact.provider_name),
+          'consumer', url_encode(pact.consumer_name),
+          'pact-version', pact.pact_version_sha,
           'verification-results', number
         ].join('/')
       end
@@ -91,6 +95,14 @@ module PactBroker
 
       def tag_url base_url, tag
         "#{tags_url(base_url, tag.version)}/#{tag.name}"
+      end
+
+      def label_url label, base_url
+        "#{labels_url(label.pacticipant, base_url)}/#{label.name}"
+      end
+
+      def labels_url pacticipant, base_url
+        "#{pacticipant_url(base_url, pacticipant)}/labels"
       end
 
       def webhooks_url base_url

@@ -31,7 +31,7 @@ module PactBroker
       end
 
       def self.delete_by_uuid uuid
-        webhook_repository.delete_executions_by_webhook_uuid uuid
+        webhook_repository.unlink_executions_by_webhook_uuid uuid
         webhook_repository.delete_by_uuid uuid
       end
 

@@ -7,7 +7,7 @@ module PactBroker
   describe App do
 
     before do
-      ProviderStateBuilder.new.create_pact_with_hierarchy 'Some Consumer', '1.0', 'Some Provider'
+      TestDataBuilder.new.create_pact_with_hierarchy 'Some Consumer', '1.0', 'Some Provider'
     end
 
     let(:hal_browser_enabled) { true }
@@ -23,6 +23,11 @@ module PactBroker
       end
     end
 
+    it "exposes a favicon.ico file" do
+      get "/favicon.ico"
+      expect(last_response.headers['Content-Type']).to eq "image/x-icon"
+    end
+
     context "when Accept includes text/html" do
       let(:env) { {'HTTP_ACCEPT' => 'text/html'} }
 
@@ -32,9 +37,10 @@ module PactBroker
 
         let(:path) { '/' }
 
-        it "redirects to /ui/relationships" do
-          expect(subject.status).to eq 303
-          expect(subject.headers['Location']).to eq '/ui/relationships'
+        it "returns the relationships page" do
+          expect(subject.status).to eq 200
+          expect(subject.headers['Content-Type']).to include 'text/html'
+          expect(subject.body).to include 'Pacts'
         end
 
       end

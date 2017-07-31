@@ -1,3 +1,5 @@
+require 'pact_broker/verifications/verification_status'
+
 module PactBroker
   module Domain
 
@@ -13,7 +15,7 @@ module PactBroker
         @webhooks = webhooks
       end
 
-      def self.create consumer, provider, latest_pact, latest_verification, webhooks
+      def self.create consumer, provider, latest_pact, latest_verification, webhooks = []
         new consumer, provider, latest_pact, latest_verification, webhooks
       end
 
@@ -41,6 +43,10 @@ module PactBroker
 
       def any_webhooks?
         @webhooks.any?
+      end
+
+      def verification_status
+        @verification_status ||= PactBroker::Verifications::Status.new(@latest_pact, @latest_verification).to_sym
       end
 
       def ever_verified?

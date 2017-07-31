@@ -1,6 +1,56 @@
 Do this to generate your change history
 
-    $ git log --pretty=format:'  * %h - %s (%an, %ad)' vX.Y.Z..HEAD
+    $ git log --pretty=format:'  * %h - %s (%an, %ad)'
+
+* 3a03f41 - fix(publish verification result): Fix Location header for newly created resource (Beth Skurrie, Mon Jul 31 10:49:37 2017 +1000)
+* 3b0f390 - feat(pacticipant labels): Add HAL link to pacticipants resource to find pacticipants by label. (Beth Skurrie, Mon Jul 24 08:17:36 2017 +1000)
+* 588d2ad - fix(pacticipant and pacticipants resources): Add correctly capitalised and namespaced properties and relations. Added deprecation warnings to existing incorrect properties and relations. (Beth Skurrie, Mon Jul 24 08:14:52 2017 +1000)
+* ab11f56 - feat(pacticipant labels): Adds embedded label resources to pacticipant resource. (Beth Skurrie, Fri Jul 21 18:03:15 2017 +1000)
+* 57086cf - feat(pacticipant labels): Adds /pacticipants/label/LABEL_NAME resource to retrieve pacticipants by label. (Beth Skurrie, Fri Jul 21 14:07:08 2017 +1000)
+* 4b44331 - feat(pacticipant labels): Adds pacticipant label resource with GET, PUT and DELETE (Beth Skurrie, Fri Jul 21 13:18:18 2017 +1000)
+* c5af7e1 - feat(badges): Allow badge config settings to be saved to/loaded from database (Beth Skurrie, Fri Jul 14 20:50:02 2017 +1000)
+
+#### 2.3.0 (2017-07-14)
+* 3ac4351 - fix(potential duplicate pacticipant names): Make duplicate logic smarter. Fixes https://github.com/pact-foundation/pact_broker/issues/35 (Beth Skurrie, Tue Jul 11 10:30:11 2017 +1000)
+* 81979b1 - add basic auth example to duplicate pacticipant error/help message (Fitzgerald, Andrew, Mon Jul 10 00:11:25 2017 -0400)
+* bc54321 - feat(badges): Add endpoint to retrieve badge for latest untagged pact (Beth Skurrie, Fri Jul 7 10:15:29 2017 +1000)
+* 5a3b149 - feat(badges): Add endpoint to retrieve badge for latest tagged pact (Beth Skurrie, Fri Jul 7 09:32:24 2017 +1000)
+* 78c888b - feat(badges): Use static images when shields.io base URL is not configured. (Beth Skurrie, Fri Jul 7 08:41:35 2017 +1000)
+* b30c368 - feat(badges): Allow shields.io base URL to be configured (Beth Skurrie, Fri Jul 7 08:31:47 2017 +1000)
+* d8b2cec - feat(badges): Added configuration for turning badge resources on or off (Beth Skurrie, Fri Jul 7 08:25:48 2017 +1000)
+* 2e43b5f - feat(badges): Added read timeout of 1000ms for HTTP call to create badge. (Beth Skurrie, Thu Jul 6 07:48:39 2017 +1000)
+* 6bdae00 - fix(publish verification): Corrected pact finding params when publishing a verification. (Beth Skurrie, Thu Jul 6 07:30:38 2017 +1000)
+* 2508eba - feat(badges): Allow pacticipant initials to be used where names are too long for the badge (Beth Skurrie, Wed Jul 5 14:49:07 2017 +1000)
+* f7a36b7 - feat(badges): Return static badge when there is an error creating a dynamic one (Beth Skurrie, Wed Jul 5 10:14:18 2017 +1000)
+* 24860b3 - feat(badges): Add badge svg endpoint for latest pact (Beth Skurrie, Tue Jul 4 15:28:28 2017 +1000)
+
+#### 2.2.0 (2017-07-04)
+* 788c5d0 - chore(gems): Lock rack and red-carpet gem versions for hakiri (Beth Skurrie, Tue Jul 4 10:28:15 2017 +1000)
+* f1abebe - chore(gems): Upgrade pact gems (Beth Skurrie, Tue Jul 4 10:10:55 2017 +1000)
+* 5bccca2 - chore(gems): Upgrade rack-protection and padrino-core gems (Beth Skurrie, Tue Jul 4 10:07:58 2017 +1000)
+* 5c1392d - chore(build): Add code climate test coverage reporter (Beth Skurrie, Tue Jul 4 09:02:09 2017 +1000)
+* 6e73420 - chore(build): Add bundle-audit to build (Beth Skurrie, Tue Jul 4 08:09:49 2017 +1000)
+* de9f493 - fix(pact versions decorator): Corrected use of title and name (Beth Skurrie, Mon Jul 3 19:45:28 2017 +1000)
+* 90d4410 - feat(HTML pact): Add home link to HTML pact (Beth Skurrie, Mon Jul 3 16:57:57 2017 +1000)
+* 4eb2095 - feat(HTML pact): Add tag names next to consumer version number (Beth Skurrie, Mon Jul 3 16:56:56 2017 +1000)
+* 1f66b6d - feat(version): Add HAL links to pacts from version resource (Beth Skurrie, Mon Jul 3 16:34:34 2017 +1000)
+* 3f61fb3 - feat(retrieve latest pact): Add HAL links for latest-untagged and latest/{tag} (Beth Skurrie, Mon Jul 3 16:17:54 2017 +1000)
+
+#### 2.1.1 (2017-07-03)
+* f7af21a - fix(gemspec) (Beth Skurrie, Mon Jul 3 09:53:02 2017 +1000)
+
+#### 2.1.0 (2017-07-03)
+* 53f0b5e - feat(get latest untagged pact): Add /latest-untagged endpoint to return the latest untagged pact (Beth Skurrie, Mon Jul 3 08:31:18 2017 +1000)
+* a963fce - Add pact_broker:db:version task. (Beth Skurrie, Thu Jun 29 20:29:55 2017 +1000)
+* 7ee134f - Add basic auth (authentication) to the UI, but no authorization (Beth Skurrie, Mon Jun 26 10:44:07 2017 +1000)
+
+#### 2.0.5 (2017-06-15)
+* e924c96 - Fixed webhook deletion bug (Beth Skurrie, Tue Jun 13 10:04:33 2017 +1000)
+
+#### 2.0.4 (2017-06-02)
+* 99e1c25 - Turn off http_origin checking for https://github.com/pact-foundation/pact_broker/issues/108 (Beth Skurrie, Fri Jun 2 16:27:38 2017 +1000)
+* e58f609 - Add favicon.ico (Beth Skurrie, Mon May 29 15:02:22 2017 +1000)
+* 2780f0a - Add pull request guidelines. (Beth Skurrie, Mon May 29 11:45:04 2017 +1000)
 
 #### 2.0.3 (2017-05-17)
 * c03b871 - Make specs pass for sqlite, postgres and mysql. At the same time. Amazing. (Beth Skurrie, Sun May 28 10:22:20 2017 +1000)

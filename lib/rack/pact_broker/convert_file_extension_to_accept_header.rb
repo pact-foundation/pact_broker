@@ -7,7 +7,7 @@ module Rack
 
     class ConvertFileExtensionToAcceptHeader
 
-      EXTENSIONS = {".csv" => "text/csv"}
+      EXTENSIONS = {".csv" => "text/csv", ".svg" => "image/svg+xml"}
       EXTENSION_REGEXP = /\.\w+$/
 
       def initialize app

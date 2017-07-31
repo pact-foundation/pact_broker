@@ -1,4 +1,4 @@
-require 'spec/support/provider_state_builder'
+require 'spec/support/test_data_builder'
 
 describe "Get previous distinct version of pact" do
 
@@ -16,7 +16,7 @@ describe "Get previous distinct version of pact" do
   let(:pact_content_version_3) { pact_content_version_2 }
 
   before do
-    ProviderStateBuilder.new
+    TestDataBuilder.new
       .create_consumer("Consumer")
       .create_provider("Provider")
       .create_consumer_version("1")

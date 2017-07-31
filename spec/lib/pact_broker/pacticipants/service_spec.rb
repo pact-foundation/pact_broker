@@ -130,7 +130,7 @@ module PactBroker
       describe "delete" do
 
         before do
-          ProviderStateBuilder.new
+          TestDataBuilder.new
             .create_consumer("Consumer")
             .create_consumer_version("2.3.4")
             .create_provider("Provider")

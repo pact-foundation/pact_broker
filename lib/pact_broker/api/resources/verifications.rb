@@ -39,7 +39,7 @@ module PactBroker
         end
 
         def create_path
-          new_verification_url(pact_params, next_verification_number, base_url)
+          new_verification_url(pact, next_verification_number, base_url)
         end
 
         def from_json

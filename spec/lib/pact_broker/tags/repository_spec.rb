@@ -15,8 +15,8 @@ module PactBroker
         let(:options) { {pacticipant_name: pacticipant_name, pacticipant_version_number: version_number, tag_name: tag_name} }
         let(:find_tag) { subject.find options }
 
-        let!(:provider_state_builder) do
-          ProviderStateBuilder.new
+        let!(:test_data_builder) do
+          TestDataBuilder.new
             .create_pacticipant("wrong_pacticipant")
             .create_version(version_number)
             .create_tag(tag_name) #Tag with wrong pacticipant
@@ -30,7 +30,7 @@ module PactBroker
         context "when the tag exists" do
 
           before do
-            provider_state_builder.create_tag(tag_name) # Right tag!
+            test_data_builder.create_tag(tag_name) # Right tag!
           end
 
           it "returns the tag" do
@@ -64,7 +64,7 @@ module PactBroker
 
       describe "delete_by_version_id" do
         let!(:version) do
-          ProviderStateBuilder.new
+          TestDataBuilder.new
             .create_consumer
             .create_provider
             .create_consumer_version("4.5.6")

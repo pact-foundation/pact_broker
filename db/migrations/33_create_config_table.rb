@@ -1,7 +1,7 @@
 require_relative 'migration_helper'
 
 Sequel.migration do
-  up do
+  change do
     create_table(:config, charset: 'utf8') do
       primary_key :id
       String :name, null: false

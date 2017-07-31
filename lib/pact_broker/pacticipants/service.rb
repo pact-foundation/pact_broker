@@ -41,6 +41,10 @@ module PactBroker
         pacticipant_repository.find_by_name(name)
       end
 
+      def self.find options
+        pacticipant_repository.find options
+      end
+
       def self.find_all_pacticipant_versions_in_reverse_order name
         pacticipant_repository.find_all_pacticipant_versions_in_reverse_order(name)
       end

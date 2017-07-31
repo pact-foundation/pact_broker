@@ -7,7 +7,7 @@ module PactBroker
 
       describe "#consumer" do
         let!(:consumer) do
-          ProviderStateBuilder.new
+          TestDataBuilder.new
             .create_consumer
             .create_provider
             .create_consumer_version
@@ -23,7 +23,7 @@ module PactBroker
 
       describe "#provider" do
         let!(:provider) do
-          ProviderStateBuilder.new
+          TestDataBuilder.new
             .create_consumer
             .create_provider
             .create_consumer_version

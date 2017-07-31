@@ -1,7 +1,7 @@
 # Yes, I know this file is too bug, but cmd+shift+t is too useful!
 
 require 'pact_broker/pacts/repository'
-require 'spec/support/provider_state_builder'
+require 'spec/support/test_data_builder'
 require 'pact_broker/pacts/pact_params'
 require 'pact_broker/versions/repository'
 require 'pact_broker/pacticipants/repository'
@@ -90,7 +90,7 @@ module PactBroker
       describe "update" do
 
         let(:existing_pact) do
-          ProviderStateBuilder.new.create_pact_with_hierarchy "A Consumer", "1.2.3", "A Provider", original_json_content
+          TestDataBuilder.new.create_pact_with_hierarchy "A Consumer", "1.2.3", "A Provider", original_json_content
         end
 
         before do
@@ -165,7 +165,7 @@ module PactBroker
 
       describe "delete" do
         before do
-          ProviderStateBuilder.new
+          TestDataBuilder.new
             .create_consumer(consumer_name)
             .create_consumer_version("1.2.3")
             .create_provider(provider_name)
@@ -193,7 +193,7 @@ module PactBroker
 
       describe "delete_by_version_id" do
         let!(:version) do
-          ProviderStateBuilder.new
+          TestDataBuilder.new
             .create_consumer
             .create_provider
             .create_consumer_version("4.5.6")
@@ -217,7 +217,7 @@ module PactBroker
       describe "#find_all_pact_versions_between" do
 
         before do
-          ProviderStateBuilder.new
+          TestDataBuilder.new
             .create_consumer(consumer_name)
             .create_consumer_version("1.2.3")
             .create_provider(provider_name)
@@ -247,7 +247,7 @@ module PactBroker
 
         context "with no tag specified" do
           before do
-            ProviderStateBuilder.new
+            TestDataBuilder.new
               .create_consumer(consumer_name)
               .create_consumer_version("1.0.0")
               .create_provider(provider_name)
@@ -277,7 +277,7 @@ module PactBroker
 
         context "with a tag specified" do
           before do
-            ProviderStateBuilder.new
+            TestDataBuilder.new
               .create_consumer(consumer_name)
               .create_consumer_version("1.2.3")
               .create_consumer_version_tag("prod")
@@ -313,7 +313,7 @@ module PactBroker
 
       describe "find_pact" do
         let!(:pact) do
-          builder = ProviderStateBuilder.new
+          builder = TestDataBuilder.new
           pact = builder
             .create_consumer("Consumer")
             .create_consumer_version("1.2.2")
@@ -360,7 +360,7 @@ module PactBroker
 
       describe "find_previous_pact" do
         before do
-          ProviderStateBuilder.new
+          TestDataBuilder.new
             .create_consumer("Consumer")
             .create_consumer_version("1.2.2")
             .create_provider("Provider")
@@ -390,7 +390,7 @@ module PactBroker
 
       describe "find_next_pact" do
         before do
-          ProviderStateBuilder.new
+          TestDataBuilder.new
             .create_consumer("Consumer")
             .create_consumer_version("1.2.2")
             .create_provider("Provider")
@@ -435,7 +435,7 @@ module PactBroker
         end
 
         before do
-          ProviderStateBuilder.new
+          TestDataBuilder.new
             .create_consumer("Consumer")
             .create_provider("Provider")
             .create_consumer_version("1")
@@ -473,11 +473,10 @@ module PactBroker
       end
 
       describe "find_latest_pact" do
-
         context "with a tag" do
           context "when a version with a pact exists with the given tag" do
             before do
-              ProviderStateBuilder.new
+              TestDataBuilder.new
                 .create_consumer("Consumer")
                 .create_consumer_version("2.3.4")
                 .create_provider("Provider")
@@ -503,11 +502,59 @@ module PactBroker
           end
 
         end
+
+        context "without a tag" do
+          context "when one or more versions of a pact exist without any tags" do
+            before do
+              TestDataBuilder.new
+                .create_consumer("Consumer")
+                .create_provider("Provider")
+                .create_consumer_version("1.0.0")
+                .create_pact
+                .create_consumer_version("1.2.3")
+                .create_pact
+                .create_consumer_version("2.3.4")
+                .create_consumer_version_tag("prod")
+                .create_pact
+            end
+
+            let(:pact) { Repository.new.find_latest_pact("Consumer", "Provider", :untagged) }
+
+            it "returns the latest" do
+              expect(pact.consumer_version.number).to eq("1.2.3")
+            end
+
+            it "has JSON content" do
+              expect(pact.json_content).to_not be nil
+            end
+
+            it "has timestamps" do
+              expect(pact.created_at).to be_datey
+            end
+          end
+
+          context "when all versions have a tag" do
+            before do
+              TestDataBuilder.new
+                .create_consumer("Consumer")
+                .create_provider("Provider")
+                .create_consumer_version("2.3.4")
+                .create_consumer_version_tag("prod")
+                .create_pact
+            end
+
+            let(:pact) { Repository.new.find_latest_pact("Consumer", "Provider", :untagged) }
+
+            it "returns nil" do
+              expect(pact).to be nil
+            end
+          end
+        end
       end
 
       describe "find_latest_pacts" do
         before do
-          ProviderStateBuilder.new
+          TestDataBuilder.new
             .create_condor
             .create_condor_version('1.3.0')
             .create_pricing_service

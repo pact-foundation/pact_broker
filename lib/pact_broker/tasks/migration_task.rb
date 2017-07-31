@@ -25,13 +25,14 @@ module PactBroker
         namespace :pact_broker do
           namespace :db do
             desc "Run sequel migrations for pact broker database"
-            task :migrate do
+            task :migrate, [:target] do | t, args |
+              require 'pact_broker/db/migrate'
               instance_eval(&block)
-              require 'sequel'
-              Sequel.extension :migration
-              db_migrations_dir = File.expand_path("../../../../db/migrations", __FILE__)
-              puts "Running migrations in directory #{db_migrations_dir}"
-              Sequel::Migrator.run(database_connection, db_migrations_dir)
+              options = {}
+              if args[:target]
+                options[:target] = args[:target].to_i
+              end
+              PactBroker::DB::Migrate.call(database_connection, options)
             end
           end
         end

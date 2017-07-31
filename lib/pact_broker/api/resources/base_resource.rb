@@ -6,6 +6,7 @@ require 'pact_broker/api/pact_broker_urls'
 require 'pact_broker/api/decorators/decorator_context'
 require 'pact_broker/json'
 require 'pact_broker/pacts/pact_params'
+require 'pact_broker/api/resources/authentication'
 
 module PactBroker
 
@@ -29,11 +30,32 @@ module PactBroker
 
         include PactBroker::Services
         include PactBroker::Api::PactBrokerUrls
+        include PactBroker::Api::Resources::Authentication
         include PactBroker::Logging
+
+
+        attr_accessor :user
+
+        def initialize
+          PactBroker.configuration.before_resource.call(self)
+        end
+
+        def finish_request
+          PactBroker.configuration.after_resource.call(self)
+        end
+
+        def is_authorized?(authorization_header)
+          authenticated?(self, authorization_header)
+        end
+
+        def forbidden?
+          return false if PactBroker.configuration.authorize.nil?
+          !PactBroker.configuration.authorize.call(self, {})
+        end
 
         def identifier_from_path
           request.path_info.each_with_object({}) do | pair, hash|
-            hash[pair.first] = URI.decode(pair.last)
+            hash[pair.first] = pair.last === String ? URI.decode(pair.last) : pair.last
           end
         end
 

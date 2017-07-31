@@ -9,6 +9,7 @@ require 'pact_broker/pacticipants/service'
 require 'pact_broker/versions/repository'
 require 'pact_broker/versions/service'
 require 'pact_broker/tags/repository'
+require 'pact_broker/labels/repository'
 require 'pact_broker/tags/service'
 require 'pact_broker/domain'
 require 'json'
@@ -21,7 +22,7 @@ require 'pact_broker/tags/repository'
 require 'pact_broker/webhooks/repository'
 require 'ostruct'
 
-class ProviderStateBuilder
+class TestDataBuilder
 
   include PactBroker::Repositories
 
@@ -135,6 +136,11 @@ class ProviderStateBuilder
     self
   end
 
+  def create_label label_name
+    @label = PactBroker::Domain::Label.create(name: label_name, pacticipant: @pacticipant)
+    self
+  end
+
   def create_pact params = {}
     @pact = PactBroker::Pacts::Repository.new.create({version_id: @consumer_version.id, consumer_id: @consumer.id, provider_id: @provider.id, json_content: params[:json_content] || default_json_content})
     set_created_at_if_set params[:created_at], :pact_publications, {id: @pact.id}
@@ -183,7 +189,7 @@ class ProviderStateBuilder
 
   def set_created_at_if_set created_at, table_name, selector
     if created_at
-      Sequel::Model.db.run("update #{table_name} set created_at = \"#{created_at.xmlschema}\" where #{selector.keys.first} = \"#{selector.values.first}\"")
+      Sequel::Model.db[table_name].where(selector.keys.first => selector.values.first).update(created_at: created_at.xmlschema)
     end
   end
 

@@ -68,7 +68,7 @@ module PactBroker
         end
 
         let(:pact) do
-          ProviderStateBuilder.new
+          TestDataBuilder.new
             .create_consumer
             .create_provider
             .create_consumer_version

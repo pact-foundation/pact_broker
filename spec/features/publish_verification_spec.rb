@@ -9,9 +9,11 @@ describe "Recording a pact verification" do
   subject { post path, verification_content, {'CONTENT_TYPE' => 'application/json' }; last_response  }
 
   let(:pact) do
-    ProviderStateBuilder.new
+    TestDataBuilder.new
       .create_provider("Provider")
       .create_consumer("Consumer")
+      .create_consumer_version("1.0.0")
+      .create_pact
       .create_consumer_version("1.2.3")
       .create_pact
       .revise_pact
@@ -22,8 +24,13 @@ describe "Recording a pact verification" do
     expect(subject.status).to be 201
   end
 
-  it "saves a verification against the pact" do
+  it "saves new verification" do
     expect { subject }.to change { PactBroker::Domain::Verification.count }.by(1)
+  end
+
+  it "saves the verification against the correct pact" do
+    subject
+    expect(PactBroker::Domain::Verification.order(:id).last.pact_version_sha).to eq pact.pact_version_sha
   end
 
   it "returns a link to itself that can be followed" do

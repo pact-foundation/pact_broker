@@ -1,6 +1,6 @@
 require 'pact_broker/api/decorators/embedded_tag_decorator'
 require 'pact_broker/tags/repository'
-require 'support/provider_state_builder'
+require 'support/test_data_builder'
 
 module PactBroker
 
@@ -11,7 +11,7 @@ module PactBroker
       describe EmbeddedTagDecorator do
 
         let(:tag) do
-          ProviderStateBuilder.new
+          TestDataBuilder.new
             .create_consumer("Consumer")
             .create_version("1.2.3")
             .create_tag("prod")
@@ -19,8 +19,9 @@ module PactBroker
         end
 
         let(:options) { { user_options: { base_url: 'http://example.org' } } }
+        let(:json) { EmbeddedTagDecorator.new(tag).to_json(options) }
 
-        subject { JSON.parse TagDecorator.new(tag).to_json(options), symbolize_names: true }
+        subject { JSON.parse json, symbolize_names: true }
 
         it "includes the tag name" do
           expect(subject[:name]).to eq "prod"

@@ -29,7 +29,7 @@ module PactBroker::Api
           subject { get "/pacts/provider/provider_name/consumer/consumer_name/latest",{}, {'HTTP_ACCEPT' => "text/html"} }
 
           it "find the pact" do
-            expect(PactBroker::Pacts::Service).to receive(:find_latest_pact).with(pact_id_params)
+            expect(PactBroker::Pacts::Service).to receive(:find_latest_pact).with(hash_including(pact_id_params))
             subject
           end
 

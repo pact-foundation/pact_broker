@@ -12,7 +12,7 @@ module PactBroker
         context "when a previous version exists" do
 
           let!(:existing_order) do
-            ProviderStateBuilder.new.create_version_with_hierarchy pacticipant_name, version_number
+            TestDataBuilder.new.create_version_with_hierarchy pacticipant_name, version_number
           end
 
           subject { Repository.new.create pacticipant_id: existing_order.pacticipant_id, number: "1.2.4" }
@@ -26,7 +26,7 @@ module PactBroker
 
       describe "#delete_by_id" do
         let!(:version) do
-          ProviderStateBuilder.new
+          TestDataBuilder.new
             .create_consumer
             .create_consumer_version("1.2.3")
             .create_consumer_version("4.5.6")
@@ -46,7 +46,7 @@ module PactBroker
 
         context "when the version exists" do
           before do
-            ProviderStateBuilder.new
+            TestDataBuilder.new
               .create_consumer("Another Consumer")
               .create_consumer(pacticipant_name)
               .create_consumer_version(version_number)

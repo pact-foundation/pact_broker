@@ -10,7 +10,7 @@ module PactBroker
       let(:tag_name) { "prod" }
 
       let(:options) { {pacticipant_name: pacticipant_name, pacticipant_version_number: version_number, tag_name: tag_name}}
-      let(:provider_state_builder) { ProviderStateBuilder.new }
+      let(:test_data_builder) { TestDataBuilder.new }
 
       describe ".create" do
 

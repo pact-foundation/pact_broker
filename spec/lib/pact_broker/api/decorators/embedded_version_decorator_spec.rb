@@ -7,7 +7,7 @@ module PactBroker
       describe EmbeddedVersionDecorator do
 
         let(:version) do
-          ProviderStateBuilder.new
+          TestDataBuilder.new
             .create_consumer("Consumer")
             .create_version("1.2.3")
           PactBroker::Versions::Repository.new.find_by_pacticipant_name_and_number "Consumer", "1.2.3"
@@ -21,11 +21,11 @@ module PactBroker
           expect(subject[:_links][:self][:href]).to eq "http://example.org/pacticipants/Consumer/versions/1.2.3"
         end
 
-        xit "includes the version number in the link" do
+        it "includes the version number in the link" do
           expect(subject[:_links][:self][:name]).to eq "1.2.3"
         end
 
-        xit "includes its title in the link" do
+        it "includes its title in the link" do
           expect(subject[:_links][:self][:title]).to eq "Version"
         end
 

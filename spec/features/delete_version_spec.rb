@@ -1,4 +1,4 @@
-require 'spec/support/provider_state_builder'
+require 'spec/support/test_data_builder'
 
 describe "Delete version" do
 
@@ -8,7 +8,7 @@ describe "Delete version" do
   subject { delete path; last_response }
 
   before do
-    ProviderStateBuilder.new
+    TestDataBuilder.new
       .create_consumer("Another Consumer")
       .create_consumer("Consumer")
       .create_consumer_version("1.2.3")

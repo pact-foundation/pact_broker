@@ -41,6 +41,18 @@ module PactBroker
           where(Sequel.qualify("verifications", "number") => number)
         end
 
+        def tag tag_name
+          filter = name_like(Sequel.qualify(:tags, :name), tag_name)
+          join(:pact_publications, {pact_version_id: :pact_version_id})
+            .join(:tags, {version_id: :consumer_version_id}).where(filter)
+        end
+
+        def untagged
+          join(:pact_publications, {pact_version_id: :pact_version_id})
+            .left_outer_join(:tags, {version_id: :consumer_version_id})
+            .where(Sequel.qualify(:tags, :name) => nil)
+        end
+
         def latest
           reverse_order(:consumer_version_order, :number).limit(1)
         end

@@ -1,9 +1,9 @@
-require 'webmachine'
+require 'pact_broker/diagnostic/resources/base_resource'
 
 module PactBroker
   module Diagnostic
     module Resources
-      class Heartbeat < Webmachine::Resource
+      class Heartbeat < BaseResource
 
         def allowed_methods
           ["GET"]

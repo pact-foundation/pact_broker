@@ -21,8 +21,8 @@ module PactBroker
       def build_diagnostic_app
         app = Webmachine::Application.new do |app|
           app.routes do
-            add ['diagnostic','status','heartbeat'], Diagnostic::Resources::Heartbeat
-            add ['diagnostic','status','dependencies'], Diagnostic::Resources::Dependencies
+            add ['diagnostic','status','heartbeat'], Diagnostic::Resources::Heartbeat, {resource_name: 'diagnostic_heartbeat'}
+            add ['diagnostic','status','dependencies'], Diagnostic::Resources::Dependencies, {resource_name: 'diagnostic_dependencies'}
           end
         end
 

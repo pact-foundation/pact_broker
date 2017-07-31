@@ -17,12 +17,17 @@ module PactBroker
       end
 
       def find_all
-        PactBroker::Domain::Pacticipant.order(:name).all
+        find
+      end
+
+      def find options = {}
+        query = PactBroker::Domain::Pacticipant.select_all_qualified
+        query = query.label(options[:label_name]) if options[:label_name]
+        query.order_ignore_case(Sequel[:pacticipants][:name]).all
       end
 
       def find_all_pacticipant_versions_in_reverse_order name
-        PactBroker::Domain::Version
-          .select(Sequel[:versions][:id], Sequel[:versions][:number], Sequel[:versions][:pacticipant_id], Sequel[:versions][:order], Sequel[:versions][:created_at], Sequel[:versions][:updated_at])
+        PactBroker::Domain::Version.select_all_qualified
           .join(:pacticipants, {id: :pacticipant_id})
           .where(name_like(:name, name))
           .reverse_order(:order)
@@ -42,10 +47,6 @@ module PactBroker
 
       def pacticipant_names
         PactBroker::Domain::Pacticipant.select(:name).order(:name).collect{ | pacticipant| pacticipant.name }
-      end
-
-      def find_latest_version name
-
       end
     end
   end

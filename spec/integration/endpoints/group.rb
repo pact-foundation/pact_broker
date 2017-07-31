@@ -6,7 +6,7 @@ describe "/groups/{pacticipant-name}" do
 
   describe "GET" do
     before do
-      ProviderStateBuilder.new.create_pact_with_hierarchy "Consumer", "1.2.3", "Provider"
+      TestDataBuilder.new.create_pact_with_hierarchy "Consumer", "1.2.3", "Provider"
       get "/groups/Consumer"
     end
 

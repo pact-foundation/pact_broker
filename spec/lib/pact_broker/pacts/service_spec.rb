@@ -27,7 +27,6 @@ module PactBroker
       end
 
       describe "#pact_has_changed_since_previous_version?" do
-
         let(:json_content) { { 'some' => 'json'}.to_json }
         let(:pact) { instance_double(PactBroker::Domain::Pact, json_content: json_content)}
 
@@ -61,9 +60,7 @@ module PactBroker
             expect(subject).to be_falsey
           end
         end
-
       end
-
     end
   end
 end

@@ -1,3 +1,6 @@
+require 'simplecov'
+SimpleCov.start
+
 ENV['RACK_ENV'] = 'test'
 RACK_ENV = 'test'
 
@@ -16,6 +19,10 @@ RSpec.configure do | config |
   config.before :suite do
     raise "Wrong environment!!! Don't run this script!! ENV['RACK_ENV'] is #{ENV['RACK_ENV']} and RACK_ENV is #{RACK_ENV}" if ENV['RACK_ENV'] != 'test' || RACK_ENV != 'test'
     PactBroker::DB.connection = PactBroker::Database.database = DB::PACT_BROKER_DB
+  end
+
+  config.before :each do
+    PactBroker.reset_configuration
   end
 
   config.include Rack::Test::Methods

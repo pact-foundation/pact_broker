@@ -35,7 +35,8 @@ module PactBroker
         private
 
         def head
-         "<link rel='stylesheet' type='text/css' href='/stylesheets/github.css'>
+         "<title>#{title}</title>
+          <link rel='stylesheet' type='text/css' href='/stylesheets/github.css'>
           <link rel='stylesheet' type='text/css' href='/stylesheets/pact.css'>
           <link rel='stylesheet' type='text/css' href='/stylesheets/github-json.css'>
           <script src='/javascripts/highlight.pack.js'></script>
@@ -47,7 +48,7 @@ module PactBroker
             <ul>
               <li>
                 <span class='name'>#{@pact.consumer.name} version:</span>
-                <span class='value'>#{@pact.consumer_version_number}</span>
+                <span class='value'>#{@pact.consumer_version_number}#{tags}</span>
               </li>
               <li>
                 <span class='name'>Date published:</span>
@@ -56,8 +57,15 @@ module PactBroker
               <li>
                 <a href=\"#{json_url}\">View in HAL Browser</a>
               </li>
+              <li>
+                <a href=\"/\">Home</a>
+              </li>
             </ul>
           </div>"
+        end
+
+        def title
+          "Pact between #{@pact.consumer.name} and #{@pact.provider.name}"
         end
 
         def published_date
@@ -70,6 +78,14 @@ module PactBroker
 
         def pact_url
           PactBroker::Api::PactBrokerUrls.pact_url '', @pact
+        end
+
+        def tags
+          if @pact.consumer_version_tag_names.any?
+            " (#{@pact.consumer_version_tag_names.join(", ")})"
+          else
+            ""
+          end
         end
 
         def markdown

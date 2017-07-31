@@ -1,28 +1,25 @@
 require 'pact_broker/project_root'
+require 'pact_broker/db/migrate'
+require 'pact_broker/db/version'
 require 'sequel'
 require 'yaml'
-require 'db'
 
 Sequel.extension :migration
 
 module PactBroker
   module Database
 
-    TABLES = [:webhook_executions, :config, :pacts, :pact_version_contents, :tags, :verifications, :pact_publications, :pact_versions,  :webhook_headers, :webhooks, :versions, :pacticipants].freeze
+    TABLES = [:labels, :webhook_executions, :config, :pacts, :pact_version_contents, :tags, :verifications, :pact_publications, :pact_versions,  :webhook_headers, :webhooks, :versions, :pacticipants].freeze
 
     extend self
 
     def migrate target = nil
       opts = target ? {target: target} : {}
-      Sequel::Migrator.run(database, migrations_dir, opts)
+      PactBroker::DB::Migrate.call(database, opts)
     end
 
     def version
-      if database.tables.include?(:schema_info)
-        database[:schema_info].first[:version]
-      else
-        0
-      end
+      PactBroker::DB::Version.call(database)
     end
 
     def delete_database_file
@@ -61,7 +58,6 @@ module PactBroker
     end
 
     def create
-      puts adapter
       if psql?
         system('psql postgres -c "create database pact_broker"')
         system('psql postgres -c "CREATE USER pact_broker WITH PASSWORD \'pact_broker\'"')
@@ -91,7 +87,10 @@ module PactBroker
     end
 
     def database
-      @@database ||= ::DB.connection_for_env env
+      @@database ||= begin
+        require 'db'
+        ::DB.connection_for_env env
+      end
     end
 
     private
