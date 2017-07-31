@@ -293,6 +293,54 @@ module PactBroker
             }.from(webhook_id).to(nil)
         end
       end
+
+      describe "find_webhook_executions_after" do
+        let(:test_data_builder) { TestDataBuilder.new }
+        let!(:consumer) { test_data_builder.create_consumer.and_return(:consumer) }
+        let!(:provider) { test_data_builder.create_provider.and_return(:provider) }
+
+        let!(:webhook_execution) do
+          test_data_builder
+            .create_webhook
+            .create_webhook_execution(created_at: DateTime.new(2017))
+            .create_webhook_execution(created_at: DateTime.new(2018))
+            .and_return(:webhook_execution)
+        end
+
+        let(:search_date) { DateTime.new(2017, 12, 31, 23, 59) }
+        let(:consumer_id) { consumer.id }
+        let(:provider_id) { provider.id }
+
+        subject { Repository.new.find_webhook_executions_after search_date, consumer_id, provider_id }
+
+        it "returns executions after the given date with matching consumer and provider" do
+          expect(subject).to eq [webhook_execution]
+        end
+
+        context "when the date specified is after all existing records" do
+          let(:search_date) { DateTime.new(2018, 1, 1, 1) }
+
+          it "returns an empty collection" do
+            expect(subject).to eq []
+          end
+        end
+
+        context "when the consumer id does not match" do
+          let(:consumer_id) { consumer.id + 1 }
+
+          it "returns an empty collection" do
+            expect(subject).to eq []
+          end
+        end
+
+        context "when the provider id does not match" do
+          let(:provider_id) { provider.id + 1 }
+
+          it "returns an empty collection" do
+            expect(subject).to eq []
+          end
+        end
+      end
     end
   end
 end

@@ -64,7 +64,9 @@ module PactBroker
       end
 
       def find_webhook_executions_after date_time, consumer_id, provider_id
-        Execution.where(consumer_id: consumer_id, provider_id: provider_id).where("created_at > ?", date_time)
+        Execution
+          .where(consumer_id: consumer_id, provider_id: provider_id)
+          .where(Sequel.lit("created_at > ?", date_time)).all
       end
     end
   end

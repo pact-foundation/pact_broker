@@ -104,11 +104,13 @@ module PactBroker
         let(:verification) { instance_double("PactBroker::Domain::Verification")}
         let(:pacts) { [pact]}
         let(:webhooks) { [instance_double("PactBroker::Domain::Webhook")]}
+        let(:webhook_execution_results) { [instance_double("PactBroker::Domain::WebhookExecutionResult")] }
 
         before do
           allow_any_instance_of(PactBroker::Pacts::Repository).to receive(:find_latest_pacts).and_return(pacts)
           allow(PactBroker::Verifications::Service).to receive(:find_latest_verification_for).and_return(verification)
           allow(PactBroker::Webhooks::Service).to receive(:find_by_consumer_and_provider).and_return(webhooks)
+          allow(PactBroker::Webhooks::Service).to receive(:find_webhook_executions_after_current_pact_version_created).and_return(webhook_execution_results)
         end
 
         it "retrieves the webhooks for the pact" do

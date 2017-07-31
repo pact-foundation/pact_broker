@@ -162,9 +162,11 @@ class TestDataBuilder
     self
   end
 
-  def create_webhook_execution
+  def create_webhook_execution params = {}
     webhook_execution_result = PactBroker::Domain::WebhookExecutionResult.new(OpenStruct.new(code: "200"), "logs", nil)
     @webhook_execution = PactBroker::Webhooks::Repository.new.create_execution @webhook, webhook_execution_result
+    set_created_at_if_set params[:created_at], :webhook_executions, {id: @webhook_execution.id}
+    @webhook_execution = PactBroker::Webhooks::Execution.find(id: @webhook_execution.id)
     self
   end
 
@@ -189,7 +191,7 @@ class TestDataBuilder
 
   def set_created_at_if_set created_at, table_name, selector
     if created_at
-      Sequel::Model.db[table_name].where(selector.keys.first => selector.values.first).update(created_at: created_at.xmlschema)
+      Sequel::Model.db[table_name].where(selector.keys.first => selector.values.first).update(created_at: created_at)
     end
   end
 
