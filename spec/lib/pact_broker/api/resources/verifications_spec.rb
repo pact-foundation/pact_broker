@@ -39,7 +39,7 @@ module PactBroker
           end
 
           context "when the pact exists" do
-            let(:pact) { instance_double("PactBroker::Domain::Pact") }
+            let(:pact) { instance_double("PactBroker::Domain::Pact", provider_name: 'Provider', consumer_name: 'Consumer', pact_version_sha: '1234') }
             let(:next_verification_number) { "2" }
             let(:serialised_verification) { {some: 'verification'}.to_json }
             let(:decorator) { instance_double('PactBroker::Api::Decorators::VerificationDecorator', to_json: serialised_verification) }
@@ -55,7 +55,7 @@ module PactBroker
             end
 
             it "returns the path of the newly created resource in the headers" do
-              expect(subject.headers['Location']).to end_with("/verification-results/2")
+              expect(subject.headers['Location']).to eq("http://example.org/pacts/provider/Provider/consumer/Consumer/pact-version/1234/verification-results/2")
             end
 
             it "stores the verification in the database" do

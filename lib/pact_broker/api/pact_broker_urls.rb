@@ -67,11 +67,11 @@ module PactBroker
         "#{version_url(base_url, version)}/tags"
       end
 
-      def new_verification_url params, number, base_url
+      def new_verification_url pact, number, base_url
         [ base_url, 'pacts',
-          'provider', url_encode(params[:provider_name]),
-          'consumer', url_encode(params[:consumer_name]),
-          'pact-version', params[:sha],
+          'provider', url_encode(pact.provider_name),
+          'consumer', url_encode(pact.consumer_name),
+          'pact-version', pact.pact_version_sha,
           'verification-results', number
         ].join('/')
       end
