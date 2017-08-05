@@ -9,6 +9,12 @@ module PactBroker
       associate(:many_to_one, :provider, :class => "PactBroker::Domain::Pacticipant", :key => :provider_id, :primary_key => :id)
       associate(:many_to_one, :consumer, :class => "PactBroker::Domain::Pacticipant", :key => :consumer_id, :primary_key => :id)
 
+
+      def <=> other
+        comp = created_date <=> other.created_date
+        comp = id <=> other.id if comp == 0
+        comp
+      end
     end
 
     Execution.plugin :timestamps

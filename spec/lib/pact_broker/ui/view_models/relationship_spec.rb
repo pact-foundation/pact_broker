@@ -62,6 +62,41 @@ module PactBroker
           end
         end
 
+        describe "webhooks" do
+          let(:domain_relationship) do
+            instance_double("PactBroker::Domain::Relationship",
+              webhook_status: webhook_status,
+              last_webhook_execution_date: DateTime.now - 1
+            )
+          end
+          let(:webhook_status) { :none }
+
+          subject { Relationship.new(domain_relationship) }
+
+          context "when the webhooks_status is :none" do
+            its(:webhook_label) { is_expected.to eq "Create" }
+            its(:webhook_status) { is_expected.to eq "" }
+          end
+
+          context "when the webhooks_status is :success" do
+            let(:webhook_status) { :success }
+            its(:webhook_label) { is_expected.to eq "1 day ago" }
+            its(:webhook_status) { is_expected.to eq "success" }
+          end
+
+          context "when the webhooks_status is :failed" do
+            let(:webhook_status) { :failed }
+            its(:webhook_label) { is_expected.to eq "1 day ago" }
+            its(:webhook_status) { is_expected.to eq "danger" }
+          end
+
+          context "when the webhooks_status is :not_run" do
+            let(:webhook_status) { :not_run }
+            its(:webhook_label) { is_expected.to eq "Not run" }
+            its(:webhook_status) { is_expected.to eq "warning" }
+          end
+        end
+
         describe "<=>" do
 
           let(:relationship_model_4) { double("PactBroker::Domain::Relationship", consumer_name: "A", provider_name: "X") }

@@ -37,25 +37,28 @@ module PactBroker
           @relationship.any_webhooks?
         end
 
+        def webhook_label
+          case @relationship.webhook_status
+            when :none then "Create"
+            when :success, :failed then webhook_last_execution_date
+            when :not_run then "Not run"
+          end
+        end
+
         def webhook_status
-          if any_webhooks?
-            ["success", "danger",""][rand(3)]
-          else
-            ""
+          case @relationship.webhook_status
+            when :success then "success"
+            when :failed then "danger"
+            when :not_run then "warning"
+            else ""
           end
         end
 
         def webhook_last_execution_date
-
-          if any_webhooks?
-            publication_date_of_latest_pact
-          else
-            "None created"
-          end
-
+          PactBroker::DateHelper.distance_of_time_in_words(@relationship.last_webhook_execution_date, DateTime.now) + " ago"
         end
 
-        def webhooks_url
+        def webhook_url
           url = PactBroker::Api::PactBrokerUrls.webhooks_for_pact_url @relationship.latest_pact.consumer, @relationship.latest_pact.provider, ''
           "/hal-browser/browser.html##{url}"
         end

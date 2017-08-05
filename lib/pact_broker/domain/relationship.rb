@@ -1,22 +1,23 @@
 require 'pact_broker/verifications/verification_status'
+require 'pact_broker/webhooks/status'
 
 module PactBroker
   module Domain
-
     class Relationship
 
       attr_reader :consumer, :provider, :latest_pact, :latest_verification, :webhooks
 
-      def initialize consumer, provider, latest_pact = nil, latest_verification = nil, webhooks = []
+      def initialize consumer, provider, latest_pact = nil, latest_verification = nil, webhooks = [], webhook_executions = []
         @consumer = consumer
         @provider = provider
         @latest_pact = latest_pact
         @latest_verification = latest_verification
         @webhooks = webhooks
+        @webhook_executions = webhook_executions
       end
 
-      def self.create consumer, provider, latest_pact, latest_verification, webhooks = []
-        new consumer, provider, latest_pact, latest_verification, webhooks
+      def self.create consumer, provider, latest_pact, latest_verification, webhooks = [], webhook_executions = []
+        new consumer, provider, latest_pact, latest_verification, webhooks, webhook_executions
       end
 
       def eq? other
@@ -43,6 +44,14 @@ module PactBroker
 
       def any_webhooks?
         @webhooks.any?
+      end
+
+      def webhook_status
+        @webhook_status ||= PactBroker::Webhooks::Status.new(@webhooks, @webhook_executions).to_sym
+      end
+
+      def last_webhook_execution_date
+        @last_webhook_execution_date ||= @webhook_executions.any? ? @webhook_executions.sort.last.created_at : nil
       end
 
       def verification_status

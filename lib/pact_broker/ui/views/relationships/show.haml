@@ -49,12 +49,9 @@
           %td
             = relationship.publication_date_of_latest_pact
           %td{class: relationship.webhook_status}
-            - if relationship.any_webhooks?
-              %a{:href => relationship.webhooks_url}
-                = relationship.webhook_last_execution_date
-            - else
-              %a{:href => relationship.webhooks_url}
-                Create
+            %a{:href => relationship.webhook_url}
+              = relationship.webhook_label
+
           %td{class: relationship.verification_status, title: relationship.verification_tooltip, "data-toggle": "tooltip", "data-placement": "left"}
             %div
               = relationship.last_verified_date
