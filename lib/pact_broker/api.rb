@@ -1,36 +1,5 @@
-require 'reform'
-require 'reform/form/dry'
-Reform::Form.class_eval do
-  feature Reform::Form::Dry
-end
-
-require 'pact_broker/api/resources/pact'
-require 'pact_broker/api/resources/latest_pact'
-require 'pact_broker/api/resources/latest_pacts'
-require 'pact_broker/api/resources/pacticipant'
-require 'pact_broker/api/resources/pacticipants'
-require 'pact_broker/api/resources/pacticipants_for_label'
-require 'pact_broker/api/resources/tag'
-require 'pact_broker/api/resources/label'
-require 'pact_broker/api/resources/index'
-require 'pact_broker/api/resources/relationships'
-require 'pact_broker/api/resources/group'
-require 'pact_broker/api/resources/pact_webhooks'
-require 'pact_broker/api/resources/pact_versions'
-require 'pact_broker/api/resources/webhooks'
-require 'pact_broker/api/resources/webhook'
-require 'pact_broker/api/resources/webhook_execution'
-require 'pact_broker/api/resources/version'
-require 'pact_broker/api/resources/versions'
-require 'pact_broker/api/resources/pact_content_diff'
-require 'pact_broker/api/resources/previous_distinct_pact_version'
-require 'pact_broker/api/resources/latest_provider_pacts'
-require 'pact_broker/api/resources/verifications'
-require 'pact_broker/api/resources/verification'
-require 'pact_broker/api/resources/latest_verifications_for_consumer_version'
-require 'pact_broker/api/resources/badge'
-
 require 'webmachine/adapters/rack_mapped'
+require 'pact_broker/api/resources'
 
 module PactBroker
 
