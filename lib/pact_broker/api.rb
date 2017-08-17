@@ -49,6 +49,8 @@ module PactBroker
 
         # Webhooks
         add ['webhooks', 'provider', :provider_name, 'consumer', :consumer_name ], Api::Resources::PactWebhooks, {resource_name: "pact_webhooks"}
+        add ['webhooks', 'provider', :provider_name, 'consumer', :consumer_name, 'status' ], Api::Resources::PactWebhooksStatus, {resource_name: "pact_webhooks"}
+
         add ['webhooks', :uuid ], Api::Resources::Webhook, {resource_name: "webhook"}
         add ['webhooks', :uuid, 'execute' ], Api::Resources::WebhookExecution, {resource_name: "execute_webhook"}
         add ['webhooks'], Api::Resources::Webhooks, {resource_name: "webhooks"}

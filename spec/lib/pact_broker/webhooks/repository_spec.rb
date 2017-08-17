@@ -5,6 +5,7 @@ module PactBroker
   module Webhooks
     describe Repository do
 
+      let(:td) { TestDataBuilder.new }
       let(:url) { 'http://example.org' }
       let(:body) { {'some' => 'json' } }
       let(:headers) { {'Content-Type' => 'application/json', 'Accept' => 'application/json'} }
@@ -240,39 +241,31 @@ module PactBroker
         end
       end
 
-      describe "create_execution" do
+      describe "create_triggered_webhook" do
         before do
           td.create_consumer
             .create_provider
+            .create_webhook
             .create_consumer_version
             .create_pact
-            .create_webhook
         end
 
-        let(:webhook_domain) { Repository.new.find_by_uuid td.webhook.uuid }
-        let(:webhook_execution_result) { instance_double("PactBroker::Domain::WebhookExecutionResult", success?: true, logs: "logs") }
-        let(:td) { TestDataBuilder.new }
+        subject { Repository.new.create_triggered_webhook '1234', td.webhook, td.pact, 'foo' }
 
-        subject { Repository.new.create_execution webhook_domain, webhook_execution_result, td.pact }
-
-        it "saves a new webhook execution " do
-          expect { subject }.to change { Execution.count }.by(1)
+        it "creates a TriggeredWebhook" do
+          expect(subject.webhook_uuid ).to eq td.webhook.uuid
+          expect(subject.consumer).to eq td.consumer
+          expect(subject.provider).to eq td.provider
+          expect(subject.trigger_uuid).to eq '1234'
+          expect(subject.trigger).to eq 'foo'
         end
 
         it "sets the webhook" do
-          expect(subject.webhook.uuid).to eq webhook_domain.uuid
+          expect(subject.webhook.uuid).to eq td.webhook.uuid
         end
 
         it "sets the webhook_uuid" do
-          expect(subject.webhook_uuid).to eq webhook_domain.uuid
-        end
-
-        it "sets the success" do
-          expect(subject.success).to be true
-        end
-
-        it "sets the logs" do
-          expect(subject.logs).to eq "logs"
+          expect(subject.webhook_uuid).to eq td.webhook.uuid
         end
 
         it "sets the consumer" do
@@ -288,7 +281,35 @@ module PactBroker
         end
       end
 
-      describe "unlink_executions_by_webhook_uuid" do
+      describe "create_execution" do
+        before do
+          td.create_consumer
+            .create_provider
+            .create_consumer_version
+            .create_pact
+            .create_webhook
+            .create_triggered_webhook
+        end
+
+        let(:webhook_domain) { Repository.new.find_by_uuid td.webhook.uuid }
+        let(:webhook_execution_result) { instance_double("PactBroker::Domain::WebhookExecutionResult", success?: true, logs: "logs") }
+
+        subject { Repository.new.create_execution td.triggered_webhook, webhook_execution_result }
+
+        it "saves a new webhook execution " do
+          expect { subject }.to change { Execution.count }.by(1)
+        end
+
+        it "sets the success" do
+          expect(subject.success).to be true
+        end
+
+        it "sets the logs" do
+          expect(subject.logs).to eq "logs"
+        end
+      end
+
+      describe "unlink_triggered_webhooks_by_webhook_uuid" do
         let(:td) { TestDataBuilder.new }
 
         before do
@@ -297,15 +318,16 @@ module PactBroker
             .create_consumer_version
             .create_pact
             .create_webhook
+            .create_triggered_webhook
             .create_webhook_execution
         end
 
-        subject { Repository.new.unlink_executions_by_webhook_uuid td.webhook.uuid }
+        subject { Repository.new.unlink_triggered_webhooks_by_webhook_uuid td.webhook.uuid }
 
         it "sets the webhook id to nil" do
           webhook_id = Webhook.find(uuid: td.webhook.uuid).id
           expect { subject }.to change {
-              Execution.find(id: td.webhook_execution.id).webhook_id
+              TriggeredWebhook.find(id: td.triggered_webhook.id).webhook_id
             }.from(webhook_id).to(nil)
         end
       end
@@ -319,6 +341,7 @@ module PactBroker
             .create_consumer_version
             .create_pact
             .create_webhook
+            .create_triggered_webhook
             .create_webhook_execution(created_at: DateTime.new(2017))
             .create_webhook_execution(created_at: DateTime.new(2018))
             .and_return(:webhook_execution)
@@ -356,6 +379,19 @@ module PactBroker
           it "returns an empty collection" do
             expect(subject).to eq []
           end
+        end
+      end
+
+      describe "delete_executions_by_pacticipant" do
+        before do
+          td.create_consumer
+            .create_provider
+            .create_webhook
+            .create_consumer_version
+            .create_pact
+            .create_triggered_webhook
+            .create_webhook_execution
+          Sequel::Model.db[:webhook_executions].update(consumer_id: td.consumer.id, provider_id: td.provider.id)
         end
       end
     end

@@ -1,4 +1,5 @@
 require 'pact_broker/repositories'
+require 'pact_broker/services'
 require 'pact_broker/webhooks/repository'
 require 'pact_broker/webhooks/service'
 require 'pact_broker/domain/webhook_execution_result'
@@ -25,6 +26,7 @@ require 'ostruct'
 class TestDataBuilder
 
   include PactBroker::Repositories
+  include PactBroker::Services
 
   attr_reader :pacticipant
   attr_reader :consumer
@@ -32,6 +34,7 @@ class TestDataBuilder
   attr_reader :pact
   attr_reader :webhook
   attr_reader :webhook_execution
+  attr_reader :triggered_webhook
 
   def create_pricing_service
     @pricing_service_id = pacticipant_repository.create(:name => 'Pricing Service', :repository_url => 'git@git.realestate.com.au:business-systems/pricing-service').save(raise_on_save_failure: true).id
@@ -164,9 +167,15 @@ class TestDataBuilder
     self
   end
 
+  def create_triggered_webhook params = {}
+    trigger_uuid = params[:trigger_uuid] || webhook_service.next_uuid
+    @triggered_webhook = webhook_repository.create_triggered_webhook trigger_uuid, @webhook, @pact, PactBroker::Webhooks::Service::PUBLICATION
+    self
+  end
+
   def create_webhook_execution params = {}
     webhook_execution_result = PactBroker::Domain::WebhookExecutionResult.new(OpenStruct.new(code: "200"), "logs", nil)
-    @webhook_execution = PactBroker::Webhooks::Repository.new.create_execution @webhook, webhook_execution_result, @pact
+    @webhook_execution = PactBroker::Webhooks::Repository.new.create_execution @triggered_webhook, webhook_execution_result
     created_at = params[:created_at] || @pact.created_at + Rational(1, 86400)
     set_created_at_if_set created_at, :webhook_executions, {id: @webhook_execution.id}
     @webhook_execution = PactBroker::Webhooks::Execution.find(id: @webhook_execution.id)

@@ -12,11 +12,11 @@ module PactBroker
       include PactBroker::Logging
 
       def perform data
-        @webhook = data[:webhook]
-        @pact = data[:pact]
+        @data = data
+        @triggered_webhook = data[:triggered_webhook]
         @error_count = data[:error_count] || 0
         begin
-          webhook_execution_result = PactBroker::Webhooks::Service.execute_webhook_now webhook, pact
+          webhook_execution_result = PactBroker::Webhooks::Service.execute_triggered_webhook_now triggered_webhook
           reschedule_job unless webhook_execution_result.success?
         rescue StandardError => e
           handle_error e
@@ -25,7 +25,7 @@ module PactBroker
 
       private
 
-      attr_reader :webhook, :pact, :error_count
+      attr_reader :triggered_webhook, :error_count
 
       def handle_error e
         log_error e
@@ -35,10 +35,10 @@ module PactBroker
       def reschedule_job
         case error_count
         when 0...BACKOFF_TIMES.size
-          logger.debug "Re-enqeuing job for webhook #{webhook.uuid} to run in #{BACKOFF_TIMES[error_count]} seconds"
-          Job.perform_in(BACKOFF_TIMES[error_count], {webhook: webhook, pact: pact, error_count: error_count+1})
+          logger.debug "Re-enqeuing job for webhook #{triggered_webhook.webhook_uuid} to run in #{BACKOFF_TIMES[error_count]} seconds"
+          Job.perform_in(BACKOFF_TIMES[error_count], @data.merge(error_count: error_count+1))
         else
-          logger.error "Failed to execute webhook #{webhook.uuid} after #{BACKOFF_TIMES.size} times."
+          logger.error "Failed to execute webhook #{triggered_webhook.webhook_uuid} after #{BACKOFF_TIMES.size} times."
         end
       end
 

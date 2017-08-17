@@ -4,9 +4,7 @@ require 'pact_broker/logging'
 require 'pact_broker/api/contracts/webhook_contract'
 
 module PactBroker
-
   module Domain
-
     class Webhook
 
       include Messages
@@ -50,7 +48,5 @@ module PactBroker
         provider && provider.name
       end
     end
-
   end
-
 end

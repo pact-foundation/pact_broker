@@ -1,20 +1,27 @@
 require 'sequel'
+require 'pact_broker/repositories/helpers'
+
 
 module PactBroker
   module Webhooks
     class Execution < Sequel::Model(:webhook_executions)
 
-      associate(:many_to_one, :webhook, :class => "PactBroker::Webhooks::Webhook", :key => :webhook_id, :primary_key => :id)
-      associate(:many_to_one, :pact_publication, :class => "PactBroker::Pacts::PactPublication", :key => :pact_publication_id, :primary_key => :id)
-      associate(:many_to_one, :provider, :class => "PactBroker::Domain::Pacticipant", :key => :provider_id, :primary_key => :id)
-      associate(:many_to_one, :consumer, :class => "PactBroker::Domain::Pacticipant", :key => :consumer_id, :primary_key => :id)
+      dataset_module do
+        include PactBroker::Repositories::Helpers
+      end
 
+      associate(:many_to_one, :triggered_webhook, :class => "PactBroker::Webhooks::TriggeredWebhook", :key => :triggered_webhook_id, :primary_key => :id)
 
       def <=> other
         comp = created_date <=> other.created_date
         comp = id <=> other.id if comp == 0
         comp
       end
+    end
+
+    class DeprecatedExecution < Execution
+      associate(:many_to_one, :provider, :class => "PactBroker::Domain::Pacticipant", :key => :provider_id, :primary_key => :id)
+      associate(:many_to_one, :consumer, :class => "PactBroker::Domain::Pacticipant", :key => :consumer_id, :primary_key => :id)
     end
 
     Execution.plugin :timestamps

@@ -3,11 +3,16 @@ require 'pact_broker/logging'
 require 'pact_broker/webhooks/job'
 require 'base64'
 require 'securerandom'
+require 'pact_broker/webhooks/triggered_webhook'
+require 'pact_broker/webhooks/status'
 
 module PactBroker
 
   module Webhooks
     class Service
+
+      PUBLICATION = 'publication'
+      USER = 'user'
 
       extend Repositories
       include Logging
@@ -31,11 +36,13 @@ module PactBroker
       end
 
       def self.delete_by_uuid uuid
-        webhook_repository.unlink_executions_by_webhook_uuid uuid
+        webhook_repository.unlink_triggered_webhooks_by_webhook_uuid uuid
         webhook_repository.delete_by_uuid uuid
       end
 
-      def self.delete_by_pacticipant pacticipant
+      def self.delete_all_webhhook_related_objects_by_pacticipant pacticipant
+        webhook_repository.delete_executions_by_pacticipant pacticipant
+        webhook_repository.delete_triggered_webhooks_by_pacticipant pacticipant
         webhook_repository.delete_by_pacticipant pacticipant
       end
 
@@ -44,13 +51,25 @@ module PactBroker
       end
 
       def self.execute_webhook_now webhook, pact
-        webhook_execution_result = webhook.execute
-        webhook_repository.create_execution webhook, webhook_execution_result, pact
+        triggered_webhook = webhook_repository.create_triggered_webhook(next_uuid, webhook, pact, USER)
+        execute_triggered_webhook_now triggered_webhook
+      end
+
+      def self.execute_triggered_webhook_now triggered_webhook
+        webhook_execution_result = triggered_webhook.execute
+        webhook_repository.create_execution triggered_webhook, webhook_execution_result
         webhook_execution_result
       end
 
       def self.find_by_consumer_and_provider consumer, provider
         webhook_repository.find_by_consumer_and_provider consumer, provider
+      end
+
+      def self.status_for consumer, provider
+        pact = pact_service.find_latest_pact consumer_name: consumer.name, provider_name: provider.name
+        webhooks = find_by_consumer_and_provider pact.consumer, pact.provider
+        webhook_executions = find_webhook_executions_after_current_pact_version_created(pact)
+        PactBroker::Webhooks::Status.new(webhooks, webhook_executions)
       end
 
       def self.execute_webhooks pact
@@ -64,10 +83,12 @@ module PactBroker
       end
 
       def self.run_later webhooks, pact
+        trigger_uuid = next_uuid
         webhooks.each do | webhook |
           begin
+            triggered_webhook = webhook_repository.create_triggered_webhook(trigger_uuid, webhook, pact, PUBLICATION)
             logger.info "Scheduling job for #{webhook.description} with uuid #{webhook.uuid}"
-            Job.perform_async webhook: webhook, pact: pact
+            Job.perform_async triggered_webhook: triggered_webhook
           rescue StandardError => e
             log_error e
           end

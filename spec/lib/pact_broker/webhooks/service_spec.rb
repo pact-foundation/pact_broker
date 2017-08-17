@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'pact_broker/webhooks/service'
+require 'pact_broker/webhooks/triggered_webhook'
 require 'webmock/rspec'
 require 'sucker_punch/testing/inline'
 
@@ -15,9 +16,11 @@ module PactBroker
         let(:consumer) { PactBroker::Domain::Pacticipant.new(name: 'Consumer') }
         let(:provider) { PactBroker::Domain::Pacticipant.new(name: 'Provider') }
         let(:webhooks) { [instance_double(PactBroker::Domain::Webhook, description: 'description', uuid: '1244')]}
+        let(:triggered_webhook) { instance_double(PactBroker::Webhooks::TriggeredWebhook) }
 
         before do
           allow_any_instance_of(PactBroker::Webhooks::Repository).to receive(:find_by_consumer_and_provider).and_return(webhooks)
+          allow_any_instance_of(PactBroker::Webhooks::Repository).to receive(:create_triggered_webhook).and_return(triggered_webhook)
           allow(Job).to receive(:perform_async)
         end
 
@@ -82,6 +85,10 @@ module PactBroker
         it "executes the HTTP request of the webhook" do
           subject
           expect(http_request).to have_been_made
+        end
+
+        it "saves the triggered webhook" do
+          expect { subject }.to change { PactBroker::Webhooks::TriggeredWebhook.count }.by(1)
         end
 
         it "saves the execution" do
