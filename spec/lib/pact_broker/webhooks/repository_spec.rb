@@ -391,7 +391,48 @@ module PactBroker
             .create_pact
             .create_triggered_webhook
             .create_webhook_execution
-          Sequel::Model.db[:webhook_executions].update(consumer_id: td.consumer.id, provider_id: td.provider.id)
+          # Replicate the old way of doing it
+        end
+
+        context "with triggered webhooks" do
+          it "deletes the execution by consumer" do
+            expect { Repository.new.delete_executions_by_pacticipant td.consumer }
+              .to change { Execution.count }.by(-1)
+          end
+
+          it "deletes the execution by provider" do
+            expect { Repository.new.delete_executions_by_pacticipant td.provider }
+              .to change { Execution.count }.by(-1)
+          end
+
+          it "does not delete executions for non related pacticipants" do
+            another_consumer = td.create_consumer.and_return(:consumer)
+            expect { Repository.new.delete_executions_by_pacticipant another_consumer }
+              .to change { Execution.count }.by(0)
+          end
+        end
+
+        context "with deprecated executions (before the triggered webhook table was introduced)" do
+          before do
+            Sequel::Model.db[:webhook_executions].update(triggered_webhook_id: nil, consumer_id: td.consumer.id, provider_id: td.provider.id)
+            TriggeredWebhook.select_all.delete
+          end
+
+          it "deletes the execution by consumer" do
+            expect { Repository.new.delete_executions_by_pacticipant td.consumer }
+              .to change { Execution.count }.by(-1)
+          end
+
+          it "deletes the execution by provider" do
+            expect { Repository.new.delete_executions_by_pacticipant td.provider }
+              .to change { Execution.count }.by(-1)
+          end
+
+          it "does not delete executions for non related pacticipants" do
+            another_consumer = td.create_consumer.and_return(:consumer)
+            expect { Repository.new.delete_executions_by_pacticipant another_consumer }
+              .to change { Execution.count }.by(0)
+          end
         end
       end
     end

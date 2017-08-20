@@ -9,6 +9,7 @@ Sequel.migration do
       String :webhook_uuid, null: false # keep so we can group executions even when webhook is deleted
       foreign_key :consumer_id, :pacticipants, null: false
       foreign_key :provider_id, :pacticipants, null: false
+      String :status, null: false
       DateTime :created_at, null: false
       DateTime :updated_at, null: false
       add_index [:pact_publication_id, :webhook_id, :trigger_uuid], unique: true, name: 'uq_triggered_webhook_ppi_wi'

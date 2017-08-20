@@ -64,15 +64,54 @@ module PactBroker
         end
       end
 
+      describe ".execute_webhook_now integration test" do
+        let(:td) { TestDataBuilder.new }
+
+        let!(:http_request) do
+          stub_request(:get, "http://example.org").
+            to_return(:status => 200)
+        end
+
+        let!(:pact) do
+          td.create_consumer
+            .create_provider
+            .create_consumer_version
+            .create_pact
+            .create_webhook(method: 'GET', url: 'http://example.org')
+            .and_return(:pact)
+        end
+
+        subject { PactBroker::Webhooks::Service.execute_webhook_now td.webhook, pact }
+
+        it "executes the HTTP request of the webhook" do
+          subject
+          expect(http_request).to have_been_made
+        end
+
+        it "saves the triggered webhook" do
+          expect { subject }.to change { PactBroker::Webhooks::TriggeredWebhook.count }.by(1)
+        end
+
+        it "saves the execution" do
+          expect { subject }.to change { PactBroker::Webhooks::Execution.count }.by(1)
+        end
+
+        it "marks the triggered webhook as a success" do
+          subject
+          expect(TriggeredWebhook.first.status).to eq TriggeredWebhook::STATUS_SUCCESS
+        end
+      end
+
       describe ".execute_webhooks integration test" do
+        let(:td) { TestDataBuilder.new }
+
         let!(:http_request) do
           stub_request(:get, "http://example.org").
             to_return(:status => 200)
         end
 
         let(:pact) do
-          TestDataBuilder.new
-            .create_consumer
+          td.create_consumer
             .create_provider
             .create_consumer_version
             .create_pact
@@ -93,6 +132,11 @@ module PactBroker
 
         it "saves the execution" do
           expect { subject }.to change { PactBroker::Webhooks::Execution.count }.by(1)
+        end
+
+        it "marks the triggered webhook as a success" do
+          subject
+          expect(TriggeredWebhook.first.status).to eq TriggeredWebhook::STATUS_SUCCESS
         end
       end
     end

@@ -52,13 +52,22 @@ module PactBroker
 
       def self.execute_webhook_now webhook, pact
         triggered_webhook = webhook_repository.create_triggered_webhook(next_uuid, webhook, pact, USER)
-        execute_triggered_webhook_now triggered_webhook
+        webhook_execution_result = execute_triggered_webhook_now triggered_webhook
+        if webhook_execution_result.success?
+          webhook_repository.update_triggered_webhook_status triggered_webhook, TriggeredWebhook::STATUS_SUCCESS
+        else
+          webhook_repository.update_triggered_webhook_status triggered_webhook, TriggeredWebhook::STATUS_FAILED
+        end
       end
 
       def self.execute_triggered_webhook_now triggered_webhook
         webhook_execution_result = triggered_webhook.execute
         webhook_repository.create_execution triggered_webhook, webhook_execution_result
         webhook_execution_result
+      end
+
+      def self.update_triggered_webhook_status triggered_webhook, status
+        webhook_repository.update_triggered_webhook_status triggered_webhook, status
       end
 
       def self.find_by_consumer_and_provider consumer, provider

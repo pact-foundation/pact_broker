@@ -5,6 +5,12 @@ module PactBroker
   module Webhooks
     class TriggeredWebhook < Sequel::Model(:triggered_webhooks)
 
+
+      STATUS_NOT_RUN = 'not_run'
+      STATUS_RETRYING = 'retrying'
+      STATUS_SUCCESS = 'success'
+      STATUS_FAILED = 'failed'
+
       dataset_module do
         include PactBroker::Repositories::Helpers
       end

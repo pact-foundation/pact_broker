@@ -53,6 +53,7 @@ module PactBroker
       def create_triggered_webhook trigger_uuid, webhook, pact, trigger
         db_webhook = Webhook.where(uuid: webhook.uuid).single_record
         TriggeredWebhook.create(
+          status: TriggeredWebhook::STATUS_NOT_RUN,
           pact_publication_id: pact.id,
           webhook: db_webhook,
           webhook_uuid: db_webhook.uuid,
@@ -61,6 +62,10 @@ module PactBroker
           consumer: db_webhook.consumer,
           provider: db_webhook.provider
         )
+      end
+
+      def update_triggered_webhook_status triggered_webhook, status
+        triggered_webhook.update(status: status)
       end
 
       def create_execution triggered_webhook, webhook_execution_result
@@ -76,6 +81,7 @@ module PactBroker
       end
 
       def delete_executions_by_pacticipant pacticipants
+        # TODO this relationship no longer exists, deprecate in next version
         DeprecatedExecution.where(consumer: pacticipants).delete
         DeprecatedExecution.where(provider: pacticipants).delete
         execution_ids = Execution

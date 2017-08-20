@@ -25,7 +25,6 @@ module PactBroker
       def logs
         @logs
       end
-
     end
   end
 end
