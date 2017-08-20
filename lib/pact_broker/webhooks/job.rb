@@ -46,7 +46,7 @@ module PactBroker
           update_triggered_webhook_status TriggeredWebhook::STATUS_RETRYING
         else
           logger.error "Failed to execute webhook #{triggered_webhook.webhook_uuid} after #{BACKOFF_TIMES.size} times."
-          update_triggered_webhook_status TriggeredWebhook::STATUS_FAILED
+          update_triggered_webhook_status TriggeredWebhook::STATUS_FAILURE
         end
       end
 

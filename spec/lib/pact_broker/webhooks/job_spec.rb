@@ -102,7 +102,7 @@ module PactBroker
         end
 
         it "updates the triggered_webhook status to 'failed'" do
-          expect(PactBroker::Webhooks::Service).to receive(:update_triggered_webhook_status).with(triggered_webhook, TriggeredWebhook::STATUS_FAILED)
+          expect(PactBroker::Webhooks::Service).to receive(:update_triggered_webhook_status).with(triggered_webhook, TriggeredWebhook::STATUS_FAILURE)
           subject
         end
       end

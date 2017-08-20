@@ -9,7 +9,7 @@ module PactBroker
       STATUS_NOT_RUN = 'not_run'
       STATUS_RETRYING = 'retrying'
       STATUS_SUCCESS = 'success'
-      STATUS_FAILED = 'failed'
+      STATUS_FAILURE = 'failure'
 
       dataset_module do
         include PactBroker::Repositories::Helpers
