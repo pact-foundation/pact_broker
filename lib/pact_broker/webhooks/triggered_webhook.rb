@@ -1,10 +1,13 @@
 require 'sequel'
 require 'pact_broker/repositories/helpers'
+require 'pact_broker/webhooks/execution'
 
 module PactBroker
   module Webhooks
     class TriggeredWebhook < Sequel::Model(:triggered_webhooks)
 
+      TRIGGER_PUBLICATION = 'publication'
+      TRIGGER_USER = 'user'
 
       STATUS_NOT_RUN = 'not_run'
       STATUS_RETRYING = 'retrying'
@@ -15,6 +18,7 @@ module PactBroker
         include PactBroker::Repositories::Helpers
       end
 
+      associate(:one_to_many, :webhook_executions, :class => "PactBroker::Webhooks::Execution", :key => :triggered_webhook_id, :primary_key => :id, :order => :id)
       associate(:many_to_one, :webhook, :class => "PactBroker::Webhooks::Webhook", :key => :webhook_id, :primary_key => :id)
       associate(:many_to_one, :pact_publication, :class => "PactBroker::Pacts::PactPublication", :key => :pact_publication_id, :primary_key => :id)
       associate(:many_to_one, :provider, :class => "PactBroker::Domain::Pacticipant", :key => :provider_id, :primary_key => :id)
