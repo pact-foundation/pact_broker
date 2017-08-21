@@ -23,7 +23,7 @@ module PactBroker
 
       describe "#create" do
         let(:params) { {'success' => true, 'providerApplicationVersion' => '4.5.6'} }
-        let(:pact) { TestDataBuilder.new.create_pact_with_hierarchy }
+        let(:pact) { TestDataBuilder.new.create_pact_with_hierarchy.and_return(:pact) }
         let(:create_verification) { subject.create 3, params, pact }
 
         it "logs the creation" do

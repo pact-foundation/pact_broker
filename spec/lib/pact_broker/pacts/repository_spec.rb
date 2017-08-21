@@ -90,7 +90,7 @@ module PactBroker
       describe "update" do
 
         let(:existing_pact) do
-          TestDataBuilder.new.create_pact_with_hierarchy "A Consumer", "1.2.3", "A Provider", original_json_content
+          TestDataBuilder.new.create_pact_with_hierarchy("A Consumer", "1.2.3", "A Provider", original_json_content).and_return(:pact)
         end
 
         before do

@@ -7,7 +7,7 @@ module PactBroker
   describe App do
 
     before do
-      TestDataBuilder.new.create_pact_with_hierarchy 'Some Consumer', '1.0', 'Some Provider'
+      TestDataBuilder.new.create_pact_with_hierarchy('Some Consumer', '1.0', 'Some Provider').and_return(:pact)
     end
 
     let(:hal_browser_enabled) { true }
