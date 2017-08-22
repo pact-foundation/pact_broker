@@ -24,6 +24,10 @@ module PactBroker
       associate(:many_to_one, :provider, :class => "PactBroker::Domain::Pacticipant", :key => :provider_id, :primary_key => :id)
       associate(:many_to_one, :consumer, :class => "PactBroker::Domain::Pacticipant", :key => :consumer_id, :primary_key => :id)
 
+      def request_description
+        webhook.to_domain.request_description
+      end
+
       def execute
         webhook.to_domain.execute
       end

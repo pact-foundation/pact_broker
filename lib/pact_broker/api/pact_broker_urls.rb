@@ -121,6 +121,10 @@ module PactBroker
         "#{base_url}/webhooks/provider/#{url_encode(provider.name)}/consumer/#{url_encode(consumer.name)}"
       end
 
+      def triggered_webhook_logs_url triggered_webhook, base_url
+        "#{base_url}/webhooks/#{triggered_webhook.webhook_uuid}/trigger/#{triggered_webhook.trigger_uuid}"
+      end
+
       def hal_browser_url target_url
         "/hal-browser/browser.html#" + target_url
       end
