@@ -11,8 +11,8 @@ module PactBroker
   module Webhooks
     class Service
 
-      PUBLICATION = 'publication'
-      USER = 'user'
+      PUBLICATION = PactBroker::Webhooks::TriggeredWebhook::TRIGGER_TYPE_PUBLICATION
+      USER = PactBroker::Webhooks::TriggeredWebhook::TRIGGER_TYPE_USER
 
       extend Repositories
       include Logging

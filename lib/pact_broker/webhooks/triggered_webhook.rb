@@ -6,8 +6,8 @@ module PactBroker
   module Webhooks
     class TriggeredWebhook < Sequel::Model(:triggered_webhooks)
 
-      TRIGGER_PUBLICATION = 'publication'
-      TRIGGER_USER = 'user'
+      TRIGGER_TYPE_PUBLICATION = 'pact_publication'
+      TRIGGER_TYPE_USER = 'user'
 
       STATUS_NOT_RUN = 'not_run'
       STATUS_RETRYING = 'retrying'
