@@ -93,8 +93,10 @@ Use the HAL browser to view documentation as you browse.
 ### To have a play around on your local machine
 
 * Install ruby 2.2.0 or later and bundler >= 1.12.0
-* Run `git clone git@github.com:pact-foundation/pact_broker.git && cd pact_broker/example`
-* Run `bundle`
+    * Windows users: get a Rails/Ruby installer from [RailsInstaller](http://railsinstaller.org/) and run it
+    * unix users just use their package manager
+* Run `git clone https://github.com:pact-foundation/pact_broker.git && cd pact_broker/example`
+* Run `bundle install`
 * Run `bundle exec rackup -p 8080`
 * Open [http://localhost:8080](http://localhost:8080) and you should see a list containing the pact between the Zoo App and the Animal Service.
 * Click on the arrow to see the generated HTML documentation.
