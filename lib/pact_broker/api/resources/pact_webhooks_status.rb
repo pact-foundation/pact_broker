@@ -1,4 +1,5 @@
 require 'pact_broker/api/resources/base_resource'
+require 'pact_broker/api/decorators/pact_webhooks_status_decorator'
 
 module PactBroker
 
@@ -20,10 +21,18 @@ module PactBroker
         end
 
         def to_json
-
+          decorator_for(latest_triggered_webhooks).to_json(user_options: decorator_context(identifier_from_path))
         end
 
         private
+
+        def latest_triggered_webhooks
+          @latest_triggered_webhooks ||= webhook_service.find_latest_triggered_webhooks(consumer, provider)
+        end
+
+        def pact
+          @pact ||= pact_service.find_latest_pact(pact_params)
+        end
 
         def webhooks
           webhook_service.find_by_consumer_and_provider consumer, provider
@@ -43,6 +52,9 @@ module PactBroker
           end
         end
 
+        def decorator_for latest_triggered_webhooks
+          PactBroker::Api::Decorators::PactWebhooksStatusDecorator.new(latest_triggered_webhooks)
+        end
       end
     end
   end

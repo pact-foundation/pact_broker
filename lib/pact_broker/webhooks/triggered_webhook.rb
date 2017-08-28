@@ -9,10 +9,10 @@ module PactBroker
       TRIGGER_TYPE_PUBLICATION = 'pact_publication'
       TRIGGER_TYPE_USER = 'user'
 
-      STATUS_NOT_RUN = 'not_run'
-      STATUS_RETRYING = 'retrying'
-      STATUS_SUCCESS = 'success'
-      STATUS_FAILURE = 'failure'
+      STATUS_NOT_RUN = 'not_run'.freeze
+      STATUS_RETRYING = 'retrying'.freeze
+      STATUS_SUCCESS = 'success'.freeze
+      STATUS_FAILURE = 'failure'.freeze
 
       dataset_module do
         include PactBroker::Repositories::Helpers
@@ -38,6 +38,22 @@ module PactBroker
 
       def provider_name
         provider && provider.name
+      end
+
+      def success?
+        status == STATUS_SUCCESS
+      end
+
+      def failure?
+        status == STATUS_FAILURE
+      end
+
+      def retrying?
+        status == STATUS_RETRYING
+      end
+
+      def not_run?
+        status == STATUS_NOT_RUN
       end
     end
 

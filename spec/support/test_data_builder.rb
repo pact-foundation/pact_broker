@@ -172,6 +172,8 @@ class TestDataBuilder
   def create_triggered_webhook params = {}
     trigger_uuid = params[:trigger_uuid] || webhook_service.next_uuid
     @triggered_webhook = webhook_repository.create_triggered_webhook trigger_uuid, @webhook, @pact, PactBroker::Webhooks::Service::PUBLICATION
+    @triggered_webhook.update(status: params[:status]) if params[:status]
+    set_created_at_if_set params[:created_at], :triggered_webhooks, {id: @triggered_webhook.id}
     self
   end
 

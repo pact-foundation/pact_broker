@@ -4,6 +4,7 @@ require 'pact_broker/domain/pacticipant'
 require 'pact_broker/db'
 require 'pact_broker/webhooks/webhook'
 require 'pact_broker/webhooks/triggered_webhook'
+require 'pact_broker/webhooks/latest_triggered_webhook'
 require 'pact_broker/webhooks/execution'
 
 module PactBroker
@@ -105,6 +106,16 @@ module PactBroker
           .where(Sequel[:triggered_webhooks][:provider_id] => provider_id)
           .filter(Sequel[:webhook_executions][:created_at] > date_time)
           .all
+      end
+
+      def find_latest_triggered_webhooks consumer, provider
+        LatestTriggeredWebhook
+          .where(consumer: consumer, provider: provider)
+          .order(:id)
+          .all
+          .group_by{|w| [w.consumer_id, w.provider_id, w.webhook_uuid]}
+          .values
+          .collect(&:last)
       end
     end
   end

@@ -435,6 +435,55 @@ module PactBroker
           end
         end
       end
+
+      describe "find_latest_triggered_webhooks" do
+        before do
+          td
+            .create_pact_with_hierarchy("Foo", "1.0.0", "Bar")
+            .create_webhook
+            .create_triggered_webhook
+            .create_webhook_execution
+            .create_pact_with_hierarchy
+            .create_webhook(uuid: '123')
+            .create_triggered_webhook(trigger_uuid: '256', created_at: DateTime.new(2016))
+            .create_webhook_execution
+            .create_triggered_webhook(trigger_uuid: '332', created_at: DateTime.new(2017))
+            .create_webhook_execution
+            .create_webhook(uuid: '987')
+            .create_triggered_webhook(trigger_uuid: '876', created_at: DateTime.new(2017))
+            .create_webhook_execution
+            .create_triggered_webhook(trigger_uuid: '638', created_at: DateTime.new(2018))
+            .create_webhook_execution
+        end
+
+        subject { Repository.new.find_latest_triggered_webhooks(td.consumer, td.provider) }
+
+        it "finds the latest triggered webhooks" do
+          expect(subject.collect(&:trigger_uuid).sort).to eq ['332', '638']
+        end
+
+        context "when there are two 'latest' triggered webhooks at the same time" do
+          before do
+            td.create_triggered_webhook(trigger_uuid: '888', created_at: DateTime.new(2018))
+              .create_webhook_execution
+          end
+
+          it "returns the one with the bigger ID" do
+            expect(subject.collect(&:trigger_uuid).sort).to eq ['332', '888']
+          end
+        end
+
+        context "when there are no triggered webhooks for the given consumer and provider" do
+          before do
+            td.create_consumer
+              .create_provider
+          end
+
+          it "returns an empty list" do
+            expect(subject).to be_empty
+          end
+        end
+      end
     end
   end
 end

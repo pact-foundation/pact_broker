@@ -40,7 +40,8 @@ module PactBroker
         def webhook_label
           case @relationship.webhook_status
             when :none then "Create"
-            when :success, :failed then webhook_last_execution_date
+            when :success, :failure then webhook_last_execution_date
+            when :retrying then "Retrying"
             when :not_run then "Not run"
           end
         end
@@ -48,8 +49,8 @@ module PactBroker
         def webhook_status
           case @relationship.webhook_status
             when :success then "success"
-            when :failed then "danger"
-            when :not_run then "warning"
+            when :failure then "danger"
+            when :retrying then "warning"
             else ""
           end
         end
@@ -59,7 +60,7 @@ module PactBroker
         end
 
         def webhook_url
-          url = PactBroker::Api::PactBrokerUrls.webhooks_for_pact_url @relationship.latest_pact.consumer, @relationship.latest_pact.provider, ''
+          url = PactBroker::Api::PactBrokerUrls.webhooks_status_url @relationship.latest_pact.consumer, @relationship.latest_pact.provider
           "/hal-browser/browser.html##{url}"
         end
 

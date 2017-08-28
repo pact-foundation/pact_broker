@@ -66,7 +66,8 @@ module PactBroker
           let(:domain_relationship) do
             instance_double("PactBroker::Domain::Relationship",
               webhook_status: webhook_status,
-              last_webhook_execution_date: DateTime.now - 1
+              last_webhook_execution_date: DateTime.now - 1,
+              latest_pact: double("pact", consumer: consumer, provider: provider)
             )
           end
           let(:webhook_status) { :none }
@@ -76,16 +77,18 @@ module PactBroker
           context "when the webhooks_status is :none" do
             its(:webhook_label) { is_expected.to eq "Create" }
             its(:webhook_status) { is_expected.to eq "" }
+            its(:webhook_url) { is_expected.to include "/webhooks/provider/Provider%20Name/consumer/Consumer%20Name/status"}
           end
 
           context "when the webhooks_status is :success" do
             let(:webhook_status) { :success }
             its(:webhook_label) { is_expected.to eq "1 day ago" }
             its(:webhook_status) { is_expected.to eq "success" }
+            its(:webhook_url) { is_expected.to include "/webhooks/provider/Provider%20Name/consumer/Consumer%20Name/status"}
           end
 
-          context "when the webhooks_status is :failed" do
-            let(:webhook_status) { :failed }
+          context "when the webhooks_status is :failure" do
+            let(:webhook_status) { :failure }
             its(:webhook_label) { is_expected.to eq "1 day ago" }
             its(:webhook_status) { is_expected.to eq "danger" }
           end
@@ -93,6 +96,12 @@ module PactBroker
           context "when the webhooks_status is :not_run" do
             let(:webhook_status) { :not_run }
             its(:webhook_label) { is_expected.to eq "Not run" }
+            its(:webhook_status) { is_expected.to eq "" }
+          end
+
+          context "when the webhooks_status is :retrying" do
+            let(:webhook_status) { :retrying }
+            its(:webhook_label) { is_expected.to eq "Retrying" }
             its(:webhook_status) { is_expected.to eq "warning" }
           end
         end

@@ -107,6 +107,10 @@ module PactBroker
       def self.find_webhook_executions_after_current_pact_version_created pact
         webhook_repository.find_webhook_executions_after PactBroker::Pacts::PactVersion.find(sha: pact.pact_version_sha).created_at, pact.consumer.id, pact.provider.id
       end
+
+      def self.find_latest_triggered_webhooks consumer, provider
+        webhook_repository.find_latest_triggered_webhooks consumer, provider
+      end
     end
   end
 end

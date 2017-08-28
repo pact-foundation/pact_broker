@@ -7,17 +7,17 @@ module PactBroker
 
       attr_reader :consumer, :provider, :latest_pact, :latest_verification, :webhooks
 
-      def initialize consumer, provider, latest_pact = nil, latest_verification = nil, webhooks = [], webhook_executions = []
+      def initialize consumer, provider, latest_pact = nil, latest_verification = nil, webhooks = [], triggered_webhooks = []
         @consumer = consumer
         @provider = provider
         @latest_pact = latest_pact
         @latest_verification = latest_verification
         @webhooks = webhooks
-        @webhook_executions = webhook_executions
+        @triggered_webhooks = triggered_webhooks
       end
 
-      def self.create consumer, provider, latest_pact, latest_verification, webhooks = [], webhook_executions = []
-        new consumer, provider, latest_pact, latest_verification, webhooks, webhook_executions
+      def self.create consumer, provider, latest_pact, latest_verification, webhooks = [], triggered_webhooks = []
+        new consumer, provider, latest_pact, latest_verification, webhooks, triggered_webhooks
       end
 
       def eq? other
@@ -47,11 +47,11 @@ module PactBroker
       end
 
       def webhook_status
-        @webhook_status ||= PactBroker::Webhooks::Status.new(@webhooks, @webhook_executions).to_sym
+        @webhook_status ||= PactBroker::Webhooks::Status.new(@latest_pact, @webhooks, @triggered_webhooks).to_sym
       end
 
       def last_webhook_execution_date
-        @last_webhook_execution_date ||= @webhook_executions.any? ? @webhook_executions.sort.last.created_at : nil
+        @last_webhook_execution_date ||= @triggered_webhooks.any? ? @triggered_webhooks.sort{|a, b| a.created_at <=> b.created_at }.last.created_at : nil
       end
 
       def verification_status

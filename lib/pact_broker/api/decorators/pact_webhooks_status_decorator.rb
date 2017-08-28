@@ -9,6 +9,7 @@ module PactBroker
       class TriggeredWebhookDecorator < BaseDecorator
         property :status
         property :trigger_type, as: :triggerType
+
         include Timestamps
 
         link :logs do | context |
@@ -22,21 +23,37 @@ module PactBroker
 
       class PactWebhooksStatusDecorator < BaseDecorator
 
-        property :success
+        property :counts, exec_context: :decorator do
+          property :success, as: :successful, default: 0
+          property :failure, as: :failed, default: 0
+          property :retrying
+          property :not_run, as: :notRun
+        end
 
-        # property :webhook_summary, as: :webhookSummary do
-        #   property :successful
-        #   property :failed
-        #   property :retrying
-        #   property :not_run, as: :notRun
-        # end
-
-        collection :triggered_webhooks, as: :triggeredWebhooks, embedded: true, :extend => TriggeredWebhookDecorator
+        collection :entries, as: :triggeredWebhooks, embedded: true, :extend => TriggeredWebhookDecorator
 
         link :self do | context |
           {
             href: context[:resource_url],
             title: "Webhooks status"
+          }
+        end
+
+        links :'pb:error-logs' do | context |
+          triggered_webhooks_with_error_logs.collect do | triggered_webhook |
+            {
+              href: triggered_webhook_logs_url(triggered_webhook, context[:base_url]),
+              title: "Error logs",
+              name: triggered_webhook.request_description
+            }
+          end
+        end
+
+        link :'pb:pact-version' do | context |
+          {
+            href: pact_url(context[:base_url], pact),
+            title: "Pact",
+            name: pact.name
           }
         end
 
@@ -54,6 +71,21 @@ module PactBroker
             title: "Provider",
             name: context[:provider_name]
           }
+        end
+
+        def counts
+          counts = represented.group_by(&:status).each_with_object({}) do | (status, triggered_webhooks), counts |
+            counts[status] = triggered_webhooks.count
+          end
+          OpenStruct.new(counts)
+        end
+
+        def triggered_webhooks_with_error_logs
+          represented.select{|w| w.failure? || w.retrying? }
+        end
+
+        def pact
+          represented.any? ? represented.first.pact_publication : nil
         end
       end
     end
