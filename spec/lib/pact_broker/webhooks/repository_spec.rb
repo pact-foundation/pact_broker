@@ -332,56 +332,6 @@ module PactBroker
         end
       end
 
-      describe "find_webhook_executions_after" do
-        let(:td) { TestDataBuilder.new }
-
-        let!(:webhook_execution) do
-          td.create_consumer
-            .create_provider
-            .create_consumer_version
-            .create_pact
-            .create_webhook
-            .create_triggered_webhook
-            .create_webhook_execution(created_at: DateTime.new(2017))
-            .create_webhook_execution(created_at: DateTime.new(2018))
-            .and_return(:webhook_execution)
-        end
-
-        let(:search_date) { DateTime.new(2017, 12, 31, 23, 59) }
-        let(:consumer_id) { td.consumer.id }
-        let(:provider_id) { td.provider.id }
-
-        subject { Repository.new.find_webhook_executions_after search_date, consumer_id, provider_id }
-
-        it "returns executions after the given date with matching consumer and provider" do
-          expect(subject).to eq [webhook_execution]
-        end
-
-        context "when the date specified is after all existing records" do
-          let(:search_date) { DateTime.new(2018, 1, 1, 1) }
-
-          it "returns an empty collection" do
-            expect(subject).to eq []
-          end
-        end
-
-        context "when the consumer id does not match" do
-          let(:consumer_id) { td.consumer.id + 1 }
-
-          it "returns an empty collection" do
-            expect(subject).to eq []
-          end
-        end
-
-        context "when the provider id does not match" do
-          let(:provider_id) { td.provider.id + 1 }
-
-          it "returns an empty collection" do
-            expect(subject).to eq []
-          end
-        end
-      end
-
       describe "delete_executions_by_pacticipant" do
         before do
           td.create_consumer

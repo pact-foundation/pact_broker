@@ -51,6 +51,10 @@ module PactBroker
           expect(subject[:_embedded][:triggeredWebhooks][0][:_links][:logs][:href]).to eq logs_url
         end
 
+        it "includes a link to the webhook" do
+          expect(subject[:_embedded][:triggeredWebhooks][0][:_links][:'pb:webhook'][:href]).to eq "http://example.org/webhooks/4321"
+        end
+
         it "includes the triggered webhooks properties" do
           expect(subject[:_embedded][:triggeredWebhooks].first).to include(status: 'success', triggerType: 'pact_publication')
         end
@@ -68,7 +72,7 @@ module PactBroker
         end
 
         it "includes a summary of the triggered webhook statuses" do
-          expect(subject[:counts]).to eq({successful: 1, failed: 0})
+          expect(subject[:summary]).to eq({successful: 1, failed: 0})
         end
 
         context "when there is a failure" do
@@ -80,7 +84,7 @@ module PactBroker
           end
 
           it "has a failed count of 1" do
-            expect(subject[:counts]).to eq({successful: 0, failed: 1})
+            expect(subject[:summary]).to eq({successful: 0, failed: 1})
           end
         end
 
@@ -93,7 +97,7 @@ module PactBroker
           end
 
           it "has a retrying count of 1" do
-            expect(subject[:counts]).to eq({successful: 0, failed: 0, retrying: 1})
+            expect(subject[:summary]).to eq({successful: 0, failed: 0, retrying: 1})
           end
         end
 
@@ -105,7 +109,7 @@ module PactBroker
           end
 
           it "has a notRun count of 1" do
-            expect(subject[:counts]).to eq({successful: 0, failed: 0, notRun: 1})
+            expect(subject[:summary]).to eq({successful: 0, failed: 0, notRun: 1})
           end
         end
       end

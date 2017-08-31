@@ -10,7 +10,9 @@ module PactBroker
         property :status
         property :trigger_type, as: :triggerType
 
-        include Timestamps
+        property :created_at, as: :triggeredAt
+
+
 
         link :logs do | context |
           {
@@ -19,11 +21,19 @@ module PactBroker
             name: represented.request_description
           }
         end
+
+        link :'pb:webhook' do | context |
+          {
+            href: webhook_url(represented.webhook_uuid, context[:base_url]),
+            title: "Webhook",
+            name: represented.request_description
+          }
+        end
       end
 
       class PactWebhooksStatusDecorator < BaseDecorator
 
-        property :counts, exec_context: :decorator do
+        property :summary, exec_context: :decorator do
           property :success, as: :successful, default: 0
           property :failure, as: :failed, default: 0
           property :retrying
@@ -73,7 +83,7 @@ module PactBroker
           }
         end
 
-        def counts
+        def summary
           counts = represented.group_by(&:status).each_with_object({}) do | (status, triggered_webhooks), counts |
             counts[status] = triggered_webhooks.count
           end

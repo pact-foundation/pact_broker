@@ -74,13 +74,6 @@ module PactBroker
         webhook_repository.find_by_consumer_and_provider consumer, provider
       end
 
-      def self.status_for consumer, provider
-        pact = pact_service.find_latest_pact consumer_name: consumer.name, provider_name: provider.name
-        webhooks = find_by_consumer_and_provider pact.consumer, pact.provider
-        webhook_executions = find_webhook_executions_after_current_pact_version_created(pact)
-        PactBroker::Webhooks::Status.new(webhooks, webhook_executions)
-      end
-
       def self.execute_webhooks pact
         webhooks = webhook_repository.find_by_consumer_and_provider pact.consumer, pact.provider
 
@@ -102,10 +95,6 @@ module PactBroker
             log_error e
           end
         end
-      end
-
-      def self.find_webhook_executions_after_current_pact_version_created pact
-        webhook_repository.find_webhook_executions_after PactBroker::Pacts::PactVersion.find(sha: pact.pact_version_sha).created_at, pact.consumer.id, pact.provider.id
       end
 
       def self.find_latest_triggered_webhooks consumer, provider

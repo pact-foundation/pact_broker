@@ -96,7 +96,6 @@ module PactBroker
           execution_logger.error e.backtrace.join("\n")
           WebhookExecutionResult.new(nil, logs.string, e)
         end
-
       end
 
       private

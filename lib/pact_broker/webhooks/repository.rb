@@ -98,16 +98,6 @@ module PactBroker
         TriggeredWebhook.where(webhook: Webhook.where(uuid: uuid)).update(webhook_id: nil)
       end
 
-      def find_webhook_executions_after date_time, consumer_id, provider_id
-        Execution
-          .select_all_qualified
-          .join(:triggered_webhooks, {id: :triggered_webhook_id})
-          .where(Sequel[:triggered_webhooks][:consumer_id] => consumer_id)
-          .where(Sequel[:triggered_webhooks][:provider_id] => provider_id)
-          .filter(Sequel[:webhook_executions][:created_at] > date_time)
-          .all
-      end
-
       def find_latest_triggered_webhooks consumer, provider
         LatestTriggeredWebhook
           .where(consumer: consumer, provider: provider)
