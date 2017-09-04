@@ -28,6 +28,16 @@ module PactBroker
         Webhook.where(uuid: uuid).limit(1).collect(&:to_domain)[0]
       end
 
+      def update_by_uuid uuid, webhook
+        existing_webhook = Webhook.find(uuid: uuid)
+        existing_webhook.update_from_domain(webhook).save
+        existing_webhook.headers.collect(&:delete)
+        webhook.request.headers.each_pair do | name, value |
+          existing_webhook.add_header PactBroker::Webhooks::WebhookHeader.from_domain(name, value, existing_webhook.id)
+        end
+        find_by_uuid uuid
+      end
+
       def delete_by_uuid uuid
         Webhook.where(uuid: uuid).destroy
       end

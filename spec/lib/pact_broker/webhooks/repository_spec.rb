@@ -188,6 +188,51 @@ module PactBroker
 
       end
 
+      describe "update_by_uuid" do
+        let(:uuid) { '1234' }
+        let(:td) { TestDataBuilder.new }
+        let(:old_webhook_params) do
+          {
+            uuid: uuid,
+            method: 'POST',
+            url: 'http://example.org',
+            body: '{"foo":1}',
+            headers: {'Content-Type' => 'application/json'},
+            username: 'username',
+            password: 'password'
+          }
+        end
+        let(:new_webhook_params) do
+          {
+            method: 'GET',
+            url: 'http://example.com',
+            body: 'foo',
+            headers: {'Content-Type' => 'text/plain'}
+          }
+        end
+        before do
+          td.create_consumer
+            .create_provider
+            .create_webhook(old_webhook_params)
+        end
+        let(:new_webhook) do
+          PactBroker::Domain::Webhook.new(request: PactBroker::Domain::WebhookRequest.new(new_webhook_params))
+        end
+
+        subject { Repository.new.update_by_uuid uuid, new_webhook }
+
+        it "updates the webhook" do
+          updated_webhook = subject
+          expect(updated_webhook.uuid).to eq uuid
+          expect(updated_webhook.request.method).to eq 'GET'
+          expect(updated_webhook.request.url).to eq 'http://example.com'
+          expect(updated_webhook.request.body).to eq 'foo'
+          expect(updated_webhook.request.headers).to eq 'Content-Type' => 'text/plain'
+          expect(updated_webhook.request.username).to eq nil
+          expect(updated_webhook.request.password).to eq nil
+        end
+      end
+
       describe "find_all" do
         before do
           Repository.new.create uuid, webhook, consumer, provider

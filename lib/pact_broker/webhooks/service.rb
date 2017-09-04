@@ -35,6 +35,10 @@ module PactBroker
         webhook_repository.find_by_uuid uuid
       end
 
+      def self.update_by_uuid uuid, webhook
+        webhook_repository.update_by_uuid uuid, webhook
+      end
+
       def self.delete_by_uuid uuid
         webhook_repository.unlink_triggered_webhooks_by_webhook_uuid uuid
         webhook_repository.delete_by_uuid uuid
