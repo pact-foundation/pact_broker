@@ -19,7 +19,7 @@ module PactBroker
         WebhookRequest.new(
           method: 'post',
           url: url,
-          headers: {'Content-Type' => 'text/plain'},
+          headers: {'Content-Type' => 'text/plain', 'Authorization' => 'foo'},
           username: username,
           password: password,
           body: body)
@@ -73,9 +73,6 @@ module PactBroker
         end
 
         describe "execution logs" do
-          before do
-
-          end
 
           let(:logs) { subject.execute.logs }
 
@@ -85,6 +82,10 @@ module PactBroker
 
           it "logs the request headers" do
             expect(logs).to include "Content-Type: text/plain"
+          end
+
+          it "redacts potentially sensitive headers" do
+            expect(logs).to include "Authorization: [REDACTED]"
           end
 
           it "logs the request body" do

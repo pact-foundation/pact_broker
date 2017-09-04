@@ -3,6 +3,7 @@ require 'pact_broker/domain/webhook_execution_result'
 require 'pact_broker/logging'
 require 'pact_broker/messages'
 require 'net/http'
+require 'pact_broker/webhooks/redact_logs'
 
 module PactBroker
 
@@ -56,7 +57,7 @@ module PactBroker
           execution_logger.info "HTTP/1.1 #{method.upcase} #{url_with_credentials}"
 
           headers.each_pair do | name, value |
-            execution_logger.info "#{name}: #{value}"
+            execution_logger.info Webhooks::RedactLogs.call("#{name}: #{value}")
             req[name] = value
           end
 
@@ -91,9 +92,8 @@ module PactBroker
 
         rescue StandardError => e
           logger.error "Error executing webhook #{uuid} #{e.class.name} - #{e.message}"
-          execution_logger.error "Error executing webhook #{uuid} #{e.class.name} - #{e.message}"
           logger.error e.backtrace.join("\n")
-          execution_logger.error e.backtrace.join("\n")
+          execution_logger.error "Error executing webhook #{uuid} #{e.class.name} - #{e.message}"
           WebhookExecutionResult.new(nil, logs.string, e)
         end
       end
@@ -118,7 +118,5 @@ module PactBroker
         u
       end
     end
-
   end
-
 end
