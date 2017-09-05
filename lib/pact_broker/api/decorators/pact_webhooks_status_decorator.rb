@@ -60,16 +60,20 @@ module PactBroker
         end
 
         link :'pb:pact-version' do | context |
-          {
-            href: pact_url(context[:base_url], pact),
-            title: "Pact",
-            name: pact.name
-          }
+          if pact
+            {
+              href: pact_url(context[:base_url], pact),
+              title: "Pact",
+              name: pact.name
+            }
+          else
+            nil
+          end
         end
 
         link :'pb:consumer' do | context |
           {
-            href: pacticipant_url(context[:base_url], OpenStruct.new(name: context[:consumer_name])),
+            href: pacticipant_url(context[:base_url], fake_consumer(context)),
             title: "Consumer",
             name: context[:consumer_name]
           }
@@ -77,9 +81,16 @@ module PactBroker
 
         link :'pb:provider' do | context |
           {
-            href: pacticipant_url(context[:base_url], OpenStruct.new(name: context[:provider_name])),
+            href: pacticipant_url(context[:base_url], fake_provider(context)),
             title: "Provider",
             name: context[:provider_name]
+          }
+        end
+
+        link :'pb:pact-webhooks' do | context |
+          {
+            title: "Webhooks for the pact between #{context[:consumer_name]} and #{context[:provider_name]}",
+            href: webhooks_for_pact_url(fake_consumer(context), fake_provider(context), context.fetch(:base_url))
           }
         end
 
@@ -96,6 +107,14 @@ module PactBroker
 
         def pact
           represented.any? ? represented.first.pact_publication : nil
+        end
+
+        def fake_consumer context
+          OpenStruct.new(name: context[:consumer_name])
+        end
+
+        def fake_provider context
+          OpenStruct.new(name: context[:provider_name])
         end
       end
     end

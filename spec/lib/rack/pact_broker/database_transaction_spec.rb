@@ -13,8 +13,10 @@ module Rack
         ::PactBroker::Database.truncate
       end
 
+      let(:headers) { {} }
+
       let(:api) do
-        ->(env) { ::PactBroker::Domain::Pacticipant.create(name: 'Foo'); [500, {}, []] }
+        ->(env) { ::PactBroker::Domain::Pacticipant.create(name: 'Foo'); [500, headers, []] }
       end
 
       let(:app) do
@@ -37,6 +39,15 @@ module Rack
           it "uses a transaction and rollsback if there is a 500 error" do
             expect { subject }.to change { ::PactBroker::Domain::Pacticipant.count }.by(0)
           end
+        end
+      end
+
+      context "when there is an error but the resource sets the no rollback header" do
+        let(:headers) { {::PactBroker::DO_NOT_ROLLBACK => 'true'} }
+        let(:http_method) { :post }
+
+        it "does not roll back" do
+          expect { subject }.to change { ::PactBroker::Domain::Pacticipant.count }.by(1)
         end
       end
     end

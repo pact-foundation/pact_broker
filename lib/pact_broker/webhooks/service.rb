@@ -62,6 +62,7 @@ module PactBroker
         else
           webhook_repository.update_triggered_webhook_status triggered_webhook, TriggeredWebhook::STATUS_FAILURE
         end
+        webhook_execution_result
       end
 
       def self.execute_triggered_webhook_now triggered_webhook

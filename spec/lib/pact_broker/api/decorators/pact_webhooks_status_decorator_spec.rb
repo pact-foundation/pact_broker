@@ -36,9 +36,10 @@ module PactBroker
         let(:retrying) { false }
         let(:status) { PactBroker::Webhooks::TriggeredWebhook::STATUS_SUCCESS }
         let(:logs_url) { "http://example.org/webhooks/4321/trigger/1234/logs" }
+        let(:triggered_webhooks) { [triggered_webhook] }
 
         let(:json) do
-          PactWebhooksStatusDecorator.new([triggered_webhook]).to_json(user_options: user_options)
+          PactWebhooksStatusDecorator.new(triggered_webhooks).to_json(user_options: user_options)
         end
 
         subject { JSON.parse json, symbolize_names: true }
@@ -110,6 +111,14 @@ module PactBroker
 
           it "has a notRun count of 1" do
             expect(subject[:summary]).to eq({successful: 0, failed: 0, notRun: 1})
+          end
+        end
+
+        context "when there are no triggered webhooks" do
+          let(:triggered_webhooks) { [] }
+
+          it "doesn't blow up" do
+            subject
           end
         end
       end
