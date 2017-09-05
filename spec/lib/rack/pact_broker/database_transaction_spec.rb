@@ -17,16 +17,15 @@ module Rack
         ->(env) { ::PactBroker::Domain::Pacticipant.create(name: 'Foo'); [500, {}, []] }
       end
 
-      let(:api_with_transaction) do
+      let(:app) do
         ::Rack::PactBroker::DatabaseTransaction.new(api, ::PactBroker::DB.connection)
       end
 
       subject { self.send(http_method, "/") }
 
       context "for get requests" do
-        let(:app) { api_with_transaction }
-
         let(:http_method) { :get }
+
         it "does not use a transaction" do
           expect { subject }.to change { ::PactBroker::Domain::Pacticipant.count }.by(1)
         end
