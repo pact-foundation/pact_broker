@@ -6,7 +6,7 @@ module Rack
     class DatabaseTransaction
 
       REQUEST_METHOD = "REQUEST_METHOD".freeze
-      TRANS_METHODS = %{POST PUT PATCH DELETE}.freeze
+      TRANS_METHODS = %w{POST PUT PATCH DELETE}.freeze
 
       def initialize app, database_connection
         @app = app
