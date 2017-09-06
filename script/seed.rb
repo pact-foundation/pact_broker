@@ -10,18 +10,19 @@ require 'logger'
 DATABASE_CREDENTIALS = {logger: Logger.new($stdout), adapter: "sqlite", database: ARGV[0], :encoding => 'utf8'}
 connection = Sequel.connect(DATABASE_CREDENTIALS)
 connection.timezone = :utc
+require 'pact_broker/db'
+PactBroker::DB.connection = connection
 require 'pact_broker'
 require 'support/test_data_builder'
 
-def random_build
-  rand * 100
-end
 
-tables_to_clean = [:labels, :webhook_executions, :verifications, :pact_publications, :pact_versions, :pacts, :pact_version_contents, :tags, :versions, :webhook_headers, :webhooks, :pacticipants]
+tables_to_clean = [:labels, :webhook_executions, :triggered_webhooks, :verifications, :pact_publications, :pact_versions, :pacts, :pact_version_contents, :tags, :versions, :webhook_headers, :webhooks, :pacticipants]
 
 tables_to_clean.each do | table_name |
   connection[table_name].delete if connection.table_exists?(table_name)
 end
+
+
 
 class TestDataBuilder
   def method_missing *args
@@ -52,7 +53,7 @@ TestDataBuilder.new
   .create_label("microservice")
   .create_provider("Bar")
   .create_label("microservice")
-  .create_webhook(method: 'GET', url: 'http://127.0.0.1:1234/')
+  .create_webhook(method: 'GET', url: 'http://localhost:9393/')
   .create_consumer_version("1.2.100")
   .publish_pact
   .create_verification(provider_version: "1.4.234", success: true, execution_date: DateTime.now - 15)
@@ -62,7 +63,7 @@ TestDataBuilder.new
   .create_consumer_version("1.2.102")
   .publish_pact(created_at: (Date.today - 7).to_datetime)
   .create_provider("Animals")
-  .create_webhook(method: 'GET', url: 'http://127.0.0.1:1234/')
+  .create_webhook(method: 'GET', url: 'http://localhost:9393/')
   .publish_pact(created_at: (Time.now - 140).to_datetime)
   .create_verification(provider_version: "2.0.366", execution_date: Date.today - 2) #changed
   .create_provider("Wiffles")
@@ -73,12 +74,16 @@ TestDataBuilder.new
   .publish_pact(created_at: (Date.today - 1).to_datetime)
   .create_consumer("The Android App")
   .create_provider("The back end")
-  .create_webhook(method: 'GET', url: 'http://127.0.0.1:1234/')
+  .create_webhook(method: 'GET', url: 'http://localhost:9393/')
   .create_consumer_version("1.2.106")
   .publish_pact
   .create_consumer("Some other app")
   .create_provider("A service")
-  .create_webhook(method: 'GET', url: 'http://127.0.0.1:1234/')
+  .create_webhook(method: 'GET', url: 'http://localhost:9393/')
+  .create_triggered_webhook(status: 'success')
+  .create_webhook_execution
+  .create_webhook(method: 'POST', url: 'http://foo:9393/')
+  .create_triggered_webhook(status: 'failure')
   .create_webhook_execution
   .create_consumer_version("1.2.106")
   .publish_pact(created_at: (Date.today - 26).to_datetime)
