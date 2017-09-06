@@ -18,6 +18,7 @@ module PactBroker
     attr_accessor :use_case_sensitive_resource_names, :order_versions_by_date
     attr_accessor :semver_formats
     attr_accessor :enable_badge_resources, :shields_io_base_url
+    attr_accessor :webhook_retry_schedule
     attr_writer :logger
 
     def initialize
@@ -48,6 +49,7 @@ module PactBroker
       # consistently extract an orderable object from the consumer application version number.
       config.order_versions_by_date = false
       config.semver_formats = ["%M.%m.%p%s%d","%M.%m", "%M"]
+      config.webhook_retry_schedule = [10, 60, 120, 300, 600, 1200] #10 sec, 1 min, 2 min, 5 min, 10 min, 20 min => 38 minutes
       config
     end
 
