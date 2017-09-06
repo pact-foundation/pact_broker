@@ -1,13 +1,13 @@
 #!/usr/bin/env ruby
 
-raise "Please supply database path" unless $1
+raise "Please supply database path" unless ARGV[0]
 
 $LOAD_PATH.unshift './lib'
 $LOAD_PATH.unshift './spec'
 ENV['RACK_ENV'] = 'development'
 require 'sequel'
 require 'logger'
-DATABASE_CREDENTIALS = {logger: Logger.new($stdout), adapter: "sqlite", database: $1, :encoding => 'utf8'}
+DATABASE_CREDENTIALS = {logger: Logger.new($stdout), adapter: "sqlite", database: ARGV[0], :encoding => 'utf8'}
 connection = Sequel.connect(DATABASE_CREDENTIALS)
 connection.timezone = :utc
 require 'pact_broker'
