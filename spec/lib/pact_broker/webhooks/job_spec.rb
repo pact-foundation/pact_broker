@@ -5,17 +5,16 @@ module PactBroker
     describe Job do
 
       before do
-        allow(PactBroker::Webhooks::Service).to receive(:execute_triggered_webhook_now)
+        PactBroker.configuration.webhook_retry_schedule = [10, 60, 120, 300, 600, 1200]
+        allow(PactBroker::Webhooks::Service).to receive(:execute_triggered_webhook_now).and_return(result)
         allow(PactBroker::Webhooks::Service).to receive(:update_triggered_webhook_status)
       end
 
       let(:triggered_webhook) { instance_double("PactBroker::Webhooks::TriggeredWebhook", webhook_uuid: '1234') }
+      let(:result) { instance_double("PactBroker::Domain::WebhookExecutionResult", success?: success)}
+      let(:success) { true }
 
       context "when the job succeeds" do
-        before do
-          allow(PactBroker::Webhooks::Service).to receive(:execute_triggered_webhook_now).and_return(instance_double("PactBroker::Domain::WebhookExecutionResult", success?: true))
-        end
-
         subject { Job.new.perform(triggered_webhook: triggered_webhook) }
 
         it "does not reschedule the job" do
@@ -24,7 +23,8 @@ module PactBroker
         end
 
         it "updates the triggered_webhook status to 'success'" do
-          expect(PactBroker::Webhooks::Service).to receive(:update_triggered_webhook_status).with(triggered_webhook, TriggeredWebhook::STATUS_SUCCESS)
+          expect(PactBroker::Webhooks::Service).to receive(:update_triggered_webhook_status)
+            .with(triggered_webhook, TriggeredWebhook::STATUS_SUCCESS)
           subject
         end
       end
@@ -42,15 +42,14 @@ module PactBroker
         end
 
         it "updates the triggered_webhook status to 'retrying'" do
-          expect(PactBroker::Webhooks::Service).to receive(:update_triggered_webhook_status).with(triggered_webhook, TriggeredWebhook::STATUS_RETRYING)
+          expect(PactBroker::Webhooks::Service).to receive(:update_triggered_webhook_status)
+            .with(triggered_webhook, TriggeredWebhook::STATUS_RETRYING)
           subject
         end
       end
 
       context "when the webhook execution result is not successful for the first time" do
-        before do
-          allow(PactBroker::Webhooks::Service).to receive(:execute_triggered_webhook_now).and_return(instance_double("PactBroker::Domain::WebhookExecutionResult", success?: false))
-        end
+        let(:success) { false }
 
         subject { Job.new.perform(triggered_webhook: triggered_webhook) }
 
@@ -59,8 +58,18 @@ module PactBroker
           subject
         end
 
+        it "executes the job with an log message indicating that the webhook will be retried" do
+          expect(PactBroker::Webhooks::Service).to receive(:execute_triggered_webhook_now)
+            .with(triggered_webhook, {
+              failure_log_message: "Retrying webhook in 10 seconds",
+              success_log_message: "Successfully executed webhook"
+          })
+          subject
+        end
+
         it "updates the triggered_webhook status to 'retrying'" do
-          expect(PactBroker::Webhooks::Service).to receive(:update_triggered_webhook_status).with(triggered_webhook, TriggeredWebhook::STATUS_RETRYING)
+          expect(PactBroker::Webhooks::Service).to receive(:update_triggered_webhook_status)
+            .with(triggered_webhook, TriggeredWebhook::STATUS_RETRYING)
           subject
         end
       end
@@ -78,17 +87,25 @@ module PactBroker
         end
 
         it "updates the triggered_webhook status to 'retrying'" do
-          expect(PactBroker::Webhooks::Service).to receive(:update_triggered_webhook_status).with(triggered_webhook, TriggeredWebhook::STATUS_RETRYING)
+          expect(PactBroker::Webhooks::Service).to receive(:update_triggered_webhook_status)
+            .with(triggered_webhook, TriggeredWebhook::STATUS_RETRYING)
           subject
         end
       end
 
-      context "when an error occurs for the last time" do
-        before do
-          allow(PactBroker::Webhooks::Service).to receive(:execute_triggered_webhook_now).and_raise("an error")
-        end
+      context "when the job is not successful for the last time" do
+        let(:success) { false }
 
         subject { Job.new.perform(triggered_webhook: triggered_webhook, error_count: 6) }
+
+        it "executes the job with an log message indicating that the webhook has failed" do
+          expect(PactBroker::Webhooks::Service).to receive(:execute_triggered_webhook_now)
+            .with(triggered_webhook, {
+              failure_log_message: "Webhook execution failed after 7 attempts",
+              success_log_message: "Successfully executed webhook"
+          })
+          subject
+        end
 
         it "does not reschedule the job" do
           expect(Job).to_not receive(:perform_in)

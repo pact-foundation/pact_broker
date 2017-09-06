@@ -14,6 +14,7 @@ module PactBroker
       let(:body) { 'body' }
       let(:logs) { StringIO.new }
       let(:execution_logger) { Logger.new(logs) }
+      let(:options) { {failure_log_message: 'oops'}}
 
       subject do
         WebhookRequest.new(
@@ -24,6 +25,8 @@ module PactBroker
           password: password,
           body: body)
       end
+
+      let(:logs) { subject.execute(options).logs }
 
       describe "description" do
         it "returns a brief description of the HTTP request" do
@@ -54,14 +57,14 @@ module PactBroker
         end
 
         it "executes the configured request" do
-          subject.execute
+          subject.execute(options)
           expect(http_request).to have_been_made
         end
 
         it "logs the request" do
           allow(PactBroker.logger).to receive(:info)
           expect(PactBroker.logger).to receive(:info).with(/POST.*example.*text.*body/)
-          subject.execute
+          subject.execute(options)
         end
 
         it "logs the response" do
@@ -69,12 +72,10 @@ module PactBroker
           allow(PactBroker.logger).to receive(:debug)
           expect(PactBroker.logger).to receive(:info).with(/response.*302/)
           expect(PactBroker.logger).to receive(:debug).with(/respbod/)
-          subject.execute
+          subject.execute(options)
         end
 
         describe "execution logs" do
-
-          let(:logs) { subject.execute.logs }
 
           it "logs the request method and path" do
             expect(logs).to include "POST http://example.org/hook"
@@ -104,6 +105,20 @@ module PactBroker
             expect(logs).to include "respbod"
           end
 
+          context "when the response code is a success" do
+            it "does not log the failure_log_message" do
+              allow_any_instance_of(WebhookExecutionResult).to receive(:success?).and_return(true)
+              expect(logs).to_not include "oops"
+            end
+          end
+
+          context "when the response code is not successful" do
+            it "logs the failure_log_message" do
+              allow_any_instance_of(WebhookExecutionResult).to receive(:success?).and_return(false)
+              expect(logs).to include "oops"
+            end
+          end
+
           context "with basic auth" do
             let(:username) { 'username' }
             let(:password) { 'password' }
@@ -129,7 +144,7 @@ module PactBroker
           end
 
           it "uses the credentials" do
-            subject.execute
+            subject.execute(options)
             expect(http_request_with_basic_auth).to have_been_made
           end
         end
@@ -145,7 +160,7 @@ module PactBroker
           end
 
           it "uses SSL" do
-            subject.execute
+            subject.execute(options)
             expect(https_request).to have_been_made
           end
         end
@@ -160,7 +175,7 @@ module PactBroker
           end
 
           it "converts the body to JSON before submitting the request" do
-            subject.execute
+            subject.execute(options)
             expect(http_request).to have_been_made
           end
         end
@@ -175,18 +190,18 @@ module PactBroker
           end
 
           it "executes the request without a body" do
-            subject.execute
+            subject.execute(options)
             expect(http_request).to have_been_made
           end
         end
 
         context "when the request is successful" do
           it "returns a WebhookExecutionResult with success=true" do
-            expect(subject.execute.success?).to be true
+            expect(subject.execute(options).success?).to be true
           end
 
           it "sets the response on the result" do
-            expect(subject.execute.response).to be_instance_of(Net::HTTPFound)
+            expect(subject.execute(options).response).to be_instance_of(Net::HTTPFound)
           end
         end
 
@@ -199,11 +214,11 @@ module PactBroker
           end
 
           it "returns a WebhookExecutionResult with success=false" do
-            expect(subject.execute.success?).to be false
+            expect(subject.execute(options).success?).to be false
           end
 
           it "sets the response on the result" do
-            expect(subject.execute.response).to be_instance_of(Net::HTTPInternalServerError)
+            expect(subject.execute(options).response).to be_instance_of(Net::HTTPInternalServerError)
           end
         end
 
@@ -218,22 +233,22 @@ module PactBroker
           it "logs the error" do
             allow(PactBroker.logger).to receive(:error)
             expect(PactBroker.logger).to receive(:error).with(/Error.*WebhookTestError.*blah/)
-            subject.execute
+            subject.execute(options)
           end
 
           it "returns a WebhookExecutionResult with success=false" do
-            expect(subject.execute.success?).to be false
+            expect(subject.execute(options).success?).to be false
           end
 
           it "returns a WebhookExecutionResult with an error" do
-            expect(subject.execute.error).to be_instance_of WebhookTestError
+            expect(subject.execute(options).error).to be_instance_of WebhookTestError
+          end
+
+          it "logs the failure_log_message" do
+            expect(logs).to include "oops"
           end
         end
-
       end
-
     end
-
   end
-
 end

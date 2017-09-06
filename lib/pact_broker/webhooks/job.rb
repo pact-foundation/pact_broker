@@ -14,7 +14,7 @@ module PactBroker
         @triggered_webhook = data[:triggered_webhook]
         @error_count = data[:error_count] || 0
         begin
-          webhook_execution_result = PactBroker::Webhooks::Service.execute_triggered_webhook_now triggered_webhook
+          webhook_execution_result = PactBroker::Webhooks::Service.execute_triggered_webhook_now triggered_webhook, execution_options
           if webhook_execution_result.success?
             handle_success
           else
@@ -28,6 +28,21 @@ module PactBroker
       private
 
       attr_reader :triggered_webhook, :error_count
+
+      def execution_options
+        {
+          success_log_message: "Successfully executed webhook",
+          failure_log_message: failure_log_message
+        }
+      end
+
+      def failure_log_message
+        if reschedule_job?
+          "Retrying webhook in #{backoff_time} seconds"
+        else
+          "Webhook execution failed after #{retry_schedule.size + 1} attempts"
+        end
+      end
 
       def handle_error e
         log_error e
@@ -43,7 +58,7 @@ module PactBroker
           reschedule_job
           update_triggered_webhook_status TriggeredWebhook::STATUS_RETRYING
         else
-          logger.error "Failed to execute webhook #{triggered_webhook.webhook_uuid} after #{retry_schedule.size} times."
+          logger.error "Failed to execute webhook #{triggered_webhook.webhook_uuid} after #{retry_schedule.size + 1} attempts."
           update_triggered_webhook_status TriggeredWebhook::STATUS_FAILURE
         end
       end
@@ -53,7 +68,7 @@ module PactBroker
       end
 
       def reschedule_job
-        logger.debug "Re-enqeuing job for webhook #{triggered_webhook.webhook_uuid} to run in #{retry_schedule[error_count]} seconds"
+        logger.debug "Re-enqeuing job for webhook #{triggered_webhook.webhook_uuid} to run in #{backoff_time} seconds"
         Job.perform_in(backoff_time, @data.merge(error_count: error_count+1))
       end
 

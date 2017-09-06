@@ -28,8 +28,8 @@ module PactBroker
         webhook.to_domain.request_description
       end
 
-      def execute
-        webhook.to_domain.execute
+      def execute options
+        webhook.to_domain.execute options
       end
 
       def consumer_name

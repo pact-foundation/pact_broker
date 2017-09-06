@@ -27,7 +27,6 @@ describe "Execute a webhook" do
     end
 
     it "returns a 200 response" do
-      puts subject.body
       expect(subject.status).to be 200
     end
 

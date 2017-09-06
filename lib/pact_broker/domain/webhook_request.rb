@@ -47,58 +47,80 @@ module PactBroker
         password.nil? ? nil : "**********"
       end
 
-      def execute
-
+      def execute options = {}
         logs = StringIO.new
         execution_logger = Logger.new(logs)
-
         begin
-          req = http_request
-          execution_logger.info "HTTP/1.1 #{method.upcase} #{url_with_credentials}"
-
-          headers.each_pair do | name, value |
-            execution_logger.info Webhooks::RedactLogs.call("#{name}: #{value}")
-            req[name] = value
-          end
-
-          req.basic_auth(username, password) if username
-
-          unless body.nil?
-            if String === body
-              req.body = body
-            else
-              req.body = body.to_json
-            end
-          end
-
-          execution_logger.info req.body
-
-          logger.info "Making webhook #{uuid} request #{to_s}"
-
-          response = Net::HTTP.start(uri.hostname, uri.port,
-            :use_ssl => uri.scheme == 'https') do |http|
-            http.request req
-          end
-
-          execution_logger.info(" ")
-          logger.info "Received response for webhook #{uuid} status=#{response.code}"
-          execution_logger.info "HTTP/#{response.http_version} #{response.code} #{response.message}"
-          response.each_header do | header |
-            execution_logger.info "#{header.split("-").collect(&:capitalize).join('-')}: #{response[header]}"
-          end
-          logger.debug "body=#{response.body}"
-          execution_logger.info response.body
-          WebhookExecutionResult.new(response, logs.string)
-
+          execute_and_build_result(options, logs, execution_logger)
         rescue StandardError => e
-          logger.error "Error executing webhook #{uuid} #{e.class.name} - #{e.message}"
-          logger.error e.backtrace.join("\n")
-          execution_logger.error "Error executing webhook #{uuid} #{e.class.name} - #{e.message}"
-          WebhookExecutionResult.new(nil, logs.string, e)
+          handle_error_and_build_result(e, options, logs, execution_logger)
         end
       end
 
       private
+
+      def execute_and_build_result options, logs, execution_logger
+        req = build_request(execution_logger)
+        response = do_request(req)
+        log_response(response, execution_logger)
+        result = WebhookExecutionResult.new(response, logs.string)
+        log_completion_message(options, execution_logger, result.success?)
+        result
+      end
+
+      def handle_error_and_build_result e, options, logs, execution_logger
+        logger.error "Error executing webhook #{uuid} #{e.class.name} - #{e.message} #{e.backtrace.join("\n")}"
+        execution_logger.error "Error executing webhook #{uuid} #{e.class.name} - #{e.message}"
+        log_completion_message(options, execution_logger, false)
+        WebhookExecutionResult.new(nil, logs.string, e)
+      end
+
+      def build_request execution_logger
+        req = http_request
+        execution_logger.info "HTTP/1.1 #{method.upcase} #{url_with_credentials}"
+
+        headers.each_pair do | name, value |
+          execution_logger.info Webhooks::RedactLogs.call("#{name}: #{value}")
+          req[name] = value
+        end
+
+        req.basic_auth(username, password) if username
+
+        unless body.nil?
+          if String === body
+            req.body = body
+          else
+            req.body = body.to_json
+          end
+        end
+
+        execution_logger.info req.body
+        req
+      end
+
+      def do_request req
+        logger.info "Making webhook #{uuid} request #{to_s}"
+        Net::HTTP.start(uri.hostname, uri.port,
+          :use_ssl => uri.scheme == 'https') do |http|
+          http.request req
+        end
+      end
+
+      def log_response response, execution_logger
+        execution_logger.info(" ")
+        logger.info "Received response for webhook #{uuid} status=#{response.code}"
+        execution_logger.info "HTTP/#{response.http_version} #{response.code} #{response.message}"
+        response.each_header do | header |
+          execution_logger.info "#{header.split("-").collect(&:capitalize).join('-')}: #{response[header]}"
+        end
+        logger.debug "body=#{response.body}"
+        execution_logger.info response.body
+      end
+
+      def log_completion_message options, execution_logger, success
+        execution_logger.info(options[:success_log_message]) if options[:success_log_message] && success
+        execution_logger.info(options[:failure_log_message]) if options[:failure_log_message] && !success
+      end
 
       def to_s
         "#{method.upcase} #{url}, username=#{username}, password=#{display_password}, headers=#{headers}, body=#{body}"
