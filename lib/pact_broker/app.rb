@@ -45,6 +45,7 @@ module PactBroker
       PactBroker.logger = configuration.logger
       SuckerPunch.logger = configuration.logger
       configure_database_connection
+      configure_sucker_punch
     end
 
     def migrate_database
@@ -117,6 +118,12 @@ module PactBroker
       builder = ::Rack::Builder.new
       builder.run PactBroker::Diagnostic::App.new
       builder
+    end
+
+    def configure_sucker_punch
+      SuckerPunch.exception_handler = -> (ex, klass, args) do
+        PactBroker.log_error(ex, "Unhandled Suckerpunch error for #{klass}.perform(#{args.inspect})")
+      end
     end
 
     def running_app
