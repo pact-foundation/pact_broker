@@ -79,13 +79,9 @@ module PactBroker
                 expect(last_response.body).to eq json
               end
             end
-
           end
-
         end
-
       end
     end
   end
-
 end
