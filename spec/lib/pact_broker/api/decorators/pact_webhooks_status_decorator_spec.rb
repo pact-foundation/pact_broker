@@ -19,6 +19,8 @@ module PactBroker
             webhook_uuid: '4321',
             request_description: "GET http://foo",
             pact_publication: pact,
+            number_of_attempts_made: 1,
+            number_of_attempts_remaining: 2,
             created_at: DateTime.new(2017),
             updated_at: DateTime.new(2017)
           )
@@ -57,7 +59,12 @@ module PactBroker
         end
 
         it "includes the triggered webhooks properties" do
-          expect(subject[:_embedded][:triggeredWebhooks].first).to include(status: 'success', triggerType: 'pact_publication')
+          expect(subject[:_embedded][:triggeredWebhooks].first).to include(
+            status: 'success',
+            triggerType: 'pact_publication',
+            attemptsMade: 1,
+            attemptsRemaining: 2
+          )
         end
 
         it "includes a link to the consumer" do

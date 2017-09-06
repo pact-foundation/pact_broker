@@ -55,6 +55,22 @@ module PactBroker
       def not_run?
         status == STATUS_NOT_RUN
       end
+
+      def number_of_attempts_made
+        webhook_executions.size
+      end
+
+      def finished?
+        success? || failure?
+      end
+
+      def number_of_attempts_remaining
+        if finished?
+          0
+        else
+          (PactBroker.configuration.webhook_retry_schedule.size + 1) - number_of_attempts_made
+        end
+      end
     end
 
     TriggeredWebhook.plugin :timestamps, update_on_create: true

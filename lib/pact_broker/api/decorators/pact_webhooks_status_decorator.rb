@@ -8,11 +8,11 @@ module PactBroker
 
       class TriggeredWebhookDecorator < BaseDecorator
         property :status
+        property :number_of_attempts_made, as: :attemptsMade
+        property :number_of_attempts_remaining, as: :attemptsRemaining
         property :trigger_type, as: :triggerType
 
         property :created_at, as: :triggeredAt
-
-
 
         link :logs do | context |
           {
