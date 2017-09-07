@@ -1,3 +1,10 @@
+<a name="v2.4.2"></a>
+### v2.4.2 (2017-09-07)
+
+#### Bug Fixes
+
+* add missing require	 ([92bf349](/../../commit/92bf349))
+
 <a name="v2.4.1"></a>
 ### v2.4.1 (2017-09-07)
 
