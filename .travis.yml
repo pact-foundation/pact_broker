@@ -19,7 +19,7 @@ env:
 before_script:
   - cp config/database.travis.yml config/database.yml
   - psql -U postgres -c "CREATE DATABASE pact_broker;"
-  - mysql -u root -e "SET PASSWORD FOR 'travis'@'localhost' = PASSWORD('')"
+  - mysql -u root -e "SET PASSWORD FOR 'root'@'localhost' = PASSWORD('')"
   - mysql -e 'CREATE DATABASE pact_broker;'
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
