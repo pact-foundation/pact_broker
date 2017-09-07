@@ -46,7 +46,9 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'mysql2', '~>0.3.15'
   gem.add_development_dependency 'webmock', '~>2.3'
   gem.add_development_dependency 'rspec', '~>3.0'
-  gem.add_development_dependency 'rspec-its'
-  gem.add_development_dependency 'database_cleaner'
+  gem.add_development_dependency 'rspec-its', '~>1.2'
+  gem.add_development_dependency 'database_cleaner', '~>1.6'
   gem.add_development_dependency 'pg'
+  gem.add_development_dependency 'conventional-changelog', '~>1.3'
+
 end
