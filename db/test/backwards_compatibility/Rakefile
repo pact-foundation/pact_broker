@@ -1,43 +1,52 @@
 require 'rspec/core'
 require 'rspec/core/rake_task'
 
-RSpec::Core::RakeTask.new(:spec) do |task|
-  task.pattern = 'spec/**/*_spec.rb'
+TESTS = [
+  %w{head  9297},
+  %w{2.4.2 9296},
+  %w{2.3.0 9295},
+  %w{2.2.0 9294},
+  %w{2.1.0 9293},
+  %w{2.0.0 9292}
+]
+DATABASE_VERSION = TESTS.first.first
+
+def start_pact_broker code_version, port
+  Bundler.with_clean_env do
+    IO.popen("bundle exec appraisal #{code_version} rackup -p #{port}")
+  end
 end
 
-task 'db:check_backwards_compatibility' do
+def kill_servers
+  Dir.chdir('pids') { Dir.glob("*") }.collect(&:to_i).each do | pid |
+    Process.kill 'KILL', pid
+  end
+end
+
+def clean
   require 'fileutils'
   FileUtils.rm_rf 'pids'
   FileUtils.mkdir 'pids'
   FileUtils.rm_rf 'pact_broker_database.sqlite3'
+end
 
-  all_tests = [
-    %w{head  9297},
-    %w{2.4.2 9296},
-    %w{2.3.0 9295},
-    %w{2.2.0 9294},
-    %w{2.1.0 9293},
-    %w{2.0.0 9292}
-  ]
+RSpec::Core::RakeTask.new(:spec) do |task|
+  task.pattern = 'spec/**/*_spec.rb'
+end
 
+desc 'Ensure code from previous versions is compatible with latest database'
+task 'db:check_backwards_compatibility' do
+  ENV['PACT_BROKER_DATABASE_VERSION'] = DATABASE_VERSION
+  clean
   begin
-    database_version = all_tests.first.first
-    all_tests.each do | test |
-      code_version = test.first
-      port = test.last
+    TESTS.each do | (code_version, port) |
+      start_pact_broker code_version, port
 
-      Bundler.with_clean_env do
-        IO.popen("bundle exec appraisal #{code_version} rackup -p #{port}")
-      end
-
-      ENV['PACT_BROKER_DATABASE_VERSION'] = database_version
       ENV['PACT_BROKER_CODE_VERSION'] = code_version
       ENV['PORT'] = port
       Rake::Task["spec"].execute
     end
   ensure
-    Dir.chdir('pids') { Dir.glob("*") }.collect(&:to_i).each do | pid |
-      Process.kill 'KILL', pid
-    end
+    kill_servers
   end
 end
