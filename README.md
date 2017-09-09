@@ -125,6 +125,10 @@ You can use the [Pact Broker Docker container][docker] or [Terraform on AWS][ter
 * For production usage, use a web application server like [Phusion Passenger](https://www.phusionpassenger.com) or [Nginx](http://nginx.org/) to serve the Pact Broker application.
 * Deploy to your location of choice.
 
+## Upgrading
+
+Please read the [UPGRADING.md](UPGRADING.md) documentation before upgrading your Pact Broker, for information on the supported upgrade paths.
+
 [decouple]: http://techblog.realestate.com.au/enter-the-pact-matrix-or-how-to-decouple-the-release-cycles-of-your-microservices/
 [pact]: https://github.com/realestate-com-au/pact
 [nerf]: https://github.com/pact-foundation/pact_broker/wiki/pact-broker-ci-nerf-gun
