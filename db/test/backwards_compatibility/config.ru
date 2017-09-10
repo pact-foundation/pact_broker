@@ -13,4 +13,6 @@ app = PactBroker::App.new do | config |
   config.auto_migrate_db = true
 end
 
+PactBroker.logger.info "Running PactBroker #{PactBroker::VERSION}"
+
 run app

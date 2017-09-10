@@ -6,9 +6,9 @@ TESTS = [
   %w{2.4.2 9296},
   %w{2.3.0 9295},
   %w{2.2.0 9294},
-  %w{2.1.0 9293},
-  %w{2.0.0 9292}
+  %w{2.1.0 9293}
 ]
+
 DATABASE_VERSION = TESTS.first.first
 
 def start_pact_broker code_version, port
@@ -28,6 +28,7 @@ def clean
   FileUtils.rm_rf 'pids'
   FileUtils.mkdir 'pids'
   FileUtils.rm_rf 'pact_broker_database.sqlite3'
+  FileUtils.rm_rf 'log'
 end
 
 RSpec::Core::RakeTask.new(:spec) do |task|
