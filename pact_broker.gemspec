@@ -27,7 +27,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'reform', '~> 2.2'
   gem.add_runtime_dependency 'dry-validation', '~> 0.10.5'
   gem.add_runtime_dependency 'sequel', '~> 4.23'
-  gem.add_runtime_dependency 'webmachine', '1.4.0'
+  gem.add_runtime_dependency 'webmachine', '1.5.0'
   gem.add_runtime_dependency 'semver2', '~> 3.4.2'
   gem.add_runtime_dependency 'rack', '~>2.0'
   gem.add_runtime_dependency 'redcarpet', '>=3.3.2', '~>3.3'
