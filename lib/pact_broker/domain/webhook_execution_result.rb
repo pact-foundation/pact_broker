@@ -11,7 +11,7 @@ module PactBroker
       end
 
       def success?
-        !@response.nil? && @response.code.to_i < 400
+        !@response.nil? && @response.code.to_i < 300
       end
 
       def response
