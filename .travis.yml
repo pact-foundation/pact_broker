@@ -27,5 +27,5 @@ script:
   - bundle exec rake
   - if [ "$DATABASE_ADAPTER" == "postgres" ]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT || true; fi
   - if [ ! -z "$(ruby --version | grep '2.4.')" ]; then (cd db/test/backwards_compatibility && bundle install && bundle exec appraisal install) fi
-  - if [ ! -z "$(ruby --version | grep '2.4.')" ]; then bundle exec rake db:spec; fi)
+  - if [ ! -z "$(ruby --version | grep '2.4.')" ]; then bundle exec rake db:spec; fi
   - bundle exec bundle-audit update && bundle exec bundle-audit
