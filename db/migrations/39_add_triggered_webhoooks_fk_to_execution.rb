@@ -3,7 +3,6 @@ Sequel.migration do
     alter_table(:webhook_executions) do
       add_foreign_key :triggered_webhook_id, :triggered_webhooks
       set_column_allow_null(:webhook_id)
-      set_column_allow_null(:webhook_uuid)
       set_column_allow_null(:pact_publication_id)
       set_column_allow_null(:consumer_id)
       set_column_allow_null(:provider_id)
