@@ -60,7 +60,12 @@ module PactBroker
         end
 
         def webhook_url
-          url = PactBroker::Api::PactBrokerUrls.webhooks_status_url @relationship.latest_pact.consumer, @relationship.latest_pact.provider
+          url = case @relationship.webhook_status
+            when :none
+              PactBroker::Api::PactBrokerUrls.webhooks_for_pact_url @relationship.latest_pact.consumer, @relationship.latest_pact.provider
+            else
+              PactBroker::Api::PactBrokerUrls.webhooks_status_url @relationship.latest_pact.consumer, @relationship.latest_pact.provider
+          end
           "/hal-browser/browser.html##{url}"
         end
 
