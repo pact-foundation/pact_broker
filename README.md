@@ -1,3 +1,8 @@
+This project is a fork of the open source [Pact Broker](https://github.com/pact-foundation/pact_broker).
+See [README_SAAS](./README_SAAS.md) for documentation on the SAAS Pact Broker.
+
+
+
 # Pact Broker
 [![Gem Version](https://badge.fury.io/rb/pact_broker.svg)](http://badge.fury.io/rb/pact_broker)
  [![Build Status](https://travis-ci.org/pact-foundation/pact_broker.svg?branch=master)](https://travis-ci.org/pact-foundation/pact_broker) [![Join the chat at https://gitter.im/pact-foundation/pact_broker](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/pact-foundation/pact_broker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
