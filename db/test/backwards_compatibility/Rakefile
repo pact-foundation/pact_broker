@@ -51,3 +51,5 @@ task 'db:check_backwards_compatibility' do
     kill_servers
   end
 end
+
+task :default => ['db:check_backwards_compatibility']
