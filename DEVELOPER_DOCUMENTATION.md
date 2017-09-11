@@ -2,10 +2,14 @@
 
 ## Domain and database design
 
-### Tables
-* `pact_version_contents` - the JSON content of each UNIQUE pact document is stored in this table. The same content is likely to be published over and over again by the CI builds, so deduplicating the content saves us a lot of disk space. Once created, a row is never modified.
+### Domain
 
-* `pact_revisions` - this table holds references to the:
+Domain classes are found in `lib/pact_broker/domain`. Many of these classes are Sequel models, as the difference between the Sequel model and the functionality required for the domain logic is similar enough to share the class. Some classes separate the domain and database logic, as the concerns are too different. Where there is a separate database model, this will be kept in a module with the pluralized name of the model eg. `PactBroker::Webhooks`. Unfortunately, this sometimes makes it difficult to tell in the calling code whether you have a domain or a database model. I haven't worked out a clean way to handle this yet.
+
+### Tables
+* `pact_versions` - the JSON content of each UNIQUE pact document is stored in this table. The same content is likely to be published over and over again by the CI builds, so deduplicating the content saves us a lot of disk space. Once created, a row is never modified. Uniqueness is just done on string equality - no special pact logic. This means that pacts with randomly generated values or orders (most of pact-jvm pacts!) will get a new version record every time they publish.
+
+* `pact_publications` - this table holds references to the:
 
     * `provider` (in the pacticipants table)
     * `consumer version` (in the versions table),
@@ -35,19 +39,19 @@
 
 ### Views
 
-* `all_pact_revisions` - A denormalised view the one-to-one attributes of a `pact_revision`, including:
+* `all_pact_publications` - A denormalised view the one-to-one attributes of a `pact_publication`, including:
 
     * `provider name` and `provider id`
     * `consumer name` and `consumer id`
     * `consumer version number` and `consumer version order`
     * `revision_number`
 
-* `all_pacts` - This view has the same columns as `all_pact_revisions`, but it only contains the latest (current) revision of the pact for each provider/consumer/version. It maps to what a user would consider the "pact" resource ie. `/pacts/provider/Provider/consumer/Consumer/version/1.2.3`
+* `latest_pact_publications` - This view has the same columns as `all_pact_publications`, but it only contains the latest revision of the pact for each provider/consumer/version. It maps to what a user would consider the "pact" resource ie. `/pacts/provider/Provider/consumer/Consumer/version/1.2.3`. Previous revisions are not currently exposed via the API.
 
- The AllPacts Sequel model in the code is what is used when querying data for displaying in a response, rather than the normalised separate PactRevision and PactVersionContent models.
+ The `AllPactPublications` Sequel model in the code is what is used when querying data for displaying in a response, rather than the normalised separate PactPublication and PactVersion models.
 
-* `latest_pacts` - This view has the same columns as `all_pact_revisions`, but it only contains the latest revision of the pact for the latest consumer version for each consumer/provider pair. It is what a user would consider the "latest pact", and maps to the resource at `/pacts/provider/Provider/consumer/Consumer/latest`
+* `latest_pact_publications` - This view has the same columns as `all_pact_publications`, but it only contains the latest revision of the pact for the latest consumer version for each consumer/provider pair. It is what a user would consider the "latest pact", and maps to the resource at `/pacts/provider/Provider/consumer/Consumer/latest`
 
-* `latest_tagged_pacts` - This view has the same columns as `all_pact_revisions`, plus a `tag_name` column. It is used to return the pact for the latest tagged version of a consumer.
+* `latest_tagged_pact_publications` - This view has the same columns as `all_pact_publications`, plus a `tag_name` column. It is used to return the pact for the latest tagged version of a consumer.
 
 * `latest_verifications` - The most recent verification for each pact version.
