@@ -79,7 +79,7 @@ module PactBroker
     end
 
     def configure_middleware
-      @app_builder.use Rack::Protection, except: [:remote_token, :session_hijacking, :http_origin]
+      @app_builder.use Rack::Protection, except: [:path_traversal, :remote_token, :session_hijacking, :http_origin]
       @app_builder.use Rack::PactBroker::InvalidUriProtection
       @app_builder.use Rack::PactBroker::AddPactBrokerVersionHeader
       @app_builder.use Rack::Static, :urls => ["/stylesheets", "/css", "/fonts", "/js", "/javascripts", "/images"], :root => PactBroker.project_root.join("public")

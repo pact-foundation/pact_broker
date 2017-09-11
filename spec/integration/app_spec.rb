@@ -187,5 +187,15 @@ module PactBroker
         expect(last_response.status).to eq 404
       end
     end
+
+    describe "when a resource identifier contains a slash" do
+      let(:path) { "/pacticipants/Foo/versions/1.2.3/tags/feat%2Fbar" }
+
+      subject { put path, nil, {'CONTENT_TYPE' => 'application/json'}; last_response }
+
+      it "returns a success status" do
+        expect(subject.status).to eq 201
+      end
+    end
   end
 end

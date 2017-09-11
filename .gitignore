@@ -30,3 +30,5 @@ Gemfile.lock
 bethtest/
 bin/
 coverage
+db/test/backwards_compatibility/pids
+db/test/backwards_compatibility/pact_broker_database.sqlite3

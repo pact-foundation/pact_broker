@@ -1,7 +1,19 @@
-Do this to generate your change history
+<a name="v2.4.2"></a>
+### v2.4.2 (2017-09-07)
 
-    $ git log --pretty=format:'  * %h - %s (%an, %ad)'
+#### Bug Fixes
 
+* add missing require	 ([92bf349](/../../commit/92bf349))
+
+<a name="v2.4.1"></a>
+### v2.4.1 (2017-09-07)
+
+#### Bug Fixes
+
+* allow resource identifiers to contain escaped forward slashes	 ([d875079](/../../commit/d875079))
+
+<a name="v2.4.0"></a>
+### v2.4.0 (2017-07-31)
 * 3a03f41 - fix(publish verification result): Fix Location header for newly created resource (Beth Skurrie, Mon Jul 31 10:49:37 2017 +1000)
 * 3b0f390 - feat(pacticipant labels): Add HAL link to pacticipants resource to find pacticipants by label. (Beth Skurrie, Mon Jul 24 08:17:36 2017 +1000)
 * 588d2ad - fix(pacticipant and pacticipants resources): Add correctly capitalised and namespaced properties and relations. Added deprecation warnings to existing incorrect properties and relations. (Beth Skurrie, Mon Jul 24 08:14:52 2017 +1000)

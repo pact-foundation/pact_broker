@@ -8,6 +8,16 @@ namespace :bundler do
 end
 
 namespace :db do
+
+  task :spec do
+    Bundler.with_clean_env do
+      # todo check for ruby version
+      system('cd db/test/backwards_compatibility && bundle exec rake db:check_backwards_compatibility')
+      success = $?.exitstatus == 0
+      exit(1) unless success
+    end
+  end
+
   task :env => ['bundler:setup'] do
     # Require RACK_ENV to be set for tasks that will be called in production
     raise "Please specify RACK_ENV" unless ENV['RACK_ENV']
