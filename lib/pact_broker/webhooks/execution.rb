@@ -1,5 +1,5 @@
 require 'sequel'
-require 'db'
+require 'pact_broker/db'
 require 'pact_broker/repositories/helpers'
 
 
