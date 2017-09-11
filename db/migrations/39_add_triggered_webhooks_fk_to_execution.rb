@@ -8,7 +8,6 @@ Sequel.migration do
       set_column_allow_null(:provider_id)
     end
 
-    from(:webhook_executions).delete
     # Hope old code doesn't insert another webhook in the meantime!
 
     # TODO drop_column(:webhook_executions, :webhook_id)
