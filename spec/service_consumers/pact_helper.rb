@@ -1,6 +1,10 @@
 $: << File.expand_path("../../../", __FILE__)
 require 'pact/provider/rspec'
 require 'db'
+require 'tasks/database'
+require 'pact_broker/db'
+PactBroker::DB.connection = PactBroker::Database.database = DB::PACT_BROKER_DB
+
 require 'spec/support/database_cleaner'
 require 'pact_broker/api'
 
