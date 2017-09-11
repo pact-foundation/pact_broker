@@ -117,7 +117,7 @@ module PactBroker
         "#{base_url}/webhooks/#{webhook.uuid}/execute"
       end
 
-      def webhooks_for_pact_url consumer, provider, base_url
+      def webhooks_for_pact_url consumer, provider, base_url = ''
         "#{base_url}/webhooks/provider/#{url_encode(provider.name)}/consumer/#{url_encode(consumer.name)}"
       end
 

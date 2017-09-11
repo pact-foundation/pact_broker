@@ -53,7 +53,7 @@ module PactBroker
         let!(:http_request) do
           stub_request(:post, "http://example.org/hook").
             with(:headers => {'Content-Type'=>'text/plain'}, :body => 'body').
-            to_return(:status => 302, :body => "respbod", :headers => {'Content-Type' => 'text/foo, blah'})
+            to_return(:status => 200, :body => "respbod", :headers => {'Content-Type' => 'text/foo, blah'})
         end
 
         it "executes the configured request" do
@@ -70,7 +70,7 @@ module PactBroker
         it "logs the response" do
           allow(PactBroker.logger).to receive(:info)
           allow(PactBroker.logger).to receive(:debug)
-          expect(PactBroker.logger).to receive(:info).with(/response.*302/)
+          expect(PactBroker.logger).to receive(:info).with(/response.*200/)
           expect(PactBroker.logger).to receive(:debug).with(/respbod/)
           subject.execute(options)
         end
@@ -94,7 +94,7 @@ module PactBroker
           end
 
           it "logs the response status" do
-            expect(logs).to include "HTTP/1.0 302"
+            expect(logs).to include "HTTP/1.0 200"
           end
 
           it "logs the response headers" do
@@ -140,7 +140,7 @@ module PactBroker
                 basic_auth: [username, password],
                 :headers => {'Content-Type'=>'text/plain'},
                 :body => 'body').
-              to_return(:status => 302, :body => "respbod", :headers => {'Content-Type' => 'text/foo, blah'})
+              to_return(:status => 200, :body => "respbod", :headers => {'Content-Type' => 'text/foo, blah'})
           end
 
           it "uses the credentials" do
@@ -156,7 +156,7 @@ module PactBroker
             # webmock will set the request signature scheme to 'https' _only_ if the use_ssl option is set
             stub_request(:post, "https://example.org/hook").
               with(:headers => {'Content-Type'=>'text/plain'}, :body => 'body').
-              to_return(:status => 302, :body => "respbod", :headers => {'Content-Type' => 'text/foo, blah'})
+              to_return(:status => 200, :body => "respbod", :headers => {'Content-Type' => 'text/foo, blah'})
           end
 
           it "uses SSL" do
@@ -171,7 +171,7 @@ module PactBroker
           let!(:http_request) do
             stub_request(:post, "http://example.org/hook").
               with(:headers => {'Content-Type'=>'text/plain'}, :body => body.to_json).
-              to_return(:status => 302, :body => "respbod", :headers => {'Content-Type' => 'text/foo, blah'})
+              to_return(:status => 200, :body => "respbod", :headers => {'Content-Type' => 'text/foo, blah'})
           end
 
           it "converts the body to JSON before submitting the request" do
@@ -186,7 +186,7 @@ module PactBroker
           let!(:http_request) do
             stub_request(:post, "http://example.org/hook").
               with(:headers => {'Content-Type'=>'text/plain'}, :body => nil).
-              to_return(:status => 302, :body => "respbod", :headers => {'Content-Type' => 'text/foo, blah'})
+              to_return(:status => 200, :body => "respbod", :headers => {'Content-Type' => 'text/foo, blah'})
           end
 
           it "executes the request without a body" do
@@ -201,7 +201,7 @@ module PactBroker
           end
 
           it "sets the response on the result" do
-            expect(subject.execute(options).response).to be_instance_of(Net::HTTPFound)
+            expect(subject.execute(options).response).to be_instance_of(Net::HTTPOK)
           end
         end
 
