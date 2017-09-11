@@ -12,8 +12,8 @@ Sequel.migration do
       String :status, null: false
       DateTime :created_at, null: false
       DateTime :updated_at, null: false
-      add_index [:webhook_id, :trigger_uuid], unique: true, name: 'uq_triggered_webhook_wi'
-      add_index [:pact_publication_id, :webhook_id, :trigger_uuid], unique: true, name: 'uq_triggered_webhook_ppi_wi'
+      index [:webhook_id, :trigger_uuid], unique: true, name: 'uq_triggered_webhook_wi'
+      index [:pact_publication_id, :webhook_id, :trigger_uuid], unique: true, name: 'uq_triggered_webhook_ppi_wi'
     end
   end
 end
