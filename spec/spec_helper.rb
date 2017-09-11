@@ -30,6 +30,10 @@ RSpec.configure do | config |
     mocks.verify_partial_doubles = true
   end
 
+  config.define_derived_metadata do |meta|
+    meta[:aggregate_failures] = true unless meta.key?(:aggregate_failures)
+  end
+
   config.include FixtureHelpers
 
   def app
