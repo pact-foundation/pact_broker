@@ -67,6 +67,7 @@ GEM
     minitest (5.10.3)
     multi_json (1.12.2)
     multi_xml (0.6.0)
+    mysql2 (0.3.21)
     pact (1.11.1)
       json (> 1.8.5)
       pact-mock_service (~> 1.2)
@@ -123,6 +124,7 @@ GEM
       thor (~> 0.18)
     padrino-support (0.12.8.1)
       activesupport (>= 3.1)
+    pg (0.21.0)
     rack (1.5.5)
     rack-protection (1.5.3)
       rack
@@ -194,12 +196,14 @@ PLATFORMS
 DEPENDENCIES
   appraisal
   dry-types (= 0.10)
+  mysql2 (~> 0.3.15)
   pact_broker (= 2.1.0)
+  pg (~> 0.21)
   rack-reverse-proxy (~> 0.12)
   rake (~> 12.0)
   rspec
-  sqlite3
-  thin
+  sqlite3 (~> 1.3)
+  thin (~> 1.3)
 
 BUNDLED WITH
    1.15.4
