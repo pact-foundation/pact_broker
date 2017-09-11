@@ -7,6 +7,7 @@ module PactBroker
     module Decorators
 
       class TriggeredWebhookDecorator < BaseDecorator
+        property :request_description, as: :name
         property :status
         property :number_of_attempts_made, as: :attemptsMade
         property :number_of_attempts_remaining, as: :attemptsRemaining
@@ -59,6 +60,13 @@ module PactBroker
           end
         end
 
+        link :'pb:pact-webhooks' do | context |
+          {
+            title: "Webhooks for the pact between #{context[:consumer_name]} and #{context[:provider_name]}",
+            href: webhooks_for_pact_url(fake_consumer(context), fake_provider(context), context.fetch(:base_url))
+          }
+        end
+
         link :'pb:pact-version' do | context |
           if pact
             {
@@ -84,13 +92,6 @@ module PactBroker
             href: pacticipant_url(context[:base_url], fake_provider(context)),
             title: "Provider",
             name: context[:provider_name]
-          }
-        end
-
-        link :'pb:pact-webhooks' do | context |
-          {
-            title: "Webhooks for the pact between #{context[:consumer_name]} and #{context[:provider_name]}",
-            href: webhooks_for_pact_url(fake_consumer(context), fake_provider(context), context.fetch(:base_url))
           }
         end
 
