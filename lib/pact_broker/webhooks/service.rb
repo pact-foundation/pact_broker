@@ -105,6 +105,10 @@ module PactBroker
       def self.find_latest_triggered_webhooks consumer, provider
         webhook_repository.find_latest_triggered_webhooks consumer, provider
       end
+
+      def self.fail_retrying_triggered_webhooks
+        webhook_repository.fail_retrying_triggered_webhooks
+      end
     end
   end
 end

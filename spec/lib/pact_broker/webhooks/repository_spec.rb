@@ -479,6 +479,25 @@ module PactBroker
           end
         end
       end
+
+      describe "fail_retrying_triggered_webhooks" do
+        before do
+          td.create_pact_with_hierarchy
+            .create_webhook
+            .create_triggered_webhook(status: TriggeredWebhook::STATUS_RETRYING)
+            .create_triggered_webhook(status: TriggeredWebhook::STATUS_SUCCESS)
+            .create_triggered_webhook(status: TriggeredWebhook::STATUS_NOT_RUN)
+            .create_triggered_webhook(status: TriggeredWebhook::STATUS_FAILURE)
+        end
+
+        it "sets the triggered_webhooks with retrying status to failed" do
+          Repository.new.fail_retrying_triggered_webhooks
+          expect(TriggeredWebhook.failed.count).to eq 2
+          expect(TriggeredWebhook.retrying.count).to eq 0
+          expect(TriggeredWebhook.successful.count).to eq 1
+          expect(TriggeredWebhook.not_run.count).to eq 1
+        end
+      end
     end
   end
 end

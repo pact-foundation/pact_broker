@@ -23,7 +23,7 @@ module PactBroker
       @configuration = PactBroker.configuration
       yield configuration
       post_configure
-      migrate_database
+      prepare_database
       prepare_app
     end
 
@@ -48,13 +48,15 @@ module PactBroker
       configure_sucker_punch
     end
 
-    def migrate_database
+    def prepare_database
       if configuration.auto_migrate_db
         logger.info "Migrating database"
         PactBroker::DB.run_migrations configuration.database_connection
       else
         logger.info "Skipping database migrations"
       end
+      require 'pact_broker/webhooks/service'
+      PactBroker::Webhooks::Service.fail_retrying_triggered_webhooks
     end
 
     def configure_database_connection
@@ -135,6 +137,5 @@ module PactBroker
         @app_builder
       end
     end
-
   end
 end

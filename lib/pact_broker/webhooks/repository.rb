@@ -117,6 +117,10 @@ module PactBroker
           .values
           .collect(&:last)
       end
+
+      def fail_retrying_triggered_webhooks
+        TriggeredWebhook.retrying.update(status: TriggeredWebhook::STATUS_FAILURE)
+      end
     end
   end
 end

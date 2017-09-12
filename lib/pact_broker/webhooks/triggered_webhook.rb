@@ -16,6 +16,22 @@ module PactBroker
 
       dataset_module do
         include PactBroker::Repositories::Helpers
+
+        def retrying
+          where(status: STATUS_RETRYING)
+        end
+
+        def successful
+          where(status: STATUS_SUCCESS)
+        end
+
+        def failed
+          where(status: STATUS_FAILURE)
+        end
+
+        def not_run
+          where(status: STATUS_NOT_RUN)
+        end
       end
 
       associate(:one_to_many, :webhook_executions, :class => "PactBroker::Webhooks::Execution", :key => :triggered_webhook_id, :primary_key => :id, :order => :id)
