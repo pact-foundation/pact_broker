@@ -63,6 +63,13 @@ module PactBroker
           }
         end
 
+        link :'pb:all-pact-versions' do | options |
+          {
+            title: "All versions of this pact",
+            href: pact_versions_url(represented.consumer.name, represented.provider.name, options.fetch(:base_url))
+          }
+        end
+
         link :'pb:latest-untagged-pact-version' do | options |
           {
             title: "Pact",

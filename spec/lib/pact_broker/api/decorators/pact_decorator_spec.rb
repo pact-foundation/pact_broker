@@ -85,6 +85,11 @@ module PactBroker
             expect(subject[:_links][:'pb:latest-pact-version'][:href]).to eq "http://example.org/pacts/provider/A%20Provider/consumer/A%20Consumer/latest"
           end
 
+          it "includes a link to all pact versions" do
+            expect(subject[:_links][:'pb:all-pact-versions'][:title]).to eq "All versions of this pact"
+            expect(subject[:_links][:'pb:all-pact-versions'][:href]).to eq "http://example.org/pacts/provider/A%20Provider/consumer/A%20Consumer/versions"
+          end
+
           it "includes a link to the pact version" do
             expect(subject[:_links][:'pb:consumer-version'][:title]).to eq "Consumer version"
             expect(subject[:_links][:'pb:consumer-version'][:name]).to eq "1234"
