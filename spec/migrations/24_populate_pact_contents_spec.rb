@@ -1,16 +1,5 @@
-require 'tasks/database'
-
-describe 'migrate to pact versions (migrate 22-24)', no_db_clean: :true do
-
-  def create table_name, params, id_column_name = :id
-    database[table_name].insert(params);
-    database[table_name].order(id_column_name).last
-  end
-
-  let(:database) { DB.connection_for_env 'test' }
-
+describe 'migrate to pact versions (migrate 22-24)', migration: true do
   before do
-    PactBroker::Database.drop_objects
     PactBroker::Database.migrate(22)
   end
 
@@ -24,17 +13,10 @@ describe 'migrate to pact versions (migrate 22-24)', no_db_clean: :true do
 
   let!(:pact_version_content_orphan) { create(:pact_version_contents, {content: {some: 'json'}.to_json, sha: '4567', created_at: now, updated_at: now}, :sha) }
 
-  let(:do_migration) do
-    PactBroker::Database.migrate(34)
-  end
+  subject { PactBroker::Database.migrate(34) }
 
   it "deletes orphan pact_versions" do
-    do_migration
+    subject
     expect(database[:pact_versions].count).to eq 1
-  end
-
-  after do
-    PactBroker::Database.migrate
-    PactBroker::Database.truncate
   end
 end

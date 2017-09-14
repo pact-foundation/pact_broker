@@ -1,16 +1,5 @@
-require 'tasks/database'
-
-describe 'using pact publications (migrate 31-32)', no_db_clean: :true do
-
-  def create table_name, params, id_column_name = :id
-    database[table_name].insert(params);
-    database[table_name].order(id_column_name).last
-  end
-
-  let(:database) { DB.connection_for_env 'test' }
-
+describe 'using pact publications (migrate 31-32)', migration: true do
   before do
-    PactBroker::Database.drop_objects
     PactBroker::Database.migrate(34)
   end
 
@@ -91,10 +80,5 @@ describe 'using pact publications (migrate 31-32)', no_db_clean: :true do
     it "doesn't have an updated_at column" do
       expect(database[:latest_tagged_pact_publications].order(:id).first).to_not have_key(:updated_at)
     end
-  end
-
-  after do
-    PactBroker::Database.migrate
-    PactBroker::Database.truncate
   end
 end

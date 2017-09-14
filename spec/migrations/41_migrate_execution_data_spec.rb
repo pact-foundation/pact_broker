@@ -1,16 +1,5 @@
-require 'tasks/database'
-
-describe 'creating triggered webhooks from webhook executions (migrate 36-41)', no_db_clean: :true do
-
-  def create table_name, params, id_column_name = :id
-    database[table_name].insert(params);
-    database[table_name].order(id_column_name).last
-  end
-
-  let(:database) { DB.connection_for_env 'test' }
-
+describe 'creating triggered webhooks from webhook executions (migrate 36-41)', migration: true do
   before do
-    PactBroker::Database.drop_objects
     PactBroker::Database.migrate(36)
   end
 
@@ -71,9 +60,7 @@ describe 'creating triggered webhooks from webhook executions (migrate 36-41)', 
     })
   end
 
-  let(:do_migration) do
-    PactBroker::Database.migrate(41)
-  end
+  subject { PactBroker::Database.migrate(41) }
 
   context "when a pact_publication can be found" do
     before do
@@ -84,7 +71,7 @@ describe 'creating triggered webhooks from webhook executions (migrate 36-41)', 
     end
 
     it "creates a triggered webhook for each webhook execution" do
-      do_migration
+      subject
       expect(database[:triggered_webhooks].count).to eq 1
       expect(database[:triggered_webhooks].first[:webhook_id]).to eq webhook[:id]
       expect(database[:triggered_webhooks].first[:webhook_uuid]).to eq '1234'
@@ -98,7 +85,7 @@ describe 'creating triggered webhooks from webhook executions (migrate 36-41)', 
 
     context "migrating backwards" do
       it "deletes the triggered_webhooks again" do
-        do_migration
+        subject
         PactBroker::Database.migrate(40)
         expect(database[:triggered_webhooks].count).to eq 0
       end
@@ -107,13 +94,8 @@ describe 'creating triggered webhooks from webhook executions (migrate 36-41)', 
 
   context "when a pact_publication cannot be found" do
     it "does not insert a triggered webhook" do
-      do_migration
+      subject
       expect(database[:triggered_webhooks].count).to eq 0
     end
-  end
-
-  after do
-    PactBroker::Database.migrate
-    PactBroker::Database.truncate
   end
 end

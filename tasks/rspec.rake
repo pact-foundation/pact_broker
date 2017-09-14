@@ -6,5 +6,5 @@ RSpec::Core::RakeTask.new(:spec) do |task|
 end
 
 RSpec::Core::RakeTask.new('spec:quick') do |task|
-  task.rspec_opts = '--tag ~@no_db_clean'
+  task.rspec_opts = '--tag ~@no_db_clean --tag ~@migration'
 end
