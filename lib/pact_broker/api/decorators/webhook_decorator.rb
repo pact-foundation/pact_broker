@@ -43,9 +43,7 @@ module PactBroker
             title: "Test the execution of the webhook by sending a POST request to this URL",
             href: webhook_execution_url(represented, options[:base_url])
           }
-
         end
-
       end
     end
   end
