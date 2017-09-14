@@ -11,8 +11,7 @@ module PactBroker
         link :self do | context |
           {
             href: context[:resource_url],
-            title: "Pact versions",
-            name: "All versions of the pact between #{context[:consumer_name]} and #{context[:provider_name]}"
+            title: "All versions of the pact between #{context[:consumer_name]} and #{context[:provider_name]}"
           }
         end
 

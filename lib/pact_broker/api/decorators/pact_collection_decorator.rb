@@ -29,8 +29,7 @@ module PactBroker
           represented.collect do | pact |
             {
               :href => latest_pact_url(options[:base_url], pact),
-              :name => "Latest pact between #{pact.consumer.name} and #{pact.provider.name}",
-              :title => "Pact"
+              :title => "Latest pact between #{pact.consumer.name} and #{pact.provider.name}",
             }
           end
         end

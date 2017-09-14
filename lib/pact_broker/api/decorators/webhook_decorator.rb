@@ -44,8 +44,6 @@ module PactBroker
             href: webhooks_url(options[:base_url])
           }
         end
-
-
       end
     end
   end
