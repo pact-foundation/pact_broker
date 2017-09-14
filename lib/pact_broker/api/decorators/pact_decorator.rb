@@ -56,8 +56,7 @@ module PactBroker
 
         link :'pb:latest-pact-version' do | options |
           {
-            title: "Pact",
-            name: "Latest version of this pact",
+            title: "Latest version of this pact",
             href: latest_pact_url(options.fetch(:base_url), represented)
 
           }
@@ -72,16 +71,14 @@ module PactBroker
 
         link :'pb:latest-untagged-pact-version' do | options |
           {
-            title: "Pact",
-            name: "Latest untagged version of this pact",
+            title: "Latest untagged version of this pact",
             href: latest_untagged_pact_url(represented, options.fetch(:base_url))
           }
         end
 
         link :'pb:latest-tagged-pact-version' do | options |
           {
-            title: "Pact",
-            name: "Latest tagged version of this pact",
+            title: "Latest tagged version of this pact",
             href: "#{latest_pact_url(options.fetch(:base_url), represented)}/{tag}",
             templated: true
           }
@@ -89,16 +86,14 @@ module PactBroker
 
         link :'pb:previous-distinct' do | options |
           {
-            title: "Pact",
-            name: "Previous distinct version of this pact",
+            title: "Previous distinct version of this pact",
             href: previous_distinct_pact_version_url(represented, options.fetch(:base_url))
           }
         end
 
         link :'pb:diff-previous-distinct' do | options |
           {
-            title: "Diff",
-            name: "Diff with previous distinct version of this pact",
+            title: "Diff with previous distinct version of this pact",
             href: previous_distinct_diff_url(represented, options.fetch(:base_url))
 
           }
