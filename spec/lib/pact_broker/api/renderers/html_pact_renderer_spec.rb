@@ -21,12 +21,13 @@ module PactBroker
         let(:json_content) { load_fixture('renderer_pact.json') }
         let(:pact) { double('pact', json_content: json_content, consumer_version_number: '1.2.3', consumer: consumer, provider: provider, consumer_version_tag_names: ['prod', 'master'], created_at: created_at)}
         let(:pact_url) { '/pact/url' }
+        let(:options) { { base_url: 'http://base' } }
 
         before do
           allow(PactBroker::Api::PactBrokerUrls).to receive(:pact_url).with('', pact).and_return(pact_url)
         end
 
-        subject { HtmlPactRenderer.call pact }
+        subject { HtmlPactRenderer.call pact, options }
 
         describe ".call" do
           it "renders the pact as HTML" do

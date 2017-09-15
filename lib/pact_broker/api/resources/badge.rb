@@ -17,11 +17,11 @@ module PactBroker
         end
 
         def resource_exists?
-          PactBroker.configuration.enable_badge_resources
+          true
         end
 
         def is_authorized?(authorization_header)
-          true
+          PactBroker.configuration.enable_badge_resources
         end
 
         def forbidden?

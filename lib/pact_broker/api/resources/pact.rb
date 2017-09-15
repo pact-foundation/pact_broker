@@ -79,7 +79,7 @@ module PactBroker
         end
 
         def to_html
-          PactBroker.configuration.html_pact_renderer.call(pact)
+          PactBroker.configuration.html_pact_renderer.call(pact, { base_url: base_url })
         end
 
         def delete_resource

@@ -52,9 +52,9 @@ module PactBroker
     end
 
     def self.default_html_pact_render
-      lambda { |pact|
+      lambda { |pact, options|
         require 'pact_broker/api/renderers/html_pact_renderer'
-        PactBroker::Api::Renderers::HtmlPactRenderer.call pact
+        PactBroker::Api::Renderers::HtmlPactRenderer.call pact, options
       }
     end
 

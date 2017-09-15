@@ -10,10 +10,11 @@ module PactBroker
       describe ".html_pact_renderer" do
 
         let(:pact) { double('pact') }
+        let(:options) { double('options') }
 
         it "calls the inbuilt HtmlPactRenderer" do
-          expect(PactBroker::Api::Renderers::HtmlPactRenderer).to receive(:call).with(pact)
-          PactBroker.configuration.html_pact_renderer.call pact
+          expect(PactBroker::Api::Renderers::HtmlPactRenderer).to receive(:call).with(pact, options)
+          PactBroker.configuration.html_pact_renderer.call pact, options
         end
 
       end

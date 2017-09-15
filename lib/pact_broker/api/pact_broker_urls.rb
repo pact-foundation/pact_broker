@@ -121,6 +121,10 @@ module PactBroker
         "#{base_url}/webhooks/provider/#{url_encode(provider.name)}/consumer/#{url_encode(consumer.name)}"
       end
 
+      def badge_url_for_latest_pact pact, base_url = ''
+        "#{latest_pact_url(base_url, pact)}/badge.svg"
+      end
+
       def hal_browser_url target_url
         "/hal-browser/browser.html#" + target_url
       end
