@@ -11,14 +11,16 @@ module PactBroker
 
   class Configuration
 
-    SAVABLE_SETTING_NAMES = [:order_versions_by_date, :use_case_sensitive_resource_names, :enable_badge_resources, :shields_io_base_url]
+    SAVABLE_SETTING_NAMES = [:order_versions_by_date, :use_case_sensitive_resource_names, :enable_public_badge_access, :shields_io_base_url]
 
     attr_accessor :log_dir, :database_connection, :auto_migrate_db, :use_hal_browser, :html_pact_renderer
     attr_accessor :validate_database_connection_config, :enable_diagnostic_endpoints, :version_parser
     attr_accessor :use_case_sensitive_resource_names, :order_versions_by_date
     attr_accessor :semver_formats
-    attr_accessor :enable_badge_resources, :shields_io_base_url
+    attr_accessor :enable_public_badge_access, :shields_io_base_url
     attr_writer :logger
+
+    alias_method :enable_badge_resources=, :enable_public_badge_access=
 
     def initialize
       @before_resource_hook = ->(resource){}
@@ -39,7 +41,7 @@ module PactBroker
       config.use_hal_browser = true
       config.validate_database_connection_config = true
       config.enable_diagnostic_endpoints = true
-      config.enable_badge_resources = false # For security
+      config.enable_public_badge_access = false # For security
       config.shields_io_base_url = "https://img.shields.io".freeze
       config.use_case_sensitive_resource_names = true
       config.html_pact_renderer = default_html_pact_render
@@ -104,6 +106,11 @@ module PactBroker
       else
         @after_resource_hook
       end
+    end
+
+    def enable_badge_resources= enable_badge_resources
+      puts "Pact Broker configuration property `enable_badge_resources` is deprecated. Please use `enable_public_badge_access`"
+      enable_public_badge_access= enable_badge_resources
     end
 
     def save_to_database

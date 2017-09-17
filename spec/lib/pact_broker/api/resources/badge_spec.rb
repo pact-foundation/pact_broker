@@ -8,32 +8,49 @@ module PactBroker
         let(:path) { "/pacts/provider/provider/consumer/consumer/latest/badge" }
         let(:params) { {} }
 
+        before do
+          allow(PactBroker::Pacts::Service).to receive(:find_latest_pact).and_return(pact)
+          allow(PactBroker::Verifications::Service).to receive(:find_latest_verification_for).and_return(verification)
+          allow(PactBroker::Badges::Service).to receive(:pact_verification_badge).and_return("badge")
+          allow(PactBroker::Verifications::Status).to receive(:new).and_return(verification_status)
+        end
+
+        let(:pact) { instance_double("PactBroker::Domain::Pact", consumer: consumer, provider: provider) }
+        let(:consumer) { double('consumer') }
+        let(:provider) { double('provider') }
+        let(:verification) { double("verification") }
+        let(:verification_status) { instance_double("PactBroker::Verifications::Status", to_sym: :verified) }
+
+
         subject { get path, params, {'HTTP_ACCEPT' => 'image/svg+xml'}; last_response }
 
-        context "when enable_badge_resources is false" do
+        context "when enable_public_badge_access is false and the request is not authenticated" do
           before do
-            PactBroker.configuration.enable_badge_resources = false
+            PactBroker.configuration.enable_public_badge_access = false
+            allow_any_instance_of(Badge).to receive(:authenticated?).and_return(false)
           end
 
-          it "returns a 404" do
-            expect(subject.status).to eq 404
+          it "returns a 401" do
+            expect(subject.status).to eq 401
           end
         end
 
-        context "when enable_badge_resources is true" do
+        context "when enable_public_badge_access is false but the request is authenticated" do
           before do
-            PactBroker.configuration.enable_badge_resources = true
-            allow(PactBroker::Pacts::Service).to receive(:find_latest_pact).and_return(pact)
-            allow(PactBroker::Verifications::Service).to receive(:find_latest_verification_for).and_return(verification)
-            allow(PactBroker::Badges::Service).to receive(:pact_verification_badge).and_return("badge")
-            allow(PactBroker::Verifications::Status).to receive(:new).and_return(verification_status)
+            PactBroker.configuration.enable_public_badge_access = false
+            allow_any_instance_of(Badge).to receive(:authenticated?).and_return(true)
           end
 
-          let(:pact) { instance_double("PactBroker::Domain::Pact", consumer: consumer, provider: provider) }
-          let(:consumer) { double('consumer') }
-          let(:provider) { double('provider') }
-          let(:verification) { double("verification") }
-          let(:verification_status) { instance_double("PactBroker::Verifications::Status", to_sym: :verified) }
+          it "returns a 200" do
+            expect(subject.status).to eq 200
+          end
+        end
+
+        context "when enable_public_badge_access is true" do
+
+          before do
+            PactBroker.configuration.enable_public_badge_access = true
+          end
 
           it "retrieves the latest pact" do
             expect(PactBroker::Pacts::Service).to receive(:find_latest_pact)

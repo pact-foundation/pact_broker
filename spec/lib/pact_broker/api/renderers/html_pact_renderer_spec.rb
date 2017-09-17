@@ -9,7 +9,7 @@ module PactBroker
         before do
           ENV['BACKUP_TZ'] = ENV['TZ']
           ENV['TZ'] = "Australia/Melbourne"
-          PactBroker.configuration.enable_badge_resources = true
+          PactBroker.configuration.enable_public_badge_access = true
         end
 
         after do

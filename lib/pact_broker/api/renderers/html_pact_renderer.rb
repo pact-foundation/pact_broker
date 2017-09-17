@@ -70,7 +70,7 @@ module PactBroker
         end
 
         def badge_list_items
-          if PactBroker.configuration.enable_badge_resources
+          if PactBroker.configuration.enable_public_badge_access
             "<li class='badge'>
               <img src='#{badge_url}'/>
             </li>

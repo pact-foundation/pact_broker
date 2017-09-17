@@ -21,7 +21,7 @@ module PactBroker
         end
 
         def is_authorized?(authorization_header)
-          PactBroker.configuration.enable_badge_resources
+          super || PactBroker.configuration.enable_public_badge_access
         end
 
         def forbidden?
