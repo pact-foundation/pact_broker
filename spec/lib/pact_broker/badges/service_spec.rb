@@ -20,10 +20,20 @@ module PactBroker
           stub_request(:get, expected_url).to_return(:status => response_status, :body => "svg")
         end
 
-        let(:subject) { PactBroker::Badges::Service.pact_verification_badge pact, label, initials, verification_status }
+        subject { PactBroker::Badges::Service.pact_verification_badge pact, label, initials, verification_status }
+
+        before do
+          Service.clear_cache
+        end
 
         it "returns the svg file" do
            expect(subject).to eq "svg"
+        end
+
+        it "caches the response" do
+          PactBroker::Badges::Service.pact_verification_badge pact, label, initials, verification_status
+          PactBroker::Badges::Service.pact_verification_badge pact, label, initials, verification_status
+          expect(http_request).to have_been_made.once
         end
 
         context "when the label is not specified" do
@@ -220,6 +230,10 @@ module PactBroker
 
           it "returns a static image" do
             expect(subject).to include ">pact</"
+          end
+
+          it "does not cache the response" do
+            expect(Service::CACHE.size).to eq 0
           end
         end
 

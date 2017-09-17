@@ -17,11 +17,11 @@ module PactBroker
         end
 
         def resource_exists?
-          PactBroker.configuration.enable_badge_resources
+          true
         end
 
         def is_authorized?(authorization_header)
-          true
+          super || PactBroker.configuration.enable_public_badge_access
         end
 
         def forbidden?
@@ -31,7 +31,7 @@ module PactBroker
         private
 
         def to_svg
-          badges_service.pact_verification_badge pact, label, initials, verification_status
+          badge_service.pact_verification_badge pact, label, initials, verification_status
         end
 
         def pact

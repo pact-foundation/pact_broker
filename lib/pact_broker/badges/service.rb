@@ -12,6 +12,7 @@ module PactBroker
       include PactBroker::Logging
 
       SPACE_DASH_UNDERSCORE = /[\s_\-]/
+      CACHE = {}
 
       def pact_verification_badge pact, label, initials, verification_status
         return static_svg(pact, verification_status) unless pact
@@ -21,6 +22,10 @@ module PactBroker
         color = badge_color verification_status
 
         dynamic_svg(title, status, color) || static_svg(pact, verification_status)
+      end
+
+      def clear_cache
+        CACHE.clear
       end
 
       private
@@ -79,7 +84,7 @@ module PactBroker
           response = do_request(uri)
           response.code == '200' ? response.body : nil
         rescue StandardError => e
-          log_error e, "Error retrieving badge from #{uri}"
+          logger.error "Error retrieving badge from #{uri} due to #{e.class} - #{e.message}"
           nil
         end
       end
@@ -95,11 +100,27 @@ module PactBroker
       end
 
       def do_request(uri)
-        request = Net::HTTP::Get.new(uri)
-        Net::HTTP.start(uri.hostname, uri.port,
-          use_ssl: uri.scheme == 'https', read_timeout: 1000) do |http|
-          http.request request
+        with_cache uri do
+          request = Net::HTTP::Get.new(uri)
+          Net::HTTP.start(uri.hostname, uri.port,
+              use_ssl: uri.scheme == 'https',
+              read_timeout: 3,
+              open_timeout: 1,
+              ssl_timeout: 1,
+              continue_timeout: 1) do |http|
+            http.request request
+          end
         end
+      end
+
+      def with_cache uri
+        if !(response = CACHE[uri])
+          response = yield
+          if response.code == '200'
+            CACHE[uri] = response
+          end
+        end
+        response
       end
 
       def static_svg pact, verification_status

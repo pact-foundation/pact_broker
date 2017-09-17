@@ -63,7 +63,8 @@
         <% if ($.isArray(obj)) { %>
           <% _.each(obj, function(link, i) { %>
             <tr>
-              <td><strong><%= HAL.truncateIfUrl(rel) %></strong></td>
+              <% tdStyle = i > 0 ? "border-top:none" : "" %>
+              <td style="<%= tdStyle %>"><strong><%= i === 0 ? HAL.truncateIfUrl(rel) : '' %></strong></td>
               <td><%= link.title || '' %></td>
               <td><%= link.name ? 'name: ' + link.name : 'index: ' + i %></a></td>
               <td>

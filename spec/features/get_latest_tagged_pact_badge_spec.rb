@@ -3,7 +3,7 @@ require 'webmock/rspec'
 describe "get latest tagged pact badge" do
 
   before do
-    PactBroker.configuration.enable_badge_resources = true
+    PactBroker.configuration.enable_public_badge_access = true
     PactBroker.configuration.shields_io_base_url = nil
     TestDataBuilder.new
       .create_consumer('consumer')
