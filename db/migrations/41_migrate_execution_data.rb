@@ -10,22 +10,26 @@ Sequel.migration do
         Sequel.lit("created_at <= ?", execution[:created_at])
       ).reverse_order(:id).limit(1).single_record
 
-      if pact_publication
-        webhook_uuid = from(:webhooks).where(id: execution[:webhook_id]).single_record[:uuid]
-        status = execution[:success] ? 'success' : 'failure'
+      if pact_publication && execution[:webhook_id]
+        webhook = from(:webhooks).where(id: execution[:webhook_id]).single_record
 
-        from(:triggered_webhooks).insert(
-          trigger_uuid: SecureRandom.urlsafe_base64,
-          trigger_type: 'pact_publication',
-          pact_publication_id: pact_publication[:id],
-          webhook_id: execution[:webhook_id],
-          webhook_uuid: webhook_uuid,
-          consumer_id: execution[:consumer_id],
-          provider_id: execution[:provider_id],
-          created_at: execution[:created_at],
-          updated_at: execution[:created_at],
-          status: status
-        )
+        if webhook
+          webhook_uuid = webhook[:uuid]
+          status = execution[:success] ? 'success' : 'failure'
+
+          from(:triggered_webhooks).insert(
+            trigger_uuid: SecureRandom.urlsafe_base64,
+            trigger_type: 'pact_publication',
+            pact_publication_id: pact_publication[:id],
+            webhook_id: execution[:webhook_id],
+            webhook_uuid: webhook_uuid,
+            consumer_id: execution[:consumer_id],
+            provider_id: execution[:provider_id],
+            created_at: execution[:created_at],
+            updated_at: execution[:created_at],
+            status: status
+          )
+        end
       end
     end
   end
