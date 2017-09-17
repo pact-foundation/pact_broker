@@ -23,8 +23,8 @@ RSpec.configure do | config |
 
   config.before :each do
     PactBroker.reset_configuration
-    require 'pact_broker/badges/cached_service'
-    PactBroker::Badges::CachedService.clear_cache
+    require 'pact_broker/badges/service'
+    PactBroker::Badges::Service.clear_cache
   end
 
   config.include Rack::Test::Methods

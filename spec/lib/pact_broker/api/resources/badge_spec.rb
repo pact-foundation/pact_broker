@@ -1,5 +1,5 @@
 require 'pact_broker/api/resources/badge'
-require 'pact_broker/badges/cached_service'
+require 'pact_broker/badges/service'
 
 module PactBroker
   module Api
@@ -11,7 +11,7 @@ module PactBroker
         before do
           allow(PactBroker::Pacts::Service).to receive(:find_latest_pact).and_return(pact)
           allow(PactBroker::Verifications::Service).to receive(:find_latest_verification_for).and_return(verification)
-          allow(PactBroker::Badges::CachedService).to receive(:pact_verification_badge).and_return("badge")
+          allow(PactBroker::Badges::Service).to receive(:pact_verification_badge).and_return("badge")
           allow(PactBroker::Verifications::Status).to receive(:new).and_return(verification_status)
         end
 
@@ -68,7 +68,7 @@ module PactBroker
           end
 
           it "creates a badge" do
-            expect(PactBroker::Badges::CachedService).to receive(:pact_verification_badge).with(pact, nil, false, :verified)
+            expect(PactBroker::Badges::Service).to receive(:pact_verification_badge).with(pact, nil, false, :verified)
             subject
           end
 
@@ -84,7 +84,7 @@ module PactBroker
             let(:params) { {label: 'consumer'} }
 
             it "creates a badge with the specified label" do
-              expect(PactBroker::Badges::CachedService).to receive(:pact_verification_badge).with(anything, 'consumer', anything, anything)
+              expect(PactBroker::Badges::Service).to receive(:pact_verification_badge).with(anything, 'consumer', anything, anything)
               subject
             end
           end
@@ -93,7 +93,7 @@ module PactBroker
             let(:params) { {initials: 'true'} }
 
             it "creates a badge with initials" do
-              expect(PactBroker::Badges::CachedService).to receive(:pact_verification_badge).with(anything, anything, true, anything)
+              expect(PactBroker::Badges::Service).to receive(:pact_verification_badge).with(anything, anything, true, anything)
               subject
             end
           end
