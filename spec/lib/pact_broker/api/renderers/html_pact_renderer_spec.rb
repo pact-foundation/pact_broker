@@ -60,6 +60,16 @@ module PactBroker
             expect(subject).to include "[![Consumer/Provider Pact Status](http://badge)](http://base)"
           end
 
+          context "when enable_public_badge_access is false" do
+            before do
+              PactBroker.configuration.enable_public_badge_access = false
+            end
+
+            it "renders a message instructing the user to turn public access on" do
+              expect(subject).to include "set `enable_public_badge_access` to true in the configuration"
+            end
+          end
+
           context "when the content is not a valid pact, but is still JSON" do
             before do
               allow(pact).to receive(:content_hash).and_return(content_hash)

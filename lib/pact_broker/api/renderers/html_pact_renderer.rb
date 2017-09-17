@@ -50,7 +50,8 @@ module PactBroker
         def pact_metadata
           "<div class='pact-metadata'>
             <ul>
-              #{badge_list_items}
+              #{badge_list_item}
+              #{badge_markdown_item}
               <li>
                 <span class='name'>#{@pact.consumer.name} version:</span>
                 <span class='value'>#{@pact.consumer_version_number}#{tags}</span>
@@ -69,20 +70,30 @@ module PactBroker
           </div>"
         end
 
-        def badge_list_items
-          if PactBroker.configuration.enable_public_badge_access
+        def badge_list_item
             "<li class='badge'>
               <img src='#{badge_url}'/>
             </li>
-            <li class='badge-markdown' style='display:none'>
-                <textarea rows='3' cols='100'>#{badge_markdown}</textarea>
-            </li>
             "
-          end
+        end
+
+        def badge_markdown_item
+          "<li class='badge-markdown' style='display:none'>
+              <textarea rows='3' cols='100'>#{badge_markdown}</textarea>
+          </li>"
         end
 
         def badge_markdown
-          "[![#{@pact.consumer.name}/#{@pact.provider.name} Pact Status](#{badge_url})](#{badge_target_url})"
+          warning = if badges_protected?
+            "If the broker is protected by authentication, set `enable_public_badge_access` to true in the configuration to enable badges to be embedded in a markdown file.\n"
+          else
+            ""
+          end
+          "#{warning}[![#{@pact.consumer.name}/#{@pact.provider.name} Pact Status](#{badge_url})](#{badge_target_url})"
+        end
+
+        def badges_protected?
+          !PactBroker.configuration.enable_public_badge_access
         end
 
         def base_url
