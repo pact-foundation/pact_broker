@@ -42,9 +42,9 @@ module PactBroker
       Verifications::Service
     end
 
-    def badges_service
-      require 'pact_broker/badges/service'
-      Badges::Service
+    def badge_service
+      require 'pact_broker/badges/cached_service'
+      Badges::CachedService
     end
   end
 end

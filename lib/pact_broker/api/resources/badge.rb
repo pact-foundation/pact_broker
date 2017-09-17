@@ -31,7 +31,7 @@ module PactBroker
         private
 
         def to_svg
-          badges_service.pact_verification_badge pact, label, initials, verification_status
+          badge_service.pact_verification_badge pact, label, initials, verification_status
         end
 
         def pact
