@@ -9,6 +9,7 @@ module PactBroker
         before do
           ENV['BACKUP_TZ'] = ENV['TZ']
           ENV['TZ'] = "Australia/Melbourne"
+          PactBroker.configuration.enable_badge_resources = true
         end
 
         after do
@@ -21,7 +22,12 @@ module PactBroker
         let(:json_content) { load_fixture('renderer_pact.json') }
         let(:pact) { double('pact', json_content: json_content, consumer_version_number: '1.2.3', consumer: consumer, provider: provider, consumer_version_tag_names: ['prod', 'master'], created_at: created_at)}
         let(:pact_url) { '/pact/url' }
-        let(:options) { { base_url: 'http://base' } }
+        let(:options) do
+          {
+            base_url: 'http://base',
+            badge_url: 'http://badge'
+           }
+        end
 
         before do
           allow(PactBroker::Api::PactBrokerUrls).to receive(:pact_url).with('', pact).and_return(pact_url)
@@ -43,6 +49,15 @@ module PactBroker
             expect(subject).to include("Thu 27 Feb 2014, 11:00am +11:00")
             expect(subject).to match /title.*Pact between Consumer and Provider/
             expect(subject).to match /prod, master/
+          end
+
+          it "renders the badge image" do
+            expect(subject).to include "<img src='http://badge'/>"
+          end
+
+          it "renders a text area with the badge markdown" do
+            expect(subject).to include "<textarea"
+            expect(subject).to include "[![Consumer/Provider Pact Status](http://badge)](http://base)"
           end
 
           context "when the content is not a valid pact, but is still JSON" do

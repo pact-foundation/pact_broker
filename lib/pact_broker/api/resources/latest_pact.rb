@@ -27,7 +27,11 @@ module PactBroker
         end
 
         def to_html
-          PactBroker.configuration.html_pact_renderer.call(pact, { base_url: base_url })
+          PactBroker.configuration.html_pact_renderer.call(
+            pact, {
+              base_url: base_url,
+              badge_url: "#{resource_url}/badge.svg"
+          })
         end
 
         def pact

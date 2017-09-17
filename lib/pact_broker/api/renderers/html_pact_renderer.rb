@@ -50,7 +50,7 @@ module PactBroker
         def pact_metadata
           "<div class='pact-metadata'>
             <ul>
-              #{badge_li}
+              #{badge_list_items}
               <li>
                 <span class='name'>#{@pact.consumer.name} version:</span>
                 <span class='value'>#{@pact.consumer_version_number}#{tags}</span>
@@ -69,20 +69,20 @@ module PactBroker
           </div>"
         end
 
-        def badge_li
+        def badge_list_items
           if PactBroker.configuration.enable_badge_resources
-            "<li>
-              <img src='#{badge_url}' class='badge'/>
+            "<li class='badge'>
+              <img src='#{badge_url}'/>
             </li>
             <li class='badge-markdown' style='display:none'>
-                <textarea rows='3' cols='100' >#{badge_markdown}</textarea>
+                <textarea rows='3' cols='100'>#{badge_markdown}</textarea>
             </li>
             "
           end
         end
 
         def badge_markdown
-          "[![#{@pact.consumer.name}/#{@pact.provider.name} Pact Status](#{badge_url})](#{latest_pact_url})"
+          "[![#{@pact.consumer.name}/#{@pact.provider.name} Pact Status](#{badge_url})](#{badge_target_url})"
         end
 
         def base_url
@@ -105,12 +105,12 @@ module PactBroker
           PactBroker::Api::PactBrokerUrls.pact_url '', @pact
         end
 
-        def latest_pact_url
-          PactBroker::Api::PactBrokerUrls.latest_pact_url base_url, @pact
+        def badge_target_url
+          base_url
         end
 
         def badge_url
-          PactBroker::Api::PactBrokerUrls.badge_url_for_latest_pact @pact, base_url
+          @options[:badge_url]
         end
 
         def tags
