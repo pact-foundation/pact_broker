@@ -20,8 +20,6 @@ module PactBroker
     attr_accessor :enable_public_badge_access, :shields_io_base_url
     attr_writer :logger
 
-    alias_method :enable_badge_resources=, :enable_public_badge_access=
-
     def initialize
       @before_resource_hook = ->(resource){}
       @after_resource_hook = ->(resource){}
@@ -110,7 +108,7 @@ module PactBroker
 
     def enable_badge_resources= enable_badge_resources
       puts "Pact Broker configuration property `enable_badge_resources` is deprecated. Please use `enable_public_badge_access`"
-      enable_public_badge_access= enable_badge_resources
+      self.enable_public_badge_access = enable_badge_resources
     end
 
     def save_to_database
