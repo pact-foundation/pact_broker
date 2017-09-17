@@ -16,7 +16,6 @@ module PactBroker
 
         before do
           allow(Service).to receive(:pact_verification_badge).and_return('badge')
-          stub_const('PactBroker::Badges::CachedService::CACHE', {})
         end
 
         subject { CachedService.pact_verification_badge pact, label, initials, verification_status  }

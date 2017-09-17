@@ -17,10 +17,15 @@ module PactBroker
         CACHE[badge_key] ||= PactBroker::Badges::Service.pact_verification_badge(pact, label, initials, verification_status)
       end
 
+      def clear_cache
+        CACHE.clear
+      end
+
       private
 
       def key pact, label, initials, verification_status
-        "#{pact.consumer.name}-#{pact.provider.name}-#{label}-#{initials}-#{verification_status}"
+        pact_name = pact ? "#{pact.consumer.name}-#{pact.provider.name}" : "nil"
+        "#{pact_name}-#{label}-#{initials}-#{verification_status}"
       end
     end
   end
