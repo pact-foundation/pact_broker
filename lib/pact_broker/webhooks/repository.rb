@@ -106,6 +106,7 @@ module PactBroker
 
       def unlink_triggered_webhooks_by_webhook_uuid uuid
         TriggeredWebhook.where(webhook: Webhook.where(uuid: uuid)).update(webhook_id: nil)
+        DeprecatedExecution.where(webhook_id: Webhook.where(uuid: uuid).select(:id)).update(webhook_id: nil)
       end
 
       def find_latest_triggered_webhooks consumer, provider

@@ -31,6 +31,13 @@ Sequel.migration do
           )
         end
       end
+      from(:webhook_executions)
+        .where(id: execution[:id])
+        .update(
+          webhook_id: nil,
+          consumer_id: nil,
+          provider_id: nil,
+          pact_publication_id: nil)
     end
   end
 

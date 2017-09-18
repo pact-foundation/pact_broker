@@ -83,6 +83,14 @@ describe 'creating triggered webhooks from webhook executions (migrate 36-41)', 
       expect(database[:triggered_webhooks].first[:updated_at]).to eq webhook[:created_at]
     end
 
+    it "nils out the unused foreign_keys on the webhook_execution" do
+      subject
+      expect(database[:webhook_executions].first[:webhook_id]).to be_nil
+      expect(database[:webhook_executions].first[:consumer_id]).to be_nil
+      expect(database[:webhook_executions].first[:provider_id]).to be_nil
+      expect(database[:webhook_executions].first[:pact_publication_id]).to be_nil
+    end
+
     context "migrating backwards" do
       it "deletes the triggered_webhooks again" do
         subject
