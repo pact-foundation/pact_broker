@@ -505,6 +505,40 @@ module PactBroker
           expect(TriggeredWebhook.not_run.count).to eq 1
         end
       end
+
+      describe "delete_triggered_webhooks_by_pact_publication_id" do
+        before do
+          td.create_pact_with_hierarchy
+            .create_webhook
+            .create_triggered_webhook
+            .create_webhook_execution
+            .create_pact_with_hierarchy("A Consumer", "1.2.3", "A Provider")
+            .create_webhook
+            .create_triggered_webhook
+            .create_webhook_execution
+            .create_deprecated_webhook_execution
+        end
+
+        subject { Repository.new.delete_triggered_webhooks_by_pact_publication_id td.pact.id }
+
+        it "deletes the triggered webhook" do
+          expect { subject }.to change {
+            TriggeredWebhook.count
+          }.by(-1)
+        end
+
+        it "deletes the webhook_execution" do
+          expect { subject }.to change {
+            Execution.exclude(triggered_webhook_id: nil).count
+          }.by(-1)
+        end
+
+        it "deletes the deprecated webhook_execution" do
+          expect { subject }.to change {
+            Execution.exclude(consumer_id: nil).count
+          }.by(-1)
+        end
+      end
     end
   end
 end

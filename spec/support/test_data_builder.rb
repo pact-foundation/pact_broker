@@ -31,6 +31,7 @@ class TestDataBuilder
   attr_reader :pacticipant
   attr_reader :consumer
   attr_reader :provider
+  attr_reader :consumer_version
   attr_reader :pact
   attr_reader :webhook
   attr_reader :webhook_execution
@@ -190,6 +191,7 @@ class TestDataBuilder
   def create_deprecated_webhook_execution params = {}
     create_webhook_execution params
     Sequel::Model.db[:webhook_executions].where(id: webhook_execution.id).update(
+      triggered_webhook_id: nil,
       consumer_id: consumer.id,
       provider_id: provider.id,
       webhook_id: PactBroker::Webhooks::Webhook.find(uuid: webhook.uuid).id,

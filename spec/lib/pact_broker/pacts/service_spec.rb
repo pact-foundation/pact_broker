@@ -1,10 +1,14 @@
 require 'spec_helper'
 require 'pact_broker/pacts/service'
+require 'pact_broker/pacts/pact_params'
+
 
 module PactBroker
 
   module Pacts
-    module Service
+    describe Service do
+
+      let(:td) { TestDataBuilder.new }
 
       describe "find_distinct_pacts_between" do
         let(:pact_1) { double('pact 1', json_content: 'content 1')}
@@ -59,6 +63,31 @@ module PactBroker
           it "returns false" do
             expect(subject).to be_falsey
           end
+        end
+      end
+
+      describe "delete" do
+        before do
+          td.create_pact_with_hierarchy
+            .create_webhook
+            .create_triggered_webhook
+            .create_deprecated_webhook_execution
+        end
+
+        let(:params) do
+          {
+            consumer_name: td.consumer.name,
+            provider_name: td.provider.name,
+            consumer_version_number: td.consumer_version.number
+          }
+        end
+
+        subject { Service.delete PactParams.new(PactBroker::Pacts::PactParams.new(params)) }
+
+        it "deletes the pact" do
+          expect { subject }.to change {
+            Pacts::PactPublication.where(id: td.pact.id ).count
+          }.by(-1)
         end
       end
     end

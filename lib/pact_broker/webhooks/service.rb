@@ -50,6 +50,10 @@ module PactBroker
         webhook_repository.delete_by_pacticipant pacticipant
       end
 
+      def self.delete_all_webhook_related_objects_by_pact_publication_id pact_publication_id
+        webhook_repository.delete_triggered_webhooks_by_pact_publication_id pact_publication_id
+      end
+
       def self.find_all
         webhook_repository.find_all
       end
