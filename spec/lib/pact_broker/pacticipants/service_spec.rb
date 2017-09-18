@@ -142,7 +142,7 @@ module PactBroker
             .create_pact
             .create_webhook
             .create_triggered_webhook
-            .create_webhook_execution
+            .create_deprecated_webhook_execution
             .create_verification
         end
 

@@ -364,14 +364,7 @@ module PactBroker
             .create_pact
             .create_webhook
             .create_triggered_webhook
-            .create_webhook_execution
-
-          DeprecatedExecution.where(id: td.webhook_execution.id).update(
-            consumer_id: td.consumer.id,
-            provider_id: td.provider.id,
-            pact_publication_id: td.pact.id,
-            webhook_id: Webhook.find(uuid: td.webhook.uuid).id
-          )
+            .create_deprecated_webhook_execution
         end
 
         subject { Repository.new.unlink_triggered_webhooks_by_webhook_uuid td.webhook.uuid }

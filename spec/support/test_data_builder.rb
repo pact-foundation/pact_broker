@@ -187,6 +187,17 @@ class TestDataBuilder
     self
   end
 
+  def create_deprecated_webhook_execution params = {}
+    create_webhook_execution params
+    Sequel::Model.db[:webhook_executions].where(id: webhook_execution.id).update(
+      consumer_id: consumer.id,
+      provider_id: provider.id,
+      webhook_id: PactBroker::Webhooks::Webhook.find(uuid: webhook.uuid).id,
+      pact_publication_id: pact.id
+    )
+    self
+  end
+
   def create_verification parameters = {}
     default_parameters = {success: true, provider_version: '4.5.6', number: 1}
     verification = PactBroker::Domain::Verification.new(default_parameters.merge(parameters))
