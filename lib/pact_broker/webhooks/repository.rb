@@ -109,11 +109,11 @@ module PactBroker
         DeprecatedExecution.where(webhook_id: Webhook.where(uuid: uuid).select(:id)).update(webhook_id: nil)
       end
 
-      def delete_triggered_webhooks_by_pact_publication_id pact_publication_id
-        triggered_webhook_ids = TriggeredWebhook.where(pact_publication_id: pact_publication_id).select_for_subquery(:id)
+      def delete_triggered_webhooks_by_pact_publication_ids pact_publication_ids
+        triggered_webhook_ids = TriggeredWebhook.where(pact_publication_id: pact_publication_ids).select_for_subquery(:id)
         Execution.where(triggered_webhook_id: triggered_webhook_ids).delete
         TriggeredWebhook.where(id: triggered_webhook_ids).delete
-        DeprecatedExecution.where(pact_publication_id: pact_publication_id).delete
+        DeprecatedExecution.where(pact_publication_id: pact_publication_ids).delete
       end
 
       def find_latest_triggered_webhooks consumer, provider

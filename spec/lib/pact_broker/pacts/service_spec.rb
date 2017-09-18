@@ -71,7 +71,9 @@ module PactBroker
           td.create_pact_with_hierarchy
             .create_webhook
             .create_triggered_webhook
+            .create_webhook_execution
             .create_deprecated_webhook_execution
+            .revise_pact
         end
 
         let(:params) do

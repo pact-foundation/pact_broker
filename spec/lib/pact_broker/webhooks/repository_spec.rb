@@ -519,7 +519,7 @@ module PactBroker
             .create_deprecated_webhook_execution
         end
 
-        subject { Repository.new.delete_triggered_webhooks_by_pact_publication_id td.pact.id }
+        subject { Repository.new.delete_triggered_webhooks_by_pact_publication_ids [td.pact.id] }
 
         it "deletes the triggered webhook" do
           expect { subject }.to change {
