@@ -2,12 +2,8 @@ require_relative 'base_decorator'
 require_relative 'version_decorator'
 
 module PactBroker
-
   module Api
-
     module Decorators
-
-
       class VersionsDecorator < BaseDecorator
 
         collection :entries, as: :versions, embedded: true, :extend => PactBroker::Api::Decorators::VersionDecorator
@@ -19,14 +15,14 @@ module PactBroker
           }
         end
 
-        link :pacticipant do | context |
+        link :'pb:pacticipant' do | context |
           {
             href: pacticipant_url(context[:base_url], OpenStruct.new(name: context[:pacticipant_name])),
             title: context[:pacticipant_name]
           }
         end
 
-        links :'versions' do | context |
+        links :'pb:versions' do | context |
           represented.collect do | version |
             {
               :href => version_url(context[:base_url], version),
@@ -35,6 +31,21 @@ module PactBroker
           end
         end
 
+        link :pacticipant do | context |
+          {
+            href: pacticipant_url(context[:base_url], OpenStruct.new(name: context[:pacticipant_name])),
+            title: 'Deprecated - please use pb:pacticipant'
+          }
+        end
+
+        links :'versions' do | context |
+          represented.collect do | version |
+            {
+              :href => version_url(context[:base_url], version),
+              :title => 'Deprecated - please use pb:versions'
+            }
+          end
+        end
       end
     end
   end
