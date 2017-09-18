@@ -101,6 +101,25 @@ module PactBroker
       end
 
       describe "#find_latest_verification_for" do
+        context "when there is a revision" do
+          before do
+            TestDataBuilder.new
+              .create_provider("Provider1")
+              .create_consumer("Consumer1")
+              .create_consumer_version("1.2.3")
+              .create_pact
+              .create_verification(number: 1, provider_version: "2.3.4")
+              .revise_pact
+              .create_verification(number: 1, provider_version: "7.8.9")
+          end
+
+          subject { Repository.new.find_latest_verification_for("Consumer1", "Provider1")}
+
+          it "finds the latest verifications for the given consumer version" do
+            expect(subject.provider_version).to eq "7.8.9"
+          end
+        end
+
         context "when no tag is specified" do
           before do
             TestDataBuilder.new
