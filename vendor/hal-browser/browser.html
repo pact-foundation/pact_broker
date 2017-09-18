@@ -193,7 +193,7 @@ Content-Type: application/json
 
   <script id="embedded-resource-template" type="text/template">
     <div class="accordion-heading">
-      <a class="accordion-toggle" href="#"><%= resource.identifier %><% if (resource.title || resource.name) { %>: <span class="embedded-resource-title"><%- resource.title || resource.name %></span><% } %>
+      <a class="accordion-toggle" href="#"><%= resource.identifier %><% if (resource.name || resource.title) { %>: <span class="embedded-resource-title"><%- resource.name || resource.title %></span><% } %>
       <% if (HAL.isUrl(resource.embed_rel)) { %>
         <span class="dox pull-right" data-href="<%= HAL.buildUrl(resource.embed_rel) %>">
           <i class="icon-book"></i>
