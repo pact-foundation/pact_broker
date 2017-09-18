@@ -32,3 +32,4 @@ bin/
 coverage
 db/test/backwards_compatibility/pids
 db/test/backwards_compatibility/pact_broker_database.sqlite3
+spec/examples.txt
