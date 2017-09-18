@@ -54,7 +54,11 @@ module PactBroker
         end
 
         def latest
-          reverse_order(:consumer_version_order, :revision_number, :number).limit(1)
+          reverse_order(
+            :consumer_version_order,
+            Sequel.qualify(:all_pact_publications, :revision_number),
+            :number
+          ).limit(1)
         end
       end
 
