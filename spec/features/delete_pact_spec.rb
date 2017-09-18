@@ -8,7 +8,11 @@ describe "Deleting a pact" do
 
   context "when the pact exists" do
     before do
-      TestDataBuilder.new.create_pact_with_hierarchy("A Consumer", "1.2.3", "A Provider").and_return(:pact)
+      TestDataBuilder.new
+        .create_pact_with_hierarchy("A Consumer", "1.2.3", "A Provider")
+        .create_webhook
+        .create_triggered_webhook
+        .create_deprecated_webhook_execution
     end
 
     it "deletes the pact" do

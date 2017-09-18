@@ -50,6 +50,10 @@ module PactBroker
         webhook_repository.delete_by_pacticipant pacticipant
       end
 
+      def self.delete_all_webhook_related_objects_by_pact_publication_ids pact_publication_ids
+        webhook_repository.delete_triggered_webhooks_by_pact_publication_ids pact_publication_ids
+      end
+
       def self.find_all
         webhook_repository.find_all
       end
@@ -104,6 +108,10 @@ module PactBroker
 
       def self.find_latest_triggered_webhooks consumer, provider
         webhook_repository.find_latest_triggered_webhooks consumer, provider
+      end
+
+      def self.fail_retrying_triggered_webhooks
+        webhook_repository.fail_retrying_triggered_webhooks
       end
     end
   end

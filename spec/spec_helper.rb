@@ -23,9 +23,12 @@ I18n.config.enforce_available_locales = false
 RSpec.configure do | config |
   config.before :each do
     PactBroker.reset_configuration
+    require 'pact_broker/badges/service'
+    PactBroker::Badges::Service.clear_cache
   end
 
   config.include Rack::Test::Methods
+
   config.mock_with :rspec do |mocks|
     mocks.verify_partial_doubles = true
   end
@@ -35,6 +38,7 @@ RSpec.configure do | config |
   end
 
   config.include FixtureHelpers
+  config.example_status_persistence_file_path = "./spec/examples.txt"
 
   def app
     PactBroker::API

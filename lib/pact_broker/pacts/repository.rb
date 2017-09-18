@@ -112,6 +112,14 @@ module PactBroker
         query.limit(1).collect(&:to_domain_with_content)[0]
       end
 
+      def find_all_revisions consumer_name, consumer_version, provider_name
+        AllPactPublications
+          .consumer(consumer_name)
+          .provider(provider_name)
+          .consumer_version_number(consumer_version)
+          .order(:consumer_version_order, :revision_number).collect(&:to_domain_with_content)
+      end
+
       def find_previous_pact pact
         LatestPactPublicationsByConsumerVersion
           .eager(:tags)

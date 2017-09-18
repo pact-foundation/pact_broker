@@ -1,16 +1,5 @@
-require 'tasks/database'
-
-describe 'using pact publications (migrate 31-32)', no_db_clean: :true do
-
-  def create table_name, params, id_column_name = :id
-    database[table_name].insert(params);
-    database[table_name].order(id_column_name).last
-  end
-
-  let(:database) { DB.connection_for_env 'test' }
-
+describe 'using pact publications (migrate 31-32)', migration: true do
   before do
-    PactBroker::Database.drop_objects
     PactBroker::Database.migrate(33)
   end
 
@@ -30,28 +19,28 @@ describe 'using pact publications (migrate 31-32)', no_db_clean: :true do
   let!(:pact_version_content_2) { create(:pact_versions, {content: {some: 'json'}.to_json, sha: '4567', consumer_id: consumer_2[:id], provider_id: provider_2[:id], created_at: now}) }
   let!(:pact_version_3_revision_1) { create(:pact_publications, {consumer_version_id: consumer_version_3[:id], provider_id: provider_2[:id], pact_version_id: pact_version_content_2[:id], created_at: now, revision_number: 1}) }
 
-  let(:do_migration) do
+  subject do
     PactBroker::Database.migrate(34)
     database.schema(:latest_pact_publication_revision_numbers, reload: true)
   end
 
   describe "all_pact_publications" do
     it "has a row for every revision" do
-      do_migration
+      subject
       expect(database[:all_pact_publications].count).to eq 4
     end
   end
 
   describe "latest_pact_publications_by_consumer_versions" do
     it "has a row for every pact" do
-      do_migration
+      subject
       expect(database[:latest_pact_publications_by_consumer_versions].count).to eq 3
     end
   end
 
   describe "latest_pact_publication_revision_numbers" do
     it "contains the latest revision number for each consumer version" do
-      do_migration
+      subject
       expect(database[:latest_pact_publication_revision_numbers].where(
         provider_id: provider_1[:id], consumer_id: consumer_1[:id],
         consumer_version_order: 1, latest_revision_number: 1
@@ -72,7 +61,7 @@ describe 'using pact publications (migrate 31-32)', no_db_clean: :true do
 
   describe "latest_pact_consumer_version_orders" do
     it "contains the latest consumer version for each consumer/provider pair" do
-      do_migration
+      subject
       expect(database[:latest_pact_consumer_version_orders].count).to eq 2
       expect(database[:latest_pact_consumer_version_orders].where(
         provider_id: provider_1[:id], consumer_id: consumer_1[:id],
@@ -85,14 +74,9 @@ describe 'using pact publications (migrate 31-32)', no_db_clean: :true do
 
   describe "latest_pact_publications" do
     it "only contains the latest revision of the pact for the latest consumer version" do
-      do_migration
+      subject
       expect(database[:latest_pact_publications].count).to eq 2
       expect(database[:latest_pact_publications].where(provider_id: provider_1[:id], consumer_id: consumer_1[:id]).count).to eq 1
     end
-  end
-
-  after do
-    PactBroker::Database.migrate
-    PactBroker::Database.truncate
   end
 end

@@ -31,6 +31,8 @@ module PactBroker
 
       def delete params
         logger.info "Deleting pact version with params #{params}"
+        pacts = pact_repository.find_all_revisions(params[:consumer_name], params[:consumer_version_number], params[:provider_name])
+        webhook_service.delete_all_webhook_related_objects_by_pact_publication_ids(pacts.collect(&:id))
         pact_repository.delete(params)
       end
 

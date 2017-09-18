@@ -8,6 +8,24 @@ module PactBroker
 
   module Webhooks
     describe Service do
+      let(:td) { TestDataBuilder.new }
+
+      describe ".delete_by_uuid" do
+        before do
+          td.create_pact_with_hierarchy
+            .create_webhook
+            .create_triggered_webhook
+            .create_deprecated_webhook_execution
+        end
+
+        subject { Service.delete_by_uuid td.webhook.uuid }
+
+        it "deletes the webhook" do
+          expect { subject }.to change {
+            Webhook.count
+          }.by(-1)
+        end
+      end
 
       describe ".execute_webhooks" do
 
@@ -103,8 +121,6 @@ module PactBroker
       end
 
       describe ".execute_webhooks integration test" do
-        let(:td) { TestDataBuilder.new }
-
         let!(:http_request) do
           stub_request(:get, "http://example.org").
             to_return(:status => 200)

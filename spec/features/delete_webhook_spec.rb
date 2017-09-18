@@ -9,7 +9,8 @@ describe "Delete a webhook" do
       .create_provider
       .create_pact
       .create_webhook
-      .create_webhook_execution
+      .create_triggered_webhook
+      .create_deprecated_webhook_execution
       .and_return(:webhook)
   end
 

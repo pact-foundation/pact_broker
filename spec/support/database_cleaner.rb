@@ -1,6 +1,10 @@
 require 'database_cleaner'
+require 'support/migration_helpers'
 
 RSpec.configure do |config|
+
+  config.include MigrationHelpers, migration: true
+
   config.before(:suite) do
     if defined?(::DB)
       DatabaseCleaner.strategy = :transaction
@@ -12,14 +16,23 @@ RSpec.configure do |config|
     end
   end
 
+  config.before :each, migration: true do
+    PactBroker::Database.drop_objects
+  end
+
+  config.after :each, migration: true do
+    PactBroker::Database.migrate
+    PactBroker::Database.truncate
+  end
+
   config.before(:each) do | example |
-    unless example.metadata[:no_db_clean]
+    unless example.metadata[:no_db_clean] || example.metadata[:migration]
       DatabaseCleaner.start if defined?(::DB)
     end
   end
 
   config.after(:each) do | example |
-    unless example.metadata[:no_db_clean]
+    unless example.metadata[:no_db_clean] || example.metadata[:migration]
       DatabaseCleaner.clean if defined?(::DB)
     end
   end

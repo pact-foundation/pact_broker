@@ -14,3 +14,16 @@ div.pact-metadata span.name {
 pre {
   font-size: 1em
 }
+
+li.badge {
+  cursor: pointer;
+}
+
+li.badge > img {
+  cursor: pointer;
+  height: 20px;
+}
+
+div.badge-markdown {
+  background-color: #f8f8f8
+}

@@ -38,7 +38,6 @@ module PactBroker
             templated: true
           }]
         end
-
       end
     end
   end

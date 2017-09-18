@@ -364,7 +364,7 @@ module PactBroker
             .create_pact
             .create_webhook
             .create_triggered_webhook
-            .create_webhook_execution
+            .create_deprecated_webhook_execution
         end
 
         subject { Repository.new.unlink_triggered_webhooks_by_webhook_uuid td.webhook.uuid }
@@ -373,6 +373,13 @@ module PactBroker
           webhook_id = Webhook.find(uuid: td.webhook.uuid).id
           expect { subject }.to change {
               TriggeredWebhook.find(id: td.triggered_webhook.id).webhook_id
+            }.from(webhook_id).to(nil)
+        end
+
+        it "sets the webhook id to nil for the deprecated webhook execution field" do
+          webhook_id = Webhook.find(uuid: td.webhook.uuid).id
+          expect { subject }.to change {
+              DeprecatedExecution.find(id: td.webhook_execution.id).webhook_id
             }.from(webhook_id).to(nil)
         end
       end
@@ -477,6 +484,59 @@ module PactBroker
           it "returns an empty list" do
             expect(subject).to be_empty
           end
+        end
+      end
+
+      describe "fail_retrying_triggered_webhooks" do
+        before do
+          td.create_pact_with_hierarchy
+            .create_webhook
+            .create_triggered_webhook(status: TriggeredWebhook::STATUS_RETRYING)
+            .create_triggered_webhook(status: TriggeredWebhook::STATUS_SUCCESS)
+            .create_triggered_webhook(status: TriggeredWebhook::STATUS_NOT_RUN)
+            .create_triggered_webhook(status: TriggeredWebhook::STATUS_FAILURE)
+        end
+
+        it "sets the triggered_webhooks with retrying status to failed" do
+          Repository.new.fail_retrying_triggered_webhooks
+          expect(TriggeredWebhook.failed.count).to eq 2
+          expect(TriggeredWebhook.retrying.count).to eq 0
+          expect(TriggeredWebhook.successful.count).to eq 1
+          expect(TriggeredWebhook.not_run.count).to eq 1
+        end
+      end
+
+      describe "delete_triggered_webhooks_by_pact_publication_id" do
+        before do
+          td.create_pact_with_hierarchy
+            .create_webhook
+            .create_triggered_webhook
+            .create_webhook_execution
+            .create_pact_with_hierarchy("A Consumer", "1.2.3", "A Provider")
+            .create_webhook
+            .create_triggered_webhook
+            .create_webhook_execution
+            .create_deprecated_webhook_execution
+        end
+
+        subject { Repository.new.delete_triggered_webhooks_by_pact_publication_ids [td.pact.id] }
+
+        it "deletes the triggered webhook" do
+          expect { subject }.to change {
+            TriggeredWebhook.count
+          }.by(-1)
+        end
+
+        it "deletes the webhook_execution" do
+          expect { subject }.to change {
+            Execution.exclude(triggered_webhook_id: nil).count
+          }.by(-1)
+        end
+
+        it "deletes the deprecated webhook_execution" do
+          expect { subject }.to change {
+            Execution.exclude(consumer_id: nil).count
+          }.by(-1)
         end
       end
     end

@@ -3,21 +3,26 @@ require 'pact_broker/app'
 module PactBroker
   describe App do
 
+    before do
+      allow(PactBroker::DB).to receive(:run_migrations)
+    end
+
     class TestApp < PactBroker::App
-
       def configure_database_connection
-        # do nothing
+        # do nothing so we don't screw up our test connection
       end
-
-      def migrate_database
-        # do nothing
-      end
-
     end
 
     let(:app) do
       TestApp.new do | configuration |
         configuration.database_connection = PactBroker::DB.connection
+      end
+    end
+
+    describe "on start up" do
+      it "fails any retrying triggered webhooks left over when the app shut down" do
+        expect(PactBroker::Webhooks::Service).to receive(:fail_retrying_triggered_webhooks)
+        app
       end
     end
 
@@ -208,6 +213,5 @@ module PactBroker
         expect { subject }.to_not change { PactBroker::Domain::Pacticipant.count }
       end
     end
-
   end
 end
