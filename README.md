@@ -26,7 +26,7 @@ Features:
 * Provides badges to display pact verification statuses in your READMEs.
 * Enables a pact version to be tagged (ie. "prod") so a provider can verify itself against a fixed version of a pact to ensure backwards compatibility.
 * Provides webhooks to trigger a provider build when a consumer publishes a change to a pact.
-* Tracks changes between Pact versions so you can tell when a consumer has changed its expectations.
+* View diffs between Pact versions so you can tell what expectations have changed.
 * [Docker Pact Broker][docker]
 
 ### How would I use the Pact Broker?
