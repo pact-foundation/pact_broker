@@ -52,14 +52,6 @@ module PactBroker
             .left_outer_join(:tags, {version_id: :consumer_version_id})
             .where(Sequel.qualify(:tags, :name) => nil)
         end
-
-        def latest
-          reverse_order(
-            :consumer_version_order,
-            Sequel.qualify(:all_pact_publications, :revision_number),
-            :number
-          ).limit(1)
-        end
       end
 
       def pact_version_sha

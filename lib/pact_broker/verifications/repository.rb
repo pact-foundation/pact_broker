@@ -47,7 +47,11 @@ module PactBroker
         elsif tag
           query = query.tag(tag)
         end
-        query.latest.single_record
+        query.reverse_order(
+          Sequel[:all_pact_publications][:consumer_version_order],
+          Sequel[:all_pact_publications][:revision_number],
+          Sequel[LatestVerificationsByConsumerVersion.table_name][:number]
+        ).limit(1).single_record
       end
 
       def pact_version_id_for pact
