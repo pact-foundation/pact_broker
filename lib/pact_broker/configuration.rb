@@ -18,7 +18,7 @@ module PactBroker
     attr_accessor :use_case_sensitive_resource_names, :order_versions_by_date
     attr_accessor :semver_formats
     attr_accessor :enable_public_badge_access, :shields_io_base_url
-    attr_accessor :webhook_retry_schedule    
+    attr_accessor :webhook_retry_schedule
     attr_writer :logger
 
     def initialize
