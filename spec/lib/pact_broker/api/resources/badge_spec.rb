@@ -76,6 +76,10 @@ module PactBroker
             expect(subject.status).to eq 200
           end
 
+          it "does not allow caching" do
+            expect(subject.headers['Cache-Control']).to eq 'no-cache'
+          end
+
           it "returns the badge" do
             expect(subject.body).to eq "badge"
           end

@@ -31,6 +31,7 @@ module PactBroker
         private
 
         def to_svg
+          response.headers['Cache-Control'] = 'no-cache'
           badge_service.pact_verification_badge pact, label, initials, verification_status
         end
 
