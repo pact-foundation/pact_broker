@@ -1,3 +1,13 @@
+<a name="v2.5.1"></a>
+### v2.5.1 (2017-09-26)
+
+
+#### Bug Fixes
+
+* **badges**
+  * do not allow caching	 ([d7e73c3](/../../commit/d7e73c3))
+
+
 <a name="v2.5.0"></a>
 ### v2.5.0 (2017-09-25)
 
