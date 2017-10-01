@@ -1,3 +1,67 @@
+<a name="v2.5.1"></a>
+### v2.5.1 (2017-09-26)
+
+
+#### Bug Fixes
+
+* **badges**
+  * do not allow caching	 ([d7e73c3](/../../commit/d7e73c3))
+
+
+<a name="v2.5.0"></a>
+### v2.5.0 (2017-09-25)
+
+#### Features
+
+* **heartbeat resource**
+  * cache json response body	 ([f2ac0f5](/../../commit/f2ac0f5))
+
+* **webhook status**
+  * delete webhook objects related to previous revisions of a pact when deleting a pact publication	 ([a053623](/../../commit/a053623))
+  * delete related triggered webhooks and executions when pact publication is deleted	 ([3dc590c](/../../commit/3dc590c))
+  * set any triggered webhooks in 'retrying' status to 'failed' on startup	 ([1f2305b](/../../commit/1f2305b))
+  * migrate webhook execution data to triggered webhooks	 ([9f46d86](/../../commit/9f46d86))
+  * consider http status < 300 to be a webhook failure	 ([7ef595a](/../../commit/7ef595a))
+  * log unhandled suckerpunch errors	 ([4cc779d](/../../commit/4cc779d))
+  * log number of seconds until next webhook attempt in webhook logs	 ([5d16330](/../../commit/5d16330))
+  * display attempts made and attempts remaining in webhook status resource	 ([648e1c3](/../../commit/648e1c3))
+  * move webhook retry schedule to configuration	 ([f2d92f3](/../../commit/f2d92f3))
+  * ensure triggered webhook and webhook execution objects are saved to database even when webhook fails and response code is 500	 ([88ba2ac](/../../commit/88ba2ac))
+  * redact authorization headers in webhook logs	 ([10efddb](/../../commit/10efddb))
+  * implement PUT for webhook resource	 ([7266b1e](/../../commit/7266b1e))
+  * add endpoint for triggered webhook execution logs	 ([ad81d20](/../../commit/ad81d20))
+
+* **hal browser**
+  * use name over title in embedded resource heading	 ([6c61da7](/../../commit/6c61da7))
+  * improve readability of link collections	 ([0a9bc8c](/../../commit/0a9bc8c))
+  * use name and title from self link when not specified in embedded resource	 ([354374c](/../../commit/354374c))
+
+* **versions resource**
+  * deprecate versions and pacticipant links in favour of pb:versions and pb:pacticipants	 ([94f395e](/../../commit/94f395e))
+
+* **badges**
+  * only cache successful badge responses from shields.io	 ([e5f08ad](/../../commit/e5f08ad))
+  * use simple in-memory cache for badges	 ([2453c55](/../../commit/2453c55))
+  * show message about enabling public badge access when disabled	 ([6fc78ff](/../../commit/6fc78ff))
+  * show badge in HTML pact and display markdown when clicked	 ([e9b632a](/../../commit/e9b632a))
+  * changed configuration property name from 'enable_badge_resources' to 'enable_public_badge_access'	 ([83540e5](/../../commit/83540e5))
+
+* **resources**
+  * improve usage of title and name attributes	 ([915a7ee](/../../commit/915a7ee))
+
+* **pact resource**
+  * improve usage of name and title fields	 ([3a9a178](/../../commit/3a9a178))
+  * add link relation for all pact versions	 ([d5ea068](/../../commit/d5ea068))
+
+* **gems**
+  * upgrade webmachine to 1.5.0	 ([d23fedc](/../../commit/d23fedc))
+
+#### Bug Fixes
+
+* return correct "latest" verification when a verification has been published for a pact with a revision	 ([f2b4c9f](/../../commit/f2b4c9f))
+* sequel migration 25 for mysql	 ([920c363](/../../commit/920c363))
+* sequel migration 19 for mysql	 ([0ee48e1](/../../commit/0ee48e1))
+
 <a name="v2.4.2"></a>
 ### v2.4.2 (2017-09-07)
 

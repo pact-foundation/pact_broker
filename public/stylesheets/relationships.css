@@ -48,7 +48,6 @@ body { padding-top: 10px; }
 
 .consumer, .provider {
   text-align: center;
-  white-space: nowrap;
 }
 
 span.pact {
