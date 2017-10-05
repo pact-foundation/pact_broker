@@ -16,7 +16,9 @@ module PactBroker
       :use_case_sensitive_resource_names,
       :enable_public_badge_access,
       :shields_io_base_url,
-      :check_for_potential_duplicate_pacticipant_names
+      :check_for_potential_duplicate_pacticipant_names,
+      :webhook_retry_schedule,
+      :semver_formats
     ]
 
     attr_accessor :log_dir, :database_connection, :auto_migrate_db, :use_hal_browser, :html_pact_renderer
@@ -55,7 +57,7 @@ module PactBroker
       # Not recommended to set this to true unless there is no way to
       # consistently extract an orderable object from the consumer application version number.
       config.order_versions_by_date = false
-      config.semver_formats = ["%M.%m.%p%s%d","%M.%m", "%M"]
+      config.semver_formats = ["%M.%m.%p%s%d", "%M.%m", "%M"]
       config.webhook_retry_schedule = [10, 60, 120, 300, 600, 1200] #10 sec, 1 min, 2 min, 5 min, 10 min, 20 min => 38 minutes
       config.check_for_potential_duplicate_pacticipant_names = true
       config
