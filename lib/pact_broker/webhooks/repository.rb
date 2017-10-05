@@ -104,9 +104,11 @@ module PactBroker
         Execution.where(id: execution_ids).delete
       end
 
-      def unlink_triggered_webhooks_by_webhook_uuid uuid
-        TriggeredWebhook.where(webhook: Webhook.where(uuid: uuid)).update(webhook_id: nil)
-        DeprecatedExecution.where(webhook_id: Webhook.where(uuid: uuid).select(:id)).update(webhook_id: nil)
+      def delete_triggered_webhooks_by_webhook_uuid uuid
+        triggered_webhook_ids = TriggeredWebhook.where(webhook: Webhook.where(uuid: uuid)).select_for_subquery(:id)
+        Execution.where(triggered_webhook_id: triggered_webhook_ids).delete
+        DeprecatedExecution.where(webhook_id: Webhook.where(uuid: uuid).select_for_subquery(:id)).delete
+        TriggeredWebhook.where(id: triggered_webhook_ids).delete
       end
 
       def delete_triggered_webhooks_by_pact_publication_ids pact_publication_ids

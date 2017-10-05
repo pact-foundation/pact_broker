@@ -19,6 +19,9 @@ module PactBroker
 
       # Accepts two hashes representing pacts, outputs a merged hash
       # Does not make any guarantees about order of interactions
+      # TODO: should not modify original!
+      # TODO: is not checking response for equality!
+      # TODO: should have separate tests!
       def merge_pacts original_json, additional_json
         original, additional = [original_json, additional_json].map{|str| JSON.parse(str, PACT_PARSING_OPTIONS) }
 

@@ -17,7 +17,7 @@ Sequel.migration do
     # TODO drop_column(:webhook_executions, :provider_id)
 
     # TODO
-    # alter_table(:triggered_webhooks) do
+    # alter_table(:webhook_executions) do
     #  set_column_not_null(:triggered_webhook_id)
     # end
   end

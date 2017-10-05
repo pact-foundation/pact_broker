@@ -354,7 +354,7 @@ module PactBroker
         end
       end
 
-      describe "unlink_triggered_webhooks_by_webhook_uuid" do
+      describe "delete_triggered_webhooks_by_webhook_uuid" do
         let(:td) { TestDataBuilder.new }
 
         before do
@@ -365,22 +365,38 @@ module PactBroker
             .create_webhook
             .create_triggered_webhook
             .create_deprecated_webhook_execution
+            .create_webhook_execution
+            .create_webhook
+            .create_triggered_webhook
+            .create_deprecated_webhook_execution
+            .create_webhook_execution
         end
 
-        subject { Repository.new.unlink_triggered_webhooks_by_webhook_uuid td.webhook.uuid }
+        let(:webhook_id) { Webhook.find(uuid: td.webhook.uuid).id }
+        subject { Repository.new.delete_triggered_webhooks_by_webhook_uuid td.webhook.uuid }
 
-        it "sets the webhook id to nil" do
-          webhook_id = Webhook.find(uuid: td.webhook.uuid).id
+        it "deletes the related triggered webhooks" do
           expect { subject }.to change {
-              TriggeredWebhook.find(id: td.triggered_webhook.id).webhook_id
-            }.from(webhook_id).to(nil)
+              TriggeredWebhook.where(id: td.triggered_webhook.id).count
+            }.from(1).to(0)
         end
 
-        it "sets the webhook id to nil for the deprecated webhook execution field" do
-          webhook_id = Webhook.find(uuid: td.webhook.uuid).id
+        it "does not delete the unrelated triggered webhooks" do
+          expect { subject }.to_not change {
+              TriggeredWebhook.exclude(id: td.triggered_webhook.id).count
+            }
+        end
+
+        it "deletes the related deprecated webhook executions" do
           expect { subject }.to change {
-              DeprecatedExecution.find(id: td.webhook_execution.id).webhook_id
-            }.from(webhook_id).to(nil)
+              DeprecatedExecution.count
+            }.by(-2)
+        end
+
+        it "deletes the related webhook executions" do
+          expect { subject }.to change {
+              Execution.count
+            }.by(-2)
         end
       end
 

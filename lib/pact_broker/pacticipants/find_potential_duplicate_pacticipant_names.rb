@@ -38,8 +38,6 @@ module PactBroker
               .downcase
               .split("_")
       end
-
     end
-
   end
 end
