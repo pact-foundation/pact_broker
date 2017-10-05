@@ -27,6 +27,8 @@ module PactBroker
       end
     end
 
+    # For a brief time, the code was released with a direct relationship between
+    # webhook and execution. Need to make sure any existing data is handled properly.
     class DeprecatedExecution < Sequel::Model(:webhook_executions)
       associate(:many_to_one, :provider, :class => "PactBroker::Domain::Pacticipant", :key => :provider_id, :primary_key => :id)
       associate(:many_to_one, :consumer, :class => "PactBroker::Domain::Pacticipant", :key => :consumer_id, :primary_key => :id)

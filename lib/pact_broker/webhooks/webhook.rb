@@ -11,6 +11,10 @@ module PactBroker
       associate(:many_to_one, :consumer, :class => "PactBroker::Domain::Pacticipant", :key => :consumer_id, :primary_key => :id)
       one_to_many :headers, :class => "PactBroker::Webhooks::WebhookHeader", :reciprocal => :webhook
 
+      dataset_module do
+        include PactBroker::Repositories::Helpers
+      end
+
       def before_destroy
         WebhookHeader.where(webhook_id: id).destroy
       end
