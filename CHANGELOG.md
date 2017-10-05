@@ -1,3 +1,16 @@
+<a name="v2.6.0"></a>
+### v2.6.0 (2017-10-06)
+
+#### Features
+
+* add configuration option for check_for_potential_duplicate_pacticipant_names	 ([6ab3fda](/../../commit/6ab3fda))
+
+#### Bug Fixes
+
+* add webhook_retry_schedule and semver_formats to list of configuration options that can be saved to the database	 ([5bab062](/../../commit/5bab062))
+* delete related triggered webhooks when webhook is deleted	 ([48f9853](/../../commit/48f9853))
+* use strict mode when using mysql	 ([f991e15](/../../commit/f991e15))
+
 <a name="v2.5.1"></a>
 ### v2.5.1 (2017-09-26)
 
