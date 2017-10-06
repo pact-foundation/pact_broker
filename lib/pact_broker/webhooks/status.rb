@@ -13,7 +13,7 @@ module PactBroker
 
       def to_sym
         return :none if webhooks.empty?
-        return :not_run if latest_triggered_webhooks.empty?
+        return :not_run if latest_triggered_webhooks.empty? || latest_triggered_webhooks.all?{|w| w.status == "not_run"}
         if latest_triggered_webhooks.any?{|w| w.status == "retrying" }
           return :retrying
         end
