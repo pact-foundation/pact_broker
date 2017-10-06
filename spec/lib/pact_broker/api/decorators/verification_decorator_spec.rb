@@ -13,15 +13,9 @@ module PactBroker
             provider_name: 'Provider',
             consumer_name: 'Consumer',
             build_url: 'http://build-url',
-            pact_version: pact_version,
+            pact_version_sha: '1234',
             latest_pact_publication: pact_publication,
             execution_date: DateTime.now)
-        end
-
-        let(:pact_version) do
-          instance_double('PactBroker::Pacts::PactVersion',
-            sha: '1234'
-          )
         end
 
         let(:pact_publication) do

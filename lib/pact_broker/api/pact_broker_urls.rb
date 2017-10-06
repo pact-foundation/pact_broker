@@ -80,7 +80,7 @@ module PactBroker
         [ base_url, 'pacts',
           'provider', url_encode(verification.provider_name),
           'consumer', url_encode(verification.consumer_name),
-          'pact-version', verification.pact_version.sha,
+          'pact-version', verification.pact_version_sha,
           'verification-results', verification.number
         ].join('/')
       end
