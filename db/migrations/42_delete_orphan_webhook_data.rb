@@ -1,5 +1,3 @@
-require 'securerandom'
-
 Sequel.migration do
   up do
     from(:triggered_webhooks).where(webhook_id: nil).each do | triggered_webhook |
