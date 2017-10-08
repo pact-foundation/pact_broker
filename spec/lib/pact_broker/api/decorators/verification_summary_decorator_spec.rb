@@ -12,7 +12,7 @@ module PactBroker
         let(:verification) do
           instance_double("PactBroker::Domain::Verification",
             success: true, number: 1,
-            provider_version: '4.5.6',
+            provider_version_number: '4.5.6',
             build_url: 'http://some-build',
             provider_name: 'Provider',
             consumer_name: 'Consumer',

@@ -9,7 +9,7 @@ module PactBroker
           instance_double('PactBroker::Domain::Verification',
             number: 1,
             success: true,
-            provider_version: "4.5.6",
+            provider_version_number: "4.5.6",
             provider_name: 'Provider',
             consumer_name: 'Consumer',
             build_url: 'http://build-url',

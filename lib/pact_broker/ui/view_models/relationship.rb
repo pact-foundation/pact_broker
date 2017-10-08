@@ -99,11 +99,11 @@ module PactBroker
         def verification_tooltip
           case @relationship.verification_status
           when :success
-            "Successfully verified by #{provider_name} (v#{@relationship.latest_verification_provider_version})"
+            "Successfully verified by #{provider_name} (v#{@relationship.latest_verification_provider_version_number})"
           when :stale
-            "Pact has changed since last successful verification by #{provider_name} (v#{@relationship.latest_verification_provider_version})"
+            "Pact has changed since last successful verification by #{provider_name} (v#{@relationship.latest_verification_provider_version_number})"
           when :failed
-            "Verification by #{provider_name} (v#{@relationship.latest_verification_provider_version}) failed"
+            "Verification by #{provider_name} (v#{@relationship.latest_verification_provider_version_number}) failed"
           else
             nil
           end
