@@ -22,7 +22,7 @@ module PactBroker
             run PactBroker::Doc::Controllers::App
           end
 
-          map "/the-matrix" do
+          map "/matrix" do
             run PactBroker::UI::Controllers::Matrix
           end
 

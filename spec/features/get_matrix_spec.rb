@@ -7,7 +7,7 @@ describe "Get matrix" do
       .create_verification(provider_version: '4.5.6')
   end
 
-  let(:path) { "/the-matrix/provider/Provider/consumer/Consumer" }
+  let(:path) { "/matrix/provider/Provider/consumer/Consumer" }
   let(:last_response_body) { JSON.parse(subject.body, symbolize_names: true) }
 
   subject { get path; last_response }
