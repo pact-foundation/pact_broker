@@ -18,8 +18,8 @@ module PactBroker
       ##
       # candidate_versions Hash of candidate name to version
       # Returns a list of matrix lines indicating the compatible versions
-      def find_compatible_pacticipant_versions candidate_versions
-        version_ids = candidate_versions.collect do | key, value |
+      def find_compatible_pacticipant_versions criteria
+        version_ids = criteria.collect do | key, value |
           version_repository.find_by_pacticipant_name_and_number(key, value).id
         end
 

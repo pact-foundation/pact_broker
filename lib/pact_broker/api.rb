@@ -60,7 +60,8 @@ module PactBroker
         add ['groups', :pacticipant_name], Api::Resources::Group, {resource_name: "group"}
 
         # matrix
-        add ['matrix', 'provider', :provider_name, 'consumer', :consumer_name], Api::Resources::Matrix, {resource_name: "matrix_consumer_provider"}
+        add ['matrix', 'provider', :provider_name, 'consumer', :consumer_name], Api::Resources::MatrixForConsumerAndProvider, {resource_name: "matrix_consumer_provider"}
+        add ['matrix'], Api::Resources::Matrix, {resource_name: "matrix"}
 
         add [], Api::Resources::Index, {resource_name: "index"}
       end

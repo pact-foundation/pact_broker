@@ -10,6 +10,10 @@ module PactBroker
       def find params
         matrix_repository.find params[:consumer_name], params[:provider_name]
       end
+
+      def find_compatible_pacticipant_versions criteria
+        matrix_repository.find_compatible_pacticipant_versions criteria
+      end
     end
   end
 end

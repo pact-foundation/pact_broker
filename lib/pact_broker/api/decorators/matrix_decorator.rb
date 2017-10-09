@@ -38,15 +38,16 @@ module PactBroker
 
         def line_hash(consumer, provider, consumer_version, line, base_url)
           {
-            consumer: consumer_hash(line, consumer_version, base_url),
+            consumer: consumer_hash(line, consumer, consumer_version, base_url),
             provider: provider_hash(line, provider, base_url),
             pact: pact_hash(line, base_url),
             verificationResult: verification_hash(line, base_url)
           }
         end
 
-        def consumer_hash(line, consumer_version, base_url)
+        def consumer_hash(line, consumer, consumer_version, base_url)
           {
+            name: line[:consumer_name],
             version: {
               number: line[:consumer_version_number],
               _links: {
@@ -54,22 +55,31 @@ module PactBroker
                   href: version_url(base_url, consumer_version)
                 }
               }
+            },
+            _links: {
+              self: {
+                href: pacticipant_url(base_url, consumer)
+              }
             }
           }
         end
 
         def provider_hash(line, provider, base_url)
-          if !line[:provider_version].nil?
-            {
-              version: {
-                number: line[:provider_version]
+          hash = {
+            name: line[:provider_name],
+            version: nil,
+            _links: {
+              self: {
+                href: pacticipant_url(base_url, provider)
               }
             }
-          else
-            {
-              version: nil
-            }
+          }
+
+          if !line[:provider_version].nil?
+            hash[:version] = { number: line[:provider_version] }
           end
+
+          hash
         end
 
         def pact_hash(line, base_url)

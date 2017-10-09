@@ -1,5 +1,6 @@
 require 'pact_broker/api/resources/base_resource'
 require 'pact_broker/api/decorators/matrix_decorator'
+require 'cgi'
 
 module PactBroker
   module Api
@@ -15,27 +16,28 @@ module PactBroker
         end
 
         def resource_exists?
-          consumer && provider
+          true
         end
 
         def to_json
-          lines = matrix_service.find(identifier_from_path)
+          versions = version_service.find_versions_by_selector(version_selectors)
+          criteria = versions.each_with_object({}) { | version, hash | hash[version.pacticipant.name] = version.number }
+          lines = matrix_service.find_compatible_pacticipant_versions(criteria)
           PactBroker::Api::Decorators::MatrixPactDecorator.new(lines).to_json(user_options: { base_url: base_url })
         end
 
-        def consumer
-          @consumer ||= find_pacticipant(identifier_from_path[:consumer_name], "consumer")
+        def selectors
+          @selectors ||= CGI.parse(request.uri.query)['selector[]']
         end
 
-        def provider
-          @provider ||= find_pacticipant(identifier_from_path[:provider_name], "provider")
+        def version_selectors
+          @version_selectors ||= selectors.select{ | selector| selector.include?("/version/") }
         end
 
-        def find_pacticipant name, role
-          pacticipant_service.find_pacticipant_by_name(name).tap do | pacticipant |
-            set_json_error_message("No #{role} with name '#{name}' found") if pacticipant.nil?
-          end
+        def pacticipant_selectors
+          @pacticipant_selectors ||= selectors.select{ | selector | selectors.include?("/version/")}
         end
+
       end
     end
   end

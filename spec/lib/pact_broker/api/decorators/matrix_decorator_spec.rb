@@ -35,6 +35,12 @@ module PactBroker
 
           let(:consumer_hash) do
             {
+              name: 'Consumer',
+              _links: {
+                self: {
+                  href: 'http://example.org/pacticipants/Consumer'
+                }
+              },
               version: {
                 number: '1.0.0',
                 _links: {
@@ -48,6 +54,12 @@ module PactBroker
 
           let(:provider_hash) do
             {
+              name: 'Provider',
+              _links: {
+                self: {
+                  href: 'http://example.org/pacticipants/Provider'
+                }
+              },
               version: {
                 number: '4.5.6'
               }
@@ -96,18 +108,12 @@ module PactBroker
           end
 
           context "when the pact has not been verified" do
-            let(:provider_hash) do
-              {
-                version: nil
-              }
-            end
-
             let(:verification_hash) do
               nil
             end
 
             it "has empty provider details" do
-              expect(parsed_json[:matrix][1][:provider]).to eq provider_hash
+              expect(parsed_json[:matrix][1][:provider]).to eq provider_hash.merge(version: nil)
             end
 
             it "has a nil verificationResult" do
