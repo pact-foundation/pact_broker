@@ -42,7 +42,7 @@ describe 'add provider version relationship to verification (migrate 42-44)', mi
 
   it "sets the created_at date of the new version to the created_at of the verification" do
     subject
-    expect(PactBroker::Domain::Verification.first.provider_version.created_at).to eq now
+    expect(PactBroker::Domain::Verification.first.provider_version.created_at.to_datetime).to eq now
   end
 
   context "when the version already exists" do

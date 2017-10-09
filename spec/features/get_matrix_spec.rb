@@ -10,7 +10,7 @@ describe "Get matrix for consumer and provider" do
   let(:path) { "/matrix" }
   let(:params) do
     {
-      selector: ['Consumer/version/1.0.0','Provider/version/4.5.6']
+      selectors: ['Consumer/version/1.0.0','Provider/version/4.5.6']
     }
   end
   let(:last_response_body) { JSON.parse(subject.body, symbolize_names: true) }
