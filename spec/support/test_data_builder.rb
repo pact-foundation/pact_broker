@@ -117,9 +117,19 @@ class TestDataBuilder
     self
   end
 
+  def use_consumer consumer_name
+    @consumer = PactBroker::Domain::Pacticipant.find(:name => consumer_name)
+    self
+  end
+
   def create_provider provider_name = "Provider #{model_counter}"
     create_pacticipant provider_name
     @provider = @pacticipant
+    self
+  end
+
+  def use_provider provider_name
+    @provider = PactBroker::Domain::Pacticipant.find(:name => provider_name)
     self
   end
 
@@ -130,6 +140,11 @@ class TestDataBuilder
 
   def create_consumer_version version_number = "1.0.#{model_counter}"
     @consumer_version = PactBroker::Domain::Version.create(:number => version_number, :pacticipant => @consumer)
+    self
+  end
+
+  def use_consumer_version version_number
+    @consumer_version = PactBroker::Domain::Version.where(pacticipant_id: @consumer.id, number: version_number).single_record
     self
   end
 
@@ -154,6 +169,11 @@ class TestDataBuilder
     set_created_at_if_set params[:created_at], :pact_versions, {sha: @pact.pact_version_sha}
     @pact = PactBroker::Pacts::PactPublication.find(id: @pact.id).to_domain
     self
+  end
+
+  def create_same_pact params = {}
+    last_pact_version = PactBroker::Pacts::PactVersion.order(:id).last
+    create_pact json_content: last_pact_version.content
   end
 
   def revise_pact json_content = nil
