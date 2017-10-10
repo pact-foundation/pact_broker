@@ -38,7 +38,7 @@ module PactBroker
           selected_versions = version_service.find_versions_by_selector(selectors)
           if selected_versions.any?(&:nil?)
             selected_versions.each_with_index do | selected_version, i |
-              error_messages << "No pact or verification found for #{selectors[i]}"
+              error_messages << "No pact or verification found for #{selectors[i]}" if selected_version.nil?
             end
           end
         end
