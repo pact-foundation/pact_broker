@@ -14,7 +14,7 @@ module PactBroker
             .create_pact
         end
 
-        subject { Repository.new.find "Consumer", "Provider" }
+        subject { Repository.new.find("Consumer", "Provider") }
 
         it "returns the latest revision of each pact in reverse consumer_version_order" do
           expect(subject.count).to eq 2
@@ -58,12 +58,15 @@ module PactBroker
             expect(subject.first[:provider_name]).to eq "B"
             expect(subject.first[:provider_version_number]).to eq "2"
             expect(subject.first[:number]).to eq 2
+            expect(subject.first[:pact_created_at]).to be_datey
+            expect(subject.first[:verification_executed_at]).to be_datey
 
             expect(subject.last[:consumer_name]).to eq "B"
             expect(subject.last[:consumer_version_number]).to eq "2"
             expect(subject.last[:provider_name]).to eq "C"
             expect(subject.last[:provider_version_number]).to eq "2"
             expect(subject.last[:number]).to eq 1
+            expect(subject.last[:pact_created_at]).to be_datey
 
             expect(subject.size).to eq 2
           end

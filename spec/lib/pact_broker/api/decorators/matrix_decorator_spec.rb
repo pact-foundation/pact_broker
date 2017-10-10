@@ -5,17 +5,20 @@ module PactBroker
     module Decorators
       describe MatrixPactDecorator do
         describe "to_json" do
+          let(:verification_date) { DateTime.new(2017, 12, 31) }
+          let(:pact_created_at) { DateTime.new(2017, 1, 1) }
           let(:line_1) do
             {
               consumer_name: "Consumer",
               consumer_version_number: "1.0.0",
               pact_version_sha: "1234",
-              provider_version: "4.5.6",
+              pact_created_at: pact_created_at,
+              provider_version_number: "4.5.6",
               provider_name: "Provider",
               success: true,
               number: 1,
               build_url: nil,
-              execution_date: DateTime.now
+              verification_executed_at: verification_date
             }
           end
 
@@ -24,12 +27,13 @@ module PactBroker
               consumer_name: "Consumer",
               consumer_version_number: "1.0.0",
               pact_version_sha: "1234",
-              provider_version: nil,
+              pact_created_at: pact_created_at,
+              provider_version_number: nil,
               provider_name: "Provider",
               success: nil,
               number: nil,
               build_url: nil,
-              execution_date: nil
+              verification_executed_at: nil
             }
           end
 
@@ -69,6 +73,7 @@ module PactBroker
           let(:verification_hash) do
             {
               success: true,
+              verifiedAt: "2017-12-31T00:00:00+00:00",
               _links: {
                 self: {
                   href: "http://example.org/pacts/provider/Provider/consumer/Consumer/pact-version/1234/verification-results/1"
@@ -79,6 +84,7 @@ module PactBroker
 
           let(:pact_hash) do
             {
+              createdAt: "2017-01-01T00:00:00+00:00",
               _links: {
                 self: {
                   href: "http://example.org/pacts/provider/Provider/consumer/Consumer/version/1.0.0"
