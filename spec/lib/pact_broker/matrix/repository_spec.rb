@@ -37,17 +37,19 @@ module PactBroker
         context "when compatible versions can be found" do
           before do
             td.create_pact_with_hierarchy("A", "1", "B")
+              .create_verification(provider_version: '0')
+              .revise_pact
               .create_verification(provider_version: '1')
               .create_verification(provider_version: '2', number: 2)
               .use_consumer("B")
               .use_consumer_version("1")
               .create_provider("C")
               .create_pact
-              .create_verification(provider_version: '1', success: true)
+              .create_verification(provider_version: '1')
               .use_consumer_version("2")
               .create_pact
-              .create_verification(provider_version: '2', success: true)
-              .create_verification(provider_version: '3', number: 2, success: true)
+              .create_verification(provider_version: '2')
+              .create_verification(provider_version: '3', number: 2)
           end
 
           subject { Repository.new.find_compatible_pacticipant_versions("A" => "1", "B" => "2", "C" => "2") }
@@ -69,6 +71,24 @@ module PactBroker
             expect(subject.last[:pact_created_at]).to be_datey
 
             expect(subject.size).to eq 2
+          end
+
+          context "when one or more pacticipants does not have a version specified" do
+            subject { Repository.new.find_compatible_pacticipant_versions("A" => "1", "B" => "2", "C" => nil) }
+
+            it "returns all the rows for that pacticipant" do
+              expect(subject[1]).to include(provider_name: "C", provider_version_number: "2")
+              expect(subject[2]).to include(provider_name: "C", provider_version_number: "3")
+              expect(subject.size).to eq 3
+            end
+          end
+
+          context "none of the pacticipants have a version specified" do
+            subject { Repository.new.find_compatible_pacticipant_versions("A" => nil, "B" => nil, "C" => nil) }
+
+            it "returns all the rows" do
+              expect(subject.size).to eq 4
+            end
           end
         end
 

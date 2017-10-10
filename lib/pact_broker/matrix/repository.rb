@@ -19,8 +19,12 @@ module PactBroker
       # Returns a list of matrix lines indicating the compatible versions
       def find_compatible_pacticipant_versions criteria
         version_ids = criteria.collect do | key, value |
-          version_repository.find_by_pacticipant_name_and_number(key, value).id
-        end
+          if value
+            version_repository.find_by_pacticipant_name_and_number(key, value).id
+          else
+            pacticipant_repository.find_by_name(key).versions.collect(&:id)
+          end
+        end.flatten
 
         find_for_version_ids(version_ids)
           .group_by{|line| [line[:consumer_version_number], line[:provider_version_number]]}
