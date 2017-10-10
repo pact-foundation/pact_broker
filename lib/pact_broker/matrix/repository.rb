@@ -11,6 +11,7 @@ module PactBroker
           .join(:pacticipants, id: :pacticipant_id)
           .where(Sequel[:pacticipants][:name] => [pacticipant_1_name, pacticipant_2_name])
         find_for_version_ids(version_ids)
+          .sort{|l1, l2| l2[:consumer_version_order] <=> l1[:consumer_version_order]}
       end
 
       ##

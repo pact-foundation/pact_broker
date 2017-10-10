@@ -7,16 +7,16 @@ module PactBroker
         before do
           TestDataBuilder.new
             .create_pact_with_hierarchy("Consumer", "1.2.3", "Provider")
-            .create_verification(provider_version: "6.7.8")
+            .create_verification(provider_version: "6.7.8", execution_date: DateTime.new(2016))
             .revise_pact
-            .create_verification(provider_version: "4.5.6")
+            .create_verification(provider_version: "4.5.6", execution_date: DateTime.new(2017))
             .create_consumer_version("2.0.0")
             .create_pact
         end
 
         subject { Repository.new.find("Consumer", "Provider") }
 
-        it "returns the latest revision of each pact in reverse consumer_version_order" do
+        it "returns the latest revision of each pact" do
           expect(subject.count).to eq 2
           expect(subject[0][:consumer_version_number]).to eq "2.0.0"
           expect(subject[1][:consumer_version_number]).to eq "1.2.3"
