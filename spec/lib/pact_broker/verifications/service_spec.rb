@@ -43,6 +43,12 @@ module PactBroker
           expect(verification.pact_version_id).to_not be_nil
           expect(verification.pact_version).to_not be_nil
         end
+
+        it "sets the provider version" do
+          verification = create_verification
+          expect(verification.provider_version).to_not be nil
+          expect(verification.provider_version_number).to eq '4.5.6'
+        end
       end
 
       describe "#errors" do

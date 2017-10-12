@@ -61,7 +61,7 @@ module PactBroker
         subject { Repository.new.find "Consumer1", "Provider1", pact.pact_version_sha, 2}
 
         it "finds the latest verifications for the given consumer version" do
-          expect(subject.provider_version).to eq "3.7.4"
+          expect(subject.provider_version_number).to eq "3.7.4"
           expect(subject.consumer_name).to eq "Consumer1"
           expect(subject.provider_name).to eq "Provider1"
           expect(subject.pact_version_sha).to eq pact.pact_version_sha
@@ -95,8 +95,8 @@ module PactBroker
         subject { Repository.new.find_latest_verifications_for_consumer_version("Consumer1", "1.2.3")}
 
         it "finds the latest verifications for the given consumer version" do
-          expect(subject.first.provider_version).to eq "7.8.9"
-          expect(subject.last.provider_version).to eq "6.5.4"
+          expect(subject.first.provider_version_number).to eq "7.8.9"
+          expect(subject.last.provider_version_number).to eq "6.5.4"
         end
       end
 
@@ -116,7 +116,7 @@ module PactBroker
           subject { Repository.new.find_latest_verification_for("Consumer1", "Provider1")}
 
           it "finds the latest verifications for the given consumer version" do
-            expect(subject.provider_version).to eq "7.8.9"
+            expect(subject.provider_version_number).to eq "7.8.9"
           end
         end
 
@@ -142,7 +142,7 @@ module PactBroker
           subject { Repository.new.find_latest_verification_for("Consumer1", "Provider1")}
 
           it "finds the latest verifications for the given consumer version" do
-            expect(subject.provider_version).to eq "7.8.9"
+            expect(subject.provider_version_number).to eq "7.8.9"
           end
         end
 
@@ -173,7 +173,7 @@ module PactBroker
           subject { Repository.new.find_latest_verification_for("Consumer1", "Provider1", 'prod')}
 
           it "finds the latest verifications for the given consumer version with the specified tag" do
-            expect(subject.provider_version).to eq "5.4.3"
+            expect(subject.provider_version_number).to eq "5.4.3"
           end
 
           context "when no verification exists" do
@@ -212,7 +212,7 @@ module PactBroker
           subject { Repository.new.find_latest_verification_for("Consumer1", "Provider1", :untagged)}
 
           it "finds the latest verifications for the given consumer version with no tag" do
-            expect(subject.provider_version).to eq "5.4.3"
+            expect(subject.provider_version_number).to eq "5.4.3"
           end
         end
       end

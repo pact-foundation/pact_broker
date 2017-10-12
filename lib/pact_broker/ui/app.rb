@@ -1,5 +1,6 @@
 require 'pact_broker/ui/controllers/relationships'
 require 'pact_broker/ui/controllers/groups'
+require 'pact_broker/ui/controllers/matrix'
 require 'pact_broker/doc/controllers/app'
 
 module PactBroker
@@ -19,6 +20,10 @@ module PactBroker
 
           map "/doc" do
             run PactBroker::Doc::Controllers::App
+          end
+
+          map "/matrix" do
+            run PactBroker::UI::Controllers::Matrix
           end
 
           map "/" do

@@ -25,7 +25,7 @@ module PactBroker
             instance_double("PactBroker::Domain::Relationship",
               verification_status: verification_status,
               provider_name: "Foo",
-              latest_verification_provider_version: "4.5.6")
+              latest_verification_provider_version_number: "4.5.6")
           end
           let(:ever_verified) { true }
           let(:pact_changed) { false }

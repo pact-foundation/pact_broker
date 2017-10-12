@@ -1,0 +1,42 @@
+%body
+  %link{rel: 'stylesheet', href: '/css/bootstrap.min.css'}
+  %link{rel: 'stylesheet', href: '/stylesheets/relationships.css'}
+  %script{type: 'text/javascript', src:'/javascripts/jquery-2.1.1.min.js'}
+  %script{type: 'text/javascript', src:'/javascripts/jquery.tablesorter.min.js'}
+  %script{type: 'text/javascript', src:'/js/bootstrap.min.js'}
+
+.container
+  %h1.page-header
+    = title
+  %table.table.table-bordered.table-striped{id: 'matrix'}
+    %thead
+      %th.consumer
+        = "#{consumer_name} version"
+        %span.glyphicon.glyphicon-sort.sort
+      %th.provider
+        = "#{provider_name} version"
+        %span.glyphicon.glyphicon-sort.sort
+      %th.verification-result
+        Verification
+        %span.glyphicon.glyphicon-sort.sort
+    %tbody
+    - lines.each do | line |
+      %tr
+        %td.consumer-version{'data-sort-value' => line.consumer_version_order}
+          %a{href: line.consumer_version_number_url}
+            = line.consumer_version_number
+        %td.provider{'data-sort-value' => line.provider_version_order}
+          %a{href: line.provider_version_number_url}
+            = line.provider_version_number
+        %td.verification-result{class: line.verification_status_class}
+          = line.verification_status
+
+:javascript
+  $(function(){
+    $("#matrix").tablesorter({
+      textExtraction : function(node, table, cellIndex){
+        n = $(node);
+        return n.attr('data-sort-value') || n.text();
+      }
+    });
+  });

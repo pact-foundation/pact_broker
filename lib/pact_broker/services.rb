@@ -46,5 +46,10 @@ module PactBroker
       require 'pact_broker/badges/service'
       Badges::Service
     end
+
+    def matrix_service
+      require 'pact_broker/matrix/service'
+      Matrix::Service
+    end
   end
 end

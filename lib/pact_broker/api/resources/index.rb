@@ -58,7 +58,8 @@ module PactBroker
                 href: base_url + '/webhooks',
                 title: 'Webhooks',
                 templated: false
-              },'curies' =>
+              },
+              'curies' =>
               [{
                 name: 'pb',
                 href: base_url + '/doc/{rel}',
@@ -67,10 +68,7 @@ module PactBroker
             }
           }.to_json
         end
-
-
       end
     end
-
   end
 end

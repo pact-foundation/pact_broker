@@ -7,9 +7,13 @@ module PactBroker
     class Repository
 
       include PactBroker::Repositories::Helpers
+      include PactBroker::Repositories
 
-      def create verification, pact
+      def create verification, provider_version_number, pact
+        provider = pacticipant_repository.find_by_name(pact.provider_name)
+        version = version_repository.find_by_pacticipant_id_and_number_or_create(provider.id, provider_version_number)
         verification.pact_version_id = pact_version_id_for(pact)
+        verification.provider_version = version
         verification.save
       end
 

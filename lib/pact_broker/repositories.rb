@@ -37,6 +37,11 @@ module PactBroker
       Verifications::Repository.new
     end
 
+    def matrix_repository
+      require 'pact_broker/matrix/repository'
+      Matrix::Repository.new
+    end
+
     extend self
   end
 end

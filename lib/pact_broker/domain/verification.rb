@@ -8,6 +8,7 @@ module PactBroker
 
       set_primary_key :id
       associate(:many_to_one, :pact_version, class: "PactBroker::Pacts::PactVersion", key: :pact_version_id, primary_key: :id)
+      associate(:many_to_one, :provider_version, class: "PactBroker::Domain::Version", key: :provider_version_id, primary_key: :id)
 
       def before_create
         super
@@ -78,10 +79,13 @@ module PactBroker
            .limit(1).select(:provider_id))
       end
 
+      def provider_version_number
+        provider_version.number
+      end
+
       def latest_pact_publication
         pact_version.latest_pact_publication
       end
-
     end
 
     Verification.plugin :timestamps

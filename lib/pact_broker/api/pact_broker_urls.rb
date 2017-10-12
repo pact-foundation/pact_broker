@@ -76,11 +76,11 @@ module PactBroker
         ].join('/')
       end
 
-      def verification_url verification, base_url
+      def verification_url verification, base_url = ''
         [ base_url, 'pacts',
           'provider', url_encode(verification.provider_name),
           'consumer', url_encode(verification.consumer_name),
-          'pact-version', verification.pact_version.sha,
+          'pact-version', verification.pact_version_sha,
           'verification-results', verification.number
         ].join('/')
       end

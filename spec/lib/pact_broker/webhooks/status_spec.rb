@@ -23,6 +23,12 @@ module PactBroker
         its(:to_sym) { is_expected.to eq :not_run }
       end
 
+      context "when all the triggered_webhooks are not_run" do
+        let(:status_1) { TriggeredWebhook::STATUS_NOT_RUN }
+        let(:status_2) { TriggeredWebhook::STATUS_NOT_RUN }
+        its(:to_sym) { is_expected.to eq :not_run }
+      end
+
       context "when the most recent triggered webhooks are successful" do
         its(:to_sym) { is_expected.to eq :success }
       end
