@@ -9,6 +9,8 @@ require 'rack/pact_broker/database_transaction'
 require 'rack/pact_broker/invalid_uri_protection'
 require 'rack/pact_broker/accepts_html_filter'
 require 'rack/pact_broker/ui_authentication'
+require 'rack/pact_broker/configurable_make_it_later'
+require 'rack/pact_broker/no_auth'
 require 'sucker_punch'
 
 module PactBroker
@@ -20,6 +22,8 @@ module PactBroker
     def initialize &block
       @app_builder = ::Rack::Builder.new
       @cascade_apps = []
+      @make_it_later_api_auth = ::Rack::PactBroker::ConfigurableMakeItLater.new(Rack::PactBroker::NoAuth)
+      @make_it_later_ui_auth = ::Rack::PactBroker::ConfigurableMakeItLater.new(Rack::PactBroker::NoAuth)
       @configuration = PactBroker.configuration
       yield configuration
       post_configure
@@ -27,8 +31,23 @@ module PactBroker
       prepare_app
     end
 
+    # Allows middleware to be inserted at the bottom of the shared middlware stack
+    # (ie just before the cascade is called for diagnostic, UI and API).
+    # To insert middleware at the top of the stack, initialize
+    # the middleware with the app, and run it manually.
+    # eg run MyMiddleware.new(app)
     def use *args, &block
       @app_builder.use *args, &block
+    end
+
+    # private API, not sure if this will continue to be supported
+    def use_api_auth middleware
+      @make_it_later_api_auth.make_it_later(middleware)
+    end
+
+    # private API, not sure if this will continue to be supported
+    def use_ui_auth middleware
+      @make_it_later_ui_auth.make_it_later(middleware)
     end
 
     def call env
@@ -82,6 +101,7 @@ module PactBroker
     end
 
     def configure_middleware
+      # NOTE THAT NONE OF THIS IS PROTECTED BY AUTH - is that ok?
       @app_builder.use Rack::Protection, except: [:path_traversal, :remote_token, :session_hijacking, :http_origin]
       @app_builder.use Rack::PactBroker::InvalidUriProtection
       @app_builder.use Rack::PactBroker::AddPactBrokerVersionHeader
@@ -102,7 +122,8 @@ module PactBroker
       require 'pact_broker/ui'
       builder = ::Rack::Builder.new
       builder.use Rack::PactBroker::AcceptsHtmlFilter
-      builder.use Rack::PactBroker::UIAuthentication
+      builder.use @make_it_later_ui_auth
+      builder.use Rack::PactBroker::UIAuthentication # deprecate?
       builder.run PactBroker::UI::App.new
       builder
     end
@@ -111,6 +132,7 @@ module PactBroker
       logger.info "Mounting PactBroker::API"
       require 'pact_broker/api'
       builder = ::Rack::Builder.new
+      builder.use @make_it_later_api_auth
       builder.use Rack::PactBroker::DatabaseTransaction, configuration.database_connection
       builder.run PactBroker::API
       builder
@@ -119,6 +141,7 @@ module PactBroker
     def build_diagnostic
       require 'pact_broker/diagnostic/app'
       builder = ::Rack::Builder.new
+      builder.use @make_it_later_api_auth
       builder.run PactBroker::Diagnostic::App.new
       builder
     end

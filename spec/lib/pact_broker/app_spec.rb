@@ -65,6 +65,50 @@ module PactBroker
       end
     end
 
+    describe "use_xxx_auth" do
+      class TestAuth
+        def initialize app, *args, &block
+          @app = Rack::Auth::Basic.new(app, "Protected") do | username, password |
+            username == 'foo' && password == 'bar'
+          end
+        end
+
+        def call(env)
+          @app.call(env)
+        end
+      end
+
+      describe "use_api_auth" do
+        it "allows the API to be protected" do
+          app.use_api_auth TestAuth
+
+          basic_authorize 'foo', 'bar'
+          get "/"
+          expect(last_response.status).to eq 200
+
+          basic_authorize 'foo', 'wrong'
+          get "/"
+          expect(last_response.status).to eq 401
+          expect(last_response.headers["WWW-Authenticate"]).to eq "Basic realm=\"Protected\""
+        end
+      end
+
+      describe "use_ui_auth" do
+        it "allows the UI to be protected" do
+          app.use_ui_auth TestAuth
+
+          basic_authorize 'foo', 'bar'
+          get "/", nil, {'HTTP_ACCEPT' => 'text/html'}
+          expect(last_response.status).to eq 200
+
+          basic_authorize 'foo', 'wrong'
+          get "/", nil, {'HTTP_ACCEPT' => 'text/html'}
+          expect(last_response.status).to eq 401
+          expect(last_response.headers["WWW-Authenticate"]).to eq "Basic realm=\"Protected\""
+        end
+      end
+    end
+
     describe "authenticate" do
       before do
         PactBroker.configuration.authenticate do | resource, authorization_header, options |
