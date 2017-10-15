@@ -43,6 +43,9 @@ module PactBroker
           .all
       end
 
+      # The most recent verification for the latest revision of the pact
+      # belonging to the version with the largest consumer_version_order.
+
       def find_latest_verification_for consumer_name, provider_name, tag = nil
         query = LatestVerificationsByConsumerVersion
           .select_all_qualified

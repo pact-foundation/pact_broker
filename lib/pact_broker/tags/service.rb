@@ -27,5 +27,4 @@ module PactBroker
 
     end
   end
-
 end

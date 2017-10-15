@@ -15,18 +15,21 @@
       Pacts
     %table.table.table-bordered.table-striped{id: 'relationships'}
       %thead
-        %th
         %th.consumer
           Consumer
           %span.glyphicon.glyphicon-sort.relationships-sort
+        %th.tag
+          Version
+          %span.glyphicon.glyphicon-sort.relationships-sort
         %th.pact
-
         %th.provider
           Provider
           %span.glyphicon.glyphicon-sort.relationships-sort
+        %th.tag
+          Version
+          %span.glyphicon.glyphicon-sort.relationships-sort
         %th
-        %th
-          Latest pact<br>published
+          Published
         %th
           Webhook<br>status
         %th
@@ -35,10 +38,13 @@
 
       - relationships.each do | relationship |
         %tr
-          %td
           %td.consumer
             %a{:href => relationship.consumer_group_url}
               = relationship.consumer_name
+          %td
+            = relationship.consumer_version_number
+            %span{style: 'color:gray'}
+              = relationship.tag_names
           %td.pact
             %a{:href => relationship.pact_url, :title => "View pact"}
               %span.pact
@@ -46,15 +52,17 @@
             %a{:href => relationship.provider_group_url}
               = relationship.provider_name
           %td
+            = relationship.provider_version_number
           %td
-            = relationship.publication_date_of_latest_pact
+            = relationship.publication_date_of_latest_pact.gsub("about ", "")
           %td{class: relationship.webhook_status}
-            %a{:href => relationship.webhook_url}
-              = relationship.webhook_label
+            - if relationship.show_webhook_status?
+              %a{:href => relationship.webhook_url}
+                = relationship.webhook_label
 
           %td{class: relationship.verification_status, title: relationship.verification_tooltip, "data-toggle": "tooltip", "data-placement": "left"}
             %div
-              = relationship.last_verified_date
+              = relationship.last_verified_date.gsub("about ", "")
               - if relationship.warning?
                 %span.glyphicon.glyphicon-warning-sign{'aria-hidden':true}
     %div.relationships-size

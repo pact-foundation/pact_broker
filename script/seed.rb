@@ -59,9 +59,12 @@ TestDataBuilder.new
   .create_verification(provider_version: "1.4.234", success: true, execution_date: DateTime.now - 15)
   .revise_pact
   .create_consumer_version("1.2.101")
+  .create_consumer_version_tag('prod')
   .publish_pact
+  .create_verification(provider_version: "9.9.10", success: false, execution_date: DateTime.now - 15)
   .create_consumer_version("1.2.102")
   .publish_pact(created_at: (Date.today - 7).to_datetime)
+  .create_verification(provider_version: "9.9.9", success: true, execution_date: DateTime.now - 14)
   .create_provider("Animals")
   .create_webhook(method: 'GET', url: 'http://localhost:9393/')
   .publish_pact(created_at: (Time.now - 140).to_datetime)
@@ -76,6 +79,8 @@ TestDataBuilder.new
   .create_provider("The back end")
   .create_webhook(method: 'GET', url: 'http://localhost:9393/')
   .create_consumer_version("1.2.106")
+  .create_consumer_version_tag("production")
+  .create_consumer_version_tag("feat-x")
   .publish_pact
   .create_consumer("Some other app")
   .create_provider("A service")

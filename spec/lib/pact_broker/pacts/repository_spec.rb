@@ -576,19 +576,20 @@ module PactBroker
       describe "find_latest_pacts" do
         before do
           TestDataBuilder.new
-            .create_condor
-            .create_condor_version('1.3.0')
-            .create_pricing_service
-            .create_condor_pricing_service_pact
-            .create_condor_version('1.4.0')
-            .create_condor_pricing_service_pact
-            .create_contract_email_service
-            .create_contract_email_service_version('2.6.0')
-            .create_contract_proposal_service
-            .create_ces_cps_pact
-            .create_contract_email_service_version('2.7.0')
-            .create_ces_cps_pact
-            .create_contract_email_service_version('2.8.0') # Create a version without a pact, it shouldn't be used
+            .create_consumer("Condor")
+            .create_consumer_version('1.3.0')
+            .create_provider("Pricing Service")
+            .create_pact
+            .create_consumer_version('1.4.0')
+            .create_consumer_version_tag("prod")
+            .create_pact
+            .create_consumer("Contract Email Service")
+            .create_consumer_version("2.6.0")
+            .create_provider("Contract Proposal Service")
+            .create_pact
+            .create_consumer_version('2.7.0')
+            .create_pact
+            .create_consumer_version('2.8.0') # Create a version without a pact, it shouldn't be used
         end
 
         it "finds the latest pact for each consumer/provider pair" do
@@ -600,12 +601,13 @@ module PactBroker
           expect(pacts[0].provider.name).to eq("Pricing Service")
           expect(pacts[0].provider.id).to_not be nil
           expect(pacts[0].consumer_version.number).to eq("1.4.0")
-          expect(pacts[1].consumer_version.tags).to be nil # Not used, don't bother loading
+          expect(pacts[0].consumer_version.tags.collect(&:name)).to eq ["prod"]
 
           expect(pacts[1].consumer_version.pacticipant.name).to eq("Contract Email Service")
           expect(pacts[1].consumer.name).to eq("Contract Email Service")
           expect(pacts[1].provider.name).to eq("Contract Proposal Service")
           expect(pacts[1].consumer_version.number).to eq("2.7.0")
+          expect(pacts[1].consumer_version.tags.collect(&:name)).to eq []
         end
 
         it "includes the timestamps - need to update view" do

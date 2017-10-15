@@ -86,7 +86,7 @@ module PactBroker
       end
 
       def find_latest_pacts
-        LatestPactPublications.order(:consumer_name, :provider_name).collect(&:to_domain_without_tags)
+        LatestPactPublications.order(:consumer_name, :provider_name).collect(&:to_domain)
       end
 
       def find_latest_pact(consumer_name, provider_name, tag = nil)

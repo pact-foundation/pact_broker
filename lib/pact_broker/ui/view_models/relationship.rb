@@ -21,6 +21,18 @@ module PactBroker
           @relationship.provider_name
         end
 
+        def consumer_version_number
+          @relationship.consumer_version_number
+        end
+
+        def provider_version_number
+          @relationship.provider_version_number
+        end
+
+        def tag_names
+          @relationship.tag_names.any? ? " (#{@relationship.tag_names.join(', ')}) ": ""
+        end
+
         def consumer_group_url
           Helpers::URLHelper.group_url consumer_name
         end
@@ -29,7 +41,7 @@ module PactBroker
           Helpers::URLHelper.group_url provider_name
         end
 
-        def latest_pact_url
+        def pact_url
           "#{pactigration_base_url('', @relationship)}/latest"
         end
 
@@ -38,6 +50,7 @@ module PactBroker
         end
 
         def webhook_label
+          return "" unless show_webhook_status?
           case @relationship.webhook_status
             when :none then "Create"
             when :success, :failure then webhook_last_execution_date
@@ -47,12 +60,17 @@ module PactBroker
         end
 
         def webhook_status
+          return "" unless show_webhook_status?
           case @relationship.webhook_status
             when :success then "success"
             when :failure then "danger"
             when :retrying then "warning"
             else ""
           end
+        end
+
+        def show_webhook_status?
+          @relationship.latest?
         end
 
         def webhook_last_execution_date

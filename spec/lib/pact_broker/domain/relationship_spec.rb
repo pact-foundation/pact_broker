@@ -13,7 +13,7 @@ module PactBroker
           allow(webhook_executions).to receive(:sort).and_return(webhook_executions)
         end
 
-        subject { Relationship.create(nil, nil, nil, nil, [], webhook_executions) }
+        subject { Relationship.create(nil, nil, nil, true, nil, [], webhook_executions) }
 
         it "returns the created_at date of the last execution" do
           expect(subject.last_webhook_execution_date).to eq DateTime.new(2015)

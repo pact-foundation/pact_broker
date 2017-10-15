@@ -16,7 +16,7 @@ module PactBroker
 
         its(:consumer_name) { should eq 'Consumer Name'}
         its(:provider_name) { should eq 'Provider Name'}
-        its(:latest_pact_url) { should eq "/pacts/provider/Provider%20Name/consumer/Consumer%20Name/latest" }
+        its(:pact_url) { should eq "/pacts/provider/Provider%20Name/consumer/Consumer%20Name/latest" }
         its(:consumer_group_url) { should eq "/groups/Consumer%20Name" }
         its(:provider_group_url) { should eq "/groups/Provider%20Name" }
 
@@ -67,7 +67,8 @@ module PactBroker
             instance_double("PactBroker::Domain::Relationship",
               webhook_status: webhook_status,
               last_webhook_execution_date: DateTime.now - 1,
-              latest_pact: double("pact", consumer: consumer, provider: provider)
+              latest_pact: double("pact", consumer: consumer, provider: provider),
+              latest?: true
             )
           end
           let(:webhook_status) { :none }
@@ -122,9 +123,7 @@ module PactBroker
             expect(relationship_view_models.sort.collect{ |r| [r.consumer_name, r.provider_name]})
               .to eq([["A", "X"],["a","y"],["A","Z"],["C", "A"]])
           end
-
         end
-
       end
     end
   end
