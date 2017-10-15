@@ -1,3 +1,11 @@
+<a name="v2.7.0.beta.1"></a>
+### v2.7.0.beta.1 (2017-10-16)
+
+#### Features
+
+* **prod pacts in index**
+  * show pacts tagged as the 'prod' or 'production' versions on the index page	 ([b58b7a3](/../../commit/b58b7a3))
+
 <a name="v2.6.0"></a>
 ### v2.6.0 (2017-10-06)
 
