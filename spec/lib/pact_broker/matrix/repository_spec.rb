@@ -3,7 +3,7 @@ require 'pact_broker/matrix/repository'
 module PactBroker
   module Matrix
     describe Repository do
-      describe "#find" do
+      describe "#find_for_consumer_and_provider" do
         before do
           TestDataBuilder.new
             .create_pact_with_hierarchy("Consumer", "1.2.3", "Provider")
@@ -14,7 +14,7 @@ module PactBroker
             .create_pact
         end
 
-        subject { Repository.new.find("Consumer", "Provider") }
+        subject { Repository.new.find_for_consumer_and_provider("Consumer", "Provider") }
 
         it "returns the latest revision of each pact" do
           expect(subject.count).to eq 2
@@ -27,7 +27,7 @@ module PactBroker
         end
 
         it "doesn't matter which way you order the pacticipant names" do
-          expect(subject).to eq(Repository.new.find "Provider", "Consumer")
+          expect(subject).to eq(Repository.new.find_for_consumer_and_provider "Provider", "Consumer")
         end
       end
 

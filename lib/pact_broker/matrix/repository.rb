@@ -6,13 +6,13 @@ module PactBroker
       include PactBroker::Repositories::Helpers
       include PactBroker::Repositories
 
-      def find pacticipant_1_name, pacticipant_2_name
+      def find_for_consumer_and_provider pacticipant_1_name, pacticipant_2_name
         find_for_version_ids([], [pacticipant_1_name, pacticipant_2_name])
           .sort{|l1, l2| l2[:consumer_version_order] <=> l1[:consumer_version_order]}
       end
 
       ##
-      # candidate_versions Hash of pacticipant name => version
+      # criteria Hash of pacticipant_name => version
       # Ihe value is nil, it means all versions for that pacticipant are to be included
       # Returns a list of matrix lines indicating the compatible versions
       #

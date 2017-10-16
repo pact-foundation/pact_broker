@@ -9,8 +9,8 @@ module PactBroker
       extend PactBroker::Repositories
       extend PactBroker::Services
 
-      def find params
-        matrix_repository.find params[:consumer_name], params[:provider_name]
+      def find_for_consumer_and_provider params
+        matrix_repository.find_for_consumer_and_provider params[:consumer_name], params[:provider_name]
       end
 
       def find_compatible_pacticipant_versions criteria

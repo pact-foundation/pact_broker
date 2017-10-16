@@ -19,7 +19,7 @@ module PactBroker
         end
 
         def to_json
-          lines = matrix_service.find(identifier_from_path)
+          lines = matrix_service.find_for_consumer_and_provider(identifier_from_path)
           PactBroker::Api::Decorators::MatrixPactDecorator.new(lines).to_json(user_options: { base_url: base_url })
         end
 
