@@ -92,11 +92,13 @@ module PactBroker
     def prepare_app
       configure_middleware
 
+      # need this first so UI login logic is performed before API login logic
+      @cascade_apps << build_ui
+
       if configuration.enable_diagnostic_endpoints
         @cascade_apps << build_diagnostic
       end
 
-      @cascade_apps << build_ui
       @cascade_apps << build_api
     end
 
