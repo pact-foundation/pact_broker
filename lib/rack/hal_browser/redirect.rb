@@ -9,6 +9,7 @@ module Rack
       def initialize(app, options = {}, &block)
         @app = app
         @excluded_paths = Array(options[:exclude]) << '/hal-browser'
+        @hal_browser = Rack::Static.new(@app, :urls => ['/hal-browser'], :root => ::File.expand_path('../../../../vendor', __FILE__))
       end
 
       def call(env)
@@ -16,7 +17,7 @@ module Rack
         if match?(request)
           return [303, {'Location' => hal_browser_url_from_request(request)}, []]
         end
-        Rack::Static.new(@app, :urls => ['/hal-browser'], :root => ::File.expand_path('../../../../vendor', __FILE__)).call(env)
+        @hal_browser.call(env)
       end
 
       private
@@ -39,7 +40,6 @@ module Rack
         url.fragment = request.path_info
         url.to_s
       end
-
     end
   end
 end
