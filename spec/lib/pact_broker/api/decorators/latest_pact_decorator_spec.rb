@@ -9,7 +9,8 @@ module PactBroker
 
       describe LatestPactDecorator do
 
-        let(:pact) { RepresentablePact.new(TestDataBuilder.new.create_pact_with_hierarchy 'Consumer', '1.2.3', 'Provider') }
+        let(:pact_domain) { TestDataBuilder.new.create_pact_with_hierarchy('Consumer', '1.2.3', 'Provider').and_return(:pact) }
+        let(:pact) { RepresentablePact.new(pact_domain) }
         let(:base_url) { 'http://example.org' }
 
         subject { JSON.parse LatestPactDecorator.new(pact).to_json(user_options: { base_url: base_url }), symbolize_names: true}

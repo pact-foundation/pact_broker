@@ -14,7 +14,7 @@ module PactBroker
         end
 
         def to_json
-          {
+          @@json ||= {
             "ok" => true,
             "_links" => {
               "self" => {
@@ -23,7 +23,6 @@ module PactBroker
             }
           }.to_json
         end
-
       end
     end
   end

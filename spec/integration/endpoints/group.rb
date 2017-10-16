@@ -6,7 +6,7 @@ describe "/groups/{pacticipant-name}" do
 
   describe "GET" do
     before do
-      TestDataBuilder.new.create_pact_with_hierarchy "Consumer", "1.2.3", "Provider"
+      TestDataBuilder.new.create_pact_with_hierarchy("Consumer", "1.2.3", "Provider").and_return(:pact)
       get "/groups/Consumer"
     end
 

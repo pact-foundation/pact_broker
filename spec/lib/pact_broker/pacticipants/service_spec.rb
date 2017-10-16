@@ -104,11 +104,13 @@ module PactBroker
         let(:verification) { instance_double("PactBroker::Domain::Verification")}
         let(:pacts) { [pact]}
         let(:webhooks) { [instance_double("PactBroker::Domain::Webhook")]}
+        let(:triggered_webhooks) { [instance_double("PactBroker::Webhooks::TriggeredWebhook")] }
 
         before do
           allow_any_instance_of(PactBroker::Pacts::Repository).to receive(:find_latest_pacts).and_return(pacts)
           allow(PactBroker::Verifications::Service).to receive(:find_latest_verification_for).and_return(verification)
           allow(PactBroker::Webhooks::Service).to receive(:find_by_consumer_and_provider).and_return(webhooks)
+          allow(PactBroker::Webhooks::Service).to receive(:find_latest_triggered_webhooks).and_return(triggered_webhooks)
         end
 
         it "retrieves the webhooks for the pact" do
@@ -139,7 +141,8 @@ module PactBroker
             .create_consumer_version_tag("prod")
             .create_pact
             .create_webhook
-            .create_webhook_execution
+            .create_triggered_webhook
+            .create_deprecated_webhook_execution
             .create_verification
         end
 
@@ -168,6 +171,12 @@ module PactBroker
           it "deletes the webhooks" do
             expect{ delete_consumer }.to change{
               PactBroker::Webhooks::Webhook.count
+              }.by(-1)
+          end
+
+          it "deletes the triggered webhooks" do
+            expect{ delete_consumer }.to change{
+              PactBroker::Webhooks::TriggeredWebhook.count
               }.by(-1)
           end
 
@@ -212,6 +221,12 @@ module PactBroker
           it "deletes the webhooks" do
             expect{ delete_provider }.to change{
               PactBroker::Webhooks::Webhook.count
+              }.by(-1)
+          end
+
+          it "deletes the triggered webhooks" do
+            expect{ delete_provider }.to change{
+              PactBroker::Webhooks::TriggeredWebhook.count
               }.by(-1)
           end
 

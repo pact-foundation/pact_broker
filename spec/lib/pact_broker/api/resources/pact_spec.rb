@@ -24,21 +24,28 @@ module PactBroker::Api
           let(:pact) { double("pact", json_content: json_content)}
           let(:html) { 'html' }
           let(:pact_id_params) { {provider_name: "provider_name", consumer_name: "consumer_name", consumer_version_number: "1.2.3"} }
+          let(:html_options) { { base_url: 'http://example.org', badge_url: 'http://badge' } }
 
           before do
+            allow_any_instance_of(Pact).to receive(:badge_url_for_latest_pact).and_return('http://badge')
             allow(PactBroker::Pacts::Service).to receive(:find_pact).and_return(pact)
             allow(PactBroker.configuration.html_pact_renderer).to receive(:call).and_return(html)
           end
 
           subject { get "/pacts/provider/provider_name/consumer/consumer_name/versions/1.2.3",{}, {'HTTP_ACCEPT' => "text/html"} }
 
-          it "find the pact" do
+          it "finds the pact" do
             expect(PactBroker::Pacts::Service).to receive(:find_pact).with(hash_including(pact_id_params))
             subject
           end
 
+          it "determines the badge url for the HTML page" do
+            expect_any_instance_of(Pact).to receive(:badge_url_for_latest_pact).with(pact, 'http://example.org')
+            subject
+          end
+
           it "uses the configured HTML renderer" do
-            expect(PactBroker.configuration.html_pact_renderer).to receive(:call).with(pact)
+            expect(PactBroker.configuration.html_pact_renderer).to receive(:call).with(pact, html_options)
             subject
           end
 

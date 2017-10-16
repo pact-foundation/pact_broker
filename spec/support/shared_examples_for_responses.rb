@@ -16,6 +16,10 @@ RSpec::Matchers.define :be_a_hal_json_success_response do
     expect(actual.status).to be 200
     expect(actual.headers['Content-Type']).to eq 'application/hal+json;charset=utf-8'
   end
+
+  failure_message do
+    "Expected successful json response, got #{actual.status} #{actual.headers['Content-Type']} with body #{actual.body}"
+  end
 end
 
 RSpec::Matchers.define :be_a_json_response do

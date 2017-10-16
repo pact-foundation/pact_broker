@@ -37,8 +37,35 @@ module PactBroker
           @relationship.any_webhooks?
         end
 
-        def webhooks_url
-          url = PactBroker::Api::PactBrokerUrls.webhooks_for_pact_url @relationship.latest_pact.consumer, @relationship.latest_pact.provider, ''
+        def webhook_label
+          case @relationship.webhook_status
+            when :none then "Create"
+            when :success, :failure then webhook_last_execution_date
+            when :retrying then "Retrying"
+            when :not_run then "Not run"
+          end
+        end
+
+        def webhook_status
+          case @relationship.webhook_status
+            when :success then "success"
+            when :failure then "danger"
+            when :retrying then "warning"
+            else ""
+          end
+        end
+
+        def webhook_last_execution_date
+          PactBroker::DateHelper.distance_of_time_in_words(@relationship.last_webhook_execution_date, DateTime.now) + " ago"
+        end
+
+        def webhook_url
+          url = case @relationship.webhook_status
+            when :none
+              PactBroker::Api::PactBrokerUrls.webhooks_for_pact_url @relationship.latest_pact.consumer, @relationship.latest_pact.provider
+            else
+              PactBroker::Api::PactBrokerUrls.webhooks_status_url @relationship.latest_pact.consumer, @relationship.latest_pact.provider
+          end
           "/hal-browser/browser.html##{url}"
         end
 
@@ -57,15 +84,11 @@ module PactBroker
         end
 
         def verification_status
-          return "" unless @relationship.ever_verified?
-          if @relationship.latest_verification_successful?
-            if @relationship.pact_changed_since_last_verification?
-              "warning"
-            else
-              "success"
-            end
-          else
-            "danger"
+          case @relationship.verification_status
+            when :success then "success"
+            when :stale then "warning"
+            when :failed then "danger"
+            else ""
           end
         end
 
@@ -74,13 +97,15 @@ module PactBroker
         end
 
         def verification_tooltip
-          return nil unless @relationship.ever_verified?
-          if warning?
-            "Pact has changed since last successful verification by #{provider_name} (v#{@relationship.latest_verification_provider_version})"
-          elsif @relationship.latest_verification_successful?
-            "Successfully verified by #{provider_name} (v#{@relationship.latest_verification_provider_version})"
-          elsif !@relationship.latest_verification_successful?
-            "Verification by #{provider_name} (v#{@relationship.latest_verification_provider_version}) failed"
+          case @relationship.verification_status
+          when :success
+            "Successfully verified by #{provider_name} (v#{@relationship.latest_verification_provider_version_number})"
+          when :stale
+            "Pact has changed since last successful verification by #{provider_name} (v#{@relationship.latest_verification_provider_version_number})"
+          when :failed
+            "Verification by #{provider_name} (v#{@relationship.latest_verification_provider_version_number}) failed"
+          else
+            nil
           end
         end
 

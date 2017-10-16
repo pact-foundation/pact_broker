@@ -28,6 +28,17 @@ module PactBroker
           where(name_like(:provider_name, provider_name))
         end
 
+        # must be exactly correct names
+        def pacticipants pacticipant_1, pacticipant_2
+          where(
+            consumer_name: pacticipant_1,
+            provider_name: pacticipant_2
+          ).or(
+            consumer_name: pacticipant_2,
+            provider_name: pacticipant_1
+          )
+        end
+
         def tag tag_name
           filter = name_like(Sequel.qualify(:tags, :name), tag_name)
           join(:tags, {version_id: :consumer_version_id}).where(filter)

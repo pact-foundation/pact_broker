@@ -19,9 +19,10 @@ module PactBroker
       def create next_verification_number, params, pact
         PactBroker.logger.info "Creating verification #{next_verification_number} for pact_id=#{pact.id} from params #{params}"
         verification = PactBroker::Domain::Verification.new
+        provider_version_number = params.fetch('providerApplicationVersion')
         PactBroker::Api::Decorators::VerificationDecorator.new(verification).from_hash(params)
         verification.number = next_verification_number
-        verification_repository.create(verification, pact)
+        verification_repository.create(verification, provider_version_number, pact)
       end
 
       def errors params
@@ -38,8 +39,8 @@ module PactBroker
         verification_repository.find_latest_verifications_for_consumer_version params[:consumer_name], params[:consumer_version_number]
       end
 
-      def find_latest_verification_for consumer, provider
-        verification_repository.find_latest_verification_for consumer.name, provider.name
+      def find_latest_verification_for consumer, provider, tag = nil
+        verification_repository.find_latest_verification_for consumer.name, provider.name, tag
       end
 
       def verification_summary_for_consumer_version params

@@ -28,6 +28,8 @@ en:
         If you meant to specify one of the above names, please correct the pact configuration, and re-publish the pact.
         If the pact is intended to be for a new consumer or provider, please manually create "%{new_name}" using the following command, and then re-publish the pact:
         $ curl -v -XPOST -H "Content-Type: application/json" -d "{\"name\": \"%{new_name}\"}" %{create_pacticipant_url}
+        If the pact broker requires basic authentication, add '-u <username:password>' to the command.
+        To disable this check, set `check_for_potential_duplicate_pacticipant_names` to false in the configuration.
       "400":
         title: 400 Malformed Request
         message: The request was malformed and could not be processed.

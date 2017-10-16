@@ -1,20 +1,23 @@
+require 'pact_broker/verifications/verification_status'
+require 'pact_broker/webhooks/status'
+
 module PactBroker
   module Domain
-
     class Relationship
 
       attr_reader :consumer, :provider, :latest_pact, :latest_verification, :webhooks
 
-      def initialize consumer, provider, latest_pact = nil, latest_verification = nil, webhooks = []
+      def initialize consumer, provider, latest_pact = nil, latest_verification = nil, webhooks = [], triggered_webhooks = []
         @consumer = consumer
         @provider = provider
         @latest_pact = latest_pact
         @latest_verification = latest_verification
         @webhooks = webhooks
+        @triggered_webhooks = triggered_webhooks
       end
 
-      def self.create consumer, provider, latest_pact, latest_verification, webhooks
-        new consumer, provider, latest_pact, latest_verification, webhooks
+      def self.create consumer, provider, latest_pact, latest_verification, webhooks = [], triggered_webhooks = []
+        new consumer, provider, latest_pact, latest_verification, webhooks, triggered_webhooks
       end
 
       def eq? other
@@ -43,6 +46,18 @@ module PactBroker
         @webhooks.any?
       end
 
+      def webhook_status
+        @webhook_status ||= PactBroker::Webhooks::Status.new(@latest_pact, @webhooks, @triggered_webhooks).to_sym
+      end
+
+      def last_webhook_execution_date
+        @last_webhook_execution_date ||= @triggered_webhooks.any? ? @triggered_webhooks.sort{|a, b| a.created_at <=> b.created_at }.last.created_at : nil
+      end
+
+      def verification_status
+        @verification_status ||= PactBroker::Verifications::Status.new(@latest_pact, @latest_verification).to_sym
+      end
+
       def ever_verified?
         !!latest_verification
       end
@@ -59,8 +74,8 @@ module PactBroker
         latest_verification.pact_version_sha != latest_pact.pact_version_sha
       end
 
-      def latest_verification_provider_version
-        latest_verification.provider_version
+      def latest_verification_provider_version_number
+        latest_verification.provider_version.number
       end
 
       def pacticipants

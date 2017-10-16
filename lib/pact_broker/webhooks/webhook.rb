@@ -11,20 +11,21 @@ module PactBroker
       associate(:many_to_one, :consumer, :class => "PactBroker::Domain::Pacticipant", :key => :consumer_id, :primary_key => :id)
       one_to_many :headers, :class => "PactBroker::Webhooks::WebhookHeader", :reciprocal => :webhook
 
+      dataset_module do
+        include PactBroker::Repositories::Helpers
+      end
+
       def before_destroy
         WebhookHeader.where(webhook_id: id).destroy
       end
 
+      def update_from_domain webhook
+        set(self.class.properties_hash_from_domain(webhook))
+      end
+
       def self.from_domain webhook, consumer, provider
-        is_json_request_body = !(String === webhook.request.body || webhook.request.body.nil?) # Can't rely on people to set content type
         new(
-          uuid: webhook.uuid,
-          method: webhook.request.method,
-          url: webhook.request.url,
-          username: webhook.request.username,
-          password: not_plain_text_password(webhook.request.password),
-          body: (is_json_request_body ? webhook.request.body.to_json : webhook.request.body),
-          is_json_request_body: is_json_request_body
+          properties_hash_from_domain(webhook).merge(uuid: webhook.uuid)
         ).tap do | db_webhook |
           db_webhook.consumer_id = consumer.id
           db_webhook.provider_id = provider.id
@@ -65,6 +66,20 @@ module PactBroker
         else
           body
         end
+      end
+
+      private
+
+      def self.properties_hash_from_domain webhook
+        is_json_request_body = !(String === webhook.request.body || webhook.request.body.nil?) # Can't rely on people to set content type
+        {
+          method: webhook.request.method,
+          url: webhook.request.url,
+          username: webhook.request.username,
+          password: not_plain_text_password(webhook.request.password),
+          body: (is_json_request_body ? webhook.request.body.to_json : webhook.request.body),
+          is_json_request_body: is_json_request_body
+        }
       end
 
     end

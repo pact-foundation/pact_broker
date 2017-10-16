@@ -17,6 +17,11 @@ module PactBroker
       Tags::Service
     end
 
+    def label_service
+      require 'pact_broker/labels/service'
+      Labels::Service
+    end
+
     def group_service
       require 'pact_broker/groups/service'
       Groups::Service
@@ -35,6 +40,16 @@ module PactBroker
     def verification_service
       require 'pact_broker/verifications/service'
       Verifications::Service
+    end
+
+    def badge_service
+      require 'pact_broker/badges/service'
+      Badges::Service
+    end
+
+    def matrix_service
+      require 'pact_broker/matrix/service'
+      Matrix::Service
     end
   end
 end

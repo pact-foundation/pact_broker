@@ -1,6 +1,117 @@
-Do this to generate your change history
+<a name="v2.6.0"></a>
+### v2.6.0 (2017-10-06)
 
-    $ git log --pretty=format:'  * %h - %s (%an, %ad)'
+#### Features
+
+* add configuration option for check_for_potential_duplicate_pacticipant_names	 ([6ab3fda](/../../commit/6ab3fda))
+
+#### Bug Fixes
+
+* add webhook_retry_schedule and semver_formats to list of configuration options that can be saved to the database	 ([5bab062](/../../commit/5bab062))
+* delete related triggered webhooks when webhook is deleted	 ([48f9853](/../../commit/48f9853))
+* use strict mode when using mysql	 ([f991e15](/../../commit/f991e15))
+
+<a name="v2.5.1"></a>
+### v2.5.1 (2017-09-26)
+
+
+#### Bug Fixes
+
+* **badges**
+  * do not allow caching	 ([d7e73c3](/../../commit/d7e73c3))
+
+
+<a name="v2.5.0"></a>
+### v2.5.0 (2017-09-25)
+
+#### Features
+
+* **heartbeat resource**
+  * cache json response body	 ([f2ac0f5](/../../commit/f2ac0f5))
+
+* **webhook status**
+  * delete webhook objects related to previous revisions of a pact when deleting a pact publication	 ([a053623](/../../commit/a053623))
+  * delete related triggered webhooks and executions when pact publication is deleted	 ([3dc590c](/../../commit/3dc590c))
+  * set any triggered webhooks in 'retrying' status to 'failed' on startup	 ([1f2305b](/../../commit/1f2305b))
+  * migrate webhook execution data to triggered webhooks	 ([9f46d86](/../../commit/9f46d86))
+  * consider http status < 300 to be a webhook failure	 ([7ef595a](/../../commit/7ef595a))
+  * log unhandled suckerpunch errors	 ([4cc779d](/../../commit/4cc779d))
+  * log number of seconds until next webhook attempt in webhook logs	 ([5d16330](/../../commit/5d16330))
+  * display attempts made and attempts remaining in webhook status resource	 ([648e1c3](/../../commit/648e1c3))
+  * move webhook retry schedule to configuration	 ([f2d92f3](/../../commit/f2d92f3))
+  * ensure triggered webhook and webhook execution objects are saved to database even when webhook fails and response code is 500	 ([88ba2ac](/../../commit/88ba2ac))
+  * redact authorization headers in webhook logs	 ([10efddb](/../../commit/10efddb))
+  * implement PUT for webhook resource	 ([7266b1e](/../../commit/7266b1e))
+  * add endpoint for triggered webhook execution logs	 ([ad81d20](/../../commit/ad81d20))
+
+* **hal browser**
+  * use name over title in embedded resource heading	 ([6c61da7](/../../commit/6c61da7))
+  * improve readability of link collections	 ([0a9bc8c](/../../commit/0a9bc8c))
+  * use name and title from self link when not specified in embedded resource	 ([354374c](/../../commit/354374c))
+
+* **versions resource**
+  * deprecate versions and pacticipant links in favour of pb:versions and pb:pacticipants	 ([94f395e](/../../commit/94f395e))
+
+* **badges**
+  * only cache successful badge responses from shields.io	 ([e5f08ad](/../../commit/e5f08ad))
+  * use simple in-memory cache for badges	 ([2453c55](/../../commit/2453c55))
+  * show message about enabling public badge access when disabled	 ([6fc78ff](/../../commit/6fc78ff))
+  * show badge in HTML pact and display markdown when clicked	 ([e9b632a](/../../commit/e9b632a))
+  * changed configuration property name from 'enable_badge_resources' to 'enable_public_badge_access'	 ([83540e5](/../../commit/83540e5))
+
+* **resources**
+  * improve usage of title and name attributes	 ([915a7ee](/../../commit/915a7ee))
+
+* **pact resource**
+  * improve usage of name and title fields	 ([3a9a178](/../../commit/3a9a178))
+  * add link relation for all pact versions	 ([d5ea068](/../../commit/d5ea068))
+
+* **gems**
+  * upgrade webmachine to 1.5.0	 ([d23fedc](/../../commit/d23fedc))
+
+#### Bug Fixes
+
+* return correct "latest" verification when a verification has been published for a pact with a revision	 ([f2b4c9f](/../../commit/f2b4c9f))
+* sequel migration 25 for mysql	 ([920c363](/../../commit/920c363))
+* sequel migration 19 for mysql	 ([0ee48e1](/../../commit/0ee48e1))
+
+<a name="v2.4.2"></a>
+### v2.4.2 (2017-09-07)
+
+#### Bug Fixes
+
+* add missing require	 ([92bf349](/../../commit/92bf349))
+
+<a name="v2.4.1"></a>
+### v2.4.1 (2017-09-07)
+
+#### Bug Fixes
+
+* allow resource identifiers to contain escaped forward slashes	 ([d875079](/../../commit/d875079))
+
+<a name="v2.4.0"></a>
+### v2.4.0 (2017-07-31)
+* 3a03f41 - fix(publish verification result): Fix Location header for newly created resource (Beth Skurrie, Mon Jul 31 10:49:37 2017 +1000)
+* 3b0f390 - feat(pacticipant labels): Add HAL link to pacticipants resource to find pacticipants by label. (Beth Skurrie, Mon Jul 24 08:17:36 2017 +1000)
+* 588d2ad - fix(pacticipant and pacticipants resources): Add correctly capitalised and namespaced properties and relations. Added deprecation warnings to existing incorrect properties and relations. (Beth Skurrie, Mon Jul 24 08:14:52 2017 +1000)
+* ab11f56 - feat(pacticipant labels): Adds embedded label resources to pacticipant resource. (Beth Skurrie, Fri Jul 21 18:03:15 2017 +1000)
+* 57086cf - feat(pacticipant labels): Adds /pacticipants/label/LABEL_NAME resource to retrieve pacticipants by label. (Beth Skurrie, Fri Jul 21 14:07:08 2017 +1000)
+* 4b44331 - feat(pacticipant labels): Adds pacticipant label resource with GET, PUT and DELETE (Beth Skurrie, Fri Jul 21 13:18:18 2017 +1000)
+* c5af7e1 - feat(badges): Allow badge config settings to be saved to/loaded from database (Beth Skurrie, Fri Jul 14 20:50:02 2017 +1000)
+
+#### 2.3.0 (2017-07-14)
+* 3ac4351 - fix(potential duplicate pacticipant names): Make duplicate logic smarter. Fixes https://github.com/pact-foundation/pact_broker/issues/35 (Beth Skurrie, Tue Jul 11 10:30:11 2017 +1000)
+* 81979b1 - add basic auth example to duplicate pacticipant error/help message (Fitzgerald, Andrew, Mon Jul 10 00:11:25 2017 -0400)
+* bc54321 - feat(badges): Add endpoint to retrieve badge for latest untagged pact (Beth Skurrie, Fri Jul 7 10:15:29 2017 +1000)
+* 5a3b149 - feat(badges): Add endpoint to retrieve badge for latest tagged pact (Beth Skurrie, Fri Jul 7 09:32:24 2017 +1000)
+* 78c888b - feat(badges): Use static images when shields.io base URL is not configured. (Beth Skurrie, Fri Jul 7 08:41:35 2017 +1000)
+* b30c368 - feat(badges): Allow shields.io base URL to be configured (Beth Skurrie, Fri Jul 7 08:31:47 2017 +1000)
+* d8b2cec - feat(badges): Added configuration for turning badge resources on or off (Beth Skurrie, Fri Jul 7 08:25:48 2017 +1000)
+* 2e43b5f - feat(badges): Added read timeout of 1000ms for HTTP call to create badge. (Beth Skurrie, Thu Jul 6 07:48:39 2017 +1000)
+* 6bdae00 - fix(publish verification): Corrected pact finding params when publishing a verification. (Beth Skurrie, Thu Jul 6 07:30:38 2017 +1000)
+* 2508eba - feat(badges): Allow pacticipant initials to be used where names are too long for the badge (Beth Skurrie, Wed Jul 5 14:49:07 2017 +1000)
+* f7a36b7 - feat(badges): Return static badge when there is an error creating a dynamic one (Beth Skurrie, Wed Jul 5 10:14:18 2017 +1000)
+* 24860b3 - feat(badges): Add badge svg endpoint for latest pact (Beth Skurrie, Tue Jul 4 15:28:28 2017 +1000)
 
 #### 2.2.0 (2017-07-04)
 * 788c5d0 - chore(gems): Lock rack and red-carpet gem versions for hakiri (Beth Skurrie, Tue Jul 4 10:28:15 2017 +1000)

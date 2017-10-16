@@ -90,7 +90,7 @@ module PactBroker
       describe "update" do
 
         let(:existing_pact) do
-          TestDataBuilder.new.create_pact_with_hierarchy "A Consumer", "1.2.3", "A Provider", original_json_content
+          TestDataBuilder.new.create_pact_with_hierarchy("A Consumer", "1.2.3", "A Provider", original_json_content).and_return(:pact)
         end
 
         before do
@@ -355,6 +355,27 @@ module PactBroker
             expect(subject.revision_number).to eq 2
 
           end
+        end
+      end
+
+      describe "find_all_revisions" do
+        before do
+          TestDataBuilder.new
+            .create_pact_with_hierarchy("foo", "3.0.0", "bar")
+            .revise_pact
+            .create_pact_with_hierarchy(consumer_name, "1.2.3", provider_name)
+            .revise_pact
+            .create_consumer_version("4.5.6")
+            .create_pact
+        end
+
+        subject { Repository.new.find_all_revisions consumer_name, "1.2.3", provider_name }
+
+        it "returns all the revisions for the given pact version" do
+          expect(subject.size).to eq 2
+          expect(subject.first.consumer_name).to eq consumer_name
+          expect(subject.first.revision_number).to eq 1
+          expect(subject.last.revision_number).to eq 2
         end
       end
 

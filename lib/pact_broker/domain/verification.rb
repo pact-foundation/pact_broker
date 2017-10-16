@@ -8,6 +8,7 @@ module PactBroker
 
       set_primary_key :id
       associate(:many_to_one, :pact_version, class: "PactBroker::Pacts::PactVersion", key: :pact_version_id, primary_key: :id)
+      associate(:many_to_one, :provider_version, class: "PactBroker::Domain::Version", key: :provider_version_id, primary_key: :id)
 
       def before_create
         super
@@ -41,8 +42,16 @@ module PactBroker
           where(Sequel.qualify("verifications", "number") => number)
         end
 
-        def latest
-          reverse_order(:consumer_version_order, :number).limit(1)
+        def tag tag_name
+          filter = name_like(Sequel.qualify(:tags, :name), tag_name)
+          join(:pact_publications, {pact_version_id: :pact_version_id})
+            .join(:tags, {version_id: :consumer_version_id}).where(filter)
+        end
+
+        def untagged
+          join(:pact_publications, {pact_version_id: :pact_version_id})
+            .left_outer_join(:tags, {version_id: :consumer_version_id})
+            .where(Sequel.qualify(:tags, :name) => nil)
         end
       end
 
@@ -70,10 +79,13 @@ module PactBroker
            .limit(1).select(:provider_id))
       end
 
+      def provider_version_number
+        provider_version.number
+      end
+
       def latest_pact_publication
         pact_version.latest_pact_publication
       end
-
     end
 
     Verification.plugin :timestamps

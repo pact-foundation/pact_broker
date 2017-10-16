@@ -22,6 +22,11 @@ module PactBroker
       Tags::Repository.new
     end
 
+    def label_repository
+      require 'pact_broker/labels/repository'
+      Labels::Repository.new
+    end
+
     def webhook_repository
       require 'pact_broker/webhooks/repository'
       Webhooks::Repository.new
@@ -30,6 +35,11 @@ module PactBroker
     def verification_repository
       require 'pact_broker/verifications/repository'
       Verifications::Repository.new
+    end
+
+    def matrix_repository
+      require 'pact_broker/matrix/repository'
+      Matrix::Repository.new
     end
 
     extend self

@@ -23,7 +23,7 @@ module PactBroker
 
       describe "#create" do
         let(:params) { {'success' => true, 'providerApplicationVersion' => '4.5.6'} }
-        let(:pact) { TestDataBuilder.new.create_pact_with_hierarchy }
+        let(:pact) { TestDataBuilder.new.create_pact_with_hierarchy.and_return(:pact) }
         let(:create_verification) { subject.create 3, params, pact }
 
         it "logs the creation" do
@@ -42,6 +42,12 @@ module PactBroker
           verification = create_verification
           expect(verification.pact_version_id).to_not be_nil
           expect(verification.pact_version).to_not be_nil
+        end
+
+        it "sets the provider version" do
+          verification = create_verification
+          expect(verification.provider_version).to_not be nil
+          expect(verification.provider_version_number).to eq '4.5.6'
         end
       end
 

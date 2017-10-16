@@ -53,14 +53,12 @@ module PactBroker
 
           it "includes a link to the diff with the previous distinct version" do
             expect(subject[:_links][:'pb:diff-previous-distinct']).to eq({href: 'http://example.org/pacts/provider/A%20Provider/consumer/A%20Consumer/version/1234/diff/previous-distinct',
-              title: 'Diff',
-              name: 'Diff with previous distinct version of this pact'})
+              title: 'Diff with previous distinct version of this pact'})
           end
 
           it "includes a link to the previous distinct pact version" do
             expect(subject[:_links][:'pb:previous-distinct']).to eq({href: 'http://example.org/pacts/provider/A%20Provider/consumer/A%20Consumer/version/1234/previous-distinct',
-              title: 'Pact',
-              name: 'Previous distinct version of this pact'})
+              title: 'Previous distinct version of this pact'})
           end
 
           it "includes a link to tag this version" do
@@ -80,9 +78,13 @@ module PactBroker
           end
 
           it "includes a link to the latest pact" do
-            expect(subject[:_links][:'pb:latest-pact-version'][:title]).to eq "Pact"
-            expect(subject[:_links][:'pb:latest-pact-version'][:name]).to eq "Latest version of this pact"
+            expect(subject[:_links][:'pb:latest-pact-version'][:title]).to eq "Latest version of this pact"
             expect(subject[:_links][:'pb:latest-pact-version'][:href]).to eq "http://example.org/pacts/provider/A%20Provider/consumer/A%20Consumer/latest"
+          end
+
+          it "includes a link to all pact versions" do
+            expect(subject[:_links][:'pb:all-pact-versions'][:title]).to eq "All versions of this pact"
+            expect(subject[:_links][:'pb:all-pact-versions'][:href]).to eq "http://example.org/pacts/provider/A%20Provider/consumer/A%20Consumer/versions"
           end
 
           it "includes a link to the pact version" do

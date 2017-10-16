@@ -9,7 +9,7 @@ Sequel.extension :migration
 module PactBroker
   module Database
 
-    TABLES = [:webhook_executions, :config, :pacts, :pact_version_contents, :tags, :verifications, :pact_publications, :pact_versions,  :webhook_headers, :webhooks, :versions, :pacticipants].freeze
+    TABLES = [:labels, :webhook_executions, :triggered_webhooks, :config, :pacts, :pact_version_contents, :tags, :verifications, :pact_publications, :pact_versions,  :webhook_headers, :webhooks, :versions, :pacticipants].freeze
 
     extend self
 
@@ -77,7 +77,12 @@ module PactBroker
     def truncate
       TABLES.each do | table_name |
         if database.table_exists?(table_name)
-          database[table_name].delete
+          begin
+            database[table_name].delete
+          rescue SQLite3::ConstraintException => e
+            puts "Could not delete the following records from #{table_name}: #{database[table_name].select_all}"
+            raise e
+          end
         end
       end
     end

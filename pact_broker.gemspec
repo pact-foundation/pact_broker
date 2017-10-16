@@ -27,7 +27,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'reform', '~> 2.2'
   gem.add_runtime_dependency 'dry-validation', '~> 0.10.5'
   gem.add_runtime_dependency 'sequel', '~> 4.23'
-  gem.add_runtime_dependency 'webmachine', '1.4.0'
+  gem.add_runtime_dependency 'webmachine', '1.5.0'
   gem.add_runtime_dependency 'semver2', '~> 3.4.2'
   gem.add_runtime_dependency 'rack', '~>2.0'
   gem.add_runtime_dependency 'redcarpet', '>=3.3.2', '~>3.3'
@@ -39,14 +39,16 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'dry-types', '~> 0.10.3' # https://travis-ci.org/pact-foundation/pact_broker/jobs/249448621
 
   gem.add_development_dependency 'bundler-audit', '~>0.4'
-  gem.add_development_dependency 'sqlite3'
+  gem.add_development_dependency 'sqlite3', '~>1.3'
   gem.add_development_dependency 'pry-byebug'
   gem.add_development_dependency 'rake', '~>10.0'
   gem.add_development_dependency 'fakefs', '~>0.4'
   gem.add_development_dependency 'mysql2', '~>0.3.15'
   gem.add_development_dependency 'webmock', '~>2.3'
   gem.add_development_dependency 'rspec', '~>3.0'
-  gem.add_development_dependency 'rspec-its'
-  gem.add_development_dependency 'database_cleaner'
-  gem.add_development_dependency 'pg'
+  gem.add_development_dependency 'rspec-its', '~>1.2'
+  gem.add_development_dependency 'database_cleaner', '~>1.6'
+  gem.add_development_dependency 'pg', '~>0.21'
+  gem.add_development_dependency 'conventional-changelog', '~>1.3'
+
 end

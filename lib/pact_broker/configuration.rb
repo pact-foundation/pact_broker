@@ -11,12 +11,23 @@ module PactBroker
 
   class Configuration
 
-    SAVABLE_SETTING_NAMES = [:order_versions_by_date, :use_case_sensitive_resource_names]
+    SAVABLE_SETTING_NAMES = [
+      :order_versions_by_date,
+      :use_case_sensitive_resource_names,
+      :enable_public_badge_access,
+      :shields_io_base_url,
+      :check_for_potential_duplicate_pacticipant_names,
+      :webhook_retry_schedule,
+      :semver_formats
+    ]
 
     attr_accessor :log_dir, :database_connection, :auto_migrate_db, :use_hal_browser, :html_pact_renderer
     attr_accessor :validate_database_connection_config, :enable_diagnostic_endpoints, :version_parser
     attr_accessor :use_case_sensitive_resource_names, :order_versions_by_date
+    attr_accessor :check_for_potential_duplicate_pacticipant_names
     attr_accessor :semver_formats
+    attr_accessor :enable_public_badge_access, :shields_io_base_url
+    attr_accessor :webhook_retry_schedule
     attr_writer :logger
 
     def initialize
@@ -38,20 +49,24 @@ module PactBroker
       config.use_hal_browser = true
       config.validate_database_connection_config = true
       config.enable_diagnostic_endpoints = true
+      config.enable_public_badge_access = false # For security
+      config.shields_io_base_url = "https://img.shields.io".freeze
       config.use_case_sensitive_resource_names = true
       config.html_pact_renderer = default_html_pact_render
       config.version_parser = PactBroker::Versions::ParseSemanticVersion
       # Not recommended to set this to true unless there is no way to
       # consistently extract an orderable object from the consumer application version number.
       config.order_versions_by_date = false
-      config.semver_formats = ["%M.%m.%p%s%d","%M.%m", "%M"]
+      config.semver_formats = ["%M.%m.%p%s%d", "%M.%m", "%M"]
+      config.webhook_retry_schedule = [10, 60, 120, 300, 600, 1200] #10 sec, 1 min, 2 min, 5 min, 10 min, 20 min => 38 minutes
+      config.check_for_potential_duplicate_pacticipant_names = true
       config
     end
 
     def self.default_html_pact_render
-      lambda { |pact|
+      lambda { |pact, options|
         require 'pact_broker/api/renderers/html_pact_renderer'
-        PactBroker::Api::Renderers::HtmlPactRenderer.call pact
+        PactBroker::Api::Renderers::HtmlPactRenderer.call pact, options
       }
     end
 
@@ -103,6 +118,11 @@ module PactBroker
       end
     end
 
+    def enable_badge_resources= enable_badge_resources
+      puts "Pact Broker configuration property `enable_badge_resources` is deprecated. Please use `enable_public_badge_access`"
+      self.enable_public_badge_access = enable_badge_resources
+    end
+
     def save_to_database
       # Can't require a Sequel::Model class before the connection has been set
       require 'pact_broker/config/save'
@@ -127,7 +147,5 @@ module PactBroker
     def log_path
       log_dir + "/pact_broker.log"
     end
-
   end
-
 end

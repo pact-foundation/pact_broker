@@ -12,4 +12,4 @@ Send a DELETE request to the webhook URL.
 
 ### Updating
 
-Currently not implemented. You will need to delete and re-create the webhook.
+Send a PUT request to the webhook URL with all fields required for the new webhook.

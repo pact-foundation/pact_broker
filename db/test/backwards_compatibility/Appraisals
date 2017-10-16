@@ -1,0 +1,49 @@
+# appraise "1.1.0" do
+#   gem "pact_broker", "1.1.0"
+#   gem "roar", "~>0.1"
+#   gem "sequel", "4.13.0"
+#   gem "webmachine", "1.2.2"
+# end
+
+# appraise "1.2.0" do
+#   gem "pact_broker", "1.2.0"
+#   gem "sequel", "4.13.0"
+#   gem "webmachine", "1.2.2"
+# end
+
+appraise "1.18.0" do
+  gem "pact_broker", "1.18.0"
+  gem "dry-types", "0.10"
+end
+
+appraise "2.0.0" do
+  gem "pact_broker", "2.0.0"
+  gem "dry-types", "0.10"
+end
+
+appraise "2.0.0" do
+  gem "pact_broker", "2.0.0"
+  gem "dry-types", "0.10"
+end
+
+appraise "2.1.0" do
+  gem "pact_broker", "2.1.0"
+  gem "dry-types", "0.10"
+end
+
+appraise "2.2.0" do
+  gem "pact_broker", "2.2.0"
+  gem "dry-types", "0.10.3"
+end
+
+appraise "2.3.0" do
+  gem "pact_broker", "2.3.0"
+end
+
+appraise "2.4.2" do
+  gem "pact_broker", "2.4.2"
+end
+
+appraise "head" do
+  gem "pact_broker", path: "../../../"
+end

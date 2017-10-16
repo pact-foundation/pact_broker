@@ -67,20 +67,20 @@ module PactBroker
         "#{version_url(base_url, version)}/tags"
       end
 
-      def new_verification_url params, number, base_url
+      def new_verification_url pact, number, base_url
         [ base_url, 'pacts',
-          'provider', url_encode(params[:provider_name]),
-          'consumer', url_encode(params[:consumer_name]),
-          'pact-version', params[:sha],
+          'provider', url_encode(pact.provider_name),
+          'consumer', url_encode(pact.consumer_name),
+          'pact-version', pact.pact_version_sha,
           'verification-results', number
         ].join('/')
       end
 
-      def verification_url verification, base_url
+      def verification_url verification, base_url = ''
         [ base_url, 'pacts',
           'provider', url_encode(verification.provider_name),
           'consumer', url_encode(verification.consumer_name),
-          'pact-version', verification.pact_version.sha,
+          'pact-version', verification.pact_version_sha,
           'verification-results', verification.number
         ].join('/')
       end
@@ -97,6 +97,14 @@ module PactBroker
         "#{tags_url(base_url, tag.version)}/#{tag.name}"
       end
 
+      def label_url label, base_url
+        "#{labels_url(label.pacticipant, base_url)}/#{label.name}"
+      end
+
+      def labels_url pacticipant, base_url
+        "#{pacticipant_url(base_url, pacticipant)}/labels"
+      end
+
       def webhooks_url base_url
         "#{base_url}/webhooks"
       end
@@ -109,8 +117,20 @@ module PactBroker
         "#{base_url}/webhooks/#{webhook.uuid}/execute"
       end
 
-      def webhooks_for_pact_url consumer, provider, base_url
+      def webhooks_for_pact_url consumer, provider, base_url = ''
         "#{base_url}/webhooks/provider/#{url_encode(provider.name)}/consumer/#{url_encode(consumer.name)}"
+      end
+
+      def webhooks_status_url consumer, provider, base_url = ''
+        "#{webhooks_for_pact_url(consumer, provider, base_url)}/status"
+      end
+
+      def triggered_webhook_logs_url triggered_webhook, base_url
+        "#{base_url}/webhooks/#{triggered_webhook.webhook_uuid}/trigger/#{triggered_webhook.trigger_uuid}/logs"
+      end
+
+     def badge_url_for_latest_pact pact, base_url = ''
+        "#{latest_pact_url(base_url, pact)}/badge.svg"
       end
 
       def hal_browser_url target_url

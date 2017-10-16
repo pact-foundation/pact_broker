@@ -4,9 +4,7 @@ require 'pact_broker/logging'
 require 'pact_broker/api/contracts/webhook_contract'
 
 module PactBroker
-
   module Domain
-
     class Webhook
 
       include Messages
@@ -33,9 +31,9 @@ module PactBroker
         request && request.description
       end
 
-      def execute
+      def execute options
         logger.info "Executing #{self}"
-        request.execute
+        request.execute options
       end
 
       def to_s
@@ -50,7 +48,5 @@ module PactBroker
         provider && provider.name
       end
     end
-
   end
-
 end

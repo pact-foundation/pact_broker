@@ -1,4 +1,5 @@
 require 'pact_broker/repositories'
+require 'pact_broker/services'
 require 'pact_broker/webhooks/repository'
 require 'pact_broker/webhooks/service'
 require 'pact_broker/domain/webhook_execution_result'
@@ -9,6 +10,7 @@ require 'pact_broker/pacticipants/service'
 require 'pact_broker/versions/repository'
 require 'pact_broker/versions/service'
 require 'pact_broker/tags/repository'
+require 'pact_broker/labels/repository'
 require 'pact_broker/tags/service'
 require 'pact_broker/domain'
 require 'json'
@@ -24,11 +26,16 @@ require 'ostruct'
 class TestDataBuilder
 
   include PactBroker::Repositories
+  include PactBroker::Services
 
   attr_reader :pacticipant
   attr_reader :consumer
   attr_reader :provider
+  attr_reader :consumer_version
+  attr_reader :pact
   attr_reader :webhook
+  attr_reader :webhook_execution
+  attr_reader :triggered_webhook
 
   def create_pricing_service
     @pricing_service_id = pacticipant_repository.create(:name => 'Pricing Service', :repository_url => 'git@git.realestate.com.au:business-systems/pricing-service').save(raise_on_save_failure: true).id
@@ -81,10 +88,11 @@ class TestDataBuilder
   end
 
   def create_pact_with_hierarchy consumer_name = "Consumer", consumer_version = "1.2.3", provider_name = "Provider", json_content = default_json_content
-    provider = PactBroker::Domain::Pacticipant.create(:name => provider_name)
-    consumer = PactBroker::Domain::Pacticipant.create(:name => consumer_name)
-    version = PactBroker::Domain::Version.create(:number => consumer_version, :pacticipant => consumer)
-    PactBroker::Pacts::Repository.new.create(version_id: version.id, consumer_id: consumer.id, provider_id: provider.id, json_content: json_content)
+    create_consumer consumer_name
+    create_provider provider_name
+    create_consumer_version consumer_version
+    create_pact json_content: json_content
+    self
   end
 
   def create_version_with_hierarchy pacticipant_name, pacticipant_version
@@ -109,9 +117,19 @@ class TestDataBuilder
     self
   end
 
+  def use_consumer consumer_name
+    @consumer = PactBroker::Domain::Pacticipant.find(:name => consumer_name)
+    self
+  end
+
   def create_provider provider_name = "Provider #{model_counter}"
     create_pacticipant provider_name
     @provider = @pacticipant
+    self
+  end
+
+  def use_provider provider_name
+    @provider = PactBroker::Domain::Pacticipant.find(:name => provider_name)
     self
   end
 
@@ -125,6 +143,11 @@ class TestDataBuilder
     self
   end
 
+  def use_consumer_version version_number
+    @consumer_version = PactBroker::Domain::Version.where(pacticipant_id: @consumer.id, number: version_number).single_record
+    self
+  end
+
   def create_tag tag_name
     @tag = PactBroker::Domain::Tag.create(name: tag_name, version: @version)
     self
@@ -132,6 +155,11 @@ class TestDataBuilder
 
   def create_consumer_version_tag tag_name
     @tag = PactBroker::Domain::Tag.create(name: tag_name, version: @consumer_version)
+    self
+  end
+
+  def create_label label_name
+    @label = PactBroker::Domain::Label.create(name: label_name, pacticipant: @pacticipant)
     self
   end
 
@@ -143,6 +171,11 @@ class TestDataBuilder
     self
   end
 
+  def create_same_pact params = {}
+    last_pact_version = PactBroker::Pacts::PactVersion.order(:id).last
+    create_pact json_content: last_pact_version.content
+  end
+
   def revise_pact json_content = nil
     json_content = json_content ? json_content : {random: rand}.to_json
     @pact = PactBroker::Pacts::Repository.new.update(@pact.id, json_content: json_content)
@@ -150,22 +183,50 @@ class TestDataBuilder
   end
 
   def create_webhook params = {}
+    uuid = params[:uuid] || PactBroker::Webhooks::Service.next_uuid
     default_params = {method: 'POST', url: 'http://example.org', headers: {'Content-Type' => 'application/json'}}
     request = PactBroker::Domain::WebhookRequest.new(default_params.merge(params))
-    @webhook = PactBroker::Webhooks::Repository.new.create PactBroker::Webhooks::Service.next_uuid, PactBroker::Domain::Webhook.new(request: request), @consumer, @provider
+    @webhook = PactBroker::Webhooks::Repository.new.create uuid, PactBroker::Domain::Webhook.new(request: request), @consumer, @provider
     self
   end
 
-  def create_webhook_execution
-    webhook_execution_result = PactBroker::Domain::WebhookExecutionResult.new(OpenStruct.new(code: "200"), "logs", nil)
-    @webhook_execution = PactBroker::Webhooks::Repository.new.create_execution @webhook, webhook_execution_result
+  def create_triggered_webhook params = {}
+    trigger_uuid = params[:trigger_uuid] || webhook_service.next_uuid
+    @triggered_webhook = webhook_repository.create_triggered_webhook trigger_uuid, @webhook, @pact, PactBroker::Webhooks::Service::PUBLICATION
+    @triggered_webhook.update(status: params[:status]) if params[:status]
+    set_created_at_if_set params[:created_at], :triggered_webhooks, {id: @triggered_webhook.id}
+    self
+  end
+
+  def create_webhook_execution params = {}
+    logs = params[:logs] || "logs"
+    webhook_execution_result = PactBroker::Domain::WebhookExecutionResult.new(OpenStruct.new(code: "200"), logs, nil)
+    @webhook_execution = PactBroker::Webhooks::Repository.new.create_execution @triggered_webhook, webhook_execution_result
+    created_at = params[:created_at] || @pact.created_at + Rational(1, 86400)
+    set_created_at_if_set created_at, :webhook_executions, {id: @webhook_execution.id}
+    @webhook_execution = PactBroker::Webhooks::Execution.find(id: @webhook_execution.id)
+    self
+  end
+
+  def create_deprecated_webhook_execution params = {}
+    create_webhook_execution params
+    Sequel::Model.db[:webhook_executions].where(id: webhook_execution.id).update(
+      triggered_webhook_id: nil,
+      consumer_id: consumer.id,
+      provider_id: provider.id,
+      webhook_id: PactBroker::Webhooks::Webhook.find(uuid: webhook.uuid).id,
+      pact_publication_id: pact.id
+    )
     self
   end
 
   def create_verification parameters = {}
-    default_parameters = {success: true, provider_version: '4.5.6', number: 1}
-    verification = PactBroker::Domain::Verification.new(default_parameters.merge(parameters))
-    @verification = PactBroker::Verifications::Repository.new.create(verification, @pact)
+    provider_version_number = parameters[:provider_version] || '4.5.6'
+    default_parameters = {success: true, number: 1}
+    parameters = default_parameters.merge(parameters)
+    parameters.delete(:provider_version)
+    verification = PactBroker::Domain::Verification.new(parameters)
+    @verification = PactBroker::Verifications::Repository.new.create(verification, provider_version_number, @pact)
     self
   end
 
@@ -183,7 +244,7 @@ class TestDataBuilder
 
   def set_created_at_if_set created_at, table_name, selector
     if created_at
-      Sequel::Model.db[table_name].where(selector.keys.first => selector.values.first).update(created_at: created_at.xmlschema)
+      Sequel::Model.db[table_name].where(selector.keys.first => selector.values.first).update(created_at: created_at)
     end
   end
 

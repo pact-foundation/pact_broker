@@ -16,17 +16,19 @@ module PactBroker::Api
 
         context "Accept: text/html" do
 
+          let(:path) { "/pacts/provider/provider_name/consumer/consumer_name/latest" }
           let(:json_content) { 'json_content' }
           let(:pact) { double("pact", json_content: json_content)}
           let(:html) { 'html' }
-          let(:pact_id_params) { {:provider_name=>"provider_name", :consumer_name=>"consumer_name"} }
+          let(:pact_id_params) { {provider_name: "provider_name", consumer_name: "consumer_name"} }
+          let(:html_options) { { base_url: 'http://example.org', badge_url: "http://example.org#{path}/badge.svg" } }
 
           before do
             allow(PactBroker::Pacts::Service).to receive(:find_latest_pact).and_return(pact)
             allow(PactBroker.configuration.html_pact_renderer).to receive(:call).and_return(html)
           end
 
-          subject { get "/pacts/provider/provider_name/consumer/consumer_name/latest",{}, {'HTTP_ACCEPT' => "text/html"} }
+          subject { get path ,{}, {'HTTP_ACCEPT' => "text/html"} }
 
           it "find the pact" do
             expect(PactBroker::Pacts::Service).to receive(:find_latest_pact).with(hash_including(pact_id_params))
@@ -34,7 +36,7 @@ module PactBroker::Api
           end
 
           it "uses the configured HTML renderer" do
-            expect(PactBroker.configuration.html_pact_renderer).to receive(:call).with(pact)
+            expect(PactBroker.configuration.html_pact_renderer).to receive(:call).with(pact, html_options)
             subject
           end
 

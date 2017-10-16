@@ -41,6 +41,10 @@ module PactBroker
         pacticipant_repository.find_by_name(name)
       end
 
+      def self.find options
+        pacticipant_repository.find options
+      end
+
       def self.find_all_pacticipant_versions_in_reverse_order name
         pacticipant_repository.find_all_pacticipant_versions_in_reverse_order(name)
       end
@@ -54,12 +58,14 @@ module PactBroker
         end
       end
 
+      # This needs to move into a new service
       def self.find_relationships
         pact_repository.find_latest_pacts
           .collect do | pact|
             latest_verification = verification_service.find_latest_verification_for(pact.consumer, pact.provider)
             webhooks = webhook_service.find_by_consumer_and_provider pact.consumer, pact.provider
-            PactBroker::Domain::Relationship.create pact.consumer, pact.provider, pact, latest_verification, webhooks
+            triggered_webhooks = webhook_service.find_latest_triggered_webhooks pact.consumer, pact.provider
+            PactBroker::Domain::Relationship.create pact.consumer, pact.provider, pact, latest_verification, webhooks, triggered_webhooks
           end
       end
 
@@ -79,7 +85,7 @@ module PactBroker
         version_ids = PactBroker::Domain::Version.where(pacticipant_id: pacticipant.id).select_for_subquery(:id) #stupid mysql doesn't allow subqueries
         select_pacticipant = "select id from pacticipants where name = '#{name}'"
         tag_repository.delete_by_version_id version_ids
-        webhook_repository.delete_executions_by_pacticipant pacticipant
+        webhook_service.delete_all_webhhook_related_objects_by_pacticipant pacticipant
         pact_repository.delete_by_version_id version_ids
         connection.run("delete from pact_publications where provider_id = #{pacticipant.id}")
         connection.run("delete from verifications where pact_version_id IN (select id from pact_versions where provider_id = #{pacticipant.id})")
@@ -88,7 +94,6 @@ module PactBroker
         connection.run("delete from pact_versions where consumer_id = #{pacticipant.id}")
         connection.run("delete from versions where pacticipant_id = #{pacticipant.id}")
         version_repository.delete_by_id version_ids
-        webhook_service.delete_by_pacticipant pacticipant
         connection.run("delete from pacticipants where id = #{pacticipant.id}")
       end
 

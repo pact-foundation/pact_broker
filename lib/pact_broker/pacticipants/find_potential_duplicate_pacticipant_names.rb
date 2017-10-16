@@ -21,19 +21,23 @@ module PactBroker
         return [] if existing_names.include?(new_name)
 
         existing_names.select do | existing_name |
-          similar?(clean(new_name), clean(existing_name))
+          clean(new_name) == clean(existing_name)
         end
       end
 
-      def similar?(new_name, existing_name)
-        existing_name.include?(new_name) || new_name.include?(existing_name)
+      def clean name
+        self.class.split(name).collect{|w| w.chomp('s') } - ["api", "provider", "service"]
       end
 
-      def clean name #TODO uppercase S
-        name.gsub(/s\b/,'').gsub(/s([A-Z])/,'\1').gsub(/[^A-Za-z0-9]/,'').downcase
+      def self.split(string)
+        string.gsub(/\s/, '_')
+              .gsub(/::/, '/')
+              .gsub(/([A-Z]+)([A-Z][a-z])/, '\1_\2')
+              .gsub(/([a-z\d])([A-Z])/, '\1_\2')
+              .tr('-', '_')
+              .downcase
+              .split("_")
       end
-
     end
-
   end
 end

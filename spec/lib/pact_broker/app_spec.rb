@@ -3,21 +3,26 @@ require 'pact_broker/app'
 module PactBroker
   describe App do
 
+    before do
+      allow(PactBroker::DB).to receive(:run_migrations)
+    end
+
     class TestApp < PactBroker::App
-
       def configure_database_connection
-        # do nothing
+        # do nothing so we don't screw up our test connection
       end
-
-      def migrate_database
-        # do nothing
-      end
-
     end
 
     let(:app) do
       TestApp.new do | configuration |
         configuration.database_connection = PactBroker::DB.connection
+      end
+    end
+
+    describe "on start up" do
+      it "fails any retrying triggered webhooks left over when the app shut down" do
+        expect(PactBroker::Webhooks::Service).to receive(:fail_retrying_triggered_webhooks)
+        app
       end
     end
 
@@ -57,6 +62,75 @@ module PactBroker
       it "executes the callbacks" do
         get "/"
         expect(CALLBACKS).to eq ["before", "after"]
+      end
+    end
+
+    describe "use_xxx_auth" do
+      class TestAuth
+        def initialize app, *args, &block
+          @app = Rack::Auth::Basic.new(app, "Protected") do | username, password |
+            username == 'foo' && password == 'bar'
+          end
+        end
+
+        def call(env)
+          @app.call(env)
+        end
+      end
+
+      describe "use_api_auth" do
+        it "allows the API to be protected" do
+          app.use_api_auth TestAuth
+
+          basic_authorize 'foo', 'bar'
+          get "/"
+          expect(last_response.status).to eq 200
+
+          basic_authorize 'foo', 'wrong'
+          get "/"
+          expect(last_response.status).to eq 401
+          expect(last_response.headers["WWW-Authenticate"]).to eq "Basic realm=\"Protected\""
+        end
+      end
+
+      describe "use_ui_auth" do
+        it "allows the UI to be protected" do
+          app.use_ui_auth TestAuth
+
+          basic_authorize 'foo', 'bar'
+          get "/", nil, {'HTTP_ACCEPT' => 'text/html'}
+          expect(last_response.status).to eq 200
+
+          basic_authorize 'foo', 'wrong'
+          get "/", nil, {'HTTP_ACCEPT' => 'text/html'}
+          expect(last_response.status).to eq 401
+          expect(last_response.headers["WWW-Authenticate"]).to eq "Basic realm=\"Protected\""
+        end
+      end
+
+      context "ordering of calls" do
+        class TestAuth1
+          def initialize app; end
+          def call env; end
+        end
+
+        class TestAuth2 < TestAuth1; end
+
+        before do
+          allow(TestAuth1).to receive(:new).and_return(test_auth_1)
+          allow(TestAuth2).to receive(:new).and_return(test_auth_2)
+        end
+
+        let(:test_auth_1) { instance_double('TestAuth1', call: [404, {}, []]) }
+        let(:test_auth_2) { instance_double('TestAuth2', call: [404, {}, []]) }
+
+        it "calls the UI auth before the API auth" do
+          expect(test_auth_1).to receive(:call).ordered
+          expect(test_auth_2).to receive(:call).ordered
+          app.use_ui_auth TestAuth1
+          app.use_api_auth TestAuth2
+          get "/", nil, {'HTTP_ACCEPT' => 'text/html'}
+        end
       end
     end
 
@@ -208,6 +282,5 @@ module PactBroker
         expect { subject }.to_not change { PactBroker::Domain::Pacticipant.count }
       end
     end
-
   end
 end

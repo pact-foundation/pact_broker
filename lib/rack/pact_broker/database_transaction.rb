@@ -1,4 +1,4 @@
-require 'pact_broker/version'
+require 'pact_broker/constants'
 require 'sequel'
 
 module Rack
@@ -6,7 +6,7 @@ module Rack
     class DatabaseTransaction
 
       REQUEST_METHOD = "REQUEST_METHOD".freeze
-      TRANS_METHODS = %{POST PUT PATCH DELETE}.freeze
+      TRANS_METHODS = %w{POST PUT PATCH DELETE}.freeze
 
       def initialize app, database_connection
         @app = app
@@ -33,9 +33,15 @@ module Rack
         response = nil
         @database_connection.transaction do
           response = @app.call(env)
-          raise Sequel::Rollback if response.first == 500
+          if response.first == 500
+            raise Sequel::Rollback unless do_not_rollback?(response)
+          end
         end
         response
+      end
+
+      def do_not_rollback? response
+        response[1].delete(::PactBroker::DO_NOT_ROLLBACK)
       end
     end
   end

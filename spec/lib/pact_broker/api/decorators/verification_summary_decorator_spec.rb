@@ -12,16 +12,17 @@ module PactBroker
         let(:verification) do
           instance_double("PactBroker::Domain::Verification",
             success: true, number: 1,
-            provider_version: '4.5.6',
+            provider_version_number: '4.5.6',
             build_url: 'http://some-build',
             provider_name: 'Provider',
             consumer_name: 'Consumer',
             pact_version: pact_version,
+            pact_version_sha: '1234',
             latest_pact_publication: pact,
             execution_date: DateTime.now)
         end
         let(:pact_version) do
-          instance_double("PactBroker::Pacts::PactVersion", sha: '1234', name: 'Name')
+          instance_double("PactBroker::Pacts::PactVersion", name: 'Name')
         end
 
         let(:pact) { instance_double("PactBroker::Domain::Pact", name: "Some pact", consumer_name: "Foo", provider_name: "Bar", consumer_version_number: "1.2.3") }

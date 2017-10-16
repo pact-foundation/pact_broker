@@ -2,12 +2,8 @@ require_relative 'base_decorator'
 require_relative 'pact_version_decorator'
 
 module PactBroker
-
   module Api
-
     module Decorators
-
-
       class PactVersionsDecorator < BaseDecorator
 
         collection :entries, as: :pacts, embedded: true, :extend => PactBroker::Api::Decorators::PactVersionDecorator
@@ -15,8 +11,7 @@ module PactBroker
         link :self do | context |
           {
             href: context[:resource_url],
-            title: "Pact versions",
-            name: "All versions of the pact between #{context[:consumer_name]} and #{context[:provider_name]}"
+            title: "All versions of the pact between #{context[:consumer_name]} and #{context[:provider_name]}"
           }
         end
 
@@ -45,7 +40,6 @@ module PactBroker
             }
           end
         end
-
       end
     end
   end

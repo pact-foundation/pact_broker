@@ -1,5 +1,6 @@
 require_relative 'base_decorator'
 require_relative 'version_decorator'
+require_relative 'verification_decorator'
 require 'ostruct'
 
 module PactBroker

@@ -3,8 +3,6 @@ require 'pact_broker/messages'
 
 module PactBroker
   module Messages
-
-
     describe "#potential_duplicate_pacticipant_message" do
       let(:new_name) { 'Contracts' }
       let(:fred) { double('Contracts Service', name: 'Contracts Service') }
@@ -24,7 +22,7 @@ EOS
       subject { Messages.potential_duplicate_pacticipant_message new_name, potential_duplicate_pacticipants, 'http://example.org' }
 
       it "returns a message" do
-        expect(subject).to eq expected_message
+        expect(subject).to start_with expected_message
       end
     end
   end

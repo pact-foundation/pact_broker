@@ -23,7 +23,7 @@ describe "Publishing a pact" do
   context "when a pact for this consumer version does exist" do
 
     before do
-      TestDataBuilder.new.create_pact_with_hierarchy "A Consumer", "1.2.3", "A Provider"
+      TestDataBuilder.new.create_pact_with_hierarchy("A Consumer", "1.2.3", "A Provider").and_return(:pact)
     end
 
     it "returns a 200 Success" do
@@ -44,6 +44,32 @@ describe "Publishing a pact" do
 
     it "returns a json error response" do
       expect(subject).to be_a_json_error_response "does not match"
+    end
+  end
+
+  context "when the pacticipant name is an almost duplicate of an existing pacticipant name" do
+    before do
+      TestDataBuilder.new.create_pacticipant("A Provider Service")
+    end
+
+    context "when duplicate checking is on" do
+      before do
+        PactBroker.configuration.check_for_potential_duplicate_pacticipant_names = true
+      end
+
+      it "returns a 409" do
+        expect(subject.status).to eq 409
+      end
+    end
+
+    context "when duplicate checking is off" do
+      before do
+        PactBroker.configuration.check_for_potential_duplicate_pacticipant_names = false
+      end
+
+      it "returns a 201" do
+        expect(subject.status).to eq 201
+      end
     end
   end
 end

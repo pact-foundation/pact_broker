@@ -14,13 +14,14 @@ module PactBroker
 
         include PactBroker::Logging
 
-        def self.call pact
-          new(pact).call
+        def self.call pact, options = {}
+          new(pact, options).call
         end
 
-        def initialize pact
+        def initialize pact, options = {}
           @json_content = pact.json_content
           @pact = pact
+          @options = options
         end
 
         def call
@@ -40,12 +41,17 @@ module PactBroker
           <link rel='stylesheet' type='text/css' href='/stylesheets/pact.css'>
           <link rel='stylesheet' type='text/css' href='/stylesheets/github-json.css'>
           <script src='/javascripts/highlight.pack.js'></script>
+          <script src='/javascripts/jquery-2.1.1.min.js'></script>
+          <script src='/js/bootstrap.min.js'></script>
+          <script src='/javascripts/pact.js'></script>
           <script>hljs.initHighlightingOnLoad();</script>"
         end
 
         def pact_metadata
           "<div class='pact-metadata'>
             <ul>
+              #{badge_list_item}
+              #{badge_markdown_item}
               <li>
                 <span class='name'>#{@pact.consumer.name} version:</span>
                 <span class='value'>#{@pact.consumer_version_number}#{tags}</span>
@@ -64,6 +70,36 @@ module PactBroker
           </div>"
         end
 
+        def badge_list_item
+            "<li class='badge'>
+              <img src='#{badge_url}'/>
+            </li>
+            "
+        end
+
+        def badge_markdown_item
+          "<li class='badge-markdown' style='display:none'>
+              <textarea rows='3' cols='100'>#{badge_markdown}</textarea>
+          </li>"
+        end
+
+        def badge_markdown
+          warning = if badges_protected?
+            "If the broker is protected by authentication, set `enable_public_badge_access` to true in the configuration to enable badges to be embedded in a markdown file.\n"
+          else
+            ""
+          end
+          "#{warning}[![#{@pact.consumer.name}/#{@pact.provider.name} Pact Status](#{badge_url})](#{badge_target_url})"
+        end
+
+        def badges_protected?
+          !PactBroker.configuration.enable_public_badge_access
+        end
+
+        def base_url
+          @options[:base_url] || ''
+        end
+
         def title
           "Pact between #{@pact.consumer.name} and #{@pact.provider.name}"
         end
@@ -78,6 +114,14 @@ module PactBroker
 
         def pact_url
           PactBroker::Api::PactBrokerUrls.pact_url '', @pact
+        end
+
+        def badge_target_url
+          base_url
+        end
+
+        def badge_url
+          @options[:badge_url]
         end
 
         def tags

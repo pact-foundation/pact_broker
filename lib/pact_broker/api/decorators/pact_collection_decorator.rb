@@ -4,11 +4,8 @@ require_relative 'latest_pact_decorator'
 require_relative 'representable_pact'
 
 module PactBroker
-
   module Api
-
     module Decorators
-
       class PactCollectionDecorator < BaseDecorator
         include Roar::JSON::HAL
         include PactBroker::Api::PactBrokerUrls
@@ -32,12 +29,10 @@ module PactBroker
           represented.collect do | pact |
             {
               :href => latest_pact_url(options[:base_url], pact),
-              :name => "Latest pact between #{pact.consumer.name} and #{pact.provider.name}",
-              :title => "Pact"
+              :title => "Latest pact between #{pact.consumer.name} and #{pact.provider.name}",
             }
           end
         end
-
       end
     end
   end

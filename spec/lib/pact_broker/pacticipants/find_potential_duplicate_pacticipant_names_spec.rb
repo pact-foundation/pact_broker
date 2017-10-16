@@ -7,76 +7,58 @@ module PactBroker
 
     describe FindPotentialDuplicatePacticipantNames do
 
+      describe "split" do
+        TEST_CASES = [
+          ["a-foo-service", ["a", "foo", "service"]],
+          ["a_foo_service", ["a", "foo", "service"]],
+          ["FooAService", ["foo", "a", "service"]],
+          ["Foo A Service", ["foo", "a", "service"]],
+          ["S3 Bucket Service", ["s3", "bucket", "service"]],
+          ["S3BucketService", ["s3", "bucket", "service"]],
+          ["S3-Bucket-Service", ["s3", "bucket", "service"]],
+          ["S3_Bucket_Service", ["s3", "bucket", "service"]],
+        ]
+
+        TEST_CASES.each do | input, output |
+          it "splits #{input} into #{output.inspect}" do
+            expect(FindPotentialDuplicatePacticipantNames.split(input)).to eq output
+          end
+        end
+      end
+
       describe ".call" do
 
         subject { FindPotentialDuplicatePacticipantNames.call(new_name, existing_names) }
 
-        context "when an existing name exactly equals the new name" do
-          let(:new_name) { 'Contracts Service' }
-          let(:existing_names) { ['Contracts Service', 'Contracts', 'Something'] }
 
-          it "does not return any potential duplicate names" do
-            expect(subject).to eq []
+        TEST_CASES = [
+          ["accounts", ["accounts-receivable"], []],
+          ["Accounts", ["Accounts Receivable"], []],
+          ["The Accounts", ["Accounts"], []],
+          ["accounts", ["account-service", "account-api", "account-provider"], ["account-service", "account-api", "account-provider"]],
+          ["accounts-api", ["account-service", "account-provider"], ["account-service", "account-provider"]],
+          ['Contracts Service', ['Contracts Service', 'Contracts', 'Something'], []],
+          ['Contracts', ['Contract Service', 'Contacts', 'Something'], ['Contract Service']],
+          ['Contracts Service', ['Contract', 'Contacts', 'Something'], ['Contract']],
+          ['Contract Service', ['Contracts', 'Contacts', 'Something'], ['Contracts']],
+          ['Contract Service', ['contracts', 'Contacts', 'Something'], ['contracts']],
+          ['ContractService', ['Contracts Service', 'Contacts', 'Something'], ['Contracts Service']],
+          ['Contract Service', ['ContractsService', 'Contacts', 'Something'], ['ContractsService']],
+          ['Contract_Service', ['ContractsService', 'Contracts Service', 'contracts-service', 'Contacts', 'Something'], ['ContractsService', 'Contracts Service', 'contracts-service']]
+        ]
+
+        TEST_CASES.each do | the_new_name, the_existing_names, the_expected_duplicates |
+          context "when the new name is #{the_new_name} and the existing names are #{the_existing_names.inspect}" do
+            let(:new_name) { the_new_name }
+            let(:existing_names) { the_existing_names }
+            let(:expected_duplicates) { the_expected_duplicates}
+
+            it "returns #{the_expected_duplicates.inspect} as the potential duplicates" do
+              expect(subject).to eq expected_duplicates
+            end
           end
         end
-
-        context "when an existing name mostly includes the new name" do
-          let(:new_name) { 'Contracts' }
-          let(:existing_names) { ['Contract Service', 'Contacts', 'Something'] }
-
-          it "returns the existing names that match" do
-            expect(subject).to eq ['Contract Service']
-          end
-        end
-
-        context "when a new name mostly includes an existing name" do
-          let(:new_name) { 'Contract Service' }
-          let(:existing_names) { ['Contracts', 'Contacts', 'Something'] }
-
-          it "returns the existing names that match" do
-            expect(subject).to eq ['Contracts']
-          end
-        end
-
-        context 'when a new name is the same but a different case' do
-          let(:new_name) { 'Contract Service' }
-          let(:existing_names) { ['contracts', 'Contacts', 'Something'] }
-
-          it "returns the existing names that match" do
-            expect(subject).to eq ['contracts']
-          end
-        end
-
-        context "when a new name is the same as an existing name but without spaces" do
-          let(:new_name) { 'ContractService' }
-          let(:existing_names) { ['Contracts Service', 'Contacts', 'Something'] }
-
-          it "returns the existing names that match" do
-            expect(subject).to eq ['Contracts Service']
-          end
-        end
-
-        context "when an existing name is the same as the new name but without spaces" do
-          let(:new_name) { 'Contract Service' }
-          let(:existing_names) { ['ContractsService', 'Contacts', 'Something'] }
-
-          it "returns the existing names that match" do
-            expect(subject).to eq ['ContractsService']
-          end
-        end
-
-        context "when the new name is similar to an existing but with underscores or dashes instead of spaces" do
-          let(:new_name) { 'Contract_Service' }
-          let(:existing_names) { ['ContractsService', 'Contracts Service', 'contracts-service', 'Contacts', 'Something'] }
-
-          it "returns the existing names that match" do
-            expect(subject).to eq ['ContractsService', 'Contracts Service', 'contracts-service']
-          end
-        end
-
       end
-
     end
-
   end
 end

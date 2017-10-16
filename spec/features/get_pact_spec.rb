@@ -7,7 +7,7 @@ describe "retrieving a pact" do
     let(:path) { "/pacts/provider/a%20provider/consumer/a%20consumer/version/1.2.3A" }
 
     before do
-      TestDataBuilder.new.create_pact_with_hierarchy "A Consumer", "1.2.3a", "A Provider"
+      TestDataBuilder.new.create_pact_with_hierarchy("A Consumer", "1.2.3a", "A Provider").and_return(:pact)
     end
 
     context "when case sensitivity is turned on" do

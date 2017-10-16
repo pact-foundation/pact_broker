@@ -1,8 +1,8 @@
 language: ruby
 rvm:
-  # - 2.2.7
-  # - 2.3.4
   - 2.4.1
+  - 2.3.4
+  - 2.2.7
 services:
   - postgresql
   - mysql
@@ -20,9 +20,11 @@ before_script:
   - cp config/database.travis.yml config/database.yml
   - psql -U postgres -c "CREATE DATABASE pact_broker;"
   - mysql -e 'CREATE DATABASE pact_broker;'
+  - mysql -e "GRANT ALL ON pact_broker.* TO 'travis'@'%';"
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
 script:
   - bundle exec rake
-  - if [ "$DATABASE_ADAPTER" == "postgres" ]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi
+  - if [ "$DATABASE_ADAPTER" == "postgres" ]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT || true; fi
+  - if [ ! -z "$(ruby --version | grep '2\.4\.')" ]; then ./script/db-spec.sh; fi
   - bundle exec bundle-audit update && bundle exec bundle-audit

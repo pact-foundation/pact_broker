@@ -1,33 +1,5 @@
-require 'reform'
-require 'reform/form/dry'
-Reform::Form.class_eval do
-  feature Reform::Form::Dry
-end
-
-require 'pact_broker/api/resources/pact'
-require 'pact_broker/api/resources/latest_pact'
-require 'pact_broker/api/resources/latest_pacts'
-require 'pact_broker/api/resources/pacticipant'
-require 'pact_broker/api/resources/pacticipants'
-require 'pact_broker/api/resources/tag'
-require 'pact_broker/api/resources/index'
-require 'pact_broker/api/resources/relationships'
-require 'pact_broker/api/resources/group'
-require 'pact_broker/api/resources/pact_webhooks'
-require 'pact_broker/api/resources/pact_versions'
-require 'pact_broker/api/resources/webhooks'
-require 'pact_broker/api/resources/webhook'
-require 'pact_broker/api/resources/webhook_execution'
-require 'pact_broker/api/resources/version'
-require 'pact_broker/api/resources/versions'
-require 'pact_broker/api/resources/pact_content_diff'
-require 'pact_broker/api/resources/previous_distinct_pact_version'
-require 'pact_broker/api/resources/latest_provider_pacts'
-require 'pact_broker/api/resources/verifications'
-require 'pact_broker/api/resources/verification'
-require 'pact_broker/api/resources/latest_verifications_for_consumer_version'
-
 require 'webmachine/adapters/rack_mapped'
+require 'pact_broker/api/resources'
 
 module PactBroker
 
@@ -49,6 +21,11 @@ module PactBroker
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'pact-version', :pact_version_sha, 'verification-results', :verification_number], Api::Resources::Verification, {resource_name: "verification_result"}
         add ['verification-results', 'consumer', :consumer_name, 'version', :consumer_version_number,'latest'], Api::Resources::LatestVerificationsForConsumerVersion, {resource_name: "verification_results_for_consumer_version"}
 
+        # Badges
+        add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'latest', 'badge'], Api::Resources::Badge, {resource_name: "latest_pact_badge"}
+        add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'latest', :tag, 'badge'], Api::Resources::Badge, {resource_name: "latest_tagged_pact_badge"}
+        add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'latest-untagged', 'badge'], Api::Resources::Badge, {resource_name: "latest_untagged_pact_badge", tag: :untagged}
+
         # Latest pacts
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'latest'], Api::Resources::LatestPact, {resource_name: "latest_pact_publication"}
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'latest', :tag], Api::Resources::LatestPact, {resource_name: "latest_tagged_pact_publication"}
@@ -63,19 +40,28 @@ module PactBroker
 
         # Pacticipants
         add ['pacticipants'], Api::Resources::Pacticipants, {resource_name: "pacticipants"}
+        add ['pacticipants', 'label', :label_name], PactBroker::Api::Resources::PacticipantsForLabel, {resource_name: "pacticipants_for_label"}
         add ['pacticipants', :name], Api::Resources::Pacticipant, {resource_name: "pacticipant"}
         add ['pacticipants', :pacticipant_name, 'versions'], Api::Resources::Versions, {resource_name: "pacticipant_versions"}
         add ['pacticipants', :pacticipant_name, 'versions', :pacticipant_version_number], Api::Resources::Version, {resource_name: "pacticipant_version"}
         add ['pacticipants', :pacticipant_name, 'versions', :pacticipant_version_number, 'tags', :tag_name], Api::Resources::Tag, {resource_name: "pacticipant_version_tag"}
+        add ['pacticipants', :pacticipant_name, 'labels', :label_name], Api::Resources::Label, {resource_name: "pacticipant_label"}
 
         # Webhooks
         add ['webhooks', 'provider', :provider_name, 'consumer', :consumer_name ], Api::Resources::PactWebhooks, {resource_name: "pact_webhooks"}
+        add ['webhooks', 'provider', :provider_name, 'consumer', :consumer_name, 'status' ], Api::Resources::PactWebhooksStatus, {resource_name: "pact_webhooks_status"}
+
         add ['webhooks', :uuid ], Api::Resources::Webhook, {resource_name: "webhook"}
+        add ['webhooks', :uuid, 'trigger', :trigger_uuid, 'logs' ], Api::Resources::TriggeredWebhookLogs, {resource_name: "triggered_webhook_logs"}
         add ['webhooks', :uuid, 'execute' ], Api::Resources::WebhookExecution, {resource_name: "execute_webhook"}
         add ['webhooks'], Api::Resources::Webhooks, {resource_name: "webhooks"}
 
         add ['relationships'], Api::Resources::Relationships, {resource_name: "relationships"}
         add ['groups', :pacticipant_name], Api::Resources::Group, {resource_name: "group"}
+
+        # matrix
+        add ['matrix', 'provider', :provider_name, 'consumer', :consumer_name], Api::Resources::MatrixForConsumerAndProvider, {resource_name: "matrix_consumer_provider"}
+        add ['matrix'], Api::Resources::Matrix, {resource_name: "matrix"}
 
         add [], Api::Resources::Index, {resource_name: "index"}
       end

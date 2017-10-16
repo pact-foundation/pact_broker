@@ -26,11 +26,11 @@
           %span.glyphicon.glyphicon-sort.relationships-sort
         %th
         %th
-          Latest pact published
+          Latest pact<br>published
         %th
-          Webhooks
+          Webhook<br>status
         %th
-          Last verified
+          Last<br>verified
       %tbody
 
       - relationships.each do | relationship |
@@ -48,13 +48,10 @@
           %td
           %td
             = relationship.publication_date_of_latest_pact
-          %td
-            - if relationship.any_webhooks?
-              %a{:href => relationship.webhooks_url}
-                Edit
-            - else
-              %a{:href => relationship.webhooks_url}
-                Create
+          %td{class: relationship.webhook_status}
+            %a{:href => relationship.webhook_url}
+              = relationship.webhook_label
+
           %td{class: relationship.verification_status, title: relationship.verification_tooltip, "data-toggle": "tooltip", "data-placement": "left"}
             %div
               = relationship.last_verified_date
