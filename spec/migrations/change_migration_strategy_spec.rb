@@ -18,16 +18,16 @@ describe "changing from integer to timestamp migrations", no_db_clean: true do
     FileUtils.rm_rf DATABASE_PATH
   end
 
-  it "uses pact_broker v 2.0.5" do
+  it "uses pact_broker v 2.6.0" do
     Dir.chdir(TEST_DIR) do
       Bundler.with_clean_env do
         `bundle install --gemfile before/Gemfile`
-        expect(`BUNDLE_GEMFILE=before/Gemfile bundle exec rake pact_broker:version`.strip).to eq '2.0.5'
+        expect(`BUNDLE_GEMFILE=before/Gemfile bundle exec rake pact_broker:version`.strip).to eq '2.6.0'
       end
     end
   end
 
-  it "migrates using integer migrations using pact_broker v2.0.5" do
+  it "migrates using integer migrations using pact_broker v2.6.0" do
     Dir.chdir(TEST_DIR) do
       Bundler.with_clean_env do
         output = `BUNDLE_GEMFILE=before/Gemfile bundle exec rake pact_broker:db:migrate[35]`
@@ -52,20 +52,20 @@ describe "changing from integer to timestamp migrations", no_db_clean: true do
     expect(@db.table_exists?(:schema_migrations)).to be false
   end
 
-  it "migrates using timestamp migrations using pact_broker > 2.0.5" do
+  it "migrates using timestamp migrations using pact_broker > 2.6.0" do
     Dir.chdir(TEST_DIR) do
       output = `bundle exec rake pact_broker:db:migrate`
       puts output
       output = `bundle exec rake pact_broker:db:version`
       puts output
-      expect(output.strip).to eq "36"
+      expect(output.strip).to eq "47"
     end
   end
 
-  it "uses the schema_migrations table after v2.0.5" do
+  it "uses the schema_migrations table after v2.6.0" do
     expect(@db.table_exists?(:schema_migrations)).to be true
     migrations_count = Dir.glob("db/migrations/**.*").select{ |f| f =~ /\/\d+/ }.count
-    expect(migrations_count).to be >= 36
+    expect(migrations_count).to be >= 47
     expect(@db[:schema_migrations].count).to eq migrations_count
     expect(@db[:schema_migrations].order(:filename).first[:filename]).to eq '000001_create_pacticipant_table.rb'
   end
@@ -76,11 +76,11 @@ describe "changing from integer to timestamp migrations", no_db_clean: true do
 
   it "allows rollback" do
     Dir.chdir(TEST_DIR) do
-      output = `bundle exec rake pact_broker:db:migrate[34]`
+      output = `bundle exec rake pact_broker:db:migrate[45]`
       puts output
       output = `bundle exec rake pact_broker:db:version`
       puts output
-      expect(output.strip).to eq "34"
+      expect(output.strip).to eq "45"
     end
   end
 end
