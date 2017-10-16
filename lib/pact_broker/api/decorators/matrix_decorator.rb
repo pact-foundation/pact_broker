@@ -17,6 +17,9 @@ module PactBroker
 
         def to_hash(options)
           {
+            summary: {
+              compatible: compatible?
+            },
             matrix: matrix(lines, options[:user_options][:base_url])
           }
         end
@@ -24,6 +27,10 @@ module PactBroker
         private
 
         attr_reader :lines
+
+        def compatible?
+          lines.any? && lines.all?{ |line| line[:success] }
+        end
 
         def matrix(lines, base_url)
           provider = nil

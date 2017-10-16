@@ -9,6 +9,10 @@ module PactBroker
       extend PactBroker::Repositories
       extend PactBroker::Services
 
+      def find criteria
+        matrix_repository.find criteria
+      end
+
       def find_for_consumer_and_provider params
         matrix_repository.find_for_consumer_and_provider params[:consumer_name], params[:provider_name]
       end
@@ -41,6 +45,10 @@ module PactBroker
               error_messages << "No pact or verification found for #{selectors[i]}" if selected_version.nil?
             end
           end
+        end
+
+        if selectors.size < 2
+          error_messages << "Please provide 2 or more version selectors."
         end
 
         error_messages

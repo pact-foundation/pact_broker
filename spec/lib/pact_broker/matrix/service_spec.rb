@@ -3,8 +3,9 @@ require 'pact_broker/matrix/service'
 module PactBroker
   module Matrix
     describe Service do
+      let(:td) { TestDataBuilder.new }
+
       describe "validate_selectors" do
-        let(:td) { TestDataBuilder.new }
 
         subject { Service.validate_selectors(selectors) }
 
@@ -13,6 +14,19 @@ module PactBroker
 
           it "returns error messages" do
             expect(subject.first).to eq "Invalid version selector 'Foo/1'. Format must be <pacticipant_name>/version/<version>"
+          end
+        end
+
+        context "when there is only one selector" do
+          before do
+            td.create_pacticipant("Foo")
+              .create_version("1")
+          end
+
+          let(:selectors) { ["Foo/version/1"] }
+
+          it "returns error messages" do
+            expect(subject.first).to eq "Please provide 2 or more version selectors."
           end
         end
 

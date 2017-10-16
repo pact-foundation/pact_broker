@@ -27,7 +27,7 @@ module PactBroker
 
         def to_json
           criteria = selected_versions.each_with_object({}) { | version, hash | hash[version.pacticipant.name] = version.number }
-          lines = matrix_service.find_compatible_pacticipant_versions(criteria)
+          lines = matrix_service.find(criteria)
           PactBroker::Api::Decorators::MatrixPactDecorator.new(lines).to_json(user_options: { base_url: base_url })
         end
 
