@@ -3,6 +3,39 @@ require 'pact_broker/matrix/repository'
 module PactBroker
   module Matrix
     describe Repository do
+      let(:td) { TestDataBuilder.new}
+
+      describe "find" do
+        context "when the provider version resource exists but there is no verification for that version" do
+          before do
+            td.create_pact_with_hierarchy("A", "1.2.3", "B")
+              .use_provider("B")
+              .create_version("2.0.0")
+              .create_provider("C")
+              .create_version("3.0.0")
+              .create_pact
+          end
+
+          subject { Repository.new.find "A" => "1.2.3", "B" => "2.0.0", "C" => "3.0.0" }
+
+          it "returns a row for each pact" do
+            expect(subject.size).to eq 2
+          end
+
+          it "returns an row with a blank provider_version_number" do
+            expect(subject.first).to include consumer_name: "A",
+              provider_name: "B",
+              consumer_version_number: "1.2.3",
+              provider_version_number: nil
+
+            expect(subject.last).to include consumer_name: "A",
+              provider_name: "C",
+              consumer_version_number: "1.2.3",
+              provider_version_number: nil
+          end
+        end
+      end
+
       describe "#find_for_consumer_and_provider" do
         before do
           TestDataBuilder.new

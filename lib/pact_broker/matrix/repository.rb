@@ -6,6 +6,24 @@ module PactBroker
       include PactBroker::Repositories::Helpers
       include PactBroker::Repositories
 
+      def find criteria
+        version_ids = criteria.reject{ |key, value| !value }.collect do | key, value |
+          version_repository.find_by_pacticipant_name_and_number(key, value).id
+        end
+
+        pacticipant_names = criteria.reject{|key, value| value }.keys
+
+        # If there is a nil provider_version_number it is because there is no verification
+        # but the row has been included because it is a left outer join.
+        # All the unverified pacts will be grouped together in the group_by because of this,
+        # so we include all of that group.
+        find_for_version_ids(version_ids, pacticipant_names)
+          .group_by{|line| [line[:consumer_version_number], line[:provider_version_number]]}
+          .values
+          .collect{ | lines | lines.first[:provider_version_number].nil? ? lines : lines.last }
+          .flatten
+      end
+
       def find_for_consumer_and_provider pacticipant_1_name, pacticipant_2_name
         find_for_version_ids([], [pacticipant_1_name, pacticipant_2_name])
           .sort{|l1, l2| l2[:consumer_version_order] <=> l1[:consumer_version_order]}
@@ -17,17 +35,7 @@ module PactBroker
       # Returns a list of matrix lines indicating the compatible versions
       #
       def find_compatible_pacticipant_versions criteria
-        version_ids = criteria.reject{ |key, value| !value }.collect do | key, value |
-          version_repository.find_by_pacticipant_name_and_number(key, value).id
-        end
-
-        pacticipant_names = criteria.reject{|key, value| value }.keys
-
-        find_for_version_ids(version_ids, pacticipant_names)
-          .group_by{|line| [line[:consumer_version_number], line[:provider_version_number]]}
-          .values
-          .collect(&:last)
-          .select{ |line | line[:success] }
+        find(criteria).select{ |line | line[:success] }
       end
 
       def find_for_version_ids version_ids, pacticipant_names = []
