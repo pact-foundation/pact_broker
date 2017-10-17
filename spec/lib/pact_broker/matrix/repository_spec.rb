@@ -8,6 +8,9 @@ module PactBroker
       describe "find" do
         context "when the provider version resource exists but there is no verification for that version" do
           before do
+            # A/1.2.3 -> B
+            # B/2.0.0
+            # C/3.0.0
             td.create_pact_with_hierarchy("A", "1.2.3", "B")
               .use_provider("B")
               .create_version("2.0.0")
@@ -32,6 +35,14 @@ module PactBroker
               provider_name: "C",
               consumer_version_number: "1.2.3",
               provider_version_number: nil
+          end
+
+          context "when only 2 version selectors are specified" do
+            subject { Repository.new.find "A" => "1.2.3", "B" => "2.0.0" }
+
+            it "only returns 1 row" do
+              expect(subject.size).to eq 1
+            end
           end
         end
       end
@@ -87,7 +98,7 @@ module PactBroker
 
           subject { Repository.new.find_compatible_pacticipant_versions("A" => "1", "B" => "2", "C" => "2") }
 
-          it "returns matrix lines for each compatible version pair" do
+          it "returns matrix lines for each compatible version pair (A/1-B/2, B/2-C/2)" do
             expect(subject.first[:consumer_name]).to eq "A"
             expect(subject.first[:consumer_version_number]).to eq "1"
             expect(subject.first[:provider_name]).to eq "B"
