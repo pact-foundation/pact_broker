@@ -61,7 +61,7 @@ module PactBroker
                 <span class='value'>#{published_date}</span>
               </li>
               <li>
-                <a href=\"#{json_url}\">View in HAL Browser</a>
+                <a href=\"#{json_url}\">View in API Browser</a>
               </li>
               <li>
                 <a href=\"/\">Home</a>
