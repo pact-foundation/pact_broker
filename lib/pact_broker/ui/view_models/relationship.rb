@@ -22,11 +22,11 @@ module PactBroker
         end
 
         def consumer_version_number
-          @relationship.consumer_version_number
+          short_version_number(@relationship.consumer_version_number)
         end
 
         def provider_version_number
-          @relationship.provider_version_number
+          short_version_number(@relationship.provider_version_number)
         end
 
         def tag_names
@@ -117,11 +117,11 @@ module PactBroker
         def verification_tooltip
           case @relationship.verification_status
           when :success
-            "Successfully verified by #{provider_name} (v#{@relationship.latest_verification_provider_version_number})"
+            "Successfully verified by #{provider_name} (v#{short_version_number(@relationship.latest_verification_provider_version_number)})"
           when :stale
-            "Pact has changed since last successful verification by #{provider_name} (v#{@relationship.latest_verification_provider_version_number})"
+            "Pact has changed since last successful verification by #{provider_name} (v#{short_version_number(@relationship.latest_verification_provider_version_number)})"
           when :failed
-            "Verification by #{provider_name} (v#{@relationship.latest_verification_provider_version_number}) failed"
+            "Verification by #{provider_name} (v#{short_version_number(@relationship.latest_verification_provider_version_number)}) failed"
           else
             nil
           end
@@ -133,6 +133,14 @@ module PactBroker
           provider_name.downcase <=> other.provider_name.downcase
         end
 
+        def short_version_number version_number
+          return "" if version_number.nil?
+          if version_number.size > 12
+            version_number[0..12] + "..."
+          else
+            version_number
+          end
+        end
       end
     end
   end
