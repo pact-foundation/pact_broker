@@ -67,3 +67,26 @@ span.pact svg path {
 span.pact:hover svg path {
   fill: #2a6496;
 }
+
+#navigation .container-fluid {
+  padding-left: 0px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#navigation .container-fluid .navbar-brand {
+  padding: 0px;
+  display: flex;
+  align-items: center;
+}
+
+#navigation .container-fluid:before {
+  content: '' !important;
+  display: none;
+}
+
+#navigation .container-fluid:after {
+  content: '' !important;
+  display: none;
+}
