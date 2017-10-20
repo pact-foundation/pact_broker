@@ -30,6 +30,10 @@ module PactBroker
           @line[:number]
         end
 
+        def consumer_name
+          @line[:consumer_name]
+        end
+
         def consumer_version_number
           @line[:consumer_version_number]
         end
@@ -42,8 +46,16 @@ module PactBroker
           @line[:consumer_version_order]
         end
 
+        def provider_name
+          @line[:provider_name]
+        end
+
         def provider_version_number
-          @line[:provider_version]
+          @line[:provider_version_number]
+        end
+
+        def provider_version_order
+          @line[:provider_version_order]
         end
 
         def provider_version_number_url
@@ -58,12 +70,33 @@ module PactBroker
           end
         end
 
+        def orderable_fields
+          [consumer_name, provider_name, consumer_version_order, provider_version_order]
+        end
+
+        def <=> other
+          self.orderable_fields <=> other.orderable_fields
+        end
+
         def verification_status
-          case @line[:success]
-            when true then "Verified"
-            when false then "Failed"
-            else ''
+          if @line[:verification_executed_at]
+            DateHelper.distance_of_time_in_words(@line[:verification_executed_at], DateTime.now) + " ago"
+          else
+            ''
           end
+          # case @line[:success]
+          #   when true then "Verified"
+          #   when false then "Failed"
+          #   else ''
+          # end
+        end
+
+        def pact_publication_date
+          DateHelper.distance_of_time_in_words(@line[:pact_created_at], DateTime.now) + " ago"
+        end
+
+        def pact_published_order
+          @line[:pact_created_at].to_time.to_i
         end
 
         def verification_status_class
