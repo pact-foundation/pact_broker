@@ -31,8 +31,7 @@ module PactBroker
       end
 
       describe "#pact_has_changed_since_previous_version?" do
-        let(:json_content) { { 'some' => 'json'}.to_json }
-        let(:pact) { instance_double(PactBroker::Domain::Pact, json_content: json_content)}
+        let(:pact) { instance_double(PactBroker::Domain::Pact, interactions: [{ description: 'some' }], metadata: { pactSpecificationVersion: "1.0.0" })}
 
         before do
           allow_any_instance_of(Pacts::Repository).to receive(:find_previous_pact).and_return(previous_pact)
@@ -41,17 +40,25 @@ module PactBroker
         subject { Service.pact_has_changed_since_previous_version? pact }
 
         context "when a previous pact is found" do
-          let(:previous_pact) { instance_double(PactBroker::Domain::Pact, json_content: previous_json_content)}
-          let(:previous_json_content) { {'some' => 'json'}.to_json }
+          let(:interaction) { { description: 'some' } }
+          let(:metadata) { { pactSpecificationVersion: "1.0.0" } }
+          let(:previous_pact) { instance_double(PactBroker::Domain::Pact, interactions: [interaction], metadata: metadata)}
 
-          context "when the json_content is the same" do
+          context "when the content hash are the same" do
             it "returns false" do
               expect(subject).to be_falsey
             end
           end
 
-          context "when the json_content is not the same" do
-            let(:previous_json_content) { {'some-other' => 'json'}.to_json }
+          context "when interactions different" do
+            let(:interaction) { { description: 'diff' } }
+            it "returns truthy" do
+              expect(subject).to be_truthy
+            end
+          end
+
+          context "when pactSpecificationVersions are different" do
+            let(:metadata) { { pactSpecificationVersion: "0.0.1" } }
             it "returns truthy" do
               expect(subject).to be_truthy
             end
@@ -60,8 +67,8 @@ module PactBroker
 
         context "when a previous pact is not found" do
           let(:previous_pact) { nil }
-          it "returns false" do
-            expect(subject).to be_falsey
+          it "returns true" do
+            expect(subject).to be_truthy
           end
         end
       end
