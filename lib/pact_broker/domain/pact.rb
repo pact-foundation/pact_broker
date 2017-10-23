@@ -49,7 +49,14 @@ module PactBroker
       def content_hash
         JSON.parse(json_content, PACT_PARSING_OPTIONS)
       end
-    end
 
+      def interactions
+        Array(content_hash[:interactions])
+      end
+
+      def metadata
+        content_hash[:meta]
+      end
+    end
   end
 end

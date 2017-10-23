@@ -92,7 +92,10 @@ module PactBroker
 
       def pact_has_changed_since_previous_version? pact
         previous_pact = pact_repository.find_previous_pact pact
-        previous_pact && pact.json_content != previous_pact.json_content
+        return true if previous_pact.nil?
+
+        !((previous_pact.interactions - pact.interactions) | (pact.interactions - previous_pact.interactions)).empty? ||
+          (previous_pact.metadata[:pactSpecificationVersion] != pact.metadata[:pactSpecificationVersion])
       end
 
       private
