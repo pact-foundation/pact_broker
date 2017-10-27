@@ -95,7 +95,7 @@ GEM
       rspec (>= 2.14)
       term-ansicolor (~> 1.0)
       thor
-    pact_broker (2.3.0)
+    pact_broker (2.5.1)
       dry-types (~> 0.10.3)
       dry-validation (~> 0.10.5)
       haml (~> 4.0)
@@ -111,7 +111,7 @@ GEM
       semver2 (~> 3.4.2)
       sequel (~> 4.23)
       sucker_punch (~> 2.0)
-      webmachine (= 1.4.0)
+      webmachine (= 1.5.0)
     padrino-core (0.14.1.1)
       mustermann19
       padrino-support (= 0.14.1.1)
@@ -175,7 +175,7 @@ GEM
     tilt (2.0.8)
     tins (1.15.0)
     uber (0.1.0)
-    webmachine (1.4.0)
+    webmachine (1.5.0)
       as-notifications (~> 1.0)
       i18n (>= 0.4.0)
       multi_json
@@ -187,7 +187,7 @@ PLATFORMS
 DEPENDENCIES
   appraisal
   mysql2 (~> 0.3.15)
-  pact_broker (= 2.3.0)
+  pact_broker (= 2.5.1)
   pg (~> 0.21)
   rack-reverse-proxy (~> 0.12)
   rake (~> 12.0)

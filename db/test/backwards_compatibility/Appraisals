@@ -44,6 +44,14 @@ appraise "2.4.2" do
   gem "pact_broker", "2.4.2"
 end
 
+appraise "2.5.1" do
+  gem "pact_broker", "2.5.1"
+end
+
+appraise "2.6.0" do
+  gem "pact_broker", "2.5.1"
+end
+
 appraise "head" do
   gem "pact_broker", path: "../../../"
 end
