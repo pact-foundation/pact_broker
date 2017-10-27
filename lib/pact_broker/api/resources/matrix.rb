@@ -1,6 +1,6 @@
 require 'pact_broker/api/resources/base_resource'
 require 'pact_broker/api/decorators/matrix_decorator'
-require 'cgi'
+require 'pact_broker/matrix/parse_query'
 
 module PactBroker
   module Api
@@ -16,7 +16,7 @@ module PactBroker
         end
 
         def malformed_request?
-          error_messages = matrix_service.validate_selectors(selectors)
+          error_messages = matrix_service.validate_selectors(criteria)
           if error_messages.any?
             set_json_validation_error_messages error_messages
             true
@@ -26,21 +26,12 @@ module PactBroker
         end
 
         def to_json
-          criteria = selected_versions.each_with_object({}) { | version, hash | hash[version.pacticipant.name] = version.number }
           lines = matrix_service.find(criteria)
           PactBroker::Api::Decorators::MatrixPactDecorator.new(lines).to_json(user_options: { base_url: base_url })
         end
 
-        def selectors
-          @selectors ||= CGI.parse(CGI.unescape(request.uri.query))['selectors[]']
-        end
-
-        def version_selectors
-          @version_selectors ||= selectors.select{ | selector| selector.include?("/version/") }
-        end
-
-        def selected_versions
-          @selected_versions ||= version_service.find_versions_by_selector(version_selectors)
+        def criteria
+          @criteria ||= PactBroker::Matrix::ParseQuery.call(request.uri.query)
         end
       end
     end

@@ -3,7 +3,6 @@ require 'pact_broker/repositories'
 module PactBroker
   module Matrix
     module Service
-      VERSION_SELECTOR_PATTERN = %r{(^[^/]+)/version/[^/]+$}.freeze
 
       extend self
       extend PactBroker::Repositories
@@ -23,27 +22,17 @@ module PactBroker
 
       def validate_selectors selectors
         error_messages = []
-        selectors.each do | version_selector |
-          if !(version_selector =~ VERSION_SELECTOR_PATTERN)
-            error_messages << "Invalid version selector '#{version_selector}'. Format must be <pacticipant_name>/version/<version>"
-          end
-        end
 
-        selectors.each do | version_selector |
-          if match = version_selector.match(VERSION_SELECTOR_PATTERN)
-            pacticipant_name = match[1]
-            unless pacticipant_service.find_pacticipant_by_name(pacticipant_name)
-              error_messages << "Pacticipant '#{pacticipant_name}' not found"
-            end
+        selectors.keys.each do | pacticipant_name |
+          unless pacticipant_service.find_pacticipant_by_name(pacticipant_name)
+            error_messages << "Pacticipant '#{pacticipant_name}' not found"
           end
         end
 
         if error_messages.empty?
-          selected_versions = version_service.find_versions_by_selector(selectors)
-          if selected_versions.any?(&:nil?)
-            selected_versions.each_with_index do | selected_version, i |
-              error_messages << "No pact or verification found for #{selectors[i]}" if selected_version.nil?
-            end
+          selectors.each do | pacticipant_name, version_number |
+            version = version_service.find_by_pacticipant_name_and_number(pacticipant_name: pacticipant_name, pacticipant_version_number: version_number)
+            error_messages << "No pact or verification found for #{pacticipant_name} version #{version_number}" if version.nil?
           end
         end
 

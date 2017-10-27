@@ -2,6 +2,18 @@ require 'spec/support/test_data_builder'
 
 Pact.provider_states_for "Pact Broker Client" do
 
+  provider_state "the pact for Foo Thing version 1.2.3 has been verified by Bar version 4.5.6" do
+    set_up do
+      TestDataBuilder.new
+        .create_pact_with_hierarchy("Foo Thing", "1.2.3", "Bar")
+        .create_verification(provider_version: "4.5.6")
+        .create_verification(provider_version: "7.8.9", number: 2)
+        .create_consumer_version("2.0.0")
+        .create_pact
+        .create_verification(provider_version: "4.5.6")
+    end
+  end
+
   provider_state "the pact for Foo version 1.2.3 has been verified by Bar version 4.5.6" do
     set_up do
       TestDataBuilder.new

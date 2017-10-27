@@ -9,13 +9,6 @@ module PactBroker
 
         subject { Service.validate_selectors(selectors) }
 
-        context "when a selector format is invalid" do
-          let(:selectors) { ["Foo/1"] }
-
-          it "returns error messages" do
-            expect(subject.first).to eq "Invalid version selector 'Foo/1'. Format must be <pacticipant_name>/version/<version>"
-          end
-        end
 
         context "when there is only one selector" do
           before do
@@ -23,7 +16,7 @@ module PactBroker
               .create_version("1")
           end
 
-          let(:selectors) { ["Foo/version/1"] }
+          let(:selectors) { {"Foo" => "1"} }
 
           it "returns error messages" do
             expect(subject.first).to eq "Please provide 2 or more version selectors."
@@ -39,15 +32,15 @@ module PactBroker
 
           end
 
-          let(:selectors) { ["Foo/version/1", "Bar/version/1"] }
+          let(:selectors) { {"Foo" => "1", "Bar" => "1"} }
 
           it "returns error messages" do
-            expect(subject).to eq ["No pact or verification found for Bar/version/1"]
+            expect(subject).to eq ["No pact or verification found for Bar version 1"]
           end
         end
 
         context "when the pacticipant does not exist" do
-          let(:selectors) { ["Foo/version/1"] }
+          let(:selectors) { {"Foo" => "1"} }
 
           it "returns error messages" do
             expect(subject.first).to eq "Pacticipant 'Foo' not found"

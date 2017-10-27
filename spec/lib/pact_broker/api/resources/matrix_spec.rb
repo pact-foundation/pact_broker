@@ -12,13 +12,13 @@ module PactBroker
         let(:td) { TestDataBuilder.new }
         let(:path) { "/matrix" }
         let(:json_response_body) { JSON.parse(subject.body, symbolize_names: true) }
-        let(:params) { { selectors: ['Foo/version/1', 'Bar/version/2'] } }
+        let(:params) { { pacticipant: ['Foo', 'Bar'], version: ['1', '2'] } }
         let(:error_messages) { [] }
 
         subject { get path, params, {'Content-Type' => 'application/hal+json'}; last_response }
 
         it "validates the selectors" do
-          expect(PactBroker::Matrix::Service).to receive(:validate_selectors).with(['Foo/version/1', 'Bar/version/2'])
+          expect(PactBroker::Matrix::Service).to receive(:validate_selectors).with('Foo' => '1', 'Bar' => '2')
           subject
         end
 
