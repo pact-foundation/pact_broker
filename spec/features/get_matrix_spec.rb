@@ -10,8 +10,10 @@ describe "Get matrix for consumer and provider" do
   let(:path) { "/matrix" }
   let(:params) do
     {
-      pacticipant: ['Consumer', 'Provider'],
-      version: ['1.0.0', '4.5.6']
+      q: [
+        { pacticipant: 'Consumer', version: '1.0.0' },
+        { pacticipant: 'Provider', version: '4.5.6' }
+      ]
     }
   end
   let(:last_response_body) { JSON.parse(subject.body, symbolize_names: true) }

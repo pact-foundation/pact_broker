@@ -12,7 +12,7 @@ module PactBroker
         let(:td) { TestDataBuilder.new }
         let(:path) { "/matrix" }
         let(:json_response_body) { JSON.parse(subject.body, symbolize_names: true) }
-        let(:params) { { pacticipant: ['Foo', 'Bar'], version: ['1', '2'] } }
+        let(:params) { {q: [{pacticipant: 'Foo', version: '1'}, {pacticipant: 'Bar', version: '2'}]} }
         let(:error_messages) { [] }
 
         subject { get path, params, {'Content-Type' => 'application/hal+json'}; last_response }

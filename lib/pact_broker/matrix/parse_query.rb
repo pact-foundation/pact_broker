@@ -1,12 +1,12 @@
-require 'cgi'
+require 'rack/utils'
 
 module PactBroker
   module Matrix
     class ParseQuery
       def self.call query
-        params = CGI.parse(CGI.unescape(query))
-        params['pacticipant[]'].zip(params['version[]']).each_with_object({}) do | (pacticipant, version), hash |
-          hash[pacticipant] = version
+        params = Rack::Utils.parse_nested_query(query)
+        (params['q'] || []).each_with_object({}) do | selector, hash |
+          hash[selector['pacticipant']] = selector['version']
         end
       end
     end

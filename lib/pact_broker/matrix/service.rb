@@ -23,7 +23,21 @@ module PactBroker
       def validate_selectors selectors
         error_messages = []
 
-        selectors.keys.each do | pacticipant_name |
+        selectors.each do | pacticipant_name, version |
+          if pacticipant_name.nil? && version.nil?
+            error_messages << "Please specify the pacticipant name and version"
+          elsif pacticipant_name.nil?
+            error_messages << "Please specify the pacticipant name"
+          elsif version.nil?
+            error_messages << "Please specify the version for #{pacticipant_name}"
+          end
+        end
+
+        if selectors.values.any?(&:nil?)
+          error_messages << "Please specify the pacticipant version"
+        end
+
+        selectors.keys.compact.each do | pacticipant_name |
           unless pacticipant_service.find_pacticipant_by_name(pacticipant_name)
             error_messages << "Pacticipant '#{pacticipant_name}' not found"
           end
