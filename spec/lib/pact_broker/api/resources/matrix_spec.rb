@@ -8,7 +8,7 @@ module PactBroker
         before do
           allow(PactBroker::Matrix::Service).to receive(:validate_selectors).and_return(error_messages)
           allow(PactBroker::Matrix::Service).to receive(:find).and_return([])
-          allow(PactBroker::Matrix::ParseQuery).to receive(:call).and_return(selectors)
+          allow(PactBroker::Matrix::ParseQuery).to receive(:call).and_return([selectors, options])
         end
 
         let(:td) { TestDataBuilder.new }
@@ -17,6 +17,7 @@ module PactBroker
         let(:params) { {q: [{pacticipant: 'Foo', version: '1'}, {pacticipant: 'Bar', version: '2'}]} }
         let(:error_messages) { [] }
         let(:selectors) { double('selectors') }
+        let(:options) { double('options') }
 
         subject { get path, params, {'Content-Type' => 'application/hal+json'}; last_response }
 

@@ -7,6 +7,10 @@ module PactBroker
     module Resources
       class Matrix < BaseResource
 
+        def initialize
+          @selectors, @options = PactBroker::Matrix::ParseQuery.call(request.uri.query)
+        end
+
         def content_types_provided
           [["application/hal+json", :to_json]]
         end
@@ -31,7 +35,11 @@ module PactBroker
         end
 
         def selectors
-          @selectors ||= PactBroker::Matrix::ParseQuery.call(request.uri.query)
+          @selectors
+        end
+
+        def options
+          @options
         end
       end
     end
