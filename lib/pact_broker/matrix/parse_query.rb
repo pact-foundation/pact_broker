@@ -5,9 +5,7 @@ module PactBroker
     class ParseQuery
       def self.call query
         params = Rack::Utils.parse_nested_query(query)
-        (params['q'] || []).each_with_object({}) do | selector, hash |
-          hash[selector['pacticipant']] = selector['version']
-        end
+        (params['q'] || []).collect{ |i| { pacticipant_name: i['pacticipant'], pacticipant_version_number: i['version'] } }
       end
     end
   end

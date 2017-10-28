@@ -16,7 +16,7 @@ module PactBroker
         end
 
         def malformed_request?
-          error_messages = matrix_service.validate_selectors(criteria)
+          error_messages = matrix_service.validate_selectors(selectors)
           if error_messages.any?
             set_json_validation_error_messages error_messages
             true
@@ -26,12 +26,12 @@ module PactBroker
         end
 
         def to_json
-          lines = matrix_service.find(criteria)
+          lines = matrix_service.find(selectors)
           PactBroker::Api::Decorators::MatrixPactDecorator.new(lines).to_json(user_options: { base_url: base_url })
         end
 
-        def criteria
-          @criteria ||= PactBroker::Matrix::ParseQuery.call(request.uri.query)
+        def selectors
+          @selectors ||= PactBroker::Matrix::ParseQuery.call(request.uri.query)
         end
       end
     end

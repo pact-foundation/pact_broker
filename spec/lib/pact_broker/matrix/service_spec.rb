@@ -16,7 +16,7 @@ module PactBroker
               .create_version("1")
           end
 
-          let(:selectors) { {"Foo" => "1"} }
+          let(:selectors) { [{ pacticipant_name: "Foo", pacticipant_version_number: "1" }] }
 
           it "returns error messages" do
             expect(subject.first).to eq "Please provide 2 or more version selectors."
@@ -32,7 +32,7 @@ module PactBroker
 
           end
 
-          let(:selectors) { {"Foo" => "1", "Bar" => "1"} }
+          let(:selectors) { [{ pacticipant_name: "Foo", pacticipant_version_number: "1" }, { pacticipant_name: "Bar", pacticipant_version_number: "1" }] }
 
           it "returns error messages" do
             expect(subject).to eq ["No pact or verification found for Bar version 1"]
@@ -40,7 +40,7 @@ module PactBroker
         end
 
         context "when the pacticipant does not exist" do
-          let(:selectors) { {"Foo" => "1"} }
+          let(:selectors) { [{ pacticipant_name: "Foo", pacticipant_version_number: "1" }] }
 
           it "returns error messages" do
             expect(subject.first).to eq "Pacticipant 'Foo' not found"
@@ -48,7 +48,7 @@ module PactBroker
         end
 
         context "when the pacticipant name is not specified" do
-          let(:selectors) { {nil => "1"} }
+          let(:selectors) { [{ pacticipant_name: nil, pacticipant_version_number: "1" }] }
 
           it "returns error messages" do
             expect(subject.first).to eq "Please specify the pacticipant name"
@@ -56,7 +56,7 @@ module PactBroker
         end
 
         context "when the pacticipant version is not specified" do
-          let(:selectors) { {'Foo' => nil} }
+          let(:selectors) { [{ pacticipant_name: "Foo", pacticipant_version_number: nil }] }
 
           it "returns error messages" do
             expect(subject.first).to eq "Please specify the version for Foo"
@@ -64,7 +64,7 @@ module PactBroker
         end
 
         context "when the pacticipant name and version are not specified" do
-          let(:selectors) { {nil => nil} }
+          let(:selectors) { [{ pacticipant_name: nil, pacticipant_version_number: nil }] }
 
           it "returns error messages" do
             expect(subject.first).to eq "Please specify the pacticipant name and version"

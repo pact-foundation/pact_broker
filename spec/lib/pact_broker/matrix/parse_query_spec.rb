@@ -9,14 +9,14 @@ module PactBroker
         subject { ParseQuery.call(query) }
 
         it "extracts the pacticipant names and respective versions" do
-          expect(subject).to eq "Foo" => "1.2.3", "Bar" => "9.9.9"
+          expect(subject).to eq([{ pacticipant_name: "Foo", pacticipant_version_number: "1.2.3" }, { pacticipant_name: "Bar", pacticipant_version_number: "9.9.9" }])
         end
 
         context "with spaces" do
           let(:query) { "q[][pacticipant]=Name%20With%20Spaces&q[][version]=1%202" }
 
           it "works" do
-            expect(subject).to eq "Name With Spaces" => "1 2"
+            expect(subject).to eq [{pacticipant_name: "Name With Spaces", pacticipant_version_number: "1 2"}]
           end
         end
 
@@ -24,7 +24,7 @@ module PactBroker
           let(:query) { "foo" }
 
           it "returns an empty hash" do
-            expect(subject).to eq({})
+            expect(subject).to eq([])
           end
         end
 
@@ -32,7 +32,7 @@ module PactBroker
           let(:query) { "q[][wrong]=Foo&q[][blah]=1.2.3" }
 
           it "returns nil keys or values" do
-            expect(subject).to eq nil => nil
+            expect(subject).to eq [{ pacticipant_name: nil, pacticipant_version_number: nil }]
           end
         end
       end

@@ -7,6 +7,8 @@ module PactBroker
       describe Matrix do
         before do
           allow(PactBroker::Matrix::Service).to receive(:validate_selectors).and_return(error_messages)
+          allow(PactBroker::Matrix::Service).to receive(:find).and_return([])
+          allow(PactBroker::Matrix::ParseQuery).to receive(:call).and_return(selectors)
         end
 
         let(:td) { TestDataBuilder.new }
@@ -14,11 +16,12 @@ module PactBroker
         let(:json_response_body) { JSON.parse(subject.body, symbolize_names: true) }
         let(:params) { {q: [{pacticipant: 'Foo', version: '1'}, {pacticipant: 'Bar', version: '2'}]} }
         let(:error_messages) { [] }
+        let(:selectors) { double('selectors') }
 
         subject { get path, params, {'Content-Type' => 'application/hal+json'}; last_response }
 
         it "validates the selectors" do
-          expect(PactBroker::Matrix::Service).to receive(:validate_selectors).with('Foo' => '1', 'Bar' => '2')
+          expect(PactBroker::Matrix::Service).to receive(:validate_selectors).with(selectors)
           subject
         end
 
