@@ -6,12 +6,18 @@ module PactBroker
       include PactBroker::Repositories::Helpers
       include PactBroker::Repositories
 
-      def find selectors
-        find_all(selectors)
+      def find selectors, options = {}
+        lines = find_all(selectors)
           .group_by{|line| [line[:consumer_version_number], line[:provider_version_number]]}
           .values
           .collect{ | lines | lines.first[:provider_version_number].nil? ? lines : lines.last }
           .flatten
+
+        if options.key?(:success)
+          lines = lines.select{ |l| options[:success].include?(l[:success]) }
+        end
+
+        lines
       end
 
       def find_for_consumer_and_provider pacticipant_1_name, pacticipant_2_name

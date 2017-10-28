@@ -8,8 +8,8 @@ module PactBroker
       extend PactBroker::Repositories
       extend PactBroker::Services
 
-      def find criteria
-        matrix_repository.find criteria
+      def find criteria, options = {}
+        matrix_repository.find criteria, options
       end
 
       def find_for_consumer_and_provider params

@@ -4,16 +4,12 @@ module PactBroker
   module Matrix
     describe ParseQuery do
       describe ".call" do
-        let(:query) { "q[][pacticipant]=Foo&q[][version]=1.2.3&q[][pacticipant]=Bar&q[][version]=9.9.9&success=true" }
+        let(:query) { "q[][pacticipant]=Foo&q[][version]=1.2.3&q[][pacticipant]=Bar&q[][version]=9.9.9" }
 
         subject { ParseQuery.call(query) }
 
         it "extracts the pacticipant names and respective versions" do
           expect(subject.first).to eq([{ pacticipant_name: "Foo", pacticipant_version_number: "1.2.3" }, { pacticipant_name: "Bar", pacticipant_version_number: "9.9.9" }])
-        end
-
-        it "extracts the options" do
-          expect(subject.last).to eq success: true
         end
 
         context "with spaces" do
@@ -45,6 +41,36 @@ module PactBroker
 
           it "does not set any options" do
             expect(subject.last).to eq({})
+          end
+        end
+
+        context "with just one status specified" do
+          let(:query) { "success=true" }
+          it "extracts the one status" do
+            expect(subject.last).to eq success: [true]
+          end
+        end
+
+        context "with an array of statuses" do
+          let(:query) { "success[]=true&success[]=false&success[]=" }
+          it "extracts the statuses" do
+            expect(subject.last).to eq success: [true, false, nil]
+          end
+        end
+
+        context "with success[]=" do
+          let(:query) { "success[]=&foo=bar" }
+
+          it "sets an array with a nil success" do
+            expect(subject.last).to eq(success: [nil])
+          end
+        end
+
+        context "with success=" do
+          let(:query) { "success=&foo=bar" }
+
+          it "sets an array with a nil success" do
+            expect(subject.last).to eq(success: [nil])
           end
         end
       end
