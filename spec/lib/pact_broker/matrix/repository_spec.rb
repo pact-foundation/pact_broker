@@ -3,7 +3,118 @@ require 'pact_broker/matrix/repository'
 module PactBroker
   module Matrix
     describe Repository do
-      describe "#find" do
+      let(:td) { TestDataBuilder.new}
+
+      def build_selectors(hash)
+        hash.collect do | key, value |
+          { pacticipant_name: key, pacticipant_version_number: value }
+        end
+      end
+
+      describe "find" do
+        context "when the provider version resource exists but there is no verification for that version" do
+          before do
+            # A/1.2.3 -> B
+            # B/2.0.0
+            # C/3.0.0
+            td.create_pact_with_hierarchy("A", "1.2.3", "B")
+              .use_provider("B")
+              .create_version("2.0.0")
+              .create_provider("C")
+              .create_version("3.0.0")
+              .create_pact
+          end
+
+          subject { Repository.new.find build_selectors("A" => "1.2.3", "B" => "2.0.0", "C" => "3.0.0") }
+
+          it "returns a row for each pact" do
+            expect(subject.size).to eq 2
+          end
+
+          it "returns an row with a blank provider_version_number" do
+            expect(subject.first).to include consumer_name: "A",
+              provider_name: "B",
+              consumer_version_number: "1.2.3",
+              provider_version_number: nil
+
+            expect(subject.last).to include consumer_name: "A",
+              provider_name: "C",
+              consumer_version_number: "1.2.3",
+              provider_version_number: nil
+          end
+
+          context "when only 2 version selectors are specified" do
+            let(:selectors) { build_selectors("A" => "1.2.3", "B" => "2.0.0") }
+
+            subject { Repository.new.find(selectors) }
+
+            it "only returns 1 row" do
+              expect(subject.size).to eq 1
+            end
+          end
+        end
+
+        context "using the success option" do
+          before do
+            td.create_pact_with_hierarchy("A", "1.2.3", "B")
+              .create_verification(provider_version: "1.0.0")
+              .create_consumer_version("1.2.4")
+              .create_pact
+              .create_verification(provider_version: "2.0.0", success: false)
+              .create_consumer_version("1.2.5")
+              .create_pact
+          end
+
+          let(:selectors) { build_selectors("A" => nil, "B" => nil) }
+
+          subject { Repository.new.find(selectors, options) }
+
+          context "when the success option is not set" do
+            let(:options) { { } }
+
+            it "returns all rows specified by the selectors" do
+              expect(subject.size).to eq 3
+            end
+          end
+
+          context "when the success option is true" do
+            let(:options) { { success: [true] } }
+
+            it "only includes successes" do
+              expect(subject.first[:provider_version_number]).to eq "1.0.0"
+              expect(subject.size).to eq 1
+            end
+          end
+
+          context "when the success option is false" do
+            let(:options) { { success: [false] } }
+
+            it "only includes failures" do
+              expect(subject.first[:provider_version_number]).to eq "2.0.0"
+              expect(subject.size).to eq 1
+            end
+          end
+
+          context "when the success option is nil" do
+            let(:options) { { success: [nil] } }
+
+            it "only includes unverified rows" do
+              expect(subject.first[:provider_version_number]).to eq nil
+              expect(subject.size).to eq 1
+            end
+          end
+
+          context "when multiple success options are specified" do
+            let(:options) { { success: [false, nil] } }
+
+            it "returns all matching rows" do
+              expect(subject.collect{ |r| r[:provider_version_number]}).to eq [nil, "2.0.0"]
+            end
+          end
+        end
+      end
+
+      describe "#find_for_consumer_and_provider" do
         before do
           TestDataBuilder.new
             .create_pact_with_hierarchy("Consumer", "1.2.3", "Provider")
@@ -14,7 +125,7 @@ module PactBroker
             .create_pact
         end
 
-        subject { Repository.new.find("Consumer", "Provider") }
+        subject { Repository.new.find_for_consumer_and_provider("Consumer", "Provider") }
 
         it "returns the latest revision of each pact" do
           expect(subject.count).to eq 2
@@ -27,7 +138,7 @@ module PactBroker
         end
 
         it "doesn't matter which way you order the pacticipant names" do
-          expect(subject).to eq(Repository.new.find "Provider", "Consumer")
+          expect(subject).to eq(Repository.new.find_for_consumer_and_provider "Provider", "Consumer")
         end
       end
 
@@ -37,22 +148,26 @@ module PactBroker
         context "when compatible versions can be found" do
           before do
             td.create_pact_with_hierarchy("A", "1", "B")
+              .create_verification(provider_version: '0')
+              .revise_pact
               .create_verification(provider_version: '1')
               .create_verification(provider_version: '2', number: 2)
               .use_consumer("B")
               .use_consumer_version("1")
               .create_provider("C")
               .create_pact
-              .create_verification(provider_version: '1', success: true)
+              .create_verification(provider_version: '1')
               .use_consumer_version("2")
               .create_pact
-              .create_verification(provider_version: '2', success: true)
-              .create_verification(provider_version: '3', number: 2, success: true)
+              .create_verification(provider_version: '2')
+              .create_verification(provider_version: '3', number: 2)
           end
 
-          subject { Repository.new.find_compatible_pacticipant_versions("A" => "1", "B" => "2", "C" => "2") }
+          let(:selectors){ build_selectors("A" => "1", "B" => "2", "C" => "2") }
 
-          it "returns matrix lines for each compatible version pair" do
+          subject { Repository.new.find_compatible_pacticipant_versions(selectors) }
+
+          it "returns matrix lines for each compatible version pair (A/1-B/2, B/2-C/2)" do
             expect(subject.first[:consumer_name]).to eq "A"
             expect(subject.first[:consumer_version_number]).to eq "1"
             expect(subject.first[:provider_name]).to eq "B"
@@ -70,6 +185,27 @@ module PactBroker
 
             expect(subject.size).to eq 2
           end
+
+          context "when one or more pacticipants does not have a version specified" do
+            let(:selectors){ build_selectors("A" => "1", "B" => "2", "C" => nil) }
+            subject { Repository.new.find_compatible_pacticipant_versions(selectors) }
+
+            it "returns all the rows for that pacticipant" do
+              expect(subject[1]).to include(provider_name: "C", provider_version_number: "2")
+              expect(subject[2]).to include(provider_name: "C", provider_version_number: "3")
+              expect(subject.size).to eq 3
+            end
+          end
+
+          context "none of the pacticipants have a version specified" do
+            let(:selectors){ build_selectors("A" => nil, "B" => nil, "C" => nil) }
+
+            subject { Repository.new.find_compatible_pacticipant_versions(selectors) }
+
+            it "returns all the rows" do
+              expect(subject.size).to eq 4
+            end
+          end
         end
 
         context "when there is more than one compatible version pair" do
@@ -78,7 +214,10 @@ module PactBroker
               .create_verification(provider_version: "1")
               .create_verification(provider_version: "1", number: 2)
           end
-          subject { Repository.new.find_compatible_pacticipant_versions("X" => "1", "Y" => "1") }
+
+          let(:selectors){ build_selectors("X" => "1", "Y" => "1") }
+
+          subject { Repository.new.find_compatible_pacticipant_versions(selectors) }
 
           it "returns the last line" do
             expect(subject.size).to eq 1
@@ -93,7 +232,9 @@ module PactBroker
               .create_verification(provider_version: "1", number: 2, success: false)
           end
 
-          subject { Repository.new.find_compatible_pacticipant_versions("X" => "1", "Y" => "1") }
+          let(:selectors){ build_selectors("X" => "1", "Y" => "1") }
+
+          subject { Repository.new.find_compatible_pacticipant_versions(selectors) }
 
           it "does not return a matrix line" do
             expect(subject.size).to eq 0
@@ -107,7 +248,9 @@ module PactBroker
               .revise_pact
           end
 
-          subject { Repository.new.find_compatible_pacticipant_versions("X" => "1", "Y" => "1") }
+          let(:selectors){ build_selectors("X" => "1", "Y" => "1") }
+
+          subject { Repository.new.find_compatible_pacticipant_versions(selectors) }
 
           it "does not return a matrix line" do
             expect(subject.size).to eq 0
@@ -121,7 +264,9 @@ module PactBroker
               .create_verification(provider_version: '1', success: false)
           end
 
-          subject { Repository.new.find_compatible_pacticipant_versions("D" => "1", "E" => "1") }
+          let(:selectors){ build_selectors("D" => "1", "E" => "1") }
+
+          subject { Repository.new.find_compatible_pacticipant_versions(selectors) }
 
           it "does not return the matrix line" do
             expect(subject.count).to eq 0

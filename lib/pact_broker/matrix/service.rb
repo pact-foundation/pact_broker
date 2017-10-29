@@ -3,14 +3,17 @@ require 'pact_broker/repositories'
 module PactBroker
   module Matrix
     module Service
-      VERSION_SELECTOR_PATTERN = %r{(^[^/]+)/version/[^/]+$}.freeze
 
       extend self
       extend PactBroker::Repositories
       extend PactBroker::Services
 
-      def find params
-        matrix_repository.find params[:consumer_name], params[:provider_name]
+      def find criteria, options = {}
+        matrix_repository.find criteria, options
+      end
+
+      def find_for_consumer_and_provider params
+        matrix_repository.find_for_consumer_and_provider params[:consumer_name], params[:provider_name]
       end
 
       def find_compatible_pacticipant_versions criteria
@@ -19,28 +22,32 @@ module PactBroker
 
       def validate_selectors selectors
         error_messages = []
-        selectors.each do | version_selector |
-          if !(version_selector =~ VERSION_SELECTOR_PATTERN)
-            error_messages << "Invalid version selector '#{version_selector}'. Format must be <pacticipant_name>/version/<version>"
+
+        selectors.each do | selector |
+          if selector[:pacticipant_name].nil? && selector[:pacticipant_version_number].nil?
+            error_messages << "Please specify the pacticipant name and version"
+          elsif selector[:pacticipant_name].nil?
+            error_messages << "Please specify the pacticipant name"
           end
         end
 
-        selectors.each do | version_selector |
-          if match = version_selector.match(VERSION_SELECTOR_PATTERN)
-            pacticipant_name = match[1]
-            unless pacticipant_service.find_pacticipant_by_name(pacticipant_name)
-              error_messages << "Pacticipant '#{pacticipant_name}' not found"
-            end
+        selectors.collect{ |selector| selector[:pacticipant_name] }.compact.each do | pacticipant_name |
+          unless pacticipant_service.find_pacticipant_by_name(pacticipant_name)
+            error_messages << "Pacticipant '#{pacticipant_name}' not found"
           end
         end
 
         if error_messages.empty?
-          selected_versions = version_service.find_versions_by_selector(selectors)
-          if selected_versions.any?(&:nil?)
-            selected_versions.each_with_index do | selected_version, i |
-              error_messages << "No pact or verification found for #{selectors[i]}" if selected_version.nil?
+          selectors.each do | selector |
+            if selector[:pacticipant_version_number]
+              version = version_service.find_by_pacticipant_name_and_number(pacticipant_name: selector[:pacticipant_name], pacticipant_version_number: selector[:pacticipant_version_number])
+              error_messages << "No pact or verification found for #{selector[:pacticipant_name]} version #{selector[:pacticipant_version_number]}" if version.nil?
             end
           end
+        end
+
+        if selectors.size < 2
+          error_messages << "Please provide 2 or more version selectors."
         end
 
         error_messages

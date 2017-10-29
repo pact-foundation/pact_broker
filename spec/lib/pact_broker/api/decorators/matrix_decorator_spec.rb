@@ -113,6 +113,10 @@ module PactBroker
             expect(parsed_json[:matrix][0][:pact]).to eq pact_hash
           end
 
+          it "includes a summary" do
+            expect(parsed_json[:summary][:compatible]).to eq false
+          end
+
           context "when the pact has not been verified" do
             let(:verification_hash) do
               nil

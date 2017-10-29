@@ -11,21 +11,36 @@
   %table.table.table-bordered.table-striped{id: 'matrix'}
     %thead
       %th.consumer
-        = "#{consumer_name} version"
+        = "Consumer"
+        %span.glyphicon.glyphicon-sort.sort
+      %th.consumer-version
+        = "Version"
+        %span.glyphicon.glyphicon-sort.sort
+      %th.pact-published
+        = "Pact Published"
         %span.glyphicon.glyphicon-sort.sort
       %th.provider
-        = "#{provider_name} version"
+        = "Provider"
+        %span.glyphicon.glyphicon-sort.sort
+      %th.provider-version
+        = "Version"
         %span.glyphicon.glyphicon-sort.sort
       %th.verification-result
-        Verification
+        Pact verified
         %span.glyphicon.glyphicon-sort.sort
     %tbody
     - lines.each do | line |
       %tr
+        %td.consumer{'data-sort-value' => line.consumer_name}
+          = line.consumer_name
         %td.consumer-version{'data-sort-value' => line.consumer_version_order}
           %a{href: line.consumer_version_number_url}
             = line.consumer_version_number
+        %td.pact-published{'data-sort-value' => line.pact_published_order}
+          = line.pact_publication_date
         %td.provider{'data-sort-value' => line.provider_version_order}
+          = line.provider_name
+        %td.provider-version{'data-sort-value' => line.provider_version_order}
           %a{href: line.provider_version_number_url}
             = line.provider_version_number
         %td.verification-result{class: line.verification_status_class}
