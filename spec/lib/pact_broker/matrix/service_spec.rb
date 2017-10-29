@@ -29,7 +29,6 @@ module PactBroker
               .create_version("1")
               .create_pacticipant("Bar")
               .create_version("2")
-
           end
 
           let(:selectors) { [{ pacticipant_name: "Foo", pacticipant_version_number: "1" }, { pacticipant_name: "Bar", pacticipant_version_number: "1" }] }
@@ -56,10 +55,17 @@ module PactBroker
         end
 
         context "when the pacticipant version is not specified" do
-          let(:selectors) { [{ pacticipant_name: "Foo", pacticipant_version_number: nil }] }
+          before do
+            td.create_pacticipant("Foo")
+              .create_version("1")
+              .create_pacticipant("Bar")
+              .create_version("2")
+          end
 
-          it "returns error messages" do
-            expect(subject.first).to eq "Please specify the version for Foo"
+          let(:selectors) { [ { pacticipant_name: "Foo", pacticipant_version_number: nil }, { pacticipant_name: "Bar", pacticipant_version_number: nil } ] }
+
+          it "returns no error messages" do
+            expect(subject).to eq []
           end
         end
 

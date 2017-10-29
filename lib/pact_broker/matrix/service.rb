@@ -28,8 +28,6 @@ module PactBroker
             error_messages << "Please specify the pacticipant name and version"
           elsif selector[:pacticipant_name].nil?
             error_messages << "Please specify the pacticipant name"
-          elsif selector[:pacticipant_version_number].nil?
-            error_messages << "Please specify the version for #{selector[:pacticipant_name]}"
           end
         end
 
@@ -41,8 +39,10 @@ module PactBroker
 
         if error_messages.empty?
           selectors.each do | selector |
-            version = version_service.find_by_pacticipant_name_and_number(pacticipant_name: selector[:pacticipant_name], pacticipant_version_number: selector[:pacticipant_version_number])
-            error_messages << "No pact or verification found for #{selector[:pacticipant_name]} version #{selector[:pacticipant_version_number]}" if version.nil?
+            if selector[:pacticipant_version_number]
+              version = version_service.find_by_pacticipant_name_and_number(pacticipant_name: selector[:pacticipant_name], pacticipant_version_number: selector[:pacticipant_version_number])
+              error_messages << "No pact or verification found for #{selector[:pacticipant_name]} version #{selector[:pacticipant_version_number]}" if version.nil?
+            end
           end
         end
 
