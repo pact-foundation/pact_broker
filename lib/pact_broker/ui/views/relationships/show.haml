@@ -4,13 +4,16 @@
   %script{type: 'text/javascript', src:'/javascripts/jquery-2.1.1.min.js'}
   %script{type: 'text/javascript', src:'/javascripts/jquery.tablesorter.min.js'}
   %script{type: 'text/javascript', src:'/js/bootstrap.min.js'}
-  %nav.navbase-default.navbar-right{role: "navigation"}
-    .container
-      %ul
-        %li.navbar-right
-          %a{href: '/hal-browser/browser.html'}
-            HAL Browser
   .container
+    %nav.navbase-default{role: "navigation", id: "navigation"}
+      .container-fluid
+        .navbar-header
+          %a.navbar-brand{href: "#"}
+            %img{alt: "Brand", src: "/images/logo@2x.png", height: "24px"}
+        %ul.navbar-right
+          %li
+            %a{href: '/hal-browser/browser.html'}
+              HAL Browser
     %h1.page-header
       Pacts
     %table.table.table-bordered.table-striped{id: 'relationships'}
