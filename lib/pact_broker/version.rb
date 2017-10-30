@@ -1,3 +1,3 @@
 module PactBroker
-  VERSION = '2.6.0'
+  VERSION = '2.7.0.beta.2'
 end

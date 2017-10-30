@@ -1,3 +1,37 @@
+<a name="v2.7.0.beta.2"></a>
+### v2.7.0.beta.2 (2017-10-31)
+
+#### Features
+
+* **matrix**
+  * add reason text to summary	 ([f979210](/../../commit/f979210))
+  * add text/plain content type for easier visualisation of matrix resource in terminal	 ([bab7720](/../../commit/bab7720))
+  * allow matrix rows to be returned for all versions of a pacticipant	 ([6d37545](/../../commit/6d37545))
+  * allow multiple verification statuses to be queried for using status[]=	 ([fba2771](/../../commit/fba2771))
+  * allow success param to be specified in query params	 ([2fb5817](/../../commit/2fb5817))
+  * change query params for matrix to use q[][pacticipant]=? and q[][version]=?	 ([e3913f7](/../../commit/e3913f7))
+  * return failure and success lines in matrix response, and a summary indicating whether the specified versions are compatible or not	 ([8783ef8](/../../commit/8783ef8))
+  * add method to find all matrix lines for a list of versions, regardless of verification status	 ([52755fd](/../../commit/52755fd))
+  * add pact publication and verification dates to response	 ([f0cc32b](/../../commit/f0cc32b))
+  * add validation errors to matrix resource	 ([7f91710](/../../commit/7f91710))
+  * allow matrix columns to be sorted	 ([7d22eb8](/../../commit/7d22eb8))
+  * add simple ui	 ([36f9480](/../../commit/36f9480))
+  * add endpoint for consumer/provider verification matrix	 ([6925dcb](/../../commit/6925dcb))
+
+* rename 'hal browser' links to 'api browser'	 ([11d3464](/../../commit/11d3464))
+* use timestamp migrator during app startup	 ([a87f393](/../../commit/a87f393))
+* convert paths ending in .json to Accept: application/hal+json	 ([d81f129](/../../commit/d81f129))
+
+* **auth**
+  * cascade UI before diagnostic api and broker api	 ([1b95461](/../../commit/1b95461))
+
+* **verifications**
+  * create and link provider version resource when verification is published	 ([3014a8b](/../../commit/3014a8b))
+
+#### Bug Fixes
+
+* show webhook status as not_run when all triggered webhooks are not_run	 ([2d014b2](/../../commit/2d014b2))
+
 <a name="v2.6.0"></a>
 ### v2.6.0 (2017-10-06)
 
