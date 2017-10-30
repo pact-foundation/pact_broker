@@ -46,8 +46,8 @@ module PactBroker
           end
         end
 
-        if selectors.size < 2
-          error_messages << "Please provide 2 or more version selectors."
+        if selectors.size == 0
+          error_messages << "Please provide 1 or more version selectors."
         end
 
         error_messages
