@@ -3,7 +3,7 @@ require 'pact_broker/api/decorators/matrix_decorator'
 module PactBroker
   module Api
     module Decorators
-      describe MatrixPactDecorator do
+      describe MatrixDecorator do
         describe "to_json" do
           let(:verification_date) { DateTime.new(2017, 12, 31) }
           let(:pact_created_at) { DateTime.new(2017, 1, 1) }
@@ -94,7 +94,7 @@ module PactBroker
           end
 
           let(:lines){ [line_1, line_2]}
-          let(:json) { MatrixPactDecorator.new(lines).to_json(user_options: { base_url: 'http://example.org' }) }
+          let(:json) { MatrixDecorator.new(lines).to_json(user_options: { base_url: 'http://example.org' }) }
           let(:parsed_json) { JSON.parse(json, symbolize_names: true) }
 
           it "includes the consumer details" do

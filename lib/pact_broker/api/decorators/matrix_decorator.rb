@@ -4,7 +4,7 @@ require 'pact_broker/api/pact_broker_urls'
 module PactBroker
   module Api
     module Decorators
-      class MatrixPactDecorator
+      class MatrixDecorator
         include PactBroker::Api::PactBrokerUrls
 
         def initialize(lines)
