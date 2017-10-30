@@ -143,6 +143,12 @@ class TestDataBuilder
     self
   end
 
+  def create_provider_version version_number = "1.0.#{model_counter}"
+    @version = PactBroker::Domain::Version.create(:number => version_number, :pacticipant => @provider)
+    @provider_version = @version
+    self
+  end
+
   def use_consumer_version version_number
     @consumer_version = PactBroker::Domain::Version.where(pacticipant_id: @consumer.id, number: version_number).single_record
     self
