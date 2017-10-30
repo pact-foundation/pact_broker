@@ -1,5 +1,6 @@
 require 'pact_broker/api/resources/base_resource'
 require 'pact_broker/api/decorators/matrix_decorator'
+require 'pact_broker/api/decorators/matrix_text_decorator'
 require 'pact_broker/matrix/parse_query'
 
 module PactBroker
@@ -12,7 +13,10 @@ module PactBroker
         end
 
         def content_types_provided
-          [["application/hal+json", :to_json]]
+          [
+            ["application/hal+json", :to_json],
+            ["text/plain", :to_text]
+          ]
         end
 
         def allowed_methods
@@ -30,8 +34,15 @@ module PactBroker
         end
 
         def to_json
-          lines = matrix_service.find(selectors, options)
           PactBroker::Api::Decorators::MatrixPactDecorator.new(lines).to_json(user_options: { base_url: base_url })
+        end
+
+        def to_text
+          PactBroker::Api::Decorators::MatrixTextDecorator.new(lines).to_text(user_options: { base_url: base_url })
+        end
+
+        def lines
+          @lines ||= matrix_service.find(selectors, options)
         end
 
         def selectors
