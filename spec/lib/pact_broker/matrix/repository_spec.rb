@@ -108,7 +108,11 @@ module PactBroker
             let(:options) { { success: [false, nil] } }
 
             it "returns all matching rows" do
-              expect(subject.collect{ |r| r[:provider_version_number]}).to eq [nil, "2.0.0"]
+              # postgres orders differently, and ruby array sort blows up with a nil string
+              provider_version_numbers = subject.collect{ |r| r[:provider_version_number]}
+              expect(provider_version_numbers).to include nil
+              expect(provider_version_numbers).to include "2.0.0"
+              expect(provider_version_numbers.size).to eq 2
             end
           end
         end
