@@ -18,7 +18,7 @@ module PactBroker
 
     def self.run_migrations database_connection
       Sequel.extension :migration
-      Sequel::Migrator.run(database_connection, PactBroker::DB::MIGRATIONS_DIR)
+      Sequel::TimestampMigrator.new(database_connection, PactBroker::DB::MIGRATIONS_DIR).run
     end
 
     def self.validate_connection_config

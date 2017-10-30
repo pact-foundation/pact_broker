@@ -54,6 +54,109 @@ module PactBroker
           end
         end
 
+        context "when only one pacticipant/version is specified and it is a consumer" do
+          before do
+            td.create_pact_with_hierarchy("A", "1.2.3", "B")
+              .create_verification(provider_version: "4.5.6")
+              .create_provider("D")
+              .create_pact
+              .create_verification(provider_version: "6.7.8")
+              .create_consumer_version("5.5.5")
+              .create_pact
+              .create_verification(provider_version: "4.5.6")
+          end
+
+          subject { Repository.new.find build_selectors("A" => "1.2.3") }
+
+          it "returns a row for each verification for that version" do
+            expect(subject.size).to eq 2
+            expect(subject.collect{|r| r[:consumer_version_number]}.sort).to eq ["1.2.3", "1.2.3"]
+            expect(subject.collect{|r| r[:provider_version_number]}.sort).to eq ["4.5.6", "6.7.8"]
+          end
+        end
+
+        context "when only one pacticipant name is specified and it is a consumer" do
+          before do
+            td.create_pact_with_hierarchy("A", "1.2.3", "B")
+              .create_verification(provider_version: "4.5.6")
+              .create_provider("D")
+              .create_pact
+              .create_pact_with_hierarchy("X", "1.2.3", "Y")
+          end
+
+          subject { Repository.new.find build_selectors("A" => nil) }
+
+          it "returns a row for each verification for the pacticipant" do
+            expect(subject.collect{|r| r[:consumer_name]}.uniq).to eq ["A"]
+            provider_version_numbers = subject.collect{|r| r[:provider_version_number]}
+            expect(provider_version_numbers).to include nil
+            expect(provider_version_numbers).to include "4.5.6"
+          end
+        end
+
+        context "when only one pacticipant/version is specified and it is a provider" do
+          before do
+            td.create_pact_with_hierarchy("A", "1.2.3", "B")
+              .create_verification(provider_version: "4.5.6")
+              .create_consumer("D")
+              .create_consumer_version("3.4.5")
+              .create_pact
+              .create_verification(provider_version: "4.5.6")
+              .create_verification(provider_version: "6.7.8", number: 2)
+          end
+
+          subject { Repository.new.find build_selectors("B" => "4.5.6") }
+
+          it "returns a row for each verification for that version" do
+            expect(subject.size).to eq 2
+            expect(subject.collect{|r| r[:consumer_version_number]}.sort).to eq ["1.2.3", "3.4.5"]
+            expect(subject.collect{|r| r[:provider_version_number]}.sort).to eq ["4.5.6", "4.5.6"]
+          end
+        end
+
+        context "when only one pacticipant name is specified and it is a provider" do
+          before do
+            td.create_pact_with_hierarchy("A", "1.2.3", "B")
+              .create_verification(provider_version: "4.5.6")
+              .create_consumer("D")
+              .create_consumer_version("3.4.5")
+              .create_pact
+              .create_verification(provider_version: "4.5.6")
+              .create_verification(provider_version: "6.7.8", number: 2)
+          end
+
+          subject { Repository.new.find build_selectors("B" => nil) }
+
+          it "returns a row for each verification for that version" do
+            expect(subject.size).to eq 3
+            expect(subject.collect{|r| r[:consumer_version_number]}.sort).to eq ["1.2.3", "3.4.5", "3.4.5"]
+            expect(subject.collect{|r| r[:provider_version_number]}.sort).to eq ["4.5.6", "4.5.6", "6.7.8"]
+          end
+        end
+
+        context "when only one pacticipant/version is specified and it is a consumer and provider" do
+          before do
+            td.create_pact_with_hierarchy("A", "1", "B")
+              .create_verification(provider_version: '1')
+              .create_verification(provider_version: '2', number: 2, success: false)
+              .create_verification(provider_version: '4', number: 3)
+              .create_provider_version("5")
+              .use_consumer("B")
+              .use_consumer_version("1")
+              .create_provider("C")
+              .create_pact
+              .create_verification(provider_version: '1', success: false)
+          end
+
+          subject { Repository.new.find build_selectors("B" => "1") }
+
+          it "returns rows where the pacticipant is the consumer and rows where the pacticipant is the provider" do
+            # A/1 and B/1
+            # B/1 and C/1
+            expect(subject.size).to eq 2
+          end
+        end
+
         context "using the success option" do
           before do
             td.create_pact_with_hierarchy("A", "1.2.3", "B")
@@ -108,7 +211,11 @@ module PactBroker
             let(:options) { { success: [false, nil] } }
 
             it "returns all matching rows" do
-              expect(subject.collect{ |r| r[:provider_version_number]}).to eq [nil, "2.0.0"]
+              # postgres orders differently, and ruby array sort blows up with a nil string
+              provider_version_numbers = subject.collect{ |r| r[:provider_version_number]}
+              expect(provider_version_numbers).to include nil
+              expect(provider_version_numbers).to include "2.0.0"
+              expect(provider_version_numbers.size).to eq 2
             end
           end
         end
@@ -203,7 +310,7 @@ module PactBroker
             subject { Repository.new.find_compatible_pacticipant_versions(selectors) }
 
             it "returns all the rows" do
-              expect(subject.size).to eq 4
+              expect(subject.size).to eq 5
             end
           end
         end

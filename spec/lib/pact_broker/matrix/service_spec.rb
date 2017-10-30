@@ -9,17 +9,11 @@ module PactBroker
 
         subject { Service.validate_selectors(selectors) }
 
-
-        context "when there is only one selector" do
-          before do
-            td.create_pacticipant("Foo")
-              .create_version("1")
-          end
-
-          let(:selectors) { [{ pacticipant_name: "Foo", pacticipant_version_number: "1" }] }
+        context "when there are no selectors" do
+          let(:selectors) { [] }
 
           it "returns error messages" do
-            expect(subject.first).to eq "Please provide 2 or more version selectors."
+            expect(subject.first).to eq "Please provide 1 or more version selectors."
           end
         end
 

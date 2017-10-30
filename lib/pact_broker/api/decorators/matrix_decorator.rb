@@ -4,7 +4,7 @@ require 'pact_broker/api/pact_broker_urls'
 module PactBroker
   module Api
     module Decorators
-      class MatrixPactDecorator
+      class MatrixDecorator
         include PactBroker::Api::PactBrokerUrls
 
         def initialize(lines)
@@ -18,7 +18,8 @@ module PactBroker
         def to_hash(options)
           {
             summary: {
-              compatible: compatible?
+              deployable: deployable,
+              reason: reason
             },
             matrix: matrix(lines, options[:user_options][:base_url])
           }
@@ -28,8 +29,18 @@ module PactBroker
 
         attr_reader :lines
 
-        def compatible?
+        def deployable
+          return nil if lines.any?{ |line| line[:success].nil? }
           lines.any? && lines.all?{ |line| line[:success] }
+        end
+
+        def reason
+          case deployable
+          when true then "All verification results are published and successful"
+          when false then "One or more verifications have failed"
+          else
+            "Missing one or more verification results"
+          end
         end
 
         def matrix(lines, base_url)

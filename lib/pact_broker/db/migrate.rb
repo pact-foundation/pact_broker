@@ -8,7 +8,7 @@ module PactBroker
       def self.call database_connection, options = {}
         db_migrations_dir = PactBroker.project_root.join('db','migrations')
         puts "Running migrations in directory #{db_migrations_dir}, target=#{options.fetch(:target, 'end')}"
-        Sequel::Migrator.run(database_connection, db_migrations_dir, options)
+        Sequel::TimestampMigrator.new(database_connection, db_migrations_dir, options).run
       end
     end
   end

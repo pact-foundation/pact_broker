@@ -6,9 +6,12 @@ module PactBroker
       include PactBroker::Repositories::Helpers
       include PactBroker::Repositories
 
+      # Return the latest matrix row (pact/verification) for each consumer_version_number/provider_version_number
       def find selectors, options = {}
+        # The group with the nil provider_version_numbers will be the results of the left outer join
+        # that don't have verifications, so we need to include them all.
         lines = find_all(selectors)
-          .group_by{|line| [line[:consumer_version_number], line[:provider_version_number]]}
+          .group_by{|line| [line[:consumer_name], line[:consumer_version_number], line[:provider_name], line[:provider_version_number]]}
           .values
           .collect{ | lines | lines.first[:provider_version_number].nil? ? lines : lines.last }
           .flatten
@@ -34,14 +37,26 @@ module PactBroker
       # If the version is nil, it means all versions for that pacticipant are to be included
       #
       def find_all selectors
-        PactBroker::Pacts::LatestPactPublicationsByConsumerVersion
+        query = PactBroker::Pacts::LatestPactPublicationsByConsumerVersion
           .select_append(:consumer_version_number, :provider_name, :consumer_name, :provider_version_id, :provider_version_number, :success)
           .select_append(Sequel[:latest_pact_publications_by_consumer_versions][:created_at].as(:pact_created_at))
           .select_append(Sequel[:all_verifications][:number])
           .select_append(Sequel[:all_verifications][:id].as(:verification_id))
           .select_append(Sequel[:execution_date].as(:verification_executed_at))
           .left_outer_join(:all_verifications, pact_version_id: :pact_version_id)
-          .where{
+
+        if selectors.size == 1
+          query = where_consumer_or_provider_is(selectors.first, query)
+        else
+          query = where_consumer_and_provider_within(selectors, query)
+        end
+
+        query.order(:execution_date, :verification_id)
+          .collect(&:values)
+      end
+
+      def where_consumer_and_provider_within selectors, query
+          query.where{
             Sequel.&(
               Sequel.|(
                 *selectors.collect{ |s| s[:pacticipant_version_number] ? Sequel.&(consumer_name: s[:pacticipant_name], consumer_version_number: s[:pacticipant_version_number]) :  Sequel.&(consumer_name: s[:pacticipant_name]) }
@@ -52,8 +67,15 @@ module PactBroker
               )
             )
           }
-          .order(:execution_date, :verification_id)
-          .collect(&:values)
+      end
+
+      def where_consumer_or_provider_is s, query
+        query.where{
+          Sequel.|(
+            s[:pacticipant_version_number] ? Sequel.&(consumer_name: s[:pacticipant_name], consumer_version_number: s[:pacticipant_version_number]) :  Sequel.&(consumer_name: s[:pacticipant_name]),
+            s[:pacticipant_version_number] ? Sequel.&(provider_name: s[:pacticipant_name], provider_version_number: s[:pacticipant_version_number]) :  Sequel.&(provider_name: s[:pacticipant_name])
+          )
+        }
       end
     end
   end
