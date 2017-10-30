@@ -10,7 +10,8 @@ module PactBroker
         include PactBroker::Services
 
         get "/provider/:provider_name/consumer/:consumer_name" do
-          lines = matrix_service.find(params[:consumer_name] => nil, params[:provider_name] => nil)
+          selectors = [{ pacticipant_name: params[:consumer_name] }, { pacticipant_name: params[:provider_name] } ]
+          lines = matrix_service.find(selectors)
           lines = lines.collect{|line| PactBroker::UI::ViewDomain::MatrixLine.new(line) }.sort
           locals = {
             lines: lines,
