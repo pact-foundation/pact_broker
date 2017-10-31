@@ -59,8 +59,9 @@ module PactBroker
 
       def look_up_versions_for_tags(selectors)
         selectors.collect do | selector |
-          if selector[:latest_tag]
-            version = version_repository.find_by_pacticpant_name_and_latest_tag(selector[:pacticipant_name], selector[:latest_tag])
+          # resource validation currently stops tag being specified without latest=true
+          if selector[:tag] && selector[:latest]
+            version = version_repository.find_by_pacticpant_name_and_latest_tag(selector[:pacticipant_name], selector[:tag])
             # validation in resource should ensure we always have a version
             {
               pacticipant_name: selector[:pacticipant_name],

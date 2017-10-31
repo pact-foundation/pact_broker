@@ -235,7 +235,7 @@ module PactBroker
           let(:selectors) do
             [
               { pacticipant_name: "A", pacticipant_version_number: "1.2.3" },
-              { pacticipant_name: "B", latest_tag: "prod" }
+              { pacticipant_name: "B", latest: true, tag: "prod" }
             ]
           end
 
