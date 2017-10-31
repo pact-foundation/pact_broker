@@ -1,5 +1,5 @@
 require 'pact_broker/db'
-require 'pact_Broker/repositories/helpers'
+require 'pact_broker/repositories/helpers'
 
 module PactBroker
 
