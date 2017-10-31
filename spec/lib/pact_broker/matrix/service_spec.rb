@@ -90,7 +90,7 @@ module PactBroker
 
           context "when there is not a version for the tag" do
 
-            let(:selectors) { [{ pacticipant_name: "Foo", latest_tag: "wiffle" }, { pacticipant_name: "Bar", pacticipant_version_number: "2" }] }
+            let(:selectors) { [{ pacticipant_name: "Foo", latest: true, tag: "wiffle" }, { pacticipant_name: "Bar", pacticipant_version_number: "2" }] }
 
             it "returns an error message" do
               expect(subject).to eq ["No version of Foo found with tag wiffle"]
@@ -98,7 +98,7 @@ module PactBroker
           end
         end
 
-        context "when the latest_tag is used as well as a version" do
+        context "when the latest is used as well as a version" do
           before do
             td.create_pacticipant("Foo")
               .create_version("1")
@@ -107,10 +107,26 @@ module PactBroker
               .create_version("2")
           end
 
-          let(:selectors) { [{ pacticipant_name: "Foo", pacticipant_version_number: "1", latest_tag: "prod" }, { pacticipant_name: "Bar", pacticipant_version_number: "2" }] }
+          let(:selectors) { [{ pacticipant_name: "Foo", pacticipant_version_number: "1", latest: true }, { pacticipant_name: "Bar", pacticipant_version_number: "2" }] }
 
           it "returns an error message" do
-            expect(subject).to eq ["A version and a latest tag cannot both be specified for Foo"]
+            expect(subject).to eq ["A version and latest flag cannot both be specified for Foo"]
+          end
+        end
+
+        context "when a tag is specified without latest=true" do
+          before do
+            td.create_pacticipant("Foo")
+              .create_version("1")
+              .create_tag("prod")
+              .create_pacticipant("Bar")
+              .create_version("2")
+          end
+
+          let(:selectors) { [{ pacticipant_name: "Foo", tag: "1"}] }
+
+          it "returns an error message" do
+            expect(subject).to eq ["Querying for all versions with a tag is not currently supported. The latest=true flag must be specified when a tag is given."]
           end
         end
       end
