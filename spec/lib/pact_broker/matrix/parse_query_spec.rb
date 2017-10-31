@@ -32,7 +32,7 @@ module PactBroker
           let(:query) { "q[][wrong]=Foo&q[][blah]=1.2.3" }
 
           it "returns nil keys or values" do
-            expect(subject.first).to eq [{ pacticipant_name: nil, pacticipant_version_number: nil }]
+            expect(subject.first).to eq [{}]
           end
         end
 
@@ -71,6 +71,30 @@ module PactBroker
 
           it "sets an array with a nil success" do
             expect(subject.last).to eq(success: [nil])
+          end
+        end
+
+        context "when latest is true" do
+          let(:query) { "q[][pacticipant]=Foo&q[][latest]=true" }
+
+          it "returns a selector with latest true" do
+            expect(subject.first).to eq [{ pacticipant_name: 'Foo', latest: true }]
+          end
+        end
+
+        context "when latest is not true" do
+          let(:query) { "q[][pacticipant]=Foo&q[][latest]=false" }
+
+          it "returns a selector with no latest key" do
+            expect(subject.first).to eq [{ pacticipant_name: 'Foo' }]
+          end
+        end
+
+        context "when there is a tag" do
+          let(:query) { "q[][pacticipant]=Foo&q[][tag]=prod" }
+
+          it "returns a selector with a tag" do
+            expect(subject.first).to eq [{ pacticipant_name: 'Foo', tag: 'prod' }]
           end
         end
       end

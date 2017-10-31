@@ -5,7 +5,14 @@ module PactBroker
     class ParseQuery
       def self.call query
         params = Rack::Utils.parse_nested_query(query)
-        selectors = (params['q'] || []).collect{ |i| { pacticipant_name: i['pacticipant'], pacticipant_version_number: i['version'] } }
+        selectors = (params['q'] || []).collect do |i|
+          p = {}
+          p[:pacticipant_name] = i['pacticipant'] if i['pacticipant']
+          p[:pacticipant_version_number] = i['version'] if i['version']
+          p[:latest] = true if i['latest'] == 'true'
+          p[:tag] = i['tag'] if i['tag']
+          p
+        end
         options = {}
         if params.key?('success') && params['success'].is_a?(Array)
           options[:success] = params['success'].collect do | value |
