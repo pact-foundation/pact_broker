@@ -37,6 +37,8 @@ module PactBroker
       # If the version is nil, it means all versions for that pacticipant are to be included
       #
       def find_all selectors
+        selectors = look_up_versions_for_tags(selectors)
+
         query = PactBroker::Pacts::LatestPactPublicationsByConsumerVersion
           .select_append(:consumer_version_number, :provider_name, :consumer_name, :provider_version_id, :provider_version_number, :success)
           .select_append(Sequel[:latest_pact_publications_by_consumer_versions][:created_at].as(:pact_created_at))
@@ -53,6 +55,21 @@ module PactBroker
 
         query.order(:execution_date, :verification_id)
           .collect(&:values)
+      end
+
+      def look_up_versions_for_tags(selectors)
+        selectors.collect do | selector |
+          if selector[:latest_tag]
+            version = version_repository.find_by_pacticpant_name_and_latest_tag(selector[:pacticipant_name], selector[:latest_tag])
+            # validation in resource should ensure we always have a version
+            {
+              pacticipant_name: selector[:pacticipant_name],
+              pacticipant_version_number: version.number
+            }
+          else
+            selector
+          end
+        end
       end
 
       def where_consumer_and_provider_within selectors, query

@@ -1,9 +1,14 @@
 require 'pact_broker/db'
+require 'pact_Broker/repositories/helpers'
 
 module PactBroker
 
   module Domain
     class Tag < Sequel::Model
+
+      dataset_module do
+        include PactBroker::Repositories::Helpers
+      end
 
       unrestrict_primary_key
 

@@ -32,7 +32,7 @@ module PactBroker
         end
 
         def from_json
-          created_model = pacticipant_service.create params
+          created_model = pacticipant_service.create params_with_string_keys
           response.body = decorator_for(created_model).to_json(user_options: decorator_context)
         end
 
@@ -55,9 +55,7 @@ module PactBroker
         def new_model
           @new_model ||= decorator_for(PactBroker::Domain::Pacticipant.new).from_json(request.body.to_s)
         end
-
       end
     end
-
   end
 end

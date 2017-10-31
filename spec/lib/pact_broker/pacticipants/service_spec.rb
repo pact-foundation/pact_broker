@@ -10,6 +10,22 @@ module PactBroker
 
       subject{ Service }
 
+      let(:td) { TestDataBuilder.new }
+
+      describe ".update" do
+        before do
+          td.create_pacticipant("Foo")
+        end
+
+        let(:params) { { 'name' => 'Foo', 'repositoryUrl' => 'http://foo' } }
+
+        subject { Service.update(params) }
+
+        it "updates the repositoryUrl" do
+          expect(subject.repository_url).to eq 'http://foo'
+        end
+      end
+
       describe ".messages_for_potential_duplicate_pacticipants" do
 
         let(:base_url) { 'http://example.org' }
@@ -126,7 +142,6 @@ module PactBroker
         it "returns a list of relationships" do
           expect(subject.find_relationships).to eq([PactBroker::Domain::Relationship.create(consumer, provider, pact, verification, webhooks)])
         end
-
       end
 
       describe "delete" do

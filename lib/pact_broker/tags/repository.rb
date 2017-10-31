@@ -14,7 +14,7 @@ module PactBroker
 
       def find args
         PactBroker::Domain::Tag
-          .select(Sequel.qualify("tags", "name"), Sequel.qualify("tags", "version_id"), Sequel.qualify("tags", "created_at"), Sequel.qualify("tags", "updated_at"))
+          .select_all_qualified
           .join(:versions, {id: :version_id})
           .join(:pacticipants, {Sequel.qualify("pacticipants", "id") => Sequel.qualify("versions", "pacticipant_id")})
           .where(name_like(Sequel.qualify("tags", "name"), args.fetch(:tag_name)))

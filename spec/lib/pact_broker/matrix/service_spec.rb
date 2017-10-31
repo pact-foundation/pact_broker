@@ -36,7 +36,7 @@ module PactBroker
           let(:selectors) { [{ pacticipant_name: "Foo", pacticipant_version_number: "1" }] }
 
           it "returns error messages" do
-            expect(subject.first).to eq "Pacticipant 'Foo' not found"
+            expect(subject.first).to eq "Pacticipant Foo not found"
           end
         end
 
@@ -68,6 +68,49 @@ module PactBroker
 
           it "returns error messages" do
             expect(subject.first).to eq "Please specify the pacticipant name and version"
+          end
+        end
+
+        context "when the latest_tag is used instead of a version" do
+          before do
+            td.create_pacticipant("Foo")
+              .create_version("1")
+              .create_tag("prod")
+              .create_pacticipant("Bar")
+              .create_version("2")
+          end
+
+          let(:selectors) { [{ pacticipant_name: "Foo", latest_tag: "prod" }, { pacticipant_name: "Bar", pacticipant_version_number: "2" }] }
+
+          context "when there is a version for the tag" do
+            it "returns no error messages" do
+              expect(subject).to eq []
+            end
+          end
+
+          context "when there is not a version for the tag" do
+
+            let(:selectors) { [{ pacticipant_name: "Foo", latest_tag: "wiffle" }, { pacticipant_name: "Bar", pacticipant_version_number: "2" }] }
+
+            it "returns an error message" do
+              expect(subject).to eq ["No version of Foo found with tag wiffle"]
+            end
+          end
+        end
+
+        context "when the latest_tag is used as well as a version" do
+          before do
+            td.create_pacticipant("Foo")
+              .create_version("1")
+              .create_tag("prod")
+              .create_pacticipant("Bar")
+              .create_version("2")
+          end
+
+          let(:selectors) { [{ pacticipant_name: "Foo", pacticipant_version_number: "1", latest_tag: "prod" }, { pacticipant_name: "Bar", pacticipant_version_number: "2" }] }
+
+          it "returns an error message" do
+            expect(subject).to eq ["A version and a latest tag cannot both be specified for Foo"]
           end
         end
       end
