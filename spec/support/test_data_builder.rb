@@ -154,6 +154,11 @@ class TestDataBuilder
     self
   end
 
+  def use_provider_version version_number
+    @provider_version = PactBroker::Domain::Version.where(pacticipant_id: @provider.id, number: version_number).single_record
+    self
+  end
+
   def create_tag tag_name
     @tag = PactBroker::Domain::Tag.create(name: tag_name, version: @version)
     self
@@ -161,6 +166,11 @@ class TestDataBuilder
 
   def create_consumer_version_tag tag_name
     @tag = PactBroker::Domain::Tag.create(name: tag_name, version: @consumer_version)
+    self
+  end
+
+  def create_provider_version_tag tag_name
+    @tag = PactBroker::Domain::Tag.create(name: tag_name, version: @provider_version)
     self
   end
 

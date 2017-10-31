@@ -219,6 +219,33 @@ module PactBroker
             end
           end
         end
+
+        context "when the latest tag is specified for a provider instead of a version" do
+          before do
+            td.create_pact_with_hierarchy("A", "1.2.3", "B")
+              .create_verification(provider_version: "1.0.0")
+              .use_provider_version("1.0.0")
+              .create_provider_version_tag("prod")
+              .create_verification(provider_version: "2.0.0", number: 2)
+              .use_provider_version("2.0.0")
+              .create_provider_version_tag("prod")
+              .create_verification(provider_version: "3.0.0", number: 3)
+          end
+
+          let(:selectors) do
+            [
+              { pacticipant_name: "A", pacticipant_version_number: "1.2.3" },
+              { pacticipant_name: "B", latest_tag: "prod" }
+            ]
+          end
+
+          subject { Repository.new.find(selectors) }
+
+          it "returns the row for the version " do
+            expect(subject.first).to include provider_version_number: "2.0.0"
+            expect(subject.size).to eq 1
+          end
+        end
       end
 
       describe "#find_for_consumer_and_provider" do
