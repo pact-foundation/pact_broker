@@ -10,7 +10,7 @@ module PactBroker
       let(:version_number) { "1.2.3" }
 
 
-      describe "#find_by_latest_tag" do
+      describe "#find_by_pacticpant_name_and_latest_tag" do
         before do
           td.create_consumer("Bar")
             .create_consumer_version("2.3.4")
@@ -23,7 +23,7 @@ module PactBroker
             .create_consumer_version("5.6.7")
         end
 
-        subject { Repository.new.find_by_latest_tag("Foo", "prod") }
+        subject { Repository.new.find_by_pacticpant_name_and_latest_tag("Foo", "prod") }
 
         it "returns the most recent version that has the specified tag" do
 

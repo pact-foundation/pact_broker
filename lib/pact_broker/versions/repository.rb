@@ -12,7 +12,7 @@ module PactBroker
         PactBroker::Domain::Version.where(number: number, pacticipant_id: pacticipant_id).single_record
       end
 
-      def find_by_latest_tag pacticipant_name, tag
+      def find_by_pacticpant_name_and_latest_tag pacticipant_name, tag
         PactBroker::Domain::Version
           .select_all_qualified
           .join(:pacticipants, {id: :pacticipant_id}, {implicit_qualifier: :versions})
