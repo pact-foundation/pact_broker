@@ -4,7 +4,7 @@ describe "Creating a pacticipant" do
   let(:path) { "/pacticipants" }
   let(:headers) { {'CONTENT_TYPE' => 'application/json'} }
   let(:response_body) { JSON.parse(last_response.body, symbolize_names: true)}
-  let(:pacticipant_hash) { {name: 'Foo Thing'}}
+  let(:pacticipant_hash) { { name: 'Foo Thing' } }
 
   subject { post path, pacticipant_hash.to_json, headers; last_response }
 
