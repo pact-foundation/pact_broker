@@ -23,6 +23,15 @@ module PactBroker
           .first
       end
 
+      def find_latest_by_pacticpant_name pacticipant_name
+        PactBroker::Domain::Version
+          .select_all_qualified
+          .join(:pacticipants, {id: :pacticipant_id}, {implicit_qualifier: :versions})
+          .where(name_like(Sequel[:pacticipants][:name], pacticipant_name))
+          .reverse_order(:order)
+          .first
+      end
+
       def find_by_pacticipant_name_and_number pacticipant_name, number
         PactBroker::Domain::Version
           .select(Sequel[:versions][:id], Sequel[:versions][:number], Sequel[:versions][:pacticipant_id], Sequel[:versions][:order], Sequel[:versions][:created_at], Sequel[:versions][:updated_at])

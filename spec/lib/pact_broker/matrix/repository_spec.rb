@@ -246,6 +246,52 @@ module PactBroker
             expect(subject.size).to eq 1
           end
         end
+
+        context "when the latest version is specified for a provider without a tag" do
+          before do
+            td.create_pact_with_hierarchy("A", "1.2.3", "B")
+              .create_verification(provider_version: "1.0.0")
+              .use_provider_version("1.0.0")
+              .create_verification(provider_version: "2.0.0", number: 2)
+              .use_provider_version("2.0.0")
+              .create_verification(provider_version: "3.0.0", number: 3)
+          end
+
+          let(:selectors) do
+            [
+              { pacticipant_name: "A", pacticipant_version_number: "1.2.3" },
+              { pacticipant_name: "B", latest: true }
+            ]
+          end
+
+          subject { Repository.new.find(selectors) }
+
+          it "returns the row for the version " do
+            expect(subject.first).to include provider_version_number: "3.0.0"
+            expect(subject.size).to eq 1
+          end
+        end
+
+        context "when the latest version is specified for a provider without a tag but the latest known version for a provider does not have a verification" do
+          before do
+            td.create_pact_with_hierarchy("A", "1.2.3", "B")
+              .create_verification(provider_version: "1.0.0")
+              .create_provider_version("5.0.0")
+          end
+
+          let(:selectors) do
+            [
+              { pacticipant_name: "A", pacticipant_version_number: "1.2.3" },
+              { pacticipant_name: "B", latest: true }
+            ]
+          end
+
+          subject { Repository.new.find(selectors) }
+
+          it "returns no data - this may be confusing. Might need to re-think this logic." do
+            expect(subject.size).to eq 0
+          end
+        end
       end
 
       describe "#find_for_consumer_and_provider" do
