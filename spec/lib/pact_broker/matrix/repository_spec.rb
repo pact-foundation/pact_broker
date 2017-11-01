@@ -32,15 +32,15 @@ module PactBroker
           end
 
           it "returns an row with a blank provider_version_number" do
-            expect(subject.first).to include consumer_name: "A",
+            expect(subject).to include_hash_matching consumer_name: "A",
               provider_name: "B",
               consumer_version_number: "1.2.3",
               provider_version_number: nil
 
-            expect(subject.last).to include consumer_name: "A",
+            expect(subject).to include_hash_matching({consumer_name: "A",
               provider_name: "C",
               consumer_version_number: "1.2.3",
-              provider_version_number: nil
+              provider_version_number: nil})
           end
 
           context "when only 2 version selectors are specified" do

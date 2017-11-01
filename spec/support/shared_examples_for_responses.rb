@@ -41,3 +41,13 @@ RSpec::Matchers.define :be_a_404_response do
     expect(actual.status).to be 404
   end
 end
+
+RSpec::Matchers.define :include_hash_matching do |expected|
+  match do |array_of_hashes|
+    array_of_hashes.any? { |actual| slice(actual, expected.keys) == expected }
+  end
+
+  def slice actual, keys
+    keys.each_with_object({}) { |k, hash| hash[k] = actual[k] if actual.has_key?(k) }
+  end
+end
