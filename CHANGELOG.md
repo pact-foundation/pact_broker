@@ -1,3 +1,23 @@
+<a name="v2.7.0.beta.3"></a>
+### v2.7.0.beta.3 (2017-11-01)
+
+#### Features
+
+* **matrix**
+  * implement querying by latest without a tag	 ([3d78f79](/../../commit/3d78f79))
+  * update query to handle tag and latest flag	 ([c5c800f](/../../commit/c5c800f))
+  * update validation of selectors to allow tag and latest flag to be specified	 ([0fa33f1](/../../commit/0fa33f1))
+  * parse latest=true and tag=TAG in matrix query	 ([abcab9e](/../../commit/abcab9e))
+  * update validation to allow latest tag to be specified	 ([6da6e02](/../../commit/6da6e02))
+  * allow version to be specified by latest_tag	 ([fe498a7](/../../commit/fe498a7))
+
+* **pacticipant**
+  * expose repositoryUrl in resource	 ([8f0f16a](/../../commit/8f0f16a))
+
+#### Bug Fixes
+
+* correct captialization in require	 ([db2e676](/../../commit/db2e676))
+
 <a name="v2.7.0.beta.2"></a>
 ### v2.7.0.beta.2 (2017-10-31)
 
