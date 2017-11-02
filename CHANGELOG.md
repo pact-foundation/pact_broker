@@ -1,3 +1,10 @@
+<a name="v2.7.0.beta.4"></a>
+### v2.7.0.beta.4 (2017-11-03)
+
+#### Bug Fixes
+
+* add missing require	 ([14d7d02](/../../commit/14d7d02))
+
 <a name="v2.7.0.beta.3"></a>
 ### v2.7.0.beta.3 (2017-11-01)
 
