@@ -1,4 +1,5 @@
 require 'pact_broker/repositories/helpers'
+require 'pact_broker/matrix/row'
 
 module PactBroker
   module Matrix
@@ -67,14 +68,7 @@ module PactBroker
       #
       def find_all selectors
         selectors = look_up_versions_for_tags(selectors)
-
-        query = PactBroker::Pacts::LatestPactPublicationsByConsumerVersion
-          .select_append(:consumer_version_number, :provider_name, :consumer_name, :provider_version_id, :provider_version_number, :success)
-          .select_append(Sequel[:latest_pact_publications_by_consumer_versions][:created_at].as(:pact_created_at))
-          .select_append(Sequel[:all_verifications][:number])
-          .select_append(Sequel[:all_verifications][:id].as(:verification_id))
-          .select_append(Sequel[:execution_date].as(:verification_executed_at))
-          .left_outer_join(:all_verifications, pact_version_id: :pact_version_id)
+        query = Row.select_all
 
         if selectors.size == 1
           query = where_consumer_or_provider_is(selectors.first, query)
@@ -82,7 +76,7 @@ module PactBroker
           query = where_consumer_and_provider_within(selectors, query)
         end
 
-        query.order(:execution_date, :verification_id)
+        query.order(:verification_executed_at, :verification_id)
           .collect(&:values)
       end
 
