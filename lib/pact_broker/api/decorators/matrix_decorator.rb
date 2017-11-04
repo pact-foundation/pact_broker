@@ -25,10 +25,6 @@ module PactBroker
           }
         end
 
-        private
-
-        attr_reader :lines
-
         def deployable
           return nil if lines.any?{ |line| line[:success].nil? }
           lines.any? && lines.all?{ |line| line[:success] }
@@ -42,6 +38,10 @@ module PactBroker
             "Missing one or more verification results"
           end
         end
+
+        private
+
+        attr_reader :lines
 
         def matrix(lines, base_url)
           provider = nil

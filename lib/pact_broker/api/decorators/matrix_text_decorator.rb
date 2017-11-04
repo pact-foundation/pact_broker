@@ -1,5 +1,7 @@
 require 'ostruct'
 require 'pact_broker/api/pact_broker_urls'
+require 'pact_broker/api/decorators/matrix_decorator'
+
 require 'table_print'
 
 module PactBroker
@@ -13,11 +15,12 @@ module PactBroker
         end
 
         def to_text(options)
+          json_decorator = PactBroker::Api::Decorators::MatrixDecorator.new(lines)
           data = lines.collect do | line |
             Line.new(line[:consumer_name], line[:consumer_version_number], line[:provider_name], line[:provider_version_number], line[:success])
           end
           printer = TablePrint::Printer.new(data)
-          printer.table_print + "\n"
+          printer.table_print + "\n\nDeployable: #{json_decorator.deployable.inspect}\nReason: #{json_decorator.reason}\n"
         end
 
         private

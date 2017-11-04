@@ -11,7 +11,234 @@ module PactBroker
         end
       end
 
+      def shorten_row row
+        "#{row[:consumer_name]}#{row[:consumer_version_number]} #{row[:provider_name]}#{row[:provider_version_number] || '?'} n#{row[:number] || '?'}"
+      end
+
+      def shorten_rows rows
+        rows.collect{ |r| shorten_row(r) }
+      end
+
       describe "find" do
+        before do
+          # A1 - B1
+          # A1 - B1 r2
+          # A1 - C1
+          # A2 - B?
+          # A2 - C2
+          td.create_pact_with_hierarchy("A", "1", "B")
+            .create_verification(provider_version: '1', success: false)
+            .create_verification(provider_version: '1', number: 2, success: true)
+            .create_verification(provider_version: '2', number: 3, success: true)
+            .create_provider("C")
+            .create_pact
+            .create_verification(provider_version: '1')
+            .create_consumer_version("2")
+            .create_pact
+            .create_verification(provider_version: '3')
+            .use_provider("B")
+            .create_pact
+        end
+
+        subject { shorten_rows(Repository.new.find(selectors, options)) }
+        let(:options) { { latestby: latestby } }
+        let(:latestby) { nil }
+        let(:a1_b1_n1) { "A1 B1 n1" }
+        let(:a1_b1_n2) { "A1 B1 n2" }
+        let(:a1_b2_n3) { "A1 B2 n3" }
+        let(:a1_c1_n1) { "A1 C1 n1"}
+
+        context "when just the consumer name is specified" do
+          let(:selectors) { build_selectors('A' => nil) }
+
+          context "when no latestby is specified" do
+            it "returns all rows" do
+              expect(subject).to include a1_b1_n1
+              expect(subject).to include a1_b1_n2
+              expect(subject).to include a1_c1_n1
+              expect(subject.size).to eq 6
+            end
+          end
+
+          context "when latestby=cvpv" do
+            let(:latestby) { 'cvpv' }
+
+            it "returns the latest rows per consumer version/provider version" do
+              expect(subject).to_not include a1_b1_n1
+              expect(subject).to include a1_b1_n2
+              expect(subject).to include a1_c1_n1
+              expect(subject.size).to eq 5
+            end
+          end
+
+          context "when latestby=cvp" do
+            let(:latestby) { 'cvp' }
+
+            it "returns the latest row for each provider for each consumer version" do
+              expect(subject).to_not include a1_b1_n1
+              expect(subject).to_not include a1_b1_n2
+              expect(subject).to include a1_b2_n3
+              expect(subject).to include a1_c1_n1
+              expect(subject.size).to eq 4
+            end
+          end
+
+          context "when latestby=cp", pending: true do
+            let(:latestby) { 'cp' }
+
+            it "returns the latest rows per consumer/provider" do
+              expect(subject).to include "A2 C3 n1"
+              expect(subject).to include "A2 B? n?"
+              expect(subject).to include a1_c1_n1
+              expect(subject).to_not include a1_b2_n3
+              expect(subject.size).to eq 2
+            end
+          end
+        end
+
+        context "when the consumer name/version are specified" do
+          let(:selectors) { build_selectors('A' => '1') }
+
+          context "when no latestby is specified" do
+            it "returns all the rows for the consumer version" do
+              expect(subject.size).to eq 4
+            end
+          end
+
+          context "when latestby=cvpv" do
+            let(:latestby) { 'cvpv' }
+
+            it "returns the latest verification for each provider version for the specified consumer version" do
+              expect(subject).to_not include a1_b1_n1
+              expect(subject).to include a1_b1_n2
+              expect(subject).to include a1_c1_n1
+              expect(subject.size).to eq 3
+            end
+          end
+
+          context "when latestby=cvp" do
+            let(:latestby) { 'cvp' }
+
+            it "returns the latest verifications for each provider for the specified consumer version" do
+              expect(subject).to_not include a1_b1_n1
+              expect(subject).to_not include a1_b1_n2
+              expect(subject).to include a1_b2_n3
+              expect(subject).to include a1_c1_n1
+              expect(subject.size).to eq 2
+            end
+          end
+
+          context "when latestby=cp" do
+            let(:latestby) { 'cp' }
+
+            it "returns the same as latestby=cvp" do
+              expect(subject).to_not include a1_b1_n1
+              expect(subject).to_not include a1_b1_n2
+              expect(subject).to include a1_b2_n3
+              expect(subject).to include a1_c1_n1
+              expect(subject.size).to eq 2
+            end
+          end
+        end
+
+        context "when the consumer name/version and the provider name are specified" do
+          let(:selectors) { build_selectors('A' => '1', 'B' => nil) }
+
+          context "when no latestby is specified" do
+            it "returns all the rows for the given consumer version and given provider" do
+              expect(subject).to include a1_b1_n1
+              expect(subject).to include a1_b1_n2
+              expect(subject).to include a1_b2_n3
+              expect(subject).to_not include a1_c1_n1
+              expect(subject.size).to eq 3
+            end
+          end
+
+          context "when latestby=cvpv" do
+            let(:latestby) { 'cvpv' }
+
+            it "returns the latest verification for each provider version for the given consumer version" do
+              expect(subject).to_not include a1_b1_n1
+              expect(subject).to include a1_b1_n2
+              expect(subject).to include a1_b2_n3
+              expect(subject).to_not include a1_c1_n1
+              expect(subject.size).to eq 2
+            end
+          end
+
+          context "when latestby=cvp" do
+            let(:latestby) { 'cvp' }
+
+            it "returns the latest verification for the given provider for the given consumer version" do
+              expect(subject).to_not include a1_b1_n1
+              expect(subject).to_not include a1_b1_n2
+              expect(subject).to include a1_b2_n3
+              expect(subject).to_not include a1_c1_n1
+              expect(subject.size).to eq 1
+            end
+          end
+
+          context "when latestby=cp" do
+            let(:latestby) { 'cp' }
+
+            it "returns the same as latestby=cvp" do
+              expect(subject).to_not include a1_b1_n1
+              expect(subject).to_not include a1_b1_n2
+              expect(subject).to include a1_b2_n3
+              expect(subject).to_not include a1_c1_n1
+              expect(subject.size).to eq 1
+            end
+          end
+        end
+
+        context "when the consumer name/version and provider name/version are specified" do
+          let(:selectors) { build_selectors('A' => '1', 'B' => '1') }
+
+          context "when no latestby is specified" do
+            it "returns all the rows for the given consumer/version and given provider/version" do
+              expect(subject).to include a1_b1_n1
+              expect(subject).to include a1_b1_n2
+              expect(subject).to_not include a1_b2_n3
+              expect(subject).to_not include a1_c1_n1
+              expect(subject.size).to eq 2
+            end
+          end
+
+          context "when latestby=cvpv" do
+            let(:latestby) { 'cvpv' }
+
+            it "returns the latest verification for the given provider version for the given consumer version" do
+              expect(subject).to include a1_b1_n2
+              expect(subject.size).to eq 1
+            end
+          end
+
+          context "when latestby=cvp" do
+            let(:latestby) { 'cvp' }
+
+            it "returns the same as latestby=cvpv" do
+              expect(subject).to include a1_b1_n2
+              expect(subject.size).to eq 1
+            end
+          end
+
+          context "when latestby=cp" do
+            let(:latestby) { 'cp' }
+
+            it "returns the same as latestby=cvp" do
+              expect(subject).to include a1_b1_n2
+              expect(subject.size).to eq 1
+            end
+          end
+        end
+      end
+
+      describe "find" do
+        let(:options) { { scope: scope} }
+        let(:scope) { 'latest' }
+
+        subject { Repository.new.find(selectors, options) }
+
         context "when the provider version resource exists but there is no verification for that version" do
           before do
             # A/1.2.3 -> B
@@ -24,8 +251,7 @@ module PactBroker
               .create_version("3.0.0")
               .create_pact
           end
-
-          subject { Repository.new.find build_selectors("A" => "1.2.3", "B" => "2.0.0", "C" => "3.0.0") }
+          let(:selectors) { build_selectors("A" => "1.2.3", "B" => "2.0.0", "C" => "3.0.0") }
 
           it "returns a row for each pact" do
             expect(subject.size).to eq 2
@@ -46,8 +272,6 @@ module PactBroker
           context "when only 2 version selectors are specified" do
             let(:selectors) { build_selectors("A" => "1.2.3", "B" => "2.0.0") }
 
-            subject { Repository.new.find(selectors) }
-
             it "only returns 1 row" do
               expect(subject.size).to eq 1
             end
@@ -66,7 +290,7 @@ module PactBroker
               .create_verification(provider_version: "4.5.6")
           end
 
-          subject { Repository.new.find build_selectors("A" => "1.2.3") }
+          let(:selectors) { build_selectors("A" => "1.2.3") }
 
           it "returns a row for each verification for that version" do
             expect(subject.size).to eq 2
@@ -84,7 +308,7 @@ module PactBroker
               .create_pact_with_hierarchy("X", "1.2.3", "Y")
           end
 
-          subject { Repository.new.find build_selectors("A" => nil) }
+          let(:selectors) { build_selectors("A" => nil) }
 
           it "returns a row for each verification for the pacticipant" do
             expect(subject.collect{|r| r[:consumer_name]}.uniq).to eq ["A"]
@@ -105,7 +329,7 @@ module PactBroker
               .create_verification(provider_version: "6.7.8", number: 2)
           end
 
-          subject { Repository.new.find build_selectors("B" => "4.5.6") }
+          let(:selectors) { build_selectors("B" => "4.5.6") }
 
           it "returns a row for each verification for that version" do
             expect(subject.size).to eq 2
@@ -125,7 +349,11 @@ module PactBroker
               .create_verification(provider_version: "6.7.8", number: 2)
           end
 
-          subject { Repository.new.find build_selectors("B" => nil) }
+          before do
+            options.delete(:scope)
+          end
+
+          let(:selectors) { build_selectors("B" => nil) }
 
           it "returns a row for each verification for that version" do
             expect(subject.size).to eq 3
@@ -148,7 +376,7 @@ module PactBroker
               .create_verification(provider_version: '1', success: false)
           end
 
-          subject { Repository.new.find build_selectors("B" => "1") }
+          let(:selectors) { build_selectors("B" => "1") }
 
           it "returns rows where the pacticipant is the consumer and rows where the pacticipant is the provider" do
             # A/1 and B/1
@@ -170,10 +398,10 @@ module PactBroker
 
           let(:selectors) { build_selectors("A" => nil, "B" => nil) }
 
-          subject { Repository.new.find(selectors, options) }
-
           context "when the success option is not set" do
-            let(:options) { { } }
+            before do
+              options.delete(:success)
+            end
 
             it "returns all rows specified by the selectors" do
               expect(subject.size).to eq 3
@@ -181,7 +409,9 @@ module PactBroker
           end
 
           context "when the success option is true" do
-            let(:options) { { success: [true] } }
+            before do
+              options[:success] = [true]
+            end
 
             it "only includes successes" do
               expect(subject.first[:provider_version_number]).to eq "1.0.0"
@@ -190,7 +420,9 @@ module PactBroker
           end
 
           context "when the success option is false" do
-            let(:options) { { success: [false] } }
+            before do
+              options[:success] = [false]
+            end
 
             it "only includes failures" do
               expect(subject.first[:provider_version_number]).to eq "2.0.0"
@@ -199,7 +431,9 @@ module PactBroker
           end
 
           context "when the success option is nil" do
-            let(:options) { { success: [nil] } }
+            before do
+              options[:success] = [nil]
+            end
 
             it "only includes unverified rows" do
               expect(subject.first[:provider_version_number]).to eq nil
@@ -208,7 +442,9 @@ module PactBroker
           end
 
           context "when multiple success options are specified" do
-            let(:options) { { success: [false, nil] } }
+            before do
+              options[:success] = [false, nil]
+            end
 
             it "returns all matching rows" do
               # postgres orders differently, and ruby array sort blows up with a nil string
@@ -220,7 +456,7 @@ module PactBroker
           end
         end
 
-        context "when the latest tag is specified for a provider instead of a version" do
+        context "when the latest tag is specified for a provider" do
           before do
             td.create_pact_with_hierarchy("A", "1.2.3", "B")
               .create_verification(provider_version: "1.0.0")
@@ -238,8 +474,6 @@ module PactBroker
               { pacticipant_name: "B", latest: true, tag: "prod" }
             ]
           end
-
-          subject { Repository.new.find(selectors) }
 
           it "returns the row for the version " do
             expect(subject.first).to include provider_version_number: "2.0.0"
@@ -264,8 +498,6 @@ module PactBroker
             ]
           end
 
-          subject { Repository.new.find(selectors) }
-
           it "returns the row for the version " do
             expect(subject.first).to include provider_version_number: "3.0.0"
             expect(subject.size).to eq 1
@@ -285,8 +517,6 @@ module PactBroker
               { pacticipant_name: "B", latest: true }
             ]
           end
-
-          subject { Repository.new.find(selectors) }
 
           it "returns no data - this may be confusing. Might need to re-think this logic." do
             expect(subject.size).to eq 0
@@ -324,6 +554,8 @@ module PactBroker
 
       describe "#find_compatible_pacticipant_versions" do
         let(:td) { TestDataBuilder.new }
+        # subject { Repository.new.find_compatible_pacticipant_versions(selectors) }
+        subject { Repository.new.find(selectors, success: [true], scope: 'latest')}
 
         context "when compatible versions can be found" do
           before do
@@ -344,8 +576,6 @@ module PactBroker
           end
 
           let(:selectors){ build_selectors("A" => "1", "B" => "2", "C" => "2") }
-
-          subject { Repository.new.find_compatible_pacticipant_versions(selectors) }
 
           it "returns matrix lines for each compatible version pair (A/1-B/2, B/2-C/2)" do
             expect(subject.first[:consumer_name]).to eq "A"
@@ -368,19 +598,16 @@ module PactBroker
 
           context "when one or more pacticipants does not have a version specified" do
             let(:selectors){ build_selectors("A" => "1", "B" => "2", "C" => nil) }
-            subject { Repository.new.find_compatible_pacticipant_versions(selectors) }
 
             it "returns all the rows for that pacticipant" do
-              expect(subject[1]).to include(provider_name: "C", provider_version_number: "2")
-              expect(subject[2]).to include(provider_name: "C", provider_version_number: "3")
+              expect(subject).to include_hash_matching(provider_name: "C", provider_version_number: "2")
+              expect(subject).to include_hash_matching(provider_name: "C", provider_version_number: "3")
               expect(subject.size).to eq 3
             end
           end
 
           context "none of the pacticipants have a version specified" do
             let(:selectors){ build_selectors("A" => nil, "B" => nil, "C" => nil) }
-
-            subject { Repository.new.find_compatible_pacticipant_versions(selectors) }
 
             it "returns all the rows" do
               expect(subject.size).to eq 5
@@ -405,7 +632,7 @@ module PactBroker
           end
         end
 
-        context "when there is more than one compatible verison pair and the last one is a failure" do
+        context "when there is more than one verification and the last one is a failure" do
           before do
             td.create_pact_with_hierarchy("X", "1", "Y")
               .create_verification(provider_version: "1")
@@ -417,6 +644,7 @@ module PactBroker
           subject { Repository.new.find_compatible_pacticipant_versions(selectors) }
 
           it "does not return a matrix line" do
+            puts subject
             expect(subject.size).to eq 0
           end
         end

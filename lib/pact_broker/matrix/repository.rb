@@ -6,21 +6,45 @@ module PactBroker
       include PactBroker::Repositories::Helpers
       include PactBroker::Repositories
 
+      # TODO SORT BY MOST RECENT FIRST
+      # TODO move latest verification logic in to database
+
+      GROUP_BY_PROVIDER_VERSION_NUMBER = [:consumer_name, :consumer_version_number, :provider_name, :provider_version_number]
+      GROUP_BY_PROVIDER = [:consumer_name, :consumer_version_number, :provider_name]
+      GROUP_BY_PACT = [:consumer_name, :provider_name]
+
       # Return the latest matrix row (pact/verification) for each consumer_version_number/provider_version_number
       def find selectors, options = {}
         # The group with the nil provider_version_numbers will be the results of the left outer join
         # that don't have verifications, so we need to include them all.
         lines = find_all(selectors)
-          .group_by{|line| [line[:consumer_name], line[:consumer_version_number], line[:provider_name], line[:provider_version_number]]}
-          .values
-          .collect{ | lines | lines.first[:provider_version_number].nil? ? lines : lines.last }
-          .flatten
+        lines = apply_scope(options, selectors, lines)
 
         if options.key?(:success)
           lines = lines.select{ |l| options[:success].include?(l[:success]) }
         end
 
         lines
+      end
+
+      def all_versions_specified? selectors
+        selectors.all?{ |s| s[:pacticipant_version_number] }
+      end
+
+      def apply_scope options, selectors, lines
+        return lines unless options[:latestby]
+
+        group_by_columns = case options[:latestby]
+        when 'cvp' then GROUP_BY_PROVIDER
+        when 'cp' then GROUP_BY_PACT
+        else
+          GROUP_BY_PROVIDER_VERSION_NUMBER
+        end
+
+        lines.group_by{|line| group_by_columns.collect{|key| line[key] }}
+          .values
+          .collect{ | lines | lines.first[:provider_version_number].nil? ? lines : lines.last }
+          .flatten
       end
 
       def find_for_consumer_and_provider pacticipant_1_name, pacticipant_2_name
@@ -30,7 +54,12 @@ module PactBroker
       end
 
       def find_compatible_pacticipant_versions selectors
-        find(selectors).select{ |line | line[:success] }
+        find(selectors)
+          .group_by{|line| GROUP_BY_PROVIDER_VERSION_NUMBER.collect{|key| line[key] }}
+          .values
+          .collect{ | lines | lines.first[:provider_version_number].nil? ? lines : lines.last }
+          .flatten
+          .select{|line| line[:success] }
       end
 
       ##
@@ -60,7 +89,6 @@ module PactBroker
       def look_up_versions_for_tags(selectors)
         selectors.collect do | selector |
           # resource validation currently stops tag being specified without latest=true
-
           if selector[:tag] && selector[:latest]
             version = version_repository.find_by_pacticpant_name_and_latest_tag(selector[:pacticipant_name], selector[:tag])
             # validation in resource should ensure we always have a version

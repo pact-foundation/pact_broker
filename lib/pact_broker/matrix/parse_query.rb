@@ -22,6 +22,12 @@ module PactBroker
         if params.key?('success') && params['success'].is_a?(String)
           options[:success] = [params['success'] == '' ? nil : params['success'] == 'true']
         end
+        if params.key?('scope')
+          options[:scope] = params['scope']
+        end
+        if params.key?('groupby')
+          options[:groupby] = params['groupby']
+        end
         return selectors, options
       end
     end
