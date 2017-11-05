@@ -419,7 +419,7 @@ module PactBroker
             end
 
             it "only includes successes" do
-              expect(subject.first[:provider_version_number]).to eq "1.0.0"
+              expect(subject).to include_hash_matching provider_version_number: "1.0.0"
               expect(subject.size).to eq 1
             end
           end
@@ -430,7 +430,7 @@ module PactBroker
             end
 
             it "only includes failures" do
-              expect(subject.first[:provider_version_number]).to eq "2.0.0"
+              expect(subject).to include_hash_matching provider_version_number: "2.0.0"
               expect(subject.size).to eq 1
             end
           end
@@ -441,7 +441,7 @@ module PactBroker
             end
 
             it "only includes unverified rows" do
-              expect(subject.first[:provider_version_number]).to eq nil
+              expect(subject).to include_hash_matching provider_version_number: nil
               expect(subject.size).to eq 1
             end
           end
@@ -481,7 +481,7 @@ module PactBroker
           end
 
           it "returns the row for the version " do
-            expect(subject.first).to include provider_version_number: "2.0.0"
+            expect(subject).to include_hash_matching provider_version_number: "2.0.0"
             expect(subject.size).to eq 1
           end
         end
@@ -504,7 +504,7 @@ module PactBroker
           end
 
           it "returns the row for the version " do
-            expect(subject.first).to include provider_version_number: "3.0.0"
+            expect(subject).to include_hash_matching provider_version_number: "3.0.0"
             expect(subject.size).to eq 1
           end
         end
@@ -583,20 +583,21 @@ module PactBroker
           let(:selectors){ build_selectors("A" => "1", "B" => "2", "C" => "2") }
 
           it "returns matrix lines for each compatible version pair (A/1-B/2, B/2-C/2)" do
-            expect(subject.first[:consumer_name]).to eq "A"
-            expect(subject.first[:consumer_version_number]).to eq "1"
-            expect(subject.first[:provider_name]).to eq "B"
-            expect(subject.first[:provider_version_number]).to eq "2"
-            expect(subject.first[:verification_number]).to eq 2
-            expect(subject.first[:pact_created_at]).to be_datey
-            expect(subject.first[:verification_executed_at]).to be_datey
+            expect(subject).to include_hash_matching(
+              consumer_name: "A",
+              consumer_version_number: "1",
+              provider_name: "B",
+              provider_version_number: "2",
+              verification_number: 2
+            )
 
-            expect(subject.last[:consumer_name]).to eq "B"
-            expect(subject.last[:consumer_version_number]).to eq "2"
-            expect(subject.last[:provider_name]).to eq "C"
-            expect(subject.last[:provider_version_number]).to eq "2"
-            expect(subject.last[:verification_number]).to eq 1
-            expect(subject.last[:pact_created_at]).to be_datey
+            expect(subject).to include_hash_matching(
+              consumer_name: "B",
+              consumer_version_number: "2",
+              provider_name: "C",
+              provider_version_number: "2",
+              verification_number: 1,
+            )
 
             expect(subject.size).to eq 2
           end
@@ -650,7 +651,6 @@ module PactBroker
           subject { Repository.new.find_compatible_pacticipant_versions(selectors) }
 
           it "does not return a matrix line" do
-            puts subject
             expect(subject.size).to eq 0
           end
         end
