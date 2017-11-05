@@ -42,6 +42,7 @@ module PactBroker
         end
 
         subject { shorten_rows(Repository.new.find(selectors, options)) }
+
         let(:options) { { latestby: latestby } }
         let(:latestby) { nil }
         let(:a1_b1_n1) { "A1 B1 n1" }
@@ -49,6 +50,15 @@ module PactBroker
         let(:a1_b2_n3) { "A1 B2 n3" }
         let(:a1_c1_n1) { "A1 C1 n1" }
         let(:a2_b__n_) { "A2 B? n?" }
+
+        context "when a limit is specified" do
+          let(:selectors) { build_selectors('A' => nil) }
+          let(:options) { {limit: 1} }
+
+          it "returns fewer rows than the limit (because some of the logic is done in the code, there may be fewer than the limit - need to fix this)" do
+            expect(subject.size).to eq 1
+          end
+        end
 
         context "when just the consumer name is specified" do
           let(:selectors) { build_selectors('A' => nil) }

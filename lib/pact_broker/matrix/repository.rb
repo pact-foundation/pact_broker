@@ -70,6 +70,8 @@ module PactBroker
           query = where_consumer_and_provider_in(selectors, query)
         end
 
+        query = query.limit(options[:limit]) if options[:limit]
+
         query.order(:verification_executed_at, :verification_id).all
       end
 

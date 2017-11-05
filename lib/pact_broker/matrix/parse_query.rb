@@ -28,6 +28,9 @@ module PactBroker
         if params.key?('groupby')
           options[:groupby] = params['groupby']
         end
+        if params.key?('limit')
+          options[:limit] = params['limit']
+        end
         return selectors, options
       end
     end
