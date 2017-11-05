@@ -23,10 +23,10 @@ module PactBroker
         lines = apply_scope(options, selectors, lines)
 
         if options.key?(:success)
-          lines = lines.select{ |l| options[:success].include?(l[:success]) }
+          lines = lines.select{ |l| options[:success].include?(l.success) }
         end
 
-        lines
+        lines.sort.collect(&:values)
       end
 
       def all_versions_specified? selectors
@@ -41,20 +41,18 @@ module PactBroker
         when 'cp' then GROUP_BY_PACT
         end
 
-        lines.group_by{|line| group_by_columns.collect{|key| line[key] }}
+        lines.group_by{|line| group_by_columns.collect{|key| line.send(key) }}
           .values
-          .collect{ | lines | lines.first[:provider_version_number].nil? ? lines : lines.last }
+          .collect{ | lines | lines.first.provider_version_number.nil? ? lines : lines.last }
           .flatten
       end
 
       def find_for_consumer_and_provider pacticipant_1_name, pacticipant_2_name
         selectors = [{ pacticipant_name: pacticipant_1_name }, { pacticipant_name: pacticipant_2_name }]
-        find_all(selectors, {latestby: 'cvpv'})
-          .sort{|l1, l2| l2[:consumer_version_order] <=> l1[:consumer_version_order]}
+        find_all(selectors, {latestby: 'cvpv'}).sort.collect(&:values)
       end
 
       def find_compatible_pacticipant_versions selectors
-
         find(selectors, latestby: 'cvpv')
           .select{|line| line[:success] }
       end
@@ -69,11 +67,10 @@ module PactBroker
         if selectors.size == 1
           query = where_consumer_or_provider_is(selectors.first, query)
         else
-          query = where_consumer_and_provider_within(selectors, query)
+          query = where_consumer_and_provider_in(selectors, query)
         end
 
-        query.order(:verification_executed_at, :verification_id)
-          .collect(&:values)
+        query.order(:verification_executed_at, :verification_id).all
       end
 
       def base_table(options)
@@ -103,7 +100,7 @@ module PactBroker
         end
       end
 
-      def where_consumer_and_provider_within selectors, query
+      def where_consumer_and_provider_in selectors, query
           query.where{
             Sequel.&(
               Sequel.|(
