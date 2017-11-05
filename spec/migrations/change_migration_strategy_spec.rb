@@ -58,7 +58,7 @@ describe "changing from integer to timestamp migrations", no_db_clean: true do
       puts output
       output = `bundle exec rake pact_broker:db:version`
       puts output
-      expect(output.strip).to eq "47"
+      expect(output.strip.to_i).to be > 47
     end
   end
 

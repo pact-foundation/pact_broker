@@ -1,6 +1,9 @@
 Sequel.migration do
   up do
-    p = :latest_pact_publications_by_consumer_versions
+    # Includes every pact revision (eg. publishing to the same consumer version twice,
+    # or using PATCH) and every verification
+    # (including 'overwritten' ones. eg. when the same provider build runs twice.)
+    p = :all_pact_publications
     create_view(:matrix,
       from(p)
         .select(
@@ -12,15 +15,16 @@ Sequel.migration do
           Sequel[p][:id].as(:pact_publication_id),
           Sequel[p][:pact_version_id],
           Sequel[p][:pact_version_sha],
-          Sequel[p][:revision_number],
+          Sequel[p][:revision_number].as(:pact_revision_number),
           Sequel[p][:created_at].as(:pact_created_at),
           Sequel[p][:provider_id],
           Sequel[p][:provider_name],
           Sequel[:versions][:id].as(:provider_version_id),
           Sequel[:versions][:number].as(:provider_version_number),
           Sequel[:versions][:order].as(:provider_version_order),
+          Sequel[:verifications][:id].as(:verification_id),
           Sequel[:verifications][:success],
-          Sequel[:verifications][:number],
+          Sequel[:verifications][:number].as(:verification_number),
           Sequel[:verifications][:id].as(:verification_id),
           Sequel[:verifications][:execution_date].as(:verification_executed_at),
           Sequel[:verifications][:build_url].as(:verification_build_url)

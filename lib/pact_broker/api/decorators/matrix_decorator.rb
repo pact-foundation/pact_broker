@@ -118,7 +118,7 @@ module PactBroker
               verifiedAt: line[:verification_executed_at].to_datetime.xmlschema,
               _links: {
                 self: {
-                  href: verification_url(OpenStruct.new(line), base_url)
+                  href: verification_url(OpenStruct.new(line.merge(number: line[:verification_number])), base_url)
                 }
               }
             }

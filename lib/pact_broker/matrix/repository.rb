@@ -1,5 +1,6 @@
 require 'pact_broker/repositories/helpers'
 require 'pact_broker/matrix/row'
+require 'pact_broker/matrix/latest_row'
 
 module PactBroker
   module Matrix
@@ -18,7 +19,7 @@ module PactBroker
       def find selectors, options = {}
         # The group with the nil provider_version_numbers will be the results of the left outer join
         # that don't have verifications, so we need to include them all.
-        lines = find_all(selectors)
+        lines = find_all(selectors, options)
         lines = apply_scope(options, selectors, lines)
 
         if options.key?(:success)
@@ -33,13 +34,11 @@ module PactBroker
       end
 
       def apply_scope options, selectors, lines
-        return lines unless options[:latestby]
+        return lines unless options[:latestby] == 'cvp' || options[:latestby] == 'cp'
 
         group_by_columns = case options[:latestby]
         when 'cvp' then GROUP_BY_PROVIDER
         when 'cp' then GROUP_BY_PACT
-        else
-          GROUP_BY_PROVIDER_VERSION_NUMBER
         end
 
         lines.group_by{|line| group_by_columns.collect{|key| line[key] }}
@@ -50,25 +49,22 @@ module PactBroker
 
       def find_for_consumer_and_provider pacticipant_1_name, pacticipant_2_name
         selectors = [{ pacticipant_name: pacticipant_1_name }, { pacticipant_name: pacticipant_2_name }]
-        find_all(selectors)
+        find_all(selectors, {latestby: 'cvpv'})
           .sort{|l1, l2| l2[:consumer_version_order] <=> l1[:consumer_version_order]}
       end
 
       def find_compatible_pacticipant_versions selectors
-        find(selectors)
-          .group_by{|line| GROUP_BY_PROVIDER_VERSION_NUMBER.collect{|key| line[key] }}
-          .values
-          .collect{ | lines | lines.first[:provider_version_number].nil? ? lines : lines.last }
-          .flatten
+
+        find(selectors, latestby: 'cvpv')
           .select{|line| line[:success] }
       end
 
       ##
       # If the version is nil, it means all versions for that pacticipant are to be included
       #
-      def find_all selectors
+      def find_all selectors, options
         selectors = look_up_versions_for_tags(selectors)
-        query = Row.select_all
+        query = base_table(options).select_all
 
         if selectors.size == 1
           query = where_consumer_or_provider_is(selectors.first, query)
@@ -78,6 +74,11 @@ module PactBroker
 
         query.order(:verification_executed_at, :verification_id)
           .collect(&:values)
+      end
+
+      def base_table(options)
+        return Row unless options[:latestby]
+        return LatestRow
       end
 
       def look_up_versions_for_tags(selectors)

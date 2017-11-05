@@ -12,7 +12,7 @@ module PactBroker
       end
 
       def shorten_row row
-        "#{row[:consumer_name]}#{row[:consumer_version_number]} #{row[:provider_name]}#{row[:provider_version_number] || '?'} n#{row[:number] || '?'}"
+        "#{row[:consumer_name]}#{row[:consumer_version_number]} #{row[:provider_name]}#{row[:provider_version_number] || '?'} n#{row[:verification_number] || '?'}"
       end
 
       def shorten_rows rows
@@ -23,6 +23,7 @@ module PactBroker
         before do
           # A1 - B1
           # A1 - B1 r2
+          # A1 - B2 r3
           # A1 - C1
           # A2 - B?
           # A2 - C2
@@ -46,7 +47,8 @@ module PactBroker
         let(:a1_b1_n1) { "A1 B1 n1" }
         let(:a1_b1_n2) { "A1 B1 n2" }
         let(:a1_b2_n3) { "A1 B2 n3" }
-        let(:a1_c1_n1) { "A1 C1 n1"}
+        let(:a1_c1_n1) { "A1 C1 n1" }
+        let(:a2_b__n_) { "A2 B? n?" }
 
         context "when just the consumer name is specified" do
           let(:selectors) { build_selectors('A' => nil) }
@@ -56,6 +58,7 @@ module PactBroker
               expect(subject).to include a1_b1_n1
               expect(subject).to include a1_b1_n2
               expect(subject).to include a1_c1_n1
+              expect(subject).to include a2_b__n_
               expect(subject.size).to eq 6
             end
           end
@@ -67,6 +70,7 @@ module PactBroker
               expect(subject).to_not include a1_b1_n1
               expect(subject).to include a1_b1_n2
               expect(subject).to include a1_c1_n1
+              expect(subject).to include a2_b__n_
               expect(subject.size).to eq 5
             end
           end
@@ -79,6 +83,7 @@ module PactBroker
               expect(subject).to_not include a1_b1_n2
               expect(subject).to include a1_b2_n3
               expect(subject).to include a1_c1_n1
+              expect(subject).to include a2_b__n_
               expect(subject.size).to eq 4
             end
           end
@@ -554,8 +559,8 @@ module PactBroker
 
       describe "#find_compatible_pacticipant_versions" do
         let(:td) { TestDataBuilder.new }
-        # subject { Repository.new.find_compatible_pacticipant_versions(selectors) }
-        subject { Repository.new.find(selectors, success: [true], scope: 'latest')}
+
+        subject { Repository.new.find(selectors, success: [true], latestby: 'cvpv')}
 
         context "when compatible versions can be found" do
           before do
@@ -582,7 +587,7 @@ module PactBroker
             expect(subject.first[:consumer_version_number]).to eq "1"
             expect(subject.first[:provider_name]).to eq "B"
             expect(subject.first[:provider_version_number]).to eq "2"
-            expect(subject.first[:number]).to eq 2
+            expect(subject.first[:verification_number]).to eq 2
             expect(subject.first[:pact_created_at]).to be_datey
             expect(subject.first[:verification_executed_at]).to be_datey
 
@@ -590,7 +595,7 @@ module PactBroker
             expect(subject.last[:consumer_version_number]).to eq "2"
             expect(subject.last[:provider_name]).to eq "C"
             expect(subject.last[:provider_version_number]).to eq "2"
-            expect(subject.last[:number]).to eq 1
+            expect(subject.last[:verification_number]).to eq 1
             expect(subject.last[:pact_created_at]).to be_datey
 
             expect(subject.size).to eq 2
@@ -598,6 +603,7 @@ module PactBroker
 
           context "when one or more pacticipants does not have a version specified" do
             let(:selectors){ build_selectors("A" => "1", "B" => "2", "C" => nil) }
+            let(:options) { { latestby: 'cvpv'} }
 
             it "returns all the rows for that pacticipant" do
               expect(subject).to include_hash_matching(provider_name: "C", provider_version_number: "2")
@@ -628,7 +634,7 @@ module PactBroker
 
           it "returns the last line" do
             expect(subject.size).to eq 1
-            expect(subject.first[:number]).to eq 2
+            expect(subject).to include_hash_matching verification_number: 2
           end
         end
 
