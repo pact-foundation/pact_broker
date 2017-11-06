@@ -56,7 +56,7 @@ module PactBroker
           let(:options) { {limit: 1} }
 
           it "returns fewer rows than the limit (because some of the logic is done in the code, there may be fewer than the limit - need to fix this)" do
-            expect(subject.size).to eq 1
+            expect(subject).to eq ["A2 B? n?"]
           end
         end
 

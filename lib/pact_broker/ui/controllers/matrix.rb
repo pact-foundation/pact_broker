@@ -11,7 +11,7 @@ module PactBroker
 
         get "/provider/:provider_name/consumer/:consumer_name" do
           selectors = [{ pacticipant_name: params[:consumer_name] }, { pacticipant_name: params[:provider_name] } ]
-          lines = matrix_service.find(selectors, {latestby: 'cvpv', limit: 500})
+          lines = matrix_service.find(selectors, {latestby: 'cvpv', limit: 1000})
           lines = lines.collect{|line| PactBroker::UI::ViewDomain::MatrixLine.new(line) }.sort
           locals = {
             lines: lines,

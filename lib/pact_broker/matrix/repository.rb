@@ -8,7 +8,6 @@ module PactBroker
       include PactBroker::Repositories::Helpers
       include PactBroker::Repositories
 
-      # TODO SORT BY MOST RECENT FIRST
       # TODO move latest verification logic in to database
 
       GROUP_BY_PROVIDER_VERSION_NUMBER = [:consumer_name, :consumer_version_number, :provider_name, :provider_version_number]
@@ -43,7 +42,7 @@ module PactBroker
 
         lines.group_by{|line| group_by_columns.collect{|key| line.send(key) }}
           .values
-          .collect{ | lines | lines.first.provider_version_number.nil? ? lines : lines.last }
+          .collect{ | lines | lines.first.provider_version_number.nil? ? lines : lines.first }
           .flatten
       end
 
@@ -53,8 +52,7 @@ module PactBroker
       end
 
       def find_compatible_pacticipant_versions selectors
-        find(selectors, latestby: 'cvpv')
-          .select{|line| line[:success] }
+        find(selectors, latestby: 'cvpv').select{|line| line[:success] }
       end
 
       ##
@@ -70,11 +68,14 @@ module PactBroker
           query = where_consumer_and_provider_in(selectors, query)
         end
 
-        # TODO need to order by most recent first, otherwise the limit will give us the oldest rows
-
         query = query.limit(options[:limit]) if options[:limit]
-
-        query.order(:verification_executed_at, :verification_id).all
+        query.order(
+          Sequel.asc(:consumer_name),
+          Sequel.desc(:consumer_version_order),
+          Sequel.desc(:pact_revision_number),
+          Sequel.asc(:provider_name),
+          Sequel.desc(:provider_version_order),
+          Sequel.desc(:verification_id)).all
       end
 
       def base_table(options)
