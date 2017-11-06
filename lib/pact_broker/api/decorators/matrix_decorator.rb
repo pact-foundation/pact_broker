@@ -26,11 +26,13 @@ module PactBroker
         end
 
         def deployable
+          return nil if lines.empty?
           return nil if lines.any?{ |line| line[:success].nil? }
           lines.any? && lines.all?{ |line| line[:success] }
         end
 
         def reason
+          return "No results matched the given query" if lines.empty?
           case deployable
           when true then "All verification results are published and successful"
           when false then "One or more verifications have failed"

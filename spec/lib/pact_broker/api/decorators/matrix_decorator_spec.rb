@@ -160,6 +160,18 @@ module PactBroker
               expect(parsed_json[:summary][:reason]).to match /have failed/
             end
           end
+
+          context "when there are no results" do
+            let(:lines) { [] }
+
+            it "has a deployable flag of false" do
+              expect(parsed_json[:summary][:deployable]).to be nil
+            end
+
+            it "has an explanation" do
+              expect(parsed_json[:summary][:reason]).to match /No results/
+            end
+          end
         end
       end
     end
