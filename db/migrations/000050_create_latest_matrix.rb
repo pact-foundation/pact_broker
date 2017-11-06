@@ -14,7 +14,14 @@ Sequel.migration do
 
       UNION
 
-      select * from matrix where verification_id is null"
+      select matrix.* from matrix
+      inner join latest_pact_publication_revision_numbers lr
+      on matrix.consumer_id = lr.consumer_id
+      and matrix.provider_id = lr.provider_id
+      and matrix.consumer_version_order = lr.consumer_version_order
+      and matrix.pact_revision_number = lr.latest_revision_number
+      where verification_id is null
+      "
     )
   end
 end

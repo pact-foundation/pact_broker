@@ -249,10 +249,26 @@ module PactBroker
       end
 
       describe "find" do
-        let(:options) { { scope: scope} }
-        let(:scope) { 'latest' }
+        let(:options) { {} }
 
         subject { Repository.new.find(selectors, options) }
+
+        context "when a pact is revised, then verified" do
+          before do
+            td.create_pact_with_hierarchy("A", "1", "B")
+              .revise_pact
+              .create_verification(provider_version: "1")
+          end
+
+          context "when latestby=cvpv" do
+            let(:selectors) { build_selectors('A' => '1', 'B' => '1')}
+            let(:options) { { latestby: 'cvpv' } }
+
+            it "returns one row" do
+              expect(shorten_rows(subject)).to eq ['A1 B1 n1']
+            end
+          end
+        end
 
         context "when the provider version resource exists but there is no verification for that version" do
           before do

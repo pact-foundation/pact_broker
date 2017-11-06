@@ -103,7 +103,6 @@ describe 'create latest matrix (latest pact revision/latest verification for pro
   # C2 P? (r1/n?)
 
   it "only includes the latest pact revisions and latest verifications" do
-    puts database[:matrix].order(:consumer_version_order, :provider_version_order, :pact_revision_number, :verification_id).all.collect{ |r| shorten_row(r) }
     rows = database[:latest_matrix].order(:verification_id).all.collect{|row| shorten_row(row) }
     expect(rows).to include "C1 P1 (r2/n2)"
     expect(rows).to include "C1 P2 (r2/n3)"
