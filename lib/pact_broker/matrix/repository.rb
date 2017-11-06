@@ -70,6 +70,8 @@ module PactBroker
           query = where_consumer_and_provider_in(selectors, query)
         end
 
+        # TODO need to order by most recent first, otherwise the limit will give us the oldest rows
+
         query = query.limit(options[:limit]) if options[:limit]
 
         query.order(:verification_executed_at, :verification_id).all
