@@ -2,8 +2,7 @@ require 'pact_broker/repositories/helpers'
 
 module PactBroker
   module Matrix
-    class Row < Sequel::Model
-      set_dataset(:matrix)
+    class Row < Sequel::Model(:matrix)
 
       dataset_module do
         include PactBroker::Repositories::Helpers
