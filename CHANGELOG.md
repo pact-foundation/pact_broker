@@ -1,5 +1,21 @@
-<a name="v2.7.0.beta.4"></a>
-### v2.7.0.beta.4 (2017-11-03)
+<a name="v2.8.0.beta.5"></a>
+### v2.8.0.beta.5 (2017-11-06)
+
+#### Features
+
+* **matrix**
+  * fix matrix data types for MySQL	 ([42c5478](/../../commit/42c5478))
+  * improve reason when no results are found	 ([473abbe](/../../commit/473abbe))
+  * change groupby param to latestby	 ([a6a8ba2](/../../commit/a6a8ba2))
+  * ensure correct row is returned when a pact is revised, then verified	 ([7f37644](/../../commit/7f37644))
+  * return most recent rows first	 ([cfa2109](/../../commit/cfa2109))
+  * allow a limit to be specified	 ([2a11334](/../../commit/2a11334))
+  * return most recent rows first	 ([e896b7b](/../../commit/e896b7b))
+  * use views to create matrix query	 ([8488212](/../../commit/8488212))
+  * add matrix view	 ([852324a](/../../commit/852324a))
+
+<a name="v2.8.0.beta.4"></a>
+### v2.8.0.beta.4 (2017-11-03)
 
 #### Bug Fixes
 
