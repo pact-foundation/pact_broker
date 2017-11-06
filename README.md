@@ -34,7 +34,8 @@ Features:
 #### Step 1. Consumer CI build
 1. The consumer project runs its tests using the [Pact][pact] library to provide a mock service.
 2. While the tests run, the mock service writes the requests and the expected responses to a JSON "pact" file - this is the consumer contract.
-3. The generated pact is then published to the Pact Broker. This is simply a `PUT` to a resource that specifies the consumer name and version, and the provider name. eg `http://my-pact-broker/pacts/provider/Animal%20Service/consumer/Zoo%20App/version/1.0.0`
+3. The generated pact is then published to the Pact Broker. Most Pact libries will make a task available for you to do this easily, however, at its simplest, it is a `PUT` to a resource that specifies the consumer name and application version, and the provider name. eg `http://my-pact-broker/pacts/provider/Animal%20Service/consumer/Zoo%20App/version/1.0.0` 
+(Note that you are specifying the _consumer application version_ in the URL, not the pact version. The broker will take care of versioning the pact behind the scenes when its content changes. It is expected that the consumer application version will increment with every CI build.)
 4. When a pact is published, a webhook in the Pact Broker kicks off a build of the provider project if the pact content has changed since the previous version.
 
 #### Step 2. Provider CI build
