@@ -25,8 +25,8 @@ module PactBroker
         if params.key?('scope')
           options[:scope] = params['scope']
         end
-        if params.key?('groupby')
-          options[:groupby] = params['groupby']
+        if params.key?('latestby')
+          options[:latestby] = params['latestby']
         end
         if params.key?('limit')
           options[:limit] = params['limit']
