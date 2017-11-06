@@ -25,7 +25,6 @@ Sequel.migration do
           Sequel[:verifications][:id].as(:verification_id),
           Sequel[:verifications][:success],
           Sequel[:verifications][:number].as(:verification_number),
-          Sequel[:verifications][:id].as(:verification_id),
           Sequel[:verifications][:execution_date].as(:verification_executed_at),
           Sequel[:verifications][:build_url].as(:verification_build_url)
         )
