@@ -47,7 +47,7 @@ module PactBroker
         password.nil? ? nil : "**********"
       end
 
-      def execute options = {}
+      def execute pact, options = {}
         logs = StringIO.new
         execution_logger = Logger.new(logs)
         begin
