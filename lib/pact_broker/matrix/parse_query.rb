@@ -31,6 +31,12 @@ module PactBroker
         if params.key?('limit')
           options[:limit] = params['limit']
         end
+        if params.key?('latest')
+          options[:latest] = params['latest']
+        end
+        if params.key?('tag')
+          options[:tag] = params['tag']
+        end
         return selectors, options
       end
     end

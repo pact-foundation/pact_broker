@@ -18,7 +18,7 @@ module PactBroker
       def find selectors, options = {}
         # The group with the nil provider_version_numbers will be the results of the left outer join
         # that don't have verifications, so we need to include them all.
-        lines = find_all(selectors, options)
+        lines = find_all(resolve_selectors(selectors, options), options)
         lines = apply_scope(options, selectors, lines)
 
         if options.key?(:success)
@@ -48,7 +48,8 @@ module PactBroker
 
       def find_for_consumer_and_provider pacticipant_1_name, pacticipant_2_name
         selectors = [{ pacticipant_name: pacticipant_1_name }, { pacticipant_name: pacticipant_2_name }]
-        find_all(selectors, {latestby: 'cvpv'}).sort.collect(&:values)
+        options = { latestby: 'cvpv' }
+        find_all(resolve_selectors(selectors, options), options).sort.collect(&:values)
       end
 
       def find_compatible_pacticipant_versions selectors
@@ -59,15 +60,8 @@ module PactBroker
       # If the version is nil, it means all versions for that pacticipant are to be included
       #
       def find_all selectors, options
-        selectors = look_up_versions_for_tags(selectors)
         query = base_table(options).select_all
-
-        if selectors.size == 1
-          query = where_consumer_or_provider_is(selectors.first, query)
-        else
-          query = where_consumer_and_provider_in(selectors, query)
-        end
-
+        query = where_row_matches_selectors selectors, query
         query = query.limit(options[:limit]) if options[:limit]
         query.order(
           Sequel.asc(:consumer_name),
@@ -83,11 +77,22 @@ module PactBroker
         return LatestRow
       end
 
-      def look_up_versions_for_tags(selectors)
+      def resolve_selectors(selectors, options)
+        selectors = look_up_versions_for_tags(selectors, options)
+
+        if options[:latest]
+          apply_latest_and_tag_to_inferred_selectors(selectors, options)
+        else
+          selectors
+        end
+      end
+
+      def look_up_versions_for_tags(selectors, options)
         selectors.collect do | selector |
           # resource validation currently stops tag being specified without latest=true
           if selector[:tag] && selector[:latest]
             version = version_repository.find_by_pacticpant_name_and_latest_tag(selector[:pacticipant_name], selector[:tag])
+            raise "Could not find version with tag #{selector[:tag].inspect} for #{selector[:pacticipant_name]}" unless version
             # validation in resource should ensure we always have a version
             {
               pacticipant_name: selector[:pacticipant_name],
@@ -102,6 +107,39 @@ module PactBroker
           else
             selector
           end
+        end
+      end
+
+      def apply_latest_and_tag_to_inferred_selectors(selectors, options)
+        all_pacticipant_names = all_pacticipant_names_in_specified_matrix(selectors, options)
+        specified_names = selectors.collect{ |s| s[:pacticipant_name] }
+        inferred_names = all_pacticipant_names - specified_names
+
+        inferred_selectors = inferred_names.collect do | pacticipant_name |
+          {
+            pacticipant_name: pacticipant_name,
+            latest: options[:latest]
+          }.tap { |it| it[:tag] = options[:tag] if options[:tag] }
+        end
+
+        selectors + look_up_versions_for_tags(inferred_selectors, options)
+      end
+
+      def all_pacticipant_names_in_specified_matrix(selectors, options)
+        query = base_table(options).select(:consumer_name, :provider_name)
+        query = where_row_matches_selectors(selectors, query)
+        query
+          .all
+          .collect{ | row | [row.consumer_name, row.provider_name] }
+          .flatten
+          .uniq
+      end
+
+      def where_row_matches_selectors selectors, query
+        if selectors.size == 1
+          where_consumer_or_provider_is(selectors.first, query)
+        else
+          where_consumer_and_provider_in(selectors, query)
         end
       end
 
