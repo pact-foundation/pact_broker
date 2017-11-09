@@ -1,3 +1,16 @@
+<a name="v2.9.0.beta.5"></a>
+### v2.9.0.beta.5 (2017-11-09)
+
+
+#### Features
+
+* **webhook templating**
+  * add support for ${pactbroker.pactUrl} in query and body	 ([0eed596](/../../commit/0eed596))
+
+* **matrix**
+  * allow query to determine if a particular pacticipant version is compatible with the latest tagged versions of all its dependencies	 ([ba4a1cc](/../../commit/ba4a1cc))
+
+
 <a name="v2.8.0.beta.5"></a>
 ### v2.8.0.beta.5 (2017-11-06)
 
