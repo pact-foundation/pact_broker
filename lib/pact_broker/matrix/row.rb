@@ -6,6 +6,47 @@ module PactBroker
 
       dataset_module do
         include PactBroker::Repositories::Helpers
+
+        def matching_selectors selectors
+          if selectors.size == 1
+            where_consumer_or_provider_is(selectors.first)
+          else
+            where_consumer_and_provider_in(selectors)
+          end
+        end
+
+        def where_consumer_and_provider_in selectors
+          where{
+            Sequel.&(
+              Sequel.|(
+                *selectors.collect{ |s| s[:pacticipant_version_number] ? Sequel.&(consumer_name: s[:pacticipant_name], consumer_version_number: s[:pacticipant_version_number]) :  Sequel.&(consumer_name: s[:pacticipant_name]) }
+              ),
+              Sequel.|(
+                *(selectors.collect{ |s| s[:pacticipant_version_number] ? Sequel.&(provider_name: s[:pacticipant_name], provider_version_number: s[:pacticipant_version_number]) :  Sequel.&(provider_name: s[:pacticipant_name]) } +
+                  selectors.collect{ |s| Sequel.&(provider_name: s[:pacticipant_name], provider_version_number: nil) })
+              )
+            )
+          }
+        end
+
+        def where_consumer_or_provider_is s
+          where{
+            Sequel.|(
+              s[:pacticipant_version_number] ? Sequel.&(consumer_name: s[:pacticipant_name], consumer_version_number: s[:pacticipant_version_number]) :  Sequel.&(consumer_name: s[:pacticipant_name]),
+              s[:pacticipant_version_number] ? Sequel.&(provider_name: s[:pacticipant_name], provider_version_number: s[:pacticipant_version_number]) :  Sequel.&(provider_name: s[:pacticipant_name])
+            )
+          }
+        end
+
+        def order_by_names_ascending_most_recent_first
+          order(
+            Sequel.asc(:consumer_name),
+            Sequel.desc(:consumer_version_order),
+            Sequel.desc(:pact_revision_number),
+            Sequel.asc(:provider_name),
+            Sequel.desc(:provider_version_order),
+            Sequel.desc(:verification_id))
+        end
       end
 
       def summary
@@ -14,7 +55,6 @@ module PactBroker
 
       # Add logic for ignoring case
       def <=> other
-
         comparisons = [
           compare_name_asc(consumer_name, other.consumer_name),
           compare_number_desc(consumer_version_order, other.consumer_version_order),

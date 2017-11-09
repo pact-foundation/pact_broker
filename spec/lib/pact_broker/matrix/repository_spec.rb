@@ -555,6 +555,139 @@ module PactBroker
         end
       end
 
+      describe "find with global latest and tag specified" do
+        subject { shorten_rows(Repository.new.find(selectors, options)) }
+
+        context "with one consumer/version and latest tag specified for all the other pacticipants" do
+          before do
+            td.create_pact_with_hierarchy("A", "1", "B")
+              .create_verification(provider_version: "1")
+              .create_verification(provider_version: "2", number: 2)
+              .use_provider_version("1")
+              .create_provider_version_tag("prod")
+              .create_provider("C")
+              .create_pact
+              .create_verification(provider_version: "3")
+              .use_provider_version("3")
+              .create_provider_version_tag("prod")
+              .create_verification(provider_version: "4", number: 2)
+          end
+
+          let(:selectors) { build_selectors('A'=> '1') }
+          let(:options) { { tag: 'prod', latest: true } }
+
+          it "finds the matrix for the latest tagged versions of each of the other other pacticipants" do
+            expect(subject).to include "A1 B1 n1"
+            expect(subject).to include "A1 C3 n1"
+            expect(subject.size).to eq 2
+          end
+        end
+
+        context "with one consumer/version and latest specified for all the other pacticipants" do
+          before do
+            td.create_pact_with_hierarchy("A", "1", "B")
+              .create_verification(provider_version: "1")
+              .create_verification(provider_version: "2", number: 2)
+              .use_provider_version("1")
+              .create_provider("C")
+              .create_pact
+              .create_verification(provider_version: "3")
+              .create_verification(provider_version: "4", number: 2)
+          end
+
+          let(:selectors) { build_selectors('A'=> '1') }
+          let(:options) { { latest: true } }
+
+          it "finds the matrix for the latest tagged versions of each of the other other pacticipants" do
+            expect(subject).to include "A1 B2 n2"
+            expect(subject).to include "A1 C4 n2"
+            expect(subject.size).to eq 2
+          end
+        end
+
+        context "with one pacticipant without a version and latest tag specified for all the other pacticipants" do
+          before do
+            td.create_pact_with_hierarchy("A", "1", "B")
+              .create_verification(provider_version: "1")
+              .create_verification(provider_version: "2", number: 2)
+              .use_provider_version("1")
+              .create_provider_version_tag("prod")
+              .create_provider("C")
+              .create_pact
+              .create_verification(provider_version: "3")
+              .use_provider_version("3")
+              .create_provider_version_tag("prod")
+              .create_verification(provider_version: "4", number: 2)
+              .create_consumer_version("2")
+              .create_pact
+          end
+
+          let(:selectors) { build_selectors('A'=> nil) }
+          let(:options) { { tag: 'prod', latest: true } }
+
+          it "finds the matrix for the latest tagged versions of each of the other other pacticipants" do
+            expect(subject).to include "A1 B1 n1"
+            expect(subject).to include "A1 C3 n1"
+            expect(subject).to include "A2 C? n?"
+            expect(subject.size).to eq 3
+          end
+        end
+
+        context "with one pacticipant/version that is both a consumer and provider and latest tag specified for all the other pacticipants" do
+          before do
+            td.create_pact_with_hierarchy("A", "1", "B")
+              .create_consumer_version_tag("prod")
+              .create_verification(provider_version: "1")
+              .use_provider_version("1")
+              .use_consumer("B")
+              .use_consumer_version("1")
+              .create_provider("C")
+              .create_pact
+              .create_verification(provider_version: "3")
+              .use_provider_version("3")
+              .create_provider_version_tag("prod")
+              .create_verification(provider_version: "4", number: 2)
+          end
+
+          let(:selectors) { build_selectors('B'=> '1') }
+          let(:options) { { tag: 'prod', latest: true } }
+
+          it "finds the matrix for the latest tagged versions of each of the other other pacticipants" do
+            expect(subject).to include "A1 B1 n1"
+            expect(subject).to include "B1 C3 n1"
+            expect(subject.size).to eq 2
+          end
+        end
+
+        context "with one pacticipant/latest tag and latest tag specified for all the other pacticipants" do
+          before do
+            td.create_pact_with_hierarchy("A", "1", "B")
+              .create_consumer_version_tag("dev")
+              .create_verification(provider_version: "1")
+              .use_provider_version("1")
+              .create_provider_version_tag("prod")
+              .create_provider("C")
+              .create_pact
+              .create_verification(provider_version: "3")
+              .use_provider_version("3")
+              .create_provider_version_tag("prod")
+              .create_verification(provider_version: "4", number: 2)
+          end
+
+          let(:selectors) { [{ pacticipant_name: 'A', latest: true, tag: 'dev' } ] }
+          let(:options) { { tag: 'prod', latest: true } }
+
+          it "finds the matrix for the latest tagged versions of each of the other other pacticipants" do
+            expect(subject).to include "A1 B1 n1"
+            expect(subject).to include "A1 C3 n1"
+            expect(subject).to_not include "A1 C4 n2"
+            expect(subject.size).to eq 2
+          end
+        end
+
+
+      end
+
       describe "#find_for_consumer_and_provider" do
         before do
           TestDataBuilder.new
