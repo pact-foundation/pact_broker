@@ -1,6 +1,5 @@
-<a name="v2.9.0.beta.5"></a>
-### v2.9.0.beta.5 (2017-11-09)
-
+<a name="v2.9.0"></a>
+### v2.9.0 (2017-11-09)
 
 #### Features
 
@@ -9,7 +8,6 @@
 
 * **matrix**
   * allow query to determine if a particular pacticipant version is compatible with the latest tagged versions of all its dependencies	 ([ba4a1cc](/../../commit/ba4a1cc))
-
 
 <a name="v2.8.0.beta.5"></a>
 ### v2.8.0.beta.5 (2017-11-06)
