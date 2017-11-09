@@ -6,7 +6,7 @@
 * **webhook templating**
   * add support for ${pactbroker.pactUrl} in query and body	 ([0eed596](/../../commit/0eed596))
 
-* **matrix**
+* **matrix** _(note that the matrix resource is still in beta, and there may be breaking changes in the future)_
   * allow query to determine if a particular pacticipant version is compatible with the latest tagged versions of all its dependencies	 ([ba4a1cc](/../../commit/ba4a1cc))
 
 <a name="v2.8.0.beta.5"></a>
