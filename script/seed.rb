@@ -53,7 +53,7 @@ TestDataBuilder.new
   .create_label("microservice")
   .create_provider("Bar")
   .create_label("microservice")
-  .create_webhook(method: 'GET', url: 'http://localhost:9393/')
+  .create_webhook(method: 'GET', url: 'http://localhost:9393?url=${pactbroker.pactUrl}', body: '${pactbroker.pactUrl}')
   .create_consumer_version("1.2.100")
   .publish_pact
   .create_verification(provider_version: "1.4.234", success: true, execution_date: DateTime.now - 15)

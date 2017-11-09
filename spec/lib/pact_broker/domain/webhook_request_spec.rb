@@ -7,6 +7,10 @@ module PactBroker
   module Domain
 
     describe WebhookRequest do
+      before do
+        allow(PactBroker::Api::PactBrokerUrls).to receive(:pact_url).and_return('http://example.org/pact-url')
+        allow(PactBroker.configuration).to receive(:base_url).and_return('http://example.org')
+      end
 
       let(:username) { nil }
       let(:password) { nil }
@@ -28,6 +32,7 @@ module PactBroker
       end
 
       let(:logs) { subject.execute(pact, options).logs }
+
 
       describe "description" do
         it "returns a brief description of the HTTP request" do
@@ -55,6 +60,50 @@ module PactBroker
           stub_request(:post, "http://example.org/hook").
             with(:headers => {'Content-Type'=>'text/plain'}, :body => 'body').
             to_return(:status => 200, :body => "respbod", :headers => {'Content-Type' => 'text/foo, blah'})
+        end
+
+        describe "when the String body contains a ${pactbroker.pactUrl} parameter" do
+          let!(:http_request) do
+            stub_request(:post, "http://example.org/hook").
+              with(:headers => {'Content-Type'=>'text/plain'}, :body => "<xml><url>http://example.org/pact-url</url></xml>").
+              to_return(:status => 200)
+          end
+
+          let(:body) { "<xml><url>${pactbroker.pactUrl}</url></xml>" }
+
+          it "replaces the token with the live value" do
+            subject.execute(pact, options)
+            expect(http_request).to have_been_made
+          end
+        end
+
+        describe "when the JSON body contains a ${pactbroker.pactUrl} parameter" do
+          let!(:http_request) do
+            stub_request(:post, "http://example.org/hook").
+              with(:headers => {'Content-Type'=>'text/plain'}, :body => '{"url":"http://example.org/pact-url"}').
+              to_return(:status => 200)
+          end
+
+          let(:body) { { url: '${pactbroker.pactUrl}' } }
+
+          it "replaces the token with the live value" do
+            subject.execute(pact, options)
+            expect(http_request).to have_been_made
+          end
+        end
+
+        describe "when the URL contains a ${pactbroker.pactUrl} parameter" do
+          let!(:http_request) do
+            stub_request(:post, "http://example.org/hook?url=http%3A%2F%2Fexample.org%2Fpact-url").
+              to_return(:status => 200)
+          end
+
+          let(:url) { 'http://example.org/hook?url=${pactbroker.pactUrl}' }
+
+          it "replaces the token with the live value" do
+            subject.execute(pact, options)
+            expect(http_request).to have_been_made
+          end
         end
 
         it "executes the configured request" do

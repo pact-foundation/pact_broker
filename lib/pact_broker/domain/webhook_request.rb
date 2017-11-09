@@ -4,6 +4,7 @@ require 'pact_broker/logging'
 require 'pact_broker/messages'
 require 'net/http'
 require 'pact_broker/webhooks/redact_logs'
+require 'pact_broker/api/pact_broker_urls'
 
 module PactBroker
 
@@ -51,7 +52,7 @@ module PactBroker
         logs = StringIO.new
         execution_logger = Logger.new(logs)
         begin
-          execute_and_build_result(options, logs, execution_logger)
+          execute_and_build_result(pact, options, logs, execution_logger)
         rescue StandardError => e
           handle_error_and_build_result(e, options, logs, execution_logger)
         end
@@ -59,9 +60,10 @@ module PactBroker
 
       private
 
-      def execute_and_build_result options, logs, execution_logger
-        req = build_request(execution_logger)
-        response = do_request(req)
+      def execute_and_build_result pact, options, logs, execution_logger
+        uri = build_uri(pact)
+        req = build_request(uri, pact, execution_logger)
+        response = do_request(uri, req)
         log_response(response, execution_logger)
         result = WebhookExecutionResult.new(response, logs.string)
         log_completion_message(options, execution_logger, result.success?)
@@ -75,9 +77,9 @@ module PactBroker
         WebhookExecutionResult.new(nil, logs.string, e)
       end
 
-      def build_request execution_logger
-        req = http_request
-        execution_logger.info "HTTP/1.1 #{method.upcase} #{url_with_credentials}"
+      def build_request uri, pact, execution_logger
+        req = http_request(uri)
+        execution_logger.info "HTTP/1.1 #{method.upcase} #{url_with_credentials(pact)}"
 
         headers.each_pair do | name, value |
           execution_logger.info Webhooks::RedactLogs.call("#{name}: #{value}")
@@ -88,9 +90,9 @@ module PactBroker
 
         unless body.nil?
           if String === body
-            req.body = body
+            req.body = gsub_body(pact, body)
           else
-            req.body = body.to_json
+            req.body = gsub_body(pact, body.to_json)
           end
         end
 
@@ -98,7 +100,7 @@ module PactBroker
         req
       end
 
-      def do_request req
+      def do_request uri, req
         logger.info "Making webhook #{uuid} request #{to_s}"
         Net::HTTP.start(uri.hostname, uri.port,
           :use_ssl => uri.scheme == 'https') do |http|
@@ -126,18 +128,30 @@ module PactBroker
         "#{method.upcase} #{url}, username=#{username}, password=#{display_password}, headers=#{headers}, body=#{body}"
       end
 
-      def http_request
-        Net::HTTP.const_get(method.capitalize).new(url)
+      def http_request(uri)
+        Net::HTTP.const_get(method.capitalize).new(uri)
       end
 
-      def uri
-        URI(url)
+      def build_uri pact
+        URI(gsub_url(pact, url))
       end
 
-      def url_with_credentials
-        u = URI(url)
+      def url_with_credentials pact
+        u = build_uri(pact)
         u.userinfo = "#{username}:#{display_password}" if username
         u
+      end
+
+      def gsub_body pact, body
+        base_url = PactBroker.configuration.base_url
+        body.gsub('${pactbroker.pactUrl}', PactBroker::Api::PactBrokerUrls.pact_url(base_url, pact))
+      end
+
+      def gsub_url pact, url
+        base_url = PactBroker.configuration.base_url
+        pact_url = PactBroker::Api::PactBrokerUrls.pact_url(base_url, pact)
+        escaped_pact_url = CGI::escape(pact_url)
+        url.gsub('${pactbroker.pactUrl}', escaped_pact_url)
       end
     end
   end
