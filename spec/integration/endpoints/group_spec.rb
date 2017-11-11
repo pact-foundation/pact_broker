@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe "/groups/{pacticipant-name}" do
 
   let(:app) { PactBroker::API }
@@ -18,5 +16,4 @@ describe "/groups/{pacticipant-name}" do
       expect(last_response.body).to_not be_nil
     end
   end
-
 end
