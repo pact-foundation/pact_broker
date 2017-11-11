@@ -31,9 +31,9 @@ module PactBroker
         request && request.description
       end
 
-      def execute options
+      def execute pact, options
         logger.info "Executing #{self}"
-        request.execute options
+        request.execute pact, options
       end
 
       def to_s

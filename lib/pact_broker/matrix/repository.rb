@@ -1,4 +1,6 @@
 require 'pact_broker/repositories/helpers'
+require 'pact_broker/matrix/row'
+require 'pact_broker/matrix/latest_row'
 
 module PactBroker
   module Matrix
@@ -6,46 +8,151 @@ module PactBroker
       include PactBroker::Repositories::Helpers
       include PactBroker::Repositories
 
-      def find pacticipant_1_name, pacticipant_2_name
-        find_for_version_ids([], [pacticipant_1_name, pacticipant_2_name])
-          .sort{|l1, l2| l2[:consumer_version_order] <=> l1[:consumer_version_order]}
-      end
+      # TODO move latest verification logic in to database
 
-      ##
-      # candidate_versions Hash of pacticipant name => version
-      # Ihe value is nil, it means all versions for that pacticipant are to be included
-      # Returns a list of matrix lines indicating the compatible versions
-      #
-      def find_compatible_pacticipant_versions criteria
-        version_ids = criteria.reject{ |key, value| !value }.collect do | key, value |
-          version_repository.find_by_pacticipant_name_and_number(key, value).id
+      GROUP_BY_PROVIDER_VERSION_NUMBER = [:consumer_name, :consumer_version_number, :provider_name, :provider_version_number]
+      GROUP_BY_PROVIDER = [:consumer_name, :consumer_version_number, :provider_name]
+      GROUP_BY_PACT = [:consumer_name, :provider_name]
+
+      # Return the latest matrix row (pact/verification) for each consumer_version_number/provider_version_number
+      def find selectors, options = {}
+        # The group with the nil provider_version_numbers will be the results of the left outer join
+        # that don't have verifications, so we need to include them all.
+        lines = query_matrix(resolve_selectors(selectors, options), options)
+        lines = apply_latestby(options, selectors, lines)
+
+        if options.key?(:success)
+          lines = lines.select{ |l| options[:success].include?(l.success) }
         end
 
-        pacticipant_names = criteria.reject{|key, value| value }.keys
+        lines.sort.collect(&:values)
+      end
 
-        find_for_version_ids(version_ids, pacticipant_names)
-          .group_by{|line| [line[:consumer_version_number], line[:provider_version_number]]}
+      def apply_latestby options, selectors, lines
+        return lines unless options[:latestby] == 'cvp' || options[:latestby] == 'cp'
+
+        group_by_columns = case options[:latestby]
+        when 'cvp' then GROUP_BY_PROVIDER
+        when 'cp' then GROUP_BY_PACT
+        end
+
+        lines.group_by{|line| group_by_columns.collect{|key| line.send(key) }}
           .values
-          .collect(&:last)
-          .select{ |line | line[:success] }
+          .collect{ | lines | lines.first.provider_version_number.nil? ? lines : lines.first }
+          .flatten
       end
 
-      def find_for_version_ids version_ids, pacticipant_names = []
-        PactBroker::Pacts::LatestPactPublicationsByConsumerVersion
-          .select_append(:consumer_version_number, :provider_name, :consumer_name, :provider_version_id, :provider_version_number, :success)
-          .select_append(Sequel[:latest_pact_publications_by_consumer_versions][:created_at].as(:pact_created_at))
-          .select_append(Sequel[:all_verifications][:number])
-          .select_append(Sequel[:all_verifications][:id].as(:verification_id))
-          .select_append(Sequel[:execution_date].as(:verification_executed_at))
-          .left_outer_join(:all_verifications, pact_version_id: :pact_version_id)
-          .where(provider_version_id: version_ids)
-            .or(provider_version_id: nil)
-            .or(provider_name: pacticipant_names)
-          .where(consumer_version_id: version_ids)
-            .or(consumer_name: pacticipant_names)
-          .order(:execution_date, :verification_id)
-          .collect(&:values)
+      def find_for_consumer_and_provider pacticipant_1_name, pacticipant_2_name
+        selectors = [{ pacticipant_name: pacticipant_1_name }, { pacticipant_name: pacticipant_2_name }]
+        options = { latestby: 'cvpv' }
+        query_matrix(resolve_selectors(selectors, options), options).sort.collect(&:values)
       end
+
+      def find_compatible_pacticipant_versions selectors
+        find(selectors, latestby: 'cvpv').select{|line| line[:success] }
+      end
+
+      def query_matrix selectors, options
+        query = view_for(options).select_all.matching_selectors(selectors)
+        query = query.limit(options[:limit]) if options[:limit]
+        query.order_by_names_ascending_most_recent_first.all
+      end
+
+      def view_for(options)
+        options[:latestby] ? LatestRow : Row
+      end
+
+      def resolve_selectors(selectors, options)
+        selectors = look_up_versions_for_latest_and_tag(selectors, options)
+
+        if options[:latest]
+          apply_latest_and_tag_to_inferred_selectors(selectors, options)
+        else
+          selectors
+        end
+      end
+
+      # Find the version number for selectors with the latest (tagged) version specified
+      def look_up_versions_for_latest_and_tag(selectors, options)
+        selectors.collect do | selector |
+          # resource validation currently stops tag being specified without latest=true
+          if selector[:tag] && selector[:latest]
+            version = version_repository.find_by_pacticpant_name_and_latest_tag(selector[:pacticipant_name], selector[:tag])
+            raise "Could not find version with tag #{selector[:tag].inspect} for #{selector[:pacticipant_name]}" unless version
+            # validation in resource should ensure we always have a version
+            {
+              pacticipant_name: selector[:pacticipant_name],
+              pacticipant_version_number: version.number
+            }
+          elsif selector[:latest]
+            version = version_repository.find_latest_by_pacticpant_name(selector[:pacticipant_name])
+            {
+              pacticipant_name: selector[:pacticipant_name],
+              pacticipant_version_number: version.number
+            }
+          else
+            selector
+          end
+        end
+      end
+
+      # eg. when checking to see if Foo version 2 can be deployed to prod,
+      # need to look up all the 'partner' pacticipants, and determine their latest prod versions
+      def apply_latest_and_tag_to_inferred_selectors(selectors, options)
+        all_pacticipant_names = all_pacticipant_names_in_specified_matrix(selectors, options)
+        specified_names = selectors.collect{ |s| s[:pacticipant_name] }
+        inferred_names = all_pacticipant_names - specified_names
+
+        inferred_selectors = inferred_names.collect do | pacticipant_name |
+          {
+            pacticipant_name: pacticipant_name,
+            latest: options[:latest]
+          }.tap { |it| it[:tag] = options[:tag] if options[:tag] }
+        end
+
+        selectors + look_up_versions_for_latest_and_tag(inferred_selectors, options)
+      end
+
+      def all_pacticipant_names_in_specified_matrix(selectors, options)
+        query = view_for(options).select(:consumer_name, :provider_name)
+        query = query.matching_selectors(selectors)
+        query
+          .all
+          .collect{ | row | [row.consumer_name, row.provider_name] }
+          .flatten
+          .uniq
+      end
+
+      # def where_row_matches_selectors selectors, query
+      #   if selectors.size == 1
+      #     where_consumer_or_provider_is(selectors.first, query)
+      #   else
+      #     where_consumer_and_provider_in(selectors, query)
+      #   end
+      # end
+
+      # def where_consumer_and_provider_in selectors, query
+      #     query.where{
+      #       Sequel.&(
+      #         Sequel.|(
+      #           *selectors.collect{ |s| s[:pacticipant_version_number] ? Sequel.&(consumer_name: s[:pacticipant_name], consumer_version_number: s[:pacticipant_version_number]) :  Sequel.&(consumer_name: s[:pacticipant_name]) }
+      #         ),
+      #         Sequel.|(
+      #           *(selectors.collect{ |s| s[:pacticipant_version_number] ? Sequel.&(provider_name: s[:pacticipant_name], provider_version_number: s[:pacticipant_version_number]) :  Sequel.&(provider_name: s[:pacticipant_name]) } +
+      #             selectors.collect{ |s| Sequel.&(provider_name: s[:pacticipant_name], provider_version_number: nil) })
+      #         )
+      #       )
+      #     }
+      # end
+
+      # def where_consumer_or_provider_is s, query
+      #   query.where{
+      #     Sequel.|(
+      #       s[:pacticipant_version_number] ? Sequel.&(consumer_name: s[:pacticipant_name], consumer_version_number: s[:pacticipant_version_number]) :  Sequel.&(consumer_name: s[:pacticipant_name]),
+      #       s[:pacticipant_version_number] ? Sequel.&(provider_name: s[:pacticipant_name], provider_version_number: s[:pacticipant_version_number]) :  Sequel.&(provider_name: s[:pacticipant_name])
+      #     )
+      #   }
+      # end
     end
   end
 end

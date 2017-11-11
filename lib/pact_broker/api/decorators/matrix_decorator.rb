@@ -4,7 +4,7 @@ require 'pact_broker/api/pact_broker_urls'
 module PactBroker
   module Api
     module Decorators
-      class MatrixPactDecorator
+      class MatrixDecorator
         include PactBroker::Api::PactBrokerUrls
 
         def initialize(lines)
@@ -17,8 +17,28 @@ module PactBroker
 
         def to_hash(options)
           {
+            summary: {
+              deployable: deployable,
+              reason: reason
+            },
             matrix: matrix(lines, options[:user_options][:base_url])
           }
+        end
+
+        def deployable
+          return nil if lines.empty?
+          return nil if lines.any?{ |line| line[:success].nil? }
+          lines.any? && lines.all?{ |line| line[:success] }
+        end
+
+        def reason
+          return "No results matched the given query" if lines.empty?
+          case deployable
+          when true then "All verification results are published and successful"
+          when false then "One or more verifications have failed"
+          else
+            "Missing one or more verification results"
+          end
         end
 
         private
@@ -100,7 +120,7 @@ module PactBroker
               verifiedAt: line[:verification_executed_at].to_datetime.xmlschema,
               _links: {
                 self: {
-                  href: verification_url(OpenStruct.new(line), base_url)
+                  href: verification_url(OpenStruct.new(line.merge(number: line[:verification_number])), base_url)
                 }
               }
             }

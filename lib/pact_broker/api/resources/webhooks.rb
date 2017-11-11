@@ -1,4 +1,5 @@
 require 'pact_broker/services'
+require 'pact_broker/api/resources/base_resource'
 require 'pact_broker/api/decorators/webhooks_decorator'
 
 module PactBroker
@@ -25,6 +26,5 @@ module PactBroker
 
       end
     end
-
   end
 end

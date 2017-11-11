@@ -16,4 +16,8 @@ Sequel.migration do
         ).join(:versions, {id: :provider_version_id}, {:table_alias => :v})
     )
   end
+
+  down do
+    drop_view(:all_verifications)
+  end
 end

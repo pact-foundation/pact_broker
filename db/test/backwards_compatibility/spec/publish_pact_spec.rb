@@ -57,7 +57,7 @@ describe "Code version #{CODE_VERSION} running against database version #{DATABA
     subject { get path; last_response  }
 
     it "returns the latest pact" do
-      expect(subject.headers['X-Pact-Consumer-Version']).to eq '100.100.100'
+      expect(subject.headers['X-Pact-Consumer-Version']).to eq CONSUMER_VERSION
     end
   end
 

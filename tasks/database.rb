@@ -38,7 +38,7 @@ module PactBroker
     end
 
     def drop_tables
-      (TABLES + [:schema_info]).each do | table_name |
+      (TABLES + [:schema_info, :schema_migrations]).each do | table_name |
         if database.table_exists?(table_name)
           database.drop_table(table_name, cascade: psql?)
         end

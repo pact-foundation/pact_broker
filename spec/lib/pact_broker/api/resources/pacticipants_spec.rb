@@ -47,7 +47,7 @@ module PactBroker
 
           context "with valid JSON" do
             it "creates the pacticipant" do
-              expect(PactBroker::Pacticipants::Service).to receive(:create).with(params)
+              expect(PactBroker::Pacticipants::Service).to receive(:create).with('name' => 'New Consumer')
               subject
             end
 

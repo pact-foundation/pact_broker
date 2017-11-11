@@ -5,8 +5,32 @@ module PactBroker
   module Versions
     describe Repository do
 
+      let(:td) { TestDataBuilder.new }
       let(:pacticipant_name) { "test_pacticipant" }
       let(:version_number) { "1.2.3" }
+
+
+      describe "#find_by_pacticpant_name_and_latest_tag" do
+        before do
+          td.create_consumer("Bar")
+            .create_consumer_version("2.3.4")
+            .create_consumer_version_tag("prod")
+            .create_consumer("Foo")
+            .create_consumer_version("1.2.3")
+            .create_consumer_version_tag("prod")
+            .create_consumer_version("2.3.4")
+            .create_consumer_version_tag("prod")
+            .create_consumer_version("5.6.7")
+        end
+
+        subject { Repository.new.find_by_pacticpant_name_and_latest_tag("Foo", "prod") }
+
+        it "returns the most recent version that has the specified tag" do
+
+          expect(subject.number).to eq "2.3.4"
+          expect(subject.pacticipant.name).to eq "Foo"
+        end
+      end
 
       describe "#create" do
         context "when a previous version exists" do

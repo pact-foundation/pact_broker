@@ -1,26 +1,38 @@
 require 'rspec/core'
 require 'rspec/core/rake_task'
+require 'open-uri'
 
 TESTS = [
-  %w{head  9297},
-  %w{2.4.2 9296},
-  %w{2.3.0 9295},
+  %w{2.1.0 9293},
   %w{2.2.0 9294},
-  %w{2.1.0 9293}
+  %w{2.3.0 9295},
+  %w{2.4.2 9296},
+  %w{2.5.1 9297},
+  %w{2.6.0 9298},
+  %w{head  9299}
 ]
 
 DATABASE_VERSION = TESTS.first.first
 
 def start_pact_broker code_version, port
   Bundler.with_clean_env do
-    IO.popen("bundle exec appraisal #{code_version} rackup -p #{port}")
+    command = "bundle exec appraisal #{code_version} rackup -p #{port}"
+    puts command
+    IO.popen(command)
   end
+  sleep 2
 end
 
 def kill_servers
   Dir.chdir('pids') { Dir.glob("*") }.collect(&:to_i).each do | pid |
-    Process.kill 'KILL', pid
+    begin
+      puts "Killing broker with pid #{pid}"
+      Process.kill 'KILL', pid
+    rescue Errno::ESRCH
+      puts "Process with pid #{pid} already killed"
+    end
   end
+  sleep 2
 end
 
 def clean
@@ -42,7 +54,12 @@ task 'db:check_backwards_compatibility' do
   begin
     TESTS.each do | (code_version, port) |
       start_pact_broker code_version, port
+    end
 
+    # All the brokers must be started before we run the tests
+    # so that we have the latest version of the db running
+
+    TESTS.each do | (code_version, port) |
       ENV['PACT_BROKER_CODE_VERSION'] = code_version
       ENV['PORT'] = port
       Rake::Task["spec"].execute

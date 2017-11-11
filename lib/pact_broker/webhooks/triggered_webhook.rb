@@ -46,7 +46,7 @@ module PactBroker
       end
 
       def execute options
-        webhook.to_domain.execute options
+        webhook.to_domain.execute pact_publication.to_domain, options
       end
 
       def consumer_name

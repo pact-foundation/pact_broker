@@ -32,9 +32,9 @@ module PactBroker
 
         def from_json
           if pacticipant
-            @pacticipant = pacticipant_service.update params.merge(name: pacticipant_name)
+            @pacticipant = pacticipant_service.update params_with_string_keys.merge('name' => pacticipant_name)
           else
-            @pacticipant = pacticipant_service.create params.merge(name: pacticipant_name)
+            @pacticipant = pacticipant_service.create params_with_string_keys.merge('name' => pacticipant_name)
             response.headers["Location"] = pacticipant_url(base_url, pacticipant)
           end
           response.body = to_json
@@ -62,9 +62,7 @@ module PactBroker
         def pacticipant_name
           identifier_from_path[:name]
         end
-
       end
     end
-
   end
 end
