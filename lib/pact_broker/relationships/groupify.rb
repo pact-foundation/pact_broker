@@ -1,7 +1,7 @@
 require 'pact_broker/domain/group'
 
 =begin
-  Splits all relationships up into groups of non-connecting relationships.
+  Splits all index_items up into groups of non-connecting index_items.
 =end
 
 module PactBroker
@@ -10,21 +10,21 @@ module PactBroker
 
     class Groupify
 
-      def self.call relationships
-        recurse_groups([], relationships.dup).collect { |group| Domain::Group.new(group) }
+      def self.call index_items
+        recurse_groups([], index_items.dup).collect { |group| Domain::Group.new(group) }
       end
 
-      def self.recurse_groups groups, relationship_pool
-        if relationship_pool.empty?
+      def self.recurse_groups groups, index_item_pool
+        if index_item_pool.empty?
           groups
         else
-          first, *rest = relationship_pool
+          first, *rest = index_item_pool
           group = [first]
           new_connections = true
           while new_connections
             new_connections = false
             group = rest.inject(group) do |connected, candidate|
-              if connected.select { |relationship| relationship.connected?(candidate) }.any?
+              if connected.select { |index_item| index_item.connected?(candidate) }.any?
                 new_connections = true
                 connected + [candidate]
               else
@@ -36,7 +36,7 @@ module PactBroker
             group.uniq
           end
 
-          recurse_groups(groups + [group], relationship_pool - group)
+          recurse_groups(groups + [group], index_item_pool - group)
         end
       end
     end

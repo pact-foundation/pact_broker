@@ -16,7 +16,7 @@ module PactBroker
       end
 
       def groups
-        Relationships::Groupify.call index_service.find_relationships
+        Relationships::Groupify.call index_service.find_index_items
       end
     end
   end

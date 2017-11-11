@@ -1,5 +1,5 @@
 require 'pact_broker/ui/controllers/base_controller'
-require 'pact_broker/ui/view_models/relationships'
+require 'pact_broker/ui/view_models/index_items'
 require 'haml'
 
 module PactBroker

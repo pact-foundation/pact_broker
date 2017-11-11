@@ -33,32 +33,32 @@
           Last<br>verified
       %tbody
 
-      - relationships.each do | relationship |
+      - index_items.each do | index_item |
         %tr
           %td
           %td.consumer
-            %a{:href => relationship.consumer_group_url}
-              = relationship.consumer_name
+            %a{:href => index_item.consumer_group_url}
+              = index_item.consumer_name
           %td.pact
-            %a{:href => relationship.pact_url, :title => "View pact"}
+            %a{:href => index_item.pact_url, :title => "View pact"}
               %span.pact
           %td.provider
-            %a{:href => relationship.provider_group_url}
-              = relationship.provider_name
+            %a{:href => index_item.provider_group_url}
+              = index_item.provider_name
           %td
           %td
-            = relationship.publication_date_of_latest_pact
-          %td{class: relationship.webhook_status}
-            %a{:href => relationship.webhook_url}
-              = relationship.webhook_label
+            = index_item.publication_date_of_latest_pact
+          %td{class: index_item.webhook_status}
+            %a{:href => index_item.webhook_url}
+              = index_item.webhook_label
 
-          %td{class: relationship.verification_status, title: relationship.verification_tooltip, "data-toggle": "tooltip", "data-placement": "left"}
+          %td{class: index_item.verification_status, title: index_item.verification_tooltip, "data-toggle": "tooltip", "data-placement": "left"}
             %div
-              = relationship.last_verified_date
-              - if relationship.warning?
+              = index_item.last_verified_date
+              - if index_item.warning?
                 %span.glyphicon.glyphicon-warning-sign{'aria-hidden':true}
     %div.relationships-size
-      = relationships.size_label
+      = index_items.size_label
 
 :javascript
   $(function(){

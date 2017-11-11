@@ -3,7 +3,7 @@ require 'pact_broker/webhooks/status'
 
 module PactBroker
   module Domain
-    class Relationship
+    class IndexItem
 
       attr_reader :consumer, :provider, :latest_pact, :latest_verification, :webhooks
 
@@ -23,7 +23,7 @@ module PactBroker
       end
 
       def eq? other
-        Relationship === other && other.consumer == consumer && other.provider == provider &&
+        IndexItem === other && other.consumer == consumer && other.provider == provider &&
           other.latest_pact == latest_pact &&
           other.latest? == latest? &&
           other.latest_verification == latest_verification &&
@@ -117,7 +117,7 @@ module PactBroker
       end
 
       def to_s
-        "Relationship between #{consumer_name} and #{provider_name}"
+        "Pact between #{consumer_name} and #{provider_name}"
       end
 
       def to_a

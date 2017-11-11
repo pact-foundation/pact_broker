@@ -5,7 +5,7 @@ require 'pact_broker/date_helper'
 module PactBroker
   module UI
     module ViewDomain
-      class Relationship
+      class IndexItem
 
         include PactBroker::Api::PactBrokerUrls
 

@@ -13,7 +13,7 @@ module PactBroker
 
       subject{ Service }
 
-      describe ".find_relationships" do
+      describe ".find_index_items" do
         let(:consumer) { instance_double("PactBroker::Domain::Pacticipant")}
         let(:provider) { instance_double("PactBroker::Domain::Pacticipant")}
         let(:pact) { instance_double("PactBroker::Domain::Pact", id: 1, consumer: consumer, provider: provider, consumer_name: 'foo', provider_name: 'bar', consumer_version_tag_names: [])}
@@ -32,16 +32,16 @@ module PactBroker
 
         it "retrieves the webhooks for the pact" do
           expect(PactBroker::Webhooks::Service).to receive(:find_by_consumer_and_provider).with(consumer, provider)
-          subject.find_relationships(options)
+          subject.find_index_items(options)
         end
 
         it "retrieves the latest verification for the pact" do
           expect(PactBroker::Verifications::Service).to receive(:find_latest_verification_for).with(consumer, provider)
-          subject.find_relationships(options)
+          subject.find_index_items(options)
         end
 
         it "returns a list of relationships" do
-          expect(subject.find_relationships(options)).to eq([PactBroker::Domain::Relationship.create(consumer, provider, pact, true, verification, webhooks)])
+          expect(subject.find_index_items(options)).to eq([PactBroker::Domain::IndexItem.create(consumer, provider, pact, true, verification, webhooks)])
         end
       end
 
@@ -58,7 +58,7 @@ module PactBroker
               .create_verification(provider_version: "2.1.0")
           end
 
-          let(:rows) { subject.find_relationships(options) }
+          let(:rows) { subject.find_index_items(options) }
 
           it "returns both rows" do
             expect(rows.count).to eq 2
@@ -107,7 +107,7 @@ module PactBroker
               .create_verification(provider_version: "2.0.0")
           end
 
-          let(:rows) { subject.find_relationships(options) }
+          let(:rows) { subject.find_index_items(options) }
 
           it "returns one row" do
             expect(rows.count).to eq 1

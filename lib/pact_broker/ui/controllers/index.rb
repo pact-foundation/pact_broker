@@ -1,5 +1,5 @@
 require 'pact_broker/ui/controllers/base_controller'
-require 'pact_broker/ui/view_models/relationships'
+require 'pact_broker/ui/view_models/index_items'
 require 'haml'
 
 module PactBroker
@@ -11,9 +11,9 @@ module PactBroker
 
         get "/" do
           tags = [*params[:tags]].compact
-          view_model = ViewDomain::Relationships.new(index_service.find_relationships(tags: tags))
+          view_model = ViewDomain::IndexItems.new(index_service.find_index_items(tags: tags))
           page = tags.any? ? :'index/show-with-tags' : :'index/show'
-          haml page, {locals: {relationships: view_model, title: "Pacts"}, layout: :'layouts/main'}
+          haml page, {locals: {index_items: view_model, title: "Pacts"}, layout: :'layouts/main'}
         end
 
       end
