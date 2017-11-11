@@ -11,21 +11,26 @@ module PactBroker
       extend PactBroker::Services
       extend PactBroker::Logging
 
-      def self.find_relationships
-        pact_repository.find_latest_pacts
-          .collect do | pact|
-            latest_relationship = build_latest_pact_relationship(pact)
-            prod_relationship = build_relationship_for_tagged_pact(pact, 'prod')
-            production_relationship = build_relationship_for_tagged_pact(pact, 'production')
-            [latest_relationship, prod_relationship, production_relationship].compact
-          end.flatten
+      def self.find_relationships options = {}
+        pact_repository
+          .find_latest_pacts
+          .collect { | pact| build_relationship_rows(pact, options[:tags] || []) }
+          .flatten
       end
 
-      def self.build_latest_pact_relationship pact
+      def self.build_relationship_rows(pact, tags)
+        relationships = [build_latest_pact_relationship(pact, tags)]
+        tags.each do | tag |
+          relationships << build_relationship_for_tagged_pact(pact, tag)
+        end
+        relationships.compact
+      end
+
+      def self.build_latest_pact_relationship pact, tags
         latest_verification = verification_service.find_latest_verification_for(pact.consumer, pact.provider)
         webhooks = webhook_service.find_by_consumer_and_provider pact.consumer, pact.provider
         triggered_webhooks = webhook_service.find_latest_triggered_webhooks pact.consumer, pact.provider
-        tag_names = pact.consumer_version_tag_names.select{ |name| name == 'prod' || name == 'production' }
+        tag_names = pact.consumer_version_tag_names.select{ |name| tags.include?(name) }
         PactBroker::Domain::Relationship.create pact.consumer, pact.provider, pact, true, latest_verification, webhooks, triggered_webhooks, tag_names
       end
 

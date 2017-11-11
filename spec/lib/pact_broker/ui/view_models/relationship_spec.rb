@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'pact_broker/ui/view_models/relationship'
+require 'pact_broker/domain/relationship'
 
 module PactBroker
   module UI
@@ -10,7 +11,9 @@ module PactBroker
         let(:provider) { instance_double("PactBroker::Domain::Pacticipant", name: 'Provider Name')}
         let(:latest_pact) { instance_double("PactBroker::Domain::Pact") }
         let(:latest_verification) { instance_double("PactBroker::Domain::Verification") }
-        let(:domain_relationship) { PactBroker::Domain::Relationship.new(consumer, provider, latest_pact, latest_verification)}
+        let(:domain_relationship) { PactBroker::Domain::Relationship.new(consumer, provider, latest_pact, latest, latest_verification, [], [], tags)}
+        let(:tags) { [] }
+        let(:latest) { true }
 
         subject { Relationship.new(domain_relationship) }
 
@@ -105,6 +108,24 @@ module PactBroker
             its(:webhook_label) { is_expected.to eq "Retrying" }
             its(:webhook_status) { is_expected.to eq "warning" }
           end
+        end
+
+        describe "tag_names" do
+          context "when the pact is the overall latest and it has no tag names" do
+            its(:tag_names) { is_expected.to eq " (latest) " }
+          end
+
+          context "when the pact is the overall latest and also has tag names" do
+            let(:tags) { ["master", "prod"] }
+            its(:tag_names) { is_expected.to eq " (latest & latest master, prod) " }
+          end
+
+          context "when the pact is not the latest and has tag names" do
+            let(:latest) { false }
+            let(:tags) { ["master", "prod"] }
+            its(:tag_names) { is_expected.to eq " (latest master, prod) " }
+          end
+
         end
 
         describe "<=>" do

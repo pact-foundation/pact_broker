@@ -30,7 +30,8 @@ module PactBroker
         end
 
         def tag_names
-          @relationship.tag_names.any? ? " (#{@relationship.tag_names.join(', ')}) ": ""
+          latest_overall = @relationship.latest? ? "latest & " : ""
+          @relationship.tag_names.any? ? " (#{latest_overall}latest #{@relationship.tag_names.join(', ')}) ": " (latest) "
         end
 
         def consumer_group_url
