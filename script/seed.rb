@@ -48,48 +48,59 @@ end
 #   .create_pact
 
 
+# TestDataBuilder.new
+#   .create_consumer("Foo")
+#   .create_label("microservice")
+#   .create_provider("Bar")
+#   .create_label("microservice")
+#   .create_webhook(method: 'GET', url: 'http://localhost:9393?url=${pactbroker.pactUrl}', body: '${pactbroker.pactUrl}')
+#   .create_consumer_version("1.2.100")
+#   .publish_pact
+#   .create_verification(provider_version: "1.4.234", success: true, execution_date: DateTime.now - 15)
+#   .revise_pact
+#   .create_consumer_version("1.2.101")
+#   .create_consumer_version_tag('prod')
+#   .publish_pact
+#   .create_verification(provider_version: "9.9.10", success: false, execution_date: DateTime.now - 15)
+#   .create_consumer_version("1.2.102")
+#   .publish_pact(created_at: (Date.today - 7).to_datetime)
+#   .create_verification(provider_version: "9.9.9", success: true, execution_date: DateTime.now - 14)
+#   .create_provider("Animals")
+#   .create_webhook(method: 'GET', url: 'http://localhost:9393/')
+#   .publish_pact(created_at: (Time.now - 140).to_datetime)
+#   .create_verification(provider_version: "2.0.366", execution_date: Date.today - 2) #changed
+#   .create_provider("Wiffles")
+#   .publish_pact
+#   .create_verification(provider_version: "3.6.100", success: false, execution_date: Date.today - 7)
+#   .create_provider("Hello World App")
+#   .create_consumer_version("1.2.107")
+#   .publish_pact(created_at: (Date.today - 1).to_datetime)
+#   .create_consumer("The Android App")
+#   .create_provider("The back end")
+#   .create_webhook(method: 'GET', url: 'http://localhost:9393/')
+#   .create_consumer_version("1.2.106")
+#   .create_consumer_version_tag("production")
+#   .create_consumer_version_tag("feat-x")
+#   .publish_pact
+#   .create_consumer("Some other app")
+#   .create_provider("A service")
+#   .create_webhook(method: 'GET', url: 'http://localhost:9393/')
+#   .create_triggered_webhook(status: 'success')
+#   .create_webhook_execution
+#   .create_webhook(method: 'POST', url: 'http://foo:9393/')
+#   .create_triggered_webhook(status: 'failure')
+#   .create_webhook_execution
+#   .create_consumer_version("1.2.106")
+#   .publish_pact(created_at: (Date.today - 26).to_datetime)
+#   .create_verification(provider_version: "4.8.152", execution_date: DateTime.now)
+
 TestDataBuilder.new
-  .create_consumer("Foo")
-  .create_label("microservice")
-  .create_provider("Bar")
-  .create_label("microservice")
-  .create_webhook(method: 'GET', url: 'http://localhost:9393?url=${pactbroker.pactUrl}', body: '${pactbroker.pactUrl}')
-  .create_consumer_version("1.2.100")
-  .publish_pact
-  .create_verification(provider_version: "1.4.234", success: true, execution_date: DateTime.now - 15)
-  .revise_pact
-  .create_consumer_version("1.2.101")
-  .create_consumer_version_tag('prod')
-  .publish_pact
-  .create_verification(provider_version: "9.9.10", success: false, execution_date: DateTime.now - 15)
-  .create_consumer_version("1.2.102")
-  .publish_pact(created_at: (Date.today - 7).to_datetime)
-  .create_verification(provider_version: "9.9.9", success: true, execution_date: DateTime.now - 14)
-  .create_provider("Animals")
-  .create_webhook(method: 'GET', url: 'http://localhost:9393/')
-  .publish_pact(created_at: (Time.now - 140).to_datetime)
-  .create_verification(provider_version: "2.0.366", execution_date: Date.today - 2) #changed
-  .create_provider("Wiffles")
-  .publish_pact
-  .create_verification(provider_version: "3.6.100", success: false, execution_date: Date.today - 7)
-  .create_provider("Hello World App")
-  .create_consumer_version("1.2.107")
-  .publish_pact(created_at: (Date.today - 1).to_datetime)
-  .create_consumer("The Android App")
-  .create_provider("The back end")
-  .create_webhook(method: 'GET', url: 'http://localhost:9393/')
-  .create_consumer_version("1.2.106")
-  .create_consumer_version_tag("production")
-  .create_consumer_version_tag("feat-x")
-  .publish_pact
-  .create_consumer("Some other app")
-  .create_provider("A service")
-  .create_webhook(method: 'GET', url: 'http://localhost:9393/')
-  .create_triggered_webhook(status: 'success')
-  .create_webhook_execution
-  .create_webhook(method: 'POST', url: 'http://foo:9393/')
-  .create_triggered_webhook(status: 'failure')
-  .create_webhook_execution
-  .create_consumer_version("1.2.106")
-  .publish_pact(created_at: (Date.today - 26).to_datetime)
-  .create_verification(provider_version: "4.8.152", execution_date: DateTime.now)
+  .create_pact_with_hierarchy("A", "1", "B")
+  .create_consumer_version_tag("master")
+  .create_consumer_version_tag("prod")
+  .create_verification(provider_version: "1")
+  .create_consumer_version("2")
+  .create_consumer_version_tag("master")
+  .create_pact
+  .create_verification(provider_version: "2")
+
