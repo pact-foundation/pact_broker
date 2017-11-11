@@ -1,3 +1,18 @@
+<a name="v2.10.0"></a>
+### v2.10.0 (2017-11-11)
+
+
+#### Features
+
+* **prod pacts in index**
+  * allow all tags to be shown on index	 ([0a1f0ee](/../../commit/0a1f0ee))
+  * allow tags shown in index to be configured via query string	 ([4eca8ee](/../../commit/4eca8ee))
+  * show pacts tagged as the 'prod' or 'production' versions on the index page	 ([b58b7a3](/../../commit/b58b7a3))
+
+* **index page**
+  * truncate git shas in table	 ([94da4c7](/../../commit/94da4c7))
+
+
 <a name="v2.9.0"></a>
 ### v2.9.0 (2017-11-09)
 
