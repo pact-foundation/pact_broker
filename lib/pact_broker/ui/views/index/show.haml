@@ -8,12 +8,12 @@
     .container
       %ul
         %li.navbar-right
-          %a{href: '/hal-browser/browser.html'}
+          %a{ href: '/hal-browser/browser.html' }
             API Browser
   .container
     %h1.page-header
       Pacts
-    %table.table.table-bordered.table-striped{id: 'relationships'}
+    %table.table.table-bordered.table-striped{ id: 'relationships' }
       %thead
         %th
         %th.consumer
@@ -37,26 +37,26 @@
         %tr
           %td
           %td.consumer
-            %a{:href => index_item.consumer_group_url}
+            %a{ href: index_item.consumer_group_url }
               = index_item.consumer_name
           %td.pact
-            %a{:href => index_item.pact_url, :title => "View pact"}
+            %a{ href: index_item.pact_url, :title => "View pact" }
               %span.pact
           %td.provider
-            %a{:href => index_item.provider_group_url}
+            %a{ href: index_item.provider_group_url }
               = index_item.provider_name
           %td
           %td
             = index_item.publication_date_of_latest_pact
           %td{class: index_item.webhook_status}
-            %a{:href => index_item.webhook_url}
+            %a{ href: index_item.webhook_url }
               = index_item.webhook_label
 
-          %td{class: index_item.verification_status, title: index_item.verification_tooltip, "data-toggle": "tooltip", "data-placement": "left"}
+          %td{ class: index_item.verification_status, title: index_item.verification_tooltip, "data-toggle": "tooltip", "data-placement": "left" }
             %div
               = index_item.last_verified_date
               - if index_item.warning?
-                %span.glyphicon.glyphicon-warning-sign{'aria-hidden':true}
+                %span.glyphicon.glyphicon-warning-sign{ 'aria-hidden': true }
     %div.relationships-size
       = index_items.size_label
 
