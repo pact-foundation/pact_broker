@@ -25,7 +25,9 @@ module PactBroker
         connection.run("delete from tags where name = '#{args.fetch(:tag_name)}' and version_id = '#{version.id}'")
       end
 
+      def find_all_tag_names_for_pacticipant pacticipant_name
+        tag_repository.find_all_tag_names_for_pacticipant pacticipant_name
+      end
     end
   end
-
 end

@@ -55,3 +55,7 @@ Domain classes are found in `lib/pact_broker/domain`. Many of these classes are 
 * `latest_tagged_pact_publications` - This view has the same columns as `all_pact_publications`, plus a `tag_name` column. It is used to return the pact for the latest tagged version of a consumer.
 
 * `latest_verifications` - The most recent verification for each pact version.
+
+* `matrix` - The matrix of every pact publication and verification. Includes every pact revision (eg. publishing to the same consumer version twice, or using PATCH) and every verification (including 'overwritten' ones. eg. when the same provider build runs twice.)
+
+* `latest_matrix` - This view is a subset of, and has the same columns as, the `matrix`. It removes 'overwritten' pacts and verifications from the matrix (ie. only show latest pact revision for each consumer version and latest verification for each provider version)

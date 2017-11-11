@@ -18,8 +18,8 @@ module PactBroker
               provider_version_number: "4.5.6",
               provider_name: "Provider",
               success: line_1_success,
-              number: 1,
-              build_url: nil,
+              verification_number: 1,
+              verification_build_url: nil,
               verification_executed_at: verification_date
             }
           end
@@ -33,8 +33,8 @@ module PactBroker
               provider_version_number: nil,
               provider_name: "Provider",
               success: line_2_success,
-              number: nil,
-              build_url: nil,
+              verification_number: nil,
+              verification_build_url: nil,
               verification_executed_at: verification_date
             }
           end
@@ -158,6 +158,18 @@ module PactBroker
 
             it "has an explanation" do
               expect(parsed_json[:summary][:reason]).to match /have failed/
+            end
+          end
+
+          context "when there are no results" do
+            let(:lines) { [] }
+
+            it "has a deployable flag of false" do
+              expect(parsed_json[:summary][:deployable]).to be nil
+            end
+
+            it "has an explanation" do
+              expect(parsed_json[:summary][:reason]).to match /No results/
             end
           end
         end

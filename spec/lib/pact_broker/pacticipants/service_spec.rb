@@ -8,9 +8,9 @@ module PactBroker
   module Pacticipants
     describe Service do
 
-      subject{ Service }
-
       let(:td) { TestDataBuilder.new }
+
+      subject{ Service }
 
       describe ".update" do
         before do
@@ -112,40 +112,7 @@ module PactBroker
         end
       end
 
-      describe ".find_relationships" do
-
-        let(:consumer) { instance_double("PactBroker::Domain::Pacticipant")}
-        let(:provider) { instance_double("PactBroker::Domain::Pacticipant")}
-        let(:pact) { instance_double("PactBroker::Domain::Pact", consumer: consumer, provider: provider)}
-        let(:verification) { instance_double("PactBroker::Domain::Verification")}
-        let(:pacts) { [pact]}
-        let(:webhooks) { [instance_double("PactBroker::Domain::Webhook")]}
-        let(:triggered_webhooks) { [instance_double("PactBroker::Webhooks::TriggeredWebhook")] }
-
-        before do
-          allow_any_instance_of(PactBroker::Pacts::Repository).to receive(:find_latest_pacts).and_return(pacts)
-          allow(PactBroker::Verifications::Service).to receive(:find_latest_verification_for).and_return(verification)
-          allow(PactBroker::Webhooks::Service).to receive(:find_by_consumer_and_provider).and_return(webhooks)
-          allow(PactBroker::Webhooks::Service).to receive(:find_latest_triggered_webhooks).and_return(triggered_webhooks)
-        end
-
-        it "retrieves the webhooks for the pact" do
-          expect(PactBroker::Webhooks::Service).to receive(:find_by_consumer_and_provider).with(consumer, provider)
-          subject.find_relationships
-        end
-
-        it "retrieves the latest verification for the pact" do
-          expect(PactBroker::Verifications::Service).to receive(:find_latest_verification_for).with(consumer, provider)
-          subject.find_relationships
-        end
-
-        it "returns a list of relationships" do
-          expect(subject.find_relationships).to eq([PactBroker::Domain::Relationship.create(consumer, provider, pact, verification, webhooks)])
-        end
-      end
-
       describe "delete" do
-
         before do
           TestDataBuilder.new
             .create_consumer("Consumer")

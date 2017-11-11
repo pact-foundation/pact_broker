@@ -5,7 +5,7 @@ require 'pact_broker/date_helper'
 module PactBroker
   module UI
     module ViewDomain
-      class Relationship
+      class IndexItem
 
         include PactBroker::Api::PactBrokerUrls
 
@@ -21,6 +21,19 @@ module PactBroker
           @relationship.provider_name
         end
 
+        def consumer_version_number
+          short_version_number(@relationship.consumer_version_number)
+        end
+
+        def provider_version_number
+          short_version_number(@relationship.provider_version_number)
+        end
+
+        def tag_names
+          latest_overall = @relationship.latest? ? "latest & " : ""
+          @relationship.tag_names.any? ? " (#{latest_overall}latest #{@relationship.tag_names.join(', ')}) ": " (latest) "
+        end
+
         def consumer_group_url
           Helpers::URLHelper.group_url consumer_name
         end
@@ -29,7 +42,7 @@ module PactBroker
           Helpers::URLHelper.group_url provider_name
         end
 
-        def latest_pact_url
+        def pact_url
           "#{pactigration_base_url('', @relationship)}/latest"
         end
 
@@ -38,6 +51,7 @@ module PactBroker
         end
 
         def webhook_label
+          return "" unless show_webhook_status?
           case @relationship.webhook_status
             when :none then "Create"
             when :success, :failure then webhook_last_execution_date
@@ -47,12 +61,17 @@ module PactBroker
         end
 
         def webhook_status
+          return "" unless show_webhook_status?
           case @relationship.webhook_status
             when :success then "success"
             when :failure then "danger"
             when :retrying then "warning"
             else ""
           end
+        end
+
+        def show_webhook_status?
+          @relationship.latest?
         end
 
         def webhook_last_execution_date
@@ -99,11 +118,11 @@ module PactBroker
         def verification_tooltip
           case @relationship.verification_status
           when :success
-            "Successfully verified by #{provider_name} (v#{@relationship.latest_verification_provider_version_number})"
+            "Successfully verified by #{provider_name} (v#{short_version_number(@relationship.latest_verification_provider_version_number)})"
           when :stale
-            "Pact has changed since last successful verification by #{provider_name} (v#{@relationship.latest_verification_provider_version_number})"
+            "Pact has changed since last successful verification by #{provider_name} (v#{short_version_number(@relationship.latest_verification_provider_version_number)})"
           when :failed
-            "Verification by #{provider_name} (v#{@relationship.latest_verification_provider_version_number}) failed"
+            "Verification by #{provider_name} (v#{short_version_number(@relationship.latest_verification_provider_version_number)}) failed"
           else
             nil
           end
@@ -115,6 +134,14 @@ module PactBroker
           provider_name.downcase <=> other.provider_name.downcase
         end
 
+        def short_version_number version_number
+          return "" if version_number.nil?
+          if version_number.size > 12
+            version_number[0..12] + "..."
+          else
+            version_number
+          end
+        end
       end
     end
   end

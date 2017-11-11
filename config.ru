@@ -2,14 +2,14 @@ require File.dirname(__FILE__) + '/config/boot'
 require 'db'
 require 'pact_broker/api'
 require 'rack/hal_browser'
-require 'pact_broker/ui/controllers/relationships'
+require 'pact_broker/ui/controllers/index'
 
 
 use Rack::Static, :urls => ["/stylesheets", "/css", "/fonts", "/js", "/javascripts", "/images"], :root => "public"
 use Rack::HalBrowser::Redirect, :exclude => ['/diagnostic', '/trace','/index']
 
 run Rack::URLMap.new(
-  '/ui/relationships' => PactBroker::UI::Controllers::Relationships,
+  '/ui/relationships' => PactBroker::UI::Controllers::Index,
   '/network-graph' => Rack::File.new("#{File.dirname(__FILE__)}/public/Network Graph REA.html"),
   '/' => PactBroker::API,
 )

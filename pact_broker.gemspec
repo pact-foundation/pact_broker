@@ -51,5 +51,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'database_cleaner', '~>1.6'
   gem.add_development_dependency 'pg', '~>0.21'
   gem.add_development_dependency 'conventional-changelog', '~>1.3'
-
+  gem.add_development_dependency 'bump', '~> 0.5'
 end

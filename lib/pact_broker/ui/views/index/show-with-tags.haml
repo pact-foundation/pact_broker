@@ -1,0 +1,83 @@
+%body
+  %link{rel: 'stylesheet', href: '/css/bootstrap.min.css'}
+  %link{rel: 'stylesheet', href: '/stylesheets/index.css'}
+  %script{type: 'text/javascript', src:'/javascripts/jquery-2.1.1.min.js'}
+  %script{type: 'text/javascript', src:'/javascripts/jquery.tablesorter.min.js'}
+  %script{type: 'text/javascript', src:'/js/bootstrap.min.js'}
+  %nav.navbase-default.navbar-right{role: "navigation"}
+    .container
+      %ul
+        %li.navbar-right
+          %a{ href: '/hal-browser/browser.html' }
+            API Browser
+  .container
+    %h1.page-header
+      Pacts
+    %table.table.table-bordered.table-striped{ id: 'relationships' }
+      %thead
+        %th.consumer
+          Consumer
+          %span.glyphicon.glyphicon-sort.relationships-sort
+        %th.tag
+          Version
+          %span.glyphicon.glyphicon-sort.relationships-sort
+        %th.pact{ style: 'width: 40px' }
+        %th.provider
+          Provider
+          %span.glyphicon.glyphicon-sort.relationships-sort
+        %th.tag
+          Version
+          %span.glyphicon.glyphicon-sort.relationships-sort
+        %th
+          Published
+        %th
+          Webhook<br>status
+        %th
+          Last<br>verified
+      %tbody
+
+      - index_items.each do | index_item |
+        %tr
+          %td.consumer
+            %a{:href => index_item.consumer_group_url }
+              = index_item.consumer_name
+          %td
+            = index_item.consumer_version_number
+            %span{style: 'color:gray'}
+              = index_item.tag_names
+          %td.pact
+            %a{ href: index_item.pact_url, title: "View pact" }
+              %span.pact
+          %td.provider
+            %a{ href: index_item.provider_group_url }
+              = index_item.provider_name
+          %td
+            = index_item.provider_version_number
+          %td
+            = index_item.publication_date_of_latest_pact.gsub("about ", "")
+          %td{ class: index_item.webhook_status }
+            - if index_item.show_webhook_status?
+              %a{ href: index_item.webhook_url }
+                = index_item.webhook_label
+
+          %td{ class: index_item.verification_status, title: index_item.verification_tooltip, "data-toggle": "tooltip", "data-placement": "left" }
+            %div
+              = index_item.last_verified_date.gsub("about ", "")
+              - if index_item.warning?
+                %span.glyphicon.glyphicon-warning-sign{ 'aria-hidden': true }
+    %div.relationships-size
+      = index_items.size_label
+
+:javascript
+  $(function(){
+    $("#relationships").tablesorter();
+  });
+
+  $(document).ready(function(){
+    $("span.pact").load("/images/doc-text.svg");
+    $('td[data-toggle="tooltip"]').each(function(index, td){
+      //appended tooltip div screws up table if it's appended after a
+      //td, so need to append it to a div
+      $(td).tooltip({container: $(td).first()});
+    });
+  });

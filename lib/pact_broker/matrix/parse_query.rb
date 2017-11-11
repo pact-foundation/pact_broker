@@ -22,6 +22,21 @@ module PactBroker
         if params.key?('success') && params['success'].is_a?(String)
           options[:success] = [params['success'] == '' ? nil : params['success'] == 'true']
         end
+        if params.key?('scope')
+          options[:scope] = params['scope']
+        end
+        if params.key?('latestby')
+          options[:latestby] = params['latestby']
+        end
+        if params.key?('limit')
+          options[:limit] = params['limit']
+        end
+        if params.key?('latest')
+          options[:latest] = params['latest']
+        end
+        if params.key?('tag')
+          options[:tag] = params['tag']
+        end
         return selectors, options
       end
     end

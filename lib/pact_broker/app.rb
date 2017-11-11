@@ -3,6 +3,7 @@ require 'pact_broker/db'
 require 'pact_broker/project_root'
 require 'rack-protection'
 require 'rack/hal_browser'
+require 'rack/pact_broker/store_base_url'
 require 'rack/pact_broker/add_pact_broker_version_header'
 require 'rack/pact_broker/convert_file_extension_to_accept_header'
 require 'rack/pact_broker/database_transaction'
@@ -106,6 +107,7 @@ module PactBroker
       # NOTE THAT NONE OF THIS IS PROTECTED BY AUTH - is that ok?
       @app_builder.use Rack::Protection, except: [:path_traversal, :remote_token, :session_hijacking, :http_origin]
       @app_builder.use Rack::PactBroker::InvalidUriProtection
+      @app_builder.use Rack::PactBroker::StoreBaseURL
       @app_builder.use Rack::PactBroker::AddPactBrokerVersionHeader
       @app_builder.use Rack::Static, :urls => ["/stylesheets", "/css", "/fonts", "/js", "/javascripts", "/images"], :root => PactBroker.project_root.join("public")
       @app_builder.use Rack::Static, :urls => ["/favicon.ico"], :root => PactBroker.project_root.join("public/images"), header_rules: [[:all, {'Content-Type' => 'image/x-icon'}]]

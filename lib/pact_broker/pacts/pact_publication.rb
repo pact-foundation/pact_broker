@@ -22,6 +22,10 @@ module PactBroker
         self.revision_number ||= 1
       end
 
+      def latest_tag_names
+        LatestTaggedPactPublications.where(id: id).select(:tag_name).collect{|t| t[:tag_name]}
+      end
+
       def to_domain
         PactBroker::Domain::Pact.new(
           id: id,

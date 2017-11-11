@@ -3,26 +3,30 @@ require 'pact_broker/webhooks/status'
 
 module PactBroker
   module Domain
-    class Relationship
+    class IndexItem
 
       attr_reader :consumer, :provider, :latest_pact, :latest_verification, :webhooks
 
-      def initialize consumer, provider, latest_pact = nil, latest_verification = nil, webhooks = [], triggered_webhooks = []
+      def initialize consumer, provider, latest_pact = nil, latest = true, latest_verification = nil, webhooks = [], triggered_webhooks = [], tags = []
         @consumer = consumer
         @provider = provider
         @latest_pact = latest_pact
+        @latest = latest
         @latest_verification = latest_verification
         @webhooks = webhooks
         @triggered_webhooks = triggered_webhooks
+        @tags = tags
       end
 
-      def self.create consumer, provider, latest_pact, latest_verification, webhooks = [], triggered_webhooks = []
-        new consumer, provider, latest_pact, latest_verification, webhooks, triggered_webhooks
+      def self.create consumer, provider, latest_pact, latest, latest_verification, webhooks = [], triggered_webhooks = [], tags = []
+        new consumer, provider, latest_pact, latest, latest_verification, webhooks, triggered_webhooks, tags
       end
 
       def eq? other
-        Relationship === other && other.consumer == consumer && other.provider == provider &&
-          other.latest_pact == latest_pact && other.latest_verification == latest_verification &&
+        IndexItem === other && other.consumer == consumer && other.provider == provider &&
+          other.latest_pact == latest_pact &&
+          other.latest? == latest? &&
+          other.latest_verification == latest_verification &&
           other.webhooks == webhooks
       end
 
@@ -40,6 +44,22 @@ module PactBroker
 
       def latest_pact
         @latest_pact
+      end
+
+      def latest?
+        @latest
+      end
+
+      def consumer_version_number
+        @latest_pact.consumer_version_number
+      end
+
+      def provider_version_number
+        @latest_verification ? @latest_verification.provider_version_number : nil
+      end
+
+      def tag_names
+        @tags
       end
 
       def any_webhooks?
@@ -97,7 +117,7 @@ module PactBroker
       end
 
       def to_s
-        "Relationship between #{consumer_name} and #{provider_name}"
+        "Pact between #{consumer_name} and #{provider_name}"
       end
 
       def to_a

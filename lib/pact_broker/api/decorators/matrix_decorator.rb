@@ -25,16 +25,14 @@ module PactBroker
           }
         end
 
-        private
-
-        attr_reader :lines
-
         def deployable
+          return nil if lines.empty?
           return nil if lines.any?{ |line| line[:success].nil? }
           lines.any? && lines.all?{ |line| line[:success] }
         end
 
         def reason
+          return "No results matched the given query" if lines.empty?
           case deployable
           when true then "All verification results are published and successful"
           when false then "One or more verifications have failed"
@@ -42,6 +40,10 @@ module PactBroker
             "Missing one or more verification results"
           end
         end
+
+        private
+
+        attr_reader :lines
 
         def matrix(lines, base_url)
           provider = nil
@@ -118,7 +120,7 @@ module PactBroker
               verifiedAt: line[:verification_executed_at].to_datetime.xmlschema,
               _links: {
                 self: {
-                  href: verification_url(OpenStruct.new(line), base_url)
+                  href: verification_url(OpenStruct.new(line.merge(number: line[:verification_number])), base_url)
                 }
               }
             }

@@ -7,8 +7,13 @@ describe "Execute a webhook" do
   let(:td) { TestDataBuilder.new }
 
   before do
-    td.create_pact_with_hierarchy("Some Consumer", "1", "Some Provider")
-      .create_webhook(method: 'POST')
+    ENV['PACT_BROKER_BASE_URL'] = 'http://example.org'
+    td.create_pact_with_hierarchy("Foo", "1", "Bar")
+      .create_webhook(method: 'POST', body: '${pactbroker.pactUrl}')
+  end
+
+  after do
+    ENV.delete('PACT_BROKER_BASE_URL')
   end
 
   let(:path) { "/webhooks/#{td.webhook.uuid}/execute" }
@@ -18,7 +23,7 @@ describe "Execute a webhook" do
 
   context "when the execution is successful" do
     let!(:request) do
-      stub_request(:post, /http/).to_return(:status => 200)
+      stub_request(:post, /http/).with(body: 'http://example.org/pacts/provider/Bar/consumer/Foo/version/1').to_return(:status => 200)
     end
 
     it "performs the HTTP request" do

@@ -1,28 +1,31 @@
 require 'spec_helper'
-require 'pact_broker/ui/view_models/relationship'
+require 'pact_broker/ui/view_models/index_item'
+require 'pact_broker/domain/index_item'
 
 module PactBroker
   module UI
     module ViewDomain
-      describe Relationship do
+      describe IndexItem do
 
         let(:consumer) { instance_double("PactBroker::Domain::Pacticipant", name: 'Consumer Name')}
         let(:provider) { instance_double("PactBroker::Domain::Pacticipant", name: 'Provider Name')}
         let(:latest_pact) { instance_double("PactBroker::Domain::Pact") }
         let(:latest_verification) { instance_double("PactBroker::Domain::Verification") }
-        let(:domain_relationship) { PactBroker::Domain::Relationship.new(consumer, provider, latest_pact, latest_verification)}
+        let(:domain_relationship) { PactBroker::Domain::IndexItem.new(consumer, provider, latest_pact, latest, latest_verification, [], [], tags)}
+        let(:tags) { [] }
+        let(:latest) { true }
 
-        subject { Relationship.new(domain_relationship) }
+        subject { IndexItem.new(domain_relationship) }
 
         its(:consumer_name) { should eq 'Consumer Name'}
         its(:provider_name) { should eq 'Provider Name'}
-        its(:latest_pact_url) { should eq "/pacts/provider/Provider%20Name/consumer/Consumer%20Name/latest" }
+        its(:pact_url) { should eq "/pacts/provider/Provider%20Name/consumer/Consumer%20Name/latest" }
         its(:consumer_group_url) { should eq "/groups/Consumer%20Name" }
         its(:provider_group_url) { should eq "/groups/Provider%20Name" }
 
         describe "verification_status" do
           let(:domain_relationship) do
-            instance_double("PactBroker::Domain::Relationship",
+            instance_double("PactBroker::Domain::IndexItem",
               verification_status: verification_status,
               provider_name: "Foo",
               latest_verification_provider_version_number: "4.5.6")
@@ -31,7 +34,7 @@ module PactBroker
           let(:pact_changed) { false }
           let(:success) { true }
 
-          subject { Relationship.new(domain_relationship) }
+          subject { IndexItem.new(domain_relationship) }
 
           context "when the pact has never been verified" do
             let(:verification_status) { :never }
@@ -64,15 +67,16 @@ module PactBroker
 
         describe "webhooks" do
           let(:domain_relationship) do
-            instance_double("PactBroker::Domain::Relationship",
+            instance_double("PactBroker::Domain::IndexItem",
               webhook_status: webhook_status,
               last_webhook_execution_date: DateTime.now - 1,
-              latest_pact: double("pact", consumer: consumer, provider: provider)
+              latest_pact: double("pact", consumer: consumer, provider: provider),
+              latest?: true
             )
           end
           let(:webhook_status) { :none }
 
-          subject { Relationship.new(domain_relationship) }
+          subject { IndexItem.new(domain_relationship) }
 
           context "when the webhooks_status is :none" do
             its(:webhook_label) { is_expected.to eq "Create" }
@@ -106,25 +110,41 @@ module PactBroker
           end
         end
 
+        describe "tag_names" do
+          context "when the pact is the overall latest and it has no tag names" do
+            its(:tag_names) { is_expected.to eq " (latest) " }
+          end
+
+          context "when the pact is the overall latest and also has tag names" do
+            let(:tags) { ["master", "prod"] }
+            its(:tag_names) { is_expected.to eq " (latest & latest master, prod) " }
+          end
+
+          context "when the pact is not the latest and has tag names" do
+            let(:latest) { false }
+            let(:tags) { ["master", "prod"] }
+            its(:tag_names) { is_expected.to eq " (latest master, prod) " }
+          end
+
+        end
+
         describe "<=>" do
 
-          let(:relationship_model_4) { double("PactBroker::Domain::Relationship", consumer_name: "A", provider_name: "X") }
-          let(:relationship_model_2) { double("PactBroker::Domain::Relationship", consumer_name: "a", provider_name: "y") }
-          let(:relationship_model_3) { double("PactBroker::Domain::Relationship", consumer_name: "A", provider_name: "Z") }
-          let(:relationship_model_1) { double("PactBroker::Domain::Relationship", consumer_name: "C", provider_name: "A") }
+          let(:relationship_model_4) { double("PactBroker::Domain::IndexItem", consumer_name: "A", provider_name: "X") }
+          let(:relationship_model_2) { double("PactBroker::Domain::IndexItem", consumer_name: "a", provider_name: "y") }
+          let(:relationship_model_3) { double("PactBroker::Domain::IndexItem", consumer_name: "A", provider_name: "Z") }
+          let(:relationship_model_1) { double("PactBroker::Domain::IndexItem", consumer_name: "C", provider_name: "A") }
 
           let(:relationship_models) { [relationship_model_1, relationship_model_3, relationship_model_4, relationship_model_2] }
           let(:ordered_view_models) { [relationship_model_4, relationship_model_2, relationship_model_3, relationship_model_1] }
 
-          let(:relationship_view_models) { relationship_models.collect{ |r| Relationship.new(r)} }
+          let(:relationship_view_models) { relationship_models.collect{ |r| IndexItem.new(r)} }
 
           it "sorts by consumer name then provider name" do
             expect(relationship_view_models.sort.collect{ |r| [r.consumer_name, r.provider_name]})
               .to eq([["A", "X"],["a","y"],["A","Z"],["C", "A"]])
           end
-
         end
-
       end
     end
   end

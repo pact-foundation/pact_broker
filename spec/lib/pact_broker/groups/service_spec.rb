@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'pact_broker/groups/service'
+require 'pact_broker/index/service'
 
 module PactBroker
 
@@ -15,8 +16,8 @@ module PactBroker
         let(:provider_x) { double('provider x', name: 'provider x', id: 3)}
         let(:provider_y) { double('provider y', name: 'provider y', id: 4)}
 
-        let(:relationship_1) { Domain::Relationship.new(consumer_a, provider_x) }
-        let(:relationship_2) { Domain::Relationship.new(consumer_b, provider_y) }
+        let(:relationship_1) { Domain::IndexItem.new(consumer_a, provider_x) }
+        let(:relationship_2) { Domain::IndexItem.new(consumer_b, provider_y) }
 
         let(:group_1) { Domain::Group.new(relationship_1) }
         let(:group_2) { Domain::Group.new(relationship_2) }
@@ -27,12 +28,12 @@ module PactBroker
         subject  { Service.find_group_containing(consumer_b) }
 
         before do
-          allow(Pacticipants::Service).to receive(:find_relationships).and_return(relationship_list)
+          allow(PactBroker::Index::Service).to receive(:find_index_items).and_return(relationship_list)
           allow(Relationships::Groupify).to receive(:call).and_return(groups)
         end
 
         it "retrieves a list of the relationships" do
-          allow(Pacticipants::Service).to receive(:find_relationships)
+          allow(Index::Service).to receive(:find_index_items)
           subject
         end
 

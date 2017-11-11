@@ -71,11 +71,11 @@ module PactBroker
         end
 
         def orderable_fields
-          [consumer_name, provider_name, consumer_version_order, provider_version_order]
+          [consumer_name, consumer_version_order, @line[:pact_revision_number], provider_name, @line[:verification_id]]
         end
 
         def <=> other
-          self.orderable_fields <=> other.orderable_fields
+          (self.orderable_fields <=> other.orderable_fields) * -1
         end
 
         def verification_status

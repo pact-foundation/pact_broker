@@ -5,6 +5,8 @@ module PactBroker
   module Tags
     describe Repository do
 
+      let(:td) { TestDataBuilder.new }
+
       describe ".find" do
 
         let(:pacticipant_name) { "test_pacticipant" }
@@ -80,9 +82,29 @@ module PactBroker
         it "deletes the tag" do
           expect{ subject }.to change { PactBroker::Domain::Tag.count }.by(-2)
         end
-
       end
 
+
+      describe "find_all_tag_names_for_pacticipant" do
+        before do
+          td.create_consumer("Foo")
+            .create_consumer_version("1")
+            .create_consumer_version_tag("prod")
+            .create_consumer_version_tag("master")
+            .create_consumer_version("2")
+            .create_consumer_version_tag("prod")
+            .create_consumer_version_tag("dev")
+            .create_consumer("Bar")
+            .create_consumer_version("1")
+            .create_consumer_version_tag("ignore")
+        end
+
+        subject { Repository.new.find_all_tag_names_for_pacticipant("Foo") }
+
+        it "returns all the tag names for the pacticipant" do
+          expect(subject).to eq ["dev", "master", "prod"]
+        end
+      end
     end
   end
 end

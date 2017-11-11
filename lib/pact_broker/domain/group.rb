@@ -2,8 +2,8 @@ module PactBroker
   module Domain
     class Group < Array
 
-      def initialize *relationships
-        self.concat relationships.flatten
+      def initialize *index_items
+        self.concat index_items.flatten
       end
 
       def == other
@@ -11,7 +11,7 @@ module PactBroker
       end
 
       def include_pacticipant? pacticipant
-        any? { | relationship | relationship.include? pacticipant }
+        any? { | index_item | index_item.include? pacticipant }
       end
 
     end

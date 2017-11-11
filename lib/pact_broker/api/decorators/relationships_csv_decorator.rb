@@ -11,17 +11,17 @@ module PactBroker
 
         def initialize pacts
           @pacts = pacts
-          @relationships = pacts.collect{|pact| PactBroker::Domain::Relationship.new(pact.consumer,pact.provider)}
+          @index_items = pacts.collect{|pact| PactBroker::Domain::IndexItem.new(pact.consumer,pact.provider)}
         end
 
         def to_csv
           hash = {}
-          pacticipants = @relationships.collect{|r| r.pacticipants}.flatten.uniq
+          pacticipants = @index_items.collect{|r| r.pacticipants}.flatten.uniq
 
-          @relationships.each do | relationship |
-            hash[relationship.consumer.id] ||= pacticipant_array(relationship.consumer, hash.size + 1)
-            hash[relationship.provider.id] ||= pacticipant_array(relationship.provider, hash.size + 1)
-            hash[relationship.consumer.id] << relationship.provider.id
+          @index_items.each do | index_item |
+            hash[index_item.consumer.id] ||= pacticipant_array(index_item.consumer, hash.size + 1)
+            hash[index_item.provider.id] ||= pacticipant_array(index_item.provider, hash.size + 1)
+            hash[index_item.consumer.id] << index_item.provider.id
           end
 
           max_length = hash.values.collect{|array| array.size}.max

@@ -123,6 +123,10 @@ module PactBroker
       self.enable_public_badge_access = enable_badge_resources
     end
 
+    def base_url
+      ENV['PACT_BROKER_BASE_URL']
+    end
+
     def save_to_database
       # Can't require a Sequel::Model class before the connection has been set
       require 'pact_broker/config/save'

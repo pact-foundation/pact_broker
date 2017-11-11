@@ -7,6 +7,10 @@ module PactBroker
   module Domain
 
     describe WebhookRequest do
+      before do
+        allow(PactBroker::Api::PactBrokerUrls).to receive(:pact_url).and_return('http://example.org/pact-url')
+        allow(PactBroker.configuration).to receive(:base_url).and_return('http://example.org')
+      end
 
       let(:username) { nil }
       let(:password) { nil }
@@ -15,6 +19,7 @@ module PactBroker
       let(:logs) { StringIO.new }
       let(:execution_logger) { Logger.new(logs) }
       let(:options) { {failure_log_message: 'oops'}}
+      let(:pact) { instance_double('PactBroker::Domain::Pact') }
 
       subject do
         WebhookRequest.new(
@@ -26,7 +31,8 @@ module PactBroker
           body: body)
       end
 
-      let(:logs) { subject.execute(options).logs }
+      let(:logs) { subject.execute(pact, options).logs }
+
 
       describe "description" do
         it "returns a brief description of the HTTP request" do
@@ -56,15 +62,59 @@ module PactBroker
             to_return(:status => 200, :body => "respbod", :headers => {'Content-Type' => 'text/foo, blah'})
         end
 
+        describe "when the String body contains a ${pactbroker.pactUrl} parameter" do
+          let!(:http_request) do
+            stub_request(:post, "http://example.org/hook").
+              with(:headers => {'Content-Type'=>'text/plain'}, :body => "<xml><url>http://example.org/pact-url</url></xml>").
+              to_return(:status => 200)
+          end
+
+          let(:body) { "<xml><url>${pactbroker.pactUrl}</url></xml>" }
+
+          it "replaces the token with the live value" do
+            subject.execute(pact, options)
+            expect(http_request).to have_been_made
+          end
+        end
+
+        describe "when the JSON body contains a ${pactbroker.pactUrl} parameter" do
+          let!(:http_request) do
+            stub_request(:post, "http://example.org/hook").
+              with(:headers => {'Content-Type'=>'text/plain'}, :body => '{"url":"http://example.org/pact-url"}').
+              to_return(:status => 200)
+          end
+
+          let(:body) { { url: '${pactbroker.pactUrl}' } }
+
+          it "replaces the token with the live value" do
+            subject.execute(pact, options)
+            expect(http_request).to have_been_made
+          end
+        end
+
+        describe "when the URL contains a ${pactbroker.pactUrl} parameter" do
+          let!(:http_request) do
+            stub_request(:post, "http://example.org/hook?url=http%3A%2F%2Fexample.org%2Fpact-url").
+              to_return(:status => 200)
+          end
+
+          let(:url) { 'http://example.org/hook?url=${pactbroker.pactUrl}' }
+
+          it "replaces the token with the live value" do
+            subject.execute(pact, options)
+            expect(http_request).to have_been_made
+          end
+        end
+
         it "executes the configured request" do
-          subject.execute(options)
+          subject.execute(pact, options)
           expect(http_request).to have_been_made
         end
 
         it "logs the request" do
           allow(PactBroker.logger).to receive(:info)
           expect(PactBroker.logger).to receive(:info).with(/POST.*example.*text.*body/)
-          subject.execute(options)
+          subject.execute(pact, options)
         end
 
         it "logs the response" do
@@ -72,7 +122,7 @@ module PactBroker
           allow(PactBroker.logger).to receive(:debug)
           expect(PactBroker.logger).to receive(:info).with(/response.*200/)
           expect(PactBroker.logger).to receive(:debug).with(/respbod/)
-          subject.execute(options)
+          subject.execute(pact, options)
         end
 
         describe "execution logs" do
@@ -144,7 +194,7 @@ module PactBroker
           end
 
           it "uses the credentials" do
-            subject.execute(options)
+            subject.execute(pact, options)
             expect(http_request_with_basic_auth).to have_been_made
           end
         end
@@ -160,7 +210,7 @@ module PactBroker
           end
 
           it "uses SSL" do
-            subject.execute(options)
+            subject.execute(pact, options)
             expect(https_request).to have_been_made
           end
         end
@@ -175,7 +225,7 @@ module PactBroker
           end
 
           it "converts the body to JSON before submitting the request" do
-            subject.execute(options)
+            subject.execute(pact, options)
             expect(http_request).to have_been_made
           end
         end
@@ -190,18 +240,18 @@ module PactBroker
           end
 
           it "executes the request without a body" do
-            subject.execute(options)
+            subject.execute(pact, options)
             expect(http_request).to have_been_made
           end
         end
 
         context "when the request is successful" do
           it "returns a WebhookExecutionResult with success=true" do
-            expect(subject.execute(options).success?).to be true
+            expect(subject.execute(pact, options).success?).to be true
           end
 
           it "sets the response on the result" do
-            expect(subject.execute(options).response).to be_instance_of(Net::HTTPOK)
+            expect(subject.execute(pact, options).response).to be_instance_of(Net::HTTPOK)
           end
         end
 
@@ -214,11 +264,11 @@ module PactBroker
           end
 
           it "returns a WebhookExecutionResult with success=false" do
-            expect(subject.execute(options).success?).to be false
+            expect(subject.execute(pact, options).success?).to be false
           end
 
           it "sets the response on the result" do
-            expect(subject.execute(options).response).to be_instance_of(Net::HTTPInternalServerError)
+            expect(subject.execute(pact, options).response).to be_instance_of(Net::HTTPInternalServerError)
           end
         end
 
@@ -233,15 +283,15 @@ module PactBroker
           it "logs the error" do
             allow(PactBroker.logger).to receive(:error)
             expect(PactBroker.logger).to receive(:error).with(/Error.*WebhookTestError.*blah/)
-            subject.execute(options)
+            subject.execute(pact, options)
           end
 
           it "returns a WebhookExecutionResult with success=false" do
-            expect(subject.execute(options).success?).to be false
+            expect(subject.execute(pact, options).success?).to be false
           end
 
           it "returns a WebhookExecutionResult with an error" do
-            expect(subject.execute(options).error).to be_instance_of WebhookTestError
+            expect(subject.execute(pact, options).error).to be_instance_of WebhookTestError
           end
 
           it "logs the failure_log_message" do

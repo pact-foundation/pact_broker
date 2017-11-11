@@ -38,6 +38,7 @@ table#relationships td.pact {
 
 .relationships-sort {
   padding-left:10px;
+  cursor: pointer;
 }
 
 .hack {

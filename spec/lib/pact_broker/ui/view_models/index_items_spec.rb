@@ -1,17 +1,17 @@
 require 'spec_helper'
-require 'pact_broker/ui/view_models/relationships'
+require 'pact_broker/ui/view_models/index_items'
 
 module PactBroker
   module UI
     module ViewDomain
-      describe Relationships do
+      describe IndexItems do
 
-        let(:relationship_model_4) { double("PactBroker::Domain::Relationship", consumer_name: "A", provider_name: "X") }
-        let(:relationship_model_2) { double("PactBroker::Domain::Relationship", consumer_name: "a", provider_name: "y") }
-        let(:relationship_model_3) { double("PactBroker::Domain::Relationship", consumer_name: "A", provider_name: "Z") }
-        let(:relationship_model_1) { double("PactBroker::Domain::Relationship", consumer_name: "C", provider_name: "A") }
+        let(:relationship_model_4) { double("PactBroker::Domain::IndexItem", consumer_name: "A", provider_name: "X") }
+        let(:relationship_model_2) { double("PactBroker::Domain::IndexItem", consumer_name: "a", provider_name: "y") }
+        let(:relationship_model_3) { double("PactBroker::Domain::IndexItem", consumer_name: "A", provider_name: "Z") }
+        let(:relationship_model_1) { double("PactBroker::Domain::IndexItem", consumer_name: "C", provider_name: "A") }
 
-        subject { Relationships.new([relationship_model_1, relationship_model_3, relationship_model_4, relationship_model_2]) }
+        subject { IndexItems.new([relationship_model_1, relationship_model_3, relationship_model_4, relationship_model_2]) }
 
         describe "#each" do
 
@@ -29,21 +29,21 @@ module PactBroker
 
         describe "size_label" do
           context "when there is 1 relationship" do
-            subject { Relationships.new([relationship_model_1]) }
+            subject { IndexItems.new([relationship_model_1]) }
 
             it "returns '1 pact'" do
               expect(subject.size_label).to eq "1 pact"
             end
           end
           context "when there are 0 relationships" do
-            subject { Relationships.new([]) }
+            subject { IndexItems.new([]) }
 
             it "returns '0 pacts'" do
               expect(subject.size_label).to eq "0 pacts"
             end
           end
           context "when there is more than 1 relationship" do
-            subject { Relationships.new([relationship_model_1, relationship_model_1]) }
+            subject { IndexItems.new([relationship_model_1, relationship_model_1]) }
 
             it "returns 'x pacts'" do
               expect(subject.size_label).to eq "2 pacts"

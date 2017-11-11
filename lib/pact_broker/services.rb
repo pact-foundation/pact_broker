@@ -1,6 +1,11 @@
 module PactBroker
   module Services
 
+    def index_service
+      require 'pact_broker/index/service'
+      Index::Service
+    end
+
     def pact_service
       # TODO work out how to fix circular dependency
       require 'pact_broker/pacts/service'

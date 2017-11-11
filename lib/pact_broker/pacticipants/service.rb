@@ -1,7 +1,6 @@
 require 'pact_broker/repositories'
 require 'pact_broker/logging'
 require 'pact_broker/messages'
-require 'pact_broker/domain/relationship'
 require 'pact_broker/pacticipants/find_potential_duplicate_pacticipant_names'
 
 module PactBroker
@@ -56,17 +55,6 @@ module PactBroker
         else
           nil
         end
-      end
-
-      # This needs to move into a new service
-      def self.find_relationships
-        pact_repository.find_latest_pacts
-          .collect do | pact|
-            latest_verification = verification_service.find_latest_verification_for(pact.consumer, pact.provider)
-            webhooks = webhook_service.find_by_consumer_and_provider pact.consumer, pact.provider
-            triggered_webhooks = webhook_service.find_latest_triggered_webhooks pact.consumer, pact.provider
-            PactBroker::Domain::Relationship.create pact.consumer, pact.provider, pact, latest_verification, webhooks, triggered_webhooks
-          end
       end
 
       def self.update params

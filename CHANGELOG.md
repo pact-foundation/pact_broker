@@ -1,3 +1,72 @@
+<a name="v2.10.0"></a>
+### v2.10.0 (2017-11-11)
+
+
+#### Features
+
+* **prod pacts in index**
+  * allow all tags to be shown on index	 ([0a1f0ee](/../../commit/0a1f0ee))
+  * allow tags shown in index to be configured via query string	 ([4eca8ee](/../../commit/4eca8ee))
+  * show pacts tagged as the 'prod' or 'production' versions on the index page	 ([b58b7a3](/../../commit/b58b7a3))
+
+* **index page**
+  * truncate git shas in table	 ([94da4c7](/../../commit/94da4c7))
+
+
+<a name="v2.9.0"></a>
+### v2.9.0 (2017-11-09)
+
+#### Features
+
+* **webhook templating**
+  * add support for ${pactbroker.pactUrl} in query and body	 ([0eed596](/../../commit/0eed596))
+
+* **matrix** _(note that the matrix resource is still in beta, and there may be breaking changes in the future)_
+  * allow query to determine if a particular pacticipant version is compatible with the latest tagged versions of all its dependencies	 ([ba4a1cc](/../../commit/ba4a1cc))
+
+<a name="v2.8.0.beta.5"></a>
+### v2.8.0.beta.5 (2017-11-06)
+
+#### Features
+
+* **matrix**
+  * fix matrix data types for MySQL	 ([42c5478](/../../commit/42c5478))
+  * improve reason when no results are found	 ([473abbe](/../../commit/473abbe))
+  * change groupby param to latestby	 ([a6a8ba2](/../../commit/a6a8ba2))
+  * ensure correct row is returned when a pact is revised, then verified	 ([7f37644](/../../commit/7f37644))
+  * return most recent rows first	 ([cfa2109](/../../commit/cfa2109))
+  * allow a limit to be specified	 ([2a11334](/../../commit/2a11334))
+  * return most recent rows first	 ([e896b7b](/../../commit/e896b7b))
+  * use views to create matrix query	 ([8488212](/../../commit/8488212))
+  * add matrix view	 ([852324a](/../../commit/852324a))
+
+<a name="v2.8.0.beta.4"></a>
+### v2.8.0.beta.4 (2017-11-03)
+
+#### Bug Fixes
+
+* add missing require	 ([14d7d02](/../../commit/14d7d02))
+
+<a name="v2.7.0.beta.3"></a>
+### v2.7.0.beta.3 (2017-11-01)
+
+#### Features
+
+* **matrix**
+  * implement querying by latest without a tag	 ([3d78f79](/../../commit/3d78f79))
+  * update query to handle tag and latest flag	 ([c5c800f](/../../commit/c5c800f))
+  * update validation of selectors to allow tag and latest flag to be specified	 ([0fa33f1](/../../commit/0fa33f1))
+  * parse latest=true and tag=TAG in matrix query	 ([abcab9e](/../../commit/abcab9e))
+  * update validation to allow latest tag to be specified	 ([6da6e02](/../../commit/6da6e02))
+  * allow version to be specified by latest_tag	 ([fe498a7](/../../commit/fe498a7))
+
+* **pacticipant**
+  * expose repositoryUrl in resource	 ([8f0f16a](/../../commit/8f0f16a))
+
+#### Bug Fixes
+
+* correct captialization in require	 ([db2e676](/../../commit/db2e676))
+
 <a name="v2.7.0.beta.2"></a>
 ### v2.7.0.beta.2 (2017-10-31)
 
@@ -31,6 +100,14 @@
 #### Bug Fixes
 
 * show webhook status as not_run when all triggered webhooks are not_run	 ([2d014b2](/../../commit/2d014b2))
+
+<a name="v2.7.0.beta.1"></a>
+### v2.7.0.beta.1 (2017-10-16)
+
+#### Features
+
+* **prod pacts in index**
+  * show pacts tagged as the 'prod' or 'production' versions on the index page	 ([b58b7a3](/../../commit/b58b7a3))
 
 <a name="v2.6.0"></a>
 ### v2.6.0 (2017-10-06)

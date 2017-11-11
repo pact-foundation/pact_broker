@@ -42,8 +42,9 @@ A -> B ->  C
 TestDataBuilder.new
   .create_pact_with_hierarchy("A", "1", "B")
   .create_verification(provider_version: '1', success: false)
-  .create_verification(provider_version: '2', number: 2)
-  .create_verification(provider_version: '4', number: 3)
+  .create_verification(provider_version: '1', number: 2, success: true)
+  .create_verification(provider_version: '2', number: 3)
+  .create_verification(provider_version: '4', number: 4)
   .create_provider_version("5")
   .use_consumer("B")
   .use_consumer_version("1")
@@ -55,17 +56,23 @@ TestDataBuilder.new
   .create_verification(provider_version: '2', success: true)
   .create_consumer_version("3")
   .create_pact
-  .create_pact_with_hierarchy("the-example-application", "391c43cae8c0e83c570c191f7324fccd67e53abc", "another-example-application")
-  .create_verification(provider_version: '391c43cae8c0e83c570c191f7324fccd67e53abc')
-  .create_verification(provider_version: '57fa24e44efc4d8aa42bb855a8217f145b5b1b5b', number: 2, success: false)
-  .create_verification(provider_version: '4', number: 3)
-  .use_consumer("another-example-application")
-  .use_consumer_version("391c43cae8c0e83c570c191f7324fccd67e53abc")
-  .create_provider("a-third-example-application")
+  .use_consumer("A")
+  .create_consumer_version("2")
+  .use_provider("B")
   .create_pact
-  .create_verification(provider_version: '391c43cae8c0e83c570c191f7324fccd67e53abc', success: false)
-  .use_consumer_version("57fa24e44efc4d8aa42bb855a8217f145b5b1b5b")
-  .create_pact
-  .create_verification(provider_version: '57fa24e44efc4d8aa42bb855a8217f145b5b1b5b', success: true)
+  .create_verification(provider_version: '5')
+
+  # .create_pact_with_hierarchy("the-example-application", "391c43cae8c0e83c570c191f7324fccd67e53abc", "another-example-application")
+  # .create_verification(provider_version: '391c43cae8c0e83c570c191f7324fccd67e53abc')
+  # .create_verification(provider_version: '57fa24e44efc4d8aa42bb855a8217f145b5b1b5b', number: 2, success: false)
+  # .create_verification(provider_version: '4', number: 3)
+  # .use_consumer("another-example-application")
+  # .use_consumer_version("391c43cae8c0e83c570c191f7324fccd67e53abc")
+  # .create_provider("a-third-example-application")
+  # .create_pact
+  # .create_verification(provider_version: '391c43cae8c0e83c570c191f7324fccd67e53abc', success: false)
+  # .use_consumer_version("57fa24e44efc4d8aa42bb855a8217f145b5b1b5b")
+  # .create_pact
+  # .create_verification(provider_version: '57fa24e44efc4d8aa42bb855a8217f145b5b1b5b', success: true)
 
 
