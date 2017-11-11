@@ -27,12 +27,12 @@ module PactBroker
         subject  { Service.find_group_containing(consumer_b) }
 
         before do
-          allow(Pacticipants::Service).to receive(:find_relationships).and_return(relationship_list)
+          allow(Index::Service).to receive(:find_relationships).and_return(relationship_list)
           allow(Relationships::Groupify).to receive(:call).and_return(groups)
         end
 
         it "retrieves a list of the relationships" do
-          allow(Pacticipants::Service).to receive(:find_relationships)
+          allow(Index::Service).to receive(:find_relationships)
           subject
         end
 

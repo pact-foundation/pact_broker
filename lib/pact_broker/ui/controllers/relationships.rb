@@ -10,7 +10,7 @@ module PactBroker
         include PactBroker::Services
 
         get "/" do
-          view_model = ViewDomain::Relationships.new(pacticipant_service.find_relationships)
+          view_model = ViewDomain::Relationships.new(index_service.find_relationships)
           page = params[:showProdPacts] == 'true' ? :'relationships/show-prod-tags' : :'relationships/show'
           haml page, {locals: {relationships: view_model, title: "Pacts"}, layout: :'layouts/main'}
         end
