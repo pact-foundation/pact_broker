@@ -12,7 +12,7 @@ module PactBroker
         get "/" do
           tags = [*params[:tags]].compact
           view_model = ViewDomain::Relationships.new(index_service.find_relationships(tags: tags))
-          page = tags.any? ? :'relationships/show-prod-tags' : :'relationships/show'
+          page = tags.any? ? :'relationships/show-with-tags' : :'relationships/show'
           haml page, {locals: {relationships: view_model, title: "Pacts"}, layout: :'layouts/main'}
         end
 
