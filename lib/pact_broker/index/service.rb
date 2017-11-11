@@ -14,8 +14,18 @@ module PactBroker
       def self.find_index_items options = {}
         pact_repository
           .find_latest_pacts
-          .collect { | pact| build_index_item_rows(pact, options[:tags] || []) }
+          .collect { | pact| build_index_item_rows(pact, tags_for(pact, options)) }
           .flatten
+      end
+
+      def self.tags_for(pact, options)
+        if options[:tags] == true
+          tag_service.find_all_tag_names_for_pacticipant(pact.consumer_name)
+        elsif options[:tags].is_a?(Array)
+          options[:tags]
+        else
+          []
+        end
       end
 
       def self.build_index_item_rows(pact, tags)

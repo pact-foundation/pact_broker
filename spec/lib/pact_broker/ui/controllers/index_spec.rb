@@ -31,6 +31,38 @@ module PactBroker
               expect(last_response.status).to eq(200)
             end
 
+            context "with tags=true" do
+              before do
+                allow(PactBroker::Index::Service).to receive(:find_index_items).and_return([])
+              end
+
+              it "passes tags: true to the IndexService" do
+                expect(PactBroker::Index::Service).to receive(:find_index_items).with(tags: true)
+                get "/", { tags: 'true' }
+              end
+            end
+
+            context "with tags[]=prod" do
+              before do
+                allow(PactBroker::Index::Service).to receive(:find_index_items).and_return([])
+              end
+
+              it "passes tags: ['prod'] to the IndexService" do
+                expect(PactBroker::Index::Service).to receive(:find_index_items).with(tags: ["prod"])
+                get "/", { tags: ["prod"] }
+              end
+            end
+
+            context "with tags=prod" do
+              before do
+                allow(PactBroker::Index::Service).to receive(:find_index_items).and_return([])
+              end
+
+              it "passes tags: ['prod'] to the IndexService" do
+                expect(PactBroker::Index::Service).to receive(:find_index_items).with(tags: ["prod"])
+                get "/", { tags: "prod" }
+              end
+            end
           end
         end
       end
