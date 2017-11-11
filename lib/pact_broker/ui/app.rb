@@ -1,4 +1,4 @@
-require 'pact_broker/ui/controllers/relationships'
+require 'pact_broker/ui/controllers/index'
 require 'pact_broker/ui/controllers/groups'
 require 'pact_broker/ui/controllers/matrix'
 require 'pact_broker/doc/controllers/app'
@@ -11,7 +11,7 @@ module PactBroker
         @app = ::Rack::Builder.new {
 
           map "/ui/relationships" do
-            run PactBroker::UI::Controllers::Relationships
+            run PactBroker::UI::Controllers::Index
           end
 
           map "/groups" do
@@ -27,7 +27,7 @@ module PactBroker
           end
 
           map "/" do
-            run PactBroker::UI::Controllers::Relationships
+            run PactBroker::UI::Controllers::Index
           end
         }
       end

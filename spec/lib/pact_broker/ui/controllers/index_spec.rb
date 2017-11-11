@@ -1,16 +1,16 @@
 require 'spec_helper'
-require 'pact_broker/ui/controllers/relationships'
+require 'pact_broker/ui/controllers/index'
 
 require 'rack/test'
 
 module PactBroker
   module UI
     module Controllers
-      describe Relationships do
+      describe Index do
 
         include Rack::Test::Methods
 
-        let(:app) { Relationships }
+        let(:app) { Index }
 
         describe "/" do
           describe "GET" do
