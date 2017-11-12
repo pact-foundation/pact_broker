@@ -1,5 +1,6 @@
 require 'pact_broker/db'
 require 'pact_broker/repositories/helpers'
+require 'json'
 
 module PactBroker
 
@@ -9,6 +10,7 @@ module PactBroker
       set_primary_key :id
       associate(:many_to_one, :pact_version, class: "PactBroker::Pacts::PactVersion", key: :pact_version_id, primary_key: :id)
       associate(:many_to_one, :provider_version, class: "PactBroker::Domain::Version", key: :provider_version_id, primary_key: :id)
+      plugin :serialization, :json, :test_results
 
       def before_create
         super

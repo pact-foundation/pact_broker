@@ -238,7 +238,7 @@ class TestDataBuilder
 
   def create_verification parameters = {}
     provider_version_number = parameters[:provider_version] || '4.5.6'
-    default_parameters = {success: true, number: 1}
+    default_parameters = {success: true, number: 1, test_results: {some: 'results'}}
     parameters = default_parameters.merge(parameters)
     parameters.delete(:provider_version)
     verification = PactBroker::Domain::Verification.new(parameters)

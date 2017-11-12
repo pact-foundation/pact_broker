@@ -1,4 +1,7 @@
 {
   "success": true,
-  "providerApplicationVersion": "4.5.6"
+  "providerApplicationVersion": "4.5.6",
+  "testResults": {
+    "some": "results"
+  }
 }

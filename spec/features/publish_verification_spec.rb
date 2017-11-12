@@ -33,6 +33,11 @@ describe "Recording a pact verification" do
     expect(PactBroker::Domain::Verification.order(:id).last.pact_version_sha).to eq pact.pact_version_sha
   end
 
+  it "saves the test results" do
+    subject
+    expect(PactBroker::Domain::Verification.order(:id).last.test_results).to eq('some' => 'results')
+  end
+
   it "returns a link to itself that can be followed" do
     get_verification_link = parsed_response_body['_links']['self']['href']
     get get_verification_link
