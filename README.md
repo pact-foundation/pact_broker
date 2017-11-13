@@ -6,7 +6,8 @@
  [![Issue Count](https://codeclimate.com/github/pact-foundation/pact_broker/badges/issue_count.svg)](https://codeclimate.com/github/pact-foundation/pact_broker)
  [![Dependency Status](https://gemnasium.com/badges/github.com/pact-foundation/pact_broker.svg)](https://gemnasium.com/github.com/pact-foundation/pact_broker)
 
-The Pact Broker is an application for sharing for consumer driven contracts. It is optimised for contracts ("pacts") created with the Pact gem, however, it supports any form of JSON contract.
+The Pact Broker is an application for sharing for consumer driven contracts. It is optimised for use with "pacts" (contracts created by the [Pact][pact-docs] framework), but can be used for any type of contract that can be serialized to JSON.
+
 
 It:
 
@@ -143,3 +144,4 @@ Please read the [UPGRADING.md](UPGRADING.md) documentation before upgrading your
 [twitter]: https://twitter.com/pact_up
 [gitter]: https://gitter.im/realestate-com-au/pact
 [issues]: https://github.com/pact-foundation/pact_broker/issues
+[pact-docs]: http://docs.pact.io
