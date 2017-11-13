@@ -10,7 +10,8 @@ The Pact Broker provides a repository for consumer driven contracts created usin
 
 It:
 
-* solves the problem of how to share pacts between consumer and provider projects
+* solves the problem of how to share pacts and verification results between consumer and provider projects
+* allows you to version your contracts
 * allows you to [decouple your service release cycles][decouple]
 * provides API documentation that is guaranteed to be up-to date
 * shows you real examples of how your services interact
