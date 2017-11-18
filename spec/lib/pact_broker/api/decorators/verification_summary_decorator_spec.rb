@@ -19,6 +19,7 @@ module PactBroker
             pact_version: pact_version,
             pact_version_sha: '1234',
             latest_pact_publication: pact,
+            test_results: nil,
             execution_date: DateTime.now)
         end
         let(:pact_version) do
