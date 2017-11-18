@@ -18,22 +18,30 @@ module PactBroker
           password: 'password',
           body: body)
       end
-      let(:webhook) { Domain::Webhook.new(request: request)}
+      let(:event) do
+        PactBroker::Webhooks::WebhookEvent.new(name: 'something_happened')
+      end
+      let(:events) { [event]}
+      let(:webhook) { Domain::Webhook.new(request: request, events: events)}
       let(:test_data_builder) { TestDataBuilder.new }
       let(:consumer) { test_data_builder.create_pacticipant 'Consumer'; test_data_builder.pacticipant}
       let(:provider) { test_data_builder.create_pacticipant 'Provider'; test_data_builder.pacticipant}
       let(:uuid) { 'the-uuid' }
       let(:created_webhook_record) { ::DB::PACT_BROKER_DB[:webhooks].order(:id).last }
       let(:created_headers) { ::DB::PACT_BROKER_DB[:webhook_headers].where(webhook_id: created_webhook_record[:id]).order(:name).all }
-      let(:expected_webhook_record) { {
-        :uuid=>"the-uuid",
-        :method=>"post",
-        :url=>"http://example.org",
-        :username => 'username',
-        :password => "cGFzc3dvcmQ=",
-        :body=>body.to_json,
-        :consumer_id=> consumer.id,
-        :provider_id=> provider.id } }
+      let(:created_events) { ::DB::PACT_BROKER_DB[:webhook_events].where(webhook_id: created_webhook_record[:id]).order(:name).all }
+      let(:expected_webhook_record) do
+        {
+          uuid: "the-uuid",
+          method: "post",
+          url: "http://example.org",
+          username: 'username',
+          password:  "cGFzc3dvcmQ=",
+          body: body.to_json,
+          consumer_id:  consumer.id,
+          provider_id:  provider.id
+        }
+      end
 
       describe "#create" do
 
@@ -51,6 +59,10 @@ module PactBroker
           expect(created_headers.first[:value]).to eq "application/json"
           expect(created_headers.last[:name]).to eq "Content-Type"
           expect(created_headers.last[:value]).to eq "application/json"
+        end
+
+        it "saves the webhook events" do
+          expect(subject.events.first[:name]).to eq "something_happened"
         end
 
       end
@@ -193,6 +205,7 @@ module PactBroker
         let(:td) { TestDataBuilder.new }
         let(:old_webhook_params) do
           {
+            events: [{ name: 'something' }],
             uuid: uuid,
             method: 'POST',
             url: 'http://example.org',
@@ -210,13 +223,16 @@ module PactBroker
             headers: {'Content-Type' => 'text/plain'}
           }
         end
+        let(:new_event) do
+          PactBroker::Webhooks::WebhookEvent.new(name: 'something_else')
+        end
         before do
           td.create_consumer
             .create_provider
             .create_webhook(old_webhook_params)
         end
         let(:new_webhook) do
-          PactBroker::Domain::Webhook.new(request: PactBroker::Domain::WebhookRequest.new(new_webhook_params))
+          PactBroker::Domain::Webhook.new(events: [new_event], request: PactBroker::Domain::WebhookRequest.new(new_webhook_params))
         end
 
         subject { Repository.new.update_by_uuid uuid, new_webhook }
@@ -230,6 +246,7 @@ module PactBroker
           expect(updated_webhook.request.headers).to eq 'Content-Type' => 'text/plain'
           expect(updated_webhook.request.username).to eq nil
           expect(updated_webhook.request.password).to eq nil
+          expect(updated_webhook.events.first.name).to eq 'something_else'
         end
       end
 

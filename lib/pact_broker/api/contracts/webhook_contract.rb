@@ -5,7 +5,6 @@ module PactBroker
   module Api
     module Contracts
       class WebhookContract < Reform::Form
-        property :request
 
         validation do
           configure do
@@ -13,6 +12,7 @@ module PactBroker
           end
 
           required(:request).filled
+          required(:events).maybe(min_size?: 1)
         end
 
         property :request do
@@ -39,6 +39,15 @@ module PactBroker
             required(:url).filled(:valid_url?)
           end
         end
+
+        collection :events do
+          property :name
+
+          validation do
+            required(:name).filled
+          end
+        end
+
       end
     end
   end

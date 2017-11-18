@@ -3,6 +3,7 @@ require 'pact_broker/domain/webhook'
 require 'pact_broker/domain/pacticipant'
 require 'pact_broker/db'
 require 'pact_broker/webhooks/webhook'
+require 'pact_broker/webhooks/webhook_event'
 require 'pact_broker/webhooks/triggered_webhook'
 require 'pact_broker/webhooks/latest_triggered_webhook'
 require 'pact_broker/webhooks/execution'
@@ -21,6 +22,9 @@ module PactBroker
         webhook.request.headers.each_pair do | name, value |
           db_webhook.add_header PactBroker::Webhooks::WebhookHeader.from_domain(name, value, db_webhook.id)
         end
+        (webhook.events || []).each do | webhook_event |
+          db_webhook.add_event(webhook_event)
+        end
         find_by_uuid db_webhook.uuid
       end
 
@@ -32,8 +36,12 @@ module PactBroker
         existing_webhook = Webhook.find(uuid: uuid)
         existing_webhook.update_from_domain(webhook).save
         existing_webhook.headers.collect(&:delete)
+        existing_webhook.events.collect(&:delete)
         webhook.request.headers.each_pair do | name, value |
           existing_webhook.add_header PactBroker::Webhooks::WebhookHeader.from_domain(name, value, existing_webhook.id)
+        end
+        (webhook.events || []).each do | webhook_event |
+          existing_webhook.add_event(webhook_event)
         end
         find_by_uuid uuid
       end
