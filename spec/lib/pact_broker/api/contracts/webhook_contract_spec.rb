@@ -40,8 +40,8 @@ module PactBroker
           context "with no events defined" do
             let(:json) { {}.to_json }
 
-            it "contains an error for missing request, I wish I could work out how not to have the second error" do
-              expect(subject.errors[:events]).to eq ["is missing", "size cannot be less than 1"]
+            it "does not contain an error for missing event, as it will be defaulted" do
+              expect(subject.errors.messages[:events]).to be nil
             end
           end
 

@@ -114,7 +114,18 @@ module PactBroker
           end
 
           it 'parses the events' do
+            expect(parsed_object.events.size).to eq 1
             expect(parsed_object.events.first.name).to eq 'something_happened'
+          end
+
+          context "when no events are specified" do
+            let(:hash) { { request: request } }
+            let(:webhook) { Domain::Webhook.new }
+
+            it "defaults to a single contract_changed event for backwards compatibility" do
+              expect(parsed_object.events.size).to eq 1
+              expect(parsed_object.events.first.name).to eq 'contract_changed'
+            end
           end
         end
       end

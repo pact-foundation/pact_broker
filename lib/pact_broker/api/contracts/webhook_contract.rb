@@ -12,7 +12,7 @@ module PactBroker
           end
 
           required(:request).filled
-          required(:events).maybe(min_size?: 1)
+          optional(:events).maybe(min_size?: 1)
         end
 
         property :request do
@@ -47,7 +47,6 @@ module PactBroker
             required(:name).filled
           end
         end
-
       end
     end
   end

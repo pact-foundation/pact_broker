@@ -5,6 +5,8 @@ module PactBroker
   module Webhooks
     class WebhookEvent < Sequel::Model
 
+      DEFAULT_EVENT_NAME = 'contract_changed'
+
       dataset_module do
         include PactBroker::Repositories::Helpers
       end

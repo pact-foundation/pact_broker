@@ -66,6 +66,14 @@ module PactBroker
             href: webhooks_url(options[:base_url])
           }
         end
+
+        def from_json represented
+          super.tap do | webhook |
+            if webhook.events == nil
+              webhook.events = [PactBroker::Webhooks::WebhookEvent.new(name: PactBroker::Webhooks::WebhookEvent::DEFAULT_EVENT_NAME)]
+            end
+          end
+        end
       end
     end
   end
