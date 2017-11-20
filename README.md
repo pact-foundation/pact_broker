@@ -30,7 +30,7 @@ Features:
 * Provides a "matrix" of compatible consumer and provider versions, so you know which versions can be safely deployed together.
 * Provides badges to display pact verification statuses in your READMEs.
 * Enables an application version to be tagged (ie. "prod", "feat/customer-preferences") to allow repository-like workflows. 
-* Provides webhooks to trigger a provider build when a consumer publishes a change to a pact.
+* Provides webhooks to trigger actions when pacts change eg. run provider build, notify a Slack channel.
 * View diffs between Pact versions so you can tell what expectations have changed.
 * [Docker Pact Broker][docker]
 * A [CLI][cli] for encorporating the Pact workflow into your continuous integration process.
