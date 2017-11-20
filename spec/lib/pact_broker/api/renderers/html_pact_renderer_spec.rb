@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'pact_broker/api/renderers/html_pact_renderer'
+require 'timecop'
 
 module PactBroker
   module Api
@@ -10,10 +11,13 @@ module PactBroker
           ENV['BACKUP_TZ'] = ENV['TZ']
           ENV['TZ'] = "Australia/Melbourne"
           PactBroker.configuration.enable_public_badge_access = true
+
+          Timecop.freeze(created_at + 3)
         end
 
         after do
           ENV['TZ'] = ENV['BACKUP_TZ']
+          Timecop.return
         end
 
         let(:consumer) { double('consumer', name: 'Consumer')}
@@ -47,6 +51,7 @@ module PactBroker
             expect(subject).to match /<h\d>.*Some Provider/
             expect(subject).to include("Date published:")
             expect(subject).to include("Thu 27 Feb 2014, 11:00am +11:00")
+            expect(subject).to include("3 days ago")
             expect(subject).to match /title.*Pact between Consumer and Provider/
             expect(subject).to match /prod, master/
           end
