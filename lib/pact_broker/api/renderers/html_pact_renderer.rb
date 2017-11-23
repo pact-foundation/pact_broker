@@ -57,8 +57,8 @@ module PactBroker
                 <span class='value'>#{@pact.consumer_version_number}#{tags}</span>
               </li>
               <li>
-                <span class='name'>Date published:</span>
-                <span class='value'>#{published_date}</span>
+                <span class='name' title='#{published_date}'>Date published:</span>
+                <span class='value' title='#{published_date}'>#{published_date_in_words}</span>
               </li>
               <li>
                 <a href=\"#{json_url}\">View in API Browser</a>
@@ -106,6 +106,10 @@ module PactBroker
 
         def published_date
           @pact.created_at.to_time.localtime.to_datetime.strftime("%a %d %b %Y, %l:%M%P %:z")
+        end
+
+        def published_date_in_words
+          PactBroker::DateHelper.distance_of_time_in_words(@pact.created_at.to_time, DateTime.now) + " ago"
         end
 
         def json_url
