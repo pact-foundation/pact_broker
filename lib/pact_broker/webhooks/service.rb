@@ -1,10 +1,11 @@
 require 'pact_broker/repositories'
 require 'pact_broker/logging'
-require 'pact_broker/webhooks/job'
 require 'base64'
 require 'securerandom'
+require 'pact_broker/webhooks/job'
 require 'pact_broker/webhooks/triggered_webhook'
 require 'pact_broker/webhooks/status'
+require 'pact_broker/webhooks/webhook_event'
 
 module PactBroker
 
@@ -83,8 +84,8 @@ module PactBroker
         webhook_repository.find_by_consumer_and_provider consumer, provider
       end
 
-      def self.execute_webhooks pact
-        webhooks = webhook_repository.find_by_consumer_and_provider pact.consumer, pact.provider
+      def self.execute_webhooks pact, event_name = PactBroker::Webhooks::WebhookEvent::DEFAULT_EVENT_NAME
+        webhooks = webhook_repository.find_by_consumer_and_provider_and_event_name pact.consumer, pact.provider, event_name
 
         if webhooks.any?
           run_later(webhooks, pact)

@@ -303,6 +303,29 @@ module PactBroker
         end
       end
 
+      describe "find_by_consumer_and_provider_and_event_name" do
+        let(:test_data_builder) { TestDataBuilder.new }
+        subject { Repository.new.find_by_consumer_and_provider_and_event_name test_data_builder.consumer, test_data_builder.provider, 'something_happened' }
+
+        context "when a webhook exists with a matching consumer and provider and event name" do
+
+          before do
+            test_data_builder
+              .create_consumer("Consumer")
+              .create_provider("Another Provider")
+              .create_webhook
+              .create_provider("Provider")
+              .create_webhook(uuid: '1', events: [{ name: 'something_happened' }])
+              .create_webhook(uuid: '2', events: [{ name: 'something_happened' }])
+              .create_webhook(uuid: '3', events: [{ name: 'something_else_happened' }])
+          end
+
+          it "returns an array of webhooks" do
+            expect(subject.collect(&:uuid).sort).to eq ['1', '2']
+          end
+        end
+      end
+
       describe "create_triggered_webhook" do
         before do
           td.create_consumer

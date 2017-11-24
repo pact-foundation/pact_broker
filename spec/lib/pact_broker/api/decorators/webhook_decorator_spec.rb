@@ -124,7 +124,7 @@ module PactBroker
 
             it "defaults to a single contract_changed event for backwards compatibility" do
               expect(parsed_object.events.size).to eq 1
-              expect(parsed_object.events.first.name).to eq 'contract_changed'
+              expect(parsed_object.events.first.name).to eq PactBroker::Webhooks::WebhookEvent::DEFAULT_EVENT_NAME
             end
           end
         end

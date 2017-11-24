@@ -200,7 +200,8 @@ class TestDataBuilder
 
   def create_webhook params = {}
     uuid = params[:uuid] || PactBroker::Webhooks::Service.next_uuid
-    events = (params[:events] || [{ name: 'pact_changed' }]).collect{ |e| PactBroker::Webhooks::WebhookEvent.new(e) }
+    event_params = params[:events] || [{ name: PactBroker::Webhooks::WebhookEvent::DEFAULT_EVENT_NAME }]
+    events = event_params.collect{ |e| PactBroker::Webhooks::WebhookEvent.new(e) }
     default_params = { method: 'POST', url: 'http://example.org', headers: {'Content-Type' => 'application/json'}}
     request = PactBroker::Domain::WebhookRequest.new(default_params.merge(params))
     @webhook = PactBroker::Webhooks::Repository.new.create uuid, PactBroker::Domain::Webhook.new(request: request, events: events), @consumer, @provider

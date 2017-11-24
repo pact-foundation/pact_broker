@@ -37,7 +37,7 @@ module PactBroker
         let(:triggered_webhook) { instance_double(PactBroker::Webhooks::TriggeredWebhook) }
 
         before do
-          allow_any_instance_of(PactBroker::Webhooks::Repository).to receive(:find_by_consumer_and_provider).and_return(webhooks)
+          allow_any_instance_of(PactBroker::Webhooks::Repository).to receive(:find_by_consumer_and_provider_and_event_name).and_return(webhooks)
           allow_any_instance_of(PactBroker::Webhooks::Repository).to receive(:create_triggered_webhook).and_return(triggered_webhook)
           allow(Job).to receive(:perform_async)
         end
@@ -45,7 +45,7 @@ module PactBroker
         subject { Service.execute_webhooks pact }
 
         it "finds the webhooks" do
-          expect_any_instance_of(PactBroker::Webhooks::Repository).to receive(:find_by_consumer_and_provider).with(consumer, provider)
+          expect_any_instance_of(PactBroker::Webhooks::Repository).to receive(:find_by_consumer_and_provider_and_event_name).with(consumer, provider, PactBroker::Webhooks::WebhookEvent::DEFAULT_EVENT_NAME)
           subject
         end
 
@@ -126,12 +126,14 @@ module PactBroker
             to_return(:status => 200)
         end
 
+        let(:events) { [{ name: PactBroker::Webhooks::WebhookEvent::DEFAULT_EVENT_NAME }] }
+
         let(:pact) do
           td.create_consumer
             .create_provider
             .create_consumer_version
             .create_pact
-            .create_webhook(method: 'GET', url: 'http://example.org')
+            .create_webhook(method: 'GET', url: 'http://example.org', events: events)
             .and_return(:pact)
         end
 

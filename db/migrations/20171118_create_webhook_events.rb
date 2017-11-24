@@ -5,7 +5,7 @@ Sequel.migration do
     from(:webhooks).each do | webhook |
       from(:webhook_events).insert(
         webhook_id: webhook[:id],
-        name: 'contract_changed',
+        name: 'contract_content_changed',
         created_at: DateTime.now,
         updated_at: DateTime.now
       )

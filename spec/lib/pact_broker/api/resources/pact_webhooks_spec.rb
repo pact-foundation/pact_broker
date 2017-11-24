@@ -13,12 +13,14 @@ module PactBroker::Api
       let(:headers) { {'CONTENT_TYPE' => 'application/json'} }
       let(:webhook) { double('webhook')}
       let(:saved_webhook) { double('saved_webhook')}
-      let(:provider) { instance_double(PactBroker::Domain::Pacticipant)}
-      let(:consumer) { instance_double(PactBroker::Domain::Pacticipant)}
+      let(:provider) { instance_double(PactBroker::Domain::Pacticipant) }
+      let(:consumer) { instance_double(PactBroker::Domain::Pacticipant) }
+      let(:webhook_decorator) { instance_double(Decorators::WebhookDecorator, from_json: webhook) }
 
       before do
         allow(PactBroker::Pacticipants::Service).to receive(:find_pacticipant_by_name).with("Some Provider").and_return(provider)
         allow(PactBroker::Pacticipants::Service).to receive(:find_pacticipant_by_name).with("Some Consumer").and_return(consumer)
+        allow(Decorators::WebhookDecorator).to receive(:new).and_return(webhook_decorator)
       end
 
       describe "GET" do
@@ -83,6 +85,7 @@ module PactBroker::Api
 
         context "when the provider is not found" do
           let(:provider) { nil }
+
           it "returns a 404 status" do
             subject
             expect(last_response.status).to eq 404
@@ -142,10 +145,10 @@ module PactBroker::Api
         context "with valid attributes" do
 
           let(:webhook_response_json) { {some: 'webhook'}.to_json }
-          let(:decorator) { instance_double(Decorators::WebhookDecorator) }
 
           before do
             allow_any_instance_of(Decorators::WebhookDecorator).to receive(:to_json).and_return(webhook_response_json)
+            allow(webhook_decorator).to receive(:to_json).and_return(webhook_response_json)
           end
 
           it "saves the webhook" do
@@ -169,9 +172,8 @@ module PactBroker::Api
           end
 
           it "generates the JSON response body" do
-            allow(Decorators::WebhookDecorator).to receive(:new).and_call_original #Deserialise
-            expect(Decorators::WebhookDecorator).to receive(:new).with(saved_webhook).and_return(decorator) #Serialize
-            expect(decorator).to receive(:to_json).with(user_options: { base_url: 'http://example.org' })
+            expect(Decorators::WebhookDecorator).to receive(:new).with(saved_webhook).and_return(webhook_decorator)
+            expect(webhook_decorator).to receive(:to_json).with(user_options: { base_url: 'http://example.org' })
             subject
           end
 
@@ -180,10 +182,7 @@ module PactBroker::Api
             expect(last_response.body).to eq webhook_response_json
           end
         end
-
       end
-
     end
   end
-
 end

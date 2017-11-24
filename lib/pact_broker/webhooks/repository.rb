@@ -63,6 +63,15 @@ module PactBroker
         Webhook.where(consumer_id: consumer.id, provider_id: provider.id).collect(&:to_domain)
       end
 
+      def find_by_consumer_and_provider_and_event_name consumer, provider, event_name
+        Webhook
+          .select_all_qualified
+          .where(consumer_id: consumer.id, provider_id: provider.id)
+          .join(:webhook_events, { webhook_id: :id })
+          .where(Sequel[:webhook_events][:name] => event_name)
+          .collect(&:to_domain)
+      end
+
       def find_by_consumer_and_provider_existing_at consumer, provider, date_time
         Webhook.where(consumer_id: consumer.id, provider_id: provider.id)
         .where(Sequel.lit("created_at < ?", date_time))
