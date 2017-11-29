@@ -11,7 +11,7 @@ The Pact Broker is an application for sharing for consumer driven contracts. It 
 
 It:
 
-* allows you to release customer value quickly and confidently by [deploying your services indendently][decouple] and avoiding the bottleneck of integration tests
+* allows you to release customer value quickly and confidently by [deploying your services independently][decouple] and avoiding the bottleneck of integration tests
 * solves the problem of how to share contracts and verification results between consumer and provider projects
 * tells you which versions of your applications can be deployed safely together
 * automatically versions your contracts
