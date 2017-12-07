@@ -22,7 +22,8 @@ module PactBroker
         provider_version_number = params.fetch('providerApplicationVersion')
         PactBroker::Api::Decorators::VerificationDecorator.new(verification).from_hash(params)
         verification.number = next_verification_number
-        verification_repository.create(verification, provider_version_number, pact)
+        webhook_service.execute_webhooks pact, PactBroker::Webhooks::WebhookEvent::VERIFICATION_PUBLISHED
+        verification = verification_repository.create(verification, provider_version_number, pact)
       end
 
       def errors params
