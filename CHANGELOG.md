@@ -1,5 +1,5 @@
-<a name="v2.11.0"></a>
-### v2.11.0 (2017-11-29)
+<a name="v2.12.0"></a>
+### v2.12.0 (2017-11-29)
 
 #### Features
 * changed date published to time ago in words, with full date as mouseover (#145) ([b28f9c3](/../../commit/b28f9c3))
