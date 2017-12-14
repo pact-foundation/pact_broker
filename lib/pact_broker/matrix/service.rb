@@ -24,9 +24,7 @@ module PactBroker
         error_messages = []
 
         selectors.each do | s |
-          if s[:pacticipant_name].nil? && s[:pacticipant_version_number].nil?
-            error_messages << "Please specify the pacticipant name and version"
-          elsif s[:pacticipant_name].nil?
+          if s[:pacticipant_name].nil?
             error_messages << "Please specify the pacticipant name"
           else
             if s.key?(:pacticipant_version_number) && s.key?(:latest)

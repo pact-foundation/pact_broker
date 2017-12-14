@@ -3,8 +3,22 @@ require 'pact_broker/ui/controllers/groups'
 require 'pact_broker/ui/controllers/matrix'
 require 'pact_broker/doc/controllers/app'
 
+
 module PactBroker
   module UI
+    class PathInfoFixer
+      PATH_INFO = 'PATH_INFO'.freeze
+
+      def initialize app
+        @app = app
+      end
+
+      def call env
+        env[PATH_INFO] = '/' if env[PATH_INFO] == ''
+        @app.call(env)
+      end
+    end
+
     class App
 
       def initialize
@@ -23,6 +37,7 @@ module PactBroker
           end
 
           map "/matrix" do
+            use PathInfoFixer
             run PactBroker::UI::Controllers::Matrix
           end
 

@@ -1,9 +1,13 @@
 require 'pact_broker/repositories/helpers'
 require 'pact_broker/matrix/row'
 require 'pact_broker/matrix/latest_row'
+require 'pact_broker/error'
 
 module PactBroker
   module Matrix
+
+    class Error < PactBroker::Error; end
+
     class Repository
       include PactBroker::Repositories::Helpers
       include PactBroker::Repositories
@@ -78,7 +82,7 @@ module PactBroker
           # resource validation currently stops tag being specified without latest=true
           if selector[:tag] && selector[:latest]
             version = version_repository.find_by_pacticpant_name_and_latest_tag(selector[:pacticipant_name], selector[:tag])
-            raise "Could not find version with tag #{selector[:tag].inspect} for #{selector[:pacticipant_name]}" unless version
+            raise Error.new("Could not find version with tag #{selector[:tag].inspect} for #{selector[:pacticipant_name]}") unless version
             # validation in resource should ensure we always have a version
             {
               pacticipant_name: selector[:pacticipant_name],
@@ -122,37 +126,6 @@ module PactBroker
           .flatten
           .uniq
       end
-
-      # def where_row_matches_selectors selectors, query
-      #   if selectors.size == 1
-      #     where_consumer_or_provider_is(selectors.first, query)
-      #   else
-      #     where_consumer_and_provider_in(selectors, query)
-      #   end
-      # end
-
-      # def where_consumer_and_provider_in selectors, query
-      #     query.where{
-      #       Sequel.&(
-      #         Sequel.|(
-      #           *selectors.collect{ |s| s[:pacticipant_version_number] ? Sequel.&(consumer_name: s[:pacticipant_name], consumer_version_number: s[:pacticipant_version_number]) :  Sequel.&(consumer_name: s[:pacticipant_name]) }
-      #         ),
-      #         Sequel.|(
-      #           *(selectors.collect{ |s| s[:pacticipant_version_number] ? Sequel.&(provider_name: s[:pacticipant_name], provider_version_number: s[:pacticipant_version_number]) :  Sequel.&(provider_name: s[:pacticipant_name]) } +
-      #             selectors.collect{ |s| Sequel.&(provider_name: s[:pacticipant_name], provider_version_number: nil) })
-      #         )
-      #       )
-      #     }
-      # end
-
-      # def where_consumer_or_provider_is s, query
-      #   query.where{
-      #     Sequel.|(
-      #       s[:pacticipant_version_number] ? Sequel.&(consumer_name: s[:pacticipant_name], consumer_version_number: s[:pacticipant_version_number]) :  Sequel.&(consumer_name: s[:pacticipant_name]),
-      #       s[:pacticipant_version_number] ? Sequel.&(provider_name: s[:pacticipant_name], provider_version_number: s[:pacticipant_version_number]) :  Sequel.&(provider_name: s[:pacticipant_name])
-      #     )
-      #   }
-      # end
     end
   end
 end
