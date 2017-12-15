@@ -63,14 +63,6 @@ module PactBroker
           end
         end
 
-        context "when the pacticipant name and version are not specified" do
-          let(:selectors) { [{ pacticipant_name: nil, pacticipant_version_number: nil }] }
-
-          it "returns error messages" do
-            expect(subject.first).to eq "Please specify the pacticipant name and version"
-          end
-        end
-
         context "when the latest_tag is used instead of a version" do
           before do
             td.create_pacticipant("Foo")

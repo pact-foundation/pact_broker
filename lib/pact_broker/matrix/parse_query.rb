@@ -7,10 +7,10 @@ module PactBroker
         params = Rack::Utils.parse_nested_query(query)
         selectors = (params['q'] || []).collect do |i|
           p = {}
-          p[:pacticipant_name] = i['pacticipant'] if i['pacticipant']
-          p[:pacticipant_version_number] = i['version'] if i['version']
+          p[:pacticipant_name] = i['pacticipant'] if i['pacticipant'] && i['pacticipant'] != ''
+          p[:pacticipant_version_number] = i['version'] if i['version'] && i['version'] != ''
           p[:latest] = true if i['latest'] == 'true'
-          p[:tag] = i['tag'] if i['tag']
+          p[:tag] = i['tag'] if i['tag'] && i['tag'] != ''
           p
         end
         options = {}
