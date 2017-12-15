@@ -9,6 +9,12 @@ Sequel.extension :migration
 module PactBroker
   module Database
 
+    # A manually ordered list of all the tables in the project.
+    # This is required so that the tables can be dropped in the right order
+    # without upsetting the foreign key constraints.
+    # I'm sure there is a better way to do this, but there are
+    # more urgent things that I need to spend my time on right now.
+
     TABLES = [:labels, :webhook_executions, :triggered_webhooks, :config, :pacts, :pact_version_contents, :tags, :verifications, :pact_publications, :pact_versions,  :webhook_headers, :webhooks, :versions, :pacticipants].freeze
 
     extend self
@@ -35,6 +41,7 @@ module PactBroker
     def drop_objects
       drop_views
       drop_tables
+      check_for_undeleted_tables
     end
 
     def drop_tables
@@ -54,6 +61,12 @@ module PactBroker
           # Cascade will have deleted some views already with pg
           raise e unless e.cause.class.name == 'PG::UndefinedTable'
         end
+      end
+    end
+
+    def check_for_undeleted_tables
+      if database.tables.any?
+        raise "Please add the following table(s) to the list of TABLES to drop, in the file where this error was raised: #{database.tables.join(', ')}"
       end
     end
 
