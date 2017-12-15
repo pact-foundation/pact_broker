@@ -32,7 +32,7 @@ module PactBroker
               end
             end
           rescue StandardError => e
-            log_error e
+            log_error(e) unless e.is_a?(PactBroker::Error)
             locals[:errors] = [e.message]
           end
           haml :'matrix/show', {locals: locals, layout: :'layouts/main'}
