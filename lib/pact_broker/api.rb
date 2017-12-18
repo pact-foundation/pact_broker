@@ -61,6 +61,7 @@ module PactBroker
 
         # matrix
         add ['matrix', 'provider', :provider_name, 'consumer', :consumer_name], Api::Resources::MatrixForConsumerAndProvider, {resource_name: "matrix_consumer_provider"}
+        add ['matrix', 'provider', :provider_name, 'latest', :provider_tag, 'consumer', :consumer_name, 'latest', :tag, 'badge'], Api::Resources::MatrixBadge, {resource_name: "matrix_tag_badge"}
         add ['matrix'], Api::Resources::Matrix, {resource_name: "matrix"}
 
         add [], Api::Resources::Index, {resource_name: "index"}
@@ -73,5 +74,4 @@ module PactBroker
 
     pact_api.adapter
   end
-
 end

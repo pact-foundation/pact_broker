@@ -16,6 +16,26 @@ module PactBroker
         matrix_repository.find_for_consumer_and_provider params[:consumer_name], params[:provider_name]
       end
 
+      def find_for_consumer_and_provider_with_tags params
+        consumer_criteria = {
+          pacticipant_name: params[:consumer_name],
+          tag: params[:tag],
+          latest: true
+        }
+        provider_criteria = {
+          pacticipant_name: params[:provider_name],
+          tag: params[:provider_tag],
+          latest: true
+        }
+        selectors = [consumer_criteria, provider_criteria]
+        options = { latestby: 'cvpv' }
+        if validate_selectors(selectors).empty?
+          matrix_repository.find(selectors, options).first
+        else
+          nil
+        end
+      end
+
       def find_compatible_pacticipant_versions criteria
         matrix_repository.find_compatible_pacticipant_versions criteria
       end
