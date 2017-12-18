@@ -122,6 +122,46 @@ module PactBroker
           end
         end
       end
+
+      describe "find_for_consumer_and_provider_with_tags integration test" do
+
+        let(:params) do
+          {
+            consumer_name: 'consumer',
+            provider_name: 'provider',
+            tag: 'prod',
+            provider_tag: 'master'
+          }
+        end
+
+        subject { Service.find_for_consumer_and_provider_with_tags(params) }
+
+        context "when the specified row exists" do
+          before do
+            td.create_pact_with_hierarchy('consumer', '1', 'provider')
+              .create_consumer_version_tag('prod')
+              .create_verification(provider_version: '2')
+              .use_provider_version('2')
+              .create_provider_version_tag('master')
+              .create_verification(provider_version: '3', number: 2)
+              .create_consumer_version('2')
+              .create_pact
+          end
+
+          it "returns the row" do
+            expect(subject[:consumer_name]).to eq 'consumer'
+            expect(subject[:provider_name]).to eq 'provider'
+            expect(subject[:consumer_version_number]).to eq '1'
+            expect(subject[:provider_version_number]).to eq '2'
+          end
+        end
+
+        context "when the specified row does not exist" do
+          it "returns nil" do
+            expect(subject).to be nil
+          end
+        end
+      end
     end
   end
 end

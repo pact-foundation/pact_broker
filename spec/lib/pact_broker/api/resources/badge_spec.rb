@@ -1,5 +1,6 @@
 require 'pact_broker/api/resources/badge'
 require 'pact_broker/badges/service'
+require 'pact_broker/matrix/service'
 
 module PactBroker
   module Api
@@ -116,6 +117,66 @@ module PactBroker
             it "retrieves the latest verification for the pact's consumer and provider and specified tag" do
               expect(PactBroker::Verifications::Service).to receive(:find_latest_verification_for).with(anything, anything, 'prod')
               subject
+            end
+          end
+
+          context "when retrieving the badge for a matrix row by tag" do
+            before do
+              allow(PactBroker::Matrix::Service).to receive(:find_for_consumer_and_provider_with_tags).and_return(row)
+              allow(PactBroker::Verifications::Service).to receive(:find_by_id).and_return(verification)
+            end
+
+            let(:path) { "/matrix/provider/provider/latest/master/consumer/consumer/latest/prod/badge" }
+            let(:row) { { verification_id: 1 } }
+
+
+            it "looks up the matrix row" do
+              expect(PactBroker::Matrix::Service).to receive(:find_for_consumer_and_provider_with_tags).with(
+                hash_including(consumer_name: 'consumer',
+                provider_name: 'provider',
+                tag: 'prod',
+                provider_tag: 'master'
+              ))
+              subject
+            end
+
+            context "when a matrix row is found" do
+              context "when there is a verification_id" do
+                it "looks up the verification" do
+                  expect(PactBroker::Verifications::Service).to receive(:find_by_id).with(1)
+                  subject
+                end
+
+                it "returns the badge" do
+                  expect(subject.body).to eq "badge"
+                end
+              end
+
+              context "when there is not a verification_id" do
+                let(:row) { {} }
+
+                it "does not look up the verification" do
+                  expect(PactBroker::Verifications::Service).to_not receive(:find_by_id)
+                  subject
+                end
+
+                it "returns the badge" do
+                  expect(subject.body).to eq "badge"
+                end
+              end
+            end
+
+            context "when a matrix row is not found" do
+              let(:row) { nil }
+
+              it "does not look up the verification" do
+                expect(PactBroker::Verifications::Service).to_not receive(:find_by_id)
+                subject
+              end
+
+              it "returns the badge" do
+                expect(subject.body).to eq "badge"
+              end
             end
           end
         end
