@@ -46,7 +46,8 @@ module PactBroker
             lines: lines,
             title: "The Matrix",
             consumer_name: params[:consumer_name],
-            provider_name: params[:provider_name]
+            provider_name: params[:provider_name],
+            selectors: create_selector_objects(selectors)
           }
           haml :'matrix/show', {locals: locals, layout: :'layouts/main'}
         end
