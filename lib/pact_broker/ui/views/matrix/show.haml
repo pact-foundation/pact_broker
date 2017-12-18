@@ -7,6 +7,8 @@
   %script{type: 'text/javascript', src:'/javascripts/matrix.js'}
   %script{type: 'text/javascript', src:'/js/bootstrap.min.js'}
 
+-# This code is an embarassment. Sorry. Just trying to get as much stuff done in the little time I have.
+
 .container
   %h1.page-header
     = title
@@ -21,7 +23,7 @@
       .selector
         %label{for: "pacticipant#{index}"}
           Pacticipant name
-          %input{name: 'q[]pacticipant', id: "pacticipant1#{index}", value: selector.pacticipant_name}
+        %input{name: 'q[]pacticipant', id: "pacticipant1#{index}", value: selector.pacticipant_name}
 
         .input-group
           %input{type: 'radio', name: "ignorethis#{index}", class: 'specify-all-versions version-selectorizor', value: 'all_versions', id: "pacticipant#{index}_all_versions", checked: selector.specify_all_versions_checked}
@@ -41,7 +43,26 @@
           %input{name: 'q[]tag', type: 'text', id: "pacticipant#{index}_tag", class: "by-latest-tag", value: selector.tag}
           %input{name: 'q[]latest', value: 'true', hidden: true, class: 'latest-flag'}
 
+    %div.top-of-group
+      .input-group
+        %input{type: 'radio', name: "latestby", class: '', value: 'cvpv', id: 'cvpv', checked: options.cvpv_checked}
+        %label{for: 'cvpv'}
+          Show latest row for each consumer version/provider version
     %div
+      .input-group
+        %input{type: 'radio', name: "latestby", class: '', value: 'cvp', id: 'cvp', checked: options.cvp_checked}
+        %label{for: 'cvp'}
+          Show latest row for each consumer version/provider
+    %div
+      .input-group
+        %input{type: 'radio', name: "latestby", class: '', value: '', id: 'all_rows', checked: options.all_rows_checked}
+        %label{for: 'all_rows'}
+          Show all rows
+    %div.top-of-group
+      %label{for: "limit"}
+        Limit
+      %input{name: 'limit', id: "limit", value: options.limit}
+    %div.top-of-group
       %input{type: 'submit'}
 
 
