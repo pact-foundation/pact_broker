@@ -11,6 +11,7 @@ DATABASE_CREDENTIALS = {adapter: "sqlite", database: "pact_broker_database.sqlit
 # For postgres:
 #
 # $ psql postgres -c "CREATE DATABASE pact_broker;"
+# $ psql postgres -c "CREATE ROLE pact_broker WITH LOGIN PASSWORD 'pact_broker';"
 # $ psql postgres -c "GRANT ALL PRIVILEGES ON DATABASE pact_broker TO pact_broker;"
 #
 # DATABASE_CREDENTIALS = {adapter: "postgres", database: "pact_broker", username: 'pact_broker', password: 'pact_broker', :encoding => 'utf8'}
