@@ -127,11 +127,11 @@ In a hurry? Hate having to run your own infrastructure? Check out the [Hosted Pa
 
 #### Container solutions
 
-You can use the [Pact Broker Docker container][docker] or [Terraform on AWS][terraform]
+You can use the [Pact Broker Docker image][docker] or [Terraform on AWS][terraform]
 
 #### Rolling your own
 
-* Are you sure you don't just want to use the [Pact Broker Docker container][docker] image? No Docker at your company yet? Ah well, keep reading.
+* Are you sure you don't just want to use the [Pact Broker Docker image][docker]? No Docker at your company yet? Ah well, keep reading.
 * Create a PostgreSQL (recommended) or MySQL (not recommended, see following note) database.
  * __Note:__ It is recommended to use __PostgreSQL__ as it will support JSON search features that are planned in the future, however MySQL the other [semi supported](https://github.com/pact-foundation/pact_broker/issues/33) database.
  * Check the [travis.yml][travisyml] file to make sure you're using the version of the database that we're currently running our tests against.
