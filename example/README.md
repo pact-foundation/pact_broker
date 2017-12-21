@@ -28,11 +28,13 @@ bundle exec rackup
 
 ## Run with postgres database
 
-Uncomment [Gemfile line #5](Gemfile#L5)
+Uncomment `gem 'pg'` in the [Gemfile](Gemfile)
 
-Comment out [config.ru line #9](config.ru#L9)
+Comment out `gem 'sqlite3'` in the [Gemfile](Gemfile)
 
-Uncomment [config.ru line #17](config.ru#L17)
+Comment out the line with `DATABASE_CREDENTIALS = {adapter: "sqlite"...` in the [config.ru](config.ru#L9).
+
+Uncomment the line with `DATABASE_CREDENTIALS = {adapter: "postgres"...`. in the [config.ru](config.ru#L17).
 
 Set up postgres database
 
