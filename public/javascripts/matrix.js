@@ -1,5 +1,6 @@
 function handleRadioButtonClicked() {
   selectApplicableTextBox($(this));
+  clearOtherTextBoxes($(this));
 }
 
 function selectApplicableTextBox(selectedRadioButton) {
@@ -15,9 +16,9 @@ function selectApplicableRadioButton(selectedTextBox) {
   selectedTextBox.closest('.input-group').find('.version-selectorizor').prop('checked', 'checked');
 }
 
-function clearOtherTextBoxes(selectedTextBox) {
-  selectedTextBox.closest('.selector').find('input[type="text"]').each(function(){
-    if(!selectedTextBox.is($(this))) {
+function clearOtherTextBoxes(clickedElement) {
+  clickedElement.closest('.selector').find('input[type="text"]').each(function(){
+    if(!$.contains(clickedElement.closest('.input-group')[0], $(this)[0])) {
       $(this).prop('value', '');
     }
   });

@@ -63,6 +63,7 @@ module PactBroker
             o.tag_disabled = o.tag ? nil : 'disabled'
             o.version_disabled = o.pacticipant_version_number ? nil : 'disabled'
             o.specify_latest_tag_checked = o.tag ? 'checked' : nil
+            o.specify_latest_checked = o.latest ? 'checked' : nil
             o.specify_version_checked = o.pacticipant_version_number ? 'checked' : nil
             o.specify_all_versions_checked = !(o.tag || o.pacticipant_version_number) ? 'checked' : nil
             o

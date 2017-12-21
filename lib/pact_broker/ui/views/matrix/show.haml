@@ -37,6 +37,12 @@
           %input{name: 'q[]version', type: 'text', id: "pacticipant#{index}_version", class: 'by-version', value: selector.pacticipant_version_number}
 
         .input-group
+          %input{type: 'radio', name: "ignorethis#{index}", class: 'specify-latest version-selectorizor', value: 'tag', id: "pacticipant#{index}_latest", checked: selector.specify_latest_checked}
+          %label{for: "pacticipant#{index}_latest"}
+            Latest version
+          %input{name: 'q[]latest', value: 'true', hidden: true, class: 'latest-flag'}
+
+        .input-group
           %input{type: 'radio', name: "ignorethis#{index}", class: 'specify-latest-tag version-selectorizor', value: 'tag', id: "pacticipant#{index}_by_tag", checked: selector.specify_latest_tag_checked}
           %label{for: "pacticipant#{index}_by_tag"}
             Latest version with tag
