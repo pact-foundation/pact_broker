@@ -10,7 +10,7 @@ module PactBroker
         allow(PactBroker::Webhooks::Service).to receive(:update_triggered_webhook_status)
       end
 
-      let(:triggered_webhook) { instance_double("PactBroker::Webhooks::TriggeredWebhook", webhook_uuid: '1234') }
+      let(:triggered_webhook) { instance_double("PactBroker::Webhooks::TriggeredWebhook", webhook_uuid: '1234', id: 1) }
       let(:result) { instance_double("PactBroker::Domain::WebhookExecutionResult", success?: success)}
       let(:success) { true }
 

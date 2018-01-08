@@ -45,7 +45,7 @@ module PactBroker
       end
 
       def handle_error e
-        log_error e
+        log_error e, "Error executing triggered webhook with ID #{triggered_webhook ? triggered_webhook.id : nil}"
         handle_failure
       end
 

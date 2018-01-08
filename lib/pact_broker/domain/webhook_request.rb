@@ -104,8 +104,13 @@ module PactBroker
 
       def do_request uri, req
         logger.info "Making webhook #{uuid} request #{to_s}"
-        Net::HTTP.start(uri.hostname, uri.port,
-          :use_ssl => uri.scheme == 'https', cert_store: cert_store) do |http|
+        options = {}
+        if uri.scheme == 'https'
+          options[:use_ssl] = true
+          options[:verify_mode] = OpenSSL::SSL::VERIFY_PEER
+          options[:cert_store] = cert_store
+        end
+        Net::HTTP.start(uri.hostname, uri.port, options) do |http|
           http.request req
         end
       end

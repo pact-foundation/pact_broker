@@ -14,6 +14,7 @@ module PactBroker
         cert_store.set_default_paths
         find_all_certificates.each do | certificate |
           begin
+            logger.debug("Loading certificate #{certificate.subject} in to cert store")
             cert_store.add_cert(certificate)
           rescue StandardError => e
             log_error e, "Error adding certificate object #{certificate.to_s} to store"
