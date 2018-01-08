@@ -1,6 +1,6 @@
 require 'pact_broker/domain/webhook_request'
 
-describe "executing a webhook with a self signed certificate" do
+describe "executing a webhook to a server with a self signed certificate" do
   let(:td) { TestDataBuilder.new }
   before(:all) do
     @pipe = IO.popen("bundle exec ruby spec/support/ssl_webhook_server.rb")
@@ -14,16 +14,24 @@ describe "executing a webhook with a self signed certificate" do
   end
 
   let(:pact) { td.create_pact_with_hierarchy.and_return(:pact) }
-  let!(:certificate) do
-    td.create_certificate('spec/fixtures/certificates/cacert.pem')
-      .create_certificate('spec/fixtures/certificates/cert.pem')
-  end
 
   subject { webhook_request.execute(pact) }
 
-  it "makes a request", pending: "can't work out why this is failing" do
-    puts subject.error unless subject.success?
-    expect(subject.success?).to be true
+  context "without the correct cacert" do
+    it "fails" do
+      expect(subject.success?).to be false
+    end
+  end
+
+  context "with the correct cacert" do
+    let!(:certificate) do
+      td.create_certificate('spec/fixtures/certificates/cacert.pem')
+    end
+
+    it "succeeds" do
+      puts subject.error unless subject.success?
+      expect(subject.success?).to be true
+    end
   end
 
   after(:all) do

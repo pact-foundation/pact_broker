@@ -1,49 +1,35 @@
 if __FILE__ == $0
 
+  SSL_KEY = 'spec/fixtures/certificates/key.pem'
+  SSL_CERT = 'spec/fixtures/certificates/cert.pem'
+
   trap(:INT) do
     @server.shutdown
     exit
   end
 
-  def webrick_opts port, options
+  def webrick_opts port
+    certificate = OpenSSL::X509::Certificate.new(File.read(SSL_CERT))
+    cert_name = certificate.subject.to_a.collect{|a| a[0..1] }
     {
-      Port: port.nil? ? 0 : port,
+      Port: port,
       Host: "0.0.0.0",
       AccessLog: [],
-      SSLCertificate: OpenSSL::X509::Certificate.new(File.open(options[:sslcert]).read),
-      SSLPrivateKey: OpenSSL::PKey::RSA.new(File.open(options[:sslkey]).read),
+      SSLCertificate: certificate,
+      SSLPrivateKey: OpenSSL::PKey::RSA.new(File.read(SSL_KEY)),
       SSLEnable: true,
-      SSLCertName: [ %w[CN localhost] ]
+      SSLCertName: cert_name
     }
   end
 
   app = ->(env) { puts "hello"; [200, {}, ['Hello world' + "\n"]] }
 
   require 'webrick'
-  require 'webrick/ssl'
   require 'webrick/https'
   require 'rack'
   require 'rack/handler/webrick'
-  require 'net/http'
-  require 'openssl'
 
-  options = {
-    ssl: true,
-    sslkey: 'spec/fixtures/certificates/key.pem',
-    sslcert: 'spec/fixtures/certificates/cert.pem'
-  }
-
-  #WEBrick::Utils::getservername
-
-  opts = {
-    Port: 4444,
-    Host: "localhost",
-    AccessLog: [],
-    SSLEnable: true,
-    SSLCertName: [["CN", "localhost"]]
-  }
-
-  opts = webrick_opts(4444, options)
+  opts = webrick_opts(4444)
 
   Rack::Handler::WEBrick.run(app, opts) do |server|
     @server = server
