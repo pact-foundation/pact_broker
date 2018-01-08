@@ -3,19 +3,12 @@ require 'pact_broker/db/migrate'
 require 'pact_broker/db/version'
 require 'sequel'
 require 'yaml'
+require_relative 'database/table_dependency_checker'
 
 Sequel.extension :migration
 
 module PactBroker
   module Database
-
-    # A manually ordered list of all the tables in the project.
-    # This is required so that the tables can be truncated in the right order
-    # without upsetting the foreign key constraints.
-    # I'm sure there is a better way to do this, but there are
-    # more urgent things that I need to spend my time on right now.
-
-    TABLES = [:certificates, :labels, :webhook_executions, :triggered_webhooks, :config, :pacts, :pact_version_contents, :tags, :verifications, :pact_publications, :pact_versions,  :webhook_headers, :webhooks, :versions, :pacticipants].freeze
 
     extend self
 
@@ -41,25 +34,11 @@ module PactBroker
     def drop_objects
       drop_views
       drop_tables
-      check_for_undeleted_tables
     end
 
     def drop_tables
-      # Attempt to drop the tables in order of the most to least foreign keys
-      roughly_ordered_tables = database.tables.collect{|it| [it, database.foreign_key_list(it).size] }.sort{|one, two| two.last <=> one.last }.collect(&:first)
-      still_existing_tables = roughly_ordered_tables.dup
-
-      while still_existing_tables.size > 0 do
-        roughly_ordered_tables.each do | table_name |
-          if database.table_exists?(table_name)
-            begin
-              database.drop_table(table_name, cascade: psql?)
-              still_existing_tables.delete(table_name)
-            rescue StandardError => e
-              puts "Could not drop #{table_name}, this is probably OK, trying again..., #{e}"
-            end
-          end
-        end
+      ordered_tables.each do | table_name |
+        database.drop_table(table_name, cascade: psql?)
       end
     end
 
@@ -72,12 +51,6 @@ module PactBroker
           # Cascade will have deleted some views already with pg
           raise e unless e.cause.class.name == 'PG::UndefinedTable'
         end
-      end
-    end
-
-    def check_for_undeleted_tables
-      if database.tables.any?
-        raise "Please add the following table(s) to the list of TABLES to drop, in the file where this error was raised: #{database.tables.join(', ')}"
       end
     end
 
@@ -99,7 +72,7 @@ module PactBroker
     end
 
     def truncate
-      TABLES.each do | table_name |
+      ordered_tables.each do | table_name |
         if database.table_exists?(table_name)
           begin
             database[table_name].delete
@@ -123,6 +96,10 @@ module PactBroker
     end
 
     private
+
+    def ordered_tables
+      TableDependencyCalculator.call(database)
+    end
 
     def ensure_not_production
       raise "Cannot delete production database using this task" if env == 'production'
