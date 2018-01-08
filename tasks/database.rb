@@ -10,12 +10,12 @@ module PactBroker
   module Database
 
     # A manually ordered list of all the tables in the project.
-    # This is required so that the tables can be dropped in the right order
+    # This is required so that the tables can be truncated in the right order
     # without upsetting the foreign key constraints.
     # I'm sure there is a better way to do this, but there are
     # more urgent things that I need to spend my time on right now.
 
-    TABLES = [:saas_sessions, :labels, :webhook_executions, :triggered_webhooks, :config, :pacts, :pact_version_contents, :tags, :verifications, :pact_publications, :pact_versions,  :webhook_headers, :webhooks, :versions, :pacticipants].freeze
+    TABLES = [:saas_sessions, :certificates, :labels, :webhook_executions, :triggered_webhooks, :config, :pacts, :pact_version_contents, :tags, :verifications, :pact_publications, :pact_versions,  :webhook_headers, :webhooks, :versions, :pacticipants].freeze
 
     extend self
 
@@ -45,9 +45,20 @@ module PactBroker
     end
 
     def drop_tables
-      (TABLES + [:schema_info, :schema_migrations]).each do | table_name |
-        if database.table_exists?(table_name)
-          database.drop_table(table_name, cascade: psql?)
+      # Attempt to drop the tables in order of the most to least foreign keys
+      roughly_ordered_tables = database.tables.collect{|it| [it, database.foreign_key_list(it).size] }.sort{|one, two| two.last <=> one.last }.collect(&:first)
+      still_existing_tables = roughly_ordered_tables.dup
+
+      while still_existing_tables.size > 0 do
+        roughly_ordered_tables.each do | table_name |
+          if database.table_exists?(table_name)
+            begin
+              database.drop_table(table_name, cascade: psql?)
+              still_existing_tables.delete(table_name)
+            rescue StandardError => e
+              puts "Could not drop #{table_name}, this is probably OK, trying again..., #{e}"
+            end
+          end
         end
       end
     end
