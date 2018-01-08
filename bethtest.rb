@@ -1,103 +1,57 @@
-require 'set'
+require 'openssl'
+require 'uri'
+require 'net/http'
 
-class Link
-  def initialize from, to
-    @from = from
-    @to = to
-  end
+cert_store = OpenSSL::X509::Store.new
+cert_store.set_default_paths
+certificate = OpenSSL::X509::Certificate.new(DATA.read)
+puts "Adding certificate #{certificate.subject}"
+cert_store.add_cert(certificate)
 
-  def include? endpoint
-    @from == endpoint || @to == endpoint
-  end
+uri = URI('https://self-signed.badssl.com/')
+req = Net::HTTP::Get.new(uri)
 
-  def connected? other
-    (self.to_a & other.to_a).any?
-  end
+options = {
+  :use_ssl => uri.scheme == 'https',
+  verify_depth: 5,
+  verify_mode: OpenSSL::SSL::VERIFY_PEER,
+  cert_store: cert_store
+}
 
-  def to_s
-    "#{@from} - #{@to}"
-  end
-
-  def to_a
-    [@from, @to]
-  end
-
+response = Net::HTTP.start(uri.hostname, uri.port, options) do |http|
+  http.request req
 end
 
-def unique_nodes links
-  links.collect(&:to_a).flatten.uniq.sort
-end
+puts response
 
-def nodes_connected_to_node node, links
-  unique_nodes links.select{|l|l.include?(node)}
-end
+__END__
 
-def connected_links link, link_pool
-  link_pool.select{|l| l.connected?(link)}
-end
-
-def nodes_connected_to_nodes_within_pool nodes, links, node_pool
-  nodes.collect{ | node | nodes_connected_to_node(node, links) }.flatten & node_pool
-end
-
-def connected_links_still_within_pool links, link_pool
-  links.collect{ | link | connected_links(link, link_pool) }.flatten.uniq
-end
-
-def split_into_clusters_of_nodes links
-  node_pool =  unique_nodes links
-  groups = []
-
-  while node_pool.any?
-    group = []
-    groups << group
-    connected_nodes = [node_pool.first]
-
-    while connected_nodes.any?
-      group.concat(connected_nodes)
-      node_pool = node_pool - connected_nodes
-      connected_nodes = nodes_connected_to_nodes_within_pool connected_nodes, links, node_pool
-    end
-  end
-
-  groups
-end
-
-def recurse link, link_pool
-  connected_links = link_pool.select{ | candidate| candidate.connected?(link) }
-  if connected_links.empty?
-    [link]
-  else
-    ([link] + connected_links.map{| connected_link| recurse(connected_link, link_pool - connected_links)}.flatten).uniq
-  end
-end
-
-def recurse_groups groups, link_pool
-  if link_pool.empty?
-    groups
-  else
-    first, *rest = *link_pool
-    group = recurse first, rest
-    recurse_groups(groups + [group], link_pool - group)
-  end
-end
-
-def split_into_clusters_of_links links
-  recurse_groups [], links.dup
-end
-
-links = [Link.new('A', 'B'), Link.new('A', 'C'), Link.new('C', 'D'), Link.new('D', 'E'), Link.new('E','A'),
-  Link.new('Y', 'Z'), Link.new('X', 'Y'),
-  Link.new('M', 'N'), Link.new('N', 'O'), Link.new('O', 'P'), Link.new('P','Q')]
-
-
-groups = split_into_clusters_of_nodes links
-
-puts groups.collect{ | group| "group = #{group.join(" ")}"}
-
-groups = split_into_clusters_of_links links
-puts groups.collect{ | group| "group = #{group.join(", ")}"}
-
-
-
-
+-----BEGIN CERTIFICATE-----
+MIIE8DCCAtigAwIBAgIJAM28Wkrsl2exMA0GCSqGSIb3DQEBCwUAMH8xCzAJBgNV
+BAYTAlVTMRMwEQYDVQQIDApDYWxpZm9ybmlhMRYwFAYDVQQHDA1TYW4gRnJhbmNp
+c2NvMQ8wDQYDVQQKDAZCYWRTU0wxMjAwBgNVBAMMKUJhZFNTTCBJbnRlcm1lZGlh
+dGUgQ2VydGlmaWNhdGUgQXV0aG9yaXR5MB4XDTE2MDgwODIxMTcwNVoXDTE4MDgw
+ODIxMTcwNVowgagxCzAJBgNVBAYTAlVTMRMwEQYDVQQIDApDYWxpZm9ybmlhMRYw
+FAYDVQQHDA1TYW4gRnJhbmNpc2NvMTYwNAYDVQQKDC1CYWRTU0wgRmFsbGJhY2su
+IFVua25vd24gc3ViZG9tYWluIG9yIG5vIFNOSS4xNDAyBgNVBAMMK2JhZHNzbC1m
+YWxsYmFjay11bmtub3duLXN1YmRvbWFpbi1vci1uby1zbmkwggEiMA0GCSqGSIb3
+DQEBAQUAA4IBDwAwggEKAoIBAQDCBOz4jO4EwrPYUNVwWMyTGOtcqGhJsCK1+ZWe
+sSssdj5swEtgTEzqsrTAD4C2sPlyyYYC+VxBXRMrf3HES7zplC5QN6ZnHGGM9kFC
+xUbTFocnn3TrCp0RUiYhc2yETHlV5NFr6AY9SBVSrbMo26r/bv9glUp3aznxJNEx
+tt1NwMT8U7ltQq21fP6u9RXSM0jnInHHwhR6bCjqN0rf6my1crR+WqIW3GmxV0Tb
+ChKr3sMPR3RcQSLhmvkbk+atIgYpLrG6SRwMJ56j+4v3QHIArJII2YxXhFOBBcvm
+/mtUmEAnhccQu3Nw72kYQQdFVXz5ZD89LMOpfOuTGkyG0cqFAgMBAAGjRTBDMAkG
+A1UdEwQCMAAwNgYDVR0RBC8wLYIrYmFkc3NsLWZhbGxiYWNrLXVua25vd24tc3Vi
+ZG9tYWluLW9yLW5vLXNuaTANBgkqhkiG9w0BAQsFAAOCAgEAsuFs0K86D2IB20nB
+QNb+4vs2Z6kECmVUuD0vEUBR/dovFE4PfzTr6uUwRoRdjToewx9VCwvTL7toq3dd
+oOwHakRjoxvq+lKvPq+0FMTlKYRjOL6Cq3wZNcsyiTYr7odyKbZs383rEBbcNu0N
+c666/ozs4y4W7ufeMFrKak9UenrrPlUe0nrEHV3IMSF32iV85nXm95f7aLFvM6Lm
+EzAGgWopuRqD+J0QEt3WNODWqBSZ9EYyx9l2l+KI1QcMalG20QXuxDNHmTEzMaCj
+4Zl8k0szexR8rbcQEgJ9J+izxsecLRVp70siGEYDkhq0DgIDOjmmu8ath4yznX6A
+pYEGtYTDUxIvsWxwkraBBJAfVxkp2OSg7DiZEVlMM8QxbSeLCz+63kE/d5iJfqde
+cGqX7rKEsVW4VLfHPF8sfCyXVi5sWrXrDvJm3zx2b3XToU7EbNONO1C85NsUOWy4
+JccoiguV8V6C723IgzkSgJMlpblJ6FVxC6ZX5XJ0ZsMI9TIjibM2L1Z9DkWRCT6D
+QjuKbYUeURhScofQBiIx73V7VXnFoc1qHAUd/pGhfkCUnUcuBV1SzCEhjiwjnVKx
+HJKvc9OYjJD0ZuvZw9gBrY7qKyBX8g+sglEGFNhruH8/OhqrV8pBXX/EWY0fUZTh
+iywmc6GTT7X94Ze2F7iB45jh7WQ=
+-----END CERTIFICATE-----
