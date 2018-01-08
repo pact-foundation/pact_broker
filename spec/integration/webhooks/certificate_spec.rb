@@ -26,6 +26,7 @@ describe "executing a webhook to a server with a self signed certificate" do
   context "with the correct cacert" do
     let!(:certificate) do
       td.create_certificate('spec/fixtures/certificates/cacert.pem')
+        .create_certificate('spec/fixtures/certificates/cert.pem')
     end
 
     it "succeeds" do
