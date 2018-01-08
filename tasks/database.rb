@@ -15,7 +15,7 @@ module PactBroker
     # I'm sure there is a better way to do this, but there are
     # more urgent things that I need to spend my time on right now.
 
-    TABLES = [:labels, :webhook_executions, :triggered_webhooks, :config, :pacts, :pact_version_contents, :tags, :verifications, :pact_publications, :pact_versions,  :webhook_headers, :webhooks, :versions, :pacticipants].freeze
+    TABLES = [:certificates, :labels, :webhook_executions, :triggered_webhooks, :config, :pacts, :pact_version_contents, :tags, :verifications, :pact_publications, :pact_versions,  :webhook_headers, :webhooks, :versions, :pacticipants].freeze
 
     extend self
 
