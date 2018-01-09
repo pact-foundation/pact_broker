@@ -4,6 +4,7 @@ raise "Please supply database path" unless ARGV[0]
 
 $LOAD_PATH.unshift './lib'
 $LOAD_PATH.unshift './spec'
+$LOAD_PATH.unshift './tasks'
 ENV['RACK_ENV'] = 'development'
 require 'sequel'
 require 'logger'
@@ -20,13 +21,10 @@ require 'support/test_data_builder'
 # require 'pry'; pry(binding);
 # exit
 
-tables_to_clean = [:certificates, :labels, :webhook_executions, :triggered_webhooks, :verifications, :pact_publications, :pact_versions, :pacts, :pact_version_contents, :tags, :versions, :webhook_headers, :webhooks, :pacticipants]
-
-tables_to_clean.each do | table_name |
-  connection[table_name].delete if connection.table_exists?(table_name)
+require 'database/table_dependency_checker'
+PactBroker::Database::TableDependencyCalculator.call(connection).each do | table_name |
+  connection[table_name].delete
 end
-
-
 
 class TestDataBuilder
   def method_missing *args
@@ -52,13 +50,14 @@ end
 #   .create_pact
 
 
+  # .create_webhook(method: 'GET', url: 'https://localhost:9393?url=${pactbroker.pactUrl}', body: '${pactbroker.pactUrl}')
 TestDataBuilder.new
   .create_certificate
   .create_consumer("Foo")
   .create_label("microservice")
   .create_provider("Bar")
   .create_label("microservice")
-  .create_webhook(method: 'GET', url: 'https://localhost:9393?url=${pactbroker.pactUrl}', body: '${pactbroker.pactUrl}')
+  .create_webhook(method: 'GET', url: 'https://self-signed.badssl.com')
   .create_consumer_version("1.2.100")
   .publish_pact
   .create_verification(provider_version: "1.4.234", success: true, execution_date: DateTime.now - 15)

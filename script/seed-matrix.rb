@@ -15,11 +15,9 @@ PactBroker::DB.connection = connection
 require 'pact_broker'
 require 'support/test_data_builder'
 
-
-tables_to_clean = [:labels, :webhook_executions, :triggered_webhooks, :verifications, :pact_publications, :pact_versions, :pacts, :pact_version_contents, :tags, :versions, :webhook_headers, :webhooks, :pacticipants]
-
-tables_to_clean.each do | table_name |
-  connection[table_name].delete if connection.table_exists?(table_name)
+require 'database/table_dependency_checker'
+PactBroker::Database::TableDependencyCalculator.call(connection).each do | table_name |
+  connection[table_name].delete
 end
 
 =begin
