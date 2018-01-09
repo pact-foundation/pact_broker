@@ -247,8 +247,8 @@ class TestDataBuilder
     self
   end
 
-  def create_certificate path = 'spec/fixtures/single-certificate.pem'
-    PactBroker::Certificates::Certificate.create(uuid: SecureRandom.urlsafe_base64, content: File.read(path))
+  def create_certificate options = {path: 'spec/fixtures/single-certificate.pem'}
+    PactBroker::Certificates::Certificate.create(uuid: SecureRandom.urlsafe_base64, content: File.read(options[:path]))
     self
   end
 

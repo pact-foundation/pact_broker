@@ -21,7 +21,7 @@ require 'support/test_data_builder'
 # require 'pry'; pry(binding);
 # exit
 
-require 'database/table_dependency_checker'
+require 'database/table_dependency_calculator'
 PactBroker::Database::TableDependencyCalculator.call(connection).each do | table_name |
   connection[table_name].delete
 end
@@ -52,7 +52,7 @@ end
 
   # .create_webhook(method: 'GET', url: 'https://localhost:9393?url=${pactbroker.pactUrl}', body: '${pactbroker.pactUrl}')
 TestDataBuilder.new
-  .create_certificate
+  .create_certificate(path: 'spec/fixtures/certificates/self-signed.badssl.com.pem')
   .create_consumer("Foo")
   .create_label("microservice")
   .create_provider("Bar")
