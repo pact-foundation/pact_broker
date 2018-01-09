@@ -36,6 +36,10 @@ module PactBroker
         verification_repository.find(params.fetch(:consumer_name), params.fetch(:provider_name), params.fetch(:pact_version_sha), params.fetch(:verification_number))
       end
 
+      def find_by_id id
+        PactBroker::Domain::Verification.find(id: id)
+      end
+
       def find_latest_verifications_for_consumer_version params
         verification_repository.find_latest_verifications_for_consumer_version params[:consumer_name], params[:consumer_version_number]
       end

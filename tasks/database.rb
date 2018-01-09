@@ -3,13 +3,12 @@ require 'pact_broker/db/migrate'
 require 'pact_broker/db/version'
 require 'sequel'
 require 'yaml'
+require_relative 'database/table_dependency_calculator'
 
 Sequel.extension :migration
 
 module PactBroker
   module Database
-
-    TABLES = [:labels, :webhook_events, :webhook_executions, :triggered_webhooks, :config, :pacts, :pact_version_contents, :tags, :verifications, :pact_publications, :pact_versions,  :webhook_headers, :webhooks, :versions, :pacticipants].freeze
 
     extend self
 
@@ -38,10 +37,8 @@ module PactBroker
     end
 
     def drop_tables
-      (TABLES + [:schema_info, :schema_migrations]).each do | table_name |
-        if database.table_exists?(table_name)
-          database.drop_table(table_name, cascade: psql?)
-        end
+      ordered_tables.each do | table_name |
+        database.drop_table(table_name, cascade: psql?)
       end
     end
 
@@ -75,7 +72,7 @@ module PactBroker
     end
 
     def truncate
-      TABLES.each do | table_name |
+      ordered_tables.each do | table_name |
         if database.table_exists?(table_name)
           begin
             database[table_name].delete
@@ -99,6 +96,10 @@ module PactBroker
     end
 
     private
+
+    def ordered_tables
+      TableDependencyCalculator.call(database)
+    end
 
     def ensure_not_production
       raise "Cannot delete production database using this task" if env == 'production'

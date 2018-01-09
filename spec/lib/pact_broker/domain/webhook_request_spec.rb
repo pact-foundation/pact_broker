@@ -3,9 +3,7 @@ require 'pact_broker/domain/webhook_request'
 require 'webmock/rspec'
 
 module PactBroker
-
   module Domain
-
     describe WebhookRequest do
       before do
         allow(PactBroker::Api::PactBrokerUrls).to receive(:pact_url).and_return('http://example.org/pact-url')
@@ -33,7 +31,6 @@ module PactBroker
 
       let(:logs) { subject.execute(pact, options).logs }
 
-
       describe "description" do
         it "returns a brief description of the HTTP request" do
           expect(subject.description).to eq 'POST example.org'
@@ -55,7 +52,6 @@ module PactBroker
       end
 
       describe "execute" do
-
         let!(:http_request) do
           stub_request(:post, "http://example.org/hook").
             with(:headers => {'Content-Type'=>'text/plain'}, :body => 'body').

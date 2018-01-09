@@ -38,6 +38,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'rack-protection', '~>2.0'
   gem.add_runtime_dependency 'dry-types', '~> 0.10.3' # https://travis-ci.org/pact-foundation/pact_broker/jobs/249448621
   gem.add_runtime_dependency 'table_print', '~> 1.5'
+  gem.add_runtime_dependency 'webrick', '~>1.3.0' # Webrick requires Ruby version >= 2.5.0dev. TODO remove dependency on Pact gem.
 
   gem.add_development_dependency 'bundler-audit', '~>0.4'
   gem.add_development_dependency 'sqlite3', '~>1.3'
@@ -52,4 +53,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'pg', '~>0.21'
   gem.add_development_dependency 'conventional-changelog', '~>1.3'
   gem.add_development_dependency 'bump', '~> 0.5'
+  gem.add_development_dependency 'timecop', '~> 0.9'
 end

@@ -15,11 +15,9 @@ PactBroker::DB.connection = connection
 require 'pact_broker'
 require 'support/test_data_builder'
 
-
-tables_to_clean = [:labels, :webhook_executions, :triggered_webhooks, :verifications, :pact_publications, :pact_versions, :pacts, :pact_version_contents, :tags, :versions, :webhook_headers, :webhooks, :pacticipants]
-
-tables_to_clean.each do | table_name |
-  connection[table_name].delete if connection.table_exists?(table_name)
+require 'database/table_dependency_calculator'
+PactBroker::Database::TableDependencyCalculator.call(connection).each do | table_name |
+  connection[table_name].delete
 end
 
 =begin
@@ -41,6 +39,7 @@ A -> B ->  C
 
 TestDataBuilder.new
   .create_pact_with_hierarchy("A", "1", "B")
+  .create_consumer_version_tag("master")
   .create_verification(provider_version: '1', success: false)
   .create_verification(provider_version: '1', number: 2, success: true)
   .create_verification(provider_version: '2', number: 3)
@@ -48,6 +47,7 @@ TestDataBuilder.new
   .create_provider_version("5")
   .use_consumer("B")
   .use_consumer_version("1")
+  .create_consumer_version_tag("master")
   .create_provider("C")
   .create_pact
   .create_verification(provider_version: '1', success: false)

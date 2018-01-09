@@ -56,5 +56,10 @@ module PactBroker
       require 'pact_broker/matrix/service'
       Matrix::Service
     end
+
+    def certificate_service
+      require 'pact_broker/certificates/service'
+      Certificates::Service
+    end
   end
 end

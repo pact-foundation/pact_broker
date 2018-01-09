@@ -21,6 +21,7 @@ require 'pact_broker/verifications/repository'
 require 'pact_broker/verifications/service'
 require 'pact_broker/tags/repository'
 require 'pact_broker/webhooks/repository'
+require 'pact_broker/certificates/certificate'
 require 'ostruct'
 
 class TestDataBuilder
@@ -245,6 +246,11 @@ class TestDataBuilder
     parameters.delete(:provider_version)
     verification = PactBroker::Domain::Verification.new(parameters)
     @verification = PactBroker::Verifications::Repository.new.create(verification, provider_version_number, @pact)
+    self
+  end
+
+  def create_certificate options = {path: 'spec/fixtures/single-certificate.pem'}
+    PactBroker::Certificates::Certificate.create(uuid: SecureRandom.urlsafe_base64, content: File.read(options[:path]))
     self
   end
 

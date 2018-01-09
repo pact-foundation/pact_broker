@@ -5,6 +5,7 @@ require 'pact_broker/messages'
 require 'net/http'
 require 'pact_broker/webhooks/redact_logs'
 require 'pact_broker/api/pact_broker_urls'
+require 'pact_broker/services'
 
 module PactBroker
 
@@ -23,6 +24,7 @@ module PactBroker
 
       include PactBroker::Logging
       include PactBroker::Messages
+      include PactBroker::Services
 
       attr_accessor :method, :url, :headers, :body, :username, :password, :uuid
 
@@ -102,8 +104,13 @@ module PactBroker
 
       def do_request uri, req
         logger.info "Making webhook #{uuid} request #{to_s}"
-        Net::HTTP.start(uri.hostname, uri.port,
-          :use_ssl => uri.scheme == 'https') do |http|
+        options = {}
+        if uri.scheme == 'https'
+          options[:use_ssl] = true
+          options[:verify_mode] = OpenSSL::SSL::VERIFY_PEER
+          options[:cert_store] = cert_store
+        end
+        Net::HTTP.start(uri.hostname, uri.port, options) do |http|
           http.request req
         end
       end
@@ -159,6 +166,10 @@ module PactBroker
         pact_url = PactBroker::Api::PactBrokerUrls.pact_url(base_url, pact)
         escaped_pact_url = CGI::escape(pact_url)
         url.gsub('${pactbroker.pactUrl}', escaped_pact_url)
+      end
+
+      def cert_store
+        certificate_service.cert_store
       end
     end
   end

@@ -1,13 +1,78 @@
 %body
   %link{rel: 'stylesheet', href: '/css/bootstrap.min.css'}
   %link{rel: 'stylesheet', href: '/stylesheets/index.css'}
+  %link{rel: 'stylesheet', href: '/stylesheets/matrix.css'}
   %script{type: 'text/javascript', src:'/javascripts/jquery-2.1.1.min.js'}
   %script{type: 'text/javascript', src:'/javascripts/jquery.tablesorter.min.js'}
+  %script{type: 'text/javascript', src:'/javascripts/matrix.js'}
   %script{type: 'text/javascript', src:'/js/bootstrap.min.js'}
+
+-# This code is an embarassment. Sorry. Just trying to get as much stuff done in the little time I have.
 
 .container
   %h1.page-header
     = title
+
+  - if defined?(errors) && errors.any?
+    - errors.each do | error |
+      %div.alert.alert-danger
+        = error
+
+  %form{action: '/matrix', onsubmit:'return onSubmit()'}
+    - selectors.each_with_index do | selector, index |
+      .selector
+        %label{for: "pacticipant#{index}"}
+          Pacticipant name
+        %input{name: 'q[]pacticipant', id: "pacticipant1#{index}", value: selector.pacticipant_name}
+
+        .input-group
+          %input{type: 'radio', name: "ignorethis#{index}", class: 'specify-all-versions version-selectorizor', value: 'all_versions', id: "pacticipant#{index}_all_versions", checked: selector.specify_all_versions_checked}
+          %label{for: "pacticipant#{index}_all_versions"}
+            All versions
+
+        .input-group
+          %input{type: 'radio', name: "ignorethis#{index}", class: 'specify-version version-selectorizor', value: 'version', id: "pacticipant#{index}_by_version", checked: selector.specify_version_checked}
+          %label{for: "pacticipant#{index}_by_version"}
+            Version
+          %input{name: 'q[]version', type: 'text', id: "pacticipant#{index}_version", class: 'by-version', value: selector.pacticipant_version_number}
+
+        .input-group
+          %input{type: 'radio', name: "ignorethis#{index}", class: 'specify-latest version-selectorizor', value: 'tag', id: "pacticipant#{index}_latest", checked: selector.specify_latest_checked}
+          %label{for: "pacticipant#{index}_latest"}
+            Latest version
+          %input{name: 'q[]latest', value: 'true', hidden: true, class: 'latest-flag'}
+
+        .input-group
+          %input{type: 'radio', name: "ignorethis#{index}", class: 'specify-latest-tag version-selectorizor', value: 'tag', id: "pacticipant#{index}_by_tag", checked: selector.specify_latest_tag_checked}
+          %label{for: "pacticipant#{index}_by_tag"}
+            Latest version with tag
+          %input{name: 'q[]tag', type: 'text', id: "pacticipant#{index}_tag", class: "by-latest-tag", value: selector.tag}
+          %input{name: 'q[]latest', value: 'true', hidden: true, class: 'latest-flag'}
+
+    %div.top-of-group
+      .input-group
+        %input{type: 'radio', name: "latestby", class: '', value: 'cvpv', id: 'cvpv', checked: options.cvpv_checked}
+        %label{for: 'cvpv'}
+          Show latest row for each consumer version/provider version
+    %div
+      .input-group
+        %input{type: 'radio', name: "latestby", class: '', value: 'cvp', id: 'cvp', checked: options.cvp_checked}
+        %label{for: 'cvp'}
+          Show latest row for each consumer version/provider
+    %div
+      .input-group
+        %input{type: 'radio', name: "latestby", class: '', value: '', id: 'all_rows', checked: options.all_rows_checked}
+        %label{for: 'all_rows'}
+          Show all rows
+    %div.top-of-group
+      %label{for: "limit"}
+        Limit
+      %input{name: 'limit', id: "limit", value: options.limit}
+    %div.top-of-group
+      %input{type: 'submit'}
+
+
+
   %table.table.table-bordered.table-striped{id: 'matrix'}
     %thead
       %th.consumer
@@ -45,13 +110,3 @@
             = line.provider_version_number
         %td.verification-result{class: line.verification_status_class}
           = line.verification_status
-
-:javascript
-  $(function(){
-    $("#matrix").tablesorter({
-      textExtraction : function(node, table, cellIndex){
-        n = $(node);
-        return n.attr('data-sort-value') || n.text();
-      }
-    });
-  });

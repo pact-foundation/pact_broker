@@ -1,0 +1,12 @@
+.input-group {
+  display: inline-block;
+  padding-right: 20px
+}
+
+input[type="radio"] {
+  /*margin-right: 4px;*/
+}
+
+div.top-of-group {
+  margin-top: 10px;
+}

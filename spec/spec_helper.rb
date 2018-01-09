@@ -15,6 +15,9 @@ PactBroker::DB.connection = PactBroker::Database.database = DB::PACT_BROKER_DB
 require 'rack/test'
 require 'pact_broker/api'
 require 'rspec/its'
+require 'webmock/rspec'
+
+WebMock.disable_net_connect!(allow_localhost: true)
 
 Dir.glob("./spec/support/**/*.rb") { |file| require file  }
 
