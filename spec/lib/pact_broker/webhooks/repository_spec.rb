@@ -335,14 +335,14 @@ module PactBroker
             .create_pact
         end
 
-        subject { Repository.new.create_triggered_webhook '1234', td.webhook, td.pact, 'pact_publication' }
+        subject { Repository.new.create_triggered_webhook '1234', td.webhook, td.pact, 'publication' }
 
         it "creates a TriggeredWebhook" do
           expect(subject.webhook_uuid ).to eq td.webhook.uuid
           expect(subject.consumer).to eq td.consumer
           expect(subject.provider).to eq td.provider
           expect(subject.trigger_uuid).to eq '1234'
-          expect(subject.trigger_type).to eq 'pact_publication'
+          expect(subject.trigger_type).to eq 'publication'
         end
 
         it "sets the webhook" do

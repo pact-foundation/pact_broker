@@ -61,7 +61,7 @@ module PactBroker
         it "includes the triggered webhooks properties" do
           expect(subject[:_embedded][:triggeredWebhooks].first).to include(
             status: 'success',
-            triggerType: 'pact_publication',
+            triggerType: 'publication',
             attemptsMade: 1,
             attemptsRemaining: 2
           )
