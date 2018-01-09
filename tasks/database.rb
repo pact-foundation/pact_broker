@@ -3,7 +3,7 @@ require 'pact_broker/db/migrate'
 require 'pact_broker/db/version'
 require 'sequel'
 require 'yaml'
-require_relative 'database/table_dependency_checker'
+require_relative 'database/table_dependency_calculator'
 
 Sequel.extension :migration
 

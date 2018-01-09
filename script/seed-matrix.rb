@@ -15,7 +15,7 @@ PactBroker::DB.connection = connection
 require 'pact_broker'
 require 'support/test_data_builder'
 
-require 'database/table_dependency_checker'
+require 'database/table_dependency_calculator'
 PactBroker::Database::TableDependencyCalculator.call(connection).each do | table_name |
   connection[table_name].delete
 end
