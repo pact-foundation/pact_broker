@@ -84,21 +84,22 @@ module PactBroker
         webhook_repository.find_by_consumer_and_provider consumer, provider
       end
 
-      def self.execute_webhooks pact, event_name = PactBroker::Webhooks::WebhookEvent::DEFAULT_EVENT_NAME
+      def self.execute_webhooks pact, event_name
         webhooks = webhook_repository.find_by_consumer_and_provider_and_event_name pact.consumer, pact.provider, event_name
 
         if webhooks.any?
-          run_later(webhooks, pact)
+          run_later(webhooks, pact, event_name)
         else
           logger.debug "No webhook found for consumer \"#{pact.consumer.name}\" and provider \"#{pact.provider.name}\""
         end
       end
 
-      def self.run_later webhooks, pact
+      def self.run_later webhooks, pact, event_name
         trigger_uuid = next_uuid
         webhooks.each do | webhook |
           begin
-            triggered_webhook = webhook_repository.create_triggered_webhook(trigger_uuid, webhook, pact, PUBLICATION)
+            trigger_type = PUBLICATION
+            triggered_webhook = webhook_repository.create_triggered_webhook(trigger_uuid, webhook, pact, trigger_type)
             logger.info "Scheduling job for #{webhook.description} with uuid #{webhook.uuid}"
             Job.perform_async triggered_webhook: triggered_webhook
           rescue StandardError => e

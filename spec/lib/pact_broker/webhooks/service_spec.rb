@@ -1,6 +1,7 @@
 require 'spec_helper'
 require 'pact_broker/webhooks/service'
 require 'pact_broker/webhooks/triggered_webhook'
+require 'pact_broker/webhooks/webhook_event'
 require 'webmock/rspec'
 require 'sucker_punch/testing/inline'
 
@@ -42,7 +43,7 @@ module PactBroker
           allow(Job).to receive(:perform_async)
         end
 
-        subject { Service.execute_webhooks pact }
+        subject { Service.execute_webhooks pact, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED }
 
         it "finds the webhooks" do
           expect_any_instance_of(PactBroker::Webhooks::Repository).to receive(:find_by_consumer_and_provider_and_event_name).with(consumer, provider, PactBroker::Webhooks::WebhookEvent::DEFAULT_EVENT_NAME)
@@ -51,7 +52,7 @@ module PactBroker
 
         context "when webhooks are found" do
           it "executes the webhook" do
-            expect(Service).to receive(:run_later).with(webhooks, pact)
+            expect(Service).to receive(:run_later).with(webhooks, pact, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED)
             subject
           end
         end
@@ -137,7 +138,7 @@ module PactBroker
             .and_return(:pact)
         end
 
-        subject { PactBroker::Webhooks::Service.execute_webhooks pact }
+        subject { PactBroker::Webhooks::Service.execute_webhooks pact, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED }
 
         it "executes the HTTP request of the webhook" do
           subject
