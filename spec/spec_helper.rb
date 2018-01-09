@@ -15,6 +15,7 @@ PactBroker::DB.connection = PactBroker::Database.database = DB::PACT_BROKER_DB
 require 'rack/test'
 require 'pact_broker/api'
 require 'rspec/its'
+require 'sucker_punch/testing/inline'
 require 'webmock/rspec'
 
 WebMock.disable_net_connect!(allow_localhost: true)
