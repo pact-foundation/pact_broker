@@ -103,13 +103,20 @@ module PactBroker
       end
 
       def find_pact consumer_name, consumer_version, provider_name, pact_version_sha = nil
-        query = pact_version_sha ? AllPactPublications.pact_version_sha(pact_version_sha) : LatestPactPublicationsByConsumerVersion
+        query = if pact_version_sha
+          AllPactPublications
+            .pact_version_sha(pact_version_sha)
+            .reverse_order(:consumer_version_order)
+            .limit(1)
+        else
+          LatestPactPublicationsByConsumerVersion
+        end
         query = query
           .eager(:tags)
           .consumer(consumer_name)
           .provider(provider_name)
         query = query.consumer_version_number(consumer_version) if consumer_version
-        query.limit(1).collect(&:to_domain_with_content)[0]
+        query.collect(&:to_domain_with_content)[0]
       end
 
       def find_all_revisions consumer_name, consumer_version, provider_name
