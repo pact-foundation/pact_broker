@@ -40,6 +40,7 @@ module PactBroker
       ordered_tables.each do | table_name |
         database.drop_table(table_name, cascade: psql?)
       end
+      database.drop_table(:schema_migrations)
     end
 
     def drop_views
