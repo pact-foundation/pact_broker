@@ -22,11 +22,11 @@ module PactBroker
         end
 
         def consumer_version_number
-          short_version_number(@relationship.consumer_version_number)
+          @relationship.consumer_version_number
         end
 
         def provider_version_number
-          short_version_number(@relationship.provider_version_number)
+          @relationship.provider_version_number
         end
 
         def tag_names
