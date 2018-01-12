@@ -12,7 +12,7 @@ module PactBroker
   module Webhooks
     class Service
 
-      PUBLICATION = PactBroker::Webhooks::TriggeredWebhook::TRIGGER_TYPE_PUBLICATION
+      RESOURCE_CREATION = PactBroker::Webhooks::TriggeredWebhook::TRIGGER_TYPE_RESOURCE_CREATION
       USER = PactBroker::Webhooks::TriggeredWebhook::TRIGGER_TYPE_USER
 
       extend Repositories
@@ -98,8 +98,7 @@ module PactBroker
         trigger_uuid = next_uuid
         webhooks.each do | webhook |
           begin
-            trigger_type = PUBLICATION
-            triggered_webhook = webhook_repository.create_triggered_webhook(trigger_uuid, webhook, pact, trigger_type)
+            triggered_webhook = webhook_repository.create_triggered_webhook(trigger_uuid, webhook, pact, RESOURCE_CREATION)
             logger.info "Scheduling job for #{webhook.description} with uuid #{webhook.uuid}"
             Job.perform_async triggered_webhook: triggered_webhook
           rescue StandardError => e
