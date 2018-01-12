@@ -1,17 +1,18 @@
 require 'pact_broker/repositories'
 require 'pact_broker/logging'
-require 'pact_broker/webhooks/job'
 require 'base64'
 require 'securerandom'
+require 'pact_broker/webhooks/job'
 require 'pact_broker/webhooks/triggered_webhook'
 require 'pact_broker/webhooks/status'
+require 'pact_broker/webhooks/webhook_event'
 
 module PactBroker
 
   module Webhooks
     class Service
 
-      PUBLICATION = PactBroker::Webhooks::TriggeredWebhook::TRIGGER_TYPE_PUBLICATION
+      RESOURCE_CREATION = PactBroker::Webhooks::TriggeredWebhook::TRIGGER_TYPE_RESOURCE_CREATION
       USER = PactBroker::Webhooks::TriggeredWebhook::TRIGGER_TYPE_USER
 
       extend Repositories
@@ -83,21 +84,21 @@ module PactBroker
         webhook_repository.find_by_consumer_and_provider consumer, provider
       end
 
-      def self.execute_webhooks pact
-        webhooks = webhook_repository.find_by_consumer_and_provider pact.consumer, pact.provider
+      def self.execute_webhooks pact, event_name
+        webhooks = webhook_repository.find_by_consumer_and_provider_and_event_name pact.consumer, pact.provider, event_name
 
         if webhooks.any?
-          run_later(webhooks, pact)
+          run_later(webhooks, pact, event_name)
         else
           logger.debug "No webhook found for consumer \"#{pact.consumer.name}\" and provider \"#{pact.provider.name}\""
         end
       end
 
-      def self.run_later webhooks, pact
+      def self.run_later webhooks, pact, event_name
         trigger_uuid = next_uuid
         webhooks.each do | webhook |
           begin
-            triggered_webhook = webhook_repository.create_triggered_webhook(trigger_uuid, webhook, pact, PUBLICATION)
+            triggered_webhook = webhook_repository.create_triggered_webhook(trigger_uuid, webhook, pact, RESOURCE_CREATION)
             logger.info "Scheduling job for #{webhook.description} with uuid #{webhook.uuid}"
             Job.perform_async triggered_webhook: triggered_webhook
           rescue StandardError => e

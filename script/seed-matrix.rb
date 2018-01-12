@@ -4,6 +4,7 @@ raise "Please supply database path" unless ARGV[0]
 
 $LOAD_PATH.unshift './lib'
 $LOAD_PATH.unshift './spec'
+$LOAD_PATH.unshift './tasks'
 ENV['RACK_ENV'] = 'development'
 require 'sequel'
 require 'logger'

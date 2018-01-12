@@ -3,7 +3,7 @@ require 'support/test_data_builder'
 describe "Creating a webhook" do
 
   before do
-    TestDataBuilder.new.create_pact_with_hierarchy("Some Consumer", "1", "Some Provider").and_return(:pact)
+    TestDataBuilder.new.create_pact_with_hierarchy("Some Consumer", "1", "Some Provider")
   end
 
   let(:path) { "/webhooks/provider/Some%20Provider/consumer/Some%20Consumer" }
@@ -38,6 +38,9 @@ describe "Creating a webhook" do
 
     let(:webhook_hash) do
       {
+        events: [{
+          name: 'something_happened'
+        }],
         request: {
           method: 'POST',
           url: 'http://example.org',

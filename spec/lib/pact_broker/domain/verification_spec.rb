@@ -5,6 +5,19 @@ module PactBroker
   module Domain
     describe Verification do
 
+      describe "#save" do
+        let!(:verification) do
+          TestDataBuilder.new
+            .create_pact_with_hierarchy("A", "1", "B")
+            .create_verification(test_results: {'some' => 'thing'})
+            .and_return(:verification)
+        end
+
+        it "saves and loads the test_results" do
+          expect(Verification.find(id: verification.id).test_results).to eq({ 'some' => 'thing' })
+        end
+      end
+
       describe "#consumer" do
         let!(:consumer) do
           TestDataBuilder.new

@@ -2,19 +2,24 @@ require_relative 'base_decorator'
 require 'pact_broker/api/decorators/webhook_request_decorator'
 require 'pact_broker/api/decorators/timestamps'
 require 'pact_broker/domain/webhook_request'
+require 'pact_broker/webhooks/webhook_event'
 require 'pact_broker/api/decorators/basic_pacticipant_decorator'
+require_relative 'pact_pacticipant_decorator'
+require_relative 'pacticipant_decorator'
 
 module PactBroker
   module Api
     module Decorators
       class WebhookDecorator < BaseDecorator
 
-        property :request, :class => PactBroker::Domain::WebhookRequest, :extend => WebhookRequestDecorator
+        class WebhookEventDecorator < BaseDecorator
+          property :name
+        end
+
+        property :request, :class => PactBroker::Domain::WebhookRequest, extend: WebhookRequestDecorator
+        collection :events, :class => PactBroker::Webhooks::WebhookEvent, extend: WebhookEventDecorator
 
         include Timestamps
-
-        property :consumer, :extend => PactBroker::Api::Decorators::BasicPacticipantDecorator, :embedded => true, writeable: false
-        property :provider, :extend => PactBroker::Api::Decorators::BasicPacticipantDecorator, :embedded => true, writeable: false
 
         link :self do | options |
           {
@@ -31,9 +36,26 @@ module PactBroker
           }
         end
 
+
+        link :'pb:consumer' do | options |
+          {
+            title: "Consumer",
+            name: represented.consumer.name,
+            href: pacticipant_url(options.fetch(:base_url), represented.consumer)
+          }
+        end
+
+        link :'pb:provider' do | options |
+          {
+            title: "Provider",
+            name: represented.provider.name,
+            href: pacticipant_url(options.fetch(:base_url), represented.provider)
+          }
+        end
+
         link :'pb:pact-webhooks' do | options |
           {
-            title: "All webhooks for the pact between #{represented.consumer.name} and #{represented.provider.name}",
+            title: "All webhooks for consumer #{represented.consumer.name} and provider #{represented.provider.name}",
             href: webhooks_for_pact_url(represented.consumer, represented.provider, options[:base_url])
           }
         end
@@ -43,6 +65,14 @@ module PactBroker
             title: "All webhooks",
             href: webhooks_url(options[:base_url])
           }
+        end
+
+        def from_json represented
+          super.tap do | webhook |
+            if webhook.events == nil
+              webhook.events = [PactBroker::Webhooks::WebhookEvent.new(name: PactBroker::Webhooks::WebhookEvent::DEFAULT_EVENT_NAME)]
+            end
+          end
         end
       end
     end

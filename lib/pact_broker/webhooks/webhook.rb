@@ -9,6 +9,8 @@ module PactBroker
       set_primary_key :id
       associate(:many_to_one, :provider, :class => "PactBroker::Domain::Pacticipant", :key => :provider_id, :primary_key => :id)
       associate(:many_to_one, :consumer, :class => "PactBroker::Domain::Pacticipant", :key => :consumer_id, :primary_key => :id)
+
+      one_to_many :events, :class => "PactBroker::Webhooks::WebhookEvent", :reciprocal => :webhook
       one_to_many :headers, :class => "PactBroker::Webhooks::WebhookHeader", :reciprocal => :webhook
 
       dataset_module do
@@ -41,6 +43,7 @@ module PactBroker
           uuid: uuid,
           consumer: consumer,
           provider: provider,
+          events: events,
           request: Domain::WebhookRequest.new(request_attributes),
           created_at: created_at,
           updated_at: updated_at)

@@ -20,7 +20,7 @@ module PactBroker
           .collect{|it| @connection.foreign_key_list(it)
           .collect{|fk| {from: it, to: fk[:table]} } }
           .flatten
-          .uniq
+          .uniq - [:schema_migrations]
         check(@connection.tables, dependencies, ordered_table_names)
         ordered_table_names
       end

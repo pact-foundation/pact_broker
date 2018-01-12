@@ -37,6 +37,26 @@ module PactBroker
             end
           end
 
+          context "with no events defined" do
+            let(:json) { {}.to_json }
+
+            it "does not contain an error for missing event, as it will be defaulted" do
+              expect(subject.errors.messages[:events]).to be nil
+            end
+          end
+
+          context "with empty events" do
+            let(:json) do
+              valid_webhook_with do |hash|
+                hash['events'] = []
+              end
+            end
+
+            it "contains an error for missing request" do
+              expect(subject.errors[:events]).to eq ["size cannot be less than 1"]
+            end
+          end
+
           context "with no method" do
             let(:json) do
               valid_webhook_with do |hash|

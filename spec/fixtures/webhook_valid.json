@@ -1,4 +1,7 @@
 {
+  "events": [{
+    "name": "something_happened"
+  }],
   "request": {
     "method": "POST",
     "url": "http://some.url",

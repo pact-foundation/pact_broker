@@ -127,8 +127,15 @@ module PactBroker
       end
 
       def log_completion_message options, execution_logger, success
-        execution_logger.info(options[:success_log_message]) if options[:success_log_message] && success
-        execution_logger.info(options[:failure_log_message]) if options[:failure_log_message] && !success
+        if options[:success_log_message] && success
+          execution_logger.info(options[:success_log_message])
+          logger.info(options[:success_log_message])
+        end
+
+        if options[:failure_log_message] && !success
+          execution_logger.info(options[:failure_log_message])
+          logger.info(options[:failure_log_message])
+        end
       end
 
       def to_s

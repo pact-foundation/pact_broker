@@ -347,7 +347,7 @@ module PactBroker
         context "with a pact_version_sha" do
           subject  { Repository.new.find_pact "Consumer", nil, "Provider", pact.pact_version_sha }
 
-          it "finds the pact with the given version and revision" do
+          it "finds the pact with the given pact_version_sha" do
             expect(subject.pact_version_sha).to eq pact.pact_version_sha
             expect(subject.consumer.name).to eq "Consumer"
             expect(subject.provider.name).to eq "Provider"
@@ -355,7 +355,24 @@ module PactBroker
             expect(subject.revision_number).to eq 2
 
           end
+          context "when there are multiple pact publications for the pact version" do
+            before do
+              # Double check the data is set up correctly...
+              expect(pact_1.pact_version_sha).to eq(pact_2.pact_version_sha)
+            end
+
+            let(:td) { TestDataBuilder.new }
+            let!(:pact_1) { td.create_pact_with_hierarchy("Foo", "1", "Bar").and_return(:pact) }
+            let!(:pact_2) { td.create_consumer_version("2").create_pact(json_content: pact_1.json_content).and_return(:pact) }
+
+            subject  { Repository.new.find_pact "Foo", nil, "Bar", pact_1.pact_version_sha }
+
+            it "returns the latest pact, ordered by consumer version order" do
+              expect(subject.consumer_version_number).to eq "2"
+            end
+          end
         end
+
       end
 
       describe "find_all_revisions" do

@@ -10,7 +10,7 @@ module PactBroker
       include Messages
       include Logging
 
-      attr_accessor :uuid, :consumer, :provider, :request, :created_at, :updated_at
+      attr_accessor :uuid, :consumer, :provider, :request, :created_at, :updated_at, :events
       attr_reader :attributes
 
       def initialize attributes = {}
@@ -19,6 +19,7 @@ module PactBroker
         @request = attributes[:request]
         @consumer = attributes[:consumer]
         @provider = attributes[:provider]
+        @events = attributes[:events]
         @created_at = attributes[:created_at]
         @updated_at = attributes[:updated_at]
       end

@@ -153,9 +153,9 @@ You can use the [Pact Broker Docker image][docker] or [Terraform on AWS][terrafo
 Please read the [UPGRADING.md](UPGRADING.md) documentation before upgrading your Pact Broker, for information on the supported upgrade paths.
 
 [decouple]: http://techblog.realestate.com.au/enter-the-pact-matrix-or-how-to-decouple-the-release-cycles-of-your-microservices/
-[pact]: https://github.com/realestate-com-au/pact
+[pact]: https://github.com/pact-foundation/pact-ruby
 [nerf]: https://github.com/pact-foundation/pact_broker/wiki/pact-broker-ci-nerf-gun
-[different-teams]: https://github.com/realestate-com-au/pact/wiki/Using-pact-where-the-consumer-team-is-different-from-the-provider-team
+[different-teams]: https://github.com/pact-foundation/pact-ruby/wiki/Using-pact-where-the-consumer-team-is-different-from-the-provider-team
 [docker]: https://hub.docker.com/r/dius/pact-broker
 [terraform]: https://github.com/nadnerb/terraform-pact-broker
 [hosted]: https://pact.dius.com.au/?utm_source=github&utm_campaign=GITHUB_BROKER&utm_medium=github

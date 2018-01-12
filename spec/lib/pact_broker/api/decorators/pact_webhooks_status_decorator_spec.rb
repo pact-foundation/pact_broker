@@ -11,7 +11,7 @@ module PactBroker
 
         let(:triggered_webhook) do
           double('PactBroker::Webhooks::TriggeredWebhook',
-            trigger_type: PactBroker::Webhooks::TriggeredWebhook::TRIGGER_TYPE_PUBLICATION,
+            trigger_type: PactBroker::Webhooks::TriggeredWebhook::TRIGGER_TYPE_RESOURCE_CREATION,
             status: status,
             failure?: failure,
             retrying?: retrying,
@@ -61,7 +61,7 @@ module PactBroker
         it "includes the triggered webhooks properties" do
           expect(subject[:_embedded][:triggeredWebhooks].first).to include(
             status: 'success',
-            triggerType: 'pact_publication',
+            triggerType: 'resource_creation',
             attemptsMade: 1,
             attemptsRemaining: 2
           )

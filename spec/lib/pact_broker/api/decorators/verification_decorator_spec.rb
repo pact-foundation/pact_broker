@@ -12,6 +12,7 @@ module PactBroker
             provider_version_number: "4.5.6",
             provider_name: 'Provider',
             consumer_name: 'Consumer',
+            test_results: { 'arbitrary' => 'json' },
             build_url: 'http://build-url',
             pact_version_sha: '1234',
             latest_pact_publication: pact_publication,
@@ -37,6 +38,10 @@ module PactBroker
 
         it "includes the provider version" do
           expect(subject[:providerApplicationVersion]).to eq "4.5.6"
+        end
+
+        it "includes the test results" do
+          expect(subject[:testResults]).to eq(arbitrary: 'json')
         end
 
         it "includes the build URL" do
