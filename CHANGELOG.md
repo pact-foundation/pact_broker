@@ -1,3 +1,12 @@
+<a name="v2.13.1"></a>
+### v2.13.1 (2018-01-12)
+
+
+#### Features
+
+* remove runtime dependency on webrick	 ([1ae7a6e](/../../commit/1ae7a6e))
+
+
 <a name="v2.13.0"></a>
 ### v2.13.0 (2018-01-11)
 
