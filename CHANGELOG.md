@@ -1,3 +1,40 @@
+<a name="v2.13.0"></a>
+### v2.13.0 (2018-01-11)
+
+
+#### Features
+
+* ensure latest pact version is returned when searching by pact version sha	 ([1d2adc6](/../../commit/1d2adc6))
+* rename 'pact_publication' trigger type to 'publication'	 ([9fe0ff0](/../../commit/9fe0ff0))
+
+* **certificates**
+  * load webhook certificates from database	 ([c72ab28](/../../commit/c72ab28))
+
+* **matrix ui**
+  * add checkbox for latest version	 ([7743ecc](/../../commit/7743ecc))
+  * add limit and latestby to form	 ([c4136bd](/../../commit/c4136bd))
+  * do not log validation errors	 ([f201d1d](/../../commit/f201d1d))
+  * add form	 ([cbf0837](/../../commit/cbf0837))
+
+* **matrix badges**
+  * add badge for provider/tag and consumer/tag	 ([d69c8e6](/../../commit/d69c8e6))
+
+* **verification webhooks**
+  * update hal browser documentation	 ([c2b31b4](/../../commit/c2b31b4))
+  * invoke verification webhooks on publication of verification	 ([04ed1cc](/../../commit/04ed1cc))
+  * alter logic to select only the relevant webhooks when the pact has changed	 ([ec18943](/../../commit/ec18943))
+  * default to contract changed event when no events specified, for backwards compatibility	 ([9fe8d47](/../../commit/9fe8d47))
+  * add events to webhooks to allow differentiation between pact and verification webhooks	 ([356c023](/../../commit/356c023))
+
+* **publish test result**
+  * allow json test results to be published with the verification result	 ([528034c](/../../commit/528034c))
+
+
+#### Bug Fixes
+
+* create selector objects when viewing matrix URL with consumer and provider	 ([e733bae](/../../commit/e733bae))
+
+
 <a name="v2.12.0"></a>
 ### v2.12.0 (2017-11-29)
 
