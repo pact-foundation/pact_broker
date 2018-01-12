@@ -31,7 +31,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'semver2', '~> 3.4.2'
   gem.add_runtime_dependency 'rack', '~>2.0'
   gem.add_runtime_dependency 'redcarpet', '>=3.3.2', '~>3.3'
-  gem.add_runtime_dependency 'pact', '~>1.14'
+  gem.add_runtime_dependency 'pact-support'
   gem.add_runtime_dependency 'padrino-core', '~>0.14.1'
   gem.add_runtime_dependency 'haml', '~>4.0'
   gem.add_runtime_dependency 'sucker_punch', '~>2.0'
@@ -40,6 +40,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'table_print', '~> 1.5'
   gem.add_runtime_dependency 'webrick', '~>1.3.0' # Webrick requires Ruby version >= 2.5.0dev. TODO remove dependency on Pact gem.
 
+  gem.add_development_dependency 'pact', '~>1.14'
   gem.add_development_dependency 'bundler-audit', '~>0.4'
   gem.add_development_dependency 'sqlite3', '~>1.3'
   gem.add_development_dependency 'pry-byebug'
