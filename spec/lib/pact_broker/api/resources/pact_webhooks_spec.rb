@@ -1,11 +1,8 @@
 require 'pact_broker/api/resources/pact_webhooks'
 
 module PactBroker::Api
-
   module Resources
-
     describe PactWebhooks do
-
 
       let(:webhook_service) { PactBroker::Webhooks::Service }
       let(:uuid) { '1483234k24DKFGJ45K' }
@@ -35,23 +32,77 @@ module PactBroker::Api
 
         subject { get path }
 
-        it "returns a 200 HAL JSON response" do
-          subject
-          expect(last_response).to be_a_hal_json_success_response
+        describe "for webhooks with a consumer and provider" do
+          it "returns a 200 HAL JSON response" do
+            subject
+            expect(last_response).to be_a_hal_json_success_response
+          end
+
+          it "generates a JSON body" do
+            expect(Decorators::WebhooksDecorator).to receive(:new).with(webhooks)
+            expect(decorator).to receive(:to_json).with(user_options: instance_of(Decorators::DecoratorContext))
+            subject
+          end
+
+          it "includes the generated JSON in the response body" do
+            subject
+            expect(last_response.body).to eq json
+          end
+
+          context "when the provider does not exist" do
+            context "when the provider does not exist" do
+              let(:provider) { nil }
+
+              it "returns a 404" do
+                expect(subject.status).to eq 404
+              end
+            end
+          end
+
+          context "when the consumer does not exist" do
+            let(:consumer) { nil }
+
+            it "returns a 404" do
+              expect(subject.status).to eq 404
+            end
+          end
         end
 
-        it "generates a JSON body" do
-          expect(Decorators::WebhooksDecorator).to receive(:new).with(webhooks)
-          expect(decorator).to receive(:to_json).with(user_options: instance_of(Decorators::DecoratorContext))
-          subject
+        context "for provider webhooks" do
+          let(:path) { "/webhooks/provider/Some%20Provider" }
+
+          context "when the provider does exist" do
+            it "returns a 200" do
+              expect(subject.status).to eq 200
+            end
+          end
+
+          context "when the provider does not exist" do
+            let(:provider) { nil }
+
+            it "returns a 404" do
+              expect(subject.status).to eq 404
+            end
+          end
         end
 
-        it "includes the generated JSON in the response body" do
-          subject
-          expect(last_response.body).to eq json
+        context "for consumer webhooks" do
+          let(:path) { "/webhooks/consumer/Some%20Consumer" }
+
+          context "when the consumer does exist" do
+            it "returns a 200" do
+              expect(subject.status).to eq 200
+            end
+          end
+
+          context "when the consumer does not exist" do
+            let(:consumer) { nil }
+
+            it "returns a 404" do
+              expect(subject.status).to eq 404
+            end
+          end
         end
-
-
       end
 
       describe "POST" do

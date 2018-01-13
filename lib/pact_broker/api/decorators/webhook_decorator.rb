@@ -38,26 +38,32 @@ module PactBroker
 
 
         link :'pb:consumer' do | options |
-          {
-            title: "Consumer",
-            name: represented.consumer.name,
-            href: pacticipant_url(options.fetch(:base_url), represented.consumer)
-          }
+          if represented.consumer
+            {
+              title: "Consumer",
+              name: represented.consumer.name,
+              href: pacticipant_url(options.fetch(:base_url), represented.consumer)
+            }
+          end
         end
 
         link :'pb:provider' do | options |
-          {
-            title: "Provider",
-            name: represented.provider.name,
-            href: pacticipant_url(options.fetch(:base_url), represented.provider)
-          }
+          if represented.provider
+            {
+              title: "Provider",
+              name: represented.provider.name,
+              href: pacticipant_url(options.fetch(:base_url), represented.provider)
+            }
+          end
         end
 
         link :'pb:pact-webhooks' do | options |
-          {
-            title: "All webhooks for consumer #{represented.consumer.name} and provider #{represented.provider.name}",
-            href: webhooks_for_pact_url(represented.consumer, represented.provider, options[:base_url])
-          }
+          if represented.consumer && represented.provider
+            {
+              title: "All webhooks for consumer #{represented.consumer.name} and provider #{represented.provider.name}",
+              href: webhooks_for_pact_url(represented.consumer, represented.provider, options[:base_url])
+            }
+          end
         end
 
         link :'pb:webhooks' do | options |

@@ -28,8 +28,8 @@ module PactBroker
         new(
           properties_hash_from_domain(webhook).merge(uuid: webhook.uuid)
         ).tap do | db_webhook |
-          db_webhook.consumer_id = consumer.id
-          db_webhook.provider_id = provider.id
+          db_webhook.consumer_id = consumer.id if consumer
+          db_webhook.provider_id = provider.id if provider
         end
       end
 

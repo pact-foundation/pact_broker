@@ -81,6 +81,14 @@ module PactBroker
         webhook_repository.update_triggered_webhook_status triggered_webhook, status
       end
 
+      def self.find_for_pact pact
+        webhook_repository.find_for_pact(pact)
+      end
+
+      def self.find_by_consumer_and_or_provider consumer, provider
+        webhook_repository.find_by_consumer_and_or_provider(consumer, provider)
+      end
+
       def self.find_by_consumer_and_provider consumer, provider
         webhook_repository.find_by_consumer_and_provider consumer, provider
       end
@@ -107,6 +115,10 @@ module PactBroker
             log_error e
           end
         end
+      end
+
+      def self.find_latest_triggered_webhooks_for_pact pact
+        webhook_repository.find_latest_triggered_webhooks_for_pact pact
       end
 
       def self.find_latest_triggered_webhooks consumer, provider

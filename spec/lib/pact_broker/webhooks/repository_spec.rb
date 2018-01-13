@@ -23,9 +23,8 @@ module PactBroker
       end
       let(:events) { [event]}
       let(:webhook) { Domain::Webhook.new(request: request, events: events)}
-      let(:test_data_builder) { TestDataBuilder.new }
-      let(:consumer) { test_data_builder.create_pacticipant 'Consumer'; test_data_builder.pacticipant}
-      let(:provider) { test_data_builder.create_pacticipant 'Provider'; test_data_builder.pacticipant}
+      let(:consumer) { td.create_pacticipant 'Consumer'; td.pacticipant}
+      let(:provider) { td.create_pacticipant 'Provider'; td.pacticipant}
       let(:uuid) { 'the-uuid' }
       let(:created_webhook_record) { ::DB::PACT_BROKER_DB[:webhooks].order(:id).last }
       let(:created_headers) { ::DB::PACT_BROKER_DB[:webhook_headers].where(webhook_id: created_webhook_record[:id]).order(:name).all }
@@ -44,8 +43,7 @@ module PactBroker
       end
 
       describe "#create" do
-
-        subject { Repository.new.create uuid, webhook, consumer, provider }
+        subject { Repository.new.create(uuid, webhook, consumer, provider) }
 
         it "saves webhook" do
           subject
@@ -74,7 +72,7 @@ module PactBroker
           Repository.new.create 'another-uuid', webhook, consumer, provider
         end
 
-        subject { Repository.new.delete_by_uuid uuid }
+        subject { Repository.new.delete_by_uuid(uuid) }
 
         it "deletes the webhook headers" do
           expect { subject }.to change {
@@ -93,7 +91,7 @@ module PactBroker
 
         before do
           allow(SecureRandom).to receive(:urlsafe_base64).and_return(uuid, 'another-uuid')
-          Repository.new.create uuid, webhook, consumer, provider
+          Repository.new.create(uuid, webhook, consumer, provider)
         end
 
         context "when the pacticipant is the consumer" do
@@ -121,9 +119,7 @@ module PactBroker
       end
 
       describe "find_by_uuid" do
-
-
-        subject { Repository.new.find_by_uuid uuid }
+        subject { Repository.new.find_by_uuid(uuid) }
 
         context "when a webhook is found" do
           before do
@@ -151,7 +147,6 @@ module PactBroker
           it "returns a webhook with the headers set" do
             expect(subject.request.headers).to eq headers
           end
-
 
           it "returns a webhook with the username set" do
             expect(subject.request.username).to eq 'username'
@@ -202,7 +197,6 @@ module PactBroker
 
       describe "update_by_uuid" do
         let(:uuid) { '1234' }
-        let(:td) { TestDataBuilder.new }
         let(:old_webhook_params) do
           {
             events: [{ name: 'something' }],
@@ -235,7 +229,7 @@ module PactBroker
           PactBroker::Domain::Webhook.new(events: [new_event], request: PactBroker::Domain::WebhookRequest.new(new_webhook_params))
         end
 
-        subject { Repository.new.update_by_uuid uuid, new_webhook }
+        subject { Repository.new.update_by_uuid(uuid, new_webhook) }
 
         it "updates the webhook" do
           updated_webhook = subject
@@ -265,32 +259,29 @@ module PactBroker
       end
 
       describe "find_by_consumer_and_provider" do
-        let(:test_data_builder) { TestDataBuilder.new }
-        subject { Repository.new.find_by_consumer_and_provider test_data_builder.consumer, test_data_builder.provider}
+        let(:consumer) { td.consumer }
+        let(:provider) { td.provider }
+
+        subject { Repository.new.find_by_consumer_and_provider(consumer, provider) }
 
         context "when a webhook exists with a matching consumer and provider" do
-
           before do
-            allow(SecureRandom).to receive(:urlsafe_base64).and_call_original
-            test_data_builder
-              .create_consumer("Consumer")
+            td.create_consumer("Consumer")
               .create_provider("Another Provider")
               .create_webhook
               .create_provider("Provider")
               .create_webhook
           end
 
-
           it "returns an array of webhooks" do
             expect(subject).to be_instance_of Array
-            expect(subject.first.uuid).to eq test_data_builder.webhook.uuid
+            expect(subject.first.uuid).to eq td.webhook.uuid
           end
         end
 
         context "when a webhook does not exist with a matching consumer and provider" do
-
           before do
-            test_data_builder
+            td
               .create_consumer("Consumer")
               .create_provider("Provider")
               .create_webhook
@@ -301,16 +292,49 @@ module PactBroker
             expect(subject).to eq []
           end
         end
+
+        context "when the consumer argument is nil" do
+          let(:consumer) { nil }
+
+          before do
+            td.create_provider("Provider")
+              .create_consumer("Consumer")
+              .create_provider_webhook
+              .create_webhook
+          end
+
+          it "returns all the webhooks where the provider matches and the consumer id is nil" do
+            expect(subject.size).to be 1
+            expect(subject.first.consumer).to be nil
+            expect(subject.first.provider).to_not be nil
+          end
+        end
+
+        context "when the provider argument is nil" do
+          let(:provider) { nil }
+
+          before do
+            td.create_consumer("Consumer")
+              .create_provider("Provider")
+              .create_consumer_webhook
+              .create_webhook
+          end
+
+          it "returns all the webhooks where the consumer matches and the provider id is nil" do
+            expect(subject.size).to be 1
+            expect(subject.first.provider).to be nil
+            expect(subject.first.consumer).to_not be nil
+          end
+        end
       end
 
       describe "find_by_consumer_and_provider_and_event_name" do
-        let(:test_data_builder) { TestDataBuilder.new }
-        subject { Repository.new.find_by_consumer_and_provider_and_event_name test_data_builder.consumer, test_data_builder.provider, 'something_happened' }
+        subject { Repository.new.find_by_consumer_and_provider_and_event_name td.consumer, td.provider, 'something_happened' }
 
         context "when a webhook exists with a matching consumer and provider and event name" do
 
           before do
-            test_data_builder
+            td
               .create_consumer("Consumer")
               .create_provider("Another Provider")
               .create_webhook
@@ -322,6 +346,31 @@ module PactBroker
 
           it "returns an array of webhooks" do
             expect(subject.collect(&:uuid).sort).to eq ['1', '2']
+          end
+        end
+      end
+
+      describe "find_for_pact_and_event_name" do
+        context "when a webhook exists with a matching consumer and provider and event name" do
+          before do
+            td
+              .create_consumer("Consumer")
+              .create_consumer_version("1")
+              .create_provider("Another Provider")
+              .create_webhook
+              .create_provider("Provider")
+              .create_pact
+              .create_webhook(uuid: '1', events: [{ name: 'something_happened' }])
+              .create_webhook(uuid: '2', events: [{ name: 'something_happened' }])
+              .create_webhook(uuid: '3', events: [{ name: 'something_else_happened' }])
+              .create_consumer_webhook(uuid: '4', events: [{ name: 'something_happened' }])
+              .create_provider_webhook(uuid: '5', events: [{ name: 'something_happened' }])
+          end
+
+          subject { Repository.new.find_for_pact_and_event_name(td.pact, 'something_happened') }
+
+          it "returns an array of webhooks" do
+            expect(subject.collect(&:uuid).sort).to eq ['1', '2', '4', '5']
           end
         end
       end
@@ -405,8 +454,6 @@ module PactBroker
       end
 
       describe "delete_triggered_webhooks_by_webhook_uuid" do
-        let(:td) { TestDataBuilder.new }
-
         before do
           td.create_consumer
             .create_provider
@@ -421,8 +468,8 @@ module PactBroker
             .create_deprecated_webhook_execution
             .create_webhook_execution
         end
-
         let(:webhook_id) { Webhook.find(uuid: td.webhook.uuid).id }
+
         subject { Repository.new.delete_triggered_webhooks_by_webhook_uuid td.webhook.uuid }
 
         it "deletes the related triggered webhooks" do
@@ -550,6 +597,39 @@ module PactBroker
           it "returns an empty list" do
             expect(subject).to be_empty
           end
+        end
+      end
+
+      describe "find_latest_triggered_webhooks_for_pact" do
+        before do
+          td
+            .create_pact_with_hierarchy("Foo", "1.0.0", "Bar")
+            .create_webhook
+            .create_triggered_webhook
+            .create_webhook_execution
+            .create_pact_with_hierarchy
+            .create_webhook
+            .create_triggered_webhook(trigger_uuid: '256', created_at: DateTime.new(2016))
+            .create_webhook_execution
+            .create_triggered_webhook(trigger_uuid: '332', created_at: DateTime.new(2017))
+            .create_webhook_execution
+            .create_provider_webhook(uuid: '987')
+            .create_triggered_webhook(trigger_uuid: '876', created_at: DateTime.new(2017))
+            .create_webhook_execution
+            .create_triggered_webhook(trigger_uuid: '638', created_at: DateTime.new(2018))
+            .create_webhook_execution
+            .create_consumer_webhook
+            .create_triggered_webhook(trigger_uuid: '555', created_at: DateTime.new(2017))
+            .create_webhook_execution
+            .create_triggered_webhook(trigger_uuid: '777', created_at: DateTime.new(2018))
+            .create_webhook_execution
+
+        end
+
+        subject { Repository.new.find_latest_triggered_webhooks_for_pact(td.pact) }
+
+        it "finds the latest triggered webhooks" do
+          expect(subject.collect(&:trigger_uuid).sort).to eq ['332', '638', '777']
         end
       end
 

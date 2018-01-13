@@ -1,12 +1,8 @@
-require 'spec_helper'
 require 'pact_broker/domain/webhook'
 
 module PactBroker
-
   module Domain
-
     describe Webhook do
-
       let(:consumer) { Pacticipant.new(name: 'Consumer')}
       let(:provider) { Pacticipant.new(name: 'Provider')}
       let(:request) { instance_double(PactBroker::Domain::WebhookRequest, execute: nil)}
@@ -14,16 +10,29 @@ module PactBroker
       let(:pact) { double('pact') }
       let(:verification) { double('verification') }
 
-      subject { Webhook.new(request: request, consumer: consumer, provider: provider,) }
+      subject(:webhook) { Webhook.new(request: request, consumer: consumer, provider: provider) }
 
       describe "description" do
-        it "returns a description of the webhook" do
-          expect(subject.description).to eq "A webhook for the pact between Consumer and Provider"
+        subject { webhook.description }
+
+        context "with a consumer and provider" do
+          it { is_expected.to eq "A webhook for the pact between Consumer and Provider" }
+        end
+
+        context "with a consumer only" do
+          let(:provider) { nil }
+
+          it { is_expected.to eq "A webhook for all pacts with consumer Consumer" }
+        end
+
+        context "with a provider only" do
+          let(:consumer) { nil }
+
+          it { is_expected.to eq "A webhook for all pacts with provider Provider" }
         end
       end
 
       describe "execute" do
-
         it "executes the request" do
           expect(request).to receive(:execute).with(pact, verification, options)
           subject.execute pact, verification, options

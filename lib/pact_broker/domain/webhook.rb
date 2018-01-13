@@ -25,7 +25,13 @@ module PactBroker
       end
 
       def description
-        "A webhook for the pact between #{consumer.name} and #{provider.name}"
+        if consumer && provider
+          "A webhook for the pact between #{consumer.name} and #{provider.name}"
+        elsif provider
+          "A webhook for all pacts with provider #{provider.name}"
+        else
+          "A webhook for all pacts with consumer #{consumer.name}"
+        end
       end
 
       def request_description

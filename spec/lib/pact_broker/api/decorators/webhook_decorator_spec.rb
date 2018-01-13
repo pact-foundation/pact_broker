@@ -89,6 +89,34 @@ module PactBroker
             end
           end
 
+          context 'when there is no consumer' do
+            before do
+              webhook.consumer = nil
+            end
+
+            it 'does not include the consumer relation' do
+              expect(parsed_json[:_links][:'pb:consumer']).to be nil
+            end
+
+            it 'does not include the pact webhooks relation' do
+              expect(parsed_json[:_links][:'pb:pact-webhooks']).to be nil
+            end
+          end
+
+          context 'when there is no provider' do
+            before do
+              webhook.provider = nil
+            end
+
+            it 'does not include the provider relation' do
+              expect(parsed_json[:_links][:'pb:provider']).to be nil
+            end
+
+            it 'does not include the pact webhooks relation' do
+              expect(parsed_json[:_links][:'pb:pact-webhooks']).to be nil
+            end
+          end
+
           context 'when the headers contain sensitve information' do
             let(:headers) { { 'Authorization' => 'foo' } }
             it 'redacts them' do

@@ -24,7 +24,8 @@ module PactBroker
         end
 
         def resource_exists?
-          consumer && provider
+          (identifier_from_path[:consumer_name].nil? || consumer) &&
+            (identifier_from_path[:provider_name].nil? || provider)
         end
 
         def malformed_request?
@@ -77,11 +78,11 @@ module PactBroker
         end
 
         def consumer
-          @consumer ||= find_pacticipant(identifier_from_path[:consumer_name], "consumer")
+          @consumer ||= identifier_from_path[:consumer_name] && find_pacticipant(identifier_from_path[:consumer_name], "consumer")
         end
 
         def provider
-          @provider ||= find_pacticipant(identifier_from_path[:provider_name], "provider")
+          @provider ||= identifier_from_path[:provider_name] && find_pacticipant(identifier_from_path[:provider_name], "provider")
         end
 
         def find_pacticipant name, role
