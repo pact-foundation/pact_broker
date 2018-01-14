@@ -40,7 +40,7 @@ module PactBroker
         before do
           allow_any_instance_of(PactBroker::Webhooks::Repository).to receive(:find_by_consumer_and_provider_and_event_name).and_return(webhooks)
           allow_any_instance_of(PactBroker::Webhooks::Repository).to receive(:create_triggered_webhook).and_return(triggered_webhook)
-          allow(Job).to receive(:perform_async)
+          allow(Job).to receive(:perform_in)
         end
 
         subject { Service.execute_webhooks pact, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED }
@@ -72,7 +72,7 @@ module PactBroker
 
         context "when there is a scheduling error" do
           before do
-            allow(Job).to receive(:perform_async).and_raise("an error")
+            allow(Job).to receive(:perform_in).and_raise("an error")
           end
 
           it "logs the error" do

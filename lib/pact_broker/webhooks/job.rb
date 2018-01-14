@@ -11,7 +11,7 @@ module PactBroker
 
       def perform data
         @data = data
-        @triggered_webhook = data[:triggered_webhook]
+        @triggered_webhook = PactBroker::Webhooks::TriggeredWebhook.find(id: data[:triggered_webhook].id)
         @error_count = data[:error_count] || 0
         begin
           webhook_execution_result = PactBroker::Webhooks::Service.execute_triggered_webhook_now triggered_webhook, execution_options

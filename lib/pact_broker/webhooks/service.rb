@@ -100,7 +100,8 @@ module PactBroker
           begin
             triggered_webhook = webhook_repository.create_triggered_webhook(trigger_uuid, webhook, pact, RESOURCE_CREATION)
             logger.info "Scheduling job for #{webhook.description} with uuid #{webhook.uuid}"
-            Job.perform_async triggered_webhook: triggered_webhook
+            # Bit of a dodgey hack to make sure the request transaction has finished before we execute the webhook
+            Job.perform_in(5, triggered_webhook: triggered_webhook)
           rescue StandardError => e
             log_error e
           end
