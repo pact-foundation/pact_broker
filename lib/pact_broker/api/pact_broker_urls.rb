@@ -1,3 +1,5 @@
+require 'erb'
+
 module PactBroker
   module Api
     module PactBrokerUrls
