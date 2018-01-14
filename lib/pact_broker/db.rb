@@ -18,7 +18,8 @@ module PactBroker
 
     def self.run_migrations database_connection
       Sequel.extension :migration
-      Sequel::TimestampMigrator.new(database_connection, PactBroker::DB::MIGRATIONS_DIR).run
+      options = { allow_missing_migration_files: true }
+      Sequel::TimestampMigrator.new(database_connection, PactBroker::DB::MIGRATIONS_DIR, options).run
     end
 
     def self.validate_connection_config
