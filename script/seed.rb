@@ -59,6 +59,8 @@ TestDataBuilder.new
   .create_label("microservice")
   .create_provider("Bar")
   .create_label("microservice")
+  .create_consumer_webhook(method: 'GET', url: 'https://www.google.com.au', event_names: ['provider_verification_published'])
+  .create_provider_webhook(method: 'GET', url: 'https://theage.com.au')
   .create_webhook(method: 'GET', url: 'https://self-signed.badssl.com')
   .create_consumer_version("1.2.100")
   .publish_pact
