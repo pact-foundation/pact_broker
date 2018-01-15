@@ -61,7 +61,7 @@ module PactBroker
           if represented.consumer && represented.provider
             {
               title: "All webhooks for consumer #{represented.consumer.name} and provider #{represented.provider.name}",
-              href: webhooks_for_pact_url(represented.consumer, represented.provider, options[:base_url])
+              href: webhooks_for_consumer_and_provider_url(represented.consumer, represented.provider, options[:base_url])
             }
           end
         end

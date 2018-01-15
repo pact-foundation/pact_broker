@@ -1,4 +1,3 @@
-
 require 'pact_broker/api/resources/base_resource'
 require 'pact_broker/api/decorators/webhook_decorator'
 require 'pact_broker/api/decorators/webhooks_decorator'

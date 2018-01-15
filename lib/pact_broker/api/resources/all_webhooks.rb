@@ -6,7 +6,7 @@ module PactBroker
   module Api
     module Resources
 
-      class Webhooks < BaseResource
+      class AllWebhooks < BaseResource
 
         def content_types_provided
           [["application/hal+json", :to_json]]

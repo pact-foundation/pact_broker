@@ -102,7 +102,7 @@ module PactBroker
         link :'pb:pact-webhooks' do | options |
           {
             title: "Webhooks for the pact between #{represented.consumer.name} and #{represented.provider.name}",
-            href: webhooks_for_pact_url(represented.consumer, represented.provider, options.fetch(:base_url))
+            href: webhooks_for_consumer_and_provider_url(represented.consumer, represented.provider, options.fetch(:base_url))
           }
         end
 

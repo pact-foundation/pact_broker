@@ -1,11 +1,11 @@
 require 'spec_helper'
-require 'pact_broker/api/resources/webhooks'
+require 'pact_broker/api/resources/all_webhooks'
 
 module PactBroker::Api
 
   module Resources
 
-    describe Webhooks do
+    describe AllWebhooks do
 
       describe "GET" do
 

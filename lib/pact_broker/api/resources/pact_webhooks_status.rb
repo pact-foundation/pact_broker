@@ -27,7 +27,7 @@ module PactBroker
         private
 
         def latest_triggered_webhooks
-          @latest_triggered_webhooks ||= webhook_service.find_latest_triggered_webhooks(consumer, provider)
+          @latest_triggered_webhooks ||= webhook_service.find_latest_triggered_webhooks_for_pact(pact)
         end
 
         def pact

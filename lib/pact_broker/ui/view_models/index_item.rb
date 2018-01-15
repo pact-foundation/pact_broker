@@ -93,7 +93,7 @@ module PactBroker
         def webhook_url
           url = case @relationship.webhook_status
             when :none
-              PactBroker::Api::PactBrokerUrls.webhooks_for_pact_url @relationship.latest_pact.consumer, @relationship.latest_pact.provider
+              PactBroker::Api::PactBrokerUrls.webhooks_for_consumer_and_provider_url @relationship.latest_pact.consumer, @relationship.latest_pact.provider
             else
               PactBroker::Api::PactBrokerUrls.webhooks_status_url @relationship.latest_pact.consumer, @relationship.latest_pact.provider
           end
