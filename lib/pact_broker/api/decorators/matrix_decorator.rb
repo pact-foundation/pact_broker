@@ -46,11 +46,9 @@ module PactBroker
         attr_reader :lines
 
         def matrix(lines, base_url)
-          provider = nil
-          consumer = nil
           lines.collect do | line |
-            provider ||= OpenStruct.new(name: line[:provider_name])
-            consumer ||= OpenStruct.new(name: line[:consumer_name])
+            provider = OpenStruct.new(name: line[:provider_name])
+            consumer = OpenStruct.new(name: line[:consumer_name])
             consumer_version = OpenStruct.new(number: line[:consumer_version_number], pacticipant: consumer)
             line_hash(consumer, provider, consumer_version, line, base_url)
           end
