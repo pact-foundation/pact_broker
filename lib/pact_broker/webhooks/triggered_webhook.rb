@@ -46,7 +46,10 @@ module PactBroker
       end
 
       def execute options
-        webhook.to_domain.execute pact_publication.to_domain, options
+        # getting a random 'no method to_domain for null' error
+        # not sure on which object, so splitting this out into two lines
+        pact = pact_publication.to_domain
+        webhook.to_domain.execute(pact, options)
       end
 
       def consumer_name
