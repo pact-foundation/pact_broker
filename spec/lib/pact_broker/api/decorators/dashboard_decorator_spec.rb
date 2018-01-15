@@ -1,4 +1,5 @@
 require 'pact_broker/api/decorators/dashboard_decorator'
+require 'pact_broker/domain/index_item'
 
 module PactBroker
   module Api

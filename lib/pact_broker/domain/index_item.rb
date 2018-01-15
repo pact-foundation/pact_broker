@@ -58,6 +58,10 @@ module PactBroker
         @latest_pact.consumer_version
       end
 
+      def provider_version
+        @latest_verification ? @latest_verification.provider_version : nil
+      end
+
       def provider_version_number
         @latest_verification ? @latest_verification.provider_version_number : nil
       end
