@@ -4,6 +4,7 @@
 }
 
 .table-striped>tbody>tr>td.consumer, .table-striped>thead>tr>th.consumer {
+  padding: 2px;
   border-right: none;
 }
 
@@ -49,6 +50,11 @@ body { padding-top: 10px; }
 
 .consumer, .provider {
   text-align: center;
+  word-wrap: break-word;
+}
+
+.consumer-version-number, .provider-version-number {
+  word-wrap: break-word;
 }
 
 span.pact {
