@@ -1,4 +1,5 @@
 require 'pact_broker/api/resources/base_resource'
+require 'pact_broker/api/decorators/dashboard_decorator'
 
 module PactBroker
   module Api
@@ -15,7 +16,13 @@ module PactBroker
         end
 
         def to_json
+          PactBroker::Api::Decorators::DashboardDecorator.new(index_items).to_json(user_options: decorator_context)
+        end
 
+        private
+
+        def index_items
+          index_service.find_index_items
         end
       end
     end

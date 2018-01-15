@@ -5,7 +5,7 @@ module PactBroker
   module Domain
     class IndexItem
 
-      attr_reader :consumer, :provider, :latest_pact, :latest_verification, :webhooks
+      attr_reader :consumer, :provider, :latest_pact, :latest_verification, :webhooks, :triggered_webhooks
 
       def initialize consumer, provider, latest_pact = nil, latest = true, latest_verification = nil, webhooks = [], triggered_webhooks = [], tags = []
         @consumer = consumer
@@ -52,6 +52,10 @@ module PactBroker
 
       def consumer_version_number
         @latest_pact.consumer_version_number
+      end
+
+      def consumer_version
+        @latest_pact.consumer_version
       end
 
       def provider_version_number
