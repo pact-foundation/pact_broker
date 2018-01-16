@@ -60,9 +60,13 @@ module PactBroker
       end
 
       def find_for_pact pact
-        find_by_consumer_and_provider(pact.consumer, pact.provider) +
-          find_by_consumer_and_provider(nil, pact.provider) +
-          find_by_consumer_and_provider(pact.consumer, nil)
+        find_by_consumer_and_or_provider(pact.consumer, pact.provider)
+      end
+
+      def find_by_consumer_and_or_provider consumer, provider
+        find_by_consumer_and_provider(consumer, provider) +
+          find_by_consumer_and_provider(nil, provider) +
+          find_by_consumer_and_provider(consumer, nil)
       end
 
       def find_by_consumer_and_provider consumer, provider
@@ -112,8 +116,8 @@ module PactBroker
           webhook_uuid: db_webhook.uuid,
           trigger_uuid: trigger_uuid,
           trigger_type: trigger_type,
-          consumer: db_webhook.consumer,
-          provider: db_webhook.provider
+          consumer: pact.consumer,
+          provider: pact.provider
         )
       end
 
@@ -161,19 +165,13 @@ module PactBroker
       end
 
       def find_latest_triggered_webhooks_for_pact pact
-        find_latest_triggered_webhooks(pact.consumer, pact.provider) +
-          find_latest_triggered_webhooks(nil, pact.provider) +
-          find_latest_triggered_webhooks(pact.consumer, nil)
+        find_latest_triggered_webhooks(pact.consumer, pact.provider)
       end
 
       def find_latest_triggered_webhooks consumer, provider
         # The manual grouping is just to get rid of any webhooks that triggered at the same time
-        criteria = {
-          consumer_id: consumer ? consumer.id : nil,
-          provider_id: provider ? provider.id : nil
-        }
         LatestTriggeredWebhook
-          .where(criteria)
+          .where(consumer: consumer, provider: provider)
           .order(:id)
           .all
       end
