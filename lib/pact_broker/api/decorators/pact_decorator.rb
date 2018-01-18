@@ -106,6 +106,20 @@ module PactBroker
           }
         end
 
+        link :'pb:consumer-webhooks' do | options |
+          {
+            title: "Webhooks for all pacts with consumer #{represented.consumer.name}",
+            href: consumer_webhooks_url(represented.consumer, options.fetch(:base_url))
+          }
+        end
+
+        link :'pb:consumer-webhooks' do | options |
+          {
+            title: "Webhooks for all pacts with provider #{represented.provider.name}",
+            href: consumer_webhooks_url(represented.provider, options.fetch(:base_url))
+          }
+        end
+
         link :'pb:tag-prod-version' do | options |
           {
             title: "PUT to this resource to tag this consumer version as 'production'",

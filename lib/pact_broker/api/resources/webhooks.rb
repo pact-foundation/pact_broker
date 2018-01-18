@@ -4,11 +4,9 @@ require 'pact_broker/api/decorators/webhooks_decorator'
 require 'pact_broker/api/contracts/webhook_contract'
 
 module PactBroker
-
   module Api
     module Resources
-
-      class PactWebhooks < BaseResource
+      class Webhooks < BaseResource
 
         def allowed_methods
           ["POST", "GET"]
@@ -38,7 +36,7 @@ module PactBroker
           errors = webhook_service.errors(webhook)
 
           unless errors.empty?
-            response.headers['Content-Type'] = 'application/hal+json;charset=utf-8'
+            response.headers['Content-Type'] = 'application/json;charset=utf-8'
             response.body = { errors: errors.messages }.to_json
           end
 
@@ -76,7 +74,19 @@ module PactBroker
           @next_uuid ||= webhook_service.next_uuid
         end
 
+        def consumer
+          @consumer ||= identifier_from_path[:consumer_name] && find_pacticipant(identifier_from_path[:consumer_name], "consumer")
+        end
 
+        def provider
+          @provider ||= identifier_from_path[:provider_name] && find_pacticipant(identifier_from_path[:provider_name], "provider")
+        end
+
+        def find_pacticipant name, role
+          pacticipant_service.find_pacticipant_by_name(name).tap do | pacticipant |
+            set_json_error_message("No #{role} with name '#{name}' found") if pacticipant.nil?
+          end
+        end
       end
     end
   end

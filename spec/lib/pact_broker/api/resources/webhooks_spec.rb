@@ -1,8 +1,8 @@
-require 'pact_broker/api/resources/pact_webhooks'
+require 'pact_broker/api/resources/webhooks'
 
 module PactBroker::Api
   module Resources
-    describe PactWebhooks do
+    describe Webhooks do
 
       let(:webhook_service) { PactBroker::Webhooks::Service }
       let(:uuid) { '1483234k24DKFGJ45K' }

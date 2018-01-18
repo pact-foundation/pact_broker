@@ -55,9 +55,9 @@ module PactBroker
         add ['pacticipants', :pacticipant_name, 'labels', :label_name], Api::Resources::Label, {resource_name: "pacticipant_label"}
 
         # Webhooks
-        add ['webhooks', 'provider', :provider_name, 'consumer', :consumer_name ], Api::Resources::PactWebhooks, {resource_name: "consumer_and_provider_webhooks"}
-        add ['webhooks', 'provider', :provider_name], Api::Resources::PactWebhooks, {resource_name: "provider_webhooks"}
-        add ['webhooks', 'consumer', :consumer_name], Api::Resources::PactWebhooks, {resource_name: "consumer_webhooks"}
+        add ['webhooks', 'provider', :provider_name, 'consumer', :consumer_name ], Api::Resources::Webhooks, {resource_name: "consumer_and_provider_webhooks"}
+        add ['webhooks', 'provider', :provider_name], Api::Resources::Webhooks, {resource_name: "provider_webhooks"}
+        add ['webhooks', 'consumer', :consumer_name], Api::Resources::Webhooks, {resource_name: "consumer_webhooks"}
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'webhooks'], Api::Resources::PactWebhooks, {resource_name: "pact_webhooks"}
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'webhooks', 'status'], Api::Resources::PactWebhooksStatus, {resource_name: "pact_webhooks_status"}
 

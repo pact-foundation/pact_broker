@@ -156,6 +156,14 @@ module PactBroker
         "#{base_url}/webhooks/provider/#{url_encode(provider.name)}/consumer/#{url_encode(consumer.name)}"
       end
 
+      def consumer_webhooks_url consumer, base_url = ''
+        "#{base_url}/webhooks/consumer/#{url_encode(consumer.name)}"
+      end
+
+      def provider_webhooks_url provider, base_url = ''
+        "#{base_url}/webhooks/provider/#{url_encode(provider.name)}"
+      end
+
       def webhooks_for_pact_url consumer, provider, base_url = ''
         "#{base_url}/pacts/provider/#{url_encode(provider.name)}/consumer/#{url_encode(consumer.name)}/webhooks"
       end

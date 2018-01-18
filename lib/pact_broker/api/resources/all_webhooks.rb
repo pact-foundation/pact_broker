@@ -5,7 +5,6 @@ require 'pact_broker/api/decorators/webhooks_decorator'
 module PactBroker
   module Api
     module Resources
-
       class AllWebhooks < BaseResource
 
         def content_types_provided
@@ -23,7 +22,6 @@ module PactBroker
         def webhooks
           webhook_service.find_all
         end
-
       end
     end
   end
