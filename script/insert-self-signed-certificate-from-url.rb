@@ -9,6 +9,7 @@ uri_string = ARGV[0]
 database = ARGV[1]
 raise "Usage: #{__FILE__} URI SQLITE_DATABASE_PATH" unless uri_string && database
 
+# Modify this hash with the configuration for your database
 DATABASE_CREDENTIALS = {logger: Logger.new($stdout), adapter: "sqlite", database: database, :encoding => 'utf8'}
 
 uri = URI(uri_string)
