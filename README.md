@@ -132,7 +132,7 @@ In a hurry? Hate having to run your own infrastructure? Check out the [Hosted Pa
 
 #### Container solutions
 
-You can use the [Pact Broker Docker image][docker] or [Terraform on AWS][terraform]
+You can use the [Pact Broker Docker image][docker] or [Terraform on AWS][terraform]. See the [wiki][reverse-proxy-docs] for instructions on using a reverse proxy with SSL.
 
 #### Rolling your own
 
@@ -145,7 +145,7 @@ You can use the [Pact Broker Docker image][docker] or [Terraform on AWS][terrafo
 * Copy the [pact\_broker](https://github.com/DiUS/pact_broker-docker/tree/master/pact_broker) directory from the Pact Broker Docker project. This will have the recommended settings for database connections, logging, basic auth etc. Note that the Docker image uses Phusion Passenger as the web application server in front of the Pact Broker Ruby application, which is the recommended set up. 
 * Modify the config.ru and Gemfile as desired (eg. choose database driver gem, set your database credentials. Use the "pg" gem if using Postgres and the "mysql2" gem if using MySQL)
 * Please ensure you use `encoding: 'utf8'` in your Sequel options to avoid encoding issues.
-* For production usage, use a web application server like [Phusion Passenger](https://www.phusionpassenger.com) or [Nginx](http://nginx.org/) to serve the Pact Broker application. You'll need to read up on the documentation for these yourself as it is beyond the scope of this documentation.
+* For production usage, use a web application server like [Phusion Passenger](https://www.phusionpassenger.com) or [Nginx](http://nginx.org/) to serve the Pact Broker application. You'll need to read up on the documentation for these yourself as it is beyond the scope of this documentation. See the [wiki][reverse-proxy-docs] for instructions on using a reverse proxy with SSL.
 * Deploy to your location of choice.
 
 ## Upgrading
@@ -160,6 +160,7 @@ Please read the [UPGRADING.md](UPGRADING.md) documentation before upgrading your
 [terraform]: https://github.com/nadnerb/terraform-pact-broker
 [hosted]: https://pact.dius.com.au/?utm_source=github&utm_campaign=GITHUB_BROKER&utm_medium=github
 [wiki]: https://github.com/pact-foundation/pact_broker/wiki
+[reverse-proxy-docs]: https://github.com/pact-foundation/pact_broker/wiki/Configuration#running-the-broker-behind-a-reverse-proxy
 [stackoverflow]: http://stackoverflow.com/questions/tagged/pact-broker
 [twitter]: https://twitter.com/pact_up
 [gitter]: https://gitter.im/realestate-com-au/pact

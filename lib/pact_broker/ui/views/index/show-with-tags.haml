@@ -21,14 +21,14 @@
         %th.consumer
           Consumer
           %span.glyphicon.glyphicon-sort.relationships-sort
-        %th.tag
+        %th.consumer-version-number
           Version
           %span.glyphicon.glyphicon-sort.relationships-sort
         %th.pact{ style: 'width: 40px' }
         %th.provider
           Provider
           %span.glyphicon.glyphicon-sort.relationships-sort
-        %th.tag
+        %th.provider-version-number
           Version
           %span.glyphicon.glyphicon-sort.relationships-sort
         %th
@@ -44,7 +44,7 @@
           %td.consumer
             %a{:href => index_item.consumer_group_url }
               = index_item.consumer_name
-          %td
+          %td.consumer-version-number
             = index_item.consumer_version_number
             %span{style: 'color:gray'}
               = index_item.tag_names
@@ -54,7 +54,7 @@
           %td.provider
             %a{ href: index_item.provider_group_url }
               = index_item.provider_name
-          %td
+          %td.provider-version-number
             = index_item.provider_version_number
           %td
             = index_item.publication_date_of_latest_pact.gsub("about ", "")

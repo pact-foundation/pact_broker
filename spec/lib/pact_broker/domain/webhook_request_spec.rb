@@ -268,6 +268,25 @@ module PactBroker
           end
         end
 
+        context "when the response body contains a non UTF-8 character" do
+          let!(:http_request) do
+            stub_request(:post, "http://example.org/hook").
+              to_return(:status => 200, :body => "This has some \xC2 invalid chars")
+          end
+
+          it "removes the non UTF-8 characters before saving the logs so they don't blow up the database" do
+            result = subject.execute(pact, options)
+            expect(result.logs).to include "This has some  invalid chars"
+          end
+
+          it "logs that it has cleaned the string to the execution logger" do
+            logger = double("logger").as_null_object
+            allow(Logger).to receive(:new).and_return(logger)
+            expect(logger).to receive(:debug).with(/Note that invalid UTF-8 byte sequences were removed/)
+            subject.execute(pact, options)
+          end
+        end
+
         context "when an error occurs executing the request" do
 
           class WebhookTestError < StandardError; end

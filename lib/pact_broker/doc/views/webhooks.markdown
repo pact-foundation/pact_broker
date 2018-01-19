@@ -1,8 +1,17 @@
 # Webhooks
 
-Allowed methods (collection resource): `GET`, `POST`
+*Collection resource*
 
-Allowed methods (individual resource): `GET`, `PUT`, `DELETE`
+Path: `/webhooks/provider/PROVIDER/consumer/CONSUMER`
+
+Allowed methods: `GET`, `POST`
+
+*Individual resource*
+
+Path: `/webhook
+s/UUID`
+
+Allowed methods: `GET`, `PUT`, `DELETE`
 
 ### Creating
 

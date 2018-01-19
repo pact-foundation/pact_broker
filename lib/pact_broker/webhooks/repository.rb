@@ -140,9 +140,6 @@ module PactBroker
           .where(consumer: consumer, provider: provider)
           .order(:id)
           .all
-          .group_by{|w| [w.consumer_id, w.provider_id, w.webhook_uuid]}
-          .values
-          .collect(&:last)
       end
 
       def fail_retrying_triggered_webhooks
