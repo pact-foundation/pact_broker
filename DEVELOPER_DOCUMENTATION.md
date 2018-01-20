@@ -46,7 +46,7 @@ Domain classes are found in `lib/pact_broker/domain`. Many of these classes are 
     * `consumer version number` and `consumer version order`
     * `revision_number`
 
-* `latest_pact_publications` - This view has the same columns as `all_pact_publications`, but it only contains the latest revision of the pact for each provider/consumer/version. It maps to what a user would consider the "pact" resource ie. `/pacts/provider/Provider/consumer/Consumer/version/1.2.3`. Previous revisions are not currently exposed via the API.
+* `latest_pact_publications_by_consumer_versions` - This view has the same columns as `all_pact_publications`, but it only contains the latest revision of the pact for each provider/consumer/version. It maps to what a user would consider the "pact" resource ie. `/pacts/provider/Provider/consumer/Consumer/version/1.2.3`. Previous revisions are not currently exposed via the API.
 
  The `AllPactPublications` Sequel model in the code is what is used when querying data for displaying in a response, rather than the normalised separate PactPublication and PactVersion models.
 
