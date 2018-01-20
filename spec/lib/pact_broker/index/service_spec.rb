@@ -13,38 +13,6 @@ module PactBroker
 
       subject{ Service }
 
-      describe ".find_index_items" do
-        let(:consumer) { instance_double("PactBroker::Domain::Pacticipant")}
-        let(:provider) { instance_double("PactBroker::Domain::Pacticipant")}
-        let(:pact) { instance_double("PactBroker::Domain::Pact", id: 1, consumer: consumer, provider: provider, consumer_name: 'foo', provider_name: 'bar', consumer_version_tag_names: [])}
-        let(:verification) { instance_double("PactBroker::Domain::Verification")}
-        let(:pacts) { [pact]}
-        let(:webhooks) { [instance_double("PactBroker::Domain::Webhook")]}
-        let(:triggered_webhooks) { [instance_double("PactBroker::Webhooks::TriggeredWebhook")] }
-
-        before do
-          allow_any_instance_of(PactBroker::Pacts::Repository).to receive(:find_latest_pacts).and_return(pacts)
-          allow_any_instance_of(PactBroker::Pacts::Repository).to receive(:find_latest_pact).and_return(pact)
-          allow(PactBroker::Verifications::Service).to receive(:find_latest_verification_for).and_return(verification)
-          allow(PactBroker::Webhooks::Service).to receive(:find_by_consumer_and_provider).and_return(webhooks)
-          allow(PactBroker::Webhooks::Service).to receive(:find_latest_triggered_webhooks).and_return(triggered_webhooks)
-        end
-
-        it "retrieves the webhooks for the pact" do
-          expect(PactBroker::Webhooks::Service).to receive(:find_by_consumer_and_provider).with(consumer, provider)
-          subject.find_index_items(options)
-        end
-
-        it "retrieves the latest verification for the pact" do
-          expect(PactBroker::Verifications::Service).to receive(:find_latest_verification_for).with(consumer, provider)
-          subject.find_index_items(options)
-        end
-
-        it "returns a list of relationships" do
-          expect(subject.find_index_items(options)).to eq([PactBroker::Domain::IndexItem.create(consumer, provider, pact, true, verification, webhooks)])
-        end
-      end
-
       describe "find_relationships integration test" do
         context "when a prod pact exists and is not the latest version" do
           before do

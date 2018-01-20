@@ -1,6 +1,7 @@
 require 'pact_broker/repositories'
 require 'pact_broker/logging'
 require 'pact_broker/domain/index_item'
+require 'pact_broker/matrix/latest_row'
 
 module PactBroker
 
@@ -12,10 +13,45 @@ module PactBroker
       extend PactBroker::Logging
 
       def self.find_index_items options = {}
-        pact_repository
-          .find_latest_pacts
-          .collect { | pact| build_index_item_rows(pact, tags_for(pact, options)) }
-          .flatten
+        rows = PactBroker::Matrix::LatestRow
+          .select_all_qualified
+          .join(:latest_pact_publications, {consumer_id: :consumer_id, provider_id: :provider_id, consumer_version_order: :consumer_version_order})
+          .eager(:latest_triggered_webhooks)
+          .eager(:webhooks)
+          .order(:consumer_name, :provider_name)
+          .eager(:consumer_version_tags)
+          .all
+
+        if options[:tags]
+          tagged_rows = PactBroker::Matrix::LatestRow
+            .select_all_qualified
+            .eager(:latest_triggered_webhooks)
+            .eager(:webhooks)
+            .order(:consumer_name, :provider_name)
+            .eager(:consumer_version_tags)
+            tagged_rows = tagged_rows.join(:latest_tagged_pact_consumer_version_orders, {consumer_id: :consumer_id, provider_id: :provider_id, latest_consumer_version_order: :consumer_version_order})
+
+          if options[:tags].is_a?(Array)
+            tagged_rows = tagged_rows.where(Sequel[:latest_tagged_pact_consumer_version_orders][:tag_name] => options[:tags])
+          end
+
+          rows = (rows + tagged_rows.all).group_by(&:pact_publication_id).values.collect(&:last)
+        end
+
+        index_items = []
+        rows.sort.each do | row |
+          tag_names = []
+          if options[:tags]
+            tag_names = row.consumer_version_tags.collect(&:name)
+            if options[:tags].is_a?(Array)
+             tag_names = tag_names & options[:tags]
+            end
+          end
+          previous_index_item_for_same_consumer_and_provider = index_items.last && index_items.last.consumer_name == row.consumer_name && index_items.last.provider_name == row.provider_name
+          index_items << PactBroker::Domain::IndexItem.create(row.consumer, row.provider, row.pact, !previous_index_item_for_same_consumer_and_provider, row.latest_verification, row.webhooks, row.latest_triggered_webhooks, tag_names)
+        end
+
+        index_items
       end
 
       def self.tags_for(pact, options)

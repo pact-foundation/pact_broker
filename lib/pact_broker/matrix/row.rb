@@ -1,8 +1,18 @@
 require 'pact_broker/repositories/helpers'
+require 'pact_broker/webhooks/latest_triggered_webhook'
 
 module PactBroker
   module Matrix
     class Row < Sequel::Model(:matrix)
+
+
+      associate(:one_to_many, :latest_triggered_webhooks, :class => "PactBroker::Webhooks::LatestTriggeredWebhook", primary_key: :pact_publication_id, key: :pact_publication_id)
+
+      # already have this
+      # associate(:many_to_one, :latest_verification, :class => "PactBroker::Verifications::Repository::LatestVerificationsByConsumerVersion", primary_key: :pact_version_id, key: :pact_version_id)
+      # TODO modify this to work with single pacticipant webhooks
+      associate(:one_to_many, :webhooks, :class => "PactBroker::Webhooks::Webhook", primary_key: [:consumer_id, :provider_id], key: [:consumer_id, :provider_id])
+      associate(:one_to_many, :consumer_version_tags, :class => "PactBroker::Domain::Tag", primary_key: :consumer_version_id, key: :version_id)
 
       dataset_module do
         include PactBroker::Repositories::Helpers
@@ -49,8 +59,55 @@ module PactBroker
         end
       end
 
+      def latest_triggered_webhooks
+        @latest_triggered_webhooks ||= []
+      end
+
       def summary
         "#{consumer_name}#{consumer_version_number} #{provider_name}#{provider_version_number || '?'} (r#{pact_revision_number}n#{verification_number || '?'})"
+      end
+
+      def consumer
+        @consumer ||= OpenStruct.new(name: consumer_name, id: consumer_id)
+      end
+
+      def provider
+        @provider ||= OpenStruct.new(name: provider_name, id: provider_id)
+      end
+
+      def consumer_version
+        @consumer_version ||= OpenStruct.new(number: consumer_version_number, id: consumer_version_id)
+      end
+
+      def provider_version
+        if provider_version_number
+          @provider_version ||= OpenStruct.new(number: provider_version_number, id: provider_version_id)
+        end
+      end
+
+      def pact
+        @pact ||= OpenStruct.new(consumer: consumer,
+          provider: provider,
+          consumer_version: consumer_version,
+          consumer_version_number: consumer_version_number,
+          created_at: pact_created_at,
+          revision_number: pact_revision_number,
+          pact_version_sha: pact_version_sha
+        )
+      end
+
+      def latest_verification
+        if verification_executed_at
+          @latest_verification ||= OpenStruct.new(
+            id: verification_id,
+            success: success,
+            number: verification_number,
+            execution_date: verification_executed_at,
+            provider_version_number: provider_version_number,
+            build_url: verification_build_url,
+            provider_version: provider_version
+          )
+        end
       end
 
       # Add logic for ignoring case

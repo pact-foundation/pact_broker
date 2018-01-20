@@ -46,16 +46,16 @@ module PactBroker
       # The most recent verification for the latest revision of the pact
       # belonging to the version with the largest consumer_version_order.
 
-      def find_latest_verification_for consumer_name, provider_name, tag = nil
+      def find_latest_verification_for consumer_name, provider_name, consumer_version_tag = nil
         query = LatestVerificationsByConsumerVersion
           .select_all_qualified
           .join(:all_pact_publications, pact_version_id: :pact_version_id)
           .consumer(consumer_name)
           .provider(provider_name)
-        if tag == :untagged
+        if consumer_version_tag == :untagged
           query = query.untagged
-        elsif tag
-          query = query.tag(tag)
+        elsif consumer_version_tag
+          query = query.tag(consumer_version_tag)
         end
         query.reverse_order(
           Sequel[:all_pact_publications][:consumer_version_order],
