@@ -13,6 +13,9 @@ module PactBroker
       extend PactBroker::Logging
 
       def self.find_index_items options = {}
+        rows = []
+
+        if !options[:tags]
         rows = PactBroker::Matrix::LatestRow
           .select_all_qualified
           .join(:latest_pact_publications, {consumer_id: :consumer_id, provider_id: :provider_id, consumer_version_order: :consumer_version_order})
@@ -21,21 +24,29 @@ module PactBroker
           .order(:consumer_name, :provider_name)
           .eager(:consumer_version_tags)
           .all
+        end
 
         if options[:tags]
-          tagged_rows = PactBroker::Matrix::LatestRow
+          tagged_rows = PactBroker::Matrix::Row
             .select_all_qualified
+            .select_append(:tag_name)
+            .join(:head_pact_publications, {id: :pact_publication_id})
             .eager(:latest_triggered_webhooks)
             .eager(:webhooks)
             .order(:consumer_name, :provider_name)
             .eager(:consumer_version_tags)
-            tagged_rows = tagged_rows.join(:latest_tagged_pact_consumer_version_orders, {consumer_id: :consumer_id, provider_id: :provider_id, latest_consumer_version_order: :consumer_version_order})
 
-          if options[:tags].is_a?(Array)
-            tagged_rows = tagged_rows.where(Sequel[:latest_tagged_pact_consumer_version_orders][:tag_name] => options[:tags])
-          end
+            if options[:tags].is_a?(Array)
+              tagged_rows = tagged_rows.where(Sequel[:head_pact_publications][:tag_name] => options[:tags]).or(Sequel[:head_pact_publications][:tag_name] => nil)
+            end
 
-          rows = (rows + tagged_rows.all).group_by(&:pact_publication_id).values.collect(&:last)
+            tagged_rows = tagged_rows.all
+              .group_by(&:pact_publication_id)
+              .values
+              .collect{|group| [group.first, group.collect{|r| r[:tag_name]}.compact] }
+              .collect{ |(row, tag_names)| row.consumer_head_tag_names = tag_names; row }
+
+          rows = tagged_rows
         end
 
         index_items = []

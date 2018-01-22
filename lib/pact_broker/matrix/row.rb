@@ -59,6 +59,16 @@ module PactBroker
         end
       end
 
+      # tags for which this pact publication is the latest of that tag
+      # this is set in the code rather than the database
+      def consumer_head_tag_names
+        @consumer_head_tag_names ||= []
+      end
+
+      def consumer_head_tag_names= consumer_head_tag_names
+        @consumer_head_tag_names = consumer_head_tag_names
+      end
+
       def latest_triggered_webhooks
         @latest_triggered_webhooks ||= []
       end
@@ -76,12 +86,12 @@ module PactBroker
       end
 
       def consumer_version
-        @consumer_version ||= OpenStruct.new(number: consumer_version_number, id: consumer_version_id)
+        @consumer_version ||= OpenStruct.new(number: consumer_version_number, id: consumer_version_id, pacticipant: consumer)
       end
 
       def provider_version
         if provider_version_number
-          @provider_version ||= OpenStruct.new(number: provider_version_number, id: provider_version_id)
+          @provider_version ||= OpenStruct.new(number: provider_version_number, id: provider_version_id, pacticipant: provider)
         end
       end
 
@@ -103,6 +113,7 @@ module PactBroker
             success: success,
             number: verification_number,
             execution_date: verification_executed_at,
+            created_at: verification_executed_at,
             provider_version_number: provider_version_number,
             build_url: verification_build_url,
             provider_version: provider_version
