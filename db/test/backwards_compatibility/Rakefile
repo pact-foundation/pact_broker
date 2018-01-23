@@ -20,7 +20,7 @@ def start_pact_broker code_version, port
     puts command
     IO.popen(command)
   end
-  sleep 2
+  sleep 4
 end
 
 def kill_servers
