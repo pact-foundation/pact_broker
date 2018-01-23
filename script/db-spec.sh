@@ -9,6 +9,6 @@ bundle exec appraisal install
 set +e
 bundle exec rake
 rake_exit_code=$?
-if [[ $rake_exit_code -ne 0 && -n "$TRAVIS" ]]; then
+if [ $rake_exit_code -ne 0 ] && [ -n "$TRAVIS" ]; then
   cat log/pact_broker.log
 fi
