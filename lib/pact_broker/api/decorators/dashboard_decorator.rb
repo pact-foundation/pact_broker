@@ -36,6 +36,7 @@ module PactBroker
             consumer: consumer_hash(index_item, consumer, consumer_version, base_url),
             provider: provider_hash(index_item, provider, base_url),
             pact: pact_hash(index_item, base_url),
+            pactTags: pact_tags(index_item, base_url),
             latestVerificationResult: verification_hash(index_item, base_url),
             verificationStatus: index_item.verification_status.to_s,
             webhookStatus: index_item.webhook_status.to_s,
@@ -106,6 +107,21 @@ module PactBroker
             }
           else
             nil
+          end
+        end
+
+        def pact_tags(index_item, base_url)
+          index_item.tag_names.collect do | tag_name |
+            fake_tag = OpenStruct.new(name: tag_name, version: index_item.consumer_version)
+            {
+              name: tag_name,
+              latest: true,
+              _links: {
+                self: {
+                  href: tag_url(base_url, fake_tag)
+                }
+              }
+            }
           end
         end
 

@@ -66,6 +66,8 @@ module PactBroker
         @latest_verification ? @latest_verification.provider_version_number : nil
       end
 
+      # these are the consumer tag names for which this pact publication
+      # is the latest with that tag
       def tag_names
         @tags
       end

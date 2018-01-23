@@ -35,6 +35,17 @@
       "latestWebhookExecution": {
         "triggeredAt": "2018-01-01T00:00:00+00:00"
       },
+      "pactTags": [
+        {
+          "name": "prod",
+          "latest": true,
+          "_links": {
+            "self": {
+              "href": "pact_prod_tag_url"
+            }
+          }
+        }
+      ],
       "pact": {
         "_links": {
           "self": {

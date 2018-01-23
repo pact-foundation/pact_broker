@@ -19,7 +19,8 @@ module PactBroker
             webhook_status: 'blah',
             verification_status: 'wiffle',
             provider_version_number: provider_version.number,
-            consumer_version_number: consumer_version.number
+            consumer_version_number: consumer_version.number,
+            tag_names: ['prod']
           )
         end
         let(:consumer) { instance_double('PactBroker::Domain::Pacticipant', name: 'Foo') }
@@ -40,6 +41,12 @@ module PactBroker
           allow_any_instance_of(DashboardDecorator).to receive(:pacticipant_url).with(base_url, provider).and_return('provider_url')
           allow_any_instance_of(DashboardDecorator).to receive(:version_url).with(base_url, consumer_version).and_return('consumer_version_url')
           allow_any_instance_of(DashboardDecorator).to receive(:webhooks_status_url).with(consumer, provider, base_url).and_return('webhooks_status_url')
+          allow_any_instance_of(DashboardDecorator).to receive(:tag_url) do | instance, base_url, tag |
+            expect(tag.name).to eq 'prod'
+            expect(tag.version).to be consumer_version
+            expect(base_url).to eq base_url
+            'pact_prod_tag_url'
+          end
         end
 
         let(:expected_hash) { JSON.parse(File.read('spec/fixtures/dashboard.json')) }

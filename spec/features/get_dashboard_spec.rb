@@ -8,6 +8,7 @@ describe "Get dashboard" do
       .create_consumer("Foo")
       .create_provider("Bar")
       .create_consumer_version("1.2.3")
+      .create_consumer_version_tag("prod")
       .create_pact
       .create_verification
       .create_webhook
