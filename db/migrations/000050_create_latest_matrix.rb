@@ -5,6 +5,7 @@ Sequel.migration do
     # latest verification for each provider version)
     # Must include lines where verification_id is null so that we don't
     # lose the unverified pacts.
+    # In this view there will be one row for each consumer version/provider version
     create_view(:latest_matrix,
       "SELECT matrix.* FROM matrix
       INNER JOIN latest_verification_id_for_consumer_version_and_provider_version AS lv

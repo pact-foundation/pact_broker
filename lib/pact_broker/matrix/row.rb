@@ -1,5 +1,6 @@
 require 'pact_broker/repositories/helpers'
 require 'pact_broker/webhooks/latest_triggered_webhook'
+require 'pact_broker/tags/latest_verification_tag'
 
 module PactBroker
   module Matrix
@@ -13,6 +14,7 @@ module PactBroker
       # TODO modify this to work with single pacticipant webhooks
       associate(:one_to_many, :webhooks, :class => "PactBroker::Webhooks::Webhook", primary_key: [:consumer_id, :provider_id], key: [:consumer_id, :provider_id])
       associate(:one_to_many, :consumer_version_tags, :class => "PactBroker::Domain::Tag", primary_key: :consumer_version_id, key: :version_id)
+      associate(:one_to_many, :latest_verification_tags, :class => "PactBroker::Tags::LatestVerificationTag", primary_key: :verification_id, key: :verification_id)
 
       dataset_module do
         include PactBroker::Repositories::Helpers

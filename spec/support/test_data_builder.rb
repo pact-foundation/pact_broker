@@ -240,12 +240,19 @@ class TestDataBuilder
   end
 
   def create_verification parameters = {}
+    tag_names = [parameters.delete(:tag_names), parameters.delete(:tag_name)].flatten.compact
     provider_version_number = parameters[:provider_version] || '4.5.6'
     default_parameters = {success: true, number: 1, test_results: {some: 'results'}}
     parameters = default_parameters.merge(parameters)
     parameters.delete(:provider_version)
     verification = PactBroker::Domain::Verification.new(parameters)
     @verification = PactBroker::Verifications::Repository.new.create(verification, provider_version_number, @pact)
+    if tag_names.any?
+      provider_version = PactBroker::Domain::Version.where(pacticipant_id: @provider.id, number: provider_version_number).single_record
+      tag_names.each do | tag_name |
+        PactBroker::Domain::Tag.create(name: tag_name, version: provider_version)
+      end
+    end
     self
   end
 

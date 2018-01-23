@@ -46,6 +46,17 @@
           }
         }
       ],
+      "latestVerificationResultTags": [
+        {
+          "name": "dev",
+          "latest": true,
+          "_links": {
+            "self": {
+              "href": "verification_dev_tag_url"
+            }
+          }
+        }
+      ],
       "pact": {
         "_links": {
           "self": {

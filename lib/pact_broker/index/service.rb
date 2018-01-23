@@ -29,12 +29,13 @@ module PactBroker
         if options[:tags]
           tagged_rows = PactBroker::Matrix::Row
             .select_all_qualified
-            .select_append(:tag_name)
-            .join(:head_pact_publications, {id: :pact_publication_id})
+            .select_append(Sequel[:head_pact_publications][:tag_name])
+            .join(:head_pact_publications, {consumer_id: :consumer_id, provider_id: :provider_id, consumer_version_order: :consumer_version_order})
             .eager(:latest_triggered_webhooks)
             .eager(:webhooks)
             .order(:consumer_name, :provider_name)
             .eager(:consumer_version_tags)
+            .eager(:latest_verification_tags)
 
             if options[:tags].is_a?(Array)
               tagged_rows = tagged_rows.where(Sequel[:head_pact_publications][:tag_name] => options[:tags]).or(Sequel[:head_pact_publications][:tag_name] => nil)
@@ -43,7 +44,7 @@ module PactBroker
             tagged_rows = tagged_rows.all
               .group_by(&:pact_publication_id)
               .values
-              .collect{|group| [group.first, group.collect{|r| r[:tag_name]}.compact] }
+              .collect{|group| [group.last, group.collect{|r| r[:tag_name]}.compact] }
               .collect{ |(row, tag_names)| row.consumer_head_tag_names = tag_names; row }
 
           rows = tagged_rows
@@ -59,7 +60,15 @@ module PactBroker
             end
           end
           previous_index_item_for_same_consumer_and_provider = index_items.last && index_items.last.consumer_name == row.consumer_name && index_items.last.provider_name == row.provider_name
-          index_items << PactBroker::Domain::IndexItem.create(row.consumer, row.provider, row.pact, !previous_index_item_for_same_consumer_and_provider, row.latest_verification, row.webhooks, row.latest_triggered_webhooks, tag_names)
+          index_items << PactBroker::Domain::IndexItem.create(row.consumer, row.provider,
+            row.pact,
+            !previous_index_item_for_same_consumer_and_provider,
+            row.latest_verification,
+            row.webhooks,
+            row.latest_triggered_webhooks,
+            tag_names,
+            row.latest_verification_tags
+            )
         end
 
         index_items

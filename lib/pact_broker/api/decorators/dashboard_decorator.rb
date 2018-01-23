@@ -38,6 +38,7 @@ module PactBroker
             pact: pact_hash(index_item, base_url),
             pactTags: pact_tags(index_item, base_url),
             latestVerificationResult: verification_hash(index_item, base_url),
+            latestVerificationResultTags: verification_tags(index_item, base_url),
             verificationStatus: index_item.verification_status.to_s,
             webhookStatus: index_item.webhook_status.to_s,
             latestWebhookExecution: latest_webhook_execution(index_item, base_url),
@@ -115,6 +116,21 @@ module PactBroker
             fake_tag = OpenStruct.new(name: tag_name, version: index_item.consumer_version)
             {
               name: tag_name,
+              latest: true,
+              _links: {
+                self: {
+                  href: tag_url(base_url, fake_tag)
+                }
+              }
+            }
+          end
+        end
+
+        def verification_tags(index_item, base_url)
+          index_item.latest_verification_latest_tags.collect do | tag |
+            fake_tag = OpenStruct.new(name: tag.name, version: index_item.provider_version)
+            {
+              name: tag.name,
               latest: true,
               _links: {
                 self: {

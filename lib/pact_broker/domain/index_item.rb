@@ -5,9 +5,9 @@ module PactBroker
   module Domain
     class IndexItem
 
-      attr_reader :consumer, :provider, :latest_pact, :latest_verification, :webhooks, :triggered_webhooks
+      attr_reader :consumer, :provider, :latest_pact, :latest_verification, :webhooks, :triggered_webhooks, :latest_verification_latest_tags
 
-      def initialize consumer, provider, latest_pact = nil, latest = true, latest_verification = nil, webhooks = [], triggered_webhooks = [], tags = []
+      def initialize consumer, provider, latest_pact = nil, latest = true, latest_verification = nil, webhooks = [], triggered_webhooks = [], tags = [], latest_verification_latest_tags = []
         @consumer = consumer
         @provider = provider
         @latest_pact = latest_pact
@@ -16,10 +16,11 @@ module PactBroker
         @webhooks = webhooks
         @triggered_webhooks = triggered_webhooks
         @tags = tags
+        @latest_verification_latest_tags = latest_verification_latest_tags
       end
 
-      def self.create consumer, provider, latest_pact, latest, latest_verification, webhooks = [], triggered_webhooks = [], tags = []
-        new consumer, provider, latest_pact, latest, latest_verification, webhooks, triggered_webhooks, tags
+      def self.create consumer, provider, latest_pact, latest, latest_verification, webhooks = [], triggered_webhooks = [], tags = [], latest_verification_latest_tags = []
+        new consumer, provider, latest_pact, latest, latest_verification, webhooks, triggered_webhooks, tags, latest_verification_latest_tags
       end
 
       def eq? other

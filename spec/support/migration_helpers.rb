@@ -3,7 +3,7 @@ require 'tasks/database'
 module MigrationHelpers
   def create table_name, params, id_column_name = :id
     database[table_name].insert(params);
-    database[table_name].order(id_column_name).last
+    database[table_name].order(id_column_name).last if id_column_name
   end
 
   def clean table_name

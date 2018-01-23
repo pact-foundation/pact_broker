@@ -24,6 +24,7 @@ module PactBroker
               .create_consumer_version_tag("also-ignored")
               .create_pact
               .create_verification(provider_version: "2.1.0")
+              .use_provider_version("2.1.0")
           end
 
           let(:rows) { subject.find_index_items(options) }
@@ -91,6 +92,22 @@ module PactBroker
 
           it "includes the latest overall verification for the latest pact" do
             expect(rows.first.latest_verification.provider_version_number).to eq '2.0.0'
+          end
+        end
+
+        context "when the verification is the latest for a given tag" do
+          before do
+            td.create_pact_with_hierarchy("Foo", "1", "Bar")
+              .create_verification(provider_version: "1.0.0", tag_names: ['dev', 'prod'])
+              .create_verification(provider_version: "2.0.0", number: 2, tag_names: ['dev'])
+          end
+
+          let(:rows) { subject.find_index_items(options) }
+          let(:options) { { tags: true } }
+
+          it "includes the names of the tags for which the verification is the latest of that tag" do
+            expect(rows.first.provider_version_number).to eq "2.0.0"
+            expect(rows.first.latest_verification_latest_tags.collect(&:name)).to eq ['dev']
           end
         end
       end

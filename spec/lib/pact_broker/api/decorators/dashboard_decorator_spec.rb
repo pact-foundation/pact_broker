@@ -20,7 +20,8 @@ module PactBroker
             verification_status: 'wiffle',
             provider_version_number: provider_version.number,
             consumer_version_number: consumer_version.number,
-            tag_names: ['prod']
+            tag_names: ['prod'],
+            latest_verification_latest_tags: [double('tag', name: 'dev')]
           )
         end
         let(:consumer) { instance_double('PactBroker::Domain::Pacticipant', name: 'Foo') }
@@ -42,10 +43,17 @@ module PactBroker
           allow_any_instance_of(DashboardDecorator).to receive(:version_url).with(base_url, consumer_version).and_return('consumer_version_url')
           allow_any_instance_of(DashboardDecorator).to receive(:webhooks_status_url).with(consumer, provider, base_url).and_return('webhooks_status_url')
           allow_any_instance_of(DashboardDecorator).to receive(:tag_url) do | instance, base_url, tag |
-            expect(tag.name).to eq 'prod'
-            expect(tag.version).to be consumer_version
-            expect(base_url).to eq base_url
-            'pact_prod_tag_url'
+            if tag.version == consumer_version
+              expect(tag.name).to eq 'prod'
+              expect(tag.version).to be consumer_version
+              expect(base_url).to eq base_url
+              'pact_prod_tag_url'
+            else
+              expect(tag.name).to eq 'dev'
+              expect(tag.version).to be provider_version
+              expect(base_url).to eq base_url
+              'verification_dev_tag_url'
+            end
           end
         end
 
