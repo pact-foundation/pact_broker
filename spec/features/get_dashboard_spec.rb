@@ -10,7 +10,7 @@ describe "Get dashboard" do
       .create_consumer_version("1.2.3")
       .create_consumer_version_tag("prod")
       .create_pact
-      .create_verification
+      .create_verification(provider_version: "4.5.6", tag_names: "dev")
       .create_webhook
       .create_triggered_webhook
       .create_webhook_execution
