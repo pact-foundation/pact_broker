@@ -34,7 +34,7 @@ module PactBroker
         def version
           if path_info[:tag]
             @version ||= version_service.find_by_pacticpant_name_and_latest_tag(path_info[:pacticipant_name], path_info[:tag])
-          elsif path_info[:number]
+          elsif path_info[:pacticipant_version_number]
             @version ||= version_service.find_by_pacticipant_name_and_number path_info
           else
             @version ||= version_service.find_latest_by_pacticpant_name path_info

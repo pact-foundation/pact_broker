@@ -5,9 +5,9 @@ class HalRelationProxyApp
   # the consumer does not need to know the actual URLs.
   PATH_REPLACEMENTS = {
     '/HAL-REL-PLACEHOLDER-INDEX-PB-LATEST-TAGGED-VERSION-Condor-production' =>
-      '/pacticipants/Condor/versions/latest/production',
+      '/pacticipants/Condor/latest-version/production',
     '/HAL-REL-PLACEHOLDER-INDEX-PB-LATEST-VERSION-Condor' =>
-      '/pacticipants/Condor/versions/latest'
+      '/pacticipants/Condor/latest-version'
   }
 
   RESPONSE_BODY_REPLACEMENTS = {

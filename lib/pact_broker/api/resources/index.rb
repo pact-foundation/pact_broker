@@ -54,12 +54,12 @@ module PactBroker
                 templated: true
               },
               'pb:latest-version' => {
-                href: base_url + '/pacticipants/{pacticipant}/versions/latest',
+                href: base_url + '/pacticipants/{pacticipant}/latest-version',
                 title: 'Latest pacticipant version',
                 templated: true
               },
               'pb:latest-tagged-version' => {
-                href: base_url + '/pacticipants/{pacticipant}/versions/latest/{tag}',
+                href: base_url + '/pacticipants/{pacticipant}/latest-version/{tag}',
                 title: 'Latest pacticipant version with the specified tag',
                 templated: true
               },
