@@ -175,10 +175,7 @@ module PactBroker
           end
         end
 
-        context "when a username and password are specified" do
-
-          let(:username) { 'username' }
-          let(:password) { 'password' }
+        describe "when a username and password are specified" do
 
           let!(:http_request_with_basic_auth) do
             stub_request(:post, "http://example.org/hook").
@@ -189,9 +186,24 @@ module PactBroker
               to_return(:status => 200, :body => "respbod", :headers => {'Content-Type' => 'text/foo, blah'})
           end
 
-          it "uses the credentials" do
-            subject.execute(pact, options)
-            expect(http_request_with_basic_auth).to have_been_made
+          context "with normal characters" do
+            let(:username) { "username" }
+            let(:password) { "password" }
+
+            it "uses the credentials" do
+              subject.execute(pact, options)
+              expect(http_request_with_basic_auth).to have_been_made
+            end
+          end
+
+          context "with special characters" do
+            let(:username) { "user_name@site.com" }
+            let(:password) { "p@$$w0rd!" }
+
+            it "uses the credentials" do
+              subject.execute(pact, options)
+              expect(http_request_with_basic_auth).to have_been_made
+            end
           end
         end
 
