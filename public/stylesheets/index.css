@@ -61,7 +61,7 @@ span.pact {
   display: inline-block;
 }
 
-span.pact svg {
+span.pact svg, span.pact-matrix svg {
   width: 20px !important;
   height: 20px !important;
   overflow: visible;
