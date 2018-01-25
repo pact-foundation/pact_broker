@@ -40,10 +40,10 @@
             %a{ href: index_item.consumer_group_url }
               = index_item.consumer_name
           %td.pact
-            %a{ href: index_item.pact_url, :title => "View pact" }
-              %span.pact
-            %a{ href: index_item.pact_matrix_url, title: "View pact matrix" }
-              %span.pact-matrix
+            %span.pact
+              %a{ href: index_item.pact_url, :title => "View pact" }
+            %span.pact-matrix
+              %a{ href: index_item.pact_matrix_url, title: "View pact matrix" }
           %td.provider
             %a{ href: index_item.provider_group_url }
               = index_item.provider_name
@@ -68,8 +68,8 @@
   });
 
   $(document).ready(function(){
-    $("span.pact").load("/images/doc-text.svg");
-    $("span.pact-matrix").load("/images/doc-matrix.svg");
+    $("span.pact a").load("/images/doc-text.svg");
+    $("span.pact-matrix a").load("/images/doc-matrix.svg");
     $('td[data-toggle="tooltip"]').each(function(index, td){
       //appended tooltip div screws up table if it's appended after a
       //td, so need to append it to a div
