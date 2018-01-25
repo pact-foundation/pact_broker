@@ -50,11 +50,20 @@ module PactBroker
               'pb:latest-provider-pacts-with-tag' =>
               {
                 href: base_url + '/pacts/provider/{provider}/latest/{tag}',
-                title: 'Latest pacts by provider with a specified tag',
+                title: 'Latest pacts by provider with the specified tag',
                 templated: true
               },
-              'pb:webhooks' =>
-              {
+              'pb:latest-version' => {
+                href: base_url + '/pacticipants/{pacticipant}/versions/latest',
+                title: 'Latest pacticipant version',
+                templated: true
+              },
+              'pb:latest-tagged-version' => {
+                href: base_url + '/pacticipants/{pacticipant}/versions/latest/{tag}',
+                title: 'Latest pacticipant version with the specified tag',
+                templated: true
+              },
+              'pb:webhooks' => {
                 href: base_url + '/webhooks',
                 title: 'Webhooks',
                 templated: false
