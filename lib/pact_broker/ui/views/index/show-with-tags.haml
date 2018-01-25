@@ -56,6 +56,8 @@
               = index_item.provider_name
           %td.provider-version-number
             = index_item.provider_version_number
+            %span{style: 'color:gray'}
+              = index_item.verification_tag_names
           %td
             = index_item.publication_date_of_latest_pact.gsub("about ", "")
           %td{ class: index_item.webhook_status }

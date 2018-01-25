@@ -34,6 +34,15 @@ module PactBroker
           @relationship.tag_names.any? ? " (#{latest_overall}latest #{@relationship.tag_names.join(', ')}) ": " (latest) "
         end
 
+        def verification_tag_names
+          if @relationship.latest_verification_latest_tags.any?
+            tag_names = @relationship.latest_verification_latest_tags.collect(&:name)
+            " (latest #{tag_names.join(', ')})"
+          else
+            ""
+          end
+        end
+
         def consumer_group_url
           Helpers::URLHelper.group_url consumer_name
         end
