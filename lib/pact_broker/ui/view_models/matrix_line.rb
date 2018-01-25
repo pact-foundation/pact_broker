@@ -1,6 +1,7 @@
 require 'pact_broker/api/pact_broker_urls'
 require 'pact_broker/ui/helpers/url_helper'
 require 'pact_broker/date_helper'
+require 'pact_broker/ui/view_models/matrix_tag'
 
 module PactBroker
   module UI
@@ -70,6 +71,30 @@ module PactBroker
           end
         end
 
+        def latest_consumer_version_tags
+          @line[:consumer_version_tags]
+            .select{ | tag | tag[:latest] }
+            .collect{ | tag | MatrixTag.new(tag.merge(pacticipant_name: consumer_name, version_number: consumer_version_number)) }
+        end
+
+        def other_consumer_version_tags
+          @line[:consumer_version_tags]
+            .select{ | tag | !tag[:latest] }
+            .collect{ | tag | MatrixTag.new(tag.merge(pacticipant_name: consumer_name, version_number: consumer_version_number)) }
+        end
+
+        def latest_provider_version_tags
+          @line[:provider_version_tags]
+            .select{ | tag | tag[:latest] }
+            .collect{ | tag | MatrixTag.new(tag.merge(pacticipant_name: provider_name, version_number: provider_version_number)) }
+        end
+
+        def other_provider_version_tags
+          @line[:provider_version_tags]
+            .select{ | tag | !tag[:latest] }
+            .collect{ | tag | MatrixTag.new(tag.merge(pacticipant_name: provider_name, version_number: provider_version_number)) }
+        end
+
         def orderable_fields
           [consumer_name, consumer_version_order, @line[:pact_revision_number], provider_name, @line[:verification_id]]
         end
@@ -92,7 +117,11 @@ module PactBroker
         end
 
         def pact_publication_date
-          DateHelper.distance_of_time_in_words(@line[:pact_created_at], DateTime.now) + " ago"
+          relative_date(@line[:pact_created_at])
+        end
+
+        def relative_date date
+          DateHelper.distance_of_time_in_words(date, DateTime.now) + " ago"
         end
 
         def pact_published_order

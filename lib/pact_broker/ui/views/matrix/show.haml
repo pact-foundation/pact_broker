@@ -99,14 +99,36 @@
         %td.consumer{'data-sort-value' => line.consumer_name}
           = line.consumer_name
         %td.consumer-version{'data-sort-value' => line.consumer_version_order}
-          %a{href: line.consumer_version_number_url}
-            = line.consumer_version_number
+          %div
+            %a{href: line.consumer_version_number_url}
+              = line.consumer_version_number
+          - line.latest_consumer_version_tags.each do | tag |
+            .tag-parent{"title": tag.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
+              %a{href: tag.url}
+                .tag.label.label-primary
+                  = tag.name
+          - line.other_consumer_version_tags.each do | tag |
+            .tag-parent{"title": tag.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
+              %a{href: tag.url}
+                .tag.label.label-default
+                  = tag.name
         %td.pact-published{'data-sort-value' => line.pact_published_order}
           = line.pact_publication_date
-        %td.provider{'data-sort-value' => line.provider_version_order}
+        %td.provider{'data-sort-value' => line.provider_name}
           = line.provider_name
         %td.provider-version{'data-sort-value' => line.provider_version_order}
-          %a{href: line.provider_version_number_url}
-            = line.provider_version_number
+          %div
+            %a{href: line.provider_version_number_url}
+              = line.provider_version_number
+          - line.latest_provider_version_tags.each do | tag |
+            .tag-parent{"title": tag.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
+              %a{href: tag.url}
+                .tag.label.label-primary
+                  = tag.name
+          - line.other_provider_version_tags.each do | tag |
+            .tag-parent{"title": tag.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
+              %a{href: tag.url}
+                .tag.label.label-default
+                  = tag.name
         %td.verification-result{class: line.verification_status_class}
           = line.verification_status

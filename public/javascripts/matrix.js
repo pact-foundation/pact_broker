@@ -57,4 +57,9 @@ $(document).ready(function(){
       return n.attr('data-sort-value') || n.text();
     }
   });
+
+
+  $('[data-toggle="tooltip"]').each(function(index, el){
+    $(el).tooltip({container: $(el)});
+  });
 });

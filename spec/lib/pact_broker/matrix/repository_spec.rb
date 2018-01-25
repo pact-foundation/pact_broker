@@ -510,6 +510,10 @@ module PactBroker
             expect(subject).to include_hash_matching provider_version_number: "2.0.0"
             expect(subject.size).to eq 1
           end
+
+          it "returns the tag information" do
+            expect(subject.first[:provider_version_tags]).to include_hash_matching name: 'prod', latest: 1
+          end
         end
 
         context "when the latest version is specified for a provider without a tag" do

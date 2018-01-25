@@ -29,7 +29,12 @@ module PactBroker
           lines = lines.select{ |l| options[:success].include?(l.success) }
         end
 
-        lines.sort.collect(&:values)
+        lines.sort.collect do | line |
+          values = line.values
+          values[:consumer_version_tags] = line.consumer_version_tags.collect(&:values)
+          values[:provider_version_tags] = line.provider_version_tags.collect(&:values)
+          values
+        end
       end
 
       def apply_latestby options, selectors, lines
@@ -59,7 +64,11 @@ module PactBroker
       def query_matrix selectors, options
         query = view_for(options).select_all.matching_selectors(selectors)
         query = query.limit(options[:limit]) if options[:limit]
-        query.order_by_names_ascending_most_recent_first.all
+        query
+          .order_by_names_ascending_most_recent_first
+          .eager(:consumer_version_tags)
+          .eager(:provider_version_tags)
+          .all
       end
 
       def view_for(options)
