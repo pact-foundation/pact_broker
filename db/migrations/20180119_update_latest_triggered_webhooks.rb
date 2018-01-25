@@ -17,6 +17,8 @@ Sequel.migration do
       group by webhook_uuid, consumer_id, provider_id"
     )
 
+    # Ignore ltwcd.latest_triggered_webhook_created_at, it's there because postgres doesn't allow you to modify
+    # the names and types of columns in a view
     create_or_replace_view(:latest_triggered_webhook_ids,
       "select tw.webhook_uuid, tw.consumer_id, tw.provider_id, ltwcd.latest_triggered_webhook_created_at, max(tw.id) as latest_triggered_webhook_id
       from latest_triggered_webhook_creation_dates ltwcd

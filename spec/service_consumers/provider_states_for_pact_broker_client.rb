@@ -2,6 +2,33 @@ require 'spec/support/test_data_builder'
 
 Pact.provider_states_for "Pact Broker Client" do
 
+  provider_state "the pb:latest-tagged-version relation exists in the index resource" do
+    no_op
+  end
+
+  provider_state "'Condor' exists in the pact-broker with the latest tagged 'production' version 1.2.3" do
+    set_up do
+      TestDataBuilder.new
+        .create_consumer("Condor")
+        .create_consumer_version("1.2.3")
+        .create_consumer_version_tag("production")
+        .create_consumer_version("2.0.0")
+    end
+  end
+
+  provider_state "the pb:latest-version relation exists in the index resource" do
+    no_op
+  end
+
+  provider_state "'Condor' exists in the pact-broker with the latest version 1.2.3" do
+    set_up do
+      TestDataBuilder.new
+        .create_consumer("Condor")
+        .create_consumer_version("1.0.0")
+        .create_consumer_version("1.2.3")
+    end
+  end
+
   provider_state "the pact for Foo Thing version 1.2.3 has been verified by Bar version 4.5.6" do
     set_up do
       TestDataBuilder.new
