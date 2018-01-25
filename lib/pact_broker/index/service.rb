@@ -23,6 +23,7 @@ module PactBroker
           .eager(:webhooks)
           .order(:consumer_name, :provider_name)
           .eager(:consumer_version_tags)
+          .eager(:provider_version_tags)
           .all
         end
 
@@ -35,7 +36,7 @@ module PactBroker
             .eager(:webhooks)
             .order(:consumer_name, :provider_name)
             .eager(:consumer_version_tags)
-            .eager(:latest_verification_tags)
+            .eager(:provider_version_tags)
 
             if options[:tags].is_a?(Array)
               tagged_rows = tagged_rows.where(Sequel[:head_pact_publications][:tag_name] => options[:tags]).or(Sequel[:head_pact_publications][:tag_name] => nil)
@@ -67,7 +68,7 @@ module PactBroker
             row.webhooks,
             row.latest_triggered_webhooks,
             tag_names,
-            row.latest_verification_tags
+            row.provider_version_tags.select(&:latest?)
             )
         end
 

@@ -1,0 +1,18 @@
+require 'pact_broker/db'
+require 'pact_broker/repositories/helpers'
+
+module PactBroker
+  module Tags
+    # The tag associated with the latest verification for a given tag
+    class TagWithLatestFlag < Sequel::Model(:tags_with_latest_flag)
+
+      dataset_module do
+        include PactBroker::Repositories::Helpers
+      end
+
+      def latest?
+        !values[:latest].nil?
+      end
+    end
+  end
+end

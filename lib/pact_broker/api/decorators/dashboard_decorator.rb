@@ -131,7 +131,7 @@ module PactBroker
             fake_tag = OpenStruct.new(name: tag.name, version: index_item.provider_version)
             {
               name: tag.name,
-              latest: true,
+              latest: tag.latest?,
               _links: {
                 self: {
                   href: tag_url(base_url, fake_tag)

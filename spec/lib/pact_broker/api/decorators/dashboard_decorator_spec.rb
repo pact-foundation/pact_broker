@@ -21,7 +21,7 @@ module PactBroker
             provider_version_number: provider_version.number,
             consumer_version_number: consumer_version.number,
             tag_names: ['prod'],
-            latest_verification_latest_tags: [double('tag', name: 'dev')]
+            latest_verification_latest_tags: [double('tag', name: 'dev', latest?: true)]
           )
         end
         let(:consumer) { instance_double('PactBroker::Domain::Pacticipant', name: 'Foo') }
