@@ -64,8 +64,8 @@ module PactBroker
         end
 
         def provider_version_order
-          if @line[:execution_date]
-            @line[:execution_date].to_time.to_i
+          if @line[:verification_executed_at]
+            @line[:verification_executed_at].to_time.to_i
           else
             0
           end
