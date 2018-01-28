@@ -29,12 +29,7 @@ module PactBroker
           lines = lines.select{ |l| options[:success].include?(l.success) }
         end
 
-        lines.sort.collect do | line |
-          values = line.values
-          values[:consumer_version_tags] = line.consumer_version_tags.collect(&:values)
-          values[:provider_version_tags] = line.provider_version_tags.collect(&:values)
-          values
-        end
+        lines.sort
       end
 
       def apply_latestby options, selectors, lines

@@ -57,6 +57,17 @@ module PactBroker
         end
       end
 
+      # Temporary method while we transition from returning Hashes to return Matrix objects
+      # from the repository find methods
+      # Need to make the object act as a hash and an object
+      def [] key
+        if key == :provider_version_tags || key == :consumer_version_tags
+          send(key)
+        else
+          super
+        end
+      end
+
       # tags for which this pact publication is the latest of that tag
       # this is set in the code rather than the database
       def consumer_head_tag_names
