@@ -48,6 +48,7 @@ module PactBroker
           if dasherized['_embedded']
             if dasherized['_embedded']['latest-version']
               dasherized['_embedded']['latest-version']['title'] = 'DEPRECATED - please use latestVersion'
+              dasherized['_embedded']['latest-version']['name'] = 'DEPRECATED - please use latestVersion'
             end
             h['_embedded'] ||= {}
             h['_embedded'].merge!(dasherized['_embedded'])
