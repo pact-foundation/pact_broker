@@ -4,6 +4,8 @@ module PactBroker
   module Api
     module PactBrokerUrls
 
+      # TODO make base_url the last and optional argument for all methods, defaulting to ''
+
       extend self
 
       def pacticipants_url base_url
@@ -12,6 +14,14 @@ module PactBroker
 
       def pacticipant_url base_url, pacticipant
         "#{pacticipants_url(base_url)}/#{url_encode(pacticipant.name)}"
+      end
+
+      def pacticipant_url_from_params params, base_url = ''
+        [
+          base_url,
+          'pacticipants',
+          url_encode(params.fetch(:pacticipant_name))
+        ].join("/")
       end
 
       def latest_version_url base_url, pacticipant
@@ -24,6 +34,16 @@ module PactBroker
 
       def version_url base_url, version
         "#{pacticipant_url(base_url, version.pacticipant)}/versions/#{version.number}"
+      end
+
+      def version_url_from_params params, base_url = ''
+        [
+          base_url,
+          'pacticipants',
+          url_encode(params.fetch(:pacticipant_name)),
+          'versions',
+          url_encode(params.fetch(:version_number)),
+        ].join("/")
       end
 
       def pact_url base_url, pact

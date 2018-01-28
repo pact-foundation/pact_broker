@@ -18,17 +18,25 @@ module PactBroker
           @line[:provider_name]
         end
 
+        def provider_name_url
+          hal_browser_url(pacticipant_url_from_params(pacticipant_name: provider_name))
+        end
+
         def consumer_name
           @line[:consumer_name]
+        end
+
+        def consumer_name_url
+          hal_browser_url(pacticipant_url_from_params(pacticipant_name: consumer_name))
         end
 
         def pact_version_sha
           @line[:pact_version_sha]
         end
 
-        # verification number
+        # verification number, used in verification_url method
         def number
-          @line[:number]
+          @line[:verification_number]
         end
 
         def consumer_name
@@ -40,7 +48,8 @@ module PactBroker
         end
 
         def consumer_version_number_url
-          pact_url_from_params('', @line)
+          params = { pacticipant_name: consumer_name, version_number: consumer_version_number }
+          hal_browser_url(version_url_from_params(params))
         end
 
         def consumer_version_order
@@ -60,7 +69,8 @@ module PactBroker
         end
 
         def provider_version_number_url
-          hal_browser_url(verification_url(self))
+          params = { pacticipant_name: provider_name, version_number: provider_version_number }
+          hal_browser_url(version_url_from_params(params))
         end
 
         def provider_version_order
@@ -116,8 +126,16 @@ module PactBroker
           # end
         end
 
+        def verification_status_url
+          hal_browser_url(verification_url(self))
+        end
+
         def pact_publication_date
           relative_date(@line[:pact_created_at])
+        end
+
+        def pact_publication_date_url
+          pact_url_from_params('', @line)
         end
 
         def relative_date date
