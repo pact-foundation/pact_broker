@@ -23,7 +23,7 @@ module PactBroker
 
         def tooltip
           if @latest
-            "LATEST. Tag created #{relative_date(@created_at)}."
+            "Version #{@version_number} is the latest version with tag #{@name}. Tag created #{relative_date(@created_at)}."
           else
             "Tag created #{relative_date(@created_at)}."
           end
