@@ -10,6 +10,7 @@ module PactBroker
       let(:td) { TestDataBuilder.new }
       let(:tags) { ['prod', 'production'] }
       let(:options) { { tags: tags } }
+      let(:rows) { subject.find_index_items(options) }
 
       subject{ Service }
 
@@ -108,6 +109,20 @@ module PactBroker
           it "includes the names of the tags for which the verification is the latest of that tag" do
             expect(rows.first.provider_version_number).to eq "2.0.0"
             expect(rows.first.latest_verification_latest_tags.collect(&:name)).to eq ['dev']
+          end
+        end
+
+        context "when there are multiple verifications for the latest consumer version" do
+          before do
+            td.create_pact_with_hierarchy("Foo", "1", "Bar")
+              .create_verification(provider_version: "1.0.0")
+              .create_verification(provider_version: "2.0.0", number: 2)
+          end
+
+          let(:options) { {} }
+
+          it "only returns the row for the latest provider version" do
+            expect(rows.count).to eq 1
           end
         end
       end

@@ -150,6 +150,10 @@ module PactBroker
         name1 <=> name2
       end
 
+      def to_s
+        "#{consumer_name} v#{consumer_version_number} #{provider_name} #{provider_version_number} #{success}"
+      end
+
       def compare_number_desc number1, number2
         if number1 && number2
           number2 <=> number1

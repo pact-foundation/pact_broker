@@ -2,6 +2,7 @@ require 'pact_broker/repositories'
 require 'pact_broker/logging'
 require 'pact_broker/domain/index_item'
 require 'pact_broker/matrix/latest_row'
+require 'pact_broker/matrix/actual_latest_row'
 
 module PactBroker
 
@@ -16,9 +17,8 @@ module PactBroker
         rows = []
 
         if !options[:tags]
-        rows = PactBroker::Matrix::LatestRow
+        rows = PactBroker::Matrix::ActualLatestRow
           .select_all_qualified
-          .join(:latest_pact_publications, {consumer_id: :consumer_id, provider_id: :provider_id, consumer_version_order: :consumer_version_order})
           .eager(:latest_triggered_webhooks)
           .eager(:webhooks)
           .order(:consumer_name, :provider_name)
