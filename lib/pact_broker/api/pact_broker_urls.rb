@@ -107,6 +107,15 @@ module PactBroker
         ].join('/')
       end
 
+      def verification_url_from_params params, base_url = ''
+        [ base_url, 'pacts',
+          'provider', url_encode(params.fetch(:provider_name)),
+          'consumer', url_encode(params.fetch(:consumer_name)),
+          'pact-version', params.fetch(:pact_version_sha),
+          'verification-results', params.fetch(:verification_number)
+        ].join('/')
+      end
+
       def latest_verifications_for_consumer_version_url version, base_url
         "#{base_url}/verification-results/consumer/#{url_encode(version.pacticipant.name)}/version/#{version.number}/latest"
       end

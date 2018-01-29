@@ -49,7 +49,7 @@ module PactBroker
       def find_for_consumer_and_provider pacticipant_1_name, pacticipant_2_name
         selectors = [{ pacticipant_name: pacticipant_1_name }, { pacticipant_name: pacticipant_2_name }]
         options = { latestby: 'cvpv' }
-        query_matrix(resolve_selectors(selectors, options), options).sort.collect(&:values)
+        query_matrix(resolve_selectors(selectors, options), options).sort
       end
 
       def find_compatible_pacticipant_versions selectors
