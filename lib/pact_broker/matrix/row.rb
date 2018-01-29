@@ -124,7 +124,9 @@ module PactBroker
             created_at: verification_executed_at,
             provider_version_number: provider_version_number,
             build_url: verification_build_url,
-            provider_version: provider_version
+            provider_version: provider_version,
+            consumer_name: consumer_name,
+            provider_name: provider_name
           )
         end
       end
