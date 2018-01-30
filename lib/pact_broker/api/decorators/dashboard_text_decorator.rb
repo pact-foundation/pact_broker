@@ -20,7 +20,7 @@ module PactBroker
         def to_text(options)
           data = items(index_items, options[:user_options][:base_url])
           printer = TablePrint::Printer.new(data)
-          printer.table_print
+          printer.table_print + "\n"
         end
 
         private
