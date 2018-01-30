@@ -37,6 +37,20 @@ class TestDataBuilder
   attr_reader :webhook
   attr_reader :webhook_execution
   attr_reader :triggered_webhook
+  attr_accessor :auto_refresh_matrix
+
+  def initialize(params = {})
+    @auto_refresh_matrix = params.fetch(:auto_refresh_matrix, true)
+  end
+
+  def refresh_matrix
+    if auto_refresh_matrix
+      params = {}
+      params[:consumer_name] = consumer.name if consumer
+      params[:provider_name] = provider.name if provider
+      matrix_service.refresh(params)
+    end
+  end
 
   def create_pricing_service
     @pricing_service_id = pacticipant_repository.create(:name => 'Pricing Service', :repository_url => 'git@git.realestate.com.au:business-systems/pricing-service').save(raise_on_save_failure: true).id
@@ -185,6 +199,7 @@ class TestDataBuilder
     set_created_at_if_set params[:created_at], :pact_publications, {id: @pact.id}
     set_created_at_if_set params[:created_at], :pact_versions, {sha: @pact.pact_version_sha}
     @pact = PactBroker::Pacts::PactPublication.find(id: @pact.id).to_domain
+    refresh_matrix
     self
   end
 
@@ -253,6 +268,7 @@ class TestDataBuilder
         PactBroker::Domain::Tag.create(name: tag_name, version: provider_version)
       end
     end
+    refresh_matrix
     self
   end
 

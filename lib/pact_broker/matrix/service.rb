@@ -1,4 +1,6 @@
 require 'pact_broker/repositories'
+require 'pact_broker/matrix/row'
+require 'pact_broker/matrix/actual_latest_row'
 
 module PactBroker
   module Matrix
@@ -7,6 +9,10 @@ module PactBroker
       extend self
       extend PactBroker::Repositories
       extend PactBroker::Services
+
+      def refresh params
+        matrix_repository.refresh params
+      end
 
       def find criteria, options = {}
         matrix_repository.find criteria, options

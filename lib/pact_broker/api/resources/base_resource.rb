@@ -41,6 +41,9 @@ module PactBroker
         end
 
         def finish_request
+          if !request.get? && !request.head?
+            matrix_service.refresh(identifier_from_path)
+          end
           PactBroker.configuration.after_resource.call(self)
         end
 

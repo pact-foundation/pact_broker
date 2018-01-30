@@ -18,6 +18,11 @@ module PactBroker
       GROUP_BY_PROVIDER = [:consumer_name, :consumer_version_number, :provider_name]
       GROUP_BY_PACT = [:consumer_name, :provider_name]
 
+      def refresh params
+        PactBroker::Matrix::Row.refresh(params)
+        PactBroker::Matrix::ActualLatestRow.refresh(params)
+      end
+
       # Return the latest matrix row (pact/verification) for each consumer_version_number/provider_version_number
       def find selectors, options = {}
         # The group with the nil provider_version_numbers will be the results of the left outer join

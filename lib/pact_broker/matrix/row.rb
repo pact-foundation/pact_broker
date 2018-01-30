@@ -4,7 +4,7 @@ require 'pact_broker/tags/tag_with_latest_flag'
 
 module PactBroker
   module Matrix
-    class Row < Sequel::Model(:matrix)
+    class Row < Sequel::Model(:materialized_matrix)
 
       associate(:one_to_many, :latest_triggered_webhooks, :class => "PactBroker::Webhooks::LatestTriggeredWebhook", primary_key: :pact_publication_id, key: :pact_publication_id)
       associate(:one_to_many, :webhooks, :class => "PactBroker::Webhooks::Webhook", primary_key: [:consumer_id, :provider_id], key: [:consumer_id, :provider_id])
@@ -13,6 +13,35 @@ module PactBroker
 
       dataset_module do
         include PactBroker::Repositories::Helpers
+
+        def refresh params
+          source_view_name = model.table_name.to_s.gsub('materialized_', '').to_sym
+          if params[:consumer_name] || params[:provider_name]
+            criteria = {}
+            if params[:consumer_name]
+              pacticipant = PactBroker::Domain::Pacticipant.where(name_like(:name, params[:consumer_name])).single_record
+              criteria[:consumer_id] = pacticipant.id if pacticipant
+            end
+
+            if params[:provider_name]
+              pacticipant = PactBroker::Domain::Pacticipant.where(name_like(:name, params[:provider_name])).single_record
+              criteria[:provider_id] = pacticipant.id if pacticipant
+            end
+            if criteria.any?
+              db[model.table_name].where(criteria).delete
+              db[model.table_name].insert(db[source_view_name].where(criteria))
+            end
+          end
+
+          if params[:pacticipant_name]
+            pacticipant = PactBroker::Domain::Pacticipant.where(name_like(:name, params[:pacticipant_name])).single_record
+            if pacticipant
+              db[model.table_name].where(consumer_id: pacticipant.id).or(provider_id: pacticipant.id).delete
+              new_rows = db[source_view_name].where(consumer_id: pacticipant.id).or(provider_id: pacticipant.id)
+              db[model.table_name].insert(new_rows)
+            end
+          end
+        end
 
         def matching_selectors selectors
           if selectors.size == 1

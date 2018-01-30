@@ -45,7 +45,7 @@ describe "changing from integer to timestamp migrations", no_db_clean: true do
   it "allows data to be inserted" do
     consumer_id = @db[:pacticipants].insert(name: 'Foo', created_at: DateTime.now, updated_at: DateTime.now)
     provider_id = @db[:pacticipants].insert(name: 'Bar', created_at: DateTime.now, updated_at: DateTime.now)
-    version_id = @db[:versions].insert(number: '1.2.3', pacticipant_id: consumer_id, created_at: DateTime.now, updated_at: DateTime.now)
+    version_id = @db[:versions].insert(number: '1.2.3', order: 1, pacticipant_id: consumer_id, created_at: DateTime.now, updated_at: DateTime.now)
     pact_json = {consumer: {name: 'Foo'}, provider: {name: 'Bar'}, interactions: []}.to_json
     pact_version_id = @db[:pact_versions].insert(sha: '123', content: pact_json, created_at: DateTime.now, consumer_id: consumer_id, provider_id: provider_id)
     pact_publication_id = @db[:pact_publications].insert(consumer_version_id: version_id, provider_id: provider_id, revision_number: 1, pact_version_id: pact_version_id, created_at: DateTime.now)

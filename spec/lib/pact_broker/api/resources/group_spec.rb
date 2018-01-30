@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'pact_broker/api/resources/group'
+require 'pact_broker/groups/service'
 require 'rack/test'
 
 module PactBroker::Api
