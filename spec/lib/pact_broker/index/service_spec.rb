@@ -113,16 +113,79 @@ module PactBroker
         end
 
         context "when there are multiple verifications for the latest consumer version" do
-          before do
-            td.create_pact_with_hierarchy("Foo", "1", "Bar")
-              .create_verification(provider_version: "1.0.0")
-              .create_verification(provider_version: "2.0.0", number: 2)
+
+          context "with no tags" do
+            before do
+              td.create_pact_with_hierarchy("Foo", "1", "Bar")
+                .create_verification(provider_version: "1.0.0")
+                .create_verification(provider_version: "2.0.0", number: 2)
+            end
+
+            let(:options) { {} }
+
+            it "only returns the row for the latest provider version" do
+              expect(rows.count).to eq 1
+            end
           end
 
-          let(:options) { {} }
+          context "with tags=true" do
+            before do
+              td.create_pact_with_hierarchy("Foo", "1", "Bar")
+                .create_consumer_version("2")
+                .create_consumer_version_tag("prod")
+                .create_consumer_version_tag("master")
+                .create_pact
+                .revise_pact
+                .create_verification(provider_version: "1.0.0")
+                .create_verification(provider_version: "2.0.0", number: 2)
+            end
 
-          it "only returns the row for the latest provider version" do
-            expect(rows.count).to eq 1
+            let(:options) { {tags: true} }
+
+            it "only returns the row for the latest provider version" do
+              expect(rows.size).to eq 1
+              expect(rows.first.tag_names.sort).to eq ["master","prod"]
+              expect(rows.first.provider_version_number).to eq "2.0.0"
+            end
+          end
+
+          context "with tags=true" do
+            before do
+              td.create_pact_with_hierarchy("Foo", "1.0.0", "Bar")
+                .create_verification(provider_version: "4.5.6")
+                .create_consumer_version("2.0.0")
+                .create_consumer_version_tag("dev")
+                .create_pact
+                .revise_pact
+                .create_consumer_version("2.1.0")
+                .create_consumer_version_tag("prod")
+                .create_pact
+                .revise_pact
+                .create_verification(provider_version: "4.5.6", number: 1)
+                .create_verification(provider_version: "4.5.7", number: 2)
+                .create_verification(provider_version: "4.5.8", number: 3)
+                .create_verification(provider_version: "4.5.9", number: 4)
+                .create_provider("Wiffle")
+                .create_pact
+            end
+
+            let(:options) { {tags: true} }
+
+            it "returns a row for each of the head pacts" do
+              expect(rows.size).to eq 3
+
+              expect(rows[0].latest?).to be true
+              expect(rows[0].provider_name).to eq "Bar"
+              expect(rows[0].tag_names).to eq ["prod"]
+              expect(rows[0].provider_version_number).to eq "4.5.9"
+
+              expect(rows[2].latest?).to be false
+              expect(rows[2].provider_name).to eq "Bar"
+              expect(rows[2].tag_names).to eq ["dev"]
+
+              expect(rows[1].latest?).to be true
+              expect(rows[1].provider_name).to eq "Wiffle"
+            end
           end
         end
       end

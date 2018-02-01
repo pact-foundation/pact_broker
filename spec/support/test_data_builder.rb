@@ -22,6 +22,7 @@ require 'pact_broker/verifications/service'
 require 'pact_broker/tags/repository'
 require 'pact_broker/webhooks/repository'
 require 'pact_broker/certificates/certificate'
+require 'pact_broker/matrix/row'
 require 'ostruct'
 
 class TestDataBuilder
@@ -49,6 +50,8 @@ class TestDataBuilder
       params[:consumer_name] = consumer.name if consumer
       params[:provider_name] = provider.name if provider
       matrix_service.refresh(params)
+      # Row is not used in production code, but the tests depend on it
+      PactBroker::Matrix::Row.refresh(params)
     end
   end
 

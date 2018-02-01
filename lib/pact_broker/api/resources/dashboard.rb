@@ -30,7 +30,7 @@ module PactBroker
         private
 
         def index_items
-          index_service.find_index_items
+          index_service.find_index_items(tags: true)
         end
       end
     end

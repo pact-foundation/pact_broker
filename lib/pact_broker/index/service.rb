@@ -3,6 +3,7 @@ require 'pact_broker/logging'
 require 'pact_broker/domain/index_item'
 require 'pact_broker/matrix/latest_row'
 require 'pact_broker/matrix/actual_latest_row'
+require 'pact_broker/matrix/head_row'
 
 module PactBroker
 
@@ -13,42 +14,41 @@ module PactBroker
       extend PactBroker::Services
       extend PactBroker::Logging
 
+      # Used when using table_print to output query results
+      TP_COLS = [:consumer_name, :consumer_version_number, :consumer_version_id, :provider_name, :provider_id, :provider_version_number]
+
       def self.find_index_items options = {}
         rows = []
+        overall_latest_publication_ids = nil
 
-        if !options[:tags]
-        rows = PactBroker::Matrix::ActualLatestRow
+        rows = PactBroker::Matrix::HeadRow
           .select_all_qualified
           .eager(:latest_triggered_webhooks)
           .eager(:webhooks)
           .order(:consumer_name, :provider_name)
           .eager(:consumer_version_tags)
           .eager(:provider_version_tags)
-          .all
+
+        if !options[:tags]
+          rows = rows.where(consumer_tag_name: nil).all
+          overall_latest_publication_ids = rows.collect(&:pact_publication_id)
         end
 
         if options[:tags]
-          tagged_rows = PactBroker::Matrix::Row
-            .select_all_qualified
-            .select_append(Sequel[:head_pact_publications][:tag_name])
-            .join(:head_pact_publications, {consumer_id: :consumer_id, provider_id: :provider_id, consumer_version_order: :consumer_version_order})
-            .eager(:latest_triggered_webhooks)
-            .eager(:webhooks)
-            .order(:consumer_name, :provider_name)
-            .eager(:consumer_version_tags)
-            .eager(:provider_version_tags)
+          if options[:tags].is_a?(Array)
+            rows = rows.where(consumer_tag_name: options[:tags]).or(consumer_tag_name: nil)
+          end
 
-            if options[:tags].is_a?(Array)
-              tagged_rows = tagged_rows.where(Sequel[:head_pact_publications][:tag_name] => options[:tags]).or(Sequel[:head_pact_publications][:tag_name] => nil)
-            end
+          rows = rows.all
+          overall_latest_publication_ids = rows.select{|r| !r[:consumer_tag_name] }.collect(&:pact_publication_id).uniq
 
-            tagged_rows = tagged_rows.all
-              .group_by(&:pact_publication_id)
-              .values
-              .collect{|group| [group.last, group.collect{|r| r[:tag_name]}.compact] }
-              .collect{ |(row, tag_names)| row.consumer_head_tag_names = tag_names; row }
-
-          rows = tagged_rows
+          # Smoosh all the rows with matching pact publications together
+          # and collect their consumer_head_tag_names
+          rows = rows
+            .group_by(&:pact_publication_id)
+            .values
+            .collect{|group| [group.last, group.collect{|r| r[:consumer_tag_name]}.compact] }
+            .collect{ |(row, tag_names)| row.consumer_head_tag_names = tag_names; row }
         end
 
         index_items = []
@@ -56,20 +56,19 @@ module PactBroker
           tag_names = []
           if options[:tags]
             tag_names = row.consumer_version_tags.collect(&:name)
-            if options[:tags].is_a?(Array)
-             tag_names = tag_names & options[:tags]
-            end
           end
-          previous_index_item_for_same_consumer_and_provider = index_items.last && index_items.last.consumer_name == row.consumer_name && index_items.last.provider_name == row.provider_name
-          index_items << PactBroker::Domain::IndexItem.create(row.consumer, row.provider,
+
+          index_items << PactBroker::Domain::IndexItem.create(
+            row.consumer,
+            row.provider,
             row.pact,
-            !previous_index_item_for_same_consumer_and_provider,
+            overall_latest_publication_ids.include?(row.pact_publication_id),
             row.latest_verification,
             row.webhooks,
             row.latest_triggered_webhooks,
-            tag_names,
+            row.consumer_head_tag_names,
             row.provider_version_tags.select(&:latest?)
-            )
+          )
         end
 
         index_items

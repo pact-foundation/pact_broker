@@ -128,7 +128,7 @@ module PactBroker
       end
 
       def to_s
-        "Pact between #{consumer_name} and #{provider_name}"
+        "Pact between #{consumer_name} #{consumer_version_number} and #{provider_name} #{provider_version_number}"
       end
 
       def to_a
