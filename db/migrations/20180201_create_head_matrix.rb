@@ -10,9 +10,9 @@ Sequel.migration do
       AND matrix.provider_id = hpp.provider_id
       AND matrix.consumer_version_order = hpp.consumer_version_order
       INNER JOIN latest_verification_id_for_consumer_version_and_provider AS lv
-      ON ((matrix.consumer_version_id = lv.consumer_version_id)
-      AND (matrix.provider_id = lv.provider_id)
-      AND ((matrix.verification_id = lv.latest_verification_id)))
+      ON matrix.consumer_version_id = lv.consumer_version_id
+      AND matrix.provider_id = lv.provider_id
+      AND matrix.verification_id = lv.latest_verification_id
 
       UNION
 
