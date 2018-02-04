@@ -14,9 +14,6 @@ module PactBroker
       extend PactBroker::Services
       extend PactBroker::Logging
 
-      # Used when using table_print to output query results
-      TP_COLS = [:consumer_name, :consumer_version_number, :consumer_version_id, :provider_name, :provider_id, :provider_version_number]
-
       def self.find_index_items options = {}
         rows = []
         overall_latest_publication_ids = nil

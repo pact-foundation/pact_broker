@@ -206,14 +206,16 @@ class TestDataBuilder
     self
   end
 
-  def create_same_pact params = {}
+  def republish_same_pact params = {}
     last_pact_version = PactBroker::Pacts::PactVersion.order(:id).last
     create_pact json_content: last_pact_version.content
+    self
   end
 
   def revise_pact json_content = nil
     json_content = json_content ? json_content : {random: rand}.to_json
     @pact = PactBroker::Pacts::Repository.new.update(@pact.id, json_content: json_content)
+    refresh_matrix
     self
   end
 

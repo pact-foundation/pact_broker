@@ -20,16 +20,17 @@ module PactBroker
       GROUP_BY_PACT = [:consumer_name, :provider_name]
 
       def refresh params
+        PactBroker::Matrix::Row.refresh(params)
         PactBroker::Matrix::HeadRow.refresh(params)
       end
 
       # Return the latest matrix row (pact/verification) for each consumer_version_number/provider_version_number
       def find selectors, options = {}
-        # The group with the nil provider_version_numbers will be the results of the left outer join
-        # that don't have verifications, so we need to include them all.
         lines = query_matrix(resolve_selectors(selectors, options), options)
         lines = apply_latestby(options, selectors, lines)
 
+        # This needs to be done after the latestby, so can't be done in the db unless
+        # the latestby logic is moved to the db
         if options.key?(:success)
           lines = lines.select{ |l| options[:success].include?(l.success) }
         end
@@ -45,6 +46,8 @@ module PactBroker
         when 'cp' then GROUP_BY_PACT
         end
 
+        # The group with the nil provider_version_numbers will be the results of the left outer join
+        # that don't have verifications, so we need to include them all.
         lines.group_by{|line| group_by_columns.collect{|key| line.send(key) }}
           .values
           .collect{ | lines | lines.first.provider_version_number.nil? ? lines : lines.first }
