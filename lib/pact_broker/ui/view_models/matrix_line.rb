@@ -12,6 +12,7 @@ module PactBroker
 
         def initialize line
           @line = line
+          @overwritten = false # true if the pact was revised and this revision is no longer the latest
         end
 
         def provider_name
@@ -152,6 +153,14 @@ module PactBroker
             when false then 'danger'
             else ''
           end
+        end
+
+        def overwritten?
+          @overwritten
+        end
+
+        def overwritten= overwritten
+          @overwritten = overwritten
         end
       end
     end

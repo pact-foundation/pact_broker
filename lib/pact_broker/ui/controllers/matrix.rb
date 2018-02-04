@@ -1,5 +1,5 @@
 require 'pact_broker/ui/controllers/base_controller'
-require 'pact_broker/ui/view_models/matrix_line'
+require 'pact_broker/ui/view_models/matrix_lines'
 require 'pact_broker/matrix/parse_query'
 require 'pact_broker/logging'
 require 'haml'
@@ -29,7 +29,7 @@ module PactBroker
               errors = matrix_service.validate_selectors(selectors)
               if errors.empty?
                 lines = matrix_service.find(selectors, options)
-                locals[:lines] = lines.collect{ |line| PactBroker::UI::ViewDomain::MatrixLine.new(line) }
+                locals[:lines] = PactBroker::UI::ViewDomain::MatrixLines.new(lines)
               else
                 locals[:errors] = errors
               end
@@ -45,7 +45,7 @@ module PactBroker
           selectors = [{ pacticipant_name: params[:consumer_name] }, { pacticipant_name: params[:provider_name] } ]
           options = {latestby: 'cvpv', limit: 100}
           lines = matrix_service.find(selectors, options)
-          lines = lines.collect{ |line| PactBroker::UI::ViewDomain::MatrixLine.new(line) }.sort
+          lines = PactBroker::UI::ViewDomain::MatrixLines.new(lines)
           locals = {
             lines: lines,
             title: "The Matrix",
