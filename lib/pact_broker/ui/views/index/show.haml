@@ -6,8 +6,10 @@
   %script{type: 'text/javascript', src:'/js/bootstrap.min.js'}
   %nav.navbase-default.navbar-right{role: "navigation"}
     .container
-      %ul
+      %ul#top-left-menu
         %li.navbar-right
+          %a{href: './?tags=true'}
+            Show latest tags
           %a{ href: '/hal-browser/browser.html' }
             API Browser
   .container
