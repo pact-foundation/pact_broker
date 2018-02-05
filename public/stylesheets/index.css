@@ -4,7 +4,6 @@
 }
 
 .table-striped>tbody>tr>td.consumer, .table-striped>thead>tr>th.consumer {
-  padding: 2px;
   border-right: none;
 }
 
@@ -98,4 +97,11 @@ span.pact:hover svg path, span.pact-matrix:hover svg path {
 #navigation .container-fluid:after {
   content: '' !important;
   display: none;
+}
+
+#top-left-menu li a{
+  padding-left: 10px
+}
+#top-left-menu li{
+  list-style: none;
 }

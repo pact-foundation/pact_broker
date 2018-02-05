@@ -8,10 +8,10 @@
     %nav.navbase-default{role: "navigation", id: "navigation"}
       .container-fluid
         .navbar-header
-          %a.navbar-brand{href: "#"}
-            %img{alt: "Brand", src: "/images/logo@2x.png", height: "24px"}
-        %ul.navbar-right
+        %ul.navbar-right#top-left-menu
           %li
+            %a{href: './?tags=true'}
+              Show latest tags
             %a{href: '/hal-browser/browser.html'}
               API Browser
     %h1.page-header

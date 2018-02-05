@@ -62,6 +62,17 @@ TestDataBuilder.new
   .use_provider("B")
   .create_pact
   .create_verification(provider_version: '5')
+  .create_pact_with_hierarchy("X", "1", "Z")
+  .create_consumer_version_tag("feat-x")
+  .create_verification(provider_version: '6')
+  .create_consumer_version("2")
+  .create_consumer_version_tag("feat-y")
+  .create_pact
+  .create_verification(provider_version: '7')
+  .create_consumer_version("3")
+  .create_consumer_version_tag("feat-x")
+  .create_consumer_version_tag("feat-y")
+  .create_pact
 
   # .create_pact_with_hierarchy("the-example-application", "391c43cae8c0e83c570c191f7324fccd67e53abc", "another-example-application")
   # .create_verification(provider_version: '391c43cae8c0e83c570c191f7324fccd67e53abc')
