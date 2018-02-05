@@ -209,6 +209,14 @@ module PactBroker
       def values
         super.merge(success: success)
       end
+
+      # Need to overwrite eql? from lib/sequel/model/base.rb
+      # because it uses @values instead of self.values
+      # so the success boolean/integer problem mentioned above
+      # screws things up
+      def eql?(obj)
+        (obj.class == model) && (obj.values == values)
+      end
     end
   end
 end

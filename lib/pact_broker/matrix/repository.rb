@@ -61,7 +61,7 @@ module PactBroker
       end
 
       def find_compatible_pacticipant_versions selectors
-        find(selectors, latestby: 'cvpv').select{|line| line[:success] }
+        find(selectors, latestby: 'cvpv').select{|line| line.success }
       end
 
       def query_matrix selectors, options
