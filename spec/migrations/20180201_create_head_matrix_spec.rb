@@ -20,11 +20,11 @@ describe "latest tagged matrix", migration: true do
     context "without a verification" do
       it "returns a line with no tag and a line with a tag" do
         expect(subject).to contain_hash(
-          consumer_tag_name: nil,
+          consumer_version_tag_name: nil,
           consumer_version_number: "2"
         )
         expect(subject).to contain_hash(
-          consumer_tag_name: "prod",
+          consumer_version_tag_name: "prod",
           consumer_version_number: "2"
         )
       end
@@ -36,12 +36,12 @@ describe "latest tagged matrix", migration: true do
       end
       it "returns the verification details" do
         expect(subject).to contain_hash(
-          consumer_tag_name: nil,
+          consumer_version_tag_name: nil,
           consumer_version_number: "2",
           provider_version_number: "3"
         )
         expect(subject).to contain_hash(
-          consumer_tag_name: "prod",
+          consumer_version_tag_name: "prod",
           consumer_version_number: "2",
           provider_version_number: "3"
         )
@@ -62,16 +62,16 @@ describe "latest tagged matrix", migration: true do
 
     it "returns a line with no tag, and a line for each tag" do
       expect(subject).to contain_hash(
-        consumer_tag_name: nil,
+        consumer_version_tag_name: nil,
         consumer_version_number: "2"
       )
       expect(subject).to contain_hash(
-        consumer_tag_name: "prod",
+        consumer_version_tag_name: "prod",
         consumer_version_number: "2"
       )
 
       expect(subject).to contain_hash(
-        consumer_tag_name: "master",
+        consumer_version_tag_name: "master",
         consumer_version_number: "2"
       )
     end
@@ -82,18 +82,18 @@ describe "latest tagged matrix", migration: true do
       end
       it "returns the verification details" do
         expect(subject).to contain_hash(
-          consumer_tag_name: nil,
+          consumer_version_tag_name: nil,
           consumer_version_number: "2",
           provider_version_number: "3"
         )
         expect(subject).to contain_hash(
-          consumer_tag_name: "prod",
+          consumer_version_tag_name: "prod",
           consumer_version_number: "2",
           provider_version_number: "3"
         )
 
         expect(subject).to contain_hash(
-          consumer_tag_name: "master",
+          consumer_version_tag_name: "master",
           consumer_version_number: "2",
           provider_version_number: "3"
         )
@@ -115,16 +115,16 @@ describe "latest tagged matrix", migration: true do
 
     it "returns a line for each" do
       expect(subject).to contain_hash(
-        consumer_tag_name: nil,
+        consumer_version_tag_name: nil,
         consumer_version_number: "3"
       )
       expect(subject).to contain_hash(
-        consumer_tag_name: "prod",
+        consumer_version_tag_name: "prod",
         consumer_version_number: "1"
       )
 
       expect(subject).to contain_hash(
-        consumer_tag_name: "master",
+        consumer_version_tag_name: "master",
         consumer_version_number: "2"
       )
     end

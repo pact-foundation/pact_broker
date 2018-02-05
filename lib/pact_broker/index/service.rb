@@ -26,24 +26,24 @@ module PactBroker
           .eager(:provider_version_tags)
 
         if !options[:tags]
-          rows = rows.where(consumer_tag_name: nil).all
+          rows = rows.where(consumer_version_tag_name: nil).all
           overall_latest_publication_ids = rows.collect(&:pact_publication_id)
         end
 
         if options[:tags]
           if options[:tags].is_a?(Array)
-            rows = rows.where(consumer_tag_name: options[:tags]).or(consumer_tag_name: nil)
+            rows = rows.where(consumer_version_tag_name: options[:tags]).or(consumer_version_tag_name: nil)
           end
 
           rows = rows.all
-          overall_latest_publication_ids = rows.select{|r| !r[:consumer_tag_name] }.collect(&:pact_publication_id).uniq
+          overall_latest_publication_ids = rows.select{|r| !r[:consumer_version_tag_name] }.collect(&:pact_publication_id).uniq
 
           # Smoosh all the rows with matching pact publications together
           # and collect their consumer_head_tag_names
           rows = rows
             .group_by(&:pact_publication_id)
             .values
-            .collect{|group| [group.last, group.collect{|r| r[:consumer_tag_name]}.compact] }
+            .collect{|group| [group.last, group.collect{|r| r[:consumer_version_tag_name]}.compact] }
             .collect{ |(row, tag_names)| row.consumer_head_tag_names = tag_names; row }
         end
 
