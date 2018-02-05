@@ -40,6 +40,10 @@ module PactBroker
           @line[:verification_number]
         end
 
+        def pact_revision_number
+          @line[:pact_revision_number]
+        end
+
         def consumer_name
           @line[:consumer_name]
         end
@@ -107,7 +111,7 @@ module PactBroker
         end
 
         def orderable_fields
-          [consumer_name, consumer_version_order, @line[:pact_revision_number], provider_name, @line[:verification_id]]
+          [consumer_name, consumer_version_order, pact_revision_number, provider_name, @line[:verification_id]]
         end
 
         def <=> other
