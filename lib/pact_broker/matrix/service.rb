@@ -1,6 +1,5 @@
 require 'pact_broker/repositories'
 require 'pact_broker/matrix/row'
-require 'pact_broker/matrix/actual_latest_row'
 
 module PactBroker
   module Matrix
