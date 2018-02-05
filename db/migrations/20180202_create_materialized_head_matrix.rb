@@ -26,8 +26,6 @@ Sequel.migration do
       index [:provider_id], name: 'ndx_mhm_provider_id'
       index [:consumer_version_order], name: 'ndx_mhm_cv_ord'
     end
-
-    from(:materialized_head_matrix).insert(from(:head_matrix).select_all)
   end
 
   down do
