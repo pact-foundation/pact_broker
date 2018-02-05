@@ -54,12 +54,23 @@ module PactBroker
             tag_names = row.consumer_version_tags.collect(&:name)
           end
 
+          overall_latest = overall_latest_publication_ids.include?(row.pact_publication_id)
+          latest_verification = if overall_latest
+            verification_repository.find_latest_verification_for row.consumer_name, row.provider_name
+          else
+            tag_names.collect do | tag_name |
+              verification_repository.find_latest_verification_for row.consumer_name, row.provider_name, tag_name
+            end.compact.sort do | v1, v2 |
+              v1.provider_version.order <=> v2.provider_version.order
+            end.last
+          end
+
           index_items << PactBroker::Domain::IndexItem.create(
             row.consumer,
             row.provider,
             row.pact,
-            overall_latest_publication_ids.include?(row.pact_publication_id),
-            row.latest_verification,
+            overall_latest,
+            latest_verification,
             row.webhooks,
             row.latest_triggered_webhooks,
             row.consumer_head_tag_names,

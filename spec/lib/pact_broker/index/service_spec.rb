@@ -188,6 +188,57 @@ module PactBroker
             end
           end
         end
+
+        context "when a pact with a tag has been verified, and then a new changed version has been published with the same tag" do
+          before do
+            td.create_pact_with_hierarchy("Foo", "1", "Bar")
+              .create_consumer_version_tag("feat-x")
+              .comment("latest verification for feat-x tag")
+              .create_verification(provider_version: "1")
+              .comment("latest feat-x version")
+              .create_consumer_version("2")
+              .create_consumer_version_tag("feat-x")
+              .comment("latest overall version")
+              .create_consumer_version("3")
+              .create_pact
+              .comment("latest overall verification")
+              .create_verification(provider_version: "2")
+
+          end
+
+          let(:options) { { tags: true } }
+
+          it "returns the latest feat-x verification for the latest feat-x pact" do
+            expect(rows.last.tag_names).to eq ["feat-x"]
+            expect(rows.last.provider_version_number).to eq "1"
+          end
+        end
+
+        context "when a pact with two tags has been verified, and then a new changed version has been published with two tags" do
+          before do
+            td.create_pact_with_hierarchy("Foo", "1", "Bar")
+              .create_consumer_version_tag("feat-x")
+              .create_verification(provider_version: "1", comment: "latest feat-x verif")
+              .create_consumer_version("2")
+              .create_consumer_version_tag("feat-y")
+              .create_pact
+              .create_verification(provider_version: "2", comment: "latest feat-y verif")
+              .create_consumer_version("3")
+              .create_consumer_version_tag("feat-x")
+              .create_consumer_version_tag("feat-y")
+              .create_pact
+              .create_consumer_version("4")
+              .create_pact
+          end
+
+          let(:options) { { tags: true } }
+
+          it "returns the latest of the feat-x and feat-y verifications" do
+            expect(rows.last.consumer_version_number).to eq "3"
+            expect(rows.last.tag_names.sort).to eq ["feat-x", "feat-y"]
+            expect(rows.last.provider_version_number).to eq "2"
+          end
+        end
       end
     end
   end
