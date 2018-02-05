@@ -159,7 +159,7 @@ module PactBroker
 
       def url_with_credentials pact
         u = build_uri(pact)
-        u.userinfo = "#{username}:#{display_password}" if username
+        u.userinfo = "#{CGI::escape username}:#{display_password}" if username
         u
       end
 

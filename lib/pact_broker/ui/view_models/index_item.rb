@@ -55,6 +55,10 @@ module PactBroker
           "#{pactigration_base_url('', @relationship)}/latest"
         end
 
+        def pact_matrix_url
+          Helpers::URLHelper.matrix_url consumer_name, provider_name
+        end
+
         def any_webhooks?
           @relationship.any_webhooks?
         end

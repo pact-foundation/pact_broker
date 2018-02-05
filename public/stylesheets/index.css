@@ -61,18 +61,20 @@ span.pact {
   display: inline-block;
 }
 
-span.pact svg {
+span.pact svg, span.pact-matrix svg {
   width: 20px !important;
   height: 20px !important;
   overflow: visible;
 }
 
-span.pact svg path {
+span.pact svg path, span.pact-matrix svg path {
   fill: #111111;
+  stroke: #111111;
 }
 
-span.pact:hover svg path {
+span.pact:hover svg path, span.pact-matrix:hover svg path {
   fill: #2a6496;
+  stroke: #2a6496;
 }
 
 #navigation .container-fluid {

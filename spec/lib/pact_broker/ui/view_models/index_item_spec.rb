@@ -23,6 +23,7 @@ module PactBroker
         its(:consumer_name) { should eq 'Consumer Name'}
         its(:provider_name) { should eq 'Provider Name'}
         its(:pact_url) { should eq "/pacts/provider/Provider%20Name/consumer/Consumer%20Name/latest" }
+        its(:pact_matrix_url) { should eq "/matrix/provider/Provider%20Name/consumer/Consumer%20Name" }
         its(:consumer_group_url) { should eq "/groups/Consumer%20Name" }
         its(:provider_group_url) { should eq "/groups/Provider%20Name" }
 
