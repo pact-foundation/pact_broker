@@ -32,7 +32,7 @@ module PactBroker
 
         def to_svg
           response.headers['Cache-Control'] = 'no-cache'
-          badge_service.pact_verification_badge pact, label, initials, verification_status
+          comment + badge_service.pact_verification_badge(pact, label, initials, verification_status)
         end
 
         def pact
@@ -54,6 +54,12 @@ module PactBroker
 
         def initials
           request.query['initials'] == 'true'
+        end
+
+        def comment
+          consumer_version_number = pact ? pact.consumer_version_number : "?"
+          provider_version_number = latest_verification ? latest_verification.provider_version_number : "?"
+          "<!-- #{identifier_from_path[:consumer_name]} version #{consumer_version_number} #{identifier_from_path[:provider_name]} version #{provider_version_number} -->\n"
         end
       end
     end

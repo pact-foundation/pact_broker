@@ -1,6 +1,7 @@
 require 'sequel'
 require 'pact_broker/domain/verification'
 require 'pact_broker/verifications/latest_verifications_by_consumer_version'
+require 'pact_broker/verifications/all_verifications'
 
 module PactBroker
   module Verifications
@@ -61,6 +62,25 @@ module PactBroker
           Sequel[:all_pact_publications][:consumer_version_order],
           Sequel[:all_pact_publications][:revision_number],
           Sequel[LatestVerificationsByConsumerVersion.table_name][:number]
+        ).limit(1).single_record
+      end
+
+      def find_latest_verification_for_tags consumer_name, provider_name, consumer_version_tag, provider_version_tag
+        view_name = PactBroker::Verifications::AllVerifications.table_name
+        query = PactBroker::Verifications::AllVerifications
+          .select_all_qualified
+          .join(:versions, {Sequel[:provider_versions][:id] => Sequel[view_name][:provider_version_id]}, {table_alias: :provider_versions})
+          .join(:all_pact_publications, { Sequel[view_name][:pact_version_id] => Sequel[:all_pact_publications][:pact_version_id] })
+          .consumer(consumer_name)
+          .provider(provider_name)
+          .tag(consumer_version_tag)
+          .provider_version_tag(provider_version_tag)
+
+        query.reverse_order(
+          Sequel[:all_pact_publications][:consumer_version_order],
+          Sequel[:all_pact_publications][:revision_number],
+          Sequel[:provider_versions][:order],
+          Sequel[view_name][:execution_date]
         ).limit(1).single_record
       end
 

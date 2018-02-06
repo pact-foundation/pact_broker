@@ -16,10 +16,10 @@ module PactBroker
           allow(PactBroker::Verifications::Status).to receive(:new).and_return(verification_status)
         end
 
-        let(:pact) { instance_double("PactBroker::Domain::Pact", consumer: consumer, provider: provider) }
+        let(:pact) { instance_double("PactBroker::Domain::Pact", consumer: consumer, provider: provider, consumer_version_number: "2") }
         let(:consumer) { double('consumer') }
         let(:provider) { double('provider') }
-        let(:verification) { double("verification") }
+        let(:verification) { double("verification", provider_version_number: "3") }
         let(:verification_status) { instance_double("PactBroker::Verifications::Status", to_sym: :verified) }
 
 
@@ -82,7 +82,11 @@ module PactBroker
           end
 
           it "returns the badge" do
-            expect(subject.body).to eq "badge"
+            expect(subject.body).to end_with "badge"
+          end
+
+          it "returns a comment with the consumer and provider numbers" do
+            expect(subject.body).to include "<!-- consumer version 2 provider version 3 -->"
           end
 
           context "when the label param is specified" do
@@ -127,55 +131,35 @@ module PactBroker
             end
 
             let(:path) { "/matrix/provider/provider/latest/master/consumer/consumer/latest/prod/badge" }
-            let(:row) { { verification_id: 1 } }
+            let(:row) { { consumer_name: 'consumer', provider_name: 'provider' } }
 
-
-            it "looks up the matrix row" do
-              expect(PactBroker::Matrix::Service).to receive(:find_for_consumer_and_provider_with_tags).with(
-                hash_including(consumer_name: 'consumer',
-                provider_name: 'provider',
-                tag: 'prod',
-                provider_tag: 'master'
-              ))
+            it "looks up the verification" do
+              expect(PactBroker::Verifications::Service).to receive(:find_latest_verification_for_tags) do | consumer, provider, tag|
+                expect(consumer.name).to eq 'consumer'
+                expect(provider.name).to eq 'provider'
+                expect(tag).to eq 'prod'
+              end
               subject
             end
 
-            context "when a matrix row is found" do
-              context "when there is a verification_id" do
-                it "looks up the verification" do
-                  expect(PactBroker::Verifications::Service).to receive(:find_by_id).with(1)
-                  subject
-                end
 
-                it "returns the badge" do
-                  expect(subject.body).to eq "badge"
-                end
-              end
-
-              context "when there is not a verification_id" do
-                let(:row) { {} }
-
-                it "does not look up the verification" do
-                  expect(PactBroker::Verifications::Service).to_not receive(:find_by_id)
-                  subject
-                end
-
-                it "returns the badge" do
-                  expect(subject.body).to eq "badge"
-                end
-              end
-            end
-
-            context "when a matrix row is not found" do
-              let(:row) { nil }
-
-              it "does not look up the verification" do
-                expect(PactBroker::Verifications::Service).to_not receive(:find_by_id)
-                subject
+            context "when a verification is found" do
+              before do
+                allow(PactBroker::Verifications::Service).to receive(:find_latest_verification_for_tags).and_return(verification)
               end
 
               it "returns the badge" do
-                expect(subject.body).to eq "badge"
+                expect(subject.body).to end_with "badge"
+              end
+            end
+
+            context "when a verification is not found" do
+              before do
+                allow(PactBroker::Verifications::Service).to receive(:find_latest_verification_for_tags).and_return(nil)
+              end
+
+              it "returns the badge" do
+                expect(subject.body).to end_with "badge"
               end
             end
           end
