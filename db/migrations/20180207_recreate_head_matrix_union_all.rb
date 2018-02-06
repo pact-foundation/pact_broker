@@ -15,7 +15,7 @@ Sequel.migration do
       AND matrix.provider_id = lv.provider_id
       AND matrix.verification_id = lv.latest_verification_id
 
-      UNION
+      UNION ALL
 
       SELECT matrix.*, hpp.tag_name as consumer_version_tag_name
       FROM latest_matrix_for_consumer_version_and_provider_version matrix
@@ -27,19 +27,14 @@ Sequel.migration do
       "
     )
 
-    alter_table(:materialized_head_matrix) do
-      rename_column(:consumer_tag_name, :consumer_version_tag_name)
-    end
+    from(:materialized_head_matrix).delete
+    from(:materialized_head_matrix).insert(from(:head_matrix).select_all)
   end
 
   down do
-    alter_table(:materialized_head_matrix) do
-      rename_column(:consumer_version_tag_name, :consumer_tag_name)
-    end
-
     drop_view(:head_matrix)
     create_view(:head_matrix,
-      "SELECT matrix.*, hpp.tag_name as consumer_tag_name
+      "SELECT matrix.*, hpp.tag_name as consumer_version_tag_name
       FROM latest_matrix_for_consumer_version_and_provider_version matrix
       INNER JOIN head_pact_publications hpp
       ON matrix.consumer_id = hpp.consumer_id
@@ -52,7 +47,7 @@ Sequel.migration do
 
       UNION
 
-      SELECT matrix.*, hpp.tag_name as consumer_tag_name
+      SELECT matrix.*, hpp.tag_name as consumer_version_tag_name
       FROM latest_matrix_for_consumer_version_and_provider_version matrix
       INNER JOIN head_pact_publications hpp
       ON matrix.consumer_id = hpp.consumer_id
