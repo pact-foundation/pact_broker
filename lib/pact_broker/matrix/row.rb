@@ -7,7 +7,7 @@ module PactBroker
     class Row < Sequel::Model(:materialized_matrix)
 
       # Used when using table_print to output query results
-      TP_COLS = [:consumer_id, :consumer_version_id, :provider_id, :provider_version_id]
+      TP_COLS = [ :consumer_version_number, :pact_revision_number, :provider_version_number, :verification_number]
 
       associate(:one_to_many, :latest_triggered_webhooks, :class => "PactBroker::Webhooks::LatestTriggeredWebhook", primary_key: :pact_publication_id, key: :pact_publication_id)
       associate(:one_to_many, :webhooks, :class => "PactBroker::Webhooks::Webhook", primary_key: [:consumer_id, :provider_id], key: [:consumer_id, :provider_id])
