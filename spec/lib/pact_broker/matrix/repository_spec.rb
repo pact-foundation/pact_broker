@@ -41,7 +41,9 @@ module PactBroker
             .create_pact
         end
 
-        subject { shorten_rows(Repository.new.find(selectors, options)) }
+        subject { shorten_rows(rows) }
+        let(:rows) { Repository.new.find(selectors, options) }
+
 
         let(:options) { { latestby: latestby } }
         let(:latestby) { nil }

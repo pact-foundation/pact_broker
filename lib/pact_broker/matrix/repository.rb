@@ -107,8 +107,21 @@ module PactBroker
               pacticipant_version_number: version.number
             }
           else
-            selector
+            selector.dup
           end
+        end.collect do | selector |
+          if selector[:pacticipant_name]
+            selector[:pacticipant_id] = PactBroker::Domain::Pacticipant.find(name: selector[:pacticipant_name]).id
+          end
+
+          if selector[:pacticipant_name] && selector[:pacticipant_version_number]
+            selector[:pacticipant_version_id] = version_repository.find_by_pacticipant_name_and_number(selector[:pacticipant_name], selector[:pacticipant_version_number]).id
+          end
+
+          if selector[:pacticipant_version_number].nil?
+            selector[:pacticipant_version_id] = nil
+          end
+          selector
         end
       end
 

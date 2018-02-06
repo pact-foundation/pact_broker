@@ -7,7 +7,7 @@ module PactBroker
     class Row < Sequel::Model(:materialized_matrix)
 
       # Used when using table_print to output query results
-      TP_COLS = [:consumer_version_number, :consumer_version_id, :pact_revision_number, :provider_id, :provider_version_number, :verification_number]
+      TP_COLS = [:consumer_id, :consumer_version_id, :provider_id, :provider_version_id]
 
       associate(:one_to_many, :latest_triggered_webhooks, :class => "PactBroker::Webhooks::LatestTriggeredWebhook", primary_key: :pact_publication_id, key: :pact_publication_id)
       associate(:one_to_many, :webhooks, :class => "PactBroker::Webhooks::Webhook", primary_key: [:consumer_id, :provider_id], key: [:consumer_id, :provider_id])
@@ -58,11 +58,24 @@ module PactBroker
           where{
             Sequel.&(
               Sequel.|(
-                *selectors.collect{ |s| s[:pacticipant_version_number] ? Sequel.&(consumer_name: s[:pacticipant_name], consumer_version_number: s[:pacticipant_version_number]) :  Sequel.&(consumer_name: s[:pacticipant_name]) }
+                *selectors.collect do |s|
+                  if s[:pacticipant_version_id]
+                    Sequel.&(consumer_id: s[:pacticipant_id], consumer_version_id: s[:pacticipant_version_id])
+                  else
+                    Sequel.&(consumer_id: s[:pacticipant_id])
+                  end
+                end
               ),
               Sequel.|(
-                *(selectors.collect{ |s| s[:pacticipant_version_number] ? Sequel.&(provider_name: s[:pacticipant_name], provider_version_number: s[:pacticipant_version_number]) :  Sequel.&(provider_name: s[:pacticipant_name]) } +
-                  selectors.collect{ |s| Sequel.&(provider_name: s[:pacticipant_name], provider_version_number: nil) })
+                *(selectors.collect do |s|
+                  if s[:pacticipant_version_id]
+                    Sequel.&(provider_id: s[:pacticipant_id], provider_version_id: s[:pacticipant_version_id])
+                  else
+                    Sequel.&(provider_id: s[:pacticipant_id])
+                  end
+                end + selectors.collect do |s|
+                  Sequel.&(provider_id: s[:pacticipant_id], provider_version_id: nil)
+                end)
               )
             )
           }
@@ -71,8 +84,8 @@ module PactBroker
         def where_consumer_or_provider_is s
           where{
             Sequel.|(
-              s[:pacticipant_version_number] ? Sequel.&(consumer_name: s[:pacticipant_name], consumer_version_number: s[:pacticipant_version_number]) :  Sequel.&(consumer_name: s[:pacticipant_name]),
-              s[:pacticipant_version_number] ? Sequel.&(provider_name: s[:pacticipant_name], provider_version_number: s[:pacticipant_version_number]) :  Sequel.&(provider_name: s[:pacticipant_name])
+              s[:pacticipant_version_id] ? Sequel.&(consumer_id: s[:pacticipant_id], consumer_version_id: s[:pacticipant_version_id]) :  Sequel.&(consumer_id: s[:pacticipant_id]),
+              s[:pacticipant_version_id] ? Sequel.&(provider_id: s[:pacticipant_id], provider_version_id: s[:pacticipant_version_id]) :  Sequel.&(provider_id: s[:pacticipant_id])
             )
           }
         end
