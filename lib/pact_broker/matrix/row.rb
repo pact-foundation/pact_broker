@@ -1,6 +1,7 @@
 require 'pact_broker/repositories/helpers'
 require 'pact_broker/webhooks/latest_triggered_webhook'
 require 'pact_broker/tags/tag_with_latest_flag'
+require 'pact_broker/logging'
 
 module PactBroker
   module Matrix
@@ -16,8 +17,11 @@ module PactBroker
 
       dataset_module do
         include PactBroker::Repositories::Helpers
+        include PactBroker::Logging
 
         def refresh params
+          logger.debug("Refreshing #{model.table_name} for #{params}")
+
           source_view_name = model.table_name.to_s.gsub('materialized_', '').to_sym
           if params[:consumer_name] || params[:provider_name]
             criteria = {}

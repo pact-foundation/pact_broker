@@ -2,7 +2,9 @@ require 'pact_broker/repositories/helpers'
 require 'pact_broker/matrix/row'
 require 'pact_broker/matrix/latest_row'
 require 'pact_broker/matrix/head_row'
+require 'pact_broker/matrix/refresh_head_matrix_job'
 require 'pact_broker/error'
+
 
 module PactBroker
   module Matrix
@@ -23,7 +25,7 @@ module PactBroker
 
       def refresh params
         PactBroker::Matrix::Row.refresh(params)
-        PactBroker::Matrix::HeadRow.refresh(params)
+        RefreshHeadMatrixJob.perform_in(1, params: params)
       end
 
       # Return the latest matrix row (pact/verification) for each consumer_version_number/provider_version_number
@@ -128,11 +130,13 @@ module PactBroker
           end
         end.collect do | selector |
           if selector[:pacticipant_name]
-            selector[:pacticipant_id] = PactBroker::Domain::Pacticipant.find(name: selector[:pacticipant_name]).id
+            pacticipant = PactBroker::Domain::Pacticipant.find(name: selector[:pacticipant_name])
+            selector[:pacticipant_id] = pacticipant ? pacticipant.id : nil
           end
 
           if selector[:pacticipant_name] && selector[:pacticipant_version_number]
-            selector[:pacticipant_version_id] = version_repository.find_by_pacticipant_name_and_number(selector[:pacticipant_name], selector[:pacticipant_version_number]).id
+            version = version_repository.find_by_pacticipant_name_and_number(selector[:pacticipant_name], selector[:pacticipant_version_number])
+            selector[:pacticipant_version_id] = version ? version.id : nil
           end
 
           if selector[:pacticipant_version_number].nil?
