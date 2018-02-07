@@ -1,6 +1,7 @@
 require 'pact_broker/api/pact_broker_urls'
 require 'pact_broker/ui/helpers/url_helper'
 require 'pact_broker/date_helper'
+require 'pact_broker/versions/abbreviate_number'
 
 module PactBroker
   module UI
@@ -22,11 +23,11 @@ module PactBroker
         end
 
         def consumer_version_number
-          @relationship.consumer_version_number
+          PactBroker::Versions::AbbreviateNumber.call(@relationship.consumer_version_number)
         end
 
         def provider_version_number
-          @relationship.provider_version_number
+          PactBroker::Versions::AbbreviateNumber.call(@relationship.provider_version_number)
         end
 
         def tag_names

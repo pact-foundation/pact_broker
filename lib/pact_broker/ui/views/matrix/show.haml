@@ -103,7 +103,7 @@
         %td.consumer-version{'data-sort-value' => line.consumer_version_order}
           %div
             %a{href: line.consumer_version_number_url}
-              = line.consumer_version_number
+              = line.display_consumer_version_number
           - line.latest_consumer_version_tags.each do | tag |
             .tag-parent{"title": tag.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
               %a{href: tag.url}
@@ -127,7 +127,7 @@
         %td.provider-version{'data-sort-value' => line.provider_version_order}
           %div
             %a{href: line.provider_version_number_url}
-              = line.provider_version_number
+              = line.display_provider_version_number
           - line.latest_provider_version_tags.each do | tag |
             .tag-parent{"title": tag.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
               %a{href: tag.url}

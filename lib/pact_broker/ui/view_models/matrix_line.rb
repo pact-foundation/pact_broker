@@ -2,6 +2,7 @@ require 'pact_broker/api/pact_broker_urls'
 require 'pact_broker/ui/helpers/url_helper'
 require 'pact_broker/date_helper'
 require 'pact_broker/ui/view_models/matrix_tag'
+require 'pact_broker/versions/abbreviate_number'
 
 module PactBroker
   module UI
@@ -52,6 +53,10 @@ module PactBroker
           @line[:consumer_version_number]
         end
 
+        def display_consumer_version_number
+          PactBroker::Versions::AbbreviateNumber.call(consumer_version_number)
+        end
+
         def consumer_version_number_url
           params = { pacticipant_name: consumer_name, version_number: consumer_version_number }
           hal_browser_url(version_url_from_params(params))
@@ -67,6 +72,10 @@ module PactBroker
 
         def provider_version_number
           @line[:provider_version_number]
+        end
+
+        def display_provider_version_number
+          PactBroker::Versions::AbbreviateNumber.call(provider_version_number)
         end
 
         def provider_version_order
