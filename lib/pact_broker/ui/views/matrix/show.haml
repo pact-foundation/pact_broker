@@ -53,17 +53,17 @@
       .input-group
         %input{type: 'radio', name: "latestby", class: '', value: 'cvpv', id: 'cvpv', checked: options.cvpv_checked}
         %label{for: 'cvpv'}
-          Show latest row for each consumer version/provider version
+          Show latest result for each consumer version/provider version
     %div
       .input-group
         %input{type: 'radio', name: "latestby", class: '', value: 'cvp', id: 'cvp', checked: options.cvp_checked}
         %label{for: 'cvp'}
-          Show latest row for each consumer version/provider
+          Show latest result for each consumer version/provider
     %div
       .input-group
         %input{type: 'radio', name: "latestby", class: '', value: '', id: 'all_rows', checked: options.all_rows_checked}
         %label{for: 'all_rows'}
-          Show all rows
+          Show all results
     %div.top-of-group
       %label{for: "limit"}
         Limit
@@ -73,14 +73,14 @@
 
 
   %p{style: 'text-align:right'}
-    = "#{lines.size} lines"
+    = "#{lines.size} rows"
   %table.table.table-bordered.table-striped{id: 'matrix'}
     %thead
       %th.consumer
         = "Consumer"
         %span.glyphicon.glyphicon-sort.sort
       %th.consumer-version
-        = "Version"
+        = "Consumer Version"
         %span.glyphicon.glyphicon-sort.sort
       %th.pact-published
         = "Pact Published"
@@ -89,7 +89,7 @@
         = "Provider"
         %span.glyphicon.glyphicon-sort.sort
       %th.provider-version
-        = "Version"
+        = "Provider Version"
         %span.glyphicon.glyphicon-sort.sort
       %th.verification-result
         Pact verified
