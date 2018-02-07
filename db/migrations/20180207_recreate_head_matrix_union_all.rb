@@ -26,9 +26,6 @@ Sequel.migration do
       where verification_id is null
       "
     )
-
-    from(:materialized_head_matrix).delete
-    from(:materialized_head_matrix).insert(from(:head_matrix).select_all)
   end
 
   down do
