@@ -30,18 +30,16 @@ module PactBroker
           PactBroker::Versions::AbbreviateNumber.call(@relationship.provider_version_number)
         end
 
-        def tag_names
-          latest_overall = @relationship.latest? ? "latest & " : ""
-          @relationship.tag_names.any? ? " (#{latest_overall}latest #{@relationship.tag_names.join(', ')}) ": " (latest) "
+        def latest?
+          @relationship.latest?
         end
 
-        def verification_tag_names
-          if @relationship.latest_verification_latest_tags.any?
-            tag_names = @relationship.latest_verification_latest_tags.collect(&:name)
-            " (latest #{tag_names.join(', ')})"
-          else
-            ""
-          end
+        def consumer_version_latest_tag_names
+          @relationship.tag_names
+        end
+
+        def provider_version_latest_tag_names
+          @relationship.latest_verification_latest_tags.collect(&:name)
         end
 
         def consumer_group_url

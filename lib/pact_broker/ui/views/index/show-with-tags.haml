@@ -22,21 +22,23 @@
           Consumer
           %span.glyphicon.glyphicon-sort.relationships-sort
         %th.consumer-version-number
-          Version
+          Consumer<br>Version
           %span.glyphicon.glyphicon-sort.relationships-sort
         %th.pact{ style: 'width: 40px' }
         %th.provider
           Provider
           %span.glyphicon.glyphicon-sort.relationships-sort
         %th.provider-version-number
-          Version
+          Provider<br>Version
           %span.glyphicon.glyphicon-sort.relationships-sort
         %th
           Published
+          %span.glyphicon.glyphicon-sort.relationships-sort
         %th
           Webhook<br>status
         %th
           Last<br>verified
+          %span.glyphicon.glyphicon-sort.relationships-sort
       %tbody
 
       - index_items.each do | index_item |
@@ -45,9 +47,14 @@
             %a{:href => index_item.consumer_group_url }
               = index_item.consumer_name
           %td.consumer-version-number
-            = index_item.consumer_version_number
-            %span{style: 'color:gray'}
-              = index_item.tag_names
+            %div
+              = index_item.consumer_version_number
+            - if index_item.latest?
+              .tag.label.label-success
+                latest
+            - index_item.consumer_version_latest_tag_names.each do | tag_name |
+              .tag.label.label-primary
+                = tag_name
           %td.pact
             %span.pact
               %a{ href: index_item.pact_url, title: "View pact" }
@@ -58,8 +65,9 @@
               = index_item.provider_name
           %td.provider-version-number
             = index_item.provider_version_number
-            %span{style: 'color:gray'}
-              = index_item.verification_tag_names
+            - index_item.provider_version_latest_tag_names.each do | tag_name |
+              .tag.label.label-primary
+                = tag_name
           %td
             = index_item.publication_date_of_latest_pact.gsub("about ", "")
           %td{ class: index_item.webhook_status }

@@ -114,30 +114,24 @@ module PactBroker
           end
         end
 
-        describe "tag_names" do
-          context "when the pact is the overall latest and it has no tag names" do
-            its(:tag_names) { is_expected.to eq " (latest) " }
+        describe "latest?" do
+          context "when the pact is the overall latest" do
+            its(:latest?) { is_expected.to be true }
           end
 
-          context "when the pact is the overall latest and also has tag names" do
-            let(:tags) { ["master", "prod"] }
-            its(:tag_names) { is_expected.to eq " (latest & latest master, prod) " }
-          end
-
-          context "when the pact is not the latest and has tag names" do
+          context "when the pact is not the latest" do
             let(:latest) { false }
-            let(:tags) { ["master", "prod"] }
-            its(:tag_names) { is_expected.to eq " (latest master, prod) " }
+            its(:latest?) { is_expected.to be false }
           end
         end
 
-        describe "verification_tag_names" do
-          its(:verification_tag_names) { is_expected.to eq " (latest dev, prod)"}
+        describe "consumer_version_latest_tag_names" do
+          let(:tags) { ["master", "prod"] }
+          its(:consumer_version_latest_tag_names) { is_expected.to eq ["master", "prod"] }
+        end
 
-          context "when there are no tags" do
-            let(:latest_verification_latest_tags) { [] }
-            its(:verification_tag_names) { is_expected.to eq "" }
-          end
+        describe "provider_version_latest_tag_names" do
+          its(:provider_version_latest_tag_names) { is_expected.to eq ["dev", "prod"] }
         end
 
         describe "<=>" do

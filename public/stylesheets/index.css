@@ -12,7 +12,7 @@
 }
 
 table#relationships {
-  table-layout: fixed;
+  /*table-layout: fixed;*/
 }
 
 table#relationships td,
@@ -104,4 +104,13 @@ span.pact:hover svg path, span.pact-matrix:hover svg path {
 }
 #top-left-menu li{
   list-style: none;
+}
+
+table#relationships .label {
+  word-wrap: break-word;
+  white-space: normal;
+}
+
+div.tag {
+  display: inline-block;
 }
