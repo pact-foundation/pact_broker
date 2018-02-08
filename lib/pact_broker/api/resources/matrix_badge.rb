@@ -8,12 +8,12 @@ module PactBroker
         private
 
         def latest_verification
-          @latest_verification ||= begin
-            matrix_row = matrix_service.find_for_consumer_and_provider_with_tags(identifier_from_path)
-            if matrix_row && matrix_row[:verification_id]
-              verification_service.find_by_id(matrix_row[:verification_id])
-            end
-          end
+          @latest_verification ||= verification_service.find_latest_verification_for_tags(
+            identifier_from_path[:consumer_name],
+            identifier_from_path[:provider_name],
+            identifier_from_path[:tag],
+            identifier_from_path[:provider_tag]
+          )
         end
       end
     end

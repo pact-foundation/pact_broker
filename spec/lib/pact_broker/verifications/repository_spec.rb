@@ -216,6 +216,30 @@ module PactBroker
           end
         end
       end
+
+      describe "find_latest_verification_for_tags" do
+        before do
+          TestDataBuilder.new
+            .create_pact_with_hierarchy("Foo", "1", "Bar")
+            .create_consumer_version_tag("feat-x")
+            .create_verification(provider_version: "5")
+            .use_provider_version("5")
+            .create_provider_version_tag("feat-y")
+            .create_verification(provider_version: "6", number: 2)
+            .use_provider_version("6")
+            .create_provider_version_tag("feat-y")
+            .create_verification(provider_version: "7", number: 3)
+            .create_consumer_version("2")
+            .create_pact
+            .create_verification(provider_version: "8")
+        end
+
+        subject { Repository.new.find_latest_verification_for_tags("Foo", "Bar", "feat-x", "feat-y") }
+
+        it "returns the latest verification for a pact with the given consumer tag, by a provider version with the given provider tag" do
+          expect(subject.provider_version_number).to eq "6"
+        end
+      end
     end
   end
 end
