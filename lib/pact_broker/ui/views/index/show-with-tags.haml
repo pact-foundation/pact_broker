@@ -64,7 +64,8 @@
             %a{ href: index_item.provider_group_url }
               = index_item.provider_name
           %td.provider-version-number
-            = index_item.provider_version_number
+            %div
+              = index_item.provider_version_number
             - index_item.provider_version_latest_tag_names.each do | tag_name |
               .tag.label.label-primary
                 = tag_name
