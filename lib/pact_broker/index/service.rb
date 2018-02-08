@@ -61,7 +61,9 @@ module PactBroker
             tag_names.collect do | tag_name |
               verification_repository.find_latest_verification_for row.consumer_name, row.provider_name, tag_name
             end.compact.sort do | v1, v2 |
-              v1.provider_version.order <=> v2.provider_version.order
+              # Some provider versions have nil orders, not sure why
+              # Sort by execution_date instead of order
+              v1.execution_date <=> v2.execution_date
             end.last
           end
 
