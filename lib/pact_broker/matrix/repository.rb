@@ -2,7 +2,6 @@ require 'pact_broker/repositories/helpers'
 require 'pact_broker/matrix/row'
 require 'pact_broker/matrix/latest_row'
 require 'pact_broker/matrix/head_row'
-require 'pact_broker/matrix/refresh_head_matrix_job'
 require 'pact_broker/error'
 
 
@@ -25,7 +24,7 @@ module PactBroker
 
       def refresh params
         PactBroker::Matrix::Row.refresh(params)
-        RefreshHeadMatrixJob.perform_in(1, params: params)
+        PactBroker::Matrix::HeadRow.refresh(params)
       end
 
       # Return the latest matrix row (pact/verification) for each consumer_version_number/provider_version_number

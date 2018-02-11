@@ -3,7 +3,11 @@ require 'pact_broker/matrix/row'
 module PactBroker
   module Matrix
     describe Row do
-      describe "refresh" do
+      describe "refresh", migration: true do
+        before do
+          PactBroker::Database.migrate
+        end
+
         let(:td) { TestDataBuilder.new(auto_refresh_matrix: false) }
 
         before do

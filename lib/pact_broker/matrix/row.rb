@@ -22,6 +22,9 @@ module PactBroker
         def refresh params
           logger.debug("Refreshing #{model.table_name} for #{params}")
 
+          db = model.db
+          table_name = model.table_name
+
           source_view_name = model.table_name.to_s.gsub('materialized_', '').to_sym
           if params[:consumer_name] || params[:provider_name]
             criteria = {}
@@ -35,17 +38,21 @@ module PactBroker
               criteria[:provider_id] = pacticipant.id if pacticipant
             end
             if criteria.any?
-              db[model.table_name].where(criteria).delete
-              db[model.table_name].insert(db[source_view_name].where(criteria))
+              db.transaction do
+                db[table_name].where(criteria).delete
+                db[table_name].insert(db[source_view_name].where(criteria).distinct)
+              end
             end
           end
 
           if params[:pacticipant_name]
             pacticipant = PactBroker::Domain::Pacticipant.where(name_like(:name, params[:pacticipant_name])).single_record
             if pacticipant
-              db[model.table_name].where(consumer_id: pacticipant.id).or(provider_id: pacticipant.id).delete
-              new_rows = db[source_view_name].where(consumer_id: pacticipant.id).or(provider_id: pacticipant.id)
-              db[model.table_name].insert(new_rows)
+              db.transaction do
+                db[table_name].where(consumer_id: pacticipant.id).or(provider_id: pacticipant.id).delete
+                new_rows = db[source_view_name].where(consumer_id: pacticipant.id).or(provider_id: pacticipant.id).distinct
+                db[table_name].insert(new_rows)
+              end
             end
           end
         end
