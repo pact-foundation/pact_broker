@@ -22,7 +22,13 @@ module PactBroker
       end
 
       def latest_pact_publication
-        PactBroker::Pacts::LatestPactPublicationsByConsumerVersion.where(pact_version_id: id).order(:consumer_version_order).last
+        PactBroker::Pacts::LatestPactPublicationsByConsumerVersion
+          .where(pact_version_id: id)
+          .order(:consumer_version_order)
+          .last || PactBroker::Pacts::AllPactPublications
+          .where(pact_version_id: id)
+          .order(:consumer_version_order)
+          .last
       end
 
       def consumer_versions
