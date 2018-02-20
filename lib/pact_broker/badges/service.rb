@@ -3,6 +3,7 @@ require 'uri'
 require 'pact_broker/project_root'
 require 'pact_broker/logging'
 require 'pact_broker/configuration'
+require 'pact_broker/build_http_options'
 
 module PactBroker
   module Badges
@@ -102,12 +103,10 @@ module PactBroker
       def do_request(uri)
         with_cache uri do
           request = Net::HTTP::Get.new(uri)
-          Net::HTTP.start(uri.hostname, uri.port,
-              use_ssl: uri.scheme == 'https',
-              read_timeout: 3,
-              open_timeout: 1,
-              ssl_timeout: 1,
-              continue_timeout: 1) do |http|
+          options = {read_timeout: 3, open_timeout: 1, ssl_timeout: 1, continue_timeout: 1}
+          options.merge! PactBroker::BuildHttpOptions.call(uri)
+
+          Net::HTTP.start(uri.hostname, uri.port, :ENV, options) do |http|
             http.request request
           end
         end
