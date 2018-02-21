@@ -32,7 +32,8 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'rack', '~>2.0'
   gem.add_runtime_dependency 'redcarpet', '>=3.3.2', '~>3.3'
   gem.add_runtime_dependency 'pact-support'
-  gem.add_runtime_dependency 'padrino-core', '~>0.14.1'
+  gem.add_runtime_dependency 'padrino-core', '0.14.1' #locked due to https://travis-ci.org/pact-foundation/pact_broker/builds/343646988 TODO work out why and fix it
+  gem.add_runtime_dependency 'sinatra', '2.0.0' #locked due to https://travis-ci.org/pact-foundation/pact_broker/builds/343646988 TODO work out why and fix it
   gem.add_runtime_dependency 'haml', '~>4.0'
   gem.add_runtime_dependency 'sucker_punch', '~>2.0'
   gem.add_runtime_dependency 'rack-protection', '~>2.0'
