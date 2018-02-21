@@ -25,7 +25,7 @@ module PactBroker
 
       def find_all_certificates
         Certificate.collect do | certificate |
-          cert_arr = certificate.content.split(/(-----END [^\-]+-----)/).each_slice(2).map(&:join)
+          cert_arr = certificate.content.split(/(-----END [^\-]+-----)/).each_slice(2).map(&:join).map(&:strip).select{|s| !s.empty?}
           cert_arr.collect do |c|
             begin
               OpenSSL::X509::Certificate.new(c)

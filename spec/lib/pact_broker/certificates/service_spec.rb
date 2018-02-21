@@ -36,9 +36,18 @@ module PactBroker
 
         subject { Service.find_all_certificates }
 
-        context "with a valid certificate file" do
+        context "with a valid certificate chain" do
           it "returns all the X509 Certificate objects" do
             expect(subject.size).to eq 2
+          end
+        end
+
+        context "with a valid CA file" do
+          let(:certificate_content) { File.read('spec/fixtures/certificates/cacert.pem') }
+
+          it "returns all the X509 Certificate objects" do
+            expect(PactBroker.logger).to_not receive(:error).with(/Error.*1234/)
+            expect(subject.size).to eq 1
           end
         end
 
