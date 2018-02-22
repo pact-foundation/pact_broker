@@ -6,8 +6,8 @@
 * Run `bundle exec pact_broker:dev:setup`. This will create an example application that you can run locally, that uses the local source code.
 * To run the example:
 
-    cd dev
-    bundle exec rackup
+      cd dev
+      bundle exec rackup
 
 * The application will be available on `http://localhost:9292`
 
