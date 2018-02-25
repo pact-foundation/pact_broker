@@ -59,6 +59,8 @@ The following funcationality is in beta release. Your feedback would be apprecia
 1. The Consumer CI determines if the pact has been verified by running `pact-broker can-i-deploy --pacticipant CONSUMER_NAME --version CONSUMER_VERSION ...` (see documentation [here](https://github.com/pact-foundation/pact_broker-client#can-i-deploy))
 1. If the pact has been verified, the deployment can proceed.
 
+Read more about how to use the Pact Broker in the [overview][overview] on the wiki page.
+
 ## Documentation
 
 See the [wiki][wiki] for documentation on the Pact Broker.
@@ -163,3 +165,4 @@ Please read the [UPGRADING.md](UPGRADING.md) documentation before upgrading your
 [pact-docs]: http://docs.pact.io
 [cli]: https://github.com/pact-foundation/pact-ruby-standalone/releases
 [travisyml]: https://github.com/pact-foundation/pact_broker/blob/master/.travis.yml
+[overview]: https://github.com/pact-foundation/pact_broker/wiki/Overview
