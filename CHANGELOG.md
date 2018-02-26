@@ -1,3 +1,18 @@
+<a name="v2.15.0"></a>
+### v2.15.0 (2018-02-26)
+
+
+#### Features
+
+* upgrade to latest versions of padrino-core and sinatra to fix CVE-2018-7212	 ([08ba1cb](/../../commit/08ba1cb))
+
+* **http**
+  * set http options globally	 ([cdf36ba](/../../commit/cdf36ba))
+
+* **ssl**
+  * allow single certificates to be uploaded	 ([9417f10](/../../commit/9417f10))
+
+
 <a name="v2.14.0"></a>
 ### v2.14.0 (2018-02-15)
 

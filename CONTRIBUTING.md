@@ -15,6 +15,9 @@ Please provide the following information with your issue to enable us to respond
 * Write tests for any changes
 * Follow existing code style and conventions
 * Separate unrelated changes into multiple pull requests
+* [Squash your commits](squash) into one commit before submitting your PR.
+* Use [semantic commit messages](semantic-commit-messages) so that your changes will show up correctly in the generated change log.
+
 * For bigger changes, make sure you start a discussion first by creating an issue and explaining the intended change
 
 See [DEVELOPER_SETUP.md](./DEVELOPER_SETUP.md) and [DEVELOPER_DOCUMENTATION.md](./DEVELOPER_DOCUMENTATION.md) for more information.
@@ -22,3 +25,5 @@ See [DEVELOPER_SETUP.md](./DEVELOPER_SETUP.md) and [DEVELOPER_DOCUMENTATION.md](
 [wiki]: https://github.com/pact-foundation/pact_broker/wiki
 [stackoverflow]: https://stackoverflow.com/questions/tagged/pact-broker
 [pact-ruby-e2e-example]: https://github.com/pact-foundation/pact-ruby-e2e-example
+[semantic-commit-messages]: http://karma-runner.github.io/2.0/dev/git-commit-msg.html
+[squash]: https://github.com/todotxt/todo.txt-android/wiki/Squash-All-Commits-Related-to-a-Single-Issue-into-a-Single-Commit
