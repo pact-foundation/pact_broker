@@ -10,7 +10,10 @@ require 'pact_broker'
 require 'pact_broker/app'
 
 require_relative 'hal_relation_proxy_app'
-require_relative 'provider_states_for_pact_broker_client'
+
+Dir.glob(File.join(File.dirname(__FILE__), "provider_states_for*.rb")).each do | path |
+  require path
+end
 
 pact_broker = PactBroker::App.new { |c| c.database_connection = DB::PACT_BROKER_DB }
 app_to_verify = HalRelationProxyApp.new(pact_broker)
