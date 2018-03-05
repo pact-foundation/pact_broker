@@ -31,3 +31,6 @@ exclude_paths:
 - vendor/
 - public/Network Graph_files/
 - public/js/bootstrap*
+- public/javascripts/d3.v3.js.pagespeed.ce.dFNRrGTALe.js
+- public/javascripts/highlight.pack.js
+- public/javascripts/jquery*.js
