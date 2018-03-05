@@ -6,8 +6,11 @@
  [![Issue Count](https://codeclimate.com/github/pact-foundation/pact_broker/badges/issue_count.svg)](https://codeclimate.com/github/pact-foundation/pact_broker)
  [![Dependency Status](https://gemnasium.com/badges/github.com/pact-foundation/pact_broker.svg)](https://gemnasium.com/github.com/pact-foundation/pact_broker)
 
-The Pact Broker is an application for sharing for consumer driven contracts. It is optimised for use with "pacts" (contracts created by the [Pact][pact-docs] framework), but can be used for any type of contract that can be serialized to JSON.
+The Pact Broker is an application for sharing for consumer driven contracts and verification results. It is optimised for use with "pacts" (contracts created by the [Pact][pact-docs] framework), but can be used for any type of contract that can be serialized to JSON.
 
+**Why do I need one?**
+
+Contract testing is an alternative approach to traditional integration testing that gives you tests that are quicker to execute, and that are more maintainable at scale. One down side of the approach is that the important information that would be available all in one place at the end of an integration test suite execution (that is, the version numbers of all the applications that were tested together, and whether the tests passed or failed) is now spread out across many different builds. The Pact Broker is a tool that brings all this information back together again, and allows you to deploy with safety. 
 
 It:
 
