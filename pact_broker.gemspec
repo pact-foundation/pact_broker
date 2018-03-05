@@ -34,7 +34,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'pact-support'
   gem.add_runtime_dependency 'padrino-core', '>= 0.14.3', '~> 0.14'
   gem.add_runtime_dependency 'sinatra', '>= 2.0.1'
-  gem.add_runtime_dependency 'haml', '~>4.0'
+  gem.add_runtime_dependency 'haml', '~>5.0'
   gem.add_runtime_dependency 'sucker_punch', '~>2.0'
   gem.add_runtime_dependency 'rack-protection', '~>2.0'
   gem.add_runtime_dependency 'dry-types', '~> 0.10.3' # https://travis-ci.org/pact-foundation/pact_broker/jobs/249448621
