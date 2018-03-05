@@ -3,7 +3,6 @@ require 'pact_broker/api/resources/base_resource'
 module PactBroker
   module Api
     module Resources
-
       class Tag < BaseResource
 
         def content_types_provided
