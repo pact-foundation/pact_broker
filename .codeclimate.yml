@@ -4,12 +4,12 @@ engines:
     enabled: true
   duplication:
     enabled: true
+    exclude_patterns:
+    - spec/
     config:
       languages:
       - ruby
       - javascript
-      exclude_paths:
-      - spec/
   eslint:
     enabled: true
   fixme:
@@ -26,7 +26,7 @@ ratings:
   - "**.php"
   - "**.py"
   - "**.rb"
-exclude_paths:
+exclude_patterns:
 - script/
 - vendor/
 - public/Network Graph_files/
