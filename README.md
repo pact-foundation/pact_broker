@@ -66,7 +66,7 @@ Read more about how to use the Pact Broker in the [overview][overview] on the wi
 
 ## Documentation
 
-See the [wiki][wiki] for documentation on the Pact Broker.
+See the [wiki][wiki] for documentation on the Pact Broker. Please read the [overview][overview] page first to get an understanding of the HTTP resources in the broker, and how they relate to each other.
 
 ## Support
 
