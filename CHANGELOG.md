@@ -1,7 +1,6 @@
 <a name="v2.16.0"></a>
 ### v2.16.0 (2018-03-05)
 
-
 #### Features
 
 * upgrade haml to 5.0	 ([4415686](/../../commit/4415686))
@@ -38,7 +37,6 @@
   * include verification tags	 ([e8d0fae](/../../commit/e8d0fae))
   * add pact tags	 ([0c79440](/../../commit/0c79440))
 
-
 #### Bug Fixes
 
 * **matrix**
@@ -48,10 +46,8 @@
 * **matrix ui**
   * fix provider version sorting	 ([611ab7e](/../../commit/611ab7e))
 
-
 <a name="v2.15.0"></a>
 ### v2.15.0 (2018-02-26)
-
 
 #### Features
 
@@ -63,10 +59,8 @@
 * **ssl**
   * allow single certificates to be uploaded	 ([9417f10](/../../commit/9417f10))
 
-
 <a name="v2.14.0"></a>
 ### v2.14.0 (2018-02-15)
-
 
 #### Features
 
@@ -80,7 +74,6 @@
 * add endpoints to get latest pacticipant version and latest tagged version	 ([aa60a85](/../../commit/aa60a85))
 * elegantly handle long service names in index.	 ([ad8da50](/../../commit/ad8da50))
 
-
 #### Bug Fixes
 
 * return overwritten pact publication as latest if non exists as a latest version when rendering verification	 ([8217209](/../../commit/8217209))
@@ -91,19 +84,15 @@
 * **matrix badge**
   * correct status of pact when consumer and provider version tags are specified	 ([0eb7429](/../../commit/0eb7429))
 
-
 <a name="v2.13.1"></a>
 ### v2.13.1 (2018-01-12)
-
 
 #### Features
 
 * remove runtime dependency on webrick	 ([1ae7a6e](/../../commit/1ae7a6e))
 
-
 <a name="v2.13.0"></a>
 ### v2.13.0 (2018-01-11)
-
 
 #### Features
 
@@ -132,11 +121,9 @@
 * **publish test result**
   * allow json test results to be published with the verification result	 ([528034c](/../../commit/528034c))
 
-
 #### Bug Fixes
 
 * create selector objects when viewing matrix URL with consumer and provider	 ([e733bae](/../../commit/e733bae))
-
 
 <a name="v2.12.0"></a>
 ### v2.12.0 (2017-11-29)
@@ -151,7 +138,6 @@
 <a name="v2.10.0"></a>
 ### v2.10.0 (2017-11-11)
 
-
 #### Features
 
 * **prod pacts in index**
@@ -161,7 +147,6 @@
 
 * **index page**
   * truncate git shas in table	 ([94da4c7](/../../commit/94da4c7))
-
 
 <a name="v2.9.0"></a>
 ### v2.9.0 (2017-11-09)
@@ -275,12 +260,10 @@
 <a name="v2.5.1"></a>
 ### v2.5.1 (2017-09-26)
 
-
 #### Bug Fixes
 
 * **badges**
   * do not allow caching	 ([d7e73c3](/../../commit/d7e73c3))
-
 
 <a name="v2.5.0"></a>
 ### v2.5.0 (2017-09-25)
@@ -705,7 +688,6 @@
 * 8001792 - Added HAL browser (Beth, Wed Apr 23 13:31:25 2014 +1000)
 * 8c94d1f - Creating example app (Beth, Wed Apr 23 13:06:40 2014 +1000)
 
-
 #### 0.0.10 (2014-06-06)
 
   * 24daeea - Added task to delete pacticipant (bethesque Tue May 20 11:59:10 2014 +1000)
@@ -758,7 +740,6 @@
 * ab9c185 - Including URLs for the dynamically calculated latest pact, not the hard link to the latest pact. (bethesque 2 days ago)
 * 5621e41 - Beginning change from Roar Representor to Decoractor. Updating to new 'latest pact' URL (bethesque 2 days ago)
 * d1bd995 - Adding missing PactBroker::Logging require (bethesque 2 days ago)
-
 
 #### 0.0.5 (2013-11-13)
 
