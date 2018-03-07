@@ -18,7 +18,8 @@ module PactBroker
       :shields_io_base_url,
       :check_for_potential_duplicate_pacticipant_names,
       :webhook_retry_schedule,
-      :semver_formats
+      :semver_formats,
+      :disable_ssl_verification
     ]
 
     attr_accessor :log_dir, :database_connection, :auto_migrate_db, :use_hal_browser, :html_pact_renderer
@@ -28,6 +29,7 @@ module PactBroker
     attr_accessor :semver_formats
     attr_accessor :enable_public_badge_access, :shields_io_base_url
     attr_accessor :webhook_retry_schedule
+    attr_accessor :disable_ssl_verification
     attr_writer :logger
 
     def initialize
@@ -60,6 +62,7 @@ module PactBroker
       config.semver_formats = ["%M.%m.%p%s%d", "%M.%m", "%M"]
       config.webhook_retry_schedule = [10, 60, 120, 300, 600, 1200] #10 sec, 1 min, 2 min, 5 min, 10 min, 20 min => 38 minutes
       config.check_for_potential_duplicate_pacticipant_names = true
+      config.disable_ssl_verification = false
       config
     end
 

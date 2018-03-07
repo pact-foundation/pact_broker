@@ -1,3 +1,46 @@
+<a name="v2.15.0"></a>
+### v2.15.0 (2018-02-26)
+
+
+#### Features
+
+* upgrade to latest versions of padrino-core and sinatra to fix CVE-2018-7212	 ([08ba1cb](/../../commit/08ba1cb))
+
+* **http**
+  * set http options globally	 ([cdf36ba](/../../commit/cdf36ba))
+
+* **ssl**
+  * allow single certificates to be uploaded	 ([9417f10](/../../commit/9417f10))
+
+
+<a name="v2.14.0"></a>
+### v2.14.0 (2018-02-15)
+
+
+#### Features
+
+* **matrix ui**
+  * add home link	 ([3f74e7e](/../../commit/3f74e7e))
+
+* **index**
+  * add link to show/hide latest tags	 ([412a2d3](/../../commit/412a2d3))
+
+* change URL for retrieving latest version so that it does not clash with a version called "latest"	 ([8e45062](/../../commit/8e45062))
+* add endpoints to get latest pacticipant version and latest tagged version	 ([aa60a85](/../../commit/aa60a85))
+* elegantly handle long service names in index.	 ([ad8da50](/../../commit/ad8da50))
+
+
+#### Bug Fixes
+
+* return overwritten pact publication as latest if non exists as a latest version when rendering verification	 ([8217209](/../../commit/8217209))
+* #184 Escape username before asigning it to URI userinfo attribute	 ([81bb779](/../../commit/81bb779))
+* remove non UTF-8 chars from webhook response bodies before saving the logs to the (UTF-8 encoded) database table	 ([0ee5b0b](/../../commit/0ee5b0b))
+* ensure webhook dependencies are saved before executing	 ([9a89d07](/../../commit/9a89d07))
+
+* **matrix badge**
+  * correct status of pact when consumer and provider version tags are specified	 ([0eb7429](/../../commit/0eb7429))
+
+
 <a name="v2.13.1"></a>
 ### v2.13.1 (2018-01-12)
 

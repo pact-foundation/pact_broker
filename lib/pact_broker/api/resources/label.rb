@@ -4,7 +4,6 @@ require 'pact_broker/api/decorators/label_decorator'
 module PactBroker
   module Api
     module Resources
-
       class Label < BaseResource
 
         def content_types_provided
