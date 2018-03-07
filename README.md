@@ -10,7 +10,7 @@ The Pact Broker is an application for sharing for consumer driven contracts and 
 
 **Why do I need one?**
 
-Contract testing is an alternative approach to traditional integration testing that gives you tests that are quicker to execute, and that are more maintainable at scale. One down side of the approach is that the important information that would be available all in one place at the end of an integration test suite execution (that is, the version numbers of all the applications that were tested together, and whether the tests passed or failed) is now spread out across many different builds. The Pact Broker is a tool that brings all this information back together again, and allows you to deploy with safety. 
+Contract testing is an alternative approach to traditional integration testing that gives you tests that are quicker to execute, and that are more maintainable at scale. One down side of the approach is that the important information that would be available all in one place at the end of an integration test suite execution (that is, the version numbers of all the applications that were tested together, and whether the tests passed or failed) is now spread out across many different builds. The Pact Broker is a tool that brings all this information back together again, and allows you to deploy with safety.
 
 It:
 
@@ -32,7 +32,7 @@ Features:
 * Displays provider verificaton results so you know if you can deploy safely.
 * Provides a "matrix" of compatible consumer and provider versions, so you know which versions can be safely deployed together.
 * Provides badges to display pact verification statuses in your READMEs.
-* Enables an application version to be tagged (ie. "prod", "feat/customer-preferences") to allow repository-like workflows. 
+* Enables an application version to be tagged (ie. "prod", "feat/customer-preferences") to allow repository-like workflows.
 * Provides webhooks to trigger actions when pacts change eg. run provider build, notify a Slack channel.
 * View diffs between Pact versions so you can tell what expectations have changed.
 * [Docker Pact Broker][docker]
@@ -43,7 +43,7 @@ Features:
 #### Step 1. Consumer CI build
 1. The consumer project runs its tests using the [Pact][pact] library to provide a mock service.
 2. While the tests run, the mock service writes the requests and the expected responses to a JSON "pact" file - this is the consumer contract.
-3. The generated pact is then published to the Pact Broker. Most Pact libries will make a task available for you to do this easily, however, at its simplest, it is a `PUT` to a resource that specifies the consumer name and application version, and the provider name. eg `http://my-pact-broker/pacts/provider/Animal%20Service/consumer/Zoo%20App/version/1.0.0` 
+3. The generated pact is then published to the Pact Broker. Most Pact libries will make a task available for you to do this easily, however, at its simplest, it is a `PUT` to a resource that specifies the consumer name and application version, and the provider name. eg `http://my-pact-broker/pacts/provider/Animal%20Service/consumer/Zoo%20App/version/1.0.0`
 (Note that you are specifying the _consumer application version_ in the URL, not the pact version. The broker will take care of versioning the pact behind the scenes when its content changes. It is expected that the consumer application version will increment with every CI build.)
 4. When a pact is published, a webhook in the Pact Broker kicks off a build of the provider project if the pact content has changed since the previous version.
 
@@ -142,7 +142,7 @@ You can use the [Pact Broker Docker image][docker] or [Terraform on AWS][terrafo
  * Check the [travis.yml][travisyml] file to make sure you're using the version of the database that we're currently running our tests against.
 * If you're using PostgreSQL (did we mention this was _recommended!_) you'll find the database creation script in the [example/config.ru](https://github.com/pact-foundation/pact_broker/blob/master/example/config.ru).
 * Install ruby 2.2.0 or later and bundler >= 1.12.0 (if you've come this far, I'm assuming you know how to do both of these. Did I mention there was a [Docker][docker] image?)
-* Copy the [pact\_broker](https://github.com/DiUS/pact_broker-docker/tree/master/pact_broker) directory from the Pact Broker Docker project. This will have the recommended settings for database connections, logging, basic auth etc. Note that the Docker image uses Phusion Passenger as the web application server in front of the Pact Broker Ruby application, which is the recommended set up. 
+* Copy the [pact\_broker](https://github.com/DiUS/pact_broker-docker/tree/master/pact_broker) directory from the Pact Broker Docker project. This will have the recommended settings for database connections, logging, basic auth etc. Note that the Docker image uses Phusion Passenger as the web application server in front of the Pact Broker Ruby application, which is the recommended set up.
 * Modify the config.ru and Gemfile as desired (eg. choose database driver gem, set your database credentials. Use the "pg" gem if using Postgres and the "mysql2" gem if using MySQL)
 * Please ensure you use `encoding: 'utf8'` in your Sequel options to avoid encoding issues.
 * For production usage, use a web application server like [Phusion Passenger](https://www.phusionpassenger.com) or [Nginx](http://nginx.org/) to serve the Pact Broker application. You'll need to read up on the documentation for these yourself as it is beyond the scope of this documentation. See the [wiki][reverse-proxy-docs] for instructions on using a reverse proxy with SSL.

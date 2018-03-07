@@ -11,8 +11,11 @@ module PactBroker
         let(:provider) { instance_double("PactBroker::Domain::Pacticipant", name: 'Provider Name')}
         let(:latest_pact) { instance_double("PactBroker::Domain::Pact") }
         let(:latest_verification) { instance_double("PactBroker::Domain::Verification") }
-        let(:domain_relationship) { PactBroker::Domain::IndexItem.new(consumer, provider, latest_pact, latest, latest_verification, [], [], tags)}
+        let(:domain_relationship) { PactBroker::Domain::IndexItem.new(consumer, provider, latest_pact, latest, latest_verification, [], [], tags, latest_verification_latest_tags)}
         let(:tags) { [] }
+        let(:verification_tag_1) { instance_double("PactBroker::Tags::TagWithLatestFlag", name: 'dev') }
+        let(:verification_tag_2) { instance_double("PactBroker::Tags::TagWithLatestFlag", name: 'prod') }
+        let(:latest_verification_latest_tags) { [verification_tag_1, verification_tag_2]  }
         let(:latest) { true }
 
         subject { IndexItem.new(domain_relationship) }
@@ -111,22 +114,24 @@ module PactBroker
           end
         end
 
-        describe "tag_names" do
-          context "when the pact is the overall latest and it has no tag names" do
-            its(:tag_names) { is_expected.to eq " (latest) " }
+        describe "latest?" do
+          context "when the pact is the overall latest" do
+            its(:latest?) { is_expected.to be true }
           end
 
-          context "when the pact is the overall latest and also has tag names" do
-            let(:tags) { ["master", "prod"] }
-            its(:tag_names) { is_expected.to eq " (latest & latest master, prod) " }
-          end
-
-          context "when the pact is not the latest and has tag names" do
+          context "when the pact is not the latest" do
             let(:latest) { false }
-            let(:tags) { ["master", "prod"] }
-            its(:tag_names) { is_expected.to eq " (latest master, prod) " }
+            its(:latest?) { is_expected.to be false }
           end
+        end
 
+        describe "consumer_version_latest_tag_names" do
+          let(:tags) { ["master", "prod"] }
+          its(:consumer_version_latest_tag_names) { is_expected.to eq ["master", "prod"] }
+        end
+
+        describe "provider_version_latest_tag_names" do
+          its(:provider_version_latest_tag_names) { is_expected.to eq ["dev", "prod"] }
         end
 
         describe "<=>" do

@@ -1,7 +1,9 @@
 require 'pact_broker/repositories/helpers'
 require 'pact_broker/matrix/row'
 require 'pact_broker/matrix/latest_row'
+require 'pact_broker/matrix/head_row'
 require 'pact_broker/error'
+
 
 module PactBroker
   module Matrix
@@ -14,56 +16,84 @@ module PactBroker
 
       # TODO move latest verification logic in to database
 
+      TP_COLS = PactBroker::Matrix::Row::TP_COLS
+
       GROUP_BY_PROVIDER_VERSION_NUMBER = [:consumer_name, :consumer_version_number, :provider_name, :provider_version_number]
       GROUP_BY_PROVIDER = [:consumer_name, :consumer_version_number, :provider_name]
       GROUP_BY_PACT = [:consumer_name, :provider_name]
 
+      def refresh params
+        PactBroker::Matrix::Row.refresh(params)
+        PactBroker::Matrix::HeadRow.refresh(params)
+      end
+
       # Return the latest matrix row (pact/verification) for each consumer_version_number/provider_version_number
       def find selectors, options = {}
-        # The group with the nil provider_version_numbers will be the results of the left outer join
-        # that don't have verifications, so we need to include them all.
         lines = query_matrix(resolve_selectors(selectors, options), options)
         lines = apply_latestby(options, selectors, lines)
 
+        # This needs to be done after the latestby, so can't be done in the db unless
+        # the latestby logic is moved to the db
         if options.key?(:success)
           lines = lines.select{ |l| options[:success].include?(l.success) }
         end
 
-        lines.sort.collect(&:values)
+        lines.sort
       end
 
-      def apply_latestby options, selectors, lines
-        return lines unless options[:latestby] == 'cvp' || options[:latestby] == 'cp'
 
+
+      def apply_latestby options, selectors, lines
+        return lines unless options[:latestby]
         group_by_columns = case options[:latestby]
+        when 'cvpv' then GROUP_BY_PROVIDER_VERSION_NUMBER
         when 'cvp' then GROUP_BY_PROVIDER
         when 'cp' then GROUP_BY_PACT
         end
 
-        lines.group_by{|line| group_by_columns.collect{|key| line.send(key) }}
+        # The group with the nil provider_version_numbers will be the results of the left outer join
+        # that don't have verifications, so we need to include them all.
+        remove_overwritten_revisions(lines).group_by{|line| group_by_columns.collect{|key| line.send(key) }}
           .values
           .collect{ | lines | lines.first.provider_version_number.nil? ? lines : lines.first }
           .flatten
       end
 
+      def remove_overwritten_revisions lines
+        latest_revisions_keys = {}
+        latest_revisions = []
+        lines.each do | line |
+          key = "#{line.consumer_name}-#{line.provider_name}-#{line.consumer_version_number}"
+          if !latest_revisions_keys.key?(key) || latest_revisions_keys[key] == line.pact_revision_number
+            latest_revisions << line
+            latest_revisions_keys[key] ||= line.pact_revision_number
+          end
+        end
+        latest_revisions
+      end
+
       def find_for_consumer_and_provider pacticipant_1_name, pacticipant_2_name
         selectors = [{ pacticipant_name: pacticipant_1_name }, { pacticipant_name: pacticipant_2_name }]
         options = { latestby: 'cvpv' }
-        query_matrix(resolve_selectors(selectors, options), options).sort.collect(&:values)
+        find(selectors, options)
       end
 
       def find_compatible_pacticipant_versions selectors
-        find(selectors, latestby: 'cvpv').select{|line| line[:success] }
+        find(selectors, latestby: 'cvpv').select{|line| line.success }
       end
 
       def query_matrix selectors, options
         query = view_for(options).select_all.matching_selectors(selectors)
         query = query.limit(options[:limit]) if options[:limit]
-        query.order_by_names_ascending_most_recent_first.all
+        query
+          .order_by_names_ascending_most_recent_first
+          .eager(:consumer_version_tags)
+          .eager(:provider_version_tags)
+          .all
       end
 
       def view_for(options)
-        options[:latestby] ? LatestRow : Row
+        Row
       end
 
       def resolve_selectors(selectors, options)
@@ -95,8 +125,23 @@ module PactBroker
               pacticipant_version_number: version.number
             }
           else
-            selector
+            selector.dup
           end
+        end.collect do | selector |
+          if selector[:pacticipant_name]
+            pacticipant = PactBroker::Domain::Pacticipant.find(name: selector[:pacticipant_name])
+            selector[:pacticipant_id] = pacticipant ? pacticipant.id : nil
+          end
+
+          if selector[:pacticipant_name] && selector[:pacticipant_version_number]
+            version = version_repository.find_by_pacticipant_name_and_number(selector[:pacticipant_name], selector[:pacticipant_version_number])
+            selector[:pacticipant_version_id] = version ? version.id : nil
+          end
+
+          if selector[:pacticipant_version_number].nil?
+            selector[:pacticipant_version_id] = nil
+          end
+          selector
         end
       end
 

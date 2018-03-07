@@ -8,8 +8,12 @@ end
 
 
 def contains_hash?(expected, actual)
-  expected.all? do |key, value|
-    unordered_match(actual[key], value)
+  if actual.is_a?(Array)
+    actual.any? && actual.any?{|actual_item| contains_hash?(expected, actual_item)}
+  else
+    expected.all? do |key, value|
+      unordered_match(actual[key], value)
+    end
   end
 end
 

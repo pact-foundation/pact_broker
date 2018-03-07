@@ -3,6 +3,65 @@ require 'pact_broker/matrix/row'
 module PactBroker
   module Matrix
     describe Row do
+      describe "refresh", migration: true do
+        before do
+          PactBroker::Database.migrate
+        end
+
+        let(:td) { TestDataBuilder.new(auto_refresh_matrix: false) }
+
+        before do
+          td.create_pact_with_hierarchy("Foo", "1", "Bar")
+        end
+
+        context "with only a consumer_name" do
+          subject { Row.refresh(consumer_name: "Foo") }
+
+          it "refreshes the data for the consumer" do
+            subject
+            expect(Row.all.collect(&:values)).to contain_hash(provider_name: "Bar", consumer_name: "Foo")
+          end
+        end
+
+        context "with only a provider_name" do
+          subject { Row.refresh(provider_name: "Bar") }
+
+          it "refreshes the data for the provider" do
+            subject
+            expect(Row.all.collect(&:values)).to contain_hash(provider_name: "Bar", consumer_name: "Foo")
+          end
+        end
+
+        context "with both consumer_name and provider_name" do
+          subject { Row.refresh(provider_name: "Bar", consumer_name: "Foo") }
+
+          it "refreshes the data for the consumer and provider" do
+            subject
+            expect(Row.all.collect(&:values)).to contain_hash(provider_name: "Bar", consumer_name: "Foo")
+          end
+        end
+
+        context "when there was existing data" do
+          it "deletes the existing data before inserting the new data" do
+            Row.refresh(provider_name: "Bar", consumer_name: "Foo")
+            expect(Row.count).to eq 1
+            td.create_consumer_version("2")
+              .create_pact
+            Row.refresh(provider_name: "Bar", consumer_name: "Foo")
+            expect(Row.count).to eq 2
+          end
+        end
+
+        context "with a pacticipant_name" do
+          subject { Row.refresh(pacticipant_name: "Bar") }
+
+          it "refreshes the data for both consumer and provider roles" do
+            subject
+            expect(Row.all.collect(&:values)).to contain_hash(provider_name: "Bar", consumer_name: "Foo")
+          end
+        end
+      end
+
       describe "<=>" do
         let(:row_1) do
           Row.new(

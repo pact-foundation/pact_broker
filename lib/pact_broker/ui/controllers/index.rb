@@ -10,9 +10,12 @@ module PactBroker
         include PactBroker::Services
 
         get "/" do
-          tags = params[:tags] == 'true' ? true : [*params[:tags]].compact
+          tags = nil
+          if params[:tags]
+            tags = params[:tags] == 'true' ? true : [*params[:tags]].compact
+          end
           view_model = ViewDomain::IndexItems.new(index_service.find_index_items(tags: tags))
-          page = tags == true || tags.any? ? :'index/show-with-tags' : :'index/show'
+          page = tags ? :'index/show-with-tags' : :'index/show'
           haml page, {locals: {index_items: view_model, title: "Pacts"}, layout: :'layouts/main'}
         end
 

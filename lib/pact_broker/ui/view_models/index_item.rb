@@ -1,6 +1,7 @@
 require 'pact_broker/api/pact_broker_urls'
 require 'pact_broker/ui/helpers/url_helper'
 require 'pact_broker/date_helper'
+require 'pact_broker/versions/abbreviate_number'
 
 module PactBroker
   module UI
@@ -22,16 +23,23 @@ module PactBroker
         end
 
         def consumer_version_number
-          @relationship.consumer_version_number
+          PactBroker::Versions::AbbreviateNumber.call(@relationship.consumer_version_number)
         end
 
         def provider_version_number
-          @relationship.provider_version_number
+          PactBroker::Versions::AbbreviateNumber.call(@relationship.provider_version_number)
         end
 
-        def tag_names
-          latest_overall = @relationship.latest? ? "latest & " : ""
-          @relationship.tag_names.any? ? " (#{latest_overall}latest #{@relationship.tag_names.join(', ')}) ": " (latest) "
+        def latest?
+          @relationship.latest?
+        end
+
+        def consumer_version_latest_tag_names
+          @relationship.tag_names
+        end
+
+        def provider_version_latest_tag_names
+          @relationship.latest_verification_latest_tags.collect(&:name)
         end
 
         def consumer_group_url

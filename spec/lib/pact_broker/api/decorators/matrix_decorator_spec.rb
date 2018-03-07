@@ -10,33 +10,37 @@ module PactBroker
           let(:line_1_success) { true }
           let(:line_2_success) { true }
           let(:line_1) do
-            {
-              consumer_name: "Consumer",
-              consumer_version_number: "1.0.0",
-              pact_version_sha: "1234",
-              pact_created_at: pact_created_at,
-              provider_version_number: "4.5.6",
-              provider_name: "Provider",
-              success: line_1_success,
-              verification_number: 1,
-              verification_build_url: nil,
-              verification_executed_at: verification_date
-            }
+            double('PactBroker::Matrix::Row',
+              {
+                consumer_name: "Consumer",
+                consumer_version_number: "1.0.0",
+                pact_version_sha: "1234",
+                pact_created_at: pact_created_at,
+                provider_version_number: "4.5.6",
+                provider_name: "Provider",
+                success: line_1_success,
+                verification_number: 1,
+                verification_build_url: nil,
+                verification_executed_at: verification_date
+              }
+            )
           end
 
           let(:line_2) do
-            {
-              consumer_name: "Consumer",
-              consumer_version_number: "1.0.0",
-              pact_version_sha: "1234",
-              pact_created_at: pact_created_at,
-              provider_version_number: nil,
-              provider_name: "Provider",
-              success: line_2_success,
-              verification_number: nil,
-              verification_build_url: nil,
-              verification_executed_at: verification_date
-            }
+            double('PactBroker::Matrix::Row',
+              {
+                consumer_name: "Consumer",
+                consumer_version_number: "1.0.0",
+                pact_version_sha: "1234",
+                pact_created_at: pact_created_at,
+                provider_version_number: nil,
+                provider_name: "Provider",
+                success: line_2_success,
+                verification_number: nil,
+                verification_build_url: nil,
+                verification_executed_at: verification_date
+              }
+            )
           end
 
           let(:consumer_hash) do
@@ -122,8 +126,8 @@ module PactBroker
 
           context "when the pact has not been verified" do
             before do
-              line_2[:success] = nil
-              line_2[:verification_executed_at] = nil
+              allow(line_2).to receive(:success).and_return(nil)
+              allow(line_2).to receive(:verification_executed_at).and_return(nil)
             end
 
             let(:verification_hash) { nil }

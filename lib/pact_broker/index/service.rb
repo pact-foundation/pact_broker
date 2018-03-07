@@ -1,6 +1,8 @@
 require 'pact_broker/repositories'
 require 'pact_broker/logging'
 require 'pact_broker/domain/index_item'
+require 'pact_broker/matrix/latest_row'
+require 'pact_broker/matrix/head_row'
 
 module PactBroker
 
@@ -12,10 +14,73 @@ module PactBroker
       extend PactBroker::Logging
 
       def self.find_index_items options = {}
-        pact_repository
-          .find_latest_pacts
-          .collect { | pact| build_index_item_rows(pact, tags_for(pact, options)) }
-          .flatten
+        rows = []
+        overall_latest_publication_ids = nil
+
+        rows = PactBroker::Matrix::HeadRow
+          .select_all_qualified
+          .eager(:latest_triggered_webhooks)
+          .eager(:webhooks)
+          .order(:consumer_name, :provider_name)
+          .eager(:consumer_version_tags)
+          .eager(:provider_version_tags)
+
+        if !options[:tags]
+          rows = rows.where(consumer_version_tag_name: nil).all
+          overall_latest_publication_ids = rows.collect(&:pact_publication_id)
+        end
+
+        if options[:tags]
+          if options[:tags].is_a?(Array)
+            rows = rows.where(consumer_version_tag_name: options[:tags]).or(consumer_version_tag_name: nil)
+          end
+
+          rows = rows.all
+          overall_latest_publication_ids = rows.select{|r| !r[:consumer_version_tag_name] }.collect(&:pact_publication_id).uniq
+
+          # Smoosh all the rows with matching pact publications together
+          # and collect their consumer_head_tag_names
+          rows = rows
+            .group_by(&:pact_publication_id)
+            .values
+            .collect{|group| [group.last, group.collect{|r| r[:consumer_version_tag_name]}.compact] }
+            .collect{ |(row, tag_names)| row.consumer_head_tag_names = tag_names; row }
+        end
+
+        index_items = []
+        rows.sort.each do | row |
+          tag_names = []
+          if options[:tags]
+            tag_names = row.consumer_version_tags.collect(&:name)
+          end
+
+          overall_latest = overall_latest_publication_ids.include?(row.pact_publication_id)
+          latest_verification = if overall_latest
+            verification_repository.find_latest_verification_for row.consumer_name, row.provider_name
+          else
+            tag_names.collect do | tag_name |
+              verification_repository.find_latest_verification_for row.consumer_name, row.provider_name, tag_name
+            end.compact.sort do | v1, v2 |
+              # Some provider versions have nil orders, not sure why
+              # Sort by execution_date instead of order
+              v1.execution_date <=> v2.execution_date
+            end.last
+          end
+
+          index_items << PactBroker::Domain::IndexItem.create(
+            row.consumer,
+            row.provider,
+            row.pact,
+            overall_latest,
+            latest_verification,
+            row.webhooks,
+            row.latest_triggered_webhooks,
+            row.consumer_head_tag_names,
+            row.provider_version_tags.select(&:latest?)
+          )
+        end
+
+        index_items
       end
 
       def self.tags_for(pact, options)

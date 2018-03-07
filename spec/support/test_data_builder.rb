@@ -22,6 +22,7 @@ require 'pact_broker/verifications/service'
 require 'pact_broker/tags/repository'
 require 'pact_broker/webhooks/repository'
 require 'pact_broker/certificates/certificate'
+require 'pact_broker/matrix/row'
 require 'ostruct'
 
 class TestDataBuilder
@@ -37,6 +38,26 @@ class TestDataBuilder
   attr_reader :webhook
   attr_reader :webhook_execution
   attr_reader :triggered_webhook
+  attr_accessor :auto_refresh_matrix
+
+  def initialize(params = {})
+    @auto_refresh_matrix = params.fetch(:auto_refresh_matrix, true)
+  end
+
+  def comment *args
+    self
+  end
+
+  def refresh_matrix
+    if auto_refresh_matrix
+      params = {}
+      params[:consumer_name] = consumer.name if consumer
+      params[:provider_name] = provider.name if provider
+      matrix_service.refresh(params)
+      # Row is not used in production code, but the tests depend on it
+      PactBroker::Matrix::Row.refresh(params)
+    end
+  end
 
   def create_pricing_service
     @pricing_service_id = pacticipant_repository.create(:name => 'Pricing Service', :repository_url => 'git@git.realestate.com.au:business-systems/pricing-service').save(raise_on_save_failure: true).id
@@ -107,23 +128,27 @@ class TestDataBuilder
     PactBroker::Domain::Tag.create(name: tag_name, version: version)
   end
 
-  def create_pacticipant pacticipant_name
+  def create_pacticipant pacticipant_name, params = {}
+    params.delete(:comment)
     @pacticipant = PactBroker::Domain::Pacticipant.create(:name => pacticipant_name)
     self
   end
 
-  def create_consumer consumer_name = "Consumer #{model_counter}"
+  def create_consumer consumer_name = "Consumer #{model_counter}", params = {}
+    params.delete(:comment)
     create_pacticipant consumer_name
     @consumer = @pacticipant
     self
   end
 
-  def use_consumer consumer_name
+  def use_consumer consumer_name, params = {}
+    params.delete(:comment)
     @consumer = PactBroker::Domain::Pacticipant.find(:name => consumer_name)
     self
   end
 
-  def create_provider provider_name = "Provider #{model_counter}"
+  def create_provider provider_name = "Provider #{model_counter}", params = {}
+    params.delete(:comment)
     create_pacticipant provider_name
     @provider = @pacticipant
     self
@@ -134,17 +159,20 @@ class TestDataBuilder
     self
   end
 
-  def create_version version_number = "1.0.#{model_counter}"
+  def create_version version_number = "1.0.#{model_counter}", params = {}
+    params.delete(:comment)
     @version = PactBroker::Domain::Version.create(:number => version_number, :pacticipant => @pacticipant)
     self
   end
 
-  def create_consumer_version version_number = "1.0.#{model_counter}"
+  def create_consumer_version version_number = "1.0.#{model_counter}", params = {}
+    params.delete(:comment)
     @consumer_version = PactBroker::Domain::Version.create(:number => version_number, :pacticipant => @consumer)
     self
   end
 
-  def create_provider_version version_number = "1.0.#{model_counter}"
+  def create_provider_version version_number = "1.0.#{model_counter}", params = {}
+    params.delete(:comment)
     @version = PactBroker::Domain::Version.create(:number => version_number, :pacticipant => @provider)
     @provider_version = @version
     self
@@ -160,17 +188,20 @@ class TestDataBuilder
     self
   end
 
-  def create_tag tag_name
+  def create_tag tag_name, params = {}
+    params.delete(:comment)
     @tag = PactBroker::Domain::Tag.create(name: tag_name, version: @version)
     self
   end
 
-  def create_consumer_version_tag tag_name
+  def create_consumer_version_tag tag_name, params = {}
+    params.delete(:comment)
     @tag = PactBroker::Domain::Tag.create(name: tag_name, version: @consumer_version)
     self
   end
 
-  def create_provider_version_tag tag_name
+  def create_provider_version_tag tag_name, params = {}
+    params.delete(:comment)
     @tag = PactBroker::Domain::Tag.create(name: tag_name, version: @provider_version)
     self
   end
@@ -181,25 +212,31 @@ class TestDataBuilder
   end
 
   def create_pact params = {}
+    params.delete(:comment)
     @pact = PactBroker::Pacts::Repository.new.create({version_id: @consumer_version.id, consumer_id: @consumer.id, provider_id: @provider.id, json_content: params[:json_content] || default_json_content})
     set_created_at_if_set params[:created_at], :pact_publications, {id: @pact.id}
     set_created_at_if_set params[:created_at], :pact_versions, {sha: @pact.pact_version_sha}
     @pact = PactBroker::Pacts::PactPublication.find(id: @pact.id).to_domain
+    refresh_matrix
     self
   end
 
-  def create_same_pact params = {}
+  def republish_same_pact params = {}
+    params.delete(:comment)
     last_pact_version = PactBroker::Pacts::PactVersion.order(:id).last
     create_pact json_content: last_pact_version.content
+    self
   end
 
   def revise_pact json_content = nil
     json_content = json_content ? json_content : {random: rand}.to_json
     @pact = PactBroker::Pacts::Repository.new.update(@pact.id, json_content: json_content)
+    refresh_matrix
     self
   end
 
   def create_webhook params = {}
+    params.delete(:comment)
     uuid = params[:uuid] || PactBroker::Webhooks::Service.next_uuid
     event_params = params[:events] || [{ name: PactBroker::Webhooks::WebhookEvent::DEFAULT_EVENT_NAME }]
     events = event_params.collect{ |e| PactBroker::Webhooks::WebhookEvent.new(e) }
@@ -210,6 +247,7 @@ class TestDataBuilder
   end
 
   def create_triggered_webhook params = {}
+    params.delete(:comment)
     trigger_uuid = params[:trigger_uuid] || webhook_service.next_uuid
     @triggered_webhook = webhook_repository.create_triggered_webhook trigger_uuid, @webhook, @pact, PactBroker::Webhooks::Service::RESOURCE_CREATION
     @triggered_webhook.update(status: params[:status]) if params[:status]
@@ -218,6 +256,7 @@ class TestDataBuilder
   end
 
   def create_webhook_execution params = {}
+    params.delete(:comment)
     logs = params[:logs] || "logs"
     webhook_execution_result = PactBroker::Domain::WebhookExecutionResult.new(OpenStruct.new(code: "200"), logs, nil)
     @webhook_execution = PactBroker::Webhooks::Repository.new.create_execution @triggered_webhook, webhook_execution_result
@@ -228,6 +267,7 @@ class TestDataBuilder
   end
 
   def create_deprecated_webhook_execution params = {}
+    params.delete(:comment)
     create_webhook_execution params
     Sequel::Model.db[:webhook_executions].where(id: webhook_execution.id).update(
       triggered_webhook_id: nil,
@@ -240,16 +280,26 @@ class TestDataBuilder
   end
 
   def create_verification parameters = {}
+    parameters.delete(:comment)
+    tag_names = [parameters.delete(:tag_names), parameters.delete(:tag_name)].flatten.compact
     provider_version_number = parameters[:provider_version] || '4.5.6'
     default_parameters = {success: true, number: 1, test_results: {some: 'results'}}
     parameters = default_parameters.merge(parameters)
     parameters.delete(:provider_version)
     verification = PactBroker::Domain::Verification.new(parameters)
     @verification = PactBroker::Verifications::Repository.new.create(verification, provider_version_number, @pact)
+    if tag_names.any?
+      provider_version = PactBroker::Domain::Version.where(pacticipant_id: @provider.id, number: provider_version_number).single_record
+      tag_names.each do | tag_name |
+        PactBroker::Domain::Tag.create(name: tag_name, version: provider_version)
+      end
+    end
+    refresh_matrix
     self
   end
 
   def create_certificate options = {path: 'spec/fixtures/single-certificate.pem'}
+    options.delete(:comment)
     PactBroker::Certificates::Certificate.create(uuid: SecureRandom.urlsafe_base64, content: File.read(options[:path]))
     self
   end

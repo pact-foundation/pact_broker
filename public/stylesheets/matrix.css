@@ -10,3 +10,12 @@ input[type="radio"] {
 div.top-of-group {
   margin-top: 10px;
 }
+
+div.tag-parent {
+  margin-top: 5px;
+  margin-bottom: 1px;
+}
+
+div.tag {
+  display: inline-block;
+}

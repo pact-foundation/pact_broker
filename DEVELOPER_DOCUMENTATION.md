@@ -58,4 +58,31 @@ Domain classes are found in `lib/pact_broker/domain`. Many of these classes are 
 
 * `matrix` - The matrix of every pact publication and verification. Includes every pact revision (eg. publishing to the same consumer version twice, or using PATCH) and every verification (including 'overwritten' ones. eg. when the same provider build runs twice.)
 
-* `latest_matrix` - This view is a subset of, and has the same columns as, the `matrix`. It removes 'overwritten' pacts and verifications from the matrix (ie. only show latest pact revision for each consumer version and latest verification for each provider version)
+* `latest_matrix_for_consumer_version_and_provider_version` - This view is a subset of, and has the same columns as, the `matrix`. It removes 'overwritten' pacts and verifications from the matrix (ie. only show latest pact revision for each consumer version and latest verification for each provider version)
+
+### Materialized Views
+
+We can't use proper materialized views because we have to support MySQL :|
+
+So as a hacky solution, there are two tables which act as materialized views to speed up the performance of the matrix and index queries. These tables are updated after any resource is published with a `consumer_name`, `provider_name` or `pacticipant_name` in the URL (see lib/pact_broker/api/resources/base_resource.rb#finish_request).
+
+* `materialized_matrix` table - is populated from the `matrix` view.
+
+* `materialized_head_matrix` table - is populated from `head_matrix` view, and is based on `materialized_matrix`.
+
+### Dependencies
+
+materialized_head_matrix table (is populated from...)
+  = head_matrix view
+    -> latest_matrix_for_consumer_version_and_provider_version view
+      -> materialized_matrix table (is populated from...)
+        = matrix view
+          -> verifications table
+          -> versions table
+          -> all_pact_publications view
+            -> pact_versions table
+            -> pact_publications table
+            -> pacticipants table
+            -> versions table
+      -> latest_verification_id_for_consumer_version_and_provider_version view
+      -> latest_pact_publication_revision_numbers view

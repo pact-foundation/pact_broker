@@ -4,15 +4,16 @@
   %script{type: 'text/javascript', src:'/javascripts/jquery-2.1.1.min.js'}
   %script{type: 'text/javascript', src:'/javascripts/jquery.tablesorter.min.js'}
   %script{type: 'text/javascript', src:'/js/bootstrap.min.js'}
-  %nav.navbase-default.navbar-right{role: "navigation"}
-    .container
-      %ul#top-left-menu
-        %li.navbar-right
-          %a{href: './?tags=true'}
-            Show latest tags
-          %a{ href: '/hal-browser/browser.html' }
-            API Browser
   .container
+    %nav.navbase-default{role: "navigation", id: "navigation"}
+      .container-fluid
+        .navbar-header
+        %ul.navbar-right#top-left-menu
+          %li
+            %a{href: './?tags=true'}
+              Show latest tags
+            %a{href: '/hal-browser/browser.html'}
+              API Browser
     %h1.page-header
       Pacts
     %table.table.table-bordered.table-striped{ id: 'relationships' }

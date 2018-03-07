@@ -67,6 +67,6 @@ RSpec::Matchers.define :include_hash_matching do |expected|
   end
 
   def slice actual, keys
-    keys.each_with_object({}) { |k, hash| hash[k] = actual[k] if actual.has_key?(k) }
+    keys.each_with_object({}) { |k, hash| hash[k] = actual[k] if (actual.respond_to?(:has_key?) && actual.has_key?(k)) || actual.respond_to?(k)  }
   end
 end

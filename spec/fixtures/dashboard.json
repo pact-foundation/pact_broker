@@ -1,0 +1,83 @@
+{
+  "items": [
+    {
+      "_links": {
+        "pb:webhook-status": {
+          "href": "webhooks_status_url",
+          "title": "Status of webhooks for Foo/Bar pact"
+        }
+      },
+      "consumer": {
+        "_links": {
+          "self": {
+            "href": "consumer_url"
+          }
+        },
+        "name": "Foo",
+        "version": {
+          "_links": {
+            "self": {
+              "href": "consumer_version_url"
+            }
+          },
+          "number": "1"
+        }
+      },
+      "latestVerificationResult": {
+        "_links": {
+          "self": {
+            "href": "verification_url"
+          }
+        },
+        "success": true,
+        "verifiedAt": "2018-01-01T00:00:00+00:00"
+      },
+      "latestWebhookExecution": {
+        "triggeredAt": "2018-01-01T00:00:00+00:00"
+      },
+      "pactTags": [
+        {
+          "name": "prod",
+          "latest": true,
+          "_links": {
+            "self": {
+              "href": "pact_prod_tag_url"
+            }
+          }
+        }
+      ],
+      "latestVerificationResultTags": [
+        {
+          "name": "dev",
+          "latest": true,
+          "_links": {
+            "self": {
+              "href": "verification_dev_tag_url"
+            }
+          }
+        }
+      ],
+      "pact": {
+        "_links": {
+          "self": {
+            "href": "pact_url"
+          }
+        },
+        "createdAt": "2018-01-01T00:00:00+00:00"
+      },
+      "provider": {
+        "_links": {
+          "self": {
+            "href": "provider_url"
+          }
+        },
+        "name": "Bar",
+        "version": {
+          "number": "2"
+        }
+      },
+      "verificationStatus": "wiffle",
+      "webhookStatus": "blah"
+    }
+  ]
+}

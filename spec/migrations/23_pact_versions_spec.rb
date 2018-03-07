@@ -14,7 +14,7 @@ describe 'migrate to pact versions (migrate 22-31)', migration: true do
   let!(:pact_2) { create(:pacts, {version_id: consumer_version_2[:id], provider_id: provider[:id], pact_version_content_sha: '1234', created_at: now, updated_at: pact_updated_at}) }
 
 
-  subject { PactBroker::Database.migrate(34) }
+  subject { PactBroker::Database.migrate }
 
   it "keeps the same number of pacts" do
     subject
@@ -65,7 +65,7 @@ describe 'migrate to pact versions (migrate 22-31)', migration: true do
     subject
 
     PactBroker::Pacts::Service.create_or_update_pact(
-      consumer_id: consumer[:id], provider_id: provider[:id], consumer_version_number: '1.2.3', json_content: load_fixture('a_consumer-a_provider.json')
+      consumer_name: consumer[:name], provider_name: provider[:name], consumer_version_number: '1.2.3', json_content: load_fixture('a_consumer-a_provider.json')
     )
   end
 end

@@ -10,40 +10,9 @@ module PactBroker
       let(:td) { TestDataBuilder.new }
       let(:tags) { ['prod', 'production'] }
       let(:options) { { tags: tags } }
+      let(:rows) { subject.find_index_items(options) }
 
       subject{ Service }
-
-      describe ".find_index_items" do
-        let(:consumer) { instance_double("PactBroker::Domain::Pacticipant")}
-        let(:provider) { instance_double("PactBroker::Domain::Pacticipant")}
-        let(:pact) { instance_double("PactBroker::Domain::Pact", id: 1, consumer: consumer, provider: provider, consumer_name: 'foo', provider_name: 'bar', consumer_version_tag_names: [])}
-        let(:verification) { instance_double("PactBroker::Domain::Verification")}
-        let(:pacts) { [pact]}
-        let(:webhooks) { [instance_double("PactBroker::Domain::Webhook")]}
-        let(:triggered_webhooks) { [instance_double("PactBroker::Webhooks::TriggeredWebhook")] }
-
-        before do
-          allow_any_instance_of(PactBroker::Pacts::Repository).to receive(:find_latest_pacts).and_return(pacts)
-          allow_any_instance_of(PactBroker::Pacts::Repository).to receive(:find_latest_pact).and_return(pact)
-          allow(PactBroker::Verifications::Service).to receive(:find_latest_verification_for).and_return(verification)
-          allow(PactBroker::Webhooks::Service).to receive(:find_by_consumer_and_provider).and_return(webhooks)
-          allow(PactBroker::Webhooks::Service).to receive(:find_latest_triggered_webhooks).and_return(triggered_webhooks)
-        end
-
-        it "retrieves the webhooks for the pact" do
-          expect(PactBroker::Webhooks::Service).to receive(:find_by_consumer_and_provider).with(consumer, provider)
-          subject.find_index_items(options)
-        end
-
-        it "retrieves the latest verification for the pact" do
-          expect(PactBroker::Verifications::Service).to receive(:find_latest_verification_for).with(consumer, provider)
-          subject.find_index_items(options)
-        end
-
-        it "returns a list of relationships" do
-          expect(subject.find_index_items(options)).to eq([PactBroker::Domain::IndexItem.create(consumer, provider, pact, true, verification, webhooks)])
-        end
-      end
 
       describe "find_relationships integration test" do
         context "when a prod pact exists and is not the latest version" do
@@ -56,6 +25,7 @@ module PactBroker
               .create_consumer_version_tag("also-ignored")
               .create_pact
               .create_verification(provider_version: "2.1.0")
+              .use_provider_version("2.1.0")
           end
 
           let(:rows) { subject.find_index_items(options) }
@@ -123,6 +93,150 @@ module PactBroker
 
           it "includes the latest overall verification for the latest pact" do
             expect(rows.first.latest_verification.provider_version_number).to eq '2.0.0'
+          end
+        end
+
+        context "when the verification is the latest for a given tag" do
+          before do
+            td.create_pact_with_hierarchy("Foo", "1", "Bar")
+              .create_verification(provider_version: "1.0.0", tag_names: ['dev', 'prod'])
+              .create_verification(provider_version: "2.0.0", number: 2, tag_names: ['dev'])
+          end
+
+          let(:rows) { subject.find_index_items(options) }
+          let(:options) { { tags: true } }
+
+          it "includes the names of the tags for which the verification is the latest of that tag" do
+            expect(rows.first.provider_version_number).to eq "2.0.0"
+            expect(rows.first.latest_verification_latest_tags.collect(&:name)).to eq ['dev']
+          end
+        end
+
+        context "when there are multiple verifications for the latest consumer version" do
+
+          context "with no tags" do
+            before do
+              td.create_pact_with_hierarchy("Foo", "1", "Bar")
+                .create_verification(provider_version: "1.0.0")
+                .create_verification(provider_version: "2.0.0", number: 2)
+            end
+
+            let(:options) { {} }
+
+            it "only returns the row for the latest provider version" do
+              expect(rows.count).to eq 1
+            end
+          end
+
+          context "with tags=true" do
+            before do
+              td.create_pact_with_hierarchy("Foo", "1", "Bar")
+                .create_consumer_version("2")
+                .create_consumer_version_tag("prod")
+                .create_consumer_version_tag("master")
+                .create_pact
+                .revise_pact
+                .create_verification(provider_version: "1.0.0")
+                .create_verification(provider_version: "2.0.0", number: 2)
+            end
+
+            let(:options) { {tags: true} }
+
+            it "only returns the row for the latest provider version" do
+              expect(rows.size).to eq 1
+              expect(rows.first.tag_names.sort).to eq ["master","prod"]
+              expect(rows.first.provider_version_number).to eq "2.0.0"
+            end
+          end
+
+          context "with tags=true" do
+            before do
+              td.create_pact_with_hierarchy("Foo", "1.0.0", "Bar")
+                .create_verification(provider_version: "4.5.6")
+                .create_consumer_version("2.0.0")
+                .create_consumer_version_tag("dev")
+                .create_pact
+                .revise_pact
+                .create_consumer_version("2.1.0")
+                .create_consumer_version_tag("prod")
+                .create_pact
+                .revise_pact
+                .create_verification(provider_version: "4.5.6", number: 1)
+                .create_verification(provider_version: "4.5.7", number: 2)
+                .create_verification(provider_version: "4.5.8", number: 3)
+                .create_verification(provider_version: "4.5.9", number: 4)
+                .create_provider("Wiffle")
+                .create_pact
+            end
+
+            let(:options) { {tags: true} }
+
+            it "returns a row for each of the head pacts" do
+              expect(rows.size).to eq 3
+
+              expect(rows[0].latest?).to be true
+              expect(rows[0].provider_name).to eq "Bar"
+              expect(rows[0].tag_names).to eq ["prod"]
+              expect(rows[0].provider_version_number).to eq "4.5.9"
+
+              expect(rows[2].latest?).to be false
+              expect(rows[2].provider_name).to eq "Bar"
+              expect(rows[2].tag_names).to eq ["dev"]
+
+              expect(rows[1].latest?).to be true
+              expect(rows[1].provider_name).to eq "Wiffle"
+            end
+          end
+        end
+
+        context "when a pact with a tag has been verified, and then a new changed version has been published with the same tag" do
+          before do
+            td.create_pact_with_hierarchy("Foo", "1", "Bar")
+              .create_consumer_version_tag("feat-x")
+              .comment("latest verification for feat-x tag")
+              .create_verification(provider_version: "1")
+              .comment("latest feat-x version")
+              .create_consumer_version("2")
+              .create_consumer_version_tag("feat-x")
+              .comment("latest overall version")
+              .create_consumer_version("3")
+              .create_pact
+              .comment("latest overall verification")
+              .create_verification(provider_version: "2")
+
+          end
+
+          let(:options) { { tags: true } }
+
+          it "returns the latest feat-x verification for the latest feat-x pact" do
+            expect(rows.last.tag_names).to eq ["feat-x"]
+            expect(rows.last.provider_version_number).to eq "1"
+          end
+        end
+
+        context "when a pact with two tags has been verified, and then a new changed version has been published with two tags" do
+          before do
+            td.create_pact_with_hierarchy("Foo", "1", "Bar")
+              .create_consumer_version_tag("feat-x")
+              .create_verification(provider_version: "1", comment: "latest feat-x verif")
+              .create_consumer_version("2")
+              .create_consumer_version_tag("feat-y")
+              .create_pact
+              .create_verification(provider_version: "2", comment: "latest feat-y verif")
+              .create_consumer_version("3")
+              .create_consumer_version_tag("feat-x")
+              .create_consumer_version_tag("feat-y")
+              .create_pact
+              .create_consumer_version("4")
+              .create_pact
+          end
+
+          let(:options) { { tags: true } }
+
+          it "returns the latest of the feat-x and feat-y verifications" do
+            expect(rows.last.consumer_version_number).to eq "3"
+            expect(rows.last.tag_names.sort).to eq ["feat-x", "feat-y"]
+            expect(rows.last.provider_version_number).to eq "2"
           end
         end
       end

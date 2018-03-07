@@ -27,8 +27,8 @@ module PactBroker
 
         def deployable
           return nil if lines.empty?
-          return nil if lines.any?{ |line| line[:success].nil? }
-          lines.any? && lines.all?{ |line| line[:success] }
+          return nil if lines.any?{ |line| line.success.nil? }
+          lines.any? && lines.all?{ |line| line.success }
         end
 
         def reason
@@ -47,9 +47,9 @@ module PactBroker
 
         def matrix(lines, base_url)
           lines.collect do | line |
-            provider = OpenStruct.new(name: line[:provider_name])
-            consumer = OpenStruct.new(name: line[:consumer_name])
-            consumer_version = OpenStruct.new(number: line[:consumer_version_number], pacticipant: consumer)
+            provider = OpenStruct.new(name: line.provider_name)
+            consumer = OpenStruct.new(name: line.consumer_name)
+            consumer_version = OpenStruct.new(number: line.consumer_version_number, pacticipant: consumer)
             line_hash(consumer, provider, consumer_version, line, base_url)
           end
         end
@@ -65,9 +65,9 @@ module PactBroker
 
         def consumer_hash(line, consumer, consumer_version, base_url)
           {
-            name: line[:consumer_name],
+            name: line.consumer_name,
             version: {
-              number: line[:consumer_version_number],
+              number: line.consumer_version_number,
               _links: {
                 self: {
                   href: version_url(base_url, consumer_version)
@@ -84,7 +84,7 @@ module PactBroker
 
         def provider_hash(line, provider, base_url)
           hash = {
-            name: line[:provider_name],
+            name: line.provider_name,
             version: nil,
             _links: {
               self: {
@@ -93,8 +93,8 @@ module PactBroker
             }
           }
 
-          if !line[:provider_version_number].nil?
-            hash[:version] = { number: line[:provider_version_number] }
+          if !line.provider_version_number.nil?
+            hash[:version] = { number: line.provider_version_number }
           end
 
           hash
@@ -102,23 +102,28 @@ module PactBroker
 
         def pact_hash(line, base_url)
           {
-            createdAt: line[:pact_created_at].to_datetime.xmlschema,
+            createdAt: line.pact_created_at.to_datetime.xmlschema,
             _links: {
               self: {
-                href: pact_url_from_params(base_url, line)
+                href: pact_url(base_url, line)
               }
             }
           }
         end
 
         def verification_hash(line, base_url)
-          if !line[:success].nil?
+          if !line.success.nil?
+            url_params = { consumer_name: line.consumer_name,
+              provider_name: line.provider_name,
+              pact_version_sha: line.pact_version_sha,
+              verification_number: line.verification_number
+            }
             {
-              success: line[:success],
-              verifiedAt: line[:verification_executed_at].to_datetime.xmlschema,
+              success: line.success,
+              verifiedAt: line.verification_executed_at.to_datetime.xmlschema,
               _links: {
                 self: {
-                  href: verification_url(OpenStruct.new(line.merge(number: line[:verification_number])), base_url)
+                  href: verification_url_from_params(url_params, base_url)
                 }
               }
             }

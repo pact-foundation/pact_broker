@@ -41,6 +41,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'table_print', '~> 1.5'
 
   gem.add_development_dependency 'pact', '~>1.14'
+  gem.add_development_dependency 'rspec-pact-matchers', '~>0.1'
   gem.add_development_dependency 'bundler-audit', '~>0.4'
   gem.add_development_dependency 'sqlite3', '~>1.3'
   gem.add_development_dependency 'pry-byebug'

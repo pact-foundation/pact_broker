@@ -21,5 +21,13 @@ module PactBroker
     def adapter
       Sequel::Model.db.adapter_scheme.to_s
     end
+
+    def sqlite_safe string
+      if adapter == 'sqlite'
+        string.gsub(/\border\b/, '`order`')
+      else
+        string
+      end
+    end
   end
 end

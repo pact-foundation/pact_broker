@@ -5,9 +5,9 @@ module PactBroker
   module Domain
     class IndexItem
 
-      attr_reader :consumer, :provider, :latest_pact, :latest_verification, :webhooks
+      attr_reader :consumer, :provider, :latest_pact, :latest_verification, :webhooks, :triggered_webhooks, :latest_verification_latest_tags
 
-      def initialize consumer, provider, latest_pact = nil, latest = true, latest_verification = nil, webhooks = [], triggered_webhooks = [], tags = []
+      def initialize consumer, provider, latest_pact = nil, latest = true, latest_verification = nil, webhooks = [], triggered_webhooks = [], tags = [], latest_verification_latest_tags = []
         @consumer = consumer
         @provider = provider
         @latest_pact = latest_pact
@@ -16,10 +16,11 @@ module PactBroker
         @webhooks = webhooks
         @triggered_webhooks = triggered_webhooks
         @tags = tags
+        @latest_verification_latest_tags = latest_verification_latest_tags
       end
 
-      def self.create consumer, provider, latest_pact, latest, latest_verification, webhooks = [], triggered_webhooks = [], tags = []
-        new consumer, provider, latest_pact, latest, latest_verification, webhooks, triggered_webhooks, tags
+      def self.create consumer, provider, latest_pact, latest, latest_verification, webhooks = [], triggered_webhooks = [], tags = [], latest_verification_latest_tags = []
+        new consumer, provider, latest_pact, latest, latest_verification, webhooks, triggered_webhooks, tags, latest_verification_latest_tags
       end
 
       def eq? other
@@ -54,10 +55,20 @@ module PactBroker
         @latest_pact.consumer_version_number
       end
 
+      def consumer_version
+        @latest_pact.consumer_version
+      end
+
+      def provider_version
+        @latest_verification ? @latest_verification.provider_version : nil
+      end
+
       def provider_version_number
         @latest_verification ? @latest_verification.provider_version_number : nil
       end
 
+      # these are the consumer tag names for which this pact publication
+      # is the latest with that tag
       def tag_names
         @tags
       end
@@ -117,7 +128,7 @@ module PactBroker
       end
 
       def to_s
-        "Pact between #{consumer_name} and #{provider_name}"
+        "Pact between #{consumer_name} #{consumer_version_number} and #{provider_name} #{provider_version_number}"
       end
 
       def to_a

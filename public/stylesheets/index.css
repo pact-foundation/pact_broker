@@ -12,7 +12,7 @@
 }
 
 table#relationships {
-  table-layout: fixed;
+  /*table-layout: fixed;*/
 }
 
 table#relationships td,
@@ -76,9 +76,41 @@ span.pact:hover svg path, span.pact-matrix:hover svg path {
   stroke: #2a6496;
 }
 
+#navigation .container-fluid {
+  padding-left: 0px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#navigation .container-fluid .navbar-brand {
+  padding: 0px;
+  display: flex;
+  align-items: center;
+}
+
+#navigation .container-fluid:before {
+  content: '' !important;
+  display: none;
+}
+
+#navigation .container-fluid:after {
+  content: '' !important;
+  display: none;
+}
+
 #top-left-menu li a{
   padding-left: 10px
 }
 #top-left-menu li{
   list-style: none;
+}
+
+table#relationships .label {
+  word-wrap: break-word;
+  white-space: normal;
+}
+
+div.tag {
+  display: inline-block;
 }

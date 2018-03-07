@@ -41,7 +41,9 @@ module PactBroker
             .create_pact
         end
 
-        subject { shorten_rows(Repository.new.find(selectors, options)) }
+        subject { shorten_rows(rows) }
+        let(:rows) { Repository.new.find(selectors, options) }
+
 
         let(:options) { { latestby: latestby } }
         let(:latestby) { nil }
@@ -243,6 +245,47 @@ module PactBroker
             it "returns the same as latestby=cvp" do
               expect(subject).to include a1_b1_n2
               expect(subject.size).to eq 1
+            end
+          end
+        end
+      end
+
+      describe "find" do
+        describe "when a pact for a particular consumer version is published, then re-published with different content, then published again with the original content" do
+          before do
+            first_pact = td.create_pact_with_hierarchy("billy", "1", "bobby").and_return(:pact)
+            td.create_verification(provider_version: "1")
+              .revise_pact
+              .revise_pact(first_pact.json_content)
+          end
+
+          let(:selectors) { build_selectors('billy' => nil, 'bobby' => nil) }
+
+          subject { Repository.new.find(selectors, options) }
+
+          context "when latestby: cvpv" do
+            let(:options) { { latestby: 'cvpv' } }
+
+            it "only includes the row for the latest revision" do
+              expect(subject.size).to eq 1
+              expect(subject).to contain_hash(pact_revision_number: 3)
+            end
+          end
+
+          context "when latestby: cvp" do
+            let(:options) { { latestby: 'cvp' } }
+
+            it "only includes the row for the latest revision" do
+              expect(subject.size).to eq 1
+              expect(subject).to contain_hash(pact_revision_number: 3)
+            end
+          end
+
+          context "when latestby: nil" do
+            let(:options) { {} }
+
+            it "includes all the rows" do
+              expect(subject.size).to eq 3
             end
           end
         end
@@ -509,6 +552,10 @@ module PactBroker
           it "returns the row for the version " do
             expect(subject).to include_hash_matching provider_version_number: "2.0.0"
             expect(subject.size).to eq 1
+          end
+
+          it "returns the tag information" do
+            expect(subject.first[:provider_version_tags]).to include_hash_matching name: 'prod', latest: 1
           end
         end
 
