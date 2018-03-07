@@ -9,8 +9,6 @@
 * abbreviate git shas in index and matrix UIs	 ([9a21e10](/../../commit/9a21e10))
 * add latest provider version tag names to dashboard UI	 ([de179d7](/../../commit/de179d7))
 * created dashboard API	 ([044bab7](/../../commit/044bab7))
-* allow database to have missing migration files so that we can deploy branches with different migrations to the same database	 ([c9fe988](/../../commit/c9fe988))
-* add dius logo to new index view with tags	 ([8a4e727](/../../commit/8a4e727))
 
 * **matrix**
   * make index refresh happen synchronously to prevent data corruption	 ([acd64e6](/../../commit/acd64e6))
