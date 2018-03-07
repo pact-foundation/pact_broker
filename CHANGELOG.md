@@ -1,3 +1,56 @@
+<a name="v2.16.0"></a>
+### v2.16.0 (2018-03-05)
+
+
+#### Features
+
+* upgrade haml to 5.0	 ([4415686](/../../commit/4415686))
+* upgrade sequel to 5.6	 ([a37c59a](/../../commit/a37c59a))
+* abbreviate git shas in index and matrix UIs	 ([9a21e10](/../../commit/9a21e10))
+* add latest provider version tag names to dashboard UI	 ([de179d7](/../../commit/de179d7))
+* created dashboard API	 ([044bab7](/../../commit/044bab7))
+* allow database to have missing migration files so that we can deploy branches with different migrations to the same database	 ([c9fe988](/../../commit/c9fe988))
+* add dius logo to new index view with tags	 ([8a4e727](/../../commit/8a4e727))
+
+* **matrix**
+  * make index refresh happen synchronously to prevent data corruption	 ([acd64e6](/../../commit/acd64e6))
+  * speed up query to refresh index	 ([011d7c9](/../../commit/011d7c9))
+  * refresh head matrix asynchronously to speed up pact publishing and tagging	 ([989e6e3](/../../commit/989e6e3))
+  * speed up matrix query for latestby=cvpv and latestby=cvp	 ([6ae039d](/../../commit/6ae039d))
+
+* **index**
+  * sort verifications by execution date	 ([2523982](/../../commit/2523982))
+  * show tag names as slugs	 ([117c89b](/../../commit/117c89b))
+
+* **matrix ui**
+  * rename "rows" to "results"	 ([2023265](/../../commit/2023265))
+  * show row count	 ([b50bd9a](/../../commit/b50bd9a))
+  * remove logic for hiding links until I can get it right	 ([107fca2](/../../commit/107fca2))
+  * correct logic for hiding pact links	 ([825af6d](/../../commit/825af6d))
+  * don't show potentially confusing links for overwritten pact revisions	 ([ed7498a](/../../commit/ed7498a))
+  * add links to all resources referenced in matrix	 ([2958ae8](/../../commit/2958ae8))
+  * add tags	 ([869d49d](/../../commit/869d49d))
+
+* **dashboard api**
+  * correct latest verification results	 ([d02ea24](/../../commit/d02ea24))
+  * fix query for displaying dashboard with tags	 ([924aaae](/../../commit/924aaae))
+  * optimise dashboard query by creating manual materialized views for the matrix	 ([494f553](/../../commit/494f553))
+  * add plain text content type for easy debugging	 ([317a64d](/../../commit/317a64d))
+  * speed up loading of verification tags	 ([a3aea48](/../../commit/a3aea48))
+  * include verification tags	 ([e8d0fae](/../../commit/e8d0fae))
+  * add pact tags	 ([0c79440](/../../commit/0c79440))
+
+
+#### Bug Fixes
+
+* **matrix**
+  * correct logic for selecting matrix rows on MySQL	 ([06f6dd4](/../../commit/06f6dd4))
+  * ensure matrix for latest consumer version/provider version shows correct results when a pact is published, published again for the same version with different content, then published again for the same version with the original content.	 ([679eec1](/../../commit/679eec1))
+
+* **matrix ui**
+  * fix provider version sorting	 ([611ab7e](/../../commit/611ab7e))
+
+
 <a name="v2.15.0"></a>
 ### v2.15.0 (2018-02-26)
 
