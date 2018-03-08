@@ -1,3 +1,13 @@
+<a name="v2.16.1"></a>
+### v2.16.1 (2018-03-08)
+
+
+#### Features
+
+* turn off sinatra show_exceptions when rack_env is production	 ([e961afe](/../../commit/e961afe))
+* add error testing endpoints	 ([4e01407](/../../commit/4e01407))
+
+
 <a name="v2.16.0"></a>
 ### v2.16.0 (2018-03-05)
 
