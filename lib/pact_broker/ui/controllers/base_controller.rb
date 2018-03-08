@@ -8,7 +8,7 @@ module PactBroker
       class Base < Padrino::Application
 
         set :root, File.join(File.dirname(__FILE__), '..')
-        set :show_exceptions, true
+        set :show_exceptions, ENV['RACK_ENV'] != 'production'
 
       end
     end
