@@ -10,7 +10,6 @@ module PactBroker
       class Matrix < Base
 
         include PactBroker::Services
-        include PactBroker::Logging
 
         get "/" do
           selectors = [OpenStruct.new, OpenStruct.new]
@@ -35,7 +34,7 @@ module PactBroker
               end
             end
           rescue StandardError => e
-            log_error(e) unless e.is_a?(PactBroker::Error)
+            Padrino.logger.exception(e) unless e.is_a?(PactBroker::Error)
             locals[:errors] = [e.message]
           end
           haml :'matrix/show', {locals: locals, layout: :'layouts/main'}

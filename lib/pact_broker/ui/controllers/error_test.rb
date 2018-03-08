@@ -7,7 +7,6 @@ module PactBroker
     module Controllers
       class ErrorTest < Base
         include PactBroker::Services
-        include PactBroker::Logging
 
         get "/" do
           raise PactBroker::Error.new("Don't panic. This is a test UI error.")
