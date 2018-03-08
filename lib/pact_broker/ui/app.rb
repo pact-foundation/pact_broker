@@ -1,8 +1,8 @@
 require 'pact_broker/ui/controllers/index'
 require 'pact_broker/ui/controllers/groups'
 require 'pact_broker/ui/controllers/matrix'
+require 'pact_broker/ui/controllers/error_test'
 require 'pact_broker/doc/controllers/app'
-
 
 module PactBroker
   module UI
@@ -39,6 +39,11 @@ module PactBroker
           map "/matrix" do
             use PathInfoFixer
             run PactBroker::UI::Controllers::Matrix
+          end
+
+          map "/test/error" do
+            use PathInfoFixer
+            run PactBroker::UI::Controllers::ErrorTest
           end
 
           map "/" do

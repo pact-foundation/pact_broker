@@ -67,6 +67,7 @@ module PactBroker
         add ['matrix'], Api::Resources::Matrix, {resource_name: "matrix"}
 
         add ['dashboard'], Api::Resources::Dashboard, {resource_name: "dashboard"}
+        add ['test','error'], Api::Resources::ErrorTest, {resource_name: "error_test"}
         add [], Api::Resources::Index, {resource_name: "index"}
       end
     end
