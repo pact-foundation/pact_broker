@@ -28,7 +28,6 @@ describe "Deleting a resource that affects the matrix" do
 
   before do
     td.create_pact_with_hierarchy("Foo", "1", "Bar")
-      .create_consumer_version_tag("prod")
       .create_verification(provider_version: "2")
   end
 
@@ -38,6 +37,10 @@ describe "Deleting a resource that affects the matrix" do
     it "deletes the relevant lines from the matrix" do
       expect{ subject }.to change{ PactBroker::Matrix::Row.count }.by(-1)
     end
+
+    it "deletes the relevant lines from the head matrix" do
+      expect{ subject }.to change{ PactBroker::Matrix::HeadRow.count }.by(-1)
+    end
   end
 
   context "deleting a pacticipant" do
@@ -45,6 +48,10 @@ describe "Deleting a resource that affects the matrix" do
 
     it "deletes the relevant lines from the matrix" do
       expect{ subject }.to change{ PactBroker::Matrix::Row.count }.by(-1)
+    end
+
+    it "deletes the relevant lines from the head matrix" do
+      expect{ subject }.to change{ PactBroker::Matrix::HeadRow.count }.by(-1)
     end
   end
 
@@ -54,12 +61,24 @@ describe "Deleting a resource that affects the matrix" do
     it "deletes the relevant lines from the matrix" do
       expect{ subject }.to change{ PactBroker::Matrix::Row.count }.by(-1)
     end
+
+    it "deletes the relevant lines from the head matrix" do
+      expect{ subject }.to change{ PactBroker::Matrix::HeadRow.count }.by(-1)
+    end
   end
 
   context "deleting a tag" do
+    before do
+      td.create_consumer_version_tag("prod")
+    end
+
     let(:path) { "/pacticipants/Foo/versions/1/tags/prod" }
 
-    it "deletes the relevant lines from the matrix" do
+    it "does not delete any lines from the matrix" do
+      expect{ subject }.to change{ PactBroker::Matrix::Row.count }.by(0)
+    end
+
+    it "deletes the relevant lines from the head matrix" do
       expect{ subject }.to change{ PactBroker::Matrix::HeadRow.count }.by(-1)
     end
   end
