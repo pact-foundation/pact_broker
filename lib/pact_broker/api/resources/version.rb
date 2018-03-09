@@ -25,7 +25,9 @@ module PactBroker
         end
 
         def delete_resource
-          version_service.delete version
+          with_matrix_refresh do
+            version_service.delete version
+          end
           true
         end
 

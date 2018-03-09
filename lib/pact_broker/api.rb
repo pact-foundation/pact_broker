@@ -41,7 +41,7 @@ module PactBroker
         # Pacticipants
         add ['pacticipants'], Api::Resources::Pacticipants, {resource_name: "pacticipants"}
         add ['pacticipants', 'label', :label_name], PactBroker::Api::Resources::PacticipantsForLabel, {resource_name: "pacticipants_for_label"}
-        add ['pacticipants', :name], Api::Resources::Pacticipant, {resource_name: "pacticipant"}
+        add ['pacticipants', :pacticipant_name], Api::Resources::Pacticipant, {resource_name: "pacticipant"}
         add ['pacticipants', :pacticipant_name, 'versions'], Api::Resources::Versions, {resource_name: "pacticipant_versions"}
         add ['pacticipants', :pacticipant_name, 'versions', :pacticipant_version_number], Api::Resources::Version, {resource_name: "pacticipant_version"}
         add ['pacticipants', :pacticipant_name, 'latest-version', :tag], Api::Resources::Version, {resource_name: "latest_tagged_pacticipant_version"}

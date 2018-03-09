@@ -10,7 +10,6 @@ describe "Recording a pact verification" do
 
   subject { post path, verification_content, {'CONTENT_TYPE' => 'application/json' }; last_response  }
 
-
   before do
     td.create_provider("Provider")
       .create_consumer("Consumer")

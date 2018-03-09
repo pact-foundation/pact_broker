@@ -19,42 +19,28 @@ module PactBroker
         include PactBroker::Repositories::Helpers
         include PactBroker::Logging
 
-        def refresh params
-          logger.debug("Refreshing #{model.table_name} for #{params}")
+        def refresh ids
+          logger.debug("Refreshing #{model.table_name} for #{ids}")
 
           db = model.db
           table_name = model.table_name
 
-          source_view_name = model.table_name.to_s.gsub('materialized_', '').to_sym
-          if params[:consumer_name] || params[:provider_name]
-            criteria = {}
-            if params[:consumer_name]
-              pacticipant = PactBroker::Domain::Pacticipant.where(name_like(:name, params[:consumer_name])).single_record
-              criteria[:consumer_id] = pacticipant.id if pacticipant
+          if ids[:pacticipant_id]
+            db.transaction do
+              db[table_name].where(consumer_id: ids[:pacticipant_id]).or(provider_id: ids[:pacticipant_id]).delete
+              new_rows = db[source_view_name].where(consumer_id: ids[:pacticipant_id]).or(provider_id: ids[:pacticipant_id]).distinct
+              db[table_name].insert(new_rows)
             end
-
-            if params[:provider_name]
-              pacticipant = PactBroker::Domain::Pacticipant.where(name_like(:name, params[:provider_name])).single_record
-              criteria[:provider_id] = pacticipant.id if pacticipant
-            end
-            if criteria.any?
-              db.transaction do
-                db[table_name].where(criteria).delete
-                db[table_name].insert(db[source_view_name].where(criteria).distinct)
-              end
+          elsif ids.any?
+            db.transaction do
+              db[table_name].where(ids).delete
+              db[table_name].insert(db[source_view_name].where(ids).distinct)
             end
           end
+        end
 
-          if params[:pacticipant_name]
-            pacticipant = PactBroker::Domain::Pacticipant.where(name_like(:name, params[:pacticipant_name])).single_record
-            if pacticipant
-              db.transaction do
-                db[table_name].where(consumer_id: pacticipant.id).or(provider_id: pacticipant.id).delete
-                new_rows = db[source_view_name].where(consumer_id: pacticipant.id).or(provider_id: pacticipant.id).distinct
-                db[table_name].insert(new_rows)
-              end
-            end
-          end
+        def source_view_name
+          model.table_name.to_s.gsub('materialized_', '').to_sym
         end
 
         def matching_selectors selectors

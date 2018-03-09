@@ -22,9 +22,45 @@ module PactBroker
       GROUP_BY_PROVIDER = [:consumer_name, :consumer_version_number, :provider_name]
       GROUP_BY_PACT = [:consumer_name, :provider_name]
 
+      # Use a block when the refresh is caused by a resource deletion
+      # This allows us to store the correct object ids for use afterwards
       def refresh params
-        PactBroker::Matrix::Row.refresh(params)
-        PactBroker::Matrix::HeadRow.refresh(params)
+        criteria = find_ids_for_pacticipant_names(params)
+        yield if block_given?
+        PactBroker::Matrix::Row.refresh(criteria)
+        PactBroker::Matrix::HeadRow.refresh(criteria)
+      end
+
+      # Only need to update the HeadRow table when tags change
+      # because it only changes which rows are the latest tagged ones -
+      # it doesn't change the actual values in the underlying matrix.
+      def refresh_tags params
+        criteria = find_ids_for_pacticipant_names(params)
+        yield if block_given?
+        PactBroker::Matrix::HeadRow.refresh(criteria)
+      end
+
+      def find_ids_for_pacticipant_names params
+        criteria  = {}
+
+        if params[:consumer_name] || params[:provider_name]
+          if params[:consumer_name]
+            pacticipant = PactBroker::Domain::Pacticipant.where(name_like(:name, params[:consumer_name])).single_record
+            criteria[:consumer_id] = pacticipant.id if pacticipant
+          end
+
+          if params[:provider_name]
+            pacticipant = PactBroker::Domain::Pacticipant.where(name_like(:name, params[:provider_name])).single_record
+            criteria[:provider_id] = pacticipant.id if pacticipant
+          end
+        end
+
+        if params[:pacticipant_name]
+          pacticipant = PactBroker::Domain::Pacticipant.where(name_like(:name, params[:pacticipant_name])).single_record
+          criteria[:pacticipant_id] = pacticipant.id if pacticipant
+        end
+
+        criteria
       end
 
       # Return the latest matrix row (pact/verification) for each consumer_version_number/provider_version_number

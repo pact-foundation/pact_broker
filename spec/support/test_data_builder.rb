@@ -55,6 +55,7 @@ class TestDataBuilder
       params[:provider_name] = provider.name if provider
       matrix_service.refresh(params)
       # Row is not used in production code, but the tests depend on it
+      # Technically this code is expecting ids, but it will work with names too
       PactBroker::Matrix::Row.refresh(params)
     end
   end
@@ -197,6 +198,7 @@ class TestDataBuilder
   def create_consumer_version_tag tag_name, params = {}
     params.delete(:comment)
     @tag = PactBroker::Domain::Tag.create(name: tag_name, version: @consumer_version)
+    refresh_matrix
     self
   end
 

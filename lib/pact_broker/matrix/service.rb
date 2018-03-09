@@ -9,8 +9,12 @@ module PactBroker
       extend PactBroker::Repositories
       extend PactBroker::Services
 
-      def refresh params
-        matrix_repository.refresh params
+      def refresh params, &block
+        matrix_repository.refresh(params, &block)
+      end
+
+      def refresh_tags params, &block
+        matrix_repository.refresh_tags(params, &block)
       end
 
       def find criteria, options = {}

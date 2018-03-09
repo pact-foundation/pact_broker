@@ -40,8 +40,12 @@ module PactBroker
           PactBroker.configuration.before_resource.call(self)
         end
 
+        def update_matrix_after_request?
+          false
+        end
+
         def finish_request
-          if !request.get? && !request.head?
+          if update_matrix_after_request?
             matrix_service.refresh(identifier_from_path)
           end
           PactBroker.configuration.after_resource.call(self)
@@ -155,6 +159,9 @@ module PactBroker
           invalid
         end
 
+        def with_matrix_refresh &block
+          matrix_service.refresh(identifier_from_path, &block)
+        end
       end
     end
   end

@@ -61,6 +61,10 @@ module PactBroker
         def decorator_for model
           PactBroker::Api::Decorators::VerificationDecorator.new(model)
         end
+
+        def update_matrix_after_request?
+          request.post?
+        end
       end
     end
   end

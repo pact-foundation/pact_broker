@@ -45,7 +45,9 @@ module PactBroker
         end
 
         def delete_resource
-          pacticipant_service.delete pacticipant_name
+          with_matrix_refresh do
+            pacticipant_service.delete pacticipant_name
+          end
           true
         end
 
@@ -60,7 +62,11 @@ module PactBroker
         end
 
         def pacticipant_name
-          identifier_from_path[:name]
+          identifier_from_path[:pacticipant_name]
+        end
+
+        def update_matrix_after_request?
+          request.patch?
         end
       end
     end

@@ -87,7 +87,9 @@ module PactBroker
         end
 
         def delete_resource
-          pact_service.delete(pact_params)
+          with_matrix_refresh do
+            pact_service.delete(pact_params)
+          end
           true
         end
 
@@ -101,6 +103,9 @@ module PactBroker
           @pact_params ||= PactBroker::Pacts::PactParams.from_request request, path_info
         end
 
+        def update_matrix_after_request?
+          request.put? || request.patch?
+        end
       end
     end
   end
