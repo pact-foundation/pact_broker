@@ -9,6 +9,7 @@ module PactBroker
 
         set :root, File.join(File.dirname(__FILE__), '..')
         set :show_exceptions, ENV['RACK_ENV'] != 'production'
+        set :dump_errors, false # The padrino logger logs these for us. If this is enabled we get duplicate logging.
 
       end
     end
