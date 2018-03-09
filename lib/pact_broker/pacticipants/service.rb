@@ -86,6 +86,7 @@ module PactBroker
         connection.run("delete from pact_versions where consumer_id = #{pacticipant.id}")
         connection.run("delete from versions where pacticipant_id = #{pacticipant.id}")
         version_repository.delete_by_id version_ids
+        label_repository.delete_by_pacticipant_id(pacticipant.id)
         connection.run("delete from pacticipants where id = #{pacticipant.id}")
       end
 

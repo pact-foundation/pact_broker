@@ -116,6 +116,7 @@ module PactBroker
         before do
           TestDataBuilder.new
             .create_consumer("Consumer")
+            .create_label("finance")
             .create_consumer_version("2.3.4")
             .create_provider("Provider")
             .create_pact
