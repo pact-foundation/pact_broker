@@ -32,9 +32,11 @@ module PactBroker
               db[table_name].insert(new_rows)
             end
           elsif ids.any?
+            accepted_columns = [:consumer_id, :consumer_name, :provider_id, :provider_name]
+            criteria = ids.reject{ |k, v| !accepted_columns.include?(k) }
             db.transaction do
-              db[table_name].where(ids).delete
-              db[table_name].insert(db[source_view_name].where(ids).distinct)
+              db[table_name].where(criteria).delete
+              db[table_name].insert(db[source_view_name].where(criteria).distinct)
             end
           end
         end

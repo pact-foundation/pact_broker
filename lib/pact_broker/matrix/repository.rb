@@ -60,6 +60,7 @@ module PactBroker
           criteria[:pacticipant_id] = pacticipant.id if pacticipant
         end
 
+        criteria[:tag_name] = params[:tag_name] if params[:tag_name].is_a?(String) # Could be a sym from resource parameters in api.rb
         criteria
       end
 
