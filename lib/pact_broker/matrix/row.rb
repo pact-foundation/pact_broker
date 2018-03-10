@@ -36,7 +36,7 @@ module PactBroker
             criteria = ids.reject{ |k, v| !accepted_columns.include?(k) }
             db.transaction do
               db[table_name].where(criteria).delete
-              db[table_name].insert(db[source_view_name].where(criteria).distinct)
+              db[table_name].insert(db[source_view_name].where(criteria))
             end
           end
         end
