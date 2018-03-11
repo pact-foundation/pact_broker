@@ -32,6 +32,7 @@ module PactBroker
 
       def set_value_on_configuration setting
         if configuration_attribute_exists? setting
+          logger.debug("Loading #{setting.name} configuration from database.")
           configuration.send("#{setting.name}=", get_value_from_setting(setting))
         else
           logger.warn("Could not load configuration setting \"#{setting.name}\" as there is no matching attribute on the Configuration class")
