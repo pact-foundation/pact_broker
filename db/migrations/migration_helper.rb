@@ -23,7 +23,7 @@ module PactBroker
     end
 
     def sqlite_safe string
-      if adapter == 'sqlite'
+      if adapter == 'sqlite' || adapter =~ /mysql/
         string.gsub(/(?:\b|")order(?:"|\b)/, '`order`')
       else
         string
