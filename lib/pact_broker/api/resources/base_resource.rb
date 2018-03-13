@@ -1,4 +1,5 @@
 require 'webmachine'
+require 'pact_broker/api/resources/error_handler'
 require 'pact_broker/services'
 require 'pact_broker/api/decorators'
 require 'pact_broker/logging'
@@ -14,17 +15,6 @@ module PactBroker
     module Resources
 
       class InvalidJsonError < StandardError ; end
-
-      class ErrorHandler
-
-        include PactBroker::Logging
-
-        def self.handle_exception e, response
-          logger.error e
-          logger.error e.backtrace
-          response.body = {:message => e.message, :backtrace => e.backtrace }.to_json
-        end
-      end
 
       class BaseResource < Webmachine::Resource
 
@@ -90,7 +80,7 @@ module PactBroker
         end
 
         def handle_exception e
-          PactBroker::Api::Resources::ErrorHandler.handle_exception(e, response)
+          PactBroker::Api::Resources::ErrorHandler.call(e, request, response)
         end
 
         def params

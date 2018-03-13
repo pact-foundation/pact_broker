@@ -40,7 +40,7 @@ module PactBroker
       end
 
       describe "load_from_database!" do
-        let(:configuration) { PactBroker::Configuration.new}
+        let(:configuration) { PactBroker::Configuration.new }
 
         before do
           PactBroker::Config::Setting.create(name: 'use_case_sensitive_resource_names', type: 'string', value: 'foo')
@@ -49,6 +49,24 @@ module PactBroker
         it "loads the configurations from the database" do
           configuration.load_from_database!
           expect(configuration.use_case_sensitive_resource_names).to eq "foo"
+        end
+      end
+
+      describe "add_api_error_reporter" do
+        let(:configuration) { PactBroker::Configuration.new }
+        let(:block) { Proc.new{ | error, options | } }
+
+        it "should add the error notifier " do
+          configuration.add_api_error_reporter(&block)
+          expect(configuration.api_error_reporters.first).to eq block
+        end
+
+        context "with a proc with the wrong number of arguments" do
+          let(:block) { Proc.new{ | error | } }
+
+          it "raises an error" do
+            expect { configuration.add_api_error_reporter(&block) }.to raise_error PactBroker::ConfigurationError
+          end
         end
       end
     end

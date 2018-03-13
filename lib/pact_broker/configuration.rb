@@ -1,4 +1,8 @@
+require 'pact_broker/error'
+
 module PactBroker
+
+  class ConfigurationError < PactBroker::Error; end
 
   def self.configuration
     @@configuration ||= Configuration.default_configuration
@@ -30,6 +34,7 @@ module PactBroker
     attr_accessor :enable_public_badge_access, :shields_io_base_url
     attr_accessor :webhook_retry_schedule
     attr_accessor :disable_ssl_verification
+    attr_reader :api_error_reporters
     attr_writer :logger
 
     def initialize
@@ -37,6 +42,7 @@ module PactBroker
       @after_resource_hook = ->(resource){}
       @authenticate_with_basic_auth = nil
       @authorize = nil
+      @api_error_reporters = []
     end
 
     def logger
@@ -118,6 +124,16 @@ module PactBroker
         @after_resource_hook = block
       else
         @after_resource_hook
+      end
+    end
+
+    def add_api_error_reporter &block
+      if block_given?
+        unless block.arity == 2
+          raise ConfigurationError.new("api_error_notfifier block must accept two arguments, 'error' and 'options'")
+        end
+        @api_error_reporters << block
+        nil
       end
     end
 
