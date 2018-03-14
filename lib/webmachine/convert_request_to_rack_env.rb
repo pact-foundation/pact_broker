@@ -11,11 +11,19 @@ module Webmachine
         'SCRIPT_NAME' => '',
         'rack.url_scheme' => request.uri.scheme,
         'rack.input' => request.body.to_io ? StringIO.new(request.body.to_s) : nil
-      }
-      http_headers = request.headers.each do | key, value |
-        env[convert_http_header_name_to_rack_header_name(key)] = value
+      }.merge(convert_headers(request))
+    end
+
+    def self.convert_headers(request)
+      request.headers.each_with_object({}) do | (key, value), env |
+        v = redact?(key) ? '[Filtered]' : value
+        env[convert_http_header_name_to_rack_header_name(key)] = v
       end
-      env
+    end
+
+    def self.redact?(http_header_name)
+      lower = http_header_name.downcase
+      lower == 'authorization' || lower.include?('token')
     end
 
     def self.convert_http_header_name_to_rack_header_name(http_header_name)

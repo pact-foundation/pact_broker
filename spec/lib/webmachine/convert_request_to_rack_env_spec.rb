@@ -6,17 +6,36 @@ module Webmachine
 
     let(:rack_env) do
       {
-        "rack.input"=>StringIO.new('foo'),
-        "REQUEST_METHOD"=>"POST",
-        "SERVER_NAME"=>"example.org",
-        "SERVER_PORT"=>"80",
-        "QUERY_STRING"=>"",
-        "PATH_INFO"=>"/foo",
-        "rack.url_scheme"=>"http",
-        "SCRIPT_NAME"=>"",
-        "CONTENT_LENGTH"=>"0",
-        "HTTP_HOST"=>"example.org",
-        "CONTENT_TYPE"=>"application/x-www-form-urlencoded",
+        "rack.input" => StringIO.new('foo'),
+        "REQUEST_METHOD" => "POST",
+        "SERVER_NAME" => "example.org",
+        "SERVER_PORT" => "80",
+        "QUERY_STRING" => "",
+        "PATH_INFO" => "/foo",
+        "rack.url_scheme" => "http",
+        "SCRIPT_NAME" => "",
+        "CONTENT_LENGTH" => "0",
+        "HTTP_HOST" => "example.org",
+        "CONTENT_TYPE" => "application/x-www-form-urlencoded",
+        "HTTP_AUTHORIZATION"  =>  "auth",
+        "HTTP_TOKEN" => "foo"
+      }
+    end
+
+    let(:expected_rack_env) do
+      {
+        "REQUEST_METHOD" => "POST",
+        "SERVER_NAME" => "example.org",
+        "SERVER_PORT" => "80",
+        "QUERY_STRING" => "",
+        "PATH_INFO" => "/foo",
+        "rack.url_scheme" => "http",
+        "SCRIPT_NAME" => "",
+        "CONTENT_LENGTH" => "0",
+        "HTTP_HOST" => "example.org",
+        "CONTENT_TYPE" => "application/x-www-form-urlencoded",
+        "HTTP_AUTHORIZATION" => "[Filtered]",
+        "HTTP_TOKEN" => "[Filtered]"
       }
     end
 
@@ -38,12 +57,10 @@ module Webmachine
     subject { ConvertRequestToRackEnv.call(webmachine_request) }
 
     describe ".call" do
-      it "" do
-        expected_env = rack_env.dup
-        expected_env.delete('rack.input')
+      it "returns a rack env hash created from the Webmachine::Request" do
         actual_env = subject
         actual_rack_input = actual_env.delete('rack.input')
-        expect(subject).to eq expected_env
+        expect(subject).to eq expected_rack_env
         expect(actual_rack_input.string).to eq 'foo'
       end
     end
