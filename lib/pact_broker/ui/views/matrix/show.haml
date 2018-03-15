@@ -143,4 +143,7 @@
                   = tag.name
         %td.verification-result{class: line.verification_status_class}
           %a{href: line.verification_status_url}
-            = line.verification_status
+            - if options.all_rows_checked
+              = "#{line.verification_status} (number #{line.number})"
+            - else
+              = line.verification_status
