@@ -3,35 +3,6 @@ require 'pact_broker/verifications/repository'
 module PactBroker
   module Verifications
     describe Repository do
-
-      describe "#verification_count_for_pact" do
-        let!(:pact_1) do
-          TestDataBuilder.new
-            .create_consumer("Consumer")
-            .create_provider("Provider")
-            .create_consumer_version("1.2.3")
-            .create_pact
-            .create_verification(number: 1)
-            .create_verification(number: 2)
-            .and_return(:pact)
-        end
-        let!(:pact_2) do
-          TestDataBuilder.new
-            .create_consumer("Foo")
-            .create_provider("Bar")
-            .create_consumer_version("4.5.6")
-            .create_pact
-            .create_verification(number: 1)
-            .and_return(:pact)
-        end
-
-        subject { Repository.new.verification_count_for_pact(pact_1) }
-
-        it "returns the number of verifications for the given pact" do
-          expect(subject).to eq 2
-        end
-      end
-
       describe "#find" do
         let!(:pact) do
           builder = TestDataBuilder.new

@@ -55,7 +55,7 @@ module PactBroker
         end
 
         def next_verification_number
-          @next_verification_number ||= verification_service.next_number_for(pact)
+          @next_verification_number ||= verification_service.next_number
         end
 
         def decorator_for model

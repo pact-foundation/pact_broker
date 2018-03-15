@@ -8,19 +8,6 @@ module PactBroker
 
       subject { PactBroker::Verifications::Service }
 
-      describe "#next_number_for" do
-
-        let(:pact) { double(:pact) }
-
-        before do
-          allow_any_instance_of(PactBroker::Verifications::Repository).to receive(:verification_count_for_pact).and_return(2)
-        end
-
-        it "returns the number for the next build to be recorded for a pact" do
-          expect(subject.next_number_for(pact)).to eq 3
-        end
-      end
-
       describe "#create" do
         let(:params) { {'success' => true, 'providerApplicationVersion' => '4.5.6'} }
         let(:pact) { TestDataBuilder.new.create_pact_with_hierarchy.and_return(:pact) }

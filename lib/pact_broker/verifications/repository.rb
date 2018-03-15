@@ -2,6 +2,7 @@ require 'sequel'
 require 'pact_broker/domain/verification'
 require 'pact_broker/verifications/latest_verifications_by_consumer_version'
 require 'pact_broker/verifications/all_verifications'
+require 'pact_broker/verifications/sequence'
 
 module PactBroker
   module Verifications
@@ -10,16 +11,20 @@ module PactBroker
       include PactBroker::Repositories::Helpers
       include PactBroker::Repositories
 
+      # Ideally this would just be a sequence, but Sqlite and MySQL don't support sequences
+      # in the way we need to use them ie. determining what the next number will be before we
+      # create the record, because Webmachine wants to set the URL of the resource that is about
+      # to be created *before* we actually create it.
+      def next_number
+        Sequence.next_val
+      end
+
       def create verification, provider_version_number, pact
         provider = pacticipant_repository.find_by_name(pact.provider_name)
         version = version_repository.find_by_pacticipant_id_and_number_or_create(provider.id, provider_version_number)
         verification.pact_version_id = pact_version_id_for(pact)
         verification.provider_version = version
         verification.save
-      end
-
-      def verification_count_for_pact pact
-        PactBroker::Domain::Verification.where(pact_version_id: pact_version_id_for(pact)).count
       end
 
       def find consumer_name, provider_name, pact_version_sha, verification_number
