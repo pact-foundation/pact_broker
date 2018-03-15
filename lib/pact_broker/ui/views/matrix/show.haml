@@ -118,7 +118,7 @@
               %a{href: tag.url}
                 .tag.label.label-default
                   = tag.name
-        %td.pact-published{'data-sort-value' => line.pact_published_order}
+        %td.pact-published{'data-sort-value' => line.pact_published_order, "title": line.inherited_verification_message, "data-toggle": "tooltip"}
           %a{href: line.pact_publication_date_url}
             - if options.all_rows_checked
               = "#{line.pact_publication_date} (revision #{line.pact_revision_number})"
@@ -142,7 +142,7 @@
               %a{href: tag.url}
                 .tag.label.label-default
                   = tag.name
-        %td.verification-result{class: line.verification_status_class}
+        %td.verification-result{class: line.verification_status_class, "title": line.inherited_verification_message, "data-toggle": "tooltip"}
           %a{href: line.verification_status_url}
             - if options.all_rows_checked
               = "#{line.verification_status} (number #{line.number})"
