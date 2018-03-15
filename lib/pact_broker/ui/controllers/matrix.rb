@@ -13,7 +13,7 @@ module PactBroker
 
         get "/" do
           selectors = [OpenStruct.new, OpenStruct.new]
-          options = { limit: 100, latestby: 'cvpv' }
+          options = { limit: 100, latestby: nil }
           locals = {
             lines: [],
             title: "The Matrix",
@@ -42,7 +42,7 @@ module PactBroker
 
         get "/provider/:provider_name/consumer/:consumer_name" do
           selectors = [{ pacticipant_name: params[:consumer_name] }, { pacticipant_name: params[:provider_name] } ]
-          options = {latestby: 'cvpv', limit: 100}
+          options = {latestby: nil, limit: 100}
           lines = matrix_service.find(selectors, options)
           lines = PactBroker::UI::ViewDomain::MatrixLines.new(lines)
           locals = {
