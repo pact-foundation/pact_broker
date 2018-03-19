@@ -12,6 +12,12 @@ require 'rack/pact_broker/accepts_html_filter'
 require 'rack/pact_broker/ui_authentication'
 require 'rack/pact_broker/configurable_make_it_later'
 require 'rack/pact_broker/no_auth'
+require 'semver/dsl'
+require 'semver/pre_release'
+require 'semver/runner'
+require 'semver/semver'
+require 'semver/semvermissingerror'
+require 'semver/xsemver'
 require 'sucker_punch'
 
 module PactBroker

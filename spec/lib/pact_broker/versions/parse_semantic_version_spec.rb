@@ -31,8 +31,14 @@ module PactBroker
             expect(ParseSemanticVersion.call("abc")).to be_nil
           end
 
-          it "accepts semver metadata" do
-            expect(ParseSemanticVersion.call("1.2.3+abc.234")).not_to be_nil
+          context "semver metadata" do
+            it "accepts metadata" do
+              expect(ParseSemanticVersion.call("1.2.3+abc.234")).not_to be_nil
+            end
+
+            it "accepts metadata short version" do
+              expect(ParseSemanticVersion.call("1+abc.234")).not_to be_nil
+            end
           end
         end
       end

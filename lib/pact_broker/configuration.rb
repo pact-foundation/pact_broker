@@ -59,7 +59,6 @@ module PactBroker
       # Not recommended to set this to true unless there is no way to
       # consistently extract an orderable object from the consumer application version number.
       config.order_versions_by_date = false
-      config.semver_formats = ["%M.%m.%p%s%d", "%M.%m", "%M"]
       config.webhook_retry_schedule = [10, 60, 120, 300, 600, 1200] #10 sec, 1 min, 2 min, 5 min, 10 min, 20 min => 38 minutes
       config.check_for_potential_duplicate_pacticipant_names = true
       config.disable_ssl_verification = false
