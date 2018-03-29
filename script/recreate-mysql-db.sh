@@ -1,6 +1,7 @@
 SCHEMA="pact_broker"
 set -e
-mysql mysql -h localhost -u root -e "select 'drop table "' || tablename || '" cascade;' from pg_tables;'"
+# mysql mysql -h localhost -u root -e "select 'drop table "' || tablename || '" cascade;' from pg_tables;'"
+mysql mysql -h localhost -u root -e 'DROP DATABASE pact_broker;'
 mysql mysql -h localhost -u root -e 'CREATE DATABASE pact_broker;'
 mysql mysql -h localhost -u root -e "GRANT ALL ON pact_broker.* TO 'pact_broker'@'%' identified by 'pact_broker';"
 
