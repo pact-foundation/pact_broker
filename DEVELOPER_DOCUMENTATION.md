@@ -86,3 +86,8 @@ materialized_head_matrix table (is populated from...)
             -> versions table
       -> latest_verification_id_for_consumer_version_and_provider_version view
       -> latest_pact_publication_revision_numbers view
+
+### Useful to know stuff
+
+* The supported database types are Postgres (recommended), MySQL (sigh) and Sqlite (just for testing, not recommended for production). Check the travis.yml file for the supported database versions.
+* Any migration that uses the "order" column has to be defined using the Sequel DSL rather than pure SQL, because the word "order" is a key word, and it has to be escaped correctly and differently on each database (Postgres, MySQL, Sqlite).
