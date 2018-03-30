@@ -1,3 +1,12 @@
+<a name="v2.17.1"></a>
+### v2.17.1 (2018-03-30)
+
+
+#### Bug Fixes
+
+* refresh matrix and head_matrix tables	 ([bf36c61](/../../commit/bf36c61))
+
+
 <a name="v2.17.0"></a>
 ### v2.17.0 (2018-03-30)
 
