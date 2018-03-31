@@ -4,8 +4,9 @@ module PactBroker
   module DB
     describe Clean do
       describe ".call" do
-
         let(:td) { TestDataBuilder.new }
+        let(:db) { PactBroker::DB.connection }
+
         before do
           td.create_pact_with_hierarchy("Foo", "0", "Bar")
             .create_consumer_version_tag("prod")
@@ -30,7 +31,6 @@ module PactBroker
         end
 
         subject { Clean.call(PactBroker::DB.connection) }
-        let(:db) { PactBroker::DB.connection }
 
         it "does not delete any rows in the head matrix" do
           head_matrix_before = db[:head_matrix].select_all
