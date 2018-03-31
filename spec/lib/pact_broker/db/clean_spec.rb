@@ -1,9 +1,12 @@
 require 'pact_broker/db/clean'
 
+IS_MYSQL = !!DB.mysql?
+
 module PactBroker
   module DB
     describe Clean do
-      describe ".call" do
+      # Inner queries don't work on MySQL. Seriously, MySQL???
+      describe ".call", pending: IS_MYSQL do
         let(:td) { TestDataBuilder.new }
         let(:db) { PactBroker::DB.connection }
 
