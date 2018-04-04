@@ -144,7 +144,7 @@
                   = tag.name
         %td.verification-result{class: line.verification_status_class, "title": line.inherited_verification_message, "data-toggle": "tooltip"}
           %a{href: line.verification_status_url}
-            - if options.all_rows_checked
+            - if options.all_rows_checked && line.number
               = "#{line.verification_status} (number #{line.number})"
             - else
               = line.verification_status
