@@ -145,9 +145,9 @@ module PactBroker
 
         def markdown
           Pact::Doc::Markdown::ConsumerContractRenderer.call consumer_contract
-        rescue NotAPactError
+        rescue StandardError
           heading = "### A contract between #{@pact.consumer.name} and #{@pact.provider.name}"
-          warning = "_Note: this contract could not be parsed to a Pact, showing raw content instead._"
+          warning = "_Note: this contract could not be parsed to a v1 or v2 Pact, showing raw content instead._"
           pretty_json = JSON.pretty_generate(@pact.content_hash)
           "#{heading}\n#{warning}\n```json\n#{pretty_json}\n```\n"
         end
