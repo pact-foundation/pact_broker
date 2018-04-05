@@ -1,3 +1,21 @@
+<a name="v2.18.0"></a>
+### v2.18.0 (2018-04-05)
+
+
+#### Features
+
+* add link to matrix from HTML pact page	 ([f9e3c23](/../../commit/f9e3c23))
+* sort tags in dashboard API response	 ([d2fd090](/../../commit/d2fd090))
+* add rake task to clean unused data to improve performance	 ([fc705a2](/../../commit/fc705a2))
+
+
+#### Bug Fixes
+
+* show JSON view when *any* error occurs creating the HTML view for a pact.	 ([e4342f0](/../../commit/e4342f0))
+* only show verification matrix number when verification is present	 ([766f7c0](/../../commit/766f7c0))
+* correctly display interaction with nil description in HTML view	 ([56528d3](/../../commit/56528d3))
+
+
 <a name="v2.17.1"></a>
 ### v2.17.1 (2018-03-30)
 
