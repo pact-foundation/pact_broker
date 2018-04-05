@@ -64,6 +64,9 @@ module PactBroker
                 <a href=\"#{json_url}\">View in API Browser</a>
               </li>
               <li>
+                <a href=\"#{matrix_url}\">View Matrix</a>
+              </li>
+              <li>
                 <a href=\"/\">Home</a>
               </li>
             </ul>
@@ -118,6 +121,10 @@ module PactBroker
 
         def pact_url
           PactBroker::Api::PactBrokerUrls.pact_url '', @pact
+        end
+
+        def matrix_url
+          PactBroker::Api::PactBrokerUrls.matrix_url_from_params consumer_name: @pact.consumer_name, provider_name: @pact.provider_name
         end
 
         def badge_target_url
