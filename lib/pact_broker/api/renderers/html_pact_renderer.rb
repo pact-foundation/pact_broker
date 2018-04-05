@@ -124,7 +124,7 @@ module PactBroker
         end
 
         def matrix_url
-          PactBroker::Api::PactBrokerUrls.matrix_url_from_params consumer_name: @pact.consumer_name, provider_name: @pact.provider_name
+          PactBroker::Api::PactBrokerUrls.matrix_url_from_params consumer_name: @pact.consumer.name, provider_name: @pact.provider.name
         end
 
         def badge_target_url
