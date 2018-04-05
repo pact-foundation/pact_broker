@@ -12,7 +12,11 @@ module PactBroker
           logger.error e
           logger.error e.backtrace
           response.body = {:message => e.message, :backtrace => e.backtrace }.to_json
-          report e, request
+          report(e, request) if reportable?(e)
+        end
+
+        def self.reportable? e
+          !e.is_a?(PactBroker::Error)
         end
 
         def self.report e, request

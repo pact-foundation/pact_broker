@@ -9,7 +9,7 @@ module PactBroker
         include PactBroker::Services
 
         get "/" do
-          raise PactBroker::Error.new("Don't panic. This is a test UI error.")
+          raise PactBroker::TestError.new("Don't panic. This is a test UI error.")
         end
       end
     end
