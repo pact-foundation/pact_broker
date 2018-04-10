@@ -2,8 +2,8 @@
 
 I have already (please mark the applicable with an `x`):
 
-[ ] Upgraded to the latest Pact Broker OR
-[ ] Checked the CHANGELOG to see if the issue I am about to raise has been fixed
+* [ ] Upgraded to the latest Pact Broker OR
+* [ ] Checked the CHANGELOG to see if the issue I am about to raise has been fixed
 
 ## Software versions
 
