@@ -31,6 +31,10 @@ module PactBroker
             expect(ParseSemanticVersion.call("abc")).to be_nil
           end
 
+          it "returns nil when GIT SHA is given" do
+            expect(ParseSemanticVersion.call("21426d86b6188b98c1d34564c5cc4858b26f5af9")).to be_nil
+          end
+
           context "semver metadata" do
             it "accepts metadata" do
               expect(ParseSemanticVersion.call("1.2.3+abc.234")).not_to be_nil

@@ -106,6 +106,9 @@ module XSemVer
 
     # Parses a semver from a string and format.
     def self.parse(version_string, format = nil, allow_missing = true)
+      # check if git SHA
+      return nil if !version_string.include?('.') && (version_string =~ /\A[-+]?\d*\.?\d+\z/).nil?
+
       format ||= TAG_FORMAT
       regex_str = Regexp.escape format
 
