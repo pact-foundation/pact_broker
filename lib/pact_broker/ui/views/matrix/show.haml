@@ -29,28 +29,26 @@
         %input{name: 'q[]pacticipant', id: "pacticipant1#{index}", value: selector.pacticipant_name}
 
         .input-group
-          %input{type: 'radio', name: "ignorethis#{index}", class: 'specify-all-versions version-selectorizor', value: 'all_versions', id: "pacticipant#{index}_all_versions", checked: selector.specify_all_versions_checked}
-          %label{for: "pacticipant#{index}_all_versions"}
-            All versions
 
         .input-group
-          %input{type: 'radio', name: "ignorethis#{index}", class: 'specify-version version-selectorizor', value: 'version', id: "pacticipant#{index}_by_version", checked: selector.specify_version_checked}
-          %label{for: "pacticipant#{index}_by_version"}
-            Version
-          %input{name: 'q[]version', type: 'text', id: "pacticipant#{index}_version", class: 'by-version', value: selector.pacticipant_version_number}
+          %select{ name: "ignorethis#{index}", class: 'version-selectorizor' }
+            %option{ value: 'specify-all-versions', selected: selector.specify_all_versions }
+              All versions
+            %option{ value: 'specify-latest', selected: selector.specify_latest }
+              Latest version
+            %option{ value: 'specify-version', selected: selector.specify_version }
+              Version number ...
+            %option{ value: 'specify-latest-tag', selected: selector.specify_latest_tag }
+              Latest version with tag ...
+            %option{ value: 'specify-all-tagged', selected: selector.specify_all_tagged }
+              All versions with tag...
 
-        .input-group
-          %input{type: 'radio', name: "ignorethis#{index}", class: 'specify-latest version-selectorizor', value: 'tag', id: "pacticipant#{index}_latest", checked: selector.specify_latest_checked}
-          %label{for: "pacticipant#{index}_latest"}
-            Latest version
+          %input{name: 'q[]version', type: 'text', id: "pacticipant#{index}_version", class: 'version', value: selector.pacticipant_version_number}
+
+          %input{name: 'q[]tag', type: 'text', id: "pacticipant#{index}_tag", class: 'tag', value: selector.tag}
+
           %input{name: 'q[]latest', value: 'true', hidden: true, class: 'latest-flag'}
 
-        .input-group
-          %input{type: 'radio', name: "ignorethis#{index}", class: 'specify-latest-tag version-selectorizor', value: 'tag', id: "pacticipant#{index}_by_tag", checked: selector.specify_latest_tag_checked}
-          %label{for: "pacticipant#{index}_by_tag"}
-            Latest version with tag
-          %input{name: 'q[]tag', type: 'text', id: "pacticipant#{index}_tag", class: "by-latest-tag", value: selector.tag}
-          %input{name: 'q[]latest', value: 'true', hidden: true, class: 'latest-flag'}
 
     %div.top-of-group
       .input-group

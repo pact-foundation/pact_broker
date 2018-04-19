@@ -59,12 +59,11 @@ module PactBroker
         def create_selector_objects(selector_hashes)
           selector_hashes.collect do | selector_hash |
             o = OpenStruct.new(selector_hash)
-            o.tag_disabled = o.tag ? nil : 'disabled'
-            o.version_disabled = o.pacticipant_version_number ? nil : 'disabled'
-            o.specify_latest_tag_checked = o.tag ? 'checked' : nil
-            o.specify_latest_checked = o.latest ? 'checked' : nil
-            o.specify_version_checked = o.pacticipant_version_number ? 'checked' : nil
-            o.specify_all_versions_checked = !(o.tag || o.pacticipant_version_number) ? 'checked' : nil
+            o.specify_latest_tag = o.tag && o.latest ? 'checked' : nil
+            o.specify_all_tagged = o.tag && !o.latest ? 'checked' : nil
+            o.specify_latest = o.latest ? 'checked' : nil
+            o.specify_version = o.pacticipant_version_number ? 'checked' : nil
+            o.specify_all_versions = !(o.tag || o.pacticipant_version_number) ? 'checked' : nil
             o
           end
         end

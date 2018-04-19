@@ -1,27 +1,48 @@
-function handleRadioButtonClicked() {
-  selectApplicableTextBox($(this));
-  clearOtherTextBoxes($(this));
+
+function setTextboxVisibility(selectBox, cssSelector, visibility) {
+  var textbox = selectBox.closest('.selector').find(cssSelector);
+  textbox.toggle(visibility);
+  if(visibility) {
+    textbox.prop('disabled', '');
+    textbox.focus();
+  } else {
+    textbox.prop('disabled', 'disabled');
+  }
 }
 
-function selectApplicableTextBox(selectedRadioButton) {
-  selectedRadioButton.closest('.input-group').find('input[type="text"]').first().focus();
+function toggleLatestFlag(selectBox, enabled) {
+  var flagElement = selectBox.closest('.selector').find('.latest-flag');
+  if(enabled) {
+    flagElement.prop('disabled', '');
+  } else {
+    flagElement.prop('disabled', 'disabled');
+  }
 }
 
-function handleTextBoxClicked() {
-  selectApplicableRadioButton($(this));
-  clearOtherTextBoxes($(this));
+function showApplicableTextBoxes(selectorizor) {
+  var selectorizorType = selectorizor.val();
+  if( selectorizorType === 'specify-version') {
+    setTextboxVisibility(selectorizor, '.version', true);
+    setTextboxVisibility(selectorizor, '.tag', false);
+  }
+  else if( selectorizorType === 'specify-latest-tag' || selectorizorType === 'specify-all-tagged') {
+    setTextboxVisibility(selectorizor, '.version', false);
+    setTextboxVisibility(selectorizor, '.tag', true);
+  }
+  else if ( selectorizorType === 'specify-all-versions' || selectorizorType === 'specify-latest') {
+    setTextboxVisibility(selectorizor, '.version', false);
+    setTextboxVisibility(selectorizor, '.tag', false);
+  }
+
+  if (selectorizorType === 'specify-latest' || selectorizorType === 'specify-latest-tag') {
+    toggleLatestFlag(selectorizor, true);
+  } else {
+    toggleLatestFlag(selectorizor, false);
+  }
 }
 
-function selectApplicableRadioButton(selectedTextBox) {
-  selectedTextBox.closest('.input-group').find('.version-selectorizor').prop('checked', 'checked');
-}
-
-function clearOtherTextBoxes(clickedElement) {
-  clickedElement.closest('.selector').find('input[type="text"]').each(function(){
-    if(!$.contains(clickedElement.closest('.input-group')[0], $(this)[0])) {
-      $(this).prop('value', '');
-    }
-  });
+function handleSelectorizorChanged() {
+  showApplicableTextBoxes($(this));
 }
 
 function onSubmit() {
@@ -30,26 +51,12 @@ function onSubmit() {
 }
 
 function disableFieldsThatShouldNotBeSubmitted() {
-  disableInputsForUncheckedRadioButtons();
-  disableRadioButtons();
-}
-
-function disableInputsForUncheckedRadioButtons() {
-  $('.version-selectorizor').each(function(){
-    if($(this).prop('checked') === false) {
-      $(this).closest('.input-group').find('input').prop('disabled', 'disabled');
-    }
-  });
-}
-
-function disableRadioButtons() {
   $('.version-selectorizor').prop('disabled', 'disabled');
 }
 
 $(document).ready(function(){
-  $('.by-version').click(handleTextBoxClicked);
-  $('.by-latest-tag').click(handleTextBoxClicked);
-  $('.version-selectorizor').click(handleRadioButtonClicked);
+  $('.version-selectorizor').change(handleSelectorizorChanged);
+  $('.version-selectorizor').each(function(){ showApplicableTextBoxes($(this)); });
 
   $("#matrix").tablesorter({
     textExtraction : function(node, table, cellIndex){
