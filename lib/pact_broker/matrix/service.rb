@@ -57,11 +57,7 @@ module PactBroker
             error_messages << "Please specify the pacticipant name"
           else
             if s.key?(:pacticipant_version_number) && s.key?(:latest)
-              error_messages << "A version and latest flag cannot both be specified for #{s[:pacticipant_name]}"
-            end
-
-            if s.key?(:tag) && !s.key?(:latest)
-              error_messages << "Querying for all versions with a tag is not currently supported. The latest=true flag must be specified when a tag is given."
+              error_messages << "A version number and latest flag cannot both be specified for #{s[:pacticipant_name]}"
             end
           end
         end
@@ -78,7 +74,7 @@ module PactBroker
               version = version_service.find_by_pacticipant_name_and_number(pacticipant_name: s[:pacticipant_name], pacticipant_version_number: s[:pacticipant_version_number])
               error_messages << "No pact or verification found for #{s[:pacticipant_name]} version #{s[:pacticipant_version_number]}" if version.nil?
             elsif s[:tag]
-              version = version_service.find_by_pacticpant_name_and_latest_tag(s[:pacticipant_name], s[:tag])
+              version = version_service.find_by_pacticipant_name_and_latest_tag(s[:pacticipant_name], s[:tag])
               error_messages << "No version of #{s[:pacticipant_name]} found with tag #{s[:tag]}" if version.nil?
             end
           end

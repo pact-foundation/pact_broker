@@ -12,7 +12,7 @@ module PactBroker
         PactBroker::Domain::Version.where(number: number, pacticipant_id: pacticipant_id).single_record
       end
 
-      def find_by_pacticpant_name_and_latest_tag pacticipant_name, tag
+      def find_by_pacticipant_name_and_latest_tag pacticipant_name, tag
         PactBroker::Domain::Version
           .select_all_qualified
           .join(:pacticipants, {id: :pacticipant_id}, {implicit_qualifier: :versions})
@@ -21,6 +21,16 @@ module PactBroker
           .where(name_like(Sequel[:pacticipants][:name], pacticipant_name))
           .reverse_order(:order)
           .first
+      end
+
+      def find_by_pacticipant_name_and_tag pacticipant_name, tag
+        PactBroker::Domain::Version
+          .select_all_qualified
+          .join(:pacticipants, {id: :pacticipant_id}, {implicit_qualifier: :versions})
+          .join(:tags, {version_id: :id}, {implicit_qualifier: :versions})
+          .where(name_like(Sequel[:tags][:name], tag))
+          .where(name_like(Sequel[:pacticipants][:name], pacticipant_name))
+          .all
       end
 
       def find_latest_by_pacticpant_name pacticipant_name

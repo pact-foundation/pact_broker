@@ -15,8 +15,8 @@ module PactBroker
         version_repository.find_by_pacticipant_name_and_number params.fetch(:pacticipant_name), params.fetch(:pacticipant_version_number)
       end
 
-      def self.find_by_pacticpant_name_and_latest_tag(pacticipant_name, tag)
-        version_repository.find_by_pacticpant_name_and_latest_tag(pacticipant_name, tag)
+      def self.find_by_pacticipant_name_and_latest_tag(pacticipant_name, tag)
+        version_repository.find_by_pacticipant_name_and_latest_tag(pacticipant_name, tag)
       end
 
       def self.delete version

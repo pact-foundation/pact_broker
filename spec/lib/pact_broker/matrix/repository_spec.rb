@@ -479,6 +479,58 @@ module PactBroker
           end
         end
 
+        context "when compability is required with all versions with a given tag" do
+          before do
+            td.create_pact_with_hierarchy("android app", "1", "BFF")
+              .create_consumer_version_tag("prod")
+              .create_verification(provider_version: "5", comment: "included")
+              .create_consumer_version("2", tag_name: "prod")
+              .create_pact
+              .create_verification(provider_version: "5", comment: "included")
+              .create_consumer_version("3")
+              .create_pact
+              .create_verification(provider_version: "5", comment: "not included")
+              .create_consumer("ios app")
+              .create_consumer_version("20", tag_name: "prod")
+              .create_pact
+              .create_verification(provider_version: "5", comment: "not included")
+          end
+
+          context "when the other service is specifically named" do
+            let(:selectors) do
+              [
+                { pacticipant_name: "android app", tag: "prod" },
+                { pacticipant_name: "BFF", pacticipant_version_number: "5" }
+              ]
+            end
+
+            let(:options) { {} }
+
+            it "returns the matrix for all of the versions for the specified pacticipants with the given tag" do
+              expect(subject).to include_hash_matching(consumer_version_number: "1")
+              expect(subject).to include_hash_matching(consumer_version_number: "2")
+              expect(subject).to_not include_hash_matching(consumer_version_number: "3")
+              expect(subject).to_not include_hash_matching(consumer_name: "ios app")
+            end
+          end
+
+          context "when the other service is not specifically named" do
+            let(:selectors) do
+              [
+                { pacticipant_name: "BFF", pacticipant_version_number: "5" }
+              ]
+            end
+
+            let(:options) { { tag: "prod" } }
+
+            it "returns the matrix for all of the versions with the given tag" do
+              expect(subject).to include_hash_matching(consumer_name: "android app", consumer_version_number: "1")
+              expect(subject).to include_hash_matching(consumer_name: "android app", consumer_version_number: "2")
+              expect(subject).to include_hash_matching(consumer_name: "ios app", consumer_version_number: "20")
+            end
+          end
+        end
+
         context "using the success option" do
           before do
             td.create_pact_with_hierarchy("A", "1.2.3", "B")

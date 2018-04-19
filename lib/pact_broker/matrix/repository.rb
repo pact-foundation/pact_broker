@@ -134,21 +134,19 @@ module PactBroker
       end
 
       def resolve_selectors(selectors, options)
-        selectors = look_up_versions_for_latest_and_tag(selectors, options)
-
-        if options[:latest]
-          apply_latest_and_tag_to_inferred_selectors(selectors, options)
+        resolved_selectors = look_up_version_numbers(selectors, options)
+        if options[:latest] || options[:tag]
+          apply_latest_and_tag_to_inferred_selectors(resolved_selectors, options)
         else
-          selectors
+          resolved_selectors
         end
       end
 
-      # Find the version number for selectors with the latest (tagged) version specified
-      def look_up_versions_for_latest_and_tag(selectors, options)
+      # Find the version number for selectors with the latest and/or tag specified
+      def look_up_version_numbers(selectors, options)
         selectors.collect do | selector |
-          # resource validation currently stops tag being specified without latest=true
           if selector[:tag] && selector[:latest]
-            version = version_repository.find_by_pacticpant_name_and_latest_tag(selector[:pacticipant_name], selector[:tag])
+            version = version_repository.find_by_pacticipant_name_and_latest_tag(selector[:pacticipant_name], selector[:tag])
             raise Error.new("Could not find version with tag #{selector[:tag].inspect} for #{selector[:pacticipant_name]}") unless version
             # validation in resource should ensure we always have a version
             {
@@ -161,25 +159,38 @@ module PactBroker
               pacticipant_name: selector[:pacticipant_name],
               pacticipant_version_number: version.number
             }
+          elsif selector[:tag]
+            # validation in resource should ensure we always have at least one version
+            versions = version_repository.find_by_pacticipant_name_and_tag(selector[:pacticipant_name], selector[:tag])
+            versions.collect do | version |
+              {
+                pacticipant_name: selector[:pacticipant_name],
+                pacticipant_version_number: version.number
+              }
+            end
           else
             selector.dup
           end
-        end.collect do | selector |
-          if selector[:pacticipant_name]
-            pacticipant = PactBroker::Domain::Pacticipant.find(name: selector[:pacticipant_name])
-            selector[:pacticipant_id] = pacticipant ? pacticipant.id : nil
-          end
-
-          if selector[:pacticipant_name] && selector[:pacticipant_version_number]
-            version = version_repository.find_by_pacticipant_name_and_number(selector[:pacticipant_name], selector[:pacticipant_version_number])
-            selector[:pacticipant_version_id] = version ? version.id : nil
-          end
-
-          if selector[:pacticipant_version_number].nil?
-            selector[:pacticipant_version_id] = nil
-          end
-          selector
+        end.flatten.compact.collect do | selector |
+          add_ids(selector)
         end
+      end
+
+      def add_ids(selector)
+        if selector[:pacticipant_name]
+          pacticipant = PactBroker::Domain::Pacticipant.find(name: selector[:pacticipant_name])
+          selector[:pacticipant_id] = pacticipant ? pacticipant.id : nil
+        end
+
+        if selector[:pacticipant_name] && selector[:pacticipant_version_number]
+          version = version_repository.find_by_pacticipant_name_and_number(selector[:pacticipant_name], selector[:pacticipant_version_number])
+          selector[:pacticipant_version_id] = version ? version.id : nil
+        end
+
+        if selector[:pacticipant_version_number].nil?
+          selector[:pacticipant_version_id] = nil
+        end
+        selector
       end
 
       # eg. when checking to see if Foo version 2 can be deployed to prod,
@@ -190,13 +201,15 @@ module PactBroker
         inferred_names = all_pacticipant_names - specified_names
 
         inferred_selectors = inferred_names.collect do | pacticipant_name |
-          {
+          selector = {
             pacticipant_name: pacticipant_name,
-            latest: options[:latest]
-          }.tap { |it| it[:tag] = options[:tag] if options[:tag] }
+          }
+          selector[:tag] = options[:tag] if options[:tag]
+          selector[:latest] = options[:latest] if options[:latest]
+          selector
         end
 
-        selectors + look_up_versions_for_latest_and_tag(inferred_selectors, options)
+        selectors + look_up_version_numbers(inferred_selectors, options)
       end
 
       def all_pacticipant_names_in_specified_matrix(selectors, options)
