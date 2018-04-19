@@ -78,8 +78,6 @@ module PactBroker
         lines.sort
       end
 
-
-
       def apply_latestby options, selectors, lines
         return lines unless options[:latestby]
         group_by_columns = case options[:latestby]
