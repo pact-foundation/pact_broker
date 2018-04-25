@@ -1,4 +1,4 @@
-require 'lib/semver/dsl'
+require 'semver/dsl'
 
 module XSemVer
   
