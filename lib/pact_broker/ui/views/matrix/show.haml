@@ -54,6 +54,11 @@
 
     %div.top-of-group
       .input-group
+        %input{type: 'radio', name: "latestby", class: '', value: '', id: 'all_rows', checked: options.all_rows_checked}
+        %label{for: 'all_rows'}
+          Show all results
+    %div
+      .input-group
         %input{type: 'radio', name: "latestby", class: '', value: 'cvpv', id: 'cvpv', checked: options.cvpv_checked}
         %label{for: 'cvpv'}
           Show latest result for each consumer version/provider version
@@ -62,14 +67,10 @@
         %input{type: 'radio', name: "latestby", class: '', value: 'cvp', id: 'cvp', checked: options.cvp_checked}
         %label{for: 'cvp'}
           Show latest result for each consumer version/provider
-    %div
-      .input-group
-        %input{type: 'radio', name: "latestby", class: '', value: '', id: 'all_rows', checked: options.all_rows_checked}
-        %label{for: 'all_rows'}
-          Show all results
     %div.top-of-group
-      %label{for: "limit"}
-        Limit
+      - limit_text = "Note that the 'Show latest...' options are summaries of the 'Show all results' query, and that the limit applies to the underlying query, rather than the number of rows returned in the summary."
+      %label{for: "limit", "title": limit_text, "data-toggle": "tooltip", "data-placement": "right"}
+        Limit*
       %input{name: 'limit', id: "limit", value: options.limit}
     %div.top-of-group
       %input{type: 'submit'}
@@ -117,7 +118,7 @@
               %a{href: tag.url}
                 .tag.label.label-default
                   = tag.name
-        %td.pact-published{'data-sort-value' => line.pact_published_order}
+        %td.pact-published{'data-sort-value' => line.pact_published_order, "title": line.inherited_verification_message, "data-toggle": "tooltip"}
           %a{href: line.pact_publication_date_url}
             - if options.all_rows_checked
               = "#{line.pact_publication_date} (revision #{line.pact_revision_number})"
@@ -141,6 +142,9 @@
               %a{href: tag.url}
                 .tag.label.label-default
                   = tag.name
-        %td.verification-result{class: line.verification_status_class}
+        %td.verification-result{class: line.verification_status_class, "title": line.inherited_verification_message, "data-toggle": "tooltip"}
           %a{href: line.verification_status_url}
-            = line.verification_status
+            - if options.all_rows_checked && line.number
+              = "#{line.verification_status} (number #{line.number})"
+            - else
+              = line.verification_status

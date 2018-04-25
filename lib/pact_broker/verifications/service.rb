@@ -12,8 +12,8 @@ module PactBroker
       extend PactBroker::Repositories
       extend PactBroker::Services
 
-      def next_number_for pact
-        verification_repository.verification_count_for_pact(pact) + 1
+      def next_number
+        verification_repository.next_number
       end
 
       def create next_verification_number, params, pact

@@ -64,6 +64,9 @@ module PactBroker
                 <a href=\"#{json_url}\">View in API Browser</a>
               </li>
               <li>
+                <a href=\"#{matrix_url}\">View Matrix</a>
+              </li>
+              <li>
                 <a href=\"/\">Home</a>
               </li>
             </ul>
@@ -120,6 +123,10 @@ module PactBroker
           PactBroker::Api::PactBrokerUrls.pact_url '', @pact
         end
 
+        def matrix_url
+          PactBroker::Api::PactBrokerUrls.matrix_url_from_params consumer_name: @pact.consumer.name, provider_name: @pact.provider.name
+        end
+
         def badge_target_url
           base_url
         end
@@ -138,9 +145,9 @@ module PactBroker
 
         def markdown
           Pact::Doc::Markdown::ConsumerContractRenderer.call consumer_contract
-        rescue NotAPactError
+        rescue StandardError
           heading = "### A contract between #{@pact.consumer.name} and #{@pact.provider.name}"
-          warning = "_Note: this contract could not be parsed to a Pact, showing raw content instead._"
+          warning = "_Note: this contract could not be parsed to a v1 or v2 Pact, showing raw content instead._"
           pretty_json = JSON.pretty_generate(@pact.content_hash)
           "#{heading}\n#{warning}\n```json\n#{pretty_json}\n```\n"
         end

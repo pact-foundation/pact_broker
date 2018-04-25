@@ -112,7 +112,7 @@ module PactBroker
         end
 
         def pact_tags(index_item, base_url)
-          index_item.tag_names.collect do | tag_name |
+          index_item.tag_names.sort.collect do | tag_name |
             fake_tag = OpenStruct.new(name: tag_name, version: index_item.consumer_version)
             {
               name: tag_name,
@@ -127,7 +127,7 @@ module PactBroker
         end
 
         def verification_tags(index_item, base_url)
-          index_item.latest_verification_latest_tags.collect do | tag |
+          index_item.latest_verification_latest_tags.sort{ |t1, t2| t1.name <=> t2.name }.collect do | tag |
             fake_tag = OpenStruct.new(name: tag.name, version: index_item.provider_version)
             {
               name: tag.name,

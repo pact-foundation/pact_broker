@@ -46,7 +46,7 @@ module PactBroker
 
             before do
               allow(Pacts::Service).to receive(:find_pact).and_return(pact)
-              allow(PactBroker::Verifications::Service).to receive(:next_number_for).and_return(next_verification_number)
+              allow(PactBroker::Verifications::Service).to receive(:next_number).and_return(next_verification_number)
               allow(PactBroker::Api::Decorators::VerificationDecorator).to receive(:new).and_return(decorator)
             end
 

@@ -41,7 +41,7 @@ A -> B ->  C
 TestDataBuilder.new
   .create_pact_with_hierarchy("A", "1", "B")
   .create_consumer_version_tag("master")
-  .create_verification(provider_version: '1', success: false)
+  .create_verification(provider_version: '1', success: false, execution_date: Date.today - 1 )
   .create_verification(provider_version: '1', number: 2, success: true)
   .create_verification(provider_version: '2', number: 3)
   .create_verification(provider_version: '4', number: 4)

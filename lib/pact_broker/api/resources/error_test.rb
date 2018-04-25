@@ -24,11 +24,11 @@ module PactBroker
         end
 
         def to_json
-          raise PactBroker::Error.new("Don't panic. This is a test API error.")
+          raise PactBroker::TestError.new("Don't panic. This is a test API error.")
         end
 
         def from_json
-          raise PactBroker::Error.new("Don't panic. This is a test API error.")
+          raise PactBroker::TestError.new("Don't panic. This is a test API error.")
         end
       end
     end

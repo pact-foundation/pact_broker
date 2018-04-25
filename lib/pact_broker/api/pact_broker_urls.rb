@@ -160,8 +160,12 @@ module PactBroker
         "#{base_url}/webhooks/#{triggered_webhook.webhook_uuid}/trigger/#{triggered_webhook.trigger_uuid}/logs"
       end
 
-     def badge_url_for_latest_pact pact, base_url = ''
+      def badge_url_for_latest_pact pact, base_url = ''
         "#{latest_pact_url(base_url, pact)}/badge.svg"
+      end
+
+      def matrix_url_from_params params, base_url = ''
+        "#{base_url}/matrix/provider/#{url_encode(params.fetch(:provider_name))}/consumer/#{url_encode(params.fetch(:consumer_name))}"
       end
 
       def hal_browser_url target_url

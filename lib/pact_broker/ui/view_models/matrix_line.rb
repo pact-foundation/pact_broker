@@ -175,6 +175,12 @@ module PactBroker
         def overwritten= overwritten
           @overwritten = overwritten
         end
+
+        def inherited_verification_message
+          if @line[:verification_executed_at] && @line[:pact_created_at] > @line[:verification_executed_at]
+            "The verification date is before the pact publication date because this verification has been inherited from a previously verified pact with identical content."
+          end
+        end
       end
     end
   end

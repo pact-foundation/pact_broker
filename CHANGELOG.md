@@ -1,3 +1,58 @@
+<a name="v2.18.0"></a>
+### v2.18.0 (2018-04-05)
+
+
+#### Features
+
+* add link to matrix from HTML pact page	 ([f9e3c23](/../../commit/f9e3c23))
+* sort tags in dashboard API response	 ([d2fd090](/../../commit/d2fd090))
+* add rake task to clean unused data to improve performance	 ([fc705a2](/../../commit/fc705a2))
+
+
+#### Bug Fixes
+
+* show JSON view when *any* error occurs creating the HTML view for a pact.	 ([e4342f0](/../../commit/e4342f0))
+* only show verification matrix number when verification is present	 ([766f7c0](/../../commit/766f7c0))
+* correctly display interaction with nil description in HTML view	 ([56528d3](/../../commit/56528d3))
+
+
+<a name="v2.17.1"></a>
+### v2.17.1 (2018-03-30)
+
+
+#### Bug Fixes
+
+* refresh matrix and head_matrix tables	 ([bf36c61](/../../commit/bf36c61))
+
+
+<a name="v2.17.0"></a>
+### v2.17.0 (2018-03-30)
+
+
+#### Features
+
+* ensure migrations in optimise_head_matrix work on mysql	 ([35874a9](/../../commit/35874a9))
+* show verification number in matrix when viewing all results	 ([5693430](/../../commit/5693430))
+* redact auth headers from rack env used to report errors	 ([94f8f13](/../../commit/94f8f13))
+* add api error reporters	 ([579fa39](/../../commit/579fa39))
+* log debug message when loading configuration setting from database	 ([9ffcc1a](/../../commit/9ffcc1a))
+* optimise head matrix refresh when adding or deleting tags	 ([263c2a4](/../../commit/263c2a4))
+* disable sinatra dump_errors	 ([d59c7e5](/../../commit/d59c7e5))
+* send padrino logs to a file in the log dir by default	 ([7408be0](/../../commit/7408be0))
+
+* **matrix ui**
+  * add tooltip explaining the situation when verification date is before pact publication date	 ([fd6e1c9](/../../commit/fd6e1c9))
+  * change default to show all results	 ([f7bea07](/../../commit/f7bea07))
+
+
+#### Bug Fixes
+
+* ensure publishing a verification does not cause a unique constraint violation	 ([ecfb385](/../../commit/ecfb385))
+* optimize matrix query to speed up lengthy pact publication times	 ([e09d528](/../../commit/e09d528))
+* ensure matrix is updated when pacticipant is deleted	 ([6c11cbe](/../../commit/6c11cbe))
+* delete pacticipant labels before deleting pacticipant	 ([18b9b7e](/../../commit/18b9b7e))
+
+
 <a name="v2.16.1"></a>
 ### v2.16.1 (2018-03-08)
 

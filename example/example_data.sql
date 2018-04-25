@@ -14,4 +14,6 @@ INSERT INTO pact_publications VALUES(1,1,1,1,1,'2014-11-18 06:28:36.340041');
 INSERT INTO pact_publications VALUES(2,2,1,1,3,'2015-01-19 22:15:10.969518');
 INSERT INTO pact_publications VALUES(3,3,1,1,1,'2016-11-08 22:45:37.291839');
 INSERT INTO pact_publications VALUES(4,4,3,1,4,'2017-05-23 06:10:23.252829');
+INSERT INTO materialized_matrix SELECT * FROM matrix;
+INSERT INTO materialized_head_matrix SELECT * FROM head_matrix;
 COMMIT;

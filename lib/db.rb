@@ -36,7 +36,7 @@ module DB
 
   def self.connection_for_env env
     config = configuration_for_env(env)
-    logger.info "Connecting to #{env} database #{config['database']}."
+    logger.info "Connecting to #{env} #{config['adapter']} database #{config['database']}."
     connect config
   end
 
