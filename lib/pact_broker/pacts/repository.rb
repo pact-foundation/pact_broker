@@ -70,6 +70,24 @@ module PactBroker
         end
       end
 
+      def find_pact_versions_for_provider provider_name, tag = nil
+        if tag
+          LatestPactPublicationsByConsumerVersion
+            .join(:tags, {version_id: :consumer_version_id})
+            .provider(provider_name)
+            .order_ignore_case(:consumer_name)
+            .order_append(:consumer_version_order)
+            .where(Sequel[:tags][:name] => tag)
+            .collect(&:to_domain)
+        else
+          LatestPactPublicationsByConsumerVersion
+            .provider(provider_name)
+            .order_ignore_case(:consumer_name)
+            .order_append(:consumer_version_order)
+            .collect(&:to_domain)
+        end
+      end
+
       # Returns latest pact version for the consumer_version_number
       def find_by_consumer_version consumer_name, consumer_version_number
         LatestPactPublicationsByConsumerVersion

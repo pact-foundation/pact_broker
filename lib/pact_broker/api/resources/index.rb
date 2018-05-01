@@ -50,7 +50,19 @@ module PactBroker
               'pb:latest-provider-pacts-with-tag' =>
               {
                 href: base_url + '/pacts/provider/{provider}/latest/{tag}',
-                title: 'Latest pacts by provider with the specified tag',
+                title: 'Latest pacts for provider with the specified tag',
+                templated: true
+              },
+              'pb:provider-pacts-with-tag' =>
+              {
+                href: base_url + '/pacts/provider/{provider}/tag/{tag}',
+                title: 'All pact versions for the provider with the specified consumer version tag',
+                templated: true
+              },
+              'pb:provider-pacts' =>
+              {
+                href: base_url + '/pacts/provider/{provider}',
+                title: 'All pact versions for the specified provider',
                 templated: true
               },
               'pb:latest-version' => {

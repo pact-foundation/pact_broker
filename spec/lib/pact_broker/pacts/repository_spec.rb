@@ -244,7 +244,6 @@ module PactBroker
       end
 
       describe "#find_latest_pact_versions_for_provider" do
-
         context "with no tag specified" do
           before do
             TestDataBuilder.new
@@ -308,7 +307,72 @@ module PactBroker
             expect(subject.last.consumer_version.number).to eq "5.0.0"
           end
         end
+      end
 
+      describe "#find_pact_versions_for_provider" do
+        context "with no tag specified" do
+          before do
+            TestDataBuilder.new
+              .create_consumer(consumer_name)
+              .create_consumer_version("1.0.0")
+              .create_provider(provider_name)
+              .create_pact
+              .create_consumer_version("1.2.3")
+              .create_pact
+              .create_consumer("wiffle consumer")
+              .create_consumer_version("4.0.0")
+              .create_pact
+              .create_consumer_version("4.5.6")
+              .create_pact
+              .create_provider("not the provider")
+              .create_pact
+          end
+
+          subject { Repository.new.find_pact_versions_for_provider provider_name }
+
+          it "returns all the pact versions for the specified provider" do
+            expect(subject.size).to eq 4
+            expect(subject.first.provider.name).to eq provider_name
+          end
+        end
+
+        context "with a tag specified" do
+          before do
+            TestDataBuilder.new
+              .create_consumer(consumer_name)
+              .create_consumer_version("1")
+              .create_consumer_version_tag("prod")
+              .create_provider(provider_name)
+              .create_pact
+              .create_consumer_version("2")
+              .create_consumer_version_tag("prod")
+              .create_pact
+              .create_consumer_version("3")
+              .create_pact
+              .create_consumer("wiffle consumer")
+              .create_consumer_version("10")
+              .create_pact
+              .create_consumer_version("11")
+              .create_consumer_version_tag("prod")
+              .create_consumer_version_tag("test")
+              .create_pact
+              .create_provider("not the provider")
+              .create_pact
+          end
+
+          subject { Repository.new.find_pact_versions_for_provider provider_name, "prod" }
+
+          it "returns the pacts between the specified consumer and provider with the given tag" do
+            expect(subject.size).to eq 3
+            expect(subject.first.provider.name).to eq provider_name
+            expect(subject.first.consumer.name).to eq consumer_name
+            expect(subject.first.consumer_version.number).to eq "1"
+            expect(subject[1].consumer_version.number).to eq "2"
+            expect(subject.first.json_content).to be nil
+            expect(subject.last.consumer.name).to eq "wiffle consumer"
+            expect(subject.last.consumer_version.number).to eq "11"
+          end
+        end
       end
 
       describe "find_pact" do
