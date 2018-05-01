@@ -25,6 +25,14 @@ module PactBroker
           versions_url(options[:base_url], represented)
         end
 
+        link :'pb:version-tag' do | options |
+          {
+            title: "Get, create or delete a tag for a version of #{represented.name}",
+            href: templated_tag_url_for_pacticipant(represented.name, options[:base_url]),
+            templated: true
+          }
+        end
+
         # TODO deprecate in v3
         # URL isn't implemented
         # link 'latest-version' do | options |

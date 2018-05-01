@@ -20,13 +20,15 @@ module PactBroker
 
         let(:created_at) { Time.new(2014, 3, 4) }
         let(:updated_at) { Time.new(2014, 3, 5) }
+        let(:base_url) { 'http://example.org' }
 
         before do
           pacticipant.created_at = created_at
           pacticipant.updated_at = updated_at
+          allow_any_instance_of(PacticipantDecorator).to receive(:templated_tag_url_for_pacticipant).and_return('version_tag_url')
         end
 
-        subject { JSON.parse PacticipantDecorator.new(pacticipant).to_json(user_options: {base_url: 'http://example.org'}), symbolize_names: true }
+        subject { JSON.parse PacticipantDecorator.new(pacticipant).to_json(user_options: {base_url: base_url}), symbolize_names: true }
 
         it "includes timestamps" do
           expect(subject[:createdAt]).to eq created_at.xmlschema
@@ -36,6 +38,15 @@ module PactBroker
         it "includes embedded labels" do
           expect(subject[:_embedded][:labels].first).to include name: 'foo'
           expect(subject[:_embedded][:labels].first[:_links][:self][:href]).to match %r{http://example.org/.*foo}
+        end
+
+        it "creates the URL for a version tag" do
+          expect_any_instance_of(PacticipantDecorator).to receive(:templated_tag_url_for_pacticipant).with("Name", base_url)
+          subject
+        end
+
+        it "includes a relation for a version tag" do
+          expect(subject[:_links][:'pb:version-tag'][:href]).to eq "version_tag_url"
         end
 
         context "when there is a latest_version" do
