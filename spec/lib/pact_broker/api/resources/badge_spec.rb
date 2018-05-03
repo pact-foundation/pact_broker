@@ -16,10 +16,10 @@ module PactBroker
           allow(PactBroker::Verifications::Status).to receive(:new).and_return(verification_status)
         end
 
-        let(:pact) { instance_double("PactBroker::Domain::Pact", consumer: consumer, provider: provider, consumer_version_number: "2") }
+        let(:pact) { instance_double("PactBroker::Domain::Pact", consumer: consumer, provider: provider, consumer_version_number: "2", revision_number: "1") }
         let(:consumer) { double('consumer') }
         let(:provider) { double('provider') }
-        let(:verification) { double("verification", provider_version_number: "3") }
+        let(:verification) { double("verification", provider_version_number: "3", number: "7") }
         let(:verification_status) { instance_double("PactBroker::Verifications::Status", to_sym: :verified) }
 
 
@@ -86,7 +86,7 @@ module PactBroker
           end
 
           it "returns a comment with the consumer and provider numbers" do
-            expect(subject.body).to include "<!-- consumer version 2 provider version 3 -->"
+            expect(subject.body).to include "<!-- consumer version 2 revision 1 provider version 3 number 7 -->"
           end
 
           context "when the label param is specified" do

@@ -58,8 +58,10 @@ module PactBroker
 
         def comment
           consumer_version_number = pact ? pact.consumer_version_number : "?"
+          pact_revision = pact ? pact.revision_number : "?"
           provider_version_number = latest_verification ? latest_verification.provider_version_number : "?"
-          "<!-- #{identifier_from_path[:consumer_name]} version #{consumer_version_number} #{identifier_from_path[:provider_name]} version #{provider_version_number} -->\n"
+          verification_number =  latest_verification ? latest_verification.number : "?"
+          "<!-- #{identifier_from_path[:consumer_name]} version #{consumer_version_number} revision #{pact_revision} #{identifier_from_path[:provider_name]} version #{provider_version_number} number #{verification_number} -->\n"
         end
       end
     end
