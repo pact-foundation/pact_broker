@@ -13,6 +13,7 @@ module PactBroker
 
         # Pacts
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'version', :consumer_version_number], Api::Resources::Pact, {resource_name: "pact_publication"}
+        add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'pact-version', :pact_version_sha], Api::Resources::PactVersion, {resource_name: "pact_publication"}
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'version', :consumer_version_number, 'previous-distinct'], Api::Resources::PreviousDistinctPactVersion, {resource_name: "previous_distinct_pact_version"}
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'version', :consumer_version_number, 'diff', 'previous-distinct'], Api::Resources::PactContentDiff, {resource_name: "previous_distinct_pact_version_diff"}
 
