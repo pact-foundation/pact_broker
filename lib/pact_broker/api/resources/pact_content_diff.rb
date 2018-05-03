@@ -20,7 +20,7 @@ module PactBroker
         end
 
         def to_text
-          output = PactBroker::Pacts::Diff.new.process pact_params.merge(base_url: base_url)
+          output = PactBroker::Pacts::Diff.new.process pact_params.merge(base_url: base_url), comparison_pact_params, raw: false
           response.body = output
         end
 
@@ -29,7 +29,19 @@ module PactBroker
         end
 
         def pact_params
-          @pact_params ||= PactBroker::Pacts::PactParams.from_request request, path_info
+          @pact_params ||= PactBroker::Pacts::PactParams.from_path_info identifier_from_path
+        end
+
+        def comparison_pact_params
+          if identifier_from_path[:comparison_consumer_version_number] || identifier_from_path[:comparison_pact_version_sha]
+            comparison_identifier_from_path = identifier_from_path.merge(
+                consumer_version_number: identifier_from_path[:comparison_consumer_version_number],
+                pact_version_sha: identifier_from_path[:comparison_pact_version_sha],
+                base_url: base_url)
+            PactBroker::Pacts::PactParams.from_path_info(comparison_identifier_from_path)
+          else
+            nil
+          end
         end
       end
     end

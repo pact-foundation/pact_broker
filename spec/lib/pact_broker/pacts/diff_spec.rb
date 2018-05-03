@@ -15,6 +15,19 @@ module PactBroker
         end
         let(:pact_content_version_2) { load_fixture('consumer-provider.json') }
         let(:pact_content_version_3) { pact_content_version_2 }
+        let(:pact_content_version_4) do
+          hash = load_json_fixture('consumer-provider.json')
+          hash['interactions'].first['request']['method'] = 'delete'
+          hash.to_json
+        end
+
+        let(:pact_params) do
+          PactBroker::Pacts::PactParams.new(
+            consumer_name: 'Consumer',
+            provider_name: 'Provider',
+            consumer_version_number: '3'
+          )
+        end
 
         before do
           TestDataBuilder.new
@@ -26,21 +39,36 @@ module PactBroker
             .create_pact(json_content: pact_content_version_2)
             .create_consumer_version("3")
             .create_pact(json_content: pact_content_version_3)
+            .create_consumer_version("4")
+            .create_pact(json_content: pact_content_version_4)
+
           allow(DateHelper).to receive(:local_date_in_words).and_return("a date")
         end
 
-        subject { Diff.new.process(pact_params.merge(base_url: 'http://example.org')) }
+        subject { Diff.new.process(pact_params.merge(base_url: 'http://example.org'), nil, raw: true) }
 
-        context "when there is a previous distinct version" do
-
-          let(:pact_params) do
+        context "when a comparison version is specified" do
+          let(:comparison_pact_params) do
             PactBroker::Pacts::PactParams.new(
               consumer_name: 'Consumer',
               provider_name: 'Provider',
-              consumer_version_number: '3'
-            )
+              consumer_version_number: '4'
+            ).merge(base_url: 'http://example.org')
           end
 
+          subject { Diff.new.process(pact_params.merge(base_url: 'http://example.org'), comparison_pact_params) }
+
+          it "compares the two pacts" do
+            expect(subject).to include "Pact between Consumer (v3) and Provider"
+            expect(subject).to include "Pact between Consumer (v4) and Provider"
+          end
+
+          it "includes a link to the comparison pact", pending: true do
+            expect(subject).to include "comparision-pact-version:"
+          end
+        end
+
+        context "when there is a previous distinct version" do
           it "indicates when the previous change was made" do
             expect(subject).to include "The following changes were made less than a minute ago (a date)"
           end
@@ -66,7 +94,6 @@ module PactBroker
           end
         end
       end
-
     end
   end
 end

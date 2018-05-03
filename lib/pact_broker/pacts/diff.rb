@@ -1,6 +1,7 @@
 require 'pact_broker/api/pact_broker_urls'
 require 'pact_broker/date_helper'
 require 'pact_broker/pacts/create_formatted_diff'
+require 'pact_broker/pacts/sort_verifiable_content'
 require 'pact_broker/repositories'
 require 'yaml'
 
@@ -10,13 +11,13 @@ module PactBroker
     class Diff
       include PactBroker::Repositories
 
-      def process(params)
+      def process(params, comparison_pact_params = nil, options = {})
         pact = find_pact(params)
-        previous_distinct_pact = pact_repository.find_previous_distinct_pact(pact)
+        comparison_pact = comparison_pact_params ? find_pact(comparison_pact_params) : pact_repository.find_previous_distinct_pact(pact)
 
-        if previous_distinct_pact
-          next_pact = pact_repository.find_next_pact(previous_distinct_pact)
-          DiffDecorator.new(pact, previous_distinct_pact, next_pact, params[:base_url]).to_text
+        if comparison_pact
+          next_pact = pact_repository.find_next_pact(comparison_pact) || pact
+          DiffDecorator.new(pact, comparison_pact, next_pact, params[:base_url], { raw: options[:raw] }).to_text
         else
           no_previous_version_message pact
         end
@@ -27,7 +28,8 @@ module PactBroker
       def find_pact(params)
         pact_repository.find_pact(params.consumer_name,
                                   params.consumer_version_number,
-                                  params.provider_name)
+                                  params.provider_name,
+                                  params.pact_version_sha)
       end
 
       def no_previous_version_message(pact)
@@ -46,11 +48,12 @@ module PactBroker
       # the latest distinct version content was first created.
 
       class DiffDecorator
-        def initialize(pact, previous_distinct_pact, next_pact, base_url)
+        def initialize(pact, comparison_pact, next_pact, base_url, options)
           @pact = pact
-          @previous_distinct_pact = previous_distinct_pact
+          @comparison_pact = comparison_pact
           @next_pact = next_pact
           @base_url = base_url
+          @options = options
         end
 
         def to_text
@@ -59,7 +62,7 @@ module PactBroker
 
         private
 
-        attr_reader :pact, :previous_distinct_pact, :next_pact, :base_url
+        attr_reader :pact, :comparison_pact, :next_pact, :base_url, :options
 
         def change_date_in_words
           DateHelper.local_date_in_words next_pact.created_at
@@ -70,7 +73,7 @@ module PactBroker
         end
 
         def header
-          title = "# Diff between versions #{previous_distinct_pact.consumer_version_number} and #{pact.consumer_version_number} of the pact between #{pact.consumer.name} and #{pact.provider.name}"
+          title = "# Diff between versions #{comparison_pact.consumer_version_number} and #{pact.consumer_version_number} of the pact between #{pact.consumer.name} and #{pact.provider.name}"
           description = "The following changes were made #{change_date_ago_in_words} ago (#{change_date_in_words})"
 
           title +  "\n\n" + description
@@ -78,7 +81,7 @@ module PactBroker
 
         def links
           self_url = PactBroker::Api::PactBrokerUrls.pact_url(base_url, pact)
-          previous_distinct_url = PactBroker::Api::PactBrokerUrls.pact_url(base_url, previous_distinct_pact)
+          previous_distinct_url = PactBroker::Api::PactBrokerUrls.pact_url(base_url, comparison_pact)
 
           links = {
             "current-pact-version" => {
@@ -88,7 +91,7 @@ module PactBroker
             },
             "previous-distinct-pact-version" => {
               "title" => "Pact",
-              "name" => previous_distinct_pact.name,
+              "name" => comparison_pact.name,
               "href" => previous_distinct_url
             }
           }
@@ -96,11 +99,19 @@ module PactBroker
         end
 
         def diff
-          CreateFormattedDiff.(pact.json_content, previous_distinct_pact.json_content)
+          CreateFormattedDiff.(prepare_content(pact.json_content), prepare_content(comparison_pact.json_content))
         end
 
         def change_date_ago_in_words
           DateHelper.distance_of_time_in_words next_pact.created_at, now
+        end
+
+        def prepare_content json_content
+          if options[:raw]
+            json_content
+          else
+            PactBroker::Pacts::SortVerifiableContent.call(json_content)
+          end
         end
       end
     end

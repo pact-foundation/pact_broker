@@ -9,19 +9,44 @@ module PactBroker
       let(:consumer_version_number) { '1.2.3' }
       let(:headers) { { 'X-Pact-Consumer-Version' => consumer_version_number, 'Host' => 'example.org' } }
       let(:revision_number) { '1' }
+      let(:path_info) do
+        {
+          consumer_name: 'Consumer',
+          provider_name: 'Provider',
+          consumer_version_number: '1.2.3',
+          revision_number: revision_number,
+          pact_version_sha: '123'
+        }
+      end
+
+      describe "from_path_info" do
+        subject { PactParams.from_path_info(path_info) }
+
+        it "extracts the consumer name from the path" do
+          expect(subject.consumer_name).to eq "Consumer"
+        end
+
+        it "extracts the provider name from the path" do
+          expect(subject.provider_name).to eq "Provider"
+        end
+
+        it "extracts the consumer_version_number from the path" do
+          expect(subject.consumer_version_number).to eq "1.2.3"
+        end
+
+        it "extracts the revision_number from the path" do
+          expect(subject.revision_number).to eq "1"
+        end
+
+        it "extracts the pact_version_sha from the path" do
+          expect(subject.pact_version_sha).to eq "123"
+        end
+      end
 
       describe "from_request" do
 
         context "from a PUT request" do
           let(:request) { Webmachine::Request.new("PUT", "/", headers, body)}
-          let(:path_info) do
-            {
-              consumer_name: 'Consumer',
-              provider_name: 'Provider',
-              consumer_version_number: '1.2.3',
-              revision_number: revision_number
-            }
-          end
 
           subject { PactParams.from_request(request, path_info) }
 

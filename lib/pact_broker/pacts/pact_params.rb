@@ -10,6 +10,16 @@ module PactBroker
         merge!(attributes)
       end
 
+      def self.from_path_info path_info
+        new(
+          consumer_name: path_info.fetch(:consumer_name),
+          provider_name: path_info.fetch(:provider_name),
+          consumer_version_number: path_info[:consumer_version_number],
+          revision_number: path_info[:revision_number],
+          pact_version_sha: path_info[:pact_version_sha]
+        )
+      end
+
       def self.from_request request, path_info
         json_content = request.body.to_s
         parsed_content = begin
