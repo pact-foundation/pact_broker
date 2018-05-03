@@ -524,7 +524,7 @@ module PactBroker
         let(:pact_content_version_1) { load_fixture('consumer-provider.json') }
         let(:pact_content_version_2) do
           hash = load_json_fixture('consumer-provider.json')
-          hash['foo'] = 'bar' # Extra key will affect equality
+          hash['interactions'].first['foo'] = 'bar' # Extra key will affect equality
           hash.to_json
         end
         let(:pact_content_version_3) {  load_fixture('consumer-provider.json') }
@@ -551,9 +551,9 @@ module PactBroker
           expect(pact_content_version_3).to_not eq pact_content_version_4
         end
 
-        let(:pact) { Repository.new.find_pact "Consumer", "4", "Provider"  }
+        let(:pact) { Repository.new.find_pact("Consumer", "4", "Provider")  }
 
-        subject  { Repository.new.find_previous_distinct_pact pact }
+        subject  { Repository.new.find_previous_distinct_pact(pact) }
 
         context "when there is a previous distinct version" do
           it "returns the previous pact with different content" do
@@ -571,7 +571,6 @@ module PactBroker
             expect(subject).to be nil
           end
         end
-
       end
 
       describe "find_latest_pact" do

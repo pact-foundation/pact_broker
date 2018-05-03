@@ -20,6 +20,20 @@ module PactBroker
       it "sorts the interactions/messages and keys in a deterministic way" do
         expect(SortVerifiableContent.call(pact_content_1).to_json).to eq(SortVerifiableContent.call(pact_content_2).to_json)
       end
+
+      context "when there is no messages or interactions key" do
+        let(:other_content) do
+          {
+            z: 1,
+            a: 1,
+            b: 1,
+          }.to_json
+        end
+
+        it "does not change the content" do
+          expect(SortVerifiableContent.call(other_content)).to eq other_content
+        end
+      end
     end
   end
 end

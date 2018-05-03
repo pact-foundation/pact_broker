@@ -5,13 +5,22 @@ module PactBroker
     class SortVerifiableContent
 
       def self.call json
-        hash = JSON.parse(json, PACT_PARSING_OPTIONS)
-        verifiable_content = if hash['interactions']
-          hash['interactions']
-        elsif hash['messages']
-          hash['messages']
+        pact_hash = JSON.parse(json, PACT_PARSING_OPTIONS)
+        verifiable_content = extract_verifiable_content(pact_hash)
+
+        if verifiable_content
+          order_verifiable_content(verifiable_content).to_json
+        else
+          json
         end
-        order_verifiable_content(verifiable_content).to_json
+      end
+
+      def self.extract_verifiable_content pact_hash
+        if pact_hash['interactions']
+          pact_hash['interactions']
+        elsif pact_hash['messages']
+          pact_hash['messages']
+        end
       end
 
       def self.order_verifiable_content array
