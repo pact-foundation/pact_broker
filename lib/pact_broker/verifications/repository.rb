@@ -75,15 +75,15 @@ module PactBroker
         query = PactBroker::Verifications::AllVerifications
           .select_all_qualified
           .join(:versions, {Sequel[:provider_versions][:id] => Sequel[view_name][:provider_version_id]}, {table_alias: :provider_versions})
-          .join(:all_pact_publications, { Sequel[view_name][:pact_version_id] => Sequel[:all_pact_publications][:pact_version_id] })
+          .join(:latest_pact_publications_by_consumer_versions, { Sequel[view_name][:pact_version_id] => Sequel[:latest_pact_publications_by_consumer_versions][:pact_version_id] })
           .consumer(consumer_name)
           .provider(provider_name)
           .tag(consumer_version_tag)
           .provider_version_tag(provider_version_tag)
 
         query.reverse_order(
-          Sequel[:all_pact_publications][:consumer_version_order],
-          Sequel[:all_pact_publications][:revision_number],
+          Sequel[:latest_pact_publications_by_consumer_versions][:consumer_version_order],
+          Sequel[:latest_pact_publications_by_consumer_versions][:revision_number],
           Sequel[:provider_versions][:order],
           Sequel[view_name][:execution_date]
         ).limit(1).single_record

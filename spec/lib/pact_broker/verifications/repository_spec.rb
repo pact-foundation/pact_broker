@@ -189,26 +189,53 @@ module PactBroker
       end
 
       describe "find_latest_verification_for_tags" do
-        before do
-          TestDataBuilder.new
-            .create_pact_with_hierarchy("Foo", "1", "Bar")
-            .create_consumer_version_tag("feat-x")
-            .create_verification(provider_version: "5")
-            .use_provider_version("5")
-            .create_provider_version_tag("feat-y")
-            .create_verification(provider_version: "6", number: 2)
-            .use_provider_version("6")
-            .create_provider_version_tag("feat-y")
-            .create_verification(provider_version: "7", number: 3)
-            .create_consumer_version("2")
-            .create_pact
-            .create_verification(provider_version: "8")
+        context "with no revisions" do
+          before do
+            TestDataBuilder.new
+              .create_pact_with_hierarchy("Foo", "1", "Bar")
+              .create_consumer_version_tag("feat-x")
+              .create_verification(provider_version: "5")
+              .use_provider_version("5")
+              .create_provider_version_tag("feat-y")
+              .create_verification(provider_version: "6", number: 2)
+              .use_provider_version("6")
+              .create_provider_version_tag("feat-y")
+              .create_verification(provider_version: "7", number: 3)
+              .create_consumer_version("2")
+              .create_pact
+              .create_verification(provider_version: "8")
+          end
+
+          subject { Repository.new.find_latest_verification_for_tags("Foo", "Bar", "feat-x", "feat-y") }
+
+          it "returns the latest verification for a pact with the given consumer tag, by a provider version with the given provider tag" do
+            expect(subject.provider_version_number).to eq "6"
+          end
         end
 
-        subject { Repository.new.find_latest_verification_for_tags("Foo", "Bar", "feat-x", "feat-y") }
+        context "when a verification exists for a pact revision that was then overwritten by a new revision of the pact" do
+          let(:content_1) { { content: 1 }.to_json }
+          let(:content_2) { { content: 2 }.to_json }
 
-        it "returns the latest verification for a pact with the given consumer tag, by a provider version with the given provider tag" do
-          expect(subject.provider_version_number).to eq "6"
+          before do
+            TestDataBuilder.new
+              .create_pact_with_hierarchy("Foo", "1", "Bar", content_1)
+              .create_consumer_version_tag("develop")
+              .create_verification(provider_version: "5", number: 1, tag_name: "develop", comment: "not this because pact revised")
+              .create_verification(provider_version: "6", number: 2, tag_name: "develop", comment: "not this because pact revised")
+              .revise_pact(content_2)
+              .create_verification(provider_version: "1", number: 1, tag_name: "develop", comment: "not this because later one exists")
+              .create_verification(provider_version: "2", number: 2, tag_name: "develop", comment: "this one!")
+              .create_consumer_version("2")
+              .create_pact(json_content: content_1)
+          end
+
+          subject { Repository.new.find_latest_verification_for_tags("Foo", "Bar", "develop", "develop") }
+
+          it "returns the latest verification " do
+            expect(subject.provider_version_number).to eq "2"
+            expect(subject.number).to eq 2
+          end
         end
       end
     end

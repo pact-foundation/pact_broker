@@ -46,8 +46,7 @@ module PactBroker
 
         def tag tag_name
           filter = name_like(Sequel.qualify(:tags, :name), tag_name)
-          join(:pact_publications, {pact_version_id: :pact_version_id})
-            .join(:tags, {version_id: :consumer_version_id}).where(filter)
+          join(:tags, { version_id: :consumer_version_id }).where(filter)
         end
 
         def untagged
