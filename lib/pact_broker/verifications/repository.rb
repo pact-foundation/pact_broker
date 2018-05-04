@@ -23,6 +23,7 @@ module PactBroker
         provider = pacticipant_repository.find_by_name(pact.provider_name)
         version = version_repository.find_by_pacticipant_id_and_number_or_create(provider.id, provider_version_number)
         verification.pact_version_id = pact_version_id_for(pact)
+        verification.verifiable_content_sha = pact_verifiable_content_sha_for(pact)
         verification.provider_version = version
         verification.save
       end
@@ -91,6 +92,10 @@ module PactBroker
 
       def pact_version_id_for pact
         PactBroker::Pacts::PactPublication.select(:pact_version_id).where(id: pact.id)
+      end
+
+      def pact_verifiable_content_sha_for pact
+        PactBroker::Pacts::PactPublication.where(id: pact.id).single_record.pact_version.verifiable_content_sha
       end
     end
   end

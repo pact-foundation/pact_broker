@@ -197,13 +197,13 @@ module PactBroker
       end
 
       def find_or_create_pact_version consumer_id, provider_id, json_content
-        sha = CreateSha.call(json_content)
-        PactVersion.find(sha: sha, consumer_id: consumer_id, provider_id: provider_id) || create_pact_version(consumer_id, provider_id, sha, json_content)
+        sha = CreateSha.call(json_content, false)
+        PactVersion.find(sha: sha, consumer_id: consumer_id, provider_id: provider_id) || create_pact_version(consumer_id, provider_id, sha, CreateSha.call(json_content, true), json_content)
       end
 
-      def create_pact_version consumer_id, provider_id, sha, json_content
+      def create_pact_version consumer_id, provider_id, sha, verifiable_content_sha, json_content
         PactBroker.logger.debug("Creating new PactVersion for sha #{sha}")
-        pact_version = PactVersion.new(consumer_id: consumer_id, provider_id: provider_id, sha: sha, content: json_content)
+        pact_version = PactVersion.new(consumer_id: consumer_id, provider_id: provider_id, sha: sha, verifiable_content_sha: verifiable_content_sha, content: json_content)
         pact_version.save
       end
 
