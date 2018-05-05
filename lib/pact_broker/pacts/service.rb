@@ -97,6 +97,7 @@ module PactBroker
       def pact_has_changed_since_previous_version? pact
         previous_pact = pact_repository.find_previous_pact pact
         previous_pact && pact.json_content != previous_pact.json_content
+        # TODO make this use the sha
       end
 
       private
@@ -122,6 +123,8 @@ module PactBroker
       def trigger_webhooks pact
         if pact_has_changed_since_previous_version? pact
           webhook_service.execute_webhooks pact, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED
+        else
+          logger.debug "Webhooks will not be triggered for #{pact} as the verifiable content has not changed"
         end
       end
     end

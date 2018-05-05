@@ -7,40 +7,38 @@ RSpec.describe "foo" do
   let(:query) do
     p = :all_pact_publications
 
-
-    join = {
-      Sequel[:temp_v][:pact_verifiable_content_sha] => Sequel[:all_pact_publications][:pact_verifiable_content_sha],
-      Sequel[:temp_v][:provider_id] => Sequel[:all_pact_publications][:provider_id],
-      Sequel[:temp_v][:consumer_id] => Sequel[:all_pact_publications][:consumer_id],
+    verifications_join = {
+      Sequel[:verifications][:pact_verifiable_content_sha] => Sequel[p][:pact_verifiable_content_sha],
+      Sequel[:verifications][:consumer_id] => Sequel[p][:consumer_id],
+      Sequel[:verifications][:provider_id] => Sequel[p][:provider_id],
     }
 
-      db[:all_pact_publications]
-        .select(
-          Sequel[p][:consumer_id],
-          Sequel[p][:consumer_name],
-          Sequel[p][:consumer_version_id],
-          Sequel[p][:consumer_version_number],
-          Sequel[p][:consumer_version_order],
-          Sequel[p][:id].as(:pact_publication_id),
-          Sequel[p][:pact_version_id],
-          Sequel[p][:pact_version_sha],
-          Sequel[p][:pact_verifiable_content_sha],
-          Sequel[p][:revision_number].as(:pact_revision_number),
-          Sequel[p][:created_at].as(:pact_created_at),
-          Sequel[p][:provider_id],
-          Sequel[p][:provider_name],
-          Sequel[:versions][:id].as(:provider_version_id),
-          Sequel[:versions][:number].as(:provider_version_number),
-          Sequel[:versions][:order].as(:provider_version_order),
-          Sequel[:verifications][:id].as(:verification_id),
-          Sequel[:verifications][:success],
-          Sequel[:verifications][:number].as(:verification_number),
-          Sequel[:verifications][:execution_date].as(:verification_executed_at),
-          Sequel[:verifications][:build_url].as(:verification_build_url)
-        )
-        .join(:all_pact_publications, join, {table_alias: :temp_v})
-        .left_outer_join(:verifications, { Sequel[:verifications][:pact_version_id] => Sequel[:temp_v][:pact_version_id] })
-        .left_outer_join(:versions, {Sequel[:versions][:id] => Sequel[:verifications][:provider_version_id]})
+          db[p]
+            .select(
+              Sequel[p][:consumer_id],
+              Sequel[p][:consumer_name],
+              Sequel[p][:consumer_version_id],
+              Sequel[p][:consumer_version_number],
+              Sequel[p][:consumer_version_order],
+              Sequel[p][:id].as(:pact_publication_id),
+              Sequel[p][:pact_version_id],
+              Sequel[p][:pact_version_sha],
+              Sequel[p][:pact_verifiable_content_sha],
+              Sequel[p][:revision_number].as(:pact_revision_number),
+              Sequel[p][:created_at].as(:pact_created_at),
+              Sequel[p][:provider_id],
+              Sequel[p][:provider_name],
+              Sequel[:provider_versions][:id].as(:provider_version_id),
+              Sequel[:provider_versions][:number].as(:provider_version_number),
+              Sequel[:provider_versions][:order].as(:provider_version_order),
+              Sequel[:verifications][:id].as(:verification_id),
+              Sequel[:verifications][:success],
+              Sequel[:verifications][:number].as(:verification_number),
+              Sequel[:verifications][:execution_date].as(:verification_executed_at),
+              Sequel[:verifications][:build_url].as(:verification_build_url)
+            )
+            .left_outer_join(:verifications, verifications_join)
+            .left_outer_join(:versions, {Sequel[:provider_versions][:id] => Sequel[:verifications][:provider_version_id]}, {table_alias: :provider_versions})
   end
 
   let(:td) { TestDataBuilder.new }
@@ -62,6 +60,9 @@ RSpec.describe "foo" do
       .create_verification(provider_version: "2")
       .create_consumer_version("2")
       .create_pact(json_content: json_content_2)
+      .create_consumer("Wiffle")
+      .create_consumer_version("10")
+      .create_pact(json_content: json_content_1)
   end
 
   def summarize row
@@ -69,6 +70,7 @@ RSpec.describe "foo" do
   end
 
   it "" do
+    puts PactBroker::Domain::Verification.first.keys
     puts query.all.collect{ |it| summarize(it)} #PactBroker::Matrix::Row.all
     puts "\n"
     puts PactBroker::Matrix::Row.all

@@ -10,6 +10,8 @@ module PactBroker
       set_primary_key :id
       associate(:many_to_one, :pact_version, class: "PactBroker::Pacts::PactVersion", key: :pact_version_id, primary_key: :id)
       associate(:many_to_one, :provider_version, class: "PactBroker::Domain::Version", key: :provider_version_id, primary_key: :id)
+      associate(:many_to_one, :consumer, class: "PactBroker::Domain::Pacticipant", key: :consumer_id, primary_key: :id)
+      associate(:many_to_one, :provider, class: "PactBroker::Domain::Pacticipant", key: :provider_id, primary_key: :id)
       plugin :serialization, :json, :test_results
 
       def before_create
@@ -74,17 +76,17 @@ module PactBroker
         provider.name
       end
 
-      def consumer
-        Pacticipant.find(id: PactBroker::Pacts::AllPactPublications
-           .where(pact_version_id: pact_version_id)
-           .limit(1).select(:consumer_id))
-      end
+      # def consumer
+      #   Pacticipant.find(id: PactBroker::Pacts::AllPactPublications
+      #      .where(pact_version_id: pact_version_id)
+      #      .limit(1).select(:consumer_id))
+      # end
 
-      def provider
-        Pacticipant.find(id: PactBroker::Pacts::AllPactPublications
-           .where(pact_version_id: pact_version_id)
-           .limit(1).select(:provider_id))
-      end
+      # def provider
+      #   Pacticipant.find(id: PactBroker::Pacts::AllPactPublications
+      #      .where(pact_version_id: pact_version_id)
+      #      .limit(1).select(:provider_id))
+      # end
 
       def provider_version_number
         provider_version.number

@@ -23,8 +23,10 @@ module PactBroker
         provider = pacticipant_repository.find_by_name(pact.provider_name)
         version = version_repository.find_by_pacticipant_id_and_number_or_create(provider.id, provider_version_number)
         verification.pact_version_id = pact_version_id_for(pact)
-        verification.verifiable_content_sha = pact_verifiable_content_sha_for(pact)
+        verification.pact_verifiable_content_sha = pact_verifiable_content_sha_for(pact)
         verification.provider_version = version
+        verification.provider = provider
+        verification.consumer = pacticipant_repository.find_by_name(pact.consumer_name)
         verification.save
       end
 
