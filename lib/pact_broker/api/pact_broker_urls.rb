@@ -51,7 +51,7 @@ module PactBroker
       end
 
       def pact_version_url pact, base_url
-        "#{pactigration_base_url(base_url, path)}/pact-version/#{pact.sha}"
+        "#{pactigration_base_url(base_url, pact)}/pact-version/#{pact.sha}"
       end
 
       def pact_url_from_params base_url, params

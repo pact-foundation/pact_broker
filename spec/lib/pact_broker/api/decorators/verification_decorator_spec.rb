@@ -15,16 +15,16 @@ module PactBroker
             test_results: { 'arbitrary' => 'json' },
             build_url: 'http://build-url',
             pact_version_sha: '1234',
-            latest_pact_publication: pact_publication,
+            pact_version: pact_version,
             execution_date: DateTime.now)
         end
 
-        let(:pact_publication) do
-          instance_double('PactBroker::Pacts::PactPublication',
+        let(:pact_version) do
+          instance_double('PactBroker::Pacts::PactVersion',
             name: 'A name',
             provider_name: 'Provider',
             consumer_name: 'Consumer',
-            consumer_version_number: '1.2.3'
+            sha: '1234'
           )
         end
 

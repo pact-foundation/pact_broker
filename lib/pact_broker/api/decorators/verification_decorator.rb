@@ -15,7 +15,7 @@ module PactBroker
         link :self do | options |
           {
             title: 'Verification result',
-            name: "Verification result #{represented.number} for #{represented.latest_pact_publication.name}",
+            name: "Verification result #{represented.number} for #{represented.pact_version.name}",
             href: verification_url(represented, options.fetch(:base_url), )
           }
         end
@@ -23,11 +23,10 @@ module PactBroker
         link 'pb:pact-version' do | options |
           {
             title: 'Pact',
-            name: represented.latest_pact_publication.name,
-            href: pact_url(options.fetch(:base_url), represented.latest_pact_publication)
+            name: represented.pact_version.name,
+            href: pact_version_url(represented.pact_version, options.fetch(:base_url))
           }
         end
-
       end
     end
   end
