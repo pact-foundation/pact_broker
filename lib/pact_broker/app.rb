@@ -75,6 +75,14 @@ module PactBroker
       else
         logger.info "Skipping database migrations"
       end
+
+      if configuration.auto_migrate_db_data
+        logger.info "Migrating invalid data that may have been created by an old instance of the Pact Broker codebase during a no downtime migration with multiple application instances"
+        PactBroker::DB.run_data_migrations configuration.database_connection
+      else
+        logger.info "NOT migrating invalid data that may have been created by an old instance of the Pact Broker codebase during a no downtime migration with multiple application instances"
+      end
+
       require 'pact_broker/webhooks/service'
       PactBroker::Webhooks::Service.fail_retrying_triggered_webhooks
     end

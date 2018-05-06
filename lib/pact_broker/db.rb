@@ -1,5 +1,6 @@
 require 'sequel'
 require 'pact_broker/db/validate_encoding'
+require 'pact_broker/db/data_migrations/run'
 
 Sequel.datetime_class = DateTime
 
@@ -31,6 +32,10 @@ module PactBroker
 
     def self.mysql?
       connection.adapter_scheme =~ /mysql/
+    end
+
+    def self.run_data_migrations database_connection
+      PactBroker::DB::DataMigrations::Run.call(database_connection)
     end
   end
 end
