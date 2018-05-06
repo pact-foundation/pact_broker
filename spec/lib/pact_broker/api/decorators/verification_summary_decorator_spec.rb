@@ -29,6 +29,10 @@ module PactBroker
         let(:pact) { instance_double("PactBroker::Domain::Pact", name: "Some pact", consumer_name: "Foo", provider_name: "Bar", consumer_version_number: "1.2.3") }
         let(:options) { {base_url: 'http://example.org', consumer_name: "Foo", consumer_version_number: "1.2.3", resource_url: "http://self"} }
 
+        before do
+          allow_any_instance_of(VerificationDecorator).to receive(:pact_version_url).and_return('pact_version_url')
+        end
+
         subject { JSON.parse VerificationSummaryDecorator.new(summary).to_json(user_options: options), symbolize_names: true }
 
         it "includes a list of verification results" do

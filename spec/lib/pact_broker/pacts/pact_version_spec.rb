@@ -63,7 +63,7 @@ module PactBroker
           it "returns the overwritten pact publication" do
             pact_version = PactBroker::Pacts::PactVersion.find(sha: first_version.pact_version_sha)
             latest_pact_publication = pact_version.latest_pact_publication
-            expect(latest_pact_publication.revision_number).to eq 1
+            expect(latest_pact_publication).to be nil
           end
         end
       end

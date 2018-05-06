@@ -28,12 +28,11 @@ module PactBroker
         existing_model = PactPublication.find(id: id)
         pact_version = find_or_create_pact_version(existing_model.consumer_version.pacticipant_id, existing_model.provider_id, params[:json_content])
         if existing_model.pact_version_id != pact_version.id
-          PactPublication.new(
-            consumer_version_id: existing_model.consumer_version_id,
-            provider_id: existing_model.provider_id,
+          existing_model.update(
             revision_number: (existing_model.revision_number + 1),
-            pact_version: pact_version,
-          ).save.to_domain
+            pact_version: pact_version
+          )
+          existing_model.to_domain
         else
           existing_model.to_domain
         end

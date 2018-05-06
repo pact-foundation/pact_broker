@@ -305,7 +305,7 @@ module PactBroker
             let(:options) { {} }
 
             it "includes all the rows" do
-              expect(subject.size).to eq 3
+              expect(subject.size).to eq 1
             end
           end
         end

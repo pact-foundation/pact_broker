@@ -14,7 +14,7 @@ describe 'migrate to pact versions (migrate 22-31)', migration: true do
   let!(:pact_2) { create(:pacts, {version_id: consumer_version_2[:id], provider_id: provider[:id], pact_version_content_sha: '1234', created_at: now, updated_at: pact_updated_at}) }
 
 
-  subject { PactBroker::Database.migrate }
+  subject { PactBroker::Database.migrate(20180330) }
 
   it "keeps the same number of pacts" do
     subject
@@ -33,7 +33,6 @@ describe 'migrate to pact versions (migrate 22-31)', migration: true do
   end
 
   it "migrates the values correctly for the first pact" do
-
     old_all_pact = database[:all_pacts].order(:id).first
     old_all_pact.delete(:updated_at)
     old_all_pact.delete(:created_at)
@@ -59,13 +58,5 @@ describe 'migrate to pact versions (migrate 22-31)', migration: true do
     new_all_pact.delete(:revision_number)
     new_all_pact.delete(:pact_version_id)
     expect(new_all_pact).to eq old_all_pact
-  end
-
-  it "allows a new pact to be inserted with no duplicate ID error" do
-    subject
-
-    PactBroker::Pacts::Service.create_or_update_pact(
-      consumer_name: consumer[:name], provider_name: provider[:name], consumer_version_number: '1.2.3', json_content: load_fixture('a_consumer-a_provider.json')
-    )
   end
 end

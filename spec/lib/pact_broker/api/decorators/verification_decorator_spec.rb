@@ -28,7 +28,12 @@ module PactBroker
           )
         end
 
+        before do
+          allow_any_instance_of(VerificationDecorator).to receive(:pact_version_url).and_return('pact_version_url')
+        end
+
         let(:options) { { user_options: { base_url: 'http://example.org' } } }
+        let(:decorator) { VerificationDecorator.new(verification) }
 
         subject { JSON.parse VerificationDecorator.new(verification).to_json(options), symbolize_names: true }
 
@@ -53,7 +58,7 @@ module PactBroker
         end
 
         it "includes a link to its pact" do
-          expect(subject[:_links][:'pb:pact-version'][:href]).to match %r{http://example.org/pacts/}
+          expect(subject[:_links][:'pb:pact-version'][:href]).to eq 'pact_version_url'
         end
       end
     end

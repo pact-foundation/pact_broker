@@ -97,13 +97,15 @@ module PactBroker
           ::DB::PACT_BROKER_DB[:pact_publications]
             .where(id: existing_pact.id)
             .update(
-              created_at: created_at)
+              created_at: created_at,
+              updated_at: updated_at)
           ::DB::PACT_BROKER_DB[:pact_versions]
               .update(
                 created_at: created_at)
         end
 
         let(:created_at) { DateTime.new(2014, 3, 2) }
+        let(:updated_at) { DateTime.new(2014, 3, 2) }
 
         let(:original_json_content) { {some: 'json'}.to_json }
         let(:json_content) { {some_other: 'json'}.to_json }
@@ -113,8 +115,8 @@ module PactBroker
 
           subject { Repository.new.update existing_pact.id, json_content: json_content }
 
-          it "creates a new PactVersion" do
-            expect { subject }.to change{ PactBroker::Pacts::PactPublication.count }.by(1)
+          it "updates the existing PactPublication" do
+            expect { subject }.to change{ PactBroker::Pacts::PactPublication.count }.by(0)
           end
 
           it "creates a new PactVersion" do
@@ -132,8 +134,12 @@ module PactBroker
             expect(subject.json_content).to eq json_content
           end
 
-          it "sets the created_at timestamp" do
-            expect(subject.created_at).to_not eq created_at
+          it "does not update the created_at timestamp" do
+            expect(subject.created_at).to eq created_at
+          end
+
+          it "does update the updated_at timestamp" do
+            expect(subject.updated_at).to_not eq updated_at
           end
 
           it "increments the revision_number by 1" do
@@ -182,7 +188,7 @@ module PactBroker
         subject { Repository.new.delete pact_params }
 
         it "deletes all PactPublication for the specified consumer version" do
-          expect { subject }.to change { PactPublication.count }.by(-2)
+          expect { subject }.to change { PactPublication.count }.by(-1)
         end
 
         it "does not delete the content because it may be used by another pact" do
@@ -453,10 +459,9 @@ module PactBroker
         subject { Repository.new.find_all_revisions consumer_name, "1.2.3", provider_name }
 
         it "returns all the revisions for the given pact version" do
-          expect(subject.size).to eq 2
+          expect(subject.size).to eq 1
           expect(subject.first.consumer_name).to eq consumer_name
-          expect(subject.first.revision_number).to eq 1
-          expect(subject.last.revision_number).to eq 2
+          expect(subject.first.revision_number).to eq 2
         end
       end
 

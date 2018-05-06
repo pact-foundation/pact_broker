@@ -8,14 +8,13 @@ module PactBroker
 
       extend Forwardable
 
-      delegate [:consumer, :consumer_version_number, :name, :provider_name, :consumer_name] => :cached_domain_for_delegation
+      delegate [:consumer, :consumer_version_number, :name, :provider_name, :consumer_name, :pact_version_sha] => :cached_domain_for_delegation
 
       set_primary_key :id
       associate(:many_to_one, :provider, :class => "PactBroker::Domain::Pacticipant", :key => :provider_id, :primary_key => :id)
       associate(:many_to_one, :consumer_version, :class => "PactBroker::Domain::Version", :key => :consumer_version_id, :primary_key => :id)
       associate(:many_to_one, :pact_version, class: "PactBroker::Pacts::PactVersion", :key => :pact_version_id, :primary_key => :id)
 
-      PactPublication.plugin :timestamps, :update_on_create=>true
 
       def before_create
         super
@@ -36,7 +35,8 @@ module PactBroker
           revision_number: revision_number,
           json_content: pact_version.content,
           pact_version_sha: pact_version.sha,
-          created_at: created_at
+          created_at: created_at,
+          updated_at: updated_at
           )
       end
 
@@ -50,5 +50,7 @@ module PactBroker
         @domain_object ||= to_domain
       end
     end
+
+    PactPublication.plugin :timestamps, :update_on_create => true
   end
 end
