@@ -22,6 +22,11 @@ module PactBroker
       Tags::Service
     end
 
+    def environment_service
+      require 'pact_broker/environments/service'
+      Environments::Service
+    end
+
     def label_service
       require 'pact_broker/labels/service'
       Labels::Service

@@ -3,11 +3,8 @@ require 'pact_broker/api/resources/tag'
 
 module PactBroker
   module Api
-
     module Resources
-
       describe Tag do
-
         let(:tag) { double("PactBroker::Domain::Tag") }
         let(:tag_decorator) { instance_double("PactBroker::Api::Decorators::TagDecorator", :to_json => tag_json) }
         let(:tag_json) { {"some" => "tag"}.to_json }
@@ -40,7 +37,6 @@ module PactBroker
           end
 
           context "when the tag doesn't exist" do
-
             let(:tag) { nil }
 
             it "returns a 404 Not Found" do
@@ -82,7 +78,6 @@ module PactBroker
           subject { get("/pacticipants/Condor/versions/1.3.0/tags/prod" ) }
 
           context "when the tag exists" do
-
             it "renders the tag" do
               subject
               expect(last_response.body).to eq tag_json
@@ -106,7 +101,6 @@ module PactBroker
         end
 
         describe "PUT" do
-
           let(:tag_url) { 'http://example.org/tag/url'}
 
           before do
@@ -123,7 +117,6 @@ module PactBroker
           end
 
           context "when the tag already exists" do
-
             it "returns a 200" do
               subject
               expect(last_response.status).to be 200
@@ -143,7 +136,6 @@ module PactBroker
               allow(Tags::Service).to receive(:create).and_return(tag)
             end
 
-
             it "creates the tag" do
               expect(Tags::Service).to receive(:create).with(hash_including(tag_attributes))
               subject
@@ -159,14 +151,9 @@ module PactBroker
               subject
               expect(last_response.body).to eq tag_json
             end
-
           end
-
-
         end
-
       end
-
     end
   end
 end

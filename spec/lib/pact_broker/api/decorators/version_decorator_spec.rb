@@ -11,7 +11,8 @@ module PactBroker
             .create_consumer("Consumer")
             .create_provider("providerA")
             .create_consumer_version("1.2.3")
-            .create_consumer_version_tag("prod")
+            .create_consumer_version_tag("feat-x")
+            .create_consumer_version_environment("prod")
             .create_pact
             .create_provider("ProviderB")
             .create_pact
@@ -44,7 +45,12 @@ module PactBroker
 
         it "includes a list of the tags" do
           expect(subject[:_embedded][:tags]).to be_instance_of(Array)
-          expect(subject[:_embedded][:tags].first[:name]).to eq "prod"
+          expect(subject[:_embedded][:tags].first[:name]).to eq "feat-x"
+        end
+
+        it "includes a list of the environments" do
+          expect(subject[:_embedded][:environments]).to be_instance_of(Array)
+          expect(subject[:_embedded][:environments].first[:name]).to eq "prod"
         end
 
         it "includes a list of sorted pacts" do

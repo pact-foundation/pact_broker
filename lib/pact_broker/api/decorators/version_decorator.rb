@@ -1,5 +1,6 @@
 require_relative 'base_decorator'
 require_relative 'embedded_tag_decorator'
+require_relative 'embedded_environment_decorator'
 
 module PactBroker
   module Api
@@ -8,6 +9,7 @@ module PactBroker
 
         property :number
 
+        collection :environments, embedded: true, :extend => PactBroker::Api::Decorators::EmbeddedEnvironmentDecorator
         collection :tags, embedded: true, :extend => PactBroker::Api::Decorators::EmbeddedTagDecorator
 
         link :self do | options |
@@ -23,6 +25,14 @@ module PactBroker
             title: 'Pacticipant',
             name: represented.pacticipant.name,
             href: pacticipant_url(options.fetch(:base_url), represented.pacticipant)
+          }
+        end
+
+        link :'pb:environment' do | options |
+          {
+            title: 'Environment',
+            href: templated_environment_url(represented, options.fetch(:base_url)),
+            templated: true
           }
         end
 

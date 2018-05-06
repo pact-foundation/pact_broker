@@ -17,6 +17,11 @@ module PactBroker
         matrix_repository.refresh_tags(params, &block)
       end
 
+      def refresh_environments params, &block
+        # TODO implement this
+        yield block if block_given?
+      end
+
       def find criteria, options = {}
         matrix_repository.find criteria, options
       end

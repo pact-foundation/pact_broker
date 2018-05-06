@@ -12,6 +12,7 @@ require 'pact_broker/versions/service'
 require 'pact_broker/tags/repository'
 require 'pact_broker/labels/repository'
 require 'pact_broker/tags/service'
+require 'pact_broker/environments/service'
 require 'pact_broker/domain'
 require 'json'
 require 'pact_broker/versions/repository'
@@ -20,6 +21,7 @@ require 'pact_broker/pacticipants/repository'
 require 'pact_broker/verifications/repository'
 require 'pact_broker/verifications/service'
 require 'pact_broker/tags/repository'
+require 'pact_broker/environments/repository'
 require 'pact_broker/webhooks/repository'
 require 'pact_broker/certificates/certificate'
 require 'pact_broker/matrix/row'
@@ -34,6 +36,8 @@ class TestDataBuilder
   attr_reader :consumer
   attr_reader :provider
   attr_reader :consumer_version
+  attr_reader :tag
+  attr_reader :environment
   attr_reader :pact
   attr_reader :webhook
   attr_reader :webhook_execution
@@ -201,9 +205,22 @@ class TestDataBuilder
     self
   end
 
+  def create_environment environment_name, params = {}
+    params.delete(:comment)
+    @environment = PactBroker::Environments::Environment.create(name: environment_name, version: @version)
+    self
+  end
+
   def create_consumer_version_tag tag_name, params = {}
     params.delete(:comment)
     @tag = PactBroker::Domain::Tag.create(name: tag_name, version: @consumer_version)
+    refresh_matrix
+    self
+  end
+
+  def create_consumer_version_environment environment_name, params = {}
+    params.delete(:comment)
+    @environment = PactBroker::Environments::Environment.create(name: environment_name, version: @consumer_version)
     refresh_matrix
     self
   end

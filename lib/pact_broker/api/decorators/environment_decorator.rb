@@ -5,7 +5,7 @@ require_relative 'timestamps'
 module PactBroker
   module Api
     module Decorators
-      class TagDecorator < BaseDecorator
+      class EnvironmentDecorator < BaseDecorator
 
         property :name
 
@@ -13,9 +13,9 @@ module PactBroker
 
         link :self do | options |
           {
-            title: 'Tag',
+            title: 'Environment',
             name: represented.name,
-            href: tag_url(options[:base_url], represented)
+            href: environment_url(options[:base_url], represented)
           }
         end
 

@@ -89,6 +89,10 @@ module PactBroker
         "#{version_url(base_url, version)}/tags"
       end
 
+      def environments_url base_url, version
+        "#{version_url(base_url, version)}/environments"
+      end
+
       def new_verification_url pact, number, base_url
         [ base_url, 'pacts',
           'provider', url_encode(pact.provider_name),
@@ -126,6 +130,14 @@ module PactBroker
 
       def tag_url base_url, tag
         "#{tags_url(base_url, tag.version)}/#{tag.name}"
+      end
+
+      def environment_url base_url, environment
+        "#{environments_url(base_url, environment.version)}/#{environment.name}"
+      end
+
+      def templated_environment_url version, base_url
+        "#{environments_url(base_url, version)}/{environment}"
       end
 
       def templated_tag_url_for_pacticipant pacticipant_name, base_url = ""

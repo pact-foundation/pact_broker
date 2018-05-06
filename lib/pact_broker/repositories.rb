@@ -22,6 +22,11 @@ module PactBroker
       Tags::Repository.new
     end
 
+    def environment_repository
+      require 'pact_broker/environments/repository'
+      Environments::Repository.new
+    end
+
     def label_repository
       require 'pact_broker/labels/repository'
       Labels::Repository.new
