@@ -1,3 +1,24 @@
+<a name="v2.19.0"></a>
+### v2.19.0 (2018-05-03)
+
+
+#### Features
+
+* create endpoint to compare arbitrary pact versions, ignoring interaction/message order	 ([15f0688](/../../commit/15f0688))
+* add endpoint to retrieve a pact version by its pact content sha	 ([a519731](/../../commit/a519731))
+* include pact revision number and verification number in badge svg comment	 ([82b59ef](/../../commit/82b59ef))
+* add pb:version-tag relation to pacticipant resource	 ([0704772](/../../commit/0704772))
+* create endpoints for retrieving all pact versions for a provider, with and without a tag.	 ([d7011b2](/../../commit/d7011b2))
+* update matrix UI to allow _all_ versions with a particular tag to be specified	 ([278b3ea](/../../commit/278b3ea))
+* allow matrix to be queried for _all_ versions with a given tag	 ([cac3023](/../../commit/cac3023))
+
+
+#### Bug Fixes
+
+* correct logic for finding latest verification for revised pacts	 ([8fb28ee](/../../commit/8fb28ee))
+* do not invoke error reporters for validation errors	 ([57eed65](/../../commit/57eed65))
+
+
 <a name="v2.18.0"></a>
 ### v2.18.0 (2018-04-05)
 
