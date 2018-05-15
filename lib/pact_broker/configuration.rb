@@ -34,6 +34,7 @@ module PactBroker
     attr_accessor :enable_public_badge_access, :shields_io_base_url
     attr_accessor :webhook_retry_schedule
     attr_accessor :disable_ssl_verification
+    attr_accessor :environments
     attr_accessor :base_equality_only_on_content_that_affects_verification_results
     attr_reader :api_error_reporters
     attr_writer :logger
@@ -74,6 +75,7 @@ module PactBroker
       config.webhook_retry_schedule = [10, 60, 120, 300, 600, 1200] #10 sec, 1 min, 2 min, 5 min, 10 min, 20 min => 38 minutes
       config.check_for_potential_duplicate_pacticipant_names = true
       config.disable_ssl_verification = false
+      config.environments = ["test", "uat", "staging", "production"]
       config
     end
 

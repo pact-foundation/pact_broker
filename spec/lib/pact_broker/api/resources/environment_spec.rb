@@ -17,9 +17,16 @@ module PactBroker
             :environment_name => "prod"
           }
         }
+        let(:contract) do
+          instance_double('PactBroker::Contracts::EnvironmentContract', validate: valid, errors: errors)
+        end
+
+        let(:valid) { true }
+        let(:errors) { instance_double('errors', messages: {some: 'errors'}) }
 
         before do
           allow(PactBroker::Matrix::Service).to receive(:refresh_environments) { |thing, &block| block.call if block }
+          allow(Contracts::EnvironmentContract).to receive(:new).and_return(contract)
         end
 
         describe "DELETE" do
@@ -117,9 +124,28 @@ module PactBroker
 
           subject { put("/pacticipants/Condor/versions/1.3.0/environments/prod", nil, "CONTENT_LENGTH" => "0", "CONTENT_TYPE" => "application/json") }
 
+          it "valides the params" do
+            expect(contract).to receive(:validate).with(hash_including(environment_name: "prod", pacticipant_name: "Condor", pacticipant_version_number: "1.3.0"))
+            subject
+          end
+
           it "returns a success response" do
             subject
             expect(last_response).to be_successful
+          end
+
+          context "when the params are invalid" do
+            let(:valid) { false }
+
+            it "returns a 400" do
+              subject
+              expect(last_response.status).to be 400
+            end
+
+            it "returns error messages" do
+              subject
+              expect(JSON.parse(last_response.body)).to eq("errors" => { "some" => "errors" })
+            end
           end
 
           context "when the environment already exists" do

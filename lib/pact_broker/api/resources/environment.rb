@@ -1,5 +1,6 @@
 require 'pact_broker/api/resources/base_resource'
 require 'pact_broker/api/decorators/environment_decorator'
+require 'pact_broker/api/contracts/environment_contract'
 
 module PactBroker
   module Api
@@ -15,6 +16,14 @@ module PactBroker
 
         def allowed_methods
           ["GET","PUT","DELETE"]
+        end
+
+        def malformed_request?
+          if request.put?
+            contract_validation_errors?(Contracts::EnvironmentContract.new(PactBroker::Environments::Environment.new), identifier_from_path)
+          else
+            false
+          end
         end
 
         def from_json
