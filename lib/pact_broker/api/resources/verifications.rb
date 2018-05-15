@@ -14,6 +14,10 @@ module PactBroker
           [["application/json", :from_json]]
         end
 
+        def content_types_provided
+          [["application/hal+json", :to_json]]
+        end
+
         def allowed_methods
           ["POST"]
         end

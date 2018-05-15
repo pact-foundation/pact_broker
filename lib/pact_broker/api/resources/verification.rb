@@ -11,7 +11,7 @@ module PactBroker
       class Verification < BaseResource
 
         def content_types_provided
-          [["application/json", :to_json]]
+          [["application/hal+json", :to_json], ["application/json", :to_json]]
         end
 
         def allowed_methods
