@@ -41,7 +41,7 @@ module PactBroker
 
           it "sets an error message" do
             subject
-            expect(contract.errors[:name].first).to eq "is not a valid environment name"
+            expect(contract.errors[:name].first).to eq "must match one of: test, uat, staging, production"
           end
         end
       end

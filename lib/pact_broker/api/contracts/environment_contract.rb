@@ -15,6 +15,12 @@ module PactBroker
             # TODO work out how to include the valid environments in the error message
             config.messages_file = File.expand_path("../../../locale/en.yml", __FILE__)
 
+            def self.messages
+              super.merge(
+                en: { errors: { valid_environment_name?: "must match one of: #{PactBroker.configuration.environments.join(', ')}" } }
+              )
+            end
+
             def valid_environment_name?(value)
               allowed_environments.any? && allowed_environments.any?{ | allowed_environment | value =~ /^#{allowed_environment}$/}
             end
