@@ -122,6 +122,7 @@ module PactBroker
             .create_pact
             .create_consumer_version("1.2.3")
             .create_consumer_version_tag("prod")
+            .create_environment("production")
             .create_pact
             .create_webhook
             .create_triggered_webhook

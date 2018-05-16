@@ -57,9 +57,9 @@ module PactBroker
       end
 
       describe "#delete_by_id" do
+        let(:td) { TestDataBuilder.new }
         let!(:version) do
-          TestDataBuilder.new
-            .create_consumer
+          td.create_consumer
             .create_consumer_version("1.2.3")
             .create_consumer_version("4.5.6")
             .and_return(:consumer_version)
@@ -69,6 +69,16 @@ module PactBroker
 
         it "deletes the version" do
           expect { subject }.to change{ PactBroker::Domain::Version.count }.by(-1)
+        end
+
+        context "when the version has an environment" do
+          before do
+            td.create_environment("production")
+          end
+
+          it "cascade deletes the environment" do
+            expect { subject }.to_not raise_error
+          end
         end
       end
 
