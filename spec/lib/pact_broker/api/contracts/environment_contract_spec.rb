@@ -11,7 +11,7 @@ module PactBroker
 
         let(:environments) { ["uat", "prod"] }
         let(:params) { {environment_name: 'prod' } }
-        let(:environment) { instance_double('PactBroker::Environments::Environment', name: nil) }
+        let(:environment) { instance_double('PactBroker::Environments::VersionEnvironment', name: nil) }
         let(:contract) { EnvironmentContract.new(environment) }
 
         subject { contract.validate(params) }

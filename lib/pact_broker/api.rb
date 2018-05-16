@@ -52,7 +52,7 @@ module PactBroker
         add ['pacticipants', :pacticipant_name, 'latest-version', :tag], Api::Resources::Version, {resource_name: "latest_tagged_pacticipant_version"}
         add ['pacticipants', :pacticipant_name, 'latest-version'], Api::Resources::Version, {resource_name: "latest_pacticipant_version"}
         add ['pacticipants', :pacticipant_name, 'versions', :pacticipant_version_number, 'tags', :tag_name], Api::Resources::Tag, {resource_name: "pacticipant_version_tag"}
-        add ['pacticipants', :pacticipant_name, 'versions', :pacticipant_version_number, 'environments', :environment_name], Api::Resources::Environment, {resource_name: "pacticipant_version_environment"}
+        add ['pacticipants', :pacticipant_name, 'versions', :pacticipant_version_number, 'environments', :environment_name], Api::Resources::VersionEnvironment, {resource_name: "pacticipant_version_environment"}
         add ['pacticipants', :pacticipant_name, 'labels', :label_name], Api::Resources::Label, {resource_name: "pacticipant_label"}
 
         # Webhooks

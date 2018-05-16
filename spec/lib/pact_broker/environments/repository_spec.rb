@@ -80,7 +80,7 @@ module PactBroker
         subject { Repository.new.delete_by_version_id(version.id) }
 
         it "deletes the environment" do
-          expect{ subject }.to change { PactBroker::Environments::Environment.count }.by(-2)
+          expect{ subject }.to change { PactBroker::Environments::VersionEnvironment.count }.by(-2)
         end
       end
 

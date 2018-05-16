@@ -176,6 +176,7 @@ class TestDataBuilder
     params.delete(:comment)
     tag_names = [params.delete(:tag_names), params.delete(:tag_name)].flatten.compact
     @consumer_version = PactBroker::Domain::Version.create(:number => version_number, :pacticipant => @consumer)
+    @version = @consumer_version
     tag_names.each do | tag_name |
       PactBroker::Domain::Tag.create(name: tag_name, version: @consumer_version)
     end
@@ -207,7 +208,7 @@ class TestDataBuilder
 
   def create_environment environment_name, params = {}
     params.delete(:comment)
-    @environment = PactBroker::Environments::Environment.create(name: environment_name, version: @version)
+    @environment = PactBroker::Environments::VersionEnvironment.create(name: environment_name, version: @version)
     self
   end
 
@@ -220,7 +221,7 @@ class TestDataBuilder
 
   def create_consumer_version_environment environment_name, params = {}
     params.delete(:comment)
-    @environment = PactBroker::Environments::Environment.create(name: environment_name, version: @consumer_version)
+    @environment = PactBroker::Environments::VersionEnvironment.create(name: environment_name, version: @consumer_version)
     refresh_matrix
     self
   end

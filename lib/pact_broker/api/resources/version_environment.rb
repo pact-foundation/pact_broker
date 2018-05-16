@@ -5,7 +5,7 @@ require 'pact_broker/api/contracts/environment_contract'
 module PactBroker
   module Api
     module Resources
-      class Environment < BaseResource
+      class VersionEnvironment < BaseResource
         def content_types_provided
           [["application/hal+json", :to_json]]
         end
@@ -20,7 +20,7 @@ module PactBroker
 
         def malformed_request?
           if request.put?
-            contract_validation_errors?(Contracts::EnvironmentContract.new(PactBroker::Environments::Environment.new), identifier_from_path)
+            contract_validation_errors?(Contracts::EnvironmentContract.new(PactBroker::Environments::VersionEnvironment.new), identifier_from_path)
           else
             false
           end

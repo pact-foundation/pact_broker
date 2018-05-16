@@ -41,7 +41,7 @@ module PactBroker
 
         it "deletes the environment for the particpiant and the version" do
           expect{ delete_environment_for_particpant_and_version }.to change{
-            PactBroker::Environments::Environment.all.count
+            PactBroker::Environments::VersionEnvironment.all.count
           }.by(-1)
         end
       end

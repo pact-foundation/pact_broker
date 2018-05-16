@@ -1,13 +1,13 @@
 require 'spec_helper'
-require 'pact_broker/api/resources/environment'
+require 'pact_broker/api/resources/version_environment'
 require 'pact_broker/environments/service'
 require 'pact_broker/matrix/service'
 
 module PactBroker
   module Api
     module Resources
-      describe Environment do
-        let(:environment) { instance_double("PactBroker::Environments::Environment") }
+      describe VersionEnvironment do
+        let(:environment) { instance_double("PactBroker::Environments::VersionEnvironment") }
         let(:environment_decorator) { instance_double("PactBroker::Api::Decorators::EnvironmentDecorator", :to_json => environment_json) }
         let(:environment_json) { {"some" => "environment"}.to_json }
         let(:environment_attributes) {
@@ -117,7 +117,7 @@ module PactBroker
           let(:environment_url) { 'http://example.org/environment/url'}
 
           before do
-            allow_any_instance_of(PactBroker::Api::Resources::Environment).to receive(:environment_url).and_return(environment_url)
+            allow_any_instance_of(PactBroker::Api::Resources::VersionEnvironment).to receive(:environment_url).and_return(environment_url)
             allow(Environments::Service).to receive(:find).and_return(environment)
             allow(PactBroker::Api::Decorators::EnvironmentDecorator).to receive(:new).and_return(environment_decorator)
           end

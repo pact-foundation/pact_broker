@@ -2,9 +2,8 @@ require 'pact_broker/db'
 require 'pact_broker/repositories/helpers'
 
 module PactBroker
-
   module Environments
-    class Environment < Sequel::Model
+    class VersionEnvironment < Sequel::Model
 
       dataset_module do
         include PactBroker::Repositories::Helpers
@@ -20,6 +19,6 @@ module PactBroker
 
     end
 
-    Environment.plugin :timestamps, update_on_create: true
+    VersionEnvironment.plugin :timestamps, update_on_create: true
   end
 end

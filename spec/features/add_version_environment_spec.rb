@@ -10,7 +10,7 @@ describe "adding environment for a pacticipant version" do
   context "when the pacticipant/version/environment do not exist" do
     it "creates an environment" do
       expect{ subject }.to change {
-        PactBroker::Environments::Environment.where(name: 'production').count
+        PactBroker::Environments::VersionEnvironment.where(name: 'production').count
       }.by(1)
     end
   end
