@@ -21,7 +21,8 @@ Sequel.migration do
       group by provider_id, consumer_id, consumer_version_order"
     )
 
-    # Latest pact_publication details for each consumer version
+    # Latest pact_publication (revision) for each provider/consumer version
+    # updated in 20180519_recreate_views.rb
     create_view(:latest_pact_publications_by_consumer_versions,
       "select app.*
       from all_pact_publications app
@@ -33,6 +34,8 @@ Sequel.migration do
         )
 
 
+    # updated in 20180519_recreate_views.rb
+    # This view tells us the latest consumer version with a pact for a consumer/provider pair
     create_or_replace_view(:latest_pact_consumer_version_orders,
       "select provider_id, consumer_id, max(consumer_version_order) as latest_consumer_version_order
       from all_pact_publications
