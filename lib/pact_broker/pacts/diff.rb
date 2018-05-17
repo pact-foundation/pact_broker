@@ -84,12 +84,12 @@ module PactBroker
           previous_distinct_url = PactBroker::Api::PactBrokerUrls.pact_url(base_url, comparison_pact)
 
           links = {
-            "current-pact-version" => {
+            "pact-version" => {
               "title" => "Pact",
               "name" => pact.name,
               "href" => self_url
             },
-            "previous-distinct-pact-version" => {
+            "comparison-pact-version" => {
               "title" => "Pact",
               "name" => comparison_pact.name,
               "href" => previous_distinct_url
