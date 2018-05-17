@@ -20,25 +20,39 @@ module PactBroker
       include PactBroker::Repositories
 
       def create params
-        PactPublication.new(
+        pact_publication = PactPublication.new(
           consumer_version_id: params[:version_id],
           provider_id: params[:provider_id],
           pact_version: find_or_create_pact_version(params.fetch(:consumer_id), params.fetch(:provider_id), params[:json_content]),
-        ).save.to_domain
+        ).save
+        update_latest_pact_publication_ids(pact_publication)
+        pact_publication.to_domain
       end
 
       def update id, params
         existing_model = PactPublication.find(id: id)
         pact_version = find_or_create_pact_version(existing_model.consumer_version.pacticipant_id, existing_model.provider_id, params[:json_content])
         if existing_model.pact_version_id != pact_version.id
-          PactPublication.new(
+          pact_publication = PactPublication.new(
             consumer_version_id: existing_model.consumer_version_id,
             provider_id: existing_model.provider_id,
             revision_number: (existing_model.revision_number + 1),
             pact_version: pact_version,
-          ).save.to_domain
+          ).save
+          update_latest_pact_publication_ids(pact_publication)
+          pact_publication.to_domain
         else
           existing_model.to_domain
+        end
+      end
+
+      def update_latest_pact_publication_ids(pact_publication)
+        table = AllPactPublications.db[:latest_pact_publication_ids_by_consumer_versions]
+        count = table.where(consumer_version_id: pact_publication.consumer_version_id, provider_id: pact_publication.provider_id).count
+        if count == 0
+          table.insert(consumer_version_id: pact_publication.consumer_version_id, provider_id: pact_publication.provider_id, pact_publication_id: pact_publication.id)
+        else
+          table.where(consumer_version_id: pact_publication.consumer_version_id, provider_id: pact_publication.provider_id).update(pact_publication_id: pact_publication.id)
         end
       end
 
