@@ -1,7 +1,9 @@
 SCHEMA="pact_broker"
-set -e
+set +e
 psql postgres -c "DROP DATABASE ${SCHEMA};"
 psql postgres -c "CREATE DATABASE ${SCHEMA};"
+psql postgres -c "CREATE USER pact_broker WITH PASSWORD 'pact_broker'"
+psql postgres -c "GRANT ALL PRIVILEGES ON DATABASE pact_broker to pact_broker;"
 psql postgres -c "GRANT ALL PRIVILEGES ON DATABASE ${SCHEMA} TO pact_broker;"
 ip=$(ifconfig en0 | sed -n -e '/inet/s/.*inet \([0-9.]*\) netmask .*/\1/p')
 echo ""
