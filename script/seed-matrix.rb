@@ -59,6 +59,7 @@ TestDataBuilder.new
   .create_pact
   .use_consumer("A")
   .create_consumer_version("2")
+  .create_consumer_version_tag("master")
   .use_provider("B")
   .create_pact
   .create_verification(provider_version: '5')

@@ -9,6 +9,8 @@ ENV['RACK_ENV'] = 'development'
 require 'sequel'
 require 'logger'
 DATABASE_CREDENTIALS = {logger: Logger.new($stdout), adapter: "sqlite", database: ARGV[0], :encoding => 'utf8'}
+#DATABASE_CREDENTIALS = {adapter: "postgres", database: "pact_broker", username: 'pact_broker', password: 'pact_broker', :encoding => 'utf8'}
+
 connection = Sequel.connect(DATABASE_CREDENTIALS)
 connection.timezone = :utc
 require 'pact_broker/db'
