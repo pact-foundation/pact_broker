@@ -21,6 +21,7 @@ module PactBroker
           }
         end
 
+        # TODO make the title and name consistent with title and name of other resources
         links :'pb:pacts' do | context |
           represented.collect do | pact |
             {
@@ -35,7 +36,7 @@ module PactBroker
           represented.collect do | pact |
             {
               :href => pact_url(context[:base_url], pact),
-              :title => 'DEPRECATED - please use the pb:pacts relation',
+              :title => "DEPRECATED - please use the pb:pacts relation. #{pact.name}",
               :name => pact.consumer_name
             }
           end

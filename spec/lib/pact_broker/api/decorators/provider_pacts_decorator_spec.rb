@@ -40,7 +40,7 @@ module PactBroker
                 :name => "Foo" }],
               :pacts => [{
                 :href => "pact_url",
-                :title => "DEPRECATED - please use the pb:pacts relation",
+                :title => "DEPRECATED - please use the pb:pacts relation. Pact name",
                 :name => "Foo"
                 }
               ]
