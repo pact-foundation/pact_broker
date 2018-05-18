@@ -1,3 +1,18 @@
+<a name="v2.19.1"></a>
+### v2.19.1 (2018-05-18)
+
+
+#### Features
+
+* rename relations in pact diff view	 ([8c3c62e](/../../commit/8c3c62e))
+
+
+#### Bug Fixes
+
+* add pact name back into title of deprecated pacts relation of provider pacts resource	 ([f5f002a](/../../commit/f5f002a))
+* set correct content type for verification result resources	 ([c177fdd](/../../commit/c177fdd))
+
+
 <a name="v2.19.0"></a>
 ### v2.19.0 (2018-05-03)
 
