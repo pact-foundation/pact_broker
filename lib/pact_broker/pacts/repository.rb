@@ -1,7 +1,7 @@
-require 'digest/sha1'
 require 'sequel'
 require 'ostruct'
 require 'pact_broker/logging'
+require 'pact_broker/pacts/generate_sha'
 require 'pact_broker/pacts/pact_publication'
 require 'pact_broker/pacts/all_pact_publications'
 require 'pact_broker/pacts/latest_pact_publications_by_consumer_version'
@@ -9,6 +9,7 @@ require 'pact_broker/pacts/latest_pact_publications'
 require 'pact_broker/pacts/latest_tagged_pact_publications'
 require 'pact/shared/json_differ'
 require 'pact_broker/domain'
+require 'pact_broker/pacts/parse'
 
 module PactBroker
   module Pacts
@@ -197,7 +198,7 @@ module PactBroker
       end
 
       def find_or_create_pact_version consumer_id, provider_id, json_content
-        sha = Digest::SHA1.hexdigest(json_content)
+        sha = PactBroker.configuration.sha_generator.call(json_content)
         PactVersion.find(sha: sha, consumer_id: consumer_id, provider_id: provider_id) || create_pact_version(consumer_id, provider_id, sha, json_content)
       end
 
@@ -206,7 +207,6 @@ module PactBroker
         pact_version = PactVersion.new(consumer_id: consumer_id, provider_id: provider_id, sha: sha, content: json_content)
         pact_version.save
       end
-
     end
   end
 end

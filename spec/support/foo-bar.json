@@ -1,0 +1,34 @@
+{
+  "consumer": {
+    "name": "Foo"
+  },
+  "provider": {
+    "name": "Bar"
+  },
+  "interactions": [
+    {
+      "description": "a retrieve thing request",
+      "request": {
+        "method": "get",
+        "path": "/thing"
+      },
+      "response": {
+        "status": 200
+      }
+    },{
+      "description": "another retrieve thing request",
+      "request": {
+        "method": "get",
+        "path": "/another-thing"
+      },
+      "response": {
+        "status": 200
+      }
+    }
+  ],
+  "metadata": {
+    "pactSpecification": {
+      "version": "2.0.0"
+    }
+  }
+}

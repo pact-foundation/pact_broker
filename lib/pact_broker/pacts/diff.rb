@@ -1,7 +1,8 @@
 require 'pact_broker/api/pact_broker_urls'
 require 'pact_broker/date_helper'
 require 'pact_broker/pacts/create_formatted_diff'
-require 'pact_broker/pacts/sort_verifiable_content'
+require 'pact_broker/pacts/sort_content'
+require 'pact_broker/pacts/parse'
 require 'pact_broker/repositories'
 require 'yaml'
 
@@ -110,7 +111,7 @@ module PactBroker
           if options[:raw]
             json_content
           else
-            PactBroker::Pacts::SortVerifiableContent.call(json_content)
+            SortContent.call(Parse.call(json_content)).to_json
           end
         end
       end

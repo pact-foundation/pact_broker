@@ -38,7 +38,11 @@ module PactBroker
           expect(subject.created_at).to be_datey
         end
 
-        context "when a pact already exists with the same content" do
+        context "when a pact already exists with exactly the same content" do
+          before do
+            PactBroker.configuration.base_equality_only_on_content_that_affects_verification_results = false
+          end
+
           let(:another_version) { Versions::Repository.new.create number: '2.0.0', pacticipant_id: consumer.id }
 
           before do
@@ -49,8 +53,47 @@ module PactBroker
             Repository.new.create version_id: another_version.id, consumer_id: consumer.id, provider_id: provider.id, json_content: json_content
           end
 
+          it "does not the content" do
+            expect_any_instance_of(Content).to_not receive(:sort)
+            subject
+          end
+
+          it "creates a new PactPublication" do
+            expect { subject }.to change{ PactPublication.count }.by(1)
+          end
+
           it "reuses the same PactVersion to save room" do
-            expect { subject }.to change{ PactVersion.count }.by(0)
+            expect { subject }.to_not change{ PactVersion.count }
+          end
+        end
+
+        context "when base_equality_only_on_content_that_affects_verification_results is true" do
+          let(:another_version) { Versions::Repository.new.create number: '2.0.0', pacticipant_id: consumer.id }
+          let(:sha_1) { '1' }
+          let(:sha_2) { '1' }
+
+          before do
+            PactBroker.configuration.base_equality_only_on_content_that_affects_verification_results = true
+            allow(PactBroker.configuration.sha_generator).to receive(:call).and_return(sha_1, sha_2)
+            Repository.new.create version_id: version.id, consumer_id: consumer.id, provider_id: provider.id, json_content: json_content
+          end
+
+          subject do
+            Repository.new.create version_id: another_version.id, consumer_id: consumer.id, provider_id: provider.id, json_content: json_content
+          end
+
+          context "when the sha is the same" do
+            it "reuses the same PactVersion to save room" do
+              expect { subject }.to_not change{ PactVersion.count }
+            end
+          end
+
+          context "when the sha is not the same" do
+            let(:sha_2) { '2' }
+
+            it "creates a new PactVersion" do
+              expect { subject }.to change{ PactVersion.count }.by(1)
+            end
           end
         end
 
@@ -65,7 +108,7 @@ module PactBroker
             Repository.new.create version_id: another_version.id, consumer_id: consumer.id, provider_id: provider.id, json_content: json_content
           end
 
-          it "does not reuse the same PactVersion to save room" do
+          it "does not reuse the same PactVersion" do
             expect { subject }.to change{ PactVersion.count }.by(1)
           end
         end
@@ -524,7 +567,7 @@ module PactBroker
         let(:pact_content_version_1) { load_fixture('consumer-provider.json') }
         let(:pact_content_version_2) do
           hash = load_json_fixture('consumer-provider.json')
-          hash['foo'] = 'bar' # Extra key will affect equality
+          hash['interactions'].first['foo'] = 'bar' # Extra key in interactions will affect equality
           hash.to_json
         end
         let(:pact_content_version_3) {  load_fixture('consumer-provider.json') }

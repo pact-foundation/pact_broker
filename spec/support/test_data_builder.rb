@@ -340,5 +340,4 @@ class TestDataBuilder
        "random" => rand
      }.to_json
    end
-
 end

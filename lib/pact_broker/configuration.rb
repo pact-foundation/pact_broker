@@ -27,13 +27,14 @@ module PactBroker
     ]
 
     attr_accessor :log_dir, :database_connection, :auto_migrate_db, :use_hal_browser, :html_pact_renderer
-    attr_accessor :validate_database_connection_config, :enable_diagnostic_endpoints, :version_parser
+    attr_accessor :validate_database_connection_config, :enable_diagnostic_endpoints, :version_parser, :sha_generator
     attr_accessor :use_case_sensitive_resource_names, :order_versions_by_date
     attr_accessor :check_for_potential_duplicate_pacticipant_names
     attr_accessor :semver_formats
     attr_accessor :enable_public_badge_access, :shields_io_base_url
     attr_accessor :webhook_retry_schedule
     attr_accessor :disable_ssl_verification
+    attr_accessor :base_equality_only_on_content_that_affects_verification_results
     attr_reader :api_error_reporters
     attr_writer :logger
 
@@ -51,6 +52,8 @@ module PactBroker
 
     def self.default_configuration
       require 'pact_broker/versions/parse_semantic_version'
+      require 'pact_broker/pacts/generate_sha'
+
       config = Configuration.new
       config.log_dir = File.expand_path("./log")
       config.auto_migrate_db = true
@@ -62,6 +65,8 @@ module PactBroker
       config.use_case_sensitive_resource_names = true
       config.html_pact_renderer = default_html_pact_render
       config.version_parser = PactBroker::Versions::ParseSemanticVersion
+      config.sha_generator = PactBroker::Pacts::GenerateSha
+      config.base_equality_only_on_content_that_affects_verification_results = false
       # Not recommended to set this to true unless there is no way to
       # consistently extract an orderable object from the consumer application version number.
       config.order_versions_by_date = false

@@ -5,7 +5,6 @@ require 'pact_broker/pacts/repository'
 module PactBroker
   module Pacts
     describe CreateFormattedDiff do
-
       describe ".call" do
 
         let(:pact_content_version_1) do
@@ -24,9 +23,7 @@ module PactBroker
           expect(subject).to match /\+.*get/
           expect(subject).to_not include 'Key'
         end
-
       end
-
     end
   end
 end
