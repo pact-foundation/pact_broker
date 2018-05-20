@@ -203,7 +203,7 @@ module PactBroker
       end
 
       def create_pact_version consumer_id, provider_id, sha, json_content
-        PactBroker.logger.debug("Creating new PactVersion for sha #{sha}")
+        logger.debug("Creating new pact version for sha #{sha}")
         pact_version = PactVersion.new(consumer_id: consumer_id, provider_id: provider_id, sha: sha, content: json_content)
         pact_version.save
       end
