@@ -12,6 +12,11 @@ Sequel.migration do
           on lv.pact_version_id = pp.pact_version_id"
     )
 
+    #TODO
+    #drop_view(:latest_matrix)
+    #drop_view(:latest_verification_id_for_consumer_version_and_provider)
+    #drop_view(:latest_matrix_for_consumer_version_and_provider_version)
+
   end
 
   down do
