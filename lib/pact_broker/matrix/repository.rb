@@ -1,6 +1,5 @@
 require 'pact_broker/repositories/helpers'
 require 'pact_broker/matrix/row'
-require 'pact_broker/matrix/latest_row'
 require 'pact_broker/matrix/head_row'
 require 'pact_broker/error'
 

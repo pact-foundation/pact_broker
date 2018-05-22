@@ -1,7 +1,6 @@
 require 'pact_broker/repositories'
 require 'pact_broker/logging'
 require 'pact_broker/domain/index_item'
-require 'pact_broker/matrix/latest_row'
 require 'pact_broker/matrix/head_row'
 
 module PactBroker
