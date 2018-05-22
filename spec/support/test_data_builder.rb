@@ -121,12 +121,14 @@ class TestDataBuilder
   def create_version_with_hierarchy pacticipant_name, pacticipant_version
     pacticipant = PactBroker::Domain::Pacticipant.create(:name => pacticipant_name)
     version = PactBroker::Domain::Version.create(:number => pacticipant_version, :pacticipant => pacticipant)
-    PactBroker::Domain::Version.find(id: version.id) # Get version with populated order
+    @version = PactBroker::Domain::Version.find(id: version.id) # Get version with populated order
+    self
   end
 
   def create_tag_with_hierarchy pacticipant_name, pacticipant_version, tag_name
-    version = create_version_with_hierarchy pacticipant_name, pacticipant_version
-    PactBroker::Domain::Tag.create(name: tag_name, version: version)
+    create_version_with_hierarchy pacticipant_name, pacticipant_version
+    PactBroker::Domain::Tag.create(name: tag_name, version: @version)
+    self
   end
 
   def create_pacticipant pacticipant_name, params = {}

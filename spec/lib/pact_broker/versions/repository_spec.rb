@@ -34,17 +34,25 @@ module PactBroker
 
       describe "#create" do
         context "when a previous version exists" do
-
-          let!(:existing_order) do
-            TestDataBuilder.new.create_version_with_hierarchy pacticipant_name, version_number
+          let!(:existing_version) do
+            TestDataBuilder.new.create_version_with_hierarchy(pacticipant_name, version_number).and_return(:version)
           end
 
-          subject { Repository.new.create pacticipant_id: existing_order.pacticipant_id, number: "1.2.4" }
+          subject { Repository.new.create pacticipant_id: existing_version.pacticipant_id, number: "1.2.4" }
 
           it "sets the order to the previous version's order plus one" do
-            expect(subject.order).to eq existing_order.order + 1
+            expect(subject.order).to eq existing_version.order + 1
           end
+        end
 
+        context "when the same version already exists" do
+          let!(:existing_version) { TestDataBuilder.new.create_version_with_hierarchy(pacticipant_name, version_number).and_return(:version) }
+
+          subject { Repository.new.create pacticipant_id: existing_version.pacticipant_id, number: version_number }
+
+          it "returns the pre-existing version" do
+            expect(subject.id).to eq existing_version.id
+          end
         end
       end
 

@@ -51,10 +51,19 @@ module PactBroker
           .single_record
       end
 
+      # There may be a race condition if two simultaneous requests come in to create the same version
       def create args
-        PactBroker.logger.info "Creating version #{args[:number]} for pacticipant_id=#{args[:pacticipant_id]}"
-        version = PactBroker::Domain::Version.new(number: args[:number], pacticipant_id: args[:pacticipant_id]).save
-        PactBroker::Domain::Version.find(id: version.id) # Need to reload with populated order
+        PactBroker.logger.info "Upserting version #{args[:number]} for pacticipant_id=#{args[:pacticipant_id]}"
+        version_params = {
+          number: args[:number],
+          pacticipant_id: args[:pacticipant_id],
+          created_at: Sequel.datetime_class.now,
+          updated_at: Sequel.datetime_class.now
+        }
+        id = PactBroker::Domain::Version.db[:versions].insert_ignore.insert(version_params)
+        version = PactBroker::Domain::Version.find(number: args[:number], pacticipant_id: args[:pacticipant_id])
+        PactBroker::Domain::OrderVersions.(version)
+        version.refresh # reload with the populated order
       end
 
       def find_by_pacticipant_id_and_number_or_create pacticipant_id, number
