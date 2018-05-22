@@ -6,7 +6,7 @@ Sequel.migration do
       String :number
       String :repository_ref
       foreign_key :pacticipant_id, :pacticipants, :null=>false
-      index [:pacticipant_id, :number], :unique=>true
+      index [:pacticipant_id, :number], :unique => true
     end
   end
 
