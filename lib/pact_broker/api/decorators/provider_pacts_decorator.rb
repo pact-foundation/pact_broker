@@ -7,7 +7,6 @@ module PactBroker
       class ProviderPactsDecorator < BaseDecorator
 
         link :self do | context |
-          suffix = context[:tag] ? " with tag '#{context[:tag]}'" : ""
           {
             href: context[:resource_url],
             title: context[:title]
@@ -33,12 +32,16 @@ module PactBroker
         end
 
         links :'pacts' do | context |
-          represented.collect do | pact |
-            {
-              :href => pact_url(context[:base_url], pact),
-              :title => "DEPRECATED - please use the pb:pacts relation. #{pact.name}",
-              :name => pact.consumer_name
-            }
+          # this is deprecated for existing resources, but let's not even show it for the
+          # new environments resource
+          if context[:environment_name].nil?
+            represented.collect do | pact |
+              {
+                :href => pact_url(context[:base_url], pact),
+                :title => "DEPRECATED - please use the pb:pacts relation. #{pact.name}",
+                :name => pact.consumer_name
+              }
+            end
           end
         end
       end

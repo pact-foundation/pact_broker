@@ -76,6 +76,13 @@ module PactBroker
             end
             subject
           end
+
+          it "includes the environment_name so that the decorator does not show the deprecated pacts relation" do
+            expect(decorator).to receive(:to_json) do | options |
+              expect(options[:user_options][:environment_name]).to eq 'production'
+            end
+            subject
+          end
         end
 
         context "with the pacticipant does not exist" do

@@ -51,6 +51,16 @@ module PactBroker
         it "matches the expected JSON" do
           expect(subject).to match_pact(expected)
         end
+
+        context "for the new environments resource" do
+          before do
+            user_options[:environment_name] = 'production'
+          end
+
+          it "does not include the deprecated pacts relation" do
+            expect(subject[:_links]).to_not have_key(:pacts)
+          end
+        end
       end
     end
   end
