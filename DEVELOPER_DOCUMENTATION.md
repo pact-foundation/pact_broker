@@ -72,20 +72,20 @@ So as a hacky solution, there are two tables which act as materialized views to 
 
 ### Dependencies
 
+```
 materialized_head_matrix table (is populated from...)
   = head_matrix view
-    -> latest_matrix_for_consumer_version_and_provider_version view
-      -> materialized_matrix table (is populated from...)
-        = matrix view
-          -> verifications table
-          -> versions table
-          -> all_pact_publications view
-            -> pact_versions table
-            -> pact_publications table
-            -> pacticipants table
-            -> versions table
-      -> latest_verification_id_for_consumer_version_and_provider_version view
-      -> latest_pact_publication_revision_numbers view
+    -> latest_pact_publications
+      -> latest_pact_publications_by_consumer_versions
+        -> latest_pact_publication_ids_by_consumer_versions
+        -> all_pact_publications
+          -> versions, pacticipants, pact_publications, pact_versions
+    -> latest_verifications
+      -> latest_verification_numbers
+      -> versions
+    -> latest_tagged_pact_consumer_version_orders
+    -> latest_pact_publications_by_consumer_versions
+```
 
 ### Useful to know stuff
 
