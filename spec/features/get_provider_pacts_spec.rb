@@ -10,15 +10,18 @@ describe "Get provider pacts" do
         .create_consumer("Consumer")
         .create_consumer_version("0.0.1")
         .create_consumer_version_tag("prod")
+        .create_environment("production")
         .create_pact
         .create_consumer_version("1.0.0")
         .create_consumer_version_tag("prod")
+        .create_environment("production")
         .create_pact
         .create_consumer_version("1.2.3")
         .create_pact
         .create_consumer("Consumer 2")
         .create_consumer_version("4.5.6")
         .create_consumer_version_tag("prod")
+        .create_environment("production")
         .create_pact
     end
 
@@ -70,7 +73,7 @@ describe "Get provider pacts" do
       end
     end
 
-    context "with no tag for all pacts" do
+    context "with no tag for all provider pacts" do
       let(:path) { "/pacts/provider/Provider" }
 
       it "returns a 200 HAL JSON response" do
@@ -79,6 +82,18 @@ describe "Get provider pacts" do
 
       it "returns a list of links to the pacts" do
         expect(last_response_body[:_links][:'pb:pacts'].size).to eq 4
+      end
+    end
+
+    context "with an enviroment for all provider pacts" do
+      let(:path) { "/pacts/provider/Provider/environment/production" }
+
+      it "returns a 200 HAL JSON response" do
+        expect(subject).to be_a_hal_json_success_response
+      end
+
+      it "returns a list of links to the pacts" do
+        expect(last_response_body[:_links][:'pb:pacts'].size).to eq 3
       end
     end
   end

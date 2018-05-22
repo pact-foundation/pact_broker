@@ -59,6 +59,12 @@ module PactBroker
                 title: 'All pact versions for the provider with the specified consumer version tag',
                 templated: true
               },
+              'pb:provider-pacts-for-environment' =>
+              {
+                href: base_url + '/pacts/provider/{provider}/environment/{environment}',
+                title: 'All pact versions for the provider with consumer versions in the specified environment',
+                templated: true
+              },
               'pb:provider-pacts' =>
               {
                 href: base_url + '/pacts/provider/{provider}',

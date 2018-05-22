@@ -34,6 +34,7 @@ module PactBroker
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'latest', :tag], Api::Resources::LatestPact, {resource_name: "latest_tagged_pact_publication"}
         add ['pacts', 'provider', :provider_name], Api::Resources::ProviderPacts, {resource_name: "provider_pact_publications"}
         add ['pacts', 'provider', :provider_name, 'tag', :tag], Api::Resources::ProviderPacts, {resource_name: "tagged_provider_pact_publications"}
+        add ['pacts', 'provider', :provider_name, 'environment', :environment_name], Api::Resources::ProviderPacts, {resource_name: "provider_pact_publications_for_environment"}
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'latest-untagged'], Api::Resources::LatestPact, {resource_name: "latest_untagged_pact_publication", tag: :untagged}
         add ['pacts', 'provider', :provider_name, 'latest'], Api::Resources::LatestProviderPacts, {resource_name: "latest_provider_pact_publications"}
         add ['pacts', 'provider', :provider_name, 'latest', :tag], Api::Resources::LatestProviderPacts, {resource_name: "latest_tagged_provider_pact_publications"}

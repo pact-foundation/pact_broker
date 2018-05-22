@@ -69,7 +69,7 @@ module PactBroker
       end
 
       def find_pact_versions_for_provider provider_name, options = {}
-        pact_repository.find_pact_versions_for_provider provider_name, options[:tag]
+        pact_repository.find_pact_versions_for_provider provider_name, options[:tag], options[:environment_name]
       end
 
       def find_previous_distinct_pact_version params

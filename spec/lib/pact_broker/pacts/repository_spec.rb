@@ -416,6 +416,44 @@ module PactBroker
             expect(subject.last.consumer_version.number).to eq "11"
           end
         end
+
+        context "with an environment name specified" do
+          before do
+            TestDataBuilder.new
+              .create_consumer(consumer_name)
+              .create_consumer_version("1")
+              .create_environment("prod")
+              .create_provider(provider_name)
+              .create_pact
+              .create_consumer_version("2")
+              .create_environment("prod")
+              .create_pact
+              .create_consumer_version("3")
+              .create_pact
+              .create_consumer("wiffle consumer")
+              .create_consumer_version("10")
+              .create_pact
+              .create_consumer_version("11")
+              .create_environment("prod")
+              .create_environment("test")
+              .create_pact
+              .create_provider("not the provider")
+              .create_pact
+          end
+
+          subject { Repository.new.find_pact_versions_for_provider provider_name, nil, "prod" }
+
+          it "returns the pacts between the specified consumer and provider in the given environment" do
+            expect(subject.size).to eq 3
+            expect(subject.first.provider.name).to eq provider_name
+            expect(subject.first.consumer.name).to eq consumer_name
+            expect(subject.first.consumer_version.number).to eq "1"
+            expect(subject[1].consumer_version.number).to eq "2"
+            expect(subject.first.json_content).to be nil
+            expect(subject.last.consumer.name).to eq "wiffle consumer"
+            expect(subject.last.consumer_version.number).to eq "11"
+          end
+        end
       end
 
       describe "find_pact" do

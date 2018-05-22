@@ -34,7 +34,7 @@ module PactBroker
 
         context "with no tag" do
           it "finds all the pacts for the given provider" do
-            expect(PactBroker::Pacts::Service).to receive(:find_pact_versions_for_provider).with("Bar", tag: nil)
+            expect(PactBroker::Pacts::Service).to receive(:find_pact_versions_for_provider).with("Bar", {})
             subject
           end
 
@@ -57,6 +57,22 @@ module PactBroker
           it "sets the correct resource title" do
             expect(decorator).to receive(:to_json) do | options |
               expect(options[:user_options][:title]).to eq "All pact versions for the provider Bar with consumer version tag 'prod'"
+            end
+            subject
+          end
+        end
+
+        context "with an environment" do
+          let(:path) { '/pacts/provider/Bar/environment/production' }
+
+          it "finds all the pacts with the given environment for the provider" do
+            expect(PactBroker::Pacts::Service).to receive(:find_pact_versions_for_provider).with("Bar", environment_name: "production")
+            subject
+          end
+
+          it "sets the correct resource title" do
+            expect(decorator).to receive(:to_json) do | options |
+              expect(options[:user_options][:title]).to eq "All pact versions for the provider Bar with consumers in the production environment"
             end
             subject
           end

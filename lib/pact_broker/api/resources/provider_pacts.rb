@@ -26,7 +26,14 @@ module PactBroker
         private
 
         def pacts
-          pact_service.find_pact_versions_for_provider provider_name, tag: identifier_from_path[:tag]
+          pact_service.find_pact_versions_for_provider provider_name, find_pact_options
+        end
+
+        def find_pact_options
+          {
+            tag: identifier_from_path[:tag],
+            environment_name: identifier_from_path[:environment_name]
+          }.reject{ |k, v| v.nil? }
         end
 
         def to_json_options
@@ -36,7 +43,13 @@ module PactBroker
         end
 
         def resource_title
-          suffix = identifier_from_path[:tag] ? " with consumer version tag '#{identifier_from_path[:tag]}'" : ""
+          suffix = if identifier_from_path[:tag]
+            " with consumer version tag '#{identifier_from_path[:tag]}'"
+          elsif identifier_from_path[:environment_name]
+            " with consumers in the #{identifier_from_path[:environment_name]} environment"
+          else
+             ""
+          end
           "All pact versions for the provider #{identifier_from_path[:provider_name]}#{suffix}"
         end
       end
