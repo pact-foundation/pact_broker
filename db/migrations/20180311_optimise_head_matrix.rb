@@ -16,6 +16,7 @@ Sequel.migration do
     )
 
     # Add provider_version_order to original definition
+    # The most recent verification for each pact version
     v = :verifications
     create_or_replace_view(:latest_verifications,
       from(v)

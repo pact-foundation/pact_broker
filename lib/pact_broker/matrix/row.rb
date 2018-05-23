@@ -2,9 +2,11 @@ require 'pact_broker/repositories/helpers'
 require 'pact_broker/webhooks/latest_triggered_webhook'
 require 'pact_broker/tags/tag_with_latest_flag'
 require 'pact_broker/logging'
+require 'pact_broker/verifications/latest_verification_for_consumer_version_tag'
 
 module PactBroker
   module Matrix
+
     class Row < Sequel::Model(:materialized_matrix)
 
       # Used when using table_print to output query results
@@ -14,6 +16,18 @@ module PactBroker
       associate(:one_to_many, :webhooks, :class => "PactBroker::Webhooks::Webhook", primary_key: [:consumer_id, :provider_id], key: [:consumer_id, :provider_id])
       associate(:one_to_many, :consumer_version_tags, :class => "PactBroker::Tags::TagWithLatestFlag", primary_key: :consumer_version_id, key: :version_id)
       associate(:one_to_many, :provider_version_tags, :class => "PactBroker::Tags::TagWithLatestFlag", primary_key: :provider_version_id, key: :version_id)
+      associate(:many_to_one, :verification, :class => "PactBroker::Domain::Verification", primary_key: :id, key: :verification_id)
+
+      one_to_one :latest_verification_for_consumer_version_tag, primary_keys: [], key: [], :eager_loader=>(proc do |eo_opts|
+        tag_to_row = eo_opts[:rows].each_with_object({}) { | row, map | row.consumer_version_tags.each{ | tag | map[tag.name] = row } }
+        eo_opts[:rows].each{|row| row.associations[:latest_verification_for_consumer_version_tag] = nil}
+
+        PactBroker::Verifications::LatestVerificationForConsumerVersionTag.each do | verification |
+          if tag_to_row[verification.consumer_version_tag_name]
+            tag_to_row[verification.consumer_version_tag_name].associations[:latest_verification_for_consumer_version_tag] = verification
+          end
+        end
+      end)
 
       dataset_module do
         include PactBroker::Repositories::Helpers
