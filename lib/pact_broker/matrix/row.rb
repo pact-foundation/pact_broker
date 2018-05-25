@@ -16,7 +16,6 @@ module PactBroker
       associate(:one_to_many, :webhooks, :class => "PactBroker::Webhooks::Webhook", primary_key: [:consumer_id, :provider_id], key: [:consumer_id, :provider_id])
       associate(:one_to_many, :consumer_version_tags, :class => "PactBroker::Tags::TagWithLatestFlag", primary_key: :consumer_version_id, key: :version_id)
       associate(:one_to_many, :provider_version_tags, :class => "PactBroker::Tags::TagWithLatestFlag", primary_key: :provider_version_id, key: :version_id)
-      associate(:many_to_one, :verification, :class => "PactBroker::Domain::Verification", primary_key: :id, key: :verification_id)
 
       dataset_module do
         include PactBroker::Repositories::Helpers
@@ -114,20 +113,6 @@ module PactBroker
         end
       end
 
-      # tags for which this pact publication is the latest of that tag
-      # this is set in the code rather than the database
-      def consumer_head_tag_names
-        @consumer_head_tag_names ||= []
-      end
-
-      def consumer_head_tag_names= consumer_head_tag_names
-        @consumer_head_tag_names = consumer_head_tag_names
-      end
-
-      # def latest_triggered_webhooks
-      #   @latest_triggered_webhooks ||= []
-      # end
-
       def summary
         "#{consumer_name}#{consumer_version_number} #{provider_name}#{provider_version_number || '?'} (r#{pact_revision_number}n#{verification_number || '?'})"
       end
@@ -141,17 +126,18 @@ module PactBroker
       end
 
       def consumer_version
-        @consumer_version ||= OpenStruct.new(number: consumer_version_number, id: consumer_version_id, pacticipant: consumer)
+        @consumer_version ||= OpenStruct.new(number: consumer_version_number, order: consumer_version_order, id: consumer_version_id, pacticipant: consumer)
       end
 
       def provider_version
         if provider_version_number
-          @provider_version ||= OpenStruct.new(number: provider_version_number, id: provider_version_id, pacticipant: provider)
+          @provider_version ||= OpenStruct.new(number: provider_version_number, order: provider_version_order, id: provider_version_id, pacticipant: provider)
         end
       end
 
       def pact
-        @pact ||= OpenStruct.new(consumer: consumer,
+        @pact ||= OpenStruct.new(
+          consumer: consumer,
           provider: provider,
           consumer_version: consumer_version,
           consumer_version_number: consumer_version_number,
@@ -161,7 +147,7 @@ module PactBroker
         )
       end
 
-      def latest_verification
+      def verification
         if verification_executed_at
           @latest_verification ||= OpenStruct.new(
             id: verification_id,
@@ -170,10 +156,12 @@ module PactBroker
             execution_date: verification_executed_at,
             created_at: verification_executed_at,
             provider_version_number: provider_version_number,
+            provider_version_order: provider_version_order,
             build_url: verification_build_url,
             provider_version: provider_version,
             consumer_name: consumer_name,
-            provider_name: provider_name
+            provider_name: provider_name,
+            pact_version_sha: pact_version_sha
           )
         end
       end
@@ -190,7 +178,6 @@ module PactBroker
         ]
 
         comparisons.find{|c| c != 0 } || 0
-
       end
 
       def compare_name_asc name1, name2

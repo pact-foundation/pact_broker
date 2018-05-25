@@ -19,7 +19,7 @@ module PactBroker
           .eager(:latest_triggered_webhooks)
           .eager(:webhooks)
           .order(:consumer_name, :provider_name)
-          .eager(:verification)
+          #.eager(verification: [:provider_version, :pact_version])
 
         if !options[:tags]
           rows = rows.where(consumer_version_tag_name: nil)
@@ -34,12 +34,13 @@ module PactBroker
         rows = rows.all.group_by(&:pact_publication_id).values.collect{ | rows| Matrix::AggregatedRow.new(rows) }
 
         rows.sort.collect do | row |
+          # TODO simplify
           PactBroker::Domain::IndexItem.create(
             row.consumer,
             row.provider,
             row.pact,
             row.overall_latest?,
-            options[:tags] ? row.latest_verification : row.verification,
+            row.latest_verification,
             row.webhooks,
             row.latest_triggered_webhooks,
             options[:tags] ? row.consumer_head_tag_names : [],

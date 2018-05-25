@@ -2,7 +2,7 @@ require 'pact_broker/verifications/repository'
 
 # A collection of matrix rows with the same pact publication id
 # It's basically a normalised view of a denormalised view :(
-
+# A pact publication may be the overall latest, and/or the latest for a tag
 module PactBroker
   module Matrix
     class AggregatedRow
@@ -13,7 +13,6 @@ module PactBroker
       delegate [:pact, :pact_version, :pact_revision_number, :webhooks, :latest_triggered_webhooks, :'<=>'] => :first_row
       delegate [:verification_id, :verification] => :first_row
 
-
       def initialize matrix_rows
         @matrix_rows = matrix_rows
         @first_row = matrix_rows.first
@@ -23,20 +22,26 @@ module PactBroker
         !!matrix_rows.find{ | row| row.consumer_version_tag_name.nil? }
       end
 
+      # If this comes back nil, it won't be "cached", but it's a reasonably
+      # quick query, so it's probably ok.
       def latest_verification
         @latest_verification ||= begin
           verification = matrix_rows.collect do | row|
-              row.verification || row.latest_verification_for_consumer_version_tag
-            end.compact.sort{ |v1, v2| v1.id <=> v2.id}.last
+              row.verification || latest_verification_for_consumer_version_tag(row)
+            end.compact.sort{ |v1, v2| v1.id <=> v2.id }.last
 
           if !verification && overall_latest?
-            PactBroker::Verifications::Repository.new.find_latest_verification_for(consumer_name, provider_name)
+            overall_latest_verification
           else
             verification
           end
         end
       end
 
+      # The list of tag names for which this pact publication is the most recent with that tag
+      # There could, however, be a later consumer version that does't have a pact (perhaps because it was deleted)
+      # that has the same tag.
+      # TODO show a warning when the data is "corrupted" as above.
       def consumer_head_tag_names
         matrix_rows.collect(&:consumer_version_tag_name).compact
       end
@@ -44,6 +49,18 @@ module PactBroker
       private
 
       attr_reader :matrix_rows
+
+      def latest_verification_for_consumer_version_tag row
+        row.latest_verification_for_consumer_version_tag if row.consumer_version_tag_name
+      end
+
+      def overall_latest_verification
+        # This causes the
+        # SELECT "latest_verifications".* FROM "latest_verifications"
+        # query in the logs for the tagged index.
+        # Given it only happens rarely, it's ok to not lazy load it.
+        PactBroker::Verifications::Repository.new.find_latest_verification_for(consumer_name, provider_name)
+      end
 
       def first_row
         @first_row

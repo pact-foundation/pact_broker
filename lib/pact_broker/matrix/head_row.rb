@@ -21,6 +21,7 @@ module PactBroker
         tag_to_row = eo_opts[:rows].each_with_object({}) { | row, map | map[[row.provider_id, row.consumer_id, row.consumer_version_tag_name]] = row }
         eo_opts[:rows].each{|row| row.associations[:latest_verification_for_consumer_version_tag] = nil}
 
+        # Need the all then the each to ensure the eager loading works
         PactBroker::Verifications::LatestVerificationForConsumerVersionTag.each do | verification |
           key = [verification.provider_id, verification.consumer_id, verification.consumer_version_tag_name]
           if tag_to_row[key]
