@@ -102,7 +102,7 @@ module PactBroker
       end
 
       def pact_changed_since_last_verification?
-        latest_verification.pact_version_sha != latest_pact.pact_version_sha
+        latest_verification.pact_version_id != latest_pact.pact_version_id
       end
 
       def latest_verification_provider_version_number
