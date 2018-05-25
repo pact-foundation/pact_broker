@@ -17,7 +17,6 @@ module PactBroker
       associate(:one_to_many, :consumer_version_tags, :class => "PactBroker::Tags::TagWithLatestFlag", primary_key: :consumer_version_id, key: :version_id)
       associate(:one_to_many, :provider_version_tags, :class => "PactBroker::Tags::TagWithLatestFlag", primary_key: :provider_version_id, key: :version_id)
       associate(:many_to_one, :verification, :class => "PactBroker::Domain::Verification", primary_key: :id, key: :verification_id)
-      # associate(:many_to_one, :pact_version, :class => "PactBroker::Pacts::PactVersion", primary_key: :id, key: :pact_version_id)
 
       dataset_module do
         include PactBroker::Repositories::Helpers

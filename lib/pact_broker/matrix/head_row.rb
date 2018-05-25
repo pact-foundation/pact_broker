@@ -16,6 +16,7 @@ module PactBroker
       # the entire HeadRow table
       # Using the inbuilt relation puts constraints on the columns that are not necessary and slow
       # the query down.
+      # This relation relies on consumer_version_tags already being loaded
       one_to_one :latest_verification_for_consumer_version_tag, :class => "PactBroker::Verifications::LatestVerificationForConsumerVersionTag", primary_keys: [], key: [], :eager_loader=>(proc do |eo_opts|
         tag_to_row = eo_opts[:rows].each_with_object({}) { | row, map | map[[row.provider_id, row.consumer_id, row.consumer_version_tag_name]] = row }
         eo_opts[:rows].each{|row| row.associations[:latest_verification_for_consumer_version_tag] = nil}
