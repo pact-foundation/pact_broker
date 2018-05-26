@@ -45,11 +45,6 @@ module PactBroker
         end
 
         context "when there is no verification for any of the rows or any of the pacts with the same tag" do
-          before do
-            allow_any_instance_of(PactBroker::Verifications::Repository).to receive(:find_latest_verification_for).and_return(overall_latest_verification)
-          end
-
-          let(:overall_latest_verification) { instance_double('PactBroker::Domain::Verification', id: 5) }
           let(:verification_1) { nil }
           let(:verification_2) { nil }
           let(:tag_verification_1) { nil }
@@ -57,10 +52,14 @@ module PactBroker
 
           context "when one of the rows is the overall latest" do
             let(:consumer_version_tag_name_1) { nil }
+            let(:overall_latest_verification) { instance_double('PactBroker::Domain::Verification', id: 1) }
+            before do
+              allow(row_1).to receive(:latest_verification_for_consumer_and_provider).and_return(overall_latest_verification)
+            end
 
             it "looks up the overall latest verification" do
-             expect_any_instance_of(PactBroker::Verifications::Repository).to receive(:find_latest_verification_for).with("Foo", "Bar")
-             subject
+              expect(row_1).to receive(:latest_verification_for_consumer_and_provider)
+              subject
             end
 
             it "returns the overall latest verification" do

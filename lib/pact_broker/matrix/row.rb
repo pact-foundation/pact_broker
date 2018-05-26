@@ -3,6 +3,7 @@ require 'pact_broker/webhooks/latest_triggered_webhook'
 require 'pact_broker/tags/tag_with_latest_flag'
 require 'pact_broker/logging'
 require 'pact_broker/verifications/latest_verification_for_consumer_version_tag'
+require 'pact_broker/verifications/latest_verification_for_consumer_and_provider'
 
 module PactBroker
   module Matrix
@@ -16,6 +17,10 @@ module PactBroker
       associate(:one_to_many, :webhooks, :class => "PactBroker::Webhooks::Webhook", primary_key: [:consumer_id, :provider_id], key: [:consumer_id, :provider_id])
       associate(:one_to_many, :consumer_version_tags, :class => "PactBroker::Tags::TagWithLatestFlag", primary_key: :consumer_version_id, key: :version_id)
       associate(:one_to_many, :provider_version_tags, :class => "PactBroker::Tags::TagWithLatestFlag", primary_key: :provider_version_id, key: :version_id)
+
+      many_to_one :latest_verification_for_consumer_and_provider,
+        :class => "PactBroker::Verifications::LatestVerificationForConsumerAndProvider",
+        primary_key: [:provider_id, :consumer_id], key: [:provider_id, :consumer_id]
 
       dataset_module do
         include PactBroker::Repositories::Helpers

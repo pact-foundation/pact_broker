@@ -18,8 +18,6 @@ module PactBroker
           .select_all_qualified
           .eager(:latest_triggered_webhooks)
           .eager(:webhooks)
-          .order(:consumer_name, :provider_name)
-          #.eager(verification: [:provider_version, :pact_version])
 
         if !options[:tags]
           rows = rows.where(consumer_version_tag_name: nil)

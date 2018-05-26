@@ -55,11 +55,8 @@ module PactBroker
       end
 
       def overall_latest_verification
-        # This causes the
-        # SELECT "latest_verifications".* FROM "latest_verifications"
-        # query in the logs for the tagged index.
-        # Given it only happens rarely, it's ok to not lazy load it.
-        PactBroker::Verifications::Repository.new.find_latest_verification_for(consumer_name, provider_name)
+        # not eager loaded because it shouldn't be called that often
+        first_row.latest_verification_for_consumer_and_provider
       end
 
       def first_row

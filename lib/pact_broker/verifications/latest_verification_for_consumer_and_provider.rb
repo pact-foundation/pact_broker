@@ -2,8 +2,11 @@ require 'pact_broker/domain/verification'
 
 module PactBroker
   module Verifications
-    class LatestVerificationForConsumerVersionTag < PactBroker::Domain::Verification
-      set_dataset(:latest_verifications_for_consumer_version_tags)
+
+    include PactBroker::Repositories::Helpers
+
+    class LatestVerificationForConsumerAndProvider < PactBroker::Domain::Verification
+      set_dataset(:latest_verifications_for_consumer_and_provider)
 
       # Don't need to load the pact_version as we do in the superclass,
       # as pact_version_sha is included in the view for convenience
