@@ -4,26 +4,23 @@ RSpec::Matchers.define :contain_hash do |expected|
   match do |actual|
     contains_hash?(expected, actual)
   end
-end
 
-
-def contains_hash?(expected, actual)
-  if actual.is_a?(Array)
-    actual.any? && actual.any?{|actual_item| contains_hash?(expected, actual_item)}
-  else
-    expected.all? do |key, value|
-      unordered_match(actual[key], value)
-    end
+  failure_message do |actual|
+    "expected #{actual.class} to include #{expected.class}\n" + formatted_diffs
   end
-end
 
-def unordered_match(expected, actual)
-  case
-  when [expected, actual].all?{|val| val.is_a? Array }
-    expected.all?{|el| actual.include? el }
-  when [expected, actual].all?{|val| val.is_a? Hash }
-    contains_hash?(expected, actual)
-  else
-    expected == actual
+  def formatted_diffs
+    @diffs.collect{ | diff| Pact::Matchers::UnixDiffFormatter.call(diff) }.join("\n")
+  end
+
+  def contains_hash?(expected, actual)
+    if actual.is_a?(Array)
+      actual.any? && actual.any?{|actual_item| contains_hash?(expected, actual_item)}
+    else
+      @diffs ||= []
+      diff = Pact::Matchers.diff(expected, actual.to_hash)
+      @diffs << diff
+      diff.empty?
+    end
   end
 end
