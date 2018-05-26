@@ -32,7 +32,7 @@ module PactBroker
         rows = rows.all.group_by(&:pact_publication_id).values.collect{ | rows| Matrix::AggregatedRow.new(rows) }
 
         rows.sort.collect do | row |
-          # TODO simplify
+          # TODO simplify. Do we really need 3 layers of abstraction?
           PactBroker::Domain::IndexItem.create(
             row.consumer,
             row.provider,
