@@ -8,6 +8,9 @@ module PactBroker
       before do
         allow(PactBroker::Api::PactBrokerUrls).to receive(:pact_url).and_return('http://example.org/pact-url')
         allow(PactBroker.configuration).to receive(:base_url).and_return('http://example.org')
+        allow(PactBroker.logger).to receive(:info).and_call_original
+        allow(PactBroker.logger).to receive(:debug).and_call_original
+        allow(PactBroker.logger).to receive(:warn).and_call_original
       end
 
       let(:username) { nil }
@@ -121,6 +124,14 @@ module PactBroker
           subject.execute(pact, options)
         end
 
+        it "does not write the response body to the exeuction log for security purposes" do
+          expect(logs).to_not include "An error"
+        end
+
+        it "logs a message about why there is no response information" do
+          expect(logs).to include "Webhook response has been redacted temporarily for security purposes"
+        end
+
         describe "execution logs" do
 
           it "logs the request method and path" do
@@ -143,12 +154,12 @@ module PactBroker
             expect(logs).to include "HTTP/1.0 200"
           end
 
-          it "logs the response headers" do
-            expect(logs).to include "Content-Type: text/foo, blah"
+          it "does not log the response headers" do
+            expect(logs).to_not include "Content-Type: text/foo, blah"
           end
 
-          it "logs the response body" do
-            expect(logs).to include "respbod"
+          it "does not log the response body" do
+            expect(logs).to_not include "respbod"
           end
 
           context "when the response code is a success" do
@@ -280,7 +291,7 @@ module PactBroker
           end
         end
 
-        context "when the response body contains a non UTF-8 character" do
+        context "when the response body contains a non UTF-8 character", pending: "execution logs disabled temporarily for security purposes" do
           let!(:http_request) do
             stub_request(:post, "http://example.org/hook").
               to_return(:status => 200, :body => "This has some \xC2 invalid chars")

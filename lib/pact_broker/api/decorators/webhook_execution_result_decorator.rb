@@ -34,11 +34,15 @@ module PactBroker
               represented.body
             end
           end
-
         end
 
-        property :error, :extend => ErrorDecorator
-        property :response, :extend => HTTPResponseDecorator
+        property :message, exec_context: :decorator
+        # property :error, :extend => ErrorDecorator
+        # property :response, :extend => HTTPResponseDecorator
+
+        def message
+          "Webhook response has been redacted temporarily for security purposes. Please see the Pact Broker application logs for the response body."
+        end
 
         link :webhook do | options |
           {
