@@ -28,6 +28,10 @@ module PactBroker
         contract.errors
       end
 
+      def self.blacklisted? webhook
+        PactBroker::Webhooks::CheckBlacklist.call(webhook.request.url).any?
+      end
+
       def self.create uuid, webhook, consumer, provider
         webhook_repository.create uuid, webhook, consumer, provider
       end

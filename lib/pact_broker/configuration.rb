@@ -33,6 +33,7 @@ module PactBroker
     attr_accessor :semver_formats
     attr_accessor :enable_public_badge_access, :shields_io_base_url
     attr_accessor :webhook_retry_schedule
+    attr_accessor :webhook_host_blacklist
     attr_accessor :disable_ssl_verification
     attr_accessor :base_equality_only_on_content_that_affects_verification_results
     attr_reader :api_error_reporters
@@ -72,6 +73,7 @@ module PactBroker
       config.order_versions_by_date = false
       config.semver_formats = ["%M.%m.%p%s%d", "%M.%m", "%M"]
       config.webhook_retry_schedule = [10, 60, 120, 300, 600, 1200] #10 sec, 1 min, 2 min, 5 min, 10 min, 20 min => 38 minutes
+      config.webhook_host_blacklist = ["localhost", "127.0.0.1","169.254.169.254", "192.0.0.0/8", "10.0.0.0/8", "172.0.0.0/8"]
       config.check_for_potential_duplicate_pacticipant_names = true
       config.disable_ssl_verification = false
       config

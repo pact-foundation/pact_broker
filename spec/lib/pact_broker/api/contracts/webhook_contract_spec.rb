@@ -10,6 +10,7 @@ module PactBroker
         let(:hash) { JSON.parse(json) }
         let(:webhook) { PactBroker::Api::Decorators::WebhookDecorator.new(Domain::Webhook.new).from_json(json) }
         let(:subject) { WebhookContract.new(webhook) }
+        let(:blacklist_matches_empty) { true }
 
         def valid_webhook_with
           hash = load_json_fixture 'webhook_valid.json'
@@ -18,8 +19,8 @@ module PactBroker
         end
 
         describe "errors" do
-
           before do
+            allow(PactBroker::Webhooks::CheckHostBlacklist).to receive(:call).and_return(double('matches', empty?: blacklist_matches_empty))
             subject.validate(hash)
           end
 
@@ -103,6 +104,11 @@ module PactBroker
             it "contains an error for invalid URL" do
               expect(subject.errors[:"request.url"]).to eq ["is not a valid URL eg. http://example.org"]
             end
+
+            it "doesn't check the blacklist" do
+              expect(PactBroker::Webhooks::CheckHostBlacklist).to_not receive(:call)
+              subject.validate(hash)
+            end
           end
 
           context "with an URL missing a scheme" do
@@ -116,8 +122,20 @@ module PactBroker
               expect(subject.errors[:"request.url"]).to eq ["is not a valid URL eg. http://example.org"]
             end
           end
-        end
 
+          context "with a blacklisted URL" do
+            let(:blacklist_matches_empty) { false }
+
+            it "checks the blacklist" do
+              expect(PactBroker::Webhooks::CheckHostBlacklist).to receive(:call).with("some.url")
+              subject.validate(hash)
+            end
+
+            it "contains an error for the URL" do
+              expect(subject.errors[:"request.url"]).to eq ["is blacklisted"]
+            end
+          end
+        end
       end
     end
   end
