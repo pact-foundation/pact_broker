@@ -1,3 +1,23 @@
+<a name="v2.19.2"></a>
+### v2.19.2 (2018-05-29)
+
+
+#### Features
+
+* load latest verification for consumer/provider via relationship rather than repository	 ([13b7c6e](/../../commit/13b7c6e))
+* include more columns in latest_verifications_for_consumer_version_tags to avoid having to do extra queries for pact_versions and provider_versions	 ([e366af4](/../../commit/e366af4))
+* optimise queries for index page with tags	 ([524e08d](/../../commit/524e08d))
+* create view for latest verifications for consumer version tags	 ([eb67511](/../../commit/eb67511))
+* log pact content as debug instead of info when publishing	 ([d116157](/../../commit/d116157))
+* allow pact equality to be based only on the content that affects verification results	 ([bf8130f](/../../commit/bf8130f))
+
+
+#### Bug Fixes
+
+* temporarily redact webhook response body from UI for security purposes	 ([becf20c](/../../commit/becf20c))
+* handle race condition causing unique constraint violation when creating pacticipant versions	 ([6c75ebd](/../../commit/6c75ebd))
+
+
 <a name="v2.19.1"></a>
 ### v2.19.1 (2018-05-18)
 
