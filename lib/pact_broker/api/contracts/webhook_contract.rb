@@ -1,6 +1,6 @@
 require 'reform'
 require 'reform/form'
-require 'pact_broker/webhooks/check_host_blacklist'
+require 'pact_broker/webhooks/service'
 
 module PactBroker
   module Api
@@ -49,7 +49,7 @@ module PactBroker
               end
 
               def webhook_url_allowed?(value)
-                PactBroker::Webhooks::CheckHostBlacklist.call(URI(value).host).empty?
+                !PactBroker::Webhooks::Service.url_blacklisted?(value)
               end
             end
 

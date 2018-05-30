@@ -7,18 +7,15 @@ require 'net/http'
 require 'pact_broker/webhooks/redact_logs'
 require 'pact_broker/api/pact_broker_urls'
 require 'pact_broker/build_http_options'
+require 'pact_broker/webhooks/webhook_blacklisted_error'
 
 module PactBroker
-
   module Domain
-
-    class WebhookRequestError < StandardError
-
+    class WebhookRequestError < PactBroker::Error
       def initialize message, response
         super message
         @response = response
       end
-
     end
 
     class WebhookRequest
@@ -62,8 +59,15 @@ module PactBroker
 
       private
 
+      def check_url_allowed uri
+        if PactBroker::Webhooks::CheckHostBlacklist.call(uri.host).any?
+          raise PactBroker::Webhooks::WebhookBlacklistedError.new("Webhook URL #{uri} is blacklisted")
+        end
+      end
+
       def execute_and_build_result pact, options, logs, execution_logger
         uri = build_uri(pact)
+        check_url_allowed(uri)
         req = build_request(uri, pact, execution_logger)
         response = do_request(uri, req)
         log_response(response, execution_logger)

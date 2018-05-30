@@ -13,6 +13,15 @@ module PactBroker
           ["POST"]
         end
 
+        def malformed_request?
+          if webhook_service.webhook_blacklisted?(webhook)
+            set_json_validation_error_messages("webhook.request.url" => "is blacklisted")
+            true
+          else
+            false
+          end
+        end
+
         def process_post
           webhook_execution_result = webhook_service.execute_webhook_now webhook, pact
           response.headers['Content-Type'] = 'application/hal+json;charset=utf-8'

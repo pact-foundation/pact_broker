@@ -11,7 +11,10 @@ module PactBroker
 
           before do
             allow(PactBroker::Webhooks::Service).to receive(:find_by_uuid).and_return(webhook)
+            allow(PactBroker::Webhooks::Service).to receive(:webhook_blacklisted?).and_return(blacklisted)
           end
+
+          let(:blacklisted) { false }
 
           subject { post "/webhooks/some-uuid/execute"}
 
@@ -77,6 +80,20 @@ module PactBroker
               it "includes the execution result JSON in the body" do
                 subject
                 expect(last_response.body).to eq json
+              end
+            end
+
+            context "when the webhook host is blacklisted" do
+              let(:blacklisted) { true }
+
+              it "returns a 400" do
+                subject
+                expect(last_response.status).to eq 400
+              end
+
+              it "returns a 400" do
+                subject
+                expect(JSON.parse(last_response.body)['errors']).to eq "webhook.request.url" => "is blacklisted"
               end
             end
           end

@@ -29,6 +29,7 @@ RSpec.configure do | config |
   config.before :each do
     PactBroker.reset_configuration
     PactBroker.configuration.base_equality_only_on_content_that_affects_verification_results = false
+    PactBroker.configuration.webhook_host_blacklist = []
     require 'pact_broker/badges/service'
     PactBroker::Badges::Service.clear_cache
   end

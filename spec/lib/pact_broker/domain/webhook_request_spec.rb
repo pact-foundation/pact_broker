@@ -11,6 +11,7 @@ module PactBroker
         allow(PactBroker.logger).to receive(:info).and_call_original
         allow(PactBroker.logger).to receive(:debug).and_call_original
         allow(PactBroker.logger).to receive(:warn).and_call_original
+        allow(PactBroker::Webhooks::CheckHostBlacklist).to receive(:call).and_return([])
       end
 
       let(:username) { nil }
@@ -102,6 +103,27 @@ module PactBroker
           it "replaces the token with the live value" do
             subject.execute(pact, options)
             expect(http_request).to have_been_made
+          end
+        end
+
+        it "checks if the host is blacklisted" do
+          expect(PactBroker::Webhooks::CheckHostBlacklist).to receive(:call).with('example.org')
+          subject.execute(pact, options)
+        end
+
+        context "when the URL is not allowed" do
+          before do
+            allow(PactBroker::Webhooks::CheckHostBlacklist).to receive(:call).and_return(['foo'])
+          end
+
+          it "does not execute the HTTP request" do
+            subject.execute(pact, options)
+            expect(http_request).to_not have_been_made
+          end
+
+          it "logs the error" do
+            subject.execute(pact, options)
+            expect(logs).to include ("PactBroker::Webhooks::WebhookBlacklistedError - Webhook URL http://example.org/hook is blacklisted")
           end
         end
 

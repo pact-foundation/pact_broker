@@ -91,6 +91,10 @@ module PactBroker
           (PactBroker.configuration.webhook_retry_schedule.size + 1) - number_of_attempts_made
         end
       end
+
+      def webhook_request_url
+        webhook.to_domain.request.url
+      end
     end
 
     TriggeredWebhook.plugin :timestamps, update_on_create: true

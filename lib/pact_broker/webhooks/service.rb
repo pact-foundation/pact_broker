@@ -6,9 +6,11 @@ require 'pact_broker/webhooks/job'
 require 'pact_broker/webhooks/triggered_webhook'
 require 'pact_broker/webhooks/status'
 require 'pact_broker/webhooks/webhook_event'
+require 'pact_broker/webhooks/check_host_blacklist'
+require 'pact_broker/error'
+require 'pact_broker/webhooks/webhook_blacklisted_error'
 
 module PactBroker
-
   module Webhooks
     class Service
 
@@ -22,6 +24,20 @@ module PactBroker
         SecureRandom.urlsafe_base64
       end
 
+      def self.webhook_blacklisted? webhook
+        url_blacklisted?(webhook.request.url)
+      end
+
+      def self.url_blacklisted? webhook_url
+        PactBroker::Webhooks::CheckHostBlacklist.call(URI(webhook_url).host).any?
+      end
+
+      def self.check_not_blacklisted triggered_webhook
+        if url_blacklisted?(triggered_webhook.webhook_request_url)
+          raise WebhookBlacklistedError.new("The URL for this webhook is blacklisted")
+        end
+      end
+
       def self.errors webhook
         contract = PactBroker::Api::Contracts::WebhookContract.new(webhook)
         contract.validate(webhook.attributes)
@@ -29,7 +45,7 @@ module PactBroker
       end
 
       def self.blacklisted? webhook
-        PactBroker::Webhooks::CheckBlacklist.call(webhook.request.url).any?
+        PactBroker::Webhooks::CheckHostBlacklist.call(webhook.request.url).any?
       end
 
       def self.create uuid, webhook, consumer, provider
