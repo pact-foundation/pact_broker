@@ -8,13 +8,9 @@ module PactBroker
       before do
         allow(PactBroker::Api::PactBrokerUrls).to receive(:pact_url).and_return('http://example.org/pact-url')
         allow(PactBroker.configuration).to receive(:base_url).and_return('http://example.org')
-        allow(PactBroker.logger).to receive(:info).and_call_original
-        allow(PactBroker.logger).to receive(:debug).and_call_original
-        allow(PactBroker.logger).to receive(:warn).and_call_original
         allow(PactBroker::Webhooks::Render).to receive(:call) do | content, pact, verification, &block |
           content
         end
-      end
 
       let(:username) { nil }
       let(:password) { nil }
@@ -143,12 +139,12 @@ module PactBroker
             expect(logs).to include "HTTP/1.0 200"
           end
 
-          it "does not log the response headers" do
-            expect(logs).to_not include "Content-Type: text/foo, blah"
+          it "logs the response headers" do
+            expect(logs).to include "Content-Type: text/foo, blah"
           end
 
-          it "does not log the response body" do
-            expect(logs).to_not include "respbod"
+          it "logs the response body" do
+            expect(logs).to include "respbod"
           end
 
           context "when the response code is a success" do
@@ -249,6 +245,7 @@ module PactBroker
         end
 
         context "when the request is not successful" do
+
           let!(:http_request) do
             stub_request(:post, "http://example.org/hook").
               with(:headers => {'Content-Type'=>'text/plain'}, :body => 'body').
@@ -264,7 +261,7 @@ module PactBroker
           end
         end
 
-        context "when the response body contains a non UTF-8 character", pending: "execution logs disabled temporarily for security purposes" do
+        context "when the response body contains a non UTF-8 character" do
           let!(:http_request) do
             stub_request(:post, "http://example.org/hook").
               to_return(:status => 200, :body => "This has some \xC2 invalid chars")

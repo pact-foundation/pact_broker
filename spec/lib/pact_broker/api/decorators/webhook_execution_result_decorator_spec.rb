@@ -30,11 +30,7 @@ module PactBroker
             expect(subject[:_links][:webhook][:href]).to eq 'http://example.org/webhooks/some-uuid'
           end
 
-          it "includes a message about the response being redacted" do
-            expect(subject[:message]).to match /redacted/
-          end
-
-          context "when there is an error", pending: "temporarily disabled" do
+          context "when there is an error" do
             let(:error) { double('error', message: 'message', backtrace: ['blah','blah']) }
 
             it "includes the message" do
@@ -46,7 +42,7 @@ module PactBroker
             end
           end
 
-          context "when there is a response", pending: "temporarily disabled" do
+          context "when there is a response" do
             it "includes the response code" do
               expect(subject[:response][:status]).to eq 200
             end

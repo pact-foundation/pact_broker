@@ -112,19 +112,18 @@ module PactBroker
         execution_logger.info(" ")
         logger.info "Received response for webhook #{uuid} status=#{response.code}"
         execution_logger.info "HTTP/#{response.http_version} #{response.code} #{response.message}"
-        #response.each_header do | header |
-        #  execution_logger.info "#{header.split("-").collect(&:capitalize).join('-')}: #{response[header]}"
-        #end
+        response.each_header do | header |
+          execution_logger.info "#{header.split("-").collect(&:capitalize).join('-')}: #{response[header]}"
+        end
         logger.debug "body=#{response.body}"
-        # safe_body = nil
-        # if response.body
-        #   safe_body = response.body.encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
-        #   if response.body != safe_body
-        #     execution_logger.debug "Note that invalid UTF-8 byte sequences were removed from response body before saving the logs"
-        #   end
-        # end
-        #execution_logger.info safe_body
-        execution_logger.info "Webhook response has been redacted temporarily for security purposes. Please see the Pact Broker application logs for the response body."
+        safe_body = nil
+        if response.body
+          safe_body = response.body.encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
+          if response.body != safe_body
+            execution_logger.debug "Note that invalid UTF-8 byte sequences were removed from response body before saving the logs"
+          end
+        end
+        execution_logger.info safe_body
       end
 
       def log_completion_message options, execution_logger, success
