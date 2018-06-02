@@ -10,6 +10,7 @@ module PactBroker
         let(:hash) { JSON.parse(json) }
         let(:webhook) { PactBroker::Api::Decorators::WebhookDecorator.new(Domain::Webhook.new).from_json(json) }
         let(:subject) { WebhookContract.new(webhook) }
+        let(:matching_hosts) { ['foo'] }
 
         def valid_webhook_with
           hash = load_json_fixture 'webhook_valid.json'
@@ -18,10 +19,12 @@ module PactBroker
         end
 
         describe "errors" do
-
           before do
+            PactBroker.configuration.webhook_http_method_whitelist = webhook_http_method_whitelist
             subject.validate(hash)
           end
+
+          let(:webhook_http_method_whitelist) { ['POST'] }
 
           context "with valid fields" do
             it "is empty" do
@@ -78,6 +81,40 @@ module PactBroker
 
             it "contains an error for invalid method" do
               expect(subject.errors[:"request.http_method"]).to include "is not a recognised HTTP method"
+            end
+          end
+
+          context "with an invalid scheme" do
+            let(:json) do
+              valid_webhook_with do |hash|
+                hash['request']['url'] = 'ftp://foo'
+              end
+            end
+
+            it "contains an error for the URL" do
+              expect(subject.errors[:"request.url"]).to include "must be https. See /doc/webhooks#whitelist for more information."
+            end
+          end
+
+          context "with an HTTP method that is not whitelisted" do
+            let(:json) do
+              valid_webhook_with do |hash|
+                hash['request']['method'] = 'DELETE'
+              end
+            end
+
+            context "when there is only one allowed HTTP method" do
+              it "contains an error for invalid method" do
+                expect(subject.errors[:"request.http_method"]).to include "must be POST. See /doc/webhooks#whitelist for more information."
+              end
+            end
+
+            context "when there is more than one allowed HTTP method", pending: "need to work out how to dynamically create this message" do
+              let(:webhook_http_method_whitelist) { ['POST', 'GET'] }
+
+              it "contains an error for invalid method" do
+                expect(subject.errors[:"request.http_method"]).to include "must be one of POST, GET"
+              end
             end
           end
 

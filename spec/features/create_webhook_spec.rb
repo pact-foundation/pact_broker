@@ -43,7 +43,7 @@ describe "Creating a webhook" do
         }],
         request: {
           method: 'POST',
-          url: 'http://example.org',
+          url: 'https://example.org',
           headers: {
             :"Content-Type" => "application/json"
           },

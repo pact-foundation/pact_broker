@@ -54,6 +54,15 @@ A request body can be specified as well.
 
 **BEWARE** The password can be reverse engineered from the database, so make a separate account for the Pact Broker to use, don't use your personal account!
 
+<a name="whitelist"></a>
+#### Webhook Whitelist
+
+To ensure that webhooks cannot be used maliciously to expose either data about your contracts or your internal network, the following validation rules are applied to webhooks via the Pact Broker configuration settings.
+
+* **Scheme**: Must be included in the `webhook_scheme_whitelist`, which by default only includes `https`. You can change this to include `http` if absolutely necessary, however, keep in mind that the body of any http traffic is visible to the network. You can load a self signed certificate into the Pact Broker to be used for https connections using `script/insert-self-signed-certificate-from-url.rb` in the Pact Broker repository.
+
+* **HTTP method**: Must be included in the `webhook_http_method_whitelist`, which by default only includes `POST`. It is highly recommended that only `POST` requests are allowed to ensure that webhooks cannot be used to retrieve sensitive information from hosts within the same network.
+
 #### Event types
 
 `contract_content_changed:` triggered when the content of the contract has changed since the previous publication. Uses plain string equality, so changes to the ordering of hash keys, or whitespace changes will trigger this webhook.
