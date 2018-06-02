@@ -11,10 +11,10 @@ DATABASE_CREDENTIALS = {adapter: "sqlite", database: "pact_broker_database.sqlit
 # For postgres:
 #
 # $ psql postgres -c "CREATE DATABASE pact_broker;"
-# $ psql postgres -c "CREATE ROLE pact_broker WITH LOGIN PASSWORD 'pact_broker';"
+# $ psql postgres -c "CREATE ROLE pact_broker WITH LOGIN PASSWORD 'CHANGE_ME';"
 # $ psql postgres -c "GRANT ALL PRIVILEGES ON DATABASE pact_broker TO pact_broker;"
 #
-# DATABASE_CREDENTIALS = {adapter: "postgres", database: "pact_broker", username: 'pact_broker', password: 'pact_broker', :encoding => 'utf8'}
+# DATABASE_CREDENTIALS = {adapter: "postgres", database: "pact_broker", username: 'pact_broker', password: 'CHANGE_ME', :encoding => 'utf8'}
 
 # Have a look at the Sequel documentation to make decisions about things like connection pooling
 # and connection validation.
@@ -25,7 +25,6 @@ app = PactBroker::App.new do | config |
   # change these from their default values if desired
   # config.log_dir = "./log"
   # config.auto_migrate_db = true
-  # config.use_hal_browser = true
   config.database_connection = Sequel.connect(DATABASE_CREDENTIALS.merge(:logger => config.logger))
 end
 

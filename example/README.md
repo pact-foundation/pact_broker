@@ -1,5 +1,7 @@
 # Run Pact Broker example
 
+The configuration for this example should not be used in production. Either use the [Docker Pact Broker image][docker-pact-broker], or copy the [pact_broker directory][pact-broker-dir] from the Docker project as your starting point. Ensure you configure a web server/reverse proxy (such as Passenger/Nginx) in front of it (you can also copy the configuration for these from the Docker image.)
+
 Clone project
 
 ```bash
@@ -40,7 +42,7 @@ Set up postgres database
 
 ```bash
 psql postgres -c "CREATE DATABASE pact_broker;"
-psql postgres -c "CREATE ROLE pact_broker WITH LOGIN PASSWORD 'pact_broker';"
+psql postgres -c "CREATE ROLE pact_broker WITH LOGIN PASSWORD 'CHANGE_ME';"
 psql postgres -c "GRANT ALL PRIVILEGES ON DATABASE pact_broker TO pact_broker;"
 ```
 
@@ -63,3 +65,7 @@ psql pact_broker < example_data.sql
 ```
 
 Now Pact Broker can be access locally at [http://localhost:9292](http://localhost:9292).
+
+[docker-pact-broker]: https://github.com/DiUS/pact_broker-docker
+[pact-broker-dir]: https://github.com/DiUS/pact_broker-docker/tree/master/pact_broker
+
