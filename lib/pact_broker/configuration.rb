@@ -146,6 +146,10 @@ module PactBroker
       end
     end
 
+    def show_webhook_response?
+      webhook_host_whitelist.any?
+    end
+
     def enable_badge_resources= enable_badge_resources
       puts "Pact Broker configuration property `enable_badge_resources` is deprecated. Please use `enable_public_badge_access`"
       self.enable_public_badge_access = enable_badge_resources

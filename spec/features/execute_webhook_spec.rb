@@ -23,8 +23,9 @@ describe "Execute a webhook" do
 
   context "when the execution is successful" do
     let!(:request) do
-      stub_request(:post, /http/).with(body: 'http://example.org/pacts/provider/Bar/consumer/Foo/version/1').to_return(:status => 200)
+      stub_request(:post, /http/).with(body: 'http://example.org/pacts/provider/Bar/consumer/Foo/version/1').to_return(:status => 200, body: response_body)
     end
+    let(:response_body) { "webhook-response-body" }
 
     it "performs the HTTP request" do
       subject
@@ -41,6 +42,36 @@ describe "Execute a webhook" do
 
     it "saves a WebhookExecution" do
       expect { subject }.to change { PactBroker::Webhooks::Execution.count }.by(1)
+    end
+
+    context "when a webhook host whitelist is not configured" do
+      before do
+        allow(PactBroker.configuration).to receive(:show_webhook_response?).and_return(false)
+      end
+
+      it "does not show any response details" do
+        expect(subject.body).to_not include response_body
+      end
+
+      it "does not log any response details" do
+        subject
+        expect(PactBroker::Webhooks::Execution.order(:id).last.logs).to_not include response_body
+      end
+    end
+
+    context "when a webhook host whitelist is configured" do
+      before do
+        allow(PactBroker.configuration).to receive(:show_webhook_response?).and_return(true)
+      end
+
+      it "includes response details" do
+        expect(subject.body).to include response_body
+      end
+
+      it "logs the response details" do
+        subject
+        expect(PactBroker::Webhooks::Execution.order(:id).last.logs).to include response_body
+      end
     end
   end
 

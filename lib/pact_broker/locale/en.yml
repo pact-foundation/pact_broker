@@ -9,6 +9,8 @@ en:
     valid_consumer_version_number?: "Consumer version number '%{value}' cannot be parsed to a version number. The expected format (unless this configuration has been overridden) is a semantic version. eg. 1.3.0 or 2.0.4.rc1"
 
   pact_broker:
+    messages:
+      response_body_hidden: For security purposes, the response details are not logged. To enable response logging, configure the webhook_host_whitelist property. See /doc/webhooks#whitelist for more information.
     errors:
       validation:
         blank: "cannot be blank."

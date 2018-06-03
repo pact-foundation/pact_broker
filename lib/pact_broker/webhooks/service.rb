@@ -61,7 +61,8 @@ module PactBroker
 
       def self.execute_webhook_now webhook, pact
         triggered_webhook = webhook_repository.create_triggered_webhook(next_uuid, webhook, pact, USER)
-        webhook_execution_result = execute_triggered_webhook_now triggered_webhook, failure_log_message: "Webhook execution failed"
+        options = { failure_log_message: "Webhook execution failed", show_response: PactBroker.configuration.show_webhook_response?}
+        webhook_execution_result = execute_triggered_webhook_now triggered_webhook, options
         if webhook_execution_result.success?
           webhook_repository.update_triggered_webhook_status triggered_webhook, TriggeredWebhook::STATUS_SUCCESS
         else

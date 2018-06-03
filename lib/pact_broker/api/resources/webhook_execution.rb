@@ -32,7 +32,7 @@ module PactBroker
         private
 
         def post_response_body webhook_execution_result
-          Decorators::WebhookExecutionResultDecorator.new(webhook_execution_result).to_json(user_options: { base_url: base_url, webhook: webhook })
+          Decorators::WebhookExecutionResultDecorator.new(webhook_execution_result).to_json(user_options: user_options)
         end
 
         def webhook
@@ -46,8 +46,11 @@ module PactBroker
         def uuid
           identifier_from_path[:uuid]
         end
+
+        def user_options
+          { base_url: base_url, webhook: webhook, show_response: PactBroker.configuration.show_webhook_response? }
+        end
       end
     end
   end
-
 end

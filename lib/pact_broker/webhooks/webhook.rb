@@ -5,7 +5,6 @@ require 'pact_broker/domain/pacticipant'
 module PactBroker
   module Webhooks
     class Webhook < Sequel::Model
-
       set_primary_key :id
       associate(:many_to_one, :provider, :class => "PactBroker::Domain::Pacticipant", :key => :provider_id, :primary_key => :id)
       associate(:many_to_one, :consumer, :class => "PactBroker::Domain::Pacticipant", :key => :consumer_id, :primary_key => :id)
@@ -84,13 +83,11 @@ module PactBroker
           is_json_request_body: is_json_request_body
         }
       end
-
     end
 
     Webhook.plugin :timestamps, :update_on_create=>true
 
     class WebhookHeader < Sequel::Model
-
       associate(:many_to_one, :webhook, :class => "PactBroker::Repositories::Webhook", :key => :webhook_id, :primary_key => :id)
 
       def self.from_domain name, value, webhook_id
@@ -100,8 +97,6 @@ module PactBroker
         db_header.webhook_id = webhook_id
         db_header
       end
-
     end
   end
-
 end

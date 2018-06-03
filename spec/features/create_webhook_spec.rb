@@ -76,5 +76,4 @@ describe "Creating a webhook" do
       expect(response_body).to include webhook_hash
     end
   end
-
 end
