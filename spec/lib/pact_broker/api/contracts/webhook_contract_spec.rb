@@ -21,10 +21,14 @@ module PactBroker
         describe "errors" do
           before do
             PactBroker.configuration.webhook_http_method_whitelist = webhook_http_method_whitelist
+            PactBroker.configuration.webhook_host_whitelist = webhook_host_whitelist
+            allow(PactBroker::Webhooks::CheckHostWhitelist).to receive(:call).and_return(whitelist_matches)
             subject.validate(hash)
           end
 
           let(:webhook_http_method_whitelist) { ['POST'] }
+          let(:whitelist_matches) { ['foo'] }
+          let(:webhook_host_whitelist) { [] }
 
           context "with valid fields" do
             it "is empty" do
@@ -92,7 +96,7 @@ module PactBroker
             end
 
             it "contains an error for the URL" do
-              expect(subject.errors[:"request.url"]).to include "must be https. See /doc/webhooks#whitelist for more information."
+              expect(subject.errors[:"request.url"]).to include "scheme must be https. See /doc/webhooks#whitelist for more information."
             end
           end
 
@@ -114,6 +118,28 @@ module PactBroker
 
               it "contains an error for invalid method" do
                 expect(subject.errors[:"request.http_method"]).to include "must be one of POST, GET"
+              end
+            end
+          end
+
+          context "when the host whitelist is empty" do
+            it "does not attempt to validate the host" do
+              expect(PactBroker::Webhooks::CheckHostWhitelist).to_not have_received(:call)
+            end
+          end
+
+          context "when the host whitelist is populated" do
+            let(:webhook_host_whitelist) { [/foo/, "bar"] }
+
+            it "validates the host" do
+              expect(PactBroker::Webhooks::CheckHostWhitelist).to have_received(:call).with("some.url", webhook_host_whitelist)
+            end
+
+            context "when the host does not match the whitelist" do
+              let(:whitelist_matches) { [] }
+
+              it "contains an error", pending: "need to work out how to do dynamic messages" do
+                expect(subject.errors[:"request.url"]).to include "host must be in the whitelist /foo/, \"bar\" . See /doc/webhooks#whitelist for more information."
               end
             end
           end

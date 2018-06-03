@@ -1,5 +1,6 @@
 require 'reform'
 require 'reform/form'
+require 'pact_broker/webhooks/check_host_whitelist'
 
 module PactBroker
   module Api
@@ -41,7 +42,8 @@ module PactBroker
                   en: {
                     errors: {
                       allowed_webhook_method?: http_method_error_message,
-                      allowed_webhook_scheme?: scheme_error_message
+                      allowed_webhook_scheme?: scheme_error_message,
+                      allowed_webhook_host?: host_error_message
                     }
                   }
                 )
@@ -56,7 +58,11 @@ module PactBroker
               end
 
               def self.scheme_error_message
-                "must be #{PactBroker.configuration.webhook_scheme_whitelist.join(", ")}. See /doc/webhooks#whitelist for more information."
+                "scheme must be #{PactBroker.configuration.webhook_scheme_whitelist.join(", ")}. See /doc/webhooks#whitelist for more information."
+              end
+
+              def self.host_error_message
+                "host must be in the whitelist #{PactBroker.configuration.webhook_host_whitelist.join(",")}. See /doc/webhooks#whitelist for more information."
               end
 
               def valid_method?(http_method)
@@ -82,10 +88,22 @@ module PactBroker
                   scheme.downcase == allowed_scheme.downcase
                 end
               end
+
+              def allowed_webhook_host?(url)
+                if host_whitelist.any?
+                  PactBroker::Webhooks::CheckHostWhitelist.call(URI(url).host, host_whitelist).any?
+                else
+                  true
+                end
+              end
+
+              def host_whitelist
+                PactBroker.configuration.webhook_host_whitelist
+              end
             end
 
             required(:http_method).filled(:valid_method?, :allowed_webhook_method?)
-            required(:url).filled(:valid_url?, :allowed_webhook_scheme?)
+            required(:url).filled(:valid_url?, :allowed_webhook_scheme?, :allowed_webhook_host?)
           end
         end
 

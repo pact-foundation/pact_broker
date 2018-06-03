@@ -30,10 +30,10 @@ module PactBroker
     attr_accessor :validate_database_connection_config, :enable_diagnostic_endpoints, :version_parser, :sha_generator
     attr_accessor :use_case_sensitive_resource_names, :order_versions_by_date
     attr_accessor :check_for_potential_duplicate_pacticipant_names
-    attr_accessor :webhook_http_method_whitelist, :webhook_scheme_whitelist
+    attr_accessor :webhook_http_method_whitelist, :webhook_scheme_whitelist, :webhook_host_whitelist
+    attr_accessor :webhook_retry_schedule
     attr_accessor :semver_formats
     attr_accessor :enable_public_badge_access, :shields_io_base_url
-    attr_accessor :webhook_retry_schedule
     attr_accessor :disable_ssl_verification
     attr_accessor :base_equality_only_on_content_that_affects_verification_results
     attr_reader :api_error_reporters
@@ -77,6 +77,7 @@ module PactBroker
       config.disable_ssl_verification = false
       config.webhook_http_method_whitelist = ['POST']
       config.webhook_scheme_whitelist = ['https']
+      config.webhook_host_whitelist = []
       config
     end
 
