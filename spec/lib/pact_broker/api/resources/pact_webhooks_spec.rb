@@ -93,7 +93,7 @@ module PactBroker::Api
 
           it "returns a JSON content type" do
             subject
-            expect(last_response.headers['Content-Type']).to eq 'application/json;charset=utf-8'
+            expect(last_response.headers['Content-Type']).to eq 'application/hal+json;charset=utf-8'
           end
 
           it "returns an error message" do
@@ -111,7 +111,7 @@ module PactBroker::Api
 
           it "returns a JSON content type" do
             subject
-            expect(last_response.headers['Content-Type']).to eq 'application/json;charset=utf-8'
+            expect(last_response.headers['Content-Type']).to eq 'application/hal+json;charset=utf-8'
           end
 
           it "returns an error message" do
@@ -132,7 +132,7 @@ module PactBroker::Api
 
           it "returns a JSON content type" do
             subject
-            expect(last_response.headers['Content-Type']).to eq 'application/json;charset=utf-8'
+            expect(last_response.headers['Content-Type']).to eq 'application/hal+json;charset=utf-8'
           end
 
           it "returns the validation errors" do
