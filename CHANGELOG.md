@@ -1,3 +1,20 @@
+<a name="v2.20.0"></a>
+### v2.20.0 (2018-06-03)
+
+
+#### Features
+
+* only log webhook response details when a webhook host whitelist has been configured	 ([3e1c562](/../../commit/3e1c562))
+* validate webhook host against configurable list on creation	 ([077e37f](/../../commit/077e37f))
+* validate webhook scheme and http method against configurable lists on creation	 ([d7a2b0a](/../../commit/d7a2b0a))
+* add ${pactbroker.consumerVersionNumber} to webhook templates	 ([d525527](/../../commit/d525527))
+
+
+#### Bug Fixes
+
+* correct all content types that were application/json to application/hal+json	 ([690e39b](/../../commit/690e39b))
+
+
 <a name="v2.19.2"></a>
 ### v2.19.2 (2018-05-29)
 
