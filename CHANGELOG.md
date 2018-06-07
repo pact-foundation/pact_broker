@@ -1,17 +1,3 @@
-<a name="v2.20.0"></a>
-### v2.20.0 (2018-06-08)
-
-
-#### Features
-
-* add ${pactbroker.consumerVersionNumber} to webhook templates	 ([d525527](/../../commit/d525527))
-
-
-#### Bug Fixes
-
-* correct all content types that were application/json to application/hal+json	 ([690e39b](/../../commit/690e39b))
-
-
 <a name="v2.19.2"></a>
 ### v2.19.2 (2018-05-29)
 
