@@ -5,8 +5,10 @@ require 'pact_broker/logging'
 require 'pact_broker/messages'
 require 'net/http'
 require 'pact_broker/webhooks/redact_logs'
+require 'pact_broker/webhooks/render'
 require 'pact_broker/api/pact_broker_urls'
 require 'pact_broker/build_http_options'
+require 'cgi'
 
 module PactBroker
 
@@ -91,11 +93,7 @@ module PactBroker
         req.basic_auth(username, password) if username
 
         unless body.nil?
-          if String === body
-            req.body = gsub_body(pact, body)
-          else
-            req.body = gsub_body(pact, body.to_json)
-          end
+          req.body = PactBroker::Webhooks::Render.call(String === body ? body : body.to_json, pact)
         end
 
         execution_logger.info req.body
@@ -150,25 +148,13 @@ module PactBroker
       end
 
       def build_uri pact
-        URI(gsub_url(pact, url))
+        URI(PactBroker::Webhooks::Render.call(url, pact){ | value | CGI::escape(value)} )
       end
 
       def url_with_credentials pact
         u = build_uri(pact)
         u.userinfo = "#{CGI::escape username}:#{display_password}" if username
         u
-      end
-
-      def gsub_body pact, body
-        base_url = PactBroker.configuration.base_url
-        body.gsub('${pactbroker.pactUrl}', PactBroker::Api::PactBrokerUrls.pact_url(base_url, pact))
-      end
-
-      def gsub_url pact, url
-        base_url = PactBroker.configuration.base_url
-        pact_url = PactBroker::Api::PactBrokerUrls.pact_url(base_url, pact)
-        escaped_pact_url = CGI::escape(pact_url)
-        url.gsub('${pactbroker.pactUrl}', escaped_pact_url)
       end
     end
   end

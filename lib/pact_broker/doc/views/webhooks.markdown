@@ -65,6 +65,7 @@ A request body can be specified as well.
 The following variables may be used in the request parameters or body, and will be replaced with their appropriate values at runtime.
 
 `${pactbroker.pactUrl}`: the "permalink" URL to the newly published pact (the URL specifying the consumer version URL, rather than the "/latest" format.)
+`${pactbroker.consumerVersionNumber}`: the version number of the most recent consumer version associated with the pact content.
 
 Example usage:
 

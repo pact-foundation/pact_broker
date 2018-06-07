@@ -11,6 +11,9 @@ module PactBroker
         allow(PactBroker.logger).to receive(:info).and_call_original
         allow(PactBroker.logger).to receive(:debug).and_call_original
         allow(PactBroker.logger).to receive(:warn).and_call_original
+        allow(PactBroker::Webhooks::Render).to receive(:call) do | content, pact, verification, &block |
+          content
+        end
       end
 
       let(:username) { nil }
@@ -57,51 +60,37 @@ module PactBroker
       describe "execute" do
         let!(:http_request) do
           stub_request(:post, "http://example.org/hook").
-            with(:headers => {'Content-Type'=>'text/plain'}, :body => 'body').
+            with(:headers => {'Content-Type'=>'text/plain'}, :body => request_body).
             to_return(:status => 200, :body => "respbod", :headers => {'Content-Type' => 'text/foo, blah'})
         end
 
-        describe "when the String body contains a ${pactbroker.pactUrl} parameter" do
-          let!(:http_request) do
-            stub_request(:post, "http://example.org/hook").
-              with(:headers => {'Content-Type'=>'text/plain'}, :body => "<xml><url>http://example.org/pact-url</url></xml>").
-              to_return(:status => 200)
+        let(:request_body) { 'body' }
+
+        it "renders the url template" do
+          expect(PactBroker::Webhooks::Render).to receive(:call).with("http://example.org/hook", pact) do | content, pact, verification, &block |
+            expect(content).to eq "http://example.org/hook"
+            expect(pact).to be pact
+            expect(verification).to be nil
+            expect(block.call("foo bar")).to eq "foo+bar"
+            "http://example.org/hook"
           end
+          subject.execute(pact, options)
+        end
 
-          let(:body) { "<xml><url>${pactbroker.pactUrl}</url></xml>" }
-
-          it "replaces the token with the live value" do
+        context "when the body is a string" do
+          it "renders the body template with the String" do
+            expect(PactBroker::Webhooks::Render).to receive(:call).with('body', pact)
             subject.execute(pact, options)
-            expect(http_request).to have_been_made
           end
         end
 
-        describe "when the JSON body contains a ${pactbroker.pactUrl} parameter" do
-          let!(:http_request) do
-            stub_request(:post, "http://example.org/hook").
-              with(:headers => {'Content-Type'=>'text/plain'}, :body => '{"url":"http://example.org/pact-url"}').
-              to_return(:status => 200)
-          end
+        context "when the body is an object" do
+          let(:body) { {"foo" => "bar"} }
+          let(:request_body) { '{"foo":"bar"}' }
 
-          let(:body) { { url: '${pactbroker.pactUrl}' } }
-
-          it "replaces the token with the live value" do
+          it "renders the body template with JSON" do
+            expect(PactBroker::Webhooks::Render).to receive(:call).with(request_body, pact)
             subject.execute(pact, options)
-            expect(http_request).to have_been_made
-          end
-        end
-
-        describe "when the URL contains a ${pactbroker.pactUrl} parameter" do
-          let!(:http_request) do
-            stub_request(:post, "http://example.org/hook?url=http%3A%2F%2Fexample.org%2Fpact-url").
-              to_return(:status => 200)
-          end
-
-          let(:url) { 'http://example.org/hook?url=${pactbroker.pactUrl}' }
-
-          it "replaces the token with the live value" do
-            subject.execute(pact, options)
-            expect(http_request).to have_been_made
           end
         end
 
@@ -234,21 +223,6 @@ module PactBroker
           end
         end
 
-        context "when the request has a JSONable body" do
-          let(:body) { [{"some": "json"}] }
-
-          let!(:http_request) do
-            stub_request(:post, "http://example.org/hook").
-              with(:headers => {'Content-Type'=>'text/plain'}, :body => body.to_json).
-              to_return(:status => 200, :body => "respbod", :headers => {'Content-Type' => 'text/foo, blah'})
-          end
-
-          it "converts the body to JSON before submitting the request" do
-            subject.execute(pact, options)
-            expect(http_request).to have_been_made
-          end
-        end
-
         context "when the request has a nil body" do
           let(:body) { nil }
 
@@ -275,7 +249,6 @@ module PactBroker
         end
 
         context "when the request is not successful" do
-
           let!(:http_request) do
             stub_request(:post, "http://example.org/hook").
               with(:headers => {'Content-Type'=>'text/plain'}, :body => 'body').
