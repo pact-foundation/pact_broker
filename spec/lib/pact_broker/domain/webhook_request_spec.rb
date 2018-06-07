@@ -11,6 +11,7 @@ module PactBroker
         allow(PactBroker::Webhooks::Render).to receive(:call) do | content, pact, verification, &block |
           content
         end
+      end
 
       let(:username) { nil }
       let(:password) { nil }
@@ -109,14 +110,6 @@ module PactBroker
           expect(PactBroker.logger).to receive(:debug).with(/content-type/)
           expect(PactBroker.logger).to receive(:debug).with(/respbod/)
           subject.execute(pact, options)
-        end
-
-        it "does not write the response body to the exeuction log for security purposes" do
-          expect(logs).to_not include "An error"
-        end
-
-        it "logs a message about why there is no response information" do
-          expect(logs).to include "Webhook response has been redacted temporarily for security purposes"
         end
 
         describe "execution logs" do
