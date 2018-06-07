@@ -14,7 +14,7 @@ describe "Creating a webhook" do
   let(:response_body) { JSON.parse(last_response.body, symbolize_names: true)}
   let(:webhook_json) do
     h = load_json_fixture('webhook_valid.json')
-    h['request']['method'] = 'GET'
+    h['request']['url'] = 'https://bar.com'
     h.to_json
   end
 
@@ -55,7 +55,7 @@ describe "Creating a webhook" do
 
     it "updates the webhook" do
       subject
-      expect(reloaded_webhook.request.method).to eq 'GET'
+      expect(reloaded_webhook.request.url).to eq 'https://bar.com'
     end
   end
 end

@@ -8,9 +8,6 @@ module PactBroker
       before do
         allow(PactBroker::Api::PactBrokerUrls).to receive(:pact_url).and_return('http://example.org/pact-url')
         allow(PactBroker.configuration).to receive(:base_url).and_return('http://example.org')
-        allow(PactBroker.logger).to receive(:info).and_call_original
-        allow(PactBroker.logger).to receive(:debug).and_call_original
-        allow(PactBroker.logger).to receive(:warn).and_call_original
         allow(PactBroker::Webhooks::Render).to receive(:call) do | content, pact, verification, &block |
           content
         end
@@ -22,7 +19,8 @@ module PactBroker
       let(:body) { 'body' }
       let(:logs) { StringIO.new }
       let(:execution_logger) { Logger.new(logs) }
-      let(:options) { {failure_log_message: 'oops'}}
+      let(:options) { {failure_log_message: 'oops', show_response: show_response} }
+      let(:show_response) { true }
       let(:pact) { instance_double('PactBroker::Domain::Pact') }
 
       subject do
@@ -109,16 +107,9 @@ module PactBroker
           allow(PactBroker.logger).to receive(:info)
           allow(PactBroker.logger).to receive(:debug)
           expect(PactBroker.logger).to receive(:info).with(/response.*200/)
+          expect(PactBroker.logger).to receive(:debug).with(/content-type/)
           expect(PactBroker.logger).to receive(:debug).with(/respbod/)
           subject.execute(pact, options)
-        end
-
-        it "does not write the response body to the exeuction log for security purposes" do
-          expect(logs).to_not include "An error"
-        end
-
-        it "logs a message about why there is no response information" do
-          expect(logs).to include "Webhook response has been redacted temporarily for security purposes"
         end
 
         describe "execution logs" do
@@ -139,16 +130,38 @@ module PactBroker
             expect(logs).to include body
           end
 
-          it "logs the response status" do
-            expect(logs).to include "HTTP/1.0 200"
+          context "when show_response is true" do
+            it "logs the response status" do
+              expect(logs).to include "HTTP/1.0 200"
+            end
+
+            it "logs the response headers" do
+              expect(logs).to include "Content-Type: text/foo, blah"
+            end
+
+            it "logs the response body" do
+              expect(logs).to include "respbod"
+            end
           end
 
-          it "does not log the response headers" do
-            expect(logs).to_not include "Content-Type: text/foo, blah"
-          end
+          context "when show_response is false" do
+            let(:show_response) { false }
 
-          it "does not log the response body" do
-            expect(logs).to_not include "respbod"
+            it "does not log the response status" do
+              expect(logs).to_not include "HTTP/1.0 200"
+            end
+
+            it "does not log the response headers" do
+              expect(logs).to_not include "Content-Type: text/foo, blah"
+            end
+
+            it "does not log the response body" do
+              expect(logs).to_not include "respbod"
+            end
+
+            it "logs a message about why the response is hidden" do
+              expect(logs).to include "security purposes"
+            end
           end
 
           context "when the response code is a success" do
@@ -249,6 +262,7 @@ module PactBroker
         end
 
         context "when the request is not successful" do
+
           let!(:http_request) do
             stub_request(:post, "http://example.org/hook").
               with(:headers => {'Content-Type'=>'text/plain'}, :body => 'body').
@@ -264,7 +278,7 @@ module PactBroker
           end
         end
 
-        context "when the response body contains a non UTF-8 character", pending: "execution logs disabled temporarily for security purposes" do
+        context "when the response body contains a non UTF-8 character" do
           let!(:http_request) do
             stub_request(:post, "http://example.org/hook").
               to_return(:status => 200, :body => "This has some \xC2 invalid chars")
@@ -289,10 +303,10 @@ module PactBroker
 
           before do
             allow(subject).to receive(:http_request).and_raise(WebhookTestError.new("blah"))
+            allow(PactBroker.logger).to receive(:error)
           end
 
           it "logs the error" do
-            allow(PactBroker.logger).to receive(:error)
             expect(PactBroker.logger).to receive(:error).with(/Error.*WebhookTestError.*blah/)
             subject.execute(pact, options)
           end
@@ -307,6 +321,24 @@ module PactBroker
 
           it "logs the failure_log_message" do
             expect(logs).to include "oops"
+          end
+
+          context "when show_response is true" do
+            it "logs the exception information" do
+              expect(logs).to include "blah"
+            end
+          end
+
+          context "when show_response is false" do
+            let(:show_response) { false }
+
+            it "does not logs the exception information" do
+              expect(logs).to_not include "blah"
+            end
+
+            it "logs a message about why the response is hidden" do
+              expect(logs).to include "security purposes"
+            end
           end
         end
       end

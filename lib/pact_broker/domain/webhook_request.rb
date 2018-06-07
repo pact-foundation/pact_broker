@@ -68,15 +68,14 @@ module PactBroker
         uri = build_uri(pact)
         req = build_request(uri, pact, execution_logger)
         response = do_request(uri, req)
-        log_response(response, execution_logger)
+        log_response(response, execution_logger, options)
         result = WebhookExecutionResult.new(response, logs.string)
         log_completion_message(options, execution_logger, result.success?)
         result
       end
 
       def handle_error_and_build_result e, options, logs, execution_logger
-        logger.error "Error executing webhook #{uuid} #{e.class.name} - #{e.message} #{e.backtrace.join("\n")}"
-        execution_logger.error "Error executing webhook #{uuid} #{e.class.name} - #{e.message}"
+        log_error(e, execution_logger, options)
         log_completion_message(options, execution_logger, false)
         WebhookExecutionResult.new(nil, logs.string, e)
       end
@@ -96,7 +95,7 @@ module PactBroker
           req.body = PactBroker::Webhooks::Render.call(String === body ? body : body.to_json, pact)
         end
 
-        execution_logger.info req.body
+        execution_logger.info(req.body) if req.body
         req
       end
 
@@ -108,23 +107,40 @@ module PactBroker
         end
       end
 
-      def log_response response, execution_logger
-        execution_logger.info(" ")
+      def log_response response, execution_logger, options
+        log_response_to_application_logger(response)
+        if options[:show_response]
+          log_response_to_execution_logger(response, execution_logger)
+        else
+          execution_logger.info response_body_hidden_message
+        end
+      end
+
+      def response_body_hidden_message
+        PactBroker::Messages.message('messages.response_body_hidden')
+      end
+
+      def log_response_to_application_logger response
         logger.info "Received response for webhook #{uuid} status=#{response.code}"
-        execution_logger.info "HTTP/#{response.http_version} #{response.code} #{response.message}"
-        #response.each_header do | header |
-        #  execution_logger.info "#{header.split("-").collect(&:capitalize).join('-')}: #{response[header]}"
-        #end
+        logger.debug "headers=#{response.to_hash}"
         logger.debug "body=#{response.body}"
-        # safe_body = nil
-        # if response.body
-        #   safe_body = response.body.encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
-        #   if response.body != safe_body
-        #     execution_logger.debug "Note that invalid UTF-8 byte sequences were removed from response body before saving the logs"
-        #   end
-        # end
-        #execution_logger.info safe_body
-        execution_logger.info "Webhook response has been redacted temporarily for security purposes. Please see the Pact Broker application logs for the response body."
+      end
+
+      def log_response_to_execution_logger response, execution_logger
+        execution_logger.info "HTTP/#{response.http_version} #{response.code} #{response.message}"
+        response.each_header do | header |
+          execution_logger.info "#{header.split("-").collect(&:capitalize).join('-')}: #{response[header]}"
+        end
+
+        safe_body = nil
+
+        if response.body
+          safe_body = response.body.encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
+          if response.body != safe_body
+            execution_logger.debug "Note that invalid UTF-8 byte sequences were removed from response body before saving the logs"
+          end
+        end
+        execution_logger.info safe_body
       end
 
       def log_completion_message options, execution_logger, success
@@ -136,6 +152,16 @@ module PactBroker
         if options[:failure_log_message] && !success
           execution_logger.info(options[:failure_log_message])
           logger.info(options[:failure_log_message])
+        end
+      end
+
+      def log_error e, execution_logger, options
+        logger.error "Error executing webhook #{uuid} #{e.class.name} - #{e.message} #{e.backtrace.join("\n")}"
+
+        if options[:show_response]
+          execution_logger.error "Error executing webhook #{uuid} #{e.class.name} - #{e.message}"
+        else
+          execution_logger.error "Error executing webhook #{uuid}. #{response_body_hidden_message}"
         end
       end
 
