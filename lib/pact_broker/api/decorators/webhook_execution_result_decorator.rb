@@ -1,21 +1,17 @@
 require_relative 'base_decorator'
 require 'json'
+require 'pact_broker/messages'
 
 module PactBroker
   module Api
     module Decorators
-
       class WebhookExecutionResultDecorator < BaseDecorator
-
         class ErrorDecorator < BaseDecorator
-
           property :message
           property :backtrace
-
         end
 
         class HTTPResponseDecorator < BaseDecorator
-
           property :status, :getter => lambda { |_| code.to_i }
           property :headers, exec_context: :decorator
           property :body, exec_context: :decorator
@@ -36,13 +32,9 @@ module PactBroker
           end
         end
 
-        property :message, exec_context: :decorator
-        # property :error, :extend => ErrorDecorator
-        # property :response, :extend => HTTPResponseDecorator
-
-        def message
-          "Webhook response has been redacted temporarily for security purposes. Please see the Pact Broker application logs for the response body."
-        end
+        property :error, :extend => ErrorDecorator, if: lambda { |context| context[:options][:user_options][:show_response] }
+        property :response, :extend => HTTPResponseDecorator, if: lambda { |context| context[:options][:user_options][:show_response] }
+        property :response_hidden_message, as: :message, exec_context: :decorator, if: lambda { |context| !context[:options][:user_options][:show_response] }
 
         link :webhook do | options |
           {
@@ -55,6 +47,10 @@ module PactBroker
             title: 'Execute the webhook again',
             href: webhook_execution_url(options.fetch(:webhook), options.fetch(:base_url))
           }
+        end
+
+        def response_hidden_message
+          PactBroker::Messages.message('messages.response_body_hidden')
         end
       end
     end

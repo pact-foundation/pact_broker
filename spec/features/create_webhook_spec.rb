@@ -43,7 +43,7 @@ describe "Creating a webhook" do
         }],
         request: {
           method: 'POST',
-          url: 'http://example.org',
+          url: 'https://example.org',
           headers: {
             :"Content-Type" => "application/json"
           },
@@ -76,5 +76,4 @@ describe "Creating a webhook" do
       expect(response_body).to include webhook_hash
     end
   end
-
 end

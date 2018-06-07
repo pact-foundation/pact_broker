@@ -14,10 +14,11 @@ module PactBroker
           let(:response) { double('http_response', code: '200', body: response_body, to_hash: headers) }
           let(:response_body) { 'body' }
           let(:error) { nil }
-          let(:webhook) { instance_double(PactBroker::Domain::Webhook, uuid: 'some-uuid')}
+          let(:webhook) { instance_double(PactBroker::Domain::Webhook, uuid: 'some-uuid') }
+          let(:show_response) { true }
           let(:json) {
             WebhookExecutionResultDecorator.new(webhook_execution_result)
-            .to_json(user_options: { base_url: 'http://example.org', webhook: webhook })
+            .to_json(user_options: { base_url: 'http://example.org', webhook: webhook, show_response: show_response })
           }
 
           let(:subject) { JSON.parse(json, symbolize_names: true)}
@@ -30,11 +31,7 @@ module PactBroker
             expect(subject[:_links][:webhook][:href]).to eq 'http://example.org/webhooks/some-uuid'
           end
 
-          it "includes a message about the response being redacted" do
-            expect(subject[:message]).to match /redacted/
-          end
-
-          context "when there is an error", pending: "temporarily disabled" do
+          context "when there is an error" do
             let(:error) { double('error', message: 'message', backtrace: ['blah','blah']) }
 
             it "includes the message" do
@@ -46,7 +43,7 @@ module PactBroker
             end
           end
 
-          context "when there is a response", pending: "temporarily disabled" do
+          context "when there is a response" do
             it "includes the response code" do
               expect(subject[:response][:status]).to eq 200
             end
@@ -66,8 +63,19 @@ module PactBroker
               end
             end
           end
-        end
 
+          context "when show_response is false" do
+            let(:show_response) { false }
+
+            it "does not include the response" do
+              expect(subject).to_not have_key(:response)
+            end
+
+            it "includes a message about why the response is hidden" do
+              expect(subject[:message]).to match /security purposes/
+            end
+          end
+        end
       end
     end
   end

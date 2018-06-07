@@ -57,7 +57,8 @@ module PactBroker
               end
 
               it "generates a JSON response body for the execution result" do
-                expect(decorator).to receive(:to_json).with(user_options: { base_url: 'http://example.org', webhook: webhook })
+                allow(PactBroker.configuration).to receive(:show_webhook_response?).and_return('foo')
+                expect(decorator).to receive(:to_json).with(user_options: { base_url: 'http://example.org', webhook: webhook, show_response: 'foo' })
                 subject
               end
 
@@ -69,6 +70,7 @@ module PactBroker
 
             context "when execution is not successful" do
               let(:success) { false }
+
               it "returns a 500 JSON response" do
                 subject
                 expect(last_response.status).to eq 500
