@@ -43,6 +43,14 @@ module PactBroker
         it "returns a brief description of the HTTP request" do
           expect(subject.description).to eq 'POST example.org'
         end
+
+        context "when the URL has a template parameter in it" do
+          let(:url) { "http://foo/commits/${pactbroker.consumerVersionNumber}" }
+
+          it "doesn't explode" do
+            expect(subject.description).to eq 'POST foo'
+          end
+        end
       end
 
       describe "display_password" do

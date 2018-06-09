@@ -1,6 +1,9 @@
 module PactBroker
   module Webhooks
     class Render
+
+      TEMPLATE_PARAMETER_REGEXP = /\$\{pactbroker\.[^\}]+\}/
+
       def self.call(template, pact, verification = nil, &escaper)
         base_url = PactBroker.configuration.base_url
         params = {

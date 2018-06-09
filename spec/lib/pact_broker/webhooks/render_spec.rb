@@ -10,7 +10,25 @@ module PactBroker
         end
 
         let(:pact) do
-          instance_double("pact", consumer_version_number: "1.2.3+foo", consumer_name: "Foo", provider_name: "Bar")
+          instance_double("pact", consumer_version_number: "1.2.3+foo", consumer_name: "Foo", provider_name: "Bar", latest_verification: nil)
+        end
+
+        let(:pact_with_no_verification) { pact }
+
+        let(:pact_with_successful_verification) do
+          instance_double("pact",
+            consumer_version_number: "1.2.3+foo",
+            consumer_name: "Foo",
+            provider_name: "Bar",
+            latest_verification: verification)
+        end
+
+        let(:pact_with_failed_verification) do
+          instance_double("pact",
+            consumer_version_number: "1.2.3+foo",
+            consumer_name: "Foo",
+            provider_name: "Bar",
+            latest_verification: failed_verification)
         end
 
         let(:verification) do
@@ -21,6 +39,7 @@ module PactBroker
           instance_double("verification", provider_version_number: "3", success: false)
         end
 
+        let(:nil_pact) { nil }
         let(:nil_verification) { nil }
 
         subject { Render.call(template, pact, verification) }
@@ -34,7 +53,10 @@ module PactBroker
           ["${pactbroker.providerName}", "Bar", :pact, :verification],
           ["${pactbroker.githubVerificationStatus}", "success", :pact, :verification],
           ["${pactbroker.githubVerificationStatus}", "failure", :pact, :failed_verification],
-          ["${pactbroker.githubVerificationStatus}", "", :pact, :nil_verification]
+          ["${pactbroker.githubVerificationStatus}", "", :nil_pact, :nil_verification],
+          ["${pactbroker.githubVerificationStatus}", "pending", :pact_with_no_verification, :nil_verification],
+          ["${pactbroker.githubVerificationStatus}", "success", :pact_with_successful_verification, :nil_verification],
+          ["${pactbroker.githubVerificationStatus}", "failure", :pact_with_failed_verification, :nil_verification]
         ]
 
         TEST_CASES.each do | (template, expected_output, pact_var_name, verification_var_name) |

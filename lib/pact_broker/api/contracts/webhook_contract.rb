@@ -1,6 +1,7 @@
 require 'reform'
 require 'reform/form'
 require 'pact_broker/webhooks/check_host_whitelist'
+require 'pact_broker/webhooks/render'
 
 module PactBroker
   module Api
@@ -106,7 +107,7 @@ module PactBroker
               end
 
               def parse_uri(uri_string, placeholder = 'placeholder')
-                URI(uri_string.gsub(/\$\{pactbroker\.[^\}]+\}/, placeholder))
+                URI(uri_string.gsub(PactBroker::Webhooks::Render::TEMPLATE_PARAMETER_REGEXP, placeholder))
               end
             end
 

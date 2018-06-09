@@ -45,7 +45,7 @@ module PactBroker
       end
 
       def description
-        "#{method.upcase} #{URI(url).host}"
+        "#{method.upcase} #{URI(url.gsub(PactBroker::Webhooks::Render::TEMPLATE_PARAMETER_REGEXP, 'placeholder')).host}"
       end
 
       def display_password
