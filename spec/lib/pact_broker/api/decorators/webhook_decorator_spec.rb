@@ -88,6 +88,13 @@ module PactBroker
               expect(parsed_json[:request]).to_not have_key :headers
             end
           end
+
+          context 'when the headers contain sensitve information' do
+            let(:headers) { { 'Authorization' => 'foo' } }
+            it 'redacts them' do
+              expect(parsed_json[:request][:headers][:'Authorization']).to eq "**********"
+            end
+          end
         end
 
         describe 'from_json' do

@@ -4,7 +4,6 @@ require 'pact_broker/domain/webhook_execution_result'
 require 'pact_broker/logging'
 require 'pact_broker/messages'
 require 'net/http'
-require 'pact_broker/webhooks/redact_logs'
 require 'pact_broker/webhooks/render'
 require 'pact_broker/api/pact_broker_urls'
 require 'pact_broker/build_http_options'
@@ -27,6 +26,7 @@ module PactBroker
 
       include PactBroker::Logging
       include PactBroker::Messages
+      HEADERS_TO_REDACT = [/authorization/i, /token/i]
 
       attr_accessor :method, :url, :headers, :body, :username, :password, :uuid
 
@@ -50,6 +50,13 @@ module PactBroker
 
       def display_password
         password.nil? ? nil : "**********"
+      end
+
+      def redacted_headers
+        headers.each_with_object({}) do | (name, value), new_headers |
+          redact = HEADERS_TO_REDACT.any?{ | pattern | name =~ pattern }
+          new_headers[name] = redact ? "**********" : value
+        end
       end
 
       def execute pact, verification, options = {}
@@ -84,8 +91,9 @@ module PactBroker
         req = http_request(uri)
         execution_logger.info "HTTP/1.1 #{method.upcase} #{url_with_credentials(pact, verification)}"
 
+        headers_to_log = redacted_headers
         headers.each_pair do | name, value |
-          execution_logger.info Webhooks::RedactLogs.call("#{name}: #{value}")
+          execution_logger.info "#{name}: #{headers_to_log[name]}"
           req[name] = value
         end
 
@@ -166,7 +174,7 @@ module PactBroker
       end
 
       def to_s
-        "#{method.upcase} #{url}, username=#{username}, password=#{display_password}, headers=#{headers}, body=#{body}"
+        "#{method.upcase} #{url}, username=#{username}, password=#{display_password}, headers=#{redacted_headers}, body=#{body}"
       end
 
       def http_request(uri)

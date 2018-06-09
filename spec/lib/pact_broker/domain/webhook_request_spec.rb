@@ -16,6 +16,7 @@ module PactBroker
       let(:username) { nil }
       let(:password) { nil }
       let(:url) { 'http://example.org/hook' }
+      let(:headers) { {'Content-Type' => 'text/plain', 'Authorization' => 'foo'} }
       let(:body) { 'body' }
       let(:logs) { StringIO.new }
       let(:execution_logger) { Logger.new(logs) }
@@ -29,7 +30,7 @@ module PactBroker
         WebhookRequest.new(
           method: 'post',
           url: url,
-          headers: {'Content-Type' => 'text/plain', 'Authorization' => 'foo'},
+          headers: headers,
           username: username,
           password: password,
           body: body)
@@ -55,6 +56,36 @@ module PactBroker
           it "returns nil" do
             expect(subject.display_password).to eq nil
           end
+        end
+      end
+
+      describe "redacted_headers" do
+        let(:headers) do
+          {
+            'Authorization' => 'foo',
+            'X-authorization' => 'bar',
+            'token' => 'bar',
+            'Token' => 'bar',
+            'X-Auth-Token' => 'bar',
+            'X-Authorization-Token' => 'bar',
+            'OK' => 'ok'
+          }
+        end
+
+        let(:expected_headers) do
+          {
+            'Authorization' => '**********',
+            'X-authorization' => '**********',
+            'token' => '**********',
+            'Token' => '**********',
+            'X-Auth-Token' => '**********',
+            'X-Authorization-Token' => '**********',
+            'OK' => 'ok'
+          }
+        end
+
+        it "redacts sensitive headers" do
+          expect(subject.redacted_headers).to eq expected_headers
         end
       end
 
@@ -126,7 +157,7 @@ module PactBroker
           end
 
           it "redacts potentially sensitive headers" do
-            expect(logs).to include "Authorization: [REDACTED]"
+            expect(logs).to include "Authorization: **********"
           end
 
           it "logs the request body" do
