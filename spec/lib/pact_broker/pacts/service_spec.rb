@@ -30,7 +30,7 @@ module PactBroker
 
       end
 
-      describe "#pact_has_changed_since_previous_version?" do
+      describe "#pact_is_new_or_pact_has_changed_since_previous_version?" do
         let(:json_content) { { 'some' => 'json'}.to_json }
         let(:pact) { instance_double(PactBroker::Domain::Pact, json_content: json_content)}
 
@@ -38,7 +38,7 @@ module PactBroker
           allow_any_instance_of(Pacts::Repository).to receive(:find_previous_pact).and_return(previous_pact)
         end
 
-        subject { Service.pact_has_changed_since_previous_version? pact }
+        subject { Service.pact_is_new_or_pact_has_changed_since_previous_version? pact }
 
         context "when a previous pact is found" do
           let(:previous_pact) { instance_double(PactBroker::Domain::Pact, json_content: previous_json_content)}
@@ -60,8 +60,9 @@ module PactBroker
 
         context "when a previous pact is not found" do
           let(:previous_pact) { nil }
-          it "returns false" do
-            expect(subject).to be_falsey
+
+          it "returns true" do
+            expect(subject).to be_truthy
           end
         end
       end
