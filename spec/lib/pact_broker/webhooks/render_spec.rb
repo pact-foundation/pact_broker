@@ -7,6 +7,10 @@ module PactBroker
       describe "#call" do
         before do
           allow(PactBroker::Api::PactBrokerUrls).to receive(:pact_url).and_return("http://foo")
+          allow(PactBroker::Api::PactBrokerUrls).to receive(:verification_url) do | verification, base_url |
+            expect(verification).to_not be nil
+            "http://verification"
+          end
         end
 
         let(:pact) do
@@ -56,15 +60,20 @@ module PactBroker
           ["${pactbroker.githubVerificationStatus}", "", :nil_pact, :nil_verification],
           ["${pactbroker.githubVerificationStatus}", "pending", :pact_with_no_verification, :nil_verification],
           ["${pactbroker.githubVerificationStatus}", "success", :pact_with_successful_verification, :nil_verification],
-          ["${pactbroker.githubVerificationStatus}", "failure", :pact_with_failed_verification, :nil_verification]
+          ["${pactbroker.githubVerificationStatus}", "failure", :pact_with_failed_verification, :nil_verification],
+          ["${pactbroker.verificationResultUrl}", "", :pact_with_no_verification, :nil_verification],
+          ["${pactbroker.verificationResultUrl}", "http://verification", :pact_with_successful_verification, :nil_verification],
+          ["${pactbroker.verificationResultUrl}", "http://verification", :pact_with_successful_verification, :verification],
         ]
 
         TEST_CASES.each do | (template, expected_output, pact_var_name, verification_var_name) |
-          it "replaces #{template} with #{expected_output.inspect}" do
-            the_pact = send(pact_var_name)
-            the_verification = send(verification_var_name)
-            output = Render.call(template, the_pact, the_verification)
-            expect(output).to eq expected_output
+          context "with #{pact_var_name} and #{verification_var_name}" do
+            it "replaces #{template} with #{expected_output.inspect}" do
+              the_pact = send(pact_var_name)
+              the_verification = send(verification_var_name)
+              output = Render.call(template, the_pact, the_verification)
+              expect(output).to eq expected_output
+            end
           end
         end
 

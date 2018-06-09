@@ -26,6 +26,10 @@ module PactBroker
         LatestTaggedPactPublications.where(id: id).select(:tag_name).collect{|t| t[:tag_name]}
       end
 
+      def latest_verification
+        pact_version.latest_verification
+      end
+
       def to_domain
         PactBroker::Domain::Pact.new(
           id: id,
@@ -36,6 +40,7 @@ module PactBroker
           revision_number: revision_number,
           json_content: pact_version.content,
           pact_version_sha: pact_version.sha,
+          latest_verification: latest_verification,
           created_at: created_at
           )
       end

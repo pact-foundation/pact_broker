@@ -3,7 +3,8 @@ require 'sequel'
 module PactBroker
   module Pacts
     class PactVersion < Sequel::Model(:pact_versions)
-      one_to_many :pact_publications, :reciprocal => :pact_version
+      one_to_many :pact_publications, reciprocal: :pact_version
+      one_to_many :verifications, reciprocal: :verification, order: :id, :class => "PactBroker::Domain::Verification"
 
       def name
         "Pact between #{consumer_name} and #{provider_name}"
@@ -29,6 +30,10 @@ module PactBroker
           .where(pact_version_id: id)
           .order(:consumer_version_order)
           .last
+      end
+
+      def latest_verification
+        verifications.last
       end
 
       def consumer_versions
