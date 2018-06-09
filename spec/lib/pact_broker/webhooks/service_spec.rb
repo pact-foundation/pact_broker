@@ -104,13 +104,6 @@ module PactBroker
 
         subject { PactBroker::Webhooks::Service.execute_webhook_now td.webhook, pact, td.verification }
 
-        it "executes the triggered webhook with the correct options" do
-          allow(PactBroker.configuration).to receive(:show_webhook_response?).and_return('foo')
-          expected_options = { :failure_log_message => "Webhook execution failed", :show_response => 'foo' }
-          expect_any_instance_of(PactBroker::Webhooks::TriggeredWebhook).to receive(:execute).with(expected_options).and_call_original
-          subject
-        end
-
         it "executes the HTTP request of the webhook" do
           subject
           expect(http_request).to have_been_made
@@ -163,6 +156,13 @@ module PactBroker
         it "executes the HTTP request of the webhook" do
           subject
           expect(http_request).to have_been_made
+        end
+
+        it "executes the webhook with the correct options" do
+          allow(PactBroker.configuration).to receive(:show_webhook_response?).and_return('foo')
+          expected_options = {:show_response => 'foo' }
+          expect_any_instance_of(PactBroker::Domain::WebhookRequest).to receive(:execute).with(anything, anything, hash_including(expected_options)).and_call_original
+          subject
         end
 
         it "saves the triggered webhook" do
