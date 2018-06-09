@@ -70,7 +70,7 @@ module PactBroker
               end
 
               def valid_url?(url)
-                uri = URI(url)
+                uri = parse_uri(url)
                 uri.scheme && uri.host
               rescue URI::InvalidURIError
                 false
@@ -83,7 +83,7 @@ module PactBroker
               end
 
               def allowed_webhook_scheme?(url)
-                scheme = URI(url).scheme
+                scheme = parse_uri(url).scheme
                 PactBroker.configuration.webhook_scheme_whitelist.any? do | allowed_scheme |
                   scheme.downcase == allowed_scheme.downcase
                 end
@@ -91,7 +91,7 @@ module PactBroker
 
               def allowed_webhook_host?(url)
                 if host_whitelist.any?
-                  PactBroker::Webhooks::CheckHostWhitelist.call(URI(url).host, host_whitelist).any?
+                  PactBroker::Webhooks::CheckHostWhitelist.call(parse_uri(url).host, host_whitelist).any?
                 else
                   true
                 end
@@ -99,6 +99,10 @@ module PactBroker
 
               def host_whitelist
                 PactBroker.configuration.webhook_host_whitelist
+              end
+
+              def parse_uri(uri_string)
+                URI(uri_string.gsub(/\$\{pactbroker\.[^\}]+\}/, 'placeholder'))
               end
             end
 

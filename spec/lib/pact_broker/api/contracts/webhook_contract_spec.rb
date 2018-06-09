@@ -179,8 +179,19 @@ module PactBroker
               expect(subject.errors[:"request.url"]).to eq ["is not a valid URL eg. http://example.org"]
             end
           end
-        end
 
+          context "with a URL that has templated parameters in it" do
+            let(:json) do
+              valid_webhook_with do |hash|
+                hash['request']['url'] = 'https://foo/commits/${pactbroker.consumerVersionNumber}'
+              end
+            end
+
+            it "is empty" do
+              expect(subject.errors).to be_empty
+            end
+          end
+        end
       end
     end
   end
