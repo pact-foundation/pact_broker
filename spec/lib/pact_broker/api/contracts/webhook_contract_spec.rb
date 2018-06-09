@@ -191,6 +191,18 @@ module PactBroker
               expect(subject.errors).to be_empty
             end
           end
+
+          context "with a URL that has templated parameters in the host" do
+            let(:json) do
+              valid_webhook_with do |hash|
+                hash['request']['url'] = 'https://${pactbroker.consumerVersionNumber}/commits'
+              end
+            end
+
+            it "contains an error" do
+              expect(subject.errors[:"request.url"]).to eq ["cannot have a template parameter in the host"]
+            end
+          end
         end
       end
     end

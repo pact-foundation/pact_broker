@@ -97,17 +97,21 @@ module PactBroker
                 end
               end
 
+              def non_templated_host?(url)
+                parse_uri(url).host == parse_uri(url, 'differentplaceholder').host
+              end
+
               def host_whitelist
                 PactBroker.configuration.webhook_host_whitelist
               end
 
-              def parse_uri(uri_string)
-                URI(uri_string.gsub(/\$\{pactbroker\.[^\}]+\}/, 'placeholder'))
+              def parse_uri(uri_string, placeholder = 'placeholder')
+                URI(uri_string.gsub(/\$\{pactbroker\.[^\}]+\}/, placeholder))
               end
             end
 
             required(:http_method).filled(:valid_method?, :allowed_webhook_method?)
-            required(:url).filled(:valid_url?, :allowed_webhook_scheme?, :allowed_webhook_host?)
+            required(:url).filled(:valid_url?, :allowed_webhook_scheme?, :allowed_webhook_host?, :non_templated_host?)
           end
         end
 
