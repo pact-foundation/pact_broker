@@ -123,7 +123,7 @@ module PactBroker
 
       def trigger_webhooks pact
         if pact_has_changed_since_previous_version? pact
-          webhook_service.execute_webhooks pact, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED
+          webhook_service.execute_webhooks pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED
         end
       end
     end
