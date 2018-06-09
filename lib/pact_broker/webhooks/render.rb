@@ -5,7 +5,8 @@ module PactBroker
         base_url = PactBroker.configuration.base_url
         params = {
           '${pactbroker.pactUrl}' => PactBroker::Api::PactBrokerUrls.pact_url(base_url, pact),
-          '${pactbroker.consumerVersionNumber}' => pact.consumer_version_number
+          '${pactbroker.consumerVersionNumber}' => pact.consumer_version_number,
+          '${pactbroker.providerVersionNumber}' => verification ? verification.provider_version_number : ""
         }
 
         if escaper

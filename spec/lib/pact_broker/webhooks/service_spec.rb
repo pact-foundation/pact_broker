@@ -30,6 +30,7 @@ module PactBroker
 
       describe ".execute_webhooks" do
 
+        let(:verification) { instance_double(PactBroker::Domain::Verification)}
         let(:pact) { instance_double(PactBroker::Domain::Pact, consumer: consumer, provider: provider, consumer_version: consumer_version)}
         let(:consumer_version) { PactBroker::Domain::Version.new(number: '1.2.3') }
         let(:consumer) { PactBroker::Domain::Pacticipant.new(name: 'Consumer') }
@@ -43,7 +44,7 @@ module PactBroker
           allow(Job).to receive(:perform_in)
         end
 
-        subject { Service.execute_webhooks pact, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED }
+        subject { Service.execute_webhooks pact, verification, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED }
 
         it "finds the webhooks" do
           expect_any_instance_of(PactBroker::Webhooks::Repository).to receive(:find_by_consumer_and_provider_and_event_name).with(consumer, provider, PactBroker::Webhooks::WebhookEvent::DEFAULT_EVENT_NAME)
@@ -52,7 +53,7 @@ module PactBroker
 
         context "when webhooks are found" do
           it "executes the webhook" do
-            expect(Service).to receive(:run_later).with(webhooks, pact, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED)
+            expect(Service).to receive(:run_later).with(webhooks, pact, verification, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED)
             subject
           end
         end
@@ -97,10 +98,11 @@ module PactBroker
             .create_consumer_version
             .create_pact
             .create_webhook(method: 'GET', url: 'http://example.org')
+            .create_verification
             .and_return(:pact)
         end
 
-        subject { PactBroker::Webhooks::Service.execute_webhook_now td.webhook, pact }
+        subject { PactBroker::Webhooks::Service.execute_webhook_now td.webhook, pact, td.verification }
 
         it "executes the triggered webhook with the correct options" do
           allow(PactBroker.configuration).to receive(:show_webhook_response?).and_return('foo')
@@ -116,6 +118,16 @@ module PactBroker
 
         it "saves the triggered webhook" do
           expect { subject }.to change { PactBroker::Webhooks::TriggeredWebhook.count }.by(1)
+        end
+
+        it "saves the pact" do
+          subject
+          expect(PactBroker::Webhooks::TriggeredWebhook.order(:id).last.pact_publication_id).to_not be nil
+        end
+
+        it "saves the verification" do
+          subject
+          expect(PactBroker::Webhooks::TriggeredWebhook.order(:id).last.verification_id).to_not be nil
         end
 
         it "saves the execution" do
@@ -141,11 +153,12 @@ module PactBroker
             .create_provider
             .create_consumer_version
             .create_pact
+            .create_verification
             .create_webhook(method: 'GET', url: 'http://example.org', events: events)
             .and_return(:pact)
         end
 
-        subject { PactBroker::Webhooks::Service.execute_webhooks pact, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED }
+        subject { PactBroker::Webhooks::Service.execute_webhooks pact, td.verification, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED }
 
         it "executes the HTTP request of the webhook" do
           subject

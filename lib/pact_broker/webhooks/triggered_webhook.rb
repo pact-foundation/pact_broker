@@ -37,6 +37,7 @@ module PactBroker
       associate(:one_to_many, :webhook_executions, :class => "PactBroker::Webhooks::Execution", :key => :triggered_webhook_id, :primary_key => :id, :order => :id)
       associate(:many_to_one, :webhook, :class => "PactBroker::Webhooks::Webhook", :key => :webhook_id, :primary_key => :id)
       associate(:many_to_one, :pact_publication, :class => "PactBroker::Pacts::PactPublication", :key => :pact_publication_id, :primary_key => :id)
+      associate(:many_to_one, :verification, :class => "PactBroker::Domain::Verification", :key => :verification_id, :primary_key => :id)
       associate(:many_to_one, :provider, :class => "PactBroker::Domain::Pacticipant", :key => :provider_id, :primary_key => :id)
       associate(:many_to_one, :consumer, :class => "PactBroker::Domain::Pacticipant", :key => :consumer_id, :primary_key => :id)
 
@@ -49,7 +50,7 @@ module PactBroker
         # getting a random 'no method to_domain for null' error
         # not sure on which object, so splitting this out into two lines
         pact = pact_publication.to_domain
-        webhook.to_domain.execute(pact, options)
+        webhook.to_domain.execute(pact, verification, options)
       end
 
       def consumer_name

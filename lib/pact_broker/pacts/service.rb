@@ -107,7 +107,7 @@ module PactBroker
         updated_pact = pact_repository.update existing_pact.id, params
 
         if existing_pact.json_content != updated_pact.json_content
-          webhook_service.execute_webhooks updated_pact, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED
+          webhook_service.execute_webhooks updated_pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED
         end
 
         updated_pact

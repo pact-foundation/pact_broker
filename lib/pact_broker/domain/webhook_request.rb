@@ -52,11 +52,11 @@ module PactBroker
         password.nil? ? nil : "**********"
       end
 
-      def execute pact, options = {}
+      def execute pact, verification, options = {}
         logs = StringIO.new
         execution_logger = Logger.new(logs)
         begin
-          execute_and_build_result(pact, options, logs, execution_logger)
+          execute_and_build_result(pact, verification, options, logs, execution_logger)
         rescue StandardError => e
           handle_error_and_build_result(e, options, logs, execution_logger)
         end
@@ -64,9 +64,9 @@ module PactBroker
 
       private
 
-      def execute_and_build_result pact, options, logs, execution_logger
-        uri = build_uri(pact)
-        req = build_request(uri, pact, execution_logger)
+      def execute_and_build_result pact, verification, options, logs, execution_logger
+        uri = build_uri(pact, verification)
+        req = build_request(uri, pact, verification, execution_logger)
         response = do_request(uri, req)
         log_response(response, execution_logger, options)
         result = WebhookExecutionResult.new(response, logs.string)
@@ -80,9 +80,9 @@ module PactBroker
         WebhookExecutionResult.new(nil, logs.string, e)
       end
 
-      def build_request uri, pact, execution_logger
+      def build_request uri, pact, verification, execution_logger
         req = http_request(uri)
-        execution_logger.info "HTTP/1.1 #{method.upcase} #{url_with_credentials(pact)}"
+        execution_logger.info "HTTP/1.1 #{method.upcase} #{url_with_credentials(pact, verification)}"
 
         headers.each_pair do | name, value |
           execution_logger.info Webhooks::RedactLogs.call("#{name}: #{value}")
@@ -92,7 +92,7 @@ module PactBroker
         req.basic_auth(username, password) if username
 
         unless body.nil?
-          req.body = PactBroker::Webhooks::Render.call(String === body ? body : body.to_json, pact)
+          req.body = PactBroker::Webhooks::Render.call(String === body ? body : body.to_json, pact, verification)
         end
 
         execution_logger.info(req.body) if req.body
@@ -173,12 +173,12 @@ module PactBroker
         Net::HTTP.const_get(method.capitalize).new(uri)
       end
 
-      def build_uri pact
-        URI(PactBroker::Webhooks::Render.call(url, pact){ | value | CGI::escape(value)} )
+      def build_uri(pact, verification)
+        URI(PactBroker::Webhooks::Render.call(url, pact, verification){ | value | CGI::escape(value)} )
       end
 
-      def url_with_credentials pact
-        u = build_uri(pact)
+      def url_with_credentials pact, verification
+        u = build_uri(pact, verification)
         u.userinfo = "#{CGI::escape username}:#{display_password}" if username
         u
       end

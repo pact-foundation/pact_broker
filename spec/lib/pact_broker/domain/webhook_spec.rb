@@ -12,6 +12,7 @@ module PactBroker
       let(:request) { instance_double(PactBroker::Domain::WebhookRequest, execute: nil)}
       let(:options) { double('options') }
       let(:pact) { double('pact') }
+      let(:verification) { double('verification') }
 
       subject { Webhook.new(request: request, consumer: consumer, provider: provider,) }
 
@@ -24,14 +25,14 @@ module PactBroker
       describe "execute" do
 
         it "executes the request" do
-          expect(request).to receive(:execute).with(pact, options)
-          subject.execute pact, options
+          expect(request).to receive(:execute).with(pact, verification, options)
+          subject.execute pact, verification, options
         end
 
         it "logs before and after" do
           allow(PactBroker.logger).to receive(:info)
           expect(PactBroker.logger).to receive(:info).with(/Executing/)
-          subject.execute pact, options
+          subject.execute pact, verification, options
         end
       end
     end

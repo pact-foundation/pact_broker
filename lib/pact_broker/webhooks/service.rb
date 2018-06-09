@@ -59,8 +59,8 @@ module PactBroker
         webhook_repository.find_all
       end
 
-      def self.execute_webhook_now webhook, pact
-        triggered_webhook = webhook_repository.create_triggered_webhook(next_uuid, webhook, pact, USER)
+      def self.execute_webhook_now webhook, pact, verification = nil
+        triggered_webhook = webhook_repository.create_triggered_webhook(next_uuid, webhook, pact, verification, USER)
         options = { failure_log_message: "Webhook execution failed", show_response: PactBroker.configuration.show_webhook_response?}
         webhook_execution_result = execute_triggered_webhook_now triggered_webhook, options
         if webhook_execution_result.success?
@@ -85,21 +85,21 @@ module PactBroker
         webhook_repository.find_by_consumer_and_provider consumer, provider
       end
 
-      def self.execute_webhooks pact, event_name
+      def self.execute_webhooks pact, verification, event_name
         webhooks = webhook_repository.find_by_consumer_and_provider_and_event_name pact.consumer, pact.provider, event_name
 
         if webhooks.any?
-          run_later(webhooks, pact, event_name)
+          run_later(webhooks, pact, verification, event_name)
         else
           logger.debug "No webhook found for consumer \"#{pact.consumer.name}\" and provider \"#{pact.provider.name}\""
         end
       end
 
-      def self.run_later webhooks, pact, event_name
+      def self.run_later webhooks, pact, verification, event_name
         trigger_uuid = next_uuid
         webhooks.each do | webhook |
           begin
-            triggered_webhook = webhook_repository.create_triggered_webhook(trigger_uuid, webhook, pact, RESOURCE_CREATION)
+            triggered_webhook = webhook_repository.create_triggered_webhook(trigger_uuid, webhook, pact, verification, RESOURCE_CREATION)
             logger.info "Scheduling job for #{webhook.description} with uuid #{webhook.uuid}"
             # Bit of a dodgey hack to make sure the request transaction has finished before we execute the webhook
             Job.perform_in(5, triggered_webhook: triggered_webhook)

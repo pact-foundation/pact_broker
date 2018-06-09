@@ -9,6 +9,10 @@ module PactBroker
       subject { PactBroker::Verifications::Service }
 
       describe "#create" do
+        before do
+          allow(PactBroker::Webhooks::Service).to receive(:execute_webhooks)
+        end
+
         let(:params) { {'success' => true, 'providerApplicationVersion' => '4.5.6'} }
         let(:pact) { TestDataBuilder.new.create_pact_with_hierarchy.and_return(:pact) }
         let(:create_verification) { subject.create 3, params, pact }
@@ -35,6 +39,11 @@ module PactBroker
           verification = create_verification
           expect(verification.provider_version).to_not be nil
           expect(verification.provider_version_number).to eq '4.5.6'
+        end
+
+        it "invokes the webhooks for the verification" do
+          verification = create_verification
+          expect(PactBroker::Webhooks::Service).to have_received(:execute_webhooks).with(pact, verification, PactBroker::Webhooks::WebhookEvent::VERIFICATION_PUBLISHED)
         end
       end
 

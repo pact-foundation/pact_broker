@@ -88,6 +88,7 @@ The following variables may be used in the request parameters or body, and will 
 
 `${pactbroker.pactUrl}`: the "permalink" URL to the newly published pact (the URL specifying the consumer version URL, rather than the "/latest" format.)
 `${pactbroker.consumerVersionNumber}`: the version number of the most recent consumer version associated with the pact content.
+`${pactbroker.providerVersionNumber}`: the provider version number for the verification result
 
 Example usage:
 

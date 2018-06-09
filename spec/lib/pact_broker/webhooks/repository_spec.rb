@@ -333,14 +333,16 @@ module PactBroker
             .create_webhook
             .create_consumer_version
             .create_pact
+            .create_verification
         end
 
-        subject { Repository.new.create_triggered_webhook '1234', td.webhook, td.pact, 'publication' }
+        subject { Repository.new.create_triggered_webhook '1234', td.webhook, td.pact, td.verification, 'publication' }
 
         it "creates a TriggeredWebhook" do
           expect(subject.webhook_uuid ).to eq td.webhook.uuid
           expect(subject.consumer).to eq td.consumer
           expect(subject.provider).to eq td.provider
+          expect(subject.verification).to eq td.verification
           expect(subject.trigger_uuid).to eq '1234'
           expect(subject.trigger_type).to eq 'publication'
         end
@@ -363,6 +365,14 @@ module PactBroker
 
         it "sets the PactPublication" do
           expect(subject.pact_publication.id).to eq td.pact.id
+        end
+
+        context "without a verification" do
+          subject { Repository.new.create_triggered_webhook '1234', td.webhook, td.pact, nil, 'publication' }
+
+          it "does not set the verification" do
+            expect(subject.verification).to be nil
+          end
         end
       end
 
