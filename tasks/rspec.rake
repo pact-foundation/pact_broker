@@ -13,4 +13,4 @@ RSpec::Core::RakeTask.new('spec:slow') do |task|
   task.rspec_opts = '--tag @no_db_clean --tag @migration'
 end
 
-task :spec => ['spec:broken']
+task :spec => ['spec:quick']
