@@ -54,9 +54,13 @@ module PactBroker
 
           it "returns the most recent verification for the previous version with the same tag" do
             require 'table_print'
-            cols = :consumer_version_tag_name, :pact_version_id, :provider_version_number
+            cols = :consumer_version_tag_name, :provider_id, :consumer_id, :pact_version_id, :provider_version_number
             tp PactBroker::Verifications::LatestVerificationForConsumerVersionTag.all, cols
             expect(PactBroker::Verifications::LatestVerificationForConsumerVersionTag.count).to be 1
+            tag = PactBroker::Verifications::LatestVerificationForConsumerVersionTag.first
+            expect(tag.provider_id).to eq subject.last.provider_id
+            expect(tag.consumer_id).to eq subject.last.consumer_id
+            expect(tag.consumer_version_tag_name).to eq subject.last.consumer_version_tag_name
             expect(subject.last.consumer_version_number).to eq "2"
             expect(subject.last.latest_verification_for_consumer_version_tag.provider_version.number).to eq "11"
           end
