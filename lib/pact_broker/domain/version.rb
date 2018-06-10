@@ -11,7 +11,7 @@ module PactBroker
       set_primary_key :id
       one_to_many :pact_publications, order: :revision_number, class: "PactBroker::Pacts::PactPublication", key: :consumer_version_id
       associate(:many_to_one, :pacticipant, :class => "PactBroker::Domain::Pacticipant", :key => :pacticipant_id, :primary_key => :id)
-      one_to_many :tags, :reciprocal => :version
+      one_to_many :tags, :reciprocal => :version, order: :created_at
 
       dataset_module do
         include PactBroker::Repositories::Helpers

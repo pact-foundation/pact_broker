@@ -14,13 +14,19 @@ module PactBroker
         end
 
         let(:pact) do
-          instance_double("pact", consumer_version_number: "1.2.3+foo", consumer_name: "Foo", provider_name: "Bar", latest_verification: nil)
+          double("pact",
+            consumer_version: consumer_version,
+            consumer_version_number: "1.2.3+foo",
+            consumer_name: "Foo",
+            provider_name: "Bar",
+            latest_verification: nil)
         end
 
         let(:pact_with_no_verification) { pact }
 
         let(:pact_with_successful_verification) do
-          instance_double("pact",
+          double("pact",
+            consumer_version: consumer_version,
             consumer_version_number: "1.2.3+foo",
             consumer_name: "Foo",
             provider_name: "Bar",
@@ -28,7 +34,8 @@ module PactBroker
         end
 
         let(:pact_with_failed_verification) do
-          instance_double("pact",
+          double("pact",
+            consumer_version: consumer_version,
             consumer_version_number: "1.2.3+foo",
             consumer_name: "Foo",
             provider_name: "Bar",
@@ -36,11 +43,27 @@ module PactBroker
         end
 
         let(:verification) do
-          instance_double("verification", provider_version_number: "3", success: true)
+          double("verification", provider_version_number: "3", success: true, provider_version: provider_version)
         end
 
         let(:failed_verification) do
-          instance_double("verification", provider_version_number: "3", success: false)
+          double("verification", provider_version_number: "3", success: false, provider_version: provider_version)
+        end
+
+        let(:provider_version) do
+          double("version", tags: provider_tags)
+        end
+
+        let(:consumer_version) do
+          double("version", tags: consumer_tags)
+        end
+
+        let(:provider_tags) do
+          [ double("tag", name: "test"), double("tag", name: "prod") ]
+        end
+
+        let(:consumer_tags) do
+          [ double("tag", name: "test") ]
         end
 
         let(:nil_pact) { nil }
@@ -57,13 +80,15 @@ module PactBroker
           ["${pactbroker.providerName}", "Bar", :pact, :verification],
           ["${pactbroker.githubVerificationStatus}", "success", :pact, :verification],
           ["${pactbroker.githubVerificationStatus}", "failure", :pact, :failed_verification],
-          ["${pactbroker.githubVerificationStatus}", "", :nil_pact, :nil_verification],
+          ["${pactbroker.githubVerificationStatus}", "pending", :nil_pact, :nil_verification],
           ["${pactbroker.githubVerificationStatus}", "pending", :pact_with_no_verification, :nil_verification],
           ["${pactbroker.githubVerificationStatus}", "success", :pact_with_successful_verification, :nil_verification],
           ["${pactbroker.githubVerificationStatus}", "failure", :pact_with_failed_verification, :nil_verification],
           ["${pactbroker.verificationResultUrl}", "", :pact_with_no_verification, :nil_verification],
           ["${pactbroker.verificationResultUrl}", "http://verification", :pact_with_successful_verification, :nil_verification],
           ["${pactbroker.verificationResultUrl}", "http://verification", :pact_with_successful_verification, :verification],
+          ["${pactbroker.providerVersionTags}", "test, prod", :pact_with_successful_verification, :verification],
+          ["${pactbroker.consumerVersionTags}", "test", :pact_with_successful_verification, :verification],
         ]
 
         TEST_CASES.each do | (template, expected_output, pact_var_name, verification_var_name) |

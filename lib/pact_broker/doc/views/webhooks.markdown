@@ -90,6 +90,8 @@ The following variables may be used in the request parameters or body, and will 
 `${pactbroker.providerName}`: the provider name
 `${pactbroker.consumerVersionNumber}`: the version number of the most recent consumer version associated with the pact content.
 `${pactbroker.providerVersionNumber}`: the provider version number for the verification result
+`${pactbroker.consumerVersionTags}`: the list of tag names for the most recent consumer version associated with the pact content, separated by ", ".
+`${pactbroker.providerVersionTags}`: the list of tag names for the provider version associated with the verification result, separated by ", ".
 `${pactbroker.githubVerificationStatus}`: the verification status using the correct keywords for posting to the the [Github commit status API](https://developer.github.com/v3/repos/statuses).
 `${pactbroker.pactUrl}`: the "permalink" URL to the newly published pact (the URL specifying the consumer version URL, rather than the "/latest" format.)
 `${pactbroker.verificationResultUrl}`: the URL to the relevant verification result.
