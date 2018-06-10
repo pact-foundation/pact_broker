@@ -50,7 +50,7 @@ module PactBroker
               .create_pact
           end
 
-          subject { HeadRow.where(verification_id: nil).eager(:consumer_version_tags).eager(:latest_verification_for_consumer_version_tag).order(:pact_publication_id).all }
+          subject { HeadRow.where(verification_id: nil).exclude(consumer_version_tag_name: nil).eager(:consumer_version_tags).eager(:latest_verification_for_consumer_version_tag).order(:pact_publication_id).all }
 
           it "returns the most recent verification for the previous version with the same tag" do
             require 'table_print'
