@@ -2,7 +2,7 @@ require 'rspec/core'
 require 'rspec/core/rake_task'
 
 RSpec::Core::RakeTask.new('spec:broken') do |task|
-  task.rspec_opts = '--pattern spec/lib/pact_broker/matrix/*_spec.rb'
+  task.rspec_opts = '--pattern spec/lib/pact_broker/verifications/sequence_spec.rb --pattern spec/lib/pact_broker/matrix/*_spec.rb'
 end
 
 RSpec::Core::RakeTask.new('spec:quick') do |task|
