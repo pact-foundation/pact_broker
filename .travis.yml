@@ -13,5 +13,5 @@ before_script:
   - mysql -e 'CREATE DATABASE pact_broker;'
   - mysql -e "GRANT ALL ON pact_broker.* TO 'travis'@'%';"
 script:
-  - bundle exec rake spec:broken
+  - bundle exec rake
 
