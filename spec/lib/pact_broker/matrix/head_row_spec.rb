@@ -2,7 +2,7 @@ require 'pact_broker/matrix/head_row'
 
 module PactBroker
   module Matrix
-    describe HeadRow do
+    describe HeadRow, broken_on_mysql: true  do
       let(:td) { TestDataBuilder.new }
 
       describe "latest_verification_for_consumer_version_tag" do
@@ -52,7 +52,7 @@ module PactBroker
 
           subject { HeadRow.eager(:consumer_version_tags).eager(:latest_verification_for_consumer_version_tag).order(:pact_publication_id).all }
 
-          it "returns the most recent verification for the previous version with the same tag", broken_on_mysql: true do
+          it "returns the most recent verification for the previous version with the same tag" do
             expect(subject.last.verification_id).to be nil # this pact version has not been verified directly
             expect(subject.last.latest_verification_for_consumer_version_tag.provider_version.number).to eq "11"
           end
