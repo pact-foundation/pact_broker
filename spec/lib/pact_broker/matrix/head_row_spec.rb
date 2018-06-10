@@ -53,6 +53,10 @@ module PactBroker
           subject { HeadRow.where(verification_id: nil).eager(:consumer_version_tags).eager(:latest_verification_for_consumer_version_tag).order(:pact_publication_id).all }
 
           it "returns the most recent verification for the previous version with the same tag" do
+            require 'table_print'
+            cols = :consumer_version_tag_name, :pact_version_id, :provider_version_number
+            tp PactBroker::Verifications::LatestVerificationForConsumerVersionTag.all, cols
+            expect(PactBroker::Verifications::LatestVerificationForConsumerVersionTag.count).to be 1
             expect(subject.last.consumer_version_number).to eq "2"
             expect(subject.last.latest_verification_for_consumer_version_tag.provider_version.number).to eq "11"
           end
