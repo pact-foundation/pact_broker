@@ -1,3 +1,12 @@
+<a name="v2.22.0"></a>
+### v2.22.0 (2018-06-11)
+
+
+#### Features
+
+* allow whitelist configurations to be loaded from database	 ([19cb83f](/../../commit/19cb83f))
+
+
 <a name="v2.21.0"></a>
 ### v2.21.0 (2018-06-10)
 
