@@ -1,4 +1,5 @@
 require 'pact_broker/error'
+require 'pact_broker/config/space_delimited_string_list'
 
 module PactBroker
 
@@ -23,15 +24,19 @@ module PactBroker
       :check_for_potential_duplicate_pacticipant_names,
       :webhook_retry_schedule,
       :semver_formats,
-      :disable_ssl_verification
+      :disable_ssl_verification,
+      :webhook_http_method_whitelist,
+      :webhook_scheme_whitelist,
+      :webhook_host_whitelist,
+      :base_equality_only_on_content_that_affects_verification_results
     ]
 
     attr_accessor :log_dir, :database_connection, :auto_migrate_db, :use_hal_browser, :html_pact_renderer
     attr_accessor :validate_database_connection_config, :enable_diagnostic_endpoints, :version_parser, :sha_generator
     attr_accessor :use_case_sensitive_resource_names, :order_versions_by_date
     attr_accessor :check_for_potential_duplicate_pacticipant_names
-    attr_accessor :webhook_http_method_whitelist, :webhook_scheme_whitelist, :webhook_host_whitelist
     attr_accessor :webhook_retry_schedule
+    attr_reader :webhook_http_method_whitelist, :webhook_scheme_whitelist, :webhook_host_whitelist
     attr_accessor :semver_formats
     attr_accessor :enable_public_badge_access, :shields_io_base_url
     attr_accessor :disable_ssl_verification
@@ -68,8 +73,7 @@ module PactBroker
       config.version_parser = PactBroker::Versions::ParseSemanticVersion
       config.sha_generator = PactBroker::Pacts::GenerateSha
       config.base_equality_only_on_content_that_affects_verification_results = false
-      # Not recommended to set this to true unless there is no way to
-      # consistently extract an orderable object from the consumer application version number.
+      # TODO change this to true
       config.order_versions_by_date = false
       config.semver_formats = ["%M.%m.%p%s%d", "%M.%m", "%M"]
       config.webhook_retry_schedule = [10, 60, 120, 300, 600, 1200] #10 sec, 1 min, 2 min, 5 min, 10 min, 20 min => 38 minutes
@@ -171,7 +175,28 @@ module PactBroker
       PactBroker::Config::Load.call(self)
     end
 
+    def webhook_http_method_whitelist= webhook_http_method_whitelist
+      @webhook_http_method_whitelist = parse_space_delimited_string_list_property('webhook_http_method_whitelist', webhook_http_method_whitelist)
+    end
+
+    def webhook_scheme_whitelist= webhook_scheme_whitelist
+      @webhook_scheme_whitelist = parse_space_delimited_string_list_property('webhook_scheme_whitelist', webhook_scheme_whitelist)
+    end
+
+    def webhook_host_whitelist= webhook_host_whitelist
+      @webhook_host_whitelist = parse_space_delimited_string_list_property('webhook_host_whitelist', webhook_host_whitelist)
+    end
+
     private
+
+    def parse_space_delimited_string_list_property property_name, property_value
+      case property_value
+      when String then Config::SpaceDelimitedStringList.parse(property_value)
+      when Array then Config::SpaceDelimitedStringList.new(property_value)
+      else
+        raise ConfigurationError.new("Pact Broker configuration property `#{property_name}` must be a space delimited String or an Array")
+      end
+    end
 
     def create_logger path
       FileUtils::mkdir_p File.dirname(path)

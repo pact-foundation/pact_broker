@@ -1,6 +1,7 @@
 require 'pact_broker/configuration'
 require 'pact_broker/logging'
 require 'pact_broker/config/setting'
+require 'pact_broker/config/space_delimited_string_list'
 
 module PactBroker
   module Config
@@ -49,6 +50,8 @@ module PactBroker
           Integer(setting.value)
         when 'float'
           Float(setting.value)
+        when 'space_delimited_string_list'
+          SpaceDelimitedStringList.parse(setting.value)
         when 'boolean'
           setting.value == "1"
         end

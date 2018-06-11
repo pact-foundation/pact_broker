@@ -1,12 +1,13 @@
 require 'pact_broker/config/save'
 require 'pact_broker/configuration'
+require 'pact_broker/config/space_delimited_string_list'
 
 module PactBroker
   module Config
     describe Save do
 
       describe "#call" do
-        let(:setting_names) { [:foo, :bar, :wiffle, :meep, :flop, :peebo, :lalala, :meow] }
+        let(:setting_names) { [:foo, :bar, :wiffle, :meep, :flop, :peebo, :lalala, :meow, :whitelist] }
         let(:configuration) do
           double("PactBroker::Configuration",
             foo: true,
@@ -16,7 +17,8 @@ module PactBroker
             flop: nil,
             peebo: 1,
             lalala: 1.2,
-            meow: Object.new)
+            meow: Object.new,
+            whitelist: SpaceDelimitedStringList.parse("foo bar"))
         end
 
         subject { Save.call(configuration, setting_names) }
@@ -68,6 +70,13 @@ module PactBroker
           setting = Setting.find(name: 'lalala')
           expect(setting.type).to eq 'float'
           expect(setting.value).to eq '1.2'
+        end
+
+        it "saves a SpaceDelimitedStringList" do
+          subject
+          setting = Setting.find(name: 'whitelist')
+          expect(setting.type).to eq 'space_delimited_string_list'
+          expect(setting.value).to eq 'foo bar'
         end
 
         it "does not save an arbitrary object to the database" do

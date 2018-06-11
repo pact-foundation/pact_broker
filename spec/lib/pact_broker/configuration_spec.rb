@@ -16,7 +16,32 @@ module PactBroker
           expect(PactBroker::Api::Renderers::HtmlPactRenderer).to receive(:call).with(pact, options)
           PactBroker.configuration.html_pact_renderer.call pact, options
         end
+      end
 
+      describe "webhook_http_method_whitelist" do
+        it "allows setting the whitelist by a string" do
+          PactBroker.configuration.webhook_http_method_whitelist = "foo"
+          expect(PactBroker.configuration.webhook_http_method_whitelist).to be_a Config::SpaceDelimitedStringList
+        end
+
+        it "allows setting the whitelist by an array" do
+          PactBroker.configuration.webhook_http_method_whitelist = ["foo"]
+          expect(PactBroker.configuration.webhook_http_method_whitelist).to be_a Config::SpaceDelimitedStringList
+        end
+      end
+
+      describe "webhook_scheme_whitelist" do
+        it "allows setting the whitelist by a string" do
+          PactBroker.configuration.webhook_scheme_whitelist = "foo"
+          expect(PactBroker.configuration.webhook_scheme_whitelist).to be_a Config::SpaceDelimitedStringList
+        end
+      end
+
+      describe "webhook_host_whitelist" do
+        it "allows setting the whitelist by a string" do
+          PactBroker.configuration.webhook_host_whitelist = "foo"
+          expect(PactBroker.configuration.webhook_host_whitelist).to be_a Config::SpaceDelimitedStringList
+        end
       end
 
       describe "SETTING_NAMES" do

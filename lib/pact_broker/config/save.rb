@@ -49,6 +49,8 @@ module PactBroker
             'boolean'
           when String, nil
             'string'
+          when SpaceDelimitedStringList
+            'space_delimited_string_list'
           when Array, Hash
             'json'
           when Integer
@@ -69,6 +71,8 @@ module PactBroker
           "1"
         when FalseClass
           "0"
+        when SpaceDelimitedStringList
+          val.to_s
         when Array, Hash
           val.to_json
         else
