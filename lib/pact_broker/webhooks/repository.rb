@@ -169,11 +169,14 @@ module PactBroker
       end
 
       def find_latest_triggered_webhooks consumer, provider
-        # The manual grouping is just to get rid of any webhooks that triggered at the same time
+        # The manual grouping is to get rid of any webhooks that triggered at the same time
         LatestTriggeredWebhook
           .where(consumer: consumer, provider: provider)
           .order(:id)
           .all
+          .group_by{|w| [w.consumer_id, w.provider_id, w.webhook_uuid]}
+          .values
+          .collect(&:last)
       end
 
       def fail_retrying_triggered_webhooks

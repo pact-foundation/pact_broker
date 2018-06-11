@@ -261,6 +261,14 @@ class TestDataBuilder
     self
   end
 
+  def create_provider_webhook parameters = {}
+    create_webhook(parameters.merge(consumer: nil))
+  end
+
+  def create_consumer_webhook parameters = {}
+    create_webhook(parameters.merge(provider: nil))
+  end
+
   def create_verification_webhook params = {}
     create_webhook params.merge(events: [{ name: PactBroker::Webhooks::WebhookEvent::VERIFICATION_PUBLISHED }])
   end
