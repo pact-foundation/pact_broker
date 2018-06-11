@@ -1,3 +1,26 @@
+<a name="v2.21.0"></a>
+### v2.21.0 (2018-06-10)
+
+
+#### Features
+
+* add ${pactbroker.consumerVersionTags} and ${pactbroker.providerVersionTags} to webhook templates	 ([e5121b1](/../../commit/e5121b1))
+* add ${pactbroker.verificationResultUrl} to webhook templates	 ([e19c9c9](/../../commit/e19c9c9))
+* redact potentially sensitive headers in the webhook resource	 ([619c7e9](/../../commit/619c7e9))
+* add ${pactbroker.githubVerificationStatus} to webhook templates	 ([abccf7a](/../../commit/abccf7a))
+* add ${pactbroker.providerVersionNumber} to webhook templates	 ([86bc1ec](/../../commit/86bc1ec))
+
+
+#### Bug Fixes
+
+* correctly trigger contract_content_changed webhooks when first version of a pact is published	 ([73a06ff](/../../commit/73a06ff))
+* correctly handle template parameters in URL when rendering webhook resource	 ([a4b69db](/../../commit/a4b69db))
+* correct call to execute webhooks when pact changes	 ([076afe6](/../../commit/076afe6))
+* ensure webhook hosts cannot contain templated parameters	 ([fe05919](/../../commit/fe05919))
+* allow pact broker template parameter in URL	 ([c91d04e](/../../commit/c91d04e))
+* correct logic for showing webhook response bodies in logs when a whitelist is configured	 ([db2f9d1](/../../commit/db2f9d1))
+
+
 <a name="v2.20.0"></a>
 ### v2.20.0 (2018-06-03)
 
