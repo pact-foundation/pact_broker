@@ -33,7 +33,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'redcarpet', '>=3.3.2', '~>3.3'
   gem.add_runtime_dependency 'pact-support'
   gem.add_runtime_dependency 'padrino-core', '>= 0.14.3', '~> 0.14'
-  gem.add_runtime_dependency 'sinatra', '>= 2.0.1'
+  gem.add_runtime_dependency 'sinatra', '>= 2.0.2'
   gem.add_runtime_dependency 'haml', '~>5.0'
   gem.add_runtime_dependency 'sucker_punch', '~>2.0'
   gem.add_runtime_dependency 'rack-protection', '~>2.0'
