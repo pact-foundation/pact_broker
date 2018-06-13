@@ -8,6 +8,7 @@ en:
     name_in_path_matches_name_in_pact?: "does not match %{left} name in path ('%{right}')."
     valid_consumer_version_number?: "Consumer version number '%{value}' cannot be parsed to a version number. The expected format (unless this configuration has been overridden) is a semantic version. eg. 1.3.0 or 2.0.4.rc1"
     non_templated_host?: "cannot have a template parameter in the host"
+    pacticipant_exists?: "does not match an existing pacticipant"
 
   pact_broker:
     messages:

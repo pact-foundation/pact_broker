@@ -46,6 +46,14 @@ module PactBroker
             expect(parsed_json[:request]).to eq request
           end
 
+          it 'includes the consumer' do
+            expect(parsed_json[:consumer]).to eq name: "Consumer"
+          end
+
+          it 'includes the provider' do
+            expect(parsed_json[:provider]).to eq name: "Provider"
+          end
+
           it 'includes a link to the consumer' do
             expect(parsed_json[:_links][:'pb:consumer'][:name]).to eq 'Consumer'
             expect(parsed_json[:_links][:'pb:consumer'][:href]).to eq 'http://example.org/pacticipants/Consumer'

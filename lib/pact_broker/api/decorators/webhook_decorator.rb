@@ -16,6 +16,14 @@ module PactBroker
           property :name
         end
 
+        property :consumer, :class => PactBroker::Domain::Pacticipant do
+          property :name
+        end
+
+        property :provider, :class => PactBroker::Domain::Pacticipant do
+          property :name
+        end
+
         property :request, :class => PactBroker::Domain::WebhookRequest, extend: WebhookRequestDecorator
         collection :events, :class => PactBroker::Webhooks::WebhookEvent, extend: WebhookEventDecorator
 

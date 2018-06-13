@@ -6,14 +6,16 @@ module PactBroker
   module Api
     module Contracts
       describe WebhookContract do
-        let(:json) { load_fixture 'webhook_valid.json' }
+        let(:json) { load_fixture 'webhook_valid_with_pacticipants.json' }
         let(:hash) { JSON.parse(json) }
         let(:webhook) { PactBroker::Api::Decorators::WebhookDecorator.new(Domain::Webhook.new).from_json(json) }
         let(:subject) { WebhookContract.new(webhook) }
         let(:matching_hosts) { ['foo'] }
+        let(:consumer) { double("consumer") }
+        let(:provider) { double("provider") }
 
         def valid_webhook_with
-          hash = load_json_fixture 'webhook_valid.json'
+          hash = load_json_fixture 'webhook_valid_with_pacticipants.json'
           yield hash
           hash.to_json
         end
@@ -23,6 +25,8 @@ module PactBroker
             PactBroker.configuration.webhook_http_method_whitelist = webhook_http_method_whitelist
             PactBroker.configuration.webhook_host_whitelist = webhook_host_whitelist
             allow(PactBroker::Webhooks::CheckHostWhitelist).to receive(:call).and_return(whitelist_matches)
+            allow(PactBroker::Pacticipants::Service).to receive(:find_pacticipant_by_name).with("Foo").and_return(consumer)
+            allow(PactBroker::Pacticipants::Service).to receive(:find_pacticipant_by_name).with("Bar").and_return(provider)
             subject.validate(hash)
           end
 
@@ -33,6 +37,98 @@ module PactBroker
           context "with valid fields" do
             it "is empty" do
               expect(subject.errors).to be_empty
+            end
+          end
+
+          context "with a nil consumer name" do
+            let(:json) do
+              valid_webhook_with do |hash|
+                hash['consumer']['name'] = nil
+              end
+            end
+
+            it "contains an error" do
+              expect(subject.errors[:'consumer.name']).to eq ["can't be blank"]
+            end
+          end
+
+          context "with no consumer name key" do
+            let(:json) do
+              valid_webhook_with do |hash|
+                hash['consumer'].delete('name')
+              end
+            end
+
+            # I'd prefer this to be "is missing". Isn't the whole point of dry validation
+            # that you can distingush between keys being missing and values being missing? FFS.
+            it "contains an error" do
+              expect(subject.errors[:'consumer.name']).to eq ["can't be blank"]
+            end
+          end
+
+          context "with no consumer" do
+            let(:json) do
+              valid_webhook_with do |hash|
+                hash.delete('consumer')
+              end
+            end
+
+            it "contains no errors" do
+              expect(subject.errors).to be_empty
+            end
+          end
+
+          context "with a consumer name that doesn't match any existing consumer" do
+            let(:consumer) { nil }
+
+            it "contains no errors" do
+              expect(subject.errors[:'consumer.name']).to eq ["does not match an existing pacticipant"]
+            end
+          end
+
+          context "with a nil provider name" do
+            let(:json) do
+              valid_webhook_with do |hash|
+                hash['provider']['name'] = nil
+              end
+            end
+
+            it "contains an error" do
+              expect(subject.errors[:'provider.name']).to eq ["can't be blank"]
+            end
+          end
+
+          context "with no provider name key" do
+            let(:json) do
+              valid_webhook_with do |hash|
+                hash['provider'].delete('name')
+              end
+            end
+
+            # I'd prefer this to be "is missing". Isn't the whole point of dry validation
+            # that you can distingush between keys being missing and values being missing? FFS.
+            it "contains an error" do
+              expect(subject.errors[:'provider.name']).to eq ["can't be blank"]
+            end
+          end
+
+          context "with no provider" do
+            let(:json) do
+              valid_webhook_with do |hash|
+                hash.delete('provider')
+              end
+            end
+
+            it "contains no errors" do
+              expect(subject.errors).to be_empty
+            end
+          end
+
+          context "with a provider name that doesn't match any existing provider" do
+            let(:provider) { nil }
+
+            it "contains no errors" do
+              expect(subject.errors[:'provider.name']).to eq ["does not match an existing pacticipant"]
             end
           end
 
