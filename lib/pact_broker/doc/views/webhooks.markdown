@@ -8,8 +8,7 @@ Allowed methods: `GET`, `POST`
 
 *Individual resource*
 
-Path: `/webhook
-s/UUID`
+Path: `/webhook/UUID`
 
 Allowed methods: `GET`, `PUT`, `DELETE`
 
