@@ -31,6 +31,8 @@ module Rack
   end
 end
 
+Pact.configuration.logger.level = Logger::DEBUG
+
 Pact.service_provider "Pact Broker" do
 
   app { HalRelationProxyApp.new(app_to_verify) }

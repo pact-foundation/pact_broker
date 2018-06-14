@@ -29,6 +29,14 @@ Pact.provider_states_for "Pact Broker Client" do
     end
   end
 
+  provider_state "the 'Pricing Service' and 'Condor' already exist in the pact-broker" do
+    set_up do
+      TestDataBuilder.new
+        .create_consumer("Condor")
+        .create_provider("Pricing Service")
+    end
+  end
+
   provider_state "the pact for Foo Thing version 1.2.3 has been verified by Bar version 4.5.6" do
     set_up do
       TestDataBuilder.new
