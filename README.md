@@ -148,6 +148,7 @@ You can use the [Pact Broker Docker image][docker] or [Terraform on AWS][terrafo
 `
 * Please ensure you use `encoding: 'utf8'` in your Sequel options to avoid encoding issues.
 * For production usage, use a web application server like [Phusion Passenger](https://www.phusionpassenger.com) or [Nginx](http://nginx.org/) to serve the Pact Broker application. You'll need to read up on the documentation for these yourself as it is beyond the scope of this documentation. See the [wiki][reverse-proxy-docs] for instructions on using a reverse proxy with SSL.
+* Ensure the environment variable `RACK_ENV` is set to `production`.
 * Deploy to your location of choice.
 
 ## Upgrading

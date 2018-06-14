@@ -4,6 +4,8 @@ require 'sequel'
 # require 'pg' # for postgres
 require 'pact_broker'
 
+ENV['RACK_ENV'] ||= 'production'
+
 # Create a real database, and set the credentials for it here
 # It is highly recommended to set the encoding to utf8
 DATABASE_CREDENTIALS = {adapter: "sqlite", database: "pact_broker_database.sqlite3", :encoding => 'utf8'}
