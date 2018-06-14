@@ -6,6 +6,36 @@ require 'pact_broker/config/setting'
 module PactBroker
   describe Configuration do
 
+    describe "show_backtrace_in_error_response?" do
+      before do
+        allow(ENV).to receive(:[]).and_call_original
+      end
+
+      context "when RACK_ENV is not set" do
+        before do
+          allow(ENV).to receive(:[]).with("RACK_ENV").and_return(nil)
+        end
+
+        its(:show_backtrace_in_error_response?) { is_expected.to be false }
+      end
+
+      context "when RACK_ENV is not production" do
+        before do
+          allow(ENV).to receive(:[]).with("RACK_ENV").and_return('development')
+        end
+
+        its(:show_backtrace_in_error_response?) { is_expected.to be true }
+      end
+
+      context "when RACK_ENV is production" do
+        before do
+          allow(ENV).to receive(:[]).with("RACK_ENV").and_return('production')
+        end
+
+        its(:show_backtrace_in_error_response?) { is_expected.to be false }
+      end
+    end
+
     context "default configuration" do
       describe ".html_pact_renderer" do
 

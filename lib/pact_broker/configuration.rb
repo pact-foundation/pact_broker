@@ -91,6 +91,10 @@ module PactBroker
       }
     end
 
+    def show_backtrace_in_error_response?
+      !!(ENV['RACK_ENV'] && ENV['RACK_ENV'].downcase != 'production')
+    end
+
     def authentication_configured?
       !!authenticate || !!authenticate_with_basic_auth
     end

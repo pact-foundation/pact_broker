@@ -40,6 +40,32 @@ module PactBroker
             end
           end
 
+          context "when show_backtrace_in_error_response? is true" do
+            before do
+              allow(PactBroker.configuration).to receive(:show_backtrace_in_error_response?).and_return(true)
+            end
+
+            it "includes the backtrace in the error response" do
+              expect(response).to receive(:body=) do | body |
+                expect(body).to include("backtrace")
+              end
+              subject
+            end
+          end
+
+          context "when show_backtrace_in_error_response? is false" do
+            before do
+              allow(PactBroker.configuration).to receive(:show_backtrace_in_error_response?).and_return(false)
+            end
+
+            it "does not include the backtrace in the error response" do
+              expect(response).to receive(:body=) do | body |
+                expect(body).to_not include("backtrace")
+              end
+              subject
+            end
+          end
+
           context "when the error is a PactBroker::TestError" do
             let(:error) { PactBroker::TestError.new('test error') }
 
