@@ -70,6 +70,7 @@ module PactBroker
 
       describe "#latest_consumer_version_number" do
         before do
+          PactBroker.configuration.order_versions_by_date = false
           builder = TestDataBuilder.new
           builder
             .create_consumer

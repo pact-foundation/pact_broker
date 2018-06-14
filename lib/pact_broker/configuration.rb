@@ -73,8 +73,7 @@ module PactBroker
       config.version_parser = PactBroker::Versions::ParseSemanticVersion
       config.sha_generator = PactBroker::Pacts::GenerateSha
       config.base_equality_only_on_content_that_affects_verification_results = false
-      # TODO change this to true
-      config.order_versions_by_date = false
+      config.order_versions_by_date = true
       config.semver_formats = ["%M.%m.%p%s%d", "%M.%m", "%M"]
       config.webhook_retry_schedule = [10, 60, 120, 300, 600, 1200] #10 sec, 1 min, 2 min, 5 min, 10 min, 20 min => 38 minutes
       config.check_for_potential_duplicate_pacticipant_names = true

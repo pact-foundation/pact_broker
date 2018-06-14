@@ -93,6 +93,7 @@ module PactBroker
 
         context "when no tag is specified" do
           before do
+            PactBroker.configuration.order_versions_by_date = false
             TestDataBuilder.new
               .create_provider("Provider1")
               .create_consumer("Consumer1")
