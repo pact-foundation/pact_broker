@@ -144,7 +144,7 @@ module PactBroker
         selectors.collect do | selector |
           if selector[:tag] && selector[:latest]
             version = version_repository.find_by_pacticipant_name_and_latest_tag(selector[:pacticipant_name], selector[:tag])
-            raise Error.new("Could not find version with tag #{selector[:tag].inspect} for #{selector[:pacticipant_name]}") unless version
+            raise Error.new("No version of #{selector[:pacticipant_name]} found with tag #{selector[:tag]}") unless version
             # validation in resource should ensure we always have a version
             {
               pacticipant_name: selector[:pacticipant_name],
@@ -152,6 +152,7 @@ module PactBroker
             }
           elsif selector[:latest]
             version = version_repository.find_latest_by_pacticpant_name(selector[:pacticipant_name])
+            raise Error.new("No version of #{selector[:pacticipant_name]} found") unless version
             {
               pacticipant_name: selector[:pacticipant_name],
               pacticipant_version_number: version.number
@@ -159,6 +160,7 @@ module PactBroker
           elsif selector[:tag]
             # validation in resource should ensure we always have at least one version
             versions = version_repository.find_by_pacticipant_name_and_tag(selector[:pacticipant_name], selector[:tag])
+            raise Error.new("No version of #{selector[:pacticipant_name]} found with tag #{selector[:tag]}") unless versions.any?
             versions.collect do | version |
               {
                 pacticipant_name: selector[:pacticipant_name],

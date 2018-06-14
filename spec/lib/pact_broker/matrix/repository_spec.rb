@@ -964,6 +964,39 @@ module PactBroker
             expect(subject.count).to eq 0
           end
         end
+
+        context "when there is no version for the specified tag" do
+          before do
+            TestDataBuilder.new
+              .create_pact_with_hierarchy("D", "1", "E")
+          end
+
+          subject { Repository.new.find(selectors) }
+
+          context "when the latest tag is specified" do
+            let(:selectors) { [{ pacticipant_name: 'D', latest: true, tag: 'dev' } ] }
+
+            it "raises an error" do
+              expect { subject }.to raise_error Error, /No version of D found/
+            end
+          end
+
+          context "when all tags are specified" do
+            let(:selectors) { [{ pacticipant_name: 'D', tag: 'dev' } ] }
+
+            it "raises an error" do
+              expect { subject }.to raise_error Error, /No version of D found/
+            end
+          end
+
+          context "when no tags are specified" do
+            let(:selectors) { [{ pacticipant_name: 'E', latest: true } ] }
+
+            it "raises an error" do
+              expect { subject }.to raise_error Error, /No version of E found/
+            end
+          end
+        end
       end
     end
   end
