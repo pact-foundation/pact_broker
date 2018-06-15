@@ -40,6 +40,14 @@ module PactBroker
             end
           end
 
+          it "creates a json error response body" do
+            expect(response).to receive(:body=) do | body |
+              expect(JSON.parse(body)['error']).to include 'message' => 'test error'
+            end
+            subject
+          end
+
+
           context "when show_backtrace_in_error_response? is true" do
             before do
               allow(PactBroker.configuration).to receive(:show_backtrace_in_error_response?).and_return(true)

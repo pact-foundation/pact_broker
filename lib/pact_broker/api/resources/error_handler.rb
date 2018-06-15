@@ -11,9 +11,9 @@ module PactBroker
         def self.call e, request, response
           logger.error e
           logger.error e.backtrace
-          response_body = { :message => e.message }
+          response_body = { error: { :message => e.message } }
           if PactBroker.configuration.show_backtrace_in_error_response?
-            response_body[:backtrace] = e.backtrace
+            response_body[:error][:backtrace] = e.backtrace
           end
           response.body = response_body.to_json
           report(e, request) if reportable?(e)

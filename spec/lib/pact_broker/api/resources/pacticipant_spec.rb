@@ -55,12 +55,7 @@ module PactBroker::Api
 
           it "returns an error message" do
             subject
-            expect(response_body[:message]).to eq "An error"
-          end
-
-          it "returns the backtrace" do
-            subject
-            expect(response_body[:backtrace]).to be_instance_of(Array)
+            expect(response_body[:error][:message]).to eq "An error"
           end
         end
       end
