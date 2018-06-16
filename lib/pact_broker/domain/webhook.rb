@@ -29,8 +29,10 @@ module PactBroker
           "A webhook for the pact between #{consumer.name} and #{provider.name}"
         elsif provider
           "A webhook for all pacts with provider #{provider.name}"
-        else
+        elsif consumer
           "A webhook for all pacts with consumer #{consumer.name}"
+        else
+          "A webhook for all pacts"
         end
       end
 

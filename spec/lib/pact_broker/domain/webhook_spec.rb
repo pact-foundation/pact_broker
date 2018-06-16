@@ -30,6 +30,13 @@ module PactBroker
 
           it { is_expected.to eq "A webhook for all pacts with provider Provider" }
         end
+
+        context "with neither a consumer nor a provider" do
+          let(:consumer) { nil }
+          let(:provider) { nil }
+
+          it { is_expected.to eq "A webhook for all pacts" }
+        end
       end
 
       describe "execute" do

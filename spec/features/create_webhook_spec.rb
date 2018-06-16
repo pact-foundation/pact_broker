@@ -27,7 +27,7 @@ describe "Creating a webhook" do
     }
   end
 
-  subject { post path, webhook_json, headers }
+  subject { post(path, webhook_json, headers) }
 
   context "for a consumer and provider" do
     let(:path) { "/webhooks/provider/Some%20Provider/consumer/Some%20Consumer" }
@@ -75,7 +75,11 @@ describe "Creating a webhook" do
   end
 
   context "for a provider" do
-    let(:path) { "/webhooks/provider/Some%20Provider" }
+    let(:path) { "/webhooks" }
+
+    before do
+      webhook_hash[:provider] = { name: "Some Provider" }
+    end
 
     it "returns a 201 response" do
       subject
@@ -90,7 +94,10 @@ describe "Creating a webhook" do
   end
 
   context "for a consumer" do
-    let(:path) { "/webhooks/consumer/Some%20Consumer" }
+    let(:path) { "/webhooks" }
+    before do
+      webhook_hash[:consumer] = { name: "Some Consumer" }
+    end
 
     it "returns a 201 response" do
       subject
@@ -100,6 +107,21 @@ describe "Creating a webhook" do
     it "creates a webhook without a provider" do
       subject
       expect(PactBroker::Webhooks::Webhook.first.consumer).to_not be nil
+      expect(PactBroker::Webhooks::Webhook.first.provider).to be nil
+    end
+  end
+
+  context "with no consumer or provider" do
+    let(:path) { "/webhooks" }
+
+    it "returns a 201 response" do
+      subject
+      expect(last_response.status).to be 201
+    end
+
+    it "creates a webhook without a provider" do
+      subject
+      expect(PactBroker::Webhooks::Webhook.first.consumer).to be nil
       expect(PactBroker::Webhooks::Webhook.first.provider).to be nil
     end
   end
