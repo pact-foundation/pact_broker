@@ -23,7 +23,7 @@ module PactBroker
         PactBroker::Api::Decorators::VerificationDecorator.new(verification).from_hash(params)
         verification.number = next_verification_number
         verification = verification_repository.create(verification, provider_version_number, pact)
-        webhook_service.execute_webhooks pact, verification, PactBroker::Webhooks::WebhookEvent::VERIFICATION_PUBLISHED
+        webhook_service.trigger_webhooks pact, verification, PactBroker::Webhooks::WebhookEvent::VERIFICATION_PUBLISHED
         verification
       end
 

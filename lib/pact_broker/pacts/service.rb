@@ -108,7 +108,7 @@ module PactBroker
         updated_pact = pact_repository.update existing_pact.id, params
 
         if existing_pact.json_content != updated_pact.json_content
-          webhook_service.execute_webhooks updated_pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED
+          webhook_service.trigger_webhooks updated_pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED
         else
           logger.debug "Pact has not changed since previous revision, not triggering webhooks"
         end
@@ -127,7 +127,7 @@ module PactBroker
       def trigger_webhooks pact
         # TODO add tests for this
         if pact_is_new_or_pact_has_changed_since_previous_version?(pact)
-          webhook_service.execute_webhooks pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED
+          webhook_service.trigger_webhooks pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED
         else
           logger.debug "Pact has not changed since previous version, not triggering webhooks"
         end
