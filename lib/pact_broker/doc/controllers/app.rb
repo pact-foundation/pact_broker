@@ -13,8 +13,7 @@ module PactBroker
 
         MAPPINGS = {
           'webhooks-create' => 'webhooks',
-          'webhooks-webhooks' => 'webhooks',
-          'pact-webhooks' => 'webhooks',
+          'webhooks-webhooks' => 'webhooks'
         }.freeze
 
         helpers do
