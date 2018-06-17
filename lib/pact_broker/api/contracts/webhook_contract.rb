@@ -26,8 +26,43 @@ module PactBroker
             config.messages_file = File.expand_path("../../../locale/en.yml", __FILE__)
           end
 
+          optional(:consumer)
+          optional(:provider)
           required(:request).filled
           optional(:events).maybe(min_size?: 1)
+        end
+
+        property :consumer do
+          property :name
+
+          validation do
+            configure do
+              config.messages_file = File.expand_path("../../../locale/en.yml", __FILE__)
+
+              def pacticipant_exists?(name)
+                !!PactBroker::Pacticipants::Service.find_pacticipant_by_name(name)
+              end
+            end
+
+            required(:name).filled(:pacticipant_exists?)
+          end
+
+        end
+
+        property :provider do
+          property :name
+
+          validation do
+            configure do
+              config.messages_file = File.expand_path("../../../locale/en.yml", __FILE__)
+
+              def pacticipant_exists?(name)
+                !!PactBroker::Pacticipants::Service.find_pacticipant_by_name(name)
+              end
+            end
+
+            required(:name).filled(:pacticipant_exists?)
+          end
         end
 
         property :request do

@@ -28,7 +28,7 @@ module PactBroker
         end
       end
 
-      describe ".execute_webhooks" do
+      describe ".trigger_webhooks" do
 
         let(:verification) { instance_double(PactBroker::Domain::Verification)}
         let(:pact) { instance_double(PactBroker::Domain::Pact, consumer: consumer, provider: provider, consumer_version: consumer_version)}
@@ -39,15 +39,15 @@ module PactBroker
         let(:triggered_webhook) { instance_double(PactBroker::Webhooks::TriggeredWebhook) }
 
         before do
-          allow_any_instance_of(PactBroker::Webhooks::Repository).to receive(:find_by_consumer_and_provider_and_event_name).and_return(webhooks)
+          allow_any_instance_of(PactBroker::Webhooks::Repository).to receive(:find_by_consumer_and_or_provider_and_event_name).and_return(webhooks)
           allow_any_instance_of(PactBroker::Webhooks::Repository).to receive(:create_triggered_webhook).and_return(triggered_webhook)
           allow(Job).to receive(:perform_in)
         end
 
-        subject { Service.execute_webhooks pact, verification, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED }
+        subject { Service.trigger_webhooks pact, verification, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED }
 
         it "finds the webhooks" do
-          expect_any_instance_of(PactBroker::Webhooks::Repository).to receive(:find_by_consumer_and_provider_and_event_name).with(consumer, provider, PactBroker::Webhooks::WebhookEvent::DEFAULT_EVENT_NAME)
+          expect_any_instance_of(PactBroker::Webhooks::Repository).to receive(:find_by_consumer_and_or_provider_and_event_name).with(consumer, provider, PactBroker::Webhooks::WebhookEvent::DEFAULT_EVENT_NAME)
           subject
         end
 
@@ -133,7 +133,7 @@ module PactBroker
         end
       end
 
-      describe ".execute_webhooks integration test" do
+      describe ".trigger_webhooks integration test" do
         let!(:http_request) do
           stub_request(:get, "http://example.org").
             to_return(:status => 200)
@@ -151,7 +151,7 @@ module PactBroker
             .and_return(:pact)
         end
 
-        subject { PactBroker::Webhooks::Service.execute_webhooks pact, td.verification, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED }
+        subject { PactBroker::Webhooks::Service.trigger_webhooks pact, td.verification, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED }
 
         it "executes the HTTP request of the webhook" do
           subject

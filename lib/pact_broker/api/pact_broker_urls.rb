@@ -120,6 +120,10 @@ module PactBroker
         "#{base_url}/verification-results/consumer/#{url_encode(version.pacticipant.name)}/version/#{version.number}/latest"
       end
 
+      def verification_triggered_webhooks_url verification, base_url = ''
+        "#{verification_url(verification, base_url)}/triggered-webhooks"
+      end
+
       def verification_publication_url pact, base_url
         "#{pactigration_base_url(base_url, pact)}/pact-version/#{pact.pact_version_sha}/verification-results"
       end
@@ -152,12 +156,28 @@ module PactBroker
         "#{base_url}/webhooks/#{webhook.uuid}/execute"
       end
 
-      def webhooks_for_pact_url consumer, provider, base_url = ''
+      def webhooks_for_consumer_and_provider_url consumer, provider, base_url = ''
         "#{base_url}/webhooks/provider/#{url_encode(provider.name)}/consumer/#{url_encode(consumer.name)}"
+      end
+
+      def consumer_webhooks_url consumer, base_url = ''
+        "#{base_url}/webhooks/consumer/#{url_encode(consumer.name)}"
+      end
+
+      def provider_webhooks_url provider, base_url = ''
+        "#{base_url}/webhooks/provider/#{url_encode(provider.name)}"
+      end
+
+      def webhooks_for_pact_url consumer, provider, base_url = ''
+        "#{base_url}/pacts/provider/#{url_encode(provider.name)}/consumer/#{url_encode(consumer.name)}/webhooks"
       end
 
       def webhooks_status_url consumer, provider, base_url = ''
         "#{webhooks_for_pact_url(consumer, provider, base_url)}/status"
+      end
+
+      def pact_triggered_webhooks_url pact, base_url = ''
+        "#{pact_url(base_url, pact)}/triggered-webhooks"
       end
 
       def triggered_webhook_logs_url triggered_webhook, base_url

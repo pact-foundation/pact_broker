@@ -46,6 +46,14 @@ module PactBroker
             expect(parsed_json[:request]).to eq request
           end
 
+          it 'includes the consumer' do
+            expect(parsed_json[:consumer]).to eq name: "Consumer"
+          end
+
+          it 'includes the provider' do
+            expect(parsed_json[:provider]).to eq name: "Provider"
+          end
+
           it 'includes a link to the consumer' do
             expect(parsed_json[:_links][:'pb:consumer'][:name]).to eq 'Consumer'
             expect(parsed_json[:_links][:'pb:consumer'][:href]).to eq 'http://example.org/pacticipants/Consumer'
@@ -86,6 +94,34 @@ module PactBroker
             let(:headers) { nil }
             it 'does not include the headers' do
               expect(parsed_json[:request]).to_not have_key :headers
+            end
+          end
+
+          context 'when there is no consumer' do
+            before do
+              webhook.consumer = nil
+            end
+
+            it 'does not include the consumer relation' do
+              expect(parsed_json[:_links][:'pb:consumer']).to be nil
+            end
+
+            it 'does not include the pact webhooks relation' do
+              expect(parsed_json[:_links][:'pb:pact-webhooks']).to be nil
+            end
+          end
+
+          context 'when there is no provider' do
+            before do
+              webhook.provider = nil
+            end
+
+            it 'does not include the provider relation' do
+              expect(parsed_json[:_links][:'pb:provider']).to be nil
+            end
+
+            it 'does not include the pact webhooks relation' do
+              expect(parsed_json[:_links][:'pb:pact-webhooks']).to be nil
             end
           end
 

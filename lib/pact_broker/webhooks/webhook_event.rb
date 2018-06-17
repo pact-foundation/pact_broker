@@ -17,6 +17,14 @@ module PactBroker
         include PactBroker::Repositories::Helpers
       end
 
+      def contract_content_changed?
+        name == CONTRACT_CONTENT_CHANGED
+      end
+
+      def provider_verification_published?
+        name == VERIFICATION_PUBLISHED
+      end
+
     end
 
     WebhookEvent.plugin :timestamps, update_on_create: true

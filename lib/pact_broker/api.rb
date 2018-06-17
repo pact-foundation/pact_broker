@@ -22,6 +22,7 @@ module PactBroker
         # Verifications
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'pact-version', :pact_version_sha, 'verification-results'], Api::Resources::Verifications, {resource_name: "verification_results"}
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'pact-version', :pact_version_sha, 'verification-results', :verification_number], Api::Resources::Verification, {resource_name: "verification_result"}
+        add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'pact-version', :pact_version_sha, 'verification-results', :verification_number, 'triggered-webhooks'], Api::Resources::VerificationTriggeredWebhooks, {resource_name: "verification_result_triggered_webhooks"}
         add ['verification-results', 'consumer', :consumer_name, 'version', :consumer_version_number,'latest'], Api::Resources::LatestVerificationsForConsumerVersion, {resource_name: "verification_results_for_consumer_version"}
 
         # Badges
@@ -55,13 +56,18 @@ module PactBroker
         add ['pacticipants', :pacticipant_name, 'labels', :label_name], Api::Resources::Label, {resource_name: "pacticipant_label"}
 
         # Webhooks
-        add ['webhooks', 'provider', :provider_name, 'consumer', :consumer_name ], Api::Resources::PactWebhooks, {resource_name: "pact_webhooks"}
-        add ['webhooks', 'provider', :provider_name, 'consumer', :consumer_name, 'status' ], Api::Resources::PactWebhooksStatus, {resource_name: "pact_webhooks_status"}
+        add ['webhooks', 'provider', :provider_name, 'consumer', :consumer_name ], Api::Resources::Webhooks, {resource_name: "consumer_and_provider_webhooks"}
+        add ['webhooks', 'provider', :provider_name], Api::Resources::Webhooks, {resource_name: "provider_webhooks"}
+        add ['webhooks', 'consumer', :consumer_name], Api::Resources::Webhooks, {resource_name: "consumer_webhooks"}
+        add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'webhooks'], Api::Resources::PactWebhooks, {resource_name: "pact_webhooks"}
+        add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'webhooks', 'status'], Api::Resources::PactWebhooksStatus, {resource_name: "pact_webhooks_status"}
+        add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'version', :consumer_version_number, 'triggered-webhooks'], Api::Resources::PactTriggeredWebhooks, {resource_name: "pact_triggered_webhooks"}
 
         add ['webhooks', :uuid ], Api::Resources::Webhook, {resource_name: "webhook"}
         add ['webhooks', :uuid, 'trigger', :trigger_uuid, 'logs' ], Api::Resources::TriggeredWebhookLogs, {resource_name: "triggered_webhook_logs"}
         add ['webhooks', :uuid, 'execute' ], Api::Resources::WebhookExecution, {resource_name: "execute_webhook"}
-        add ['webhooks'], Api::Resources::Webhooks, {resource_name: "webhooks"}
+        add ['webhooks'], Api::Resources::AllWebhooks, {resource_name: "webhooks"}
+
 
         add ['relationships'], Api::Resources::Relationships, {resource_name: "relationships"}
         add ['groups', :pacticipant_name], Api::Resources::Group, {resource_name: "group"}

@@ -49,6 +49,10 @@ module PactBroker
       def content_hash
         JSON.parse(json_content, PACT_PARSING_OPTIONS)
       end
+
+      def pact_publication_id
+        id
+      end
     end
 
   end

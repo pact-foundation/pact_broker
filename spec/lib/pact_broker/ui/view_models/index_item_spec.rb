@@ -92,7 +92,7 @@ module PactBroker
             let(:webhook_status) { :success }
             its(:webhook_label) { is_expected.to eq "1 day ago" }
             its(:webhook_status) { is_expected.to eq "success" }
-            its(:webhook_url) { is_expected.to end_with "/webhooks/provider/Provider%20Name/consumer/Consumer%20Name/status"}
+            its(:webhook_url) { is_expected.to end_with "/pacts/provider/Provider%20Name/consumer/Consumer%20Name/webhooks/status"}
           end
 
           context "when the webhooks_status is :failure" do

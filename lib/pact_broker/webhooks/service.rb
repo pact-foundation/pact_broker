@@ -81,12 +81,20 @@ module PactBroker
         webhook_repository.update_triggered_webhook_status triggered_webhook, status
       end
 
+      def self.find_for_pact pact
+        webhook_repository.find_for_pact(pact)
+      end
+
+      def self.find_by_consumer_and_or_provider consumer, provider
+        webhook_repository.find_by_consumer_and_or_provider(consumer, provider)
+      end
+
       def self.find_by_consumer_and_provider consumer, provider
         webhook_repository.find_by_consumer_and_provider consumer, provider
       end
 
-      def self.execute_webhooks pact, verification, event_name
-        webhooks = webhook_repository.find_by_consumer_and_provider_and_event_name pact.consumer, pact.provider, event_name
+      def self.trigger_webhooks pact, verification, event_name
+        webhooks = webhook_repository.find_by_consumer_and_or_provider_and_event_name pact.consumer, pact.provider, event_name
 
         if webhooks.any?
           run_later(webhooks, pact, verification, event_name)
@@ -109,12 +117,24 @@ module PactBroker
         end
       end
 
+      def self.find_latest_triggered_webhooks_for_pact pact
+        webhook_repository.find_latest_triggered_webhooks_for_pact pact
+      end
+
       def self.find_latest_triggered_webhooks consumer, provider
         webhook_repository.find_latest_triggered_webhooks consumer, provider
       end
 
       def self.fail_retrying_triggered_webhooks
         webhook_repository.fail_retrying_triggered_webhooks
+      end
+
+      def self.find_triggered_webhooks_for_pact pact
+        webhook_repository.find_triggered_webhooks_for_pact(pact)
+      end
+
+      def self.find_triggered_webhooks_for_verification verification
+        webhook_repository.find_triggered_webhooks_for_verification(verification)
       end
     end
   end

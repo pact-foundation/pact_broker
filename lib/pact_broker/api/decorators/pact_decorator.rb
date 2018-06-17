@@ -102,7 +102,21 @@ module PactBroker
         link :'pb:pact-webhooks' do | options |
           {
             title: "Webhooks for the pact between #{represented.consumer.name} and #{represented.provider.name}",
-            href: webhooks_for_pact_url(represented.consumer, represented.provider, options.fetch(:base_url))
+            href: webhooks_for_consumer_and_provider_url(represented.consumer, represented.provider, options.fetch(:base_url))
+          }
+        end
+
+        link :'pb:consumer-webhooks' do | options |
+          {
+            title: "Webhooks for all pacts with consumer #{represented.consumer.name}",
+            href: consumer_webhooks_url(represented.consumer, options.fetch(:base_url))
+          }
+        end
+
+        link :'pb:consumer-webhooks' do | options |
+          {
+            title: "Webhooks for all pacts with provider #{represented.provider.name}",
+            href: consumer_webhooks_url(represented.provider, options.fetch(:base_url))
           }
         end
 
@@ -124,6 +138,13 @@ module PactBroker
           {
             title: "Publish verification results",
             href: verification_publication_url(represented, options.fetch(:base_url))
+          }
+        end
+
+        link :'pb:triggered-webhooks' do | options |
+          {
+            title: "Webhooks triggered by the publication of this pact",
+            href: pact_triggered_webhooks_url(represented, options.fetch(:base_url))
           }
         end
 

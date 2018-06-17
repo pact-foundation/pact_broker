@@ -25,7 +25,15 @@ module PactBroker
       end
 
       def description
-        "A webhook for the pact between #{consumer.name} and #{provider.name}"
+        if consumer && provider
+          "A webhook for the pact between #{consumer.name} and #{provider.name}"
+        elsif provider
+          "A webhook for all pacts with provider #{provider.name}"
+        elsif consumer
+          "A webhook for all pacts with consumer #{consumer.name}"
+        else
+          "A webhook for all pacts"
+        end
       end
 
       def request_description
@@ -47,6 +55,14 @@ module PactBroker
 
       def provider_name
         provider && provider.name
+      end
+
+      def trigger_on_contract_content_changed?
+        events.any?(&:contract_content_changed?)
+      end
+
+      def trigger_on_provider_verification_published?
+        events.any?(&:provider_verification_published?)
       end
     end
   end

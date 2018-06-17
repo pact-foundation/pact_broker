@@ -1,20 +1,22 @@
-require 'pact_broker/api/resources/pact_webhooks'
+require 'spec_helper'
+require 'pact_broker/api/resources/all_webhooks'
 
 module PactBroker::Api
 
   module Resources
 
-    describe PactWebhooks do
-
+    describe AllWebhooks do
 
       let(:webhook_service) { PactBroker::Webhooks::Service }
       let(:uuid) { '1483234k24DKFGJ45K' }
-      let(:path) { "/webhooks/provider/Some%20Provider/consumer/Some%20Consumer" }
+      let(:path) { "/webhooks" }
       let(:headers) { {'CONTENT_TYPE' => 'application/json'} }
-      let(:webhook) { double('webhook')}
+      let(:webhook) { double('webhook', consumer: parsed_consumer, provider: parsed_provider) }
+      let(:parsed_provider) { instance_double(PactBroker::Domain::Pacticipant, name: "Some Provider") }
+      let(:parsed_consumer) { instance_double(PactBroker::Domain::Pacticipant, name: "Some Consumer") }
+      let(:consumer) { double('consumer', name: "Some Consumer") }
+      let(:provider) { double('provider', name: "Some Provider") }
       let(:saved_webhook) { double('saved_webhook')}
-      let(:provider) { instance_double(PactBroker::Domain::Pacticipant) }
-      let(:consumer) { instance_double(PactBroker::Domain::Pacticipant) }
       let(:webhook_decorator) { instance_double(Decorators::WebhookDecorator, from_json: webhook) }
 
       before do
@@ -23,45 +25,14 @@ module PactBroker::Api
         allow(Decorators::WebhookDecorator).to receive(:new).and_return(webhook_decorator)
       end
 
-      describe "GET" do
-        let(:webhooks) { double('webhooks') }
-        let(:json) { {some: 'webhooks'}.to_json }
-        let(:decorator) { instance_double(Decorators::WebhooksDecorator, to_json: json) }
-
-        before do
-          allow(webhook_service).to receive(:find_by_consumer_and_provider).and_return(webhooks)
-          allow(Decorators::WebhooksDecorator).to receive(:new).and_return(decorator)
-        end
-
-        subject { get path }
-
-        it "returns a 200 HAL JSON response" do
-          subject
-          expect(last_response).to be_a_hal_json_success_response
-        end
-
-        it "generates a JSON body" do
-          expect(Decorators::WebhooksDecorator).to receive(:new).with(webhooks)
-          expect(decorator).to receive(:to_json).with(user_options: instance_of(Decorators::DecoratorContext))
-          subject
-        end
-
-        it "includes the generated JSON in the response body" do
-          subject
-          expect(last_response.body).to eq json
-        end
-
-
-      end
-
       describe "POST" do
         let(:webhook_json) do
           {
             some: 'json'
           }.to_json
         end
-        let(:next_uuid) { '123k2nvkkwjrwk34' }
 
+        let(:next_uuid) { '123k2nvkkwjrwk34' }
         let(:valid) { true }
         let(:errors) { double("errors", empty?: valid, messages: ['messages']) }
 
@@ -83,44 +54,6 @@ module PactBroker::Api
           end
         end
 
-        context "when the provider is not found" do
-          let(:provider) { nil }
-
-          it "returns a 404 status" do
-            subject
-            expect(last_response.status).to eq 404
-          end
-
-          it "returns a JSON content type" do
-            subject
-            expect(last_response.headers['Content-Type']).to eq 'application/hal+json;charset=utf-8'
-          end
-
-          it "returns an error message" do
-            subject
-            expect(JSON.parse(last_response.body, symbolize_names: true)).to eq error: "No provider with name 'Some Provider' found"
-          end
-        end
-
-        context "when the consumer is not found" do
-          let(:consumer) { nil }
-          it "returns a 404 status" do
-            subject
-            expect(last_response.status).to eq 404
-          end
-
-          it "returns a JSON content type" do
-            subject
-            expect(last_response.headers['Content-Type']).to eq 'application/hal+json;charset=utf-8'
-          end
-
-          it "returns an error message" do
-            subject
-            expect(JSON.parse(last_response.body, symbolize_names: true)).to eq error: "No consumer with name 'Some Consumer' found"
-          end
-        end
-
-
         context "with invalid attributes" do
 
           let(:valid) { false }
@@ -130,7 +63,7 @@ module PactBroker::Api
             expect(last_response.status).to be 400
           end
 
-          it "returns a JSON content type" do
+          it "returns a HAL JSON content type" do
             subject
             expect(last_response.headers['Content-Type']).to eq 'application/hal+json;charset=utf-8'
           end
@@ -144,7 +77,7 @@ module PactBroker::Api
 
         context "with valid attributes" do
 
-          let(:webhook_response_json) { {some: 'webhook'}.to_json }
+          let(:webhook_response_json) { { some: 'webhook' }.to_json }
 
           before do
             allow_any_instance_of(Decorators::WebhookDecorator).to receive(:to_json).and_return(webhook_response_json)
@@ -166,7 +99,7 @@ module PactBroker::Api
             expect(last_response.headers['Location']).to include(next_uuid)
           end
 
-          it "returns a JSON content type" do
+          it "returns a HAL JSON content type" do
             subject
             expect(last_response.headers['Content-Type']).to eq 'application/hal+json;charset=utf-8'
           end
@@ -183,6 +116,39 @@ module PactBroker::Api
           end
         end
       end
+
+      describe "GET" do
+
+        subject { get "/webhooks" }
+
+        let(:webhooks) { [double('webhook')]}
+        let(:decorator) { double(Decorators::WebhooksDecorator, to_json: json)}
+        let(:json) { {some: 'json'}.to_json }
+
+        before do
+          allow(Decorators::WebhooksDecorator).to receive(:new).and_return(decorator)
+          allow(PactBroker::Webhooks::Service).to receive(:find_all).and_return(webhooks)
+        end
+
+        it "returns a 200 HAL JSON response" do
+          subject
+          expect(last_response).to be_a_hal_json_success_response
+        end
+
+        it "generates a JSON representation of the webhook" do
+          expect(Decorators::WebhooksDecorator).to receive(:new).with(webhooks)
+          expect(decorator).to receive(:to_json).with(user_options: instance_of(Decorators::DecoratorContext))
+          subject
+        end
+
+        it "includes the JSON representation in the response body" do
+          subject
+          expect(last_response.body).to eq json
+        end
+
+      end
+
     end
   end
+
 end

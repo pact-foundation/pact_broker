@@ -1,4 +1,3 @@
-
 require 'pact_broker/api/resources/base_resource'
 require 'pact_broker/api/decorators/webhook_decorator'
 require 'pact_broker/api/decorators/webhooks_decorator'
@@ -24,7 +23,8 @@ module PactBroker
         end
 
         def resource_exists?
-          consumer && provider
+          (identifier_from_path[:consumer_name].nil? || consumer) &&
+            (identifier_from_path[:provider_name].nil? || provider)
         end
 
         def malformed_request?
@@ -76,19 +76,6 @@ module PactBroker
           @next_uuid ||= webhook_service.next_uuid
         end
 
-        def consumer
-          @consumer ||= find_pacticipant(identifier_from_path[:consumer_name], "consumer")
-        end
-
-        def provider
-          @provider ||= find_pacticipant(identifier_from_path[:provider_name], "provider")
-        end
-
-        def find_pacticipant name, role
-          pacticipant_service.find_pacticipant_by_name(name).tap do | pacticipant |
-            set_json_error_message("No #{role} with name '#{name}' found") if pacticipant.nil?
-          end
-        end
 
       end
     end

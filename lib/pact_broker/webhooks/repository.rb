@@ -59,14 +59,44 @@ module PactBroker
         Webhook.all.collect(&:to_domain)
       end
 
+      def find_for_pact pact
+        find_by_consumer_and_or_provider(pact.consumer, pact.provider)
+      end
+
+      def find_by_consumer_and_or_provider consumer, provider
+        find_by_consumer_and_provider(consumer, provider) +
+          find_by_consumer_and_provider(nil, provider) +
+          find_by_consumer_and_provider(consumer, nil) +
+          find_by_consumer_and_provider(nil, nil)
+      end
+
       def find_by_consumer_and_provider consumer, provider
-        Webhook.where(consumer_id: consumer.id, provider_id: provider.id).collect(&:to_domain)
+        criteria = {
+          consumer_id: (consumer ? consumer.id : nil),
+          provider_id: (provider ? provider.id : nil)
+        }
+        Webhook.where(criteria).collect(&:to_domain)
+      end
+
+      def find_for_pact_and_event_name pact, event_name
+        find_by_consumer_and_or_provider_and_event_name(pact.consumer, pact.provider, event_name)
+      end
+
+      def find_by_consumer_and_or_provider_and_event_name consumer, provider, event_name
+        find_by_consumer_and_provider_and_event_name(consumer, provider, event_name) +
+          find_by_consumer_and_provider_and_event_name(nil, provider, event_name) +
+          find_by_consumer_and_provider_and_event_name(consumer, nil, event_name) +
+          find_by_consumer_and_provider_and_event_name(nil, nil, event_name)
       end
 
       def find_by_consumer_and_provider_and_event_name consumer, provider, event_name
+        criteria = {
+          consumer_id: (consumer ? consumer.id : nil),
+          provider_id: (provider ? provider.id : nil)
+        }
         Webhook
           .select_all_qualified
-          .where(consumer_id: consumer.id, provider_id: provider.id)
+          .where(criteria)
           .join(:webhook_events, { webhook_id: :id })
           .where(Sequel[:webhook_events][:name] => event_name)
           .collect(&:to_domain)
@@ -88,8 +118,8 @@ module PactBroker
           webhook_uuid: db_webhook.uuid,
           trigger_uuid: trigger_uuid,
           trigger_type: trigger_type,
-          consumer: db_webhook.consumer,
-          provider: db_webhook.provider
+          consumer: pact.consumer,
+          provider: pact.provider
         )
       end
 
@@ -136,11 +166,31 @@ module PactBroker
         DeprecatedExecution.where(pact_publication_id: pact_publication_ids).delete
       end
 
+      def find_latest_triggered_webhooks_for_pact pact
+        find_latest_triggered_webhooks(pact.consumer, pact.provider)
+      end
+
       def find_latest_triggered_webhooks consumer, provider
         LatestTriggeredWebhook
           .where(consumer: consumer, provider: provider)
           .order(:id)
           .all
+      end
+
+      def find_triggered_webhooks_for_pact pact
+        PactBroker::Webhooks::TriggeredWebhook
+          .where(pact_publication_id: pact.pact_publication_id)
+          .eager(:webhook)
+          .eager(:webhook_executions)
+          .reverse(:created_at, :id)
+      end
+
+      def find_triggered_webhooks_for_verification verification
+        PactBroker::Webhooks::TriggeredWebhook
+          .where(verification_id: verification.id)
+          .eager(:webhook)
+          .eager(:webhook_executions)
+          .reverse(:created_at, :id)
       end
 
       def fail_retrying_triggered_webhooks

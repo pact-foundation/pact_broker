@@ -4,6 +4,9 @@ module PactBroker
   module Api
     module Decorators
       describe VerificationDecorator do
+        before do
+          allow_any_instance_of(VerificationDecorator).to receive(:verification_triggered_webhooks_url).and_return("http://triggered-webhooks")
+        end
 
         let(:verification) do
           instance_double('PactBroker::Domain::Verification',
@@ -30,6 +33,7 @@ module PactBroker
 
         let(:options) { { user_options: { base_url: 'http://example.org' } } }
 
+
         subject { JSON.parse VerificationDecorator.new(verification).to_json(options), symbolize_names: true }
 
         it "includes the success status" do
@@ -54,6 +58,10 @@ module PactBroker
 
         it "includes a link to its pact" do
           expect(subject[:_links][:'pb:pact-version'][:href]).to match %r{http://example.org/pacts/}
+        end
+
+        it "includes a link to the triggered webhooks" do
+          expect(subject[:_links][:'pb:triggered-webhooks'][:href]).to eq "http://triggered-webhooks"
         end
       end
     end

@@ -244,15 +244,37 @@ class TestDataBuilder
     self
   end
 
-  def create_webhook params = {}
-    params.delete(:comment)
+  def create_webhook parameters = {}
+    params = parameters.dup
+    consumer = params.key?(:consumer) ? params.delete(:consumer) : @consumer
+    provider = params.key?(:provider) ? params.delete(:provider) : @provider
     uuid = params[:uuid] || PactBroker::Webhooks::Service.next_uuid
-    event_params = params[:events] || [{ name: PactBroker::Webhooks::WebhookEvent::DEFAULT_EVENT_NAME }]
+    event_params = if params[:event_names]
+      params[:event_names].collect{ |event_name| {name: event_name} }
+    else
+      params[:events] || [{ name: PactBroker::Webhooks::WebhookEvent::DEFAULT_EVENT_NAME }]
+    end
     events = event_params.collect{ |e| PactBroker::Webhooks::WebhookEvent.new(e) }
     default_params = { method: 'POST', url: 'http://example.org', headers: {'Content-Type' => 'application/json'}}
     request = PactBroker::Domain::WebhookRequest.new(default_params.merge(params))
-    @webhook = PactBroker::Webhooks::Repository.new.create uuid, PactBroker::Domain::Webhook.new(request: request, events: events), @consumer, @provider
+    @webhook = PactBroker::Webhooks::Repository.new.create uuid, PactBroker::Domain::Webhook.new(request: request, events: events), consumer, provider
     self
+  end
+
+  def create_verification_webhook parameters = {}
+    create_webhook(parameters.merge(event_names: PactBroker::Webhooks::WebhookEvent::VERIFICATION_PUBLISHED))
+  end
+
+  def create_global_webhook parameters = {}
+    create_webhook(parameters.merge(consumer: nil, provider: nil))
+  end
+
+  def create_provider_webhook parameters = {}
+    create_webhook(parameters.merge(consumer: nil))
+  end
+
+  def create_consumer_webhook parameters = {}
+    create_webhook(parameters.merge(provider: nil))
   end
 
   def create_verification_webhook params = {}
@@ -262,7 +284,8 @@ class TestDataBuilder
   def create_triggered_webhook params = {}
     params.delete(:comment)
     trigger_uuid = params[:trigger_uuid] || webhook_service.next_uuid
-    @triggered_webhook = webhook_repository.create_triggered_webhook trigger_uuid, @webhook, @pact, nil, PactBroker::Webhooks::Service::RESOURCE_CREATION
+    verification = @webhook.trigger_on_provider_verification_published? ? @verification : nil
+    @triggered_webhook = webhook_repository.create_triggered_webhook trigger_uuid, @webhook, @pact, verification, PactBroker::Webhooks::Service::RESOURCE_CREATION
     @triggered_webhook.update(status: params[:status]) if params[:status]
     set_created_at_if_set params[:created_at], :triggered_webhooks, {id: @triggered_webhook.id}
     self

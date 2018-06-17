@@ -10,7 +10,7 @@ module PactBroker
 
       describe "#create" do
         before do
-          allow(PactBroker::Webhooks::Service).to receive(:execute_webhooks)
+          allow(PactBroker::Webhooks::Service).to receive(:trigger_webhooks)
         end
 
         let(:params) { {'success' => true, 'providerApplicationVersion' => '4.5.6'} }
@@ -43,7 +43,7 @@ module PactBroker
 
         it "invokes the webhooks for the verification" do
           verification = create_verification
-          expect(PactBroker::Webhooks::Service).to have_received(:execute_webhooks).with(pact, verification, PactBroker::Webhooks::WebhookEvent::VERIFICATION_PUBLISHED)
+          expect(PactBroker::Webhooks::Service).to have_received(:trigger_webhooks).with(pact, verification, PactBroker::Webhooks::WebhookEvent::VERIFICATION_PUBLISHED)
         end
       end
 
