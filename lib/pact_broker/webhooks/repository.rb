@@ -66,7 +66,8 @@ module PactBroker
       def find_by_consumer_and_or_provider consumer, provider
         find_by_consumer_and_provider(consumer, provider) +
           find_by_consumer_and_provider(nil, provider) +
-          find_by_consumer_and_provider(consumer, nil)
+          find_by_consumer_and_provider(consumer, nil) +
+          find_by_consumer_and_provider(nil, nil)
       end
 
       def find_by_consumer_and_provider consumer, provider
@@ -84,7 +85,8 @@ module PactBroker
       def find_by_consumer_and_or_provider_and_event_name consumer, provider, event_name
         find_by_consumer_and_provider_and_event_name(consumer, provider, event_name) +
           find_by_consumer_and_provider_and_event_name(nil, provider, event_name) +
-          find_by_consumer_and_provider_and_event_name(consumer, nil, event_name)
+          find_by_consumer_and_provider_and_event_name(consumer, nil, event_name) +
+          find_by_consumer_and_provider_and_event_name(nil, nil, event_name)
       end
 
       def find_by_consumer_and_provider_and_event_name consumer, provider, event_name

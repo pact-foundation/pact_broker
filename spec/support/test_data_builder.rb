@@ -261,6 +261,10 @@ class TestDataBuilder
     self
   end
 
+  def create_global_webhook parameters = {}
+    create_webhook(parameters.merge(consumer: nil, provider: nil))
+  end
+
   def create_provider_webhook parameters = {}
     create_webhook(parameters.merge(consumer: nil))
   end

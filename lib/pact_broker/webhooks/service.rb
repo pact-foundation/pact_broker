@@ -94,7 +94,7 @@ module PactBroker
       end
 
       def self.trigger_webhooks pact, verification, event_name
-        webhooks = webhook_repository.find_by_consumer_and_provider_and_event_name pact.consumer, pact.provider, event_name
+        webhooks = webhook_repository.find_by_consumer_and_or_provider_and_event_name pact.consumer, pact.provider, event_name
 
         if webhooks.any?
           run_later(webhooks, pact, verification, event_name)

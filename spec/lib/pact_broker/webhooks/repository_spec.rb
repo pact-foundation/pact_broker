@@ -365,12 +365,14 @@ module PactBroker
               .create_webhook(uuid: '3', events: [{ name: 'something_else_happened' }])
               .create_consumer_webhook(uuid: '4', events: [{ name: 'something_happened' }])
               .create_provider_webhook(uuid: '5', events: [{ name: 'something_happened' }])
+              .create_global_webhook(uuid: '6', events: [{ name: 'something_happened' }])
+              .create_global_webhook(uuid: '7', events: [{ name: 'something_else_happened' }])
           end
 
           subject { Repository.new.find_for_pact_and_event_name(td.pact, 'something_happened') }
 
           it "returns an array of webhooks" do
-            expect(subject.collect(&:uuid).sort).to eq ['1', '2', '4', '5']
+            expect(subject.collect(&:uuid).sort).to eq ['1', '2', '4', '5', '6']
           end
         end
       end
