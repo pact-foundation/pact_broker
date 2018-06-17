@@ -172,6 +172,10 @@ module PactBroker
         "#{webhooks_for_pact_url(consumer, provider, base_url)}/status"
       end
 
+      def pact_triggered_webhooks_url pact, base_url = ''
+        "#{pact_url(base_url, pact)}/triggered-webhooks"
+      end
+
       def triggered_webhook_logs_url triggered_webhook, base_url
         "#{base_url}/webhooks/#{triggered_webhook.webhook_uuid}/trigger/#{triggered_webhook.trigger_uuid}/logs"
       end

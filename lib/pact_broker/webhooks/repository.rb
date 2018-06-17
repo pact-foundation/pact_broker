@@ -177,6 +177,14 @@ module PactBroker
           .all
       end
 
+      def find_triggered_webhooks_for_pact pact
+        PactBroker::Webhooks::TriggeredWebhook
+          .where(pact_publication_id: pact.pact_publication_id)
+          .eager(:webhook)
+          .eager(:webhook_executions)
+          .reverse(:created_at, :id)
+      end
+
       def fail_retrying_triggered_webhooks
         TriggeredWebhook.retrying.update(status: TriggeredWebhook::STATUS_FAILURE)
       end

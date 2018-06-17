@@ -141,6 +141,13 @@ module PactBroker
           }
         end
 
+        link :'pb:triggered-webhooks' do | options |
+          {
+            title: "Webhooks triggered by the publication of this pact",
+            href: pact_triggered_webhooks_url(represented, options.fetch(:base_url))
+          }
+        end
+
         curies do | options |
           [{
             name: :pb,

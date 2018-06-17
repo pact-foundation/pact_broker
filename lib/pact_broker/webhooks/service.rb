@@ -128,6 +128,10 @@ module PactBroker
       def self.fail_retrying_triggered_webhooks
         webhook_repository.fail_retrying_triggered_webhooks
       end
+
+      def self.find_triggered_webhooks_for_pact pact
+        webhook_repository.find_triggered_webhooks_for_pact(pact)
+      end
     end
   end
 end

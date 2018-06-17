@@ -60,6 +60,7 @@ module PactBroker
         add ['webhooks', 'consumer', :consumer_name], Api::Resources::Webhooks, {resource_name: "consumer_webhooks"}
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'webhooks'], Api::Resources::PactWebhooks, {resource_name: "pact_webhooks"}
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'webhooks', 'status'], Api::Resources::PactWebhooksStatus, {resource_name: "pact_webhooks_status"}
+        add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'version', :consumer_version_number, 'triggered-webhooks'], Api::Resources::PactTriggeredWebhooks, {resource_name: "pact_triggered_webhooks"}
 
         add ['webhooks', :uuid ], Api::Resources::Webhook, {resource_name: "webhook"}
         add ['webhooks', :uuid, 'trigger', :trigger_uuid, 'logs' ], Api::Resources::TriggeredWebhookLogs, {resource_name: "triggered_webhook_logs"}

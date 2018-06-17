@@ -166,6 +166,10 @@ module PactBroker
         def provider
           @provider ||= identifier_from_path[:provider_name] && find_pacticipant(identifier_from_path[:provider_name], "provider")
         end
+
+        def pact
+          @pact ||= pact_service.find_pact(pact_params)
+        end
       end
     end
   end
