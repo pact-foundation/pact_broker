@@ -2,6 +2,7 @@ require 'reform'
 require 'reform/form'
 require 'pact_broker/webhooks/check_host_whitelist'
 require 'pact_broker/webhooks/render'
+require 'pact_broker/pacticipants/service'
 
 module PactBroker
   module Api
