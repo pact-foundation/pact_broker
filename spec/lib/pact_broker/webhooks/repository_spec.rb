@@ -625,13 +625,50 @@ module PactBroker
             .create_webhook_execution
             .create_triggered_webhook(trigger_uuid: '777', created_at: DateTime.new(2018))
             .create_webhook_execution
-
         end
 
         subject { Repository.new.find_latest_triggered_webhooks_for_pact(td.pact) }
 
         it "finds the latest triggered webhooks" do
           expect(subject.collect(&:trigger_uuid).sort).to eq ['332', '638', '777']
+        end
+      end
+
+      describe "find_triggered_webhooks_for_pact" do
+        before do
+          td
+            .create_pact_with_hierarchy("Foo", "1", "Bar")
+            .create_webhook
+            .create_triggered_webhook(trigger_uuid: "1")
+            .create_webhook_execution
+            .create_consumer_version("2")
+            .create_pact
+            .create_triggered_webhook(trigger_uuid: "2")
+            .create_webhook_execution
+        end
+
+        subject { Repository.new.find_triggered_webhooks_for_pact(td.pact) }
+
+        it "finds the triggered webhooks" do
+          expect(subject.collect(&:trigger_uuid).sort).to eq ["2"]
+        end
+      end
+
+      describe "find_triggered_webhooks_for_verification" do
+        before do
+          td
+            .create_pact_with_hierarchy("Foo", "1", "Bar")
+            .create_verification_webhook
+            .create_verification(provider_version: "1")
+            .create_triggered_webhook(trigger_uuid: "1")
+            .create_verification(provider_version: "2", number: 2)
+            .create_triggered_webhook(trigger_uuid: "2")
+        end
+
+        subject { Repository.new.find_triggered_webhooks_for_verification(td.verification) }
+
+        it "finds the triggered webhooks" do
+          expect(subject.collect(&:trigger_uuid).sort).to eq ["2"]
         end
       end
 

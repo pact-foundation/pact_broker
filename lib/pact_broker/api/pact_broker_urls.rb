@@ -120,6 +120,10 @@ module PactBroker
         "#{base_url}/verification-results/consumer/#{url_encode(version.pacticipant.name)}/version/#{version.number}/latest"
       end
 
+      def verification_triggered_webhooks_url verification, base_url = ''
+        "#{verification_url(verification, base_url)}/triggered-webhooks"
+      end
+
       def verification_publication_url pact, base_url
         "#{pactigration_base_url(base_url, pact)}/pact-version/#{pact.pact_version_sha}/verification-results"
       end

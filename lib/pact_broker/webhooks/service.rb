@@ -132,6 +132,10 @@ module PactBroker
       def self.find_triggered_webhooks_for_pact pact
         webhook_repository.find_triggered_webhooks_for_pact(pact)
       end
+
+      def self.find_triggered_webhooks_for_verification verification
+        webhook_repository.find_triggered_webhooks_for_verification(verification)
+      end
     end
   end
 end

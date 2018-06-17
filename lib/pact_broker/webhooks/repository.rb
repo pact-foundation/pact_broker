@@ -185,6 +185,14 @@ module PactBroker
           .reverse(:created_at, :id)
       end
 
+      def find_triggered_webhooks_for_verification verification
+        PactBroker::Webhooks::TriggeredWebhook
+          .where(verification_id: verification.id)
+          .eager(:webhook)
+          .eager(:webhook_executions)
+          .reverse(:created_at, :id)
+      end
+
       def fail_retrying_triggered_webhooks
         TriggeredWebhook.retrying.update(status: TriggeredWebhook::STATUS_FAILURE)
       end

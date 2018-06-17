@@ -54,11 +54,13 @@ end
 
   # .create_webhook(method: 'GET', url: 'https://localhost:9393?url=${pactbroker.pactUrl}', body: '${pactbroker.pactUrl}')
 TestDataBuilder.new
+  .create_global_webhook(method: 'GET', url: "http://example.org?consumer=${pactbroker.consumerName}&provider=${pactbroker.providerName}")
   .create_certificate(path: 'spec/fixtures/certificates/self-signed.badssl.com.pem')
   .create_consumer("Foo")
   .create_label("microservice")
   .create_provider("Bar")
   .create_label("microservice")
+  .create_verification_webhook(method: 'GET', url: "http://example.org")
   .create_consumer_webhook(method: 'GET', url: 'https://www.google.com.au', event_names: ['provider_verification_published'])
   .create_provider_webhook(method: 'GET', url: 'https://theage.com.au')
   .create_webhook(method: 'GET', url: 'https://self-signed.badssl.com')

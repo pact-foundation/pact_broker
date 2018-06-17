@@ -56,6 +56,14 @@ module PactBroker
       def provider_name
         provider && provider.name
       end
+
+      def trigger_on_contract_content_changed?
+        events.any?(&:contract_content_changed?)
+      end
+
+      def trigger_on_provider_verification_published?
+        events.any?(&:provider_verification_published?)
+      end
     end
   end
 end
