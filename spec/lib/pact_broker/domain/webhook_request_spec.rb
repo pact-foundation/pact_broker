@@ -299,7 +299,7 @@ module PactBroker
           end
 
           it "sets the response on the result" do
-            expect(execute.response).to be_instance_of(Net::HTTPOK)
+            expect(execute.response).to be_instance_of(WebhookResponseWithUtf8SafeBody)
           end
         end
 
@@ -316,7 +316,7 @@ module PactBroker
           end
 
           it "sets the response on the result" do
-            expect(execute.response).to be_instance_of(Net::HTTPInternalServerError)
+            expect(execute.response).to be_instance_of(WebhookResponseWithUtf8SafeBody)
           end
         end
 

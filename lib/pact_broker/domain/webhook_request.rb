@@ -8,6 +8,7 @@ require 'pact_broker/webhooks/render'
 require 'pact_broker/api/pact_broker_urls'
 require 'pact_broker/build_http_options'
 require 'cgi'
+require 'delegate'
 
 module PactBroker
 
@@ -20,6 +21,24 @@ module PactBroker
         @response = response
       end
 
+    end
+
+    class WebhookResponseWithUtf8SafeBody < SimpleDelegator
+      def body
+        if unsafe_body
+          unsafe_body.encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
+        else
+          unsafe_body
+        end
+      end
+
+      def unsafe_body
+        __getobj__().body
+      end
+
+      def unsafe_body?
+        unsafe_body != body
+      end
     end
 
     class WebhookRequest
@@ -110,9 +129,10 @@ module PactBroker
       def do_request uri, req
         logger.info "Making webhook #{uuid} request #{to_s}"
         options = PactBroker::BuildHttpOptions.call(uri)
-        Net::HTTP.start(uri.hostname, uri.port, :ENV, options) do |http|
+        response = Net::HTTP.start(uri.hostname, uri.port, :ENV, options) do |http|
           http.request req
         end
+        WebhookResponseWithUtf8SafeBody.new(response)
       end
 
       def log_response response, execution_logger, options
@@ -131,7 +151,7 @@ module PactBroker
       def log_response_to_application_logger response
         logger.info "Received response for webhook #{uuid} status=#{response.code}"
         logger.debug "headers=#{response.to_hash}"
-        logger.debug "body=#{response.body}"
+        logger.debug "body=#{response.unsafe_body}"
       end
 
       def log_response_to_execution_logger response, execution_logger
@@ -140,15 +160,12 @@ module PactBroker
           execution_logger.info "#{header.split("-").collect(&:capitalize).join('-')}: #{response[header]}"
         end
 
-        safe_body = nil
-
         if response.body
-          safe_body = response.body.encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
-          if response.body != safe_body
+          if response.unsafe_body?
             execution_logger.debug "Note that invalid UTF-8 byte sequences were removed from response body before saving the logs"
           end
+          execution_logger.info response.body
         end
-        execution_logger.info safe_body
       end
 
       def log_completion_message options, execution_logger, success
@@ -182,7 +199,7 @@ module PactBroker
       end
 
       def build_uri(pact, verification)
-        URI(PactBroker::Webhooks::Render.call(url, pact, verification){ | value | CGI::escape(value)} )
+        URI(PactBroker::Webhooks::Render.call(url, pact, verification){ | value | CGI::escape(value) if !value.nil? } )
       end
 
       def url_with_credentials pact, verification
