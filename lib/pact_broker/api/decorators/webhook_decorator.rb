@@ -39,7 +39,7 @@ module PactBroker
 
         link :'pb:execute' do | options |
           {
-            title: "Test the execution of the webhook by sending a POST request to this URL",
+            title: "Test the execution of the webhook with the latest matching pact or verification by sending a POST request to this URL",
             href: webhook_execution_url(represented, options[:base_url])
           }
         end

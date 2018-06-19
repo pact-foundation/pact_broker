@@ -697,6 +697,45 @@ module PactBroker
         end
       end
 
+      describe "search_for_latest_pact" do
+        context "when one or more versions of a pact exist without any tags" do
+          before do
+            TestDataBuilder.new
+              .create_consumer("Consumer")
+              .create_provider("Provider")
+              .create_consumer_version("1")
+              .create_pact
+              .create_provider("Another Provider")
+              .create_consumer_version("2")
+              .create_pact
+          end
+
+          context "with both consumer and provider names" do
+            let(:pact) { Repository.new.search_for_latest_pact("Consumer", "Provider") }
+
+            it "returns the latest" do
+              expect(pact.consumer_version.number).to eq("1")
+            end
+          end
+
+          context "with only consumer name" do
+            let(:pact) { Repository.new.search_for_latest_pact("Consumer", nil) }
+
+            it "returns the latest" do
+              expect(pact.consumer_version.number).to eq("2")
+            end
+          end
+
+          context "with only provider name" do
+            let(:pact) { Repository.new.search_for_latest_pact(nil, "Another Provider") }
+
+            it "returns the latest" do
+              expect(pact.consumer_version.number).to eq("2")
+            end
+          end
+        end
+      end
+
       describe "find_latest_pacts" do
         before do
           TestDataBuilder.new
@@ -736,7 +775,6 @@ module PactBroker
 
         it "includes the timestamps - need to update view" do
           pacts = Repository.new.find_latest_pacts
-
           expect(pacts[0].created_at).to be_datey
         end
       end

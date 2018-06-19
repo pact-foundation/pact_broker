@@ -35,18 +35,12 @@ module PactBroker
             let(:provider_name) { "bar" }
 
             before do
-              allow(PactBroker::Webhooks::Service).to receive(:execute_webhook_now).and_return(execution_result)
+              allow(PactBroker::Webhooks::Service).to receive(:test_execution).and_return(execution_result)
               allow(PactBroker::Api::Decorators::WebhookExecutionResultDecorator).to receive(:new).and_return(decorator)
-              allow(PactBroker::Pacts::Service).to receive(:find_latest_pact).and_return(pact)
-            end
-
-            it "finds the latest pact for the webhook" do
-              expect(PactBroker::Pacts::Service).to receive(:find_latest_pact).with(consumer_name: consumer_name, provider_name: provider_name)
-              subject
             end
 
             it "executes the webhook" do
-              expect(PactBroker::Webhooks::Service).to receive(:execute_webhook_now).with(webhook, pact)
+              expect(PactBroker::Webhooks::Service).to receive(:test_execution).with(webhook)
               subject
             end
 

@@ -84,6 +84,83 @@ module PactBroker
         end
       end
 
+      describe ".test_execution" do
+        let(:webhook) do
+          instance_double(PactBroker::Domain::Webhook,
+            trigger_on_provider_verification_published?: trigger_on_verification,
+            consumer_name: 'consumer',
+            provider_name: 'provider',
+            execute: result
+          )
+        end
+        let(:pact) { instance_double(PactBroker::Domain::Pact) }
+        let(:verification) { instance_double(PactBroker::Domain::Verification) }
+        let(:trigger_on_verification) { false }
+        let(:result) { double('result') }
+        let(:options) do
+          {
+            failure_log_message: "Webhook execution failed",
+            show_response: 'foo'
+          }
+        end
+
+        before do
+          allow(PactBroker::Pacts::Service).to receive(:search_for_latest_pact).and_return(pact)
+          allow(PactBroker::Verifications::Service).to receive(:search_for_latest).and_return(verification)
+          allow(PactBroker.configuration).to receive(:show_webhook_response?).and_return('foo')
+        end
+
+        subject { Service.test_execution(webhook) }
+
+        it "searches for the latest matching pact" do
+          expect(PactBroker::Pacts::Service).to receive(:search_for_latest_pact).with(consumer_name: 'consumer', provider_name: 'provider')
+          subject
+        end
+
+        it "returns the result" do
+          expect(subject).to be result
+        end
+
+        context "when the trigger is not for a verification" do
+          it "executes the webhook with the pact" do
+            expect(webhook).to receive(:execute).with(pact, nil, options)
+            subject
+          end
+        end
+
+        context "when a pact cannot be found" do
+          let(:pact) { nil }
+
+          it "executes the webhook with a placeholder pact" do
+            expect(webhook).to receive(:execute).with(an_instance_of(PactBroker::Pacts::PlaceholderPact), anything, anything)
+            subject
+          end
+        end
+
+        context "when the trigger is for a verification publication" do
+          let(:trigger_on_verification) { true }
+
+          it "searches for the latest matching verification" do
+            expect(PactBroker::Verifications::Service).to receive(:search_for_latest).with('consumer', 'provider')
+            subject
+          end
+
+          it "executes the webhook with the pact and the verification" do
+            expect(webhook).to receive(:execute).with(pact, verification, options)
+            subject
+          end
+
+          context "when a verification cannot be found" do
+            let(:verification) { nil }
+
+            it "executes the webhook with a placeholder verification" do
+              expect(webhook).to receive(:execute).with(anything, an_instance_of(PactBroker::Verifications::PlaceholderVerification), anything)
+              subject
+            end
+          end
+        end
+      end
+
       describe ".execute_webhook_now integration test" do
         let(:td) { TestDataBuilder.new }
 

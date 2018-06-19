@@ -1,4 +1,5 @@
 require 'pact_broker/repositories'
+require 'pact_broker/services'
 require 'pact_broker/logging'
 require 'base64'
 require 'securerandom'
@@ -6,6 +7,8 @@ require 'pact_broker/webhooks/job'
 require 'pact_broker/webhooks/triggered_webhook'
 require 'pact_broker/webhooks/status'
 require 'pact_broker/webhooks/webhook_event'
+require 'pact_broker/verifications/placeholder_verification'
+require 'pact_broker/pacts/placeholder_pact'
 
 module PactBroker
 
@@ -16,6 +19,7 @@ module PactBroker
       USER = PactBroker::Webhooks::TriggeredWebhook::TRIGGER_TYPE_USER
 
       extend Repositories
+      extend Services
       include Logging
 
       def self.next_uuid
@@ -57,6 +61,17 @@ module PactBroker
 
       def self.find_all
         webhook_repository.find_all
+      end
+
+      def self.test_execution webhook
+        options = { failure_log_message: "Webhook execution failed", show_response: PactBroker.configuration.show_webhook_response?}
+        verification = nil
+        if webhook.trigger_on_provider_verification_published?
+          verification = verification_service.search_for_latest(webhook.consumer_name, webhook.provider_name) || PactBroker::Verifications::PlaceholderVerification.new
+        end
+
+        pact = pact_service.search_for_latest_pact(consumer_name: webhook.consumer_name, provider_name: webhook.provider_name) || PactBroker::Pacts::PlaceholderPact.new
+        webhook.execute(pact, verification, options)
       end
 
       def self.execute_webhook_now webhook, pact, verification = nil

@@ -121,6 +121,20 @@ module PactBroker
         query.latest.all.collect(&:to_domain_with_content)[0]
       end
 
+      # Allows optional consumer_name and provider_name
+      def search_for_latest_pact(consumer_name, provider_name, tag = nil)
+        query = LatestPactPublicationsByConsumerVersion.select_all_qualified
+        query = query.consumer(consumer_name) if consumer_name
+        query = query.provider(provider_name) if provider_name
+
+        if tag == :untagged
+          query = query.untagged
+        elsif tag
+          query = query.tag(tag)
+        end
+        query.latest.all.collect(&:to_domain_with_content)[0]
+      end
+
       def find_pact consumer_name, consumer_version, provider_name, pact_version_sha = nil
         query = if pact_version_sha
           AllPactPublications

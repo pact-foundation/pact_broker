@@ -133,7 +133,7 @@ Pact Broker Github repository.
 
 ### Testing
 
-To test a webhook, navigate to the webhook in the HAL browser, then make a POST request to the "execute" relation. The response or error will be shown in the window.
+To test a webhook, navigate to the webhook in the HAL browser, then make a POST request to the "pb:execute" relation. The latest matching pact/verification will be used in the template, or a placeholder if none exists. The response or error will be shown in the window.
 
 ### Deleting
 

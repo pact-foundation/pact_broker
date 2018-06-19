@@ -53,6 +53,10 @@ module PactBroker
         verification_repository.find_latest_verification_for_tags(consumer_name, provider_name, consumer_version_tag_name, provider_version_tag_name)
       end
 
+      def search_for_latest consumer_name, provider_name
+        verification_repository.search_for_latest(consumer_name, provider_name)
+      end
+
       def verification_summary_for_consumer_version params
         verifications = find_latest_verifications_for_consumer_version(params)
         pacts = pact_service.find_by_consumer_version(params)

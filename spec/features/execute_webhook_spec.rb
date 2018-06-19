@@ -36,12 +36,12 @@ describe "Execute a webhook" do
       expect(subject.status).to be 200
     end
 
-    it "saves a TriggeredWebhook" do
-      expect { subject }.to change { PactBroker::Webhooks::TriggeredWebhook.count }.by(1)
+    it "does not save a TriggeredWebhook" do
+      expect { subject }.to_not change { PactBroker::Webhooks::TriggeredWebhook.count }
     end
 
-    it "saves a WebhookExecution" do
-      expect { subject }.to change { PactBroker::Webhooks::Execution.count }.by(1)
+    it "does not save a WebhookExecution" do
+      expect { subject }.to_not change { PactBroker::Webhooks::Execution.count }
     end
 
     context "when a webhook host whitelist is not configured" do
@@ -52,11 +52,6 @@ describe "Execute a webhook" do
       it "does not show any response details" do
         expect(subject.body).to_not include response_body
       end
-
-      it "does not log any response details" do
-        subject
-        expect(PactBroker::Webhooks::Execution.order(:id).last.logs).to_not include response_body
-      end
     end
 
     context "when a webhook host whitelist is configured" do
@@ -66,11 +61,6 @@ describe "Execute a webhook" do
 
       it "includes response details" do
         expect(subject.body).to include response_body
-      end
-
-      it "logs the response details" do
-        subject
-        expect(PactBroker::Webhooks::Execution.order(:id).last.logs).to include response_body
       end
     end
   end
@@ -98,12 +88,12 @@ describe "Execute a webhook" do
       expect(subject.status).to be 500
     end
 
-    it "saves a TriggeredWebhook" do
-      expect { subject }.to change { PactBroker::Webhooks::TriggeredWebhook.count }.by(1)
+    it "does not save a TriggeredWebhook" do
+      expect { subject }.to_not change { PactBroker::Webhooks::TriggeredWebhook.count }
     end
 
-    it "saves a WebhookExecution" do
-      expect { subject }.to change { PactBroker::Webhooks::Execution.count }.by(1)
+    it "does not save a WebhookExecution" do
+      expect { subject }.to_not change { PactBroker::Webhooks::Execution.count }
     end
   end
 end

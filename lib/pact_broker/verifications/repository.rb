@@ -37,6 +37,15 @@ module PactBroker
           .verification_number(verification_number).single_record
       end
 
+      def search_for_latest consumer_name, provider_name
+        query = LatestVerificationsByConsumerVersion
+                  .select_all_qualified
+                  .join(:all_pact_publications, pact_version_id: :pact_version_id)
+        query = query.consumer(consumer_name) if consumer_name
+        query = query.provider(provider_name) if provider_name
+        query.reverse(:execution_date, :id).first
+      end
+
       def find_latest_verifications_for_consumer_version consumer_name, consumer_version_number
         # Use LatestPactPublicationsByConsumerVersion not AllPactPublcations because we don't
         # want verifications for shadowed revisions as it would be misleading.

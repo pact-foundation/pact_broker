@@ -71,6 +71,42 @@ module PactBroker
         end
       end
 
+      describe "#search_for_latest" do
+        before do
+          TestDataBuilder.new
+            .create_pact_with_hierarchy("Foo", "1", "Bar")
+            .create_verification(provider_version: "2")
+            .create_verification(provider_version: "3", number: 2)
+            .create_provider("Wiffle")
+            .create_pact
+            .create_verification(provider_version: "4")
+        end
+
+        context "with just the consumer name" do
+          subject { Repository.new.search_for_latest("Foo", nil) }
+
+          its(:provider_version_number) { is_expected.to eq "4" }
+        end
+
+        context "with the consumer and provider name" do
+          subject { Repository.new.search_for_latest("Foo", "Bar") }
+
+          its(:provider_version_number) { is_expected.to eq "3" }
+        end
+
+        context "with just the provider name" do
+          subject { Repository.new.search_for_latest(nil, "Bar") }
+
+          its(:provider_version_number) { is_expected.to eq "3" }
+        end
+
+        context "with neither name" do
+          subject { Repository.new.search_for_latest(nil, nil) }
+
+          its(:provider_version_number) { is_expected.to eq "4" }
+        end
+      end
+
       describe "#find_latest_verification_for" do
         context "when there is a revision" do
           before do

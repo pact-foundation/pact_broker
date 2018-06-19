@@ -17,6 +17,10 @@ module PactBroker
         pact_repository.find_latest_pact(params[:consumer_name], params[:provider_name], params[:tag])
       end
 
+      def search_for_latest_pact params
+        pact_repository.search_for_latest_pact(params[:consumer_name], params[:provider_name], params[:tag])
+      end
+
       def find_latest_pacts
         pact_repository.find_latest_pacts
       end

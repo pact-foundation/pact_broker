@@ -1,4 +1,6 @@
 require 'pact_broker/webhooks/render'
+require 'pact_broker/pacts/placeholder_pact'
+require 'pact_broker/verifications/placeholder_verification'
 require 'cgi'
 
 module PactBroker
@@ -113,6 +115,19 @@ module PactBroker
           end
 
           it { is_expected.to eq "http%3A%2F%2Ffoo" }
+        end
+      end
+
+      describe "#call with placeholder domain objects" do
+        let(:placeholder_pact) { PactBroker::Pacts::PlaceholderPact.new }
+        let(:placeholder_verification) { PactBroker::Verifications::PlaceholderVerification.new }
+
+        it "does not blow up with a placeholder pact" do
+          Render.call("", placeholder_pact)
+        end
+
+        it "does not blow up with a placeholder verification" do
+          Render.call("", placeholder_pact, placeholder_verification)
         end
       end
     end
