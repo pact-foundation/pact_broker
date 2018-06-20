@@ -1,3 +1,33 @@
+<a name="v2.23.0"></a>
+### v2.23.0 (2018-06-20)
+
+
+#### Features
+
+* include test webhook request in execution response body	 ([7518098](/../../commit/7518098))
+* use the latest matching pact or verification to test webhook execution, or a placeholder if either is not found	 ([273078b](/../../commit/273078b))
+* add resource to view the triggered webhooks for a verification result	 ([c3e8df0](/../../commit/c3e8df0))
+* add resource to view the triggered webhooks for a pact publication	 ([00f60c1](/../../commit/00f60c1))
+* allow "global" webhooks (matching all consumers and providers) to be triggered by pact or verification publication	 ([19f7060](/../../commit/19f7060))
+* allow webhook with optional consumer and/or provider to be created by posting to /webhooks	 ([b15ba85](/../../commit/b15ba85))
+* add consumer and provider objects to webhook resource	 ([e60460e](/../../commit/e60460e))
+* move $.message to $.error.message in error response body	 ([803c025](/../../commit/803c025))
+* only show backtrace in error response for non production environments	 ([665ac23](/../../commit/665ac23))
+* change version ordering to sort by date by default	 ([6552b46](/../../commit/6552b46))
+* raise explicit error if a matrix query is done for a version with a tag that does not exist	 ([8f64288](/../../commit/8f64288))
+
+* **consumer or provider webhooks**
+  * refactor webhooks resource classes and add consumer and provider webhook links to pact resource	 ([9321c73](/../../commit/9321c73))
+  * change pact webhook status URL	 ([2445b1e](/../../commit/2445b1e))
+  * allow a webhook to be defined for either a consumer OR provider	 ([37a62be](/../../commit/37a62be))
+
+
+#### Bug Fixes
+
+* ensure non utf-8 characters in the webook response do not cause an error in the Pact Broker response body	 ([a5ae5bf](/../../commit/a5ae5bf))
+* update sintra to >= 2.0.2 to fix css vulnerability	 ([3023408](/../../commit/3023408))
+
+
 <a name="v2.22.0"></a>
 ### v2.22.0 (2018-06-11)
 
