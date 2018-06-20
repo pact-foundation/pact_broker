@@ -1,5 +1,6 @@
 require 'sequel'
 require 'pact_broker/domain/webhook'
+require 'pact_broker/webhooks/webhook_request_template'
 require 'pact_broker/domain/pacticipant'
 
 module PactBroker
@@ -43,7 +44,7 @@ module PactBroker
           consumer: consumer,
           provider: provider,
           events: events,
-          request: Domain::WebhookRequest.new(request_attributes),
+          request: Webhooks::WebhookRequestTemplate.new(request_attributes),
           created_at: created_at,
           updated_at: updated_at)
       end

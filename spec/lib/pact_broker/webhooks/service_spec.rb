@@ -238,7 +238,7 @@ module PactBroker
         it "executes the webhook with the correct options" do
           allow(PactBroker.configuration).to receive(:show_webhook_response?).and_return('foo')
           expected_options = {:show_response => 'foo' }
-          expect_any_instance_of(PactBroker::Domain::WebhookRequest).to receive(:execute).with(anything, anything, hash_including(expected_options)).and_call_original
+          expect_any_instance_of(PactBroker::Domain::WebhookRequest).to receive(:execute).with(hash_including(expected_options)).and_call_original
           subject
         end
 

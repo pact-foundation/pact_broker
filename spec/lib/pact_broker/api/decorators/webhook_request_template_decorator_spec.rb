@@ -1,17 +1,17 @@
 require 'spec_helper'
-require 'pact_broker/api/decorators/webhook_request_decorator'
+require 'pact_broker/api/decorators/webhook_request_template_decorator'
 require 'json'
 
 module PactBroker
   module Api
     module Decorators
-      describe WebhookRequestDecorator do
+      describe WebhookRequestTemplateDecorator do
 
         let(:username) { 'username' }
         let(:display_password) { '*****' }
         let(:webhook_request) do
           instance_double(
-            PactBroker::Domain::WebhookRequest,
+            PactBroker::Webhooks::WebhookRequestTemplate,
             username: username,
             display_password: display_password,
             method: 'POST',
@@ -20,7 +20,7 @@ module PactBroker
             headers: {})
         end
 
-        let(:json) { WebhookRequestDecorator.new(webhook_request).to_json }
+        let(:json) { WebhookRequestTemplateDecorator.new(webhook_request).to_json }
 
         subject { JSON.parse(json, symbolize_names: true)}
 
@@ -58,9 +58,9 @@ module PactBroker
           end
 
           let(:json) { hash.to_json }
-          let(:webhook_request) { PactBroker::Domain::WebhookRequest.new }
+          let(:webhook_request) { PactBroker::Webhooks::WebhookRequestTemplate.new }
 
-          subject { WebhookRequestDecorator.new(webhook_request).from_json(json) }
+          subject { WebhookRequestTemplateDecorator.new(webhook_request).from_json(json) }
 
           it "reads the username" do
             expect(subject.username).to eq username
@@ -69,9 +69,7 @@ module PactBroker
           it "reads the password" do
             expect(subject.password).to eq password
           end
-
         end
-
       end
     end
   end

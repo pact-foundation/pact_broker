@@ -74,7 +74,7 @@ module PactBroker
       end
 
       def description
-        "#{method.upcase} #{URI(url.gsub(PactBroker::Webhooks::Render::TEMPLATE_PARAMETER_REGEXP, 'placeholder')).host}"
+        "#{method.upcase} #{URI(url).host}"
       end
 
       def display_password
@@ -88,68 +88,72 @@ module PactBroker
         end
       end
 
-      def execute pact, verification, options = {}
-        logs = StringIO.new
-        execution_logger = Logger.new(logs)
+      def execute options = {}
+        @options = options
+        @logs = StringIO.new
+        @execution_logger = Logger.new(logs)
         begin
-          execute_and_build_result(pact, verification, options, logs, execution_logger)
+          execute_and_build_result
         rescue StandardError => e
-          handle_error_and_build_result(e, options, logs, execution_logger)
+          handle_error_and_build_result(e)
         end
       end
 
       private
 
-      def execute_and_build_result pact, verification, options, logs, execution_logger
-        uri = build_uri(pact, verification)
-        req = build_request(uri, pact, verification, execution_logger)
-        response = do_request(uri, req)
-        log_response(response, execution_logger, options)
-        result = WebhookExecutionResult.new(WebhookRequestWithRedactedHeaders.new(req), response, logs.string)
-        log_completion_message(options, execution_logger, result.success?)
+      attr_reader :options, :execution_logger, :logs
+
+      def execute_and_build_result
+        log_request
+        response = do_request
+        log_response(response)
+        result = WebhookExecutionResult.new(WebhookRequestWithRedactedHeaders.new(http_request), response, logs.string)
+        log_completion_message(result.success?)
         result
       end
 
-      def handle_error_and_build_result e, options, logs, execution_logger
-        log_error(e, execution_logger, options)
-        log_completion_message(options, execution_logger, false)
-        WebhookExecutionResult.new(nil, nil, logs.string, e)
+      def handle_error_and_build_result e
+        log_error(e)
+        log_completion_message(false)
+        WebhookExecutionResult.new(WebhookRequestWithRedactedHeaders.new(http_request), nil, logs.string, e)
       end
 
-      def build_request uri, pact, verification, execution_logger
-        req = http_request(uri)
-        execution_logger.info "HTTP/1.1 #{method.upcase} #{url_with_credentials(pact, verification)}"
-
-        headers_to_log = redacted_headers
-        headers.each_pair do | name, value |
-          execution_logger.info "#{name}: #{headers_to_log[name]}"
-          req[name] = value
+      def http_request
+        @http_request ||= begin
+          req = Net::HTTP.const_get(method.capitalize).new(url)
+          headers.each_pair { | name, value | req[name] = value }
+          req.basic_auth(username, password) if username
+          req.body = body unless body.nil?
+          req
         end
-
-        req.basic_auth(username, password) if username
-
-        unless body.nil?
-          req.body = PactBroker::Webhooks::Render.call(String === body ? body : body.to_json, pact, verification)
-        end
-
-        execution_logger.info(req.body) if req.body
-        logger.info "Making webhook #{uuid} request #{method.upcase} URI=#{uri} headers=#{headers_to_log} (body in debug logs)"
-        logger.debug "body=#{req.body}"
-        req
       end
 
-      def do_request uri, req
+      def do_request
         options = PactBroker::BuildHttpOptions.call(uri)
+        req = http_request
         response = Net::HTTP.start(uri.hostname, uri.port, :ENV, options) do |http|
           http.request req
         end
         WebhookResponseWithUtf8SafeBody.new(response)
       end
 
-      def log_response response, execution_logger, options
+      def log_request
+        redacted_request = WebhookRequestWithRedactedHeaders.new(http_request)
+        logger.info "Making webhook #{uuid} request #{http_method.upcase} URI=#{uri} (headers and body in debug logs)"
+        logger.debug "Webhook #{uuid} request headers=#{redacted_request.to_hash}"
+        logger.debug "Webhook #{uuid} request body=#{redacted_request.body}"
+
+        execution_logger.info "HTTP/1.1 #{http_method.upcase} #{url}"
+        redacted_request.to_hash.each do | name, value |
+          execution_logger.info "#{name}: #{value.join(", ")}"
+        end
+        execution_logger.info(body) if body
+      end
+
+      def log_response response
         log_response_to_application_logger(response)
         if options[:show_response]
-          log_response_to_execution_logger(response, execution_logger)
+          log_response_to_execution_logger(response)
         else
           execution_logger.info response_body_hidden_message
         end
@@ -161,14 +165,14 @@ module PactBroker
 
       def log_response_to_application_logger response
         logger.info "Received response for webhook #{uuid} status=#{response.code} (headers and body in debug logs)"
-        logger.debug "headers=#{response.to_hash} "
-        logger.debug "body=#{response.unsafe_body}"
+        logger.debug "Webhook #{uuid} response headers=#{response.to_hash} "
+        logger.debug "Webhook #{uuid} response body=#{response.unsafe_body}"
       end
 
-      def log_response_to_execution_logger response, execution_logger
+      def log_response_to_execution_logger response
         execution_logger.info "HTTP/#{response.http_version} #{response.code} #{response.message}"
-        response.each_header do | header |
-          execution_logger.info "#{header.split("-").collect(&:capitalize).join('-')}: #{response[header]}"
+        response.each_header do | name, value |
+          execution_logger.info "#{name}: #{value}"
         end
 
         if response.body
@@ -179,7 +183,7 @@ module PactBroker
         end
       end
 
-      def log_completion_message options, execution_logger, success
+      def log_completion_message success
         if options[:success_log_message] && success
           execution_logger.info(options[:success_log_message])
           logger.info(options[:success_log_message])
@@ -191,7 +195,7 @@ module PactBroker
         end
       end
 
-      def log_error e, execution_logger, options
+      def log_error e
         logger.error "Error executing webhook #{uuid} #{e.class.name} - #{e.message} #{e.backtrace.join("\n")}"
 
         if options[:show_response]
@@ -205,18 +209,8 @@ module PactBroker
         "#{method.upcase} #{url}, username=#{username}, password=#{display_password}, headers=#{redacted_headers}, body=#{body}"
       end
 
-      def http_request(uri)
-        Net::HTTP.const_get(method.capitalize).new(uri)
-      end
-
-      def build_uri(pact, verification)
-        URI(PactBroker::Webhooks::Render.call(url, pact, verification){ | value | CGI::escape(value) if !value.nil? } )
-      end
-
-      def url_with_credentials pact, verification
-        u = build_uri(pact, verification)
-        u.userinfo = "#{CGI::escape username}:#{display_password}" if username
-        u
+      def uri
+        @uri ||= URI(url)
       end
     end
   end

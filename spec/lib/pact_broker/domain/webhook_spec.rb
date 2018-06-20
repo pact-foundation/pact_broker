@@ -5,12 +5,14 @@ module PactBroker
     describe Webhook do
       let(:consumer) { Pacticipant.new(name: 'Consumer')}
       let(:provider) { Pacticipant.new(name: 'Provider')}
-      let(:request) { instance_double(PactBroker::Domain::WebhookRequest, execute: nil)}
+      let(:request_template) { instance_double(PactBroker::Webhooks::WebhookRequestTemplate, build: request)}
+      let(:request) { instance_double(PactBroker::Domain::WebhookRequest, execute: result) }
+      let(:result) { double('result') }
       let(:options) { double('options') }
       let(:pact) { double('pact') }
       let(:verification) { double('verification') }
 
-      subject(:webhook) { Webhook.new(request: request, consumer: consumer, provider: provider) }
+      subject(:webhook) { Webhook.new(request: request_template, consumer: consumer, provider: provider) }
 
       describe "description" do
         subject { webhook.description }
@@ -40,15 +42,26 @@ module PactBroker
       end
 
       describe "execute" do
+        before do
+          allow(request_template).to receive(:build).and_return(request)
+        end
+
+        let(:execute) { subject.execute pact, verification, options }
+
+        it "builds the request" do
+          expect(request_template).to receive(:build).with(pact: pact, verification: verification)
+          execute
+        end
+
         it "executes the request" do
-          expect(request).to receive(:execute).with(pact, verification, options)
-          subject.execute pact, verification, options
+          expect(request).to receive(:execute).with(options)
+          execute
         end
 
         it "logs before and after" do
           allow(PactBroker.logger).to receive(:info)
           expect(PactBroker.logger).to receive(:info).with(/Executing/)
-          subject.execute pact, verification, options
+          execute
         end
       end
     end

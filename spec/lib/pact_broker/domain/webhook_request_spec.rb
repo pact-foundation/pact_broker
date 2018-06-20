@@ -5,25 +5,15 @@ require 'webmock/rspec'
 module PactBroker
   module Domain
     describe WebhookRequest do
-      before do
-        allow(PactBroker::Api::PactBrokerUrls).to receive(:pact_url).and_return('http://example.org/pact-url')
-        allow(PactBroker.configuration).to receive(:base_url).and_return('http://example.org')
-        allow(PactBroker::Webhooks::Render).to receive(:call) do | content, pact, verification, &block |
-          content
-        end
-      end
-
       let(:username) { nil }
       let(:password) { nil }
       let(:url) { 'http://example.org/hook' }
       let(:headers) { {'Content-Type' => 'text/plain', 'Authorization' => 'foo'} }
-      let(:body) { 'body' }
+      let(:body) { 'reqbody' }
       let(:logs) { StringIO.new }
       let(:execution_logger) { Logger.new(logs) }
       let(:options) { {failure_log_message: 'oops', show_response: show_response} }
       let(:show_response) { true }
-      let(:pact) { instance_double('PactBroker::Domain::Pact') }
-      let(:verification) { instance_double('PactBroker::Domain::Verification') }
       let(:logs) { execute.logs }
 
       subject do
@@ -36,20 +26,11 @@ module PactBroker
           body: body)
       end
 
-      let(:execute) { subject.execute(pact, verification, options) }
-
+      let(:execute) { subject.execute(options) }
 
       describe "description" do
         it "returns a brief description of the HTTP request" do
           expect(subject.description).to eq 'POST example.org'
-        end
-
-        context "when the URL has a template parameter in it" do
-          let(:url) { "http://foo/commits/${pactbroker.consumerVersionNumber}" }
-
-          it "doesn't explode" do
-            expect(subject.description).to eq 'POST foo'
-          end
         end
       end
 
@@ -104,35 +85,7 @@ module PactBroker
             to_return(:status => 200, :body => "respbod", :headers => {'Content-Type' => 'text/foo, blah'})
         end
 
-        let(:request_body) { 'body' }
-
-        it "renders the url template" do
-          expect(PactBroker::Webhooks::Render).to receive(:call).with("http://example.org/hook", pact, verification) do | content, pact, verification, &block |
-            expect(content).to eq "http://example.org/hook"
-            expect(pact).to be pact
-            expect(verification).to be verification
-            expect(block.call("foo bar")).to eq "foo+bar"
-            "http://example.org/hook"
-          end
-          execute
-        end
-
-        context "when the body is a string" do
-          it "renders the body template with the String" do
-            expect(PactBroker::Webhooks::Render).to receive(:call).with('body', pact, verification)
-            execute
-          end
-        end
-
-        context "when the body is an object" do
-          let(:body) { {"foo" => "bar"} }
-          let(:request_body) { '{"foo":"bar"}' }
-
-          it "renders the body template with JSON" do
-            expect(PactBroker::Webhooks::Render).to receive(:call).with(request_body, pact, verification)
-            execute
-          end
-        end
+        let(:request_body) { 'reqbody' }
 
         it "executes the configured request" do
           execute
@@ -141,7 +94,10 @@ module PactBroker
 
         it "logs the request" do
           allow(PactBroker.logger).to receive(:info)
-          expect(PactBroker.logger).to receive(:info).with(/POST.*example.*text.*body/)
+          allow(PactBroker.logger).to receive(:debug)
+          expect(PactBroker.logger).to receive(:info).with(/POST.*example/)
+          expect(PactBroker.logger).to receive(:debug).with(/.*text\/plain/)
+          expect(PactBroker.logger).to receive(:debug).with(/.*reqbody/)
           execute
         end
 
@@ -149,7 +105,7 @@ module PactBroker
           allow(PactBroker.logger).to receive(:info)
           allow(PactBroker.logger).to receive(:debug)
           expect(PactBroker.logger).to receive(:info).with(/response.*200/)
-          expect(PactBroker.logger).to receive(:debug).with(/content-type/)
+          expect(PactBroker.logger).to receive(:debug).with(/text\/foo/)
           expect(PactBroker.logger).to receive(:debug).with(/respbod/)
           execute
         end
@@ -161,11 +117,11 @@ module PactBroker
           end
 
           it "logs the request headers" do
-            expect(logs).to include "Content-Type: text/plain"
+            expect(logs).to include "content-type: text/plain"
           end
 
           it "redacts potentially sensitive headers" do
-            expect(logs).to include "Authorization: **********"
+            expect(logs).to include "authorization: **********"
           end
 
           it "logs the request body" do
@@ -178,7 +134,7 @@ module PactBroker
             end
 
             it "logs the response headers" do
-              expect(logs).to include "Content-Type: text/foo, blah"
+              expect(logs).to include "content-type: text/foo, blah"
             end
 
             it "logs the response body" do
@@ -194,7 +150,7 @@ module PactBroker
             end
 
             it "does not log the response headers" do
-              expect(logs).to_not include "Content-Type: text/foo, blah"
+              expect(logs).to_not include "content-type: text/foo, blah"
             end
 
             it "does not log the response body" do
@@ -224,8 +180,8 @@ module PactBroker
             let(:username) { 'username' }
             let(:password) { 'password' }
 
-            it "logs the username and a starred password" do
-              expect(logs).to include "POST http://username:**********@example.org/hook"
+            it "logs the Authorization header with a starred value" do
+              expect(logs).to include "authorization: **********"
             end
           end
         end
@@ -237,7 +193,7 @@ module PactBroker
               with(
                 basic_auth: [username, password],
                 :headers => {'Content-Type'=>'text/plain'},
-                :body => 'body').
+                :body => 'reqbody').
               to_return(:status => 200, :body => "respbod", :headers => {'Content-Type' => 'text/foo, blah'})
           end
 
@@ -268,7 +224,7 @@ module PactBroker
           let!(:https_request) do
             # webmock will set the request signature scheme to 'https' _only_ if the use_ssl option is set
             stub_request(:post, "https://example.org/hook").
-              with(:headers => {'Content-Type'=>'text/plain'}, :body => 'body').
+              with(:headers => {'Content-Type'=>'text/plain'}, :body => 'reqbody').
               to_return(:status => 200, :body => "respbod", :headers => {'Content-Type' => 'text/foo, blah'})
           end
 
@@ -307,7 +263,7 @@ module PactBroker
 
           let!(:http_request) do
             stub_request(:post, "http://example.org/hook").
-              with(:headers => {'Content-Type'=>'text/plain'}, :body => 'body').
+              with(:headers => {'Content-Type'=>'text/plain'}, :body => 'reqbody').
               to_return(:status => 500, :body => "An error")
           end
 
@@ -344,7 +300,7 @@ module PactBroker
           class WebhookTestError < StandardError; end
 
           before do
-            allow(subject).to receive(:http_request).and_raise(WebhookTestError.new("blah"))
+            allow(Net::HTTP).to receive(:start).and_raise(WebhookTestError.new("blah"))
             allow(PactBroker.logger).to receive(:error)
           end
 

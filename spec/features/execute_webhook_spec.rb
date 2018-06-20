@@ -25,6 +25,7 @@ describe "Execute a webhook" do
     let!(:request) do
       stub_request(:post, /http/).with(body: 'http://example.org/pacts/provider/Bar/consumer/Foo/version/1').to_return(:status => 200, body: response_body)
     end
+
     let(:response_body) { "webhook-response-body" }
 
     it "performs the HTTP request" do

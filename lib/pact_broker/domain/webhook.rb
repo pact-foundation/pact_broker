@@ -42,7 +42,7 @@ module PactBroker
 
       def execute pact, verification, options
         logger.info "Executing #{self}"
-        request.execute pact, verification, options
+        request.build(pact: pact, verification: verification).execute(options)
       end
 
       def to_s

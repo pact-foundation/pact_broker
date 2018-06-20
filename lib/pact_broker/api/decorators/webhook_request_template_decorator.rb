@@ -3,7 +3,7 @@ require_relative 'base_decorator'
 module PactBroker
   module Api
     module Decorators
-      class WebhookRequestDecorator < BaseDecorator
+      class WebhookRequestTemplateDecorator < BaseDecorator
 
         property :method
         property :url

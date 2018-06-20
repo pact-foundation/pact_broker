@@ -10,7 +10,7 @@ module PactBroker
       let(:body) { {'some' => 'json' } }
       let(:headers) { {'Content-Type' => 'application/json', 'Accept' => 'application/json'} }
       let(:request) do
-        Domain::WebhookRequest.new(
+        Webhooks::WebhookRequestTemplate.new(
           method: 'post',
           url: url,
           headers: headers,

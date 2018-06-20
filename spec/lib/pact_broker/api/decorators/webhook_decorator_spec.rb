@@ -16,7 +16,7 @@ module PactBroker
         end
 
         let(:webhook_request) do
-          Domain::WebhookRequest.new(request)
+          Webhooks::WebhookRequestTemplate.new(request)
         end
 
         let(:consumer) { Domain::Pacticipant.new(name: 'Consumer') }

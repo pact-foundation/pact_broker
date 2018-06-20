@@ -256,7 +256,7 @@ class TestDataBuilder
     end
     events = event_params.collect{ |e| PactBroker::Webhooks::WebhookEvent.new(e) }
     default_params = { method: 'POST', url: 'http://example.org', headers: {'Content-Type' => 'application/json'}}
-    request = PactBroker::Domain::WebhookRequest.new(default_params.merge(params))
+    request = PactBroker::Webhooks::WebhookRequestTemplate.new(default_params.merge(params))
     @webhook = PactBroker::Webhooks::Repository.new.create uuid, PactBroker::Domain::Webhook.new(request: request, events: events), consumer, provider
     self
   end
