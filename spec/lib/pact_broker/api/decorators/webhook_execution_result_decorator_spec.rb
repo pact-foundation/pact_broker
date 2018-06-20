@@ -8,9 +8,15 @@ module PactBroker
 
         describe "to_json" do
 
-          let(:webhook_execution_result) { PactBroker::Domain::WebhookExecutionResult.new(response, logs, error)}
+          let(:webhook_execution_result) { PactBroker::Domain::WebhookExecutionResult.new(request, response, logs, error)}
           let(:logs) { "logs" }
           let(:headers) { { "Something" => ["blah", "thing"]} }
+          let(:request) do
+            req = Net::HTTP::Get.new("http://example.org?foo=bar")
+            req['Foo'] = ['bar', 'wiffle']
+            req.body = { foo: 'bar' }.to_json
+            req
+          end
           let(:response) { double('http_response', code: '200', body: response_body, to_hash: headers) }
           let(:response_body) { 'body' }
           let(:error) { nil }
@@ -43,6 +49,32 @@ module PactBroker
             end
           end
 
+          context "when there is a request" do
+            it "includes the request URL" do
+              expect(subject[:request][:url]).to eq "http://example.org?foo=bar"
+            end
+
+            it "includes the request headers" do
+              expect(subject[:request][:headers][:'foo']).to eq "bar, wiffle"
+            end
+
+            context "when the request body is JSON" do
+              it "includes the request body as JSON" do
+                expect(subject[:request][:body]).to include( foo: 'bar' )
+              end
+            end
+
+            context "when the request body is not json" do
+              before do
+                request.body = "<xml></xml>"
+              end
+
+              it "includes the request body as a String" do
+                expect(subject[:request][:body]).to eq "<xml></xml>"
+              end
+            end
+          end
+
           context "when there is a response" do
             it "includes the response code" do
               expect(subject[:response][:status]).to eq 200
@@ -51,6 +83,7 @@ module PactBroker
             it "includes the response headers" do
               expect(subject[:response][:headers]).to eq :'Something' => "blah, thing"
             end
+
             it "includes the response body" do
               expect(subject[:response][:body]).to eq response_body
             end

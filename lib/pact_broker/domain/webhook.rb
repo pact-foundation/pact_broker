@@ -46,7 +46,7 @@ module PactBroker
       end
 
       def to_s
-        "webhook for consumer=#{consumer_name} provider=#{provider_name} uuid=#{uuid} request=#{request}"
+        "webhook for consumer=#{consumer_name} provider=#{provider_name} uuid=#{uuid}"
       end
 
       def consumer_name

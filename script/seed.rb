@@ -47,7 +47,7 @@ TestDataBuilder.new
   .create_global_webhook(method: 'GET', url: "http://example.org?consumer=${pactbroker.consumerName}&provider=${pactbroker.providerName}")
   .create_certificate(path: 'spec/fixtures/certificates/self-signed.badssl.com.pem')
   .create_consumer("Bethtest")
-  .create_verification_webhook(method: 'POST', url: "http://localhost:9292", body: webhook_body)
+  .create_verification_webhook(method: 'POST', url: "http://localhost:9292", body: webhook_body, username: "foo", password: "bar")
   .create_consumer("Foo")
   .create_label("microservice")
   .create_provider("Bar")

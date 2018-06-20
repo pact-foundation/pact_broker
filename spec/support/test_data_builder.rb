@@ -294,7 +294,7 @@ class TestDataBuilder
   def create_webhook_execution params = {}
     params.delete(:comment)
     logs = params[:logs] || "logs"
-    webhook_execution_result = PactBroker::Domain::WebhookExecutionResult.new(OpenStruct.new(code: "200"), logs, nil)
+    webhook_execution_result = PactBroker::Domain::WebhookExecutionResult.new(nil, OpenStruct.new(code: "200"), logs, nil)
     @webhook_execution = PactBroker::Webhooks::Repository.new.create_execution @triggered_webhook, webhook_execution_result
     created_at = params[:created_at] || @pact.created_at + Rational(1, 86400)
     set_created_at_if_set created_at, :webhook_executions, {id: @webhook_execution.id}

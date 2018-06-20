@@ -15,12 +15,10 @@ module PactBroker
   module Domain
 
     class WebhookRequestError < StandardError
-
       def initialize message, response
         super message
         @response = response
       end
-
     end
 
     class WebhookResponseWithUtf8SafeBody < SimpleDelegator
@@ -38,6 +36,18 @@ module PactBroker
 
       def unsafe_body?
         unsafe_body != body
+      end
+    end
+
+    class WebhookRequestWithRedactedHeaders < SimpleDelegator
+      def to_hash
+        __getobj__().to_hash.each_with_object({}) do | (key, values), new_hash |
+          new_hash[key] = redact?(key) ? ["**********"] : values
+        end
+      end
+
+      def redact? name
+        WebhookRequest::HEADERS_TO_REDACT.any?{ | pattern | name =~ pattern }
       end
     end
 
@@ -95,7 +105,7 @@ module PactBroker
         req = build_request(uri, pact, verification, execution_logger)
         response = do_request(uri, req)
         log_response(response, execution_logger, options)
-        result = WebhookExecutionResult.new(response, logs.string)
+        result = WebhookExecutionResult.new(WebhookRequestWithRedactedHeaders.new(req), response, logs.string)
         log_completion_message(options, execution_logger, result.success?)
         result
       end
@@ -103,7 +113,7 @@ module PactBroker
       def handle_error_and_build_result e, options, logs, execution_logger
         log_error(e, execution_logger, options)
         log_completion_message(options, execution_logger, false)
-        WebhookExecutionResult.new(nil, logs.string, e)
+        WebhookExecutionResult.new(nil, nil, logs.string, e)
       end
 
       def build_request uri, pact, verification, execution_logger
@@ -123,11 +133,12 @@ module PactBroker
         end
 
         execution_logger.info(req.body) if req.body
+        logger.info "Making webhook #{uuid} request #{method.upcase} URI=#{uri} headers=#{headers_to_log} (body in debug logs)"
+        logger.debug "body=#{req.body}"
         req
       end
 
       def do_request uri, req
-        logger.info "Making webhook #{uuid} request #{to_s}"
         options = PactBroker::BuildHttpOptions.call(uri)
         response = Net::HTTP.start(uri.hostname, uri.port, :ENV, options) do |http|
           http.request req
@@ -149,8 +160,8 @@ module PactBroker
       end
 
       def log_response_to_application_logger response
-        logger.info "Received response for webhook #{uuid} status=#{response.code}"
-        logger.debug "headers=#{response.to_hash}"
+        logger.info "Received response for webhook #{uuid} status=#{response.code} (headers and body in debug logs)"
+        logger.debug "headers=#{response.to_hash} "
         logger.debug "body=#{response.unsafe_body}"
       end
 
