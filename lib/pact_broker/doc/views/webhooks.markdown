@@ -112,7 +112,7 @@ Example usage:
 <a name="whitelist"></a>
 ### Webhook Whitelist
 
-To ensure that webhooks cannot be used maliciously to expose either data about your contracts or your internal network, the following validation rules are applied to webhooks via the Pact Broker configuration settings.
+To ensure that webhooks cannot be used maliciously to expose either data about your contracts or your internal network, the following validation rules are applied to webhooks via the Pact Broker [webhook whitelist configuration settings](https://github.com/pact-foundation/pact_broker/wiki/Configuration#webhook-whitelists) .
 
 * **Scheme**: Must be included in the `webhook_scheme_whitelist`, which by default only includes `https`. You can change this to include `http` if absolutely necessary, however, keep in mind that the body of any http traffic is visible to the network. You can load a self signed certificate into the Pact Broker to be used for https connections using [script/insert-self-signed-certificate-from-url.rb](https://github.com/pact-foundation/pact_broker/blob/master/script/insert-self-signed-certificate-from-url.rb) in the
 Pact Broker Github repository.
