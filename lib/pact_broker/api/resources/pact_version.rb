@@ -5,7 +5,7 @@ module PactBroker
     module Resources
       class PactVersion < Pact
         def allowed_methods
-          ["GET"]
+          ["GET", "OPTIONS"]
         end
       end
     end

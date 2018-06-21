@@ -30,6 +30,10 @@ module PactBroker
           PactBroker.configuration.before_resource.call(self)
         end
 
+        def options
+          { 'Access-Control-Allow-Methods' => allowed_methods.join(", ")}
+        end
+
         def update_matrix_after_request?
           false
         end

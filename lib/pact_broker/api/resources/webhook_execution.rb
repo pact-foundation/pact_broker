@@ -10,7 +10,7 @@ module PactBroker
       class WebhookExecution < BaseResource
 
         def allowed_methods
-          ["POST"]
+          ["POST", "OPTIONS"]
         end
 
         def process_post

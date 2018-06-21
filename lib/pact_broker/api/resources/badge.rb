@@ -9,7 +9,7 @@ module PactBroker
       class Badge < BaseResource
 
         def allowed_methods
-          ['GET']
+          ["GET", "OPTIONS", "OPTIONS"]
         end
 
         def content_types_provided

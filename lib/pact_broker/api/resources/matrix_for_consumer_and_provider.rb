@@ -11,7 +11,7 @@ module PactBroker
         end
 
         def allowed_methods
-          ["GET"]
+          ["GET", "OPTIONS"]
         end
 
         def resource_exists?

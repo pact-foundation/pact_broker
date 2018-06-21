@@ -11,7 +11,7 @@ module PactBroker
       class LatestVerificationsForConsumerVersion < BaseResource
 
         def allowed_methods
-          ["GET"]
+          ["GET", "OPTIONS"]
         end
 
         def content_types_provided

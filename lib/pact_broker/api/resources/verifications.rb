@@ -19,7 +19,7 @@ module PactBroker
         end
 
         def allowed_methods
-          ["POST"]
+          ["POST", "OPTIONS"]
         end
 
         def post_is_create?

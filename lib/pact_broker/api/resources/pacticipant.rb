@@ -23,7 +23,7 @@ module PactBroker
         end
 
         def allowed_methods
-          ["GET", "PATCH", "DELETE"]
+          ["GET", "PATCH", "DELETE", "OPTIONS"]
         end
 
         def known_methods

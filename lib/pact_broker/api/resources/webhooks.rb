@@ -9,7 +9,7 @@ module PactBroker
       class Webhooks < BaseResource
 
         def allowed_methods
-          ["POST", "GET"]
+          ["POST", "GET", "OPTIONS"]
         end
 
         def content_types_provided

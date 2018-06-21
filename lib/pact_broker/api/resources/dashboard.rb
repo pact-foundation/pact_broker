@@ -16,7 +16,7 @@ module PactBroker
         end
 
         def allowed_methods
-          ["GET"]
+          ["GET", "OPTIONS"]
         end
 
         def to_json
