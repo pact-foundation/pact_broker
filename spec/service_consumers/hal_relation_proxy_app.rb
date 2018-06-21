@@ -7,7 +7,9 @@ class HalRelationProxyApp
     '/HAL-REL-PLACEHOLDER-INDEX-PB-LATEST-TAGGED-VERSION-Condor-production' =>
       '/pacticipants/Condor/latest-version/production',
     '/HAL-REL-PLACEHOLDER-INDEX-PB-LATEST-VERSION-Condor' =>
-      '/pacticipants/Condor/latest-version'
+      '/pacticipants/Condor/latest-version',
+    '/HAL-REL-PLACEHOLDER-PB-WEBHOOKS' =>
+      '/webhooks'
   }
 
   RESPONSE_BODY_REPLACEMENTS = {
