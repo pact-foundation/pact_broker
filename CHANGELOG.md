@@ -1,3 +1,17 @@
+<a name="v2.23.1"></a>
+### v2.23.1 (2018-06-23)
+
+
+#### Features
+
+* respond correctly to OPTIONS requests	 ([c5d3937](/../../commit/c5d3937))
+
+
+#### Bug Fixes
+
+* add missing require to pact_triggered_webhooks	 ([aaf1755](/../../commit/aaf1755))
+
+
 <a name="v2.23.0"></a>
 ### v2.23.0 (2018-06-20)
 
