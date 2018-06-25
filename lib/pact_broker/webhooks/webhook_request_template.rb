@@ -31,6 +31,7 @@ module PactBroker
         attributes = {
           method: http_method,
           url: build_url(context[:pact], context[:verification]),
+          headers: headers,
           username: username,
           password: password,
           uuid: uuid,

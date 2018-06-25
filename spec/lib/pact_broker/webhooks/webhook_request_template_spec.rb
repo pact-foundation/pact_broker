@@ -10,7 +10,8 @@ module PactBroker
           username: "foo",
           password: "bar",
           uuid: "1234",
-          body: body
+          body: body,
+          headers: {'Foo' => 'bar'}
         }
       end
 
@@ -21,7 +22,8 @@ module PactBroker
           username: "foo",
           password: "bar",
           uuid: "1234",
-          body: built_body
+          body: built_body,
+          headers: {'Foo' => 'bar'}
         }
       end
 
