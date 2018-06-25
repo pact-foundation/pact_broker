@@ -1,3 +1,12 @@
+<a name="v2.23.2"></a>
+### v2.23.2 (2018-06-25)
+
+
+#### Bug Fixes
+
+* ensure configured webhook headers are used when making request	 ([50c876f](/../../commit/50c876f))
+
+
 <a name="v2.23.1"></a>
 ### v2.23.1 (2018-06-23)
 
