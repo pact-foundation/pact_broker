@@ -1,3 +1,12 @@
+<a name="v2.23.3"></a>
+### v2.23.3 (2018-06-27)
+
+
+#### Bug Fixes
+
+* add missing require in triggered_webhooks_decorator.rb	 ([c4adeaf](/../../commit/c4adeaf))
+
+
 <a name="v2.23.2"></a>
 ### v2.23.2 (2018-06-25)
 
