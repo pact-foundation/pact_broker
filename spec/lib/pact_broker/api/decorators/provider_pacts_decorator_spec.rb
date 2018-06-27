@@ -13,7 +13,8 @@ module PactBroker
           {
             base_url: 'http://example.org',
             resource_url: 'http://example.org/provider-pacts',
-            title: 'title'
+            title: 'title',
+            provider_name: 'foo'
           }
         end
 
@@ -30,9 +31,9 @@ module PactBroker
                 :href=> "http://example.org/provider-pacts",
                 :title => "title"
               },
-              :provider => {
-                :href => "http://example.org/pacticipants/",
-                :title => nil
+              :"pb:provider" => {
+                :href => "http://example.org/pacticipants/foo",
+                :name => "foo"
               },
               :"pb:pacts" =>[{
                 :href => "pact_url",
