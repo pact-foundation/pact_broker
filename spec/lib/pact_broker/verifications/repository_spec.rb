@@ -275,6 +275,26 @@ module PactBroker
           end
         end
       end
+
+      describe "delete_by_provider_version_id" do
+        let!(:provider_version) do
+          TestDataBuilder.new
+            .create_consumer
+            .create_provider
+            .create_consumer_version
+            .create_pact
+            .create_verification(provider_version: "1.0.0")
+            .create_verification(provider_version: "2.0.0", number: 2)
+            .create_verification(provider_version: "2.0.0", number: 3)
+            .and_return(:provider_version)
+        end
+
+        subject { Repository.new.delete_by_provider_version_id(provider_version.id) }
+
+        it "deletes the verifications associated with the given version id" do
+          expect { subject }.to change { PactBroker::Domain::Verification.count }.by(-2)
+        end
+      end
     end
   end
 end

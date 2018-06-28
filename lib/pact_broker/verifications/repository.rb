@@ -98,6 +98,10 @@ module PactBroker
         ).limit(1).single_record
       end
 
+      def delete_by_provider_version_id version_id
+        PactBroker::Domain::Verification.where(provider_version_id: version_id).delete
+      end
+
       def pact_version_id_for pact
         PactBroker::Pacts::PactPublication.select(:pact_version_id).where(id: pact.id)
       end

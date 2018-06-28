@@ -5,13 +5,15 @@ module PactBroker
   module Versions
     describe Service do
       describe ".delete" do
+        let(:td) { TestDataBuilder.new }
         let!(:version) do
-          TestDataBuilder.new
+          td
             .create_consumer
             .create_provider
             .create_consumer_version("1.2.3")
             .create_consumer_version_tag("prod")
             .create_pact
+            .create_verification(provider_version: "1.0.0")
             .and_return(:consumer_version)
         end
 
@@ -27,6 +29,12 @@ module PactBroker
 
         it "deletes the version" do
           expect{ subject }.to change { PactBroker::Domain::Version.count }.by(-1)
+        end
+
+        context "when deleting a provider version" do
+          it "deletes associated verifications" do
+            expect { Service.delete(td.provider_version ) }. to change { PactBroker::Domain::Verification.count }.by(-1)
+          end
         end
       end
     end

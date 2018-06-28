@@ -34,6 +34,7 @@ class TestDataBuilder
   attr_reader :consumer
   attr_reader :provider
   attr_reader :consumer_version
+  attr_reader :provider_version
   attr_reader :pact
   attr_reader :verification
   attr_reader :webhook
@@ -320,10 +321,11 @@ class TestDataBuilder
     parameters.delete(:provider_version)
     verification = PactBroker::Domain::Verification.new(parameters)
     @verification = PactBroker::Verifications::Repository.new.create(verification, provider_version_number, @pact)
+    @provider_version = PactBroker::Domain::Version.where(pacticipant_id: @provider.id, number: provider_version_number).single_record
+
     if tag_names.any?
-      provider_version = PactBroker::Domain::Version.where(pacticipant_id: @provider.id, number: provider_version_number).single_record
       tag_names.each do | tag_name |
-        PactBroker::Domain::Tag.create(name: tag_name, version: provider_version)
+        PactBroker::Domain::Tag.create(name: tag_name, version: @provider_version)
       end
     end
     refresh_matrix
