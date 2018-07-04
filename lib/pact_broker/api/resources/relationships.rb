@@ -22,9 +22,7 @@ module PactBroker
         def pacts
           pact_service.find_latest_pacts
         end
-
       end
     end
-
   end
 end

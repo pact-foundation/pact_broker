@@ -7,8 +7,8 @@ module PactBroker
       class MatrixDecorator
         include PactBroker::Api::PactBrokerUrls
 
-        def initialize(lines)
-          @lines = lines
+        def initialize(query_results_with_deployment_status_summary)
+          @query_results_with_deployment_status_summary = query_results_with_deployment_status_summary
         end
 
         def to_json(options)
@@ -21,32 +21,27 @@ module PactBroker
               deployable: deployable,
               reason: reason
             },
-            matrix: matrix(lines, options[:user_options][:base_url])
-          }
+            matrix: matrix(options[:user_options][:base_url])
+          }.tap do | hash |
+            hash[:summary].merge!(query_results_with_deployment_status_summary.deployment_status_summary.counts)
+          end
+
         end
 
         def deployable
-          return nil if lines.empty?
-          return nil if lines.any?{ |line| line.success.nil? }
-          lines.any? && lines.all?{ |line| line.success }
+          query_results_with_deployment_status_summary.deployment_status_summary.deployable?
         end
 
         def reason
-          return "No results matched the given query" if lines.empty?
-          case deployable
-          when true then "All verification results are published and successful"
-          when false then "One or more verifications have failed"
-          else
-            "Missing one or more verification results"
-          end
+          query_results_with_deployment_status_summary.deployment_status_summary.reasons.join("\n")
         end
 
         private
 
-        attr_reader :lines
+        attr_reader :query_results_with_deployment_status_summary
 
-        def matrix(lines, base_url)
-          lines.collect do | line |
+        def matrix(base_url)
+          query_results_with_deployment_status_summary.rows.collect do | line |
             provider = OpenStruct.new(name: line.provider_name)
             consumer = OpenStruct.new(name: line.consumer_name)
             consumer_version = OpenStruct.new(number: line.consumer_version_number, pacticipant: consumer)

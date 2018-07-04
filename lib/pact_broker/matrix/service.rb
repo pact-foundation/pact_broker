@@ -1,5 +1,6 @@
 require 'pact_broker/repositories'
 require 'pact_broker/matrix/row'
+require 'pact_broker/matrix/deployment_status_summary'
 
 module PactBroker
   module Matrix
@@ -17,12 +18,18 @@ module PactBroker
         matrix_repository.refresh_tags(params, &block)
       end
 
-      def find criteria, options = {}
-        matrix_repository.find criteria, options
+      def find selectors, options = {}
+        query_results = matrix_repository.find selectors, options
+        pacticipant_names = selectors.collect{ | s| s[:pacticipant_name] }
+        integrations = matrix_repository.find_integrations(pacticipant_names)
+        deployment_status_summary = DeploymentStatusSummary.new(query_results.rows, query_results.resolved_selectors, integrations)
+        QueryResultsWithDeploymentStatusSummary.new(query_results.rows, query_results.selectors, query_results.options, query_results.resolved_selectors, deployment_status_summary)
       end
 
       def find_for_consumer_and_provider params
-        matrix_repository.find_for_consumer_and_provider params[:consumer_name], params[:provider_name]
+        selectors = [{ pacticipant_name: params[:consumer_name] }, { pacticipant_name: params[:provider_name] }]
+        options = { latestby: 'cvpv' }
+        find(selectors, options)
       end
 
       def find_for_consumer_and_provider_with_tags params

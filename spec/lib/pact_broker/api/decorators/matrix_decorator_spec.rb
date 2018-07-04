@@ -1,4 +1,6 @@
 require 'pact_broker/api/decorators/matrix_decorator'
+require 'pact_broker/matrix/query_results_with_deployment_status_summary'
+require 'pact_broker/matrix/deployment_status_summary'
 
 module PactBroker
   module Api
@@ -7,9 +9,9 @@ module PactBroker
         describe "to_json" do
           let(:verification_date) { DateTime.new(2017, 12, 31) }
           let(:pact_created_at) { DateTime.new(2017, 1, 1) }
-          let(:line_1_success) { true }
-          let(:line_2_success) { true }
-          let(:line_1) do
+          let(:row_1_success) { true }
+          let(:row_2_success) { true }
+          let(:row_1) do
             double('PactBroker::Matrix::Row',
               {
                 consumer_name: "Consumer",
@@ -18,7 +20,7 @@ module PactBroker
                 pact_created_at: pact_created_at,
                 provider_version_number: "4.5.6",
                 provider_name: "Provider",
-                success: line_1_success,
+                success: row_1_success,
                 verification_number: 1,
                 verification_build_url: nil,
                 verification_executed_at: verification_date
@@ -26,7 +28,7 @@ module PactBroker
             )
           end
 
-          let(:line_2) do
+          let(:row_2) do
             double('PactBroker::Matrix::Row',
               {
                 consumer_name: "Consumer",
@@ -35,7 +37,7 @@ module PactBroker
                 pact_created_at: pact_created_at,
                 provider_version_number: nil,
                 provider_name: "Provider",
-                success: line_2_success,
+                success: row_2_success,
                 verification_number: nil,
                 verification_build_url: nil,
                 verification_executed_at: verification_date
@@ -99,8 +101,16 @@ module PactBroker
             }
           end
 
-          let(:lines){ [line_1, line_2]}
-          let(:json) { MatrixDecorator.new(lines).to_json(user_options: { base_url: 'http://example.org' }) }
+          let(:query_results){ PactBroker::Matrix::QueryResultsWithDeploymentStatusSummary.new([row_1, row_2], selectors, options, resolved_selectors, deployment_status_summary)}
+          let(:selectors) { nil }
+          let(:options) { nil }
+          let(:resolved_selectors) { nil }
+          let(:counts) { { success: 1 } }
+          let(:deployment_status_summary) do
+            instance_double('PactBroker::Matrix::DeploymentStatusSummary', reasons: ['foo', 'bar'], deployable?: deployable, counts: counts)
+          end
+          let(:deployable) { true }
+          let(:json) { MatrixDecorator.new(query_results).to_json(user_options: { base_url: 'http://example.org' }) }
           let(:parsed_json) { JSON.parse(json, symbolize_names: true) }
 
           it "includes the consumer details" do
@@ -121,13 +131,14 @@ module PactBroker
 
           it "includes a summary" do
             expect(parsed_json[:summary][:deployable]).to eq true
-            expect(parsed_json[:summary][:reason]).to match /All verification results are published/
+            expect(parsed_json[:summary][:reason]).to eq "foo\nbar"
+            expect(parsed_json[:summary][:success]).to eq 1
           end
 
           context "when the pact has not been verified" do
             before do
-              allow(line_2).to receive(:success).and_return(nil)
-              allow(line_2).to receive(:verification_executed_at).and_return(nil)
+              allow(row_2).to receive(:success).and_return(nil)
+              allow(row_2).to receive(:verification_executed_at).and_return(nil)
             end
 
             let(:verification_hash) { nil }
@@ -138,42 +149,6 @@ module PactBroker
 
             it "has a nil verificationResult" do
               expect(parsed_json[:matrix][1][:verificationResult]).to eq verification_hash
-            end
-          end
-
-          context "when one or more successes are nil" do
-            let(:line_1_success) { nil }
-
-            it "has a deployable flag of nil" do
-              expect(parsed_json[:summary][:deployable]).to be nil
-            end
-
-            it "has an explanation" do
-              expect(parsed_json[:summary][:reason]).to match /Missing/
-            end
-          end
-
-          context "when one or more successes are false" do
-            let(:line_1_success) { false }
-
-            it "has a deployable flag of false" do
-              expect(parsed_json[:summary][:deployable]).to be false
-            end
-
-            it "has an explanation" do
-              expect(parsed_json[:summary][:reason]).to match /have failed/
-            end
-          end
-
-          context "when there are no results" do
-            let(:lines) { [] }
-
-            it "has a deployable flag of false" do
-              expect(parsed_json[:summary][:deployable]).to be nil
-            end
-
-            it "has an explanation" do
-              expect(parsed_json[:summary][:reason]).to match /No results/
             end
           end
         end

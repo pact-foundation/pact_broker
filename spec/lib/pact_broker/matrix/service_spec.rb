@@ -5,6 +5,32 @@ module PactBroker
     describe Service do
       let(:td) { TestDataBuilder.new }
 
+      describe "find integration test" do
+        let(:selectors) do
+          [ { pacticipant_name: "foo" } ]
+        end
+
+        let(:options) do
+          { latest: true, tag: "prod" }
+        end
+
+        before do
+          td.create_pact_with_hierarchy("foo", "1", "bar")
+            .create_verification(provider_version: "2", tag_names: ["prod"])
+        end
+
+        subject { Service.find(selectors, options) }
+
+        it "returns a QueryResultsWithDeploymentStatusSummary" do
+          expect(subject.rows).to be_a(Array)
+          expect(subject.selectors).to be selectors
+          expect(subject.options).to be options
+          expect(subject.resolved_selectors).to be_a(Array)
+          expect(subject.resolved_selectors.count).to eq 2
+          expect(subject.deployment_status_summary).to be_a(DeploymentStatusSummary)
+        end
+      end
+
       describe "validate_selectors" do
 
         subject { Service.validate_selectors(selectors) }

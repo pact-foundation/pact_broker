@@ -998,6 +998,30 @@ module PactBroker
           end
         end
       end
+
+      describe "find pact_broker-client issue 33" do
+        before do
+          td
+          .create_consumer("foo")
+          .create_provider("bar")
+          .create_consumer_version("1.0.0")
+          .create_pact
+          .create_verification(provider_version: "10.0.0", tag_names: ["prod"])
+          .create_provider("baz")
+          .create_consumer_version("2.0.0")
+          .create_pact
+          .create_verification(provider_version: "20.0.0", tag_names: ["prod"])
+        end
+
+        let(:selectors) { [{ pacticipant_name: "foo", pacticipant_version_number: "1.0.0" }] }
+        let(:options) { {latestby: "cvp", latest: true, tag: "prod"} }
+
+        subject { shorten_rows(Repository.new.find(selectors, options)) }
+
+        it "only returns a row for the foo pact version that has been verified by the current production version of bar" do
+          expect(subject).to eq ["foo1.0.0 bar10.0.0 n1"]
+        end
+      end
     end
   end
 end

@@ -82,6 +82,14 @@ module PactBroker
           end
         end
 
+        context "when global latest is true" do
+          let(:query) { "q[][pacticipant]=Foo&latest=true" }
+
+          it "returns options with latest true" do
+            expect(subject.last).to eq latest: true
+          end
+        end
+
         context "when latest is not true" do
           let(:query) { "q[][pacticipant]=Foo&q[][latest]=false" }
 

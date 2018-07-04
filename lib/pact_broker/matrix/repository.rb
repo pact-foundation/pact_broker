@@ -2,7 +2,9 @@ require 'pact_broker/repositories/helpers'
 require 'pact_broker/matrix/row'
 require 'pact_broker/matrix/head_row'
 require 'pact_broker/error'
-
+require 'pact_broker/matrix/query_results'
+require 'pact_broker/matrix/integration'
+require 'pact_broker/matrix/query_results_with_deployment_status_summary'
 
 module PactBroker
   module Matrix
@@ -65,7 +67,8 @@ module PactBroker
 
       # Return the latest matrix row (pact/verification) for each consumer_version_number/provider_version_number
       def find selectors, options = {}
-        lines = query_matrix(resolve_selectors(selectors, options), options)
+        resolved_selectors = resolve_selectors(selectors, options)
+        lines = query_matrix(resolved_selectors, options)
         lines = apply_latestby(options, selectors, lines)
 
         # This needs to be done after the latestby, so can't be done in the db unless
@@ -74,8 +77,30 @@ module PactBroker
           lines = lines.select{ |l| options[:success].include?(l.success) }
         end
 
-        lines.sort
+        QueryResults.new(lines.sort, selectors, options, resolved_selectors)
       end
+
+      def find_for_consumer_and_provider pacticipant_1_name, pacticipant_2_name
+        selectors = [{ pacticipant_name: pacticipant_1_name }, { pacticipant_name: pacticipant_2_name }]
+        options = { latestby: 'cvpv' }
+        find(selectors, options)
+      end
+
+      def find_compatible_pacticipant_versions selectors
+        find(selectors, latestby: 'cvpv').select{|line| line.success }
+      end
+
+      def find_integrations(pacticipant_names)
+        selectors = pacticipant_names.collect{ | pacticipant_name | add_ids(pacticipant_name: pacticipant_name) }
+        Row
+          .select(:consumer_name, :consumer_id, :provider_name, :provider_id)
+          .matching_selectors(selectors)
+          .distinct
+          .all
+          .collect{ |row | Integration.from_hash(row.to_hash) }.uniq
+      end
+
+      private
 
       def apply_latestby options, selectors, lines
         return lines unless options[:latestby]
@@ -104,16 +129,6 @@ module PactBroker
           end
         end
         latest_revisions
-      end
-
-      def find_for_consumer_and_provider pacticipant_1_name, pacticipant_2_name
-        selectors = [{ pacticipant_name: pacticipant_1_name }, { pacticipant_name: pacticipant_2_name }]
-        options = { latestby: 'cvpv' }
-        find(selectors, options)
-      end
-
-      def find_compatible_pacticipant_versions selectors
-        find(selectors, latestby: 'cvpv').select{|line| line.success }
       end
 
       def query_matrix selectors, options
@@ -195,7 +210,7 @@ module PactBroker
       # eg. when checking to see if Foo version 2 can be deployed to prod,
       # need to look up all the 'partner' pacticipants, and determine their latest prod versions
       def apply_latest_and_tag_to_inferred_selectors(selectors, options)
-        all_pacticipant_names = all_pacticipant_names_in_specified_matrix(selectors, options)
+        all_pacticipant_names = all_pacticipant_names_in_specified_matrix(selectors)
         specified_names = selectors.collect{ |s| s[:pacticipant_name] }
         inferred_names = all_pacticipant_names - specified_names
 
@@ -211,12 +226,9 @@ module PactBroker
         selectors + look_up_version_numbers(inferred_selectors, options)
       end
 
-      def all_pacticipant_names_in_specified_matrix(selectors, options)
-        query = view_for(options).select(:consumer_name, :provider_name)
-        query = query.matching_selectors(selectors)
-        query
-          .all
-          .collect{ | row | [row.consumer_name, row.provider_name] }
+      def all_pacticipant_names_in_specified_matrix(selectors)
+        find_integrations(selectors.collect{|s| s[:pacticipant_name]})
+          .collect(&:pacticipant_names)
           .flatten
           .uniq
       end

@@ -29,7 +29,7 @@ module PactBroker
           options[:limit] = params['limit']
         end
         if params.key?('latest') && params['latest'] != ''
-          options[:latest] = params['latest']
+          options[:latest] = params['latest'] == 'true'
         end
         if params.key?('tag') && params['tag'] != ''
           options[:tag] = params['tag']
