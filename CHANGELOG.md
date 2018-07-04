@@ -1,3 +1,18 @@
+<a name="v2.23.4"></a>
+### v2.23.4 (2018-07-04)
+
+
+#### Features
+
+* deprecate provider relation in provider pacts resource in preference for pb:provider	 ([eda8cbf](/../../commit/eda8cbf))
+
+
+#### Bug Fixes
+
+* correct the logic for determining the deployment status in the matrix resource	 ([ad85db4](/../../commit/ad85db4))
+* delete associated verification results when a pacticipant version is deleted	 ([ddec810](/../../commit/ddec810))
+
+
 <a name="v2.23.3"></a>
 ### v2.23.3 (2018-06-27)
 
