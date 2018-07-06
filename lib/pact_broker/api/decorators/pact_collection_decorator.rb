@@ -25,11 +25,22 @@ module PactBroker
         end
 
         # This is the LATEST pact URL
+        links :'pb:pacts' do | options |
+          represented.collect do | pact |
+            {
+              :href => latest_pact_url(options[:base_url], pact),
+              :title => "Latest pact between #{pact.consumer.name} and #{pact.provider.name}",
+            }
+          end
+        end
+
+        # This is the LATEST pact URL
         links :pacts do | options |
           represented.collect do | pact |
             {
               :href => latest_pact_url(options[:base_url], pact),
               :title => "Latest pact between #{pact.consumer.name} and #{pact.provider.name}",
+              :name => "DEPRECATED - please use the pb:pacts relation"
             }
           end
         end
