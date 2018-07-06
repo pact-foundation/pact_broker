@@ -65,6 +65,12 @@ module PactBroker
                 title: 'All pact versions for the specified provider',
                 templated: true
               },
+              'pb:wip-provider-pacts' =>
+              {
+                href: base_url + '/pacts/provider/{provider}/wip',
+                title: 'WIP pact versions for the specified provider',
+                templated: true
+              },
               'pb:latest-version' => {
                 href: base_url + '/pacticipants/{pacticipant}/latest-version',
                 title: 'Latest pacticipant version',

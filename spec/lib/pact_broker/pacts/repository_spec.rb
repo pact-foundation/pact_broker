@@ -1,7 +1,6 @@
 # Yes, I know this file is too bug, but cmd+shift+t is too useful!
 
 require 'pact_broker/pacts/repository'
-require 'spec/support/test_data_builder'
 require 'pact_broker/pacts/pact_params'
 require 'pact_broker/versions/repository'
 require 'pact_broker/pacticipants/repository'
