@@ -1,4 +1,3 @@
-require 'spec_helper'
 require 'pact_broker/doc/controllers/app'
 
 module PactBroker
