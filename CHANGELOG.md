@@ -1,3 +1,18 @@
+<a name="v2.24.0"></a>
+### v2.24.0 (2018-07-08)
+
+
+#### Features
+
+* disable wip-provider-pacts in production until the feature is passed alpha testing	 ([3f9a1c7](/../../commit/3f9a1c7))
+* allow HAL docs to specify a context so that two relations with the same name in different resources don't clash	 ([fe85b0b](/../../commit/fe85b0b))
+* add pb:diff relation to pact resource to view a diff with an arbitrary pact version	 ([3eaa79c](/../../commit/3eaa79c))
+* add HAL documentation for the relations that were missing documentation	 ([6b04d70](/../../commit/6b04d70))
+* add resource for "work in progress" pacts for a provider	 ([50c003b](/../../commit/50c003b))
+* deprecate pacts relation in favour of pb:pacts in latest pacts resource	 ([ccdd46f](/../../commit/ccdd46f))
+* add bash script to migrate pacts from one broker to another	 ([7d587d9](/../../commit/7d587d9))
+
+
 <a name="v2.23.4"></a>
 ### v2.23.4 (2018-07-04)
 
