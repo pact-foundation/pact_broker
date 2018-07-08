@@ -99,6 +99,15 @@ module PactBroker
           }
         end
 
+        link :'pb:diff' do | options |
+          {
+            title: "Diff with another specified version of this pact",
+            href: templated_diff_url(represented, options.fetch(:base_url)),
+            templated: true
+
+          }
+        end
+
         link :'pb:pact-webhooks' do | options |
           {
             title: "Webhooks for the pact between #{represented.consumer.name} and #{represented.provider.name}",

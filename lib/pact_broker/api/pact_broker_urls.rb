@@ -51,7 +51,7 @@ module PactBroker
       end
 
       def pact_version_url pact, base_url
-        "#{pactigration_base_url(base_url, path)}/pact-version/#{pact.sha}"
+        "#{pactigration_base_url(base_url, pact)}/pact-version/#{pact.pact_version_sha}"
       end
 
       def pact_url_from_params base_url, params
@@ -79,6 +79,10 @@ module PactBroker
 
       def previous_distinct_diff_url pact, base_url
         pact_url(base_url, pact) + "/diff/previous-distinct"
+      end
+
+      def templated_diff_url pact, base_url = ''
+        pact_version_url(pact, base_url) + "/diff/pact-version/{pactVersion}"
       end
 
       def previous_distinct_pact_version_url pact, base_url

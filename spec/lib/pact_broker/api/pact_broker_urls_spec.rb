@@ -4,8 +4,11 @@ module PactBroker
   module Api
     describe PactBrokerUrls do
 
+      # Regex find all the URL parameter names
+      # \/\{[^\}\s\[\(\.]+\}
+
       let(:base_url) { "http://example.org" }
-      let(:pact) { double('pact', consumer: consumer, provider: provider, consumer_version_number: "123") }
+      let(:pact) { double('pact', consumer: consumer, provider: provider, consumer_version_number: "123", pact_version_sha: "5hbfu") }
       let(:consumer) { double('pacticipant', name: "Foo") }
       let(:provider) { double('pacticipant', name: "Bar") }
       let(:verification) do
@@ -32,6 +35,12 @@ module PactBroker
         subject { PactBrokerUrls.verification_triggered_webhooks_url(verification, base_url) }
 
         it { is_expected.to eq "http://example.org/pacts/provider/Bar/consumer/Foo/pact-version/1234/verification-results/1/triggered-webhooks" }
+      end
+
+      describe "templated_diff_url" do
+        subject { PactBrokerUrls.templated_diff_url(pact, base_url) }
+
+        it { is_expected.to eq "http://example.org/pacts/provider/Bar/consumer/Foo/pact-version/5hbfu/diff/pact-version/{pactVersion}" }
       end
     end
   end

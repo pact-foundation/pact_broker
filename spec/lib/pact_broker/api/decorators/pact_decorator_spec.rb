@@ -2,13 +2,13 @@ require 'spec_helper'
 require 'pact_broker/api/decorators/pact_decorator'
 
 module PactBroker
-
   module Api
-
     module Decorators
-
       describe PactDecorator do
 
+        before do
+          allow_any_instance_of(PactDecorator).to receive(:templated_diff_url).and_return('templated-diff-url')
+        end
         let(:content_hash) {
           {
             'consumer' => {'name' => 'Consumer'},
@@ -105,6 +105,11 @@ module PactBroker
             expect(subject[:_links][:'pb:publish-verification-results'][:href]).to match %r{http://example.org/.*/verification-results}
           end
 
+          it "includes a link to diff this pact version with another pact version" do
+            expect(subject[:_links][:'pb:diff'][:href]).to eq 'templated-diff-url'
+            expect(subject[:_links][:'pb:diff'][:templated]).to eq true
+          end
+
           it "includes a curie" do
             expect(subject[:_links][:curies]).to eq [{ name: "pb", href: "http://example.org/doc/{rel}", templated: true }]
           end
@@ -116,7 +121,6 @@ module PactBroker
             end
           end
         end
-
       end
     end
   end
