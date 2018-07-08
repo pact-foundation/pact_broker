@@ -10,6 +10,7 @@ require 'pact_broker/pacts/latest_tagged_pact_publications'
 require 'pact/shared/json_differ'
 require 'pact_broker/domain'
 require 'pact_broker/pacts/parse'
+require 'pact_broker/matrix/head_row'
 
 module PactBroker
   module Pacts

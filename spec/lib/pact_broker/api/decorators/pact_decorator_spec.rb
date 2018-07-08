@@ -111,7 +111,7 @@ module PactBroker
           end
 
           it "includes a curie" do
-            expect(subject[:_links][:curies]).to eq [{ name: "pb", href: "http://example.org/doc/{rel}", templated: true }]
+            expect(subject[:_links][:curies]).to eq [{ name: "pb", href: "http://example.org/doc/{rel}?context=pact", templated: true }]
           end
 
           context "when the json_content is not a Hash" do
