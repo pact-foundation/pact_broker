@@ -89,7 +89,7 @@ module PactBroker
               'curies' =>
               [{
                 name: 'pb',
-                href: base_url + '/doc/{rel}',
+                href: base_url + '/doc/{rel}?context=index',
                 templated: true
               }]
             }

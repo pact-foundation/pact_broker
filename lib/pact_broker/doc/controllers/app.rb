@@ -17,24 +17,28 @@ module PactBroker
         }.freeze
 
         helpers do
-          def view_name_for rel_name
-            MAPPINGS[rel_name] || rel_name
+          def view_name_for rel_name, context = nil
+            view_name = MAPPINGS[rel_name] || rel_name
+            context ? "#{context}/#{view_name}" : view_name
           end
 
-          def resource_exists? rel_name
-            File.exist? File.join(self.class.root, 'views', "#{view_name_for(rel_name)}.markdown")
+          def resource_exists? rel_name, context = nil
+            File.exist? File.join(self.class.root, 'views', "#{view_name_for(rel_name, context)}.markdown")
           end
         end
 
         get ":rel_name" do
           rel_name = params[:rel_name]
-          if resource_exists? rel_name
-            markdown view_name_for(rel_name).to_sym, {:layout_engine => :haml, layout: :'layouts/main'}, {}
+          context = params[:context]
+          view_params = {:layout_engine => :haml, layout: :'layouts/main'}
+          if resource_exists? rel_name, context
+            markdown view_name_for(rel_name, context).to_sym, view_params, {}
+          elsif resource_exists? rel_name
+            markdown view_name_for(rel_name).to_sym, view_params, {}
           else
-            response.status = 404
+            markdown :not_found, view_params, {}
           end
         end
-
       end
     end
   end

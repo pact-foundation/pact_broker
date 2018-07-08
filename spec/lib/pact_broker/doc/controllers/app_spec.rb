@@ -31,9 +31,9 @@ module PactBroker
           context "when the resource does not exist" do
             subject { get "/blah" }
 
-            it "returns a 404 status" do
+            it "returns a 200 status, because otherwise, the Rack cascade will make it return a 404 from the webmachine API" do
               subject
-              expect(last_response.status).to eq 404
+              expect(last_response.status).to eq 200
             end
 
             it "returns a html content type" do
@@ -41,9 +41,27 @@ module PactBroker
               expect(last_response.headers['Content-Type']).to eq "text/html;charset=utf-8"
             end
 
+            it "returns a custom error page" do
+              subject
+              expect(last_response.body).to include "No documentation exists"
+            end
+          end
+
+          context "when the resource has a context and there is a folder with a matching name" do
+            subject { get "/diff?context=pact" }
+
+            it "returns documentation in a folder of the matching name" do
+              subject
+              expect(last_response.status).to eq 200
+              expect(last_response.body).to include "Diff"
+            end
+
+            it "returns a html content type" do
+              subject
+              expect(last_response.headers['Content-Type']).to eq "text/html;charset=utf-8"
+            end
           end
         end
-
       end
     end
   end

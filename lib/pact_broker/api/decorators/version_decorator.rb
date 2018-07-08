@@ -46,7 +46,7 @@ module PactBroker
         curies do | options |
           [{
             name: :pb,
-            href: options.fetch(:base_url) + '/doc/{rel}',
+            href: options.fetch(:base_url) + '/doc/{rel}?context=version',
             templated: true
           }]
         end

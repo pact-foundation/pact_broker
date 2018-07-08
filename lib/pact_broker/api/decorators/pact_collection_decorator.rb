@@ -44,6 +44,14 @@ module PactBroker
             }
           end
         end
+
+        curies do | options |
+          [{
+            name: :pb,
+            href: options[:base_url] + '/doc/{rel}?context=pacts',
+            templated: true
+          }]
+        end
       end
     end
   end

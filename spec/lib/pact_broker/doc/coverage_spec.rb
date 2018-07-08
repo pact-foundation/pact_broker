@@ -21,7 +21,7 @@ RSpec.describe "the HAL docs for the index" do
     relations_without_docs = {}
 
     relations_that_should_have_docs.each do | relation |
-      path = "/docs/#{relation.split(":", 2).last}"
+      path = "/docs/#{relation.split(":", 2).last}?context=index"
       get path, {}, { 'HTTP_ACCEPT' => 'text/html' }
       if last_response.status != 200
         relations_without_docs[relation] = last_response.status

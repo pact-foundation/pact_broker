@@ -160,11 +160,10 @@ module PactBroker
         curies do | options |
           [{
             name: :pb,
-            href: options[:base_url] + '/doc/{rel}',
+            href: options[:base_url] + '/doc/{rel}?context=pact',
             templated: true
           }]
         end
-
       end
     end
   end
