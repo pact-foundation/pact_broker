@@ -1,5 +1,6 @@
 require 'webmachine/adapters/rack_mapped'
 require 'pact_broker/api/resources'
+require 'pact_broker/feature_toggle'
 
 module PactBroker
 
@@ -40,7 +41,7 @@ module PactBroker
         add ['pacts', 'provider', :provider_name, 'latest', :tag], Api::Resources::LatestProviderPacts, {resource_name: "latest_tagged_provider_pact_publications"}
         add ['pacts', 'latest'], Api::Resources::LatestPacts, {resource_name: "latest_pacts"}
 
-        if ENV['RACK_ENV'] != 'production'
+        if PactBroker.feature_enabled?(:wip_pacts)
           add ['pacts', 'provider', :provider_name, 'wip'], Api::Resources::WipProviderPacts, {resource_name: "wip_provider_pact_publications"}
         end
 
