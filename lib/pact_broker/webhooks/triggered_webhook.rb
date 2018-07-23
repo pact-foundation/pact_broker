@@ -98,3 +98,30 @@ module PactBroker
 
   end
 end
+
+# Table: triggered_webhooks
+# Columns:
+#  id                  | integer                     | PRIMARY KEY DEFAULT nextval('triggered_webhooks_id_seq'::regclass)
+#  trigger_uuid        | text                        | NOT NULL
+#  trigger_type        | text                        | NOT NULL
+#  pact_publication_id | integer                     | NOT NULL
+#  webhook_id          | integer                     |
+#  webhook_uuid        | text                        | NOT NULL
+#  consumer_id         | integer                     | NOT NULL
+#  provider_id         | integer                     | NOT NULL
+#  status              | text                        | NOT NULL
+#  created_at          | timestamp without time zone | NOT NULL
+#  updated_at          | timestamp without time zone | NOT NULL
+#  verification_id     | integer                     |
+# Indexes:
+#  triggered_webhooks_pkey     | PRIMARY KEY btree (id)
+#  uq_triggered_webhook_ppi_wi | UNIQUE btree (pact_publication_id, webhook_id, trigger_uuid)
+#  uq_triggered_webhook_wi     | UNIQUE btree (webhook_id, trigger_uuid)
+# Foreign key constraints:
+#  triggered_webhooks_consumer_id_fkey         | (consumer_id) REFERENCES pacticipants(id)
+#  triggered_webhooks_pact_publication_id_fkey | (pact_publication_id) REFERENCES pact_publications(id)
+#  triggered_webhooks_provider_id_fkey         | (provider_id) REFERENCES pacticipants(id)
+#  triggered_webhooks_verification_id_fkey     | (verification_id) REFERENCES verifications(id)
+#  triggered_webhooks_webhook_id_fkey          | (webhook_id) REFERENCES webhooks(id)
+# Referenced By:
+#  webhook_executions | webhook_executions_triggered_webhook_id_fkey | (triggered_webhook_id) REFERENCES triggered_webhooks(id)

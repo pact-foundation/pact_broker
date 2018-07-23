@@ -9,3 +9,18 @@ module PactBroker
 
   end
 end
+
+# Table: latest_pact_publications
+# Columns:
+#  id                      | integer                     |
+#  consumer_id             | integer                     |
+#  consumer_name           | text                        |
+#  consumer_version_id     | integer                     |
+#  consumer_version_number | text                        |
+#  consumer_version_order  | integer                     |
+#  provider_id             | integer                     |
+#  provider_name           | text                        |
+#  revision_number         | integer                     |
+#  pact_version_id         | integer                     |
+#  pact_version_sha        | text                        |
+#  created_at              | timestamp without time zone |

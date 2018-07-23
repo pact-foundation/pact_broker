@@ -23,3 +23,16 @@ module PactBroker
     Tag.plugin :timestamps, :update_on_create=>true
   end
 end
+
+# Table: tags
+# Primary Key: (name, version_id)
+# Columns:
+#  name       | text                        |
+#  version_id | integer                     |
+#  created_at | timestamp without time zone | NOT NULL
+#  updated_at | timestamp without time zone | NOT NULL
+# Indexes:
+#  tags_pk      | PRIMARY KEY btree (version_id, name)
+#  ndx_tag_name | btree (name)
+# Foreign key constraints:
+#  tags_version_id_fkey | (version_id) REFERENCES versions(id)

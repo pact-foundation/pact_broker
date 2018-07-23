@@ -96,6 +96,13 @@ namespace :db do
     PactBroker::Database.ensure_database_dir_exists
   end
 
+  task :annotate =>['db:set_postgres_database_adapter', 'db:migrate'] do
+    load 'tasks/database/annotate.rb'
+    require 'pact_broker/db'
+    PactBroker::DB.connection = PactBroker::Database.database
+    PactBroker::Annotate.call
+  end
+
   # task :create => 'db:env' do
   #   PactBroker::Database.create
   # end
@@ -103,6 +110,10 @@ namespace :db do
   # Private
   task :set_test_env do
     ENV['RACK_ENV'] = 'test'
+  end
+
+  task :set_postgres_database_adapter do
+    ENV['DATABASE_ADAPTER'] = 'postgres'
   end
 
   # Private

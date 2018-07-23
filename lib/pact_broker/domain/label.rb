@@ -17,3 +17,15 @@ module PactBroker
     Label.plugin :timestamps, update_on_create: true
   end
 end
+
+# Table: labels
+# Primary Key: (name, pacticipant_id)
+# Columns:
+#  name           | text                        |
+#  pacticipant_id | integer                     |
+#  created_at     | timestamp without time zone | NOT NULL
+#  updated_at     | timestamp without time zone | NOT NULL
+# Indexes:
+#  labels_pk | PRIMARY KEY btree (pacticipant_id, name)
+# Foreign key constraints:
+#  labels_pacticipant_id_fkey | (pacticipant_id) REFERENCES pacticipants(id)

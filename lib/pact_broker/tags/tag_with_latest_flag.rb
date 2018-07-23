@@ -16,3 +16,11 @@ module PactBroker
     end
   end
 end
+
+# Table: tags_with_latest_flag
+# Columns:
+#  name       | text                        |
+#  version_id | integer                     |
+#  created_at | timestamp without time zone |
+#  updated_at | timestamp without time zone |
+#  latest     | integer                     |

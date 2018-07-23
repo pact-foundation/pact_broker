@@ -61,3 +61,23 @@ module PactBroker
     PactPublication.plugin :timestamps, update_on_create: true
   end
 end
+
+# Table: pact_publications
+# Columns:
+#  id                  | integer                     | PRIMARY KEY DEFAULT nextval('pact_publications_id_seq'::regclass)
+#  consumer_version_id | integer                     | NOT NULL
+#  provider_id         | integer                     | NOT NULL
+#  revision_number     | integer                     | NOT NULL
+#  pact_version_id     | integer                     | NOT NULL
+#  created_at          | timestamp without time zone | NOT NULL
+# Indexes:
+#  pact_publications_pkey | PRIMARY KEY btree (id)
+#  cv_prov_revision_unq   | UNIQUE btree (consumer_version_id, provider_id, revision_number)
+#  cv_prov_id_ndx         | btree (consumer_version_id, provider_id, id)
+# Foreign key constraints:
+#  pact_publications_consumer_version_id_fkey | (consumer_version_id) REFERENCES versions(id)
+#  pact_publications_pact_version_id_fkey     | (pact_version_id) REFERENCES pact_versions(id)
+#  pact_publications_provider_id_fkey         | (provider_id) REFERENCES pacticipants(id)
+# Referenced By:
+#  triggered_webhooks | triggered_webhooks_pact_publication_id_fkey | (pact_publication_id) REFERENCES pact_publications(id)
+#  webhook_executions | webhook_executions_pact_publication_id_fkey | (pact_publication_id) REFERENCES pact_publications(id)

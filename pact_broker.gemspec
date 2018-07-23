@@ -56,4 +56,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'conventional-changelog', '~>1.3'
   gem.add_development_dependency 'bump', '~> 0.5'
   gem.add_development_dependency 'timecop', '~> 0.9'
+  gem.add_development_dependency 'sequel-annotate', '~>1.3'
 end

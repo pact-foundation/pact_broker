@@ -48,3 +48,21 @@ module PactBroker
     PactVersion.plugin :timestamps
   end
 end
+
+# Table: pact_versions
+# Columns:
+#  id          | integer                     | PRIMARY KEY DEFAULT nextval('pact_versions_id_seq'::regclass)
+#  consumer_id | integer                     | NOT NULL
+#  provider_id | integer                     | NOT NULL
+#  sha         | text                        | NOT NULL
+#  content     | text                        |
+#  created_at  | timestamp without time zone | NOT NULL
+# Indexes:
+#  pact_versions_pkey   | PRIMARY KEY btree (id)
+#  unq_pvc_con_prov_sha | UNIQUE btree (consumer_id, provider_id, sha)
+# Foreign key constraints:
+#  pact_versions_consumer_id_fkey | (consumer_id) REFERENCES pacticipants(id)
+#  pact_versions_provider_id_fkey | (provider_id) REFERENCES pacticipants(id)
+# Referenced By:
+#  pact_publications | pact_publications_pact_version_id_fkey | (pact_version_id) REFERENCES pact_versions(id)
+#  verifications     | verifications_pact_version_id_fkey     | (pact_version_id) REFERENCES pact_versions(id)

@@ -38,3 +38,25 @@ module PactBroker
     Version.plugin :timestamps, :update_on_create=>true
   end
 end
+
+# Table: versions
+# Columns:
+#  id             | integer                     | PRIMARY KEY DEFAULT nextval('versions_id_seq'::regclass)
+#  number         | text                        |
+#  repository_ref | text                        |
+#  pacticipant_id | integer                     | NOT NULL
+#  order          | integer                     |
+#  created_at     | timestamp without time zone | NOT NULL
+#  updated_at     | timestamp without time zone | NOT NULL
+# Indexes:
+#  versions_pkey                        | PRIMARY KEY btree (id)
+#  uq_ver_ppt_ord                       | UNIQUE btree (pacticipant_id, "order")
+#  versions_pacticipant_id_number_index | UNIQUE btree (pacticipant_id, number)
+#  ndx_ver_num                          | btree (number)
+#  ndx_ver_ord                          | btree ("order")
+# Foreign key constraints:
+#  versions_pacticipant_id_fkey | (pacticipant_id) REFERENCES pacticipants(id)
+# Referenced By:
+#  pact_publications | pact_publications_consumer_version_id_fkey | (consumer_version_id) REFERENCES versions(id)
+#  verifications     | fk_verifications_versions                  | (provider_version_id) REFERENCES versions(id)
+#  tags              | tags_version_id_fkey                       | (version_id) REFERENCES versions(id)

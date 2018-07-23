@@ -30,3 +30,16 @@ module PactBroker
     WebhookEvent.plugin :timestamps, update_on_create: true
   end
 end
+
+# Table: webhook_events
+# Columns:
+#  id         | integer                     | PRIMARY KEY DEFAULT nextval('webhook_events_id_seq'::regclass)
+#  webhook_id | integer                     |
+#  name       | text                        |
+#  created_at | timestamp without time zone | NOT NULL
+#  updated_at | timestamp without time zone | NOT NULL
+# Indexes:
+#  webhook_events_pkey | PRIMARY KEY btree (id)
+#  uq_webhook_id_name  | UNIQUE btree (id, name)
+# Foreign key constraints:
+#  webhook_events_webhook_id_fkey | (webhook_id) REFERENCES webhooks(id) ON DELETE CASCADE

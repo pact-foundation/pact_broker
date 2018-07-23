@@ -98,3 +98,24 @@ module PactBroker
     Verification.plugin :timestamps
   end
 end
+
+# Table: verifications
+# Columns:
+#  id                  | integer                     | PRIMARY KEY DEFAULT nextval('verifications_id_seq'::regclass)
+#  number              | integer                     |
+#  success             | boolean                     | NOT NULL
+#  provider_version    | text                        |
+#  build_url           | text                        |
+#  pact_version_id     | integer                     | NOT NULL
+#  execution_date      | timestamp without time zone | NOT NULL
+#  created_at          | timestamp without time zone | NOT NULL
+#  provider_version_id | integer                     |
+#  test_results        | text                        |
+# Indexes:
+#  verifications_pkey                         | PRIMARY KEY btree (id)
+#  verifications_pact_version_id_number_index | UNIQUE btree (pact_version_id, number)
+# Foreign key constraints:
+#  fk_verifications_versions          | (provider_version_id) REFERENCES versions(id)
+#  verifications_pact_version_id_fkey | (pact_version_id) REFERENCES pact_versions(id)
+# Referenced By:
+#  triggered_webhooks | triggered_webhooks_verification_id_fkey | (verification_id) REFERENCES verifications(id)
