@@ -68,12 +68,6 @@ module PactBroker
               title: 'All pact versions for the specified provider',
               templated: true
             },
-            'pb:wip-provider-pacts' =>
-            {
-              href: base_url + '/pacts/provider/{provider}/wip',
-              title: 'WIP pact versions for the specified provider',
-              templated: true
-            },
             'pb:latest-version' => {
               href: base_url + '/pacticipants/{pacticipant}/latest-version',
               title: 'Latest pacticipant version',
@@ -89,15 +83,23 @@ module PactBroker
               title: 'Webhooks',
               templated: false
             },
+            'beta:wip-provider-pacts' =>
+            {
+              href: base_url + '/pacts/provider/{provider}/wip',
+              title: 'WIP pact versions for the specified provider',
+              templated: true
+            },
             'curies' =>
             [{
               name: 'pb',
               href: base_url + '/doc/{rel}?context=index',
               templated: true
+            },{
+              name: 'beta',
+              href: base_url + '/doc/{rel}?context=index',
+              templated: true
             }]
-          }.tap do | it |
-            it.delete('pb:wip-provider-pacts') if ENV['RACK_ENV'] == 'production'
-          end
+          }
         end
       end
     end
