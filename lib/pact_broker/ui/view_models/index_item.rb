@@ -50,8 +50,12 @@ module PactBroker
           Helpers::URLHelper.group_url provider_name
         end
 
-        def pact_url
+        def latest_pact_url
           "#{pactigration_base_url('', @relationship)}/latest"
+        end
+
+        def pact_url
+          PactBroker::Api::PactBrokerUrls.pact_url('', @relationship)
         end
 
         def pact_matrix_url

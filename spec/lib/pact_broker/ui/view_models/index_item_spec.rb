@@ -9,7 +9,7 @@ module PactBroker
 
         let(:consumer) { instance_double("PactBroker::Domain::Pacticipant", name: 'Consumer Name')}
         let(:provider) { instance_double("PactBroker::Domain::Pacticipant", name: 'Provider Name')}
-        let(:latest_pact) { instance_double("PactBroker::Domain::Pact") }
+        let(:latest_pact) { instance_double("PactBroker::Domain::Pact", consumer_version_number: "1.2.3") }
         let(:latest_verification) { instance_double("PactBroker::Domain::Verification") }
         let(:domain_relationship) { PactBroker::Domain::IndexItem.new(consumer, provider, latest_pact, latest, latest_verification, [], [], tags, latest_verification_latest_tags)}
         let(:tags) { [] }
@@ -22,7 +22,8 @@ module PactBroker
 
         its(:consumer_name) { should eq 'Consumer Name'}
         its(:provider_name) { should eq 'Provider Name'}
-        its(:pact_url) { should eq "/pacts/provider/Provider%20Name/consumer/Consumer%20Name/latest" }
+        its(:latest_pact_url) { should eq "/pacts/provider/Provider%20Name/consumer/Consumer%20Name/latest" }
+        its(:pact_url) { should eq "/pacts/provider/Provider%20Name/consumer/Consumer%20Name/version/1.2.3" }
         its(:pact_matrix_url) { should eq "/matrix/provider/Provider%20Name/consumer/Consumer%20Name" }
         its(:consumer_group_url) { should eq "/groups/Consumer%20Name" }
         its(:provider_group_url) { should eq "/groups/Provider%20Name" }

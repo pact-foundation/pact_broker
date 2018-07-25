@@ -50,7 +50,7 @@ module PactBroker
         "#{pactigration_base_url(base_url, pact)}/version/#{pact.consumer_version_number}"
       end
 
-      def pact_version_url pact, base_url
+      def pact_version_url pact, base_url = ''
         "#{pactigration_base_url(base_url, pact)}/pact-version/#{pact.pact_version_sha}"
       end
 
