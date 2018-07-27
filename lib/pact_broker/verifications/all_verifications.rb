@@ -10,3 +10,16 @@ module PactBroker
 
   end
 end
+
+# Table: all_verifications
+# Columns:
+#  id                      | integer                     |
+#  number                  | integer                     |
+#  success                 | boolean                     |
+#  provider_version_id     | integer                     |
+#  provider_version_number | text                        |
+#  provider_version_order  | integer                     |
+#  build_url               | text                        |
+#  pact_version_id         | integer                     |
+#  execution_date          | timestamp without time zone |
+#  created_at              | timestamp without time zone |

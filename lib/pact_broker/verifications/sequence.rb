@@ -32,3 +32,7 @@ module PactBroker
     end
   end
 end
+
+# Table: verification_sequence_number
+# Columns:
+#  value | integer | NOT NULL

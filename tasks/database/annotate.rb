@@ -22,7 +22,11 @@ module PactBroker
     end
 
     def self.sequel_domain_classes
-      require 'pact_broker/api'
+
+      Dir.chdir("lib") { Dir.glob("**/*.rb") }.sort.each do | path |
+        require path
+      end
+
       ObjectSpace
         .each_object(::Class).select {|klass| klass < ::Sequel::Model }
         .select{ |klass| klass.name && klass.name.start_with?("PactBroker::") }
