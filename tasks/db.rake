@@ -96,6 +96,7 @@ namespace :db do
     PactBroker::Database.ensure_database_dir_exists
   end
 
+  desc 'Annotate the Sequel domain classes with schema information'
   task :annotate =>['db:set_postgres_database_adapter', 'db:migrate'] do
     load 'tasks/database/annotate.rb'
     require 'pact_broker/db'
