@@ -4,7 +4,7 @@ Sequel.migration do
     # Keeping track of this in a table rather than having to calculate the
     # latest revision speeds things up.
     # We don't have to worry about updating it if a revision is deleted, because
-    # you can't delete a single revision through the API - all the revisions
+    # you can't delete a single pact revision through the API - all the revisions
     # for a pact are deleted together when you delete the pact resource for that
     # consumer version, and when that happens, this row will cascade delete.
     create_table(:latest_pact_publication_ids_by_consumer_versions, charset: 'utf8') do

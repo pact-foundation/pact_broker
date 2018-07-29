@@ -14,8 +14,8 @@ module PactBroker
       end
 
       def call
-        db[:verifications].where(id: db[:materialized_head_matrix].select(:verification_id)).invert.delete
-        pp_ids = db[:materialized_head_matrix].select(:pact_publication_id)
+        db[:verifications].where(id: db[:head_matrix].select(:verification_id)).invert.delete
+        pp_ids = db[:head_matrix].select(:pact_publication_id)
 
         triggered_webhook_ids = db[:triggered_webhooks].where(pact_publication_id: pp_ids).invert.select(:id)
         db[:webhook_executions].where(triggered_webhook_id: triggered_webhook_ids).delete
@@ -33,11 +33,6 @@ module PactBroker
 
         db[:tags].where(version_id: referenced_version_ids).invert.delete
         db[:versions].where(id: referenced_version_ids).invert.delete
-
-        db[:materialized_matrix].delete
-        db[:materialized_matrix].insert(db[:matrix].select_all)
-        db[:materialized_head_matrix].delete
-        db[:materialized_head_matrix].insert(db[:head_matrix].select_all)
       end
 
       private

@@ -39,9 +39,6 @@ module PactBroker
         end
 
         def finish_request
-          if update_matrix_after_request?
-            matrix_service.refresh(identifier_from_path)
-          end
           PactBroker.configuration.after_resource.call(self)
         end
 
@@ -151,10 +148,6 @@ module PactBroker
             set_json_validation_error_messages contract.errors.messages
           end
           invalid
-        end
-
-        def with_matrix_refresh &block
-          matrix_service.refresh(identifier_from_path, &block)
         end
 
         def find_pacticipant name, role

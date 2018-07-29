@@ -23,24 +23,6 @@ module PactBroker
       GROUP_BY_PROVIDER = [:consumer_name, :consumer_version_number, :provider_name]
       GROUP_BY_PACT = [:consumer_name, :provider_name]
 
-      # Use a block when the refresh is caused by a resource deletion
-      # This allows us to store the correct object ids for use afterwards
-      def refresh params
-        criteria = find_ids_for_pacticipant_names(params)
-        yield if block_given?
-        PactBroker::Matrix::Row.refresh(criteria)
-        PactBroker::Matrix::HeadRow.refresh(criteria)
-      end
-
-      # Only need to update the HeadRow table when tags change
-      # because it only changes which rows are the latest tagged ones -
-      # it doesn't change the actual values in the underlying matrix.
-      def refresh_tags params
-        criteria = find_ids_for_pacticipant_names(params)
-        yield if block_given?
-        PactBroker::Matrix::HeadRow.refresh(criteria)
-      end
-
       def find_ids_for_pacticipant_names params
         criteria  = {}
 

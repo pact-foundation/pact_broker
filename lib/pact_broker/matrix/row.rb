@@ -8,7 +8,7 @@ require 'pact_broker/verifications/latest_verification_for_consumer_and_provider
 module PactBroker
   module Matrix
 
-    class Row < Sequel::Model(:materialized_matrix)
+    class Row < Sequel::Model(:matrix)
 
       # Used when using table_print to output query results
       TP_COLS = [ :consumer_version_number, :pact_revision_number, :provider_version_number, :verification_number]
@@ -25,32 +25,6 @@ module PactBroker
       dataset_module do
         include PactBroker::Repositories::Helpers
         include PactBroker::Logging
-
-        def refresh ids
-          logger.debug("Refreshing #{model.table_name} for #{ids}")
-
-          db = model.db
-          table_name = model.table_name
-
-          if ids[:pacticipant_id]
-            db.transaction do
-              db[table_name].where(consumer_id: ids[:pacticipant_id]).or(provider_id: ids[:pacticipant_id]).delete
-              new_rows = db[source_view_name].where(consumer_id: ids[:pacticipant_id]).or(provider_id: ids[:pacticipant_id]).distinct
-              db[table_name].insert(new_rows)
-            end
-          elsif ids.any?
-            accepted_columns = [:consumer_id, :consumer_name, :provider_id, :provider_name]
-            criteria = ids.reject{ |k, v| !accepted_columns.include?(k) }
-            db.transaction do
-              db[table_name].where(criteria).delete
-              db[table_name].insert(db[source_view_name].where(criteria))
-            end
-          end
-        end
-
-        def source_view_name
-          model.table_name.to_s.gsub('materialized_', '').to_sym
-        end
 
         def matching_selectors selectors
           if selectors.size == 1

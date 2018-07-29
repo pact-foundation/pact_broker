@@ -22,7 +22,6 @@ module PactBroker
             @tag = tag_service.create identifier_from_path
             # Make it return a 201 by setting the Location header
             response.headers["Location"] = tag_url(base_url, tag)
-            matrix_service.refresh_tags(identifier_from_path)
           end
           response.body = to_json
         end
@@ -40,9 +39,7 @@ module PactBroker
         end
 
         def delete_resource
-          matrix_service.refresh_tags(identifier_from_path) do
-            tag_service.delete identifier_from_path
-          end
+          tag_service.delete identifier_from_path
           true
         end
       end
