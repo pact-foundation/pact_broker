@@ -47,13 +47,8 @@ module PactBroker
       end
 
       def update_latest_pact_publication_ids(pact_publication)
-        table = AllPactPublications.db[:latest_pact_publication_ids_by_consumer_versions]
-        count = table.where(consumer_version_id: pact_publication.consumer_version_id, provider_id: pact_publication.provider_id).count
-        if count == 0
-          table.insert(consumer_version_id: pact_publication.consumer_version_id, provider_id: pact_publication.provider_id, pact_publication_id: pact_publication.id)
-        else
-          table.where(consumer_version_id: pact_publication.consumer_version_id, provider_id: pact_publication.provider_id).update(pact_publication_id: pact_publication.id)
-        end
+        latest_pact_publication_params = { consumer_version_id: pact_publication.consumer_version_id, provider_id: pact_publication.provider_id, pact_publication_id: pact_publication.id }
+        AllPactPublications.db[:latest_pact_publication_ids_by_consumer_versions].insert_ignore.insert(latest_pact_publication_params)
       end
 
       def delete params

@@ -30,14 +30,8 @@ module PactBroker
       end
 
       def update_latest_verification_id verification
-        if PactBroker::Domain::Verification.db.table_exists?(:latest_verification_id_for_pact_version_and_provider_version)
-          table = PactBroker::Domain::Verification.db[:latest_verification_id_for_pact_version_and_provider_version]
-          if table.where(pact_version_id: verification.pact_version_id, provider_version_id: verification.provider_version_id).count == 0
-            table.insert(pact_version_id: verification.pact_version_id, provider_version_id: verification.provider_version_id, provider_id: verification.provider_version.pacticipant_id, verification_id: verification.id)
-          else
-            table.where(pact_version_id: verification.pact_version_id, provider_version_id: verification.provider_version_id).update(verification_id: verification.id)
-          end
-        end
+        latest_verification_params = { pact_version_id: verification.pact_version_id, provider_version_id: verification.provider_version_id, provider_id: verification.provider_version.pacticipant_id, verification_id: verification.id }
+        PactBroker::Domain::Verification.db[:latest_verification_id_for_pact_version_and_provider_version].insert_ignore.insert(latest_verification_params)
       end
 
       def find consumer_name, provider_name, pact_version_sha, verification_number
