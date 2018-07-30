@@ -28,6 +28,7 @@ module PactBroker
           rows = rows.eager(:consumer_version_tags)
                 .eager(:provider_version_tags)
                 .eager(:latest_verification_for_consumer_version_tag)
+                .eager(:latest_verification_for_consumer_and_provider)
         end
         rows = rows.all.group_by(&:pact_publication_id).values.collect{ | rows| Matrix::AggregatedRow.new(rows) }
 
