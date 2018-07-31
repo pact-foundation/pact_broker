@@ -31,7 +31,7 @@ module PactBroker
       :base_equality_only_on_content_that_affects_verification_results
     ]
 
-    attr_accessor :log_dir, :database_connection, :auto_migrate_db, :use_hal_browser, :html_pact_renderer
+    attr_accessor :log_dir, :database_connection, :auto_migrate_db, :auto_migrate_db_data, :use_hal_browser, :html_pact_renderer
     attr_accessor :validate_database_connection_config, :enable_diagnostic_endpoints, :version_parser, :sha_generator
     attr_accessor :use_case_sensitive_resource_names, :order_versions_by_date
     attr_accessor :check_for_potential_duplicate_pacticipant_names
@@ -63,6 +63,7 @@ module PactBroker
       config = Configuration.new
       config.log_dir = File.expand_path("./log")
       config.auto_migrate_db = true
+      config.auto_migrate_db_data = true
       config.use_hal_browser = true
       config.validate_database_connection_config = true
       config.enable_diagnostic_endpoints = true

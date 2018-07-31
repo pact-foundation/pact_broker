@@ -1,5 +1,7 @@
 require 'sequel'
 require 'pact_broker/db/validate_encoding'
+require 'pact_broker/db/migrate'
+require 'pact_broker/db/migrate_data'
 
 Sequel.datetime_class = DateTime
 
@@ -19,6 +21,10 @@ module PactBroker
     def self.run_migrations database_connection
       Sequel.extension :migration
       Sequel::TimestampMigrator.new(database_connection, PactBroker::DB::MIGRATIONS_DIR).run
+    end
+
+    def self.run_data_migrations database_connection
+      PactBroker::DB::MigrateData.(connection)
     end
 
     def self.validate_connection_config
