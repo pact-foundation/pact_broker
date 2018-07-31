@@ -5,7 +5,7 @@ describe "executing a webhook to a server with a self signed certificate" do
   let(:td) { TestDataBuilder.new }
   before(:all) do
     @pipe = IO.popen("bundle exec ruby spec/support/ssl_webhook_server.rb")
-    sleep 2
+    sleep 3
   end
 
   let(:webhook_request) do
