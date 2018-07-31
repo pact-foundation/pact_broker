@@ -60,6 +60,8 @@ end
 #  pact_versions      | pact_versions_consumer_id_fkey      | (consumer_id) REFERENCES pacticipants(id)
 #  pact_versions      | pact_versions_provider_id_fkey      | (provider_id) REFERENCES pacticipants(id)
 #  versions           | versions_pacticipant_id_fkey        | (pacticipant_id) REFERENCES pacticipants(id)
+#  verifications      | verifications_consumer_id_fkey      | (consumer_id) REFERENCES pacticipants(id)
+#  verifications      | verifications_provider_id_fkey      | (provider_id) REFERENCES pacticipants(id)
 #  labels             | labels_pacticipant_id_fkey          | (pacticipant_id) REFERENCES pacticipants(id)
 #  triggered_webhooks | triggered_webhooks_consumer_id_fkey | (consumer_id) REFERENCES pacticipants(id)
 #  triggered_webhooks | triggered_webhooks_provider_id_fkey | (provider_id) REFERENCES pacticipants(id)

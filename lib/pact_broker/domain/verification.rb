@@ -111,11 +111,18 @@ end
 #  created_at          | timestamp without time zone | NOT NULL
 #  provider_version_id | integer                     |
 #  test_results        | text                        |
+#  consumer_id         | integer                     |
+#  provider_id         | integer                     |
 # Indexes:
-#  verifications_pkey                         | PRIMARY KEY btree (id)
-#  verifications_pact_version_id_number_index | UNIQUE btree (pact_version_id, number)
+#  verifications_pkey                          | PRIMARY KEY btree (id)
+#  verifications_pact_version_id_number_index  | UNIQUE btree (pact_version_id, number)
+#  verifications_consumer_id_index             | btree (consumer_id)
+#  verifications_provider_id_consumer_id_index | btree (provider_id, consumer_id)
+#  verifications_provider_id_index             | btree (provider_id)
 # Foreign key constraints:
 #  fk_verifications_versions          | (provider_version_id) REFERENCES versions(id)
+#  verifications_consumer_id_fkey     | (consumer_id) REFERENCES pacticipants(id)
 #  verifications_pact_version_id_fkey | (pact_version_id) REFERENCES pact_versions(id)
+#  verifications_provider_id_fkey     | (provider_id) REFERENCES pacticipants(id)
 # Referenced By:
 #  triggered_webhooks | triggered_webhooks_verification_id_fkey | (verification_id) REFERENCES verifications(id)
