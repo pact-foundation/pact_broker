@@ -1,5 +1,22 @@
 # Developer Documentation
 
+## File structure
+
+* Application code - [lib](lib)
+  * List of API endpoints - [lib/pact_broker/api.rb](lib/pact_broker/api.rb)
+  * API - [lib/pact_broker/api](lib/pact_broker/api)
+    * HTTP Resources - [lib/pact_broker/api/resources](lib/pact_broker/api/resources) These handle the HTTP requests.
+    * Decorators - [lib/pact_broker/api/decorators](lib/pact_broker/api/decorators) These render the response bodies.
+    * Contracts - [lib/pact_broker/api/contracts](lib/pact_broker/api/contracts) These validate incoming API requests.
+  * Domain - Domain classes were intially created in [lib/pact_broker/domain](lib/pact_broker/domain) but are now put in their own modules. The ones left here just haven't been migrated yet.
+* Database migrations - [db/migrations](db/migrations)
+
+* Tests - `spec`
+  * Isolated tests (mostly) - `spec/lib`
+  * Contract tests - `spec/service_consumers`
+  * High level API functional tests - `spec/features`
+  * Migration tests - `spec/migrations`
+
 ## Domain and database design
 
 ### Domain
