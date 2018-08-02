@@ -75,6 +75,14 @@ module PactBroker
       else
         logger.info "Skipping database migrations"
       end
+
+      if configuration.auto_migrate_db_data
+        logger.info "Migrating data"
+        PactBroker::DB.run_data_migrations configuration.database_connection
+      else
+        logger.info "Skipping data migrations"
+      end
+
       require 'pact_broker/webhooks/service'
       PactBroker::Webhooks::Service.fail_retrying_triggered_webhooks
     end

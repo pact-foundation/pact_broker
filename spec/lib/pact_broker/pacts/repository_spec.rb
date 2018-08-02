@@ -24,6 +24,11 @@ module PactBroker
           expect{subject}.to change{ PactPublication.count }.by(1)
         end
 
+        it "sets the consumer_id" do
+          subject
+          expect(PactPublication.first.consumer_id).to eq consumer.id
+        end
+
         it "returns a Pact::Model" do
           expect(subject).to be_instance_of(PactBroker::Domain::Pact)
         end

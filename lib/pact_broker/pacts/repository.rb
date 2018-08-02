@@ -23,6 +23,7 @@ module PactBroker
         pact_publication = PactPublication.new(
           consumer_version_id: params[:version_id],
           provider_id: params[:provider_id],
+          consumer_id: params[:consumer_id],
           pact_version: find_or_create_pact_version(params.fetch(:consumer_id), params.fetch(:provider_id), params[:json_content]),
         ).save
         update_latest_pact_publication_ids(pact_publication)
@@ -35,6 +36,7 @@ module PactBroker
         if existing_model.pact_version_id != pact_version.id
           pact_publication = PactPublication.new(
             consumer_version_id: existing_model.consumer_version_id,
+            consumer_id: existing_model.consumer_id,
             provider_id: existing_model.provider_id,
             revision_number: (existing_model.revision_number + 1),
             pact_version: pact_version,
