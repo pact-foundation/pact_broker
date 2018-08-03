@@ -20,6 +20,10 @@ module PactBroker
         Sequel::Model.db.adapter_scheme.to_s =~ /mysql/
       end
 
+      def postgres?
+        Sequel::Model.db.adapter_scheme.to_s == "postgres"
+      end
+
       def select_all_qualified
         select(Sequel[model.table_name].*)
       end
@@ -29,6 +33,23 @@ module PactBroker
           select(column).collect{ | it | it[column] }
         else
           select(column)
+        end
+      end
+
+      # TODO refactor to use proper dataset module
+      def upsert table, key, other
+        row = key.merge(other)
+        if postgres?
+          table.insert_conflict(update: other, target: key.keys).insert(row)
+        elsif mysql?
+          table.on_duplicate_key_update.insert(row)
+        else
+          # Sqlite
+          if table.where(key).count == 0
+            table.insert(row)
+          else
+            table.where(key).update(row)
+          end
         end
       end
     end

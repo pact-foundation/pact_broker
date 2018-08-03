@@ -14,7 +14,7 @@ module PactBroker
           [["application/hal+json", :to_json], ["application/json", :to_json]]
         end
 
-        # Remember to update latest_verification_id_for_pact_version_and_provider_version
+        # Remember to update latest_verif_id_for_pact_version_and_provider_version
         # if/when DELETE is implemented
         def allowed_methods
           ["GET", "OPTIONS"]

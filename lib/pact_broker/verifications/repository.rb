@@ -33,8 +33,18 @@ module PactBroker
       end
 
       def update_latest_verification_id verification
-        latest_verification_params = { pact_version_id: verification.pact_version_id, provider_version_id: verification.provider_version_id, provider_id: verification.provider_version.pacticipant_id, verification_id: verification.id }
-        PactBroker::Domain::Verification.db[:latest_verification_id_for_pact_version_and_provider_version].insert_ignore.insert(latest_verification_params)
+        key = {
+          pact_version_id: verification.pact_version_id, provider_version_id: verification.provider_version_id
+        }
+
+        other = {
+          provider_id: verification.provider_version.pacticipant_id,
+          verification_id: verification.id,
+          consumer_id: verification.consumer_id
+        }
+
+        table = PactBroker::Domain::Verification.db[:latest_verif_id_for_pact_version_and_provider_version]
+        PactBroker::Repositories::Helpers.upsert(table, key, other)
       end
 
       def find consumer_name, provider_name, pact_version_sha, verification_number
@@ -99,6 +109,7 @@ module PactBroker
           .provider(provider_name)
           .tag(consumer_version_tag)
           .provider_version_tag(provider_version_tag)
+
 
         query.reverse_order(
           Sequel[:latest_pact_publications_by_consumer_versions][:consumer_version_order],

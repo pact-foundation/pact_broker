@@ -8,7 +8,7 @@ Sequel.migration do
       from latest_pact_publication_ids_by_consumer_versions lpp
       inner join pact_publications pp
         on pp.id = lpp.pact_publication_id
-      left outer join latest_verification_id_for_pact_version_and_provider_version lv
+      left outer join latest_verif_id_for_pact_version_and_provider_version lv
           on lv.pact_version_id = pp.pact_version_id"
     )
 

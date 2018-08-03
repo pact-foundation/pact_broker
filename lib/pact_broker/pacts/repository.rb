@@ -49,8 +49,19 @@ module PactBroker
       end
 
       def update_latest_pact_publication_ids(pact_publication)
-        latest_pact_publication_params = { consumer_version_id: pact_publication.consumer_version_id, provider_id: pact_publication.provider_id, pact_publication_id: pact_publication.id }
-        AllPactPublications.db[:latest_pact_publication_ids_by_consumer_versions].insert_ignore.insert(latest_pact_publication_params)
+        key = {
+          consumer_version_id: pact_publication.consumer_version_id,
+          provider_id: pact_publication.provider_id,
+        }
+
+        other = {
+          pact_publication_id: pact_publication.id, consumer_id: pact_publication.consumer_id
+        }
+
+        row = key.merge(other)
+
+        table = AllPactPublications.db[:latest_pact_publication_ids_by_consumer_versions]
+        PactBroker::Repositories::Helpers.upsert(table, key, other)
       end
 
       def delete params
