@@ -37,10 +37,10 @@ module PactBroker
           Line.new(
             index_item.consumer_name,
             index_item.consumer_version_number,
-            index_item.tag_names.join(", "),
+            index_item.tag_names.sort.join(", "),
             index_item.provider_name,
             index_item.provider_version_number,
-            index_item.latest_verification_latest_tags.collect(&:name).join(", "),
+            index_item.latest_verification_latest_tags.collect(&:name).sort.join(", "),
             index_item.verification_status.to_s
           )
         end
