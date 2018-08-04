@@ -43,7 +43,7 @@ module PactBroker
           consumer_id: verification.consumer_id
         }
 
-        table = PactBroker::Domain::Verification.db[:latest_verif_id_for_pact_version_and_provider_version]
+        table = PactBroker::Domain::Verification.db[:latest_verification_id_for_pact_version_and_provider_version]
         PactBroker::Repositories::Helpers.upsert(table, key, other)
       end
 

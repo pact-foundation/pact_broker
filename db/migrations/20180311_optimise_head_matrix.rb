@@ -18,7 +18,7 @@ Sequel.migration do
     # Add provider_version_order to original definition
     # The most recent verification for each pact_version
     # provider_version column is DEPRECATED, use provider_version_number
-    # Think this can be replaced by latest_verif_id_for_pact_version_and_provider_version?
+    # Think this can be replaced by latest_verification_id_for_pact_version_and_provider_version?
     v = :verifications
     create_or_replace_view(:latest_verifications,
       from(v)

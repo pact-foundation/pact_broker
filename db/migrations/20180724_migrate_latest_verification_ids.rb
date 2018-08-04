@@ -9,10 +9,10 @@ Sequel.migration do
         .select_append{ max(verifications[id]).as(verification_id) }
 
     # The danger with this migration is that a verification created by an old node will be lost
-    from(:latest_verif_id_for_pact_version_and_provider_version).insert(rows)
+    from(:latest_verification_id_for_pact_version_and_provider_version).insert(rows)
   end
 
   down do
-    from(:latest_verif_id_for_pact_version_and_provider_version).delete
+    from(:latest_verification_id_for_pact_version_and_provider_version).delete
   end
 end

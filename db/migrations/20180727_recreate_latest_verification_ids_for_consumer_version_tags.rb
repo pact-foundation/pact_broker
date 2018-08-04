@@ -6,7 +6,7 @@ Sequel.migration do
       v.consumer_id,
       t.name as consumer_version_tag_name,
       max(v.verification_id) as latest_verification_id
-    from latest_verif_id_for_pact_version_and_provider_version v
+    from latest_verification_id_for_pact_version_and_provider_version v
     join latest_pact_publication_ids_by_consumer_versions lpp
       on v.pact_version_id = lpp.pact_version_id
     join tags t
