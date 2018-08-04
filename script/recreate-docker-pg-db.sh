@@ -1,4 +1,4 @@
-# docker run -p 8000:8000 dwmkerr/dynamodb
+# docker run -p "5432:5432" --cpus 0.2 postgres:9.5-alpine
 
 SCHEMA="pact_broker"
 set +e
