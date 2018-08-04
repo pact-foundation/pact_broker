@@ -1,6 +1,8 @@
 Sequel.migration do
   up do
     # The latest verification id for each consumer version tag
+    # This is not the latest verification for the latest pact with a given tag,
+    # this is the latest verification for any pact with the tag
     create_view(:latest_verification_ids_for_consumer_version_tags,
       "select
         pv.pacticipant_id as provider_id,
