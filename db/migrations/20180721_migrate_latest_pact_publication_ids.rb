@@ -6,6 +6,6 @@ Sequel.migration do
   end
 
   down do
-
+    from(:latest_pact_publication_ids_by_consumer_versions).delete
   end
 end

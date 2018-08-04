@@ -13,6 +13,6 @@ Sequel.migration do
   end
 
   down do
-
+    from(:latest_verif_id_for_pact_version_and_provider_version).delete
   end
 end
