@@ -4,14 +4,12 @@ module PactBroker
       class SetConsumerIdsForPactPublications
         def self.call connection
           if columns_exist?(connection)
-            ids = connection.from(:pact_publications)
-              .select(Sequel[:pact_publications][:id], Sequel[:versions][:pacticipant_id].as(:consumer_id))
-              .join(:versions, {id: :consumer_version_id})
-              .where(Sequel[:pact_publications][:consumer_id] => nil)
-
-            ids.each do | id |
-              connection.from(:pact_publications).where(id: id[:id]).update(consumer_id: id[:consumer_id])
-            end
+            query = "UPDATE pact_publications
+                    SET consumer_id = (SELECT consumer_id
+                      FROM versions
+                      WHERE id = pact_publications.consumer_version_id)
+                    WHERE consumer_id is null"
+            connection.run(query)
           end
         end
 
