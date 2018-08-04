@@ -15,3 +15,4 @@ echo "export PACT_BROKER_DATABASE_HOST=${ip}"
 echo "To test:"
 echo "mysql -upact_broker -ppact_broker -hlocalhost"
 
+DATABASE_ADAPTER=mysql bundle exec rake db:migrate
