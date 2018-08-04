@@ -6,7 +6,7 @@ module PactBroker
           if columns_exist?(connection)
             ids = connection.from(:verifications)
               .select(Sequel[:verifications][:id], Sequel[:pact_versions][:consumer_id], Sequel[:pact_versions][:provider_id])
-              .join(:pact_versions, {id: :provider_version_id})
+              .join(:pact_versions, {id: :pact_version_id})
               .where(Sequel[:verifications][:consumer_id] => nil)
               .or(Sequel[:verifications][:provider_id] => nil)
 
