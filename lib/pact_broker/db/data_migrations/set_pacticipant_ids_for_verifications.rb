@@ -4,15 +4,16 @@ module PactBroker
       class SetPacticipantIdsForVerifications
         def self.call connection
           if columns_exist?(connection)
-            ids = connection.from(:verifications)
-              .select(Sequel[:verifications][:id], Sequel[:pact_versions][:consumer_id], Sequel[:pact_versions][:provider_id])
-              .join(:pact_versions, {id: :pact_version_id})
-              .where(Sequel[:verifications][:consumer_id] => nil)
-              .or(Sequel[:verifications][:provider_id] => nil)
-
-            ids.each do | id |
-              connection.from(:verifications).where(id: id[:id]).update(consumer_id: id[:consumer_id], provider_id: id[:provider_id])
-            end
+            query = "UPDATE verifications
+                    SET consumer_id = (SELECT consumer_id
+                      FROM pact_versions
+                      WHERE id = verifications.pact_version_id),
+                     provider_id = (SELECT provider_id
+                      FROM pact_versions
+                      WHERE id = verifications.pact_version_id)
+                    WHERE consumer_id is null
+                    OR provider_id is null"
+            connection.run(query)
           end
         end
 
