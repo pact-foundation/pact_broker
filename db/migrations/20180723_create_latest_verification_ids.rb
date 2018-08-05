@@ -12,7 +12,8 @@ Sequel.migration do
       foreign_key :provider_version_id, :versions,  null: false, on_delete: :cascade, foreign_key_constraint_name: 'latest_v_id_for_pv_and_pv_provider_version_id_fk'
       foreign_key :verification_id, :verifications, null: false, on_delete: :cascade, foreign_key_constraint_name: 'latest_v_id_for_pv_and_pv_verification_id_fk'
       index [:verification_id], unique: true, name: "latest_v_id_for_pv_and_pv_v_id_unq"
-      index [:pact_version_id, :provider_version_id], unique: true, name: "unq_latest_verifid_pvid_provid"
+      index [:pact_version_id, :provider_version_id], unique: true, name: "latest_v_id_for_pv_and_pv_pv_id_pv_id_unq"
+      index [:pact_version_id, :verification_id], name: "latest_v_id_for_pv_and_pv_pv_id_v_id"
     end
   end
 

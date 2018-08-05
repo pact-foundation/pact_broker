@@ -11,13 +11,6 @@ Sequel.migration do
       left outer join latest_verification_id_for_pact_version_and_provider_version lv
           on lv.pact_version_id = pp.pact_version_id"
     )
-
-    # TODO
-    #drop_view(:latest_matrix)
-    #drop_view(:latest_verification_id_for_consumer_version_and_provider)
-    #drop_view(:latest_matrix_for_consumer_version_and_provider_version)
-    #drop_table(:materialized_matrix)
-    #drop_table(:materialized_head_matrix)
   end
 
   down do
