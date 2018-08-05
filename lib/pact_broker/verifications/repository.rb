@@ -1,6 +1,6 @@
 require 'sequel'
 require 'pact_broker/domain/verification'
-require 'pact_broker/verifications/latest_verifications_by_consumer_version'
+require 'pact_broker/verifications/latest_verification_for_pact_version'
 require 'pact_broker/verifications/all_verifications'
 require 'pact_broker/verifications/sequence'
 require 'pact_broker/verifications/latest_verification_id_for_pact_version_and_provider_version'
@@ -55,7 +55,7 @@ module PactBroker
       end
 
       def search_for_latest consumer_name, provider_name
-        query = LatestVerificationsByConsumerVersion
+        query = LatestVerificationForPactVersion
                   .select_all_qualified
                   .join(:all_pact_publications, pact_version_id: :pact_version_id)
         query = query.consumer(consumer_name) if consumer_name
@@ -66,7 +66,7 @@ module PactBroker
       def find_latest_verifications_for_consumer_version consumer_name, consumer_version_number
         # Use LatestPactPublicationsByConsumerVersion not AllPactPublcations because we don't
         # want verifications for shadowed revisions as it would be misleading.
-        LatestVerificationsByConsumerVersion
+        LatestVerificationForPactVersion
           .select_all_qualified
           .join(:latest_pact_publications_by_consumer_versions, pact_version_id: :pact_version_id)
           .consumer(consumer_name)
@@ -79,7 +79,7 @@ module PactBroker
       # belonging to the version with the largest consumer_version_order.
 
       def find_latest_verification_for consumer_name, provider_name, consumer_version_tag = nil
-        query = LatestVerificationsByConsumerVersion
+        query = LatestVerificationForPactVersion
           .select_all_qualified
           .join(:all_pact_publications, pact_version_id: :pact_version_id)
           .consumer(consumer_name)
@@ -92,7 +92,7 @@ module PactBroker
         query.reverse_order(
           Sequel[:all_pact_publications][:consumer_version_order],
           Sequel[:all_pact_publications][:revision_number],
-          Sequel[LatestVerificationsByConsumerVersion.table_name][:number]
+          Sequel[LatestVerificationForPactVersion.table_name][:number]
         ).limit(1).single_record
       end
 
