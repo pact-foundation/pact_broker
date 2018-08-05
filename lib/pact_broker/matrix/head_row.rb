@@ -33,20 +33,20 @@ module PactBroker
   end
 end
 
-# Table: materialized_head_matrix
+# Table: head_matrix
 # Columns:
-#  consumer_id               | integer                     | NOT NULL
-#  consumer_name             | text                        | NOT NULL
-#  consumer_version_id       | integer                     | NOT NULL
-#  consumer_version_number   | text                        | NOT NULL
-#  consumer_version_order    | integer                     | NOT NULL
-#  pact_publication_id       | integer                     | NOT NULL
-#  pact_version_id           | integer                     | NOT NULL
-#  pact_version_sha          | text                        | NOT NULL
-#  pact_revision_number      | integer                     | NOT NULL
-#  pact_created_at           | timestamp without time zone | NOT NULL
-#  provider_id               | integer                     | NOT NULL
-#  provider_name             | text                        | NOT NULL
+#  consumer_id               | integer                     |
+#  consumer_name             | text                        |
+#  consumer_version_id       | integer                     |
+#  consumer_version_number   | text                        |
+#  consumer_version_order    | integer                     |
+#  pact_publication_id       | integer                     |
+#  pact_version_id           | integer                     |
+#  pact_version_sha          | text                        |
+#  pact_revision_number      | integer                     |
+#  pact_created_at           | timestamp without time zone |
+#  provider_id               | integer                     |
+#  provider_name             | text                        |
 #  provider_version_id       | integer                     |
 #  provider_version_number   | text                        |
 #  provider_version_order    | integer                     |
@@ -56,8 +56,3 @@ end
 #  verification_executed_at  | timestamp without time zone |
 #  verification_build_url    | text                        |
 #  consumer_version_tag_name | text                        |
-# Indexes:
-#  materialized_head_matrix_consumer_version_tag_name_index | btree (consumer_version_tag_name)
-#  ndx_mhm_consumer_id                                      | btree (consumer_id)
-#  ndx_mhm_cv_ord                                           | btree (consumer_version_order)
-#  ndx_mhm_provider_id                                      | btree (provider_id)

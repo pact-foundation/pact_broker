@@ -202,20 +202,20 @@ module PactBroker
   end
 end
 
-# Table: materialized_matrix
+# Table: matrix
 # Columns:
-#  consumer_id              | integer                     | NOT NULL
-#  consumer_name            | text                        | NOT NULL
-#  consumer_version_id      | integer                     | NOT NULL
-#  consumer_version_number  | text                        | NOT NULL
-#  consumer_version_order   | integer                     | NOT NULL
-#  pact_publication_id      | integer                     | NOT NULL
-#  pact_version_id          | integer                     | NOT NULL
-#  pact_version_sha         | text                        | NOT NULL
-#  pact_revision_number     | integer                     | NOT NULL
-#  pact_created_at          | timestamp without time zone | NOT NULL
-#  provider_id              | integer                     | NOT NULL
-#  provider_name            | text                        | NOT NULL
+#  consumer_id              | integer                     |
+#  consumer_name            | text                        |
+#  consumer_version_id      | integer                     |
+#  consumer_version_number  | text                        |
+#  consumer_version_order   | integer                     |
+#  pact_publication_id      | integer                     |
+#  pact_version_id          | integer                     |
+#  pact_version_sha         | text                        |
+#  pact_revision_number     | integer                     |
+#  pact_created_at          | timestamp without time zone |
+#  provider_id              | integer                     |
+#  provider_name            | text                        |
 #  provider_version_id      | integer                     |
 #  provider_version_number  | text                        |
 #  provider_version_order   | integer                     |
@@ -224,9 +224,3 @@ end
 #  verification_number      | integer                     |
 #  verification_executed_at | timestamp without time zone |
 #  verification_build_url   | text                        |
-# Indexes:
-#  ndx_mm_consumer_id  | btree (consumer_id)
-#  ndx_mm_cv_ord       | btree (consumer_version_order)
-#  ndx_mm_pact_rev_num | btree (pact_revision_number)
-#  ndx_mm_provider_id  | btree (provider_id)
-#  ndx_mm_verif_id     | btree (verification_id)
