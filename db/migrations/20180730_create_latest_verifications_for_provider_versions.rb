@@ -2,7 +2,7 @@ Sequel.migration do
   up do
     # The most recent verification for each pact_version
     v = :verifications
-    create_view(:latest_verifications_for_provider_versions,
+    create_view(:latest_verifications_for_pact_versions,
       from(v)
         .select(
           Sequel[v][:id],
@@ -15,7 +15,7 @@ Sequel.migration do
           Sequel[v][:provider_version_id],
           Sequel[:s][:number].as(:provider_version_number),
           Sequel[:s][:order].as(:provider_version_order))
-        .join(:latest_verification_ids_for_provider_versions,
+        .join(:latest_verification_ids_for_pact_versions,
           {
             Sequel[v][:pact_version_id] => Sequel[:lv][:pact_version_id],
             Sequel[v][:id] => Sequel[:lv][:latest_verification_id]
@@ -28,6 +28,6 @@ Sequel.migration do
   end
 
   down do
-    drop_view(:latest_verifications_for_provider_versions)
+    drop_view(:latest_verifications_for_pact_versions)
   end
 end

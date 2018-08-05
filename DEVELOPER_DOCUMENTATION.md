@@ -97,8 +97,8 @@ materialized_head_matrix table (is populated from...)
         -> latest_pact_publication_ids_by_consumer_versions
         -> all_pact_publications
           -> versions, pacticipants, pact_publications, pact_versions
-    -> latest_verifications
-      -> latest_verification_numbers
+    -> latest_verifications_for_pact_versions
+      -> latest_verification_ids_for_pact_versions
       -> versions
     -> latest_tagged_pact_consumer_version_orders
     -> latest_pact_publications_by_consumer_versions

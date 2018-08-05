@@ -8,7 +8,7 @@ select
   lv.build_url as verification_build_url,
   null as consumer_version_tag_name
 from latest_pact_publications p
-left outer join latest_verifications_for_provider_versions lv
+left outer join latest_verifications_for_pact_versions lv
   on p.pact_version_id = lv.pact_version_id
 
 union all
@@ -26,6 +26,6 @@ inner join latest_pact_publications_by_consumer_versions p
   on lt.consumer_id = p.consumer_id
   and lt.provider_id = p.provider_id
   and lt.latest_consumer_version_order = p.consumer_version_order
-left outer join latest_verifications_for_provider_versions lv
+left outer join latest_verifications_for_pact_versions lv
   on p.pact_version_id = lv.pact_version_id
 "
