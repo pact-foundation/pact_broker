@@ -1,5 +1,5 @@
 Sequel.migration do
-  change do
+  up do
     # The most recent verification for each pact_version
     v = :verifications
     create_view(:latest_verifications_for_provider_versions,
@@ -25,5 +25,9 @@ Sequel.migration do
             Sequel[v][:provider_version_id] => Sequel[:s][:id]
           }, { table_alias: :s })
     )
+  end
+
+  down do
+    drop_view(:latest_verifications_for_provider_versions)
   end
 end
