@@ -7,6 +7,7 @@ module PactBroker
       include PactBroker::Repositories::Helpers
 
       # TODO rename this to LatestVerificationsByPactVersion
+      # TODO
       class LatestVerificationsByConsumerVersion < PactBroker::Domain::Verification
         set_dataset(:latest_verifications)
       end
