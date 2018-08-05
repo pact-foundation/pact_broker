@@ -3,7 +3,7 @@ Sequel.migration do
     # Latest pact_publication details for each provider/consumer version
     create_or_replace_view(:latest_pact_publications_by_consumer_versions,
       "select app.*
-      from latest_pact_publication_ids_by_consumer_versions lpp
+      from latest_pact_publication_ids_for_consumer_versions lpp
       inner join all_pact_publications app
       on lpp.consumer_version_id = app.consumer_version_id
       and lpp.pact_publication_id = app.id
@@ -11,8 +11,8 @@ Sequel.migration do
     )
 
     # Latest consumer version order for consumer/provider
-    # Recreate latest_pact_publication_ids_by_consumer_versions view
-    lpp = :latest_pact_publication_ids_by_consumer_versions
+    # Recreate latest_pact_publication_ids_for_consumer_versions view
+    lpp = :latest_pact_publication_ids_for_consumer_versions
     latest_pact_consumer_version_orders = from(lpp).select_group(
         Sequel[lpp][:provider_id],
         Sequel[:cv][:pacticipant_id].as(:consumer_id))

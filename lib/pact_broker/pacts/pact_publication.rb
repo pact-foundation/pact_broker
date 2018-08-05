@@ -84,4 +84,4 @@ end
 # Referenced By:
 #  triggered_webhooks                               | triggered_webhooks_pact_publication_id_fkey                     | (pact_publication_id) REFERENCES pact_publications(id)
 #  webhook_executions                               | webhook_executions_pact_publication_id_fkey                     | (pact_publication_id) REFERENCES pact_publications(id)
-#  latest_pact_publication_ids_by_consumer_versions | latest_pact_publication_ids_by_consume_pact_publication_id_fkey | (pact_publication_id) REFERENCES pact_publications(id) ON DELETE CASCADE
+#  latest_pact_publication_ids_for_consumer_versions | latest_pact_publication_ids_by_consume_pact_publication_id_fkey | (pact_publication_id) REFERENCES pact_publications(id) ON DELETE CASCADE

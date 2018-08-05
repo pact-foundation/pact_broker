@@ -70,7 +70,7 @@ end
 #  webhook_executions                                           | webhook_executions_provider_id_fkey                             | (provider_id) REFERENCES pacticipants(id)
 #  webhooks                                                     | fk_webhooks_consumer                                            | (consumer_id) REFERENCES pacticipants(id)
 #  webhooks                                                     | fk_webhooks_provider                                            | (provider_id) REFERENCES pacticipants(id)
-#  latest_pact_publication_ids_by_consumer_versions             | latest_pact_publication_ids_by_consumer_versio_consumer_id_fkey | (consumer_id) REFERENCES pacticipants(id) ON DELETE CASCADE
-#  latest_pact_publication_ids_by_consumer_versions             | latest_pact_publication_ids_by_consumer_versio_provider_id_fkey | (provider_id) REFERENCES pacticipants(id) ON DELETE CASCADE
+#  latest_pact_publication_ids_for_consumer_versions             | latest_pact_publication_ids_by_consumer_versio_consumer_id_fkey | (consumer_id) REFERENCES pacticipants(id) ON DELETE CASCADE
+#  latest_pact_publication_ids_for_consumer_versions             | latest_pact_publication_ids_by_consumer_versio_provider_id_fkey | (provider_id) REFERENCES pacticipants(id) ON DELETE CASCADE
 #  latest_verification_id_for_pact_version_and_provider_version | latest_v_id_for_pv_and_pv_consumer_id_fk                        | (consumer_id) REFERENCES pacticipants(id) ON DELETE CASCADE
 #  latest_verification_id_for_pact_version_and_provider_version | latest_v_id_for_pv_and_pv_provider_id_fk                        | (provider_id) REFERENCES pacticipants(id) ON DELETE CASCADE

@@ -62,7 +62,7 @@ module PactBroker
 
         row = key.merge(other)
 
-        table = AllPactPublications.db[:latest_pact_publication_ids_by_consumer_versions]
+        table = AllPactPublications.db[:latest_pact_publication_ids_for_consumer_versions]
         PactBroker::Repositories::Helpers.upsert(table, key, other)
       end
 

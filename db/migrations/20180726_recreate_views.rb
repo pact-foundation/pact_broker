@@ -5,7 +5,7 @@ Sequel.migration do
     # verifications
     create_or_replace_view(:latest_verification_id_for_consumer_version_and_provider_version,
       "select pp.consumer_version_id, lv.provider_version_id, lv.verification_id as latest_verification_id
-      from latest_pact_publication_ids_by_consumer_versions lpp
+      from latest_pact_publication_ids_for_consumer_versions lpp
       inner join pact_publications pp
         on pp.id = lpp.pact_publication_id
       left outer join latest_verification_id_for_pact_version_and_provider_version lv
