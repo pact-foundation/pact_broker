@@ -3,6 +3,9 @@ require 'pact_broker/domain/verification'
 module PactBroker
   module Verifications
     class LatestVerificationIdForPactVersionAndProviderVersion < Sequel::Model(:latest_verification_id_for_pact_version_and_provider_version)
+
+      unrestrict_primary_key
+
       dataset_module do
         include PactBroker::Repositories::Helpers
       end

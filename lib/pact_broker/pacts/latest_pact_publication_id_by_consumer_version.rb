@@ -5,6 +5,8 @@ module PactBroker
   module Pacts
     class LatestPactPublicationIdForConsumerVersion < Sequel::Model(:latest_pact_publication_ids_for_consumer_versions)
 
+      unrestrict_primary_key
+
       dataset_module do
         include PactBroker::Repositories::Helpers
       end
