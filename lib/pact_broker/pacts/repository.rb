@@ -11,6 +11,7 @@ require 'pact/shared/json_differ'
 require 'pact_broker/domain'
 require 'pact_broker/pacts/parse'
 require 'pact_broker/matrix/head_row'
+require 'pact_broker/pacts/latest_pact_publication_id_by_consumer_version'
 
 module PactBroker
   module Pacts
@@ -49,21 +50,15 @@ module PactBroker
       end
 
       def update_latest_pact_publication_ids(pact_publication)
-        key = {
+        params = {
           consumer_version_id: pact_publication.consumer_version_id,
           provider_id: pact_publication.provider_id,
-        }
-
-        other = {
           pact_publication_id: pact_publication.id,
           consumer_id: pact_publication.consumer_id,
           pact_version_id: pact_publication.pact_version_id
         }
 
-        row = key.merge(other)
-
-        table = AllPactPublications.db[:latest_pact_publication_ids_for_consumer_versions]
-        PactBroker::Repositories::Helpers.upsert(table, key, other)
+        LatestPactPublicationIdForConsumerVersion.new(params).upsert
       end
 
       def delete params

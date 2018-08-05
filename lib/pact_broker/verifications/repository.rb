@@ -3,6 +3,7 @@ require 'pact_broker/domain/verification'
 require 'pact_broker/verifications/latest_verifications_by_consumer_version'
 require 'pact_broker/verifications/all_verifications'
 require 'pact_broker/verifications/sequence'
+require 'pact_broker/verifications/latest_verification_id_for_pact_version_and_provider_version'
 
 module PactBroker
   module Verifications
@@ -33,18 +34,14 @@ module PactBroker
       end
 
       def update_latest_verification_id verification
-        key = {
-          pact_version_id: verification.pact_version_id, provider_version_id: verification.provider_version_id
-        }
-
-        other = {
+        params = {
+          pact_version_id: verification.pact_version_id,
+          provider_version_id: verification.provider_version_id,
           provider_id: verification.provider_version.pacticipant_id,
           verification_id: verification.id,
           consumer_id: verification.consumer_id
         }
-
-        table = PactBroker::Domain::Verification.db[:latest_verification_id_for_pact_version_and_provider_version]
-        PactBroker::Repositories::Helpers.upsert(table, key, other)
+        LatestVerificationIdForPactVersionAndProviderVersion.new(params).upsert
       end
 
       def find consumer_name, provider_name, pact_version_sha, verification_number

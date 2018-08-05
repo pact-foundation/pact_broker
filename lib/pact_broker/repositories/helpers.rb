@@ -36,19 +36,18 @@ module PactBroker
         end
       end
 
-      # TODO refactor to use proper dataset module
-      def upsert table, key, other
-        row = key.merge(other)
+      def upsert row, key_names
         if postgres?
-          table.insert_conflict(update: other, target: key.keys).insert(row)
+          insert_conflict(update: row, target: key_names).insert(row)
         elsif mysql?
-          table.on_duplicate_key_update.insert(row)
+          on_duplicate_key_update.insert(row)
         else
           # Sqlite
-          if table.where(key).count == 0
-            table.insert(row)
+          key = row.reject{ |k, v| !key_names.include?(k) }
+          if where(key).count == 0
+            insert(row)
           else
-            table.where(key).update(row)
+            where(key).update(row)
           end
         end
       end
