@@ -15,8 +15,8 @@ Please provide the following information with your issue to enable us to respond
 * Write tests for any changes
 * Follow existing code style and conventions
 * Separate unrelated changes into multiple pull requests
-* [Squash your commits](squash) into one commit before submitting your PR.
-* Use [semantic commit messages](semantic-commit-messages) so that your changes will show up correctly in the generated change log.
+* [Squash your commits][squash] into one commit before submitting your PR.
+* Use [semantic commit messages][semantic-commit-messages] so that your changes will show up correctly in the generated change log.
 
 * For bigger changes, make sure you start a discussion first by creating an issue and explaining the intended change
 
