@@ -170,13 +170,20 @@ module PactBroker
           .order(:consumer_version_order, :revision_number).collect(&:to_domain_with_content)
       end
 
-      def find_previous_pact pact
-        LatestPactPublicationsByConsumerVersion
-          .eager(:tags)
-          .consumer(pact.consumer.name)
-          .provider(pact.provider.name)
-          .consumer_version_order_before(pact.consumer_version.order)
-          .latest.collect(&:to_domain_with_content)[0]
+      def find_previous_pact pact, tag = nil
+        query = LatestPactPublicationsByConsumerVersion
+            .eager(:tags)
+            .consumer(pact.consumer.name)
+            .provider(pact.provider.name)
+
+        if tag == :untagged
+          query = query.untagged
+        elsif tag
+          query = query.tag(tag)
+        end
+
+        query.consumer_version_order_before(pact.consumer_version.order)
+            .latest.collect(&:to_domain_with_content)[0]
       end
 
       def find_next_pact pact

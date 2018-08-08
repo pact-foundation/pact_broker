@@ -513,27 +513,74 @@ module PactBroker
             .create_consumer("Consumer")
             .create_consumer_version("1.2.2")
             .create_provider("Provider")
+            .create_consumer_version_tag("a_tag")
+            .create_pact
+            .create_consumer_version("1.2.3")
             .create_pact
             .create_consumer_version("1.2.4")
+            .create_consumer_version_tag("another_tag")
             .create_pact
-            .create_consumer_version("1.2.6")
+            .create_consumer_version("1.2.5")
+            .create_consumer_version_tag("a_tag")
+            .create_pact
+            .create_consumer_version("1.2.7")
+            .create_consumer_version_tag("another_tag")
             .create_pact
             .create_provider("Another Provider")
-            .create_consumer_version("1.2.5")
+            .create_consumer_version("1.2.6")
+            .create_consumer_version_tag("a_tag")
             .create_pact
         end
 
-        let(:pact) { Repository.new.find_latest_pact "Consumer", "Provider"  }
+        context "regardless of tag" do
+          context "when a previous version with a pact exists" do
 
-        subject  { Repository.new.find_previous_pact pact }
+            let(:pact) { Repository.new.find_latest_pact "Consumer", "Provider", "another_tag" }
 
-        it "finds the previous pact" do
-          expect(subject.consumer_version_number).to eq "1.2.4"
-          expect(subject.consumer_version.number).to eq "1.2.4"
+            subject  { Repository.new.find_previous_pact pact }
+
+            it "finds the previous pact" do
+              expect(subject.consumer_version_number).to eq "1.2.5"
+            end
+
+            it "sets the json_content" do
+              expect(subject.json_content).to_not be nil
+            end
+          end
         end
 
-        it "sets the json_content" do
-          expect(subject.json_content).to_not be nil
+        context "by tag" do
+          context "when a previous version with a pact with a specific tag exists" do
+
+            let(:pact) { Repository.new.find_latest_pact "Consumer", "Provider", "a_tag"  }
+
+            subject  { Repository.new.find_previous_pact pact, "a_tag" }
+
+            it "finds the previous pact" do
+              expect(subject.consumer_version_number).to eq "1.2.2"
+            end
+
+            it "sets the json_content" do
+              expect(subject.json_content).to_not be nil
+            end
+          end
+        end
+
+        context "that is untagged" do
+          context "when a previous version with a an untagged pact exists" do
+
+            let(:pact) { Repository.new.find_latest_pact "Consumer", "Provider"  }
+
+            subject  { Repository.new.find_previous_pact pact, :untagged }
+
+            it "finds the previous pact" do
+              expect(subject.consumer_version_number).to eq "1.2.3"
+            end
+
+            it "sets the json_content" do
+              expect(subject.json_content).to_not be nil
+            end
+          end
         end
       end
 
