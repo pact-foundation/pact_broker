@@ -104,8 +104,7 @@ module PactBroker
 
       # TODO also take into account overridden revisions
       def pact_is_new_or_pact_has_changed_since_previous_version? pact
-        previous_pacts = find_previous_pacts pact
-        previous_pacts.any? { |previous_pact| previous_pact.nil? || pact.json_content != previous_pact.json_content}
+        find_previous_pacts(pact).any? { |previous_pact| previous_pact.nil? || pact.json_content != previous_pact.json_content}
       end
 
       private
