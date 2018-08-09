@@ -44,7 +44,7 @@ module PactBroker
 
         it "deletes rows that aren't the latest or latest tagged" do
           subject
-          expect(db[:materialized_matrix].where(consumer_version_number: "2").count).to eq 0
+          expect(db[:matrix].where(consumer_version_number: "2").count).to eq 0
         end
 
         it "deletes orphan pact_versions" do

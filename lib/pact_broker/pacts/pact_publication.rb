@@ -82,5 +82,6 @@ end
 #  pact_publications_pact_version_id_fkey     | (pact_version_id) REFERENCES pact_versions(id)
 #  pact_publications_provider_id_fkey         | (provider_id) REFERENCES pacticipants(id)
 # Referenced By:
-#  webhook_executions | webhook_executions_pact_publication_id_fkey | (pact_publication_id) REFERENCES pact_publications(id)
-#  triggered_webhooks | triggered_webhooks_pact_publication_id_fkey | (pact_publication_id) REFERENCES pact_publications(id)
+#  webhook_executions                                | webhook_executions_pact_publication_id_fkey                     | (pact_publication_id) REFERENCES pact_publications(id)
+#  triggered_webhooks                                | triggered_webhooks_pact_publication_id_fkey                     | (pact_publication_id) REFERENCES pact_publications(id)
+#  latest_pact_publication_ids_for_consumer_versions | latest_pact_publication_ids_for_consum_pact_publication_id_fkey | (pact_publication_id) REFERENCES pact_publications(id) ON DELETE CASCADE

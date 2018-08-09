@@ -7,6 +7,7 @@ Sequel.migration do
     # you can't delete a single pact revision through the API - all the revisions
     # for a pact are deleted together when you delete the pact resource for that
     # consumer version, and when that happens, this row will cascade delete.
+
     create_table(:latest_pact_publication_ids_for_consumer_versions, charset: 'utf8') do
       foreign_key :consumer_id, :pacticipants, null: false, on_delete: :cascade # redundant, but speeds up queries by removing need for extra join
       foreign_key :consumer_version_id, :versions, null: false, on_delete: :cascade

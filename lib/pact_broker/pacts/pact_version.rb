@@ -64,5 +64,7 @@ end
 #  pact_versions_consumer_id_fkey | (consumer_id) REFERENCES pacticipants(id)
 #  pact_versions_provider_id_fkey | (provider_id) REFERENCES pacticipants(id)
 # Referenced By:
-#  pact_publications | pact_publications_pact_version_id_fkey | (pact_version_id) REFERENCES pact_versions(id)
-#  verifications     | verifications_pact_version_id_fkey     | (pact_version_id) REFERENCES pact_versions(id)
+#  pact_publications                                            | pact_publications_pact_version_id_fkey                          | (pact_version_id) REFERENCES pact_versions(id)
+#  verifications                                                | verifications_pact_version_id_fkey                              | (pact_version_id) REFERENCES pact_versions(id)
+#  latest_pact_publication_ids_for_consumer_versions            | latest_pact_publication_ids_for_consumer_v_pact_version_id_fkey | (pact_version_id) REFERENCES pact_versions(id) ON DELETE CASCADE
+#  latest_verification_id_for_pact_version_and_provider_version | latest_v_id_for_pv_and_pv_pact_version_id_fk                    | (pact_version_id) REFERENCES pact_versions(id) ON DELETE CASCADE

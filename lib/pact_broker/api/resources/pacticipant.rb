@@ -45,9 +45,7 @@ module PactBroker
         end
 
         def delete_resource
-          with_matrix_refresh do
-            pacticipant_service.delete pacticipant_name
-          end
+          pacticipant_service.delete pacticipant_name
           true
         end
 

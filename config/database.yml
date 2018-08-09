@@ -11,6 +11,11 @@ test:
   postgres:
     <<: *default
     adapter: postgres
+  docker_postgres:
+    <<: *default
+    adapter: postgres
+    host: "127.0.0.1"
+    port: "5433"
   mysql:
     <<: *default
     adapter: mysql2
@@ -22,6 +27,11 @@ development:
   postgres:
     <<: *default
     adapter: postgres
+  docker_postgres:
+    <<: *default
+    adapter: postgres
+    host: "127.0.0.1"
+    port: "5433"
   mysql:
     <<: *default
     adapter: mysql2

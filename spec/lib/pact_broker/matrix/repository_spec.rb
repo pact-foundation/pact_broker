@@ -19,26 +19,6 @@ module PactBroker
         rows.collect{ |r| shorten_row(r) }
       end
 
-      describe "refresh" do
-        before do
-          td.create_pact_with_hierarchy("Foo", "1", "Bar")
-          Row.refresh(pacticipant_id: td.provider.id)
-        end
-
-        context "when deleting an object in the block" do
-          it "removes the relevant lines from the matrix" do
-            expect(Row.count).to_not eq 0
-            Repository.new.refresh(pacticipant_name: "Bar") { PactBroker::Pacticipants::Service.delete("Bar") }
-            expect(Row.count).to eq 0
-          end
-
-          it "yields the block" do
-            Repository.new.refresh(pacticipant_name: "Bar") { PactBroker::Pacticipants::Service.delete("Bar") }
-            expect(PactBroker::Domain::Pacticipant.where(name: "Bar").count).to eq 0
-          end
-        end
-      end
-
       describe "find" do
         before do
           # A1 - B1

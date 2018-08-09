@@ -40,26 +40,12 @@ class TestDataBuilder
   attr_reader :webhook
   attr_reader :webhook_execution
   attr_reader :triggered_webhook
-  attr_accessor :auto_refresh_matrix
 
   def initialize(params = {})
-    @auto_refresh_matrix = params.fetch(:auto_refresh_matrix, true)
   end
 
   def comment *args
     self
-  end
-
-  def refresh_matrix
-    if auto_refresh_matrix
-      params = {}
-      params[:consumer_name] = consumer.name if consumer
-      params[:provider_name] = provider.name if provider
-      matrix_service.refresh(params)
-      # Row is not used in production code, but the tests depend on it
-      # Technically this code is expecting ids, but it will work with names too
-      PactBroker::Matrix::Row.refresh(params)
-    end
   end
 
   def create_pricing_service
@@ -206,7 +192,6 @@ class TestDataBuilder
   def create_consumer_version_tag tag_name, params = {}
     params.delete(:comment)
     @tag = PactBroker::Domain::Tag.create(name: tag_name, version: @consumer_version)
-    refresh_matrix
     self
   end
 
@@ -227,7 +212,6 @@ class TestDataBuilder
     set_created_at_if_set params[:created_at], :pact_publications, {id: @pact.id}
     set_created_at_if_set params[:created_at], :pact_versions, {sha: @pact.pact_version_sha}
     @pact = PactBroker::Pacts::PactPublication.find(id: @pact.id).to_domain
-    refresh_matrix
     self
   end
 
@@ -241,7 +225,6 @@ class TestDataBuilder
   def revise_pact json_content = nil
     json_content = json_content ? json_content : {random: rand}.to_json
     @pact = PactBroker::Pacts::Repository.new.update(@pact.id, json_content: json_content)
-    refresh_matrix
     self
   end
 
@@ -328,7 +311,6 @@ class TestDataBuilder
         PactBroker::Domain::Tag.create(name: tag_name, version: @provider_version)
       end
     end
-    refresh_matrix
     self
   end
 

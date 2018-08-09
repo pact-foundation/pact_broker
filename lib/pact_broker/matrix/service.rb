@@ -10,14 +10,6 @@ module PactBroker
       extend PactBroker::Repositories
       extend PactBroker::Services
 
-      def refresh params, &block
-        matrix_repository.refresh(params, &block)
-      end
-
-      def refresh_tags params, &block
-        matrix_repository.refresh_tags(params, &block)
-      end
-
       def find selectors, options = {}
         query_results = matrix_repository.find selectors, options
         pacticipant_names = selectors.collect{ | s| s[:pacticipant_name] }

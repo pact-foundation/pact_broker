@@ -57,6 +57,8 @@ end
 # Foreign key constraints:
 #  versions_pacticipant_id_fkey | (pacticipant_id) REFERENCES pacticipants(id)
 # Referenced By:
-#  tags              | tags_version_id_fkey                       | (version_id) REFERENCES versions(id)
-#  pact_publications | pact_publications_consumer_version_id_fkey | (consumer_version_id) REFERENCES versions(id)
-#  verifications     | fk_verifications_versions                  | (provider_version_id) REFERENCES versions(id)
+#  tags                                                         | tags_version_id_fkey                                            | (version_id) REFERENCES versions(id)
+#  pact_publications                                            | pact_publications_consumer_version_id_fkey                      | (consumer_version_id) REFERENCES versions(id)
+#  verifications                                                | fk_verifications_versions                                       | (provider_version_id) REFERENCES versions(id)
+#  latest_pact_publication_ids_for_consumer_versions            | latest_pact_publication_ids_for_consum_consumer_version_id_fkey | (consumer_version_id) REFERENCES versions(id) ON DELETE CASCADE
+#  latest_verification_id_for_pact_version_and_provider_version | latest_v_id_for_pv_and_pv_provider_version_id_fk                | (provider_version_id) REFERENCES versions(id) ON DELETE CASCADE
