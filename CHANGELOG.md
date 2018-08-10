@@ -1,3 +1,41 @@
+<a name="v2.25.0"></a>
+### v2.25.0 (2018-08-09)
+
+
+#### Features
+
+* make contract_content_changed tag aware	 ([8e7d0e47](/../../commit/8e7d0e47))
+* move "latest id" upsert logic into own class	 ([360d236f](/../../commit/360d236f))
+* replace latest_verifications view with latest_verifications_for_provider_versions	 ([ee4fef99](/../../commit/ee4fef99))
+* sort tags in text/plain version of /dashboard	 ([0a821490](/../../commit/0a821490))
+* optimise data migrations that set pacticipant ids	 ([9a148b80](/../../commit/9a148b80))
+* add pact_version_id to latest_pact_publication_ids table	 ([627ce6db](/../../commit/627ce6db))
+* optimise query for loading latest verification for the latest pacts for each tag on index page	 ([8bc58442](/../../commit/8bc58442))
+* add consumer_id to pact_publications table	 ([d520e228](/../../commit/d520e228))
+* add consumer id and provider id to verifications table to speed up queries	 ([d5698901](/../../commit/d5698901))
+* run data migrations on startup to ensure data created by old nodes is migrated when performing a rolling update	 ([ec59ba5b](/../../commit/ec59ba5b))
+* move migrations on feature branch to run last	 ([78d31c49](/../../commit/78d31c49))
+* remove refresh of materialized_matrix and materialized_head_matrix	 ([262af756](/../../commit/262af756))
+* keep track of the latest verification for a pact version for each provider version, rather than calculating it	 ([110495a9](/../../commit/110495a9))
+* store latest pact publication ids for each consumer version	 ([d239bfdf](/../../commit/d239bfdf))
+* keep track of latest pact revision in table rather than calculating it	 ([e9cd9e1b](/../../commit/e9cd9e1b))
+* move pb:wip-provider-pacts to beta:wip-provider-pacts	 ([3008140a](/../../commit/3008140a))
+* make feature toggles case insensitive and space aware	 ([f4a03c0c](/../../commit/f4a03c0c))
+* add feature toggle via environment variable PACT_BROKER_FEATURES	 ([f0737b97](/../../commit/f0737b97))
+* keep track of the latest verification for a pact version for each provider version, rather than calculating it	 ([b4f18770](/../../commit/b4f18770))
+* store latest pact publication ids for each consumer version	 ([c8fa5545](/../../commit/c8fa5545))
+* keep track of latest pact revision in table rather than calculating it	 ([1db5b7ba](/../../commit/1db5b7ba))
+
+* **index**
+  * eager load latest verification for consumer and provider	 ([1bf61afc](/../../commit/1bf61afc))
+
+
+#### Bug Fixes
+
+* **index page**
+  * correct pact URL when showing index with tags	 ([a5bda98f](/../../commit/a5bda98f))
+
+
 <a name="v2.24.0"></a>
 ### v2.24.0 (2018-07-08)
 
