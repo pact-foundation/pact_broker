@@ -83,10 +83,10 @@ module PactBroker
               title: 'Webhooks',
               templated: false
             },
-            'beta:wip-provider-pacts' =>
+            'beta:pending-provider-pacts' =>
             {
-              href: base_url + '/pacts/provider/{provider}/wip',
-              title: 'WIP pact versions for the specified provider',
+              href: base_url + '/pacts/provider/{provider}/pending',
+              title: 'Pending pact versions for the specified provider',
               templated: true
             },
             'curies' =>

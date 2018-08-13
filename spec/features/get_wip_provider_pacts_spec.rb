@@ -1,4 +1,4 @@
-describe "Get WIP provider pacts" do
+describe "Get pending provider pacts" do
   subject { get path; last_response }
 
   let(:last_response_body) { JSON.parse(subject.body, symbolize_names: true) }
@@ -13,7 +13,7 @@ describe "Get WIP provider pacts" do
         .create_pact
     end
 
-    let(:path) { "/pacts/provider/Provider/wip" }
+    let(:path) { "/pacts/provider/Provider/pending" }
 
     it "returns a 200 HAL JSON response" do
       expect(subject).to be_a_hal_json_success_response

@@ -92,7 +92,7 @@ module PactBroker
         end
       end
 
-      def find_wip_pact_versions_for_provider provider_name
+      def find_pending_pact_versions_for_provider provider_name
         provider_id = pacticipant_repository.find_by_name(provider_name).id
         pact_publication_ids = PactBroker::Matrix::HeadRow.where(provider_id: provider_id).exclude(success: true).select_for_subquery(:pact_publication_id)
         AllPactPublications.where(id: pact_publication_ids).order_ignore_case(:consumer_name).order_append(:consumer_version_order).collect(&:to_domain)

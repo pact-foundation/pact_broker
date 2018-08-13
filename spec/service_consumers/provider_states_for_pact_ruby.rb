@@ -6,11 +6,11 @@ Pact.provider_states_for "Pact Ruby" do
     no_op
   end
 
-  provider_state "the relation for retrieving WIP pacts exists in the index resource" do
+  provider_state "the relation for retrieving pending pacts exists in the index resource" do
     no_op
   end
 
-  provider_state "consumer-1 has a WIP pact with provider provider-1" do
+  provider_state "consumer-1 has a pending pact with provider provider-1" do
     set_up do
       TestDataBuilder.new
         .create_provider('provider-1')

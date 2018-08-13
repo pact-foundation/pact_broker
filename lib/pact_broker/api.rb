@@ -41,8 +41,8 @@ module PactBroker
         add ['pacts', 'provider', :provider_name, 'latest', :tag], Api::Resources::LatestProviderPacts, {resource_name: "latest_tagged_provider_pact_publications"}
         add ['pacts', 'latest'], Api::Resources::LatestPacts, {resource_name: "latest_pacts"}
 
-        # WIP pacts
-        add ['pacts', 'provider', :provider_name, 'wip'], Api::Resources::WipProviderPacts, {resource_name: "wip_provider_pact_publications"}
+        # Pending pacts
+        add ['pacts', 'provider', :provider_name, 'pending'], Api::Resources::PendingProviderPacts, {resource_name: "pending_provider_pact_publications"}
 
         # Deprecated pact
         add ['pact', 'provider', :provider_name, 'consumer', :consumer_name, 'version', :consumer_version_number], Api::Resources::Pact, {resource_name: "pact_publications", deprecated: "true"} # Deprecate, singular /pact

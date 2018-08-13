@@ -5,8 +5,8 @@ module PactBroker
     describe Repository do
       let(:td) { TestDataBuilder.new }
 
-      describe "find_wip_pact_versions_for_provider" do
-        subject { Repository.new.find_wip_pact_versions_for_provider("bar") }
+      describe "find_pending_pact_versions_for_provider" do
+        subject { Repository.new.find_pending_pact_versions_for_provider("bar") }
 
         context "when the latest pact for a tag has been successfully verified" do
           before do
