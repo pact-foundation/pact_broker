@@ -1,3 +1,13 @@
+<a name="v2.26.0"></a>
+### v2.26.0 (2018-08-23)
+
+
+#### Features
+
+* change default value of base_equality_only_on_content_that_affects_verification_results to true	 ([615f0c90](/../../commit/615f0c90))
+* renamed 'wip pacts' to 'pending pacts'	 ([11a56b5c](/../../commit/11a56b5c))
+
+
 <a name="v2.25.0"></a>
 ### v2.25.0 (2018-08-09)
 
