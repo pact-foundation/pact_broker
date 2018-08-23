@@ -109,8 +109,8 @@ module PactBroker
               def valid_url?(url)
                 uri = parse_uri(url)
                 uri.scheme && uri.host
-              rescue URI::InvalidURIError
-                false
+              rescue URI::InvalidURIError, ArgumentError
+                nil
               end
 
               def allowed_webhook_method?(http_method)

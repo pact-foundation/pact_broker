@@ -23,7 +23,7 @@ module Rack
         begin
           parse(::Rack::Request.new(env).url)
           true
-        rescue URI::InvalidURIError
+        rescue URI::InvalidURIError, ArgumentError
           false
         end
       end

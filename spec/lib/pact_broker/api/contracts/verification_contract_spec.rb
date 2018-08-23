@@ -64,6 +64,14 @@ module PactBroker
             its(:errors) { is_expected.to be_empty }
           end
 
+          context "when the buildURL is not stringable" do
+            let(:build_url) { {} }
+
+            it "has an error" do
+              expect(subject.errors[:build_url]).to include(match("URL"))
+            end
+          end
+
           context "when the providerApplicationVersion is not present" do
             let(:params) { modify valid_params, without: :providerApplicationVersion }
             it "has an error" do

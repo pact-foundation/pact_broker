@@ -25,7 +25,7 @@ module PactBroker
 
         def uri
           URI(url)
-        rescue URI::InvalidURIError
+        rescue URI::InvalidURIError, ArgumentError
           nil
         end
       end
