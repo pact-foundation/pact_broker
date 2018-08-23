@@ -5,7 +5,7 @@ module PactBroker
     module Decorators
       class VerificationDecorator < BaseDecorator
 
-        property :provider_name, as: :providerName, writeable: :false
+        property :provider_name, as: :providerName, writeable: false
         property :provider_version_number, as: :providerApplicationVersion, writeable: false
         property :success
         property :execution_date, as: :verificationDate

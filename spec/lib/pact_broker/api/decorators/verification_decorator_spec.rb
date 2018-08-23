@@ -34,7 +34,9 @@ module PactBroker
         let(:options) { { user_options: { base_url: 'http://example.org' } } }
 
 
-        subject { JSON.parse VerificationDecorator.new(verification).to_json(options), symbolize_names: true }
+        let(:json) { VerificationDecorator.new(verification).to_json(options) }
+
+        subject { JSON.parse json, symbolize_names: true }
 
         it "includes the success status" do
           expect(subject[:success]).to eq true
