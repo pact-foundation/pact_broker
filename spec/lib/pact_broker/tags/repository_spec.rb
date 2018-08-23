@@ -4,8 +4,41 @@ require 'pact_broker/tags/repository'
 module PactBroker
   module Tags
     describe Repository do
-
       let(:td) { TestDataBuilder.new }
+
+      describe ".create" do
+        before do
+          td.create_pacticipant("foo")
+            .create_version("1")
+        end
+
+        let(:params) { { name: "prod", version: td.version } }
+
+        subject { Repository.new.create(params) }
+
+        it "returns a tag" do
+          expect(subject).to be_a(Domain::Tag)
+        end
+
+        it "sets the properties" do
+          expect(subject.name).to eq "prod"
+          expect(subject.version.id).to eq td.version.id
+        end
+
+        context "when the tag already exists" do
+          before do
+            td.create_tag("prod")
+          end
+
+          it "does nothing" do
+            expect { subject }.to_not change { Domain::Tag.count }
+          end
+
+          it "returns a tag" do
+            expect(subject).to be_a(Domain::Tag)
+          end
+        end
+      end
 
       describe ".find" do
 

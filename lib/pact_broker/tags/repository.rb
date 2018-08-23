@@ -9,7 +9,14 @@ module PactBroker
       include PactBroker::Repositories::Helpers
 
       def create args
-        Domain::Tag.new(name: args.fetch(:name), version: args.fetch(:version)).save
+        params = {
+          name: args.fetch(:name),
+          version_id: args.fetch(:version).id,
+          created_at: Sequel.datetime_class.now,
+          updated_at: Sequel.datetime_class.now
+        }
+        Domain::Tag.dataset.insert_ignore.insert(params)
+        Domain::Tag.find(name: args[:name], version_id: args[:version].id)
       end
 
       def find args

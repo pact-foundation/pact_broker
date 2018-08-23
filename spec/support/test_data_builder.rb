@@ -35,6 +35,7 @@ class TestDataBuilder
   attr_reader :provider
   attr_reader :consumer_version
   attr_reader :provider_version
+  attr_reader :version
   attr_reader :pact
   attr_reader :verification
   attr_reader :webhook
