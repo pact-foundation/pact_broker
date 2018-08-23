@@ -31,7 +31,7 @@ module PactBroker
       end
 
       def delete_by_version_id version_id
-        Sequel::Model.db[:tags].where(version_id: version_id).delete
+        Domain::Tag.where(version_id: version_id).delete
       end
 
       def find_all_tag_names_for_pacticipant pacticipant_name

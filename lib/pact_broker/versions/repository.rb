@@ -60,7 +60,7 @@ module PactBroker
           created_at: Sequel.datetime_class.now,
           updated_at: Sequel.datetime_class.now
         }
-        id = PactBroker::Domain::Version.db[:versions].insert_ignore.insert(version_params)
+        id = PactBroker::Domain::Version.dataset.insert_ignore.insert(version_params)
         version = PactBroker::Domain::Version.find(number: args[:number], pacticipant_id: args[:pacticipant_id])
         PactBroker::Domain::OrderVersions.(version)
         version.refresh # reload with the populated order
@@ -75,7 +75,7 @@ module PactBroker
       end
 
       def delete_by_id version_ids
-        Sequel::Model.db[:versions].where(id: version_ids).delete
+        Domain::Version.where(id: version_ids).delete
       end
     end
   end
