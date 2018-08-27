@@ -83,6 +83,11 @@ module PactBroker
               title: 'Webhooks',
               templated: false
             },
+            'pb:integrations' => {
+              href: base_url + '/integrations',
+              title: 'Integrations',
+              templated: false
+            },
             'beta:pending-provider-pacts' =>
             {
               href: base_url + '/pacts/provider/{provider}/pending',

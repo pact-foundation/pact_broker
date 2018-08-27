@@ -83,6 +83,8 @@ module PactBroker
 
         add ['dashboard'], Api::Resources::Dashboard, {resource_name: "dashboard"}
         add ['test','error'], Api::Resources::ErrorTest, {resource_name: "error_test"}
+
+        add ['integrations'], Api::Resources::Integrations, {resource_name: "integrations"}
         add [], Api::Resources::Index, {resource_name: "index"}
       end
     end
