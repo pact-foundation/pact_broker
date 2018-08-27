@@ -1,11 +1,11 @@
 require 'pact_broker/db'
 require 'pact_broker/messages'
 require 'pact_broker/repositories/helpers'
+require 'pact_broker/versions/latest_version'
+require 'pact_broker/domain/label'
 
 module PactBroker
-
   module Domain
-
     class Pacticipant < Sequel::Model
 
       include Messages
@@ -15,6 +15,7 @@ module PactBroker
       one_to_many :versions, :order => :order, :reciprocal => :pacticipant
       one_to_many :labels, :order => :name, :reciprocal => :pacticipant
       one_to_many :pacts
+      one_to_one :latest_version, :class => "PactBroker::Versions::LatestVersion", primary_key: :id, key: :pacticipant_id
 
       dataset_module do
         include PactBroker::Repositories::Helpers
