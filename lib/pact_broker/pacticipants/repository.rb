@@ -23,7 +23,7 @@ module PactBroker
       def find options = {}
         query = PactBroker::Domain::Pacticipant.select_all_qualified
         query = query.label(options[:label_name]) if options[:label_name]
-        query.order_ignore_case(Sequel[:pacticipants][:name]).all
+        query.order_ignore_case(Sequel[:pacticipants][:name]).eager(:labels).all
       end
 
       def find_all_pacticipant_versions_in_reverse_order name
