@@ -1,3 +1,12 @@
+<a name="v2.27.0"></a>
+### v2.27.0 (2018-09-07)
+
+
+#### Features
+
+* add ${pactbroker.consumerLabels} and ${pactbroker.providerLabels} to webhook templates	 ([afebbc5a](/../../commit/afebbc5a))
+
+
 <a name="v2.26.1"></a>
 ### v2.26.1 (2018-09-07)
 
