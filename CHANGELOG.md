@@ -1,3 +1,24 @@
+<a name="v2.26.1"></a>
+### v2.26.1 (2018-09-07)
+
+
+#### Features
+
+* allow integrations to be exported in dot format (text/vnd.graphviz)	 ([ac609081](/../../commit/ac609081))
+* eager load latest version for /pacticipants resource	 ([9ac2ba9b](/../../commit/9ac2ba9b))
+* eager load pacticipant labels for /pacticipants resource	 ([01dd8669](/../../commit/01dd8669))
+
+
+#### Bug Fixes
+
+* **matrix**
+  * gracefully handle and log when version is unresolved	 ([82fe19f1](/../../commit/82fe19f1))
+
+* gracefully handle attempt to create a duplicate tag	 ([53bea8b4](/../../commit/53bea8b4))
+* correct :false to false in verification decorator to correctly handle read only property providerName	 ([4af4ed1c](/../../commit/4af4ed1c))
+* gracefully handle scenario where URL supplied in JSON body is not a String	 ([b0bb6044](/../../commit/b0bb6044))
+
+
 <a name="v2.26.0"></a>
 ### v2.26.0 (2018-08-23)
 
