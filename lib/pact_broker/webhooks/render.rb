@@ -16,7 +16,9 @@ module PactBroker
           '${pactbroker.consumerVersionTags}' => consumer_version_tags(pact),
           '${pactbroker.consumerName}' => pact ? pact.consumer_name : "",
           '${pactbroker.providerName}' => pact ? pact.provider_name : "",
-          '${pactbroker.githubVerificationStatus}' => github_verification_status(verification)
+          '${pactbroker.githubVerificationStatus}' => github_verification_status(verification),
+          '${pactbroker.consumerLabels}' => pacticipant_labels(pact && pact.consumer),
+          '${pactbroker.providerLabels}' => pacticipant_labels(pact && pact.provider)
         }
 
         if escaper
@@ -60,6 +62,10 @@ module PactBroker
         else
           ""
         end
+      end
+
+      def self.pacticipant_labels pacticipant
+        pacticipant && pacticipant.labels ? pacticipant.labels.collect(&:name).join(", ") : ""
       end
     end
   end

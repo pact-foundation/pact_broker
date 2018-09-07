@@ -4,8 +4,8 @@ module PactBroker
   module Pacts
     class PlaceholderPact < PactBroker::Domain::Pact
       def initialize
-        consumer = OpenStruct.new(name: "placeholder-consumer")
-        @provider = OpenStruct.new(name: "placeholder-provider")
+        consumer = OpenStruct.new(name: "placeholder-consumer", labels: [OpenStruct.new(name: "placeholder-consumer-label")])
+        @provider = OpenStruct.new(name: "placeholder-provider", labels: [OpenStruct.new(name: "placeholder-provider-label")])
         @consumer_version = OpenStruct.new(number: "gggghhhhjjjjkkkkllll66667777888899990000", pacticipant: consumer, tags: [OpenStruct.new(name: "master")])
         @consumer_version_number = @consumer_version.number
         @created_at = DateTime.now

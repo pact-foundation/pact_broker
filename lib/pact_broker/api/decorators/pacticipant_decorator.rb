@@ -33,6 +33,14 @@ module PactBroker
           }
         end
 
+        link :'pb:label' do | options |
+          {
+            title: "Get, create or delete a label for #{represented.name}",
+            href: templated_label_url_for_pacticipant(represented.name, options[:base_url]),
+            templated: true
+          }
+        end
+
         # TODO deprecate in v3
         # URL isn't implemented
         # link 'latest-version' do | options |

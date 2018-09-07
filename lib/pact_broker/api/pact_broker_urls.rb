@@ -140,6 +140,10 @@ module PactBroker
         pacticipant_url_from_params({pacticipant_name: pacticipant_name}, base_url) + "/versions/{version}/tags/{tag}"
       end
 
+      def templated_label_url_for_pacticipant pacticipant_name, base_url = ""
+        pacticipant_url_from_params({pacticipant_name: pacticipant_name}, base_url) + "/labels/{label}"
+      end
+
       def label_url label, base_url
         "#{labels_url(label.pacticipant, base_url)}/#{label.name}"
       end

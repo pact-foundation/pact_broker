@@ -21,6 +21,8 @@ module PactBroker
             consumer_version_number: "1.2.3+foo",
             consumer_name: "Foo",
             provider_name: "Bar",
+            consumer: consumer,
+            provider: provider,
             latest_verification: nil)
         end
 
@@ -32,6 +34,8 @@ module PactBroker
             consumer_version_number: "1.2.3+foo",
             consumer_name: "Foo",
             provider_name: "Bar",
+            consumer: consumer,
+            provider: provider,
             latest_verification: verification)
         end
 
@@ -41,7 +45,17 @@ module PactBroker
             consumer_version_number: "1.2.3+foo",
             consumer_name: "Foo",
             provider_name: "Bar",
+            consumer: consumer,
+            provider: provider,
             latest_verification: failed_verification)
+        end
+
+        let (:provider) do
+          double("provider", labels: provider_labels)
+        end
+
+        let (:consumer) do
+          double("consumer", labels: consumer_labels)
         end
 
         let(:verification) do
@@ -68,6 +82,14 @@ module PactBroker
           [ double("tag", name: "test") ]
         end
 
+        let(:provider_labels) do
+          [ double("label", name: "finance"), double("label", name: "IT") ]
+        end
+
+        let(:consumer_labels) do
+          [ double("label", name: "foo"), double("label", name: "bar") ]
+        end
+
         let(:nil_pact) { nil }
         let(:nil_verification) { nil }
 
@@ -91,6 +113,8 @@ module PactBroker
           ["${pactbroker.verificationResultUrl}", "http://verification", :pact_with_successful_verification, :verification],
           ["${pactbroker.providerVersionTags}", "test, prod", :pact_with_successful_verification, :verification],
           ["${pactbroker.consumerVersionTags}", "test", :pact_with_successful_verification, :verification],
+          ["${pactbroker.consumerLabels}", "foo, bar", :pact_with_successful_verification, :verification],
+          ["${pactbroker.providerLabels}", "finance, IT", :pact, :nil_verification],
         ]
 
         TEST_CASES.each do | (template, expected_output, pact_var_name, verification_var_name) |
