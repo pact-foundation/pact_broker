@@ -7,7 +7,6 @@ module PactBroker
   module Matrix
     describe DeploymentStatusSummary do
       describe ".call" do
-
         let(:rows) { [row_1, row_2] }
         let(:row_1) do
           double(Row,
@@ -52,7 +51,6 @@ module PactBroker
           ]
         end
 
-
         subject { DeploymentStatusSummary.new(rows, resolved_selectors, integrations) }
 
         context "when there is a row for all integrations" do
@@ -91,6 +89,26 @@ module PactBroker
           its(:deployable?) { is_expected.to be nil }
           its(:reasons) { is_expected.to eq ["There is no verified pact between Foo (ddec8101dabf4edf9125a69f9a161f0f294af43c) and Baz (4ee06460f10e8207ad904fa9fa6c4842e462ab59)"] }
           its(:counts) { is_expected.to eq success: 1, failed: 0, unknown: 1 }
+        end
+
+        context "when there is something unexpected about the data and the resolved selector cannot be found" do
+          let(:rows) { [row_1] }
+
+          let(:resolved_selectors) do
+            [
+              {
+                pacticipant_id: 3, pacticipant_version_number: "4ee06460f10e8207ad904fa9fa6c4842e462ab59"
+              }
+            ]
+          end
+
+          its(:deployable?) { is_expected.to be nil }
+          its(:reasons) { is_expected.to eq ["There is no verified pact between Foo (unresolved version) and Baz (4ee06460f10e8207ad904fa9fa6c4842e462ab59)"] }
+
+          it "logs a warning" do
+            expect(PactBroker.logger).to receive(:warn).with(/Could not find the resolved version/)
+            subject.reasons
+          end
         end
       end
     end

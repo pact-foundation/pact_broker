@@ -1,3 +1,5 @@
+require 'pact_broker/logging'
+
 module PactBroker
   module Matrix
     class DeploymentStatusSummary
@@ -82,7 +84,13 @@ module PactBroker
       end
 
       def resolved_version_for(pacticipant_id)
-        resolved_selectors.find{ | s| s[:pacticipant_id] == pacticipant_id }[:pacticipant_version_number]
+        resolved_selector = resolved_selectors.find{ | s| s[:pacticipant_id] == pacticipant_id }
+        if resolved_selector
+          resolved_selector[:pacticipant_version_number]
+        else
+          PactBroker.logger.warn "Could not find the resolved version for pacticipant_id #{pacticipant_id} from integrations #{integrations.collect(&:to_s).join(", ")} in resolved selectors #{resolved_selectors.inspect}"
+          "unresolved version"
+        end
       end
     end
   end
