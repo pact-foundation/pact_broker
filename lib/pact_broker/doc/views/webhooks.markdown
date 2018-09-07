@@ -123,7 +123,7 @@ Pact Broker Github repository.
 
 * **Host**: If the `webhook_host_whitelist` contains any entries, the host must match one or more of the entries. By default, it is empty. For security purposes, if the host whitelist is empty, the response details will not be logged to the UI (though they can be seen in the application logs at debug level).
 
-  The host whitelist may contain hostnames (eg `"github.com"`), IPs (eg `"192.0.345.4"`), network ranges (eg `"10.0.0.0/8"`) or regular expressions (eg `/.*\.foo\.com$/`). Note that IPs are not resolved, so if you specify an IP range, you need to use the IP in the webhook URL. If you wish to allow webhooks to any host (not recommended!), you can set `webhook_host_whitelist` to `[/.*/]`. Beware of any sensitive endpoints that may be exposed within the same network.
+  The host whitelist may contain hostnames (eg `"github.com"`), domains beginning with `*` (eg. `"*.foo.com"`), IPs (eg `"192.0.345.4"`), network ranges (eg `"10.0.0.0/8"`) or regular expressions (eg `/.*\.foo\.com$/`). Note that IPs are not resolved, so if you specify an IP range, you need to use the IP in the webhook URL. If you wish to allow webhooks to any host (not recommended!), you can set `webhook_host_whitelist` to `[/.*/]`. Beware of any sensitive endpoints that may be exposed within the same network.
 
   The recommended set of values to start with are:
 
@@ -131,7 +131,9 @@ Pact Broker Github repository.
     * your company chat (eg. Slack, for publishing notifications)
     * your code repository (eg. Github, for sending commit statuses)
 
-  Alternatively, you could use a regular expression to limit requests to your company's domain. eg `/.*\.foo\.com$/` (don't forget the end of string anchor). You can test Ruby regular expressions at [rubular.com](http://rubular.com).
+  Alternatively, you could use a domain beginning with a `*` to limit requests to your company's domain.
+
+  Note that the hostname/domain matching follows that used for SSL certificate hostnames, so `*.foo.com` will match `a.foo.com` but not `a.b.foo.com`. If you need more flexible matching because you have domains with variable "parts" (eg `a.b.foo.com`), you can use a regular expression (eg `/.*\.foo\.com$/` - don't forget the end of string anchor). You can test Ruby regular expressions at [rubular.com](http://rubular.com).
 
 ### Testing
 

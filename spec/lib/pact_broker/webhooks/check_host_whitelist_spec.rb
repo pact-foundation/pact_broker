@@ -23,6 +23,44 @@ module PactBroker
         end
       end
 
+      context "when the whitelist includes *.foo.bar" do
+        let(:whitelist) { ["*.foo.bar"] }
+
+        it "matches host a.foo.bar" do
+          expect(CheckHostWhitelist.call("a.foo.bar", whitelist)).to eq whitelist
+        end
+
+        it "does not matche host a.b.foo.bar" do
+          expect(CheckHostWhitelist.call("a.b.foo.bar", whitelist)).to eq []
+        end
+
+        it "does not match a.foo.bar.b" do
+          expect(CheckHostWhitelist.call("a.foo.bar.b", whitelist)).to eq []
+        end
+
+        it "does not match foo.bar" do
+          expect(CheckHostWhitelist.call("foo.bar", whitelist)).to eq []
+        end
+
+        it "does not match 10.0.0.2" do
+          expect(CheckHostWhitelist.call("10.0.0.2", whitelist)).to eq []
+        end
+      end
+
+      context "when the whitelist includes *.2" do
+        it "does not match 10.0.0.2 as that's the wrong way to declare an IP range" do
+          expect(CheckHostWhitelist.call("10.0.0.2", ["*.0.0.2"])).to eq []
+        end
+      end
+
+      context "when the whitelist includes *.foo.*.bar" do
+        let(:whitelist) { ["*.foo.*.bar"] }
+
+        it "does not match host a.foo.b.bar, according to RFC 6125, section 6.4.3, subitem 1" do
+          expect(CheckHostWhitelist.call("a.foo.b.bar", whitelist)).to eq []
+        end
+      end
+
       context "when the host is localhost" do
         let(:host) { "localhost" }
 
