@@ -1,14 +1,18 @@
 module Rack
   module PactBroker
-
     # If the HTML and the CSV group resources are both requested by the browser,
     # Chrome gets confused by the content types, and when you click back, it tries to load the CSV
     # instead of the HTML page. So we have to give the CSV resource a different URL (.csv)
 
     class ConvertFileExtensionToAcceptHeader
 
-      EXTENSIONS = {".csv" => "text/csv", ".svg" => "image/svg+xml", ".json" => "application/hal+json"}
-      EXTENSION_REGEXP = /\.\w+$/
+      EXTENSION_REGEXP = /\.\w+$/.freeze
+      EXTENSIONS = {
+        ".csv" => "text/csv",
+        ".svg" => "image/svg+xml",
+        ".json" => "application/hal+json",
+        ".yaml" => "application/x-yaml"
+      }
 
       def initialize app
         @app = app
@@ -37,8 +41,6 @@ module Rack
           "HTTP_ACCEPT" => EXTENSIONS[file_extension]
         )
       end
-
     end
-
   end
 end
