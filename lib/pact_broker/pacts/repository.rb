@@ -75,13 +75,15 @@ module PactBroker
       end
 
       def find_all_pact_versions_between consumer_name, options
-        provider_name = options.fetch(:and)
-        LatestPactPublicationsByConsumerVersion
+        find_all_database_versions_between(consumer_name, options)
           .eager(:tags)
-          .consumer(consumer_name)
-          .provider(provider_name)
           .reverse_order(:consumer_version_order)
           .collect(&:to_domain)
+      end
+
+      def delete_all_pact_versions_between consumer_name, options
+        ids = find_all_database_versions_between(consumer_name, options).select_for_subquery(:id)
+        PactPublication.where(id: ids).delete
       end
 
       def find_latest_pact_versions_for_provider provider_name, tag = nil
@@ -254,6 +256,17 @@ module PactBroker
         logger.debug("Creating new pact version for sha #{sha}")
         pact_version = PactVersion.new(consumer_id: consumer_id, provider_id: provider_id, sha: sha, content: json_content)
         pact_version.save
+      end
+
+      def find_all_database_versions_between(consumer_name, options)
+        provider_name = options.fetch(:and)
+
+        query = LatestPactPublicationsByConsumerVersion
+          .consumer(consumer_name)
+          .provider(provider_name)
+
+        query = query.tag(options[:tag]) if options[:tag]
+        query
       end
     end
   end

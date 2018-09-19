@@ -277,17 +277,55 @@ module PactBroker
             .create_pact
         end
 
-        subject { Repository.new.find_all_pact_versions_between consumer_name, :and => provider_name }
+        subject { Repository.new.find_all_pact_versions_between(consumer_name, :and => provider_name) }
 
         it "returns the pacts between the specified consumer and provider" do
           expect(subject.size).to eq 2
           expect(subject.first.consumer.name).to eq consumer_name
           expect(subject.first.provider.name).to eq provider_name
           expect(subject.first.consumer_version.number).to eq "2.3.4"
-          expect(subject.first.consumer_version.tags.first.name).to eq "branch"
-          expect(subject.first.consumer_version.tags.last.name).to eq "prod"
+          expect(subject.first.consumer_version.tags.count).to eq 2
         end
 
+        context "with a tag" do
+          subject { Repository.new.find_all_pact_versions_between(consumer_name, :and => provider_name, tag: "prod") }
+
+          it "returns the pacts between the specified consumer and provider with the given tag" do
+            expect(subject.size).to eq 1
+            expect(subject.first.consumer_version.number).to eq "2.3.4"
+          end
+        end
+      end
+
+      describe "#delete_all_pact_versions_between" do
+
+        before do
+          TestDataBuilder.new
+            .create_consumer(consumer_name)
+            .create_consumer_version("1.2.3")
+            .create_provider(provider_name)
+            .create_pact
+            .create_consumer_version("2.3.4")
+            .create_consumer_version_tag("prod")
+            .create_consumer_version_tag("branch")
+            .create_pact
+            .create_provider("Another Provider")
+            .create_pact
+        end
+
+        subject { Repository.new.delete_all_pact_versions_between(consumer_name, :and => provider_name) }
+
+        it "deletes the pacts between the specified consumer and provider" do
+          expect { subject }.to change { PactPublication.count }.by(-2)
+        end
+
+        context "with a tag" do
+          subject { Repository.new.delete_all_pact_versions_between(consumer_name, :and => provider_name, tag: "prod") }
+
+          it "deletes the pacts between the specified consumer and provider with the given tag" do
+            expect { subject }.to change { PactPublication.count }.by(-1)
+          end
+        end
       end
 
       describe "#find_latest_pact_versions_for_provider" do
