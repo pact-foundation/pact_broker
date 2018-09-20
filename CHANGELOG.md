@@ -1,3 +1,22 @@
+<a name="v2.27.2"></a>
+### v2.27.2 (2018-09-14)
+
+
+#### Features
+
+* use application/yaml instead of application/x-yaml to match Swaggerhub	 ([067d6ac7](/../../commit/067d6ac7))
+* treat .yaml requests as having header Accept: application/x-yaml	 ([1c8e199f](/../../commit/1c8e199f))
+
+* **webhook whitelist**
+  * allow hosts to be whitelisted using * domains	 ([150858a1](/../../commit/150858a1))
+
+
+#### Bug Fixes
+
+* **content-type**
+  * convert 404 content-type to application/hal+json #235	 ([83958db7](/../../commit/83958db7))
+
+
 <a name="v2.27.0"></a>
 ### v2.27.0 (2018-09-07)
 
