@@ -12,6 +12,7 @@ require 'rack/pact_broker/accepts_html_filter'
 require 'rack/pact_broker/ui_authentication'
 require 'rack/pact_broker/configurable_make_it_later'
 require 'rack/pact_broker/no_auth'
+require 'rack/pact_broker/convert_404_to_hal'
 require 'sucker_punch'
 
 module PactBroker
@@ -145,6 +146,7 @@ module PactBroker
       require 'pact_broker/api'
       builder = ::Rack::Builder.new
       builder.use @make_it_later_api_auth
+      builder.use Rack::PactBroker::Convert404ToHal
       builder.use Rack::PactBroker::DatabaseTransaction, configuration.database_connection
       builder.run PactBroker::API
       builder

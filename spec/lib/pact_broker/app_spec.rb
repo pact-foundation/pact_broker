@@ -276,10 +276,26 @@ module PactBroker
         PactBroker::Database.truncate
       end
 
-      subject { put path, pact_content, {'CONTENT_TYPE' => 'application/json' }; last_response  }
+      subject { put path, pact_content, { 'CONTENT_TYPE' => 'application/json' }; last_response  }
 
       it "wraps the API with a database transaction" do
         expect { subject }.to_not change { PactBroker::Domain::Pacticipant.count }
+      end
+    end
+
+    describe "when resource is not found" do
+      subject { get("/does/not/exist", nil, { 'CONTENT_TYPE' => 'application/hal+json' })  }
+
+      it "returns a Content-Type of application/hal+json" do
+        expect(subject.headers['Content-Type']).to eq 'application/hal+json'
+      end
+
+      it "returns a JSON body" do
+        expect(subject.body).to eq ""
+      end
+
+      it "returns a 404" do
+        expect(subject.status).to eq 404
       end
     end
   end
