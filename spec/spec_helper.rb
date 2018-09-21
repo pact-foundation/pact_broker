@@ -33,7 +33,12 @@ RSpec.configure do | config |
     PactBroker::Badges::Service.clear_cache
   end
 
+  config.after :suite do
+    Pact::Fixture.check_fixtures
+  end
+
   config.include Rack::Test::Methods
+  config.include Pact::Fixture
 
   config.mock_with :rspec do |mocks|
     mocks.verify_partial_doubles = true
