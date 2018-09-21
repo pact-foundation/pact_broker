@@ -27,13 +27,15 @@ module PactBroker
           subject { get(path) }
 
           let(:user_options) do
-            {
-              base_url: "http://example.org",
-              resource_url: "http://example.org/pacts/provider/Bar/consumer/Foo/tag/prod",
-              consumer_name: "Foo",
-              provider_name: "Bar",
-              tag: "prod"
-            }
+            register_fixture(:tagged_pact_versions_decorator_user_options) do
+              {
+                base_url: "http://example.org",
+                resource_url: "http://example.org/pacts/provider/Bar/consumer/Foo/tag/prod",
+                consumer_name: "Foo",
+                provider_name: "Bar",
+                tag: "prod"
+              }
+            end
           end
 
           it "finds all the pacts with the given consumer/provider/tag" do

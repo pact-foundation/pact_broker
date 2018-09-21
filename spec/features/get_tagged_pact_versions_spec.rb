@@ -2,8 +2,8 @@ describe "retrieving tagged pact versions" do
 
   let(:path) { "/pacts/provider/Provider/consumer/Consumer/tag/prod"}
 
-  subject { get path; last_response  }
-  let(:json_response_body) { JSON.parse(subject.body, symbolize_names: true) }
+  subject { get(path) }
+  let(:json_response_body) { JSON.parse(subject.body) }
 
   before do
     TestDataBuilder.new
@@ -16,7 +16,11 @@ describe "retrieving tagged pact versions" do
       .create_pact
   end
 
-  it "returns the latest tagged pact version" do
-    expect(json_response_body[:_links][:self][:href]).to end_with("1.2.3")
+  it "returns a 200 HAL JSON response" do
+    expect(subject).to be_a_hal_json_success_response
+  end
+
+  it "returns the list of tagged pact versions" do
+    expect(json_response_body['_links']['pb:pact-versions']).to be_a Array
   end
 end
