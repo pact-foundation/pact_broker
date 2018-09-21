@@ -11,6 +11,7 @@ module PactBroker
       let(:headers) { {'Content-Type' => 'text/plain', 'Authorization' => 'foo'} }
       let(:body) { 'reqbody' }
       let(:logs) { StringIO.new }
+      let(:logger) { double('logger').as_null_object }
       let(:execution_logger) { Logger.new(logs) }
       let(:options) { {failure_log_message: 'oops', show_response: show_response} }
       let(:show_response) { true }
@@ -85,6 +86,12 @@ module PactBroker
             to_return(:status => 200, :body => "respbod", :headers => {'Content-Type' => 'text/foo, blah'})
         end
 
+        before do
+          allow(WebhookRequest).to receive(:logger).and_return(logger)
+          allow(WebhookRequest.logger).to receive(:info)
+          allow(WebhookRequest.logger).to receive(:debug)
+        end
+
         let(:request_body) { 'reqbody' }
 
         it "executes the configured request" do
@@ -93,20 +100,18 @@ module PactBroker
         end
 
         it "logs the request" do
-          allow(PactBroker.logger).to receive(:info)
-          allow(PactBroker.logger).to receive(:debug)
-          expect(PactBroker.logger).to receive(:info).with(/POST.*example/)
-          expect(PactBroker.logger).to receive(:debug).with(/.*text\/plain/)
-          expect(PactBroker.logger).to receive(:debug).with(/.*reqbody/)
+          expect(logger).to receive(:info).with(/POST.*example/)
+          expect(logger).to receive(:debug).with(/.*text\/plain/)
+          expect(logger).to receive(:debug).with(/.*reqbody/)
           execute
         end
 
         it "logs the response" do
-          allow(PactBroker.logger).to receive(:info)
-          allow(PactBroker.logger).to receive(:debug)
-          expect(PactBroker.logger).to receive(:info).with(/response.*200/)
-          expect(PactBroker.logger).to receive(:debug).with(/text\/foo/)
-          expect(PactBroker.logger).to receive(:debug).with(/respbod/)
+          allow(logger).to receive(:info)
+          allow(logger).to receive(:debug)
+          expect(logger).to receive(:info).with(/response.*200/)
+          expect(logger).to receive(:debug).with(/text\/foo/)
+          expect(logger).to receive(:debug).with(/respbod/)
           execute
         end
 
@@ -301,11 +306,11 @@ module PactBroker
 
           before do
             allow(Net::HTTP).to receive(:start).and_raise(WebhookTestError.new("blah"))
-            allow(PactBroker.logger).to receive(:error)
+            allow(logger).to receive(:error)
           end
 
           it "logs the error" do
-            expect(PactBroker.logger).to receive(:error).with(/Error.*WebhookTestError.*blah/)
+            expect(logger).to receive(:error).with(/Error.*WebhookTestError.*blah/)
             execute
           end
 

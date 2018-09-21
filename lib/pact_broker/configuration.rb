@@ -1,5 +1,6 @@
 require 'pact_broker/error'
 require 'pact_broker/config/space_delimited_string_list'
+require 'semantic_logger'
 
 module PactBroker
 
@@ -15,6 +16,7 @@ module PactBroker
   end
 
   class Configuration
+    include SemanticLogger::Loggable
 
     SAVABLE_SETTING_NAMES = [
       :order_versions_by_date,
@@ -50,10 +52,6 @@ module PactBroker
       @authenticate_with_basic_auth = nil
       @authorize = nil
       @api_error_reporters = []
-    end
-
-    def logger
-      @logger ||= create_logger log_path
     end
 
     def self.default_configuration
@@ -200,13 +198,6 @@ module PactBroker
       else
         raise ConfigurationError.new("Pact Broker configuration property `#{property_name}` must be a space delimited String or an Array")
       end
-    end
-
-    def create_logger path
-      FileUtils::mkdir_p File.dirname(path)
-      logger = Logger.new(path)
-      logger.level = Logger::DEBUG
-      logger
     end
 
     def log_path

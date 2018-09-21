@@ -39,6 +39,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'rack-protection', '~>2.0'
   gem.add_runtime_dependency 'dry-types', '~> 0.10.3' # https://travis-ci.org/pact-foundation/pact_broker/jobs/249448621
   gem.add_runtime_dependency 'table_print', '~> 1.5'
+  gem.add_runtime_dependency 'semantic_logger', '~> 4.3'
 
   gem.add_development_dependency 'pact', '~>1.14'
   gem.add_development_dependency 'rspec-pact-matchers', '~>0.1'

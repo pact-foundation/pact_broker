@@ -10,7 +10,7 @@ module PactBroker
         let(:label) { nil }
         let(:initials) { false }
         let(:verification_status) { :success }
-
+        let(:logger) { double('logger').as_null_object }
         let(:expected_url) { "https://img.shields.io/badge/#{expected_left_text}-#{expected_right_text}-#{expected_color}.svg" }
         let(:expected_color) { "brightgreen" }
         let(:expected_right_text) { "verified" }
@@ -24,6 +24,7 @@ module PactBroker
 
         before do
           Service.clear_cache
+          allow(Service).to receive(:logger).and_return(logger)
         end
 
         it "returns the svg file" do
@@ -224,7 +225,7 @@ module PactBroker
           end
 
           it "logs the error" do
-            expect(PactBroker.logger).to receive(:error).with(/Error retrieving badge from.*shield.*an error/)
+            expect(logger).to receive(:error).with(/Error retrieving badge from.*shield.*an error/)
             subject
           end
 

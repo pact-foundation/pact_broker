@@ -6,6 +6,7 @@ module PactBroker
     module Resources
       class ErrorHandler
 
+        include SemanticLogger::Loggable
         include PactBroker::Logging
 
         def self.call e, request, response

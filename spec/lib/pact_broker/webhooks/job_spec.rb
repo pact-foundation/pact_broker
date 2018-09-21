@@ -9,11 +9,13 @@ module PactBroker
         allow(PactBroker::Webhooks::Service).to receive(:execute_triggered_webhook_now).and_return(result)
         allow(PactBroker::Webhooks::Service).to receive(:update_triggered_webhook_status)
         allow(PactBroker::Webhooks::TriggeredWebhook).to receive(:find).and_return(triggered_webhook)
+        allow(Job).to receive(:logger).and_return(logger)
       end
 
       let(:triggered_webhook) { instance_double("PactBroker::Webhooks::TriggeredWebhook", webhook_uuid: '1234', id: 1) }
       let(:result) { instance_double("PactBroker::Domain::WebhookExecutionResult", success?: success)}
       let(:success) { true }
+      let(:logger) { double('logger').as_null_object }
 
       subject { Job.new.perform(triggered_webhook: triggered_webhook) }
 

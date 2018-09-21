@@ -11,6 +11,8 @@ module PactBroker
           ENV['BACKUP_TZ'] = ENV['TZ']
           ENV['TZ'] = "Australia/Melbourne"
           PactBroker.configuration.enable_public_badge_access = true
+          allow(PactBroker::Api::PactBrokerUrls).to receive(:pact_url).with('', pact).and_return(pact_url)
+          allow_any_instance_of(HtmlPactRenderer).to receive(:logger).and_return(logger)
 
           Timecop.freeze(created_at + 3)
         end
@@ -32,10 +34,7 @@ module PactBroker
             badge_url: 'http://badge'
            }
         end
-
-        before do
-          allow(PactBroker::Api::PactBrokerUrls).to receive(:pact_url).with('', pact).and_return(pact_url)
-        end
+        let(:logger) { double('logger').as_null_object }
 
         subject { HtmlPactRenderer.call pact, options }
 
@@ -95,8 +94,8 @@ module PactBroker
             end
 
             it "logs a warning" do
-              allow(PactBroker.logger).to receive(:warn).with(/Error/)
-              expect(PactBroker.logger).to receive(:warn).with(/Could not parse/)
+              allow(logger).to receive(:warn).with(/Error/)
+              expect(logger).to receive(:warn).with(/Could not parse/)
               subject
             end
           end

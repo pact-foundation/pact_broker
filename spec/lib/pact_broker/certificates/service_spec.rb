@@ -4,6 +4,11 @@ module PactBroker
   module Certificates
     describe Service do
       let(:certificate_content) { File.read('spec/fixtures/certificate.pem') }
+      let(:logger) { double('logger').as_null_object }
+
+      before do
+        allow(Service).to receive(:logger).and_return(logger)
+      end
 
       describe "#cert_store" do
         subject { Service.cert_store }
@@ -19,7 +24,7 @@ module PactBroker
           end
 
           it "logs the error" do
-            expect(PactBroker.logger).to receive(:error).with(/Error adding certificate/).at_least(1).times
+            expect(Service).to receive(:log_error).with(/Error adding certificate/).at_least(1).times
             subject
           end
 
@@ -46,7 +51,7 @@ module PactBroker
           let(:certificate_content) { File.read('spec/fixtures/certificates/cacert.pem') }
 
           it "returns all the X509 Certificate objects" do
-            expect(PactBroker.logger).to_not receive(:error).with(/Error.*1234/)
+            expect(logger).to_not receive(:error).with(/Error.*1234/)
             expect(subject.size).to eq 1
           end
         end
@@ -55,7 +60,7 @@ module PactBroker
           let(:certificate_content) { File.read('spec/fixtures/certificate-invalid.pem') }
 
           it "logs an error" do
-            expect(PactBroker.logger).to receive(:error).with(/Error.*1234/)
+            expect(logger).to receive(:error).with(/Error.*1234/)
             subject
           end
 

@@ -10,7 +10,7 @@ module PactBroker
     module Service
 
       extend self
-      include PactBroker::Logging
+      include SemanticLogger::Loggable
 
       SPACE_DASH_UNDERSCORE = /[\s_\-]/
       CACHE = {}

@@ -1,6 +1,7 @@
 require 'pact_broker/configuration'
 require 'pact_broker/db'
 require 'pact_broker/project_root'
+require 'pact_broker/default_formatter'
 require 'rack-protection'
 require 'rack/hal_browser'
 require 'rack/pact_broker/store_base_url'
@@ -18,6 +19,7 @@ require 'sucker_punch'
 module PactBroker
 
   class App
+    include SemanticLogger::Loggable
 
     attr_accessor :configuration
 
@@ -58,13 +60,9 @@ module PactBroker
 
     private
 
-    def logger
-      PactBroker.logger
-    end
-
     def post_configure
-      PactBroker.logger = configuration.logger
-      SuckerPunch.logger = configuration.logger
+      configure_logger
+      SuckerPunch.logger = SemanticLogger['SuckerPunch']
       configure_database_connection
       configure_sucker_punch
     end
@@ -163,6 +161,14 @@ module PactBroker
     def configure_sucker_punch
       SuckerPunch.exception_handler = -> (ex, klass, args) do
         PactBroker.log_error(ex, "Unhandled Suckerpunch error for #{klass}.perform(#{args.inspect})")
+      end
+    end
+
+    def configure_logger
+      if SemanticLogger.appenders.empty?
+        path = configuration.log_dir + "/pact_broker.log"
+        FileUtils.mkdir_p(configuration.log_dir)
+        SemanticLogger.add_appender(file_name: path, formatter: PactBroker::Logging::DefaultFormatter.new)
       end
     end
 

@@ -5,6 +5,12 @@ module PactBroker
     module Resources
       describe ErrorHandler do
         describe "call" do
+
+          before do
+            allow(ErrorHandler).to receive(:logger).and_return(logger)
+          end
+
+          let(:logger) { double('logger').as_null_object }
           let(:error) { StandardError.new('test error') }
           let(:thing) { double('thing', call: nil, another_call: nil) }
           let(:options) { { env: env } }
@@ -91,7 +97,7 @@ module PactBroker
             end
 
             it "logs the error" do
-              expect(PactBroker.logger).to receive(:error).at_least(1).times
+              expect(logger).to receive(:error).at_least(1).times
               subject
             end
 
