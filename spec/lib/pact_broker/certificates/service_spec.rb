@@ -24,7 +24,7 @@ module PactBroker
           end
 
           it "logs the error" do
-            expect(Service).to receive(:log_error).with(/Error adding certificate/).at_least(1).times
+            expect(Service).to receive(:log_error).with(anything, /Error adding certificate/).at_least(1).times
             subject
           end
 
