@@ -83,6 +83,7 @@ module PactBroker
 
       def delete_all_pact_versions_between consumer_name, options
         ids = find_all_database_versions_between(consumer_name, options).select_for_subquery(:id)
+        webhook_repository.delete_triggered_webhooks_by_pact_publication_ids(ids)
         PactPublication.where(id: ids).delete
       end
 

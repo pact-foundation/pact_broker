@@ -305,6 +305,9 @@ module PactBroker
             .create_consumer_version("1.2.3")
             .create_provider(provider_name)
             .create_pact
+            .create_webhook
+            .create_triggered_webhook
+            .create_webhook_execution
             .create_consumer_version("2.3.4")
             .create_consumer_version_tag("prod")
             .create_consumer_version_tag("branch")
