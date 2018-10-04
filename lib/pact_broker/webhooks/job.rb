@@ -7,7 +7,7 @@ module PactBroker
     class Job
 
       include SuckerPunch::Job
-      include SemanticLogger::Loggable
+      include PactBroker::Logging
       include PactBroker::Logging
 
       def perform data

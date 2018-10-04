@@ -8,7 +8,7 @@ module PactBroker
 
       extend self
       extend PactBroker::Logging
-      include SemanticLogger::Loggable
+      include PactBroker::Logging
 
       def cert_store
         cert_store = OpenSSL::X509::Store.new

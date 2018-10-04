@@ -16,7 +16,6 @@ module PactBroker
   end
 
   class Configuration
-    include SemanticLogger::Loggable
 
     SAVABLE_SETTING_NAMES = [
       :order_versions_by_date,
@@ -44,7 +43,7 @@ module PactBroker
     attr_accessor :disable_ssl_verification
     attr_accessor :base_equality_only_on_content_that_affects_verification_results
     attr_reader :api_error_reporters
-    attr_writer :logger
+    attr_reader :custom_logger
 
     def initialize
       @before_resource_hook = ->(resource){}
@@ -52,6 +51,7 @@ module PactBroker
       @authenticate_with_basic_auth = nil
       @authorize = nil
       @api_error_reporters = []
+      @semantic_logger = SemanticLogger[Configuration]
     end
 
     def self.default_configuration
@@ -81,6 +81,14 @@ module PactBroker
       config.webhook_scheme_whitelist = ['https']
       config.webhook_host_whitelist = []
       config
+    end
+
+    def logger
+      custom_logger || @semantic_logger
+    end
+
+    def logger= logger
+      @custom_logger = logger
     end
 
     def self.default_html_pact_render
@@ -198,10 +206,6 @@ module PactBroker
       else
         raise ConfigurationError.new("Pact Broker configuration property `#{property_name}` must be a space delimited String or an Array")
       end
-    end
-
-    def log_path
-      log_dir + "/pact_broker.log"
     end
   end
 end

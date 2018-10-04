@@ -9,7 +9,12 @@ module PactBroker
 
   module Webhooks
     describe Service do
+      before do
+        allow(Service).to receive(:logger).and_return(logger)
+      end
+
       let(:td) { TestDataBuilder.new }
+      let(:logger) { double('logger').as_null_object }
 
       describe ".delete_by_uuid" do
         before do
@@ -66,7 +71,7 @@ module PactBroker
           end
 
           it "logs that no webhook was found" do
-            expect(PactBroker.logger).to receive(:debug).with(/No webhook found/)
+            expect(logger).to receive(:debug).with(/No webhook found/)
             subject
           end
         end

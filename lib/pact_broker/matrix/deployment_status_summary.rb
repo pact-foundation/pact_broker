@@ -3,6 +3,8 @@ require 'pact_broker/logging'
 module PactBroker
   module Matrix
     class DeploymentStatusSummary
+      include PactBroker::Logging
+
       attr_reader :rows, :resolved_selectors, :integrations
 
       def initialize(rows, resolved_selectors, integrations)
@@ -88,7 +90,7 @@ module PactBroker
         if resolved_selector
           resolved_selector[:pacticipant_version_number]
         else
-          PactBroker.logger.warn "Could not find the resolved version for pacticipant_id #{pacticipant_id} from integrations #{integrations.collect(&:to_s).join(", ")} in resolved selectors #{resolved_selectors.inspect}"
+          logger.warn "Could not find the resolved version for pacticipant_id #{pacticipant_id} from integrations #{integrations.collect(&:to_s).join(", ")} in resolved selectors #{resolved_selectors.inspect}"
           "unresolved version"
         end
       end

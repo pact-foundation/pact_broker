@@ -1,6 +1,7 @@
 require 'pact_broker/repositories'
 require 'pact_broker/api/decorators/verification_decorator'
 require 'pact_broker/verifications/summary_for_consumer_version'
+require 'pact_broker/logging'
 
 module PactBroker
 
@@ -11,13 +12,14 @@ module PactBroker
 
       extend PactBroker::Repositories
       extend PactBroker::Services
+      include PactBroker::Logging
 
       def next_number
         verification_repository.next_number
       end
 
       def create next_verification_number, params, pact
-        PactBroker.logger.info "Creating verification #{next_verification_number} for pact_id=#{pact.id} from params #{params}"
+        logger.info "Creating verification #{next_verification_number} for pact_id=#{pact.id} from params #{params}"
         verification = PactBroker::Domain::Verification.new
         provider_version_number = params.fetch('providerApplicationVersion')
         PactBroker::Api::Decorators::VerificationDecorator.new(verification).from_hash(params)

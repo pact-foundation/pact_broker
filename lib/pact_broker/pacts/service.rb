@@ -11,7 +11,7 @@ module PactBroker
 
       extend PactBroker::Repositories
       extend PactBroker::Services
-      include SemanticLogger::Loggable
+      include PactBroker::Logging
 
       def find_latest_pact params
         pact_repository.find_latest_pact(params[:consumer_name], params[:provider_name], params[:tag])

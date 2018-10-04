@@ -10,7 +10,7 @@ module PactBroker
 
       extend PactBroker::Repositories
       extend PactBroker::Services
-      extend PactBroker::Logging
+      include PactBroker::Logging
 
       def self.messages_for_potential_duplicate_pacticipants pacticipant_names, base_url
         messages = []

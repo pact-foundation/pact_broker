@@ -7,7 +7,7 @@ module PactBroker
   module Config
     class Load
 
-      include SemanticLogger::Loggable
+      include PactBroker::Logging
 
       def self.call configuration
         new(configuration).call

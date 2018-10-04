@@ -11,6 +11,11 @@ module PactBroker
       let(:options) { double('options') }
       let(:pact) { double('pact') }
       let(:verification) { double('verification') }
+      let(:logger) { double('logger').as_null_object }
+
+      before do
+        allow(webhook).to receive(:logger).and_return(logger)
+      end
 
       subject(:webhook) { Webhook.new(request: request_template, consumer: consumer, provider: provider) }
 
@@ -59,8 +64,8 @@ module PactBroker
         end
 
         it "logs before and after" do
-          allow(PactBroker.logger).to receive(:info)
-          expect(PactBroker.logger).to receive(:info).with(/Executing/)
+          allow(logger).to receive(:info)
+          expect(logger).to receive(:info).with(/Executing/)
           execute
         end
       end

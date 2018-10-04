@@ -6,7 +6,7 @@ require 'erb'
 require 'pact_broker/project_root'
 
 module DB
-  include SemanticLogger::Loggable
+  include PactBroker::Logging
   ##
   # Sequel by default does not test connections in its connection pool before
   # handing them to a client. To enable connection testing you need to load the

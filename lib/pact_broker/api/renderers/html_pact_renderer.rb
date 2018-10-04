@@ -12,7 +12,7 @@ module PactBroker
 
         class NotAPactError < StandardError; end
 
-        include SemanticLogger::Loggable
+        include PactBroker::Logging
 
         def self.call pact, options = {}
           new(pact, options).call

@@ -6,7 +6,7 @@ module PactBroker
   module Config
     class Save
 
-      include SemanticLogger::Loggable
+      include PactBroker::Logging
 
       def self.call configuration, setting_names
         new(configuration, setting_names).call

@@ -53,7 +53,7 @@ module PactBroker
 
     class WebhookRequest
 
-      include SemanticLogger::Loggable
+      include PactBroker::Logging
       include PactBroker::Messages
       HEADERS_TO_REDACT = [/authorization/i, /token/i]
 

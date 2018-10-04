@@ -1,4 +1,5 @@
 require 'sequel'
+require 'pact_broker/logging'
 require 'pact_broker/domain/version'
 require 'pact_broker/tags/repository'
 
@@ -6,6 +7,7 @@ module PactBroker
   module Versions
     class Repository
 
+      include PactBroker::Logging
       include PactBroker::Repositories::Helpers
 
       def find_by_pacticipant_id_and_number pacticipant_id, number
@@ -53,7 +55,7 @@ module PactBroker
 
       # There may be a race condition if two simultaneous requests come in to create the same version
       def create args
-        PactBroker.logger.info "Upserting version #{args[:number]} for pacticipant_id=#{args[:pacticipant_id]}"
+        logger.info "Upserting version #{args[:number]} for pacticipant_id=#{args[:pacticipant_id]}"
         version_params = {
           number: args[:number],
           pacticipant_id: args[:pacticipant_id],

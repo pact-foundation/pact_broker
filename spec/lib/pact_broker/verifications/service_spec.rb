@@ -5,6 +5,11 @@ module PactBroker
 
   module Verifications
     describe Service do
+      before do
+        allow(Service).to receive(:logger).and_return(logger)
+      end
+
+      let(:logger) { double('logger').as_null_object }
 
       subject { PactBroker::Verifications::Service }
 
@@ -18,8 +23,7 @@ module PactBroker
         let(:create_verification) { subject.create 3, params, pact }
 
         it "logs the creation" do
-          allow(PactBroker.logger).to receive(:info).and_call_original
-          expect(PactBroker.logger).to receive(:info).with(/.*verification.*3.*success/)
+          expect(logger).to receive(:info).with(/.*verification.*3.*success/)
           create_verification
         end
 

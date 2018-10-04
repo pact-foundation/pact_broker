@@ -17,7 +17,7 @@ module PactBroker
   module Pacts
     class Repository
 
-      include SemanticLogger::Loggable
+      include PactBroker::Logging
       include PactBroker::Repositories
 
       def create params

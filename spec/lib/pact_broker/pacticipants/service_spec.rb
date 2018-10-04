@@ -4,11 +4,14 @@ require 'pact_broker/domain/tag'
 require 'pact_broker/domain/pact'
 
 module PactBroker
-
   module Pacticipants
     describe Service do
+      before do
+        allow(Service).to receive(:logger).and_return(logger)
+      end
 
       let(:td) { TestDataBuilder.new }
+      let(:logger) { double('logger').as_null_object }
 
       subject{ Service }
 
@@ -106,8 +109,7 @@ module PactBroker
         end
 
         it "logs the names" do
-          allow(PactBroker.logger).to receive(:info)
-          expect(PactBroker.logger).to receive(:info).with(/pacticipant_name.*Fred, Mary/)
+          expect(logger).to receive(:info).with(/pacticipant_name.*Fred, Mary/)
           subject.find_potential_duplicate_pacticipants pacticipant_name
         end
       end

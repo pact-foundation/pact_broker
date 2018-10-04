@@ -6,6 +6,13 @@ require 'pact_broker/matrix/integration'
 module PactBroker
   module Matrix
     describe DeploymentStatusSummary do
+
+      before do
+        allow(subject).to receive(:logger).and_return(logger)
+      end
+
+      let(:logger) { double('logger').as_null_object }
+
       describe ".call" do
         let(:rows) { [row_1, row_2] }
         let(:row_1) do
@@ -106,7 +113,7 @@ module PactBroker
           its(:reasons) { is_expected.to eq ["There is no verified pact between Foo (unresolved version) and Baz (4ee06460f10e8207ad904fa9fa6c4842e462ab59)"] }
 
           it "logs a warning" do
-            expect(PactBroker.logger).to receive(:warn).with(/Could not find the resolved version/)
+            expect(logger).to receive(:warn).with(/Could not find the resolved version/)
             subject.reasons
           end
         end

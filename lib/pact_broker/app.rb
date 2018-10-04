@@ -19,7 +19,7 @@ require 'sucker_punch'
 module PactBroker
 
   class App
-    include SemanticLogger::Loggable
+    include PactBroker::Logging
 
     attr_accessor :configuration
 

@@ -24,7 +24,7 @@ module PactBroker
 
       dataset_module do
         include PactBroker::Repositories::Helpers
-        include SemanticLogger::Loggable
+        include PactBroker::Logging
 
         def matching_selectors selectors
           if selectors.size == 1

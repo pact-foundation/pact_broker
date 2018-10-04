@@ -21,7 +21,7 @@ module PactBroker
         include PactBroker::Services
         include PactBroker::Api::PactBrokerUrls
         include PactBroker::Api::Resources::Authentication
-        include SemanticLogger::Loggable
+        include PactBroker::Logging
 
 
         attr_accessor :user

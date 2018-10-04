@@ -4,7 +4,7 @@ module PactBroker
   module Domain
     class OrderVersions
 
-      include SemanticLogger::Loggable
+      include PactBroker::Logging
 
       def self.call new_version
         new_version.lock!
