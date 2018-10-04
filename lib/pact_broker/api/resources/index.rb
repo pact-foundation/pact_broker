@@ -38,6 +38,12 @@ module PactBroker
               title: 'Latest pact versions',
               templated: false
             },
+            'pb:tagged-pact-versions' =>
+            {
+              href: base_url + '/pacts/provider/{provider}/consumer/{consumer}/tag/{tag}',
+              title: 'All versions of a pact for a given consumer, provider and consumer version tag',
+              templated: false
+            },
             'pb:pacticipants' =>
             {
               href: base_url + '/pacticipants',

@@ -2,11 +2,8 @@ require 'spec_helper'
 require 'pact_broker/api/decorators/pact_version_decorator'
 
 module PactBroker
-
   module Api
-
     module Decorators
-
       describe PactVersionDecorator do
 
         let(:json_content) {
