@@ -2,9 +2,7 @@ require 'logger'
 require 'semantic_logger'
 
 module PactBroker
-
   module Logging
-
     class DefaultFormatter < SemanticLogger::Formatters::Default
       def initialize
         @formatter = ::Logger::Formatter.new
