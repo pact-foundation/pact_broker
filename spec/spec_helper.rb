@@ -6,6 +6,10 @@ RACK_ENV = 'test'
 
 $: << File.expand_path("../../", __FILE__)
 
+require 'semantic_logger'
+require 'pact_broker/logging/default_formatter'
+SemanticLogger.add_appender(file_name: "log/test.log", formatter: PactBroker::Logging::DefaultFormatter.new)
+
 require 'db'
 require 'tasks/database'
 require 'pact_broker/db'

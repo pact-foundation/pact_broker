@@ -1,7 +1,7 @@
 require 'pact_broker/configuration'
 require 'pact_broker/db'
 require 'pact_broker/project_root'
-require 'pact_broker/default_formatter'
+require 'pact_broker/logging/default_formatter'
 require 'rack-protection'
 require 'rack/hal_browser'
 require 'rack/pact_broker/store_base_url'
@@ -62,7 +62,7 @@ module PactBroker
 
     def post_configure
       configure_logger
-      SuckerPunch.logger = SemanticLogger['SuckerPunch']
+      SuckerPunch.logger = configuration.custom_logger || SemanticLogger['SuckerPunch']
       configure_database_connection
       configure_sucker_punch
     end

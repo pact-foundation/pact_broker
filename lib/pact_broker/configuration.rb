@@ -51,7 +51,7 @@ module PactBroker
       @authenticate_with_basic_auth = nil
       @authorize = nil
       @api_error_reporters = []
-      @semantic_logger = SemanticLogger[Configuration]
+      @semantic_logger = SemanticLogger["root"]
     end
 
     def self.default_configuration
