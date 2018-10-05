@@ -1,21 +1,12 @@
+$: << File.expand_path("../../", __FILE__)
+
+RACK_ENV = ENV['RACK_ENV'] = 'test'
+
 require 'simplecov'
 SimpleCov.start
 
-ENV['RACK_ENV'] = 'test'
-RACK_ENV = 'test'
-
-$: << File.expand_path("../../", __FILE__)
-
-require 'semantic_logger'
-require 'pact_broker/logging/default_formatter'
-SemanticLogger.add_appender(file_name: "log/test.log", formatter: PactBroker::Logging::DefaultFormatter.new)
-
-require 'db'
-require 'tasks/database'
-require 'pact_broker/db'
-raise "Wrong environment!!! Don't run this script!! ENV['RACK_ENV'] is #{ENV['RACK_ENV']} and RACK_ENV is #{RACK_ENV}" if ENV['RACK_ENV'] != 'test' || RACK_ENV != 'test'
-PactBroker::DB.connection = PactBroker::Database.database = DB::PACT_BROKER_DB
-
+require 'support/logging'
+require 'support/database'
 require 'rack/test'
 require 'pact_broker/api'
 require 'rspec/its'
@@ -23,9 +14,9 @@ require 'rspec/pact/matchers'
 require 'sucker_punch/testing/inline'
 require 'webmock/rspec'
 
-WebMock.disable_net_connect!(allow_localhost: true)
-
 Dir.glob("./spec/support/**/*.rb") { |file| require file  }
+
+WebMock.disable_net_connect!(allow_localhost: true)
 
 I18n.config.enforce_available_locales = false
 
