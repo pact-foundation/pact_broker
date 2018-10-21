@@ -7,142 +7,140 @@
   %script{type: 'text/javascript', src:'/javascripts/matrix.js'}
   %script{type: 'text/javascript', src:'/js/bootstrap.min.js'}
 
--# This code is an embarassment. Sorry. Just trying to get as much stuff done in the little time I have.
+  .container
+    .navbar-right
+      %a{href: '/'}
+        Home
+    %h1.page-header
+      = title
 
-.container
-  .navbar-right
-    %a{href: '/'}
-      Home
-  %h1.page-header
-    = title
+    - if defined?(errors) && errors.any?
+      - errors.each do | error |
+        %div.alert.alert-danger
+          = error
 
-  - if defined?(errors) && errors.any?
-    - errors.each do | error |
-      %div.alert.alert-danger
-        = error
+    %form{action: '/matrix', onsubmit:'return onSubmit()'}
+      - selectors.each_with_index do | selector, index |
+        .selector
+          %label{for: "pacticipant#{index}"}
+            Pacticipant name
+          %input{name: 'q[]pacticipant', id: "pacticipant1#{index}", value: selector.pacticipant_name}
 
-  %form{action: '/matrix', onsubmit:'return onSubmit()'}
-    - selectors.each_with_index do | selector, index |
-      .selector
-        %label{for: "pacticipant#{index}"}
-          Pacticipant name
-        %input{name: 'q[]pacticipant', id: "pacticipant1#{index}", value: selector.pacticipant_name}
+          .input-group
 
+          .input-group
+            %select{ name: "ignorethis#{index}", class: 'version-selectorizor' }
+              %option{ value: 'specify-all-versions', selected: selector.specify_all_versions }
+                All versions
+              %option{ value: 'specify-latest', selected: selector.specify_latest }
+                Latest version
+              %option{ value: 'specify-version', selected: selector.specify_version }
+                Version number ...
+              %option{ value: 'specify-latest-tag', selected: selector.specify_latest_tag }
+                Latest version with tag ...
+              %option{ value: 'specify-all-tagged', selected: selector.specify_all_tagged }
+                All versions with tag...
+
+            %input{name: 'q[]version', type: 'text', id: "pacticipant#{index}_version", class: 'version', value: selector.pacticipant_version_number}
+
+            %input{name: 'q[]tag', type: 'text', id: "pacticipant#{index}_tag", class: 'tag', value: selector.tag}
+
+            %input{name: 'q[]latest', value: 'true', hidden: true, class: 'latest-flag'}
+
+
+      %div.top-of-group
         .input-group
-
+          %input{type: 'radio', name: "latestby", class: '', value: '', id: 'all_rows', checked: options.all_rows_checked}
+          %label{for: 'all_rows'}
+            Show all results
+      %div
         .input-group
-          %select{ name: "ignorethis#{index}", class: 'version-selectorizor' }
-            %option{ value: 'specify-all-versions', selected: selector.specify_all_versions }
-              All versions
-            %option{ value: 'specify-latest', selected: selector.specify_latest }
-              Latest version
-            %option{ value: 'specify-version', selected: selector.specify_version }
-              Version number ...
-            %option{ value: 'specify-latest-tag', selected: selector.specify_latest_tag }
-              Latest version with tag ...
-            %option{ value: 'specify-all-tagged', selected: selector.specify_all_tagged }
-              All versions with tag...
-
-          %input{name: 'q[]version', type: 'text', id: "pacticipant#{index}_version", class: 'version', value: selector.pacticipant_version_number}
-
-          %input{name: 'q[]tag', type: 'text', id: "pacticipant#{index}_tag", class: 'tag', value: selector.tag}
-
-          %input{name: 'q[]latest', value: 'true', hidden: true, class: 'latest-flag'}
+          %input{type: 'radio', name: "latestby", class: '', value: 'cvpv', id: 'cvpv', checked: options.cvpv_checked}
+          %label{for: 'cvpv'}
+            Show latest result for each consumer version/provider version
+      %div
+        .input-group
+          %input{type: 'radio', name: "latestby", class: '', value: 'cvp', id: 'cvp', checked: options.cvp_checked}
+          %label{for: 'cvp'}
+            Show latest result for each consumer version/provider
+      %div.top-of-group
+        - limit_text = "Note that the 'Show latest...' options are summaries of the 'Show all results' query, and that the limit applies to the underlying query, rather than the number of rows returned in the summary."
+        %label{for: "limit", "title": limit_text, "data-toggle": "tooltip", "data-placement": "right"}
+          Limit*
+        %input{name: 'limit', id: "limit", value: options.limit}
+      %div.top-of-group
+        %input{type: 'submit'}
 
 
-    %div.top-of-group
-      .input-group
-        %input{type: 'radio', name: "latestby", class: '', value: '', id: 'all_rows', checked: options.all_rows_checked}
-        %label{for: 'all_rows'}
-          Show all results
-    %div
-      .input-group
-        %input{type: 'radio', name: "latestby", class: '', value: 'cvpv', id: 'cvpv', checked: options.cvpv_checked}
-        %label{for: 'cvpv'}
-          Show latest result for each consumer version/provider version
-    %div
-      .input-group
-        %input{type: 'radio', name: "latestby", class: '', value: 'cvp', id: 'cvp', checked: options.cvp_checked}
-        %label{for: 'cvp'}
-          Show latest result for each consumer version/provider
-    %div.top-of-group
-      - limit_text = "Note that the 'Show latest...' options are summaries of the 'Show all results' query, and that the limit applies to the underlying query, rather than the number of rows returned in the summary."
-      %label{for: "limit", "title": limit_text, "data-toggle": "tooltip", "data-placement": "right"}
-        Limit*
-      %input{name: 'limit', id: "limit", value: options.limit}
-    %div.top-of-group
-      %input{type: 'submit'}
+    %p{style: 'text-align:right'}
+      = "#{lines.size} rows"
+    %table.table.table-bordered.table-striped{id: 'matrix'}
+      %thead
+        %th.consumer
+          = "Consumer"
+          %span.glyphicon.glyphicon-sort.sort
+        %th.consumer-version
+          = "Consumer Version"
+          %span.glyphicon.glyphicon-sort.sort
+        %th.pact-published
+          = "Pact Published"
+          %span.glyphicon.glyphicon-sort.sort
+        %th.provider
+          = "Provider"
+          %span.glyphicon.glyphicon-sort.sort
+        %th.provider-version
+          = "Provider Version"
+          %span.glyphicon.glyphicon-sort.sort
+        %th.verification-result
+          Pact verified
+          %span.glyphicon.glyphicon-sort.sort
+      %tbody
+      - lines.each do | line |
+        %tr
+          %td.consumer{'data-sort-value' => line.consumer_name}
+            %a{href: line.consumer_name_url}
+              = line.consumer_name
+          %td.consumer-version{'data-sort-value' => line.consumer_version_order}
+            %div
+              %a{href: line.consumer_version_number_url}
+                = line.display_consumer_version_number
+            - line.latest_consumer_version_tags.each do | tag |
+              .tag-parent{"title": tag.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
+                %a{href: tag.url}
+                  .tag.label.label-primary
+                    = tag.name
+            - line.other_consumer_version_tags.each do | tag |
+              .tag-parent{"title": tag.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
+                %a{href: tag.url}
+                  .tag.label.label-default
+                    = tag.name
+          %td.pact-published{'data-sort-value' => line.pact_published_order, "title": line.inherited_verification_message, "data-toggle": "tooltip"}
+            %a{href: line.pact_publication_date_url}
+              - if options.all_rows_checked
+                = "#{line.pact_publication_date} (revision #{line.pact_revision_number})"
+              - else
+                = line.pact_publication_date
 
-
-  %p{style: 'text-align:right'}
-    = "#{lines.size} rows"
-  %table.table.table-bordered.table-striped{id: 'matrix'}
-    %thead
-      %th.consumer
-        = "Consumer"
-        %span.glyphicon.glyphicon-sort.sort
-      %th.consumer-version
-        = "Consumer Version"
-        %span.glyphicon.glyphicon-sort.sort
-      %th.pact-published
-        = "Pact Published"
-        %span.glyphicon.glyphicon-sort.sort
-      %th.provider
-        = "Provider"
-        %span.glyphicon.glyphicon-sort.sort
-      %th.provider-version
-        = "Provider Version"
-        %span.glyphicon.glyphicon-sort.sort
-      %th.verification-result
-        Pact verified
-        %span.glyphicon.glyphicon-sort.sort
-    %tbody
-    - lines.each do | line |
-      %tr
-        %td.consumer{'data-sort-value' => line.consumer_name}
-          %a{href: line.consumer_name_url}
-            = line.consumer_name
-        %td.consumer-version{'data-sort-value' => line.consumer_version_order}
-          %div
-            %a{href: line.consumer_version_number_url}
-              = line.display_consumer_version_number
-          - line.latest_consumer_version_tags.each do | tag |
-            .tag-parent{"title": tag.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
-              %a{href: tag.url}
-                .tag.label.label-primary
-                  = tag.name
-          - line.other_consumer_version_tags.each do | tag |
-            .tag-parent{"title": tag.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
-              %a{href: tag.url}
-                .tag.label.label-default
-                  = tag.name
-        %td.pact-published{'data-sort-value' => line.pact_published_order, "title": line.inherited_verification_message, "data-toggle": "tooltip"}
-          %a{href: line.pact_publication_date_url}
-            - if options.all_rows_checked
-              = "#{line.pact_publication_date} (revision #{line.pact_revision_number})"
-            - else
-              = line.pact_publication_date
-
-        %td.provider{'data-sort-value' => line.provider_name}
-          %a{href: line.provider_name_url}
-            = line.provider_name
-        %td.provider-version{'data-sort-value' => line.provider_version_order}
-          %div
-            %a{href: line.provider_version_number_url}
-              = line.display_provider_version_number
-          - line.latest_provider_version_tags.each do | tag |
-            .tag-parent{"title": tag.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
-              %a{href: tag.url}
-                .tag.label.label-primary
-                  = tag.name
-          - line.other_provider_version_tags.each do | tag |
-            .tag-parent{"title": tag.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
-              %a{href: tag.url}
-                .tag.label.label-default
-                  = tag.name
-        %td.verification-result{class: line.verification_status_class, "title": line.inherited_verification_message, "data-toggle": "tooltip"}
-          %a{href: line.verification_status_url}
-            - if options.all_rows_checked && line.number
-              = "#{line.verification_status} (number #{line.number})"
-            - else
-              = line.verification_status
+          %td.provider{'data-sort-value' => line.provider_name}
+            %a{href: line.provider_name_url}
+              = line.provider_name
+          %td.provider-version{'data-sort-value' => line.provider_version_order}
+            %div
+              %a{href: line.provider_version_number_url}
+                = line.display_provider_version_number
+            - line.latest_provider_version_tags.each do | tag |
+              .tag-parent{"title": tag.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
+                %a{href: tag.url}
+                  .tag.label.label-primary
+                    = tag.name
+            - line.other_provider_version_tags.each do | tag |
+              .tag-parent{"title": tag.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
+                %a{href: tag.url}
+                  .tag.label.label-default
+                    = tag.name
+          %td.verification-result{class: line.verification_status_class, "title": line.inherited_verification_message, "data-toggle": "tooltip"}
+            %a{href: line.verification_status_url}
+              - if options.all_rows_checked && line.number
+                = "#{line.verification_status} (number #{line.number})"
+              - else
+                = line.verification_status

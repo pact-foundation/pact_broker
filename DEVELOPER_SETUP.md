@@ -8,6 +8,7 @@
 * To run the example:
 
       cd dev
+      bundle install
       bundle exec rackup
 
 * The application will be available on `http://localhost:9292`
