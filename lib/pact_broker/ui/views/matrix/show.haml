@@ -76,24 +76,25 @@
       = "#{lines.size} rows"
     %table.table.table-bordered.table-striped{id: 'matrix'}
       %thead
-        %th.consumer
-          = "Consumer"
-          %span.glyphicon.glyphicon-sort.sort
-        %th.consumer-version
-          = "Consumer Version"
-          %span.glyphicon.glyphicon-sort.sort
-        %th.pact-published
-          = "Pact Published"
-          %span.glyphicon.glyphicon-sort.sort
-        %th.provider
-          = "Provider"
-          %span.glyphicon.glyphicon-sort.sort
-        %th.provider-version
-          = "Provider Version"
-          %span.glyphicon.glyphicon-sort.sort
-        %th.verification-result
-          Pact verified
-          %span.glyphicon.glyphicon-sort.sort
+        %tr
+          %th.consumer
+            = "Consumer"
+            %span.glyphicon.glyphicon-sort.sort
+          %th.consumer-version
+            = "Consumer Version"
+            %span.glyphicon.glyphicon-sort.sort
+          %th.pact-published
+            = "Pact Published"
+            %span.glyphicon.glyphicon-sort.sort
+          %th.provider
+            = "Provider"
+            %span.glyphicon.glyphicon-sort.sort
+          %th.provider-version
+            = "Provider Version"
+            %span.glyphicon.glyphicon-sort.sort
+          %th.verification-result
+            Pact verified
+            %span.glyphicon.glyphicon-sort.sort
       %tbody
       - lines.each do | line |
         %tr
