@@ -2,7 +2,7 @@ require 'delegate'
 
 module PactBroker
   module DB
-    class Logger < SimpleDelegator
+    class LogQuietener < SimpleDelegator
       def info *args
         __getobj__().debug(*args)
       end
@@ -24,7 +24,7 @@ module PactBroker
 
       def reassure_people_that_this_is_expected(args)
         message = args.shift
-        message = message + " Don't panic. This just happens when Sequel doesn't know if a table/view exists or not."
+        message = message + " Don't panic. This happens when Sequel doesn't know if a table/view exists or not."
         [message] + args
       end
     end

@@ -1,4 +1,4 @@
-require 'pact_broker/db/logger'
+require 'pact_broker/db/log_quietener'
 
 module PactBroker
   module DB
@@ -6,7 +6,7 @@ module PactBroker
       let(:logs) { StringIO.new }
       let(:wrapped_logger) { ::Logger.new(logs) }
 
-      subject { Logger.new(wrapped_logger) }
+      subject { LogQuietener.new(wrapped_logger) }
 
       describe "error" do
         context "when the error is for a table or view that does not exist" do
