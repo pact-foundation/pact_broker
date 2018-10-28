@@ -27,7 +27,7 @@ app = PactBroker::App.new do | config |
   # change these from their default values if desired
   # config.log_dir = "./log"
   # config.auto_migrate_db = true
-  config.database_connection = Sequel.connect(DATABASE_CREDENTIALS.merge(:logger => config.logger))
+  config.database_connection = Sequel.connect(DATABASE_CREDENTIALS.merge(:logger => PactBroker::DB::LogQuietener.new(config.logger)))
 end
 
 run app

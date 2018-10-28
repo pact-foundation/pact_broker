@@ -1,3 +1,9 @@
+# To reduce the noise of the SQL logs, this class changes INFO
+# logs to DEBUG, and changes the ERROR logs that occur when
+# Sequel doesn't know if a table/view exists or not to DEBUG,
+# so that they don't freak newbies out when they start up the
+# broker for the first time.
+
 require 'delegate'
 
 module PactBroker
