@@ -1,3 +1,35 @@
+<a name="v2.27.3"></a>
+### v2.27.3 (2018-11-01)
+
+
+#### Features
+
+* add LogQuietener to example config.ru	 ([2f014f07](/../../commit/2f014f07))
+* Rename database logger delegate to LogQuietener	 ([34f44bcb](/../../commit/34f44bcb))
+* create delegate for database logger to tone down the 'table does not exist' errors that freak people out at startup	 ([573d204b](/../../commit/573d204b))
+
+* **semantic-logging**
+  * set logger for SuckerPunch and tests	 ([201eb331](/../../commit/201eb331))
+  * allow ruby standard logger to be configured to ensure backwards compatibility	 ([cfbb704c](/../../commit/cfbb704c))
+
+* **tagged-pact-versions**
+  * ensure triggered webhooks are deleted when pact versions are deleted	 ([288475f1](/../../commit/288475f1))
+  * add endpoint to view and delete a collection of pact versions by tag	 ([615025e9](/../../commit/615025e9))
+
+* **logging**
+  * implement structured logging	 ([a9133bd5](/../../commit/a9133bd5))
+
+
+#### Bug Fixes
+
+* correct foreign key between AllPactPublications and PactVersion	 ([59f76c74](/../../commit/59f76c74))
+* ensure bundle install for pact_broker:dev:setup uses correct Gemfile	 ([94f3a5f2](/../../commit/94f3a5f2))
+* Fix some invalid HTML	 ([0c9a08a8](/../../commit/0c9a08a8))
+
+* **openssl**
+  * simplify certificate test for latest LibreSSL/OpenSSL libs	 ([cce79390](/../../commit/cce79390))
+
+
 <a name="v2.27.2"></a>
 ### v2.27.2 (2018-09-14)
 
