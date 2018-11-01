@@ -15,7 +15,7 @@ module PactBroker
 
       set_primary_key :id
       associate(:one_to_many, :tags, :class => "PactBroker::Domain::Tag", :reciprocal => :version, :key => :version_id, :primary_key => :consumer_version_id)
-      associate(:many_to_one, :pact_version, :key => :pact_version_sha, :primary_key => :sha)
+      associate(:many_to_one, :pact_version, :key => :pact_version_id, :primary_key => :id)
 
       dataset_module do
         include PactBroker::Repositories::Helpers
