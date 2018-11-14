@@ -7,11 +7,11 @@
   },
   "interactions": [
     {
-      "description" : "a request for something",
+      "description" : "another request for something",
       "providerState": null,
       "request": {
         "method": "get",
-        "path" : "/something"
+        "path" : "/something_else"
       },
       "response": {
         "status": 200,
@@ -19,11 +19,11 @@
       }
     },
     {
-      "description" : "another request for something",
+      "description" : "a request for something",
       "providerState": null,
       "request": {
         "method": "get",
-        "path" : "/something_else"
+        "path" : "/something"
       },
       "response": {
         "status": 200,
