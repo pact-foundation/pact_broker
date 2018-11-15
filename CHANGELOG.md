@@ -1,3 +1,13 @@
+<a name="v2.27.4"></a>
+### v2.27.4 (2018-11-15)
+
+
+#### Bug Fixes
+
+* handle race conditions when creating a pacticipant	 ([b3799670](/../../commit/b3799670))
+* correct order of arguments for merging pacts	 ([f6cfb197](/../../commit/f6cfb197))
+
+
 <a name="v2.27.3"></a>
 ### v2.27.3 (2018-11-01)
 
