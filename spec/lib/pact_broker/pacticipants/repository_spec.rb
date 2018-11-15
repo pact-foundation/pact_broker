@@ -5,6 +5,39 @@ require 'support/test_data_builder'
 module PactBroker
   module Pacticipants
     describe Repository do
+      describe "#create" do
+        let(:repository) { Repository.new }
+
+        subject { repository.create(name: "Foo") }
+
+        context "when the pacticipant does not already exist" do
+          before do
+            TestDataBuilder.new.create_pacticipant("Bar")
+          end
+
+          subject { repository.create(name: "Foo") }
+
+          it "returns the new pacticipant" do
+            expect(subject).to be_a(PactBroker::Domain::Pacticipant)
+            expect(subject.name).to eq "Foo"
+          end
+        end
+
+        context "when a race condition occurs and the pacticipant was already created by another request" do
+          before do
+            TestDataBuilder.new.create_pacticipant("Foo")
+          end
+
+          it "does not raise an error" do
+            subject
+          end
+
+          it "returns the existing pacticipant" do
+            expect(subject).to be_a(PactBroker::Domain::Pacticipant)
+            expect(subject.name).to eq "Foo"
+          end
+        end
+      end
 
       describe "#find" do
         before do
