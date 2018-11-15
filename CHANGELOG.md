@@ -1,3 +1,13 @@
+<a name="v2.27.5"></a>
+### v2.27.5 (2018-11-15)
+
+
+#### Bug Fixes
+
+* handle race conditions when creating a pacticipant on postgres	 ([2c83985f](/../../commit/2c83985f))
+* ensure latest version of rack is used to avoid vulnerability CVE-2018-16471	 ([996953f8](/../../commit/996953f8))
+
+
 <a name="v2.27.4"></a>
 ### v2.27.4 (2018-11-15)
 
