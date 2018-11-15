@@ -42,13 +42,13 @@ module PactBroker
       end
 
       def create args
-        id = PactBroker::Domain::Pacticipant.dataset.insert_ignore.insert(
+        PactBroker::Domain::Pacticipant.dataset.insert_ignore.insert(
           name: args[:name],
           repository_url: args[:repository_url],
           created_at: Sequel.datetime_class.now,
           updated_at: Sequel.datetime_class.now
         )
-        PactBroker::Domain::Pacticipant.find(id: id)
+        PactBroker::Domain::Pacticipant.find(name: args[:name])
       end
 
       def pacticipant_names
