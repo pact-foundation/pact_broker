@@ -1,3 +1,12 @@
+<a name="v2.27.6"></a>
+### v2.27.6 (2018-11-23)
+
+
+#### Bug Fixes
+
+* URL encode consumer version number in pact URL	 ([b58f4fbf](/../../commit/b58f4fbf))
+
+
 <a name="v2.27.5"></a>
 ### v2.27.5 (2018-11-15)
 
