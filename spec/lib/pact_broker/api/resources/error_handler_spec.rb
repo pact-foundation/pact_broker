@@ -8,12 +8,13 @@ module PactBroker
 
           before do
             allow(ErrorHandler).to receive(:logger).and_return(logger)
+            allow(SecureRandom).to receive(:urlsafe_base64).and_return("bYWfn-+yWPlf")
           end
 
           let(:logger) { double('logger').as_null_object }
           let(:error) { StandardError.new('test error') }
           let(:thing) { double('thing', call: nil, another_call: nil) }
-          let(:options) { { env: env } }
+          let(:options) { { env: env, error_reference: "bYWfnyWPlf" } }
           let(:request) { double('request' ) }
           let(:response) { double('response', :body= => nil) }
           let(:env) { double('env') }
@@ -37,33 +38,59 @@ module PactBroker
             subject
           end
 
-          context "when the error is a PactBroker::Error or subclass" do
-            let(:error) { Class.new(PactBroker::Error).new('test error') }
-
-            it "does not invoke the api error reporters" do
-              expect(thing).to_not receive(:call).with(error, options)
-              subject
-            end
-          end
-
-          it "creates a json error response body" do
+          it "includes an error reference" do
             expect(response).to receive(:body=) do | body |
-              expect(JSON.parse(body)['error']).to include 'message' => 'test error'
+              expect(JSON.parse(body)['error']).to include 'reference' => "bYWfnyWPlf"
             end
             subject
           end
-
 
           context "when show_backtrace_in_error_response? is true" do
             before do
               allow(PactBroker.configuration).to receive(:show_backtrace_in_error_response?).and_return(true)
             end
 
-            it "includes the backtrace in the error response" do
-              expect(response).to receive(:body=) do | body |
-                expect(body).to include("backtrace")
+            context "when the error is a PactBroker::Error or subclass" do
+              let(:error) { Class.new(PactBroker::Error).new('test error') }
+
+              it "does not invoke the api error reporters" do
+                expect(thing).to_not receive(:call).with(error, options)
+                subject
               end
-              subject
+
+              it "uses the error message as the message" do
+                expect(response).to receive(:body=) do | body |
+                  expect(JSON.parse(body)['error']).to include 'message' => "test error"
+                end
+                subject
+              end
+
+              it "includes the backtrace in the error response" do
+                expect(response).to receive(:body=) do | body |
+                  expect(body).to include("backtrace")
+                end
+                subject
+              end
+            end
+            context "when the error is not a PactBroker::Error or subclass" do
+              it "invokes the api error reporters" do
+                expect(thing).to receive(:call).with(error, options)
+                subject
+              end
+
+              it "uses the error message as the message" do
+                expect(response).to receive(:body=) do | body |
+                  expect(JSON.parse(body)['error']).to include 'message' => "test error"
+                end
+                subject
+              end
+
+              it "includes the backtrace in the error response" do
+                expect(response).to receive(:body=) do | body |
+                  expect(body).to include("backtrace")
+                end
+                subject
+              end
             end
           end
 
@@ -72,11 +99,47 @@ module PactBroker
               allow(PactBroker.configuration).to receive(:show_backtrace_in_error_response?).and_return(false)
             end
 
-            it "does not include the backtrace in the error response" do
-              expect(response).to receive(:body=) do | body |
-                expect(body).to_not include("backtrace")
+            context "when the error is a PactBroker::Error or subclass" do
+              let(:error) { Class.new(PactBroker::Error).new('test error') }
+
+              it "does not invoke the api error reporters" do
+                expect(thing).to_not receive(:call).with(error, options)
+                subject
               end
-              subject
+
+              it "uses the error message as the message" do
+                expect(response).to receive(:body=) do | body |
+                  expect(JSON.parse(body)['error']).to include 'message' => "test error"
+                end
+                subject
+              end
+
+              it "does not include the backtrace in the error response" do
+                expect(response).to receive(:body=) do | body |
+                  expect(body).to_not include("backtrace")
+                end
+                subject
+              end
+            end
+            context "when the error is not a PactBroker::Error or subclass" do
+              it "invokes the api error reporters" do
+                expect(thing).to receive(:call).with(error, options)
+                subject
+              end
+
+              it "uses a hardcoded error message" do
+                expect(response).to receive(:body=) do | body |
+                  expect(JSON.parse(body)['error']['message']).to match /An error/
+                end
+                subject
+              end
+
+              it "does not include the backtrace in the error response" do
+                expect(response).to receive(:body=) do | body |
+                  expect(body).to_not include("backtrace")
+                end
+                subject
+              end
             end
           end
 
