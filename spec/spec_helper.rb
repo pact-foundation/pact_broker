@@ -1,9 +1,7 @@
 $: << File.expand_path("../../", __FILE__)
 
 RACK_ENV = ENV['RACK_ENV'] = 'test'
-
-require 'simplecov'
-SimpleCov.start
+require 'spec/support/simplecov'
 
 require 'support/logging'
 require 'support/database'

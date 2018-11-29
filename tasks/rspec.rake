@@ -9,4 +9,14 @@ RSpec::Core::RakeTask.new('spec:slow') do |task|
   task.rspec_opts = '--tag @no_db_clean --tag @migration'
 end
 
+task :set_simplecov_command_to_spec_quick do
+  ENV['SIMPLECOV_COMMAND_NAME'] = 'spec:quick'
+end
+
+task :set_simplecov_command_to_spec_slow do
+  ENV['SIMPLECOV_COMMAND_NAME'] = 'spec:slow'
+end
+
+task 'spec:quick' => ['set_simplecov_command_to_spec_quick']
+task 'spec:slow' => ['set_simplecov_command_to_spec_slow']
 task :spec => ['spec:quick', 'spec:slow']

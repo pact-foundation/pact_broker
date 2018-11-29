@@ -1,4 +1,6 @@
 $: << File.expand_path("../../../", __FILE__)
+
+require 'spec/support/simplecov'
 require 'pact/provider/rspec'
 require 'db'
 require 'tasks/database'
