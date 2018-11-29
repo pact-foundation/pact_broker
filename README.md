@@ -1,10 +1,10 @@
 # Pact Broker
 [![Gem Version](https://badge.fury.io/rb/pact_broker.svg)](http://badge.fury.io/rb/pact_broker)
- [![Build Status](https://travis-ci.org/pact-foundation/pact_broker.svg?branch=master)](https://travis-ci.org/pact-foundation/pact_broker) [![Join the chat at https://gitter.im/pact-foundation/pact_broker](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/pact-foundation/pact_broker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+ [![Build Status](https://travis-ci.org/pact-foundation/pact_broker.svg?branch=master)](https://travis-ci.org/pact-foundation/pact_broker)
+ [![Join the chat at https://pact-foundation.slack.com/](https://img.shields.io/badge/chat-on%20slack-blue.svg?logo=slack)](https://slack.pact.io)
  [![security](https://hakiri.io/github/pact-foundation/pact_broker/master.svg)](https://hakiri.io/github/pact-foundation/pact_broker/master)
  [![Code Climate](https://codeclimate.com/github/pact-foundation/pact_broker/badges/gpa.svg)](https://codeclimate.com/github/pact-foundation/pact_broker)
  [![Test Coverage](https://codeclimate.com/github/pact-foundation/pact_broker/badges/coverage.svg)](https://codeclimate.com/github/pact-foundation/pact_broker/coverage)
- [![Issue Count](https://codeclimate.com/github/pact-foundation/pact_broker/badges/issue_count.svg)](https://codeclimate.com/github/pact-foundation/pact_broker)
 
 The Pact Broker is an application for sharing for consumer driven contracts and verification results. It is optimised for use with "pacts" (contracts created by the [Pact][pact-docs] framework), but can be used for any type of contract that can be serialized to JSON.
 
