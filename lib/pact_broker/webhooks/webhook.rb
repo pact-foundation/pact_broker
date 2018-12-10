@@ -71,6 +71,10 @@ module PactBroker
         end
       end
 
+      def is_for? relationship
+        (consumer_id == relationship.consumer_id || !consumer_id) && (provider_id == relationship.provider_id || !provider_id)
+      end
+
       private
 
       def self.properties_hash_from_domain webhook

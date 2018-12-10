@@ -5,6 +5,29 @@ module PactBroker
     describe HeadRow do
       let(:td) { TestDataBuilder.new }
 
+      describe "webhooks" do
+        let(:td) { TestDataBuilder.new }
+
+        before do
+          td.create_consumer("Foo")
+            .create_provider("Bar")
+            .create_consumer_version
+            .create_pact
+            .create_global_webhook
+            .create_consumer_webhook
+            .create_provider_webhook
+            .create_provider("Wiffle")
+            .create_provider_webhook
+        end
+
+        let(:row) { HeadRow.where(consumer_name: "Foo", provider_name: "Bar").single_record }
+
+        it "returns all the webhooks" do
+          rows = HeadRow.eager(:webhooks).all
+          expect(rows.first.webhooks.count).to eq 3
+        end
+      end
+
       describe "latest_verification_for_consumer_version_tag" do
         context "when the pact with a given tag has been verified" do
           before do
