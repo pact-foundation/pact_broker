@@ -16,6 +16,11 @@ test:
     adapter: postgres
     host: "127.0.0.1"
     port: "5433"
+  docker_compose_postgres:
+    <<: *default
+    adapter: postgres
+    host: postgres
+    port: "5432"
   mysql:
     <<: *default
     adapter: mysql2
