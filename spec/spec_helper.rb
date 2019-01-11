@@ -43,6 +43,7 @@ RSpec.configure do | config |
 
   config.include FixtureHelpers
   config.example_status_persistence_file_path = "./spec/examples.txt"
+  config.filter_run_excluding skip: true
 
   def app
     PactBroker::API
