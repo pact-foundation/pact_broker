@@ -11,6 +11,16 @@ module PactBroker
       include PactBroker::Logging
 
       def perform data
+        data.fetch(:database_connector).call do
+          perform_with_connection(data)
+        end
+      end
+
+      private
+
+      attr_reader :triggered_webhook, :error_count
+
+      def perform_with_connection(data)
         @data = data
         @triggered_webhook = PactBroker::Webhooks::TriggeredWebhook.find(id: data[:triggered_webhook].id)
         @error_count = data[:error_count] || 0
@@ -25,10 +35,6 @@ module PactBroker
           handle_error e
         end
       end
-
-      private
-
-      attr_reader :triggered_webhook, :error_count
 
       def execution_options
         {

@@ -76,7 +76,7 @@ module PactBroker
           end
         end
 
-        context "when there is a scheduling error" do
+        context "when there is a scheduling error", job: true do
           before do
             allow(Job).to receive(:perform_in).and_raise("an error")
           end
@@ -166,7 +166,7 @@ module PactBroker
         end
       end
 
-      describe ".execute_webhook_now integration test" do
+      describe ".execute_webhook_now integration test", job: true do
         let(:td) { TestDataBuilder.new }
 
         let!(:http_request) do
@@ -215,7 +215,7 @@ module PactBroker
         end
       end
 
-      describe ".trigger_webhooks integration test" do
+      describe ".trigger_webhooks integration test", job: true do
         let!(:http_request) do
           stub_request(:get, "http://example.org").
             to_return(:status => 200)

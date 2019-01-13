@@ -50,6 +50,46 @@ module Rack
           expect { subject }.to change { ::PactBroker::Domain::Pacticipant.count }.by(1)
         end
       end
+
+      describe "setting the database connector" do
+        let(:api) { double('api', call: [200, {}, []]) }
+
+        it "sets a database connector for use in jobs scheduled by this request" do
+          expect(api).to receive(:call) do | env |
+            expect(Thread.current[:pact_broker_thread_data].database_connector).to_not be nil
+            [200, {}, []]
+          end
+
+          subject
+        end
+
+        it "clears it after the request" do
+          subject
+          expect(Thread.current[:pact_broker_thread_data].database_connector).to be nil
+        end
+
+        context "when other middleware sets the database connector" do
+          before do
+            Thread.current[:pact_broker_thread_data] = OpenStruct.new(database_connector: other_database_connector)
+          end
+
+          let(:other_database_connector) { ->(&block) { block.call } }
+
+          it "does not override it" do
+            expect(api).to receive(:call) do | env |
+              expect(Thread.current[:pact_broker_thread_data].database_connector).to eq other_database_connector
+              [200, {}, []]
+            end
+
+            subject
+          end
+
+          it "does not clear it after the request" do
+            subject
+            expect(Thread.current[:pact_broker_thread_data].database_connector).to_not be nil
+          end
+        end
+      end
     end
   end
 end

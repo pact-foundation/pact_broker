@@ -124,18 +124,20 @@ module PactBroker
           begin
             triggered_webhook = webhook_repository.create_triggered_webhook(trigger_uuid, webhook, pact, verification, RESOURCE_CREATION)
             logger.info "Scheduling job for #{webhook.description} with uuid #{webhook.uuid}"
-            job_data = { triggered_webhook: triggered_webhook }
-            schedule_webhook_job(job_data)
+            job_data = {
+              triggered_webhook: triggered_webhook,
+              database_connector: job_database_connector
+            }
+            # Delay slightly to make sure the request transaction has finished before we execute the webhook
+            Job.perform_in(5, job_data)
           rescue StandardError => e
             log_error e
           end
         end
       end
 
-      # This is a separate method so it can be overridden in the saas broker
-      def self.schedule_webhook_job(job_data)
-        # Delay slightly to make sure the request transaction has finished before we execute the webhook
-        Job.perform_in(5, job_data)
+      def self.job_database_connector
+        Thread.current[:pact_broker_thread_data].database_connector
       end
 
       def self.find_latest_triggered_webhooks_for_pact pact

@@ -45,7 +45,7 @@ describe "Recording a pact verification" do
     expect(JSON.parse(subject.body)).to include JSON.parse(verification_content)
   end
 
-  context "with a webhook configured" do
+  context "with a webhook configured", job: true do
     before do
       td.create_webhook(
         method: 'POST',
