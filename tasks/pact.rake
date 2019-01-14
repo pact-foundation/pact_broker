@@ -14,4 +14,3 @@ namespace :pact do
   task 'verify:at' => :prepare
   task 'verify:dev' => :prepare
 end
-
