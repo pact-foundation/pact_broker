@@ -1,3 +1,19 @@
+<a name="v2.28.0"></a>
+### v2.28.0 (2019-01-15)
+
+
+#### Features
+
+* enable file list in gemspec to work without git	 ([6dd27e26](/../../commit/6dd27e26))
+* allow the database connection to be configured for async jobs	 ([6a745d4b](/../../commit/6a745d4b))
+* add error reference to API error response and ensure potentially sensitive details from the exception message are not exposed	 ([e7bb4a01](/../../commit/e7bb4a01))
+
+
+#### Bug Fixes
+
+* show consumer/provider/global webhooks in webhook column on index page	 ([35f8bfc1](/../../commit/35f8bfc1))
+
+
 <a name="v2.27.6"></a>
 ### v2.27.6 (2018-11-23)
 
