@@ -32,7 +32,6 @@ module PactBroker
       yield configuration
       post_configure
       prepare_database
-      prepare_app
     end
 
     # Allows middleware to be inserted at the bottom of the shared middlware stack
@@ -54,11 +53,17 @@ module PactBroker
       @make_it_later_ui_auth.make_it_later(middleware)
     end
 
+    def use_custom_ui custom_ui
+      @custom_ui = custom_ui
+    end
+
     def call env
       running_app.call env
     end
 
     private
+
+    attr_reader :custom_ui
 
     def post_configure
       configure_logger
@@ -101,6 +106,7 @@ module PactBroker
       configure_middleware
 
       # need this first so UI login logic is performed before API login logic
+      @cascade_apps << build_custom_ui if custom_ui
       @cascade_apps << build_ui
 
       if configuration.enable_diagnostic_endpoints
@@ -139,6 +145,14 @@ module PactBroker
       builder
     end
 
+    def build_custom_ui
+      logger.info "Mounting Custom UI"
+      builder = ::Rack::Builder.new
+      builder.use Rack::PactBroker::AcceptsHtmlFilter
+      builder.run @custom_ui
+      builder
+    end
+
     def build_api
       logger.info "Mounting PactBroker::API"
       require 'pact_broker/api'
@@ -174,6 +188,7 @@ module PactBroker
 
     def running_app
       @running_app ||= begin
+        prepare_app
         apps = @cascade_apps
         @app_builder.map "/" do
           run Rack::Cascade.new(apps)

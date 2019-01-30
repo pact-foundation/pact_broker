@@ -65,6 +65,28 @@ module PactBroker
       end
     end
 
+    describe "use_custom_ui" do
+      context "when the UI returns a non 404 response" do
+        let(:custom_ui) { double('ui', call: [200, {}, ["hello"]]) }
+
+        it "returns the given page" do
+          app.use_custom_ui(custom_ui)
+
+          get "/", nil, { "HTTP_ACCEPT" => "text/html" }
+          expect(last_response.body).to eq "hello"
+        end
+      end
+
+      context "when the UI returns a 404 response" do
+        let(:custom_ui) { double('ui', call: [404, {}, []]) }
+
+        it "passes on the call to the rest of the app" do
+          get "/", nil, { "HTTP_ACCEPT" => "text/html" }
+          expect(last_response.status).to eq 200
+        end
+      end
+    end
+
     describe "use_xxx_auth" do
       class TestAuth
         def initialize app, *args, &block
