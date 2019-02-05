@@ -11,6 +11,6 @@ module MigrationHelpers
   end
 
   def database
-    @database ||= DB.connection_for_env 'test'
+    @database ||= PactBroker::Database.database
   end
 end
