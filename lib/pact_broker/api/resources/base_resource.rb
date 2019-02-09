@@ -127,7 +127,7 @@ module PactBroker
             JSON.parse(request_body, PACT_PARSING_OPTIONS) #Not load! Otherwise it will try to load Ruby classes.
             false
           rescue StandardError => e
-            logger.error "Error parsing JSON #{e} - #{request_body}"
+            logger.info "Error parsing JSON #{e} - #{request_body}"
             set_json_error_message "Error parsing JSON - #{e.message}"
             response.headers['Content-Type'] = 'application/hal+json;charset=utf-8'
             true

@@ -65,7 +65,7 @@ module PactBroker
           reschedule_job
           update_triggered_webhook_status TriggeredWebhook::STATUS_RETRYING
         else
-          logger.error "Failed to execute webhook #{triggered_webhook.webhook_uuid} after #{retry_schedule.size + 1} attempts."
+          logger.info "Failed to execute webhook #{triggered_webhook.webhook_uuid} after #{retry_schedule.size + 1} attempts."
           update_triggered_webhook_status TriggeredWebhook::STATUS_FAILURE
         end
       end

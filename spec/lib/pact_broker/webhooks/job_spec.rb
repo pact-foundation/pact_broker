@@ -118,8 +118,8 @@ module PactBroker
         end
 
         it "logs that it has failed" do
-          allow(Job.logger).to receive(:error)
-          expect(Job.logger).to receive(:error).with(/Failed to execute/)
+          allow(Job.logger).to receive(:info)
+          expect(Job.logger).to receive(:info).with(/Failed to execute/)
           subject
         end
 
