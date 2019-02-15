@@ -139,6 +139,7 @@ module PactBroker
         let(:existing_pact) do
           TestDataBuilder.new.create_pact_with_hierarchy("A Consumer", "1.2.3", "A Provider", original_json_content).and_return(:pact)
         end
+        let(:repository) { Repository.new }
 
         before do
           ::DB::PACT_BROKER_DB[:pact_publications]
@@ -155,10 +156,8 @@ module PactBroker
         let(:original_json_content) { {some: 'json'}.to_json }
         let(:json_content) { {some_other: 'json'}.to_json }
 
-
         context "when the attributes have changed" do
-
-          subject { Repository.new.update existing_pact.id, json_content: json_content }
+          subject { repository.update existing_pact.id, json_content: json_content }
 
           it "creates a new PactVersion" do
             expect { subject }.to change{ PactBroker::Pacts::PactPublication.count }.by(1)
@@ -186,11 +185,27 @@ module PactBroker
           it "increments the revision_number by 1" do
             expect(subject.revision_number).to eq 2
           end
+
+          context "when there is a race condition" do
+            before do
+              allow(repository).to receive(:next_revision_number) { | existing_pact | existing_pact.revision_number }
+            end
+
+            it "updates the existing row - yes this is destructive, by MySQL not supporting inner queries stops us doing a SELECT revision_number + 1" do
+              # And if we're conflicting the time between the two publications is so small that nobody
+              # can have depended on the content of the first pact
+              expect { subject }.to_not change{ PactBroker::Pacts::PactPublication.count }
+            end
+
+            it "sets the content to the new content" do
+              expect(subject.json_content).to eq json_content
+            end
+          end
         end
 
         context "when the content has not changed" do
 
-          subject { Repository.new.update existing_pact.id, json_content: original_json_content }
+          subject { repository.update existing_pact.id, json_content: original_json_content }
 
           it "does not create a new PactVersion" do
             expect { subject }.to_not change{ PactBroker::Pacts::PactPublication.count }
@@ -217,6 +232,7 @@ module PactBroker
             .create_consumer_version("1.2.3")
             .create_provider(provider_name)
             .create_pact
+            .create_webhook
             .revise_pact
             .create_consumer_version("2.3.4")
             .create_pact

@@ -36,11 +36,12 @@ module PactBroker
         end
       end
 
-      def upsert row, key_names
+      def upsert row, key_names, columns_to_update = nil
         if postgres?
           insert_conflict(update: row, target: key_names).insert(row)
         elsif mysql?
-          on_duplicate_key_update.insert(row)
+          update_cols = columns_to_update || (row.keys - key_names)
+          on_duplicate_key_update(*update_cols).insert(row)
         else
           # Sqlite
           key = row.reject{ |k, v| !key_names.include?(k) }
