@@ -27,7 +27,7 @@ _yardoc
 *.swp
 .idea
 
-*.sqlite
+*.sqlite3
 Gemfile.lock
 
 bethtest/
