@@ -1,19 +1,8 @@
 %body
-  %link{rel: 'stylesheet', href: '/css/bootstrap.min.css'}
   %link{rel: 'stylesheet', href: '/stylesheets/index.css'}
-  %script{type: 'text/javascript', src:'/javascripts/jquery-2.1.1.min.js'}
   %script{type: 'text/javascript', src:'/javascripts/jquery.tablesorter.min.js'}
-  %script{type: 'text/javascript', src:'/js/bootstrap.min.js'}
   .container
-    %nav.navbase-default{role: "navigation", id: "navigation"}
-      .container-fluid
-        .navbar-header
-        %ul.navbar-right#top-left-menu
-          %li
-            %a{href: './?tags=true'}
-              Show latest tags
-            %a{href: '/hal-browser/browser.html'}
-              API Browser
+    = render :haml, :'index/_navbar', :layout => false, locals: {tag_toggle: true}
     %h1.page-header
       Pacts
     %table.table.table-bordered.table-striped{ id: 'relationships' }

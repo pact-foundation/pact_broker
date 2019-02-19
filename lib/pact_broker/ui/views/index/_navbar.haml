@@ -1,0 +1,14 @@
+%nav.navbase-default{role: "navigation", id: "navigation"}
+  .container-fluid
+    .navbar-header
+    %ul.navbar-right#top-left-menu
+      %li
+        - if tag_toggle
+          %a{href: './?tags=true'}
+            Show latest tags
+        - else
+          %a{href: './'}
+            Hide latest tags
+
+        %a{href: '/hal-browser/browser.html'}
+          API Browser
