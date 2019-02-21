@@ -310,7 +310,7 @@ module PactBroker
           end
 
           it "logs the error" do
-            expect(logger).to receive(:error).with(/Error.*WebhookTestError.*blah/)
+            expect(logger).to receive(:info).with(/Error.*WebhookTestError.*blah/)
             execute
           end
 

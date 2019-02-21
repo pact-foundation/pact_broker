@@ -196,7 +196,7 @@ module PactBroker
       end
 
       def log_error e
-        logger.error "Error executing webhook #{uuid} #{e.class.name} - #{e.message} #{e.backtrace.join("\n")}"
+        logger.info "Error executing webhook #{uuid} #{e.class.name} - #{e.message} #{e.backtrace.join("\n")}"
 
         if options[:show_response]
           execution_logger.error "Error executing webhook #{uuid} #{e.class.name} - #{e.message}"
