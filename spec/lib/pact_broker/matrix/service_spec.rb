@@ -31,6 +31,48 @@ module PactBroker
         end
       end
 
+      describe "integration - when deploying a provider to prod for the first time and the consumer is not yet deployed" do
+        before do
+          td.create_pact_with_hierarchy("Foo", "1", "Bar")
+          .create_verification(provider_version: "2")
+        end
+
+        let(:selectors) do
+          [ { pacticipant_name: "Bar", pacticipant_version_number: "2" } ]
+        end
+
+        let(:options) do
+          { latest: true, tag: "prod" }
+        end
+
+        subject { Service.find(selectors, options) }
+
+        it "allows the provider to be deployed" do
+          expect(subject.deployment_status_summary.deployable?).to be true
+        end
+      end
+
+      describe "integration - when deploying a consumer to prod for the first time and the provider is not yet deployed" do
+        before do
+          td.create_pact_with_hierarchy("Foo", "1", "Bar")
+          .create_verification(provider_version: "2")
+        end
+
+        let(:selectors) do
+          [ { pacticipant_name: "Foo", pacticipant_version_number: "1" } ]
+        end
+
+        let(:options) do
+          { latest: true, tag: "prod" }
+        end
+
+        subject { Service.find(selectors, options) }
+
+        it "does not allow the provider to be deployed" do
+          expect(subject.deployment_status_summary.deployable?).to_not be true
+        end
+      end
+
       describe "validate_selectors" do
 
         subject { Service.validate_selectors(selectors) }
