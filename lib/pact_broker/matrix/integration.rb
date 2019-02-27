@@ -1,17 +1,22 @@
-#
-# Represents the integration relationship between a consumer and a provider
-#
+
+# Represents the integration relationship between a consumer and a provider in the context
+# of a matrix or can-i-deploy query.
+# If the required flag is set, then one of the pacticipants (consumers) specified in the HTTP query
+# requires the provider. It would not be required if a provider was specified, and it had an
+# integration with a consumer.
+
 module PactBroker
   module Matrix
     class Integration
 
       attr_reader :consumer_name, :consumer_id, :provider_name, :provider_id
 
-      def initialize consumer_id, consumer_name, provider_id, provider_name
+      def initialize consumer_id, consumer_name, provider_id, provider_name, required
         @consumer_id = consumer_id
         @consumer_name = consumer_name
         @provider_id = provider_id
         @provider_name = provider_name
+        @required = required
       end
 
       def self.from_hash hash
@@ -19,8 +24,13 @@ module PactBroker
           hash.fetch(:consumer_id),
           hash.fetch(:consumer_name),
           hash.fetch(:provider_id),
-          hash.fetch(:provider_name)
+          hash.fetch(:provider_name),
+          hash.fetch(:required)
         )
+      end
+
+      def required?
+        @required
       end
 
       def == other
@@ -30,7 +40,7 @@ module PactBroker
       def <=> other
         comparison = consumer_name <=> other.consumer_name
         return comparison if comparison != 0
-        provider_name <=> other.provider_name
+        comparison =provider_name <=> other.provider_name
       end
 
       def to_hash
@@ -48,6 +58,22 @@ module PactBroker
 
       def to_s
         "Relationship between #{consumer_name} (id=#{consumer_id}) and #{provider_name} (id=#{provider_id})"
+      end
+
+      def involves_consumer_with_id?(consumer_id)
+        self.consumer_id == consumer_id
+      end
+
+      def involves_consumer_with_names?(consumer_names)
+        consumer_names.include?(self.consumer_name)
+      end
+
+      def involves_provider_with_name?(provider_name)
+        self.provider_name == provider_name
+      end
+
+      def involves_consumer_with_name?(consumer_name)
+        self.consumer_name == consumer_name
       end
     end
   end

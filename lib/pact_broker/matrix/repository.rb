@@ -5,6 +5,7 @@ require 'pact_broker/error'
 require 'pact_broker/matrix/query_results'
 require 'pact_broker/matrix/integration'
 require 'pact_broker/matrix/query_results_with_deployment_status_summary'
+require 'pact_broker/matrix/resolved_selector'
 
 module PactBroker
   module Matrix
@@ -48,10 +49,10 @@ module PactBroker
       end
 
       # Return the latest matrix row (pact/verification) for each consumer_version_number/provider_version_number
-      def find selectors, options = {}
-        resolved_selectors = resolve_selectors(selectors, options)
+      def find specified_selectors, options = {}
+        resolved_selectors = resolve_selectors(specified_selectors, options)
         lines = query_matrix(resolved_selectors, options)
-        lines = apply_latestby(options, selectors, lines)
+        lines = apply_latestby(options, specified_selectors, lines)
 
         # This needs to be done after the latestby, so can't be done in the db unless
         # the latestby logic is moved to the db
@@ -59,7 +60,7 @@ module PactBroker
           lines = lines.select{ |l| options[:success].include?(l.success) }
         end
 
-        QueryResults.new(lines.sort, selectors, options, resolved_selectors)
+        QueryResults.new(lines.sort, specified_selectors, options, resolved_selectors)
       end
 
       def find_for_consumer_and_provider pacticipant_1_name, pacticipant_2_name
@@ -73,13 +74,19 @@ module PactBroker
       end
 
       def find_integrations(pacticipant_names)
-        selectors = pacticipant_names.collect{ | pacticipant_name | add_ids(pacticipant_name: pacticipant_name) }
+        selectors = pacticipant_names.collect{ | pacticipant_name | add_ids_to_selector(pacticipant_name: pacticipant_name) }
         Row
           .select(:consumer_name, :consumer_id, :provider_name, :provider_id)
           .matching_selectors(selectors)
           .distinct
           .all
-          .collect{ |row | Integration.from_hash(row.to_hash) }.uniq
+          .collect do |row |
+            row.to_hash
+          end
+          .uniq
+          .collect do | hash |
+            Integration.from_hash(hash.merge(required: pacticipant_names.include?(hash[:consumer_name])))
+          end
       end
 
       private
@@ -127,85 +134,102 @@ module PactBroker
         Row
       end
 
-      def resolve_selectors(selectors, options)
-        resolved_selectors = look_up_version_numbers(selectors, options)
+      def resolve_selectors(specified_selectors, options)
+        resolved_specified_selectors = resolve_versions_and_add_ids(specified_selectors, options)
         if options[:latest] || options[:tag]
-          apply_latest_and_tag_to_inferred_selectors(resolved_selectors, options)
+          add_inferred_selectors(resolved_specified_selectors, options)
         else
-          resolved_selectors
+          resolved_specified_selectors
         end
       end
 
       # Find the version number for selectors with the latest and/or tag specified
-      def look_up_version_numbers(selectors, options)
+      def resolve_versions_and_add_ids(selectors, options, required = true)
         selectors.collect do | selector |
-          if selector[:tag] && selector[:latest]
-            version = version_repository.find_by_pacticipant_name_and_latest_tag(selector[:pacticipant_name], selector[:tag])
-            raise Error.new("No version of #{selector[:pacticipant_name]} found with tag #{selector[:tag]}") unless version
-            # validation in resource should ensure we always have a version
-            {
-              pacticipant_name: selector[:pacticipant_name],
-              pacticipant_version_number: version.number
-            }
-          elsif selector[:latest]
-            version = version_repository.find_latest_by_pacticpant_name(selector[:pacticipant_name])
-            raise Error.new("No version of #{selector[:pacticipant_name]} found") unless version
-            {
-              pacticipant_name: selector[:pacticipant_name],
-              pacticipant_version_number: version.number
-            }
-          elsif selector[:tag]
-            # validation in resource should ensure we always have at least one version
-            versions = version_repository.find_by_pacticipant_name_and_tag(selector[:pacticipant_name], selector[:tag])
-            raise Error.new("No version of #{selector[:pacticipant_name]} found with tag #{selector[:tag]}") unless versions.any?
+          pacticipant = PactBroker::Domain::Pacticipant.find(name: selector[:pacticipant_name])
+
+          versions = find_versions_for_selector(selector, required)
+
+          if versions
             versions.collect do | version |
-              {
-                pacticipant_name: selector[:pacticipant_name],
-                pacticipant_version_number: version.number
-              }
+              if version
+                selector_for_version(pacticipant, version)
+              else
+                selector_for_non_existing_version(pacticipant)
+              end
             end
           else
-            selector.dup
+            selector_without_version(pacticipant)
           end
-        end.flatten.compact.collect do | selector |
-          add_ids(selector)
+        end.flatten
+      end
+
+      def find_versions_for_selector(selector, required)
+        if selector[:tag] && selector[:latest]
+          version = version_repository.find_by_pacticipant_name_and_latest_tag(selector[:pacticipant_name], selector[:tag])
+          # raise Error.new("No version of #{selector[:pacticipant_name]} found with tag #{selector[:tag]}") if required && !version
+          [version]
+        elsif selector[:latest]
+          version = version_repository.find_latest_by_pacticpant_name(selector[:pacticipant_name])
+          # raise Error.new("No version of #{selector[:pacticipant_name]} found") if required && !version
+          [version]
+        elsif selector[:tag]
+          versions = version_repository.find_by_pacticipant_name_and_tag(selector[:pacticipant_name], selector[:tag])
+          # raise Error.new("No version of #{selector[:pacticipant_name]} found with tag #{selector[:tag]}") if required && versions.empty?
+          versions.any? ? versions : [nil]
+        elsif selector[:pacticipant_version_number]
+          version = version_repository.find_by_pacticipant_name_and_number(selector[:pacticipant_name], selector[:pacticipant_version_number])
+          # raise Error.new("No version #{selector[:pacticipant_version_number]} of #{selector[:pacticipant_name]} found") if required && !version
+          [version]
+        else
+          nil
         end
       end
 
-      def add_ids(selector)
+      def add_ids_to_selector(selector)
         if selector[:pacticipant_name]
           pacticipant = PactBroker::Domain::Pacticipant.find(name: selector[:pacticipant_name])
           selector[:pacticipant_id] = pacticipant ? pacticipant.id : nil
         end
 
-        if selector[:pacticipant_name] && selector[:pacticipant_version_number]
+        if selector[:pacticipant_name] && selector[:pacticipant_version_number] && !selector[:pacticipant_version_id]
           version = version_repository.find_by_pacticipant_name_and_number(selector[:pacticipant_name], selector[:pacticipant_version_number])
           selector[:pacticipant_version_id] = version ? version.id : nil
         end
 
-        if selector[:pacticipant_version_number].nil?
-          selector[:pacticipant_version_id] = nil
+        if !selector.key?(:pacticipant_version_id)
+           selector[:pacticipant_version_id] = nil
         end
         selector
       end
 
       # eg. when checking to see if Foo version 2 can be deployed to prod,
       # need to look up all the 'partner' pacticipants, and determine their latest prod versions
-      def apply_latest_and_tag_to_inferred_selectors(selectors, options)
-        all_pacticipant_names = all_pacticipant_names_in_specified_matrix(selectors)
-        specified_names = selectors.collect{ |s| s[:pacticipant_name] }
-        inferred_names = all_pacticipant_names - specified_names
+      def add_inferred_selectors(resolved_specified_selectors, options)
+        integrations = find_integrations(resolved_specified_selectors.collect{|s| s[:pacticipant_name]})
+        all_pacticipant_names = integrations.collect(&:pacticipant_names).flatten.uniq
+        specified_names = resolved_specified_selectors.collect{ |s| s[:pacticipant_name] }
+        inferred_pacticipant_names = all_pacticipant_names - specified_names
+        # Inferred providers are required for a consumer to be deployed
+        required_inferred_pacticipant_names = inferred_pacticipant_names.select{ | n | integrations.any?{ |i| i.involves_provider_with_name?(n) } }
+        # Inferred consumers are NOT required for a provider to be deployed
+        optional_inferred_pacticipant_names = inferred_pacticipant_names - required_inferred_pacticipant_names
 
-        inferred_selectors = inferred_names.collect do | pacticipant_name |
+        resolved_specified_selectors +
+          build_inferred_selectors(required_inferred_pacticipant_names, options, true) +
+          build_inferred_selectors(optional_inferred_pacticipant_names, options, false)
+      end
+
+      def build_inferred_selectors(inferred_pacticipant_names, options, required)
+        selectors = inferred_pacticipant_names.collect do | pacticipant_name |
           selector = {
-            pacticipant_name: pacticipant_name,
+            pacticipant_name: pacticipant_name
           }
           selector[:tag] = options[:tag] if options[:tag]
           selector[:latest] = options[:latest] if options[:latest]
           selector
         end
-
-        selectors + look_up_version_numbers(inferred_selectors, options)
+        resolve_versions_and_add_ids(selectors, options, required)
       end
 
       def all_pacticipant_names_in_specified_matrix(selectors)
@@ -213,6 +237,18 @@ module PactBroker
           .collect(&:pacticipant_names)
           .flatten
           .uniq
+      end
+
+      def selector_for_non_existing_version(pacticipant)
+        ResolvedSelector.for_pacticipant_and_non_existing_version(pacticipant)
+      end
+
+      def selector_for_version(pacticipant, version)
+        ResolvedSelector.for_pacticipant_and_version(pacticipant, version)
+      end
+
+      def selector_without_version(pacticipant)
+        ResolvedSelector.for_pacticipant(pacticipant)
       end
     end
   end

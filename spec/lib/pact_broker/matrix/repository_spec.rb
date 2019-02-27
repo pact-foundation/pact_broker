@@ -956,24 +956,27 @@ module PactBroker
           context "when the latest tag is specified" do
             let(:selectors) { [{ pacticipant_name: 'D', latest: true, tag: 'dev' } ] }
 
-            it "raises an error" do
-              expect { subject }.to raise_error Error, /No version of D found/
+            it "returns an empty array" do
+              expect(subject).to eq []
+              expect(subject.resolved_selectors.find{ |s | s[:pacticipant_name] == "D"}[:pacticipant_version_id]).to eq -1
             end
           end
 
           context "when all tags are specified" do
             let(:selectors) { [{ pacticipant_name: 'D', tag: 'dev' } ] }
 
-            it "raises an error" do
-              expect { subject }.to raise_error Error, /No version of D found/
+            it "returns an empty array" do
+              expect(subject).to eq []
+              expect(subject.resolved_selectors.find{ |s | s[:pacticipant_name] == "D"}[:pacticipant_version_id]).to eq -1
             end
           end
 
           context "when no tags are specified" do
             let(:selectors) { [{ pacticipant_name: 'E', latest: true } ] }
 
-            it "raises an error" do
-              expect { subject }.to raise_error Error, /No version of E found/
+            it "returns an empty array" do
+              expect(subject).to eq []
+              expect(subject.resolved_selectors.find{ |s | s[:pacticipant_name] == "E"}[:pacticipant_version_id]).to eq -1
             end
           end
         end
