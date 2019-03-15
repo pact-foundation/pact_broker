@@ -5,74 +5,6 @@ module PactBroker
     describe Service do
       let(:td) { TestDataBuilder.new }
 
-      describe "find integration test" do
-        let(:selectors) do
-          [ { pacticipant_name: "foo" } ]
-        end
-
-        let(:options) do
-          { latest: true, tag: "prod" }
-        end
-
-        before do
-          td.create_pact_with_hierarchy("foo", "1", "bar")
-            .create_verification(provider_version: "2", tag_names: ["prod"])
-        end
-
-        subject { Service.find(selectors, options) }
-
-        it "returns a QueryResultsWithDeploymentStatusSummary" do
-          expect(subject.rows).to be_a(Array)
-          expect(subject.selectors).to be selectors
-          expect(subject.options).to be options
-          expect(subject.resolved_selectors).to be_a(Array)
-          expect(subject.resolved_selectors.count).to eq 2
-          expect(subject.deployment_status_summary).to be_a(DeploymentStatusSummary)
-        end
-      end
-
-      describe "integration - when deploying a provider to prod for the first time and the consumer is not yet deployed" do
-        before do
-          td.create_pact_with_hierarchy("Foo", "1", "Bar")
-          .create_verification(provider_version: "2")
-        end
-
-        let(:selectors) do
-          [ { pacticipant_name: "Bar", pacticipant_version_number: "2" } ]
-        end
-
-        let(:options) do
-          { latest: true, tag: "prod" }
-        end
-
-        subject { Service.find(selectors, options) }
-
-        it "allows the provider to be deployed" do
-          expect(subject.deployment_status_summary.deployable?).to be true
-        end
-      end
-
-      describe "integration - when deploying a consumer to prod for the first time and the provider is not yet deployed" do
-        before do
-          td.create_pact_with_hierarchy("Foo", "1", "Bar")
-          .create_verification(provider_version: "2")
-        end
-
-        let(:selectors) do
-          [ { pacticipant_name: "Foo", pacticipant_version_number: "1" } ]
-        end
-
-        let(:options) do
-          { latest: true, tag: "prod" }
-        end
-
-        subject { Service.find(selectors, options) }
-
-        it "does not allow the provider to be deployed" do
-          expect(subject.deployment_status_summary.deployable?).to_not be true
-        end
-      end
-
       describe "validate_selectors" do
 
         subject { Service.validate_selectors(selectors) }
@@ -82,21 +14,6 @@ module PactBroker
 
           it "returns error messages" do
             expect(subject.first).to eq "Please provide 1 or more version selectors."
-          end
-        end
-
-        context "when one or more of the selectors does not match any known version" do
-          before do
-            td.create_pacticipant("Foo")
-              .create_version("1")
-              .create_pacticipant("Bar")
-              .create_version("2")
-          end
-
-          let(:selectors) { [{ pacticipant_name: "Foo", pacticipant_version_number: "1" }, { pacticipant_name: "Bar", pacticipant_version_number: "1" }] }
-
-          it "returns error messages" do
-            expect(subject).to eq ["No pact or verification found for Bar version 1"]
           end
         end
 
@@ -145,15 +62,6 @@ module PactBroker
           context "when there is a version for the tag" do
             it "returns no error messages" do
               expect(subject).to eq []
-            end
-          end
-
-          context "when there is not a version for the tag" do
-
-            let(:selectors) { [{ pacticipant_name: "Foo", latest: true, tag: "wiffle" }, { pacticipant_name: "Bar", pacticipant_version_number: "2" }] }
-
-            it "returns an error message" do
-              expect(subject).to eq ["No version of Foo found with tag wiffle"]
             end
           end
         end

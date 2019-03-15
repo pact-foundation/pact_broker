@@ -57,7 +57,7 @@ module PactBroker
       end
 
       def to_s
-        "Relationship between #{consumer_name} (id=#{consumer_id}) and #{provider_name} (id=#{provider_id})"
+        "Integration between #{consumer_name} (id=#{consumer_id}) and #{provider_name} (id=#{provider_id})"
       end
 
       def involves_consumer_with_id?(consumer_id)
@@ -74,6 +74,14 @@ module PactBroker
 
       def involves_consumer_with_name?(consumer_name)
         self.consumer_name == consumer_name
+      end
+
+      def pacticipant_names
+        [consumer_name, provider_name]
+      end
+
+      def involves_pacticipant_with_name?(pacticipant_name)
+        pacticipant_names.include?(pacticipant_name)
       end
     end
   end
