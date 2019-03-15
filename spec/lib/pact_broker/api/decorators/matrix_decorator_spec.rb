@@ -101,8 +101,9 @@ module PactBroker
             }
           end
 
-          let(:query_results){ PactBroker::Matrix::QueryResultsWithDeploymentStatusSummary.new([row_1, row_2], selectors, options, resolved_selectors, deployment_status_summary)}
+          let(:query_results){ PactBroker::Matrix::QueryResultsWithDeploymentStatusSummary.new([row_1, row_2], selectors, options, resolved_selectors, integrations, deployment_status_summary)}
           let(:selectors) { nil }
+          let(:integrations){ [] }
           let(:options) { nil }
           let(:resolved_selectors) { nil }
           let(:counts) { { success: 1 } }

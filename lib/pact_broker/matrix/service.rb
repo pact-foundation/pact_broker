@@ -12,10 +12,8 @@ module PactBroker
 
       def find selectors, options = {}
         query_results = matrix_repository.find selectors, options
-        pacticipant_names = selectors.collect{ | s| s[:pacticipant_name] }
-        integrations = matrix_repository.find_integrations(pacticipant_names)
-        deployment_status_summary = DeploymentStatusSummary.new(query_results.rows, query_results.resolved_selectors, integrations)
-        QueryResultsWithDeploymentStatusSummary.new(query_results.rows, query_results.selectors, query_results.options, query_results.resolved_selectors, deployment_status_summary)
+        deployment_status_summary = DeploymentStatusSummary.new(query_results.rows, query_results.resolved_selectors, query_results.integrations)
+        QueryResultsWithDeploymentStatusSummary.new(query_results.rows, query_results.selectors, query_results.options, query_results.resolved_selectors, query_results.integrations, deployment_status_summary)
       end
 
       def find_for_consumer_and_provider params
@@ -64,18 +62,6 @@ module PactBroker
         selectors.collect{ |selector| selector[:pacticipant_name] }.compact.each do | pacticipant_name |
           unless pacticipant_service.find_pacticipant_by_name(pacticipant_name)
             error_messages << "Pacticipant #{pacticipant_name} not found"
-          end
-        end
-
-        if error_messages.empty?
-          selectors.each do | s |
-            if s[:pacticipant_version_number]
-              version = version_service.find_by_pacticipant_name_and_number(pacticipant_name: s[:pacticipant_name], pacticipant_version_number: s[:pacticipant_version_number])
-              error_messages << "No pact or verification found for #{s[:pacticipant_name]} version #{s[:pacticipant_version_number]}" if version.nil?
-            elsif s[:tag]
-              version = version_service.find_by_pacticipant_name_and_latest_tag(s[:pacticipant_name], s[:tag])
-              error_messages << "No version of #{s[:pacticipant_name]} found with tag #{s[:tag]}" if version.nil?
-            end
           end
         end
 

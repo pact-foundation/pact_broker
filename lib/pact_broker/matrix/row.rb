@@ -197,6 +197,14 @@ module PactBroker
       def eql?(obj)
         (obj.class == model) && (obj.values == values)
       end
+
+      def pacticipant_names
+        [consumer_name, provider_name]
+      end
+
+      def involves_pacticipant_with_name?(pacticipant_name)
+        pacticipant_name.include?(pacticipant_name)
+      end
     end
   end
 end
