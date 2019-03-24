@@ -7,6 +7,15 @@ module PactBroker
       describe "find" do
         subject { Service.find(selectors, options) }
 
+        # Useful for eyeballing the messages to make sure they read nicely
+        # after do
+        #   require 'pact_broker/api/decorators/reason_decorator'
+        #   subject.deployment_status_summary.reasons.each do | reason |
+        #     puts reason
+        #     puts PactBroker::Api::Decorators::ReasonDecorator.new(reason).to_s
+        #   end
+        # end
+
         let(:options) { {} }
 
         describe "find" do
@@ -38,12 +47,12 @@ module PactBroker
           before do
             td.create_pact_with_hierarchy("Foo", "1", "Bar")
               .create_consumer_version_tag("prod")
-              .create_verification(provider_version: "10")
+              .create_verification(provider_version: "10", tag_names: ["test"])
               .create_consumer_version("2", tag_names: ["prod"])
               .create_pact
           end
 
-          let(:selectors) { [{ pacticipant_name: "Bar", pacticipant_version_number: "10" }]}
+          let(:selectors) { [{ pacticipant_name: "Bar", latest: true, tag: "test" }]}
           let(:options) { { tag: "prod" } }
 
           it "does not allow the consumer to be deployed" do

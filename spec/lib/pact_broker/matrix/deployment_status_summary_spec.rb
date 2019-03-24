@@ -18,8 +18,13 @@ module PactBroker
         let(:rows) { [row_1, row_2] }
         let(:row_1) do
           double(Row,
+            consumer: foo,
+            provider: bar,
+            consumer_version: foo_version,
+            provider_version: bar_version,
             consumer_name: "Foo",
             consumer_id: 1,
+            consumer_version_id: 1,
             provider_name: "Bar",
             provider_id: 2,
             success: row_1_success,
@@ -29,8 +34,13 @@ module PactBroker
 
         let(:row_2) do
           double(Row,
+            consumer: foo,
+            provider: baz,
+            consumer_version: foo_version,
+            provider_version: baz_version,
             consumer_name: "Foo",
             consumer_id: 1,
+            consumer_version_id: 1,
             provider_name: "Baz",
             provider_id: 3,
             success: true,
@@ -56,32 +66,23 @@ module PactBroker
 
         let(:resolved_selectors) do
           [
-            double('foo selector',
+            ResolvedSelector.new(
               pacticipant_id: 1,
               pacticipant_name: "Foo",
               pacticipant_version_number: "ddec8101dabf4edf9125a69f9a161f0f294af43c",
-              pacticipant_version_id: 10,
-              latest_tagged_version_that_does_not_exist?: false,
-              specified_version_that_does_not_exist?: false,
-              description: "version ddec8101dabf4edf9125a69f9a161f0f294af43c of Foo"
+              pacticipant_version_id: 10
             ),
-            double('bar selector',
+            ResolvedSelector.new(
               pacticipant_id: 2,
               pacticipant_name: "Bar",
               pacticipant_version_number: "14131c5da3abf323ccf410b1b619edac76231243",
-              pacticipant_version_id: 11,
-              latest_tagged_version_that_does_not_exist?: false,
-              specified_version_that_does_not_exist?: false,
-              description: "version 14131c5da3abf323ccf410b1b619edac76231243 of Bar"
+              pacticipant_version_id: 11
             ),
-            double('baz selector',
+            ResolvedSelector.new(
              pacticipant_id: 3,
              pacticipant_name: "Baz",
              pacticipant_version_number: "4ee06460f10e8207ad904fa9fa6c4842e462ab59",
-             pacticipant_version_id: 12,
-             latest_tagged_version_that_does_not_exist?: false,
-             specified_version_that_does_not_exist?: false,
-             description: "version 4ee06460f10e8207ad904fa9fa6c4842e462ab59 of Baz"
+             pacticipant_version_id: 12
             ),
           ]
         end
@@ -90,7 +91,7 @@ module PactBroker
 
         context "when there is a row for all integrations" do
           its(:deployable?) { is_expected.to be true }
-          its(:reasons) { is_expected.to eq ["All required verification results are published and successful"] }
+          its(:reasons) { is_expected.to eq [Successful.new] }
           its(:counts) { is_expected.to eq success: 2, failed: 0, unknown: 0 }
         end
 
@@ -100,8 +101,8 @@ module PactBroker
           its(:deployable?) { is_expected.to be nil }
           its(:reasons) do
             is_expected.to eq [
-              "There is no verified pact between version ddec8101dabf4edf9125a69f9a161f0f294af43c of Foo and version 14131c5da3abf323ccf410b1b619edac76231243 of Bar",
-              "There is no verified pact between version ddec8101dabf4edf9125a69f9a161f0f294af43c of Foo and version 4ee06460f10e8207ad904fa9fa6c4842e462ab59 of Baz",
+              PactNotVerifiedByRequiredProviderVersion.new(resolved_selectors.first, resolved_selectors[1]),
+              PactNotVerifiedByRequiredProviderVersion.new(resolved_selectors.first, resolved_selectors.last)
             ]
           end
           its(:counts) { is_expected.to eq success: 0, failed: 0, unknown: 2 }
@@ -111,12 +112,7 @@ module PactBroker
           let(:row_1_success) { nil }
 
           its(:deployable?) { is_expected.to be nil }
-          its(:reasons) do
-            is_expected.to eq [
-              "There is no verified pact between version ddec8101dabf4edf9125a69f9a161f0f294af43c of Foo and version 14131c5da3abf323ccf410b1b619edac76231243 of Bar",
-              "There is no verified pact between version ddec8101dabf4edf9125a69f9a161f0f294af43c of Foo and version 4ee06460f10e8207ad904fa9fa6c4842e462ab59 of Baz",
-            ]
-          end
+          its(:reasons) { is_expected.to eq [PactNotEverVerifiedByProvider.new(resolved_selectors.first, resolved_selectors[1]) ] }
           its(:counts) { is_expected.to eq success: 1, failed: 0, unknown: 1 }
         end
 
@@ -124,7 +120,7 @@ module PactBroker
           let(:row_1_success) { false }
 
           its(:deployable?) { is_expected.to be false }
-          its(:reasons) { is_expected.to eq ["One or more verifications have failed"] }
+          its(:reasons) { is_expected.to eq [VerificationFailed.new(resolved_selectors.first, resolved_selectors[1])] }
           its(:counts) { is_expected.to eq success: 1, failed: 1, unknown: 0 }
         end
 
@@ -132,7 +128,7 @@ module PactBroker
           let(:rows) { [row_1] }
 
           its(:deployable?) { is_expected.to be nil }
-          its(:reasons) { is_expected.to eq ["There is no verified pact between version ddec8101dabf4edf9125a69f9a161f0f294af43c of Foo and version 4ee06460f10e8207ad904fa9fa6c4842e462ab59 of Baz"] }
+          its(:reasons) { is_expected.to eq [PactNotVerifiedByRequiredProviderVersion.new(resolved_selectors.first, resolved_selectors.last)] }
           its(:counts) { is_expected.to eq success: 1, failed: 0, unknown: 1 }
         end
 
@@ -146,8 +142,22 @@ module PactBroker
           end
 
           its(:deployable?) { is_expected.to be true }
-          its(:reasons) { is_expected.to eq ["All required verification results are published and successful"] }
+          its(:reasons) { is_expected.to eq [Successful.new] }
           its(:counts) { is_expected.to eq success: 1, failed: 0, unknown: 0 }
+        end
+
+        context "when there are no rows, and no missing downstream providers and the provider was specified in the query" do
+          let(:rows) { [] }
+          let(:integrations) do
+            [
+              Integration.new(1, "Foo", 2, "Bar", false),
+              Integration.new(3, "Baz", 2, "Bar", false)
+            ]
+          end
+
+          its(:deployable?) { is_expected.to be true }
+          its(:reasons) { is_expected.to eq [NoDependenciesMissing.new] }
+          its(:counts) { is_expected.to eq success: 0, failed: 0, unknown: 0 }
         end
 
         context "when there is a provider integration missing and only the consumer was specified in the query" do
@@ -161,70 +171,39 @@ module PactBroker
           end
 
           its(:deployable?) { is_expected.to be nil }
-          its(:reasons) { is_expected.to eq ["There is no verified pact between version ddec8101dabf4edf9125a69f9a161f0f294af43c of Foo and version 4ee06460f10e8207ad904fa9fa6c4842e462ab59 of Baz"] }
+          its(:reasons) { is_expected.to eq [PactNotVerifiedByRequiredProviderVersion.new(resolved_selectors.first, resolved_selectors.last)] }
           its(:counts) { is_expected.to eq success: 1, failed: 0, unknown: 1 }
         end
 
-        context "when there is a provider integration missing because the provider version does not exist" do
-          let(:rows) { [] }
-          let(:integrations) do
-            [
-              Integration.new(1, "Foo", 2, "Bar", true)
-            ]
-          end
-
-          let(:resolved_selectors) do
-            [
-              double('foo selector',
-                pacticipant_id: 1,
-                pacticipant_name: "Foo",
-                pacticipant_version_number: "ddec8101dabf4edf9125a69f9a161f0f294af43c",
-                pacticipant_version_id: 10,
-                latest_tagged_version_that_does_not_exist?: false,
-                specified_version_that_does_not_exist?: false,
-                description: 'verison foo'),
-              double('bar selector',
-               pacticipant_id: 2,
-               pacticipant_name: "Bar",
-               pacticipant_version_number: "",
-               pacticipant_version_id: 11,
-               latest_tagged_version_that_does_not_exist?: true,
-               involves_pacticipant_with_name?: true,
-               version_does_not_exist_description: "description",
-               specified_version_that_does_not_exist?: false,
-               description: 'bar version'),
-            ]
-          end
-
-          its(:deployable?) { is_expected.to be nil }
-          its(:reasons) { is_expected.to eq ["There is no verified pact between verison foo and bar version"] }
-          its(:counts) { is_expected.to eq success: 0, failed: 0, unknown: 1 }
-        end
-
-        context "when there is something unexpected about the data and the resolved selector cannot be found" do
+        context "when there are no inferred selectors and the pact has not ever been verified" do
+          # This happens when the user has not specified a version of the provider (eg no 'latest' and/or 'tag')
+          # so the "add inferred selectors" code in the Matrix::Repository has not run
+          # AND the pact has not been verified
+          # eg.
+          # bundle exec bin/pact-broker can-i-deploy --broker-base-url http://localhost:9292 --pacticipant Foo --version 1.1.0
           let(:rows) { [row_1] }
+          let(:row_1_success) { nil }
 
-          let(:resolved_selectors) do
-            [
-              double('selector',
-                pacticipant_id: 3,
-                pacticipant_name: "Foo",
-                pacticipant_version_number: "4ee06460f10e8207ad904fa9fa6c4842e462ab59",
-                pacticipant_version_id: 10,
-                latest_tagged_version_that_does_not_exist?: false,
-                specified_version_that_does_not_exist?: false,
-                description: "version 4ee06460f10e8207ad904fa9fa6c4842e462ab59 of Foo"
-              )
-            ]
+          let(:dummy_selector) do
+            ResolvedSelector.new(
+              pacticipant_id: 2,
+              pacticipant_name: "Bar",
+              pacticipant_version_id: 10,
+              pacticipant_version_number: "14131c5da3abf323ccf410b1b619edac76231243",
+              latest: nil,
+              tag: nil,
+              type: :inferred
+            )
+          end
+
+          before do
+            resolved_selectors.delete_at(1)
+            resolved_selectors.delete_at(1)
+            integrations.delete_at(1)
           end
 
           its(:deployable?) { is_expected.to be nil }
-          its(:reasons) { is_expected.to eq ["There is no verified pact between version 4ee06460f10e8207ad904fa9fa6c4842e462ab59 of Foo and Baz (unresolved version)"] }
-
-          it "logs a warning" do
-            expect(logger).to receive(:warn).with(/Could not find the resolved version/)
-            subject.reasons
-          end
+          its(:reasons) { is_expected.to eq [PactNotEverVerifiedByProvider.new(resolved_selectors.first, dummy_selector)] }
         end
       end
     end
