@@ -1,3 +1,25 @@
+<a name="v2.29.0"></a>
+### v2.29.0 (2019-03-15)
+
+
+#### Features
+
+* **matrix**
+  * improve reasons in response when pacticipant cannot be deployed	 ([e96544f6](/../../commit/e96544f6))
+  * allow provider to be deployed to an environment without the consumer having to be deployed there already	 ([475a4010](/../../commit/475a4010))
+
+* change webhook execution failure log to info	 ([7238bc49](/../../commit/7238bc49))
+* remove db/pact_broker_database.sqlite3 so we don't have conflicts in fork	 ([f68fce8b](/../../commit/f68fce8b))
+* change error logs to info logs	 ([700f6992](/../../commit/700f6992))
+* lock dry-logic to version that works	 ([28769040](/../../commit/28769040))
+* allow a custom UI to be configured	 ([23695b08](/../../commit/23695b08))
+
+
+#### Bug Fixes
+
+* gracefully handle race conditions when publishing a new revision of a pact	 ([012c54f0](/../../commit/012c54f0))
+
+
 <a name="v2.28.0"></a>
 ### v2.28.0 (2019-01-15)
 
