@@ -29,6 +29,14 @@ module PactBroker
         )
       end
 
+      def consumer
+        @consumer ||= OpenStruct.new(name: consumer_name, id: consumer_id)
+      end
+
+      def provider
+        @provider ||= OpenStruct.new(name: provider_name, id: provider_id)
+      end
+
       def required?
         @required
       end

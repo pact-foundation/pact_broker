@@ -1012,6 +1012,29 @@ module PactBroker
           expect(results.integrations.size).to eq 2
         end
       end
+
+      describe "when deploying a provider and the version of the consumer is not specified and multiple consumer versions have been verified by this provider version" do
+        before do
+          td.create_pact_with_hierarchy("Foo", "1", "Bar")
+            .create_verification(provider_version: "5")
+            .create_consumer_version("2")
+            .create_pact
+            .create_verification(provider_version: "5")
+        end
+
+        subject { Repository.new.find(selectors, options) }
+
+        let(:options) { { latestby: 'cvp' } }
+
+        let(:selectors) do
+          [ { pacticipant_name: "Bar", pacticipant_version_number: "5" } ]
+        end
+
+        it "returns only the latest consumer version row", pending: "Can't work out what this should do" do
+          expect(subject.rows.size).to eq 1
+          expect(subject.rows.first.consumer_version_number).to eq "2"
+        end
+      end
     end
   end
 end

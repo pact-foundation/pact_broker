@@ -1,10 +1,17 @@
 # A selector with the pacticipant id, name, version number, and version id set
+# This is created from either specified or inferred data, based on the user's query
+# eg.
+# can-i-deploy --pacticipant Foo --version 1 (this is a specified selector)
+#              --to prod (this is used to create inferred selectors)
 module PactBroker
   module Matrix
     class ResolvedSelector < Hash
+
+      # A version ID of -1 will not match any rows, which is what we want to ensure that
+      # no matrix rows are returned for a version that does not exist.
       NULL_VERSION_ID = -1
 
-      def initialize(params)
+      def initialize(params = {})
         merge!(params)
       end
 
@@ -28,7 +35,6 @@ module PactBroker
         )
       end
 
-      # An ID of -1 will not match any rows, which is what we want
       def self.for_pacticipant_and_non_existing_version(pacticipant, original_selector, type)
         ResolvedSelector.new(
           pacticipant_id: pacticipant.id,
@@ -85,13 +91,13 @@ module PactBroker
         pacticipant_version_id != NULL_VERSION_ID
       end
 
-      # Did the user specify this selector in the HTTP query?
+      # Did the user specify this selector in the user's query?
       def specified?
         self[:type] == :specified
       end
 
-      # Was this selector inferred based on the HTTP query?
-      #(ie. the integrations were calculated because only on selector was specified)
+      # Was this selector inferred based on the user's query?
+      #(ie. the integrations were calculated because only one selector was specified)
       def inferred?
         self[:type] == :inferred
       end
@@ -100,33 +106,19 @@ module PactBroker
         if latest_tagged? && pacticipant_version_number
           "the latest version of #{pacticipant_name} with tag #{tag} (#{pacticipant_version_number})"
         elsif latest_tagged?
-          "the latest version of #{pacticipant_name} with tag #{tag} (it does not exist)"
+          "the latest version of #{pacticipant_name} with tag #{tag} (no such version exists)"
         elsif latest? && pacticipant_version_number
           "the latest version of #{pacticipant_name} (#{pacticipant_version_number})"
         elsif latest?
-          "the latest version of #{pacticipant_name} (it does not exist)"
+          "the latest version of #{pacticipant_name} (no such version exists)"
         elsif tag && pacticipant_version_number
           "a version of #{pacticipant_name} with tag #{tag} (#{pacticipant_version_number})"
         elsif tag
-          "a version of #{pacticipant_name} with tag #{tag} (it does not exist)"
+          "a version of #{pacticipant_name} with tag #{tag} (no such version exists)"
         elsif pacticipant_version_number
           "version #{pacticipant_version_number} of #{pacticipant_name}"
         else
-          "all versions of #{pacticipant_name}"
-        end
-      end
-
-      def version_does_not_exist_description
-        if version_does_not_exist?
-          if tag
-            "No version with tag #{tag} exists for #{pacticipant_name}"
-          elsif pacticipant_version_number
-            "No version with number #{pacticipant_version_number} exists for #{pacticipant_name}"
-          else
-            "No versions exist for #{pacticipant_name}"
-          end
-        else
-          nil
+          "any version of #{pacticipant_name}"
         end
       end
     end
