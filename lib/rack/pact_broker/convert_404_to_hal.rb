@@ -9,7 +9,7 @@ module Rack
       def call env
         response = @app.call(env)
 
-        if response.first == 404 && response[1]['Content-Type'] == 'text/html' && !(env['HTTP_ACCEPT'] =~ /html/)
+        if response.first == 404 && response[1]['Content-Type'] == 'text/html' && !(env['HTTP_ACCEPT'] =~ /html|javascript|css/)
           [404, { 'Content-Type' => 'application/hal+json'},[]]
         else
           response
