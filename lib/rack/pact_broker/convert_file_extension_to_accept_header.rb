@@ -11,7 +11,9 @@ module Rack
         ".csv" => "text/csv",
         ".svg" => "image/svg+xml",
         ".json" => "application/hal+json",
-        ".yaml" => "application/yaml"
+        ".yaml" => "application/yaml",
+        ".css"  => "text/css",
+        ".js" => "text/javascript"
       }
 
       def initialize app
