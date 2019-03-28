@@ -114,3 +114,8 @@ table#relationships .label {
 div.tag {
   display: inline-block;
 }
+
+div.getting-started {
+  max-width: 600px;
+  margin-bottom: 50px;
+}
