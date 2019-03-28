@@ -13,7 +13,7 @@ module PactBroker
         end
 
         def allowed_methods
-          ["GET", "OPTIONS"]
+          ["GET", "DELETE", "OPTIONS"]
         end
 
         def resource_exists?
@@ -29,6 +29,10 @@ module PactBroker
           pact_service.find_all_pact_versions_between consumer_name, :and => provider_name
         end
 
+        def delete_resource
+          pact_service.delete_all_pact_versions_between(consumer_name, and: provider_name)
+          true
+        end
       end
     end
   end
