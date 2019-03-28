@@ -118,7 +118,9 @@ module PactBroker
 
     def configure_middleware
       # NOTE THAT NONE OF THIS IS PROTECTED BY AUTH - is that ok?
-      @app_builder.use Rack::Protection, except: [:path_traversal, :remote_token, :session_hijacking, :http_origin]
+      if configuration.use_rack_protection
+        @app_builder.use Rack::Protection, except: [:path_traversal, :remote_token, :session_hijacking, :http_origin]
+      end
       @app_builder.use Rack::PactBroker::InvalidUriProtection
       @app_builder.use Rack::PactBroker::StoreBaseURL
       @app_builder.use Rack::PactBroker::AddPactBrokerVersionHeader
