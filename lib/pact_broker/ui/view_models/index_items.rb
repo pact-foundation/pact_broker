@@ -21,6 +21,10 @@ module PactBroker
           end
         end
 
+        def empty?
+          index_items.empty?
+        end
+
         private
 
         attr_reader :index_items

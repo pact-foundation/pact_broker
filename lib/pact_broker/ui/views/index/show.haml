@@ -3,6 +3,8 @@
   %script{type: 'text/javascript', src:'/javascripts/jquery.tablesorter.min.js'}
   .container
     = render :haml, :'index/_navbar', :layout => false, locals: {tag_toggle: true}
+    - if index_items.empty?
+      = render :haml, :'index/_getting-started', :layout => false
     %h1.page-header
       Pacts
     %table.table.table-bordered.table-striped{ id: 'relationships' }
