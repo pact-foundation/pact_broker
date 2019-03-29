@@ -1,5 +1,6 @@
 require 'ostruct'
 require 'pact_broker/api/pact_broker_urls'
+require 'pact_broker/api/decorators/reason_decorator'
 
 module PactBroker
   module Api
@@ -33,7 +34,11 @@ module PactBroker
         end
 
         def reason
-          query_results_with_deployment_status_summary.deployment_status_summary.reasons.join("\n")
+          query_results_with_deployment_status_summary
+            .deployment_status_summary
+            .reasons
+            .collect{ | reason | ReasonDecorator.new(reason).to_s }
+            .join("\n")
         end
 
         private
@@ -130,3 +135,4 @@ module PactBroker
     end
   end
 end
+
