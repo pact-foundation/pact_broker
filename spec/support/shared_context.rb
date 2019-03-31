@@ -6,10 +6,10 @@ RSpec.shared_context "stubbed services" do
   let(:webhook_service) { class_double("PactBroker::Webhooks::Service").as_stubbed_const }
 
   before do
-    allow(described_class).to receive(:pact_service).and_return(pact_service)
-    allow(described_class).to receive(:pacticipant_service).and_return(pacticipant_service)
-    allow(described_class).to receive(:version_service).and_return(version_service)
-    allow(described_class).to receive(:webhook_service).and_return(webhook_service)
+    allow_any_instance_of(described_class).to receive(:pact_service).and_return(pact_service)
+    allow_any_instance_of(described_class).to receive(:pacticipant_service).and_return(pacticipant_service)
+    allow_any_instance_of(described_class).to receive(:version_service).and_return(version_service)
+    allow_any_instance_of(described_class).to receive(:webhook_service).and_return(webhook_service)
   end
 end
 
