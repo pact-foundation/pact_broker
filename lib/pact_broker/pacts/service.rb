@@ -108,7 +108,7 @@ module PactBroker
 
       # TODO also take into account overridden revisions
       def pact_is_new_or_pact_has_changed_since_previous_version? pact
-        find_previous_pacts(pact).any? { |previous_pact| previous_pact.nil? || pact.json_content != previous_pact.json_content}
+        pact_repository.find_previous_pacts(pact).any? { |previous_pact| previous_pact.nil? || pact.json_content != previous_pact.json_content}
       end
 
       private
@@ -143,14 +143,6 @@ module PactBroker
           webhook_service.trigger_webhooks pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED
         else
           logger.debug "Pact has not changed since previous version, not triggering webhooks for changed content"
-        end
-      end
-
-      def find_previous_pacts pact
-        if pact.consumer_version_tag_names.any?
-          pact.consumer_version_tag_names.map { |tag| pact_repository.find_previous_pact(pact, tag) }
-        else
-          [pact_repository.find_previous_pact(pact, :untagged)]
         end
       end
     end
