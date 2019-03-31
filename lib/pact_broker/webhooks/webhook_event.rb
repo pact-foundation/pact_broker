@@ -5,16 +5,21 @@ module PactBroker
   module Webhooks
     class WebhookEvent < Sequel::Model
 
+      CONTRACT_PUBLISHED = 'contract_published'
       CONTRACT_CONTENT_CHANGED = 'contract_content_changed'
       VERIFICATION_PUBLISHED = 'provider_verification_published'
       DEFAULT_EVENT_NAME = CONTRACT_CONTENT_CHANGED
       #CONTRACT_VERIFIABLE_CONTENT_CHANGED = 'contract_verifiable_content_changed'
       #VERIFICATION_STATUS_CHANGED = 'verification_status_changed'
 
-      EVENT_NAMES = [CONTRACT_CONTENT_CHANGED, VERIFICATION_PUBLISHED]
+      EVENT_NAMES = [CONTRACT_PUBLISHED, CONTRACT_CONTENT_CHANGED, VERIFICATION_PUBLISHED]
 
       dataset_module do
         include PactBroker::Repositories::Helpers
+      end
+
+      def contract_published?
+        name == CONTRACT_PUBLISHED
       end
 
       def contract_content_changed?

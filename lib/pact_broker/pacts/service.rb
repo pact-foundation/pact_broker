@@ -108,7 +108,7 @@ module PactBroker
 
       # TODO also take into account overridden revisions
       def pact_is_new_or_pact_has_changed_since_previous_version? pact
-        find_previous_pacts(pact).any? { |previous_pact| previous_pact.nil? || pact.json_content != previous_pact.json_content}
+        pact_repository.find_previous_pacts(pact).any? { |previous_pact| previous_pact.nil? || pact.json_content != previous_pact.json_content}
       end
 
       private
@@ -118,10 +118,11 @@ module PactBroker
         logger.debug "Content #{params[:json_content]}"
         updated_pact = pact_repository.update existing_pact.id, params
 
+        webhook_service.trigger_webhooks updated_pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_PUBLISHED
         if existing_pact.json_content != updated_pact.json_content
           webhook_service.trigger_webhooks updated_pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED
         else
-          logger.debug "Pact has not changed since previous revision, not triggering webhooks"
+          logger.debug "Pact has not changed since previous version, not triggering webhooks for changed content"
         end
 
         updated_pact
@@ -137,18 +138,11 @@ module PactBroker
 
       def trigger_webhooks pact
         # TODO add tests for this
+        webhook_service.trigger_webhooks pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_PUBLISHED
         if pact_is_new_or_pact_has_changed_since_previous_version?(pact)
           webhook_service.trigger_webhooks pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED
         else
-          logger.debug "Pact has not changed since previous version, not triggering webhooks"
-        end
-      end
-
-      def find_previous_pacts pact
-        if pact.consumer_version_tag_names.any?
-          pact.consumer_version_tag_names.map { |tag| pact_repository.find_previous_pact(pact, tag) }
-        else
-          [pact_repository.find_previous_pact(pact, :untagged)]
+          logger.debug "Pact has not changed since previous version, not triggering webhooks for changed content"
         end
       end
     end

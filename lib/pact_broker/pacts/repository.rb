@@ -234,6 +234,14 @@ module PactBroker
         end
       end
 
+      def find_previous_pacts pact
+        if pact.consumer_version_tag_names.any?
+          pact.consumer_version_tag_names.map { |tag| find_previous_pact(pact, tag) }
+        else
+          [find_previous_pact(pact, :untagged)]
+        end
+      end
+
       private
 
       def find_previous_distinct_pact_by_sha pact

@@ -7,8 +7,58 @@ module PactBroker
 
   module Pacts
     describe Service do
-
       let(:td) { TestDataBuilder.new }
+
+      describe "create_or_update_pact" do
+        include_context "stubbed repositories"
+
+        before do
+          allow(described_class).to receive(:webhook_service).and_return(webhook_service)
+          allow(pacticipant_repository).to receive(:find_by_name_or_create).with(params[:consumer_name]).and_return(consumer)
+          allow(pacticipant_repository).to receive(:find_by_name_or_create).with(params[:provider_name]).and_return(provider)
+          allow(version_repository).to receive(:find_by_pacticipant_id_and_number_or_create).and_return(version)
+          allow(pact_repository).to receive(:find_by_version_and_provider).and_return(existing_pact)
+          allow(pact_repository).to receive(:create).and_return(new_pact)
+          allow(pact_repository).to receive(:update).and_return(new_pact)
+          allow(pact_repository).to receive(:find_previous_pacts).and_return(previous_pacts)
+          allow(webhook_service).to receive(:trigger_webhooks)
+        end
+
+        let(:webhook_service) { class_double("PactBroker::Webhooks::Service").as_stubbed_const }
+        let(:consumer) { double('consumer', id: 1) }
+        let(:provider) { double('provider', id: 2) }
+        let(:version) { double('version', id: 3, pacticipant_id: 1) }
+        let(:existing_pact) { nil }
+        let(:new_pact) { double('new_pact', json_content: json_content) }
+        let(:json_content) { { the: "contract" }.to_json }
+        let(:previous_pacts) { [] }
+        let(:params) do
+          {
+            consumer_name: "Foo",
+            provider_name: "Bar",
+            consumer_version_number: "1",
+            json_content: json_content
+          }
+        end
+
+        subject { Service.create_or_update_pact(params) }
+
+        context "when no pact exists with the same params" do
+          it "triggers webhooks for contract publications" do
+            expect(webhook_service).to receive(:trigger_webhooks).with(new_pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_PUBLISHED)
+            subject
+          end
+        end
+
+        context "when a pact exists with the same params" do
+          let(:existing_pact) { double('existing_pact', id: 4, json_content: { the: "contract" }.to_json) }
+
+          it "triggers webhooks for contract publications" do
+            expect(webhook_service).to receive(:trigger_webhooks).with(new_pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_PUBLISHED)
+            subject
+          end
+        end
+      end
 
       describe "find_distinct_pacts_between" do
         let(:pact_1) { double('pact 1', json_content: 'content 1')}
@@ -27,7 +77,6 @@ module PactBroker
         it "returns the distinct pacts" do
           expect(subject).to eq [pact_4, pact_2, pact_1]
         end
-
       end
 
       describe "#pact_is_new_or_pact_has_changed_since_previous_version?" do
