@@ -17,14 +17,14 @@
     - if defined?(errors) && errors.any?
       - errors.each do | error |
         %div.alert.alert-danger
-          = error
+          = escape_html(error)
 
     %form{action: '/matrix', onsubmit:'return onSubmit()'}
       - selectors.each_with_index do | selector, index |
         .selector
           %label{for: "pacticipant#{index}"}
             Pacticipant name
-          %input{name: 'q[]pacticipant', id: "pacticipant1#{index}", value: selector.pacticipant_name}
+          %input{name: 'q[]pacticipant', id: "pacticipant1#{index}", value: escape_html(selector.pacticipant_name)}
 
           .input-group
 
@@ -41,9 +41,9 @@
               %option{ value: 'specify-all-tagged', selected: selector.specify_all_tagged }
                 All versions with tag...
 
-            %input{name: 'q[]version', type: 'text', id: "pacticipant#{index}_version", class: 'version', value: selector.pacticipant_version_number}
+            %input{name: 'q[]version', type: 'text', id: "pacticipant#{index}_version", class: 'version', value: escape_html(selector.pacticipant_version_number)}
 
-            %input{name: 'q[]tag', type: 'text', id: "pacticipant#{index}_tag", class: 'tag', value: selector.tag}
+            %input{name: 'q[]tag', type: 'text', id: "pacticipant#{index}_tag", class: 'tag', value: escape_html(selector.tag)}
 
             %input{name: 'q[]latest', value: 'true', hidden: true, class: 'latest-flag'}
 
