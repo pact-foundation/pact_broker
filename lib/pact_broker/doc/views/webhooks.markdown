@@ -76,7 +76,9 @@ To specify an XML body, you will need to use a correctly escaped string (or use 
 
 #### Event types
 
-`contract_content_changed:` triggered when the content of the contract has changed since the previous publication. If `base_equality_only_on_content_that_affects_verification_results` is set to `true` in the configuration (the default), any changes to whitespace, ordering of keys, or the ordering of the `interactions` or `messages` will be ignored, and will not trigger this event.
+`contract_published:` triggered every time a contract is published. It is not recommended to trigger your provider verification build every time a contract is published - see `contract_content_changed` below.
+
+`contract_content_changed:` triggered when the content of the contract has changed since the previous publication. If `base_equality_only_on_content_that_affects_verification_results` is set to `true` in the configuration (the default), any changes to whitespace, ordering of keys, or the ordering of the `interactions` or `messages` will be ignored, and will not trigger this event. It is recommended to trigger a provider verification build for this event.
 
 `provider_verification_published:` triggered whenever a provider publishes a verification.
 
