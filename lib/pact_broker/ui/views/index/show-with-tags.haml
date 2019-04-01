@@ -37,16 +37,16 @@
         %tr
           %td.consumer
             %a{:href => index_item.consumer_group_url }
-              = index_item.consumer_name
+              = escape_html(index_item.consumer_name)
           %td.consumer-version-number
             %div
-              = index_item.consumer_version_number
+              = escape_html(index_item.consumer_version_number)
             - if index_item.latest?
               .tag.label.label-success
                 latest
             - index_item.consumer_version_latest_tag_names.each do | tag_name |
               .tag.label.label-primary
-                = tag_name
+                = escape_html(tag_name)
           %td.pact
             %span.pact
               %a{ href: index_item.pact_url, title: "View pact" }
@@ -54,13 +54,13 @@
               %a{ href: index_item.pact_matrix_url, title: "View pact matrix" }
           %td.provider
             %a{ href: index_item.provider_group_url }
-              = index_item.provider_name
+              = escape_html(index_item.provider_name)
           %td.provider-version-number
             %div
-              = index_item.provider_version_number
+              = escape_html(index_item.provider_version_number)
             - index_item.provider_version_latest_tag_names.each do | tag_name |
               .tag.label.label-primary
-                = tag_name
+                = escape_html(tag_name)
           %td
             = index_item.publication_date_of_latest_pact.gsub("about ", "")
           %td{ class: index_item.webhook_status }
