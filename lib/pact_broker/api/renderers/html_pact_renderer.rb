@@ -41,7 +41,7 @@ module PactBroker
           <link rel='stylesheet' type='text/css' href='/stylesheets/pact.css'>
           <link rel='stylesheet' type='text/css' href='/stylesheets/github-json.css'>
           <script src='/javascripts/highlight.pack.js'></script>
-          <script src='/javascripts/jquery-2.1.1.min.js'></script>
+          <script src='/javascripts/jquery-3.3.1.min.js'></script>
           <script src='/js/bootstrap.min.js'></script>
           <script src='/javascripts/pact.js'></script>
           <script>hljs.initHighlightingOnLoad();</script>"
