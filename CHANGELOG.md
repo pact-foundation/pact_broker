@@ -1,3 +1,26 @@
+<a name="v2.30.0"></a>
+### v2.30.0 (2019-03-29)
+
+
+#### Features
+
+* add helper text on index page for getting started	 ([cdeb2cd9](/../../commit/cdeb2cd9))
+* allow rack protection to be turned off so that the headers can be managed in nginx	 ([941371ec](/../../commit/941371ec))
+* allow all pacts between a given consumer and provider to be deleted at once	 ([9f1ce9c3](/../../commit/9f1ce9c3))
+* correctly identify javascript and css content types	 ([6470d199](/../../commit/6470d199))
+* add .css and .js file extensions to middleware that sets the accept header	 ([eb1cd323](/../../commit/eb1cd323))
+* add helper text on index page for getting started	 ([222d8965](/../../commit/222d8965))
+* allow rack protection to be turned off so that the headers can be managed in nginx	 ([b43e60ee](/../../commit/b43e60ee))
+* allow all pacts between a given consumer and provider to be deleted at once	 ([0c8106b6](/../../commit/0c8106b6))
+* correctly identify javascript and css content types	 ([03e156cb](/../../commit/03e156cb))
+* add .css and .js file extensions to middleware that sets the accept header	 ([2aa533dc](/../../commit/2aa533dc))
+* add a new webhook event for contract_published	 ([2e2a2034](/../../commit/2e2a2034))
+
+* **matrix**
+  * improve reasons in response when pacticipant cannot be deployed	 ([85e11616](/../../commit/85e11616))
+  * allow provider to be deployed to an environment without the consumer having to be deployed there already	 ([125c2722](/../../commit/125c2722))
+
+
 <a name="v2.29.0"></a>
 ### v2.29.0 (2019-03-15)
 
