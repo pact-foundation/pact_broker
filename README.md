@@ -43,7 +43,7 @@ Features:
 #### Step 1. Consumer CI build
 1. The consumer project runs its tests using the [Pact][pact] library to provide a mock service.
 2. While the tests run, the mock service writes the requests and the expected responses to a JSON "pact" file - this is the consumer contract.
-3. The generated pact is then published to the Pact Broker. Most Pact libries will make a task available for you to do this easily, however, at its simplest, it is a `PUT` to a resource that specifies the consumer name and application version, and the provider name. eg `http://my-pact-broker/pacts/provider/Animal%20Service/consumer/Zoo%20App/version/1.0.0`
+3. The generated pact is then published to the Pact Broker. Most Pact libraries will make a task available for you to do this easily, however, at its simplest, it is a `PUT` to a resource that specifies the consumer name and application version, and the provider name. eg `http://my-pact-broker/pacts/provider/Animal%20Service/consumer/Zoo%20App/version/1.0.0`
 (Note that you are specifying the _consumer application version_ in the URL, not the pact version. The broker will take care of versioning the pact behind the scenes when its content changes. It is expected that the consumer application version will increment with every CI build.)
 4. When a pact is published, a webhook in the Pact Broker kicks off a build of the provider project if the pact content has changed since the previous version.
 
@@ -73,7 +73,7 @@ See the [wiki][wiki] for documentation on the Pact Broker. Please read the [over
 * Check the [wiki][wiki] first.
 * See if there is an existing or closed [issue][issues] and raise a new issue if not.
 * See if there is an existing question on [stackoverflow][stackoverflow] tagged with `pact-broker`, and ask a new question if not.
-* Have a chat to us on the Pact [gitter][gitter].
+* Have a chat to us on the Pact [slack][slack].
 * Tweet us at [@pact_up][twitter] on the twitters.
 
 ### Screenshots
@@ -166,7 +166,7 @@ Please read the [UPGRADING.md](UPGRADING.md) documentation before upgrading your
 [reverse-proxy-docs]: https://github.com/pact-foundation/pact_broker/wiki/Configuration#running-the-broker-behind-a-reverse-proxy
 [stackoverflow]: http://stackoverflow.com/questions/tagged/pact-broker
 [twitter]: https://twitter.com/pact_up
-[gitter]: https://gitter.im/realestate-com-au/pact
+[slack]: https://slack.pact.io/
 [issues]: https://github.com/pact-foundation/pact_broker/issues
 [pact-docs]: http://docs.pact.io
 [cli]: https://github.com/pact-foundation/pact-ruby-standalone/releases
