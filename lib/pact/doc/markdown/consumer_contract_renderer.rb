@@ -1,5 +1,6 @@
 require 'pact/doc/markdown/interaction_renderer'
 require 'pact/doc/sort_interactions'
+require 'rack/utils'
 
 module Pact
   module Doc
@@ -15,7 +16,7 @@ module Pact
         end
 
         def call
-          title + summaries_title + summaries.join + interactions_title + full_interactions.join
+          title + summaries_title + summaries + interactions_title + full_interactions
         end
 
         private
@@ -39,11 +40,11 @@ module Pact
         end
 
         def summaries
-          interaction_renderers.collect(&:render_summary)
+          interaction_renderers.collect(&:render_summary).join
         end
 
         def full_interactions
-          interaction_renderers.collect(&:render_full_interaction)
+          interaction_renderers.collect(&:render_full_interaction).join
         end
 
         def sorted_interactions
@@ -51,17 +52,20 @@ module Pact
         end
 
         def consumer_name
-          markdown_escape consumer_contract.consumer.name
+          h(markdown_escape consumer_contract.consumer.name)
         end
 
         def provider_name
-          markdown_escape consumer_contract.provider.name
+          h(markdown_escape consumer_contract.provider.name)
         end
 
         def markdown_escape string
           string.gsub('*','\*').gsub('_','\_')
         end
 
+        def h(text)
+          Rack::Utils.escape_html(text)
+        end
       end
     end
   end

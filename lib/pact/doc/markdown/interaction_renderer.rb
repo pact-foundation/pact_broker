@@ -1,5 +1,6 @@
 require 'erb'
 require 'pact/doc/interaction_view_model'
+require 'rack/utils'
 
 module Pact
   module Doc
@@ -12,8 +13,8 @@ module Pact
         end
 
         def render_summary
-          suffix = interaction.has_provider_state? ? " given #{interaction.provider_state}" : ""
-          "* [#{interaction.description(true)}](##{interaction.id})#{suffix}\n\n"
+          suffix = interaction.has_provider_state? ? " given #{h(interaction.provider_state)}" : ""
+          "* [#{h(interaction.description(true))}](##{interaction.id})#{suffix}\n\n"
         end
 
         def render_full_interaction
@@ -36,6 +37,9 @@ module Pact
           File.dirname(__FILE__) + template_file
         end
 
+        def h(text)
+          Rack::Utils.escape_html(text)
+        end
       end
     end
   end

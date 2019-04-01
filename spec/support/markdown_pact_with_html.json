@@ -1,0 +1,27 @@
+{
+  "provider": {
+    "name": "Some <h1>Provider</h1>"
+  },
+  "consumer": {
+    "name": "Some <h1>Consumer</h1>"
+  },
+  "interactions": [
+    {
+      "description": "a request for <h1>alligators</h1> in France",
+      "provider_state": "<h1>alligators</h1> exist",
+      "request": {
+        "method": "get",
+        "path": "/alligators"
+      },
+      "response": {
+        "headers" : {"Content-Type": "application/json"},
+        "status" : 200,
+        "body" : {
+          "alligators": [{
+            "name": "Bob"
+          }]
+        }
+      }
+    }
+  ]
+}

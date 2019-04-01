@@ -39,6 +39,22 @@ module Pact
           it "renders the interactions" do
             expect(subject.call).to eq(expected_output)
           end
+
+          context "when the pact fields have html embedded in them" do
+            let(:consumer_contract) { Pact::ConsumerContract.from_uri './spec/support/markdown_pact_with_html.json' }
+
+            its(:title) { is_expected.to include "&lt;h1&gt;Consumer&lt;&#x2F;h1&gt;" }
+            its(:title) { is_expected.to include "&lt;h1&gt;Provider&lt;&#x2F;h1&gt;" }
+
+            its(:summaries_title) { is_expected.to include "&lt;h1&gt;Consumer&lt;&#x2F;h1&gt;" }
+            its(:summaries_title) { is_expected.to include "&lt;h1&gt;Provider&lt;&#x2F;h1&gt;" }
+
+            its(:summaries) { is_expected.to include "&lt;h1&gt;alligators&lt;/h1&gt;" }
+            its(:summaries) { is_expected.to_not include "<h1>alligators</h1>" }
+
+            its(:full_interactions) { is_expected.to include "&lt;h1&gt;alligators&lt;/h1&gt;" }
+            its(:full_interactions) { is_expected.to_not include "<h1>alligators</h1>" }
+          end
         end
 
       end
