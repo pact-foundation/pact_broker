@@ -3,9 +3,7 @@ require 'pact_broker/app'
 require 'db'
 
 module PactBroker
-
   describe App do
-
     before do
       TestDataBuilder.new.create_pact_with_hierarchy('Some Consumer', '1.0', 'Some Provider').and_return(:pact)
     end
@@ -34,7 +32,6 @@ module PactBroker
       subject { get path, '', env; last_response }
 
       describe "a request for root" do
-
         let(:path) { '/' }
 
         it "returns the relationships page" do
@@ -102,7 +99,6 @@ module PactBroker
 
       context "when the HALBrowser is enabled" do
         context "when application/hal+json is also specified as an Accept" do
-
           let(:env) { {'HTTP_ACCEPT' => 'text/html;application/hal+json'} }
           let(:path) { '/something' }
 
@@ -115,7 +111,6 @@ module PactBroker
 
       context "when the HALBrowser is not enabled" do
         context "when application/hal+json is also specified as an Accept" do
-
           let(:hal_browser_enabled) { false }
           let(:env) { {'HTTP_ACCEPT' => 'text/html;application/hal+json'} }
           let(:path) { '/something' }
@@ -127,7 +122,6 @@ module PactBroker
       end
 
       context "when a .csv extension is specified" do
-
         let(:path) { '/groups/Some%20Consumer.csv' }
 
         it "returns the CSV Content-Type" do
@@ -138,9 +132,24 @@ module PactBroker
 
     end
 
-    context "when no Accept header is specified" do
+    context "when the Accept header is */* (default curl)" do
+      let(:env) { { 'HTTP_ACCEPT' => '*/*' } }
 
+      subject { get path, '', env; last_response }
+
+      describe "a request for root" do
+        let(:path) { "/" }
+
+        it "returns an API response" do
+          expect(subject.status).to eq 200
+          expect(subject.headers['Content-Type']).to include 'application/hal+json'
+        end
+      end
+    end
+
+    context "when no Accept header is specified" do
       let(:env) { {} }
+
       subject { get path, '', env; last_response }
 
       describe "a request for root" do
@@ -169,7 +178,6 @@ module PactBroker
           expect(subject.headers['Content-Type']).to include 'text/css'
         end
       end
-
     end
 
     context "when the diagnostic endpoints are enabled" do
