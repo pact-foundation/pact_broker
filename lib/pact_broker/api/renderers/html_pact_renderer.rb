@@ -159,8 +159,7 @@ module PactBroker
         def consumer_contract
           Pact::ConsumerContract.from_json(@json_content)
         rescue => e
-          logger.warn "#{e.class} #{e.message} #{e.backtrace.join("\n")}"
-          logger.warn "Could not parse the following content to a Pact, showing raw content instead: #{@json_content}"
+          logger.info "Could not parse the following content to a Pact due to #{e.class} #{e.message}, showing raw content instead: #{@json_content}"
           raise NotAPactError
         end
 

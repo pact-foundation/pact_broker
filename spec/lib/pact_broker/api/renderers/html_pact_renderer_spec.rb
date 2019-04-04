@@ -94,8 +94,7 @@ module PactBroker
             end
 
             it "logs a warning" do
-              allow(logger).to receive(:warn).with(/Error/)
-              expect(logger).to receive(:warn).with(/Could not parse/)
+              expect(logger).to receive(:info).with(/Could not parse.*Error/)
               subject
             end
           end
