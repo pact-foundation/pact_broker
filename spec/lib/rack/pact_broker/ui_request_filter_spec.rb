@@ -1,14 +1,14 @@
-require 'rack/pact_broker/accepts_html_filter'
+require 'rack/pact_broker/ui_request_filter'
 require 'rack/test'
 
 module Rack
   module PactBroker
-    describe AcceptsHtmlFilter do
+    describe UIRequestFilter do
       include Rack::Test::Methods
 
       describe "#call" do
         let(:target_app) { double('target_app', call: [200, {}, []]) }
-        let(:app) { AcceptsHtmlFilter.new(target_app) }
+        let(:app) { UIRequestFilter.new(target_app) }
         let(:path) { "/" }
         let(:accept) { "text/html" }
 

@@ -2,7 +2,7 @@
 
 module Rack
   module PactBroker
-    class AcceptsHtmlFilter
+    class UIRequestFilter
       def initialize app
         @app = app
       end

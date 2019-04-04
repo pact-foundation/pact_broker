@@ -9,7 +9,7 @@ require 'rack/pact_broker/add_pact_broker_version_header'
 require 'rack/pact_broker/convert_file_extension_to_accept_header'
 require 'rack/pact_broker/database_transaction'
 require 'rack/pact_broker/invalid_uri_protection'
-require 'rack/pact_broker/accepts_html_filter'
+require 'rack/pact_broker/ui_request_filter'
 require 'rack/pact_broker/ui_authentication'
 require 'rack/pact_broker/configurable_make_it_later'
 require 'rack/pact_broker/no_auth'
@@ -140,7 +140,7 @@ module PactBroker
       logger.info "Mounting UI"
       require 'pact_broker/ui'
       builder = ::Rack::Builder.new
-      builder.use Rack::PactBroker::AcceptsHtmlFilter
+      builder.use Rack::PactBroker::UIRequestFilter
       builder.use @make_it_later_ui_auth
       builder.use Rack::PactBroker::UIAuthentication # deprecate?
       builder.run PactBroker::UI::App.new
@@ -150,7 +150,7 @@ module PactBroker
     def build_custom_ui
       logger.info "Mounting Custom UI"
       builder = ::Rack::Builder.new
-      builder.use Rack::PactBroker::AcceptsHtmlFilter
+      builder.use Rack::PactBroker::UIRequestFilter
       builder.run @custom_ui
       builder
     end
