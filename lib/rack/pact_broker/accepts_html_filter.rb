@@ -1,4 +1,5 @@
-# Decides whether this is a browser request or a request for the API
+# Decides whether this is a request for the UI or a request for the API
+
 module Rack
   module PactBroker
     class AcceptsHtmlFilter
@@ -7,24 +8,29 @@ module Rack
       end
 
       def call env
-        if accepts_web_content_types_and_not_api_media env
+        if request_for_ui_resource? env
           @app.call(env)
         else
           [404, {},[]]
         end
       end
 
-      def accepts_web_content_types_and_not_api_media env
-        accept = env['HTTP_ACCEPT'] || ''
-        accepts_web_content_types(accept) && !accepts_api_content_types(accept)
+      private
+
+      def request_for_ui_resource? env
+        request_for_file?(env) || accepts_html?(env)
       end
 
-      def accepts_web_content_types(accept)
-        accept.include?("*/*") || accept.include?("html") || accept.include?("text/css") || accept.include?("text/javascript")
+      def request_for_file?(env)
+        if last_segment = env['PATH_INFO'].split("/").last
+          last_segment.include?(".")
+        else
+          false
+        end
       end
 
-      def accepts_api_content_types accept
-        accept.include?("json") || accept.include?("csv")
+      def accepts_html?(env)
+        (env['HTTP_ACCEPT'] || '').include?("text/html")
       end
     end
   end
