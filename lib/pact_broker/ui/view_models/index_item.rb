@@ -2,6 +2,7 @@ require 'pact_broker/api/pact_broker_urls'
 require 'pact_broker/ui/helpers/url_helper'
 require 'pact_broker/date_helper'
 require 'pact_broker/versions/abbreviate_number'
+require 'pact_broker/configuration'
 
 module PactBroker
   module UI
@@ -66,6 +67,10 @@ module PactBroker
           @relationship.any_webhooks?
         end
 
+        def pact_versions_url
+          PactBroker::Api::PactBrokerUrls.pact_versions_url(consumer_name, provider_name, PactBroker.configuration.base_url)
+        end
+
         def webhook_label
           return "" unless show_webhook_status?
           case @relationship.webhook_status
@@ -87,6 +92,10 @@ module PactBroker
         end
 
         def show_webhook_status?
+          @relationship.latest?
+        end
+
+        def show_settings?
           @relationship.latest?
         end
 

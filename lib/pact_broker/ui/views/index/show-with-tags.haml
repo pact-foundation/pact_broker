@@ -1,6 +1,5 @@
 %body
-  %link{rel: 'stylesheet', href: '/stylesheets/index.css'}
-  %script{type: 'text/javascript', src:'/javascripts/jquery.tablesorter.min.js'}
+  = render :haml, :'index/_css_and_js', :layout => false
   .container
     = render :haml, :'index/_navbar', :layout => false, locals: {tag_toggle: false}
     - if index_items.empty?
@@ -31,6 +30,7 @@
           %th
             Last<br>verified
             %span.glyphicon.glyphicon-sort.relationships-sort
+          %th
       %tbody
 
       - index_items.each do | index_item |
@@ -73,6 +73,9 @@
               = index_item.last_verified_date.gsub("about ", "")
               - if index_item.warning?
                 %span.glyphicon.glyphicon-warning-sign{ 'aria-hidden': true }
+          %td
+            - if index_item.show_settings?
+              %span.integration-settings.glyphicon.glyphicon-cog{ 'aria-hidden': true, 'data-pact-versions-url': index_item.pact_versions_url, 'data-consumer-name': index_item.consumer_name, 'data-provider-name': index_item.provider_name}
     %div.relationships-size
       = index_items.size_label
 

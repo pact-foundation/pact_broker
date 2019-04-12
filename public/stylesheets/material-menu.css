@@ -1,0 +1,108 @@
+﻿.sm-rotate-90 {
+    -webkit-transform: rotate(90deg);
+    -moz-transform: rotate(90deg);
+    -o-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    transform: rotate(90deg);
+}
+
+.sm-right {
+    float: right;
+}
+
+/* Material menu */
+.material-menu {
+    z-index: 1000;
+    position: absolute;
+    overflow-y: auto;
+    max-width: 320px;
+
+    font-family: 'Roboto', sans-serif;
+    font-size: 15px;
+    color: rgba(0, 0, 0, 0.87);
+    
+    padding: 16px 0;
+    background-color: #FFFFFF;
+    border-radius: 2px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
+.material-menu ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.material-menu li {
+    padding: 0 24px;
+    min-height: 32px;
+    line-height: 32px;
+    cursor: pointer;
+}
+
+.material-menu li * {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.material-menu li span {
+    margin-left: 16px;
+}
+
+.material-menu li.check {
+    padding: 0 24px;
+    height: 32px;
+    line-height: 32px;
+    cursor: pointer;
+}
+
+.material-menu li.check.unchecked i {
+    color: transparent;
+}
+
+.material-menu li.divider {
+    margin: 10px 0;
+    min-height: 1px;
+    height: 1px;
+    background-color: #EAEAEA;
+    cursor: default;
+}
+
+.material-menu li.divider:hover {
+    background-color: #EAEAEA;
+}
+
+.material-menu li.label {
+    font-weight: bold;
+    cursor: default;
+}
+
+.material-menu li.label:hover {
+    background-color: inherit;
+}
+
+.material-menu li:hover {
+    background-color: #EEEEEE;
+}
+
+.material-menu .icon-wrapper {
+    height: inherit;
+    line-height: inherit;
+}
+
+.material-icons {
+    color: rgba(0, 0, 0, 0.54);
+}
+
+.material-icons.md-18 { font-size: 18px; }
+.material-icons.md-24 { font-size: 24px; }
+.material-icons.md-36 { font-size: 36px; }
+.material-icons.md-48 { font-size: 48px; }
