@@ -8,6 +8,21 @@ module PactBroker
       set_dataset(:all_verifications)
     end
 
+    # this view doesn't have a consumer_id
+    # TODO add it
+    def consumer
+      PactBroker::Domain::Pacticipant.find(id: PactBroker::Pacts::AllPactPublications
+         .where(pact_version_id: pact_version_id)
+         .limit(1).select(:consumer_id))
+    end
+
+    # this view doesn't have a provider_id
+    # TODO add it
+    def provider
+      PactBroker::Domain::Pacticipant.find(id: PactBroker::Pacts::AllPactPublications
+         .where(pact_version_id: pact_version_id)
+         .limit(1).select(:provider_id))
+    end
   end
 end
 

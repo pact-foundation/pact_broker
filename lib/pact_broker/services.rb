@@ -61,5 +61,10 @@ module PactBroker
       require 'pact_broker/certificates/service'
       Certificates::Service
     end
+
+    def integration_service
+      require 'pact_broker/integrations/service'
+      Integrations::Service
+    end
   end
 end

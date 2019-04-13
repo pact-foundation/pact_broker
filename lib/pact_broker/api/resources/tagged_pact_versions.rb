@@ -25,7 +25,7 @@ module PactBroker
         end
 
         def delete_resource
-          pact_service.delete_all_pact_versions_between consumer_name, and: provider_name, tag: identifier_from_path[:tag]
+          pact_service.delete_all_pact_publications_between consumer_name, and: provider_name, tag: identifier_from_path[:tag]
           true
         end
 

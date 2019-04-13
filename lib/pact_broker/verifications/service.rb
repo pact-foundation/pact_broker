@@ -64,6 +64,10 @@ module PactBroker
         pacts = pact_service.find_by_consumer_version(params)
         SummaryForConsumerVersion.new(verifications, pacts)
       end
+
+      def delete_all_verifications_between(consumer_name, options)
+        verification_repository.delete_all_verifications_between(consumer_name, options)
+      end
     end
   end
 end

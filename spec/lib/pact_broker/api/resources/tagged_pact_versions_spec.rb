@@ -68,13 +68,13 @@ module PactBroker
 
         context "DELETE" do
           before do
-            allow(pact_service).to receive(:delete_all_pact_versions_between)
+            allow(pact_service).to receive(:delete_all_pact_publications_between)
           end
 
           subject { delete(path) }
 
           it "deletes all the pacts with the given consumer/provider/tag" do
-            expect(pact_service).to receive(:delete_all_pact_versions_between).with("Foo", and: "Bar", tag: "prod")
+            expect(pact_service).to receive(:delete_all_pact_publications_between).with("Foo", and: "Bar", tag: "prod")
             subject
           end
 

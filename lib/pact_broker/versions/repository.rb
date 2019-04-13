@@ -79,6 +79,18 @@ module PactBroker
       def delete_by_id version_ids
         Domain::Version.where(id: version_ids).delete
       end
+
+      def delete_orphan_versions consumer, provider
+        version_ids_with_pact_publications = PactBroker::Pacts::PactPublication.where(consumer_id: [consumer.id, provider.id]).select(:consumer_version_id).collect{|r| r[:consumer_version_id]}
+        version_ids_with_verifications = PactBroker::Domain::Verification.where(provider_id: [provider.id, consumer.id]).select(:provider_version_id).collect{|r| r[:provider_version_id]}
+        # Hope we don't hit max parameter constraints here...
+        version_ids_to_keep = (version_ids_with_pact_publications + version_ids_with_verifications).uniq
+
+        PactBroker::Domain::Version
+          .where(pacticipant_id: [consumer.id, provider.id])
+          .exclude(id: (version_ids_with_pact_publications + version_ids_with_verifications).uniq)
+          .destroy
+      end
     end
   end
 end

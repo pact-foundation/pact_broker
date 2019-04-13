@@ -8,10 +8,11 @@ module PactBroker
 
       extend Forwardable
 
-      delegate [:consumer, :consumer_version_number, :name, :provider_name, :consumer_name] => :cached_domain_for_delegation
+      delegate [:consumer_version_number, :name, :provider_name, :consumer_name] => :cached_domain_for_delegation
 
       set_primary_key :id
       associate(:many_to_one, :provider, :class => "PactBroker::Domain::Pacticipant", :key => :provider_id, :primary_key => :id)
+      associate(:many_to_one, :consumer, :class => "PactBroker::Domain::Pacticipant", :key => :consumer_id, :primary_key => :id)
       associate(:many_to_one, :consumer_version, :class => "PactBroker::Domain::Version", :key => :consumer_version_id, :primary_key => :id)
       associate(:many_to_one, :pact_version, class: "PactBroker::Pacts::PactVersion", :key => :pact_version_id, :primary_key => :id)
 

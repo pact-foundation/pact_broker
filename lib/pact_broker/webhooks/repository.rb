@@ -78,6 +78,10 @@ module PactBroker
         Webhook.where(criteria).collect(&:to_domain)
       end
 
+      def delete_by_consumer_and_provider consumer, provider
+        Webhook.where(consumer: consumer, provider: provider).destroy
+      end
+
       def find_for_pact_and_event_name pact, event_name
         find_by_consumer_and_or_provider_and_event_name(pact.consumer, pact.provider, event_name)
       end
@@ -102,6 +106,7 @@ module PactBroker
           .collect(&:to_domain)
       end
 
+      # TODO delete
       def find_by_consumer_and_provider_existing_at consumer, provider, date_time
         Webhook.where(consumer_id: consumer.id, provider_id: provider.id)
         .where(Sequel.lit("created_at < ?", date_time))

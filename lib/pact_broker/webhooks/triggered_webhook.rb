@@ -2,6 +2,9 @@ require 'sequel'
 require 'pact_broker/repositories/helpers'
 require 'pact_broker/webhooks/execution'
 
+# Represents the relationship between a webhook and the event and object
+# that caused it to be triggered. eg a pact publication
+
 module PactBroker
   module Webhooks
     class TriggeredWebhook < Sequel::Model(:triggered_webhooks)

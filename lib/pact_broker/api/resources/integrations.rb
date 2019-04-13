@@ -10,7 +10,7 @@ module PactBroker
         end
 
         def allowed_methods
-          ["GET", "OPTIONS"]
+          ["GET", "OPTIONS", "DELETE"]
         end
 
         def to_dot
@@ -19,6 +19,11 @@ module PactBroker
 
         def integrations
           pact_service.find_latest_pacts
+        end
+
+        def delete_resource
+          integration_service.delete(consumer_name, provider_name)
+          true
         end
       end
     end

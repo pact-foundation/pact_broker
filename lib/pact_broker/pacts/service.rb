@@ -68,6 +68,10 @@ module PactBroker
         pact_repository.find_all_pact_versions_between consumer, options
       end
 
+      def delete_all_pact_publications_between consumer, options
+        pact_repository.delete_all_pact_publications_between consumer, options
+      end
+
       def delete_all_pact_versions_between consumer, options
         pact_repository.delete_all_pact_versions_between consumer, options
       end

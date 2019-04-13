@@ -26,6 +26,11 @@ module PactBroker
         end
       end
 
+      def before_destroy
+        PactBroker::Domain::Label.where(pacticipant: self).destroy
+        super
+      end
+
       def latest_version
         versions.last
       end

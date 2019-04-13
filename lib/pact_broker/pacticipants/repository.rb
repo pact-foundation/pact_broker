@@ -54,6 +54,15 @@ module PactBroker
       def pacticipant_names
         PactBroker::Domain::Pacticipant.select(:name).order(:name).collect{ | pacticipant| pacticipant.name }
       end
+
+      def delete_if_orphan(pacticipant)
+        if PactBroker::Domain::Version.where(pacticipant: pacticipant).empty? &&
+          PactBroker::Pacts::PactPublication.where(provider: pacticipant).or(consumer: pacticipant).empty? &&
+            PactBroker::Pacts::PactVersion.where(provider: pacticipant).or(consumer: pacticipant).empty? &&
+            PactBroker::Webhooks::Webhook.where(provider: pacticipant).or(consumer: pacticipant).empty?
+          pacticipant.destroy
+        end
+      end
     end
   end
 end

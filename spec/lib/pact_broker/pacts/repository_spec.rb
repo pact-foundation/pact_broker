@@ -313,7 +313,7 @@ module PactBroker
         end
       end
 
-      describe "#delete_all_pact_versions_between" do
+      describe "#delete_all_pact_publications_between" do
 
         before do
           TestDataBuilder.new
@@ -332,14 +332,14 @@ module PactBroker
             .create_pact
         end
 
-        subject { Repository.new.delete_all_pact_versions_between(consumer_name, :and => provider_name) }
+        subject { Repository.new.delete_all_pact_publications_between(consumer_name, :and => provider_name) }
 
         it "deletes the pacts between the specified consumer and provider" do
           expect { subject }.to change { PactPublication.count }.by(-2)
         end
 
         context "with a tag" do
-          subject { Repository.new.delete_all_pact_versions_between(consumer_name, :and => provider_name, tag: "prod") }
+          subject { Repository.new.delete_all_pact_publications_between(consumer_name, :and => provider_name, tag: "prod") }
 
           it "deletes the pacts between the specified consumer and provider with the given tag" do
             expect { subject }.to change { PactPublication.count }.by(-1)

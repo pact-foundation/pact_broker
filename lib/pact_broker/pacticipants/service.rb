@@ -90,6 +90,10 @@ module PactBroker
         connection.run("delete from pacticipants where id = #{pacticipant.id}")
       end
 
+      def self.delete_if_orphan(pacticipant)
+        pacticipant_repository.delete_if_orphan(pacticipant)
+      end
+
       def self.pacticipant_names
         pacticipant_repository.pacticipant_names
       end

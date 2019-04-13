@@ -30,7 +30,7 @@ module PactBroker
         end
 
         def delete_resource
-          pact_service.delete_all_pact_versions_between(consumer_name, and: provider_name)
+          pact_service.delete_all_pact_publications_between(consumer_name, and: provider_name)
           true
         end
       end

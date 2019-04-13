@@ -120,6 +120,12 @@ module PactBroker
         PactBroker::Domain::Verification.where(provider_version_id: version_id).delete
       end
 
+      def delete_all_verifications_between(consumer_name, options)
+        consumer = pacticipant_repository.find_by_name(consumer_name)
+        provider = pacticipant_repository.find_by_name(options.fetch(:and))
+        PactBroker::Domain::Verification.where(provider: provider, consumer: consumer).destroy
+      end
+
       def pact_version_id_for pact
         PactBroker::Pacts::PactPublication.select(:pact_version_id).where(id: pact.id)
       end

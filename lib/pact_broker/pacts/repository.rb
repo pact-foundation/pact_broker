@@ -91,10 +91,16 @@ module PactBroker
           .collect(&:to_domain)
       end
 
-      def delete_all_pact_versions_between consumer_name, options
+      def delete_all_pact_publications_between consumer_name, options
         ids = find_all_database_versions_between(consumer_name, options).select_for_subquery(:id)
         webhook_repository.delete_triggered_webhooks_by_pact_publication_ids(ids)
         PactPublication.where(id: ids).delete
+      end
+
+      def delete_all_pact_versions_between consumer_name, options
+        consumer = pacticipant_repository.find_by_name(consumer_name)
+        provider = pacticipant_repository.find_by_name(options.fetch(:and))
+        PactVersion.where(consumer: consumer, provider: provider).destroy
       end
 
       def find_latest_pact_versions_for_provider provider_name, tag = nil

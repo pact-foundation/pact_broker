@@ -19,6 +19,7 @@ module PactBroker
 
       def before_destroy
         WebhookHeader.where(webhook_id: id).destroy
+        super
       end
 
       def update_from_domain webhook

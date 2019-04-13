@@ -3,11 +3,8 @@ require 'pact_broker/domain/order_versions'
 require 'pact_broker/repositories/helpers'
 
 module PactBroker
-
   module Domain
-
     class Version < Sequel::Model
-
       set_primary_key :id
       one_to_many :pact_publications, order: :revision_number, class: "PactBroker::Pacts::PactPublication", key: :consumer_version_id
       associate(:many_to_one, :pacticipant, :class => "PactBroker::Domain::Pacticipant", :key => :pacticipant_id, :primary_key => :id)
@@ -19,6 +16,11 @@ module PactBroker
 
       def after_create
         OrderVersions.(self)
+      end
+
+      def before_destroy
+        PactBroker::Domain::Tag.where(version: self).destroy
+        super
       end
 
       def to_s
