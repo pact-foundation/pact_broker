@@ -321,6 +321,8 @@ module PactBroker
             .create_consumer_version("1.2.3")
             .create_provider(provider_name)
             .create_pact
+            .revise_pact
+            .comment("The overwritten pact needs to be deleted too")
             .create_webhook
             .create_triggered_webhook
             .create_webhook_execution
@@ -330,12 +332,13 @@ module PactBroker
             .create_pact
             .create_provider("Another Provider")
             .create_pact
+            .comment("This one won't be deleted")
         end
 
         subject { Repository.new.delete_all_pact_publications_between(consumer_name, :and => provider_name) }
 
         it "deletes the pacts between the specified consumer and provider" do
-          expect { subject }.to change { PactPublication.count }.by(-2)
+          expect { subject }.to change { PactPublication.count }.by(-3)
         end
 
         context "with a tag" do
