@@ -119,3 +119,7 @@ div.getting-started {
   max-width: 600px;
   margin-bottom: 50px;
 }
+
+td.to-be-deleted {
+  background-color: #f2dede !important
+}

@@ -18,6 +18,11 @@ module PactBroker
 
       dataset_module do
         include PactBroker::Repositories::Helpers
+
+        def tag tag_name
+          filter = name_like(Sequel.qualify(:tags, :name), tag_name)
+          join(:tags, {version_id: :consumer_version_id}).where(filter)
+        end
       end
 
       def before_create

@@ -71,6 +71,10 @@ module PactBroker
           PactBroker::Api::PactBrokerUrls.pact_versions_url(consumer_name, provider_name, PactBroker.configuration.base_url)
         end
 
+        def integration_url
+          PactBroker::Api::PactBrokerUrls.integration_url(consumer_name, provider_name, PactBroker.configuration.base_url)
+        end
+
         def webhook_label
           return "" unless show_webhook_status?
           case @relationship.webhook_status

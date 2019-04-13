@@ -86,6 +86,7 @@ module PactBroker
         add ['test','error'], Api::Resources::ErrorTest, {resource_name: "error_test"}
 
         add ['integrations'], Api::Resources::Integrations, {resource_name: "integrations"}
+        add ['integrations', 'provider', :provider_name, 'consumer', :consumer_name], Api::Resources::Integration, {resource_name: "integration"}
         add [], Api::Resources::Index, {resource_name: "index"}
       end
     end

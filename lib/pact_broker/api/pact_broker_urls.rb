@@ -77,6 +77,10 @@ module PactBroker
         "#{base_url}/pacts/provider/#{url_encode(provider_name)}/consumer/#{url_encode(consumer_name)}/versions"
       end
 
+      def integration_url consumer_name, provider_name, base_url = ""
+        "#{base_url}/integrations/provider/#{url_encode(provider_name)}/consumer/#{url_encode(consumer_name)}"
+      end
+
       def previous_distinct_diff_url pact, base_url
         pact_url(base_url, pact) + "/diff/previous-distinct"
       end
