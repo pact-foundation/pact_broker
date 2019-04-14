@@ -34,7 +34,7 @@
       %tbody
 
         - index_items.each do | index_item |
-          %tr
+          %tr{'data-pact-versions-url': index_item.pact_versions_url, 'data-consumer-name': index_item.consumer_name, 'data-provider-name': index_item.provider_name, 'data-integration-url': index_item.integration_url}
             %td.consumer
               %a{:href => index_item.consumer_group_url }
                 = escape_html(index_item.consumer_name)
@@ -75,7 +75,7 @@
                   %span.glyphicon.glyphicon-warning-sign{ 'aria-hidden': true }
             %td
               - if index_item.show_settings?
-                %span.integration-settings.glyphicon.glyphicon-option-horizontal{ 'aria-hidden': true, 'data-pact-versions-url': index_item.pact_versions_url, 'data-consumer-name': index_item.consumer_name, 'data-provider-name': index_item.provider_name}
+                %span.integration-settings.glyphicon.glyphicon-option-horizontal{ 'aria-hidden': true }
     %div.relationships-size
       = index_items.size_label
 
