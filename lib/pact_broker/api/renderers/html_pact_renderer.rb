@@ -75,11 +75,12 @@ module PactBroker
                 <a href=\"/\">Home</a>
               </li>
               <li>
-                <span data-api-browser-url=\"#{json_url}\"
-                      data-consumer-name=\"#{@pact.consumer.name}\"
+                <span data-consumer-name=\"#{@pact.consumer.name}\"
+                      data-provider-name=\"#{@pact.provider.name}\"
                       data-consumer-version-number=\"#{@pact.consumer_version_number}\"
                       data-pact-url=\"#{pact_url}\"
-                      class='more-options glyphicon glyphicon-option-horizontal' aria-hidden='true'></span>
+                      class='more-options glyphicon glyphicon-option-horizontal'
+                      aria-hidden='true'></span>
               </li>
             </ul>
           </div>"

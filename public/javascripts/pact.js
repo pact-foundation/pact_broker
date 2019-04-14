@@ -26,7 +26,10 @@ $(document).ready(function() {
           type: "normal",
           text: "Delete ...",
           click: function(openMenuElement) {
-            promptToDeleteResource(openMenuElement.data().pactUrl, createDeletionConfirmationText(openMenuElement.data()))
+            promptToDeleteResource(
+              openMenuElement.data().pactUrl,
+              createDeletionConfirmationText(openMenuElement.data())
+            );
           }
         }
       ]
@@ -37,13 +40,14 @@ $(document).ready(function() {
 });
 
 function createDeletionConfirmationText(data) {
-  return `Do you wish to delete the pact for version ${data.consumerVersionNumber} of ${data.consumerName}?`;
+  return `Do you wish to delete the pact for version ${
+    data.consumerVersionNumber
+  } of ${data.consumerName}?`;
 }
-
 
 function confirmDeleteResource(
   confirmationText,
-  confirmCallbak,
+  confirmCallback,
   cancelCallback
 ) {
   $.confirm({
@@ -54,7 +58,7 @@ function confirmDeleteResource(
         text: "DELETE",
         btnClass: "alert alert-danger",
         keys: ["enter", "shift"],
-        action: confirmCallbak
+        action: confirmCallback
       },
       cancel: cancelCallback
     }
@@ -62,62 +66,81 @@ function confirmDeleteResource(
 }
 
 function promptToDeleteResource(deletionUrl, confirmationText) {
-  const cancel = function() {};
-  const confirm = function() {
-    deleteResource(
-      deletionUrl,
-      handleDeletionSuccess,
-      handleDeletionFailure
-    );
+  const cancelled = function() {};
+  const confirmed = function() {
+    deleteResource(deletionUrl, handleDeletionSuccess, handleDeletionFailure);
   };
 
-  confirmDeleteResource(
-    confirmationText,
-    confirm,
-    cancel
-  );
+  confirmDeleteResource(confirmationText, confirmed, cancelled);
+}
+
+function createWhereToNextConfirmationConfiguration(latestPactUrl) {
+  return {
+    title: "Pact deleted",
+    content: "Where to next?",
+    buttons: {
+      latest: {
+        text: "Latest pact",
+        keys: ["enter", "shift"],
+        action: function() {
+          window.location.href = latestPactUrl;
+        }
+      },
+      home: {
+        text: "Home",
+        action: function() {
+          window.location.href = "/";
+        }
+      }
+    }
+  };
+}
+
+function createAllPactsDeletedConfirmationConfiguration() {
+  return {
+    title: "Pact deleted",
+    content: "All versions of this pact have now been deleted.",
+    buttons: {
+      home: {
+        text: "Home",
+        action: function() {
+          window.location.href = "/";
+        }
+      }
+    }
+  };
 }
 
 function handleDeletionSuccess(responseBody) {
-  if(responseBody._links['pb:latest-pact-version']) {
-    $.confirm({
-      title: "Pact deleted",
-      content: "Where to next?",
-      buttons: {
-        latest: {
-          text: "Latest pact",
-          keys: ["enter", "shift"],
-          action: function() { window.location.href = responseBody._links['pb:latest-pact-version'].href }
-        },
-        home: {
-          text: "Home",
-          action: function() { window.location.href = "/"; }
-        }
-      }
-    });
-
+  if (responseBody._links["pb:latest-pact-version"]) {
+    $.confirm(
+      createWhereToNextConfirmationConfiguration(
+        responseBody._links["pb:latest-pact-version"].href
+      )
+    );
   } else {
-    window.location.href = "/";
+    $.confirm(createAllPactsDeletedConfirmationConfiguration());
   }
 }
 
-function handleDeletionFailure(response) {
-  let errorMessage = null;
-
-  if (response.error && response.error.message && response.error.reference) {
-    errorMessage =
-      "<p>Could not delete resources due to error: " +
-      response.error.message +
-      "</p><p>Error reference: " +
-      response.error.reference + "</p>";
-  } else {
-    errorMessage =
-      "Could not delete resources due to error: " + JSON.stringify(response);
+function createErrorMessage(responseBody) {
+  if (responseBody && responseBody.error && responseBody.error.message && responseBody.error.reference) {
+    return `<p>Could not delete resources due to error: ${
+      responseBody.error.message
+    }</p><p>Error reference:
+      ${responseBody.error.reference}
+      </p>`;
+  } else if (responseBody) {
+    return `Could not delete resources due to error: ${JSON.stringify(responseBody)}`;
   }
 
+  return "Could not delete resources.";
+}
+
+function handleDeletionFailure(response) {
   $.alert({
-      title: 'Error',
-      content: errorMessage,
+    title: "Error",
+    content: createErrorMessage(response)
   });
 }
 

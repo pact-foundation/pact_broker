@@ -21,26 +21,12 @@ $(document).ready(function() {
     });
 });
 
-function handleDeletePactsSelected(clickedElement) {
-  const tr = $(clickedElement).closest("tr");
-  const confirmationText = createPactVersionsDeletionConfirmationText(tr.data());
-  promptToDeleteResources(
-    tr,
-    tr.data().pactVersionsUrl,
-    confirmationText
-  );
-}
-
-function handleDeleteIntegrationsSelected(clickedElement) {
-  const tr = $(clickedElement).closest("tr");
-  const confirmationText = createIntegrationDeletionConfirmationText(
-    tr.data()
-  );
-  promptToDeleteResources(
-    tr,
-    tr.data().integrationUrl,
-    confirmationText
-  );
+function createPactDeletionConfirmationText(rowData) {
+  return `This will delete all versions of the pact between ${
+    rowData.consumerName
+  } and ${rowData.providerName}. It will keep ${rowData.consumerName} and ${
+    rowData.providerName
+  }, and all other data related to them (webhooks, verifications, application versions, and tags). Do you wish to continue?`;
 }
 
 function createIntegrationDeletionConfirmationText(rowData) {
@@ -49,45 +35,39 @@ function createIntegrationDeletionConfirmationText(rowData) {
   }, and all associated data (pacts, verifications, application versions, tags and webhooks) that are not associated with other integrations. Do you wish to continue?`;
 }
 
-function promptToDeleteIntegration(rowData, row) {
-  const agree = confirm(
-    `This will delete ${rowData.consumerName} and ${
-      rowData.providerName
-    }, and all associated data (pacts, verifications, application versions, tags and webhooks). Do you wish to continue?`
+function handleDeletePactsSelected(clickedElement) {
+  const tr = $(clickedElement).closest("tr");
+  const confirmationText = createPactDeletionConfirmationText(tr.data());
+  handleDeleteResourcesSelected(
+    tr,
+    tr.data().pactVersionsUrl,
+    confirmationText
   );
 }
 
-function highlightRowsToBeDeleted(table, consumerName, providerName) {
-  table
+function handleDeleteIntegrationsSelected(clickedElement) {
+  const tr = $(clickedElement).closest("tr");
+  const confirmationText = createIntegrationDeletionConfirmationText(tr.data());
+  handleDeleteResourcesSelected(tr, tr.data().integrationUrl, confirmationText);
+}
+
+function findRowsToBeDeleted(table, consumerName, providerName) {
+  return table
     .children("tbody")
-    .find(`[data-consumer-name="${consumerName}"]`)
-    .children("td")
-    .addClass("to-be-deleted");
-  table
-    .children("tbody")
-    .find(`[data-provider-name="${providerName}"]`)
-    .children("td")
-    .addClass("to-be-deleted");
+    .find(
+      `[data-consumer-name="${consumerName}"][data-provider-name="${providerName}"]`
+    );
 }
 
-function highlightRowToBeDeleted(row) {
-  row.children("td").addClass("to-be-deleted");
+function highlightRowsToBeDeleted(rows) {
+  rows.children("td").addClass("to-be-deleted");
 }
 
-function unHighlightRows(table) {
-  table.find(".to-be-deleted").removeClass("to-be-deleted");
-}
-
-function createPactVersionsDeletionConfirmationText(rowData) {
-  return `This will delete all versions of the pact between ${
-    rowData.consumerName
-  } and ${rowData.providerName}. It will keep ${rowData.consumerName} and ${
-    rowData.providerName
-  }, and all other data related to them (webhooks, verifications, application versions, and tags). Do you wish to continue?`;
+function unHighlightRows(rows) {
+  rows.children("td").removeClass("to-be-deleted");
 }
 
 function confirmDeleteResources(
-  rowData,
   confirmationText,
   confirmCallback,
   cancelCallback
@@ -107,35 +87,33 @@ function confirmDeleteResources(
   });
 }
 
-function promptToDeleteResources(row, deletionUrl, confirmationText) {
+function handleDeleteResourcesSelected(row, deletionUrl, confirmationText) {
   const rowData = row.data();
-  const table = row.closest("table");
-  const cancel = function() {
-    unHighlightRows(table);
+  const rows = findRowsToBeDeleted(
+    row.closest("table"),
+    rowData.consumerName,
+    rowData.providerName
+  );
+  const cancelled = function() {
+    unHighlightRows(rows);
   };
-  const confirm = function() {
+  const confirmed = function() {
     deleteResources(
       deletionUrl,
       function() {
-        handleDeletionSuccess(row);
+        handleDeletionSuccess(rows);
       },
       function(response) {
-        handleDeletionFailure(table, response);
+        handleDeletionFailure(rows, response);
       }
     );
   };
-
-  highlightRowToBeDeleted(row);
-  confirmDeleteResources(
-    rowData,
-    confirmationText,
-    confirm,
-    cancel
-  );
+  highlightRowsToBeDeleted(rows);
+  confirmDeleteResources(confirmationText, confirmed, cancelled);
 }
 
-function handleDeletionSuccess(row) {
-  row
+function hideDeletedRows(rows) {
+  rows
     .children("td, th")
     .animate({ padding: 0 })
     .wrapInner("<div />")
@@ -147,24 +125,29 @@ function handleDeletionSuccess(row) {
     });
 }
 
-function handleDeletionFailure(table, response) {
-  unHighlightRows(table);
-  let errorMessage = null;
+function handleDeletionSuccess(rows) {
+  hideDeletedRows(rows);
+}
 
-  if (response.error && response.error.message && response.error.reference) {
-    errorMessage =
-      "<p>Could not delete resources due to error: " +
-      response.error.message +
-      "</p><p>Error reference: " +
-      response.error.reference + "</p>";
-  } else {
-    errorMessage =
-      "Could not delete resources due to error: " + JSON.stringify(response);
+function createErrorMessage(responseBody) {
+  if (responseBody && responseBody.error && responseBody.error.message && responseBody.error.reference) {
+    return `<p>Could not delete resources due to error: ${
+      responseBody.error.message
+    }</p><p>Error reference:
+      ${responseBody.error.reference}
+      </p>`;
+  } else if (responseBody) {
+    return `Could not delete resources due to error: ${JSON.stringify(responseBody)}`;
   }
 
+  return "Could not delete resources.";
+}
+
+function handleDeletionFailure(rows, response) {
+  unHighlightRows(rows);
   $.alert({
-      title: 'Error',
-      content: errorMessage,
+    title: "Error",
+    content: createErrorMessage(response)
   });
 }
 
