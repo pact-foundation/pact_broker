@@ -15,15 +15,15 @@ pre {
   font-size: 1em
 }
 
-li.badge {
+li.pact-badge {
   cursor: pointer;
 }
 
-li.badge > img {
+li.pact-badge > img {
   cursor: pointer;
   height: 20px;
 }
 
-div.badge-markdown {
+div.pact-badge-markdown {
   background-color: #f8f8f8
 }

@@ -11,7 +11,7 @@ module PactBroker
           ENV['BACKUP_TZ'] = ENV['TZ']
           ENV['TZ'] = "Australia/Melbourne"
           PactBroker.configuration.enable_public_badge_access = true
-          allow(PactBroker::Api::PactBrokerUrls).to receive(:pact_url).with('', pact).and_return(pact_url)
+          allow(PactBroker::Api::PactBrokerUrls).to receive(:pact_url).with('http://base', pact).and_return(pact_url)
           allow_any_instance_of(HtmlPactRenderer).to receive(:logger).and_return(logger)
 
           Timecop.freeze(created_at + 3)

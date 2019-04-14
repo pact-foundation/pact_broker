@@ -86,10 +86,10 @@ function createPactVersionsDeletionConfirmationText(rowData) {
   }, and all other data related to them (webhooks, verifications, application versions, and tags). Do you wish to continue?`;
 }
 
-function confirmDeletePactVersions(
+function confirmDeleteResources(
   rowData,
   confirmationText,
-  confirmCallbak,
+  confirmCallback,
   cancelCallback
 ) {
   $.confirm({
@@ -100,7 +100,7 @@ function confirmDeletePactVersions(
         text: "DELETE",
         btnClass: "alert alert-danger",
         keys: ["enter", "shift"],
-        action: confirmCallbak
+        action: confirmCallback
       },
       cancel: cancelCallback
     }
@@ -114,7 +114,7 @@ function promptToDeleteResources(row, deletionUrl, confirmationText) {
     unHighlightRows(table);
   };
   const confirm = function() {
-    deletePactVersions(
+    deleteResources(
       deletionUrl,
       function() {
         handleDeletionSuccess(row);
@@ -126,7 +126,7 @@ function promptToDeleteResources(row, deletionUrl, confirmationText) {
   };
 
   highlightRowToBeDeleted(row);
-  confirmDeletePactVersions(
+  confirmDeleteResources(
     rowData,
     confirmationText,
     confirm,
@@ -168,7 +168,7 @@ function handleDeletionFailure(table, response) {
   });
 }
 
-function deletePactVersions(url, successCallback, errorCallback) {
+function deleteResources(url, successCallback, errorCallback) {
   $.ajax({
     url: url,
     dataType: "json",

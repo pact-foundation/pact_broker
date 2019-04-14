@@ -88,6 +88,7 @@ module PactBroker
 
         def delete_resource
           pact_service.delete(pact_params)
+          set_post_deletion_response
           true
         end
 
@@ -103,6 +104,19 @@ module PactBroker
 
         def update_matrix_after_request?
           request.put? || request.patch?
+        end
+
+        def set_post_deletion_response
+          latest_pact = pact_service.find_latest_pact(pact_params)
+          response_body = { "_links" => {} }
+          if latest_pact
+            response_body["_links"]["pb:latest-pact-version"] = {
+              href: latest_pact_url(base_url, latest_pact),
+              title: "Latest pact"
+            }
+          end
+          response.body = response_body.to_json
+          response.headers["Content-Type" => "application/hal+json;charset=utf-8"]
         end
       end
     end

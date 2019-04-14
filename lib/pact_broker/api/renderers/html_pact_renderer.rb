@@ -40,10 +40,15 @@ module PactBroker
           <link rel='stylesheet' type='text/css' href='/stylesheets/github.css'>
           <link rel='stylesheet' type='text/css' href='/stylesheets/pact.css'>
           <link rel='stylesheet' type='text/css' href='/stylesheets/github-json.css'>
+          <link rel='stylesheet' type='text/css' href='/css/bootstrap.min.css'>
+          <link rel='stylesheet' type='text/css' href='/stylesheets/material-menu.css'>
+          <link rel='stylesheet' type='text/css' href='/stylesheets/jquery-confirm.min.css'>
           <script src='/javascripts/highlight.pack.js'></script>
           <script src='/javascripts/jquery-3.3.1.min.js'></script>
           <script src='/js/bootstrap.min.js'></script>
+          <script src='/javascripts/material-menu.js'></script>
           <script src='/javascripts/pact.js'></script>
+          <script src='/javascripts/jquery-confirm.min.js'></script>
           <script>hljs.initHighlightingOnLoad();</script>"
         end
 
@@ -69,19 +74,26 @@ module PactBroker
               <li>
                 <a href=\"/\">Home</a>
               </li>
+              <li>
+                <span data-api-browser-url=\"#{json_url}\"
+                      data-consumer-name=\"#{@pact.consumer.name}\"
+                      data-consumer-version-number=\"#{@pact.consumer_version_number}\"
+                      data-pact-url=\"#{pact_url}\"
+                      class='more-options glyphicon glyphicon-option-horizontal' aria-hidden='true'></span>
+              </li>
             </ul>
           </div>"
         end
 
         def badge_list_item
-            "<li class='badge'>
+            "<li class='pact-badge'>
               <img src='#{badge_url}'/>
             </li>
             "
         end
 
         def badge_markdown_item
-          "<li class='badge-markdown' style='display:none'>
+          "<li class='pact-badge-markdown' style='display:none'>
               <textarea rows='3' cols='100'>#{badge_markdown}</textarea>
           </li>"
         end
@@ -120,11 +132,15 @@ module PactBroker
         end
 
         def pact_url
-          PactBroker::Api::PactBrokerUrls.pact_url '', @pact
+          PactBroker::Api::PactBrokerUrls.pact_url base_url, @pact
         end
 
         def matrix_url
-          PactBroker::Api::PactBrokerUrls.matrix_url_from_params consumer_name: @pact.consumer.name, provider_name: @pact.provider.name
+          PactBroker::Api::PactBrokerUrls.matrix_url_from_params({ consumer_name: @pact.consumer.name, provider_name: @pact.provider.name }, base_url)
+        end
+
+        def latest_pact_url
+          PactBroker::Api::PactBrokerUrls.latest_pact_url base_url, @pact
         end
 
         def badge_target_url
@@ -162,7 +178,6 @@ module PactBroker
           logger.info "Could not parse the following content to a Pact due to #{e.class} #{e.message}, showing raw content instead: #{@json_content}"
           raise NotAPactError
         end
-
       end
     end
   end

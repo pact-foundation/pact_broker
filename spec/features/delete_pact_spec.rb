@@ -19,8 +19,8 @@ describe "Deleting a pact" do
       expect{ subject }.to change{ PactBroker::Pacts::PactPublication.count }.by(-1)
     end
 
-    it "returns a 204" do
-      expect(subject.status).to be 204
+    it "returns a 200" do
+      expect(subject.status).to be 200
     end
   end
 

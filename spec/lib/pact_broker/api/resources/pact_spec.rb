@@ -153,8 +153,8 @@ module PactBroker::Api
             subject
           end
 
-          it "returns a 204" do
-            expect(subject.status).to eq 204
+          it "returns a 200" do
+            expect(subject.status).to eq 200
           end
         end
 
@@ -164,7 +164,6 @@ module PactBroker::Api
           it "returns a 404" do
             expect(subject.status).to eq 404
           end
-
         end
       end
     end
