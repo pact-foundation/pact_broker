@@ -30,22 +30,23 @@ module PactBroker
       def build(context)
         attributes = {
           method: http_method,
-          url: build_url(context[:pact], context[:verification]),
+          url: build_url(context[:pact], context[:verification], context[:base_url]),
           headers: headers,
           username: username,
           password: password,
           uuid: uuid,
-          body: build_body(context[:pact], context[:verification])
+          body: build_body(context[:pact], context[:verification], context[:base_url])
         }
         PactBroker::Domain::WebhookRequest.new(attributes)
       end
 
-      def build_url(pact, verification)
-        URI(PactBroker::Webhooks::Render.call(url, pact, verification){ | value | CGI::escape(value) if !value.nil? } ).to_s
+      def build_url(pact, verification, broker_base_url)
+        URI(PactBroker::Webhooks::Render.call(url, pact, verification, broker_base_url){ | value | CGI::escape(value) if !value.nil? } ).to_s
       end
 
-      def build_body(pact, verification)
-        PactBroker::Webhooks::Render.call(String === body ? body : body.to_json, pact, verification)
+      def build_body(pact, verification, broker_base_url)
+        body_string = String === body ? body : body.to_json
+        PactBroker::Webhooks::Render.call(body_string, pact, verification, broker_base_url)
       end
 
       def description

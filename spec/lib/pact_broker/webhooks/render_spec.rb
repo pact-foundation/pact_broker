@@ -15,6 +15,8 @@ module PactBroker
           end
         end
 
+        let(:base_url) { "http://broker" }
+
         let(:pact) do
           double("pact",
             consumer_version: consumer_version,
@@ -93,7 +95,7 @@ module PactBroker
         let(:nil_pact) { nil }
         let(:nil_verification) { nil }
 
-        subject { Render.call(template, pact, verification) }
+        subject { Render.call(template, pact, verification, base_url) }
 
         TEST_CASES = [
           ["${pactbroker.pactUrl}", "http://foo", :pact, :verification],
@@ -122,7 +124,7 @@ module PactBroker
             it "replaces #{template} with #{expected_output.inspect}" do
               the_pact = send(pact_var_name)
               the_verification = send(verification_var_name)
-              output = Render.call(template, the_pact, the_verification)
+              output = Render.call(template, the_pact, the_verification, base_url)
               expect(output).to eq expected_output
             end
           end
@@ -130,7 +132,7 @@ module PactBroker
 
         context "with an escaper" do
           subject do
-            Render.call(template, pact, verification) do | value |
+            Render.call(template, pact, verification, base_url) do | value |
               CGI.escape(value)
             end
           end
@@ -145,13 +147,14 @@ module PactBroker
       describe "#call with placeholder domain objects" do
         let(:placeholder_pact) { PactBroker::Pacts::PlaceholderPact.new }
         let(:placeholder_verification) { PactBroker::Verifications::PlaceholderVerification.new }
+        let(:base_url) { "http://broker" }
 
         it "does not blow up with a placeholder pact" do
-          Render.call("", placeholder_pact)
+          Render.call("", placeholder_pact, nil, base_url)
         end
 
         it "does not blow up with a placeholder verification" do
-          Render.call("", placeholder_pact, placeholder_verification)
+          Render.call("", placeholder_pact, placeholder_verification, base_url)
         end
       end
     end

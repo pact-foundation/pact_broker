@@ -7,13 +7,9 @@ describe "Execute a webhook" do
   let(:td) { TestDataBuilder.new }
 
   before do
-    ENV['PACT_BROKER_BASE_URL'] = 'http://example.org'
+    Thread.current[:pact_broker_thread_data] = OpenStruct.new(base_url: 'http://broker')
     td.create_pact_with_hierarchy("Foo", "1", "Bar")
       .create_webhook(method: 'POST', body: '${pactbroker.pactUrl}')
-  end
-
-  after do
-    ENV.delete('PACT_BROKER_BASE_URL')
   end
 
   let(:path) { "/webhooks/#{td.webhook.uuid}/execute" }
@@ -23,7 +19,7 @@ describe "Execute a webhook" do
 
   context "when the execution is successful" do
     let!(:request) do
-      stub_request(:post, /http/).with(body: 'http://example.org/pacts/provider/Bar/consumer/Foo/version/1').to_return(:status => 200, body: response_body)
+      stub_request(:post, /http/).with(body: 'http://broker/pacts/provider/Bar/consumer/Foo/version/1').to_return(:status => 200, body: response_body)
     end
 
     let(:response_body) { "webhook-response-body" }

@@ -11,13 +11,14 @@ module PactBroker
         allow(Job).to receive(:logger).and_return(logger)
       end
 
+      let(:base_url) { "http://broker" }
       let(:triggered_webhook) { instance_double("PactBroker::Webhooks::TriggeredWebhook", webhook_uuid: '1234', id: 1) }
       let(:result) { instance_double("PactBroker::Domain::WebhookExecutionResult", success?: success)}
       let(:success) { true }
       let(:logger) { double('logger').as_null_object }
       let(:database_connector) { ->(&block) { block.call } }
 
-      subject { Job.new.perform(triggered_webhook: triggered_webhook, database_connector: database_connector) }
+      subject { Job.new.perform(triggered_webhook: triggered_webhook, database_connector: database_connector, base_url: base_url) }
 
       it "reloads the TriggeredWebhook object to make sure it has a fresh copy" do
         expect(PactBroker::Webhooks::TriggeredWebhook).to receive(:find).with(id: 1)
@@ -44,7 +45,7 @@ module PactBroker
         end
 
         it "reschedules the job in 10 seconds" do
-          expect(Job).to receive(:perform_in).with(10, {triggered_webhook: triggered_webhook, error_count: 1, database_connector: database_connector})
+          expect(Job).to receive(:perform_in).with(10, {triggered_webhook: triggered_webhook, error_count: 1, database_connector: database_connector, base_url: base_url})
           subject
         end
 
@@ -59,7 +60,7 @@ module PactBroker
         let(:success) { false }
 
         it "reschedules the job in 10 seconds" do
-          expect(Job).to receive(:perform_in).with(10, {triggered_webhook: triggered_webhook, error_count: 1, database_connector: database_connector})
+          expect(Job).to receive(:perform_in).with(10, {triggered_webhook: triggered_webhook, error_count: 1, database_connector: database_connector, base_url: base_url})
           subject
         end
 
@@ -67,7 +68,8 @@ module PactBroker
           expect(PactBroker::Webhooks::Service).to receive(:execute_triggered_webhook_now)
             .with(triggered_webhook, {
               failure_log_message: "Retrying webhook in 10 seconds",
-              success_log_message: "Successfully executed webhook"
+              success_log_message: "Successfully executed webhook",
+              base_url: base_url
           })
           subject
         end
@@ -84,10 +86,10 @@ module PactBroker
           allow(PactBroker::Webhooks::Service).to receive(:execute_triggered_webhook_now).and_raise("an error")
         end
 
-        subject { Job.new.perform(triggered_webhook: triggered_webhook, error_count: 1, database_connector: database_connector) }
+        subject { Job.new.perform(triggered_webhook: triggered_webhook, error_count: 1, database_connector: database_connector, base_url: base_url) }
 
         it "reschedules the job in 60 seconds" do
-          expect(Job).to receive(:perform_in).with(60, {triggered_webhook: triggered_webhook, error_count: 2, database_connector: database_connector})
+          expect(Job).to receive(:perform_in).with(60, {triggered_webhook: triggered_webhook, error_count: 2, database_connector: database_connector, base_url: base_url})
           subject
         end
 
@@ -101,13 +103,14 @@ module PactBroker
       context "when the job is not successful for the last time" do
         let(:success) { false }
 
-        subject { Job.new.perform(triggered_webhook: triggered_webhook, error_count: 6, database_connector: database_connector) }
+        subject { Job.new.perform(triggered_webhook: triggered_webhook, error_count: 6, database_connector: database_connector, base_url: base_url) }
 
         it "executes the job with an log message indicating that the webhook has failed" do
           expect(PactBroker::Webhooks::Service).to receive(:execute_triggered_webhook_now)
             .with(triggered_webhook, {
               failure_log_message: "Webhook execution failed after 7 attempts",
-              success_log_message: "Successfully executed webhook"
+              success_log_message: "Successfully executed webhook",
+              base_url: base_url
           })
           subject
         end

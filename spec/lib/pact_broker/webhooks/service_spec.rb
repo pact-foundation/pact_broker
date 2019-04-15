@@ -105,7 +105,8 @@ module PactBroker
         let(:options) do
           {
             failure_log_message: "Webhook execution failed",
-            show_response: 'foo'
+            show_response: 'foo',
+            base_url: 'http://broker'
           }
         end
 
@@ -113,6 +114,7 @@ module PactBroker
           allow(PactBroker::Pacts::Service).to receive(:search_for_latest_pact).and_return(pact)
           allow(PactBroker::Verifications::Service).to receive(:search_for_latest).and_return(verification)
           allow(PactBroker.configuration).to receive(:show_webhook_response?).and_return('foo')
+          allow(Service).to receive(:base_url).and_return("http://broker")
         end
 
         subject { Service.test_execution(webhook) }

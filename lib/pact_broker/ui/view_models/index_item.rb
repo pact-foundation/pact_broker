@@ -68,11 +68,11 @@ module PactBroker
         end
 
         def pact_versions_url
-          PactBroker::Api::PactBrokerUrls.pact_versions_url(consumer_name, provider_name, PactBroker.configuration.base_url)
+          PactBroker::Api::PactBrokerUrls.pact_versions_url(consumer_name, provider_name)
         end
 
         def integration_url
-          PactBroker::Api::PactBrokerUrls.integration_url(consumer_name, provider_name, PactBroker.configuration.base_url)
+          PactBroker::Api::PactBrokerUrls.integration_url(consumer_name, provider_name)
         end
 
         def webhook_label

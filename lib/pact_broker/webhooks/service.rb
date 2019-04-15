@@ -64,7 +64,7 @@ module PactBroker
       end
 
       def self.test_execution webhook
-        options = { failure_log_message: "Webhook execution failed", show_response: PactBroker.configuration.show_webhook_response?}
+        options = { failure_log_message: "Webhook execution failed", show_response: PactBroker.configuration.show_webhook_response?, base_url: base_url}
         verification = nil
         if webhook.trigger_on_provider_verification_published?
           verification = verification_service.search_for_latest(webhook.consumer_name, webhook.provider_name) || PactBroker::Verifications::PlaceholderVerification.new
@@ -126,7 +126,8 @@ module PactBroker
             logger.info "Scheduling job for #{webhook.description} with uuid #{webhook.uuid}"
             job_data = {
               triggered_webhook: triggered_webhook,
-              database_connector: job_database_connector
+              database_connector: job_database_connector,
+              base_url: base_url
             }
             # Delay slightly to make sure the request transaction has finished before we execute the webhook
             Job.perform_in(5, job_data)
@@ -138,6 +139,10 @@ module PactBroker
 
       def self.job_database_connector
         Thread.current[:pact_broker_thread_data].database_connector
+      end
+
+      def self.base_url
+        Thread.current[:pact_broker_thread_data].base_url
       end
 
       def self.find_latest_triggered_webhooks_for_pact pact

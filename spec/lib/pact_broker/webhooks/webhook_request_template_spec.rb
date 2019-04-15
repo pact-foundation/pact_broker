@@ -28,6 +28,7 @@ module PactBroker
       end
 
       let(:url) { "http://example.org/hook?foo=bar" }
+      let(:base_url) { "http://broker" }
       let(:built_url) { "http://example.org/hook?foo=barBUILT" }
       let(:body) { { foo: "bar" } }
       let(:built_body) { '{"foo":"bar"}BUILT' }
@@ -42,10 +43,10 @@ module PactBroker
         let(:pact) { double('pact') }
         let(:verification) { double('verification') }
 
-        subject { WebhookRequestTemplate.new(attributes).build(pact: pact, verification: verification) }
+        subject { WebhookRequestTemplate.new(attributes).build(pact: pact, verification: verification, base_url: base_url) }
 
         it "renders the url template" do
-          expect(PactBroker::Webhooks::Render).to receive(:call).with(url, pact, verification) do | content, pact, verification, &block |
+          expect(PactBroker::Webhooks::Render).to receive(:call).with(url, pact, verification, base_url) do | content, pact, verification, &block |
             expect(content).to eq url
             expect(pact).to be pact
             expect(verification).to be verification
@@ -59,7 +60,7 @@ module PactBroker
           let(:body) { 'body' }
 
           it "renders the body template with the String" do
-            expect(PactBroker::Webhooks::Render).to receive(:call).with('body', pact, verification)
+            expect(PactBroker::Webhooks::Render).to receive(:call).with('body', pact, verification, base_url)
             subject
           end
         end
@@ -68,7 +69,7 @@ module PactBroker
           let(:request_body_string) { '{"foo":"bar"}' }
 
           it "renders the body template with JSON" do
-            expect(PactBroker::Webhooks::Render).to receive(:call).with(request_body_string, pact, verification)
+            expect(PactBroker::Webhooks::Render).to receive(:call).with(request_body_string, pact, verification, base_url)
             subject
           end
         end

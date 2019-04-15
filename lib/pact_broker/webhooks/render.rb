@@ -4,12 +4,11 @@ module PactBroker
 
       TEMPLATE_PARAMETER_REGEXP = /\$\{pactbroker\.[^\}]+\}/
 
-      def self.call(template, pact, trigger_verification = nil, &escaper)
-        base_url = PactBroker.configuration.base_url
+      def self.call(template, pact, trigger_verification, base_url, &escaper)
         verification = trigger_verification || (pact && pact.latest_verification)
         params = {
           '${pactbroker.pactUrl}' => pact ? PactBroker::Api::PactBrokerUrls.pact_url(base_url, pact) : "",
-          '${pactbroker.verificationResultUrl}' => verification_url(verification),
+          '${pactbroker.verificationResultUrl}' => verification_url(verification, base_url),
           '${pactbroker.consumerVersionNumber}' => pact ? pact.consumer_version_number : "",
           '${pactbroker.providerVersionNumber}' => verification ? verification.provider_version_number : "",
           '${pactbroker.providerVersionTags}' => provider_version_tags(verification),
@@ -40,9 +39,9 @@ module PactBroker
         end
       end
 
-      def self.verification_url verification
+      def self.verification_url verification, base_url
         if verification
-          PactBroker::Api::PactBrokerUrls.verification_url(verification, PactBroker.configuration.base_url)
+          PactBroker::Api::PactBrokerUrls.verification_url(verification, base_url)
         else
           ""
         end
