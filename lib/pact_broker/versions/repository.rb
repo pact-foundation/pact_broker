@@ -89,7 +89,7 @@ module PactBroker
         PactBroker::Domain::Version
           .where(pacticipant_id: [consumer.id, provider.id])
           .exclude(id: (version_ids_with_pact_publications + version_ids_with_verifications).uniq)
-          .destroy
+          .delete
       end
     end
   end

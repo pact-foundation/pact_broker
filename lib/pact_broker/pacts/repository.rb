@@ -105,7 +105,7 @@ module PactBroker
       def delete_all_pact_versions_between consumer_name, options
         consumer = pacticipant_repository.find_by_name(consumer_name)
         provider = pacticipant_repository.find_by_name(options.fetch(:and))
-        PactVersion.where(consumer: consumer, provider: provider).destroy
+        PactVersion.where(consumer: consumer, provider: provider).delete
       end
 
       def find_latest_pact_versions_for_provider provider_name, tag = nil

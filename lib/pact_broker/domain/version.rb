@@ -12,6 +12,11 @@ module PactBroker
 
       dataset_module do
         include PactBroker::Repositories::Helpers
+
+        def delete
+          PactBroker::Domain::Tag.where(version: self).delete
+          super
+        end
       end
 
       def after_create
