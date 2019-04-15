@@ -21,8 +21,9 @@ module Rack
           end
         end
 
-        context "when the request is for a file" do
+        context "when the request is for a web file with an Accept header of */*" do
           let(:path) { "/blah/foo.css" }
+          let(:accept) { "*/*" }
 
           it "forwards the request to the target app" do
             expect(target_app).to receive(:call)
@@ -30,8 +31,16 @@ module Rack
           end
         end
 
-        context "when the request is not for a file, and the Accept header does not include text/html" do
-          let(:accept) { "application/hal+json, */*" }
+        context "when the request is for a content type served by the API (HAL browser request)" do
+          let(:accept) { "application/hal+json, application/json, */*; q=0.01" }
+
+          it "returns a 404" do
+            expect(subject.status).to eq 404
+          end
+        end
+
+        context "when the request is for an API resource and the Accept headers is */* (default Accept header from curl request)" do
+          let(:accept) { "*/*" }
 
           it "returns a 404" do
             expect(subject.status).to eq 404
