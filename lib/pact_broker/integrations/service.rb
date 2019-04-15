@@ -20,7 +20,7 @@ module PactBroker
         version_repository.delete_orphan_versions(consumer, provider)
 
         pacticipant_service.delete_if_orphan(consumer)
-        pacticipant_service.delete_if_orphan(provider)
+        pacticipant_service.delete_if_orphan(provider) unless consumer == provider
       end
     end
   end

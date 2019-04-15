@@ -208,6 +208,19 @@ module PactBroker
             expect { subject }.to change { PactBroker::Domain::Version.count }
           end
         end
+
+        context "when a pacticipant has a pact with itself... I wouldn't have believed it unless I'd seen it..." do
+          before do
+            td.create_consumer("Foo")
+              .use_provider("Foo")
+              .create_consumer_version("1")
+              .create_pact
+          end
+
+          it "doesn't blow up" do
+            Service.delete("Foo", "Foo")
+          end
+        end
       end
     end
   end
