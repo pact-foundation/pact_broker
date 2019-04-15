@@ -1,6 +1,6 @@
 # Decides whether this is a request for the UI or a request for the API
 # This is only needed so that UI auth logic is not applied to an API request.
-# If it was, a 401 or 405 would be returned before the API got a chance
+# If it was, a 401 or 403 would be returned before the API got a chance
 # to actually handle the request, as it would short circuit the cascade
 # logic.
 
