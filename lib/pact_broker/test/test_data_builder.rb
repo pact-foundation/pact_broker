@@ -189,18 +189,21 @@ module PactBroker
       def create_tag tag_name, params = {}
         params.delete(:comment)
         @tag = PactBroker::Domain::Tag.create(name: tag_name, version: @version)
+        set_created_at_if_set params[:created_at], :tags, { name: @tag.name, version_id: @tag.version_id }
         self
       end
 
       def create_consumer_version_tag tag_name, params = {}
         params.delete(:comment)
         @tag = PactBroker::Domain::Tag.create(name: tag_name, version: @consumer_version)
+        set_created_at_if_set params[:created_at], :tags, { name: @tag.name, version_id: @tag.version_id }
         self
       end
 
       def create_provider_version_tag tag_name, params = {}
         params.delete(:comment)
         @tag = PactBroker::Domain::Tag.create(name: tag_name, version: @provider_version)
+        set_created_at_if_set params[:created_at], :tags, { name: @tag.name, version_id: @tag.version_id }
         self
       end
 
@@ -343,10 +346,10 @@ module PactBroker
 
       def default_json_content
         {
-          "consumer"     => {
+          "consumer" => {
              "name" => "Condor"
            },
-           "provider"     => {
+           "provider" => {
              "name" => "Pricing Service"
            },
            "interactions" => [],
@@ -354,7 +357,5 @@ module PactBroker
          }.to_json
        end
     end
-
   end
 end
-

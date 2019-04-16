@@ -6,7 +6,7 @@ require 'db'
 require 'tasks/database'
 require 'pact_broker/db'
 PactBroker::DB.connection = PactBroker::Database.database = DB::PACT_BROKER_DB
-
+PactBroker.configuration.seed_example_data = false
 require 'spec/support/database_cleaner'
 require 'pact_broker'
 require 'pact_broker/app'

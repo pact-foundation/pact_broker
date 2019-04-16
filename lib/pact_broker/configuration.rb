@@ -29,10 +29,11 @@ module PactBroker
       :webhook_http_method_whitelist,
       :webhook_scheme_whitelist,
       :webhook_host_whitelist,
-      :base_equality_only_on_content_that_affects_verification_results
+      :base_equality_only_on_content_that_affects_verification_results,
+      :seed_example_data
     ]
 
-    attr_accessor :log_dir, :database_connection, :auto_migrate_db, :auto_migrate_db_data, :use_hal_browser, :html_pact_renderer, :use_rack_protection
+    attr_accessor :log_dir, :database_connection, :auto_migrate_db, :auto_migrate_db_data, :example_data_seeder, :seed_example_data, :use_hal_browser, :html_pact_renderer, :use_rack_protection
     attr_accessor :validate_database_connection_config, :enable_diagnostic_endpoints, :version_parser, :sha_generator
     attr_accessor :use_case_sensitive_resource_names, :order_versions_by_date
     attr_accessor :check_for_potential_duplicate_pacticipant_names
@@ -72,6 +73,11 @@ module PactBroker
       config.html_pact_renderer = default_html_pact_render
       config.version_parser = PactBroker::Versions::ParseSemanticVersion
       config.sha_generator = PactBroker::Pacts::GenerateSha
+      config.seed_example_data = true
+      config.example_data_seeder = lambda do
+        require 'pact_broker/db/seed_example_data'
+        PactBroker::DB::SeedExampleData.call
+      end
       config.base_equality_only_on_content_that_affects_verification_results = true
       config.order_versions_by_date = true
       config.semver_formats = ["%M.%m.%p%s%d", "%M.%m", "%M"]

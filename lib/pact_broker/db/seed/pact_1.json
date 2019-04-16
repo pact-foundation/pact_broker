@@ -1,0 +1,35 @@
+{
+  "consumer": {
+    "name": "Zoo App"
+  },
+  "provider": {
+    "name": "Animal Service"
+  },
+  "interactions": [
+    {
+      "description": "a request for an alligator",
+      "providerState": "there is an alligator named Mary",
+      "request": {
+        "method": "get",
+        "path": "/alligators/Mary",
+        "headers": {
+          "Accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json;charset=utf-8"
+        },
+        "body": {
+          "name": "Mary"
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "pactSpecification": {
+      "version": "2.0.0"
+    }
+  }
+}

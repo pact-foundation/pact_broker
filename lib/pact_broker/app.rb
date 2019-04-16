@@ -33,6 +33,8 @@ module PactBroker
       yield configuration
       post_configure
       prepare_database
+      load_configuration_from_database
+      seed_example_data
     end
 
     # Allows middleware to be inserted at the bottom of the shared middlware stack
@@ -92,6 +94,11 @@ module PactBroker
       PactBroker::Webhooks::Service.fail_retrying_triggered_webhooks
     end
 
+    def load_configuration_from_database
+      require 'pact_broker/config/load'
+      PactBroker::Config::Load.call(configuration)
+    end
+
     def configure_database_connection
       PactBroker::DB.connection = configuration.database_connection
       PactBroker::DB.connection.timezone = :utc
@@ -101,6 +108,21 @@ module PactBroker
       Sequel.database_timezone = :utc # Store all dates in UTC, assume any date without a TZ is UTC
       Sequel.application_timezone = :local # Convert dates to localtime when retrieving from database
       Sequel.typecast_timezone = :utc # If no timezone specified on dates going into the database, assume they are UTC
+    end
+
+    def seed_example_data
+      if configuration.seed_example_data && configuration.example_data_seeder
+        logger.info "Seeding example data"
+        configuration.example_data_seeder.call
+        logger.info "Marking seed as done"
+        configuration.seed_example_data = false
+        require 'pact_broker/config/save'
+        PactBroker::Config::Save.call(configuration, [:seed_example_data])
+      else
+        logger.info "Not seeding example data"
+      end
+    rescue StandardError => e
+      logger.error "Error running example data seeder, #{e.class} #{e.message}", e
     end
 
     def prepare_app
