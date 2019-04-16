@@ -21,6 +21,7 @@ I18n.config.enforce_available_locales = false
 RSpec.configure do | config |
   config.before :each do
     PactBroker.reset_configuration
+    PactBroker.configuration.seed_example_data = false
     PactBroker.configuration.base_equality_only_on_content_that_affects_verification_results = false
     require 'pact_broker/badges/service'
     PactBroker::Badges::Service.clear_cache
@@ -42,6 +43,7 @@ RSpec.configure do | config |
   end
 
   config.include FixtureHelpers
+  config.include_context "test data builder"
   config.example_status_persistence_file_path = "./spec/examples.txt"
   config.filter_run_excluding skip: true
 
@@ -49,3 +51,5 @@ RSpec.configure do | config |
     PactBroker::API
   end
 end
+
+#SemanticLogger.add_appender(io: $stdout)

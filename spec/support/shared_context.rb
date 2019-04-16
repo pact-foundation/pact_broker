@@ -1,3 +1,5 @@
+require 'pact_broker/test/test_data_builder'
+
 RSpec.shared_context "stubbed services" do
 
   let(:pact_service) { class_double("PactBroker::Pacts::Service").as_stubbed_const }
@@ -24,4 +26,8 @@ RSpec.shared_context "stubbed repositories" do
     allow(described_class).to receive(:pacticipant_repository).and_return(pacticipant_repository)
     allow(described_class).to receive(:version_repository).and_return(version_repository)
   end
+end
+
+RSpec.shared_context "test data builder" do
+  let(:td) { PactBroker::Test::TestDataBuilder.new }
 end
