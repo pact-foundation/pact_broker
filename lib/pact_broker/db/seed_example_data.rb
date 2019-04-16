@@ -1,4 +1,5 @@
 require 'pact_broker/test/test_data_builder'
+require 'pact_broker/pacticipants/service'
 
 module PactBroker
   module DB
@@ -8,6 +9,7 @@ module PactBroker
       end
 
       def call
+        return unless database_empty?
         PactBroker::Test::TestDataBuilder.new
           .create_consumer("Example App", created_at: days_ago(16))
           .create_provider("Example API", created_at: days_ago(16))
@@ -28,6 +30,10 @@ module PactBroker
           .create_pact(json_content: pact_3, created_at: days_ago(1))
           .create_verification(provider_version: "4fdf20082263d4c5038355a3b734be1c0054d1e1", execution_date: days_ago(1))
           .create_provider_version_tag("dev", created_at: days_ago(1))
+      end
+
+      def database_empty?
+        PactBroker::Pacticipants::Service.find_all_pacticipants.empty?
       end
 
       def pact_1
