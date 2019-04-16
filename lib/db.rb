@@ -26,6 +26,7 @@ module DB
   #
   def self.connect db_credentials
     Sequel.datetime_class = DateTime
+    # logger = Logger.new($stdout)
     con = Sequel.connect(db_credentials.merge(:logger => logger, :pool_class => Sequel::ThreadedConnectionPool, :encoding => 'utf8'))
     con.extension(:connection_validator)
     con.pool.connection_validation_timeout = -1 #Check the connection on every request

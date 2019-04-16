@@ -52,4 +52,5 @@ RSpec.configure do | config |
   end
 end
 
-#SemanticLogger.add_appender(io: $stdout)
+# SemanticLogger.add_appender(io: $stdout)
+# SemanticLogger.default_level = :info
