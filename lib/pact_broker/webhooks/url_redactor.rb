@@ -4,30 +4,28 @@ module PactBroker
       # @url = attributes[:url]
       PARAMS_TO_REDACT = [/auth/i, /token/i]
       SLACK_URL = "hooks.slack.com/services/"
+      attr_accessor :url
       def self.call url
-        attr_accessor :url
         url = url
         if URI(url).query
-          url = redact_secret_params(url)
+          redact_secret_params(url)
         elsif url.include? SLACK_URL
-          url = url.split("/")[0..5].join("/") + "/redacted"
-          url
+          url.split("/")[0..5].join("/") + "/redacted"
         else
           url 
         end
       end
 
       def self.redact_secret_params url
-        attr_accessor :url
         baseUrl = url.split("?")[0]
         paramHash = redact_params(url)
         redactedParams = encode_params(paramHash)
-        url = baseUrl + "?" + redactedParams   
+        baseUrl + "?" + redactedParams   
       end
 
       def self.redact_params url
         attr_accessor :url
-        paramHash = CGI.parse(URI.parse(url).query).each_with_object({}) do | (name, value), new_params |
+        CGI.parse(URI.parse(url).query).each_with_object({}) do | (name, value), new_params |
           redact = PARAMS_TO_REDACT.any?{ | pattern | name =~ pattern }
           new_params[name] = redact ? "redacted" : value
         end

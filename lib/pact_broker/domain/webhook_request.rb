@@ -83,7 +83,7 @@ module PactBroker
       end
 
       def display_url
-        redacted_url = PactBroker::Webhooks::URLRedactor.call(url)
+        PactBroker::Webhooks::URLRedactor.call(url)
       end
 
       def redacted_headers
