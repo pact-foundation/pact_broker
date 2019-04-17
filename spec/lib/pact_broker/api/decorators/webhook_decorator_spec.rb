@@ -131,6 +131,80 @@ module PactBroker
               expect(parsed_json[:request][:headers][:'Authorization']).to eq "**********"
             end
           end
+
+          context 'when there is no sensitive data in the url' do
+            it 'is shown as is' do
+              expect(parsed_json[:request][:url]).to eq "http://example.org/hook"
+            end
+          end
+
+          context 'when the url contains a slack token' do
+            let(:request) do
+              {
+                method: 'POST',
+                url: 'https://hooks.slack.com/services/aaa/bbb/ccc',
+                headers: headers,
+                body: { some: 'body' }
+              }
+            end
+
+            let(:parsed_json) { JSON.parse(subject.to_json(user_options: { base_url: 'https://hooks.slack.com/services/aaa/bbb/ccc' }), symbolize_names: true) }
+
+            it 'redacts them' do
+              expect(parsed_json[:request][:url]).to eq "https://hooks.slack.com/services/aaa/bbb/redacted"
+            end
+          end
+
+          context 'when the url contains a token param' do
+            let(:request) do
+              {
+                method: 'POST',
+                url: 'https://secure.server.com/?token=thatneedstobehidden',
+                headers: headers,
+                body: { some: 'body' }
+              }
+            end
+
+            let(:parsed_json) { JSON.parse(subject.to_json(user_options: { base_url: 'https://secure.server.com/?token=thatneedstobehidden' }), symbolize_names: true) }
+
+            it 'redacts them' do
+              expect(parsed_json[:request][:url]).to eq "https://secure.server.com/?token=redacted"
+            end
+          end
+          
+          context 'when the url contains multiple params including a token param at the start of the url' do
+            let(:request) do
+              {
+                method: 'POST',
+                url: 'https://secure.server.com/?token=thatwedont&param=thatwewant',
+                headers: headers,
+                body: { some: 'body' }
+              }
+            end
+
+            let(:parsed_json) { JSON.parse(subject.to_json(user_options: { base_url: 'https://secure.server.com/?token=thatwedont&param=thatwewant' }), symbolize_names: true) }
+
+            it 'redacts only the token' do
+              expect(parsed_json[:request][:url]).to eq "https://secure.server.com/?token=redacted&param=thatwewant"
+            end
+          end
+          
+          context 'when the url contains multiple params including a token param at the end of the url' do
+            let(:request) do
+              {
+                method: 'POST',
+                url: 'https://secure.server.com/?param=thatwewant&token=thatwedont',
+                headers: headers,
+                body: { some: 'body' }
+              }
+            end
+
+            let(:parsed_json) { JSON.parse(subject.to_json(user_options: { base_url: 'https://secure.server.com/?param=thatwewant&token=thatwedont' }), symbolize_names: true) }
+
+            it 'redacts only the token' do
+              expect(parsed_json[:request][:url]).to eq "https://secure.server.com/?param=thatwewant&token=redacted"
+            end
+          end
         end
 
         describe 'from_json' do
@@ -170,7 +244,7 @@ module PactBroker
               expect(parsed_object.events.first.name).to eq PactBroker::Webhooks::WebhookEvent::DEFAULT_EVENT_NAME
             end
           end
-        end
+        end  
       end
     end
   end

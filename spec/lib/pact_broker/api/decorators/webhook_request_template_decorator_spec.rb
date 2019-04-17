@@ -9,13 +9,14 @@ module PactBroker
 
         let(:username) { 'username' }
         let(:display_password) { '*****' }
+        let(:display_url) { 'http://example.org/hooks' }
         let(:webhook_request) do
           instance_double(
             PactBroker::Webhooks::WebhookRequestTemplate,
             username: username,
             display_password: display_password,
             method: 'POST',
-            url: 'url',
+            display_url: display_url,
             body: 'body',
             headers: {})
         end
@@ -30,8 +31,12 @@ module PactBroker
             expect(subject[:username]).to eq username
           end
 
-          it "includes the username starred out" do
+          it "includes the password starred out" do
             expect(subject[:password]).to eq display_password
+          end
+
+          it "includes the url displayed" do
+            expect(subject[:url]).to eq display_url
           end
 
           context "when there is no password" do
@@ -46,12 +51,13 @@ module PactBroker
 
         describe "from_json" do
           let(:password) { 'password' }
+          let(:url) { 'http://example.org/hooks' }
           let(:hash) do
             {
               username: username,
               password: password,
               method: 'POST',
-              url: 'url',
+              url: url,
               body: 'body',
               headers: {}
             }
@@ -68,6 +74,29 @@ module PactBroker
 
           it "reads the password" do
             expect(subject.password).to eq password
+          end
+
+          it "reads the url" do
+            expect(subject.url).to eq 'http://example.org/hooks'
+          end
+          
+          context "when a slack token is in the url" do
+            let(:url) { 'https://hooks.slack.com/services/aaa/bbb/ccc' }
+            it "reads the token" do
+              expect(subject.url).to eq url
+            end
+          end
+          context "when a token param is in the url" do
+            let(:url) { 'https://hooks.slack.com/services?param=wewanttokeep&token=wewanttohide' }
+            it "reads the token" do
+              expect(subject.url).to eq url
+            end
+          end
+          context "when no sensitive info in the url" do
+            let(:url) { 'http://example.org/hooks?param=something' }
+            it "reads the full url" do
+              expect(subject.url).to eq url
+            end
           end
         end
       end

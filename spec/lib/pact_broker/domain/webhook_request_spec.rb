@@ -49,6 +49,45 @@ module PactBroker
         end
       end
 
+      describe "redacted tokens" do
+        context "when a slack token is in the url" do
+          let(:url) { 'https://hooks.slack.com/services/aaa/bbb/ccc' }
+          it "hides the token" do
+            expect(subject.display_url).to eq "https://hooks.slack.com/services/aaa/bbb/redacted"
+          end
+        end
+        context "when a param called token is in the url" do
+          let(:url) { 'https://hooks.slack.com/services?param=wewanttokeep&token=wewanttohide' }
+          it "hides the token" do
+            expect(subject.display_url).to eq "https://hooks.slack.com/services?param=wewanttokeep&token=redacted"
+          end
+        end
+        context "when a param containing the word token is in the url" do
+          let(:url) { 'https://hooks.slack.com/services?param=wewanttokeep&circle-token=wewanttohide' }
+          it "hides the token" do
+            expect(subject.display_url).to eq "https://hooks.slack.com/services?param=wewanttokeep&circle-token=redacted"
+          end
+        end
+        context "when an auth param is in the url" do
+          let(:url) { 'https://hooks.slack.com/services?param=wewanttokeep&auth=wewanttohide' }
+          it "hides the token" do
+            expect(subject.display_url).to eq "https://hooks.slack.com/services?param=wewanttokeep&auth=redacted"
+          end
+        end
+        context "when a param containing the word auth is in the url" do
+          let(:url) { 'https://hooks.slack.com/services?param=wewanttokeep&os_auth=wewanttohide' }
+          it "hides the token" do
+            expect(subject.display_url).to eq "https://hooks.slack.com/services?param=wewanttokeep&os_auth=redacted"
+          end
+        end
+        context "when no sensitive info in the url" do
+          let(:url) { 'http://example.org?param=something' }
+          it "hides the token" do
+            expect(subject.display_url).to eq "http://example.org?param=something"
+          end
+        end
+      end
+
       describe "redacted_headers" do
         let(:headers) do
           {

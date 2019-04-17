@@ -9,6 +9,7 @@ require 'pact_broker/api/pact_broker_urls'
 require 'pact_broker/build_http_options'
 require 'cgi'
 require 'delegate'
+require 'pact_broker/webhooks/url_redactor'
 
 module PactBroker
 
@@ -79,6 +80,10 @@ module PactBroker
 
       def display_password
         password.nil? ? nil : "**********"
+      end
+
+      def display_url
+        redacted_url = PactBroker::Webhooks::URLRedactor.call(url)
       end
 
       def redacted_headers
@@ -206,12 +211,13 @@ module PactBroker
       end
 
       def to_s
-        "#{method.upcase} #{url}, username=#{username}, password=#{display_password}, headers=#{redacted_headers}, body=#{body}"
+        "#{method.upcase} url=#{display_url}, username=#{username}, password=#{display_password}, headers=#{redacted_headers}, body=#{body}"
       end
 
       def uri
         @uri ||= URI(url)
       end
+
     end
   end
 end

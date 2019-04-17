@@ -2,6 +2,7 @@ require 'pact_broker/domain/webhook_request_header'
 require 'pact_broker/webhooks/render'
 require 'cgi'
 require 'pact_broker/domain/webhook_request'
+require 'pact_broker/webhooks/url_redactor'
 
 module PactBroker
   module Webhooks
@@ -56,6 +57,10 @@ module PactBroker
         password.nil? ? nil : "**********"
       end
 
+      def display_url
+        redacted_url = PactBroker::Webhooks::URLRedactor.call(url)
+      end
+
       def redacted_headers
         headers.each_with_object({}) do | (name, value), new_headers |
           redact = HEADERS_TO_REDACT.any?{ | pattern | name =~ pattern }
@@ -66,8 +71,9 @@ module PactBroker
       private
 
       def to_s
-        "#{method.upcase} #{url}, username=#{username}, password=#{display_password}, headers=#{redacted_headers}, body=#{body}"
+        "#{method.upcase} url=#{display_url}, username=#{username}, password=#{display_password}, headers=#{redacted_headers}, body=#{body}"
       end
+
     end
   end
 end

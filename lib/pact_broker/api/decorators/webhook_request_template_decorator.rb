@@ -6,7 +6,7 @@ module PactBroker
       class WebhookRequestTemplateDecorator < BaseDecorator
 
         property :method
-        property :url
+        property :url, getter: lambda { | _ | display_url }
         property :headers, getter: lambda { | _ | headers.empty? ? nil : self.redacted_headers }
         property :body
         property :username
