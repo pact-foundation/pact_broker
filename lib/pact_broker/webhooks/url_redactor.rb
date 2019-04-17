@@ -24,7 +24,6 @@ module PactBroker
       end
 
       def self.redact_params url
-        attr_accessor :url
         CGI.parse(URI.parse(url).query).each_with_object({}) do | (name, value), new_params |
           redact = PARAMS_TO_REDACT.any?{ | pattern | name =~ pattern }
           new_params[name] = redact ? "redacted" : value
