@@ -1,11 +1,10 @@
-require 'reform'
-require 'reform/form'
+require 'pact_broker/api/contracts/base_contract'
 require 'uri'
 
 module PactBroker
   module Api
     module Contracts
-      class VerificationContract < Reform::Form
+      class VerificationContract < BaseContract
 
         property :success
         property :provider_version, as: :providerApplicationVersion

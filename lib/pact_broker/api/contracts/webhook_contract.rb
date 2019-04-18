@@ -1,5 +1,4 @@
-require 'reform'
-require 'reform/form'
+require 'pact_broker/api/contracts/base_contract'
 require 'pact_broker/webhooks/check_host_whitelist'
 require 'pact_broker/webhooks/render'
 require 'pact_broker/pacticipants/service'
@@ -7,7 +6,7 @@ require 'pact_broker/pacticipants/service'
 module PactBroker
   module Api
     module Contracts
-      class WebhookContract < Reform::Form
+      class WebhookContract < BaseContract
 
         def validate(*)
           result = super

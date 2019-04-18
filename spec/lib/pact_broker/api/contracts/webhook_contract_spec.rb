@@ -1,4 +1,3 @@
-require 'spec_helper'
 require 'pact_broker/api/contracts/webhook_contract'
 require 'pact_broker/api/decorators/webhook_decorator'
 

@@ -1,10 +1,9 @@
-require 'reform'
-require 'reform/form'
+require 'pact_broker/api/contracts/base_contract'
 
 module PactBroker
   module Api
     module Contracts
-      class PutPacticipantNameContract < Reform::Form
+      class PutPacticipantNameContract < BaseContract
         property :name
         property :name_in_pact
         property :pacticipant
@@ -24,7 +23,7 @@ module PactBroker
         end
       end
 
-      class PutPactParamsContract < Reform::Form
+      class PutPactParamsContract < BaseContract
         property :consumer_version_number
         property :consumer, form: PutPacticipantNameContract
         property :provider, form: PutPacticipantNameContract

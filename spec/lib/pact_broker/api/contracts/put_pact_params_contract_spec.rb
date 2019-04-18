@@ -1,4 +1,3 @@
-require 'spec_helper'
 require 'pact_broker/api/contracts/put_pact_params_contract'
 
 module PactBroker
