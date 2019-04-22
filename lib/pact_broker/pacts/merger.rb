@@ -48,7 +48,11 @@ module PactBroker
 
       def same_description_and_state? original, additional
         original["description"] == additional["description"] &&
-          original["provider_state"] == additional["provider_state"]
+          normalized_provider_states(original) == normalized_provider_states(additional)
+      end
+
+      def normalized_provider_states(interaction)
+        interaction.values_at("provider_state", "providerState", "providerStates").compact.first
       end
 
       def same_request_properties? original, additional

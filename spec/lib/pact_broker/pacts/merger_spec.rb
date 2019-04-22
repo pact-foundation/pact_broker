@@ -66,6 +66,39 @@ module PactBroker
           expect(result["interactions"].length).to eq example_pact["interactions"].length + 1
         end
 
+        it "matches same provider state when is in v2 format" do
+          example_pact["interactions"][0]["providerState"] = "something in the way"
+          pact_to_merge["interactions"][0]["providerState"] = "something in the way"
+          pact_to_merge["interactions"][0]["response"]["body"] = "changed!"
+
+          result = merge_pacts(example_pact, pact_to_merge)
+
+          expect(result["interactions"].length).to eq example_pact["interactions"].length
+          expect(result["interactions"].first["response"]["body"]).to eq "changed!"
+        end
+
+        it "supports merging when provider state is in either v2 or v1 format" do
+          example_pact["interactions"][0]["provider_state"] = "system must resist"
+          pact_to_merge["interactions"][0]["providerState"] = "system must resist"
+          pact_to_merge["interactions"][0]["response"]["body"] = "changed!"
+
+          result = merge_pacts(example_pact, pact_to_merge)
+
+          expect(result["interactions"].length).to eq example_pact["interactions"].length
+          expect(result["interactions"].first["response"]["body"]).to eq "changed!"
+        end
+
+        it "supports merging when provider state is in v3 format with providerStates" do
+          example_pact["interactions"][0]["providerStates"] = [{ name: "a state" }]
+          pact_to_merge["interactions"][0]["providerStates"] = [{ name: "a state" }]
+          pact_to_merge["interactions"][0]["response"]["body"] = "changed!"
+
+          result = merge_pacts(example_pact, pact_to_merge)
+
+          expect(result["interactions"].length).to eq example_pact["interactions"].length
+          expect(result["interactions"].first["response"]["body"]).to eq "changed!"
+        end
+
         # helper that lets these specs deal with hashes instead of JSON strings
         def merge_pacts(a, b, return_hash = true)
           result = PactBroker::Pacts::Merger.merge_pacts(a.to_json, b.to_json)
