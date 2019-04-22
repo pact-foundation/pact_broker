@@ -6,14 +6,12 @@ module Pact
   module Doc
     module Markdown
       describe ConsumerContractRenderer do
-
-        subject { ConsumerContractRenderer.new(consumer_contract) }
         let(:consumer_contract) { Pact::ConsumerContract.from_uri './spec/support/markdown_pact.json' }
-
         let(:expected_output) { File.read("./spec/support/generated_markdown.md", external_encoding: Encoding::UTF_8) }
 
-        describe "#call" do
+        subject { ConsumerContractRenderer.new(consumer_contract) }
 
+        describe "#call" do
           context "with markdown characters in the pacticipant names" do
             let(:consumer_contract) { Pact::ConsumerContract.from_uri './spec/support/markdown_pact_with_markdown_chars_in_names.json' }
 
@@ -56,7 +54,6 @@ module Pact
             its(:full_interactions) { is_expected.to_not include "<h1>alligators</h1>" }
           end
         end
-
       end
     end
   end
