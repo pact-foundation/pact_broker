@@ -8,7 +8,6 @@ module PactBroker
       class ErrorHandler
 
         include PactBroker::Logging
-        include PactBroker::Logging
 
         def self.call e, request, response
           error_reference = SecureRandom.urlsafe_base64.gsub(/[^a-z]/i, '')[0,10]
