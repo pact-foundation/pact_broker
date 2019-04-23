@@ -13,12 +13,6 @@ module PactBroker
           ]
         end
 
-        def content_types_accepted
-          [
-            ["application/hal+json", :from_json]
-          ]
-        end
-
         def allowed_methods
           ["GET", "POST", "OPTIONS"]
         end
@@ -27,7 +21,7 @@ module PactBroker
           raise PactBroker::TestError.new("Don't panic. This is a test API error.")
         end
 
-        def from_json
+        def process_post
           raise PactBroker::TestError.new("Don't panic. This is a test API error.")
         end
       end
