@@ -1,4 +1,5 @@
 require 'webmachine/adapters/rack_mapped'
+require 'webmachine/rack_adapter_monkey_patch'
 require 'pact_broker/api/resources'
 require 'pact_broker/feature_toggle'
 

@@ -15,14 +15,13 @@ module PactBroker
           let(:error) { StandardError.new('test error') }
           let(:thing) { double('thing', call: nil, another_call: nil) }
           let(:options) { { env: env, error_reference: "bYWfnyWPlf" } }
-          let(:request) { double('request' ) }
+          let(:request) { double('request', env: env ) }
           let(:response) { double('response', :body= => nil) }
           let(:env) { double('env') }
 
           subject { ErrorHandler.call(error, request, response) }
 
           before do
-            allow(Webmachine::ConvertRequestToRackEnv).to receive(:call).and_return(env)
             PactBroker.configuration.add_api_error_reporter do | error, options |
               thing.call(error, options)
             end

@@ -1,4 +1,3 @@
-require 'webmachine/convert_request_to_rack_env'
 require 'pact_broker/configuration'
 require 'securerandom'
 
@@ -49,7 +48,7 @@ module PactBroker
         def self.report e, error_reference, request
           PactBroker.configuration.api_error_reporters.each do | error_notifier |
             begin
-              error_notifier.call(e, env: Webmachine::ConvertRequestToRackEnv.call(request), error_reference: error_reference)
+              error_notifier.call(e, env: request.env, error_reference: error_reference)
             rescue StandardError => e
               log_error(e, "Error executing api_error_reporter")
             end
