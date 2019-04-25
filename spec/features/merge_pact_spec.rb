@@ -20,7 +20,7 @@ describe "Merging a pact" do
     end
 
     it "returns the pact in the body" do
-      expect(response_body_json).to include JSON.parse(pact_content)
+      expect(response_body_json).to match_pact JSON.parse(pact_content)
     end
   end
 

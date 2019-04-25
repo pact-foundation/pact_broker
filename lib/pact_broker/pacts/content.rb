@@ -1,9 +1,11 @@
 require 'pact_broker/pacts/parse'
 require 'pact_broker/pacts/sort_content'
+require 'pact_broker/pacts/generate_interaction_sha'
 
 module PactBroker
   module Pacts
     class Content
+      include GenerateInteractionSha
 
       def initialize pact_hash
         @pact_hash = pact_hash
@@ -27,6 +29,18 @@ module PactBroker
 
       def sort
         Content.from_hash(SortContent.call(pact_hash))
+      end
+
+      def with_ids
+        new_pact_hash = pact_hash.dup
+        if interactions && interactions.is_a?(Array)
+          new_pact_hash['interactions'] = add_ids(interactions)
+        end
+
+        if messages && messages.is_a?(Array)
+          new_pact_hash['messages'] = add_ids(messages)
+        end
+        Content.from_hash(new_pact_hash)
       end
 
       # Half thinking this belongs in GenerateSha
@@ -61,6 +75,15 @@ module PactBroker
 
       attr_reader :pact_hash
 
+      def add_ids(interactions)
+        interactions.map do | interaction |
+          if interaction.is_a?(Hash)
+            interaction.merge("id" => generate_interaction_sha(interaction))
+          else
+            interaction
+          end
+        end
+      end
     end
   end
 end

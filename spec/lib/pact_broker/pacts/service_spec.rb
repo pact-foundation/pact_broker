@@ -31,6 +31,7 @@ module PactBroker
         let(:existing_pact) { nil }
         let(:new_pact) { double('new_pact', json_content: json_content) }
         let(:json_content) { { the: "contract" }.to_json }
+        let(:json_content_with_ids) { { the: "contract with ids" }.to_json }
         let(:previous_pacts) { [] }
         let(:params) do
           {
@@ -40,10 +41,30 @@ module PactBroker
             json_content: json_content
           }
         end
+        let(:content) { double('content') }
+        let(:content_with_interaction_ids) { double('content_with_interaction_ids', to_json: json_content_with_ids) }
+
+        before do
+          allow(Content).to receive(:from_json).and_return(content)
+          allow(content).to receive(:with_ids).and_return(content_with_interaction_ids)
+          allow(PactBroker::Pacts::GenerateSha).to receive(:call).and_call_original
+        end
 
         subject { Service.create_or_update_pact(params) }
 
+
         context "when no pact exists with the same params" do
+          it "creates the sha before adding the interaction ids" do
+            expect(PactBroker::Pacts::GenerateSha).to receive(:call).ordered
+            expect(content).to receive(:with_ids).ordered
+            subject
+          end
+
+          it "saves the pact interactions/messages with ids added to them" do
+            expect(pact_repository).to receive(:create).with hash_including(json_content: json_content_with_ids)
+            subject
+          end
+
           it "triggers webhooks for contract publications" do
             expect(webhook_service).to receive(:trigger_webhooks).with(new_pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_PUBLISHED)
             subject
@@ -52,6 +73,17 @@ module PactBroker
 
         context "when a pact exists with the same params" do
           let(:existing_pact) { double('existing_pact', id: 4, json_content: { the: "contract" }.to_json) }
+
+          it "creates the sha before adding the interaction ids" do
+            expect(PactBroker::Pacts::GenerateSha).to receive(:call).ordered
+            expect(content).to receive(:with_ids).ordered
+            subject
+          end
+
+          it "saves the pact interactions/messages with ids added to them" do
+            expect(pact_repository).to receive(:update).with(anything, hash_including(json_content: json_content_with_ids))
+            subject
+          end
 
           it "triggers webhooks for contract publications" do
             expect(webhook_service).to receive(:trigger_webhooks).with(new_pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_PUBLISHED)

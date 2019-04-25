@@ -3,6 +3,54 @@ require 'pact_broker/pacts/content'
 module PactBroker
   module Pacts
     describe Content do
+      describe "with_ids" do
+        let(:pact_hash) do
+          {
+            'ignored' => 'foo',
+            'interactions' => [interaction],
+            'metadata' => {
+              'foo' => 'bar'
+            }
+          }
+        end
+        let(:interaction) { { "foo" => "bar" } }
+
+        before do
+          allow(GenerateInteractionSha).to receive(:call).and_return("some-id")
+        end
+
+        context "when the interaction is a hash" do
+          it "adds ids to the interactions" do
+            expect(Content.from_hash(pact_hash).with_ids.interactions.first["id"]).to eq "some-id"
+          end
+        end
+
+        context "when the interaction is not a hash" do
+          let(:interaction) { 1 }
+
+          it "does not add an id" do
+            expect(Content.from_hash(pact_hash).with_ids.interactions.first).to eq interaction
+          end
+        end
+
+        context "when the pact is a message pact" do
+          let(:pact_hash) do
+            {
+              'ignored' => 'foo',
+              'messages' => [interaction],
+              'metadata' => {
+                'foo' => 'bar'
+              }
+            }
+          end
+
+          it "adds ids to the messages" do
+            expect(Content.from_hash(pact_hash).with_ids.messages.first["id"]).to eq "some-id"
+          end
+        end
+      end
+
+
       describe "content_that_affects_verification_results" do
 
         subject { Content.from_hash(pact_hash).content_that_affects_verification_results }
