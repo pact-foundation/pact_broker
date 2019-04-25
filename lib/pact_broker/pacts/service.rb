@@ -120,9 +120,11 @@ module PactBroker
       def update_pact params, existing_pact
         logger.info "Updating existing pact publication with params #{params.reject{ |k, v| k == :json_content}}"
         logger.debug "Content #{params[:json_content]}"
-        updated_pact = pact_repository.update existing_pact.id, params
+        pact_version_sha = generate_sha(params[:json_content])
+        updated_pact = pact_repository.update(existing_pact.id, params.merge(pact_version_sha: pact_version_sha))
 
         webhook_service.trigger_webhooks updated_pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_PUBLISHED
+        # TODO this should use the sha!
         if existing_pact.json_content != updated_pact.json_content
           webhook_service.trigger_webhooks updated_pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED
         else
@@ -135,9 +137,19 @@ module PactBroker
       def create_pact params, version, provider
         logger.info "Creating new pact publication with params #{params.reject{ |k, v| k == :json_content}}"
         logger.debug "Content #{params[:json_content]}"
-        pact = pact_repository.create json_content: params[:json_content], version_id: version.id, provider_id: provider.id, consumer_id: version.pacticipant_id
+        pact = pact_repository.create(
+          json_content: params[:json_content],
+          version_id: version.id,
+          provider_id: provider.id,
+          consumer_id: version.pacticipant_id,
+          pact_version_sha: generate_sha(params[:json_content])
+        )
         trigger_webhooks pact
         pact
+      end
+
+      def generate_sha(json_content)
+        PactBroker.configuration.sha_generator.call(json_content)
       end
 
       def trigger_webhooks pact

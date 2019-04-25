@@ -21,11 +21,17 @@ module PactBroker
       include PactBroker::Repositories
 
       def create params
+        pact_version = find_or_create_pact_version(
+          params.fetch(:consumer_id),
+          params.fetch(:provider_id),
+          params.fetch(:pact_version_sha),
+          params.fetch(:json_content)
+        )
         pact_publication = PactPublication.new(
           consumer_version_id: params[:version_id],
           provider_id: params[:provider_id],
           consumer_id: params[:consumer_id],
-          pact_version: find_or_create_pact_version(params.fetch(:consumer_id), params.fetch(:provider_id), params[:json_content]),
+          pact_version: pact_version
         ).save
         update_latest_pact_publication_ids(pact_publication)
         pact_publication.to_domain
@@ -33,7 +39,12 @@ module PactBroker
 
       def update id, params
         existing_model = PactPublication.find(id: id)
-        pact_version = find_or_create_pact_version(existing_model.consumer_version.pacticipant_id, existing_model.provider_id, params[:json_content])
+        pact_version = find_or_create_pact_version(
+          existing_model.consumer_version.pacticipant_id,
+          existing_model.provider_id,
+          params.fetch(:pact_version_sha),
+          params.fetch(:json_content)
+        )
         if existing_model.pact_version_id != pact_version.id
           key = {
             consumer_version_id: existing_model.consumer_version_id,
@@ -277,14 +288,19 @@ module PactBroker
         Pact::JsonDiffer.(pact.content_hash, other_pact.content_hash, allow_unexpected_keys: false).any?
       end
 
-      def find_or_create_pact_version consumer_id, provider_id, json_content
-        sha = PactBroker.configuration.sha_generator.call(json_content)
-        PactVersion.find(sha: sha, consumer_id: consumer_id, provider_id: provider_id) || create_pact_version(consumer_id, provider_id, sha, json_content)
+      def find_or_create_pact_version consumer_id, provider_id, pact_version_sha, json_content
+        PactVersion.find(sha: pact_version_sha, consumer_id: consumer_id, provider_id: provider_id) || create_pact_version(consumer_id, provider_id, pact_version_sha, json_content)
       end
 
       def create_pact_version consumer_id, provider_id, sha, json_content
         logger.debug("Creating new pact version for sha #{sha}")
-        pact_version = PactVersion.new(consumer_id: consumer_id, provider_id: provider_id, sha: sha, content: json_content)
+        # Content.from_json(json_content).with_ids.to_json
+        pact_version = PactVersion.new(
+          consumer_id: consumer_id,
+          provider_id: provider_id,
+          sha: sha,
+          content: json_content
+        )
         pact_version.save
       end
 

@@ -16,12 +16,23 @@ module PactBroker
         let(:consumer) { Pacticipants::Repository.new.create name: 'Consumer' }
         let(:provider) { Pacticipants::Repository.new.create name: 'Provider' }
         let(:version) { PactBroker::Versions::Repository.new.create number: '1.2.3', pacticipant_id: consumer.id }
+        let(:pact_version_sha) { '123' }
         let(:json_content) { {some: 'json'}.to_json }
 
-        subject { Repository.new.create version_id: version.id, consumer_id: consumer.id, provider_id: provider.id, json_content: json_content }
+        let(:params) do
+          {
+            version_id: version.id,
+            consumer_id: consumer.id,
+            provider_id: provider.id,
+            json_content: json_content,
+            pact_version_sha: pact_version_sha
+          }
+        end
+
+        subject { Repository.new.create(params) }
 
         it "saves the pact" do
-          expect{subject}.to change{ PactPublication.count }.by(1)
+          expect{ subject }.to change{ PactPublication.count }.by(1)
         end
 
         it "sets the consumer_id" do
@@ -43,18 +54,26 @@ module PactBroker
         end
 
         context "when a pact already exists with exactly the same content" do
-          before do
-            PactBroker.configuration.base_equality_only_on_content_that_affects_verification_results = false
-          end
-
           let(:another_version) { Versions::Repository.new.create number: '2.0.0', pacticipant_id: consumer.id }
 
           before do
-            Repository.new.create version_id: version.id, consumer_id: consumer.id, provider_id: provider.id, json_content: json_content
+            Repository.new.create(
+              version_id: version.id,
+              consumer_id: consumer.id,
+              provider_id: provider.id,
+              json_content: json_content,
+              pact_version_sha: pact_version_sha
+            )
           end
 
           subject do
-            Repository.new.create version_id: another_version.id, consumer_id: consumer.id, provider_id: provider.id, json_content: json_content
+            Repository.new.create(
+              version_id: another_version.id,
+              consumer_id: consumer.id,
+              provider_id: provider.id,
+              json_content: json_content,
+              pact_version_sha: pact_version_sha
+            )
           end
 
           it "does not the content" do
@@ -77,13 +96,25 @@ module PactBroker
           let(:sha_2) { '1' }
 
           before do
-            PactBroker.configuration.base_equality_only_on_content_that_affects_verification_results = true
-            allow(PactBroker.configuration.sha_generator).to receive(:call).and_return(sha_1, sha_2)
-            Repository.new.create version_id: version.id, consumer_id: consumer.id, provider_id: provider.id, json_content: json_content
+            # PactBroker.configuration.base_equality_only_on_content_that_affects_verification_results = true
+            # allow(PactBroker.configuration.sha_generator).to receive(:call).and_return(sha_1, sha_2)
+            Repository.new.create(
+              version_id: version.id,
+              consumer_id: consumer.id,
+              provider_id: provider.id,
+              json_content: json_content,
+              pact_version_sha: sha_1
+            )
           end
 
           subject do
-            Repository.new.create version_id: another_version.id, consumer_id: consumer.id, provider_id: provider.id, json_content: json_content
+            Repository.new.create(
+              version_id: another_version.id,
+              consumer_id: consumer.id,
+              provider_id: provider.id,
+              json_content: json_content,
+              pact_version_sha: sha_2
+            )
           end
 
           context "when the sha is the same" do
@@ -105,11 +136,23 @@ module PactBroker
           let(:another_version) { Versions::Repository.new.create number: '2.0.0', pacticipant_id: consumer.id }
           let(:another_provider) { Pacticipants::Repository.new.create name: 'Provider2' }
           before do
-            Repository.new.create version_id: version.id, consumer_id: consumer.id, provider_id: another_provider.id, json_content: json_content
+            Repository.new.create(
+              version_id: version.id,
+              consumer_id: consumer.id,
+              provider_id: another_provider.id,
+              json_content: json_content,
+              pact_version_sha: pact_version_sha
+            )
           end
 
           subject do
-            Repository.new.create version_id: another_version.id, consumer_id: consumer.id, provider_id: provider.id, json_content: json_content
+            Repository.new.create(
+              version_id: another_version.id,
+              consumer_id: consumer.id,
+              provider_id: provider.id,
+              json_content: json_content,
+              pact_version_sha: pact_version_sha
+            )
           end
 
           it "does not reuse the same PactVersion" do
@@ -121,11 +164,23 @@ module PactBroker
           let(:another_version) { Versions::Repository.new.create number: '2.0.0', pacticipant_id: consumer.id }
 
           before do
-            Repository.new.create version_id: version.id, consumer_id: consumer.id, provider_id: provider.id, json_content: {some_other: 'json_content'}.to_json
+            Repository.new.create(
+              version_id: version.id,
+              consumer_id: consumer.id,
+              provider_id: provider.id,
+              json_content: {some_other: 'json_content'}.to_json,
+              pact_version_sha: pact_version_sha
+            )
           end
 
           subject do
-            Repository.new.create version_id: another_version.id, consumer_id: consumer.id, provider_id: provider.id, json_content: json_content
+            Repository.new.create(
+              version_id: another_version.id,
+              consumer_id: consumer.id,
+              provider_id: provider.id,
+              json_content: json_content,
+              pact_version_sha: "#{pact_version_sha}111"
+            )
           end
 
           it "creates a new PactVersion" do
@@ -137,27 +192,33 @@ module PactBroker
       describe "update" do
 
         let(:existing_pact) do
-          TestDataBuilder.new.create_pact_with_hierarchy("A Consumer", "1.2.3", "A Provider", original_json_content).and_return(:pact)
+          td.create_consumer("A Consumer")
+            .create_provider("A Provider")
+            .create_consumer_version("1.2.3")
+            .create_pact(pact_version_sha: pact_version_sha, json_content: original_json_content)
+            .and_return(:pact)
         end
         let(:repository) { Repository.new }
 
         before do
-          ::DB::PACT_BROKER_DB[:pact_publications]
+          PactPublication
+            .dataset
             .where(id: existing_pact.id)
-            .update(
-              created_at: created_at)
-          ::DB::PACT_BROKER_DB[:pact_versions]
-              .update(
-                created_at: created_at)
+            .update(created_at: created_at)
+          PactVersion
+            .dataset
+            .update(created_at: created_at)
         end
 
         let(:created_at) { DateTime.new(2014, 3, 2) }
 
         let(:original_json_content) { {some: 'json'}.to_json }
         let(:json_content) { {some_other: 'json'}.to_json }
+        let(:pact_version_sha) { '123' }
+        let(:new_pact_version_sha) { '567' }
 
-        context "when the attributes have changed" do
-          subject { repository.update existing_pact.id, json_content: json_content }
+        context "when the pact_version_sha has changed" do
+          subject { repository.update(existing_pact.id, json_content: json_content, pact_version_sha: new_pact_version_sha) }
 
           it "creates a new PactVersion" do
             expect { subject }.to change{ PactBroker::Pacts::PactPublication.count }.by(1)
@@ -203,9 +264,13 @@ module PactBroker
           end
         end
 
-        context "when the content has not changed" do
-
-          subject { repository.update existing_pact.id, json_content: original_json_content }
+        context "when the pact_version_sha has not changed" do
+          subject do
+            repository.update(existing_pact.id,
+              json_content: original_json_content,
+              pact_version_sha: pact_version_sha
+            )
+          end
 
           it "does not create a new PactVersion" do
             expect { subject }.to_not change{ PactBroker::Pacts::PactPublication.count }

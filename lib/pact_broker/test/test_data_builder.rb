@@ -77,7 +77,13 @@ module PactBroker
       end
 
       def create_ces_cps_pact
-        @pact_id = pact_repository.create(version_id: @contract_email_service_version_id, consumer_id: @contract_email_service_id, provider_id: @contract_proposal_service_id, json_content: default_json_content).id
+        @pact_id = pact_repository.create(
+          version_id: @contract_email_service_version_id,
+          consumer_id: @contract_email_service_id,
+          provider_id: @contract_proposal_service_id,
+          json_content: default_json_content,
+          pact_version_sha: PactBroker.configuration.sha_generator.call(default_json_content)
+          ).id
         self
       end
 
@@ -97,7 +103,13 @@ module PactBroker
       end
 
       def create_condor_pricing_service_pact
-        @pact_id = pact_repository.create(version_id: @condor_version_id, consumer_id: @condor_id, provider_id: @pricing_service_id, json_content: default_json_content).id
+        @pact_id = pact_repository.create(
+          version_id: @condor_version_id,
+          consumer_id: @condor_id,
+          provider_id: @pricing_service_id,
+          json_content: default_json_content,
+          pact_version_sha: PactBroker.configuration.sha_generator.call(default_json_content)
+          ).id
         self
       end
 
@@ -214,7 +226,15 @@ module PactBroker
 
       def create_pact params = {}
         params.delete(:comment)
-        @pact = PactBroker::Pacts::Repository.new.create({version_id: @consumer_version.id, consumer_id: @consumer.id, provider_id: @provider.id, json_content: params[:json_content] || default_json_content})
+        json_content = params[:json_content] || default_json_content
+        pact_version_sha = params[:pact_version_sha] || PactBroker.configuration.sha_generator.call(json_content)
+        @pact = PactBroker::Pacts::Repository.new.create(
+          version_id: @consumer_version.id,
+          consumer_id: @consumer.id,
+          provider_id: @provider.id,
+          json_content: json_content,
+          pact_version_sha: pact_version_sha
+        )
         set_created_at_if_set params[:created_at], :pact_publications, {id: @pact.id}
         set_created_at_if_set params[:created_at], :pact_versions, {sha: @pact.pact_version_sha}
         @pact = PactBroker::Pacts::PactPublication.find(id: @pact.id).to_domain
@@ -230,7 +250,11 @@ module PactBroker
 
       def revise_pact json_content = nil
         json_content = json_content ? json_content : {random: rand}.to_json
-        @pact = PactBroker::Pacts::Repository.new.update(@pact.id, json_content: json_content)
+        pact_version_sha = PactBroker.configuration.sha_generator.call(json_content)
+        @pact = PactBroker::Pacts::Repository.new.update(@pact.id,
+          json_content: json_content,
+          pact_version_sha: pact_version_sha
+        )
         self
       end
 
