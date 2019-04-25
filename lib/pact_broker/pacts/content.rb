@@ -78,7 +78,9 @@ module PactBroker
       def add_ids(interactions)
         interactions.map do | interaction |
           if interaction.is_a?(Hash)
-            interaction.merge("id" => generate_interaction_sha(interaction))
+            # just in case there is a previous ID in there
+            interaction_without_id = interaction.reject { |k, _| k == "id" }
+            interaction.merge("id" => generate_interaction_sha(interaction_without_id))
           else
             interaction
           end
