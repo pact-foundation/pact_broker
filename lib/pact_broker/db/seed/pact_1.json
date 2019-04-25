@@ -1,9 +1,9 @@
 {
   "consumer": {
-    "name": "Zoo App"
+    "name": "Example App"
   },
   "provider": {
-    "name": "Animal Service"
+    "name": "Example API"
   },
   "interactions": [
     {
