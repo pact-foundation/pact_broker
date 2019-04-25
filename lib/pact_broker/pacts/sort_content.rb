@@ -1,4 +1,5 @@
 require 'pact_broker/json'
+require 'pact_broker/pacts/order_object'
 
 module PactBroker
   module Pacts
@@ -26,28 +27,13 @@ module PactBroker
         end
       end
 
-
       def self.order_verifiable_content array
         array_with_ordered_hashes = order_object(array)
-        array_with_ordered_hashes.sort{|a, b| a.to_json <=> b.to_json }
+        array_with_ordered_hashes.sort{ |a, b| a.to_json <=> b.to_json }
       end
 
       def self.order_object thing
-        case thing
-          when Hash then order_hash(thing)
-          when Array then order_child_array(thing)
-        else thing
-        end
-      end
-
-      def self.order_child_array array
-        array.collect{|thing| order_object(thing) }
-      end
-
-      def self.order_hash hash
-        hash.keys.sort.each_with_object({}) do | key, new_hash |
-          new_hash[key] = order_object(hash[key])
-        end
+        OrderObject.call(thing)
       end
     end
   end
