@@ -2,7 +2,7 @@ require 'pact_broker/json'
 
 module PactBroker
   module Pacts
-    module OrderObject
+    module OrderHashKeys
       def self.call thing
         case thing
           when Hash then order_hash(thing)
@@ -21,8 +21,8 @@ module PactBroker
         end
       end
 
-      def order_object(thing)
-        OrderObject.call(thing)
+      def order_hash_keys(thing)
+        OrderHashKeys.call(thing)
       end
     end
   end
