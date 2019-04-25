@@ -142,7 +142,6 @@ module PactBroker
         pact_version_sha = generate_sha(params[:json_content])
         json_content = add_interaction_ids(params[:json_content])
         pact = pact_repository.create(
-          json_content: params[:json_content],
           version_id: version.id,
           provider_id: provider.id,
           consumer_id: version.pacticipant_id,
