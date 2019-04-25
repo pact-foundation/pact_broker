@@ -97,7 +97,6 @@ module PactBroker
       def self.pacticipant_names
         pacticipant_repository.pacticipant_names
       end
-
     end
   end
 end
