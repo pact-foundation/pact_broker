@@ -67,7 +67,11 @@ module PactBroker
           end
 
           it "extracts the json_content" do
-            expect(subject.json_content).to eq body
+            expect(subject.json_content).to eq JSON.parse(body).to_json
+          end
+
+          it "removes whitespace from the json_content" do
+            expect(subject.json_content).to_not include "\n"
           end
 
           it "extracts the consumer name from the pact" do
