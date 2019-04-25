@@ -21,25 +21,25 @@ module PactBroker
 
         subject { Content.from_hash(pact_hash).with_ids }
 
-        context "when the interaction has an existing id" do
-          let(:interaction) { { "id" => "blah", "foo" => "bar" } }
+        context "when the interaction has an existing _id" do
+          let(:interaction) { { "_id" => "blah", "foo" => "bar" } }
 
-          it "removes the id before creating the sha" do
+          it "removes the i_d before creating the sha" do
             expect(GenerateInteractionSha).to receive(:call).with("foo" => "bar")
             subject
           end
         end
 
         context "when the interaction is a hash" do
-          it "adds ids to the interactions" do
-            expect(subject.interactions.first["id"]).to eq "some-id"
+          it "adds an _id to each interaction" do
+            expect(subject.interactions.first["_id"]).to eq "some-id"
           end
         end
 
         context "when the interaction is not a hash" do
           let(:interaction) { 1 }
 
-          it "does not add an id" do
+          it "does not add an _id" do
             expect(subject.interactions.first).to eq interaction
           end
         end
@@ -55,8 +55,8 @@ module PactBroker
             }
           end
 
-          it "adds ids to the messages" do
-            expect(subject.messages.first["id"]).to eq "some-id"
+          it "adds an _id to each message" do
+            expect(subject.messages.first["_id"]).to eq "some-id"
           end
         end
       end

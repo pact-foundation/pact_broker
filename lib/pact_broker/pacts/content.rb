@@ -79,8 +79,9 @@ module PactBroker
         interactions.map do | interaction |
           if interaction.is_a?(Hash)
             # just in case there is a previous ID in there
-            interaction_without_id = interaction.reject { |k, _| k == "id" }
-            interaction.merge("id" => generate_interaction_sha(interaction_without_id))
+            interaction_without_id = interaction.reject { |k, _| k == "_id" }
+            # make the _id the first key in the hash when rendered to JSON
+            { "_id" => generate_interaction_sha(interaction_without_id) }.merge(interaction)
           else
             interaction
           end
