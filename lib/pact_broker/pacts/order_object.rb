@@ -2,7 +2,7 @@ require 'pact_broker/json'
 
 module PactBroker
   module Pacts
-    class OrderObject
+    module OrderObject
       def self.call thing
         case thing
           when Hash then order_hash(thing)
@@ -19,6 +19,10 @@ module PactBroker
         hash.keys.sort.each_with_object({}) do | key, new_hash |
           new_hash[key] = call(hash[key])
         end
+      end
+
+      def order_object(thing)
+        OrderObject.call(thing)
       end
     end
   end

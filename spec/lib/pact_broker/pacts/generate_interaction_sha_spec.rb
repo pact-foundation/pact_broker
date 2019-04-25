@@ -22,43 +22,22 @@ module PactBroker
             "providerStates" => [
               "name" => "bar",
               "params" => {
-                "wiffle" => "bar",
-                "meep" => "eek"
+                "meep" => "eek",
+                "wiffle" => "bar"
               }
             ],
             "description" => "foo"
           }
         end
 
-        let(:interaction_hash_with_different_params_order) do
-          {
-            "description" => "foo",
-            "providerStates" => [
-              "name" => "bar",
-              "params" => {
-                "meep" => "eek",
-                "wiffle" => "bar"
-              }
-            ]
-          }
-        end
-
         subject { GenerateInteractionSha.call(interaction_hash) }
 
         it "generates a SHA based on the sorted keys" do
-          expect(subject).to eq "5ec1cc12132d3437a5a2ced5537cdab2d4f44521"
+          expect(subject).to eq "57d06e151eca35083e4d6b585b4d4fab2e2ed6b7"
         end
 
-        it "generates the same SHA if the top level keys are ordered differently" do
+        it "generates the same SHA if the keys are ordered differently" do
           expect(subject).to eq GenerateInteractionSha.call(interaction_hash_with_different_key_order)
-        end
-
-        # This could be a whole lot smarter, but I'm not sure it's worth it.
-        # eg. order of provider state params doesn't matter, but the ordering
-        # of the provider states themselves may... who knows.
-        # Let's not try and be too smart about it until we have a use case to flesh it out.
-        it "generates a different SHA if any of the other keys are ordered differently" do
-          expect(subject).to_not eq GenerateInteractionSha.call(interaction_hash_with_different_params_order)
         end
       end
     end
