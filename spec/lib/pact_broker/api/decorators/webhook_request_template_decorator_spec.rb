@@ -9,14 +9,13 @@ module PactBroker
 
         let(:username) { 'username' }
         let(:display_password) { '*****' }
-        let(:display_url) { 'http://example.org/hooks' }
         let(:webhook_request) do
           instance_double(
             PactBroker::Webhooks::WebhookRequestTemplate,
             username: username,
             display_password: display_password,
             method: 'POST',
-            display_url: display_url,
+            display_url: 'url',
             body: 'body',
             headers: {})
         end
@@ -35,10 +34,6 @@ module PactBroker
             expect(subject[:password]).to eq display_password
           end
 
-          it "includes the url displayed" do
-            expect(subject[:url]).to eq display_url
-          end
-
           context "when there is no password" do
 
             let(:display_password) { nil }
@@ -51,13 +46,12 @@ module PactBroker
 
         describe "from_json" do
           let(:password) { 'password' }
-          let(:url) { 'http://example.org/hooks' }
           let(:hash) do
             {
               username: username,
               password: password,
               method: 'POST',
-              url: url,
+              url: 'url',
               body: 'body',
               headers: {}
             }
@@ -75,11 +69,6 @@ module PactBroker
           it "reads the password" do
             expect(subject.password).to eq password
           end
-
-          it "reads the url" do
-            expect(subject.url).to eq 'http://example.org/hooks'
-          end
-          
         end
       end
     end
