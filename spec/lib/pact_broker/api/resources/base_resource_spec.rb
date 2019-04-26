@@ -4,7 +4,7 @@ module PactBroker
   module Api
     module Resources
       describe BaseResource do
-        let(:request) { double('request', uri: uri) }
+        let(:request) { double('request', uri: uri).as_null_object }
         let(:response) { double('response') }
         let(:uri) { URI('http://example.org/path?query') }
 
