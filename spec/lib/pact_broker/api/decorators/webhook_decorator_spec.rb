@@ -131,8 +131,6 @@ module PactBroker
               expect(parsed_json[:request][:headers][:'Authorization']).to eq "**********"
             end
           end
-
-
         end
 
         describe 'from_json' do
@@ -172,7 +170,7 @@ module PactBroker
               expect(parsed_object.events.first.name).to eq PactBroker::Webhooks::WebhookEvent::DEFAULT_EVENT_NAME
             end
           end
-        end  
+        end
       end
     end
   end
