@@ -134,7 +134,7 @@ Pact.provider_states_for "Pact Broker Client" do
 
   provider_state "the 'Pricing Service' already exists in the pact-broker" do
     set_up do
-      TestDataBuilder.new.create_pricing_service.create_pricing_service_version("1.3.0")
+      TestDataBuilder.new.create_pricing_service.create_provider_version("1.3.0")
     end
   end
 
@@ -149,9 +149,9 @@ Pact.provider_states_for "Pact Broker Client" do
     set_up do
       TestDataBuilder.new
         .create_condor
-        .create_condor_version('1.3.0')
+        .create_consumer_version('1.3.0')
         .create_pricing_service
-        .create_condor_pricing_service_pact
+        .create_pact
     end
   end
 
@@ -163,9 +163,9 @@ Pact.provider_states_for "Pact Broker Client" do
     set_up do
       TestDataBuilder.new
         .create_condor
-        .create_condor_version('1.3.0')
+        .create_consumer_version('1.3.0')
         .create_pricing_service
-        .create_condor_pricing_service_pact
+        .create_pact
     end
   end
 
@@ -177,7 +177,7 @@ Pact.provider_states_for "Pact Broker Client" do
 
   provider_state "'Condor' exists in the pact-broker" do
     set_up do
-      TestDataBuilder.new.create_condor.create_condor_version('1.3.0')
+      TestDataBuilder.new.create_condor.create_consumer_version('1.3.0')
     end
   end
 

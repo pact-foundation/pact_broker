@@ -6,6 +6,7 @@ require 'pact_broker/webhooks/service'
 require 'pact_broker/domain/webhook_execution_result'
 require 'pact_broker/pacts/repository'
 require 'pact_broker/pacts/service'
+require 'pact_broker/pacts/content'
 require 'pact_broker/pacticipants/repository'
 require 'pact_broker/pacticipants/service'
 require 'pact_broker/versions/repository'
@@ -52,64 +53,22 @@ module PactBroker
       end
 
       def create_pricing_service
-        @pricing_service_id = pacticipant_repository.create(:name => 'Pricing Service', :repository_url => 'git@git.realestate.com.au:business-systems/pricing-service').save(raise_on_save_failure: true).id
+        create_provider("Pricing Service", :repository_url => 'git@git.realestate.com.au:business-systems/pricing-service')
         self
       end
 
       def create_contract_proposal_service
-        @contract_proposal_service_id = pacticipant_repository.create(:name => 'Contract Proposal Service', :repository_url => 'git@git.realestate.com.au:business-systems/contract-proposal-service').save(raise_on_save_failure: true).id
-        self
-      end
-
-      def create_contract_proposal_service_version number
-        @contract_proposal_service_version_id = version_repository.create(number: number, pacticipant_id: @contract_proposal_service_id).id
+        create_provider("Contract Proposal Service", :repository_url => 'git@git.realestate.com.au:business-systems/contract-proposal-service')
         self
       end
 
       def create_contract_email_service
-        @contract_email_service_id = pacticipant_repository.create(:name => 'Contract Email Service', :repository_url => 'git@git.realestate.com.au:business-systems/contract-email-service').save(raise_on_save_failure: true).id
-        self
-      end
-
-      def create_contract_email_service_version number
-        @contract_email_service_version_id = version_repository.create(number: number, pacticipant_id: @contract_email_service_id).id
-        self
-      end
-
-      def create_ces_cps_pact
-        @pact_id = pact_repository.create(
-          version_id: @contract_email_service_version_id,
-          consumer_id: @contract_email_service_id,
-          provider_id: @contract_proposal_service_id,
-          json_content: default_json_content,
-          pact_version_sha: PactBroker.configuration.sha_generator.call(default_json_content)
-          ).id
+        create_consumer("Contract Email Service", :repository_url => 'git@git.realestate.com.au:business-systems/contract-email-service')
         self
       end
 
       def create_condor
-        @condor_id = pacticipant_repository.create(:name => 'Condor').save(raise_on_save_failure: true).id
-        self
-      end
-
-      def create_condor_version number
-        @condor_version_id = version_repository.create(number: number, pacticipant_id: @condor_id).id
-        self
-      end
-
-      def create_pricing_service_version number
-        @pricing_service_version_id = version_repository.create(number: number, pacticipant_id: @pricing_service_id).id
-        self
-      end
-
-      def create_condor_pricing_service_pact
-        @pact_id = pact_repository.create(
-          version_id: @condor_version_id,
-          consumer_id: @condor_id,
-          provider_id: @pricing_service_id,
-          json_content: default_json_content,
-          pact_version_sha: PactBroker.configuration.sha_generator.call(default_json_content)
-          ).id
+        create_consumer("Condor")
         self
       end
 
@@ -136,13 +95,13 @@ module PactBroker
 
       def create_pacticipant pacticipant_name, params = {}
         params.delete(:comment)
-        @pacticipant = PactBroker::Domain::Pacticipant.create(:name => pacticipant_name)
+        @pacticipant = PactBroker::Domain::Pacticipant.create({ :name => pacticipant_name }.merge(params))
         self
       end
 
       def create_consumer consumer_name = "Consumer #{model_counter}", params = {}
         params.delete(:comment)
-        create_pacticipant consumer_name
+        create_pacticipant consumer_name, params
         @consumer = @pacticipant
         self
       end
@@ -155,7 +114,7 @@ module PactBroker
 
       def create_provider provider_name = "Provider #{model_counter}", params = {}
         params.delete(:comment)
-        create_pacticipant provider_name
+        create_pacticipant provider_name, params
         @provider = @pacticipant
         self
       end
@@ -227,13 +186,13 @@ module PactBroker
       def create_pact params = {}
         params.delete(:comment)
         json_content = params[:json_content] || default_json_content
-        pact_version_sha = params[:pact_version_sha] || PactBroker.configuration.sha_generator.call(json_content)
+        pact_version_sha = params[:pact_version_sha] || generate_pact_version_sha(json_content)
         @pact = PactBroker::Pacts::Repository.new.create(
           version_id: @consumer_version.id,
           consumer_id: @consumer.id,
           provider_id: @provider.id,
-          json_content: json_content,
-          pact_version_sha: pact_version_sha
+          pact_version_sha: pact_version_sha,
+          json_content: prepare_json_content(json_content),
         )
         set_created_at_if_set params[:created_at], :pact_publications, {id: @pact.id}
         set_created_at_if_set params[:created_at], :pact_versions, {sha: @pact.pact_version_sha}
@@ -250,9 +209,9 @@ module PactBroker
 
       def revise_pact json_content = nil
         json_content = json_content ? json_content : {random: rand}.to_json
-        pact_version_sha = PactBroker.configuration.sha_generator.call(json_content)
+        pact_version_sha = generate_pact_version_sha(json_content)
         @pact = PactBroker::Pacts::Repository.new.update(@pact.id,
-          json_content: json_content,
+          json_content: prepare_json_content(json_content),
           pact_version_sha: pact_version_sha
         )
         self
@@ -361,6 +320,15 @@ module PactBroker
       end
 
       private
+
+      # Remember! This must be called before adding the IDs
+      def generate_pact_version_sha json_content
+        PactBroker.configuration.sha_generator.call(json_content)
+      end
+
+      def prepare_json_content(json_content)
+        PactBroker::Pacts::Content.from_json(json_content).with_ids.to_json
+      end
 
       def set_created_at_if_set created_at, table_name, selector
         if created_at
