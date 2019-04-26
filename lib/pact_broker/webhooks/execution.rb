@@ -6,7 +6,7 @@ require 'pact_broker/repositories/helpers'
 module PactBroker
   module Webhooks
     class Execution < Sequel::Model(
-      PactBroker::DB.connection[:webhook_executions].select(
+      Sequel::Model.db[:webhook_executions].select(
         Sequel[:webhook_executions][:id],
         :triggered_webhook_id,
         :success,
