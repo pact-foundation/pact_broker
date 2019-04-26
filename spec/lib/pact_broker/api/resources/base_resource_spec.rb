@@ -25,7 +25,7 @@ module PactBroker
 
       ALL_RESOURCES.each do | resource |
         describe resource do
-          let(:request) { double('request', uri: URI("http://example.org")) }
+          let(:request) { double('request', uri: URI("http://example.org")).as_null_object }
           let(:response) { double('response') }
 
           it "includes OPTIONS in the list of allowed_methods" do
