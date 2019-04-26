@@ -1,10 +1,8 @@
 module PactBroker
   module Webhooks
     class URLRedactor
-      # @url = attributes[:url]
       PARAMS_TO_REDACT = [/auth/i, /token/i]
       SLACK_URL = "hooks.slack.com/services/"
-      attr_accessor :url
       def self.call url
         url = url
         if URI(url).query

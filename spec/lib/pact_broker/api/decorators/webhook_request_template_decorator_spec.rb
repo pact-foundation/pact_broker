@@ -80,24 +80,6 @@ module PactBroker
             expect(subject.url).to eq 'http://example.org/hooks'
           end
           
-          context "when a slack token is in the url" do
-            let(:url) { 'https://hooks.slack.com/services/aaa/bbb/ccc' }
-            it "reads the token" do
-              expect(subject.url).to eq url
-            end
-          end
-          context "when a token param is in the url" do
-            let(:url) { 'https://hooks.slack.com/services?param=wewanttokeep&token=wewanttohide' }
-            it "reads the token" do
-              expect(subject.url).to eq url
-            end
-          end
-          context "when no sensitive info in the url" do
-            let(:url) { 'http://example.org/hooks?param=something' }
-            it "reads the full url" do
-              expect(subject.url).to eq url
-            end
-          end
         end
       end
     end
