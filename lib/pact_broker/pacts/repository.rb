@@ -258,9 +258,11 @@ module PactBroker
 
       def find_previous_pacts pact
         if pact.consumer_version_tag_names.any?
-          pact.consumer_version_tag_names.map { |tag| find_previous_pact(pact, tag) }
+          pact.consumer_version_tag_names.each_with_object({}) do |tag, tags_to_pacts|
+            tags_to_pacts[tag] = find_previous_pact(pact, tag)
+          end
         else
-          [find_previous_pact(pact, :untagged)]
+          { :untagged => find_previous_pact(pact, :untagged) }
         end
       end
 

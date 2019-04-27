@@ -14,6 +14,7 @@ module PactBroker
 
         before do
           allow(described_class).to receive(:webhook_service).and_return(webhook_service)
+          allow(described_class).to receive(:webhook_trigger_service).and_return(webhook_trigger_service)
           allow(pacticipant_repository).to receive(:find_by_name_or_create).with(params[:consumer_name]).and_return(consumer)
           allow(pacticipant_repository).to receive(:find_by_name_or_create).with(params[:provider_name]).and_return(provider)
           allow(version_repository).to receive(:find_by_pacticipant_id_and_number_or_create).and_return(version)
@@ -22,9 +23,12 @@ module PactBroker
           allow(pact_repository).to receive(:update).and_return(new_pact)
           allow(pact_repository).to receive(:find_previous_pacts).and_return(previous_pacts)
           allow(webhook_service).to receive(:trigger_webhooks)
+          allow(webhook_trigger_service).to receive(:trigger_webhooks_for_new_pact)
+          allow(webhook_trigger_service).to receive(:trigger_webhooks_for_updated_pact)
         end
 
         let(:webhook_service) { class_double("PactBroker::Webhooks::Service").as_stubbed_const }
+        let(:webhook_trigger_service) { class_double("PactBroker::Webhooks::TriggerService").as_stubbed_const }
         let(:consumer) { double('consumer', id: 1) }
         let(:provider) { double('provider', id: 2) }
         let(:version) { double('version', id: 3, pacticipant_id: 1) }
@@ -52,7 +56,6 @@ module PactBroker
 
         subject { Service.create_or_update_pact(params) }
 
-
         context "when no pact exists with the same params" do
           it "creates the sha before adding the interaction ids" do
             expect(PactBroker::Pacts::GenerateSha).to receive(:call).ordered
@@ -65,8 +68,8 @@ module PactBroker
             subject
           end
 
-          it "triggers webhooks for contract publications" do
-            expect(webhook_service).to receive(:trigger_webhooks).with(new_pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_PUBLISHED)
+          it "triggers webhooks" do
+            expect(webhook_trigger_service).to receive(:trigger_webhooks_for_new_pact).with(new_pact)
             subject
           end
         end
@@ -85,8 +88,8 @@ module PactBroker
             subject
           end
 
-          it "triggers webhooks for contract publications" do
-            expect(webhook_service).to receive(:trigger_webhooks).with(new_pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_PUBLISHED)
+          it "triggers webhooks" do
+            expect(webhook_trigger_service).to receive(:trigger_webhooks_for_updated_pact).with(existing_pact, new_pact)
             subject
           end
         end
@@ -108,91 +111,6 @@ module PactBroker
 
         it "returns the distinct pacts" do
           expect(subject).to eq [pact_4, pact_2, pact_1]
-        end
-      end
-
-      describe "#pact_is_new_or_pact_has_changed_since_previous_version?" do
-        let(:json_content) { { 'some' => 'json'}.to_json }
-        let(:pact) { instance_double(PactBroker::Domain::Pact, json_content: json_content)}
-
-        subject { Service.pact_is_new_or_pact_has_changed_since_previous_version? pact }
-
-        context "when consumer version is untagged" do
-          before do
-            allow(pact).to receive(:consumer_version_tag_names).and_return([]);
-            allow_any_instance_of(Pacts::Repository).to receive(:find_previous_pact).with(pact, :untagged).and_return(previous_pact)
-          end
-
-          context "when a previous pact is found" do
-            let(:previous_pact) { instance_double(PactBroker::Domain::Pact, json_content: previous_json_content)}
-            let(:previous_json_content) { {'some' => 'json'}.to_json }
-
-            context "when the json_content is the same" do
-              it "returns false" do
-                expect(subject).to be_falsey
-              end
-            end
-
-            context "when the json_content is not the same" do
-              let(:previous_json_content) { {'some-other' => 'json'}.to_json }
-              it "returns truthy" do
-                expect(subject).to be_truthy
-              end
-            end
-          end
-
-          context "when a previous pact is not found" do
-            let(:previous_pact) { nil }
-
-            it "returns true" do
-              expect(subject).to be_truthy
-            end
-          end
-        end
-
-        context "when consumer version has two tags" do
-          before do
-            allow(pact).to receive(:consumer_version_tag_names).and_return(['tag_1', 'tag_2']);
-            allow_any_instance_of(Pacts::Repository).to receive(:find_previous_pact).with(pact, 'tag_1').and_return(previous_pact_tag_1)
-            allow_any_instance_of(Pacts::Repository).to receive(:find_previous_pact).with(pact, 'tag_2').and_return(previous_pact_tag_2)
-          end
-
-          context "when a previous pact is found for both tags" do
-            let(:previous_pact_tag_1) { instance_double(PactBroker::Domain::Pact, json_content: previous_json_content_tag_1)}
-            let(:previous_json_content_tag_1) { {'some' => 'json'}.to_json }
-
-            let(:previous_pact_tag_2) { instance_double(PactBroker::Domain::Pact, json_content: previous_json_content_tag_2)}
-            let(:previous_json_content_tag_2) { {'some' => 'json'}.to_json }
-
-            context "when the json_content of both previous pacts and new pact is the same" do
-              it "returns false" do
-                expect(subject).to be_falsey
-              end
-            end
-
-            context "when the json_content of first previous pact is not the same" do
-              let(:previous_json_content_tag_1) { {'some-other' => 'json'}.to_json }
-              it "returns truthy" do
-                expect(subject).to be_truthy
-              end
-            end
-
-            context "when the json_content of second previous pact not the same" do
-              let(:previous_json_content_tag_2) { {'some-other' => 'json'}.to_json }
-              it "returns truthy" do
-                expect(subject).to be_truthy
-              end
-            end
-          end
-
-          context "when no previous pacts are found" do
-            let(:previous_pact_tag_1) { nil }
-            let(:previous_pact_tag_2) { nil }
-
-            it "returns true" do
-              expect(subject).to be_truthy
-            end
-          end
         end
       end
 

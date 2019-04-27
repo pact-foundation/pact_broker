@@ -110,13 +110,9 @@ module PactBroker
         distinct
       end
 
-      # TODO also take into account overridden revisions
-      def pact_is_new_or_pact_has_changed_since_previous_version? pact
-        pact_repository.find_previous_pacts(pact).any? { |previous_pact| previous_pact.nil? || pact.json_content != previous_pact.json_content}
-      end
-
       private
 
+      # Overwriting an existing pact with the same consumer/provider/consumer version number
       def update_pact params, existing_pact
         logger.info "Updating existing pact publication with params #{params.reject{ |k, v| k == :json_content}}"
         logger.debug "Content #{params[:json_content]}"
@@ -125,17 +121,12 @@ module PactBroker
         update_params = { pact_version_sha: pact_version_sha, json_content: json_content }
         updated_pact = pact_repository.update(existing_pact.id, update_params)
 
-        webhook_service.trigger_webhooks updated_pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_PUBLISHED
-        # TODO this should use the sha!
-        if existing_pact.json_content != updated_pact.json_content
-          webhook_service.trigger_webhooks updated_pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED
-        else
-          logger.debug "Pact has not changed since previous version, not triggering webhooks for changed content"
-        end
+        webhook_trigger_service.trigger_webhooks_for_updated_pact(existing_pact, updated_pact)
 
         updated_pact
       end
 
+      # When no publication for the given consumer/provider/consumer version number exists
       def create_pact params, version, provider
         logger.info "Creating new pact publication with params #{params.reject{ |k, v| k == :json_content}}"
         logger.debug "Content #{params[:json_content]}"
@@ -148,7 +139,7 @@ module PactBroker
           pact_version_sha: pact_version_sha,
           json_content: json_content
         )
-        trigger_webhooks pact
+        webhook_trigger_service.trigger_webhooks_for_new_pact pact
         pact
       end
 
@@ -158,16 +149,6 @@ module PactBroker
 
       def add_interaction_ids(json_content)
         Content.from_json(json_content).with_ids.to_json
-      end
-
-      def trigger_webhooks pact
-        # TODO add tests for this
-        webhook_service.trigger_webhooks pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_PUBLISHED
-        if pact_is_new_or_pact_has_changed_since_previous_version?(pact)
-          webhook_service.trigger_webhooks pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED
-        else
-          logger.debug "Pact has not changed since previous version, not triggering webhooks for changed content"
-        end
       end
     end
   end
