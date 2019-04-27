@@ -6,12 +6,17 @@ describe "fetching pacts to verify", pending: 'not yet implemented' do
   end
   let(:path) { "/pacts/provider/Provider/verifiable" }
   let(:query) do
+    # need to provide the provider tags that will be used when publishing the
+    # verification results, as whether a pact
+    # is pending or not depends on which provider tag we're talking about
+    # eg. if content has been verified on git branch (broker tag) feat-2,
+    # it's still pending on master, and shouldn't fail the build
     {
       provider_version_tags: [{ name: "feat-2" }],
       consumer_version_tags: [
-        { name: "feat-1", fallback: "master" },
-        { name: "test", required: true },
-        { name: "prod", all: true }
+        { name: "feat-1", fallback: "master" }, # allow a fallback to be provided for the "branch mirroring" workflow
+        { name: "test", required: true }, # default to optional or required??? Ron?
+        { name: "prod", all: true } # by default return latest, but allow "all" to be specified for things like mobile apps
       ]
     }
   end
