@@ -4,7 +4,7 @@ describe "fetching pacts to verify", pending: 'not yet implemented' do
     #   .create_consumer_version_tag("feat-1")
     #   .create_provider_version_tag("master")
   end
-  let(:path) { "/pacts/provider/Provider/verifiable" }
+  let(:path) { "/pacts/provider/Bar/verifiable" }
   let(:query) do
     # need to provide the provider tags that will be used when publishing the
     # verification results, as whether a pact
