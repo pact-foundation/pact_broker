@@ -1,6 +1,8 @@
 require 'pact_broker/api/decorators/dashboard_decorator'
 require 'pact_broker/domain/index_item'
 
+ORIGINAL_TZ = ENV['TZ']
+
 module PactBroker
   module Api
     module Decorators
@@ -26,14 +28,24 @@ module PactBroker
         end
         let(:consumer) { instance_double('PactBroker::Domain::Pacticipant', name: 'Foo') }
         let(:provider) { instance_double('PactBroker::Domain::Pacticipant', name: 'Bar') }
-        let(:pact) { instance_double('PactBroker::Domain::Pact', created_at: DateTime.new(2018)) }
-        let(:verification) { instance_double('PactBroker::Domain::Verification', success: true, created_at: DateTime.new(2018)) }
+        let(:pact) { instance_double('PactBroker::Domain::Pact', created_at: created_at) }
+        let(:verification) { instance_double('PactBroker::Domain::Verification', success: true, created_at: created_at) }
         let(:consumer_version) { instance_double('PactBroker::Domain::Version', number: '1', pacticipant: consumer) }
         let(:provider_version) { instance_double('PactBroker::Domain::Version', number: '2', pacticipant: provider) }
-        let(:last_webhook_execution_date) { Date.new(2018) }
+        let(:last_webhook_execution_date) { created_at }
         let(:base_url) { 'http://example.org' }
         let(:options) { { user_options: { base_url: base_url } } }
         let(:dashboard_json) { DashboardDecorator.new([index_item]).to_json(options) }
+        let(:created_at) { in_utc { DateTime.new(2018) } }
+
+        def in_utc
+          begin
+            ENV['TZ'] = 'UTC'
+            yield
+          ensure
+            ENV['TZ'] = ORIGINAL_TZ
+          end
+        end
 
         before do
           allow_any_instance_of(DashboardDecorator).to receive(:pact_url).with(base_url, pact).and_return('pact_url')
