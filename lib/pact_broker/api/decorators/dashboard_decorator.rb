@@ -26,9 +26,13 @@ module PactBroker
         attr_reader :index_items
 
         def items(index_items, base_url)
-          index_items.collect do | index_item |
+          sorted_index_items.collect do | index_item |
             index_item_hash(index_item.consumer, index_item.provider, index_item.consumer_version, index_item, base_url)
           end
+        end
+
+        def sorted_index_items
+          index_items.sort{ |i1, i2| i2.last_activity_date <=> i1.last_activity_date }
         end
 
         def index_item_hash(consumer, provider, consumer_version, index_item, base_url)

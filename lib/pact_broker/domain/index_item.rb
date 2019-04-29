@@ -135,6 +135,9 @@ module PactBroker
         [consumer, provider]
       end
 
+      def last_activity_date
+        @last_activity_date ||= [latest_pact.created_at, latest_verification ? latest_verification.execution_date : nil].compact.max
+      end
     end
   end
 end
