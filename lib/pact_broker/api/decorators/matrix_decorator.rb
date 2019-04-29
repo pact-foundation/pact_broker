@@ -1,12 +1,14 @@
 require 'ostruct'
 require 'pact_broker/api/pact_broker_urls'
 require 'pact_broker/api/decorators/reason_decorator'
+require 'pact_broker/api/decorators/format_date_time'
 
 module PactBroker
   module Api
     module Decorators
       class MatrixDecorator
         include PactBroker::Api::PactBrokerUrls
+        include FormatDateTime
 
         def initialize(query_results_with_deployment_status_summary)
           @query_results_with_deployment_status_summary = query_results_with_deployment_status_summary
@@ -102,7 +104,7 @@ module PactBroker
 
         def pact_hash(line, base_url)
           {
-            createdAt: line.pact_created_at.to_datetime.xmlschema,
+            createdAt: format_date_time(line.pact_created_at),
             _links: {
               self: {
                 href: pact_url(base_url, line)
@@ -120,7 +122,7 @@ module PactBroker
             }
             {
               success: line.success,
-              verifiedAt: line.verification_executed_at.to_datetime.xmlschema,
+              verifiedAt: format_date_time(line.verification_executed_at),
               _links: {
                 self: {
                   href: verification_url_from_params(url_params, base_url)

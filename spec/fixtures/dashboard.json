@@ -33,7 +33,7 @@
         "verifiedAt": "2018-01-01T00:00:00+00:00"
       },
       "latestWebhookExecution": {
-        "triggeredAt": "2018-01-01T00:00:00+00:00"
+        "triggeredAt": "2017-12-31T13:00:00+00:00"
       },
       "pactTags": [
         {

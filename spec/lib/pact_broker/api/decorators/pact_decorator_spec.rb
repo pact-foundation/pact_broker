@@ -44,7 +44,7 @@ module PactBroker
           end
 
           it "includes the createdAt date" do
-            expect(subject[:createdAt]).to eq created_at.xmlschema
+            expect(subject[:createdAt]).to eq FormatDateTime.call(created_at)
           end
 
           it "includes a link to itself" do

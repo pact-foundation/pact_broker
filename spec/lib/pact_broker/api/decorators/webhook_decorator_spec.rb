@@ -86,8 +86,8 @@ module PactBroker
           end
 
           it 'includes timestamps' do
-            expect(parsed_json[:createdAt]).to eq created_at.xmlschema
-            expect(parsed_json[:updatedAt]).to eq updated_at.xmlschema
+            expect(parsed_json[:createdAt]).to eq FormatDateTime.call(created_at)
+            expect(parsed_json[:updatedAt]).to eq FormatDateTime.call(updated_at)
           end
 
           context 'when the headers are empty' do

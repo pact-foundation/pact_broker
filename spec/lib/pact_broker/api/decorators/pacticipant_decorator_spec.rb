@@ -31,8 +31,8 @@ module PactBroker
         subject { JSON.parse PacticipantDecorator.new(pacticipant).to_json(user_options: {base_url: base_url}), symbolize_names: true }
 
         it "includes timestamps" do
-          expect(subject[:createdAt]).to eq created_at.xmlschema
-          expect(subject[:updatedAt]).to eq updated_at.xmlschema
+          expect(subject[:createdAt]).to eq FormatDateTime.call(created_at)
+          expect(subject[:updatedAt]).to eq FormatDateTime.call(updated_at)
         end
 
         it "includes embedded labels" do

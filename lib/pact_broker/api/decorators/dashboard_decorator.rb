@@ -1,11 +1,13 @@
 require 'ostruct'
 require 'pact_broker/api/pact_broker_urls'
+require 'pact_broker/api/decorators/format_date_time'
 
 module PactBroker
   module Api
     module Decorators
       class DashboardDecorator
         include PactBroker::Api::PactBrokerUrls
+        include FormatDateTime
 
         def initialize(index_items)
           @index_items = index_items
@@ -90,7 +92,7 @@ module PactBroker
 
         def pact_hash(index_item, base_url)
           {
-            createdAt: index_item.latest_pact.created_at.to_datetime.xmlschema,
+            createdAt: format_date_time(index_item.latest_pact.created_at),
             _links: {
               self: {
                 href: pact_url(base_url, index_item.latest_pact)
@@ -103,7 +105,7 @@ module PactBroker
           if index_item.latest_verification
             {
               success: index_item.latest_verification.success,
-              verifiedAt: index_item.latest_verification.created_at.to_datetime.xmlschema,
+              verifiedAt: format_date_time(index_item.latest_verification.created_at),
               _links: {
                 self: {
                   href: verification_url(index_item.latest_verification, base_url)
@@ -148,7 +150,7 @@ module PactBroker
         def latest_webhook_execution(index_item, base_url)
           if index_item.last_webhook_execution_date
             {
-              triggeredAt: index_item.last_webhook_execution_date.to_datetime.xmlschema
+              triggeredAt: format_date_time(index_item.last_webhook_execution_date)
             }
           end
         end
