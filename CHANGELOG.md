@@ -1,3 +1,54 @@
+<a name="v2.31.0"></a>
+### v2.31.0 (2019-04-30)
+
+
+#### Features
+
+* display times in UTC in API responses	 ([a4231117](/../../commit/a4231117))
+* log the reason why a webhook has been triggered	 ([30522c0d](/../../commit/30522c0d))
+* add _ids to interactions added via the TestDataBuilder	 ([d21e7092](/../../commit/d21e7092))
+* update names of example apps	 ([2b2a3f81](/../../commit/2b2a3f81))
+* ignore order of keys when generating interaction sha	 ([e6a0e8d8](/../../commit/e6a0e8d8))
+* use _id instead of id for the interaction identifier	 ([010a14ab](/../../commit/010a14ab))
+* add ids to interactions when pacts are published	 ([cd377850](/../../commit/cd377850))
+* remove whitespace from pact content when saving to database	 ([1f53682e](/../../commit/1f53682e))
+* monkeypatch webmachine to make the rack env available on the request	 ([40be97db](/../../commit/40be97db))
+* ensure index page is not cached	 ([0cfa9bbf](/../../commit/0cfa9bbf))
+* correct provider state matching for merging	 ([41ff6e5d](/../../commit/41ff6e5d))
+* only seed example data when database is empty	 ([0f2d00a6](/../../commit/0f2d00a6))
+* seed app with example data on first startup	 ([cf27ad8c](/../../commit/cf27ad8c))
+* batch delete versions and tags using delete instead of destroy for efficiency	 ([1315e0b1](/../../commit/1315e0b1))
+* allow pact to be deleted through the UI	 ([df0f35cb](/../../commit/df0f35cb))
+* upgrade bootstrap	 ([1be9f1b2](/../../commit/1be9f1b2))
+* allow an integration to be deleted via the UI	 ([f520520e](/../../commit/f520520e))
+* add delete integration which deletes all objects pertaining to an integration that are not referenced by other objects	 ([718f0218](/../../commit/718f0218))
+* simplify the logic that determines if the request is for the UI or the API	 ([73ae0fc2](/../../commit/73ae0fc2))
+* change pact rendering log message from warn to info	 ([93229103](/../../commit/93229103))
+* upgrade jquery version to 3.3.1	 ([82b830cf](/../../commit/82b830cf))
+
+* **dashboard**
+  * sort items by most recent activity	 ([f6f8fb20](/../../commit/f6f8fb20))
+
+* **index**
+  * add button to delete all pact versions	 ([b5d15d5d](/../../commit/b5d15d5d))
+
+
+#### Bug Fixes
+
+* ensure datetime tests run correctly regardless of timezone	 ([0506be30](/../../commit/0506be30))
+* correct logic for filtering ui/api requests	 ([725c6ccb](/../../commit/725c6ccb))
+* ensure that the templating in the webhook body uses the correct base URL for the broker	 ([3d5a5380](/../../commit/3d5a5380))
+* handle deleting integration when consumer and provider are the same pacticipant	 ([f31e8df2](/../../commit/f31e8df2))
+* correct tbody in show-with-tags index page	 ([325a98ed](/../../commit/325a98ed))
+* delete overwritten pact publications when deleting all pact publications between a consumer and provider	 ([5456eda5](/../../commit/5456eda5))
+* escape html on index pages	 ([6ee34afe](/../../commit/6ee34afe))
+* sanitize html in matrix	 ([c4d74d87](/../../commit/c4d74d87))
+* sanitize fields when rendering pact html	 ([dca76506](/../../commit/dca76506))
+
+* **readme**
+  * Change gitter link to slack. + Minor typo	 ([6b1c7843](/../../commit/6b1c7843))
+
+
 <a name="v2.30.0"></a>
 ### v2.30.0 (2019-03-29)
 
