@@ -133,7 +133,6 @@ module PactBroker
       configure_middleware
 
       # need this first so UI login logic is performed before API login logic
-      @cascade_apps << build_custom_ui if custom_ui
       @cascade_apps << build_ui
 
       if configuration.enable_diagnostic_endpoints
@@ -167,19 +166,13 @@ module PactBroker
     def build_ui
       logger.info "Mounting UI"
       require 'pact_broker/ui'
+      ui_apps = [PactBroker::UI::App.new]
+      ui_apps.unshift(@custom_ui) if @custom_ui
       builder = ::Rack::Builder.new
       builder.use Rack::PactBroker::UIRequestFilter
       builder.use @make_it_later_ui_auth
       builder.use Rack::PactBroker::UIAuthentication # deprecate?
-      builder.run PactBroker::UI::App.new
-      builder
-    end
-
-    def build_custom_ui
-      logger.info "Mounting Custom UI"
-      builder = ::Rack::Builder.new
-      builder.use Rack::PactBroker::UIRequestFilter
-      builder.run @custom_ui
+      builder.run Rack::Cascade.new(ui_apps)
       builder
     end
 
