@@ -60,6 +60,10 @@ module PactBroker
       @custom_ui = custom_ui
     end
 
+    def use_custom_api custom_api
+      @custom_api = custom_api
+    end
+
     def call env
       running_app.call env
     end
@@ -182,11 +186,13 @@ module PactBroker
     def build_api
       logger.info "Mounting PactBroker::API"
       require 'pact_broker/api'
+      api_apps = [PactBroker::API]
+      api_apps.unshift(@custom_api) if @custom_api
       builder = ::Rack::Builder.new
       builder.use @make_it_later_api_auth
       builder.use Rack::PactBroker::Convert404ToHal
       builder.use Rack::PactBroker::DatabaseTransaction, configuration.database_connection
-      builder.run PactBroker::API
+      builder.run Rack::Cascade.new(api_apps)
       builder
     end
 

@@ -66,13 +66,15 @@ module PactBroker
     end
 
     describe "use_custom_ui" do
+      before do
+        app.use_custom_ui(custom_ui)
+        get "/", nil, { "HTTP_ACCEPT" => "text/html" }
+      end
+
       context "when the UI returns a non 404 response" do
         let(:custom_ui) { double('ui', call: [200, {}, ["hello"]]) }
 
         it "returns the given page" do
-          app.use_custom_ui(custom_ui)
-
-          get "/", nil, { "HTTP_ACCEPT" => "text/html" }
           expect(last_response.body).to eq "hello"
         end
       end
@@ -81,8 +83,30 @@ module PactBroker
         let(:custom_ui) { double('ui', call: [404, {}, []]) }
 
         it "passes on the call to the rest of the app" do
-          get "/", nil, { "HTTP_ACCEPT" => "text/html" }
           expect(last_response.status).to eq 200
+        end
+      end
+    end
+
+    describe "use_custom_api" do
+      before do
+        app.use_custom_api(custom_api)
+        get "/", nil, { "HTTP_ACCEPT" => "application/hal+json" }
+      end
+
+      context "when the API returns a non 404 response" do
+        let(:custom_api) { double('api', call: [200, {}, ["hello"]]) }
+
+        it "returns the given resource" do
+          expect(last_response.body).to eq "hello"
+        end
+      end
+
+      context "when the custom API returns a 404 response" do
+        let(:custom_api) { double('api', call: [404, {}, []]) }
+
+        it "passes on the call to the rest of the app" do
+          expect(last_response.body).to_not eq "hello"
         end
       end
     end
