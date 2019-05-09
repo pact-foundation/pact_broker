@@ -4,15 +4,18 @@ require 'pact_broker/pacticipants/service'
 module PactBroker
   module DB
     class SeedExampleData
+      CONSUMER_NAME = "Example App"
+      PROVIDER_NAME = "Example API"
+
       def self.call
         new.call
       end
 
-      def call
+      def call(consumer_name: CONSUMER_NAME, provider_name: PROVIDER_NAME)
         return unless database_empty?
         PactBroker::Test::TestDataBuilder.new
-          .create_consumer("Example App", created_at: days_ago(16))
-          .create_provider("Example API", created_at: days_ago(16))
+          .create_consumer(consumer_name, created_at: days_ago(16))
+          .create_provider(provider_name, created_at: days_ago(16))
           .create_consumer_version("e15da45d3943bf10793a6d04cfb9f5dabe430fe2", created_at: days_ago(16))
           .create_consumer_version_tag("prod", created_at: days_ago(16))
           .create_consumer_version_tag("dev", created_at: days_ago(16))
