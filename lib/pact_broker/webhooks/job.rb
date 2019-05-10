@@ -18,11 +18,20 @@ module PactBroker
 
       private
 
-      attr_reader :triggered_webhook, :error_count
+      attr_reader :triggered_webhook, :error_count, :data
 
       def perform_with_connection(data)
         @data = data
-        @triggered_webhook = PactBroker::Webhooks::TriggeredWebhook.find(id: data[:triggered_webhook].id)
+        triggered_webhook_id = data[:triggered_webhook].id
+        @triggered_webhook = PactBroker::Webhooks::TriggeredWebhook.find(id: triggered_webhook_id)
+        if triggered_webhook
+          perform_with_triggered_webhook
+        else
+          logger.info "Could not find webhook with id: #{triggered_webhook_id}"
+        end
+      end
+
+      def perform_with_triggered_webhook
         @error_count = data[:error_count] || 0
         begin
           webhook_execution_result = PactBroker::Webhooks::Service.execute_triggered_webhook_now triggered_webhook, execution_options(data)

@@ -26,7 +26,6 @@ module PactBroker
       end
 
       context "when the job succeeds" do
-
         it "does not reschedule the job" do
           expect(Job).to_not receive(:perform_in)
           subject
@@ -128,6 +127,18 @@ module PactBroker
 
         it "updates the triggered_webhook status to 'failed'" do
           expect(PactBroker::Webhooks::Service).to receive(:update_triggered_webhook_status).with(triggered_webhook, TriggeredWebhook::STATUS_FAILURE)
+          subject
+        end
+      end
+
+      context "when the webhook gets deleted between executions" do
+        before do
+          allow(PactBroker::Webhooks::TriggeredWebhook).to receive(:find).and_return(nil)
+        end
+
+        it "does not reschedule the job" do
+          expect(Job).to_not receive(:perform_in)
+          expect(logger).to receive(:info).with(/Could not find webhook with id: 1/)
           subject
         end
       end
