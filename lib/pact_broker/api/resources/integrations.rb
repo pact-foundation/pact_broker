@@ -1,12 +1,16 @@
 require 'pact_broker/api/resources/base_resource'
 require 'pact_broker/api/renderers/integrations_dot_renderer'
+require 'pact_broker/api/decorators/integrations_decorator'
 
 module PactBroker
   module Api
     module Resources
       class Integrations < BaseResource
         def content_types_provided
-          [["text/vnd.graphviz", :to_dot]]
+          [
+            ["text/vnd.graphviz", :to_dot],
+            ["application/hal+json", :to_json]
+          ]
         end
 
         def allowed_methods
@@ -17,8 +21,12 @@ module PactBroker
           PactBroker::Api::Renderers::IntegrationsDotRenderer.call(integrations)
         end
 
+        def to_json
+          PactBroker::Api::Decorators::IntegrationsDecorator.new(integrations).to_json(user_options: decorator_context)
+        end
+
         def integrations
-          pact_service.find_latest_pacts
+          integration_service.find_all
         end
 
         def delete_resource

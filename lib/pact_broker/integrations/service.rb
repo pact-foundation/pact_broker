@@ -1,6 +1,7 @@
 require 'pact_broker/services'
 require 'pact_broker/repositories'
 require 'pact_broker/logging'
+require 'pact_broker/integrations/integration'
 
 module PactBroker
   module Integrations
@@ -8,6 +9,10 @@ module PactBroker
       extend PactBroker::Repositories
       extend PactBroker::Services
       include PactBroker::Logging
+
+      def self.find_all
+        PactBroker::Integrations::Integration.eager(:consumer).eager(:provider).all
+      end
 
       def self.delete(consumer_name, provider_name)
         consumer = pacticipant_service.find_pacticipant_by_name(consumer_name)
