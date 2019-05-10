@@ -24,7 +24,7 @@ describe PactBroker::Domain::OrderVersions do
     end
   end
 
-  context "when order_versions_by_date is true (not recommended)" do
+  context "when order_versions_by_date is true (recommended)" do
     before do
       allow(PactBroker.configuration).to receive(:order_versions_by_date).and_return(true)
     end
@@ -69,7 +69,6 @@ describe PactBroker::Domain::OrderVersions do
     end
 
     context "when the new version is considered to be earlier than the previous latest version" do
-
       before do
         Sequel::Model.db[:versions].where(number: '2').update(number: 'z')
         Sequel::Model.db[:versions].where(number: '3').update(number: 'a')
@@ -80,8 +79,6 @@ describe PactBroker::Domain::OrderVersions do
         PactBroker::Domain::Version.create(number: '2', pacticipant_id: consumer.id)
         expect(ordered_versions).to eq(['1', 'z', 'a', '2', '4'])
       end
-
     end
   end
-
 end

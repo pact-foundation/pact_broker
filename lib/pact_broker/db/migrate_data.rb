@@ -16,6 +16,7 @@ module PactBroker
       def self.call database_connection, options = {}
         DataMigrations::SetPacticipantIdsForVerifications.call(database_connection)
         DataMigrations::SetConsumerIdsForPactPublications.call(database_connection)
+        DataMigrations::SetLatestVersionSequenceValue.call(database_connection)
       end
     end
   end

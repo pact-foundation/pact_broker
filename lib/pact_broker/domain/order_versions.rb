@@ -1,13 +1,26 @@
 require 'pact_broker/configuration'
+require 'pact_broker/versions/sequence'
 
 module PactBroker
   module Domain
     class OrderVersions
-
       include PactBroker::Logging
 
       def self.call new_version
         new_version.lock!
+
+        if PactBroker.configuration.order_versions_by_date
+          set_sequential_order(new_version)
+        else
+          set_semantic_order(new_version)
+        end
+      end
+
+      def self.set_sequential_order(new_version)
+        set_order new_version, PactBroker::Versions::Sequence.next_val
+      end
+
+      def self.set_semantic_order(new_version)
         order_set = false
 
         PactBroker::Domain::Version.for_update.where(pacticipant_id: new_version.pacticipant_id).exclude(order: nil).reverse(:order).each do | existing_version |

@@ -93,7 +93,7 @@ module PactBroker
             expect(subject.number).to eq version_number
             expect(subject.pacticipant.name).to eq pacticipant_name
             expect(subject.tags.first.name).to eq "prod"
-            expect(subject.order).to eq 0
+            expect(subject.order).to_not be nil
           end
 
           context "when case sensitivity is turned off and names with different cases are used" do

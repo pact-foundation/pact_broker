@@ -1,8 +1,9 @@
 require 'sequel'
 
 module PactBroker
-  module Verifications
-    class Sequence < Sequel::Model(:verification_sequence_number)
+  module Versions
+    class Sequence < Sequel::Model(:version_sequence_number)
+
       dataset_module do
         # The easiest way to implement a cross database compatible sequence.
         # Sad, I know.
@@ -15,12 +16,13 @@ module PactBroker
               row.value
             else
               # The first row should have been created in the migration, so this code
-              # should only ever be executed in a test context.
+              # should only ever be executed in a test context, after we've truncated all the
+              # tables after a test.
               # There would be a risk of a race condition creating two rows if this
               # code executed in prod, as I don't think you can lock an empty table
               # to prevent another record being inserted.
-              max_verification_number = PactBroker::Domain::Verification.max(:number)
-              value = max_verification_number ? max_verification_number + 100 : 1
+              max_version_order = PactBroker::Domain::Version.max(:order)
+              value = max_version_order ? max_version_order + 100 : 1
               insert(value: value)
               value
             end
@@ -31,6 +33,6 @@ module PactBroker
   end
 end
 
-# Table: verification_sequence_number
+# Table: version_sequence_number
 # Columns:
 #  value | integer | NOT NULL

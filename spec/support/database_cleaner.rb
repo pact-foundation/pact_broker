@@ -3,7 +3,7 @@ require 'support/migration_helpers'
 
 RSpec.configure do |config|
 
-  config.include MigrationHelpers, migration: true
+  config.include MigrationHelpers, migration: true, data_migration: true
 
   config.before(:suite) do
     if defined?(::DB)
@@ -20,7 +20,17 @@ RSpec.configure do |config|
     PactBroker::Database.drop_objects
   end
 
+
   config.after :each, migration: true do
+    PactBroker::Database.migrate
+    PactBroker::Database.truncate
+  end
+
+  config.after :each, data_migration: true do
+    PactBroker::Database.truncate
+  end
+
+  config.after :all, data_migration: true do
     PactBroker::Database.migrate
     PactBroker::Database.truncate
   end
