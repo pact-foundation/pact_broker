@@ -10,7 +10,6 @@ Sequel.migration do
         ).distinct
         .join(:pacticipants, {:id => :consumer_id}, {:table_alias => :c, implicit_qualifier: :pact_publications})
         .join(:pacticipants, {:id => :provider_id}, {:table_alias => :p, implicit_qualifier: :pact_publications})
-
     )
   end
 
