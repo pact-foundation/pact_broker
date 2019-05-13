@@ -25,6 +25,14 @@ module PactBroker
         include PactBroker::Repositories::Helpers
         include PactBroker::Logging
 
+        def consumer consumer_name
+          where(name_like(:consumer_name, consumer_name))
+        end
+
+        def provider provider_name
+          where(name_like(:provider_name, provider_name))
+        end
+
         def matching_selectors selectors
           if selectors.size == 1
             where_consumer_or_provider_is(selectors.first)

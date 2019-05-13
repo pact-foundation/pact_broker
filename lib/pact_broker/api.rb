@@ -84,6 +84,7 @@ module PactBroker
         add ['matrix'], Api::Resources::Matrix, {resource_name: "matrix"}
 
         add ['dashboard'], Api::Resources::Dashboard, {resource_name: "dashboard"}
+        add ['dashboard', 'provider', :provider_name, 'consumer', :consumer_name ], Api::Resources::Dashboard, {resource_name: "integration_dashboard"}
         add ['test','error'], Api::Resources::ErrorTest, {resource_name: "error_test"}
 
         add ['integrations'], Api::Resources::Integrations, {resource_name: "integrations"}

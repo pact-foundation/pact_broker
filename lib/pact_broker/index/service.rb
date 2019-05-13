@@ -19,6 +19,9 @@ module PactBroker
           .eager(:latest_triggered_webhooks)
           .eager(:webhooks)
 
+        rows = rows.consumer(options[:consumer_name]) if options[:consumer_name]
+        rows = rows.provider(options[:provider_name]) if options[:provider_name]
+
         if !options[:tags]
           rows = rows.where(consumer_version_tag_name: nil)
         else
