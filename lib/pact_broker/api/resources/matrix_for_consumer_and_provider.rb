@@ -22,20 +22,6 @@ module PactBroker
           lines = matrix_service.find_for_consumer_and_provider(identifier_from_path)
           PactBroker::Api::Decorators::MatrixDecorator.new(lines).to_json(user_options: { base_url: base_url })
         end
-
-        def consumer
-          @consumer ||= find_pacticipant(identifier_from_path[:consumer_name], "consumer")
-        end
-
-        def provider
-          @provider ||= find_pacticipant(identifier_from_path[:provider_name], "provider")
-        end
-
-        def find_pacticipant name, role
-          pacticipant_service.find_pacticipant_by_name(name).tap do | pacticipant |
-            set_json_error_message("No #{role} with name '#{name}' found") if pacticipant.nil?
-          end
-        end
       end
     end
   end
