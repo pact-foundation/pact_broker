@@ -212,6 +212,10 @@ module PactBroker
         matrix_url(params.fetch(:consumer_name), params.fetch(:provider_name), base_url)
       end
 
+      def group_url(pacticipant_name, base_url = '')
+        "#{base_url}/groups/#{pacticipant_name}"
+      end
+
       def hal_browser_url target_url
         "/hal-browser/browser.html#" + target_url
       end

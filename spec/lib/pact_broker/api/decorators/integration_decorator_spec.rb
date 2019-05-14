@@ -8,6 +8,7 @@ module PactBroker
         before do
           allow(integration_decorator).to receive(:dashboard_url_for_integration).and_return("/dashboard")
           allow(integration_decorator).to receive(:matrix_url).and_return("/matrix")
+          allow(integration_decorator).to receive(:group_url).and_return("/group")
         end
 
         let(:integration) do
@@ -34,6 +35,9 @@ module PactBroker
               "pb:matrix" => {
                 "title" => "Matrix of pacts/verification results for the consumer and the provider",
                 "href" => "/matrix"
+              },
+              "pb:group" => {
+                "href" => "/group"
               }
             }
           }
@@ -60,6 +64,14 @@ module PactBroker
           expect(integration_decorator).to receive(:matrix_url).with(
             "the consumer",
             "the provider",
+            "http://example.org"
+          )
+          subject
+        end
+
+        it "generates the correct group url for the matrix" do
+          expect(integration_decorator).to receive(:group_url).with(
+            "the consumer",
             "http://example.org"
           )
           subject

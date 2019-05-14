@@ -28,6 +28,12 @@ module PactBroker
             href: matrix_url(represented.consumer.name, represented.provider.name, options.fetch(:base_url))
           }
         end
+
+        link "pb:group" do | options |
+          {
+            href: group_url(represented.consumer.name, options.fetch(:base_url))
+          }
+        end
       end
     end
   end
