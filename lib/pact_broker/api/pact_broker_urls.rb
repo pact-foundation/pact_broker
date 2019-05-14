@@ -204,8 +204,12 @@ module PactBroker
         "#{latest_pact_url(base_url, pact)}/badge.svg"
       end
 
+      def matrix_url consumer_name, provider_name, base_url = ''
+        "/matrix/provider/#{url_encode(provider_name)}/consumer/#{url_encode(consumer_name)}"
+      end
+
       def matrix_url_from_params params, base_url = ''
-        "#{base_url}/matrix/provider/#{url_encode(params.fetch(:provider_name))}/consumer/#{url_encode(params.fetch(:consumer_name))}"
+        matrix_url(params.fetch(:consumer_name), params.fetch(:provider_name), base_url)
       end
 
       def hal_browser_url target_url

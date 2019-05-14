@@ -21,6 +21,13 @@ module PactBroker
             href: dashboard_url_for_integration(represented.consumer.name, represented.provider.name, options.fetch(:base_url))
           }
         end
+
+        link "pb:matrix" do | options |
+          {
+            title: "Matrix of pacts/verification results for #{represented.consumer.name} and #{represented.provider.name}",
+            href: matrix_url(represented.consumer.name, represented.provider.name, options.fetch(:base_url))
+          }
+        end
       end
     end
   end

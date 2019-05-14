@@ -7,6 +7,7 @@ module PactBroker
       describe IntegrationDecorator do
         before do
           allow(integration_decorator).to receive(:dashboard_url_for_integration).and_return("/dashboard")
+          allow(integration_decorator).to receive(:matrix_url).and_return("/matrix")
         end
 
         let(:integration) do
@@ -29,6 +30,10 @@ module PactBroker
             "_links" => {
               "pb:dashboard" => {
                 "href" => "/dashboard"
+              },
+              "pb:matrix" => {
+                "title" => "Matrix of pacts/verification results for the consumer and the provider",
+                "href" => "/matrix"
               }
             }
           }
@@ -44,6 +49,15 @@ module PactBroker
 
         it "generates the correct link for the dashboard" do
           expect(integration_decorator).to receive(:dashboard_url_for_integration).with(
+            "the consumer",
+            "the provider",
+            "http://example.org"
+          )
+          subject
+        end
+
+        it "generates the correct link for the matrix" do
+          expect(integration_decorator).to receive(:matrix_url).with(
             "the consumer",
             "the provider",
             "http://example.org"
