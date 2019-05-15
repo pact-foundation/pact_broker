@@ -32,8 +32,10 @@ describe "fetching pacts to verify", pending: 'not yet implemented' do
   end
 
   it "returns a list of links to the pacts" do
-    expect(response_body_hash[:_links][:'pb:pacts']).to be_instance_of(Array)
+    expect(response_body_hash[:_embedded][:'pacts']).to be_instance_of(Array)
   end
 
-  it "indicates whether a pact is pending or not"
+  it "indicates whether a pact is pending or not" do
+    expect(response_body_hash[:_embedded][:'pacts'].first[:pending]).to be true
+  end
 end
