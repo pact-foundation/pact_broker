@@ -12,6 +12,7 @@ describe "fetching pacts to verify", pending: 'not yet implemented' do
     # eg. if content has been verified on git branch (broker tag) feat-2,
     # it's still pending on master, and shouldn't fail the build
     {
+      protocol: "http1", # other option is "message"
       include_other_pending: true, # whether or not to include pending pacts not already specified by the consumer_version_tags('head' pacts that have not yet been successfully verified)
       provider_version_tags: [{ name: "feat-2" }], # the provider tags that will be applied to this app version when the results are published
       consumer_version_tags: [
