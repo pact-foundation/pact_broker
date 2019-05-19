@@ -54,6 +54,15 @@ module Rack
             expect(subject.status).to eq 404
           end
         end
+
+        context "when the request ends in a web asset extension but has Accept application/hal+json" do
+          let(:accept) { "application/hal+json" }
+          let(:path) { "/blah/foo.woff" }
+
+          it "returns a 404" do
+            expect(subject.status).to eq 404
+          end
+        end
       end
     end
   end
