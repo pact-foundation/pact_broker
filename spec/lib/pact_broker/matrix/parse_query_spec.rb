@@ -39,22 +39,22 @@ module PactBroker
         context "with no options specified" do
           let(:query) { "" }
 
-          it "does not set any options" do
-            expect(subject.last).to eq({})
+          it "sets the defaults" do
+            expect(subject.last).to eq(limit: "100")
           end
         end
 
         context "with just one status specified" do
           let(:query) { "success=true" }
           it "extracts the one status" do
-            expect(subject.last).to eq success: [true]
+            expect(subject.last).to include success: [true]
           end
         end
 
         context "with an array of statuses" do
           let(:query) { "success[]=true&success[]=false&success[]=" }
           it "extracts the statuses" do
-            expect(subject.last).to eq success: [true, false, nil]
+            expect(subject.last).to include success: [true, false, nil]
           end
         end
 
@@ -62,7 +62,7 @@ module PactBroker
           let(:query) { "success[]=&foo=bar" }
 
           it "sets an array with a nil success" do
-            expect(subject.last).to eq(success: [nil])
+            expect(subject.last).to include success: [nil]
           end
         end
 
@@ -70,7 +70,7 @@ module PactBroker
           let(:query) { "success=&foo=bar" }
 
           it "sets an array with a nil success" do
-            expect(subject.last).to eq(success: [nil])
+            expect(subject.last).to include success: [nil]
           end
         end
 
@@ -86,7 +86,7 @@ module PactBroker
           let(:query) { "q[][pacticipant]=Foo&latest=true" }
 
           it "returns options with latest true" do
-            expect(subject.last).to eq latest: true
+            expect(subject.last).to include latest: true
           end
         end
 
@@ -103,6 +103,14 @@ module PactBroker
 
           it "returns a selector with a tag" do
             expect(subject.first).to eq [{ pacticipant_name: 'Foo', tag: 'prod' }]
+          end
+        end
+
+        context "when a limit is specified" do
+          let(:query) { "limit=200" }
+
+          it "sets the limit" do
+            expect(subject.last[:limit]).to eq "200"
           end
         end
       end

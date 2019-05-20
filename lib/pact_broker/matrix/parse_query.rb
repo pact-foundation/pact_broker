@@ -27,6 +27,8 @@ module PactBroker
         end
         if params.key?('limit') && params['limit'] != ''
           options[:limit] = params['limit']
+        else
+          options[:limit] = "100"
         end
         if params.key?('latest') && params['latest'] != ''
           options[:latest] = params['latest'] == 'true'
