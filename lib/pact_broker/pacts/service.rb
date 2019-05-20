@@ -2,6 +2,7 @@ require 'pact_broker/repositories'
 require 'pact_broker/services'
 require 'pact_broker/logging'
 require 'pact_broker/pacts/merger'
+require 'pact_broker/pacts/verifiable_pact'
 
 module PactBroker
   module Pacts
@@ -108,6 +109,14 @@ module PactBroker
           end
         end
         distinct
+      end
+
+      def find_for_verification(provider_name, provider_version_tags, consumer_version_selectors)
+        pact_repository
+          .find_for_verification(provider_name, consumer_version_selectors)
+          .collect do | pact |
+            VerifiablePact.new(pact, pact.pending?(provider_version_tags))
+          end
       end
 
       private

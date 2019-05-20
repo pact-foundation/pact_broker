@@ -50,8 +50,9 @@ module PactBroker
           json_content: pact_version.content,
           pact_version_sha: pact_version.sha,
           latest_verification: latest_verification,
-          created_at: created_at
-          )
+          created_at: created_at,
+          db_model: self
+        )
       end
 
       def to_version_domain

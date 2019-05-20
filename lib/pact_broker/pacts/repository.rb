@@ -263,6 +263,13 @@ module PactBroker
         end
       end
 
+      def find_for_verification(provider_name, consumer_version_selectors)
+        latest_tags = consumer_version_selectors.any? ?
+          consumer_version_selectors.select(&:latest).collect(&:tag) :
+          nil
+        find_latest_pact_versions_for_provider(provider_name, latest_tags)
+      end
+
       private
 
       def find_previous_distinct_pact_by_sha pact

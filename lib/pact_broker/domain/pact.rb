@@ -53,6 +53,18 @@ module PactBroker
       def pact_publication_id
         id
       end
+
+      def pending?(provider_version_tags)
+        if provider_version_tags.any?
+          !db_model.pact_version.verified_successfully_by_provider_version_with_all_tags?(provider_version_tags)
+        else
+          !db_model.pact_version.verified_successfully_by_any_provider_version?
+        end
+      end
+
+      private
+
+      attr_accessor :db_model
     end
 
   end

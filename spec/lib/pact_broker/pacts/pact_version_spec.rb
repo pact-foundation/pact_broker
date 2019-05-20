@@ -92,6 +92,75 @@ module PactBroker
           expect(PactVersion.first.latest_consumer_version_number).to eq "1.0.1"
         end
       end
+
+      describe "verified_successfully_by_provider_version_with_all_tags?" do
+        before do
+          td.create_pact_with_hierarchy("Foo", "1", "Bar")
+            .create_verification(provider_version: "20", tag_names: ['dev'], success: true)
+            .create_verification(provider_version: "21", number: 2)
+        end
+
+        let(:pact_version) { PactVersion.last }
+        let(:tags) { %w[dev] }
+
+        subject { pact_version.verified_successfully_by_provider_version_with_all_tags?(tags) }
+
+        context "when the pact version has been successfully verified by all the specified tags" do
+          let(:tags) { %w[dev] }
+
+          it { is_expected.to be true }
+        end
+
+        context "when the pact version has been verified successfully by one the two specified tags" do
+          let(:tags) { %w[dev feat-foo] }
+
+          it { is_expected.to be false }
+        end
+
+        context "when the pact version has been verified unsuccessfully by all of the specified tags" do
+          before do
+            td.create_verification(provider_version: "30", number: 10, tag_names: ['feat-bar'], success: false)
+          end
+
+          let(:tags) { %w[feat-bar] }
+
+          it { is_expected.to be false }
+        end
+      end
+
+      describe "#verified_successfully_by_any_provider_version?" do
+
+        let(:pact_version) { PactVersion.last }
+
+        subject { pact_version.verified_successfully_by_any_provider_version? }
+
+        context "when the pact version has been successfully verified before" do
+          before do
+            td.create_pact_with_hierarchy("Foo", "1", "Bar")
+              .create_verification(provider_version: "20", success: true)
+              .create_verification(provider_version: "21", number: 2, success: false)
+          end
+
+          it { is_expected.to be true }
+        end
+
+        context "when the pact version has been unsuccessfully verified before" do
+          before do
+            td.create_pact_with_hierarchy("Foo", "1", "Bar")
+              .create_verification(provider_version: "21", number: 2, success: false)
+          end
+
+          it { is_expected.to be false }
+        end
+
+        context "when the pact version has not been verified ever before" do
+          before do
+            td.create_pact_with_hierarchy("Foo", "1", "Bar")
+          end
+
+          it { is_expected.to be false }
+        end
+      end
     end
   end
 end

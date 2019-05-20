@@ -101,7 +101,8 @@ module PactBroker
           consumer_version_number: consumer_version_number,
           revision_number: revision_number,
           pact_version_sha: pact_version_sha,
-          created_at: created_at)
+          created_at: created_at,
+          db_model: self)
       end
 
       def to_domain_with_content

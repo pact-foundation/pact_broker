@@ -6,6 +6,14 @@ module PactBroker
     module Decorators
       class VerifiablePactDecorator < BaseDecorator
 
+        property :pending
+
+        link :self do | context |
+          {
+            href: pact_version_url(represented, context[:base_url]),
+            name: represented.name
+          }
+        end
       end
     end
   end

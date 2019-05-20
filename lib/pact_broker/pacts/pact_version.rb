@@ -45,6 +45,26 @@ module PactBroker
       def latest_consumer_version_number
         latest_consumer_version.number
       end
+
+      def verified_successfully_by_provider_version_with_all_tags?(tags)
+        tags.all? do | tag |
+          PactVersion.where(Sequel[:pact_versions][:id] => id)
+            .join(:verifications, Sequel[:verifications][:pact_version_id] => Sequel[:pact_versions][:id])
+            .join(:versions, Sequel[:versions][:id] => Sequel[:verifications][:provider_version_id])
+            .join(:tags, Sequel[:tags][:version_id] => Sequel[:versions][:id])
+            .where(Sequel[:tags][:name] => tag)
+            .where(Sequel[:verifications][:success] => true)
+            .any?
+        end
+      end
+
+      def verified_successfully_by_any_provider_version?
+        PactVersion.where(Sequel[:pact_versions][:id] => id)
+          .join(:verifications, Sequel[:verifications][:pact_version_id] => Sequel[:pact_versions][:id])
+          .join(:versions, Sequel[:versions][:id] => Sequel[:verifications][:provider_version_id])
+          .where(Sequel[:verifications][:success] => true)
+          .any?
+      end
     end
 
     PactVersion.plugin :timestamps
