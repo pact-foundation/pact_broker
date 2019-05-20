@@ -16,10 +16,10 @@ module PactBroker
         QueryResultsWithDeploymentStatusSummary.new(query_results.rows, query_results.selectors, query_results.options, query_results.resolved_selectors, query_results.integrations, deployment_status_summary)
       end
 
-      def find_for_consumer_and_provider params
+      def find_for_consumer_and_provider params, options = {}
         selectors = [{ pacticipant_name: params[:consumer_name] }, { pacticipant_name: params[:provider_name] }]
-        options = { latestby: 'cvpv' }
-        find(selectors, options)
+        default_options = { latestby: 'cvpv' }
+        find(selectors, default_options.merge(options))
       end
 
       def find_for_consumer_and_provider_with_tags params

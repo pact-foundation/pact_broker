@@ -6,6 +6,10 @@ module PactBroker
     module Resources
       class MatrixForConsumerAndProvider < BaseResource
 
+        def initialize
+          _, @options = PactBroker::Matrix::ParseQuery.call(request.uri.query)
+        end
+
         def content_types_provided
           [["application/hal+json", :to_json]]
         end
@@ -19,9 +23,13 @@ module PactBroker
         end
 
         def to_json
-          lines = matrix_service.find_for_consumer_and_provider(identifier_from_path)
+          lines = matrix_service.find_for_consumer_and_provider(identifier_from_path, options)
           PactBroker::Api::Decorators::MatrixDecorator.new(lines).to_json(user_options: { base_url: base_url })
         end
+
+        private
+
+        attr_reader :options
       end
     end
   end
