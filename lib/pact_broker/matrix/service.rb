@@ -18,8 +18,7 @@ module PactBroker
 
       def find_for_consumer_and_provider params, options = {}
         selectors = [{ pacticipant_name: params[:consumer_name] }, { pacticipant_name: params[:provider_name] }]
-        default_options = { latestby: 'cvpv' }
-        find(selectors, default_options.merge(options))
+        find(selectors, options)
       end
 
       def find_for_consumer_and_provider_with_tags params
