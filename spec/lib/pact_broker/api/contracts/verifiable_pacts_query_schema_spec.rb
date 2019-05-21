@@ -7,6 +7,7 @@ module PactBroker
 
         let(:params) do
           {
+            exclude_other_pending: exclude_other_pending,
             provider_version_tags: provider_version_tags,
             consumer_version_selectors: consumer_version_selectors
           }
@@ -20,12 +21,20 @@ module PactBroker
           }]
         end
 
-        subject { VerifiablePactsQuerySchema.(params).tap { |it| puts it } }
+        let(:exclude_other_pending) { "false" }
+
+        subject { VerifiablePactsQuerySchema.(params) }
 
         context "when the params are valid" do
           it "has no errors" do
             expect(subject).to eq({})
           end
+        end
+
+        context "when exclude_other_pending is not true or false" do
+          let(:exclude_other_pending) { nil }
+
+          it { is_expected.to have_key(:exclude_other_pending) }
         end
 
         context "when provider_version_tags is not an array" do
