@@ -5,11 +5,8 @@ require 'pact_broker/api/decorators/decorator_context'
 require 'pact_broker/api/decorators/format_date_time'
 
 module PactBroker
-
   module Api
-
     module Decorators
-
       class BaseDecorator < Roar::Decorator
         include Roar::JSON::HAL
         include Roar::JSON::HAL::Links
