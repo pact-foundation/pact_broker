@@ -4,15 +4,15 @@ module PactBroker
 
       TEMPLATE_PARAMETER_REGEXP = /\$\{pactbroker\.[^\}]+\}/
 
-      def self.call(template, pact, trigger_verification, base_url, &escaper)
+      def self.call(template, pact, trigger_verification, base_url, webhook_context, &escaper)
         verification = trigger_verification || (pact && pact.latest_verification)
         params = {
-          '${pactbroker.pactUrl}' => pact ? PactBroker::Api::PactBrokerUrls.pact_url(base_url, pact) : "",
+          '${pactbroker.pactUrl}' => pact ? PactBroker::Api::PactBrokerUrls.pact_version_url_with_metadata(pact, base_url) : "",
           '${pactbroker.verificationResultUrl}' => verification_url(verification, base_url),
-          '${pactbroker.consumerVersionNumber}' => pact ? pact.consumer_version_number : "",
+          '${pactbroker.consumerVersionNumber}' => consumer_version_number(pact, webhook_context),
           '${pactbroker.providerVersionNumber}' => verification ? verification.provider_version_number : "",
           '${pactbroker.providerVersionTags}' => provider_version_tags(verification),
-          '${pactbroker.consumerVersionTags}' => consumer_version_tags(pact),
+          '${pactbroker.consumerVersionTags}' => consumer_version_tags(pact, webhook_context),
           '${pactbroker.consumerName}' => pact ? pact.consumer_name : "",
           '${pactbroker.providerName}' => pact ? pact.provider_name : "",
           '${pactbroker.githubVerificationStatus}' => github_verification_status(verification),
@@ -47,11 +47,23 @@ module PactBroker
         end
       end
 
-      def self.consumer_version_tags pact
-        if pact
-          pact.consumer_version.tags.collect(&:name).join(", ")
+      def self.consumer_version_number(pact, webhook_context)
+        if webhook_context[:metadata] && webhook_context[:metadata][:consumer_version_number]
+          webhook_context[:metadata][:consumer_version_number]
         else
-          ""
+          pact ? pact.consumer_version_number : ""
+        end
+      end
+
+      def self.consumer_version_tags pact, webhook_context
+        if webhook_context[:metadata] && webhook_context[:metadata][:consumer_version_tags]
+          webhook_context[:metadata][:consumer_version_tags].join(", ")
+        else
+          if pact
+            pact.consumer_version.tags.collect(&:name).join(", ")
+          else
+            ""
+          end
         end
       end
 

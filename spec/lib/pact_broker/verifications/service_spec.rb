@@ -18,9 +18,10 @@ module PactBroker
           allow(PactBroker::Webhooks::Service).to receive(:trigger_webhooks)
         end
 
+        let(:metadata) { "abcd" }
         let(:params) { {'success' => true, 'providerApplicationVersion' => '4.5.6'} }
         let(:pact) { TestDataBuilder.new.create_pact_with_hierarchy.and_return(:pact) }
-        let(:create_verification) { subject.create 3, params, pact }
+        let(:create_verification) { subject.create 3, params, pact, metadata }
 
         it "logs the creation" do
           expect(logger).to receive(:info).with(/.*verification.*3.*success/)
@@ -47,7 +48,12 @@ module PactBroker
 
         it "invokes the webhooks for the verification" do
           verification = create_verification
-          expect(PactBroker::Webhooks::Service).to have_received(:trigger_webhooks).with(pact, verification, PactBroker::Webhooks::WebhookEvent::VERIFICATION_PUBLISHED)
+          expect(PactBroker::Webhooks::Service).to have_received(:trigger_webhooks).with(
+            pact,
+            verification,
+            PactBroker::Webhooks::WebhookEvent::VERIFICATION_PUBLISHED,
+            { metadata: metadata }
+          )
         end
       end
 

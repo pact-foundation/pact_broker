@@ -7,7 +7,8 @@ module PactBroker
       describe PactDecorator do
 
         before do
-          allow_any_instance_of(PactDecorator).to receive(:templated_diff_url).and_return('templated-diff-url')
+          allow(decorator).to receive(:templated_diff_url).and_return('templated-diff-url')
+          allow(decorator).to receive(:verification_publication_url).and_return('verification-publication-url')
         end
         let(:content_hash) {
           {
@@ -34,10 +35,17 @@ module PactBroker
         let(:consumer) { instance_double(PactBroker::Domain::Pacticipant, name: 'A Consumer')}
         let(:provider) { instance_double(PactBroker::Domain::Pacticipant, name: 'A Provider')}
         let(:consumer_version) { instance_double(PactBroker::Domain::Version, number: '1234', pacticipant: consumer)}
-
-        subject { JSON.parse PactDecorator.new(pact).to_json(user_options: { base_url: base_url }), symbolize_names: true}
+        let(:metadata) { "abcd" }
+        let(:decorator) { PactDecorator.new(pact) }
+        let(:json) { decorator.to_json(user_options: { base_url: base_url, metadata: metadata }) }
+        subject { JSON.parse(json, symbolize_names: true) }
 
         describe "#to_json" do
+
+          it "creates the verification link" do
+            expect(decorator).to receive(:verification_publication_url).with(pact, base_url, metadata)
+            subject
+          end
 
           it "includes the json_content" do
             expect(subject[:consumer]).to eq name: 'Consumer'
@@ -102,7 +110,7 @@ module PactBroker
           end
 
           it "includes a link to publish a verification" do
-            expect(subject[:_links][:'pb:publish-verification-results'][:href]).to match %r{http://example.org/.*/verification-results}
+            expect(subject[:_links][:'pb:publish-verification-results'][:href]).to eq "verification-publication-url"
           end
 
           it "includes a link to diff this pact version with another pact version" do

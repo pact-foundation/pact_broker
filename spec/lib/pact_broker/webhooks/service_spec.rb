@@ -34,7 +34,7 @@ module PactBroker
       end
 
       describe ".trigger_webhooks" do
-
+        let(:context) { {the: 'context'} }
         let(:verification) { instance_double(PactBroker::Domain::Verification)}
         let(:pact) { instance_double(PactBroker::Domain::Pact, consumer: consumer, provider: provider, consumer_version: consumer_version)}
         let(:consumer_version) { PactBroker::Domain::Version.new(number: '1.2.3') }
@@ -49,7 +49,7 @@ module PactBroker
           allow(Job).to receive(:perform_in)
         end
 
-        subject { Service.trigger_webhooks pact, verification, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED }
+        subject { Service.trigger_webhooks pact, verification, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED, context }
 
         it "finds the webhooks" do
           expect_any_instance_of(PactBroker::Webhooks::Repository).to receive(:find_by_consumer_and_or_provider_and_event_name).with(consumer, provider, PactBroker::Webhooks::WebhookEvent::DEFAULT_EVENT_NAME)
@@ -58,7 +58,7 @@ module PactBroker
 
         context "when webhooks are found" do
           it "executes the webhook" do
-            expect(Service).to receive(:run_later).with(webhooks, pact, verification, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED)
+            expect(Service).to receive(:run_later).with(webhooks, pact, verification, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED, context)
             subject
           end
         end

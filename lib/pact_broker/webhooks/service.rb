@@ -108,17 +108,17 @@ module PactBroker
         webhook_repository.find_by_consumer_and_provider consumer, provider
       end
 
-      def self.trigger_webhooks pact, verification, event_name
+      def self.trigger_webhooks pact, verification, event_name, context = {}
         webhooks = webhook_repository.find_by_consumer_and_or_provider_and_event_name pact.consumer, pact.provider, event_name
 
         if webhooks.any?
-          run_later(webhooks, pact, verification, event_name)
+          run_later(webhooks, pact, verification, event_name, context)
         else
           logger.debug "No webhook found for consumer \"#{pact.consumer.name}\" and provider \"#{pact.provider.name}\""
         end
       end
 
-      def self.run_later webhooks, pact, verification, event_name
+      def self.run_later webhooks, pact, verification, event_name, context
         trigger_uuid = next_uuid
         webhooks.each do | webhook |
           begin
@@ -127,7 +127,8 @@ module PactBroker
             job_data = {
               triggered_webhook: triggered_webhook,
               database_connector: job_database_connector,
-              base_url: base_url
+              base_url: base_url,
+              context: context
             }
             # Delay slightly to make sure the request transaction has finished before we execute the webhook
             Job.perform_in(5, job_data)

@@ -54,6 +54,27 @@ module PactBroker
         "#{pactigration_base_url(base_url, pact)}/pact-version/#{pact.pact_version_sha}"
       end
 
+      def pact_version_url_with_metadata pact, base_url = ''
+        "#{pactigration_base_url(base_url, pact)}/pact-version/#{pact.pact_version_sha}/metadata/#{build_webhook_metadata(pact)}"
+      end
+
+      def build_webhook_metadata(pact)
+        Base64.strict_encode64(Rack::Utils.build_nested_query(
+          consumer_version_number: pact.consumer_version_number,
+          consumer_version_tags: pact.consumer_version_tag_names
+        ))
+      end
+
+      def parse_webhook_metadata(metadata)
+        if metadata
+          Rack::Utils.parse_nested_query(Base64.strict_decode64(metadata)).each_with_object({}) do | (k, v), new_hash |
+            new_hash[k.to_sym] = v
+          end
+        else
+          {}
+        end
+      end
+
       def pact_url_from_params base_url, params
         [ base_url, 'pacts',
           'provider', url_encode(params[:provider_name]),
@@ -136,8 +157,9 @@ module PactBroker
         "#{verification_url(verification, base_url)}/triggered-webhooks"
       end
 
-      def verification_publication_url pact, base_url
-        "#{pactigration_base_url(base_url, pact)}/pact-version/#{pact.pact_version_sha}/verification-results"
+      def verification_publication_url pact, base_url, metadata = ""
+        metadata_part = metadata ? "/metadata/#{metadata}" : ""
+        "#{pactigration_base_url(base_url, pact)}/pact-version/#{pact.pact_version_sha}#{metadata_part}/verification-results"
       end
 
       def tag_url base_url, tag

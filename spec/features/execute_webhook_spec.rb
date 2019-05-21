@@ -19,9 +19,10 @@ describe "Execute a webhook" do
 
   context "when the execution is successful" do
     let!(:request) do
-      stub_request(:post, /http/).with(body: 'http://broker/pacts/provider/Bar/consumer/Foo/version/1').to_return(:status => 200, body: response_body)
+      stub_request(:post, /http/).with(body: expected_webhook_url).to_return(:status => 200, body: response_body)
     end
 
+    let(:expected_webhook_url) { %r{http://broker/pacts/provider/Bar/consumer/Foo/pact-version/.*/metadata/Y29uc3VtZXJfdmVyc2lvbl9udW1iZXI9MQ==} }
     let(:response_body) { "webhook-response-body" }
 
     it "performs the HTTP request" do

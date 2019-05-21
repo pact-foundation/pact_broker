@@ -5,23 +5,22 @@ require 'pact_broker/verifications/service'
 
 module PactBroker
   module Api
-
     module Resources
-
       describe Verifications do
-
         describe "post" do
 
-          let(:url) { "/pacts/provider/Provider/consumer/Consumer/pact-version/1234/verification-results" }
-          let(:request_body) { {some: 'params'}.to_json }
-          subject { post url, request_body, {'CONTENT_TYPE' => 'application/json' }; last_response }
-          let(:response_body) { JSON.parse(subject.body, {symbolize_names: true}) }
+          let(:url) { "/pacts/provider/Provider/consumer/Consumer/pact-version/1234/metadata/abcd/verification-results" }
+          let(:request_body) { { some: 'params' }.to_json }
+          subject { post url, request_body, { 'CONTENT_TYPE' => 'application/json' }; last_response }
+          let(:response_body) { JSON.parse(subject.body, symbolize_names: true) }
           let(:verification) { double(PactBroker::Domain::Verification) }
           let(:errors_empty) { true }
+          let(:parsed_metadata) { double('the-metadata') }
 
           before do
             allow(PactBroker::Verifications::Service).to receive(:create).and_return(verification)
             allow(PactBroker::Verifications::Service).to receive(:errors).and_return(double(:errors, messages: ['errors'], empty?: errors_empty))
+            allow(PactBrokerUrls).to receive(:parse_webhook_metadata).and_return(parsed_metadata)
           end
 
           it "looks up the specified pact" do
@@ -39,7 +38,13 @@ module PactBroker
           end
 
           context "when the pact exists" do
-            let(:pact) { instance_double("PactBroker::Domain::Pact", provider_name: 'Provider', consumer_name: 'Consumer', pact_version_sha: '1234') }
+            let(:pact) do
+              instance_double("PactBroker::Domain::Pact",
+                provider_name: 'Provider',
+                consumer_name: 'Consumer',
+                pact_version_sha: '1234'
+              )
+            end
             let(:next_verification_number) { "2" }
             let(:serialised_verification) { {some: 'verification'}.to_json }
             let(:decorator) { instance_double('PactBroker::Api::Decorators::VerificationDecorator', to_json: serialised_verification) }
@@ -48,6 +53,11 @@ module PactBroker
               allow(Pacts::Service).to receive(:find_pact).and_return(pact)
               allow(PactBroker::Verifications::Service).to receive(:next_number).and_return(next_verification_number)
               allow(PactBroker::Api::Decorators::VerificationDecorator).to receive(:new).and_return(decorator)
+            end
+
+            it "parses the webhook metadata" do
+              expect(PactBrokerUrls).to receive(:parse_webhook_metadata).with("abcd")
+              subject
             end
 
             it "returns a 201" do
@@ -59,7 +69,12 @@ module PactBroker
             end
 
             it "stores the verification in the database" do
-              expect(PactBroker::Verifications::Service).to receive(:create).with(next_verification_number, hash_including('some' => 'params'), pact)
+              expect(PactBroker::Verifications::Service).to receive(:create).with(
+                next_verification_number,
+                hash_including('some' => 'params'),
+                pact,
+                parsed_metadata
+              )
               subject
             end
 

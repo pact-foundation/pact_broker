@@ -8,7 +8,7 @@ module PactBroker
     describe Render do
       describe "#call" do
         before do
-          allow(PactBroker::Api::PactBrokerUrls).to receive(:pact_url).and_return("http://foo")
+          allow(PactBroker::Api::PactBrokerUrls).to receive(:pact_version_url_with_metadata).and_return("http://foo")
           allow(PactBroker::Api::PactBrokerUrls).to receive(:verification_url) do | verification, base_url |
             expect(verification).to_not be nil
             "http://verification"
@@ -92,6 +92,8 @@ module PactBroker
           [ double("label", name: "foo"), double("label", name: "bar") ]
         end
 
+        let(:webhook_context) { {} }
+
         let(:nil_pact) { nil }
         let(:nil_verification) { nil }
 
@@ -124,7 +126,7 @@ module PactBroker
             it "replaces #{template} with #{expected_output.inspect}" do
               the_pact = send(pact_var_name)
               the_verification = send(verification_var_name)
-              output = Render.call(template, the_pact, the_verification, base_url)
+              output = Render.call(template, the_pact, the_verification, base_url, webhook_context)
               expect(output).to eq expected_output
             end
           end
@@ -132,7 +134,7 @@ module PactBroker
 
         context "with an escaper" do
           subject do
-            Render.call(template, pact, verification, base_url) do | value |
+            Render.call(template, pact, verification, base_url, webhook_context) do | value |
               CGI.escape(value)
             end
           end
@@ -142,6 +144,29 @@ module PactBroker
 
           it { is_expected.to eq "http%3A%2F%2Ffoo" }
         end
+
+        context "with webhook context data passed in" do
+          let(:webhook_context) do
+            {
+              metadata: {
+                consumer_version_number: "webhook-version-number",
+                consumer_version_tags: %w[webhook tags]
+              }
+            }
+          end
+
+          it "uses the consumer_version_number in preference to the field on the domain models" do
+            template = "${pactbroker.consumerVersionNumber}"
+            output = Render.call(template, pact, verification, base_url, webhook_context)
+            expect(output).to eq "webhook-version-number"
+          end
+
+          it "uses the consumer_version_tags in preference to the field on the domain models" do
+            template = "${pactbroker.consumerVersionTags}"
+            output = Render.call(template, pact, verification, base_url, webhook_context)
+            expect(output).to eq "webhook, tags"
+          end
+        end
       end
 
       describe "#call with placeholder domain objects" do
@@ -150,11 +175,11 @@ module PactBroker
         let(:base_url) { "http://broker" }
 
         it "does not blow up with a placeholder pact" do
-          Render.call("", placeholder_pact, nil, base_url)
+          Render.call("", placeholder_pact, nil, base_url, {})
         end
 
         it "does not blow up with a placeholder verification" do
-          Render.call("", placeholder_pact, placeholder_verification, base_url)
+          Render.call("", placeholder_pact, placeholder_verification, base_url, {})
         end
       end
     end

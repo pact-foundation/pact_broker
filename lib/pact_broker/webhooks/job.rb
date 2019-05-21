@@ -49,7 +49,8 @@ module PactBroker
         {
           success_log_message: "Successfully executed webhook",
           failure_log_message: failure_log_message,
-          base_url: data.fetch(:base_url)
+          base_url: data.fetch(:base_url),
+          context: data[:context]
         }
       end
 

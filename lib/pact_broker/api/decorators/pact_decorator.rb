@@ -146,7 +146,7 @@ module PactBroker
         link :'pb:publish-verification-results' do | options |
           {
             title: "Publish verification results",
-            href: verification_publication_url(represented, options.fetch(:base_url))
+            href: verification_publication_url(represented, options.fetch(:base_url), options[:metadata])
           }
         end
 

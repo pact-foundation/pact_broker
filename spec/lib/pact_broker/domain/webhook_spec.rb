@@ -8,7 +8,8 @@ module PactBroker
       let(:request_template) { instance_double(PactBroker::Webhooks::WebhookRequestTemplate, build: request)}
       let(:request) { instance_double(PactBroker::Domain::WebhookRequest, execute: result) }
       let(:result) { double('result') }
-      let(:options) { { base_url: base_url } }
+      let(:webhook_context) { { some: 'things' } }
+      let(:options) { { base_url: base_url, context: webhook_context } }
       let(:base_url) { "http://broker" }
       let(:pact) { double('pact') }
       let(:verification) { double('verification') }
@@ -55,7 +56,11 @@ module PactBroker
         let(:execute) { subject.execute pact, verification, options }
 
         it "builds the request" do
-          expect(request_template).to receive(:build).with(pact: pact, verification: verification, base_url: base_url)
+          expect(request_template).to receive(:build).with(
+            pact: pact,
+            verification: verification,
+            base_url: base_url,
+            webhook_context: webhook_context)
           execute
         end
 

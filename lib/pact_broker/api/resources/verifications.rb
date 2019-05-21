@@ -47,7 +47,7 @@ module PactBroker
         end
 
         def from_json
-          verification = verification_service.create(next_verification_number, params_with_string_keys, pact)
+          verification = verification_service.create(next_verification_number, params_with_string_keys, pact, metadata)
           response.body = decorator_for(verification).to_json(user_options: {base_url: base_url})
           true
         end
@@ -68,6 +68,10 @@ module PactBroker
 
         def update_matrix_after_request?
           request.post?
+        end
+
+        def metadata
+          PactBrokerUrls.parse_webhook_metadata(identifier_from_path[:metadata])
         end
       end
     end

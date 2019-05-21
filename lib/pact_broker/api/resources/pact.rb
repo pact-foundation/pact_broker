@@ -75,7 +75,7 @@ module PactBroker
         end
 
         def to_json
-          PactBroker::Api::Decorators::PactDecorator.new(pact).to_json(user_options: { base_url: base_url })
+          PactBroker::Api::Decorators::PactDecorator.new(pact).to_json(user_options: decorator_context(metadata: identifier_from_path[:metadata]))
         end
 
         def to_html

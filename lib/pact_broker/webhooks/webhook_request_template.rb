@@ -30,23 +30,23 @@ module PactBroker
       def build(context)
         attributes = {
           method: http_method,
-          url: build_url(context[:pact], context[:verification], context[:base_url]),
+          url: build_url(context[:pact], context[:verification], context[:base_url], context[:webhook_context]),
           headers: headers,
           username: username,
           password: password,
           uuid: uuid,
-          body: build_body(context[:pact], context[:verification], context[:base_url])
+          body: build_body(context[:pact], context[:verification], context[:base_url], context[:webhook_context])
         }
         PactBroker::Domain::WebhookRequest.new(attributes)
       end
 
-      def build_url(pact, verification, broker_base_url)
-        URI(PactBroker::Webhooks::Render.call(url, pact, verification, broker_base_url){ | value | CGI::escape(value) if !value.nil? } ).to_s
+      def build_url(pact, verification, broker_base_url, webhook_context)
+        URI(PactBroker::Webhooks::Render.call(url, pact, verification, broker_base_url, webhook_context){ | value | CGI::escape(value) if !value.nil? } ).to_s
       end
 
-      def build_body(pact, verification, broker_base_url)
+      def build_body(pact, verification, broker_base_url, webhook_context)
         body_string = String === body ? body : body.to_json
-        PactBroker::Webhooks::Render.call(body_string, pact, verification, broker_base_url)
+        PactBroker::Webhooks::Render.call(body_string, pact, verification, broker_base_url, webhook_context)
       end
 
       def description
