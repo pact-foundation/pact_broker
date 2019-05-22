@@ -8,10 +8,11 @@ module PactBroker
     module Resources
       describe Verifications do
         describe "post" do
-
           let(:url) { "/pacts/provider/Provider/consumer/Consumer/pact-version/1234/metadata/abcd/verification-results" }
           let(:request_body) { { some: 'params' }.to_json }
-          subject { post url, request_body, { 'CONTENT_TYPE' => 'application/json', 'pactbroker.database_connector' => database_connector }; last_response }
+          let(:rack_env) do
+            { 'CONTENT_TYPE' => 'application/json', 'pactbroker.database_connector' => database_connector }
+          end
           let(:response_body) { JSON.parse(subject.body, symbolize_names: true) }
           let(:database_connector) { double('database_connector' )}
           let(:verification) { double(PactBroker::Domain::Verification) }
@@ -24,6 +25,8 @@ module PactBroker
             allow(PactBroker::Verifications::Service).to receive(:errors).and_return(double(:errors, messages: ['errors'], empty?: errors_empty))
             allow(PactBrokerUrls).to receive(:parse_webhook_metadata).and_return(parsed_metadata)
           end
+
+          subject { post url, request_body, rack_env; last_response }
 
           it "looks up the specified pact" do
             allow(Pacts::Service).to receive(:find_pact).with(instance_of(PactBroker::Pacts::PactParams))
