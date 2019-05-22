@@ -49,16 +49,16 @@ module PactBroker
       end
 
       def self.consumer_version_number(pact, webhook_context)
-        if webhook_context[:metadata] && webhook_context[:metadata][:consumer_version_number]
-          webhook_context[:metadata][:consumer_version_number]
+        if webhook_context[:upstream_webhook_pact_metadata] && webhook_context[:upstream_webhook_pact_metadata][:consumer_version_number]
+          webhook_context[:upstream_webhook_pact_metadata][:consumer_version_number]
         else
           pact ? pact.consumer_version_number : ""
         end
       end
 
       def self.consumer_version_tags pact, webhook_context
-        if webhook_context[:metadata] && webhook_context[:metadata][:consumer_version_tags]
-          webhook_context[:metadata][:consumer_version_tags].join(", ")
+        if webhook_context[:upstream_webhook_pact_metadata] && webhook_context[:upstream_webhook_pact_metadata][:consumer_version_tags]
+          webhook_context[:upstream_webhook_pact_metadata][:consumer_version_tags].join(", ")
         else
           if pact
             pact.consumer_version.tags.collect(&:name).join(", ")
