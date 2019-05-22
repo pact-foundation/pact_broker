@@ -17,7 +17,7 @@ module PactBroker
         'Accept' => 'application/hal+json'
       }
 
-      provider_version = "1.2.3"
+      provider_version = "1.2.#{(rand * 1000).to_i}"
       provider_url = pact_hash['_links']['pb:provider']['href']
       Faraday.put("#{provider_url}/versions/#{provider_version}/tags/dev", nil, headers)
 
@@ -28,6 +28,7 @@ module PactBroker
       }
 
       Faraday.post(verification_url, body.to_json, headers)
+      Faraday.put("#{provider_url}/versions/#{provider_version}/tags/prod", nil, headers)
     end
   end
 end

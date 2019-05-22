@@ -12,7 +12,7 @@ module PactBroker
           '${pactbroker.verificationResultUrl}' => verification_url(verification, base_url),
           '${pactbroker.consumerVersionNumber}' => consumer_version_number(pact, webhook_context),
           '${pactbroker.providerVersionNumber}' => verification ? verification.provider_version_number : "",
-          '${pactbroker.providerVersionTags}' => provider_version_tags(verification),
+          '${pactbroker.providerVersionTags}' => provider_version_tags(verification, webhook_context),
           '${pactbroker.consumerVersionTags}' => consumer_version_tags(pact, webhook_context),
           '${pactbroker.consumerName}' => pact ? pact.consumer_name : "",
           '${pactbroker.providerName}' => pact ? pact.provider_name : "",
@@ -68,11 +68,15 @@ module PactBroker
         end
       end
 
-      def self.provider_version_tags verification
-        if verification
-          verification.provider_version.tags.collect(&:name).join(", ")
+      def self.provider_version_tags verification, webhook_context
+        if webhook_context[:provider_version_tags]
+          webhook_context[:provider_version_tags].join(", ")
         else
-          ""
+          if verification
+            verification.provider_version.tags.collect(&:name).join(", ")
+          else
+            ""
+          end
         end
       end
 

@@ -25,10 +25,14 @@ module PactBroker
         PactBroker::Api::Decorators::VerificationDecorator.new(verification).from_hash(params)
         verification.number = next_verification_number
         verification = verification_repository.create(verification, provider_version_number, pact)
+        webhook_context = webhook_options[:webhook_context].merge(
+          provider_version_tags: verification.provider_version_tag_names
+        )
+
         webhook_service.trigger_webhooks(pact,
           verification,
           PactBroker::Webhooks::WebhookEvent::VERIFICATION_PUBLISHED,
-          webhook_options
+          webhook_options.merge(webhook_context: webhook_context)
         )
         verification
       end
