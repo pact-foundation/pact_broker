@@ -44,11 +44,18 @@ module PactBroker
         end
 
         def user_options
-          { base_url: base_url, webhook: webhook, show_response: PactBroker.configuration.show_webhook_response? }
+          {
+            base_url: base_url,
+            webhook: webhook,
+            show_response: PactBroker.configuration.show_webhook_response?
+          }
         end
 
         def webhook_options
           {
+            execution_options: {
+              show_response: PactBroker.configuration.show_webhook_response?
+            },
             webhook_context: {
               base_url: base_url
             }

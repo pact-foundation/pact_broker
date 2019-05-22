@@ -58,6 +58,7 @@ module PactBroker
               allow(Pacts::Service).to receive(:find_pact).and_return(pact)
               allow(PactBroker::Verifications::Service).to receive(:next_number).and_return(next_verification_number)
               allow(PactBroker::Api::Decorators::VerificationDecorator).to receive(:new).and_return(decorator)
+              allow(PactBroker.configuration).to receive(:show_webhook_response?).and_return('some-boolean')
             end
 
             it "parses the webhook metadata" do
@@ -79,6 +80,9 @@ module PactBroker
                 hash_including('some' => 'params'),
                 pact,
                 {
+                  execution_options: {
+                    show_response: 'some-boolean'
+                  },
                   webhook_context: {
                     upstream_webhook_pact_metadata: parsed_metadata,
                     base_url: base_url,

@@ -35,6 +35,9 @@ module PactBroker
             let(:provider_name) { "bar" }
             let(:webhook_options) do
               {
+                execution_options: {
+                  show_response: false,
+                },
                 webhook_context: {
                   base_url: "http://example.org"
                 }

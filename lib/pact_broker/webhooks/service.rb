@@ -64,17 +64,17 @@ module PactBroker
       end
 
       def self.test_execution webhook, options
-        execution_options = {
+        execution_options = options[:execution_options].merge(
           failure_log_message: "Webhook execution failed",
-          show_response: PactBroker.configuration.show_webhook_response?
-        }
+        )
+        merged_options = options.merge(execution_options: execution_options)
         verification = nil
         if webhook.trigger_on_provider_verification_published?
           verification = verification_service.search_for_latest(webhook.consumer_name, webhook.provider_name) || PactBroker::Verifications::PlaceholderVerification.new
         end
 
         pact = pact_service.search_for_latest_pact(consumer_name: webhook.consumer_name, provider_name: webhook.provider_name) || PactBroker::Pacts::PlaceholderPact.new
-        webhook.execute(pact, verification, execution_options.merge(options))
+        webhook.execute(pact, verification, merged_options)
       end
 
       # # TODO delete?
@@ -90,8 +90,8 @@ module PactBroker
       #   webhook_execution_result
       # end
 
-      def self.execute_triggered_webhook_now triggered_webhook, execution_options
-        webhook_execution_result = triggered_webhook.execute execution_options.merge(show_response: PactBroker.configuration.show_webhook_response?)
+      def self.execute_triggered_webhook_now triggered_webhook, webhook_options
+        webhook_execution_result = triggered_webhook.execute webhook_options
         webhook_repository.create_execution triggered_webhook, webhook_execution_result
         webhook_execution_result
       end
@@ -131,6 +131,7 @@ module PactBroker
             job_data = {
               triggered_webhook: triggered_webhook,
               webhook_context: options.fetch(:webhook_context),
+              execution_options: options.fetch(:execution_options),
               database_connector: options.fetch(:database_connector)
             }
             # Delay slightly to make sure the request transaction has finished before we execute the webhook

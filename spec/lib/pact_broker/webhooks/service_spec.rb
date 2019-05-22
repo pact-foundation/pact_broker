@@ -41,7 +41,12 @@ module PactBroker
         let(:provider) { PactBroker::Domain::Pacticipant.new(name: 'Provider') }
         let(:webhooks) { [instance_double(PactBroker::Domain::Webhook, description: 'description', uuid: '1244')]}
         let(:triggered_webhook) { instance_double(PactBroker::Webhooks::TriggeredWebhook) }
-        let(:options) { { database_connector: double('database_connector'), webhook_context: {} } }
+        let(:options) do
+          { database_connector: double('database_connector'),
+            webhook_context: {},
+            execution_options: {}
+          }
+        end
 
         before do
           allow_any_instance_of(PactBroker::Webhooks::Repository).to receive(:find_by_consumer_and_or_provider_and_event_name).and_return(webhooks)
@@ -104,8 +109,10 @@ module PactBroker
         let(:result) { double('result') }
         let(:options) do
           {
-            failure_log_message: "Webhook execution failed",
-            show_response: 'foo',
+            execution_options: {
+              failure_log_message: "Webhook execution failed",
+              show_response: 'foo',
+            },
             webhook_context: {
               base_url: 'http://broker'
             }
@@ -225,7 +232,14 @@ module PactBroker
         end
 
         let(:events) { [{ name: PactBroker::Webhooks::WebhookEvent::DEFAULT_EVENT_NAME }] }
-        let(:options) { { database_connector: database_connector, webhook_context: { base_url: 'http://example.org' } } }
+        let(:options) do
+          {
+            database_connector: database_connector,
+            webhook_context: { base_url: 'http://example.org' },
+            execution_options: execution_options
+          }
+        end
+        let(:execution_options) { { show_response: true } }
         let(:database_connector) { ->(&block) { block.call } }
         let(:pact) do
           td.create_consumer
@@ -245,9 +259,7 @@ module PactBroker
         end
 
         it "executes the webhook with the correct options" do
-          allow(PactBroker.configuration).to receive(:show_webhook_response?).and_return('foo')
-          expected_options = {:show_response => 'foo' }
-          expect_any_instance_of(PactBroker::Domain::WebhookRequest).to receive(:execute).with(hash_including(expected_options)).and_call_original
+          expect_any_instance_of(PactBroker::Domain::WebhookRequest).to receive(:execute).with(hash_including(execution_options)).and_call_original
           subject
         end
 

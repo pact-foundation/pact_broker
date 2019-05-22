@@ -42,9 +42,7 @@ module PactBroker
 
       def execute pact, verification, options
         logger.info "Executing #{self}"
-        duplicate_options = options.dup
-        webhook_context = duplicate_options.delete(:webhook_context)
-        request.build(pact: pact, verification: verification, webhook_context: webhook_context).execute(duplicate_options)
+        request.build(pact: pact, verification: verification, webhook_context: options.fetch(:webhook_context)).execute(options.fetch(:execution_options))
       end
 
       def to_s
