@@ -10,20 +10,22 @@ module PactBroker
       include PactBroker::Logging
 
       def trigger_webhooks_for_new_pact pact
-        webhook_service.trigger_webhooks pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_PUBLISHED
+        placeholder_options = {}
+        webhook_service.trigger_webhooks pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_PUBLISHED, placeholder_options
         if pact_is_new_or_newly_tagged_or_pact_has_changed_since_previous_version?(pact)
-          webhook_service.trigger_webhooks pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED
+          webhook_service.trigger_webhooks pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED, placeholder_options
         else
           logger.debug "Pact content has not changed since previous version, not triggering webhooks for changed content"
         end
       end
 
       def trigger_webhooks_for_updated_pact(existing_pact, updated_pact)
-        webhook_service.trigger_webhooks updated_pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_PUBLISHED
+        placeholder_options = {}
+        webhook_service.trigger_webhooks updated_pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_PUBLISHED, placeholder_options
         # TODO this should use the sha!
         if existing_pact.pact_version_sha != updated_pact.pact_version_sha
           logger.debug "Existing pact for version #{existing_pact.consumer_version_number} has been updated with new content, triggering webhooks for changed content"
-          webhook_service.trigger_webhooks updated_pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED
+          webhook_service.trigger_webhooks updated_pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED, placeholder_options
         else
           logger.debug "Pact content has not changed since previous revision, not triggering webhooks for changed content"
         end

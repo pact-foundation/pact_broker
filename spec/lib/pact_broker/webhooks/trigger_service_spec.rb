@@ -11,6 +11,7 @@ module PactBroker
       let(:previous_pact_version_sha) { "111" }
       let(:previous_pacts) { { untagged: previous_pact } }
       let(:logger) { double('logger').as_null_object }
+      let(:webhook_options) { {} }
 
       before do
         allow(TriggerService).to receive(:pact_repository).and_return(pact_repository)
@@ -20,21 +21,21 @@ module PactBroker
 
       shared_examples_for "triggering a contract_published event" do
         it "triggers a contract_published webhook" do
-          expect(webhook_service).to receive(:trigger_webhooks).with(pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_PUBLISHED)
+          expect(webhook_service).to receive(:trigger_webhooks).with(pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_PUBLISHED, webhook_options)
           subject
         end
       end
 
       shared_examples_for "triggering a contract_content_changed event" do
         it "triggers a contract_content_changed webhook" do
-          expect(webhook_service).to receive(:trigger_webhooks).with(pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED)
+          expect(webhook_service).to receive(:trigger_webhooks).with(pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED, webhook_options)
           subject
         end
       end
 
       shared_examples_for "not triggering a contract_content_changed event" do
         it "does not trigger a contract_content_changed webhook" do
-          expect(webhook_service).to_not receive(:trigger_webhooks).with(anything, anything, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED)
+          expect(webhook_service).to_not receive(:trigger_webhooks).with(anything, anything, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED, anything)
           subject
         end
       end

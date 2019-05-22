@@ -17,13 +17,12 @@ module PactBroker
       let(:success) { true }
       let(:logger) { double('logger').as_null_object }
       let(:database_connector) { ->(&block) { block.call } }
-      let(:context) { { the: "context" } }
+      let(:webhook_context) { { the: "context" } }
       let(:job_params) do
         {
           triggered_webhook: triggered_webhook,
           database_connector: database_connector,
-          base_url: base_url,
-          context: context
+          webhook_context: webhook_context
         }
       end
 
@@ -58,7 +57,11 @@ module PactBroker
         end
 
         it "reschedules the job with the passed in data" do
-          expect(Job).to receive(:perform_in).with(10, hash_including(context: context, base_url: base_url))
+          expect(Job).to receive(:perform_in).with(10, hash_including(
+            webhook_context: webhook_context,
+            database_connector: database_connector,
+            triggered_webhook: triggered_webhook
+          ))
           subject
         end
 
@@ -82,8 +85,7 @@ module PactBroker
             .with(triggered_webhook, {
               failure_log_message: "Retrying webhook in 10 seconds",
               success_log_message: "Successfully executed webhook",
-              base_url: base_url,
-              context: context
+              webhook_context: webhook_context
           })
           subject
         end

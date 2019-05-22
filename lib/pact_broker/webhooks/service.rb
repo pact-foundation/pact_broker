@@ -63,31 +63,35 @@ module PactBroker
         webhook_repository.find_all
       end
 
-      def self.test_execution webhook
-        options = { failure_log_message: "Webhook execution failed", show_response: PactBroker.configuration.show_webhook_response?, base_url: base_url}
+      def self.test_execution webhook, options
+        execution_options = {
+          failure_log_message: "Webhook execution failed",
+          show_response: PactBroker.configuration.show_webhook_response?
+        }
         verification = nil
         if webhook.trigger_on_provider_verification_published?
           verification = verification_service.search_for_latest(webhook.consumer_name, webhook.provider_name) || PactBroker::Verifications::PlaceholderVerification.new
         end
 
         pact = pact_service.search_for_latest_pact(consumer_name: webhook.consumer_name, provider_name: webhook.provider_name) || PactBroker::Pacts::PlaceholderPact.new
-        webhook.execute(pact, verification, options)
+        webhook.execute(pact, verification, execution_options.merge(options))
       end
 
-      def self.execute_webhook_now webhook, pact, verification = nil
-        triggered_webhook = webhook_repository.create_triggered_webhook(next_uuid, webhook, pact, verification, USER)
-        options = { failure_log_message: "Webhook execution failed"}
-        webhook_execution_result = execute_triggered_webhook_now triggered_webhook, options
-        if webhook_execution_result.success?
-          webhook_repository.update_triggered_webhook_status triggered_webhook, TriggeredWebhook::STATUS_SUCCESS
-        else
-          webhook_repository.update_triggered_webhook_status triggered_webhook, TriggeredWebhook::STATUS_FAILURE
-        end
-        webhook_execution_result
-      end
+      # # TODO delete?
+      # def self.execute_webhook_now webhook, pact, verification = nil
+      #   triggered_webhook = webhook_repository.create_triggered_webhook(next_uuid, webhook, pact, verification, USER)
+      #   execution_options = { failure_log_message: "Webhook execution failed"}
+      #   webhook_execution_result = execute_triggered_webhook_now triggered_webhook, execution_options
+      #   if webhook_execution_result.success?
+      #     webhook_repository.update_triggered_webhook_status triggered_webhook, TriggeredWebhook::STATUS_SUCCESS
+      #   else
+      #     webhook_repository.update_triggered_webhook_status triggered_webhook, TriggeredWebhook::STATUS_FAILURE
+      #   end
+      #   webhook_execution_result
+      # end
 
-      def self.execute_triggered_webhook_now triggered_webhook, options
-        webhook_execution_result = triggered_webhook.execute options.merge(show_response: PactBroker.configuration.show_webhook_response?)
+      def self.execute_triggered_webhook_now triggered_webhook, execution_options
+        webhook_execution_result = triggered_webhook.execute execution_options.merge(show_response: PactBroker.configuration.show_webhook_response?)
         webhook_repository.create_execution triggered_webhook, webhook_execution_result
         webhook_execution_result
       end
@@ -108,17 +112,17 @@ module PactBroker
         webhook_repository.find_by_consumer_and_provider consumer, provider
       end
 
-      def self.trigger_webhooks pact, verification, event_name, context = {}
+      def self.trigger_webhooks pact, verification, event_name, options
         webhooks = webhook_repository.find_by_consumer_and_or_provider_and_event_name pact.consumer, pact.provider, event_name
 
         if webhooks.any?
-          run_later(webhooks, pact, verification, event_name, context)
+          run_later(webhooks, pact, verification, event_name, options)
         else
           logger.debug "No webhook found for consumer \"#{pact.consumer.name}\" and provider \"#{pact.provider.name}\""
         end
       end
 
-      def self.run_later webhooks, pact, verification, event_name, context
+      def self.run_later webhooks, pact, verification, event_name, options
         trigger_uuid = next_uuid
         webhooks.each do | webhook |
           begin
@@ -126,9 +130,8 @@ module PactBroker
             logger.info "Scheduling job for #{webhook.description} with uuid #{webhook.uuid}"
             job_data = {
               triggered_webhook: triggered_webhook,
-              database_connector: job_database_connector,
-              base_url: base_url,
-              context: context
+              webhook_context: options[:webhook_context] || { base_url: base_url },
+              database_connector: options[:database_connector] || job_database_connector
             }
             # Delay slightly to make sure the request transaction has finished before we execute the webhook
             Job.perform_in(5, job_data)

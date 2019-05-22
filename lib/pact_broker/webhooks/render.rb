@@ -4,7 +4,8 @@ module PactBroker
 
       TEMPLATE_PARAMETER_REGEXP = /\$\{pactbroker\.[^\}]+\}/
 
-      def self.call(template, pact, trigger_verification, base_url, webhook_context, &escaper)
+      def self.call(template, pact, trigger_verification, webhook_context, &escaper)
+        base_url = webhook_context[:base_url]
         verification = trigger_verification || (pact && pact.latest_verification)
         params = {
           '${pactbroker.pactUrl}' => pact ? PactBroker::Api::PactBrokerUrls.pact_version_url_with_metadata(pact, base_url) : "",

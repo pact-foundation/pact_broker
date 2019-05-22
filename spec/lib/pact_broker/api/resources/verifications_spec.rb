@@ -11,11 +11,13 @@ module PactBroker
 
           let(:url) { "/pacts/provider/Provider/consumer/Consumer/pact-version/1234/metadata/abcd/verification-results" }
           let(:request_body) { { some: 'params' }.to_json }
-          subject { post url, request_body, { 'CONTENT_TYPE' => 'application/json' }; last_response }
+          subject { post url, request_body, { 'CONTENT_TYPE' => 'application/json', 'pactbroker.database_connector' => database_connector }; last_response }
           let(:response_body) { JSON.parse(subject.body, symbolize_names: true) }
+          let(:database_connector) { double('database_connector' )}
           let(:verification) { double(PactBroker::Domain::Verification) }
           let(:errors_empty) { true }
           let(:parsed_metadata) { double('the-metadata') }
+          let(:base_url) { "http://example.org" }
 
           before do
             allow(PactBroker::Verifications::Service).to receive(:create).and_return(verification)
@@ -73,7 +75,13 @@ module PactBroker
                 next_verification_number,
                 hash_including('some' => 'params'),
                 pact,
-                parsed_metadata
+                {
+                  webhook_context: {
+                    upstream_webhook_pact_metadata: parsed_metadata,
+                    base_url: base_url,
+                  },
+                  database_connector: database_connector
+                }
               )
               subject
             end
