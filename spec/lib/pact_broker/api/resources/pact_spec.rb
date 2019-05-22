@@ -6,11 +6,8 @@ require 'pact_broker/pacticipants/service'
 
 
 module PactBroker::Api
-
   module Resources
-
     describe Pact do
-
       include Rack::Test::Methods
 
       let(:app) { PactBroker::API }

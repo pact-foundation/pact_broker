@@ -40,20 +40,20 @@ module PactBroker
         pact_repository.delete(params)
       end
 
-      def create_or_update_pact params
+      def create_or_update_pact params, webhook_options
         provider = pacticipant_repository.find_by_name_or_create params[:provider_name]
         consumer = pacticipant_repository.find_by_name_or_create params[:consumer_name]
         consumer_version = version_repository.find_by_pacticipant_id_and_number_or_create consumer.id, params[:consumer_version_number]
         existing_pact = pact_repository.find_by_version_and_provider(consumer_version.id, provider.id)
 
         if existing_pact
-          update_pact params, existing_pact
+          update_pact params, existing_pact, webhook_options
         else
-          create_pact params, consumer_version, provider
+          create_pact params, consumer_version, provider, webhook_options
         end
       end
 
-      def merge_pact params
+      def merge_pact params, webhook_options
         provider = pacticipant_repository.find_by_name_or_create params[:provider_name]
         consumer = pacticipant_repository.find_by_name_or_create params[:consumer_name]
         consumer_version = version_repository.find_by_pacticipant_id_and_number_or_create consumer.id, params[:consumer_version_number]
@@ -61,7 +61,7 @@ module PactBroker
 
         params.merge!(json_content: Merger.merge_pacts(existing_pact.json_content, params[:json_content]))
 
-        update_pact params, existing_pact
+        update_pact params, existing_pact, webhook_options
       end
 
       def find_all_pact_versions_between consumer, options
@@ -113,7 +113,7 @@ module PactBroker
       private
 
       # Overwriting an existing pact with the same consumer/provider/consumer version number
-      def update_pact params, existing_pact
+      def update_pact params, existing_pact, webhook_options
         logger.info "Updating existing pact publication with params #{params.reject{ |k, v| k == :json_content}}"
         logger.debug "Content #{params[:json_content]}"
         pact_version_sha = generate_sha(params[:json_content])
@@ -121,13 +121,13 @@ module PactBroker
         update_params = { pact_version_sha: pact_version_sha, json_content: json_content }
         updated_pact = pact_repository.update(existing_pact.id, update_params)
 
-        webhook_trigger_service.trigger_webhooks_for_updated_pact(existing_pact, updated_pact)
+        webhook_trigger_service.trigger_webhooks_for_updated_pact(existing_pact, updated_pact, webhook_options)
 
         updated_pact
       end
 
       # When no publication for the given consumer/provider/consumer version number exists
-      def create_pact params, version, provider
+      def create_pact params, version, provider, webhook_options
         logger.info "Creating new pact publication with params #{params.reject{ |k, v| k == :json_content}}"
         logger.debug "Content #{params[:json_content]}"
         pact_version_sha = generate_sha(params[:json_content])
@@ -139,7 +139,7 @@ module PactBroker
           pact_version_sha: pact_version_sha,
           json_content: json_content
         )
-        webhook_trigger_service.trigger_webhooks_for_new_pact pact
+        webhook_trigger_service.trigger_webhooks_for_new_pact(pact, webhook_options)
         pact
       end
 

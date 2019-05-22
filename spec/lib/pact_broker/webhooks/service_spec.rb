@@ -41,7 +41,7 @@ module PactBroker
         let(:provider) { PactBroker::Domain::Pacticipant.new(name: 'Provider') }
         let(:webhooks) { [instance_double(PactBroker::Domain::Webhook, description: 'description', uuid: '1244')]}
         let(:triggered_webhook) { instance_double(PactBroker::Webhooks::TriggeredWebhook) }
-        let(:options) { {the: 'options'} }
+        let(:options) { { database_connector: double('database_connector'), webhook_context: {} } }
 
         before do
           allow_any_instance_of(PactBroker::Webhooks::Repository).to receive(:find_by_consumer_and_or_provider_and_event_name).and_return(webhooks)

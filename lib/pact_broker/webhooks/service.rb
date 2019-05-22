@@ -130,8 +130,8 @@ module PactBroker
             logger.info "Scheduling job for #{webhook.description} with uuid #{webhook.uuid}"
             job_data = {
               triggered_webhook: triggered_webhook,
-              webhook_context: options[:webhook_context] || { base_url: base_url },
-              database_connector: options[:database_connector] || job_database_connector
+              webhook_context: options.fetch(:webhook_context),
+              database_connector: options.fetch(:database_connector)
             }
             # Delay slightly to make sure the request transaction has finished before we execute the webhook
             Job.perform_in(5, job_data)
@@ -139,14 +139,6 @@ module PactBroker
             log_error e
           end
         end
-      end
-
-      def self.job_database_connector
-        Thread.current[:pact_broker_thread_data].database_connector
-      end
-
-      def self.base_url
-        Thread.current[:pact_broker_thread_data].base_url
       end
 
       def self.find_latest_triggered_webhooks_for_pact pact

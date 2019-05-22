@@ -77,7 +77,7 @@ module PactBroker
 
         def webhook_options
           {
-            database_connector: request.env['pactbroker.database_connector'],
+            database_connector: database_connector,
             webhook_context: {
               upstream_webhook_pact_metadata: metadata,
               base_url: base_url

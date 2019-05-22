@@ -11,7 +11,7 @@ module PactBroker
       let(:previous_pact_version_sha) { "111" }
       let(:previous_pacts) { { untagged: previous_pact } }
       let(:logger) { double('logger').as_null_object }
-      let(:webhook_options) { {} }
+      let(:webhook_options) { { the: 'options'} }
 
       before do
         allow(TriggerService).to receive(:pact_repository).and_return(pact_repository)
@@ -41,7 +41,7 @@ module PactBroker
       end
 
       describe "#trigger_webhooks_for_new_pact" do
-        subject { TriggerService.trigger_webhooks_for_new_pact(pact) }
+        subject { TriggerService.trigger_webhooks_for_new_pact(pact, webhook_options) }
 
         context "when no previous untagged pact exists" do
           let(:previous_pact) { nil }
@@ -117,7 +117,7 @@ module PactBroker
         end
         let(:existing_pact_version_sha) { pact_version_sha }
 
-        subject { TriggerService.trigger_webhooks_for_updated_pact(existing_pact, pact) }
+        subject { TriggerService.trigger_webhooks_for_updated_pact(existing_pact, pact, webhook_options) }
 
         context "when the pact version sha of the previous revision is different" do
           let(:existing_pact_version_sha) { "456" }

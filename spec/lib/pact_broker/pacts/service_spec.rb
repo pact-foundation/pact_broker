@@ -47,6 +47,7 @@ module PactBroker
         end
         let(:content) { double('content') }
         let(:content_with_interaction_ids) { double('content_with_interaction_ids', to_json: json_content_with_ids) }
+        let(:webhook_options) { { the: 'options'} }
 
         before do
           allow(Content).to receive(:from_json).and_return(content)
@@ -54,7 +55,7 @@ module PactBroker
           allow(PactBroker::Pacts::GenerateSha).to receive(:call).and_call_original
         end
 
-        subject { Service.create_or_update_pact(params) }
+        subject { Service.create_or_update_pact(params, webhook_options) }
 
         context "when no pact exists with the same params" do
           it "creates the sha before adding the interaction ids" do
@@ -69,7 +70,7 @@ module PactBroker
           end
 
           it "triggers webhooks" do
-            expect(webhook_trigger_service).to receive(:trigger_webhooks_for_new_pact).with(new_pact)
+            expect(webhook_trigger_service).to receive(:trigger_webhooks_for_new_pact).with(new_pact, webhook_options)
             subject
           end
         end
@@ -89,7 +90,7 @@ module PactBroker
           end
 
           it "triggers webhooks" do
-            expect(webhook_trigger_service).to receive(:trigger_webhooks_for_updated_pact).with(existing_pact, new_pact)
+            expect(webhook_trigger_service).to receive(:trigger_webhooks_for_updated_pact).with(existing_pact, new_pact, webhook_options)
             subject
           end
         end
