@@ -22,12 +22,16 @@ module Rack
       def call env
         set_database_connector
         if use_transaction? env
-          call_with_transaction env
+          call_with_transaction(add_database_connector(env))
         else
-          call_without_transaction env
+          call_without_transaction(add_database_connector(env))
         end
       ensure
         clear_database_connector
+      end
+
+      def add_database_connector(env)
+        env.merge("pactbroker.database_connector" => @default_database_connector)
       end
 
       def use_transaction? env
