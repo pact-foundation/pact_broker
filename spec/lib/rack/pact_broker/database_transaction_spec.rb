@@ -25,6 +25,16 @@ module Rack
 
       subject { self.send(http_method, "/") }
 
+      it "sets the pactbroker.database_connector on the env" do
+        actual_env = nil
+        allow(api).to receive(:call) do | env |
+          actual_env = env
+          [200, {}, {}]
+        end
+        subject
+        expect(actual_env).to have_key("pactbroker.database_connector")
+      end
+
       context "for get requests" do
         let(:http_method) { :get }
 
