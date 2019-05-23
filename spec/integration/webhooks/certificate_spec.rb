@@ -24,7 +24,7 @@ describe "executing a webhook to a server with a self signed certificate" do
 
   let(:pact) { td.create_pact_with_hierarchy.and_return(:pact) }
 
-  subject { webhook_request.execute({}) }
+  subject { webhook_request.execute({ show_response: true }) }
 
   context "without the correct cacert" do
     it "fails" do

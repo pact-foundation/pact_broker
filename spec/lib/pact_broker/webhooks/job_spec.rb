@@ -17,8 +17,17 @@ module PactBroker
       let(:success) { true }
       let(:logger) { double('logger').as_null_object }
       let(:database_connector) { ->(&block) { block.call } }
+      let(:webhook_context) { { the: "context" } }
+      let(:job_params) do
+        {
+          triggered_webhook: triggered_webhook,
+          database_connector: database_connector,
+          webhook_context: webhook_context,
+          execution_options: { the: 'options' }
+        }
+      end
 
-      subject { Job.new.perform(triggered_webhook: triggered_webhook, database_connector: database_connector, base_url: base_url) }
+      subject { Job.new.perform(job_params) }
 
       it "reloads the TriggeredWebhook object to make sure it has a fresh copy" do
         expect(PactBroker::Webhooks::TriggeredWebhook).to receive(:find).with(id: 1)
@@ -44,7 +53,16 @@ module PactBroker
         end
 
         it "reschedules the job in 10 seconds" do
-          expect(Job).to receive(:perform_in).with(10, {triggered_webhook: triggered_webhook, error_count: 1, database_connector: database_connector, base_url: base_url})
+          expect(Job).to receive(:perform_in).with(10, hash_including(error_count: 1))
+          subject
+        end
+
+        it "reschedules the job with the passed in data" do
+          expect(Job).to receive(:perform_in).with(10, hash_including(
+            webhook_context: webhook_context,
+            database_connector: database_connector,
+            triggered_webhook: triggered_webhook
+          ))
           subject
         end
 
@@ -59,16 +77,19 @@ module PactBroker
         let(:success) { false }
 
         it "reschedules the job in 10 seconds" do
-          expect(Job).to receive(:perform_in).with(10, {triggered_webhook: triggered_webhook, error_count: 1, database_connector: database_connector, base_url: base_url})
+          expect(Job).to receive(:perform_in).with(10, hash_including(error_count: 1))
           subject
         end
 
         it "executes the job with an log message indicating that the webhook will be retried" do
           expect(PactBroker::Webhooks::Service).to receive(:execute_triggered_webhook_now)
             .with(triggered_webhook, {
-              failure_log_message: "Retrying webhook in 10 seconds",
-              success_log_message: "Successfully executed webhook",
-              base_url: base_url
+              execution_options: {
+                failure_log_message: "Retrying webhook in 10 seconds",
+                success_log_message: "Successfully executed webhook",
+                the: 'options'
+              },
+              webhook_context: webhook_context
           })
           subject
         end
@@ -83,12 +104,13 @@ module PactBroker
       context "when an error occurs for the second time" do
         before do
           allow(PactBroker::Webhooks::Service).to receive(:execute_triggered_webhook_now).and_raise("an error")
+          job_params[:error_count] = 1
         end
 
-        subject { Job.new.perform(triggered_webhook: triggered_webhook, error_count: 1, database_connector: database_connector, base_url: base_url) }
+        # subject { Job.new.perform(triggered_webhook: triggered_webhook, error_count: 1, database_connector: database_connector, base_url: base_url) }
 
         it "reschedules the job in 60 seconds" do
-          expect(Job).to receive(:perform_in).with(60, {triggered_webhook: triggered_webhook, error_count: 2, database_connector: database_connector, base_url: base_url})
+          expect(Job).to receive(:perform_in).with(60, hash_including(error_count: 2))
           subject
         end
 
@@ -101,16 +123,20 @@ module PactBroker
 
       context "when the job is not successful for the last time" do
         let(:success) { false }
+        before do
+          job_params[:error_count] = 6
+        end
 
-        subject { Job.new.perform(triggered_webhook: triggered_webhook, error_count: 6, database_connector: database_connector, base_url: base_url) }
+        # subject { Job.new.perform(triggered_webhook: triggered_webhook, error_count: 6, database_connector: database_connector, base_url: base_url) }
 
         it "executes the job with an log message indicating that the webhook has failed" do
           expect(PactBroker::Webhooks::Service).to receive(:execute_triggered_webhook_now)
-            .with(triggered_webhook, {
-              failure_log_message: "Webhook execution failed after 7 attempts",
-              success_log_message: "Successfully executed webhook",
-              base_url: base_url
-          })
+            .with(triggered_webhook, hash_including(
+              execution_options: hash_including(
+                failure_log_message: "Webhook execution failed after 7 attempts",
+                success_log_message: "Successfully executed webhook")
+            )
+          )
           subject
         end
 

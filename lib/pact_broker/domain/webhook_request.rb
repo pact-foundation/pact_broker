@@ -152,7 +152,7 @@ module PactBroker
 
       def log_response response
         log_response_to_application_logger(response)
-        if options[:show_response]
+        if options.fetch(:show_response)
           log_response_to_execution_logger(response)
         else
           execution_logger.info response_body_hidden_message

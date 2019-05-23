@@ -33,6 +33,16 @@ module PactBroker
             let(:pact) { instance_double("PactBroker::Domain::Pact") }
             let(:consumer_name) { "foo" }
             let(:provider_name) { "bar" }
+            let(:webhook_options) do
+              {
+                execution_options: {
+                  show_response: false,
+                },
+                webhook_context: {
+                  base_url: "http://example.org"
+                }
+              }
+            end
 
             before do
               allow(PactBroker::Webhooks::Service).to receive(:test_execution).and_return(execution_result)
@@ -40,7 +50,7 @@ module PactBroker
             end
 
             it "executes the webhook" do
-              expect(PactBroker::Webhooks::Service).to receive(:test_execution).with(webhook)
+              expect(PactBroker::Webhooks::Service).to receive(:test_execution).with(webhook, webhook_options)
               subject
             end
 

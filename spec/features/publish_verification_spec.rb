@@ -7,8 +7,15 @@ describe "Recording a pact verification" do
   let(:verification_content) { load_fixture('verification.json') }
   let(:parsed_response_body) { JSON.parse(subject.body) }
   let(:pact) { td.pact }
+  let(:rack_env) do
+    {
+      'CONTENT_TYPE' => 'application/json',
+      'HTTP_ACCEPT' => 'application/hal+json',
+      'pactbroker.database_connector' => lambda { |&block| block.call }
+    }
+  end
 
-  subject { post path, verification_content, {'CONTENT_TYPE' => 'application/json', 'HTTP_ACCEPT' => 'application/hal+json' }; last_response  }
+  subject { post path, verification_content, rack_env; last_response  }
 
   before do
     td.create_provider("Provider")

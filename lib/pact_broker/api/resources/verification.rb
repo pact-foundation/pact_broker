@@ -7,9 +7,7 @@ require 'pact_broker/api/decorators/verification_decorator'
 module PactBroker
   module Api
     module Resources
-
       class Verification < BaseResource
-
         def content_types_provided
           [["application/hal+json", :to_json], ["application/json", :to_json]]
         end

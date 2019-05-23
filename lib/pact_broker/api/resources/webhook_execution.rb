@@ -14,7 +14,7 @@ module PactBroker
         end
 
         def process_post
-          webhook_execution_result = webhook_service.test_execution(webhook)
+          webhook_execution_result = webhook_service.test_execution(webhook, webhook_options)
           response.headers['Content-Type'] = 'application/hal+json;charset=utf-8'
           response.body = post_response_body webhook_execution_result
           if webhook_execution_result.success?
@@ -44,7 +44,22 @@ module PactBroker
         end
 
         def user_options
-          { base_url: base_url, webhook: webhook, show_response: PactBroker.configuration.show_webhook_response? }
+          {
+            base_url: base_url,
+            webhook: webhook,
+            show_response: PactBroker.configuration.show_webhook_response?
+          }
+        end
+
+        def webhook_options
+          {
+            execution_options: {
+              show_response: PactBroker.configuration.show_webhook_response?
+            },
+            webhook_context: {
+              base_url: base_url
+            }
+          }
         end
       end
     end

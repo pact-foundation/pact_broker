@@ -33,7 +33,7 @@ module PactBroker
         let(:provider) { double('provider', id: 2) }
         let(:version) { double('version', id: 3, pacticipant_id: 1) }
         let(:existing_pact) { nil }
-        let(:new_pact) { double('new_pact', json_content: json_content) }
+        let(:new_pact) { double('new_pact', consumer_version_tag_names: %[dev], json_content: json_content) }
         let(:json_content) { { the: "contract" }.to_json }
         let(:json_content_with_ids) { { the: "contract with ids" }.to_json }
         let(:previous_pacts) { [] }
@@ -47,6 +47,8 @@ module PactBroker
         end
         let(:content) { double('content') }
         let(:content_with_interaction_ids) { double('content_with_interaction_ids', to_json: json_content_with_ids) }
+        let(:webhook_options) { { the: 'options'} }
+        let(:outgoing_webhook_options) { { the: 'options', webhook_context: { consumer_version_tags: %[dev] }} }
 
         before do
           allow(Content).to receive(:from_json).and_return(content)
@@ -54,7 +56,7 @@ module PactBroker
           allow(PactBroker::Pacts::GenerateSha).to receive(:call).and_call_original
         end
 
-        subject { Service.create_or_update_pact(params) }
+        subject { Service.create_or_update_pact(params, webhook_options) }
 
         context "when no pact exists with the same params" do
           it "creates the sha before adding the interaction ids" do
@@ -69,13 +71,19 @@ module PactBroker
           end
 
           it "triggers webhooks" do
-            expect(webhook_trigger_service).to receive(:trigger_webhooks_for_new_pact).with(new_pact)
+            expect(webhook_trigger_service).to receive(:trigger_webhooks_for_new_pact).with(new_pact, outgoing_webhook_options)
             subject
           end
         end
 
         context "when a pact exists with the same params" do
-          let(:existing_pact) { double('existing_pact', id: 4, json_content: { the: "contract" }.to_json) }
+          let(:existing_pact) do
+            double('existing_pact',
+              id: 4,
+              consumer_version_tag_names: %[dev],
+              json_content: { the: "contract" }.to_json
+            )
+          end
 
           it "creates the sha before adding the interaction ids" do
             expect(PactBroker::Pacts::GenerateSha).to receive(:call).ordered
@@ -89,7 +97,7 @@ module PactBroker
           end
 
           it "triggers webhooks" do
-            expect(webhook_trigger_service).to receive(:trigger_webhooks_for_updated_pact).with(existing_pact, new_pact)
+            expect(webhook_trigger_service).to receive(:trigger_webhooks_for_updated_pact).with(existing_pact, new_pact, outgoing_webhook_options)
             subject
           end
         end

@@ -65,9 +65,9 @@ module PactBroker
           response_code = pact ? 200 : 201
 
           if request.patch? && resource_exists?
-            @pact = pact_service.merge_pact(pact_params)
+            @pact = pact_service.merge_pact(pact_params, webhook_options)
           else
-            @pact = pact_service.create_or_update_pact(pact_params)
+            @pact = pact_service.create_or_update_pact(pact_params, webhook_options)
           end
 
           response.body = to_json
@@ -75,7 +75,7 @@ module PactBroker
         end
 
         def to_json
-          PactBroker::Api::Decorators::PactDecorator.new(pact).to_json(user_options: { base_url: base_url })
+          PactBroker::Api::Decorators::PactDecorator.new(pact).to_json(user_options: decorator_context(metadata: identifier_from_path[:metadata]))
         end
 
         def to_html
@@ -117,6 +117,18 @@ module PactBroker
           end
           response.body = response_body.to_json
           response.headers["Content-Type" => "application/hal+json;charset=utf-8"]
+        end
+
+        def webhook_options
+          {
+            database_connector: database_connector,
+            execution_options: {
+              show_response: PactBroker.configuration.show_webhook_response?
+            },
+            webhook_context: {
+              base_url: base_url
+            }
+          }
         end
       end
     end

@@ -167,6 +167,10 @@ module PactBroker
         def pact
           @pact ||= pact_service.find_pact(pact_params)
         end
+
+        def database_connector
+          request.env["pactbroker.database_connector"]
+        end
       end
     end
   end

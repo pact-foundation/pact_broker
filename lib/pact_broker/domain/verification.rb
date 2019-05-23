@@ -80,6 +80,10 @@ module PactBroker
         provider_version.number
       end
 
+      def provider_version_tag_names
+        provider_version.tags.collect(&:name)
+      end
+
       def latest_pact_publication
         pact_version.latest_pact_publication
       end
