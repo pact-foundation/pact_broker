@@ -332,7 +332,6 @@ module PactBroker
         subject { Repository.new.find_by_consumer_and_provider_and_event_name td.consumer, td.provider, 'something_happened' }
 
         context "when a webhook exists with a matching consumer and provider and event name" do
-
           before do
             td
               .create_consumer("Consumer")
@@ -347,32 +346,15 @@ module PactBroker
           it "returns an array of webhooks" do
             expect(subject.collect(&:uuid).sort).to eq ['1', '2']
           end
-        end
-      end
 
-      describe "find_for_pact_and_event_name" do
-        context "when a webhook exists with a matching consumer and provider and event name" do
-          before do
-            td
-              .create_consumer("Consumer")
-              .create_consumer_version("1")
-              .create_provider("Another Provider")
-              .create_webhook
-              .create_provider("Provider")
-              .create_pact
-              .create_webhook(uuid: '1', events: [{ name: 'something_happened' }])
-              .create_webhook(uuid: '2', events: [{ name: 'something_happened' }])
-              .create_webhook(uuid: '3', events: [{ name: 'something_else_happened' }])
-              .create_consumer_webhook(uuid: '4', events: [{ name: 'something_happened' }])
-              .create_provider_webhook(uuid: '5', events: [{ name: 'something_happened' }])
-              .create_global_webhook(uuid: '6', events: [{ name: 'something_happened' }])
-              .create_global_webhook(uuid: '7', events: [{ name: 'something_else_happened' }])
-          end
+          context "when the webhook is not enabled" do
+            before do
+              Webhook.where(uuid: '2').update(enabled: false)
+            end
 
-          subject { Repository.new.find_for_pact_and_event_name(td.pact, 'something_happened') }
-
-          it "returns an array of webhooks" do
-            expect(subject.collect(&:uuid).sort).to eq ['1', '2', '4', '5', '6']
+            it "is not returned" do
+              expect(subject.collect(&:uuid).sort).to_not include('2  ')
+            end
           end
         end
       end

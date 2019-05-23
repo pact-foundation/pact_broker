@@ -16,6 +16,8 @@ module PactBroker
           property :name
         end
 
+        property :description, getter: lambda { |context| context[:decorator].display_description }
+
         property :consumer, :class => PactBroker::Domain::Pacticipant do
           property :name
         end
@@ -24,6 +26,8 @@ module PactBroker
           property :name
         end
 
+        property :enabled, default: true
+
         property :request, :class => PactBroker::Webhooks::WebhookRequestTemplate, extend: WebhookRequestTemplateDecorator
         collection :events, :class => PactBroker::Webhooks::WebhookEvent, extend: WebhookEventDecorator
 
@@ -31,7 +35,7 @@ module PactBroker
 
         link :self do | options |
           {
-            title: represented.description,
+            title: display_description,
             href: webhook_url(represented.uuid, options[:base_url])
           }
 
@@ -86,6 +90,14 @@ module PactBroker
             if webhook.events == nil
               webhook.events = [PactBroker::Webhooks::WebhookEvent.new(name: PactBroker::Webhooks::WebhookEvent::DEFAULT_EVENT_NAME)]
             end
+          end
+        end
+
+        def display_description
+          if represented.description && represented.description.strip.size > 0
+            represented.description
+          else
+            represented.scope_description
           end
         end
       end

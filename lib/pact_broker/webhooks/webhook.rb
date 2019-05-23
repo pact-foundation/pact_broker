@@ -15,6 +15,10 @@ module PactBroker
 
       dataset_module do
         include PactBroker::Repositories::Helpers
+
+        def enabled
+          where(enabled: true)
+        end
       end
 
       def before_destroy
@@ -42,10 +46,12 @@ module PactBroker
       def to_domain
         Domain::Webhook.new(
           uuid: uuid,
+          description: description,
           consumer: consumer,
           provider: provider,
           events: events,
           request: Webhooks::WebhookRequestTemplate.new(request_attributes),
+          enabled: enabled,
           created_at: created_at,
           updated_at: updated_at)
       end
@@ -81,17 +87,19 @@ module PactBroker
       def self.properties_hash_from_domain webhook
         is_json_request_body = !(String === webhook.request.body || webhook.request.body.nil?) # Can't rely on people to set content type
         {
+          description: webhook.description,
           method: webhook.request.method,
           url: webhook.request.url,
           username: webhook.request.username,
           password: not_plain_text_password(webhook.request.password),
+          enabled: webhook.enabled.nil? ? true : webhook.enabled,
           body: (is_json_request_body ? webhook.request.body.to_json : webhook.request.body),
           is_json_request_body: is_json_request_body
         }
       end
     end
 
-    Webhook.plugin :timestamps, :update_on_create=>true
+    Webhook.plugin :timestamps, update_on_create: true
 
     class WebhookHeader < Sequel::Model
       associate(:many_to_one, :webhook, :class => "PactBroker::Repositories::Webhook", :key => :webhook_id, :primary_key => :id)

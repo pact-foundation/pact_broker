@@ -17,6 +17,7 @@ module PactBroker
         DataMigrations::SetPacticipantIdsForVerifications.call(database_connection)
         DataMigrations::SetConsumerIdsForPactPublications.call(database_connection)
         DataMigrations::SetLatestVersionSequenceValue.call(database_connection)
+        DataMigrations::SetWebhooksEnabled.call(database_connection)
       end
     end
   end

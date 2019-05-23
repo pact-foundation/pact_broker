@@ -10,21 +10,23 @@ module PactBroker
       include Messages
       include Logging
 
-      attr_accessor :uuid, :consumer, :provider, :request, :created_at, :updated_at, :events
+      attr_accessor :uuid, :consumer, :provider, :request, :created_at, :updated_at, :events, :enabled, :description
       attr_reader :attributes
 
       def initialize attributes = {}
         @attributes = attributes
         @uuid = attributes[:uuid]
+        @description = attributes[:description]
         @request = attributes[:request]
         @consumer = attributes[:consumer]
         @provider = attributes[:provider]
         @events = attributes[:events]
+        @enabled = attributes[:enabled]
         @created_at = attributes[:created_at]
         @updated_at = attributes[:updated_at]
       end
 
-      def description
+      def scope_description
         if consumer && provider
           "A webhook for the pact between #{consumer.name} and #{provider.name}"
         elsif provider

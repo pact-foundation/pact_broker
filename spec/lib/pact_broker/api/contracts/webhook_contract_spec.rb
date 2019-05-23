@@ -298,6 +298,18 @@ module PactBroker
               expect(subject.errors[:"request.url"]).to eq ["cannot have a template parameter in the host"]
             end
           end
+
+          context "when enabled is not a boolean", pending: "I can't work out why this doesn't work" do
+            let(:json) do
+              valid_webhook_with do |hash|
+                hash['enabled'] = 'foo'
+              end
+            end
+
+            it "contains an error" do
+              expect(subject.errors[:enabled]).to eq ["cannot have a template parameter in the host"]
+            end
+          end
         end
       end
     end

@@ -11,6 +11,8 @@ describe "Creating a webhook" do
   let(:webhook_json) { webhook_hash.to_json }
   let(:webhook_hash) do
     {
+      description: "trigger build",
+      enabled: false,
       events: [{
         name: 'something_happened'
       }],

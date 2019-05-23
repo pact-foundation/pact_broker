@@ -82,10 +82,6 @@ module PactBroker
         Webhook.where(consumer: consumer, provider: provider).destroy
       end
 
-      def find_for_pact_and_event_name pact, event_name
-        find_by_consumer_and_or_provider_and_event_name(pact.consumer, pact.provider, event_name)
-      end
-
       def find_by_consumer_and_or_provider_and_event_name consumer, provider, event_name
         find_by_consumer_and_provider_and_event_name(consumer, provider, event_name) +
           find_by_consumer_and_provider_and_event_name(nil, provider, event_name) +
@@ -100,6 +96,7 @@ module PactBroker
         }
         Webhook
           .select_all_qualified
+          .enabled
           .where(criteria)
           .join(:webhook_events, { webhook_id: :id })
           .where(Sequel[:webhook_events][:name] => event_name)
