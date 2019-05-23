@@ -46,6 +46,7 @@ module PactBroker
           provider: provider,
           events: events,
           request: Webhooks::WebhookRequestTemplate.new(request_attributes),
+          enabled: enabled,
           created_at: created_at,
           updated_at: updated_at)
       end
@@ -85,6 +86,7 @@ module PactBroker
           url: webhook.request.url,
           username: webhook.request.username,
           password: not_plain_text_password(webhook.request.password),
+          enabled: webhook.enabled,
           body: (is_json_request_body ? webhook.request.body.to_json : webhook.request.body),
           is_json_request_body: is_json_request_body
         }

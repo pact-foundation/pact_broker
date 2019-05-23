@@ -33,7 +33,8 @@ module PactBroker
             provider: provider,
             events: [event],
             created_at: created_at,
-            updated_at: updated_at
+            updated_at: updated_at,
+            enabled: false
           )
         end
 
@@ -88,6 +89,10 @@ module PactBroker
           it 'includes timestamps' do
             expect(parsed_json[:createdAt]).to eq FormatDateTime.call(created_at)
             expect(parsed_json[:updatedAt]).to eq FormatDateTime.call(updated_at)
+          end
+
+          it 'includes the enabled flag' do
+            expect(parsed_json[:enabled]).to eq false
           end
 
           context 'when the headers are empty' do

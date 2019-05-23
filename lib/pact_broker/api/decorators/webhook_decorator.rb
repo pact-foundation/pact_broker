@@ -24,6 +24,8 @@ module PactBroker
           property :name
         end
 
+        property :enabled, default: true
+
         property :request, :class => PactBroker::Webhooks::WebhookRequestTemplate, extend: WebhookRequestTemplateDecorator
         collection :events, :class => PactBroker::Webhooks::WebhookEvent, extend: WebhookEventDecorator
 
