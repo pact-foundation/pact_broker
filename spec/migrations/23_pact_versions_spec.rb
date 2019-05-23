@@ -65,7 +65,13 @@ describe 'migrate to pact versions (migrate 22-31)', migration: true do
     subject
 
     PactBroker::Pacts::Service.create_or_update_pact(
-      consumer_name: consumer[:name], provider_name: provider[:name], consumer_version_number: '1.2.3', json_content: load_fixture('a_consumer-a_provider.json')
+      {
+        consumer_name: consumer[:name],
+        provider_name: provider[:name],
+        consumer_version_number: '1.2.3',
+        json_content: load_fixture('a_consumer-a_provider.json')
+      },{
+      }
     )
   end
 end
