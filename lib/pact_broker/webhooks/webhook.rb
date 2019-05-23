@@ -15,6 +15,10 @@ module PactBroker
 
       dataset_module do
         include PactBroker::Repositories::Helpers
+
+        def enabled
+          where(enabled: true)
+        end
       end
 
       def before_destroy
@@ -86,7 +90,7 @@ module PactBroker
           url: webhook.request.url,
           username: webhook.request.username,
           password: not_plain_text_password(webhook.request.password),
-          enabled: webhook.enabled,
+          enabled: webhook.enabled.nil? ? true : webhook.enabled,
           body: (is_json_request_body ? webhook.request.body.to_json : webhook.request.body),
           is_json_request_body: is_json_request_body
         }
