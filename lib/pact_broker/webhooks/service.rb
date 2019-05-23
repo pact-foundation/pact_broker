@@ -9,6 +9,7 @@ require 'pact_broker/webhooks/status'
 require 'pact_broker/webhooks/webhook_event'
 require 'pact_broker/verifications/placeholder_verification'
 require 'pact_broker/pacts/placeholder_pact'
+require 'pact_broker/api/decorators/webhook_decorator'
 
 module PactBroker
 
@@ -40,7 +41,16 @@ module PactBroker
         webhook_repository.find_by_uuid uuid
       end
 
-      def self.update_by_uuid uuid, webhook
+      def self.update_by_uuid uuid, params
+        webhook = webhook_repository.find_by_uuid(uuid)
+        # Dirty hack to maintain existing password if it is not submitted
+        # This is required because the password is not returned in the API response
+        # for security purposes, so it needs to be re-entered with every response.
+        # TODO implement proper 'secrets' management.
+        if webhook.request.password && !params['request'].key?('password')
+          params['request']['password'] = webhook.request.password
+        end
+        PactBroker::Api::Decorators::WebhookDecorator.new(webhook).from_hash(params)
         webhook_repository.update_by_uuid uuid, webhook
       end
 

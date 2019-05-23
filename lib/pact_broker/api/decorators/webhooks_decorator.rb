@@ -24,8 +24,8 @@ module PactBroker
         links :'pb:webhooks' do | context |
           represented.entries.collect do | webhook |
             {
-              title: webhook.description,
-              name: webhook.request_description,
+              title: "Webhook",
+              name: webhook.display_description,
               href: webhook_url(webhook.uuid, context[:base_url])
             }
           end
