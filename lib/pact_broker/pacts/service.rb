@@ -121,7 +121,7 @@ module PactBroker
         update_params = { pact_version_sha: pact_version_sha, json_content: json_content }
         updated_pact = pact_repository.update(existing_pact.id, update_params)
 
-        webhook_trigger_service.trigger_webhooks_for_updated_pact(existing_pact, updated_pact, webhook_options)
+        webhook_trigger_service.trigger_webhooks_for_updated_pact(existing_pact, updated_pact, merge_consumer_version_info(webhook_options, updated_pact))
 
         updated_pact
       end
@@ -139,7 +139,7 @@ module PactBroker
           pact_version_sha: pact_version_sha,
           json_content: json_content
         )
-        webhook_trigger_service.trigger_webhooks_for_new_pact(pact, webhook_options)
+        webhook_trigger_service.trigger_webhooks_for_new_pact(pact, merge_consumer_version_info(webhook_options, pact))
         pact
       end
 
@@ -149,6 +149,13 @@ module PactBroker
 
       def add_interaction_ids(json_content)
         Content.from_json(json_content).with_ids.to_json
+      end
+
+      def merge_consumer_version_info(webhook_options, pact)
+        webhook_context = webhook_options.fetch(:webhook_context, {}).merge(
+          consumer_version_tags: pact.consumer_version_tag_names
+        )
+        webhook_options.merge(webhook_context: webhook_context)
       end
     end
   end

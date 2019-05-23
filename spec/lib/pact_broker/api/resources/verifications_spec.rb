@@ -17,7 +17,7 @@ module PactBroker
           let(:database_connector) { double('database_connector' )}
           let(:verification) { double(PactBroker::Domain::Verification) }
           let(:errors_empty) { true }
-          let(:parsed_metadata) { double('the-metadata') }
+          let(:parsed_metadata) { { the: 'metadata' } }
           let(:base_url) { "http://example.org" }
 
           before do
@@ -84,7 +84,7 @@ module PactBroker
                     show_response: 'some-boolean'
                   },
                   webhook_context: {
-                    upstream_webhook_pact_metadata: parsed_metadata,
+                    the: 'metadata',
                     base_url: base_url,
                   },
                   database_connector: database_connector

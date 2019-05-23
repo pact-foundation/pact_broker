@@ -146,10 +146,8 @@ module PactBroker
         context "with webhook context data passed in" do
           let(:webhook_context) do
             {
-              upstream_webhook_pact_metadata: {
-                consumer_version_number: "webhook-version-number",
-                consumer_version_tags: %w[webhook tags]
-              }
+              consumer_version_number: "webhook-version-number",
+              consumer_version_tags: %w[webhook tags]
             }
           end
 

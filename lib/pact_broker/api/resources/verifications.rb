@@ -81,10 +81,9 @@ module PactBroker
             execution_options: {
               show_response: PactBroker.configuration.show_webhook_response?
             },
-            webhook_context: {
-              upstream_webhook_pact_metadata: metadata,
+            webhook_context: metadata.merge(
               base_url: base_url
-            }
+            )
           }
         end
       end
