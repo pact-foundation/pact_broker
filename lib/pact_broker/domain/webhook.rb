@@ -26,6 +26,14 @@ module PactBroker
         @updated_at = attributes[:updated_at]
       end
 
+      def display_description
+        if description && description.strip.size > 0
+          description
+        else
+          request_description
+        end
+      end
+
       def scope_description
         if consumer && provider
           "A webhook for the pact between #{consumer.name} and #{provider.name}"

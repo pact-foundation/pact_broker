@@ -7,7 +7,10 @@ module PactBroker
       describe WebhooksDecorator do
 
         let(:webhook) do
-          instance_double(Domain::Webhook, uuid: 'some-uuid', description: 'description', request_description: 'request description')
+          instance_double(Domain::Webhook,
+            uuid: 'some-uuid',
+            display_description: 'description'
+          )
         end
         let(:base_url) { 'http://example.org' }
         let(:resource_url) { 'http://example.org/webhooks' }
@@ -31,15 +34,13 @@ module PactBroker
 
           it "includes a list of links to the webhooks" do
             expect(subject[:_links][:'pb:webhooks']).to be_instance_of(Array)
-            expect(subject[:_links][:'pb:webhooks'].first).to eq title: 'description', name: 'request description', href: 'http://example.org/webhooks/some-uuid'
+            expect(subject[:_links][:'pb:webhooks'].first).to eq title: 'Webhook', name: 'description', href: 'http://example.org/webhooks/some-uuid'
           end
 
           it "includes curies" do
             expect(subject[:_links][:curies]).to eq [{:name=>"pb", :href=>"http://example.org/doc/webhooks-{rel}", templated: true}]
           end
-
         end
-
       end
     end
   end
