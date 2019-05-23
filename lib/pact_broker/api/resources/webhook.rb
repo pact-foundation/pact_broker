@@ -33,7 +33,7 @@ module PactBroker
 
         def from_json
           if webhook
-            @webhook = webhook_service.update_by_uuid uuid, new_webhook
+            @webhook = webhook_service.update_by_uuid uuid, params_with_string_keys
             response.body = to_json
           else
             404

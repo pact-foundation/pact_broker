@@ -33,6 +33,56 @@ module PactBroker
         end
       end
 
+      describe ".update_by_uuid" do
+        before do
+          allow_any_instance_of(PactBroker::Webhooks::Repository).to receive(:find_by_uuid).and_return(existing_webhook)
+        end
+
+        let(:request) { PactBroker::Webhooks::WebhookRequestTemplate.new(password: 'password')}
+        let(:existing_webhook) { PactBroker::Domain::Webhook.new(request: request) }
+        let(:params) do
+          {
+            'request' => {
+              'url' => "http://url"
+            }
+          }
+        end
+
+        subject { Service.update_by_uuid("1234", params) }
+
+        context "when the webhook has a password and the incoming parameters do not contain a password" do
+          it "does not overwite the password" do
+            updated_webhook = nil
+            allow_any_instance_of(PactBroker::Webhooks::Repository).to receive(:update_by_uuid) do | instance, uuid, webhook |
+              updated_webhook = webhook
+              true
+            end
+            subject
+            expect(updated_webhook.request.password).to eq 'password'
+          end
+        end
+
+        context "the incoming parameters contain a password" do
+          let(:params) do
+            {
+              'request' => {
+                'password' => "updated"
+              }
+            }
+          end
+
+          it "updates the password" do
+            updated_webhook = nil
+            allow_any_instance_of(PactBroker::Webhooks::Repository).to receive(:update_by_uuid) do | instance, uuid, webhook |
+              updated_webhook = webhook
+              true
+            end
+            subject
+            expect(updated_webhook.request.password).to eq 'updated'
+          end
+        end
+      end
+
       describe ".trigger_webhooks" do
 
         let(:verification) { instance_double(PactBroker::Domain::Verification)}
