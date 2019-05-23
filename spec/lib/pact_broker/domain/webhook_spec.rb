@@ -20,8 +20,8 @@ module PactBroker
 
       subject(:webhook) { Webhook.new(request: request_template, consumer: consumer, provider: provider) }
 
-      describe "description" do
-        subject { webhook.description }
+      describe "scope_description" do
+        subject { webhook.scope_description }
 
         context "with a consumer and provider" do
           it { is_expected.to eq "A webhook for the pact between Consumer and Provider" }

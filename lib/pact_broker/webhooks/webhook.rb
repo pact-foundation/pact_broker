@@ -46,6 +46,7 @@ module PactBroker
       def to_domain
         Domain::Webhook.new(
           uuid: uuid,
+          description: description,
           consumer: consumer,
           provider: provider,
           events: events,
@@ -86,6 +87,7 @@ module PactBroker
       def self.properties_hash_from_domain webhook
         is_json_request_body = !(String === webhook.request.body || webhook.request.body.nil?) # Can't rely on people to set content type
         {
+          description: webhook.description,
           method: webhook.request.method,
           url: webhook.request.url,
           username: webhook.request.username,
@@ -97,7 +99,7 @@ module PactBroker
       end
     end
 
-    Webhook.plugin :timestamps, :update_on_create=>true
+    Webhook.plugin :timestamps, update_on_create: true
 
     class WebhookHeader < Sequel::Model
       associate(:many_to_one, :webhook, :class => "PactBroker::Repositories::Webhook", :key => :webhook_id, :primary_key => :id)

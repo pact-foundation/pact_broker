@@ -71,7 +71,7 @@ module PactBroker
           end
 
           it "logs that no webhook was found" do
-            expect(logger).to receive(:debug).with(/No webhook found/)
+            expect(logger).to receive(:debug).with(/No enabled webhooks found/)
             subject
           end
         end
