@@ -16,12 +16,7 @@ module PactBroker
           webhook_execution_result = webhook_service.test_execution(webhook, webhook_options)
           response.headers['Content-Type'] = 'application/hal+json;charset=utf-8'
           response.body = post_response_body webhook_execution_result
-          if webhook_execution_result.success?
-            true
-          else
-            response.headers[PactBroker::DO_NOT_ROLLBACK] = 'true'
-            500
-          end
+          true
         end
 
         def resource_exists?

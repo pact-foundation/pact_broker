@@ -75,9 +75,9 @@ module PactBroker
             context "when execution is not successful" do
               let(:success) { false }
 
-              it "returns a 500 JSON response" do
+              it "returns a 200 JSON response" do
                 subject
-                expect(last_response.status).to eq 500
+                expect(last_response.status).to eq 200
               end
 
               it "includes the execution result JSON in the body" do
