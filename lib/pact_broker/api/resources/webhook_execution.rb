@@ -6,7 +6,6 @@ require 'pact_broker/constants'
 module PactBroker
   module Api
     module Resources
-
       class WebhookExecution < BaseResource
 
         def allowed_methods
