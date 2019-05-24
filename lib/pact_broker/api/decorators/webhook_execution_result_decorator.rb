@@ -8,7 +8,6 @@ module PactBroker
       class WebhookExecutionResultDecorator < BaseDecorator
         class ErrorDecorator < BaseDecorator
           property :message
-          property :backtrace
         end
 
         class HTTPRequestDecorator < BaseDecorator

@@ -43,10 +43,6 @@ module PactBroker
             it "includes the message" do
               expect(subject[:error][:message]).to eq 'message'
             end
-
-            it "includes the backtrace" do
-              expect(subject[:error][:backtrace]).to eq ['blah','blah']
-            end
           end
 
           context "when there is a request" do

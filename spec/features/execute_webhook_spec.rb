@@ -82,8 +82,8 @@ describe "Execute a webhook" do
 
     subject { post path; last_response }
 
-    it "returns a 500 response" do
-      expect(subject.status).to be 500
+    it "returns a 200 response" do
+      expect(subject.status).to be 200
     end
 
     it "does not save a TriggeredWebhook" do
