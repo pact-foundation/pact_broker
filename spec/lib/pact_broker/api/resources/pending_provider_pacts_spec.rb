@@ -5,7 +5,7 @@ module PactBroker
     module Resources
       describe PendingProviderPacts do
         before do
-          allow(PactBroker::Pacts::Service).to receive(:find_pending_pact_versions_for_provider).and_return(pacts)
+          allow(PactBroker::Pacts::Service).to receive(:find_wip_pact_versions_for_provider).and_return(pacts)
           allow(PactBroker::Api::Decorators::ProviderPactsDecorator).to receive(:new).and_return(decorator)
           allow_any_instance_of(PendingProviderPacts).to receive(:resource_exists?).and_return(provider)
         end
@@ -18,7 +18,7 @@ module PactBroker
         subject { get path; last_response }
 
         it "finds the pending pacts for the provider" do
-          expect(PactBroker::Pacts::Service).to receive(:find_pending_pact_versions_for_provider).with("Bar")
+          expect(PactBroker::Pacts::Service).to receive(:find_wip_pact_versions_for_provider).with("Bar")
           subject
         end
 

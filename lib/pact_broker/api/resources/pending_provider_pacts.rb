@@ -9,7 +9,7 @@ module PactBroker
         private
 
         def pacts
-          pact_service.find_pending_pact_versions_for_provider provider_name
+          pact_service.find_wip_pact_versions_for_provider provider_name
         end
 
         def resource_title

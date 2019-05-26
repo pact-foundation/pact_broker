@@ -81,8 +81,8 @@ module PactBroker
         pact_repository.find_latest_pact_versions_for_provider provider_name, options[:tag]
       end
 
-      def find_pending_pact_versions_for_provider provider_name
-        pact_repository.find_pending_pact_versions_for_provider provider_name
+      def find_wip_pact_versions_for_provider provider_name
+        pact_repository.find_wip_pact_versions_for_provider provider_name
       end
 
       def find_pact_versions_for_provider provider_name, options = {}
