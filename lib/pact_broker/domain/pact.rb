@@ -1,11 +1,16 @@
 require 'pact_broker/db'
 require 'pact_broker/json'
 
+=begin
+This class most accurately represents a PactPublication
+=end
+
 module PactBroker
 
   module Domain
     class Pact
 
+      # The ID is the pact_publication ID
       attr_accessor :id, :provider, :consumer_version, :consumer, :created_at, :json_content, :consumer_version_number, :revision_number, :pact_version_sha, :latest_verification
 
       def initialize attributes

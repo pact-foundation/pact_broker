@@ -12,6 +12,7 @@ require 'pact_broker/domain'
 require 'pact_broker/pacts/parse'
 require 'pact_broker/matrix/head_row'
 require 'pact_broker/pacts/latest_pact_publication_id_by_consumer_version'
+require 'pact_broker/pacts/verifiable_pact'
 
 module PactBroker
   module Pacts
@@ -124,10 +125,32 @@ module PactBroker
         end
       end
 
-      def find_wip_pact_versions_for_provider provider_name
+      def find_wip_pact_versions_for_provider provider_name, provider_tags
+        return [] if provider_tags.empty?
         provider_id = pacticipant_repository.find_by_name(provider_name).id
-        pact_publication_ids = PactBroker::Matrix::HeadRow.where(provider_id: provider_id).exclude(success: true).select_for_subquery(:pact_publication_id)
-        AllPactPublications.where(id: pact_publication_ids).order_ignore_case(:consumer_name).order_append(:consumer_version_order).collect(&:to_domain)
+        successfully_verified_pact_publication_ids_for_each_tag = provider_tags.collect do | provider_tag |
+          ids = LatestTaggedPactPublications
+            .join(:verifications, { pact_version_id: :pact_version_id })
+            .join(:tags, { Sequel[:verifications][:provider_version_id] => Sequel[:provider_tags][:version_id] }, {table_alias: :provider_tags})
+            .where(Sequel[:provider_tags][:name] => provider_tag)
+            .provider(provider_name)
+            .where(Sequel[:verifications][:success] => true)
+            .select(Sequel[:latest_tagged_pact_publications][:id])
+            .collect(&:id)
+          [provider_tag, ids]
+        end
+
+        successfully_verified_pact_publication_ids_for_all_tags = successfully_verified_pact_publication_ids_for_each_tag.collect(&:last).reduce(:&)
+        pact_publication_ids = LatestTaggedPactPublications.provider(provider_name).exclude(id: successfully_verified_pact_publication_ids_for_all_tags).select_for_subquery(:id)
+
+        # pact_publication_ids = PactBroker::Matrix::HeadRow.where(provider_id: provider_id).exclude(success: true).select_for_subquery(:pact_publication_id)
+        pacts = AllPactPublications.where(id: pact_publication_ids).order_ignore_case(:consumer_name).order_append(:consumer_version_order).collect(&:to_domain)
+        pacts.collect do | pact|
+          pending_tags = successfully_verified_pact_publication_ids_for_each_tag.select do | (provider_tag, pact_publication_ids) |
+           !pact_publication_ids.include?(pact.id)
+          end.collect(&:first)
+          VerifiablePact.new(pact, true, pending_tags)
+        end
       end
 
       def find_pact_versions_for_provider provider_name, tag = nil

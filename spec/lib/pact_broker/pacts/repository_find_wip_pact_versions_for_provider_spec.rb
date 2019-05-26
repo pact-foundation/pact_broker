@@ -6,75 +6,105 @@ module PactBroker
       let(:td) { TestDataBuilder.new }
 
       describe "find_wip_pact_versions_for_provider" do
-        subject { Repository.new.find_wip_pact_versions_for_provider("bar") }
 
-        context "when the latest pact for a tag has been successfully verified" do
+        let(:provider_tags) { %w[dev] }
+        subject { Repository.new.find_wip_pact_versions_for_provider("bar", provider_tags) }
+
+        context "when there are no tags" do
+          let(:provider_tags) { [] }
+
+          it "returns an empty list" do
+            expect(subject).to eq []
+          end
+        end
+
+        context "when the latest pact for a tag has been successfully verified by the given provider tag" do
           before do
             td.create_pact_with_hierarchy("foo", "1", "bar")
               .comment("above not included because it's not the latest prod")
               .create_consumer_version("2")
               .create_consumer_version_tag("prod")
               .create_pact
-              .create_verification(provider_version: "3", comment: "not included because already verified")
+              .create_verification(provider_version: "3", tag_names: %w[dev], comment: "not included because already verified")
           end
+
+          let(:provider_tags) { %w[dev] }
 
           it "is not included" do
             expect(subject.size).to be 0
           end
         end
 
-        context "when the latest pact without a tag has failed verification" do
-          before do
-            td.create_pact_with_hierarchy("foo", "1", "bar")
-              .create_verification(provider_version: "3", success: false)
-          end
-
-          it "is included" do
-            expect(subject.size).to be 1
-          end
-        end
-
-        context "when the latest pact without a tag has not been verified" do
-          before do
-            td.create_pact_with_hierarchy("foo", "1", "bar")
-              .create_consumer_version("2")
-              .create_pact
-          end
-
-          it "is included" do
-            expect(subject.first.consumer_version_number).to eq "2"
-            expect(subject.size).to be 1
-          end
-        end
-
-        context "when the latest pact for a tag has failed verification" do
+        context "when the latest pact for a tag has been successfully verified by one of the given provider tags, but not the other" do
           before do
             td.create_pact_with_hierarchy("foo", "1", "bar")
               .create_consumer_version_tag("prod")
-              .create_verification(provider_version: "3", success: true)
-              .create_consumer_version("2", tag_names: ["prod"])
-              .create_pact
-              .create_verification(provider_version: "5", success: false)
+              .create_verification(provider_version: "3", tag_names: %w[dev], comment: "not included because already verified")
+          end
+
+          let(:provider_tags) { %w[dev feat-1] }
+
+          it "is included" do
+            expect(subject.size).to be 1
+          end
+
+          it "sets the pending tags to the tag that has not yet been verified" do
+            expect(subject.first.pending_provider_tags).to eq %w[feat-1]
+          end
+        end
+
+        context "when the latest pact for a tag has failed verification from the specified provider version" do
+          before do
+            td.create_pact_with_hierarchy("foo", "1", "bar")
+              .create_consumer_version_tag("feat-1")
+              .create_verification(provider_version: "3", success: false, tag_names: %[dev])
           end
 
           it "is included" do
-            expect(subject.first.consumer_version_number).to eq "2"
             expect(subject.size).to be 1
+          end
+
+          it "sets the pending tags" do
+            expect(subject.first.pending_provider_tags).to eq %w[dev]
+          end
+        end
+
+        context "when there are no consumer tags" do
+          before do
+            td.create_pact_with_hierarchy("foo", "1", "bar")
+              .create_verification(provider_version: "3", success: false, tag_names: %[dev])
+          end
+
+          it "returns an empty list" do
+            expect(subject).to eq []
+          end
+        end
+
+        context "when the latest pact for a tag has successful and failed verifications" do
+          before do
+            td.create_pact_with_hierarchy("foo", "1", "bar")
+              .create_consumer_version_tag("dev")
+              .create_verification(provider_version: "3", success: true, tag_names: %[dev])
+              .create_verification(provider_version: "5", success: false, number: 2, tag_names: %[dev])
+          end
+
+          it "is not included, but maybe it should be? can't really work out a scenario where this is likely to happen" do
+            expect(subject).to eq []
           end
         end
 
         context "when the latest pact for a tag has not been verified" do
           before do
             td.create_pact_with_hierarchy("foo", "1", "bar")
-              .create_consumer_version_tag("prod")
-              .create_verification(provider_version: "5")
-              .create_consumer_version("2", tag_names: ["prod"])
-              .create_pact
+              .create_consumer_version_tag("dev")
           end
 
           it "is included" do
-            expect(subject.first.consumer_version_number).to eq "2"
             expect(subject.size).to be 1
+          end
+
+          it "sets the pending tags" do
+            expect(subject.first.pending_provider_tags).to eq %w[dev]
           end
         end
 
