@@ -122,7 +122,7 @@ module PactBroker
         @http_request ||= begin
           req = Net::HTTP.const_get(method.capitalize).new(url)
           headers.each_pair { | name, value | req[name] = value }
-          req.basic_auth(username, password) if username
+          req.basic_auth(username, password) if username && username.size > 0
           req.body = body unless body.nil?
           req
         end
