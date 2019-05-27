@@ -196,6 +196,13 @@ module PactBroker
       end
 
       describe "update_by_uuid" do
+        before do
+          td.create_consumer("Foo")
+            .create_provider
+            .create_webhook(old_webhook_params)
+            .create_consumer("Foo2")
+        end
+
         let(:uuid) { '1234' }
         let(:old_webhook_params) do
           {
@@ -209,7 +216,7 @@ module PactBroker
             password: 'password'
           }
         end
-        let(:new_webhook_params) do
+        let(:new_request_webhook_params) do
           {
             method: 'GET',
             url: 'http://example.com',
@@ -217,16 +224,17 @@ module PactBroker
             headers: {'Content-Type' => 'text/plain'}
           }
         end
+        let(:new_request) { PactBroker::Domain::WebhookRequest.new(new_request_webhook_params) }
         let(:new_event) do
           PactBroker::Webhooks::WebhookEvent.new(name: 'something_else')
         end
-        before do
-          td.create_consumer
-            .create_provider
-            .create_webhook(old_webhook_params)
-        end
+        let(:new_consumer) { PactBroker::Domain::Pacticipant.new(name: "Foo2") }
         let(:new_webhook) do
-          PactBroker::Domain::Webhook.new(events: [new_event], request: PactBroker::Domain::WebhookRequest.new(new_webhook_params))
+          PactBroker::Domain::Webhook.new(
+            consumer: new_consumer,
+            events: [new_event],
+            request: new_request
+          )
         end
 
         subject { Repository.new.update_by_uuid(uuid, new_webhook) }
@@ -241,6 +249,7 @@ module PactBroker
           expect(updated_webhook.request.username).to eq nil
           expect(updated_webhook.request.password).to eq nil
           expect(updated_webhook.events.first.name).to eq 'something_else'
+          expect(updated_webhook.consumer.name).to eq "Foo2"
         end
       end
 
