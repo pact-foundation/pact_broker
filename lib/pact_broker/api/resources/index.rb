@@ -94,10 +94,10 @@ module PactBroker
               title: 'Integrations',
               templated: false
             },
-            'beta:pending-provider-pacts' =>
+            'beta:provider-pacts-for-verification' =>
             {
-              href: base_url + '/pacts/provider/{provider}/pending',
-              title: 'Pending pact versions for the specified provider',
+              href: base_url + '/pacts/provider/{provider}/for-verification',
+              title: 'Pact versions to be verified for the specified provider',
               templated: true
             },
             'curies' =>
