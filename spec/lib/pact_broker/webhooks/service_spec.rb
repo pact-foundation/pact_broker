@@ -38,7 +38,9 @@ module PactBroker
           allow_any_instance_of(PactBroker::Webhooks::Repository).to receive(:find_by_uuid).and_return(existing_webhook)
         end
 
-        let(:request) { PactBroker::Webhooks::WebhookRequestTemplate.new(password: 'password')}
+        let(:request) { PactBroker::Webhooks::WebhookRequestTemplate.new(password: existing_password, headers: headers)}
+        let(:existing_password) { nil }
+        let(:headers) { {} }
         let(:existing_webhook) { PactBroker::Domain::Webhook.new(request: request) }
         let(:params) do
           {
@@ -50,7 +52,19 @@ module PactBroker
 
         subject { Service.update_by_uuid("1234", params) }
 
+        it "sends through the params to the repository" do
+          updated_webhook = nil
+          allow_any_instance_of(PactBroker::Webhooks::Repository).to receive(:update_by_uuid) do | instance, uuid, webhook |
+            updated_webhook = webhook
+            true
+          end
+          subject
+          expect(updated_webhook.request.url).to eq 'http://url'
+        end
+
         context "when the webhook has a password and the incoming parameters do not contain a password" do
+          let(:existing_password) { 'password' }
+
           it "does not overwite the password" do
             updated_webhook = nil
             allow_any_instance_of(PactBroker::Webhooks::Repository).to receive(:update_by_uuid) do | instance, uuid, webhook |
@@ -59,6 +73,52 @@ module PactBroker
             end
             subject
             expect(updated_webhook.request.password).to eq 'password'
+          end
+        end
+
+        context "when the webhook has a password and the incoming parameters contain a *** password" do
+          let(:existing_password) { 'password' }
+          let(:params) do
+            {
+              'request' => {
+                'url' => 'http://url',
+                'password' => '*******'
+              }
+            }
+          end
+
+          it "does not overwite the password" do
+            updated_webhook = nil
+            allow_any_instance_of(PactBroker::Webhooks::Repository).to receive(:update_by_uuid) do | instance, uuid, webhook |
+              updated_webhook = webhook
+              true
+            end
+            subject
+            expect(updated_webhook.request.password).to eq 'password'
+          end
+        end
+
+        context "when the webhook has an authorization header and the incoming parameters contain a *** authorization header" do
+          let(:headers) { { 'Authorization' => 'existing'} }
+          let(:params) do
+            {
+              'request' => {
+                'url' => "http://url",
+                'headers' => {
+                  'authorization' => "***********"
+                }
+              }
+            }
+          end
+
+          it "does not overwite the authorization header" do
+            updated_webhook = nil
+            allow_any_instance_of(PactBroker::Webhooks::Repository).to receive(:update_by_uuid) do | instance, uuid, webhook |
+              updated_webhook = webhook
+              true
+            end
+            subject
+            expect(updated_webhook.request.headers['Authorization']).to eq 'existing'
           end
         end
 

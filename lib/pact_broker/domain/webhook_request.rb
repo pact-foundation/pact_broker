@@ -9,6 +9,7 @@ require 'pact_broker/api/pact_broker_urls'
 require 'pact_broker/build_http_options'
 require 'cgi'
 require 'delegate'
+require 'rack/utils'
 
 module PactBroker
 

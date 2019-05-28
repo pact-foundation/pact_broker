@@ -43,13 +43,7 @@ module PactBroker
 
       def self.update_by_uuid uuid, params
         webhook = webhook_repository.find_by_uuid(uuid)
-        # Dirty hack to maintain existing password if it is not submitted
-        # This is required because the password is not returned in the API response
-        # for security purposes, so it needs to be re-entered with every response.
-        # TODO implement proper 'secrets' management.
-        if webhook.request.password && !params['request'].key?('password')
-          params['request']['password'] = webhook.request.password
-        end
+        maintain_redacted_params(webhook, params)
         PactBroker::Api::Decorators::WebhookDecorator.new(webhook).from_hash(params)
         webhook_repository.update_by_uuid uuid, webhook
       end
@@ -170,6 +164,31 @@ module PactBroker
 
       def self.find_triggered_webhooks_for_verification verification
         webhook_repository.find_triggered_webhooks_for_verification(verification)
+      end
+
+      private
+
+      # Dirty hack to maintain existing password or Authorization header if it is submitted with value ****
+      # This is required because the password and Authorization header is **** out in the API response
+      # for security purposes, so it would need to be re-entered with every response.
+      # TODO implement proper 'secrets' management.
+      def self.maintain_redacted_params(webhook, params)
+        if webhook.request.password && password_key_does_not_exist_or_is_starred?(params)
+          params['request']['password'] = webhook.request.password
+        end
+
+        new_headers = params['request']['headers'] ||= {}
+        existing_headers = webhook.request.headers
+        starred_new_headers = new_headers.select { |key, value| value =~ /^\**$/ }
+        starred_new_headers.each do | (key, value) |
+          new_headers[key] = existing_headers[key]
+        end
+        params['request']['headers'] = new_headers
+        params
+      end
+
+      def self.password_key_does_not_exist_or_is_starred?(params)
+        !params['request'].key?('password') || params.dig('request','password') =~ /^\**$/
       end
     end
   end

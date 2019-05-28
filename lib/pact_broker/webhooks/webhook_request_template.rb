@@ -22,7 +22,7 @@ module PactBroker
         @url = attributes[:url]
         @username = attributes[:username]
         @password = attributes[:password]
-        @headers = attributes[:headers] || {}
+        @headers = Rack::Utils::HeaderHash.new(attributes[:headers] || {})
         @body = attributes[:body]
         @uuid = attributes[:uuid]
       end
@@ -62,6 +62,10 @@ module PactBroker
           redact = HEADERS_TO_REDACT.any?{ | pattern | name =~ pattern }
           new_headers[name] = redact ? "**********" : value
         end
+      end
+
+      def headers= headers
+        @headers = Rack::Utils::HeaderHash.new(headers)
       end
 
       private
