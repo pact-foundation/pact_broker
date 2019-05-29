@@ -115,7 +115,9 @@ module PactBroker
         pact_repository
           .find_for_verification(provider_name, consumer_version_selectors)
           .collect do | pact |
-            VerifiablePact.new(pact, pact.pending?(provider_version_tags))
+            # TODO must be only the latest tags
+            # TODO populate the provider version tags properly
+            VerifiablePact.new(pact, pact.pending?(provider_version_tags), provider_version_tags, pact.consumer_version_tag_names)
           end
       end
 

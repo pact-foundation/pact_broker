@@ -9,7 +9,11 @@ module PactBroker
         end
         let(:expected_hash) do
           {
-            "pending" => true,
+            "verificationProperties" => {
+              "pending" => true,
+              "pendingReason" => Pact.like("message"),
+              "inclusionReason" => Pact.like("message")
+            },
             "_links" => {
               "self" => {
                 "href" => "/pact-version-url",
@@ -20,7 +24,16 @@ module PactBroker
         end
 
         let(:decorator) { VerifiablePactDecorator.new(pact) }
-        let(:pact) { double('pact', pending: true, name: "name") }
+        let(:pact) do
+          double('pact',
+            pending: true,
+            name: "name",
+            provider_name: "Bar",
+            pending_provider_tags: pending_provider_tags,
+            consumer_tags: consumer_tags)
+        end
+        let(:pending_provider_tags) { %w[dev] }
+        let(:consumer_tags) { %w[dev] }
         let(:json) { decorator.to_json(options) }
         let(:options) { { user_options: { base_url: 'http://example.org' } } }
 

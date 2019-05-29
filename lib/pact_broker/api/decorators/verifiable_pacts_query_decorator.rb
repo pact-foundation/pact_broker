@@ -12,6 +12,15 @@ module PactBroker
           property :tag
           property :latest, default: true
         end
+
+
+        def from_hash(*args)
+          # Should remember how to do this via Representable...
+          result = super
+          result.consumer_version_selectors = [] if result.consumer_version_selectors.nil?
+          result.provider_version_tags = [] if result.provider_version_tags.nil?
+          result
+        end
       end
     end
   end

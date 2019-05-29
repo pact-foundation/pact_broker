@@ -125,7 +125,7 @@ module PactBroker
         end
       end
 
-      def find_wip_pact_versions_for_provider provider_name, provider_tags
+      def find_wip_pact_versions_for_provider provider_name, provider_tags = []
         return [] if provider_tags.empty?
         provider_id = pacticipant_repository.find_by_name(provider_name).id
         successfully_verified_pact_publication_ids_for_each_tag = provider_tags.collect do | provider_tag |
@@ -149,7 +149,7 @@ module PactBroker
           pending_tags = successfully_verified_pact_publication_ids_for_each_tag.select do | (provider_tag, pact_publication_ids) |
            !pact_publication_ids.include?(pact.id)
           end.collect(&:first)
-          VerifiablePact.new(pact, true, pending_tags)
+          VerifiablePact.new(pact, true, pending_tags, pact.consumer_version_tag_names)
         end
       end
 

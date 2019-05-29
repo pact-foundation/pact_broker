@@ -22,6 +22,14 @@ module PactBroker
             expect(subject.consumer_version_selectors.first.latest).to be true
           end
         end
+
+        context "when there are no consumer_version_selectors" do
+          let(:params) { {} }
+
+          it "returns an empty array" do
+            expect(subject.consumer_version_selectors).to eq []
+          end
+        end
       end
     end
   end
