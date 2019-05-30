@@ -4,6 +4,9 @@ I have already (please mark the applicable with an `x`):
 
 * [ ] Upgraded to the latest Pact Broker OR
 * [ ] Checked the CHANGELOG to see if the issue I am about to raise has been fixed
+* [ ] Created an executable example that demonstrates the issue using either a:
+  * Dockerfile
+  * Git repository with a Travis or Appveyor (or similar) build
 
 ## Software versions
 
