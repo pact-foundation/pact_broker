@@ -1,3 +1,43 @@
+<a name="v2.32.0"></a>
+### v2.32.0 (2019-05-28)
+
+
+#### Features
+
+* **webhooks**
+  * maintain starred out Authorization header value	 ([cc978582](/../../commit/cc978582))
+  * don't use username if empty string	 ([9327271d](/../../commit/9327271d))
+  * do not show backtrace in webhook test execution response	 ([c8a8194e](/../../commit/c8a8194e))
+  * return a 200 status for webhook test execution response even when execution has failed	 ([d90c4552](/../../commit/d90c4552))
+  * do not require basic auth password to be re-submitted when a webhook is updated - maintain existing value if not present	 ([55d7f4ad](/../../commit/55d7f4ad))
+  * allow description to be edited	 ([302d70f6](/../../commit/302d70f6))
+  * only trigger enabled webhooks	 ([cb2b0321](/../../commit/cb2b0321))
+  * add enabled column to model and database schema	 ([ce452ec8](/../../commit/ce452ec8))
+
+* add metadata to webhook and verification URLs to correctly track relevant versions and tags (#274)	 ([426b0b19](/../../commit/426b0b19))
+* add group url to /integrations _links	 ([e2584f53](/../../commit/e2584f53))
+* add matrix URL to /integration _links	 ([344d3e18](/../../commit/344d3e18))
+* allow dashboard resource to be filtered by consumer/provider	 ([a2408520](/../../commit/a2408520))
+* add hal+json endpoint for listing integrations	 ([40f3e021](/../../commit/40f3e021))
+* allow a custom API to be configured	 ([1c371163](/../../commit/1c371163))
+
+* **webhook**
+  * show user specified description instead of generated one in collection resource	 ([2643d957](/../../commit/2643d957))
+
+* **matrix**
+  * do not default to latestby=cvpv for consumer/provider matrix	 ([742d506c](/../../commit/742d506c))
+
+
+#### Bug Fixes
+
+* **webhooks**
+  * correctly set updated consumer and provider	 ([d865a429](/../../commit/d865a429))
+
+* default matrix limit for /matrix/provider/PROVIDER/consumer/CONSUMER endpoint to 100	 ([7ccc9b6f](/../../commit/7ccc9b6f))
+* gracefully handle situation where webhook is deleted before execution	 ([634ccd53](/../../commit/634ccd53))
+* duplicate key value violates unique constraint uq_ver_ppt_ord	 ([4303e4f7](/../../commit/4303e4f7))
+
+
 <a name="v2.31.0"></a>
 ### v2.31.0 (2019-04-30)
 
