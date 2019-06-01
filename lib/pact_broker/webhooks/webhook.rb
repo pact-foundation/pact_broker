@@ -129,6 +129,8 @@ end
 #  updated_at           | timestamp without time zone |
 #  username             | text                        |
 #  password             | text                        |
+#  enabled              | boolean                     | DEFAULT true
+#  description          | text                        |
 # Indexes:
 #  webhooks_pkey   | PRIMARY KEY btree (id)
 #  uq_webhook_uuid | UNIQUE btree (uuid)

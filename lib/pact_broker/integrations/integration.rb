@@ -8,3 +8,10 @@ module PactBroker
     end
   end
 end
+
+# Table: integrations
+# Columns:
+#  consumer_id   | integer |
+#  consumer_name | text    |
+#  provider_id   | integer |
+#  provider_name | text    |
