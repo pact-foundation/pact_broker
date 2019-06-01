@@ -34,7 +34,7 @@ module PactBroker
     ]
 
     attr_accessor :log_dir, :database_connection, :auto_migrate_db, :auto_migrate_db_data, :example_data_seeder, :seed_example_data, :use_hal_browser, :html_pact_renderer, :use_rack_protection
-    attr_accessor :validate_database_connection_config, :enable_diagnostic_endpoints, :version_parser, :sha_generator
+    attr_accessor :validate_database_connection_config, :enable_diagnostic_endpoints, :version_parser, :sha_generator, :secrets_encryption_key_finder
     attr_accessor :use_case_sensitive_resource_names, :order_versions_by_date
     attr_accessor :check_for_potential_duplicate_pacticipant_names
     attr_accessor :webhook_retry_schedule
@@ -58,6 +58,7 @@ module PactBroker
     def self.default_configuration
       require 'pact_broker/versions/parse_semantic_version'
       require 'pact_broker/pacts/generate_sha'
+      require 'pact_broker/secrets/environment_variable_encryption_key_finder'
 
       config = Configuration.new
       config.log_dir = File.expand_path("./log")
@@ -73,6 +74,7 @@ module PactBroker
       config.html_pact_renderer = default_html_pact_render
       config.version_parser = PactBroker::Versions::ParseSemanticVersion
       config.sha_generator = PactBroker::Pacts::GenerateSha
+      config.secrets_encryption_key_finder = PactBroker::Secrets::EnvironmentVariableEncryptionKeyFinder
       config.seed_example_data = true
       config.example_data_seeder = lambda do
         require 'pact_broker/db/seed_example_data'
