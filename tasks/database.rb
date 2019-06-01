@@ -96,6 +96,18 @@ module PactBroker
       end
     end
 
+    def wait_for_database
+      tries = 0
+      begin
+        database
+      rescue StandardError => e
+        tries += 1
+        sleep 1
+        retry if tries < 10
+        raise e
+      end
+    end
+
     private
 
     def ordered_tables
