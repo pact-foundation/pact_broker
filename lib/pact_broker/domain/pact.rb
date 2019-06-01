@@ -12,7 +12,6 @@ module PactBroker
 
       # The ID is the pact_publication ID
       attr_accessor :id, :provider, :consumer_version, :consumer, :created_at, :json_content, :consumer_version_number, :revision_number, :pact_version_sha, :latest_verification
-
       def initialize attributes
         attributes.each_pair do | key, value |
           self.send(key.to_s + "=", value)
@@ -33,6 +32,31 @@ module PactBroker
 
       def consumer_version_tag_names
         consumer_version.tags.collect(&:name)
+      end
+
+      # # The names of the tags for which this pact is the latest of that tag.
+      # # eg. a version could be tagged with 'dev' and 'prod', but there is a later
+      # # version with tag 'dev', so this is only the latest 'prod' pact, not the latest 'dev'
+      # # pact.
+      # # It will only be set when loading the pact via the LatestTaggedPactPublications table
+      # # or LatestPactPublications
+      # # This is really yucky code. Should work out how to do it more elegantly.
+      # # Decorator?
+      # def latest_consumer_version_tag_names
+      #   if @latest_consumer_version_tag_names.nil?
+      #     raise "latest_consumer_version_tag_names not set"
+      #   else
+      #     @latest_consumer_version_tag_names
+      #   end
+      # end
+
+      # def add_latest_consumer_version_tag_name tag_name
+      #   @latest_consumer_version_tag_names ||= []
+      #   @latest_consumer_version_tag_names << tag_name unless tag_name.nil? # for LatestPactPublications
+      # end
+
+      def latest_consumer_version_tag_names= latest_consumer_version_tag_names
+        @latest_consumer_version_tag_names = latest_consumer_version_tag_names
       end
 
       def to_s
@@ -60,7 +84,7 @@ module PactBroker
       end
 
       def pending?(provider_version_tags)
-        if provider_version_tags.any?
+        if provider_version_tags && provider_version_tags.any?
           !db_model.pact_version.verified_successfully_by_provider_version_with_all_tags?(provider_version_tags)
         else
           !db_model.pact_version.verified_successfully_by_any_provider_version?

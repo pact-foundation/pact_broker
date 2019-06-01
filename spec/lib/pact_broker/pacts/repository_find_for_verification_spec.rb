@@ -22,15 +22,14 @@ module PactBroker
             .create_consumer("Baz")
             .create_consumer_version("baz-latest-dev", tag_names: ["dev"])
             .create_pact
-
         end
 
-        subject { Repository.new.find_for_verification("Bar", pact_selectors) }
+        subject { Repository.new.find_for_verification("Bar", consumer_version_selectors) }
 
-        context "when tag names are specified" do
+        context "when consumer tag names are specified" do
           let(:pact_selector_1) { double('selector', tag: 'dev', latest: true) }
           let(:pact_selector_2) { double('selector', tag: 'prod', latest: true) }
-          let(:pact_selectors) do
+          let(:consumer_version_selectors) do
             [pact_selector_1, pact_selector_2]
           end
 
@@ -40,15 +39,24 @@ module PactBroker
             expect(find_by_consumer_version_number("baz-latest-dev")).to_not be nil
             expect(subject.size).to eq 3
           end
+
+          it "sets the latest_consumer_version_tag_names" do
+            expect(find_by_consumer_version_number("bar-latest-prod").head_tag).to eq 'prod'
+          end
         end
 
         context "when no selectors are specified" do
-          let(:pact_selectors) { [] }
+          let(:consumer_version_selectors) { [] }
 
           it "returns the latest pact for each provider" do
             expect(find_by_consumer_version_number("bar-latest-dev")).to_not be nil
             expect(find_by_consumer_version_number("baz-latest-dev")).to_not be nil
             expect(subject.size).to eq 2
+          end
+
+          it "does not set the tag name" do
+            expect(find_by_consumer_version_number("bar-latest-dev").head_tag).to be nil
+            expect(find_by_consumer_version_number("bar-latest-dev").overall_latest?).to be true
           end
         end
       end

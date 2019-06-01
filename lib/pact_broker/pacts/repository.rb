@@ -286,6 +286,7 @@ module PactBroker
         end
       end
 
+      # Returns a list of Domain::Pact objects the represent pact publications
       def find_for_verification(provider_name, consumer_version_selectors)
         latest_tags = consumer_version_selectors.any? ?
           consumer_version_selectors.select(&:latest).collect(&:tag) :

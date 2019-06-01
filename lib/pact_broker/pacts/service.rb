@@ -114,10 +114,24 @@ module PactBroker
       def find_for_verification(provider_name, provider_version_tags, consumer_version_selectors)
         pact_repository
           .find_for_verification(provider_name, consumer_version_selectors)
-          .collect do | pact |
-            # TODO must be only the latest tags
-            # TODO populate the provider version tags properly
-            VerifiablePact.new(pact, pact.pending?(provider_version_tags), provider_version_tags, pact.consumer_version_tag_names)
+          .group_by(&:pact_version_sha)
+          .collect do | pact_version_sha, head_pacts |
+
+            domain_pact = head_pacts.first.pact
+            pending_provider_tags = []
+            pending = nil
+            if provider_version_tags.any?
+              pending_provider_tags = provider_version_tags.select do | provider_version_tag |
+                pact.pending?([provider_version_tag])
+              end
+              pending = pending_provider_tags.any?
+            else
+              pending = pact.pending?
+            end
+
+            head_consumer_tags = head_pacts.collect(&:head_tag)
+            overall_latest = head_consumer_tags.include?(nil)
+            VerifiablePact.new(domain_pact, pending, pending_provider_tags, head_consumer_tags.compact, overall_latest)
           end
       end
 
