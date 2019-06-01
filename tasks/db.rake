@@ -97,11 +97,33 @@ namespace :db do
   end
 
   desc 'Annotate the Sequel domain classes with schema information'
-  task :annotate =>['db:set_postgres_database_adapter', 'db:migrate'] do
-    load 'tasks/database/annotate.rb'
-    require 'pact_broker/db'
-    PactBroker::DB.connection = PactBroker::Database.database
-    PactBroker::Annotate.call
+  task :annotate =>['db:set_postgres_database_adapter'] do
+    begin
+      ENV['RACK_ENV'] = 'test'
+      ENV['DATABASE_ADAPTER'] = 'docker_postgres'
+      load 'tasks/database.rb'
+      load 'tasks/docker_database.rb'
+      DockerDatabase.stop_and_remove("postgres-for-annotate")
+      DockerDatabase.start(name: "postgres-for-annotate", port: "5433")
+      sleep 3 # wait for container to come up
+      PactBroker::Database.migrate
+      load 'tasks/database/annotate.rb'
+      require 'pact_broker/db'
+      PactBroker::DB.connection = PactBroker::Database.database
+      PactBroker::Annotate.call
+    ensure
+      DockerDatabase.stop_and_remove("postgres-for-annotate")
+    end
+  end
+
+  task 'docker:start' do
+    load 'tasks/docker_database.rb'
+    DockerDatabase.start(name: "postgres-for-pact-broker", port: "5433")
+  end
+
+  task 'docker:stop' do
+    load 'tasks/docker_database.rb'
+    DockerDatabase.stop_and_remove("postgres-for-pact-broker")
   end
 
   # task :create => 'db:env' do

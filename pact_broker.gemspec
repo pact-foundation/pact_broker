@@ -81,4 +81,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'timecop', '~> 0.9'
   gem.add_development_dependency 'sequel-annotate', '~>1.3'
   gem.add_development_dependency 'faraday', '~>0.15'
+  gem.add_development_dependency 'docker-api', '~>1.34'
 end
