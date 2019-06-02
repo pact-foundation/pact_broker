@@ -1,6 +1,6 @@
 require 'pact_broker/build_http_options'
 require 'pact_broker/domain/webhook_request_header'
-require 'pact_broker/domain/webhook_execution_result'
+require 'pact_broker/webhooks/webhook_execution_result'
 require 'pact_broker/logging'
 require 'pact_broker/messages'
 require 'net/http'

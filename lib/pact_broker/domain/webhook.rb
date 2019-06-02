@@ -63,7 +63,7 @@ module PactBroker
           error = e
         end
 
-        WebhookExecutionResult.new(
+        PactBroker::Webhooks::WebhookExecutionResult.new(
           webhook_request.http_request,
           http_response,
           generate_logs(webhook_request, http_response, error, options.fetch(:logging_options)),
