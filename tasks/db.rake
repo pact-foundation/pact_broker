@@ -21,7 +21,6 @@ namespace :db do
   task :env => ['bundler:setup'] do
     # Require RACK_ENV to be set for tasks that will be called in production
     raise "Please specify RACK_ENV" unless ENV['RACK_ENV']
-    RACK_ENV = ENV['RACK_ENV']
     require File.dirname(__FILE__) + '/database.rb'
   end
 
