@@ -28,25 +28,26 @@ module PactBroker
       end
 
       def build(context)
+        template_params = PactBroker::Webhooks::PactAndVerificationParameters.new(context[:pact], context[:verification], context[:webhook_context]).to_hash
         attributes = {
           method: http_method,
-          url: build_url(context[:pact], context[:verification], context[:webhook_context]),
+          url: build_url(template_params),
           headers: headers,
           username: username,
           password: password,
           uuid: uuid,
-          body: build_body(context[:pact], context[:verification], context[:webhook_context])
+          body: build_body(template_params)
         }
         PactBroker::Domain::WebhookRequest.new(attributes)
       end
 
-      def build_url(pact, verification, webhook_context)
-        URI(PactBroker::Webhooks::Render.call(url, pact, verification, webhook_context){ | value | CGI::escape(value) if !value.nil? } ).to_s
+      def build_url(template_params)
+        URI(PactBroker::Webhooks::Render.call(url, template_params){ | value | CGI::escape(value) if !value.nil? } ).to_s
       end
 
-      def build_body(pact, verification, webhook_context)
+      def build_body(template_params)
         body_string = String === body ? body : body.to_json
-        PactBroker::Webhooks::Render.call(body_string, pact, verification, webhook_context)
+        PactBroker::Webhooks::Render.call(body_string, template_params)
       end
 
       def description

@@ -38,11 +38,15 @@ module PactBroker
           allow(PactBroker::Webhooks::Render).to receive(:call) do | content, pact, verification, &block |
             content + "BUILT"
           end
+
+          allow(PactAndVerificationParameters).to receive(:new).and_return(pact_and_verification_parameters)
         end
 
+        let(:pact_and_verification_parameters) { instance_double(PactAndVerificationParameters, to_hash: params_hash)}
+        let(:params_hash) { double('params hash') }
         let(:pact) { double('pact') }
         let(:verification) { double('verification') }
-        let(:webhook_context) { { some: "context" } }
+        let(:webhook_context) { { some: "context", base_url: base_url } }
         let(:template_context) do
           {
             pact: pact,
@@ -52,8 +56,13 @@ module PactBroker
         end
         subject { WebhookRequestTemplate.new(attributes).build(template_context) }
 
+        it "creates the template parameters" do
+          expect(PactAndVerificationParameters).to receive(:new).with(pact, verification, webhook_context)
+          subject
+        end
+
         it "renders the url template" do
-          expect(PactBroker::Webhooks::Render).to receive(:call).with(url, pact, verification, webhook_context) do | content, pact, verification, &block |
+          expect(PactBroker::Webhooks::Render).to receive(:call).with(url, params_hash) do | content, pact, verification, &block |
             expect(content).to eq url
             expect(pact).to be pact
             expect(verification).to be verification
@@ -67,7 +76,7 @@ module PactBroker
           let(:body) { 'body' }
 
           it "renders the body template with the String" do
-            expect(PactBroker::Webhooks::Render).to receive(:call).with('body', pact, verification, webhook_context)
+            expect(PactBroker::Webhooks::Render).to receive(:call).with('body', params_hash)
             subject
           end
         end
@@ -76,7 +85,7 @@ module PactBroker
           let(:request_body_string) { '{"foo":"bar"}' }
 
           it "renders the body template with JSON" do
-            expect(PactBroker::Webhooks::Render).to receive(:call).with(request_body_string, pact, verification, webhook_context)
+            expect(PactBroker::Webhooks::Render).to receive(:call).with(request_body_string, params_hash)
             subject
           end
         end

@@ -1,6 +1,8 @@
 require 'pact_broker/webhooks/render'
 require 'pact_broker/pacts/placeholder_pact'
 require 'pact_broker/verifications/placeholder_verification'
+require 'pact_broker/webhooks/pact_and_verification_parameters'
+
 require 'cgi'
 
 module PactBroker
@@ -124,7 +126,8 @@ module PactBroker
             it "replaces #{template} with #{expected_output.inspect}" do
               the_pact = send(pact_var_name)
               the_verification = send(verification_var_name)
-              output = Render.call(template, the_pact, the_verification, webhook_context)
+              template_parameters = PactAndVerificationParameters.new(the_pact, the_verification, webhook_context).to_hash
+              output = Render.call(template, template_parameters)
               expect(output).to eq expected_output
             end
           end
@@ -132,7 +135,8 @@ module PactBroker
 
         context "with an escaper" do
           subject do
-            Render.call(template, pact, verification, webhook_context) do | value |
+            template_parameters = PactAndVerificationParameters.new(pact, verification, webhook_context).to_hash
+            Render.call(template, template_parameters) do | value |
               CGI.escape(value)
             end
           end
@@ -147,19 +151,24 @@ module PactBroker
           let(:webhook_context) do
             {
               consumer_version_number: "webhook-version-number",
-              consumer_version_tags: %w[webhook tags]
+              consumer_version_tags: %w[webhook tags],
+              base_url: base_url
+
             }
+          end
+          let(:template_parameters) do
+            PactAndVerificationParameters.new(pact, verification, webhook_context).to_hash
           end
 
           it "uses the consumer_version_number in preference to the field on the domain models" do
             template = "${pactbroker.consumerVersionNumber}"
-            output = Render.call(template, pact, verification, webhook_context)
+            output = Render.call(template, template_parameters)
             expect(output).to eq "webhook-version-number"
           end
 
           it "uses the consumer_version_tags in preference to the field on the domain models" do
             template = "${pactbroker.consumerVersionTags}"
-            output = Render.call(template, pact, verification, webhook_context)
+            output = Render.call(template, template_parameters)
             expect(output).to eq "webhook, tags"
           end
         end
@@ -170,12 +179,18 @@ module PactBroker
         let(:placeholder_verification) { PactBroker::Verifications::PlaceholderVerification.new }
         let(:base_url) { "http://broker" }
 
+        let(:template_parameters) do
+          PactAndVerificationParameters.new(placeholder_pact, nil, { base_url: base_url }).to_hash
+        end
+
         it "does not blow up with a placeholder pact" do
-          Render.call("", placeholder_pact, nil, {})
+          template_parameters = PactAndVerificationParameters.new(placeholder_pact, nil, { base_url: base_url }).to_hash
+          Render.call("", template_parameters)
         end
 
         it "does not blow up with a placeholder verification" do
-          Render.call("", placeholder_pact, placeholder_verification, {})
+          template_parameters = PactAndVerificationParameters.new(placeholder_pact, placeholder_verification, { base_url: base_url }).to_hash
+          Render.call("", template_parameters)
         end
       end
     end

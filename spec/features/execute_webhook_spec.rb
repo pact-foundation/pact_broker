@@ -22,7 +22,7 @@ describe "Execute a webhook" do
       stub_request(:post, /http/).with(body: expected_webhook_url).to_return(:status => 200, body: response_body)
     end
 
-    let(:expected_webhook_url) { %r{http://example.org/pacts/provider/Bar/consumer/Foo/pact-version/.*/metadata/Y29uc3VtZXJfdmVyc2lvbl9udW1iZXI9MQ==} }
+    let(:expected_webhook_url) { %r{http://example.org/pacts/provider/Bar/consumer/Foo/pact-version/.*/metadata/.*} }
     let(:response_body) { "webhook-response-body" }
 
     it "performs the HTTP request" do
