@@ -27,7 +27,6 @@ module PactBroker
       let(:provider) { td.create_pacticipant 'Provider'; td.pacticipant}
       let(:uuid) { 'the-uuid' }
       let(:created_webhook_record) { ::DB::PACT_BROKER_DB[:webhooks].order(:id).last }
-      let(:created_headers) { ::DB::PACT_BROKER_DB[:webhook_headers].where(webhook_id: created_webhook_record[:id]).order(:name).all }
       let(:created_events) { ::DB::PACT_BROKER_DB[:webhook_events].where(webhook_id: created_webhook_record[:id]).order(:name).all }
       let(:expected_webhook_record) do
         {
@@ -50,19 +49,14 @@ module PactBroker
           expect(created_webhook_record).to include expected_webhook_record
         end
 
-        it "saves the headers" do
+        it "saves the webhook headers as JSON" do
           subject
-          expect(created_headers.size).to eq 2
-          expect(created_headers.first[:name]).to eq "Accept"
-          expect(created_headers.first[:value]).to eq "application/json"
-          expect(created_headers.last[:name]).to eq "Content-Type"
-          expect(created_headers.last[:value]).to eq "application/json"
+          expect(JSON.parse(created_webhook_record[:headers])).to eq headers
         end
 
         it "saves the webhook events" do
           expect(subject.events.first[:name]).to eq "something_happened"
         end
-
       end
 
       describe "delete_by_uuid" do
@@ -73,12 +67,6 @@ module PactBroker
         end
 
         subject { Repository.new.delete_by_uuid(uuid) }
-
-        it "deletes the webhook headers" do
-          expect { subject }.to change {
-            ::DB::PACT_BROKER_DB[:webhook_headers].count
-            }.by(-2)
-        end
 
         it "deletes the webhook" do
           expect { subject }.to change {

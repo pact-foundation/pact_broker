@@ -19,9 +19,6 @@ module PactBroker
         db_webhook = Webhook.from_domain webhook, consumer, provider
         db_webhook.uuid = uuid
         db_webhook.save
-        webhook.request.headers.each_pair do | name, value |
-          db_webhook.add_header PactBroker::Webhooks::WebhookHeader.from_domain(name, value, db_webhook.id)
-        end
         (webhook.events || []).each do | webhook_event |
           db_webhook.add_event(webhook_event)
         end
@@ -37,11 +34,7 @@ module PactBroker
         existing_webhook.consumer_id = pacticipant_repository.find_by_name(webhook.consumer.name).id if webhook.consumer
         existing_webhook.provider_id = pacticipant_repository.find_by_name(webhook.provider.name).id if webhook.provider
         existing_webhook.update_from_domain(webhook).save
-        existing_webhook.headers.collect(&:delete)
         existing_webhook.events.collect(&:delete)
-        webhook.request.headers.each_pair do | name, value |
-          existing_webhook.add_header PactBroker::Webhooks::WebhookHeader.from_domain(name, value, existing_webhook.id)
-        end
         (webhook.events || []).each do | webhook_event |
           existing_webhook.add_event(webhook_event)
         end
