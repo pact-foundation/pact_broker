@@ -39,13 +39,11 @@ module PactBroker
           http_version: "1.0",
           message: "OK",
           code: status,
-          body: "respbod",
-          unsafe_body?: unsafe_body?,
-          unsafe_body: "unsafe_body",
+          body: response_body,
           to_hash: response_headers
         )
       end
-      let(:unsafe_body?) { false }
+      let(:response_body) { "respbod" }
       let(:response_headers) do
         {
           'content-type' => 'text/foo, blah'
@@ -66,7 +64,7 @@ module PactBroker
         it "logs the response" do
           expect(logger).to have_received(:info).with(/response.*200/)
           expect(logger).to have_received(:debug).with(/text\/foo/)
-          expect(logger).to have_received(:debug).with(/unsafe_body/)
+          expect(logger).to have_received(:debug).with(/respbod/)
         end
       end
 
@@ -141,10 +139,10 @@ module PactBroker
         end
 
         context "when the response body contains a non UTF-8 character" do
-          let(:unsafe_body?) { true }
+          let(:response_body) { "This has some \xC2 invalid chars" }
 
           it "logs the safe body so it doesn't blow up the database" do
-            expect(logs).to include "respbod"
+            expect(logs).to include "This has some  invalid chars"
           end
 
           it "logs that it has cleaned the string to the execution logger" do

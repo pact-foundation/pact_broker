@@ -1,6 +1,7 @@
 require 'pact_broker/messages'
 require 'pact_broker/logging'
 require 'pact_broker/webhooks/http_request_with_redacted_headers'
+require 'pact_broker/webhooks/http_response_with_utf_8_safe_body'
 
 module PactBroker
   module Webhooks
@@ -16,10 +17,11 @@ module PactBroker
       end
 
       def log(uuid, webhook_request, http_response, error)
+        safe_response = http_response ? HttpResponseWithUtf8SafeBody.new(http_response) : nil
         log_request(webhook_request)
-        log_response(uuid, http_response) if http_response
+        log_response(uuid, safe_response) if safe_response
         log_error(uuid, error) if error
-        log_completion_message(success?(http_response))
+        log_completion_message(success?(safe_response))
         log_stream.string
       end
 

@@ -12,47 +12,6 @@ require 'pact_broker/webhooks/webhook_request_logger'
 
 module PactBroker
   module Domain
-    class WebhookRequestError < StandardError
-      def initialize message, response
-        super message
-        @response = response
-      end
-    end
-
-    class WebhookResponseWithUtf8SafeBody < SimpleDelegator
-      def body
-        if unsafe_body
-          unsafe_body.encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
-        else
-          unsafe_body
-        end
-      end
-
-      def unsafe_body
-        __getobj__().body
-      end
-
-      def unsafe_body?
-        unsafe_body != body
-      end
-    end
-
-    class WebhookRequestWithRedactedHeaders < SimpleDelegator
-      def to_hash
-        __getobj__().to_hash.each_with_object({}) do | (key, values), new_hash |
-          new_hash[key] = redact?(key) ? ["**********"] : values
-        end
-      end
-
-      def method
-        __getobj__().method
-      end
-
-      def redact? name
-        WebhookRequest::HEADERS_TO_REDACT.any?{ | pattern | name =~ pattern }
-      end
-    end
-
     class WebhookRequest
 
       include PactBroker::Logging

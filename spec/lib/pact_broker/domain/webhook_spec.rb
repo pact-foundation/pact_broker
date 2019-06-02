@@ -74,13 +74,13 @@ module PactBroker
         end
 
         it "generates the execution logs" do
-          expect(webhook_request_logger).to receive(:log).with(uuid, webhook_request, instance_of(WebhookResponseWithUtf8SafeBody), nil)
+          expect(webhook_request_logger).to receive(:log).with(uuid, webhook_request, http_response, nil)
           execute
         end
 
         it "returns a WebhookExecutionResult" do
           expect(execute.request).to_not be nil
-          expect(execute.response).to be_instance_of(WebhookResponseWithUtf8SafeBody)
+          expect(execute.response).to_not be nil
           expect(execute.logs).to eq "logs"
           expect(execute.error).to be nil
         end

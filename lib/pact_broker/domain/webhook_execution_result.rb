@@ -1,10 +1,13 @@
+require 'pact_broker/webhooks/http_request_with_redacted_headers'
+require 'pact_broker/webhooks/http_response_with_utf_8_safe_body'
+
 module PactBroker
   module Domain
     class WebhookExecutionResult
 
       def initialize request, response, logs, error = nil
-        @request = request
-        @response = response
+        @request = PactBroker::Webhooks::HttpRequestWithRedactedHeaders.new(request)
+        @response = response ? PactBroker::Webhooks::HttpResponseWithUtf8SafeBody.new(response) : nil
         @logs = logs
         @error = error
       end

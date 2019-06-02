@@ -2,6 +2,7 @@ require 'pact_broker/domain/webhook_request'
 require 'pact_broker/messages'
 require 'pact_broker/logging'
 require 'pact_broker/api/contracts/webhook_contract'
+require 'pact_broker/webhooks/http_request_with_redacted_headers'
 
 module PactBroker
   module Domain
@@ -57,13 +58,13 @@ module PactBroker
         http_response = nil
         error = nil
         begin
-          http_response = WebhookResponseWithUtf8SafeBody.new(webhook_request.execute)
+          http_response = webhook_request.execute
         rescue StandardError => e
           error = e
         end
 
         WebhookExecutionResult.new(
-          WebhookRequestWithRedactedHeaders.new(webhook_request.http_request),
+          webhook_request.http_request,
           http_response,
           generate_logs(webhook_request, http_response, error, options.fetch(:logging_options)),
           error

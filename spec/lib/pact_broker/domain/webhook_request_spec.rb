@@ -177,13 +177,6 @@ module PactBroker
           end
         end
 
-        # context "when the response body contains a non UTF-8 character" do
-        #   let!(:http_request) do
-        #     stub_request(:post, "http://example.org/hook").
-        #       to_return(:status => 200, :body => "This has some \xC2 invalid chars")
-        #   end
-        # end
-
         context "when an error occurs executing the request" do
           class WebhookTestError < StandardError; end
 
