@@ -68,10 +68,10 @@ module PactBroker
       end
 
       def self.test_execution webhook, options
-        execution_options = options[:execution_options].merge(
+        logging_options = options[:logging_options].merge(
           failure_log_message: "Webhook execution failed",
         )
-        merged_options = options.merge(execution_options: execution_options)
+        merged_options = options.merge(logging_options: logging_options)
         verification = nil
         if webhook.trigger_on_provider_verification_published?
           verification = verification_service.search_for_latest(webhook.consumer_name, webhook.provider_name) || PactBroker::Verifications::PlaceholderVerification.new
@@ -84,8 +84,8 @@ module PactBroker
       # # TODO delete?
       # def self.execute_webhook_now webhook, pact, verification = nil
       #   triggered_webhook = webhook_repository.create_triggered_webhook(next_uuid, webhook, pact, verification, USER)
-      #   execution_options = { failure_log_message: "Webhook execution failed"}
-      #   webhook_execution_result = execute_triggered_webhook_now triggered_webhook, execution_options
+      #   logging_options = { failure_log_message: "Webhook execution failed"}
+      #   webhook_execution_result = execute_triggered_webhook_now triggered_webhook, logging_options
       #   if webhook_execution_result.success?
       #     webhook_repository.update_triggered_webhook_status triggered_webhook, TriggeredWebhook::STATUS_SUCCESS
       #   else
@@ -135,7 +135,7 @@ module PactBroker
             job_data = {
               triggered_webhook: triggered_webhook,
               webhook_context: options.fetch(:webhook_context),
-              execution_options: options.fetch(:execution_options),
+              logging_options: options.fetch(:logging_options),
               database_connector: options.fetch(:database_connector)
             }
             # Delay slightly to make sure the request transaction has finished before we execute the webhook

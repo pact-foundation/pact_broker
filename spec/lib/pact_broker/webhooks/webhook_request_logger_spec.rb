@@ -4,14 +4,20 @@ require 'pact_broker/domain/webhook_request'
 module PactBroker
   module Webhooks
     describe WebhookRequestLogger do
-      let(:log_stream) { StringIO.new }
+      before do
+        if response
+          response_headers.each do | key, value |
+            allow(response).to receive(:each_header).and_yield(key, value)
+          end
+        end
+        allow(webhook_request_logger).to receive(:logger).and_return(logger)
+        subject
+      end
+
       let(:logger) { double('logger').as_null_object }
-      let(:execution_logger) { Logger.new(log_stream) }
       let(:uuid) { "uuid" }
       let(:options) { { failure_log_message: 'oops', show_response: show_response } }
       let(:show_response) { true }
-      let(:logs) { log_stream.string.tap { |it| puts it } }
-
       let(:username) { nil }
       let(:password) { nil }
       let(:url) { 'http://example.org/hook' }
@@ -46,17 +52,9 @@ module PactBroker
         }
       end
 
+      let(:webhook_request_logger) { WebhookRequestLogger.new(options) }
 
-      let(:webhook_request_logger) { WebhookRequestLogger.new(logger, execution_logger, uuid, options) }
-
-      before do
-        if response
-          response_headers.each do | key, value |
-            allow(response).to receive(:each_header).and_yield(key, value)
-          end
-        end
-        webhook_request_logger.log_all(webhook_request, webhook_request.http_request, response, error)
-      end
+      subject(:logs) { webhook_request_logger.log(uuid, webhook_request, response, error) }
 
       describe "application logs" do
         it "logs the request" do
@@ -135,7 +133,7 @@ module PactBroker
         end
 
         context "with basic auth" do
-          let(:headers) { { 'authorization' => '**********' } }
+          let(:headers) { { 'authorization' => 'foo' } }
 
           it "logs the Authorization header with a starred value" do
             expect(logs).to include "authorization: **********"

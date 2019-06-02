@@ -23,7 +23,7 @@ module PactBroker
           triggered_webhook: triggered_webhook,
           database_connector: database_connector,
           webhook_context: webhook_context,
-          execution_options: { the: 'options' }
+          logging_options: { the: 'options' }
         }
       end
 
@@ -84,7 +84,7 @@ module PactBroker
         it "executes the job with an log message indicating that the webhook will be retried" do
           expect(PactBroker::Webhooks::Service).to receive(:execute_triggered_webhook_now)
             .with(triggered_webhook, {
-              execution_options: {
+              logging_options: {
                 failure_log_message: "Retrying webhook in 10 seconds",
                 success_log_message: "Successfully executed webhook",
                 the: 'options'
@@ -132,7 +132,7 @@ module PactBroker
         it "executes the job with an log message indicating that the webhook has failed" do
           expect(PactBroker::Webhooks::Service).to receive(:execute_triggered_webhook_now)
             .with(triggered_webhook, hash_including(
-              execution_options: hash_including(
+              logging_options: hash_including(
                 failure_log_message: "Webhook execution failed after 7 attempts",
                 success_log_message: "Successfully executed webhook")
             )

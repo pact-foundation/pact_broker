@@ -47,7 +47,7 @@ module PactBroker
 
         def webhook_options
           {
-            execution_options: {
+            logging_options: {
               show_response: PactBroker.configuration.show_webhook_response?
             },
             webhook_context: {

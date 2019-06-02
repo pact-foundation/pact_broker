@@ -90,16 +90,12 @@ module PactBroker
         end
       end
 
-      def execute options = {}
-        @options = options
-        @logs = StringIO.new
-        begin
-          @response = do_request
-        rescue StandardError => e
-          @error = e
+      def execute
+        options = PactBroker::BuildHttpOptions.call(uri)
+        req = http_request
+        Net::HTTP.start(uri.hostname, uri.port, :ENV, options) do |http|
+          http.request req
         end
-        do_logging
-        WebhookExecutionResult.new(WebhookRequestWithRedactedHeaders.new(http_request), response, logs.string, error)
       end
 
       def http_request
@@ -113,25 +109,6 @@ module PactBroker
       end
 
       private
-
-      attr_reader :options, :execution_logger, :logs, :webhook_request_logger, :response, :error
-
-      def do_logging
-        webhook_request_logger = PactBroker::Webhooks::WebhookRequestLogger.new(logger, Logger.new(logs), uuid, options)
-        webhook_request_logger.log_all(self,
-          WebhookRequestWithRedactedHeaders.new(http_request),
-          response ? WebhookResponseWithUtf8SafeBody.new(response) : nil,
-          error
-        )
-      end
-
-      def do_request
-        options = PactBroker::BuildHttpOptions.call(uri)
-        req = http_request
-        Net::HTTP.start(uri.hostname, uri.port, :ENV, options) do |http|
-          http.request req
-        end
-      end
 
       def to_s
         "#{method.upcase} #{url}, username=#{username}, password=#{display_password}, headers=#{redacted_headers}, body=#{body}"

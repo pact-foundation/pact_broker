@@ -22,13 +22,11 @@ describe "executing a webhook to a server with a self signed certificate" do
       url: 'https://localhost:4444/')
   end
 
-  let(:pact) { td.create_pact_with_hierarchy.and_return(:pact) }
-
-  subject { webhook_request.execute({ show_response: true }) }
+  subject { webhook_request.execute }
 
   context "without the correct cacert" do
     it "fails" do
-      expect(subject.success?).to be false
+      expect { subject }.to raise_error(OpenSSL::SSL::SSLError)
     end
   end
 
@@ -38,8 +36,8 @@ describe "executing a webhook to a server with a self signed certificate" do
     end
 
     it "succeeds" do
-      puts subject.error unless subject.success?
-      expect(subject.success?).to be true
+      puts subject.body unless subject.code == "200"
+      expect(subject.code).to eq "200"
     end
   end
 

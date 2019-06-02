@@ -35,7 +35,7 @@ module PactBroker
             let(:provider_name) { "bar" }
             let(:webhook_options) do
               {
-                execution_options: {
+                logging_options: {
                   show_response: false,
                 },
                 webhook_context: {

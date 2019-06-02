@@ -78,7 +78,7 @@ module PactBroker
         def webhook_options
           {
             database_connector: database_connector,
-            execution_options: {
+            logging_options: {
               show_response: PactBroker.configuration.show_webhook_response?
             },
             webhook_context: metadata.merge(

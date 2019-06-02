@@ -10,6 +10,7 @@ module PactBroker
       include Messages
       include Logging
 
+      # request is actually a request_template
       attr_accessor :uuid, :consumer, :provider, :request, :created_at, :updated_at, :events, :enabled, :description
       attr_reader :attributes
 
@@ -52,7 +53,31 @@ module PactBroker
 
       def execute pact, verification, options
         logger.info "Executing #{self}"
-        request.build(pact: pact, verification: verification, webhook_context: options.fetch(:webhook_context)).execute(options.fetch(:execution_options))
+        webhook_request = request.build(pact: pact, verification: verification, webhook_context: options.fetch(:webhook_context))
+        http_response = nil
+        error = nil
+        begin
+          http_response = WebhookResponseWithUtf8SafeBody.new(webhook_request.execute)
+        rescue StandardError => e
+          error = e
+        end
+
+        WebhookExecutionResult.new(
+          WebhookRequestWithRedactedHeaders.new(webhook_request.http_request),
+          http_response,
+          generate_logs(webhook_request, http_response, error, options.fetch(:logging_options)),
+          error
+        )
+      end
+
+      def generate_logs(webhook_request, http_response, error, logging_options)
+        webhook_request_logger = PactBroker::Webhooks::WebhookRequestLogger.new(logging_options)
+        webhook_request_logger.log(
+          uuid,
+          webhook_request,
+          http_response,
+          error
+        )
       end
 
       def to_s

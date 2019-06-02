@@ -11,7 +11,6 @@ module PactBroker
       let(:headers) { {'Content-Type' => 'text/plain', 'Authorization' => 'foo'} }
       let(:body) { 'reqbody' }
       let(:logger) { double('logger').as_null_object }
-      let(:options) { { show_response: true } }
 
       subject do
         WebhookRequest.new(
@@ -23,7 +22,7 @@ module PactBroker
           body: body)
       end
 
-      let(:execute) { subject.execute(options) }
+      let(:execute) { subject.execute }
 
       describe "description" do
         it "returns a brief description of the HTTP request" do
@@ -160,11 +159,7 @@ module PactBroker
         end
 
         context "when the request is successful" do
-          it "returns a WebhookExecutionResult with success=true" do
-            expect(execute.success?).to be true
-          end
-
-          it "sets the response on the result" do
+          it "returns the response" do
             expect(execute.response).to be_instance_of(Net::HTTPOK)
           end
         end
@@ -177,11 +172,7 @@ module PactBroker
               to_return(:status => 500, :body => "An error")
           end
 
-          it "returns a WebhookExecutionResult with success=false" do
-            expect(execute.success?).to be false
-          end
-
-          it "sets the response on the result" do
+          it "returns the response" do
             expect(execute.response).to be_instance_of(Net::HTTPInternalServerError)
           end
         end
@@ -194,7 +185,6 @@ module PactBroker
         # end
 
         context "when an error occurs executing the request" do
-
           class WebhookTestError < StandardError; end
 
           before do
@@ -202,12 +192,8 @@ module PactBroker
             allow(logger).to receive(:error)
           end
 
-          it "returns a WebhookExecutionResult with success=false" do
-            expect(execute.success?).to be false
-          end
-
           it "returns a WebhookExecutionResult with an error" do
-            expect(execute.error).to be_instance_of WebhookTestError
+            expect { execute }.to raise_error WebhookTestError
           end
         end
       end

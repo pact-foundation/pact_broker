@@ -154,7 +154,7 @@ module PactBroker
         let(:options) do
           { database_connector: double('database_connector'),
             webhook_context: {},
-            execution_options: {}
+            logging_options: {}
           }
         end
 
@@ -219,7 +219,7 @@ module PactBroker
         let(:result) { double('result') }
         let(:options) do
           {
-            execution_options: {
+            logging_options: {
               failure_log_message: "Webhook execution failed",
               show_response: 'foo',
             },
@@ -346,10 +346,10 @@ module PactBroker
           {
             database_connector: database_connector,
             webhook_context: { base_url: 'http://example.org' },
-            execution_options: execution_options
+            logging_options: logging_options
           }
         end
-        let(:execution_options) { { show_response: true } }
+        let(:logging_options) { { show_response: true } }
         let(:database_connector) { ->(&block) { block.call } }
         let(:pact) do
           td.create_consumer
@@ -369,7 +369,7 @@ module PactBroker
         end
 
         it "executes the webhook with the correct options" do
-          expect_any_instance_of(PactBroker::Domain::WebhookRequest).to receive(:execute).with(hash_including(execution_options)).and_call_original
+          expect_any_instance_of(PactBroker::Domain::WebhookRequest).to receive(:execute).and_call_original
           subject
         end
 

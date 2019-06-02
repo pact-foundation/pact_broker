@@ -80,7 +80,7 @@ module PactBroker
                 hash_including('some' => 'params'),
                 pact,
                 {
-                  execution_options: {
+                  logging_options: {
                     show_response: 'some-boolean'
                   },
                   webhook_context: {

@@ -46,12 +46,12 @@ module PactBroker
       end
 
       def webhook_options(data)
-        execution_options = data[:execution_options].merge(
+        logging_options = data[:logging_options].merge(
           success_log_message: "Successfully executed webhook",
           failure_log_message: failure_log_message
         )
         {
-          execution_options: execution_options,
+          logging_options: logging_options,
           webhook_context: data[:webhook_context]
         }
       end

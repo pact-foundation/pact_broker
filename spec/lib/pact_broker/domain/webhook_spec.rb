@@ -3,14 +3,16 @@ require 'pact_broker/domain/webhook'
 module PactBroker
   module Domain
     describe Webhook do
+      let(:uuid) { "uuid" }
       let(:consumer) { Pacticipant.new(name: 'Consumer')}
       let(:provider) { Pacticipant.new(name: 'Provider')}
-      let(:request_template) { instance_double(PactBroker::Webhooks::WebhookRequestTemplate, build: request)}
-      let(:request) { instance_double(PactBroker::Domain::WebhookRequest, execute: result) }
-      let(:result) { double('result') }
+      let(:request_template) { instance_double(PactBroker::Webhooks::WebhookRequestTemplate, build: webhook_request)}
+      let(:webhook_request) { instance_double(PactBroker::Domain::WebhookRequest, execute: http_response, http_request: http_request) }
+      let(:http_request) { double('http request') }
+      let(:http_response) { double('http response') }
       let(:webhook_context) { { some: 'things' } }
-      let(:execution_options) { { other: 'options' } }
-      let(:options) { { webhook_context: webhook_context, execution_options: execution_options } }
+      let(:logging_options) { { other: 'options' } }
+      let(:options) { { webhook_context: webhook_context, logging_options: logging_options } }
       let(:pact) { double('pact') }
       let(:verification) { double('verification') }
       let(:logger) { double('logger').as_null_object }
@@ -19,7 +21,7 @@ module PactBroker
         allow(webhook).to receive(:logger).and_return(logger)
       end
 
-      subject(:webhook) { Webhook.new(request: request_template, consumer: consumer, provider: provider) }
+      subject(:webhook) { Webhook.new(uuid: uuid, request: request_template, consumer: consumer, provider: provider) }
 
       describe "scope_description" do
         subject { webhook.scope_description }
@@ -50,8 +52,11 @@ module PactBroker
 
       describe "execute" do
         before do
-          allow(request_template).to receive(:build).and_return(request)
+          allow(request_template).to receive(:build).and_return(webhook_request)
+          allow(PactBroker::Webhooks::WebhookRequestLogger).to receive(:new).and_return(webhook_request_logger)
         end
+
+        let(:webhook_request_logger) { instance_double(PactBroker::Webhooks::WebhookRequestLogger, log: "logs") }
 
         let(:execute) { subject.execute pact, verification, options }
 
@@ -64,14 +69,46 @@ module PactBroker
         end
 
         it "executes the request" do
-          expect(request).to receive(:execute).with(execution_options)
+          expect(webhook_request).to receive(:execute)
           execute
+        end
+
+        it "generates the execution logs" do
+          expect(webhook_request_logger).to receive(:log).with(uuid, webhook_request, instance_of(WebhookResponseWithUtf8SafeBody), nil)
+          execute
+        end
+
+        it "returns a WebhookExecutionResult" do
+          expect(execute.request).to_not be nil
+          expect(execute.response).to be_instance_of(WebhookResponseWithUtf8SafeBody)
+          expect(execute.logs).to eq "logs"
+          expect(execute.error).to be nil
         end
 
         it "logs before and after" do
           allow(logger).to receive(:info)
           expect(logger).to receive(:info).with(/Executing/)
           execute
+        end
+
+        context "when an error is thrown" do
+          let(:error_class) { Class.new(StandardError) }
+
+          before do
+            allow(webhook_request).to receive(:execute).and_raise(error_class)
+          end
+
+          it "generates the execution logs" do
+            expect(webhook_request_logger).to receive(:log).with(uuid, webhook_request, nil, instance_of(error_class))
+            execute
+          end
+
+          it "returns a WebhookExecutionResult with an error" do
+            expect(execute.request).to_not be nil
+            expect(execute.response).to be nil
+            expect(execute.logs).to eq "logs"
+            expect(execute.error).to_not be nil
+          end
         end
       end
     end
