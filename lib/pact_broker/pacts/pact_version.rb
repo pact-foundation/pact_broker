@@ -46,8 +46,8 @@ module PactBroker
         latest_consumer_version.number
       end
 
-      def verified_successfully_by_provider_version_with_all_tags?(tags)
-        tags.all? do | tag |
+      def select_provider_tags_with_successful_verifications(tags)
+        tags.select do | tag |
           PactVersion.where(Sequel[:pact_versions][:id] => id)
             .join(:verifications, Sequel[:verifications][:pact_version_id] => Sequel[:pact_versions][:id])
             .join(:versions, Sequel[:versions][:id] => Sequel[:verifications][:provider_version_id])

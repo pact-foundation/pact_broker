@@ -41,7 +41,7 @@ module PactBroker
           end
 
           it "sets the latest_consumer_version_tag_names" do
-            expect(find_by_consumer_version_number("bar-latest-prod").head_tag).to eq 'prod'
+            expect(find_by_consumer_version_number("bar-latest-prod").tag).to eq 'prod'
           end
         end
 
@@ -55,7 +55,7 @@ module PactBroker
           end
 
           it "does not set the tag name" do
-            expect(find_by_consumer_version_number("bar-latest-dev").head_tag).to be nil
+            expect(find_by_consumer_version_number("bar-latest-dev").tag).to be nil
             expect(find_by_consumer_version_number("bar-latest-dev").overall_latest?).to be true
           end
         end

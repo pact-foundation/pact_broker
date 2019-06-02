@@ -45,14 +45,6 @@ module PactBroker
         end
 
         subject { Service.find_for_verification(provider_name, provider_version_tags, consumer_version_selectors) }
-
-        context "when multiple pacts have the same pact_version_sha" do
-          let(:pact_version_sha_2) { pact_version_sha_1 }
-
-          it "squashes them into one VerifiablePact" do
-            expect(subject.count).to eq 1
-          end
-        end
       end
     end
   end

@@ -3,6 +3,7 @@ require 'pact_broker/services'
 require 'pact_broker/logging'
 require 'pact_broker/pacts/merger'
 require 'pact_broker/pacts/verifiable_pact'
+require 'pact_broker/pacts/squash_pacts_for_verification'
 
 module PactBroker
   module Pacts
@@ -13,6 +14,7 @@ module PactBroker
       extend PactBroker::Repositories
       extend PactBroker::Services
       include PactBroker::Logging
+      extend SquashPactsForVerification
 
       def find_latest_pact params
         pact_repository.find_latest_pact(params[:consumer_name], params[:provider_name], params[:tag])
@@ -116,22 +118,7 @@ module PactBroker
           .find_for_verification(provider_name, consumer_version_selectors)
           .group_by(&:pact_version_sha)
           .collect do | pact_version_sha, head_pacts |
-
-            domain_pact = head_pacts.first.pact
-            pending_provider_tags = []
-            pending = nil
-            if provider_version_tags.any?
-              pending_provider_tags = provider_version_tags.select do | provider_version_tag |
-                pact.pending?([provider_version_tag])
-              end
-              pending = pending_provider_tags.any?
-            else
-              pending = pact.pending?
-            end
-
-            head_consumer_tags = head_pacts.collect(&:head_tag)
-            overall_latest = head_consumer_tags.include?(nil)
-            VerifiablePact.new(domain_pact, pending, pending_provider_tags, head_consumer_tags.compact, overall_latest)
+            squash_pacts_for_verification(provider_version_tags, consumer_version_selectors, head_pacts)
           end
       end
 

@@ -83,17 +83,23 @@ module PactBroker
         id
       end
 
-      def pending?(provider_version_tags)
-        if provider_version_tags && provider_version_tags.any?
-          !db_model.pact_version.verified_successfully_by_provider_version_with_all_tags?(provider_version_tags)
-        else
-          !db_model.pact_version.verified_successfully_by_any_provider_version?
-        end
+      def select_pending_provider_version_tags(provider_version_tags)
+        provider_version_tags - db_model.pact_version.select_provider_tags_with_successful_verifications(provider_version_tags)
+      end
+
+      def pending?
+        !pact_version.verified_successfully_by_any_provider_version?
       end
 
       private
 
       attr_accessor :db_model
+
+      # Really not sure about mixing Sequel model class into this PORO...
+      # But it's much nicer than using a repository to find out the pending information :(
+      def pact_version
+        db_model.pact_version
+      end
     end
 
   end
