@@ -10,12 +10,8 @@ module PactBroker
       let(:url) { 'http://example.org/hook' }
       let(:headers) { {'Content-Type' => 'text/plain', 'Authorization' => 'foo'} }
       let(:body) { 'reqbody' }
-      let(:logs) { StringIO.new }
       let(:logger) { double('logger').as_null_object }
-      let(:execution_logger) { Logger.new(logs) }
-      let(:options) { {failure_log_message: 'oops', show_response: show_response} }
-      let(:show_response) { true }
-      let(:logs) { execute.logs }
+      let(:options) { { show_response: true } }
 
       subject do
         WebhookRequest.new(
@@ -100,100 +96,6 @@ module PactBroker
           expect(http_request).to have_been_made
         end
 
-        it "logs the request" do
-          expect(logger).to receive(:info).with(/POST.*example/)
-          expect(logger).to receive(:debug).with(/.*text\/plain/)
-          expect(logger).to receive(:debug).with(/.*reqbody/)
-          execute
-        end
-
-        it "logs the response" do
-          allow(logger).to receive(:info)
-          allow(logger).to receive(:debug)
-          expect(logger).to receive(:info).with(/response.*200/)
-          expect(logger).to receive(:debug).with(/text\/foo/)
-          expect(logger).to receive(:debug).with(/respbod/)
-          execute
-        end
-
-        describe "execution logs" do
-
-          it "logs the request method and path" do
-            expect(logs).to include "POST http://example.org/hook"
-          end
-
-          it "logs the request headers" do
-            expect(logs).to include "content-type: text/plain"
-          end
-
-          it "redacts potentially sensitive headers" do
-            expect(logs).to include "authorization: **********"
-          end
-
-          it "logs the request body" do
-            expect(logs).to include body
-          end
-
-          context "when show_response is true" do
-            it "logs the response status" do
-              expect(logs).to include "HTTP/1.0 200"
-            end
-
-            it "logs the response headers" do
-              expect(logs).to include "content-type: text/foo, blah"
-            end
-
-            it "logs the response body" do
-              expect(logs).to include "respbod"
-            end
-          end
-
-          context "when show_response is false" do
-            let(:show_response) { false }
-
-            it "does not log the response status" do
-              expect(logs).to_not include "HTTP/1.0 200"
-            end
-
-            it "does not log the response headers" do
-              expect(logs).to_not include "content-type: text/foo, blah"
-            end
-
-            it "does not log the response body" do
-              expect(logs).to_not include "respbod"
-            end
-
-            it "logs a message about why the response is hidden" do
-              expect(logs).to include "security purposes"
-            end
-          end
-
-          context "when the response code is a success" do
-            it "does not log the failure_log_message" do
-              allow_any_instance_of(WebhookExecutionResult).to receive(:success?).and_return(true)
-              expect(logs).to_not include "oops"
-            end
-          end
-
-          context "when the response code is not successful" do
-            let(:status) { 400 }
-
-            it "logs the failure_log_message" do
-              allow_any_instance_of(WebhookExecutionResult).to receive(:success?).and_return(false)
-              expect(logs).to include "oops"
-            end
-          end
-
-          context "with basic auth" do
-            let(:username) { 'username' }
-            let(:password) { 'password' }
-
-            it "logs the Authorization header with a starred value" do
-              expect(logs).to include "authorization: **********"
-            end
-          end
-        end
-
         describe "when a username and password are specified" do
 
           let!(:http_request_with_basic_auth) do
@@ -263,7 +165,7 @@ module PactBroker
           end
 
           it "sets the response on the result" do
-            expect(execute.response).to be_instance_of(WebhookResponseWithUtf8SafeBody)
+            expect(execute.response).to be_instance_of(Net::HTTPOK)
           end
         end
 
@@ -280,28 +182,16 @@ module PactBroker
           end
 
           it "sets the response on the result" do
-            expect(execute.response).to be_instance_of(WebhookResponseWithUtf8SafeBody)
+            expect(execute.response).to be_instance_of(Net::HTTPInternalServerError)
           end
         end
 
-        context "when the response body contains a non UTF-8 character" do
-          let!(:http_request) do
-            stub_request(:post, "http://example.org/hook").
-              to_return(:status => 200, :body => "This has some \xC2 invalid chars")
-          end
-
-          it "removes the non UTF-8 characters before saving the logs so they don't blow up the database" do
-            result = execute
-            expect(result.logs).to include "This has some  invalid chars"
-          end
-
-          it "logs that it has cleaned the string to the execution logger" do
-            logger = double("logger").as_null_object
-            allow(Logger).to receive(:new).and_return(logger)
-            expect(logger).to receive(:debug).with(/Note that invalid UTF-8 byte sequences were removed/)
-            execute
-          end
-        end
+        # context "when the response body contains a non UTF-8 character" do
+        #   let!(:http_request) do
+        #     stub_request(:post, "http://example.org/hook").
+        #       to_return(:status => 200, :body => "This has some \xC2 invalid chars")
+        #   end
+        # end
 
         context "when an error occurs executing the request" do
 
@@ -312,39 +202,12 @@ module PactBroker
             allow(logger).to receive(:error)
           end
 
-          it "logs the error" do
-            expect(logger).to receive(:info).with(/Error.*WebhookTestError.*blah/)
-            execute
-          end
-
           it "returns a WebhookExecutionResult with success=false" do
             expect(execute.success?).to be false
           end
 
           it "returns a WebhookExecutionResult with an error" do
             expect(execute.error).to be_instance_of WebhookTestError
-          end
-
-          it "logs the failure_log_message" do
-            expect(logs).to include "oops"
-          end
-
-          context "when show_response is true" do
-            it "logs the exception information" do
-              expect(logs).to include "blah"
-            end
-          end
-
-          context "when show_response is false" do
-            let(:show_response) { false }
-
-            it "does not logs the exception information" do
-              expect(logs).to_not include "blah"
-            end
-
-            it "logs a message about why the response is hidden" do
-              expect(logs).to include "security purposes"
-            end
           end
         end
       end

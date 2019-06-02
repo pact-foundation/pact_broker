@@ -1,0 +1,201 @@
+require 'pact_broker/webhooks/webhook_request_logger'
+require 'pact_broker/domain/webhook_request'
+
+module PactBroker
+  module Webhooks
+    describe WebhookRequestLogger do
+      let(:log_stream) { StringIO.new }
+      let(:logger) { double('logger').as_null_object }
+      let(:execution_logger) { Logger.new(log_stream) }
+      let(:uuid) { "uuid" }
+      let(:options) { { failure_log_message: 'oops', show_response: show_response } }
+      let(:show_response) { true }
+      let(:logs) { log_stream.string.tap { |it| puts it } }
+
+      let(:username) { nil }
+      let(:password) { nil }
+      let(:url) { 'http://example.org/hook' }
+      let(:headers) { {'Content-Type' => 'text/plain', 'Authorization' => 'foo'} }
+      let(:body) { 'reqbody' }
+      let(:webhook_request) do
+        PactBroker::Domain::WebhookRequest.new(
+          method: 'post',
+          url: url,
+          headers: headers,
+          username: username,
+          password: password,
+          body: body)
+      end
+      let(:error) { nil }
+      let(:status) { 200 }
+      let(:response) do
+        double('response',
+          http_version: "1.0",
+          message: "OK",
+          code: status,
+          body: "respbod",
+          unsafe_body?: unsafe_body?,
+          unsafe_body: "unsafe_body",
+          to_hash: response_headers
+        )
+      end
+      let(:unsafe_body?) { false }
+      let(:response_headers) do
+        {
+          'content-type' => 'text/foo, blah'
+        }
+      end
+
+
+      let(:webhook_request_logger) { WebhookRequestLogger.new(logger, execution_logger, uuid, options) }
+
+      before do
+        if response
+          response_headers.each do | key, value |
+            allow(response).to receive(:each_header).and_yield(key, value)
+          end
+        end
+        webhook_request_logger.log_all(webhook_request, webhook_request.http_request, response, error)
+      end
+
+      describe "application logs" do
+        it "logs the request" do
+          expect(logger).to have_received(:info).with(/POST.*example/)
+          expect(logger).to have_received(:debug).with(/.*text\/plain/)
+          expect(logger).to have_received(:debug).with(/.*reqbody/)
+        end
+
+        it "logs the response" do
+          expect(logger).to have_received(:info).with(/response.*200/)
+          expect(logger).to have_received(:debug).with(/text\/foo/)
+          expect(logger).to have_received(:debug).with(/unsafe_body/)
+        end
+      end
+
+      describe "execution logs" do
+
+        it "logs the request method and path" do
+          expect(logs).to include "POST http://example.org/hook"
+        end
+
+        it "logs the request headers" do
+          expect(logs).to include "content-type: text/plain"
+        end
+
+        it "logs the request body" do
+          expect(logs).to include body
+        end
+
+        context "when show_response is true" do
+          it "logs the response status" do
+            expect(logs).to include "HTTP/1.0 200"
+          end
+
+          it "logs the response headers" do
+            expect(logs).to include "content-type: text/foo, blah"
+          end
+
+          it "logs the response body" do
+            expect(logs).to include "respbod"
+          end
+        end
+
+        context "when show_response is false" do
+          let(:show_response) { false }
+
+          it "does not log the response status" do
+            expect(logs).to_not include "HTTP/1.0 200"
+          end
+
+          it "does not log the response headers" do
+            expect(logs).to_not include "content-type: text/foo, blah"
+          end
+
+          it "does not log the response body" do
+            expect(logs).to_not include "respbod"
+          end
+
+          it "logs a message about why the response is hidden" do
+            expect(logs).to include "security purposes"
+          end
+        end
+
+        context "when the response code is a success" do
+          it "does not log the failure_log_message" do
+            expect(logs).to_not include "oops"
+          end
+        end
+
+        context "when the response code is not successful" do
+          let(:status) { 400 }
+
+          it "logs the failure_log_message" do
+            expect(logs).to include "oops"
+          end
+        end
+
+        context "with basic auth" do
+          let(:headers) { { 'authorization' => '**********' } }
+
+          it "logs the Authorization header with a starred value" do
+            expect(logs).to include "authorization: **********"
+          end
+        end
+
+        context "when the response body contains a non UTF-8 character" do
+          let(:unsafe_body?) { true }
+
+          it "logs the safe body so it doesn't blow up the database" do
+            expect(logs).to include "respbod"
+          end
+
+          it "logs that it has cleaned the string to the execution logger" do
+            expect(logs).to include("Note that invalid UTF-8 byte sequences were removed")
+          end
+        end
+
+        context "when an error occurs executing the request" do
+
+          class WebhookTestError < StandardError; end
+
+          before do
+            allow(error).to receive(:backtrace).and_return([])
+          end
+
+          let(:response) { nil }
+          let(:error) do
+            err = WebhookTestError.new("blah")
+            allow(err).to receive(:backtrace).and_return([])
+            err
+          end
+
+          it "logs the error" do
+            expect(logger).to have_received(:info).with(/Error.*WebhookTestError.*blah/)
+          end
+
+          it "logs the failure_log_message" do
+            expect(logs).to include "oops"
+          end
+
+          context "when show_response is true" do
+            it "logs the exception information" do
+              expect(logs).to include "blah"
+            end
+          end
+
+          context "when show_response is false" do
+            let(:show_response) { false }
+
+            it "does not logs the exception information" do
+              expect(logs).to_not include "blah"
+            end
+
+            it "logs a message about why the response is hidden" do
+              expect(logs).to include "security purposes"
+            end
+          end
+        end
+      end
+    end
+  end
+end

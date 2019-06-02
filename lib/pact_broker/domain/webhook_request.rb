@@ -11,9 +11,7 @@ require 'rack/utils'
 require 'pact_broker/webhooks/webhook_request_logger'
 
 module PactBroker
-
   module Domain
-
     class WebhookRequestError < StandardError
       def initialize message, response
         super message
@@ -104,15 +102,6 @@ module PactBroker
         WebhookExecutionResult.new(WebhookRequestWithRedactedHeaders.new(http_request), response, logs.string, error)
       end
 
-      private
-
-      attr_reader :options, :execution_logger, :logs, :webhook_request_logger, :response, :error
-
-      def do_logging
-        webhook_request_logger = PactBroker::Webhooks::WebhookRequestLogger.new(logger, Logger.new(logs), uuid, options)
-        webhook_request_logger.log_all(self, WebhookRequestWithRedactedHeaders.new(http_request), response, error)
-      end
-
       def http_request
         @http_request ||= begin
           req = Net::HTTP.const_get(method.capitalize).new(url)
@@ -123,13 +112,25 @@ module PactBroker
         end
       end
 
+      private
+
+      attr_reader :options, :execution_logger, :logs, :webhook_request_logger, :response, :error
+
+      def do_logging
+        webhook_request_logger = PactBroker::Webhooks::WebhookRequestLogger.new(logger, Logger.new(logs), uuid, options)
+        webhook_request_logger.log_all(self,
+          WebhookRequestWithRedactedHeaders.new(http_request),
+          response ? WebhookResponseWithUtf8SafeBody.new(response) : nil,
+          error
+        )
+      end
+
       def do_request
         options = PactBroker::BuildHttpOptions.call(uri)
         req = http_request
-        response = Net::HTTP.start(uri.hostname, uri.port, :ENV, options) do |http|
+        Net::HTTP.start(uri.hostname, uri.port, :ENV, options) do |http|
           http.request req
         end
-        WebhookResponseWithUtf8SafeBody.new(response)
       end
 
       def to_s
