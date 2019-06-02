@@ -11,8 +11,15 @@ module PactBroker
         @options = options
       end
 
+      def log_all(webhook_request, http_request, response, error)
+        log_request(http_request, webhook_request)
+        log_response(response) if response
+        log_error(error) if error
+        log_completion_message(success?(response))
+      end
+
       def log_request(redacted_request, webhook_request)
-        logger.info "Making webhook #{webhook_request.uuid} request #{webhook_request.http_method.upcase} URI=#{webhook_request.url} (headers and body in debug logs)"
+        logger.info "Making webhook #{webhook_request.uuid} request #{redacted_request.method.upcase} URI=#{webhook_request.url} (headers and body in debug logs)"
         logger.debug "Webhook #{webhook_request.uuid} request headers=#{redacted_request.to_hash}"
         logger.debug "Webhook #{webhook_request.uuid} request body=#{redacted_request.body}"
 
@@ -76,6 +83,10 @@ module PactBroker
         else
           execution_logger.error "Error executing webhook #{uuid}. #{response_body_hidden_message}"
         end
+      end
+
+      def success?(response)
+        !response.nil? && response.code.to_i < 300
       end
     end
   end

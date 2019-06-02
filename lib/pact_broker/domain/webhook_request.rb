@@ -46,6 +46,10 @@ module PactBroker
         end
       end
 
+      def method
+        __getobj__().method
+      end
+
       def redact? name
         WebhookRequest::HEADERS_TO_REDACT.any?{ | pattern | name =~ pattern }
       end
@@ -91,32 +95,22 @@ module PactBroker
       def execute options = {}
         @options = options
         @logs = StringIO.new
-        @execution_logger = Logger.new(logs)
-        @webhook_request_logger = PactBroker::Webhooks::WebhookRequestLogger.new(logger, execution_logger, uuid, options)
         begin
-          execute_and_build_result
+          @response = do_request
         rescue StandardError => e
-          handle_error_and_build_result(e)
+          @error = e
         end
+        do_logging
+        WebhookExecutionResult.new(WebhookRequestWithRedactedHeaders.new(http_request), response, logs.string, error)
       end
 
       private
 
-      attr_reader :options, :execution_logger, :logs, :webhook_request_logger
+      attr_reader :options, :execution_logger, :logs, :webhook_request_logger, :response, :error
 
-      def execute_and_build_result
-        webhook_request_logger.log_request(WebhookRequestWithRedactedHeaders.new(http_request), self)
-        response = do_request
-        webhook_request_logger.log_response(response)
-        result = WebhookExecutionResult.new(WebhookRequestWithRedactedHeaders.new(http_request), response, logs.string)
-        webhook_request_logger.log_completion_message(result.success?)
-        result
-      end
-
-      def handle_error_and_build_result e
-        webhook_request_logger.log_error(e)
-        webhook_request_logger.log_completion_message(false)
-        WebhookExecutionResult.new(WebhookRequestWithRedactedHeaders.new(http_request), nil, logs.string, e)
+      def do_logging
+        webhook_request_logger = PactBroker::Webhooks::WebhookRequestLogger.new(logger, Logger.new(logs), uuid, options)
+        webhook_request_logger.log_all(self, WebhookRequestWithRedactedHeaders.new(http_request), response, error)
       end
 
       def http_request

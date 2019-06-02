@@ -83,7 +83,7 @@ module PactBroker
         let!(:http_request) do
           stub_request(:post, "http://example.org/hook").
             with(:headers => {'Content-Type'=>'text/plain'}, :body => request_body).
-            to_return(:status => 200, :body => "respbod", :headers => {'Content-Type' => 'text/foo, blah'})
+            to_return(:status => status, :body => "respbod", :headers => {'Content-Type' => 'text/foo, blah'})
         end
 
         before do
@@ -92,6 +92,7 @@ module PactBroker
           allow(WebhookRequest.logger).to receive(:debug)
         end
 
+        let(:status) { 200 }
         let(:request_body) { 'reqbody' }
 
         it "executes the configured request" do
@@ -175,6 +176,8 @@ module PactBroker
           end
 
           context "when the response code is not successful" do
+            let(:status) { 400 }
+
             it "logs the failure_log_message" do
               allow_any_instance_of(WebhookExecutionResult).to receive(:success?).and_return(false)
               expect(logs).to include "oops"

@@ -1,7 +1,5 @@
 module PactBroker
-
   module Domain
-
     class WebhookExecutionResult
 
       def initialize request, response, logs, error = nil
