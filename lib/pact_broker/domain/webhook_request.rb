@@ -4,12 +4,11 @@ require 'pact_broker/domain/webhook_execution_result'
 require 'pact_broker/logging'
 require 'pact_broker/messages'
 require 'net/http'
-require 'pact_broker/webhooks/render'
-require 'pact_broker/api/pact_broker_urls'
 require 'pact_broker/build_http_options'
 require 'cgi'
 require 'delegate'
 require 'rack/utils'
+require 'pact_broker/webhooks/webhook_request_logger'
 
 module PactBroker
 
@@ -52,90 +51,10 @@ module PactBroker
       end
     end
 
-    class WebhookRequestLogger
-      attr_reader :execution_logger, :logger, :uuid, :options
-
-      def initialize(logger, execution_logger, uuid, options)
-        @logger = logger
-        @execution_logger = execution_logger
-        @uuid = uuid
-        @options = options
-      end
-
-      def log_request(uri, url, http_method, http_request, body)
-        redacted_request = WebhookRequestWithRedactedHeaders.new(http_request)
-        logger.info "Making webhook #{uuid} request #{http_method.upcase} URI=#{uri} (headers and body in debug logs)"
-        logger.debug "Webhook #{uuid} request headers=#{redacted_request.to_hash}"
-        logger.debug "Webhook #{uuid} request body=#{redacted_request.body}"
-
-        execution_logger.info "HTTP/1.1 #{http_method.upcase} #{url}"
-        redacted_request.to_hash.each do | name, value |
-          execution_logger.info "#{name}: #{value.join(", ")}"
-        end
-        execution_logger.info(body) if body
-      end
-
-      def log_response response
-        log_response_to_application_logger(response)
-        if options.fetch(:show_response)
-          log_response_to_execution_logger(response)
-        else
-          execution_logger.info response_body_hidden_message
-        end
-      end
-
-      def response_body_hidden_message
-        PactBroker::Messages.message('messages.response_body_hidden')
-      end
-
-      def log_response_to_application_logger response
-        logger.info "Received response for webhook #{uuid} status=#{response.code} (headers and body in debug logs)"
-        logger.debug "Webhook #{uuid} response headers=#{response.to_hash} "
-        logger.debug "Webhook #{uuid} response body=#{response.unsafe_body}"
-      end
-
-      def log_response_to_execution_logger response
-        execution_logger.info "HTTP/#{response.http_version} #{response.code} #{response.message}"
-        response.each_header do | name, value |
-          execution_logger.info "#{name}: #{value}"
-        end
-
-        if response.body
-          if response.unsafe_body?
-            execution_logger.debug "Note that invalid UTF-8 byte sequences were removed from response body before saving the logs"
-          end
-          execution_logger.info response.body
-        end
-      end
-
-      def log_completion_message success
-        if options[:success_log_message] && success
-          execution_logger.info(options[:success_log_message])
-          logger.info(options[:success_log_message])
-        end
-
-        if options[:failure_log_message] && !success
-          execution_logger.info(options[:failure_log_message])
-          logger.info(options[:failure_log_message])
-        end
-      end
-
-      def log_error e
-        logger.info "Error executing webhook #{uuid} #{e.class.name} - #{e.message} #{e.backtrace.join("\n")}"
-
-        if options[:show_response]
-          execution_logger.error "Error executing webhook #{uuid} #{e.class.name} - #{e.message}"
-        else
-          execution_logger.error "Error executing webhook #{uuid}. #{response_body_hidden_message}"
-        end
-      end
-
-    end
-
     class WebhookRequest
 
       include PactBroker::Logging
-      include PactBroker::Messages
+
       HEADERS_TO_REDACT = [/authorization/i, /token/i]
 
       attr_accessor :method, :url, :headers, :body, :username, :password, :uuid
@@ -173,7 +92,7 @@ module PactBroker
         @options = options
         @logs = StringIO.new
         @execution_logger = Logger.new(logs)
-        @webhook_request_logger = WebhookRequestLogger.new(logger, execution_logger, uuid, options)
+        @webhook_request_logger = PactBroker::Webhooks::WebhookRequestLogger.new(logger, execution_logger, uuid, options)
         begin
           execute_and_build_result
         rescue StandardError => e
@@ -186,7 +105,7 @@ module PactBroker
       attr_reader :options, :execution_logger, :logs, :webhook_request_logger
 
       def execute_and_build_result
-        webhook_request_logger.log_request(uri, url, http_method, http_request, body)
+        webhook_request_logger.log_request(WebhookRequestWithRedactedHeaders.new(http_request), self)
         response = do_request
         webhook_request_logger.log_response(response)
         result = WebhookExecutionResult.new(WebhookRequestWithRedactedHeaders.new(http_request), response, logs.string)
