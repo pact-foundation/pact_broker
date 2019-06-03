@@ -16,9 +16,17 @@ module PactBroker
           pending = domain_pact.pending?
         end
 
+        non_pending_provider_tags = provider_version_tags - pending_provider_tags
+
         head_consumer_tags = head_pacts.collect(&:tag)
         overall_latest = head_consumer_tags.include?(nil)
-        VerifiablePact.new(domain_pact, pending, pending_provider_tags, head_consumer_tags.compact, overall_latest)
+        VerifiablePact.new(domain_pact,
+          pending,
+          pending_provider_tags,
+          non_pending_provider_tags,
+          head_consumer_tags.compact,
+          overall_latest
+        )
       end
 
       def squash_pacts_for_verification(*args)

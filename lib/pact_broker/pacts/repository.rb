@@ -149,7 +149,7 @@ module PactBroker
           pending_tags = successfully_verified_pact_publication_ids_for_each_tag.select do | (provider_tag, pact_publication_ids) |
            !pact_publication_ids.include?(pact.id)
           end.collect(&:first)
-          VerifiablePact.new(pact, true, pending_tags, pact.consumer_version_tag_names)
+          VerifiablePact.new(pact, true, pending_tags, [], pact.consumer_version_tag_names)
         end
       end
 

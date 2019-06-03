@@ -57,12 +57,14 @@ module PactBroker
           context "when the pact version is not pending" do
             its(:pending) { is_expected.to be false }
             its(:pending_provider_tags) { is_expected.to eq [] }
+            its(:non_pending_provider_tags) { is_expected.to eq [] }
           end
 
           context "when the pact version is pending" do
             let(:pending_1) { true }
             its(:pending) { is_expected.to be true }
             its(:pending_provider_tags) { is_expected.to eq [] }
+            its(:non_pending_provider_tags) { is_expected.to eq [] }
           end
         end
 
@@ -74,6 +76,7 @@ module PactBroker
 
             its(:pending) { is_expected.to be true }
             its(:pending_provider_tags) { is_expected.to eq %w[dev] }
+            its(:non_pending_provider_tags) { is_expected.to eq %w[feat-x] }
           end
 
           context "when a pact is not pending for any of the provider tags" do
@@ -81,6 +84,7 @@ module PactBroker
 
             its(:pending) { is_expected.to be false }
             its(:pending_provider_tags) { is_expected.to eq [] }
+            its(:non_pending_provider_tags) { is_expected.to eq %w[dev feat-x] }
           end
         end
       end
