@@ -1,6 +1,6 @@
 require 'pact_broker/domain/verification'
 
-describe "Recording a pact verification" do
+describe "Publishing a pact verification" do
 
   let(:td) { TestDataBuilder.new }
   let(:path) { "/pacts/provider/Provider/consumer/Consumer/pact-version/#{pact.pact_version_sha}/verification-results" }
