@@ -1,7 +1,6 @@
 module PactBroker
   module Pacts
     class VerifiablePactMessages
-
       extend Forwardable
 
       delegate [:consumer_name, :provider_name, :head_consumer_tags, :pending_provider_tags, :non_pending_provider_tags, :pending?] => :verifiable_pact

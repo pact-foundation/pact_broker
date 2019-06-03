@@ -6,13 +6,15 @@ module PactBroker
       describe VerifiablePactDecorator do
         before do
           allow(decorator).to receive(:pact_version_url).and_return('/pact-version-url')
+          allow_any_instance_of(PactBroker::Pacts::VerifiablePactMessages).to receive(:inclusion_reason).and_return("inclusion_reason")
+          allow_any_instance_of(PactBroker::Pacts::VerifiablePactMessages).to receive(:pending_reason).and_return("pending_reason")
         end
         let(:expected_hash) do
           {
             "verificationProperties" => {
               "pending" => true,
-              "pendingReason" => Pact.like("message"),
-              "inclusionReason" => Pact.like("message")
+              "pendingReason" => "pending_reason",
+              "inclusionReason" => "inclusion_reason"
             },
             "_links" => {
               "self" => {
