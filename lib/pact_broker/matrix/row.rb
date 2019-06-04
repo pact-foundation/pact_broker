@@ -41,31 +41,59 @@ module PactBroker
           end
         end
 
+        # find rows where (the consumer (and optional version) matches any of the selectors)
+        # AND
+        # the (provider (and optional version) matches any of the selectors OR the provider matches
+        #      and the verification is missing (and hence the provider version is null))
         def where_consumer_and_provider_in selectors
           where{
             Sequel.&(
               Sequel.|(
-                *selectors.collect do |s|
-                  if s[:pacticipant_version_id]
-                    Sequel.&(consumer_id: s[:pacticipant_id], consumer_version_id: s[:pacticipant_version_id])
-                  else
-                    Sequel.&(consumer_id: s[:pacticipant_id])
-                  end
-                end
+                *QueryHelper.consumer_and_maybe_consumer_version_match_any_selector(selectors)
               ),
               Sequel.|(
-                *(selectors.collect do |s|
-                  if s[:pacticipant_version_id]
-                    Sequel.&(provider_id: s[:pacticipant_id], provider_version_id: s[:pacticipant_version_id])
-                  else
-                    Sequel.&(provider_id: s[:pacticipant_id])
-                  end
-                end + selectors.collect do |s|
-                  Sequel.&(provider_id: s[:pacticipant_id], provider_version_id: nil)
-                end)
+                *QueryHelper.provider_and_maybe_provider_version_match_any_selector_or_verification_is_missing(selectors)
               )
             )
           }
+        end
+
+        # Can't access other dataset_module methods from inside the Sequel `where{ ... }` block, so make a private class
+        # with some helper methods
+        class QueryHelper
+          def self.consumer_and_maybe_consumer_version_match_any_selector(selectors)
+            selectors.collect { |s| consumer_and_maybe_consumer_version_match_selector(s) }
+          end
+
+          def self.consumer_and_maybe_consumer_version_match_selector(s)
+            if s[:pacticipant_version_id]
+              Sequel.&(consumer_id: s[:pacticipant_id], consumer_version_id: s[:pacticipant_version_id])
+            else
+              Sequel.&(consumer_id: s[:pacticipant_id])
+            end
+          end
+
+          def self.provider_and_maybe_provider_version_match_selector(s)
+            if s[:pacticipant_version_id]
+              Sequel.&(provider_id: s[:pacticipant_id], provider_version_id: s[:pacticipant_version_id])
+            else
+              Sequel.&(provider_id: s[:pacticipant_id])
+            end
+          end
+
+          # if the pact for a consumer version has never been verified, it exists in the matrix as a row
+          # with a blank provider version id
+          def self.provider_verification_is_missing_for_matching_selector(s)
+            Sequel.&(provider_id: s[:pacticipant_id], provider_version_id: nil)
+          end
+
+          def self.provider_and_maybe_provider_version_match_any_selector_or_verification_is_missing(selectors)
+            selectors.collect { |s|
+              provider_and_maybe_provider_version_match_selector(s)
+            } + selectors.collect { |s|
+              provider_verification_is_missing_for_matching_selector(s)
+            }
+          end
         end
 
         def where_consumer_or_provider_is s
