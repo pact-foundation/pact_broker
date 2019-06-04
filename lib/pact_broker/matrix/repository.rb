@@ -61,7 +61,6 @@ module PactBroker
         end
 
         integrations = find_integrations_for_specified_selectors(resolved_selectors.select(&:specified?))
-
         QueryResults.new(lines.sort, specified_selectors, options, resolved_selectors, integrations)
       end
 
