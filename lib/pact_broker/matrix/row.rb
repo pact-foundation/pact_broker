@@ -53,7 +53,8 @@ module PactBroker
               ),
               Sequel.|(
                 *QueryHelper.provider_and_maybe_provider_version_match_any_selector_or_verification_is_missing(selectors)
-              )
+              ),
+              QueryHelper.either_consumer_or_provider_was_specified_in_query(selectors)
             )
           }
         end
@@ -93,6 +94,18 @@ module PactBroker
             } + selectors.collect { |s|
               provider_verification_is_missing_for_matching_selector(s)
             }
+          end
+
+          # Some selecters are specified in the query, others are implied (when only one pacticipant is specified,
+          # the integrations are automatically worked out, and the selectors for these are of type :implied )
+          # When there are 3 pacticipants that each have dependencies on each other (A->B, A->C, B->C), the query
+          # to deploy C (implied A, implied B, specified C) was returning the A->B row because it matched the
+          # implied selectors as well.
+          # This extra filter makes sure that every row that is returned actually matches one of the specified
+          # selectors.
+          def self.either_consumer_or_provider_was_specified_in_query(selectors)
+            specified_pacticipant_ids = selectors.select{ |s| s[:type] == :specified }.collect{ |s| s[:pacticipant_id] }
+            Sequel.|({ consumer_id: specified_pacticipant_ids } , { provider_id: specified_pacticipant_ids })
           end
         end
 

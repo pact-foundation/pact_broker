@@ -1035,6 +1035,30 @@ module PactBroker
           expect(subject.rows.first.consumer_version_number).to eq "2"
         end
       end
+
+      describe "deploying a provider when there is a three way dependency between 3 pacticipants" do
+        before do
+          # A->B, A->C, B->C, deploying C
+          td.create_pact_with_hierarchy("B", "1", "C")
+            .create_verification(provider_version: "10")
+            .create_consumer("A")
+            .create_consumer_version("2")
+            .create_pact
+            .create_verification(provider_version: "10")
+            .use_provider("B")
+            .create_pact
+        end
+
+        let(:selectors) { [ { pacticipant_name: "C", pacticipant_version_number: "10" } ] }
+        let(:options) { { latestby: "cvp", limit: "100", latest: true} }
+        let(:rows) { Repository.new.find(selectors, options) }
+
+        subject { shorten_rows(rows) }
+
+        it "only includes rows that involve the specified pacticipant" do
+          expect(subject.all?{ | row | row.include?("C") } ).to be true
+        end
+      end
     end
   end
 end
