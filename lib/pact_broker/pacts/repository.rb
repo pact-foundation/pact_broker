@@ -31,8 +31,9 @@ module PactBroker
           consumer_version_id: params[:version_id],
           provider_id: params[:provider_id],
           consumer_id: params[:consumer_id],
-          pact_version: pact_version
-        ).save
+          pact_version: pact_version,
+          revision_number: 1
+        ).upsert
         update_latest_pact_publication_ids(pact_publication)
         pact_publication.to_domain
       end
@@ -46,18 +47,14 @@ module PactBroker
           params.fetch(:json_content)
         )
         if existing_model.pact_version_id != pact_version.id
-          key = {
+          pact_publication = PactPublication.new(
             consumer_version_id: existing_model.consumer_version_id,
             provider_id: existing_model.provider_id,
             revision_number: next_revision_number(existing_model),
-          }
-          new_params = key.merge(
             consumer_id: existing_model.consumer_id,
             pact_version_id: pact_version.id,
             created_at: Sequel.datetime_class.now
-          )
-          PactPublication.upsert(new_params, key.keys)
-          pact_publication = PactPublication.where(key).single_record
+          ).upsert
           update_latest_pact_publication_ids(pact_publication)
           pact_publication.to_domain
         else

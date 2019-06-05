@@ -3,6 +3,66 @@ require 'pact_broker/pacts/pact_publication'
 module PactBroker
   module Pacts
     describe PactPublication do
+      describe "save and upsert" do
+        before do
+          td.create_consumer
+            .create_provider
+            .create_consumer_version
+            .create_pact
+        end
+
+        let(:params) do
+          {
+            consumer_id: td.consumer.id,
+            provider_id: td.provider.id,
+            consumer_version_id: td.consumer_version.id,
+            pact_version_id: PactVersion.first.id,
+            revision_number: 1
+          }
+        end
+
+        let(:pact_publication) do
+          PactPublication.new(params)
+        end
+
+        context "when using a PactPublication with the same provider/consumer version/revision number as an existing PactPublication" do
+          describe "save" do
+            it "raises a constraint exception" do
+              expect { pact_publication.save }.to raise_error Sequel::UniqueConstraintViolation
+            end
+          end
+
+          describe "upsert" do
+            it "does not raise an error" do
+              pact_publication.upsert
+            end
+
+            it "sets the relationship objects" do
+              pact_publication.upsert
+              expect(pact_publication.id).to_not be nil
+              expect(pact_publication.consumer.id).to eq td.consumer.id
+              expect(pact_publication.consumer.name).to eq td.consumer.name
+            end
+
+            context "with objects instead of ids" do
+              let(:params) do
+                {
+                  consumer: td.consumer,
+                  provider: td.provider,
+                  consumer_version: td.consumer_version,
+                  pact_version: PactVersion.first,
+                  revision_number: 1
+                }
+              end
+
+              it "also works" do
+                pact_publication.upsert
+                expect(pact_publication.consumer_id).to eq td.consumer.id
+              end
+            end
+          end
+        end
+      end
 
       describe "#latest_tag_names" do
         before do

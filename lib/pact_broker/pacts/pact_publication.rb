@@ -5,6 +5,7 @@ require 'pact_broker/repositories/helpers'
 module PactBroker
   module Pacts
     class PactPublication < Sequel::Model(:pact_publications)
+      UNIQUE_CONSTRAINT_KEYS = [:consumer_version_id, :provider_id, :revision_number].freeze
 
       extend Forwardable
 
@@ -55,6 +56,12 @@ module PactBroker
 
       def to_version_domain
         OpenStruct.new(number: consumer_version.number, pacticipant: consumer_version.pacticipant, tags: consumer_version.tags, order: consumer_version.order)
+      end
+
+      def upsert
+        params = to_hash.merge(created_at: Sequel.datetime_class.now)
+        self.id = PactPublication.upsert(params, UNIQUE_CONSTRAINT_KEYS).id
+        self.refresh
       end
 
       private
