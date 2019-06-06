@@ -3,6 +3,8 @@ module PactBroker
     class VerifiablePactMessages
       extend Forwardable
 
+      READ_MORE = "Read more at https://pact.io/pending"
+
       delegate [:consumer_name, :provider_name, :head_consumer_tags, :pending_provider_tags, :non_pending_provider_tags, :pending?] => :verifiable_pact
 
       def initialize(verifiable_pact)
@@ -20,9 +22,9 @@ module PactBroker
 
       def pending_reason
         if pending?
-          "This pact is in pending state because it has not yet been successfully verified by #{pending_provider_tags_description}. If this verification fails, it will not cause the overall build to fail."
+          "This pact is in pending state because it has not yet been successfully verified by #{pending_provider_tags_description}. If this verification fails, it will not cause the overall build to fail. #{READ_MORE}"
         else
-          "This pact has previously been successfully verified by #{non_pending_provider_tags_description}. If this verification fails, it will fail the build."
+          "This pact has previously been successfully verified by #{non_pending_provider_tags_description}. If this verification fails, it will fail the build. #{READ_MORE}"
         end
       end
 
