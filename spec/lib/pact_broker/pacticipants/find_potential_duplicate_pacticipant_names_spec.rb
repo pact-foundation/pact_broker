@@ -8,7 +8,7 @@ module PactBroker
     describe FindPotentialDuplicatePacticipantNames do
 
       describe "split" do
-        TEST_CASES = [
+        SPLIT_TEST_CASES = [
           ["a-foo-service", ["a", "foo", "service"]],
           ["a_foo_service", ["a", "foo", "service"]],
           ["FooAService", ["foo", "a", "service"]],
@@ -19,7 +19,7 @@ module PactBroker
           ["S3_Bucket_Service", ["s3", "bucket", "service"]],
         ]
 
-        TEST_CASES.each do | input, output |
+        SPLIT_TEST_CASES.each do | input, output |
           it "splits #{input} into #{output.inspect}" do
             expect(FindPotentialDuplicatePacticipantNames.split(input)).to eq output
           end
@@ -31,7 +31,7 @@ module PactBroker
         subject { FindPotentialDuplicatePacticipantNames.call(new_name, existing_names) }
 
 
-        TEST_CASES = [
+        CALL_TEST_CASES = [
           ["accounts", ["accounts-receivable"], []],
           ["Accounts", ["Accounts Receivable"], []],
           ["The Accounts", ["Accounts"], []],
@@ -47,7 +47,7 @@ module PactBroker
           ['Contract_Service', ['ContractsService', 'Contracts Service', 'contracts-service', 'Contacts', 'Something'], ['ContractsService', 'Contracts Service', 'contracts-service']]
         ]
 
-        TEST_CASES.each do | the_new_name, the_existing_names, the_expected_duplicates |
+        CALL_TEST_CASES.each do | the_new_name, the_existing_names, the_expected_duplicates |
           context "when the new name is #{the_new_name} and the existing names are #{the_existing_names.inspect}" do
             let(:new_name) { the_new_name }
             let(:existing_names) { the_existing_names }
