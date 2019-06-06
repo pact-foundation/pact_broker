@@ -228,16 +228,28 @@ module PactBroker
         subject { Repository.new.update_by_uuid(uuid, new_webhook) }
 
         it "updates the webhook" do
-          updated_webhook = subject
-          expect(updated_webhook.uuid).to eq uuid
-          expect(updated_webhook.request.method).to eq 'GET'
-          expect(updated_webhook.request.url).to eq 'http://example.com'
-          expect(updated_webhook.request.body).to eq 'foo'
-          expect(updated_webhook.request.headers).to eq 'Content-Type' => 'text/plain'
-          expect(updated_webhook.request.username).to eq nil
-          expect(updated_webhook.request.password).to eq nil
-          expect(updated_webhook.events.first.name).to eq 'something_else'
-          expect(updated_webhook.consumer.name).to eq "Foo2"
+          expect(subject.uuid).to eq uuid
+          expect(subject.request.method).to eq 'GET'
+          expect(subject.request.url).to eq 'http://example.com'
+          expect(subject.request.body).to eq 'foo'
+          expect(subject.request.headers).to eq 'Content-Type' => 'text/plain'
+          expect(subject.request.username).to eq nil
+          expect(subject.request.password).to eq nil
+          expect(subject.events.first.name).to eq 'something_else'
+          expect(subject.consumer.name).to eq "Foo2"
+        end
+
+        context "when the updated params do not contain a consumer or provider" do
+          let(:new_webhook) do
+            PactBroker::Domain::Webhook.new(
+              events: [new_event],
+              request: new_request
+            )
+          end
+
+          it "removes the existing consumer or provider" do
+            expect(subject.consumer).to be nil
+          end
         end
       end
 

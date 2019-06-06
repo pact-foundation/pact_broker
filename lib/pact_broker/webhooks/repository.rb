@@ -31,8 +31,8 @@ module PactBroker
 
       def update_by_uuid uuid, webhook
         existing_webhook = Webhook.find(uuid: uuid)
-        existing_webhook.consumer_id = pacticipant_repository.find_by_name(webhook.consumer.name).id if webhook.consumer
-        existing_webhook.provider_id = pacticipant_repository.find_by_name(webhook.provider.name).id if webhook.provider
+        existing_webhook.consumer_id = webhook.consumer ? pacticipant_repository.find_by_name(webhook.consumer.name).id : nil
+        existing_webhook.provider_id = webhook.provider ? pacticipant_repository.find_by_name(webhook.provider.name).id : nil
         existing_webhook.update_from_domain(webhook).save
         existing_webhook.events.collect(&:delete)
         (webhook.events || []).each do | webhook_event |
