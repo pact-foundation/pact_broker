@@ -50,6 +50,12 @@ module PactBroker
               title: 'Pacticipants',
               templated: false
             },
+            'pb:pacticipant' =>
+            {
+              href: base_url + '/pacticipants/{pacticipant}',
+              title: 'Fetch pacticipant by name',
+              templated: true
+            },
             'pb:latest-provider-pacts' =>
             {
               href: base_url + '/pacts/provider/{provider}/latest',
@@ -93,6 +99,12 @@ module PactBroker
               href: base_url + '/integrations',
               title: 'Integrations',
               templated: false
+            },
+            'pb:pacticipant-version-tag' =>
+            {
+              href: base_url + '/pacticipants/{pacticipant}/versions/{version}/tags/{tag}',
+              title: "Get, create or delete a tag for a pacticipant version",
+              templated: true
             },
             'beta:pending-provider-pacts' =>
             {
