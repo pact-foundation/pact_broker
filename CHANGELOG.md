@@ -1,3 +1,21 @@
+<a name="v2.33.0"></a>
+### v2.33.0 (2019-06-07)
+
+
+#### Features
+
+* add pb:pacticipant and pb:pacticipant-version-tag relations to the index resource	 ([2c4c258c](/../../commit/2c4c258c))
+
+
+#### Bug Fixes
+
+* correctly remove webhook consumer/provider when update params do not contain a consumer/provider	 ([118bbee1](/../../commit/118bbee1))
+* duplicate key value violates unique constraint "cv_prov_revision_unq" error when publishing identical pact resources at the same time	 ([6c8e38fb](/../../commit/6c8e38fb))
+
+* **matrix**
+  * ensure unrelated dependencies are not included in a matrix result when three pacticipants each have dependencies on each other	 ([a086ffec](/../../commit/a086ffec))
+
+
 <a name="v2.32.0"></a>
 ### v2.32.0 (2019-05-28)
 
