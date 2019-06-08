@@ -88,7 +88,7 @@ module PactBroker
       end
 
       def reschedule_job
-        logger.debug "Re-enqeuing job for webhook #{triggered_webhook.webhook_uuid} to run in #{backoff_time} seconds"
+        logger.info "Re-enqeuing job for webhook #{triggered_webhook.webhook_uuid} to run in #{backoff_time} seconds"
         Job.perform_in(backoff_time, @data.merge(error_count: error_count+1))
       end
 

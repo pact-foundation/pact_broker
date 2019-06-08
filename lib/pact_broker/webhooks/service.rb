@@ -122,7 +122,7 @@ module PactBroker
         if webhooks.any?
           run_later(webhooks, pact, verification, event_name, options)
         else
-          logger.debug "No enabled webhooks found for consumer \"#{pact.consumer.name}\" and provider \"#{pact.provider.name}\" and event #{event_name}"
+          logger.info "No enabled webhooks found for consumer \"#{pact.consumer.name}\" and provider \"#{pact.provider.name}\" and event #{event_name}"
         end
       end
 
