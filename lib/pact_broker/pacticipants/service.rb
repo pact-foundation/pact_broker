@@ -58,6 +58,7 @@ module PactBroker
       end
 
       def self.update params
+        # TODO move this to the repository!
         pacticipant = pacticipant_repository.find_by_name(params.fetch('name'))
         PactBroker::Api::Decorators::PacticipantDecorator.new(pacticipant).from_hash(params)
         pacticipant.save
@@ -65,10 +66,7 @@ module PactBroker
       end
 
       def self.create params
-        pacticipant = PactBroker::Domain::Pacticipant.new
-        PactBroker::Api::Decorators::PacticipantDecorator.new(pacticipant).from_hash(params)
-        pacticipant.save
-        pacticipant
+        pacticipant_repository.create(params)
       end
 
       def self.delete name

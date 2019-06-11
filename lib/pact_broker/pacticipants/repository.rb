@@ -41,6 +41,9 @@ module PactBroker
         end
       end
 
+      # Need to be able to handle two calls that make the pacticipant at the same time.
+      # TODO raise error if attributes apart from name are different, because this indicates that
+      # the second request is not at the same time.
       def create args
         PactBroker::Domain::Pacticipant.dataset.insert_ignore.insert(
           name: args[:name],
