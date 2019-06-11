@@ -164,7 +164,11 @@ module PactBroker
       end
 
       def find_latest_triggered_webhooks_for_pact pact
-        find_latest_triggered_webhooks(pact.consumer, pact.provider)
+        if pact
+          find_latest_triggered_webhooks(pact.consumer, pact.provider)
+        else
+          []
+        end
       end
 
       def find_latest_triggered_webhooks consumer, provider
