@@ -131,7 +131,7 @@ module PactBroker
         webhooks.each do | webhook |
           begin
             triggered_webhook = webhook_repository.create_triggered_webhook(trigger_uuid, webhook, pact, verification, RESOURCE_CREATION)
-            logger.info "Scheduling job for #{webhook.description} with uuid #{webhook.uuid}"
+            logger.info "Scheduling job for webhook with uuid #{webhook.uuid}"
             job_data = {
               triggered_webhook: triggered_webhook,
               webhook_context: options.fetch(:webhook_context),
