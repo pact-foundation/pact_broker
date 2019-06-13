@@ -50,6 +50,16 @@ RSpec.configure do | config |
   def app
     PactBroker::API
   end
+
+  def in_utc
+    original_tz = ENV['TZ']
+    begin
+      ENV['TZ'] = 'UTC'
+      yield
+    ensure
+      ENV['TZ'] = original_tz
+    end
+  end
 end
 
 # SemanticLogger.add_appender(io: $stdout)

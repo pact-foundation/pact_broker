@@ -238,6 +238,14 @@ module PactBroker
         "#{base_url}/groups/#{pacticipant_name}"
       end
 
+      def secret_url(secret, base_url = '')
+        "#{base_url}/secrets/#{secret.uuid}"
+      end
+
+      def secrets_url(base_url = '')
+        "#{base_url}/secrets"
+      end
+
       def hal_browser_url target_url
         "/hal-browser/browser.html#" + target_url
       end

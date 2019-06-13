@@ -5,8 +5,6 @@ module PactBroker
   module Api
     module Decorators
       class WebhooksDecorator < BaseDecorator
-
-
         link :self do | context |
           {
             title: context[:resource_title],
