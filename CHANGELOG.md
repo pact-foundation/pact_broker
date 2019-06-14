@@ -1,3 +1,22 @@
+<a name="v2.34.0"></a>
+### v2.34.0 (2019-06-14)
+
+
+#### Features
+
+* **webhooks**
+  * provide mapping to bitbucket build status names (#277)	 ([7bdf0c47](/../../commit/7bdf0c47))
+
+* change log level for webhook triggering logs from debug to info	 ([2dca79c1](/../../commit/2dca79c1))
+
+
+#### Bug Fixes
+
+* gracefully handle two requests coming in at the same time to create the same pacticipant	 ([78d92ada](/../../commit/78d92ada))
+* gracefully handle pact webhook status when there is no pact yet	 ([ba1f6bc7](/../../commit/ba1f6bc7))
+* do not overwrite existing pactbroker.database_connector in rack env	 ([0da5d070](/../../commit/0da5d070))
+
+
 <a name="v2.33.0"></a>
 ### v2.33.0 (2019-06-07)
 
