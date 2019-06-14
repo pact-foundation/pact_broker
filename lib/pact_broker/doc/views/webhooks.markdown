@@ -95,6 +95,7 @@ The following variables may be used in the request path, parameters or body, and
 * `${pactbroker.consumerLabels}`: the list of labels for the consumer associated with the pact content, separated by ", ".
 * `${pactbroker.providerLabels}`: the list of labels for the provider associated with the pact content, separated by ", ".
 * `${pactbroker.githubVerificationStatus}`: the verification status using the correct keywords for posting to the the [Github commit status API](https://developer.github.com/v3/repos/statuses).
+* `${pactbroker.bitbucketVerificationStatus}`: the verification status using the correct keywords for posting to the the [Bitbucket commit status API](https://developer.atlassian.com/server/bitbucket/how-tos/updating-build-status-for-commits/).
 * `${pactbroker.pactUrl}`: the "permalink" URL to the newly published pact (the URL specifying the consumer version URL, rather than the "/latest" format.)
 * `${pactbroker.verificationResultUrl}`: the URL to the relevant verification result.
 
