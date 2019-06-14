@@ -27,5 +27,9 @@ To run the "quick tests" (skip the lengthy migration specs)
 
 `bundle exec rake spec:quick`
 
+To run a single spec:
+
+`bundle exec rspec path_to_your_spec.rb`
+
 [chruby]: https://github.com/postmodern/chruby
 [ruby-install]: https://github.com/postmodern/ruby-install
