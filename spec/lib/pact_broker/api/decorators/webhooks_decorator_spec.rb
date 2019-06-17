@@ -9,7 +9,8 @@ module PactBroker
         let(:webhook) do
           instance_double(Domain::Webhook,
             uuid: 'some-uuid',
-            display_description: 'description'
+            display_description: 'description',
+            scope_description: 'scope description'
           )
         end
         let(:base_url) { 'http://example.org' }
@@ -34,7 +35,7 @@ module PactBroker
 
           it "includes a list of links to the webhooks" do
             expect(subject[:_links][:'pb:webhooks']).to be_instance_of(Array)
-            expect(subject[:_links][:'pb:webhooks'].first).to eq title: 'Webhook', name: 'description', href: 'http://example.org/webhooks/some-uuid'
+            expect(subject[:_links][:'pb:webhooks'].first).to eq title: 'scope description', name: 'description', href: 'http://example.org/webhooks/some-uuid'
           end
 
           it "includes curies" do
