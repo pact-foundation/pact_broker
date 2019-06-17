@@ -1,9 +1,34 @@
 require 'pact_broker/api/contracts/base_contract'
+require 'dry/validation/schema/form'
 
 module PactBroker
   module Api
     module Contracts
-      class PutPacticipantNameContract < BaseContract
+
+      PUT_PACTICIPANT_NAME_FORM = Dry::Validation.Form do
+        configure do
+          config.messages_file = File.expand_path("../../../locale/en.yml", __FILE__)
+        end
+
+        required(:name).maybe
+        required(:name_in_pact).maybe
+
+        rule(name_in_path_matches_name_in_pact?: [:name, :name_in_pact]) do |name, name_in_pact|
+          name_in_pact.filled?.then(name.eql?(value(:name_in_pact)))
+        end
+      end
+
+      class PutPacticipantNameContract
+
+        def initialize _ = nil
+        end
+
+        def validate(params)
+          PUT_PACTICIPANT_FORM.call(params)
+        end
+      end
+
+      class PutPacticipantNameContract2 < BaseContract
         property :name
         property :name_in_pact
         property :pacticipant
@@ -23,7 +48,37 @@ module PactBroker
         end
       end
 
-      class PutPactParamsContract < BaseContract
+      PUT_PACT_PARAMS_CONTRACT = Dry::Validation.Form do
+        configure do
+          config.messages_file = File.expand_path("../../../locale/en.yml", __FILE__)
+
+          def valid_consumer_version_number?(value)
+            return true if PactBroker.configuration.order_versions_by_date
+            parsed_version_number = PactBroker.configuration.version_parser.call(value)
+            !parsed_version_number.nil?
+          end
+        end
+
+        required(:consumer_version_number).filled(:valid_consumer_version_number?)
+      end
+
+      class PutPactParamsContract
+        def initialize(_ = nil)
+
+        end
+
+        def errors
+          @errors
+        end
+
+        def validate(params)
+          result = PUT_PACT_PARAMS_CONTRACT.call(params)
+          @errors = result.errors || {}
+          @errors.empty?
+        end
+      end
+
+      class PutPactParamsContract2 < BaseContract
         property :consumer_version_number
         property :consumer, form: PutPacticipantNameContract
         property :provider, form: PutPacticipantNameContract
