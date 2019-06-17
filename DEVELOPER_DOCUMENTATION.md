@@ -95,3 +95,24 @@ Domain classes are found in `lib/pact_broker/domain`. Many of these classes are 
 
 * The supported database types are Postgres (recommended), MySQL (sigh) and Sqlite (just for testing, not recommended for production). Check the travis.yml file for the supported database versions.
 * Any migration that uses the "order" column has to be defined using the Sequel DSL rather than pure SQL, because the word "order" is a key word, and it has to be escaped correctly and differently on each database (Postgres, MySQL, Sqlite).
+
+## Adding a resource
+
+* In `spec/features` add a new high level spec that executes the endpoint you're going to write. Don't worry if you're not sure exactly what it's going to look like yet - you can come back and change it as you go. Have a look at the other specs in the directory for the type of assertions that should be made. Basic rule of thumb is to check the http status code, and do a light touch of assertions on the body.
+* Create a new directory for the classes that relate to your new resource. eg For a "Foo" resource, create `lib/pact_broker/foos`
+* Create a new migration in `db/migrations` that creates the underlying database table.
+* Create a new database model for the resource that extends from Sequel::Model. eg `lib/pact_broker/foos/foo.rb`
+* Create a decorator in `spec/lib/pact_broker/api/decorators/` that will map to and from the representation that will be used in the HTTP request and response.
+  * Write a spec for the decorator.
+* You may need to create a contract to validate the request. This is kind of broken while I upgrade to the latest dry-validation library. See Beth for more details.
+* Add the HTTP resource in `lib/pact_broker/api/resources/`. It should extend from `BaseResource`.
+  * Write a spec for the resource, stubbing out the behaviour you expect from your service.
+* Add the route to `lib/pact_broker/api.rb`
+* Create a service that has the methods that you need for the resource. eg. `lib/pact_broker/foos/service.rb`
+  * Add the new service to `lib/pact_broker/services.rb`
+  * Write a spec for the service, stubbing out the behaviour you expect from your repository.
+* Create a repository eg. `lib/pact_broker/foos/repository.rb`.
+  * Add the new repository to `lib/pact_broker/repositories.rb`.
+  * Write a spec for the repository.
+* Go back and make the original feature spec pass.
+* Profit.
