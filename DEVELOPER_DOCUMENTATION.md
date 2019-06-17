@@ -8,7 +8,9 @@
     * HTTP Resources - [lib/pact_broker/api/resources](lib/pact_broker/api/resources) These handle the HTTP requests.
     * Decorators - [lib/pact_broker/api/decorators](lib/pact_broker/api/decorators) These render the response bodies.
     * Contracts - [lib/pact_broker/api/contracts](lib/pact_broker/api/contracts) These validate incoming API requests.
-  * Domain - Domain classes were intially created in [lib/pact_broker/domain](lib/pact_broker/domain) but are now put in their own modules. The ones left here just haven't been migrated yet.
+  * Domain - Domain classes were intially created in [lib/pact_broker/domain](lib/pact_broker/domain) but are now put in their own modules. The ones left here just haven't been migrated yet. The module name is the plural of the domain class name. eg `lib/pact_broker/widgets/widget.rb`.
+  * Services and Repositories - in the module with the name of their domain concept. eg `lib/pact_broker/widgets/service.rb` and `lib/pact_broker/widgets/repository.rb`
+  * Standalone "function as class" classes go into the module they relate to. This pattern is used when there is some significant stateless logic that we want to
 * Database migrations - [db/migrations](db/migrations)
 
 * Tests - `spec`
