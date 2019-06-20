@@ -88,6 +88,17 @@ module PactBroker
           it "reuses the same PactVersion to save room" do
             expect { subject }.to_not change{ PactVersion.count }
           end
+
+          context "when there is a race condition and the pact version gets created by another request in between attempting to find and create" do
+            before do
+              allow(PactVersion).to receive(:find).and_return(nil)
+            end
+
+            it "doesn't blow up" do
+              expect(PactVersion).to receive(:find)
+              subject
+            end
+          end
         end
 
         context "when base_equality_only_on_content_that_affects_verification_results is true" do

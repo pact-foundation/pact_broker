@@ -51,7 +51,7 @@ module PactBroker
             where(key).update(row)
           end
         end
-        model.find(row.select{ |key, _| unique_key_names.include?(key)} )
+        model.where(row.select{ |key, _| unique_key_names.include?(key)}).single_record
       end
     end
   end

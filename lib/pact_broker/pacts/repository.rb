@@ -292,15 +292,13 @@ module PactBroker
       end
 
       def create_pact_version consumer_id, provider_id, sha, json_content
-        logger.debug("Creating new pact version for sha #{sha}")
-        # Content.from_json(json_content).with_ids.to_json
-        pact_version = PactVersion.new(
+        PactVersion.new(
           consumer_id: consumer_id,
           provider_id: provider_id,
           sha: sha,
-          content: json_content
-        )
-        pact_version.save
+          content: json_content,
+          created_at: Sequel.datetime_class.now
+        ).upsert
       end
 
       def find_all_database_versions_between(consumer_name, options, base_class = LatestPactPublicationsByConsumerVersion)
