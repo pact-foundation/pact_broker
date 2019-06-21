@@ -1,12 +1,22 @@
 require 'pact_broker/api/resources/base_resource'
 require 'pact_broker/services'
 require 'pact_broker/api/decorators/webhook_execution_result_decorator'
+require 'pact_broker/api/resources/webhook_resource_methods'
 require 'pact_broker/constants'
 
 module PactBroker
   module Api
     module Resources
       class WebhookExecution < BaseResource
+        include WebhookResourceMethods
+
+        def content_types_accepted
+          [["application/json"]]
+        end
+
+        def content_types_provided
+          [["application/hal+json"]]
+        end
 
         def allowed_methods
           ["POST", "OPTIONS"]
@@ -23,6 +33,14 @@ module PactBroker
           webhook
         end
 
+        def malformed_request?
+          if uuid
+            false
+          else
+            webhook_validation_errors?(webhook)
+          end
+        end
+
         private
 
         def post_response_body webhook_execution_result
@@ -30,7 +48,13 @@ module PactBroker
         end
 
         def webhook
-          @webhook ||= webhook_service.find_by_uuid uuid
+          @webhook ||= begin
+            if uuid
+              webhook_service.find_by_uuid uuid
+            else
+              build_unsaved_webhook
+            end
+          end
         end
 
         def uuid
@@ -38,11 +62,10 @@ module PactBroker
         end
 
         def user_options
-          {
-            base_url: base_url,
+          decorator_context(
             webhook: webhook,
             show_response: PactBroker.configuration.show_webhook_response?
-          }
+          )
         end
 
         def webhook_options
@@ -54,6 +77,10 @@ module PactBroker
               base_url: base_url
             }
           }
+        end
+
+        def build_unsaved_webhook
+          Decorators::WebhookDecorator.new(PactBroker::Domain::Webhook.new).from_json(request_body)
         end
       end
     end
