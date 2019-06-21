@@ -8,8 +8,6 @@ module PactBroker
   module Api
     module Resources
       class Secrets < BaseResource
-
-
         def content_types_provided
           [["application/hal+json", :to_json]]
         end
@@ -29,18 +27,21 @@ module PactBroker
           false
         end
 
+        # Lifecycle method not actually called for POST, so call it manually
+        def is_conflict?
+          !secret_service.encryption_key_configured?(secrets_encryption_key_id)
+        end
+
         def post_is_create?
           true
         end
 
         def from_json
-          if secret_service.encryption_key_configured?(secrets_encryption_key_id)
-            unencrypted_secret = Decorators::SecretDecorator.new(secret).from_hash(params_with_string_keys)
-            created_unencrypted_secret = secret_service.create(next_uuid, unencrypted_secret, secrets_encryption_key_id)
-            response.body = Decorators::SecretDecorator.new(created_unencrypted_secret).to_json(user_options: { base_url: base_url })
-          else
+          if is_conflict?
             set_json_error_message(message('errors.encryption_key_not_configured'))
             409
+          else
+            create_secret
           end
         end
 
@@ -49,19 +50,15 @@ module PactBroker
         end
 
         def to_json
-          generate_json([])
-        end
-
-        def generate_json pacticipants
-          PactBroker::Api::Decorators::DeprecatedPacticipantCollectionDecorator.new(pacticipants).to_json(user_options: { base_url: base_url })
-        end
-
-        def decorator_for model
 
         end
 
-        def secret
-          @secret ||= PactBroker::Secrets::UnencryptedSecret.new
+        private
+
+        def create_secret
+          unencrypted_secret = Decorators::SecretDecorator.new(PactBroker::Secrets::UnencryptedSecret.new).from_hash(params_with_string_keys)
+          created_unencrypted_secret = secret_service.create(next_uuid, unencrypted_secret, secrets_encryption_key_id)
+          response.body = Decorators::SecretDecorator.new(created_unencrypted_secret).to_json(user_options: { base_url: base_url })
         end
 
         def contract

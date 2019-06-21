@@ -42,6 +42,11 @@ module PactBroker
       Matrix::Repository.new
     end
 
+    def secret_repository
+      require 'pact_broker/secrets/repository'
+      Secrets::Repository.new
+    end
+
     extend self
   end
 end
