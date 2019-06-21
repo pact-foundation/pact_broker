@@ -71,5 +71,10 @@ module PactBroker
       require 'pact_broker/webhooks/trigger_service'
       Webhooks::TriggerService
     end
+
+    def secret_service
+      require 'pact_broker/secrets/service'
+      Secrets::Service
+    end
   end
 end

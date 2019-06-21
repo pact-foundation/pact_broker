@@ -6,7 +6,8 @@ module PactBroker
     module Contracts
       describe 'SecretContract' do
         let(:params) { {} }
-        let(:errors) { SecretContract.call(params) }
+        let(:secret_contract) { SecretContract.new }
+        let(:errors) { secret_contract.validate(params); secret_contract.errors }
 
         context "with empty params" do
           it "has errors" do

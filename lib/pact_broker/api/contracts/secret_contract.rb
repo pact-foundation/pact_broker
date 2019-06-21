@@ -28,11 +28,14 @@ module PactBroker
 
       class SecretContract
 
-        def self.call(params)
-          select_first_error(SCHEMA.call(params).errors(full: true))
+        attr_reader :errors
+
+        def validate(params)
+          @errors = select_first_error(SCHEMA.call(params).errors(full: true))
+          errors.empty?
         end
 
-        def self.select_first_error(errors)
+        def select_first_error(errors)
           errors.each_with_object({}) do | (key, value), new_errors |
             new_errors[key] = [value.first]
           end

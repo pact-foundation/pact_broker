@@ -8,6 +8,7 @@ require 'pact_broker/api/decorators/decorator_context'
 require 'pact_broker/json'
 require 'pact_broker/pacts/pact_params'
 require 'pact_broker/api/resources/authentication'
+require 'pact_broker/messages'
 
 module PactBroker
 
@@ -22,6 +23,7 @@ module PactBroker
         include PactBroker::Api::PactBrokerUrls
         include PactBroker::Api::Resources::Authentication
         include PactBroker::Logging
+        include PactBroker::Messages
 
 
         attr_accessor :user

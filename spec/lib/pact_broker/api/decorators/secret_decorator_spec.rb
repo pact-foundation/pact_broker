@@ -63,6 +63,7 @@ module PactBroker
           before do
             allow(PactBroker.configuration.secrets_encryption_key_finder).to receive(:call).and_return('foo')
           end
+
           let(:hash) do
             {
               "name" => "name",
