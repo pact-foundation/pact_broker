@@ -56,7 +56,7 @@ module PactBroker
         private
 
         def create_secret
-          unencrypted_secret = Decorators::SecretDecorator.new(PactBroker::Secrets::UnencryptedSecret.new).from_hash(params_with_string_keys)
+          unencrypted_secret = Decorators::SecretDecorator.new(PactBroker::Secrets::UnencryptedSecret.new).from_json(params)
           created_unencrypted_secret = secret_service.create(next_uuid, unencrypted_secret, secrets_encryption_key_id)
           response.body = Decorators::SecretDecorator.new(created_unencrypted_secret).to_json(user_options: { base_url: base_url })
         end
