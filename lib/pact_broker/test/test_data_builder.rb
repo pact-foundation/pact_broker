@@ -46,6 +46,7 @@ module PactBroker
       attr_reader :webhook
       attr_reader :webhook_execution
       attr_reader :triggered_webhook
+      attr_reader :secret
 
       def initialize(params = {})
       end
@@ -320,7 +321,8 @@ module PactBroker
           name: params[:name] || "name-#{model_counter}",
           value: params[:name] || "value-#{model_counter}",
         )
-        PactBroker::Secrets::Service.create(SecureRandom.urlsafe_base64, unencrypted_secret, nil)
+        @secret = PactBroker::Secrets::Service.create(SecureRandom.urlsafe_base64, unencrypted_secret, nil)
+        self
       end
 
       def model_counter

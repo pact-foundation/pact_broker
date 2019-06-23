@@ -23,6 +23,14 @@ module PactBroker
       def self.find_all
         secret_repository.find_all
       end
+
+      def self.find_by_uuid(uuid)
+        secret_repository.find_by_uuid(uuid)
+      end
+
+      def self.delete_by_uuid(uuid)
+        secret_repository.delete_by_uuid(uuid)
+      end
     end
   end
 end
