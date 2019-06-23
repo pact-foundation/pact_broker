@@ -24,6 +24,8 @@ require 'pact_broker/tags/repository'
 require 'pact_broker/webhooks/repository'
 require 'pact_broker/certificates/certificate'
 require 'pact_broker/matrix/row'
+require 'pact_broker/secrets/service'
+require 'pact_broker/secrets/secret'
 require 'ostruct'
 
 module PactBroker
@@ -311,6 +313,14 @@ module PactBroker
         options.delete(:comment)
         PactBroker::Certificates::Certificate.create(uuid: SecureRandom.urlsafe_base64, content: File.read(options[:path]))
         self
+      end
+
+      def create_secret params = {}
+        unencrypted_secret = PactBroker::Secrets::UnencryptedSecret.new(
+          name: params[:name] || "name-#{model_counter}",
+          value: params[:name] || "value-#{model_counter}",
+        )
+        PactBroker::Secrets::Service.create(SecureRandom.urlsafe_base64, unencrypted_secret, nil)
       end
 
       def model_counter

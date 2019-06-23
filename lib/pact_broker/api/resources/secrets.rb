@@ -50,15 +50,15 @@ module PactBroker
         end
 
         def to_json
-
+          Decorators::SecretsDecorator.new(secret_service.find_all).to_json(user_options: decorator_context)
         end
 
         private
 
         def create_secret
-          unencrypted_secret = Decorators::SecretDecorator.new(PactBroker::Secrets::UnencryptedSecret.new).from_json(params)
+          unencrypted_secret = Decorators::SecretDecorator.new(PactBroker::Secrets::UnencryptedSecret.new).from_json(request_body)
           created_unencrypted_secret = secret_service.create(next_uuid, unencrypted_secret, secrets_encryption_key_id)
-          response.body = Decorators::SecretDecorator.new(created_unencrypted_secret).to_json(user_options: { base_url: base_url })
+          response.body = Decorators::SecretDecorator.new(created_unencrypted_secret).to_json(user_options: decorator_context)
         end
 
         def contract

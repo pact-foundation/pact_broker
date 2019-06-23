@@ -8,12 +8,7 @@ RSpec.describe "creating a secret" do
   subject { post path, request_body, rack_headers }
 
 
-  context "when the encryption key is configured" do
-    before do
-      allow(ENV).to receive(:fetch).and_call_original
-      allow(ENV).to receive(:fetch).with("PACT_BROKER_SECRETS_ENCRYPTION_KEY").and_return("ttDJ1PnVbxGWhIe3T12UHoEfHKB4AvoxdW0JWOg98gE=")
-    end
-
+  context "when the encryption key is configured", secret_key: true do
     it "creates a secret" do
       expect { subject }.to change { PactBroker::Secrets::Secret.count }.by(1)
     end
@@ -31,7 +26,6 @@ RSpec.describe "creating a secret" do
   context "when the encryption key is not configured" do
     it "returns a 409" do
       expect(subject.status).to eq 409
-      puts subject.body
     end
   end
 end

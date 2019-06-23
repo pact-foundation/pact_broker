@@ -4,7 +4,8 @@ module PactBroker
   module Api
     module Decorators
       class SecretsDecorator < BaseDecorator
-        property :entries, as: :secrets, embedded: true, :extend => SecretDecorator
+
+        collection :entries, as: :secrets, embedded: true, :extend => SecretDecorator
 
         link :self do | context |
           {

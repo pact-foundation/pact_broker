@@ -19,6 +19,10 @@ module PactBroker
       def self.create(uuid, unencrypted_secret, secrets_encryption_key_id)
         secret_repository.create(uuid, unencrypted_secret, secrets_encryption_key_id)
       end
+
+      def self.find_all
+        secret_repository.find_all
+      end
     end
   end
 end
