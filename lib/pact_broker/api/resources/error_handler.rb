@@ -9,15 +9,22 @@ module PactBroker
         include PactBroker::Logging
 
         def self.call e, request, response
-          error_reference = SecureRandom.urlsafe_base64.gsub(/[^a-z]/i, '')[0,10]
-          logger.error "#{e.message} - error reference #{error_reference}"
-          logger.error e.backtrace
+          error_reference = generate_error_reference
+          if reportable?(e)
+            log_error(e, "Error reference #{error_reference}")
+            report(e, error_reference, request)
+          else
+            logger.info "Error reference #{error_reference} - #{e.class} #{e.message}\n#{e.backtrace.join("\n")}"
+          end
           response.body = response_body_hash(e, error_reference).to_json
-          report(e, error_reference, request) if reportable?(e)
         end
 
-        def self.reportable? e
-          !e.is_a?(PactBroker::Error)
+        def self.generate_error_reference
+          SecureRandom.urlsafe_base64.gsub(/[^a-z]/i, '')[0,10]
+        end
+
+        def self.reportable?(e)
+          !e.is_a?(PactBroker::Error) && !e.is_a?(JSON::GeneratorError)
         end
 
         def self.display_message(e, error_reference)
