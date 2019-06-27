@@ -4,7 +4,7 @@ module PactBroker
   module Certificates
     describe Service do
       let(:certificate_content) { File.read('spec/fixtures/certificate.pem') }
-      let(:logger) { double('logger').as_null_object }
+      let(:logger) { spy('logger') }
 
       before do
         allow(Service).to receive(:logger).and_return(logger)
@@ -17,19 +17,25 @@ module PactBroker
           expect(subject).to be_instance_of(OpenSSL::X509::Store)
         end
 
-        context "when there is a duplicate certificate" do
+        context "when there is an error adding certificate" do
+          let(:cert_store) { instance_spy(OpenSSL::X509::Store) }
+
           before do
             Certificate.create(uuid: '1234', content: certificate_content)
-            Certificate.create(uuid: '5678', content: certificate_content)
+
+            allow(cert_store).to receive(:add_cert).and_raise(StandardError)
+            allow(OpenSSL::X509::Store).to receive(:new).and_return(cert_store)
           end
 
           it "logs the error" do
-            expect(Service).to receive(:log_error).with(anything, /Error adding certificate/).at_least(1).times
             subject
+
+            expect(logger).to have_received(:error)
+              .with(/Error adding certificate/).at_least(1).times
           end
 
           it "returns an OpenSSL::X509::Store" do
-            expect(subject).to be_instance_of(OpenSSL::X509::Store)
+            expect(subject).to be(cert_store)
           end
         end
       end
