@@ -5,10 +5,8 @@ module PactBroker
   module Api
     module Decorators
       describe WebhookExecutionResultDecorator do
-
         describe "to_json" do
-
-          let(:webhook_execution_result) { PactBroker::Webhooks::WebhookExecutionResult.new(request, response, logs, error)}
+          let(:webhook_execution_result) { PactBroker::Webhooks::WebhookExecutionResult.new(request, response, logs, error) }
           let(:logs) { "logs" }
           let(:headers) { { "Something" => ["blah", "thing"]} }
           let(:request) do
@@ -34,6 +32,14 @@ module PactBroker
             expect(subject[:_links][:'try-again'][:href]).to eq 'http://resource-url'
           end
 
+          it "includes a success flag" do
+            expect(subject[:success]).to be true
+          end
+
+          it "includes the logs" do
+            expect(subject[:logs]).to eq logs
+          end
+
           context "when there is a uuid" do
             it "include a link to the webhook" do
               expect(subject[:_links][:webhook][:href]).to eq 'http://example.org/webhooks/some-uuid'
@@ -47,7 +53,6 @@ module PactBroker
               expect(subject[:_links]).to_not have_key(:webhook)
             end
           end
-
 
           context "when there is an error" do
             let(:error) { double('error', message: 'message', backtrace: ['blah','blah']) }

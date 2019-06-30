@@ -60,6 +60,8 @@ module PactBroker
         property :request, :extend => HTTPRequestDecorator
         property :response, :extend => HTTPResponseDecorator, if: lambda { |context| context[:options][:user_options][:show_response] }
         property :response_hidden_message, as: :message, exec_context: :decorator, if: lambda { |context| !context[:options][:user_options][:show_response] }
+        property :logs
+        property :success?, as: :success
 
         link :webhook do | options |
           if options.fetch(:webhook).uuid
