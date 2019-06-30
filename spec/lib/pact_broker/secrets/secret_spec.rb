@@ -7,8 +7,7 @@ module PactBroker
         allow(PactBroker.configuration.secrets_encryption_key_finder).to receive(:call).and_return(key)
       end
 
-      let(:base64_encoded_key) { "ttDJ1PnVbxGWhIe3T12UHoEfHKB4AvoxdW0JWOg98gE=" }
-      let(:key) { Base64.strict_decode64(base64_encoded_key) }
+      let(:key) { SecureRandom.random_bytes(32) }
       let(:params) do
         {
           name: "foo",
@@ -49,6 +48,19 @@ module PactBroker
           subject.value = nil
           subject.save
           expect(Secret.find(id: subject.id).value).to be nil
+        end
+      end
+
+      context "when changing the key the secret is encrypted with" do
+        let(:key_2) { SecureRandom.random_bytes(32) }
+
+        it "doesn't blow up" do
+          expect(PactBroker.configuration.secrets_encryption_key_finder).to receive(:call).and_return(key, key_2)
+          subject.value = "bar"
+          subject.save
+          subject.value = "bar2"
+          subject.key_id = "new_key"
+          subject.save
         end
       end
     end

@@ -55,6 +55,14 @@ module PactBroker
         it "returns a 200" do
           expect(subject).to be_a_hal_json_created_response
         end
+
+        context "when there are validation errors" do
+          let(:errors) { { "field" => "name" } }
+
+          it "returns an error response" do
+            expect(subject).to be_a_json_error_response("field")
+          end
+        end
       end
     end
   end

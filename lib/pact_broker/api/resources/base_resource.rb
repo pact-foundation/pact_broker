@@ -100,12 +100,12 @@ module PactBroker
 
         def set_json_error_message message
           response.headers['Content-Type'] = 'application/hal+json;charset=utf-8'
-          response.body = {error: message}.to_json
+          response.body = { error: message }.to_json
         end
 
         def set_json_validation_error_messages errors
           response.headers['Content-Type'] = 'application/hal+json;charset=utf-8'
-          response.body = {errors: errors}.to_json
+          response.body = { errors: errors }.to_json
         end
 
         def request_body
