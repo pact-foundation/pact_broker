@@ -11,17 +11,17 @@ module PactBroker
           self[:base_url] = base_url
           @resource_url = resource_url
           self[:resource_url] = resource_url
-          @resource_title = options[:resource_title]
-          self[:resource_title] = resource_title
+          if options[:resource_title]
+            @resource_title = options[:resource_title]
+            self[:resource_title] = resource_title
+          end
           merge!(options)
         end
 
         def to_s
           "DecoratorContext #{super}"
         end
-
       end
-
     end
   end
 end

@@ -7,11 +7,12 @@ require 'pact_broker/webhooks/webhook_event'
 require 'pact_broker/webhooks/triggered_webhook'
 require 'pact_broker/webhooks/latest_triggered_webhook'
 require 'pact_broker/webhooks/execution'
+require 'pact_broker/logging'
 
 module PactBroker
   module Webhooks
-
     class Repository
+      include PactBroker::Logging
 
       include Repositories
 
@@ -125,10 +126,15 @@ module PactBroker
       end
 
       def create_execution triggered_webhook, webhook_execution_result
-        Execution.create(
-          triggered_webhook: triggered_webhook,
-          success: webhook_execution_result.success?,
-          logs: webhook_execution_result.logs)
+        # TriggeredWebhook may have been deleted since the webhook execution started
+        if TriggeredWebhook.where(id: triggered_webhook.id).any?
+          Execution.create(
+            triggered_webhook: triggered_webhook,
+            success: webhook_execution_result.success?,
+            logs: webhook_execution_result.logs)
+        else
+          logger.info("Could not save webhook execution for triggered webhook with id #{triggered_webhook.id} as it has been delete from the database")
+        end
       end
 
       def delete_triggered_webhooks_by_pacticipant pacticipant

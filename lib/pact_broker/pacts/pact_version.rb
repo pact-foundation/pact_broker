@@ -1,12 +1,18 @@
 require 'sequel'
+require 'pact_broker/repositories/helpers'
 
 module PactBroker
   module Pacts
     class PactVersion < Sequel::Model(:pact_versions)
+      plugin :timestamps
       one_to_many :pact_publications, reciprocal: :pact_version
       one_to_many :verifications, reciprocal: :verification, order: :id, :class => "PactBroker::Domain::Verification"
       associate(:many_to_one, :provider, class: "PactBroker::Domain::Pacticipant", key: :provider_id, primary_key: :id)
       associate(:many_to_one, :consumer, class: "PactBroker::Domain::Pacticipant", key: :consumer_id, primary_key: :id)
+
+      dataset_module do
+        include PactBroker::Repositories::Helpers
+      end
 
       def name
         "Pact between #{consumer_name} and #{provider_name}"
@@ -45,9 +51,11 @@ module PactBroker
       def latest_consumer_version_number
         latest_consumer_version.number
       end
-    end
 
-    PactVersion.plugin :timestamps
+      def upsert
+        self.class.upsert(to_hash, [:consumer_id, :provider_id, :sha])
+      end
+    end
   end
 end
 

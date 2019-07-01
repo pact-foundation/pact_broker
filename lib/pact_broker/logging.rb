@@ -32,7 +32,7 @@ module PactBroker
     end
 
     def log_error e, description = nil
-      message = "#{e.class} #{e.message} #{e.backtrace.join("\n")}"
+      message = "#{e.class} #{e.message}\n#{e.backtrace.join("\n")}"
       message = "#{description} - #{message}" if description
       logger.error message
     end

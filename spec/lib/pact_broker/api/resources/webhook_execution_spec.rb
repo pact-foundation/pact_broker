@@ -55,6 +55,15 @@ module PactBroker
             end
 
             context "when execution is successful" do
+              let(:expected_user_options) do
+                {
+                  resource_url: 'http://example.org/webhooks/some-uuid/execute',
+                  base_url: 'http://example.org',
+                  webhook: webhook,
+                  show_response: 'foo',
+                }
+              end
+
               it "returns a 200 JSON response" do
                 subject
                 expect(last_response).to be_a_hal_json_success_response
@@ -62,7 +71,7 @@ module PactBroker
 
               it "generates a JSON response body for the execution result" do
                 allow(PactBroker.configuration).to receive(:show_webhook_response?).and_return('foo')
-                expect(decorator).to receive(:to_json).with(user_options: { base_url: 'http://example.org', webhook: webhook, show_response: 'foo' })
+                expect(decorator).to receive(:to_json).with(user_options: expected_user_options)
                 subject
               end
 

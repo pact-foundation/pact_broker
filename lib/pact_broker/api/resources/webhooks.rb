@@ -2,11 +2,13 @@ require 'pact_broker/api/resources/base_resource'
 require 'pact_broker/api/decorators/webhook_decorator'
 require 'pact_broker/api/decorators/webhooks_decorator'
 require 'pact_broker/api/contracts/webhook_contract'
+require 'pact_broker/api/resources/webhook_resource_methods'
 
 module PactBroker
   module Api
     module Resources
       class Webhooks < BaseResource
+        include WebhookResourceMethods
 
         def allowed_methods
           ["POST", "GET", "OPTIONS"]
@@ -27,20 +29,9 @@ module PactBroker
 
         def malformed_request?
           if request.post?
-            return invalid_json? || validation_errors?(webhook)
+            return invalid_json? || webhook_validation_errors?(webhook)
           end
           false
-        end
-
-        def validation_errors? webhook
-          errors = webhook_service.errors(webhook)
-
-          unless errors.empty?
-            response.headers['Content-Type'] = 'application/hal+json;charset=utf-8'
-            response.body = { errors: errors.messages }.to_json
-          end
-
-          !errors.empty?
         end
 
         def create_path

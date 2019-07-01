@@ -10,9 +10,22 @@ module PactBroker
 
       attr_reader :execution_logger, :options
 
+      class Formatter < Logger::Formatter
+        Format = "[%s] %s: %s\n".freeze
+
+        def call(severity, time, progname, msg)
+          Format % [format_datetime(time), severity, msg2str(msg)]
+        end
+
+        def format_datetime(time)
+          time.strftime(@datetime_format || "%Y-%m-%dT%H:%M:%SZ".freeze)
+        end
+      end
+
       def initialize(options)
         @log_stream = StringIO.new
         @execution_logger = Logger.new(log_stream)
+        @execution_logger.formatter = Formatter.new
         @options = options
       end
 

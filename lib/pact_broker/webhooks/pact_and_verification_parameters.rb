@@ -20,6 +20,7 @@ module PactBroker
           '${pactbroker.consumerName}' => pact ? pact.consumer_name : "",
           '${pactbroker.providerName}' => pact ? pact.provider_name : "",
           '${pactbroker.githubVerificationStatus}' => github_verification_status,
+          '${pactbroker.bitbucketVerificationStatus}' => bitbucket_verification_status,
           '${pactbroker.consumerLabels}' => pacticipant_labels(pact && pact.consumer),
           '${pactbroker.providerLabels}' => pacticipant_labels(pact && pact.provider)
         }
@@ -29,6 +30,13 @@ module PactBroker
 
       attr_reader :pact, :verification, :webhook_context, :base_url
 
+      def bitbucket_verification_status
+        if verification
+          verification.success ? "SUCCESSFUL" : "FAILED"
+        else
+          "INPROGRESS"
+        end
+      end
 
       def github_verification_status
         if verification

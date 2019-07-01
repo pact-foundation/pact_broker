@@ -1,12 +1,14 @@
 require 'pact_broker/api/resources/base_resource'
 require 'pact_broker/services'
 require 'pact_broker/api/decorators/webhook_decorator'
+require 'pact_broker/api/resources/webhook_resource_methods'
 
 module PactBroker
   module Api
     module Resources
-
       class Webhook < BaseResource
+
+        include WebhookResourceMethods
 
         def content_types_accepted
           [["application/json", :from_json]]
@@ -26,7 +28,7 @@ module PactBroker
 
         def malformed_request?
           if request.put?
-            return invalid_json? || validation_errors?(webhook)
+            return invalid_json? || webhook_validation_errors?(new_webhook)
           end
           false
         end
@@ -50,12 +52,6 @@ module PactBroker
         end
 
         private
-
-        def validation_errors? webhook
-          errors = webhook_service.errors(new_webhook)
-          set_json_validation_error_messages(errors.messages) if !errors.empty?
-          !errors.empty?
-        end
 
         def webhook
           @webhook ||= webhook_service.find_by_uuid uuid

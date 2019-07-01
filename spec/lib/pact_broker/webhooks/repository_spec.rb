@@ -430,8 +430,9 @@ module PactBroker
 
         let(:webhook_domain) { Repository.new.find_by_uuid td.webhook.uuid }
         let(:webhook_execution_result) { instance_double("PactBroker::Domain::WebhookExecutionResult", success?: true, logs: "logs") }
+        let(:repository) { Repository.new }
 
-        subject { Repository.new.create_execution td.triggered_webhook, webhook_execution_result }
+        subject { repository.create_execution td.triggered_webhook, webhook_execution_result }
 
         it "saves a new webhook execution " do
           expect { subject }.to change { Execution.count }.by(1)
@@ -443,6 +444,20 @@ module PactBroker
 
         it "sets the logs" do
           expect(subject.logs).to eq "logs"
+        end
+
+        context "when the triggered webhook has been deleted in the meantime" do
+          before do
+            TriggeredWebhook.where(id: td.triggered_webhook.id).delete
+            allow(repository).to receive(:logger).and_return(logger)
+          end
+
+          let(:logger) { double('logger') }
+
+          it "just logs the error" do
+            expect(logger).to receive(:info).with(/triggered webhook with id #{td.triggered_webhook.id}/)
+            subject
+          end
         end
       end
 

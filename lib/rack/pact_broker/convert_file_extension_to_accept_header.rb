@@ -3,6 +3,8 @@ module Rack
     # If the HTML and the CSV group resources are both requested by the browser,
     # Chrome gets confused by the content types, and when you click back, it tries to load the CSV
     # instead of the HTML page. So we have to give the CSV resource a different URL (.csv)
+    # Update: this should be fixed by lib/rack/pact_broker/add_vary_header.rb, but may as well
+    # leave it now!
 
     class ConvertFileExtensionToAcceptHeader
 
