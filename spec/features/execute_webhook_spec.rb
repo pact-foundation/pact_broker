@@ -3,18 +3,16 @@ require 'webmock/rspec'
 require 'rack/pact_broker/database_transaction'
 
 describe "Execute a webhook" do
-
-  let(:td) { TestDataBuilder.new }
-
   before do
     td.create_pact_with_hierarchy("Foo", "1", "Bar")
       .create_webhook(method: 'POST', body: '${pactbroker.pactUrl}')
   end
 
+  let(:td) { TestDataBuilder.new }
   let(:path) { "/webhooks/#{td.webhook.uuid}/execute" }
   let(:response_body) { JSON.parse(last_response.body, symbolize_names: true)}
 
-  subject { post path; last_response }
+  subject { post(path) }
 
   context "when the execution is successful" do
     let!(:request) do
