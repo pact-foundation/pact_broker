@@ -15,6 +15,7 @@ require 'rack/pact_broker/configurable_make_it_later'
 require 'rack/pact_broker/no_auth'
 require 'rack/pact_broker/convert_404_to_hal'
 require 'rack/pact_broker/reset_thread_data'
+require 'rack/pact_broker/add_vary_header'
 require 'sucker_punch'
 
 module PactBroker
@@ -151,6 +152,7 @@ module PactBroker
       @app_builder.use Rack::PactBroker::ResetThreadData
       @app_builder.use Rack::PactBroker::StoreBaseURL
       @app_builder.use Rack::PactBroker::AddPactBrokerVersionHeader
+      @app_builder.use Rack::PactBroker::AddVaryHeader
       @app_builder.use Rack::Static, :urls => ["/stylesheets", "/css", "/fonts", "/js", "/javascripts", "/images"], :root => PactBroker.project_root.join("public")
       @app_builder.use Rack::Static, :urls => ["/favicon.ico"], :root => PactBroker.project_root.join("public/images"), header_rules: [[:all, {'Content-Type' => 'image/x-icon'}]]
       @app_builder.use Rack::PactBroker::ConvertFileExtensionToAcceptHeader
