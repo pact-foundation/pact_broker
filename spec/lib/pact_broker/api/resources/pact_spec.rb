@@ -4,7 +4,6 @@ require 'rack/test'
 require 'pact_broker/pacts/service'
 require 'pact_broker/pacticipants/service'
 
-
 module PactBroker::Api
   module Resources
     describe Pact do
@@ -58,7 +57,6 @@ module PactBroker::Api
 
         end
       end
-
 
       shared_examples "an update endpoint" do |http_method|
         subject { self.send http_method, "/pacts/provider/Provider/consumer/Consumer/version/1.2.3", json, {'CONTENT_TYPE' => "application/json"} ; last_response }

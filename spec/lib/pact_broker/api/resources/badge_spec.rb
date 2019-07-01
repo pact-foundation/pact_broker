@@ -22,7 +22,6 @@ module PactBroker
         let(:verification) { double("verification", provider_version_number: "3", number: "7") }
         let(:verification_status) { instance_double("PactBroker::Verifications::Status", to_sym: :verified) }
 
-
         subject { get path, params, {'HTTP_ACCEPT' => 'image/svg+xml'}; last_response }
 
         context "when enable_public_badge_access is false and the request is not authenticated" do
@@ -141,7 +140,6 @@ module PactBroker
               end
               subject
             end
-
 
             context "when a verification is found" do
               before do

@@ -30,7 +30,6 @@ module PactBroker
 
         subject { FindPotentialDuplicatePacticipantNames.call(new_name, existing_names) }
 
-
         CALL_TEST_CASES = [
           ["accounts", ["accounts-receivable"], []],
           ["Accounts", ["Accounts Receivable"], []],

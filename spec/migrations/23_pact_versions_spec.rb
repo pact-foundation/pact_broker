@@ -13,7 +13,6 @@ describe 'migrate to pact versions (migrate 22-31)', migration: true do
   let!(:pact_1) { create(:pacts, {version_id: consumer_version_1[:id], provider_id: provider[:id], pact_version_content_sha: '1234', created_at: now, updated_at: pact_updated_at}) }
   let!(:pact_2) { create(:pacts, {version_id: consumer_version_2[:id], provider_id: provider[:id], pact_version_content_sha: '1234', created_at: now, updated_at: pact_updated_at}) }
 
-
   subject { PactBroker::Database.migrate }
 
   it "keeps the same number of pacts" do

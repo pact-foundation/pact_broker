@@ -33,7 +33,6 @@ module PactBroker
 
         let(:options) { { user_options: { base_url: 'http://example.org' } } }
 
-
         let(:json) { VerificationDecorator.new(verification).to_json(options) }
 
         subject { JSON.parse json, symbolize_names: true }

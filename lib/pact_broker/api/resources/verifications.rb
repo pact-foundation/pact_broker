@@ -70,7 +70,6 @@ module PactBroker
           request.post?
         end
 
-
         def metadata
           PactBrokerUrls.parse_webhook_metadata(identifier_from_path[:metadata])
         end

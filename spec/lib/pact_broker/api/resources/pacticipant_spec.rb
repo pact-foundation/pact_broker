@@ -1,7 +1,6 @@
 require 'spec_helper'
 require 'pact_broker/api/resources/pacticipant'
 
-
 module PactBroker::Api
 
   module Resources

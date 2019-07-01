@@ -83,7 +83,6 @@ module PactBroker
             end
           end
 
-
           context "with a consumer name in the pact that does not match the consumer name in the path" do
             let(:attributes) do
               valid_attributes.merge(consumer_name: "another consumer")

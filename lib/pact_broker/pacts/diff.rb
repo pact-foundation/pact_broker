@@ -37,7 +37,6 @@ module PactBroker
         "No previous distinct version was found for #{pact.name}"
       end
 
-
       # The next pact version after the previous distinct version.
       # Eg. v1 (previous distinct) -> pactContentA
       #     v2 (next pact)         -> pactContentB

@@ -33,7 +33,6 @@ Sequel.migration do
         and app.revision_number = lr.latest_revision_number"
         )
 
-
     # updated in 20180519_recreate_views.rb
     # This view tells us the latest consumer version with a pact for a consumer/provider pair
     create_or_replace_view(:latest_pact_consumer_version_orders,

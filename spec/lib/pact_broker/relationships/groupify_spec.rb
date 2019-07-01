@@ -23,13 +23,11 @@ module PactBroker
         let(:provider_y) { double('provider y', id: 8, name: 'provider y') }
         let(:provider_z) { double('provider z', id: 9, name: 'provider z') }
 
-
         let(:relationship_1) { Domain::IndexItem.new(consumer_a, provider_x) }
         let(:relationship_4) { Domain::IndexItem.new(consumer_a, provider_y) }
         let(:relationship_2) { Domain::IndexItem.new(consumer_b, provider_y) }
 
         let(:relationship_3) { Domain::IndexItem.new(consumer_c, provider_z) }
-
 
         let(:relationship_5) { Domain::IndexItem.new(consumer_l, provider_p) }
         let(:relationship_6) { Domain::IndexItem.new(consumer_m, provider_p) }

@@ -72,7 +72,6 @@ module PactBroker::Api
           end
         end
 
-
       end
 
     end

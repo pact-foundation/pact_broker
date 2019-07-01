@@ -138,7 +138,6 @@ module PactBroker
               allow(Tags::Service).to receive(:create).and_return(tag)
             end
 
-
             it "creates the tag" do
               expect(Tags::Service).to receive(:create).with(hash_including(tag_attributes))
               subject
@@ -156,7 +155,6 @@ module PactBroker
             end
 
           end
-
 
         end
 

@@ -6,7 +6,6 @@ module PactBroker
   module Domain
     describe Group do
 
-
       describe "#include_pacticipant" do
 
         let(:consumer_a) { double('consumer a') }

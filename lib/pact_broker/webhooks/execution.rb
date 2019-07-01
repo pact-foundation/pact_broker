@@ -2,7 +2,6 @@ require 'sequel'
 require 'pact_broker/db'
 require 'pact_broker/repositories/helpers'
 
-
 module PactBroker
   module Webhooks
     class Execution < Sequel::Model(

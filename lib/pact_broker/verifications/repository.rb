@@ -107,7 +107,6 @@ module PactBroker
           .tag(consumer_version_tag)
           .provider_version_tag(provider_version_tag)
 
-
         query.reverse_order(
           Sequel[:latest_pact_publications_by_consumer_versions][:consumer_version_order],
           Sequel[:latest_pact_publications_by_consumer_versions][:revision_number],

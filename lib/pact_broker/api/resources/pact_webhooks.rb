@@ -76,7 +76,6 @@ module PactBroker
           @next_uuid ||= webhook_service.next_uuid
         end
 
-
       end
     end
   end

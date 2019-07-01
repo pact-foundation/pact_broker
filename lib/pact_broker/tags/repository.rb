@@ -1,7 +1,6 @@
 require 'pact_broker/domain/tag'
 require 'pact_broker/repositories/helpers'
 
-
 module PactBroker
   module Tags
     class Repository

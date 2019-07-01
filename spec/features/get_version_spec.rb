@@ -18,7 +18,6 @@ describe "Get version" do
         .create_consumer_version("1.2.4")
     end
 
-
     it "returns a 200 HAL JSON response" do
       expect(subject).to be_a_hal_json_success_response
     end

@@ -23,7 +23,6 @@ module PactBroker
         include PactBroker::Api::Resources::Authentication
         include PactBroker::Logging
 
-
         attr_accessor :user
 
         def initialize

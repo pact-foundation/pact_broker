@@ -171,7 +171,6 @@ module PactBroker::Api
           end
         end
 
-
         context "with invalid attributes" do
 
           let(:valid) { false }

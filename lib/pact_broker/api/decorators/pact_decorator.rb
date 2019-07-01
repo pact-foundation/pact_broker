@@ -53,7 +53,6 @@ module PactBroker
           }
         end
 
-
         link :'pb:latest-pact-version' do | options |
           {
             title: "Latest version of this pact",

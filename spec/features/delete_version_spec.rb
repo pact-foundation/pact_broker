@@ -16,7 +16,6 @@ describe "Delete version" do
       .create_consumer_version("1.2.4")
   end
 
-
   it "returns a 200 HAL JSON response" do
     expect(subject.status).to eq 204
   end

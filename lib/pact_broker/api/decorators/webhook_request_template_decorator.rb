@@ -12,7 +12,6 @@ module PactBroker
         property :username
         property :password, getter: lambda { | _ | display_password }
 
-
         def redacted_headers
           represented.headers
         end

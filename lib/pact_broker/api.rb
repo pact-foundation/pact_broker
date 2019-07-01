@@ -77,7 +77,6 @@ module PactBroker
         add ['webhooks', :uuid, 'execute' ], Api::Resources::WebhookExecution, {resource_name: "execute_webhook"}
         add ['webhooks'], Api::Resources::AllWebhooks, {resource_name: "webhooks"}
 
-
         add ['relationships'], Api::Resources::Relationships, {resource_name: "relationships"}
         add ['groups', :pacticipant_name], Api::Resources::Group, {resource_name: "group"}
 
