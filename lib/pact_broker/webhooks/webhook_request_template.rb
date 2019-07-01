@@ -27,8 +27,7 @@ module PactBroker
         @uuid = attributes[:uuid]
       end
 
-      def build(context)
-        template_params = PactBroker::Webhooks::PactAndVerificationParameters.new(context[:pact], context[:verification], context[:webhook_context]).to_hash
+      def build(template_params)
         attributes = {
           method: http_method,
           url: build_url(template_params),

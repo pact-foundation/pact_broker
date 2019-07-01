@@ -38,28 +38,11 @@ module PactBroker
           allow(PactBroker::Webhooks::Render).to receive(:call) do | content, pact, verification, &block |
             content + "BUILT"
           end
-
-          allow(PactAndVerificationParameters).to receive(:new).and_return(pact_and_verification_parameters)
         end
 
-        let(:pact_and_verification_parameters) { instance_double(PactAndVerificationParameters, to_hash: params_hash)}
         let(:params_hash) { double('params hash') }
-        let(:pact) { double('pact') }
-        let(:verification) { double('verification') }
-        let(:webhook_context) { { some: "context", base_url: base_url } }
-        let(:template_context) do
-          {
-            pact: pact,
-            verification: verification,
-            webhook_context: webhook_context
-          }
-        end
-        subject { WebhookRequestTemplate.new(attributes).build(template_context) }
 
-        it "creates the template parameters" do
-          expect(PactAndVerificationParameters).to receive(:new).with(pact, verification, webhook_context)
-          subject
-        end
+        subject { WebhookRequestTemplate.new(attributes).build(params_hash) }
 
         it "renders the url template" do
           expect(PactBroker::Webhooks::Render).to receive(:call).with(url, params_hash) do | content, pact, verification, &block |
