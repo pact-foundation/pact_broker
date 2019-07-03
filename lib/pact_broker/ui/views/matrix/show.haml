@@ -5,6 +5,7 @@
   %script{type: 'text/javascript', src:'/javascripts/jquery-3.3.1.min.js'}
   %script{type: 'text/javascript', src:'/javascripts/jquery.tablesorter.min.js'}
   %script{type: 'text/javascript', src:'/javascripts/matrix.js'}
+  %script{type: 'text/javascript', src:'/javascripts/clipboard.js'}
   %script{type: 'text/javascript', src:'/js/bootstrap.min.js'}
 
   .container
@@ -102,9 +103,11 @@
             %a{href: line.consumer_name_url}
               = line.consumer_name
           %td.consumer-version{'data-sort-value' => line.consumer_version_order}
-            %div
+            %div.clippable
               %a{href: line.consumer_version_number_url}
                 = line.display_consumer_version_number
+              %button.clippy.hidden{ title: "Copy to clipboard" }
+                %span.glyphicon.glyphicon-copy
             - line.latest_consumer_version_tags.each do | tag |
               .tag-parent{"title": tag.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
                 %a{href: tag.url}
@@ -126,9 +129,11 @@
             %a{href: line.provider_name_url}
               = line.provider_name
           %td.provider-version{'data-sort-value' => line.provider_version_order}
-            %div
+            %div.clippable
               %a{href: line.provider_version_number_url}
                 = line.display_provider_version_number
+              %button.clippy.hidden{ title: "Copy to clipboard" }
+                %span.glyphicon.glyphicon-copy
             - line.latest_provider_version_tags.each do | tag |
               .tag-parent{"title": tag.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
                 %a{href: tag.url}
@@ -145,3 +150,8 @@
                 = "#{line.verification_status} (number #{line.number})"
               - else
                 = line.verification_status
+
+  :javascript
+    $(document).ready(function(){
+      clipper();
+    });
