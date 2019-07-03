@@ -39,8 +39,10 @@
               %a{:href => index_item.consumer_group_url }
                 = escape_html(index_item.consumer_name)
             %td.consumer-version-number
-              %div
+              %div.clippable
                 = escape_html(index_item.consumer_version_number)
+                %button.clippy.hidden{ title: "Copy to clipboard" }
+                  %span.glyphicon.glyphicon-copy
               - if index_item.latest?
                 .tag.label.label-success
                   latest
@@ -56,8 +58,10 @@
               %a{ href: index_item.provider_group_url }
                 = escape_html(index_item.provider_name)
             %td.provider-version-number
-              %div
+              %div.clippable
                 = escape_html(index_item.provider_version_number)
+                %button.clippy.hidden{ title: "Copy to clipboard" }
+                  %span.glyphicon.glyphicon-copy
               - index_item.provider_version_latest_tag_names.each do | tag_name |
                 .tag.label.label-primary
                   = escape_html(tag_name)
@@ -85,6 +89,8 @@
     });
 
     $(document).ready(function(){
+      clipper();
+
       $("span.pact a").load("/images/doc-text.svg");
       $("span.pact-matrix a").load("/images/doc-matrix.svg");
       $('td[data-toggle="tooltip"]').each(function(index, td){

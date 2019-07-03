@@ -56,6 +56,25 @@ body { padding-top: 10px; }
   word-wrap: break-word;
 }
 
+.clippable {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.clippy {
+  padding: 0 4px;
+  border: none;
+  background: none;
+}
+
+.clippy:hover {
+  color: #2a6496;
+}
+
+.clippy:active, .clippy:focus {
+  outline: none;
+}
+
 span.pact {
   display: inline-block;
 }
