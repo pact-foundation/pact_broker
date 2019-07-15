@@ -29,7 +29,7 @@ module PactBroker
 
         def self.display_message(e, error_reference)
           if PactBroker.configuration.show_backtrace_in_error_response?
-            e.message
+            e.message || obfuscated_error_message(error_reference)
           else
            reportable?(e) ? obfuscated_error_message(error_reference) : e.message
           end
