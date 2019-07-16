@@ -4,11 +4,8 @@ require 'pact_broker/api/resources/webhook_execution'
 module PactBroker
   module Api
     module Resources
-
       describe WebhookExecution do
-
         describe "POST" do
-
           before do
             allow(PactBroker::Webhooks::Service).to receive(:find_by_uuid).and_return(webhook)
           end
@@ -33,7 +30,7 @@ module PactBroker
             let(:pact) { instance_double("PactBroker::Domain::Pact") }
             let(:consumer_name) { "foo" }
             let(:provider_name) { "bar" }
-            let(:webhook_options) do
+            let(:webhook_execution_configuration) do
               {
                 logging_options: {
                   show_response: false,
@@ -50,7 +47,7 @@ module PactBroker
             end
 
             it "executes the webhook" do
-              expect(PactBroker::Webhooks::Service).to receive(:test_execution).with(webhook, webhook_options)
+              expect(PactBroker::Webhooks::Service).to receive(:test_execution).with(webhook, execution_configuration)
               subject
             end
 

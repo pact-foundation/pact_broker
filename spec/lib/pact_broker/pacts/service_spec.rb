@@ -46,8 +46,8 @@ module PactBroker
         end
         let(:content) { double('content') }
         let(:content_with_interaction_ids) { double('content_with_interaction_ids', to_json: json_content_with_ids) }
-        let(:webhook_options) { { the: 'options'} }
-        let(:outgoing_webhook_options) { { the: 'options', webhook_context: { consumer_version_tags: %[dev] }} }
+        let(:webhook_options) { { webhook_execution_configuration: { the: 'options'}} }
+        let(:outgoing_webhook_options) { { webhook_execution_configuration: { the: 'options', webhook_context: { consumer_version_tags: %[dev] }}} }
 
         before do
           allow(Content).to receive(:from_json).and_return(content)

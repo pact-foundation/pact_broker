@@ -345,8 +345,10 @@ module PactBroker
         let(:options) do
           {
             database_connector: database_connector,
-            webhook_context: { base_url: 'http://example.org' },
-            logging_options: logging_options
+            webhook_execution_configuration: {
+              webhook_context: { base_url: 'http://example.org' },
+              logging_options: logging_options
+            }
           }
         end
         let(:logging_options) { { show_response: true } }

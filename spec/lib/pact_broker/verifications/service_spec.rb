@@ -18,8 +18,8 @@ module PactBroker
           allow(PactBroker::Webhooks::Service).to receive(:trigger_webhooks)
         end
 
-        let(:options) { { webhook_context: {} } }
-        let(:expected_options) { { webhook_context: { provider_version_tags: %w[dev] } } }
+        let(:options) { { webhook_execution_configuration: { webhook_context: {} } } }
+        let(:expected_options) { { webhook_execution_configuration: { webhook_context: { provider_version_tags: %w[dev] } } } }
         let(:params) { {'success' => true, 'providerApplicationVersion' => '4.5.6'} }
         let(:pact) do
           td.create_pact_with_hierarchy

@@ -80,12 +80,14 @@ module PactBroker
                 hash_including('some' => 'params'),
                 pact,
                 {
-                  logging_options: {
-                    show_response: 'some-boolean'
-                  },
-                  webhook_context: {
-                    the: 'metadata',
-                    base_url: base_url,
+                  webhook_execution_configuration: {
+                    logging_options: {
+                      show_response: 'some-boolean'
+                    },
+                    webhook_context: {
+                      the: 'metadata',
+                      base_url: base_url,
+                    }
                   },
                   database_connector: database_connector
                 }

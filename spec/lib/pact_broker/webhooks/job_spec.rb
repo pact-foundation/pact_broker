@@ -22,8 +22,10 @@ module PactBroker
         {
           triggered_webhook: triggered_webhook,
           database_connector: database_connector,
-          webhook_context: webhook_context,
-          logging_options: { the: 'options' }
+          webhook_execution_configuration: {
+            webhook_context: webhook_context,
+            logging_options: { the: 'options' }
+          }
         }
       end
 
@@ -58,11 +60,7 @@ module PactBroker
         end
 
         it "reschedules the job with the passed in data" do
-          expect(Job).to receive(:perform_in).with(10, hash_including(
-            webhook_context: webhook_context,
-            database_connector: database_connector,
-            triggered_webhook: triggered_webhook
-          ))
+          expect(Job).to receive(:perform_in).with(10, hash_including(job_params))
           subject
         end
 

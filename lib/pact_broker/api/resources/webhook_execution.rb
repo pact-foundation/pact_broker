@@ -3,12 +3,15 @@ require 'pact_broker/services'
 require 'pact_broker/api/decorators/webhook_execution_result_decorator'
 require 'pact_broker/api/resources/webhook_resource_methods'
 require 'pact_broker/constants'
+require 'pact_broker/webhooks/execution_configuration'
+require 'pact_broker/api/resources/webhook_execution_methods'
 
 module PactBroker
   module Api
     module Resources
       class WebhookExecution < BaseResource
         include WebhookResourceMethods
+        include WebhookExecutionMethods
 
         def content_types_accepted
           [["application/json"]]
@@ -23,7 +26,7 @@ module PactBroker
         end
 
         def process_post
-          webhook_execution_result = webhook_service.test_execution(webhook, webhook_options)
+          webhook_execution_result = webhook_service.test_execution(webhook, webhook_execution_configuration.to_hash)
           response.headers['Content-Type'] = 'application/hal+json;charset=utf-8'
           response.body = post_response_body(webhook_execution_result)
           true
@@ -66,17 +69,6 @@ module PactBroker
             webhook: webhook,
             show_response: PactBroker.configuration.show_webhook_response?
           )
-        end
-
-        def webhook_options
-          {
-            logging_options: {
-              show_response: PactBroker.configuration.show_webhook_response?
-            },
-            webhook_context: {
-              base_url: base_url
-            }
-          }
         end
 
         def build_unsaved_webhook

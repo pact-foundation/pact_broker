@@ -10,11 +10,13 @@ require 'pact_broker/webhooks/webhook_event'
 require 'pact_broker/verifications/placeholder_verification'
 require 'pact_broker/pacts/placeholder_pact'
 require 'pact_broker/api/decorators/webhook_decorator'
+require 'pact_broker/hash_refinements'
+require 'pact_broker/webhooks/execution_configuration'
 
 module PactBroker
-
   module Webhooks
     class Service
+      using PactBroker::HashRefinements
 
       RESOURCE_CREATION = PactBroker::Webhooks::TriggeredWebhook::TRIGGER_TYPE_RESOURCE_CREATION
       USER = PactBroker::Webhooks::TriggeredWebhook::TRIGGER_TYPE_USER
@@ -68,10 +70,8 @@ module PactBroker
       end
 
       def self.test_execution webhook, options
-        logging_options = options[:logging_options].merge(
-          failure_log_message: "Webhook execution failed",
-        )
-        merged_options = options.merge(logging_options: logging_options)
+        merged_options = ExecutionConfiguration.new(options).with_failure_log_message("Webhook execution failed").to_hash
+
         verification = nil
         if webhook.trigger_on_provider_verification_published?
           verification = verification_service.search_for_latest(webhook.consumer_name, webhook.provider_name) || PactBroker::Verifications::PlaceholderVerification.new
@@ -132,12 +132,7 @@ module PactBroker
           begin
             triggered_webhook = webhook_repository.create_triggered_webhook(trigger_uuid, webhook, pact, verification, RESOURCE_CREATION)
             logger.info "Scheduling job for webhook with uuid #{webhook.uuid}"
-            job_data = {
-              triggered_webhook: triggered_webhook,
-              webhook_context: options.fetch(:webhook_context),
-              logging_options: options.fetch(:logging_options),
-              database_connector: options.fetch(:database_connector)
-            }
+            job_data = { triggered_webhook: triggered_webhook }.deep_merge(options)
             # Delay slightly to make sure the request transaction has finished before we execute the webhook
             Job.perform_in(5, job_data)
           rescue StandardError => e

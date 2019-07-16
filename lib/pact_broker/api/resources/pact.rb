@@ -5,6 +5,8 @@ require 'pact_broker/api/decorators/pact_decorator'
 require 'pact_broker/json'
 require 'pact_broker/pacts/pact_params'
 require 'pact_broker/api/contracts/put_pact_params_contract'
+require 'pact_broker/webhooks/execution_configuration'
+require 'pact_broker/api/resources/webhook_execution_methods'
 
 module Webmachine
   class Request
@@ -15,13 +17,11 @@ module Webmachine
 end
 
 module PactBroker
-
   module Api
     module Resources
-
       class Pact < BaseResource
-
         include PacticipantResourceMethods
+        include WebhookExecutionMethods
 
         def content_types_provided
           [["application/hal+json", :to_json],
@@ -122,12 +122,7 @@ module PactBroker
         def webhook_options
           {
             database_connector: database_connector,
-            logging_options: {
-              show_response: PactBroker.configuration.show_webhook_response?
-            },
-            webhook_context: {
-              base_url: base_url
-            }
+            webhook_execution_configuration: webhook_execution_configuration.to_hash
           }
         end
       end

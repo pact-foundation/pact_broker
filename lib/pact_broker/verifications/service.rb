@@ -2,6 +2,8 @@ require 'pact_broker/repositories'
 require 'pact_broker/api/decorators/verification_decorator'
 require 'pact_broker/verifications/summary_for_consumer_version'
 require 'pact_broker/logging'
+require 'pact_broker/webhooks/execution_configuration'
+require 'pact_broker/hash_refinements'
 
 module PactBroker
 
@@ -13,6 +15,7 @@ module PactBroker
       extend PactBroker::Repositories
       extend PactBroker::Services
       include PactBroker::Logging
+      using PactBroker::HashRefinements
 
       def next_number
         verification_repository.next_number
@@ -25,14 +28,14 @@ module PactBroker
         PactBroker::Api::Decorators::VerificationDecorator.new(verification).from_hash(params)
         verification.number = next_verification_number
         verification = verification_repository.create(verification, provider_version_number, pact)
-        webhook_context = webhook_options[:webhook_context].merge(
-          provider_version_tags: verification.provider_version_tag_names
-        )
+
+        execution_configuration = PactBroker::Webhooks::ExecutionConfiguration.new(webhook_options[:webhook_execution_configuration])
+                                    .with_webhook_context(provider_version_tags: verification.provider_version_tag_names).to_hash
 
         webhook_service.trigger_webhooks(pact,
           verification,
           PactBroker::Webhooks::WebhookEvent::VERIFICATION_PUBLISHED,
-          webhook_options.merge(webhook_context: webhook_context)
+          webhook_options.deep_merge(webhook_execution_configuration: execution_configuration)
         )
         verification
       end
