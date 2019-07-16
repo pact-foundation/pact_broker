@@ -71,8 +71,8 @@ body { padding-top: 10px; }
   color: #2a6496;
 }
 
-.clippy:active, .clippy:focus {
-  outline: none;
+.success {
+  color: #5cb85c
 }
 
 span.pact {
