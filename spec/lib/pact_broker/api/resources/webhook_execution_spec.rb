@@ -30,24 +30,16 @@ module PactBroker
             let(:pact) { instance_double("PactBroker::Domain::Pact") }
             let(:consumer_name) { "foo" }
             let(:provider_name) { "bar" }
-            let(:webhook_execution_configuration) do
-              {
-                logging_options: {
-                  show_response: false,
-                },
-                webhook_context: {
-                  base_url: "http://example.org"
-                }
-              }
-            end
+            let(:webhook_execution_configuration) { instance_double(PactBroker::Webhooks::ExecutionConfiguration) }
 
             before do
               allow(PactBroker::Webhooks::Service).to receive(:test_execution).and_return(execution_result)
               allow(PactBroker::Api::Decorators::WebhookExecutionResultDecorator).to receive(:new).and_return(decorator)
+              allow_any_instance_of(WebhookExecution).to receive(:webhook_execution_configuration).and_return(webhook_execution_configuration)
             end
 
             it "executes the webhook" do
-              expect(PactBroker::Webhooks::Service).to receive(:test_execution).with(webhook, execution_configuration)
+              expect(PactBroker::Webhooks::Service).to receive(:test_execution).with(webhook, webhook_execution_configuration)
               subject
             end
 

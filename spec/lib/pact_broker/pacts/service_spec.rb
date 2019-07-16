@@ -1,6 +1,7 @@
 require 'spec_helper'
 require 'pact_broker/pacts/service'
 require 'pact_broker/pacts/pact_params'
+require 'pact_broker/webhooks/execution_configuration'
 
 module PactBroker
 
@@ -46,13 +47,15 @@ module PactBroker
         end
         let(:content) { double('content') }
         let(:content_with_interaction_ids) { double('content_with_interaction_ids', to_json: json_content_with_ids) }
-        let(:webhook_options) { { webhook_execution_configuration: { the: 'options'}} }
-        let(:outgoing_webhook_options) { { webhook_execution_configuration: { the: 'options', webhook_context: { consumer_version_tags: %[dev] }}} }
+        let(:webhook_options) { { webhook_execution_configuration: webhook_execution_configuration } }
+        let(:webhook_execution_configuration) { instance_double(PactBroker::Webhooks::ExecutionConfiguration) }
+
 
         before do
           allow(Content).to receive(:from_json).and_return(content)
           allow(content).to receive(:with_ids).and_return(content_with_interaction_ids)
           allow(PactBroker::Pacts::GenerateSha).to receive(:call).and_call_original
+          allow(webhook_execution_configuration).to receive(:with_webhook_context).and_return(webhook_execution_configuration)
         end
 
         subject { Service.create_or_update_pact(params, webhook_options) }
@@ -69,8 +72,13 @@ module PactBroker
             subject
           end
 
+          it "sets the consumer version tags" do
+            expect(webhook_execution_configuration).to receive(:with_webhook_context).with(consumer_version_tags: %[dev]).and_return(webhook_execution_configuration)
+            subject
+          end
+
           it "triggers webhooks" do
-            expect(webhook_trigger_service).to receive(:trigger_webhooks_for_new_pact).with(new_pact, outgoing_webhook_options)
+            expect(webhook_trigger_service).to receive(:trigger_webhooks_for_new_pact).with(new_pact, webhook_options)
             subject
           end
         end
@@ -96,7 +104,7 @@ module PactBroker
           end
 
           it "triggers webhooks" do
-            expect(webhook_trigger_service).to receive(:trigger_webhooks_for_updated_pact).with(existing_pact, new_pact, outgoing_webhook_options)
+            expect(webhook_trigger_service).to receive(:trigger_webhooks_for_updated_pact).with(existing_pact, new_pact, webhook_options)
             subject
           end
         end

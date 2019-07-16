@@ -69,8 +69,8 @@ module PactBroker
         webhook_repository.find_all
       end
 
-      def self.test_execution webhook, options
-        merged_options = ExecutionConfiguration.new(options).with_failure_log_message("Webhook execution failed").to_hash
+      def self.test_execution webhook, execution_configuration
+        merged_options = execution_configuration.with_failure_log_message("Webhook execution failed").to_hash
 
         verification = nil
         if webhook.trigger_on_provider_verification_published?
@@ -81,21 +81,8 @@ module PactBroker
         webhook.execute(pact, verification, merged_options)
       end
 
-      # # TODO delete?
-      # def self.execute_webhook_now webhook, pact, verification = nil
-      #   triggered_webhook = webhook_repository.create_triggered_webhook(next_uuid, webhook, pact, verification, USER)
-      #   logging_options = { failure_log_message: "Webhook execution failed"}
-      #   webhook_execution_result = execute_triggered_webhook_now triggered_webhook, logging_options
-      #   if webhook_execution_result.success?
-      #     webhook_repository.update_triggered_webhook_status triggered_webhook, TriggeredWebhook::STATUS_SUCCESS
-      #   else
-      #     webhook_repository.update_triggered_webhook_status triggered_webhook, TriggeredWebhook::STATUS_FAILURE
-      #   end
-      #   webhook_execution_result
-      # end
-
-      def self.execute_triggered_webhook_now triggered_webhook, webhook_options
-        webhook_execution_result = triggered_webhook.execute webhook_options
+      def self.execute_triggered_webhook_now triggered_webhook, webhook_execution_configuration_hash
+        webhook_execution_result = triggered_webhook.execute webhook_execution_configuration_hash
         webhook_repository.create_execution triggered_webhook, webhook_execution_result
         webhook_execution_result
       end

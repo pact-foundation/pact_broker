@@ -80,7 +80,6 @@ module PactBroker
             database_connector: database_connector,
             webhook_execution_configuration: webhook_execution_configuration
                                       .with_webhook_context(metadata)
-                                      .to_hash
           }
         end
       end

@@ -122,7 +122,7 @@ module PactBroker
         def webhook_options
           {
             database_connector: database_connector,
-            webhook_execution_configuration: webhook_execution_configuration.to_hash
+            webhook_execution_configuration: webhook_execution_configuration
           }
         end
       end

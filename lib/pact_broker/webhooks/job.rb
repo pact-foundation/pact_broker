@@ -47,7 +47,7 @@ module PactBroker
       end
 
       def webhook_options(data)
-        ExecutionConfiguration.new(data[:webhook_execution_configuration])
+        data[:webhook_execution_configuration]
           .with_success_log_message("Successfully executed webhook")
           .with_failure_log_message(failure_log_message)
           .to_hash

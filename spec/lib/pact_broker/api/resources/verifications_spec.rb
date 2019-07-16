@@ -19,11 +19,14 @@ module PactBroker
           let(:errors_empty) { true }
           let(:parsed_metadata) { { the: 'metadata' } }
           let(:base_url) { "http://example.org" }
+          let(:webhook_execution_configuration) { instance_double(PactBroker::Webhooks::ExecutionConfiguration) }
 
           before do
             allow(PactBroker::Verifications::Service).to receive(:create).and_return(verification)
             allow(PactBroker::Verifications::Service).to receive(:errors).and_return(double(:errors, messages: ['errors'], empty?: errors_empty))
             allow(PactBrokerUrls).to receive(:parse_webhook_metadata).and_return(parsed_metadata)
+            allow_any_instance_of(Verifications).to receive(:webhook_execution_configuration).and_return(webhook_execution_configuration)
+            allow(webhook_execution_configuration).to receive(:with_webhook_context).and_return(webhook_execution_configuration)
           end
 
           subject { post url, request_body, rack_env; last_response }
@@ -74,21 +77,18 @@ module PactBroker
               expect(subject.headers['Location']).to eq("http://example.org/pacts/provider/Provider/consumer/Consumer/pact-version/1234/verification-results/2")
             end
 
+            it "merges the upstream verification metdata into the webhook context" do
+              expect(webhook_execution_configuration).to receive(:with_webhook_context).with(parsed_metadata)
+              subject
+            end
+
             it "stores the verification in the database" do
               expect(PactBroker::Verifications::Service).to receive(:create).with(
                 next_verification_number,
                 hash_including('some' => 'params'),
                 pact,
                 {
-                  webhook_execution_configuration: {
-                    logging_options: {
-                      show_response: 'some-boolean'
-                    },
-                    webhook_context: {
-                      the: 'metadata',
-                      base_url: base_url,
-                    }
-                  },
+                  webhook_execution_configuration: webhook_execution_configuration,
                   database_connector: database_connector
                 }
               )

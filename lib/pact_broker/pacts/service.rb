@@ -2,7 +2,6 @@ require 'pact_broker/repositories'
 require 'pact_broker/services'
 require 'pact_broker/logging'
 require 'pact_broker/pacts/merger'
-require 'pact_broker/webhooks/execution_configuration'
 
 module PactBroker
   module Pacts
@@ -153,9 +152,9 @@ module PactBroker
       end
 
       def merge_consumer_version_info(webhook_options, pact)
-        execution_configuration = PactBroker::Webhooks::ExecutionConfiguration.new(webhook_options[:webhook_execution_configuration])
+        execution_configuration = webhook_options[:webhook_execution_configuration]
                                     .with_webhook_context(consumer_version_tags: pact.consumer_version_tag_names)
-        webhook_options.merge(webhook_execution_configuration: execution_configuration.to_hash)
+        webhook_options.merge(webhook_execution_configuration: execution_configuration)
       end
     end
   end

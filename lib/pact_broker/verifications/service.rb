@@ -2,7 +2,6 @@ require 'pact_broker/repositories'
 require 'pact_broker/api/decorators/verification_decorator'
 require 'pact_broker/verifications/summary_for_consumer_version'
 require 'pact_broker/logging'
-require 'pact_broker/webhooks/execution_configuration'
 require 'pact_broker/hash_refinements'
 
 module PactBroker
@@ -29,8 +28,8 @@ module PactBroker
         verification.number = next_verification_number
         verification = verification_repository.create(verification, provider_version_number, pact)
 
-        execution_configuration = PactBroker::Webhooks::ExecutionConfiguration.new(webhook_options[:webhook_execution_configuration])
-                                    .with_webhook_context(provider_version_tags: verification.provider_version_tag_names).to_hash
+        execution_configuration = webhook_options[:webhook_execution_configuration]
+                                    .with_webhook_context(provider_version_tags: verification.provider_version_tag_names)
 
         webhook_service.trigger_webhooks(pact,
           verification,
