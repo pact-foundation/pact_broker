@@ -1,9 +1,19 @@
 /**
+ * Include code to enable copy-to-clipboard functionality
+ * and currently used on index and matrix tables
+ * @example in Haml
+ *     %div.clippable
+ *       = Text to be copied
+ *       %button.clippy.hidden{ title: "Copy to clipboard" }
+ *         %span.glyphicon.glyphicon-copy
+ */
+
+/**
  * Bootstrap copy-to-clipboard functionality
  * @param {string} selector CSS selector of elements that require
  *     copy-to-clipboard functionality
  */
-function clipper(selector) {
+function initializeClipper(selector) {
   const elements = $(selector);
 
   elements.hover(function() {
