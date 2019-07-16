@@ -26,7 +26,7 @@ module PactBroker
             .to_json(user_options: { resource_url: 'http://resource-url', base_url: 'http://example.org', webhook: webhook, show_response: show_response })
           }
 
-          let(:subject) { JSON.parse(json, symbolize_names: true)}
+          let(:subject) { JSON.parse(json, symbolize_names: true) }
 
           it "includes a link to execute the webhook again" do
             expect(subject[:_links][:'try-again'][:href]).to eq 'http://resource-url'

@@ -1,3 +1,5 @@
+require 'pact_broker/webhooks/execution_configuration'
+
 describe 'migrate to pact versions (migrate 22-31)', migration: true do
   before do
     PactBroker::Database.migrate(22)
@@ -70,6 +72,7 @@ describe 'migrate to pact versions (migrate 22-31)', migration: true do
         consumer_version_number: '1.2.3',
         json_content: load_fixture('a_consumer-a_provider.json')
       },{
+        webhook_execution_configuration: PactBroker::Webhooks::ExecutionConfiguration.new
       }
     )
   end
