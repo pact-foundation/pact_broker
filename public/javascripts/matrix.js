@@ -1,4 +1,3 @@
-
 function setTextboxVisibility(selectBox, cssSelector, visibility) {
   var textbox = selectBox.closest('.selector').find(cssSelector);
   textbox.toggle(visibility);
@@ -64,7 +63,6 @@ $(document).ready(function(){
       return n.attr('data-sort-value') || n.text();
     }
   });
-
 
   $('[data-toggle="tooltip"]').each(function(index, el){
     $(el).tooltip({container: $(el)});
