@@ -30,7 +30,20 @@ function clipper() {
   elements
     .children(".clippy")
     .click(function() {
-      const text = $.trim($(this).closest(".clippable").text());
+      const clippyButton = $(this);
+      const text = $.trim(clippyButton.closest(".clippable").text());
+
       copyToClipboard(text);
+      flashClipped(clippyButton);
     });
+}
+
+function flashClipped(clippyButton) {
+  const icon = clippyButton.children("span");
+  icon.attr("class", "glyphicon glyphicon-ok success");
+
+  setTimeout(
+    function() { icon.attr("class", "glyphicon glyphicon-copy"); },
+    2000
+  );
 }
