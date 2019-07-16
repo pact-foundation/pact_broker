@@ -1,4 +1,32 @@
-// https://gist.github.com/Chalarangelo/4ff1e8c0ec03d9294628efbae49216db#file-copytoclipboard-js
+/**
+ * Bootstrap copy-to-clipboard functionality
+ * @param {string} selector CSS selector of elements that require
+ *     copy-to-clipboard functionality
+ */
+function clipper(selector) {
+  const elements = $(selector);
+
+  elements.hover(function() {
+    $(this).children(".clippy").toggleClass("hidden");
+  });
+
+  elements
+    .children(".clippy")
+    .click(function() {
+      const clippyButton = $(this);
+      const text = $.trim(clippyButton.closest(selector).text());
+
+      copyToClipboard(text);
+      flashClipped(clippyButton);
+    });
+}
+
+/**
+ * Copy text to clipboard using execCommand
+ * @see https://gist.github.com/Chalarangelo/4ff1e8c0ec03d9294628efbae49216db#file-copytoclipboard-js
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Document/execCommand
+ * @param {string} text text to be copied to clipboard
+ */
 function copyToClipboard(text) {
   const el = document.createElement('textarea');
   el.value = text;
@@ -20,24 +48,10 @@ function copyToClipboard(text) {
   }
 }
 
-function clipper() {
-  const elements = $(".clippable");
-
-  elements.hover(function() {
-    $(this).children(".clippy").toggleClass("hidden");
-  });
-
-  elements
-    .children(".clippy")
-    .click(function() {
-      const clippyButton = $(this);
-      const text = $.trim(clippyButton.closest(".clippable").text());
-
-      copyToClipboard(text);
-      flashClipped(clippyButton);
-    });
-}
-
+/**
+ * Flash a success tick to indicate successful copy-to-clipboard action
+ * @param {jQuery Element} clipButton button to copy to clipboard
+ */
 function flashClipped(clippyButton) {
   const icon = clippyButton.children("span");
   icon.attr("class", "glyphicon glyphicon-ok success");
