@@ -11,7 +11,7 @@ module PactBroker
           password: "password",
           uuid: "1234",
           body: body,
-          headers: {'headername' => 'headervalue'}
+          headers: headers
         }
       end
 
@@ -27,6 +27,7 @@ module PactBroker
         }
       end
 
+      let(:headers) { {'headername' => 'headervalue'} }
       let(:url) { "http://example.org/hook?foo=bar" }
       let(:base_url) { "http://broker" }
       let(:built_url) { "http://example.org/hook?foo=barBUILT" }
@@ -104,6 +105,54 @@ module PactBroker
 
           it "does not blow up" do
             subject
+          end
+        end
+      end
+
+      describe "redacted_headers" do
+        subject { WebhookRequestTemplate.new(attributes) }
+
+        let(:headers) do
+          {
+            'Authorization' => 'foo',
+            'X-authorization' => 'bar',
+            'Token' => 'bar',
+            'X-Auth-Token' => 'bar',
+            'X-Authorization-Token' => 'bar',
+            'OK' => 'ok'
+          }
+        end
+
+        let(:expected_headers) do
+          {
+            'Authorization' => '**********',
+            'X-authorization' => '**********',
+            'Token' => '**********',
+            'X-Auth-Token' => '**********',
+            'X-Authorization-Token' => '**********',
+            'OK' => 'ok'
+          }
+        end
+
+        it "redacts sensitive headers" do
+          expect(subject.redacted_headers).to eq expected_headers
+        end
+
+        context "when there is a parameter in the value" do
+          let(:headers) do
+            {
+              'Authorization' => '${pactbroker.secret}'
+            }
+          end
+
+          let(:expected_headers) do
+            {
+              'Authorization' => '${pactbroker.secret}'
+            }
+          end
+
+          it "does not redact it" do
+            expect(subject.redacted_headers).to eq expected_headers
           end
         end
       end

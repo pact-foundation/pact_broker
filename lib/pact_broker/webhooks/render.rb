@@ -7,6 +7,10 @@ module PactBroker
       TEMPLATE_PARAMETER_REGEXP = /\$\{pactbroker\.[^\}]+\}/
       DEFAULT_ESCAPER = lambda { |it| it }
 
+      def self.includes_parameter?(value)
+        value =~ TEMPLATE_PARAMETER_REGEXP
+      end
+
       def self.call(template, params, &escaper)
         render_template(escape_params(params, escaper || DEFAULT_ESCAPER), template)
       end

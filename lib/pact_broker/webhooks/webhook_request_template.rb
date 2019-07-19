@@ -53,7 +53,7 @@ module PactBroker
 
       def redacted_headers
         headers.each_with_object({}) do | (name, value), new_headers |
-          redact = HEADERS_TO_REDACT.any?{ | pattern | name =~ pattern }
+          redact = HEADERS_TO_REDACT.any?{ | pattern | name =~ pattern }  && !PactBroker::Webhooks::Render.includes_parameter?(value)
           new_headers[name] = redact ? "**********" : value
         end
       end
