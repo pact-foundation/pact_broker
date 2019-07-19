@@ -7,11 +7,11 @@ module PactBroker
         {
           method: 'POST',
           url: url,
-          username: "foo",
-          password: "bar",
+          username: "username",
+          password: "password",
           uuid: "1234",
           body: body,
-          headers: {'Foo' => 'bar'}
+          headers: {'headername' => 'headervalue'}
         }
       end
 
@@ -19,11 +19,11 @@ module PactBroker
         {
           method: 'POST',
           url: built_url,
-          username: "foo",
-          password: "bar",
+          username: "usernameBUILT",
+          password: "passwordBUILT",
           uuid: "1234",
           body: built_body,
-          headers: {'Foo' => 'bar'}
+          headers: {'headername' => 'headervalueBUILT'}
         }
       end
 
@@ -73,9 +73,38 @@ module PactBroker
           end
         end
 
+        it "renders each header value" do
+          expect(PactBroker::Webhooks::Render).to receive(:call).with('headervalue', params_hash)
+          subject
+        end
+
+        it "renders the username" do
+          expect(PactBroker::Webhooks::Render).to receive(:call).with('username', params_hash)
+          subject
+        end
+
+        it "renders the password" do
+          expect(PactBroker::Webhooks::Render).to receive(:call).with('password', params_hash)
+          subject
+        end
+
         it "creates a new PactBroker::Domain::WebhookRequest" do
           expect(PactBroker::Domain::WebhookRequest).to receive(:new).with(new_attributes)
           subject
+        end
+
+        context "when optional attributes are missing" do
+          let(:attributes) do
+            {
+              method: 'POST',
+              url: url,
+              uuid: "1234",
+            }
+          end
+
+          it "does not blow up" do
+            subject
+          end
         end
       end
     end
