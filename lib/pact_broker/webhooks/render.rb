@@ -17,7 +17,7 @@ module PactBroker
 
       def self.render_template(params, template)
         params.inject(template) do | template, (key, value) |
-          template.gsub(key, value)
+          template.gsub("${#{key}}", value)
         end
       end
 

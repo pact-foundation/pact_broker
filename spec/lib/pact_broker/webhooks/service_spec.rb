@@ -336,6 +336,15 @@ module PactBroker
           expect(TriggeredWebhook.first.status).to eq TriggeredWebhook::STATUS_SUCCESS
         end
       end
+
+      describe "parameters" do
+        subject { Service.parameters }
+
+        it "returns a list of parameters and their descriptions" do
+          expect(subject.first.name).to start_with "pactbroker.consumerName"
+          expect(subject.first.description).to eq "the consumer name"
+        end
+      end
     end
   end
 end

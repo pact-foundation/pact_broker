@@ -12,6 +12,8 @@ require 'pact_broker/pacts/placeholder_pact'
 require 'pact_broker/api/decorators/webhook_decorator'
 require 'pact_broker/hash_refinements'
 require 'pact_broker/webhooks/execution_configuration'
+require 'pact_broker/messages'
+require 'pact_broker/webhooks/pact_and_verification_parameters'
 
 module PactBroker
   module Webhooks
@@ -24,6 +26,7 @@ module PactBroker
       extend Repositories
       extend Services
       include Logging
+      extend PactBroker::Messages
 
       def self.next_uuid
         SecureRandom.urlsafe_base64
@@ -146,6 +149,15 @@ module PactBroker
 
       def self.find_triggered_webhooks_for_verification verification
         webhook_repository.find_triggered_webhooks_for_verification(verification)
+      end
+
+      def self.parameters
+        PactAndVerificationParameters::ALL.collect do | parameter |
+          OpenStruct.new(
+            name: parameter,
+            description: message("messages.webhooks.parameters.#{parameter}")
+          )
+        end
       end
 
       private
