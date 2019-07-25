@@ -142,7 +142,7 @@ module PactBroker
               end
 
               def parse_uri(uri_string, placeholder = 'placeholder')
-                URI(uri_string.gsub(PactBroker::Webhooks::Render::TEMPLATE_PARAMETER_REGEXP, placeholder))
+                URI(PactBroker::Webhooks::Render.render_with_placeholder(uri_string, placeholder))
               end
             end
 
