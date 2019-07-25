@@ -8,7 +8,7 @@ module PactBroker
           method: 'POST',
           url: url,
           username: "username",
-          password: "password",
+          password: password,
           uuid: "1234",
           body: body,
           headers: headers
@@ -27,6 +27,7 @@ module PactBroker
         }
       end
 
+      let(:password) { "password" }
       let(:headers) { {'headername' => 'headervalue'} }
       let(:url) { "http://example.org/hook?foo=bar" }
       let(:base_url) { "http://broker" }
@@ -154,6 +155,28 @@ module PactBroker
           it "does not redact it" do
             expect(subject.redacted_headers).to eq expected_headers
           end
+        end
+      end
+
+      describe "display_password" do
+        subject { WebhookRequestTemplate.new(attributes) }
+
+        context "when it is nil" do
+          let(:password) { nil }
+
+          its(:display_password) { is_expected.to be nil }
+        end
+
+        context "when the password contains a parameter" do
+          let(:password) { "${pactbroker.foo}" }
+
+          its(:display_password) { is_expected.to eq password }
+        end
+
+        context "when the password does not contains a parameter" do
+          let(:password) { "foo" }
+
+          its(:display_password) { is_expected.to eq "**********" }
         end
       end
     end

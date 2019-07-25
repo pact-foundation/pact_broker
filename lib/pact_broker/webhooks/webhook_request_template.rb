@@ -48,7 +48,7 @@ module PactBroker
       end
 
       def display_password
-        password.nil? ? nil : "**********"
+        password.nil? ? nil : (PactBroker::Webhooks::Render.includes_parameter?(password) ? password : "**********")
       end
 
       def redacted_headers
