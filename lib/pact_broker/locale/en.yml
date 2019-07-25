@@ -26,8 +26,8 @@ en:
             providerLabels: the list of labels for the provider associated with the pact content, separated by ", ".
             pactUrl: the "permalink" URL to the newly published pact (the URL specifying the consumer version URL, rather than the "/latest" format.
             verificationResultUrl: the URL to the relevant verification result.
-            githubVerificationStatus: the verification status using the correct keywords for posting to the the <a href="https://developer.github.com/v3/repos/statuses">Github commit status API</a>.
-            bitbucketVerificationStatus: the verification status using the correct keywords for posting to the the <a href="https://developer.atlassian.com/server/bitbucket/how-tos/updating-build-status-for-commits/">Bitbucket commit status API</a>.
+            githubVerificationStatus: the verification status using the correct keywords for posting to the Github commit status API. See https://developer.github.com/v3/repos/statuses.
+            bitbucketVerificationStatus: the verification status using the correct keywords for posting to the Bitbucket commit status API. See https://developer.atlassian.com/server/bitbucket/how-tos/updating-build-status-for-commits/.
 
     errors:
       validation:
