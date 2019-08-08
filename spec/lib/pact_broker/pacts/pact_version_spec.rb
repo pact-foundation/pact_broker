@@ -92,6 +92,22 @@ module PactBroker
           expect(PactVersion.first.latest_consumer_version_number).to eq "1.0.1"
         end
       end
+
+      describe "#latest_verification" do
+        before do
+          td.create_pact_with_hierarchy
+            .create_verification
+            .create_verification(number: 2)
+            .create_verification(number: 3)
+        end
+        let(:pact_version) { PactVersion.last }
+
+        subject { pact_version.latest_verification }
+
+        it "returns the latest verification by execution date" do
+          expect(subject.number).to eq 3
+        end
+      end
     end
   end
 end
