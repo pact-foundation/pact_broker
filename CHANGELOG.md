@@ -1,3 +1,37 @@
+<a name="v2.35.0"></a>
+### v2.35.0 (2019-08-08)
+
+
+#### Features
+
+* **webhooks**
+  * do not redact a password with a parameter in it	 ([47c602ef](/../../commit/47c602ef))
+  * update parameter text	 ([7fa518cb](/../../commit/7fa518cb))
+  * do not redact header if it contains a parameter	 ([5787e0d1](/../../commit/5787e0d1))
+  * support template parameters in header values, username and password	 ([a800ac2e](/../../commit/a800ac2e))
+  * simplify request logger format	 ([c52ade2f](/../../commit/c52ade2f))
+  * add the logs and success flag to the execution result	 ([96769a88](/../../commit/96769a88))
+  * allow testing of an unsaved webhook	 ([a436e42d](/../../commit/a436e42d))
+  * gracefully handle scenario where triggered webhook has been deleted while webhook was being executed	 ([052055d4](/../../commit/052055d4))
+  * use consumer/provider names in webhook title	 ([2b5d2498](/../../commit/2b5d2498))
+
+* add copy to clipboard for version numbers (#283)	 ([c10a6f28](/../../commit/c10a6f28))
+* update redact logs	 ([51aa13c0](/../../commit/51aa13c0))
+* use hardcoded error message when error class has a nil message	 ([03a3b63c](/../../commit/03a3b63c))
+* ensure clean up script handles pact versions for left over verifications	 ([116f8eaa](/../../commit/116f8eaa))
+* added clean up sql script	 ([388b441e](/../../commit/388b441e))
+* add Vary header to avoid browser returning the wrong cached content type for a resource	 ([6d30baa2](/../../commit/6d30baa2))
+* change logging level from error to info for JSON parsing errors	 ([cc144062](/../../commit/cc144062))
+
+
+#### Bug Fixes
+
+* inefficient SQL loading latest verification for pact version	 ([301d9a58](/../../commit/301d9a58))
+
+* **publish pacts**
+  * handle race condition when creating pact version	 ([de0d3b7f](/../../commit/de0d3b7f))
+
+
 <a name="v2.34.0"></a>
 ### v2.34.0 (2019-06-14)
 
