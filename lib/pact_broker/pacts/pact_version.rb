@@ -7,7 +7,7 @@ module PactBroker
     class PactVersion < Sequel::Model(:pact_versions)
       plugin :timestamps
       one_to_many :pact_publications, reciprocal: :pact_version
-      one_to_many :verifications, reciprocal: :verification, order: :id, :class => "PactBroker::Domain::Verification"
+      one_to_many :verifications, reciprocal: :verification, order: :id, class: "PactBroker::Domain::Verification"
       one_to_one :latest_verification, class: "PactBroker::Verifications::LatestVerificationForPactVersion", key: :pact_version_id, primary_key: :id
       associate(:many_to_one, :provider, class: "PactBroker::Domain::Pacticipant", key: :provider_id, primary_key: :id)
       associate(:many_to_one, :consumer, class: "PactBroker::Domain::Pacticipant", key: :consumer_id, primary_key: :id)
