@@ -4,7 +4,7 @@
  * @example in Haml
  *     %div.clippable
  *       = Text to be copied
- *       %button.clippy.hidden{ title: "Copy to clipboard" }
+ *       %button.clippy.invisible{ title: "Copy to clipboard" }
  *         %span.glyphicon.glyphicon-copy
  */
 
@@ -17,7 +17,7 @@ function initializeClipper(selector) {
   const elements = $(selector);
 
   elements.hover(function() {
-    $(this).children(".clippy").toggleClass("hidden");
+    $(this).children(".clippy").toggleClass("invisible");
   });
 
   elements
