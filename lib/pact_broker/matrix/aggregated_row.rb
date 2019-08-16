@@ -24,7 +24,12 @@ module PactBroker
 
       # If this comes back nil, it won't be "cached", but it's a reasonably
       # quick query, so it's probably ok.
-      def latest_verification
+      # The collection of pacts that belong to the same tag can be considered
+      # a pseudo branch. Find the latest verification for each pseudo branch
+      # and return the most recent. If this pact is the most recent overall,
+      # and there were no verifications found for any of the tags, then
+      # return the most recent verification
+      def latest_verification_for_pseudo_branch
         @latest_verification ||= begin
           verification = matrix_rows.collect do | row|
               row.verification || latest_verification_for_consumer_version_tag(row)

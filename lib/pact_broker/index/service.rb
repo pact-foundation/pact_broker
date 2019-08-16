@@ -42,7 +42,7 @@ module PactBroker
             row.provider,
             row.pact,
             row.overall_latest?,
-            row.latest_verification,
+            row.latest_verification_for_pseudo_branch,
             row.webhooks,
             row.latest_triggered_webhooks,
             options[:tags] ? row.consumer_head_tag_names : [],

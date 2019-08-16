@@ -3,7 +3,7 @@ require 'pact_broker/matrix/aggregated_row'
 module PactBroker
   module Matrix
     describe AggregatedRow do
-      describe "latest_verification" do
+      describe "latest_verification_for_pseudo_branch" do
         let(:row_1) do
           instance_double('PactBroker::Matrix::HeadRow',
             consumer_name: "Foo",
@@ -27,7 +27,7 @@ module PactBroker
         let(:rows) { [row_1, row_2] }
         let(:aggregated_row) { AggregatedRow.new(rows) }
 
-        subject { aggregated_row.latest_verification }
+        subject { aggregated_row.latest_verification_for_pseudo_branch }
 
         context "when the rows have verifications" do
           it "returns the verification with the largest id" do
