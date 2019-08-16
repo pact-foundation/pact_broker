@@ -1,14 +1,12 @@
 require 'spec/support/test_data_builder'
 
 describe "Get pact versions" do
-
   let(:path) { "/pacts/provider/Provider/consumer/Consumer/versions" }
   let(:last_response_body) { JSON.parse(subject.body, symbolize_names: true) }
 
   subject { get path; last_response }
 
   context "when the pacts exist" do
-
     before do
       TestDataBuilder.new
         .create_provider("Provider")
@@ -26,14 +24,11 @@ describe "Get pact versions" do
     it "returns a list of links to the pacts" do
       expect(last_response_body[:_links][:"pact-versions"].size).to eq 2
     end
-
   end
 
   context "when the pacts do not exist" do
-
     it "returns a 404 response" do
       expect(subject).to be_a_404_response
     end
-
   end
 end

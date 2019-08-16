@@ -5,7 +5,6 @@ require 'pact_broker/api/decorators/pact_versions_decorator'
 module PactBroker
   module Api
     module Resources
-
       class PactVersions < BaseResource
 
         def content_types_provided
