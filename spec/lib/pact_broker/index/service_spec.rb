@@ -233,10 +233,35 @@ module PactBroker
 
           let(:options) { { tags: true } }
 
-          it "returns the latest of the feat-x and feat-y verifications" do
-            expect(rows.last.consumer_version_number).to eq "3"
-            expect(rows.last.tag_names.sort).to eq ["feat-x", "feat-y"]
-            expect(rows.last.provider_version_number).to eq "2"
+          context "with tags=true" do
+            it "returns the tags for the pacts" do
+              expect(rows.last.tag_names.sort).to eq ["feat-x", "feat-y"]
+            end
+          end
+
+          context "with tags=false" do
+            let(:options) { { tags: false } }
+
+            it "does not return the tags for the pacts" do
+              expect(rows.last.tag_names.sort).to eq []
+            end
+          end
+
+          context "with dashboard=true" do
+            let(:options) { { dashboard: true } }
+
+            it "returns the latest verification as nil as the pact version itself has not been verified" do
+              expect(rows.last.provider_version_number).to be nil
+            end
+          end
+
+          context "with dashboard=false" do
+            let(:options) { { } }
+
+            it "returns the latest of the feat-x and feat-y verifications because we are summarising the entire integration (backwards compat for OSS index)" do
+              expect(rows.last.consumer_version_number).to eq "4"
+              expect(rows.last.provider_version_number).to eq "2"
+            end
           end
         end
       end

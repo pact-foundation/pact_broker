@@ -43,6 +43,14 @@ module PactBroker
         end
       end
 
+      def latest_verification_for_pact_version
+        @latest_verificaton_for_pact_version ||= begin
+          matrix_rows.collect do | row|
+            row.verification
+          end.compact.sort{ |v1, v2| v1.id <=> v2.id }.last
+        end
+      end
+
       # The list of tag names for which this pact publication is the most recent with that tag
       # There could, however, be a later consumer version that does't have a pact (perhaps because it was deleted)
       # that has the same tag.
