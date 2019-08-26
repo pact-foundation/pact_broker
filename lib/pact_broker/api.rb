@@ -26,6 +26,8 @@ module PactBroker
         # Verifications
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'pact-version', :pact_version_sha, 'verification-results'], Api::Resources::Verifications, {resource_name: "verification_results"}
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'pact-version', :pact_version_sha, 'metadata', :metadata, 'verification-results'], Api::Resources::Verifications, {resource_name: "verification_results"}
+        add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'version', :consumer_version_number, 'verification-results', 'latest'], Api::Resources::LatestVerificationForPact, {resource_name: "latest_verification_results_for_pact_publication"}
+        add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'pact-version', :pact_version_sha, 'verification-results', 'latest'], Api::Resources::LatestVerificationForPact, {resource_name: "latest_verification_results_for_pact_version"}
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'pact-version', :pact_version_sha, 'verification-results', :verification_number], Api::Resources::Verification, {resource_name: "verification_result"}
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'pact-version', :pact_version_sha, 'verification-results', :verification_number, 'triggered-webhooks'], Api::Resources::VerificationTriggeredWebhooks, {resource_name: "verification_result_triggered_webhooks"}
         add ['verification-results', 'consumer', :consumer_name, 'version', :consumer_version_number,'latest'], Api::Resources::LatestVerificationsForConsumerVersion, {resource_name: "verification_results_for_consumer_version"}

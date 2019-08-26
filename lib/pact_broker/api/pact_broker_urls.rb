@@ -157,6 +157,14 @@ module PactBroker
         "#{base_url}/verification-results/consumer/#{url_encode(version.pacticipant.name)}/version/#{version.number}/latest"
       end
 
+      def latest_verification_for_pact_url pact, base_url
+        verification_url_from_params(
+          provider_name: pact.provider_name,
+          consumer_name: pact.consumer_name,
+          pact_version_sha: pact.pact_version_sha,
+          verification_number: 'latest')
+      end
+
       def verification_triggered_webhooks_url verification, base_url = ''
         "#{verification_url(verification, base_url)}/triggered-webhooks"
       end

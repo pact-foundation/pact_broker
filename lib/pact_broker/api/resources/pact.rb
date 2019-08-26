@@ -28,7 +28,7 @@ module PactBroker
           [["application/hal+json", :to_json],
            ["application/json", :to_json],
            ["text/html", :to_html],
-           ["application/vnd.pactbroker.v1+json", :to_extended_json]
+           ["application/vnd.pactbrokerextended.v1+json", :to_extended_json]
           ]
         end
 

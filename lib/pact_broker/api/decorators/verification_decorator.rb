@@ -15,7 +15,6 @@ module PactBroker
         property :execution_date, as: :verificationDate
         property :build_url, as: :buildUrl
         property :test_results, as: :testResults
-        collection :provider_version_tags, as: :tags, embedded: true, extend: TagDecorator
 
         link :self do | options |
           {

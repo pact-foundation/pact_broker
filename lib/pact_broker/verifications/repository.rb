@@ -54,6 +54,10 @@ module PactBroker
           .verification_number(verification_number).single_record
       end
 
+      def find_latest_for_pact(pact)
+        PactBroker::Pacts::PactPublication.where(id: pact.id).single_record.latest_verification
+      end
+
       def search_for_latest consumer_name, provider_name
         query = LatestVerificationForPactVersion
                   .select_all_qualified

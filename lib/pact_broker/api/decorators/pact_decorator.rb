@@ -146,6 +146,12 @@ module PactBroker
           }
         end
 
+        link :'pb:latest-verification-results' do | options |
+          {
+            href: latest_verification_for_pact_url(represented, options.fetch(:base_url))
+          }
+        end
+
         link :'pb:triggered-webhooks' do | options |
           {
             title: "Webhooks triggered by the publication of this pact",
