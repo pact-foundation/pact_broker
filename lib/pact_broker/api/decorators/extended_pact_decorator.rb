@@ -3,6 +3,9 @@ require 'pact_broker/api/decorators/pact_decorator'
 module PactBroker
   module Api
     module Decorators
+      # Make a different content type for adding extra information for the UI, as
+      # some pact parsing tools blow up when there are unexpected keys :|
+
       class ExtendedPactDecorator < PactDecorator
         class TagDecorator < BaseDecorator
           property :name

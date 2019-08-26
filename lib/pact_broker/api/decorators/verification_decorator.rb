@@ -4,6 +4,10 @@ module PactBroker
   module Api
     module Decorators
       class VerificationDecorator < BaseDecorator
+        class TagDecorator < BaseDecorator
+          property :name
+          property :latest?, as: :latest
+        end
 
         property :provider_name, as: :providerName, writeable: false
         property :provider_version_number, as: :providerApplicationVersion, writeable: false
@@ -11,6 +15,7 @@ module PactBroker
         property :execution_date, as: :verificationDate
         property :build_url, as: :buildUrl
         property :test_results, as: :testResults
+        collection :provider_version_tags, as: :tags, embedded: true, extend: TagDecorator
 
         link :self do | options |
           {
