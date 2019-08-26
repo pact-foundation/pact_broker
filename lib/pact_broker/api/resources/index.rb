@@ -106,6 +106,11 @@ module PactBroker
               title: "Get, create or delete a tag for a pacticipant version",
               templated: true
             },
+            'pb:metrics' =>
+            {
+              href: base_url + '/metrics',
+              title: "Get Pact Broker metrics",
+            },
             'beta:pending-provider-pacts' =>
             {
               href: base_url + '/pacts/provider/{provider}/pending',

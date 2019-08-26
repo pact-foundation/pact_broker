@@ -71,5 +71,10 @@ module PactBroker
       require 'pact_broker/webhooks/trigger_service'
       Webhooks::TriggerService
     end
+
+    def metrics_service
+      require 'pact_broker/metrics/service'
+      Metrics::Service
+    end
   end
 end

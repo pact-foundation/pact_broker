@@ -91,6 +91,7 @@ module PactBroker
 
         add ['integrations'], Api::Resources::Integrations, {resource_name: "integrations"}
         add ['integrations', 'provider', :provider_name, 'consumer', :consumer_name], Api::Resources::Integration, {resource_name: "integration"}
+        add ['metrics'], Api::Resources::Metrics, {resource_name: 'metrics'}
         add [], Api::Resources::Index, {resource_name: "index"}
       end
     end
