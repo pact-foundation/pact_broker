@@ -5,7 +5,6 @@ module PactBroker
   module Api
     module Decorators
       describe PactDecorator do
-
         before do
           allow(decorator).to receive(:templated_diff_url).and_return('templated-diff-url')
           allow(decorator).to receive(:verification_publication_url).and_return('verification-publication-url')

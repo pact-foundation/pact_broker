@@ -3,11 +3,8 @@ require 'pact_broker/json'
 require 'pact_broker/api/decorators/timestamps'
 
 module PactBroker
-
   module Api
-
     module Decorators
-
       class PactDecorator < BaseDecorator
 
         include Timestamps

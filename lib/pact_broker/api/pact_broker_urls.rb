@@ -90,6 +90,10 @@ module PactBroker
         "#{pactigration_base_url(base_url, pact)}/latest-untagged"
       end
 
+      def latest_tagged_pact_url pact, tag_name, base_url
+        "#{latest_pact_url(base_url, pact)}/#{url_encode(tag_name)}"
+      end
+
       def latest_pacts_url base_url
         "#{base_url}/pacts/latest"
       end

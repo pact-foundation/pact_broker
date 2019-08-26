@@ -6,7 +6,7 @@ module PactBroker
   module Domain
     class Pact
 
-      attr_accessor :id, :provider, :consumer_version, :consumer, :created_at, :json_content, :consumer_version_number, :revision_number, :pact_version_sha, :latest_verification
+      attr_accessor :id, :provider, :consumer_version, :consumer, :created_at, :json_content, :consumer_version_number, :revision_number, :pact_version_sha, :latest_verification, :head_tag_names
 
       def initialize attributes
         attributes.each_pair do | key, value |
@@ -54,6 +54,5 @@ module PactBroker
         id
       end
     end
-
   end
 end

@@ -2,6 +2,7 @@ require 'cgi'
 require 'pact_broker/api/resources/base_resource'
 require 'pact_broker/api/resources/pacticipant_resource_methods'
 require 'pact_broker/api/decorators/pact_decorator'
+require 'pact_broker/api/decorators/extended_pact_decorator'
 require 'pact_broker/json'
 require 'pact_broker/pacts/pact_params'
 require 'pact_broker/api/contracts/put_pact_params_contract'
@@ -26,7 +27,9 @@ module PactBroker
         def content_types_provided
           [["application/hal+json", :to_json],
            ["application/json", :to_json],
-           ["text/html", :to_html]]
+           ["text/html", :to_html],
+           ["application/vnd.pactbroker.pact.v1+json", :to_extended_json]
+          ]
         end
 
         def content_types_accepted
@@ -76,6 +79,10 @@ module PactBroker
 
         def to_json
           PactBroker::Api::Decorators::PactDecorator.new(pact).to_json(user_options: decorator_context(metadata: identifier_from_path[:metadata]))
+        end
+
+        def to_extended_json
+          PactBroker::Api::Decorators::ExtendedPactDecorator.new(pact).to_json(user_options: decorator_context(metadata: identifier_from_path[:metadata]))
         end
 
         def to_html

@@ -31,8 +31,12 @@ module PactBroker
         self.revision_number ||= 1
       end
 
-      def latest_tag_names
+      def head_tag_names
         LatestTaggedPactPublications.where(id: id).select(:tag_name).collect{|t| t[:tag_name]}
+      end
+
+      def consumer_version_tags
+        consumer_version.tags
       end
 
       def latest_verification
@@ -50,7 +54,8 @@ module PactBroker
           json_content: pact_version.content,
           pact_version_sha: pact_version.sha,
           latest_verification: latest_verification,
-          created_at: created_at
+          created_at: created_at,
+          head_tag_names: head_tag_names
           )
       end
 
