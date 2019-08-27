@@ -67,10 +67,6 @@ module PactBroker
         it "includes a link to the triggered webhooks" do
           expect(subject[:_links][:'pb:triggered-webhooks'][:href]).to eq "http://triggered-webhooks"
         end
-
-        it "includes the provider version tags" do
-          expect(subject[:_embedded][:tags].first).to eq name: 'prod', latest: true
-        end
       end
     end
   end
