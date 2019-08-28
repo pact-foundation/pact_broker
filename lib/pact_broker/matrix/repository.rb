@@ -192,22 +192,24 @@ module PactBroker
         end
       end
 
-      def add_ids_to_selector(selector)
-        if selector[:pacticipant_name]
-          pacticipant = PactBroker::Domain::Pacticipant.find(name: selector[:pacticipant_name])
-          selector[:pacticipant_id] = pacticipant ? pacticipant.id : nil
-        end
+      # def add_ids_to_selector(selector)
+      #   if selector[:pacticipant_name]
+      #     pacticipant = PactBroker::Domain::Pacticipant.find(name: selector[:pacticipant_name])
+      #     selector[:pacticipant_id] = pacticipant ? pacticipant.id : nil
+      #   end
 
-        if selector[:pacticipant_name] && selector[:pacticipant_version_number] && !selector[:pacticipant_version_id]
-          version = version_repository.find_by_pacticipant_name_and_number(selector[:pacticipant_name], selector[:pacticipant_version_number])
-          selector[:pacticipant_version_id] = version ? version.id : nil
-        end
+      #   if selector[:pacticipant_name] && selector[:pacticipant_version_number] && !selector[:pacticipant_version_id]
+      #     version = version_repository.find_by_pacticipant_name_and_number(selector[:pacticipant_name], selector[:pacticipant_version_number])
+      #     selector[:pacticipant_version_id] = version ? version.id : nil
+      #   end
 
-        if !selector.key?(:pacticipant_version_id)
-           selector[:pacticipant_version_id] = nil
-        end
-        selector
-      end
+      #   if !selector.key?(:pacticipant_version_id)
+      #      selector[:pacticipant_version_id] = nil
+      #   end
+
+
+      #   selector
+      # end
 
       # When only one selector is specified, (eg. checking to see if Foo version 2 can be deployed to prod),
       # need to look up all integrated pacticipants, and determine their relevant (eg. latest prod) versions
@@ -243,6 +245,18 @@ module PactBroker
       end
 
       def selector_for_version(pacticipant, version, original_selector, selector_type)
+        # if selector[:pacticipant_version_id]
+        #   selector[:pact_publication_id] = PactBroker::Pacts::PactPublication
+        #                                     .where(
+        #                                       consumer_version_id: selector[:pacticipant_version_id])
+        #                                     .order(:pact_revision_number)
+        #                                     .last&.id
+        #   selector[:verification_id] = PactBroker::Domain::Verification
+        #                                   .where(provider_version_id: selector[:pacticipant_version_id])
+        #                                   .order(:verification_id)
+        # end
+
+
         ResolvedSelector.for_pacticipant_and_version(pacticipant, version, original_selector, selector_type)
       end
 
