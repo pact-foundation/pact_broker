@@ -82,7 +82,13 @@ module PactBroker
         end
 
         def to_extended_json
-          PactBroker::Api::Decorators::ExtendedPactDecorator.new(pact).to_json(user_options: decorator_context(metadata: identifier_from_path[:metadata]))
+          verification_number = request.query['verification']
+          verification_result = if verification_number
+            verification_service.find_by_number_for_pact(pact, verification_number)
+          else
+            nil
+          end
+          PactBroker::Api::Decorators::ExtendedPactDecorator.new(pact, verification_result).to_json(user_options: decorator_context(metadata: identifier_from_path[:metadata]))
         end
 
         def to_html

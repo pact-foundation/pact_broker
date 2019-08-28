@@ -58,6 +58,15 @@ module PactBroker
         PactBroker::Pacts::PactPublication.where(id: pact.id).single_record.latest_verification
       end
 
+      def find_by_number_for_pact(pact, number)
+        PactBroker::Domain::Verification
+          .join(:pact_versions, id: :pact_version_id)
+          .join(:pact_publications, Sequel[:pact_versions][:id] => Sequel[:pact_publications][:pact_version_id])
+          .where(Sequel[:pact_publications][:id] => pact.id)
+          .where(number: number)
+          .single_record
+      end
+
       def search_for_latest consumer_name, provider_name
         query = LatestVerificationForPactVersion
                   .select_all_qualified

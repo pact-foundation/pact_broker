@@ -1,4 +1,5 @@
 require 'pact_broker/api/decorators/pact_decorator'
+require 'pact_broker/pacts/content'
 
 module PactBroker
   module Api
@@ -22,9 +23,19 @@ module PactBroker
         property :content_hash, as: :contract
         collection :head_tags, exec_context: :decorator, as: :tags, embedded: true, extend: TagDecorator
 
+        def initialize(pact, verification_result)
+          super(pact)
+          @verification_result = verification_result
+        end
+
         # TODO rather than remove the contract keys that we added in the super class,
         # it would be better to inherit from a shared super class
         def to_hash(options = {})
+          PactBroker::Pacts::Content
+            .from_hash(represented.content_hash)
+            .with_test_results(verification_result.test_results)
+            .to_hash
+
           keys_to_remove = represented.content_hash.keys
           super.each_with_object({}) do | (key, value), new_hash |
             new_hash[key] = value unless keys_to_remove.include?(key)

@@ -71,10 +71,24 @@ module PactBroker
         end
       end
 
+      describe "#find_by_number_for_pact" do
+        before do
+          td.create_pact_with_hierarchy("Foo", "1", "Bar")
+            .create_verification(provider_version: "2", number: 1)
+            .revise_pact
+            .create_verification(provider_version: "3", number: 1)
+        end
+
+        subject { Repository.new.find_by_number_for_pact(td.pact, "1") }
+
+        it "returns the verification" do
+          expect(subject.provider_version_number).to eq "3"
+        end
+      end
+
       describe "#search_for_latest" do
         before do
-          TestDataBuilder.new
-            .create_pact_with_hierarchy("Foo", "1", "Bar")
+          td.create_pact_with_hierarchy("Foo", "1", "Bar")
             .create_verification(provider_version: "2")
             .create_verification(provider_version: "3", number: 2)
             .create_provider("Wiffle")

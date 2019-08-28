@@ -148,7 +148,7 @@ module PactBroker
       end
 
       def add_interaction_ids(json_content)
-        Content.from_json(json_content).with_ids.to_json
+        Content.from_json(json_content).with_ids(false).to_json
       end
 
       def merge_consumer_version_info(webhook_options, pact)

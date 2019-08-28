@@ -53,6 +53,10 @@ module PactBroker
         verification_repository.find_latest_for_pact(pact)
       end
 
+      def find_by_number_for_pact(pact, verification_number)
+        verification_repository.find_by_number_for_pact(pact, verification_number)
+      end
+
       def find_by_id id
         PactBroker::Domain::Verification.find(id: id)
       end
