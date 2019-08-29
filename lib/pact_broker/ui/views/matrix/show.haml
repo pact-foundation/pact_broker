@@ -106,8 +106,9 @@
             %div.clippable
               %a{href: line.consumer_version_number_url}
                 = line.display_consumer_version_number
-              %button.clippy.invisible{ title: "Copy to clipboard" }
-                %span.glyphicon.glyphicon-copy
+              - if line.display_consumer_version_number
+                %button.clippy.invisible{ title: "Copy to clipboard" }
+                  %span.glyphicon.glyphicon-copy
             - line.latest_consumer_version_tags.each do | tag |
               .tag-parent{"title": tag.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
                 %a{href: tag.url}
@@ -132,8 +133,9 @@
             %div.clippable
               %a{href: line.provider_version_number_url}
                 = line.display_provider_version_number
-              %button.clippy.invisible{ title: "Copy to clipboard" }
-                %span.glyphicon.glyphicon-copy
+              - if line.display_provider_version_number
+                %button.clippy.invisible{ title: "Copy to clipboard" }
+                  %span.glyphicon.glyphicon-copy
             - line.latest_provider_version_tags.each do | tag |
               .tag-parent{"title": tag.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
                 %a{href: tag.url}
