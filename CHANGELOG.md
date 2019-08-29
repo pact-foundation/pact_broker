@@ -1,3 +1,22 @@
+<a name="v2.36.0"></a>
+### v2.36.0 (2019-08-30)
+
+
+#### Features
+
+* add resource to get latest verification for a pact	 ([f02a1ca0](/../../commit/f02a1ca0))
+* add /metrics endpoint	 ([9bcbc1bd](/../../commit/9bcbc1bd))
+* add tags to verification resource	 ([830632a2](/../../commit/830632a2))
+* add content type to return pact with extra metadata (eg tags)	 ([76668639](/../../commit/76668639))
+* remove use of 'stale' for dashboard resource	 ([e173f5cf](/../../commit/e173f5cf))
+
+
+#### Bug Fixes
+
+* pact broker client issue 53 (#299)	 ([aa27cef3](/../../commit/aa27cef3))
+* version column resize when clipboard icon appears (#292)	 ([5aa668e9](/../../commit/5aa668e9))
+
+
 <a name="v2.35.0"></a>
 ### v2.35.0 (2019-08-08)
 
