@@ -1,3 +1,12 @@
+<a name="v2.36.1"></a>
+### v2.36.1 (2019-08-30)
+
+
+#### Bug Fixes
+
+* do not show clipboard icon if version is blank (#297)	 ([36948fe1](/../../commit/36948fe1))
+
+
 <a name="v2.36.0"></a>
 ### v2.36.0 (2019-08-30)
 
