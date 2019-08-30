@@ -131,6 +131,10 @@ module PactBroker
           PactBroker::DateHelper.distance_of_time_in_words(date, DateTime.now) + " ago"
         end
 
+        def publication_date_of_latest_pact_order
+          @relationship.latest_pact.created_at.to_time.to_i
+        end
+
         def verification_status
           case @relationship.verification_status
             when :success then "success"
