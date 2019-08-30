@@ -41,8 +41,9 @@
             %td.consumer-version-number
               %div.clippable
                 = escape_html(index_item.consumer_version_number)
-                %button.clippy.invisible{ title: "Copy to clipboard" }
-                  %span.glyphicon.glyphicon-copy
+                - if index_item.consumer_version_number
+                  %button.clippy.invisible{ title: "Copy to clipboard" }
+                    %span.glyphicon.glyphicon-copy
               - if index_item.latest?
                 .tag.label.label-success
                   latest
@@ -60,8 +61,9 @@
             %td.provider-version-number
               %div.clippable
                 = escape_html(index_item.provider_version_number)
-                %button.clippy.invisible{ title: "Copy to clipboard" }
-                  %span.glyphicon.glyphicon-copy
+                - if index_item.provider_version_number
+                  %button.clippy.invisible{ title: "Copy to clipboard" }
+                    %span.glyphicon.glyphicon-copy
               - index_item.provider_version_latest_tag_names.each do | tag_name |
                 .tag.label.label-primary
                   = escape_html(tag_name)
