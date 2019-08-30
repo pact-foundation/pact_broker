@@ -67,7 +67,7 @@
               - index_item.provider_version_latest_tag_names.each do | tag_name |
                 .tag.label.label-primary
                   = escape_html(tag_name)
-            %td
+            %td{"data-text": index_item.publication_date_of_latest_pact_order}
               = index_item.publication_date_of_latest_pact.gsub("about ", "")
             %td{ class: index_item.webhook_status }
               - if index_item.show_webhook_status?
