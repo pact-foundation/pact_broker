@@ -730,6 +730,41 @@ module PactBroker
           }.by(-1)
         end
       end
+
+      describe "delete_triggered_webhooks_by_version_id" do
+        subject { Repository.new.delete_triggered_webhooks_by_version_id(version.id) }
+
+        context "when deleting a triggered webhook by consumer version" do
+          let!(:version) do
+            td
+              .create_pact_with_hierarchy
+              .create_webhook
+              .create_triggered_webhook
+              .create_webhook_execution
+              .and_return(:consumer_version)
+          end
+
+          it "deletes the webhooks belonging to the consumer version" do
+            expect { subject }.to change{ TriggeredWebhook.count }.by (-1)
+          end
+        end
+
+        context "when deleting a triggered webhook by provider version" do
+          let!(:version) do
+            td
+              .create_pact_with_hierarchy
+              .create_verification(provider_version: "1")
+              .create_provider_webhook(event_names: ['provider_verification_published'])
+              .create_triggered_webhook
+              .create_webhook_execution
+              .and_return(:provider_version)
+          end
+
+          it "deletes the webhooks belonging to the consumer version" do
+            expect { subject }.to change{ TriggeredWebhook.count }.by (-1)
+          end
+        end
+      end
     end
   end
 end
