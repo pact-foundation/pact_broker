@@ -99,13 +99,6 @@ module PactBroker
           .collect(&:to_domain)
       end
 
-      # TODO delete
-      def find_by_consumer_and_provider_existing_at consumer, provider, date_time
-        Webhook.where(consumer_id: consumer.id, provider_id: provider.id)
-        .where(Sequel.lit("created_at < ?", date_time))
-        .collect(&:to_domain)
-      end
-
       def create_triggered_webhook trigger_uuid, webhook, pact, verification, trigger_type
         db_webhook = Webhook.where(uuid: webhook.uuid).single_record
         TriggeredWebhook.create(
