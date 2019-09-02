@@ -1,3 +1,18 @@
+<a name="v2.37.0"></a>
+### v2.37.0 (2019-09-02)
+
+
+#### Bug Fixes
+
+* delete triggered webhook data when deleting pacticipant version	 ([77265c30](/../../commit/77265c30))
+
+* **index with tags**
+  * sort pact publication by date, not string (#301)	 ([e92bde5f](/../../commit/e92bde5f))
+
+* **index**
+  * sort pact publication by date, not string	 ([75d35802](/../../commit/75d35802))
+
+
 <a name="v2.36.1"></a>
 ### v2.36.1 (2019-08-30)
 
