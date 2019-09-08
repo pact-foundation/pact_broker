@@ -113,6 +113,20 @@ module PactBroker
           end
         end
       end
+
+      describe "latest_verification_for_pact_url" do
+        context "when permalink = true" do
+          subject { PactBrokerUrls.latest_verification_for_pact_url(pact, base_url, true) }
+
+          it { is_expected.to eq "http://example.org/pacts/provider/Bar%2FBar/consumer/Foo%2FFoo/pact-version/5hbfu/verification-results/latest" }
+        end
+
+        context "when permalink = false" do
+          subject { PactBrokerUrls.latest_verification_for_pact_url(pact, base_url, false) }
+
+          it { is_expected.to eq "http://example.org/pacts/provider/Bar%2FBar/consumer/Foo%2FFoo/version/123%2F456/verification-results/latest" }
+        end
+      end
     end
   end
 end

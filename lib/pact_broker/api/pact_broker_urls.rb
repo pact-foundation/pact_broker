@@ -157,12 +157,20 @@ module PactBroker
         "#{base_url}/verification-results/consumer/#{url_encode(version.pacticipant.name)}/version/#{version.number}/latest"
       end
 
-      def latest_verification_for_pact_url pact, base_url
-        verification_url_from_params(
-          provider_name: pact.provider_name,
-          consumer_name: pact.consumer_name,
-          pact_version_sha: pact.pact_version_sha,
-          verification_number: 'latest')
+      def latest_verification_for_pact_url pact, base_url, permalink = true
+        if permalink
+          verification_url_from_params(
+            {
+              provider_name: provider_name(pact),
+              consumer_name: consumer_name(pact),
+              pact_version_sha: pact.pact_version_sha,
+              verification_number: 'latest'
+            },
+            base_url
+          )
+        else
+          pact_url(base_url, pact) + "/verification-results/latest"
+        end
       end
 
       def verification_triggered_webhooks_url verification, base_url = ''
@@ -275,6 +283,30 @@ module PactBroker
           'provider', url_encode(params[:provider_name]),
           'consumer', url_encode(params[:consumer_name])
         ].join('/')
+      end
+
+      def consumer_name(thing)
+        if thing.respond_to?(:consumer_name)
+          thing.consumer_name
+        elsif thing.respond_to?(:consumer)
+          thing.consumer.name
+        elsif thing.respond_to?(:[])
+          thing[:consumer_name]
+        else
+          nil
+        end
+      end
+
+      def provider_name(thing)
+        if thing.respond_to?(:provider_name)
+          thing.provider_name
+        elsif thing.respond_to?(:provider)
+          thing.provider.name
+        elsif thing.respond_to?(:[])
+          thing[:provider_name]
+        else
+          nil
+        end
       end
     end
   end

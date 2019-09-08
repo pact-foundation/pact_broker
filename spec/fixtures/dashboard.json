@@ -26,7 +26,7 @@
       "latestVerificationResult": {
         "_links": {
           "self": {
-            "href": "verification_url"
+            "href": "latest_verification_url"
           }
         },
         "success": true,
