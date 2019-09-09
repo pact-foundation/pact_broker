@@ -36,3 +36,4 @@ end
 #  provider_version_id     | integer                     |
 #  provider_version_number | text                        |
 #  provider_version_order  | integer                     |
+#  test_results            | text                        |
