@@ -31,7 +31,7 @@ Sequel.migration do
   down do
     # The most recent verification for each pact_version
     v = :verifications
-    create_view(:latest_verifications_for_pact_versions,
+    create_or_replace_view(:latest_verifications_for_pact_versions,
       from(v)
         .select(
           Sequel[v][:id],
