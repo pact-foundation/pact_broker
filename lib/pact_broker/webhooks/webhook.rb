@@ -108,6 +108,7 @@ end
 #  password             | text                        |
 #  enabled              | boolean                     | DEFAULT true
 #  description          | text                        |
+#  headers              | text                        |
 # Indexes:
 #  webhooks_pkey   | PRIMARY KEY btree (id)
 #  uq_webhook_uuid | UNIQUE btree (uuid)
