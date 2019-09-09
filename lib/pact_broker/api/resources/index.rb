@@ -4,9 +4,7 @@ require 'json'
 module PactBroker
   module Api
     module Resources
-
       class Index < BaseResource
-
         def content_types_provided
           [["application/hal+json", :to_json]]
         end
