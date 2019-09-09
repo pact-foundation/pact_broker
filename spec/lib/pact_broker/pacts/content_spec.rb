@@ -59,6 +59,14 @@ module PactBroker
             expect(subject.messages.first["_id"]).to eq "some-id"
           end
         end
+
+        context "when override_existing_ids = false (for setting up test data)" do
+          let(:interaction) { { "_id" => "1", "foo" => "bar" } }
+
+          it "does not override the existing ids" do
+            expect(subject.interactions.first["_id"]).to eq "1"
+          end
+        end
       end
 
       describe "content_that_affects_verification_results" do
