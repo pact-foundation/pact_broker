@@ -3,6 +3,7 @@
 ## File structure
 
 * Application code - [lib](lib)
+  * The aggregated application (API, UI, middleware, HAL Browser, diagnostic endpoints etc) - [lib/pact_broker/app.rb](lib/pact_broker/app.rb)
   * API - [lib/pact_broker/api](lib/pact_broker/api)
     * Routes - [lib/pact_broker/api.rb](lib/pact_broker/api.rb)
     * HTTP Resources - [lib/pact_broker/api/resources](lib/pact_broker/api/resources) These handle the HTTP requests.
