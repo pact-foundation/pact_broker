@@ -3,12 +3,13 @@
 ## File structure
 
 * Application code - [lib](lib)
-  * List of API endpoints - [lib/pact_broker/api.rb](lib/pact_broker/api.rb)
   * API - [lib/pact_broker/api](lib/pact_broker/api)
+    * Routes - [lib/pact_broker/api.rb](lib/pact_broker/api.rb)
     * HTTP Resources - [lib/pact_broker/api/resources](lib/pact_broker/api/resources) These handle the HTTP requests.
     * Decorators - [lib/pact_broker/api/decorators](lib/pact_broker/api/decorators) These render the response bodies.
     * Contracts - [lib/pact_broker/api/contracts](lib/pact_broker/api/contracts) These validate incoming API requests.
-  * UI - [lib/pact_broker/ui/app.rb](lib/pact_broker/ui/app.rb)
+  * UI - [lib/pact_broker/ui](lib/pact_broker/ui)
+    * Routes - [lib/pact_broker/ui/app.rb](lib/pact_broker/ui/app.rb)
     * Controllers - [lib/pact_broker/ui/controllers](lib/pact_broker/ui/controllers) These handle the HTTP requests.
     * Views - [lib/pact_broker/ui/views](lib/pact_broker/ui/views) These render the view using HAML
     * View models - [lib/pact_broker/ui/view_models](lib/pact_broker/ui/view_models) These expose the domain model data in a way that is suited to rendering in a view.
