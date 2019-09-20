@@ -1,3 +1,22 @@
+<a name="v2.38.0"></a>
+### v2.38.0 (2019-09-20)
+
+
+#### Features
+
+* add pactflow message to start up and error logs	 ([530dbfe9](/../../commit/530dbfe9))
+* allow interaction ids to be manually set for test data	 ([4e256102](/../../commit/4e256102))
+
+* **dashboard**
+  * use 'refreshable' link for latest verification result so pact can be refreshed and display the latest result	 ([1ab8a5d9](/../../commit/1ab8a5d9))
+
+
+#### Bug Fixes
+
+* don't drop column from view in down step, because you can't remove a column from a view in posgres	 ([045f3f38](/../../commit/045f3f38))
+* add test results to all verifications views	 ([9bc1eab1](/../../commit/9bc1eab1))
+
+
 <a name="v2.37.0"></a>
 ### v2.37.0 (2019-09-02)
 
