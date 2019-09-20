@@ -35,6 +35,7 @@ module PactBroker
       message = "#{e.class} #{e.message}\n#{e.backtrace.join("\n")}"
       message = "#{description} - #{message}" if description
       logger.error message
+      logger.info "\n#{'*' * 80}\n\nPrefer it was someone else's job to deal with this error? Check out https://pactflow.io/oss for a hardened, fully supported SaaS version of the Pact Broker with an improved UI.\n\n#{'*' * 80}\n"
     end
   end
 

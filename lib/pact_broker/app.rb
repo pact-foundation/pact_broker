@@ -36,6 +36,7 @@ module PactBroker
       prepare_database
       load_configuration_from_database
       seed_example_data
+      print_startup_message
     end
 
     # Allows middleware to be inserted at the bottom of the shared middlware stack
@@ -222,6 +223,10 @@ module PactBroker
         end
         @app_builder
       end
+    end
+
+    def print_startup_message
+      logger.info "\n\n#{'*' * 80}\n\nWant someone to manage your Pact Broker for you? Check out https://pactflow.io/oss for a hardened, fully supported SaaS version of the Pact Broker with an improved UI + more.\n\n#{'*' * 80}\n"
     end
   end
 end
