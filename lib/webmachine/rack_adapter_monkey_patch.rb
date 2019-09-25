@@ -14,7 +14,6 @@ module Webmachine
   end
 end
 
-
 unless Webmachine::Adapters::Rack.private_instance_methods.include?(:build_webmachine_request)
   raise "Webmachine::Adapters::Rack no longer has the private instance method #build_webmachine_request - rack env monkey patch won't work"
 end

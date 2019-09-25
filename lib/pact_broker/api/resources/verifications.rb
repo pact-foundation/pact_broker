@@ -3,12 +3,13 @@ require 'pact_broker/configuration'
 require 'pact_broker/domain/verification'
 require 'pact_broker/api/contracts/verification_contract'
 require 'pact_broker/api/decorators/verification_decorator'
+require 'pact_broker/api/resources/webhook_execution_methods'
 
 module PactBroker
   module Api
     module Resources
-
       class Verifications < BaseResource
+        include WebhookExecutionMethods
 
         def content_types_accepted
           [["application/json", :from_json]]
@@ -70,7 +71,6 @@ module PactBroker
           request.post?
         end
 
-
         def metadata
           PactBrokerUrls.parse_webhook_metadata(identifier_from_path[:metadata])
         end
@@ -78,12 +78,8 @@ module PactBroker
         def webhook_options
           {
             database_connector: database_connector,
-            logging_options: {
-              show_response: PactBroker.configuration.show_webhook_response?
-            },
-            webhook_context: metadata.merge(
-              base_url: base_url
-            )
+            webhook_execution_configuration: webhook_execution_configuration
+                                      .with_webhook_context(metadata)
           }
         end
       end

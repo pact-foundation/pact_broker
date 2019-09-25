@@ -228,16 +228,28 @@ module PactBroker
         subject { Repository.new.update_by_uuid(uuid, new_webhook) }
 
         it "updates the webhook" do
-          updated_webhook = subject
-          expect(updated_webhook.uuid).to eq uuid
-          expect(updated_webhook.request.method).to eq 'GET'
-          expect(updated_webhook.request.url).to eq 'http://example.com'
-          expect(updated_webhook.request.body).to eq 'foo'
-          expect(updated_webhook.request.headers).to eq 'Content-Type' => 'text/plain'
-          expect(updated_webhook.request.username).to eq nil
-          expect(updated_webhook.request.password).to eq nil
-          expect(updated_webhook.events.first.name).to eq 'something_else'
-          expect(updated_webhook.consumer.name).to eq "Foo2"
+          expect(subject.uuid).to eq uuid
+          expect(subject.request.method).to eq 'GET'
+          expect(subject.request.url).to eq 'http://example.com'
+          expect(subject.request.body).to eq 'foo'
+          expect(subject.request.headers).to eq 'Content-Type' => 'text/plain'
+          expect(subject.request.username).to eq nil
+          expect(subject.request.password).to eq nil
+          expect(subject.events.first.name).to eq 'something_else'
+          expect(subject.consumer.name).to eq "Foo2"
+        end
+
+        context "when the updated params do not contain a consumer or provider" do
+          let(:new_webhook) do
+            PactBroker::Domain::Webhook.new(
+              events: [new_event],
+              request: new_request
+            )
+          end
+
+          it "removes the existing consumer or provider" do
+            expect(subject.consumer).to be nil
+          end
         end
       end
 
@@ -418,8 +430,9 @@ module PactBroker
 
         let(:webhook_domain) { Repository.new.find_by_uuid td.webhook.uuid }
         let(:webhook_execution_result) { instance_double("PactBroker::Domain::WebhookExecutionResult", success?: true, logs: "logs") }
+        let(:repository) { Repository.new }
 
-        subject { Repository.new.create_execution td.triggered_webhook, webhook_execution_result }
+        subject { repository.create_execution td.triggered_webhook, webhook_execution_result }
 
         it "saves a new webhook execution " do
           expect { subject }.to change { Execution.count }.by(1)
@@ -431,6 +444,20 @@ module PactBroker
 
         it "sets the logs" do
           expect(subject.logs).to eq "logs"
+        end
+
+        context "when the triggered webhook has been deleted in the meantime" do
+          before do
+            TriggeredWebhook.where(id: td.triggered_webhook.id).delete
+            allow(repository).to receive(:logger).and_return(logger)
+          end
+
+          let(:logger) { double('logger') }
+
+          it "just logs the error" do
+            expect(logger).to receive(:info).with(/triggered webhook with id #{td.triggered_webhook.id}/)
+            subject
+          end
         end
       end
 
@@ -701,6 +728,41 @@ module PactBroker
           expect { subject }.to change {
             Execution.exclude(consumer_id: nil).count
           }.by(-1)
+        end
+      end
+
+      describe "delete_triggered_webhooks_by_version_id" do
+        subject { Repository.new.delete_triggered_webhooks_by_version_id(version.id) }
+
+        context "when deleting a triggered webhook by consumer version" do
+          let!(:version) do
+            td
+              .create_pact_with_hierarchy
+              .create_webhook
+              .create_triggered_webhook
+              .create_webhook_execution
+              .and_return(:consumer_version)
+          end
+
+          it "deletes the webhooks belonging to the consumer version" do
+            expect { subject }.to change{ TriggeredWebhook.count }.by (-1)
+          end
+        end
+
+        context "when deleting a triggered webhook by provider version" do
+          let!(:version) do
+            td
+              .create_pact_with_hierarchy
+              .create_verification(provider_version: "1")
+              .create_provider_webhook(event_names: ['provider_verification_published'])
+              .create_triggered_webhook
+              .create_webhook_execution
+              .and_return(:provider_version)
+          end
+
+          it "deletes the webhooks belonging to the consumer version" do
+            expect { subject }.to change{ TriggeredWebhook.count }.by (-1)
+          end
         end
       end
     end

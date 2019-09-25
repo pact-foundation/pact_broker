@@ -102,7 +102,14 @@ module PactBroker
           revision_number: revision_number,
           pact_version_sha: pact_version_sha,
           created_at: created_at,
+          head_tag_names: head_tag_names,
           db_model: self)
+      end
+
+      def head_tag_names
+        # Avoid circular dependency
+        require 'pact_broker/pacts/latest_tagged_pact_publications'
+        LatestTaggedPactPublications.where(id: id).select(:tag_name).collect{|t| t[:tag_name]}
       end
 
       def to_domain_with_content

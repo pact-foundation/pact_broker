@@ -5,7 +5,6 @@ module PactBroker
   module Api
     module Decorators
       describe PactDecorator do
-
         before do
           allow(decorator).to receive(:templated_diff_url).and_return('templated-diff-url')
           allow(decorator).to receive(:verification_publication_url).and_return('verification-publication-url')
@@ -25,7 +24,9 @@ module PactBroker
           content_hash: content_hash,
           created_at: created_at,
           consumer: consumer,
+          consumer_name: consumer.name,
           provider: provider,
+          provider_name: provider.name,
           consumer_version: consumer_version,
           consumer_version_number: '1234',
           pact_version_sha: '9999',

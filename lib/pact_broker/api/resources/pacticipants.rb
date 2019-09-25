@@ -32,7 +32,7 @@ module PactBroker
         end
 
         def from_json
-          created_model = pacticipant_service.create params_with_string_keys
+          created_model = pacticipant_service.create(params)
           response.body = decorator_for(created_model).to_json(user_options: decorator_context)
         end
 

@@ -7,11 +7,11 @@ module PactBroker
         {
           method: 'POST',
           url: url,
-          username: "foo",
-          password: "bar",
+          username: "username",
+          password: password,
           uuid: "1234",
           body: body,
-          headers: {'Foo' => 'bar'}
+          headers: headers
         }
       end
 
@@ -19,14 +19,16 @@ module PactBroker
         {
           method: 'POST',
           url: built_url,
-          username: "foo",
-          password: "bar",
+          username: "usernameBUILT",
+          password: "passwordBUILT",
           uuid: "1234",
           body: built_body,
-          headers: {'Foo' => 'bar'}
+          headers: {'headername' => 'headervalueBUILT'}
         }
       end
 
+      let(:password) { "password" }
+      let(:headers) { {'headername' => 'headervalue'} }
       let(:url) { "http://example.org/hook?foo=bar" }
       let(:base_url) { "http://broker" }
       let(:built_url) { "http://example.org/hook?foo=barBUILT" }
@@ -38,28 +40,11 @@ module PactBroker
           allow(PactBroker::Webhooks::Render).to receive(:call) do | content, pact, verification, &block |
             content + "BUILT"
           end
-
-          allow(PactAndVerificationParameters).to receive(:new).and_return(pact_and_verification_parameters)
         end
 
-        let(:pact_and_verification_parameters) { instance_double(PactAndVerificationParameters, to_hash: params_hash)}
         let(:params_hash) { double('params hash') }
-        let(:pact) { double('pact') }
-        let(:verification) { double('verification') }
-        let(:webhook_context) { { some: "context", base_url: base_url } }
-        let(:template_context) do
-          {
-            pact: pact,
-            verification: verification,
-            webhook_context: webhook_context
-          }
-        end
-        subject { WebhookRequestTemplate.new(attributes).build(template_context) }
 
-        it "creates the template parameters" do
-          expect(PactAndVerificationParameters).to receive(:new).with(pact, verification, webhook_context)
-          subject
-        end
+        subject { WebhookRequestTemplate.new(attributes).build(params_hash) }
 
         it "renders the url template" do
           expect(PactBroker::Webhooks::Render).to receive(:call).with(url, params_hash) do | content, pact, verification, &block |
@@ -90,9 +75,108 @@ module PactBroker
           end
         end
 
+        it "renders each header value" do
+          expect(PactBroker::Webhooks::Render).to receive(:call).with('headervalue', params_hash)
+          subject
+        end
+
+        it "renders the username" do
+          expect(PactBroker::Webhooks::Render).to receive(:call).with('username', params_hash)
+          subject
+        end
+
+        it "renders the password" do
+          expect(PactBroker::Webhooks::Render).to receive(:call).with('password', params_hash)
+          subject
+        end
+
         it "creates a new PactBroker::Domain::WebhookRequest" do
           expect(PactBroker::Domain::WebhookRequest).to receive(:new).with(new_attributes)
           subject
+        end
+
+        context "when optional attributes are missing" do
+          let(:attributes) do
+            {
+              method: 'POST',
+              url: url,
+              uuid: "1234",
+            }
+          end
+
+          it "does not blow up" do
+            subject
+          end
+        end
+      end
+
+      describe "redacted_headers" do
+        subject { WebhookRequestTemplate.new(attributes) }
+
+        let(:headers) do
+          {
+            'Authorization' => 'foo',
+            'X-authorization' => 'bar',
+            'Token' => 'bar',
+            'X-Auth-Token' => 'bar',
+            'X-Authorization-Token' => 'bar',
+            'OK' => 'ok'
+          }
+        end
+
+        let(:expected_headers) do
+          {
+            'Authorization' => '**********',
+            'X-authorization' => '**********',
+            'Token' => '**********',
+            'X-Auth-Token' => '**********',
+            'X-Authorization-Token' => '**********',
+            'OK' => 'ok'
+          }
+        end
+
+        it "redacts sensitive headers" do
+          expect(subject.redacted_headers).to eq expected_headers
+        end
+
+        context "when there is a parameter in the value" do
+          let(:headers) do
+            {
+              'Authorization' => '${pactbroker.secret}'
+            }
+          end
+
+          let(:expected_headers) do
+            {
+              'Authorization' => '${pactbroker.secret}'
+            }
+          end
+
+          it "does not redact it" do
+            expect(subject.redacted_headers).to eq expected_headers
+          end
+        end
+      end
+
+      describe "display_password" do
+        subject { WebhookRequestTemplate.new(attributes) }
+
+        context "when it is nil" do
+          let(:password) { nil }
+
+          its(:display_password) { is_expected.to be nil }
+        end
+
+        context "when the password contains a parameter" do
+          let(:password) { "${pactbroker.foo}" }
+
+          its(:display_password) { is_expected.to eq password }
+        end
+
+        context "when the password does not contains a parameter" do
+          let(:password) { "foo" }
+
+          its(:display_password) { is_expected.to eq "**********" }
         end
       end
     end

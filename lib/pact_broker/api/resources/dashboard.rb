@@ -5,9 +5,7 @@ require 'pact_broker/api/decorators/dashboard_text_decorator'
 module PactBroker
   module Api
     module Resources
-
       class Dashboard < BaseResource
-
         def content_types_provided
           [
             ["application/hal+json", :to_json],
@@ -30,7 +28,7 @@ module PactBroker
         private
 
         def index_items
-          index_service.find_index_items(identifier_from_path.merge(tags: true))
+          index_service.find_index_items(identifier_from_path.merge(tags: true, dashboard: true))
         end
       end
     end

@@ -1,4 +1,5 @@
 require 'pact_broker/webhooks/job'
+require 'pact_broker/webhooks/execution_configuration'
 
 module PactBroker
   module Webhooks
@@ -9,11 +10,15 @@ module PactBroker
         allow(PactBroker::Webhooks::Service).to receive(:update_triggered_webhook_status)
         allow(PactBroker::Webhooks::TriggeredWebhook).to receive(:find).and_return(triggered_webhook)
         allow(Job).to receive(:logger).and_return(logger)
+        allow(webhook_execution_configuration).to receive(:with_success_log_message).and_return(webhook_execution_configuration)
+        allow(webhook_execution_configuration).to receive(:with_failure_log_message).and_return(webhook_execution_configuration)
       end
 
       let(:base_url) { "http://broker" }
       let(:triggered_webhook) { instance_double("PactBroker::Webhooks::TriggeredWebhook", webhook_uuid: '1234', id: 1) }
-      let(:result) { instance_double("PactBroker::Domain::WebhookExecutionResult", success?: success)}
+      let(:result) { instance_double("PactBroker::Domain::WebhookExecutionResult", success?: success) }
+      let(:webhook_execution_configuration) { instance_double(PactBroker::Webhooks::ExecutionConfiguration, to_hash: webhook_execution_configuration_hash) }
+      let(:webhook_execution_configuration_hash) { { the: 'options' } }
       let(:success) { true }
       let(:logger) { double('logger').as_null_object }
       let(:database_connector) { ->(&block) { block.call } }
@@ -22,8 +27,7 @@ module PactBroker
         {
           triggered_webhook: triggered_webhook,
           database_connector: database_connector,
-          webhook_context: webhook_context,
-          logging_options: { the: 'options' }
+          webhook_execution_configuration: webhook_execution_configuration
         }
       end
 
@@ -58,11 +62,7 @@ module PactBroker
         end
 
         it "reschedules the job with the passed in data" do
-          expect(Job).to receive(:perform_in).with(10, hash_including(
-            webhook_context: webhook_context,
-            database_connector: database_connector,
-            triggered_webhook: triggered_webhook
-          ))
+          expect(Job).to receive(:perform_in).with(10, hash_including(job_params))
           subject
         end
 
@@ -81,16 +81,16 @@ module PactBroker
           subject
         end
 
+        it "sets the success and failure messages" do
+          expect(webhook_execution_configuration).to receive(:with_success_log_message).with("Successfully executed webhook")
+          expect(webhook_execution_configuration).to receive(:with_failure_log_message).with("Retrying webhook in 10 seconds")
+          subject
+
+        end
+
         it "executes the job with an log message indicating that the webhook will be retried" do
           expect(PactBroker::Webhooks::Service).to receive(:execute_triggered_webhook_now)
-            .with(triggered_webhook, {
-              logging_options: {
-                failure_log_message: "Retrying webhook in 10 seconds",
-                success_log_message: "Successfully executed webhook",
-                the: 'options'
-              },
-              webhook_context: webhook_context
-          })
+            .with(triggered_webhook, webhook_execution_configuration_hash)
           subject
         end
 
@@ -122,21 +122,18 @@ module PactBroker
       end
 
       context "when the job is not successful for the last time" do
-        let(:success) { false }
         before do
           job_params[:error_count] = 6
         end
 
-        # subject { Job.new.perform(triggered_webhook: triggered_webhook, error_count: 6, database_connector: database_connector, base_url: base_url) }
+        let(:success) { false }
 
         it "executes the job with an log message indicating that the webhook has failed" do
+          expect(webhook_execution_configuration).to receive(:with_failure_log_message).with("Webhook execution failed after 7 attempts")
+          expect(webhook_execution_configuration).to receive(:with_success_log_message).with("Successfully executed webhook")
+
           expect(PactBroker::Webhooks::Service).to receive(:execute_triggered_webhook_now)
-            .with(triggered_webhook, hash_including(
-              logging_options: hash_including(
-                failure_log_message: "Webhook execution failed after 7 attempts",
-                success_log_message: "Successfully executed webhook")
-            )
-          )
+            .with(triggered_webhook, webhook_execution_configuration_hash)
           subject
         end
 

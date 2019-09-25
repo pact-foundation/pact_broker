@@ -14,6 +14,9 @@ module PactBroker
             .create_consumer_version_tag("prod")
             .create_pact
             .create_verification(provider_version: "1.0.0")
+            .create_webhook
+            .create_triggered_webhook
+            .create_webhook_execution
             .and_return(:consumer_version)
         end
 

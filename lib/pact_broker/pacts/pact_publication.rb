@@ -31,8 +31,14 @@ module PactBroker
         self.revision_number ||= 1
       end
 
-      def latest_tag_names
+      # The names of the tags for which this pact is the latest pact with that tag
+      # (ie. it is not necessarily the pact for the latest consumer version with the given tag)
+      def head_tag_names
         LatestTaggedPactPublications.where(id: id).select(:tag_name).collect{|t| t[:tag_name]}
+      end
+
+      def consumer_version_tags
+        consumer_version.tags
       end
 
       def latest_verification
@@ -51,8 +57,9 @@ module PactBroker
           pact_version_sha: pact_version.sha,
           latest_verification: latest_verification,
           created_at: created_at,
+          head_tag_names: head_tag_names,
           db_model: self
-        )
+          )
       end
 
       def to_version_domain

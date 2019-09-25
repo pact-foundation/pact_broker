@@ -19,7 +19,8 @@ module PactBroker
             build_url: 'http://build-url',
             pact_version_sha: '1234',
             latest_pact_publication: pact_publication,
-            execution_date: DateTime.now)
+            execution_date: DateTime.now,
+            provider_version_tags: provider_version_tags)
         end
 
         let(:pact_publication) do
@@ -31,8 +32,9 @@ module PactBroker
           )
         end
 
-        let(:options) { { user_options: { base_url: 'http://example.org' } } }
+        let(:provider_version_tags) { [instance_double(PactBroker::Tags::TagWithLatestFlag, name: 'prod', latest?: true)] }
 
+        let(:options) { { user_options: { base_url: 'http://example.org' } } }
 
         let(:json) { VerificationDecorator.new(verification).to_json(options) }
 

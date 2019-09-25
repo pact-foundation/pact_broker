@@ -14,7 +14,6 @@ module PactBroker
 
         include Timestamps
 
-
         link :self do | options |
           {
             title: 'Tag',

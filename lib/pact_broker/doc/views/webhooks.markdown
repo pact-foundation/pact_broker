@@ -78,7 +78,7 @@ To specify an XML body, you will need to use a correctly escaped string (or use 
 
 `contract_published:` triggered every time a contract is published. It is not recommended to trigger your provider verification build every time a contract is published - see `contract_content_changed` below.
 
-`contract_content_changed:` triggered when the content of the contract has changed since the previous publication. If `base_equality_only_on_content_that_affects_verification_results` is set to `true` in the configuration (the default), any changes to whitespace, ordering of keys, or the ordering of the `interactions` or `messages` will be ignored, and will not trigger this event. It is recommended to trigger a provider verification build for this event.
+`contract_content_changed:` triggered when the content of the contract, or tags applied to the contract have changed since the previous publication. If `base_equality_only_on_content_that_affects_verification_results` is set to `true` in the configuration (the default), any changes to whitespace, ordering of keys, or the ordering of the `interactions` or `messages` will be ignored, and will not trigger this event. It is recommended to trigger a provider verification build for this event.
 
 `provider_verification_published:` triggered whenever a provider publishes a verification.
 
@@ -95,6 +95,7 @@ The following variables may be used in the request path, parameters or body, and
 * `${pactbroker.consumerLabels}`: the list of labels for the consumer associated with the pact content, separated by ", ".
 * `${pactbroker.providerLabels}`: the list of labels for the provider associated with the pact content, separated by ", ".
 * `${pactbroker.githubVerificationStatus}`: the verification status using the correct keywords for posting to the the [Github commit status API](https://developer.github.com/v3/repos/statuses).
+* `${pactbroker.bitbucketVerificationStatus}`: the verification status using the correct keywords for posting to the the [Bitbucket commit status API](https://developer.atlassian.com/server/bitbucket/how-tos/updating-build-status-for-commits/).
 * `${pactbroker.pactUrl}`: the "permalink" URL to the newly published pact (the URL specifying the consumer version URL, rather than the "/latest" format.)
 * `${pactbroker.verificationResultUrl}`: the URL to the relevant verification result.
 

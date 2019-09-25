@@ -4,9 +4,7 @@ require 'json'
 module PactBroker
   module Api
     module Resources
-
       class Index < BaseResource
-
         def content_types_provided
           [["application/hal+json", :to_json]]
         end
@@ -49,6 +47,12 @@ module PactBroker
               href: base_url + '/pacticipants',
               title: 'Pacticipants',
               templated: false
+            },
+            'pb:pacticipant' =>
+            {
+              href: base_url + '/pacticipants/{pacticipant}',
+              title: 'Fetch pacticipant by name',
+              templated: true
             },
             'pb:latest-provider-pacts' =>
             {
@@ -93,6 +97,17 @@ module PactBroker
               href: base_url + '/integrations',
               title: 'Integrations',
               templated: false
+            },
+            'pb:pacticipant-version-tag' =>
+            {
+              href: base_url + '/pacticipants/{pacticipant}/versions/{version}/tags/{tag}',
+              title: "Get, create or delete a tag for a pacticipant version",
+              templated: true
+            },
+            'pb:metrics' =>
+            {
+              href: base_url + '/metrics',
+              title: "Get Pact Broker metrics",
             },
             'beta:provider-pacts-for-verification' =>
             {

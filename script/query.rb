@@ -17,5 +17,4 @@ puts time.real
 
 __END__
 
-
 select * from matrix

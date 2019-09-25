@@ -9,7 +9,6 @@ module PactBroker
         let(:path) { "/dashboard" }
         subject { get path; last_response }
 
-
       end
     end
   end

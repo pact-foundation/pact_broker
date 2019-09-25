@@ -48,7 +48,6 @@ module PactBroker
           }
         end
 
-
         link :'pb:consumer' do | options |
           if represented.consumer
             {

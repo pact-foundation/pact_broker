@@ -17,7 +17,9 @@ module PactBroker
             method: 'POST',
             url: 'url',
             body: 'body',
-            headers: {})
+            redacted_headers: {
+              'foo' => '***'
+            })
         end
 
         let(:json) { WebhookRequestTemplateDecorator.new(webhook_request).to_json }

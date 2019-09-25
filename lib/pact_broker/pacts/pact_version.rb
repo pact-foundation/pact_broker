@@ -1,12 +1,20 @@
 require 'sequel'
+require 'pact_broker/repositories/helpers'
+require 'pact_broker/verifications/latest_verification_for_pact_version'
 
 module PactBroker
   module Pacts
     class PactVersion < Sequel::Model(:pact_versions)
+      plugin :timestamps
       one_to_many :pact_publications, reciprocal: :pact_version
-      one_to_many :verifications, reciprocal: :verification, order: :id, :class => "PactBroker::Domain::Verification"
+      one_to_many :verifications, reciprocal: :verification, order: :id, class: "PactBroker::Domain::Verification"
+      one_to_one :latest_verification, class: "PactBroker::Verifications::LatestVerificationForPactVersion", key: :pact_version_id, primary_key: :id
       associate(:many_to_one, :provider, class: "PactBroker::Domain::Pacticipant", key: :provider_id, primary_key: :id)
       associate(:many_to_one, :consumer, class: "PactBroker::Domain::Pacticipant", key: :consumer_id, primary_key: :id)
+
+      dataset_module do
+        include PactBroker::Repositories::Helpers
+      end
 
       def name
         "Pact between #{consumer_name} and #{provider_name}"
@@ -32,10 +40,6 @@ module PactBroker
           .where(pact_version_id: id)
           .order(:consumer_version_order)
           .last
-      end
-
-      def latest_verification
-        verifications.last
       end
 
       def consumer_versions
@@ -65,9 +69,11 @@ module PactBroker
           .where(Sequel[:verifications][:success] => true)
           .any?
       end
-    end
 
-    PactVersion.plugin :timestamps
+      def upsert
+        self.class.upsert(to_hash, [:consumer_id, :provider_id, :sha])
+      end
+    end
   end
 end
 

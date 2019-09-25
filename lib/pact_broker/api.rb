@@ -26,6 +26,8 @@ module PactBroker
         # Verifications
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'pact-version', :pact_version_sha, 'verification-results'], Api::Resources::Verifications, {resource_name: "verification_results"}
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'pact-version', :pact_version_sha, 'metadata', :metadata, 'verification-results'], Api::Resources::Verifications, {resource_name: "verification_results"}
+        add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'version', :consumer_version_number, 'verification-results', 'latest'], Api::Resources::LatestVerificationForPact, {resource_name: "latest_verification_results_for_pact_publication"}
+        add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'pact-version', :pact_version_sha, 'verification-results', 'latest'], Api::Resources::LatestVerificationForPact, {resource_name: "latest_verification_results_for_pact_version"}
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'pact-version', :pact_version_sha, 'verification-results', :verification_number], Api::Resources::Verification, {resource_name: "verification_result"}
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'pact-version', :pact_version_sha, 'verification-results', :verification_number, 'triggered-webhooks'], Api::Resources::VerificationTriggeredWebhooks, {resource_name: "verification_result_triggered_webhooks"}
         add ['verification-results', 'consumer', :consumer_name, 'version', :consumer_version_number,'latest'], Api::Resources::LatestVerificationsForConsumerVersion, {resource_name: "verification_results_for_consumer_version"}
@@ -74,11 +76,11 @@ module PactBroker
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'webhooks', 'status'], Api::Resources::PactWebhooksStatus, {resource_name: "pact_webhooks_status"}
         add ['pacts', 'provider', :provider_name, 'consumer', :consumer_name, 'version', :consumer_version_number, 'triggered-webhooks'], Api::Resources::PactTriggeredWebhooks, {resource_name: "pact_triggered_webhooks"}
 
+        add ['webhooks', 'execute' ], Api::Resources::WebhookExecution, {resource_name: "execute_unsaved_webhook"}
         add ['webhooks', :uuid ], Api::Resources::Webhook, {resource_name: "webhook"}
         add ['webhooks', :uuid, 'trigger', :trigger_uuid, 'logs' ], Api::Resources::TriggeredWebhookLogs, {resource_name: "triggered_webhook_logs"}
         add ['webhooks', :uuid, 'execute' ], Api::Resources::WebhookExecution, {resource_name: "execute_webhook"}
         add ['webhooks'], Api::Resources::AllWebhooks, {resource_name: "webhooks"}
-
 
         add ['relationships'], Api::Resources::Relationships, {resource_name: "relationships"}
         add ['groups', :pacticipant_name], Api::Resources::Group, {resource_name: "group"}
@@ -94,6 +96,7 @@ module PactBroker
 
         add ['integrations'], Api::Resources::Integrations, {resource_name: "integrations"}
         add ['integrations', 'provider', :provider_name, 'consumer', :consumer_name], Api::Resources::Integration, {resource_name: "integration"}
+        add ['metrics'], Api::Resources::Metrics, {resource_name: 'metrics'}
         add [], Api::Resources::Index, {resource_name: "index"}
       end
     end

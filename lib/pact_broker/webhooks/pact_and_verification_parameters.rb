@@ -1,6 +1,33 @@
 module PactBroker
   module Webhooks
     class PactAndVerificationParameters
+      PACT_URL = 'pactbroker.pactUrl'
+      VERIFICATION_RESULT_URL = 'pactbroker.verificationResultUrl'
+      CONSUMER_VERSION_NUMBER = 'pactbroker.consumerVersionNumber'
+      PROVIDER_VERSION_NUMBER = 'pactbroker.providerVersionNumber'
+      PROVIDER_VERSION_TAGS = 'pactbroker.providerVersionTags'
+      CONSUMER_VERSION_TAGS = 'pactbroker.consumerVersionTags'
+      CONSUMER_NAME = 'pactbroker.consumerName'
+      PROVIDER_NAME = 'pactbroker.providerName'
+      GITHUB_VERIFICATION_STATUS = 'pactbroker.githubVerificationStatus'
+      BITBUCKET_VERIFICATION_STATUS = 'pactbroker.bitbucketVerificationStatus'
+      CONSUMER_LABELS = 'pactbroker.consumerLabels'
+      PROVIDER_LABELS = 'pactbroker.providerLabels'
+
+      ALL = [
+        CONSUMER_NAME,
+        PROVIDER_NAME,
+        CONSUMER_VERSION_NUMBER,
+        PROVIDER_VERSION_NUMBER,
+        PROVIDER_VERSION_TAGS,
+        CONSUMER_VERSION_TAGS,
+        PACT_URL,
+        VERIFICATION_RESULT_URL,
+        GITHUB_VERIFICATION_STATUS,
+        BITBUCKET_VERIFICATION_STATUS,
+        CONSUMER_LABELS,
+        PROVIDER_LABELS
+      ]
 
       def initialize(pact, trigger_verification, webhook_context)
         @pact = pact
@@ -11,17 +38,18 @@ module PactBroker
 
       def to_hash
         @hash ||= {
-          '${pactbroker.pactUrl}' => pact ? PactBroker::Api::PactBrokerUrls.pact_version_url_with_metadata(pact, base_url) : "",
-          '${pactbroker.verificationResultUrl}' => verification_url,
-          '${pactbroker.consumerVersionNumber}' => consumer_version_number,
-          '${pactbroker.providerVersionNumber}' => verification ? verification.provider_version_number : "",
-          '${pactbroker.providerVersionTags}' => provider_version_tags,
-          '${pactbroker.consumerVersionTags}' => consumer_version_tags,
-          '${pactbroker.consumerName}' => pact ? pact.consumer_name : "",
-          '${pactbroker.providerName}' => pact ? pact.provider_name : "",
-          '${pactbroker.githubVerificationStatus}' => github_verification_status,
-          '${pactbroker.consumerLabels}' => pacticipant_labels(pact && pact.consumer),
-          '${pactbroker.providerLabels}' => pacticipant_labels(pact && pact.provider)
+          PACT_URL => pact ? PactBroker::Api::PactBrokerUrls.pact_version_url_with_metadata(pact, base_url) : "",
+          VERIFICATION_RESULT_URL => verification_url,
+          CONSUMER_VERSION_NUMBER => consumer_version_number,
+          PROVIDER_VERSION_NUMBER => verification ? verification.provider_version_number : "",
+          PROVIDER_VERSION_TAGS => provider_version_tags,
+          CONSUMER_VERSION_TAGS => consumer_version_tags,
+          CONSUMER_NAME => pact ? pact.consumer_name : "",
+          PROVIDER_NAME => pact ? pact.provider_name : "",
+          GITHUB_VERIFICATION_STATUS => github_verification_status,
+          BITBUCKET_VERIFICATION_STATUS => bitbucket_verification_status,
+          CONSUMER_LABELS => pacticipant_labels(pact && pact.consumer),
+          PROVIDER_LABELS => pacticipant_labels(pact && pact.provider)
         }
       end
 
@@ -29,6 +57,13 @@ module PactBroker
 
       attr_reader :pact, :verification, :webhook_context, :base_url
 
+      def bitbucket_verification_status
+        if verification
+          verification.success ? "SUCCESSFUL" : "FAILED"
+        else
+          "INPROGRESS"
+        end
+      end
 
       def github_verification_status
         if verification

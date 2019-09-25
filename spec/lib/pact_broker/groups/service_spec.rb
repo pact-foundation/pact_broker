@@ -7,7 +7,6 @@ module PactBroker
   module Groups
     describe Service do
 
-
       describe "#find_group_containing" do
 
         let(:consumer_a) { double('consumer a', name: 'consumer a', id: 1)}

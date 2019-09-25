@@ -20,7 +20,6 @@ RSpec.configure do |config|
     PactBroker::Database.drop_objects
   end
 
-
   config.after :each, migration: true do
     PactBroker::Database.migrate
     PactBroker::Database.truncate

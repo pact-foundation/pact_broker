@@ -3,11 +3,8 @@ require 'pact_broker/json'
 require 'pact_broker/api/decorators/timestamps'
 
 module PactBroker
-
   module Api
-
     module Decorators
-
       class PactDecorator < BaseDecorator
 
         include Timestamps
@@ -52,7 +49,6 @@ module PactBroker
             href: pacticipant_url(options.fetch(:base_url), represented.provider)
           }
         end
-
 
         link :'pb:latest-pact-version' do | options |
           {
@@ -147,6 +143,12 @@ module PactBroker
           {
             title: "Publish verification results",
             href: verification_publication_url(represented, options.fetch(:base_url), options[:metadata])
+          }
+        end
+
+        link :'pb:latest-verification-results' do | options |
+          {
+            href: latest_verification_for_pact_url(represented, options.fetch(:base_url))
           }
         end
 

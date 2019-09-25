@@ -5,7 +5,6 @@ module PactBroker
   module Versions
     class ParseSemanticVersion
 
-
       def self.call string_version
         PactBroker.configuration.semver_formats.each do |semver_format|
           parsed_version = ::SemVer.parse(string_version, semver_format)

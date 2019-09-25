@@ -38,3 +38,4 @@ end
 #  pact_version_id         | integer                     |
 #  execution_date          | timestamp without time zone |
 #  created_at              | timestamp without time zone |
+#  test_results            | text                        |

@@ -15,6 +15,7 @@ require 'rack/pact_broker/configurable_make_it_later'
 require 'rack/pact_broker/no_auth'
 require 'rack/pact_broker/convert_404_to_hal'
 require 'rack/pact_broker/reset_thread_data'
+require 'rack/pact_broker/add_vary_header'
 require 'sucker_punch'
 
 module PactBroker
@@ -35,6 +36,7 @@ module PactBroker
       prepare_database
       load_configuration_from_database
       seed_example_data
+      print_startup_message
     end
 
     # Allows middleware to be inserted at the bottom of the shared middlware stack
@@ -151,6 +153,7 @@ module PactBroker
       @app_builder.use Rack::PactBroker::ResetThreadData
       @app_builder.use Rack::PactBroker::StoreBaseURL
       @app_builder.use Rack::PactBroker::AddPactBrokerVersionHeader
+      @app_builder.use Rack::PactBroker::AddVaryHeader
       @app_builder.use Rack::Static, :urls => ["/stylesheets", "/css", "/fonts", "/js", "/javascripts", "/images"], :root => PactBroker.project_root.join("public")
       @app_builder.use Rack::Static, :urls => ["/favicon.ico"], :root => PactBroker.project_root.join("public/images"), header_rules: [[:all, {'Content-Type' => 'image/x-icon'}]]
       @app_builder.use Rack::PactBroker::ConvertFileExtensionToAcceptHeader
@@ -220,6 +223,10 @@ module PactBroker
         end
         @app_builder
       end
+    end
+
+    def print_startup_message
+      logger.info "\n\n#{'*' * 80}\n\nWant someone to manage your Pact Broker for you? Check out https://pactflow.io/oss for a hardened, fully supported SaaS version of the Pact Broker with an improved UI + more.\n\n#{'*' * 80}\n"
     end
   end
 end

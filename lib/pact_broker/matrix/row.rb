@@ -67,7 +67,9 @@ module PactBroker
           end
 
           def self.consumer_and_maybe_consumer_version_match_selector(s)
-            if s[:pacticipant_version_id]
+            if s[:pact_publication_ids]
+              Sequel.&(pact_publication_id: s[:pact_publication_ids])
+            elsif s[:pacticipant_version_id]
               Sequel.&(consumer_id: s[:pacticipant_id], consumer_version_id: s[:pacticipant_version_id])
             else
               Sequel.&(consumer_id: s[:pacticipant_id])
@@ -75,7 +77,9 @@ module PactBroker
           end
 
           def self.provider_and_maybe_provider_version_match_selector(s)
-            if s[:pacticipant_version_id]
+            if s[:verification_ids]
+              Sequel.&(verification_id: s[:verification_ids])
+            elsif s[:pacticipant_version_id]
               Sequel.&(provider_id: s[:pacticipant_id], provider_version_id: s[:pacticipant_version_id])
             else
               Sequel.&(provider_id: s[:pacticipant_id])

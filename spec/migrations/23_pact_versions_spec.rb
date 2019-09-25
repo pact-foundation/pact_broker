@@ -1,3 +1,5 @@
+require 'pact_broker/webhooks/execution_configuration'
+
 describe 'migrate to pact versions (migrate 22-31)', migration: true do
   before do
     PactBroker::Database.migrate(22)
@@ -12,7 +14,6 @@ describe 'migrate to pact versions (migrate 22-31)', migration: true do
   let!(:pact_version_content) { create(:pact_version_contents, {content: {some: 'json'}.to_json, sha: '1234', created_at: now, updated_at: now}, :sha) }
   let!(:pact_1) { create(:pacts, {version_id: consumer_version_1[:id], provider_id: provider[:id], pact_version_content_sha: '1234', created_at: now, updated_at: pact_updated_at}) }
   let!(:pact_2) { create(:pacts, {version_id: consumer_version_2[:id], provider_id: provider[:id], pact_version_content_sha: '1234', created_at: now, updated_at: pact_updated_at}) }
-
 
   subject { PactBroker::Database.migrate }
 
@@ -71,6 +72,7 @@ describe 'migrate to pact versions (migrate 22-31)', migration: true do
         consumer_version_number: '1.2.3',
         json_content: load_fixture('a_consumer-a_provider.json')
       },{
+        webhook_execution_configuration: PactBroker::Webhooks::ExecutionConfiguration.new
       }
     )
   end

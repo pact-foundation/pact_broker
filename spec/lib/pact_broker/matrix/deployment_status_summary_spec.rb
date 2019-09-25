@@ -190,6 +190,8 @@ module PactBroker
               pacticipant_name: "Bar",
               pacticipant_version_id: 10,
               pacticipant_version_number: "14131c5da3abf323ccf410b1b619edac76231243",
+              pact_publication_ids: [],
+              verification_ids: [],
               latest: nil,
               tag: nil,
               type: :inferred

@@ -1,5 +1,6 @@
 require 'pact_broker/verifications/service'
 require 'pact_broker/verifications/repository'
+require 'pact_broker/webhooks/execution_configuration'
 
 module PactBroker
 
@@ -16,10 +17,11 @@ module PactBroker
       describe "#create" do
         before do
           allow(PactBroker::Webhooks::Service).to receive(:trigger_webhooks)
+          allow(webhook_execution_configuration).to receive(:with_webhook_context).and_return(webhook_execution_configuration)
         end
 
-        let(:options) { { webhook_context: {} } }
-        let(:expected_options) { { webhook_context: { provider_version_tags: %w[dev] } } }
+        let(:options) { { webhook_execution_configuration: webhook_execution_configuration } }
+        let(:webhook_execution_configuration) { instance_double(PactBroker::Webhooks::ExecutionConfiguration) }
         let(:params) { {'success' => true, 'providerApplicationVersion' => '4.5.6'} }
         let(:pact) do
           td.create_pact_with_hierarchy
@@ -52,13 +54,18 @@ module PactBroker
           expect(verification.provider_version_number).to eq '4.5.6'
         end
 
+        it "sets the provider version tags on the webhook execution configuration" do
+          expect(webhook_execution_configuration).to receive(:with_webhook_context).with(provider_version_tags: %w[dev])
+          create_verification
+        end
+
         it "invokes the webhooks for the verification" do
           verification = create_verification
           expect(PactBroker::Webhooks::Service).to have_received(:trigger_webhooks).with(
             pact,
             verification,
             PactBroker::Webhooks::WebhookEvent::VERIFICATION_PUBLISHED,
-            expected_options
+            options
           )
         end
       end

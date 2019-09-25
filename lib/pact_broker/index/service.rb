@@ -35,14 +35,29 @@ module PactBroker
         end
         rows = rows.all.group_by(&:pact_publication_id).values.collect{ | rows| Matrix::AggregatedRow.new(rows) }
 
+
+
         rows.sort.collect do | row |
+          # The concept of "stale" (the pact used to be verified but then it changed and we haven't got
+          # a new verification result yet) only really make sense if we're trying to summarise
+          # the latest state of an integration. Once we start showing multiple pacts for each
+          # integration (ie. the latest for each tag) then each pact version is either verified,
+          # or it's not verified.
+          # For backwards compatiblity with the existing UI, don't change the 'stale' concept for the OSS
+          # UI - just ensure we don't use it for the new dashboard endpoint with the consumer/provider specified.
+          latest_verification = if options[:dashboard]
+            row.latest_verification_for_pact_version
+          else
+            row.latest_verification_for_pseudo_branch
+          end
+
           # TODO simplify. Do we really need 3 layers of abstraction?
           PactBroker::Domain::IndexItem.create(
             row.consumer,
             row.provider,
             row.pact,
             row.overall_latest?,
-            row.latest_verification,
+            latest_verification,
             row.webhooks,
             row.latest_triggered_webhooks,
             options[:tags] ? row.consumer_head_tag_names : [],

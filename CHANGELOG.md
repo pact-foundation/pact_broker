@@ -1,3 +1,145 @@
+<a name="v2.38.1"></a>
+### v2.38.1 (2019-09-23)
+
+
+#### Bug Fixes
+
+* add missing require	 ([36500e04](/../../commit/36500e04))
+
+
+<a name="v2.38.0"></a>
+### v2.38.0 (2019-09-20)
+
+
+#### Features
+
+* add pactflow message to start up and error logs	 ([530dbfe9](/../../commit/530dbfe9))
+* allow interaction ids to be manually set for test data	 ([4e256102](/../../commit/4e256102))
+
+* **dashboard**
+  * use 'refreshable' link for latest verification result so pact can be refreshed and display the latest result	 ([1ab8a5d9](/../../commit/1ab8a5d9))
+
+
+#### Bug Fixes
+
+* don't drop column from view in down step, because you can't remove a column from a view in posgres	 ([045f3f38](/../../commit/045f3f38))
+* add test results to all verifications views	 ([9bc1eab1](/../../commit/9bc1eab1))
+
+
+<a name="v2.37.0"></a>
+### v2.37.0 (2019-09-02)
+
+
+#### Bug Fixes
+
+* delete triggered webhook data when deleting pacticipant version	 ([77265c30](/../../commit/77265c30))
+
+* **index with tags**
+  * sort pact publication by date, not string (#301)	 ([e92bde5f](/../../commit/e92bde5f))
+
+* **index**
+  * sort pact publication by date, not string	 ([75d35802](/../../commit/75d35802))
+
+
+<a name="v2.36.1"></a>
+### v2.36.1 (2019-08-30)
+
+
+#### Bug Fixes
+
+* do not show clipboard icon if version is blank (#297)	 ([36948fe1](/../../commit/36948fe1))
+
+
+<a name="v2.36.0"></a>
+### v2.36.0 (2019-08-30)
+
+
+#### Features
+
+* add resource to get latest verification for a pact	 ([f02a1ca0](/../../commit/f02a1ca0))
+* add /metrics endpoint	 ([9bcbc1bd](/../../commit/9bcbc1bd))
+* add tags to verification resource	 ([830632a2](/../../commit/830632a2))
+* add content type to return pact with extra metadata (eg tags)	 ([76668639](/../../commit/76668639))
+* remove use of 'stale' for dashboard resource	 ([e173f5cf](/../../commit/e173f5cf))
+
+
+#### Bug Fixes
+
+* pact broker client issue 53 (#299)	 ([aa27cef3](/../../commit/aa27cef3))
+* version column resize when clipboard icon appears (#292)	 ([5aa668e9](/../../commit/5aa668e9))
+
+
+<a name="v2.35.0"></a>
+### v2.35.0 (2019-08-08)
+
+
+#### Features
+
+* **webhooks**
+  * do not redact a password with a parameter in it	 ([47c602ef](/../../commit/47c602ef))
+  * update parameter text	 ([7fa518cb](/../../commit/7fa518cb))
+  * do not redact header if it contains a parameter	 ([5787e0d1](/../../commit/5787e0d1))
+  * support template parameters in header values, username and password	 ([a800ac2e](/../../commit/a800ac2e))
+  * simplify request logger format	 ([c52ade2f](/../../commit/c52ade2f))
+  * add the logs and success flag to the execution result	 ([96769a88](/../../commit/96769a88))
+  * allow testing of an unsaved webhook	 ([a436e42d](/../../commit/a436e42d))
+  * gracefully handle scenario where triggered webhook has been deleted while webhook was being executed	 ([052055d4](/../../commit/052055d4))
+  * use consumer/provider names in webhook title	 ([2b5d2498](/../../commit/2b5d2498))
+
+* add copy to clipboard for version numbers (#283)	 ([c10a6f28](/../../commit/c10a6f28))
+* update redact logs	 ([51aa13c0](/../../commit/51aa13c0))
+* use hardcoded error message when error class has a nil message	 ([03a3b63c](/../../commit/03a3b63c))
+* ensure clean up script handles pact versions for left over verifications	 ([116f8eaa](/../../commit/116f8eaa))
+* added clean up sql script	 ([388b441e](/../../commit/388b441e))
+* add Vary header to avoid browser returning the wrong cached content type for a resource	 ([6d30baa2](/../../commit/6d30baa2))
+* change logging level from error to info for JSON parsing errors	 ([cc144062](/../../commit/cc144062))
+
+
+#### Bug Fixes
+
+* inefficient SQL loading latest verification for pact version	 ([301d9a58](/../../commit/301d9a58))
+
+* **publish pacts**
+  * handle race condition when creating pact version	 ([de0d3b7f](/../../commit/de0d3b7f))
+
+
+<a name="v2.34.0"></a>
+### v2.34.0 (2019-06-14)
+
+
+#### Features
+
+* **webhooks**
+  * provide mapping to bitbucket build status names (#277)	 ([7bdf0c47](/../../commit/7bdf0c47))
+
+* change log level for webhook triggering logs from debug to info	 ([2dca79c1](/../../commit/2dca79c1))
+
+
+#### Bug Fixes
+
+* gracefully handle two requests coming in at the same time to create the same pacticipant	 ([78d92ada](/../../commit/78d92ada))
+* gracefully handle pact webhook status when there is no pact yet	 ([ba1f6bc7](/../../commit/ba1f6bc7))
+* do not overwrite existing pactbroker.database_connector in rack env	 ([0da5d070](/../../commit/0da5d070))
+
+
+<a name="v2.33.0"></a>
+### v2.33.0 (2019-06-07)
+
+
+#### Features
+
+* add pb:pacticipant and pb:pacticipant-version-tag relations to the index resource	 ([2c4c258c](/../../commit/2c4c258c))
+
+
+#### Bug Fixes
+
+* correctly remove webhook consumer/provider when update params do not contain a consumer/provider	 ([118bbee1](/../../commit/118bbee1))
+* duplicate key value violates unique constraint "cv_prov_revision_unq" error when publishing identical pact resources at the same time	 ([6c8e38fb](/../../commit/6c8e38fb))
+
+* **matrix**
+  * ensure unrelated dependencies are not included in a matrix result when three pacticipants each have dependencies on each other	 ([a086ffec](/../../commit/a086ffec))
+
+
 <a name="v2.32.0"></a>
 ### v2.32.0 (2019-05-28)
 

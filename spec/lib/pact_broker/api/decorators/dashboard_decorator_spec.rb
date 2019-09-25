@@ -49,7 +49,7 @@ module PactBroker
 
         before do
           allow_any_instance_of(DashboardDecorator).to receive(:pact_url).with(base_url, pact).and_return('pact_url')
-          allow_any_instance_of(DashboardDecorator).to receive(:verification_url).with(verification, base_url).and_return('verification_url')
+          allow_any_instance_of(DashboardDecorator).to receive(:latest_verification_for_pact_url).with(pact, base_url, false).and_return('latest_verification_url')
           allow_any_instance_of(DashboardDecorator).to receive(:pacticipant_url).with(base_url, consumer).and_return('consumer_url')
           allow_any_instance_of(DashboardDecorator).to receive(:pacticipant_url).with(base_url, provider).and_return('provider_url')
           allow_any_instance_of(DashboardDecorator).to receive(:version_url).with(base_url, consumer_version).and_return('consumer_version_url')

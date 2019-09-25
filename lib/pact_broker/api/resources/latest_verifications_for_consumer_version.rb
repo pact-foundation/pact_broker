@@ -7,7 +7,6 @@ require 'pact_broker/api/decorators/verification_summary_decorator'
 module PactBroker
   module Api
     module Resources
-
       class LatestVerificationsForConsumerVersion < BaseResource
 
         def allowed_methods

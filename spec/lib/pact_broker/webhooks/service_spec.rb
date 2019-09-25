@@ -4,6 +4,7 @@ require 'pact_broker/webhooks/triggered_webhook'
 require 'pact_broker/webhooks/webhook_event'
 require 'webmock/rspec'
 require 'sucker_punch/testing/inline'
+require 'pact_broker/webhooks/execution_configuration'
 
 module PactBroker
 
@@ -186,7 +187,7 @@ module PactBroker
           end
 
           it "logs that no webhook was found" do
-            expect(logger).to receive(:debug).with(/No enabled webhooks found/)
+            expect(logger).to receive(:info).with(/No enabled webhooks found/)
             subject
           end
         end
@@ -217,25 +218,19 @@ module PactBroker
         let(:verification) { instance_double(PactBroker::Domain::Verification) }
         let(:trigger_on_verification) { false }
         let(:result) { double('result') }
-        let(:options) do
-          {
-            logging_options: {
-              failure_log_message: "Webhook execution failed",
-              show_response: 'foo',
-            },
-            webhook_context: {
-              base_url: 'http://broker'
-            }
-          }
+        let(:execution_configuration) do
+          instance_double(PactBroker::Webhooks::ExecutionConfiguration, to_hash: execution_configuration_hash)
         end
+        let(:execution_configuration_hash) { { the: 'options' } }
 
         before do
           allow(PactBroker::Pacts::Service).to receive(:search_for_latest_pact).and_return(pact)
           allow(PactBroker::Verifications::Service).to receive(:search_for_latest).and_return(verification)
           allow(PactBroker.configuration).to receive(:show_webhook_response?).and_return('foo')
+          allow(execution_configuration).to receive(:with_failure_log_message).and_return(execution_configuration)
         end
 
-        subject { Service.test_execution(webhook, options) }
+        subject { Service.test_execution(webhook, execution_configuration) }
 
         it "searches for the latest matching pact" do
           expect(PactBroker::Pacts::Service).to receive(:search_for_latest_pact).with(consumer_name: 'consumer', provider_name: 'provider')
@@ -248,7 +243,7 @@ module PactBroker
 
         context "when the trigger is not for a verification" do
           it "executes the webhook with the pact" do
-            expect(webhook).to receive(:execute).with(pact, nil, options)
+            expect(webhook).to receive(:execute).with(pact, nil, execution_configuration_hash)
             subject
           end
         end
@@ -271,7 +266,7 @@ module PactBroker
           end
 
           it "executes the webhook with the pact and the verification" do
-            expect(webhook).to receive(:execute).with(pact, verification, options)
+            expect(webhook).to receive(:execute).with(pact, verification, execution_configuration_hash)
             subject
           end
 
@@ -286,55 +281,6 @@ module PactBroker
         end
       end
 
-      # describe ".execute_webhook_now integration test", job: true do
-      #   let(:td) { TestDataBuilder.new }
-
-      #   let!(:http_request) do
-      #     stub_request(:get, "http://example.org").
-      #       to_return(:status => 200)
-      #   end
-
-      #   let!(:pact) do
-      #     td.create_consumer
-      #       .create_provider
-      #       .create_consumer_version
-      #       .create_pact
-      #       .create_webhook(method: 'GET', url: 'http://example.org')
-      #       .create_verification
-      #       .and_return(:pact)
-      #   end
-
-      #   subject { PactBroker::Webhooks::Service.execute_webhook_now td.webhook, pact, td.verification }
-
-      #   it "executes the HTTP request of the webhook" do
-      #     subject
-      #     expect(http_request).to have_been_made
-      #   end
-
-      #   it "saves the triggered webhook" do
-      #     expect { subject }.to change { PactBroker::Webhooks::TriggeredWebhook.count }.by(1)
-      #   end
-
-      #   it "saves the pact" do
-      #     subject
-      #     expect(PactBroker::Webhooks::TriggeredWebhook.order(:id).last.pact_publication_id).to_not be nil
-      #   end
-
-      #   it "saves the verification" do
-      #     subject
-      #     expect(PactBroker::Webhooks::TriggeredWebhook.order(:id).last.verification_id).to_not be nil
-      #   end
-
-      #   it "saves the execution" do
-      #     expect { subject }.to change { PactBroker::Webhooks::Execution.count }.by(1)
-      #   end
-
-      #   it "marks the triggered webhook as a success" do
-      #     subject
-      #     expect(TriggeredWebhook.first.status).to eq TriggeredWebhook::STATUS_SUCCESS
-      #   end
-      # end
-
       describe ".trigger_webhooks integration test", job: true do
         let!(:http_request) do
           stub_request(:get, "http://example.org").
@@ -342,11 +288,15 @@ module PactBroker
         end
 
         let(:events) { [{ name: PactBroker::Webhooks::WebhookEvent::DEFAULT_EVENT_NAME }] }
+        let(:webhook_execution_configuration) do
+          PactBroker::Webhooks::ExecutionConfiguration.new
+            .with_webhook_context(base_url: 'http://example.org')
+            .with_show_response(true)
+        end
         let(:options) do
           {
             database_connector: database_connector,
-            webhook_context: { base_url: 'http://example.org' },
-            logging_options: logging_options
+            webhook_execution_configuration: webhook_execution_configuration
           }
         end
         let(:logging_options) { { show_response: true } }
@@ -384,6 +334,15 @@ module PactBroker
         it "marks the triggered webhook as a success" do
           subject
           expect(TriggeredWebhook.first.status).to eq TriggeredWebhook::STATUS_SUCCESS
+        end
+      end
+
+      describe "parameters" do
+        subject { Service.parameters }
+
+        it "returns a list of parameters and their descriptions" do
+          expect(subject.first.name).to start_with "pactbroker.consumerName"
+          expect(subject.first.description).to eq "the consumer name"
         end
       end
     end

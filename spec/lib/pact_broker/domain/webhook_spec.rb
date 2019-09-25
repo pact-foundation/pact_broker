@@ -8,6 +8,8 @@ module PactBroker
       let(:provider) { Pacticipant.new(name: 'Provider')}
       let(:request_template) { instance_double(PactBroker::Webhooks::WebhookRequestTemplate, build: webhook_request)}
       let(:webhook_request) { instance_double(PactBroker::Domain::WebhookRequest, execute: http_response, http_request: http_request) }
+      let(:webhook_template_parameters) { instance_double(PactBroker::Webhooks::PactAndVerificationParameters, to_hash: webhook_template_parameters_hash) }
+      let(:webhook_template_parameters_hash) { { 'foo' => 'bar' } }
       let(:http_request) { double('http request') }
       let(:http_response) { double('http response') }
       let(:webhook_context) { { some: 'things' } }
@@ -19,6 +21,7 @@ module PactBroker
 
       before do
         allow(webhook).to receive(:logger).and_return(logger)
+        allow(PactBroker::Webhooks::PactAndVerificationParameters).to receive(:new).and_return(webhook_template_parameters)
       end
 
       subject(:webhook) { Webhook.new(uuid: uuid, request: request_template, consumer: consumer, provider: provider) }
@@ -60,11 +63,15 @@ module PactBroker
 
         let(:execute) { subject.execute pact, verification, options }
 
+        it "creates the template parameters" do
+          expect(PactBroker::Webhooks::PactAndVerificationParameters).to receive(:new).with(
+            pact, verification, webhook_context
+          )
+          execute
+        end
+
         it "builds the request" do
-          expect(request_template).to receive(:build).with(
-            pact: pact,
-            verification: verification,
-            webhook_context: webhook_context)
+          expect(request_template).to receive(:build).with(webhook_template_parameters_hash)
           execute
         end
 

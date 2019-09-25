@@ -46,7 +46,6 @@ Sequel.migration do
           }, { table_alias: :s })
     )
 
-
     create_or_replace_view(:head_matrix, HEAD_MATRIX_V1)
   end
 end

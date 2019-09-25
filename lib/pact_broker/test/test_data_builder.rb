@@ -331,7 +331,7 @@ module PactBroker
       end
 
       def prepare_json_content(json_content)
-        PactBroker::Pacts::Content.from_json(json_content).with_ids.to_json
+        PactBroker::Pacts::Content.from_json(json_content).with_ids(false).to_json
       end
 
       def set_created_at_if_set created_at, table_name, selector

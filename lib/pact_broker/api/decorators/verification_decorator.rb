@@ -4,6 +4,10 @@ module PactBroker
   module Api
     module Decorators
       class VerificationDecorator < BaseDecorator
+        class TagDecorator < BaseDecorator
+          property :name
+          property :latest?, as: :latest
+        end
 
         property :provider_name, as: :providerName, writeable: false
         property :provider_version_number, as: :providerApplicationVersion, writeable: false

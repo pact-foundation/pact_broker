@@ -9,7 +9,6 @@ module PactBroker
       let(:pacticipant_name) { "test_pacticipant" }
       let(:version_number) { "1.2.3" }
 
-
       describe "#find_by_pacticipant_name_and_latest_tag" do
         before do
           td.create_consumer("Bar")

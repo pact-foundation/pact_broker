@@ -10,11 +10,15 @@ require 'pact_broker/webhooks/webhook_event'
 require 'pact_broker/verifications/placeholder_verification'
 require 'pact_broker/pacts/placeholder_pact'
 require 'pact_broker/api/decorators/webhook_decorator'
+require 'pact_broker/hash_refinements'
+require 'pact_broker/webhooks/execution_configuration'
+require 'pact_broker/messages'
+require 'pact_broker/webhooks/pact_and_verification_parameters'
 
 module PactBroker
-
   module Webhooks
     class Service
+      using PactBroker::HashRefinements
 
       RESOURCE_CREATION = PactBroker::Webhooks::TriggeredWebhook::TRIGGER_TYPE_RESOURCE_CREATION
       USER = PactBroker::Webhooks::TriggeredWebhook::TRIGGER_TYPE_USER
@@ -22,6 +26,7 @@ module PactBroker
       extend Repositories
       extend Services
       include Logging
+      extend PactBroker::Messages
 
       def self.next_uuid
         SecureRandom.urlsafe_base64
@@ -67,11 +72,9 @@ module PactBroker
         webhook_repository.find_all
       end
 
-      def self.test_execution webhook, options
-        logging_options = options[:logging_options].merge(
-          failure_log_message: "Webhook execution failed",
-        )
-        merged_options = options.merge(logging_options: logging_options)
+      def self.test_execution webhook, execution_configuration
+        merged_options = execution_configuration.with_failure_log_message("Webhook execution failed").to_hash
+
         verification = nil
         if webhook.trigger_on_provider_verification_published?
           verification = verification_service.search_for_latest(webhook.consumer_name, webhook.provider_name) || PactBroker::Verifications::PlaceholderVerification.new
@@ -81,21 +84,8 @@ module PactBroker
         webhook.execute(pact, verification, merged_options)
       end
 
-      # # TODO delete?
-      # def self.execute_webhook_now webhook, pact, verification = nil
-      #   triggered_webhook = webhook_repository.create_triggered_webhook(next_uuid, webhook, pact, verification, USER)
-      #   logging_options = { failure_log_message: "Webhook execution failed"}
-      #   webhook_execution_result = execute_triggered_webhook_now triggered_webhook, logging_options
-      #   if webhook_execution_result.success?
-      #     webhook_repository.update_triggered_webhook_status triggered_webhook, TriggeredWebhook::STATUS_SUCCESS
-      #   else
-      #     webhook_repository.update_triggered_webhook_status triggered_webhook, TriggeredWebhook::STATUS_FAILURE
-      #   end
-      #   webhook_execution_result
-      # end
-
-      def self.execute_triggered_webhook_now triggered_webhook, webhook_options
-        webhook_execution_result = triggered_webhook.execute webhook_options
+      def self.execute_triggered_webhook_now triggered_webhook, webhook_execution_configuration_hash
+        webhook_execution_result = triggered_webhook.execute webhook_execution_configuration_hash
         webhook_repository.create_execution triggered_webhook, webhook_execution_result
         webhook_execution_result
       end
@@ -122,7 +112,7 @@ module PactBroker
         if webhooks.any?
           run_later(webhooks, pact, verification, event_name, options)
         else
-          logger.debug "No enabled webhooks found for consumer \"#{pact.consumer.name}\" and provider \"#{pact.provider.name}\" and event #{event_name}"
+          logger.info "No enabled webhooks found for consumer \"#{pact.consumer.name}\" and provider \"#{pact.provider.name}\" and event #{event_name}"
         end
       end
 
@@ -131,13 +121,8 @@ module PactBroker
         webhooks.each do | webhook |
           begin
             triggered_webhook = webhook_repository.create_triggered_webhook(trigger_uuid, webhook, pact, verification, RESOURCE_CREATION)
-            logger.info "Scheduling job for #{webhook.description} with uuid #{webhook.uuid}"
-            job_data = {
-              triggered_webhook: triggered_webhook,
-              webhook_context: options.fetch(:webhook_context),
-              logging_options: options.fetch(:logging_options),
-              database_connector: options.fetch(:database_connector)
-            }
+            logger.info "Scheduling job for webhook with uuid #{webhook.uuid}"
+            job_data = { triggered_webhook: triggered_webhook }.deep_merge(options)
             # Delay slightly to make sure the request transaction has finished before we execute the webhook
             Job.perform_in(5, job_data)
           rescue StandardError => e
@@ -164,6 +149,15 @@ module PactBroker
 
       def self.find_triggered_webhooks_for_verification verification
         webhook_repository.find_triggered_webhooks_for_verification(verification)
+      end
+
+      def self.parameters
+        PactAndVerificationParameters::ALL.collect do | parameter |
+          OpenStruct.new(
+            name: parameter,
+            description: message("messages.webhooks.parameters.#{parameter}")
+          )
+        end
       end
 
       private

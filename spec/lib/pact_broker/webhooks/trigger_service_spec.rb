@@ -50,7 +50,7 @@ module PactBroker
           include_examples "triggering a contract_content_changed event"
 
           it "logs the reason why it triggered the contract_content_changed event" do
-            expect(logger).to receive(:debug).with(/first time untagged pact published/)
+            expect(logger).to receive(:info).with(/first time untagged pact published/)
             subject
           end
         end
@@ -64,7 +64,7 @@ module PactBroker
           include_examples "triggering a contract_content_changed event"
 
           it "logs the reason why it triggered the contract_content_changed event" do
-            expect(logger).to receive(:debug).with(/pact content has changed since previous untagged version/)
+            expect(logger).to receive(:info).with(/pact content has changed since previous untagged version/)
             subject
           end
         end
@@ -86,7 +86,7 @@ module PactBroker
           include_examples "triggering a contract_content_changed event"
 
           it "logs the reason why it triggered the contract_content_changed event" do
-            expect(logger).to receive(:debug).with(/first time pact published with consumer version tagged dev/)
+            expect(logger).to receive(:info).with(/first time pact published with consumer version tagged dev/)
             subject
           end
         end
@@ -126,7 +126,7 @@ module PactBroker
           include_examples "triggering a contract_content_changed event"
 
           it "logs the reason why it triggered the contract_content_changed event" do
-            expect(logger).to receive(:debug).with(/version 1.2.3 has been updated with new content/)
+            expect(logger).to receive(:info).with(/version 1.2.3 has been updated with new content/)
             subject
           end
         end

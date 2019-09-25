@@ -20,18 +20,16 @@ module Rack
       end
 
       def call env
-        set_database_connector
         if use_transaction? env
           call_with_transaction(add_database_connector(env))
         else
           call_without_transaction(add_database_connector(env))
         end
-      ensure
-        clear_database_connector
       end
 
       def add_database_connector(env)
-        env.merge("pactbroker.database_connector" => @default_database_connector)
+        # maintain any existing one set by previous middleware
+        { "pactbroker.database_connector" => @default_database_connector }.merge(env)
       end
 
       def use_transaction? env
@@ -55,19 +53,6 @@ module Rack
 
       def do_not_rollback? response
         response[1].delete(::PactBroker::DO_NOT_ROLLBACK)
-      end
-
-      def set_database_connector
-        Thread.current[:pact_broker_thread_data] ||= OpenStruct.new
-        Thread.current[:pact_broker_thread_data].database_connector ||= @default_database_connector
-      end
-
-      def clear_database_connector
-        if thread_data = Thread.current[:pact_broker_thread_data]
-          if thread_data.database_connector == @default_database_connector
-            thread_data.database_connector = nil
-          end
-        end
       end
     end
   end

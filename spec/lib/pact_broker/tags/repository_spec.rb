@@ -117,7 +117,6 @@ module PactBroker
         end
       end
 
-
       describe "find_all_tag_names_for_pacticipant" do
         before do
           td.create_consumer("Foo")

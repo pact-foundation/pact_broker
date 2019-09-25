@@ -12,7 +12,6 @@ module PactBroker
         let(:valid_params) { {success: success, providerApplicationVersion: provider_version, buildUrl: build_url} }
         let(:params) { valid_params }
 
-
         let(:success) { true }
         let(:provider_version) { "4.5.6" }
         let(:build_url) { 'http://foo' }

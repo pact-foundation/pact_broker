@@ -5,10 +5,8 @@ module PactBroker
   module Api
     module Decorators
       describe WebhookExecutionResultDecorator do
-
         describe "to_json" do
-
-          let(:webhook_execution_result) { PactBroker::Webhooks::WebhookExecutionResult.new(request, response, logs, error)}
+          let(:webhook_execution_result) { PactBroker::Webhooks::WebhookExecutionResult.new(request, response, logs, error) }
           let(:logs) { "logs" }
           let(:headers) { { "Something" => ["blah", "thing"]} }
           let(:request) do
@@ -20,21 +18,40 @@ module PactBroker
           let(:response) { double('http_response', code: '200', body: response_body, to_hash: headers) }
           let(:response_body) { 'body' }
           let(:error) { nil }
-          let(:webhook) { instance_double(PactBroker::Domain::Webhook, uuid: 'some-uuid') }
+          let(:webhook) { instance_double(PactBroker::Domain::Webhook, uuid: uuid) }
+          let(:uuid) { 'some-uuid' }
           let(:show_response) { true }
           let(:json) {
             WebhookExecutionResultDecorator.new(webhook_execution_result)
-            .to_json(user_options: { base_url: 'http://example.org', webhook: webhook, show_response: show_response })
+            .to_json(user_options: { resource_url: 'http://resource-url', base_url: 'http://example.org', webhook: webhook, show_response: show_response })
           }
 
-          let(:subject) { JSON.parse(json, symbolize_names: true)}
+          let(:subject) { JSON.parse(json, symbolize_names: true) }
 
           it "includes a link to execute the webhook again" do
-            expect(subject[:_links][:'try-again'][:href]).to eq 'http://example.org/webhooks/some-uuid/execute'
+            expect(subject[:_links][:'try-again'][:href]).to eq 'http://resource-url'
           end
 
-          it "includes a link to the webhook" do
-            expect(subject[:_links][:webhook][:href]).to eq 'http://example.org/webhooks/some-uuid'
+          it "includes a success flag" do
+            expect(subject[:success]).to be true
+          end
+
+          it "includes the logs" do
+            expect(subject[:logs]).to eq logs
+          end
+
+          context "when there is a uuid" do
+            it "include a link to the webhook" do
+              expect(subject[:_links][:webhook][:href]).to eq 'http://example.org/webhooks/some-uuid'
+            end
+          end
+
+          context "when there is a not uuid because this is an unsaved webhook" do
+            let(:uuid) { nil }
+
+            it "does not includes a link to the webhook" do
+              expect(subject[:_links]).to_not have_key(:webhook)
+            end
           end
 
           context "when there is an error" do

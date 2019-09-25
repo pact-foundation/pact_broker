@@ -6,6 +6,8 @@ require 'pact_broker/matrix/query_results'
 require 'pact_broker/matrix/integration'
 require 'pact_broker/matrix/query_results_with_deployment_status_summary'
 require 'pact_broker/matrix/resolved_selector'
+require 'pact_broker/verifications/latest_verification_id_for_pact_version_and_provider_version'
+require 'pact_broker/pacts/latest_pact_publications_by_consumer_version'
 
 module PactBroker
   module Matrix
@@ -103,6 +105,7 @@ module PactBroker
         specified_pacticipant_names.include?(consumer_name)
       end
 
+      # It would be nicer to do this in the SQL, but it requires time that I don't have at the moment
       def apply_latestby options, selectors, lines
         return lines unless options[:latestby]
         group_by_columns = case options[:latestby]
@@ -119,6 +122,7 @@ module PactBroker
           .flatten
       end
 
+      # It would be nicer to do this in the SQL, but it requires time that I don't have at the moment
       def remove_overwritten_revisions lines
         latest_revisions_keys = {}
         latest_revisions = []
@@ -143,7 +147,7 @@ module PactBroker
       end
 
       def resolve_selectors(specified_selectors, options)
-        resolved_specified_selectors = resolve_versions_and_add_ids(specified_selectors, :specified)
+        resolved_specified_selectors = resolve_versions_and_add_ids(specified_selectors, :specified, options[:latestby])
         if options[:latest] || options[:tag]
           add_inferred_selectors(resolved_specified_selectors, options)
         else
@@ -152,19 +156,19 @@ module PactBroker
       end
 
       # Find the version number for selectors with the latest and/or tag specified
-      def resolve_versions_and_add_ids(selectors, selector_type)
+      def resolve_versions_and_add_ids(selectors, selector_type, latestby)
         selectors.collect do | selector |
           pacticipant = PactBroker::Domain::Pacticipant.find(name: selector[:pacticipant_name])
           versions = find_versions_for_selector(selector)
-          build_selectors_for_pacticipant_and_versions(pacticipant, versions, selector, selector_type)
+          build_selectors_for_pacticipant_and_versions(pacticipant, versions, selector, selector_type, latestby)
         end.flatten
       end
 
-      def build_selectors_for_pacticipant_and_versions(pacticipant, versions, original_selector, selector_type)
+      def build_selectors_for_pacticipant_and_versions(pacticipant, versions, original_selector, selector_type, latestby)
         if versions
           versions.collect do | version |
             if version
-              selector_for_version(pacticipant, version, original_selector, selector_type)
+              selector_for_version(pacticipant, version, original_selector, selector_type, latestby)
             else
               selector_for_non_existing_version(pacticipant, original_selector, selector_type)
             end
@@ -192,23 +196,6 @@ module PactBroker
         end
       end
 
-      def add_ids_to_selector(selector)
-        if selector[:pacticipant_name]
-          pacticipant = PactBroker::Domain::Pacticipant.find(name: selector[:pacticipant_name])
-          selector[:pacticipant_id] = pacticipant ? pacticipant.id : nil
-        end
-
-        if selector[:pacticipant_name] && selector[:pacticipant_version_number] && !selector[:pacticipant_version_id]
-          version = version_repository.find_by_pacticipant_name_and_number(selector[:pacticipant_name], selector[:pacticipant_version_number])
-          selector[:pacticipant_version_id] = version ? version.id : nil
-        end
-
-        if !selector.key?(:pacticipant_version_id)
-           selector[:pacticipant_version_id] = nil
-        end
-        selector
-      end
-
       # When only one selector is specified, (eg. checking to see if Foo version 2 can be deployed to prod),
       # need to look up all integrated pacticipants, and determine their relevant (eg. latest prod) versions
       def add_inferred_selectors(resolved_specified_selectors, options)
@@ -228,7 +215,7 @@ module PactBroker
           selector[:latest] = options[:latest] if options[:latest]
           selector
         end
-        resolve_versions_and_add_ids(selectors, :inferred)
+        resolve_versions_and_add_ids(selectors, :inferred, options[:latestby])
       end
 
       def all_pacticipant_names_in_specified_matrix(selectors)
@@ -242,8 +229,27 @@ module PactBroker
         ResolvedSelector.for_pacticipant_and_non_existing_version(pacticipant, original_selector, selector_type)
       end
 
-      def selector_for_version(pacticipant, version, original_selector, selector_type)
-        ResolvedSelector.for_pacticipant_and_version(pacticipant, version, original_selector, selector_type)
+      def selector_for_version(pacticipant, version, original_selector, selector_type, latestby)
+        pact_publication_ids, verification_ids = nil, nil
+
+        # Querying for the "pre-filtered" pact publications and verifications directly, rather than just using the consumer
+        # and provider versions allows us to remove the "overwritten" pact revisions and verifications from the
+        # matrix result set, making the final matrix query more efficient and stopping the query limit from
+        # removing relevant data (eg. https://github.com/pact-foundation/pact_broker-client/issues/53)
+        if latestby
+          pact_publication_ids = PactBroker::Pacts::LatestPactPublicationsByConsumerVersion
+                                            .select(:id)
+                                            .where(consumer_version_id: version.id)
+                                            .collect{ |pact_publication| pact_publication[:id] }
+
+          verification_ids = PactBroker::Verifications::LatestVerificationIdForPactVersionAndProviderVersion
+                                .select(:verification_id)
+                                .distinct
+                                .where(provider_version_id: version.id)
+                                .collect{ |pact_publication| pact_publication[:verification_id] }
+        end
+
+        ResolvedSelector.for_pacticipant_and_version(pacticipant, version, pact_publication_ids, verification_ids, original_selector, selector_type)
       end
 
       def selector_without_version(pacticipant, selector_type)

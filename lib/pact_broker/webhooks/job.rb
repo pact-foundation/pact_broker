@@ -1,6 +1,7 @@
 require 'sucker_punch'
 require 'pact_broker/webhooks/service'
 require 'pact_broker/logging'
+require 'pact_broker/webhooks/execution_configuration'
 
 module PactBroker
   module Webhooks
@@ -46,14 +47,10 @@ module PactBroker
       end
 
       def webhook_options(data)
-        logging_options = data[:logging_options].merge(
-          success_log_message: "Successfully executed webhook",
-          failure_log_message: failure_log_message
-        )
-        {
-          logging_options: logging_options,
-          webhook_context: data[:webhook_context]
-        }
+        data[:webhook_execution_configuration]
+          .with_success_log_message("Successfully executed webhook")
+          .with_failure_log_message(failure_log_message)
+          .to_hash
       end
 
       def failure_log_message
@@ -88,7 +85,7 @@ module PactBroker
       end
 
       def reschedule_job
-        logger.debug "Re-enqeuing job for webhook #{triggered_webhook.webhook_uuid} to run in #{backoff_time} seconds"
+        logger.info "Re-enqeuing job for webhook #{triggered_webhook.webhook_uuid} to run in #{backoff_time} seconds"
         Job.perform_in(backoff_time, @data.merge(error_count: error_count+1))
       end
 

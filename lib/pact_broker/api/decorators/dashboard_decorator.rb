@@ -102,13 +102,15 @@ module PactBroker
         end
 
         def verification_hash(index_item, base_url)
+          # Use the 'latest pact' URL instead of the permalink URL so that the page can be
+          # refreshed, and the latest verification result will be updated to the  most recent
           if index_item.latest_verification
             {
               success: index_item.latest_verification.success,
               verifiedAt: format_date_time(index_item.latest_verification.created_at),
               _links: {
                 self: {
-                  href: verification_url(index_item.latest_verification, base_url)
+                  href: latest_verification_for_pact_url(index_item.latest_pact, base_url, false)
                 }
               }
             }

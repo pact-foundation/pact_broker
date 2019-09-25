@@ -2,9 +2,12 @@ require 'cgi'
 require 'pact_broker/api/resources/base_resource'
 require 'pact_broker/api/resources/pacticipant_resource_methods'
 require 'pact_broker/api/decorators/pact_decorator'
+require 'pact_broker/api/decorators/extended_pact_decorator'
 require 'pact_broker/json'
 require 'pact_broker/pacts/pact_params'
 require 'pact_broker/api/contracts/put_pact_params_contract'
+require 'pact_broker/webhooks/execution_configuration'
+require 'pact_broker/api/resources/webhook_execution_methods'
 
 module Webmachine
   class Request
@@ -15,18 +18,18 @@ module Webmachine
 end
 
 module PactBroker
-
   module Api
     module Resources
-
       class Pact < BaseResource
-
         include PacticipantResourceMethods
+        include WebhookExecutionMethods
 
         def content_types_provided
           [["application/hal+json", :to_json],
            ["application/json", :to_json],
-           ["text/html", :to_html]]
+           ["text/html", :to_html],
+           ["application/vnd.pactbrokerextended.v1+json", :to_extended_json]
+          ]
         end
 
         def content_types_accepted
@@ -78,6 +81,10 @@ module PactBroker
           PactBroker::Api::Decorators::PactDecorator.new(pact).to_json(user_options: decorator_context(metadata: identifier_from_path[:metadata]))
         end
 
+        def to_extended_json
+          PactBroker::Api::Decorators::ExtendedPactDecorator.new(pact).to_json(user_options: decorator_context(metadata: identifier_from_path[:metadata]))
+        end
+
         def to_html
           PactBroker.configuration.html_pact_renderer.call(
             pact, {
@@ -122,12 +129,7 @@ module PactBroker
         def webhook_options
           {
             database_connector: database_connector,
-            logging_options: {
-              show_response: PactBroker.configuration.show_webhook_response?
-            },
-            webhook_context: {
-              base_url: base_url
-            }
+            webhook_execution_configuration: webhook_execution_configuration
           }
         end
       end

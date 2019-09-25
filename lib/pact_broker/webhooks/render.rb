@@ -3,17 +3,26 @@ require 'pact_broker/webhooks/pact_and_verification_parameters'
 module PactBroker
   module Webhooks
     class Render
-
       TEMPLATE_PARAMETER_REGEXP = /\$\{pactbroker\.[^\}]+\}/
       DEFAULT_ESCAPER = lambda { |it| it }
+
+      def self.includes_parameter?(value)
+        value =~ TEMPLATE_PARAMETER_REGEXP
+      end
+
+      def self.render_with_placeholder(value, placeholder = 'placeholder')
+        value.gsub(TEMPLATE_PARAMETER_REGEXP, placeholder)
+      end
 
       def self.call(template, params, &escaper)
         render_template(escape_params(params, escaper || DEFAULT_ESCAPER), template)
       end
 
+      private
+
       def self.render_template(params, template)
         params.inject(template) do | template, (key, value) |
-          template.gsub(key, value)
+          template.gsub("${#{key}}", value)
         end
       end
 

@@ -2,6 +2,7 @@ require 'pact_broker/repositories'
 require 'pact_broker/api/decorators/verification_decorator'
 require 'pact_broker/verifications/summary_for_consumer_version'
 require 'pact_broker/logging'
+require 'pact_broker/hash_refinements'
 
 module PactBroker
 
@@ -13,26 +14,27 @@ module PactBroker
       extend PactBroker::Repositories
       extend PactBroker::Services
       include PactBroker::Logging
+      using PactBroker::HashRefinements
 
       def next_number
         verification_repository.next_number
       end
 
       def create next_verification_number, params, pact, webhook_options
-        logger.info "Creating verification #{next_verification_number} for pact_id=#{pact.id} from params #{params}"
+        logger.info "Creating verification #{next_verification_number} for pact_id=#{pact.id} from params #{params.reject{ |k,_| k == "testResults"}}"
         verification = PactBroker::Domain::Verification.new
         provider_version_number = params.fetch('providerApplicationVersion')
         PactBroker::Api::Decorators::VerificationDecorator.new(verification).from_hash(params)
         verification.number = next_verification_number
         verification = verification_repository.create(verification, provider_version_number, pact)
-        webhook_context = webhook_options[:webhook_context].merge(
-          provider_version_tags: verification.provider_version_tag_names
-        )
+
+        execution_configuration = webhook_options[:webhook_execution_configuration]
+                                    .with_webhook_context(provider_version_tags: verification.provider_version_tag_names)
 
         webhook_service.trigger_webhooks(pact,
           verification,
           PactBroker::Webhooks::WebhookEvent::VERIFICATION_PUBLISHED,
-          webhook_options.merge(webhook_context: webhook_context)
+          webhook_options.deep_merge(webhook_execution_configuration: execution_configuration)
         )
         verification
       end
@@ -45,6 +47,10 @@ module PactBroker
 
       def find params
         verification_repository.find(params.fetch(:consumer_name), params.fetch(:provider_name), params.fetch(:pact_version_sha), params.fetch(:verification_number))
+      end
+
+      def find_latest_for_pact(pact)
+        verification_repository.find_latest_for_pact(pact)
       end
 
       def find_by_id id

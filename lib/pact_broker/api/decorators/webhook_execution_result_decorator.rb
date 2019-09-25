@@ -35,7 +35,6 @@ module PactBroker
           end
         end
 
-
         class HTTPResponseDecorator < BaseDecorator
           property :status, :getter => lambda { |_| code.to_i }
           property :headers, exec_context: :decorator
@@ -61,17 +60,21 @@ module PactBroker
         property :request, :extend => HTTPRequestDecorator
         property :response, :extend => HTTPResponseDecorator, if: lambda { |context| context[:options][:user_options][:show_response] }
         property :response_hidden_message, as: :message, exec_context: :decorator, if: lambda { |context| !context[:options][:user_options][:show_response] }
+        property :logs
+        property :success?, as: :success
 
         link :webhook do | options |
-          {
-            href: webhook_url(options.fetch(:webhook).uuid, options.fetch(:base_url))
-          }
+          if options.fetch(:webhook).uuid
+            {
+              href: webhook_url(options.fetch(:webhook).uuid, options.fetch(:base_url))
+            }
+          end
         end
 
         link :'try-again' do | options |
           {
             title: 'Execute the webhook again',
-            href: webhook_execution_url(options.fetch(:webhook), options.fetch(:base_url))
+            href: options.fetch(:resource_url)
           }
         end
 

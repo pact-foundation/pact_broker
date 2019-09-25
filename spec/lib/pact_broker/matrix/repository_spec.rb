@@ -44,7 +44,6 @@ module PactBroker
         subject { shorten_rows(rows) }
         let(:rows) { Repository.new.find(selectors, options) }
 
-
         let(:options) { { latestby: latestby } }
         let(:latestby) { nil }
         let(:a1_b1_n1) { "A1 B1 n1" }
@@ -783,7 +782,6 @@ module PactBroker
             expect(subject.size).to eq 2
           end
         end
-
 
       end
 

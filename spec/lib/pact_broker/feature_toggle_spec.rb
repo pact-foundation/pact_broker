@@ -60,7 +60,6 @@ module PactBroker
           it { is_expected.to be true }
         end
 
-
         context "when PACT_BROKER_FEATURES does not include the given string" do
           before do
             allow(ENV).to receive(:[]).with('PACT_BROKER_FEATURES').and_return(nil)

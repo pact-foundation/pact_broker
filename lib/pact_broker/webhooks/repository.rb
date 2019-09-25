@@ -7,11 +7,12 @@ require 'pact_broker/webhooks/webhook_event'
 require 'pact_broker/webhooks/triggered_webhook'
 require 'pact_broker/webhooks/latest_triggered_webhook'
 require 'pact_broker/webhooks/execution'
+require 'pact_broker/logging'
 
 module PactBroker
   module Webhooks
-
     class Repository
+      include PactBroker::Logging
 
       include Repositories
 
@@ -31,8 +32,8 @@ module PactBroker
 
       def update_by_uuid uuid, webhook
         existing_webhook = Webhook.find(uuid: uuid)
-        existing_webhook.consumer_id = pacticipant_repository.find_by_name(webhook.consumer.name).id if webhook.consumer
-        existing_webhook.provider_id = pacticipant_repository.find_by_name(webhook.provider.name).id if webhook.provider
+        existing_webhook.consumer_id = webhook.consumer ? pacticipant_repository.find_by_name(webhook.consumer.name).id : nil
+        existing_webhook.provider_id = webhook.provider ? pacticipant_repository.find_by_name(webhook.provider.name).id : nil
         existing_webhook.update_from_domain(webhook).save
         existing_webhook.events.collect(&:delete)
         (webhook.events || []).each do | webhook_event |
@@ -98,13 +99,6 @@ module PactBroker
           .collect(&:to_domain)
       end
 
-      # TODO delete
-      def find_by_consumer_and_provider_existing_at consumer, provider, date_time
-        Webhook.where(consumer_id: consumer.id, provider_id: provider.id)
-        .where(Sequel.lit("created_at < ?", date_time))
-        .collect(&:to_domain)
-      end
-
       def create_triggered_webhook trigger_uuid, webhook, pact, verification, trigger_type
         db_webhook = Webhook.where(uuid: webhook.uuid).single_record
         TriggeredWebhook.create(
@@ -125,10 +119,15 @@ module PactBroker
       end
 
       def create_execution triggered_webhook, webhook_execution_result
-        Execution.create(
-          triggered_webhook: triggered_webhook,
-          success: webhook_execution_result.success?,
-          logs: webhook_execution_result.logs)
+        # TriggeredWebhook may have been deleted since the webhook execution started
+        if TriggeredWebhook.where(id: triggered_webhook.id).any?
+          Execution.create(
+            triggered_webhook: triggered_webhook,
+            success: webhook_execution_result.success?,
+            logs: webhook_execution_result.logs)
+        else
+          logger.info("Could not save webhook execution for triggered webhook with id #{triggered_webhook.id} as it has been delete from the database")
+        end
       end
 
       def delete_triggered_webhooks_by_pacticipant pacticipant
@@ -151,20 +150,31 @@ module PactBroker
 
       def delete_triggered_webhooks_by_webhook_uuid uuid
         triggered_webhook_ids = TriggeredWebhook.where(webhook: Webhook.where(uuid: uuid)).select_for_subquery(:id)
-        Execution.where(triggered_webhook_id: triggered_webhook_ids).delete
+        delete_triggered_webhooks_and_executions(triggered_webhook_ids)
         DeprecatedExecution.where(webhook_id: Webhook.where(uuid: uuid).select_for_subquery(:id)).delete
-        TriggeredWebhook.where(id: triggered_webhook_ids).delete
+      end
+
+      def delete_triggered_webhooks_by_version_id version_id
+        delete_triggered_webhooks_by_pact_publication_ids(PactBroker::Pacts::PactPublication.where(consumer_version_id: version_id).select_for_subquery(:id))
+        delete_triggered_webhooks_by_verification_ids(PactBroker::Domain::Verification.where(provider_version_id: version_id).select_for_subquery(:id))
+      end
+
+      def delete_triggered_webhooks_by_verification_ids verification_ids
+        delete_triggered_webhooks_and_executions(TriggeredWebhook.where(verification_id: verification_ids).select_for_subquery(:id))
       end
 
       def delete_triggered_webhooks_by_pact_publication_ids pact_publication_ids
         triggered_webhook_ids = TriggeredWebhook.where(pact_publication_id: pact_publication_ids).select_for_subquery(:id)
-        Execution.where(triggered_webhook_id: triggered_webhook_ids).delete
-        TriggeredWebhook.where(id: triggered_webhook_ids).delete
+        delete_triggered_webhooks_and_executions(triggered_webhook_ids)
         DeprecatedExecution.where(pact_publication_id: pact_publication_ids).delete
       end
 
       def find_latest_triggered_webhooks_for_pact pact
-        find_latest_triggered_webhooks(pact.consumer, pact.provider)
+        if pact
+          find_latest_triggered_webhooks(pact.consumer, pact.provider)
+        else
+          []
+        end
       end
 
       def find_latest_triggered_webhooks consumer, provider
@@ -192,6 +202,13 @@ module PactBroker
 
       def fail_retrying_triggered_webhooks
         TriggeredWebhook.retrying.update(status: TriggeredWebhook::STATUS_FAILURE)
+      end
+
+      private
+
+      def delete_triggered_webhooks_and_executions triggered_webhook_ids
+        Execution.where(triggered_webhook_id: triggered_webhook_ids).delete
+        TriggeredWebhook.where(id: triggered_webhook_ids).delete
       end
     end
   end

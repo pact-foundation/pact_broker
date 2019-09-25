@@ -21,6 +21,7 @@ module PactBroker
 
       def self.delete version
         tag_repository.delete_by_version_id version.id
+        webhook_repository.delete_triggered_webhooks_by_version_id version.id
         pact_repository.delete_by_version_id version.id
         verification_repository.delete_by_provider_version_id version.id
         version_repository.delete_by_id version.id

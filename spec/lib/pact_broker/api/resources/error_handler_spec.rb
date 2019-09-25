@@ -9,6 +9,7 @@ module PactBroker
           before do
             allow(ErrorHandler).to receive(:logger).and_return(logger)
             allow(SecureRandom).to receive(:urlsafe_base64).and_return("bYWfn-+yWPlf")
+            allow(error).to receive(:backtrace).and_return(["backtrace"])
           end
 
           let(:logger) { double('logger').as_null_object }
@@ -71,6 +72,7 @@ module PactBroker
                 subject
               end
             end
+
             context "when the error is not a PactBroker::Error or subclass" do
               it "invokes the api error reporters" do
                 expect(thing).to receive(:call).with(error, options)
@@ -120,6 +122,7 @@ module PactBroker
                 subject
               end
             end
+
             context "when the error is not a PactBroker::Error or subclass" do
               it "invokes the api error reporters" do
                 expect(thing).to receive(:call).with(error, options)

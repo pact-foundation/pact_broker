@@ -25,7 +25,6 @@ module Pact
 
       attr_reader :dir, :consumer_contract, :consumer_contract_renderer, :file_extension
 
-
       def path
         File.join(dir, name)
       end

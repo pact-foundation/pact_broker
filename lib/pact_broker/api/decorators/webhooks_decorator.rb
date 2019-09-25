@@ -6,7 +6,6 @@ module PactBroker
     module Decorators
       class WebhooksDecorator < BaseDecorator
 
-
         link :self do | context |
           {
             title: context[:resource_title],
@@ -24,7 +23,7 @@ module PactBroker
         links :'pb:webhooks' do | context |
           represented.entries.collect do | webhook |
             {
-              title: "Webhook",
+              title: webhook.scope_description,
               name: webhook.display_description,
               href: webhook_url(webhook.uuid, context[:base_url])
             }
