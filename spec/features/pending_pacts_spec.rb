@@ -39,7 +39,7 @@ RSpec.describe "the pending lifecycle of a pact (with no tags)" do
     post(verification_results_url, results, request_headers)
   end
 
-  def pending_from(pacts_for_verification_response)
+  def pending_status_from(pacts_for_verification_response)
     JSON.parse(pacts_for_verification_response.body)["_embedded"]["pacts"][0]["verificationProperties"]["pending"]
   end
 
@@ -49,8 +49,7 @@ RSpec.describe "the pending lifecycle of a pact (with no tags)" do
       it "is pending" do
         publish_pact
         pacts_for_verification_response = get_pacts_for_verification
-        pending = pending_from(pacts_for_verification_response)
-        expect(pending).to be true
+        expect(pending_status_from(pacts_for_verification_response)).to be true
       end
     end
 
@@ -75,9 +74,8 @@ RSpec.describe "the pending lifecycle of a pact (with no tags)" do
         # ANOTHER PROVIDER BUILD
         # get pacts for verification
         pacts_for_verification_response = get_pacts_for_verification
-        pending = pending_from(pacts_for_verification_response)
         # still pending
-        expect(pending).to be true
+        expect(pending_status_from(pacts_for_verification_response)).to be true
       end
     end
 
@@ -103,9 +101,8 @@ RSpec.describe "the pending lifecycle of a pact (with no tags)" do
         # get pacts for verification
         # publish successful verification results
         pacts_for_verification_response = get_pacts_for_verification
-        pending = pending_from(pacts_for_verification_response)
         # not pending any more
-        expect(pending).to be false
+        expect(pending_status_from(pacts_for_verification_response)).to be false
       end
     end
   end

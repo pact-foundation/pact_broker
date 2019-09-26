@@ -10,7 +10,7 @@ module PactBroker
 
         collection :consumer_version_selectors, class: OpenStruct do
           property :tag
-          property :latest
+          property :latest, setter: ->(fragment:, represented:, **) { represented.latest = (fragment == 'true') }
         end
 
 

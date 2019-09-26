@@ -23,6 +23,16 @@ module PactBroker
           end
         end
 
+        context "when latest is a string" do
+          let(:consumer_version_selectors) do
+            [{"tag" => "dev", "latest" => "true"}]
+          end
+
+          it "casts it to a boolean" do
+            expect(subject.consumer_version_selectors.first.latest).to be true
+          end
+        end
+
         context "when there are no consumer_version_selectors" do
           let(:params) { {} }
 

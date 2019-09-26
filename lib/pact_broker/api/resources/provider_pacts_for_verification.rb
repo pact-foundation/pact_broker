@@ -6,8 +6,7 @@ require 'pact_broker/api/decorators/verifiable_pacts_query_decorator'
 module PactBroker
   module Api
     module Resources
-      class VerifiableProviderPacts < ProviderPacts
-
+      class ProviderPactsForVerification < ProviderPacts
         def initialize
           @query = Rack::Utils.parse_nested_query(request.uri.query)
         end
