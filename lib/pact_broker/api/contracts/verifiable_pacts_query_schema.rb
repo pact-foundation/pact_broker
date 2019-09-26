@@ -6,7 +6,7 @@ module PactBroker
       class VerifiablePactsQuerySchema
         SCHEMA = Dry::Validation.Schema do
           optional(:provider_version_tags).maybe(:array?)
-          optional(:exclude_other_pending).filled(included_in?: ["true", "false"])
+          # optional(:exclude_other_pending).filled(included_in?: ["true", "false"])
           optional(:consumer_version_selectors).each do
             schema do
               required(:tag).filled(:str?)
