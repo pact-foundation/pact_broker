@@ -20,8 +20,6 @@ module PactBroker
           super(Reshaper.new(verifiable_pact))
         end
 
-        property :pending # remove?
-
         property :verification_properties, as: :verificationProperties do
           property :pending
           property :pending_reason, as: :pendingReason, exec_context: :decorator
