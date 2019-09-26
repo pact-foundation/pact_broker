@@ -14,9 +14,9 @@ module PactBroker
       def inclusion_reason
         if head_consumer_tags.any?
           version_text = head_consumer_tags.size == 1 ? "version" : "versions"
-          "Verifying the pact for the latest #{version_text} of Foo tagged with #{joined_head_consumer_tags}"
+          "This pact is being verified because it is the pact for the latest #{version_text} of Foo tagged with #{joined_head_consumer_tags}"
         else
-          "Verifying the latest pact between #{consumer_name} and #{provider_name}."
+          "This pact is being verified because it is the latest pact between #{consumer_name} and #{provider_name}."
         end
       end
 
