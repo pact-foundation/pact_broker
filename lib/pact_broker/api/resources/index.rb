@@ -1,4 +1,5 @@
 require 'pact_broker/api/resources/base_resource'
+require 'pact_broker/feature_toggle'
 require 'json'
 
 module PactBroker
@@ -18,7 +19,7 @@ module PactBroker
         end
 
         def links
-          {
+          links_hash = {
             'self' =>
             {
               href: base_url,
@@ -109,12 +110,6 @@ module PactBroker
               href: base_url + '/metrics',
               title: "Get Pact Broker metrics",
             },
-            'beta:pending-provider-pacts' =>
-            {
-              href: base_url + '/pacts/provider/{provider}/pending',
-              title: 'Pending pact versions for the specified provider',
-              templated: true
-            },
             'curies' =>
             [{
               name: 'pb',
@@ -126,6 +121,16 @@ module PactBroker
               templated: true
             }]
           }
+
+          if PactBroker.feature_enabled?(:pacts_for_verification)
+            links_hash['beta:provider-pacts-for-verification'] = {
+                href: base_url + '/pacts/provider/{provider}/for-verification',
+                title: 'Pact versions to be verified for the specified provider',
+                templated: true
+              }
+          end
+
+          links_hash
         end
       end
     end

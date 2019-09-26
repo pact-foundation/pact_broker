@@ -1,12 +1,16 @@
 require 'pact_broker/pacts/latest_pact_publications_by_consumer_version'
+require 'pact_broker/pacts/head_pact'
 
 module PactBroker
   module Pacts
 
     class LatestTaggedPactPublications < LatestPactPublicationsByConsumerVersion
       set_dataset(:latest_tagged_pact_publications)
-    end
 
+      def to_domain
+        HeadPact.new(super, consumer_version_number, tag_name)
+      end
+    end
   end
 end
 

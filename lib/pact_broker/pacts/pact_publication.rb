@@ -57,7 +57,8 @@ module PactBroker
           pact_version_sha: pact_version.sha,
           latest_verification: latest_verification,
           created_at: created_at,
-          head_tag_names: head_tag_names
+          head_tag_names: head_tag_names,
+          db_model: self
           )
       end
 

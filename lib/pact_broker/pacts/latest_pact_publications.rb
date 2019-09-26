@@ -1,12 +1,19 @@
 require 'pact_broker/pacts/latest_pact_publications_by_consumer_version'
+require 'pact_broker/pacts/head_pact'
 
 module PactBroker
   module Pacts
 
+    # latest pact for each consumer/provider pair
     class LatestPactPublications < LatestPactPublicationsByConsumerVersion
       set_dataset(:latest_pact_publications)
-    end
 
+      # This pact may well be the latest for certain tags, but in this query
+      # we don't know what they are
+      def to_domain
+        HeadPact.new(super, consumer_version_number, nil)
+      end
+    end
   end
 end
 

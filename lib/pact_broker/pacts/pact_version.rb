@@ -50,6 +50,26 @@ module PactBroker
         latest_consumer_version.number
       end
 
+      def select_provider_tags_with_successful_verifications(tags)
+        tags.select do | tag |
+          PactVersion.where(Sequel[:pact_versions][:id] => id)
+            .join(:verifications, Sequel[:verifications][:pact_version_id] => Sequel[:pact_versions][:id])
+            .join(:versions, Sequel[:versions][:id] => Sequel[:verifications][:provider_version_id])
+            .join(:tags, Sequel[:tags][:version_id] => Sequel[:versions][:id])
+            .where(Sequel[:tags][:name] => tag)
+            .where(Sequel[:verifications][:success] => true)
+            .any?
+        end
+      end
+
+      def verified_successfully_by_any_provider_version?
+        PactVersion.where(Sequel[:pact_versions][:id] => id)
+          .join(:verifications, Sequel[:verifications][:pact_version_id] => Sequel[:pact_versions][:id])
+          .join(:versions, Sequel[:versions][:id] => Sequel[:verifications][:provider_version_id])
+          .where(Sequel[:verifications][:success] => true)
+          .any?
+      end
+
       def upsert
         self.class.upsert(to_hash, [:consumer_id, :provider_id, :sha])
       end
