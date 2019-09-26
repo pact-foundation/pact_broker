@@ -16,7 +16,8 @@ module PactBroker
 
         let(:consumer_version_selectors) do
           [{
-            tag: "master"
+            tag: "master",
+            latest: "true"
           }]
         end
 
@@ -41,6 +42,18 @@ module PactBroker
 
           it "flattens the messages" do
             expect(subject[:consumer_version_selectors].first).to eq "tag is missing at index 0"
+          end
+        end
+
+        context "whne the consumer_version_selectors is missing the latest" do
+          let(:consumer_version_selectors) do
+            [{
+              tag: "master"
+            }]
+          end
+
+          it "has no errors" do
+            expect(subject).to eq({})
           end
         end
       end

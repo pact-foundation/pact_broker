@@ -10,6 +10,7 @@ module PactBroker
           optional(:consumer_version_selectors).each do
             schema do
               required(:tag).filled(:str?)
+              optional(:latest).filled(included_in?: ["true", "false"])
             end
           end
         end

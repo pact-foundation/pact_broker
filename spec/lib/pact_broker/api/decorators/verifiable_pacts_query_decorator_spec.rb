@@ -18,8 +18,8 @@ module PactBroker
         subject { VerifiablePactsQueryDecorator.new(OpenStruct.new).from_hash(params)  }
 
         context "when latest is not specified" do
-          it "defaults to true" do
-            expect(subject.consumer_version_selectors.first.latest).to be true
+          it "defaults to nil" do
+            expect(subject.consumer_version_selectors.first.latest).to be nil
           end
         end
 

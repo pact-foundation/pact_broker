@@ -10,7 +10,7 @@ module PactBroker
 
         collection :consumer_version_selectors, class: OpenStruct do
           property :tag
-          property :latest, default: true
+          property :latest
         end
 
 
