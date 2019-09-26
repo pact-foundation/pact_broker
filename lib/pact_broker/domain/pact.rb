@@ -34,27 +34,6 @@ module PactBroker
         consumer_version.tags.collect(&:name)
       end
 
-      # # The names of the tags for which this pact is the latest of that tag.
-      # # eg. a version could be tagged with 'dev' and 'prod', but there is a later
-      # # version with tag 'dev', so this is only the latest 'prod' pact, not the latest 'dev'
-      # # pact.
-      # # It will only be set when loading the pact via the LatestTaggedPactPublications table
-      # # or LatestPactPublications
-      # # This is really yucky code. Should work out how to do it more elegantly.
-      # # Decorator?
-      # def latest_consumer_version_tag_names
-      #   if @latest_consumer_version_tag_names.nil?
-      #     raise "latest_consumer_version_tag_names not set"
-      #   else
-      #     @latest_consumer_version_tag_names
-      #   end
-      # end
-
-      # def add_latest_consumer_version_tag_name tag_name
-      #   @latest_consumer_version_tag_names ||= []
-      #   @latest_consumer_version_tag_names << tag_name unless tag_name.nil? # for LatestPactPublications
-      # end
-
       def latest_consumer_version_tag_names= latest_consumer_version_tag_names
         @latest_consumer_version_tag_names = latest_consumer_version_tag_names
       end
