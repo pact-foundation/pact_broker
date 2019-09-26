@@ -5,7 +5,7 @@
 module PactBroker
   module Pacts
     module SquashPactsForVerification
-      def self.call(provider_version_tags, consumer_version_selectors, head_pacts)
+      def self.call(provider_version_tags, head_pacts)
         domain_pact = head_pacts.first.pact
         pending_provider_tags = []
         pending = nil

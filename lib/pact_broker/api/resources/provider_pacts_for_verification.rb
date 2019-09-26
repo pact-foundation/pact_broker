@@ -22,6 +22,8 @@ module PactBroker
 
         private
 
+        attr_reader :query
+
         def pacts
           pact_service.find_for_verification(
             provider_name,
@@ -38,9 +40,6 @@ module PactBroker
           PactBroker::Api::Decorators::VerifiablePactsDecorator.new(pacts).to_json(to_json_options)
         end
 
-        private
-
-        attr_reader :query
 
         def query_schema
           PactBroker::Api::Contracts::VerifiablePactsQuerySchema

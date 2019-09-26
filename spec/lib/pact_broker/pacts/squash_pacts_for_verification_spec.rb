@@ -38,9 +38,8 @@ module PactBroker
 
         let(:provider_name) { "Bar" }
         let(:provider_version_tags) { [] }
-        let(:consumer_version_selectors) { [] }
 
-        subject { SquashPactsForVerification.call(provider_version_tags, consumer_version_selectors, head_pacts) }
+        subject { SquashPactsForVerification.call(provider_version_tags, head_pacts) }
 
         context "when all of the consumer tags are not nil" do
           its(:head_consumer_tags) { is_expected.to eq %w[dev feat-x] }

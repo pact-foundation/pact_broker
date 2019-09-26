@@ -127,7 +127,6 @@ module PactBroker
 
       def find_wip_pact_versions_for_provider provider_name, provider_tags = []
         return [] if provider_tags.empty?
-        provider_id = pacticipant_repository.find_by_name(provider_name).id
         successfully_verified_pact_publication_ids_for_each_tag = provider_tags.collect do | provider_tag |
           ids = LatestTaggedPactPublications
             .join(:verifications, { pact_version_id: :pact_version_id })
@@ -143,7 +142,6 @@ module PactBroker
         successfully_verified_pact_publication_ids_for_all_tags = successfully_verified_pact_publication_ids_for_each_tag.collect(&:last).reduce(:&)
         pact_publication_ids = LatestTaggedPactPublications.provider(provider_name).exclude(id: successfully_verified_pact_publication_ids_for_all_tags).select_for_subquery(:id)
 
-        # pact_publication_ids = PactBroker::Matrix::HeadRow.where(provider_id: provider_id).exclude(success: true).select_for_subquery(:pact_publication_id)
         pacts = AllPactPublications.where(id: pact_publication_ids).order_ignore_case(:consumer_name).order_append(:consumer_version_order).collect(&:to_domain)
         pacts.collect do | pact|
           pending_tags = successfully_verified_pact_publication_ids_for_each_tag.select do | (provider_tag, pact_publication_ids) |

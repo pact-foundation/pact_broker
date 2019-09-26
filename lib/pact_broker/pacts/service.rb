@@ -117,8 +117,9 @@ module PactBroker
         pact_repository
           .find_for_verification(provider_name, consumer_version_selectors)
           .group_by(&:pact_version_sha)
-          .collect do | pact_version_sha, head_pacts |
-            squash_pacts_for_verification(provider_version_tags, consumer_version_selectors, head_pacts)
+          .values
+          .collect do | head_pacts |
+            squash_pacts_for_verification(provider_version_tags, head_pacts)
           end
       end
 
