@@ -5,6 +5,7 @@ describe "Get latest verification for pact" do
     td
       .create_consumer("Consumer")
       .create_consumer_version("1.2.3")
+      .create_consumer_version_tag("master")
       .create_provider("Another provider")
       .create_pact
       .create_verification(number: 1, provider_version: "5")
@@ -34,6 +35,22 @@ describe "Get latest verification for pact" do
 
   context "by consumer version" do
     let(:path) { "/pacts/provider/Provider/consumer/Consumer/version/1.2.3/verification-results/latest" }
+
+    it "returns the verification" do
+      expect(last_response_body[:providerApplicationVersion]).to eq "4"
+    end
+  end
+
+  context "for latest pact" do
+    let(:path) { "/pacts/provider/Provider/consumer/Consumer/latest/verification-results/latest" }
+
+    it "returns the verification" do
+      expect(last_response_body[:providerApplicationVersion]).to eq "4"
+    end
+  end
+
+  context "for latest pact for tag" do
+    let(:path) { "/pacts/provider/Provider/consumer/Consumer/latest/master/verification-results/latest" }
 
     it "returns the verification" do
       expect(last_response_body[:providerApplicationVersion]).to eq "4"
