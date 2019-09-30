@@ -134,7 +134,7 @@ module PactBroker
             .where(Sequel[:provider_tags][:name] => provider_tag)
             .provider(provider_name)
             .where(Sequel[:verifications][:success] => true)
-            .select(Sequel[:latest_tagged_pact_publications][:id])
+            .select(Sequel[:latest_tagged_pact_publications][:id].as(:id))
             .collect(&:id)
           [provider_tag, ids]
         end
