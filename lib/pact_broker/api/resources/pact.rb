@@ -25,10 +25,11 @@ module PactBroker
         include WebhookExecutionMethods
 
         def content_types_provided
-          [["application/hal+json", :to_json],
-           ["application/json", :to_json],
-           ["text/html", :to_html],
-           ["application/vnd.pactbrokerextended.v1+json", :to_extended_json]
+          [
+            ["application/hal+json", :to_json],
+            ["application/json", :to_json],
+            ["text/html", :to_html],
+            ["application/vnd.pactbrokerextended.v1+json", :to_extended_json]
           ]
         end
 
