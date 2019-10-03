@@ -110,6 +110,12 @@ module PactBroker
               href: base_url + '/metrics',
               title: "Get Pact Broker metrics",
             },
+            'pb:can-i-deploy-pacticipant-version-to-tag' =>
+            {
+              href: base_url + '/can-i-deploy?pacticipant={pacticipant}&version={version}&to={tag}',
+              title: "Determine if an application can be safely deployed to an environment identified by the given tag",
+              templated: true
+            },
             'curies' =>
             [{
               name: 'pb',

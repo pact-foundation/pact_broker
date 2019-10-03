@@ -88,6 +88,7 @@ module PactBroker
         add ['matrix', 'provider', :provider_name, 'consumer', :consumer_name], Api::Resources::MatrixForConsumerAndProvider, {resource_name: "matrix_consumer_provider"}
         add ['matrix', 'provider', :provider_name, 'latest', :provider_tag, 'consumer', :consumer_name, 'latest', :tag, 'badge'], Api::Resources::MatrixBadge, {resource_name: "matrix_tag_badge"}
         add ['matrix'], Api::Resources::Matrix, {resource_name: "matrix"}
+        add ['can-i-deploy'], Api::Resources::CanIDeploy, {resource_name: "can-i-deploy"}
 
         add ['dashboard'], Api::Resources::Dashboard, {resource_name: "dashboard"}
         add ['dashboard', 'provider', :provider_name, 'consumer', :consumer_name ], Api::Resources::Dashboard, {resource_name: "integration_dashboard"}
