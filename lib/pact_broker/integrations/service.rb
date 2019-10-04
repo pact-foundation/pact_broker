@@ -11,7 +11,7 @@ module PactBroker
       include PactBroker::Logging
 
       def self.find_all
-        PactBroker::Integrations::Integration.eager(:consumer).eager(:provider).all
+        PactBroker::Integrations::Integration.eager(:consumer).eager(:provider).eager(latest_pact: :latest_verification).all
       end
 
       def self.delete(consumer_name, provider_name)

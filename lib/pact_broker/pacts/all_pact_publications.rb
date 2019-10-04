@@ -6,7 +6,6 @@ require 'pact_broker/repositories/helpers'
 
 module PactBroker
   module Pacts
-
     class AllPactPublications < Sequel::Model(:all_pact_publications)
 
       extend Forwardable
@@ -16,6 +15,7 @@ module PactBroker
       set_primary_key :id
       associate(:one_to_many, :tags, :class => "PactBroker::Domain::Tag", :reciprocal => :version, :key => :version_id, :primary_key => :consumer_version_id)
       associate(:many_to_one, :pact_version, :key => :pact_version_id, :primary_key => :id)
+      associate(:many_to_one, :latest_verification, :class => "PactBroker::Verifications::LatestVerificationForPactVersion", key: :pact_version_id, primary_key: :pact_version_id)
 
       dataset_module do
         include PactBroker::Repositories::Helpers

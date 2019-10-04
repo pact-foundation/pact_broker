@@ -1,9 +1,6 @@
 module PactBroker
-
   module Verifications
-
     class Status
-
       def initialize latest_pact, latest_verification
         @latest_pact = latest_pact
         @latest_verification = latest_verification

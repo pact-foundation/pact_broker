@@ -14,11 +14,14 @@ module PactBroker
         let(:integration) do
           instance_double(PactBroker::Integrations::Integration,
             consumer: consumer,
-            provider: provider
+            provider: provider,
+            verification_status_for_latest_pact: verification_status
           )
         end
         let(:consumer) { double("consumer", name: "the consumer") }
         let(:provider) { double("provider", name: "the provider") }
+        let(:verification_status) { double("verification_status", to_s: "some_status") }
+
         let(:options) { { user_options: { base_url: 'http://example.org' } } }
         let(:expected_hash) do
           {
@@ -28,6 +31,7 @@ module PactBroker
             "provider" => {
               "name" => "the provider"
             },
+            "verificationStatus" => "some_status",
             "_links" => {
               "pb:dashboard" => {
                 "href" => "/dashboard"

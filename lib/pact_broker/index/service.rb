@@ -40,7 +40,7 @@ module PactBroker
         rows.sort.collect do | row |
           # The concept of "stale" (the pact used to be verified but then it changed and we haven't got
           # a new verification result yet) only really make sense if we're trying to summarise
-          # the latest state of an integration. Once we start showing multiple pacts for each
+          # the state of an integration. Once we start showing multiple pacts for each
           # integration (ie. the latest for each tag) then each pact version is either verified,
           # or it's not verified.
           # For backwards compatiblity with the existing UI, don't change the 'stale' concept for the OSS
