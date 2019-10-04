@@ -3,6 +3,33 @@ require 'pact_broker/integrations/service'
 module PactBroker
   module Integrations
     describe Service do
+      describe "find_all" do
+        before do
+          allow(PactBroker::Integrations::Integration).to receive(:eager).and_return(dataset)
+          allow(dataset).to receive(:eager).and_return(dataset)
+          allow(dataset).to receive(:all).and_return(integrations)
+        end
+
+        let(:dataset) { double('integrations') }
+        let(:integrations) { [ integration_1, integration_2 ] }
+        let(:integration_1) do
+          double(
+            'integration 1',
+            latest_pact_or_verification_publication_date: DateTime.new(2019, 1, 1)
+          )
+        end
+        let(:integration_2) do
+          double(
+            'integration 2',
+            latest_pact_or_verification_publication_date: DateTime.new(2019, 2, 1)
+          )
+        end
+
+        it "sorts the integrations with the most recently active first so that the UI doesn't need to do it" do
+          expect(Service.find_all.first).to be integration_2
+        end
+      end
+
       describe "#delete" do
         let(:td) { TestDataBuilder.new }
 

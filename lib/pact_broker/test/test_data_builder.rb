@@ -293,6 +293,7 @@ module PactBroker
         tag_names = [parameters.delete(:tag_names), parameters.delete(:tag_name)].flatten.compact
         provider_version_number = parameters[:provider_version] || '4.5.6'
         default_parameters = {success: true, number: 1, test_results: {some: 'results'}}
+        default_parameters[:execution_date] = @now if @now
         parameters = default_parameters.merge(parameters)
         parameters.delete(:provider_version)
         verification = PactBroker::Domain::Verification.new(parameters)
@@ -323,6 +324,22 @@ module PactBroker
         instance_variable_get("@#{instance_variable_name}")
       end
 
+      def set_now date
+        @now = date
+        self
+      end
+
+      def in_utc
+        original_tz = ENV['TZ']
+        begin
+          ENV['TZ'] = 'UTC'
+          yield
+        ensure
+          ENV['TZ'] = original_tz
+        end
+      end
+
+
       private
 
       # Remember! This must be called before adding the IDs
@@ -335,8 +352,9 @@ module PactBroker
       end
 
       def set_created_at_if_set created_at, table_name, selector
-        if created_at
-          Sequel::Model.db[table_name].where(selector.keys.first => selector.values.first).update(created_at: created_at)
+        date_to_set = created_at || @now
+        if date_to_set
+          Sequel::Model.db[table_name].where(selector.keys.first => selector.values.first).update(created_at: date_to_set)
         end
       end
 

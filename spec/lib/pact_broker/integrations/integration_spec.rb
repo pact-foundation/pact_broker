@@ -4,10 +4,14 @@ module PactBroker
   module Integrations
     describe Integration do
       before do
-        td.create_pact_with_hierarchy("Foo", "1", "Bar")
+        td.set_now(DateTime.new(2019, 1, 1))
+          .create_pact_with_hierarchy("Foo", "1", "Bar")
+          .set_now(DateTime.new(2019, 1, 2))
           .create_consumer_version("2")
           .create_pact
+          .set_now(DateTime.new(2019, 1, 3))
           .create_verification(provider_version: "3")
+          .set_now(DateTime.new(2019, 1, 4))
           .create_verification(provider_version: "4", number: 2)
       end
 
@@ -23,6 +27,28 @@ module PactBroker
 
       it "has a verification status" do
         expect(Integration.first.verification_status_for_latest_pact).to be_instance_of(PactBroker::Verifications::Status)
+      end
+
+      describe "latest_pact_or_verification_publication_date" do
+        context "when the last publication is a verification" do
+          it "returns the verification execution date" do
+            date = td.in_utc { DateTime.new(2019, 1, 4) }
+            expect(Integration.first.latest_pact_or_verification_publication_date).to eq date
+          end
+        end
+
+        context "when the last publication is a pact" do
+          before do
+            td.set_now(DateTime.new(2019, 1, 5))
+              .create_consumer_version("3")
+              .create_pact
+          end
+
+          it "returns the pact publication date" do
+            date = td.in_utc { DateTime.new(2019, 1, 5) }
+            expect(Integration.first.latest_pact_or_verification_publication_date).to eq date
+          end
+        end
       end
     end
   end

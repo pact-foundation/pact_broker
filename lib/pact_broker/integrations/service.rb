@@ -11,7 +11,12 @@ module PactBroker
       include PactBroker::Logging
 
       def self.find_all
-        PactBroker::Integrations::Integration.eager(:consumer).eager(:provider).eager(latest_pact: :latest_verification).all
+        PactBroker::Integrations::Integration
+          .eager(:consumer)
+          .eager(:provider)
+          .eager(latest_pact: :latest_verification)
+          .all
+          .sort { | a, b| b.latest_pact_or_verification_publication_date <=> a.latest_pact_or_verification_publication_date }
       end
 
       def self.delete(consumer_name, provider_name)

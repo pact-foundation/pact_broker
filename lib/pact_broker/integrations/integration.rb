@@ -1,5 +1,6 @@
 require 'pact_broker/db'
 require 'pact_broker/verifications/verification_status'
+require 'pact_broker/domain/verification'
 
 module PactBroker
   module Integrations
@@ -10,6 +11,14 @@ module PactBroker
 
       def verification_status_for_latest_pact
         @verification_status_for_latest_pact ||= PactBroker::Verifications::Status.new(latest_pact, latest_pact&.latest_verification)
+      end
+
+      def latest_pact_or_verification_publication_date
+        [latest_pact.created_at, latest_verification_publication_date].compact.max
+      end
+
+      def latest_verification_publication_date
+        PactBroker::Domain::Verification.where(consumer_id: consumer_id, provider_id: provider_id).order(:id).last&.execution_date
       end
     end
   end
