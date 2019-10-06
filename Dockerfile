@@ -1,5 +1,6 @@
 FROM ruby:2.5.3-alpine
 
+ENV INSTALL_MYSQL=true
 RUN apk update \
     && apk --no-cache add \
       "build-base>=0.5" \
@@ -10,6 +11,7 @@ RUN apk update \
       "sqlite-dev>=3.28" \
       "sqlite>=3.28" \
       "tzdata>=2019" \
+      "mariadb-dev>=10.3" \
     && rm -rf /var/cache/apk/*
 
 WORKDIR /app

@@ -5,5 +5,5 @@ gemspec
 gem 'simplecov', :require => false, :group => :test
 
 if ENV['INSTALL_MYSQL'] == "true"
-  gem 'mysql2', '~>0.3.15'
+  gem 'mysql2', '~>0.5'
 end
