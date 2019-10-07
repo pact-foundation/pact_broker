@@ -329,6 +329,16 @@ module PactBroker
         self
       end
 
+      def add_day
+        @now = @now + 1
+        self
+      end
+
+      def add_five_minutes
+        @now = @now + (1.0/(24*60)*5)
+        self
+      end
+
       def in_utc
         original_tz = ENV['TZ']
         begin
