@@ -26,7 +26,7 @@ module PactBroker
       end
 
       it "has a verification status" do
-        expect(Integration.first.verification_status_for_latest_pact).to be_instance_of(PactBroker::Verifications::Status)
+        expect(Integration.first.verification_status_for_latest_pact).to be_instance_of(PactBroker::Verifications::PseudoBranchStatus)
       end
 
       describe "latest_pact_or_verification_publication_date" do

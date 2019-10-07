@@ -1,6 +1,9 @@
+# The time ordered list of pacts that belong to the same consumer/provider/tag
+# (or just consumer/provider) can be considered a pseudo branch.
+
 module PactBroker
   module Verifications
-    class Status
+    class PseudoBranchStatus
       def initialize latest_pact, latest_verification
         @latest_pact = latest_pact
         @latest_verification = latest_verification

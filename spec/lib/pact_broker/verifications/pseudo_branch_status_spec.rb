@@ -1,9 +1,9 @@
-require 'pact_broker/verifications/verification_status'
+require 'pact_broker/verifications/pseudo_branch_status'
 
 module PactBroker
   module Verifications
-    describe Status do
-      describe "verification_status" do
+    describe PseudoBranchStatus do
+      describe "pseudo_branch_verification_status" do
 
         let(:latest_verification) { instance_double("PactBroker::Domain::Verification", pact_version_sha: latest_verification_pact_version_sha, success: success) }
         let(:latest_pact) { instance_double("PactBroker::Domain::Pact", pact_version_sha: pact_pact_version_sha) }
@@ -11,7 +11,7 @@ module PactBroker
         let(:latest_verification_pact_version_sha) { '1234' }
         let(:success) { true }
 
-        subject { PactBroker::Verifications::Status.new(latest_pact, latest_verification) }
+        subject { PseudoBranchStatus.new(latest_pact, latest_verification) }
 
         context "when the pact is nil (used in badge resource)" do
           let(:latest_pact) { nil }

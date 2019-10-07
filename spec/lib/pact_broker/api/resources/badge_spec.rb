@@ -13,14 +13,14 @@ module PactBroker
           allow(PactBroker::Pacts::Service).to receive(:find_latest_pact).and_return(pact)
           allow(PactBroker::Verifications::Service).to receive(:find_latest_verification_for).and_return(verification)
           allow(PactBroker::Badges::Service).to receive(:pact_verification_badge).and_return("badge")
-          allow(PactBroker::Verifications::Status).to receive(:new).and_return(verification_status)
+          allow(PactBroker::Verifications::PseudoBranchStatus).to receive(:new).and_return(pseudo_branch_verification_status)
         end
 
         let(:pact) { instance_double("PactBroker::Domain::Pact", consumer: consumer, provider: provider, consumer_version_number: "2", revision_number: "1") }
         let(:consumer) { double('consumer') }
         let(:provider) { double('provider') }
         let(:verification) { double("verification", provider_version_number: "3", number: "7") }
-        let(:verification_status) { instance_double("PactBroker::Verifications::Status", to_sym: :verified) }
+        let(:pseudo_branch_verification_status) { instance_double("PactBroker::Verifications::PseudoBranchStatus", to_sym: :verified) }
 
         subject { get path, params, {'HTTP_ACCEPT' => 'image/svg+xml'}; last_response }
 
@@ -63,7 +63,7 @@ module PactBroker
           end
 
           it "determines the pact's verification status based on the latest pact and latest verification" do
-            expect(PactBroker::Verifications::Status).to receive(:new).with(pact, verification)
+            expect(PactBroker::Verifications::PseudoBranchStatus).to receive(:new).with(pact, verification)
             subject
           end
 

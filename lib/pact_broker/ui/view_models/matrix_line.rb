@@ -127,7 +127,7 @@ module PactBroker
           (self.orderable_fields <=> other.orderable_fields) * -1
         end
 
-        def verification_status
+        def pseudo_branch_verification_status
           if @line[:verification_executed_at]
             DateHelper.distance_of_time_in_words(@line[:verification_executed_at], DateTime.now) + " ago"
           else

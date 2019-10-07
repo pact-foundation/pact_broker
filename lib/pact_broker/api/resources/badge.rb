@@ -1,5 +1,5 @@
 require 'pact_broker/api/resources/base_resource'
-require 'pact_broker/verifications/verification_status'
+require 'pact_broker/verifications/pseudo_branch_status'
 require 'pact_broker/configuration'
 
 module PactBroker
@@ -32,7 +32,7 @@ module PactBroker
 
         def to_svg
           response.headers['Cache-Control'] = 'no-cache'
-          comment + badge_service.pact_verification_badge(pact, label, initials, verification_status)
+          comment + badge_service.pact_verification_badge(pact, label, initials, pseudo_branch_verification_status)
         end
 
         def pact
@@ -44,8 +44,8 @@ module PactBroker
           @verification ||= verification_service.find_latest_verification_for(pact.consumer, pact.provider, identifier_from_path[:tag])
         end
 
-        def verification_status
-          @verification_status ||= PactBroker::Verifications::Status.new(pact, latest_verification).to_sym
+        def pseudo_branch_verification_status
+          @pseudo_branch_verification_status ||= PactBroker::Verifications::PseudoBranchStatus.new(pact, latest_verification).to_sym
         end
 
         def label

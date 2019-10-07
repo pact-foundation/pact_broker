@@ -15,14 +15,14 @@ module PactBroker
       SPACE_DASH_UNDERSCORE = /[\s_\-]/
       CACHE = {}
 
-      def pact_verification_badge pact, label, initials, verification_status
-        return static_svg(pact, verification_status) unless pact
+      def pact_verification_badge pact, label, initials, pseudo_branch_verification_status
+        return static_svg(pact, pseudo_branch_verification_status) unless pact
 
         title = badge_title pact, label, initials
-        status = badge_status verification_status
-        color = badge_color verification_status
+        status = badge_status pseudo_branch_verification_status
+        color = badge_color pseudo_branch_verification_status
 
-        dynamic_svg(title, status, color) || static_svg(pact, verification_status)
+        dynamic_svg(title, status, color) || static_svg(pact, pseudo_branch_verification_status)
       end
 
       def clear_cache
@@ -60,8 +60,8 @@ module PactBroker
             .split('_')
       end
 
-      def badge_status verification_status
-        case verification_status
+      def badge_status pseudo_branch_verification_status
+        case pseudo_branch_verification_status
           when :success then "verified"
           when :failed then "failed"
           when :stale then "changed"
@@ -69,8 +69,8 @@ module PactBroker
         end
       end
 
-      def badge_color verification_status
-        case verification_status
+      def badge_color pseudo_branch_verification_status
+        case pseudo_branch_verification_status
           when :success then "brightgreen"
           when :failed then "red"
           when :stale then "orange"
@@ -122,8 +122,8 @@ module PactBroker
         response
       end
 
-      def static_svg pact, verification_status
-        file_name = case verification_status
+      def static_svg pact, pseudo_branch_verification_status
+        file_name = case pseudo_branch_verification_status
           when :success then "pact-verified-brightgreen.svg"
           when :failed then "pact-failed-red.svg"
           when :stale then "pact-changed-orange.svg"

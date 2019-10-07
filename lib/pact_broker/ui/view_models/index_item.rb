@@ -135,8 +135,8 @@ module PactBroker
           @relationship.latest_pact.created_at.to_time.to_i
         end
 
-        def verification_status
-          case @relationship.verification_status
+        def pseudo_branch_verification_status
+          case @relationship.pseudo_branch_verification_status
             when :success then "success"
             when :stale then "warning"
             when :failed then "danger"
@@ -145,11 +145,11 @@ module PactBroker
         end
 
         def warning?
-          verification_status == 'warning'
+          pseudo_branch_verification_status == 'warning'
         end
 
         def verification_tooltip
-          case @relationship.verification_status
+          case @relationship.pseudo_branch_verification_status
           when :success
             "Successfully verified by #{provider_name} (v#{short_version_number(@relationship.latest_verification_provider_version_number)})"
           when :stale

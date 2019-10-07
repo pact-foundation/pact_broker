@@ -28,10 +28,10 @@ module PactBroker
         its(:consumer_group_url) { should eq "/groups/Consumer%20Name" }
         its(:provider_group_url) { should eq "/groups/Provider%20Name" }
 
-        describe "verification_status" do
+        describe "pseudo_branch_verification_status" do
           let(:domain_relationship) do
             instance_double("PactBroker::Domain::IndexItem",
-              verification_status: verification_status,
+              pseudo_branch_verification_status: pseudo_branch_verification_status,
               provider_name: "Foo",
               latest_verification_provider_version_number: "4.5.6")
           end
@@ -42,29 +42,29 @@ module PactBroker
           subject { IndexItem.new(domain_relationship) }
 
           context "when the pact has never been verified" do
-            let(:verification_status) { :never }
-            its(:verification_status) { is_expected.to eq "" }
+            let(:pseudo_branch_verification_status) { :never }
+            its(:pseudo_branch_verification_status) { is_expected.to eq "" }
             its(:warning?) { is_expected.to be false }
             its(:verification_tooltip) { is_expected.to eq nil }
           end
 
           context "when the pact has changed since the last successful verification" do
-            let(:verification_status) { :stale }
-            its(:verification_status) { is_expected.to eq "warning" }
+            let(:pseudo_branch_verification_status) { :stale }
+            its(:pseudo_branch_verification_status) { is_expected.to eq "warning" }
             its(:warning?) { is_expected.to be true }
             its(:verification_tooltip) { is_expected.to eq "Pact has changed since last successful verification by Foo (v4.5.6)" }
           end
 
           context "when the pact has not changed since the last successful verification" do
-            let(:verification_status) { :success }
-            its(:verification_status) { is_expected.to eq "success" }
+            let(:pseudo_branch_verification_status) { :success }
+            its(:pseudo_branch_verification_status) { is_expected.to eq "success" }
             its(:warning?) { is_expected.to be false }
             its(:verification_tooltip) { is_expected.to eq "Successfully verified by Foo (v4.5.6)" }
           end
 
           context "when the pact verification failed" do
-            let(:verification_status) { :failed }
-            its(:verification_status) { is_expected.to eq "danger" }
+            let(:pseudo_branch_verification_status) { :failed }
+            its(:pseudo_branch_verification_status) { is_expected.to eq "danger" }
             its(:warning?) { is_expected.to be false }
             its(:verification_tooltip) { is_expected.to eq "Verification by Foo (v4.5.6) failed" }
           end

@@ -45,7 +45,7 @@ module PactBroker
             pactTags: pact_tags(index_item, base_url),
             latestVerificationResult: verification_hash(index_item, base_url),
             latestVerificationResultTags: verification_tags(index_item, base_url),
-            verificationStatus: index_item.verification_status.to_s,
+            verificationStatus: index_item.pseudo_branch_verification_status.to_s,
             webhookStatus: index_item.webhook_status.to_s,
             latestWebhookExecution: latest_webhook_execution(index_item, base_url),
             _links: links(index_item, base_url)

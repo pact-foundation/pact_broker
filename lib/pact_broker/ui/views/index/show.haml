@@ -48,7 +48,7 @@
               %a{ href: index_item.webhook_url }
                 = index_item.webhook_label
 
-            %td{ class: index_item.verification_status, title: index_item.verification_tooltip, "data-toggle": "tooltip", "data-placement": "left" }
+            %td{ class: index_item.pseudo_branch_verification_status, title: index_item.verification_tooltip, "data-toggle": "tooltip", "data-placement": "left" }
               %div
                 = index_item.last_verified_date
                 - if index_item.warning?

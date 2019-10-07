@@ -15,12 +15,12 @@ module PactBroker
           instance_double(PactBroker::Integrations::Integration,
             consumer: consumer,
             provider: provider,
-            verification_status_for_latest_pact: verification_status
+            verification_status_for_latest_pact: pseudo_branch_verification_status
           )
         end
         let(:consumer) { double("consumer", name: "the consumer") }
         let(:provider) { double("provider", name: "the provider") }
-        let(:verification_status) { double("verification_status", to_s: "some_status") }
+        let(:pseudo_branch_verification_status) { double("pseudo_branch_verification_status", to_s: "some_status") }
 
         let(:options) { { user_options: { base_url: 'http://example.org' } } }
         let(:expected_hash) do

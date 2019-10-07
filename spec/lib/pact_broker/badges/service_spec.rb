@@ -9,7 +9,7 @@ module PactBroker
         let(:pact) { double("pact", consumer_name: "Foo-Bar", provider_name: "Thing_Blah") }
         let(:label) { nil }
         let(:initials) { false }
-        let(:verification_status) { :success }
+        let(:pseudo_branch_verification_status) { :success }
         let(:logger) { double('logger').as_null_object }
         let(:expected_url) { "https://img.shields.io/badge/#{expected_left_text}-#{expected_right_text}-#{expected_color}.svg" }
         let(:expected_color) { "brightgreen" }
@@ -20,7 +20,7 @@ module PactBroker
           stub_request(:get, expected_url).to_return(:status => response_status, :body => "svg")
         end
 
-        subject { PactBroker::Badges::Service.pact_verification_badge pact, label, initials, verification_status }
+        subject { PactBroker::Badges::Service.pact_verification_badge pact, label, initials, pseudo_branch_verification_status }
 
         before do
           Service.clear_cache
@@ -32,8 +32,8 @@ module PactBroker
         end
 
         it "caches the response" do
-          PactBroker::Badges::Service.pact_verification_badge pact, label, initials, verification_status
-          PactBroker::Badges::Service.pact_verification_badge pact, label, initials, verification_status
+          PactBroker::Badges::Service.pact_verification_badge pact, label, initials, pseudo_branch_verification_status
+          PactBroker::Badges::Service.pact_verification_badge pact, label, initials, pseudo_branch_verification_status
           expect(http_request).to have_been_made.once
         end
 
@@ -127,15 +127,15 @@ module PactBroker
           end
         end
 
-        context "when the verification_status is :success" do
+        context "when the pseudo_branch_verification_status is :success" do
           it "create a green badge with left text 'verified'" do
             subject
             expect(http_request).to have_been_made
           end
         end
 
-        context "when the verification_status is :never" do
-          let(:verification_status) { :never }
+        context "when the pseudo_branch_verification_status is :never" do
+          let(:pseudo_branch_verification_status) { :never }
           let(:expected_color) { "lightgrey" }
           let(:expected_right_text) { "unknown" }
 
@@ -145,8 +145,8 @@ module PactBroker
           end
         end
 
-        context "when the verification_status is :failed" do
-          let(:verification_status) { :failed }
+        context "when the pseudo_branch_verification_status is :failed" do
+          let(:pseudo_branch_verification_status) { :failed }
           let(:expected_color) { "red" }
           let(:expected_right_text) { "failed" }
 
@@ -156,8 +156,8 @@ module PactBroker
           end
         end
 
-        context "when the verification_status is :stale" do
-          let(:verification_status) { :stale }
+        context "when the pseudo_branch_verification_status is :stale" do
+          let(:pseudo_branch_verification_status) { :stale }
           let(:expected_color) { "orange" }
           let(:expected_right_text) { "changed" }
 
@@ -184,15 +184,15 @@ module PactBroker
           let(:expected_url) { /http/ }
           let(:response_status) { 404 }
 
-          context "when the verification_status is success" do
+          context "when the pseudo_branch_verification_status is success" do
             it "returns a static success image" do
               expect(subject).to include ">pact</"
               expect(subject).to include ">verified</"
             end
           end
 
-          context "when the verification_status is failed" do
-            let(:verification_status) { :failed }
+          context "when the pseudo_branch_verification_status is failed" do
+            let(:pseudo_branch_verification_status) { :failed }
 
             it "returns a static failed image" do
               expect(subject).to include ">pact</"
@@ -200,8 +200,8 @@ module PactBroker
             end
           end
 
-          context "when the verification_status is stale" do
-            let(:verification_status) { :stale }
+          context "when the pseudo_branch_verification_status is stale" do
+            let(:pseudo_branch_verification_status) { :stale }
 
             it "returns a static stale image" do
               expect(subject).to include ">pact</"
@@ -209,8 +209,8 @@ module PactBroker
             end
           end
 
-          context "when the verification_status is never" do
-            let(:verification_status) { :never }
+          context "when the pseudo_branch_verification_status is never" do
+            let(:pseudo_branch_verification_status) { :never }
 
             it "returns a static stale image" do
               expect(subject).to include ">pact</"

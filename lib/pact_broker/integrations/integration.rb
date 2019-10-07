@@ -1,5 +1,5 @@
 require 'pact_broker/db'
-require 'pact_broker/verifications/verification_status'
+require 'pact_broker/verifications/pseudo_branch_status'
 require 'pact_broker/domain/verification'
 
 module PactBroker
@@ -10,7 +10,7 @@ module PactBroker
       associate(:one_to_one, :latest_pact, :class => "PactBroker::Pacts::LatestPactPublications", key: [:consumer_id, :provider_id], primary_key: [:consumer_id, :provider_id])
 
       def verification_status_for_latest_pact
-        @verification_status_for_latest_pact ||= PactBroker::Verifications::Status.new(latest_pact, latest_pact&.latest_verification)
+        @verification_status_for_latest_pact ||= PactBroker::Verifications::PseudoBranchStatus.new(latest_pact, latest_pact&.latest_verification)
       end
 
       def latest_pact_or_verification_publication_date

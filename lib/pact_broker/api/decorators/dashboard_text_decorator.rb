@@ -41,7 +41,7 @@ module PactBroker
             index_item.provider_name,
             index_item.provider_version_number,
             index_item.latest_verification_latest_tags.collect(&:name).sort.join(", "),
-            index_item.verification_status.to_s
+            index_item.pseudo_branch_verification_status.to_s
           )
         end
       end

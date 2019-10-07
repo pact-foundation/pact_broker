@@ -1,4 +1,4 @@
-require 'pact_broker/verifications/verification_status'
+require 'pact_broker/verifications/pseudo_branch_status'
 require 'pact_broker/webhooks/status'
 
 module PactBroker
@@ -85,8 +85,8 @@ module PactBroker
         @last_webhook_execution_date ||= @triggered_webhooks.any? ? @triggered_webhooks.sort{|a, b| a.created_at <=> b.created_at }.last.created_at : nil
       end
 
-      def verification_status
-        @verification_status ||= PactBroker::Verifications::Status.new(@latest_pact, @latest_verification).to_sym
+      def pseudo_branch_verification_status
+        @pseudo_branch_verification_status ||= PactBroker::Verifications::PseudoBranchStatus.new(@latest_pact, @latest_verification).to_sym
       end
 
       def ever_verified?

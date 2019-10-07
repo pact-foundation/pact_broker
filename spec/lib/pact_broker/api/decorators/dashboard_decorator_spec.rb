@@ -19,7 +19,7 @@ module PactBroker
             consumer_version: consumer_version,
             last_webhook_execution_date: last_webhook_execution_date,
             webhook_status: 'blah',
-            verification_status: 'wiffle',
+            pseudo_branch_verification_status: 'wiffle',
             provider_version_number: provider_version.number,
             consumer_version_number: consumer_version.number,
             tag_names: ['prod'],
