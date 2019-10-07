@@ -23,58 +23,63 @@ module PactBroker
           .eager(:latest_triggered_webhooks)
           .eager(:webhooks)
 
-        # pactflow
-        rows = rows.consumer(options[:consumer_name]) if options[:consumer_name]
-        rows = rows.provider(options[:provider_name]) if options[:provider_name]
-
         if !options[:tags]
+          # server side rendered index page without tags
           rows = rows.where(consumer_version_tag_name: nil)
         else
+          # server side rendered index page with tags=true or tags[]=a&tags=[]b
           if options[:tags].is_a?(Array)
             rows = rows.where(consumer_version_tag_name: options[:tags]).or(consumer_version_tag_name: nil)
           end
           rows = rows.eager(:consumer_version_tags)
                       .eager(:provider_version_tags)
-
-            if !options[:dashboard] # pactflow
-              # The latest_verification_for_consumer_version_tag query is very slow when there is lots of data,
-              # and it is only used when calculating latest_verification_for_pseudo_branch,
-              # so only load it if we need it
-              rows = rows.eager(:latest_verification_for_consumer_version_tag)
-                          .eager(:latest_verification_for_consumer_and_provider)
-            end
-
-
+                      .eager(:latest_verification_for_consumer_version_tag)
+                      .eager(:latest_verification_for_consumer_and_provider)
         end
         rows = rows.all.group_by(&:pact_publication_id).values.collect{ | rows| Matrix::AggregatedRow.new(rows) }
 
 
 
         rows.sort.collect do | row |
-          # The concept of "stale" (the pact used to be verified but then it changed and we haven't got
-          # a new verification result yet) only really make sense if we're trying to summarise
-          # the state of an integration. Once we start showing multiple pacts for each
-          # integration (ie. the latest for each tag) then each pact version is either verified,
-          # or it's not verified.
-          # For backwards compatiblity with the existing UI, don't change the 'stale' concept for the OSS
-          # UI - just ensure we don't use it for the new dashboard endpoint with the consumer/provider specified.
-          latest_verification = if options[:dashboard] # pactflow
-            row.latest_verification_for_pact_version
-          else
-            row.latest_verification_for_pseudo_branch
-          end
-
           # TODO simplify. Do we really need 3 layers of abstraction?
           PactBroker::Domain::IndexItem.create(
             row.consumer,
             row.provider,
             row.pact,
             row.overall_latest?,
-            latest_verification,
+            row.latest_verification_for_pseudo_branch,
             row.webhooks,
             row.latest_triggered_webhooks,
             options[:tags] ? row.consumer_head_tag_names : [],
             options[:tags] ? row.provider_version_tags.select(&:latest?) : []
+          )
+        end
+      end
+
+      def self.find_index_items_for_api(consumer_name: nil, provider_name: nil, **ignored)
+        rows = PactBroker::Matrix::HeadRow
+          .eager(:consumer_version_tags)
+          .eager(:provider_version_tags)
+          .select_all_qualified
+
+        rows = rows.consumer(consumer_name) if consumer_name
+        rows = rows.provider(provider_name) if provider_name
+
+        rows = rows.all.group_by(&:pact_publication_id).values.collect{ | rows| Matrix::AggregatedRow.new(rows) }
+
+        rows.sort.collect do | row |
+          # TODO separate this model from IndexItem
+          # webhook status not currently displayed in Pactflow UI, so don't query for it.
+          PactBroker::Domain::IndexItem.create(
+            row.consumer,
+            row.provider,
+            row.pact,
+            row.overall_latest?,
+            row.latest_verification_for_pact_version,
+            [],
+            [],
+            row.consumer_head_tag_names,
+            row.provider_version_tags.select(&:latest?)
           )
         end
       end

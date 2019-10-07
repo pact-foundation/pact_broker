@@ -28,7 +28,7 @@ module PactBroker
         private
 
         def index_items
-          index_service.find_index_items(identifier_from_path.merge(tags: true, dashboard: true))
+          index_service.find_index_items_for_api(identifier_from_path)
         end
       end
     end

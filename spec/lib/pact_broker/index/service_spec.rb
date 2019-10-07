@@ -239,29 +239,43 @@ module PactBroker
             end
           end
 
-          context "with tags=false" do
-            let(:options) { { tags: false } }
+          context "with tags=nil" do
+            let(:options) { { tags: nil } }
 
             it "does not return the tags for the pacts" do
               expect(rows.last.tag_names.sort).to eq []
             end
-          end
 
-          context "with dashboard=true" do
-            let(:options) { { dashboard: true } }
-
-            it "returns the latest verification as nil as the pact version itself has not been verified" do
-              expect(rows.last.provider_version_number).to be nil
-            end
-          end
-
-          context "with dashboard=false" do
-            let(:options) { { } }
-
-            it "returns the latest of the feat-x and feat-y verifications because we are summarising the entire integration (backwards compat for OSS index)" do
+            it "returns the latest of the feat-x and feat-y verifications because we are summarising the entire integration" do
               expect(rows.last.consumer_version_number).to eq "4"
               expect(rows.last.provider_version_number).to eq "2"
             end
+          end
+        end
+      end
+
+      describe "find_index_items_for_api" do
+        before do
+          td.create_pact_with_hierarchy("Foo", "1", "Bar")
+            .create_consumer_version_tag("feat-x")
+            .create_verification(provider_version: "1", comment: "latest feat-x verif")
+            .create_consumer_version("2")
+            .create_consumer_version_tag("feat-y")
+            .create_pact
+            .create_verification(provider_version: "2", comment: "latest feat-y verif")
+            .create_consumer_version("3")
+            .create_consumer_version_tag("feat-x")
+            .create_consumer_version_tag("feat-y")
+            .create_pact
+            .create_consumer_version("4")
+            .create_pact
+        end
+
+        let(:rows) { subject.find_index_items_for_api(consumer_name: td.consumer.name, provider_name: td.provider.name) }
+
+        context "when the pact has not yet been verified" do
+          it "returns the latest verification as nil (unlike the pseudo branch code for the server side rendered UI)" do
+            expect(rows.last.provider_version_number).to be nil
           end
         end
       end

@@ -1,6 +1,12 @@
 # The time ordered list of pacts that belong to the same consumer/provider/tag
 # (or just consumer/provider) can be considered a pseudo branch.
 
+# The concept of "stale" (the pact used to be verified but then it changed and we haven't got
+# a new verification result yet) only really make sense if we're trying to summarise
+# the state of an integration or pseudo branch. Once we start showing multiple pacts for each
+# integration (ie. the latest for each tag) then each pact version is either verified,
+# or it's not verified.
+
 module PactBroker
   module Verifications
     class PseudoBranchStatus
