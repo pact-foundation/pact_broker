@@ -13,12 +13,17 @@ module PactBroker
       extend PactBroker::Services
       extend PactBroker::Logging
 
+      # This method provides data for both the OSS server side rendered index (with and without tags)
+      # and the Pactflow UI. It really needs to be broken into to separate methods, as it's getting too messy
+      # supporting both
+
       def self.find_index_items options = {}
         rows = PactBroker::Matrix::HeadRow
           .select_all_qualified
           .eager(:latest_triggered_webhooks)
           .eager(:webhooks)
 
+        # pactflow
         rows = rows.consumer(options[:consumer_name]) if options[:consumer_name]
         rows = rows.provider(options[:provider_name]) if options[:provider_name]
 
@@ -29,9 +34,17 @@ module PactBroker
             rows = rows.where(consumer_version_tag_name: options[:tags]).or(consumer_version_tag_name: nil)
           end
           rows = rows.eager(:consumer_version_tags)
-                .eager(:provider_version_tags)
-                .eager(:latest_verification_for_consumer_version_tag)
-                .eager(:latest_verification_for_consumer_and_provider)
+                      .eager(:provider_version_tags)
+
+            if !options[:dashboard] # pactflow
+              # The latest_verification_for_consumer_version_tag query is very slow when there is lots of data,
+              # and it is only used when calculating latest_verification_for_pseudo_branch,
+              # so only load it if we need it
+              rows = rows.eager(:latest_verification_for_consumer_version_tag)
+                          .eager(:latest_verification_for_consumer_and_provider)
+            end
+
+
         end
         rows = rows.all.group_by(&:pact_publication_id).values.collect{ | rows| Matrix::AggregatedRow.new(rows) }
 
@@ -45,7 +58,7 @@ module PactBroker
           # or it's not verified.
           # For backwards compatiblity with the existing UI, don't change the 'stale' concept for the OSS
           # UI - just ensure we don't use it for the new dashboard endpoint with the consumer/provider specified.
-          latest_verification = if options[:dashboard]
+          latest_verification = if options[:dashboard] # pactflow
             row.latest_verification_for_pact_version
           else
             row.latest_verification_for_pseudo_branch
