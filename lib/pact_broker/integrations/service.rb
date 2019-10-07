@@ -11,10 +11,19 @@ module PactBroker
       include PactBroker::Logging
 
       def self.find_all
+        # The only reason the pact_version needs to be loaded is that
+        # the Verification::PseudoBranchStatus uses it to determine if
+        # the pseudo branch is 'stale'.
+        # Because this is the status for a pact, and not a pseudo branch,
+        # the status can never be 'stale',
+        # so it would be better to create a Verification::PactStatus class
+        # that doesn't have the 'stale' logic in it.
+        # Then we can remove the eager loading of the pact_version
         PactBroker::Integrations::Integration
           .eager(:consumer)
           .eager(:provider)
-          .eager(latest_pact: :latest_verification)
+          .eager(latest_pact: [:latest_verification, :pact_version])
+          .eager(:latest_verification)
           .all
           .sort { | a, b| b.latest_pact_or_verification_publication_date <=> a.latest_pact_or_verification_publication_date }
       end

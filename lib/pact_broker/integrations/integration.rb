@@ -8,6 +8,7 @@ module PactBroker
       associate(:many_to_one, :consumer, :class => "PactBroker::Domain::Pacticipant", :key => :consumer_id, :primary_key => :id)
       associate(:many_to_one, :provider, :class => "PactBroker::Domain::Pacticipant", :key => :provider_id, :primary_key => :id)
       associate(:one_to_one, :latest_pact, :class => "PactBroker::Pacts::LatestPactPublications", key: [:consumer_id, :provider_id], primary_key: [:consumer_id, :provider_id])
+      associate(:one_to_one, :latest_verification, :class => "PactBroker::Verifications::LatestVerificationForConsumerAndProvider", key: [:consumer_id, :provider_id], primary_key: [:consumer_id, :provider_id])
 
       def verification_status_for_latest_pact
         @verification_status_for_latest_pact ||= PactBroker::Verifications::PseudoBranchStatus.new(latest_pact, latest_pact&.latest_verification)
@@ -18,7 +19,7 @@ module PactBroker
       end
 
       def latest_verification_publication_date
-        PactBroker::Domain::Verification.where(consumer_id: consumer_id, provider_id: provider_id).order(:id).last&.execution_date
+        latest_verification&.execution_date
       end
     end
   end

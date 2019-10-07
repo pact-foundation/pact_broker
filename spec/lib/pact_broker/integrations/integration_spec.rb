@@ -29,6 +29,11 @@ module PactBroker
         expect(Integration.first.verification_status_for_latest_pact).to be_instance_of(PactBroker::Verifications::PseudoBranchStatus)
       end
 
+      it "has a latest verification - this may not be the same as the latest verification for the latest pact" do
+        integration = Integration.eager(:latest_verification).all.first
+        expect(integration.latest_verification.provider_version_number).to eq "4"
+      end
+
       describe "latest_pact_or_verification_publication_date" do
         context "when the last publication is a verification" do
           it "returns the verification execution date" do
