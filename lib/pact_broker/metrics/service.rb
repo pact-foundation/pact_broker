@@ -34,6 +34,9 @@ module PactBroker
           pactVersions: {
             count: PactBroker::Pacts::PactVersion.count
           },
+          pactRevisions: {
+            counts: pact_revision_counts
+          },
           verificationResults: {
             count: PactBroker::Domain::Verification.count,
             first: format_date_time(PactBroker::Domain::Verification.order(:id).first.created_at),
@@ -58,6 +61,13 @@ module PactBroker
             count: PactBroker::Matrix::HeadRow.count
           }
         }
+      end
+
+      def pact_revision_counts
+        query = "select revision_count as number_of_revisions, count(consumer_version_id) as consumer_version_count
+          from (select consumer_version_id, count(*) as revision_count from pact_publications group by consumer_version_id) foo
+          group by revision_count"
+        PactBroker::Pacts::PactPublication.db[query].all.each_with_object({}) { |row, hash| hash[row[:number_of_revisions]] = row[:consumer_version_count] }
       end
     end
   end
