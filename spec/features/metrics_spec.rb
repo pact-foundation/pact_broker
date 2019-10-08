@@ -18,6 +18,6 @@ describe "get metrics" do
   end
 
   it "returns some metrics" do
-    expect(json_response_body).to be_instance_of(Hash)
+    expect(json_response_body[:pacticipants]).to be_instance_of(Hash)
   end
 end

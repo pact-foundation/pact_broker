@@ -8,6 +8,8 @@ require 'pact_broker/api/decorators/format_date_time'
 require 'pact_broker/webhooks/webhook'
 require 'pact_broker/webhooks/triggered_webhook'
 require 'pact_broker/webhooks/execution'
+require 'pact_broker/matrix/row'
+require 'pact_broker/matrix/head_row'
 
 module PactBroker
   module Metrics
@@ -48,6 +50,12 @@ module PactBroker
           },
           webhookExecutions: {
             count: PactBroker::Webhooks::Execution.count
+          },
+          matrix: {
+            count: PactBroker::Matrix::Row.count
+          },
+          headMatrix: {
+            count: PactBroker::Matrix::HeadRow.count
           }
         }
       end

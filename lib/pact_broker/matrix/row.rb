@@ -7,7 +7,6 @@ require 'pact_broker/verifications/latest_verification_for_consumer_and_provider
 
 module PactBroker
   module Matrix
-
     class Row < Sequel::Model(:matrix)
 
       # Used when using table_print to output query results
