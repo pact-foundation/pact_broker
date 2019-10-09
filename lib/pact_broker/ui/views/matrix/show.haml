@@ -149,9 +149,9 @@
           %td.verification-result{class: line.verification_status_class, "title": line.inherited_verification_message, "data-toggle": "tooltip"}
             %a{href: line.verification_status_url}
               - if options.all_rows_checked && line.number
-                = "#{line.verification_status} (number #{line.number})"
+                = "#{line.pseudo_branch_verification_status} (number #{line.number})"
               - else
-                = line.verification_status
+                = line.pseudo_branch_verification_status
 
   :javascript
     $(document).ready(function(){
