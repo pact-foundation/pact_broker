@@ -31,6 +31,15 @@
 
 Domain classes are found in `lib/pact_broker/domain`. Many of these classes are Sequel models, as the difference between the Sequel model and the functionality required for the domain logic is similar enough to share the class. Some classes separate the domain and database logic, as the concerns are too different. Where there is a separate database model, this will be kept in a module with the pluralized name of the model eg. `PactBroker::Webhooks`. Unfortunately, this sometimes makes it difficult to tell in the calling code whether you have a domain or a database model. I haven't worked out a clean way to handle this yet.
 
+### Domain terminology
+
+* `pacticipant` - an application that participates in a pact. A very bad pun which I deeply regret.
+* `pact` - this term is confusing and overloaded. It generally means a `pact publication` in the code.
+* `pact publication` - the resource that gets created when a PUT request is sent to the Pact Broker to /pacts/provider/PROVIDER/consumer/CONSUMER/version/VERSION.
+* `pact version` - the JSON contents of the pact publication. One pact version may belong to many pact publications. That is, if a pact publication with exactly the same contents is published twice, then a new
+pact publication resource will be created, but it will reuse the existing pact version.
+* `pseudo branch` - A time ordered list of pacts that are related to a particular tag. The most recent pact for each pseudo branch is a "head" pact.
+
 ### Tables
 * `pact_versions` - the JSON content of each UNIQUE pact document is stored in this table. The same content is likely to be published over and over again by the CI builds, so deduplicating the content saves us a lot of disk space. Once created, a row is never modified. Uniqueness is just done on string equality - no special pact logic. This means that pacts with randomly generated values or orders (most of pact-jvm pacts!) will get a new version record every time they publish.
 
