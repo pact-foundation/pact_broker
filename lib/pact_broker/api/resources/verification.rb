@@ -24,7 +24,12 @@ module PactBroker
         end
 
         def resource_exists?
-          !!verification
+          if identifier_from_path[:verification_number] == "all"
+            set_json_error_message("To see all the verifications for a pact, use the Matrix page")
+            false
+          else
+            !!verification
+          end
         end
 
         def to_json
