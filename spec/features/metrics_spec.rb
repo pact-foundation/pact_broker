@@ -18,6 +18,8 @@ describe "get metrics" do
   end
 
   it "returns some metrics" do
+    puts json_response_body
+    require 'pry'; pry(binding);
     expect(json_response_body[:pacticipants]).to be_instance_of(Hash)
   end
 end
