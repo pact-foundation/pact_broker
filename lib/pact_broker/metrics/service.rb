@@ -34,13 +34,19 @@ module PactBroker
           pactVersions: {
             count: PactBroker::Pacts::PactVersion.count
           },
-          pactRevisions: {
-            counts: pact_revision_counts
+          pactRevisionsPerConsumerVersion: {
+            distribution: pact_revision_counts
           },
           verificationResults: {
             count: PactBroker::Domain::Verification.count,
-            first: format_date_time(PactBroker::Domain::Verification.order(:id).first.created_at),
-            last: format_date_time(PactBroker::Domain::Verification.order(:id).last.created_at)
+            successCount: PactBroker::Domain::Verification.where(success: true).count,
+            failureCount: PactBroker::Domain::Verification.where(success: false).count,
+            distinctCount: PactBroker::Domain::Verification.distinct.select(:provider_version_id, :pact_version_id, :success).count,
+            first: format_date_time(PactBroker::Domain::Verification.order(:id).first&.created_at),
+            last: format_date_time(PactBroker::Domain::Verification.order(:id).last&.created_at),
+          },
+          verificationResultsPerPactVersion: {
+            distribution: verification_distribution
           },
           pacticipantVersions: {
             count: PactBroker::Domain::Version.count
@@ -66,8 +72,18 @@ module PactBroker
       def pact_revision_counts
         query = "select revision_count as number_of_revisions, count(consumer_version_id) as consumer_version_count
           from (select consumer_version_id, count(*) as revision_count from pact_publications group by consumer_version_id) foo
-          group by revision_count"
+          group by revision_count
+          order by 1"
         PactBroker::Pacts::PactPublication.db[query].all.each_with_object({}) { |row, hash| hash[row[:number_of_revisions]] = row[:consumer_version_count] }
+      end
+
+#
+      def verification_distribution
+        query = "select verification_count as number_of_verifications, count(*) as pact_version_count
+          from (select pact_version_id, count(*) as verification_count from verifications group by pact_version_id) foo
+          group by verification_count
+          order by 1"
+          PactBroker::Pacts::PactPublication.db[query].all.each_with_object({}) { |row, hash| hash[row[:number_of_verifications]] = row[:pact_version_count] }
       end
     end
   end
