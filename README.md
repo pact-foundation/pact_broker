@@ -8,7 +8,13 @@
 
 The Pact Broker is an application for sharing for consumer driven contracts and verification results. It is optimised for use with "pacts" (contracts created by the [Pact][pact-docs] framework), but can be used for any type of contract that can be serialized to JSON.
 
-**Why do I need one?**
+<br/>
+<a href="https:/pactflow.io/?utm_source=github&utm_campaign=pact_broker_intro"><img src="docs/images/Pactflow logo - black small.png"></a>
+<br/>
+
+You can try out a Pact Broker for free at <a href="https:/pactflow.io/?utm_source=github&utm_campaign=pact_broker_intro"/>pactflow.io</a>. Built by a group of core Pact maintainers, Pactflow is a fork of the OSS Pact Broker with extra goodies like an improved UI, field level verification results and federated login.
+
+**Why do I need a Pact Broker?**
 
 Contract testing is an alternative approach to traditional integration testing that gives you tests that are quicker to execute, and that are more maintainable at scale. One down side of the approach is that the important information that would be available all in one place at the end of an integration test suite execution (that is, the version numbers of all the applications that were tested together, and whether the tests passed or failed) is now spread out across many different builds. The Pact Broker is a tool that brings all this information back together again, and allows you to deploy with safety.
 
@@ -37,6 +43,7 @@ Features:
 * View diffs between Pact versions so you can tell what expectations have changed.
 * [Docker Pact Broker][docker]
 * A [CLI][cli] for encorporating the Pact workflow into your continuous integration process.
+
 
 ### How would I use the Pact Broker?
 
@@ -128,7 +135,7 @@ Use the HAL browser to view documentation as you browse.
 
 #### Hosted
 
-In a hurry? Hate having to run your own infrastructure? Check out the [Hosted Pact Broker][hosted] - it's fast, it's secure and it's free!
+In a hurry? Hate having to run your own infrastructure? Check out [pactflow.io][pactflow] - it's fast, it's secure and it's free to trial!
 
 #### Container solutions
 
@@ -161,7 +168,7 @@ Please read the [UPGRADING.md](UPGRADING.md) documentation before upgrading your
 [different-teams]: https://github.com/pact-foundation/pact-ruby/wiki/Using-pact-where-the-consumer-team-is-different-from-the-provider-team
 [docker]: https://hub.docker.com/r/dius/pact-broker
 [terraform]: https://github.com/nadnerb/terraform-pact-broker
-[hosted]: https://pact.dius.com.au/?utm_source=github&utm_campaign=GITHUB_BROKER&utm_medium=github
+[pactflow]: https:/pactflow.io/?utm_source=github&utm_campaign=pact_broker_usage
 [wiki]: https://github.com/pact-foundation/pact_broker/wiki
 [reverse-proxy-docs]: https://github.com/pact-foundation/pact_broker/wiki/Configuration#running-the-broker-behind-a-reverse-proxy
 [stackoverflow]: http://stackoverflow.com/questions/tagged/pact-broker
