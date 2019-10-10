@@ -172,3 +172,5 @@ Please read the [UPGRADING.md](UPGRADING.md) documentation before upgrading your
 [cli]: https://github.com/pact-foundation/pact-ruby-standalone/releases
 [travisyml]: https://github.com/pact-foundation/pact_broker/blob/master/.travis.yml
 [overview]: https://github.com/pact-foundation/pact_broker/wiki/Overview
+
+<img src="docs/images/Pactflow%20logo%20-%20black.svg" width="200"/>
