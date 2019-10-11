@@ -16,11 +16,15 @@ test:
     database: postgres
     username: postgres
     password: postgres
-    host: "localhost"
+    host: localhost
     port: "5433"
   mysql:
     <<: *default
     adapter: mysql2
+  docker_mysql:
+    <<: *default
+    adapter: mysql2
+    host: "192.168.0.9"
 
 development:
   default:
@@ -34,11 +38,15 @@ development:
     database: postgres
     username: postgres
     password: postgres
-    host: "localhost"
+    host: localhost
     port: "5432"
   mysql:
     <<: *default
     adapter: mysql2
+  docker_mysql:
+    <<: *default
+    adapter: mysql2
+    host: localhost
 
 production:
   default:
