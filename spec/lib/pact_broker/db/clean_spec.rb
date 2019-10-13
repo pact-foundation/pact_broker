@@ -26,6 +26,9 @@ module PactBroker
             .create_webhook_execution
             .create_deprecated_webhook_execution
             .create_verification(provider_version: "30")
+            .create_verification_webhook
+            .create_triggered_webhook
+            .create_webhook_execution
             .create_consumer_version("3")
             .create_pact
             .comment("keep")

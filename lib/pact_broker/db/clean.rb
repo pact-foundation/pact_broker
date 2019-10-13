@@ -14,7 +14,16 @@ module PactBroker
       end
 
       def call
-        db[:verifications].where(id: db[:head_matrix].select(:verification_id)).invert.delete
+        # TODO head matrix is the head for the consumer tags, not the provider tags.
+        # Work out how to keep the head verifications for the provider tags.
+        verification_ids = db[:verifications].where(id: db[:head_matrix].select(:verification_id)).invert.select(:verification_id)
+
+        triggered_webhook_ids = db[:triggered_webhooks].where(verification_id: verification_ids).select(:id)
+        db[:webhook_executions].where(triggered_webhook_id: triggered_webhook_ids).delete
+        db[:triggered_webhooks].where(id: triggered_webhook_ids).delete
+
+        verification_ids.delete
+
         pp_ids = db[:head_matrix].select(:pact_publication_id)
 
         triggered_webhook_ids = db[:triggered_webhooks].where(pact_publication_id: pp_ids).invert.select(:id)
