@@ -116,28 +116,20 @@ module PactBroker
 
         # The group with the nil provider_version_numbers will be the results of the left outer join
         # that don't have verifications, so we need to include them all.
-        remove_overwritten_revisions(lines).group_by{|line| group_by_columns.collect{|key| line.send(key) }}
+        lines.group_by{|line| group_by_columns.collect{|key| line.send(key) }}
           .values
           .collect{ | lines | lines.first.provider_version_number.nil? ? lines : lines.first }
           .flatten
       end
 
-      # It would be nicer to do this in the SQL, but it requires time that I don't have at the moment
-      def remove_overwritten_revisions lines
-        latest_revisions_keys = {}
-        latest_revisions = []
-        lines.each do | line |
-          key = "#{line.consumer_name}-#{line.provider_name}-#{line.consumer_version_number}"
-          if !latest_revisions_keys.key?(key) || latest_revisions_keys[key] == line.pact_revision_number
-            latest_revisions << line
-            latest_revisions_keys[key] ||= line.pact_revision_number
-          end
-        end
-        latest_revisions
-      end
-
       def query_matrix selectors, options
-        query = Row.select_all.matching_selectors(selectors)
+        query = Row
+        if options[:latestby]
+          query = query.where(pact_publication_id: Row.db[:latest_pact_publication_ids_for_consumer_versions].select(:pact_publication_id))
+        end
+
+        query = query.select_all.matching_selectors(selectors)
+
         query = query.limit(options[:limit]) if options[:limit]
         query
           .order_by_names_ascending_most_recent_first
