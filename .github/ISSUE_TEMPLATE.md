@@ -25,8 +25,8 @@ TBC
 
 ## Steps to reproduce
 
-Provide a repository, gist or reproducable code snippet so that we can test the problem.
+Provide a repository, gist or reproducible code snippet so that we can test the problem.
 
-## Relevent log files
+## Relevant log files
 
 Please ensure you set logging to `DEBUG` and attach any relevant log files here (or link from a gist).
