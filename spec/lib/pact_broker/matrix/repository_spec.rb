@@ -12,7 +12,7 @@ module PactBroker
       end
 
       def shorten_row row
-        "#{row[:consumer_name]}#{row[:consumer_version_number]} #{row[:provider_name]}#{row[:provider_version_number] || '?'} n#{row[:verification_number] || '?'}"
+        "#{row.consumer_name}#{row.consumer_version_number} #{row.provider_name}#{row.provider_version_number || '?'} n#{row.verification_number || '?'}"
       end
 
       def shorten_rows rows
@@ -86,7 +86,7 @@ module PactBroker
             end
           end
 
-          context "when latestby=cvp" do
+          context "when latestby=cvp", can_i_deploy: true do
             let(:latestby) { 'cvp' }
 
             it "returns the latest row for each provider for each consumer version" do
@@ -132,7 +132,7 @@ module PactBroker
             end
           end
 
-          context "when latestby=cvp" do
+          context "when latestby=cvp", can_i_deploy: true do
             let(:latestby) { 'cvp' }
 
             it "returns the latest verifications for each provider for the specified consumer version" do
@@ -267,7 +267,7 @@ module PactBroker
 
             it "only includes the row for the latest revision" do
               expect(subject.size).to eq 1
-              expect(subject).to contain_hash(pact_revision_number: 3)
+              expect(subject.find { | s | s.pact_revision_number == 3} ).to_not be nil
             end
           end
 
@@ -276,7 +276,7 @@ module PactBroker
 
             it "only includes the row for the latest revision" do
               expect(subject.size).to eq 1
-              expect(subject).to contain_hash(pact_revision_number: 3)
+              expect(subject.find { | s | s.pact_revision_number == 3} ).to_not be nil
             end
           end
 
@@ -800,12 +800,12 @@ module PactBroker
 
         it "returns the latest revision of each pact" do
           expect(subject.count).to eq 2
-          expect(subject[0][:consumer_version_number]).to eq "2.0.0"
-          expect(subject[1][:consumer_version_number]).to eq "1.2.3"
+          expect(subject[0].consumer_version_number).to eq "2.0.0"
+          expect(subject[1].consumer_version_number).to eq "1.2.3"
         end
 
         it "returns the latest verification for the pact version" do
-          expect(subject[1][:provider_version_number]).to eq "4.5.6"
+          expect(subject[1].provider_version_number).to eq "4.5.6"
         end
 
         it "doesn't matter which way you order the pacticipant names" do

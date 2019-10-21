@@ -109,10 +109,10 @@ module PactBroker
           end
 
           it "returns the row" do
-            expect(subject[:consumer_name]).to eq 'consumer'
-            expect(subject[:provider_name]).to eq 'provider'
-            expect(subject[:consumer_version_number]).to eq '1'
-            expect(subject[:provider_version_number]).to eq '2'
+            expect(subject.consumer_name).to eq 'consumer'
+            expect(subject.provider_name).to eq 'provider'
+            expect(subject.consumer_version_number).to eq '1'
+            expect(subject.provider_version_number).to eq '2'
           end
         end
 

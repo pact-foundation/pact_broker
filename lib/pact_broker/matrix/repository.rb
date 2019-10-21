@@ -1,5 +1,6 @@
 require 'pact_broker/repositories/helpers'
 require 'pact_broker/matrix/row'
+require 'pact_broker/matrix/quick_row'
 require 'pact_broker/matrix/head_row'
 require 'pact_broker/error'
 require 'pact_broker/matrix/query_results'
@@ -80,7 +81,7 @@ module PactBroker
       # If two or more are specified, just return the integrations that involve the specified pacticipants
       def find_integrations_for_specified_selectors(resolved_specified_selectors)
         specified_pacticipant_names = resolved_specified_selectors.collect(&:pacticipant_name)
-        Row
+        QuickRow
           .select(:consumer_name, :consumer_id, :provider_name, :provider_id)
           .matching_selectors(resolved_specified_selectors)
           .distinct
@@ -123,13 +124,8 @@ module PactBroker
       end
 
       def query_matrix selectors, options
-        query = Row
-        if options[:latestby]
-          query = query.where(pact_publication_id: Row.db[:latest_pact_publication_ids_for_consumer_versions].select(:pact_publication_id))
-        end
-
+        query = options[:latestby] ? QuickRow.eager_all_the_things : Row
         query = query.select_all.matching_selectors(selectors)
-
         query = query.limit(options[:limit]) if options[:limit]
         query
           .order_by_names_ascending_most_recent_first
