@@ -1,3 +1,48 @@
+<a name="v2.39.0"></a>
+### v2.39.0 (2019-10-21)
+
+
+#### Features
+
+* **matrix**
+  * optimise query for can-i-deploy, again	 ([78b8a5d5](/../../commit/78b8a5d5))
+  * handle overwritten revisions in database rather than code	 ([1459b46a](/../../commit/1459b46a))
+
+* **clean**
+  * allow date to be specified for data to clean and return counts of deleted and kept rows	 ([29dcbacd](/../../commit/29dcbacd))
+
+* update db clean to remove webhooks triggered by verifications	 ([f38eeaea](/../../commit/f38eeaea))
+* add revisions per consumer version and verifications per pact version to metrics	 ([f764fbca](/../../commit/f764fbca))
+* show more helpful error message when someone tries to get /all verifications for a pact	 ([bea59518](/../../commit/bea59518))
+* add missing HAL docs for various relations and correct test that should have identified their absence	 ([a057427c](/../../commit/a057427c))
+* add can-i-deploy endpoint to expose a simplified interface to the /matrix resource that accepts the same parameters as the can-i-deploy CLI.	 ([02443f39](/../../commit/02443f39))
+* add 'pacts for verification' endpoint (#308)	 ([31fb8aa7](/../../commit/31fb8aa7))
+
+* **metrics**
+  * add revision count	 ([4369f227](/../../commit/4369f227))
+  * add matrix and head matrix row counts	 ([5fb705ec](/../../commit/5fb705ec))
+
+* **dashboard api**
+  * eager load the pact_version	 ([b6b5c900](/../../commit/b6b5c900))
+
+* **integrations**
+  * sort by integration with most recent activity first	 ([35bdbb92](/../../commit/35bdbb92))
+  * add verification status to integrations endpoint	 ([437ba769](/../../commit/437ba769))
+
+
+#### Bug Fixes
+
+* typos on ISSUE_TEMPLATE (#311)	 ([a10b4792](/../../commit/a10b4792))
+* add endpoints to get latest verification for latest pact	 ([73413727](/../../commit/73413727))
+* support application/vnd.pactbrokerextended.v1+json for latest pact resource	 ([476ff595](/../../commit/476ff595))
+
+* **matrix**
+  * undefined method	 ([b365c64b](/../../commit/b365c64b))
+
+* **dashboard api**
+  * remove expensive queries for unused data	 ([07206559](/../../commit/07206559))
+
+
 <a name="v2.38.1"></a>
 ### v2.38.1 (2019-09-23)
 
