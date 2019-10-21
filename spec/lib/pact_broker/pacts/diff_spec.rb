@@ -59,8 +59,8 @@ module PactBroker
           subject { Diff.new.process(pact_params.merge(base_url: 'http://example.org'), comparison_pact_params) }
 
           it "compares the two pacts" do
-            expect(subject).to include "Pact between Consumer (v3) and Provider"
-            expect(subject).to include "Pact between Consumer (v4) and Provider"
+            expect(subject).to include "Pact between Consumer (3) and Provider"
+            expect(subject).to include "Pact between Consumer (4) and Provider"
           end
 
           it "includes a link to the comparison pact", pending: true do

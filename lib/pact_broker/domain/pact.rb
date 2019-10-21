@@ -47,7 +47,7 @@ module PactBroker
       end
 
       def name
-        "Pact between #{consumer.name} (v#{consumer_version_number}) and #{provider.name}"
+        "Pact between #{consumer.name} (#{consumer_version_number}) and #{provider.name}"
       end
 
       def version_and_updated_date

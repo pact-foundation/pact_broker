@@ -52,21 +52,21 @@ module PactBroker
             let(:pseudo_branch_verification_status) { :stale }
             its(:pseudo_branch_verification_status) { is_expected.to eq "warning" }
             its(:warning?) { is_expected.to be true }
-            its(:verification_tooltip) { is_expected.to eq "Pact has changed since last successful verification by Foo (v4.5.6)" }
+            its(:verification_tooltip) { is_expected.to eq "Pact has changed since last successful verification by Foo (4.5.6)" }
           end
 
           context "when the pact has not changed since the last successful verification" do
             let(:pseudo_branch_verification_status) { :success }
             its(:pseudo_branch_verification_status) { is_expected.to eq "success" }
             its(:warning?) { is_expected.to be false }
-            its(:verification_tooltip) { is_expected.to eq "Successfully verified by Foo (v4.5.6)" }
+            its(:verification_tooltip) { is_expected.to eq "Successfully verified by Foo (4.5.6)" }
           end
 
           context "when the pact verification failed" do
             let(:pseudo_branch_verification_status) { :failed }
             its(:pseudo_branch_verification_status) { is_expected.to eq "danger" }
             its(:warning?) { is_expected.to be false }
-            its(:verification_tooltip) { is_expected.to eq "Verification by Foo (v4.5.6) failed" }
+            its(:verification_tooltip) { is_expected.to eq "Verification by Foo (4.5.6) failed" }
           end
         end
 
