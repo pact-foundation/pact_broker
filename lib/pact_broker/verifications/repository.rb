@@ -101,19 +101,27 @@ module PactBroker
       end
 
       def find_latest_verification_for_tags consumer_name, provider_name, consumer_version_tag, provider_version_tag
-        view_name = PactBroker::Verifications::AllVerifications.table_name
-        query = PactBroker::Verifications::AllVerifications
+        view_name = PactBroker::Domain::Verification.table_name
+        consumer = pacticipant_repository.find_by_name(consumer_name)
+        provider = pacticipant_repository.find_by_name(provider_name)
+
+        consumer_tag_filter = PactBroker::Repositories::Helpers.name_like(Sequel.qualify(:consumer_tags, :name), consumer_version_tag)
+        provider_tag_filter = PactBroker::Repositories::Helpers.name_like(Sequel.qualify(:provider_tags, :name), provider_version_tag)
+
+        query = PactBroker::Domain::Verification
           .select_all_qualified
-          .join(:versions, {Sequel[:provider_versions][:id] => Sequel[view_name][:provider_version_id]}, {table_alias: :provider_versions})
-          .join(:latest_pact_publications_by_consumer_versions, { Sequel[view_name][:pact_version_id] => Sequel[:latest_pact_publications_by_consumer_versions][:pact_version_id] })
-          .consumer(consumer_name)
-          .provider(provider_name)
-          .tag(consumer_version_tag)
-          .provider_version_tag(provider_version_tag)
+          .join(:versions, { Sequel[:provider_versions][:id] => Sequel[view_name][:provider_version_id] }, { table_alias: :provider_versions })
+          .join(:latest_verification_id_for_pact_version_and_provider_version, { Sequel[:lv][:verification_id] => Sequel[view_name][:id] }, { table_alias: :lv })
+          .join(:latest_pact_publication_ids_for_consumer_versions, { Sequel[view_name][:pact_version_id] => Sequel[:lp][:pact_version_id] }, { table_alias: :lp })
+          .join(:versions, { Sequel[:consumer_versions][:id] => Sequel[:lp][:consumer_version_id] }, { table_alias: :consumer_versions })
+          .join(:tags, { Sequel[:consumer_tags][:version_id] => Sequel[:lp][:consumer_version_id]}, { table_alias: :consumer_tags })
+          .join(:tags, { Sequel[:provider_tags][:version_id] => Sequel[view_name][:provider_version_id]}, { table_alias: :provider_tags })
+          .where(consumer: consumer, provider: provider)
+          .where(consumer_tag_filter)
+          .where(provider_tag_filter)
 
         query.reverse_order(
-          Sequel[:latest_pact_publications_by_consumer_versions][:consumer_version_order],
-          Sequel[:latest_pact_publications_by_consumer_versions][:revision_number],
+          Sequel[:consumer_versions][:order],
           Sequel[:provider_versions][:order],
           Sequel[view_name][:execution_date]
         ).limit(1).single_record

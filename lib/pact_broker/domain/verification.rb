@@ -58,12 +58,6 @@ module PactBroker
             .left_outer_join(:tags, {version_id: :consumer_version_id})
             .where(Sequel.qualify(:tags, :name) => nil)
         end
-
-        def provider_version_tag tag_name
-          filter = name_like(Sequel.qualify(:ptags, :name), tag_name)
-          join_params = { Sequel[:ptags][:version_id] => Sequel[model.table_name][:provider_version_id] }
-          join(:tags, join_params, {table_alias: :ptags}).where(filter)
-        end
       end
 
       def pact_version_sha
