@@ -1,22 +1,8 @@
+require_relative '../ddl_statements'
+
 Sequel.migration do
   up do
-    # The latest verification id for each consumer version tag
-    # This is not the latest verification for the latest pact with a given tag,
-    # this is the latest verification for any pact with the tag
-    create_view(:latest_verification_ids_for_consumer_version_tags,
-      "select
-        pv.pacticipant_id as provider_id,
-        lpp.consumer_id,
-        t.name as consumer_version_tag_name,
-        max(v.id) as latest_verification_id
-      from verifications v
-      join latest_pact_publications_by_consumer_versions lpp
-        on v.pact_version_id = lpp.pact_version_id
-      join tags t
-        on lpp.consumer_version_id = t.version_id
-      join versions pv
-        on v.provider_version_id = pv.id
-      group by pv.pacticipant_id, lpp.consumer_id, t.name")
+    create_view(:latest_verification_ids_for_consumer_version_tags, LATEST_VERIFICATION_IDS_FOR_CONSUMER_VERSION_TAGS_V1)
 
     # The most recent verification for each consumer/consumer version tag/provider
     latest_verifications = from(:verifications)
