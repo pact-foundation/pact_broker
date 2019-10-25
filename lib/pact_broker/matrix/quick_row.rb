@@ -204,7 +204,7 @@ module PactBroker
       end
 
       def verification_executed_at
-        verification.execution_date
+        verification&.execution_date
       end
 
       # Add logic for ignoring case

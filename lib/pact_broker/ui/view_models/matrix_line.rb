@@ -17,7 +17,7 @@ module PactBroker
         end
 
         def provider_name
-          @line[:provider_name]
+          @line.provider_name
         end
 
         def provider_name_url
@@ -25,7 +25,7 @@ module PactBroker
         end
 
         def consumer_name
-          @line[:consumer_name]
+          @line.consumer_name
         end
 
         def consumer_name_url
@@ -33,24 +33,24 @@ module PactBroker
         end
 
         def pact_version_sha
-          @line[:pact_version_sha]
+          @line.pact_version_sha
         end
 
         # verification number, used in verification_url method
         def number
-          @line[:verification_number]
+          @line.verification_number
         end
 
         def pact_revision_number
-          @line[:pact_revision_number]
+          @line.pact_revision_number
         end
 
         def consumer_name
-          @line[:consumer_name]
+          @line.consumer_name
         end
 
         def consumer_version_number
-          @line[:consumer_version_number]
+          @line.consumer_version_number
         end
 
         def display_consumer_version_number
@@ -63,15 +63,15 @@ module PactBroker
         end
 
         def consumer_version_order
-          @line[:consumer_version_order]
+          @line.consumer_version_order
         end
 
         def provider_name
-          @line[:provider_name]
+          @line.provider_name
         end
 
         def provider_version_number
-          @line[:provider_version_number]
+          @line.provider_version_number
         end
 
         def display_provider_version_number
@@ -79,7 +79,7 @@ module PactBroker
         end
 
         def provider_version_order
-          @line[:provider_version_order]
+          @line.provider_version_order
         end
 
         def provider_version_number_url
@@ -88,39 +88,39 @@ module PactBroker
         end
 
         def provider_version_order
-          if @line[:verification_executed_at]
-            @line[:verification_executed_at].to_time.to_i
+          if @line.verification_executed_at
+            @line.verification_executed_at.to_time.to_i
           else
             0
           end
         end
 
         def latest_consumer_version_tags
-          @line[:consumer_version_tags]
-            .select{ | tag | tag[:latest] }
+          @line.consumer_version_tags
+            .select{ | tag | tag.latest }
             .collect{ | tag | MatrixTag.new(tag.to_hash.merge(pacticipant_name: consumer_name, version_number: consumer_version_number)) }
         end
 
         def other_consumer_version_tags
-          @line[:consumer_version_tags]
-            .select{ | tag | !tag[:latest] }
+          @line.consumer_version_tags
+            .select{ | tag | !tag.latest }
             .collect{ | tag | MatrixTag.new(tag.to_hash.merge(pacticipant_name: consumer_name, version_number: consumer_version_number)) }
         end
 
         def latest_provider_version_tags
-          @line[:provider_version_tags]
-            .select{ | tag | tag[:latest] }
+          @line.provider_version_tags
+            .select{ | tag | tag.latest }
             .collect{ | tag | MatrixTag.new(tag.to_hash.merge(pacticipant_name: provider_name, version_number: provider_version_number)) }
         end
 
         def other_provider_version_tags
-          @line[:provider_version_tags]
-            .select{ | tag | !tag[:latest] }
+          @line.provider_version_tags
+            .select{ | tag | !tag.latest }
             .collect{ | tag | MatrixTag.new(tag.to_hash.merge(pacticipant_name: provider_name, version_number: provider_version_number)) }
         end
 
         def orderable_fields
-          [consumer_name, consumer_version_order, pact_revision_number, provider_name, @line[:verification_id]]
+          [consumer_name, consumer_version_order, pact_revision_number, provider_name, @line.verification_id]
         end
 
         def <=> other
@@ -128,12 +128,12 @@ module PactBroker
         end
 
         def pseudo_branch_verification_status
-          if @line[:verification_executed_at]
-            DateHelper.distance_of_time_in_words(@line[:verification_executed_at], DateTime.now) + " ago"
+          if @line.verification_executed_at
+            DateHelper.distance_of_time_in_words(@line.verification_executed_at, DateTime.now) + " ago"
           else
             ''
           end
-          # case @line[:success]
+          # case @line.success
           #   when true then "Verified"
           #   when false then "Failed"
           #   else ''
@@ -145,7 +145,7 @@ module PactBroker
         end
 
         def pact_publication_date
-          relative_date(@line[:pact_created_at])
+          relative_date(@line.pact_created_at)
         end
 
         def pact_publication_date_url
@@ -157,11 +157,11 @@ module PactBroker
         end
 
         def pact_published_order
-          @line[:pact_created_at].to_time.to_i
+          @line.pact_created_at.to_time.to_i
         end
 
         def verification_status_class
-          case @line[:success]
+          case @line.success
             when true then 'success'
             when false then 'danger'
             else ''
@@ -177,7 +177,7 @@ module PactBroker
         end
 
         def inherited_verification_message
-          if @line[:verification_executed_at] && @line[:pact_created_at] > @line[:verification_executed_at]
+          if @line.verification_executed_at && @line.pact_created_at > @line.verification_executed_at
             "The verification date is before the pact publication date because this verification has been inherited from a previously verified pact with identical content."
           end
         end
