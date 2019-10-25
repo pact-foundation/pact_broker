@@ -1,3 +1,27 @@
+<a name="v2.40.0"></a>
+### v2.40.0 (2019-10-26)
+
+
+#### Features
+
+* **matrix**
+  * default page to showing 'latest by consumer version and provider' as it is much quicker and less confusing.	 ([dd879250](/../../commit/dd879250))
+
+* optimise query to find latest verification for consumer version tag	 ([301b30ca](/../../commit/301b30ca))
+
+* **matrix badge**
+  * optimise database query	 ([2b7f8e23](/../../commit/2b7f8e23))
+
+
+#### Bug Fixes
+
+* **matrix**
+  * exceptions on matrix page due to recent query optimisation	 ([3c504ba5](/../../commit/3c504ba5))
+
+* **frontend**
+  * remove 'v' prefix on versions during render (#313)	 ([e109a8cd](/../../commit/e109a8cd))
+
+
 <a name="v2.39.0"></a>
 ### v2.39.0 (2019-10-21)
 
