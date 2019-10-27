@@ -12,14 +12,7 @@ Sequel.migration do
 
     # Latest consumer version order for consumer/provider
     # Recreate latest_pact_publication_ids_for_consumer_versions view
-    lpp = :latest_pact_publication_ids_for_consumer_versions
-    latest_pact_consumer_version_orders = from(lpp).select_group(
-        Sequel[lpp][:provider_id],
-        Sequel[:cv][:pacticipant_id].as(:consumer_id))
-      .select_append{ max(order).as(latest_consumer_version_order) }
-      .join(:versions, { Sequel[lpp][:consumer_version_id] => Sequel[:cv][:id] }, { table_alias: :cv })
-
-    create_or_replace_view(:latest_pact_consumer_version_orders, latest_pact_consumer_version_orders)
+    create_or_replace_view(:latest_pact_consumer_version_orders, latest_pact_consumer_version_orders_v2(self))
   end
 
   down do
