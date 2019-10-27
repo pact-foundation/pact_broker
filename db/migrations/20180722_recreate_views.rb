@@ -35,9 +35,6 @@ Sequel.migration do
         )
 
     create_or_replace_view(:latest_pact_consumer_version_orders,
-      "select provider_id, consumer_id, max(consumer_version_order) as latest_consumer_version_order
-      from all_pact_publications
-      group by provider_id, consumer_id"
-    )
+      latest_pact_consumer_version_orders_v1(self))
   end
 end
