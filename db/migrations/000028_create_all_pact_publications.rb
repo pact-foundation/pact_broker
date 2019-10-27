@@ -23,6 +23,7 @@ Sequel.migration do
 
     # Latest pact_publication (revision) for each provider/consumer version
     # updated in 20180519_recreate_views.rb
+    # latest_pact_publications_by_consumer_versions_v1
     create_view(:latest_pact_publications_by_consumer_versions,
       "select app.*
       from all_pact_publications app

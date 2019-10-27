@@ -1,14 +1,10 @@
+require_relative '../ddl_statements'
+
 Sequel.migration do
   up do
     # Latest pact_publication details for each provider/consumer version
     create_or_replace_view(:latest_pact_publications_by_consumer_versions,
-      "select app.*
-      from latest_pact_publication_ids_for_consumer_versions lpp
-      inner join all_pact_publications app
-      on lpp.consumer_version_id = app.consumer_version_id
-      and lpp.pact_publication_id = app.id
-      and lpp.provider_id = app.provider_id"
-    )
+      latest_pact_publications_by_consumer_versions_v2(self))
 
     # Latest consumer version order for consumer/provider
     # Recreate latest_pact_publication_ids_for_consumer_versions view
@@ -17,6 +13,7 @@ Sequel.migration do
 
   down do
     # Latest pact_publication details for each provider/consumer version
+    # latest_pact_publications_by_consumer_versions_v1
     create_or_replace_view(:latest_pact_publications_by_consumer_versions,
       "select app.*
       from all_pact_publications app
