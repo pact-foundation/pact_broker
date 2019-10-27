@@ -6,15 +6,7 @@ Sequel.migration do
     pp = :pact_publications
     # For each consumer_id/provider_id/tag_name, the version order of the latest version that has a pact
     create_or_replace_view(:latest_tagged_pact_consumer_version_orders,
-      from(:pact_publications)
-        .select_group(
-          Sequel[pp][:provider_id],
-          Sequel[:cv][:pacticipant_id].as(:consumer_id),
-          Sequel[:t][:name].as(:tag_name))
-        .select_append{ max(order).as(latest_consumer_version_order) }
-        .join(:versions, { Sequel[pp][:consumer_version_id] => Sequel[:cv][:id] }, { table_alias: :cv} )
-        .join(:tags, { Sequel[:t][:version_id] => Sequel[pp][:consumer_version_id] }, { table_alias: :t })
-    )
+      latest_tagged_pact_consumer_version_orders_v2(self))
 
     # Add provider_version_order to original definition
     # The most recent verification for each pact_version
