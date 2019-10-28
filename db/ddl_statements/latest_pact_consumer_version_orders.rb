@@ -1,3 +1,6 @@
+# The consumer id, provider id, and consumer version order
+# for the latest consumer version that has a pact with that provider.
+
 def latest_pact_consumer_version_orders_v1(connection = nil)
   "select provider_id, consumer_id, max(consumer_version_order) as latest_consumer_version_order
   from all_pact_publications
