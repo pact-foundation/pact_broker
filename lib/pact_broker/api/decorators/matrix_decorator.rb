@@ -52,14 +52,15 @@ module PactBroker
             provider = OpenStruct.new(name: line.provider_name)
             consumer = OpenStruct.new(name: line.consumer_name)
             consumer_version = OpenStruct.new(number: line.consumer_version_number, pacticipant: consumer)
-            line_hash(consumer, provider, consumer_version, line, base_url)
+            provider_version = line.provider_version_number ? OpenStruct.new(number: line.provider_version_number, pacticipant: provider) : nil
+            line_hash(consumer, provider, consumer_version, provider_version, line, base_url)
           end
         end
 
-        def line_hash(consumer, provider, consumer_version, line, base_url)
+        def line_hash(consumer, provider, consumer_version, provider_version, line, base_url)
           {
             consumer: consumer_hash(line, consumer, consumer_version, base_url),
-            provider: provider_hash(line, provider, base_url),
+            provider: provider_hash(line, provider, provider_version, base_url),
             pact: pact_hash(line, base_url),
             verificationResult: verification_hash(line, base_url)
           }
@@ -74,7 +75,8 @@ module PactBroker
                 self: {
                   href: version_url(base_url, consumer_version)
                 }
-              }
+              },
+              tags: tags(line.consumer_version_tags)
             },
             _links: {
               self: {
@@ -84,7 +86,16 @@ module PactBroker
           }
         end
 
-        def provider_hash(line, provider, base_url)
+        def tags(tags)
+          tags.collect do | tag |
+            {
+              name: tag.name,
+              latest: tag.latest?
+            }
+          end
+        end
+
+        def provider_hash(line, provider, provider_version, base_url)
           hash = {
             name: line.provider_name,
             version: nil,
@@ -96,7 +107,15 @@ module PactBroker
           }
 
           if !line.provider_version_number.nil?
-            hash[:version] = { number: line.provider_version_number }
+            hash[:version] = {
+              number: line.provider_version_number,
+              _links: {
+                self: {
+                  href: version_url(base_url, provider_version)
+                }
+              },
+              tags: tags(line.provider_version_tags)
+            }
           end
 
           hash

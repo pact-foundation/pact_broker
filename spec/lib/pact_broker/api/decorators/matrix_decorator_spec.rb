@@ -16,6 +16,8 @@ module PactBroker
               {
                 consumer_name: "Consumer",
                 consumer_version_number: "1.0.0",
+                consumer_version_tags: consumer_version_tags,
+                provider_version_tags: provider_version_tags,
                 pact_version_sha: "1234",
                 pact_created_at: pact_created_at,
                 provider_version_number: "4.5.6",
@@ -33,6 +35,7 @@ module PactBroker
               {
                 consumer_name: "Consumer",
                 consumer_version_number: "1.0.0",
+                consumer_version_tags: [],
                 pact_version_sha: "1234",
                 pact_created_at: pact_created_at,
                 provider_version_number: nil,
@@ -59,7 +62,14 @@ module PactBroker
                   self: {
                     href: 'http://example.org/pacticipants/Consumer/versions/1.0.0'
                   }
-                }
+                },
+                tags: [
+                  {
+                    name: 'prod',
+                    latest: true
+
+                  }
+                ]
               }
             }
           end
@@ -73,7 +83,19 @@ module PactBroker
                 }
               },
               version: {
-                number: '4.5.6'
+                number: '4.5.6',
+                _links: {
+                  self: {
+                    href: 'http://example.org/pacticipants/Provider/versions/4.5.6'
+                  }
+                },
+                tags: [
+                  {
+                    name: 'master',
+                    latest: false
+                  }
+                ]
+
               }
             }
           end
@@ -99,6 +121,18 @@ module PactBroker
                 }
               }
             }
+          end
+
+          let(:consumer_version_tags) do
+            [
+              double('tag', name: 'prod', latest?: true)
+            ]
+          end
+
+          let(:provider_version_tags) do
+            [
+              double('tag', name: 'master', latest?: false)
+            ]
           end
 
           let(:query_results){ PactBroker::Matrix::QueryResultsWithDeploymentStatusSummary.new([row_1, row_2], selectors, options, resolved_selectors, integrations, deployment_status_summary)}
