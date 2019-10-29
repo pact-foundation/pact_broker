@@ -12,5 +12,5 @@ def latest_pact_consumer_version_orders_v2(connection = nil)
   connection.from(view)
     .select_group(:provider_id, :consumer_id)
     .select_append{ max(order).as(latest_consumer_version_order) }
-    .join(:versions, { Sequel[:lp][:consumer_version_id] => Sequel[:cv][:id]}, { table_alias: :cv} )
+    .join(:versions, { Sequel[:lp][:consumer_version_id] => Sequel[:cv][:id]}, { table_alias: :cv } )
 end
