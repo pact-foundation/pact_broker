@@ -41,15 +41,15 @@ module PactBroker
       .join(:versions, CONSUMER_VERSION_JOIN, { table_alias: :cv })
       .left_outer_join(:versions, PROVIDER_VERSION_JOIN, { table_alias: :pv } )
 
-    ALIASED_QUERY = Sequel.as(RAW_QUERY, :smart_rows)
+    ALIASED_QUERY = Sequel.as(RAW_QUERY, :quick_rows)
 
     class QuickRow < Sequel::Model(ALIASED_QUERY)
-      CONSUMER_ID = Sequel[:smart_rows][:consumer_id]
-      PROVIDER_ID = Sequel[:smart_rows][:provider_id]
-      CONSUMER_VERSION_ID = Sequel[:smart_rows][:consumer_version_id]
-      PROVIDER_VERSION_ID = Sequel[:smart_rows][:provider_version_id]
-      PACT_PUBLICATION_ID = Sequel[:smart_rows][:pact_publication_id]
-      VERIFICATION_ID = Sequel[:smart_rows][:verification_id]
+      CONSUMER_ID = Sequel[:quick_rows][:consumer_id]
+      PROVIDER_ID = Sequel[:quick_rows][:provider_id]
+      CONSUMER_VERSION_ID = Sequel[:quick_rows][:consumer_version_id]
+      PROVIDER_VERSION_ID = Sequel[:quick_rows][:provider_version_id]
+      PACT_PUBLICATION_ID = Sequel[:quick_rows][:pact_publication_id]
+      VERIFICATION_ID = Sequel[:quick_rows][:verification_id]
 
       associate(:many_to_one, :pact_publication, :class => "PactBroker::Pacts::PactPublication", :key => :pact_publication_id, :primary_key => :id)
       associate(:many_to_one, :provider, :class => "PactBroker::Domain::Pacticipant", :key => :provider_id, :primary_key => :id)
