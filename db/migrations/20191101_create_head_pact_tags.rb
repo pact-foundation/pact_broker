@@ -1,3 +1,5 @@
+require_relative '../ddl_statements'
+
 Sequel.migration do
   up do
     create_view(:head_pact_tags, head_pact_tags_v1(self))
