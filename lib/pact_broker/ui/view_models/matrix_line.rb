@@ -8,7 +8,6 @@ module PactBroker
   module UI
     module ViewDomain
       class MatrixLine
-
         include PactBroker::Api::PactBrokerUrls
 
         def initialize line
@@ -45,10 +44,6 @@ module PactBroker
           @line.pact_revision_number
         end
 
-        def consumer_name
-          @line.consumer_name
-        end
-
         def consumer_version_number
           @line.consumer_version_number
         end
@@ -66,20 +61,12 @@ module PactBroker
           @line.consumer_version_order
         end
 
-        def provider_name
-          @line.provider_name
-        end
-
         def provider_version_number
           @line.provider_version_number
         end
 
         def display_provider_version_number
           PactBroker::Versions::AbbreviateNumber.call(provider_version_number)
-        end
-
-        def provider_version_order
-          @line.provider_version_order
         end
 
         def provider_version_number_url
