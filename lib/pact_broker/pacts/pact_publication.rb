@@ -1,6 +1,8 @@
 require 'pact_broker/domain/pact'
 require 'pact_broker/pacts/pact_version'
 require 'pact_broker/repositories/helpers'
+require 'pact_broker/integrations/integration'
+require 'pact_broker/tags/head_pact_tags'
 
 module PactBroker
   module Pacts
@@ -16,6 +18,9 @@ module PactBroker
       associate(:many_to_one, :consumer, :class => "PactBroker::Domain::Pacticipant", :key => :consumer_id, :primary_key => :id)
       associate(:many_to_one, :consumer_version, :class => "PactBroker::Domain::Version", :key => :consumer_version_id, :primary_key => :id)
       associate(:many_to_one, :pact_version, class: "PactBroker::Pacts::PactVersion", :key => :pact_version_id, :primary_key => :id)
+      associate(:many_to_one, :integration, class: "PactBroker::Integrations::Integration", key: [:consumer_id, :provider_id], primary_key: [:consumer_id, :provider_id])
+      one_to_one(:latest_verification, class: "PactBroker::Verifications::LatestVerificationForPactVersion", key: :pact_version_id, primary_key: :pact_version_id)
+      one_to_many(:head_pact_tags, class: "PactBroker::Tags::HeadPactTag", primary_key: :id, key: :pact_publication_id)
 
       dataset_module do
         include PactBroker::Repositories::Helpers
@@ -49,21 +54,39 @@ module PactBroker
         PactBroker::Domain::Pact.new(
           id: id,
           provider: provider,
-          consumer: consumer_version.pacticipant,
+          consumer: consumer,
           consumer_version_number: consumer_version.number,
           consumer_version: to_version_domain,
           revision_number: revision_number,
           json_content: pact_version.content,
           pact_version_sha: pact_version.sha,
-          latest_verification: latest_verification,
+          latest_verification: nil,
           created_at: created_at,
-          head_tag_names: head_tag_names,
+          head_tag_names: [],
+          db_model: self
+          )
+      end
+
+      def to_domain_lightweight
+        PactBroker::Domain::Pact.new(
+          id: id,
+          provider: provider,
+          consumer: consumer,
+          consumer_version_number: consumer_version.number,
+          consumer_version: to_version_domain_lightweight,
+          revision_number: revision_number,
+          pact_version_sha: pact_version.sha,
+          created_at: created_at,
           db_model: self
           )
       end
 
       def to_version_domain
-        OpenStruct.new(number: consumer_version.number, pacticipant: consumer_version.pacticipant, tags: consumer_version.tags, order: consumer_version.order)
+        OpenStruct.new(number: consumer_version.number, pacticipant: consumer, tags: consumer_version.tags, order: consumer_version.order)
+      end
+
+      def to_version_domain_lightweight
+        OpenStruct.new(number: consumer_version.number, pacticipant: consumer, order: consumer_version.order)
       end
 
       def upsert

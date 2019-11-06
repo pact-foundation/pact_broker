@@ -19,7 +19,9 @@ module PactBroker
       # the query down.
       # This relation relies on consumer_version_tags already being loaded
       one_to_one :latest_verification_for_consumer_version_tag, :class => "PactBroker::Verifications::LatestVerificationForConsumerVersionTag", primary_keys: [], key: [], :eager_loader=>(proc do |eo_opts|
+        # create an index of provider_id/consumer_id/consumer_version_tag_name => row
         tag_to_row = eo_opts[:rows].each_with_object({}) { | row, map | map[[row.provider_id, row.consumer_id, row.consumer_version_tag_name]] = row }
+        # Initialise the association with nil - not sure why?
         eo_opts[:rows].each{|row| row.associations[:latest_verification_for_consumer_version_tag] = nil}
 
         # Need the all then the each to ensure the eager loading works

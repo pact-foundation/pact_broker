@@ -2,6 +2,7 @@ require 'pact_broker/db'
 require 'pact_broker/verifications/pseudo_branch_status'
 require 'pact_broker/domain/verification'
 require 'pact_broker/webhooks/latest_triggered_webhook'
+require 'pact_broker/webhooks/webhook'
 
 module PactBroker
   module Integrations
@@ -17,7 +18,7 @@ module PactBroker
       # This will only work when using eager loading. The keys are just blanked out to avoid errors.
       # I don't understand how they work at all.
       # It would be nice to do this declaratively.
-      many_to_many :webhooks, :left_key => [], left_primary_key: [], :eager_loader=>(proc do |eo_opts|
+      many_to_many :webhooks, class: "PactBroker::Webhooks::Webhook", :left_key => [], left_primary_key: [], :eager_loader=>(proc do |eo_opts|
         eo_opts[:rows].each do |row|
           row.associations[:webhooks] = []
         end

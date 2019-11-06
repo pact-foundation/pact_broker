@@ -14,7 +14,9 @@ module PactBroker
           if params[:tags]
             tags = params[:tags] == 'true' ? true : [*params[:tags]].compact
           end
-          view_model = ViewDomain::IndexItems.new(index_service.find_index_items(tags: tags))
+          options = { tags: tags }
+          options[:optimised] = true if params[:optimised] == 'true'
+          view_model = ViewDomain::IndexItems.new(index_service.find_index_items(options))
           page = tags ? :'index/show-with-tags' : :'index/show'
           haml page, {locals: {index_items: view_model, title: "Pacts"}, layout: :'layouts/main'}
         end

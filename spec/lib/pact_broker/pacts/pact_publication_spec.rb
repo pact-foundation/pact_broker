@@ -99,12 +99,14 @@ module PactBroker
         context "when the pact is the latest for a tag" do
           it "returns the relevant tag names" do
             expect(pact_publication.head_tag_names).to eq ["yes"]
+            expect(pact_publication.head_pact_tags.collect(&:name)).to eq ["yes"]
           end
         end
 
         context "when the pact is not the latest for a tag" do
           it "returns the relevant tag names" do
             expect(pact_publication.head_tag_names).to eq ["yes"]
+            expect(pact_publication.head_pact_tags.collect(&:name)).to eq ["yes"]
           end
         end
       end

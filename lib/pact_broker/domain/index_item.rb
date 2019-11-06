@@ -127,6 +127,32 @@ module PactBroker
         provider_name <=> other.provider_name
       end
 
+      # Add logic for ignoring case
+      def <=> other
+        comparisons = [
+          compare_name_asc(consumer_name, other.consumer_name),
+          compare_number_desc(consumer_version.order, other.consumer_version.order),
+          compare_number_desc(latest_pact.revision_number, other.latest_pact.revision_number),
+          compare_name_asc(provider_name, other.provider_name)
+        ]
+
+        comparisons.find{|c| c != 0 } || 0
+      end
+
+      def compare_name_asc name1, name2
+        name1&.downcase <=> name2&.downcase
+      end
+
+      def compare_number_desc number1, number2
+        if number1 && number2
+          number2 <=> number1
+        elsif number1
+          1
+        else
+          -1
+        end
+      end
+
       def to_s
         "Pact between #{consumer_name} #{consumer_version_number} and #{provider_name} #{provider_version_number}"
       end
