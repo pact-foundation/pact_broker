@@ -55,7 +55,7 @@ module PactBroker
       end
 
       def pacticipant_names
-        PactBroker::Domain::Pacticipant.select(:name).order(:name).collect{ | pacticipant| pacticipant.name }
+        PactBroker::Domain::Pacticipant.select(:name).order(:name).collect(&:name)
       end
 
       def delete_if_orphan(pacticipant)

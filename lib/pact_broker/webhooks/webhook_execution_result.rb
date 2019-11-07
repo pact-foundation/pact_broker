@@ -4,8 +4,9 @@ require 'pact_broker/webhooks/http_response_with_utf_8_safe_body'
 module PactBroker
   module Webhooks
     class WebhookExecutionResult
+      attr_reader :request, :response, :logs, :error
 
-      def initialize request, response, logs, error = nil
+      def initialize(request, response, logs, error = nil)
         @request = PactBroker::Webhooks::HttpRequestWithRedactedHeaders.new(request)
         @response = response ? PactBroker::Webhooks::HttpResponseWithUtf8SafeBody.new(response) : nil
         @logs = logs
@@ -13,23 +14,7 @@ module PactBroker
       end
 
       def success?
-        !@response.nil? && @response.code.to_i < 300
-      end
-
-      def request
-        @request
-      end
-
-      def response
-        @response
-      end
-
-      def error
-        @error
-      end
-
-      def logs
-        @logs
+        !response.nil? && response.code.to_i < 300
       end
     end
   end

@@ -74,7 +74,7 @@ module PactBroker
       end
 
       def find_compatible_pacticipant_versions selectors
-        find(selectors, latestby: 'cvpv').select{|line| line.success }
+        find(selectors, latestby: 'cvpv').select(&:success)
       end
 
       # If one pacticipant is specified, find all the integrations that involve that pacticipant
@@ -86,9 +86,7 @@ module PactBroker
           .matching_selectors(resolved_specified_selectors)
           .distinct
           .all
-          .collect do |row |
-            row.to_hash
-          end
+          .collect(&:to_hash)
           .uniq
           .collect do | hash |
             required = is_a_row_for_this_integration_required?(specified_pacticipant_names, hash[:consumer_name])

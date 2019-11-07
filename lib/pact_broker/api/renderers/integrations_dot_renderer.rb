@@ -28,7 +28,7 @@ module PactBroker
         end
 
         def escape_name(name)
-          name.gsub(" ", "_")
+          name.tr(" ", "_")
         end
       end
     end

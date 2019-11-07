@@ -4,10 +4,22 @@ require 'pact_broker/webhooks/status'
 module PactBroker
   module Domain
     class IndexItem
+      attr_reader :consumer,
+        :provider,
+        :latest_pact,
+        :latest_verification,
+        :webhooks,
+        :triggered_webhooks,
+        :latest_verification_latest_tags
 
-      attr_reader :consumer, :provider, :latest_pact, :latest_verification, :webhooks, :triggered_webhooks, :latest_verification_latest_tags
+      # rubocop:disable Metrics/ParameterLists
+      def self.create(consumer, provider, latest_pact, latest, latest_verification, webhooks = [], triggered_webhooks = [], tags = [], latest_verification_latest_tags = [])
+        new(consumer, provider, latest_pact, latest, latest_verification, webhooks, triggered_webhooks, tags, latest_verification_latest_tags)
+      end
+      # rubocop:enable Metrics/ParameterLists
 
-      def initialize consumer, provider, latest_pact = nil, latest = true, latest_verification = nil, webhooks = [], triggered_webhooks = [], tags = [], latest_verification_latest_tags = []
+      # rubocop:disable Metrics/ParameterLists
+      def initialize(consumer, provider, latest_pact = nil, latest = true, latest_verification = nil, webhooks = [], triggered_webhooks = [], tags = [], latest_verification_latest_tags = [])
         @consumer = consumer
         @provider = provider
         @latest_pact = latest_pact
@@ -18,10 +30,7 @@ module PactBroker
         @tags = tags
         @latest_verification_latest_tags = latest_verification_latest_tags
       end
-
-      def self.create consumer, provider, latest_pact, latest, latest_verification, webhooks = [], triggered_webhooks = [], tags = [], latest_verification_latest_tags = []
-        new consumer, provider, latest_pact, latest, latest_verification, webhooks, triggered_webhooks, tags, latest_verification_latest_tags
-      end
+      # rubocop:enable Metrics/ParameterLists
 
       def eq? other
         IndexItem === other && other.consumer == consumer && other.provider == provider &&
@@ -41,10 +50,6 @@ module PactBroker
 
       def provider_name
         provider.name
-      end
-
-      def latest_pact
-        @latest_pact
       end
 
       def latest?
@@ -91,10 +96,6 @@ module PactBroker
 
       def ever_verified?
         !!latest_verification
-      end
-
-      def latest_verification
-        @latest_verification
       end
 
       def latest_verification_successful?

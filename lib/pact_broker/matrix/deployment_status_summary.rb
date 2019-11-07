@@ -17,7 +17,7 @@ module PactBroker
 
       def counts
         {
-          success: rows.count{ |row| row.success },
+          success: rows.count(&:success),
           failed: rows.count { |row| row.success == false },
           unknown: required_integrations_without_a_row.count + rows.count { |row| row.success.nil? }
         }
@@ -27,7 +27,7 @@ module PactBroker
         return false if specified_selectors_that_do_not_exist.any?
         return nil if rows.any?{ |row| row.success.nil? }
         return nil if required_integrations_without_a_row.any?
-        rows.all?{ |row| row.success } # true if rows is empty
+        rows.all?(&:success) # true if rows is empty
       end
 
       def reasons
@@ -72,7 +72,7 @@ module PactBroker
       end
 
       def success_messages
-        if rows.all?{ |row| row.success } && required_integrations_without_a_row.empty?
+        if rows.all?(&:success) && required_integrations_without_a_row.empty?
           if rows.any?
             [Successful.new]
           else
@@ -113,7 +113,7 @@ module PactBroker
 
       def missing_reasons
         required_integrations_without_a_row.collect do | integration |
-            pact_not_verified_by_required_provider_version(integration)
+          pact_not_verified_by_required_provider_version(integration)
         end.flatten
       end
 
@@ -141,7 +141,7 @@ module PactBroker
 
       def selector_for(pacticipant_name)
         resolved_selectors.find{ | s| s.pacticipant_name == pacticipant_name } ||
-        dummy_selectors.find{ | s| s.pacticipant_name == pacticipant_name }
+          dummy_selectors.find{ | s| s.pacticipant_name == pacticipant_name }
       end
 
       def selectors_for(row)
