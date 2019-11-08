@@ -7,6 +7,7 @@ module PactBroker
       class MatrixForConsumerAndProvider < BaseResource
 
         def initialize
+          super
           _, @options = PactBroker::Matrix::ParseQuery.call(request.uri.query)
         end
 

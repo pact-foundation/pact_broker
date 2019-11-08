@@ -10,6 +10,7 @@ module PactBroker
         attr_reader :selectors, :options
 
         def initialize
+          super
           @selectors, @options = PactBroker::Matrix::ParseQuery.call(request.uri.query)
         end
 

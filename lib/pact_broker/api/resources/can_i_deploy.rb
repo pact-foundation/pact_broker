@@ -7,6 +7,7 @@ module PactBroker
     module Resources
       class CanIDeploy < Matrix
         def initialize
+          super
           @query_params = JSON.parse(Rack::Utils.parse_nested_query(request.uri.query).to_json, symbolize_names: true)
           @selectors, @options = PactBroker::Matrix::ParseCanIDeployQuery.call(query_params)
         end

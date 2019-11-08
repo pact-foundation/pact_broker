@@ -8,6 +8,7 @@ module PactBroker
     module Resources
       class ProviderPactsForVerification < ProviderPacts
         def initialize
+          super
           @query = Rack::Utils.parse_nested_query(request.uri.query)
         end
 
