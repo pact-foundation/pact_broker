@@ -1,22 +1,16 @@
 require 'csv'
-require 'set'
 
 module PactBroker
-
   module Api
-
     module Decorators
-
       class RelationshipsCsvDecorator
-
         def initialize pacts
           @pacts = pacts
-          @index_items = pacts.collect{|pact| PactBroker::Domain::IndexItem.new(pact.consumer,pact.provider)}
+          @index_items = pacts.collect{|pact| PactBroker::Domain::IndexItem.new(pact.consumer, pact.provider)}
         end
 
         def to_csv
           hash = {}
-          pacticipants = @index_items.collect{|r| r.pacticipants}.flatten.uniq
 
           @index_items.each do | index_item |
             hash[index_item.consumer.id] ||= pacticipant_array(index_item.consumer, hash.size + 1)
@@ -24,7 +18,7 @@ module PactBroker
             hash[index_item.consumer.id] << index_item.provider.id
           end
 
-          max_length = hash.values.collect{|array| array.size}.max
+          max_length = hash.values.collect(&:size).max
 
           hash.values.each do | array |
             while array.size < max_length
@@ -37,7 +31,6 @@ module PactBroker
               csv << array
             end
           end
-
         end
 
         def pacticipant_array pacticipant, order
@@ -46,8 +39,7 @@ module PactBroker
 
         private
 
-        attr_accessor :pacts
-
+        attr_reader :pacts
       end
     end
   end

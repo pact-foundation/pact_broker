@@ -1,4 +1,3 @@
-require 'pathname'
 require 'semantic_logger'
 
 module PactBroker

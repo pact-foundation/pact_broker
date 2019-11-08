@@ -22,18 +22,10 @@ module PactBroker
 
         private
 
-        attr_reader :query_params
+        attr_reader :query_params, :selectors, :options
 
         def query_schema
           PactBroker::Api::Contracts::CanIDeployQuerySchema
-        end
-
-        def selectors
-          @selectors
-        end
-
-        def options
-          @options
         end
       end
     end

@@ -62,7 +62,9 @@ module PactBroker
         consumer_version = version_repository.find_by_pacticipant_id_and_number_or_create consumer.id, params[:consumer_version_number]
         existing_pact = pact_repository.find_by_version_and_provider(consumer_version.id, provider.id)
 
-        params.merge!(json_content: Merger.merge_pacts(existing_pact.json_content, params[:json_content]))
+        params[:json_content] = Merger.merge_pacts(
+          existing_pact.json_content, params[:json_content]
+        )
 
         update_pact params, existing_pact, webhook_options
       end

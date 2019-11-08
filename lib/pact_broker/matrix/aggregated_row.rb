@@ -33,7 +33,7 @@ module PactBroker
         @latest_verification ||= begin
           verification = matrix_rows.collect do | row|
               row.verification || latest_verification_for_consumer_version_tag(row)
-            end.compact.sort{ |v1, v2| v1.id <=> v2.id }.last
+            end.compact.sort_by(&:id).last
 
           if !verification && overall_latest?
             overall_latest_verification
@@ -45,9 +45,7 @@ module PactBroker
 
       def latest_verification_for_pact_version
         @latest_verificaton_for_pact_version ||= begin
-          matrix_rows.collect do | row|
-            row.verification
-          end.compact.sort{ |v1, v2| v1.id <=> v2.id }.last
+          matrix_rows.collect(&:verification).compact.sort_by(&:id).last
         end
       end
 
@@ -61,7 +59,7 @@ module PactBroker
 
       private
 
-      attr_reader :matrix_rows
+      attr_reader :matrix_rows, :first_row
 
       def latest_verification_for_consumer_version_tag row
         row.latest_verification_for_consumer_version_tag if row.consumer_version_tag_name
@@ -70,10 +68,6 @@ module PactBroker
       def overall_latest_verification
         # not eager loaded because it shouldn't be called that often
         first_row.latest_verification_for_consumer_and_provider
-      end
-
-      def first_row
-        @first_row
       end
 
       def consumer_version_tag_names

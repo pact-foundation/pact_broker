@@ -7,6 +7,7 @@ module PactBroker
   module Api
     module Resources
       class Matrix < BaseResource
+        attr_reader :selectors, :options
 
         def initialize
           @selectors, @options = PactBroker::Matrix::ParseQuery.call(request.uri.query)
@@ -43,14 +44,6 @@ module PactBroker
 
         def lines
           @lines ||= matrix_service.find(selectors, options)
-        end
-
-        def selectors
-          @selectors
-        end
-
-        def options
-          @options
         end
       end
     end
