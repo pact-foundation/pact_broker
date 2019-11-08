@@ -31,6 +31,16 @@ module PactBroker
           it "includes OPTIONS in the list of allowed_methods" do
             expect(resource.new(request, response).allowed_methods).to include "OPTIONS"
           end
+
+          it "calls super in its constructor" do
+            expect(PactBroker.configuration.before_resource).to receive(:call)
+            resource.new(request, response)
+          end
+
+          it "calls super in finish_request" do
+            expect(PactBroker.configuration.after_resource).to receive(:call)
+            resource.new(request, response).finish_request
+          end
         end
       end
     end
