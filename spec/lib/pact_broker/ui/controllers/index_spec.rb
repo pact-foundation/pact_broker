@@ -1,7 +1,6 @@
-require 'spec_helper'
-require 'pact_broker/ui/controllers/index'
-
 require 'rack/test'
+require 'pact_broker/ui/controllers/index'
+require 'pact_broker/index/service'
 
 module PactBroker
   module UI
@@ -37,7 +36,7 @@ module PactBroker
               end
 
               it "passes tags: true to the IndexService" do
-                expect(PactBroker::Index::Service).to receive(:find_index_items).with(tags: true)
+                expect(PactBroker::Index::Service).to receive(:find_index_items).with(tags: true, limit: nil, offset: nil)
                 get "/", { tags: 'true' }
               end
             end
@@ -48,7 +47,7 @@ module PactBroker
               end
 
               it "passes tags: ['prod'] to the IndexService" do
-                expect(PactBroker::Index::Service).to receive(:find_index_items).with(tags: ["prod"])
+                expect(PactBroker::Index::Service).to receive(:find_index_items).with(tags: ["prod"], limit: nil, offset: nil)
                 get "/", { tags: ["prod"] }
               end
             end
@@ -59,7 +58,7 @@ module PactBroker
               end
 
               it "passes tags: ['prod'] to the IndexService" do
-                expect(PactBroker::Index::Service).to receive(:find_index_items).with(tags: ["prod"])
+                expect(PactBroker::Index::Service).to receive(:find_index_items).with(tags: ["prod"], limit: nil, offset: nil)
                 get "/", { tags: "prod" }
               end
             end

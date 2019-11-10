@@ -27,6 +27,10 @@ module PactBroker
           PactBroker::Versions::AbbreviateNumber.call(@relationship.consumer_version_number)
         end
 
+        def consumer_version_order
+          @relationship.consumer_version_order
+        end
+
         def provider_version_number
           PactBroker::Versions::AbbreviateNumber.call(@relationship.provider_version_number)
         end
@@ -164,7 +168,9 @@ module PactBroker
         def <=> other
           comp = consumer_name.downcase <=> other.consumer_name.downcase
           return comp unless comp == 0
-          provider_name.downcase <=> other.provider_name.downcase
+          comp = provider_name.downcase <=> other.provider_name.downcase
+          return comp unless comp == 0
+          other.consumer_version_order <=> consumer_version_order
         end
 
         def short_version_number version_number

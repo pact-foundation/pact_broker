@@ -6,10 +6,10 @@ module PactBroker
     module ViewDomain
       describe IndexItems do
 
-        let(:relationship_model_4) { double("PactBroker::Domain::IndexItem", consumer_name: "A", provider_name: "X") }
-        let(:relationship_model_2) { double("PactBroker::Domain::IndexItem", consumer_name: "a", provider_name: "y") }
-        let(:relationship_model_3) { double("PactBroker::Domain::IndexItem", consumer_name: "A", provider_name: "Z") }
-        let(:relationship_model_1) { double("PactBroker::Domain::IndexItem", consumer_name: "C", provider_name: "A") }
+        let(:relationship_model_4) { double("PactBroker::Domain::IndexItem", consumer_name: "A", provider_name: "X", consumer_version_order: 1) }
+        let(:relationship_model_2) { double("PactBroker::Domain::IndexItem", consumer_name: "a", provider_name: "y", consumer_version_order: 2) }
+        let(:relationship_model_3) { double("PactBroker::Domain::IndexItem", consumer_name: "A", provider_name: "Z", consumer_version_order: 3) }
+        let(:relationship_model_1) { double("PactBroker::Domain::IndexItem", consumer_name: "C", provider_name: "A", consumer_version_order: 4) }
 
         subject { IndexItems.new([relationship_model_1, relationship_model_3, relationship_model_4, relationship_model_2]) }
 

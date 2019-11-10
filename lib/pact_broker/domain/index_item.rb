@@ -60,6 +60,10 @@ module PactBroker
         @latest_pact.consumer_version_number
       end
 
+      def consumer_version_order
+        consumer_version.order
+      end
+
       def consumer_version
         @latest_pact.consumer_version
       end

@@ -14,7 +14,7 @@ module PactBroker
           if params[:tags]
             tags = params[:tags] == 'true' ? true : [*params[:tags]].compact
           end
-          options = { tags: tags }
+          options = { tags: tags, limit: params[:limit]&.to_i, offset: params[:offset]&.to_i }
           options[:optimised] = true if params[:optimised] == 'true'
           view_model = ViewDomain::IndexItems.new(index_service.find_index_items(options))
           page = tags ? :'index/show-with-tags' : :'index/show'

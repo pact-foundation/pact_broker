@@ -106,7 +106,18 @@ pact publication resource will be created, but it will reuse the existing pact v
     -> versions
   -> latest_tagged_pact_consumer_version_orders
   -> latest_pact_publications_by_consumer_versions
+
+= head_pact_publications
+  -> latest_pact_publications
+    -> latest_pact_publication_ids_for_consumer_versions
+  -> latest_tagged_pact_publications
+    -> latest_pact_publications_by_consumer_versions (optimised for pp_ids)
+    -> latest_tagged_pact_consumer_version_orders (optimised for pp_ids)
+
 ```
+
+
+
 
 ### Useful to know stuff
 

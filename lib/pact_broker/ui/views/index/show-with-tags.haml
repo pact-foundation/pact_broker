@@ -38,7 +38,7 @@
             %td.consumer
               %a{:href => index_item.consumer_group_url }
                 = escape_html(index_item.consumer_name)
-            %td.consumer-version-number
+            %td.consumer-version-number{"data-text": index_item.consumer_version_order}
               %div.clippable
                 = escape_html(index_item.consumer_version_number)
                 - if index_item.consumer_version_number

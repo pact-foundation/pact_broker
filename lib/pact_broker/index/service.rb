@@ -3,15 +3,23 @@ require 'pact_broker/logging'
 require 'pact_broker/domain/index_item'
 require 'pact_broker/matrix/head_row'
 require 'pact_broker/matrix/aggregated_row'
+require 'pact_broker/repositories/helpers'
 
 module PactBroker
-
   module Index
     class Service
-
       extend PactBroker::Repositories
       extend PactBroker::Services
       extend PactBroker::Logging
+
+      COLS = [:id, :consumer_name, :provider_name, :consumer_version_order]
+      LATEST_PPS = Sequel::Model.db[:latest_pact_publications].select(*COLS)
+      LATEST_TAGGED_PPS = Sequel::Model.db[:latest_tagged_pact_publications].select(*COLS)
+      HEAD_PP_ORDER_COLUMNS = [
+          Sequel.asc(Sequel.function(:lower, :consumer_name)),
+          Sequel.desc(:consumer_version_order),
+          Sequel.asc(Sequel.function(:lower, :provider_name))
+        ].freeze
 
       # This method provides data for both the OSS server side rendered index (with and without tags)
       # and the Pactflow UI. It really needs to be broken into to separate methods, as it's getting too messy
@@ -46,10 +54,7 @@ module PactBroker
         end
         rows = rows.all.group_by(&:pact_publication_id).values.collect{ | rows| Matrix::AggregatedRow.new(rows) }
 
-
-
         rows.sort.collect do | row |
-          # TODO simplify. Do we really need 3 layers of abstraction?
           PactBroker::Domain::IndexItem.create(
             row.consumer,
             row.provider,
@@ -65,30 +70,13 @@ module PactBroker
       end
 
       def self.find_index_items_optimised options = {}
-        pact_publication_ids = nil
-        latest_verifications_for_cv_tags = nil
-
-        if !options[:tags]
-          # server side rendered index page without tags
-          pact_publication_ids = latest_pact_publications.select(:id)
-        else
-          # server side rendered index page with tags=true or tags[]=a&tags=[]b
-          if options[:tags].is_a?(Array)
-            # TODO test for this
-            pact_publication_ids = head_pact_publications_ids_for_tags(options[:tags])
-            latest_verifications_for_cv_tags = PactBroker::Verifications::LatestVerificationForConsumerVersionTag
-                                                    .eager(:provider_version)
-                                                    .where(consumer_version_tag_name: options[:tags]).all
-          else
-            pact_publication_ids = head_pact_publications_ids
-            latest_verifications_for_cv_tags = PactBroker::Verifications::LatestVerificationForConsumerVersionTag.eager(:provider_version).all
-          end
-        end
-
+        latest_verifications_for_cv_tags = latest_verifications_for_consumer_version_tags(options)
         latest_pact_publication_ids = latest_pact_publications.select(:id).all.collect{ |h| h[:id] }
 
         # We only need to know if a webhook exists for an integration, not what its properties are
         webhooks = PactBroker::Webhooks::Webhook.select(:consumer_id, :provider_id).distinct.all
+
+        pact_publication_ids = head_pact_publication_ids(options)
 
         pact_publications = PactBroker::Pacts::PactPublication
           .where(id: pact_publication_ids)
@@ -102,7 +90,6 @@ module PactBroker
           .eager(:head_pact_tags)
 
         pact_publications.all.collect do | pact_publication |
-
           is_overall_latest_for_integration = latest_pact_publication_ids.include?(pact_publication.id)
           latest_verification = latest_verification_for_pseudo_branch(pact_publication, is_overall_latest_for_integration, latest_verifications_for_cv_tags, options[:tags])
           webhook = webhooks.find{ |webhook| webhook.is_for?(pact_publication.integration) }
@@ -148,47 +135,83 @@ module PactBroker
       end
 
       def self.find_index_items_for_api(consumer_name: nil, provider_name: nil, **ignored)
-        rows = PactBroker::Matrix::HeadRow
-          .eager(:consumer_version_tags)
-          .eager(:provider_version_tags)
+        latest_pact_publication_ids = latest_pact_publications.select(:id).all.collect{ |h| h[:id] }
+        pact_publication_ids = head_pact_publication_ids(consumer_name: consumer_name, provider_name: provider_name, tags: true)
+
+        pact_publications = PactBroker::Pacts::PactPublication
+          .where(id: pact_publication_ids)
           .select_all_qualified
+          .eager(:consumer)
+          .eager(:provider)
+          .eager(:pact_version)
+          .eager(:consumer_version)
+          .eager(latest_verification: { provider_version: :tags_with_latest_flag })
+          .eager(:head_pact_tags)
 
-        rows = rows.consumer(consumer_name) if consumer_name
-        rows = rows.provider(provider_name) if provider_name
 
-        rows = rows.all.group_by(&:pact_publication_id).values.collect{ | rows| Matrix::AggregatedRow.new(rows) }
+        pact_publications.all.collect do | pact_publication |
 
-        rows.sort.collect do | row |
-          # TODO separate this model from IndexItem
-          # webhook status not currently displayed in Pactflow UI, so don't query for it.
+          is_overall_latest_for_integration = latest_pact_publication_ids.include?(pact_publication.id)
+
           PactBroker::Domain::IndexItem.create(
-            row.consumer,
-            row.provider,
-            row.pact,
-            row.overall_latest?,
-            row.latest_verification_for_pact_version,
+            pact_publication.consumer,
+            pact_publication.provider,
+            pact_publication.to_domain_lightweight,
+            is_overall_latest_for_integration,
+            pact_publication.latest_verification,
             [],
             [],
-            row.consumer_head_tag_names,
-            row.provider_version_tags.select(&:latest?)
+            pact_publication.head_pact_tags.collect(&:name),
+            pact_publication.latest_verification ? pact_publication.latest_verification.provider_version.tags_with_latest_flag.select(&:latest?) : []
           )
-        end
+        end.sort
       end
 
       def self.latest_pact_publications
         db[:latest_pact_publications]
       end
 
-      def self.head_pact_publications_ids
-        db[:head_pact_tags].select(Sequel[:pact_publication_id].as(:id)).union(db[:latest_pact_publications].select(:id)).limit(500)
-      end
-
-      def self.head_pact_publications_ids_for_tags(tag_names)
-        db[:head_pact_tags].select(Sequel[:pact_publication_id].as(:id)).where(name: tag_names).union(db[:latest_pact_publications].select(:id)).limit(500)
-      end
-
       def self.db
         PactBroker::Pacts::PactPublication.db
+      end
+
+      def self.head_pact_publication_ids(options = {})
+        query = if options[:tags].is_a?(Array)
+          LATEST_PPS.union(LATEST_TAGGED_PPS.where(tag_name: options[:tags]))
+        elsif options[:tags]
+          LATEST_PPS.union(LATEST_TAGGED_PPS)
+        else
+          LATEST_PPS
+        end
+
+        if options[:consumer_name]
+          query = query.where(PactBroker::Repositories::Helpers.name_like(:consumer_name, options[:consumer_name]))
+        end
+
+        if options[:provider_name]
+          query = query.where(PactBroker::Repositories::Helpers.name_like(:provider_name, options[:provider_name]))
+        end
+
+        query.order(*HEAD_PP_ORDER_COLUMNS)
+          .limit(options[:limit] || 50)
+          .offset(options[:offset] || 0)
+          .select(:id)
+      end
+
+      def self.latest_verifications_for_consumer_version_tags(options)
+        # server side rendered index page with tags[]=a&tags=[]b
+        if options[:tags].is_a?(Array)
+          PactBroker::Verifications::LatestVerificationForConsumerVersionTag
+            .eager(:provider_version)
+            .where(consumer_version_tag_name: options[:tags])
+            .all
+        elsif options[:tags] # server side rendered index page with tags=true
+          PactBroker::Verifications::LatestVerificationForConsumerVersionTag
+            .eager(:provider_version)
+            .all
+        else
+          nil # should not be used
+        end
       end
     end
   end

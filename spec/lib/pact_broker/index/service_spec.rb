@@ -4,7 +4,6 @@ require 'pact_broker/domain/tag'
 require 'pact_broker/domain/pact'
 
 module PactBroker
-
   module Index
     describe Service do
       let(:td) { TestDataBuilder.new }
