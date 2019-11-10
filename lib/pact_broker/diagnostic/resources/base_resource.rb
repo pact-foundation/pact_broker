@@ -16,14 +16,6 @@ module PactBroker
           return false if PactBroker.configuration.authorize.nil?
           !PactBroker.configuration.authorize.call(self, {})
         end
-
-        def initialize
-          PactBroker.configuration.before_resource.call(self)
-        end
-
-        def finish_request
-          PactBroker.configuration.after_resource.call(self)
-        end
       end
     end
   end
