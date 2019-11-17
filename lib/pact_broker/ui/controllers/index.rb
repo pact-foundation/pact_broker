@@ -15,14 +15,16 @@ module PactBroker
             tags = params[:tags] == 'true' ? true : [*params[:tags]].compact
           end
           page_number = params[:page]&.to_i || 1
-          page_size = params[:pageSize]&.to_i || 30
+          # Make page size smaller for data intensive query
+          page_size = params[:pageSize]&.to_i || ( params[:tags] == true ? 30 : 100)
           options = {
             tags: tags,
             page_number: page_number,
             page_size: page_size
           }
 
-          options[:optimised] = true if params[:optimised] == 'true'
+          # TODO remove this code when verified
+          options[:optimised] = true unless params[:optimised] == 'false'
           index_items = ViewDomain::IndexItems.new(index_service.find_index_items(options))
 
           page = tags ? :'index/show-with-tags' : :'index/show'
