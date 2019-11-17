@@ -16,7 +16,7 @@ module PactBroker
           end
           page_number = params[:page]&.to_i || 1
           # Make page size smaller for data intensive query
-          page_size = params[:pageSize]&.to_i || ( params[:tags] == true ? 30 : 100)
+          page_size = params[:pageSize]&.to_i || (tags == true ? 30 : 100)
           options = {
             tags: tags,
             page_number: page_number,
