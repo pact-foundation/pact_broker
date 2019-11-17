@@ -30,13 +30,27 @@ module PactBroker
               expect(last_response.status).to eq(200)
             end
 
+            context "when pagination parameters are present" do
+              it "passes through pagination parameters to the search" do
+                expect(PactBroker::Index::Service).to receive(:find_index_items).with(hash_including(page_number: 2, page_size: 40))
+                get "/", { page: '2', pageSize: '40' }
+              end
+            end
+
+            context "when pagination parameters are not present" do
+              it "passes through default pagination parameters to the search" do
+                expect(PactBroker::Index::Service).to receive(:find_index_items).with(hash_including(page_number: 1, page_size: 30))
+                get "/"
+              end
+            end
+
             context "with tags=true" do
               before do
                 allow(PactBroker::Index::Service).to receive(:find_index_items).and_return([])
               end
 
               it "passes tags: true to the IndexService" do
-                expect(PactBroker::Index::Service).to receive(:find_index_items).with(tags: true, limit: nil, offset: nil)
+                expect(PactBroker::Index::Service).to receive(:find_index_items).with(hash_including(tags: true))
                 get "/", { tags: 'true' }
               end
             end
@@ -47,7 +61,7 @@ module PactBroker
               end
 
               it "passes tags: ['prod'] to the IndexService" do
-                expect(PactBroker::Index::Service).to receive(:find_index_items).with(tags: ["prod"], limit: nil, offset: nil)
+                expect(PactBroker::Index::Service).to receive(:find_index_items).with(hash_including(tags: ["prod"]))
                 get "/", { tags: ["prod"] }
               end
             end
@@ -58,7 +72,7 @@ module PactBroker
               end
 
               it "passes tags: ['prod'] to the IndexService" do
-                expect(PactBroker::Index::Service).to receive(:find_index_items).with(tags: ["prod"], limit: nil, offset: nil)
+                expect(PactBroker::Index::Service).to receive(:find_index_items).with(hash_including(tags: ["prod"]))
                 get "/", { tags: "prod" }
               end
             end

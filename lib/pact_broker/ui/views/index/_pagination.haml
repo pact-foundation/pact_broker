@@ -1,0 +1,31 @@
+%script{type: 'text/javascript', src:'/javascripts/pagination.js'}
+
+:javascript
+  const PAGE_NUMBER = #{page_number};
+  const PAGE_SIZE = #{page_size};
+  const TOTAL_NUMBER = #{pagination_record_count}
+  const CURRENT_PAGE_SIZE = #{current_page_size}
+
+  $(document).ready(function(){
+    function createPageLink(pageNumber, pageSize) {
+      const url = new URL(window.location)
+      url.searchParams.set('page', pageNumber)
+      url.searchParams.set('pageSize', pageSize)
+      return url.toString()
+    }
+
+    function createFooter(currentPage, totalPage, totalNumber) {
+      return `<div class='nav-footer'>${CURRENT_PAGE_SIZE} of ${totalNumber} pacts</div>`
+    }
+
+    $('div.pagination').pagination({
+        dataSource: [],
+        totalNumber: TOTAL_NUMBER,
+        pageNumber: PAGE_NUMBER,
+        pageSize: PAGE_SIZE,
+        pageRange: 2,
+        pageLink: createPageLink,
+        ulClassName: 'pagination',
+        footer: createFooter
+    })
+  });

@@ -55,8 +55,11 @@
                   %span.glyphicon.glyphicon-warning-sign{ 'aria-hidden': true }
             %td
               %span.integration-settings.glyphicon.glyphicon-option-horizontal{ 'aria-hidden': true }
-    %div.relationships-size
-      = index_items.size_label
+    %div.pagination
+
+    - pagination_locals = { page_number: page_number, page_size: page_size, pagination_record_count: pagination_record_count, current_page_size: current_page_size }
+    = render :haml, :'index/_pagination', :layout => false, locals: pagination_locals
+
 
   :javascript
     $(function(){

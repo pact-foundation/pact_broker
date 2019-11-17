@@ -14,11 +14,27 @@ module PactBroker
           if params[:tags]
             tags = params[:tags] == 'true' ? true : [*params[:tags]].compact
           end
-          options = { tags: tags, limit: params[:limit]&.to_i, offset: params[:offset]&.to_i }
+          page_number = params[:page]&.to_i || 1
+          page_size = params[:pageSize]&.to_i || 30
+          options = {
+            tags: tags,
+            page_number: page_number,
+            page_size: page_size
+          }
+
           options[:optimised] = true if params[:optimised] == 'true'
-          view_model = ViewDomain::IndexItems.new(index_service.find_index_items(options))
+          index_items = ViewDomain::IndexItems.new(index_service.find_index_items(options))
+
           page = tags ? :'index/show-with-tags' : :'index/show'
-          haml page, {locals: {index_items: view_model, title: "Pacts"}, layout: :'layouts/main'}
+          locals = {
+            index_items: index_items, title: "Pacts",
+            page_number: page_number,
+            page_size: page_size,
+            pagination_record_count: index_items.pagination_record_count,
+            current_page_size: index_items.size
+          }
+
+          haml page, {locals: locals, layout: :'layouts/main'}
         end
 
         def set_headers

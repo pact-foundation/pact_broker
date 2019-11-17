@@ -1,4 +1,3 @@
-require "spec_helper"
 require "pact_broker/matrix/quick_row"
 require "pact_broker/ui/view_models/matrix_line"
 

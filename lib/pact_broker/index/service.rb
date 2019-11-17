@@ -4,6 +4,7 @@ require 'pact_broker/domain/index_item'
 require 'pact_broker/matrix/head_row'
 require 'pact_broker/matrix/aggregated_row'
 require 'pact_broker/repositories/helpers'
+require 'pact_broker/index/page'
 
 module PactBroker
   module Index
@@ -20,6 +21,8 @@ module PactBroker
           Sequel.desc(:consumer_version_order),
           Sequel.asc(Sequel.function(:lower, :provider_name))
         ].freeze
+      DEFAULT_PAGE_SIZE = 30
+      DEFAULT_PAGE_NUMBER = 1
 
       # This method provides data for both the OSS server side rendered index (with and without tags)
       # and the Pactflow UI. It really needs to be broken into to separate methods, as it's getting too messy
@@ -77,6 +80,7 @@ module PactBroker
         webhooks = PactBroker::Webhooks::Webhook.select(:consumer_id, :provider_id).distinct.all
 
         pact_publication_ids = head_pact_publication_ids(options)
+        pagination_record_count = pact_publication_ids.pagination_record_count
 
         pact_publications = PactBroker::Pacts::PactPublication
           .where(id: pact_publication_ids)
@@ -89,7 +93,7 @@ module PactBroker
           .eager(latest_verification: { provider_version: :tags_with_latest_flag })
           .eager(:head_pact_tags)
 
-        pact_publications.all.collect do | pact_publication |
+        index_items = pact_publications.all.collect do | pact_publication |
           is_overall_latest_for_integration = latest_pact_publication_ids.include?(pact_publication.id)
           latest_verification = latest_verification_for_pseudo_branch(pact_publication, is_overall_latest_for_integration, latest_verifications_for_cv_tags, options[:tags])
           webhook = webhooks.find{ |webhook| webhook.is_for?(pact_publication.integration) }
@@ -106,6 +110,8 @@ module PactBroker
             options[:tags] && latest_verification ? latest_verification.provider_version.tags_with_latest_flag.select(&:latest?) : []
           )
         end.sort
+
+        Page.new(index_items, pagination_record_count)
       end
 
       # Worst. Code. Ever.
@@ -193,8 +199,7 @@ module PactBroker
         end
 
         query.order(*HEAD_PP_ORDER_COLUMNS)
-          .limit(options[:limit] || 50)
-          .offset(options[:offset] || 0)
+          .paginate(options[:page_number] || DEFAULT_PAGE_NUMBER, options[:page_size] || DEFAULT_PAGE_SIZE)
           .select(:id)
       end
 

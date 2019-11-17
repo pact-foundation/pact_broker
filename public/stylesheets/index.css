@@ -142,3 +142,16 @@ div.getting-started {
 td.to-be-deleted {
   background-color: #f2dede !important
 }
+
+div.pagination {
+  width: 100%;
+  text-align: center;
+}
+
+nav.paginationjs {
+  display: inline-block;
+}
+
+div.pagination div.nav-footer {
+  color: gray;
+}

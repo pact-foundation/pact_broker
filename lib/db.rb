@@ -29,6 +29,7 @@ module DB
     # logger = Logger.new($stdout)
     con = Sequel.connect(db_credentials.merge(:logger => logger, :pool_class => Sequel::ThreadedConnectionPool, :encoding => 'utf8'))
     con.extension(:connection_validator)
+    con.extension(:pagination)
     con.pool.connection_validation_timeout = -1 #Check the connection on every request
     con.timezone = :utc
     con.run("SET sql_mode='STRICT_TRANS_TABLES';") if db_credentials[:adapter].to_s =~ /mysql/

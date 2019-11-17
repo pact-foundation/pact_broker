@@ -8,7 +8,9 @@ module PactBroker
     describe Service do
       let(:td) { TestDataBuilder.new }
       let(:tags) { ['prod', 'production'] }
-      let(:options) { { tags: tags, optimised: optimised } }
+      let(:options) { { tags: tags, optimised: optimised, page_size: page_size, page_number: page_number } }
+      let(:page_number) { nil }
+      let(:page_size) { nil }
       let(:rows) { subject.find_index_items(options) }
       let(:optimised) { true }
 
@@ -253,6 +255,36 @@ module PactBroker
             it "returns the latest of the feat-x and feat-y verifications because we are summarising the entire integration" do
               expect(rows.last.consumer_version_number).to eq "4"
               expect(rows.last.provider_version_number).to eq "2"
+            end
+          end
+        end
+
+        describe "with pagination" do
+          let(:page_number) { 1 }
+          let(:page_size) { 2 }
+          let(:tags) { nil }
+
+          before do
+            td.create_pact_with_hierarchy("Foo1", "1", "Bar1")
+              .create_pact_with_hierarchy("Foo2", "1", "Bar2")
+              .create_pact_with_hierarchy("Foo3", "1", "Bar3")
+          end
+
+          it "it returns the total number of records" do
+            expect(rows.pagination_record_count).to eq 3
+          end
+
+          describe "the first page" do
+            it "contains 2 rows" do
+              expect(rows.count).to eq 2
+            end
+          end
+
+          describe "the second page" do
+            let(:page_number) { 2 }
+
+            it "contains 1 row" do
+              expect(rows.count).to eq 1
             end
           end
         end

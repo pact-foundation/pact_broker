@@ -110,6 +110,7 @@ module PactBroker
       PactBroker::DB.connection.timezone = :utc
       PactBroker::DB.validate_connection_config if configuration.validate_database_connection_config
       PactBroker::DB.set_mysql_strict_mode_if_mysql
+      PactBroker::DB.connection.extension(:pagination)
       Sequel.datetime_class = DateTime
       Sequel.database_timezone = :utc # Store all dates in UTC, assume any date without a TZ is UTC
       Sequel.application_timezone = :local # Convert dates to localtime when retrieving from database
