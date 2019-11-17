@@ -27,7 +27,8 @@ module PactBroker
 
           page = tags ? :'index/show-with-tags' : :'index/show'
           locals = {
-            index_items: index_items, title: "Pacts",
+            title: "Pacts",
+            index_items: index_items,
             page_number: page_number,
             page_size: page_size,
             pagination_record_count: index_items.pagination_record_count,
