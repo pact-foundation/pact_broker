@@ -14,13 +14,69 @@ module PactBroker
         let(:pacts) { double('pacts') }
         let(:path) { '/pacts/provider/Bar/for-verification' }
         let(:decorator) { instance_double('PactBroker::Api::Decorators::VerifiablePactsDecorator') }
+        let(:query) do
+          {
+            provider_version_tags: ['master'],
+            consumer_version_selectors: [ { tag: "dev", latest: "true" }]
+          }
+        end
 
-        subject { get(path, provider_version_tags: ['master'], consumer_version_selectors: [ { tag: "dev", latest: true}]) }
+        subject { get(path, query) }
 
-        it "finds the pacts for verification by the provider" do
-          # Naughty not mocking out the query parsing...
-          expect(PactBroker::Pacts::Service).to receive(:find_for_verification).with("Bar", ["master"], [ OpenStruct.new(tag: "dev", latest: true)])
-          subject
+        describe "GET" do
+          it "finds the pacts for verification by the provider" do
+            # Naughty not mocking out the query parsing...
+            expect(PactBroker::Pacts::Service).to receive(:find_for_verification).with("Bar", ["master"], [OpenStruct.new(tag: "dev", latest: true)])
+            subject
+          end
+
+          context "when there are validation errors" do
+            let(:query) do
+              {
+                provider_version_tags: true,
+              }
+            end
+
+            it "returns the keys with the right case" do
+              expect(JSON.parse(subject.body)['errors']).to have_key('provider_version_tags')
+            end
+          end
+        end
+
+        describe "POST" do
+          let(:request_body) do
+            {
+              providerVersionTags: ['master'],
+              consumerVersionSelectors: [ { tag: "dev", latest: true }]
+            }
+          end
+
+          let(:request_headers) do
+            {
+              'CONTENT_TYPE' => 'application/json',
+              'HTTP_ACCEPT' => 'application/hal+json'
+            }
+          end
+
+          subject { post(path, request_body.to_json, request_headers) }
+
+          it "finds the pacts for verification by the provider" do
+            # Naughty not mocking out the query parsing...
+            expect(PactBroker::Pacts::Service).to receive(:find_for_verification).with("Bar", ["master"], [OpenStruct.new(tag: "dev", latest: true)])
+            subject
+          end
+
+          context "when there are validation errors" do
+            let(:request_body) do
+              {
+                providerVersionTags: true,
+              }
+            end
+
+            it "returns the keys with the right case" do
+              expect(JSON.parse(subject.body)['errors']).to have_key('providerVersionTags')
+            end
+          end
         end
 
         it "sets the correct resource title" do

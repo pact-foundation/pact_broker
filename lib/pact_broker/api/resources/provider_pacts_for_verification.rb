@@ -2,14 +2,18 @@ require 'pact_broker/api/resources/provider_pacts'
 require 'pact_broker/api/decorators/verifiable_pacts_decorator'
 require 'pact_broker/api/contracts/verifiable_pacts_query_schema'
 require 'pact_broker/api/decorators/verifiable_pacts_query_decorator'
+require 'pact_broker/api/contracts/verifiable_pacts_json_query_schema'
 
 module PactBroker
   module Api
     module Resources
       class ProviderPactsForVerification < ProviderPacts
-        def initialize
-          super
-          @query = Rack::Utils.parse_nested_query(request.uri.query)
+        def allowed_methods
+          ["GET", "POST", "OPTIONS"]
+        end
+
+        def content_types_accepted
+          [["application/json"]]
         end
 
         def malformed_request?
@@ -21,9 +25,12 @@ module PactBroker
           end
         end
 
-        private
+        def process_post
+          response.body = to_json
+          true
+        end
 
-        attr_reader :query
+        private
 
         def pacts
           pact_service.find_for_verification(
@@ -43,11 +50,25 @@ module PactBroker
 
 
         def query_schema
-          PactBroker::Api::Contracts::VerifiablePactsQuerySchema
+          if request.get?
+            PactBroker::Api::Contracts::VerifiablePactsQuerySchema
+          else
+            PactBroker::Api::Contracts::VerifiablePactsJSONQuerySchema
+          end
         end
 
         def parsed_query_params
           @parsed_query_params ||= PactBroker::Api::Decorators::VerifiablePactsQueryDecorator.new(OpenStruct.new).from_hash(query)
+        end
+
+        def query
+          @query ||= begin
+            if request.get?
+              Rack::Utils.parse_nested_query(request.uri.query)
+            elsif request.post?
+              params_with_string_keys
+            end
+          end
         end
       end
     end

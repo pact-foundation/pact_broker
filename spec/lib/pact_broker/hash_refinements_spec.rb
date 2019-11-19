@@ -11,5 +11,29 @@ module PactBroker
     it "merges" do
       expect(a.deep_merge(b)).to eq expected
     end
+
+    describe "snakecase_keys" do
+      let(:hash_1) do
+        {
+          "fooBar" => {
+            :meepMoop => "blahBlah",
+            "already_snake" => ""
+          }
+        }
+      end
+
+      let(:expected) do
+        {
+          "foo_bar" => {
+            :meep_moop => "blahBlah",
+            "already_snake" => ""
+          }
+        }
+      end
+
+      it "snake cases the keys" do
+        expect(hash_1.snakecase_keys).to eq expected
+      end
+    end
   end
 end

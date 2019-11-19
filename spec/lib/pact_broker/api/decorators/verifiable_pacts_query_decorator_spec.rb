@@ -4,40 +4,72 @@ module PactBroker
   module Api
     module Decorators
       describe VerifiablePactsQueryDecorator do
-        let(:params) do
-          {
-            "provider_version_tags" => provider_version_tags,
-            "consumer_version_selectors" => consumer_version_selectors
-          }
-        end
+
         let(:provider_version_tags) { %w[dev] }
-        let(:consumer_version_selectors) do
-          [{"tag" => "dev", "ignored" => "foo"}]
-        end
 
         subject { VerifiablePactsQueryDecorator.new(OpenStruct.new).from_hash(params)  }
 
-        context "when latest is not specified" do
-          it "defaults to nil" do
-            expect(subject.consumer_version_selectors.first.latest).to be nil
+        context "when parsing JSON params" do
+          let(:params) do
+            {
+              "providerVersionTags" => provider_version_tags,
+              "consumerVersionSelectors" => consumer_version_selectors
+            }
+          end
+
+          let(:consumer_version_selectors) do
+            [{"tag" => "dev", "ignored" => "foo", "latest" => true}]
+          end
+
+          context "when latest is not specified" do
+            let(:consumer_version_selectors) do
+              [{"tag" => "dev"}]
+            end
+
+            it "defaults to nil" do
+              expect(subject.consumer_version_selectors.first.latest).to be nil
+            end
+          end
+
+          it "parses the latest as a boolean" do
+            expect(subject.consumer_version_selectors.first.latest).to be true
+          end
+
+          context "when there are no consumer_version_selectors" do
+            let(:params) { {} }
+
+            it "returns an empty array" do
+              expect(subject.consumer_version_selectors).to eq []
+            end
+          end
+
+          context "when there are no provider_version_tags" do
+            let(:params) { {} }
+
+            it "returns an empty array" do
+              expect(subject.provider_version_tags).to eq []
+            end
           end
         end
 
-        context "when latest is a string" do
+        context "when parsing query string params" do
+          let(:params) do
+            {
+              "provider_version_tags" => provider_version_tags,
+              "consumer_version_selectors" => consumer_version_selectors
+            }
+          end
+
           let(:consumer_version_selectors) do
             [{"tag" => "dev", "latest" => "true"}]
           end
 
-          it "casts it to a boolean" do
-            expect(subject.consumer_version_selectors.first.latest).to be true
+          it "parses the provider_version_tags" do
+            expect(subject.provider_version_tags).to eq provider_version_tags
           end
-        end
 
-        context "when there are no consumer_version_selectors" do
-          let(:params) { {} }
-
-          it "returns an empty array" do
-            expect(subject.consumer_version_selectors).to eq []
+          it "parses a string 'latest' to a boolean" do
+            expect(subject.consumer_version_selectors.first.latest).to be true
           end
         end
       end

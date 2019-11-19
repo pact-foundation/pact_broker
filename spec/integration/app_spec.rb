@@ -29,7 +29,7 @@ module PactBroker
     context "when Accept includes text/html" do
       let(:env) { {'HTTP_ACCEPT' => 'text/html'} }
 
-      subject { get path, '', env; last_response }
+      subject { get(path, '', env) }
 
       describe "a request for root" do
         let(:path) { '/' }
