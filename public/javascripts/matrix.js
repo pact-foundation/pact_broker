@@ -53,6 +53,26 @@ function disableFieldsThatShouldNotBeSubmitted() {
   $('.version-selectorizor').prop('disabled', 'disabled');
 }
 
+function highlightPactPublicationsWithSameContent(td) {
+  const pactVersionSha = $(td).data('pact-version-sha');
+  $('*[data-pact-version-sha="' + pactVersionSha +'"]').addClass('bg-info');
+}
+
+function unHighlightPactPublicationsWithSameContent(td, event) {
+  var destinationElement = $(event.toElement || event.relatedTarget);
+  // Have to use mouseout instead of mouseleave, because the tooltip is a child
+  // of the td, and the mouseleave will consider that hovering over the tooltip
+  // does not count as leaving. Unfortunately, if you then leave the tooltip,
+  // the div gets removed without firing the mouseleave event, so the cells remain
+  // highlighted.
+  // The tooltip needs to be a child of the td so that we can style the one showing
+  // the SHA so that it's wide enough to fit the SHA in.
+  if (!$(td).find('a').is(destinationElement)) {
+    const pactVersionSha = $(td).data('pact-version-sha');
+    $('*[data-pact-version-sha="' + pactVersionSha +'"]').removeClass('bg-info');
+  }
+}
+
 $(document).ready(function(){
   $('.version-selectorizor').change(handleSelectorizorChanged);
   $('.version-selectorizor').each(function(){ showApplicableTextBoxes($(this)); });
@@ -65,6 +85,11 @@ $(document).ready(function(){
   });
 
   $('[data-toggle="tooltip"]').each(function(index, el){
-    $(el).tooltip({container: $(el)});
+    $(el).tooltip({container: $(el)})
   });
+
+  initializeClipper('.clippable');
+
+  $('td.pact-published').mouseover(function(event) { highlightPactPublicationsWithSameContent(this) });
+  $('td.pact-published').mouseout(function(event) { unHighlightPactPublicationsWithSameContent(this, event)});
 });

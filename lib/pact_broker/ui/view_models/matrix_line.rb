@@ -37,6 +37,10 @@ module PactBroker
           @line.pact_version_sha
         end
 
+        def pact_version_sha_message
+          "The highlighted pact(s) have content that has a SHA of #{pact_version_sha}"
+        end
+
         # verification number, used in verification_url method
         def number
           @line.verification_number

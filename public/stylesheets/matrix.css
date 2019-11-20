@@ -23,3 +23,8 @@ div.tag {
 span.pre-verified-icon {
   color: #337ab7;
 }
+
+/* Need to make the tooltip wide enough to show the full SHA */
+td.pact-published .tooltip-inner {
+  max-width: 300px;
+}
