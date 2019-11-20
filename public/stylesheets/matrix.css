@@ -19,3 +19,7 @@ div.tag-parent {
 div.tag {
   display: inline-block;
 }
+
+span.pre-verified-icon {
+  color: #337ab7;
+}

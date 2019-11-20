@@ -13,6 +13,8 @@ en:
   pact_broker:
     messages:
       response_body_hidden: For security purposes, the response details are not logged. To enable response logging, configure the webhook_host_whitelist property. See /doc/webhooks#whitelist for more information.
+      matrix:
+        pre_verified: This pact was "pre-verified" as it has identical content to a previously verified pact.
       webhooks:
         parameters:
           pactbroker:

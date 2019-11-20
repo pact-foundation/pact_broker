@@ -119,7 +119,7 @@
                 %a{href: tag.url}
                   .tag.label.label-default
                     = tag.name
-          %td.pact-published{'data-sort-value' => line.pact_published_order, "title": line.inherited_verification_message, "data-toggle": "tooltip"}
+          %td.pact-published{'data-sort-value' => line.pact_published_order, "data-toggle": "tooltip"}
             %a{href: line.pact_publication_date_url}
               - if options.all_rows_checked
                 = "#{line.pact_publication_date} (revision #{line.pact_revision_number})"
@@ -146,12 +146,14 @@
                 %a{href: tag.url}
                   .tag.label.label-default
                     = tag.name
-          %td.verification-result{class: line.verification_status_class, "title": line.inherited_verification_message, "data-toggle": "tooltip"}
+          %td.verification-result{class: line.verification_status_class, "title": line.pre_verified_message, "data-toggle": "tooltip"}
             %a{href: line.verification_status_url}
               - if options.all_rows_checked && line.number
-                = "#{line.pseudo_branch_verification_status} (number #{line.number})"
+                = "#{line.verification_status} (number #{line.number})"
               - else
-                = line.pseudo_branch_verification_status
+                = line.verification_status
+            - if line.pre_verified_message
+              %span.glyphicon.glyphicon-time.pre-verified-icon{"aria-hidden": true}
 
   :javascript
     $(document).ready(function(){

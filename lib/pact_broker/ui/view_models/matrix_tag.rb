@@ -9,28 +9,26 @@ module PactBroker
 
         include PactBroker::Api::PactBrokerUrls
 
+        attr_reader :name, :pacticipant_name, :version_number
+
         def initialize params
-          @params = params
           @name = params[:name]
+          @pacticipant_name = params[:pacticipant_name]
           @version_number = params[:version_number]
           @created_at = params[:created_at]
           @latest = !!params[:latest]
         end
 
-        def name
-          @params[:name]
-        end
-
         def tooltip
           if @latest
-            "Version #{@version_number} is the latest version with tag #{@name}. Tag created #{relative_date(@created_at)}."
+            "This is the latest version of #{pacticipant_name} with tag \"#{@name}\". Tag created #{relative_date(@created_at)}."
           else
-            "Tag created #{relative_date(@created_at)}."
+            "Tag created #{relative_date(@created_at)}. A more recent version of #{pacticipant_name} with tag \"#{name}\" exists."
           end
         end
 
         def url
-          hal_browser_url("/pacticipants/#{ERB::Util.url_encode(@params[:pacticipant_name])}/versions/#{@params[:version_number]}/tags/#{@params[:name]}")
+          hal_browser_url("/pacticipants/#{ERB::Util.url_encode(pacticipant_name)}/versions/#{ERB::Util.url_encode(version_number)}/tags/#{ERB::Util.url_encode(name)}")
         end
 
         def relative_date date

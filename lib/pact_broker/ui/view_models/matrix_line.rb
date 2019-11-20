@@ -3,12 +3,14 @@ require 'pact_broker/ui/helpers/url_helper'
 require 'pact_broker/date_helper'
 require 'pact_broker/ui/view_models/matrix_tag'
 require 'pact_broker/versions/abbreviate_number'
+require 'pact_broker/messages'
 
 module PactBroker
   module UI
     module ViewDomain
       class MatrixLine
         include PactBroker::Api::PactBrokerUrls
+        include PactBroker::Messages
 
         def initialize line
           @line = line
@@ -114,7 +116,7 @@ module PactBroker
           (self.orderable_fields <=> other.orderable_fields) * -1
         end
 
-        def pseudo_branch_verification_status
+        def verification_status
           if @line.verification_executed_at
             DateHelper.distance_of_time_in_words(@line.verification_executed_at, DateTime.now) + " ago"
           else
@@ -163,9 +165,9 @@ module PactBroker
           @overwritten = overwritten
         end
 
-        def inherited_verification_message
+        def pre_verified_message
           if @line.verification_executed_at && @line.pact_created_at > @line.verification_executed_at
-            "The verification date is before the pact publication date because this verification has been inherited from a previously verified pact with identical content."
+            message("messages.matrix.pre_verified")
           end
         end
       end

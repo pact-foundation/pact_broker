@@ -203,7 +203,7 @@ module PactBroker
       def republish_same_pact params = {}
         params.delete(:comment)
         last_pact_version = PactBroker::Pacts::PactVersion.order(:id).last
-        create_pact json_content: last_pact_version.content
+        create_pact pact_version_sha: last_pact_version.sha, json_content: last_pact_version.content, created_at: params[:created_at]
         self
       end
 
