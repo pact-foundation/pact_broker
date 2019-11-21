@@ -18,7 +18,7 @@ module PactBroker
           optional(:consumerVersionSelectors).each do
             schema do
               required(:tag).filled(:str?)
-              optional(:latest).filled(included_in?: [true, false])
+              required(:latest).filled(included_in?: [true])
             end
           end
           optional(:includePendingStatus).filled(included_in?: [true, false])

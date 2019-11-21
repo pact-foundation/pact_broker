@@ -57,9 +57,7 @@ module PactBroker
             }]
           end
 
-          it "has no errors" do
-            expect(subject).to eq({})
-          end
+          it { is_expected.to have_key(:consumerVersionSelectors) }
         end
 
         context "when includeWipPactsSince key exists" do
