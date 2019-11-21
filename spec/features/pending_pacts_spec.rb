@@ -20,7 +20,7 @@ RSpec.describe "the pending lifecycle of a pact (with no tags)" do
   end
 
   def get_pacts_for_verification
-    get("/pacts/provider/Bar/for-verification", nil, request_headers)
+    post("/pacts/provider/Bar/for-verification", { includePendingStatus: true }.to_json, request_headers)
   end
 
   def pact_url_from(pacts_for_verification_response)

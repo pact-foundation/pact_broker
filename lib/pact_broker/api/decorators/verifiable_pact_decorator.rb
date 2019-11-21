@@ -21,9 +21,11 @@ module PactBroker
         end
 
         property :verification_properties, as: :verificationProperties do
-          property :pending
-          property :pending_reason, as: :pendingReason, exec_context: :decorator
-          property :inclusion_reason, as: :inclusionReason, exec_context: :decorator
+        property :pending,
+          if: ->(context) { context[:options][:user_options][:include_pending_status] }
+        property :pending_reason, as: :pendingReason, exec_context: :decorator,
+          if: ->(context) { context[:options][:user_options][:include_pending_status] }
+        property :inclusion_reason, as: :inclusionReason, exec_context: :decorator
 
           def inclusion_reason
             PactBroker::Pacts::VerifiablePactMessages.new(represented).inclusion_reason

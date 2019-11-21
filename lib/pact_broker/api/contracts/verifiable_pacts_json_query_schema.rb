@@ -17,6 +17,7 @@ module PactBroker
               optional(:latest).filled(included_in?: [true, false])
             end
           end
+          optional(:includePendingStatus).filled(included_in?: [true, false])
         end
 
         def self.call(params)

@@ -19,6 +19,11 @@ module PactBroker
             }
         end
 
+        property :include_pending_status, default: true,
+          setter: ->(fragment:, represented:, **) {
+            represented.include_pending_status = (fragment == 'true' || fragment == true)
+          }
+
         def from_hash(hash)
           # This handles both the snakecase keys from the GET query and the camelcase JSON POST body
           super(hash&.snakecase_keys)

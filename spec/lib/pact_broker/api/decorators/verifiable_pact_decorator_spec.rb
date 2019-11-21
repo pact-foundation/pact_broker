@@ -37,7 +37,8 @@ module PactBroker
         let(:pending_provider_tags) { %w[dev] }
         let(:consumer_tags) { %w[dev] }
         let(:json) { decorator.to_json(options) }
-        let(:options) { { user_options: { base_url: 'http://example.org' } } }
+        let(:options) { { user_options: { base_url: 'http://example.org', include_pending_status: include_pending_status } } }
+        let(:include_pending_status) { true }
 
         subject { JSON.parse(json) }
 
@@ -48,6 +49,18 @@ module PactBroker
         it "creates the pact version url" do
           expect(decorator).to receive(:pact_version_url).with(pact, 'http://example.org')
           subject
+        end
+
+        context "when include_pending_status is false" do
+          let(:include_pending_status) { false }
+
+          it "does not include the pending flag" do
+            expect(subject['verificationProperties']).to_not have_key('pending')
+          end
+
+          it "does not include the pending reason" do
+            expect(subject['verificationProperties']).to_not have_key('pendingReason')
+          end
         end
       end
     end

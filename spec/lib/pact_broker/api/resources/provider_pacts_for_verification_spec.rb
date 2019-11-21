@@ -17,7 +17,8 @@ module PactBroker
         let(:query) do
           {
             provider_version_tags: ['master'],
-            consumer_version_selectors: [ { tag: "dev", latest: "true" }]
+            consumer_version_selectors: [ { tag: "dev", latest: "true" }],
+            include_pending_status: false
           }
         end
 
@@ -26,7 +27,10 @@ module PactBroker
         describe "GET" do
           it "finds the pacts for verification by the provider" do
             # Naughty not mocking out the query parsing...
-            expect(PactBroker::Pacts::Service).to receive(:find_for_verification).with("Bar", ["master"], [OpenStruct.new(tag: "dev", latest: true)])
+            expect(PactBroker::Pacts::Service).to receive(:find_for_verification).with(
+              "Bar",
+              ["master"],
+              [OpenStruct.new(tag: "dev", latest: true)])
             subject
           end
 
@@ -47,7 +51,8 @@ module PactBroker
           let(:request_body) do
             {
               providerVersionTags: ['master'],
-              consumerVersionSelectors: [ { tag: "dev", latest: true }]
+              consumerVersionSelectors: [ { tag: "dev", latest: true }],
+              includePendingStatus: true
             }
           end
 
@@ -62,7 +67,10 @@ module PactBroker
 
           it "finds the pacts for verification by the provider" do
             # Naughty not mocking out the query parsing...
-            expect(PactBroker::Pacts::Service).to receive(:find_for_verification).with("Bar", ["master"], [OpenStruct.new(tag: "dev", latest: true)])
+            expect(PactBroker::Pacts::Service).to receive(:find_for_verification).with(
+              "Bar",
+              ["master"],
+              [OpenStruct.new(tag: "dev", latest: true)])
             subject
           end
 
@@ -79,9 +87,10 @@ module PactBroker
           end
         end
 
-        it "sets the correct resource title" do
+        it "uses the correct options for the decorator" do
           expect(decorator).to receive(:to_json) do | options |
             expect(options[:user_options][:title]).to eq "Pacts to be verified by provider Bar"
+            expect(options[:user_options][:include_pending_status]).to eq false
           end
           subject
         end
