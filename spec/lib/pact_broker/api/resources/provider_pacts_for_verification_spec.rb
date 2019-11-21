@@ -17,8 +17,9 @@ module PactBroker
         let(:query) do
           {
             provider_version_tags: ['master'],
-            consumer_version_selectors: [ { tag: "dev", latest: "true" }],
-            include_pending_status: false
+            consumer_version_selectors: [ { tag: 'dev', latest: 'true' }],
+            include_pending_status: false,
+            include_wip_pacts_since: '2018-01-01'
           }
         end
 
@@ -30,7 +31,8 @@ module PactBroker
             expect(PactBroker::Pacts::Service).to receive(:find_for_verification).with(
               "Bar",
               ["master"],
-              [OpenStruct.new(tag: "dev", latest: true)])
+              [OpenStruct.new(tag: "dev", latest: true)],
+              { include_wip_pacts_since: DateTime.parse('2018-01-01') })
             subject
           end
 
@@ -51,8 +53,9 @@ module PactBroker
           let(:request_body) do
             {
               providerVersionTags: ['master'],
-              consumerVersionSelectors: [ { tag: "dev", latest: true }],
-              includePendingStatus: true
+              consumerVersionSelectors: [ { tag: 'dev', latest: true }],
+              includePendingStatus: false,
+              includeWipPactsSince: '2018-01-01'
             }
           end
 
@@ -70,14 +73,15 @@ module PactBroker
             expect(PactBroker::Pacts::Service).to receive(:find_for_verification).with(
               "Bar",
               ["master"],
-              [OpenStruct.new(tag: "dev", latest: true)])
+              [OpenStruct.new(tag: "dev", latest: true)],
+              { include_wip_pacts_since: DateTime.parse('2018-01-01') })
             subject
           end
 
           context "when there are validation errors" do
             let(:request_body) do
               {
-                providerVersionTags: true,
+                providerVersionTags: true
               }
             end
 

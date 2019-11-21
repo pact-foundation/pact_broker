@@ -115,17 +115,35 @@ module PactBroker
         distinct
       end
 
-      def find_for_verification(provider_name, provider_version_tags, consumer_version_selectors)
-        pact_repository
+      def find_for_verification(provider_name, provider_version_tags, consumer_version_selectors, options)
+        verifiable_pacts_specified_in_request = pact_repository
           .find_for_verification(provider_name, consumer_version_selectors)
           .group_by(&:pact_version_sha)
           .values
           .collect do | head_pacts |
             squash_pacts_for_verification(provider_version_tags, head_pacts)
           end
+
+        verifiable_wip_pacts = if options[:include_wip_pacts_since]
+          exclude_specified_pacts(
+            pact_repository.find_wip_pact_versions_for_provider(provider_name, provider_version_tags, options),
+            verifiable_pacts_specified_in_request)
+        else
+          []
+        end
+
+        verifiable_pacts_specified_in_request + verifiable_wip_pacts
       end
 
       private
+
+      def exclude_specified_pacts(wip_pacts, specified_pacts)
+        wip_pacts.select do | wip_pact |
+          !specified_pacts.any? do | specified_pacts |
+            wip_pact.pact_version_sha == specified_pacts.pact_version_sha
+          end
+        end
+      end
 
       # Overwriting an existing pact with the same consumer/provider/consumer version number
       def update_pact params, existing_pact, webhook_options

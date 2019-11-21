@@ -155,6 +155,62 @@ module PactBroker
           }.by(-1)
         end
       end
+
+      describe "find_for_verification integration test" do
+        before do
+          td.create_pact_with_hierarchy("Foo", "1", "Bar")
+            .create_consumer_version_tag("feat-1", comment: "latest for feat-1")
+            .create_consumer_version("2")
+            .create_pact(comment: "overall latest")
+            .create_consumer_version("3")
+        end
+
+        let(:options) { { } }
+
+        subject { Service.find_for_verification("Bar", ["master"], [], options) }
+
+
+        context "when the consumer version tags are empty" do
+          it "returns the latest overall pact for the consumer" do
+            expect(subject.first.consumer_version_number).to eq "2"
+            expect(subject.first.wip).to be false
+          end
+        end
+
+        context "when include_wip_pacts_since is not specified" do
+          it "does not include the WIP pacts" do
+            expect(subject.size).to eq 1
+          end
+        end
+
+        context "when WIP pacts are included" do
+          let(:options) do
+            {
+              include_wip_pacts_since: (Date.today - 1).to_datetime
+            }
+          end
+          it "returns the WIP pacts as well as the specified pacts" do
+            expect(subject.size).to eq 2
+            expect(subject.last.consumer_version_number).to eq "1"
+            expect(subject.last.wip).to be true
+          end
+
+          context "when the WIP pact has the same content as a specified pact" do
+            before do
+              td.create_pact_with_hierarchy("Blah", "1", "Wiffle")
+                .create_consumer_version_tag("feat-1", comment: "latest for feat-1")
+                .create_consumer_version("2")
+                .republish_same_pact(comment: "overall latest")
+            end
+
+            subject { Service.find_for_verification("Wiffle", ["master"], [], options) }
+
+            it "is not included" do
+              expect(subject.size).to eq 1
+            end
+          end
+        end
+      end
     end
   end
 end

@@ -8,6 +8,7 @@ module PactBroker
       let(:pending_provider_tags) { [] }
       let(:non_pending_provider_tags) { [] }
       let(:pending) { false }
+      let(:wip) { false }
       let(:verifiable_pact) do
         double(VerifiablePact,
           head_consumer_tags: head_consumer_tags,
@@ -15,7 +16,8 @@ module PactBroker
           provider_name: "Bar",
           pending_provider_tags: pending_provider_tags,
           non_pending_provider_tags: non_pending_provider_tags,
-          pending?: pending
+          pending?: pending,
+          wip?: wip
         )
       end
 
@@ -44,6 +46,15 @@ module PactBroker
         context "when there are 4 head consumer tags" do
           let(:head_consumer_tags) { %w[dev prod feat-x feat-y] }
           its(:inclusion_reason) { is_expected.to include "'dev', 'prod', 'feat-x' and 'feat-y'" }
+        end
+
+        context "when the pact is a WIP pact" do
+          let(:wip) { true }
+          let(:pending) { true }
+          let(:head_consumer_tags) { %w[feat-x] }
+          let(:pending_provider_tags) { %w[dev] }
+
+          its(:inclusion_reason) { is_expected.to include "This pact is being verified because it is a 'work in progress' pact (ie. it is the pact for the latest version of Foo tagged with 'feat-x' and is still in pending state)."}
         end
       end
 

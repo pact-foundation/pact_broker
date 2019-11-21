@@ -3,28 +3,34 @@ module PactBroker
     class VerifiablePactMessages
       extend Forwardable
 
-      READ_MORE = "Read more at https://pact.io/pending"
+      READ_MORE_PENDING = "Read more at https://pact.io/pending"
+      READ_MORE_WIP = "Read more at https://pact.io/wip"
 
-      delegate [:consumer_name, :provider_name, :head_consumer_tags, :pending_provider_tags, :non_pending_provider_tags, :pending?] => :verifiable_pact
+      delegate [:consumer_name, :provider_name, :head_consumer_tags, :pending_provider_tags, :non_pending_provider_tags, :pending?, :wip?] => :verifiable_pact
 
       def initialize(verifiable_pact)
         @verifiable_pact = verifiable_pact
       end
 
       def inclusion_reason
-        if head_consumer_tags.any?
-          version_text = head_consumer_tags.size == 1 ? "version" : "versions"
-          "This pact is being verified because it is the pact for the latest #{version_text} of Foo tagged with #{joined_head_consumer_tags}"
+        version_text = head_consumer_tags.size == 1 ? "version" : "versions"
+        if wip?
+          # WIP pacts will always have tags, because it is part of the definition of being a WIP pact
+          "This pact is being verified because it is a 'work in progress' pact (ie. it is the pact for the latest #{version_text} of Foo tagged with #{joined_head_consumer_tags} and is still in pending state). #{READ_MORE_WIP}"
         else
-          "This pact is being verified because it is the latest pact between #{consumer_name} and #{provider_name}."
+          if head_consumer_tags.any?
+            "This pact is being verified because it is the pact for the latest #{version_text} of Foo tagged with #{joined_head_consumer_tags}"
+          else
+            "This pact is being verified because it is the latest pact between #{consumer_name} and #{provider_name}."
+          end
         end
       end
 
       def pending_reason
         if pending?
-          "This pact is in pending state because it has not yet been successfully verified by #{pending_provider_tags_description}. If this verification fails, it will not cause the overall build to fail. #{READ_MORE}"
+          "This pact is in pending state because it has not yet been successfully verified by #{pending_provider_tags_description}. If this verification fails, it will not cause the overall build to fail. #{READ_MORE_PENDING}"
         else
-          "This pact has previously been successfully verified by #{non_pending_provider_tags_description}. If this verification fails, it will fail the build. #{READ_MORE}"
+          "This pact has previously been successfully verified by #{non_pending_provider_tags_description}. If this verification fails, it will fail the build. #{READ_MORE_PENDING}"
         end
       end
 

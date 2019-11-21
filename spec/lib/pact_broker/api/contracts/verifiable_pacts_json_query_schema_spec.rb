@@ -61,6 +61,31 @@ module PactBroker
             expect(subject).to eq({})
           end
         end
+
+        context "when includeWipPactsSince key exists" do
+          let(:include_wip_pacts_since) { nil }
+          let(:params) do
+            {
+              includeWipPactsSince: include_wip_pacts_since
+            }
+          end
+
+          context "when it is nil" do
+            it { is_expected.to have_key(:includeWipPactsSince) }
+          end
+
+          context "when it is not a date" do
+            let(:include_wip_pacts_since) { "foo" }
+
+            it { is_expected.to have_key(:includeWipPactsSince) }
+          end
+
+          context "when it is a valid date" do
+            let(:include_wip_pacts_since) { "2013-02-13T20:04:45.000+11:00" }
+
+            it { is_expected.to_not have_key(:includeWipPactsSince) }
+          end
+        end
       end
     end
   end

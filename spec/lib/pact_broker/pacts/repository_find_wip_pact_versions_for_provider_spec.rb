@@ -6,9 +6,11 @@ module PactBroker
       let(:td) { TestDataBuilder.new }
 
       describe "find_wip_pact_versions_for_provider" do
-
         let(:provider_tags) { %w[dev] }
-        subject { Repository.new.find_wip_pact_versions_for_provider("bar", provider_tags) }
+        let(:options) { { include_wip_pacts_since: include_wip_pacts_since } }
+        let(:include_wip_pacts_since) { (Date.today - 1).to_datetime }
+
+        subject { Repository.new.find_wip_pact_versions_for_provider("bar", provider_tags, options) }
 
         context "when there are no tags" do
           let(:provider_tags) { [] }
@@ -113,6 +115,19 @@ module PactBroker
             td.create_pact_with_hierarchy("foo", "1", "baz")
               .create_provider("bar")
           end
+
+          it "is not included" do
+            expect(subject.size).to be 0
+          end
+        end
+
+        context "when the pact was published before the specified include_wip_pacts_since" do
+          before do
+            td.create_pact_with_hierarchy("foo", "1", "bar")
+              .create_consumer_version_tag("prod")
+          end
+
+          let(:include_wip_pacts_since) { (Date.today + 3).to_datetime }
 
           it "is not included" do
             expect(subject.size).to be 0

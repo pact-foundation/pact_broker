@@ -24,6 +24,11 @@ module PactBroker
             represented.include_pending_status = (fragment == 'true' || fragment == true)
           }
 
+        property :include_wip_pacts_since, default: nil,
+          setter: ->(fragment:, represented:, **) {
+            represented.include_wip_pacts_since = fragment ? DateTime.parse(fragment) : nil
+          }
+
         def from_hash(hash)
           # This handles both the snakecase keys from the GET query and the camelcase JSON POST body
           super(hash&.snakecase_keys)

@@ -44,7 +44,7 @@ module PactBroker
           end
         end
 
-        context "whne the consumer_version_selectors is missing the latest" do
+        context "when the consumer_version_selectors is missing the latest" do
           let(:consumer_version_selectors) do
             [{
               tag: "master"
@@ -53,6 +53,31 @@ module PactBroker
 
           it "has no errors" do
             expect(subject).to eq({})
+          end
+        end
+
+        context "when include_wip_pacts_since key exists" do
+          let(:include_wip_pacts_since) { nil }
+          let(:params) do
+            {
+              include_wip_pacts_since: include_wip_pacts_since
+            }
+          end
+
+          context "when it is nil" do
+            it { is_expected.to have_key(:include_wip_pacts_since) }
+          end
+
+          context "when it is not a date" do
+            let(:include_wip_pacts_since) { "foo" }
+
+            it { is_expected.to have_key(:include_wip_pacts_since) }
+          end
+
+          context "when it is a valid date" do
+            let(:include_wip_pacts_since) { "2013-02-13T20:04:45.000+11:00" }
+
+            it { is_expected.to_not have_key(:include_wip_pacts_since) }
           end
         end
       end

@@ -1,5 +1,6 @@
 require 'dry-validation'
 require 'pact_broker/api/contracts/dry_validation_workarounds'
+require 'pact_broker/api/contracts/dry_validation_predicates'
 
 module PactBroker
   module Api
@@ -9,6 +10,9 @@ module PactBroker
         using PactBroker::HashRefinements
 
         SCHEMA = Dry::Validation.Schema do
+          configure do
+            predicates(DryValidationPredicates)
+          end
           optional(:provider_version_tags).maybe(:array?)
           optional(:consumer_version_selectors).each do
             schema do
@@ -17,6 +21,7 @@ module PactBroker
             end
           end
           optional(:include_pending_status).filled(included_in?: ["true", "false"])
+          optional(:include_wip_pacts_since).filled(:date?)
         end
 
         def self.call(params)

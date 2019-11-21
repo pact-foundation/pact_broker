@@ -29,6 +29,7 @@ module PactBroker
         let(:pact) do
           double('pact',
             pending: true,
+            wip: wip,
             name: "name",
             provider_name: "Bar",
             pending_provider_tags: pending_provider_tags,
@@ -39,6 +40,7 @@ module PactBroker
         let(:json) { decorator.to_json(options) }
         let(:options) { { user_options: { base_url: 'http://example.org', include_pending_status: include_pending_status } } }
         let(:include_pending_status) { true }
+        let(:wip){ false }
 
         subject { JSON.parse(json) }
 
@@ -60,6 +62,14 @@ module PactBroker
 
           it "does not include the pending reason" do
             expect(subject['verificationProperties']).to_not have_key('pendingReason')
+          end
+        end
+
+        context "when wip is true" do
+          let(:wip) { true }
+
+          it "includes the wip flag" do
+            expect(subject['verificationProperties']['wip']).to be true
           end
         end
       end

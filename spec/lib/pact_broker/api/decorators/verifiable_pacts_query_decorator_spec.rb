@@ -72,6 +72,18 @@ module PactBroker
             expect(subject.consumer_version_selectors.first.latest).to be true
           end
         end
+
+        context "when specifying include_wip_pacts_since" do
+          let(:params) do
+            {
+              "include_wip_pacts_since" => "2013-02-13T20:04:45.000+11:00"
+            }
+          end
+
+          it "parses the date" do
+            expect(subject.include_wip_pacts_since).to eq DateTime.parse("2013-02-13T20:04:45.000+11:00")
+          end
+        end
       end
     end
   end
