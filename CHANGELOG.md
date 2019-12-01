@@ -1,3 +1,39 @@
+<a name="v2.41.0"></a>
+### v2.41.0 (2019-11-21)
+
+
+#### Features
+
+* **pacts for verification**
+  * make latest flag required and true for now, until the 'all pacts for tag' is implemented	 ([ebbbbec9](/../../commit/ebbbbec9))
+  * include WIP pacts in list of pacts to verify	 ([04a0f40c](/../../commit/04a0f40c))
+  * allow pending status information to be optionall included	 ([a80f2fd6](/../../commit/a80f2fd6))
+  * support querying by POST	 ([5556b814](/../../commit/5556b814))
+
+* **matrix**
+  * show pact version SHA in popup text, and highlight pact publications with the same pact version	 ([0d539093](/../../commit/0d539093))
+  * update 'pre-verifed' pop up text, and add icon to indicate when a pact is pre-verified	 ([a86010e5](/../../commit/a86010e5))
+  * add tags to json response	 ([6d099f59](/../../commit/6d099f59))
+
+* **example data**
+  * include a pre-verified pact	 ([49fd5004](/../../commit/49fd5004))
+
+* **index**
+  * enable pagination feature	 ([9bb87eca](/../../commit/9bb87eca))
+  * add pagination controls to the bottom of the page	 ([9d9e6378](/../../commit/9d9e6378))
+  * optimise query, feature toggled	 ([e238749e](/../../commit/e238749e))
+  * optimise server side rendered page	 ([1f54ccf4](/../../commit/1f54ccf4))
+
+* **diagnostic**
+  * remove before_resource and after_resource hook calls from diagnostics endpoints	 ([b1dac2bd](/../../commit/b1dac2bd))
+
+* add missing super calls in BaseResource child classes	 ([1071ca8a](/../../commit/1071ca8a))
+* optimise latest_verification_ids_for_consumer_version_tags	 ([9e84ce7d](/../../commit/9e84ce7d))
+* optimise latest_pact_publications_by_consumer_versions	 ([86846271](/../../commit/86846271))
+* optimise latest_pact_consumer_version_orders	 ([c4febeaa](/../../commit/c4febeaa))
+* optimise latest_tagged_pact_consumer_version_orders view	 ([d92cb8f2](/../../commit/d92cb8f2))
+
+
 <a name="v2.40.0"></a>
 ### v2.40.0 (2019-10-26)
 
