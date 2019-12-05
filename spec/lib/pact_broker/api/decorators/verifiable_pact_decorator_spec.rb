@@ -6,15 +6,23 @@ module PactBroker
       describe VerifiablePactDecorator do
         before do
           allow(decorator).to receive(:pact_version_url).and_return('/pact-version-url')
-          allow_any_instance_of(PactBroker::Pacts::VerifiablePactMessages).to receive(:inclusion_reason).and_return("inclusion_reason")
-          allow_any_instance_of(PactBroker::Pacts::VerifiablePactMessages).to receive(:pending_reason).and_return("pending_reason")
+          allow_any_instance_of(PactBroker::Pacts::VerifiablePactMessages).to receive(:inclusion_reason).and_return("the inclusion reason")
+          allow_any_instance_of(PactBroker::Pacts::VerifiablePactMessages).to receive(:pending_reason).and_return(pending_reason)
         end
+        let(:pending_reason) { "the pending reason" }
         let(:expected_hash) do
           {
             "verificationProperties" => {
               "pending" => true,
-              "pendingReason" => "pending_reason",
-              "inclusionReason" => "inclusion_reason"
+              "notices" => [
+                {
+                  "text" => "the inclusion reason"
+                }, {
+                  "text" => pending_reason
+                }
+              ],
+              "pendingReason" => pending_reason,
+              "inclusionReason" => "the inclusion reason"
             },
             "_links" => {
               "self" => {
@@ -55,6 +63,7 @@ module PactBroker
 
         context "when include_pending_status is false" do
           let(:include_pending_status) { false }
+          let(:notices) { subject['verificationProperties']['notices'].collect{ | notice | notice['text'] } }
 
           it "does not include the pending flag" do
             expect(subject['verificationProperties']).to_not have_key('pending')
@@ -62,6 +71,7 @@ module PactBroker
 
           it "does not include the pending reason" do
             expect(subject['verificationProperties']).to_not have_key('pendingReason')
+            expect(notices).to_not include(pending_reason)
           end
         end
 

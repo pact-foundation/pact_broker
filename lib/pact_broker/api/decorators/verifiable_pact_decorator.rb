@@ -28,12 +28,23 @@ module PactBroker
           property :pending_reason, as: :pendingReason, exec_context: :decorator,
             if: ->(context) { context[:options][:user_options][:include_pending_status] }
 
+          property :notices, getter: -> (context) { context[:decorator].notices(context[:options][:user_options]) }
+          property :noteToDevelopers, getter: -> (_) { "Please print out the text from the 'notices' rather than using the inclusionReason and the pendingReason fields. These will be removed when this API moves out of beta."}
+
           def inclusion_reason
             PactBroker::Pacts::VerifiablePactMessages.new(represented).inclusion_reason
           end
 
           def pending_reason
             PactBroker::Pacts::VerifiablePactMessages.new(represented).pending_reason
+          end
+
+          def notices(user_options)
+            mess = [{
+              text: inclusion_reason
+            }]
+            mess << { text: pending_reason } if user_options[:include_pending_status]
+            mess
           end
         end
 
