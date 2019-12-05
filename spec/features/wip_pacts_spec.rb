@@ -1,4 +1,10 @@
 RSpec.describe "the lifecycle of a WIP pact" do
+  before do
+    td.set_now(DateTime.now - 100)
+      .create_provider("Bar")
+      .create_provider_version("1")
+      .create_provider_version_tag("master")
+  end
   let(:pact_content_1) { { interactions: [{ some: 'interaction'}] }.to_json }
   let(:pact_content_2) { { interactions: [{ some: 'other interaction'}] }.to_json }
   let(:request_headers) { { "CONTENT_TYPE" => "application/json", "HTTP_ACCEPT" => "application/hal+json"} }
@@ -122,7 +128,6 @@ RSpec.describe "the lifecycle of a WIP pact" do
           verification_results_url = verification_results_url_from(pact_response)
           publish_verification_results_with_tag_master(verification_results_url, successful_verification_results)
 
-
           # ANOTHER PROVIDER BUILD 2
           # get pacts for verification
           # publish successful verification results
@@ -131,8 +136,6 @@ RSpec.describe "the lifecycle of a WIP pact" do
           expect(wip_pacts_from(pacts_for_verification_response).size).to eq 0
         end
       end
-
-  end
-
+    end
   end
 end
