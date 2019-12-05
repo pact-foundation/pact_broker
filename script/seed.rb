@@ -42,9 +42,17 @@ webhook_body = {
   'githubVerificationStatus' => '${pactbroker.githubVerificationStatus}'
 }
 
+  # .create_global_webhook(
+  #   method: 'POST',
+  #   url: "http://localhost:9292/pact-changed-webhook",
+  #   body: webhook_body.to_json,
+  #   username: "foo",
+  #   password: "bar")
 TestDataBuilder.new
-  .create_global_webhook(method: 'POST', url: "http://localhost:9292/pact-changed-webhook", body: webhook_body.to_json, username: "foo", password: "bar")
-  .create_global_verification_webhook(method: 'POST', url: "http://localhost:9292/verification-published-webhook", body: webhook_body.to_json)
+  .create_global_verification_succeeded_webhook(
+    method: 'POST',
+    url: "http://localhost:9292/verification-published-webhook",
+    body: webhook_body.to_json)
   # .create_certificate(path: 'spec/fixtures/certificates/self-signed.badssl.com.pem')
   # .create_consumer("Bethtest")
   # .create_verification_webhook(method: 'GET', url: "http://localhost:9292", body: webhook_body, username: "foo", password: "bar", headers: {"Accept" => "application/json"})

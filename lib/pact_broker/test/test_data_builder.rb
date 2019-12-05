@@ -249,6 +249,14 @@ module PactBroker
         create_webhook(parameters.merge(consumer: nil, provider: nil, event_names: [PactBroker::Webhooks::WebhookEvent::VERIFICATION_PUBLISHED]))
       end
 
+      def create_global_verification_succeeded_webhook parameters = {}
+        create_webhook(parameters.merge(consumer: nil, provider: nil, event_names: [PactBroker::Webhooks::WebhookEvent::VERIFICATION_SUCCEEDED]))
+      end
+
+      def create_global_verification_failed_webhook parameters = {}
+        create_webhook(parameters.merge(consumer: nil, provider: nil, event_names: [PactBroker::Webhooks::WebhookEvent::VERIFICATION_FAILED]))
+      end
+
       def create_provider_webhook parameters = {}
         create_webhook(parameters.merge(consumer: nil))
       end
