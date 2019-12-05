@@ -1,3 +1,17 @@
+<a name="v2.42.0"></a>
+### v2.42.0 (2019-12-05)
+
+
+#### Features
+
+* **pacts for verification**
+  * include list of notices to print rather than inclusionReason and pendingReason	 ([eed0120e](/../../commit/eed0120e))
+  * only include WIP pacts that were published after the provider tag was first used	 ([673fcb8c](/../../commit/673fcb8c))
+
+* **webhooks**
+  * allow webhooks to be triggered for verification successes and failures	 ([6735da32](/../../commit/6735da32))
+
+
 <a name="v2.41.0"></a>
 ### v2.41.0 (2019-11-21)
 
