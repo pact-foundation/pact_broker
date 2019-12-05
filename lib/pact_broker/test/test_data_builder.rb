@@ -337,6 +337,11 @@ module PactBroker
         self
       end
 
+      def add_minute
+        @now = @now + (1.0/(24*60))
+        self
+      end
+
       def add_five_minutes
         @now = @now + (1.0/(24*60)*5)
         self
