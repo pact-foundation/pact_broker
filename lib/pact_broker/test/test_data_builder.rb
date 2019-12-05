@@ -46,6 +46,7 @@ module PactBroker
       attr_reader :triggered_webhook
 
       def initialize(params = {})
+        @now = DateTime.now
       end
 
       def comment *args
@@ -73,8 +74,10 @@ module PactBroker
       end
 
       def create_pact_with_hierarchy consumer_name = "Consumer", consumer_version = "1.2.3", provider_name = "Provider", json_content = default_json_content
-        create_consumer consumer_name
-        create_provider provider_name
+        use_consumer(consumer_name)
+        create_consumer(consumer_name) if !consumer
+        use_provider(provider_name)
+        create_provider provider_name if !provider
         create_consumer_version consumer_version
         create_pact json_content: json_content
         self
