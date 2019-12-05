@@ -39,7 +39,13 @@ module PactBroker
 
         context "when the latest pact for a tag has been successfully verified by one of the given provider tags, but not the other" do
           before do
-            td.create_pact_with_hierarchy("foo", "1", "bar")
+            td.create_provider("bar")
+              .create_provider_version("44")
+              .create_provider_version_tag("feat-1")
+              .add_day
+              .create_consumer("foo")
+              .create_consumer_version("1")
+              .create_pact
               .create_consumer_version_tag("prod")
               .create_verification(provider_version: "3", tag_names: %w[dev], comment: "not included because already verified")
           end
@@ -57,7 +63,11 @@ module PactBroker
 
         context "when the latest pact for a tag has failed verification from the specified provider version" do
           before do
-            td.create_pact_with_hierarchy("foo", "1", "bar")
+            td.create_provider("bar")
+              .create_provider_version("333")
+              .create_provider_version_tag("dev")
+              .add_day
+              .create_pact_with_hierarchy("foo", "1", "bar")
               .create_consumer_version_tag("feat-1")
               .create_verification(provider_version: "3", success: false, tag_names: %[dev])
           end
@@ -84,7 +94,11 @@ module PactBroker
 
         context "when the latest pact for a tag has successful and failed verifications" do
           before do
-            td.create_pact_with_hierarchy("foo", "1", "bar")
+            td.create_provider("bar")
+              .create_provider_version("333")
+              .create_provider_version_tag("dev")
+              .add_day
+              .create_pact_with_hierarchy("foo", "1", "bar")
               .create_consumer_version_tag("dev")
               .create_verification(provider_version: "3", success: true, tag_names: %[dev])
               .create_verification(provider_version: "5", success: false, number: 2, tag_names: %[dev])
@@ -97,8 +111,12 @@ module PactBroker
 
         context "when the latest pact for a tag has not been verified" do
           before do
-            td.create_pact_with_hierarchy("foo", "1", "bar")
-              .create_consumer_version_tag("dev")
+            td.create_provider("bar")
+              .create_provider_version("333")
+              .create_provider_version_tag("dev")
+              .add_day
+              .create_pact_with_hierarchy("foo", "1", "bar")
+              .create_consumer_version_tag("feat-1")
           end
 
           it "is included" do
@@ -123,7 +141,11 @@ module PactBroker
 
         context "when the pact was published before the specified include_wip_pacts_since" do
           before do
-            td.create_pact_with_hierarchy("foo", "1", "bar")
+            td.create_provider("bar")
+              .create_provider_version("333")
+              .create_provider_version_tag("dev")
+              .add_day
+              .create_pact_with_hierarchy("foo", "1", "bar")
               .create_consumer_version_tag("prod")
           end
 
@@ -131,6 +153,51 @@ module PactBroker
 
           it "is not included" do
             expect(subject.size).to be 0
+          end
+        end
+
+        context "when the first provider tag with a given name was created after the head pact was created" do
+          before do
+            td.create_pact_with_hierarchy("foo", "1", "bar")
+              .create_consumer_version_tag("feat-x")
+              .add_day
+              .create_provider_version("5")
+              .create_provider_version_tag(provider_tags.first)
+          end
+
+          it "doesn't return any pacts" do
+            expect(subject.size).to be 0
+          end
+        end
+
+        context "when the provider tag does not exist yet" do
+          before do
+            td.create_pact_with_hierarchy("foo", "1", "bar")
+              .create_consumer_version_tag("feat-x")
+          end
+
+          it "doesn't return any pacts" do
+            expect(subject.size).to be 0
+          end
+        end
+
+        context "when a pact was published between the first creation date of two provider tags" do
+          let(:provider_tags) { %w[dev feat-1] }
+
+          before do
+            td.create_provider("bar")
+              .create_provider_version("4")
+              .create_provider_version_tag(provider_tags.first)
+              .add_day
+              .create_pact_with_hierarchy("foo", "1", "bar")
+              .create_consumer_version_tag("feat-x")
+              .add_day
+              .create_provider_version("5")
+              .create_provider_version_tag(provider_tags.last)
+          end
+
+          it "is wip for the first tag but not the second" do
+            expect(subject.first.pending_provider_tags).to eq [provider_tags.first]
           end
         end
       end
