@@ -1,6 +1,7 @@
 require 'pact_broker/verifications/service'
 require 'pact_broker/verifications/repository'
 require 'pact_broker/webhooks/execution_configuration'
+require 'pact_broker/webhooks/trigger_service'
 
 module PactBroker
 
@@ -16,7 +17,7 @@ module PactBroker
 
       describe "#create" do
         before do
-          allow(PactBroker::Webhooks::Service).to receive(:trigger_webhooks)
+          allow(PactBroker::Webhooks::TriggerService).to receive(:trigger_webhooks_for_verification_results_publication)
           allow(webhook_execution_configuration).to receive(:with_webhook_context).and_return(webhook_execution_configuration)
         end
 
@@ -61,10 +62,9 @@ module PactBroker
 
         it "invokes the webhooks for the verification" do
           verification = create_verification
-          expect(PactBroker::Webhooks::Service).to have_received(:trigger_webhooks).with(
+          expect(PactBroker::Webhooks::TriggerService).to have_received(:trigger_webhooks_for_verification_results_publication).with(
             pact,
             verification,
-            PactBroker::Webhooks::WebhookEvent::VERIFICATION_PUBLISHED,
             options
           )
         end

@@ -80,7 +80,11 @@ To specify an XML body, you will need to use a correctly escaped string (or use 
 
 `contract_content_changed:` triggered when the content of the contract, or tags applied to the contract have changed since the previous publication. If `base_equality_only_on_content_that_affects_verification_results` is set to `true` in the configuration (the default), any changes to whitespace, ordering of keys, or the ordering of the `interactions` or `messages` will be ignored, and will not trigger this event. It is recommended to trigger a provider verification build for this event.
 
-`provider_verification_published:` triggered whenever a provider publishes a verification.
+`provider_verification_published:` triggered whenever a provider publishes a verification result.
+
+`provider_verification_succeeded:` triggered whenever a provider publishes a successful verification result.
+
+`provider_verification_failed:` triggered whenever a provider publishes a failed verification result.
 
 ### Dynamic variable substitution
 

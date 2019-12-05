@@ -29,6 +29,31 @@ module PactBroker
         end
       end
 
+      def trigger_webhooks_for_verification_results_publication(pact, verification, webhook_options)
+        if verification.success
+          webhook_service.trigger_webhooks(
+            pact,
+            verification,
+            PactBroker::Webhooks::WebhookEvent::VERIFICATION_SUCCEEDED,
+            webhook_options
+          )
+        else
+          webhook_service.trigger_webhooks(
+            pact,
+            verification,
+            PactBroker::Webhooks::WebhookEvent::VERIFICATION_FAILED,
+            webhook_options
+          )
+        end
+
+        webhook_service.trigger_webhooks(
+          pact,
+          verification,
+          PactBroker::Webhooks::WebhookEvent::VERIFICATION_PUBLISHED,
+          webhook_options
+        )
+      end
+
       private
 
       def pact_is_new_or_newly_tagged_or_pact_has_changed_since_previous_version? pact

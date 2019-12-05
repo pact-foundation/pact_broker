@@ -85,6 +85,14 @@ module PactBroker
         events.any?(&:provider_verification_published?)
       end
 
+      def trigger_on_provider_verification_succeeded?
+        events.any?(&:provider_verification_succeeded?)
+      end
+
+      def trigger_on_provider_verification_failed?
+        events.any?(&:provider_verification_failed?)
+      end
+
       private
 
       def execute_request(webhook_request)

@@ -136,6 +136,39 @@ module PactBroker
           include_examples "not triggering a contract_content_changed event"
         end
       end
+
+      describe "#trigger_webhooks_for_verification_results_publication" do
+        let(:verification) { double("verification", success: success) }
+        let(:success) { true }
+
+        subject { TriggerService.trigger_webhooks_for_verification_results_publication(pact, verification, webhook_options) }
+
+        context "when the verification is successful" do
+          it "triggers a provider_verification_succeeded webhook" do
+            expect(webhook_service).to receive(:trigger_webhooks).with(pact, verification, PactBroker::Webhooks::WebhookEvent::VERIFICATION_SUCCEEDED, webhook_options)
+            subject
+          end
+
+          it "triggers a provider_verification_published webhook" do
+            expect(webhook_service).to receive(:trigger_webhooks).with(pact, verification, PactBroker::Webhooks::WebhookEvent::VERIFICATION_PUBLISHED, webhook_options)
+            subject
+          end
+        end
+
+        context "when the verification is not successful" do
+          let(:success) { false }
+
+          it "triggers a provider_verification_failed webhook" do
+            expect(webhook_service).to receive(:trigger_webhooks).with(pact, verification, PactBroker::Webhooks::WebhookEvent::VERIFICATION_FAILED, webhook_options)
+            subject
+          end
+
+          it "triggeres a provider_verification_published webhook" do
+            expect(webhook_service).to receive(:trigger_webhooks).with(pact, verification, PactBroker::Webhooks::WebhookEvent::VERIFICATION_PUBLISHED, webhook_options)
+            subject
+          end
+        end
+      end
     end
   end
 end

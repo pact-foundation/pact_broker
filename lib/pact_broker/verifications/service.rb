@@ -31,9 +31,9 @@ module PactBroker
         execution_configuration = webhook_options[:webhook_execution_configuration]
                                     .with_webhook_context(provider_version_tags: verification.provider_version_tag_names)
 
-        webhook_service.trigger_webhooks(pact,
+        webhook_trigger_service.trigger_webhooks_for_verification_results_publication(
+          pact,
           verification,
-          PactBroker::Webhooks::WebhookEvent::VERIFICATION_PUBLISHED,
           webhook_options.deep_merge(webhook_execution_configuration: execution_configuration)
         )
         verification
