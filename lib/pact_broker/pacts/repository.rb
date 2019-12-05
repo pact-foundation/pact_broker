@@ -157,7 +157,6 @@ module PactBroker
         pacts = AllPactPublications.where(id: pact_publication_ids).order_ignore_case(:consumer_name).order_append(:consumer_version_order)
 
         # The first instance (by date) of each provider tag with that name
-        # Note: created_at is coming back as a string
         provider_tag_collection = PactBroker::Domain::Tag
           .select_group(Sequel[:tags][:name], Sequel[:pacticipant_id])
           .select_append(Sequel.function(:min, Sequel[:tags][:created_at]).as(:created_at))
@@ -377,7 +376,17 @@ module PactBroker
       end
 
       def find_provider_tag_names_that_were_first_used_before_pact_published(pact_publication, provider_tag_collection)
-        provider_tag_collection.select { | tag| DateTime.parse(tag.created_at) < pact_publication.created_at }.collect(&:name)
+        provider_tag_collection.select { | tag| to_datetime(tag.created_at) < pact_publication.created_at }.collect(&:name)
+      end
+
+      # Note: created_at is coming back as a string for sqlite
+      # Can't work out how to to tell Sequel that this should be a date
+      def to_datetime string_or_datetime
+        if string_or_datetime.is_a?(String)
+          Sequel.string_to_datetime(string_or_datetime)
+        else
+          string_or_datetime
+        end
       end
 
       def find_head_pacts_that_have_not_been_successfully_verified_by_all_provider_tags(provider_name, pact_publication_ids_successfully_verified_by_all_provider_tags, options)
