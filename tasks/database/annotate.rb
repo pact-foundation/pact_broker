@@ -4,9 +4,13 @@ module PactBroker
   class Annotate
     def self.call
       annotation_configuration.each_pair do | klass, path |
-        puts "Annotating #{klass}"
-        sa = Sequel::Annotate.new(klass)
-        sa.annotate(path)
+        begin
+          puts "Annotating #{klass}"
+          sa = Sequel::Annotate.new(klass)
+          sa.annotate(path)
+        rescue StandardError => e
+          puts "Error annnotating #{klass} - #{e.message}\n#{e.backtrace.join("\n")}"
+        end
       end
     end
 
@@ -14,7 +18,11 @@ module PactBroker
       sequel_domain_classes.each_with_object({}) do | klass, configs |
         file_path = file_path_for_class(klass)
         if File.exist?(file_path)
-          configs[klass] = file_path
+          if klass.db.table_exists?(klass.table_name)
+            configs[klass] = file_path
+          else
+            puts "Skipping annotation for #{klass} as the configured table_name '#{klass.table_name}' is not a real table"
+          end
         else
           puts "Skipping annotation for #{klass} as the generated file path #{file_path} does not exist"
         end
