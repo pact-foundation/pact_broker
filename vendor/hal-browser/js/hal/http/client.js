@@ -1,6 +1,6 @@
 HAL.Http.Client = function(opts) {
   this.vent = opts.vent;
-  $.ajaxSetup({ headers: { 'Accept': 'application/hal+json, application/json, */*; q=0.01' } });
+  $.ajaxSetup({ headers: { 'Accept': 'application/hal+json, application/json, */*; q=0.01', 'X-Interface': 'HAL Browser' } });
 };
 
 HAL.Http.Client.prototype.get = function(url) {
