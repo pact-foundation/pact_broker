@@ -219,6 +219,25 @@ module PactBroker
           end
         end
 
+        context "when a timeout exception is raised connecting to the shields.io server" do
+          before do
+            allow(Net::HTTP).to receive(:start).and_raise(Net::OpenTimeout)
+          end
+
+          it "logs a warning rather than an error as this will happen reasonably often" do
+            expect(logger).to receive(:warn).with(/Timeout retrieving badge from.*shield.*Net::OpenTimeout/)
+            subject
+          end
+
+          it "returns a static image" do
+            expect(subject).to include ">pact</"
+          end
+
+          it "does not cache the response" do
+            expect(Service::CACHE.size).to eq 0
+          end
+        end
+
         context "when an exception is raised connecting to the shields.io server" do
           before do
             allow(Net::HTTP).to receive(:start).and_raise("an error")

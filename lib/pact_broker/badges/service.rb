@@ -84,8 +84,11 @@ module PactBroker
         begin
           response = do_request(uri)
           response.code == '200' ? response.body : nil
+        rescue Net::OpenTimeout => e
+          logger.warn "Timeout retrieving badge from #{uri} #{e.class} - #{e.message}"
+          nil
         rescue StandardError => e
-          logger.error "Error retrieving badge from #{uri} due to #{e.class} - #{e.message}"
+          log_error e, "Error retrieving badge from #{uri}"
           nil
         end
       end
