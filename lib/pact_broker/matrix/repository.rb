@@ -82,7 +82,7 @@ module PactBroker
       def find_integrations_for_specified_selectors(resolved_specified_selectors)
         specified_pacticipant_names = resolved_specified_selectors.collect(&:pacticipant_name)
         QuickRow
-          .select(:consumer_name, :consumer_id, :provider_name, :provider_id)
+          .pacticipant_names_and_ids
           .matching_selectors(resolved_specified_selectors)
           .distinct
           .all

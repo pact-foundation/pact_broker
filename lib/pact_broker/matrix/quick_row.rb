@@ -65,6 +65,8 @@ module PactBroker
         include PactBroker::Repositories::Helpers
         include PactBroker::Logging
 
+        select :pacticipant_names_and_ids, :consumer_name, :consumer_id, :provider_name, :provider_id
+
         def consumer_id consumer_id
           where(CONSUMER_ID => consumer_id)
         end
