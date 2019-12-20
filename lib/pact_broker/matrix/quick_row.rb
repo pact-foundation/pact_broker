@@ -85,21 +85,31 @@ module PactBroker
         #      and the verification is missing (and hence the provider version is null))
         def where_consumer_and_provider_in selectors
           where{
-            Sequel.&(
-              Sequel.|(
-                *QueryHelper.consumer_and_maybe_consumer_version_match_any_selector(selectors)
-              ),
-              Sequel.|(
-                *QueryHelper.provider_and_maybe_provider_version_match_any_selector_or_verification_is_missing(selectors)
-              ),
-              QueryHelper.either_consumer_or_provider_was_specified_in_query(selectors)
-            )
+            QueryHelper.consumer_and_provider_in(selectors)
+          }
+        end
+
+        def where_consumer_or_provider_is s
+          where{
+            QueryHelper.consumer_or_consumer_version_or_provider_or_provider_or_provider_version_match_selector(s)
           }
         end
 
         # Can't access other dataset_module methods from inside the Sequel `where{ ... }` block, so make a private class
         # with some helper methods
         class QueryHelper
+          def self.consumer_and_provider_in selectors
+            Sequel.&(
+              Sequel.|(
+                *consumer_and_maybe_consumer_version_match_any_selector(selectors)
+              ),
+              Sequel.|(
+                *provider_and_maybe_provider_version_match_any_selector_or_verification_is_missing(selectors)
+              ),
+              either_consumer_or_provider_was_specified_in_query(selectors)
+            )
+          end
+
           def self.consumer_and_maybe_consumer_version_match_any_selector(selectors)
             selectors.collect { |s| consumer_and_maybe_consumer_version_match_selector(s) }
           end
@@ -149,15 +159,13 @@ module PactBroker
             specified_pacticipant_ids = selectors.select{ |s| s[:type] == :specified }.collect{ |s| s[:pacticipant_id] }
             Sequel.|({ CONSUMER_ID => specified_pacticipant_ids } , { PROVIDER_ID => specified_pacticipant_ids })
           end
-        end
 
-        def where_consumer_or_provider_is s
-          where{
+          def self.consumer_or_consumer_version_or_provider_or_provider_or_provider_version_match_selector(s)
             Sequel.|(
               s[:pacticipant_version_id] ? { CONSUMER_VERSION_ID => s[:pacticipant_version_id] } :  { CONSUMER_ID => s[:pacticipant_id] },
               s[:pacticipant_version_id] ? { PROVIDER_VERSION_ID => s[:pacticipant_version_id] } :  { PROVIDER_ID => s[:pacticipant_id] }
             )
-          }
+          end
         end
 
         def order_by_names_ascending_most_recent_first
