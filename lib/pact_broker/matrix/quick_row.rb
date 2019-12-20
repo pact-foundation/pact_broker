@@ -106,28 +106,28 @@ module PactBroker
 
           def self.consumer_and_maybe_consumer_version_match_selector(s)
             if s[:pact_publication_ids]
-              Sequel.&(PACT_PUBLICATION_ID => s[:pact_publication_ids])
+              { PACT_PUBLICATION_ID => s[:pact_publication_ids] }
             elsif s[:pacticipant_version_id]
-              Sequel.&(CONSUMER_ID => s[:pacticipant_id], CONSUMER_VERSION_ID => s[:pacticipant_version_id])
+              { CONSUMER_ID => s[:pacticipant_id], CONSUMER_VERSION_ID => s[:pacticipant_version_id] }
             else
-              Sequel.&(CONSUMER_ID => s[:pacticipant_id])
+              { CONSUMER_ID => s[:pacticipant_id] }
             end
           end
 
           def self.provider_and_maybe_provider_version_match_selector(s)
             if s[:verification_ids]
-              Sequel.&(VERIFICATION_ID => s[:verification_ids])
+              { VERIFICATION_ID => s[:verification_ids] }
             elsif s[:pacticipant_version_id]
-              Sequel.&(PROVIDER_ID => s[:pacticipant_id], PROVIDER_VERSION_ID => s[:pacticipant_version_id])
+              { PROVIDER_ID => s[:pacticipant_id], PROVIDER_VERSION_ID => s[:pacticipant_version_id] }
             else
-              Sequel.&(PROVIDER_ID => s[:pacticipant_id])
+              { PROVIDER_ID => s[:pacticipant_id] }
             end
           end
 
           # if the pact for a consumer version has never been verified, it exists in the matrix as a row
           # with a blank provider version id
           def self.provider_verification_is_missing_for_matching_selector(s)
-            Sequel.&(PROVIDER_ID => s[:pacticipant_id], PROVIDER_VERSION_ID => nil)
+            { PROVIDER_ID => s[:pacticipant_id], PROVIDER_VERSION_ID => nil }
           end
 
           def self.provider_and_maybe_provider_version_match_any_selector_or_verification_is_missing(selectors)
@@ -154,8 +154,8 @@ module PactBroker
         def where_consumer_or_provider_is s
           where{
             Sequel.|(
-              s[:pacticipant_version_id] ? Sequel.&(CONSUMER_ID => s[:pacticipant_id], CONSUMER_VERSION_ID => s[:pacticipant_version_id]) :  Sequel.&(CONSUMER_ID => s[:pacticipant_id]),
-              s[:pacticipant_version_id] ? Sequel.&(PROVIDER_ID => s[:pacticipant_id], PROVIDER_VERSION_ID => s[:pacticipant_version_id]) :  Sequel.&(PROVIDER_ID => s[:pacticipant_id])
+              s[:pacticipant_version_id] ? { CONSUMER_VERSION_ID => s[:pacticipant_version_id] } :  { CONSUMER_ID => s[:pacticipant_id] },
+              s[:pacticipant_version_id] ? { PROVIDER_VERSION_ID => s[:pacticipant_version_id] } :  { PROVIDER_ID => s[:pacticipant_id] }
             )
           }
         end
