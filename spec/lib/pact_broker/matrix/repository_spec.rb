@@ -633,7 +633,7 @@ module PactBroker
           end
         end
 
-        context "when the latest version is specified for a provider without a tag but the latest known version for a provider does not have a verification" do
+        context "when the latest version is specified for a provider ignoring tags but the latest known version for a provider does not have a verification" do
           before do
             td.create_pact_with_hierarchy("A", "1.2.3", "B")
               .create_verification(provider_version: "1.0.0")
@@ -647,7 +647,7 @@ module PactBroker
             ]
           end
 
-          it "returns no data - this may be confusing. Might need to re-think this logic." do
+          it "returns no data" do
             expect(subject.size).to eq 0
           end
         end

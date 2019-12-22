@@ -9,6 +9,7 @@ require 'pact_broker/matrix/query_results_with_deployment_status_summary'
 require 'pact_broker/matrix/resolved_selector'
 require 'pact_broker/verifications/latest_verification_id_for_pact_version_and_provider_version'
 require 'pact_broker/pacts/latest_pact_publications_by_consumer_version'
+require 'pact_broker/matrix/quick_row_2'
 
 module PactBroker
   module Matrix
@@ -81,8 +82,8 @@ module PactBroker
       # If two or more are specified, just return the integrations that involve the specified pacticipants
       def find_integrations_for_specified_selectors(resolved_specified_selectors)
         specified_pacticipant_names = resolved_specified_selectors.collect(&:pacticipant_name)
-        QuickRow
-          .pacticipant_names_and_ids
+
+        QuickRow2
           .matching_selectors(resolved_specified_selectors)
           .distinct
           .all

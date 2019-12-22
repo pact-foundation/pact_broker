@@ -21,25 +21,26 @@ module PactBroker
     LV = :latest_verification_id_for_pact_version_and_provider_version
     LP = :latest_pact_publication_ids_for_consumer_versions
 
-    CONSUMER_COLUMNS = [Sequel[:lp][:consumer_id], Sequel[:consumers][:name].as(:consumer_name), Sequel[:lp][:pact_publication_id], Sequel[:lp][:pact_version_id]]
-    PROVIDER_COLUMNS = [Sequel[:lp][:provider_id], Sequel[:providers][:name].as(:provider_name), Sequel[:lv][:verification_id]]
-    CONSUMER_VERSION_COLUMNS = [Sequel[:lp][:consumer_version_id], Sequel[:cv][:number].as(:consumer_version_number), Sequel[:cv][:order].as(:consumer_version_order)]
+    CONSUMER_COLUMNS = [Sequel[LP][:consumer_id], Sequel[:consumers][:name].as(:consumer_name), Sequel[LP][:pact_publication_id], Sequel[LP][:pact_version_id]]
+    PROVIDER_COLUMNS = [Sequel[LP][:provider_id], Sequel[:providers][:name].as(:provider_name), Sequel[:lv][:verification_id]]
+    CONSUMER_VERSION_COLUMNS = [Sequel[LP][:consumer_version_id], Sequel[:cv][:number].as(:consumer_version_number), Sequel[:cv][:order].as(:consumer_version_order)]
     PROVIDER_VERSION_COLUMNS = [Sequel[:lv][:provider_version_id], Sequel[:pv][:number].as(:provider_version_number), Sequel[:pv][:order].as(:provider_version_order)]
     ALL_COLUMNS = CONSUMER_COLUMNS + CONSUMER_VERSION_COLUMNS + PROVIDER_COLUMNS + PROVIDER_VERSION_COLUMNS
 
-    LP_LV_JOIN = { Sequel[:lp][:pact_version_id] => Sequel[:lv][:pact_version_id] }
-    CONSUMER_JOIN = { Sequel[:lp][:consumer_id] => Sequel[:consumers][:id] }
-    PROVIDER_JOIN = { Sequel[:lp][:provider_id] => Sequel[:providers][:id] }
-    CONSUMER_VERSION_JOIN = { Sequel[:lp][:consumer_version_id] => Sequel[:cv][:id] }
+    LP_LV_JOIN = { Sequel[LP][:pact_version_id] => Sequel[:lv][:pact_version_id] }
+    CONSUMER_JOIN = { Sequel[LP][:consumer_id] => Sequel[:consumers][:id] }
+    PROVIDER_JOIN = { Sequel[LP][:provider_id] => Sequel[:providers][:id] }
+    CONSUMER_VERSION_JOIN = { Sequel[LP][:consumer_version_id] => Sequel[:cv][:id] }
     PROVIDER_VERSION_JOIN = { Sequel[:lv][:provider_version_id] => Sequel[:pv][:id] }
 
-    RAW_QUERY = Sequel::Model.db[Sequel.as(LP, :lp)]
+    RAW_QUERY = Sequel::Model.db[LP]
       .select(*ALL_COLUMNS)
       .left_outer_join(LV, LP_LV_JOIN, { table_alias: :lv } )
       .join(:pacticipants, CONSUMER_JOIN, { table_alias: :consumers })
       .join(:pacticipants, PROVIDER_JOIN, { table_alias: :providers })
       .join(:versions, CONSUMER_VERSION_JOIN, { table_alias: :cv })
       .left_outer_join(:versions, PROVIDER_VERSION_JOIN, { table_alias: :pv } )
+
 
     ALIASED_QUERY = Sequel.as(RAW_QUERY, :quick_rows)
 
@@ -101,36 +102,36 @@ module PactBroker
           def self.consumer_and_provider_in selectors
             Sequel.&(
               Sequel.|(
-                *consumer_and_maybe_consumer_version_match_any_selector(selectors)
+                *consumer_or_consumer_version_match_any_selector(selectors)
               ),
               Sequel.|(
-                *provider_and_maybe_provider_version_match_any_selector_or_verification_is_missing(selectors)
+                *provider_or_provider_version_match_any_selector_or_verification_is_missing(selectors)
               ),
               either_consumer_or_provider_was_specified_in_query(selectors)
             )
           end
 
-          def self.consumer_and_maybe_consumer_version_match_any_selector(selectors)
-            selectors.collect { |s| consumer_and_maybe_consumer_version_match_selector(s) }
+          def self.consumer_or_consumer_version_match_any_selector(selectors)
+            selectors.collect { |s| most_specific_consumer_criterion(s) }
           end
 
-          def self.consumer_and_maybe_consumer_version_match_selector(s)
+          def self.most_specific_consumer_criterion(s, qualifier = :quick_rows)
             if s[:pact_publication_ids]
-              { PACT_PUBLICATION_ID => s[:pact_publication_ids] }
+              { Sequel[qualifier][:pact_publication_id] => s[:pact_publication_ids] }
             elsif s[:pacticipant_version_id]
-              { CONSUMER_ID => s[:pacticipant_id], CONSUMER_VERSION_ID => s[:pacticipant_version_id] }
+              { Sequel[qualifier][:consumer_version_id] => s[:pacticipant_version_id] }
             else
-              { CONSUMER_ID => s[:pacticipant_id] }
+              { Sequel[qualifier][:consumer_id] => s[:pacticipant_id] }
             end
           end
 
-          def self.provider_and_maybe_provider_version_match_selector(s)
-            if s[:verification_ids]
-              { VERIFICATION_ID => s[:verification_ids] }
-            elsif s[:pacticipant_version_id]
-              { PROVIDER_ID => s[:pacticipant_id], PROVIDER_VERSION_ID => s[:pacticipant_version_id] }
+          def self.most_specific_provider_criterion(selector, qualifier = :quick_rows)
+            if selector[:verification_ids]
+              { Sequel[qualifier][:verification_id] => selector[:verification_ids] }
+            elsif selector[:pacticipant_version_id]
+              { Sequel[qualifier][:provider_version_id] => selector[:pacticipant_version_id] }
             else
-              { PROVIDER_ID => s[:pacticipant_id] }
+              { Sequel[qualifier][:provider_id] => selector[:pacticipant_id] }
             end
           end
 
@@ -140,9 +141,9 @@ module PactBroker
             { PROVIDER_ID => s[:pacticipant_id], PROVIDER_VERSION_ID => nil }
           end
 
-          def self.provider_and_maybe_provider_version_match_any_selector_or_verification_is_missing(selectors)
+          def self.provider_or_provider_version_match_any_selector_or_verification_is_missing(selectors)
             selectors.collect { |s|
-              provider_and_maybe_provider_version_match_selector(s)
+              most_specific_provider_criterion(s)
             } + selectors.collect { |s|
               provider_verification_is_missing_for_matching_selector(s)
             }
@@ -155,16 +156,17 @@ module PactBroker
           # implied selectors as well.
           # This extra filter makes sure that every row that is returned actually matches one of the specified
           # selectors.
-          def self.either_consumer_or_provider_was_specified_in_query(selectors)
-            specified_pacticipant_ids = selectors.select{ |s| s[:type] == :specified }.collect{ |s| s[:pacticipant_id] }
-            Sequel.|({ CONSUMER_ID => specified_pacticipant_ids } , { PROVIDER_ID => specified_pacticipant_ids })
+          def self.either_consumer_or_provider_was_specified_in_query(selectors, qualifier = nil)
+            consumer_id_field = qualifier ? Sequel[qualifier][:consumer_id] : CONSUMER_ID
+            provider_id_field = qualifier ? Sequel[qualifier][:provider_id] : PROVIDER_ID
+            specified_pacticipant_ids = selectors.select(&:specified?).collect(&:pacticipant_id)
+            Sequel.|({ consumer_id_field => specified_pacticipant_ids } , { provider_id_field => specified_pacticipant_ids })
           end
 
           def self.consumer_or_consumer_version_or_provider_or_provider_or_provider_version_match_selector(s)
-            Sequel.|(
-              s[:pacticipant_version_id] ? { CONSUMER_VERSION_ID => s[:pacticipant_version_id] } :  { CONSUMER_ID => s[:pacticipant_id] },
-              s[:pacticipant_version_id] ? { PROVIDER_VERSION_ID => s[:pacticipant_version_id] } :  { PROVIDER_ID => s[:pacticipant_id] }
-            )
+            consumer_or_consumer_version_match = s[:pacticipant_version_id] ? { CONSUMER_VERSION_ID => s[:pacticipant_version_id] } :  { CONSUMER_ID => s[:pacticipant_id] }
+            provider_or_provider_version_match = s[:pacticipant_version_id] ? { PROVIDER_VERSION_ID => s[:pacticipant_version_id] } :  { PROVIDER_ID => s[:pacticipant_id] }
+            Sequel.|(consumer_or_consumer_version_match , provider_or_provider_version_match)
           end
         end
 

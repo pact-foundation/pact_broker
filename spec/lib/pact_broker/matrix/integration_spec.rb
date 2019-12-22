@@ -4,6 +4,7 @@ module PactBroker
   module Matrix
     describe Service do
       let(:td) { TestDataBuilder.new }
+
       describe "find" do
         subject { Service.find(selectors, options) }
 
@@ -234,6 +235,47 @@ module PactBroker
 
           it "allows the app to be deployed" do
             expect(subject.deployment_status_summary.deployable?).to be true
+          end
+        end
+
+        describe "when two applications have pacts with each other (nureva use case)" do
+          # ServiceA v 1 has been verified by ServiceB v 100
+          # but ServiceB v 100 has only been verified by ServiceA v 99.
+          # It's missing a verification from ServiceA v1.
+          before do
+            td.create_pact_with_verification("ServiceB", "100", "ServiceA", "99")
+              .create_pact_with_verification("ServiceA", "1", "ServiceB", "100")
+          end
+
+          context "when both application versions are specified explictly" do
+            let(:selectors) do
+              [
+                { pacticipant_name: "ServiceA", pacticipant_version_number: "1" },
+                { pacticipant_name: "ServiceB", pacticipant_version_number: "100" }
+              ]
+            end
+
+            let(:options) { { latestby: "cvpv" } }
+
+            it "does not allow the two apps to be deployed together" do
+              expect(subject.deployment_status_summary.deployable?).to_not be true
+            end
+          end
+
+          context "when only one application is specified" do
+            let(:selectors) do
+              [
+                { pacticipant_name: "ServiceB", pacticipant_version_number: "100" }
+              ]
+            end
+
+            let(:options) { { latestby: "cvp", latest: true } }
+
+            it "does not allow the two apps to be deployed together" do
+              tp subject, :consumer_name, :consumer_version_number, :provider_name, :provider_version_number
+              puts subject.deployment_status_summary.reasons
+              expect(subject.deployment_status_summary.deployable?).to_not be true
+            end
           end
         end
       end

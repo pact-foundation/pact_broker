@@ -73,13 +73,20 @@ module PactBroker
         self
       end
 
-      def create_pact_with_hierarchy consumer_name = "Consumer", consumer_version = "1.2.3", provider_name = "Provider", json_content = default_json_content
+      def create_pact_with_hierarchy consumer_name = "Consumer", consumer_version_number = "1.2.3", provider_name = "Provider", json_content = default_json_content
         use_consumer(consumer_name)
         create_consumer(consumer_name) if !consumer
         use_provider(provider_name)
         create_provider provider_name if !provider
-        create_consumer_version consumer_version
+        use_consumer_version(consumer_version_number)
+        create_consumer_version(consumer_version_number) if !consumer_version
         create_pact json_content: json_content
+        self
+      end
+
+      def create_pact_with_verification consumer_name = "Consumer", consumer_version = "1.0.#{model_counter}", provider_name = "Provider", provider_version = "1.0.#{model_counter}"
+        create_pact_with_hierarchy(consumer_name, consumer_version, provider_name)
+        create_verification(number: model_counter, provider_version: provider_version)
         self
       end
 

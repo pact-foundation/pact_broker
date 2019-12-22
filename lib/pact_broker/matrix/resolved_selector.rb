@@ -65,12 +65,40 @@ module PactBroker
         self[:pacticipant_version_number]
       end
 
+      def verification_ids
+        self[:verification_ids]
+      end
+
+      def pact_publication_ids
+        self[:pact_publication_ids]
+      end
+
       def latest?
         self[:latest]
       end
 
       def tag
         self[:tag]
+      end
+
+      def most_specific_provider_criterion
+        if verification_ids
+          { verification_ids: verification_ids }
+        elsif pacticipant_version_id
+          { pacticipant_version_id: pacticipant_version_id }
+        else
+          { pacticipant_id: pacticipant_id }
+        end
+      end
+
+      def most_specific_consumer_criterion
+        if pact_publication_ids
+          { pact_publication_ids: pact_publication_ids }
+        elsif pacticipant_version_id
+          { pacticipant_version_id: pacticipant_version_id }
+        else
+          { pacticipant_id: pacticipant_id }
+        end
       end
 
       def latest_tagged?
