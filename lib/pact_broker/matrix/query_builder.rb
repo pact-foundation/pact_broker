@@ -9,7 +9,7 @@ module PactBroker
         provider_ids = collect_ids(most_specific_criteria, :pacticipant_id)
 
         ors = [
-          { verification_id: verification_ids },
+          { Sequel[qualifier][:verification_id] => verification_ids },
           { Sequel[qualifier][:provider_version_id] => provider_version_ids },
           { Sequel[qualifier][:provider_id] => provider_ids }
         ]
