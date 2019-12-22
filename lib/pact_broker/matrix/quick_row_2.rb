@@ -10,19 +10,19 @@ require 'pact_broker/matrix/query_builder'
 
 module PactBroker
   module Matrix
-    class QuickRow2 < Sequel::Model(:latest_pact_publication_ids_for_consumer_versions)
+    class QuickRow2 < Sequel::Model(Sequel.as(:latest_pact_publication_ids_for_consumer_versions, :lp))
       LV = :latest_verification_id_for_pact_version_and_provider_version
       LP = :latest_pact_publication_ids_for_consumer_versions
 
-      LP_LV_JOIN = { Sequel[LP][:pact_version_id] => Sequel[:lv][:pact_version_id] }
-      CONSUMER_JOIN = { Sequel[LP][:consumer_id] => Sequel[:consumers][:id] }
-      PROVIDER_JOIN = { Sequel[LP][:provider_id] => Sequel[:providers][:id] }
-      CONSUMER_VERSION_JOIN = { Sequel[LP][:consumer_version_id] => Sequel[:cv][:id] }
+      LP_LV_JOIN = { Sequel[:lp][:pact_version_id] => Sequel[:lv][:pact_version_id] }
+      CONSUMER_JOIN = { Sequel[:lp][:consumer_id] => Sequel[:consumers][:id] }
+      PROVIDER_JOIN = { Sequel[:lp][:provider_id] => Sequel[:providers][:id] }
+      CONSUMER_VERSION_JOIN = { Sequel[:lp][:consumer_version_id] => Sequel[:cv][:id] }
       PROVIDER_VERSION_JOIN = { Sequel[:lv][:provider_version_id] => Sequel[:pv][:id] }
 
-      CONSUMER_COLUMNS = [Sequel[LP][:consumer_id], Sequel[:consumers][:name].as(:consumer_name), Sequel[LP][:pact_publication_id], Sequel[LP][:pact_version_id]]
-      PROVIDER_COLUMNS = [Sequel[LP][:provider_id], Sequel[:providers][:name].as(:provider_name), Sequel[:lv][:verification_id]]
-      CONSUMER_VERSION_COLUMNS = [Sequel[LP][:consumer_version_id], Sequel[:cv][:number].as(:consumer_version_number), Sequel[:cv][:order].as(:consumer_version_order)]
+      CONSUMER_COLUMNS = [Sequel[:lp][:consumer_id], Sequel[:consumers][:name].as(:consumer_name), Sequel[:lp][:pact_publication_id], Sequel[:lp][:pact_version_id]]
+      PROVIDER_COLUMNS = [Sequel[:lp][:provider_id], Sequel[:providers][:name].as(:provider_name), Sequel[:lv][:verification_id]]
+      CONSUMER_VERSION_COLUMNS = [Sequel[:lp][:consumer_version_id], Sequel[:cv][:number].as(:consumer_version_number), Sequel[:cv][:order].as(:consumer_version_order)]
       PROVIDER_VERSION_COLUMNS = [Sequel[:lv][:provider_version_id], Sequel[:pv][:number].as(:provider_version_number), Sequel[:pv][:order].as(:provider_version_order)]
       ALL_COLUMNS = CONSUMER_COLUMNS + CONSUMER_VERSION_COLUMNS + PROVIDER_COLUMNS + PROVIDER_VERSION_COLUMNS
 
@@ -67,8 +67,8 @@ module PactBroker
             .join_pacticipants_and_pacticipant_versions
             .where {
               Sequel.&(
-                QueryBuilder.consumer_or_consumer_version_or_pact_publication_in(selectors, LP),
-                QueryBuilder.either_consumer_or_provider_was_specified_in_query(selectors, LP)
+                QueryBuilder.consumer_or_consumer_version_or_pact_publication_in(selectors, :lp),
+                QueryBuilder.either_consumer_or_provider_was_specified_in_query(selectors, :lp)
               )
             }
             .from_self(alias: :t9)

@@ -1,9 +1,6 @@
 module PactBroker
   module Matrix
     class QueryBuilder
-      LV = :latest_verification_id_for_pact_version_and_provider_version
-      LP = :latest_pact_publication_ids_for_consumer_versions
-
       def self.provider_or_provider_version_or_verification_in(selectors, allow_null_provider_version = false, qualifier)
         most_specific_criteria = selectors.collect(&:most_specific_provider_criterion)
 
@@ -59,8 +56,8 @@ module PactBroker
       end
 
       def self.consumer_or_consumer_version_or_provider_or_provider_or_provider_version_match_selector(s)
-        consumer_or_consumer_version_match = s[:pacticipant_version_id] ? { Sequel[LP][:consumer_version_id] => s[:pacticipant_version_id] } :  { Sequel[LP][:consumer_id] => s[:pacticipant_id] }
-        provider_or_provider_version_match = s[:pacticipant_version_id] ? { Sequel[:lv][:provider_version_id] => s[:pacticipant_version_id] } :  { Sequel[LP][:provider_id] => s[:pacticipant_id] }
+        consumer_or_consumer_version_match = s[:pacticipant_version_id] ? { Sequel[:lp][:consumer_version_id] => s[:pacticipant_version_id] } :  { Sequel[:lp][:consumer_id] => s[:pacticipant_id] }
+        provider_or_provider_version_match = s[:pacticipant_version_id] ? { Sequel[:lv][:provider_version_id] => s[:pacticipant_version_id] } :  { Sequel[:lp][:provider_id] => s[:pacticipant_id] }
         Sequel.|(consumer_or_consumer_version_match , provider_or_provider_version_match)
       end
 
