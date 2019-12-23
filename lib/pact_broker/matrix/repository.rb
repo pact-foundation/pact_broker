@@ -218,26 +218,7 @@ module PactBroker
       end
 
       def selector_for_version(pacticipant, version, original_selector, selector_type, latestby)
-        pact_publication_ids, verification_ids = nil, nil
-
-        # Querying for the "pre-filtered" pact publications and verifications directly, rather than just using the consumer
-        # and provider versions allows us to remove the "overwritten" pact revisions and verifications from the
-        # matrix result set, making the final matrix query more efficient and stopping the query limit from
-        # removing relevant data (eg. https://github.com/pact-foundation/pact_broker-client/issues/53)
-        if latestby
-          pact_publication_ids = PactBroker::Pacts::LatestPactPublicationsByConsumerVersion
-                                            .select(:id)
-                                            .where(consumer_version_id: version.id)
-                                            .collect{ |pact_publication| pact_publication[:id] }
-
-          verification_ids = PactBroker::Verifications::LatestVerificationIdForPactVersionAndProviderVersion
-                                .select(:verification_id)
-                                .distinct
-                                .where(provider_version_id: version.id)
-                                .collect{ |pact_publication| pact_publication[:verification_id] }
-        end
-
-        ResolvedSelector.for_pacticipant_and_version(pacticipant, version, pact_publication_ids, verification_ids, original_selector, selector_type)
+        ResolvedSelector.for_pacticipant_and_version(pacticipant, version, original_selector, selector_type)
       end
 
       def selector_without_version(pacticipant, selector_type)

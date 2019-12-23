@@ -23,13 +23,11 @@ module PactBroker
         )
       end
 
-      def self.for_pacticipant_and_version(pacticipant, version, pact_publication_ids = [], verification_ids = [], original_selector, type)
+      def self.for_pacticipant_and_version(pacticipant, version, original_selector, type)
         ResolvedSelector.new(
           pacticipant_id: pacticipant.id,
           pacticipant_name: pacticipant.name,
           pacticipant_version_id: version.id,
-          pact_publication_ids: pact_publication_ids,
-          verification_ids: verification_ids,
           pacticipant_version_number: version.number,
           latest: original_selector[:latest],
           tag: original_selector[:tag],
@@ -65,14 +63,6 @@ module PactBroker
         self[:pacticipant_version_number]
       end
 
-      def verification_ids
-        self[:verification_ids]
-      end
-
-      def pact_publication_ids
-        self[:pact_publication_ids]
-      end
-
       def latest?
         self[:latest]
       end
@@ -82,9 +72,7 @@ module PactBroker
       end
 
       def most_specific_provider_criterion
-        if verification_ids
-          { verification_ids: verification_ids }
-        elsif pacticipant_version_id
+        if pacticipant_version_id
           { pacticipant_version_id: pacticipant_version_id }
         else
           { pacticipant_id: pacticipant_id }
@@ -92,9 +80,7 @@ module PactBroker
       end
 
       def most_specific_consumer_criterion
-        if pact_publication_ids
-          { pact_publication_ids: pact_publication_ids }
-        elsif pacticipant_version_id
+        if pacticipant_version_id
           { pacticipant_version_id: pacticipant_version_id }
         else
           { pacticipant_id: pacticipant_id }

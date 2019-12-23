@@ -4,12 +4,10 @@ module PactBroker
       def self.provider_or_provider_version_or_verification_in(selectors, allow_null_provider_version = false, qualifier)
         most_specific_criteria = selectors.collect(&:most_specific_provider_criterion)
 
-        verification_ids = collect_ids(most_specific_criteria, :verification_ids)
         provider_version_ids = collect_ids(most_specific_criteria, :pacticipant_version_id)
         provider_ids = collect_ids(most_specific_criteria, :pacticipant_id)
 
         ors = []
-        ors << { Sequel[qualifier][:verification_id] => verification_ids } if verification_ids.any?
         ors << { Sequel[qualifier][:provider_version_id] => provider_version_ids } if provider_version_ids.any?
         ors << { Sequel[qualifier][:provider_id] => provider_ids } if provider_ids.any?
 
@@ -29,12 +27,10 @@ module PactBroker
 
       def self.consumer_or_consumer_version_or_pact_publication_in(selectors, qualifier)
         most_specific_criteria = selectors.collect(&:most_specific_consumer_criterion)
-        pact_publication_ids = collect_ids(most_specific_criteria, :pact_publication_ids)
         consumer_version_ids = collect_ids(most_specific_criteria, :pacticipant_version_id)
         consumer_ids = collect_ids(most_specific_criteria, :pacticipant_id)
 
         ors = []
-        ors << { Sequel[qualifier][:pact_publication_id] => pact_publication_ids } if pact_publication_ids.any?
         ors << { Sequel[qualifier][:consumer_version_id] => consumer_version_ids } if consumer_version_ids.any?
         ors << { Sequel[qualifier][:consumer_id] => consumer_ids } if consumer_ids.any?
 
@@ -71,8 +67,6 @@ module PactBroker
 
       def self.collect_the_ids selectors
         most_specific_criteria = selectors.collect(&:most_specific_consumer_criterion)
-        verification_ids = collect_ids(most_specific_criteria, :verification_ids)
-        pact_publication_ids = collect_ids(most_specific_criteria, :pact_publication_ids)
         pacticipant_version_ids = collect_ids(most_specific_criteria, :pacticipant_version_id)
         pacticipant_ids = collect_ids(most_specific_criteria, :pacticipant_id)
         all_pacticipant_ids = selectors.collect(&:pacticipant_id)
@@ -80,8 +74,6 @@ module PactBroker
         specified_pacticipant_ids = selectors.select(&:specified?).collect(&:pacticipant_id)
 
         {
-          verification_ids: verification_ids,
-          pact_publication_ids: pact_publication_ids,
           consumer_version_ids: pacticipant_version_ids,
           provider_version_ids: pacticipant_version_ids,
           consumer_ids: pacticipant_ids,
