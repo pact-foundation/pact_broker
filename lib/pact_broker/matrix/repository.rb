@@ -82,12 +82,14 @@ module PactBroker
       def find_integrations_for_specified_selectors(resolved_specified_selectors)
         specified_pacticipant_names = resolved_specified_selectors.collect(&:pacticipant_name)
 
+        # Must do select after matching selectors so we only select the columns we actually want
+        # Otherwise we end up with a really long query!
         QuickRow
           .matching_selectors(resolved_specified_selectors)
+          .from_self
+          .select(:consumer_name, :consumer_id, :provider_name, :provider_id)
           .distinct
-          .all
           .collect(&:to_hash)
-          .uniq
           .collect do | hash |
             required = is_a_row_for_this_integration_required?(specified_pacticipant_names, hash[:consumer_name])
             Integration.from_hash(hash.merge(required: required))
