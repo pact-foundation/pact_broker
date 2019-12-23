@@ -11,11 +11,11 @@ require 'pact_broker/domain/verification'
 require 'pact_broker/pacts/pact_publication'
 require 'pact_broker/tags/tag_with_latest_flag'
 
-# The difference between this query and the query for QuickRow2 is that
-# the left outer join is done on a pre-filtered dataset so that we
-# get a row with null verification fields for a pact that has not been verified
-# by the particular providers where're interested in, rather than being excluded
-# from the dataset.
+# The difference between `join_verifications_for` and `join_verifications` is that
+# the left outer join is done on a pre-filtered dataset in `join_verifications_for`,
+# so that we get a row with null verification fields for a pact that has been verified
+# by a *different* version of the provider we're interested in,
+# rather than being excluded from the dataset altogether.
 
 module PactBroker
   module Matrix
