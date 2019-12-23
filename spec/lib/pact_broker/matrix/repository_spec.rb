@@ -981,6 +981,8 @@ module PactBroker
       end
 
       describe "find pact_broker-client issue 33" do
+        # foo1.0.0 bar10.0.0 n1
+        # foo1.0.0 baz9.0.0 n1
         before do
           td
           .create_consumer("foo")
@@ -1003,7 +1005,7 @@ module PactBroker
         subject { shorten_rows(results) }
 
         it "only returns a row for the foo pact version that has been verified by the current production version of bar" do
-          expect(subject).to eq ["foo1.0.0 bar10.0.0 n1"]
+          expect(subject).to eq ["foo1.0.0 bar10.0.0 n1", "foo1.0.0 baz? n?"]
         end
 
         it "returns 2 integrations" do

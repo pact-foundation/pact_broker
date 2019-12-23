@@ -9,7 +9,6 @@ require 'pact_broker/matrix/query_results_with_deployment_status_summary'
 require 'pact_broker/matrix/resolved_selector'
 require 'pact_broker/verifications/latest_verification_id_for_pact_version_and_provider_version'
 require 'pact_broker/pacts/latest_pact_publications_by_consumer_version'
-require 'pact_broker/matrix/quick_row_2'
 
 module PactBroker
   module Matrix
@@ -83,7 +82,7 @@ module PactBroker
       def find_integrations_for_specified_selectors(resolved_specified_selectors)
         specified_pacticipant_names = resolved_specified_selectors.collect(&:pacticipant_name)
 
-        QuickRow2
+        QuickRow
           .matching_selectors(resolved_specified_selectors)
           .distinct
           .all
@@ -123,8 +122,8 @@ module PactBroker
       end
 
       def query_matrix selectors, options
-        query = options[:latestby] ? QuickRow.eager_all_the_things : Row
-        query = query.select_all.matching_selectors(selectors)
+        query = options[:latestby] ? QuickRow.eager_all_the_things : Row.select_all
+        query = query.matching_selectors(selectors)
         query = query.limit(options[:limit]) if options[:limit]
         query
           .order_by_names_ascending_most_recent_first

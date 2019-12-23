@@ -1,11 +1,6 @@
-=begin
-The Matrix::Row is based on the matrix view which does a join of every pact/verification
-and then selects the relevant ones.
-
-The Matrix::QuickRow starts with the relevant rows, and builds the matrix query from that,
-making it much quicker.
-
-=end
+require 'pact_broker/pacts/all_pact_publications'
+require 'pact_broker/repositories/helpers'
+require 'pact_broker/matrix/query_builder'
 require 'sequel'
 require 'pact_broker/repositories/helpers'
 require 'pact_broker/logging'
@@ -16,41 +11,33 @@ require 'pact_broker/domain/verification'
 require 'pact_broker/pacts/pact_publication'
 require 'pact_broker/tags/tag_with_latest_flag'
 
+# The difference between this query and the query for QuickRow2 is that
+# the left outer join is done on a pre-filtered dataset so that we
+# get a row with null verification fields for a pact that has not been verified
+# by the particular providers where're interested in, rather than being excluded
+# from the dataset.
+
 module PactBroker
   module Matrix
-    LV = :latest_verification_id_for_pact_version_and_provider_version
-    LP = :latest_pact_publication_ids_for_consumer_versions
+    class QuickRow < Sequel::Model(Sequel.as(:latest_pact_publication_ids_for_consumer_versions, :lp))
+      LV = :latest_verification_id_for_pact_version_and_provider_version
+      LP = :latest_pact_publication_ids_for_consumer_versions
 
-    CONSUMER_COLUMNS = [Sequel[LP][:consumer_id], Sequel[:consumers][:name].as(:consumer_name), Sequel[LP][:pact_publication_id], Sequel[LP][:pact_version_id]]
-    PROVIDER_COLUMNS = [Sequel[LP][:provider_id], Sequel[:providers][:name].as(:provider_name), Sequel[:lv][:verification_id]]
-    CONSUMER_VERSION_COLUMNS = [Sequel[LP][:consumer_version_id], Sequel[:cv][:number].as(:consumer_version_number), Sequel[:cv][:order].as(:consumer_version_order)]
-    PROVIDER_VERSION_COLUMNS = [Sequel[:lv][:provider_version_id], Sequel[:pv][:number].as(:provider_version_number), Sequel[:pv][:order].as(:provider_version_order)]
-    ALL_COLUMNS = CONSUMER_COLUMNS + CONSUMER_VERSION_COLUMNS + PROVIDER_COLUMNS + PROVIDER_VERSION_COLUMNS
+      # Not sure why we're eager loading some things and including others in the base query :shrug:
 
-    LP_LV_JOIN = { Sequel[LP][:pact_version_id] => Sequel[:lv][:pact_version_id] }
-    CONSUMER_JOIN = { Sequel[LP][:consumer_id] => Sequel[:consumers][:id] }
-    PROVIDER_JOIN = { Sequel[LP][:provider_id] => Sequel[:providers][:id] }
-    CONSUMER_VERSION_JOIN = { Sequel[LP][:consumer_version_id] => Sequel[:cv][:id] }
-    PROVIDER_VERSION_JOIN = { Sequel[:lv][:provider_version_id] => Sequel[:pv][:id] }
+      LP_LV_JOIN = { Sequel[:lp][:pact_version_id] => Sequel[:lv][:pact_version_id] }
+      CONSUMER_JOIN = { Sequel[:lp][:consumer_id] => Sequel[:consumers][:id] }
+      PROVIDER_JOIN = { Sequel[:lp][:provider_id] => Sequel[:providers][:id] }
+      CONSUMER_VERSION_JOIN = { Sequel[:lp][:consumer_version_id] => Sequel[:cv][:id] }
+      PROVIDER_VERSION_JOIN = { Sequel[:lv][:provider_version_id] => Sequel[:pv][:id] }
 
-    RAW_QUERY = Sequel::Model.db[LP]
-      .select(*ALL_COLUMNS)
-      .left_outer_join(LV, LP_LV_JOIN, { table_alias: :lv } )
-      .join(:pacticipants, CONSUMER_JOIN, { table_alias: :consumers })
-      .join(:pacticipants, PROVIDER_JOIN, { table_alias: :providers })
-      .join(:versions, CONSUMER_VERSION_JOIN, { table_alias: :cv })
-      .left_outer_join(:versions, PROVIDER_VERSION_JOIN, { table_alias: :pv } )
+      CONSUMER_COLUMNS = [Sequel[:lp][:consumer_id], Sequel[:consumers][:name].as(:consumer_name), Sequel[:lp][:pact_publication_id], Sequel[:lp][:pact_version_id]]
+      PROVIDER_COLUMNS = [Sequel[:lp][:provider_id], Sequel[:providers][:name].as(:provider_name), Sequel[:lv][:verification_id]]
+      CONSUMER_VERSION_COLUMNS = [Sequel[:lp][:consumer_version_id], Sequel[:cv][:number].as(:consumer_version_number), Sequel[:cv][:order].as(:consumer_version_order)]
+      PROVIDER_VERSION_COLUMNS = [Sequel[:lv][:provider_version_id], Sequel[:pv][:number].as(:provider_version_number), Sequel[:pv][:order].as(:provider_version_order)]
+      ALL_COLUMNS = CONSUMER_COLUMNS + CONSUMER_VERSION_COLUMNS + PROVIDER_COLUMNS + PROVIDER_VERSION_COLUMNS
 
-
-    ALIASED_QUERY = Sequel.as(RAW_QUERY, :quick_rows)
-
-    class QuickRow < Sequel::Model(ALIASED_QUERY)
-      CONSUMER_ID = Sequel[:quick_rows][:consumer_id]
-      PROVIDER_ID = Sequel[:quick_rows][:provider_id]
-      CONSUMER_VERSION_ID = Sequel[:quick_rows][:consumer_version_id]
-      PROVIDER_VERSION_ID = Sequel[:quick_rows][:provider_version_id]
-      PACT_PUBLICATION_ID = Sequel[:quick_rows][:pact_publication_id]
-      VERIFICATION_ID = Sequel[:quick_rows][:verification_id]
+      SELECT_ALL_COLUMN_ARGS = [:select_all_columns] + ALL_COLUMNS
 
       associate(:many_to_one, :pact_publication, :class => "PactBroker::Pacts::PactPublication", :key => :pact_publication_id, :primary_key => :id)
       associate(:many_to_one, :provider, :class => "PactBroker::Domain::Pacticipant", :key => :provider_id, :primary_key => :id)
@@ -64,113 +51,97 @@ module PactBroker
 
       dataset_module do
         include PactBroker::Repositories::Helpers
-        include PactBroker::Logging
 
-        select :pacticipant_names_and_ids, :consumer_name, :consumer_id, :provider_name, :provider_id
-
-        def consumer_id consumer_id
-          where(CONSUMER_ID => consumer_id)
-        end
+        select *SELECT_ALL_COLUMN_ARGS
 
         def matching_selectors selectors
           if selectors.size == 1
-            where_consumer_or_provider_is(selectors.first)
+            matching_one_selector(selectors.first)
           else
-            where_consumer_and_provider_in(selectors)
+            matching_multiple_selectors(selectors)
           end
         end
 
-        # find rows where (the consumer (and optional version) matches any of the selectors)
-        # AND
-        # the (provider (and optional version) matches any of the selectors OR the provider matches
-        #      and the verification is missing (and hence the provider version is null))
-        def where_consumer_and_provider_in selectors
-          where{
-            QueryHelper.consumer_and_provider_in(selectors)
-          }
-        end
-
-        def where_consumer_or_provider_is s
-          where{
-            QueryHelper.consumer_or_consumer_version_or_provider_or_provider_or_provider_version_match_selector(s)
-          }
-        end
-
-        # Can't access other dataset_module methods from inside the Sequel `where{ ... }` block, so make a private class
-        # with some helper methods
-        class QueryHelper
-          def self.consumer_and_provider_in selectors
-            Sequel.&(
-              Sequel.|(
-                *consumer_or_consumer_version_match_any_selector(selectors)
-              ),
-              Sequel.|(
-                *provider_or_provider_version_match_any_selector_or_verification_is_missing(selectors)
-              ),
-              either_consumer_or_provider_was_specified_in_query(selectors)
-            )
-          end
-
-          def self.consumer_or_consumer_version_match_any_selector(selectors)
-            selectors.collect { |s| most_specific_consumer_criterion(s) }
-          end
-
-          def self.most_specific_consumer_criterion(s, qualifier = :quick_rows)
-            if s[:pact_publication_ids]
-              { Sequel[qualifier][:pact_publication_id] => s[:pact_publication_ids] }
-            elsif s[:pacticipant_version_id]
-              { Sequel[qualifier][:consumer_version_id] => s[:pacticipant_version_id] }
-            else
-              { Sequel[qualifier][:consumer_id] => s[:pacticipant_id] }
-            end
-          end
-
-          def self.most_specific_provider_criterion(selector, qualifier = :quick_rows)
-            if selector[:verification_ids]
-              { Sequel[qualifier][:verification_id] => selector[:verification_ids] }
-            elsif selector[:pacticipant_version_id]
-              { Sequel[qualifier][:provider_version_id] => selector[:pacticipant_version_id] }
-            else
-              { Sequel[qualifier][:provider_id] => selector[:pacticipant_id] }
-            end
-          end
-
-          # if the pact for a consumer version has never been verified, it exists in the matrix as a row
-          # with a blank provider version id
-          def self.provider_verification_is_missing_for_matching_selector(s)
-            { PROVIDER_ID => s[:pacticipant_id], PROVIDER_VERSION_ID => nil }
-          end
-
-          def self.provider_or_provider_version_match_any_selector_or_verification_is_missing(selectors)
-            selectors.collect { |s|
-              most_specific_provider_criterion(s)
-            } + selectors.collect { |s|
-              provider_verification_is_missing_for_matching_selector(s)
+        # When we have one selector, we need to join ALL the verifications to find out
+        # what integrations exist
+        def matching_one_selector(selector)
+          select_all_columns
+            .join_verifications
+            .join_pacticipants_and_pacticipant_versions
+            .where {
+              QueryBuilder.consumer_or_consumer_version_or_provider_or_provider_or_provider_version_match_selector(selector)
             }
-          end
+        end
 
-          # Some selecters are specified in the query, others are implied (when only one pacticipant is specified,
-          # the integrations are automatically worked out, and the selectors for these are of type :implied )
-          # When there are 3 pacticipants that each have dependencies on each other (A->B, A->C, B->C), the query
-          # to deploy C (implied A, implied B, specified C) was returning the A->B row because it matched the
-          # implied selectors as well.
-          # This extra filter makes sure that every row that is returned actually matches one of the specified
-          # selectors.
-          def self.either_consumer_or_provider_was_specified_in_query(selectors, qualifier = nil)
-            consumer_id_field = qualifier ? Sequel[qualifier][:consumer_id] : CONSUMER_ID
-            provider_id_field = qualifier ? Sequel[qualifier][:provider_id] : PROVIDER_ID
-            specified_pacticipant_ids = selectors.select(&:specified?).collect(&:pacticipant_id)
-            Sequel.|({ consumer_id_field => specified_pacticipant_ids } , { provider_id_field => specified_pacticipant_ids })
-          end
+        # When the user has specified multiple selectors, we only want to join the verifications for
+        # the specified selectors. This is because of the behaviour of the left outer join.
+        # Imagine a pact has been verified by a provider version that was NOT specified in the selectors.
+        # If we join all the verifications and THEN filter the rows to only show the versions specified
+        # in the selectors, we won't get a row for that pact, and hence, we won't
+        # know that it hasn't been verified by the provider version we're interested in.
+        # Instead, we need to filter the verifications dataset down to only the ones specified in the selectors first,
+        # and THEN join them to the pacts, so that we get a row for the pact with null provider version
+        # and verification fields.
+        def matching_multiple_selectors(selectors)
+          select_all_columns
+            .join_verifications_for(selectors)
+            .join_pacticipants_and_pacticipant_versions
+            .where {
+              Sequel.&(
+                QueryBuilder.consumer_or_consumer_version_or_pact_publication_in(selectors, :lp),
+                QueryBuilder.either_consumer_or_provider_was_specified_in_query(selectors, :lp)
+              )
+            }
+            .from_self(alias: :t9)
+            .where {
+              QueryBuilder.provider_or_provider_version_or_verification_in(selectors, true, :t9)
+            }
+        end
 
-          def self.consumer_or_consumer_version_or_provider_or_provider_or_provider_version_match_selector(s)
-            consumer_or_consumer_version_match = s[:pacticipant_version_id] ? { CONSUMER_VERSION_ID => s[:pacticipant_version_id] } :  { CONSUMER_ID => s[:pacticipant_id] }
-            provider_or_provider_version_match = s[:pacticipant_version_id] ? { PROVIDER_VERSION_ID => s[:pacticipant_version_id] } :  { PROVIDER_ID => s[:pacticipant_id] }
-            Sequel.|(consumer_or_consumer_version_match , provider_or_provider_version_match)
-          end
+        def verifications_for(selectors)
+          db[LV]
+            .select(:verification_id, :provider_version_id, :pact_version_id)
+            .where {
+              Sequel.&(
+                QueryBuilder.consumer_in_pacticipant_ids(selectors),
+                QueryBuilder.provider_or_provider_version_or_verification_in(selectors, false, LV)
+              )
+            }
+        end
+
+        def join_pacticipants_and_pacticipant_versions
+          join_consumers
+            .join_providers
+            .join_consumer_versions
+            .join_provider_versions
+        end
+
+        def join_consumers
+          join(:pacticipants, CONSUMER_JOIN, { table_alias: :consumers })
+        end
+
+        def join_providers
+          join(:pacticipants, PROVIDER_JOIN, { table_alias: :providers })
+        end
+
+        def join_consumer_versions
+          join(:versions, CONSUMER_VERSION_JOIN, { table_alias: :cv })
+        end
+
+        def join_provider_versions
+          left_outer_join(:versions, PROVIDER_VERSION_JOIN, { table_alias: :pv } )
+        end
+
+        def join_verifications_for(selectors)
+          left_outer_join(verifications_for(selectors), LP_LV_JOIN, { table_alias: :lv } )
+        end
+
+        def join_verifications
+          left_outer_join(LV, LP_LV_JOIN, { table_alias: :lv } )
         end
 
         def order_by_names_ascending_most_recent_first
+          from_self.
           order(
             Sequel.asc(:consumer_name),
             Sequel.desc(:consumer_version_order),
@@ -189,7 +160,10 @@ module PactBroker
           .eager(:pact_version)
         end
 
-      end
+        def default_scope
+          select_all_columns.join_verifications.join_pacticipants_and_pacticipant_versions.from_self
+        end
+      end # end dataset_module
 
       def success
         verification&.success
@@ -261,6 +235,50 @@ module PactBroker
 
       def involves_pacticipant_with_name?(pacticipant_name)
         pacticipant_name.include?(pacticipant_name)
+      end
+
+      def provider_version_id
+        # null when not verified
+        values[:provider_version_id]
+      end
+
+      def verification_id
+        # null when not verified
+        return_or_raise_if_not_set(:verification_id)
+      end
+
+      def consumer_name
+        return_or_raise_if_not_set(:consumer_name)
+      end
+
+      def consumer_version_number
+        return_or_raise_if_not_set(:consumer_version_number)
+      end
+
+      def consumer_version_order
+        return_or_raise_if_not_set(:consumer_version_order)
+      end
+
+      def provider_name
+        return_or_raise_if_not_set(:provider_name)
+      end
+
+      def provider_version_number
+        return_or_raise_if_not_set(:provider_version_number)
+      end
+
+      def provider_version_order
+        return_or_raise_if_not_set(:provider_version_order)
+      end
+
+      # This model needs the verifications and pacticipants joined to it
+      # before it can be used, as it's not a "real" model.
+      def return_or_raise_if_not_set(key)
+        if values.key?(key)
+          values[key]
+        else
+          raise "Required table not joined"
+        end
       end
     end
   end
