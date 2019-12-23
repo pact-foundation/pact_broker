@@ -8,11 +8,10 @@ module PactBroker
         provider_version_ids = collect_ids(most_specific_criteria, :pacticipant_version_id)
         provider_ids = collect_ids(most_specific_criteria, :pacticipant_id)
 
-        ors = [
-          { Sequel[qualifier][:verification_id] => verification_ids },
-          { Sequel[qualifier][:provider_version_id] => provider_version_ids },
-          { Sequel[qualifier][:provider_id] => provider_ids }
-        ]
+        ors = []
+        ors << { Sequel[qualifier][:verification_id] => verification_ids } if verification_ids.any?
+        ors << { Sequel[qualifier][:provider_version_id] => provider_version_ids } if provider_version_ids.any?
+        ors << { Sequel[qualifier][:provider_id] => provider_ids } if provider_ids.any?
 
         if allow_null_provider_version
           ors << {
@@ -34,11 +33,12 @@ module PactBroker
         consumer_version_ids = collect_ids(most_specific_criteria, :pacticipant_version_id)
         consumer_ids = collect_ids(most_specific_criteria, :pacticipant_id)
 
-        Sequel.|(
-          { Sequel[qualifier][:pact_publication_id] => pact_publication_ids },
-          { Sequel[qualifier][:consumer_version_id] => consumer_version_ids },
-          { Sequel[qualifier][:consumer_id] => consumer_ids }
-        )
+        ors = []
+        ors << { Sequel[qualifier][:pact_publication_id] => pact_publication_ids } if pact_publication_ids.any?
+        ors << { Sequel[qualifier][:consumer_version_id] => consumer_version_ids } if consumer_version_ids.any?
+        ors << { Sequel[qualifier][:consumer_id] => consumer_ids } if consumer_ids.any?
+
+        Sequel.|(*ors)
       end
 
       # Some selecters are specified in the query, others are implied (when only one pacticipant is specified,
@@ -66,9 +66,7 @@ module PactBroker
       end
 
       def self.collect_ids(hashes, key)
-        ids = hashes.collect{ |s| s[key] }.flatten.compact
-        # must avoid an empty IN list, or Sequel makes a (0 = 1) clause for us
-        ids.empty? ? [-1] : ids
+        hashes.collect{ |s| s[key] }.flatten.compact
       end
 
       def self.collect_the_ids selectors
