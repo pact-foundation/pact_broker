@@ -272,8 +272,6 @@ module PactBroker
             let(:options) { { latestby: "cvp", latest: true } }
 
             it "does not allow the two apps to be deployed together" do
-              tp subject, :consumer_name, :consumer_version_number, :provider_name, :provider_version_number
-              puts subject.deployment_status_summary.reasons
               expect(subject.deployment_status_summary.deployable?).to_not be true
             end
           end
