@@ -20,28 +20,53 @@ require 'pact_broker/tags/tag_with_latest_flag'
 module PactBroker
   module Matrix
     class QuickRow < Sequel::Model(Sequel.as(:latest_pact_publication_ids_for_consumer_versions, :lp))
+
+      # Tables
       LV = :latest_verification_id_for_pact_version_and_provider_version
       LP = :latest_pact_publication_ids_for_consumer_versions
 
-      # Not sure why we're eager loading some things and including others in the base query :shrug:
-
+      # Joins
       LP_LV_JOIN = { Sequel[:lp][:pact_version_id] => Sequel[:lv][:pact_version_id] }
       CONSUMER_JOIN = { Sequel[:lp][:consumer_id] => Sequel[:consumers][:id] }
       PROVIDER_JOIN = { Sequel[:lp][:provider_id] => Sequel[:providers][:id] }
       CONSUMER_VERSION_JOIN = { Sequel[:lp][:consumer_version_id] => Sequel[:cv][:id] }
       PROVIDER_VERSION_JOIN = { Sequel[:lv][:provider_version_id] => Sequel[:pv][:id] }
 
-      CONSUMER_COLUMNS = [Sequel[:lp][:consumer_id], Sequel[:consumers][:name].as(:consumer_name), Sequel[:lp][:pact_publication_id], Sequel[:lp][:pact_version_id]]
-      PROVIDER_COLUMNS = [Sequel[:lp][:provider_id], Sequel[:providers][:name].as(:provider_name), Sequel[:lv][:verification_id]]
-      CONSUMER_VERSION_COLUMNS = [Sequel[:lp][:consumer_version_id], Sequel[:cv][:number].as(:consumer_version_number), Sequel[:cv][:order].as(:consumer_version_order)]
-      PROVIDER_VERSION_COLUMNS = [Sequel[:lv][:provider_version_id], Sequel[:pv][:number].as(:provider_version_number), Sequel[:pv][:order].as(:provider_version_order)]
-      ALL_COLUMNS = CONSUMER_COLUMNS + CONSUMER_VERSION_COLUMNS + PROVIDER_COLUMNS + PROVIDER_VERSION_COLUMNS
+      # Not sure why we're eager loading some things and including others in the base query :shrug:
 
-      SELECT_ALL_COLUMN_ARGS = [:select_all_columns] + ALL_COLUMNS
-      PACTICIPANT_NAMES_AND_IDS = [
-        Sequel[:lp][:consumer_id], Sequel[:consumers][:name].as(:consumer_name),
-        Sequel[:lp][:provider_id], Sequel[:providers][:name].as(:provider_name)
+      # Columns
+      CONSUMER_COLUMNS = [
+        Sequel[:lp][:consumer_id],
+        Sequel[:consumers][:name].as(:consumer_name)
       ]
+      PROVIDER_COLUMNS = [
+        Sequel[:lp][:provider_id],
+        Sequel[:providers][:name].as(:provider_name)
+      ]
+      CONSUMER_VERSION_COLUMNS = [
+        Sequel[:lp][:consumer_version_id],
+        Sequel[:cv][:number].as(:consumer_version_number),
+        Sequel[:cv][:order].as(:consumer_version_order)
+      ]
+      PROVIDER_VERSION_COLUMNS = [
+        Sequel[:lv][:provider_version_id],
+        Sequel[:pv][:number].as(:provider_version_number),
+        Sequel[:pv][:order].as(:provider_version_order)
+      ]
+      PACT_COLUMNS = [
+        Sequel[:lp][:pact_publication_id],
+        Sequel[:lp][:pact_version_id]
+      ]
+      VERIFICATION_COLUMNS = [
+        Sequel[:lv][:verification_id]
+      ]
+      ALL_COLUMNS = CONSUMER_COLUMNS + CONSUMER_VERSION_COLUMNS + PACT_COLUMNS +
+                    PROVIDER_COLUMNS + PROVIDER_VERSION_COLUMNS + VERIFICATION_COLUMNS
+      PACTICIPANT_NAMES_AND_IDS = CONSUMER_COLUMNS + PROVIDER_COLUMNS
+
+      # cachable select arguments
+      SELECT_ALL_COLUMN_ARGS = [:select_all_columns] + ALL_COLUMNS
+      SELECT_PACTICIPANT_NAMES_AND_IDS_ARGS = [:select_pacticipant_names_and_ids] + PACTICIPANT_NAMES_AND_IDS
 
       associate(:many_to_one, :pact_publication, :class => "PactBroker::Pacts::PactPublication", :key => :pact_publication_id, :primary_key => :id)
       associate(:many_to_one, :provider, :class => "PactBroker::Domain::Pacticipant", :key => :provider_id, :primary_key => :id)
@@ -57,9 +82,10 @@ module PactBroker
         include PactBroker::Repositories::Helpers
 
         select *SELECT_ALL_COLUMN_ARGS
+        select *SELECT_PACTICIPANT_NAMES_AND_IDS_ARGS
 
         def distinct_integrations selectors
-          select(*(PACTICIPANT_NAMES_AND_IDS))
+          select_pacticipant_names_and_ids
             .distinct
             .matching_selectors(selectors)
         end
