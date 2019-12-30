@@ -42,10 +42,6 @@ module PactBroker
         Sequel[:lp][:consumer_id], Sequel[:consumers][:name].as(:consumer_name),
         Sequel[:lp][:provider_id], Sequel[:providers][:name].as(:provider_name)
       ]
-      PACTICIPANT_VERSION_IDS = [
-        Sequel[:lp][:consumer_version_id],
-        Sequel[:lv][:provider_version_id]
-      ]
 
       associate(:many_to_one, :pact_publication, :class => "PactBroker::Pacts::PactPublication", :key => :pact_publication_id, :primary_key => :id)
       associate(:many_to_one, :provider, :class => "PactBroker::Domain::Pacticipant", :key => :provider_id, :primary_key => :id)
@@ -63,12 +59,9 @@ module PactBroker
         select *SELECT_ALL_COLUMN_ARGS
 
         def distinct_integrations selectors
-          select(*(PACTICIPANT_NAMES_AND_IDS + PACTICIPANT_VERSION_IDS))
+          select(*(PACTICIPANT_NAMES_AND_IDS))
             .distinct
             .matching_selectors(selectors)
-            .from_self
-            .select(:consumer_name, :consumer_id, :provider_name, :provider_id)
-            .distinct
         end
 
         def matching_selectors selectors
@@ -107,9 +100,8 @@ module PactBroker
                 QueryBuilder.either_consumer_or_provider_was_specified_in_query(selectors, :lp)
               )
             }
-            .from_self(alias: :t9)
             .where {
-              QueryBuilder.provider_or_provider_version_matches_selectors(selectors, true, :t9)
+              QueryBuilder.provider_or_provider_version_matches_selectors(selectors, true, :lv)
             }
         end
 

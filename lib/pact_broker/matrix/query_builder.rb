@@ -13,7 +13,7 @@ module PactBroker
 
         if allow_null_provider_version
           ors << {
-            Sequel[qualifier][:provider_id] => selectors.collect{ |s| s[:pacticipant_id] },
+            Sequel[:lp][:provider_id] => selectors.collect{ |s| s[:pacticipant_id] },
             Sequel[qualifier][:provider_version_id] => nil
           }
         end
