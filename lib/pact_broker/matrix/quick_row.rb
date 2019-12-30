@@ -38,6 +38,14 @@ module PactBroker
       ALL_COLUMNS = CONSUMER_COLUMNS + CONSUMER_VERSION_COLUMNS + PROVIDER_COLUMNS + PROVIDER_VERSION_COLUMNS
 
       SELECT_ALL_COLUMN_ARGS = [:select_all_columns] + ALL_COLUMNS
+      PACTICIPANT_NAMES_AND_IDS = [
+        Sequel[:lp][:consumer_id], Sequel[:consumers][:name].as(:consumer_name),
+        Sequel[:lp][:provider_id], Sequel[:providers][:name].as(:provider_name)
+      ]
+      PACTICIPANT_VERSION_IDS = [
+        Sequel[:lp][:consumer_version_id],
+        Sequel[:lv][:provider_version_id]
+      ]
 
       associate(:many_to_one, :pact_publication, :class => "PactBroker::Pacts::PactPublication", :key => :pact_publication_id, :primary_key => :id)
       associate(:many_to_one, :provider, :class => "PactBroker::Domain::Pacticipant", :key => :provider_id, :primary_key => :id)
@@ -54,6 +62,15 @@ module PactBroker
 
         select *SELECT_ALL_COLUMN_ARGS
 
+        def distinct_integrations selectors
+          select(*(PACTICIPANT_NAMES_AND_IDS + PACTICIPANT_VERSION_IDS))
+            .distinct
+            .matching_selectors(selectors)
+            .from_self
+            .select(:consumer_name, :consumer_id, :provider_name, :provider_id)
+            .distinct
+        end
+
         def matching_selectors selectors
           if selectors.size == 1
             matching_one_selector(selectors.first)
@@ -65,8 +82,7 @@ module PactBroker
         # When we have one selector, we need to join ALL the verifications to find out
         # what integrations exist
         def matching_one_selector(selector)
-          select_all_columns
-            .join_verifications
+          join_verifications
             .join_pacticipants_and_pacticipant_versions
             .where {
               QueryBuilder.consumer_or_consumer_version_or_provider_or_provider_or_provider_version_match_selector(selector)
@@ -83,8 +99,7 @@ module PactBroker
         # and THEN join them to the pacts, so that we get a row for the pact with null provider version
         # and verification fields.
         def matching_multiple_selectors(selectors)
-          select_all_columns
-            .join_verifications_for(selectors)
+          join_verifications_for(selectors)
             .join_pacticipants_and_pacticipant_versions
             .where {
               Sequel.&(
@@ -94,17 +109,17 @@ module PactBroker
             }
             .from_self(alias: :t9)
             .where {
-              QueryBuilder.provider_or_provider_version_or_verification_in(selectors, true, :t9)
+              QueryBuilder.provider_or_provider_version_matches_selectors(selectors, true, :t9)
             }
         end
 
         def verifications_for(selectors)
           db[LV]
-            .select(:verification_id, :provider_version_id, :pact_version_id)
+            .select(:verification_id, :provider_version_id, :pact_version_id, :provider_id)
             .where {
               Sequel.&(
                 QueryBuilder.consumer_in_pacticipant_ids(selectors),
-                QueryBuilder.provider_or_provider_version_or_verification_in(selectors, false, LV)
+                QueryBuilder.provider_or_provider_version_matches_selectors(selectors, false, LV)
               )
             }
         end

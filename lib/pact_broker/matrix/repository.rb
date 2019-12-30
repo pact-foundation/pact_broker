@@ -81,14 +81,8 @@ module PactBroker
       # If two or more are specified, just return the integrations that involve the specified pacticipants
       def find_integrations_for_specified_selectors(resolved_specified_selectors)
         specified_pacticipant_names = resolved_specified_selectors.collect(&:pacticipant_name)
-
-        # Must do select after matching selectors so we only select the columns we actually want
-        # Otherwise we end up with a really long query!
         QuickRow
-          .matching_selectors(resolved_specified_selectors)
-          .from_self
-          .select(:consumer_name, :consumer_id, :provider_name, :provider_id)
-          .distinct
+          .distinct_integrations(resolved_specified_selectors)
           .collect(&:to_hash)
           .collect do | hash |
             required = is_a_row_for_this_integration_required?(specified_pacticipant_names, hash[:consumer_name])
@@ -124,7 +118,7 @@ module PactBroker
       end
 
       def query_matrix selectors, options
-        query = options[:latestby] ? QuickRow.eager_all_the_things : Row.select_all
+        query = options[:latestby] ? QuickRow.select_all_columns.eager_all_the_things : Row.select_all
         query = query.matching_selectors(selectors)
         query = query.limit(options[:limit]) if options[:limit]
         query

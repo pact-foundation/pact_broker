@@ -1,7 +1,7 @@
 module PactBroker
   module Matrix
     class QueryBuilder
-      def self.provider_or_provider_version_or_verification_in(selectors, allow_null_provider_version = false, qualifier)
+      def self.provider_or_provider_version_matches_selectors(selectors, allow_null_provider_version = false, qualifier)
         most_specific_criteria = selectors.collect(&:most_specific_provider_criterion)
 
         provider_version_ids = collect_ids(most_specific_criteria, :pacticipant_version_id)
