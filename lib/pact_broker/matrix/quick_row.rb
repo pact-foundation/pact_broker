@@ -104,7 +104,7 @@ module PactBroker
           join_verifications
             .join_pacticipants_and_pacticipant_versions
             .where {
-              QueryBuilder.consumer_or_consumer_version_or_provider_or_provider_or_provider_version_match_selector(selector)
+              QueryBuilder.consumer_or_consumer_version_or_provider_or_provider_or_provider_version_match(selector)
             }
         end
 
@@ -122,12 +122,10 @@ module PactBroker
             .join_pacticipants_and_pacticipant_versions
             .where {
               Sequel.&(
-                QueryBuilder.consumer_or_consumer_version_or_pact_publication_in(selectors, :lp),
+                QueryBuilder.consumer_or_consumer_version_matches(selectors, :lp),
+                QueryBuilder.provider_or_provider_version_matches_or_pact_unverified(selectors, :lv),
                 QueryBuilder.either_consumer_or_provider_was_specified_in_query(selectors, :lp)
               )
-            }
-            .where {
-              QueryBuilder.provider_or_provider_version_matches_selectors(selectors, true, :lv)
             }
         end
 
@@ -137,7 +135,7 @@ module PactBroker
             .where {
               Sequel.&(
                 QueryBuilder.consumer_in_pacticipant_ids(selectors),
-                QueryBuilder.provider_or_provider_version_matches_selectors(selectors, false, LV)
+                QueryBuilder.provider_or_provider_version_matches(selectors)
               )
             }
         end
