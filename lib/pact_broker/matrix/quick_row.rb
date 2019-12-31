@@ -10,6 +10,7 @@ require 'pact_broker/domain/version'
 require 'pact_broker/domain/verification'
 require 'pact_broker/pacts/pact_publication'
 require 'pact_broker/tags/tag_with_latest_flag'
+require 'pact_broker/matrix/query_ids'
 
 # The difference between `join_verifications_for` and `join_verifications` is that
 # the left outer join is done on a pre-filtered dataset in `join_verifications_for`,
@@ -92,19 +93,45 @@ module PactBroker
 
         def matching_selectors selectors
           if selectors.size == 1
-            matching_one_selector(selectors.first)
+            matching_one_selector(selectors)
           else
             matching_multiple_selectors(selectors)
           end
         end
 
+        def order_by_names_ascending_most_recent_first
+          from_self.
+          order(
+            Sequel.asc(:consumer_name),
+            Sequel.desc(:consumer_version_order),
+            Sequel.asc(:provider_name),
+            Sequel.desc(:provider_version_order),
+            Sequel.desc(:verification_id))
+        end
+
+        def eager_all_the_things
+          eager(:consumer)
+          .eager(:provider)
+          .eager(:consumer_version)
+          .eager(:provider_version)
+          .eager(:verification)
+          .eager(:pact_publication)
+          .eager(:pact_version)
+        end
+
+        def default_scope
+          select_all_columns.join_verifications.join_pacticipants_and_pacticipant_versions.from_self
+        end
+
+        # PRIVATE METHODS
+
         # When we have one selector, we need to join ALL the verifications to find out
         # what integrations exist
-        def matching_one_selector(selector)
+        def matching_one_selector(selectors)
           join_verifications
             .join_pacticipants_and_pacticipant_versions
             .where {
-              QueryBuilder.consumer_or_consumer_version_or_provider_or_provider_or_provider_version_match(selector)
+              QueryBuilder.consumer_or_consumer_version_or_provider_or_provider_or_provider_version_match(QueryIds.from_selectors(selectors))
             }
         end
 
@@ -118,24 +145,29 @@ module PactBroker
         # and THEN join them to the pacts, so that we get a row for the pact with null provider version
         # and verification fields.
         def matching_multiple_selectors(selectors)
-          join_verifications_for(selectors)
+          query_ids = QueryIds.from_selectors(selectors)
+          join_verifications_for(query_ids)
             .join_pacticipants_and_pacticipant_versions
             .where {
               Sequel.&(
-                QueryBuilder.consumer_or_consumer_version_matches(selectors, :lp),
-                QueryBuilder.provider_or_provider_version_matches_or_pact_unverified(selectors, :lv),
-                QueryBuilder.either_consumer_or_provider_was_specified_in_query(selectors, :lp)
+                QueryBuilder.consumer_or_consumer_version_matches(query_ids, :lp),
+                QueryBuilder.provider_or_provider_version_matches_or_pact_unverified(query_ids, :lv),
+                QueryBuilder.either_consumer_or_provider_was_specified_in_query(query_ids, :lp)
               )
             }
         end
 
-        def verifications_for(selectors)
+        def join_verifications_for(query_ids)
+          left_outer_join(verifications_for(query_ids), LP_LV_JOIN, { table_alias: :lv } )
+        end
+
+        def verifications_for(query_ids)
           db[LV]
             .select(:verification_id, :provider_version_id, :pact_version_id, :provider_id)
             .where {
               Sequel.&(
-                QueryBuilder.consumer_in_pacticipant_ids(selectors),
-                QueryBuilder.provider_or_provider_version_matches(selectors)
+                QueryBuilder.consumer_in_pacticipant_ids(query_ids),
+                QueryBuilder.provider_or_provider_version_matches(query_ids)
               )
             }
         end
@@ -163,36 +195,8 @@ module PactBroker
           left_outer_join(:versions, PROVIDER_VERSION_JOIN, { table_alias: :pv } )
         end
 
-        def join_verifications_for(selectors)
-          left_outer_join(verifications_for(selectors), LP_LV_JOIN, { table_alias: :lv } )
-        end
-
         def join_verifications
           left_outer_join(LV, LP_LV_JOIN, { table_alias: :lv } )
-        end
-
-        def order_by_names_ascending_most_recent_first
-          from_self.
-          order(
-            Sequel.asc(:consumer_name),
-            Sequel.desc(:consumer_version_order),
-            Sequel.asc(:provider_name),
-            Sequel.desc(:provider_version_order),
-            Sequel.desc(:verification_id))
-        end
-
-        def eager_all_the_things
-          eager(:consumer)
-          .eager(:provider)
-          .eager(:consumer_version)
-          .eager(:provider_version)
-          .eager(:verification)
-          .eager(:pact_publication)
-          .eager(:pact_version)
-        end
-
-        def default_scope
-          select_all_columns.join_verifications.join_pacticipants_and_pacticipant_versions.from_self
         end
       end # end dataset_module
 
