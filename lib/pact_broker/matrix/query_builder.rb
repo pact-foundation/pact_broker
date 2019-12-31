@@ -2,26 +2,29 @@ module PactBroker
   module Matrix
     class QueryBuilder
       def self.provider_or_provider_version_matches(selectors, qualifier = nil)
-        Sequel.|(*provider_or_provider_version_criteria(selectors, qualifier, false))
+        Sequel.|(*provider_or_provider_version_criteria(selectors, qualifier))
       end
 
       def self.provider_or_provider_version_matches_or_pact_unverified(selectors, qualifier = nil)
-        Sequel.|(*provider_or_provider_version_criteria(selectors, qualifier, true))
-      end
-
-      def self.provider_or_provider_version_criteria(selectors, qualifier = nil, allow_null_provider_version = false)
-        most_specific_criteria = selectors.collect(&:most_specific_provider_criterion)
-        provider_version_ids = collect_ids(most_specific_criteria, :pacticipant_version_id)
-        provider_ids = collect_ids(most_specific_criteria, :pacticipant_id)
+        ors = provider_or_provider_version_criteria(selectors, qualifier)
         all_provider_ids = selectors.collect{ |s| s[:pacticipant_id] }
-
-        ors = []
-        ors << { qualify(qualifier, :provider_version_id) => provider_version_ids } if provider_version_ids.any?
-        ors << { qualify(qualifier, :provider_id) => provider_ids } if provider_ids.any?
         ors << {
           qualify(:lp, :provider_id) => all_provider_ids,
           qualify(qualifier, :provider_version_id) => nil
-        } if allow_null_provider_version
+        }
+        Sequel.|(*ors)
+      end
+
+      def self.provider_or_provider_version_criteria(selectors, qualifier = nil)
+        most_specific_criteria = selectors.collect(&:most_specific_criterion)
+        # the pacticipant version ids for selectors where pacticipant version id was the most specific criterion
+        pacticipant_version_ids = collect_ids(most_specific_criteria, :pacticipant_version_id)
+        # the pacticipant ids for the selectors where the pacticipant id was most specific criterion
+        pacticipant_ids = collect_ids(most_specific_criteria, :pacticipant_id)
+
+        ors = []
+        ors << { qualify(qualifier, :provider_version_id) => pacticipant_version_ids } if pacticipant_version_ids.any?
+        ors << { qualify(qualifier, :provider_id) => pacticipant_ids } if pacticipant_ids.any?
         ors
       end
 
@@ -30,13 +33,15 @@ module PactBroker
       end
 
       def self.consumer_or_consumer_version_matches(selectors, qualifier)
-        most_specific_criteria = selectors.collect(&:most_specific_consumer_criterion)
-        consumer_version_ids = collect_ids(most_specific_criteria, :pacticipant_version_id)
-        consumer_ids = collect_ids(most_specific_criteria, :pacticipant_id)
+        most_specific_criteria = selectors.collect(&:most_specific_criterion)
+        # the pacticipant version ids for selectors where pacticipant version id was the most specific criterion
+        pacticipant_version_ids = collect_ids(most_specific_criteria, :pacticipant_version_id)
+        # the pacticipant ids for the selectors where the pacticipant id was most specific criterion
+        pacticipant_ids = collect_ids(most_specific_criteria, :pacticipant_id)
 
         ors = []
-        ors << { qualify(qualifier, :consumer_version_id) => consumer_version_ids } if consumer_version_ids.any?
-        ors << { qualify(qualifier, :consumer_id) => consumer_ids } if consumer_ids.any?
+        ors << { qualify(qualifier, :consumer_version_id) => pacticipant_version_ids } if pacticipant_version_ids.any?
+        ors << { qualify(qualifier, :consumer_id) => pacticipant_ids } if pacticipant_ids.any?
 
         Sequel.|(*ors)
       end
@@ -72,7 +77,7 @@ module PactBroker
       end
 
       def self.collect_the_ids selectors
-        most_specific_criteria = selectors.collect(&:most_specific_consumer_criterion)
+        most_specific_criteria = selectors.collect(&:most_specific_criterion)
         pacticipant_version_ids = collect_ids(most_specific_criteria, :pacticipant_version_id)
         pacticipant_ids = collect_ids(most_specific_criteria, :pacticipant_id)
         all_pacticipant_ids = selectors.collect(&:pacticipant_id)

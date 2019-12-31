@@ -71,15 +71,7 @@ module PactBroker
         self[:tag]
       end
 
-      def most_specific_provider_criterion
-        if pacticipant_version_id
-          { pacticipant_version_id: pacticipant_version_id }
-        else
-          { pacticipant_id: pacticipant_id }
-        end
-      end
-
-      def most_specific_consumer_criterion
+      def most_specific_criterion
         if pacticipant_version_id
           { pacticipant_version_id: pacticipant_version_id }
         else
