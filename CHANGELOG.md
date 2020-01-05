@@ -1,3 +1,24 @@
+<a name="v2.43.0"></a>
+### v2.43.0 (2020-01-06)
+
+
+#### Features
+
+* support DELETE /integrations for deleting all integration related data at once (pacticipants, pacts, verifications and webhooks)	 ([d7e2ef27](/../../commit/d7e2ef27))
+* optimise query to automatically determine integrations	 ([147cbfb6](/../../commit/147cbfb6))
+* change badge timeout message from error to warning	 ([e34f5676](/../../commit/e34f5676))
+
+* **matrix**
+  * optimise the query that determines the integrations	 ([704944b6](/../../commit/704944b6))
+  * attempt to optimise the query that determines the integrations	 ([afde01e1](/../../commit/afde01e1))
+
+
+#### Bug Fixes
+
+* update rack for https://github.com/advisories/GHSA-hrqr-hxpp-chr3	 ([c9352fde](/../../commit/c9352fde))
+* correctly identify missing verification for bi-directional pacts	 ([3577968a](/../../commit/3577968a))
+
+
 <a name="v2.42.0"></a>
 ### v2.42.0 (2019-12-05)
 
