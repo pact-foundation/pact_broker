@@ -30,7 +30,7 @@ module PactBroker
         end
 
         def delete_resource
-          integration_service.delete(consumer_name, provider_name)
+          integration_service.delete_all
           true
         end
       end

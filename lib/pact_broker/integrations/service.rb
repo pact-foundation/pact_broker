@@ -2,6 +2,7 @@ require 'pact_broker/services'
 require 'pact_broker/repositories'
 require 'pact_broker/logging'
 require 'pact_broker/integrations/integration'
+require 'pact_broker/db/models'
 
 module PactBroker
   module Integrations
@@ -40,6 +41,14 @@ module PactBroker
 
         pacticipant_service.delete_if_orphan(consumer)
         pacticipant_service.delete_if_orphan(provider) unless consumer == provider
+      end
+
+      def self.delete_all
+        # TODO move all these into their own repositories
+        PactBroker::DB.each_integration_model do | model |
+          logger.info("Truncating ", model.table_name)
+          model.truncate
+        end
       end
     end
   end

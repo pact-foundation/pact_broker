@@ -249,6 +249,16 @@ module PactBroker
           end
         end
       end
+
+      describe "delete_all" do
+        before do
+          td.create_everything_for_an_integration
+        end
+
+        it "doesn't blow up" do
+          Service.delete_all
+        end
+      end
     end
   end
 end

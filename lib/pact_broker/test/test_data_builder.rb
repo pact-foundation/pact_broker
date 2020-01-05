@@ -332,6 +332,16 @@ module PactBroker
         self
       end
 
+      def create_everything_for_an_integration
+        create_pact_with_verification("Foo", "1", "Bar", "2")
+          .create_label("label")
+          .create_consumer_version_tag("master")
+          .create_provider_version_tag("master")
+          .create_webhook
+          .create_triggered_webhook
+          .create_webhook_execution
+      end
+
       def model_counter
         @@model_counter ||= 0
         @@model_counter += 1

@@ -1,0 +1,37 @@
+require 'pact_broker/webhooks/execution'
+require 'pact_broker/webhooks/triggered_webhook'
+require 'pact_broker/webhooks/webhook'
+require 'pact_broker/pacts/latest_pact_publication_id_by_consumer_version'
+require 'pact_broker/verifications/latest_verification_id_for_pact_version_and_provider_version'
+require 'pact_broker/pacts/pact_publication'
+require 'pact_broker/pacts/pact_version'
+require 'pact_broker/domain/verification'
+require 'pact_broker/domain/tag'
+require 'pact_broker/domain/version'
+require 'pact_broker/domain/label'
+require 'pact_broker/domain/pacticipant'
+
+module PactBroker
+  INTEGRATIONS_TABLES = [
+    PactBroker::Webhooks::Execution,
+    PactBroker::Webhooks::TriggeredWebhook,
+    PactBroker::Webhooks::Webhook,
+    PactBroker::Pacts::LatestPactPublicationIdForConsumerVersion,
+    PactBroker::Verifications::LatestVerificationIdForPactVersionAndProviderVersion,
+    PactBroker::Domain::Verification,
+    PactBroker::Pacts::PactPublication,
+    PactBroker::Pacts::PactVersion,
+    PactBroker::Domain::Tag,
+    PactBroker::Domain::Version,
+    PactBroker::Domain::Label,
+    PactBroker::Domain::Pacticipant
+  ]
+
+  module DB
+    def self.each_integration_model
+      INTEGRATIONS_TABLES.each do | model |
+        yield model
+      end
+    end
+  end
+end
