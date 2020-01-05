@@ -3,6 +3,7 @@ require 'pact_broker/repositories'
 require 'pact_broker/logging'
 require 'pact_broker/integrations/integration'
 require 'pact_broker/db/models'
+require 'pact_broker/repositories/helpers'
 
 module PactBroker
   module Integrations
@@ -46,8 +47,16 @@ module PactBroker
       def self.delete_all
         # TODO move all these into their own repositories
         PactBroker::DB.each_integration_model do | model |
-          logger.info("Truncating ", model.table_name)
-          model.truncate(cascade: true)
+          if PactBroker::Repositories::Helpers.postgres?
+            logger.info("Truncating ", model.table_name)
+            model.truncate(cascade: true)
+          else
+            logger.info("Deleting all from ", model.table_name)
+            # Mysql adapter needs to support cascade truncate
+            # https://travis-ci.org/pact-foundation/pact_broker/jobs/633050220#L841
+            # https://travis-ci.org/pact-foundation/pact_broker/jobs/633053228#L849
+            model.dataset.delete
+          end
         end
       end
     end
