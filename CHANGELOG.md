@@ -10,7 +10,6 @@
 
 * **matrix**
   * optimise the query that determines the integrations	 ([704944b6](/../../commit/704944b6))
-  * attempt to optimise the query that determines the integrations	 ([afde01e1](/../../commit/afde01e1))
 
 
 #### Bug Fixes
