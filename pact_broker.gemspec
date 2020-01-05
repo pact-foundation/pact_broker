@@ -51,14 +51,14 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'sequel', '~> 5.6'
   gem.add_runtime_dependency 'webmachine', '1.5.0'
   gem.add_runtime_dependency 'semver2', '~> 3.4.2'
-  gem.add_runtime_dependency 'rack', '>= 2.0.6', '~>2.0'
+  gem.add_runtime_dependency 'rack', '>= 2.0.8', '~>2.0'
   gem.add_runtime_dependency 'redcarpet', '>=3.3.2', '~>3.3'
   gem.add_runtime_dependency 'pact-support'
   gem.add_runtime_dependency 'padrino-core', '>= 0.14.3', '~> 0.14'
-  gem.add_runtime_dependency 'sinatra', '>= 2.0.2'
+  gem.add_runtime_dependency 'sinatra', '>= 2.0.8.1', '< 3.0'
   gem.add_runtime_dependency 'haml', '~>5.0'
   gem.add_runtime_dependency 'sucker_punch', '~>2.0'
-  gem.add_runtime_dependency 'rack-protection', '~>2.0'
+  gem.add_runtime_dependency 'rack-protection', '>= 2.0.8.1', '< 3.0'
   gem.add_runtime_dependency 'dry-types', '~> 0.10.3' # https://travis-ci.org/pact-foundation/pact_broker/jobs/249448621
   gem.add_runtime_dependency 'dry-logic', '0.4.2' # Later version cases ArgumentError: wrong number of arguments
   gem.add_runtime_dependency 'table_print', '~> 1.5'
