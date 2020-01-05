@@ -47,7 +47,7 @@ module PactBroker
         # TODO move all these into their own repositories
         PactBroker::DB.each_integration_model do | model |
           logger.info("Truncating ", model.table_name)
-          model.truncate
+          model.truncate(cascade: true)
         end
       end
     end
