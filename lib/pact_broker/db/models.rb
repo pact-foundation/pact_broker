@@ -1,7 +1,7 @@
 require 'pact_broker/webhooks/execution'
 require 'pact_broker/webhooks/triggered_webhook'
 require 'pact_broker/webhooks/webhook'
-require 'pact_broker/pacts/latest_pact_publication_id_by_consumer_version'
+require 'pact_broker/pacts/latest_pact_publication_id_for_consumer_version'
 require 'pact_broker/verifications/latest_verification_id_for_pact_version_and_provider_version'
 require 'pact_broker/pacts/pact_publication'
 require 'pact_broker/pacts/pact_version'

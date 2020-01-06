@@ -11,7 +11,7 @@ require 'pact/shared/json_differ'
 require 'pact_broker/domain'
 require 'pact_broker/pacts/parse'
 require 'pact_broker/matrix/head_row'
-require 'pact_broker/pacts/latest_pact_publication_id_by_consumer_version'
+require 'pact_broker/pacts/latest_pact_publication_id_for_consumer_version'
 require 'pact_broker/pacts/verifiable_pact'
 
 module PactBroker
