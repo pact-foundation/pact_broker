@@ -53,7 +53,7 @@ module PactBroker
         add ['pacts', 'provider', :provider_name, 'for-verification'], Api::Resources::ProviderPactsForVerification, {resource_name: "pacts_for_verification"}
 
         # Deprecated pact
-        add ['pact', 'provider', :provider_name, 'consumer', :consumer_name, 'version', :consumer_version_number], Api::Resources::Pact, {resource_name: "pact_publications", deprecated: "true"} # Deprecate, singular /pact
+        add ['pact', 'provider', :provider_name, 'consumer', :consumer_name, 'version', :consumer_version_number], Api::Resources::Pact, {resource_name: "pact_publication", deprecated: "true"} # Deprecate, singular /pact
         add ['pact', 'provider', :provider_name, 'consumer', :consumer_name, 'latest'], Api::Resources::LatestPact, {resource_name: "latest_pact_publications", deprecated: "true"}
 
         # Pacticipants
