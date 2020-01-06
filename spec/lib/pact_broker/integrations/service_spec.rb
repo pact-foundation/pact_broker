@@ -257,6 +257,7 @@ module PactBroker
 
         it "doesn't blow up" do
           Service.delete_all
+          expect(PactBroker::Domain::Pacticipant.count).to be 0
         end
       end
     end
