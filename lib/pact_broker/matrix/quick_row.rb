@@ -28,8 +28,6 @@ module PactBroker
 
       # Joins
       LP_LV_JOIN = { Sequel[:lp][:pact_version_id] => Sequel[:lv][:pact_version_id] }
-      CONSUMER_JOIN = { Sequel[:lp][:consumer_id] => Sequel[:consumers][:id] }
-      PROVIDER_JOIN = { Sequel[:lp][:provider_id] => Sequel[:providers][:id] }
       CONSUMER_VERSION_JOIN = { Sequel[:lp][:consumer_version_id] => Sequel[:cv][:id] }
       PROVIDER_VERSION_JOIN = { Sequel[:lv][:provider_version_id] => Sequel[:pv][:id] }
 
@@ -63,11 +61,11 @@ module PactBroker
       ]
       ALL_COLUMNS = CONSUMER_COLUMNS + CONSUMER_VERSION_COLUMNS + PACT_COLUMNS +
                     PROVIDER_COLUMNS + PROVIDER_VERSION_COLUMNS + VERIFICATION_COLUMNS
-      PACTICIPANT_NAMES_AND_IDS = CONSUMER_COLUMNS + PROVIDER_COLUMNS
+
 
       # cachable select arguments
       SELECT_ALL_COLUMN_ARGS = [:select_all_columns] + ALL_COLUMNS
-      SELECT_PACTICIPANT_NAMES_AND_IDS_ARGS = [:select_pacticipant_names_and_ids] + PACTICIPANT_NAMES_AND_IDS
+      SELECT_PACTICIPANT_IDS_ARGS = [:select_pacticipant_ids, Sequel[:lp][:consumer_id], Sequel[:lp][:provider_id]]
 
       associate(:many_to_one, :pact_publication, :class => "PactBroker::Pacts::PactPublication", :key => :pact_publication_id, :primary_key => :id)
       associate(:many_to_one, :provider, :class => "PactBroker::Domain::Pacticipant", :key => :provider_id, :primary_key => :id)
@@ -83,12 +81,21 @@ module PactBroker
         include PactBroker::Repositories::Helpers
 
         select *SELECT_ALL_COLUMN_ARGS
-        select *SELECT_PACTICIPANT_NAMES_AND_IDS_ARGS
+        select *SELECT_PACTICIPANT_IDS_ARGS
 
         def distinct_integrations selectors
-          select_pacticipant_names_and_ids
+          select_pacticipant_ids
             .distinct
             .matching_selectors(selectors)
+            .from_self(alias: :pacticipant_ids)
+            .select(
+              :consumer_id,
+              Sequel[:c][:name].as(:consumer_name),
+              :provider_id,
+              Sequel[:p][:name].as(:provider_name)
+            )
+            .join_consumers(:pacticipant_ids, :c)
+            .join_providers(:pacticipant_ids, :p)
         end
 
         def matching_selectors selectors
@@ -179,12 +186,20 @@ module PactBroker
             .join_provider_versions
         end
 
-        def join_consumers
-          join(:pacticipants, CONSUMER_JOIN, { table_alias: :consumers })
+        def join_consumers qualifier = :lp, table_alias = :consumers
+          join(
+            :pacticipants,
+            { Sequel[qualifier][:consumer_id] => Sequel[table_alias][:id] },
+            { table_alias: table_alias }
+          )
         end
 
-        def join_providers
-          join(:pacticipants, PROVIDER_JOIN, { table_alias: :providers })
+        def join_providers qualifier = :lp, table_alias = :providers
+          join(
+            :pacticipants,
+            { Sequel[qualifier][:provider_id] => Sequel[table_alias][:id] },
+            { table_alias: table_alias }
+          )
         end
 
         def join_consumer_versions
