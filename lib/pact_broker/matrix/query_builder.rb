@@ -9,7 +9,7 @@ module PactBroker
         ors = provider_or_provider_version_criteria(query_ids, qualifier)
 
         ors << {
-          qualify(:lp, :provider_id) => query_ids.all_pacticipant_ids,
+          qualify(:p, :provider_id) => query_ids.all_pacticipant_ids,
           qualify(qualifier, :provider_version_id) => nil
         }
         Sequel.|(*ors)
@@ -53,13 +53,13 @@ module PactBroker
       def self.consumer_or_consumer_version_or_provider_or_provider_or_provider_version_match(query_ids)
         ors = if query_ids.pacticipant_version_id
           [
-            { Sequel[:lp][:consumer_version_id] => query_ids.pacticipant_version_id },
-            { Sequel[:lv][:provider_version_id] => query_ids.pacticipant_version_id }
+            { Sequel[:p][:consumer_version_id] => query_ids.pacticipant_version_id },
+            { Sequel[:v][:provider_version_id] => query_ids.pacticipant_version_id }
           ]
         else
           [
-            { Sequel[:lp][:consumer_id] => query_ids.pacticipant_id },
-            { Sequel[:lp][:provider_id] => query_ids.pacticipant_id }
+            { Sequel[:p][:consumer_id] => query_ids.pacticipant_id },
+            { Sequel[:p][:provider_id] => query_ids.pacticipant_id }
           ]
         end
 

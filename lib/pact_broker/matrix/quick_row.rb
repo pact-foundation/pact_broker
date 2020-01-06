@@ -20,44 +20,44 @@ require 'pact_broker/matrix/query_ids'
 
 module PactBroker
   module Matrix
-    class QuickRow < Sequel::Model(Sequel.as(:latest_pact_publication_ids_for_consumer_versions, :lp))
+    class QuickRow < Sequel::Model(Sequel.as(:latest_pact_publication_ids_for_consumer_versions, :p))
 
       # Tables
       LV = :latest_verification_id_for_pact_version_and_provider_version
       LP = :latest_pact_publication_ids_for_consumer_versions
 
       # Joins
-      LP_LV_JOIN = { Sequel[:lp][:pact_version_id] => Sequel[:lv][:pact_version_id] }
-      CONSUMER_VERSION_JOIN = { Sequel[:lp][:consumer_version_id] => Sequel[:cv][:id] }
-      PROVIDER_VERSION_JOIN = { Sequel[:lv][:provider_version_id] => Sequel[:pv][:id] }
+      LP_LV_JOIN = { Sequel[:p][:pact_version_id] => Sequel[:v][:pact_version_id] }
+      CONSUMER_VERSION_JOIN = { Sequel[:p][:consumer_version_id] => Sequel[:cv][:id] }
+      PROVIDER_VERSION_JOIN = { Sequel[:v][:provider_version_id] => Sequel[:pv][:id] }
 
       # Not sure why we're eager loading some things and including others in the base query :shrug:
 
       # Columns
       CONSUMER_COLUMNS = [
-        Sequel[:lp][:consumer_id],
+        Sequel[:p][:consumer_id],
         Sequel[:consumers][:name].as(:consumer_name)
       ]
       PROVIDER_COLUMNS = [
-        Sequel[:lp][:provider_id],
+        Sequel[:p][:provider_id],
         Sequel[:providers][:name].as(:provider_name)
       ]
       CONSUMER_VERSION_COLUMNS = [
-        Sequel[:lp][:consumer_version_id],
+        Sequel[:p][:consumer_version_id],
         Sequel[:cv][:number].as(:consumer_version_number),
         Sequel[:cv][:order].as(:consumer_version_order)
       ]
       PROVIDER_VERSION_COLUMNS = [
-        Sequel[:lv][:provider_version_id],
+        Sequel[:v][:provider_version_id],
         Sequel[:pv][:number].as(:provider_version_number),
         Sequel[:pv][:order].as(:provider_version_order)
       ]
       PACT_COLUMNS = [
-        Sequel[:lp][:pact_publication_id],
-        Sequel[:lp][:pact_version_id]
+        Sequel[:p][:pact_publication_id],
+        Sequel[:p][:pact_version_id]
       ]
       VERIFICATION_COLUMNS = [
-        Sequel[:lv][:verification_id]
+        Sequel[:v][:verification_id]
       ]
       ALL_COLUMNS = CONSUMER_COLUMNS + CONSUMER_VERSION_COLUMNS + PACT_COLUMNS +
                     PROVIDER_COLUMNS + PROVIDER_VERSION_COLUMNS + VERIFICATION_COLUMNS
@@ -65,7 +65,7 @@ module PactBroker
 
       # cachable select arguments
       SELECT_ALL_COLUMN_ARGS = [:select_all_columns] + ALL_COLUMNS
-      SELECT_PACTICIPANT_IDS_ARGS = [:select_pacticipant_ids, Sequel[:lp][:consumer_id], Sequel[:lp][:provider_id]]
+      SELECT_PACTICIPANT_IDS_ARGS = [:select_pacticipant_ids, Sequel[:p][:consumer_id], Sequel[:p][:provider_id]]
 
       associate(:many_to_one, :pact_publication, :class => "PactBroker::Pacts::PactPublication", :key => :pact_publication_id, :primary_key => :id)
       associate(:many_to_one, :provider, :class => "PactBroker::Domain::Pacticipant", :key => :provider_id, :primary_key => :id)
@@ -157,15 +157,15 @@ module PactBroker
             .join_pacticipants_and_pacticipant_versions
             .where {
               Sequel.&(
-                QueryBuilder.consumer_or_consumer_version_matches(query_ids, :lp),
-                QueryBuilder.provider_or_provider_version_matches_or_pact_unverified(query_ids, :lv),
-                QueryBuilder.either_consumer_or_provider_was_specified_in_query(query_ids, :lp)
+                QueryBuilder.consumer_or_consumer_version_matches(query_ids, :p),
+                QueryBuilder.provider_or_provider_version_matches_or_pact_unverified(query_ids, :v),
+                QueryBuilder.either_consumer_or_provider_was_specified_in_query(query_ids, :p)
               )
             }
         end
 
         def join_verifications_for(query_ids)
-          left_outer_join(verifications_for(query_ids), LP_LV_JOIN, { table_alias: :lv } )
+          left_outer_join(verifications_for(query_ids), LP_LV_JOIN, { table_alias: :v } )
         end
 
         def verifications_for(query_ids)
@@ -186,7 +186,7 @@ module PactBroker
             .join_provider_versions
         end
 
-        def join_consumers qualifier = :lp, table_alias = :consumers
+        def join_consumers qualifier = :p, table_alias = :consumers
           join(
             :pacticipants,
             { Sequel[qualifier][:consumer_id] => Sequel[table_alias][:id] },
@@ -194,7 +194,7 @@ module PactBroker
           )
         end
 
-        def join_providers qualifier = :lp, table_alias = :providers
+        def join_providers qualifier = :p, table_alias = :providers
           join(
             :pacticipants,
             { Sequel[qualifier][:provider_id] => Sequel[table_alias][:id] },
@@ -211,7 +211,7 @@ module PactBroker
         end
 
         def join_verifications
-          left_outer_join(LV, LP_LV_JOIN, { table_alias: :lv } )
+          left_outer_join(LV, LP_LV_JOIN, { table_alias: :v } )
         end
       end # end dataset_module
 
@@ -319,6 +319,10 @@ module PactBroker
 
       def provider_version_order
         return_or_raise_if_not_set(:provider_version_order)
+      end
+
+      def has_verification?
+        !!verification_id
       end
 
       # This model needs the verifications and pacticipants joined to it

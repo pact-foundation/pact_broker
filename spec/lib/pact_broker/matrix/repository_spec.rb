@@ -606,7 +606,7 @@ module PactBroker
           end
 
           it "returns the tag information" do
-            expect(subject.first[:provider_version_tags]).to include_hash_matching name: 'prod', latest: 1
+            expect(subject.first.provider_version_tags).to include_hash_matching name: 'prod', latest: 1
           end
         end
 
@@ -647,8 +647,9 @@ module PactBroker
             ]
           end
 
-          it "returns no data" do
-            expect(subject.size).to eq 0
+          it "returns a row with no verification" do
+            expect(subject.size).to eq 1
+            expect(subject.first).to_not have_verification
           end
         end
       end

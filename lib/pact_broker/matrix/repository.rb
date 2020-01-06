@@ -1,6 +1,7 @@
 require 'pact_broker/repositories/helpers'
 require 'pact_broker/matrix/row'
 require 'pact_broker/matrix/quick_row'
+require 'pact_broker/matrix/every_row'
 require 'pact_broker/matrix/head_row'
 require 'pact_broker/error'
 require 'pact_broker/matrix/query_results'
@@ -118,7 +119,8 @@ module PactBroker
       end
 
       def query_matrix selectors, options
-        query = options[:latestby] ? QuickRow.select_all_columns.eager_all_the_things : Row.select_all
+        query = options[:latestby] ? QuickRow : EveryRow
+        query = query.select_all_columns.eager_all_the_things
         query = query.matching_selectors(selectors)
         query = query.limit(options[:limit]) if options[:limit]
         query

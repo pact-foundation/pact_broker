@@ -48,9 +48,9 @@ module PactBroker
         subject { shorten_rows(rows) }
         let(:results) { Repository.new.find(selectors, options) }
 
-        it "returns an empty array" do
-          expect(results).to eq []
-          expect(results.resolved_selectors.find{ |s | s[:pacticipant_name] == "Bar"}[:pacticipant_version_id]).to eq -1
+        it "returns an array with one row that does not have a verification" do
+          expect(results.first).to_not have_verification
+          expect(results.resolved_selectors.find{ |s | s[:pacticipant_name] == "Bar"}.pacticipant_version_id).to eq -1
         end
       end
     end

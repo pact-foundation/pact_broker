@@ -107,8 +107,12 @@ module PactBroker
             expect(subject.integrations.size).to eq 2
           end
 
-          it "returns 1 row" do
-            expect(subject.rows.size).to eq 1
+          it "returns 1 row with a verification" do
+            expect(subject.rows.select(&:has_verification?).size).to eq 1
+          end
+
+          it "returns 1 row without a verification" do
+            expect(subject.rows.reject(&:has_verification?).size).to eq 1
           end
 
           it "does not allow the consumer to be deployed" do
