@@ -43,6 +43,8 @@ module PactBroker
       describe "eager_all_the_things" do
         before do
           td.create_pact_with_verification("Foo", "1", "Bar", "2")
+            .create_consumer_version_tag("foo")
+            .create_provider_version_tag("foo")
         end
 
         subject do
@@ -72,6 +74,8 @@ module PactBroker
           expect(subject.first.verification).to_not be nil
           expect(subject.first.pact_revision_number).to_not be nil
           expect(subject.first.verification_number).to_not be nil
+          expect(subject.first.consumer_version_tags).to_not be_empty
+          expect(subject.first.provider_version_tags).to_not be_empty
         end
       end
 

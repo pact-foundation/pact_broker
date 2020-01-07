@@ -124,6 +124,8 @@ module PactBroker
           .eager(:verification)
           .eager(:pact_publication)
           .eager(:pact_version)
+          .eager(:consumer_version_tags)
+          .eager(:provider_version_tags)
         end
 
         def default_scope

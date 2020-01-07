@@ -124,11 +124,7 @@ module PactBroker
                   .matching_selectors(selectors)
                   .order_by_names_ascending_most_recent_first
         query = query.limit(options[:limit]) if options[:limit]
-        query
-          .eager_all_the_things
-          .eager(:consumer_version_tags)
-          .eager(:provider_version_tags)
-          .all
+        query.eager_all_the_things.all
       end
 
       def base_model(options)
