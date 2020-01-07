@@ -119,15 +119,20 @@ module PactBroker
       end
 
       def query_matrix selectors, options
-        query = options[:latestby] ? QuickRow : EveryRow
-        query = query.select_all_columns.eager_all_the_things
-        query = query.matching_selectors(selectors)
+        query = base_model(options)
+                  .select_all_columns
+                  .matching_selectors(selectors)
+                  .order_by_names_ascending_most_recent_first
         query = query.limit(options[:limit]) if options[:limit]
         query
-          .order_by_names_ascending_most_recent_first
+          .eager_all_the_things
           .eager(:consumer_version_tags)
           .eager(:provider_version_tags)
           .all
+      end
+
+      def base_model(options)
+        options[:latestby] ? QuickRow : EveryRow
       end
 
       def resolve_selectors(specified_selectors, options)
