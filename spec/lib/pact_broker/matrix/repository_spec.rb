@@ -54,7 +54,7 @@ module PactBroker
 
         context "when a limit is specified" do
           let(:selectors) { build_selectors('A' => nil) }
-          let(:options) { {limit: 1} }
+          let(:options) { { limit: 1 } }
 
           it "returns fewer rows than the limit (because some of the logic is done in the code, there may be fewer than the limit - need to fix this)" do
             expect(subject).to eq ["A2 B? n?"]
