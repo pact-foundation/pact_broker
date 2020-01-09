@@ -99,12 +99,21 @@ module PactBroker
       # the Foo -> Bar integration, and therefore cannot deploy Foo.
       # However, if we were to try and deploy the provider, Bar, that would be ok
       # as Bar does not rely on Foo, so this method would not return that integration.
+      # UPDATE:
+      # The matrix query now returns a row with blank provider version/verification fields
+      # so the above comment is now redundant.
+      # I'm not sure if this piece of code can ever return a list with anything in it any more.
+      # Will log it for a while and see.
       def required_integrations_without_a_row
         @required_integrations_without_a_row ||= begin
           integrations.select(&:required?).select do | integration |
             !row_exists_for_integration(integration)
           end
-        end
+        end.tap { |it| log_required_integrations_without_a_row_occurred(it) if it.any? }
+      end
+
+      def log_required_integrations_without_a_row_occurred integrations
+        logger.info("required_integrations_without_a_row returned non empty", payload: { integrations: integrations, rows: rows })
       end
 
       def row_exists_for_integration(integration)
