@@ -25,7 +25,7 @@ module PactBroker
           end
 
           let(:options) do
-            { latest: true, tag: "prod" }
+            { latest: true, tag: "prod", latestby: "cvp" }
           end
 
           before do
@@ -54,10 +54,10 @@ module PactBroker
           end
 
           let(:selectors) { [{ pacticipant_name: "Bar", latest: true, tag: "test" }]}
-          let(:options) { { tag: "prod" } }
+          let(:options) { { tag: "prod", latestby: "cvp" } }
 
           it "does not allow the consumer to be deployed" do
-            expect(subject.deployment_status_summary.deployable?).to_not be true
+            expect(subject.deployment_status_summary).to_not be_deployable
           end
         end
 
@@ -80,7 +80,7 @@ module PactBroker
           end
 
           it "does not allow the consumer to be deployed" do
-            expect(subject.deployment_status_summary.deployable?).to_not be true
+            expect(subject.deployment_status_summary).to_not be_deployable
           end
         end
 
@@ -101,7 +101,7 @@ module PactBroker
             [ { pacticipant_name: "Foo", pacticipant_version_number: "3.0.0" } ]
           end
 
-          let(:options) { {latest: true, tag: "prod"} }
+          let(:options) { {latest: true, tag: "prod", latestby: "cvp"} }
 
           it "returns 2 integrations" do
             expect(subject.integrations.size).to eq 2
@@ -116,7 +116,7 @@ module PactBroker
           end
 
           it "does not allow the consumer to be deployed" do
-            expect(subject.deployment_status_summary.deployable?).to_not be true
+            expect(subject.deployment_status_summary).to_not be_deployable
           end
         end
 
@@ -137,7 +137,7 @@ module PactBroker
           end
 
           it "allows the old version of the consumer to be deployed" do
-            expect(subject.deployment_status_summary.deployable?).to be true
+            expect(subject.deployment_status_summary).to be_deployable
           end
         end
 
@@ -150,8 +150,8 @@ module PactBroker
             [ { pacticipant_name: "Bar", pacticipant_version_number: "5" } ]
           end
 
-          it "does not allow the provider to be deployed" do
-            expect(subject.deployment_status_summary.deployable?).to_not be true
+          it "does not allow the app to be deployed" do
+            expect(subject.deployment_status_summary).to_not be_deployable
           end
         end
 
@@ -166,20 +166,19 @@ module PactBroker
           end
 
           let(:options) do
-            { latest: true, tag: "prod" }
+            { latest: true, tag: "prod", latestby: "cvp" }
           end
 
           subject { Service.find(selectors, options) }
 
-          it "allows the provider to be deployed" do
-            expect(subject.deployment_status_summary.deployable?).to be true
+          it "allows the app to be deployed" do
+            expect(subject.deployment_status_summary).to be_deployable
           end
         end
 
         describe "when deploying a consumer to prod for the first time and the provider is not yet deployed" do
           before do
-            td.create_pact_with_hierarchy("Foo", "1", "Bar")
-            .create_verification(provider_version: "2")
+            td.create_pact_with_verification("Foo", "1", "Bar", "2")
           end
 
           let(:selectors) do
@@ -187,18 +186,17 @@ module PactBroker
           end
 
           let(:options) do
-            { latest: true, tag: "prod" }
+            { latest: true, tag: "prod", latestby: "cvp" }
           end
 
-          it "does not allow the consumer to be deployed" do
-            expect(subject.deployment_status_summary.deployable?).to_not be true
+          it "does not allow the app to be deployed" do
+            expect(subject.deployment_status_summary).to_not be_deployable
           end
         end
 
         describe "when deploying an app that is both a consumer and a provider to prod for the first time and the downstream provider is not yet deployed" do
           before do
-            td.create_pact_with_hierarchy("Foo", "1", "Bar")
-            .create_verification(provider_version: "2")
+            td.create_pact_with_verification("Foo", "1", "Bar", "2")
             .use_consumer("Bar")
             .use_consumer_version("2")
             .create_provider("Baz")
@@ -210,18 +208,19 @@ module PactBroker
           end
 
           let(:options) do
-            { latest: true, tag: "prod" }
+            { latest: true, tag: "prod", latestby: "cvp" }
           end
 
           it "does not allow the app to be deployed" do
-            expect(subject.deployment_status_summary.deployable?).to_not be true
+            expect(subject.deployment_status_summary).to_not be_deployable
           end
         end
 
         describe "when deploying an app that is both a consumer and a provider to prod for the first time and the downstream provider has been deployed" do
           before do
-            td.create_pact_with_hierarchy("Foo", "1", "Bar")
-            .create_verification(provider_version: "2")
+            # Foo v1 => Bar v2
+            # Bar v2 => Baz v4 (prod)
+            td.create_pact_with_verification("Foo", "1", "Bar", "2")
             .use_consumer("Bar")
             .use_consumer_version("2")
             .create_provider("Baz")
@@ -233,12 +232,13 @@ module PactBroker
             [ { pacticipant_name: "Bar", pacticipant_version_number: "2" } ]
           end
 
+          # Deploy Bar v2 to prod
           let(:options) do
-            { latest: true, tag: "prod" }
+            { latest: true, tag: "prod", latestby: "cvp" }
           end
 
           it "allows the app to be deployed" do
-            expect(subject.deployment_status_summary.deployable?).to be true
+            expect(subject.deployment_status_summary).to be_deployable
           end
         end
 
@@ -262,7 +262,7 @@ module PactBroker
             let(:options) { { latestby: "cvpv" } }
 
             it "does not allow the two apps to be deployed together" do
-              expect(subject.deployment_status_summary.deployable?).to_not be true
+              expect(subject.deployment_status_summary).to_not be_deployable
             end
           end
 
@@ -276,7 +276,7 @@ module PactBroker
             let(:options) { { latestby: "cvp", latest: true } }
 
             it "does not allow the two apps to be deployed together" do
-              expect(subject.deployment_status_summary.deployable?).to_not be true
+              expect(subject.deployment_status_summary).to_not be_deployable
             end
           end
         end
