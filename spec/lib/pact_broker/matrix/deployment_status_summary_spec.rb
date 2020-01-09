@@ -16,35 +16,37 @@ module PactBroker
 
       describe ".call" do
         let(:rows) { [row_1, row_2] }
+        # Foo => Bar
         let(:row_1) do
           double(Row,
             consumer: foo,
             provider: bar,
             consumer_version: foo_version,
             provider_version: bar_version,
-            consumer_name: "Foo",
-            consumer_id: 1,
-            consumer_version_id: 1,
-            provider_name: "Bar",
-            provider_id: 2,
+            consumer_name: foo.name,
+            consumer_id: foo.id,
+            consumer_version_id: foo_version.id,
+            provider_name: bar.name,
+            provider_id: bar.id,
             success: row_1_success,
-            pacticipant_names: %w{Foo Bar}
+            pacticipant_names: [foo.name, bar.name]
           )
         end
 
+        # Foo => Baz
         let(:row_2) do
           double(Row,
             consumer: foo,
             provider: baz,
             consumer_version: foo_version,
             provider_version: baz_version,
-            consumer_name: "Foo",
-            consumer_id: 1,
-            consumer_version_id: 1,
-            provider_name: "Baz",
-            provider_id: 3,
+            consumer_name: foo.name,
+            consumer_id: foo.id,
+            consumer_version_id: foo_version.id,
+            provider_name: baz.name,
+            provider_id: baz.id,
             success: true,
-            pacticipant_names: %w{Foo Baz}
+            pacticipant_names: [foo.name, baz.name]
           )
         end
 
@@ -61,29 +63,29 @@ module PactBroker
         let(:bar) { double('bar', id: 2, name: "Bar") }
         let(:baz) { double('baz', id: 3, name: "Baz") }
         let(:foo_version) { double('foo version', number: "ddec8101dabf4edf9125a69f9a161f0f294af43c", id: 10)}
-        let(:bar_version) { double('bar version', number: "14131c5da3abf323ccf410b1b619edac76231243", id: 10)}
-        let(:baz_version) { double('baz version', number: "4ee06460f10e8207ad904fa9fa6c4842e462ab59", id: 10)}
+        let(:bar_version) { double('bar version', number: "14131c5da3abf323ccf410b1b619edac76231243", id: 11)}
+        let(:baz_version) { double('baz version', number: "4ee06460f10e8207ad904fa9fa6c4842e462ab59", id: 12)}
 
         let(:resolved_selectors) do
           [
             ResolvedSelector.new(
-              pacticipant_id: 1,
-              pacticipant_name: "Foo",
-              pacticipant_version_number: "ddec8101dabf4edf9125a69f9a161f0f294af43c",
-              pacticipant_version_id: 10
+              pacticipant_id: foo.id,
+              pacticipant_name: foo.name,
+              pacticipant_version_number: foo_version.number,
+              pacticipant_version_id: foo_version.id
             ),
             ResolvedSelector.new(
-              pacticipant_id: 2,
-              pacticipant_name: "Bar",
-              pacticipant_version_number: "14131c5da3abf323ccf410b1b619edac76231243",
-              pacticipant_version_id: 11
+              pacticipant_id: bar.id,
+              pacticipant_name: bar.name,
+              pacticipant_version_number: bar_version.number,
+              pacticipant_version_id: bar_version.id
             ),
             ResolvedSelector.new(
-             pacticipant_id: 3,
-             pacticipant_name: "Baz",
-             pacticipant_version_number: "4ee06460f10e8207ad904fa9fa6c4842e462ab59",
-             pacticipant_version_id: 12
-            ),
+             pacticipant_id: baz.id,
+             pacticipant_name: baz.name,
+             pacticipant_version_number: baz_version.number,
+             pacticipant_version_id: baz_version.id
+            )
           ]
         end
 
@@ -132,12 +134,15 @@ module PactBroker
           its(:counts) { is_expected.to eq success: 1, failed: 0, unknown: 1 }
         end
 
-        context "when there is a consumer integration missing and only the provider was specified in the query" do
+        # I think this is an impossible scenario now that the left outer join returns a row with blank verification fields
+        context "when there is a consumer row missing a verification and only the provider was specified in the query" do
+
           let(:rows) { [row_1] }
+
           let(:integrations) do
             [
               Integration.new(1, "Foo", 2, "Bar", true),
-              Integration.new(3, "Baz", 2, "Bar", false) # the missing one
+              Integration.new(3, "Baz", 2, "Bar", false) # the integration missing a verification
             ]
           end
 
@@ -186,10 +191,10 @@ module PactBroker
 
           let(:dummy_selector) do
             ResolvedSelector.new(
-              pacticipant_id: 2,
-              pacticipant_name: "Bar",
-              pacticipant_version_id: 10,
-              pacticipant_version_number: "14131c5da3abf323ccf410b1b619edac76231243",
+              pacticipant_id: bar.id,
+              pacticipant_name: bar.name,
+              pacticipant_version_id: bar_version.id,
+              pacticipant_version_number: bar_version.number,
               latest: nil,
               tag: nil,
               type: :inferred
