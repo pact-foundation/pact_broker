@@ -242,6 +242,57 @@ module PactBroker
           end
         end
 
+        describe "when deploying a provider where the pact has not been verified" do
+          before do
+            # Foo v1 => Bar ?
+            td.create_pact_with_hierarchy("Foo", "1", "Bar")
+              .create_provider_version("2")
+          end
+
+          let(:selectors) do
+            [ { pacticipant_name: "Bar", pacticipant_version_number: "2" } ]
+          end
+
+          # Deploy Bar v2 to prod
+          let(:options) do
+            { latest: true, tag: "prod", latestby: "cvp" }
+          end
+
+          it "allows the app to be deployed" do
+            # no integrations and no matrix rows
+            expect(subject.deployment_status_summary).to be_deployable
+          end
+        end
+
+        describe "when deploying a consumer where the pact has been verified, but not by the required provider version" do
+          before do
+            # Foo v1 => Bar v2
+            td.create_pact_with_hierarchy("Foo", "1", "Bar")
+              .create_provider_version("2")
+              .create_provider_version_tag("prod")
+              .create_provider_version("3")
+              .create_verification(comment: "the verification is not from the required provider version")
+          end
+
+          let(:selectors) do
+            [ { pacticipant_name: "Foo", pacticipant_version_number: "1" } ]
+          end
+
+          # Deploy Foo v1 to prod
+          let(:options) do
+            { latest: true, tag: "prod", latestby: "cvp" }
+          end
+
+          # Currently returning PactNotEverVerifiedByProvider because the matrix response has changed from 'no row' to
+          # 'one row with no verification details' (left outer join stuff).
+          # Not sure if the 'no row' usecase can ever happen now.
+          # The messages shown to the user for 'not ever verified' and 'verified by the wrong provider version'
+          # are the same however, so the code does not need to be updated straight away.
+          it "returns a reason indicating that the pact has not been verified by the required provider version", pending: true do
+            expect(subject.deployment_status_summary.reasons.first).to be_a(PactBroker::Matrix::PactNotVerifiedByRequiredProviderVersion)
+          end
+        end
+
         describe "when two applications have pacts with each other (nureva use case)" do
           # ServiceA v 1 has been verified by ServiceB v 100
           # but ServiceB v 100 has only been verified by ServiceA v 99.
