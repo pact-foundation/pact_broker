@@ -157,7 +157,7 @@ module PactBroker
         [selector_for(row.consumer_name), selector_for(row.provider_name)]
       end
 
-      # When the user has not specified a version of the provider (eg no 'latest' and/or 'tag')
+      # When the user has not specified a version of the provider (eg no 'latest' and/or 'tag', which means 'all versions')
       # so the "add inferred selectors" code in the Matrix::Repository has not run,
       # we may end up with rows for which we do not have a selector.
       # To solve this, create dummy selectors from the row and integration data.
