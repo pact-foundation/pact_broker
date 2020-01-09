@@ -37,6 +37,9 @@ module PactBroker
     # the required provider version
     # (this row is not included in the matrix, and it's
     # absence must be inferred)
+    # Update: because the left outer join now returns a row with blank verification
+    # details, this scenario is now indistingishable from PactNotEverVerifiedByProvider
+    # TODO: merge these two classes when it's verified that they are duplicates.
     class PactNotVerifiedByRequiredProviderVersion < ErrorReasonWithTwoSelectors; end
 
     # The pact verification has failed
