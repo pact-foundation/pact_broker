@@ -26,6 +26,14 @@ module PactBroker
           }
         end
 
+        link :'pb:tag' do | options |
+          {
+            href: pacticipant_url(options.fetch(:base_url), represented.pacticipant) + '/tags/{tag}',
+            title: "Get, create or delete a tag for this pacticipant version",
+            templated: true
+          }
+        end
+
         link :'pb:latest-verification-results-where-pacticipant-is-consumer' do | options |
           {
             title: "Latest verification results for consumer version",
