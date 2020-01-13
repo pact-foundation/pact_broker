@@ -54,9 +54,16 @@ module PactBroker
 
       # Return the latest matrix row (pact/verification) for each consumer_version_number/provider_version_number
       def find specified_selectors, options = {}
-        resolved_selectors = resolve_specified_selectors(specified_selectors, options)
-        lines = query_matrix(resolved_selectors, options)
-        lines = apply_latestby(options, specified_selectors, lines)
+        resolved_specified_selectors = resolve_versions_and_add_ids(specified_selectors, :specified)
+        integrations = find_integrations_for_specified_selectors(resolved_specified_selectors)
+        resolved_selectors = if infer_selectors_for_integrations?(options)
+          resolved_specified_selectors + inferred_selectors(resolved_specified_selectors, integrations, options)
+        else
+          resolved_specified_selectors
+        end
+
+        all_lines = query_matrix(resolved_selectors, options)
+        lines = apply_latestby(options, all_lines)
 
         # This needs to be done after the latestby, so can't be done in the db unless
         # the latestby logic is moved to the db
@@ -64,7 +71,6 @@ module PactBroker
           lines = lines.select{ |l| options[:success].include?(l.success) }
         end
 
-        integrations = find_integrations_for_specified_selectors(resolved_selectors.select(&:specified?))
         QueryResults.new(lines.sort, specified_selectors, options, resolved_selectors, integrations)
       end
 
@@ -102,7 +108,7 @@ module PactBroker
       end
 
       # It would be nicer to do this in the SQL, but it requires time that I don't have at the moment
-      def apply_latestby options, selectors, lines
+      def apply_latestby options, lines
         return lines unless options[:latestby]
         group_by_columns = case options[:latestby]
         when 'cvpv' then GROUP_BY_PROVIDER_VERSION_NUMBER
@@ -131,25 +137,18 @@ module PactBroker
         options[:latestby] ? QuickRow : EveryRow
       end
 
-      def resolve_specified_selectors(specified_selectors, options)
-        resolved_specified_selectors = resolve_versions_and_add_ids(specified_selectors, :specified)
-        if options[:latest] || options[:tag]
-          add_inferred_selectors(resolved_specified_selectors, options)
-        else
-          resolved_specified_selectors
-        end
-      end
-
       # Find the version number for selectors with the latest and/or tag specified
       def resolve_versions_and_add_ids(selectors, selector_type)
         selectors.collect do | selector |
           pacticipant = PactBroker::Domain::Pacticipant.find(name: selector[:pacticipant_name])
           versions = find_versions_for_selector(selector)
-          build_selectors_for_pacticipant_and_versions(pacticipant, versions, selector, selector_type)
+          build_resolved_selectors(pacticipant, versions, selector, selector_type)
         end.flatten
       end
 
-      def build_selectors_for_pacticipant_and_versions(pacticipant, versions, original_selector, selector_type)
+      # When a single selector specifies multiple versions (eg. "all prod pacts"), this expands
+      # the single selector into one selector for each version.
+      def build_resolved_selectors(pacticipant, versions, original_selector, selector_type)
         if versions
           versions.collect do | version |
             if version
@@ -181,14 +180,17 @@ module PactBroker
         end
       end
 
+      def infer_selectors_for_integrations?(options)
+        options[:latest] || options[:tag]
+      end
+
       # When only one selector is specified, (eg. checking to see if Foo version 2 can be deployed to prod),
       # need to look up all integrated pacticipants, and determine their relevant (eg. latest prod) versions
-      def add_inferred_selectors(resolved_specified_selectors, options)
-        integrations = find_integrations_for_specified_selectors(resolved_specified_selectors)
+      def inferred_selectors(resolved_specified_selectors, integrations, options)
         all_pacticipant_names = integrations.collect(&:pacticipant_names).flatten.uniq
         specified_names = resolved_specified_selectors.collect{ |s| s[:pacticipant_name] }
         inferred_pacticipant_names = all_pacticipant_names - specified_names
-        resolved_specified_selectors + build_inferred_selectors(inferred_pacticipant_names, options)
+        build_inferred_selectors(inferred_pacticipant_names, options)
       end
 
       def build_inferred_selectors(inferred_pacticipant_names, options)
@@ -201,13 +203,6 @@ module PactBroker
           selector
         end
         resolve_versions_and_add_ids(selectors, :inferred)
-      end
-
-      def all_pacticipant_names_in_specified_matrix(selectors)
-        find_integrations_for_specified_selectors(selectors)
-          .collect(&:pacticipant_names)
-          .flatten
-          .uniq
       end
 
       def selector_for_non_existing_version(pacticipant, original_selector, selector_type)
