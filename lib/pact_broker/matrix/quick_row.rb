@@ -84,10 +84,15 @@ module PactBroker
         select *SELECT_PACTICIPANT_IDS_ARGS
 
         def distinct_integrations selectors
-          select_pacticipant_ids
-            .distinct
-            .matching_selectors(selectors)
-            .from_self(alias: :pacticipant_ids)
+          query = if selectors.size == 1
+            pacticipant_ids_matching_one_selector_optimised(selectors)
+          else
+            select_pacticipant_ids
+              .distinct
+              .matching_multiple_selectors(selectors)
+          end
+
+          query.from_self(alias: :pacticipant_ids)
             .select(
               :consumer_id,
               Sequel[:c][:name].as(:consumer_name),
@@ -141,6 +146,29 @@ module PactBroker
             .join_pacticipants_and_pacticipant_versions
             .where {
               QueryBuilder.consumer_or_consumer_version_or_provider_or_provider_or_provider_version_match(QueryIds.from_selectors(selectors))
+            }
+        end
+
+        def pacticipant_ids_matching_one_selector_optimised(selectors)
+          query_ids = QueryIds.from_selectors(selectors)
+          distinct_pacticipant_ids_where_consumer_or_consumer_version_matches(query_ids)
+            .union(distinct_pacticipant_ids_where_provider_or_provider_version_matches(query_ids))
+        end
+
+        def distinct_pacticipant_ids_where_consumer_or_consumer_version_matches(query_ids)
+          select_pacticipant_ids
+            .distinct
+            .where {
+              QueryBuilder.consumer_or_consumer_version_matches(query_ids, :p)
+            }
+        end
+
+        def distinct_pacticipant_ids_where_provider_or_provider_version_matches(query_ids)
+          select_pacticipant_ids
+            .distinct
+            .inner_join_verifications
+            .where {
+              QueryBuilder.provider_or_provider_version_matches(query_ids, :v)
             }
         end
 
@@ -214,6 +242,10 @@ module PactBroker
 
         def join_verifications
           left_outer_join(LV, LP_LV_JOIN, { table_alias: :v } )
+        end
+
+        def inner_join_verifications
+          join(LV, LP_LV_JOIN, { table_alias: :v } )
         end
       end # end dataset_module
 
