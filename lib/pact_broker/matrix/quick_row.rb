@@ -152,7 +152,7 @@ module PactBroker
         def pacticipant_ids_matching_one_selector_optimised(selectors)
           query_ids = QueryIds.from_selectors(selectors)
           distinct_pacticipant_ids_where_consumer_or_consumer_version_matches(query_ids)
-            .union(distinct_pacticipant_ids_where_provider_or_provider_version_matches(query_ids))
+            .union(distinct_pacticipant_ids_where_provider_or_provider_version_matches(query_ids), all: true)
         end
 
         def distinct_pacticipant_ids_where_consumer_or_consumer_version_matches(query_ids)
