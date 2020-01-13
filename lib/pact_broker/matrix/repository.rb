@@ -54,7 +54,7 @@ module PactBroker
 
       # Return the latest matrix row (pact/verification) for each consumer_version_number/provider_version_number
       def find specified_selectors, options = {}
-        resolved_selectors = resolve_selectors(specified_selectors, options)
+        resolved_selectors = resolve_specified_selectors(specified_selectors, options)
         lines = query_matrix(resolved_selectors, options)
         lines = apply_latestby(options, specified_selectors, lines)
 
@@ -131,8 +131,8 @@ module PactBroker
         options[:latestby] ? QuickRow : EveryRow
       end
 
-      def resolve_selectors(specified_selectors, options)
-        resolved_specified_selectors = resolve_versions_and_add_ids(specified_selectors, :specified, options[:latestby])
+      def resolve_specified_selectors(specified_selectors, options)
+        resolved_specified_selectors = resolve_versions_and_add_ids(specified_selectors, :specified)
         if options[:latest] || options[:tag]
           add_inferred_selectors(resolved_specified_selectors, options)
         else
@@ -141,19 +141,19 @@ module PactBroker
       end
 
       # Find the version number for selectors with the latest and/or tag specified
-      def resolve_versions_and_add_ids(selectors, selector_type, latestby)
+      def resolve_versions_and_add_ids(selectors, selector_type)
         selectors.collect do | selector |
           pacticipant = PactBroker::Domain::Pacticipant.find(name: selector[:pacticipant_name])
           versions = find_versions_for_selector(selector)
-          build_selectors_for_pacticipant_and_versions(pacticipant, versions, selector, selector_type, latestby)
+          build_selectors_for_pacticipant_and_versions(pacticipant, versions, selector, selector_type)
         end.flatten
       end
 
-      def build_selectors_for_pacticipant_and_versions(pacticipant, versions, original_selector, selector_type, latestby)
+      def build_selectors_for_pacticipant_and_versions(pacticipant, versions, original_selector, selector_type)
         if versions
           versions.collect do | version |
             if version
-              selector_for_version(pacticipant, version, original_selector, selector_type, latestby)
+              selector_for_version(pacticipant, version, original_selector, selector_type)
             else
               selector_for_non_existing_version(pacticipant, original_selector, selector_type)
             end
@@ -200,7 +200,7 @@ module PactBroker
           selector[:latest] = options[:latest] if options[:latest]
           selector
         end
-        resolve_versions_and_add_ids(selectors, :inferred, options[:latestby])
+        resolve_versions_and_add_ids(selectors, :inferred)
       end
 
       def all_pacticipant_names_in_specified_matrix(selectors)
@@ -214,7 +214,7 @@ module PactBroker
         ResolvedSelector.for_pacticipant_and_non_existing_version(pacticipant, original_selector, selector_type)
       end
 
-      def selector_for_version(pacticipant, version, original_selector, selector_type, latestby)
+      def selector_for_version(pacticipant, version, original_selector, selector_type)
         ResolvedSelector.for_pacticipant_and_version(pacticipant, version, original_selector, selector_type)
       end
 
