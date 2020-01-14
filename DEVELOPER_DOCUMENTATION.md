@@ -7,7 +7,7 @@
   * API - [lib/pact_broker/api](lib/pact_broker/api)
     * Routes - [lib/pact_broker/api.rb](lib/pact_broker/api.rb)
     * HTTP Resources - [lib/pact_broker/api/resources](lib/pact_broker/api/resources) These handle the HTTP requests.
-    * Decorators - [lib/pact_broker/api/decorators](lib/pact_broker/api/decorators) These render the response bodies.
+    * Decorators - [lib/pact_broker/api/decorators](lib/pact_broker/api/decorators) These parse the request bodies and render the response bodies.
     * Contracts - [lib/pact_broker/api/contracts](lib/pact_broker/api/contracts) These validate incoming API requests.
   * UI - [lib/pact_broker/ui](lib/pact_broker/ui)
     * Routes - [lib/pact_broker/ui/app.rb](lib/pact_broker/ui/app.rb)
@@ -35,10 +35,13 @@ Domain classes are found in `lib/pact_broker/domain`. Many of these classes are 
 
 * `pacticipant` - an application that participates in a pact. A very bad pun which I deeply regret.
 * `pact` - this term is confusing and overloaded. It generally means a `pact publication` in the code.
-* `pact publication` - the resource that gets created when a PUT request is sent to the Pact Broker to /pacts/provider/PROVIDER/consumer/CONSUMER/version/VERSION.
+* `pact publication` - the resource that gets created when a PUT request is sent to the Pact Broker to `/pacts/provider/PROVIDER/consumer/CONSUMER/version/VERSION`.
 * `pact version` - the JSON contents of the pact publication. One pact version may belong to many pact publications. That is, if a pact publication with exactly the same contents is published twice, then a new
-pact publication resource will be created, but it will reuse the existing pact version.
+pact publication resource will be created with an incremented revision number, but it will reuse the existing pact version.
+* `pacticipant version` - a resource that represents a version of the application
+* `integration` - the relationship between a consumer and a provider
 * `pseudo branch` - A time ordered list of pacts that are related to a particular tag. The most recent pact for each pseudo branch is a "head" pact.
+* `matrix` - the table that shows the cartesian join of pact versions/verifications, and hence shows which consumer versions and provider versions have been tested together.
 
 ### Tables
 * `pact_versions` - the JSON content of each UNIQUE pact document is stored in this table. The same content is likely to be published over and over again by the CI builds, so deduplicating the content saves us a lot of disk space. Once created, a row is never modified. Uniqueness is just done on string equality - no special pact logic. This means that pacts with randomly generated values or orders (most of pact-jvm pacts!) will get a new version record every time they publish.
@@ -80,11 +83,11 @@ pact publication resource will be created, but it will reuse the existing pact v
     * `consumer version number` and `consumer version order`
     * `revision_number`
 
-* `latest_pact_publications_by_consumer_versions` - This view has the same columns as `all_pact_publications`, but it only contains the latest revision of the pact for each provider/consumer/version. It maps to what a user would consider the "pact" resource ie. `/pacts/provider/Provider/consumer/Consumer/version/1.2.3`. Previous revisions are not currently exposed via the API.
+* `latest_pact_publications_by_consumer_versions` - This view has the same columns as `all_pact_publications`, but it only contains the latest revision of the pact for each provider/consumer/version. It maps to what a user would consider the "pact" resource ie. `/pacts/provider/PROVIDER/consumer/CONSUMER/version/VERSION`. Previous revisions are not currently exposed via the API.
 
  The `AllPactPublications` Sequel model in the code is what is used when querying data for displaying in a response, rather than the normalised separate PactPublication and PactVersion models.
 
-* `latest_pact_publications` - This view has the same columns as `all_pact_publications`, but it only contains the latest revision of the pact for the latest consumer version for each consumer/provider pair. It is what a user would consider the "latest pact", and maps to the resource at `/pacts/provider/Provider/consumer/Consumer/latest`
+* `latest_pact_publications` - This view has the same columns as `all_pact_publications`, but it only contains the latest revision of the pact for the latest consumer version for each consumer/provider pair. It is what a user would consider the "latest pact", and maps to the resource at `/pacts/provider/PROVIDER/consumer/CONSUMER/latest`
 
 * `latest_tagged_pact_publications` - This view has the same columns as `all_pact_publications`, plus a `tag_name` column. It is used to return the pact for the latest tagged version of a consumer.
 
@@ -116,8 +119,9 @@ pact publication resource will be created, but it will reuse the existing pact v
 
 ```
 
+### Database modeling approach
 
-
+In the beginning, I made a lot of Sequel models based on views that pulled in the different tables of data together (eg denormalising consumer, provider, pact publication and pact version in to `all_pact_publications`). This made the Ruby code quite simple, but it was not very performant. As time has progressed, I have moved more and more of the "data joining" code into the Ruby to optimise the queries. That's why there are a lot of "aggregated data" views that are not being used by the code any more.
 
 ### Useful to know stuff
 
