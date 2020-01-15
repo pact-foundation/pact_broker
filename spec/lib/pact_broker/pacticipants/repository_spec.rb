@@ -87,7 +87,7 @@ module PactBroker
             end
           end
 
-          context "with case sensitivity turned off and multiple records found" do
+          context "with case sensitivity turned off and multiple records found", skip: DB.mysql?  do
             before do
               td.create_pacticipant("Foo bar")
               allow(PactBroker.configuration).to receive(:use_case_sensitive_resource_names).and_return(false)
