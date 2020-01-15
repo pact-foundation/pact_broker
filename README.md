@@ -166,7 +166,7 @@ Please read the [UPGRADING.md](UPGRADING.md) documentation before upgrading your
 [pact]: https://github.com/pact-foundation/pact-ruby
 [nerf]: https://github.com/pact-foundation/pact_broker/wiki/pact-broker-ci-nerf-gun
 [different-teams]: https://github.com/pact-foundation/pact-ruby/wiki/Using-pact-where-the-consumer-team-is-different-from-the-provider-team
-[docker]: https://hub.docker.com/r/dius/pact-broker
+[docker]: https://github.com/pact-foundation/pact-broker-docker
 [terraform]: https://github.com/nadnerb/terraform-pact-broker
 [pactflow]: https:/pactflow.io/?utm_source=github&utm_campaign=pact_broker_usage
 [wiki]: https://github.com/pact-foundation/pact_broker/wiki
