@@ -60,7 +60,7 @@ module PactBroker
       end
       describe "#find_by_name" do
         before do
-          TestDataBuilder.new.create_pacticipant("Foo Bar")
+          td.create_pacticipant("Foo Bar")
         end
 
         subject { Repository.new.find_by_name('foo bar') }
@@ -85,6 +85,23 @@ module PactBroker
               expect(subject).to_not be nil
               expect(subject.name).to eq "Foo Bar"
             end
+          end
+
+          context "with case sensitivity turned off and multiple records found" do
+            before do
+              td.create_pacticipant("Foo bar")
+              allow(PactBroker.configuration).to receive(:use_case_sensitive_resource_names).and_return(false)
+            end
+
+            it "raises an error" do
+              expect { subject }.to raise_error PactBroker::Error, /Found multiple pacticipants.*foo bar/
+            end
+          end
+
+          context "with case sensitivity turned off no record found" do
+            subject { Repository.new.find_by_name('blah') }
+
+            it { is_expected.to be nil }
           end
         end
       end

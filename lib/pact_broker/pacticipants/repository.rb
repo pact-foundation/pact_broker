@@ -1,6 +1,7 @@
 require 'sequel'
 require 'pact_broker/domain/pacticipant'
 require 'pact_broker/repositories/helpers'
+require 'pact_broker/error'
 
 module PactBroker
   module Pacticipants
@@ -9,7 +10,13 @@ module PactBroker
       include PactBroker::Repositories::Helpers
 
       def find_by_name name
-        PactBroker::Domain::Pacticipant.where(name_like(:name, name)).single_record
+        if PactBroker.configuration.use_case_sensitive_resource_names
+          PactBroker::Domain::Pacticipant.where(name: name).single_record
+        else
+          pacticipants = PactBroker::Domain::Pacticipant.where(name_like(:name, name)).all
+          handle_multiple_pacticipants_found(name, pacticipants) if pacticipants.size > 1
+          pacticipants.first
+        end
       end
 
       def find_by_id id
@@ -65,6 +72,11 @@ module PactBroker
             PactBroker::Webhooks::Webhook.where(provider: pacticipant).or(consumer: pacticipant).empty?
           pacticipant.destroy
         end
+      end
+
+      def handle_multiple_pacticipants_found(name, pacticipants)
+        names = pacticipants.collect(&:name).join(", ")
+        raise PactBroker::Error.new("Found multiple pacticipants with a case insensitive name match for '#{name}': #{names}. Please delete one of them, or set PactBroker.configuration.use_case_sensitive_resource_names = true")
       end
     end
   end
