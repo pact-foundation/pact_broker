@@ -1,3 +1,5 @@
+Sequel.extension :escaped_like
+
 module PactBroker
   module Repositories
     module Helpers
@@ -5,11 +7,16 @@ module PactBroker
       extend self
 
       def name_like column_name, value
-        Sequel.like(column_name, value, case_sensitivity_options)
-      end
-
-      def case_sensitivity_options
-        {case_insensitive: !PactBroker.configuration.use_case_sensitive_resource_names}
+        if PactBroker.configuration.use_case_sensitive_resource_names
+          if mysql?
+            # sigh, mysql, this is the only way to perform a case sensitive search
+            Sequel.escaped_like(column_name, value)
+          else
+            { column_name => value }
+          end
+        else
+          { Sequel.function(:lower, column_name) => value.downcase }
+        end
       end
 
       def order_ignore_case column_name = :name
