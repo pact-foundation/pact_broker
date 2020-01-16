@@ -10,13 +10,9 @@ module PactBroker
       include PactBroker::Repositories::Helpers
 
       def find_by_name name
-        if PactBroker.configuration.use_case_sensitive_resource_names
-          PactBroker::Domain::Pacticipant.where(name: name).single_record
-        else
-          pacticipants = PactBroker::Domain::Pacticipant.where(name_like(:name, name)).all
-          handle_multiple_pacticipants_found(name, pacticipants) if pacticipants.size > 1
-          pacticipants.first
-        end
+        pacticipants = PactBroker::Domain::Pacticipant.where(name_like(:name, name)).all
+        handle_multiple_pacticipants_found(name, pacticipants) if pacticipants.size > 1
+        pacticipants.first
       end
 
       def find_by_id id
