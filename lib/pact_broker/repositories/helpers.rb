@@ -10,12 +10,12 @@ module PactBroker
         if PactBroker.configuration.use_case_sensitive_resource_names
           if mysql?
             # sigh, mysql, this is the only way to perform a case sensitive search
-            Sequel.escaped_like(column_name, value)
+            Sequel.like(column_name, value.gsub("_", "\\_"), { case_insensitive: false })
           else
             { column_name => value }
           end
         else
-          { Sequel.function(:lower, column_name) => value.downcase }
+          Sequel.like(column_name, value.gsub("_", "\\_"), { case_insensitive: true })
         end
       end
 
