@@ -60,10 +60,10 @@ module PactBroker
       end
       describe "#find_by_name" do
         before do
-          td.create_pacticipant("Foo Bar")
+          td.create_pacticipant("Foo-Bar")
         end
 
-        subject { Repository.new.find_by_name('foo bar') }
+        subject { Repository.new.find_by_name('foo-bar') }
 
         context "when the name is a different case" do
           context "with case sensitivity turned on" do
@@ -83,19 +83,36 @@ module PactBroker
 
             it "returns the pacticipant" do
               expect(subject).to_not be nil
-              expect(subject.name).to eq "Foo Bar"
+              expect(subject.name).to eq "Foo-Bar"
             end
           end
 
           context "with case sensitivity turned off and multiple records found", skip: DB.mysql?  do
+            # Can't be created in MySQL - duplicate record
             before do
-              td.create_pacticipant("Foo bar")
+              td.create_pacticipant("Foo-bar")
               allow(PactBroker.configuration).to receive(:use_case_sensitive_resource_names).and_return(false)
             end
 
             it "raises an error" do
-              expect { subject }.to raise_error PactBroker::Error, /Found multiple pacticipants.*foo bar/
+              expect { subject }.to raise_error PactBroker::Error, /Found multiple pacticipants.*foo-bar/
             end
+          end
+
+          context "with case sensitivity turned off and searching for a name with an underscore" do
+            before do
+              allow(PactBroker.configuration).to receive(:use_case_sensitive_resource_names).and_return(false)
+            end
+
+            subject { Repository.new.find_by_name('foo_bar') }
+
+            it { is_expected.to be nil }
+          end
+
+          context "with case sensitivity turned on and searching for a name with an underscore" do
+            subject { Repository.new.find_by_name('foo_bar') }
+
+            it { is_expected.to be nil }
           end
 
           context "with case sensitivity turned off no record found" do
