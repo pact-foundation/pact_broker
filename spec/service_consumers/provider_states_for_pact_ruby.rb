@@ -143,4 +143,16 @@ Pact.provider_states_for "Pact Ruby" do
         .create_pact
     end
   end
+
+  provider_state "the relation for retrieving pacts for verifications exists in the index resource" do
+      no_op
+    end
+
+    provider_state "Foo has a pact tagged cdev with provider Bar" do
+      set_up do
+        TestDataBuilder.new
+          .create_pact_with_hierarchy("Foo", "1", "Bar")
+          .create_consumer_version_tag("cdev")
+      end
+    end
 end
