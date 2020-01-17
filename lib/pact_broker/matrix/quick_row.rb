@@ -89,7 +89,7 @@ module PactBroker
           else
             select_pacticipant_ids
               .distinct
-              .matching_multiple_selectors(selectors)
+              .matching_any_of_multiple_selectors(selectors)
           end
 
           query.from_self(alias: :pacticipant_ids)
@@ -189,6 +189,21 @@ module PactBroker
               Sequel.&(
                 QueryBuilder.consumer_or_consumer_version_matches(query_ids, :p),
                 QueryBuilder.provider_or_provider_version_matches_or_pact_unverified(query_ids, :v),
+                QueryBuilder.either_consumer_or_provider_was_specified_in_query(query_ids, :p)
+              )
+            }
+        end
+
+        def matching_any_of_multiple_selectors(selectors)
+          query_ids = QueryIds.from_selectors(selectors)
+          join_verifications_for(query_ids)
+            .join_pacticipants_and_pacticipant_versions
+            .where {
+              Sequel.&(
+                Sequel.|(
+                  QueryBuilder.consumer_or_consumer_version_matches(query_ids, :p),
+                  QueryBuilder.provider_or_provider_version_matches_or_pact_unverified(query_ids, :v),
+                ),
                 QueryBuilder.either_consumer_or_provider_was_specified_in_query(query_ids, :p)
               )
             }

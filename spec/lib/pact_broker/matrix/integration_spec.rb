@@ -331,6 +331,70 @@ module PactBroker
             end
           end
         end
+
+        describe "specifying a provider which has multiple prod versions of one consumer (explicit) and a single version of another (inferred)" do
+          before do
+            # Foo 1   (prod) -> Bar 2    [explicit]
+            # Foo 2   (prod) -> Bar 2    [explicit]
+            # Foo 3          -> Bar 2 failed [explicit]
+            # Cat 20  (prod) -> Bar ?    [inferred, missing verification]
+            # Dog 40         -> Bar 2 failed   [inferred, but not in prod]
+
+            td.create_pact_with_verification("Foo", "1", "Bar", "2")
+              .create_consumer_version_tag("prod")
+              .create_consumer_version("2")
+              .create_consumer_version_tag("prod")
+              .create_pact
+              .create_verification(provider_version: "2")
+              .create_consumer_version("3")
+              .create_pact
+              .create_verification(provider_version: "2", success: false, comment: "not prod, doesn't matter")
+              .create_consumer("Cat")
+              .create_consumer_version("20")
+              .create_consumer_version_tag("prod")
+              .create_pact
+              .comment("missing verification")
+              .create_consumer("Dog")
+              .create_consumer_version("40")
+              .create_pact
+              .create_verification(provider_version: "2")
+          end
+
+          let(:selector_1) { { pacticipant_name: "Bar", pacticipant_version_number: "2" } }
+          let(:selector_2) { { pacticipant_name: "Foo", tag: "prod" } }
+          let(:selectors)  { [ selector_1, selector_2 ] }
+
+          subject { Service.find(selectors, options) }
+
+          context "with inferred selectors" do
+            let(:options) { { latest: true, tag: "prod"} }
+
+            it "determines the number of integrations" do
+              expect(subject.integrations.size).to eq 3
+            end
+
+            it "finds all prod versions of Foo" do
+              expect(subject.select { |row| row.consumer_name == "Foo"}.size).to eq 2
+            end
+
+            it "finds the single prod version of Cat" do
+              expect(subject.select { |row| row.consumer_name == "Cat"}.size).to eq 1
+            end
+
+            it "is not deployable because of the missing verification for Cat v20" do
+              expect(subject.deployment_status_summary.reasons.size).to eq 1
+              expect(subject.deployment_status_summary.reasons.first).to be_a_pact_never_verified_for_consumer "Cat"
+            end
+          end
+
+          context "without inferred selectors" do
+            let(:options) { {} }
+
+            it "is deployable" do
+              expect(subject.deployment_status_summary).to be_deployable
+            end
+          end
+        end
       end
     end
   end
