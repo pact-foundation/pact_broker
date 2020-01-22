@@ -1,3 +1,27 @@
+<a name="v2.44.0"></a>
+### v2.44.0 (2020-01-22)
+
+
+#### Features
+
+* **matrix**
+  * optimise query to determine integrations, again	 ([44e78ad2](/../../commit/44e78ad2))
+  * add indexes to optimise queries	 ([cdc9aad7](/../../commit/cdc9aad7))
+  * optimise query to determine integrations	 ([9e874f3b](/../../commit/9e874f3b))
+
+* add hal relation for creating a tag on the pacticipant version resource	 ([dca0ad4f](/../../commit/dca0ad4f))
+
+
+#### Bug Fixes
+
+* update pact-support to fix bug caused by missing require	 ([416ecdf5](/../../commit/416ecdf5))
+* correct logic for finding pacticipants by name when the name contains an underscore	 ([6d975ebe](/../../commit/6d975ebe))
+* correct logic for finding pacticipants by name when the name contains an underscore	 ([2db59797](/../../commit/2db59797))
+
+* **matrix**
+  * correctly infer selectors when multiple selectors have been specified	 ([4288c282](/../../commit/4288c282))
+
+
 <a name="v2.43.0"></a>
 ### v2.43.0 (2020-01-06)
 
