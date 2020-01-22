@@ -8,20 +8,21 @@ module PactBroker
 
       delegate [:consumer_name, :provider_name, :head_consumer_tags, :pending_provider_tags, :non_pending_provider_tags, :pending?, :wip?] => :verifiable_pact
 
-      def initialize(verifiable_pact)
+      def initialize(verifiable_pact, pact_version_url)
         @verifiable_pact = verifiable_pact
+        @pact_version_url = pact_version_url
       end
 
       def inclusion_reason
         version_text = head_consumer_tags.size == 1 ? "version" : "versions"
         if wip?
           # WIP pacts will always have tags, because it is part of the definition of being a WIP pact
-          "This pact is being verified because it is a 'work in progress' pact (ie. it is the pact for the latest #{version_text} of Foo tagged with #{joined_head_consumer_tags} and is still in pending state). #{READ_MORE_WIP}"
+          "The pact at #{pact_version_url} is being verified because it is a 'work in progress' pact (ie. it is the pact for the latest #{version_text} of Foo tagged with #{joined_head_consumer_tags} and is still in pending state). #{READ_MORE_WIP}"
         else
           if head_consumer_tags.any?
-            "This pact is being verified because it is the pact for the latest #{version_text} of Foo tagged with #{joined_head_consumer_tags}"
+            "The pact at #{pact_version_url} is being verified because it is the pact for the latest #{version_text} of Foo tagged with #{joined_head_consumer_tags}"
           else
-            "This pact is being verified because it is the latest pact between #{consumer_name} and #{provider_name}."
+            "The pact at #{pact_version_url} is being verified because it is the latest pact between #{consumer_name} and #{provider_name}."
           end
         end
       end
@@ -36,7 +37,7 @@ module PactBroker
 
       private
 
-      attr_reader :verifiable_pact
+      attr_reader :verifiable_pact, :pact_version_url
 
       def join(list, last_joiner = " and ")
         quoted_list = list.collect { | tag | "'#{tag}'" }

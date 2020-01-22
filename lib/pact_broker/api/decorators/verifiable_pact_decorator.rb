@@ -21,36 +21,40 @@ module PactBroker
         end
 
         property :verification_properties, as: :verificationProperties do
+          include PactBroker::Api::PactBrokerUrls
+
           property :pending,
             if: ->(context) { context[:options][:user_options][:include_pending_status] }
           property :wip, if: -> (context) { context[:represented].wip }
-          property :inclusion_reason, as: :inclusionReason, exec_context: :decorator
-          property :pending_reason, as: :pendingReason, exec_context: :decorator,
-            if: ->(context) { context[:options][:user_options][:include_pending_status] }
 
           property :notices, getter: -> (context) { context[:decorator].notices(context[:options][:user_options]) }
           property :noteToDevelopers, getter: -> (_) { "Please print out the text from the 'notices' rather than using the inclusionReason and the pendingReason fields. These will be removed when this API moves out of beta."}
 
-          def inclusion_reason
-            PactBroker::Pacts::VerifiablePactMessages.new(represented).inclusion_reason
+          def inclusion_reason(pact_url)
+            PactBroker::Pacts::VerifiablePactMessages.new(represented, pact_url).inclusion_reason
           end
 
-          def pending_reason
-            PactBroker::Pacts::VerifiablePactMessages.new(represented).pending_reason
+          def pending_reason(pact_url)
+            PactBroker::Pacts::VerifiablePactMessages.new(represented, pact_url).pending_reason
           end
 
           def notices(user_options)
+            pact_url = pact_version_url(represented, user_options[:base_url])
             mess = [{
-              text: inclusion_reason
+              timing: 'pre_verification',
+              text: inclusion_reason(pact_url)
             }]
-            mess << { text: pending_reason } if user_options[:include_pending_status]
+            mess << {
+              timing: 'pre_verification',
+              text: pending_reason(pact_url)
+            } if user_options[:include_pending_status]
             mess
           end
         end
 
-        link :self do | context |
+        link :self do | user_options |
           {
-            href: pact_version_url(represented, context[:base_url]),
+            href: pact_version_url(represented, user_options[:base_url]),
             name: represented.name
           }
         end

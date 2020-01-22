@@ -20,27 +20,28 @@ module PactBroker
           wip?: wip
         )
       end
+      let(:pact_version_url) { "http://pact" }
 
-      subject { VerifiablePactMessages.new(verifiable_pact) }
+      subject { VerifiablePactMessages.new(verifiable_pact, pact_version_url) }
 
       describe "#inclusion_reason" do
         context "when there are no head consumer tags" do
-          its(:inclusion_reason) { is_expected.to include "This pact is being verified because it is the latest pact between Foo and Bar." }
+          its(:inclusion_reason) { is_expected.to include "The pact at http://pact is being verified because it is the latest pact between Foo and Bar." }
         end
 
         context "when there is 1 head consumer tags" do
           let(:head_consumer_tags) { %w[dev] }
-          its(:inclusion_reason) { is_expected.to include "This pact is being verified because it is the pact for the latest version of Foo tagged with 'dev'" }
+          its(:inclusion_reason) { is_expected.to include "The pact at http://pact is being verified because it is the pact for the latest version of Foo tagged with 'dev'" }
         end
 
         context "when there are 2 head consumer tags" do
           let(:head_consumer_tags) { %w[dev prod] }
-          its(:inclusion_reason) { is_expected.to include "This pact is being verified because it is the pact for the latest versions of Foo tagged with 'dev' and 'prod' (both have the same content)" }
+          its(:inclusion_reason) { is_expected.to include "The pact at http://pact is being verified because it is the pact for the latest versions of Foo tagged with 'dev' and 'prod' (both have the same content)" }
         end
 
         context "when there are 3 head consumer tags" do
           let(:head_consumer_tags) { %w[dev prod feat-x] }
-          its(:inclusion_reason) { is_expected.to include "This pact is being verified because it is the pact for the latest versions of Foo tagged with 'dev', 'prod' and 'feat-x' (all have the same content)" }
+          its(:inclusion_reason) { is_expected.to include "The pact at http://pact is being verified because it is the pact for the latest versions of Foo tagged with 'dev', 'prod' and 'feat-x' (all have the same content)" }
         end
 
         context "when there are 4 head consumer tags" do
@@ -54,7 +55,7 @@ module PactBroker
           let(:head_consumer_tags) { %w[feat-x] }
           let(:pending_provider_tags) { %w[dev] }
 
-          its(:inclusion_reason) { is_expected.to include "This pact is being verified because it is a 'work in progress' pact (ie. it is the pact for the latest version of Foo tagged with 'feat-x' and is still in pending state)."}
+          its(:inclusion_reason) { is_expected.to include "The pact at http://pact is being verified because it is a 'work in progress' pact (ie. it is the pact for the latest version of Foo tagged with 'feat-x' and is still in pending state)."}
         end
       end
 

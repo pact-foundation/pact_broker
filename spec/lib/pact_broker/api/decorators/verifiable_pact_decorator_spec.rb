@@ -5,7 +5,7 @@ module PactBroker
     module Decorators
       describe VerifiablePactDecorator do
         before do
-          allow(decorator).to receive(:pact_version_url).and_return('/pact-version-url')
+          allow_any_instance_of(PactBroker::Api::PactBrokerUrls).to receive(:pact_version_url).and_return('/pact-version-url')
           allow_any_instance_of(PactBroker::Pacts::VerifiablePactMessages).to receive(:inclusion_reason).and_return("the inclusion reason")
           allow_any_instance_of(PactBroker::Pacts::VerifiablePactMessages).to receive(:pending_reason).and_return(pending_reason)
         end
@@ -20,9 +20,7 @@ module PactBroker
                 }, {
                   "text" => pending_reason
                 }
-              ],
-              "pendingReason" => pending_reason,
-              "inclusionReason" => "the inclusion reason"
+              ]
             },
             "_links" => {
               "self" => {
@@ -58,6 +56,11 @@ module PactBroker
 
         it "creates the pact version url" do
           expect(decorator).to receive(:pact_version_url).with(pact, 'http://example.org')
+          subject
+        end
+
+        it "creates the inclusion message" do
+          expect(PactBroker::Pacts::VerifiablePactMessages).to receive(:new).twice.with(pact, '/pact-version-url').and_call_original
           subject
         end
 
