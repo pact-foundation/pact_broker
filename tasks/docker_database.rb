@@ -17,6 +17,7 @@ module DockerDatabase
         }
       }
     ).start({})
+    # .tap(&:start).attach { |stream, chunk| puts "#{stream}: #{chunk}" }
   end
 
   def self.stop_and_remove(name)
