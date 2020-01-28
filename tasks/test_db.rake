@@ -6,6 +6,12 @@ PactBroker::DB::MigrationTask.new do | task |
   task.database_connection = DB::PACT_BROKER_DB
 end
 
+PactBroker::DB::DataMigrationTask.new do | task |
+  ENV['RACK_ENV'] ||= 'test'
+  require 'db'
+  task.database_connection = DB::PACT_BROKER_DB
+end
+
 PactBroker::DB::VersionTask.new do | task |
   ENV['RACK_ENV'] ||= 'test'
   require 'db'

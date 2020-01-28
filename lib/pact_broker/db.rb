@@ -24,7 +24,7 @@ module PactBroker
     end
 
     def self.run_data_migrations database_connection
-      PactBroker::DB::MigrateData.(connection)
+      PactBroker::DB::MigrateData.(database_connection)
     end
 
     def self.validate_connection_config
