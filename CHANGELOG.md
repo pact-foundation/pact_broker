@@ -1,3 +1,21 @@
+<a name="v2.45.0"></a>
+### v2.45.0 (2020-01-30)
+
+
+#### Features
+
+* expose the data migrations code as a rake task	 ([00ee00d5](/../../commit/00ee00d5))
+
+* **pacts for verification**
+  * include URL of pact in inclusion message	 ([5a85a5a4](/../../commit/5a85a5a4))
+
+
+#### Bug Fixes
+
+* **can-i-deploy**
+  * when multiple selectors are specified, do not infer integrations unless the "latest" or "tag" are specified	 ([c5819299](/../../commit/c5819299))
+
+
 <a name="v2.44.0"></a>
 ### v2.44.0 (2020-01-22)
 
