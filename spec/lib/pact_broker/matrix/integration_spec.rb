@@ -395,6 +395,27 @@ module PactBroker
             end
           end
         end
+
+        describe "when there is a consumer with two providers, and only one of them has a verification, and the consumer and the verified provider are explicitly specified" do
+          before do
+            td.create_pact_with_verification("Foo", "1", "Bar", "2")
+              .create_provider_version_tag("prod")
+              .create_pact_with_hierarchy("Foo", "1", "Wiffle")
+          end
+
+          let(:selectors) do
+            [
+              { pacticipant_name: "Foo", pacticipant_version_number: "1" },
+              { pacticipant_name: "Bar", tag: "prod", latest: true}
+            ]
+          end
+
+          let(:options) { { latestby: "cvpv"} }
+
+          it "should allow the consumer to be deployed" do
+            expect(subject.deployment_status_summary).to be_deployable
+          end
+        end
       end
     end
   end

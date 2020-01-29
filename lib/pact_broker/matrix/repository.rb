@@ -55,7 +55,7 @@ module PactBroker
       # Return the latest matrix row (pact/verification) for each consumer_version_number/provider_version_number
       def find specified_selectors, options = {}
         resolved_specified_selectors = resolve_versions_and_add_ids(specified_selectors, :specified)
-        integrations = find_integrations_for_specified_selectors(resolved_specified_selectors)
+        integrations = find_integrations_for_specified_selectors(resolved_specified_selectors, infer_selectors_for_integrations?(options))
         resolved_selectors = if infer_selectors_for_integrations?(options)
           resolved_specified_selectors + inferred_selectors(resolved_specified_selectors, integrations, options)
         else
@@ -84,12 +84,10 @@ module PactBroker
         find(selectors, latestby: 'cvpv').select(&:success)
       end
 
-      # If one pacticipant is specified, find all the integrations that involve that pacticipant
-      # If two or more are specified, just return the integrations that involve the specified pacticipants
-      def find_integrations_for_specified_selectors(resolved_specified_selectors)
+      def find_integrations_for_specified_selectors(resolved_specified_selectors, infer_integrations)
         specified_pacticipant_names = resolved_specified_selectors.collect(&:pacticipant_name)
         QuickRow
-          .distinct_integrations(resolved_specified_selectors)
+          .distinct_integrations(resolved_specified_selectors, infer_integrations)
           .collect(&:to_hash)
           .collect do | hash |
             required = is_a_row_for_this_integration_required?(specified_pacticipant_names, hash[:consumer_name])

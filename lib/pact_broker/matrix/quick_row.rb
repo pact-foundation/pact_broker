@@ -83,13 +83,19 @@ module PactBroker
         select *SELECT_ALL_COLUMN_ARGS
         select *SELECT_PACTICIPANT_IDS_ARGS
 
-        def distinct_integrations selectors
+        def distinct_integrations selectors, infer_integrations
           query = if selectors.size == 1
             pacticipant_ids_matching_one_selector_optimised(selectors)
           else
-            select_pacticipant_ids
-              .distinct
-              .matching_any_of_multiple_selectors(selectors)
+            if infer_integrations
+              select_pacticipant_ids
+                .distinct
+                .matching_any_of_multiple_selectors(selectors)
+            else
+              select_pacticipant_ids
+                .distinct
+                .matching_multiple_selectors(selectors)
+            end
           end
 
           query.from_self(alias: :pacticipant_ids)
