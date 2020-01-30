@@ -22,23 +22,19 @@ module PactBroker
                 {
                   "when" => "before_verification",
                   "text" => "the inclusion reason"
-                }, {
+                },{
                   "when" => "before_verification",
                   "text" => pending_reason
-                },
-                {
+                },{
                   "when" => "after_verification:success_true_published_false",
                   "text" => "verification_success_true_published_false"
-                },
-                {
+                },{
                   "when" => "after_verification:success_false_published_false",
                   "text" => "verification_success_false_published_false"
-                },
-                {
+                },{
                   "when" => "after_verification:success_true_published_true",
                   "text" => "verification_success_true_published_true"
-                },
-                {
+                },{
                   "when" => "after_verification:success_false_published_true",
                   "text" => "verification_success_false_published_true"
                 }
