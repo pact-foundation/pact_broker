@@ -97,9 +97,9 @@ module PactBroker
 
       private
 
-      # If one of the specified pacticipants is a consumer, then that provider is required to be deployed
+      # If a specified pacticipant is a consumer, then its provider is required to be deployed
       # to the same environment before the consumer can be deployed.
-      # If one of the specified pacticipants is a provider, then the provider may be deployed
+      # If a specified pacticipant is a provider only, then it may be deployed
       # without the consumer being present.
       def is_a_row_for_this_integration_required?(specified_pacticipant_names, consumer_name)
         specified_pacticipant_names.include?(consumer_name)
