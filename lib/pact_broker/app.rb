@@ -109,14 +109,14 @@ module PactBroker
       # Keep this configuration in sync with lib/db.rb
       PactBroker::DB.connection = configuration.database_connection
       PactBroker::DB.connection.timezone = :utc
-      PactBroker::DB.validate_connection_config if configuration.validate_database_connection_config
-      PactBroker::DB.set_mysql_strict_mode_if_mysql
-      PactBroker::DB.connection.extension(:pagination)
-      PactBroker::DB.extend_datasets do
+      PactBroker::DB.connection.extend_datasets do
         def any?
           !empty?
         end
       end
+      PactBroker::DB.validate_connection_config if configuration.validate_database_connection_config
+      PactBroker::DB.set_mysql_strict_mode_if_mysql
+      PactBroker::DB.connection.extension(:pagination)
 
       Sequel.datetime_class = DateTime
       Sequel.database_timezone = :utc # Store all dates in UTC, assume any date without a TZ is UTC

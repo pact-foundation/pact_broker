@@ -55,7 +55,7 @@ module DB
   end
 
   def self.mysql?
-    PACT_BROKER_DB.adapter_scheme.to_s =~ /mysql/
+    !!(PACT_BROKER_DB.adapter_scheme.to_s =~ /mysql/)
   end
 
   PACT_BROKER_DB ||= connection_for_env ENV.fetch('RACK_ENV')
