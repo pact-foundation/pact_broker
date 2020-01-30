@@ -27,16 +27,3 @@ script:
   - bundle exec rake
   - if [ "$DATABASE_ADAPTER" == "postgres" ]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT || true; fi
   # - if [ ! -z "$(ruby --version | grep '2\.4\.')" ]; then ./script/db-spec.sh; fi
-jobs:
-  include:
-    - stage: gem release
-      before_script: echo ""
-      script: echo "Deploying to rubygems.org ..."
-      deploy:
-        provider: rubygems
-        api_key:
-          secure: AzTHDbKRr1ZO4E2mRyvU054Tx8c2cZbKkoDBZjSAQ2CY3E7oH137NTAIGd4BthH/E9mbEXtGpZIDfWPbaOcUJQ5Bz24CWTKmGyic6FrPhJnOW5CKVSLGCDPzpmqHULv/GTN16YN0Dh1HLeGYZzlHlxT0+4AVvbvBAleHrAFeJs8=
-        gem: pact_broker
-        on:
-          tags: true
-          repo: pact-foundation/pact_broker
