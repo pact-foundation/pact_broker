@@ -19,7 +19,7 @@ module PactBroker
             }
         end
 
-        property :include_pending_status, default: true,
+        property :include_pending_status, default: false,
           setter: ->(fragment:, represented:, **) {
             represented.include_pending_status = (fragment == 'true' || fragment == true)
           }
