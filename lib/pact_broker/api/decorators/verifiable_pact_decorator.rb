@@ -30,25 +30,33 @@ module PactBroker
           property :notices, getter: -> (context) { context[:decorator].notices(context[:options][:user_options]) }
           property :noteToDevelopers, getter: -> (_) { "Please print out the text from the 'notices' rather than using the inclusionReason and the pendingReason fields. These will be removed when this API moves out of beta."}
 
-          def inclusion_reason(pact_url)
-            PactBroker::Pacts::VerifiablePactMessages.new(represented, pact_url).inclusion_reason
-          end
-
-          def pending_reason(pact_url)
-            PactBroker::Pacts::VerifiablePactMessages.new(represented, pact_url).pending_reason
-          end
-
           def notices(user_options)
+            # TODO move this out of the decorator
             pact_url = pact_version_url(represented, user_options[:base_url])
-            mess = [{
-              timing: 'pre_verification',
-              text: inclusion_reason(pact_url)
+            messages = PactBroker::Pacts::VerifiablePactMessages.new(represented, pact_url)
+
+            the_notices = [{
+              when: 'before_verification',
+              text: messages.inclusion_reason
             }]
-            mess << {
-              timing: 'pre_verification',
-              text: pending_reason(pact_url)
-            } if user_options[:include_pending_status]
-            mess
+
+            if user_options[:include_pending_status]
+              append_notice(the_notices, 'before_verification', messages.pending_reason)
+              append_notice(the_notices, 'after_verification:success_true_published_false', messages.verification_success_true_published_false)
+              append_notice(the_notices, 'after_verification:success_false_published_false', messages.verification_success_false_published_false)
+              append_notice(the_notices, 'after_verification:success_true_published_true', messages.verification_success_true_published_true)
+              append_notice(the_notices, 'after_verification:success_false_published_true', messages.verification_success_false_published_true)
+            end
+            the_notices
+          end
+
+          def append_notice the_notices, the_when, text
+            if text
+              the_notices << {
+                when: the_when,
+                text: text
+              }
+            end
           end
         end
 

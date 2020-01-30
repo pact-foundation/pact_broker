@@ -35,6 +35,28 @@ module PactBroker
         end
       end
 
+      def verification_success_true_published_false
+        if pending?
+          "This pact is still in pending state for #{pending_provider_tags_description} as the successful verification results #{with_these_tags}have not yet been published."
+        end
+      end
+
+      def verification_success_true_published_true
+        if pending?
+          "This pact is no longer in pending state for #{pending_provider_tags_description}, as a successful verification result #{with_these_tags}has been published. If a verification for a version with  fails in the future, it will fail the build. #{READ_MORE_PENDING}"
+        end
+      end
+
+      def verification_success_false_published_false
+        if pending?
+          "This pact is still in pending state for #{pending_provider_tags_description} as a successful verification result #{with_these_tags}has not yet been published"
+        end
+      end
+
+      def verification_success_false_published_true
+        verification_success_false_published_false
+      end
+
       private
 
       attr_reader :verifiable_pact, :pact_version_url
@@ -75,6 +97,14 @@ module PactBroker
         when 0 then provider_name
         when 1 then "a version of #{provider_name} with tag '#{non_pending_provider_tags.first}'"
         else "a version of #{provider_name} with tag #{join(non_pending_provider_tags)}"
+        end
+      end
+
+      def with_these_tags
+        case pending_provider_tags.size
+        when 0 then ""
+        when 1 then "with this tag "
+        else "with these tags "
         end
       end
     end
