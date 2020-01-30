@@ -1,3 +1,24 @@
+<a name="v2.46.0"></a>
+### v2.46.0 (2020-01-30)
+
+
+#### Features
+
+* allow the base URL of the application to be set for the API	 ([73bd4c44](/../../commit/73bd4c44))
+* correct logs relation to pb:logs in the triggered webhooks resource	 ([89ea1a58](/../../commit/89ea1a58))
+
+* **pacts for verification**
+  * add pre and post verification messages that can be displayed to the user based on whether or not the verification has passed or failed	 ([bb079858](/../../commit/bb079858))
+  * allow all versions for a particular tag to be verified (eg. all prod versions of a mobile consumer)	 ([e16feef6](/../../commit/e16feef6))
+  * optimise queries for determining which provider version tags are pending	 ([b4e1461a](/../../commit/b4e1461a))
+
+
+#### Bug Fixes
+
+* **pacts for verification**
+  * set includePendingStatus to false by default	 ([9b3162ac](/../../commit/9b3162ac))
+
+
 <a name="v2.45.0"></a>
 ### v2.45.0 (2020-01-30)
 
