@@ -12,6 +12,7 @@ RUN apk update \
       "sqlite>=3.28" \
       "tzdata>=2019" \
       "mariadb-dev>=10.3" \
+      "git" \
     && rm -rf /var/cache/apk/*
 
 WORKDIR /app
