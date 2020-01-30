@@ -2,6 +2,8 @@ require 'sucker_punch'
 require 'faraday'
 require 'pact_broker/logging'
 
+
+# Publishes verification results, as if they were triggered by a CI job
 module PactBroker
   class VerificationJob
     include SuckerPunch::Job
