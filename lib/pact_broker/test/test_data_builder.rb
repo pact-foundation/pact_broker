@@ -252,6 +252,10 @@ module PactBroker
         create_webhook(parameters.merge(consumer: nil, provider: nil))
       end
 
+      def create_global_contract_content_changed_webhook parameters = {}
+        create_webhook(parameters.merge(consumer: nil, provider: nil, event_names: [PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED]))
+      end
+
       def create_global_verification_webhook parameters = {}
         create_webhook(parameters.merge(consumer: nil, provider: nil, event_names: [PactBroker::Webhooks::WebhookEvent::VERIFICATION_PUBLISHED]))
       end
