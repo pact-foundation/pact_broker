@@ -43,7 +43,7 @@ module PactBroker
         subject { JSON.parse(json, symbolize_names: true) }
 
         it "includes a link to the logs" do
-          expect(subject[:_links][:logs][:href]).to eq logs_url
+          expect(subject[:_links][:'pb:logs'][:href]).to eq logs_url
         end
 
         it "includes a link to the webhook" do

@@ -12,10 +12,18 @@ module PactBroker
 
         property :created_at, as: :triggeredAt
 
-        link :logs do | context |
+        link :'pb:logs' do | context |
           {
             href: triggered_webhook_logs_url(represented, context[:base_url]),
             title: "Webhook execution logs",
+            name: represented.request_description
+          }
+        end
+
+        link :logs do | context |
+          {
+            href: triggered_webhook_logs_url(represented, context[:base_url]),
+            title: "DEPRECATED - Use pb:logs",
             name: represented.request_description
           }
         end

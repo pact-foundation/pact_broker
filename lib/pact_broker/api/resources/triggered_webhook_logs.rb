@@ -26,7 +26,7 @@ module PactBroker
 
         def triggered_webhook
           @triggered_webhook ||= begin
-            criteria = {webhook_uuid: identifier_from_path[:uuid], trigger_uuid: identifier_from_path[:trigger_uuid]}
+            criteria = { webhook_uuid: identifier_from_path[:uuid], trigger_uuid: identifier_from_path[:trigger_uuid] }
             PactBroker::Webhooks::TriggeredWebhook.where(criteria).single_record
           end
         end
