@@ -1,4 +1,12 @@
 #Code to generate certificates
+
+# To generate a self signed CA certificate for use in a server:
+# root_ca.add_extension(ef.create_extension("basicConstraints","CA:TRUE",true))
+# root_ca.add_extension(ef.create_extension("keyUsage","keyCertSign, cRLSign", true))
+# root_ca.add_extension(ef.create_extension("subjectKeyIdentifier","hash",false))
+# root_ca.add_extension(ef.create_extension("authorityKeyIdentifier","keyid:always",false))
+# root_ca.add_extension(ef.create_extension("keyUsage","digitalSignature", true))
+
 require 'openssl'
 
 root_key = OpenSSL::PKey::RSA.new 2048 # the CA's public/private key
