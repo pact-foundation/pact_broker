@@ -8,6 +8,10 @@ module PactBroker
           allow_any_instance_of(PactBroker::Api::PactBrokerUrls).to receive(:pact_version_url).and_return('/pact-version-url')
           allow_any_instance_of(PactBroker::Pacts::VerifiablePactMessages).to receive(:inclusion_reason).and_return("the inclusion reason")
           allow_any_instance_of(PactBroker::Pacts::VerifiablePactMessages).to receive(:pending_reason).and_return(pending_reason)
+          allow_any_instance_of(PactBroker::Pacts::VerifiablePactMessages).to receive(:verification_success_true_published_false).and_return('verification_success_true_published_false')
+          allow_any_instance_of(PactBroker::Pacts::VerifiablePactMessages).to receive(:verification_success_false_published_false).and_return('verification_success_false_published_false')
+          allow_any_instance_of(PactBroker::Pacts::VerifiablePactMessages).to receive(:verification_success_true_published_true).and_return('verification_success_true_published_true')
+          allow_any_instance_of(PactBroker::Pacts::VerifiablePactMessages).to receive(:verification_success_false_published_true).and_return('verification_success_false_published_true')
         end
         let(:pending_reason) { "the pending reason" }
         let(:expected_hash) do
@@ -16,9 +20,27 @@ module PactBroker
               "pending" => true,
               "notices" => [
                 {
+                  "when" => "before_verification",
                   "text" => "the inclusion reason"
                 }, {
+                  "when" => "before_verification",
                   "text" => pending_reason
+                },
+                {
+                  "when" => "after_verification:success_true_published_false",
+                  "text" => "verification_success_true_published_false"
+                },
+                {
+                  "when" => "after_verification:success_false_published_false",
+                  "text" => "verification_success_false_published_false"
+                },
+                {
+                  "when" => "after_verification:success_true_published_true",
+                  "text" => "verification_success_true_published_true"
+                },
+                {
+                  "when" => "after_verification:success_false_published_true",
+                  "text" => "verification_success_false_published_true"
                 }
               ]
             },
@@ -60,7 +82,7 @@ module PactBroker
         end
 
         it "creates the inclusion message" do
-          expect(PactBroker::Pacts::VerifiablePactMessages).to receive(:new).twice.with(pact, '/pact-version-url').and_call_original
+          expect(PactBroker::Pacts::VerifiablePactMessages).to receive(:new).with(pact, '/pact-version-url').and_call_original
           subject
         end
 
@@ -75,6 +97,10 @@ module PactBroker
           it "does not include the pending reason" do
             expect(subject['verificationProperties']).to_not have_key('pendingReason')
             expect(notices).to_not include(pending_reason)
+          end
+
+          it "does not include the pending notices" do
+            expect(subject['verificationProperties']['notices'].size).to eq 1
           end
         end
 
