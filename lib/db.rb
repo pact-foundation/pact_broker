@@ -25,11 +25,17 @@ module DB
   # pool, as noted in the documentation for the extension.
   #
   def self.connect db_credentials
+    # Keep this conifiguration in sync with lib/pact_broker/app.rb#configure_database_connection
     Sequel.datetime_class = DateTime
     # logger = Logger.new($stdout)
     con = Sequel.connect(db_credentials.merge(:logger => logger, :pool_class => Sequel::ThreadedConnectionPool, :encoding => 'utf8'))
     con.extension(:connection_validator)
     con.extension(:pagination)
+    con.extend_datasets do
+      def any?
+        !empty?
+      end
+    end
     con.pool.connection_validation_timeout = -1 #Check the connection on every request
     con.timezone = :utc
     con.run("SET sql_mode='STRICT_TRANS_TABLES';") if db_credentials[:adapter].to_s =~ /mysql/

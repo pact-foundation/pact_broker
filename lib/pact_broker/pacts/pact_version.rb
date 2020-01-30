@@ -52,21 +52,31 @@ module PactBroker
 
       def select_provider_tags_with_successful_verifications(tags)
         tags.select do | tag |
+          verifications_join = {
+            Sequel[:verifications][:pact_version_id] => Sequel[:pact_versions][:id],
+            Sequel[:verifications][:success] => true
+          }
+          tags_join = {
+            Sequel[:tags][:version_id] => Sequel[:versions][:id],
+            Sequel[:tags][:name] => tag
+          }
           PactVersion.where(Sequel[:pact_versions][:id] => id)
-            .join(:verifications, Sequel[:verifications][:pact_version_id] => Sequel[:pact_versions][:id])
+            .join(:verifications, verifications_join)
             .join(:versions, Sequel[:versions][:id] => Sequel[:verifications][:provider_version_id])
-            .join(:tags, Sequel[:tags][:version_id] => Sequel[:versions][:id])
-            .where(Sequel[:tags][:name] => tag)
-            .where(Sequel[:verifications][:success] => true)
+            .join(:tags, tags_join)
             .any?
         end
       end
 
       def verified_successfully_by_any_provider_version?
+        verifications_join = {
+          Sequel[:verifications][:pact_version_id] => Sequel[:pact_versions][:id],
+          Sequel[:verifications][:pact_version_id] => id,
+          Sequel[:verifications][:success] => true
+        }
         PactVersion.where(Sequel[:pact_versions][:id] => id)
-          .join(:verifications, Sequel[:verifications][:pact_version_id] => Sequel[:pact_versions][:id])
+          .join(:verifications, verifications_join)
           .join(:versions, Sequel[:versions][:id] => Sequel[:verifications][:provider_version_id])
-          .where(Sequel[:verifications][:success] => true)
           .any?
       end
 
