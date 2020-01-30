@@ -57,7 +57,7 @@ module PactBroker
             }]
           end
 
-          it { is_expected.to have_key(:consumerVersionSelectors) }
+          it { is_expected.to be_empty }
         end
 
         context "when includeWipPactsSince key exists" do

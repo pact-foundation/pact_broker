@@ -23,6 +23,10 @@ module PactBroker
         order(Sequel.function(:lower, column_name))
       end
 
+      def order_append_ignore_case column_name = :name
+        order_append(Sequel.function(:lower, column_name))
+      end
+
       def mysql?
         Sequel::Model.db.adapter_scheme.to_s =~ /mysql/
       end
