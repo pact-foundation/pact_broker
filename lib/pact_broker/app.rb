@@ -4,7 +4,6 @@ require 'pact_broker/project_root'
 require 'pact_broker/logging/default_formatter'
 require 'rack-protection'
 require 'rack/hal_browser'
-require 'rack/pact_broker/store_base_url'
 require 'rack/pact_broker/add_pact_broker_version_header'
 require 'rack/pact_broker/convert_file_extension_to_accept_header'
 require 'rack/pact_broker/database_transaction'
@@ -159,7 +158,6 @@ module PactBroker
       end
       @app_builder.use Rack::PactBroker::InvalidUriProtection
       @app_builder.use Rack::PactBroker::ResetThreadData
-      @app_builder.use Rack::PactBroker::StoreBaseURL
       @app_builder.use Rack::PactBroker::AddPactBrokerVersionHeader
       @app_builder.use Rack::PactBroker::AddVaryHeader
       @app_builder.use Rack::Static, :urls => ["/stylesheets", "/css", "/fonts", "/js", "/javascripts", "/images"], :root => PactBroker.project_root.join("public")

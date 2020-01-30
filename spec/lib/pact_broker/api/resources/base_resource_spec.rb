@@ -4,7 +4,7 @@ module PactBroker
   module Api
     module Resources
       describe BaseResource do
-        let(:request) { double('request', uri: uri).as_null_object }
+        let(:request) { double('request', uri: uri, base_uri: URI("http://example.org/")).as_null_object }
         let(:response) { double('response') }
         let(:uri) { URI('http://example.org/path?query') }
 
@@ -17,6 +17,28 @@ module PactBroker
 
           it "returns a list of allowed methods" do
             expect(subject.headers['Access-Control-Allow-Methods']).to eq "GET, OPTIONS"
+          end
+        end
+
+        describe "base_url" do
+          context "when PactBroker.configuration.base_url is not nil" do
+            before do
+              allow(PactBroker.configuration).to receive(:base_url).and_return("http://foo")
+            end
+
+            it "returns the configured base URL" do
+              expect(subject.base_url).to eq "http://foo"
+            end
+          end
+
+          context "when PactBroker.configuration.base_url is nil" do
+            before do
+              allow(PactBroker.configuration).to receive(:base_url).and_return(nil)
+            end
+
+            it "returns the base URL from the request" do
+              expect(subject.base_url).to eq "http://example.org"
+            end
           end
         end
       end

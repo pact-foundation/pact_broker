@@ -59,7 +59,7 @@ module PactBroker
         alias_method :path_info, :identifier_from_path
 
         def base_url
-          request.base_uri.to_s.chomp('/')
+          PactBroker.configuration.base_url || request.base_uri.to_s.chomp('/')
         end
 
         def charsets_provided

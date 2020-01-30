@@ -33,7 +33,7 @@ module PactBroker
       :seed_example_data
     ]
 
-    attr_accessor :log_dir, :database_connection, :auto_migrate_db, :auto_migrate_db_data, :example_data_seeder, :seed_example_data, :use_hal_browser, :html_pact_renderer, :use_rack_protection
+    attr_accessor :base_url, :log_dir, :database_connection, :auto_migrate_db, :auto_migrate_db_data, :example_data_seeder, :seed_example_data, :use_hal_browser, :html_pact_renderer, :use_rack_protection
     attr_accessor :validate_database_connection_config, :enable_diagnostic_endpoints, :version_parser, :sha_generator
     attr_accessor :use_case_sensitive_resource_names, :order_versions_by_date
     attr_accessor :check_for_potential_duplicate_pacticipant_names
@@ -174,10 +174,6 @@ module PactBroker
     def enable_badge_resources= enable_badge_resources
       puts "Pact Broker configuration property `enable_badge_resources` is deprecated. Please use `enable_public_badge_access`"
       self.enable_public_badge_access = enable_badge_resources
-    end
-
-    def base_url
-      ENV['PACT_BROKER_BASE_URL']
     end
 
     def save_to_database
