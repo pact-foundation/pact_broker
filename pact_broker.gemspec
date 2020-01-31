@@ -74,7 +74,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'webmock', '~>2.3'
   gem.add_development_dependency 'rspec', '~>3.0'
   gem.add_development_dependency 'rspec-its', '~>1.2'
-  gem.add_development_dependency 'database_cleaner', '~>1.7', '< 1.8' # cannot load such file -- active_support/core_ext/string/inflections
+  gem.add_development_dependency 'database_cleaner', '~>1.8', '>= 1.8.1'
   gem.add_development_dependency 'pg', '~>0.21'
   gem.add_development_dependency 'conventional-changelog', '~>1.3'
   gem.add_development_dependency 'bump', '~> 0.5'
