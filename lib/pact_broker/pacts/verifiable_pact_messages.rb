@@ -6,11 +6,21 @@ module PactBroker
       READ_MORE_PENDING = "Read more at https://pact.io/pending"
       READ_MORE_WIP = "Read more at https://pact.io/wip"
 
-      delegate [:consumer_name, :provider_name, :head_consumer_tags, :pending_provider_tags, :non_pending_provider_tags, :pending?, :wip?] => :verifiable_pact
+      delegate [:consumer_name, :provider_name, :consumer_version_number, :head_consumer_tags, :pending_provider_tags, :non_pending_provider_tags, :pending?, :wip?] => :verifiable_pact
 
       def initialize(verifiable_pact, pact_version_url)
         @verifiable_pact = verifiable_pact
         @pact_version_url = pact_version_url
+      end
+
+      def pact_description
+        position_descs = if head_consumer_tags.empty?
+          ["latest"]
+        else
+          head_consumer_tags.collect { | tag | "latest #{tag}"}
+        end
+
+        "Pact between #{consumer_name} and #{provider_name}, consumer version #{consumer_version_number}, #{position_descs.join(",")}"
       end
 
       def inclusion_reason

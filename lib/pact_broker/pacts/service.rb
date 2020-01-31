@@ -118,10 +118,8 @@ module PactBroker
       def find_for_verification(provider_name, provider_version_tags, consumer_version_selectors, options)
         verifiable_pacts_specified_in_request = pact_repository
           .find_for_verification(provider_name, consumer_version_selectors)
-          .group_by(&:pact_version_sha)
-          .values
-          .collect do | head_pacts |
-            squash_pacts_for_verification(provider_version_tags, head_pacts)
+          .collect do | selected_pact |
+            squash_pacts_for_verification(provider_version_tags, selected_pact, options[:include_pending_status])
           end
 
         verifiable_wip_pacts = if options[:include_wip_pacts_since]

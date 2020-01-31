@@ -4,7 +4,7 @@ module PactBroker
   module Pacts
     module SquashPactsForVerification
       describe ".call" do
-        let(:head_pacts) { [pact_1, pact_2] }
+        let(:selected_pact) { pact_1 }
         let(:head_tag_1) { "dev" }
         let(:head_tag_2) { "feat-x" }
         let(:pact_version_sha_1) { "1" }
@@ -15,42 +15,23 @@ module PactBroker
             select_pending_provider_version_tags: pending_provider_version_tags
           )
         end
-        let(:domain_pact_2) { double('pact2', pending?: pending_2) }
         let(:pending_1) { false }
-        let(:pending_2) { false }
         let(:pending_provider_version_tags) { [] }
 
         let(:pact_1) do
-          double("HeadPact",
-            tag: head_tag_1,
-            pact_version_sha: pact_version_sha_1,
-            pact: domain_pact_1
+          double("SelectedPact",
+            tag_names_for_selectors_for_latest_pacts: %w[dev feat-x],
+            pact: domain_pact_1,
+            overall_latest?: false
           )
         end
 
-        let(:pact_2) do
-          double("HeadPact",
-            tag: head_tag_2,
-            pact_version_sha: pact_version_sha_2,
-            pact: domain_pact_2
-          )
-        end
-
-        let(:provider_name) { "Bar" }
         let(:provider_version_tags) { [] }
 
-        subject { SquashPactsForVerification.call(provider_version_tags, head_pacts) }
+        subject { SquashPactsForVerification.call(provider_version_tags, selected_pact, true) }
 
-        context "when all of the consumer tags are not nil" do
-          its(:head_consumer_tags) { is_expected.to eq %w[dev feat-x] }
-          its(:overall_latest?) { is_expected.to be false }
-        end
-
-        context "when one of the consumer tags is nil" do
-          let(:head_tag_2) { nil }
-          its(:head_consumer_tags) { is_expected.to eq %w[dev] }
-          its(:overall_latest?) { is_expected.to be true }
-        end
+        its(:head_consumer_tags) { is_expected.to eq %w[dev feat-x] }
+        its(:overall_latest?) { is_expected.to be false }
 
         context "when there are no provider tags" do
           context "when the pact version is not pending" do

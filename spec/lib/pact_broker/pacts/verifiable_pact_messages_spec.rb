@@ -13,6 +13,7 @@ module PactBroker
         double(VerifiablePact,
           head_consumer_tags: head_consumer_tags,
           consumer_name: "Foo",
+          consumer_version_number: "123",
           provider_name: "Bar",
           pending_provider_tags: pending_provider_tags,
           non_pending_provider_tags: non_pending_provider_tags,
@@ -32,6 +33,7 @@ module PactBroker
         context "when there is 1 head consumer tags" do
           let(:head_consumer_tags) { %w[dev] }
           its(:inclusion_reason) { is_expected.to include "The pact at http://pact is being verified because it is the pact for the latest version of Foo tagged with 'dev'" }
+          its(:pact_description) { is_expected.to eq "Pact between Foo and Bar, consumer version 123, latest dev"}
         end
 
         context "when there are 2 head consumer tags" do

@@ -38,8 +38,7 @@ module PactBroker
             expect(subject.size).to eq 2
             expect(find_by_consumer_name_and_consumer_version_number("Foo", "foo-latest-dev-version")).to_not be nil
             expect(find_by_consumer_name_and_consumer_version_number("Baz", "baz-latest-dev-version")).to_not be nil
-            expect(subject.first.latest).to be true
-            expect(subject.first.selector_tag_names).to be_empty
+            expect(subject.all?(&:overall_latest?)).to be true
           end
         end
 
@@ -65,18 +64,16 @@ module PactBroker
           end
 
           it "returns the latest pact with the specified tags for each consumer" do
-            expect(find_by_consumer_version_number("foo-latest-prod-version").selector_tag_names).to eq %w[prod]
-            expect(find_by_consumer_version_number("foo-latest-dev-version").selector_tag_names).to eq %w[dev]
-            expect(find_by_consumer_version_number("baz-latest-dev-version").selector_tag_names.sort).to eq %w[dev prod]
-
+            expect(find_by_consumer_version_number("foo-latest-prod-version").selectors).to eq [Selector.latest_for_tag('prod')]
+            expect(find_by_consumer_version_number("foo-latest-dev-version").selectors).to eq [Selector.latest_for_tag('dev')]
+            expect(find_by_consumer_version_number("baz-latest-dev-version").selectors.sort_by{ |s| s[:tag] }).to eq [{ tag: 'dev', latest: true }, { tag: 'prod', latest: true }]
             expect(subject.size).to eq 3
           end
 
           it "sets the latest_consumer_version_tag_names" do
-            expect(find_by_consumer_version_number("foo-latest-prod-version").selector_tag_names).to eq ['prod']
+            expect(find_by_consumer_version_number("foo-latest-prod-version").selectors.collect(&:tag)).to eq ['prod']
           end
         end
-
 
         context "when all versions with a given tag are requested" do
           before do
@@ -95,8 +92,8 @@ module PactBroker
 
           it "returns all the versions with the specified tag" do
             expect(subject.size).to be 2
-            expect(find_by_consumer_version_number("prod-version-1").selector_tag_names).to eq %w[prod]
-            expect(find_by_consumer_version_number("prod-version-2").selector_tag_names).to eq %w[prod]
+            expect(find_by_consumer_version_number("prod-version-1").selectors.collect(&:tag)).to eq %w[prod]
+            expect(find_by_consumer_version_number("prod-version-2").selectors.collect(&:tag)).to eq %w[prod]
           end
 
           it "dedupes them to ensure that each pact version is only verified once" do
@@ -105,19 +102,23 @@ module PactBroker
             expect(subject.size).to be 2
             expect(subject.collect(&:consumer_version_number)).to eq %w[prod-version-1 prod-version-3]
           end
+        end
 
-          context "when a pact is returned matching multiple selectors" do
-            before do
-              td.create_consumer_version_tag("dev")
-            end
+        context "when a pact version has been selected by two different selectors" do
+          before do
+            td.create_pact_with_hierarchy("Foo", "1", "Bar")
+              .create_consumer_version_tag("dev")
+              .create_consumer_version_tag("prod")
+          end
 
-            let(:pact_selector_2) { double('selector2', tag: 'dev', latest: nil) }
-            let(:consumer_version_selectors) { [pact_selector_1, pact_selector_2] }
-            let(:pact_selected_by_multiple_selectors) { find_by_consumer_version_number("prod-version-2") }
+          let(:consumer_version_selectors) { [pact_selector_1, pact_selector_2] }
+          let(:pact_selector_1) { double('selector1', tag: 'prod', latest: nil) }
+          let(:pact_selector_2) { double('selector2', tag: 'dev', latest: true) }
+          let(:consumer_version_selectors) { [pact_selector_1, pact_selector_2] }
 
-            it "sets the selector_tag_names" do
-              expect(pact_selected_by_multiple_selectors.selector_tag_names.sort).to eq %w[dev prod]
-            end
+          it "returns a single selected pact with multiple selectors" do
+            expect(subject.size).to eq 1
+            expect(subject.first.selectors.size).to eq 2
           end
         end
 
@@ -144,7 +145,7 @@ module PactBroker
           end
 
           it "does not set the tag name" do
-            expect(find_by_consumer_version_number("foo-latest-dev-version").selector_tag_names).to be_empty
+            expect(find_by_consumer_version_number("foo-latest-dev-version").selectors).to eq [{ latest: true }]
             expect(find_by_consumer_version_number("foo-latest-dev-version").overall_latest?).to be true
           end
         end

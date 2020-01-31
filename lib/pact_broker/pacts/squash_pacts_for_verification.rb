@@ -5,28 +5,38 @@
 module PactBroker
   module Pacts
     module SquashPactsForVerification
-      def self.call(provider_version_tags, head_pacts)
-        domain_pact = head_pacts.first.pact
-        pending_provider_tags = []
-        pending = nil
-        if provider_version_tags.any?
-          pending_provider_tags = domain_pact.select_pending_provider_version_tags(provider_version_tags)
-          pending = pending_provider_tags.any?
+      def self.call(provider_version_tags, selected_pact, include_pending_status = false)
+        domain_pact = selected_pact.pact
+
+        if include_pending_status
+          pending_provider_tags = []
+          non_pending_provider_tags = []
+          pending = nil
+          if provider_version_tags.any?
+            pending_provider_tags = domain_pact.select_pending_provider_version_tags(provider_version_tags)
+            pending = pending_provider_tags.any?
+          else
+            pending = domain_pact.pending?
+          end
+          non_pending_provider_tags = provider_version_tags - pending_provider_tags
+          VerifiablePact.new(
+            domain_pact,
+            pending,
+            pending_provider_tags,
+            non_pending_provider_tags,
+            selected_pact.tag_names_for_selectors_for_latest_pacts,
+            selected_pact.overall_latest?
+          )
         else
-          pending = domain_pact.pending?
+          VerifiablePact.new(
+            domain_pact,
+            nil,
+            [],
+            [],
+            selected_pact.tag_names_for_selectors_for_latest_pacts,
+            selected_pact.overall_latest?
+          )
         end
-
-        non_pending_provider_tags = provider_version_tags - pending_provider_tags
-
-        head_consumer_tags = head_pacts.collect(&:tag)
-        overall_latest = head_consumer_tags.include?(nil)
-        VerifiablePact.new(domain_pact,
-          pending,
-          pending_provider_tags,
-          non_pending_provider_tags,
-          head_consumer_tags.compact,
-          overall_latest
-        )
       end
 
       def squash_pacts_for_verification(*args)

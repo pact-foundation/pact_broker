@@ -40,7 +40,10 @@ module PactBroker
             provider_name,
             parsed_query_params.provider_version_tags,
             parsed_query_params.consumer_version_selectors,
-            { include_wip_pacts_since: parsed_query_params.include_wip_pacts_since }
+            {
+              include_wip_pacts_since: parsed_query_params.include_wip_pacts_since,
+              include_pending_status: parsed_query_params.include_pending_status
+            }
           )
         end
 

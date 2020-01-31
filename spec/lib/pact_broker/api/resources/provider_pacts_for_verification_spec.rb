@@ -18,7 +18,7 @@ module PactBroker
           {
             provider_version_tags: ['master'],
             consumer_version_selectors: [ { tag: 'dev', latest: 'true' }],
-            include_pending_status: false,
+            include_pending_status: 'true',
             include_wip_pacts_since: '2018-01-01'
           }
         end
@@ -32,7 +32,11 @@ module PactBroker
               "Bar",
               ["master"],
               [OpenStruct.new(tag: "dev", latest: true)],
-              { include_wip_pacts_since: DateTime.parse('2018-01-01') })
+              {
+                include_wip_pacts_since: DateTime.parse('2018-01-01'),
+                include_pending_status: true
+              }
+            )
             subject
           end
 
@@ -54,8 +58,8 @@ module PactBroker
             {
               providerVersionTags: ['master'],
               consumerVersionSelectors: [ { tag: 'dev', latest: true }],
-              includePendingStatus: false,
-              includeWipPactsSince: '2018-01-01'
+              includePendingStatus: true,
+              includeWipPactsSince: '2018-01-01',
             }
           end
 
@@ -74,7 +78,11 @@ module PactBroker
               "Bar",
               ["master"],
               [OpenStruct.new(tag: "dev", latest: true)],
-              { include_wip_pacts_since: DateTime.parse('2018-01-01') })
+              {
+                include_wip_pacts_since: DateTime.parse('2018-01-01'),
+                include_pending_status: true
+              }
+            )
             subject
           end
 
@@ -94,7 +102,7 @@ module PactBroker
         it "uses the correct options for the decorator" do
           expect(decorator).to receive(:to_json) do | options |
             expect(options[:user_options][:title]).to eq "Pacts to be verified by provider Bar"
-            expect(options[:user_options][:include_pending_status]).to eq false
+            expect(options[:user_options][:include_pending_status]).to eq true
           end
           subject
         end
