@@ -152,14 +152,16 @@ module PactBroker
         let(:provider) { PactBroker::Domain::Pacticipant.new(name: 'Provider') }
         let(:webhooks) { [instance_double(PactBroker::Domain::Webhook, description: 'description', uuid: '1244')]}
         let(:triggered_webhook) { instance_double(PactBroker::Webhooks::TriggeredWebhook) }
+        let(:webhook_execution_configuration) { double('webhook_execution_configuration') }
         let(:options) do
           { database_connector: double('database_connector'),
-            webhook_context: {},
+            webhook_execution_configuration: webhook_execution_configuration,
             logging_options: {}
           }
         end
 
         before do
+          allow(webhook_execution_configuration).to receive(:with_webhook_context).and_return(webhook_execution_configuration)
           allow_any_instance_of(PactBroker::Webhooks::Repository).to receive(:find_by_consumer_and_or_provider_and_event_name).and_return(webhooks)
           allow_any_instance_of(PactBroker::Webhooks::Repository).to receive(:create_triggered_webhook).and_return(triggered_webhook)
           allow(Job).to receive(:perform_in)
@@ -175,6 +177,11 @@ module PactBroker
         context "when webhooks are found" do
           it "executes the webhook" do
             expect(Service).to receive(:run_later).with(webhooks, pact, verification, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED, options)
+            subject
+          end
+
+          it "merges the event name in the options" do
+            expect(webhook_execution_configuration).to receive(:with_webhook_context).with(event_name: PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED)
             subject
           end
         end

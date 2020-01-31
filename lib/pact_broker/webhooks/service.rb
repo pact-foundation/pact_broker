@@ -110,7 +110,8 @@ module PactBroker
         webhooks = webhook_repository.find_by_consumer_and_or_provider_and_event_name pact.consumer, pact.provider, event_name
 
         if webhooks.any?
-          run_later(webhooks, pact, verification, event_name, options)
+          webhook_execution_configuration = options.fetch(:webhook_execution_configuration).with_webhook_context(event_name: event_name)
+          run_later(webhooks, pact, verification, event_name, options.merge(webhook_execution_configuration: webhook_execution_configuration))
         else
           logger.info "No enabled webhooks found for consumer \"#{pact.consumer.name}\" and provider \"#{pact.provider.name}\" and event #{event_name}"
         end
@@ -122,6 +123,7 @@ module PactBroker
           begin
             triggered_webhook = webhook_repository.create_triggered_webhook(trigger_uuid, webhook, pact, verification, RESOURCE_CREATION)
             logger.info "Scheduling job for webhook with uuid #{webhook.uuid}"
+            logger.debug "Schedule webhook with options #{options}"
             job_data = { triggered_webhook: triggered_webhook }.deep_merge(options)
             # Delay slightly to make sure the request transaction has finished before we execute the webhook
             Job.perform_in(5, job_data)

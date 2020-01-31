@@ -53,14 +53,14 @@ module PactBroker
       end
 
       def execute pact, verification, options
-        logger.info "Executing #{self}"
+        logger.info "Executing #{self} webhook_context=#{options.fetch(:webhook_context)}"
         webhook_request = request.build(template_parameters(pact, verification, options))
         http_response, error = execute_request(webhook_request)
 
         PactBroker::Webhooks::WebhookExecutionResult.new(
           webhook_request.http_request,
           http_response,
-          generate_logs(webhook_request, http_response, error, options.fetch(:logging_options)),
+          generate_logs(webhook_request, http_response, error, options[:webhook_context], options.fetch(:logging_options)),
           error
         )
       end
@@ -110,13 +110,14 @@ module PactBroker
         PactBroker::Webhooks::PactAndVerificationParameters.new(pact, verification, options.fetch(:webhook_context)).to_hash
       end
 
-      def generate_logs(webhook_request, http_response, error, logging_options)
+      def generate_logs(webhook_request, http_response, error, webhook_context, logging_options)
         webhook_request_logger = PactBroker::Webhooks::WebhookRequestLogger.new(logging_options)
         webhook_request_logger.log(
           uuid,
           webhook_request,
           http_response,
-          error
+          error,
+          webhook_context
         )
       end
     end

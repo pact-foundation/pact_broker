@@ -50,9 +50,11 @@ module PactBroker
         }
       end
 
+      let(:webhook_context) { { consumer_version_number: "123" } }
+
       let(:webhook_request_logger) { WebhookRequestLogger.new(options) }
 
-      subject(:logs) { webhook_request_logger.log(uuid, webhook_request, response, error) }
+      subject(:logs) { webhook_request_logger.log(uuid, webhook_request, response, error, webhook_context) }
 
       describe "application logs" do
         it "logs the request" do
@@ -69,6 +71,9 @@ module PactBroker
       end
 
       describe "execution logs" do
+        it "logs the application context" do
+          expect(logs).to include webhook_context.to_json
+        end
 
         it "logs the request method and path" do
           expect(logs).to include "POST http://example.org/hook"

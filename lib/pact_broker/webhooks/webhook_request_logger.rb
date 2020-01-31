@@ -29,8 +29,9 @@ module PactBroker
         @options = options
       end
 
-      def log(uuid, webhook_request, http_response, error)
+      def log(uuid, webhook_request, http_response, error, webhook_context)
         safe_response = http_response ? HttpResponseWithUtf8SafeBody.new(http_response) : nil
+        log_webhook_context(webhook_context)
         log_request(webhook_request)
         log_response(uuid, safe_response) if safe_response
         log_error(uuid, error) if error
@@ -41,6 +42,11 @@ module PactBroker
       private
 
       attr_reader :log_stream
+
+      def log_webhook_context(webhook_context)
+        execution_logger.debug "Webhook context #{webhook_context.to_json}"
+        logger.debug("Webhook context #{webhook_context.to_json}")
+      end
 
       def log_request(webhook_request)
         http_request = HttpRequestWithRedactedHeaders.new(webhook_request.http_request)

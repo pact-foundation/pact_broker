@@ -81,7 +81,7 @@ module PactBroker
         end
 
         it "generates the execution logs" do
-          expect(webhook_request_logger).to receive(:log).with(uuid, webhook_request, http_response, nil)
+          expect(webhook_request_logger).to receive(:log).with(uuid, webhook_request, http_response, nil, webhook_context)
           execute
         end
 
@@ -106,7 +106,7 @@ module PactBroker
           end
 
           it "generates the execution logs" do
-            expect(webhook_request_logger).to receive(:log).with(uuid, webhook_request, nil, instance_of(error_class))
+            expect(webhook_request_logger).to receive(:log).with(uuid, webhook_request, nil, instance_of(error_class), webhook_context)
             execute
           end
 
