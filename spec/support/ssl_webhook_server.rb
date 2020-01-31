@@ -11,10 +11,12 @@ if __FILE__ == $0
   def webrick_opts port
     certificate = OpenSSL::X509::Certificate.new(File.read(SSL_CERT))
     cert_name = certificate.subject.to_a.collect{|a| a[0..1] }
+    logger_stream = ENV['DEBUG'] ? $stderr : StringIO.new
     {
       Port: port,
       Host: "0.0.0.0",
       AccessLog: [],
+      Logger: WEBrick::Log.new(logger_stream,WEBrick::Log::INFO),
       SSLCertificate: certificate,
       SSLPrivateKey: OpenSSL::PKey::RSA.new(File.read(SSL_KEY)),
       SSLEnable: true,
