@@ -14,6 +14,7 @@ require 'pact_broker/matrix/head_row'
 require 'pact_broker/pacts/latest_pact_publication_id_for_consumer_version'
 require 'pact_broker/pacts/verifiable_pact'
 require 'pact_broker/repositories/helpers'
+require 'pact_broker/pacts/selected_pact'
 
 module PactBroker
   module Pacts
@@ -127,12 +128,13 @@ module PactBroker
         end
       end
 
-      def find_all_pact_versions_for_provider_with_tags provider_name, consumer_version_tag_names
+      def find_all_pact_versions_for_provider_with_consumer_version_tags provider_name, consumer_version_tag_names
         provider = pacticipant_repository.find_by_name(provider_name)
 
         PactPublication
           .select_all_qualified
           .select_append(Sequel[:cv][:order].as(:consumer_version_order))
+          .select_append(Sequel[:ct][:name].as(:consumer_version_tag_name))
           .remove_overridden_revisions
           .join_consumer_versions(:cv)
           .join_consumer_version_tags_with_names(consumer_version_tag_names)
@@ -144,8 +146,11 @@ module PactBroker
           .all
           .group_by(&:pact_version_id)
           .values
-          .collect{ | pacts| pacts.sort_by{|pact| pact.values.fetch(:consumer_version_order) }.last }
-          .collect(&:to_domain)
+          .collect do | pact_publications |
+            selector_tag_names = pact_publications.collect{ | p| p.values.fetch(:consumer_version_tag_name) }
+            latest_pact_publication = pact_publications.sort_by{ |p| p.values.fetch(:consumer_version_order) }.last
+            SelectedPact.new(latest_pact_publication.to_domain, selector_tag_names: selector_tag_names)
+          end
       end
 
       # To find the work in progress pacts for this verification execution:
@@ -339,19 +344,48 @@ module PactBroker
 
       # Returns a list of Domain::Pact objects the represent pact publications
       def find_for_verification(provider_name, consumer_version_selectors)
-        find_pacts_for_which_the_latest_version_or_latest_version_for_the_tag_is_required(provider_name, consumer_version_selectors) +
+        find_pacts_for_which_the_latest_version_is_required(provider_name, consumer_version_selectors) +
+        find_pacts_for_which_the_latest_version_for_the_tag_is_required(provider_name, consumer_version_selectors) +
         find_pacts_for_which_all_versions_for_the_tag_are_required(provider_name, consumer_version_selectors)
       end
 
       private
 
-      def find_pacts_for_which_the_latest_version_or_latest_version_for_the_tag_is_required(provider_name, consumer_version_selectors)
-        # The tags for which only the latest version is specified
-        latest_tags = consumer_version_selectors.any? ?
-          consumer_version_selectors.select(&:latest).collect(&:tag) :
-          nil
+      def find_pacts_for_which_the_latest_version_is_required(provider_name, consumer_version_selectors)
+        if consumer_version_selectors.empty?
+          LatestPactPublications
+            .provider(provider_name)
+            .order_ignore_case(:consumer_name)
+            .collect do | pact_publication |
+              SelectedPact.new(pact_publication, latest: true)
+            end
+        else
+          []
+        end
+      end
 
-        find_latest_pact_versions_for_provider(provider_name, latest_tags)
+      def find_pacts_for_which_the_latest_version_for_the_tag_is_required(provider_name, consumer_version_selectors)
+        # The tags for which only the latest version is specified
+        latest_tags = consumer_version_selectors.select(&:latest).collect(&:tag).compact.uniq
+
+        # TODO make this an efficient query!
+        # These are not yet de-duped. Should make the behaviour consistent between this and find_pacts_for_which_all_versions_for_the_tag_are_required ?
+        if latest_tags.any?
+          LatestTaggedPactPublications
+            .provider(provider_name)
+            .order_ignore_case(:consumer_name)
+            .where(tag_name: latest_tags)
+            .all
+            .group_by(&:pact_version_id)
+            .values
+            .collect do | pact_publications |
+              selector_tag_names = pact_publications.collect(&:tag_name)
+              last_pact_publication = pact_publications.sort_by(&:consumer_version_order).last
+              SelectedPact.new(last_pact_publication, selector_tag_names: selector_tag_names, latest: true)
+            end
+        else
+          []
+        end
       end
 
       def find_pacts_for_which_all_versions_for_the_tag_are_required(provider_name, consumer_version_selectors)
@@ -361,7 +395,7 @@ module PactBroker
           nil
 
         if all_tags
-          find_all_pact_versions_for_provider_with_tags(provider_name, all_tags)
+          find_all_pact_versions_for_provider_with_consumer_version_tags(provider_name, all_tags)
         else
           []
         end
