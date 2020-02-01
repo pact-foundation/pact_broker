@@ -1,60 +1,62 @@
 require 'pact_broker/pacts/verifiable_pact_messages'
 require 'pact_broker/pacts/verifiable_pact'
+require 'pact_broker/pacts/selectors'
 
 module PactBroker
   module Pacts
     describe VerifiablePactMessages do
-      let(:head_consumer_tags) { [] }
       let(:pending_provider_tags) { [] }
       let(:non_pending_provider_tags) { [] }
       let(:pending) { false }
       let(:wip) { false }
       let(:verifiable_pact) do
         double(VerifiablePact,
-          head_consumer_tags: head_consumer_tags,
           consumer_name: "Foo",
           consumer_version_number: "123",
           provider_name: "Bar",
           pending_provider_tags: pending_provider_tags,
           non_pending_provider_tags: non_pending_provider_tags,
           pending?: pending,
-          wip?: wip
+          wip?: wip,
+          selectors: selectors
         )
       end
+      let(:selectors) { [] }
       let(:pact_version_url) { "http://pact" }
 
       subject { VerifiablePactMessages.new(verifiable_pact, pact_version_url) }
 
       describe "#inclusion_reason" do
         context "when there are no head consumer tags" do
+          let(:selectors) { Selectors.create_for_overall_latest }
           its(:inclusion_reason) { is_expected.to include "The pact at http://pact is being verified because it is the latest pact between Foo and Bar." }
         end
 
         context "when there is 1 head consumer tags" do
-          let(:head_consumer_tags) { %w[dev] }
+          let(:selectors) { Selectors.create_for_overall_latest_of_each_tag(%w[dev]) }
           its(:inclusion_reason) { is_expected.to include "The pact at http://pact is being verified because it is the pact for the latest version of Foo tagged with 'dev'" }
           its(:pact_description) { is_expected.to eq "Pact between Foo and Bar, consumer version 123, latest dev"}
         end
 
         context "when there are 2 head consumer tags" do
-          let(:head_consumer_tags) { %w[dev prod] }
+          let(:selectors) { Selectors.create_for_overall_latest_of_each_tag(%w[dev prod]) }
           its(:inclusion_reason) { is_expected.to include "The pact at http://pact is being verified because it is the pact for the latest versions of Foo tagged with 'dev' and 'prod' (both have the same content)" }
         end
 
         context "when there are 3 head consumer tags" do
-          let(:head_consumer_tags) { %w[dev prod feat-x] }
+          let(:selectors) { Selectors.create_for_overall_latest_of_each_tag(%w[dev prod feat-x]) }
           its(:inclusion_reason) { is_expected.to include "The pact at http://pact is being verified because it is the pact for the latest versions of Foo tagged with 'dev', 'prod' and 'feat-x' (all have the same content)" }
         end
 
         context "when there are 4 head consumer tags" do
-          let(:head_consumer_tags) { %w[dev prod feat-x feat-y] }
+          let(:selectors) { Selectors.create_for_overall_latest_of_each_tag(%w[dev prod feat-x feat-y]) }
           its(:inclusion_reason) { is_expected.to include "'dev', 'prod', 'feat-x' and 'feat-y'" }
         end
 
         context "when the pact is a WIP pact" do
+          let(:selectors) { Selectors.create_for_overall_latest_of_each_tag(%w[feat-x]) }
           let(:wip) { true }
           let(:pending) { true }
-          let(:head_consumer_tags) { %w[feat-x] }
           let(:pending_provider_tags) { %w[dev] }
 
           its(:inclusion_reason) { is_expected.to include "The pact at http://pact is being verified because it is a 'work in progress' pact (ie. it is the pact for the latest version of Foo tagged with 'feat-x' and is still in pending state)."}

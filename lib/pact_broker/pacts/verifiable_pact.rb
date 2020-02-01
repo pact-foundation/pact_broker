@@ -3,21 +3,17 @@ require 'delegate'
 module PactBroker
   module Pacts
     class VerifiablePact < SimpleDelegator
-      attr_reader :pending, :pending_provider_tags, :non_pending_provider_tags, :head_consumer_tags, :wip
+      attr_reader :selectors, :pending, :pending_provider_tags, :non_pending_provider_tags, :wip
 
       # TODO refactor this constructor
-      def initialize(pact, pending, pending_provider_tags = [], non_pending_provider_tags = [], head_consumer_tags = [], overall_latest = false, wip = false)
+      def initialize(pact, selectors, pending, pending_provider_tags = [], non_pending_provider_tags = [], overall_latest = false, wip = false)
         super(pact)
         @pending = pending
+        @selectors = selectors
         @pending_provider_tags = pending_provider_tags
         @non_pending_provider_tags = non_pending_provider_tags
-        @head_consumer_tags = head_consumer_tags
         @overall_latest = overall_latest
         @wip = wip
-      end
-
-      def consumer_tags
-        head_consumer_tags
       end
 
       def overall_latest?

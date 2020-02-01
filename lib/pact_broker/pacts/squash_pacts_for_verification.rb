@@ -21,19 +21,19 @@ module PactBroker
           non_pending_provider_tags = provider_version_tags - pending_provider_tags
           VerifiablePact.new(
             domain_pact,
+            selected_pact.selectors,
             pending,
             pending_provider_tags,
             non_pending_provider_tags,
-            selected_pact.tag_names_for_selectors_for_latest_pacts,
             selected_pact.overall_latest?
           )
         else
           VerifiablePact.new(
             domain_pact,
+            selected_pact.selectors,
             nil,
             [],
             [],
-            selected_pact.tag_names_for_selectors_for_latest_pacts,
             selected_pact.overall_latest?
           )
         end

@@ -22,7 +22,8 @@ module PactBroker
           double("SelectedPact",
             tag_names_for_selectors_for_latest_pacts: %w[dev feat-x],
             pact: domain_pact_1,
-            overall_latest?: false
+            overall_latest?: false,
+            selectors: double('selectors')
           )
         end
 
@@ -30,7 +31,6 @@ module PactBroker
 
         subject { SquashPactsForVerification.call(provider_version_tags, selected_pact, true) }
 
-        its(:head_consumer_tags) { is_expected.to eq %w[dev feat-x] }
         its(:overall_latest?) { is_expected.to be false }
 
         context "when there are no provider tags" do

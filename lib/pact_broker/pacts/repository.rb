@@ -150,7 +150,7 @@ module PactBroker
           .collect do | pact_publications |
             selector_tag_names = pact_publications.collect{ | p| p.values.fetch(:consumer_version_tag_name) }
             latest_pact_publication = pact_publications.sort_by{ |p| p.values.fetch(:consumer_version_order) }.last
-            selectors = selector_tag_names.collect{ | tag_name | Selector.one_of_tag(tag_name) }
+            selectors = Selectors.create_for_all_of_each_tag(selector_tag_names)
             SelectedPact.new(latest_pact_publication.to_domain, selectors)
           end
       end
@@ -206,7 +206,8 @@ module PactBroker
           pre_existing_pending_tags = pending_tag_names & pre_existing_tag_names
 
           if pre_existing_pending_tags.any?
-            VerifiablePact.new(pact.to_domain, true, pre_existing_pending_tags, [], pact.head_tag_names, nil, true)
+            selectors = Selectors.create_for_overall_latest_of_each_tag(pact.head_tag_names)
+            VerifiablePact.new(pact.to_domain, selectors, true, pre_existing_pending_tags, [], nil, true)
           end
         end.compact
       end
@@ -366,7 +367,7 @@ module PactBroker
             .order_ignore_case(:consumer_name)
             .collect do | latest_pact_publication |
               pact_publication = PactPublication.find(id: latest_pact_publication.id)
-              SelectedPact.new(pact_publication.to_domain, [Selector.overall_latest])
+              SelectedPact.new(pact_publication.to_domain, Selectors.create_for_overall_latest)
             end
         else
           []
@@ -389,11 +390,12 @@ module PactBroker
             .values
             .collect do | pact_publications |
               selector_tag_names = pact_publications.collect(&:tag_name)
+              selectors = Selectors.create_for_overall_latest_of_each_tag(selector_tag_names)
               last_pact_publication = pact_publications.sort_by(&:consumer_version_order).last
               pact_publication = PactPublication.find(id: last_pact_publication.id)
               SelectedPact.new(
                 pact_publication.to_domain,
-                selector_tag_names.collect{ | tag_name| Selector.latest_for_tag(tag_name) }
+                selectors
               )
             end
         else
