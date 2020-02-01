@@ -2,13 +2,9 @@ require 'spec_helper'
 require 'pact_broker/domain/pacticipant'
 
 module PactBroker
-
   module Domain
-
     describe Pacticipant do
-
       describe "validate" do
-
         context "with all valid attributes" do
           subject { Pacticipant.new name: 'Name' }
 
@@ -25,8 +21,6 @@ module PactBroker
           end
         end
       end
-
     end
-
   end
 end
