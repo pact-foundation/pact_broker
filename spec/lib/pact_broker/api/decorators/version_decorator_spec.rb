@@ -42,6 +42,10 @@ module PactBroker
           expect(subject[:_links][:'pb:pacticipant']).to eq title: "Pacticipant", name: "Consumer", href: "http://example.org/pacticipants/Consumer"
         end
 
+        it "includes a link to get, create or delete a tag" do
+          expect(subject[:_links][:'pb:tag']).to include href: "http://example.org/pacticipants/Consumer/versions/1.2.3/tags/{tag}", templated: true
+        end
+
         it "includes a list of the tags" do
           expect(subject[:_embedded][:tags]).to be_instance_of(Array)
           expect(subject[:_embedded][:tags].first[:name]).to eq "prod"

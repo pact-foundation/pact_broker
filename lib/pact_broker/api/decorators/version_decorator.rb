@@ -28,7 +28,7 @@ module PactBroker
 
         link :'pb:tag' do | options |
           {
-            href: pacticipant_url(options.fetch(:base_url), represented.pacticipant) + '/tags/{tag}',
+            href: version_url(options.fetch(:base_url), represented) + '/tags/{tag}',
             title: "Get, create or delete a tag for this pacticipant version",
             templated: true
           }
