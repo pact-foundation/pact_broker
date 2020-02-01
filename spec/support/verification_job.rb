@@ -30,6 +30,7 @@ module PactBroker
       }
 
       Faraday.post(verification_url, body.to_json, headers)
+      sleep 3
       Faraday.put("#{provider_url}/versions/#{provider_version}/tags/prod", nil, headers)
     end
   end
