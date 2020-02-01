@@ -1,3 +1,12 @@
+<a name="v2.47.0"></a>
+### v2.47.0 (2020-01-31)
+
+
+#### Features
+
+* include the webhook context in the execution logs	 ([29f65bef](/../../commit/29f65bef))
+
+
 <a name="v2.46.0"></a>
 ### v2.46.0 (2020-01-30)
 
