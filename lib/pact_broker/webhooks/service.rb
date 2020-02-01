@@ -68,6 +68,10 @@ module PactBroker
         webhook_repository.delete_triggered_webhooks_by_pact_publication_ids pact_publication_ids
       end
 
+      def self.delete_all_webhook_related_objects_by_verification_ids verification_ids
+        webhook_repository.delete_triggered_webhooks_by_verification_ids verification_ids
+      end
+
       def self.find_all
         webhook_repository.find_all
       end

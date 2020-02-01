@@ -20,7 +20,7 @@ module PactBroker
         # Remember to update latest_verification_id_for_pact_version_and_provider_version
         # if/when DELETE is implemented
         def allowed_methods
-          ["GET", "OPTIONS"]
+          ["GET", "OPTIONS", "DELETE"]
         end
 
         def resource_exists?
@@ -38,6 +38,11 @@ module PactBroker
 
         def to_extended_json
           extended_decorator_for(verification).to_json(user_options: { base_url: base_url })
+        end
+
+        def delete_resource
+          verification_service.delete(verification)
+          true
         end
 
         private

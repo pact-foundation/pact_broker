@@ -33,6 +33,10 @@ module PactBroker
         verification
       end
 
+      def delete(verification_id)
+        PactBroker::Domain::Verification.where(id: verification_id).delete
+      end
+
       def update_latest_verification_id verification
         params = {
           pact_version_id: verification.pact_version_id,

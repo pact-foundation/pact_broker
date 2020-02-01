@@ -39,6 +39,11 @@ module PactBroker
         verification
       end
 
+      def delete(verification)
+        webhook_service.delete_all_webhook_related_objects_by_verification_ids(verification.id)
+        verification_repository.delete(verification.id)
+      end
+
       def errors params
         contract = PactBroker::Api::Contracts::VerificationContract.new(PactBroker::Domain::Verification.new)
         contract.validate(params)
