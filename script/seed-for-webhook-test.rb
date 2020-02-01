@@ -47,7 +47,7 @@ webhook_body = {
 PactBroker.configuration.base_equality_only_on_content_that_affects_verification_results = false
 
 TestDataBuilder.new
-    .create_global_contract_content_changed_webhook(
+    .create_global_contract_published_webhook(
       method: 'POST',
       url: "http://localhost:9292/pact-changed-webhook",
       body: webhook_body.to_json,
