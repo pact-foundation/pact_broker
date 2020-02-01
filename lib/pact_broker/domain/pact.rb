@@ -6,8 +6,12 @@ This class most accurately represents a PactPublication
 =end
 
 module PactBroker
+  class UnsetAttributeError < StandardError; end
+  class UnsetAttribute; end
+
   module Domain
     class Pact
+
       # The ID is the pact_publication ID
       attr_accessor :id,
         :provider,
@@ -21,7 +25,8 @@ module PactBroker
         :latest_verification,
         :head_tag_names
 
-      def initialize attributes
+      def initialize attributes = {}
+        @latest_verification = UnsetAttribute.new
         attributes.each_pair do | key, value |
           self.send(key.to_s + "=", value)
         end
@@ -45,6 +50,10 @@ module PactBroker
 
       def latest_consumer_version_tag_names= latest_consumer_version_tag_names
         @latest_consumer_version_tag_names = latest_consumer_version_tag_names
+      end
+
+      def latest_verification
+        get_attribute_if_set :latest_verification
       end
 
       def to_s
@@ -87,6 +96,19 @@ module PactBroker
       # But it's much nicer than using a repository to find out the pending information :(
       def pact_version
         db_model.pact_version
+      end
+
+      # This class has various incarnations with different properties loaded.
+      # They should probably be different classes, but for now, raise an error if
+      # an attribute is called when it hasn't been set in the constuctor, because
+      # returning nil when there should be an object causes bugs.
+      def get_attribute_if_set attribute_name
+        val = instance_variable_get("@#{attribute_name}".to_sym)
+        if val.is_a?(UnsetAttribute)
+          raise UnsetAttributeError.new("Attribute #{attribute_name} not set")
+        else
+          val
+        end
       end
     end
   end

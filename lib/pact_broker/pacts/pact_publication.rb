@@ -113,7 +113,7 @@ module PactBroker
           revision_number: revision_number,
           json_content: pact_version.content,
           pact_version_sha: pact_version.sha,
-          latest_verification: nil,
+          latest_verification: pact_version.latest_verification,
           created_at: created_at,
           head_tag_names: [],
           db_model: self

@@ -93,8 +93,10 @@ module PactBroker
           number: consumer_version_number,
           order: consumer_version_order,
           pacticipant: consumer,
-          tags: nil)
-        Domain::Pact.new(id: id,
+          tags: nil
+        )
+        Domain::Pact.new(
+          id: id,
           consumer: consumer,
           consumer_version: consumer_version,
           provider: provider,
@@ -103,7 +105,9 @@ module PactBroker
           pact_version_sha: pact_version_sha,
           created_at: created_at,
           head_tag_names: head_tag_names,
-          db_model: self)
+          latest_verification: pact_version.latest_verification,
+          db_model: self
+        )
       end
 
       def head_tag_names

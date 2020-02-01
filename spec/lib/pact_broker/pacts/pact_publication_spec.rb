@@ -3,6 +3,28 @@ require 'pact_broker/pacts/pact_publication'
 module PactBroker
   module Pacts
     describe PactPublication do
+      describe "to_domain" do
+        before do
+          td.create_pact_with_verification("Foo", "1", "Bar", "2")
+        end
+
+        subject { PactPublication.first.to_domain }
+
+        its(:latest_verification) { is_expected.to_not be nil }
+      end
+
+      describe "to_domain_lightweight" do
+        before do
+          td.create_pact_with_verification("Foo", "1", "Bar", "2")
+        end
+
+        subject { PactPublication.first.to_domain_lightweight }
+
+        it "raises an error if you try to access the latest_verification" do
+          expect { subject.latest_verification }.to raise_error PactBroker::UnsetAttributeError
+        end
+      end
+
       describe "save and upsert" do
         before do
           td.create_consumer
