@@ -1,3 +1,12 @@
+<a name="v2.47.1"></a>
+### v2.47.1 (2020-02-01)
+
+
+#### Bug Fixes
+
+* ensure latest verification is loaded on pact object before executing webhook	 ([41eb25d8](/../../commit/41eb25d8))
+
+
 <a name="v2.47.0"></a>
 ### v2.47.0 (2020-01-31)
 
