@@ -21,6 +21,10 @@ module PactBroker
             [{"tag" => "dev", "ignored" => "foo", "latest" => true}]
           end
 
+          it "parses the consumer_version_selectors to a Selectors collection" do
+            expect(subject.consumer_version_selectors).to be_a(PactBroker::Pacts::Selectors)
+          end
+
           context "when latest is not specified" do
             let(:consumer_version_selectors) do
               [{"tag" => "dev"}]
@@ -32,14 +36,14 @@ module PactBroker
           end
 
           it "parses the latest as a boolean" do
-            expect(subject.consumer_version_selectors.first.latest).to be true
+            expect(subject.consumer_version_selectors.first).to eq PactBroker::Pacts::Selector.new(tag: "dev", latest: true)
           end
 
           context "when there are no consumer_version_selectors" do
             let(:params) { {} }
 
             it "returns an empty array" do
-              expect(subject.consumer_version_selectors).to eq []
+              expect(subject.consumer_version_selectors).to eq PactBroker::Pacts::Selectors.new
             end
           end
 
@@ -69,7 +73,7 @@ module PactBroker
           end
 
           it "parses a string 'latest' to a boolean" do
-            expect(subject.consumer_version_selectors.first.latest).to be true
+            expect(subject.consumer_version_selectors.first).to eq PactBroker::Pacts::Selector.new(tag: "dev", latest: true)
           end
         end
 

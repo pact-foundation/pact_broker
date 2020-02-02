@@ -7,20 +7,11 @@ module PactBroker
   module Api
     module Decorators
       class VerifiablePactDecorator < BaseDecorator
-
-        # Allows a "flat" VerifiablePact to look like it has
-        # a nested verification_properties object for Reform
-        class Reshaper < SimpleDelegator
-          def verification_properties
-            __getobj__()
-          end
-        end
-
         def initialize(verifiable_pact)
-          super(Reshaper.new(verifiable_pact))
+          super(verifiable_pact)
         end
 
-        property :verification_properties, as: :verificationProperties do
+        nested :verificationProperties do
           include PactBroker::Api::PactBrokerUrls
 
           property :pending,

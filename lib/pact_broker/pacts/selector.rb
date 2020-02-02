@@ -1,8 +1,20 @@
 module PactBroker
   module Pacts
     class Selector < Hash
-      def initialize(options)
+      def initialize(options = {})
         merge!(options)
+      end
+
+      def tag= tag
+        self[:tag] = tag
+      end
+
+      def latest= latest
+        self[:latest] = latest
+      end
+
+      def latest
+        self[:latest]
       end
 
       def self.overall_latest
@@ -54,10 +66,6 @@ module PactBroker
       private
 
       def latest?
-        self[:latest]
-      end
-
-      def latest
         self[:latest]
       end
     end

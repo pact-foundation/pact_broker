@@ -33,24 +33,24 @@ module PactBroker
         end
 
         context "when there is 1 head consumer tags" do
-          let(:selectors) { Selectors.create_for_overall_latest_of_each_tag(%w[dev]) }
+          let(:selectors) { Selectors.create_for_latest_of_each_tag(%w[dev]) }
           its(:inclusion_reason) { is_expected.to include "The pact at http://pact is being verified because it matches the following configured selection criterion: latest pact for a consumer version tagged 'dev'" }
           its(:pact_description) { is_expected.to eq "Pact between Foo and Bar, consumer version 123, latest dev"}
         end
 
         context "when there are 2 head consumer tags" do
-          let(:selectors) { Selectors.create_for_overall_latest_of_each_tag(%w[dev prod]) }
+          let(:selectors) { Selectors.create_for_latest_of_each_tag(%w[dev prod]) }
           its(:inclusion_reason) { is_expected.to include "The pact at http://pact is being verified because it matches the following configured selection criteria: latest pact for a consumer version tagged 'dev', latest pact for a consumer version tagged 'prod' (both have the same content)" }
         end
 
         context "when there are 3 head consumer tags" do
-          let(:selectors) { Selectors.create_for_overall_latest_of_each_tag(%w[dev prod feat-x]) }
+          let(:selectors) { Selectors.create_for_latest_of_each_tag(%w[dev prod feat-x]) }
           its(:inclusion_reason) { is_expected.to include " (all have the same content)" }
         end
 
 
         context "when the pact is a WIP pact" do
-          let(:selectors) { Selectors.create_for_overall_latest_of_each_tag(%w[feat-x]) }
+          let(:selectors) { Selectors.create_for_latest_of_each_tag(%w[feat-x]) }
           let(:wip) { true }
           let(:pending) { true }
           let(:pending_provider_tags) { %w[dev] }

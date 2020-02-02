@@ -207,7 +207,7 @@ module PactBroker
           pre_existing_pending_tags = pending_tag_names & pre_existing_tag_names
 
           if pre_existing_pending_tags.any?
-            selectors = Selectors.create_for_overall_latest_of_each_tag(pact.head_tag_names)
+            selectors = Selectors.create_for_latest_of_each_tag(pact.head_tag_names)
             VerifiablePact.new(pact.to_domain, selectors, true, pre_existing_pending_tags, [], nil, true)
           end
         end.compact
@@ -391,7 +391,7 @@ module PactBroker
             .values
             .collect do | pact_publications |
               selector_tag_names = pact_publications.collect(&:tag_name)
-              selectors = Selectors.create_for_overall_latest_of_each_tag(selector_tag_names)
+              selectors = Selectors.create_for_latest_of_each_tag(selector_tag_names)
               last_pact_publication = pact_publications.sort_by(&:consumer_version_order).last
               pact_publication = PactPublication.find(id: last_pact_publication.id)
               SelectedPact.new(

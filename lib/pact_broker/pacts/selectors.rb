@@ -3,7 +3,7 @@ require 'pact_broker/pacts/selector'
 module PactBroker
   module Pacts
     class Selectors < Array
-      def initialize selectors
+      def initialize selectors = []
         super(selectors)
       end
 
@@ -11,7 +11,7 @@ module PactBroker
         Selectors.new(tag_names.collect{ | tag_name | Selector.all_for_tag(tag_name) })
       end
 
-      def self.create_for_overall_latest_of_each_tag(tag_names)
+      def self.create_for_latest_of_each_tag(tag_names)
         Selectors.new(tag_names.collect{ | tag_name | Selector.latest_for_tag(tag_name) })
       end
 

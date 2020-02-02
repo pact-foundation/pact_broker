@@ -31,7 +31,7 @@ module PactBroker
             expect(PactBroker::Pacts::Service).to receive(:find_for_verification).with(
               "Bar",
               ["master"],
-              [OpenStruct.new(tag: "dev", latest: true)],
+              PactBroker::Pacts::Selectors.new([PactBroker::Pacts::Selector.latest_for_tag("dev")]),
               {
                 include_wip_pacts_since: DateTime.parse('2018-01-01'),
                 include_pending_status: true
@@ -77,7 +77,7 @@ module PactBroker
             expect(PactBroker::Pacts::Service).to receive(:find_for_verification).with(
               "Bar",
               ["master"],
-              [OpenStruct.new(tag: "dev", latest: true)],
+              PactBroker::Pacts::Selectors.new([PactBroker::Pacts::Selector.latest_for_tag("dev")]),
               {
                 include_wip_pacts_since: DateTime.parse('2018-01-01'),
                 include_pending_status: true
