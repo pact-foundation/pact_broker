@@ -16,6 +16,7 @@ require 'pact_broker/pacts/verifiable_pact'
 require 'pact_broker/repositories/helpers'
 require 'pact_broker/pacts/selected_pact'
 require 'pact_broker/pacts/selector'
+require 'pact_broker/pacts/selectors'
 
 module PactBroker
   module Pacts

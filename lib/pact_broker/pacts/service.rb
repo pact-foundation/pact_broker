@@ -136,8 +136,8 @@ module PactBroker
       private
 
       def exclude_specified_pacts(wip_pacts, specified_pacts)
-        wip_pacts.select do | wip_pact |
-          !specified_pacts.any? do | specified_pacts |
+        wip_pacts.reject do | wip_pact |
+          specified_pacts.any? do | specified_pacts |
             wip_pact.pact_version_sha == specified_pacts.pact_version_sha
           end
         end

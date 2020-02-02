@@ -29,17 +29,14 @@ module PactBroker
           # WIP pacts will always have tags, because it is part of the definition of being a WIP pact
           "The pact at #{pact_version_url} is being verified because it is a 'work in progress' pact (ie. it is the pact for the latest #{version_text} of Foo tagged with #{joined_head_consumer_tags} and is still in pending state). #{READ_MORE_WIP}"
         else
-          if selectors.overall_latest?
-            "The pact at #{pact_version_url} is being verified because it is the latest pact between #{consumer_name} and #{provider_name}."
-          else
-            "The pact at #{pact_version_url} is being verified because it is the pact for the latest #{version_text} of Foo tagged with #{joined_head_consumer_tags}"
-          end
+          criteria_or_criterion = selectors.size > 1 ? "criteria" : "criterion"
+          "The pact at #{pact_version_url} is being verified because it matches the following configured selection #{criteria_or_criterion}: #{selector_descriptions}#{same_content_note}"
         end
       end
 
       def pending_reason
         if pending?
-          "This pact is in pending state because it has not yet been successfully verified by #{pending_provider_tags_description}. If this verification fails, it will not cause the overall build to fail. #{READ_MORE_PENDING}"
+          "This pact is in pending state for this version of #{provider_name} because a successful verification result for #{pending_provider_tags_description("a")} has not yet been published. If this verification fails, it will not cause the overall build to fail. #{READ_MORE_PENDING}"
         else
           "This pact has previously been successfully verified by #{non_pending_provider_tags_description}. If this verification fails, it will fail the build. #{READ_MORE_PENDING}"
         end
@@ -87,18 +84,18 @@ module PactBroker
       end
 
       def same_content_note
-        case head_consumer_tags.size
+        case selectors.size
         when 1 then ""
         when 2 then " (both have the same content)"
         else " (all have the same content)"
         end
       end
 
-      def pending_provider_tags_description
+      def pending_provider_tags_description(any_or_a = "any")
         case pending_provider_tags.size
         when 0 then provider_name
-        when 1 then "any version of #{provider_name} with tag '#{pending_provider_tags.first}'"
-        else "any versions of #{provider_name} with tag #{join(pending_provider_tags)}"
+        when 1 then "#{any_or_a} version of #{provider_name} with tag '#{pending_provider_tags.first}'"
+        else "#{any_or_a} versions of #{provider_name} with tag #{join(pending_provider_tags)}"
         end
       end
 
@@ -120,6 +117,24 @@ module PactBroker
 
       def head_consumer_tags
         selectors.tag_names_for_selectors_for_latest_pacts
+      end
+
+      def selector_descriptions
+        selectors.sort.collect do | selector |
+          selector_description(selector)
+        end.join(", ")
+      end
+
+      def selector_description selector
+        if selector.overall_latest?
+          "latest pact between a consumer and #{provider_name}"
+        elsif selector.latest_for_tag?
+          "latest pact for a consumer version tagged '#{selector.tag}'"
+        elsif selector.tag
+          "pacts for all consumer versions tagged '#{selector.tag}'"
+        else
+          selector.to_json
+        end
       end
 
       def selectors

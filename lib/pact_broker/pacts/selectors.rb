@@ -8,7 +8,7 @@ module PactBroker
       end
 
       def self.create_for_all_of_each_tag(tag_names)
-        Selectors.new(tag_names.collect{ | tag_name | Selector.one_of_tag(tag_name) })
+        Selectors.new(tag_names.collect{ | tag_name | Selector.all_for_tag(tag_name) })
       end
 
       def self.create_for_overall_latest_of_each_tag(tag_names)
