@@ -18,7 +18,7 @@ module PactBroker
           end
 
           let(:consumer_version_selectors) do
-            [{"tag" => "dev", "ignored" => "foo", "latest" => true}]
+            [{ "tag" => "dev", "ignored" => "foo", "latest" => true }]
           end
 
           it "parses the consumer_version_selectors to a Selectors collection" do
@@ -27,7 +27,7 @@ module PactBroker
 
           context "when latest is not specified" do
             let(:consumer_version_selectors) do
-              [{"tag" => "dev"}]
+              [{ "tag" => "dev" }]
             end
 
             it "defaults to nil" do
@@ -65,7 +65,7 @@ module PactBroker
           end
 
           let(:consumer_version_selectors) do
-            [{"tag" => "dev", "latest" => "true"}]
+            [{ "tag" => "dev", "latest" => "true" }]
           end
 
           it "parses the provider_version_tags" do
