@@ -45,6 +45,10 @@ module PactBroker
         !!(latest && tag)
       end
 
+      def all_for_tag?
+        !!(tag && !latest?)
+      end
+
       def <=> other
         if overall_latest? || other.overall_latest?
           if overall_latest? == other.overall_latest?

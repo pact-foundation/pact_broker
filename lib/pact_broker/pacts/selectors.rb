@@ -3,8 +3,8 @@ require 'pact_broker/pacts/selector'
 module PactBroker
   module Pacts
     class Selectors < Array
-      def initialize selectors = []
-        super(selectors)
+      def initialize *selectors
+        super([*selectors].flatten)
       end
 
       def self.create_for_all_of_each_tag(tag_names)
@@ -32,8 +32,12 @@ module PactBroker
         any?(&:latest_for_tag?)
       end
 
-      def tag_names_for_selectors_for_latest_pacts
-        select(&:latest_for_tag?).collect(&:tag)
+      def tag_names_of_selectors_for_all_pacts
+        select(&:all_for_tag?).collect(&:tag).uniq
+      end
+
+      def tag_names_of_selectors_for_latest_pacts
+        select(&:latest_for_tag?).collect(&:tag).uniq
       end
     end
   end

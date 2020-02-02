@@ -377,15 +377,15 @@ module PactBroker
 
       def find_pacts_for_which_the_latest_version_for_the_tag_is_required(provider_name, consumer_version_selectors)
         # The tags for which only the latest version is specified
-        latest_tags = consumer_version_selectors.select(&:latest).collect(&:tag).compact.uniq
+        tag_names = consumer_version_selectors.tag_names_of_selectors_for_latest_pacts
 
         # TODO make this an efficient query!
         # These are not yet de-duped. Should make the behaviour consistent between this and find_pacts_for_which_all_versions_for_the_tag_are_required ?
-        if latest_tags.any?
+        if tag_names.any?
           LatestTaggedPactPublications
             .provider(provider_name)
             .order_ignore_case(:consumer_name)
-            .where(tag_name: latest_tags)
+            .where(tag_name: tag_names)
             .all
             .group_by(&:pact_version_id)
             .values
@@ -406,10 +406,10 @@ module PactBroker
 
       def find_pacts_for_which_all_versions_for_the_tag_are_required(provider_name, consumer_version_selectors)
         # The tags for which all versions are specified
-        all_tags = consumer_version_selectors.reject(&:latest).collect(&:tag)
+        tag_names = consumer_version_selectors.tag_names_of_selectors_for_all_pacts
 
-        if all_tags.any?
-          find_all_pact_versions_for_provider_with_consumer_version_tags(provider_name, all_tags)
+        if tag_names.any?
+          find_all_pact_versions_for_provider_with_consumer_version_tags(provider_name, tag_names)
         else
           []
         end

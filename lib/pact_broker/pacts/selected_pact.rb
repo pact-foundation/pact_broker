@@ -17,8 +17,8 @@ module PactBroker
         SelectedPact.new(latest_selected_pact.pact, selectors)
       end
 
-      def tag_names_for_selectors_for_latest_pacts
-        selectors.tag_names_for_selectors_for_latest_pacts
+      def tag_names_of_selectors_for_latest_pacts
+        selectors.tag_names_of_selectors_for_latest_pacts
       end
 
       def overall_latest?

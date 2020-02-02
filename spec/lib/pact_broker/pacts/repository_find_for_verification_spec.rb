@@ -15,7 +15,6 @@ module PactBroker
           subject.find{ |pact| pact.consumer_name == consumer_name && pact.consumer_version_number == consumer_version_number }
         end
 
-
         subject { Repository.new.find_for_verification("Bar", consumer_version_selectors) }
 
         context "when there are no selectors" do
@@ -32,7 +31,7 @@ module PactBroker
               .create_pact
           end
 
-          let(:consumer_version_selectors) { [] }
+          let(:consumer_version_selectors) { Selectors.new }
 
           it "returns the latest pact for each consumer" do
             expect(subject.size).to eq 2
@@ -57,10 +56,10 @@ module PactBroker
               .create_pact
           end
 
-          let(:pact_selector_1) { double('selector', tag: 'dev', latest: true) }
-          let(:pact_selector_2) { double('selector', tag: 'prod', latest: true) }
+          let(:pact_selector_1) { Selector.latest_for_tag('dev') }
+          let(:pact_selector_2) { Selector.latest_for_tag('prod') }
           let(:consumer_version_selectors) do
-            [pact_selector_1, pact_selector_2]
+            Selectors.new(pact_selector_1, pact_selector_2)
           end
 
           it "returns the latest pact with the specified tags for each consumer" do
@@ -85,8 +84,8 @@ module PactBroker
               .create_pact
           end
 
-          let(:consumer_version_selectors) { [pact_selector_1] }
-          let(:pact_selector_1) { double('selector', tag: 'prod', latest: nil) }
+          let(:consumer_version_selectors) { Selectors.new(pact_selector_1) }
+          let(:pact_selector_1) { Selector.all_for_tag('prod') }
 
           subject { Repository.new.find_for_verification("Bar2", consumer_version_selectors) }
 
@@ -111,10 +110,9 @@ module PactBroker
               .create_consumer_version_tag("prod")
           end
 
-          let(:consumer_version_selectors) { [pact_selector_1, pact_selector_2] }
-          let(:pact_selector_1) { double('selector1', tag: 'prod', latest: nil) }
-          let(:pact_selector_2) { double('selector2', tag: 'dev', latest: true) }
-          let(:consumer_version_selectors) { [pact_selector_1, pact_selector_2] }
+          let(:pact_selector_1) { Selector.all_for_tag('prod') }
+          let(:pact_selector_2) { Selector.latest_for_tag('dev') }
+          let(:consumer_version_selectors) { Selectors.new(pact_selector_1, pact_selector_2) }
 
           it "returns a single selected pact with multiple selectors" do
             expect(subject.size).to eq 1
@@ -136,7 +134,7 @@ module PactBroker
               .create_pact
           end
 
-          let(:consumer_version_selectors) { [] }
+          let(:consumer_version_selectors) { Selectors.new }
 
           it "returns the latest pact for each provider" do
             expect(find_by_consumer_version_number("foo-latest-dev-version")).to_not be nil

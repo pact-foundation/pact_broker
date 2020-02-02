@@ -171,7 +171,7 @@ module PactBroker
 
         let(:options) { { } }
 
-        subject { Service.find_for_verification("Bar", ["master"], [], options) }
+        subject { Service.find_for_verification("Bar", ["master"], Selectors.new, options) }
 
 
         context "when the consumer version tags are empty" do
@@ -208,7 +208,7 @@ module PactBroker
                 .republish_same_pact(comment: "overall latest")
             end
 
-            subject { Service.find_for_verification("Wiffle", ["master"], [], options) }
+            subject { Service.find_for_verification("Wiffle", ["master"], Selectors.new, options) }
 
             it "is not included" do
               expect(subject.size).to eq 1

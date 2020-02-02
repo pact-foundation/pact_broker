@@ -116,7 +116,7 @@ module PactBroker
       end
 
       def head_consumer_tags
-        selectors.tag_names_for_selectors_for_latest_pacts
+        selectors.tag_names_of_selectors_for_latest_pacts
       end
 
       def selector_descriptions

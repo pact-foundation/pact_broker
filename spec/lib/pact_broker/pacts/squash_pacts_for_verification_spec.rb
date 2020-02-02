@@ -20,7 +20,7 @@ module PactBroker
 
         let(:pact_1) do
           double("SelectedPact",
-            tag_names_for_selectors_for_latest_pacts: %w[dev feat-x],
+            tag_names_of_selectors_for_latest_pacts: %w[dev feat-x],
             pact: domain_pact_1,
             overall_latest?: false,
             selectors: double('selectors')
