@@ -48,6 +48,10 @@ module PactBroker
           its(:inclusion_reason) { is_expected.to include " (all have the same content)" }
         end
 
+        context "when the pact was selected by the fallback tag" do
+          let(:selectors) { Selectors.new(Selector.latest_for_tag_with_fallback("feat-x", "master")) }
+          its(:inclusion_reason) { is_expected.to include "latest pact for a consumer version tagged 'master' (fallback tag used as no pact was found with tag 'feat-x')" }
+        end
 
         context "when the pact is a WIP pact" do
           let(:selectors) { Selectors.create_for_latest_of_each_tag(%w[feat-x]) }

@@ -129,7 +129,11 @@ module PactBroker
         if selector.overall_latest?
           "latest pact between a consumer and #{provider_name}"
         elsif selector.latest_for_tag?
-          "latest pact for a consumer version tagged '#{selector.tag}'"
+          if selector.fallback_tag?
+            "latest pact for a consumer version tagged '#{selector.fallback_tag}' (fallback tag used as no pact was found with tag '#{selector.tag}')"
+          else
+            "latest pact for a consumer version tagged '#{selector.tag}'"
+          end
         elsif selector.tag
           "pacts for all consumer versions tagged '#{selector.tag}'"
         else

@@ -33,9 +33,14 @@ module PactBroker
         Selector.new(latest: true, tag: tag)
       end
 
+      def self.latest_for_tag_with_fallback(tag, fallback_tag)
+        Selector.new(latest: true, tag: tag, fallback_tag: fallback_tag)
+      end
+
       def self.all_for_tag(tag)
         Selector.new(tag: tag)
       end
+
 
       def self.from_hash hash
         Selector.new(hash)
