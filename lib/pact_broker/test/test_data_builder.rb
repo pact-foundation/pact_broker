@@ -84,6 +84,12 @@ module PactBroker
         self
       end
 
+      def create_pact_with_consumer_version_tag consumer_name, consumer_version_number, consumer_version_tag_name, provider_name
+        create_pact_with_hierarchy(consumer_name, consumer_version_number, provider_name)
+        create_consumer_version_tag(consumer_version_tag_name)
+        self
+      end
+
       def create_pact_with_verification consumer_name = "Consumer", consumer_version = "1.0.#{model_counter}", provider_name = "Provider", provider_version = "1.0.#{model_counter}"
         create_pact_with_hierarchy(consumer_name, consumer_version, provider_name)
         create_verification(number: model_counter, provider_version: provider_version)

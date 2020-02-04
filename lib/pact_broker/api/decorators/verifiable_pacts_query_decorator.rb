@@ -19,6 +19,7 @@ module PactBroker
             setter: ->(fragment:, represented:, **) {
               represented.latest = (fragment == 'true' || fragment == true)
             }
+          property :fallback_tag
         end
 
         property :include_pending_status, default: false,

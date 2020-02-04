@@ -28,6 +28,35 @@ module PactBroker
           end
         end
 
+        context "when the fallback tag is specified" do
+          context "when latest is specified" do
+            let(:consumer_version_selectors) do
+              [{
+                tag: "feat-x",
+                fallbackTag: "master",
+                latest: true
+              }]
+            end
+
+            it "has no errors" do
+              expect(subject).to eq({})
+            end
+          end
+
+          context "when latest is not specified", pending: true do
+            let(:consumer_version_selectors) do
+              [{
+                tag: "feat-x",
+                fallbackTag: "master"
+              }]
+            end
+
+            it "has an error" do
+              expect(subject[:consumerVersionSelectors].first).to include "not allowed"
+            end
+          end
+        end
+
         context "when providerVersionTags is not an array" do
           let(:provider_version_tags) { true }
 

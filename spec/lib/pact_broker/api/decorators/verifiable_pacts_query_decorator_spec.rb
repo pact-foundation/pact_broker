@@ -35,6 +35,16 @@ module PactBroker
             end
           end
 
+          context "with a fallback" do
+            let(:consumer_version_selectors) do
+              [{ "tag" => "feat-x", "fallbackTag" => "dev", "latest" => true }]
+            end
+
+            it "sets the fallback" do
+              expect(subject.consumer_version_selectors.first.fallback_tag).to eq "dev"
+            end
+          end
+
           it "parses the latest as a boolean" do
             expect(subject.consumer_version_selectors.first).to eq PactBroker::Pacts::Selector.new(tag: "dev", latest: true)
           end

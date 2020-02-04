@@ -17,8 +17,19 @@ module PactBroker
           optional(:providerVersionTags).maybe(:array?)
           optional(:consumerVersionSelectors).each do
             schema do
+              # configure do
+              #   def self.messages
+              #     super.merge(en: { errors: { fallbackTagMustBeForLatest: 'can only be set if latest=true' }})
+              #   end
+              # end
+
               required(:tag).filled(:str?)
               optional(:latest).filled(included_in?: [true, false])
+              optional(:fallbackTag).filled(:str?)
+
+              # rule(fallbackTagMustBeForLatest: [:fallbackTag, :latest]) do | fallback_tag, latest |
+              #   fallback_tag.filled?.then(latest.eql?(true))
+              # end
             end
           end
           optional(:includePendingStatus).filled(included_in?: [true, false])

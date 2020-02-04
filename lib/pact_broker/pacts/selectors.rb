@@ -28,8 +28,8 @@ module PactBroker
         any?(&:overall_latest?)
       end
 
-      def latest_for_tag?
-        any?(&:latest_for_tag?)
+      def latest_for_tag? potential_tag = nil
+        any? { | selector | selector.latest_for_tag?(potential_tag) }
       end
 
       def tag_names_of_selectors_for_all_pacts

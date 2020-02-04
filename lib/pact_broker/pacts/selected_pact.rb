@@ -25,8 +25,8 @@ module PactBroker
         selectors.overall_latest?
       end
 
-      def latest_for_tag?
-        selectors.latest_for_tag?
+      def latest_for_tag? potential_tag = nil
+        selectors.latest_for_tag?(potential_tag)
       end
 
       def consumer_version_order

@@ -17,6 +17,14 @@ module PactBroker
         self[:latest]
       end
 
+      def fallback_tag= fallback_tag
+        self[:fallback_tag] = fallback_tag
+      end
+
+      def fallback_tag
+        self[:fallback_tag]
+      end
+
       def self.overall_latest
         Selector.new(latest: true)
       end
@@ -33,6 +41,10 @@ module PactBroker
         Selector.new(hash)
       end
 
+      def fallback_tag?
+        !!fallback_tag
+      end
+
       def tag
         self[:tag]
       end
@@ -41,8 +53,13 @@ module PactBroker
         !!(latest? && !tag)
       end
 
-      def latest_for_tag?
-        !!(latest && tag)
+      # Not sure if the fallback_tag logic is needed
+      def latest_for_tag? potential_tag = nil
+        if potential_tag
+          !!(latest && tag == potential_tag)
+        else
+          !!(latest && !!tag)
+        end
       end
 
       def all_for_tag?
@@ -70,7 +87,7 @@ module PactBroker
       private
 
       def latest?
-        self[:latest]
+        !!self[:latest]
       end
     end
   end

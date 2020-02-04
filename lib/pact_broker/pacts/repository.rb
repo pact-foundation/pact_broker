@@ -351,15 +351,35 @@ module PactBroker
         selected_pacts = find_pacts_for_which_the_latest_version_is_required(provider_name, consumer_version_selectors) +
         find_pacts_for_which_the_latest_version_for_the_tag_is_required(provider_name, consumer_version_selectors) +
         find_pacts_for_which_all_versions_for_the_tag_are_required(provider_name, consumer_version_selectors)
+
+        selected_pacts = selected_pacts + find_pacts_for_fallback_tags(selected_pacts, provider_name, consumer_version_selectors)
+
         selected_pacts
           .group_by(&:pact_version_sha)
           .values
           .collect do | selected_pacts_for_pact_version_id |
             SelectedPact.merge(selected_pacts_for_pact_version_id)
           end
+
       end
 
       private
+
+      def find_pacts_for_fallback_tags(selected_pacts, provider_name, consumer_version_selectors)
+        # TODO at the moment, the validation doesn't stop fallback being used with 'all' selectors
+        selectors_with_fallback_tags = consumer_version_selectors.select(&:fallback_tag?)
+        selectors_missing_a_pact = selectors_with_fallback_tags.reject do | selector |
+          selected_pacts.any? do | selected_pact |
+            selected_pact.latest_for_tag?(selector.tag)
+          end
+        end
+
+        if selectors_missing_a_pact.any?
+          find_pacts_for_which_the_latest_version_for_the_fallback_tag_is_required(provider_name, selectors_missing_a_pact)
+        else
+          []
+        end
+      end
 
       def find_pacts_for_which_the_latest_version_is_required(provider_name, consumer_version_selectors)
         if consumer_version_selectors.empty?
@@ -384,25 +404,56 @@ module PactBroker
         if tag_names.any?
           LatestTaggedPactPublications
             .provider(provider_name)
-            .order_ignore_case(:consumer_name)
             .where(tag_name: tag_names)
             .all
             .group_by(&:pact_version_id)
             .values
             .collect do | pact_publications |
-              selector_tag_names = pact_publications.collect(&:tag_name)
-              selectors = Selectors.create_for_latest_of_each_tag(selector_tag_names)
-              last_pact_publication = pact_publications.sort_by(&:consumer_version_order).last
-              pact_publication = PactPublication.find(id: last_pact_publication.id)
-              SelectedPact.new(
-                pact_publication.to_domain,
-                selectors
-              )
+              create_selected_pact(pact_publications)
             end
         else
           []
         end
       end
+
+      def create_selected_pact(pact_publications)
+        selector_tag_names = pact_publications.collect(&:tag_name)
+        selectors = Selectors.create_for_latest_of_each_tag(selector_tag_names)
+        last_pact_publication = pact_publications.sort_by(&:consumer_version_order).last
+        pact_publication = PactPublication.find(id: last_pact_publication.id)
+        SelectedPact.new(
+          pact_publication.to_domain,
+          selectors
+        )
+      end
+
+      def create_fallback_selected_pact(pact_publications, consumer_version_selectors)
+        selector_tag_names = pact_publications.collect(&:tag_name)
+        selectors = Selectors.create_for_latest_fallback_of_each_tag(selector_tag_names)
+        last_pact_publication = pact_publications.sort_by(&:consumer_version_order).last
+        pact_publication = PactPublication.find(id: last_pact_publication.id)
+        SelectedPact.new(
+          pact_publication.to_domain,
+          selectors
+        )
+      end
+
+      def find_pacts_for_which_the_latest_version_for_the_fallback_tag_is_required(provider_name, selectors)
+        selectors.collect do | selector |
+          LatestTaggedPactPublications
+            .provider(provider_name)
+            .where(tag_name: selector.fallback_tag)
+            .all
+            .collect do | latest_tagged_pact_publication |
+              pact_publication = PactPublication.find(id: latest_tagged_pact_publication.id)
+              SelectedPact.new(
+                pact_publication.to_domain,
+                Selectors.new(selector)
+              )
+            end
+        end.flatten
+      end
+
 
       def find_pacts_for_which_all_versions_for_the_tag_are_required(provider_name, consumer_version_selectors)
         # The tags for which all versions are specified

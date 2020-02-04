@@ -18,6 +18,7 @@ module PactBroker
             schema do
               required(:tag).filled(:str?)
               optional(:latest).filled(included_in?: ["true", "false"])
+              optional(:fallback_tag).filled(:str?)
             end
           end
           optional(:include_pending_status).filled(included_in?: ["true", "false"])
