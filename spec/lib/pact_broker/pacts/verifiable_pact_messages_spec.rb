@@ -9,20 +9,20 @@ module PactBroker
       let(:non_pending_provider_tags) { [] }
       let(:pending) { false }
       let(:wip) { false }
+      let(:selectors) { Selectors.new }
+      let(:pact_version_url) { "http://pact" }
       let(:verifiable_pact) do
         double(VerifiablePact,
-          consumer_name: "Foo",
-          consumer_version_number: "123",
-          provider_name: "Bar",
-          pending_provider_tags: pending_provider_tags,
-          non_pending_provider_tags: non_pending_provider_tags,
-          pending?: pending,
-          wip?: wip,
-          selectors: selectors
+            consumer_name: "Foo",
+            consumer_version_number: "123",
+            provider_name: "Bar",
+            pending_provider_tags: pending_provider_tags,
+            non_pending_provider_tags: non_pending_provider_tags,
+            pending?: pending,
+            wip?: wip,
+            selectors: selectors
         )
       end
-      let(:selectors) { [] }
-      let(:pact_version_url) { "http://pact" }
 
       subject { VerifiablePactMessages.new(verifiable_pact, pact_version_url) }
 

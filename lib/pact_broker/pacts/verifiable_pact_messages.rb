@@ -64,6 +64,10 @@ module PactBroker
         verification_success_false_published_false
       end
 
+      def pact_version_short_description
+        short_selector_descriptions
+      end
+
       private
 
       attr_reader :verifiable_pact, :pact_version_url
@@ -136,6 +140,27 @@ module PactBroker
           end
         elsif selector.tag
           "pacts for all consumer versions tagged '#{selector.tag}'"
+        else
+          selector.to_json
+        end
+      end
+
+      def short_selector_descriptions
+        selectors.collect{ | selector | short_selector_description(selector) }.join(", ")
+      end
+
+      # this is used by Pact Go to create the test method name, so needs to be concise
+      def short_selector_description selector
+        if selector.overall_latest?
+          "latest"
+        elsif selector.latest_for_tag?
+          if selector.fallback_tag?
+            "latest #{selector.fallback_tag}"
+          else
+            "latest #{selector.tag}"
+          end
+        elsif selector.tag
+          "one of #{selector.tag}"
         else
           selector.to_json
         end
