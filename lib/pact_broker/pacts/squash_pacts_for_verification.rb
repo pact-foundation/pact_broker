@@ -24,8 +24,7 @@ module PactBroker
             selected_pact.selectors,
             pending,
             pending_provider_tags,
-            non_pending_provider_tags,
-            selected_pact.overall_latest?
+            non_pending_provider_tags
           )
         else
           VerifiablePact.new(
@@ -33,8 +32,7 @@ module PactBroker
             selected_pact.selectors,
             nil,
             [],
-            [],
-            selected_pact.overall_latest?
+            []
           )
         end
       end

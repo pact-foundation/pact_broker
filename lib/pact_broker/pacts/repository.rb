@@ -208,7 +208,7 @@ module PactBroker
 
           if pre_existing_pending_tags.any?
             selectors = Selectors.create_for_latest_of_each_tag(pact.head_tag_names)
-            VerifiablePact.new(pact.to_domain, selectors, true, pre_existing_pending_tags, [], nil, true)
+            VerifiablePact.new(pact.to_domain, selectors, true, pre_existing_pending_tags, [], true)
           end
         end.compact
       end
