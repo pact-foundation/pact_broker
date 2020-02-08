@@ -1,3 +1,24 @@
+<a name="v2.48.0"></a>
+### v2.48.0 (2020-02-07)
+
+
+#### Features
+
+* **pacts for verification**
+  * include a short description of the pact's selectors in the response	 ([41c6d91f](/../../commit/41c6d91f))
+  * update inclusion reason to support fallback tag explanation	 ([43081170](/../../commit/43081170))
+  * allow a fallback tag to be specified	 ([113180c1](/../../commit/113180c1))
+  * update the inclusion notice text to handle 'all pacts for tag'	 ([59ec8c8a](/../../commit/59ec8c8a))
+
+* support DELETE for verification results	 ([70392e53](/../../commit/70392e53))
+
+
+#### Bug Fixes
+
+* a url typo (#328)	 ([482264fa](/../../commit/482264fa))
+* correct URL of tag relation in pacticipant version resource	 ([ec24e999](/../../commit/ec24e999))
+
+
 <a name="v2.47.1"></a>
 ### v2.47.1 (2020-02-01)
 
