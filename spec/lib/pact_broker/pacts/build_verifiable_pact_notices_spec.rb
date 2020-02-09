@@ -24,7 +24,6 @@ module PactBroker
 
       subject { BuildVerifiablePactNotices.call(verifiable_pact, pact_url, options) }
 
-
       context "when include_pending_status is true" do
         let(:expected_notices) do
           [
