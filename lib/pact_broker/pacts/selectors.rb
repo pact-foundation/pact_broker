@@ -23,7 +23,6 @@ module PactBroker
         Selectors.new(super)
       end
 
-      # might actually be, but this code doesn't know it.
       def overall_latest?
         any?(&:overall_latest?)
       end
