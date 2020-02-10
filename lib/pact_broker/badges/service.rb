@@ -15,14 +15,21 @@ module PactBroker
       SPACE_DASH_UNDERSCORE = /[\s_\-]/
       CACHE = {}
 
+      def can_provide_badge_using_redirect?
+        PactBroker.configuration.badge_provider_mode == :redirect && !!PactBroker.configuration.shields_io_base_url
+      end
+
       def pact_verification_badge pact, label, initials, pseudo_branch_verification_status
         return static_svg(pact, pseudo_branch_verification_status) unless pact
 
-        title = badge_title pact, label, initials
-        status = badge_status pseudo_branch_verification_status
-        color = badge_color pseudo_branch_verification_status
+        dynamic_svg(pact, label, initials, pseudo_branch_verification_status) || static_svg(pact, pseudo_branch_verification_status)
+      end
 
-        dynamic_svg(title, status, color) || static_svg(pact, pseudo_branch_verification_status)
+      def pact_verification_badge_url(pact, label, initials, pseudo_branch_verification_status)
+        title = badge_title(pact, label, initials)
+        status = badge_status(pseudo_branch_verification_status)
+        color = badge_color(pseudo_branch_verification_status)
+        build_shield_io_uri(title, status, color)
       end
 
       def clear_cache
@@ -78,9 +85,9 @@ module PactBroker
         end
       end
 
-      def dynamic_svg left_text, right_text, color
+      def dynamic_svg pact, label, initials, pseudo_branch_verification_status
         return nil unless PactBroker.configuration.shields_io_base_url
-        uri = build_uri(left_text, right_text, color)
+        uri = pact_verification_badge_url(pact, label, initials, pseudo_branch_verification_status)
         begin
           response = do_request(uri)
           response.code == '200' ? response.body : nil
@@ -93,7 +100,7 @@ module PactBroker
         end
       end
 
-      def build_uri left_text, right_text, color
+      def build_shield_io_uri left_text, right_text, color
         shield_base_url = PactBroker.configuration.shields_io_base_url
         path = "/badge/#{escape_text(left_text)}-#{escape_text(right_text)}-#{color}.svg"
         URI.parse(shield_base_url + path)

@@ -14,13 +14,15 @@ module PactBroker
         let(:expected_url) { "https://img.shields.io/badge/#{expected_left_text}-#{expected_right_text}-#{expected_color}.svg" }
         let(:expected_color) { "brightgreen" }
         let(:expected_right_text) { "verified" }
-        let(:expected_left_text) { "foo--bar%2Fthing__blah%20pact" }
+        let(:expected_left_text) { "foo--bar%2fthing__blah%20pact" }
         let(:response_status) { 200 }
         let!(:http_request) do
           stub_request(:get, expected_url).to_return(:status => response_status, :body => "svg")
         end
 
         subject { PactBroker::Badges::Service.pact_verification_badge pact, label, initials, pseudo_branch_verification_status }
+
+        let(:pact_verification_badge_url) { PactBroker::Badges::Service.pact_verification_badge_url(pact, label, initials, pseudo_branch_verification_status) }
 
         before do
           Service.clear_cache
@@ -41,48 +43,53 @@ module PactBroker
           it "creates a badge with the consumer and provider names" do
             subject
             expect(http_request).to have_been_made
+            expect(pact_verification_badge_url).to eq URI(expected_url)
           end
 
           context "when initials is true" do
-            let(:expected_left_text) { "fb%2Ftb%20pact" }
+            let(:expected_left_text) { "fb%2ftb%20pact" }
             let(:initials) { true }
 
             it "creates a badge with the consumer and provider initials" do
               subject
               expect(http_request).to have_been_made
+              expect(pact_verification_badge_url).to eq URI(expected_url)
             end
           end
 
           context "when initials is true but the consumer and provider names only contain one word" do
-            let(:expected_left_text) { "foo%2Fbar%20pact" }
+            let(:expected_left_text) { "foo%2fbar%20pact" }
             let(:initials) { true }
             let(:pact) { double("pact", consumer_name: "Foo", provider_name: "Bar") }
 
             it "creates a badge with the consumer and provider names, not initials" do
               subject
               expect(http_request).to have_been_made
+              expect(pact_verification_badge_url).to eq URI(expected_url)
             end
           end
 
           context "when initials is true but the consumer and provider names are one camel cased word" do
-            let(:expected_left_text) { "fa%2Fbp%20pact" }
+            let(:expected_left_text) { "fa%2fbp%20pact" }
             let(:initials) { true }
             let(:pact) { double("pact", consumer_name: "FooApp", provider_name: "barProvider") }
 
             it "creates a badge with the consumer and provider names, not initials" do
               subject
               expect(http_request).to have_been_made
+              expect(pact_verification_badge_url).to eq URI(expected_url)
             end
           end
 
           context "when initials is true but the consumer and provider names are one camel cased word" do
-            let(:expected_left_text) { "fa%2Fdat%20pact" }
+            let(:expected_left_text) { "fa%2fdat%20pact" }
             let(:initials) { true }
             let(:pact) { double("pact", consumer_name: "FooApp", provider_name: "doAThing") }
 
             it "creates a badge with the consumer and provider names, not initials" do
               subject
               expect(http_request).to have_been_made
+              expect(pact_verification_badge_url).to eq URI(expected_url)
             end
           end
         end
@@ -94,6 +101,7 @@ module PactBroker
           it "creates a badge with only the consumer name" do
             subject
             expect(http_request).to have_been_made
+            expect(pact_verification_badge_url).to eq URI(expected_url)
           end
 
           context "when initials is true" do
@@ -103,6 +111,7 @@ module PactBroker
             it "creates a badge with only the consumer initials" do
               subject
               expect(http_request).to have_been_made
+              expect(pact_verification_badge_url).to eq URI(expected_url)
             end
           end
         end
@@ -114,6 +123,7 @@ module PactBroker
           it "creates a badge with only the provider name" do
             subject
             expect(http_request).to have_been_made
+            expect(pact_verification_badge_url).to eq URI(expected_url)
           end
 
           context "when initials is true" do
@@ -123,6 +133,7 @@ module PactBroker
             it "creates a badge with only the provider initials" do
               subject
               expect(http_request).to have_been_made
+              expect(pact_verification_badge_url).to eq URI(expected_url)
             end
           end
         end
@@ -131,6 +142,7 @@ module PactBroker
           it "create a green badge with left text 'verified'" do
             subject
             expect(http_request).to have_been_made
+            expect(pact_verification_badge_url).to eq URI(expected_url)
           end
         end
 
@@ -142,6 +154,7 @@ module PactBroker
           it "create a lightgrey badge with left text 'unknown'" do
             subject
             expect(http_request).to have_been_made
+            expect(pact_verification_badge_url).to eq URI(expected_url)
           end
         end
 
@@ -153,6 +166,7 @@ module PactBroker
           it "create a red badge with left text 'failed'" do
             subject
             expect(http_request).to have_been_made
+            expect(pact_verification_badge_url).to eq URI(expected_url)
           end
         end
 
@@ -164,6 +178,7 @@ module PactBroker
           it "create a orange badge with left text 'changed'" do
             subject
             expect(http_request).to have_been_made
+            expect(pact_verification_badge_url).to eq URI(expected_url)
           end
         end
 

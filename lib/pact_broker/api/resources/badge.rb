@@ -5,11 +5,10 @@ require 'pact_broker/configuration'
 module PactBroker
   module Api
     module Resources
-
       class Badge < BaseResource
 
         def allowed_methods
-          ["GET", "OPTIONS", "OPTIONS"]
+          ["GET", "OPTIONS"]
         end
 
         def content_types_provided
@@ -17,6 +16,11 @@ module PactBroker
         end
 
         def resource_exists?
+          !badge_service.can_provide_badge_using_redirect?
+        end
+
+        # Only called if resource_exists? returns false
+        def previously_existed?
           true
         end
 
@@ -28,12 +32,17 @@ module PactBroker
           false
         end
 
-        private
-
         def to_svg
           response.headers['Cache-Control'] = 'no-cache'
           comment + badge_service.pact_verification_badge(pact, label, initials, pseudo_branch_verification_status)
         end
+
+        def moved_temporarily?
+          response.headers['Cache-Control'] = 'no-cache'
+          badge_service.pact_verification_badge_url(pact, label, initials, pseudo_branch_verification_status)
+        end
+
+        private
 
         def pact
           @pact ||= pact_service.find_latest_pact(identifier_from_path)

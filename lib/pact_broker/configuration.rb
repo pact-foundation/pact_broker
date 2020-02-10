@@ -30,7 +30,8 @@ module PactBroker
       :webhook_scheme_whitelist,
       :webhook_host_whitelist,
       :base_equality_only_on_content_that_affects_verification_results,
-      :seed_example_data
+      :seed_example_data,
+      :badge_provider_mode
     ]
 
     attr_accessor :base_url, :log_dir, :database_connection, :auto_migrate_db, :auto_migrate_db_data, :example_data_seeder, :seed_example_data, :use_hal_browser, :html_pact_renderer, :use_rack_protection
@@ -40,7 +41,7 @@ module PactBroker
     attr_accessor :webhook_retry_schedule
     attr_reader :webhook_http_method_whitelist, :webhook_scheme_whitelist, :webhook_host_whitelist
     attr_accessor :semver_formats
-    attr_accessor :enable_public_badge_access, :shields_io_base_url
+    attr_accessor :enable_public_badge_access, :shields_io_base_url, :badge_provider_mode
     attr_accessor :disable_ssl_verification
     attr_accessor :base_equality_only_on_content_that_affects_verification_results
     attr_reader :api_error_reporters
@@ -69,6 +70,7 @@ module PactBroker
       config.enable_diagnostic_endpoints = true
       config.enable_public_badge_access = false # For security
       config.shields_io_base_url = "https://img.shields.io".freeze
+      config.badge_provider_mode = :proxy # other option is :redirect
       config.use_case_sensitive_resource_names = true
       config.html_pact_renderer = default_html_pact_render
       config.version_parser = PactBroker::Versions::ParseSemanticVersion

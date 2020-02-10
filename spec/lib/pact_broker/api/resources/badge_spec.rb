@@ -13,7 +13,9 @@ module PactBroker
           allow(PactBroker::Pacts::Service).to receive(:find_latest_pact).and_return(pact)
           allow(PactBroker::Verifications::Service).to receive(:find_latest_verification_for).and_return(verification)
           allow(PactBroker::Badges::Service).to receive(:pact_verification_badge).and_return("badge")
+          allow(PactBroker::Badges::Service).to receive(:pact_verification_badge_url).and_return("http://badge")
           allow(PactBroker::Verifications::PseudoBranchStatus).to receive(:new).and_return(pseudo_branch_verification_status)
+          allow(PactBroker::Badges::Service).to receive(:can_provide_badge_using_redirect?).and_return(false)
         end
 
         let(:pact) { instance_double("PactBroker::Domain::Pact", consumer: consumer, provider: provider, consumer_version_number: "2", revision_number: "1") }
@@ -47,7 +49,6 @@ module PactBroker
         end
 
         context "when enable_public_badge_access is true" do
-
           before do
             PactBroker.configuration.enable_public_badge_access = true
           end
@@ -67,25 +68,48 @@ module PactBroker
             subject
           end
 
-          it "creates a badge" do
-            expect(PactBroker::Badges::Service).to receive(:pact_verification_badge).with(pact, nil, false, :verified)
-            subject
+          context "when can_provide_badge_using_redirect? is false" do
+            before do
+              allow(PactBroker::Badges::Service).to receive(:can_provide_badge_using_redirect?).and_return(false)
+            end
+
+            it "creates a badge" do
+              expect(PactBroker::Badges::Service).to receive(:pact_verification_badge).with(pact, nil, false, :verified)
+              subject
+            end
+
+            it "returns a 200 status" do
+              expect(subject.status).to eq 200
+            end
+
+            it "does not allow caching" do
+              expect(subject.headers['Cache-Control']).to eq 'no-cache'
+            end
+
+            it "returns the badge" do
+              expect(subject.body).to end_with "badge"
+            end
+
+            it "returns a comment with the consumer and provider numbers" do
+              expect(subject.body).to include "<!-- consumer version 2 revision 1 provider version 3 number 7 -->"
+            end
           end
 
-          it "returns a 200 status" do
-            expect(subject.status).to eq 200
-          end
+          context "when can_provide_badge_using_redirect? is true" do
+            before do
+              allow(PactBroker::Badges::Service).to receive(:can_provide_badge_using_redirect?).and_return(true)
+            end
 
-          it "does not allow caching" do
-            expect(subject.headers['Cache-Control']).to eq 'no-cache'
-          end
+            it "determines the URL of the badge to redirect to" do
+              expect(PactBroker::Badges::Service).to receive(:pact_verification_badge_url).with(pact, nil, false, :verified)
+              subject
+            end
 
-          it "returns the badge" do
-            expect(subject.body).to end_with "badge"
-          end
-
-          it "returns a comment with the consumer and provider numbers" do
-            expect(subject.body).to include "<!-- consumer version 2 revision 1 provider version 3 number 7 -->"
+            it "returns a 301 redirect to the badge URL" do
+              expect(subject.status).to eq 307
+              expect(subject.headers['Location']).to eq 'http://badge'
+              expect(subject.headers['Cache-Control']).to eq 'no-cache'
+            end
           end
 
           context "when the label param is specified" do
