@@ -7,7 +7,7 @@ module PactBroker
     describe Save do
 
       describe "#call" do
-        let(:setting_names) { [:foo, :bar, :wiffle, :meep, :flop, :peebo, :lalala, :meow, :whitelist] }
+        let(:setting_names) { [:foo, :bar, :wiffle, :meep, :flop, :peebo, :lalala, :meow, :whitelist, :blah] }
         let(:configuration) do
           double("PactBroker::Configuration",
             foo: true,
@@ -15,6 +15,7 @@ module PactBroker
             wiffle: ["a", "b", "c"],
             meep: {a: 'thing'},
             flop: nil,
+            blah: :boop,
             peebo: 1,
             lalala: 1.2,
             meow: Object.new,
@@ -22,6 +23,13 @@ module PactBroker
         end
 
         subject { Save.call(configuration, setting_names) }
+
+        it "saves a Symbol" do
+          subject
+          setting = Setting.find(name: 'blah')
+          expect(setting.type).to eq 'symbol'
+          expect(setting.value).to eq 'boop'
+        end
 
         it "saves a false config setting to the database" do
           subject

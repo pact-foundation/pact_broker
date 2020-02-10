@@ -7,7 +7,7 @@ module PactBroker
       describe ".call" do
 
         class MockConfig
-          attr_accessor :foo, :bar, :nana, :meep, :lalala, :meow, :peebo, :whitelist
+          attr_accessor :foo, :bar, :nana, :meep, :lalala, :meow, :peebo, :whitelist, :blah
         end
 
         before do
@@ -20,6 +20,7 @@ module PactBroker
           Setting.create(name: 'peebo', type: 'string', value: nil)
           Setting.create(name: 'unknown', type: 'string', value: nil)
           Setting.create(name: 'whitelist', type: 'space_delimited_string_list', value: 'foo bar')
+          Setting.create(name: 'blah', type: 'symbol', value: 'boop')
         end
 
         let(:configuration) { MockConfig.new }
@@ -34,6 +35,11 @@ module PactBroker
         it "loads a String setting" do
           subject
           expect(configuration.bar).to eq "bar"
+        end
+
+        it "loads a Symbol setting" do
+          subject
+          expect(configuration.blah).to eq :boop
         end
 
         it "loads an Integer setting" do

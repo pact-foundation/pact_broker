@@ -14,6 +14,8 @@ module PactBroker
           JSON.parse(value, symbolize_names: true)
         when 'string'
           value
+        when 'symbol'
+          value.to_sym
         when 'integer'
           Integer(value)
         when 'float'
@@ -33,7 +35,7 @@ module PactBroker
           "1"
         when FalseClass
           "0"
-        when SpaceDelimitedStringList
+        when SpaceDelimitedStringList, Symbol
           object.to_s
         when Array, Hash
           object.to_json
@@ -56,6 +58,8 @@ module PactBroker
             'integer'
           when Float
             'float'
+          when Symbol
+            'symbol'
           else
             nil
           end
