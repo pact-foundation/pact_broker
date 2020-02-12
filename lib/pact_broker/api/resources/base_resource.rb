@@ -84,7 +84,7 @@ module PactBroker
         end
 
         def params
-          @params ||= JSON.parse(request.body.to_s, {symbolize_names: true}.merge(PACT_PARSING_OPTIONS))
+          @params ||= JSON.parse(request.body.to_s, { symbolize_names: true }.merge(PACT_PARSING_OPTIONS)) #Not load! Otherwise it will try to load Ruby classes.
         end
 
         def params_with_string_keys
@@ -123,7 +123,7 @@ module PactBroker
 
         def invalid_json?
           begin
-            JSON.parse(request_body, PACT_PARSING_OPTIONS) #Not load! Otherwise it will try to load Ruby classes.
+            params
             false
           rescue StandardError => e
             logger.info "Error parsing JSON #{e} - #{request_body}"
