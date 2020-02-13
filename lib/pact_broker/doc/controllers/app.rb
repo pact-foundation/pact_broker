@@ -14,6 +14,7 @@ module PactBroker
         MAPPINGS = {
           'webhooks-create' => 'webhooks',
           'webhooks-webhooks' => 'webhooks',
+          'webhook' => 'webhooks',
           'can-i-deploy-pacticipant-version-to-tag' => 'can-i-deploy',
           'pacticipant' => 'pacticipants'
         }.freeze

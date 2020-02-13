@@ -8,7 +8,7 @@ Allowed methods: `GET`, `POST`
 
 *Individual resource*
 
-Path: `/webhook/UUID`
+Path: `/webhook/{uuid}`
 
 Allowed methods: `GET`, `PUT`, `DELETE`
 
@@ -16,7 +16,11 @@ Webhooks are HTTP requests that are executed asynchronously after certain events
 
 ### Creating
 
-To create a webhook, send a `POST` request to `/webhooks` with the body described below. You can do this through the API Browser by clicking on the `NON-GET` button for the `pb:webhooks` relation on the index, pasting in the JSON body, and clicking "Make Request".
+To create a webhook, send a `POST` request to `/webhooks` with the body described below. You can also do a `PUT` to `/webhooks/{uuid}`, where the UUID is a identifier that you generate yourself. This supports upserting webhooks, allowing you to automate your Pact Broker set up.
+
+The easiest way to create a webhook is by using the [Pact Broker Client CLI](https://github.com/pact-foundation/pact_broker-client/#create-webhook). It is available as a docker container and a standalone executable for all platforms.
+
+You can also create webhooks through the API Browser by clicking on the `NON-GET` button for the `pb:webhooks` relation on the index, pasting in the JSON body, and clicking "Make Request".
 
 Below is an example webhook to trigger a Bamboo job when any contract for the provider "Foo" has changed. Both provider and consumer are optional - omitting either indicates that any pacticipant in that role will be matched. Webhooks with neither provider nor consumer specified are "global" webhooks that will trigger for any consumer/provider pair.
 
@@ -90,6 +94,7 @@ To specify an XML body, you will need to use a correctly escaped string (or use 
 
 The following variables may be used in the request path, parameters or body, and will be replaced with their appropriate values at runtime.
 
+* `${pactbroker.pactUrl}`: the "permalink" URL to the newly published pact (the URL specifying the consumer version URL, rather than the "/latest" format.)
 * `${pactbroker.consumerName}`: the consumer name
 * `${pactbroker.providerName}`: the provider name
 * `${pactbroker.consumerVersionNumber}`: the version number of the most recent consumer version associated with the pact content.
@@ -100,7 +105,6 @@ The following variables may be used in the request path, parameters or body, and
 * `${pactbroker.providerLabels}`: the list of labels for the provider associated with the pact content, separated by ", ".
 * `${pactbroker.githubVerificationStatus}`: the verification status using the correct keywords for posting to the the [Github commit status API](https://developer.github.com/v3/repos/statuses).
 * `${pactbroker.bitbucketVerificationStatus}`: the verification status using the correct keywords for posting to the the [Bitbucket commit status API](https://developer.atlassian.com/server/bitbucket/how-tos/updating-build-status-for-commits/).
-* `${pactbroker.pactUrl}`: the "permalink" URL to the newly published pact (the URL specifying the consumer version URL, rather than the "/latest" format.)
 * `${pactbroker.verificationResultUrl}`: the URL to the relevant verification result.
 
 Example usage:
