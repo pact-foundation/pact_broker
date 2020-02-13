@@ -25,6 +25,7 @@ You can also create webhooks through the API Browser by clicking on the `NON-GET
 Below is an example webhook to trigger a Bamboo job when any contract for the provider "Foo" has changed. Both provider and consumer are optional - omitting either indicates that any pacticipant in that role will be matched. Webhooks with neither provider nor consumer specified are "global" webhooks that will trigger for any consumer/provider pair.
 
     {
+      "description": "Trigger SomeProject CI",
       "provider": {
         "name": "Bar"
       },
