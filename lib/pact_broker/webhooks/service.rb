@@ -14,7 +14,6 @@ require 'pact_broker/hash_refinements'
 require 'pact_broker/webhooks/execution_configuration'
 require 'pact_broker/messages'
 require 'pact_broker/webhooks/pact_and_verification_parameters'
-require 'reform/contract/errors'
 
 module PactBroker
   module Webhooks
