@@ -14,6 +14,7 @@ require 'pact_broker/hash_refinements'
 require 'pact_broker/webhooks/execution_configuration'
 require 'pact_broker/messages'
 require 'pact_broker/webhooks/pact_and_verification_parameters'
+require 'reform/contract/errors'
 
 module PactBroker
   module Webhooks
@@ -28,14 +29,24 @@ module PactBroker
       include Logging
       extend PactBroker::Messages
 
+      # Not actually a UUID. Ah well.
+      def self.valid_uuid_format?(uuid)
+        !!(uuid =~ /^[A-Za-z0-9_\-]{16,}$/)
+      end
+
       def self.next_uuid
         SecureRandom.urlsafe_base64
       end
 
-      def self.errors webhook
+      def self.errors webhook, uuid = nil
         contract = PactBroker::Api::Contracts::WebhookContract.new(webhook)
         contract.validate(webhook.attributes)
-        contract.errors
+        errors = contract.errors
+
+        if uuid && !valid_uuid_format?(uuid)
+          errors.add("uuid", message("errors.validation.invalid_webhook_uuid"))
+        end
+        errors
       end
 
       def self.create uuid, webhook, consumer, provider

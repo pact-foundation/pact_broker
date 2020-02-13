@@ -127,4 +127,12 @@ describe "Creating a webhook" do
       expect(PactBroker::Webhooks::Webhook.first.provider).to be nil
     end
   end
+
+  context "with a UUID" do
+    let(:path) { "/webhooks/1234123412341234" }
+
+    subject { put(path, webhook_json, headers) }
+
+    its(:status) { is_expected.to be 201 }
+  end
 end

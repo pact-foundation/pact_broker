@@ -14,8 +14,37 @@ module PactBroker
         allow(Service).to receive(:logger).and_return(logger)
       end
 
-      let(:td) { TestDataBuilder.new }
       let(:logger) { double('logger').as_null_object }
+
+      describe "validate - integration test" do
+        let(:invalid_webhook) { PactBroker::Domain::Webhook.new }
+
+        context "with no uuid" do
+          subject { Service.errors(invalid_webhook) }
+
+          it "does not contain an error for the uuid" do
+            expect(subject.messages).to_not have_key('uuid')
+          end
+        end
+
+        context "with a uuid" do
+          subject { Service.errors(invalid_webhook, '') }
+
+          it "merges the uuid errors with the webhook errors" do
+            expect(subject.messages['uuid'].first).to include "can only contain"
+          end
+        end
+      end
+
+      describe ".valid_uuid_format?" do
+        it 'does something' do
+          expect(Service.valid_uuid_format?("_-bcdefghigHIJKLMNOP")).to be true
+          expect(Service.valid_uuid_format?("HIJKLMNOP")).to be false
+          expect(Service.valid_uuid_format?("abcdefghigHIJKLMNOP\\")).to be false
+          expect(Service.valid_uuid_format?("abcdefghigHIJKLMNOP#")).to be false
+          expect(Service.valid_uuid_format?("abcdefghigHIJKLMNOP$")).to be false
+        end
+      end
 
       describe ".delete_by_uuid" do
         before do

@@ -28,7 +28,7 @@ module PactBroker
 
         def malformed_request?
           if request.put?
-            return invalid_json? || webhook_validation_errors?(new_webhook)
+            return invalid_json? || webhook_validation_errors?(parsed_webhook, uuid)
           end
           false
         end
@@ -38,7 +38,9 @@ module PactBroker
             @webhook = webhook_service.update_by_uuid uuid, params_with_string_keys
             response.body = to_json
           else
-            404
+            @webhook = webhook_service.create(uuid, parsed_webhook, consumer, provider)
+            response.body = to_json
+            201
           end
         end
 
@@ -57,8 +59,8 @@ module PactBroker
           @webhook ||= webhook_service.find_by_uuid uuid
         end
 
-        def new_webhook
-          @new_webhook ||= Decorators::WebhookDecorator.new(PactBroker::Domain::Webhook.new).from_json(request_body)
+        def parsed_webhook
+          @parsed_webhook ||= Decorators::WebhookDecorator.new(PactBroker::Domain::Webhook.new).from_json(request_body)
         end
 
         def uuid

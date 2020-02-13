@@ -94,6 +94,11 @@ module PactBroker
               title: 'Webhooks',
               templated: false
             },
+            'pb:webhook' => {
+              href: base_url + '/webhooks/{uuid}',
+              title: 'Webhook',
+              templated: true
+            },
             'pb:integrations' => {
               href: base_url + '/integrations',
               title: 'Integrations',
