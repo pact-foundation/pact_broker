@@ -1,3 +1,17 @@
+<a name="v2.49.0"></a>
+### v2.49.0 (2020-02-13)
+
+
+#### Features
+
+* **webhooks**
+  * support upsert of webhook via a PUT to /webhooks/{uuid}	 ([f9ba9ab5](/../../commit/f9ba9ab5))
+
+* don't double parse the incoming JSON body when checking if it is invalid.	 ([bd74b82c](/../../commit/bd74b82c))
+* support saving symbol configuration settings	 ([73db9c2b](/../../commit/73db9c2b))
+* allow verification status badges to be served via a redirect instead of proxying the response	 ([a34d5f7f](/../../commit/a34d5f7f))
+
+
 <a name="v2.48.0"></a>
 ### v2.48.0 (2020-02-07)
 
