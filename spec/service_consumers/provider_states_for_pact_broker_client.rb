@@ -235,4 +235,13 @@ Pact.provider_states_for "Pact Broker Client" do
           .create_pact
     end
   end
+
+  provider_state "a webhook with the uuid 696c5f93-1b7f-44bc-8d03-59440fcaa9a0 exists" do
+    set_up do
+      TestDataBuilder.new
+          .create_consumer("Condor")
+          .create_provider("Pricing Service")
+          .create_webhook(uuid: "696c5f93-1b7f-44bc-8d03-59440fcaa9a0")
+    end
+  end
 end
