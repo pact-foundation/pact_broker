@@ -27,6 +27,11 @@ module PactBroker
           pact_version_sha: "1234",
           number: "1")
       end
+      let(:version) do
+        double('version',
+          pacticipant: consumer,
+          number: "2")
+      end
 
       matcher :match_route_in_api do |api|
         match do |url|
@@ -126,6 +131,12 @@ module PactBroker
 
           it { is_expected.to eq "http://example.org/pacts/provider/Bar%2FBar/consumer/Foo%2FFoo/version/123%2F456/verification-results/latest" }
         end
+      end
+
+      describe "matrix_for_pacticipant_version_url" do
+        subject { PactBrokerUrls.matrix_for_pacticipant_version_url(version, base_url) }
+
+        it { is_expected.to eq "http://example.org/matrix?q[][pacticipant]=Foo%2FFoo&q[][version]=2&latestby=cvpv" }
       end
     end
   end

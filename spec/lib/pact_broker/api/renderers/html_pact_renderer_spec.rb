@@ -12,6 +12,7 @@ module PactBroker
           ENV['TZ'] = "Australia/Melbourne"
           PactBroker.configuration.enable_public_badge_access = true
           allow(PactBroker::Api::PactBrokerUrls).to receive(:pact_url).with('http://base', pact).and_return(pact_url)
+          allow(PactBroker::Api::PactBrokerUrls).to receive(:matrix_for_pacticipant_version_url).with(consumer_version, 'http://base').and_return(matrix_url)
           allow_any_instance_of(HtmlPactRenderer).to receive(:logger).and_return(logger)
 
           Timecop.freeze(created_at + 3)
@@ -24,10 +25,22 @@ module PactBroker
 
         let(:consumer) { double('consumer', name: 'Consumer')}
         let(:provider) { double('provider', name: 'Provider')}
+        let(:consumer_version) { double('consumer version') }
         let(:created_at) { DateTime.new(2014, 02, 27) }
         let(:json_content) { load_fixture('renderer_pact.json') }
-        let(:pact) { double('pact', json_content: json_content, consumer_version_number: '1.2.3', consumer: consumer, provider: provider, consumer_version_tag_names: ['prod', 'master'], created_at: created_at)}
+        let(:pact) do
+          double('pact',
+            json_content: json_content,
+            consumer_version_number: '1.2.3',
+            consumer: consumer,
+            provider: provider,
+            consumer_version_tag_names: ['prod', 'master'],
+            created_at: created_at,
+            consumer_version: consumer_version
+            )
+        end
         let(:pact_url) { '/pact/url' }
+        let(:matrix_url) { '/matrix/url' }
         let(:options) do
           {
             base_url: 'http://base',
@@ -62,6 +75,10 @@ module PactBroker
           it "renders a text area with the badge markdown" do
             expect(subject).to include "<textarea"
             expect(subject).to include "[![Consumer/Provider Pact Status](http://badge)](http://base)"
+          end
+
+          it "includes the matrix URL" do
+            expect(subject).to include matrix_url
           end
 
           context "when enable_public_badge_access is false" do
@@ -99,7 +116,6 @@ module PactBroker
             end
           end
         end
-
       end
     end
   end

@@ -159,6 +159,13 @@ module PactBroker
           }
         end
 
+        link :'pb:matrix-for-consumer-version' do | options |
+          {
+            title: "View matrix rows for the consumer version to which this pact belongs",
+            href: matrix_for_pacticipant_version_url(represented.consumer_version, options.fetch(:base_url))
+          }
+        end
+
         curies do | options |
           [{
             name: :pb,

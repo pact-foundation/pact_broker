@@ -1,6 +1,6 @@
 # Latest pact version
 
-Allowed methods: GET
+Allowed methods: `GET`
 
 The latest pact between this consumer and provider.
 
