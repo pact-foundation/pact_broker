@@ -1,6 +1,7 @@
 require 'pact_broker/api/resources/base_resource'
 require 'pact_broker/configuration'
 require 'pact_broker/api/decorators/extended_pact_decorator'
+require 'pact_broker/pacts/metadata'
 
 module PactBroker
   module Api
@@ -25,11 +26,11 @@ module PactBroker
 
         def to_json
           response.headers['X-Pact-Consumer-Version'] = pact.consumer_version_number
-          PactBroker::Api::Decorators::PactDecorator.new(pact).to_json(user_options: { base_url: base_url })
+          PactBroker::Api::Decorators::PactDecorator.new(pact).to_json(user_options: decorator_context(metadata: metadata))
         end
 
         def to_extended_json
-          PactBroker::Api::Decorators::ExtendedPactDecorator.new(pact).to_json(user_options: decorator_context(metadata: identifier_from_path[:metadata]))
+          PactBroker::Api::Decorators::ExtendedPactDecorator.new(pact).to_json(user_options: decorator_context(metadata: metadata))
         end
 
         def to_html
@@ -44,6 +45,9 @@ module PactBroker
           @pact ||= pact_service.find_latest_pact(identifier_from_path)
         end
 
+        def metadata
+          @metadata ||= encode_webhook_metadata(PactBroker::Pacts::Metadata.build_metadata_for_latest_pact(pact, identifier_from_path))
+        end
       end
     end
   end

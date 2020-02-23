@@ -107,14 +107,14 @@ module PactBroker
         end
 
         it "builds the webhook metadata" do
-          expect(PactBrokerUrls.parse_webhook_metadata(PactBrokerUrls.build_webhook_metadata(pact))).to eq (expected_metadata)
+          expect(PactBrokerUrls.decode_webhook_metadata(PactBrokerUrls.build_webhook_metadata(pact))).to eq (expected_metadata)
         end
       end
 
-      describe "parse_webhook_metadata" do
+      describe "decode_webhook_metadata" do
         context "when the metadata is nil" do
           it "returns an empty hash" do
-            expect(PactBrokerUrls.parse_webhook_metadata(nil)).to eq({})
+            expect(PactBrokerUrls.decode_webhook_metadata(nil)).to eq({})
           end
         end
       end

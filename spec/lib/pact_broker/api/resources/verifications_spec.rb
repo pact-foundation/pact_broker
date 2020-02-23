@@ -24,7 +24,7 @@ module PactBroker
           before do
             allow(PactBroker::Verifications::Service).to receive(:create).and_return(verification)
             allow(PactBroker::Verifications::Service).to receive(:errors).and_return(double(:errors, messages: ['errors'], empty?: errors_empty))
-            allow(PactBrokerUrls).to receive(:parse_webhook_metadata).and_return(parsed_metadata)
+            allow(PactBrokerUrls).to receive(:decode_webhook_metadata).and_return(parsed_metadata)
             allow_any_instance_of(Verifications).to receive(:webhook_execution_configuration).and_return(webhook_execution_configuration)
             allow(webhook_execution_configuration).to receive(:with_webhook_context).and_return(webhook_execution_configuration)
           end
@@ -65,7 +65,7 @@ module PactBroker
             end
 
             it "parses the webhook metadata" do
-              expect(PactBrokerUrls).to receive(:parse_webhook_metadata).with("abcd")
+              expect(PactBrokerUrls).to receive(:decode_webhook_metadata).with("abcd")
               subject
             end
 

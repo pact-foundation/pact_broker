@@ -1,9 +1,11 @@
 require 'erb'
+require 'pact_broker/pacts/metadata'
 
 module PactBroker
   module Api
     module PactBrokerUrls
 
+      include PactBroker::Pacts::Metadata
       # TODO make base_url the last and optional argument for all methods, defaulting to ''
 
       extend self
@@ -59,13 +61,14 @@ module PactBroker
       end
 
       def build_webhook_metadata(pact)
-        Base64.strict_encode64(Rack::Utils.build_nested_query(
-          consumer_version_number: pact.consumer_version_number,
-          consumer_version_tags: pact.consumer_version_tag_names
-        ))
+        encode_webhook_metadata(build_metadata_for_webhook_triggered_by_pact_publication(pact))
       end
 
-      def parse_webhook_metadata(metadata)
+      def encode_webhook_metadata(metadata)
+        Base64.strict_encode64(Rack::Utils.build_nested_query(metadata))
+      end
+
+      def decode_webhook_metadata(metadata)
         if metadata
           Rack::Utils.parse_nested_query(Base64.strict_decode64(metadata)).each_with_object({}) do | (k, v), new_hash |
             new_hash[k.to_sym] = v

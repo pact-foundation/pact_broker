@@ -72,7 +72,7 @@ module PactBroker
         end
 
         def metadata
-          PactBrokerUrls.parse_webhook_metadata(identifier_from_path[:metadata])
+          PactBrokerUrls.decode_webhook_metadata(identifier_from_path[:metadata])
         end
 
         def webhook_options
