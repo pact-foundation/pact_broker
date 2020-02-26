@@ -307,19 +307,6 @@ module PactBroker
         self
       end
 
-      def create_deprecated_webhook_execution params = {}
-        params.delete(:comment)
-        create_webhook_execution params
-        Sequel::Model.db[:webhook_executions].where(id: webhook_execution.id).update(
-          triggered_webhook_id: nil,
-          consumer_id: consumer.id,
-          provider_id: provider.id,
-          webhook_id: PactBroker::Webhooks::Webhook.find(uuid: webhook.uuid).id,
-          pact_publication_id: pact.id
-        )
-        self
-      end
-
       def create_verification parameters = {}
         parameters.delete(:comment)
         tag_names = [parameters.delete(:tag_names), parameters.delete(:tag_name)].flatten.compact

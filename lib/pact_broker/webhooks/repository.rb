@@ -136,9 +136,6 @@ module PactBroker
       end
 
       def delete_executions_by_pacticipant pacticipants
-        # TODO this relationship no longer exists, deprecate in next version
-        DeprecatedExecution.where(consumer: pacticipants).delete
-        DeprecatedExecution.where(provider: pacticipants).delete
         execution_ids = Execution
           .join(:triggered_webhooks, {id: :triggered_webhook_id})
           .where(Sequel.or(
@@ -151,7 +148,6 @@ module PactBroker
       def delete_triggered_webhooks_by_webhook_uuid uuid
         triggered_webhook_ids = TriggeredWebhook.where(webhook: Webhook.where(uuid: uuid)).select_for_subquery(:id)
         delete_triggered_webhooks_and_executions(triggered_webhook_ids)
-        DeprecatedExecution.where(webhook_id: Webhook.where(uuid: uuid).select_for_subquery(:id)).delete
       end
 
       def delete_triggered_webhooks_by_version_id version_id
@@ -166,7 +162,6 @@ module PactBroker
       def delete_triggered_webhooks_by_pact_publication_ids pact_publication_ids
         triggered_webhook_ids = TriggeredWebhook.where(pact_publication_id: pact_publication_ids).select_for_subquery(:id)
         delete_triggered_webhooks_and_executions(triggered_webhook_ids)
-        DeprecatedExecution.where(pact_publication_id: pact_publication_ids).delete
       end
 
       def find_latest_triggered_webhooks_for_pact pact

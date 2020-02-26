@@ -51,7 +51,6 @@ module PactBroker
           td.create_pact_with_hierarchy
             .create_webhook
             .create_triggered_webhook
-            .create_deprecated_webhook_execution
         end
 
         subject { Service.delete_by_uuid td.webhook.uuid }

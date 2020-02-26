@@ -469,11 +469,9 @@ module PactBroker
             .create_pact
             .create_webhook
             .create_triggered_webhook
-            .create_deprecated_webhook_execution
             .create_webhook_execution
             .create_webhook
             .create_triggered_webhook
-            .create_deprecated_webhook_execution
             .create_webhook_execution
         end
         let(:webhook_id) { Webhook.find(uuid: td.webhook.uuid).id }
@@ -492,16 +490,10 @@ module PactBroker
             }
         end
 
-        it "deletes the related deprecated webhook executions" do
-          expect { subject }.to change {
-              DeprecatedExecution.count
-            }.by(-2)
-        end
-
         it "deletes the related webhook executions" do
           expect { subject }.to change {
               Execution.count
-            }.by(-2)
+            }.by(-1)
         end
       end
 
@@ -518,29 +510,6 @@ module PactBroker
         end
 
         context "with triggered webhooks" do
-          it "deletes the execution by consumer" do
-            expect { Repository.new.delete_executions_by_pacticipant td.consumer }
-              .to change { Execution.count }.by(-1)
-          end
-
-          it "deletes the execution by provider" do
-            expect { Repository.new.delete_executions_by_pacticipant td.provider }
-              .to change { Execution.count }.by(-1)
-          end
-
-          it "does not delete executions for non related pacticipants" do
-            another_consumer = td.create_consumer.and_return(:consumer)
-            expect { Repository.new.delete_executions_by_pacticipant another_consumer }
-              .to change { Execution.count }.by(0)
-          end
-        end
-
-        context "with deprecated executions (before the triggered webhook table was introduced)" do
-          before do
-            Sequel::Model.db[:webhook_executions].update(triggered_webhook_id: nil, consumer_id: td.consumer.id, provider_id: td.provider.id)
-            TriggeredWebhook.select_all.delete
-          end
-
           it "deletes the execution by consumer" do
             expect { Repository.new.delete_executions_by_pacticipant td.consumer }
               .to change { Execution.count }.by(-1)
@@ -707,7 +676,6 @@ module PactBroker
             .create_webhook
             .create_triggered_webhook
             .create_webhook_execution
-            .create_deprecated_webhook_execution
         end
 
         subject { Repository.new.delete_triggered_webhooks_by_pact_publication_ids [td.pact.id] }
@@ -721,12 +689,6 @@ module PactBroker
         it "deletes the webhook_execution" do
           expect { subject }.to change {
             Execution.exclude(triggered_webhook_id: nil).count
-          }.by(-1)
-        end
-
-        it "deletes the deprecated webhook_execution" do
-          expect { subject }.to change {
-            Execution.exclude(consumer_id: nil).count
           }.by(-1)
         end
       end
