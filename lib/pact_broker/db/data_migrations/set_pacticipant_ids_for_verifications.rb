@@ -1,3 +1,5 @@
+require 'pact_broker/db/data_migrations/helpers'
+
 module PactBroker
   module DB
     module DataMigrations
