@@ -23,3 +23,10 @@ PactBroker::DB::CleanTask.new do | task |
   require 'db'
   task.database_connection = DB::PACT_BROKER_DB
 end
+
+PactBroker::DB::DeleteOverwrittenDataTask.new do | task |
+  ENV['RACK_ENV'] ||= 'test'
+  require 'db'
+  task.database_connection = DB::PACT_BROKER_DB
+  task.age_in_days = 7
+end
