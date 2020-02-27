@@ -2,7 +2,7 @@ require 'pact_broker/db/delete_overwritten_data'
 
 module PactBroker
   module DB
-    describe DeleteOverwrittenData do
+    describe DeleteOverwrittenData, pending: IS_MYSQL do
       describe ".call" do
         let(:db) { PactBroker::DB.connection }
         subject { DeleteOverwrittenData.call(db, before: before_date) }
