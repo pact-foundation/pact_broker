@@ -3,31 +3,46 @@ require 'webmock/rspec'
 
 module PactBroker
   module Badges
-    module Service
+    describe Service do
+      let(:pacticipant_name) { "Foo-Bar_Thing Service" }
+      let(:pact) { double("pact", consumer_name: "Foo-Bar", provider_name: "Thing_Blah") }
+      let(:label) { nil }
+      let(:initials) { false }
+      let(:pseudo_branch_verification_status) { :success }
+      let(:logger) { double('logger').as_null_object }
+      let(:expected_url) { "https://img.shields.io/badge/#{expected_left_text}-#{expected_right_text}-#{expected_color}.svg" }
+      let(:expected_color) { "brightgreen" }
+      let(:expected_right_text) { "verified" }
+      let(:expected_left_text) { "foo--bar%2fthing__blah%20pact" }
+      let(:response_status) { 200 }
+      let!(:http_request) do
+        stub_request(:get, expected_url).to_return(:status => response_status, :body => "svg")
+      end
+
+      subject { PactBroker::Badges::Service.pact_verification_badge pact, label, initials, pseudo_branch_verification_status }
+
+      let(:pact_verification_badge_url) { PactBroker::Badges::Service.pact_verification_badge_url(pact, label, initials, pseudo_branch_verification_status) }
+
+      before do
+        Service.clear_cache
+        allow(Service).to receive(:logger).and_return(logger)
+      end
+
+      describe "pact_verification_badge_url" do
+        context "with the pact is nil" do
+          let(:pact) { nil }
+          let(:expected_left_text) { "pact%20not%20found" }
+          let(:expected_right_text) { "unknown" }
+          let(:expected_color) { "lightgrey" }
+          let(:pseudo_branch_verification_status) { :never }
+
+          it "returns a link to a 'pact not found' badge" do
+            expect(pact_verification_badge_url).to eq URI(expected_url)
+          end
+        end
+      end
+
       describe "#pact_verification_badge" do
-        let(:pacticipant_name) { "Foo-Bar_Thing Service" }
-        let(:pact) { double("pact", consumer_name: "Foo-Bar", provider_name: "Thing_Blah") }
-        let(:label) { nil }
-        let(:initials) { false }
-        let(:pseudo_branch_verification_status) { :success }
-        let(:logger) { double('logger').as_null_object }
-        let(:expected_url) { "https://img.shields.io/badge/#{expected_left_text}-#{expected_right_text}-#{expected_color}.svg" }
-        let(:expected_color) { "brightgreen" }
-        let(:expected_right_text) { "verified" }
-        let(:expected_left_text) { "foo--bar%2fthing__blah%20pact" }
-        let(:response_status) { 200 }
-        let!(:http_request) do
-          stub_request(:get, expected_url).to_return(:status => response_status, :body => "svg")
-        end
-
-        subject { PactBroker::Badges::Service.pact_verification_badge pact, label, initials, pseudo_branch_verification_status }
-
-        let(:pact_verification_badge_url) { PactBroker::Badges::Service.pact_verification_badge_url(pact, label, initials, pseudo_branch_verification_status) }
-
-        before do
-          Service.clear_cache
-          allow(Service).to receive(:logger).and_return(logger)
-        end
 
         it "returns the svg file" do
            expect(subject).to eq "svg"

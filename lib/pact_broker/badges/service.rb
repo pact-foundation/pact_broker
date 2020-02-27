@@ -39,6 +39,7 @@ module PactBroker
       private
 
       def badge_title pact, label, initials
+        return 'pact not found' if pact.nil?
         title = case (label || '').downcase
           when 'consumer' then prepare_name(pact.consumer_name, initials)
           when 'provider' then prepare_name(pact.provider_name, initials)
