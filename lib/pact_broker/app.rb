@@ -83,7 +83,7 @@ module PactBroker
     def prepare_database
       if configuration.auto_migrate_db
         logger.info "Migrating database"
-        PactBroker::DB.run_migrations configuration.database_connection
+        PactBroker::DB.run_migrations configuration.database_connection, allow_missing_migration_files: configuration.allow_missing_migration_files
       else
         logger.info "Skipping database migrations"
       end

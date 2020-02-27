@@ -34,7 +34,7 @@ module PactBroker
       :badge_provider_mode
     ]
 
-    attr_accessor :base_url, :log_dir, :database_connection, :auto_migrate_db, :auto_migrate_db_data, :example_data_seeder, :seed_example_data, :use_hal_browser, :html_pact_renderer, :use_rack_protection
+    attr_accessor :base_url, :log_dir, :database_connection, :auto_migrate_db, :auto_migrate_db_data, :allow_missing_migration_files, :example_data_seeder, :seed_example_data, :use_hal_browser, :html_pact_renderer, :use_rack_protection
     attr_accessor :validate_database_connection_config, :enable_diagnostic_endpoints, :version_parser, :sha_generator
     attr_accessor :use_case_sensitive_resource_names, :order_versions_by_date
     attr_accessor :check_for_potential_duplicate_pacticipant_names
@@ -64,6 +64,7 @@ module PactBroker
       config.log_dir = File.expand_path("./log")
       config.auto_migrate_db = true
       config.auto_migrate_db_data = true
+      config.allow_missing_migration_files = false
       config.use_rack_protection = true
       config.use_hal_browser = true
       config.validate_database_connection_config = true
