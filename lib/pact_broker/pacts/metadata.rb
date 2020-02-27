@@ -11,7 +11,7 @@ module PactBroker
       def build_metadata_for_latest_pact(pact, selection_parameters)
         if selection_parameters[:tag]
           {
-            consumer_version_tags: selection_parameters[:tag],
+            consumer_version_tags: [selection_parameters[:tag]],
             consumer_version_number: pact.consumer_version_number
           }
         else
