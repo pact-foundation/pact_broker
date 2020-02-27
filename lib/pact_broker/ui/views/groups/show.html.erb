@@ -1,3 +1,5 @@
+<% require 'sanitize' %>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30,6 +32,19 @@ body{
 </head>
 <body>
 <h1>Network graph of <%= pacticipant_name %> relationships</h1>
+
+<% if repository_url %>
+<p>Repository URL:
+
+<%
+repository_link = "<a href='#{repository_url}'>#{escape_html(repository_url)}</a>"
+%>
+
+<%= Sanitize.fragment(repository_link, Sanitize::Config::BASIC) %>
+
+<% end %>
+
+
 <script type="text/javascript">
 var windowWidth, windowHeight, svg;
 

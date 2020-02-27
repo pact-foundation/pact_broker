@@ -10,10 +10,13 @@ module PactBroker
         include PactBroker::Services
 
         get ":name" do
+          pacticipant = pacticipant_service.find_pacticipant_by_name(params[:name])
           erb :'groups/show.html', {
-            locals: {
-              csv_path: "/groups/#{params[:name]}.csv",
-              pacticipant_name: params[:name]}
+              locals: {
+                csv_path: "/groups/#{params[:name]}.csv",
+                pacticipant_name: params[:name],
+                repository_url: pacticipant&.repository_url
+              }
             }, {
               layout: 'layouts/main'
             }

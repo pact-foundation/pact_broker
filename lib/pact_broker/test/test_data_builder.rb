@@ -111,7 +111,7 @@ module PactBroker
 
       def create_pacticipant pacticipant_name, params = {}
         params.delete(:comment)
-        @pacticipant = PactBroker::Domain::Pacticipant.create({ :name => pacticipant_name }.merge(params))
+        @pacticipant = PactBroker::Domain::Pacticipant.create({ :name => pacticipant_name, repository_url: "https://github.com/example-organization/#{pacticipant_name}" }.merge(params))
         self
       end
 
