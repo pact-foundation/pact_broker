@@ -1,3 +1,13 @@
+<a name="v2.50.1"></a>
+### v2.50.1 (2020-02-27)
+
+
+#### Bug Fixes
+
+* **webhooks**
+  * make consumer_version_tags an array when creating metadata for latest [tagged] pact	 ([59b9e4c5](/../../commit/59b9e4c5))
+
+
 <a name="v2.50.0"></a>
 ### v2.50.0 (2020-02-27)
 
