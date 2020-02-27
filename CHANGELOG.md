@@ -1,3 +1,23 @@
+<a name="v2.50.0"></a>
+### v2.50.0 (2020-02-27)
+
+
+#### Features
+
+* **deps**
+  * upgrade to pact-support 1.14.1	 ([47c23b7d](/../../commit/47c23b7d))
+
+* **ui**
+  * display repository URL on the pacticipant relationships page	 ([5d285e95](/../../commit/5d285e95))
+
+* expose configuration option to allow missing migrations files on startup	 ([58dea9ab](/../../commit/58dea9ab))
+* add rake task to clean overwritten pact publications and verifications	 ([942dfbd0](/../../commit/942dfbd0))
+* include tag and consumer version number in metadata parameter of verification creation URL when verifying latest pact for a tag	 ([3b59e824](/../../commit/3b59e824))
+
+* **pact**
+  * add relation to view matrix rows for the consumer version	 ([13cb20b1](/../../commit/13cb20b1))
+
+
 <a name="v2.49.0"></a>
 ### v2.49.0 (2020-02-13)
 
