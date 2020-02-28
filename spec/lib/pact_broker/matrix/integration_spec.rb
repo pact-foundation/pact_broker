@@ -21,7 +21,7 @@ module PactBroker
 
         describe "find" do
           let(:selectors) do
-            [ { pacticipant_name: "foo" } ]
+            [ UnresolvedSelector.new(pacticipant_name: "foo") ]
           end
 
           let(:options) do
@@ -53,7 +53,7 @@ module PactBroker
               .create_pact
           end
 
-          let(:selectors) { [{ pacticipant_name: "Bar", latest: true, tag: "test" }]}
+          let(:selectors) { [ UnresolvedSelector.new(pacticipant_name: "Bar", latest: true, tag: "test") ]}
           let(:options) { { tag: "prod", latestby: "cvp" } }
 
           it "does not allow the consumer to be deployed" do
@@ -68,7 +68,7 @@ module PactBroker
               .create_pact
           end
           let(:selectors) do
-            [ { pacticipant_name: "Foo", pacticipant_version_number: "1" } ]
+            [ UnresolvedSelector.new(pacticipant_name: "Foo", pacticipant_version_number: "1") ]
           end
 
           it "returns 2 integrations" do
@@ -98,7 +98,7 @@ module PactBroker
           end
 
           let(:selectors) do
-            [ { pacticipant_name: "Foo", pacticipant_version_number: "3.0.0" } ]
+            [ UnresolvedSelector.new(pacticipant_name: "Foo", pacticipant_version_number: "3.0.0") ]
           end
 
           let(:options) { {latest: true, tag: "prod", latestby: "cvp"} }
@@ -133,7 +133,7 @@ module PactBroker
           end
 
           let(:selectors) do
-            [ { pacticipant_name: "Foo", pacticipant_version_number: "1" } ]
+            [ UnresolvedSelector.new(pacticipant_name: "Foo", pacticipant_version_number: "1") ]
           end
 
           it "allows the old version of the consumer to be deployed" do
@@ -147,7 +147,7 @@ module PactBroker
           end
 
           let(:selectors) do
-            [ { pacticipant_name: "Bar", pacticipant_version_number: "5" } ]
+            [ UnresolvedSelector.new(pacticipant_name: "Bar", pacticipant_version_number: "5") ]
           end
 
           it "does not allow the app to be deployed" do
@@ -162,7 +162,7 @@ module PactBroker
           end
 
           let(:selectors) do
-            [ { pacticipant_name: "Bar", pacticipant_version_number: "2" } ]
+            [ UnresolvedSelector.new(pacticipant_name: "Bar", pacticipant_version_number: "2") ]
           end
 
           let(:options) do
@@ -182,7 +182,7 @@ module PactBroker
           end
 
           let(:selectors) do
-            [ { pacticipant_name: "Foo", pacticipant_version_number: "1" } ]
+            [ UnresolvedSelector.new(pacticipant_name: "Foo", pacticipant_version_number: "1") ]
           end
 
           let(:options) do
@@ -204,7 +204,7 @@ module PactBroker
           end
 
           let(:selectors) do
-            [ { pacticipant_name: "Bar", pacticipant_version_number: "2" } ]
+            [ UnresolvedSelector.new(pacticipant_name: "Bar", pacticipant_version_number: "2") ]
           end
 
           let(:options) do
@@ -229,7 +229,7 @@ module PactBroker
           end
 
           let(:selectors) do
-            [ { pacticipant_name: "Bar", pacticipant_version_number: "2" } ]
+            [ UnresolvedSelector.new(pacticipant_name: "Bar", pacticipant_version_number: "2") ]
           end
 
           # Deploy Bar v2 to prod
@@ -250,7 +250,7 @@ module PactBroker
           end
 
           let(:selectors) do
-            [ { pacticipant_name: "Bar", pacticipant_version_number: "2" } ]
+            [ UnresolvedSelector.new(pacticipant_name: "Bar", pacticipant_version_number: "2") ]
           end
 
           # Deploy Bar v2 to prod
@@ -275,7 +275,7 @@ module PactBroker
           end
 
           let(:selectors) do
-            [ { pacticipant_name: "Foo", pacticipant_version_number: "1" } ]
+            [ UnresolvedSelector.new(pacticipant_name: "Foo", pacticipant_version_number: "1") ]
           end
 
           # Deploy Foo v1 to prod
@@ -305,8 +305,8 @@ module PactBroker
           context "when both application versions are specified explictly" do
             let(:selectors) do
               [
-                { pacticipant_name: "ServiceA", pacticipant_version_number: "1" },
-                { pacticipant_name: "ServiceB", pacticipant_version_number: "100" }
+                UnresolvedSelector.new(pacticipant_name: "ServiceA", pacticipant_version_number: "1"),
+                UnresolvedSelector.new(pacticipant_name: "ServiceB", pacticipant_version_number: "100")
               ]
             end
 
@@ -320,7 +320,7 @@ module PactBroker
           context "when only one application is specified" do
             let(:selectors) do
               [
-                { pacticipant_name: "ServiceB", pacticipant_version_number: "100" }
+                UnresolvedSelector.new(pacticipant_name: "ServiceB", pacticipant_version_number: "100")
               ]
             end
 
@@ -360,8 +360,8 @@ module PactBroker
               .create_verification(provider_version: "2")
           end
 
-          let(:selector_1) { { pacticipant_name: "Bar", pacticipant_version_number: "2" } }
-          let(:selector_2) { { pacticipant_name: "Foo", tag: "prod" } }
+          let(:selector_1) { UnresolvedSelector.new(pacticipant_name: "Bar", pacticipant_version_number: "2") }
+          let(:selector_2) { UnresolvedSelector.new(pacticipant_name: "Foo", tag: "prod") }
           let(:selectors)  { [ selector_1, selector_2 ] }
 
           subject { Service.find(selectors, options) }
@@ -405,8 +405,8 @@ module PactBroker
 
           let(:selectors) do
             [
-              { pacticipant_name: "Foo", pacticipant_version_number: "1" },
-              { pacticipant_name: "Bar", tag: "prod", latest: true}
+              UnresolvedSelector.new(pacticipant_name: "Foo", pacticipant_version_number: "1"),
+              UnresolvedSelector.new(pacticipant_name: "Bar", tag: "prod", latest: true)
             ]
           end
 

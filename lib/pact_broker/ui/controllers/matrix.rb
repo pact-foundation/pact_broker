@@ -1,5 +1,6 @@
 require 'pact_broker/ui/controllers/base_controller'
 require 'pact_broker/ui/view_models/matrix_lines'
+require 'pact_broker/matrix/unresolved_selector'
 require 'pact_broker/matrix/parse_query'
 require 'pact_broker/logging'
 require 'haml'
@@ -41,7 +42,7 @@ module PactBroker
         end
 
         get "/provider/:provider_name/consumer/:consumer_name" do
-          selectors = [{ pacticipant_name: params[:consumer_name] }, { pacticipant_name: params[:provider_name] } ]
+          selectors = [ PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: params[:consumer_name]), PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: params[:provider_name]) ]
           options = {latestby: 'cvpv', limit: 100}
           lines = matrix_service.find(selectors, options)
           lines = PactBroker::UI::ViewDomain::MatrixLines.new(lines)

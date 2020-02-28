@@ -17,22 +17,22 @@ module PactBroker
       end
 
       def find_for_consumer_and_provider params, options = {}
-        selectors = [{ pacticipant_name: params[:consumer_name] }, { pacticipant_name: params[:provider_name] }]
+        selectors = [ UnresolvedSelector.new(pacticipant_name: params[:consumer_name]), UnresolvedSelector.new(pacticipant_name: params[:provider_name]) ]
         find(selectors, options)
       end
 
       def find_for_consumer_and_provider_with_tags params
-        consumer_criteria = {
+        consumer_selector = UnresolvedSelector.new(
           pacticipant_name: params[:consumer_name],
           tag: params[:tag],
           latest: true
-        }
-        provider_criteria = {
+        )
+        provider_selector = UnresolvedSelector.new(
           pacticipant_name: params[:provider_name],
           tag: params[:provider_tag],
           latest: true
-        }
-        selectors = [consumer_criteria, provider_criteria]
+        )
+        selectors = [consumer_selector, provider_selector]
         options = { latestby: 'cvpv' }
         if validate_selectors(selectors).empty?
           matrix_repository.find(selectors, options).first

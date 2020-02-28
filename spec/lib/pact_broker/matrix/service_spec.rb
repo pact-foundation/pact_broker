@@ -1,4 +1,5 @@
 require 'pact_broker/matrix/service'
+require 'pact_broker/matrix/unresolved_selector'
 
 module PactBroker
   module Matrix
@@ -41,7 +42,7 @@ module PactBroker
               .create_version("2")
           end
 
-          let(:selectors) { [ { pacticipant_name: "Foo", pacticipant_version_number: nil }, { pacticipant_name: "Bar", pacticipant_version_number: nil } ] }
+          let(:selectors) { [ UnresolvedSelector.new(pacticipant_name: "Foo", pacticipant_version_number: nil ), UnresolvedSelector.new(pacticipant_name: "Bar", pacticipant_version_number: nil) ] }
 
           it "returns no error messages" do
             expect(subject).to eq []
@@ -57,7 +58,7 @@ module PactBroker
               .create_version("2")
           end
 
-          let(:selectors) { [{ pacticipant_name: "Foo", latest_tag: "prod" }, { pacticipant_name: "Bar", pacticipant_version_number: "2" }] }
+          let(:selectors) { [ UnresolvedSelector.new(pacticipant_name: "Foo", latest_tag: "prod"), UnresolvedSelector.new(pacticipant_name: "Bar", pacticipant_version_number: "2")] }
 
           context "when there is a version for the tag" do
             it "returns no error messages" do
@@ -75,7 +76,7 @@ module PactBroker
               .create_version("2")
           end
 
-          let(:selectors) { [{ pacticipant_name: "Foo", pacticipant_version_number: "1", latest: true }, { pacticipant_name: "Bar", pacticipant_version_number: "2" }] }
+          let(:selectors) { [ UnresolvedSelector.new(pacticipant_name: "Foo", pacticipant_version_number: "1", latest: true), UnresolvedSelector.new(pacticipant_name: "Bar", pacticipant_version_number: "2")] }
 
           it "returns an error message" do
             expect(subject).to eq ["A version number and latest flag cannot both be specified for Foo"]

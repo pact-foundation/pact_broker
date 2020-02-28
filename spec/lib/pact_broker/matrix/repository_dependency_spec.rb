@@ -25,7 +25,7 @@ module PactBroker
             .create_verification(provider_version: "2")
         end
 
-        let(:selectors) { [ { pacticipant_name: "Bar", pacticipant_version_number: "2" } ] }
+        let(:selectors) { [ UnresolvedSelector.new(pacticipant_name: "Bar", pacticipant_version_number: "2") ] }
         let(:options) { { latest: true, tag: "prod"} }
 
         subject { shorten_rows(rows) }
@@ -42,7 +42,7 @@ module PactBroker
             .create_verification(provider_version: "2")
         end
 
-        let(:selectors) { [ { pacticipant_name: "Foo", pacticipant_version_number: "1" } ] }
+        let(:selectors) { [ UnresolvedSelector.new(pacticipant_name: "Foo", pacticipant_version_number: "1") ] }
         let(:options) { { latest: true, tag: "prod"} }
 
         subject { shorten_rows(rows) }

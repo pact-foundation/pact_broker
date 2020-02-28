@@ -1,4 +1,5 @@
 require 'rack/utils'
+require 'pact_broker/matrix/unresolved_selector'
 
 module PactBroker
   module Matrix
@@ -6,7 +7,7 @@ module PactBroker
       def self.call query
         params = Rack::Utils.parse_nested_query(query)
         selectors = (params['q'] || []).collect do |i|
-          p = {}
+          p = PactBroker::Matrix::UnresolvedSelector.new
           p[:pacticipant_name] = i['pacticipant'] if i['pacticipant'] && i['pacticipant'] != ''
           p[:pacticipant_version_number] = i['version'] if i['version'] && i['version'] != ''
           p[:latest] = true if i['latest'] == 'true'

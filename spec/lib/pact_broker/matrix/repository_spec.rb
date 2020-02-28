@@ -1,4 +1,5 @@
 require 'pact_broker/matrix/repository'
+require 'pact_broker/matrix/unresolved_selector'
 
 module PactBroker
   module Matrix
@@ -7,7 +8,7 @@ module PactBroker
 
       def build_selectors(hash)
         hash.collect do | key, value |
-          { pacticipant_name: key, pacticipant_version_number: value }
+          UnresolvedSelector.new(pacticipant_name: key, pacticipant_version_number: value)
         end
       end
 
@@ -478,8 +479,8 @@ module PactBroker
           context "when the other service is specifically named" do
             let(:selectors) do
               [
-                { pacticipant_name: "android app", tag: "prod" },
-                { pacticipant_name: "BFF", pacticipant_version_number: "5" }
+                UnresolvedSelector.new(pacticipant_name: "android app", tag: "prod"),
+                UnresolvedSelector.new(pacticipant_name: "BFF", pacticipant_version_number: "5")
               ]
             end
 
@@ -496,7 +497,7 @@ module PactBroker
           context "when the other service is not specifically named" do
             let(:selectors) do
               [
-                { pacticipant_name: "BFF", pacticipant_version_number: "5" }
+                UnresolvedSelector.new(pacticipant_name: "BFF", pacticipant_version_number: "5")
               ]
             end
 
@@ -595,8 +596,8 @@ module PactBroker
 
           let(:selectors) do
             [
-              { pacticipant_name: "A", pacticipant_version_number: "1.2.3" },
-              { pacticipant_name: "B", latest: true, tag: "prod" }
+              UnresolvedSelector.new(pacticipant_name: "A", pacticipant_version_number: "1.2.3"),
+              UnresolvedSelector.new(pacticipant_name: "B", latest: true, tag: "prod")
             ]
           end
 
@@ -622,8 +623,8 @@ module PactBroker
 
           let(:selectors) do
             [
-              { pacticipant_name: "A", pacticipant_version_number: "1.2.3" },
-              { pacticipant_name: "B", latest: true }
+              UnresolvedSelector.new(pacticipant_name: "A", pacticipant_version_number: "1.2.3"),
+              UnresolvedSelector.new(pacticipant_name: "B", latest: true)
             ]
           end
 
@@ -642,8 +643,8 @@ module PactBroker
 
           let(:selectors) do
             [
-              { pacticipant_name: "A", pacticipant_version_number: "1.2.3" },
-              { pacticipant_name: "B", latest: true }
+              UnresolvedSelector.new(pacticipant_name: "A", pacticipant_version_number: "1.2.3"),
+              UnresolvedSelector.new(pacticipant_name: "B", latest: true)
             ]
           end
 
@@ -773,7 +774,7 @@ module PactBroker
               .create_verification(provider_version: "4", number: 2)
           end
 
-          let(:selectors) { [{ pacticipant_name: 'A', latest: true, tag: 'dev' } ] }
+          let(:selectors) { [UnresolvedSelector.new(pacticipant_name: 'A', latest: true, tag: 'dev')] }
           let(:options) { { tag: 'prod', latest: true } }
 
           it "finds the matrix for the latest tagged versions of each of the other other pacticipants" do
@@ -953,7 +954,7 @@ module PactBroker
           subject { Repository.new.find(selectors) }
 
           context "when the latest tag is specified" do
-            let(:selectors) { [{ pacticipant_name: 'D', latest: true, tag: 'dev' } ] }
+            let(:selectors) { [ UnresolvedSelector.new(pacticipant_name: 'D', latest: true, tag: 'dev') ] }
 
             it "returns an empty array" do
               expect(subject).to eq []
@@ -962,7 +963,7 @@ module PactBroker
           end
 
           context "when all tags are specified" do
-            let(:selectors) { [{ pacticipant_name: 'D', tag: 'dev' } ] }
+            let(:selectors) { [ UnresolvedSelector.new(pacticipant_name: 'D', tag: 'dev') ] }
 
             it "returns an empty array" do
               expect(subject).to eq []
@@ -971,7 +972,7 @@ module PactBroker
           end
 
           context "when no tags are specified" do
-            let(:selectors) { [{ pacticipant_name: 'E', latest: true } ] }
+            let(:selectors) { [ UnresolvedSelector.new(pacticipant_name: 'E', latest: true) ] }
 
             it "returns an empty array" do
               expect(subject).to eq []
@@ -999,8 +1000,8 @@ module PactBroker
           .create_verification(provider_version: "20.0.0", tag_names: ["prod"])
         end
 
-        let(:selectors) { [{ pacticipant_name: "foo", pacticipant_version_number: "1.0.0" }] }
-        let(:options) { {latestby: "cvp", latest: true, tag: "prod"} }
+        let(:selectors) { [ UnresolvedSelector.new(pacticipant_name: "foo", pacticipant_version_number: "1.0.0")] }
+        let(:options) { { latestby: "cvp", latest: true, tag: "prod" } }
         let(:results) { Repository.new.find(selectors, options) }
 
         subject { shorten_rows(results) }
@@ -1028,7 +1029,7 @@ module PactBroker
         let(:options) { { latestby: 'cvp' } }
 
         let(:selectors) do
-          [ { pacticipant_name: "Bar", pacticipant_version_number: "5" } ]
+          [ UnresolvedSelector.new(pacticipant_name: "Bar", pacticipant_version_number: "5") ]
         end
 
         it "returns only the latest consumer version row", pending: "Can't work out what this should do" do
@@ -1050,7 +1051,7 @@ module PactBroker
             .create_pact
         end
 
-        let(:selectors) { [ { pacticipant_name: "C", pacticipant_version_number: "10" } ] }
+        let(:selectors) { [ UnresolvedSelector.new(pacticipant_name: "C", pacticipant_version_number: "10") ] }
         let(:options) { { latestby: "cvp", limit: "100", latest: true} }
         let(:rows) { Repository.new.find(selectors, options) }
 

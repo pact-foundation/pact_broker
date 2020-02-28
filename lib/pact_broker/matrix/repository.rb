@@ -8,6 +8,7 @@ require 'pact_broker/matrix/query_results'
 require 'pact_broker/matrix/integration'
 require 'pact_broker/matrix/query_results_with_deployment_status_summary'
 require 'pact_broker/matrix/resolved_selector'
+require 'pact_broker/matrix/unresolved_selector'
 require 'pact_broker/verifications/latest_verification_id_for_pact_version_and_provider_version'
 require 'pact_broker/pacts/latest_pact_publications_by_consumer_version'
 
@@ -75,7 +76,7 @@ module PactBroker
       end
 
       def find_for_consumer_and_provider pacticipant_1_name, pacticipant_2_name
-        selectors = [{ pacticipant_name: pacticipant_1_name }, { pacticipant_name: pacticipant_2_name }]
+        selectors = [ UnresolvedSelector.new(pacticipant_name: pacticipant_1_name), UnresolvedSelector.new(pacticipant_name: pacticipant_2_name)]
         options = { latestby: 'cvpv' }
         find(selectors, options)
       end
@@ -138,7 +139,7 @@ module PactBroker
       # Find the version number for selectors with the latest and/or tag specified
       def resolve_versions_and_add_ids(selectors, selector_type)
         selectors.collect do | selector |
-          pacticipant = PactBroker::Domain::Pacticipant.find(name: selector[:pacticipant_name])
+          pacticipant = PactBroker::Domain::Pacticipant.find(name: selector.pacticipant_name)
           versions = find_versions_for_selector(selector)
           build_resolved_selectors(pacticipant, versions, selector, selector_type)
         end.flatten
@@ -161,17 +162,17 @@ module PactBroker
       end
 
       def find_versions_for_selector(selector)
-        if selector[:tag] && selector[:latest]
-          version = version_repository.find_by_pacticipant_name_and_latest_tag(selector[:pacticipant_name], selector[:tag])
+        if selector.tag && selector.latest
+          version = version_repository.find_by_pacticipant_name_and_latest_tag(selector.pacticipant_name, selector.tag)
           [version]
-        elsif selector[:latest]
-          version = version_repository.find_latest_by_pacticpant_name(selector[:pacticipant_name])
+        elsif selector.latest
+          version = version_repository.find_latest_by_pacticpant_name(selector.pacticipant_name)
           [version]
-        elsif selector[:tag]
-          versions = version_repository.find_by_pacticipant_name_and_tag(selector[:pacticipant_name], selector[:tag])
+        elsif selector.tag
+          versions = version_repository.find_by_pacticipant_name_and_tag(selector.pacticipant_name, selector.tag)
           versions.any? ? versions : [nil]
-        elsif selector[:pacticipant_version_number]
-          version = version_repository.find_by_pacticipant_name_and_number(selector[:pacticipant_name], selector[:pacticipant_version_number])
+        elsif selector.pacticipant_version_number
+          version = version_repository.find_by_pacticipant_name_and_number(selector.pacticipant_name, selector.pacticipant_version_number)
           [version]
         else
           nil
@@ -193,11 +194,9 @@ module PactBroker
 
       def build_inferred_selectors(inferred_pacticipant_names, options)
         selectors = inferred_pacticipant_names.collect do | pacticipant_name |
-          selector = {
-            pacticipant_name: pacticipant_name
-          }
-          selector[:tag] = options[:tag] if options[:tag]
-          selector[:latest] = options[:latest] if options[:latest]
+          selector = UnresolvedSelector.new(pacticipant_name: pacticipant_name)
+          selector.tag = options[:tag] if options[:tag]
+          selector.latest = options[:latest] if options[:latest]
           selector
         end
         resolve_versions_and_add_ids(selectors, :inferred)
