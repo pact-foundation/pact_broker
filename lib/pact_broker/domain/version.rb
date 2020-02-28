@@ -18,12 +18,21 @@ module PactBroker
         include PactBroker::Repositories::Helpers
 
         def where_pacticipant_name(pacticipant_name)
-          where(pacticipant_id: pacticipant_id_for_name(pacticipant_name))
+          join(:pacticipants) do | p |
+            Sequel.&(
+              { Sequel[first_source_alias][:pacticipant_id] => Sequel[p][:id] },
+              name_like(Sequel[p][:name], pacticipant_name)
+            )
+          end
         end
 
         def where_tag(tag)
-          join(:tags, { version_id: :id }, {implicit_qualifier: :versions})
-          .where(name_like(Sequel[:tags][:name], tag))
+          join(:tags) do | tags |
+            Sequel.&(
+              { Sequel[first_source_alias][:id] => Sequel[tags][:version_id] },
+              name_like(Sequel[tags][:name], tag)
+            )
+          end
         end
 
         def where_number(number)
