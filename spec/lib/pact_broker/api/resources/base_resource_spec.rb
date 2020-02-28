@@ -20,6 +20,14 @@ module PactBroker
           end
         end
 
+        describe "resource_url" do
+          let(:uri) { URI('http://example.org/path/?query') }
+
+          it "cleans the query and trailing slash" do
+            expect(subject.resource_url).to eq "http://example.org/path"
+          end
+        end
+
         describe "base_url" do
           context "when PactBroker.configuration.base_url is not nil" do
             before do

@@ -72,7 +72,7 @@ module PactBroker
         end
 
         def resource_url
-          request.uri.to_s.gsub(/\?.*/, '')
+          request.uri.to_s.gsub(/\?.*/, '').chomp('/')
         end
 
         def decorator_context options = {}
