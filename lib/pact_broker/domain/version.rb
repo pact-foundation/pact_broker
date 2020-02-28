@@ -15,6 +15,10 @@ module PactBroker
       dataset_module do
         include PactBroker::Repositories::Helpers
 
+        def where_pacticipant_name(pacticipant_name)
+          where(pacticipant_id: pacticipant_id_for_name(pacticipant_name))
+        end
+
         def delete
           PactBroker::Domain::Tag.where(version: self).delete
           super

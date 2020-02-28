@@ -19,6 +19,10 @@ module PactBroker
         end
       end
 
+      def pacticipant_id_for_name pacticipant_name
+        Sequel::Model.db[:pacticipants].select(:id).where(name_like(:name, pacticipant_name)).limit(1)
+      end
+
       def order_ignore_case column_name = :name
         order(Sequel.function(:lower, column_name))
       end

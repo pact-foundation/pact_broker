@@ -17,10 +17,9 @@ module PactBroker
       def find_by_pacticipant_name_and_latest_tag pacticipant_name, tag
         PactBroker::Domain::Version
           .select_all_qualified
-          .join(:pacticipants, {id: :pacticipant_id}, {implicit_qualifier: :versions})
           .join(:tags, {version_id: :id}, {implicit_qualifier: :versions})
           .where(name_like(Sequel[:tags][:name], tag))
-          .where(name_like(Sequel[:pacticipants][:name], pacticipant_name))
+          .where_pacticipant_name(pacticipant_name)
           .reverse_order(:order)
           .first
       end
@@ -28,18 +27,16 @@ module PactBroker
       def find_by_pacticipant_name_and_tag pacticipant_name, tag
         PactBroker::Domain::Version
           .select_all_qualified
-          .join(:pacticipants, {id: :pacticipant_id}, {implicit_qualifier: :versions})
+          .where_pacticipant_name(pacticipant_name)
           .join(:tags, {version_id: :id}, {implicit_qualifier: :versions})
           .where(name_like(Sequel[:tags][:name], tag))
-          .where(name_like(Sequel[:pacticipants][:name], pacticipant_name))
           .all
       end
 
       def find_latest_by_pacticpant_name pacticipant_name
         PactBroker::Domain::Version
           .select_all_qualified
-          .join(:pacticipants, {id: :pacticipant_id}, {implicit_qualifier: :versions})
-          .where(name_like(Sequel[:pacticipants][:name], pacticipant_name))
+          .where_pacticipant_name(pacticipant_name)
           .reverse_order(:order)
           .first
       end
@@ -47,9 +44,8 @@ module PactBroker
       def find_by_pacticipant_name_and_number pacticipant_name, number
         PactBroker::Domain::Version
           .select(Sequel[:versions][:id], Sequel[:versions][:number], Sequel[:versions][:pacticipant_id], Sequel[:versions][:order], Sequel[:versions][:created_at], Sequel[:versions][:updated_at])
-          .join(:pacticipants, {id: :pacticipant_id})
           .where(name_like(:number, number))
-          .where(name_like(:name, pacticipant_name))
+          .where_pacticipant_name(pacticipant_name)
           .single_record
       end
 
@@ -90,6 +86,24 @@ module PactBroker
           .where(pacticipant_id: [consumer.id, provider.id])
           .exclude(id: (version_ids_with_pact_publications + version_ids_with_verifications).uniq)
           .delete
+      end
+
+      def find_versions_for_selector(selector)
+        if selector.tag && selector.latest
+          version = find_by_pacticipant_name_and_latest_tag(selector.pacticipant_name, selector.tag)
+          [version]
+        elsif selector.latest
+          version = find_latest_by_pacticpant_name(selector.pacticipant_name)
+          [version]
+        elsif selector.tag
+          versions = find_by_pacticipant_name_and_tag(selector.pacticipant_name, selector.tag)
+          versions.any? ? versions : [nil]
+        elsif selector.pacticipant_version_number
+          version = find_by_pacticipant_name_and_number(selector.pacticipant_name, selector.pacticipant_version_number)
+          [version]
+        else
+          nil
+        end
       end
     end
   end

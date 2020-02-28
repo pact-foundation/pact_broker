@@ -140,7 +140,7 @@ module PactBroker
       def resolve_versions_and_add_ids(selectors, selector_type)
         selectors.collect do | selector |
           pacticipant = PactBroker::Domain::Pacticipant.find(name: selector.pacticipant_name)
-          versions = find_versions_for_selector(selector)
+          versions = version_repository.find_versions_for_selector(selector)
           build_resolved_selectors(pacticipant, versions, selector, selector_type)
         end.flatten
       end
@@ -158,24 +158,6 @@ module PactBroker
           end
         else
           selector_without_version(pacticipant, selector_type)
-        end
-      end
-
-      def find_versions_for_selector(selector)
-        if selector.tag && selector.latest
-          version = version_repository.find_by_pacticipant_name_and_latest_tag(selector.pacticipant_name, selector.tag)
-          [version]
-        elsif selector.latest
-          version = version_repository.find_latest_by_pacticpant_name(selector.pacticipant_name)
-          [version]
-        elsif selector.tag
-          versions = version_repository.find_by_pacticipant_name_and_tag(selector.pacticipant_name, selector.tag)
-          versions.any? ? versions : [nil]
-        elsif selector.pacticipant_version_number
-          version = version_repository.find_by_pacticipant_name_and_number(selector.pacticipant_name, selector.pacticipant_version_number)
-          [version]
-        else
-          nil
         end
       end
 
