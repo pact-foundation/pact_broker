@@ -6,6 +6,8 @@ require 'pact_broker/tags/tag_with_latest_flag'
 module PactBroker
   module Domain
     class Version < Sequel::Model
+      plugin :timestamps, update_on_create: true
+
       set_primary_key :id
       one_to_many :pact_publications, order: :revision_number, class: "PactBroker::Pacts::PactPublication", key: :consumer_version_id
       associate(:many_to_one, :pacticipant, :class => "PactBroker::Domain::Pacticipant", :key => :pacticipant_id, :primary_key => :id)
@@ -17,6 +19,15 @@ module PactBroker
 
         def where_pacticipant_name(pacticipant_name)
           where(pacticipant_id: pacticipant_id_for_name(pacticipant_name))
+        end
+
+        def where_tag(tag)
+          join(:tags, { version_id: :id }, {implicit_qualifier: :versions})
+          .where(name_like(Sequel[:tags][:name], tag))
+        end
+
+        def where_number(number)
+          where(name_like(:number, number))
         end
 
         def delete
@@ -47,8 +58,6 @@ module PactBroker
         pact_publications.last
       end
     end
-
-    Version.plugin :timestamps, :update_on_create=>true
   end
 end
 
