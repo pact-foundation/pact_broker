@@ -17,11 +17,24 @@ module PactBroker
         deleted_counts = {}
         kept_counts = {}
         date = options[:date]
+
+        version_ids_to_keep = nil
+
+        if options[:keep]
+          version_ids_to_keep = options[:keep].collect do | selector |
+            PactBroker::Domain::Version.select(:id).for_selector(selector)
+          end.reduce(&:union)
+        end
+
         pact_publication_ids_to_delete = if date
           db[:pact_publications].select(:id).where(Sequel.lit('created_at < ?', date))
+        elsif version_ids_to_keep
+          db[:pact_publications].select(:id).where(consumer_version_id: version_ids_to_keep).invert
         else
-          db[:pact_publications].select(:id).where(id: db[:head_matrix].select(:pact_publication_id)).invert
+          keep = db[:latest_tagged_pact_publications].select(:id).union(db[:latest_pact_publications].select(:id))
+          db[:pact_publications].select(:id).where(id: keep).invert
         end
+
 
         deleted_counts[:pact_publications] = pact_publication_ids_to_delete.count
         kept_counts[:pact_publications] = db[:pact_publications].where(id: pact_publication_ids_to_delete).invert.count

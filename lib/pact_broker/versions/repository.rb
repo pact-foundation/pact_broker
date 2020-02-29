@@ -87,7 +87,7 @@ module PactBroker
       end
 
       def find_versions_for_selector(selector)
-        PactBroker::Domain::Version.find_for_selector(selector)
+        PactBroker::Domain::Version.select_all_qualified.for_selector(selector).all
       end
     end
   end
