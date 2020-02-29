@@ -49,8 +49,19 @@ module PactBroker
           query = query.where_pacticipant_name(selector.pacticipant_name) if selector.pacticipant_name
           query = query.where_tag(selector.tag) if selector.tag
           query = query.where_number(selector.pacticipant_version_number) if selector.pacticipant_version_number
-          query = query.reverse_order(:order).limit(1) if selector.latest
-          query
+          if selector.latest
+            join = {
+              Sequel[:versions][:pacticipant_id] => Sequel[:latest][:pacticipant_id],
+              Sequel[:versions][:order] => Sequel[:latest][:latest_version_order]
+            }
+
+            max_order_for_each_pacticipant = query.select_group(:pacticipant_id)
+                 .select_append{ max(order).as(latest_version_order) }
+
+            Version.join(max_order_for_each_pacticipant, join, { table_alias: :latest })
+          else
+            query
+          end
         end
       end
 

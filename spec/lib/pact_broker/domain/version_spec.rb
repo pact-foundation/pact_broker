@@ -1,10 +1,31 @@
 require 'pact_broker/domain/version'
 
 module PactBroker
-
   module Domain
-
     describe Version do
+
+      describe "for_selector" do
+        let(:selector) { PactBroker::Matrix::UnresolvedSelector.new(tag: 'prod', latest: true) }
+
+        context "when selecting the latest prod versions without a pacticipant name" do
+          before do
+            td.create_consumer("Foo")
+              .create_consumer_version("1", tag_names: %w{prod})
+              .create_consumer_version("2", tag_names: %w{prod})
+              .create_consumer("Bar")
+              .create_consumer_version("10", tag_names: %w{prod})
+              .create_consumer_version("11", tag_names: %w{prod})
+          end
+
+          subject { Version.for_selector(selector) }
+
+          it "returns the latest prod version for each pacticipant" do
+            expect(subject.find{ |v| v.number == '2'}).to_not be nil
+            expect(subject.find{ |v| v.number == '11'}).to_not be nil
+          end
+        end
+      end
+
       describe "#latest_pact_publication" do
         let!(:pact) do
           TestDataBuilder.new
