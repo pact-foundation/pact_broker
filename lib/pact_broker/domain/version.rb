@@ -58,7 +58,7 @@ module PactBroker
             max_order_for_each_pacticipant = query.select_group(:pacticipant_id)
                  .select_append{ max(order).as(latest_version_order) }
 
-            Version.join(max_order_for_each_pacticipant, join, { table_alias: :latest })
+            join(max_order_for_each_pacticipant, join, { table_alias: :latest })
           else
             query
           end

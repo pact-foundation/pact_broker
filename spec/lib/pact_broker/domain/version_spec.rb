@@ -5,7 +5,7 @@ module PactBroker
     describe Version do
 
       describe "for_selector" do
-        let(:selector) { PactBroker::Matrix::UnresolvedSelector.new(tag: 'prod', latest: true) }
+        subject { Version.for_selector(selector).all }
 
         context "when selecting the latest prod versions without a pacticipant name" do
           before do
@@ -17,11 +17,31 @@ module PactBroker
               .create_consumer_version("11", tag_names: %w{prod})
           end
 
-          subject { Version.for_selector(selector) }
+          let(:selector) { PactBroker::Matrix::UnresolvedSelector.new(tag: 'prod', latest: true) }
 
           it "returns the latest prod version for each pacticipant" do
+            expect(subject.size).to eq 2
             expect(subject.find{ |v| v.number == '2'}).to_not be nil
             expect(subject.find{ |v| v.number == '11'}).to_not be nil
+          end
+        end
+
+        context "when selecting the latest prod versions without a pacticipant name" do
+          before do
+            td.create_consumer("Foo")
+              .create_consumer_version("1", tag_names: %w{prod})
+              .create_consumer_version("2", tag_names: %w{prod})
+              .create_consumer("Bar")
+              .create_consumer_version("10", tag_names: %w{prod})
+              .create_consumer_version("11", tag_names: %w{prod})
+          end
+
+          let(:selector) { PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: 'Foo', tag: 'prod', latest: true) }
+
+
+          it "returns the latest prod version for Foo" do
+            expect(subject.size).to eq 1
+            expect(subject.find{ |v| v.number == '2'}).to_not be nil
           end
         end
       end
