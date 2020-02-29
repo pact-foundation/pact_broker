@@ -43,6 +43,15 @@ module PactBroker
           PactBroker::Domain::Tag.where(version: self).delete
           super
         end
+
+        def find_for_selector(selector)
+          query = select_all_qualified
+          query = query.where_pacticipant_name(selector.pacticipant_name) if selector.pacticipant_name
+          query = query.where_tag(selector.tag) if selector.tag
+          query = query.where_number(selector.pacticipant_version_number) if selector.pacticipant_version_number
+          query = query.reverse_order(:order).limit(1) if selector.latest
+          versions = query.all
+        end
       end
 
       def after_create

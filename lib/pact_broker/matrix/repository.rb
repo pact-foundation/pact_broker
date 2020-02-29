@@ -140,9 +140,23 @@ module PactBroker
       def resolve_versions_and_add_ids(selectors, selector_type)
         selectors.collect do | selector |
           pacticipant = PactBroker::Domain::Pacticipant.find(name: selector.pacticipant_name)
-          versions = version_repository.find_versions_for_selector(selector)
+          versions = find_versions_for_selector(selector)
           build_resolved_selectors(pacticipant, versions, selector, selector_type)
         end.flatten
+      end
+
+      def find_versions_for_selector(selector)
+        # For selectors that just set the pacticipant name, there's no need to resolve the version -
+        # only the pacticipant ID will be used in the query
+        return nil unless (selector.tag || selector.latest || selector.pacticipant_version_number)
+
+        versions = version_repository.find_versions_for_selector(selector)
+
+        if selector.latest
+          [versions.first]
+        else
+          versions.empty? ? [nil] : versions
+        end
       end
 
       # When a single selector specifies multiple versions (eg. "all prod pacts"), this expands

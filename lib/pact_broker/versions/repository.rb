@@ -87,21 +87,7 @@ module PactBroker
       end
 
       def find_versions_for_selector(selector)
-        if selector.tag && selector.latest
-          version = find_by_pacticipant_name_and_latest_tag(selector.pacticipant_name, selector.tag)
-          [version]
-        elsif selector.latest
-          version = find_latest_by_pacticpant_name(selector.pacticipant_name)
-          [version]
-        elsif selector.tag
-          versions = find_by_pacticipant_name_and_tag(selector.pacticipant_name, selector.tag)
-          versions.any? ? versions : [nil]
-        elsif selector.pacticipant_version_number
-          version = find_by_pacticipant_name_and_number(selector.pacticipant_name, selector.pacticipant_version_number)
-          [version]
-        else
-          nil
-        end
+        PactBroker::Domain::Version.find_for_selector(selector)
       end
     end
   end
