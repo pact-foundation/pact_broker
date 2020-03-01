@@ -40,6 +40,14 @@ module PactBroker
       def pacticipant_version_number= pacticipant_version_number
         self[:pacticipant_version_number] = pacticipant_version_number
       end
+
+      def max_age= max_age
+        self[:max_age] = max_age
+      end
+
+      def max_age
+        self[:max_age]
+      end
     end
   end
 end

@@ -7,6 +7,14 @@ module PactBroker
       describe "for_selector" do
         subject { Version.for_selector(selector).all }
 
+        def find_version(number)
+          subject.find{ |v| v.number == number }
+        end
+
+        def version_numbers
+          subject.collect(&:number)
+        end
+
         context "when selecting the latest prod versions without a pacticipant name" do
           before do
             td.create_consumer("Foo")
@@ -20,13 +28,11 @@ module PactBroker
           let(:selector) { PactBroker::Matrix::UnresolvedSelector.new(tag: 'prod', latest: true) }
 
           it "returns the latest prod version for each pacticipant" do
-            expect(subject.size).to eq 2
-            expect(subject.find{ |v| v.number == '2'}).to_not be nil
-            expect(subject.find{ |v| v.number == '11'}).to_not be nil
+            expect(version_numbers).to eq %w{2 11}
           end
         end
 
-        context "when selecting the latest prod versions without a pacticipant name" do
+        context "when selecting the latest prod versions with a pacticipant name" do
           before do
             td.create_consumer("Foo")
               .create_consumer_version("1", tag_names: %w{prod})
@@ -40,8 +46,45 @@ module PactBroker
 
 
           it "returns the latest prod version for Foo" do
-            expect(subject.size).to eq 1
-            expect(subject.find{ |v| v.number == '2'}).to_not be nil
+            expect(version_numbers).to eq %w{2}
+          end
+        end
+
+        context "when selecting all prod versions without a pacticipant name" do
+          before do
+            td.create_consumer("Foo")
+              .create_consumer_version("1", tag_names: %w{prod})
+              .create_consumer_version("2", tag_names: %w{prod})
+              .create_consumer("Bar")
+              .create_consumer_version("10", tag_names: %w{prod})
+              .create_consumer_version("11", tag_names: %w{prod master})
+              .create_consumer_version("12", tag_names: %w{master})
+          end
+
+          let(:selector) { PactBroker::Matrix::UnresolvedSelector.new(tag: 'prod') }
+
+          it "selects all the production versions without a pacticipant name" do
+            expect(version_numbers).to eq %w{1 2 10 11}
+          end
+        end
+
+        context "when selecting all versions for a tag with max age" do
+          before do
+            td.set_now(four_days_ago)
+              .create_consumer("Foo")
+              .create_consumer_version("1", tag_names: %w{master})
+              .add_days(1)
+              .create_consumer_version("2", tag_names: %w{master})
+              .create_consumer_version("3", tag_names: %w{master})
+          end
+
+          let(:selector) { PactBroker::Matrix::UnresolvedSelector.new(tag: 'master', max_age: max_age) }
+
+          let(:max_age) { 3 }
+          let(:four_days_ago) { Date.today - 4 }
+
+          it "selects the consumer versions younger than the max age" do
+            expect(version_numbers.sort).to eq %w{2 3}
           end
         end
       end

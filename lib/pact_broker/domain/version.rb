@@ -39,6 +39,11 @@ module PactBroker
           where(name_like(:number, number))
         end
 
+        def where_age_less_than(days)
+          start_date = Date.today - days
+          where{ versions[:created_at] >= start_date }
+        end
+
         def delete
           PactBroker::Domain::Tag.where(version: self).delete
           super
@@ -49,19 +54,28 @@ module PactBroker
           query = query.where_pacticipant_name(selector.pacticipant_name) if selector.pacticipant_name
           query = query.where_tag(selector.tag) if selector.tag
           query = query.where_number(selector.pacticipant_version_number) if selector.pacticipant_version_number
+          query = query.where_age_less_than(selector.max_age) if selector.max_age
+
           if selector.latest
-            join = {
-              Sequel[:versions][:pacticipant_id] => Sequel[:latest][:pacticipant_id],
-              Sequel[:versions][:order] => Sequel[:latest][:latest_version_order]
-            }
-
-            max_order_for_each_pacticipant = query.select_group(:pacticipant_id)
-                 .select_append{ max(order).as(latest_version_order) }
-
-            join(max_order_for_each_pacticipant, join, { table_alias: :latest })
+            select_max_order_for_each_pacticipant_and_join_back_to_versions(query)
           else
             query
           end
+        end
+
+        # private
+
+        def select_max_order_for_each_pacticipant_and_join_back_to_versions(query)
+          join = {
+            Sequel[:versions][:pacticipant_id] => Sequel[:latest][:pacticipant_id],
+            Sequel[:versions][:order]          => Sequel[:latest][:latest_version_order]
+          }
+
+          max_order_for_each_pacticipant = query
+              .select_group(:pacticipant_id)
+              .select_append{ max(order).as(latest_version_order) }
+
+          join(max_order_for_each_pacticipant, join, table_alias: :latest)
         end
       end
 

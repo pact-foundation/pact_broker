@@ -150,6 +150,7 @@ module PactBroker
         params.delete(:comment)
         tag_names = [params.delete(:tag_names), params.delete(:tag_name)].flatten.compact
         @consumer_version = PactBroker::Domain::Version.create(:number => version_number, :pacticipant => @consumer)
+        set_created_at_if_set params[:created_at], :versions, { id: @consumer_version.id }
         tag_names.each do | tag_name |
           PactBroker::Domain::Tag.create(name: tag_name, version: @consumer_version)
         end
@@ -354,12 +355,27 @@ module PactBroker
       end
 
       def set_now date
-        @now = date
+        @now = date.to_date
         self
       end
 
       def add_day
         @now = @now + 1
+        self
+      end
+
+      def add_days(days = 1)
+        @now = @now + days
+        self
+      end
+
+      def subtract_day
+        @now = @now - 1
+        self
+      end
+
+      def subtract_days(days = 1)
+        @now = @now - days
         self
       end
 
