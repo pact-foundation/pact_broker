@@ -12,4 +12,4 @@ FROM
   ( SELECT name, 'tag-' || ROW_NUMBER () OVER (ORDER BY name) as redacted_name FROM (
     SELECT DISTINCT name FROM tags WHERE lower(name) NOT IN ('master', 'test', 'dev', 'prod', 'production') ORDER BY name
   ) as x) as temprow
-WHERE tags.name = temprow.name
+WHERE tags.name = temprow.name;
