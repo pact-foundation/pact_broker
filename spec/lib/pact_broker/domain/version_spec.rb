@@ -64,7 +64,7 @@ module PactBroker
           let(:selector) { PactBroker::Matrix::UnresolvedSelector.new(tag: 'prod') }
 
           it "selects all the production versions without a pacticipant name" do
-            expect(version_numbers.sort).to eq %w{1 2 10 11}
+            expect(version_numbers.sort).to eq %w{1 10 11 2}
           end
         end
 
