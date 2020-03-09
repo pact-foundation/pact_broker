@@ -27,11 +27,15 @@ module PactBroker
         end
 
         def where_tag(tag)
-          join(:tags) do | tags |
-            Sequel.&(
-              { Sequel[first_source_alias][:id] => Sequel[tags][:version_id] },
-              name_like(Sequel[tags][:name], tag)
-            )
+          if tag == true
+            join(:tags, Sequel[:tags][:version_id] => Sequel[first_source_alias][:id])
+          else
+            join(:tags) do | tags |
+              Sequel.&(
+                { Sequel[first_source_alias][:id] => Sequel[tags][:version_id] },
+                name_like(Sequel[tags][:name], tag)
+              )
+            end
           end
         end
 
@@ -57,7 +61,7 @@ module PactBroker
           query = query.where_age_less_than(selector.max_age) if selector.max_age
 
           if selector.latest
-            select_max_order_for_each_pacticipant_and_join_back_to_versions(query)
+            calculate_max_version_order_and_join_back_to_versions(query, selector)
           else
             query
           end
@@ -65,17 +69,19 @@ module PactBroker
 
         # private
 
-        def select_max_order_for_each_pacticipant_and_join_back_to_versions(query)
-          join = {
+        def calculate_max_version_order_and_join_back_to_versions(query, selector)
+          versions_join = {
             Sequel[:versions][:pacticipant_id] => Sequel[:latest][:pacticipant_id],
             Sequel[:versions][:order]          => Sequel[:latest][:latest_version_order]
           }
 
+          group_by_cols = selector.tag == true ? [:pacticipant_id, Sequel[:tags][:name]] : [:pacticipant_id]
+
           max_order_for_each_pacticipant = query
-              .select_group(:pacticipant_id)
+              .select_group(*group_by_cols)
               .select_append{ max(order).as(latest_version_order) }
 
-          join(max_order_for_each_pacticipant, join, table_alias: :latest)
+          join(max_order_for_each_pacticipant, versions_join, table_alias: :latest)
         end
       end
 

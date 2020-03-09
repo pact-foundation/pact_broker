@@ -3,7 +3,6 @@ require 'pact_broker/domain/version'
 module PactBroker
   module Domain
     describe Version do
-
       describe "for_selector" do
         subject { Version.for_selector(selector).all }
 
@@ -65,6 +64,60 @@ module PactBroker
 
           it "selects all the production versions without a pacticipant name" do
             expect(version_numbers.sort).to eq %w{1 10 11 2}
+          end
+        end
+
+        context "when selecting the latest version for each tag (head versions)" do
+          before do
+            td.create_consumer("Foo")
+              .create_consumer_version("1", tag_names: %w{prod})
+              .create_consumer_version("2", tag_names: %w{prod}).comment("yes")
+              .create_consumer_version("3", tag_names: %w{master})
+              .create_consumer_version("4", tag_names: %w{master}).comment("yes")
+              .create_consumer("Bar")
+              .create_consumer_version("10", tag_names: %w{prod})
+              .create_consumer_version("11", tag_names: %w{prod}).comment("yes")
+          end
+
+          let(:selector) { PactBroker::Matrix::UnresolvedSelector.new(tag: true, latest: true) }
+
+          it "selects the head versions for each tag" do
+            expect(version_numbers.sort).to eq %w{11 2 4}
+          end
+
+          context "when also specifying pacticipant name" do
+            let(:selector) { PactBroker::Matrix::UnresolvedSelector.new(tag: true, latest: true, pacticipant_name: "Foo") }
+
+            it "selects the head versions for each tag for the given pacticipant" do
+              expect(version_numbers.sort).to eq %w{2 4}
+            end
+          end
+        end
+
+        context "when selecting all tagged versions" do
+          before do
+            td.create_consumer("Foo")
+              .create_consumer_version("1", tag_names: %w{prod})
+              .create_consumer_version("2", tag_names: %w{prod})
+              .create_consumer_version("4", tag_names: %w{master})
+              .create_consumer_version("5")
+              .create_consumer("Bar")
+              .create_consumer_version("10", tag_names: %w{prod})
+              .create_consumer_version("11")
+          end
+
+          let(:selector) { PactBroker::Matrix::UnresolvedSelector.new(tag: true) }
+
+          it "selects every version with a tag" do
+            expect(version_numbers.sort).to eq %w{1 10 2 4}
+          end
+
+          context "when also specifying pacticipant name" do
+            let(:selector) { PactBroker::Matrix::UnresolvedSelector.new(tag: true, pacticipant_name: "Foo") }
+
+            it "selects every version with a tag for the given pacticipant" do
+              expect(version_numbers.sort).to eq %w{1 2 4}
+            end
           end
         end
 
