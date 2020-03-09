@@ -8,6 +8,13 @@ module PactBroker
       let(:bar) { PactBroker::Domain::Pacticipant.where(name: "Bar").single_record }
       let(:wiffle) { PactBroker::Domain::Pacticipant.where(name: "Wiffle").single_record }
 
+      describe "ALL_COLUMNS" do
+        it "has the same first column as QuickRow - this is required so that they both sort the same" do
+          expect(EveryRow::ALL_COLUMNS.first).to eq QuickRow::LAST_ACTION_DATE
+          expect(EveryRow::ALL_COLUMNS.first).to eq QuickRow::ALL_COLUMNS.first
+        end
+      end
+
       describe "matching_selectors" do
         before do
           td.create_pact_with_verification("Foo", "1", "Bar", "2")

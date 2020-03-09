@@ -15,7 +15,7 @@ module PactBroker
       # for the entire table, or whether it will apply the consumer/provider filters...
       # The quick and dirty solution is to do a pre-query to get the latest pact revision and latest
       # verifications for the pact versions before we do the matrix query.
-      describe "Querying for can-i-deploy when there are more matrix rows than the specified query limit" do
+      describe "querying for can-i-deploy when there are more matrix rows than the specified query limit" do
         before do
           td.create_consumer("Foo")
             .create_provider("Bar")
@@ -37,6 +37,40 @@ module PactBroker
 
         it "does not remove relevant rows from the query due to the specified limit" do
           expect(JSON.parse(subject.body)['summary']['deployable']).to be true
+        end
+      end
+
+      describe "querying for the UI when there is a bi-directional pact and there are more matrix rows for one direction than the specified query limit" do
+        before do
+          td.create_pact_with_verification("Foo", "1", "Bar", "2")
+            .create_pact_with_verification("Bar", "2", "Foo", "1")
+            .add_day
+            .create_pact_with_verification("Foo", "3", "Bar", "4")
+            .create_pact_with_verification("Bar", "4", "Foo", "3")
+            .add_day
+            .create_pact_with_verification("Foo", "5", "Bar", "6")
+            .create_pact_with_verification("Bar", "6", "Foo", "5")
+        end
+        let(:selectors) do
+          [
+            UnresolvedSelector.new(pacticipant_name: 'Foo'),
+            UnresolvedSelector.new(pacticipant_name: 'Bar')
+          ]
+        end
+        let(:options) { { limit: 4 } }
+
+        subject { Repository.new.find(selectors, options) }
+
+        it "includes rows from each direction" do
+          expect(subject.count{ |r| r.consumer_name == 'Foo' }).to eq (subject.count{ |r| r.consumer_name == 'Bar' })
+        end
+
+        context "when where is a latestby" do
+          let(:options) { { limit: 4, latestby: 'cvpv'} }
+
+          it "includes rows from each direction" do
+            expect(subject.count{ |r| r.consumer_name == 'Foo' }).to eq (subject.count{ |r| r.consumer_name == 'Bar' })
+          end
         end
       end
     end

@@ -8,7 +8,9 @@ $LOAD_PATH.unshift './tasks'
 ENV['RACK_ENV'] = 'development'
 require 'sequel'
 require 'logger'
-DATABASE_CREDENTIALS = {logger: Logger.new($stdout), adapter: "sqlite", database: ARGV[0], :encoding => 'utf8'}.tap { |it| puts it }
+logger = Logger.new($stdout)
+logger = Logger.new(StringIO.new)
+DATABASE_CREDENTIALS = {logger: logger, adapter: "sqlite", database: ARGV[0], :encoding => 'utf8'}.tap { |it| puts it }
 #DATABASE_CREDENTIALS = {adapter: "postgres", database: "pact_broker", username: 'pact_broker', password: 'pact_broker', :encoding => 'utf8'}
 
 connection = Sequel.connect(DATABASE_CREDENTIALS)
@@ -42,6 +44,8 @@ webhook_body = {
   'githubVerificationStatus' => '${pactbroker.githubVerificationStatus}'
 }
 
+PactBroker.configuration.base_equality_only_on_content_that_affects_verification_results = false
+
   # .create_global_webhook(
   #   method: 'POST',
   #   url: "http://localhost:9292/pact-changed-webhook",
@@ -53,6 +57,16 @@ TestDataBuilder.new
     method: 'POST',
     url: "http://localhost:9292/verification-published-webhook",
     body: webhook_body.to_json)
+  .set_now(Date.today - 101)
+  .tap{ | it |
+    100.times do | i |
+      it.create_pact_with_verification("Foo", i.to_s, "Bar", i.to_s)
+      .create_pact_with_verification("Bar", i.to_s, "Foo", i.to_s)
+      .add_day
+    end
+  }.create_pact_with_hierarchy("Foo", "100", "Bar")
+
+
   # .create_certificate(path: 'spec/fixtures/certificates/self-signed.badssl.com.pem')
   # .create_consumer("Bethtest")
   # .create_verification_webhook(method: 'GET', url: "http://localhost:9292", body: webhook_body, username: "foo", password: "bar", headers: {"Accept" => "application/json"})

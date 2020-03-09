@@ -38,8 +38,7 @@ module PactBroker
         describe "latest_pact_or_verification_publication_date" do
           context "when the last publication is a verification" do
             it "returns the verification execution date" do
-              date = td.in_utc { DateTime.new(2019, 1, 4) }
-              expect(Integration.first.latest_pact_or_verification_publication_date.to_datetime).to eq date
+              expect(Integration.first.latest_pact_or_verification_publication_date.to_datetime).to eq Integration.first.latest_verification_publication_date
             end
           end
 

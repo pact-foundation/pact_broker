@@ -36,16 +36,7 @@ module PactBroker
         let(:base_url) { 'http://example.org' }
         let(:options) { { user_options: { base_url: base_url } } }
         let(:dashboard_json) { DashboardDecorator.new([index_item]).to_json(options) }
-        let(:created_at) { in_utc { DateTime.new(2018) } }
-
-        def in_utc
-          begin
-            ENV['TZ'] = 'UTC'
-            yield
-          ensure
-            ENV['TZ'] = ORIGINAL_TZ
-          end
-        end
+        let(:created_at) { td.in_utc { DateTime.new(2018) } }
 
         before do
           allow_any_instance_of(DashboardDecorator).to receive(:pact_url).with(base_url, pact).and_return('pact_url')

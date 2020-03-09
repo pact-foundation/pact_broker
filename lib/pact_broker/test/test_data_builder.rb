@@ -211,8 +211,8 @@ module PactBroker
           pact_version_sha: pact_version_sha,
           json_content: prepare_json_content(json_content),
         )
-        set_created_at_if_set params[:created_at], :pact_publications, {id: @pact.id}
-        set_created_at_if_set params[:created_at], :pact_versions, {sha: @pact.pact_version_sha}
+        set_created_at_if_set(params[:created_at], :pact_publications, id: @pact.id)
+        set_created_at_if_set(params[:created_at], :pact_versions, sha: @pact.pact_version_sha)
         @pact = PactBroker::Pacts::PactPublication.find(id: @pact.id).to_domain
         self
       end
@@ -320,9 +320,13 @@ module PactBroker
         @verification = PactBroker::Verifications::Repository.new.create(verification, provider_version_number, @pact)
         @provider_version = PactBroker::Domain::Version.where(pacticipant_id: @provider.id, number: provider_version_number).single_record
 
+        set_created_at_if_set(parameters[:created_at], :verifications, id: @verification.id)
+        set_created_at_if_set(parameters[:created_at], :versions, id: @provider_version.id)
+
         if tag_names.any?
           tag_names.each do | tag_name |
             PactBroker::Domain::Tag.create(name: tag_name, version: @provider_version)
+            set_created_at_if_set(parameters[:created_at], :tags, version_id: @provider_version.id, name: tag_name)
           end
         end
         self

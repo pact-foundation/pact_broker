@@ -59,8 +59,11 @@ module PactBroker
       VERIFICATION_COLUMNS = [
         Sequel[:v][:verification_id]
       ]
-      ALL_COLUMNS = CONSUMER_COLUMNS + CONSUMER_VERSION_COLUMNS + PACT_COLUMNS +
+      LAST_ACTION_DATE = Sequel.lit("CASE WHEN (pv.created_at IS NOT NULL AND pv.created_at > cv.created_at) THEN pv.created_at ELSE cv.created_at END").as(:last_action_date)
+
+      ALL_COLUMNS = [LAST_ACTION_DATE] + CONSUMER_COLUMNS + CONSUMER_VERSION_COLUMNS + PACT_COLUMNS +
                     PROVIDER_COLUMNS + PROVIDER_VERSION_COLUMNS + VERIFICATION_COLUMNS
+
 
 
       # cachable select arguments
@@ -125,6 +128,10 @@ module PactBroker
             Sequel.asc(:provider_name),
             Sequel.desc(:provider_version_order),
             Sequel.desc(:verification_id))
+        end
+
+        def order_by_last_action_date
+          order(Sequel.desc(1), Sequel.desc(:consumer_version_order))
         end
 
         def eager_all_the_things
@@ -374,6 +381,10 @@ module PactBroker
 
       def provider_version_order
         return_or_raise_if_not_set(:provider_version_order)
+      end
+
+      def last_action_date
+        return_or_raise_if_not_set(:last_action_date)
       end
 
       def has_verification?

@@ -119,7 +119,7 @@ module PactBroker
         # that don't have verifications, so we need to include them all.
         lines.group_by{|line| group_by_columns.collect{|key| line.send(key) }}
           .values
-          .collect{ | lines | lines.first.provider_version_number.nil? ? lines : lines.first }
+          .collect{ | lines | lines.first.provider_version_number.nil? ? lines : lines.sort_by(&:provider_version_order).last }
           .flatten
       end
 
@@ -127,7 +127,17 @@ module PactBroker
         query = base_model(options)
                   .select_all_columns
                   .matching_selectors(selectors)
-                  .order_by_names_ascending_most_recent_first
+
+        # These two could both probably use the order by last action date,
+        # but I just want to give the implications a little more thought before changing
+        # the can-i-deploy query order.
+        if selectors.all?(&:only_pacticipant_name_specified?)
+          # Can only be the UI, as can-i-deploy requires a version to be specified
+          query = query.order_by_last_action_date
+        else
+          query = query.order_by_names_ascending_most_recent_first
+        end
+
         query = query.limit(options[:limit]) if options[:limit]
         query.eager_all_the_things.all
       end
