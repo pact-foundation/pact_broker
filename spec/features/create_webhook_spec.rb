@@ -108,8 +108,19 @@ describe "Creating a webhook" do
   context "with a UUID" do
     let(:path) { "/webhooks/1234123412341234" }
 
+    before do
+      webhook_hash[:provider] = { name: "Some Provider" }
+      webhook_hash[:consumer] = { name: "Some Consumer" }
+    end
+
     subject { put(path, webhook_json, headers) }
 
     its(:status) { is_expected.to be 201 }
+
+    it "is expected to have a consumer and provider" do
+      subject
+      expect(PactBroker::Webhooks::Webhook.first.consumer).to_not be nil
+      expect(PactBroker::Webhooks::Webhook.first.provider).to_not be nil
+    end
   end
 end

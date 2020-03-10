@@ -4,8 +4,6 @@ require 'pact_broker/webhooks/repository'
 module PactBroker
   module Webhooks
     describe Repository do
-
-      let(:td) { TestDataBuilder.new }
       let(:url) { 'http://example.org' }
       let(:body) { {'some' => 'json' } }
       let(:headers) { {'Content-Type' => 'application/json', 'Accept' => 'application/json'} }
@@ -22,9 +20,9 @@ module PactBroker
         PactBroker::Webhooks::WebhookEvent.new(name: 'something_happened')
       end
       let(:events) { [event]}
-      let(:webhook) { Domain::Webhook.new(request: request, events: events)}
-      let(:consumer) { td.create_pacticipant 'Consumer'; td.pacticipant}
-      let(:provider) { td.create_pacticipant 'Provider'; td.pacticipant}
+      let(:webhook) { Domain::Webhook.new(request: request, events: events) }
+      let(:consumer) { td.create_pacticipant('Consumer').and_return(:pacticipant) }
+      let(:provider) { td.create_pacticipant('Provider').and_return(:pacticipant) }
       let(:uuid) { 'the-uuid' }
       let(:created_webhook_record) { ::DB::PACT_BROKER_DB[:webhooks].order(:id).last }
       let(:created_events) { ::DB::PACT_BROKER_DB[:webhook_events].where(webhook_id: created_webhook_record[:id]).order(:name).all }
@@ -57,10 +55,20 @@ module PactBroker
         it "saves the webhook events" do
           expect(subject.events.first[:name]).to eq "something_happened"
         end
+
+        context "when consumer and provider domain objects are set on the object rather than passed in" do
+          let(:webhook) { Domain::Webhook.new(request: request, events: events, consumer: consumer, provider: provider) }
+
+          subject { Repository.new.create(uuid, webhook, nil, nil) }
+
+          it "sets the consumer and provider relationships" do
+            expect(subject.consumer.id).to eq consumer.id
+            expect(subject.provider.id).to eq provider.id
+          end
+        end
       end
 
       describe "delete_by_uuid" do
-
         before do
           Repository.new.create uuid, webhook, consumer, provider
           Repository.new.create 'another-uuid', webhook, consumer, provider
