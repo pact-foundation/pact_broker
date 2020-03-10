@@ -21,6 +21,10 @@ test:
   mysql:
     <<: *default
     adapter: mysql2
+  docker_compose_mysql:
+    <<: *default
+    adapter: mysql2
+    host: mysql
   docker_mysql:
     <<: *default
     adapter: mysql2
