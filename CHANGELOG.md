@@ -1,3 +1,22 @@
+<a name="v2.51.0"></a>
+### v2.51.0 (2020-03-11)
+
+
+#### Features
+
+* **clean**
+  * all the latest version for all tags to be kept	 ([9ff7bbec](/../../commit/9ff7bbec))
+  * allow a maximum age to be specified for the versions to keep	 ([bc457492](/../../commit/bc457492))
+  * support specifying which versions to keep using selectors	 ([a06899eb](/../../commit/a06899eb))
+
+
+#### Bug Fixes
+
+* set consumer and provider relationships when a webhook is created and consumer/provider are set in the body of the request rather than the URL	 ([5ccdd31c](/../../commit/5ccdd31c))
+* sort matrix rows by last action date	 ([f625c9ad](/../../commit/f625c9ad))
+* gracefully handle badge redirects when the pact is not found	 ([2da36574](/../../commit/2da36574))
+
+
 <a name="v2.50.1"></a>
 ### v2.50.1 (2020-02-27)
 
