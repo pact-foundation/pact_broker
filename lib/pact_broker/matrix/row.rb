@@ -5,6 +5,8 @@ require 'pact_broker/logging'
 require 'pact_broker/verifications/latest_verification_for_consumer_version_tag'
 require 'pact_broker/verifications/latest_verification_for_consumer_and_provider'
 
+# TODO DELETE THIS!!!
+
 module PactBroker
   module Matrix
     class Row < Sequel::Model(:matrix)
