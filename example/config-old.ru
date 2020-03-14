@@ -10,22 +10,6 @@ ENV['RACK_ENV'] ||= 'production'
 # It is highly recommended to set the encoding to utf8
 DATABASE_CREDENTIALS = {adapter: "sqlite", database: "pact_broker_database.sqlite3", :encoding => 'utf8'}
 
-begin
-# Hacky fix to let us get the text/plain version of the matrix
-require 'rack/pact_broker/request_target'
-
-module Rack
-  module PactBroker
-    module RequestTarget
-      API_CONTENT_TYPES = %w[application/hal+json application/json text/csv application/yaml text/plain].freeze
-    end
-  end
-end
-
-rescue LoadError => e
-  # old version
-end
-
 # For postgres:
 #
 # $ psql postgres -c "CREATE DATABASE pact_broker;"
@@ -43,7 +27,7 @@ app = PactBroker::App.new do | config |
   # change these from their default values if desired
   # config.log_dir = "./log"
   # config.auto_migrate_db = true
-  config.database_connection = Sequel.connect(DATABASE_CREDENTIALS.merge(:logger => PactBroker::DB::LogQuietener.new(config.logger)))
+  config.database_connection = Sequel.connect(DATABASE_CREDENTIALS.merge(:logger => config.logger))
 end
 
 run app
