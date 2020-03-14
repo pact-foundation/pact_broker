@@ -8,7 +8,11 @@ ENV['RACK_ENV'] ||= 'production'
 
 # Create a real database, and set the credentials for it here
 # It is highly recommended to set the encoding to utf8
-DATABASE_CREDENTIALS = {adapter: "sqlite", database: "pact_broker_database.sqlite3", :encoding => 'utf8'}
+DATABASE_CREDENTIALS = {
+  adapter: ENV.fetch('DATABASE_ADAPTER', 'sqlite'),
+  database: ENV.fetch('DATABASE_NAME', 'pact_broker_database.sqlite3'),
+  encoding: 'utf8'
+}
 
 begin
 # Hacky fix to let us get the text/plain version of the matrix

@@ -6,7 +6,7 @@ bundle install >/dev/null 2>&1
 bundle exec rackup -p 9292 &
 pid=$!
 
-sleep 5
+while [ "200" -ne "$(curl -s -o /dev/null  -w "%{http_code}" localhost:9292)" ]; do sleep 0.5; done
 
 curl -X PUT \-H "Content-Type: application/json" -s -d@pact-1.json \
   http://localhost:9292/pacts/provider/Bar/consumer/Foo/version/125 >/dev/null 2>&1
