@@ -11,6 +11,7 @@ env:
     - DATABASE_ADAPTER=postgres DATABASE_NAME=pact_broker
 before_script:
   - psql -U postgres -c "CREATE DATABASE pact_broker;"
+  - gem install bundler
 script:
   - example/issue-old.sh
   - example/issue-new.sh
