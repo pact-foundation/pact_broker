@@ -1,0 +1,22 @@
+{
+  "consumer": {
+    "name": "Foo"
+  },
+  "provider": {
+    "name": "Bar"
+  },
+  "interactions": [
+    {
+      "description": "a request for something",
+      "providerState": null,
+      "request": {
+        "method": "get",
+        "path": "/something"
+      },
+      "response": {
+        "status": 200,
+        "body": "something2"
+      }
+    }
+  ]
+}

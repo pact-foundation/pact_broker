@@ -10,6 +10,17 @@ ENV['RACK_ENV'] ||= 'production'
 # It is highly recommended to set the encoding to utf8
 DATABASE_CREDENTIALS = {adapter: "sqlite", database: "pact_broker_database.sqlite3", :encoding => 'utf8'}
 
+# Hacky fix to let us get the text/plain version of the matrix
+require 'rack/pact_broker/request_target'
+
+module Rack
+  module PactBroker
+    module RequestTarget
+      API_CONTENT_TYPES = %w[application/hal+json application/json text/csv application/yaml text/plain].freeze
+    end
+  end
+end
+
 # For postgres:
 #
 # $ psql postgres -c "CREATE DATABASE pact_broker;"
