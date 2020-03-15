@@ -158,7 +158,7 @@ module PactBroker
           join_verifications
             .join_pacticipants_and_pacticipant_versions
             .where {
-              QueryBuilder.consumer_or_consumer_version_or_provider_or_provider_or_provider_version_match(QueryIds.from_selectors(selectors))
+              QueryBuilder.consumer_or_consumer_version_or_provider_or_provider_or_provider_version_match(QueryIds.from_selectors(selectors), :p, :v)
             }
         end
 

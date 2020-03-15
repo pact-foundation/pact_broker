@@ -1,16 +1,16 @@
 module PactBroker
   module Matrix
     class QueryBuilder
-      def self.provider_or_provider_version_matches(query_ids, qualifier = nil)
-        Sequel.|(*provider_or_provider_version_criteria(query_ids, qualifier))
+      def self.provider_or_provider_version_matches(query_ids, verifications_qualifier = nil)
+        Sequel.|(*provider_or_provider_version_criteria(query_ids, verifications_qualifier))
       end
 
-      def self.provider_or_provider_version_matches_or_pact_unverified(query_ids, qualifier = nil)
-        ors = provider_or_provider_version_criteria(query_ids, qualifier)
+      def self.provider_or_provider_version_matches_or_pact_unverified(query_ids, verifications_qualifier = nil)
+        ors = provider_or_provider_version_criteria(query_ids, verifications_qualifier)
 
         ors << {
           qualify(:p, :provider_id) => query_ids.all_pacticipant_ids,
-          qualify(qualifier, :provider_version_id) => nil
+          qualify(verifications_qualifier, :provider_version_id) => nil
         }
         Sequel.|(*ors)
       end
@@ -50,16 +50,16 @@ module PactBroker
       end
 
       # QueryIds is built from a single selector, so there is only one pacticipant_id or pacticipant_version_id
-      def self.consumer_or_consumer_version_or_provider_or_provider_or_provider_version_match(query_ids)
+      def self.consumer_or_consumer_version_or_provider_or_provider_or_provider_version_match(query_ids, pacts_qualifier = :p, verifications_qualifier = :v)
         ors = if query_ids.pacticipant_version_id
           [
-            { Sequel[:p][:consumer_version_id] => query_ids.pacticipant_version_id },
-            { Sequel[:v][:provider_version_id] => query_ids.pacticipant_version_id }
+            { Sequel[pacts_qualifier][:consumer_version_id] => query_ids.pacticipant_version_id },
+            { Sequel[verifications_qualifier][:provider_version_id] => query_ids.pacticipant_version_id }
           ]
         else
           [
-            { Sequel[:p][:consumer_id] => query_ids.pacticipant_id },
-            { Sequel[:p][:provider_id] => query_ids.pacticipant_id }
+            { Sequel[pacts_qualifier][:consumer_id] => query_ids.pacticipant_id },
+            { Sequel[pacts_qualifier][:provider_id] => query_ids.pacticipant_id }
           ]
         end
 
