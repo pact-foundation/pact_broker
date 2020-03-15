@@ -2,12 +2,23 @@ require 'pact_broker/matrix/query_results'
 
 module PactBroker
   module Matrix
-    class QueryResultsWithDeploymentStatusSummary < QueryResults
-      attr_reader :deployment_status_summary
+    class QueryResultsWithDeploymentStatusSummary
+      extend Forwardable
 
-      def initialize rows, selectors, options, resolved_selectors, integrations, deployment_status_summary
-        super(rows, selectors, options, resolved_selectors, integrations)
+      attr_reader :query_results, :deployment_status_summary
+
+      delegate [:selectors, :options, :resolved_selectors, :integrations] => :query_results
+      delegate (Array.instance_methods - Object.instance_methods) => :rows
+      delegate [:deployable?] => :deployment_status_summary
+
+
+      def initialize query_results, deployment_status_summary
+        @query_results = query_results
         @deployment_status_summary = deployment_status_summary
+      end
+
+      def rows
+        query_results.rows
       end
     end
   end

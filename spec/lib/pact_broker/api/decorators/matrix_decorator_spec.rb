@@ -135,7 +135,16 @@ module PactBroker
             ]
           end
 
-          let(:query_results){ PactBroker::Matrix::QueryResultsWithDeploymentStatusSummary.new([row_1, row_2], selectors, options, resolved_selectors, integrations, deployment_status_summary)}
+          let(:query_results) do
+            double('QueryResults',
+              rows: [row_1, row_2],
+              selectors: selectors,
+              options: options,
+              resolved_selectors: resolved_selectors,
+              integrations: integrations
+            )
+          end
+          let(:query_results_with_deployment_status_summary){ PactBroker::Matrix::QueryResultsWithDeploymentStatusSummary.new(query_results, deployment_status_summary)}
           let(:selectors) { nil }
           let(:integrations){ [] }
           let(:options) { nil }
@@ -145,7 +154,7 @@ module PactBroker
             instance_double('PactBroker::Matrix::DeploymentStatusSummary', reasons: ['foo', 'bar'], deployable?: deployable, counts: counts)
           end
           let(:deployable) { true }
-          let(:json) { MatrixDecorator.new(query_results).to_json(user_options: { base_url: 'http://example.org' }) }
+          let(:json) { MatrixDecorator.new(query_results_with_deployment_status_summary).to_json(user_options: { base_url: 'http://example.org' }) }
           let(:parsed_json) { JSON.parse(json, symbolize_names: true) }
 
           it "includes the consumer details" do

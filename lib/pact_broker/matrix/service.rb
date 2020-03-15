@@ -13,7 +13,7 @@ module PactBroker
       def find selectors, options = {}
         query_results = matrix_repository.find selectors, options
         deployment_status_summary = DeploymentStatusSummary.new(query_results.rows, query_results.resolved_selectors, query_results.integrations)
-        QueryResultsWithDeploymentStatusSummary.new(query_results.rows, query_results.selectors, query_results.options, query_results.resolved_selectors, query_results.integrations, deployment_status_summary)
+        QueryResultsWithDeploymentStatusSummary.new(query_results, deployment_status_summary)
       end
 
       def find_for_consumer_and_provider params, options = {}
