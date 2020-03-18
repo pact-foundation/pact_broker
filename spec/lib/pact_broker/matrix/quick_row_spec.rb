@@ -38,20 +38,20 @@ module PactBroker
           before do
             td.create_consumer("Foo")
               .create_provider("Bar")
-              .create_consumer_version("10", created_at: cv_created_at_1)
-              .create_pact
-              .create_verification(provider_version: "2", created_at: pv_created_at)
-              .create_consumer_version("3", created_at: cv_created_at_2)
-              .create_pact
-              .create_verification(provider_version: "2")
+              .create_consumer_version("10")
+              .create_pact(created_at: day_1)
+              .create_verification(provider_version: "2", created_at: day_3)
+              .create_consumer_version("3")
+              .create_pact(created_at: day_2)
+              .create_verification(provider_version: "2", created_at: day_3)
           end
 
-          let(:cv_created_at_1) { DateTime.now + 1  }
-          let(:cv_created_at_2) { DateTime.now + 2  }
-          let(:pv_created_at) { DateTime.now + 3  }
+          let(:day_1) { DateTime.now + 1  }
+          let(:day_2) { DateTime.now + 2  }
+          let(:day_3) { DateTime.now + 3  }
 
-
-          it "orders by the consumer version" do
+          it "orders by the pact publication id desc" do
+            expect(subject.first.last_action_date).to eq subject.last.last_action_date
             expect(subject.first.consumer_version_number).to eq "3"
             expect(subject.last.consumer_version_number).to eq "10"
           end

@@ -19,6 +19,8 @@ module PactBroker
         DataMigrations::SetLatestVersionSequenceValue.call(database_connection)
         DataMigrations::SetWebhooksEnabled.call(database_connection)
         DataMigrations::DeleteDeprecatedWebhookExecutions.call(database_connection)
+        DataMigrations::SetCreatedAtForLatestPactPublications.call(database_connection)
+        DataMigrations::SetCreatedAtForLatestVerifications.call(database_connection)
       end
     end
   end

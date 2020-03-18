@@ -124,19 +124,9 @@ module PactBroker
       end
 
       def query_matrix selectors, options
-        query = base_model(options)
-                  .select_all_columns
+        query = base_model(options).select_all_columns
                   .matching_selectors(selectors)
-
-        # These two could both probably use the order by last action date,
-        # but I just want to give the implications a little more thought before changing
-        # the can-i-deploy query order.
-        if selectors.all?(&:only_pacticipant_name_specified?)
-          # Can only be the UI, as can-i-deploy requires a version to be specified
-          query = query.order_by_last_action_date
-        else
-          query = query.order_by_names_ascending_most_recent_first
-        end
+                  .order_by_last_action_date
 
         query = query.limit(options[:limit]) if options[:limit]
         query.eager_all_the_things.all

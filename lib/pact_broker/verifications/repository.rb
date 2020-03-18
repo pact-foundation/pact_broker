@@ -43,7 +43,8 @@ module PactBroker
           provider_version_id: verification.provider_version_id,
           provider_id: verification.provider_version.pacticipant_id,
           verification_id: verification.id,
-          consumer_id: verification.consumer_id
+          consumer_id: verification.consumer_id,
+          created_at: verification.created_at
         }
         LatestVerificationIdForPactVersionAndProviderVersion.new(params).upsert
       end

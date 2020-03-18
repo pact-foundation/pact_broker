@@ -53,6 +53,15 @@ module PactBroker
           expect(subject.created_at).to be_datey
         end
 
+        it "creates a LatestPactPublicationIdForConsumerVersion" do
+          expect{ subject }.to change { LatestPactPublicationIdForConsumerVersion.count }.by(1)
+        end
+
+        it "sets the created_at of the LatestPactPublicationIdForConsumerVersion to the same as the consumer version, because that's how pacts are ordered" do
+          subject
+          expect(LatestPactPublicationIdForConsumerVersion.first.created_at).to eq PactBroker::Domain::Version.find(number: subject.consumer_version_number).created_at
+        end
+
         context "when a pact already exists with exactly the same content" do
           let(:another_version) { Versions::Repository.new.create number: '2.0.0', pacticipant_id: consumer.id }
 

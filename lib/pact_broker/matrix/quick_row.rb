@@ -31,39 +31,23 @@ module PactBroker
       CONSUMER_VERSION_JOIN = { Sequel[:p][:consumer_version_id] => Sequel[:cv][:id] }
       PROVIDER_VERSION_JOIN = { Sequel[:v][:provider_version_id] => Sequel[:pv][:id] }
 
-      # Not sure why we're eager loading some things and including others in the base query :shrug:
-
-      # Columns
-      CONSUMER_COLUMNS = [
-        Sequel[:p][:consumer_id],
-        Sequel[:consumers][:name].as(:consumer_name)
-      ]
-      PROVIDER_COLUMNS = [
-        Sequel[:p][:provider_id],
-        Sequel[:providers][:name].as(:provider_name)
-      ]
-      CONSUMER_VERSION_COLUMNS = [
-        Sequel[:p][:consumer_version_id],
-        Sequel[:cv][:number].as(:consumer_version_number),
-        Sequel[:cv][:order].as(:consumer_version_order)
-      ]
-      PROVIDER_VERSION_COLUMNS = [
-        Sequel[:v][:provider_version_id],
-        Sequel[:pv][:number].as(:provider_version_number),
-        Sequel[:pv][:order].as(:provider_version_order)
-      ]
       PACT_COLUMNS = [
+        Sequel[:p][:consumer_id],
+        Sequel[:p][:provider_id],
+        Sequel[:p][:consumer_version_id],
         Sequel[:p][:pact_publication_id],
-        Sequel[:p][:pact_version_id]
+        Sequel[:p][:pact_version_id],
+        Sequel[:p][:created_at].as(:consumer_version_created_at),
+        Sequel[:p][:pact_publication_id].as(:pact_order)
       ]
       VERIFICATION_COLUMNS = [
-        Sequel[:v][:verification_id]
+        Sequel[:v][:provider_version_id],
+        Sequel[:v][:verification_id],
+        Sequel[:v][:created_at].as(:provider_version_created_at)
       ]
-      LAST_ACTION_DATE = Sequel.lit("CASE WHEN (pv.created_at IS NOT NULL AND pv.created_at > cv.created_at) THEN pv.created_at ELSE cv.created_at END").as(:last_action_date)
+      LAST_ACTION_DATE = Sequel.lit("CASE WHEN (provider_version_created_at IS NOT NULL AND provider_version_created_at > consumer_version_created_at) THEN provider_version_created_at ELSE consumer_version_created_at END").as(:last_action_date)
 
-      ALL_COLUMNS = [LAST_ACTION_DATE] + CONSUMER_COLUMNS + CONSUMER_VERSION_COLUMNS + PACT_COLUMNS +
-                    PROVIDER_COLUMNS + PROVIDER_VERSION_COLUMNS + VERIFICATION_COLUMNS
-
+      ALL_COLUMNS = PACT_COLUMNS + VERIFICATION_COLUMNS
 
 
       # cachable select arguments
@@ -90,14 +74,15 @@ module PactBroker
           query = if selectors.size == 1
             pacticipant_ids_matching_one_selector_optimised(selectors)
           else
+            query = select_pacticipant_ids.distinct
             if infer_integrations
-              select_pacticipant_ids
-                .distinct
-                .matching_any_of_multiple_selectors(selectors)
+              query.matching_any_of_multiple_selectors(selectors)
             else
-              select_pacticipant_ids
-                .distinct
-                .matching_multiple_selectors(selectors)
+              if selectors.all?(&:only_pacticipant_name_specified?)
+                query.matching_multiple_selectors_without_joining_verifications(selectors)
+              else
+                query.matching_multiple_selectors_joining_verifications(selectors)
+              end
             end
           end
 
@@ -116,22 +101,16 @@ module PactBroker
           if selectors.size == 1
             matching_one_selector(selectors)
           else
-            matching_multiple_selectors(selectors)
+            matching_multiple_selectors_joining_verifications(selectors)
           end
         end
 
-        def order_by_names_ascending_most_recent_first
-          from_self.
-          order(
-            Sequel.asc(:consumer_name),
-            Sequel.desc(:consumer_version_order),
-            Sequel.asc(:provider_name),
-            Sequel.desc(:provider_version_order),
-            Sequel.desc(:verification_id))
+        def order_by_last_action_date
+          from_self(alias: :unordered_rows).select(LAST_ACTION_DATE, Sequel[:unordered_rows].* ).order(Sequel.desc(:last_action_date), Sequel.desc(:pact_order), Sequel.desc(:verification_id))
         end
 
-        def order_by_last_action_date
-          order(Sequel.desc(1), Sequel.desc(:consumer_version_order))
+        def order_by_pact_publication_created_at
+          order(Sequel.desc(:consumer_version_created_at), Sequel.desc(:pact_order))
         end
 
         def eager_all_the_things
@@ -147,7 +126,7 @@ module PactBroker
         end
 
         def default_scope
-          select_all_columns.join_verifications.join_pacticipants_and_pacticipant_versions.from_self
+          select_all_columns.join_verifications.from_self
         end
 
         # PRIVATE METHODS
@@ -156,7 +135,6 @@ module PactBroker
         # what integrations exist
         def matching_one_selector(selectors)
           join_verifications
-            .join_pacticipants_and_pacticipant_versions
             .where {
               QueryBuilder.consumer_or_consumer_version_or_provider_or_provider_or_provider_version_match(QueryIds.from_selectors(selectors), :p, :v)
             }
@@ -181,7 +159,7 @@ module PactBroker
             .distinct
             .inner_join_verifications
             .where {
-              QueryBuilder.provider_or_provider_version_matches(query_ids, :v)
+              QueryBuilder.provider_or_provider_version_matches(query_ids, :v, :v)
             }
         end
 
@@ -194,28 +172,41 @@ module PactBroker
         # Instead, we need to filter the verifications dataset down to only the ones specified in the selectors first,
         # and THEN join them to the pacts, so that we get a row for the pact with null provider version
         # and verification fields.
-        def matching_multiple_selectors(selectors)
+
+        def matching_multiple_selectors_joining_verifications(selectors)
           query_ids = QueryIds.from_selectors(selectors)
           join_verifications_for(query_ids)
-            .join_pacticipants_and_pacticipant_versions
             .where {
               Sequel.&(
                 QueryBuilder.consumer_or_consumer_version_matches(query_ids, :p),
-                QueryBuilder.provider_or_provider_version_matches_or_pact_unverified(query_ids, :v),
+                QueryBuilder.provider_or_provider_version_matches_or_pact_unverified(query_ids, :v, :p),
                 QueryBuilder.either_consumer_or_provider_was_specified_in_query(query_ids, :p)
               )
             }
         end
 
+        def matching_multiple_selectors_without_joining_verifications(selectors)
+          # There are no versions specified in these selectors, so we can do the whole
+          # query based on the consumer/provider IDs, which we have in the pact_publication
+          # table without having to do a join.
+          query_ids = QueryIds.from_selectors(selectors)
+          where {
+            Sequel.&(
+              QueryBuilder.consumer_or_consumer_version_matches(query_ids, :p),
+              QueryBuilder.provider_matches(query_ids, :p),
+              QueryBuilder.either_consumer_or_provider_was_specified_in_query(query_ids, :p)
+            )
+          }
+        end
+
         def matching_any_of_multiple_selectors(selectors)
           query_ids = QueryIds.from_selectors(selectors)
           join_verifications_for(query_ids)
-            .join_pacticipants_and_pacticipant_versions
             .where {
               Sequel.&(
                 Sequel.|(
                   QueryBuilder.consumer_or_consumer_version_matches(query_ids, :p),
-                  QueryBuilder.provider_or_provider_version_matches_or_pact_unverified(query_ids, :v),
+                  QueryBuilder.provider_or_provider_version_matches_or_pact_unverified(query_ids, :v, :p),
                 ),
                 QueryBuilder.either_consumer_or_provider_was_specified_in_query(query_ids, :p)
               )
@@ -228,20 +219,13 @@ module PactBroker
 
         def verifications_for(query_ids)
           db[LV]
-            .select(:verification_id, :provider_version_id, :pact_version_id, :provider_id)
+            .select(:verification_id, :provider_version_id, :pact_version_id, :provider_id, :created_at)
             .where {
               Sequel.&(
                 QueryBuilder.consumer_in_pacticipant_ids(query_ids),
                 QueryBuilder.provider_or_provider_version_matches(query_ids)
               )
             }
-        end
-
-        def join_pacticipants_and_pacticipant_versions
-          join_consumers
-            .join_providers
-            .join_consumer_versions
-            .join_provider_versions
         end
 
         def join_consumers qualifier = :p, table_alias = :consumers
@@ -360,27 +344,27 @@ module PactBroker
       end
 
       def consumer_name
-        return_or_raise_if_not_set(:consumer_name)
+        consumer.name
       end
 
       def consumer_version_number
-        return_or_raise_if_not_set(:consumer_version_number)
+        consumer_version.number
       end
 
       def consumer_version_order
-        return_or_raise_if_not_set(:consumer_version_order)
+        consumer_version.order
       end
 
       def provider_name
-        return_or_raise_if_not_set(:provider_name)
+        provider.name
       end
 
       def provider_version_number
-        return_or_raise_if_not_set(:provider_version_number)
+        provider_version&.number
       end
 
       def provider_version_order
-        return_or_raise_if_not_set(:provider_version_order)
+        provider_version&.order
       end
 
       def last_action_date

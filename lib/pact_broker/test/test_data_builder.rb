@@ -213,6 +213,7 @@ module PactBroker
         )
         set_created_at_if_set(params[:created_at], :pact_publications, id: @pact.id)
         set_created_at_if_set(params[:created_at], :pact_versions, sha: @pact.pact_version_sha)
+        set_created_at_if_set(params[:created_at], :latest_pact_publication_ids_for_consumer_versions, consumer_version_id: @consumer_version.id)
         @pact = PactBroker::Pacts::PactPublication.find(id: @pact.id).to_domain
         self
       end
@@ -322,6 +323,7 @@ module PactBroker
 
         set_created_at_if_set(parameters[:created_at], :verifications, id: @verification.id)
         set_created_at_if_set(parameters[:created_at], :versions, id: @provider_version.id)
+        set_created_at_if_set(parameters[:created_at], :latest_verification_id_for_pact_version_and_provider_version, pact_version_id: pact_version_id, provider_version_id: @provider_version.id)
 
         if tag_names.any?
           tag_names.each do | tag_name |
@@ -405,6 +407,10 @@ module PactBroker
 
 
       private
+
+      def pact_version_id
+        PactBroker::Pacts::PactPublication.find(id: @pact.id).pact_version_id
+      end
 
       # Remember! This must be called before adding the IDs
       def generate_pact_version_sha json_content

@@ -7,7 +7,7 @@ module PactBroker
 
       def build_selectors(hash)
         hash.collect do | key, value |
-          { pacticipant_name: key, pacticipant_version_number: value }
+          UnresolvedSelector.new(pacticipant_name: key, pacticipant_version_number: value)
         end
       end
 
