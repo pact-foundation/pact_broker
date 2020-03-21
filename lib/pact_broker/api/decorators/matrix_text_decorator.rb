@@ -17,7 +17,7 @@ module PactBroker
         def to_text(options)
           json_decorator = PactBroker::Api::Decorators::MatrixDecorator.new(lines)
           data = lines.collect do | line |
-            Line.new(line[:consumer_name], line[:consumer_version_number], line[:pact_revision_number], line[:provider_name], line[:provider_version_number], line[:verification_number], line[:success])
+            Line.new(line.consumer_name, line.consumer_version_number, line.pact_revision_number, line.provider_name, line.provider_version_number, line.verification_number, line.success)
           end
           printer = TablePrint::Printer.new(data)
           printer.table_print + "\n\nDeployable: #{json_decorator.deployable.inspect}\nReason: #{json_decorator.reason}\n"
