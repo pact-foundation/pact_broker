@@ -78,6 +78,10 @@ module PactBroker
         end
       end
 
+      def all_for_tag_and_consumer?
+        !!(tag && !latest? && consumer)
+      end
+
       def all_for_tag?
         !!(tag && !latest?)
       end
@@ -94,6 +98,12 @@ module PactBroker
             tag <=> other.tag
           else
             latest_for_tag? ? -1 : 1
+          end
+        elsif consumer || other.consumer
+          if consumer == other.consumer
+            tag <=> other.tag
+          else
+            consumer ? -1 : 1
           end
         else
           tag <=> other.tag

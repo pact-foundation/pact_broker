@@ -127,6 +127,11 @@ module PactBroker
             expect(find_by_consumer_version_number("prod-version-2")).to_not be nil
             expect(find_by_consumer_version_number("prod-version-3")).to be nil
           end
+
+          it "sets the selectors" do
+            expect(find_by_consumer_version_number("prod-version-1").selectors.first.tag).to eq 'prod'
+            expect(find_by_consumer_version_number("prod-version-1").selectors.first.consumer).to eq 'Foo2'
+          end
         end
 
         context "when a pact version has been selected by two different selectors" do

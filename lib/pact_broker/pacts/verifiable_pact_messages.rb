@@ -138,7 +138,9 @@ module PactBroker
           else
             "latest pact for a consumer version tagged '#{selector.tag}'"
           end
-        elsif selector.tag
+        elsif selector.all_for_tag_and_consumer?
+          "pacts for all #{selector.consumer} versions tagged '#{selector.tag}'"
+        elsif selector.all_for_tag?
           "pacts for all consumer versions tagged '#{selector.tag}'"
         else
           selector.to_json

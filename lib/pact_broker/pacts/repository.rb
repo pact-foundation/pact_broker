@@ -130,16 +130,17 @@ module PactBroker
         end
       end
 
-      def find_all_pact_versions_for_provider_with_consumer_version_tags provider_name, consumer_version_tag_name, consumer_name = nil
+      def find_all_pact_versions_for_provider_with_consumer_version_tags provider_name, selector
         provider = pacticipant_repository.find_by_name(provider_name)
-        consumer = consumer_name ? pacticipant_repository.find_by_name(consumer_name) : nil
+        consumer = selector.consumer ? pacticipant_repository.find_by_name(selector.consumer) : nil
+
         PactPublication
           .select_all_qualified
           .select_append(Sequel[:cv][:order].as(:consumer_version_order))
           .select_append(Sequel[:ct][:name].as(:consumer_version_tag_name))
           .remove_overridden_revisions
           .join_consumer_versions(:cv)
-          .join_consumer_version_tags_with_names(consumer_version_tag_name)
+          .join_consumer_version_tags_with_names(selector.tag)
           .where(provider: provider)
           .where_consumer_if_set(consumer)
           .eager(:consumer)
@@ -150,10 +151,8 @@ module PactBroker
           .group_by(&:pact_version_id)
           .values
           .collect do | pact_publications |
-            selector_tag_names = pact_publications.collect{ | p| p.values.fetch(:consumer_version_tag_name) }
             latest_pact_publication = pact_publications.sort_by{ |p| p.values.fetch(:consumer_version_order) }.last
-            selectors = Selectors.create_for_all_of_each_tag(selector_tag_names)
-            SelectedPact.new(latest_pact_publication.to_domain, selectors)
+            SelectedPact.new(latest_pact_publication.to_domain, [selector])
           end
       end
 
@@ -461,7 +460,7 @@ module PactBroker
         selectors = consumer_version_selectors.select(&:all_for_tag?)
 
         selectors.flat_map do | selector |
-          find_all_pact_versions_for_provider_with_consumer_version_tags(provider_name, selector.tag, selector.consumer)
+          find_all_pact_versions_for_provider_with_consumer_version_tags(provider_name, selector)
         end
       end
 
