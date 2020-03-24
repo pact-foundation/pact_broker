@@ -13,6 +13,7 @@ module PactBroker
         SCHEMA = Dry::Validation.Schema do
           configure do
             predicates(DryValidationPredicates)
+            config.messages_file = File.expand_path("../../../locale/en.yml", __FILE__)
           end
           optional(:providerVersionTags).maybe(:array?)
           optional(:consumerVersionSelectors).each do
@@ -26,6 +27,7 @@ module PactBroker
               required(:tag).filled(:str?)
               optional(:latest).filled(included_in?: [true, false])
               optional(:fallbackTag).filled(:str?)
+              optional(:consumer).filled(:str?, :not_blank?)
 
               # rule(fallbackTagMustBeForLatest: [:fallbackTag, :latest]) do | fallback_tag, latest |
               #   fallback_tag.filled?.then(latest.eql?(true))

@@ -12,6 +12,7 @@ module PactBroker
         SCHEMA = Dry::Validation.Schema do
           configure do
             predicates(DryValidationPredicates)
+            config.messages_file = File.expand_path("../../../locale/en.yml", __FILE__)
           end
           optional(:provider_version_tags).maybe(:array?)
           optional(:consumer_version_selectors).each do
@@ -19,6 +20,7 @@ module PactBroker
               required(:tag).filled(:str?)
               optional(:latest).filled(included_in?: ["true", "false"])
               optional(:fallback_tag).filled(:str?)
+              optional(:consumer).filled(:str?, :not_blank?)
             end
           end
           optional(:include_pending_status).filled(included_in?: ["true", "false"])

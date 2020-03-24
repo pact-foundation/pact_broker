@@ -82,6 +82,14 @@ module PactBroker
         def order_by_consumer_version_order
           order_append(Sequel[:cv][:order])
         end
+
+        def where_consumer_if_set(consumer)
+          if consumer
+            where(consumer: consumer)
+          else
+            self
+          end
+        end
       end
 
       def before_create

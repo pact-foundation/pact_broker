@@ -130,17 +130,18 @@ module PactBroker
         end
       end
 
-      def find_all_pact_versions_for_provider_with_consumer_version_tags provider_name, consumer_version_tag_names
+      def find_all_pact_versions_for_provider_with_consumer_version_tags provider_name, consumer_version_tag_name, consumer_name = nil
         provider = pacticipant_repository.find_by_name(provider_name)
-
+        consumer = consumer_name ? pacticipant_repository.find_by_name(consumer_name) : nil
         PactPublication
           .select_all_qualified
           .select_append(Sequel[:cv][:order].as(:consumer_version_order))
           .select_append(Sequel[:ct][:name].as(:consumer_version_tag_name))
           .remove_overridden_revisions
           .join_consumer_versions(:cv)
-          .join_consumer_version_tags_with_names(consumer_version_tag_names)
+          .join_consumer_version_tags_with_names(consumer_version_tag_name)
           .where(provider: provider)
+          .where_consumer_if_set(consumer)
           .eager(:consumer)
           .eager(:consumer_version)
           .eager(:provider)
@@ -457,12 +458,10 @@ module PactBroker
 
       def find_pacts_for_which_all_versions_for_the_tag_are_required(provider_name, consumer_version_selectors)
         # The tags for which all versions are specified
-        tag_names = consumer_version_selectors.tag_names_of_selectors_for_all_pacts
+        selectors = consumer_version_selectors.select(&:all_for_tag?)
 
-        if tag_names.any?
-          find_all_pact_versions_for_provider_with_consumer_version_tags(provider_name, tag_names)
-        else
-          []
+        selectors.flat_map do | selector |
+          find_all_pact_versions_for_provider_with_consumer_version_tags(provider_name, selector.tag, selector.consumer)
         end
       end
 

@@ -78,6 +78,19 @@ module PactBroker
             it { is_expected.to_not have_key(:include_wip_pacts_since) }
           end
         end
+
+        context "when a blank consumer name is specified" do
+          let(:consumer_version_selectors) do
+            [{
+              tag: "feat-x",
+              consumer: ""
+            }]
+          end
+
+          it "has an error" do
+            expect(subject[:consumer_version_selectors].first).to include "blank"
+          end
+        end
       end
     end
   end

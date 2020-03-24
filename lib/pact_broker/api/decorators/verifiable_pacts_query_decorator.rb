@@ -20,6 +20,7 @@ module PactBroker
               represented.latest = (fragment == 'true' || fragment == true)
             }
           property :fallback_tag
+          property :consumer
         end
 
         property :include_pending_status, default: false,

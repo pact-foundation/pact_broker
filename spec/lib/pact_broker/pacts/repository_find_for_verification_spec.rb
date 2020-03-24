@@ -103,6 +103,32 @@ module PactBroker
           end
         end
 
+        context "when all versions with a given tag for a given consumer are requested" do
+          before do
+            td.create_pact_with_hierarchy("Foo2", "prod-version-1", "Bar2")
+              .create_consumer_version_tag("prod")
+              .create_consumer_version("not-prod-version", tag_names: %w[master])
+              .create_pact
+              .create_consumer_version("prod-version-2", tag_names: %w[prod])
+              .create_pact
+              .create_consumer("Foo3")
+              .create_consumer_version("prod-version-3", tag_names: %w[prod])
+              .create_pact
+          end
+
+          let(:consumer_version_selectors) { Selectors.new(pact_selector_1) }
+          let(:pact_selector_1) { Selector.all_for_tag_and_consumer('prod', "Foo2") }
+
+          subject { Repository.new.find_for_verification("Bar2", consumer_version_selectors) }
+
+          it "returns all the versions with the specified tag and consumer" do
+            expect(subject.size).to be 2
+            expect(find_by_consumer_version_number("prod-version-1")).to_not be nil
+            expect(find_by_consumer_version_number("prod-version-2")).to_not be nil
+            expect(find_by_consumer_version_number("prod-version-3")).to be nil
+          end
+        end
+
         context "when a pact version has been selected by two different selectors" do
           before do
             td.create_pact_with_hierarchy("Foo", "1", "Bar")

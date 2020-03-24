@@ -25,6 +25,14 @@ module PactBroker
         self[:fallback_tag]
       end
 
+      def consumer= consumer
+        self[:consumer] = consumer
+      end
+
+      def consumer
+        self[:consumer]
+      end
+
       def self.overall_latest
         Selector.new(latest: true)
       end
@@ -41,6 +49,9 @@ module PactBroker
         Selector.new(tag: tag)
       end
 
+      def self.all_for_tag_and_consumer(tag, consumer)
+        Selector.new(tag: tag, consumer: consumer)
+      end
 
       def self.from_hash hash
         Selector.new(hash)
