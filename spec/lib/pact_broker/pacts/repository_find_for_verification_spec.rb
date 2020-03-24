@@ -72,6 +72,17 @@ module PactBroker
           it "sets the latest_consumer_version_tag_names" do
             expect(find_by_consumer_version_number("foo-latest-prod-version").selectors.collect(&:tag)).to eq ['prod']
           end
+
+          context "when a consumer name is specified", pending: "not yet implemented, but will do" do
+            let(:consumer_version_selectors) do
+              Selectors.new(Selector.all_for_tag_and_consumer('prod', 'Foo'))
+            end
+
+            it "only returns the pacts for that consumer" do
+              expect(subject.size).to eq 3
+              expect(find_by_consumer_version_number("foo-latest-prod-version").selectors).to eq [Selector.all_for_tag_and_consumer('prod', 'Foo')]
+            end
+          end
         end
 
         context "when all versions with a given tag are requested" do

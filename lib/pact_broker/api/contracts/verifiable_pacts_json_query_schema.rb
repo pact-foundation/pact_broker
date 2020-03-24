@@ -39,7 +39,30 @@ module PactBroker
         end
 
         def self.call(params)
-          select_first_message(flatten_indexed_messages(SCHEMA.call(params&.symbolize_keys).messages(full: true)))
+          symbolized_params = params&.symbolize_keys
+          results = select_first_message(flatten_indexed_messages(SCHEMA.call(symbolized_params).messages(full: true)))
+          add_cross_field_validation_errors(symbolized_params, results)
+          results
+        end
+
+        def self.add_cross_field_validation_errors(params, results)
+          # This is a ducking joke. Need to get rid of dry-validation
+          if params[:consumerVersionSelectors].is_a?(Array)
+            errors = []
+            params[:consumerVersionSelectors].each_with_index do | selector, index |
+              if selector[:fallbackTag] && !selector[:latest]
+                errors << "fallbackTag can only be set if latest is true (at index #{index})"
+              end
+
+              if selector[:consumer] && selector[:latest]
+                errors << "specifying a consumer with latest == true is not yet supported (at index #{index})"
+              end
+            end
+            if errors.any?
+              results[:consumerVersionSelectors] ||= []
+              results[:consumerVersionSelectors].concat(errors)
+            end
+          end
         end
       end
     end

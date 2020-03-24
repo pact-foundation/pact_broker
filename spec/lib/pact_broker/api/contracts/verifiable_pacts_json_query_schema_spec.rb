@@ -43,7 +43,7 @@ module PactBroker
             end
           end
 
-          context "when latest is not specified", pending: true do
+          context "when latest is not specified" do
             let(:consumer_version_selectors) do
               [{
                 tag: "feat-x",
@@ -52,7 +52,21 @@ module PactBroker
             end
 
             it "has an error" do
-              expect(subject[:consumerVersionSelectors].first).to include "not allowed"
+              expect(subject[:consumerVersionSelectors].first).to match /can only be set.*index 0/
+            end
+
+            context "when there are multiple errors" do
+              let(:consumer_version_selectors) do
+                [{
+                  consumer: "",
+                  tag: "feat-x",
+                  fallbackTag: "master"
+                }]
+              end
+
+              it "merges the array" do
+                expect(subject[:consumerVersionSelectors].size).to be 2
+              end
             end
           end
         end
@@ -124,6 +138,20 @@ module PactBroker
 
           it "has an error" do
             expect(subject[:consumerVersionSelectors].first).to include "blank"
+          end
+        end
+
+        context "when a consumer name is specified with a latest tag" do
+          let(:consumer_version_selectors) do
+            [{
+              latest: true,
+              tag: "feat-x",
+              consumer: "foo"
+            }]
+          end
+
+          it "has an error" do
+            expect(subject[:consumerVersionSelectors].first).to include "not yet supported"
           end
         end
       end
