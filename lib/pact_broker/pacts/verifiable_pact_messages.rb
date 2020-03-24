@@ -161,6 +161,8 @@ module PactBroker
           else
             "latest #{selector.tag}"
           end
+        elsif selector.all_for_tag_and_consumer?
+          "one of #{selector.consumer} #{selector.tag}"
         elsif selector.tag
           "one of #{selector.tag}"
         else
