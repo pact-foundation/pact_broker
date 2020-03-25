@@ -99,10 +99,10 @@
       %tbody
       - lines.each do | line |
         %tr
-          %td.consumer{'data-sort-value' => line.consumer_name}
+          %td.consumer{'data-sort-value' => line.consumer_name, 'data-consumer-name' => line.consumer_name}
             %a{href: line.consumer_name_url}
               = line.consumer_name
-          %td.consumer-version{'data-sort-value' => line.consumer_version_order}
+          %td.consumer-version{'data-sort-value' => line.consumer_version_order, 'data-consumer-version-id' => line.consumer_version_id}
             %div.clippable
               %a{href: line.consumer_version_number_url}
                 = line.display_consumer_version_number
@@ -126,10 +126,10 @@
               - else
                 = line.pact_publication_date
 
-          %td.provider{'data-sort-value' => line.provider_name}
+          %td.provider{'data-sort-value' => line.provider_name, 'data-provider-name' => line.provider_name }
             %a{href: line.provider_name_url}
               = line.provider_name
-          %td.provider-version{'data-sort-value' => line.provider_version_order}
+          %td.provider-version{'data-sort-value' => line.provider_version_order, 'data-provider-version-id' => line.provider_version_id }
             %div.clippable
               %a{href: line.provider_version_number_url}
                 = line.display_provider_version_number

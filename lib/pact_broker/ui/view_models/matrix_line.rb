@@ -50,6 +50,14 @@ module PactBroker
           @line.pact_revision_number
         end
 
+        def consumer_version_id
+          @line.consumer_version_id
+        end
+
+        def provider_version_id
+          @line.provider_version_id
+        end
+
         def consumer_version_number
           @line.consumer_version_number
         end

@@ -53,12 +53,12 @@ function disableFieldsThatShouldNotBeSubmitted() {
   $('.version-selectorizor').prop('disabled', 'disabled');
 }
 
-function highlightPactPublicationsWithSameContent(td) {
-  const pactVersionSha = $(td).data('pact-version-sha');
-  $('*[data-pact-version-sha="' + pactVersionSha +'"]').addClass('bg-info');
+function highlightPactPublicationsWithSameData(td, field) {
+  const value = $(td).data(field);
+  $('*[data-' + field + '="' + value +'"]').addClass('bg-info');
 }
 
-function unHighlightPactPublicationsWithSameContent(td, event) {
+function unHighlightPactPublicationsWithSameData(td, event, field) {
   var destinationElement = $(event.toElement || event.relatedTarget);
   // Have to use mouseout instead of mouseleave, because the tooltip is a child
   // of the td, and the mouseleave will consider that hovering over the tooltip
@@ -68,8 +68,8 @@ function unHighlightPactPublicationsWithSameContent(td, event) {
   // The tooltip needs to be a child of the td so that we can style the one showing
   // the SHA so that it's wide enough to fit the SHA in.
   if (!$(td).find('a').is(destinationElement)) {
-    const pactVersionSha = $(td).data('pact-version-sha');
-    $('*[data-pact-version-sha="' + pactVersionSha +'"]').removeClass('bg-info');
+    const value = $(td).data(field);
+    $('*[data-' + field + '="' + value +'"]').removeClass('bg-info');
   }
 }
 
@@ -90,6 +90,18 @@ $(document).ready(function(){
 
   initializeClipper('.clippable');
 
-  $('td.pact-published').mouseover(function(event) { highlightPactPublicationsWithSameContent(this) });
-  $('td.pact-published').mouseout(function(event) { unHighlightPactPublicationsWithSameContent(this, event)});
+  $('td.consumer').mouseover(function(event) { highlightPactPublicationsWithSameData(this, 'consumer-name') });
+  $('td.consumer').mouseout(function(event) { unHighlightPactPublicationsWithSameData(this, event, 'consumer-name') });
+
+  $('td.consumer-version').mouseover(function(event) { highlightPactPublicationsWithSameData(this, 'consumer-version-id') });
+  $('td.consumer-version').mouseout(function(event) { unHighlightPactPublicationsWithSameData(this, event, 'consumer-version-id') });
+
+  $('td.pact-published').mouseover(function(event) { highlightPactPublicationsWithSameData(this, 'pact-version-sha') });
+  $('td.pact-published').mouseout(function(event) { unHighlightPactPublicationsWithSameData(this, event, 'pact-version-sha') });
+
+  $('td.provider').mouseover(function(event) { highlightPactPublicationsWithSameData(this, 'provider-name') });
+  $('td.provider').mouseout(function(event) { unHighlightPactPublicationsWithSameData(this, event, 'provider-name') });
+
+  $('td.provider-version').mouseover(function(event) { highlightPactPublicationsWithSameData(this, 'provider-version-id') });
+  $('td.provider-version').mouseout(function(event) { unHighlightPactPublicationsWithSameData(this, event, 'provider-version-id') });
 });
