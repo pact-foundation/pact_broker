@@ -44,7 +44,7 @@ Gem::Specification.new do |gem|
 
   #gem.add_runtime_dependency 'pact'
   gem.add_runtime_dependency 'httparty', '~> 0.14'
-  gem.add_runtime_dependency 'json', '> 1.8', '< 3.0'
+  gem.add_runtime_dependency 'json', '~> 2.3'
   gem.add_runtime_dependency 'roar', '~> 1.1'
   gem.add_runtime_dependency 'reform', '~> 2.2'
   gem.add_runtime_dependency 'dry-validation', '~> 0.10.5'
