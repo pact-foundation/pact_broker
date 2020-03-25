@@ -3,6 +3,27 @@ require 'pact_broker/verifications/repository'
 module PactBroker
   module Verifications
     describe Repository do
+      describe "#create" do
+        let(:verification) do
+          PactBroker::Domain::Verification.new(success: true)
+        end
+
+        let(:provider_version_number) { "2" }
+        let(:pact) do
+          td.create_pact_with_hierarchy("Foo", "1", "Bar").and_return(:pact)
+        end
+
+        subject { Repository.new.create verification, provider_version_number, pact}
+
+        it "creates a LatestVerificationIdForPactVersionAndProviderVersion" do
+          expect { subject }.to change { LatestVerificationIdForPactVersionAndProviderVersion.count }.by(1)
+        end
+
+        it "sets the created_at of the LatestVerificationIdForPactVersionAndProviderVersion to the same as the verification" do
+          expect(subject.created_at).to eq LatestVerificationIdForPactVersionAndProviderVersion.first.created_at
+        end
+      end
+
       describe "#find" do
         let!(:pact) do
           builder = TestDataBuilder.new

@@ -1,24 +1,36 @@
 module PactBroker
   module Matrix
     class QueryBuilder
-      def self.provider_or_provider_version_matches(query_ids, verifications_qualifier = nil)
-        Sequel.|(*provider_or_provider_version_criteria(query_ids, verifications_qualifier))
+      def self.provider_or_provider_version_matches(query_ids, provider_version_qualifier = nil, provider_qualifier = nil)
+        Sequel.|(*provider_or_provider_version_criteria(query_ids, provider_version_qualifier, provider_qualifier))
       end
 
-      def self.provider_or_provider_version_matches_or_pact_unverified(query_ids, verifications_qualifier = nil)
-        ors = provider_or_provider_version_criteria(query_ids, verifications_qualifier)
-
-        ors << {
-          qualify(:p, :provider_id) => query_ids.all_pacticipant_ids,
-          qualify(verifications_qualifier, :provider_version_id) => nil
+      def self.provider_matches(query_ids, qualifier)
+        {
+          qualify(qualifier, :provider_id) => query_ids.pacticipant_ids,
         }
+      end
+
+      def self.provider_or_provider_version_matches_or_pact_unverified(query_ids, provider_version_qualifier = nil, provider_qualifier = nil)
+        ors = provider_or_provider_version_criteria(query_ids, provider_version_qualifier, provider_qualifier)
+
+        # If we have specified any versions, then we need to add an
+        # "OR (provider matches these IDs and provider version is null)"
+        # so that we get a line with blank verification details.
+        if query_ids.pacticipant_version_ids.any?
+          ors << {
+            qualify(provider_qualifier, :provider_id) => query_ids.all_pacticipant_ids,
+            qualify(provider_version_qualifier, :provider_version_id) => nil
+          }
+        end
+
         Sequel.|(*ors)
       end
 
-      def self.provider_or_provider_version_criteria(query_ids, qualifier = nil)
+      def self.provider_or_provider_version_criteria(query_ids, provider_version_qualifier = nil, provider_qualifier = nil)
         ors = []
-        ors << { qualify(qualifier, :provider_version_id) => query_ids.pacticipant_version_ids } if query_ids.pacticipant_version_ids.any?
-        ors << { qualify(qualifier, :provider_id) => query_ids.pacticipant_ids } if query_ids.pacticipant_ids.any?
+        ors << { qualify(provider_version_qualifier, :provider_version_id) => query_ids.pacticipant_version_ids } if query_ids.pacticipant_version_ids.any?
+        ors << { qualify(provider_qualifier, :provider_id) => query_ids.pacticipant_ids } if query_ids.pacticipant_ids.any?
         ors
       end
 

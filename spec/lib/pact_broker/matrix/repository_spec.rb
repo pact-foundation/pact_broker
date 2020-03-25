@@ -359,8 +359,8 @@ module PactBroker
 
           it "returns a row for each verification for that version" do
             expect(subject.size).to eq 2
-            expect(subject.collect{|r| r[:consumer_version_number]}.sort).to eq ["1.2.3", "1.2.3"]
-            expect(subject.collect{|r| r[:provider_version_number]}.sort).to eq ["4.5.6", "6.7.8"]
+            expect(subject.collect(&:consumer_version_number).sort).to eq ["1.2.3", "1.2.3"]
+            expect(subject.collect(&:provider_version_number).sort).to eq ["4.5.6", "6.7.8"]
           end
         end
 
@@ -376,8 +376,8 @@ module PactBroker
           let(:selectors) { build_selectors("A" => nil) }
 
           it "returns a row for each verification for the pacticipant" do
-            expect(subject.collect{|r| r[:consumer_name]}.uniq).to eq ["A"]
-            provider_version_numbers = subject.collect{|r| r[:provider_version_number]}
+            expect(subject.collect(&:consumer_name).uniq).to eq ["A"]
+            provider_version_numbers = subject.collect(&:provider_version_number)
             expect(provider_version_numbers).to include nil
             expect(provider_version_numbers).to include "4.5.6"
           end
@@ -398,8 +398,8 @@ module PactBroker
 
           it "returns a row for each verification for that version" do
             expect(subject.size).to eq 2
-            expect(subject.collect{|r| r[:consumer_version_number]}.sort).to eq ["1.2.3", "3.4.5"]
-            expect(subject.collect{|r| r[:provider_version_number]}.sort).to eq ["4.5.6", "4.5.6"]
+            expect(subject.collect(&:consumer_version_number).sort).to eq ["1.2.3", "3.4.5"]
+            expect(subject.collect(&:provider_version_number).sort).to eq ["4.5.6", "4.5.6"]
           end
         end
 
@@ -422,8 +422,8 @@ module PactBroker
 
           it "returns a row for each verification for that version" do
             expect(subject.size).to eq 3
-            expect(subject.collect{|r| r[:consumer_version_number]}.sort).to eq ["1.2.3", "3.4.5", "3.4.5"]
-            expect(subject.collect{|r| r[:provider_version_number]}.sort).to eq ["4.5.6", "4.5.6", "6.7.8"]
+            expect(subject.collect(&:consumer_version_number).sort).to eq ["1.2.3", "3.4.5", "3.4.5"]
+            expect(subject.collect(&:provider_version_number).sort).to eq ["4.5.6", "4.5.6", "6.7.8"]
           end
         end
 
@@ -565,7 +565,7 @@ module PactBroker
 
             it "returns all matching rows" do
               # postgres orders differently, and ruby array sort blows up with a nil string
-              provider_version_numbers = subject.collect{ |r| r[:provider_version_number]}
+              provider_version_numbers = subject.collect(&:provider_version_number)
               expect(provider_version_numbers).to include nil
               expect(provider_version_numbers).to include "2.0.0"
               expect(provider_version_numbers.size).to eq 2

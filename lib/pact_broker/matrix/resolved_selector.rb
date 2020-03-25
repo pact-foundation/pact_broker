@@ -80,7 +80,7 @@ module PactBroker
       end
 
       def only_pacticipant_name_specified?
-        pacticipant_name && !tag && !latest?
+        pacticipant_name && !tag && !latest? && !pacticipant_version_number
       end
 
       def latest_tagged?
