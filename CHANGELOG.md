@@ -1,3 +1,29 @@
+<a name="v2.52.0"></a>
+### v2.52.0 (2020-03-25)
+
+
+#### Features
+
+* **pact ui**
+  * update matrix URL to specify the latest provider version	 ([23b02c80](/../../commit/23b02c80))
+
+* **matrix ui**
+  * highlight rows with the same consumer/provider/consumer version/provider version	 ([99b36d50](/../../commit/99b36d50))
+
+* **matrix**
+  * speed up query for UI by reducing the number of joins and removing unncessary criteria (#332)	 ([9e5ea8be](/../../commit/9e5ea8be))
+
+* **pacts for verification**
+  * add validation to only allow consumer to be specified for 'all' versions for a tag	 ([b39ad193](/../../commit/b39ad193))
+  * update inclusion messages to specify consumer name when selecting all pacts for a given consumer	 ([fdff0c58](/../../commit/fdff0c58))
+  * support finding all pacts with a given tag for a specified consumer	 ([749e708d](/../../commit/749e708d))
+
+
+#### Bug Fixes
+
+* ensure requests for text/plain go to the API rather than the UI	 ([1cf28009](/../../commit/1cf28009))
+
+
 <a name="v2.51.0"></a>
 ### v2.51.0 (2020-03-11)
 
