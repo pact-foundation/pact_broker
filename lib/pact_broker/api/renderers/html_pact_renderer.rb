@@ -137,7 +137,7 @@ module PactBroker
         end
 
         def matrix_url
-          PactBroker::Api::PactBrokerUrls.matrix_for_pacticipant_version_url(@pact.consumer_version, base_url)
+          PactBroker::Api::PactBrokerUrls.matrix_for_pact_url(@pact, base_url)
         end
 
         def latest_pact_url

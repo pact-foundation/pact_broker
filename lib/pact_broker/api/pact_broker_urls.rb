@@ -261,6 +261,17 @@ module PactBroker
         "#{base_url}/matrix?#{Rack::Utils.build_nested_query(query)}"
       end
 
+      def matrix_for_pact_url(pact, base_url = '')
+        query = {
+          q: [
+            { pacticipant: pact.consumer_name, version: pact.consumer_version_number },
+            { pacticipant: pact.provider_name, latest: true }
+          ],
+          latestby: 'cvpv'
+        }
+        "#{base_url}/matrix?#{Rack::Utils.build_nested_query(query)}"
+      end
+
       def matrix_url_from_params params, base_url = ''
         matrix_url(params.fetch(:consumer_name), params.fetch(:provider_name), base_url)
       end

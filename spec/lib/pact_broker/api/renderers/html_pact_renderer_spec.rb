@@ -12,7 +12,7 @@ module PactBroker
           ENV['TZ'] = "Australia/Melbourne"
           PactBroker.configuration.enable_public_badge_access = true
           allow(PactBroker::Api::PactBrokerUrls).to receive(:pact_url).with('http://base', pact).and_return(pact_url)
-          allow(PactBroker::Api::PactBrokerUrls).to receive(:matrix_for_pacticipant_version_url).with(consumer_version, 'http://base').and_return(matrix_url)
+          allow(PactBroker::Api::PactBrokerUrls).to receive(:matrix_for_pact_url).with(pact, 'http://base').and_return(matrix_url)
           allow_any_instance_of(HtmlPactRenderer).to receive(:logger).and_return(logger)
 
           Timecop.freeze(created_at + 3)
@@ -95,6 +95,7 @@ module PactBroker
             before do
               allow(pact).to receive(:content_hash).and_return(content_hash)
             end
+
             let(:json_content) { '[1]' }
             let(:content_hash) { [1] }
 
