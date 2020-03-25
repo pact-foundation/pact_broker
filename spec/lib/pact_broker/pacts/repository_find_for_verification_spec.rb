@@ -110,7 +110,7 @@ module PactBroker
             td.create_consumer_version("prod-version-3", tag_names: %w[prod])
               .republish_same_pact
             expect(subject.size).to be 2
-            expect(subject.collect(&:consumer_version_number)).to eq %w[prod-version-1 prod-version-3]
+            expect(subject.collect(&:consumer_version_number).sort).to eq %w[prod-version-1 prod-version-3]
           end
         end
 
