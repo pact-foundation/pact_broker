@@ -189,6 +189,20 @@ module PactBroker
               expect(parsed_object.events.first.name).to eq PactBroker::Webhooks::WebhookEvent::DEFAULT_EVENT_NAME
             end
           end
+
+          context "when the decorated object has a consumer/provider but the incoming JSON does not" do
+            let(:webhook) do
+              Domain::Webhook.new(
+                consumer: Domain::Pacticipant.new(name: 'consumer'),
+                provider: Domain::Pacticipant.new(name: 'provider')
+              )
+            end
+
+            it "sets the consumer and provider to nil on the decorated object" do
+              expect(parsed_object.consumer).to be nil
+              expect(parsed_object.provider).to be nil
+            end
+          end
         end
       end
     end

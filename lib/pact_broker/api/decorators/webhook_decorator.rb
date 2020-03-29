@@ -11,18 +11,17 @@ module PactBroker
   module Api
     module Decorators
       class WebhookDecorator < BaseDecorator
-
         class WebhookEventDecorator < BaseDecorator
           property :name
         end
 
         property :description, getter: lambda { |context| context[:represented].display_description }
 
-        property :consumer, :class => PactBroker::Domain::Pacticipant do
+        property :consumer, :class => PactBroker::Domain::Pacticipant, default: nil do
           property :name
         end
 
-        property :provider, :class => PactBroker::Domain::Pacticipant do
+        property :provider, :class => PactBroker::Domain::Pacticipant, default: nil do
           property :name
         end
 
