@@ -1,3 +1,12 @@
+<a name="v2.52.1"></a>
+### v2.52.1 (2020-03-30)
+
+
+#### Bug Fixes
+
+* set consumer and provider to nil on the underlying webhook when they are not specified in the incoming webhook JSON	 ([f85b6ea2](/../../commit/f85b6ea2))
+
+
 <a name="v2.52.0"></a>
 ### v2.52.0 (2020-03-25)
 
