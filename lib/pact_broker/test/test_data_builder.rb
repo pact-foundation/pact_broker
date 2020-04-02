@@ -204,6 +204,7 @@ module PactBroker
         params.delete(:comment)
         json_content = params[:json_content] || default_json_content
         pact_version_sha = params[:pact_version_sha] || generate_pact_version_sha(json_content)
+        pact_versions_count_before = PactBroker::Pacts::PactVersion.count
         @pact = PactBroker::Pacts::Repository.new.create(
           version_id: @consumer_version.id,
           consumer_id: @consumer.id,
@@ -211,8 +212,9 @@ module PactBroker
           pact_version_sha: pact_version_sha,
           json_content: prepare_json_content(json_content),
         )
+        pact_versions_count_after = PactBroker::Pacts::PactVersion.count
         set_created_at_if_set(params[:created_at], :pact_publications, id: @pact.id)
-        set_created_at_if_set(params[:created_at], :pact_versions, sha: @pact.pact_version_sha)
+        set_created_at_if_set(params[:created_at], :pact_versions, sha: @pact.pact_version_sha) if pact_versions_count_after > pact_versions_count_before
         set_created_at_if_set(params[:created_at], :latest_pact_publication_ids_for_consumer_versions, consumer_version_id: @consumer_version.id)
         @pact = PactBroker::Pacts::PactPublication.find(id: @pact.id).to_domain
         self
@@ -424,7 +426,10 @@ module PactBroker
       def set_created_at_if_set created_at, table_name, selector
         date_to_set = created_at || @now
         if date_to_set
-          Sequel::Model.db[table_name].where(selector.keys.first => selector.values.first).update(created_at: date_to_set)
+          Sequel::Model.db[table_name].where(selector).update(created_at: date_to_set)
+          if Sequel::Model.db.schema(table_name).any?{ |col| col.first == :updated_at }
+            Sequel::Model.db[table_name].where(selector.keys.first => selector.values.first).update(updated_at: date_to_set)
+          end
         end
       end
 
