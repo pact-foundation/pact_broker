@@ -19,7 +19,7 @@ Sequel.migration do
   end
 
   down do
-    drop_view(:latest_version_orders)
     drop_view(:latest_versions)
+    drop_view(:latest_version_orders)
   end
 end
