@@ -244,4 +244,15 @@ Pact.provider_states_for "Pact Broker Client" do
           .create_webhook(uuid: "696c5f93-1b7f-44bc-8d03-59440fcaa9a0")
     end
   end
+
+  provider_state "the pacticipant relations are present" do
+    no_op
+  end
+
+  provider_state "a pacticipant with name Foo exists" do
+    set_up do
+      TestDataBuilder.new
+        .create_consumer("Foo")
+    end
+  end
 end

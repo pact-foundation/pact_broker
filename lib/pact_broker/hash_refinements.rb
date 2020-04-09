@@ -22,6 +22,10 @@ module PactBroker
         snakecase_keys_private(self)
       end
 
+      def slice(*keys)
+        keys.each_with_object(Hash.new) { |k, hash| hash[k] = self[k] if has_key?(k) }
+      end
+
       private
 
       def snakecase_keys_private(params)

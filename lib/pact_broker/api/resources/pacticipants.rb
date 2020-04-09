@@ -1,12 +1,13 @@
 require 'pact_broker/api/resources/base_resource'
 require 'pact_broker/api/decorators/pacticipant_decorator'
 require 'pact_broker/domain/pacticipant'
+require 'pact_broker/hash_refinements'
 
 module PactBroker
   module Api
     module Resources
-
       class Pacticipants < BaseResource
+        using PactBroker::HashRefinements
 
         def content_types_provided
           [["application/hal+json", :to_json]]
@@ -32,7 +33,7 @@ module PactBroker
         end
 
         def from_json
-          created_model = pacticipant_service.create(params)
+          created_model = pacticipant_service.create(params.symbolize_keys.snakecase_keys.slice(:name, :repository_url))
           response.body = decorator_for(created_model).to_json(user_options: decorator_context)
         end
 
