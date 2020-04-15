@@ -150,7 +150,7 @@ module PactBroker
         end
 
         def pact_publication_date_url
-          pact_url_from_params('', @line)
+          pact_url('', @line)
         end
 
         def relative_date date
