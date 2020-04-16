@@ -1,3 +1,12 @@
+<a name="v2.52.2"></a>
+### v2.52.2 (2020-04-16)
+
+
+#### Bug Fixes
+
+* pact URL in matrix page	 ([5ed046f1](/../../commit/5ed046f1))
+
+
 <a name="v2.52.1"></a>
 ### v2.52.1 (2020-03-30)
 
