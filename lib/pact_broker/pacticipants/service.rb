@@ -40,8 +40,8 @@ module PactBroker
         pacticipant_repository.find_by_name(name)
       end
 
-      def self.find_by_id name
-        pacticipant_repository.find_by_id(name)
+      def self.find_by_id id
+        pacticipant_repository.find_by_id(id)
       end
 
       def self.find options
