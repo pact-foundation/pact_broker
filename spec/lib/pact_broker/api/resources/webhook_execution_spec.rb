@@ -60,7 +60,7 @@ module PactBroker
 
               it "generates a JSON response body for the execution result" do
                 allow(PactBroker.configuration).to receive(:show_webhook_response?).and_return('foo')
-                expect(decorator).to receive(:to_json).with(user_options: expected_user_options)
+                expect(decorator).to receive(:to_json).with(user_options: hash_including(expected_user_options))
                 subject
               end
 

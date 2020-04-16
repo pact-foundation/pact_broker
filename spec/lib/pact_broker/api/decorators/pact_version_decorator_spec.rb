@@ -28,7 +28,7 @@ module PactBroker
         let(:consumer) { instance_double(PactBroker::Domain::Pacticipant, name: 'Consumer')}
         let(:provider) { instance_double(PactBroker::Domain::Pacticipant, name: 'Provider')}
         let(:consumer_version) { instance_double(PactBroker::Domain::Version, number: '1234', pacticipant: consumer)}
-        let(:decorator_context) { DecoratorContext.new(base_url, '') }
+        let(:decorator_context) { DecoratorContext.new(base_url, '', {}) }
 
         let(:json) { PactVersionDecorator.new(pact).to_json(user_options: decorator_context) }
 

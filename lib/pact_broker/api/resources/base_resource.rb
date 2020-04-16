@@ -76,7 +76,7 @@ module PactBroker
         end
 
         def decorator_context options = {}
-          Decorators::DecoratorContext.new(base_url, resource_url, options)
+          Decorators::DecoratorContext.new(base_url, resource_url, request.env, options)
         end
 
         def handle_exception e

@@ -17,7 +17,7 @@ module PactBroker
         let(:resource_url) { 'http://example.org/webhooks' }
 
         let(:decorator_context) do
-          DecoratorContext.new(base_url, resource_url, resource_title: 'Title')
+          DecoratorContext.new(base_url, resource_url, {}, resource_title: 'Title')
         end
 
         let(:webhooks) { [webhook] }
