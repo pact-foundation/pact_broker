@@ -202,6 +202,7 @@ module PactBroker
           .all
 
         wip_pacts.collect do | pact|
+
           pending_tag_names = find_provider_tags_for_which_pact_publication_id_is_pending(pact, successfully_verified_head_pact_publication_ids_for_each_provider_tag)
           pre_existing_tag_names = find_provider_tag_names_that_were_first_used_before_pact_published(pact, provider_tag_collection)
 
@@ -562,6 +563,7 @@ module PactBroker
             .join(:verifications, verifications_join)
             .join(:tags, tags_join, { table_alias: :provider_tags } )
             .where(Sequel[:latest_tagged_pact_publications][:provider_id] => provider_id)
+            .distinct
             .all
           hash[provider_tag] = head_pacts
         end
