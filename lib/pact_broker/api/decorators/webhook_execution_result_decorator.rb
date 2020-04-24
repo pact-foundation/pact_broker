@@ -78,8 +78,13 @@ module PactBroker
           }
         end
 
+        def to_hash(options)
+          @to_hash_options = options
+          super
+        end
+
         def response_hidden_message
-          PactBroker::Messages.message('messages.response_body_hidden')
+          PactBroker::Messages.message('messages.response_body_hidden', base_url: @to_hash_options[:user_options][:base_url])
         end
       end
     end

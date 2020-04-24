@@ -33,8 +33,8 @@ module PactBroker
         safe_response = http_response ? HttpResponseWithUtf8SafeBody.new(http_response) : nil
         log_webhook_context(webhook_context)
         log_request(webhook_request)
-        log_response(uuid, safe_response) if safe_response
-        log_error(uuid, error) if error
+        log_response(uuid, safe_response, webhook_context[:base_url]) if safe_response
+        log_error(uuid, error, webhook_context[:base_url]) if error
         log_completion_message(success?(safe_response))
         log_stream.string
       end
@@ -61,17 +61,17 @@ module PactBroker
         execution_logger.info(webhook_request.body) if webhook_request.body
       end
 
-      def log_response uuid, response
+      def log_response uuid, response, base_url
         log_response_to_application_logger(uuid, response)
         if options.fetch(:show_response)
           log_response_to_execution_logger(response)
         else
-          execution_logger.info response_body_hidden_message
+          execution_logger.info response_body_hidden_message(base_url)
         end
       end
 
-      def response_body_hidden_message
-        PactBroker::Messages.message('messages.response_body_hidden')
+      def response_body_hidden_message(base_url)
+        PactBroker::Messages.message('messages.response_body_hidden', base_url: base_url)
       end
 
       def log_response_to_application_logger uuid, response
@@ -106,13 +106,13 @@ module PactBroker
         end
       end
 
-      def log_error uuid, e
+      def log_error uuid, e, base_url
         logger.info "Error executing webhook #{uuid} #{e.class.name} - #{e.message} #{e.backtrace.join("\n")}"
 
         if options[:show_response]
           execution_logger.error "Error executing webhook #{uuid} #{e.class.name} - #{e.message}"
         else
-          execution_logger.error "Error executing webhook #{uuid}. #{response_body_hidden_message}"
+          execution_logger.error "Error executing webhook #{uuid}. #{response_body_hidden_message(base_url)}"
         end
       end
 

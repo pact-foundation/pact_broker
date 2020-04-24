@@ -50,7 +50,8 @@ module PactBroker
         }
       end
 
-      let(:webhook_context) { { consumer_version_number: "123" } }
+      let(:base_url) { "http://example.org" }
+      let(:webhook_context) { { consumer_version_number: "123", base_url: base_url } }
 
       let(:webhook_request_logger) { WebhookRequestLogger.new(options) }
 
@@ -117,6 +118,7 @@ module PactBroker
           end
 
           it "logs a message about why the response is hidden" do
+            expect(logs).to include base_url
             expect(logs).to include "security purposes"
           end
         end
@@ -192,6 +194,7 @@ module PactBroker
             end
 
             it "logs a message about why the response is hidden" do
+              expect(logs).to include base_url
               expect(logs).to include "security purposes"
             end
           end
