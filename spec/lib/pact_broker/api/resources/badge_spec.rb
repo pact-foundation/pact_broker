@@ -63,6 +63,15 @@ module PactBroker
             subject
           end
 
+          context "when the pact is not found" do
+            let(:pact) { nil }
+
+            it "does not retrieve the latest verification" do
+              expect(PactBroker::Verifications::Service).to_not receive(:find_latest_verification_for)
+              subject
+            end
+          end
+
           it "determines the pact's verification status based on the latest pact and latest verification" do
             expect(PactBroker::Verifications::PseudoBranchStatus).to receive(:new).with(pact, verification)
             subject
@@ -156,32 +165,43 @@ module PactBroker
             let(:path) { "/matrix/provider/provider/latest/master/consumer/consumer/latest/prod/badge" }
             let(:row) { { consumer_name: 'consumer', provider_name: 'provider' } }
 
-            it "looks up the verification" do
-              expect(PactBroker::Verifications::Service).to receive(:find_latest_verification_for_tags) do | consumer, provider, tag|
-                expect(consumer.name).to eq 'consumer'
-                expect(provider.name).to eq 'provider'
-                expect(tag).to eq 'prod'
+            context "when a pact is found" do
+              it "looks up the verification" do
+                expect(PactBroker::Verifications::Service).to receive(:find_latest_verification_for_tags) do | consumer, provider, tag|
+                  expect(consumer.name).to eq 'consumer'
+                  expect(provider.name).to eq 'provider'
+                  expect(tag).to eq 'prod'
+                end
+                subject
               end
-              subject
+
+              context "when a verification is found" do
+                before do
+                  allow(PactBroker::Verifications::Service).to receive(:find_latest_verification_for_tags).and_return(verification)
+                end
+
+                it "returns the badge" do
+                  expect(subject.body).to end_with "badge"
+                end
+              end
+
+              context "when a verification is not found" do
+                before do
+                  allow(PactBroker::Verifications::Service).to receive(:find_latest_verification_for_tags).and_return(nil)
+                end
+
+                it "returns the badge" do
+                  expect(subject.body).to end_with "badge"
+                end
+              end
             end
 
-            context "when a verification is found" do
-              before do
-                allow(PactBroker::Verifications::Service).to receive(:find_latest_verification_for_tags).and_return(verification)
-              end
+            context "when a pact is not found" do
+              let(:pact) { nil }
 
-              it "returns the badge" do
-                expect(subject.body).to end_with "badge"
-              end
-            end
-
-            context "when a verification is not found" do
-              before do
-                allow(PactBroker::Verifications::Service).to receive(:find_latest_verification_for_tags).and_return(nil)
-              end
-
-              it "returns the badge" do
-                expect(subject.body).to end_with "badge"
+              it "does not look up the verification" do
+                expect(PactBroker::Verifications::Service).to_not receive(:find_latest_verification_for_tags)
+                subject
               end
             end
           end

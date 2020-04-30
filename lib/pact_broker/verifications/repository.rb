@@ -107,8 +107,8 @@ module PactBroker
 
       def find_latest_verification_for_tags consumer_name, provider_name, consumer_version_tag, provider_version_tag
         view_name = PactBroker::Domain::Verification.table_name
-        consumer = pacticipant_repository.find_by_name(consumer_name)
-        provider = pacticipant_repository.find_by_name(provider_name)
+        consumer = pacticipant_repository.find_by_name!(consumer_name)
+        provider = pacticipant_repository.find_by_name!(provider_name)
 
         consumer_tag_filter = PactBroker::Repositories::Helpers.name_like(Sequel.qualify(:consumer_tags, :name), consumer_version_tag)
         provider_tag_filter = PactBroker::Repositories::Helpers.name_like(Sequel.qualify(:provider_tags, :name), provider_version_tag)

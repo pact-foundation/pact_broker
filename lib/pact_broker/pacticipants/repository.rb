@@ -15,6 +15,12 @@ module PactBroker
         pacticipants.first
       end
 
+      def find_by_name! name
+        pacticipant = find_by_name(name)
+        raise PactBroker::Error, "No pacticipant found with name '#{name}'" unless pacticipant
+        pacticipant
+      end
+
       def find_by_id id
         PactBroker::Domain::Pacticipant.where(id: id).single_record
       end

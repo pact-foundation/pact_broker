@@ -295,6 +295,26 @@ module PactBroker
             expect(subject.number).to eq 2
           end
         end
+
+        context "when the consumer does not exist" do
+          subject { Repository.new.find_latest_verification_for_tags("Foo", "Bar", "feat-x", "feat-y") }
+
+          it "raises an error" do
+            expect{ subject }.to raise_error PactBroker::Error, /Foo/
+          end
+        end
+
+        context "when the provider does not exist" do
+          before do
+            td.create_consumer("Foo")
+          end
+
+          subject { Repository.new.find_latest_verification_for_tags("Foo", "Bar", "feat-x", "feat-y") }
+
+          it "raises an error" do
+            expect{ subject }.to raise_error PactBroker::Error, /Bar/
+          end
+        end
       end
 
       describe "delete_by_provider_version_id" do
