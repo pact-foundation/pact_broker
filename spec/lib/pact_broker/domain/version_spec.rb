@@ -11,7 +11,7 @@ module PactBroker
         end
 
         def version_numbers
-          subject.collect(&:number)
+          subject.collect(&:number).sort_by(&:to_i)
         end
 
         context "when selecting the latest prod versions without a pacticipant name" do
@@ -63,7 +63,7 @@ module PactBroker
           let(:selector) { PactBroker::Matrix::UnresolvedSelector.new(tag: 'prod') }
 
           it "selects all the production versions without a pacticipant name" do
-            expect(version_numbers.sort).to eq %w{1 10 11 2}
+            expect(version_numbers).to eq %w{1 2 10 11}
           end
         end
 
@@ -82,14 +82,14 @@ module PactBroker
           let(:selector) { PactBroker::Matrix::UnresolvedSelector.new(tag: true, latest: true) }
 
           it "selects the head versions for each tag" do
-            expect(version_numbers.sort).to eq %w{11 2 4}
+            expect(version_numbers).to eq %w{2 4 11}
           end
 
           context "when also specifying pacticipant name" do
             let(:selector) { PactBroker::Matrix::UnresolvedSelector.new(tag: true, latest: true, pacticipant_name: "Foo") }
 
             it "selects the head versions for each tag for the given pacticipant" do
-              expect(version_numbers.sort).to eq %w{2 4}
+              expect(version_numbers).to eq %w{2 4}
             end
           end
         end
@@ -109,14 +109,14 @@ module PactBroker
           let(:selector) { PactBroker::Matrix::UnresolvedSelector.new(tag: true) }
 
           it "selects every version with a tag" do
-            expect(version_numbers.sort).to eq %w{1 10 2 4}
+            expect(version_numbers).to eq %w{1 2 4 10}
           end
 
           context "when also specifying pacticipant name" do
             let(:selector) { PactBroker::Matrix::UnresolvedSelector.new(tag: true, pacticipant_name: "Foo") }
 
             it "selects every version with a tag for the given pacticipant" do
-              expect(version_numbers.sort).to eq %w{1 2 4}
+              expect(version_numbers).to eq %w{1 2 4}
             end
           end
         end
@@ -137,7 +137,7 @@ module PactBroker
           let(:four_days_ago) { Date.today - 4 }
 
           it "selects the consumer versions younger than the max age" do
-            expect(version_numbers.sort).to eq %w{2 3}
+            expect(version_numbers).to eq %w{2 3}
           end
         end
       end
