@@ -7,6 +7,10 @@ module PactBroker
 
         private
 
+        def tags
+          { consumer_tag: identifier_from_path[:tag], provider_tag: identifier_from_path[:provider_tag] }
+        end
+
         def latest_verification
           return nil unless pact
           @latest_verification ||= verification_service.find_latest_verification_for_tags(

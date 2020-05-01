@@ -253,6 +253,10 @@ module PactBroker
         "/matrix/provider/#{url_encode(provider_name)}/consumer/#{url_encode(consumer_name)}"
       end
 
+      def matrix_badge_url_for_selectors consumer_selector, provider_selector, base_url = ''
+        "#{base_url}/matrix/provider/#{url_encode(provider_selector.pacticipant_name)}/latest/#{url_encode(provider_selector.tag)}/consumer/#{url_encode(consumer_selector.pacticipant_name)}/latest/#{url_encode(consumer_selector.tag)}/badge.svg"
+      end
+
       def matrix_for_pacticipant_version_url(version, base_url = '')
         query = {
           q: [{ pacticipant: version.pacticipant.name, version: version.number }],

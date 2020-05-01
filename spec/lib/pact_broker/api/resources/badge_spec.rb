@@ -83,7 +83,7 @@ module PactBroker
             end
 
             it "creates a badge" do
-              expect(PactBroker::Badges::Service).to receive(:pact_verification_badge).with(pact, nil, false, :verified)
+              expect(PactBroker::Badges::Service).to receive(:pact_verification_badge).with(pact, nil, false, :verified, {})
               subject
             end
 
@@ -110,7 +110,7 @@ module PactBroker
             end
 
             it "determines the URL of the badge to redirect to" do
-              expect(PactBroker::Badges::Service).to receive(:pact_verification_badge_url).with(pact, nil, false, :verified)
+              expect(PactBroker::Badges::Service).to receive(:pact_verification_badge_url).with(pact, nil, false, :verified, {})
               subject
             end
 
@@ -125,7 +125,7 @@ module PactBroker
             let(:params) { {label: 'consumer'} }
 
             it "creates a badge with the specified label" do
-              expect(PactBroker::Badges::Service).to receive(:pact_verification_badge).with(anything, 'consumer', anything, anything)
+              expect(PactBroker::Badges::Service).to receive(:pact_verification_badge).with(anything, 'consumer', anything, anything, {})
               subject
             end
           end
@@ -134,7 +134,7 @@ module PactBroker
             let(:params) { {initials: 'true'} }
 
             it "creates a badge with initials" do
-              expect(PactBroker::Badges::Service).to receive(:pact_verification_badge).with(anything, anything, true, anything)
+              expect(PactBroker::Badges::Service).to receive(:pact_verification_badge).with(anything, anything, true, anything, {})
               subject
             end
           end

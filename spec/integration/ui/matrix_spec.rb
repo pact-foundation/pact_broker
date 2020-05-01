@@ -6,10 +6,9 @@ describe "UI matrix" do
   let(:params) { {} }
 
   before do
-    td.create_pact_with_hierarchy("Foo", "1", "Bar")
-      .create_consumer_version_tag("prod")
-      .create_consumer_version("2")
-      .create_pact
+    td.create_pact_with_verification("Foo", "1", "Bar", "2")
+      .create_consumer_version_tag("ctag")
+      .create_provider_version_tag("ptag")
   end
 
   subject { get("/matrix/provider/Bar/consumer/Foo") }
@@ -25,6 +24,14 @@ describe "UI matrix" do
 
     it "returns a table of matrix rows" do
       expect(subject.body.scan('<tr').to_a.count).to be > 1
+    end
+  end
+
+  describe "with query params, for the latest tagged versions of two pacticipants" do
+    subject { get("/matrix?q%5B%5Dpacticipant=Foo&q%5B%5Dtag=ctag&q%5B%5Dlatest=true&q%5B%5Dpacticipant=Bar&q%5B%5Dtag=ptag&q%5B%5Dlatest=true&latestby=cvpv&limit=100") }
+
+    it "returns a page with a badge" do
+      expect(subject.body).to include "http://example.org/matrix/provider/Bar/latest/ptag/consumer/Foo/latest/ctag/badge.svg"
     end
   end
 end

@@ -138,6 +138,14 @@ module PactBroker
 
         it { is_expected.to eq "http://example.org/matrix?q[][pacticipant]=Foo%2FFoo&q[][version]=2&latestby=cvpv" }
       end
+
+      describe "matrix_badge_url" do
+        subject { PactBrokerUrls.matrix_badge_url_for_selectors(consumer_selector, provider_selector, base_url) }
+        let(:provider_selector) { PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: provider_name, tag: "meep", latest: true) }
+        let(:consumer_selector) { PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: consumer_name, tag: "bar", latest: true) }
+
+        it { is_expected.to eq "http://example.org/matrix/provider/Bar%2FBar/latest/meep/consumer/Foo%2FFoo/latest/bar/badge.svg" }
+      end
     end
   end
 end

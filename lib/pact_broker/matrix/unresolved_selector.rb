@@ -48,6 +48,10 @@ module PactBroker
       def max_age
         self[:max_age]
       end
+
+      def latest_for_pacticipant_and_tag?
+        !!(pacticipant_name && tag && latest)
+      end
     end
   end
 end

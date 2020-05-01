@@ -34,12 +34,12 @@ module PactBroker
 
         def to_svg
           response.headers['Cache-Control'] = 'no-cache'
-          comment + badge_service.pact_verification_badge(pact, label, initials, pseudo_branch_verification_status)
+          comment + badge_service.pact_verification_badge(pact, label, initials, pseudo_branch_verification_status, tags)
         end
 
         def moved_temporarily?
           response.headers['Cache-Control'] = 'no-cache'
-          badge_service.pact_verification_badge_url(pact, label, initials, pseudo_branch_verification_status)
+          badge_service.pact_verification_badge_url(pact, label, initials, pseudo_branch_verification_status, tags)
         end
 
         private
@@ -71,6 +71,10 @@ module PactBroker
           provider_version_number = latest_verification ? latest_verification.provider_version_number : "?"
           verification_number =  latest_verification ? latest_verification.number : "?"
           "<!-- #{identifier_from_path[:consumer_name]} version #{consumer_version_number} revision #{pact_revision} #{identifier_from_path[:provider_name]} version #{provider_version_number} number #{verification_number} -->\n"
+        end
+
+        def tags
+          {}
         end
       end
     end

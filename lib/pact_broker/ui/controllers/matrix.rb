@@ -3,6 +3,8 @@ require 'pact_broker/ui/view_models/matrix_lines'
 require 'pact_broker/matrix/unresolved_selector'
 require 'pact_broker/matrix/parse_query'
 require 'pact_broker/logging'
+require 'pact_broker/api/pact_broker_urls'
+
 require 'haml'
 
 module PactBroker
@@ -30,6 +32,7 @@ module PactBroker
               if errors.empty?
                 lines = matrix_service.find(selectors, options)
                 locals[:lines] = PactBroker::UI::ViewDomain::MatrixLines.new(lines)
+                locals[:badge_url] = matrix_badge_url(selectors, lines)
               else
                 locals[:errors] = errors
               end
@@ -52,7 +55,8 @@ module PactBroker
             consumer_name: params[:consumer_name],
             provider_name: params[:provider_name],
             selectors: create_selector_objects(selectors),
-            options: create_options_model(options)
+            options: create_options_model(options),
+            badge_url: nil
           }
           haml :'matrix/show', {locals: locals, layout: :'layouts/main'}
         end
@@ -75,6 +79,16 @@ module PactBroker
           o.cvp_checked = o.latestby == 'cvp' ? 'checked' : nil
           o.all_rows_checked = o.latestby.nil? ? 'checked' : nil
           o
+        end
+
+        def matrix_badge_url(selectors, lines)
+          if lines.any? && selectors.size == 2 && selectors.all?{ | selector| selector.latest_for_pacticipant_and_tag? }
+            consumer_selector = selectors.find{ | selector| selector.pacticipant_name == lines.first.consumer_name }
+            provider_selector = selectors.find{ | selector| selector.pacticipant_name == lines.first.provider_name }
+            if consumer_selector && provider_selector
+              PactBroker::Api::PactBrokerUrls.matrix_badge_url_for_selectors(consumer_selector, provider_selector, base_url)
+            end
+          end
         end
       end
     end

@@ -18,10 +18,11 @@ module PactBroker
       let!(:http_request) do
         stub_request(:get, expected_url).to_return(:status => response_status, :body => "svg")
       end
+      let(:tags) { {} }
 
-      subject { PactBroker::Badges::Service.pact_verification_badge pact, label, initials, pseudo_branch_verification_status }
+      subject { PactBroker::Badges::Service.pact_verification_badge(pact, label, initials, pseudo_branch_verification_status, tags) }
 
-      let(:pact_verification_badge_url) { PactBroker::Badges::Service.pact_verification_badge_url(pact, label, initials, pseudo_branch_verification_status) }
+      let(:pact_verification_badge_url) { PactBroker::Badges::Service.pact_verification_badge_url(pact, label, initials, pseudo_branch_verification_status, tags) }
 
       before do
         Service.clear_cache
@@ -43,7 +44,6 @@ module PactBroker
       end
 
       describe "#pact_verification_badge" do
-
         it "returns the svg file" do
            expect(subject).to eq "svg"
         end
@@ -100,6 +100,18 @@ module PactBroker
             let(:expected_left_text) { "fa%2fdat%20pact" }
             let(:initials) { true }
             let(:pact) { double("pact", consumer_name: "FooApp", provider_name: "doAThing") }
+
+            it "creates a badge with the consumer and provider names, not initials" do
+              subject
+              expect(http_request).to have_been_made
+              expect(pact_verification_badge_url).to eq URI(expected_url)
+            end
+          end
+
+          context "when the tags are supplied" do
+            let(:tags) { { consumer_tag: "prod", provider_tag: "master" } }
+
+            let(:expected_left_text) { "foo--bar%20(prod)%2fthing__blah%20(master)%20pact" }
 
             it "creates a badge with the consumer and provider names, not initials" do
               subject

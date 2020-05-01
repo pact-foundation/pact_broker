@@ -28,3 +28,16 @@ span.pre-verified-icon {
 td.pact-published .tooltip-inner {
   max-width: 300px;
 }
+
+input.pacticipant_name {
+  width: 250px;
+}
+
+input.tag {
+  width: 250px;
+}
+
+img.pact_badge {
+  float: right;
+  margin-top: 15px;
+}

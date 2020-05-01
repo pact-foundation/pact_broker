@@ -19,14 +19,14 @@ module PactBroker
         PactBroker.configuration.badge_provider_mode == :redirect && !!PactBroker.configuration.shields_io_base_url
       end
 
-      def pact_verification_badge pact, label, initials, pseudo_branch_verification_status
+      def pact_verification_badge pact, label, initials, pseudo_branch_verification_status, metadata = {}
         return static_svg(pact, pseudo_branch_verification_status) unless pact
 
-        dynamic_svg(pact, label, initials, pseudo_branch_verification_status) || static_svg(pact, pseudo_branch_verification_status)
+        dynamic_svg(pact, label, initials, pseudo_branch_verification_status, metadata) || static_svg(pact, pseudo_branch_verification_status)
       end
 
-      def pact_verification_badge_url(pact, label, initials, pseudo_branch_verification_status)
-        title = badge_title(pact, label, initials)
+      def pact_verification_badge_url(pact, label, initials, pseudo_branch_verification_status, metadata = {})
+        title = badge_title(pact, label, initials, metadata)
         status = badge_status(pseudo_branch_verification_status)
         color = badge_color(pseudo_branch_verification_status)
         build_shield_io_uri(title, status, color)
@@ -38,23 +38,26 @@ module PactBroker
 
       private
 
-      def badge_title pact, label, initials
+      def badge_title pact, label, initials, metadata
         return 'pact not found' if pact.nil?
+        consumer_name = prepare_name(pact.consumer_name, initials, metadata[:consumer_tag])
+        provider_name = prepare_name(pact.provider_name, initials, metadata[:provider_tag])
         title = case (label || '').downcase
-          when 'consumer' then prepare_name(pact.consumer_name, initials)
-          when 'provider' then prepare_name(pact.provider_name, initials)
-          else "#{prepare_name(pact.consumer_name, initials)}%2F#{prepare_name(pact.provider_name, initials)}"
+          when 'consumer' then consumer_name
+          when 'provider' then provider_name
+          else "#{consumer_name}%2F#{provider_name}"
         end
         "#{title} pact".downcase
       end
 
-      def prepare_name name, initials
+      def prepare_name name, initials, tag = nil
+        tag_suffix = tag ? " (#{tag})" : ''
         if initials
           parts = split_space_dash_underscore(name)
           parts = split_camel_case(name) if parts.size == 1
-          return parts.collect{ |p| p[0] }.join.downcase if parts.size > 1
+          return parts.collect{ |p| p[0] }.join.downcase + tag_suffix if parts.size > 1
         end
-        name.downcase
+        name.downcase + tag_suffix
       end
 
       def split_space_dash_underscore name
@@ -86,9 +89,9 @@ module PactBroker
         end
       end
 
-      def dynamic_svg pact, label, initials, pseudo_branch_verification_status
+      def dynamic_svg pact, label, initials, pseudo_branch_verification_status, metadata
         return nil unless PactBroker.configuration.shields_io_base_url
-        uri = pact_verification_badge_url(pact, label, initials, pseudo_branch_verification_status)
+        uri = pact_verification_badge_url(pact, label, initials, pseudo_branch_verification_status, metadata)
         begin
           response = do_request(uri)
           response.code == '200' ? response.body : nil
