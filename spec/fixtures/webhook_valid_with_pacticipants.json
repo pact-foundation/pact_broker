@@ -1,6 +1,6 @@
 {
   "events": [{
-    "name": "something_happened"
+    "name": "contract_content_changed"
   }],
   "consumer": {
     "name": "Foo"

@@ -11,7 +11,7 @@ describe "Creating a webhook" do
       description: "trigger build",
       enabled: false,
       events: [{
-        name: 'something_happened'
+        name: 'contract_content_changed'
       }],
       request: {
         method: 'POST',
