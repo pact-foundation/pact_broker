@@ -19,6 +19,10 @@ module PactBroker
         version_repository.find_by_pacticipant_name_and_latest_tag(pacticipant_name, tag)
       end
 
+      def self.create_or_update(version, pacticipant_name)
+
+      end
+
       def self.delete version
         tag_repository.delete_by_version_id version.id
         webhook_repository.delete_triggered_webhooks_by_version_id version.id

@@ -7,8 +7,10 @@ module PactBroker
       class VersionDecorator < BaseDecorator
 
         property :number
+        property :branch
+        property :build_url, as: :buildUrl
 
-        collection :tags, embedded: true, :extend => PactBroker::Api::Decorators::EmbeddedTagDecorator
+        collection :tags, embedded: true, writeable: false, :extend => PactBroker::Api::Decorators::EmbeddedTagDecorator
 
         include Timestamps
 

@@ -60,6 +60,10 @@ module PactBroker
         PactBroker::Domain::Version.new(version_params).insert_ignore
       end
 
+      def create_or_update(version, pacticipant_name)
+
+      end
+
       def find_by_pacticipant_id_and_number_or_create pacticipant_id, number
         if version = find_by_pacticipant_id_and_number(pacticipant_id, number)
           version
