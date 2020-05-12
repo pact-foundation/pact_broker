@@ -1,3 +1,22 @@
+<a name="v2.53.0"></a>
+### v2.53.0 (2020-05-12)
+
+
+#### Features
+
+* **badge**
+  * include tag names in matrix badge	 ([cce7cd01](/../../commit/cce7cd01))
+
+
+#### Bug Fixes
+
+* **pacts for verification**
+  * ensure a separate pact URL is returned for each consumer when multiple consumers share the same pact json content	 ([13e7b640](/../../commit/13e7b640))
+
+* gracefully handle fetching matrix badge when specified pact does not exist	 ([e8ec4101](/../../commit/e8ec4101))
+* include the base URL in the link to the webhook docs	 ([5363ab2e](/../../commit/5363ab2e))
+
+
 <a name="v2.52.2"></a>
 ### v2.52.2 (2020-04-16)
 
