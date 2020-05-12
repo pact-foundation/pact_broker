@@ -2,6 +2,7 @@ require 'pact_broker/api/contracts/base_contract'
 require 'pact_broker/webhooks/check_host_whitelist'
 require 'pact_broker/webhooks/render'
 require 'pact_broker/pacticipants/service'
+require 'pact_broker/webhooks/webhook_event'
 
 module PactBroker
   module Api
@@ -46,7 +47,6 @@ module PactBroker
 
             required(:name).filled(:pacticipant_exists?)
           end
-
         end
 
         property :provider do
@@ -155,7 +155,7 @@ module PactBroker
           property :name
 
           validation do
-            required(:name).filled
+            required(:name).filled(included_in?: PactBroker::Webhooks::WebhookEvent::EVENT_NAMES)
           end
         end
       end

@@ -159,6 +159,18 @@ module PactBroker
             end
           end
 
+          context "with an event with an invalid name" do
+            let(:json) do
+              valid_webhook_with do |hash|
+                hash['events'].first['name'] = 'foo'
+              end
+            end
+
+            it "contains an error" do
+              expect(subject.errors[:'events.name'].first).to include "must be one of"
+            end
+          end
+
           context "with no method" do
             let(:json) do
               valid_webhook_with do |hash|
