@@ -6,7 +6,6 @@ module PactBroker
       let(:td) { TestDataBuilder.new }
 
       describe "#find_for_verification" do
-
         def find_by_consumer_version_number(consumer_version_number)
           subject.find{ |pact| pact.consumer_version_number == consumer_version_number }
         end
@@ -187,6 +186,24 @@ module PactBroker
           it "does not set the tag name" do
             expect(find_by_consumer_version_number("foo-latest-dev-version").selectors).to eq [{ latest: true }]
             expect(find_by_consumer_version_number("foo-latest-dev-version").overall_latest?).to be true
+          end
+        end
+
+        context "when two consumers have exactly the same json content" do
+          before do
+            td.create_consumer
+              .create_provider("Bar")
+              .create_consumer_version
+              .create_pact(json_content: { interactions: ['foo'] }.to_json )
+              .create_consumer
+              .create_consumer_version
+              .create_pact(json_content: { interactions: ['foo'] }.to_json )
+          end
+
+          let(:consumer_version_selectors) { Selectors.new }
+
+          it "returns a pact for each consumer" do
+            expect(subject.size).to eq 2
           end
         end
       end

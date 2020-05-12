@@ -357,12 +357,11 @@ module PactBroker
         selected_pacts = selected_pacts + find_pacts_for_fallback_tags(selected_pacts, provider_name, consumer_version_selectors)
 
         selected_pacts
-          .group_by(&:pact_version_sha)
+          .group_by{ |p| [p.consumer_name, p.pact_version_sha] }
           .values
           .collect do | selected_pacts_for_pact_version_id |
             SelectedPact.merge(selected_pacts_for_pact_version_id)
           end
-
       end
 
       private
