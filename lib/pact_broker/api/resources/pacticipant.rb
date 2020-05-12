@@ -62,10 +62,6 @@ module PactBroker
         def pacticipant_name
           identifier_from_path[:pacticipant_name]
         end
-
-        def update_matrix_after_request?
-          request.patch?
-        end
       end
     end
   end

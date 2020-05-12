@@ -67,10 +67,6 @@ module PactBroker
           PactBroker::Api::Decorators::VerificationDecorator.new(model)
         end
 
-        def update_matrix_after_request?
-          request.post?
-        end
-
         def metadata
           PactBrokerUrls.decode_webhook_metadata(identifier_from_path[:metadata])
         end

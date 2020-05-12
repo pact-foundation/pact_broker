@@ -9,14 +9,6 @@ require 'pact_broker/api/contracts/put_pact_params_contract'
 require 'pact_broker/webhooks/execution_configuration'
 require 'pact_broker/api/resources/webhook_execution_methods'
 
-module Webmachine
-  class Request
-    def patch?
-      method == "PATCH"
-    end
-  end
-end
-
 module PactBroker
   module Api
     module Resources
@@ -39,10 +31,6 @@ module PactBroker
 
         def allowed_methods
           ["GET", "PUT", "DELETE", "PATCH", "OPTIONS"]
-        end
-
-        def known_methods
-          super + ['PATCH']
         end
 
         def is_conflict?
@@ -108,10 +96,6 @@ module PactBroker
 
         def pact_params
           @pact_params ||= PactBroker::Pacts::PactParams.from_request request, path_info
-        end
-
-        def update_matrix_after_request?
-          request.put? || request.patch?
         end
 
         def set_post_deletion_response

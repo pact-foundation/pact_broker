@@ -3,6 +3,14 @@ require 'webmachine/rack_adapter_monkey_patch'
 require 'pact_broker/api/resources'
 require 'pact_broker/feature_toggle'
 
+module Webmachine
+  class Request
+    def patch?
+      method == "PATCH"
+    end
+  end
+end
+
 module PactBroker
 
   API ||= begin

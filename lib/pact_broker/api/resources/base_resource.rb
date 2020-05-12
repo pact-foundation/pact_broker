@@ -33,8 +33,8 @@ module PactBroker
           { 'Access-Control-Allow-Methods' => allowed_methods.join(", ")}
         end
 
-        def update_matrix_after_request?
-          false
+        def known_methods
+          super + ['PATCH']
         end
 
         def finish_request
