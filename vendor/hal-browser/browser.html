@@ -63,9 +63,10 @@
         <% if ($.isArray(obj)) { %>
           <% _.each(obj, function(link, i) { %>
             <tr>
+              <!-- pact_broker escaping -->
               <td><strong><%= HAL.truncateIfUrl(rel) %></strong></td>
-              <td><%= link.title || '' %></td>
-              <td><%= link.name ? 'name: ' + link.name : 'index: ' + i %></a></td>
+              <td><%- link.title || '' %></td>
+              <td><%- link.name ? 'name: ' + link.name : 'index: ' + i %></a></td>
               <td>
               <% if (HAL.isUrl(rel)) { %>
                 <a class="dox" href="<%= HAL.normalizeUrl(HAL.buildUrl(rel)) %>"><i class="icon-book"></i></a>
@@ -86,8 +87,9 @@
         <% } else { %>
           <tr>
             <td><strong><%= HAL.truncateIfUrl(rel) %></strong></td>
-            <td><%= obj.title || '' %></td>
-            <td><%= obj.name || '' %></td>
+            <!-- pact_broker escaping -->
+            <td><%- obj.title || '' %></td>
+            <td><%- obj.name || '' %></td>
             <td>
             <% if (HAL.isUrl(rel)) { %>
               <a class="dox" href="<%= HAL.normalizeUrl(HAL.buildUrl(rel)) %>"><i class="icon-book"></i></a>
