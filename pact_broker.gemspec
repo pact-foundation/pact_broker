@@ -51,7 +51,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'sequel', '~> 5.28'
   gem.add_runtime_dependency 'webmachine', '1.5.0'
   gem.add_runtime_dependency 'semver2', '~> 3.4.2'
-  gem.add_runtime_dependency 'rack', '>= 2.0.8', '~>2.0'
+  gem.add_runtime_dependency 'rack', '~> 2.2'
   gem.add_runtime_dependency 'redcarpet', '>=3.3.2', '~>3.3'
   gem.add_runtime_dependency 'pact-support', '~> 1.14', '>= 1.14.1'
   gem.add_runtime_dependency 'padrino-core', '>= 0.14.3', '~> 0.14'
