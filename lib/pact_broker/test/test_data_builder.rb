@@ -250,7 +250,7 @@ module PactBroker
         events = event_params.collect{ |e| PactBroker::Webhooks::WebhookEvent.new(e) }
         template_params = { method: 'POST', url: 'http://example.org', headers: {'Content-Type' => 'application/json'}, username: params[:username], password: params[:password]}
         request = PactBroker::Webhooks::WebhookRequestTemplate.new(template_params.merge(params))
-        @webhook = PactBroker::Webhooks::Repository.new.create uuid, PactBroker::Domain::Webhook.new(request: request, events: events), consumer, provider
+        @webhook = PactBroker::Webhooks::Repository.new.create uuid, PactBroker::Domain::Webhook.new(request: request, events: events, description: params[:description]), consumer, provider
         self
       end
 
