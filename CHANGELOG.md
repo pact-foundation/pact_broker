@@ -1,3 +1,24 @@
+<a name="v2.54.0"></a>
+### v2.54.0 (2020-05-13)
+
+
+#### Features
+
+* **hal browser**
+  * update to latest code	 ([a79ad290](/../../commit/a79ad290))
+
+
+#### Bug Fixes
+
+* update rack for CVE-2020-8161	 ([96c3386a](/../../commit/96c3386a))
+
+* **hal browser**
+  * fix xss vulnerability	 ([ac564412](/../../commit/ac564412))
+
+* **webhooks**
+  * add missing validation for event names when creating webhooks	 ([5fc0563c](/../../commit/5fc0563c))
+
+
 <a name="v2.53.0"></a>
 ### v2.53.0 (2020-05-12)
 
