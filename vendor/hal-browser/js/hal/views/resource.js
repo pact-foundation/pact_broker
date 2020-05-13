@@ -25,12 +25,13 @@ HAL.Views.Resource = Backbone.View.extend({
         propertiesView = new HAL.Views.Properties({ vent: this.vent }),
         embeddedResourcesView
 
-    linksView.render(resource.links);
+
     propertiesView.render(resource.toJSON());
+    linksView.render(resource.links);
 
     this.$el.empty();
-    this.$el.append(linksView.el);
-    this.$el.append(propertiesView.el);
+    this.$el.append(linksView.el); // pact_broker swap order of links and properties
+    this.$el.append(propertiesView.el); // pact_broker
 
     if (resource.embeddedResources) {
       embeddedResourcesView = new HAL.Views.EmbeddedResources({ vent: this.vent });

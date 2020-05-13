@@ -1,3 +1,5 @@
+html, body, #browser, .hal-browser { height: 100%; }
+
 #browser #location-bar { margin: 10px 0; }
 
 #browser #location-bar .address {
@@ -28,7 +30,7 @@
 
 .documentation { height: 100%; }
 .documentation iframe { width: 100%; height: 100%; }
-.documentation iframe { min-height: 600px } /* Beth: don't know why we need this, it used to display full height without setting a min-height. No idea what changed. */
+.documentation iframe { min-height: 600px } /* pact_broker Beth: don't know why we need this, it used to display full height without setting a min-height. No idea what changed. */
 
 .modal input, .modal textarea {
   width: 90%;

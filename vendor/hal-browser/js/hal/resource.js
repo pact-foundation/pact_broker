@@ -2,8 +2,8 @@ HAL.Models.Resource = Backbone.Model.extend({
   initialize: function(representation) {
     representation = representation || {};
     this.links = representation._links;
-    this.title = this.buildTitle(representation);
-    this.name = this.buildName(representation);
+    this.title = this.buildTitle(representation); // pact_broker
+    this.name = this.buildName(representation); // pact_broker
     if(representation._embedded !== undefined) {
       this.embeddedResources = this.buildEmbeddedResources(representation._embedded);
     }
@@ -12,6 +12,7 @@ HAL.Models.Resource = Backbone.Model.extend({
     this.unset('_links', { silent: true });
   },
 
+  // pact_broker
   buildName: function(representation) {
     return representation.name ||
       (representation._links
@@ -19,6 +20,7 @@ HAL.Models.Resource = Backbone.Model.extend({
         && representation._links.self.name);
   },
 
+  // pact_broker
   buildTitle: function(representation) {
     return representation.title ||
       (representation._links
