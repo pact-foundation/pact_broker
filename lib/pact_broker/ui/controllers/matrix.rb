@@ -21,7 +21,8 @@ module PactBroker
             lines: [],
             title: "The Matrix",
             selectors: create_selector_objects(selectors),
-            options: create_options_model(options)
+            options: create_options_model(options),
+            base_url: base_url
           }
           begin
             if params[:q]
@@ -56,7 +57,8 @@ module PactBroker
             provider_name: params[:provider_name],
             selectors: create_selector_objects(selectors),
             options: create_options_model(options),
-            badge_url: nil
+            badge_url: nil,
+            base_url: base_url
           }
           haml :'matrix/show', {locals: locals, layout: :'layouts/main'}
         end

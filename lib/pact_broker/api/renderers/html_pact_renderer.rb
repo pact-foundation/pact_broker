@@ -37,18 +37,18 @@ module PactBroker
 
         def head
          "<title>#{title}</title>
-          <link rel='stylesheet' type='text/css' href='/stylesheets/github.css'>
-          <link rel='stylesheet' type='text/css' href='/stylesheets/pact.css'>
-          <link rel='stylesheet' type='text/css' href='/stylesheets/github-json.css'>
-          <link rel='stylesheet' type='text/css' href='/css/bootstrap.min.css'>
-          <link rel='stylesheet' type='text/css' href='/stylesheets/material-menu.css'>
-          <link rel='stylesheet' type='text/css' href='/stylesheets/jquery-confirm.min.css'>
-          <script src='/javascripts/highlight.pack.js'></script>
-          <script src='/javascripts/jquery-3.3.1.min.js'></script>
-          <script src='/js/bootstrap.min.js'></script>
-          <script src='/javascripts/material-menu.js'></script>
-          <script src='/javascripts/pact.js'></script>
-          <script src='/javascripts/jquery-confirm.min.js'></script>
+          <link rel='stylesheet' type='text/css' href='#{base_url}/stylesheets/github.css'>
+          <link rel='stylesheet' type='text/css' href='#{base_url}/stylesheets/pact.css'>
+          <link rel='stylesheet' type='text/css' href='#{base_url}/stylesheets/github-json.css'>
+          <link rel='stylesheet' type='text/css' href='#{base_url}/css/bootstrap.min.css'>
+          <link rel='stylesheet' type='text/css' href='#{base_url}/stylesheets/material-menu.css'>
+          <link rel='stylesheet' type='text/css' href='#{base_url}/stylesheets/jquery-confirm.min.css'>
+          <script src='#{base_url}/javascripts/highlight.pack.js'></script>
+          <script src='#{base_url}/javascripts/jquery-3.3.1.min.js'></script>
+          <script src='#{base_url}/js/bootstrap.min.js'></script>
+          <script src='#{base_url}/javascripts/material-menu.js'></script>
+          <script src='#{base_url}/javascripts/pact.js'></script>
+          <script src='#{base_url}/javascripts/jquery-confirm.min.js'></script>
           <script>hljs.initHighlightingOnLoad();</script>"
         end
 

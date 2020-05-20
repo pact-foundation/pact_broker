@@ -15,7 +15,8 @@ module PactBroker
               locals: {
                 csv_path: "/groups/#{params[:name]}.csv",
                 pacticipant_name: params[:name],
-                repository_url: pacticipant&.repository_url
+                repository_url: pacticipant&.repository_url,
+                base_url: base_url
               }
             }, {
               layout: 'layouts/main'

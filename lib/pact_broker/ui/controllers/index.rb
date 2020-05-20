@@ -34,7 +34,8 @@ module PactBroker
             page_number: page_number,
             page_size: page_size,
             pagination_record_count: index_items.pagination_record_count,
-            current_page_size: index_items.size
+            current_page_size: index_items.size,
+            base_url: base_url
           }
 
           haml page, {locals: locals, layout: :'layouts/main'}
