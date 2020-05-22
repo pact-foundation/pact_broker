@@ -74,7 +74,7 @@ function promptToDeleteResource(deletionUrl, confirmationText) {
   confirmDeleteResource(confirmationText, confirmed, cancelled);
 }
 
-function createWhereToNextConfirmationConfiguration(latestPactUrl) {
+function createWhereToNextConfirmationConfiguration(latestPactUrl, indexUrl) {
   return {
     title: "Pact deleted",
     content: "Where to next?",
@@ -89,14 +89,14 @@ function createWhereToNextConfirmationConfiguration(latestPactUrl) {
       home: {
         text: "Home",
         action: function() {
-          window.location.href = "/";
+          window.location.href = indexUrl;
         }
       }
     }
   };
 }
 
-function createAllPactsDeletedConfirmationConfiguration() {
+function createAllPactsDeletedConfirmationConfiguration(indexUrl) {
   return {
     title: "Pact deleted",
     content: "All versions of this pact have now been deleted.",
@@ -104,7 +104,7 @@ function createAllPactsDeletedConfirmationConfiguration() {
       home: {
         text: "Home",
         action: function() {
-          window.location.href = "/";
+          window.location.href = indexUrl;
         }
       }
     }
@@ -115,11 +115,12 @@ function handleDeletionSuccess(responseBody) {
   if (responseBody._links["pb:latest-pact-version"]) {
     $.confirm(
       createWhereToNextConfirmationConfiguration(
-        responseBody._links["pb:latest-pact-version"].href
+        responseBody._links["pb:latest-pact-version"].href,
+        responseBody._links["index"].href
       )
     );
   } else {
-    $.confirm(createAllPactsDeletedConfirmationConfiguration());
+    $.confirm(createAllPactsDeletedConfirmationConfiguration(responseBody._links["index"].href));
   }
 }
 

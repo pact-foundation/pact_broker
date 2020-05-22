@@ -1,16 +1,16 @@
 %body
-  %link{rel: 'stylesheet', href: '/css/bootstrap.min.css'}
-  %link{rel: 'stylesheet', href: '/stylesheets/index.css'}
-  %link{rel: 'stylesheet', href: '/stylesheets/matrix.css'}
-  %script{type: 'text/javascript', src:'/javascripts/jquery-3.3.1.min.js'}
-  %script{type: 'text/javascript', src:'/javascripts/jquery.tablesorter.min.js'}
-  %script{type: 'text/javascript', src:'/javascripts/matrix.js'}
-  %script{type: 'text/javascript', src:'/javascripts/clipboard.js'}
-  %script{type: 'text/javascript', src:'/js/bootstrap.min.js'}
+  %link{rel: 'stylesheet', href: "#{base_url}/css/bootstrap.min.css"}
+  %link{rel: 'stylesheet', href: "#{base_url}/stylesheets/index.css"}
+  %link{rel: 'stylesheet', href: "#{base_url}/stylesheets/matrix.css"}
+  %script{type: 'text/javascript', src: "#{base_url}/javascripts/jquery-3.3.1.min.js"}
+  %script{type: 'text/javascript', src: "#{base_url}/javascripts/jquery.tablesorter.min.js"}
+  %script{type: 'text/javascript', src: "#{base_url}/javascripts/matrix.js"}
+  %script{type: 'text/javascript', src: "#{base_url}/javascripts/clipboard.js"}
+  %script{type: 'text/javascript', src: "#{base_url}/js/bootstrap.min.js"}
 
   .container
     .navbar-right
-      %a{href: '/'}
+      %a{href: base_url}
         Home
     %h1.page-header
       = title
@@ -23,7 +23,7 @@
           = escape_html(error)
 
 
-    %form{action: '/matrix', onsubmit:'return onSubmit()'}
+    %form{action: "#{base_url}/matrix", onsubmit:'return onSubmit()'}
       - selectors.each_with_index do | selector, index |
         .selector
           %label{for: "pacticipant#{index}"}

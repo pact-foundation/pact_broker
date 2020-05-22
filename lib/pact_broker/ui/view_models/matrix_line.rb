@@ -12,8 +12,9 @@ module PactBroker
         include PactBroker::Api::PactBrokerUrls
         include PactBroker::Messages
 
-        def initialize line
+        def initialize line, options = {}
           @line = line
+          @options = options
           @overwritten = false # true if the pact was revised and this revision is no longer the latest
         end
 
@@ -22,7 +23,7 @@ module PactBroker
         end
 
         def provider_name_url
-          hal_browser_url(pacticipant_url_from_params(pacticipant_name: provider_name))
+          hal_browser_url(pacticipant_url_from_params({ pacticipant_name: provider_name }, base_url), base_url)
         end
 
         def consumer_name
@@ -30,7 +31,7 @@ module PactBroker
         end
 
         def consumer_name_url
-          hal_browser_url(pacticipant_url_from_params(pacticipant_name: consumer_name))
+          hal_browser_url(pacticipant_url_from_params({ pacticipant_name: consumer_name }, base_url), base_url)
         end
 
         def pact_version_sha
@@ -68,7 +69,7 @@ module PactBroker
 
         def consumer_version_number_url
           params = { pacticipant_name: consumer_name, version_number: consumer_version_number }
-          hal_browser_url(version_url_from_params(params))
+          hal_browser_url(version_url_from_params(params, base_url), base_url)
         end
 
         def consumer_version_order
@@ -85,7 +86,7 @@ module PactBroker
 
         def provider_version_number_url
           params = { pacticipant_name: provider_name, version_number: provider_version_number }
-          hal_browser_url(version_url_from_params(params))
+          hal_browser_url(version_url_from_params(params, base_url), base_url)
         end
 
         def provider_version_order
@@ -142,7 +143,7 @@ module PactBroker
         end
 
         def verification_status_url
-          hal_browser_url(verification_url(self))
+          hal_browser_url(verification_url(self, base_url), base_url)
         end
 
         def pact_publication_date
@@ -150,7 +151,7 @@ module PactBroker
         end
 
         def pact_publication_date_url
-          pact_url('', @line)
+          pact_url(base_url, @line)
         end
 
         def relative_date date
@@ -181,6 +182,10 @@ module PactBroker
           if @line.verification_executed_at && @line.pact_created_at > @line.verification_executed_at
             message("messages.matrix.pre_verified")
           end
+        end
+
+        def base_url
+          @options[:base_url]
         end
       end
     end

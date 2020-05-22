@@ -284,8 +284,8 @@ module PactBroker
         "#{base_url}/groups/#{pacticipant_name}"
       end
 
-      def hal_browser_url target_url
-        "/hal-browser/browser.html#" + target_url
+      def hal_browser_url target_url, base_url = ''
+        "#{base_url}/hal-browser/browser.html#" + target_url
       end
 
       def url_encode param

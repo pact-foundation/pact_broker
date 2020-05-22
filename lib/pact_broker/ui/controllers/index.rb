@@ -25,7 +25,7 @@ module PactBroker
 
           # TODO remove this code when verified
           options[:optimised] = true unless params[:optimised] == 'false'
-          index_items = ViewDomain::IndexItems.new(index_service.find_index_items(options))
+          index_items = ViewDomain::IndexItems.new(index_service.find_index_items(options), base_url: base_url)
 
           page = tags ? :'index/show-with-tags' : :'index/show'
           locals = {
@@ -34,7 +34,8 @@ module PactBroker
             page_number: page_number,
             page_size: page_size,
             pagination_record_count: index_items.pagination_record_count,
-            current_page_size: index_items.size
+            current_page_size: index_items.size,
+            base_url: base_url
           }
 
           haml page, {locals: locals, layout: :'layouts/main'}

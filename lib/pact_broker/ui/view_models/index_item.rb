@@ -11,8 +11,9 @@ module PactBroker
 
         include PactBroker::Api::PactBrokerUrls
 
-        def initialize relationship
+        def initialize relationship, options = {}
           @relationship = relationship
+          @options = options
         end
 
         def consumer_name
@@ -48,23 +49,23 @@ module PactBroker
         end
 
         def consumer_group_url
-          Helpers::URLHelper.group_url consumer_name
+          Helpers::URLHelper.group_url(consumer_name, base_url)
         end
 
         def provider_group_url
-          Helpers::URLHelper.group_url provider_name
+          Helpers::URLHelper.group_url(provider_name, base_url)
         end
 
         def latest_pact_url
-          "#{pactigration_base_url('', @relationship)}/latest"
+          "#{pactigration_base_url(base_url, @relationship)}/latest"
         end
 
         def pact_url
-          PactBroker::Api::PactBrokerUrls.pact_url('', @relationship)
+          PactBroker::Api::PactBrokerUrls.pact_url(base_url, @relationship)
         end
 
         def pact_matrix_url
-          Helpers::URLHelper.matrix_url consumer_name, provider_name
+          Helpers::URLHelper.matrix_url(consumer_name, provider_name, base_url)
         end
 
         def any_webhooks?
@@ -72,11 +73,11 @@ module PactBroker
         end
 
         def pact_versions_url
-          PactBroker::Api::PactBrokerUrls.pact_versions_url(consumer_name, provider_name)
+          PactBroker::Api::PactBrokerUrls.pact_versions_url(consumer_name, provider_name, base_url)
         end
 
         def integration_url
-          PactBroker::Api::PactBrokerUrls.integration_url(consumer_name, provider_name)
+          PactBroker::Api::PactBrokerUrls.integration_url(consumer_name, provider_name, base_url)
         end
 
         def webhook_label
@@ -114,11 +115,11 @@ module PactBroker
         def webhook_url
           url = case @relationship.webhook_status
             when :none
-              PactBroker::Api::PactBrokerUrls.webhooks_for_consumer_and_provider_url @relationship.latest_pact.consumer, @relationship.latest_pact.provider
+              PactBroker::Api::PactBrokerUrls.webhooks_for_consumer_and_provider_url @relationship.latest_pact.consumer, @relationship.latest_pact.provider, base_url
             else
-              PactBroker::Api::PactBrokerUrls.webhooks_status_url @relationship.latest_pact.consumer, @relationship.latest_pact.provider
+              PactBroker::Api::PactBrokerUrls.webhooks_status_url @relationship.latest_pact.consumer, @relationship.latest_pact.provider, base_url
           end
-          "/hal-browser/browser.html##{url}"
+          PactBroker::Api::PactBrokerUrls.hal_browser_url(url, base_url)
         end
 
         def last_verified_date
@@ -180,6 +181,10 @@ module PactBroker
           else
             version_number
           end
+        end
+
+        def base_url
+          @options[:base_url]
         end
       end
     end

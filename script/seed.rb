@@ -59,7 +59,7 @@ TestDataBuilder.new
     body: webhook_body.to_json)
   .set_now(Date.today - 101)
   .tap{ | it |
-    100.times do | i |
+    2.times do | i |
       it.create_pact_with_verification("Foo", i.to_s, "Bar", i.to_s)
       .create_pact_with_verification("Bar", i.to_s, "Foo", i.to_s)
       .add_day

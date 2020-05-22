@@ -5,11 +5,11 @@
 <head>
 <meta charset="utf-8">
 <title>Network Graph</title>
-<link rel='shortcut icon' href='/favicon.ico' type='image/x-icon'/>
+<link rel='shortcut icon' href='<%= base_url %>/favicon.ico' type='image/x-icon'/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="">
 <meta name="author" content="Duncan Alexander">
-<script type="text/javascript" src="/javascripts/d3.v3.js.pagespeed.ce.dFNRrGTALe.js"></script>
+<script type="text/javascript" src="<%= base_url %>/javascripts/d3.v3.js.pagespeed.ce.dFNRrGTALe.js"></script>
 <style>
 body{
     font-family:"Helvetica Neue",Arial,sans-serif;
@@ -105,7 +105,7 @@ var relationshipPath = function(relationship, nodeLocations, pacticipants) {
 
 var latestPactUrl = function (consumerName, providerName) {
     //TODO send this with the relationship data
-    return '/pacts/provider/' + providerName + '/consumer/' + consumerName + '/latest';
+    return '<%= base_url %>/pacts/provider/' + providerName + '/consumer/' + consumerName + '/latest';
 };
 
 var relationshipData = function(pacticipant, relationships) {

@@ -21,7 +21,8 @@ module PactBroker
             lines: [],
             title: "The Matrix",
             selectors: create_selector_objects(selectors),
-            options: create_options_model(options)
+            options: create_options_model(options),
+            base_url: base_url
           }
           begin
             if params[:q]
@@ -48,7 +49,7 @@ module PactBroker
           selectors = [ PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: params[:consumer_name]), PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: params[:provider_name]) ]
           options = {latestby: 'cvpv', limit: 100}
           lines = matrix_service.find(selectors, options)
-          lines = PactBroker::UI::ViewDomain::MatrixLines.new(lines)
+          lines = PactBroker::UI::ViewDomain::MatrixLines.new(lines, base_url: base_url)
           locals = {
             lines: lines,
             title: "The Matrix",
@@ -56,7 +57,8 @@ module PactBroker
             provider_name: params[:provider_name],
             selectors: create_selector_objects(selectors),
             options: create_options_model(options),
-            badge_url: nil
+            badge_url: nil,
+            base_url: base_url
           }
           haml :'matrix/show', {locals: locals, layout: :'layouts/main'}
         end

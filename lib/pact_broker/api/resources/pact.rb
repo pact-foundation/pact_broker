@@ -100,7 +100,7 @@ module PactBroker
 
         def set_post_deletion_response
           latest_pact = pact_service.find_latest_pact(pact_params)
-          response_body = { "_links" => {} }
+          response_body = { "_links" => { index: { href: base_url } } }
           if latest_pact
             response_body["_links"]["pb:latest-pact-version"] = {
               href: latest_pact_url(base_url, latest_pact),

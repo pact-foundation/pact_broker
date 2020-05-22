@@ -2,8 +2,8 @@
 %html
   %head
     %title= defined?(title) ? title : ""
-    %link{rel: 'shortcut icon', href: '/images/favicon.ico', type:'image/x-icon'}
-    %link{rel: 'stylesheet', href: '/css/bootstrap.min.css'}
-    %script{type: 'text/javascript', src:'/javascripts/jquery-3.3.1.min.js'}
-    %script{type: 'text/javascript', src:'/js/bootstrap.min.js'}
+    %link{rel: 'shortcut icon', href: "#{base_url}/images/favicon.ico", type:'image/x-icon'}
+    %link{rel: 'stylesheet', href: "#{base_url}/css/bootstrap.min.css"}
+    %script{type: 'text/javascript', src:"#{base_url}/javascripts/jquery-3.3.1.min.js"}
+    %script{type: 'text/javascript', src:"#{base_url}/js/bootstrap.min.js"}
   = yield
