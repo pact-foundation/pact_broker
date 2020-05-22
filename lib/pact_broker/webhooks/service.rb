@@ -40,12 +40,13 @@ module PactBroker
       def self.errors webhook, uuid = nil
         contract = PactBroker::Api::Contracts::WebhookContract.new(webhook)
         contract.validate(webhook.attributes)
-        errors = contract.errors
+        messages = contract.errors.messages
 
         if uuid && !valid_uuid_format?(uuid)
-          errors.add("uuid", message("errors.validation.invalid_webhook_uuid"))
+          messages["uuid"] = [message("errors.validation.invalid_webhook_uuid")]
         end
-        errors
+
+        OpenStruct.new(messages: messages, empty?: messages.empty?, any?: messages.any?)
       end
 
       def self.create uuid, webhook, consumer, provider
