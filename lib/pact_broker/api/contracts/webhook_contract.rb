@@ -14,11 +14,13 @@ module PactBroker
           # I just cannot seem to get the validation to stop on the first error.
           # If one rule fails, they all come back failed, and it's driving me nuts.
           # Why on earth would I want that behaviour?
-          new_errors = Reform::Contract::Errors.new
-          errors.messages.each do | key, value |
-            new_errors.add(key, value.first)
+          # I cannot believe I have to do this shit.
+          @first_errors = errors
+          @first_errors.messages.keys.each do | key |
+            @first_errors.messages[key] = @first_errors.messages[key][0...1]
           end
-          @errors = new_errors
+
+          def self.errors; @first_errors end
           result
         end
 
