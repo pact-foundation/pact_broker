@@ -33,7 +33,7 @@ module PactBroker
         get ":rel_name" do
           rel_name = params[:rel_name]
           context = params[:context]
-          view_params = {:layout_engine => :haml, layout: :'layouts/main'}
+          view_params = {:layout_engine => :haml, layout: :'layouts/main', locals: { base_url: base_url }}
           if resource_exists? rel_name, context
             markdown view_name_for(rel_name, context).to_sym, view_params, {}
           elsif resource_exists? rel_name
@@ -41,6 +41,12 @@ module PactBroker
           else
             markdown :not_found, view_params, {}
           end
+        end
+
+        private
+
+        def base_url
+          PactBroker.configuration.base_url || request.base_url
         end
       end
     end

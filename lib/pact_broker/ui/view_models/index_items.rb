@@ -7,9 +7,9 @@ module PactBroker
 
         attr_reader :pagination_record_count
 
-        def initialize index_items
+        def initialize index_items, options = {}
           # Why are we sorting twice!?
-          @index_items = index_items.collect{ |index_item| IndexItem.new(index_item) }.sort
+          @index_items = index_items.collect{ |index_item| IndexItem.new(index_item, options) }.sort
           # until the feature flag is turned on
           @pagination_record_count = index_items.size
           @pagination_record_count = index_items.pagination_record_count if index_items.respond_to?(:pagination_record_count)

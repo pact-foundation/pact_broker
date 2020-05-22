@@ -47,6 +47,7 @@ module PactBroker
           end
 
           map "/" do
+            use PathInfoFixer
             run PactBroker::UI::Controllers::Index
           end
         }

@@ -72,7 +72,7 @@ module PactBroker
                 <a href=\"#{matrix_url}\">View Matrix</a>
               </li>
               <li>
-                <a href=\"/\">Home</a>
+                <a href=\"#{base_url}\">Home</a>
               </li>
               <li>
                 <span data-consumer-name=\"#{@pact.consumer.name}\"
@@ -129,7 +129,7 @@ module PactBroker
         end
 
         def json_url
-          PactBroker::Api::PactBrokerUrls.hal_browser_url pact_url
+          PactBroker::Api::PactBrokerUrls.hal_browser_url pact_url, base_url
         end
 
         def pact_url

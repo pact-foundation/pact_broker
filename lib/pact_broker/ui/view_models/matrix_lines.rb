@@ -5,9 +5,9 @@ module PactBroker
     module ViewDomain
       class MatrixLines < Array
 
-        def initialize rows
+        def initialize rows, options = {}
           lines = rows.collect do | row |
-            PactBroker::UI::ViewDomain::MatrixLine.new(row)
+            PactBroker::UI::ViewDomain::MatrixLine.new(row, options)
           end
           super(lines.sort)
         end

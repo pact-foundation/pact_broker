@@ -25,7 +25,7 @@ module PactBroker
 
           # TODO remove this code when verified
           options[:optimised] = true unless params[:optimised] == 'false'
-          index_items = ViewDomain::IndexItems.new(index_service.find_index_items(options))
+          index_items = ViewDomain::IndexItems.new(index_service.find_index_items(options), base_url: base_url)
 
           page = tags ? :'index/show-with-tags' : :'index/show'
           locals = {

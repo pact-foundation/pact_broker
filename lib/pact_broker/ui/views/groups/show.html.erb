@@ -105,7 +105,7 @@ var relationshipPath = function(relationship, nodeLocations, pacticipants) {
 
 var latestPactUrl = function (consumerName, providerName) {
     //TODO send this with the relationship data
-    return '/pacts/provider/' + providerName + '/consumer/' + consumerName + '/latest';
+    return '<%= base_url %>/pacts/provider/' + providerName + '/consumer/' + consumerName + '/latest';
 };
 
 var relationshipData = function(pacticipant, relationships) {
