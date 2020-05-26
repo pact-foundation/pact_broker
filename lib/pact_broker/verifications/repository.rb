@@ -136,8 +136,8 @@ module PactBroker
       end
 
       def delete_all_verifications_between(consumer_name, options)
-        consumer = pacticipant_repository.find_by_name(consumer_name)
-        provider = pacticipant_repository.find_by_name(options.fetch(:and))
+        consumer = pacticipant_repository.find_by_name!(consumer_name)
+        provider = pacticipant_repository.find_by_name!(options.fetch(:and))
         PactBroker::Domain::Verification.where(provider: provider, consumer: consumer).delete
       end
 

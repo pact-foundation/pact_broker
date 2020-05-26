@@ -248,6 +248,12 @@ module PactBroker
             Service.delete("Foo", "Foo")
           end
         end
+
+        context "when the pacticipants are not found for some bizarre reason (I can't see how this can happen, but it has)" do
+          it "raises an error" do
+            expect { Service.delete("Foo", "Bar") }.to raise_error(PactBroker::Error, /found/)
+          end
+        end
       end
 
       describe "delete_all" do

@@ -31,8 +31,8 @@ module PactBroker
       end
 
       def self.delete(consumer_name, provider_name)
-        consumer = pacticipant_service.find_pacticipant_by_name(consumer_name)
-        provider = pacticipant_service.find_pacticipant_by_name(provider_name)
+        consumer = pacticipant_service.find_pacticipant_by_name!(consumer_name)
+        provider = pacticipant_service.find_pacticipant_by_name!(provider_name)
         # this takes care of the triggered webhooks and webhook executions
         pact_service.delete_all_pact_publications_between(consumer_name, and: provider_name)
         verification_service.delete_all_verifications_between(consumer_name, and: provider_name)

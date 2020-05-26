@@ -1,4 +1,4 @@
-describe "Deleting pact versions" do
+describe "Deleting an integration" do
 
   let(:path) { "/integrations/provider/Bar/consumer/Foo" }
 
@@ -19,7 +19,7 @@ describe "Deleting pact versions" do
     end
   end
 
-  context "when the pact does not exist" do
+  context "when the integration does not exist" do
     it "returns a 404 Not Found" do
       expect(subject.status).to be 404
     end

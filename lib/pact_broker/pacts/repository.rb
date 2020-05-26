@@ -107,8 +107,8 @@ module PactBroker
       end
 
       def delete_all_pact_publications_between consumer_name, options
-        consumer = pacticipant_repository.find_by_name(consumer_name)
-        provider = pacticipant_repository.find_by_name(options.fetch(:and))
+        consumer = pacticipant_repository.find_by_name!(consumer_name)
+        provider = pacticipant_repository.find_by_name!(options.fetch(:and))
         query = PactPublication.where(consumer: consumer, provider: provider)
         query = query.tag(options[:tag]) if options[:tag]
 
