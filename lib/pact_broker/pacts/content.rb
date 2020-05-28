@@ -31,14 +31,25 @@ module PactBroker
         Content.from_hash(SortContent.call(pact_hash))
       end
 
+      def interactions_missing_test_results
+        interactions.reject do | interaction |
+          interaction['tests']&.any?
+        end
+      end
+
       def with_test_results(test_results)
+        tests = test_results && test_results['tests']
+        if tests.nil? || !tests.is_a?(Array) || tests.empty?
+          tests = []
+        end
+
         new_pact_hash = pact_hash.dup
         if interactions && interactions.is_a?(Array)
-          new_pact_hash['interactions'] = merge_verification_results(interactions, test_results)
+          new_pact_hash['interactions'] = merge_verification_results(interactions, tests)
         end
 
         if messages && messages.is_a?(Array)
-          new_pact_hash['messages'] = merge_verification_results(messages, test_results)
+          new_pact_hash['messages'] = merge_verification_results(messages, tests)
         end
         Content.from_hash(new_pact_hash)
       end
@@ -106,6 +117,19 @@ module PactBroker
             interaction
           end
         end
+      end
+
+      def merge_verification_results(interactions, tests)
+        interactions.collect(&:dup).collect do | interaction |
+          interaction['tests'] = tests.select do | test |
+            test_is_for_interaction(interaction, test)
+          end
+          interaction
+        end
+      end
+
+      def test_is_for_interaction(interaction, test)
+        test.is_a?(Hash) && interaction.is_a?(Hash) && test['interactionDescription'] == interaction['description'] && test['interactionProviderState'] == interaction['providerState']
       end
     end
   end

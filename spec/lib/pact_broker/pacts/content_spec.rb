@@ -227,6 +227,131 @@ module PactBroker
           its(:pact_specification_version) { is_expected.to eq nil }
         end
       end
+
+      describe "with_test_results" do
+        let(:test_results) do
+          {
+            "tests" => [
+              {
+                "interactionProviderState" => "ps1",
+                "interactionDescription" => "desc1"
+              },{
+                "interactionProviderState" => "ps1",
+                "interactionDescription" => "desc1"
+              }
+            ]
+          }
+        end
+
+        let(:pact_content) do
+          {
+            "interactions" => [
+              {
+               "providerState" => "ps1",
+               "description" => "desc1",
+              },
+              {
+               "providerState" => "ps2",
+               "description" => "desc2",
+              }
+            ]
+          }
+        end
+
+        subject { Content.from_hash(pact_content).with_test_results(test_results) }
+
+        let(:merged) do
+          {
+            "interactions" => [
+              {
+               "providerState" => "ps1",
+               "description" => "desc1",
+               "tests" => [
+                {
+                  "interactionProviderState" => "ps1",
+                  "interactionDescription" => "desc1",
+                },{
+                  "interactionProviderState" => "ps1",
+                  "interactionDescription" => "desc1",
+                }
+               ]
+              },{
+               "providerState" => "ps2",
+               "description" => "desc2",
+               "tests" => []
+              }
+            ]
+          }
+        end
+
+        let(:merged_with_empty_tests) do
+          {
+            "interactions" => [
+              {
+               "providerState" => "ps1",
+               "description" => "desc1",
+               "tests" => []
+              },{
+               "providerState" => "ps2",
+               "description" => "desc2",
+               "tests" => []
+              }
+            ]
+          }
+        end
+
+        it "merges the contents with the results" do
+          expect(subject.to_hash).to eq merged
+        end
+
+        it "returns interactions without test results" do
+          expect(subject.interactions_missing_test_results.count).to eq 1
+        end
+
+        context "with nil test results" do
+          let(:test_results) { nil }
+
+          it "does not blow up" do
+            expect(subject.to_hash).to eq merged_with_empty_tests
+          end
+
+          it "returns interactions without test results" do
+            expect(subject.interactions_missing_test_results.count).to eq 2
+          end
+        end
+
+        context "with nil tests" do
+          let(:test_results) { {} }
+
+          it "does not blow up" do
+            expect(subject.to_hash).to eq merged_with_empty_tests
+          end
+        end
+
+        context "with empty tests" do
+          let(:test_results) { { "tests" => [] } }
+
+          it "does not blow up" do
+            expect(subject.to_hash).to eq merged_with_empty_tests
+          end
+        end
+
+        context "with tests not an array" do
+          let(:test_results) { { "tests" => {} } }
+
+          it "does not blow up" do
+            expect(subject.to_hash).to eq merged_with_empty_tests
+          end
+        end
+
+        context "with tests an array of not hashes" do
+          let(:test_results) { { "tests" => [1] } }
+
+          it "does not blow up" do
+            expect(subject.to_hash).to eq merged_with_empty_tests
+          end
+        end
+      end
     end
   end
 end

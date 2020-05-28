@@ -10,7 +10,7 @@ module PactBroker
 
         describe "the number of Reason classes" do
           it "is 9 - add another spec here if a new Reason is added" do
-            expect(REASON_CLASSES.size).to eq 9
+            expect(REASON_CLASSES.size).to eq 10
           end
         end
 
@@ -51,6 +51,23 @@ module PactBroker
             let(:reason) { PactBroker::Matrix::Successful.new }
 
             its(:to_s) { is_expected.to eq "All required verification results are published and successful" }
+          end
+
+          context "when the reason is PactBroker::Matrix::InteractionsMissingVerifications" do
+            let(:reason) { PactBroker::Matrix::InteractionsMissingVerifications.new(consumer_selector, provider_selector, interactions) }
+            let(:interactions) do
+              [
+                {
+                  "description" => "desc1",
+                  "providerState" => "p2"
+                },{
+                  "description" => "desc1",
+                  "providerStates" => [ { "name" => "desc3"}, { "name" => "desc4"} ]
+                }
+              ]
+            end
+
+            its(:to_s) { is_expected.to eq "WARNING: Although the verification was reported as successful, the results for version 2 of Foo and version 6 of Bar may be missing tests for the following interactions: desc1 given p2; desc1 given desc3, desc4" }
           end
         end
       end

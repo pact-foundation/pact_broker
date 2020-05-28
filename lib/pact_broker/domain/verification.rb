@@ -2,6 +2,7 @@ require 'json'
 require 'sequel'
 require 'pact_broker/repositories/helpers'
 require 'pact_broker/tags/tag_with_latest_flag'
+require 'pact_broker/pacts/content'
 
 
 module PactBroker
@@ -82,6 +83,18 @@ module PactBroker
 
       def latest_pact_publication
         pact_version.latest_pact_publication
+      end
+
+      def interactions_missing_test_results
+        @interactions_missing_test_results ||= pact_content_with_test_results.interactions_missing_test_results
+      end
+
+      def all_interactions_missing_test_results?
+        pact_content_with_test_results.interactions.count == pact_content_with_test_results.interactions_missing_test_results.count
+      end
+
+      def pact_content_with_test_results
+        @pact_content_with_test_results = PactBroker::Pacts::Content.from_json(pact_version.content).with_test_results(test_results)
       end
     end
 

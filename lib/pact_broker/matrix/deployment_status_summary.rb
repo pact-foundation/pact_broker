@@ -31,7 +31,7 @@ module PactBroker
       end
 
       def reasons
-        error_messages.any? ? error_messages : success_messages
+        error_messages.any? ? error_messages + warning_messages : success_messages + warning_messages
       end
 
       private
@@ -49,6 +49,10 @@ module PactBroker
           end
           messages.uniq
         end
+      end
+
+      def warning_messages
+        warnings_for_missing_interactions
       end
 
       def specified_selectors_that_do_not_exist
@@ -181,6 +185,24 @@ module PactBroker
             ResolvedSelector.for_pacticipant(row.provider, :inferred)
           [dummy_consumer_selector, dummy_provider_selector]
         end.flatten
+      end
+
+      # experimental
+      def warnings_for_missing_interactions
+        rows.select(&:success).collect do | row |
+          begin
+            if row.verification.interactions_missing_test_results.any? && !row.verification.all_interactions_missing_test_results?
+              InteractionsMissingVerifications.new(selector_for(row.consumer_name), selector_for(row.provider_name), row.verification.interactions_missing_test_results)
+            end
+          rescue StandardError => e
+            log_error(e, "Error determining if there were missing interaction verifications")
+            nil
+          end
+        end.compact.tap { |it| report_missing_interaction_verifications(it) if it.any? }
+      end
+
+      def report_missing_interaction_verifications(messages)
+        logger.warn("Interactions missing verifications", messages)
       end
     end
   end

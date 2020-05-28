@@ -2,8 +2,10 @@
   "success": true,
   "providerApplicationVersion": "1.0.0",
   "testResults": {
-    "examples": [
+    "tests": [
       {
+        "interactionDescription": "a request for something",
+        "interactionProviderState": null,
         "description": "has status code 200",
         "file_path": "/redacted/.gem/ruby/2.4.1/gems/pact-1.17.0/lib/pact/provider/rspec.rb",
         "full_description": "Verifying a pact between me and they Greeting with GET / returns a response which has status code 200",

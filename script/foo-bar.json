@@ -17,6 +17,17 @@
         "status": 200,
         "body" : "something"
       }
+    },{
+      "description" : "a request for something else",
+      "providerState": null,
+      "request": {
+        "method": "get",
+        "path" : "/something"
+      },
+      "response": {
+        "status": 200,
+        "body" : "something"
+      }
     }
   ]
 }

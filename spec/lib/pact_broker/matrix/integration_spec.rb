@@ -416,6 +416,49 @@ module PactBroker
             expect(subject.deployment_status_summary).to be_deployable
           end
         end
+
+        describe "when verification results are published missing tests for some interactions" do
+          let(:pact_content) do
+            {
+              "interactions" => [
+                {
+                  "description" => "desc1"
+                },{
+                  "description" => "desc2"
+                }
+              ]
+            }
+          end
+
+          let(:verification_tests) do
+            [
+              {
+                "interactionDescription" => "desc1"
+              }
+            ]
+          end
+
+          before do
+            td.create_consumer("Foo")
+              .create_provider("Bar")
+              .create_consumer_version
+              .create_pact(json_content: pact_content.to_json)
+              .create_verification(provider_version: "1", test_results: { tests: verification_tests })
+          end
+
+          let(:selectors) do
+            [
+              UnresolvedSelector.new(pacticipant_name: "Foo", latest: true),
+              UnresolvedSelector.new(pacticipant_name: "Bar", latest: true)
+            ]
+          end
+
+          let(:options) { { latestby: "cvpv"} }
+
+          it "should include a warning" do
+            expect(subject.deployment_status_summary.reasons.last).to be_a(PactBroker::Matrix::InteractionsMissingVerifications)
+          end
+        end
       end
     end
   end

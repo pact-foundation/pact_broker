@@ -29,7 +29,8 @@ module PactBroker
             provider_name: bar.name,
             provider_id: bar.id,
             success: row_1_success,
-            pacticipant_names: [foo.name, bar.name]
+            pacticipant_names: [foo.name, bar.name],
+            verification: verification_1
           )
         end
 
@@ -46,7 +47,8 @@ module PactBroker
             provider_name: baz.name,
             provider_id: baz.id,
             success: true,
-            pacticipant_names: [foo.name, baz.name]
+            pacticipant_names: [foo.name, baz.name],
+            verification: verification_2
           )
         end
 
@@ -65,6 +67,8 @@ module PactBroker
         let(:foo_version) { double('foo version', number: "ddec8101dabf4edf9125a69f9a161f0f294af43c", id: 10)}
         let(:bar_version) { double('bar version', number: "14131c5da3abf323ccf410b1b619edac76231243", id: 11)}
         let(:baz_version) { double('baz version', number: "4ee06460f10e8207ad904fa9fa6c4842e462ab59", id: 12)}
+        let(:verification_1) { double('verification 1', interactions_missing_test_results: []) }
+        let(:verification_2) { double('verification 2', interactions_missing_test_results: []) }
 
         let(:resolved_selectors) do
           [

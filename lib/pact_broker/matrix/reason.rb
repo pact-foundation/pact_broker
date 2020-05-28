@@ -73,5 +73,14 @@ module PactBroker
     # provider verifications.
     class NoDependenciesMissing < Reason
     end
+
+    class InteractionsMissingVerifications < ErrorReasonWithTwoSelectors
+      attr_reader :interactions
+
+      def initialize(consumer_selector, provider_selector, interactions)
+        super(consumer_selector, provider_selector)
+        @interactions = interactions
+      end
+    end
   end
 end
