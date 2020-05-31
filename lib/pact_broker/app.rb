@@ -232,7 +232,9 @@ module PactBroker
     end
 
     def print_startup_message
-      logger.info "\n\n#{'*' * 80}\n\nWant someone to manage your Pact Broker for you? Check out https://pactflow.io/oss for a hardened, fully supported SaaS version of the Pact Broker with an improved UI + more.\n\n#{'*' * 80}\n"
+      if ENV['PACT_BROKER_HIDE_PACTFLOW_MESSAGES'] != 'true'
+        logger.info "\n\n#{'*' * 80}\n\nWant someone to manage your Pact Broker for you? Check out https://pactflow.io/oss for a hardened, fully supported SaaS version of the Pact Broker with an improved UI + more.\n\n#{'*' * 80}\n"
+      end
     end
   end
 end
