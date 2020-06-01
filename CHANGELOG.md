@@ -1,3 +1,25 @@
+<a name="v2.56.0"></a>
+### v2.56.0 (2020-06-01)
+
+
+#### Features
+
+* **database**
+  * log schema versions and migration info on startup	 ([b385e535](/../../commit/b385e535))
+  * allow options to be passed to Sequel migrate via the MigrationTask	 ([143613e7](/../../commit/143613e7))
+
+* allow Pactflow messages in logs to be hidden by setting PACT_BROKER_HIDE_PACTFLOW_MESSAGES=true	 ([a7550105](/../../commit/a7550105))
+
+* **can-i-deploy**
+  * experimental - add a warning message if there are interactions missing verification test results.	 ([f7ab8cc5](/../../commit/f7ab8cc5))
+
+
+#### Bug Fixes
+
+* use relative URLs when base_url not explictly set to ensure app is not vulnerable to host header attacks	 ([92c45a0a](/../../commit/92c45a0a))
+* raise PactBroker::Error when either pacticipant is not found in the business layer while attempting to delete an integration	 ([3c209a46](/../../commit/3c209a46))
+
+
 <a name="v2.55.0"></a>
 ### v2.55.0 (2020-05-22)
 
