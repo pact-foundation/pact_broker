@@ -32,5 +32,21 @@ describe "UI index" do
         expect(subject.body.scan('<tr').to_a.count).to eq 3
       end
     end
+
+    context "with the base_url not set" do
+      it "returns relative links" do
+        expect(subject.body).to include "href='/stylesheets"
+      end
+    end
+
+    context "with the base_url set" do
+      before do
+        allow(PactBroker.configuration).to receive(:base_url).and_return('http://example.org/pact-broker')
+      end
+
+      it "returns absolute links" do
+        expect(subject.body).to include "href='http://example.org/pact-broker/stylesheets"
+      end
+    end
   end
 end

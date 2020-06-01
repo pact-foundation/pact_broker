@@ -46,7 +46,11 @@ module PactBroker
         private
 
         def base_url
-          PactBroker.configuration.base_url || request.base_url
+          # Using the X-Forwarded headers in the UI can leave the app vulnerable
+          # https://www.acunetix.com/blog/articles/automated-detection-of-host-header-attacks/
+          # Either use the explicitly configured base url or an empty string,
+          # rather than request.base_url, which uses the X-Forwarded headers.
+          PactBroker.configuration.base_url || ''
         end
       end
     end
