@@ -2,12 +2,12 @@ require 'sequel'
 require 'pact_broker/db/validate_encoding'
 require 'pact_broker/db/migrate'
 require 'pact_broker/db/migrate_data'
+require 'pact_broker/db/version'
 
 Sequel.datetime_class = DateTime
 
 module PactBroker
   module DB
-
     MIGRATIONS_DIR = File.expand_path("../../../db/migrations", __FILE__)
 
     def self.connection= connection
@@ -25,6 +25,14 @@ module PactBroker
 
     def self.run_data_migrations database_connection
       PactBroker::DB::MigrateData.(database_connection)
+    end
+
+    def self.is_current? database_connection, options = {}
+      Sequel::TimestampMigrator.is_current?(database_connection, PactBroker::DB::MIGRATIONS_DIR, options)
+    end
+
+    def self.version database_connection
+      PactBroker::DB::Version.call(database_connection)
     end
 
     def self.validate_connection_config
