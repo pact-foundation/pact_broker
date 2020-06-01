@@ -31,7 +31,7 @@ describe "UI matrix" do
     subject { get("/matrix?q%5B%5Dpacticipant=Foo&q%5B%5Dtag=ctag&q%5B%5Dlatest=true&q%5B%5Dpacticipant=Bar&q%5B%5Dtag=ptag&q%5B%5Dlatest=true&latestby=cvpv&limit=100") }
 
     it "returns a page with a badge" do
-      expect(subject.body).to include "http://example.org/matrix/provider/Bar/latest/ptag/consumer/Foo/latest/ctag/badge.svg"
+      expect(subject.body).to include "/matrix/provider/Bar/latest/ptag/consumer/Foo/latest/ctag/badge.svg"
     end
   end
 end
