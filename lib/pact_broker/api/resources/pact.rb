@@ -77,8 +77,8 @@ module PactBroker
         def to_html
           PactBroker.configuration.html_pact_renderer.call(
             pact, {
-              base_url: base_url,
-              badge_url: badge_url_for_latest_pact(pact, base_url)
+              base_url: ui_base_url,
+              badge_url: badge_url_for_latest_pact(pact, ui_base_url)
           })
         end
 

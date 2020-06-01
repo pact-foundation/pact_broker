@@ -62,6 +62,11 @@ module PactBroker
           PactBroker.configuration.base_url || request.base_uri.to_s.chomp('/')
         end
 
+        # See comments for base_url in lib/pact_broker/doc/controllers/app.rb
+        def ui_base_url
+          PactBroker.configuration.base_url || ''
+        end
+
         def charsets_provided
           [['utf-8', :encode]]
         end

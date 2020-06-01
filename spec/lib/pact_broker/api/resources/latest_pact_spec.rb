@@ -21,6 +21,7 @@ module PactBroker::Api
           before do
             allow(PactBroker::Pacts::Service).to receive(:find_latest_pact).and_return(pact)
             allow(PactBroker.configuration.html_pact_renderer).to receive(:call).and_return(html)
+            allow_any_instance_of(LatestPact).to receive(:ui_base_url).and_return('http://example.org')
           end
 
           subject { get(path, nil, 'HTTP_ACCEPT' => accept) }

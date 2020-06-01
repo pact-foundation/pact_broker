@@ -24,6 +24,7 @@ module PactBroker::Api
 
           before do
             allow_any_instance_of(Pact).to receive(:badge_url_for_latest_pact).and_return('http://badge')
+            allow_any_instance_of(Pact).to receive(:ui_base_url).and_return('http://example.org')
             allow(PactBroker::Pacts::Service).to receive(:find_pact).and_return(pact)
             allow(PactBroker.configuration.html_pact_renderer).to receive(:call).and_return(html)
           end
