@@ -10,6 +10,7 @@ en:
     non_templated_host?: "cannot have a template parameter in the host"
     pacticipant_exists?: "does not match an existing pacticipant"
 
+
   pact_broker:
     messages:
       response_body_hidden: For security purposes, the response details are not logged. To enable response logging, configure the webhook_host_whitelist property. See %{base_url}/doc/webhooks#whitelist for more information.
@@ -53,6 +54,9 @@ en:
         $ curl -v -XPOST -H "Content-Type: application/json" -d "{\"name\": \"%{new_name}\"}" %{create_pacticipant_url}
         If the pact broker requires basic authentication, add '-u <username:password>' to the command.
         To disable this check, set `check_for_potential_duplicate_pacticipant_names` to false in the configuration.
+      new_line_in_url_path: URL path cannot contain a new line character.
+      tab_in_url_path: URL path cannot contain a tab character.
+
       "400":
         title: 400 Malformed Request
         message: The request was malformed and could not be processed.

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require 'uri'
+require 'pact_broker/messages'
+
 
 # This class is for https://github.com/pact-foundation/pact_broker/issues/101
 # curl -i "http://127.0.0.1:9292/<script>"
@@ -8,6 +10,8 @@ require 'uri'
 module Rack
   module PactBroker
     class InvalidUriProtection
+      include ::PactBroker::Messages
+
       def initialize app
         @app = app
       end
@@ -43,9 +47,9 @@ module Rack
       def validate(uri)
         decoded_path = URI.decode(uri.path)
         if decoded_path.include?("\n")
-          'URL path cannot contain a new line character.'
+          message('errors.new_line_in_url_path')
         elsif decoded_path.include?("\t")
-          'URL path cannot contain a tab character.'
+          message('errors.tab_in_url_path')
         end
       end
     end

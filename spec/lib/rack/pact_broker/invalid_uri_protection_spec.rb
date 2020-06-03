@@ -32,6 +32,7 @@ module Rack
 
           it "returns a 422" do
             expect(subject.status).to eq 422
+            expect(subject.body).to include "new line"
           end
         end
 
@@ -40,6 +41,7 @@ module Rack
 
           it "returns a 422" do
             expect(subject.status).to eq 422
+            expect(subject.body).to include "tab"
           end
         end
       end
