@@ -1,3 +1,19 @@
+<a name="v2.57.0"></a>
+### v2.57.0 (2020-06-16)
+
+
+#### Features
+
+* add Content Security Policy header	 ([fd2e81fb](/../../commit/fd2e81fb))
+
+
+#### Bug Fixes
+
+* upgrade Rack for vulnerability CVE-2020-8184	 ([99b78b3c](/../../commit/99b78b3c))
+* fix Home link on pact page	 ([081d1586](/../../commit/081d1586))
+* return a 422 if the URL path contains a new line or tab	 ([db9f7f4d](/../../commit/db9f7f4d))
+
+
 <a name="v2.56.1"></a>
 ### v2.56.1 (2020-06-01)
 
