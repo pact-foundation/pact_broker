@@ -72,7 +72,7 @@ module PactBroker
                 <a href=\"#{matrix_url}\">View Matrix</a>
               </li>
               <li>
-                <a href=\"#{base_url}\">Home</a>
+                <a href=\"#{base_url}/\">Home</a>
               </li>
               <li>
                 <span data-consumer-name=\"#{@pact.consumer.name}\"
