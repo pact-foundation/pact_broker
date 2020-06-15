@@ -43,6 +43,7 @@ module PactBroker
     attr_accessor :semver_formats
     attr_accessor :enable_public_badge_access, :shields_io_base_url, :badge_provider_mode
     attr_accessor :disable_ssl_verification
+    attr_accessor :content_security_policy, :hal_browser_content_security_policy_overrides
     attr_accessor :base_equality_only_on_content_that_affects_verification_results
     attr_reader :api_error_reporters
     attr_reader :custom_logger
@@ -90,6 +91,20 @@ module PactBroker
       config.webhook_http_method_whitelist = ['POST']
       config.webhook_scheme_whitelist = ['https']
       config.webhook_host_whitelist = []
+      # TODO get rid of unsafe-inline
+      config.content_security_policy = {
+        script_src: "'self' 'unsafe-inline'",
+        style_src: "'self' 'unsafe-inline'",
+        img_src: "'self' data:",
+        font_src: "'self' data:",
+        base_uri: "'self'",
+        frame_src: "'self'",
+        frame_ancestors: "'self'"
+      }
+      config.hal_browser_content_security_policy_overrides = {
+        script_src: "'self' 'unsafe-inline' 'unsafe-eval'",
+        frame_ancestors: "'self'"
+      }
       config
     end
 

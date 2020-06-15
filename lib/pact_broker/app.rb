@@ -15,12 +15,14 @@ require 'rack/pact_broker/no_auth'
 require 'rack/pact_broker/convert_404_to_hal'
 require 'rack/pact_broker/reset_thread_data'
 require 'rack/pact_broker/add_vary_header'
+require 'rack/pact_broker/use_when'
 require 'sucker_punch'
 
 module PactBroker
 
   class App
     include PactBroker::Logging
+    using Rack::PactBroker::UseWhen
 
     attr_accessor :configuration
 
@@ -162,6 +164,15 @@ module PactBroker
       # NOTE THAT NONE OF THIS IS PROTECTED BY AUTH - is that ok?
       if configuration.use_rack_protection
         @app_builder.use Rack::Protection, except: [:path_traversal, :remote_token, :session_hijacking, :http_origin]
+
+        is_hal_browser = ->(env) { env['PATH_INFO'] == '/hal-browser/browser.html' }
+        not_hal_browser = ->(env) { env['PATH_INFO'] != '/hal-browser/browser.html' }
+
+        @app_builder.use_when not_hal_browser,
+          Rack::Protection::ContentSecurityPolicy, configuration.content_security_policy
+        @app_builder.use_when is_hal_browser,
+          Rack::Protection::ContentSecurityPolicy,
+          configuration.content_security_policy.merge(configuration.hal_browser_content_security_policy_overrides)
       end
       @app_builder.use Rack::PactBroker::InvalidUriProtection
       @app_builder.use Rack::PactBroker::ResetThreadData
