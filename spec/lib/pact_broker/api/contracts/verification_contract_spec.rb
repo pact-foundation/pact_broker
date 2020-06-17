@@ -15,6 +15,7 @@ module PactBroker
         let(:success) { true }
         let(:provider_version) { "4.5.6" }
         let(:build_url) { 'http://foo' }
+        let(:order_versions_by_date) { false }
 
         def modify hash, options
           hash.delete(options.fetch(:without))
@@ -24,6 +25,7 @@ module PactBroker
         describe "errors" do
 
           before do
+            allow(PactBroker.configuration).to receive(:order_versions_by_date).and_return(order_versions_by_date)
             subject.validate(params)
           end
 
@@ -85,10 +87,22 @@ module PactBroker
             end
           end
 
-          context "when the providerApplicationVersion is not a semantic version" do
-            let(:provider_version) { "#" }
-            it "has an error" do
-              expect(subject.errors[:provider_version]).to include(match("#.*cannot be parsed"))
+          context "when order_versions_by_date is true" do
+            let(:order_versions_by_date) { true }
+
+            context "when the providerApplicationVersion is not a semantic version" do
+              let(:provider_version) { "#" }
+              its(:errors) { is_expected.to be_empty }
+            end
+          end
+
+          context "when order_versions_by_date is false" do
+            context "when the providerApplicationVersion is not a semantic version" do
+              let(:provider_version) { "#" }
+
+              it "has an error" do
+                expect(subject.errors[:provider_version]).to include(match("#.*cannot be parsed"))
+              end
             end
           end
         end
