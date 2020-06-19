@@ -9,7 +9,9 @@ module PactBroker
       end
 
       def call(log, output)
-        @formatter.call(log.level.upcase, log.time, nil, log.message)
+        self.log    = log
+        self.logger = logger
+        @formatter.call(log.level.upcase, log.time, nil, [tags, named_tags, duration, message, payload, exception].compact.join(" "))
       end
     end
   end
