@@ -9,10 +9,6 @@ require 'delegate'
 module PactBroker
   module DB
     class LogQuietener < SimpleDelegator
-      def info *args
-        __getobj__().debug(*args)
-      end
-
       def error *args
         if error_is_about_table_not_existing?(args)
           __getobj__().debug(*reassure_people_that_this_is_expected(args))
