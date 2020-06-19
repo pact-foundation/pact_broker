@@ -16,6 +16,8 @@ module PactBroker
       def error *args
         if error_is_about_table_not_existing?(args)
           __getobj__().debug(*reassure_people_that_this_is_expected(args))
+        elsif foreign_key_error?(args)
+          __getobj__().warn(*args)
         else
           __getobj__().error(*args)
         end
@@ -26,6 +28,11 @@ module PactBroker
           ( args.first.include?("PG::UndefinedTable") ||
             args.first.include?("no such table") ||
             args.first.include?("no such view"))
+      end
+
+      # Foreign key exceptions are almost always transitory and unreproducible by this stage
+      def foreign_key_error?(args)
+        args.first.is_a?(String) && args.first.downcase.include?("foreign key")
       end
 
       def reassure_people_that_this_is_expected(args)

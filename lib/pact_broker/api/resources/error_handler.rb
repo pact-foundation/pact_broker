@@ -8,13 +8,16 @@ module PactBroker
 
         include PactBroker::Logging
 
+        WARNING_ERROR_CLASSES = [Sequel::ForeignKeyConstraintViolation]
+
         def self.call e, request, response
           error_reference = generate_error_reference
-          if reportable?(e)
+          if log_as_warning?(e)
+            logger.warn("Error reference #{error_reference}", e)
+          elsif reportable?(e)
             log_error(e, "Error reference #{error_reference}")
             report(e, error_reference, request)
-          else
-            logger.info "Error reference #{error_reference} - #{e.class} #{e.message}\n#{e.backtrace.join("\n")}"
+            logger.info("Error reference #{error_reference}", e)
           end
           response.body = response_body_hash(e, error_reference).to_json
         end
@@ -25,6 +28,10 @@ module PactBroker
 
         def self.reportable?(e)
           !e.is_a?(PactBroker::Error) && !e.is_a?(JSON::GeneratorError)
+        end
+
+        def self.log_as_warning?(e)
+          WARNING_ERROR_CLASSES.any? { |clazz| e.is_a?(clazz) }
         end
 
         def self.display_message(e, error_reference)
