@@ -1,3 +1,19 @@
+<a name="v2.58.0"></a>
+### v2.58.0 (2020-06-19)
+
+
+#### Features
+
+* log foreign key constraint errors as warn as 99% of the time they are transitory and unreproducible and should not cause alarms to be raised	 ([71fd0270](/../../commit/71fd0270))
+* use structured logs for logging errors	 ([1e097b37](/../../commit/1e097b37))
+
+
+#### Bug Fixes
+
+* fix: update sanitize gem for CVE-2020-4054	 ([2af4bf9d](/../../commit/2af4bf9d))
+* do not parse the provider version as a semantic version when order_versions_by_date is true	 ([bf30024f](/../../commit/bf30024f))
+
+
 <a name="v2.57.0"></a>
 ### v2.57.0 (2020-06-16)
 
