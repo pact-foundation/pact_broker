@@ -1,0 +1,11 @@
+Please add code examples for consumer version selectors docs in pact.docs.io
+
+As part of the process of making the Pact docs more user friendly, we'd like to start writing feature documentation once, and providing code examples for each of the languages, rather than everyone having to write the same docs over and over again in each language.
+
+The documentation for the consumer version selectors can be our first opportunity to give this approach a try. I have written the behavioural docs, but we need code examples from each of the languages. Can one of the maintainers of this repository (or any other Pact user of this language!) please add (via direct edit/PR as your permissions allow) code samples for the examples found here https://docs.pact.io/pact_broker/advanced_topics/consumer_version_selectors#examples If you press the EDIT button, it will automatically fork and open a page to edit.
+
+To add a new language, just add a comment with the name of the language (eg. <!-- Java -->) and an example surrounded by "```".
+
+If you would like to link to these docs in your own READMEs, please use the short link `https://docs.pact.io/consumer_version_selectors` (rather than the deep link into the broker section).
+
+Thanks all!
