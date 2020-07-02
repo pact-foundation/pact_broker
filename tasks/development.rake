@@ -12,8 +12,8 @@ task 'pact_broker:dev:setup' do
 
   Dir.chdir("dev") do
     Bundler.with_clean_env do
-      puts "Executing bundle install"
-      puts `bundle install`
+      puts "Executing bundle update"
+      puts `bundle update`
     end
   end
 end
