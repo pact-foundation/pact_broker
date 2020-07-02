@@ -11,11 +11,10 @@ env:
   global:
     - CC_TEST_REPORTER_ID=dc2c30b67c9e2a5309e1aef699c30fdab55ba4f0e4f1beac029ba93e293835db
     - GIT_COMMITTED_AT=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then git log -1 --pretty=format:%ct; else git log -1 --skip 1 --pretty=format:%ct; fi)
-    - INSTALL_MYSQL=true
   matrix:
     - DATABASE_ADAPTER=default RUBYOPT="-W0"
-    - DATABASE_ADAPTER=postgres RUBYOPT="-W0"
-    - DATABASE_ADAPTER=mysql RUBYOPT="-W0"
+    - DATABASE_ADAPTER=postgres RUBYOPT="-W0" INSTALL_PG=true
+    - DATABASE_ADAPTER=mysql RUBYOPT="-W0" INSTALL_MYSQL=true
 before_script:
   - cp config/database.travis.yml config/database.yml
   - psql -U postgres -c "CREATE DATABASE pact_broker;"
