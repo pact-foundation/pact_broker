@@ -4,11 +4,11 @@ gemspec
 
 gem 'rake', '~>12.3.3'
 gem 'sqlite3', '~>1.3'
+gem 'conventional-changelog', '~>1.3'
+gem 'bump', '~> 0.5'
 
 group :development do
   gem 'pry-byebug'
-  gem 'conventional-changelog', '~>1.3'
-  gem 'bump', '~> 0.5'
   gem 'sequel-annotate', '~>1.3'
 end
 
