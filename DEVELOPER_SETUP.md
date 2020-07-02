@@ -4,7 +4,7 @@
 
 ### With Docker Compose
 
-The following command runs the application from the source code and binds it to port 9292 of your host.
+The following command runs the application from the source code and binds it to port 9292 of your host. It mounts the source code as a volume, so changes to the code will be applied if you stop and start the containers (the app code doesn't hot reload however).
 
 ```sh
 docker-compose -f docker-compose-dev-postgres.yml up --build
