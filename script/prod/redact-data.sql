@@ -1,4 +1,5 @@
 UPDATE pacticipants SET name = 'pacticipant-' || id;
+UPDATE versions SET number = 'version-' || id;
 UPDATE pact_versions SET content = '{}';
 UPDATE verifications SET test_results = null;
 DELETE FROM webhook_executions;
