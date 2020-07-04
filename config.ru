@@ -1,7 +1,6 @@
 require 'fileutils'
 require 'logger'
 require 'sequel'
-require 'pg' # for postgres
 require 'pact_broker'
 
 FileUtils.mkdir_p('tmp') unless ENV['PACT_BROKER_DATABASE_URL']
