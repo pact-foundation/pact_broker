@@ -8,17 +8,16 @@ module PactBroker
     describe Service do
       let(:td) { TestDataBuilder.new }
       let(:tags) { ['prod', 'production'] }
-      let(:options) { { tags: tags, optimised: optimised, page_size: page_size, page_number: page_number } }
+      let(:options) { { tags: tags, page_size: page_size, page_number: page_number } }
       let(:page_number) { nil }
       let(:page_size) { nil }
       let(:rows) { subject.find_index_items(options) }
-      let(:optimised) { true }
 
       before do
         td.create_global_webhook
       end
 
-      subject{ Service }
+      subject { Service }
 
       describe "find_relationships integration test" do
         context "when a prod pact exists and is not the latest version" do

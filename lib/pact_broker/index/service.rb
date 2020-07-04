@@ -29,50 +29,6 @@ module PactBroker
       # supporting both
 
       def self.find_index_items options = {}
-        if options[:optimised]
-          find_index_items_optimised(options)
-        else
-          find_index_items_original(options)
-        end
-      end
-
-      def self.find_index_items_original options = {}
-        rows = PactBroker::Matrix::HeadRow
-          .select_all_qualified
-          .eager(:latest_triggered_webhooks)
-          .eager(:webhooks)
-
-        if !options[:tags]
-          # server side rendered index page without tags
-          rows = rows.where(consumer_version_tag_name: nil)
-        else
-          # server side rendered index page with tags=true or tags[]=a&tags=[]b
-          if options[:tags].is_a?(Array)
-            rows = rows.where(consumer_version_tag_name: options[:tags]).or(consumer_version_tag_name: nil)
-          end
-          rows = rows.eager(:consumer_version_tags)
-                      .eager(:provider_version_tags)
-                      .eager(:latest_verification_for_consumer_version_tag)
-                      .eager(:latest_verification_for_consumer_and_provider)
-        end
-        rows = rows.all.group_by(&:pact_publication_id).values.collect{ | rows| Matrix::AggregatedRow.new(rows) }
-
-        rows.sort.collect do | row |
-          PactBroker::Domain::IndexItem.create(
-            row.consumer,
-            row.provider,
-            row.pact,
-            row.overall_latest?,
-            row.latest_verification_for_pseudo_branch,
-            row.webhooks,
-            row.latest_triggered_webhooks,
-            options[:tags] ? row.consumer_head_tag_names : [],
-            options[:tags] ? row.provider_version_tags.select(&:latest?) : []
-          )
-        end
-      end
-
-      def self.find_index_items_optimised options = {}
         latest_verifications_for_cv_tags = latest_verifications_for_consumer_version_tags(options)
         latest_pact_publication_ids = latest_pact_publications.select(:id).all.collect{ |h| h[:id] }
 
