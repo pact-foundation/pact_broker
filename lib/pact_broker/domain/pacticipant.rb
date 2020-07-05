@@ -44,6 +44,11 @@ module PactBroker
         messages << message('errors.validation.attribute_missing', attribute: 'name') unless name
         messages
       end
+
+      def insert_ignore
+        before_create
+        self.class.dataset.insert_ignore.insert(values)
+      end
     end
 
     Pacticipant.plugin :timestamps, update_on_create: true

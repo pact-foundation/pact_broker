@@ -54,12 +54,12 @@ module PactBroker
       # TODO raise error if attributes apart from name are different, because this indicates that
       # the second request is not at the same time.
       def create args
-        PactBroker::Domain::Pacticipant.dataset.insert_ignore.insert(
+        PactBroker::Domain::Pacticipant.new(
           name: args[:name],
           repository_url: args[:repository_url],
           created_at: Sequel.datetime_class.now,
           updated_at: Sequel.datetime_class.now
-        )
+        ).insert_ignore
         PactBroker::Domain::Pacticipant.find(name: args[:name])
       end
 

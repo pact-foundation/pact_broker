@@ -11,6 +11,7 @@ module PactBroker
       end
 
       def upsert
+        before_create
         self.class.upsert(to_hash, [:pact_version_id, :provider_version_id])
       end
     end
