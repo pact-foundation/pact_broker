@@ -3,12 +3,16 @@ require 'pact_broker/messages'
 require 'pact_broker/repositories/helpers'
 require 'pact_broker/versions/latest_version'
 require 'pact_broker/domain/label'
+require 'pact_broker/db/insert_ignore'
 
 module PactBroker
   module Domain
     class Pacticipant < Sequel::Model
 
       include Messages
+      include PactBroker::DB::InsertIgnore
+
+      plugin :timestamps, update_on_create: true
 
       set_primary_key :id
 
@@ -44,16 +48,13 @@ module PactBroker
         messages << message('errors.validation.attribute_missing', attribute: 'name') unless name
         messages
       end
-
-      def insert_ignore
-        before_create
-        self.class.dataset.insert_ignore.insert(values)
-      end
     end
-
-    Pacticipant.plugin :timestamps, update_on_create: true
   end
 end
+
+
+
+
 
 # Table: pacticipants
 # Columns:

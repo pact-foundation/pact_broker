@@ -59,7 +59,7 @@ module PactBroker
           repository_url: args[:repository_url],
           created_at: Sequel.datetime_class.now,
           updated_at: Sequel.datetime_class.now
-        ).insert_ignore
+        ).save
         PactBroker::Domain::Pacticipant.find(name: args[:name])
       end
 
