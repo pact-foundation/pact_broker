@@ -11,6 +11,7 @@ require 'rspec/its'
 require 'rspec/pact/matchers'
 require 'sucker_punch/testing/inline'
 require 'webmock/rspec'
+require 'pact_broker/policies'
 
 Dir.glob("./spec/support/**/*.rb") { |file| require file  }
 

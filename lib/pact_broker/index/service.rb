@@ -28,6 +28,10 @@ module PactBroker
       # and the Pactflow UI. It really needs to be broken into to separate methods, as it's getting too messy
       # supporting both
 
+      def self.pact_publication_scope
+        Pundit.policy_scope!(PactBroker.current_user, PactBroker::Pacts::PactPublication)
+      end
+
       def self.find_index_items options = {}
         latest_verifications_for_cv_tags = latest_verifications_for_consumer_version_tags(options)
         latest_pact_publication_ids = latest_pact_publications.select(:id).all.collect{ |h| h[:id] }
@@ -38,7 +42,7 @@ module PactBroker
         pact_publication_ids = head_pact_publication_ids(options)
         pagination_record_count = pact_publication_ids.pagination_record_count
 
-        pact_publications = PactBroker::Pacts::PactPublication
+        pact_publications = pact_publication_scope
           .where(id: pact_publication_ids)
           .select_all_qualified
           .eager(:consumer)
@@ -100,7 +104,7 @@ module PactBroker
         latest_pact_publication_ids = latest_pact_publications.select(:id).all.collect{ |h| h[:id] }
         pact_publication_ids = head_pact_publication_ids(consumer_name: consumer_name, provider_name: provider_name, tags: true)
 
-        pact_publications = PactBroker::Pacts::PactPublication
+        pact_publications = pact_publication_scope
           .where(id: pact_publication_ids)
           .select_all_qualified
           .eager(:consumer)

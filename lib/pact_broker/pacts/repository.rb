@@ -26,6 +26,10 @@ module PactBroker
       include PactBroker::Repositories
       include PactBroker::Repositories::Helpers
 
+      def pact_publication_scope
+        Pundit.policy_scope!(PactBroker.current_user, PactBroker::Pacts::PactPublication)
+      end
+
       def create params
         pact_version = find_or_create_pact_version(
           params.fetch(:consumer_id),
@@ -109,7 +113,7 @@ module PactBroker
       def delete_all_pact_publications_between consumer_name, options
         consumer = pacticipant_repository.find_by_name!(consumer_name)
         provider = pacticipant_repository.find_by_name!(options.fetch(:and))
-        query = PactPublication.where(consumer: consumer, provider: provider)
+        query = pact_publication_scope.where(consumer: consumer, provider: provider)
         query = query.tag(options[:tag]) if options[:tag]
 
         ids = query.select_for_subquery(:id)
@@ -135,7 +139,7 @@ module PactBroker
         provider = pacticipant_repository.find_by_name(provider_name)
         consumer = selector.consumer ? pacticipant_repository.find_by_name(selector.consumer) : nil
 
-        PactPublication
+        pact_publication_scope
           .select_all_qualified
           .select_append(Sequel[:cv][:order].as(:consumer_version_order))
           .select_append(Sequel[:ct][:name].as(:consumer_version_tag_name))
