@@ -36,5 +36,10 @@ RUN gem install bundler -v '~>2.0.0' \
 RUN echo '#!/bin/sh' >> /home/start.sh
 RUN echo 'bundle exec rackup -o 0.0.0.0 -p 9292' >> /home/start.sh
 RUN chmod +x /home/start.sh
+
+RUN echo '#!/bin/sh' >> /home/init-db.sh
+RUN echo 'bundle exec rake db:prepare:test' >> /home/init-db.sh
+RUN chmod +x /home/init-db.sh
+
 ENTRYPOINT bash
 CMD []

@@ -56,6 +56,18 @@ docker-compose -f docker-compose-test-mysql.yml run --rm tests bash
 # inside the tests container
 bundle exec rake
 ```
+
+## Running the tests with postgres
+
+```
+docker-compose -f docker-compose-test-postgres.yml up --build --remove-orphans
+
+# in separate console window...
+docker-compose -f docker-compose-test-postgres.yml run --rm tests bash
+
+# inside the tests container
+bundle exec rake
+```
 ## Running the tests
 
 * To run everything (specs, pact verifications, vulnerability scan...):

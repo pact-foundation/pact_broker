@@ -18,6 +18,13 @@ test:
     password: postgres
     host: localhost
     port: "5433"
+  docker_compose_postgres:
+    adapter: postgres
+    database: postgres
+    username: postgres
+    password: postgres
+    host: postgres
+    port: "5432"
   mysql:
     <<: *default
     adapter: mysql2

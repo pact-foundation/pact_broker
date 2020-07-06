@@ -25,13 +25,19 @@ module Sequel
       module InstanceMethods
         def insert_ignore(opts = {})
           save(opts)
+          load_values_from_previously_inserted_object unless id
+          self
         rescue Sequel::NoExistingObject
           # MySQL. Ruining it for everyone.
+          load_values_from_previously_inserted_object
+        end
+
+        def load_values_from_previously_inserted_object
           query = self.class.insert_ignore_identifying_columns.each_with_object({}) do | column_name, q |
             q[column_name] = values[column_name]
           end
           self.id = model.where(query).single_record.id
-          self.refresh
+          refresh
         end
 
         # Does the job for Sqlite and Postgres
