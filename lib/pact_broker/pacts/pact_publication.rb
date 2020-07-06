@@ -151,8 +151,9 @@ module PactBroker
       end
 
       def upsert
+        before_create
         params = to_hash.merge(created_at: Sequel.datetime_class.now)
-        self.id = PactPublication.upsert(params, UNIQUE_CONSTRAINT_KEYS).id
+        self.id = self.class.upsert(params, UNIQUE_CONSTRAINT_KEYS).id
         self.refresh
       end
 

@@ -85,6 +85,11 @@ module PactBroker
         end
       end
 
+      def insert_ignore
+        before_create
+        self.class.dataset.insert_ignore.insert(values)
+      end
+
       def after_create
         OrderVersions.(self)
       end
