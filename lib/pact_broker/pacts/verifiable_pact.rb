@@ -22,6 +22,14 @@ module PactBroker
       def wip?
         wip
       end
+
+      def <=> other
+        if self.consumer_name != other.consumer_name
+          return self.consumer_name <=> other.consumer_name
+        else
+          return self.consumer_version.order <=> other.consumer_version.order
+        end
+      end
     end
   end
 end

@@ -1,4 +1,5 @@
 require 'pact_broker/pacts/pact_publication_policy'
+require 'pact_broker/pacts/pact_version_policy'
 require 'pundit'
 
 module PactBroker

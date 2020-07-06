@@ -30,6 +30,16 @@ module PactBroker
         Pundit.policy_scope!(PactBroker.current_user, PactBroker::Pacts::PactPublication)
       end
 
+      def pact_version_scope
+        Pundit.policy_scope!(PactBroker.current_user, PactBroker::Pacts::PactVersion)
+      end
+
+      # For the times when it doesn't make sense to use the scoped class, this is a way to
+      # indicate that it is an intentional use of the PactVersion class directly.
+      def unscoped_pact_version
+        PactVersion
+      end
+
       def create params
         pact_version = find_or_create_pact_version(
           params.fetch(:consumer_id),
@@ -121,13 +131,13 @@ module PactBroker
 
         ids = query.select_for_subquery(:id)
         webhook_repository.delete_triggered_webhooks_by_pact_publication_ids(ids)
-        PactPublication.where(id: ids).delete
+        pact_publication_scope.where(id: ids).delete
       end
 
       def delete_all_pact_versions_between consumer_name, options
         consumer = pacticipant_repository.find_by_name(consumer_name)
         provider = pacticipant_repository.find_by_name(options.fetch(:and))
-        PactVersion.where(consumer: consumer, provider: provider).delete
+        pact_version_scope.where(consumer: consumer, provider: provider).delete
       end
 
       def find_latest_pact_versions_for_provider provider_name, tag = nil
@@ -495,7 +505,8 @@ module PactBroker
       end
 
       def find_or_create_pact_version consumer_id, provider_id, pact_version_sha, json_content
-        PactVersion.find(sha: pact_version_sha, consumer_id: consumer_id, provider_id: provider_id) || create_pact_version(consumer_id, provider_id, pact_version_sha, json_content)
+        unscoped_pact_version.find(sha: pact_version_sha, consumer_id: consumer_id, provider_id: provider_id) ||
+          create_pact_version(consumer_id, provider_id, pact_version_sha, json_content)
       end
 
       def create_pact_version consumer_id, provider_id, sha, json_content

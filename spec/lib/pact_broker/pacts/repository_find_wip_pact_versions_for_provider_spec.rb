@@ -20,6 +20,42 @@ module PactBroker
           end
         end
 
+        context "when there are multiple wip pacts" do
+          before do
+            td.create_provider("bar")
+              .create_provider_version("333")
+              .create_provider_version_tag("dev")
+              .add_day
+              .create_pact_with_hierarchy("foo", "1", "bar")
+              .create_consumer_version_tag("feat-1")
+              .add_day
+              .create_pact_with_hierarchy("meep", "2", "bar")
+              .create_consumer_version_tag("feat-2")
+              .add_day
+              .create_pact_with_hierarchy("foo", "2", "bar")
+              .create_consumer_version_tag("feat-2")
+              .add_day
+              .create_pact_with_hierarchy("meep", "1", "bar")
+              .create_consumer_version_tag("feat-1")
+          end
+
+          let(:provider_tags) { %w[dev] }
+
+          it "sorts them" do
+            expect(subject[0].consumer_name).to eq "foo"
+            expect(subject[0].consumer_version_number).to eq "1"
+
+            expect(subject[1].consumer_name).to eq "foo"
+            expect(subject[1].consumer_version_number).to eq "2"
+
+            expect(subject[2].consumer_name).to eq "meep"
+            expect(subject[2].consumer_version_number).to eq "2"
+
+            expect(subject[3].consumer_name).to eq "meep"
+            expect(subject[3].consumer_version_number).to eq "1"
+          end
+        end
+
         context "when the latest pact for a tag has been successfully verified by the given provider tag" do
           before do
             td.create_pact_with_hierarchy("foo", "1", "bar")
