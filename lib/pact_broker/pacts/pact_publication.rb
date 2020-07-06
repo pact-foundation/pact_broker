@@ -71,6 +71,14 @@ module PactBroker
           where(name_like(Sequel[:providers][:name], name))
         end
 
+        def consumer_name_like(name)
+          where(name_like(Sequel[:consumers][:name], name))
+        end
+
+        def consumer_version_number_like(number)
+          where(name_like(Sequel[:cv][:number], number))
+        end
+
         def consumer_version_tag(tag)
           where(Sequel[:ct][:name] => tag)
         end

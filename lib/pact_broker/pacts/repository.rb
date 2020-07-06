@@ -91,11 +91,14 @@ module PactBroker
       end
 
       def delete params
-        id = AllPactPublications
-          .consumer(params.consumer_name)
-          .provider(params.provider_name)
-          .consumer_version_number(params.consumer_version_number)
-          .select_for_subquery(:id)
+        id = pact_publication_scope
+          .join_consumers
+          .join_providers
+          .join_consumer_versions
+          .consumer_name_like(params.consumer_name)
+          .provider_name_like(params.provider_name)
+          .consumer_version_number_like(params.consumer_version_number)
+          .select_for_subquery(Sequel[:pact_publications][:id])
         PactPublication.where(id: id).delete
       end
 
