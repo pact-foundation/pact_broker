@@ -206,7 +206,7 @@ module PactBroker
           non_wip_pact_publication_ids,
           options)
 
-        wip_pacts = AllPactPublications.where(id: wip_pact_publication_ids).order_ignore_case(:consumer_name).order_append(:consumer_version_order)
+        wip_pacts = pact_publication_scope.where(id: wip_pact_publication_ids)
 
         # The first instance (by date) of each provider tag with that name
         provider_tag_collection = PactBroker::Domain::Tag
@@ -229,7 +229,7 @@ module PactBroker
             selectors = Selectors.create_for_latest_of_each_tag(pact.head_tag_names)
             VerifiablePact.new(pact.to_domain, selectors, true, pre_existing_pending_tags, [], true)
           end
-        end.compact
+        end.compact.sort
       end
 
       def find_pact_versions_for_provider provider_name, tag = nil
