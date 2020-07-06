@@ -5,7 +5,6 @@ require 'pact_broker/api/decorators/versions_decorator'
 module PactBroker
   module Api
     module Resources
-
       class Versions < BaseResource
 
         def content_types_provided
@@ -17,7 +16,7 @@ module PactBroker
         end
 
         def resource_exists?
-          pacticipant_service.find_pacticipant_by_name(pacticipant_name)
+          !!pacticipant
         end
 
         def to_json
@@ -27,7 +26,6 @@ module PactBroker
         def versions
           pacticipant_service.find_all_pacticipant_versions_in_reverse_order pacticipant_name
         end
-
       end
     end
   end

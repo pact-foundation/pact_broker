@@ -25,6 +25,10 @@ module PactBroker
           PactBroker::Api::Decorators::PactDecorator.new(pact).to_json(user_options: {base_url: base_url})
         end
 
+        def resource
+          pact
+        end
+
         def pact
           @pact ||= pact_service.find_previous_distinct_pact_version(pact_params)
         end

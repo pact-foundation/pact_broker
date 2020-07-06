@@ -5,7 +5,6 @@ require 'pact_broker/api/resources/base_resource'
 module PactBroker
   module Api
     module Resources
-
       class Version < BaseResource
 
         def content_types_provided
@@ -17,6 +16,10 @@ module PactBroker
         end
 
         def resource_exists?
+          !!resource
+        end
+
+        def resource
           version
         end
 

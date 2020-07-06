@@ -16,6 +16,10 @@ module PactBroker
         end
 
         def resource_exists?
+          !!resource
+        end
+
+        def resource
           triggered_webhook
         end
 

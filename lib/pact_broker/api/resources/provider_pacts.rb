@@ -16,7 +16,11 @@ module PactBroker
         end
 
         def resource_exists?
-          pacticipant_service.find_pacticipant_by_name(provider_name)
+          !!provider
+        end
+
+        def resource
+          provider
         end
 
         def to_json

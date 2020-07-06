@@ -14,7 +14,11 @@ module PactBroker
         end
 
         def resource_exists?
-          !!verification
+          !!resource
+        end
+
+        def resource
+          verification
         end
 
         def to_json
