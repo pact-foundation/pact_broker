@@ -104,7 +104,7 @@ module PactBroker
           .consumer_name_like(params.consumer_name)
           .provider_name_like(params.provider_name)
           .consumer_version_number_like(params.consumer_version_number)
-          .select_for_subquery(Sequel[:pact_publications][:id])
+          .select_for_subquery(Sequel[:pact_publications][:id].as(:id))
         unscoped(PactPublication).where(id: id).delete
       end
 

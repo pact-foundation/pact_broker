@@ -44,8 +44,9 @@ module PactBroker
       end
 
       def select_for_subquery column
-        if mysql? #stoopid mysql doesn't allow subqueries
-          select(column).collect{ | it | it[column] }
+        if mysql? #stoopid mysql doesn't allow you to modify datasets with subqueries
+          column_name = column.respond_to?(:alias) ? column.alias : column
+          select(column).collect{ | it | it[column_name] }
         else
           select(column)
         end
