@@ -17,7 +17,7 @@ RUN apk update \
       "mariadb-dev>=10.3" \
     && rm -rf /var/cache/apk/*
 
-RUN apk add --no-cache openssl
+RUN apk add --no-cache openssl less
 
 ENV DOCKERIZE_VERSION v0.6.1
 RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
@@ -36,5 +36,5 @@ RUN gem install bundler -v '~>2.0.0' \
 RUN echo '#!/bin/sh' >> /home/start.sh
 RUN echo 'bundle exec rackup -o 0.0.0.0 -p 9292' >> /home/start.sh
 RUN chmod +x /home/start.sh
-
+ENTRYPOINT bash
 CMD []

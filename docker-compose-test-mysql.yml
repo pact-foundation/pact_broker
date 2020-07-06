@@ -4,21 +4,25 @@ version: "3"
 services:
   tests:
     build: .
-    command: sh -c "sleep 10 && bundle exec rake db:prepare:test && bundle exec rspec spec/lib/pact_broker/domain/version_spec.rb"
+    ports:
+      - "9292:9292"
     depends_on:
       - mysql
     environment:
-      RACK_ENV: test
       DATABASE_ADAPTER: docker_compose_mysql
-      PACT_BROKER_DATABASE_USERNAME: pact_broker
-      PACT_BROKER_DATABASE_PASSWORD: pact_broker
-      PACT_BROKER_DATABASE_HOST: pact_broker
-      PACT_BROKER_DATABASE_NAME: pact_broker
-      PACT_BROKER_BASIC_AUTH_USERNAME: pact_broker
-      PACT_BROKER_BASIC_AUTH_PASSWORD: pact_broker
-      PACT_BROKER_PORT: "9292"
+      PACT_BROKER_HIDE_PACTFLOW_MESSAGES: 'true'
+      INSTALL_MYSQL: 'true'
     volumes:
-        - ${PWD}:/app
+      - ./lib:/home/lib
+      - ./spec:/home/spec
+      - ./db:/home/db
+      - ./config.ru:/home/config.ru
+      - ./tasks:/home/tasks
+      - ./Rakefile:/home/Rakefile
+      - ./config:/home/config
+      - ./.rspec:/home/.rspec
+      - ./.rubocop:/home/.rubocop
+      - ./.gitignore:/home/.gitignore
 
   mysql:
     image: mysql:5.7.28
