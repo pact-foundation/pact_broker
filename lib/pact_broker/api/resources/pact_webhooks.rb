@@ -4,10 +4,8 @@ require 'pact_broker/api/decorators/webhooks_decorator'
 require 'pact_broker/api/contracts/webhook_contract'
 
 module PactBroker
-
   module Api
     module Resources
-
       class PactWebhooks < BaseResource
 
         def allowed_methods
@@ -23,8 +21,7 @@ module PactBroker
         end
 
         def resource_exists?
-          (identifier_from_path[:consumer_name].nil? || consumer) &&
-            (identifier_from_path[:provider_name].nil? || provider)
+          (!consumer_specified? || consumer) && (!provider_specified? || provider)
         end
 
         def malformed_request?

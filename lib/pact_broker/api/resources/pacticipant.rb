@@ -11,7 +11,6 @@ end
 module PactBroker
   module Api
     module Resources
-
       class Pacticipant < BaseResource
 
         def content_types_provided
@@ -41,26 +40,20 @@ module PactBroker
         end
 
         def resource_exists?
+          !!resource
+        end
+
+        def resource
           pacticipant
         end
 
         def delete_resource
-          pacticipant_service.delete pacticipant_name
+          pacticipant_service.delete(pacticipant_name)
           true
         end
 
         def to_json
           PactBroker::Api::Decorators::PacticipantDecorator.new(pacticipant).to_json(user_options: { base_url: base_url })
-        end
-
-        private
-
-        def pacticipant
-          @pacticipant ||= pacticipant_service.find_pacticipant_by_name(pacticipant_name)
-        end
-
-        def pacticipant_name
-          identifier_from_path[:pacticipant_name]
         end
       end
     end

@@ -5,7 +5,6 @@ module PactBroker
   module Api
     module Resources
       class Label < BaseResource
-
         def content_types_provided
           [["application/hal+json", :to_json]]
         end
@@ -28,6 +27,10 @@ module PactBroker
         end
 
         def resource_exists?
+          !!resource
+        end
+
+        def resource
           label
         end
 

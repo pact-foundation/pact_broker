@@ -18,15 +18,15 @@ module PactBroker
         end
 
         def resource_exists?
+          !!resource
+        end
+
+        def resource
           pact
         end
 
         def to_json
           PactBroker::Api::Decorators::PactDecorator.new(pact).to_json(user_options: {base_url: base_url})
-        end
-
-        def resource
-          pact
         end
 
         def pact

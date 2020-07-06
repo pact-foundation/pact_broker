@@ -18,8 +18,7 @@ module PactBroker
         end
 
         def resource_exists?
-          version_params = {pacticipant_name: identifier_from_path[:consumer_name], pacticipant_version_number: identifier_from_path[:consumer_version_number]}
-          !!version_service.find_by_pacticipant_name_and_number(version_params)
+          !!version
         end
 
         def to_json
@@ -28,6 +27,13 @@ module PactBroker
         end
 
         private
+
+        def version
+          version_service.find_by_pacticipant_name_and_number(
+            pacticipant_name: consumer_name,
+            pacticipant_version_number: consumer_version_number
+          )
+        end
 
         def decorator_for summary
           PactBroker::Api::Decorators::VerificationSummaryDecorator.new(summary)

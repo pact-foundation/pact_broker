@@ -6,7 +6,6 @@ module PactBroker
   module Api
     module Resources
       class PactVersions < BaseResource
-
         def content_types_provided
           [["application/hal+json", :to_json]]
         end
@@ -16,8 +15,7 @@ module PactBroker
         end
 
         def resource_exists?
-          pacticipant_service.find_pacticipant_by_name(consumer_name) &&
-            pacticipant_service.find_pacticipant_by_name(provider_name)
+          consumer && provider
         end
 
         def to_json

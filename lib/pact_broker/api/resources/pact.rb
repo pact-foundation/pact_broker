@@ -50,7 +50,11 @@ module PactBroker
         end
 
         def resource_exists?
-          !!pact
+          !!resource
+        end
+
+        def resource
+          pact
         end
 
         def from_json
@@ -86,10 +90,6 @@ module PactBroker
           pact_service.delete(pact_params)
           set_post_deletion_response
           true
-        end
-
-        def resource
-          pact
         end
 
         private

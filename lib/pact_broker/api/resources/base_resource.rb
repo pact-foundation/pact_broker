@@ -118,6 +118,10 @@ module PactBroker
           identifier_from_path[:consumer_name]
         end
 
+        def consumer_version_number
+          identifier_from_path[:consumer_version_number]
+        end
+
         def consumer_specified?
           identifier_from_path.key?(:consumer_name)
         end
@@ -178,6 +182,10 @@ module PactBroker
 
         def provider
           @provider ||= identifier_from_path[:provider_name] && find_pacticipant(identifier_from_path[:provider_name], "provider")
+        end
+
+        def pacticipant
+          @pacticipant ||= identifier_from_path[:pacticipant_name] && find_pacticipant(identifier_from_path[:pacticipant_name], "pacticipant")
         end
 
         def pact

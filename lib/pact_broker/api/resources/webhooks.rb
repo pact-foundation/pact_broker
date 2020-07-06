@@ -63,20 +63,6 @@ module PactBroker
         def next_uuid
           @next_uuid ||= webhook_service.next_uuid
         end
-
-        def consumer
-          @consumer ||= identifier_from_path[:consumer_name] && find_pacticipant(identifier_from_path[:consumer_name], "consumer")
-        end
-
-        def provider
-          @provider ||= identifier_from_path[:provider_name] && find_pacticipant(identifier_from_path[:provider_name], "provider")
-        end
-
-        def find_pacticipant name, role
-          pacticipant_service.find_pacticipant_by_name(name).tap do | pacticipant |
-            set_json_error_message("No #{role} with name '#{name}' found") if pacticipant.nil?
-          end
-        end
       end
     end
   end

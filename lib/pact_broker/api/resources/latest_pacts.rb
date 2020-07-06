@@ -3,7 +3,6 @@ require 'pact_broker/api/resources/base_resource'
 module PactBroker
   module Api
     module Resources
-
       class LatestPacts < BaseResource
 
         def content_types_provided
@@ -21,9 +20,7 @@ module PactBroker
         def pacts
           pact_service.find_latest_pacts
         end
-
       end
     end
-
   end
 end

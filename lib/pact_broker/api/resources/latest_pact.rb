@@ -21,6 +21,10 @@ module PactBroker
         end
 
         def resource_exists?
+          !!resource
+        end
+
+        def resource
           pact
         end
 
