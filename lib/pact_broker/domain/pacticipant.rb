@@ -3,14 +3,13 @@ require 'pact_broker/messages'
 require 'pact_broker/repositories/helpers'
 require 'pact_broker/versions/latest_version'
 require 'pact_broker/domain/label'
-require 'pact_broker/db/insert_ignore'
 
 module PactBroker
   module Domain
     class Pacticipant < Sequel::Model
 
       include Messages
-      include PactBroker::DB::InsertIgnore
+      plugin :insert_ignore, identifying_columns: [:name]
 
       plugin :timestamps, update_on_create: true
 
