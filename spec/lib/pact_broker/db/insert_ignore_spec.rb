@@ -1,5 +1,5 @@
 require 'pact_broker/db/insert_ignore'
-require 'method_source'
+# require 'method_source'
 
 module PactBroker
   module DB
@@ -46,15 +46,15 @@ module PactBroker
         end
       end
 
-      describe "#_insert_dataset" do
-        it "naughtily overrides a private method, and this test ensures that we know exactly what we're overriding" do
-          insert_raw = Sequel::Model.instance_method(:_insert_dataset)
-          insert_raw.instance_eval do
-            extend MethodSource::MethodExtensions
-          end
-          expect(insert_raw.source).to eq "      def _insert_dataset\n        use_server(model.instance_dataset)\n      end\n"
-        end
-      end
+      # describe "#_insert_dataset" do
+      #   it "naughtily overrides a private method, and this test ensures that we know exactly what we're overriding" do
+      #     insert_raw = Sequel::Model.instance_method(:_insert_dataset)
+      #     insert_raw.instance_eval do
+      #       extend MethodSource::MethodExtensions
+      #     end
+      #     expect(insert_raw.source).to eq "      def _insert_dataset\n        use_server(model.instance_dataset)\n      end\n"
+      #   end
+      # end
     end
   end
 end
