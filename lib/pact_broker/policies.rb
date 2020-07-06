@@ -33,11 +33,7 @@ module PactBroker
     end
   end
 
-  def self.current_user
-    @current_user ||= OpenStruct.new
-  end
-
   def self.policy_scope!(scope)
-    DefaultPolicy::Scope.new(current_user, scope).resolve
+    scope
   end
 end

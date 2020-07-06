@@ -26,18 +26,14 @@ module PactBroker
       include PactBroker::Repositories
       include PactBroker::Repositories::Helpers
 
-      def pact_publication_scope
-        PactBroker.policy_scope!(PactBroker::Pacts::PactPublication)
-      end
-
-      def pact_version_scope
-        PactBroker.policy_scope!(PactBroker::Pacts::PactVersion)
+      def scope_for(scope)
+        PactBroker.policy_scope!(scope)
       end
 
       # For the times when it doesn't make sense to use the scoped class, this is a way to
       # indicate that it is an intentional use of the PactVersion class directly.
-      def unscoped_pact_version
-        PactVersion
+      def unscoped(scope)
+        scope
       end
 
       def create params
@@ -101,7 +97,7 @@ module PactBroker
       end
 
       def delete params
-        id = pact_publication_scope
+        id = scope_for(PactPublication)
           .join_consumers
           .join_providers
           .join_consumer_versions
@@ -109,11 +105,11 @@ module PactBroker
           .provider_name_like(params.provider_name)
           .consumer_version_number_like(params.consumer_version_number)
           .select_for_subquery(Sequel[:pact_publications][:id])
-        PactPublication.where(id: id).delete
+        unscoped(PactPublication).where(id: id).delete
       end
 
       def delete_by_version_id version_id
-        pact_publication_scope.where(consumer_version_id: version_id).delete
+        scope_for(PactPublication).where(consumer_version_id: version_id).delete
       end
 
       def find_all_pact_versions_between consumer_name, options
@@ -126,25 +122,25 @@ module PactBroker
       def delete_all_pact_publications_between consumer_name, options
         consumer = pacticipant_repository.find_by_name!(consumer_name)
         provider = pacticipant_repository.find_by_name!(options.fetch(:and))
-        query = pact_publication_scope.where(consumer: consumer, provider: provider)
+        query = scope_for(PactPublication).where(consumer: consumer, provider: provider)
         query = query.tag(options[:tag]) if options[:tag]
 
         ids = query.select_for_subquery(:id)
         webhook_repository.delete_triggered_webhooks_by_pact_publication_ids(ids)
-        pact_publication_scope.where(id: ids).delete
+        unscoped(PactPublication).where(id: ids).delete
       end
 
       def delete_all_pact_versions_between consumer_name, options
         consumer = pacticipant_repository.find_by_name(consumer_name)
         provider = pacticipant_repository.find_by_name(options.fetch(:and))
-        pact_version_scope.where(consumer: consumer, provider: provider).delete
+        scope_for(PactVersion).where(consumer: consumer, provider: provider).delete
       end
 
       def find_latest_pact_versions_for_provider provider_name, tag = nil
         if tag
-          LatestTaggedPactPublications.provider(provider_name).order_ignore_case(:consumer_name).where(tag_name: tag).collect(&:to_domain)
+          scope_for(LatestTaggedPactPublications).provider(provider_name).order_ignore_case(:consumer_name).where(tag_name: tag).collect(&:to_domain)
         else
-          LatestPactPublications.provider(provider_name).order_ignore_case(:consumer_name).collect(&:to_domain)
+          scope_for(LatestPactPublications).provider(provider_name).order_ignore_case(:consumer_name).collect(&:to_domain)
         end
       end
 
@@ -152,7 +148,7 @@ module PactBroker
         provider = pacticipant_repository.find_by_name(provider_name)
         consumer = selector.consumer ? pacticipant_repository.find_by_name(selector.consumer) : nil
 
-        pact_publication_scope
+        scope_for(PactPublication)
           .select_all_qualified
           .select_append(Sequel[:cv][:order].as(:consumer_version_order))
           .select_append(Sequel[:ct][:name].as(:consumer_version_tag_name))
@@ -206,7 +202,7 @@ module PactBroker
           non_wip_pact_publication_ids,
           options)
 
-        wip_pacts = pact_publication_scope.where(id: wip_pact_publication_ids)
+        wip_pacts = scope_for(PactPublication).where(id: wip_pact_publication_ids)
 
         # The first instance (by date) of each provider tag with that name
         provider_tag_collection = PactBroker::Domain::Tag
@@ -234,7 +230,7 @@ module PactBroker
 
       def find_pact_versions_for_provider provider_name, tag = nil
         if tag
-          LatestPactPublicationsByConsumerVersion
+          scope_for(LatestPactPublicationsByConsumerVersion)
             .join(:tags, {version_id: :consumer_version_id})
             .provider(provider_name)
             .order_ignore_case(:consumer_name)
@@ -242,7 +238,7 @@ module PactBroker
             .where(Sequel[:tags][:name] => tag)
             .collect(&:to_domain)
         else
-          LatestPactPublicationsByConsumerVersion
+          scope_for(LatestPactPublicationsByConsumerVersion)
             .provider(provider_name)
             .order_ignore_case(:consumer_name)
             .order_append(:consumer_version_order)
@@ -252,25 +248,25 @@ module PactBroker
 
       # Returns latest pact version for the consumer_version_number
       def find_by_consumer_version consumer_name, consumer_version_number
-        LatestPactPublicationsByConsumerVersion
+        scope_for(LatestPactPublicationsByConsumerVersion)
           .consumer(consumer_name)
           .consumer_version_number(consumer_version_number)
           .collect(&:to_domain_with_content)
       end
 
       def find_by_version_and_provider version_id, provider_id
-        LatestPactPublicationsByConsumerVersion
+        scope_for(LatestPactPublicationsByConsumerVersion)
           .eager(:tags)
           .where(consumer_version_id: version_id, provider_id: provider_id)
           .limit(1).collect(&:to_domain_with_content)[0]
       end
 
       def find_latest_pacts
-        LatestPactPublications.order(:consumer_name, :provider_name).collect(&:to_domain)
+        scope_for(LatestPactPublications).order(:consumer_name, :provider_name).collect(&:to_domain)
       end
 
       def find_latest_pact(consumer_name, provider_name, tag = nil)
-        query = LatestPactPublicationsByConsumerVersion
+        query = scope_for(LatestPactPublicationsByConsumerVersion)
           .select_all_qualified
           .consumer(consumer_name)
           .provider(provider_name)
@@ -284,7 +280,7 @@ module PactBroker
 
       # Allows optional consumer_name and provider_name
       def search_for_latest_pact(consumer_name, provider_name, tag = nil)
-        query = LatestPactPublicationsByConsumerVersion.select_all_qualified
+        query = scope_for(LatestPactPublicationsByConsumerVersion).select_all_qualified
         query = query.consumer(consumer_name) if consumer_name
         query = query.provider(provider_name) if provider_name
 
@@ -298,12 +294,12 @@ module PactBroker
 
       def find_pact consumer_name, consumer_version, provider_name, pact_version_sha = nil
         query = if pact_version_sha
-          AllPactPublications
+          scope_for(AllPactPublications)
             .pact_version_sha(pact_version_sha)
             .reverse_order(:consumer_version_order)
             .limit(1)
         else
-          LatestPactPublicationsByConsumerVersion
+          scope_for(LatestPactPublicationsByConsumerVersion)
         end
         query = query
           .eager(:tags)
@@ -314,7 +310,7 @@ module PactBroker
       end
 
       def find_all_revisions consumer_name, consumer_version, provider_name
-        AllPactPublications
+        scope_for(AllPactPublications)
           .consumer(consumer_name)
           .provider(provider_name)
           .consumer_version_number(consumer_version)
@@ -322,7 +318,7 @@ module PactBroker
       end
 
       def find_previous_pact pact, tag = nil
-        query = LatestPactPublicationsByConsumerVersion
+        query = scope_for(LatestPactPublicationsByConsumerVersion)
             .eager(:tags)
             .consumer(pact.consumer.name)
             .provider(pact.provider.name)
@@ -338,7 +334,7 @@ module PactBroker
       end
 
       def find_next_pact pact
-        LatestPactPublicationsByConsumerVersion
+        scope_for(LatestPactPublicationsByConsumerVersion)
           .eager(:tags)
           .consumer(pact.consumer.name)
           .provider(pact.provider.name)
@@ -401,7 +397,7 @@ module PactBroker
 
       def find_pacts_for_which_the_latest_version_is_required(provider_name, consumer_version_selectors)
         if consumer_version_selectors.empty?
-          LatestPactPublications
+          scope_for(LatestPactPublications)
             .provider(provider_name)
             .order_ignore_case(:consumer_name)
             .collect do | latest_pact_publication |
@@ -420,7 +416,7 @@ module PactBroker
         # TODO make this an efficient query!
         # These are not yet de-duped. Should make the behaviour consistent between this and find_pacts_for_which_all_versions_for_the_tag_are_required ?
         if tag_names.any?
-          LatestTaggedPactPublications
+          scope_for(LatestTaggedPactPublications)
             .provider(provider_name)
             .where(tag_name: tag_names)
             .all
@@ -438,7 +434,7 @@ module PactBroker
         selector_tag_names = pact_publications.collect(&:tag_name)
         selectors = Selectors.create_for_latest_of_each_tag(selector_tag_names)
         last_pact_publication = pact_publications.sort_by(&:consumer_version_order).last
-        pact_publication = PactPublication.find(id: last_pact_publication.id)
+        pact_publication = scope_for(PactPublication).find(id: last_pact_publication.id)
         SelectedPact.new(
           pact_publication.to_domain,
           selectors
@@ -449,7 +445,7 @@ module PactBroker
         selector_tag_names = pact_publications.collect(&:tag_name)
         selectors = Selectors.create_for_latest_fallback_of_each_tag(selector_tag_names)
         last_pact_publication = pact_publications.sort_by(&:consumer_version_order).last
-        pact_publication = PactPublication.find(id: last_pact_publication.id)
+        pact_publication = unscoped(PactPublication).find(id: last_pact_publication.id)
         SelectedPact.new(
           pact_publication.to_domain,
           selectors
@@ -458,12 +454,12 @@ module PactBroker
 
       def find_pacts_for_which_the_latest_version_for_the_fallback_tag_is_required(provider_name, selectors)
         selectors.collect do | selector |
-          LatestTaggedPactPublications
+          scope_for(LatestTaggedPactPublications)
             .provider(provider_name)
             .where(tag_name: selector.fallback_tag)
             .all
             .collect do | latest_tagged_pact_publication |
-              pact_publication = PactPublication.find(id: latest_tagged_pact_publication.id)
+              pact_publication = unscoped(PactPublication).find(id: latest_tagged_pact_publication.id)
               SelectedPact.new(
                 pact_publication.to_domain,
                 Selectors.new(selector)
@@ -484,13 +480,13 @@ module PactBroker
 
       def find_previous_distinct_pact_by_sha pact
         current_pact_content_sha =
-          LatestPactPublicationsByConsumerVersion.select(:pact_version_sha)
+          scope_for(LatestPactPublicationsByConsumerVersion).select(:pact_version_sha)
           .consumer(pact.consumer.name)
           .provider(pact.provider.name)
           .consumer_version_number(pact.consumer_version_number)
           .limit(1)
 
-        LatestPactPublicationsByConsumerVersion
+        scope_for(LatestPactPublicationsByConsumerVersion)
           .eager(:tags)
           .consumer(pact.consumer.name)
           .provider(pact.provider.name)
@@ -505,7 +501,7 @@ module PactBroker
       end
 
       def find_or_create_pact_version consumer_id, provider_id, pact_version_sha, json_content
-        unscoped_pact_version.find(sha: pact_version_sha, consumer_id: consumer_id, provider_id: provider_id) ||
+        unscoped(PactVersion).find(sha: pact_version_sha, consumer_id: consumer_id, provider_id: provider_id) ||
           create_pact_version(consumer_id, provider_id, pact_version_sha, json_content)
       end
 
@@ -522,7 +518,7 @@ module PactBroker
       def find_all_database_versions_between(consumer_name, options, base_class = LatestPactPublicationsByConsumerVersion)
         provider_name = options.fetch(:and)
 
-        query = base_class
+        query = scope_for(base_class)
           .consumer(consumer_name)
           .provider(provider_name)
 
@@ -553,7 +549,7 @@ module PactBroker
 
       def find_head_pacts_that_have_not_been_successfully_verified_by_all_provider_tags(provider_id, pact_publication_ids_successfully_verified_by_all_provider_tags, options)
         # Exclude the head pacts that have been successfully verified by all the specified provider tags
-        LatestTaggedPactPublications
+        scope_for(LatestTaggedPactPublications)
           .where(provider_id: provider_id)
           .where(Sequel.lit('latest_tagged_pact_publications.created_at > ?', options.fetch(:include_wip_pacts_since)))
           .exclude(id: pact_publication_ids_successfully_verified_by_all_provider_tags)
@@ -575,7 +571,7 @@ module PactBroker
             Sequel[:verifications][:provider_version_id] => Sequel[:provider_tags][:version_id],
             Sequel[:provider_tags][:name] => provider_tag
           }
-          head_pacts = LatestTaggedPactPublications
+          head_pacts = scope_for(LatestTaggedPactPublications)
             .select(Sequel[:latest_tagged_pact_publications][:id].as(:id))
             .join(:verifications, verifications_join)
             .join(:tags, tags_join, { table_alias: :provider_tags } )
