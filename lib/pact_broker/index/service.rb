@@ -29,7 +29,7 @@ module PactBroker
       # supporting both
 
       def self.pact_publication_scope
-        Pundit.policy_scope!(PactBroker.current_user, PactBroker::Pacts::PactPublication)
+        PactBroker.policy_scope!(PactBroker::Pacts::PactPublication)
       end
 
       def self.find_index_items options = {}

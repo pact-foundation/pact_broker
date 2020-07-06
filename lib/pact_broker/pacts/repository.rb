@@ -27,11 +27,11 @@ module PactBroker
       include PactBroker::Repositories::Helpers
 
       def pact_publication_scope
-        Pundit.policy_scope!(PactBroker.current_user, PactBroker::Pacts::PactPublication)
+        PactBroker.policy_scope!(PactBroker::Pacts::PactPublication)
       end
 
       def pact_version_scope
-        Pundit.policy_scope!(PactBroker.current_user, PactBroker::Pacts::PactVersion)
+        PactBroker.policy_scope!(PactBroker::Pacts::PactVersion)
       end
 
       # For the times when it doesn't make sense to use the scoped class, this is a way to
