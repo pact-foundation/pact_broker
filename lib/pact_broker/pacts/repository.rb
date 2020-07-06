@@ -113,7 +113,7 @@ module PactBroker
       end
 
       def delete_by_version_id version_id
-        Sequel::Model.db[:pact_publications].where(consumer_version_id: version_id).delete
+        pact_publication_scope.where(consumer_version_id: version_id).delete
       end
 
       def find_all_pact_versions_between consumer_name, options
