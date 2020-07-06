@@ -10,6 +10,7 @@ PactBroker.configuration.seed_example_data = false
 require 'spec/support/database_cleaner'
 require 'pact_broker'
 require 'pact_broker/app'
+require 'pact_broker/policies'
 
 require_relative 'hal_relation_proxy_app'
 

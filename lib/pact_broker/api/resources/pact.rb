@@ -88,6 +88,10 @@ module PactBroker
           true
         end
 
+        def resource
+          pact
+        end
+
         private
 
         def pact
