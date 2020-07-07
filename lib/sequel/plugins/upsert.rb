@@ -36,7 +36,8 @@ module Sequel
         end
 
         def manual_upsert(opts)
-          query = values.slice(*self.class.upsert_identifying_columns)
+          # Can use slice when we drop support for Ruby 2.4
+          query = values.select{ |k, _| self.class.upsert_identifying_columns.include?(k) }
           existing_record = model.where(query).single_record
           if existing_record
             existing_record.update(values)
