@@ -87,6 +87,7 @@ module PactBroker
       end
 
       def after_create
+        super
         OrderVersions.(self)
         refresh
       end
