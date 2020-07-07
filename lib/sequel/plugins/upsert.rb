@@ -4,16 +4,20 @@ module Sequel
     module Upsert
       def self.configure(model, opts=OPTS)
         model.instance_exec do
-          @upsert_identifying_columns = opts.fetch(:identifying_columns)
+          @upsert_plugin_identifying_columns = opts.fetch(:identifying_columns)
         end
       end
 
       module ClassMethods
-        attr_reader :upsert_identifying_columns
+        attr_reader :upsert_plugin_identifying_columns
       end
 
       module InstanceMethods
+        # dirty stateful attribute because we can't pass any opts through to the _insert_dataset method
+        attr_reader :upsert_plugin_upserting
+
         def upsert(opts = {})
+          @upsert_plugin_upserting = true
           if postgres? || mysql?
             save(opts)
           else
@@ -23,13 +27,15 @@ module Sequel
           self
         rescue Sequel::NoExistingObject
           load_values_from_previously_inserted_object
+        ensure
+          @upsert_plugin_upserting = false
         end
 
         def load_values_from_previously_inserted_object
-          query = self.class.upsert_identifying_columns.each_with_object({}) do | column_name, q |
-            q[column_name] = values[column_name]
-          end
           if self.respond_to?(:id=)
+            query = self.class.upsert_plugin_identifying_columns.each_with_object({}) do | column_name, q |
+              q[column_name] = values[column_name]
+            end
             self.id = model.where(query).single_record.id
           end
           refresh
@@ -37,7 +43,7 @@ module Sequel
 
         def manual_upsert(opts)
           # Can use slice when we drop support for Ruby 2.4
-          query = values.select{ |k, _| self.class.upsert_identifying_columns.include?(k) }
+          query = values.select{ |k, _| self.class.upsert_plugin_identifying_columns.include?(k) }
           existing_record = model.where(query).single_record
           if existing_record
             existing_record.update(values)
@@ -49,11 +55,15 @@ module Sequel
         # naughty override of Sequel private method to
         # avoid having to rewrite the whole save method logic
         def _insert_dataset
-          if postgres?
-            super.insert_conflict(update: values, target: self.class.upsert_identifying_columns)
-          elsif mysql?
-            columns_to_update = values.keys - self.class.upsert_identifying_columns
-            super.on_duplicate_key_update(*columns_to_update)
+          if upsert_plugin_upserting
+            if postgres?
+              super.insert_conflict(update: values, target: self.class.upsert_plugin_identifying_columns)
+            elsif mysql?
+              columns_to_update = values.keys - self.class.upsert_plugin_identifying_columns
+              super.on_duplicate_key_update(*columns_to_update)
+            else
+              super
+            end
           else
             super
           end

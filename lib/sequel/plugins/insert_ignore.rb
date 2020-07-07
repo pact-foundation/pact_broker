@@ -11,12 +11,12 @@ module Sequel
     module InsertIgnore
       def self.configure(model, opts=OPTS)
         model.instance_exec do
-          @insert_ignore_identifying_columns = opts.fetch(:identifying_columns)
+          @insert_ignore_plugin_identifying_columns = opts.fetch(:identifying_columns)
         end
       end
 
       module ClassMethods
-        attr_reader :insert_ignore_identifying_columns
+        attr_reader :insert_ignore_plugin_identifying_columns
       end
 
       module InstanceMethods
@@ -29,7 +29,7 @@ module Sequel
         end
 
         def load_values_from_previously_inserted_object
-          query = self.class.insert_ignore_identifying_columns.each_with_object({}) do | column_name, q |
+          query = self.class.insert_ignore_plugin_identifying_columns.each_with_object({}) do | column_name, q |
             q[column_name] = values[column_name]
           end
           self.id = model.where(query).single_record.id
