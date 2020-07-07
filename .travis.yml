@@ -1,7 +1,8 @@
 language: ruby
 rvm:
+  # Only supporting 2.4 until we upgrade the DiUS pact broker base image
   - 2.4.1
-  - 2.6
+  - 2.5
 services:
   - postgresql
   - mysql
