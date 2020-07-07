@@ -45,28 +45,22 @@ To make the barrier to entry as low as possible, the mysql2 and pg gems are not 
 
 You can set the `PACT_BROKER_DATABASE_URL` environment variable to use a postgres/mysql database using the format `driver://username:password@host:port/database` eg. `postgres://pact_broker:password@localhost/pact_broker`. Ensure you have set `INSTALL_MYSQL=true` or `INSTALL_PG=true` and run `bundle install` to make sure the required gems are present.
 
-## Running the tests with mysql
+## Running the tests with postgres and mysql
 
 ```
-docker-compose -f docker-compose-test-mysql.yml up --build --remove-orphans
+docker-compose -f docker-compose-test.yml up --build --remove-orphans
 
 # in separate console window...
-docker-compose -f docker-compose-test-mysql.yml run --rm tests bash
+docker-compose -f docker-compose-test.yml run --rm postgres-tests bash
+
+# in separate console window...
+docker-compose -f docker-compose-test.yml run --rm mysql-tests bash
 
 # inside the tests container
 bundle exec rake
-```
 
-## Running the tests with postgres
-
-```
-docker-compose -f docker-compose-test-postgres.yml up --build --remove-orphans
-
-# in separate console window...
-docker-compose -f docker-compose-test-postgres.yml run --rm tests bash
-
-# inside the tests container
-bundle exec rake
+# if you don't want to run the whole rake test suite, init the db first
+/home/init-db.sh
 ```
 ## Running the tests
 

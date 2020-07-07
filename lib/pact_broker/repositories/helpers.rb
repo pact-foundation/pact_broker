@@ -51,24 +51,6 @@ module PactBroker
           select(column)
         end
       end
-
-      def upsert row, unique_key_names, columns_to_update = nil
-        if postgres?
-          insert_conflict(update: row, target: unique_key_names).insert(row)
-        elsif mysql?
-          update_cols = columns_to_update || (row.keys - unique_key_names)
-          on_duplicate_key_update(*update_cols).insert(row)
-        else
-          # Sqlite
-          key = row.reject{ |k, v| !unique_key_names.include?(k) }
-          if where(key).count == 0
-            insert(row)
-          else
-            where(key).update(row)
-          end
-        end
-        model.where(row.select{ |key, _| unique_key_names.include?(key)}).single_record
-      end
     end
   end
 end

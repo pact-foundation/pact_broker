@@ -4,16 +4,12 @@ require 'pact_broker/repositories/helpers'
 module PactBroker
   module Pacts
     class LatestPactPublicationIdForConsumerVersion < Sequel::Model(:latest_pact_publication_ids_for_consumer_versions)
-
+      set_primary_key [:provider_id, :consumer_version_id]
       unrestrict_primary_key
+      plugin :upsert, identifying_columns: [:provider_id, :consumer_version_id]
 
       dataset_module do
         include PactBroker::Repositories::Helpers
-      end
-
-      def upsert
-        before_create
-        self.class.upsert(to_hash, [:provider_id, :consumer_version_id])
       end
     end
   end

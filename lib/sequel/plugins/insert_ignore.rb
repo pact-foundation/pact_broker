@@ -6,9 +6,6 @@
 # Rather than re-writing the whole save method and all the hooks and validation logic in it,
 # it naughtily overrides the private _insert_dataset.
 
-# MySQL does not return the id of the original row when a duplicate is inserted,
-# so we have to manually find the original record an load it into the model.
-
 module Sequel
   module Plugins
     module InsertIgnore
@@ -28,7 +25,6 @@ module Sequel
           load_values_from_previously_inserted_object unless id
           self
         rescue Sequel::NoExistingObject
-          # MySQL. Ruining it for everyone.
           load_values_from_previously_inserted_object
         end
 
@@ -40,7 +36,7 @@ module Sequel
           refresh
         end
 
-        # Does the job for Sqlite and Postgres
+        # naughty override of Sequel private method
         def _insert_dataset
           super.insert_ignore
         end
