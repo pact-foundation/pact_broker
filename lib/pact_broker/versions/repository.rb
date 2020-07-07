@@ -56,10 +56,8 @@ module PactBroker
           created_at: Sequel.datetime_class.now,
           updated_at: Sequel.datetime_class.now
         }
-        id = PactBroker::Domain::Version.new(version_params).insert_ignore
-        version = PactBroker::Domain::Version.find(number: args[:number], pacticipant_id: args[:pacticipant_id])
-        PactBroker::Domain::OrderVersions.(version)
-        version.refresh # reload with the populated order
+
+        PactBroker::Domain::Version.new(version_params).insert_ignore
       end
 
       def find_by_pacticipant_id_and_number_or_create pacticipant_id, number

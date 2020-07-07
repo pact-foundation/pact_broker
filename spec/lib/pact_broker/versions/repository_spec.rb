@@ -39,6 +39,10 @@ module PactBroker
 
           subject { Repository.new.create pacticipant_id: existing_version.pacticipant_id, number: "1.2.4" }
 
+          it "creates a new version" do
+            expect { subject }.to change { PactBroker::Domain::Version.count }.by(1)
+          end
+
           it "sets the order to the previous version's order plus one" do
             expect(subject.order).to eq existing_version.order + 1
           end
@@ -48,6 +52,10 @@ module PactBroker
           let!(:existing_version) { TestDataBuilder.new.create_version_with_hierarchy(pacticipant_name, version_number).and_return(:version) }
 
           subject { Repository.new.create pacticipant_id: existing_version.pacticipant_id, number: version_number }
+
+          it "does not create a new version" do
+            expect { subject }.to_not change { PactBroker::Domain::Version.count }
+          end
 
           it "returns the pre-existing version" do
             expect(subject.id).to eq existing_version.id
