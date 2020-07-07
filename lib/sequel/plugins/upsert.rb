@@ -31,14 +31,35 @@ module Sequel
           @upsert_plugin_upserting = false
         end
 
+        private
+
         def load_values_from_previously_inserted_object
-          if self.respond_to?(:id=)
-            query = self.class.upsert_plugin_identifying_columns.each_with_object({}) do | column_name, q |
-              q[column_name] = values[column_name]
-            end
-            self.id = model.where(query).single_record.id
-          end
+          set_primary_key_columns_from_previously_inserted_object
           refresh
+        end
+
+        def set_primary_key_columns_from_previously_inserted_object
+          if !primary_key_columns_are_same_as_identifying_columns
+            existing_record = find_previously_inserted_object
+            upsert_primary_key_columns.each do | column |
+              self.send("#{column}=".to_sym, existing_record[column])
+            end
+          end
+        end
+
+        def find_previously_inserted_object
+          query = self.class.upsert_plugin_identifying_columns.each_with_object({}) do | column_name, q |
+            q[column_name] = values[column_name]
+          end
+          model.where(query).single_record
+        end
+
+        def upsert_primary_key_columns
+          @upsert_primary_key_columns ||= [*primary_key].sort
+        end
+
+        def primary_key_columns_are_same_as_identifying_columns
+          upsert_primary_key_columns == self.class.upsert_plugin_identifying_columns.sort
         end
 
         def manual_upsert(opts)
