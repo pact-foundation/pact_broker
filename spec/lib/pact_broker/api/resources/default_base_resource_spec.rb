@@ -1,9 +1,9 @@
-require 'pact_broker/api/resources/base_resource'
+require 'pact_broker/api/resources/default_base_resource'
 
 module PactBroker
   module Api
     module Resources
-      describe BaseResource do
+      describe DefaultBaseResource do
         let(:request) { double('request', uri: uri, base_uri: URI("http://example.org/")).as_null_object }
         let(:response) { double('response') }
         let(:uri) { URI('http://example.org/path?query') }
