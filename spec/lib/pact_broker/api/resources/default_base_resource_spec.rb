@@ -4,13 +4,61 @@ module PactBroker
   module Api
     module Resources
       describe DefaultBaseResource do
-        let(:request) { double('request', uri: uri, base_uri: URI("http://example.org/")).as_null_object }
+        let(:request) { double('request', body: body, uri: uri, base_uri: URI("http://example.org/")).as_null_object }
         let(:response) { double('response') }
         let(:uri) { URI('http://example.org/path?query') }
+        let(:body) { double('body', to_s: body_string) }
+        let(:body_string) { '' }
 
         subject { BaseResource.new(request, response) }
 
         its(:resource_url) { is_expected.to eq 'http://example.org/path' }
+
+        describe "params" do
+          let(:body_string) { { foo: 'bar' }.to_json }
+
+          context "when the body is invalid JSON" do
+            let(:body_string) { '{' }
+
+            it "raises an error" do
+              expect { subject.params }.to raise_error InvalidJsonError
+            end
+          end
+
+          context "when the body is empty and a default is provided" do
+            let(:body_string) { '' }
+
+            it "returns the default" do
+              expect(subject.params(default: 'foo')).to eq 'foo'
+            end
+          end
+
+          context "when the body is empty and no default is provided" do
+            let(:body_string) { '' }
+
+            it "raises an error" do
+              expect { subject.params }.to raise_error InvalidJsonError
+            end
+          end
+
+          context "when symbolize_names is not set" do
+            it "symbolizes the names" do
+              expect(subject.params.keys).to eq [:foo]
+            end
+          end
+
+          context "when symbolize_names is true" do
+            it "symbolizes the names" do
+              expect(subject.params(symbolize_names: true).keys).to eq [:foo]
+            end
+          end
+
+          context "when symbolize_names is false" do
+            it "does not symbolize the names" do
+              expect(subject.params(symbolize_names: false).keys).to eq ['foo']
+            end
+          end
+        end
 
         describe "options" do
           subject { options "/"; last_response }

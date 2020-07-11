@@ -12,7 +12,7 @@ require 'pact_broker/api/resources/authentication'
 module PactBroker
   module Api
     module Resources
-      class InvalidJsonError < StandardError ; end
+      class InvalidJsonError < PactBroker::Error ; end
 
       class DefaultBaseResource < Webmachine::Resource
         include PactBroker::Services
@@ -85,12 +85,21 @@ module PactBroker
           PactBroker::Api::Resources::ErrorHandler.call(e, request, response)
         end
 
-        def params
-          @params ||= JSON.parse(request.body.to_s, { symbolize_names: true }.merge(PACT_PARSING_OPTIONS)) #Not load! Otherwise it will try to load Ruby classes.
+        def params(options = {})
+          return options[:default] if options.key?(:default) && request_body.empty?
+
+          symbolize_names = !options.key?(:symbolize_names) || options[:symbolize_names]
+          if symbolize_names
+            @params_with_symbol_keys ||= JSON.parse(request_body, { symbolize_names: true }.merge(PACT_PARSING_OPTIONS)) #Not load! Otherwise it will try to load Ruby classes.
+          else
+            @params_with_string_keys ||= JSON.parse(request_body, { symbolize_names: false }.merge(PACT_PARSING_OPTIONS)) #Not load! Otherwise it will try to load Ruby classes.
+          end
+        rescue JSON::JSONError => e
+          raise InvalidJsonError.new("Error parsing JSON - #{e.message}")
         end
 
         def params_with_string_keys
-          @params_with_string_keys ||= JSON.parse(request.body.to_s, { symbolize_names: false }.merge(PACT_PARSING_OPTIONS))
+          params(symbolize_names: false)
         end
 
         def pact_params
@@ -99,12 +108,12 @@ module PactBroker
 
         def set_json_error_message message
           response.headers['Content-Type'] = 'application/hal+json;charset=utf-8'
-          response.body = {error: message}.to_json
+          response.body = { error: message }.to_json
         end
 
         def set_json_validation_error_messages errors
           response.headers['Content-Type'] = 'application/hal+json;charset=utf-8'
-          response.body = {errors: errors}.to_json
+          response.body = { errors: errors }.to_json
         end
 
         def request_body

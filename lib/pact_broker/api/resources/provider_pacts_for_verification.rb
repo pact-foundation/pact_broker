@@ -72,7 +72,7 @@ module PactBroker
             if request.get?
               Rack::Utils.parse_nested_query(request.uri.query)
             elsif request.post?
-              params_with_string_keys
+              params(symbolize_names: false, default: {})
             end
           end
         end

@@ -27,7 +27,7 @@ module PactBroker
         end
 
         def self.reportable?(e)
-          !e.is_a?(PactBroker::Error) && !e.is_a?(JSON::GeneratorError)
+          !e.is_a?(PactBroker::Error) && !e.is_a?(JSON::JSONError)
         end
 
         def self.log_as_warning?(e)

@@ -39,7 +39,7 @@ module PactBroker
 
         def from_json
           if webhook
-            @webhook = webhook_service.update_by_uuid uuid, params_with_string_keys
+            @webhook = webhook_service.update_by_uuid(uuid, params(symbolize_names: false))
             response.body = to_json
           else
             @webhook = webhook_service.create(uuid, parsed_webhook, consumer, provider)
