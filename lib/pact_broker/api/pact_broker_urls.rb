@@ -35,7 +35,7 @@ module PactBroker
       end
 
       def version_url base_url, version
-        "#{pacticipant_url(base_url, version.pacticipant)}/versions/#{version.number}"
+        "#{pacticipant_url(base_url, version.pacticipant)}/versions/#{url_encode(version.number)}"
       end
 
       def version_url_from_params params, base_url = ''
@@ -157,7 +157,7 @@ module PactBroker
       end
 
       def latest_verifications_for_consumer_version_url version, base_url
-        "#{base_url}/verification-results/consumer/#{url_encode(version.pacticipant.name)}/version/#{version.number}/latest"
+        "#{base_url}/verification-results/consumer/#{url_encode(version.pacticipant.name)}/version/#{url_encode(version.number)}/latest"
       end
 
       def latest_verification_for_pact_url pact, base_url, permalink = true
@@ -198,7 +198,7 @@ module PactBroker
       end
 
       def label_url label, base_url
-        "#{labels_url(label.pacticipant, base_url)}/#{label.name}"
+        "#{labels_url(label.pacticipant, base_url)}/#{url_encoded(label.name)}"
       end
 
       def labels_url pacticipant, base_url
@@ -281,7 +281,7 @@ module PactBroker
       end
 
       def group_url(pacticipant_name, base_url = '')
-        "#{base_url}/groups/#{pacticipant_name}"
+        "#{base_url}/groups/#{url_encoded(pacticipant_name)}"
       end
 
       def hal_browser_url target_url, base_url = ''

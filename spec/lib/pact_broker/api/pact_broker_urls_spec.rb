@@ -30,7 +30,7 @@ module PactBroker
       let(:version) do
         double('version',
           pacticipant: consumer,
-          number: "2")
+          number: "2/4")
       end
 
       matcher :match_route_in_api do |api|
@@ -136,7 +136,7 @@ module PactBroker
       describe "matrix_for_pacticipant_version_url" do
         subject { PactBrokerUrls.matrix_for_pacticipant_version_url(version, base_url) }
 
-        it { is_expected.to eq "http://example.org/matrix?q[][pacticipant]=Foo%2FFoo&q[][version]=2&latestby=cvpv" }
+        it { is_expected.to eq "http://example.org/matrix?q[][pacticipant]=Foo%2FFoo&q[][version]=2%2F4&latestby=cvpv" }
       end
 
       describe "matrix_badge_url" do
