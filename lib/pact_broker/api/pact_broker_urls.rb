@@ -198,7 +198,7 @@ module PactBroker
       end
 
       def label_url label, base_url
-        "#{labels_url(label.pacticipant, base_url)}/#{url_encoded(label.name)}"
+        "#{labels_url(label.pacticipant, base_url)}/#{url_encode(label.name)}"
       end
 
       def labels_url pacticipant, base_url
@@ -281,7 +281,7 @@ module PactBroker
       end
 
       def group_url(pacticipant_name, base_url = '')
-        "#{base_url}/groups/#{url_encoded(pacticipant_name)}"
+        "#{base_url}/groups/#{url_encode(pacticipant_name)}"
       end
 
       def hal_browser_url target_url, base_url = ''
