@@ -99,7 +99,9 @@ module PactBroker
         end
       end
 
-      ALL_RESOURCES = ObjectSpace.each_object(::Class).select {|klass| klass < BaseResource }
+      ALL_RESOURCES = ObjectSpace.each_object(::Class)
+        .select { |klass| klass < BaseResource }
+        .select { |klass| !klass.name.end_with?("BaseResource") }
 
       ALL_RESOURCES.each do | resource |
         describe resource do
