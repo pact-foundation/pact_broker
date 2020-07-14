@@ -43,11 +43,11 @@ module PactBroker
     end
   end
 
-  def self.policy!(object, user = nil)
-    PactBroker.configuration.policy_finder.call(object)
+  def self.policy!(*args)
+    PactBroker.configuration.policy_finder.call(*args)
   end
 
-  def self.policy_scope!(scope, user = nil)
-    PactBroker.configuration.policy_scope_finder.call(scope)
+  def self.policy_scope!(*args)
+    PactBroker.configuration.policy_scope_finder.call(*args)
   end
 end
