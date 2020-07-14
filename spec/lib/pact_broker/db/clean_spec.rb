@@ -81,7 +81,7 @@ module PactBroker
               .create_webhook_execution
           end
 
-          it "deletes all but the most recent triggered webhook" do
+          xit "deletes all but the most recent triggered webhook" do
 
           end
         end
