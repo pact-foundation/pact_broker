@@ -49,7 +49,6 @@ module PactBroker
         verification_ids.delete
 
         delete_webhook_data(db[:triggered_webhooks].where(pact_publication_id: pact_publication_ids_to_delete).select(:id))
-        delete_deprecated_webhook_executions(pact_publication_ids_to_delete)
         delete_pact_publications(pact_publication_ids_to_delete)
 
         delete_orphan_pact_versions
@@ -78,11 +77,6 @@ module PactBroker
       def delete_webhook_data(triggered_webhook_ids)
         db[:webhook_executions].where(triggered_webhook_id: triggered_webhook_ids).delete
         db[:triggered_webhooks].where(id: triggered_webhook_ids).delete
-
-      end
-
-      def delete_deprecated_webhook_executions(pact_publication_ids)
-        db[:webhook_executions].where(pact_publication_id: pact_publication_ids).delete
       end
 
       def delete_pact_publications(pact_publication_ids)
