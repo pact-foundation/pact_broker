@@ -19,7 +19,7 @@ module PactBroker
           !!provider
         end
 
-        def resource
+        def resource_object
           provider
         end
 

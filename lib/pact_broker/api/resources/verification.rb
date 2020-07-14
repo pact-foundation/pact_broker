@@ -28,11 +28,11 @@ module PactBroker
             set_json_error_message("To see all the verifications for a pact, use the Matrix page")
             false
           else
-            !!resource
+            !!resource_object
           end
         end
 
-        def resource
+        def resource_object
           verification
         end
 

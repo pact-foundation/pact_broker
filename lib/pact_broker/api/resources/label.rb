@@ -27,10 +27,10 @@ module PactBroker
         end
 
         def resource_exists?
-          !!resource
+          !!resource_object
         end
 
-        def resource
+        def resource_object
           label
         end
 
