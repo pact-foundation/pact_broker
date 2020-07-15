@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require 'pact_broker/api/paths'
 
 module Rack
   module PactBroker
@@ -13,7 +14,7 @@ module Rack
       end
 
       def request_for_api?(env)
-        explicit_request_for_api(env) || no_accept_header(env) || (accept_all(env) && !is_web_extension(env))
+        explicit_request_for_api(env) || no_accept_header(env) || is_badge_request?(env) || (accept_all(env) && !is_web_extension(env))
       end
 
       private
@@ -36,6 +37,10 @@ module Rack
 
       def is_api_content_type(header)
         API_CONTENT_TYPES.any?{ |content_type| header.include?(content_type) }
+      end
+
+      def is_badge_request?(env)
+        env['HTTP_ACCEPT'].include?('svg') && ::PactBroker::Api::Paths.is_badge_path?(env['PATH_INFO'])
       end
 
       # default curl Accept header

@@ -56,6 +56,13 @@ module Rack
 
           it { is_expected.to be false }
         end
+
+        context "when the request is for a badge resource with a svg content type" do
+          let(:accept) { "image/svg+xml;charset=utf-8" }
+          let(:path) { "/pacts/provider/foo/consumer/bar/latest/badge" }
+
+          it { is_expected.to be false }
+        end
       end
     end
   end
