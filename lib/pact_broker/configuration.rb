@@ -96,7 +96,7 @@ module PactBroker
       config.content_security_policy = {
         script_src: "'self' 'unsafe-inline'",
         style_src: "'self' 'unsafe-inline'",
-        img_src: "'self' data:",
+        img_src: "'self' data: #{URI(config.shields_io_base_url).host}",
         font_src: "'self' data:",
         base_uri: "'self'",
         frame_src: "'self'",
