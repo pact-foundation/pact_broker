@@ -24,7 +24,7 @@ module PactBroker
         end
 
         def to_json
-          PactBroker::Api::Decorators::MatrixDecorator.new(results).to_json(user_options: { base_url: base_url })
+          PactBroker::Api::Decorators::MatrixDecorator.new(results).to_json(decorator_options)
         end
 
         private

@@ -125,7 +125,7 @@ module PactBroker
             end
 
             it "renders the tag" do
-              expect(tag_decorator).to receive(:to_json).with(user_options: { base_url: "http://example.org" })
+              expect(tag_decorator).to receive(:to_json).with(user_options: hash_including(base_url: "http://example.org"))
               subject
               expect(last_response.body).to eq tag_json
             end
@@ -149,7 +149,7 @@ module PactBroker
             end
 
             it "renders the tag" do
-              expect(tag_decorator).to receive(:to_json).with(user_options: { base_url: "http://example.org" })
+              expect(tag_decorator).to receive(:to_json).with(user_options: hash_including(base_url: "http://example.org"))
               subject
               expect(last_response.body).to eq tag_json
             end

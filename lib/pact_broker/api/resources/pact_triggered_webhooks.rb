@@ -18,7 +18,7 @@ module PactBroker
         end
 
         def to_json
-          Decorators::TriggeredWebhooksDecorator.new(triggered_webhooks).to_json(decorator_options)
+          Decorators::TriggeredWebhooksDecorator.new(triggered_webhooks).to_json(decorator_options(resource_title: resource_title))
         end
 
         private
@@ -29,12 +29,6 @@ module PactBroker
 
         def resource_title
           "Webhooks triggered by the publication of the #{pact.name[0].downcase}#{pact.name[1..-1]}"
-        end
-
-        def decorator_options
-          {
-            user_options: decorator_context.merge(resource_title: resource_title)
-          }
         end
       end
     end

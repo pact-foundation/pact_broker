@@ -106,7 +106,7 @@ module PactBroker::Api
 
           it "generates the JSON response body" do
             expect(Decorators::WebhookDecorator).to receive(:new).with(saved_webhook).and_return(webhook_decorator)
-            expect(webhook_decorator).to receive(:to_json).with(user_options: { base_url: 'http://example.org' })
+            expect(webhook_decorator).to receive(:to_json).with(user_options: hash_including({ base_url: 'http://example.org' }))
             subject
           end
 

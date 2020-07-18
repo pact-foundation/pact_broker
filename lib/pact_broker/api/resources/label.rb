@@ -35,7 +35,7 @@ module PactBroker
         end
 
         def to_json
-          PactBroker::Api::Decorators::LabelDecorator.new(label).to_json(user_options: { base_url: base_url })
+          PactBroker::Api::Decorators::LabelDecorator.new(label).to_json(decorator_options)
         end
 
         def label

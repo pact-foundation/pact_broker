@@ -19,7 +19,7 @@ module PactBroker
         end
 
         def generate_json pacticipants
-          PactBroker::Api::Decorators::PacticipantCollectionDecorator.new(pacticipants).to_json(user_options: { base_url: base_url })
+          PactBroker::Api::Decorators::PacticipantCollectionDecorator.new(pacticipants).to_json(decorator_options)
         end
       end
     end

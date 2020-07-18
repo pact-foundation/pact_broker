@@ -37,12 +37,12 @@ module PactBroker
         end
 
         def to_json
-          Decorators::WebhooksDecorator.new(webhooks).to_json(user_options: decorator_context(resource_title: "Webhooks"))
+          Decorators::WebhooksDecorator.new(webhooks).to_json(decorator_options(resource_title: "Webhooks"))
         end
 
         def from_json
           saved_webhook = webhook_service.create(next_uuid, webhook, consumer, provider)
-          response.body = Decorators::WebhookDecorator.new(saved_webhook).to_json(user_options: { base_url: base_url })
+          response.body = Decorators::WebhookDecorator.new(saved_webhook).to_json(decorator_options)
         end
 
         private

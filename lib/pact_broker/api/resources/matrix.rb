@@ -36,11 +36,11 @@ module PactBroker
         end
 
         def to_json
-          PactBroker::Api::Decorators::MatrixDecorator.new(results).to_json(user_options: { base_url: base_url })
+          PactBroker::Api::Decorators::MatrixDecorator.new(results).to_json(decorator_options)
         end
 
         def to_text
-          PactBroker::Api::Decorators::MatrixTextDecorator.new(results).to_text(user_options: { base_url: base_url })
+          PactBroker::Api::Decorators::MatrixTextDecorator.new(results).to_text(decorator_options)
         end
 
         def results

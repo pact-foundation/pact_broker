@@ -4,11 +4,12 @@ module PactBroker
   module Api
     module Resources
       describe DefaultBaseResource do
-        let(:request) { double('request', body: body, uri: uri, base_uri: URI("http://example.org/")).as_null_object }
+        let(:request) { double('request', body: body, uri: uri, base_uri: URI("http://example.org/"), env: env).as_null_object }
         let(:response) { double('response') }
         let(:uri) { URI('http://example.org/path?query') }
         let(:body) { double('body', to_s: body_string) }
         let(:body_string) { '' }
+        let(:env) { double('env') }
 
         subject { BaseResource.new(request, response) }
 
@@ -94,6 +95,35 @@ module PactBroker
 
             it "returns the base URL from the request" do
               expect(subject.base_url).to eq "http://example.org"
+            end
+          end
+        end
+
+        describe "decorator_options" do
+          context "with no overrides" do
+            it "returns the default decorator options" do
+              expect(subject.decorator_options).to eq(
+                user_options: {
+                  base_url: "http://example.org",
+                  resource_url: "http://example.org/path",
+                  env: env,
+                  resource_title: nil
+                }
+              )
+            end
+          end
+
+          context "with overrides" do
+            it "returns the default decorator options" do
+              expect(subject.decorator_options(resource_title: "foo", something: "else")).to eq(
+                user_options: {
+                  base_url: "http://example.org",
+                  resource_url: "http://example.org/path",
+                  env: env,
+                  resource_title: "foo",
+                  something: "else"
+                }
+              )
             end
           end
         end

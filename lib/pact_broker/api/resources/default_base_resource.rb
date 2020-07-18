@@ -81,6 +81,10 @@ module PactBroker
           Decorators::DecoratorContext.new(base_url, resource_url, request.env, options)
         end
 
+        def decorator_options options = {}
+          { user_options: decorator_context(options) }
+        end
+
         def handle_exception e
           PactBroker::Api::Resources::ErrorHandler.call(e, request, response)
         end
