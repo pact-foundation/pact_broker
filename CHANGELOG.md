@@ -1,3 +1,10 @@
+<a name="v2.58.3"></a>
+### v2.58.3 (2020-07-25)
+
+#### Bug Fixes
+
+* correctly encode user entered data in attributes, Javascript, and HTML	 ([523980e2](/../../commit/523980e2))
+
 <a name="v2.58.2"></a>
 ### v2.58.2 (2020-07-17)
 
