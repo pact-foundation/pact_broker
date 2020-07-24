@@ -4,6 +4,7 @@ require 'pact_broker/project_root'
 require 'pact_broker/logging'
 require 'pact_broker/configuration'
 require 'pact_broker/build_http_options'
+require 'erb'
 
 module PactBroker
   module Badges
@@ -45,7 +46,7 @@ module PactBroker
         title = case (label || '').downcase
           when 'consumer' then consumer_name
           when 'provider' then provider_name
-          else "#{consumer_name}%2F#{provider_name}"
+          else "#{consumer_name}/#{provider_name}"
         end
         "#{title} pact".downcase
       end
@@ -111,7 +112,7 @@ module PactBroker
       end
 
       def escape_text text
-        text.gsub(" ", "%20").gsub("-", "--").gsub("_", "__")
+        ERB::Util.url_encode(text.gsub("-", "--").gsub("_", "__"))
       end
 
       def do_request(uri)

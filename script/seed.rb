@@ -58,13 +58,11 @@ TestDataBuilder.new
     url: "http://localhost:9292/verification-published-webhook",
     body: webhook_body.to_json)
   .set_now(Date.today - 101)
-  .tap{ | it |
-    2.times do | i |
-      it.create_pact_with_verification("Foo", i.to_s, "Bar", i.to_s)
-      .create_pact_with_verification("Bar", i.to_s, "Foo", i.to_s)
-      .add_day
-    end
-  }.create_pact_with_hierarchy("Foo", "100", "Bar")
+  .create_pact_with_hierarchy("Foo/Foo", "100", "Bar/Bar")
+  .create_pact_with_hierarchy("Foo", "1", "Bar")
+  .create_pact_with_hierarchy("<script>alert('hello')</script>", "<script>alert(\"version\")</script>", "Bar/Bar")
+  .create_consumer_version_tag("prod")
+  .create_verification(provider_version: "1", tag_names: "prod")
 
 
   # .create_certificate(path: 'spec/fixtures/certificates/self-signed.badssl.com.pem')

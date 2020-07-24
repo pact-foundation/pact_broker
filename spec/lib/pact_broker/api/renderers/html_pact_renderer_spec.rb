@@ -23,22 +23,26 @@ module PactBroker
           Timecop.return
         end
 
-        let(:consumer) { double('consumer', name: 'Consumer')}
-        let(:provider) { double('provider', name: 'Provider')}
+        let(:consumer_name) { 'Consumer' }
+        let(:provider_name) { 'Provider' }
+        let(:consumer_version_number) { '1.2.3' }
+        let(:consumer) { double('consumer', name: consumer_name) }
+        let(:provider) { double('provider', name: provider_name) }
         let(:consumer_version) { double('consumer version') }
         let(:created_at) { DateTime.new(2014, 02, 27) }
         let(:json_content) { load_fixture('renderer_pact.json') }
         let(:pact) do
           double('pact',
             json_content: json_content,
-            consumer_version_number: '1.2.3',
+            consumer_version_number: consumer_version_number,
             consumer: consumer,
             provider: provider,
-            consumer_version_tag_names: ['prod', 'master'],
+            consumer_version_tag_names: consumer_version_tag_names,
             created_at: created_at,
             consumer_version: consumer_version
             )
         end
+        let(:consumer_version_tag_names) { ['prod', 'master'] }
         let(:pact_url) { '/pact/url' }
         let(:matrix_url) { '/matrix/url' }
         let(:options) do
@@ -49,7 +53,7 @@ module PactBroker
         end
         let(:logger) { double('logger').as_null_object }
 
-        subject { HtmlPactRenderer.call pact, options }
+        subject { HtmlPactRenderer.call(pact, options) }
 
         describe ".call" do
           it "renders the pact as HTML" do
@@ -69,7 +73,7 @@ module PactBroker
           end
 
           it "renders the badge image" do
-            expect(subject).to include "<img src='http://badge'/>"
+            expect(subject).to include "<img src=\"http://badge\"/>"
           end
 
           it "renders a text area with the badge markdown" do
@@ -79,6 +83,20 @@ module PactBroker
 
           it "includes the matrix URL" do
             expect(subject).to include matrix_url
+          end
+
+          context "with dodgey data" do
+            let(:consumer_name) { '<script>alert("consumer");</script>' }
+            let(:provider_name) { '<script>alert("provider");</script>' }
+            let(:consumer_version_number) { '<script>alert("version");</script>' }
+            let(:consumer_version_tag_names) { ['<script>alert("tag");</script>'] }
+
+            it "does not contain the literal <script> anywhere except the badge markdown" do
+              expect(subject).to_not include consumer_version_number
+              expect(subject.scan(consumer_name).count).to eq 1
+              expect(subject.scan(provider_name).count).to eq 1
+              expect(subject).to include '[![<script>alert("consumer");</script>/<script>alert("provider");</script> Pact Status](http://badge)]'
+            end
           end
 
           context "when enable_public_badge_access is false" do

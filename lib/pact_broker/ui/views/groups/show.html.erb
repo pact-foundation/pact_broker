@@ -31,13 +31,13 @@ body{
 <!-- developed by Duncan Alexander - hypothete.com -->
 </head>
 <body>
-<h1>Network graph of <%= pacticipant_name %> relationships</h1>
+<h1>Network graph of <%= escape_html(pacticipant_name) %> relationships</h1>
 
 <% if repository_url %>
 <p>Repository URL:
 
 <%
-repository_link = "<a href='#{repository_url}'>#{escape_html(repository_url)}</a>"
+repository_link = "<a href=\"#{repository_url}\">#{repository_url}</a>"
 %>
 
 <%= Sanitize.fragment(repository_link, Sanitize::Config::BASIC) %>
@@ -105,7 +105,7 @@ var relationshipPath = function(relationship, nodeLocations, pacticipants) {
 
 var latestPactUrl = function (consumerName, providerName) {
     //TODO send this with the relationship data
-    return '<%= base_url %>/pacts/provider/' + providerName + '/consumer/' + consumerName + '/latest';
+    return '<%= base_url %>' + '/pacts/provider/' + encodeURIComponent(providerName) + '/consumer/' + encodeURIComponent(consumerName) + '/latest';
 };
 
 var relationshipData = function(pacticipant, relationships) {

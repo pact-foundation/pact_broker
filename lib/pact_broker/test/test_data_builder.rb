@@ -73,14 +73,14 @@ module PactBroker
         self
       end
 
-      def create_pact_with_hierarchy consumer_name = "Consumer", consumer_version_number = "1.2.3", provider_name = "Provider", json_content = default_json_content
+      def create_pact_with_hierarchy consumer_name = "Consumer", consumer_version_number = "1.2.3", provider_name = "Provider", json_content = nil
         use_consumer(consumer_name)
         create_consumer(consumer_name) if !consumer
         use_provider(provider_name)
         create_provider provider_name if !provider
         use_consumer_version(consumer_version_number)
         create_consumer_version(consumer_version_number) if !consumer_version
-        create_pact json_content: json_content
+        create_pact json_content: json_content || default_json_content
         self
       end
 
@@ -436,10 +436,10 @@ module PactBroker
       def default_json_content
         {
           "consumer" => {
-             "name" => "Condor"
+             "name" => consumer.name
            },
            "provider" => {
-             "name" => "Pricing Service"
+             "name" => provider.name
            },
            "interactions" => [],
            "random" => rand

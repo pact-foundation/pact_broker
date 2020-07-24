@@ -42,7 +42,7 @@ module PactBroker
             Padrino.logger.exception(e) unless e.is_a?(PactBroker::Error)
             locals[:errors] = [e.message]
           end
-          haml :'matrix/show', {locals: locals, layout: :'layouts/main'}
+          haml :'matrix/show', { locals: locals, layout: :'layouts/main', escape_html: true }
         end
 
         get "/provider/:provider_name/consumer/:consumer_name" do
@@ -60,7 +60,7 @@ module PactBroker
             badge_url: nil,
             base_url: base_url
           }
-          haml :'matrix/show', {locals: locals, layout: :'layouts/main'}
+          haml :'matrix/show', { locals: locals, layout: :'layouts/main', escape_html: true }
         end
 
         def create_selector_objects(selector_hashes)

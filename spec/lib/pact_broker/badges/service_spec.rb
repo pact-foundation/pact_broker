@@ -13,7 +13,7 @@ module PactBroker
       let(:expected_url) { "https://img.shields.io/badge/#{expected_left_text}-#{expected_right_text}-#{expected_color}.svg" }
       let(:expected_color) { "brightgreen" }
       let(:expected_right_text) { "verified" }
-      let(:expected_left_text) { "foo--bar%2fthing__blah%20pact" }
+      let(:expected_left_text) { "foo--bar%2Fthing__blah%20pact" }
       let(:response_status) { 200 }
       let!(:http_request) do
         stub_request(:get, expected_url).to_return(:status => response_status, :body => "svg")
@@ -62,7 +62,7 @@ module PactBroker
           end
 
           context "when initials is true" do
-            let(:expected_left_text) { "fb%2ftb%20pact" }
+            let(:expected_left_text) { "fb%2Ftb%20pact" }
             let(:initials) { true }
 
             it "creates a badge with the consumer and provider initials" do
@@ -73,7 +73,7 @@ module PactBroker
           end
 
           context "when initials is true but the consumer and provider names only contain one word" do
-            let(:expected_left_text) { "foo%2fbar%20pact" }
+            let(:expected_left_text) { "foo%2Fbar%20pact" }
             let(:initials) { true }
             let(:pact) { double("pact", consumer_name: "Foo", provider_name: "Bar") }
 
@@ -85,7 +85,7 @@ module PactBroker
           end
 
           context "when initials is true but the consumer and provider names are one camel cased word" do
-            let(:expected_left_text) { "fa%2fbp%20pact" }
+            let(:expected_left_text) { "fa%2Fbp%20pact" }
             let(:initials) { true }
             let(:pact) { double("pact", consumer_name: "FooApp", provider_name: "barProvider") }
 
@@ -97,7 +97,7 @@ module PactBroker
           end
 
           context "when initials is true but the consumer and provider names are one camel cased word" do
-            let(:expected_left_text) { "fa%2fdat%20pact" }
+            let(:expected_left_text) { "fa%2Fdat%20pact" }
             let(:initials) { true }
             let(:pact) { double("pact", consumer_name: "FooApp", provider_name: "doAThing") }
 
@@ -111,7 +111,7 @@ module PactBroker
           context "when the tags are supplied" do
             let(:tags) { { consumer_tag: "prod", provider_tag: "master" } }
 
-            let(:expected_left_text) { "foo--bar%20(prod)%2fthing__blah%20(master)%20pact" }
+            let(:expected_left_text) { "foo--bar%20%28prod%29%2Fthing__blah%20%28master%29%20pact" }
 
             it "creates a badge with the consumer and provider names, not initials" do
               subject

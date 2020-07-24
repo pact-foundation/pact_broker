@@ -1,9 +1,9 @@
 %body
-  = render :haml, :'index/_css_and_js', :layout => false
+  != render :haml, :'index/_css_and_js', :layout => false
   .container
-    = render :haml, :'index/_navbar', :layout => false, locals: {tag_toggle: true, base_url: base_url}
+    != render :haml, :'index/_navbar', :layout => false, locals: {tag_toggle: true, base_url: base_url}
     - if index_items.empty?
-      = render :haml, :'index/_getting-started', :layout => false
+      != render :haml, :'index/_getting-started', :layout => false
     %h1.page-header
       Pacts
     %table.table.table-bordered.table-striped{ id: 'relationships' }
@@ -32,7 +32,7 @@
             %td
             %td.consumer
               %a{ href: index_item.consumer_group_url }
-                = escape_html(index_item.consumer_name)
+                = index_item.consumer_name
             %td.pact
               %span.pact
                 %a{ href: index_item.latest_pact_url, :title => "View pact" }
@@ -40,7 +40,7 @@
                 %a{ href: index_item.pact_matrix_url, title: "View pact matrix" }
             %td.provider
               %a{ href: index_item.provider_group_url }
-                = escape_html(index_item.provider_name)
+                = index_item.provider_name
             %td
             %td{"data-text": index_item.publication_date_of_latest_pact_order}
               = index_item.publication_date_of_latest_pact
@@ -58,7 +58,7 @@
     %div.pagination
 
     - pagination_locals = { page_number: page_number, page_size: page_size, pagination_record_count: pagination_record_count, current_page_size: current_page_size }
-    = render :haml, :'index/_pagination', :layout => false, locals: pagination_locals
+    != render :haml, :'index/_pagination', :layout => false, locals: pagination_locals
 
 
   :javascript

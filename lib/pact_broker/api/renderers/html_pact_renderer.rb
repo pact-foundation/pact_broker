@@ -4,6 +4,7 @@ require 'redcarpet'
 require 'pact/doc/markdown/consumer_contract_renderer'
 require 'pact_broker/api/pact_broker_urls'
 require 'pact_broker/logging'
+require 'rack'
 
 module PactBroker
   module Api
@@ -58,8 +59,8 @@ module PactBroker
               #{badge_list_item}
               #{badge_markdown_item}
               <li>
-                <span class='name'>#{@pact.consumer.name} version:</span>
-                <span class='value'>#{@pact.consumer_version_number}#{tags}</span>
+                <span class='name'>#{consumer_name} version:</span>
+                <span class='value'>#{consumer_version_number}#{tags}</span>
               </li>
               <li>
                 <span class='name' title='#{published_date}'>Date published:</span>
@@ -75,9 +76,9 @@ module PactBroker
                 <a href=\"#{base_url}/\">Home</a>
               </li>
               <li>
-                <span data-consumer-name=\"#{@pact.consumer.name}\"
-                      data-provider-name=\"#{@pact.provider.name}\"
-                      data-consumer-version-number=\"#{@pact.consumer_version_number}\"
+                <span data-consumer-name=\"#{consumer_name}\"
+                      data-provider-name=\"#{provider_name}\"
+                      data-consumer-version-number=\"#{consumer_version_number}\"
                       data-pact-url=\"#{pact_url}\"
                       class='more-options glyphicon glyphicon-option-horizontal'
                       aria-hidden='true'></span>
@@ -88,7 +89,7 @@ module PactBroker
 
         def badge_list_item
             "<li class='pact-badge'>
-              <img src='#{badge_url}'/>
+              <img src=\"#{badge_url}\"/>
             </li>
             "
         end
@@ -117,7 +118,19 @@ module PactBroker
         end
 
         def title
-          "Pact between #{@pact.consumer.name} and #{@pact.provider.name}"
+          "Pact between #{consumer_name} and #{provider_name}"
+        end
+
+        def consumer_version_number
+          h(@pact.consumer_version_number)
+        end
+
+        def consumer_name
+          h(@pact.consumer.name)
+        end
+
+        def provider_name
+          h(@pact.provider.name)
         end
 
         def published_date
@@ -154,7 +167,8 @@ module PactBroker
 
         def tags
           if @pact.consumer_version_tag_names.any?
-            " (#{@pact.consumer_version_tag_names.join(", ")})"
+            tag_names = @pact.consumer_version_tag_names.collect{ |t| h(t) }.join(", ")
+            " (#{tag_names})"
           else
             ""
           end
@@ -178,6 +192,10 @@ module PactBroker
         rescue => e
           logger.info "Could not parse the following content to a Pact due to #{e.class} #{e.message}, showing raw content instead: #{@json_content}"
           raise NotAPactError
+        end
+
+        def h string
+          Rack::Utils.escape_html(string)
         end
       end
     end

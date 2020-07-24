@@ -1,9 +1,9 @@
 %body
-  = render :haml, :'index/_css_and_js', :layout => false
+  != render :haml, :'index/_css_and_js', :layout => false
   .container
-    = render :haml, :'index/_navbar', :layout => false, locals: {tag_toggle: false, base_url: base_url}
+    != render :haml, :'index/_navbar', :layout => false, locals: {tag_toggle: false, base_url: base_url}
     - if index_items.empty?
-      = render :haml, :'index/_getting-started', :layout => false
+      != render :haml, :'index/_getting-started', :layout => false
     %h1.page-header
       Pacts
     %table.table.table-bordered.table-striped{ id: 'relationships' }
@@ -37,10 +37,10 @@
           %tr{'data-pact-versions-url': index_item.pact_versions_url, 'data-consumer-name': index_item.consumer_name, 'data-provider-name': index_item.provider_name, 'data-integration-url': index_item.integration_url}
             %td.consumer
               %a{:href => index_item.consumer_group_url }
-                = escape_html(index_item.consumer_name)
+                = index_item.consumer_name
             %td.consumer-version-number{"data-text": index_item.consumer_version_order}
               %div.clippable
-                = escape_html(index_item.consumer_version_number)
+                = index_item.consumer_version_number
                 - if index_item.consumer_version_number
                   %button.clippy.invisible{ title: "Copy to clipboard" }
                     %span.glyphicon.glyphicon-copy
@@ -49,7 +49,7 @@
                   latest
               - index_item.consumer_version_latest_tag_names.each do | tag_name |
                 .tag.label.label-primary
-                  = escape_html(tag_name)
+                  = tag_name
             %td.pact
               %span.pact
                 %a{ href: index_item.pact_url, title: "View pact" }
@@ -57,16 +57,16 @@
                 %a{ href: index_item.pact_matrix_url, title: "View pact matrix" }
             %td.provider
               %a{ href: index_item.provider_group_url }
-                = escape_html(index_item.provider_name)
+                = index_item.provider_name
             %td.provider-version-number
               %div.clippable
-                = escape_html(index_item.provider_version_number)
+                = index_item.provider_version_number
                 - if index_item.provider_version_number
                   %button.clippy.invisible{ title: "Copy to clipboard" }
                     %span.glyphicon.glyphicon-copy
               - index_item.provider_version_latest_tag_names.each do | tag_name |
                 .tag.label.label-primary
-                  = escape_html(tag_name)
+                  = tag_name
             %td{"data-text": index_item.publication_date_of_latest_pact_order}
               = index_item.publication_date_of_latest_pact.gsub("about ", "")
             %td{ class: index_item.webhook_status }
@@ -86,7 +86,7 @@
     %div.pagination
 
     - pagination_locals = { page_number: page_number, page_size: page_size, pagination_record_count: pagination_record_count, current_page_size: current_page_size }
-    = render :haml, :'index/_pagination', :layout => false, locals: pagination_locals
+    != render :haml, :'index/_pagination', :layout => false, locals: pagination_locals
 
   :javascript
     $(function(){

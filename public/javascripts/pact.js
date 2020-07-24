@@ -39,10 +39,14 @@ $(document).ready(function() {
     });
 });
 
+function h(string) {
+  return jQuery('<div/>').text(string).html();
+}
+
 function createDeletionConfirmationText(data) {
   return `Do you wish to delete the pact for version ${
-    data.consumerVersionNumber
-  } of ${data.consumerName}?`;
+    h(data.consumerVersionNumber)
+  } of ${h(data.consumerName)}?`;
 }
 
 function confirmDeleteResource(

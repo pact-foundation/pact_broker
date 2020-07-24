@@ -36,7 +36,7 @@ module PactBroker
             base_url: base_url
           }
 
-          haml page, {locals: locals, layout: :'layouts/main'}
+          haml page, { locals: locals, layout: :'layouts/main', escape_html: true }
         end
 
         def set_headers
