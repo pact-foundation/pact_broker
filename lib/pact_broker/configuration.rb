@@ -47,7 +47,10 @@ module PactBroker
     attr_accessor :base_equality_only_on_content_that_affects_verification_results
     attr_reader :api_error_reporters
     attr_reader :custom_logger
-    attr_accessor :policy_finder, :policy_scope_finder, :base_resource_class_factory
+    attr_accessor :policy_builder, :policy_scope_builder, :base_resource_class_factory
+
+    alias_method :policy_finder=, :policy_builder=
+    alias_method :policy_scope_finder=, :policy_scope_builder=
 
     def initialize
       @before_resource_hook = ->(resource){}
@@ -106,8 +109,8 @@ module PactBroker
         script_src: "'self' 'unsafe-inline' 'unsafe-eval'",
         frame_ancestors: "'self'"
       }
-      config.policy_finder = -> (object) { DefaultPolicy.new(nil, object) }
-      config.policy_scope_finder = -> (scope) { scope }
+      config.policy_builder = -> (object) { DefaultPolicy.new(nil, object) }
+      config.policy_scope_builder = -> (scope) { scope }
       config.base_resource_class_factory = -> () {
         require 'pact_broker/api/resources/default_base_resource'
         PactBroker::Api::Resources::DefaultBaseResource

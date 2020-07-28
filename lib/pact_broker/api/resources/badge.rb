@@ -42,6 +42,10 @@ module PactBroker
           badge_service.pact_verification_badge_url(pact, label, initials, pseudo_branch_verification_status, tags)
         end
 
+        def policy_name
+          :'badges::badge'
+        end
+
         private
 
         def pact

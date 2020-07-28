@@ -26,12 +26,20 @@ module PactBroker
         end
 
         def integrations
-          integration_service.find_all
+          @integrations ||= integration_service.find_all
         end
 
         def delete_resource
           integration_service.delete_all
           true
+        end
+
+        def policy_name
+          :'integrations::integrations'
+        end
+
+        def policy_resource
+          integrations
         end
       end
     end

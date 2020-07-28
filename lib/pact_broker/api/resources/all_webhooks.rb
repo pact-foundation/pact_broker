@@ -45,6 +45,15 @@ module PactBroker
           response.body = Decorators::WebhookDecorator.new(saved_webhook).to_json(decorator_options)
         end
 
+        def policy_name
+          :'webhooks::webooks'
+        end
+
+        def policy_record
+          # Note: consumer and provider not yet set on new webhook
+          request.post? ? webhook : webhooks
+        end
+
         private
 
         def validation_errors? webhook

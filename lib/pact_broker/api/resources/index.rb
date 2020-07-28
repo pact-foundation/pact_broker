@@ -143,6 +143,10 @@ module PactBroker
 
           links_hash
         end
+
+        def policy_name
+          :'index::index'
+        end
       end
     end
   end

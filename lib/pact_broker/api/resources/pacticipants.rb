@@ -56,6 +56,20 @@ module PactBroker
         def new_model
           @new_model ||= decorator_for(PactBroker::Domain::Pacticipant.new).from_json(request.body.to_s)
         end
+
+        def policy_name
+          :'pacticipants::pacticipants'
+        end
+
+        def policy_record
+          request.post? ? nil : pacticipants
+        end
+
+        private
+
+        def pacticipants
+          @pacticipants ||= pacticipant_service.find_all_pacticipants
+        end
       end
     end
   end

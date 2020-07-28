@@ -26,6 +26,14 @@ module PactBroker
           decorator_for(summary).to_json(user_options: decorator_context(identifier_from_path))
         end
 
+        def policy_name
+          :'verifications::verifications'
+        end
+
+        def policy_record
+          version
+        end
+
         private
 
         def version

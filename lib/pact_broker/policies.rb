@@ -44,10 +44,10 @@ module PactBroker
   end
 
   def self.policy!(*args)
-    PactBroker.configuration.policy_finder.call(*args)
+    PactBroker.configuration.policy_builder.call(*args)
   end
 
   def self.policy_scope!(*args)
-    PactBroker.configuration.policy_scope_finder.call(*args)
+    PactBroker.configuration.policy_scope_builder.call(*args)
   end
 end

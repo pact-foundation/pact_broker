@@ -19,7 +19,7 @@ module PactBroker
 
         def from_json
           unless label
-            @label = label_service.create identifier_from_path
+            @label = label_service.create(identifier_from_path)
             # Make it return a 201 by setting the Location header
             response.headers["Location"] = label_url(label, base_url)
           end
@@ -27,10 +27,18 @@ module PactBroker
         end
 
         def resource_exists?
-          !!resource_object
+          !!label
         end
 
         def resource_object
+          label
+        end
+
+        def policy_name
+          :'labels::label'
+        end
+
+        def policy_record
           label
         end
 
@@ -39,14 +47,13 @@ module PactBroker
         end
 
         def label
-          @label ||= label_service.find identifier_from_path
+          @label ||= label_service.find(identifier_from_path)
         end
 
         def delete_resource
-          label_service.delete identifier_from_path
+          label_service.delete(identifier_from_path)
           true
         end
-
       end
     end
 

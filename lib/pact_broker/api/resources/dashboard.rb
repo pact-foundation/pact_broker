@@ -25,6 +25,10 @@ module PactBroker
           PactBroker::Api::Decorators::DashboardTextDecorator.new(index_items).to_text(user_options: decorator_context)
         end
 
+        def policy_name
+          :'dashboard::dashboard'
+        end
+
         private
 
         def index_items

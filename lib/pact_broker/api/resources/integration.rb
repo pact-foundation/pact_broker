@@ -16,6 +16,18 @@ module PactBroker
           integration_service.delete(consumer_name, provider_name)
           true
         end
+
+        def policy_name
+          :'integrations::integration'
+        end
+
+        def policy_resource
+          integration
+        end
+
+        def integration
+          @integration ||= OpenStruct.new(consumer: consumer, provider: provider)
+        end
       end
     end
   end

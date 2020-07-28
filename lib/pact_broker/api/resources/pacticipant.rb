@@ -47,6 +47,10 @@ module PactBroker
           pacticipant
         end
 
+        def policy_resource
+          pacticipant
+        end
+
         def delete_resource
           pacticipant_service.delete(pacticipant_name)
           true

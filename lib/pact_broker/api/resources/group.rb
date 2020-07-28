@@ -22,6 +22,14 @@ module PactBroker
           PactBroker::Api::Decorators::RelationshipsCsvDecorator.new(group).to_csv
         end
 
+        def policy_name
+          :'groups::group'
+        end
+
+        def policy_record
+          pacticipant
+        end
+
         private
 
         def group

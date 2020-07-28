@@ -18,7 +18,15 @@ module PactBroker
         end
 
         def pacts
-          pact_service.find_latest_pacts
+          @pacts ||= pact_service.find_latest_pacts
+        end
+
+        def policy_name
+          :'pacts:pacts'
+        end
+
+        def policy_record
+          pacts
         end
       end
     end

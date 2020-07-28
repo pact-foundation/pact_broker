@@ -6,7 +6,6 @@ require 'pact_broker/api/decorators/pact_decorator'
 module PactBroker
   module Api
     module Resources
-
       class PreviousDistinctPactVersion < BaseResource
 
         def content_types_provided
@@ -22,6 +21,10 @@ module PactBroker
         end
 
         def resource_object
+          pact
+        end
+
+        def policy_resource
           pact
         end
 
