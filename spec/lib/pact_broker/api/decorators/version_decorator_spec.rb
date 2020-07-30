@@ -51,6 +51,10 @@ module PactBroker
           expect(subject[:_embedded][:tags].first[:name]).to eq "prod"
         end
 
+        it "includes the timestamps" do
+          expect(subject[:createdAt]).to_not be nil
+        end
+
         it "includes a list of sorted pacts" do
           expect(subject[:_links][:'pb:pact-versions']).to be_instance_of(Array)
           expect(subject[:_links][:'pb:pact-versions'].first[:href]).to include ("1.2.3")

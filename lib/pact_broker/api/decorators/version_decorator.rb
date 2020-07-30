@@ -10,6 +10,8 @@ module PactBroker
 
         collection :tags, embedded: true, :extend => PactBroker::Api::Decorators::EmbeddedTagDecorator
 
+        include Timestamps
+
         link :self do | options |
           {
             title: 'Version',
