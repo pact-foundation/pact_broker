@@ -19,14 +19,33 @@ jobs:
     #     checkInterval: 15
     #   env:
     #     GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-    - uses: pact-foundation/release-gem@v0.0.11
-      env:
-        GEM_HOST_API_KEY: '${{ secrets.RUBYGEMS_API_KEY }}'
-        GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-        INCREMENT: '${{ github.event.client_payload.increment }}'
-    # - name: Trigger release of pact-cli Docker image
-    #   uses: peter-evans/repository-dispatch@v1
-    #   with:
-    #     token: ${{ secrets.GHTOKENFORPACTCLIRELEASE }}
-    #     repository: pact-foundation/pact-ruby-cli
-    #     event-type: gem-released
+    # - uses: pact-foundation/release-gem@v0.0.11
+    #   env:
+    #     GEM_HOST_API_KEY: '${{ secrets.RUBYGEMS_API_KEY }}'
+    #     GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+    #     INCREMENT: '${{ github.event.client_payload.increment }}'
+    notify-gem-released:
+      needs: release
+      strategy:
+        matrix:
+          repository: [pact-foundation/pact-broker-docker, DiUS/pact_broker-docker]
+      runs-on: ubuntu-latest
+      steps:
+        - name: Notify ${{ matrix.repository }} of gem release
+          uses: peter-evans/repository-dispatch@v1
+          with:
+            token: ${{ secrets.GHTOKENNOTIFYPBRELEASED }}
+            repository: ${{ matrix.repository }}
+            event-type: gem-released
+            client-payload: |
+                {
+                  "name": "pact_broker",
+                  "version": "2.59.0",
+                  "increment": "minor"
+                }
+            # client-payload: |
+            #     {
+            #       "name": "${{ needs.release.outputs.gem_name }}",
+            #       "version": "${{ needs.release.outputs.version }}",
+            #       "increment": "${{ needs.release.outputs.increment }}"
+            #     }
