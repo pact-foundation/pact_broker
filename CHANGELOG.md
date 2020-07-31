@@ -1,3 +1,10 @@
+<a name="v2.59.0"></a>
+### v2.59.0 (2020-07-30)
+
+#### Features
+
+* add timestamps to version resource	 ([818a0c2c](/../../commit/818a0c2c))
+
 <a name="v2.58.3"></a>
 ### v2.58.3 (2020-07-25)
 
