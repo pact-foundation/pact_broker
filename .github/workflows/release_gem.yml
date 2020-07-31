@@ -19,11 +19,11 @@ jobs:
     #     checkInterval: 15
     #   env:
     #     GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-    # - uses: pact-foundation/release-gem@v0.0.11
-    #   env:
-    #     GEM_HOST_API_KEY: '${{ secrets.RUBYGEMS_API_KEY }}'
-    #     GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-    #     INCREMENT: '${{ github.event.client_payload.increment }}'
+    - uses: pact-foundation/release-gem@v0.0.11
+      env:
+        GEM_HOST_API_KEY: '${{ secrets.RUBYGEMS_API_KEY }}'
+        GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+        INCREMENT: '${{ github.event.client_payload.increment }}'
   notify-gem-released:
     needs: release
     strategy:
@@ -39,13 +39,7 @@ jobs:
           event-type: gem-released
           client-payload: |
               {
-                "name": "pact_broker",
-                "version": "2.59.0",
-                "increment": "minor"
+                "name": "${{ needs.release.outputs.gem_name }}",
+                "version": "${{ needs.release.outputs.version }}",
+                "increment": "${{ needs.release.outputs.increment }}"
               }
-          # client-payload: |
-          #     {
-          #       "name": "${{ needs.release.outputs.gem_name }}",
-          #       "version": "${{ needs.release.outputs.version }}",
-          #       "increment": "${{ needs.release.outputs.increment }}"
-          #     }
