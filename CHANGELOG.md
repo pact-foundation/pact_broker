@@ -1,3 +1,10 @@
+<a name="v2.59.1"></a>
+### v2.59.1 (2020-08-04)
+
+#### Bug Fixes
+
+* fix error rendering relationships diagram when the number of index items is greater than one page	 ([93a19982](/../../commit/93a19982))
+
 <a name="v2.59.0"></a>
 ### v2.59.0 (2020-07-30)
 
