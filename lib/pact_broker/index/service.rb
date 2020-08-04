@@ -32,6 +32,12 @@ module PactBroker
         PactBroker.policy_scope!(PactBroker::Pacts::PactPublication)
       end
 
+      def self.find_all_index_items
+        # Is there a better way to do this? Setting a page_size of nil or -1 doesn't work
+        # If we get to 100000000000 index items, we're probably going to have bigger issues...
+        find_index_items(page_number: 1, page_size: 100000000000)
+      end
+
       def self.find_index_items options = {}
         latest_verifications_for_cv_tags = latest_verifications_for_consumer_version_tags(options)
         latest_pact_publication_ids = latest_pact_publications.select(:id).all.collect{ |h| h[:id] }
