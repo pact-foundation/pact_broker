@@ -5,7 +5,6 @@ module PactBroker
     module Resources
       describe ErrorHandler do
         describe "call" do
-
           before do
             allow(ErrorHandler).to receive(:logger).and_return(logger)
             allow(SecureRandom).to receive(:urlsafe_base64).and_return("bYWfn-+yWPlf")
@@ -43,6 +42,24 @@ module PactBroker
               expect(JSON.parse(body)['error']).to include 'reference' => "bYWfnyWPlf"
             end
             subject
+          end
+
+          context "when the error class is in the WARNING_ERROR_CLASSES list" do
+            let(:error) { Sequel::ForeignKeyConstraintViolation.new }
+
+            it "logs at warn so as not to wake everyone up in the middle of the night" do
+              expect(logger).to receive(:warn).with(/bYWfnyWPlf/, error)
+              subject
+            end
+          end
+
+          context "when the error is not reportable and not a warning level" do
+            let(:error) { PactBroker::Error.new('foo') }
+
+            it "logs at info" do
+              expect(logger).to receive(:info).with(/bYWfnyWPlf/, error)
+              subject
+            end
           end
 
           context "when show_backtrace_in_error_response? is true" do

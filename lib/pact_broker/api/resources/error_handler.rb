@@ -5,7 +5,6 @@ module PactBroker
   module Api
     module Resources
       class ErrorHandler
-
         include PactBroker::Logging
 
         WARNING_ERROR_CLASSES = [Sequel::ForeignKeyConstraintViolation]
@@ -17,6 +16,7 @@ module PactBroker
           elsif reportable?(e)
             log_error(e, "Error reference #{error_reference}")
             report(e, error_reference, request)
+          else
             logger.info("Error reference #{error_reference}", e)
           end
           response.body = response_body_hash(e, error_reference).to_json
