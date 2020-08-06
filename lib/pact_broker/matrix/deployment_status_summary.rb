@@ -195,7 +195,7 @@ module PactBroker
               InteractionsMissingVerifications.new(selector_for(row.consumer_name), selector_for(row.provider_name), row.verification.interactions_missing_test_results)
             end
           rescue StandardError => e
-            log_error(e, "Error determining if there were missing interaction verifications")
+            logger.warn("Error determining if there were missing interaction verifications", e)
             nil
           end
         end.compact.tap { |it| report_missing_interaction_verifications(it) if it.any? }
