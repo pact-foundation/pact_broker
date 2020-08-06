@@ -32,7 +32,8 @@ module PactBroker
       end
 
       def interactions_missing_test_results
-        interactions.reject do | interaction |
+        return [] unless messages_or_interactions
+        messages_or_interactions.reject do | interaction |
           interaction['tests']&.any?
         end
       end

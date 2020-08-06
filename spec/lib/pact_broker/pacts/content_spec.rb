@@ -308,6 +308,14 @@ module PactBroker
           expect(subject.interactions_missing_test_results.count).to eq 1
         end
 
+        context "with no interactions" do
+          let(:pact_content) { {} }
+
+          it "does not blow up" do
+            expect(subject.interactions_missing_test_results.count).to eq 0
+          end
+        end
+
         context "with nil test results" do
           let(:test_results) { nil }
 
