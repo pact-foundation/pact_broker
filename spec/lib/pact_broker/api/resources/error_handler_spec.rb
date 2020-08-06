@@ -44,7 +44,7 @@ module PactBroker
             subject
           end
 
-          context "when the error class is in the WARNING_ERROR_CLASSES list" do
+          context "when the error class is in the warning_error_classes list" do
             let(:error) { Sequel::ForeignKeyConstraintViolation.new }
 
             it "logs at warn so as not to wake everyone up in the middle of the night" do

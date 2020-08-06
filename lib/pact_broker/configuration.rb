@@ -31,12 +31,14 @@ module PactBroker
       :webhook_host_whitelist,
       :base_equality_only_on_content_that_affects_verification_results,
       :seed_example_data,
-      :badge_provider_mode
+      :badge_provider_mode,
+      :warning_error_class_names
     ]
 
     attr_accessor :base_url, :log_dir, :database_connection, :auto_migrate_db, :auto_migrate_db_data, :allow_missing_migration_files, :example_data_seeder, :seed_example_data, :use_hal_browser, :html_pact_renderer, :use_rack_protection
     attr_accessor :validate_database_connection_config, :enable_diagnostic_endpoints, :version_parser, :sha_generator
     attr_accessor :use_case_sensitive_resource_names, :order_versions_by_date
+    attr_accessor :warning_error_class_names
     attr_accessor :check_for_potential_duplicate_pacticipant_names
     attr_accessor :webhook_retry_schedule
     attr_reader :webhook_http_method_whitelist, :webhook_scheme_whitelist, :webhook_host_whitelist
@@ -115,6 +117,7 @@ module PactBroker
         require 'pact_broker/api/resources/default_base_resource'
         PactBroker::Api::Resources::DefaultBaseResource
       }
+      config.warning_error_class_names = ['Sequel::ForeignKeyConstraintViolation']
       config
     end
 
@@ -226,6 +229,12 @@ module PactBroker
 
     def webhook_host_whitelist= webhook_host_whitelist
       @webhook_host_whitelist = parse_space_delimited_string_list_property('webhook_host_whitelist', webhook_host_whitelist)
+    end
+
+    def warning_error_classes
+      warning_error_class_names.collect do | class_name |
+        Object.const_get(class_name)
+      end
     end
 
     private

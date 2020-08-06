@@ -7,8 +7,6 @@ module PactBroker
       class ErrorHandler
         include PactBroker::Logging
 
-        WARNING_ERROR_CLASSES = [Sequel::ForeignKeyConstraintViolation]
-
         def self.call e, request, response
           error_reference = generate_error_reference
           if log_as_warning?(e)
@@ -31,7 +29,7 @@ module PactBroker
         end
 
         def self.log_as_warning?(e)
-          WARNING_ERROR_CLASSES.any? { |clazz| e.is_a?(clazz) }
+          PactBroker.configuration.warning_error_classes.any? { |clazz| e.is_a?(clazz) }
         end
 
         def self.display_message(e, error_reference)
