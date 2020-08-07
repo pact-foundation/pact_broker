@@ -1,3 +1,11 @@
+<a name="v2.59.2"></a>
+### v2.59.2 (2020-08-06)
+
+#### Bug Fixes
+
+* gracefully handle contracts without interactions or messages in deployment status warnings	 ([6c223e69](/../../commit/6c223e69))
+* add missing info level log for business level errors	 ([80a895bf](/../../commit/80a895bf))
+
 <a name="v2.59.1"></a>
 ### v2.59.1 (2020-08-04)
 
