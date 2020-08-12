@@ -359,6 +359,53 @@ module PactBroker
             expect(subject.to_hash).to eq merged_with_empty_tests
           end
         end
+
+        context "with the new format" do
+          let(:test_results) do
+            [
+              {
+                "interactionId" => "1",
+                "success "=> false
+              },{
+                "foo" => "bar"
+              }
+            ]
+          end
+
+          let(:pact_content) do
+            {
+              "interactions" => [
+                {
+                 "_id" => "1"
+                },
+                {
+                 "_id" => "2"
+                }
+              ]
+            }
+          end
+
+          let(:merged) do
+            {
+              "interactions" => [
+                {
+                 "_id" => "1",
+                 "tests" => [{
+                    "interactionId" => "1",
+                    "success "=> false
+                  }]
+                },{
+                 "_id" => "2",
+                 "tests" => []
+                }
+              ]
+            }
+          end
+
+          it "merges the tests into the pact content" do
+            expect(subject.to_hash).to eq merged
+          end
+        end
       end
     end
   end

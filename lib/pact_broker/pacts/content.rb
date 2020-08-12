@@ -38,10 +38,17 @@ module PactBroker
         end
       end
 
+
       def with_test_results(test_results)
-        tests = test_results && test_results['tests']
-        if tests.nil? || !tests.is_a?(Array) || tests.empty?
-          tests = []
+        # new format
+        if test_results.is_a?(Array)
+          tests = test_results
+        else
+          # old format
+          tests = test_results && test_results['tests']
+          if tests.nil? || !tests.is_a?(Array) || tests.empty?
+            tests = []
+          end
         end
 
         new_pact_hash = pact_hash.dup
@@ -130,7 +137,15 @@ module PactBroker
       end
 
       def test_is_for_interaction(interaction, test)
-        test.is_a?(Hash) && interaction.is_a?(Hash) && test['interactionDescription'] == interaction['description'] && test['interactionProviderState'] == interaction['providerState']
+        test.is_a?(Hash) && interaction.is_a?(Hash) && ( interaction_ids_match(interaction, test) || description_and_state_match(interaction, test))
+      end
+
+      def interaction_ids_match(interaction, test)
+        interaction['_id'] && interaction['_id'] == test['interactionId']
+      end
+
+      def description_and_state_match(interaction, test)
+        test['interactionDescription'] && test['interactionDescription'] == interaction['description'] && test['interactionProviderState'] == interaction['providerState']
       end
     end
   end
