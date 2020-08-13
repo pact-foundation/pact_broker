@@ -1,5 +1,6 @@
 require 'pact_broker/db'
 require 'pact_broker/json'
+require 'pact_broker/pacts/content'
 
 =begin
 This class most accurately represents a PactPublication
@@ -74,6 +75,14 @@ module PactBroker
 
       def content_hash
         JSON.parse(json_content, PACT_PARSING_OPTIONS)
+      end
+
+      def content_object
+        @content_object ||= begin
+          PactBroker::Pacts::Content.from_json(json_content)
+        rescue
+          PactBroker::Pacts::Content.new
+        end
       end
 
       def pact_publication_id

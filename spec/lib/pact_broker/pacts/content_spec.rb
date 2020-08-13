@@ -407,6 +407,41 @@ module PactBroker
           end
         end
       end
+
+      describe "interaction_ids" do
+        let(:interaction_1) do
+          {
+            _id: '1'
+          }
+        end
+
+        let(:interaction_2) do
+          {
+            _id: '2'
+          }
+        end
+
+        let(:interaction_3) do
+          {
+          }
+        end
+
+        let(:content_hash) do
+          {
+            interactions: [interaction_1, interaction_2, interaction_3]
+          }
+        end
+
+        subject { Content.from_json(content_hash.to_json) }
+
+        its(:interaction_ids) { is_expected.to eq ['1', '2'] }
+
+        context "when there are no interactions" do
+          let(:content_hash) { {} }
+
+          its(:interaction_ids) { is_expected.to eq [] }
+        end
+      end
     end
   end
 end

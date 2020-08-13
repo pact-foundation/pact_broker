@@ -38,7 +38,6 @@ module PactBroker
         end
       end
 
-
       def with_test_results(test_results)
         # new format
         if test_results.is_a?(Array)
@@ -74,6 +73,12 @@ module PactBroker
         Content.from_hash(new_pact_hash)
       end
 
+      def interaction_ids
+        messages_or_interaction_or_empty_array.collect do | interaction |
+          interaction['_id']
+        end.compact
+      end
+
       # Half thinking this belongs in GenerateSha
       def content_that_affects_verification_results
         if interactions || messages
@@ -97,6 +102,10 @@ module PactBroker
 
       def messages_or_interactions
         messages || interactions
+      end
+
+      def messages_or_interaction_or_empty_array
+        messages_or_interactions || []
       end
 
       def pact_specification_version
