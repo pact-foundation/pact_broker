@@ -11,7 +11,7 @@ module PactBroker
         end
 
         let(:provider) { double('provider') }
-        let(:pacts) { double('pacts') }
+        let(:pacts) { [] }
         let(:path) { '/pacts/provider/Bar/for-verification' }
         let(:decorator) { instance_double('PactBroker::Api::Decorators::VerifiablePactsDecorator') }
         let(:query) do
