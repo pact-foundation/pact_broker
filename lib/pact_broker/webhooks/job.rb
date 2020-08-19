@@ -7,8 +7,9 @@ module PactBroker
   module Webhooks
     class Job
 
+      INFO_ERROR_PREFIXES = %w{Errno:: Timeout:: Net:: OpenSSL:: EOFError SocketError}
+
       include SuckerPunch::Job
-      include PactBroker::Logging
       include PactBroker::Logging
 
       def perform data
@@ -62,7 +63,12 @@ module PactBroker
       end
 
       def handle_error e
-        log_error e, "Error executing triggered webhook with ID #{triggered_webhook ? triggered_webhook.id : nil}"
+        message = "Error executing triggered webhook with ID #{triggered_webhook ? triggered_webhook.id : nil}"
+        if e.class.name.start_with?(*INFO_ERROR_PREFIXES)
+          logger.info(message, e)
+        else
+          logger.warn(message, e)
+        end
         handle_failure
       end
 

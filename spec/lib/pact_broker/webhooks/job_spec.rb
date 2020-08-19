@@ -53,7 +53,25 @@ module PactBroker
 
       context "when an error occurs for the first time" do
         before do
-          allow(PactBroker::Webhooks::Service).to receive(:execute_triggered_webhook_now).and_raise("an error")
+          allow(PactBroker::Webhooks::Service).to receive(:execute_triggered_webhook_now).and_raise(error)
+        end
+
+        let(:error) { "an error" }
+
+        context "when the error is HTTP related (most likely caused by a problem with the webhook or request itself)" do
+          let(:error) { Errno::ECONNREFUSED.new }
+
+          it "logs a message at info" do
+            expect(logger).to receive(:info).with(/Error executing/, error)
+            subject
+          end
+        end
+
+        context "when the error is not HTTP related (most likely caused by a code, platform or environment issue)" do
+          it "logs a message at warn" do
+            expect(logger).to receive(:warn).with(/Error executing/, instance_of(RuntimeError))
+            subject
+          end
         end
 
         it "reschedules the job in 10 seconds" do
