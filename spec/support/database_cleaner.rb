@@ -8,11 +8,7 @@ RSpec.configure do |config|
   config.before(:suite) do
     if defined?(::DB)
       DatabaseCleaner.strategy = :transaction
-      if DB.mysql?
-        DatabaseCleaner.clean_with :deletion
-      else
-        DatabaseCleaner.clean_with :truncation
-      end
+      PactBroker::Database.truncate
     end
   end
 
