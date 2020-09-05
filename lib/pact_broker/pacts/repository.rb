@@ -405,40 +405,35 @@ module PactBroker
               SelectedPact.new(pact_publication.to_domain, Selectors.create_for_overall_latest)
             end
         else
-          []
+          selectors_for_overall_latest = consumer_version_selectors.select(&:overall_latest?)
+          selectors_for_overall_latest.flat_map do | selector |
+            query = scope_for(LatestPactPublications).provider(provider_name)
+            query = query.consumer(selector.consumer) if selector.consumer
+            query.collect do | latest_pact_publication |
+              pact_publication = PactPublication.find(id: latest_pact_publication.id)
+              resolved_selector = selector.consumer ? Selector.latest_for_consumer(selector.consumer) : Selector.overall_latest
+              SelectedPact.new(pact_publication.to_domain, Selectors.new(resolved_selector))
+            end
+          end
         end
       end
 
       def find_pacts_for_which_the_latest_version_for_the_tag_is_required(provider_name, consumer_version_selectors)
         # The tags for which only the latest version is specified
-        tag_names = consumer_version_selectors.tag_names_of_selectors_for_latest_pacts
+        selectors = consumer_version_selectors.select(&:latest_for_tag?)
 
-        # TODO make this an efficient query!
-        # These are not yet de-duped. Should make the behaviour consistent between this and find_pacts_for_which_all_versions_for_the_tag_are_required ?
-        if tag_names.any?
-          scope_for(LatestTaggedPactPublications)
-            .provider(provider_name)
-            .where(tag_name: tag_names)
-            .all
-            .group_by(&:pact_version_id)
-            .values
-            .collect do | pact_publications |
-              create_selected_pact(pact_publications)
-            end
-        else
-          []
+        selectors.flat_map do | selector |
+          query = scope_for(LatestTaggedPactPublications).where(tag_name: selector.tag).provider(provider_name)
+          query = query.consumer(selector.consumer) if selector.consumer
+          query.all.collect do | latest_tagged_pact_publication |
+            pact_publication = PactPublication.find(id: latest_tagged_pact_publication.id)
+            resolved_pact = selector.consumer ? Selector.latest_for_tag_and_consumer(selector.tag, selector.consumer) : Selector.latest_for_tag(selector.tag)
+            SelectedPact.new(
+              pact_publication.to_domain,
+              Selectors.new(resolved_pact)
+            )
+          end
         end
-      end
-
-      def create_selected_pact(pact_publications)
-        selector_tag_names = pact_publications.collect(&:tag_name)
-        selectors = Selectors.create_for_latest_of_each_tag(selector_tag_names)
-        last_pact_publication = pact_publications.sort_by(&:consumer_version_order).last
-        pact_publication = scope_for(PactPublication).find(id: last_pact_publication.id)
-        SelectedPact.new(
-          pact_publication.to_domain,
-          selectors
-        )
       end
 
       def create_fallback_selected_pact(pact_publications, consumer_version_selectors)
@@ -454,10 +449,9 @@ module PactBroker
 
       def find_pacts_for_which_the_latest_version_for_the_fallback_tag_is_required(provider_name, selectors)
         selectors.collect do | selector |
-          scope_for(LatestTaggedPactPublications)
-            .provider(provider_name)
-            .where(tag_name: selector.fallback_tag)
-            .all
+          query = scope_for(LatestTaggedPactPublications).provider(provider_name).where(tag_name: selector.fallback_tag)
+          query = query.consumer(selector.consumer) if selector.consumer
+          query.all
             .collect do | latest_tagged_pact_publication |
               pact_publication = unscoped(PactPublication).find(id: latest_tagged_pact_publication.id)
               SelectedPact.new(

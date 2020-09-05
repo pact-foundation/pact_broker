@@ -56,6 +56,20 @@ module PactBroker
             it "sets the latest flag on the selector" do
               expect(find_by_consumer_version_number("1").selectors.first.latest).to be true
             end
+
+            context "when a consumer is specified" do
+              before do
+                td.create_pact_with_consumer_version_tag("Foo2", "3", "master", "Bar")
+              end
+
+              let(:selector) { Selector.new(tag: tag, fallback_tag: fallback_tag, latest: true, consumer: "Foo") }
+
+              it "only returns the pacts for the consumer" do
+                expect(subject.size).to eq 1
+                expect(subject.first.consumer.name).to eq "Foo"
+                expect(subject.first.selectors.first).to eq selector
+              end
+            end
           end
 
           context "when a pact does not exist for either tag or fallback_tag" do

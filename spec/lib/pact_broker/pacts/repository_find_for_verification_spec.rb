@@ -40,6 +40,68 @@ module PactBroker
           end
         end
 
+        context "when the selector is latest: true" do
+          let(:pact_selector_1) { Selector.overall_latest }
+          let(:consumer_version_selectors) do
+            Selectors.new(pact_selector_1)
+          end
+
+          before do
+            td.create_pact_with_hierarchy("Foo1", "1", "Bar")
+              .create_pact_with_hierarchy("Foo1", "2", "Bar")
+              .create_pact_with_hierarchy("Foo2", "3", "Bar")
+              .create_pact_with_hierarchy("Foo2", "4", "Bar2")
+          end
+
+          it "returns the latest pact for each consumer" do
+            expect(subject.size).to eq 2
+            expect(find_by_consumer_name_and_consumer_version_number("Foo1", "2").selectors).to eq [Selector.overall_latest]
+            expect(find_by_consumer_name_and_consumer_version_number("Foo2", "3").selectors).to eq [Selector.overall_latest]
+          end
+        end
+
+        context "when the selector is latest: true for a particular consumer" do
+          let(:pact_selector_1) { Selector.latest_for_consumer("Foo1") }
+
+          let(:consumer_version_selectors) do
+            Selectors.new(pact_selector_1)
+          end
+
+          before do
+            td.create_pact_with_hierarchy("Foo1", "1", "Bar")
+              .create_pact_with_hierarchy("Foo1", "2", "Bar")
+              .create_pact_with_hierarchy("Foo2", "2", "Bar")
+              .create_pact_with_hierarchy("Foo2", "2", "Bar2")
+          end
+
+          it "returns the latest pact for each consumer" do
+            expect(subject.size).to eq 1
+            expect(find_by_consumer_name_and_consumer_version_number("Foo1", "2").selectors).to eq [pact_selector_1]
+          end
+        end
+
+        context "when the selector is latest: true, with a tag, for a particular consumer" do
+          let(:pact_selector_1) { Selector.latest_for_tag_and_consumer("prod", "Foo1") }
+
+          let(:consumer_version_selectors) do
+            Selectors.new(pact_selector_1)
+          end
+
+          before do
+            td.create_pact_with_hierarchy("Foo1", "1", "Bar")
+              .create_consumer_version_tag("prod")
+              .create_pact_with_hierarchy("Foo1", "2", "Bar")
+              .create_pact_with_hierarchy("Foo2", "2", "Bar")
+              .create_consumer_version_tag("prod")
+              .create_pact_with_hierarchy("Foo2", "2", "Bar2")
+          end
+
+          it "returns the latest pact for each consumer" do
+            expect(subject.size).to eq 1
+            expect(find_by_consumer_name_and_consumer_version_number("Foo1", "1").selectors).to eq [pact_selector_1]
+          end
+        end
+
         context "when the latest consumer tag names are specified" do
           before do
             td.create_pact_with_hierarchy("Foo", "foo-latest-prod-version", "Bar")

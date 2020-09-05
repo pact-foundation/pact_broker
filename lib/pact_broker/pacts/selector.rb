@@ -53,6 +53,14 @@ module PactBroker
         Selector.new(tag: tag, consumer: consumer)
       end
 
+      def self.latest_for_tag_and_consumer(tag, consumer)
+        Selector.new(latest: true, tag: tag, consumer: consumer)
+      end
+
+      def self.latest_for_consumer(consumer)
+        Selector.new(latest: true, consumer: consumer)
+      end
+
       def self.from_hash hash
         Selector.new(hash)
       end

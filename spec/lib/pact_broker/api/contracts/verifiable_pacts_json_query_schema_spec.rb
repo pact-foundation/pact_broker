@@ -71,6 +71,27 @@ module PactBroker
           end
         end
 
+        context "when the latest version for a particular consumer is requested" do
+          let(:consumer_version_selectors) do
+            [{
+              consumer: "Foo",
+              latest: true
+            }]
+          end
+
+          it { is_expected.to be_empty }
+        end
+
+        context "when the latest version for all is requested" do
+          let(:consumer_version_selectors) do
+            [{
+              latest: true
+            }]
+          end
+
+          it { is_expected.to be_empty }
+        end
+
         context "when providerVersionTags is not an array" do
           let(:provider_version_tags) { true }
 
@@ -89,7 +110,7 @@ module PactBroker
           end
 
           it "flattens the messages" do
-            expect(subject[:consumerVersionSelectors].first).to eq "tag is missing at index 0"
+            expect(subject[:consumerVersionSelectors].first).to eq "latest must be true, or a tag must be provided (at index 0)"
           end
         end
 
@@ -150,9 +171,7 @@ module PactBroker
             }]
           end
 
-          it "has an error" do
-            expect(subject[:consumerVersionSelectors].first).to include "not yet supported"
-          end
+          it { is_expected.to be_empty }
         end
       end
     end

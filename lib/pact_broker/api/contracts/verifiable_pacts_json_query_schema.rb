@@ -1,5 +1,6 @@
 require 'dry-validation'
 require 'pact_broker/hash_refinements'
+require 'pact_broker/string_refinements'
 require 'pact_broker/api/contracts/dry_validation_workarounds'
 require 'pact_broker/api/contracts/dry_validation_predicates'
 
@@ -9,6 +10,7 @@ module PactBroker
       class VerifiablePactsJSONQuerySchema
         extend DryValidationWorkarounds
         using PactBroker::HashRefinements
+        using PactBroker::StringRefinements
 
         SCHEMA = Dry::Validation.Schema do
           configure do
@@ -24,7 +26,7 @@ module PactBroker
               #   end
               # end
 
-              required(:tag).filled(:str?)
+              optional(:tag).filled(:str?)
               optional(:latest).filled(included_in?: [true, false])
               optional(:fallbackTag).filled(:str?)
               optional(:consumer).filled(:str?, :not_blank?)
@@ -54,8 +56,9 @@ module PactBroker
                 errors << "fallbackTag can only be set if latest is true (at index #{index})"
               end
 
-              if selector[:consumer] && selector[:latest]
-                errors << "specifying a consumer with latest == true is not yet supported (at index #{index})"
+
+              if not_provided?(selector[:tag]) && selector[:latest] != true
+                errors << "latest must be true, or a tag must be provided (at index #{index})"
               end
             end
             if errors.any?
@@ -63,6 +66,10 @@ module PactBroker
               results[:consumerVersionSelectors].concat(errors)
             end
           end
+        end
+
+        def self.not_provided?(value)
+          value.nil? || value.blank?
         end
       end
     end
