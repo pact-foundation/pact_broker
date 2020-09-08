@@ -121,6 +121,17 @@ module PactBroker
               title: "Determine if an application can be safely deployed to an environment identified by the given tag",
               templated: true
             },
+            'pb:provider-pacts-for-verification' => {
+              href: base_url + '/pacts/provider/{provider}/for-verification',
+              title: 'Pact versions to be verified for the specified provider',
+              templated: true
+            },
+            'beta:provider-pacts-for-verification' => {
+              name: 'beta',
+              href: base_url + '/doc/{rel}?context=index',
+              title: 'DEPRECATED - please use pb:provider-pacts-for-verification',
+              templated: true
+            },
             'curies' =>
             [{
               name: 'pb',
@@ -132,16 +143,6 @@ module PactBroker
               templated: true
             }]
           }
-
-
-          links_hash['pb:provider-pacts-for-verification'] = {
-            href: base_url + '/pacts/provider/{provider}/for-verification',
-            title: 'Pact versions to be verified for the specified provider',
-            templated: true
-          }
-
-          links_hash['beta:provider-pacts-for-verification'] = links_hash['pb:provider-pacts-for-verification'].merge(title: 'DEPRECATED - please use pb:provider-pacts-for-verification')
-
 
           links_hash
         end

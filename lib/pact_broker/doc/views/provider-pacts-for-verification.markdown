@@ -12,22 +12,20 @@ Returns a deduplicated list of pacts to be verified by the specified provider.
 
 Example: This data structure represents the way a user might specify "I want to verify the latest 'master' pact, all 'prod' pacts, and when I publish the verification results, I'm going to tag the provider version with 'master'"
 
-
-```json
-{
-  "consumerVersionSelectors": [
     {
-      "tag": "master",
-      "latest": true
-    },{
-      "tag": "prod"
+      "consumerVersionSelectors": [
+        {
+          "tag": "master",
+          "latest": true
+        },{
+          "tag": "prod"
+        }
+      ],
+      "providerVersionTags": ["master"],
+      "includePendingStatus": true,
+      "includeWipPactsSince": "2020-01-01"
     }
-  ],
-  "providerVersionTags": ["master"],
-  "includePendingStatus": true,
-  "includeWipPactsSince": "2020-01-01"
-}
-```
+
 
 `consumerVersionSelectors.tag`: the tag name(s) of the consumer versions to get the pacts for.
 
@@ -47,34 +45,34 @@ Example: This data structure represents the way a user might specify "I want to 
 
 `pending` flag and  the "pending reason" notice will only be included if `includePendingStatus` is set to true.
 
-```json
-{
-  "_embedded": {
-    "pacts": [
-      {
-        "verificationProperties": {
-          "notices": [
-            {
-              "text": "This pact is being verified because it is the pact for the latest version of Foo tagged with 'dev'",
-              "when": "before_verification"
+
+    {
+      "_embedded": {
+        "pacts": [
+          {
+            "verificationProperties": {
+              "notices": [
+                {
+                  "text": "This pact is being verified because it is the pact for the latest version of Foo tagged with 'dev'",
+                  "when": "before_verification"
+                }
+              ],
+              "pending": false
+            },
+            "_links": {
+              "self": {
+                "href": "http://localhost:9292/pacts/provider/Bar/consumer/Foo/pact-version/0e3369199f4008231946e0245474537443ccda2a",
+                "name": "Pact between Foo (v1.0.0) and Bar"
+              }
             }
-          ],
-          "pending": false
-        },
-        "_links": {
-          "self": {
-            "href": "http://localhost:9292/pacts/provider/Bar/consumer/Foo/pact-version/0e3369199f4008231946e0245474537443ccda2a",
-            "name": "Pact between Foo (v1.0.0) and Bar"
           }
+        ]
+      },
+      "_links": {
+        "self": {
+          "href": "http://localhost:9292/pacts/provider/Bar/for-verification",
+          "title": "Pacts to be verified"
         }
       }
-    ]
-  },
-  "_links": {
-    "self": {
-      "href": "http://localhost:9292/pacts/provider/Bar/for-verification",
-      "title": "Pacts to be verified"
     }
-  }
-}
-```
+
