@@ -1,6 +1,5 @@
 require 'pact_broker/api/resources/provider_pacts'
 require 'pact_broker/api/decorators/verifiable_pacts_decorator'
-require 'pact_broker/api/contracts/verifiable_pacts_query_schema'
 require 'pact_broker/api/decorators/verifiable_pacts_query_decorator'
 require 'pact_broker/api/contracts/verifiable_pacts_json_query_schema'
 require 'pact_broker/hash_refinements'
@@ -12,7 +11,7 @@ module PactBroker
         using PactBroker::HashRefinements
 
         def allowed_methods
-          ["GET", "POST", "OPTIONS"]
+          ["POST", "OPTIONS"]
         end
 
         def content_types_accepted
@@ -56,11 +55,7 @@ module PactBroker
         end
 
         def query_schema
-          if request.get?
-            PactBroker::Api::Contracts::VerifiablePactsQuerySchema
-          else
-            PactBroker::Api::Contracts::VerifiablePactsJSONQuerySchema
-          end
+          PactBroker::Api::Contracts::VerifiablePactsJSONQuerySchema
         end
 
         def parsed_query_params

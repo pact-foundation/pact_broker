@@ -133,13 +133,14 @@ module PactBroker
             }]
           }
 
-          if PactBroker.feature_enabled?(:pacts_for_verification)
-            links_hash['beta:provider-pacts-for-verification'] = {
-                href: base_url + '/pacts/provider/{provider}/for-verification',
-                title: 'Pact versions to be verified for the specified provider',
-                templated: true
-              }
-          end
+
+          links_hash['pb:provider-pacts-for-verification'] = {
+            href: base_url + '/pacts/provider/{provider}/for-verification',
+            title: 'Pact versions to be verified for the specified provider',
+            templated: true
+          }
+
+          links_hash['beta:provider-pacts-for-verification'] = links_hash['pb:provider-pacts-for-verification']
 
           links_hash
         end
