@@ -1,3 +1,17 @@
+<a name="v2.60.0"></a>
+### v2.60.0 (2020-09-08)
+
+#### Features
+
+* **pacts for verification**
+  * add deprecation title to beta:provider-pacts-for-verification relation	 ([47a61f69](/../../commit/47a61f69))
+  * do not require environment variable feature toggle to enable feature	 ([7d0fe1ea](/../../commit/7d0fe1ea))
+  * allow consumer to be specified with fallback tags, and overall latest to be specified with or without a consumer	 ([2d52d173](/../../commit/2d52d173))
+
+#### Bug Fixes
+
+* correctly handle new test results format when merging test results with pact contents	 ([b35ab71b](/../../commit/b35ab71b))
+
 <a name="v2.59.2"></a>
 ### v2.59.2 (2020-08-06)
 
