@@ -140,7 +140,8 @@ module PactBroker
             templated: true
           }
 
-          links_hash['beta:provider-pacts-for-verification'] = links_hash['pb:provider-pacts-for-verification']
+          links_hash['beta:provider-pacts-for-verification'] = links_hash['pb:provider-pacts-for-verification'].merge(title: 'DEPRECATED - please use pb:provider-pacts-for-verification')
+
 
           links_hash
         end
