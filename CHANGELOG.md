@@ -1,3 +1,10 @@
+<a name="v2.60.1"></a>
+### v2.60.1 (2020-09-10)
+
+#### Bug Fixes
+
+* href for beta:provider-pacts-for-verification	 ([3949fdd1](/../../commit/3949fdd1))
+
 <a name="v2.60.0"></a>
 ### v2.60.0 (2020-09-08)
 
