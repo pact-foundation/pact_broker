@@ -128,7 +128,7 @@ module PactBroker
             },
             'beta:provider-pacts-for-verification' => {
               name: 'beta',
-              href: base_url + '/doc/{rel}?context=index',
+              href: base_url + '/pacts/provider/{provider}/for-verification',
               title: 'DEPRECATED - please use pb:provider-pacts-for-verification',
               templated: true
             },
