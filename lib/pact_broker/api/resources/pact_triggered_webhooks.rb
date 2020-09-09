@@ -21,10 +21,14 @@ module PactBroker
           Decorators::TriggeredWebhooksDecorator.new(triggered_webhooks).to_json(decorator_options(resource_title: resource_title))
         end
 
+        def policy_name
+          :'webhooks::webhooks'
+        end
+
         private
 
         def triggered_webhooks
-          webhook_service.find_triggered_webhooks_for_pact(pact)
+          @webhooks ||= webhook_service.find_triggered_webhooks_for_pact(pact)
         end
 
         def resource_title

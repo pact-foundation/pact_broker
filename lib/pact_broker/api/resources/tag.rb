@@ -27,11 +27,7 @@ module PactBroker
         end
 
         def resource_exists?
-          !!resource_object
-        end
-
-        def resource_object
-          tag
+          !!tag
         end
 
         def to_json
@@ -45,6 +41,10 @@ module PactBroker
         def delete_resource
           tag_service.delete identifier_from_path
           true
+        end
+
+        def policy_name
+          :'tags::tag'
         end
       end
     end

@@ -21,6 +21,10 @@ module PactBroker
         def generate_json pacticipants
           PactBroker::Api::Decorators::PacticipantCollectionDecorator.new(pacticipants).to_json(decorator_options)
         end
+
+        def policy_name
+          :'pacticipants::pacticipants'
+        end
       end
     end
   end

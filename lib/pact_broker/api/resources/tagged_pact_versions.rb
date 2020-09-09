@@ -6,7 +6,6 @@ module PactBroker
   module Api
     module Resources
       class TaggedPactVersions < BaseResource
-
         def content_types_provided
           [["application/hal+json", :to_json]]
         end
@@ -29,7 +28,11 @@ module PactBroker
         end
 
         def pacts
-          pact_service.find_all_pact_versions_between consumer_name, and: provider_name, tag: identifier_from_path[:tag]
+          @pacts ||= pact_service.find_all_pact_versions_between consumer_name, and: provider_name, tag: identifier_from_path[:tag]
+        end
+
+        def policy_name
+          :'pact::pacts'
         end
       end
     end

@@ -37,10 +37,6 @@ module PactBroker
         def policy_name
           :'integrations::integrations'
         end
-
-        def policy_resource
-          integrations
-        end
       end
     end
   end

@@ -133,23 +133,29 @@ module PactBroker
         .select { |klass| klass < DefaultBaseResource }
         .select { |klass| !klass.name.end_with?("BaseResource") }
 
-      ALL_RESOURCES.each do | resource |
-        describe resource do
+      ALL_RESOURCES.each do | resource_class |
+        describe resource_class do
           let(:request) { double('request', uri: URI("http://example.org")).as_null_object }
           let(:response) { double('response') }
+          let(:resource) { resource_class.new(request, response) }
 
           it "includes OPTIONS in the list of allowed_methods" do
-            expect(resource.new(request, response).allowed_methods).to include "OPTIONS"
+            expect(resource.allowed_methods).to include "OPTIONS"
           end
 
           it "calls super in its constructor" do
             expect(PactBroker.configuration.before_resource).to receive(:call)
-            resource.new(request, response)
+            resource
           end
 
           it "calls super in finish_request" do
             expect(PactBroker.configuration.after_resource).to receive(:call)
-            resource.new(request, response).finish_request
+            resource.finish_request
+          end
+
+          it "has a policy_name method" do
+            expect(resource).to respond_to(:policy_name)
+            puts resource.policy_name
           end
         end
       end

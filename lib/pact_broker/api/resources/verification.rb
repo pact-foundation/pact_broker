@@ -28,12 +28,8 @@ module PactBroker
             set_json_error_message("To see all the verifications for a pact, use the Matrix page")
             false
           else
-            !!resource_object
+            !!verification
           end
-        end
-
-        def resource_object
-          verification
         end
 
         def to_json
@@ -47,6 +43,10 @@ module PactBroker
         def delete_resource
           verification_service.delete(verification)
           true
+        end
+
+        def policy_name
+          :'verifications::verification'
         end
 
         private

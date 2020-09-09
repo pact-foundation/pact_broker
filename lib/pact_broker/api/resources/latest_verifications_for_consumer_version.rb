@@ -30,10 +30,6 @@ module PactBroker
           :'verifications::verifications'
         end
 
-        def policy_record
-          version
-        end
-
         private
 
         def version

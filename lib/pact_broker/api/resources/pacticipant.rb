@@ -40,15 +40,7 @@ module PactBroker
         end
 
         def resource_exists?
-          !!resource_object
-        end
-
-        def resource_object
-          pacticipant
-        end
-
-        def policy_resource
-          pacticipant
+          !!pacticipant
         end
 
         def delete_resource
@@ -58,6 +50,10 @@ module PactBroker
 
         def to_json
           PactBroker::Api::Decorators::PacticipantDecorator.new(pacticipant).to_json(decorator_options)
+        end
+
+        def policy_name
+          :'pacticipants::pacticipant'
         end
       end
     end

@@ -43,6 +43,10 @@ module PactBroker
           PactBroker::Api::Decorators::MatrixTextDecorator.new(results).to_text(decorator_options)
         end
 
+        def policy_name
+          :'matrix::matrix'
+        end
+
         def results
           @results ||= matrix_service.find(selectors, options)
         end

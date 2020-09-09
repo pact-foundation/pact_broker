@@ -16,11 +16,7 @@ module PactBroker
         end
 
         def resource_exists?
-          !!resource_object
-        end
-
-        def resource_object
-          version
+          !!version
         end
 
         def to_json
@@ -30,6 +26,10 @@ module PactBroker
         def delete_resource
           version_service.delete version
           true
+        end
+
+        def policy_name
+          :'versions::version'
         end
 
         private

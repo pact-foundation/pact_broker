@@ -15,6 +15,10 @@ module PactBroker
         def to_json
           metrics_service.metrics.to_json
         end
+
+        def policy_name
+          :'metrics::metrics'
+        end
       end
     end
   end

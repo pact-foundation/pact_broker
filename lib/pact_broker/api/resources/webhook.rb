@@ -57,6 +57,10 @@ module PactBroker
           true
         end
 
+        def policy_name
+          :'webhooks::webhook'
+        end
+
         private
 
         def webhook

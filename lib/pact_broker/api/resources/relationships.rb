@@ -4,9 +4,7 @@ require 'pact_broker/api/decorators/relationships_csv_decorator'
 module PactBroker
   module Api
     module Resources
-
       class Relationships < BaseResource
-
         def content_types_provided
           [["text/csv", :to_csv]]
         end
@@ -21,6 +19,10 @@ module PactBroker
 
         def pacts
           pact_service.find_latest_pacts
+        end
+
+        def policy_name
+          :'integrations::integrations'
         end
       end
     end

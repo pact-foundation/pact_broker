@@ -202,6 +202,15 @@ module PactBroker
           @pact ||= pact_service.find_pact(pact_params)
         end
 
+        # Not necessarily an existing integration
+        def integration
+          if consumer_specified? && provider_specified?
+            OpenStruct.new(consumer: consumer, provider: provider)
+          else
+            nil
+          end
+        end
+
         def database_connector
           request.env["pactbroker.database_connector"]
         end

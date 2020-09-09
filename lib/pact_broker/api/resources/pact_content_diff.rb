@@ -31,6 +31,10 @@ module PactBroker
           @pact_params ||= PactBroker::Pacts::PactParams.from_path_info identifier_from_path
         end
 
+        def policy_name
+          :'pacts::pact'
+        end
+
         def comparison_pact_params
           if identifier_from_path[:comparison_consumer_version_number] || identifier_from_path[:comparison_pact_version_sha]
             comparison_identifier_from_path = identifier_from_path.merge(

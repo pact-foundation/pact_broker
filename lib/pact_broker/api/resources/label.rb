@@ -30,16 +30,8 @@ module PactBroker
           !!label
         end
 
-        def resource_object
-          label
-        end
-
         def policy_name
           :'labels::label'
-        end
-
-        def policy_record
-          label
         end
 
         def to_json

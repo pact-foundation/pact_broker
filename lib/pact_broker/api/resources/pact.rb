@@ -53,14 +53,6 @@ module PactBroker
           !!pact
         end
 
-        def resource_object
-          pact
-        end
-
-        def policy_resource
-          pact
-        end
-
         def from_json
           response_code = pact ? 200 : 201
 
@@ -94,6 +86,10 @@ module PactBroker
           pact_service.delete(pact_params)
           set_post_deletion_response
           true
+        end
+
+        def policy_name
+          :'pacts::pact'
         end
 
         private

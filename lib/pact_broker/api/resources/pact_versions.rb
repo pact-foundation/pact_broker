@@ -23,12 +23,16 @@ module PactBroker
         end
 
         def pacts
-          pact_service.find_all_pact_versions_between consumer_name, :and => provider_name
+          @pacts ||= pact_service.find_all_pact_versions_between consumer_name, :and => provider_name
         end
 
         def delete_resource
           pact_service.delete_all_pact_publications_between(consumer_name, and: provider_name)
           true
+        end
+
+        def policy_name
+          :'pacts::pacts'
         end
       end
     end

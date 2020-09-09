@@ -59,10 +59,14 @@ module PactBroker
           Decorators::WebhooksDecorator.new(webhooks).to_json(user_options: decorator_context(resource_title: 'Pact webhooks'))
         end
 
+        def policy_name
+          :'webhooks::webhooks'
+        end
+
         private
 
         def webhooks
-          webhook_service.find_by_consumer_and_provider consumer, provider
+          @webhooks ||= webhook_service.find_by_consumer_and_provider consumer, provider
         end
 
         def webhook

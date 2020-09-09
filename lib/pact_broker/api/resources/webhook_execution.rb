@@ -48,6 +48,10 @@ module PactBroker
           end
         end
 
+        def policy_name
+          :'webhooks::webhook'
+        end
+
         private
 
         def post_response_body webhook_execution_result

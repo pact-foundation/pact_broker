@@ -14,31 +14,25 @@ module PactBroker
         end
 
         def resource_exists?
-          !!resource_object
-        end
-
-        def resource_object
-          verification
+          !!verification
         end
 
         def to_json
-          Decorators::TriggeredWebhooksDecorator.new(triggered_webhooks).to_json(decorator_options)
+          Decorators::TriggeredWebhooksDecorator.new(triggered_webhooks).to_json(decorator_options(resource_title: resource_title))
+        end
+
+        def policy_name
+          :'webhooks::triggered_webhooks'
         end
 
         private
 
         def triggered_webhooks
-          webhook_service.find_triggered_webhooks_for_verification(verification)
+          @triggered_webhooks ||= webhook_service.find_triggered_webhooks_for_verification(verification)
         end
 
         def resource_title
           "Webhooks triggered by the publication of verification result #{verification.number}"
-        end
-
-        def decorator_options
-          {
-            user_options: decorator_context.merge(resource_title: resource_title)
-          }
         end
 
         def verification

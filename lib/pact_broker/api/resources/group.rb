@@ -26,10 +26,6 @@ module PactBroker
           :'groups::group'
         end
 
-        def policy_record
-          pacticipant
-        end
-
         private
 
         def group

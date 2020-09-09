@@ -34,7 +34,6 @@ module PactBroker
           end
 
           context "when the verification exists" do
-
             it "finds the triggered webhooks for the verification" do
               expect(webhook_service).to receive(:find_triggered_webhooks_for_verification)
               subject

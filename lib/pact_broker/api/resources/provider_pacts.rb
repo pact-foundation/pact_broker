@@ -20,11 +20,7 @@ module PactBroker
         end
 
         def policy_name
-          :'pacts:provider_pacts'
-        end
-
-        def policy_record
-          provider
+          :'pacts::pacts'
         end
 
         def to_json

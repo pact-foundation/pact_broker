@@ -6,7 +6,6 @@ module PactBroker
   module Api
     module Resources
       class Versions < BaseResource
-
         def content_types_provided
           [["application/hal+json", :to_json]]
         end
@@ -24,7 +23,11 @@ module PactBroker
         end
 
         def versions
-          pacticipant_service.find_all_pacticipant_versions_in_reverse_order pacticipant_name
+          @versions ||= pacticipant_service.find_all_pacticipant_versions_in_reverse_order pacticipant_name
+        end
+
+        def policy_name
+          :'versions::versions'
         end
       end
     end

@@ -16,17 +16,19 @@ module PactBroker
         end
 
         def resource_exists?
-          !!resource_object
-        end
-
-        def resource_object
-          triggered_webhook
+          !!triggered_webhook
         end
 
         def to_text
           # Too simple to bother putting into a service
           triggered_webhook.webhook_executions.collect(&:logs).join("\n")
         end
+
+        def policy_name
+          :'webhook::webhook'
+        end
+
+        private
 
         def triggered_webhook
           @triggered_webhook ||= begin

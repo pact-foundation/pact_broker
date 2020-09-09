@@ -22,6 +22,10 @@ module PactBroker
           decorator_for(latest_triggered_webhooks).to_json(user_options: decorator_context(identifier_from_path))
         end
 
+        def policy_name
+          :'webhooks::webhooks'
+        end
+
         private
 
         def latest_triggered_webhooks
@@ -33,7 +37,7 @@ module PactBroker
         end
 
         def webhooks
-          webhook_service.find_by_consumer_and_provider(consumer, provider)
+          @webhooks ||= webhook_service.find_by_consumer_and_provider(consumer, provider)
         end
 
         def decorator_for latest_triggered_webhooks

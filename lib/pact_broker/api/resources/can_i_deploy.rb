@@ -25,10 +25,6 @@ module PactBroker
           :'matrix::can_i_deploy'
         end
 
-        def policy_record
-          selectors
-        end
-
         private
 
         attr_reader :query_params, :selectors, :options

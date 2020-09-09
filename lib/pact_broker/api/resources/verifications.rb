@@ -28,11 +28,7 @@ module PactBroker
         end
 
         def resource_exists?
-          !!resource_object
-        end
-
-        def resource_object
-          pact
+          !!pact
         end
 
         def malformed_request?
@@ -55,6 +51,10 @@ module PactBroker
           verification = verification_service.create(next_verification_number, params(symbolize_names: false), pact, webhook_options)
           response.body = decorator_for(verification).to_json(decorator_options)
           true
+        end
+
+        def policy_name
+          :'verifications::verifications'
         end
 
         private

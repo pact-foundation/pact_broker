@@ -21,10 +21,6 @@ module PactBroker
           :'integrations::integration'
         end
 
-        def policy_resource
-          integration
-        end
-
         def integration
           @integration ||= OpenStruct.new(consumer: consumer, provider: provider)
         end

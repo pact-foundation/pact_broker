@@ -17,15 +17,7 @@ module PactBroker
         end
 
         def resource_exists?
-          !!resource_object
-        end
-
-        def resource_object
-          pact
-        end
-
-        def policy_resource
-          pact
+          !!pact
         end
 
         def to_json
@@ -40,6 +32,9 @@ module PactBroker
           @pact_params ||= PactBroker::Pacts::PactParams.from_request request, path_info
         end
 
+        def policy_name
+          :'pacts::pact'
+        end
       end
     end
   end

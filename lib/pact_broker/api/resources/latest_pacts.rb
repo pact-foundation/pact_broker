@@ -22,11 +22,7 @@ module PactBroker
         end
 
         def policy_name
-          :'pacts:pacts'
-        end
-
-        def policy_record
-          pacts
+          :'pacts::pacts'
         end
       end
     end

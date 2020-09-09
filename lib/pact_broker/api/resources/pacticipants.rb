@@ -61,10 +61,6 @@ module PactBroker
           :'pacticipants::pacticipants'
         end
 
-        def policy_record
-          request.post? ? nil : pacticipants
-        end
-
         private
 
         def pacticipants

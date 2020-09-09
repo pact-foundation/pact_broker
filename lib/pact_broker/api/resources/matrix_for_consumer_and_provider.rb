@@ -27,6 +27,10 @@ module PactBroker
           PactBroker::Api::Decorators::MatrixDecorator.new(results).to_json(decorator_options)
         end
 
+        def policy_name
+          :'matrix::matrix'
+        end
+
         private
 
         attr_reader :options

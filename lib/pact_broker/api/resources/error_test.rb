@@ -4,9 +4,7 @@ require 'pact_broker/error'
 module PactBroker
   module Api
     module Resources
-
       class ErrorTest < BaseResource
-
         def content_types_provided
           [
             ["application/hal+json", :to_json]
@@ -23,6 +21,10 @@ module PactBroker
 
         def process_post
           raise PactBroker::TestError.new("Don't panic. This is a test API error.")
+        end
+
+        def policy_name
+          :'default'
         end
       end
     end
