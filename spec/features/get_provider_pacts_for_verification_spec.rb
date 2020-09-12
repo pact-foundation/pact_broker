@@ -24,6 +24,28 @@ describe "Get provider pacts for verification" do
 
     let(:path) { "/pacts/provider/Provider/for-verification" }
 
+    context "when using GET" do
+      it "returns a 200 HAL JSON response" do
+        expect(subject).to be_a_hal_json_success_response
+      end
+
+      it "returns a list of links to the pacts" do
+        expect(pacts.size).to eq 1
+      end
+
+      it "returns a deprecation notice" do
+        expect(last_response_body[:_embedded][:pacts].first[:verificationProperties][:notices].first[:text]).to start_with("WARNING")
+      end
+
+      context "when the provider does not exist" do
+        let(:path) { "/pacts/provider/ProviderThatDoesNotExist/for-verification" }
+
+        it "returns a 404 response" do
+          expect(subject).to be_a_404_response
+        end
+      end
+    end
+
     context "when using POST" do
       let(:request_body) do
         {
@@ -42,6 +64,10 @@ describe "Get provider pacts for verification" do
 
       it "returns a list of links to the pacts" do
         expect(pacts.size).to eq 1
+      end
+
+      it "does not include a deprecation notice" do
+        expect(last_response_body[:_embedded][:pacts].first[:verificationProperties][:notices].first[:text]).to_not start_with("WARNING")
       end
 
       context "when the provider does not exist" do

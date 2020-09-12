@@ -23,7 +23,35 @@ module PactBroker
           }
         end
 
-        subject { post(path, request_body.to_json, request_headers) }
+        subject { get(path, query) }
+
+        describe "GET" do
+          it "finds the pacts for verification by the provider" do
+            # Naughty not mocking out the query parsing...
+            expect(PactBroker::Pacts::Service).to receive(:find_for_verification).with(
+              "Bar",
+              ["master"],
+              PactBroker::Pacts::Selectors.new([PactBroker::Pacts::Selector.latest_for_tag("dev")]),
+              {
+                include_wip_pacts_since: DateTime.parse('2018-01-01'),
+                include_pending_status: true
+              }
+            )
+            subject
+          end
+
+          context "when there are validation errors" do
+            let(:query) do
+              {
+                provider_version_tags: true,
+              }
+            end
+
+            it "returns the keys with the right case" do
+              expect(JSON.parse(subject.body)['errors']).to have_key('provider_version_tags')
+            end
+          end
+        end
 
         describe "POST" do
           let(:request_body) do
@@ -41,6 +69,8 @@ module PactBroker
               'HTTP_ACCEPT' => 'application/hal+json'
             }
           end
+
+          subject { post(path, request_body.to_json, request_headers) }
 
           it "finds the pacts for verification by the provider" do
             # Naughty not mocking out the query parsing...
@@ -67,14 +97,14 @@ module PactBroker
               expect(JSON.parse(subject.body)['errors']).to have_key('providerVersionTags')
             end
           end
+        end
 
-          it "uses the correct options for the decorator" do
-            expect(decorator).to receive(:to_json) do | options |
-              expect(options[:user_options][:title]).to eq "Pacts to be verified by provider Bar"
-              expect(options[:user_options][:include_pending_status]).to eq true
-            end
-            subject
+        it "uses the correct options for the decorator" do
+          expect(decorator).to receive(:to_json) do | options |
+            expect(options[:user_options][:title]).to eq "Pacts to be verified by provider Bar"
+            expect(options[:user_options][:include_pending_status]).to eq true
           end
+          subject
         end
       end
     end

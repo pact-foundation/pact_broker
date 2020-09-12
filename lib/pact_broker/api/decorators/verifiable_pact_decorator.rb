@@ -14,14 +14,14 @@ module PactBroker
 
           property :pending,
             if: ->(context) { context[:options][:user_options][:include_pending_status] }
-          property :wip, if: -> (context) { context[:represented].wip }
-
-          property :notices, getter: -> (context) { context[:decorator].notices(context[:options][:user_options]) }
-          property :noteToDevelopers, getter: -> (_) { "Please print out the text from the 'notices' rather than using the inclusionReason and the pendingReason fields. These will be removed when this API moves out of beta."}
+          property :wip,
+            if: -> (context) { context[:represented].wip }
+          property :notices,
+            getter: -> (context) { context[:decorator].notices(context[:options][:user_options]) }
 
           def notices(user_options)
             pact_url = pact_version_url(represented, user_options[:base_url])
-            PactBroker::Pacts::BuildVerifiablePactNotices.call(represented, pact_url, include_pending_status: user_options[:include_pending_status])
+            PactBroker::Pacts::BuildVerifiablePactNotices.call(represented, pact_url, user_options)
           end
         end
 

@@ -7,10 +7,13 @@ module PactBroker
       def self.call(verifiable_pact, pact_url, options)
         messages = VerifiablePactMessages.new(verifiable_pact, pact_url)
 
-        notices = [{
-          when: 'before_verification',
-          text: messages.inclusion_reason
-        }]
+        notices = []
+
+        if options[:deprecated]
+          append_notice(notices, 'before_verification', 'WARNING - this version of the Pact library uses a beta version of the API which will be removed in the future. Please upgrade your Pact library. See https://docs.pact.io/pact_broker/advanced_topics/provider_verification_results/#pacts-for-verification for minimum required versions.')
+        end
+
+        append_notice(notices, 'before_verification', messages.inclusion_reason)
 
         if options[:include_pending_status]
           append_notice(notices, 'before_verification', messages.pending_reason)

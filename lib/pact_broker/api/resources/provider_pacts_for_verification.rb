@@ -1,5 +1,6 @@
 require 'pact_broker/api/resources/provider_pacts'
 require 'pact_broker/api/decorators/verifiable_pacts_decorator'
+require 'pact_broker/api/contracts/verifiable_pacts_query_schema'
 require 'pact_broker/api/decorators/verifiable_pacts_query_decorator'
 require 'pact_broker/api/contracts/verifiable_pacts_json_query_schema'
 require 'pact_broker/hash_refinements'
@@ -11,7 +12,7 @@ module PactBroker
         using PactBroker::HashRefinements
 
         def allowed_methods
-          ["POST", "OPTIONS"]
+          ["GET", "POST", "OPTIONS"]
         end
 
         def content_types_accepted
@@ -51,11 +52,21 @@ module PactBroker
         end
 
         def to_json
-          PactBroker::Api::Decorators::VerifiablePactsDecorator.new(pacts).to_json(to_json_options)
+          PactBroker::Api::Decorators::VerifiablePactsDecorator.new(pacts).to_json(
+            decorator_options(
+              include_pending_status: parsed_query_params.include_pending_status,
+              title: "Pacts to be verified by provider #{provider_name}",
+              deprecated: request.get?
+            )
+          )
         end
 
         def query_schema
-          PactBroker::Api::Contracts::VerifiablePactsJSONQuerySchema
+          if request.get?
+            PactBroker::Api::Contracts::VerifiablePactsQuerySchema
+          else
+            PactBroker::Api::Contracts::VerifiablePactsJSONQuerySchema
+          end
         end
 
         def parsed_query_params
@@ -70,10 +81,6 @@ module PactBroker
               params(symbolize_names: false, default: {})
             end
           end
-        end
-
-        def to_json_options
-          super.deep_merge(user_options: { include_pending_status: parsed_query_params.include_pending_status })
         end
       end
     end
