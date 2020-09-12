@@ -233,8 +233,8 @@ module PactBroker
           end
 
           it "logs the error" do
-            allow(Service.logger).to receive(:error)
-            expect(Service.logger).to receive(:error).with(/an error/)
+            allow(Service.logger).to receive(:warn)
+            expect(Service.logger).to receive(:warn).with(/Error scheduling/, StandardError)
             subject
           end
         end

@@ -286,7 +286,7 @@ module PactBroker
           end
 
           it "logs the error" do
-            expect(logger).to receive(:error).with(/Error retrieving badge from.*shield.*an error/)
+            expect(logger).to receive(:warn).with(/Error retrieving badge from.*shield.*/, RuntimeError)
             subject
           end
 

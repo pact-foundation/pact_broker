@@ -227,7 +227,7 @@ module PactBroker
 
     def configure_sucker_punch
       SuckerPunch.exception_handler = -> (ex, klass, args) do
-        PactBroker.log_error(ex, "Unhandled Suckerpunch error for #{klass}.perform(#{args.inspect})")
+        PactBroker.logger.warn("Unhandled Suckerpunch error for #{klass}.perform(#{args.inspect})", ex)
       end
     end
 

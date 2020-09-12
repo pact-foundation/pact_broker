@@ -18,7 +18,7 @@ module PactBroker
             logger.debug("Loading certificate #{certificate.subject} in to cert store")
             cert_store.add_cert(certificate)
           rescue StandardError => e
-            log_error e, "Error adding certificate object #{certificate.to_s} to store"
+            logger.warn("Error adding certificate object #{certificate.to_s} to store", e)
           end
         end
         cert_store
@@ -31,7 +31,7 @@ module PactBroker
             begin
               OpenSSL::X509::Certificate.new(c)
             rescue StandardError => e
-              log_error e, "Error creating certificate object from certificate #{certificate.uuid} '#{certificate.description}'"
+              logger.warn("Error creating certificate object from certificate #{certificate.uuid} '#{certificate.description}'", e)
               nil
             end
           end

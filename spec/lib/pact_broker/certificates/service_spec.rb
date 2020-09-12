@@ -30,8 +30,8 @@ module PactBroker
           it "logs the error" do
             subject
 
-            expect(logger).to have_received(:error)
-              .with(/Error adding certificate/).at_least(1).times
+            expect(logger).to have_received(:warn)
+              .with(/Error adding certificate/, StandardError).at_least(1).times
           end
 
           it "returns an OpenSSL::X509::Store" do
@@ -66,7 +66,7 @@ module PactBroker
           let(:certificate_content) { File.read('spec/fixtures/certificate-invalid.pem') }
 
           it "logs an error" do
-            expect(logger).to receive(:error).with(/Error.*1234/)
+            expect(logger).to receive(:warn).with(/Error.*1234/, StandardError)
             subject
           end
 

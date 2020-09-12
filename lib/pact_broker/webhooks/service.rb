@@ -143,7 +143,7 @@ module PactBroker
             # Delay slightly to make sure the request transaction has finished before we execute the webhook
             Job.perform_in(5, job_data)
           rescue StandardError => e
-            log_error e
+            logger.warn("Error scheduling webhook execution for webhook with uuid #{webhook.uuid}", e)
           end
         end
       end

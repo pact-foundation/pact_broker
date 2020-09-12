@@ -155,7 +155,6 @@ module PactBroker
 
           it "has a policy_name method" do
             expect(resource).to respond_to(:policy_name)
-            puts resource.policy_name
           end
         end
       end

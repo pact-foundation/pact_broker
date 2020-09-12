@@ -100,7 +100,7 @@ module PactBroker
           logger.warn "Timeout retrieving badge from #{uri} #{e.class} - #{e.message}"
           nil
         rescue StandardError => e
-          log_error e, "Error retrieving badge from #{uri}"
+          logger.warn("Error retrieving badge from #{uri}", e)
           nil
         end
       end
