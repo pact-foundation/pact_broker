@@ -46,24 +46,46 @@ webhook_body = {
 
 PactBroker.configuration.base_equality_only_on_content_that_affects_verification_results = false
 
-  # .create_global_webhook(
-  #   method: 'POST',
-  #   url: "http://localhost:9292/pact-changed-webhook",
-  #   body: webhook_body.to_json,
-  #   username: "foo",
-  #   password: "bar")
-TestDataBuilder.new
-  .create_global_verification_succeeded_webhook(
-    method: 'POST',
-    url: "http://localhost:9292/verification-published-webhook",
-    body: webhook_body.to_json)
-  .set_now(Date.today - 101)
-  .create_pact_with_hierarchy("Foo/Foo", "100", "Bar/Bar")
-  .create_pact_with_hierarchy("Foo", "1", "Bar")
-  .create_pact_with_hierarchy("<script>alert('hello')</script>", "<script>alert(\"version\")</script>", "Bar/Bar")
-  .create_consumer_version_tag("prod")
-  .create_verification(provider_version: "1", tag_names: "prod")
+json_content = <<-HEREDOC
+{
+  "consumer": {
+    "name": "Foo"
+  },
+  "provider": {
+    "name": "Bar"
+  },
+  "interactions": [
+    {
+      "description": "a retrieve thing request",
+      "request": {
+        "method": "get",
+        "path": "/thing"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "name": "Thing 1"
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "pactSpecification": {
+      "version": "2.0.0"
+    }
+  }
+}
+HEREDOC
 
+TestDataBuilder.new
+  .create_pact_with_hierarchy("Foo", "1", "Bar", json_content)
+  .create_consumer_version_tag("master")
+  .create_verification(provider_version: "1", tag_name: "master")
+  .create_pact_with_hierarchy("Foo", "2", "Bar", json_content.gsub("200", "201"))
+  .create_consumer_version_tag("feat/x")
 
   # .create_certificate(path: 'spec/fixtures/certificates/self-signed.badssl.com.pem')
   # .create_consumer("Bethtest")
