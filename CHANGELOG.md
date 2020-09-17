@@ -1,3 +1,10 @@
+<a name="v2.61.0"></a>
+### v2.61.0 (2020-09-12)
+
+#### Features
+
+* add back support for GET requests to the 'pacts for verification' API with a deprecation notice in the response	 ([8f45cc9f](/../../commit/8f45cc9f))
+
 <a name="v2.60.1"></a>
 ### v2.60.1 (2020-09-10)
 
