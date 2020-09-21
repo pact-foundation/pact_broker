@@ -3,6 +3,10 @@ require 'pact_broker/api/pact_broker_urls'
 module PactBroker
   module Api
     describe PactBrokerUrls do
+      before do
+        allow(PactBrokerUrls).to receive(:logger).and_return(logger)
+      end
+      let(:logger) { double('logger').as_null_object }
 
       # Regex find all the URL parameter names
       # \/\{[^\}\s\[\(\.]+\}
@@ -115,6 +119,17 @@ module PactBroker
         context "when the metadata is nil" do
           it "returns an empty hash" do
             expect(PactBrokerUrls.decode_webhook_metadata(nil)).to eq({})
+          end
+        end
+
+        context "when the metadata is not valid base64" do
+          it "returns an empty hash" do
+            expect(PactBrokerUrls.decode_webhook_metadata("foo==,")).to eq({})
+          end
+
+          it "logs a warning" do
+            expect(logger).to receive(:warn).with("Exception parsing webhook metadata: foo==,", ArgumentError)
+            PactBrokerUrls.decode_webhook_metadata("foo==,")
           end
         end
       end

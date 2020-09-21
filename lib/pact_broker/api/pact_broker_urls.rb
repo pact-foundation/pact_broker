@@ -1,11 +1,13 @@
 require 'erb'
 require 'pact_broker/pacts/metadata'
+require 'pact_broker/logging'
 
 module PactBroker
   module Api
     module PactBrokerUrls
 
       include PactBroker::Pacts::Metadata
+      include PactBroker::Logging
       # TODO make base_url the last and optional argument for all methods, defaulting to ''
 
       extend self
@@ -70,8 +72,13 @@ module PactBroker
 
       def decode_webhook_metadata(metadata)
         if metadata
-          Rack::Utils.parse_nested_query(Base64.strict_decode64(metadata)).each_with_object({}) do | (k, v), new_hash |
-            new_hash[k.to_sym] = v
+          begin
+            Rack::Utils.parse_nested_query(Base64.strict_decode64(metadata)).each_with_object({}) do | (k, v), new_hash |
+              new_hash[k.to_sym] = v
+            end
+          rescue StandardError => e
+            logger.warn("Exception parsing webhook metadata: #{metadata}", e)
+            {}
           end
         else
           {}
