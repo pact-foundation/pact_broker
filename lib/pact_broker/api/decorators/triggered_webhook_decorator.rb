@@ -9,6 +9,7 @@ module PactBroker
         property :number_of_attempts_made, as: :attemptsMade
         property :number_of_attempts_remaining, as: :attemptsRemaining
         property :trigger_type, as: :triggerType
+        property :event_name, as: :eventName
 
         property :created_at, as: :triggeredAt
 

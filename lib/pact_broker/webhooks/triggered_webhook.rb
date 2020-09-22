@@ -8,6 +8,7 @@ require 'pact_broker/webhooks/execution'
 module PactBroker
   module Webhooks
     class TriggeredWebhook < Sequel::Model(:triggered_webhooks)
+      plugin :timestamps, update_on_create: true
 
       TRIGGER_TYPE_RESOURCE_CREATION = 'resource_creation'
       TRIGGER_TYPE_USER = 'user'
@@ -95,9 +96,6 @@ module PactBroker
         end
       end
     end
-
-    TriggeredWebhook.plugin :timestamps, update_on_create: true
-
   end
 end
 

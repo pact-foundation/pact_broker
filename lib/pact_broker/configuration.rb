@@ -32,7 +32,12 @@ module PactBroker
       :base_equality_only_on_content_that_affects_verification_results,
       :seed_example_data,
       :badge_provider_mode,
-      :warning_error_class_names
+      :warning_error_class_names,
+      :base_url,
+      :log_dir,
+      :allow_missing_migration_files,
+      :auto_migrate_db_data,
+      :use_rack_protection
     ]
 
     attr_accessor :base_url, :log_dir, :database_connection, :auto_migrate_db, :auto_migrate_db_data, :allow_missing_migration_files, :example_data_seeder, :seed_example_data, :use_hal_browser, :html_pact_renderer, :use_rack_protection
@@ -127,6 +132,12 @@ module PactBroker
 
     def logger= logger
       @custom_logger = logger
+    end
+
+    def log_configuration
+      SAVABLE_SETTING_NAMES.sort.each do | setting |
+        logger.info "PactBroker.configuration.#{setting}=#{PactBroker.configuration.send(setting).inspect}"
+      end
     end
 
     def self.default_html_pact_render

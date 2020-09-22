@@ -7,6 +7,7 @@ module PactBroker
         let(:triggered_webhook) do
           double('PactBroker::Webhooks::TriggeredWebhook',
             trigger_type: PactBroker::Webhooks::TriggeredWebhook::TRIGGER_TYPE_RESOURCE_CREATION,
+            event_name: 'some_event',
             status: status,
             failure?: failure,
             retrying?: retrying,
@@ -55,7 +56,8 @@ module PactBroker
             status: 'success',
             triggerType: 'resource_creation',
             attemptsMade: 1,
-            attemptsRemaining: 2
+            attemptsRemaining: 2,
+            eventName: 'some_event'
           )
         end
       end

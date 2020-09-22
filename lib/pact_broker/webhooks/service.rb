@@ -136,7 +136,7 @@ module PactBroker
         trigger_uuid = next_uuid
         webhooks.each do | webhook |
           begin
-            triggered_webhook = webhook_repository.create_triggered_webhook(trigger_uuid, webhook, pact, verification, RESOURCE_CREATION)
+            triggered_webhook = webhook_repository.create_triggered_webhook(trigger_uuid, webhook, pact, verification, RESOURCE_CREATION, event_name)
             logger.info "Scheduling job for webhook with uuid #{webhook.uuid}"
             logger.debug "Schedule webhook with options #{options}"
             job_data = { triggered_webhook: triggered_webhook }.deep_merge(options)

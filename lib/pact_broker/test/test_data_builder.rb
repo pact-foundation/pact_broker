@@ -294,7 +294,7 @@ module PactBroker
         params.delete(:comment)
         trigger_uuid = params[:trigger_uuid] || webhook_service.next_uuid
         verification = @webhook.trigger_on_provider_verification_published? ? @verification : nil
-        @triggered_webhook = webhook_repository.create_triggered_webhook trigger_uuid, @webhook, @pact, verification, PactBroker::Webhooks::Service::RESOURCE_CREATION
+        @triggered_webhook = webhook_repository.create_triggered_webhook trigger_uuid, @webhook, @pact, verification, PactBroker::Webhooks::Service::RESOURCE_CREATION, @webhook.events.first.name
         @triggered_webhook.update(status: params[:status]) if params[:status]
         set_created_at_if_set params[:created_at], :triggered_webhooks, {id: @triggered_webhook.id}
         self

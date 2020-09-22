@@ -4,6 +4,7 @@ require 'pact_broker/repositories/helpers'
 module PactBroker
   module Webhooks
     class WebhookEvent < Sequel::Model
+      plugin :timestamps, update_on_create: true
 
       CONTRACT_PUBLISHED = 'contract_published'
       CONTRACT_CONTENT_CHANGED = 'contract_content_changed'
@@ -38,8 +39,6 @@ module PactBroker
         name == VERIFICATION_FAILED
       end
     end
-
-    WebhookEvent.plugin :timestamps, update_on_create: true
   end
 end
 
