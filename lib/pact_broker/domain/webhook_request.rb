@@ -60,6 +60,8 @@ module PactBroker
       def http_request
         @http_request ||= begin
           req = Net::HTTP.const_get(method.capitalize).new(uri.request_uri)
+          req.delete("accept-encoding")
+          req.delete("user-agent")
           headers.each_pair { | name, value | req[name] = value }
           req.basic_auth(username, password) if username && username.size > 0
           req.body = body unless body.nil?
