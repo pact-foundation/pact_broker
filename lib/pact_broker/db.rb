@@ -3,6 +3,7 @@ require 'pact_broker/db/validate_encoding'
 require 'pact_broker/db/migrate'
 require 'pact_broker/db/migrate_data'
 require 'pact_broker/db/version'
+require 'pact_broker/db/table_dependency_calculator'
 
 Sequel.datetime_class = DateTime
 
@@ -29,6 +30,19 @@ module PactBroker
 
     def self.is_current? database_connection, options = {}
       Sequel::TimestampMigrator.is_current?(database_connection, PactBroker::DB::MIGRATIONS_DIR, options)
+    end
+
+    def self.truncate database_connection, options = {}
+      exceptions = options[:except] || []
+      TableDependencyCalculator.call(database_connection).each do | table_name |
+        if database_connection.table_exists?(table_name) && !exceptions.include?(table_name)
+          begin
+            database_connection[table_name].truncate
+          rescue StandardError => e
+            puts "Could not truncate table #{table_name}"
+          end
+        end
+      end
     end
 
     def self.version database_connection

@@ -1,6 +1,7 @@
 require 'pact_broker/project_root'
 require 'pact_broker/db/migrate'
 require 'pact_broker/db/version'
+require 'pact_broker/db'
 require 'sequel'
 require 'yaml'
 require_relative 'database/table_dependency_calculator'
@@ -73,16 +74,7 @@ module PactBroker
     end
 
     def truncate
-      ordered_tables.each do | table_name |
-        if database.table_exists?(table_name)
-          begin
-            database[table_name].delete
-          rescue SQLite3::ConstraintException => e
-            puts "Could not delete the following records from #{table_name}: #{database[table_name].select_all}"
-            raise e
-          end
-        end
-      end
+      PactBroker::DB.truncate(database)
     end
 
     def database= database
