@@ -74,7 +74,16 @@ module PactBroker
     end
 
     def truncate
-      PactBroker::DB.truncate(database)
+      ordered_tables.each do | table_name |
+        if database.table_exists?(table_name)
+          begin
+            database[table_name].delete
+          rescue SQLite3::ConstraintException => e
+            puts "Could not delete the following records from #{table_name}: #{database[table_name].select_all}"
+            raise e
+          end
+        end
+      end
     end
 
     def database= database

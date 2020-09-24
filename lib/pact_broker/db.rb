@@ -32,14 +32,14 @@ module PactBroker
       Sequel::TimestampMigrator.is_current?(database_connection, PactBroker::DB::MIGRATIONS_DIR, options)
     end
 
-    def self.truncate database_connection
-      ordered_tables.each do | table_name |
-        if database_connection.table_exists?(table_name)
+    def self.truncate database_connection, options = {}
+      exceptions = options[:except] || []
+      TableDependencyCalculator.call(database_connection).each do | table_name |
+        if !exceptions.include?(table_name)
           begin
-            database_connection[table_name].delete
-          rescue SQLite3::ConstraintException => e
-            puts "Could not delete the following records from #{table_name}: #{database_connection[table_name].select_all}"
-            raise e
+            database_connection[table_name].truncate
+          rescue StandardError => e
+            puts "Could not truncate table #{table_name}"
           end
         end
       end
