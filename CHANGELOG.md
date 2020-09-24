@@ -1,3 +1,20 @@
+<a name="v2.62.0"></a>
+### v2.62.0 (2020-09-23)
+
+#### Features
+
+* **webhooks**
+  * remove user-agent and accept-encoding headers which the Ruby HTTP library adds by default	 ([ef25b88c](/../../commit/ef25b88c))
+
+* add event name to triggered webhook	 ([ecce16fd](/../../commit/ecce16fd))
+
+#### Bug Fixes
+
+* **webhooks**
+  * use path to initialise http request, rather than full URL	 ([ecbac9a6](/../../commit/ecbac9a6))
+
+* gracefully handle corrupt webhook metadata in pact URL	 ([ba94c355](/../../commit/ba94c355))
+
 <a name="v2.61.0"></a>
 ### v2.61.0 (2020-09-12)
 
