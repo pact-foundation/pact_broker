@@ -1,3 +1,12 @@
+<a name="v2.65.0"></a>
+### v2.65.0 (2020-09-25)
+
+#### Features
+
+* **pacts for verification**
+  * allow API to be disabled by setting PACT_BROKER_FEATURES=disable_pacts_for_verification	 ([bab116b3](/../../commit/bab116b3))
+  * update wording for inclusion notice when selector has a consumer specified	 ([61370d1f](/../../commit/61370d1f))
+
 <a name="v2.64.0"></a>
 ### v2.64.0 (2020-09-25)
 
