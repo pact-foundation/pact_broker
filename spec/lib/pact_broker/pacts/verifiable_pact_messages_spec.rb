@@ -73,6 +73,18 @@ module PactBroker
 
           its(:inclusion_reason) { is_expected.to include "The pact at http://pact is being verified because it matches the following configured selection criterion: pacts for all Foo versions tagged 'prod'"}
         end
+
+        context "when the pact is the latest versions for a tag and consumer" do
+          let(:selectors) { Selectors.new(Selector.latest_for_tag_and_consumer('prod', 'Foo')) }
+
+          its(:inclusion_reason) { is_expected.to include "The pact at http://pact is being verified because it matches the following configured selection criterion: latest pact for a version of Foo tagged 'prod'"}
+        end
+
+        context "when the pact is the latest version for and consumer" do
+          let(:selectors) { Selectors.new(Selector.latest_for_consumer('Foo')) }
+
+          its(:inclusion_reason) { is_expected.to include "The pact at http://pact is being verified because it matches the following configured selection criterion: latest pact between Foo and Bar"}
+        end
       end
 
       describe "#pending_reason" do

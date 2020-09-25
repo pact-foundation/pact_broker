@@ -131,12 +131,14 @@ module PactBroker
 
       def selector_description selector
         if selector.overall_latest?
-          "latest pact between a consumer and #{provider_name}"
+          consumer_label = selector.consumer ? selector.consumer : 'a consumer'
+          "latest pact between #{consumer_label} and #{provider_name}"
         elsif selector.latest_for_tag?
+          version_label = selector.consumer ? "version of #{selector.consumer}" : "consumer version"
           if selector.fallback_tag?
-            "latest pact for a consumer version tagged '#{selector.fallback_tag}' (fallback tag used as no pact was found with tag '#{selector.tag}')"
+            "latest pact for a #{version_label} tagged '#{selector.fallback_tag}' (fallback tag used as no pact was found with tag '#{selector.tag}')"
           else
-            "latest pact for a consumer version tagged '#{selector.tag}'"
+            "latest pact for a #{version_label} tagged '#{selector.tag}'"
           end
         elsif selector.all_for_tag_and_consumer?
           "pacts for all #{selector.consumer} versions tagged '#{selector.tag}'"
