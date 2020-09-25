@@ -204,8 +204,12 @@ module PactBroker
         pacticipant_url_from_params({ pacticipant_name: pacticipant_name }, base_url) + "/labels/{label}"
       end
 
+      def templated_can_i_deploy_url pacticipant_name, base_url = ""
+        pacticipant_url_from_params({ pacticipant_name: pacticipant_name }, base_url) + "/latest-version/{tag}/can-i-deploy/to/{environmentTag}"
+      end
+
       def templated_can_i_deploy_badge_url pacticipant_name, base_url = ""
-        pacticipant_url_from_params({ pacticipant_name: pacticipant_name }, base_url) + "/latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge"
+        templated_can_i_deploy_url(pacticipant_name, base_url) + "/badge"
       end
 
       def label_url label, base_url

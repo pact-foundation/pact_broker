@@ -71,6 +71,7 @@ module PactBroker
         add ['pacticipants', :pacticipant_name, 'versions'], Api::Resources::Versions, {resource_name: "pacticipant_versions"}
         add ['pacticipants', :pacticipant_name, 'versions', :pacticipant_version_number], Api::Resources::Version, {resource_name: "pacticipant_version"}
         add ['pacticipants', :pacticipant_name, 'latest-version', :tag], Api::Resources::Version, {resource_name: "latest_tagged_pacticipant_version"}
+        add ['pacticipants', :pacticipant_name, 'latest-version', :tag, 'can-i-deploy', 'to', :to], Api::Resources::CanIDeployPacticipantVersion, { resource_name: "can_i_deploy_latest_tagged_version" }
         add ['pacticipants', :pacticipant_name, 'latest-version', :tag, 'can-i-deploy', 'to', :to, 'badge'], Api::Resources::CanIDeployBadge, { resource_name: "can_i_deploy_badge" }
         add ['pacticipants', :pacticipant_name, 'latest-version'], Api::Resources::Version, {resource_name: "latest_pacticipant_version"}
         add ['pacticipants', :pacticipant_name, 'versions', :pacticipant_version_number, 'tags', :tag_name], Api::Resources::Tag, {resource_name: "pacticipant_version_tag"}
