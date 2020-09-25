@@ -58,6 +58,22 @@ module PactBroker
           }
         end
 
+        link :'pb:can-i-deploy-badge' do | options |
+          {
+            title: "Can I Deploy #{represented.name} badge",
+            href: templated_can_i_deploy_badge_url(represented.name, options[:base_url]),
+            templated: true
+          }
+        end
+
+        curies do | options |
+          [{
+            name: :pb,
+            href: options[:base_url] + '/doc/{rel}?context=pacticipant',
+            templated: true
+          }]
+        end
+
         def to_hash options
           h = super
           dasherized = DasherizedVersionDecorator.new(represented).to_hash(options)

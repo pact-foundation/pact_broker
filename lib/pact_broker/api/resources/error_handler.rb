@@ -32,11 +32,11 @@ module PactBroker
           PactBroker.configuration.warning_error_classes.any? { |clazz| e.is_a?(clazz) }
         end
 
-        def self.display_message(e, error_reference)
+        def self.display_message(e, obfuscated_message)
           if PactBroker.configuration.show_backtrace_in_error_response?
-            e.message || obfuscated_error_message(error_reference)
+            e.message || obfuscated_message
           else
-           reportable?(e) ? obfuscated_error_message(error_reference) : e.message
+           reportable?(e) ? obfuscated_message : e.message
           end
         end
 
@@ -47,7 +47,7 @@ module PactBroker
         def self.response_body_hash e, error_reference
           response_body = {
             error: {
-              message: display_message(e, error_reference),
+              message: display_message(e, obfuscated_error_message(error_reference)),
               reference: error_reference
             }
           }

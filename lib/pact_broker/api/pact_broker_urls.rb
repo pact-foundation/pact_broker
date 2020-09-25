@@ -197,11 +197,15 @@ module PactBroker
       end
 
       def templated_tag_url_for_pacticipant pacticipant_name, base_url = ""
-        pacticipant_url_from_params({pacticipant_name: pacticipant_name}, base_url) + "/versions/{version}/tags/{tag}"
+        pacticipant_url_from_params({ pacticipant_name: pacticipant_name }, base_url) + "/versions/{version}/tags/{tag}"
       end
 
       def templated_label_url_for_pacticipant pacticipant_name, base_url = ""
-        pacticipant_url_from_params({pacticipant_name: pacticipant_name}, base_url) + "/labels/{label}"
+        pacticipant_url_from_params({ pacticipant_name: pacticipant_name }, base_url) + "/labels/{label}"
+      end
+
+      def templated_can_i_deploy_badge_url pacticipant_name, base_url = ""
+        pacticipant_url_from_params({ pacticipant_name: pacticipant_name }, base_url) + "/latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge"
       end
 
       def label_url label, base_url

@@ -24,7 +24,7 @@ describe "get latest matrix badge with tags" do
   # In the full app, the .svg extension is turned into an Accept header
   # by ConvertFileExtensionToAcceptHeader
 
-  subject { get path, nil, {'HTTP_ACCEPT' => "image/svg+xml"}; last_response  }
+  subject { get(path, nil, {'HTTP_ACCEPT' => "image/svg+xml"}) }
 
   it "returns a 200 status" do
     expect(subject.status).to eq 200

@@ -33,6 +33,17 @@ module PactBroker
         build_shield_io_uri(title, status, color)
       end
 
+      def can_i_deploy_badge_url(pacticipant_name, environment_tag, deployable)
+        title = "Can I deploy #{pacticipant_name} to #{environment_tag}?"
+        status = deployable ? "yes" : "no"
+        color = deployable ? "brightgreen" : "red"
+        build_shield_io_uri(title, status, color)
+      end
+
+      def error_badge_url(left_text, right_text)
+        build_shield_io_uri(left_text, right_text, "lightgrey")
+      end
+
       def clear_cache
         CACHE.clear
       end
