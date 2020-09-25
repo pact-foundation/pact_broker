@@ -29,6 +29,12 @@ module PactBroker
         allow(Service).to receive(:logger).and_return(logger)
       end
 
+      describe "can_i_deploy_badge_url" do
+        subject { Service.can_i_deploy_badge_url("main", "prod", nil, true) }
+
+        it { is_expected.to eq URI("https://img.shields.io/badge/can--i--deploy-main%20to%20prod-brightgreen.svg") }
+      end
+
       describe "pact_verification_badge_url" do
         context "with the pact is nil" do
           let(:pact) { nil }

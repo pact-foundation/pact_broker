@@ -46,7 +46,7 @@ module PactBroker
           begin
             if pacticipant
               if version
-                badge_service.can_i_deploy_badge_url(pacticipant_name, identifier_from_path[:tag], identifier_from_path[:to], label, results.deployable?)
+                badge_service.can_i_deploy_badge_url(identifier_from_path[:tag], identifier_from_path[:to], label, results.deployable?)
               else
                 badge_service.error_badge_url("version", "not found")
               end

@@ -32,7 +32,7 @@ module PactBroker
 
         context "when the pacticipant exists" do
           it "returns a redirect to the badge" do
-            expect(badge_service).to receive(:can_i_deploy_badge_url).with("Foo", "main", "prod", nil, true)
+            expect(badge_service).to receive(:can_i_deploy_badge_url).with("main", "prod", nil, true)
             expect(subject.status).to eq 307
           end
         end
@@ -59,7 +59,7 @@ module PactBroker
           subject { get(path, label: "some custom label") }
 
           it "returns a redirect to a badge with a custom label" do
-            expect(badge_service).to receive(:can_i_deploy_badge_url).with("Foo", "main", "prod", "some custom label", true)
+            expect(badge_service).to receive(:can_i_deploy_badge_url).with("main", "prod", "some custom label", true)
             subject
           end
         end
