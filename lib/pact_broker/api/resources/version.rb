@@ -6,7 +6,6 @@ module PactBroker
   module Api
     module Resources
       class Version < BaseResource
-
         def content_types_provided
           [["application/hal+json", :to_json]]
         end
@@ -20,7 +19,7 @@ module PactBroker
         end
 
         def to_json
-          Decorators::VersionDecorator.new(version).to_json(user_options: {base_url: base_url})
+          Decorators::VersionDecorator.new(version).to_json(decorator_options)
         end
 
         def delete_resource
@@ -35,12 +34,12 @@ module PactBroker
         private
 
         def version
-          if path_info[:tag]
-            @version ||= version_service.find_by_pacticipant_name_and_latest_tag(path_info[:pacticipant_name], path_info[:tag])
-          elsif path_info[:pacticipant_version_number]
-            @version ||= version_service.find_by_pacticipant_name_and_number path_info
+          if identifier_from_path[:tag]
+            @version ||= version_service.find_by_pacticipant_name_and_latest_tag(identifier_from_path[:pacticipant_name], identifier_from_path[:tag])
+          elsif identifier_from_path[:pacticipant_version_number]
+            @version ||= version_service.find_by_pacticipant_name_and_number(identifier_from_path)
           else
-            @version ||= version_service.find_latest_by_pacticpant_name path_info
+            @version ||= version_service.find_latest_by_pacticpant_name(identifier_from_path)
           end
         end
       end
