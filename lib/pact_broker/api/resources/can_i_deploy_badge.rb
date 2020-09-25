@@ -46,7 +46,7 @@ module PactBroker
           begin
             if pacticipant
               if version
-                badge_service.can_i_deploy_badge_url(selectors.first.pacticipant_name, options[:tag], results.deployable?)
+                badge_service.can_i_deploy_badge_url(pacticipant_name, identifier_from_path[:tag], identifier_from_path[:to], label, results.deployable?)
               else
                 badge_service.error_badge_url("version", "not found")
               end
@@ -73,6 +73,11 @@ module PactBroker
 
         def version
           @version ||= version_service.find_by_pacticipant_name_and_latest_tag(identifier_from_path[:pacticipant_name], identifier_from_path[:tag])
+        end
+
+        def label
+          lab = request.query['label']
+          lab && !lab.empty? ? lab : nil
         end
       end
     end
