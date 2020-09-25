@@ -1,3 +1,12 @@
+<a name="v2.64.0"></a>
+### v2.64.0 (2020-09-25)
+
+#### Features
+
+* add API endpoint for can-i-deploy for latest tagged pacticipant version	 ([88fdc60a](/../../commit/88fdc60a))
+* render matrix UI page for can-i-deploy endpoint	 ([463e9cfd](/../../commit/463e9cfd))
+* change text on can-i-deploy badge	 ([f9e183e9](/../../commit/f9e183e9))
+
 <a name="v2.63.0"></a>
 ### v2.63.0 (2020-09-25)
 
