@@ -1,3 +1,11 @@
+<a name="v2.63.0"></a>
+### v2.63.0 (2020-09-25)
+
+#### Features
+
+* allow label of can-i-deploy badge to be customised by setting the label query parameter	 ([ed544f94](/../../commit/ed544f94))
+* add badges for can-i-deploy	 ([887a9ca3](/../../commit/887a9ca3))
+
 <a name="v2.62.0"></a>
 ### v2.62.0 (2020-09-23)
 
