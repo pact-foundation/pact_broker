@@ -1,7 +1,11 @@
 module PactBroker
   class FeatureToggle
-    def self.enabled?(feature)
-      not_production? || feature_in_env_var?(feature)
+    def self.enabled?(feature, ignore_env)
+      if ignore_env
+        feature_in_env_var?(feature)
+      else
+        not_production? || feature_in_env_var?(feature)
+      end
     end
 
     def self.not_production?
@@ -17,7 +21,7 @@ module PactBroker
     end
   end
 
-  def self.feature_enabled?(feature)
-    FeatureToggle.enabled?(feature)
+  def self.feature_enabled?(feature, ignore_env = false)
+    FeatureToggle.enabled?(feature, ignore_env)
   end
 end

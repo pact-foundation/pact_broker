@@ -144,7 +144,7 @@ module PactBroker
             }]
           }
 
-          if PactBroker.feature_enabled?(:disable_pacts_for_verification)
+          if PactBroker.feature_enabled?('disable_pacts_for_verification', true)
             links_hash.delete('pb:provider-pacts-for-verification')
             links_hash.delete('beta:provider-pacts-for-verification')
           end

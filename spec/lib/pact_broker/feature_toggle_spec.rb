@@ -7,7 +7,9 @@ module PactBroker
         allow(ENV).to receive(:[]).and_call_original
       end
 
-      subject { FeatureToggle.enabled?(:foo) }
+      let(:ignore_env) { false }
+
+      subject { FeatureToggle.enabled?(:foo, ignore_env) }
 
       context "when RACK_ENV is not production" do
         before do
@@ -28,6 +30,12 @@ module PactBroker
           end
 
           it { is_expected.to be true }
+
+          context "when ignore env is set" do
+            let(:ignore_env) { true }
+
+            it { is_expected.to be false }
+          end
         end
       end
 
