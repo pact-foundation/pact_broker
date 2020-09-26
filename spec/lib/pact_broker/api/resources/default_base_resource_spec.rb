@@ -5,7 +5,7 @@ module PactBroker
     module Resources
       describe DefaultBaseResource do
         let(:request) { double('request', body: body, uri: uri, base_uri: URI("http://example.org/"), env: env).as_null_object }
-        let(:response) { double('response') }
+        let(:response) { double('response').as_null_object }
         let(:uri) { URI('http://example.org/path?query') }
         let(:body) { double('body', to_s: body_string) }
         let(:body_string) { '' }
