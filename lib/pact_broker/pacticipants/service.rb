@@ -79,21 +79,8 @@ module PactBroker
 
       def self.delete name
         pacticipant = find_pacticipant_by_name name
-        connection = PactBroker::Domain::Pacticipant.new.db
-        version_ids = PactBroker::Domain::Version.where(pacticipant_id: pacticipant.id).select_for_subquery(:id) #stupid mysql doesn't allow subqueries
-        select_pacticipant = "select id from pacticipants where name = '#{name}'"
-        tag_repository.delete_by_version_id version_ids
-        webhook_service.delete_all_webhhook_related_objects_by_pacticipant pacticipant
-        pact_repository.delete_by_version_id version_ids
-        connection.run("delete from pact_publications where provider_id = #{pacticipant.id}")
-        connection.run("delete from verifications where pact_version_id IN (select id from pact_versions where provider_id = #{pacticipant.id})")
-        connection.run("delete from verifications where pact_version_id IN (select id from pact_versions where consumer_id = #{pacticipant.id})")
-        connection.run("delete from pact_versions where provider_id = #{pacticipant.id}")
-        connection.run("delete from pact_versions where consumer_id = #{pacticipant.id}")
-        connection.run("delete from versions where pacticipant_id = #{pacticipant.id}")
-        version_repository.delete_by_id version_ids
-        label_repository.delete_by_pacticipant_id(pacticipant.id)
-        connection.run("delete from pacticipants where id = #{pacticipant.id}")
+        webhook_service.delete_all_webhhook_related_objects_by_pacticipant(pacticipant)
+        pacticipant.destroy
       end
 
       def self.delete_if_orphan(pacticipant)

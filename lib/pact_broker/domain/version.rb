@@ -50,6 +50,7 @@ module PactBroker
         end
 
         def delete
+          PactBroker::Pacts::PactPublication.where(consumer_version: self).delete
           PactBroker::Domain::Tag.where(version: self).delete
           super
         end

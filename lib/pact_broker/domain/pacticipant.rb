@@ -30,6 +30,10 @@ module PactBroker
       end
 
       def before_destroy
+        PactBroker::Pacts::PactPublication.where(provider: self).delete
+        PactBroker::Domain::Verification.where(consumer: self).or(provider: self).delete
+        PactBroker::Domain::Version.where(pacticipant: self).delete
+        PactBroker::Pacts::PactVersion.where(consumer: self).or(provider: self).delete
         PactBroker::Domain::Label.where(pacticipant: self).destroy
         super
       end
