@@ -2,7 +2,6 @@ require_relative '../ddl_statements/latest_triggered_webhooks'
 
 Sequel.migration do
   up do
-
     create_or_replace_view(:latest_triggered_webhook_creation_dates, latest_triggered_webhook_creation_dates_v2)
     create_or_replace_view(:latest_triggered_webhook_ids, latest_triggered_webhook_ids_v2)
     create_or_replace_view(:latest_triggered_webhooks, latest_triggered_webhooks_v2)

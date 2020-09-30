@@ -37,11 +37,23 @@ def latest_triggered_webhooks_v2
   and tw.id = ltwi.latest_triggered_webhook_id"
 end
 
-#####
+# use explicit columns - can't drop event_name in 20200922_add_event_to_triggered_webhook.rb
+# if tw.* is used because you can't remove columns from a view in postgres
+def latest_triggered_webhooks_v3_rollback
+  "select tw.id, tw.trigger_uuid, tw.trigger_type, tw.pact_publication_id, tw.webhook_id, tw.webhook_uuid, tw.consumer_id, tw.provider_id, tw.status, tw.created_at, tw.updated_at, tw.verification_id, null as event_name
+  from triggered_webhooks tw
+  inner join latest_triggered_webhook_ids ltwi
+  on tw.consumer_id = ltwi.consumer_id
+  and tw.provider_id = ltwi.provider_id
+  and tw.webhook_uuid = ltwi.webhook_uuid
+  and tw.id = ltwi.latest_triggered_webhook_id"
+end
+
+##### v3
 
 # screw dates, just use IDs.
 def latest_triggered_webhooks_v3
-  "select tw.*
+  "select tw.id, tw.trigger_uuid, tw.trigger_type, tw.pact_publication_id, tw.webhook_id, tw.webhook_uuid, tw.consumer_id, tw.provider_id, tw.status, tw.created_at, tw.updated_at, tw.verification_id, tw.event_name
   from triggered_webhooks tw
   inner join (select max(id) as max_id
     from triggered_webhooks

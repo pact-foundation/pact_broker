@@ -9,6 +9,6 @@ Sequel.migration do
   end
 
   down do
-    create_or_replace_view(:latest_triggered_webhooks, latest_triggered_webhooks_v2)
+    create_or_replace_view(:latest_triggered_webhooks, latest_triggered_webhooks_v3_rollback)
   end
 end
