@@ -330,7 +330,7 @@ module PactBroker
 
         if tag_names.any?
           tag_names.each do | tag_name |
-            PactBroker::Domain::Tag.create(name: tag_name, version: @provider_version)
+            PactBroker::Domain::Tag.new(name: tag_name, version: @provider_version).insert_ignore
             set_created_at_if_set(parameters[:created_at], :tags, version_id: @provider_version.id, name: tag_name)
           end
         end

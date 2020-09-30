@@ -10,6 +10,8 @@ module PactBroker
         include PactBroker::Repositories::Helpers
       end
 
+      plugin :insert_ignore, identifying_columns: [:name, :version_id]
+
       unrestrict_primary_key
 
       associate(:many_to_one, :version, :class => "PactBroker::Domain::Version", :key => :version_id, :primary_key => :id)
