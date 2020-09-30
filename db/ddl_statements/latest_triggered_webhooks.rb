@@ -40,7 +40,7 @@ end
 # use explicit columns - can't drop event_name in 20200922_add_event_to_triggered_webhook.rb
 # if tw.* is used because you can't remove columns from a view in postgres
 def latest_triggered_webhooks_v3_rollback
-  "select tw.id, tw.trigger_uuid, tw.trigger_type, tw.pact_publication_id, tw.webhook_id, tw.webhook_uuid, tw.consumer_id, tw.provider_id, tw.status, tw.created_at, tw.updated_at, tw.verification_id, null as event_name
+  "select tw.id, tw.trigger_uuid, tw.trigger_type, tw.pact_publication_id, tw.webhook_id, tw.webhook_uuid, tw.consumer_id, tw.provider_id, tw.status, tw.created_at, tw.updated_at, tw.verification_id, '' as event_name
   from triggered_webhooks tw
   inner join latest_triggered_webhook_ids ltwi
   on tw.consumer_id = ltwi.consumer_id
