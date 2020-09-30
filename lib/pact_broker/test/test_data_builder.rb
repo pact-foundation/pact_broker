@@ -408,6 +408,25 @@ module PactBroker
         end
       end
 
+      def random_json_content(consumer_name, provider_name)
+        {
+          "consumer" => {
+             "name" => consumer_name
+           },
+           "provider" => {
+             "name" => provider_name
+           },
+           "interactions" => [{
+              "request" => {
+                "method" => "GET",
+                "path" => "/things/#{rand}"
+              },
+              "response" => {
+                "status" => 200
+              }
+           }],
+         }.to_json
+      end
 
       private
 

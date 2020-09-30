@@ -47,6 +47,45 @@ module PactBroker
           end
         end
 
+        context "when a verification for the latest tagged version belongs to a pact that is not the latest tagged version" do
+          before do
+            td.create_pact_with_hierarchy("Foo", "1", "Bar", td.random_json_content("Foo", "Bar"))
+              .create_consumer_version_tag("dev").comment("delete, not latest, not verified by latest Bar")
+              .create_verification(provider_version: "3", tag_names: "dev").comment("delete, not latest")
+              .create_pact_with_hierarchy("Foo", "2", "Bar", td.random_json_content("Foo", "Bar"))
+              .create_consumer_version_tag("dev").comment("can't delete because it is verified by the latest dev version of the provider")
+              .create_verification(provider_version: "4", tag_names: "dev").comment("keep")
+              .create_pact_with_hierarchy("Foo", "3", "Bar", td.random_json_content("Foo", "Bar"))
+              .create_consumer_version_tag("dev").comment("keep")
+          end
+
+          let(:options) { { keep: [latest_dev_selector] } }
+
+          it "does not delete the latest verification" do
+            expect{ subject }.to_not change {
+              PactBroker::Domain::Verification.where(provider_version: PactBroker::Domain::Version.where_pacticipant_name("Bar").where(number: "4")).count
+            }
+          end
+
+          it "deletes the non-latest verification" do
+            expect{ subject }.to change {
+              PactBroker::Domain::Verification.where(provider_version: PactBroker::Domain::Version.where_pacticipant_name("Bar").where(number: "3")).count
+            }.by(-1)
+          end
+
+          it "does not delete the pact publication that belongs to the latest verification" do
+            expect{ subject }.to_not change {
+              PactBroker::Pacts::PactPublication.where(consumer_version: PactBroker::Domain::Version.where_pacticipant_name("Foo").where(number: "2")).count
+            }
+          end
+
+          it "deletes the pact publication that does not belongs to the latest verification" do
+            expect{ subject }.to change {
+              PactBroker::Pacts::PactPublication.where(consumer_version: PactBroker::Domain::Version.where_pacticipant_name("Foo").where(number: "1")).count
+            }.by(-1)
+          end
+        end
+
         context "with orphan pact versions" do
           before do
             # Create a pact that will not be deleted
@@ -69,20 +108,23 @@ module PactBroker
           end
         end
 
-        context "with triggered and executed" do
+        context "with triggered and executed webhooks" do
           before do
             td.create_pact_with_hierarchy("Foo", "1", "Bar")
-              .create_consumer_version_tag("dev").comment("keep")
+              .create_consumer_version_tag("dev").comment("delete")
               .create_webhook
               .create_triggered_webhook
               .create_webhook_execution
               .add_day
+              .create_pact_with_hierarchy("Foo", "2", "Bar")
+              .create_consumer_version_tag("dev").comment("keep")
+              .create_webhook
               .create_triggered_webhook
               .create_webhook_execution
           end
 
-          xit "deletes all but the most recent triggered webhook" do
-
+          it "deletes the ones associated with the deleted pacts" do
+            expect { subject }.to change { PactBroker::Webhooks::TriggeredWebhook.count }.by(-1)
           end
         end
       end
