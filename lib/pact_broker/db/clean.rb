@@ -1,9 +1,20 @@
 require 'sequel'
 require 'pact_broker/project_root'
+require 'pact_broker/pacts/latest_tagged_pact_publications'
 
 module PactBroker
   module DB
     class Clean
+
+      class Unionable < Array
+        alias_method :union, :+
+
+        def union(other)
+          Unionable.new(self + other)
+        end
+      end
+
+
       def self.call database_connection, options = {}
         new(database_connection, options).call
       end
@@ -18,16 +29,14 @@ module PactBroker
       end
 
       def resolve_ids(query)
-        query
-        # result = query.collect { |h| h[:id] }
-        # def result.union(other)
-        #   self + other
-        # end
-        # result
+        # query
+        Unionable.new(query.collect { |h| h[:id] })
       end
 
       def pact_publication_ids_to_keep
-        @pact_publication_ids_to_keep ||= pact_publication_ids_to_keep_for_version_ids_to_keep.union(pact_publications_to_keep_for_verification_ids_to_keep)
+        @pact_publication_ids_to_keep ||= pact_publication_ids_to_keep_for_version_ids_to_keep
+                                            .union(pact_publications_to_keep_for_verification_ids_to_keep)
+                                            .union(latest_tagged_pact_publications_ids_to_keep)
       end
 
       def pact_publication_ids_to_keep_for_version_ids_to_keep
@@ -38,13 +47,14 @@ module PactBroker
         @pact_publications_to_keep_for_verification_ids_to_keep ||= resolve_ids(db[:pact_publications].select(:id).where(pact_version_id: db[:verifications].select(:pact_version_id).where(id: verification_ids_to_keep_for_version_ids_to_keep)))
       end
 
+      def latest_tagged_pact_publications_ids_to_keep
+        @latest_tagged_pact_publications_ids_to_keep ||= resolve_ids(keep.select(&:tag).select(&:latest).collect do | selector |
+          PactBroker::Pacts::LatestTaggedPactPublications.select(:id).for_selector(selector)
+        end.reduce(&:union))
+      end
+
       def pact_publication_ids_to_delete
         @pact_publication_ids_to_delete ||= resolve_ids(db[:pact_publications].select(:id).where(id: pact_publication_ids_to_keep).invert)
-
-        # else
-          # keep = db[:latest_tagged_pact_publications].select(:id).union(db[:latest_pact_publications].select(:id))
-          # db[:pact_publications].select(:id).where(id: keep).invert
-        # end
       end
 
       # because they belong to the versions to keep
@@ -74,10 +84,8 @@ module PactBroker
         deleted_counts = {}
         kept_counts = {}
 
-        pact_publications_to_keep = db[:pact_publications].where(id: pact_publication_ids_to_delete).invert
-
         deleted_counts[:pact_publications] = pact_publication_ids_to_delete.count
-        kept_counts[:pact_publications] = pact_publications_to_keep.count
+        kept_counts[:pact_publications] = pact_publication_ids_to_keep.count
 
         # Work out how to keep the head verifications for the provider tags.
 

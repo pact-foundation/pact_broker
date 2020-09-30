@@ -7,6 +7,11 @@ module PactBroker
   module DB
     # Inner queries don't work on MySQL. Seriously, MySQL???
     describe Clean, pending: IS_MYSQL  do
+
+      def pact_publication_count_for(consumer_name, version_number)
+        PactBroker::Pacts::PactPublication.where(consumer_version: PactBroker::Domain::Version.where_pacticipant_name(consumer_name).where(number: version_number)).count
+      end
+
       let(:options) { {} }
       let(:db) { PactBroker::DB.connection }
 
@@ -44,6 +49,25 @@ module PactBroker
             expect(PactBroker::Domain::Version.where(number: "4").count).to be 0
             expect(PactBroker::Domain::Version.where(number: "5").count).to be 1
             expect(PactBroker::Domain::Version.where(number: "6").count).to be 0
+          end
+        end
+
+        context "when the latest pact for a tag does not belong to the latest version for a tag" do
+          before do
+            td.create_pact_with_hierarchy("Foo", "1", "Bar").comment("delete, not latest pact for dev")
+              .create_consumer_version_tag("dev")
+              .create_pact_with_hierarchy("Foo", "2", "Bar").comment("keep, latest pact for dev")
+              .create_consumer_version_tag("dev")
+              .create_consumer_version("3").comment("keep, latest version for dev")
+              .create_consumer_version_tag("dev")
+          end
+
+          it "deletes the not-latest pact" do
+            expect { subject }.to change { pact_publication_count_for("Foo", "1") }.by(-1)
+          end
+
+          it "does not delete the pact latest" do
+            expect { subject }.to_not change { pact_publication_count_for("Foo", "2") }
           end
         end
 
@@ -85,6 +109,8 @@ module PactBroker
             }.by(-1)
           end
         end
+
+
 
         context "with orphan pact versions" do
           before do
