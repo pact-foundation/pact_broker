@@ -1,4 +1,5 @@
 require_relative '../ddl_statements/latest_triggered_webhooks'
+require_relative 'migration_helper'
 
 Sequel.migration do
   up do
@@ -9,6 +10,6 @@ Sequel.migration do
   end
 
   down do
-    create_or_replace_view(:latest_triggered_webhooks, latest_triggered_webhooks_v3_rollback)
+    create_or_replace_view(:latest_triggered_webhooks, latest_triggered_webhooks_v3_rollback(PactBroker::MigrationHelper.postgres?))
   end
 end

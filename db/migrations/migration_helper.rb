@@ -4,7 +4,7 @@ module PactBroker
     extend self
 
     def large_text_type
-      if adapter == 'postgres'
+      if postgres?
         :text
       else
         # Assume mysql
@@ -13,9 +13,17 @@ module PactBroker
     end
 
     def with_mysql
-      if adapter =~ /mysql/
+      if mysql?
         yield
       end
+    end
+
+    def mysql?
+      adapter =~ /mysql/
+    end
+
+    def postgres?
+      adapter == 'postgres'
     end
 
     def adapter
