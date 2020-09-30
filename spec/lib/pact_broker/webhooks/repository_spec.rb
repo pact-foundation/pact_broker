@@ -563,6 +563,26 @@ module PactBroker
           expect(subject.collect(&:trigger_uuid).sort).to eq ['332', '638']
         end
 
+        context "when a webhook has been triggered by different events" do
+          before do
+            td.create_pact_with_hierarchy("Foo2", "1.0.0", "Bar2")
+              .create_webhook
+              .create_triggered_webhook(trigger_uuid: '333', event_name: 'foo')
+              .create_triggered_webhook(trigger_uuid: '555', event_name: 'foo')
+              .create_webhook_execution
+              .create_triggered_webhook(trigger_uuid: '444', event_name: 'bar')
+              .create_triggered_webhook(trigger_uuid: '777', event_name: 'bar')
+              .create_webhook_execution
+              .create_triggered_webhook(trigger_uuid: '111', event_name: nil)
+              .create_triggered_webhook(trigger_uuid: '888', event_name: nil)
+              .create_webhook_execution
+          end
+
+          it "returns one for each event" do
+            expect(subject.collect(&:trigger_uuid).sort).to eq ['555', '777', '888']
+          end
+        end
+
         context "when there are two 'latest' triggered webhooks at the same time" do
           before do
             td.create_triggered_webhook(trigger_uuid: '888', created_at: DateTime.new(2018))
