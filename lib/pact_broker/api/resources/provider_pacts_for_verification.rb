@@ -77,7 +77,7 @@ module PactBroker
         def query
           @query ||= begin
             if request.get?
-              Rack::Utils.parse_nested_query(request.uri.query)
+              nested_query
             elsif request.post?
               params(symbolize_names: false, default: {})
             end
@@ -85,8 +85,12 @@ module PactBroker
         end
 
         def log_request
-          parameters = request.get? ? request.query : params
+          parameters = request.get? ? nested_query : params
           logger.info "Fetching pacts for verification by #{provider_name}", provider_name: provider_name, params: parameters
+        end
+
+        def nested_query
+          @nested_query ||= Rack::Utils.parse_nested_query(request.uri.query)
         end
       end
     end
