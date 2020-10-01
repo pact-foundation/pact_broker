@@ -51,6 +51,14 @@
             %input{name: 'q[]latest', value: 'true', hidden: true, class: 'latest-flag'}
 
 
+      - if options.latest || options.tag
+        .selector
+          %label{for: 'to'}
+            = options.latest ? 'To' : 'With all'
+          %input{name: 'tag', id: 'to', value: options.tag }
+          %input{name: 'latest', value: options.latest.to_s, hidden: true}
+
+
       %div.top-of-group
         .input-group
           %input{type: 'radio', name: "latestby", class: '', value: '', id: 'all_rows', checked: options.all_rows_checked}
