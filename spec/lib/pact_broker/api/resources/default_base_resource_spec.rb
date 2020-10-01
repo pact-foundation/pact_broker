@@ -9,7 +9,7 @@ module PactBroker
         let(:uri) { URI('http://example.org/path?query') }
         let(:body) { double('body', to_s: body_string) }
         let(:body_string) { '' }
-        let(:env) { double('env') }
+        let(:env) { double('env').as_null_object }
 
         subject { BaseResource.new(request, response) }
 
@@ -100,6 +100,10 @@ module PactBroker
         end
 
         describe "decorator_options" do
+          before do
+            allow(env).to receive(:[]).with("QUERY_STRING").and_return("foo=bar")
+          end
+
           context "with no overrides" do
             it "returns the default decorator options" do
               expect(subject.decorator_options).to eq(
@@ -107,7 +111,8 @@ module PactBroker
                   base_url: "http://example.org",
                   resource_url: "http://example.org/path",
                   env: env,
-                  resource_title: nil
+                  resource_title: nil,
+                  query_string: "foo=bar"
                 }
               )
             end
@@ -121,7 +126,8 @@ module PactBroker
                   resource_url: "http://example.org/path",
                   env: env,
                   resource_title: "foo",
-                  something: "else"
+                  something: "else",
+                  query_string: "foo=bar"
                 }
               )
             end
