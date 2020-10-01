@@ -307,6 +307,14 @@ module PactBroker
         ERB::Util.url_encode param
       end
 
+      def append_query_if_present(url, query)
+        if query && query.size > 0
+          url + "?#{query}"
+        else
+          url
+        end
+      end
+
       private
 
       def representable_pact pact

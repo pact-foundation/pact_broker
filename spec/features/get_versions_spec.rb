@@ -21,6 +21,14 @@ describe "Get versions" do
     it "returns a list of links to the versions" do
       expect(last_response_body[:_links][:"versions"].size).to eq 2
     end
+
+    context "with pagination options" do
+      subject { get(path, { 'pageSize' => '1', 'pageNumber' => '1' }) }
+
+      it "paginates the response" do
+        expect(last_response_body[:_links][:"versions"].size).to eq 1
+      end
+    end
   end
 
   context "when the pacticipant does not exist" do

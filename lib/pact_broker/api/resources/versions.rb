@@ -23,11 +23,22 @@ module PactBroker
         end
 
         def versions
-          @versions ||= pacticipant_service.find_all_pacticipant_versions_in_reverse_order pacticipant_name
+          @versions ||= pacticipant_service.find_all_pacticipant_versions_in_reverse_order(pacticipant_name, pagination_options)
         end
 
         def policy_name
           :'versions::versions'
+        end
+
+        def pagination_options
+          if request.query['pageNumber'] || request.query['pageSize']
+            {
+              page_number: request.query['pageNumber']&.to_i || 1,
+              page_size: request.query['pageSize']&.to_i || 100
+            }
+          else
+            nil
+          end
         end
       end
     end

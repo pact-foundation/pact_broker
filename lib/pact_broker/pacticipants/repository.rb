@@ -8,6 +8,7 @@ module PactBroker
     class Repository
 
       include PactBroker::Repositories::Helpers
+      include PactBroker::Repositories
 
       def find_by_name name
         pacticipants = PactBroker::Domain::Pacticipant.where(name_like(:name, name)).all
@@ -35,11 +36,11 @@ module PactBroker
         query.order_ignore_case(Sequel[:pacticipants][:name]).eager(:labels).eager(:latest_version).all
       end
 
-      def find_all_pacticipant_versions_in_reverse_order name
-        PactBroker::Domain::Version.select_all_qualified
-          .join(:pacticipants, {id: :pacticipant_id})
-          .where(name_like(:name, name))
-          .reverse_order(:order)
+      def find_all_pacticipant_versions_in_reverse_order name, pagination_options = nil
+        pacticipant = pacticipant_repository.find_by_name!(name)
+        query = PactBroker::Domain::Version.where(pacticipant: pacticipant).reverse_order(:order)
+        query = query.paginate(pagination_options[:page_number], pagination_options[:page_size]) if pagination_options
+        query
       end
 
       def find_by_name_or_create name

@@ -52,8 +52,8 @@ module PactBroker
         pacticipant_repository.find options
       end
 
-      def self.find_all_pacticipant_versions_in_reverse_order name
-        pacticipant_repository.find_all_pacticipant_versions_in_reverse_order(name)
+      def self.find_all_pacticipant_versions_in_reverse_order name, pagination_options = nil
+        pacticipant_repository.find_all_pacticipant_versions_in_reverse_order(name, pagination_options)
       end
 
       def self.find_pacticipant_repository_url_by_pacticipant_name name

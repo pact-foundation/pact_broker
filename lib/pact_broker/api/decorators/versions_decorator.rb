@@ -1,5 +1,6 @@
 require_relative 'base_decorator'
 require_relative 'version_decorator'
+require_relative 'pagination_links'
 
 module PactBroker
   module Api
@@ -9,11 +10,14 @@ module PactBroker
         collection :entries, as: :versions, embedded: true, :extend => PactBroker::Api::Decorators::VersionDecorator
 
         link :self do | context |
+          href = append_query_if_present(context[:resource_url], context[:query_string])
           {
-            href: context[:resource_url],
+            href: href,
             title: "All application versions of #{context[:pacticipant_name]}"
           }
         end
+
+        include PaginationLinks
 
         link :'pb:pacticipant' do | context |
           {

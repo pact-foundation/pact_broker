@@ -154,8 +154,15 @@ module PactBroker
         it "returns all the application versions for the given consumer" do
           expect(subject.collect(&:number)).to eq ["4.5.6", "1.2.3"]
         end
-      end
 
+        context "with pagination options" do
+          subject { Repository.new.find_all_pacticipant_versions_in_reverse_order "Foo", page_number: 1, page_size: 1 }
+
+          it "paginates the query" do
+            expect(subject.collect(&:number)).to eq ["4.5.6"]
+          end
+        end
+      end
     end
   end
 end
