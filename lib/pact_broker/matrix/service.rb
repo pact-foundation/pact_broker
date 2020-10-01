@@ -1,3 +1,4 @@
+require 'pact_broker/logging'
 require 'pact_broker/repositories'
 require 'pact_broker/matrix/row'
 require 'pact_broker/matrix/deployment_status_summary'
@@ -9,8 +10,10 @@ module PactBroker
       extend self
       extend PactBroker::Repositories
       extend PactBroker::Services
+      include PactBroker::Logging
 
       def find selectors, options = {}
+        logger.info "Querying matrix", selectors: selectors, options: options
         query_results = matrix_repository.find selectors, options
         deployment_status_summary = DeploymentStatusSummary.new(query_results.rows, query_results.resolved_selectors, query_results.integrations)
         QueryResultsWithDeploymentStatusSummary.new(query_results, deployment_status_summary)

@@ -52,6 +52,7 @@ module PactBroker
         end
 
         def to_json
+          log_request
           PactBroker::Api::Decorators::VerifiablePactsDecorator.new(pacts).to_json(
             decorator_options(
               include_pending_status: parsed_query_params.include_pending_status,
@@ -81,6 +82,11 @@ module PactBroker
               params(symbolize_names: false, default: {})
             end
           end
+        end
+
+        def log_request
+          parameters = request.get? ? query : params
+          logger.info "Fetching pacts for verification by #{provider_name}", provider_name: provider_name, params: parameters
         end
       end
     end
