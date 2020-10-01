@@ -1,3 +1,17 @@
+<a name="v2.66.0"></a>
+### v2.66.0 (2020-10-01)
+
+#### Features
+
+* paginate pacticipant versions	 ([f489ba7b](/../../commit/f489ba7b))
+
+* **webhooks**
+  * add event name to group by clause when selecting latest triggered webhooks	 ([134f12c8](/../../commit/134f12c8))
+
+#### Bug Fixes
+
+* maintain latest and tag params when submitting page after following link from can-i-deploy debug logs	 ([6e2f1a85](/../../commit/6e2f1a85))
+
 <a name="v2.65.0"></a>
 ### v2.65.0 (2020-09-25)
 
