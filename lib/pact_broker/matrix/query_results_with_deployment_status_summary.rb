@@ -1,3 +1,4 @@
+require 'forwardable'
 require 'pact_broker/matrix/query_results'
 
 module PactBroker

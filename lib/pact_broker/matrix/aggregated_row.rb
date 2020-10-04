@@ -1,3 +1,4 @@
+require 'forwardable'
 require 'pact_broker/verifications/repository'
 
 # A collection of matrix rows with the same pact publication id

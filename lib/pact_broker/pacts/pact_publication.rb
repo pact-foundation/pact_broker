@@ -1,3 +1,4 @@
+require 'forwardable'
 require 'pact_broker/domain/pact'
 require 'pact_broker/pacts/pact_version'
 require 'pact_broker/repositories/helpers'

@@ -1,3 +1,5 @@
+require 'forwardable'
+
 module PactBroker
   module Pacts
     class VerifiablePactMessages
