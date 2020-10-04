@@ -5,7 +5,6 @@ module PactBroker
   module Api
     module Resources
       class Group < BaseResource
-
         def content_types_provided
           [["text/csv", :to_csv]]
         end

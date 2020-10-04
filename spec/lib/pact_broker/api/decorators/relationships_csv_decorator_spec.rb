@@ -2,11 +2,8 @@ require 'spec_helper'
 require 'pact_broker/api/decorators/relationships_csv_decorator'
 
 module PactBroker
-
   module Api
-
     module Decorators
-
       describe RelationshipsCsvDecorator do
 
         let(:pact) { TestDataBuilder.new.create_pact_with_hierarchy("My Consumer", "1.0", "My Provider").and_return(:pact) }
