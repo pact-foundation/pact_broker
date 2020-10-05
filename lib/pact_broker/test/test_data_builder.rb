@@ -316,7 +316,7 @@ module PactBroker
         parameters.delete(:comment)
         tag_names = [parameters.delete(:tag_names), parameters.delete(:tag_name)].flatten.compact
         provider_version_number = parameters[:provider_version] || '4.5.6'
-        default_parameters = {success: true, number: 1, test_results: {some: 'results'}}
+        default_parameters = { success: true, number: 1, test_results: {some: 'results'}, wip: false }
         default_parameters[:execution_date] = @now if @now
         parameters = default_parameters.merge(parameters)
         parameters.delete(:provider_version)

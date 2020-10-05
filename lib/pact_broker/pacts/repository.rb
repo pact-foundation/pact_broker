@@ -559,6 +559,7 @@ module PactBroker
           verifications_join = {
             pact_version_id: :pact_version_id,
             Sequel[:verifications][:success] => true,
+            Sequel[:verifications][:wip] => false,
             Sequel[:verifications][:provider_id] => provider_id
           }
           tags_join = {

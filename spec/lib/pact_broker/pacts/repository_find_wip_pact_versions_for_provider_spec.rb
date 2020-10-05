@@ -3,8 +3,6 @@ require 'pact_broker/pacts/repository'
 module PactBroker
   module Pacts
     describe Repository do
-      let(:td) { TestDataBuilder.new }
-
       describe "find_wip_pact_versions_for_provider" do
         let(:provider_tags) { %w[dev] }
         let(:options) { { include_wip_pacts_since: include_wip_pacts_since } }
@@ -70,6 +68,28 @@ module PactBroker
 
           it "is not included" do
             expect(subject.size).to be 0
+          end
+        end
+
+        context "when the latest pact for a tag has been successfully verified by the given provider tag but it was a WIP verification" do
+          before do
+            td.create_provider("bar")
+              .create_provider_version("333")
+              .create_provider_version_tag("dev")
+              .add_day
+              .create_pact_with_hierarchy("foo", "1", "bar")
+              .comment("above not included because it's not the latest dev")
+              .create_consumer_version("2")
+              .create_consumer_version_tag("feat-1")
+              .create_pact
+              .create_verification(wip: true, success: true, provider_version: "3", tag_names: %w[dev])
+          end
+
+          let(:provider_tags) { %w[dev] }
+
+          it "it is included" do
+            expect(subject[0].consumer_name).to eq "foo"
+            expect(subject[0].consumer_version_number).to eq "2"
           end
         end
 
@@ -144,6 +164,8 @@ module PactBroker
             expect(subject).to eq []
           end
         end
+
+
 
         context "when the latest pact for a tag has not been verified" do
           before do
