@@ -20,14 +20,16 @@ module PactBroker
             getter: -> (context) { context[:decorator].notices(context[:options][:user_options]) }
 
           def notices(user_options)
-            pact_url = pact_version_url(represented, user_options[:base_url])
+            metadata = represented.wip ? { wip: true } : nil
+            pact_url = pact_version_url_with_metadata(represented, represented.wip, user_options[:base_url])
             PactBroker::Pacts::BuildVerifiablePactNotices.call(represented, pact_url, user_options)
           end
         end
 
         link :self do | user_options |
+          metadata = represented.wip ? { wip: true } : nil
           {
-            href: pact_version_url(represented, user_options[:base_url]),
+            href: pact_version_url_with_metadata(represented, metadata, user_options[:base_url]),
             name: represented.name
           }
         end

@@ -23,7 +23,7 @@ module PactBroker
 
         let(:options) { { webhook_execution_configuration: webhook_execution_configuration } }
         let(:webhook_execution_configuration) { instance_double(PactBroker::Webhooks::ExecutionConfiguration) }
-        let(:params) { {'success' => true, 'providerApplicationVersion' => '4.5.6'} }
+        let(:params) { { 'success' => true, 'providerApplicationVersion' => '4.5.6', 'wip' => true, 'testResults' => { 'some' => 'results' }} }
         let(:pact) do
           td.create_pact_with_hierarchy
             .create_provider_version('4.5.6')
@@ -33,14 +33,16 @@ module PactBroker
         let(:create_verification) { subject.create 3, params, pact, options }
 
         it "logs the creation" do
-          expect(logger).to receive(:info).with(/.*verification.*3.*success/)
+          expect(logger).to receive(:info).with(/.*verification.*3/, payload: {"providerApplicationVersion"=>"4.5.6", "success"=>true, "wip"=>true})
           create_verification
         end
 
         it "sets the verification attributes" do
           verification = create_verification
+          expect(verification.wip).to be true
           expect(verification.success).to be true
           expect(verification.number).to eq 3
+          expect(verification.test_results).to eq 'some' => 'results'
         end
 
         it "sets the pact content for the verification" do

@@ -58,19 +58,23 @@ module PactBroker
         "#{pactigration_base_url(base_url, pact)}/pact-version/#{pact.pact_version_sha}"
       end
 
-      def pact_version_url_with_metadata pact, base_url = ''
-        "#{pactigration_base_url(base_url, pact)}/pact-version/#{pact.pact_version_sha}/metadata/#{build_webhook_metadata(pact)}"
+      def pact_version_url_with_metadata pact, metadata, base_url = ''
+        if metadata && metadata.any?
+          "#{pact_version_url(pact, base_url)}/#{encode_metadata(metadata)}"
+        else
+          pact_version_url(pact, base_url)
+        end
       end
 
-      def build_webhook_metadata(pact)
-        encode_webhook_metadata(build_metadata_for_webhook_triggered_by_pact_publication(pact))
+      def pact_version_url_with_webhook_metadata pact, base_url = ''
+        pact_version_url_with_metadata(pact, build_metadata_for_webhook_triggered_by_pact_publication(pact), base_url)
       end
 
-      def encode_webhook_metadata(metadata)
+      def encode_metadata(metadata)
         Base64.strict_encode64(Rack::Utils.build_nested_query(metadata))
       end
 
-      def decode_webhook_metadata(metadata)
+      def decode_pact_metadata(metadata)
         if metadata
           begin
             Rack::Utils.parse_nested_query(Base64.strict_decode64(metadata)).each_with_object({}) do | (k, v), new_hash |

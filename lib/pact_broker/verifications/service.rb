@@ -21,10 +21,11 @@ module PactBroker
       end
 
       def create next_verification_number, params, pact, webhook_options
-        logger.info "Creating verification #{next_verification_number} for pact_id=#{pact.id} from params #{params.reject{ |k,_| k == "testResults"}}"
+        logger.info "Creating verification #{next_verification_number} for pact_id=#{pact.id}", payload: params.reject{ |k,_| k == "testResults"}
         verification = PactBroker::Domain::Verification.new
         provider_version_number = params.fetch('providerApplicationVersion')
         PactBroker::Api::Decorators::VerificationDecorator.new(verification).from_hash(params)
+        verification.wip = params.fetch('wip')
         verification.number = next_verification_number
         verification = verification_repository.create(verification, provider_version_number, pact)
 

@@ -5,7 +5,7 @@ module PactBroker
     module Decorators
       describe VerifiablePactDecorator do
         before do
-          allow_any_instance_of(PactBroker::Api::PactBrokerUrls).to receive(:pact_version_url).and_return('http://pact')
+          allow_any_instance_of(PactBroker::Api::PactBrokerUrls).to receive(:pact_version_url_with_metadata).and_return('http://pact')
           allow(PactBroker::Pacts::BuildVerifiablePactNotices).to receive(:call).and_return(notices)
           allow_any_instance_of(PactBroker::Pacts::VerifiablePactMessages).to receive(:pact_version_short_description).and_return('short desc')
         end
@@ -61,7 +61,7 @@ module PactBroker
         end
 
         it "creates the pact version url" do
-          expect(decorator).to receive(:pact_version_url).with(pact, 'http://example.org')
+          expect(decorator).to receive(:pact_version_url_with_metadata).with(pact, nil, 'http://example.org')
           subject
         end
 
@@ -83,6 +83,11 @@ module PactBroker
 
           it "includes the wip flag" do
             expect(subject['verificationProperties']['wip']).to be true
+          end
+
+          it "includes it in the metadata" do
+            expect(decorator).to receive(:pact_version_url_with_metadata).with(pact, { wip: true }, 'http://example.org')
+            subject
           end
         end
       end

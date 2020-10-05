@@ -111,25 +111,26 @@ module PactBroker
         end
 
         it "builds the webhook metadata" do
-          expect(PactBrokerUrls.decode_webhook_metadata(PactBrokerUrls.build_webhook_metadata(pact))).to eq (expected_metadata)
+          encoded_metadata = PactBrokerUrls.encode_metadata(PactBrokerUrls.build_metadata_for_webhook_triggered_by_pact_publication(pact))
+          expect(PactBrokerUrls.decode_pact_metadata(encoded_metadata)).to eq (expected_metadata)
         end
       end
 
-      describe "decode_webhook_metadata" do
+      describe "decode_pact_metadata" do
         context "when the metadata is nil" do
           it "returns an empty hash" do
-            expect(PactBrokerUrls.decode_webhook_metadata(nil)).to eq({})
+            expect(PactBrokerUrls.decode_pact_metadata(nil)).to eq({})
           end
         end
 
         context "when the metadata is not valid base64" do
           it "returns an empty hash" do
-            expect(PactBrokerUrls.decode_webhook_metadata("foo==,")).to eq({})
+            expect(PactBrokerUrls.decode_pact_metadata("foo==,")).to eq({})
           end
 
           it "logs a warning" do
             expect(logger).to receive(:warn).with("Exception parsing webhook metadata: foo==,", ArgumentError)
-            PactBrokerUrls.decode_webhook_metadata("foo==,")
+            PactBrokerUrls.decode_pact_metadata("foo==,")
           end
         end
       end

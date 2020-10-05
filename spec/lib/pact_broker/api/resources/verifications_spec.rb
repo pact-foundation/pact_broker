@@ -24,7 +24,7 @@ module PactBroker
           before do
             allow(PactBroker::Verifications::Service).to receive(:create).and_return(verification)
             allow(PactBroker::Verifications::Service).to receive(:errors).and_return(double(:errors, messages: ['errors'], empty?: errors_empty))
-            allow(PactBrokerUrls).to receive(:decode_webhook_metadata).and_return(parsed_metadata)
+            allow(PactBrokerUrls).to receive(:decode_pact_metadata).and_return(parsed_metadata)
             allow_any_instance_of(Verifications).to receive(:webhook_execution_configuration).and_return(webhook_execution_configuration)
             allow(webhook_execution_configuration).to receive(:with_webhook_context).and_return(webhook_execution_configuration)
           end
@@ -65,7 +65,7 @@ module PactBroker
             end
 
             it "parses the webhook metadata" do
-              expect(PactBrokerUrls).to receive(:decode_webhook_metadata).with("abcd")
+              expect(PactBrokerUrls).to receive(:decode_pact_metadata).with("abcd")
               subject
             end
 
@@ -85,7 +85,7 @@ module PactBroker
             it "stores the verification in the database" do
               expect(PactBroker::Verifications::Service).to receive(:create).with(
                 next_verification_number,
-                hash_including('some' => 'params'),
+                hash_including('some' => 'params', 'wip' => false),
                 pact,
                 {
                   webhook_execution_configuration: webhook_execution_configuration,
@@ -103,6 +103,20 @@ module PactBroker
 
             it "returns the serialised verification in the response body" do
               expect(subject.body).to eq serialised_verification
+            end
+
+            context "when the verification is for a wip pact" do
+              let(:parsed_metadata) { { wip: true } }
+
+              it "merges that into the verification params" do
+                expect(PactBroker::Verifications::Service).to receive(:create).with(
+                  anything,
+                  hash_including('wip' => true),
+                  anything,
+                  anything
+                )
+                subject
+              end
             end
           end
 

@@ -10,7 +10,7 @@ module PactBroker
     describe Render do
       describe "#call" do
         before do
-          allow(PactBroker::Api::PactBrokerUrls).to receive(:pact_version_url_with_metadata).and_return("http://foo")
+          allow(PactBroker::Api::PactBrokerUrls).to receive(:pact_version_url_with_webhook_metadata).and_return("http://foo")
           allow(PactBroker::Api::PactBrokerUrls).to receive(:verification_url) do | verification, base_url |
             expect(verification).to_not be nil
             "http://verification"

@@ -48,7 +48,7 @@ module PactBroker
         end
 
         def from_json
-          verification = verification_service.create(next_verification_number, params(symbolize_names: false), pact, webhook_options)
+          verification = verification_service.create(next_verification_number, verification_params, pact, webhook_options)
           response.body = decorator_for(verification).to_json(decorator_options)
           true
         end
@@ -72,7 +72,11 @@ module PactBroker
         end
 
         def metadata
-          PactBrokerUrls.decode_webhook_metadata(identifier_from_path[:metadata])
+          PactBrokerUrls.decode_pact_metadata(identifier_from_path[:metadata])
+        end
+
+        def wip?
+          metadata[:wip] == true
         end
 
         def webhook_options
@@ -81,6 +85,10 @@ module PactBroker
             webhook_execution_configuration: webhook_execution_configuration
                                       .with_webhook_context(metadata)
           }
+        end
+
+        def verification_params
+          params(symbolize_names: false).merge('wip' => wip?)
         end
       end
     end

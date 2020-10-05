@@ -38,7 +38,7 @@ module PactBroker
 
       def to_hash
         @hash ||= {
-          PACT_URL => pact ? PactBroker::Api::PactBrokerUrls.pact_version_url_with_metadata(pact, base_url) : "",
+          PACT_URL => pact ? PactBroker::Api::PactBrokerUrls.pact_version_url_with_webhook_metadata(pact, base_url) : "",
           VERIFICATION_RESULT_URL => verification_url,
           CONSUMER_VERSION_NUMBER => consumer_version_number,
           PROVIDER_VERSION_NUMBER => verification ? verification.provider_version_number : "",
