@@ -55,7 +55,7 @@ module PactBroker::Api
             before do
               allow(PactBroker::Api::Decorators::PactDecorator).to receive(:new).and_return(decorator)
               allow(PactBroker::Pacts::Metadata).to receive(:build_metadata_for_latest_pact).and_return(metadata)
-              allow_any_instance_of(LatestPact).to receive(:encode_webhook_metadata).and_return('encoded metadata')
+              allow_any_instance_of(LatestPact).to receive(:encode_metadata).and_return('encoded metadata')
             end
 
             it "builds the metadata" do
@@ -64,7 +64,7 @@ module PactBroker::Api
             end
 
             it "encodes the metadata" do
-              expect_any_instance_of(LatestPact).to receive(:encode_webhook_metadata).with(metadata)
+              expect_any_instance_of(LatestPact).to receive(:encode_metadata).with(metadata)
               subject
             end
 

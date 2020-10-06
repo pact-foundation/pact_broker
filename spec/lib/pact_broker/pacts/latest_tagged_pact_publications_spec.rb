@@ -87,7 +87,7 @@ module PactBroker
             .create_consumer_version_tag("dev")
         end
 
-        let(:selector) { PactBroker::Matrix::UnresolvedSelector.new(tag: true, latest: true, max_age: 3) }
+        let(:selector) { PactBroker::Matrix::UnresolvedSelector.new(tag: true, latest: true, max_age: 5) }
 
         it "returns matching rows" do
           expect(subject.count).to eq 1

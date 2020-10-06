@@ -50,7 +50,7 @@ module PactBroker
         end
 
         def metadata
-          @metadata ||= encode_webhook_metadata(PactBroker::Pacts::Metadata.build_metadata_for_latest_pact(pact, identifier_from_path))
+          @metadata ||= encode_metadata(PactBroker::Pacts::Metadata.build_metadata_for_latest_pact(pact, identifier_from_path))
         end
       end
     end
