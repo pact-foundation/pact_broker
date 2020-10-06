@@ -85,7 +85,7 @@ module PactBroker
             it "stores the verification in the database" do
               expect(PactBroker::Verifications::Service).to receive(:create).with(
                 next_verification_number,
-                hash_including('some' => 'params', 'wip' => false),
+                hash_including('some' => 'params', 'wip' => 'false'),
                 pact,
                 {
                   webhook_execution_configuration: webhook_execution_configuration,
@@ -106,7 +106,7 @@ module PactBroker
             end
 
             context "when the verification is for a wip pact" do
-              let(:parsed_metadata) { { wip: true } }
+              let(:parsed_metadata) { { wip: 'true' } }
 
               it "merges that into the verification params" do
                 expect(PactBroker::Verifications::Service).to receive(:create).with(

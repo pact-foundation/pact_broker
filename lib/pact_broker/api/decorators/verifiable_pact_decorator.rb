@@ -21,7 +21,7 @@ module PactBroker
 
           def notices(user_options)
             metadata = represented.wip ? { wip: true } : nil
-            pact_url = pact_version_url_with_metadata(represented, represented.wip, user_options[:base_url])
+            pact_url = pact_version_url_with_metadata(represented, metadata, user_options[:base_url])
             PactBroker::Pacts::BuildVerifiablePactNotices.call(represented, pact_url, user_options)
           end
         end

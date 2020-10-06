@@ -60,7 +60,7 @@ module PactBroker
 
       def pact_version_url_with_metadata pact, metadata, base_url = ''
         if metadata && metadata.any?
-          "#{pact_version_url(pact, base_url)}/#{encode_metadata(metadata)}"
+          "#{pact_version_url(pact, base_url)}/metadata/#{encode_metadata(metadata)}"
         else
           pact_version_url(pact, base_url)
         end

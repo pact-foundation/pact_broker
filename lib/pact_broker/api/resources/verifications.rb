@@ -76,7 +76,7 @@ module PactBroker
         end
 
         def wip?
-          metadata[:wip] == true
+          metadata[:wip] == 'true'
         end
 
         def webhook_options
