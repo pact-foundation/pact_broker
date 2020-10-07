@@ -233,6 +233,11 @@ RSpec.describe "the lifecycle of a WIP pact" do
           pact_url = wip_pact_url_from(pacts_for_verification_response)
           pact_response = get_pact(pact_url)
 
+          # however feat-x pact is no longer pending because it has a successful verification from master!!!
+          # Question: do we want this behaviour? Or should pending use the same logic?
+          expect(wip_pacts_from(pacts_for_verification_response).first['verificationProperties']['wip']).to be true
+          expect(wip_pacts_from(pacts_for_verification_response).first['verificationProperties']['pending']).to be nil
+
           # verify pact... success!
 
           # publish success verification results
