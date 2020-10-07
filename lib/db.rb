@@ -27,7 +27,9 @@ module DB
   def self.connect db_credentials
     # Keep this conifiguration in sync with lib/pact_broker/app.rb#configure_database_connection
     Sequel.datetime_class = DateTime
-    # logger = Logger.new($stdout)
+    if ENV['DEBUG'] == 'true'
+      logger = Logger.new($stdout)
+    end
     con = Sequel.connect(db_credentials.merge(:logger => logger, :pool_class => Sequel::ThreadedConnectionPool, :encoding => 'utf8'))
     con.extension(:connection_validator)
     con.extension(:pagination)
