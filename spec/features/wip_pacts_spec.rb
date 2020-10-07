@@ -342,6 +342,7 @@ RSpec.describe "the lifecycle of a WIP pact" do
           pact_response = get_pact(pact_url)
           verification_results_url = verification_results_url_from(pact_response)
           publish_verification_results("2", "feat-y", verification_results_url, true)
+          sleep 1 if ::DB.mysql? # time resolution is lower on MySQL, need to make sure the next pacts are created after the above provider version
 
           # CONSUMER BUILD - feature branch again
           # republish same pact content with new version
