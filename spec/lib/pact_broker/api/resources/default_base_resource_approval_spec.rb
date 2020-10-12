@@ -7,7 +7,8 @@ module PactBroker
         let(:pact_broker_resource_classes) do
           all_resources = ObjectSpace.each_object(::Class)
             .select { |klass| klass < DefaultBaseResource }
-            .reject { |klass| klass.name&.end_with?("BaseResource") }
+            .select(&:name)
+            .reject { |klass| klass.name.end_with?("BaseResource") }
             .sort_by(&:name)
         end
 
