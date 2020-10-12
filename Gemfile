@@ -25,6 +25,7 @@ group :test do
   gem 'timecop', '~> 0.9'
   gem 'faraday', '~>0.15'
   gem 'docker-api', '~>1.34'
+  gem 'approvals', '~>0.0.1', '< 1'
 end
 
 if ENV['INSTALL_MYSQL'] == "true"
