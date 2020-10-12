@@ -48,6 +48,5 @@ module PactBroker
         end
       end
     end
-
   end
 end

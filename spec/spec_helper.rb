@@ -12,12 +12,17 @@ require 'rspec/pact/matchers'
 require 'sucker_punch/testing/inline'
 require 'webmock/rspec'
 require 'pact_broker/policies'
+require 'approvals/rspec'
 
 Dir.glob("./spec/support/**/*.rb") { |file| require file  }
 
 WebMock.disable_net_connect!(allow_localhost: true)
 
 I18n.config.enforce_available_locales = false
+
+Approvals.configure do |c|
+  c.approvals_path = 'spec/fixtures/approvals/'
+end
 
 RSpec.configure do | config |
   config.before :each do
