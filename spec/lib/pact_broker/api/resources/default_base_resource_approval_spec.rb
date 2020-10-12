@@ -1,3 +1,5 @@
+require 'pact_broker/api/resources'
+
 module PactBroker
   module Api
     module Resources
@@ -5,7 +7,7 @@ module PactBroker
         let(:pact_broker_resource_classes) do
           all_resources = ObjectSpace.each_object(::Class)
             .select { |klass| klass < DefaultBaseResource }
-            .select { |klass| !klass.name.end_with?("BaseResource") }
+            .reject { |klass| klass.name&.end_with?("BaseResource") }
             .sort_by(&:name)
         end
 
