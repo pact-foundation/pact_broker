@@ -1,3 +1,23 @@
+<a name="v2.67.0"></a>
+### v2.67.0 (2020-10-16)
+
+#### Features
+
+* **wip pacts**
+  * if a pact was successfully verified because it was included as a WIP pact, keep it as WIP	 ([16cae55d](/../../commit/16cae55d))
+  * add 'wip' column to verification results	 ([34f98592](/../../commit/34f98592))
+
+#### Bug Fixes
+
+* typo when rendering created webhook for old webhooks path	 ([1e6a06a0](/../../commit/1e6a06a0))
+* include can-i-deploy badge in is_badge_path? logic	 ([31ea5f34](/../../commit/31ea5f34))
+
+* **pacts for verification**
+  * gracefully log empty request body	 ([0e48d13a](/../../commit/0e48d13a))
+
+* **can-i-deploy**
+  * gracefully handle pacticipant not found	 ([f6903b23](/../../commit/f6903b23))
+
 <a name="v2.66.0"></a>
 ### v2.66.0 (2020-10-01)
 
