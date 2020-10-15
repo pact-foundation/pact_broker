@@ -123,4 +123,22 @@ describe "Creating a webhook" do
       expect(PactBroker::Webhooks::Webhook.first.provider).to_not be nil
     end
   end
+
+  context "with the old path" do
+    let(:path) { "/pacts/provider/Some%20Provider/consumer/Some%20Consumer/webhooks" }
+
+    its(:status) { is_expected.to be 201 }
+
+    it "returns the Location header" do
+      expect(subject.headers['Location']).to match(%r{http://example.org/webhooks/.+})
+    end
+
+    it "returns a JSON Content Type" do
+      expect(subject.headers['Content-Type']).to eq 'application/hal+json;charset=utf-8'
+    end
+
+    it "returns the newly created webhook" do
+      expect(response_body).to include webhook_hash
+    end
+  end
 end
