@@ -52,7 +52,7 @@ module PactBroker
       end
 
       def warning_messages
-        warnings_for_missing_interactions
+        []
       end
 
       def specified_selectors_that_do_not_exist
