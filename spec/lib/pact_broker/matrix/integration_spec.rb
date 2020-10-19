@@ -455,7 +455,7 @@ module PactBroker
 
           let(:options) { { latestby: "cvpv"} }
 
-          it "should include a warning" do
+          xit "should include a warning" do
             expect(subject.deployment_status_summary.reasons.last).to be_a(PactBroker::Matrix::InteractionsMissingVerifications)
           end
         end
