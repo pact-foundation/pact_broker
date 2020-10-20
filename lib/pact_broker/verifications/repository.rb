@@ -87,20 +87,27 @@ module PactBroker
       # belonging to the version with the largest consumer_version_order.
 
       def find_latest_verification_for consumer_name, provider_name, consumer_version_tag = nil
-        query = LatestVerificationForPactVersion
+        consumer = pacticipant_repository.find_by_name!(consumer_name)
+        provider = pacticipant_repository.find_by_name!(provider_name)
+        join_cols = {
+          Sequel[:lp][:pact_version_id] => Sequel[:verifications][:pact_version_id],
+          Sequel[:lp][:consumer_id] => consumer.id,
+          Sequel[:lp][:provider_id] => provider.id
+        }
+        query = PactBroker::Domain::Verification
           .select_all_qualified
-          .join(:all_pact_publications, pact_version_id: :pact_version_id)
-          .consumer(consumer_name)
-          .provider(provider_name)
+          .join(:latest_verification_ids_for_pact_versions, { Sequel[:verifications][:id] => Sequel[:lv][:latest_verification_id] }, { table_alias: :lv })
+          .join(:latest_pact_publication_ids_for_consumer_versions, join_cols, { table_alias: :lp })
+          .join(:versions, { Sequel[:cv][:id] => Sequel[:lp][:consumer_version_id] }, { table_alias: :cv })
         if consumer_version_tag == :untagged
-          query = query.untagged
+          query = query.left_outer_join(:tags, { Sequel[:cv][:id] => Sequel[:tags][:version_id] })
+                        .where(Sequel[:tags][:name] => nil)
         elsif consumer_version_tag
-          query = query.tag(consumer_version_tag)
+          query = query.join(:tags, { Sequel[:cv][:id] => Sequel[:tags][:version_id], Sequel[:tags][:name] => consumer_version_tag })
         end
         query.reverse_order(
-          Sequel[:all_pact_publications][:consumer_version_order],
-          Sequel[:all_pact_publications][:revision_number],
-          Sequel[LatestVerificationForPactVersion.table_name][:number]
+          Sequel[:cv][:order],
+          Sequel[:verifications][:number]
         ).limit(1).single_record
       end
 
