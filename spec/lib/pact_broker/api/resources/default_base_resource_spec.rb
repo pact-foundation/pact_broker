@@ -147,7 +147,7 @@ module PactBroker
           end
           let(:request) { double('request', uri: URI("http://example.org"), path_info: path_info).as_null_object }
           let(:path_info) { {} }
-          let(:response) { double('response') }
+          let(:response) { double('response').as_null_object }
           let(:resource) { resource_class.new(request, response) }
 
           it "includes OPTIONS in the list of allowed_methods" do
