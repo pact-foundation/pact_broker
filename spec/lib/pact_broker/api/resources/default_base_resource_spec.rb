@@ -141,7 +141,12 @@ module PactBroker
 
       ALL_RESOURCES.each do | resource_class |
         describe resource_class do
-          let(:request) { double('request', uri: URI("http://example.org")).as_null_object }
+          before do
+            # stub out all path info params for pf
+            allow(path_info).to receive(:[]).and_return('1')
+          end
+          let(:request) { double('request', uri: URI("http://example.org"), path_info: path_info).as_null_object }
+          let(:path_info) { {} }
           let(:response) { double('response') }
           let(:resource) { resource_class.new(request, response) }
 
