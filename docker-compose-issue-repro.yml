@@ -1,0 +1,18 @@
+version: "3"
+
+services:
+  pact-broker:
+    build:
+      context: .
+      dockerfile: issue-reproduction/Dockerfile-pact-broker
+    ports:
+      - "9292:9292"
+    command: bundle exec rackup -p 9292 -o 0.0.0.0
+
+  repro-issue:
+    build:
+      context: .
+      dockerfile: issue-reproduction/Dockerfile-pact-broker
+    depends_on:
+      - pact-broker
+    command: dockerize -wait http://pact-broker:9292 -timeout 30s /home/script/reproduce-issue.rb
