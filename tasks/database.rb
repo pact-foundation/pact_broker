@@ -35,6 +35,7 @@ module PactBroker
     def drop_objects
       drop_views
       drop_tables
+      drop_sequences
     end
 
     def drop_tables
@@ -53,6 +54,12 @@ module PactBroker
           # Cascade will have deleted some views already with pg
           raise e unless e.cause.class.name == 'PG::UndefinedTable'
         end
+      end
+    end
+
+    def drop_sequences
+      if psql?
+        database.run('DROP SEQUENCE verification_number_sequence')
       end
     end
 

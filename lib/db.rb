@@ -60,6 +60,10 @@ module DB
     !!(PACT_BROKER_DB.adapter_scheme.to_s =~ /mysql/)
   end
 
+  def self.postgres?
+    !!(PACT_BROKER_DB.adapter_scheme.to_s == "postgres")
+  end
+
   PACT_BROKER_DB ||= connection_for_env ENV.fetch('RACK_ENV')
 
   def self.health_check
