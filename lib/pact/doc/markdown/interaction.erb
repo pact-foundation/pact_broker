@@ -1,6 +1,6 @@
-<a name="<%= interaction.id %>"></a>
-<%= if interaction.has_provider_state?
-  "Given **#{h(interaction.provider_state)}**, upon receiving"
+<a name="<%= interaction.id %>"></a><% formatted_provider_states = h(interaction.formatted_provider_states mark_bold: true) %>
+<%= if !formatted_provider_states.empty?
+  "Given #{formatted_provider_states}, upon receiving"
    else
   "Upon receiving"
    end

@@ -1,0 +1,44 @@
+{
+  "provider": {
+    "name": "Some Provider"
+  },
+  "consumer": {
+    "name": "Some Consumer"
+  },
+  "interactions": [
+    {
+      "description": "a request to list all alligators in Tel Aviv",
+      "providerStates": [
+        {"name": "alligators exist", "params" : {}}, 
+        {"name": "the city of Tel Aviv has a zoo", "params" : {}},
+        {"name": "the zoo keeps record of its alligator population", "params" : {}}
+      ],
+      "params": {},
+      "request": {
+        "method": "get",
+        "path": "/alligators"
+      },
+      "response": {
+        "headers" : {"Content-Type": "application/json"},
+        "status" : 200,
+        "body" : {
+          "alligators": [{
+            "name": "Bob",
+            "phoneNumber" : {
+              "json_class": "Pact::Term",
+              "data": {
+                "generate": "12345678",
+                "matcher": {"json_class":"Regexp","o":0,"s":"\\d+"}
+              }
+            }
+          }]
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "pactSpecification": {
+      "version": "3.0.0"
+    }
+  }
+}

@@ -12,6 +12,17 @@ module Pact
         subject { ConsumerContractRenderer.new(consumer_contract) }
 
         describe "#call" do
+          context "when using V3 specification" do
+            context "when an interaction has multiple provider states" do
+              let(:consumer_contract) { Pact::ConsumerContract.from_uri './spec/support/markdown_pact_v3.json' }
+
+              it "displays all provider states in the interaction title" do
+                expect(subject.call).to include 'Given **alligators exist** and **the city of Tel Aviv has a zoo** ' \
+                                                'and **the zoo keeps record of its alligator population**, upon receiving'
+              end
+            end
+          end
+
           context "with markdown characters in the pacticipant names" do
             let(:consumer_contract) { Pact::ConsumerContract.from_uri './spec/support/markdown_pact_with_markdown_chars_in_names.json' }
 
