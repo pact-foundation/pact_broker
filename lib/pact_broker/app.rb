@@ -213,7 +213,7 @@ module PactBroker
       builder.use @make_it_later_api_auth
       builder.use Rack::PactBroker::Convert404ToHal
       builder.use Rack::PactBroker::DatabaseTransaction, configuration.database_connection
-      builder.run Rack::Cascade.new(api_apps)
+      builder.run Rack::Cascade.new(api_apps, [404])
       builder
     end
 
@@ -244,7 +244,7 @@ module PactBroker
         prepare_app
         apps = @cascade_apps
         @app_builder.map "/" do
-          run Rack::Cascade.new(apps)
+          run Rack::Cascade.new(apps, [404])
         end
         @app_builder
       end
