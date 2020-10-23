@@ -1,3 +1,13 @@
+<a name="v2.68.0"></a>
+### v2.68.0 (2020-10-23)
+
+#### Features
+
+* use a sequence for the version order on postgres	 ([da497a76](/../../commit/da497a76))
+* only cascade apps for 404s (not 405s)	 ([4e1b3083](/../../commit/4e1b3083))
+* use a sequence for the verification number on postgres	 ([b8f029ee](/../../commit/b8f029ee))
+* optimise query to find latest verification for pact	 ([db17ef5a](/../../commit/db17ef5a))
+
 <a name="v2.67.0"></a>
 ### v2.67.0 (2020-10-16)
 
