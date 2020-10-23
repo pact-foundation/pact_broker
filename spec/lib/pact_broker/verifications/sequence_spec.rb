@@ -7,8 +7,8 @@ module PactBroker
         context "for proper databases with proper sequences", skip: !::DB.postgres? do
           it "increments the value each time" do
             PactBroker::Database.migrate
-            expect(Sequence.next_val).to eq 101
-            expect(Sequence.next_val).to eq 102
+            expect(Sequence.next_val).to eq 200
+            expect(Sequence.next_val).to eq 201
           end
 
           it "can rollback without duplicating a sequence number" do
@@ -18,7 +18,7 @@ module PactBroker
             Sequence.next_val
             PactBroker::Database.migrate(20201006)
             row = database.from(:verification_sequence_number).select(:value).limit(1).first
-            expect(row[:value]).to eq 202
+            expect(row[:value]).to eq 301
           end
 
           it "can deal with there not being an existing value in the verification_sequence_number table" do
