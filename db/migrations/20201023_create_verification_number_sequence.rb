@@ -4,7 +4,7 @@ Sequel.migration do
   up do
     if PactBroker::MigrationHelper.postgres?
       row = from(:verification_sequence_number).select(:value).limit(1).first
-      start = row ? row[:value] + 1 : 1
+      start = row ? row[:value] + 100 : 1
       run("CREATE SEQUENCE verification_number_sequence START WITH #{start}")
     end
   end

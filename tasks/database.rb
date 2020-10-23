@@ -60,6 +60,7 @@ module PactBroker
     def drop_sequences
       if psql?
         database.run('DROP SEQUENCE verification_number_sequence')
+        database.run('DROP SEQUENCE version_order_sequence')
       end
     end
 
