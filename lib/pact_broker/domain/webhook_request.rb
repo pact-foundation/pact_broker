@@ -9,6 +9,7 @@ require 'cgi'
 require 'delegate'
 require 'rack/utils'
 require 'pact_broker/webhooks/webhook_request_logger'
+require 'pact_broker/configuration'
 
 module PactBroker
   module Domain
@@ -61,7 +62,7 @@ module PactBroker
         @http_request ||= begin
           req = Net::HTTP.const_get(method.capitalize).new(uri.request_uri)
           req.delete("accept-encoding")
-          req.delete("user-agent")
+          req["user-agent"] = PactBroker.configuration.user_agent
           headers.each_pair { | name, value | req[name] = value }
           req.basic_auth(username, password) if username && username.size > 0
           req.body = body unless body.nil?

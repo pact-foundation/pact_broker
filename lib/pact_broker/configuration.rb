@@ -1,3 +1,4 @@
+require 'pact_broker/version'
 require 'pact_broker/error'
 require 'pact_broker/config/space_delimited_string_list'
 require 'semantic_logger'
@@ -46,6 +47,7 @@ module PactBroker
     attr_accessor :warning_error_class_names
     attr_accessor :check_for_potential_duplicate_pacticipant_names
     attr_accessor :webhook_retry_schedule
+    attr_accessor :user_agent
     attr_reader :webhook_http_method_whitelist, :webhook_scheme_whitelist, :webhook_host_whitelist
     attr_accessor :semver_formats
     attr_accessor :enable_public_badge_access, :shields_io_base_url, :badge_provider_mode
@@ -93,6 +95,7 @@ module PactBroker
         require 'pact_broker/db/seed_example_data'
         PactBroker::DB::SeedExampleData.call
       end
+      config.user_agent = "Pact Broker v#{PactBroker::VERSION}"
       config.base_equality_only_on_content_that_affects_verification_results = true
       config.order_versions_by_date = true
       config.semver_formats = ["%M.%m.%p%s%d", "%M.%m", "%M"]

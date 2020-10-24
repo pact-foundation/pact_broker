@@ -77,7 +77,7 @@ module PactBroker
       describe "execute" do
         let!(:http_request) do
           stub_request(:post, "http://example.org/hook").
-            with(:headers => {'Content-Type'=>'text/plain'}, :body => request_body).
+            with(:headers => {'Content-Type'=>'text/plain', 'User-Agent' => /Pact Broker/}, :body => request_body).
             to_return(:status => status, :body => "respbod", :headers => {'Content-Type' => 'text/foo, blah'})
         end
 
