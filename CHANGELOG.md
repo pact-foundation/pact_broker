@@ -1,3 +1,10 @@
+<a name="v2.68.1"></a>
+### v2.68.1 (2020-10-24)
+
+#### Bug Fixes
+
+* set default User-Agent header in webhook requests	 ([caa71f9b](/../../commit/caa71f9b))
+
 <a name="v2.68.0"></a>
 ### v2.68.0 (2020-10-23)
 
