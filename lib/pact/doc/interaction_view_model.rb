@@ -8,6 +8,8 @@ module Pact
 
       include Pact::ActiveSupportSupport
 
+      MARKDOWN_BOLD_CHARACTERS = '**'
+
       def initialize interaction, consumer_contract
         @interaction = interaction
         @consumer_contract = consumer_contract
@@ -50,6 +52,16 @@ module Pact
 
       def provider_state start_of_sentence = false
         markdown_escape apply_capitals(@interaction.provider_state.strip, start_of_sentence)
+      end
+
+      def formatted_provider_states mark_bold: false
+        bold_marker = mark_bold ? MARKDOWN_BOLD_CHARACTERS : ''
+
+        (@interaction.provider_states || []).map do |ps| 
+          "#{bold_marker}" \
+          "#{markdown_escape(apply_capitals(ps.name.strip, false))}" \
+          "#{bold_marker}"
+        end.join(' and ')
       end
 
       def description start_of_sentence = false

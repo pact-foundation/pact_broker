@@ -13,7 +13,8 @@ module Pact
         end
 
         def render_summary
-          suffix = interaction.has_provider_state? ? " given #{h(interaction.provider_state)}" : ""
+          formatted_provider_states = h(interaction.formatted_provider_states)
+          suffix = formatted_provider_states.empty? ? "" : " given #{formatted_provider_states}"
           "* [#{h(interaction.description(true))}](##{interaction.id})#{suffix}\n\n"
         end
 

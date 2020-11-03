@@ -181,6 +181,52 @@ module Pact
           end
         end
       end
+
+      describe "formatted_provider_states" do
+        let(:consumer_contract) { Pact::ConsumerContract.from_uri './spec/support/markdown_pact.json' }
+        let(:interaction) { consumer_contract.interactions.first }
+
+        context "when no provider state" do
+          let(:interaction) { consumer_contract.interactions.last }
+
+          it "returns an empty string" do
+            expect(subject.formatted_provider_states).to eq ""
+          end
+        end
+
+        context "when marking provider states in bold" do
+          it "formats the provider state in bold" do
+            expect(subject.formatted_provider_states mark_bold: true).to eq "**alligators exist**"
+          end
+        end
+        
+        context "when not marking provider states in bold" do
+          it "formats the provider state without bold" do
+            expect(subject.formatted_provider_states).to eq "alligators exist"
+          end
+        end
+
+        context "when using v3 specification" do
+          let(:consumer_contract) { Pact::ConsumerContract.from_uri './spec/support/markdown_pact_v3.json' }
+          let(:interaction) { consumer_contract.interactions.first }
+
+          context "when marking provider states in bold" do
+            it "formats the provider states in bold" do
+              expected_result = '**alligators exist** and **the city of Tel Aviv has a zoo** ' \
+                                'and **the zoo keeps record of its alligator population**'
+              expect(subject.formatted_provider_states mark_bold: true).to eq expected_result
+            end
+          end
+
+          context "when not marking provider states in bold" do
+            it "formats the provider states without bold" do
+              expected_result = 'alligators exist and the city of Tel Aviv has a zoo ' \
+                                'and the zoo keeps record of its alligator population'
+              expect(subject.formatted_provider_states).to eq expected_result
+            end
+          end
+        end
+      end
     end
   end
 end
