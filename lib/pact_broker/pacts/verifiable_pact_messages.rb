@@ -29,7 +29,7 @@ module PactBroker
         version_text = head_consumer_tags.size == 1 ? "version" : "versions"
         if wip?
           # WIP pacts will always have tags, because it is part of the definition of being a WIP pact
-          "The pact at #{pact_version_url} is being verified because it is a 'work in progress' pact (ie. it is the pact for the latest #{version_text} of Foo tagged with #{joined_head_consumer_tags} and is still in pending state). #{READ_MORE_WIP}"
+          "The pact at #{pact_version_url} is being verified because it is a 'work in progress' pact (ie. it is the pact for the latest #{version_text} of #{consumer_name} tagged with #{joined_head_consumer_tags} and is still in pending state). #{READ_MORE_WIP}"
         else
           criteria_or_criterion = selectors.size > 1 ? "criteria" : "criterion"
           "The pact at #{pact_version_url} is being verified because it matches the following configured selection #{criteria_or_criterion}: #{selector_descriptions}#{same_content_note}"
