@@ -19,11 +19,16 @@ jobs:
     #     checkInterval: 15
     #   env:
     #     GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-    - uses: pact-foundation/release-gem@v0.0.11
+    - id: release-gem
+      uses: pact-foundation/release-gem@v0.0.11
       env:
         GEM_HOST_API_KEY: '${{ secrets.RUBYGEMS_API_KEY }}'
         GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
         INCREMENT: '${{ github.event.client_payload.increment }}'
+    outputs:
+      gem_name: "${{ steps.release-gem.outputs.gem_name }}"
+      version: "${{ steps.release-gem.outputs.version }}"
+      increment: "${{ steps.release-gem.outputs.increment }}"
   notify-gem-released:
     needs: release
     strategy:
