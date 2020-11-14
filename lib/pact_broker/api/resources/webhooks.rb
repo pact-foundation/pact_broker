@@ -51,7 +51,7 @@ module PactBroker
         end
 
         def policy_name
-          :'webhooks::webhooks'
+          request.post? ? :'webhooks::webhook' : :'webhooks::webhooks'
         end
 
         private
