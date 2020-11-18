@@ -15,7 +15,7 @@ module PactBroker
         end
 
         def resource_exists?
-          consumer && provider
+          pact
         end
 
         def to_text
