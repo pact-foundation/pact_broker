@@ -8,6 +8,21 @@ module PactBroker
     class LatestPactPublications < LatestPactPublicationsByConsumerVersion
       set_dataset(:latest_pact_publications)
 
+      # def dataset_module
+      #   def where_age_less_than(days)
+      #     start_date = Date.today - days
+      #     where{ latest_pact_publications[:created_at] >= start_date }
+      #   end
+
+      #   def for_selector(selector)
+      #     query = self
+      #     query = query.where(consumer_name: selector.pacticipant_name) if selector.pacticipant_name
+      #     query = query.where(tag_name: selector.tag) if selector.tag && selector.tag.is_a?(String)
+      #     query = query.where_age_less_than(selector.max_age) if selector.max_age
+      #     query
+      #   end
+      # end
+
       # This pact may well be the latest for certain tags, but in this query
       # we don't know what they are
       def to_domain

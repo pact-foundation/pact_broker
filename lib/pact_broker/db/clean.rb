@@ -25,17 +25,17 @@ module PactBroker
       end
 
       def keep
-        options[:keep] || [PactBroker::Matrix::UnresolvedSelector.new(tag: true, latest: true)]
+        options[:keep] || [PactBroker::Matrix::UnresolvedSelector.new(tag: true, latest: true), PactBroker::Matrix::UnresolvedSelector.new(latest: true)]
       end
 
-      def resolve_ids(query)
+      def resolve_ids(query, column_name = :id)
         # query
-        Unionable.new(query.collect { |h| h[:id] })
+        Unionable.new(query.collect { |h| h[column_name] })
       end
 
       def pact_publication_ids_to_keep
         @pact_publication_ids_to_keep ||= pact_publication_ids_to_keep_for_version_ids_to_keep
-                                            .union(pact_publications_to_keep_for_verification_ids_to_keep)
+                                            .union(latest_pact_publication_ids_to_keep)
                                             .union(latest_tagged_pact_publications_ids_to_keep)
       end
 
@@ -43,14 +43,15 @@ module PactBroker
         @pact_publication_ids_to_keep_for_version_ids_to_keep ||= resolve_ids(db[:pact_publications].select(:id).where(consumer_version_id: version_ids_to_keep))
       end
 
-      def pact_publications_to_keep_for_verification_ids_to_keep
-        @pact_publications_to_keep_for_verification_ids_to_keep ||= resolve_ids(db[:pact_publications].select(:id).where(pact_version_id: db[:verifications].select(:pact_version_id).where(id: verification_ids_to_keep_for_version_ids_to_keep)))
-      end
-
       def latest_tagged_pact_publications_ids_to_keep
         @latest_tagged_pact_publications_ids_to_keep ||= resolve_ids(keep.select(&:tag).select(&:latest).collect do | selector |
           PactBroker::Pacts::LatestTaggedPactPublications.select(:id).for_selector(selector)
         end.reduce(&:union))
+      end
+
+
+      def latest_pact_publication_ids_to_keep
+        @latest_pact_publication_ids_to_keep ||= resolve_ids(db[:latest_pact_publications].select(:id))
       end
 
       def pact_publication_ids_to_delete
@@ -62,12 +63,31 @@ module PactBroker
         @verification_ids_to_keep_for_version_ids_to_keep ||= resolve_ids(db[:verifications].select(:id).where(provider_version_id: version_ids_to_keep))
       end
 
+      def verification_ids_to_keep_because_latest_verification_for_latest_pact
+        @verification_ids_to_keep_because_latest_verification ||= resolve_ids(
+          db[:latest_verification_ids_for_pact_versions]
+            .select(:latest_verification_id)
+            .where(pact_version_id:
+              db[:latest_pact_publications].select(:pact_version_id)
+            ),
+          :latest_verification_id
+        )
+      end
+
       def verification_ids_to_keep_for_pact_publication_ids_to_keep
-        @verification_ids_to_keep_for_pact_publication_ids_to_keep ||= resolve_ids(db[:verifications].select(:id).where(pact_version_id: db[:pact_publications].select(:pact_version_id).where(id: pact_publication_ids_to_keep_for_version_ids_to_keep)))
+        @verification_ids_to_keep_for_pact_publication_ids_to_keep ||= resolve_ids(
+          db[:latest_verification_id_for_pact_version_and_provider_version]
+            .select(:verification_id)
+            .where(pact_version_id:
+              db[:pact_publications]
+                .select(:pact_version_id)
+                .where(id: pact_publication_ids_to_keep_for_version_ids_to_keep)
+          )
+        )
       end
 
       def verification_ids_to_keep
-        @verification_ids_to_keep ||= verification_ids_to_keep_for_version_ids_to_keep.union(verification_ids_to_keep_for_pact_publication_ids_to_keep)
+        @verification_ids_to_keep ||= verification_ids_to_keep_for_version_ids_to_keep.union(verification_ids_to_keep_because_latest_verification_for_latest_pact)
       end
 
       def verification_ids_to_delete

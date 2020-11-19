@@ -33,6 +33,8 @@ module PactBroker
               .create_pact
               .create_consumer_version("6", tag_names: %w{foo})
               .create_pact
+              .create_consumer_version("7")
+              .create_pact
           end
 
           let(:options) { { keep: [all_prod_selector, latest_dev_selector] } }
@@ -43,12 +45,14 @@ module PactBroker
             expect(PactBroker::Domain::Version.where(number: "4").count).to be 1
             expect(PactBroker::Domain::Version.where(number: "5").count).to be 1
             expect(PactBroker::Domain::Version.where(number: "6").count).to be 1
+            expect(PactBroker::Domain::Version.where(number: "7").count).to be 1
             subject
             expect(PactBroker::Domain::Version.where(number: "1").count).to be 1
             expect(PactBroker::Domain::Version.where(number: "3").count).to be 1
             expect(PactBroker::Domain::Version.where(number: "4").count).to be 0
             expect(PactBroker::Domain::Version.where(number: "5").count).to be 1
             expect(PactBroker::Domain::Version.where(number: "6").count).to be 0
+            expect(PactBroker::Domain::Version.where(number: "7").count).to be 1 # doesn't delete overall latest
           end
         end
 
@@ -97,20 +101,12 @@ module PactBroker
             }.by(-1)
           end
 
-          it "does not delete the pact publication that belongs to the latest verification" do
-            expect{ subject }.to_not change {
-              PactBroker::Pacts::PactPublication.where(consumer_version: PactBroker::Domain::Version.where_pacticipant_name("Foo").where(number: "2")).count
-            }
-          end
-
           it "deletes the pact publication that does not belongs to the latest verification" do
             expect{ subject }.to change {
               PactBroker::Pacts::PactPublication.where(consumer_version: PactBroker::Domain::Version.where_pacticipant_name("Foo").where(number: "1")).count
             }.by(-1)
           end
         end
-
-
 
         context "with orphan pact versions" do
           before do

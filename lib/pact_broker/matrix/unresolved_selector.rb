@@ -17,6 +17,10 @@ module PactBroker
         !!latest
       end
 
+      def overall_latest?
+        latest? && !tag && !max_age
+      end
+
       def latest
         self[:latest]
       end
