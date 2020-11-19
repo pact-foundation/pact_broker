@@ -29,6 +29,7 @@ jobs:
       gem_name: "${{ steps.release-gem.outputs.gem_name }}"
       version: "${{ steps.release-gem.outputs.version }}"
       increment: "${{ steps.release-gem.outputs.increment }}"
+
   notify-gem-released:
     needs: release
     strategy:
