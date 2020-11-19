@@ -50,6 +50,14 @@ module PactBroker
           }
         end
 
+        link :'pb:pact-version' do | options |
+          {
+            title: "Pact content version permalink",
+            name: represented.pact_version_sha,
+            href: pact_version_url(represented, options.fetch(:base_url))
+          }
+        end
+
         link :'pb:latest-pact-version' do | options |
           {
             title: "Latest version of this pact",
