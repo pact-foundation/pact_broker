@@ -1,3 +1,20 @@
+<a name="v2.69.0"></a>
+### v2.69.0 (2020-11-24)
+
+#### Features
+
+* **wip**
+  * keep pacts as WIP when verified via the pactUrl passed though the webhook template parameters - experimental.	 ([a9b3fef0](/../../commit/a9b3fef0))
+
+* add link to the pact content version	 ([8eefba5f](/../../commit/8eefba5f))
+* display V3 provider states in HTML (#357)	 ([8e06a7f2](/../../commit/8e06a7f2))
+* optimise query for determining latest verification for consumer and provider	 ([7889b051](/../../commit/7889b051))
+
+#### Bug Fixes
+
+* return a 404 when the base pact for a pact diff doesn't exist	 ([74d3644d](/../../commit/74d3644d))
+* Add consumer name to inclusion reason log (#358)	 ([82901891](/../../commit/82901891))
+
 <a name="v2.68.1"></a>
 ### v2.68.1 (2020-10-24)
 
