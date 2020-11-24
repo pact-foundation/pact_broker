@@ -107,7 +107,7 @@ module PactBroker
 
       describe "webhook metadata" do
         let(:expected_metadata) do
-          { consumer_version_number: "123/456", consumer_version_tags: %w[dev] }
+          { consumer_version_number: "123/456", consumer_version_tags: %w[dev], wip: "true" }
         end
 
         it "builds the webhook metadata" do
