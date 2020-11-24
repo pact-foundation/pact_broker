@@ -1,3 +1,5 @@
+require 'pact_broker/feature_toggle'
+
 module PactBroker
   module Pacts
     module Metadata
@@ -27,10 +29,12 @@ module PactBroker
       # parameters. This is part of ensuring that verification results webhooks
       # go back to the correct consumer version number (eg for git statuses)
       def build_metadata_for_webhook_triggered_by_pact_publication(pact)
-        {
+        metadata = {
           consumer_version_number: pact.consumer_version_number,
           consumer_version_tags: pact.consumer_version_tag_names
         }
+        metadata[:wip] = "true" if PactBroker.feature_enabled?(:experimental_webhook_wip)
+        metadata
       end
     end
   end
