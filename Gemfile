@@ -36,3 +36,7 @@ end
 if ENV['INSTALL_PG'] == 'true'
   gem 'pg', '~>1.2'
 end
+
+if ENV['X_PACT_DEVELOPMENT'] == 'true'
+  gem 'pact-support', path: '../pact-support'
+end
