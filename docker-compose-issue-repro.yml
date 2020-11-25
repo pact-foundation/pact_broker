@@ -2,17 +2,21 @@ version: "3"
 
 services:
   pact-broker:
-    build:
-      context: .
-      dockerfile: issue-reproduction/Dockerfile-pact-broker
+    build: .
     ports:
       - "9292:9292"
-    command: bundle exec rackup -p 9292 -o 0.0.0.0
+    entrypoint: /usr/local/bin/start
+    environment:
+      - RACK_ENV=production
+    volumes:
+      - $PWD:/home
 
   repro-issue:
-    build:
-      context: .
-      dockerfile: issue-reproduction/Dockerfile-pact-broker
+    build: .
     depends_on:
       - pact-broker
     command: dockerize -wait http://pact-broker:9292 -timeout 30s /home/script/reproduce-issue.rb
+    environment:
+      - PACT_BROKER_BASE_URL=http://pact-broker:9292
+    volumes:
+      - $PWD:/home

@@ -99,7 +99,9 @@ module PactBroker
       end
 
       def verify_pact(index: 0, success:, provider: last_provider_name, provider_version_tag: , provider_version: )
-        url_of_pact_to_verify = @pacts_for_verification_response.body["_embedded"]["pacts"][index]["_links"]["self"]["href"]
+        pact_to_verify = @pacts_for_verification_response.body["_embedded"]["pacts"][index]
+        raise "No pact found to verify at index #{index}" unless pact_to_verify
+        url_of_pact_to_verify = pact_to_verify["_links"]["self"]["href"]
         pact_response = client.get(url_of_pact_to_verify)
         verification_results_url = pact_response.body["_links"]["pb:publish-verification-results"]["href"]
 
