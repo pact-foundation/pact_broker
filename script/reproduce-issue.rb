@@ -18,14 +18,17 @@ begin
       provider_version_tag: "main",
       include_wip_pacts_since: "2020-01-01",
       consumer_version_selectors: [{ tag: "main", latest: true }])
-    .print_pacts_for_verification
     .verify_pact(
       index: 0,
       provider_version_tag: "main",
       provider_version: "1",
       success: false
     )
-    .print_pacts_for_verification
+    .get_pacts_for_verification(
+      enable_pending: true,
+      provider_version_tag: "main",
+      include_wip_pacts_since: "2020-01-01",
+      consumer_version_selectors: [{ tag: "main", latest: true }])
     .can_i_deploy(pacticipant: "MyProvider", version: "1", to: "prod")
     .can_i_deploy(pacticipant: "MyConsumer", version: "1", to: "prod")
     .deploy_to_prod(pacticipant: "MyProvider", version: "1")

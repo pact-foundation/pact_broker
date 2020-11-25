@@ -79,7 +79,10 @@ module PactBroker
           includeWipPactsSince: include_wip_pacts_since
         }
         puts body.to_yaml
+        puts ""
         @pacts_for_verification_response = client.post("/pacts/provider/#{encode(provider)}/for-verification", body)
+
+        print_pacts_for_verification
         separate
         self
       end
@@ -94,7 +97,6 @@ module PactBroker
             "pending" => pact["verificationProperties"]["pending"]
           }.to_yaml)
         end
-        separate
         self
       end
 
