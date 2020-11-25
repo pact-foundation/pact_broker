@@ -3,24 +3,8 @@ name: Test
 on: push
 
 jobs:
-  # test:
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #     matrix:
-  #       database_adapter: ["mysql", "postgres", "sqlite"]
-  #       ruby_version: [2.5, 2.7]
-  #   env:
-  #     INSTALL_PG: ${{ matrix.database_adapter == 'postgres' }}
-  #     INSTALL_MYSQL: ${{ matrix.database_adapter == 'mysql' }}
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - uses: actions/setup-ruby@v1
-  #       with:
-  #         ruby-version: ${{ matrix.ruby_version }}
-  #     - run: "bundle install"
-  #     - run: "bundle exec rake"
   postgres:
-    runs-on: ubuntu-latest
+    runs-on: "ubuntu-latest"
     strategy:
       matrix:
         ruby_version: ["2.5", "2.7"]
@@ -36,13 +20,14 @@ jobs:
           --health-retries 5
         ports:
           - 5432:5432
-    - uses: actions/checkout@v2
-    - uses: actions/setup-ruby@v1
-      with:
-        ruby-version: ${{ matrix.ruby_version }}
-    - run: "bundle install"
-      env:
-        INSTALL_PG: "true"
-    - run: "bundle exec rake"
-      env:
-        INSTALL_PG: "true"
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby_version }}
+      - run: "bundle install"
+        env:
+          INSTALL_PG: "true"
+      - run: "bundle exec rake"
+        env:
+          INSTALL_PG: "true"
