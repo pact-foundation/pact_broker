@@ -17,5 +17,5 @@ jobs:
       - uses: actions/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby_version }}
-      - runs: "bundle install"
-      - runs: "bundle exec rake"
+      - run: "bundle install"
+      - run: "bundle exec rake"
