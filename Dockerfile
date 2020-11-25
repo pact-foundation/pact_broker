@@ -26,6 +26,7 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
 
 
 COPY Gemfile /home/Gemfile
+COPY Gemfile.lock /home/Gemfile.lock
 COPY pact_broker.gemspec /home/pact_broker.gemspec
 COPY lib/pact_broker/version.rb /home/lib/pact_broker/version.rb
 COPY .gitignore /home/.gitignore
@@ -33,9 +34,9 @@ COPY .gitignore /home/.gitignore
 RUN gem install bundler -v '~>2.0.0' \
     && bundle install --jobs 3 --retry 3
 
-RUN echo '#!/bin/sh' >> /home/start.sh
-RUN echo 'bundle exec rackup -o 0.0.0.0 -p 9292' >> /home/start.sh
-RUN chmod +x /home/start.sh
+RUN echo '#!/bin/sh' >> /usr/local/bin/start
+RUN echo 'bundle exec rackup -o 0.0.0.0 -p 9292' >> /usr/local/bin/start
+RUN chmod +x /usr/local/bin/start
 
 RUN echo '#!/bin/sh' >> /home/init-db.sh
 RUN echo 'bundle exec rake db:prepare:test' >> /home/init-db.sh

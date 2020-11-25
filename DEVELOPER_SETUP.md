@@ -28,6 +28,12 @@ This allows you to open a shell to a development environment where you can run t
 
 Remember to rebuild the image if you change any of the gems or gem versions.
 
+* Run the server on the docker image
+
+    ```sh
+    docker run --rm -v $(PWD):/home -w /home --entrypoint /bin/sh -p 9292:9292 -it pact_broker:dev /usr/local/bin/start
+    ```
+
 ### With native install
 
 * You will need to install Ruby 2.5, and preferably a ruby version manager. I recommend using [chruby][chruby] and [ruby-install][ruby-install].
