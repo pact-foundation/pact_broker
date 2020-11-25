@@ -2,7 +2,7 @@
 
 ## Reproducing an issue
 
-In (script/reproduce-issue.rb)[script/reproduce-issue.rb] you will find a fluent API that allows you to simulate client libraries interacting with the Pact Broker.
+In [script/reproduce-issue.rb](script/reproduce-issue.rb) you will find a fluent API that allows you to simulate client libraries interacting with the Pact Broker.
 
 You can use it to easily reproduce issues.
 
