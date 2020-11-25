@@ -3,19 +3,44 @@ name: Test
 on: push
 
 jobs:
-  test:
+  # test:
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     matrix:
+  #       database_adapter: ["mysql", "postgres", "sqlite"]
+  #       ruby_version: [2.5, 2.7]
+  #   env:
+  #     INSTALL_PG: ${{ matrix.database_adapter == 'postgres' }}
+  #     INSTALL_MYSQL: ${{ matrix.database_adapter == 'mysql' }}
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - uses: actions/setup-ruby@v1
+  #       with:
+  #         ruby-version: ${{ matrix.ruby_version }}
+  #     - run: "bundle install"
+  #     - run: "bundle exec rake"
+  postgres:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        database_adapter: ["mysql", "postgres", "sqlite"]
         ruby_version: [2.5, 2.7]
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
     env:
-      INSTALL_PG: ${{ matrix.database_adapter == 'postgres' }}
-      INSTALL_MYSQL: ${{ matrix.database_adapter == 'mysql' }}
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-ruby@v1
-        with:
-          ruby-version: ${{ matrix.ruby_version }}
-      - run: "bundle install"
-      - run: "bundle exec rake"
+      INSTALL_PG: true
+    - uses: actions/checkout@v2
+    - uses: actions/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby_version }}
+    - run: "bundle install"
+    - run: "bundle exec rake"
