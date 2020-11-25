@@ -17,6 +17,7 @@ require 'pact_broker/repositories/helpers'
 require 'pact_broker/pacts/selected_pact'
 require 'pact_broker/pacts/selector'
 require 'pact_broker/pacts/selectors'
+require 'pact_broker/feature_toggle'
 
 module PactBroker
   module Pacts
@@ -214,14 +215,15 @@ module PactBroker
           .where(name: provider_tags_names)
           .all
 
-        wip_pacts.collect do | pact|
+        provider_version_count = scope_for(PactBroker::Domain::Version).where(pacticipant: provider).count
 
+        wip_pacts.collect do | pact|
           pending_tag_names = find_provider_tags_for_which_pact_publication_id_is_pending(pact, successfully_verified_head_pact_publication_ids_for_each_provider_tag)
           pre_existing_tag_names = find_provider_tag_names_that_were_first_used_before_pact_published(pact, provider_tag_collection)
 
           pre_existing_pending_tags = pending_tag_names & pre_existing_tag_names
 
-          if pre_existing_pending_tags.any?
+          if pre_existing_pending_tags.any? || (PactBroker.feature_enabled?(:experimental_no_provider_versions_makes_all_head_pacts_wip) && provider_version_count == 0)
             selectors = Selectors.create_for_latest_of_each_tag(pact.head_tag_names)
             VerifiablePact.new(pact.to_domain, selectors, true, pre_existing_pending_tags, [], true)
           end

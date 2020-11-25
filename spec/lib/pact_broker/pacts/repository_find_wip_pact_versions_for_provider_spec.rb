@@ -228,16 +228,29 @@ module PactBroker
           end
         end
 
-        context "when the provider tag does not exist yet" do
+        context "when the provider tag does not exist yet and there are no provider versions" do
           before do
             td.create_pact_with_hierarchy("foo", "1", "bar")
               .create_consumer_version_tag("feat-x")
+          end
+
+          it "is included" do
+            expect(subject.size).to be 1
+          end
+        end
+
+        context "when the provider tag does not exist yet but there are other provider versions" do
+          before do
+            td.create_pact_with_hierarchy("foo", "1", "bar")
+              .create_consumer_version_tag("feat-x")
+              .create_provider_version("1")
           end
 
           it "doesn't return any pacts" do
             expect(subject.size).to be 0
           end
         end
+
 
         context "when a pact was published between the first creation date of two provider tags" do
           let(:provider_tags) { %w[dev feat-1] }
