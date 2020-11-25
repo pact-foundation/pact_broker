@@ -4,17 +4,13 @@ require 'pact_broker/groups/service'
 require 'rack/test'
 
 module PactBroker::Api
-
   module Resources
-
     describe Group do
-
       include Rack::Test::Methods
 
       let(:app) { PactBroker::API }
 
       describe "GET" do
-
         let(:group) { double('group') }
         let(:decorator) { instance_double(PactBroker::Api::Decorators::RelationshipsCsvDecorator) }
         let(:csv) { 'csv' }
@@ -60,7 +56,6 @@ module PactBroker::Api
             subject
             expect(last_response.body).to eq csv
           end
-
         end
 
         context "when the pacticipant does not exist" do
@@ -72,9 +67,16 @@ module PactBroker::Api
           end
         end
 
-      end
+        context "when there is no group because the pacticipant isn't integrated with any other pacticipants" do
+          let(:group) { nil }
 
+          it "returns an empty body" do
+            expect(subject.status).to eq 200
+            expect(last_response.headers['Content-Type']).to eq 'text/csv;charset=utf-8'
+            expect(subject.body).to eq ""
+          end
+        end
+      end
     end
   end
-
 end

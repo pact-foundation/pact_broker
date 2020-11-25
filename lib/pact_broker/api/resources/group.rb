@@ -18,7 +18,11 @@ module PactBroker
         end
 
         def to_csv
-          PactBroker::Api::Decorators::RelationshipsCsvDecorator.new(group).to_csv
+          if group
+            PactBroker::Api::Decorators::RelationshipsCsvDecorator.new(group).to_csv
+          else
+            ""
+          end
         end
 
         def policy_name
