@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'semantic_logger'
 
 module PactBroker
@@ -49,4 +50,10 @@ module PactBroker
   end
 
   include Logging
+end
+
+# Hide the annoying warnings from Declarative gem. Need to upgrade Representable.
+def Warning.warn(w)
+  # super calls the original behavior, which is printing to $stderr
+  super unless (w.start_with?("[Declarative] Defaults#merge!") || w.include?("URI.unescape is obsolete"))
 end
