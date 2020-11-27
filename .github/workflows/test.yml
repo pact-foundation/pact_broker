@@ -30,4 +30,5 @@ jobs:
           INSTALL_PG: "true"
       - run: "bundle exec rake"
         env:
+          DATABASE_ADAPTER: github_actions_postgres
           INSTALL_PG: "true"

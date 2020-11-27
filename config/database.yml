@@ -36,6 +36,13 @@ test:
     <<: *default
     adapter: mysql2
     host: "192.168.0.9"
+  github_actions_postgres:
+    adapter: postgres
+    database: postgres
+    username: postgres
+    password: postgres
+    host: localhost
+    port: "5432"
 
 development:
   default:
