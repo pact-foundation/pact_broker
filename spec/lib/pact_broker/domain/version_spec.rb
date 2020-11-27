@@ -172,6 +172,29 @@ module PactBroker
             .to raise_error(Sequel::UniqueConstraintViolation)
         end
       end
+
+      describe "tags_with_latest_flag" do
+        before do
+          td.create_consumer("foo")
+            .create_consumer_version("1")
+            .create_consumer_version_tag("dev")
+            .create_consumer_version_tag("prod")
+            .create_consumer_version("2")
+            .create_consumer_version_tag("dev")
+        end
+
+        it "uneager loads" do
+          version = Version.first(number: "1")
+          expect(version.tags.collect(&:name).sort).to eq %w{dev prod}
+          expect(version.tags_with_latest_flag.select(&:latest).collect(&:name)).to eq %w{prod}
+        end
+
+        it "eager loads" do
+          version = Version.eager(:tags, :tags_with_latest_flag).where(number: "1").all.first
+          expect(version.tags.collect(&:name).sort).to eq %w{dev prod}
+          expect(version.tags_with_latest_flag.select(&:latest).collect(&:name)).to eq %w{prod}
+        end
+      end
     end
   end
 end

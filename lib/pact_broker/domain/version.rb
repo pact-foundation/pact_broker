@@ -5,6 +5,21 @@ require 'pact_broker/tags/tag_with_latest_flag'
 
 module PactBroker
   module Domain
+
+    # Same attributes as PactBroker::Tags::TagWithLatestFlag
+    class EagerTagWithLatestFlag < SimpleDelegator
+      attr_reader :latest
+
+      def initialize(tag, latest)
+        super(tag)
+        @latest = latest
+      end
+
+      def latest?
+        latest
+      end
+    end
+
     class Version < Sequel::Model
       plugin :timestamps, update_on_create: true
       plugin :insert_ignore, identifying_columns: [:pacticipant_id, :number]
@@ -13,7 +28,21 @@ module PactBroker
       one_to_many :pact_publications, order: :revision_number, class: "PactBroker::Pacts::PactPublication", key: :consumer_version_id
       associate(:many_to_one, :pacticipant, :class => "PactBroker::Domain::Pacticipant", :key => :pacticipant_id, :primary_key => :id)
       one_to_many :tags, :reciprocal => :version, order: :created_at
-      one_to_many :tags_with_latest_flag, class: "PactBroker::Tags::TagWithLatestFlag", key: :version_id, primary_key: :id
+
+      one_to_many :tags_with_latest_flag, :class => "PactBroker::Tags::TagWithLatestFlag", primary_keys: [:id], key: [:version_id], :eager_loader=>(proc do |eo_opts|
+        tags_for_versions = PactBroker::Domain::Tag.where(version_id: eo_opts[:key_hash][:id].keys)
+        latest_tag_for_pacticipants = PactBroker::Domain::Tag.latest_tags_for_pacticipant_ids(eo_opts[:rows].collect(&:pacticipant_id)).all
+
+        eo_opts[:rows].each{|row| row.associations[:tags_with_latest_flag] = [] }
+
+        tags_for_versions.each do | tag |
+          latest = latest_tag_for_pacticipants.any? { |latest_tag| latest_tag.name == tag.name && latest_tag.version_id == tag.version_id }
+          eo_opts[:id_map][tag.version_id].each do | version |
+            version.associations[:tags_with_latest_flag] << EagerTagWithLatestFlag.new(tag, latest)
+          end
+        end
+      end)
+
 
       dataset_module do
         include PactBroker::Repositories::Helpers
