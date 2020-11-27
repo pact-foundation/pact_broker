@@ -111,7 +111,7 @@ module PactBroker
       # The names of the tags for which this pact is the latest pact with that tag
       # (ie. it is not necessarily the pact for the latest consumer version with the given tag)
       def head_tag_names
-        LatestTaggedPactPublications.where(id: id).select(:tag_name).collect{|t| t[:tag_name]}
+        @head_tag_names ||= PactBroker::Domain::Tag.head_tags_for_pact_publication(self).collect(&:name)
       end
 
       def consumer_version_tags

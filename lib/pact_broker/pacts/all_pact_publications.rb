@@ -112,9 +112,7 @@ module PactBroker
       end
 
       def head_tag_names
-        # Avoid circular dependency
-        require 'pact_broker/pacts/latest_tagged_pact_publications'
-        @head_tag_names ||= LatestTaggedPactPublications.where(id: id).select(:tag_name).collect{|t| t[:tag_name]}
+        @head_tag_names ||= PactBroker::Domain::Tag.head_tags_for_pact_publication(self).collect(&:name)
       end
 
       def to_domain_with_content
