@@ -43,6 +43,12 @@ test:
     password: postgres
     host: localhost
     port: "5432"
+  github_actions_mysql:
+    adapter: mysql
+    database: pact_broker
+    username: pact_broker
+    password: pact_broker
+    host: localhost
 
 development:
   default:
