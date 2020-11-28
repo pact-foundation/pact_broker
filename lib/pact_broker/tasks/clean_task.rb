@@ -6,10 +6,12 @@ module PactBroker
       attr_reader :keep_version_selectors
       attr_accessor :version_deletion_limit
       attr_accessor :logger
+      attr_accessor :dry_run
 
       def initialize &block
         require 'pact_broker/db/clean_incremental'
         @version_deletion_limit = 1000
+        @dry_run = false
         @keep_version_selectors = PactBroker::DB::CleanIncremental::DEFAULT_KEEP_SELECTORS
         rake_task &block
       end
@@ -44,14 +46,14 @@ module PactBroker
 
               start_time = Time.now
               results = PactBroker::DB::CleanIncremental.call(
-                database_connection, keep: keep_version_selectors, limit: version_deletion_limit, logger: logger)
+                database_connection, keep: keep_version_selectors, limit: version_deletion_limit, logger: logger, dry_run: dry_run)
               end_time = Time.now
               elapsed_seconds = (end_time - start_time).to_i
               output "Results (#{elapsed_seconds} seconds)", results
             end
 
             def output string, payload = {}
-              logger ? logger.info(string, payload: payload) : puts("#{string} #{payload}")
+              logger ? logger.info(string, payload: payload) : puts("#{string} #{payload.to_json}")
             end
           end
         end

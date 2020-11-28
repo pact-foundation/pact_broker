@@ -15,15 +15,21 @@ module PactBroker
       let(:options) { {} }
       let(:db) { PactBroker::DB.connection }
 
-      subject { CleanIncremental.call(PactBroker::DB.connection, options) }
+
       let(:latest_dev_selector) { PactBroker::Matrix::UnresolvedSelector.new(tag: "dev", latest: true) }
       let(:all_prod_selector) { PactBroker::Matrix::UnresolvedSelector.new(tag: "prod") }
       let(:limit) { 3 }
+      let(:dry_run) { false }
+
+      subject { CleanIncremental.call(PactBroker::DB.connection, options) }
 
       describe ".call"do
         context "when there are specified versions to keep" do
           before do
             td.create_pact_with_hierarchy("Foo", "1", "Bar")
+              .create_webhook
+              .create_triggered_webhook
+              .create_webhook_execution
               .create_consumer_version_tag("prod").comment("keep as one of prod")
               .create_consumer_version_tag("dev")
               .add_day
@@ -45,7 +51,7 @@ module PactBroker
               .create_pact
           end
 
-          let(:options) { { keep: [all_prod_selector, latest_dev_selector], limit: limit } }
+          let(:options) { { keep: [all_prod_selector, latest_dev_selector], limit: limit, dry_run: dry_run } }
 
           it "does not delete the consumer versions specified" do
             expect(PactBroker::Domain::Version.where(number: "1").count).to be 1
@@ -64,7 +70,19 @@ module PactBroker
             expect(PactBroker::Domain::Version.where(number: "6").count).to be 0
             expect(PactBroker::Domain::Version.where(number: "7").count).to be 1
           end
+
+          context "when dry_run: true" do
+            before do
+              td.create_pact_with_hierarchy("Meep", "2", "Moop")
+            end
+            let(:dry_run) { true }
+
+            it "doesn't delete anything" do
+              expect { subject }.to_not change { PactBroker::Domain::Version.count }
+            end
+          end
         end
+
 
         context "with orphan pact versions" do
           before do

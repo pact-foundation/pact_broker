@@ -1,5 +1,7 @@
 require 'pact_broker/logging'
 require 'pact_broker/matrix/unresolved_selector'
+require 'pact_broker/date_helper'
+
 
 module PactBroker
   module DB
@@ -47,16 +49,37 @@ module PactBroker
       end
 
       def call
-        require 'pact_broker/domain/version'
-        before_counts = current_counts
+        require 'pact_broker/db/models'
 
-        result = PactBroker::Domain::Version.where(id: resolve_ids(version_ids_to_delete)).delete
-        delete_orphan_pact_versions
+        if dry_run?
+          PactBroker::Domain::Version
+            .where(id: version_ids_to_delete.select(:id))
+            .all
+            .group_by{ | v | v.pacticipant_id }
+            .each_with_object({}) do | (pacticipant_id, versions), thing |
+              thing[versions.first.pacticipant.name] = {
+                count: versions.count,
+                from_version: {
+                  number: versions.first.number,
+                  created: DateHelper.distance_of_time_in_words(versions.first.created_at, DateTime.now) + " ago",
+                  tags: versions.first.tags.collect(&:name)
+                },
+                to_version: {
+                  number: versions.last.number,
+                  created: DateHelper.distance_of_time_in_words(versions.last.created_at, DateTime.now) + " ago",
+                  tags: versions.last.tags.collect(&:name)
+                }
+              }
+            end
+        else
+          before_counts = current_counts
+          result = PactBroker::Domain::Version.where(id: resolve_ids(version_ids_to_delete)).delete
+          delete_orphan_pact_versions
+          after_counts = current_counts
 
-        after_counts = current_counts
-
-        TABLES.each_with_object({}) do | table_name, comparison_counts |
-          comparison_counts[table_name.to_s] = { "deleted" => before_counts[table_name] - after_counts[table_name], "kept" => after_counts[table_name] }
+          TABLES.each_with_object({}) do | table_name, comparison_counts |
+            comparison_counts[table_name.to_s] = { "deleted" => before_counts[table_name] - after_counts[table_name], "kept" => after_counts[table_name] }
+          end
         end
       end
 
@@ -68,6 +91,10 @@ module PactBroker
         TABLES.each_with_object({}) do | table_name, counts |
           counts[table_name] = db[table_name].count
         end
+      end
+
+      def dry_run?
+        options[:dry_run]
       end
 
       def delete_orphan_pact_versions
