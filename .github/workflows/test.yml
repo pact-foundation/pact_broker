@@ -53,10 +53,10 @@ jobs:
           mysql root password: 'pact_broker' # Required if "mysql user" is empty, default is empty. The root superuser password
           mysql user: 'pact_broker' # Required if "mysql root password" is empty, default is empty. The superuser for the specified database. Can use secrets, too
           mysql password: 'pact_broker' # Required if "mysql user" exists. The password for the "mysql user"
-        - run: "bundle install"
-          env:
-            INSTALL_PG: "true"
-        - run: "bundle exec rake"
-          env:
-            DATABASE_ADAPTER: github_actions_mysql
-            INSTALL_MYSQL: "true"
+      - run: "bundle install"
+        env:
+          INSTALL_PG: "true"
+      - run: "bundle exec rake"
+        env:
+          DATABASE_ADAPTER: github_actions_mysql
+          INSTALL_MYSQL: "true"
