@@ -52,7 +52,7 @@ module PactBroker
         require 'pact_broker/db/models'
 
         if dry_run?
-          PactBroker::Domain::Version
+          to_delete = PactBroker::Domain::Version
             .where(id: version_ids_to_delete.select(:id))
             .all
             .group_by{ | v | v.pacticipant_id }
@@ -71,6 +71,7 @@ module PactBroker
                 }
               }
             end
+          { "to_delete" => to_delete }
         else
           before_counts = current_counts
           result = PactBroker::Domain::Version.where(id: resolve_ids(version_ids_to_delete)).delete
