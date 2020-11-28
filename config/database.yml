@@ -44,7 +44,7 @@ test:
     host: localhost
     port: "5432"
   github_actions_mysql:
-    adapter: mysql
+    adapter: mysql2
     database: pact_broker
     username: pact_broker
     password: pact_broker
