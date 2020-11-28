@@ -49,6 +49,7 @@ test:
     username: pact_broker
     password: pact_broker
     host: localhost
+    port: 3306
 
 development:
   default:
