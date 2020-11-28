@@ -4,8 +4,6 @@ require 'pact_broker/matrix/unresolved_selector'
 module PactBroker
   module DB
     class CleanIncremental
-      include PactBroker::Logging
-
       DEFAULT_KEEP_SELECTORS = [
         PactBroker::Matrix::UnresolvedSelector.new(tag: true, latest: true),
         PactBroker::Matrix::UnresolvedSelector.new(latest: true),
@@ -20,6 +18,10 @@ module PactBroker
       def initialize database_connection, options = {}
         @db = database_connection
         @options = options
+      end
+
+      def logger
+        options[:logger] || PactBroker.logger
       end
 
       def keep
@@ -69,7 +71,6 @@ module PactBroker
       end
 
       def delete_orphan_pact_versions
-        logger.info("Deleting orphan pact versions")
         referenced_pact_version_ids = db[:pact_publications].select(:pact_version_id).union(db[:verifications].select(:pact_version_id))
         db[:pact_versions].where(id: referenced_pact_version_ids).invert.delete
       end

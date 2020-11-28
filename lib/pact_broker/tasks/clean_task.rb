@@ -5,6 +5,7 @@ module PactBroker
       attr_accessor :database_connection
       attr_reader :keep_version_selectors
       attr_accessor :version_deletion_limit
+      attr_accessor :logger
 
       def initialize &block
         require 'pact_broker/db/clean_incremental'
@@ -38,14 +39,19 @@ module PactBroker
               if keep_version_selectors.nil? || keep_version_selectors.empty?
                 raise PactBroker::Error.new("You must specify which versions to keep")
               else
-                puts "Deleting oldest #{version_deletion_limit} versions, keeping versions that match the following selectors: #{keep_version_selectors}..."
+                output "Deleting oldest #{version_deletion_limit} versions, keeping versions that match the configured selectors", keep_version_selectors
               end
 
               start_time = Time.now
-              results = PactBroker::DB::CleanIncremental.call(database_connection, keep: keep_version_selectors, limit: version_deletion_limit)
+              results = PactBroker::DB::CleanIncremental.call(
+                database_connection, keep: keep_version_selectors, limit: version_deletion_limit, logger: logger)
               end_time = Time.now
               elapsed_seconds = (end_time - start_time).to_i
-              puts results.to_yaml.gsub("---", "\nResults (#{elapsed_seconds} seconds)\n-------")
+              output "Results (#{elapsed_seconds} seconds)", results
+            end
+
+            def output string, payload = {}
+              logger ? logger.info(string, payload: payload) : puts("#{string} #{payload}")
             end
           end
         end
