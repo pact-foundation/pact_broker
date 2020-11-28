@@ -21,6 +21,12 @@ module PactBroker
       dataset_module do
         include PactBroker::Repositories::Helpers
 
+        def delete
+          require 'pact_broker/webhooks/execution'
+          PactBroker::Webhooks::Execution.where(triggered_webhook: self).delete
+          super
+        end
+
         def retrying
           where(status: STATUS_RETRYING)
         end

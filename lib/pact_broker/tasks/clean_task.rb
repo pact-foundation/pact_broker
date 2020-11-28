@@ -3,10 +3,21 @@ module PactBroker
     class CleanTask < ::Rake::TaskLib
 
       attr_accessor :database_connection
-      attr_accessor :keep
+      attr_reader :keep
+      attr_accessor :limit
 
       def initialize &block
+        require 'pact_broker/db/clean_incremental'
+        @limit = 1000
+        @keep = PactBroker::DB::CleanIncremental::DEFAULT_KEEP_SELECTORS
         rake_task &block
+      end
+
+      def keep=(keep)
+        require 'pact_broker/matrix/unresolved_selector'
+        @keep = [*keep].collect do | hash |
+          PactBroker::Matrix::UnresolvedSelector.from_hash(hash)
+        end
       end
 
       def rake_task &block
@@ -17,19 +28,24 @@ module PactBroker
 
               instance_eval(&block)
 
-              require 'pact_broker/db/clean'
-              require 'pact_broker/matrix/unresolved_selector'
+              require 'pact_broker/db/clean_incremental'
+              require 'pact_broker/error'
               require 'yaml'
+              require 'benchmark'
 
-              keep_selectors = nil
-              if keep
-                keep_selectors = [*keep].collect do | hash |
-                  PactBroker::Matrix::UnresolvedSelector.new(hash)
-                end
+              raise PactBroker::Error.new("You must specify a limit for the number of versions to delete") unless limit
+
+              if keep.nil? || keep.empty?
+                raise PactBroker::Error.new("You must specify which versions to keep")
+              else
+                puts "Deleting oldest #{limit} versions, keeping versions that match the following selectors: #{keep}..."
               end
-              # TODO time it
-              results = PactBroker::DB::Clean.call(database_connection, keep: keep_selectors)
-              puts results.to_yaml
+
+              start_time = Time.now
+              results = PactBroker::DB::CleanIncremental.call(database_connection, keep: keep, limit: limit)
+              end_time = Time.now
+              elapsed_seconds = (end_time - start_time).to_i
+              puts results.to_yaml.gsub("---", "\nResults (#{elapsed_seconds} seconds)\n-------")
             end
           end
         end

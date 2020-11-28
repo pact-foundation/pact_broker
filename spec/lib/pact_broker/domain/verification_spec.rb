@@ -4,6 +4,19 @@ module PactBroker
 
   module Domain
     describe Verification do
+      describe "delete" do
+        before do
+          td.create_pact_with_hierarchy("Foo", "1", "Bar")
+            .create_verification_webhook
+            .create_verification(provider_version: "2")
+            .create_triggered_webhook
+            .create_webhook_execution
+        end
+
+        it "deletes stuff" do
+          Verification.delete
+        end
+      end
 
       describe "#save" do
         let!(:verification) do

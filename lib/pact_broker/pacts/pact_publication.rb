@@ -101,6 +101,12 @@ module PactBroker
             self
           end
         end
+
+        def delete
+          require 'pact_broker/webhooks/triggered_webhook'
+          PactBroker::Webhooks::TriggeredWebhook.where(pact_publication: self).delete
+          super
+        end
       end
 
       def before_create

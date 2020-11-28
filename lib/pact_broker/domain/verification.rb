@@ -29,6 +29,12 @@ module PactBroker
         # Beware that when columns with the same name exist in both datasets
         # you may get the wrong column back in your model.
 
+        def delete
+          require 'pact_broker/webhooks/triggered_webhook'
+          PactBroker::Webhooks::TriggeredWebhook.where(verification: self).delete
+          super
+        end
+
         def consumer consumer_name
           where(name_like(:consumer_name, consumer_name))
         end

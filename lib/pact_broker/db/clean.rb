@@ -1,10 +1,13 @@
 require 'sequel'
 require 'pact_broker/project_root'
 require 'pact_broker/pacts/latest_tagged_pact_publications'
+require 'pact_broker/logging'
 
 module PactBroker
   module DB
     class Clean
+      include PactBroker::Logging
+
 
       class Unionable < Array
         alias_method :union, :+
@@ -46,7 +49,7 @@ module PactBroker
       def latest_tagged_pact_publications_ids_to_keep
         @latest_tagged_pact_publications_ids_to_keep ||= resolve_ids(keep.select(&:tag).select(&:latest).collect do | selector |
           PactBroker::Pacts::LatestTaggedPactPublications.select(:id).for_selector(selector)
-        end.reduce(&:union))
+        end.reduce(&:union) || [])
       end
 
 

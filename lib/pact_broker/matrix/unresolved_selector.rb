@@ -1,8 +1,16 @@
+require 'pact_broker/hash_refinements'
+
 module PactBroker
   module Matrix
     class UnresolvedSelector < Hash
+      using PactBroker::HashRefinements
+
       def initialize(params = {})
         merge!(params)
+      end
+
+      def self.from_hash(hash)
+        new(hash.symbolize_keys.snakecase_keys.slice(:pacticipant_name, :pacticipant_version_number, :latest, :tag, :max_age))
       end
 
       def pacticipant_name

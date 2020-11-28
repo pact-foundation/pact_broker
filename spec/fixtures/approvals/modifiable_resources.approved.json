@@ -4,6 +4,9 @@
       "resource_class_name": "PactBroker::Api::Resources::AllWebhooks"
     },
     {
+      "resource_class_name": "PactBroker::Api::Resources::Clean"
+    },
+    {
       "resource_class_name": "PactBroker::Api::Resources::ErrorTest"
     },
     {
