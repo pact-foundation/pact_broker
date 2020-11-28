@@ -1,3 +1,19 @@
+<a name="v2.70.0"></a>
+### v2.70.0 (2020-11-28)
+
+#### Features
+
+* allow limit to be applied to clean task	 ([d29e5c62](/../../commit/d29e5c62))
+* optimise the query to load the tags with latest flags	 ([bc47613f](/../../commit/bc47613f))
+* optimise query to find head tags for a pact	 ([67309e37](/../../commit/67309e37))
+
+* **wip pacts**
+  * experimental feature - if no provider versions exist, consider all head pacts wip	 ([a635cc53](/../../commit/a635cc53))
+
+#### Bug Fixes
+
+* return empty body when group csv is requested for a pacticipant that does not have any integrations	 ([fb4e28ce](/../../commit/fb4e28ce))
+
 <a name="v2.69.0"></a>
 ### v2.69.0 (2020-11-24)
 
