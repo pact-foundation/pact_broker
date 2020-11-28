@@ -1,3 +1,10 @@
+<a name="v2.71.0"></a>
+### v2.71.0 (2020-11-28)
+
+#### Features
+
+* allow clean to be performed in dry run mode	 ([a7a18fde](/../../commit/a7a18fde))
+
 <a name="v2.70.0"></a>
 ### v2.70.0 (2020-11-28)
 
