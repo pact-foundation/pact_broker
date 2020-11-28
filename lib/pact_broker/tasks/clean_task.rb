@@ -3,19 +3,19 @@ module PactBroker
     class CleanTask < ::Rake::TaskLib
 
       attr_accessor :database_connection
-      attr_reader :keep
-      attr_accessor :limit
+      attr_reader :keep_version_selectors
+      attr_accessor :version_deletion_limit
 
       def initialize &block
         require 'pact_broker/db/clean_incremental'
-        @limit = 1000
-        @keep = PactBroker::DB::CleanIncremental::DEFAULT_KEEP_SELECTORS
+        @version_deletion_limit = 1000
+        @keep_version_selectors = PactBroker::DB::CleanIncremental::DEFAULT_KEEP_SELECTORS
         rake_task &block
       end
 
-      def keep=(keep)
+      def keep_version_selectors=(keep_version_selectors)
         require 'pact_broker/matrix/unresolved_selector'
-        @keep = [*keep].collect do | hash |
+        @keep_version_selectors = [*keep_version_selectors].collect do | hash |
           PactBroker::Matrix::UnresolvedSelector.from_hash(hash)
         end
       end
@@ -33,16 +33,16 @@ module PactBroker
               require 'yaml'
               require 'benchmark'
 
-              raise PactBroker::Error.new("You must specify a limit for the number of versions to delete") unless limit
+              raise PactBroker::Error.new("You must specify the version_deletion_limit") unless version_deletion_limit
 
-              if keep.nil? || keep.empty?
+              if keep_version_selectors.nil? || keep_version_selectors.empty?
                 raise PactBroker::Error.new("You must specify which versions to keep")
               else
-                puts "Deleting oldest #{limit} versions, keeping versions that match the following selectors: #{keep}..."
+                puts "Deleting oldest #{version_deletion_limit} versions, keeping versions that match the following selectors: #{keep_version_selectors}..."
               end
 
               start_time = Time.now
-              results = PactBroker::DB::CleanIncremental.call(database_connection, keep: keep, limit: limit)
+              results = PactBroker::DB::CleanIncremental.call(database_connection, keep: keep_version_selectors, limit: version_deletion_limit)
               end_time = Time.now
               elapsed_seconds = (end_time - start_time).to_i
               puts results.to_yaml.gsub("---", "\nResults (#{elapsed_seconds} seconds)\n-------")
