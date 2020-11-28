@@ -3,6 +3,18 @@ name: Test
 on: push
 
 jobs:
+  sqlite:
+    runs-on: "ubuntu-latest"
+    strategy:
+      matrix:
+        ruby_version: ["2.7"]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby_version }}
+      - run: "bundle install"
+      - run: "bundle exec rake"
   postgres:
     runs-on: "ubuntu-latest"
     strategy:
@@ -36,7 +48,7 @@ jobs:
     runs-on: "ubuntu-latest"
     strategy:
       matrix:
-        ruby_version: ["2.5", "2.7"]
+        ruby_version: ["2.7"]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-ruby@v1
