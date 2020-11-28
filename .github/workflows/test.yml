@@ -55,7 +55,7 @@ jobs:
           mysql password: 'pact_broker' # Required if "mysql user" exists. The password for the "mysql user"
       - run: "bundle install"
         env:
-          INSTALL_PG: "true"
+          INSTALL_MYSQL: "true"
       - run: "bundle exec rake"
         env:
           DATABASE_ADAPTER: github_actions_mysql
