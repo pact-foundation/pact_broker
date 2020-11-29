@@ -92,7 +92,7 @@ module PactBroker
         {
           "number" => version.number,
           "created" => DateHelper.distance_of_time_in_words(version.created_at, DateTime.now) + " ago",
-          "tags" => version.tags.collect(&:name)
+          "tags" => version.tags.collect(&:name).sort
         }
       end
 
