@@ -13,6 +13,30 @@ module PactBroker
       dataset_module do
         include PactBroker::Repositories::Helpers
 
+        def latest_tags
+          tags_versions_join = {
+            Sequel[:tags][:version_id] => Sequel[:versions][:id],
+          }
+
+          latest_tags_versions_join = {
+            Sequel[:latest_tags][:name] => Sequel[:tags][:name],
+            Sequel[:latest_tags][:latest_order] => Sequel[:versions][:order],
+            Sequel[:latest_tags][:pacticipant_id] => Sequel[:versions][:pacticipant_id],
+          }
+
+          latest_tags = PactBroker::Domain::Tag
+            .select_group(Sequel[:tags][:name], Sequel[:versions][:pacticipant_id])
+            .select_append{ max(order).as(latest_order) }
+            .join(:versions, tags_versions_join)
+
+          PactBroker::Domain::Tag
+            .select_all_qualified
+            .join(:versions,
+              { Sequel[:tags][:version_id] => Sequel[:versions][:id] }
+            )
+            .join(latest_tags, latest_tags_versions_join, { table_alias: :latest_tags })
+        end
+
         # Does NOT care about whether or not there is a pact publication
         # for the version
         def latest_tags_for_pacticipant_ids(pacticipant_ids)

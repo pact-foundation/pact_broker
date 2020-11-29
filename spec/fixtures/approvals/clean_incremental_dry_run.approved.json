@@ -1,0 +1,100 @@
+{
+  "counts": {
+    "totalVersions": 9,
+    "versionsToDelete": 3,
+    "versionsNotToKeep": 6,
+    "versionsToKeep": 3,
+    "versionsToKeepBySelector": [
+      {
+        "selector": {
+          "tag": "prod"
+        },
+        "count": 2
+      },
+      {
+        "selector": {
+          "tag": "dev",
+          "latest": true
+        },
+        "count": 1
+      }
+    ]
+  },
+  "versionSummary": {
+    "Bar": {
+      "toDelete": {
+        "count": 0
+      },
+      "toKeep": {
+        "count": 0
+      }
+    },
+    "Foo": {
+      "toDelete": {
+        "count": 3,
+        "fromVersion": {
+          "number": "2",
+          "created": "1 day ago",
+          "tags": [
+
+          ]
+        },
+        "toVersion": {
+          "number": "6",
+          "created": "5 days ago",
+          "tags": [
+            "foo"
+          ]
+        }
+      },
+      "toKeep": {
+        "count": 4,
+        "latestVersion": {
+          "number": "1",
+          "created": "less than a minute ago",
+          "tags": [
+            "dev",
+            "prod"
+          ]
+        },
+        "firstVersion": {
+          "number": "7",
+          "created": "6 days ago",
+          "tags": [
+
+          ]
+        }
+      }
+    },
+    "Meep": {
+      "toDelete": {
+        "count": 0
+      },
+      "toKeep": {
+        "count": 2,
+        "latestVersion": {
+          "number": "2",
+          "created": "6 days ago",
+          "tags": [
+            "foop"
+          ]
+        },
+        "firstVersion": {
+          "number": "3",
+          "created": "6 days ago",
+          "tags": [
+            "blah"
+          ]
+        }
+      }
+    },
+    "Moop": {
+      "toDelete": {
+        "count": 0
+      },
+      "toKeep": {
+        "count": 0
+      }
+    }
+  }
+}

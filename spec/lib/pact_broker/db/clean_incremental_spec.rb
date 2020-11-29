@@ -74,11 +74,19 @@ module PactBroker
           context "when dry_run: true" do
             before do
               td.create_pact_with_hierarchy("Meep", "2", "Moop")
+                .create_consumer_version_tag("foop")
+                .create_consumer_version("3")
+                .create_consumer_version_tag("blah")
             end
+
             let(:dry_run) { true }
 
             it "doesn't delete anything" do
               expect { subject }.to_not change { PactBroker::Domain::Version.count }
+            end
+
+            it "returns info on what will be deleted" do
+              Approvals.verify(subject, :name => 'clean_incremental_dry_run', format: :json)
             end
           end
         end
