@@ -26,7 +26,7 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
 
 
 COPY Gemfile /home/Gemfile
-COPY Gemfile.lock /home/Gemfile.lock
+# COPY Gemfile.lock /home/Gemfile.lock # lock file does not exist on CI
 COPY pact_broker.gemspec /home/pact_broker.gemspec
 COPY lib/pact_broker/version.rb /home/lib/pact_broker/version.rb
 COPY .gitignore /home/.gitignore
