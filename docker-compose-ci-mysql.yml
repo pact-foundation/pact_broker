@@ -33,4 +33,4 @@ services:
       - ./.gitignore:/home/.gitignore
       - ./public:/home/public
     entrypoint: dockerize
-    command: --wait tcp://mysql:3306 test
+    command: --wait tcp://mysql:3306 -timeout 60s test
