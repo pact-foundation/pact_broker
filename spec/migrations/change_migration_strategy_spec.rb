@@ -1,6 +1,6 @@
 require 'fileutils'
 
-describe "changing from integer to timestamp migrations", no_db_clean: true do
+describe "changing from integer to timestamp migrations", no_db_clean: true, skip: DB.mysql? do
 
   TEST_DIR = "db/test/change_migration_strategy"
   DATABASE_PATH = "#{TEST_DIR}/pact_broker_database.sqlite3"

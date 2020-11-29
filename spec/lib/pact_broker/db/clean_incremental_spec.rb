@@ -6,7 +6,7 @@ IS_MYSQL = !!DB.mysql?
 module PactBroker
   module DB
     # Inner queries don't work on MySQL. Seriously, MySQL???
-    describe CleanIncremental, pending: IS_MYSQL  do
+    describe CleanIncremental, skip: IS_MYSQL  do
 
       def pact_publication_count_for(consumer_name, version_number)
         PactBroker::Pacts::PactPublication.where(consumer_version: PactBroker::Domain::Version.where_pacticipant_name(consumer_name).where(number: version_number)).count

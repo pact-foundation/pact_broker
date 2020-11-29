@@ -38,6 +38,10 @@ RUN echo '#!/bin/sh' >> /usr/local/bin/start
 RUN echo 'bundle exec rackup -o 0.0.0.0 -p 9292' >> /usr/local/bin/start
 RUN chmod +x /usr/local/bin/start
 
+RUN echo '#!/bin/sh' >> /usr/local/bin/test
+RUN echo 'bundle exec rake' >> /usr/local/bin/test
+RUN chmod +x /usr/local/bin/test
+
 RUN echo '#!/bin/sh' >> /home/init-db.sh
 RUN echo 'bundle exec rake db:prepare:test' >> /home/init-db.sh
 RUN chmod +x /home/init-db.sh
