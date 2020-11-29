@@ -54,6 +54,11 @@ module PactBroker
           webhooks: {
             count: PactBroker::Webhooks::Webhook.count
           },
+          tags: {
+            count: PactBroker::Domain::Tag.count,
+            distinctCount: PactBroker::Domain::Tag.select(:name).distinct.count,
+            distinctWithPacticipantCount: PactBroker::Domain::Tag.join(:versions, { id: :version_id }).select_group(:name, :pacticipant_id).count
+          },
           triggeredWebhooks: {
             count: PactBroker::Webhooks::TriggeredWebhook.count
           },
@@ -62,9 +67,6 @@ module PactBroker
           },
           matrix: {
             count: PactBroker::Matrix::Row.count
-          },
-          headMatrix: {
-            count: PactBroker::Matrix::HeadRow.count
           }
         }
       end

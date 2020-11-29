@@ -9,17 +9,20 @@ module PactBroker
         describe "verificationResultsPerPactVersion" do
           before do
             td.create_pact_with_hierarchy
+              .create_consumer_version_tag("prod")
               .comment("this pact version will have 2 verifications")
               .create_verification
-              .create_verification(number: 2)
+              .create_verification(number: 2, tag_names: ["main"])
               .revise_pact
               .comment("this pact version will have 1 verification")
               .create_verification
               .create_consumer_version
+              .create_consumer_version_tag("main")
               .create_pact
               .comment("this pact will have 1 verification")
               .create_verification
               .create_consumer_version
+              .create_consumer_version_tag("main")
               .create_pact
               .comment("this pact will have 1 verification")
               .create_verification
