@@ -69,7 +69,11 @@ module PactBroker
         context "DELETE" do
           before do
             allow(pact_service).to receive(:delete_all_pact_publications_between)
+            allow(pact_service).to receive(:find_latest_pact).and_return(latest_pact)
+            allow_any_instance_of(described_class).to receive(:latest_pact_url).and_return("http://latest-pact")
           end
+
+          let(:latest_pact) { double('pact') }
 
           subject { delete(path) }
 
@@ -78,8 +82,12 @@ module PactBroker
             subject
           end
 
-          it "returns a 204" do
-            expect(subject.status).to eq 204
+          it "returns a 200" do
+            expect(subject.status).to eq 200
+          end
+
+          it "returns a link to the latest pact" do
+            expect(JSON.parse(subject.body)["_links"]["pb:latest-pact-version"]["href"]).to eq "http://latest-pact"
           end
         end
       end

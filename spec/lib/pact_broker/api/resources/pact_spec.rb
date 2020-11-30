@@ -13,7 +13,6 @@ module PactBroker::Api
       let(:json) { {some: 'json'}.to_json }
 
       describe "GET" do
-
         context "Accept: text/html" do
 
           let(:json_content) { 'json_content' }
@@ -130,20 +129,20 @@ module PactBroker::Api
       end
 
       describe "DELETE" do
-
-        subject { delete "/pacts/provider/Provider/consumer/Consumer/version/1.2", json, {'CONTENT_TYPE' => "application/json"} ; last_response }
-
-        let(:pact) { double('pact') }
-        let(:pact_service) { PactBroker::Pacts::Service }
-        let(:response) { subject; last_response }
-
         before do
           allow(pact_service).to receive(:find_pact).and_return(pact)
           allow(pact_service).to receive(:delete)
+          allow(pact_service).to receive(:find_latest_pact).and_return(latest_pact)
+          allow_any_instance_of(described_class).to receive(:latest_pact_url).and_return("http://latest-pact")
         end
 
-        context "when the pact exists" do
+        let(:pact) { double('pact') }
+        let(:pact_service) { PactBroker::Pacts::Service }
+        let(:latest_pact) { double('latest pact') }
 
+        subject { delete "/pacts/provider/Provider/consumer/Consumer/version/1.2", json, {'CONTENT_TYPE' => "application/json"} ; last_response }
+
+        context "when the pact exists" do
           it "deletes the pact using the pact service" do
             expect(pact_service).to receive(:delete).with(instance_of(PactBroker::Pacts::PactParams))
             subject
@@ -151,6 +150,18 @@ module PactBroker::Api
 
           it "returns a 200" do
             expect(subject.status).to eq 200
+          end
+
+          it "returns a link to the latest pact" do
+            expect(JSON.parse(subject.body)["_links"]["pb:latest-pact-version"]["href"]).to eq "http://latest-pact"
+          end
+
+          context "with there are no more pacts" do
+            let(:latest_pact) { nil }
+
+            it "does not return a link" do
+              expect(JSON.parse(subject.body)["_links"]).to_not have_key("pb:latest-pact-version")
+            end
           end
         end
 

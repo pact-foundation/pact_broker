@@ -8,6 +8,7 @@ require 'pact_broker/pacts/pact_params'
 require 'pact_broker/api/contracts/put_pact_params_contract'
 require 'pact_broker/webhooks/execution_configuration'
 require 'pact_broker/api/resources/webhook_execution_methods'
+require 'pact_broker/api/resources/pact_resource_methods'
 
 module PactBroker
   module Api
@@ -15,6 +16,7 @@ module PactBroker
       class Pact < BaseResource
         include PacticipantResourceMethods
         include WebhookExecutionMethods
+        include PactResourceMethods
 
         def content_types_provided
           [
@@ -108,19 +110,6 @@ module PactBroker
 
         def pact_params
           @pact_params ||= PactBroker::Pacts::PactParams.from_request request, path_info
-        end
-
-        def set_post_deletion_response
-          latest_pact = pact_service.find_latest_pact(pact_params)
-          response_body = { "_links" => { index: { href: base_url } } }
-          if latest_pact
-            response_body["_links"]["pb:latest-pact-version"] = {
-              href: latest_pact_url(base_url, latest_pact),
-              title: "Latest pact"
-            }
-          end
-          response.body = response_body.to_json
-          response.headers["Content-Type" => "application/hal+json;charset=utf-8"]
         end
 
         def webhook_options
