@@ -116,6 +116,10 @@ module PactBroker
         "#{base_url}/pacts/provider/#{url_encode(provider_name)}/consumer/#{url_encode(consumer_name)}/versions"
       end
 
+      def tagged_pact_versions_url consumer_name, provider_name, tag, base_url = ""
+        "#{base_url}/pacts/provider/#{url_encode(provider_name)}/consumer/#{url_encode(consumer_name)}/tag/#{url_encode(tag)}"
+      end
+
       def integration_url consumer_name, provider_name, base_url = ""
         "#{base_url}/integrations/provider/#{url_encode(provider_name)}/consumer/#{url_encode(consumer_name)}"
       end
