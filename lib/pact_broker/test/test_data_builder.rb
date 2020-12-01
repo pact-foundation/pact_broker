@@ -96,6 +96,15 @@ module PactBroker
         self
       end
 
+      def create_pact_with_verification_and_tags consumer_name = "Consumer", consumer_version = "1.0.#{model_counter}", consumer_version_tags = [], provider_name = "Provider", provider_version = "1.0.#{model_counter}", provider_version_tags = []
+        create_pact_with_hierarchy(consumer_name, consumer_version, provider_name)
+        consumer_version_tags.each do | tag |
+          create_consumer_version_tag(tag)
+        end
+        create_verification(number: model_counter, provider_version: provider_version, tag_names: provider_version_tags)
+        self
+      end
+
       def create_version_with_hierarchy pacticipant_name, pacticipant_version
         pacticipant = pacticipant_service.create(:name => pacticipant_name)
         version = PactBroker::Domain::Version.create(:number => pacticipant_version, :pacticipant => pacticipant)

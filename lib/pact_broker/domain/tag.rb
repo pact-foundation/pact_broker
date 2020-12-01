@@ -37,6 +37,24 @@ module PactBroker
             .join(latest_tags, latest_tags_versions_join, { table_alias: :latest_tags })
         end
 
+        # Ron's fancy join
+        # performs every so slightly better
+        def latest_tags_2
+          tag_versions = PactBroker::Domain::Tag
+            .select_all_qualified
+            .select_append(Sequel[:versions][:pacticipant_id])
+            .select_append(Sequel[:versions][:order])
+            .join(:versions,
+              { Sequel[:tags][:version_id] => Sequel[:versions][:id] }
+            )
+
+          tag_versions
+            .left_join(tag_versions, { Sequel[:tags][:name] =>  Sequel[:tags_2][:name], Sequel[:versions][:pacticipant_id] => Sequel[:tags_2][:pacticipant_id] }, { table_alias: :tags_2 }) do | table, joined_table, js |
+              Sequel.qualify(table, :order) > Sequel.qualify(joined_table, :order)
+            end
+            .where(Sequel[:tags_2][:name] => nil)
+        end
+
         # Does NOT care about whether or not there is a pact publication
         # for the version
         def latest_tags_for_pacticipant_ids(pacticipant_ids)

@@ -4,6 +4,55 @@ module PactBroker
 
   module Domain
     describe Verification do
+      describe "latest_verifications_for_all_consumer_version_tags" do
+        before do
+          td.create_pact_with_verification_and_tags("Foo", "1", ["fmain"], "Bar", "2")
+            .create_pact_with_verification_and_tags("Foo", "3", ["fmain"], "Bar", "4")
+            .create_pact_with_verification_and_tags("Foo", "5", ["fmain"], "Bar", "5")
+            .create_pact_with_verification_and_tags("Foo", "6", ["other"], "Bar", "5")
+            .create_pact_with_verification_and_tags("Foo2", "6", ["fprod"], "Bar", "7")
+            .create_pact_with_verification_and_tags("Ignored", "6", ["fmain"], "Bar", "8")
+        end
+
+        subject { Verification.latest_verifications_for_all_consumer_version_tags.all }
+
+        it "returns the same number of rows as the view" do
+          expect(subject.size).to eq Verification.db[:latest_verifications_for_consumer_version_tags].count
+        end
+
+        it "allows eager" do
+          expect(Verification.latest_verifications_for_all_consumer_version_tags.eager(:provider_version).all.first.provider_version.number).to_not be nil
+        end
+      end
+
+      describe "latest_verifications_for_consumer_version_tags" do
+        before do
+          td.create_pact_with_verification_and_tags("Foo", "1", ["fmain"], "Bar", "2")
+            .create_pact_with_verification_and_tags("Foo", "3", ["fmain"], "Bar", "4")
+            .create_pact_with_verification_and_tags("Foo", "5", ["fmain"], "Bar", "5")
+            .create_pact_with_verification_and_tags("Foo", "6", ["other"], "Bar", "5")
+            .create_pact_with_verification_and_tags("Foo2", "6", ["fprod"], "Bar", "7")
+            .create_pact_with_verification_and_tags("Ignored", "6", ["fmain"], "Bar", "8")
+        end
+
+        let(:consumer_ids) { PactBroker::Domain::Pacticipant.where(name: ["Foo", "Foo2"]).all.collect(&:id) }
+
+        subject { Verification.latest_verifications_for_consumer_version_tags(consumer_ids, ["fmain", "fprod"]).order(:id) }
+
+        it "returns the latest verifications for the given consumer ids and consumer version tag names" do
+          expect(subject.first.provider_version_number).to eq "5"
+          expect(subject.first.consumer_name).to eq "Foo"
+          expect(subject.first.consumer_version_tag_name).to eq "fmain"
+          expect(subject.last.provider_version_number).to eq "7"
+          expect(subject.last.consumer_name).to eq "Foo2"
+          expect(subject.last.consumer_version_tag_name).to eq "fprod"
+        end
+
+        it "allows eager" do
+          expect(subject.eager(:provider_version).all.first.provider_version.number).to eq "5"
+        end
+      end
+
       describe "delete" do
         before do
           td.create_pact_with_hierarchy("Foo", "1", "Bar")
