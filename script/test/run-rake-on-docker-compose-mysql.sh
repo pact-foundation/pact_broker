@@ -5,4 +5,4 @@ cleanup() {
 }
 
 trap cleanup EXIT
-docker-compose -f docker-compose-ci-mysql.yml up --exit-code-from mysql-tests --abort-on-container-exit --remove-orphans
+docker-compose -f docker-compose-ci-mysql.yml up --exit-code-from tests --abort-on-container-exit --remove-orphans

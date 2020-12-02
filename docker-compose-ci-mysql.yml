@@ -12,7 +12,7 @@ services:
     ports:
       - "3306:3306"
 
-  mysql-tests:
+  tests:
     build: .
     depends_on:
       - mysql
@@ -32,5 +32,6 @@ services:
       - ./.rubocop:/home/.rubocop
       - ./.gitignore:/home/.gitignore
       - ./public:/home/public
+      - ./script/docker-container/test.sh:/usr/local/bin/test
     entrypoint: dockerize
     command: --wait tcp://mysql:3306 -timeout 60s test
