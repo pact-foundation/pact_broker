@@ -3,6 +3,7 @@ require 'ostruct'
 require 'pact_broker/logging'
 require 'pact_broker/pacts/generate_sha'
 require 'pact_broker/pacts/pact_publication'
+require 'pact_broker/pacts/pact_version'
 require 'pact_broker/pacts/all_pact_publications'
 require 'pact_broker/pacts/latest_pact_publications_by_consumer_version'
 require 'pact_broker/pacts/latest_pact_publications'
@@ -295,20 +296,38 @@ module PactBroker
       end
 
       def find_pact consumer_name, consumer_version, provider_name, pact_version_sha = nil
-        query = if pact_version_sha
-          scope_for(AllPactPublications)
-            .pact_version_sha(pact_version_sha)
-            .reverse_order(:consumer_version_order)
+        pact_publication_by_consumer_version = scope_for(LatestPactPublicationsByConsumerVersion)
+            .consumer(consumer_name)
+            .provider(provider_name)
+            .consumer_version_number(consumer_version)
             .limit(1)
-        else
-          scope_for(LatestPactPublicationsByConsumerVersion)
+
+        latest_pact_publication_by_sha = scope_for(AllPactPublications)
+            .consumer(consumer_name)
+            .provider(provider_name)
+            .pact_version_sha(pact_version_sha)
+            .reverse_order(:consumer_version_order, :revision_number)
+            .limit(1)
+
+        query = if consumer_version && !pact_version_sha
+          pact_publication_by_consumer_version
+            .eager(:tags)
+            .collect(&:to_domain_with_content).first
+        elsif pact_version_sha && !consumer_version
+          latest_pact_publication_by_sha
+            .eager(:tags)
+            .collect(&:to_domain_with_content).first
+        elsif consumer_version && pact_version_sha
+          pact_publication = pact_publication_by_consumer_version.all.first
+          if pact_publication && pact_publication.pact_version.sha == pact_version_sha
+            pact_publication.tags
+            pact_publication.to_domain_with_content
+          else
+            latest_pact_publication_by_sha
+              .eager(:tags)
+              .collect(&:to_domain_with_content).first
+          end
         end
-        query = query
-          .eager(:tags)
-          .consumer(consumer_name)
-          .provider(provider_name)
-        query = query.consumer_version_number(consumer_version) if consumer_version
-        query.collect(&:to_domain_with_content)[0]
       end
 
       def find_all_revisions consumer_name, consumer_version, provider_name
@@ -502,7 +521,7 @@ module PactBroker
       end
 
       def create_pact_version consumer_id, provider_id, sha, json_content
-        PactVersion.new(
+        PactBroker::Pacts::PactVersion.new(
           consumer_id: consumer_id,
           provider_id: provider_id,
           sha: sha,

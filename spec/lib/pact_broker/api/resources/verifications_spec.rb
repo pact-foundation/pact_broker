@@ -17,7 +17,7 @@ module PactBroker
           let(:database_connector) { double('database_connector' )}
           let(:verification) { double(PactBroker::Domain::Verification) }
           let(:errors_empty) { true }
-          let(:parsed_metadata) { { the: 'metadata' } }
+          let(:parsed_metadata) { { the: 'metadata', consumer_version_number: "2"} }
           let(:base_url) { "http://example.org" }
           let(:webhook_execution_configuration) { instance_double(PactBroker::Webhooks::ExecutionConfiguration) }
 
@@ -29,10 +29,14 @@ module PactBroker
             allow(webhook_execution_configuration).to receive(:with_webhook_context).and_return(webhook_execution_configuration)
           end
 
-          subject { post url, request_body, rack_env; last_response }
+          subject { post(url, request_body, rack_env) }
 
           it "looks up the specified pact" do
-            allow(Pacts::Service).to receive(:find_pact).with(instance_of(PactBroker::Pacts::PactParams))
+            expect(Pacts::Service).to receive(:find_pact) do | arg |
+              expect(arg).to be_a(PactBroker::Pacts::PactParams)
+              expect(arg[:consumer_version_number]).to eq "2"
+            end
+            subject
           end
 
           context "when the pact does not exist" do

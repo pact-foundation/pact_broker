@@ -1,6 +1,5 @@
 describe "retrieving a pact" do
-
-  subject { get path; last_response  }
+  subject { get(path)  }
 
   context "when differing case is used in the consumer and provider names" do
 
@@ -30,6 +29,7 @@ describe "retrieving a pact" do
       end
     end
   end
+
   context "when differing case is used in the tag name" do
 
     let(:path) { "/pacts/provider/a%20provider/consumer/a%20consumer/latest/PROD" }

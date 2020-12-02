@@ -4,12 +4,14 @@ require 'pact_broker/domain/verification'
 require 'pact_broker/api/contracts/verification_contract'
 require 'pact_broker/api/decorators/verification_decorator'
 require 'pact_broker/api/resources/webhook_execution_methods'
+require 'pact_broker/api/resources/metadata_resource_methods'
 
 module PactBroker
   module Api
     module Resources
       class Verifications < BaseResource
         include WebhookExecutionMethods
+        include MetadataResourceMethods
 
         def content_types_accepted
           [["application/json", :from_json]]
@@ -73,10 +75,6 @@ module PactBroker
 
         def decorator_for model
           PactBroker::Api::Decorators::VerificationDecorator.new(model)
-        end
-
-        def metadata
-          PactBrokerUrls.decode_pact_metadata(identifier_from_path[:metadata])
         end
 
         def wip?

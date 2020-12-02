@@ -75,7 +75,7 @@ module PactBroker
       end
 
       def decode_pact_metadata(metadata)
-        if metadata
+        if metadata && metadata != ''
           begin
             Rack::Utils.parse_nested_query(Base64.strict_decode64(metadata)).each_with_object({}) do | (k, v), new_hash |
               new_hash[k.to_sym] = v

@@ -123,6 +123,12 @@ module PactBroker
           end
         end
 
+        context "when the metadata is empty" do
+          it "returns an empty hash" do
+            expect(PactBrokerUrls.decode_pact_metadata("")).to eq({})
+          end
+        end
+
         context "when the metadata is not valid base64" do
           it "returns an empty hash" do
             expect(PactBrokerUrls.decode_pact_metadata("foo==,")).to eq({})

@@ -40,6 +40,7 @@ module PactBroker
       attr_reader :provider_version
       attr_reader :version
       attr_reader :pact
+      attr_reader :pact_version
       attr_reader :verification
       attr_reader :webhook
       attr_reader :webhook_execution
@@ -243,6 +244,20 @@ module PactBroker
           json_content: prepare_json_content(json_content),
           pact_version_sha: pact_version_sha
         )
+        self
+      end
+
+      def create_pact_version_without_publication(json_content = nil )
+        json_content = json_content ? json_content : {random: rand}.to_json
+        pact_version_sha = generate_pact_version_sha(json_content)
+
+        @pact_version = PactBroker::Pacts::PactVersion.new(
+          consumer_id: consumer.id,
+          provider_id: provider.id,
+          sha: pact_version_sha,
+          content: json_content,
+          created_at: Sequel.datetime_class.now
+        ).save
         self
       end
 

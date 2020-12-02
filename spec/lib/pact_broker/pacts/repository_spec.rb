@@ -609,26 +609,66 @@ module PactBroker
             expect(subject.provider.name).to eq "Provider"
             expect(subject.consumer_version_number).to eq "1.2.4"
             expect(subject.revision_number).to eq 2
-
           end
+
           context "when there are multiple pact publications for the pact version" do
             before do
               # Double check the data is set up correctly...
               expect(pact_1.pact_version_sha).to eq(pact_2.pact_version_sha)
             end
 
-            let(:td) { TestDataBuilder.new }
             let!(:pact_1) { td.create_pact_with_hierarchy("Foo", "1", "Bar").and_return(:pact) }
             let!(:pact_2) { td.create_consumer_version("2").create_pact(json_content: pact_1.json_content).and_return(:pact) }
 
-            subject  { Repository.new.find_pact "Foo", nil, "Bar", pact_1.pact_version_sha }
+            let(:consumer_version_number) { nil }
+
+            subject  { Repository.new.find_pact "Foo", consumer_version_number, "Bar", pact_1.pact_version_sha }
 
             it "returns the latest pact, ordered by consumer version order" do
               expect(subject.consumer_version_number).to eq "2"
             end
+
+            context "when the consumer_version_number is specified too (from the URL metadata)" do
+              let(:consumer_version_number) { "1" }
+
+              it "returns the publication with the consumer version specified" do
+                expect(subject.consumer_version_number).to eq "1"
+              end
+            end
+
+            context "when the consumer_version_number is specified too (from the URL metadata) but it doesn't exist (anymore)" do
+              let(:consumer_version_number) { "9" }
+
+              it "returns the pact matching the sha with the latest consumer version" do
+                expect(subject.consumer_version_number).to eq "2"
+              end
+            end
+
+            # Not sure when this would happen
+            context "when the consumer_version_number is specified too (from the URL metadata) and it exists but it doesn't match the sha" do
+              before do
+                td.create_pact_with_hierarchy("Foo", "8", "Bar")
+              end
+
+              let(:consumer_version_number) { "8" }
+
+              it "returns the pact matching the sha with the latest consumer version" do
+                expect(subject.consumer_version_number).to eq "2"
+              end
+            end
+
+            context "when the pact has multiple revisions and goes back to a previous revision" do
+              before do
+                td.revise_pact
+                  .revise_pact(pact_1.json_content)
+              end
+
+              it "returns the latest revision" do
+                expect(subject.revision_number).to eq 3
+              end
+            end
           end
         end
-
       end
 
       describe "find_all_revisions" do
