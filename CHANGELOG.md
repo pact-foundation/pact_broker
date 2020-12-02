@@ -1,3 +1,14 @@
+<a name="v2.72.0"></a>
+### v2.72.0 (2020-12-02)
+
+#### Features
+
+* allow overwritten data deletion to be configured with extra options	 ([fd809737](/../../commit/fd809737))
+* use the consumer version number in the metadata to select the correct consumer version for a pact version resource	 ([422c87fc](/../../commit/422c87fc))
+* return link to latest pact if more pacts exist when deleting pacts by tag	 ([b87ea704](/../../commit/b87ea704))
+* update output for clean dry run	 ([681a5ddd](/../../commit/681a5ddd))
+* update metrics output	 ([0617e9df](/../../commit/0617e9df))
+
 <a name="v2.71.0"></a>
 ### v2.71.0 (2020-11-28)
 
