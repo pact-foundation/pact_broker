@@ -54,6 +54,14 @@ module PactBroker
           where(name_like(:consumer_version_number, number))
         end
 
+        def maybe_consumer_version_number number
+          if number
+            where(name_like(:consumer_version_number, number))
+          else
+            self
+          end
+        end
+
         def revision_number number
           where(revision_number: number)
         end

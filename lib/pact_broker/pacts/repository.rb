@@ -299,7 +299,7 @@ module PactBroker
         pact_publication_by_consumer_version = scope_for(LatestPactPublicationsByConsumerVersion)
             .consumer(consumer_name)
             .provider(provider_name)
-            .consumer_version_number(consumer_version)
+            .maybe_consumer_version_number(consumer_version)
             .limit(1)
 
         latest_pact_publication_by_sha = scope_for(AllPactPublications)
@@ -327,6 +327,11 @@ module PactBroker
               .eager(:tags)
               .collect(&:to_domain_with_content).first
           end
+        else
+          pact_publication_by_consumer_version
+            .eager(:tags)
+            .reverse_order(:consumer_version_order, :revision_number)
+            .collect(&:to_domain_with_content).first
         end
       end
 

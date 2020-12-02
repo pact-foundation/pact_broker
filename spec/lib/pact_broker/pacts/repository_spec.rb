@@ -569,8 +569,7 @@ module PactBroker
 
       describe "find_pact" do
         let!(:pact) do
-          builder = TestDataBuilder.new
-          pact = builder
+          pact = td
             .create_consumer("Consumer")
             .create_consumer_version("1.2.2")
             .create_provider("Provider")
@@ -580,7 +579,7 @@ module PactBroker
             .create_pact
             .revise_pact
             .and_return(:pact)
-          builder
+          td
             .create_consumer_version("1.2.6")
             .create_pact
             .create_provider("Another Provider")
@@ -598,6 +597,14 @@ module PactBroker
           expect(subject.consumer_version.number).to eq "1.2.4"
           expect(subject.consumer_version.tags.first.name).to eq "prod"
           expect(subject.json_content).to_not be_nil
+        end
+
+        context "with no version" do
+          subject  { Repository.new.find_pact("Consumer", nil, "Provider") }
+
+          it "returns the latest pact" do
+            expect(subject.consumer_version_number).to eq "1.2.6"
+          end
         end
 
         context "with a pact_version_sha" do
