@@ -8,6 +8,7 @@ $LOAD_PATH.unshift './tasks'
 ENV['RACK_ENV'] = 'development'
 require 'sequel'
 require 'logger'
+require 'stringio'
 logger = Logger.new($stdout)
 logger = Logger.new(StringIO.new)
 DATABASE_CREDENTIALS = {logger: logger, adapter: "sqlite", database: ARGV[0], :encoding => 'utf8'}.tap { |it| puts it }
