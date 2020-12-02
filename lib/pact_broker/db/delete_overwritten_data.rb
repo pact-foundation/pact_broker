@@ -11,65 +11,93 @@ module PactBroker
       def initialize database_connection, options = {}
         @db = database_connection
         @options = options
-        @before = options[:before] || DateTime.now
+        @cut_off_date = options[:max_age] ? (DateTime.now - options[:max_age]) : DateTime.now
+        @limit = options[:limit] || 1000
       end
 
       def call
+        require 'pact_broker/pacts/pact_publication'
+        require 'pact_broker/domain/verification'
+
         deleted_counts = {}
         kept_counts = {}
-
 
         deleted_counts.merge!(delete_overwritten_pact_publications)
         deleted_counts.merge!(delete_overwritten_verifications)
         deleted_counts.merge!(delete_orphan_pact_versions)
+        deleted_counts.merge!(delete_webhook_data)
 
         kept_counts[:pact_publications] = db[:pact_publications].count
         kept_counts[:verification_results] = db[:verifications].count
         kept_counts[:pact_versions] = db[:pact_versions].count
+        kept_counts[:triggered_webhooks] = db[:triggered_webhooks].count
 
-
-        { deleted: deleted_counts, kept: kept_counts }
+        if dry_run?
+          to_keep = deleted_counts.keys.each_with_object({}) do | table_name, new_counts |
+            new_counts[table_name] = kept_counts[table_name] - deleted_counts[table_name]
+          end
+          { toDelete: deleted_counts, toKeep: to_keep }
+        else
+          { deleted: deleted_counts, kept: kept_counts }
+        end
       end
 
       private
 
-      attr_reader :db, :options, :before
+      attr_reader :db, :options, :cut_off_date, :limit
 
-      def delete_webhook_data(triggered_webhook_ids)
-        db[:webhook_executions].where(triggered_webhook_id: triggered_webhook_ids).delete
-        db[:triggered_webhooks].where(id: triggered_webhook_ids).delete
+      def dry_run?
+        options[:dry_run]
+      end
+
+      def delete_webhook_data
+        ids_to_keep = db[:latest_triggered_webhooks].select(:id)
+        resolved_ids_to_delete = db[:triggered_webhooks]
+          .where(id: ids_to_keep)
+          .invert
+          .where(Sequel.lit('created_at < ?', cut_off_date))
+          .limit(limit)
+          .collect{ |row| row[:id] }
+
+        PactBroker::Webhooks::TriggeredWebhook.where(id: resolved_ids_to_delete).delete unless dry_run?
+        { triggered_webhooks: resolved_ids_to_delete.count }
       end
 
       def delete_orphan_pact_versions
         referenced_pact_version_ids = db[:pact_publications].select(:pact_version_id).union(db[:verifications].select(:pact_version_id))
-        pact_version_ids_to_delete = db[:pact_versions].where(id: referenced_pact_version_ids).invert
-        deleted_counts = { pact_versions: pact_version_ids_to_delete.count }
-        pact_version_ids_to_delete.delete
-        deleted_counts
+        pact_version_ids_to_delete = db[:pact_versions].where(id: referenced_pact_version_ids).invert.order(:id).limit(limit).collect{ |row| row[:id] }
+        db[:pact_versions].where(id: pact_version_ids_to_delete).delete unless dry_run?
+        { pact_versions: pact_version_ids_to_delete.count }
       end
 
       def delete_overwritten_pact_publications
-        pact_publication_ids_to_delete = db[:pact_publications]
-          .select(:id)
-          .where(id: db[:latest_pact_publication_ids_for_consumer_versions].select(:pact_publication_id))
-          .invert
-          .where(Sequel.lit('created_at < ?', before))
+        ids_to_keep = db[:latest_pact_publication_ids_for_consumer_versions].select(:pact_publication_id)
 
-        deleted_counts = { pact_publications: pact_publication_ids_to_delete.count }
-        delete_webhook_data(db[:triggered_webhooks].where(pact_publication_id: pact_publication_ids_to_delete).select(:id))
-        pact_publication_ids_to_delete.delete
-        deleted_counts
+        resolved_ids_to_delete = db[:pact_publications]
+          .where(id: ids_to_keep)
+          .invert
+          .where(Sequel.lit('created_at < ?', cut_off_date))
+          .order(:id)
+          .limit(limit)
+          .collect{ |row| row[:id] }
+
+        PactBroker::Pacts::PactPublication.where(id: resolved_ids_to_delete).delete unless dry_run?
+
+        { pact_publications: resolved_ids_to_delete.count }
       end
 
       def delete_overwritten_verifications
-        verification_ids = db[:verifications].select(:id)
-          .where(id: db[:latest_verification_id_for_pact_version_and_provider_version].select(:verification_id))
+        ids_to_keep = db[:latest_verification_id_for_pact_version_and_provider_version].select(:verification_id)
+        resolved_ids_to_delete = db[:verifications]
+          .where(id: ids_to_keep)
           .invert
-          .where(Sequel.lit('created_at < ?', before))
-        deleted_counts = { verification_results: verification_ids.count }
-        delete_webhook_data(db[:triggered_webhooks].where(verification_id: verification_ids).select(:id))
-        verification_ids.delete
-        deleted_counts
+          .where(Sequel.lit('created_at < ?', cut_off_date))
+          .order(:id)
+          .limit(limit)
+          .collect{ |row| row[:id] }
+
+        PactBroker::Domain::Verification.where(id: resolved_ids_to_delete).delete unless dry_run?
+        { verification_results: resolved_ids_to_delete.count }
       end
     end
   end

@@ -38,15 +38,21 @@ module PactBroker
 
               raise PactBroker::Error.new("You must specify the version_deletion_limit") unless version_deletion_limit
 
+              prefix = dry_run ? "[DRY RUN] " : ""
+
               if keep_version_selectors.nil? || keep_version_selectors.empty?
                 raise PactBroker::Error.new("You must specify which versions to keep")
               else
-                output "Deleting oldest #{version_deletion_limit} versions, keeping versions that match the configured selectors", keep_version_selectors
+                output "#{prefix}Deleting oldest #{version_deletion_limit} versions, keeping versions that match the configured selectors", keep_version_selectors
               end
 
               start_time = Time.now
-              results = PactBroker::DB::CleanIncremental.call(
-                database_connection, keep: keep_version_selectors, limit: version_deletion_limit, logger: logger, dry_run: dry_run)
+              results = PactBroker::DB::CleanIncremental.call(database_connection,
+                keep: keep_version_selectors,
+                limit: version_deletion_limit,
+                logger: logger,
+                dry_run: dry_run
+              )
               end_time = Time.now
               elapsed_seconds = (end_time - start_time).to_i
               output "Results (#{elapsed_seconds} seconds)", results

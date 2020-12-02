@@ -2,11 +2,14 @@ require 'pact_broker/db/delete_overwritten_data'
 
 module PactBroker
   module DB
-    describe DeleteOverwrittenData, pending: !!DB.mysql? do
+    describe DeleteOverwrittenData, skip: !!DB.mysql? do
       describe ".call" do
         let(:db) { PactBroker::DB.connection }
-        subject { DeleteOverwrittenData.call(db, before: before_date) }
-        let(:before_date) { nil }
+        let(:max_age) { nil }
+        let(:dry_run) { nil }
+        let(:limit) { nil }
+
+        subject { DeleteOverwrittenData.call(db, max_age: max_age, limit: limit, dry_run: dry_run) }
 
         context "when a pact is overwritten" do
           let!(:pact_to_delete) { td.create_everything_for_an_integration.and_return(:pact) }
@@ -24,6 +27,14 @@ module PactBroker
           it "returns a report" do
             expect(subject[:deleted][:pact_publications]).to eq 1
             expect(subject[:kept][:pact_publications]).to eq 1
+          end
+
+          context "when dry_run is true" do
+            let(:dry_run) { true }
+
+            it "does not delete anything" do
+              expect { subject }.to_not change{ db[:pact_publications].count }
+            end
           end
         end
 
@@ -53,9 +64,11 @@ module PactBroker
         context "when a pact version is orphaned" do
           before do
             td.create_pact_with_verification.comment("this one will still have the verification, so can't be deleted")
-              .revise_pact.comment("this one can be deleted")
-              .revise_pact.comment("this one will still have a pact publication, so can't be deleted")
+              .create_pact_version_without_publication.comment("will be deleted")
+              .create_pact_version_without_publication.comment("will be kept because of limit")
           end
+
+          let(:limit) { 1 }
 
           it "is deleted" do
             expect { subject }.to change{ db[:pact_versions].count }.by(-1)
@@ -65,34 +78,81 @@ module PactBroker
             expect(subject[:deleted][:pact_versions]).to eq 1
             expect(subject[:kept][:pact_versions]).to eq 2
           end
+
+          context "when dry_run is true" do
+            let(:dry_run) { true }
+
+            it "does not delete anything" do
+              expect { subject }.to_not change{ db[:pact_versions].count }
+            end
+          end
         end
 
-        context "when the pact publication is created after the before date" do
+        context "when the pact publication is younger than the max age" do
           before do
-            td.set_now(before_date + 1)
+            td.set_now(DateTime.now - 3)
               .create_pact_with_hierarchy
               .revise_pact
           end
 
-          let(:before_date) { DateTime.new(2010, 2, 5) }
+          let(:max_age) { 4 }
 
           it "doesn't delete the data" do
             expect { subject }.to_not change { db[:pact_publications].count }
           end
         end
 
-        context "when the verification is created after the before date" do
+        context "when the verification is younger than the max age" do
           before do
-            td.set_now(before_date + 1)
+            td.set_now(DateTime.now - 3)
               .create_pact_with_hierarchy
               .create_verification(provider_version: "1", success: false)
               .create_verification(provider_version: "1", success: true, number: 2)
           end
 
-          let(:before_date) { DateTime.new(2010, 2, 5) }
+          let(:max_age) { 4 }
 
           it "doesn't delete the data" do
             expect { subject }.to_not change { db[:verifications].count }
+          end
+        end
+
+        context "when there are triggered webhooks and executions" do
+          before do
+            td.create_pact_with_hierarchy("Foo", "1", "Bar")
+              .create_webhook
+              .create_triggered_webhook
+              .create_webhook_execution
+              .create_triggered_webhook.comment("latest")
+              .create_webhook_execution
+              .create_pact_with_hierarchy("Foo1", "1", "Bar1")
+              .create_webhook
+              .create_triggered_webhook
+              .create_webhook_execution
+              .create_triggered_webhook.comment("latest")
+              .create_webhook_execution
+          end
+
+          let(:limit) { 3 }
+
+          it "deletes all but the latest triggered webhooks, considering the limit" do
+            expect { subject }.to change { PactBroker::Webhooks::TriggeredWebhook.count }.by(-2)
+          end
+
+          context "when dry_run is true" do
+            let(:dry_run) { true }
+
+            it "does not delete anything" do
+              expect { subject }.to_not change{ PactBroker::Webhooks::TriggeredWebhook.count }
+            end
+          end
+
+          context "when all the records are younger than the max age" do
+            let(:max_age) { 1 }
+
+            it "doesn't delete anything" do
+              expect { subject }.to_not change { PactBroker::Webhooks::TriggeredWebhook.count }
+            end
           end
         end
       end

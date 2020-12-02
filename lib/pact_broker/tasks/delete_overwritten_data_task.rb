@@ -2,9 +2,13 @@ module PactBroker
   module DB
     class DeleteOverwrittenDataTask < ::Rake::TaskLib
       attr_accessor :database_connection
-      attr_accessor :age_in_days
+      attr_accessor :max_age
+      attr_accessor :logger
+      attr_accessor :deletion_limit
+      attr_accessor :dry_run
 
       def initialize &block
+        @max_age = 7
         rake_task &block
       end
 
@@ -19,15 +23,27 @@ module PactBroker
               instance_eval(&block)
               options = {}
 
-              if age_in_days
-                options[:before] = (Date.today - age_in_days.to_i).to_datetime
-                $stdout.puts "Deleting overwritten pact publications and verifications older than #{age_in_days} days"
+              prefix = dry_run ? "[DRY RUN] " : ""
+
+              if max_age
+                options[:max_age] = max_age
+                output "#{prefix}Deleting overwritten pact publications and verifications older than #{max_age} days"
               else
-                $stdout.puts "Deleting overwritten pact publications and verifications"
+                output "#{prefix}Deleting overwritten pact publications and verifications"
               end
 
-              report = PactBroker::DB::DeleteOverwrittenData.call(database_connection, options)
-              $stdout.puts report.to_yaml
+              options[:limit] = deletion_limit if deletion_limit
+              options[:dry_run] = dry_run
+
+              start_time = Time.now
+              results = PactBroker::DB::DeleteOverwrittenData.call(database_connection, options)
+              end_time = Time.now
+              elapsed_seconds = (end_time - start_time).to_i
+              output "Results (#{elapsed_seconds} seconds)", results
+            end
+
+            def output string, payload = {}
+              logger ? logger.info(string, payload: payload) : puts("#{string} #{payload.to_json}")
             end
           end
         end
