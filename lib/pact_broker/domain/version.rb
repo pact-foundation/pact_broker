@@ -118,7 +118,7 @@ module PactBroker
             Sequel[:versions][:order]          => Sequel[:latest][:latest_version_order]
           }
 
-          group_by_cols = selector.tag == true ? [:pacticipant_id, Sequel[:tags][:name]] : [:pacticipant_id]
+          group_by_cols = selector.tag == true ? [Sequel[:versions][:pacticipant_id], Sequel[:tags][:name]] : [Sequel[:versions][:pacticipant_id]]
 
           max_order_for_each_pacticipant = query
               .select_group(*group_by_cols)

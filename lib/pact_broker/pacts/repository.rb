@@ -208,11 +208,11 @@ module PactBroker
 
         # The first instance (by date) of each provider tag with that name
         provider_tag_collection = PactBroker::Domain::Tag
-          .select_group(Sequel[:tags][:name], Sequel[:pacticipant_id])
+          .select_group(Sequel[:tags][:name], Sequel[:versions][:pacticipant_id])
           .select_append(Sequel.function(:min, Sequel[:tags][:created_at]).as(:created_at))
           .distinct
           .join(:versions, { Sequel[:tags][:version_id] => Sequel[:versions][:id] } )
-          .where(pacticipant_id: provider.id)
+          .where(Sequel[:versions][:pacticipant_id] => provider.id)
           .where(name: provider_tags_names)
           .all
 

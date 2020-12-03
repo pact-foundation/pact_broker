@@ -186,7 +186,7 @@ module PactBroker
 
       def create_tag tag_name, params = {}
         params.delete(:comment)
-        @tag = PactBroker::Domain::Tag.create(name: tag_name, version: @version)
+        @tag = PactBroker::Domain::Tag.create(name: tag_name, version: @version, version_order: @version.order, pacticipant_id: @version.pacticipant_id)
         set_created_at_if_set params[:created_at], :tags, { name: @tag.name, version_id: @tag.version_id }
         self
       end

@@ -79,7 +79,7 @@ module PactBroker
         version_ids_to_keep = (version_ids_with_pact_publications + version_ids_with_verifications).uniq
 
         PactBroker::Domain::Version
-          .where(pacticipant_id: [consumer.id, provider.id])
+          .where(Sequel[:versions][:pacticipant_id] => [consumer.id, provider.id])
           .exclude(id: (version_ids_with_pact_publications + version_ids_with_verifications).uniq)
           .delete
       end
