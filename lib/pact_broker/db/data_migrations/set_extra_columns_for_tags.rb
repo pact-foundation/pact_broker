@@ -7,15 +7,20 @@ module PactBroker
         extend Helpers
 
         def self.call(connection)
-          if columns_exist?(connection, :tags, [:pacticipant_id, :version_id]) &&
-              column_exists?(connection, :versions, [:id, :pacticipant_id])
-            query = "UPDATE tags SET pacticipant_id = (SELECT pacticipant_id FROM versions v WHERE v.id = tags.version_id)"
-            connection.run(query)
+          if columns_exist?(connection, :tags, [:version_id, :pacticipant_id]) &&
+              columns_exist?(connection, :versions, [:id, :pacticipant_id])
+            connection[:tags].update(
+              pacticipant_id: connection[:versions].select(:pacticipant_id)
+                                .where(Sequel[:versions][:id] => Sequel[:tags][:version_id])
+            )
           end
 
           if columns_exist?(connection, :tags, [:version_id, :version_order]) &&
-              column_exists?(connection, :versions, :order)
-            connection[:tags].update(version_order: connection[:versions].select(:pacticipant_id).where(Sequel[:versions][:id] => Sequel[:tags][:version_id]))
+              columns_exist?(connection, :versions, [:id, :order])
+            connection[:tags].update(
+              version_order: connection[:versions].select(:order)
+                                .where(Sequel[:versions][:id] => Sequel[:tags][:version_id])
+            )
           end
         end
       end
