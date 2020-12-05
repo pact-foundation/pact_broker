@@ -8,8 +8,10 @@ Sequel.migration do
 
       if PactBroker::MigrationHelper.postgres?
         add_index(:version_id, type: "hash", name: "ndx_tags_version_id")
+        add_index(:pacticipant_id, type: "hash", name: "ndx_tags_pacticipant_id")
       else
         add_index(:version_id, name: "ndx_tags_version_id")
+        add_index(:pacticipant_id, name: "ndx_tags_pacticipant_id")
         add_index([:pacticipant_id, :version_order], name: "ndx_tag_pacticipant_id_version_order")
       end
     end
@@ -22,6 +24,7 @@ Sequel.migration do
 
   down do
     alter_table(:tags) do
+      drop_index(:version_id, name: "ndx_tags_pacticipant_id")
       drop_index(:version_id, name: "ndx_tags_version_id")
       drop_index([:pacticipant_id, :version_order], name: "ndx_tag_pacticipant_id_version_order")
       drop_foreign_key(:pacticipant_id, foreign_key_constraint_name: 'fk_tag_pacticipant')

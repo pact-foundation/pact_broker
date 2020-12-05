@@ -51,3 +51,17 @@ LATEST_VERIFICATION_IDS_FOR_CONSUMER_VERSION_TAGS_V3 = "select
         on v.provider_version_id = pv.id
       where v.id in (select latest_verification_id from latest_verification_ids_for_pact_versions)
       group by pv.pacticipant_id, lpp.consumer_id, t.name"
+
+
+LATEST_VERIFICATION_IDS_FOR_CONSUMER_VERSION_TAGS_V4 = "select
+    lpp.provider_id,
+    lpp.consumer_id,
+    t.name as consumer_version_tag_name,
+    max(lv.latest_verification_id)
+  from latest_verification_ids_for_pact_versions lv
+  join latest_pact_publication_ids_for_consumer_versions lpp
+    on lv.pact_version_id = lpp.pact_version_id
+  join tags t
+    on lpp.consumer_version_id = t.version_id
+  group by lpp.provider_id, lpp.consumer_id, t.name
+"

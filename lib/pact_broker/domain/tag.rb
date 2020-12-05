@@ -14,43 +14,15 @@ module PactBroker
         include PactBroker::Repositories::Helpers
 
         def latest_tags
-          tags_versions_join = {
-            Sequel[:tags][:version_id] => Sequel[:versions][:id],
+          self_join = {
+            Sequel[:tags][:pacticipant_id] => Sequel[:tags_2][:pacticipant_id],
+            Sequel[:tags][:name] => Sequel[:tags_2][:name]
           }
-
-          latest_tags_versions_join = {
-            Sequel[:latest_tags][:name] => Sequel[:tags][:name],
-            Sequel[:latest_tags][:latest_order] => Sequel[:versions][:order],
-            Sequel[:latest_tags][:pacticipant_id] => Sequel[:versions][:pacticipant_id],
-          }
-
-          latest_tags = PactBroker::Domain::Tag
-            .select_group(Sequel[:tags][:name], Sequel[:versions][:pacticipant_id])
-            .select_append{ max(order).as(latest_order) }
-            .join(:versions, tags_versions_join)
 
           PactBroker::Domain::Tag
             .select_all_qualified
-            .join(:versions,
-              { Sequel[:tags][:version_id] => Sequel[:versions][:id] }
-            )
-            .join(latest_tags, latest_tags_versions_join, { table_alias: :latest_tags })
-        end
-
-        # Ron's fancy join
-        # performs every so slightly better
-        def latest_tags_2
-          tag_versions = PactBroker::Domain::Tag
-            .select_all_qualified
-            .select_append(Sequel[:versions][:pacticipant_id])
-            .select_append(Sequel[:versions][:order])
-            .join(:versions,
-              { Sequel[:tags][:version_id] => Sequel[:versions][:id] }
-            )
-
-          tag_versions
-            .left_join(tag_versions, { Sequel[:tags][:name] =>  Sequel[:tags_2][:name], Sequel[:versions][:pacticipant_id] => Sequel[:tags_2][:pacticipant_id] }, { table_alias: :tags_2 }) do | table, joined_table, js |
-              Sequel.qualify(table, :order) > Sequel.qualify(joined_table, :order)
+            .left_join(:tags, self_join, { table_alias: :tags_2 }) do | t, jt, js |
+              Sequel[:tags_2][:version_order] > Sequel[:tags][:version_order]
             end
             .where(Sequel[:tags_2][:name] => nil)
         end
@@ -58,30 +30,19 @@ module PactBroker
         # Does NOT care about whether or not there is a pact publication
         # for the version
         def latest_tags_for_pacticipant_ids(pacticipant_ids)
-          tags_versions_join = {
-            Sequel[:tags][:version_id] => Sequel[:versions][:id],
-            Sequel[:versions][:pacticipant_id] => pacticipant_ids
+          self_join = {
+            Sequel[:tags][:pacticipant_id] => Sequel[:tags_2][:pacticipant_id],
+            Sequel[:tags][:name] => Sequel[:tags_2][:name],
+            Sequel[:tags_2][:pacticipant_id] => pacticipant_ids,
           }
-
-          latest_tags_versions_join = {
-            Sequel[:latest_tags][:name] => Sequel[:tags][:name],
-            Sequel[:latest_tags][:latest_order] => Sequel[:versions][:order],
-            Sequel[:latest_tags][:pacticipant_id] => Sequel[:versions][:pacticipant_id],
-            Sequel[:versions][:pacticipant_id] => pacticipant_ids
-          }
-
-          latest_tags = PactBroker::Domain::Tag
-            .select_group(Sequel[:tags][:name], Sequel[:versions][:pacticipant_id])
-            .select_append{ max(order).as(latest_order) }
-            .join(:versions, tags_versions_join)
 
           PactBroker::Domain::Tag
             .select_all_qualified
-            .join(:versions,
-              { Sequel[:tags][:version_id] => Sequel[:versions][:id],
-                Sequel[:versions][:pacticipant_id] => pacticipant_ids
-              })
-            .join(latest_tags, latest_tags_versions_join, { table_alias: :latest_tags })
+            .left_join(:tags, self_join, { table_alias: :tags_2 }) do | t, jt, js |
+              Sequel[:tags_2][:version_order] > Sequel[:tags][:version_order]
+            end
+            .where(Sequel[:tags_2][:name] => nil)
+            .where(Sequel[:tags][:pacticipant_id] => pacticipant_ids)
         end
 
         def head_tags_for_consumer_id(consumer_id)
@@ -119,6 +80,28 @@ module PactBroker
             .select(Sequel[:head_tags][:name], Sequel[:versions][:id].as(:version_id))
             .join(:versions, head_tags_versions_join)
             .where(Sequel[:versions][:id] => pact_publication.consumer_version_id)
+        end
+      end
+
+      def before_save
+        if version
+          if version.order && self.version_order.nil?
+            self.version_order = version.order
+          end
+
+          if self.pacticipant_id.nil?
+            if version.pacticipant_id
+              self.pacticipant_id = version.pacticipant_id
+            elsif version&.pacticipant&.id
+              self.pacticipant_id = version.pacticipant.id
+            end
+          end
+        end
+
+        if version_order.nil? || pacticipant_id.nil?
+          raise PactBroker::Error.new("Need to set version_order and pacticipant_id for tags now")
+        else
+          super
         end
       end
 
