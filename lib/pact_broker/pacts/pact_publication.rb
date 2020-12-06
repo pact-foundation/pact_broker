@@ -22,6 +22,26 @@ module PactBroker
       one_to_one(:latest_verification, class: "PactBroker::Verifications::LatestVerificationForPactVersion", key: :pact_version_id, primary_key: :pact_version_id)
       one_to_many(:head_pact_tags, class: "PactBroker::Tags::HeadPactTag", primary_key: :id, key: :pact_publication_id)
 
+
+
+      # one_to_many :head_pact_tags, :class => "PactBroker::Tags::HeadPactTag", primary_keys: [:id], key: [:version_id], :eager_loader=>(proc do |eo_opts|
+      #   tags_for_versions = PactBroker::Domain::Tag.where(version_id: eo_opts[:key_hash][:id].keys)
+      #   latest_tag_for_pacticipants = PactBroker::Domain::Tag.latest_tags_for_pacticipant_ids(eo_opts[:rows].collect(&:pacticipant_id)).all
+
+      #   eo_opts[:rows].each{|row| row.associations[:tags_with_latest_flag] = [] }
+
+      #   tags_for_versions.each do | tag |
+      #     latest = latest_tag_for_pacticipants.any? { |latest_tag| latest_tag.name == tag.name && latest_tag.version_id == tag.version_id }
+      #     eo_opts[:id_map][tag.version_id].each do | version |
+      #       version.associations[:tags_with_latest_flag] << EagerTagWithLatestFlag.new(tag, latest)
+      #     end
+      #   end
+      # end)
+
+      # def head_pact_tags
+      #   @head_pact_tags ||= consumer_version.tags.select { |tag| tag.latest_for_pact_publication?(self) }
+      # end
+
       plugin :upsert, identifying_columns: [:consumer_version_id, :provider_id, :revision_number]
       plugin :timestamps, update_on_create: true
 

@@ -9,6 +9,7 @@ Sequel.migration do
       if PactBroker::MigrationHelper.postgres?
         add_index(:version_id, type: "hash", name: "ndx_tags_version_id")
         add_index(:pacticipant_id, type: "hash", name: "ndx_tags_pacticipant_id")
+        add_index(:name, type: "hash", name: "ndx_tags_tag_name") # original index was a btree, not a hash
       else
         add_index(:version_id, name: "ndx_tags_version_id")
         add_index(:pacticipant_id, name: "ndx_tags_pacticipant_id")
@@ -24,6 +25,9 @@ Sequel.migration do
 
   down do
     alter_table(:tags) do
+      if PactBroker::MigrationHelper.postgres?
+        drop_index(:name, name: "ndx_tags_tag_name")
+      end
       drop_index(:version_id, name: "ndx_tags_pacticipant_id")
       drop_index(:version_id, name: "ndx_tags_version_id")
       drop_index([:pacticipant_id, :version_order], name: "ndx_tag_pacticipant_id_version_order")

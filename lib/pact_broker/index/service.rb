@@ -73,7 +73,7 @@ module PactBroker
             webhook ? [webhook]: [],
             pact_publication.integration.latest_triggered_webhooks,
             consumer_version_tags(pact_publication, options[:tags]),
-            options[:tags] && latest_verification ? latest_verification.provider_version.tags_with_latest_flag.select(&:latest?) : []
+            options[:tags] && latest_verification ? latest_verification.provider_version.head_tags : []
           )
         end.sort
 

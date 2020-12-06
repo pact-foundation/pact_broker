@@ -147,6 +147,10 @@ module PactBroker
         "Version #{number} - #{updated_at.to_time.localtime.strftime("%d/%m/%Y")}"
       end
 
+      def head_tags
+        tags.select(&:latest_for_pacticipant?)
+      end
+
       # What about provider??? This makes no sense
       def latest_pact_publication
         pact_publications.last

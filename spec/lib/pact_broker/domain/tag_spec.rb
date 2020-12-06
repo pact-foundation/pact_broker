@@ -42,6 +42,52 @@ module PactBroker
           expect(tags.collect(&:created_at).compact.size).to eq 4
         end
       end
+
+      describe "latest_for_pacticipant?" do
+        before do
+          # Foo v1 Bar1
+          # Foo v1 Bar2
+          # Foo v2 Bar1
+          td.create_pact_with_verification_and_tags("Foo", "1", ["dev", "prod"], "Bar1")
+            .create_provider("Bar2")
+            .create_pact
+            .create_pact_with_verification_and_tags("Foo", "2", ["dev"], "Bar1")
+            .create_consumer_version("3")
+            .create_consumer_version_tag("dev")
+        end
+
+        it "returns true if there are no other tags with that name for that pacticipant for a later version" do
+          version_1 = PactBroker::Versions::Repository.new.find_by_pacticipant_name_and_number("Foo", "1")
+          expect(version_1.tags.find { |t| t.name == "prod" }.latest_for_pacticipant?).to be true
+          expect(version_1.tags.find { |t| t.name == "dev" }.latest_for_pacticipant?).to be false
+        end
+      end
+
+      describe "head_tags_for_pact_publication" do
+        before do
+          # Foo v1 Bar1
+          # Foo v1 Bar2
+          # Foo v2 Bar1
+          td.create_pact_with_verification_and_tags("Foo", "1", ["dev", "prod"], "Bar1")
+            .create_provider("Bar2")
+            .create_pact
+            .create_pact_with_verification_and_tags("Foo", "2", ["dev"], "Bar1")
+            .create_consumer_version("3")
+            .create_consumer_version_tag("dev")
+        end
+
+        it "returns the names of the tags for which this pact publication is the latest" do
+          pact_0 = PactBroker::Pacts::PactPublication.find(id: PactBroker::Pacts::Repository.new.find_pact("Foo", "1", "Bar1").id)
+          expect(pact_0.consumer_version.tags.collect(&:name).sort).to eq ["dev", "prod"]
+          expect(Tag.head_tags_for_pact_publication(pact_0).collect(&:name).sort).to eq ["prod"]
+
+          pact_1 = PactBroker::Pacts::PactPublication.find(id: PactBroker::Pacts::Repository.new.find_pact("Foo", "2", "Bar1").id)
+          expect(Tag.head_tags_for_pact_publication(pact_1).collect(&:name).sort).to eq ["dev"]
+
+          pact_2 = PactBroker::Pacts::PactPublication.find(id: PactBroker::Pacts::Repository.new.find_pact("Foo", "1", "Bar2").id)
+          expect(Tag.head_tags_for_pact_publication(pact_2).collect(&:name).sort).to eq ["dev", "prod"]
+        end
+      end
     end
   end
 end
