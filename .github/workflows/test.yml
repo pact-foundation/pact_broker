@@ -37,7 +37,7 @@ jobs:
       - uses: actions/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby_version }}
-      - run: "bundle install"
+      - run: "gem install bundler && bundle install"
         env:
           INSTALL_PG: "true"
       - run: "bundle exec rake"
