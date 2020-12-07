@@ -46,6 +46,7 @@ module PactBroker
           expect(subject[:_embedded][:tags].first).to include name: 'prod', latest: true
           # Can't seem to stub the verification_publication_url method on the TagDecorator
           expect(subject[:_embedded][:tags].first[:_links][:'pb:latest-pact'][:href]).to eq "http://example.org/pacts/provider/A%20Provider/consumer/A%20Consumer/latest/prod"
+          expect(subject[:_embedded][:tags].first[:_links][:self][:href]).to eq "http://example.org/pacticipants/A%20Consumer/versions/1234/tags/prod"
         end
 
         it "includes the pact contents under the contract key" do

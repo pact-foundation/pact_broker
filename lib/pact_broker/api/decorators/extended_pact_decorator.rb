@@ -11,6 +11,14 @@ module PactBroker
           property :name
           property :latest, getter: ->(_) { true }
 
+          link :self do | options |
+            {
+              title: 'Tag',
+              name: represented.name,
+              href: tag_url(options[:base_url], represented)
+            }
+          end
+
           link "pb:latest-pact" do | opts |
             {
               name: "The latest pact with the tag #{represented.name}",
@@ -33,7 +41,7 @@ module PactBroker
 
         def head_tags
           represented.head_tag_names.collect do | tag_name |
-            OpenStruct.new(name: tag_name, pact: represented)
+            OpenStruct.new(name: tag_name, pact: represented, version: represented.consumer_version)
           end
         end
       end
