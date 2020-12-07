@@ -76,7 +76,7 @@ module PactBroker
                   href: version_url(base_url, consumer_version)
                 }
               },
-              tags: tags(line.consumer_version_tags)
+              tags: tags(line.consumer_version_tags, base_url)
             },
             _links: {
               self: {
@@ -86,11 +86,16 @@ module PactBroker
           }
         end
 
-        def tags(tags)
+        def tags(tags, base_url)
           tags.collect do | tag |
             {
               name: tag.name,
-              latest: tag.latest?
+              latest: tag.latest?,
+              _links: {
+                self: {
+                  href: tag_url(base_url, tag)
+                }
+              }
             }
           end
         end
@@ -114,7 +119,7 @@ module PactBroker
                   href: version_url(base_url, provider_version)
                 }
               },
-              tags: tags(line.provider_version_tags)
+              tags: tags(line.provider_version_tags, base_url)
             }
           end
 

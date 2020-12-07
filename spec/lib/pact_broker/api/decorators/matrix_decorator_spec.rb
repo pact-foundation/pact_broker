@@ -66,8 +66,12 @@ module PactBroker
                 tags: [
                   {
                     name: 'prod',
-                    latest: true
-
+                    latest: true,
+                    _links: {
+                      self: {
+                        href: 'http://example.org/pacticipants/Consumer/versions/1.0.0/tags/prod'
+                      }
+                    }
                   }
                 ]
               }
@@ -92,10 +96,14 @@ module PactBroker
                 tags: [
                   {
                     name: 'master',
-                    latest: false
+                    latest: false,
+                    _links: {
+                      self: {
+                        href: 'http://example.org/pacticipants/Provider/versions/4.5.6/tags/master'
+                      }
+                    }
                   }
                 ]
-
               }
             }
           end
@@ -123,15 +131,19 @@ module PactBroker
             }
           end
 
+          let(:consumer_version) { double("consumer version", number: "1.0.0", pacticipant: double("consumer", name: "Consumer")) }
+
           let(:consumer_version_tags) do
             [
-              double('tag', name: 'prod', latest?: true)
+              double("tag", name: "prod", latest?: true, version: consumer_version)
             ]
           end
 
+          let(:provider_version) { double("provider version", number: "4.5.6", pacticipant: double("provider", name: "Provider")) }
+
           let(:provider_version_tags) do
             [
-              double('tag', name: 'master', latest?: false)
+              double("tag", name: "master", latest?: false, version: provider_version)
             ]
           end
 
@@ -158,11 +170,11 @@ module PactBroker
           let(:parsed_json) { JSON.parse(json, symbolize_names: true) }
 
           it "includes the consumer details" do
-            expect(parsed_json[:matrix][0][:consumer]).to eq consumer_hash
+            expect(parsed_json[:matrix][0][:consumer]).to match_pact consumer_hash
           end
 
           it "includes the provider details" do
-            expect(parsed_json[:matrix][0][:provider]).to eq provider_hash
+            expect(parsed_json[:matrix][0][:provider]).to match_pact provider_hash
           end
 
           it "includes the verification details" do
