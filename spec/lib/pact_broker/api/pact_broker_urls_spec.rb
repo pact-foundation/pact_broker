@@ -36,6 +36,7 @@ module PactBroker
           pacticipant: consumer,
           number: "2/4")
       end
+      let(:tag) { double('tag', name: "feat/foo", version: version) }
 
       matcher :match_route_in_api do |api|
         match do |url|
@@ -167,6 +168,13 @@ module PactBroker
         let(:consumer_selector) { PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: consumer_name, tag: "bar", latest: true) }
 
         it { is_expected.to eq "http://example.org/matrix/provider/Bar%2FBar/latest/meep/consumer/Foo%2FFoo/latest/bar/badge.svg" }
+      end
+
+      describe "tag_url" do
+        subject { PactBrokerUrls.tag_url(base_url, tag) }
+
+        it { is_expected.to match_route_in_api(PactBroker::API) }
+        it { is_expected.to eq "http://example.org/pacticipants/Foo%2FFoo/versions/2%2F4/tags/feat%2Ffoo" }
       end
     end
   end

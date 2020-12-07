@@ -201,7 +201,7 @@ module PactBroker
       end
 
       def tag_url base_url, tag
-        "#{tags_url(base_url, tag.version)}/#{tag.name}"
+        "#{tags_url(base_url, tag.version)}/#{url_encode(tag.name)}"
       end
 
       def templated_tag_url_for_pacticipant pacticipant_name, base_url = ""
