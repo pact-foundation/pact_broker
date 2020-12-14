@@ -77,7 +77,7 @@ module PactBroker
           consumerVersionSelectors: consumer_version_selectors,
           includePendingStatus: enable_pending,
           includeWipPactsSince: include_wip_pacts_since
-        }
+        }.compact
         puts body.to_yaml
         puts ""
         @pacts_for_verification_response = client.post("/pacts/provider/#{encode(provider)}/for-verification", body)
