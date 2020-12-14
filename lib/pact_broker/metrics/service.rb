@@ -1,3 +1,4 @@
+require 'pact_broker/configuration'
 require 'pact_broker/pacts/pact_publication'
 require 'pact_broker/pacts/pact_version'
 require 'pact_broker/domain/pacticipant'
@@ -66,7 +67,7 @@ module PactBroker
             count: PactBroker::Webhooks::Execution.count
           },
           matrix: {
-            count: PactBroker::Matrix::Row.count
+            count: matrix_count
           }
         }
       end
@@ -86,6 +87,16 @@ module PactBroker
           group by verification_count
           order by 1"
           PactBroker::Pacts::PactPublication.db[query].all.each_with_object({}) { |row, hash| hash[row[:number_of_verifications]] = row[:pact_version_count] }
+      end
+
+      def matrix_count
+        begin
+          PactBroker::Matrix::Row.db.with_statement_timeout(PactBroker.configuration.metrics_sql_statement_timeout) do
+            PactBroker::Matrix::Row.count
+          end
+        rescue Sequel::DatabaseError => e
+          -1
+        end
       end
     end
   end

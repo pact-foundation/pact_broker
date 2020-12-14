@@ -126,6 +126,7 @@ module PactBroker
       PactBroker::DB.validate_connection_config if configuration.validate_database_connection_config
       PactBroker::DB.set_mysql_strict_mode_if_mysql
       PactBroker::DB.connection.extension(:pagination)
+      PactBroker::DB.connection.extension(:statement_timeout)
 
       Sequel.datetime_class = DateTime
       Sequel.database_timezone = :utc # Store all dates in UTC, assume any date without a TZ is UTC
