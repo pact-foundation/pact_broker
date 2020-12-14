@@ -53,6 +53,22 @@ module PactBroker
             end
           end
 
+          context "when the error cause class is in the warning_error_classes list" do
+            class TestCauseError < StandardError; end
+
+            before do
+              allow(PactBroker.configuration).to receive(:warning_error_classes).and_return([TestCauseError])
+              allow(error).to receive(:cause).and_return(TestCauseError.new)
+            end
+
+            let(:error) { StandardError.new("message") }
+
+            it "logs at warn so as not to wake everyone up in the middle of the night" do
+              expect(logger).to receive(:warn).with(/bYWfnyWPlf/, error)
+              subject
+            end
+          end
+
           context "when the error is not reportable and not a warning level" do
             let(:error) { PactBroker::Error.new('foo') }
 

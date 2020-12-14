@@ -29,7 +29,7 @@ module PactBroker
         end
 
         def self.log_as_warning?(e)
-          PactBroker.configuration.warning_error_classes.any? { |clazz| e.is_a?(clazz) }
+          PactBroker.configuration.warning_error_classes.any? { |clazz| e.is_a?(clazz) || e.cause&.is_a?(clazz) }
         end
 
         def self.display_message(e, obfuscated_message)

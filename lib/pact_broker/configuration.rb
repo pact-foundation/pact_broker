@@ -127,7 +127,7 @@ module PactBroker
         require 'pact_broker/api/resources/default_base_resource'
         PactBroker::Api::Resources::DefaultBaseResource
       }
-      config.warning_error_class_names = ['Sequel::ForeignKeyConstraintViolation']
+      config.warning_error_class_names = ['Sequel::ForeignKeyConstraintViolation', 'PG::QueryCanceled']
       config.metrics_sql_statement_timeout = 30
       config
     end
@@ -250,8 +250,13 @@ module PactBroker
 
     def warning_error_classes
       warning_error_class_names.collect do | class_name |
-        Object.const_get(class_name)
-      end
+        begin
+          Object.const_get(class_name)
+        rescue NameError => e
+          logger.warn("Class #{class_name} couldn't be loaded as a warning error class (#{e.class} - #{e.message}). Ignoring.")
+          nil
+        end
+      end.compact
     end
 
     private
