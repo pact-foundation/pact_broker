@@ -1,5 +1,3 @@
-require 'pact_broker/feature_toggle'
-
 module PactBroker
   module Pacts
     module Metadata
@@ -33,7 +31,7 @@ module PactBroker
           consumer_version_number: pact.consumer_version_number,
           consumer_version_tags: pact.consumer_version_tag_names
         }
-        metadata[:wip] = "true" if PactBroker.feature_enabled?(:experimental_webhook_wip)
+        metadata[:wip] = "true"
         metadata
       end
     end
