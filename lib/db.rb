@@ -33,6 +33,7 @@ module DB
     con = Sequel.connect(db_credentials.merge(:logger => logger, :pool_class => Sequel::ThreadedConnectionPool, :encoding => 'utf8'))
     con.extension(:connection_validator)
     con.extension(:pagination)
+    con.extension(:statement_timeout)
     con.extend_datasets do
       def any?
         !empty?
