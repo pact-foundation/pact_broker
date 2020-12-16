@@ -1,3 +1,22 @@
+<a name="v2.73.0"></a>
+### v2.73.0 (2020-12-16)
+
+#### Features
+
+* **wip**
+  * permenently enable feature that keeps pacts as WIP when verified via the URL from a webhook triggered by pact publication	 ([70071373](/../../commit/70071373))
+
+* allow error causes to be configured to log at warning level	 ([3a7bf5ea](/../../commit/3a7bf5ea))
+* add self relations for tags in matrix resource	 ([727cee99](/../../commit/727cee99))
+* add self relation to tags in extended pact and verification resources	 ([a560ce6d](/../../commit/a560ce6d))
+
+* **metrics**
+  * timeout matrix count	 ([43091b57](/../../commit/43091b57))
+
+#### Bug Fixes
+
+* url encode tag name in tag URL	 ([80df832d](/../../commit/80df832d))
+
 <a name="v2.72.0"></a>
 ### v2.72.0 (2020-12-02)
 
