@@ -3,8 +3,6 @@ require 'pact_broker/pacts/repository'
 module PactBroker
   module Pacts
     describe Repository do
-      let(:td) { TestDataBuilder.new }
-
       describe "#find_for_verification" do
         def find_by_consumer_version_number(consumer_version_number)
           subject.find{ |pact| pact.consumer_version_number == consumer_version_number }
@@ -55,8 +53,8 @@ module PactBroker
 
           it "returns the latest pact for each consumer" do
             expect(subject.size).to eq 2
-            expect(find_by_consumer_name_and_consumer_version_number("Foo1", "2").selectors).to eq [Selector.overall_latest]
-            expect(find_by_consumer_name_and_consumer_version_number("Foo2", "3").selectors).to eq [Selector.overall_latest]
+            expect(find_by_consumer_name_and_consumer_version_number("Foo1", "2").selectors).to eq [Selector.overall_latest.resolve(PactBroker::Domain::Version.find(number: "2"))]
+            expect(find_by_consumer_name_and_consumer_version_number("Foo2", "3").selectors).to eq [Selector.overall_latest.resolve(PactBroker::Domain::Version.find(number: "3"))]
           end
         end
 
@@ -76,7 +74,7 @@ module PactBroker
 
           it "returns the latest pact for each consumer" do
             expect(subject.size).to eq 1
-            expect(find_by_consumer_name_and_consumer_version_number("Foo1", "2").selectors).to eq [pact_selector_1]
+            expect(find_by_consumer_name_and_consumer_version_number("Foo1", "2").selectors).to eq [pact_selector_1.resolve(PactBroker::Domain::Version.find(number: "2"))]
           end
         end
 
@@ -98,7 +96,8 @@ module PactBroker
 
           it "returns the latest pact for each consumer" do
             expect(subject.size).to eq 1
-            expect(find_by_consumer_name_and_consumer_version_number("Foo1", "1").selectors).to eq [pact_selector_1]
+            expected_consumer_version = PactBroker::Domain::Version.where_pacticipant_name("Foo1").where(number: "1").single_record
+            expect(find_by_consumer_name_and_consumer_version_number("Foo1", "1").selectors).to eq [pact_selector_1.resolve(expected_consumer_version)]
           end
         end
 
@@ -122,11 +121,17 @@ module PactBroker
           let(:consumer_version_selectors) do
             Selectors.new(pact_selector_1, pact_selector_2)
           end
+          let(:expected_sorted_selectors) do
+            [
+              ResolvedSelector.new({ tag: 'dev', latest: true }, PactBroker::Domain::Version.for("Baz", "baz-latest-dev-version")),
+              ResolvedSelector.new({ tag: 'prod', latest: true }, PactBroker::Domain::Version.for("Baz", "baz-latest-dev-version"))
+            ]
+          end
 
           it "returns the latest pact with the specified tags for each consumer" do
-            expect(find_by_consumer_version_number("foo-latest-prod-version").selectors).to eq [Selector.latest_for_tag('prod')]
-            expect(find_by_consumer_version_number("foo-latest-dev-version").selectors).to eq [Selector.latest_for_tag('dev')]
-            expect(find_by_consumer_version_number("baz-latest-dev-version").selectors.sort_by{ |s| s[:tag] }).to eq [{ tag: 'dev', latest: true }, { tag: 'prod', latest: true }]
+            expect(find_by_consumer_version_number("foo-latest-prod-version").selectors).to eq [Selector.latest_for_tag('prod').resolve(PactBroker::Domain::Version.for("Foo", "foo-latest-prod-version"))]
+            expect(find_by_consumer_version_number("foo-latest-dev-version").selectors).to eq [Selector.latest_for_tag('dev').resolve(PactBroker::Domain::Version.for("Foo", "foo-latest-dev-version"))]
+            expect(find_by_consumer_version_number("baz-latest-dev-version").selectors.sort_by{ |s| s[:tag] }).to eq expected_sorted_selectors
             expect(subject.size).to eq 3
           end
 
@@ -134,12 +139,18 @@ module PactBroker
             expect(find_by_consumer_version_number("foo-latest-prod-version").selectors.collect(&:tag)).to eq ['prod']
           end
 
-          context "when a consumer name is specified", pending: "not yet implemented, but will do" do
+          context "when a consumer name is specified" do
+            before do
+              td.create_pact_with_hierarchy("Foo", "2", "Bar")
+                .create_consumer_version_tag("prod")
+                .create_pact_with_hierarchy("Foo", "3", "Bar")
+                .create_consumer_version_tag("prod")
+            end
             let(:consumer_version_selectors) do
               Selectors.new(Selector.all_for_tag_and_consumer('prod', 'Foo'))
             end
 
-            it "only returns the pacts for that consumer" do
+            it "returns all the pacts with that tag for that consumer" do
               expect(subject.size).to eq 3
               expect(find_by_consumer_version_number("foo-latest-prod-version").selectors).to eq [Selector.all_for_tag_and_consumer('prod', 'Foo')]
             end
@@ -246,7 +257,7 @@ module PactBroker
           end
 
           it "does not set the tag name" do
-            expect(find_by_consumer_version_number("foo-latest-dev-version").selectors).to eq [{ latest: true }]
+            expect(find_by_consumer_version_number("foo-latest-dev-version").selectors).to eq [ResolvedSelector.new({ latest: true }, PactBroker::Domain::Version.find(number: "foo-latest-dev-version"))]
             expect(find_by_consumer_version_number("foo-latest-dev-version").overall_latest?).to be true
           end
         end

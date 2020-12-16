@@ -47,13 +47,20 @@ module PactBroker
       dataset_module do
         include PactBroker::Repositories::Helpers
 
+        def for(pacticipant_name, version_number)
+          where_pacticipant_name(pacticipant_name).where_number(version_number).single_record
+        end
+
         def where_pacticipant_name(pacticipant_name)
-          join(:pacticipants) do | p |
-            Sequel.&(
-              { Sequel[first_source_alias][:pacticipant_id] => Sequel[p][:id] },
-              name_like(Sequel[p][:name], pacticipant_name)
-            )
-          end
+          where(pacticipant_id: db[:pacticipants].select(:id).where(name_like(:name, pacticipant_name)))
+          # If we do a join, we get the extra columns from the pacticipant table that then
+          # make == not work
+          # join(:pacticipants) do | p |
+          #   Sequel.&(
+          #     { Sequel[first_source_alias][:pacticipant_id] => Sequel[p][:id] },
+          #     name_like(Sequel[p][:name], pacticipant_name)
+          #   )
+          # end
         end
 
         def where_tag(tag)

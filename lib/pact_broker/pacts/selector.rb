@@ -5,6 +5,10 @@ module PactBroker
         merge!(options)
       end
 
+      def resolve(consumer_version)
+        ResolvedSelector.new(self.to_h, consumer_version)
+      end
+
       def tag= tag
         self[:tag] = tag
       end
@@ -94,6 +98,10 @@ module PactBroker
         !!(tag && !latest?)
       end
 
+      def == other
+        other.class == self.class && super
+      end
+
       def <=> other
         if overall_latest? || other.overall_latest?
           if overall_latest? == other.overall_latest?
@@ -122,6 +130,19 @@ module PactBroker
 
       def latest?
         !!self[:latest]
+      end
+    end
+
+    class ResolvedSelector < Selector
+      attr_reader :consumer_version
+
+      def initialize(options = {}, consumer_version)
+        super(options)
+        @consumer_version = consumer_version
+      end
+
+      def == other
+        super && consumer_version == other.consumer_version
       end
     end
   end

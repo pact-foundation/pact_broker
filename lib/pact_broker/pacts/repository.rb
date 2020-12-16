@@ -428,7 +428,7 @@ module PactBroker
             .order_ignore_case(:consumer_name)
             .collect do | latest_pact_publication |
               pact_publication = PactPublication.find(id: latest_pact_publication.id)
-              SelectedPact.new(pact_publication.to_domain, Selectors.create_for_overall_latest)
+              SelectedPact.new(pact_publication.to_domain, Selectors.create_for_overall_latest.resolve(pact_publication.consumer_version))
             end
         else
           selectors_for_overall_latest = consumer_version_selectors.select(&:overall_latest?)
@@ -438,7 +438,7 @@ module PactBroker
             query.collect do | latest_pact_publication |
               pact_publication = PactPublication.find(id: latest_pact_publication.id)
               resolved_selector = selector.consumer ? Selector.latest_for_consumer(selector.consumer) : Selector.overall_latest
-              SelectedPact.new(pact_publication.to_domain, Selectors.new(resolved_selector))
+              SelectedPact.new(pact_publication.to_domain, Selectors.new(resolved_selector).resolve(pact_publication.consumer_version))
             end
           end
         end
@@ -453,24 +453,17 @@ module PactBroker
           query = query.consumer(selector.consumer) if selector.consumer
           query.all.collect do | latest_tagged_pact_publication |
             pact_publication = PactPublication.find(id: latest_tagged_pact_publication.id)
-            resolved_pact = selector.consumer ? Selector.latest_for_tag_and_consumer(selector.tag, selector.consumer) : Selector.latest_for_tag(selector.tag)
+            resolved_selector = if selector.consumer
+              Selector.latest_for_tag_and_consumer(selector.tag, selector.consumer).resolve(pact_publication.consumer_version)
+            else
+              Selector.latest_for_tag(selector.tag).resolve(pact_publication.consumer_version)
+            end
             SelectedPact.new(
               pact_publication.to_domain,
-              Selectors.new(resolved_pact)
+              Selectors.new(resolved_selector)
             )
           end
         end
-      end
-
-      def create_fallback_selected_pact(pact_publications, consumer_version_selectors)
-        selector_tag_names = pact_publications.collect(&:tag_name)
-        selectors = Selectors.create_for_latest_fallback_of_each_tag(selector_tag_names)
-        last_pact_publication = pact_publications.sort_by(&:consumer_version_order).last
-        pact_publication = unscoped(PactPublication).find(id: last_pact_publication.id)
-        SelectedPact.new(
-          pact_publication.to_domain,
-          selectors
-        )
       end
 
       def find_pacts_for_which_the_latest_version_for_the_fallback_tag_is_required(provider_name, selectors)
@@ -482,7 +475,7 @@ module PactBroker
               pact_publication = unscoped(PactPublication).find(id: latest_tagged_pact_publication.id)
               SelectedPact.new(
                 pact_publication.to_domain,
-                Selectors.new(selector)
+                Selectors.new(selector.resolve(pact_publication.consumer_version))
               )
             end
         end.flatten

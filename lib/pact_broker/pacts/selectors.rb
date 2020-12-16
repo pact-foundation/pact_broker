@@ -19,6 +19,10 @@ module PactBroker
         Selectors.new([Selector.overall_latest])
       end
 
+      def resolve(consumer_version)
+        Selectors.new(collect{ |selector| selector.resolve(consumer_version) })
+      end
+
       def + other
         Selectors.new(super)
       end

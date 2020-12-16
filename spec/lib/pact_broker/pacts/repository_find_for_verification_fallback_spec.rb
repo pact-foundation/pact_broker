@@ -30,7 +30,7 @@ module PactBroker
           context "when a pact exists for the main tag" do
             it "returns the pact with the main tag" do
               expect(find_by_consumer_version_number("2")).to_not be nil
-              expect(find_by_consumer_version_number("2").selectors.first).to eq Selector.latest_for_tag(tag)
+              expect(find_by_consumer_version_number("2").selectors.first).to eq Selector.latest_for_tag(tag).resolve(PactBroker::Domain::Version.for("Foo", "2"))
             end
 
             it "does not set the fallback_tag on the selector" do
@@ -67,7 +67,7 @@ module PactBroker
               it "only returns the pacts for the consumer" do
                 expect(subject.size).to eq 1
                 expect(subject.first.consumer.name).to eq "Foo"
-                expect(subject.first.selectors.first).to eq selector
+                expect(subject.first.selectors.first).to eq selector.resolve(PactBroker::Domain::Version.for("Foo", "1"))
               end
             end
           end
