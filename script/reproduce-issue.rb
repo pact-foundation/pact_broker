@@ -9,6 +9,8 @@ begin
 
   td = PactBroker::Test::HttpTestDataBuilder.new(base_url, { })
   td.delete_integration(consumer: "MyConsumer", provider: "MyProvider")
+    .create_pacticipant("MyConsumer")
+    .create_pacticipant("MyProvider")
     .publish_pact(consumer: "MyConsumer", consumer_version: "1", provider: "MyProvider", content_id: "111", tag: "main")
     .publish_pact(consumer: "MyConsumer", consumer_version: "2", provider: "MyProvider", content_id: "222", tag: "main")
     .publish_pact(consumer: "MyConsumer", consumer_version: "3", provider: "MyProvider", content_id: "111", tag: "feat/a")

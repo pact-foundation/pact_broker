@@ -19,7 +19,7 @@ module PactBroker
               logger.filter(/(Authorization: ).*/,'\1[REMOVED]')
             end
           end
-          # faraday.headers['Authorization'] = "Bearer #{pactflow_api_token}"
+          faraday.headers['Authorization'] = "Bearer #{auth[:token]}" if auth[:token]
           faraday.adapter  Faraday.default_adapter
         end
       end
@@ -42,13 +42,20 @@ module PactBroker
 
       def create_tag(pacticipant:, version:, tag:)
         puts "Creating tag '#{tag}' for #{pacticipant} version #{version}"
-        client.put("/pacticipants/#{encode(pacticipant)}/versions/#{encode(version)}/tags/#{encode(tag)}", {})
+        client.put("/pacticipants/#{encode(pacticipant)}/versions/#{encode(version)}/tags/#{encode(tag)}", {}).tap { |response| check_for_error(response) }
         self
       end
 
       def deploy_to_prod(pacticipant:, version:)
         puts "Deploying #{pacticipant} version #{version} to prod"
         create_tag(pacticipant: pacticipant, version: version, tag: "prod")
+        separate
+        self
+      end
+
+      def create_pacticipant(name)
+        puts "Creating pacticipant with name #{name}"
+        client.post("/pacticipants", { name: name}).tap { |response| check_for_error(response) }
         separate
         self
       end
@@ -65,7 +72,7 @@ module PactBroker
         content = generate_content(consumer, provider, content_id)
         puts "Publishing pact for consumer #{consumer} version #{consumer_version} and provider #{provider}"
         pact_path = "/pacts/provider/#{encode(provider)}/consumer/#{encode(consumer)}/version/#{encode(consumer_version)}"
-        @publish_pact_response = client.put(pact_path, content)
+        @publish_pact_response = client.put(pact_path, content).tap { |response| check_for_error(response) }
         separate
         self
       end
@@ -80,7 +87,7 @@ module PactBroker
         }.compact
         puts body.to_yaml
         puts ""
-        @pacts_for_verification_response = client.post("/pacts/provider/#{encode(provider)}/for-verification", body)
+        @pacts_for_verification_response = client.post("/pacts/provider/#{encode(provider)}/for-verification", body).tap { |response| check_for_error(response) }
 
         print_pacts_for_verification
         separate
@@ -88,7 +95,7 @@ module PactBroker
       end
 
       def print_pacts_for_verification
-        pacts = @pacts_for_verification_response.body.dig("_embedded", "pacts")
+        pacts = @pacts_for_verification_response.body&.dig("_embedded", "pacts")
         if pacts
           puts "Pacts for verification (#{pacts.count}):"
           pacts.each do | pact |
@@ -98,8 +105,6 @@ module PactBroker
               "pending" => pact["verificationProperties"]["pending"]
             }.to_yaml)
           end
-        else
-          puts @pacts_for_verification_response.body
         end
         self
       end
@@ -108,7 +113,7 @@ module PactBroker
         pact_to_verify = @pacts_for_verification_response.body["_embedded"]["pacts"][index]
         raise "No pact found to verify at index #{index}" unless pact_to_verify
         url_of_pact_to_verify = pact_to_verify["_links"]["self"]["href"]
-        pact_response = client.get(url_of_pact_to_verify)
+        pact_response = client.get(url_of_pact_to_verify).tap { |response| check_for_error(response) }
         verification_results_url = pact_response.body["_links"]["pb:publish-verification-results"]["href"]
 
         results = {
@@ -116,8 +121,9 @@ module PactBroker
           testResults: [],
           providerApplicationVersion: provider_version
         }
-        puts "\nPublishing verification"
-        response = client.post(verification_results_url, results.to_json)
+        puts "Publishing verification"
+        puts results.to_yaml
+        response = client.post(verification_results_url, results.to_json).tap { |response| check_for_error(response) }
         separate
         self
       end
@@ -128,7 +134,7 @@ module PactBroker
       end
 
       def can_i_deploy(pacticipant:, version:, to:)
-        can_i_deploy_response = client.get("/can-i-deploy", { pacticipant: pacticipant, version: version, to: to} )
+        can_i_deploy_response = client.get("/can-i-deploy", { pacticipant: pacticipant, version: version, to: to} ).tap { |response| check_for_error(response) }
         can = !!(can_i_deploy_response.body['summary'] || {})['deployable']
         puts "can-i-deploy #{pacticipant} version #{version} to #{to}: #{can ? 'yes' : 'no'}"
         puts (can_i_deploy_response.body['summary'] || can_i_deploy_response.body).to_yaml
@@ -137,7 +143,8 @@ module PactBroker
       end
 
       def delete_integration(consumer:, provider:)
-        client.delete("/integrations/provider/#{encode(provider)}/consumer/#{encode(consumer)}")
+        puts "Deleting all data for the integration between #{consumer} and #{provider}"
+        client.delete("/integrations/provider/#{encode(provider)}/consumer/#{encode(consumer)}").tap { |response| check_for_error(response) }
         separate
         self
       end
@@ -166,6 +173,13 @@ module PactBroker
 
       def encode string
         ERB::Util.url_encode(string)
+      end
+
+      def check_for_error(response)
+        if ! response.success?
+          puts response.status
+          puts response.body
+        end
       end
     end
   end
