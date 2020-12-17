@@ -1,4 +1,5 @@
 require 'pact_broker/hash_refinements'
+require 'pact_broker/pacts/metadata'
 
 module PactBroker
   module Api
@@ -15,7 +16,7 @@ module PactBroker
         end
 
         def metadata
-          @metadata ||= PactBrokerUrls.decode_pact_metadata(identifier_from_path[:metadata])
+          @metadata ||= PactBroker::Pacts::Metadata.parse_metadata(PactBrokerUrls.decode_pact_metadata(identifier_from_path[:metadata]))
         end
       end
     end

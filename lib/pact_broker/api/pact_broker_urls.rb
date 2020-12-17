@@ -1,6 +1,8 @@
 require 'erb'
 require 'pact_broker/pacts/metadata'
 require 'pact_broker/logging'
+require 'base64'
+require 'rack'
 
 module PactBroker
   module Api
@@ -77,9 +79,7 @@ module PactBroker
       def decode_pact_metadata(metadata)
         if metadata && metadata != ''
           begin
-            Rack::Utils.parse_nested_query(Base64.strict_decode64(metadata)).each_with_object({}) do | (k, v), new_hash |
-              new_hash[k.to_sym] = v
-            end
+            Rack::Utils.parse_nested_query(Base64.strict_decode64(metadata))
           rescue StandardError => e
             logger.warn("Exception parsing webhook metadata: #{metadata}", e)
             {}

@@ -107,13 +107,9 @@ module PactBroker
       end
 
       describe "webhook metadata" do
-        let(:expected_metadata) do
-          { consumer_version_number: "123/456", consumer_version_tags: %w[dev], wip: "true" }
-        end
-
         it "builds the webhook metadata" do
-          encoded_metadata = PactBrokerUrls.encode_metadata(PactBrokerUrls.build_metadata_for_webhook_triggered_by_pact_publication(pact))
-          expect(PactBrokerUrls.decode_pact_metadata(encoded_metadata)).to eq (expected_metadata)
+          encoded_metadata = PactBrokerUrls.encode_metadata("some" => "metadata")
+          expect(PactBrokerUrls.decode_pact_metadata(encoded_metadata)).to eq "some" => "metadata"
         end
       end
 

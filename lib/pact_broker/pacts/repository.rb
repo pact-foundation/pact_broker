@@ -168,7 +168,7 @@ module PactBroker
           .values
           .collect do | pact_publications |
             latest_pact_publication = pact_publications.sort_by{ |p| p.values.fetch(:consumer_version_order) }.last
-            SelectedPact.new(latest_pact_publication.to_domain, Selectors.new(selector))
+            SelectedPact.new(latest_pact_publication.to_domain, Selectors.new(selector).resolve(latest_pact_publication.consumer_version))
           end
       end
 

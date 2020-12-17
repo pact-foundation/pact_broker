@@ -145,14 +145,23 @@ module PactBroker
                 .create_consumer_version_tag("prod")
                 .create_pact_with_hierarchy("Foo", "3", "Bar")
                 .create_consumer_version_tag("prod")
+                .create_consumer_version("4")
+                .create_consumer_version_tag("prod")
+                .republish_same_pact
             end
+
             let(:consumer_version_selectors) do
               Selectors.new(Selector.all_for_tag_and_consumer('prod', 'Foo'))
             end
 
             it "returns all the pacts with that tag for that consumer" do
               expect(subject.size).to eq 3
-              expect(find_by_consumer_version_number("foo-latest-prod-version").selectors).to eq [Selector.all_for_tag_and_consumer('prod', 'Foo')]
+              expect(find_by_consumer_version_number("foo-latest-prod-version").selectors).to eq [Selector.all_for_tag_and_consumer('prod', 'Foo').resolve(PactBroker::Domain::Version.for("Foo", "foo-latest-prod-version"))]
+            end
+
+            it "uses the latest consumer verison number as the resolved version when the same pact content is selected multiple times" do
+              expect(find_by_consumer_version_number("3")).to be nil
+              expect(find_by_consumer_version_number("4").selectors).to eq [Selector.all_for_tag_and_consumer('prod', 'Foo').resolve(PactBroker::Domain::Version.for("Foo", "4"))]
             end
           end
         end

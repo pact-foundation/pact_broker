@@ -10,9 +10,12 @@ begin
   td = PactBroker::Test::HttpTestDataBuilder.new(base_url, { })
   td.delete_integration(consumer: "MyConsumer", provider: "MyProvider")
     .publish_pact(consumer: "MyConsumer", consumer_version: "1", provider: "MyProvider", content_id: "111", tag: "main")
+    .publish_pact(consumer: "MyConsumer", consumer_version: "2", provider: "MyProvider", content_id: "222", tag: "main")
+    .publish_pact(consumer: "MyConsumer", consumer_version: "3", provider: "MyProvider", content_id: "111", tag: "feat/a")
     .get_pacts_for_verification(
       provider_version_tag: "main",
-      consumer_version_selectors: [{ tag: "main", latest: true }])
+      consumer_version_selectors: [{ tag: "main" }, { tag: "feat/a", latest: true }])
+    .verify_pact(success: true, provider_version_tag: "main", provider_version: "2" )
 
 
 rescue StandardError => e

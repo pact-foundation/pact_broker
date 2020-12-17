@@ -88,14 +88,18 @@ module PactBroker
       end
 
       def print_pacts_for_verification
-        pacts = @pacts_for_verification_response.body["_embedded"]["pacts"]
-        puts "Pacts for verification (#{pacts.count}):"
-        pacts.each do | pact |
-          puts({
-            "url" => pact["_links"]["self"]["href"],
-            "wip" => pact["verificationProperties"]["wip"],
-            "pending" => pact["verificationProperties"]["pending"]
-          }.to_yaml)
+        pacts = @pacts_for_verification_response.body.dig("_embedded", "pacts")
+        if pacts
+          puts "Pacts for verification (#{pacts.count}):"
+          pacts.each do | pact |
+            puts({
+              "url" => pact["_links"]["self"]["href"],
+              "wip" => pact["verificationProperties"]["wip"],
+              "pending" => pact["verificationProperties"]["pending"]
+            }.to_yaml)
+          end
+        else
+          puts @pacts_for_verification_response.body
         end
         self
       end

@@ -134,11 +134,12 @@ module PactBroker
     end
 
     class ResolvedSelector < Selector
-      attr_reader :consumer_version
-
       def initialize(options = {}, consumer_version)
-        super(options)
-        @consumer_version = consumer_version
+        super(options.merge(consumer_version: consumer_version))
+      end
+
+      def consumer_version
+        self[:consumer_version]
       end
 
       def == other
