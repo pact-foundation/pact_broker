@@ -25,7 +25,7 @@ module PactBroker
       end
 
       def sleep
-        Kernel.sleep 1
+        Kernel.sleep 0.5
         self
       end
 
@@ -79,6 +79,7 @@ module PactBroker
       end
 
       def get_pacts_for_verification(provider: last_provider_name, provider_version_tag: , consumer_version_selectors:, enable_pending: false, include_wip_pacts_since: nil)
+        @last_provider_name = provider
         puts "Fetching pacts for verification for #{provider}"
         body = {
           providerVersionTags: [*provider_version_tag],
@@ -111,6 +112,7 @@ module PactBroker
       end
 
       def verify_pact(index: 0, success:, provider: last_provider_name, provider_version_tag: , provider_version: )
+        @last_provider_name = provider
         pact_to_verify = @pacts_for_verification_response.body["_embedded"]["pacts"][index]
         raise "No pact found to verify at index #{index}" unless pact_to_verify
         url_of_pact_to_verify = pact_to_verify["_links"]["self"]["href"]
