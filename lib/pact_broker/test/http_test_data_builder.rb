@@ -68,6 +68,7 @@ module PactBroker
         [*tag].each do | tag |
           create_tag(pacticipant: consumer, version: consumer_version, tag: tag)
         end
+        puts "" if [*tag].any?
 
         content = generate_content(consumer, provider, content_id)
         puts "Publishing pact for consumer #{consumer} version #{consumer_version} and provider #{provider}"
@@ -113,6 +114,12 @@ module PactBroker
         pact_to_verify = @pacts_for_verification_response.body["_embedded"]["pacts"][index]
         raise "No pact found to verify at index #{index}" unless pact_to_verify
         url_of_pact_to_verify = pact_to_verify["_links"]["self"]["href"]
+
+        [*provider_version_tag].each do | tag |
+          create_tag(pacticipant: provider, version: provider_version, tag: tag)
+        end
+        puts "" if [*provider_version_tag].any?
+
         pact_response = client.get(url_of_pact_to_verify).tap { |response| check_for_error(response) }
         verification_results_url = pact_response.body["_links"]["pb:publish-verification-results"]["href"]
 
