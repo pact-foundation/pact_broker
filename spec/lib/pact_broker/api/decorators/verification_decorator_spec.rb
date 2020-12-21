@@ -20,7 +20,9 @@ module PactBroker
             pact_version_sha: "1234",
             latest_pact_publication: pact_publication,
             execution_date: DateTime.now,
-            provider_version_tags: provider_version_tags)
+            provider_version_tags: provider_version_tags,
+            verified_by_implementation: 'Ruby',
+            verified_by_version: '1234')
         end
 
         let(:pact_publication) do
@@ -66,6 +68,11 @@ module PactBroker
 
         it "includes a link to the triggered webhooks" do
           expect(subject[:_links][:'pb:triggered-webhooks'][:href]).to eq "http://triggered-webhooks"
+        end
+
+        it "includes the framework that did the verification" do
+          expect(subject[:verifiedBy][:implementation]).to eq "Ruby"
+          expect(subject[:verifiedBy][:version]).to eq "1234"
         end
       end
     end

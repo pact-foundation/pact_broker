@@ -21,7 +21,9 @@ module PactBroker
             latest_pact_publication: pact,
             test_results: nil,
             execution_date: DateTime.now,
-            provider_version_tags: provider_version_tags)
+            provider_version_tags: provider_version_tags,
+            verified_by_implementation: 'Ruby',
+            verified_by_version: '1234')
         end
 
         let(:pact_version) do
