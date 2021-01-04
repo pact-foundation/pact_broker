@@ -1,3 +1,11 @@
+<a name="v2.74.1"></a>
+### v2.74.1 (2021-01-05)
+
+#### Bug Fixes
+
+* **deps**
+  * remove manual specification for nokogiri now the fix for CVE-2020-26247 has been released in 1.11	 ([771378a9](/../../commit/771378a9))
+
 <a name="v2.74.0"></a>
 ### v2.74.0 (2021-01-04)
 
