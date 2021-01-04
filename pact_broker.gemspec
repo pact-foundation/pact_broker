@@ -64,4 +64,5 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'table_print', '~> 1.5'
   gem.add_runtime_dependency 'semantic_logger', '~> 4.3'
   gem.add_runtime_dependency 'sanitize', '>= 5.2.1', '~> 5.2'
+  gem.add_runtime_dependency 'nokogiri', '< 2.0', '>= 1.11.0.rc4' # For CVE-2020-26247 Remove when 1.11 is released properly
 end
