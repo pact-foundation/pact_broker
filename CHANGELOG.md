@@ -1,3 +1,15 @@
+<a name="v2.74.0"></a>
+### v2.74.0 (2021-01-04)
+
+#### Features
+
+* include the consumer version selectors in the metadata of the 'pact for verification' URL	 ([32bbe1c3](/../../commit/32bbe1c3))
+
+#### Bug Fixes
+
+* **deps**
+  * update nokogiri for CVE-2020-26247	 ([336ec897](/../../commit/336ec897))
+
 <a name="v2.73.0"></a>
 ### v2.73.0 (2020-12-16)
 
