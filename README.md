@@ -1,6 +1,6 @@
 # Pact Broker
 [![Gem Version](https://badge.fury.io/rb/pact_broker.svg)](http://badge.fury.io/rb/pact_broker)
- [![Build Status](https://travis-ci.org/pact-foundation/pact_broker.svg?branch=master)](https://travis-ci.org/pact-foundation/pact_broker)
+ ![Build status](https://github.com/pact-foundation/pact_broker/workflows/Test/badge.svg)
  [![Join the chat at https://pact-foundation.slack.com/](https://img.shields.io/badge/chat-on%20slack-blue.svg?logo=slack)](https://slack.pact.io)
  [![security](https://hakiri.io/github/pact-foundation/pact_broker/master.svg)](https://hakiri.io/github/pact-foundation/pact_broker/master)
  [![Code Climate](https://codeclimate.com/github/pact-foundation/pact_broker/badges/gpa.svg)](https://codeclimate.com/github/pact-foundation/pact_broker)
