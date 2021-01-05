@@ -64,7 +64,7 @@ module PactBroker
         end
 
         def extended_decorator_for model
-          PactBroker::Api::Decorators::ExtendedVerificationDecorator.new(model)
+          decorator_class(:extended_verification_decorator).new(model)
         end
       end
     end

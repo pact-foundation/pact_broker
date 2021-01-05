@@ -214,6 +214,10 @@ module PactBroker
         def database_connector
           request.env["pactbroker.database_connector"]
         end
+
+        def decorator_class(name)
+          request.path_info[:application_context].decorator_configuration.class_for(name)
+        end
       end
     end
   end

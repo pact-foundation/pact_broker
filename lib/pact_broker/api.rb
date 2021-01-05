@@ -1,6 +1,8 @@
 require 'webmachine/adapters/rack_mapped'
 require 'webmachine/rack_adapter_monkey_patch'
 require 'pact_broker/api/resources'
+require 'pact_broker/api/decorators'
+require 'pact_broker/application_context'
 require 'pact_broker/feature_toggle'
 
 module Webmachine
@@ -12,8 +14,7 @@ module Webmachine
 end
 
 module PactBroker
-
-  API ||= begin
+  def self.build_api(application_context = PactBroker::ApplicationContext.default_application_context)
     pact_api = Webmachine::Application.new do |app|
       app.routes do
         add(['trace', :*], Webmachine::Trace::TraceResource) unless ENV['RACK_ENV'] == 'production'
@@ -111,10 +112,20 @@ module PactBroker
       end
     end
 
+    # naughty, but better than setting each route manually
+    pact_api.routes.each do | route |
+      route.instance_variable_get(:@bindings)[:application_context] = application_context
+    end
+
     pact_api.configure do |config|
       config.adapter = :RackMapped
     end
 
     pact_api.adapter
+  end
+
+
+  API ||= begin
+    build_api
   end
 end

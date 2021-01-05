@@ -2,6 +2,7 @@ require_relative 'base_decorator'
 require_relative 'embedded_version_decorator'
 require_relative 'latest_pact_decorator'
 require_relative 'representable_pact'
+require 'pact_broker/domain/pact'
 
 module PactBroker
   module Api
