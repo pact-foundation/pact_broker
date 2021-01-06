@@ -70,7 +70,7 @@ module PactBroker
       @custom_api = custom_api
     end
 
-    def use_to_create_pact_broker_api block
+    def use_to_create_pact_broker_api &block
       @create_pact_broker_api_block = block
     end
 
