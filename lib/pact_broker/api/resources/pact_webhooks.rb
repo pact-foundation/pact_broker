@@ -56,7 +56,7 @@ module PactBroker
         end
 
         def to_json
-          Decorators::WebhooksDecorator.new(webhooks).to_json(user_options: decorator_context(resource_title: 'Pact webhooks'))
+          Decorators::WebhooksDecorator.new(webhooks).to_json(decorator_options(resource_title: 'Pact webhooks'))
         end
 
         def policy_name

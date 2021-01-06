@@ -30,11 +30,11 @@ module PactBroker
 
         def to_json
           response.headers['X-Pact-Consumer-Version'] = pact.consumer_version_number
-          PactBroker::Api::Decorators::PactDecorator.new(pact).to_json(user_options: decorator_context(metadata: metadata))
+          PactBroker::Api::Decorators::PactDecorator.new(pact).to_json(decorator_options(metadata: metadata))
         end
 
         def to_extended_json
-          PactBroker::Api::Decorators::ExtendedPactDecorator.new(pact).to_json(user_options: decorator_context(metadata: metadata))
+          PactBroker::Api::Decorators::ExtendedPactDecorator.new(pact).to_json(decorator_options(metadata: metadata))
         end
 
         def to_html

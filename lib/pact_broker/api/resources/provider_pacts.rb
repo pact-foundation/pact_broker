@@ -24,19 +24,13 @@ module PactBroker
         end
 
         def to_json
-          PactBroker::Api::Decorators::ProviderPactsDecorator.new(pacts).to_json(to_json_options)
+          PactBroker::Api::Decorators::ProviderPactsDecorator.new(pacts).to_json(decorator_options(identifier_from_path.merge(title: resource_title)))
         end
 
         private
 
         def pacts
           pact_service.find_pact_versions_for_provider provider_name, tag: identifier_from_path[:tag]
-        end
-
-        def to_json_options
-          {
-            user_options: decorator_context(identifier_from_path.merge(title: resource_title))
-          }
         end
 
         def resource_title

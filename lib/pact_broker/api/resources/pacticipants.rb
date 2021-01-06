@@ -34,7 +34,7 @@ module PactBroker
 
         def from_json
           created_model = pacticipant_service.create(params.symbolize_keys.snakecase_keys.slice(:name, :repository_url))
-          response.body = decorator_for(created_model).to_json(user_options: decorator_context)
+          response.body = decorator_for(created_model).to_json(decorator_options)
         end
 
         def create_path

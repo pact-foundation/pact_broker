@@ -18,11 +18,11 @@ module PactBroker
         end
 
         def to_json
-          PactBroker::Api::Decorators::DashboardDecorator.new(index_items).to_json(user_options: decorator_context)
+          PactBroker::Api::Decorators::DashboardDecorator.new(index_items).to_json(decorator_options)
         end
 
         def to_text
-          PactBroker::Api::Decorators::DashboardTextDecorator.new(index_items).to_text(user_options: decorator_context)
+          PactBroker::Api::Decorators::DashboardTextDecorator.new(index_items).to_text(decorator_options)
         end
 
         def policy_name

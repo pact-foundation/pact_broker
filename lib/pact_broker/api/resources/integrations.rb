@@ -22,7 +22,7 @@ module PactBroker
         end
 
         def to_json
-          PactBroker::Api::Decorators::IntegrationsDecorator.new(integrations).to_json(user_options: decorator_context)
+          PactBroker::Api::Decorators::IntegrationsDecorator.new(integrations).to_json(decorator_options)
         end
 
         def integrations

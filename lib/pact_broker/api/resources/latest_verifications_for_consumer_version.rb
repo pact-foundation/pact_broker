@@ -23,7 +23,7 @@ module PactBroker
 
         def to_json
           summary = verification_service.verification_summary_for_consumer_version(identifier_from_path)
-          decorator_for(summary).to_json(user_options: decorator_context(identifier_from_path))
+          decorator_for(summary).to_json(decorator_options(identifier_from_path))
         end
 
         def policy_name
