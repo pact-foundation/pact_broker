@@ -32,7 +32,8 @@ module PactBroker
       @cascade_apps = []
       @make_it_later_api_auth = ::Rack::PactBroker::ConfigurableMakeItLater.new(Rack::PactBroker::NoAuth)
       @make_it_later_ui_auth = ::Rack::PactBroker::ConfigurableMakeItLater.new(Rack::PactBroker::NoAuth)
-      @pact_broker_api = PactBroker::API
+      # Can only be required after database connection has been made because the decorators rely on the Sequel models
+      @create_pact_broker_api_block = ->() { require 'pact_broker/api'; PactBroker::API }
       @configuration = PactBroker.configuration
       yield configuration
       post_configure
@@ -69,8 +70,8 @@ module PactBroker
       @custom_api = custom_api
     end
 
-    def use_pact_broker_api pact_broker_api
-      @pact_broker_api = pact_broker_api
+    def use_to_create_pact_broker_api block
+      @create_pact_broker_api_block = block
     end
 
     def call env
@@ -79,7 +80,7 @@ module PactBroker
 
     private
 
-    attr_reader :custom_ui
+    attr_reader :custom_ui, :create_pact_broker_api_block
 
     def post_configure
       configure_logger
@@ -212,8 +213,7 @@ module PactBroker
 
     def build_api
       logger.info "Mounting PactBroker::API"
-      require 'pact_broker/api'
-      api_apps = [@pact_broker_api]
+      api_apps = [create_pact_broker_api_block.call]
       api_apps.unshift(@custom_api) if @custom_api
       builder = ::Rack::Builder.new
       builder.use @make_it_later_api_auth
