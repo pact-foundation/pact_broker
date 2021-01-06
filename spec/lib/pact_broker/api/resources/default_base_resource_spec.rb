@@ -14,7 +14,7 @@ module PactBroker
         let(:body_string) { '' }
         let(:env) { double('env').as_null_object }
 
-        subject { BaseResource.new(request, response) }
+        subject(:resource) { BaseResource.new(request, response) }
 
         its(:resource_url) { is_expected.to eq 'http://example.org/path' }
 
@@ -136,6 +136,39 @@ module PactBroker
             end
           end
         end
+
+        describe "forbidden?" do
+          context "with the resource_authorizer configured" do
+            let(:application_context) { PactBroker::ApplicationContext.default_application_context(resource_authorizer: resource_authorizer) }
+            let(:resource_authorizer) { double('resource_authorizer', call: allowed) }
+            let(:allowed) { true }
+
+            it "calls the resource authorizer" do
+              expect(resource_authorizer).to receive(:call).with(resource)
+              resource.forbidden?
+            end
+
+            context "when the authorizer returns true" do
+              it "returns false" do
+                expect(resource.forbidden?).to eq false
+              end
+            end
+
+            context "when the authorizer returns false" do
+              let(:allowed) { false }
+
+              it "returns true" do
+                expect(resource.forbidden?).to eq true
+              end
+            end
+          end
+        end
+
+        context "with no resource_authorizer configured" do
+          it "returns false" do
+            expect(resource.forbidden?).to eq false
+          end
+        end
       end
 
       ALL_RESOURCES = ObjectSpace.each_object(::Class)
@@ -147,22 +180,28 @@ module PactBroker
           before do
             # stub out all path info params for pf
             allow(path_info).to receive(:[]).and_return('1')
+            allow(path_info).to receive(:[]).with(:application_context).and_return(application_context)
           end
+          let(:application_context) { PactBroker::ApplicationContext.default_application_context(before_resource: before_resource, after_resource: after_resource) }
           let(:request) { double('request', uri: URI("http://example.org"), path_info: path_info).as_null_object }
           let(:path_info) { {} }
           let(:response) { double('response').as_null_object }
           let(:resource) { resource_class.new(request, response) }
+          let(:before_resource) { double('before_resource', call: nil) }
+          let(:after_resource) { double('after_resource', call: nil) }
 
           it "includes OPTIONS in the list of allowed_methods" do
             expect(resource.allowed_methods).to include "OPTIONS"
           end
 
           it "calls super in its constructor" do
+            expect(application_context.before_resource).to receive(:call)
             expect(PactBroker.configuration.before_resource).to receive(:call)
             resource
           end
 
           it "calls super in finish_request" do
+            expect(application_context.after_resource).to receive(:call)
             expect(PactBroker.configuration.after_resource).to receive(:call)
             resource.finish_request
           end

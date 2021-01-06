@@ -23,6 +23,7 @@ module PactBroker
 
         def initialize
           PactBroker.configuration.before_resource.call(self)
+          application_context.before_resource&.call(self)
         end
 
         def options
@@ -34,6 +35,7 @@ module PactBroker
         end
 
         def finish_request
+          application_context.after_resource&.call(self)
           PactBroker.configuration.after_resource.call(self)
         end
 
@@ -42,8 +44,13 @@ module PactBroker
         end
 
         def forbidden?
-          return false if PactBroker.configuration.authorize.nil?
-          !PactBroker.configuration.authorize.call(self, {})
+          if application_context.resource_authorizer
+            !application_context.resource_authorizer.call(self)
+          elsif PactBroker.configuration.authorize
+            !PactBroker.configuration.authorize.call(self, {})
+          else
+            false
+          end
         end
 
         def identifier_from_path
