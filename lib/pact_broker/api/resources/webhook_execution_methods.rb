@@ -3,9 +3,7 @@ module PactBroker
     module Resources
       module WebhookExecutionMethods
         def webhook_execution_configuration
-          PactBroker::Webhooks::ExecutionConfiguration.new
-            .with_show_response(PactBroker.configuration.show_webhook_response?)
-            .with_webhook_context(base_url: base_url)
+          application_context.webhook_execution_configuration_creator.call(self)
         end
       end
     end

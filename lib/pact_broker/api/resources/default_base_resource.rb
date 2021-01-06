@@ -4,7 +4,6 @@ require 'pact_broker/services'
 require 'pact_broker/api/decorators'
 require 'pact_broker/logging'
 require 'pact_broker/api/pact_broker_urls'
-require 'pact_broker/api/decorators/decorator_context'
 require 'pact_broker/json'
 require 'pact_broker/pacts/pact_params'
 require 'pact_broker/api/resources/authentication'
@@ -78,7 +77,7 @@ module PactBroker
         end
 
         def decorator_context options = {}
-          Decorators::DecoratorContext.new(base_url, resource_url, request.env, options)
+          application_context.decorator_context_creator.call(self, options)
         end
 
         def decorator_options options = {}
@@ -215,8 +214,12 @@ module PactBroker
           request.env["pactbroker.database_connector"]
         end
 
+        def application_context
+          request.path_info[:application_context]
+        end
+
         def decorator_class(name)
-          request.path_info[:application_context].decorator_configuration.class_for(name)
+          application_context.decorator_configuration.class_for(name)
         end
       end
     end

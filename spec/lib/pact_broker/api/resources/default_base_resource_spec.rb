@@ -1,10 +1,13 @@
 require 'pact_broker/api/resources/default_base_resource'
+require 'pact_broker/application_context'
 
 module PactBroker
   module Api
     module Resources
       describe DefaultBaseResource do
-        let(:request) { double('request', body: body, uri: uri, base_uri: URI("http://example.org/"), env: env).as_null_object }
+        let(:request) { double('request', body: body, uri: uri, base_uri: URI("http://example.org/"), env: env, path_info: path_info).as_null_object }
+        let(:path_info) { { application_context: application_context }}
+        let(:application_context) { PactBroker::ApplicationContext.default_application_context }
         let(:response) { double('response').as_null_object }
         let(:uri) { URI('http://example.org/path?query') }
         let(:body) { double('body', to_s: body_string) }
