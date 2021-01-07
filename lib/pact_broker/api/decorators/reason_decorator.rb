@@ -1,3 +1,5 @@
+require 'pact_broker/matrix/reason'
+
 module PactBroker
   module Api
     module Decorators
