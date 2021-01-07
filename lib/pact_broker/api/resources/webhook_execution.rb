@@ -72,8 +72,8 @@ module PactBroker
           identifier_from_path[:uuid]
         end
 
-        def user_options
-          decorator_context(
+        def decorator_options
+          super(
             webhook: webhook,
             show_response: PactBroker.configuration.show_webhook_response?
           )
