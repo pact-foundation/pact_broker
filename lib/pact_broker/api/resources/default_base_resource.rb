@@ -53,9 +53,14 @@ module PactBroker
           end
         end
 
+        # The path_info segments aren't URL decoded
         def identifier_from_path
-          request.path_info.each_with_object({}) do | pair, hash|
-            hash[pair.first] = pair.last === String ? URI.decode(pair.last) : pair.last
+          @identifier_from_path ||= request.path_info.each_with_object({}) do | (key, value), hash|
+            if value.is_a?(String)
+              hash[key] = URI.decode(value)
+            elsif value.is_a?(Symbol) || value.is_a?(Numeric)
+              hash[key] = value
+            end
           end
         end
 
