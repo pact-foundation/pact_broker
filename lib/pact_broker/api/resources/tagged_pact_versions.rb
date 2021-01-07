@@ -22,7 +22,7 @@ module PactBroker
         end
 
         def to_json
-          PactBroker::Api::Decorators::TaggedPactVersionsDecorator.new(pacts).to_json(decorator_options(identifier_from_path))
+          decorator_class(:tagged_pact_versions_decorator).new(pacts).to_json(decorator_options(identifier_from_path))
         end
 
         def delete_resource

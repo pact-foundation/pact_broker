@@ -35,7 +35,7 @@ module PactBroker
         end
 
         def to_json
-          PactBroker::Api::Decorators::LabelDecorator.new(label).to_json(decorator_options)
+          decorator_class(:label_decorator).new(label).to_json(decorator_options)
         end
 
         def label

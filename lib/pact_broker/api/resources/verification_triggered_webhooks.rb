@@ -18,7 +18,7 @@ module PactBroker
         end
 
         def to_json
-          Decorators::TriggeredWebhooksDecorator.new(triggered_webhooks).to_json(decorator_options(resource_title: resource_title))
+          decorator_class(:triggered_webhooks_decorator).new(triggered_webhooks).to_json(decorator_options(resource_title: resource_title))
         end
 
         def policy_name

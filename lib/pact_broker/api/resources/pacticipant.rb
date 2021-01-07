@@ -49,7 +49,7 @@ module PactBroker
         end
 
         def to_json
-          PactBroker::Api::Decorators::PacticipantDecorator.new(pacticipant).to_json(decorator_options)
+          decorator_class(:pacticipant_decorator).new(pacticipant).to_json(decorator_options)
         end
 
         def policy_name

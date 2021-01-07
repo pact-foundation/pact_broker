@@ -19,7 +19,7 @@ module PactBroker
         end
 
         def to_json
-          PactBroker::Api::Decorators::VersionsDecorator.new(versions).to_json(decorator_options(identifier_from_path))
+          decorator_class(:versions_decorator).new(versions).to_json(decorator_options(identifier_from_path))
         end
 
         def versions

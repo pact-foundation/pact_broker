@@ -41,7 +41,7 @@ module PactBroker
         end
 
         def decorator_for latest_triggered_webhooks
-          PactBroker::Api::Decorators::PactWebhooksStatusDecorator.new(latest_triggered_webhooks)
+          decorator_class(:pact_webhooks_status_decorator).new(latest_triggered_webhooks)
         end
       end
     end

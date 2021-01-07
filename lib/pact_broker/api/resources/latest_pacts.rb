@@ -14,7 +14,7 @@ module PactBroker
         end
 
         def to_json
-          PactBroker::Api::Decorators::PactCollectionDecorator.new(pacts).to_json(decorator_options)
+          decorator_class(:pact_collection_decorator).new(pacts).to_json(decorator_options)
         end
 
         def pacts

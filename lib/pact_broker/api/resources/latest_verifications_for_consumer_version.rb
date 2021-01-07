@@ -40,7 +40,7 @@ module PactBroker
         end
 
         def decorator_for summary
-          PactBroker::Api::Decorators::VerificationSummaryDecorator.new(summary)
+          decorator_class(:verification_summary_decorator).new(summary)
         end
       end
     end

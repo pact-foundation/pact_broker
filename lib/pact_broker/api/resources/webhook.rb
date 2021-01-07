@@ -49,7 +49,7 @@ module PactBroker
         end
 
         def to_json
-          Decorators::WebhookDecorator.new(webhook).to_json(decorator_options)
+          decorator_class(:webhook_decorator).new(webhook).to_json(decorator_options)
         end
 
         def delete_resource
@@ -68,7 +68,7 @@ module PactBroker
         end
 
         def parsed_webhook
-          @parsed_webhook ||= Decorators::WebhookDecorator.new(PactBroker::Domain::Webhook.new).from_json(request_body)
+          @parsed_webhook ||= decorator_class(:webhook_decorator).new(PactBroker::Domain::Webhook.new).from_json(request_body)
         end
 
         def uuid

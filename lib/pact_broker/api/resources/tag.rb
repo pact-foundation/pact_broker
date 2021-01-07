@@ -31,7 +31,7 @@ module PactBroker
         end
 
         def to_json
-          PactBroker::Api::Decorators::TagDecorator.new(tag).to_json(decorator_options)
+          decorator_class(:tag_decorator).new(tag).to_json(decorator_options)
         end
 
         def tag

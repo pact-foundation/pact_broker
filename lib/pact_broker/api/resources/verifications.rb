@@ -74,7 +74,7 @@ module PactBroker
         end
 
         def decorator_for model
-          PactBroker::Api::Decorators::VerificationDecorator.new(model)
+          decorator_class(:verification_decorator).new(model)
         end
 
         def wip?

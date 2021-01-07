@@ -19,7 +19,7 @@ module PactBroker
 
         def to_csv
           if group
-            PactBroker::Api::Decorators::RelationshipsCsvDecorator.new(group).to_csv
+            decorator_class(:relationships_csv_decorator).new(group).to_csv
           else
             ""
           end

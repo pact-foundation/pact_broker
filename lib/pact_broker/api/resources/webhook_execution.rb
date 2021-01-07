@@ -55,7 +55,7 @@ module PactBroker
         private
 
         def post_response_body webhook_execution_result
-          Decorators::WebhookExecutionResultDecorator.new(webhook_execution_result).to_json(user_options: user_options)
+          decorator_class(:webhook_execution_result_decorator).new(webhook_execution_result).to_json(decorator_options)
         end
 
         def webhook
@@ -80,7 +80,7 @@ module PactBroker
         end
 
         def build_unsaved_webhook
-          Decorators::WebhookDecorator.new(PactBroker::Domain::Webhook.new).from_json(request_body)
+          decorator_class(:webhook_decorator).new(PactBroker::Domain::Webhook.new).from_json(request_body)
         end
       end
     end

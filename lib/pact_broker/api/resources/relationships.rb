@@ -14,7 +14,7 @@ module PactBroker
         end
 
         def to_csv
-          PactBroker::Api::Decorators::RelationshipsCsvDecorator.new(pacts).to_csv
+          decorator_class(:relationships_csv_decorator).new(pacts).to_csv
         end
 
         def pacts

@@ -53,7 +53,7 @@ module PactBroker
 
         def to_json
           log_request
-          PactBroker::Api::Decorators::VerifiablePactsDecorator.new(pacts).to_json(
+          decorator_class(:verifiable_pacts_decorator).new(pacts).to_json(
             decorator_options(
               include_pending_status: parsed_query_params.include_pending_status,
               title: "Pacts to be verified by provider #{provider_name}",
@@ -71,7 +71,7 @@ module PactBroker
         end
 
         def parsed_query_params
-          @parsed_query_params ||= PactBroker::Api::Decorators::VerifiablePactsQueryDecorator.new(OpenStruct.new).from_hash(query)
+          @parsed_query_params ||= decorator_class(:verifiable_pacts_query_decorator).new(OpenStruct.new).from_hash(query)
         end
 
         def query

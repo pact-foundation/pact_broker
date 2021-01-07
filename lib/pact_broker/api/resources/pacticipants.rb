@@ -46,11 +46,11 @@ module PactBroker
         end
 
         def generate_json pacticipants
-          PactBroker::Api::Decorators::DeprecatedPacticipantCollectionDecorator.new(pacticipants).to_json(decorator_options)
+          decorator_class(:deprecated_pacticipant_collection_decorator).new(pacticipants).to_json(decorator_options)
         end
 
         def decorator_for model
-          PactBroker::Api::Decorators::PacticipantDecorator.new(model)
+          decorator_class(:pacticipant_decorator).new(model)
         end
 
         def new_model

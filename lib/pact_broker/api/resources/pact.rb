@@ -69,11 +69,11 @@ module PactBroker
         end
 
         def to_json
-          PactBroker::Api::Decorators::PactDecorator.new(pact).to_json(decorator_options(metadata: identifier_from_path[:metadata]))
+          decorator_class(:pact_decorator).new(pact).to_json(decorator_options(metadata: identifier_from_path[:metadata]))
         end
 
         def to_extended_json
-          PactBroker::Api::Decorators::ExtendedPactDecorator.new(pact).to_json(decorator_options(metadata: identifier_from_path[:metadata]))
+          decorator_class(:extended_pact_decorator).new(pact).to_json(decorator_options(metadata: identifier_from_path[:metadata]))
         end
 
         def to_html
