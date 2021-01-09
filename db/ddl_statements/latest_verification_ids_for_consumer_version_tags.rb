@@ -52,7 +52,6 @@ LATEST_VERIFICATION_IDS_FOR_CONSUMER_VERSION_TAGS_V3 = "select
       where v.id in (select latest_verification_id from latest_verification_ids_for_pact_versions)
       group by pv.pacticipant_id, lpp.consumer_id, t.name"
 
-
 LATEST_VERIFICATION_IDS_FOR_CONSUMER_VERSION_TAGS_V4 = "select
     lpp.provider_id,
     lpp.consumer_id,

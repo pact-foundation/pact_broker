@@ -52,7 +52,7 @@ module PactBroker
         end
 
         def where_pacticipant_name(pacticipant_name)
-          where(pacticipant_id: db[:pacticipants].select(:id).where(name_like(:name, pacticipant_name)))
+          where(Sequel[:versions][:pacticipant_id] => db[:pacticipants].select(:id).where(name_like(:name, pacticipant_name)))
           # If we do a join, we get the extra columns from the pacticipant table that then
           # make == not work
           # join(:pacticipants) do | p |
