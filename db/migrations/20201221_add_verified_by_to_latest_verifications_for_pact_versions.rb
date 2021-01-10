@@ -46,8 +46,8 @@ Sequel.migration do
          Sequel[:s][:number].as(:provider_version_number),
          Sequel[:s][:order].as(:provider_version_order),
          Sequel[v][:test_results],
-         Sequel.lit('').as(:verified_by_implementation),
-         Sequel.lit('').as(:verified_by_version))
+         Sequel.lit('""').as(:verified_by_implementation),
+         Sequel.lit('""').as(:verified_by_version))
        .join(:latest_verification_ids_for_pact_versions,
              {
                Sequel[v][:pact_version_id] => Sequel[:lv][:pact_version_id],
