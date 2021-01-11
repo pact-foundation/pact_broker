@@ -1,5 +1,4 @@
 require 'webmachine'
-require 'pact_broker/api/resources/error_handler'
 require 'pact_broker/services'
 require 'pact_broker/api/decorators'
 require 'pact_broker/logging'
@@ -7,6 +6,7 @@ require 'pact_broker/api/pact_broker_urls'
 require 'pact_broker/json'
 require 'pact_broker/pacts/pact_params'
 require 'pact_broker/api/resources/authentication'
+require 'pact_broker/errors'
 
 module PactBroker
   module Api
@@ -96,8 +96,13 @@ module PactBroker
           { user_options: decorator_context(options) }
         end
 
-        def handle_exception e
-          PactBroker::Api::Resources::ErrorHandler.call(e, request, response)
+        def handle_exception(error)
+          error_reference = PactBroker::Errors.generate_error_reference
+          application_context.error_logger.call(error, error_reference, request)
+          if PactBroker::Errors.reportable_error?(error)
+            PactBroker::Errors.report(error, error_reference, request)
+          end
+          response.body = application_context.error_response_body_generator.call(error, error_reference, request)
         end
 
         def params(options = {})

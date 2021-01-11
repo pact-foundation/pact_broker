@@ -15,7 +15,7 @@ module PactBroker
           allow(pacticipant_service).to receive(:find_pacticipant_by_name).and_return(pacticipant)
           allow(version_service).to receive(:find_by_pacticipant_name_and_latest_tag).and_return(version)
           allow(PactBroker.configuration).to receive(:show_backtrace_in_error_response?).and_return(false)
-          allow(ErrorHandler).to receive(:generate_error_reference).and_return("abcd")
+          allow(PactBroker::Errors).to receive(:generate_error_reference).and_return("abcd")
         end
 
         let(:pacticipant_service) { class_double("PactBroker::Pacticipant::Service").as_stubbed_const }
