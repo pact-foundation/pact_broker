@@ -158,6 +158,13 @@ module PactBroker
         self
       end
 
+      def delete_pacticipant(name)
+        puts "Deleting pacticipant #{name}"
+        @publish_pact_response = client.delete("/pacticipants/#{encode(name)}").tap { |response| check_for_error(response) }
+        separate
+        self
+      end
+
       def generate_content(consumer_name, provider_name, content_id)
         {
           consumer: {
