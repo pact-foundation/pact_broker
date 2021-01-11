@@ -1,0 +1,5 @@
+name: "Pact Broker"
+tasks:
+  start:
+     command: "bundle exec rackup -p ${PORT}"
+     inboundUrl: http://localhost:4000
