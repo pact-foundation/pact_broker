@@ -5,6 +5,9 @@ module PactBroker
   module Api
     module Resources
       describe DefaultBaseResource do
+        before do
+          allow(env).to receive(:[]).with("pactbroker.base_url").and_return(nil)
+        end
         let(:request) { double('request', body: body, uri: uri, base_uri: URI("http://example.org/"), env: env, path_info: path_info).as_null_object }
         let(:path_info) { { application_context: application_context, key1: "foo%20bar", key2: :value2, key3: 1.2 }}
         let(:application_context) { PactBroker::ApplicationContext.default_application_context }
@@ -85,18 +88,29 @@ module PactBroker
         end
 
         describe "base_url" do
+          before do
+            allow(env).to receive(:[]).with("pactbroker.base_url").and_return("http://rack")
+            allow(PactBroker.configuration).to receive(:base_url).and_return("http://foo")
+          end
+
+          context "when pactbroker.base_url is set on the env" do
+            it "uses that" do
+              expect(subject.base_url).to eq "http://rack"
+            end
+          end
+
           context "when PactBroker.configuration.base_url is not nil" do
             before do
-              allow(PactBroker.configuration).to receive(:base_url).and_return("http://foo")
+              allow(env).to receive(:[]).with("pactbroker.base_url").and_return(nil)
             end
-
             it "returns the configured base URL" do
               expect(subject.base_url).to eq "http://foo"
             end
           end
 
-          context "when PactBroker.configuration.base_url is nil" do
+          context "when PactBroker.configuration.base_url is nil and the rack env value is not set" do
             before do
+              allow(env).to receive(:[]).with("pactbroker.base_url").and_return(nil)
               allow(PactBroker.configuration).to receive(:base_url).and_return(nil)
             end
 

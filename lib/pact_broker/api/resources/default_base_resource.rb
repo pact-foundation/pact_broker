@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'webmachine'
 require 'pact_broker/services'
 require 'pact_broker/api/decorators'
@@ -67,16 +68,16 @@ module PactBroker
         alias_method :path_info, :identifier_from_path
 
         def base_url
-          PactBroker.configuration.base_url || request.base_uri.to_s.chomp('/')
+          request.env["pactbroker.base_url"] || PactBroker.configuration.base_url || request.base_uri.to_s.chomp('/')
         end
 
         # See comments for base_url in lib/pact_broker/doc/controllers/app.rb
         def ui_base_url
-          PactBroker.configuration.base_url || ''
+          request.env["pactbroker.base_url"] || PactBroker.configuration.base_url || ''
         end
 
         def charsets_provided
-          [['utf-8', :encode]]
+          [["utf-8", :encode]]
         end
 
         # We only use utf-8 so leave encoding as it is
