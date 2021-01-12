@@ -52,7 +52,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'webmachine', '1.5.0'
   gem.add_runtime_dependency 'semver2', '~> 3.4.2'
   gem.add_runtime_dependency 'rack', '>= 2.2.3', '~> 2.2'
-  gem.add_runtime_dependency 'redcarpet', '>=3.5.1', '~>3.5'
+  gem.add_runtime_dependency 'redcarpet', '>= 3.5.1', '~>3.5'
   gem.add_runtime_dependency 'pact-support' , '~> 1.16', '>= 1.16.4'
   gem.add_runtime_dependency 'padrino-core', '>= 0.14.3', '~> 0.14'
   gem.add_runtime_dependency 'sinatra', '>= 2.0.8.1', '< 3.0'
