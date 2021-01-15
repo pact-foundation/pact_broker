@@ -80,7 +80,7 @@ module PactBroker
                       data-provider-name=\"#{provider_name}\"
                       data-consumer-version-number=\"#{consumer_version_number}\"
                       data-pact-url=\"#{pact_url}\"
-                      class='more-options glyphicon glyphicon-option-horizontal'
+                      class='more-options kebab-horizontal'
                       aria-hidden='true'></span>
               </li>
             </ul>
