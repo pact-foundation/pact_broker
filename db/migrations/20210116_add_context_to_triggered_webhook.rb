@@ -1,0 +1,11 @@
+require_relative 'migration_helper'
+
+include PactBroker::MigrationHelper
+
+Sequel.migration do
+  change do
+    alter_table(:triggered_webhooks) do
+      add_column(:context, String)
+    end
+  end
+end

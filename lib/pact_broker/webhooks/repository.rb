@@ -101,7 +101,7 @@ module PactBroker
           .collect(&:to_domain)
       end
 
-      def create_triggered_webhook trigger_uuid, webhook, pact, verification, trigger_type, event_name
+      def create_triggered_webhook trigger_uuid, webhook, pact, verification, trigger_type, event_name, context
         db_webhook = Webhook.where(uuid: webhook.uuid).single_record
         TriggeredWebhook.create(
           status: TriggeredWebhook::STATUS_NOT_RUN,
@@ -113,7 +113,8 @@ module PactBroker
           trigger_type: trigger_type,
           consumer: pact.consumer,
           provider: pact.provider,
-          event_name: event_name
+          event_name: event_name,
+          context: context
         )
       end
 

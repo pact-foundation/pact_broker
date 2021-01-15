@@ -180,7 +180,8 @@ module PactBroker
         let(:provider) { PactBroker::Domain::Pacticipant.new(name: 'Provider') }
         let(:webhooks) { [instance_double(PactBroker::Domain::Webhook, description: 'description', uuid: '1244')]}
         let(:triggered_webhook) { instance_double(PactBroker::Webhooks::TriggeredWebhook) }
-        let(:webhook_execution_configuration) { double('webhook_execution_configuration') }
+        let(:webhook_execution_configuration) { double('webhook_execution_configuration', webhook_context: webhook_context) }
+        let(:webhook_context) { double('webhook_context') }
         let(:options) do
           { database_connector: double('database_connector'),
             webhook_execution_configuration: webhook_execution_configuration,

@@ -29,6 +29,10 @@ module PactBroker
         with_updated_attribute(webhook_context: value)
       end
 
+      def webhook_context
+        self[:webhook_context]
+      end
+
       def [](key)
         params[key]
       end
