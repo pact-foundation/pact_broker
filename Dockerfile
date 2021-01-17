@@ -15,6 +15,7 @@ RUN apk update \
       "sqlite>=3.28" \
       "tzdata>=2019" \
       "mariadb-dev>=10.3" \
+      "mysql-client>=10.3.25" \
     && rm -rf /var/cache/apk/*
 
 RUN apk add --no-cache openssl less

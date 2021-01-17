@@ -68,6 +68,13 @@ bundle exec rake
 # if you don't want to run the whole rake test suite, init the db first
 /home/init-db.sh
 ```
+
+Running a mysql client in the mysql-tests container:
+
+```
+mysql -hmysql -upact_broker -ppact_broker
+```
+
 ## Running the tests
 
 * To run everything (specs, pact verifications, vulnerability scan...):
