@@ -102,11 +102,20 @@ module Sequel
 
       context "when a duplicate Version is inserted with upsert" do
         let!(:pacticipant) { Pacticipant.new(name: "Foo").save }
-        let!(:original_version) { Version.new(number: "1", pacticipant_id: pacticipant.id, created_at: yesterday, updated_at: yesterday).upsert }
+        let!(:original_version) do
+          Version.new(
+            number: "1",
+            pacticipant_id: pacticipant.id,
+            created_at: yesterday,
+            updated_at: yesterday,
+            branch: "original-branch",
+            build_url: "original-url"
+          ).upsert
+        end
         let(:yesterday) { DateTime.now - 1 }
 
         subject do
-          Version.new(number: "1", pacticipant_id: pacticipant.id).upsert
+          Version.new(number: "1", pacticipant_id: pacticipant.id, branch: "new-branch").upsert
         end
 
         it "does not raise an error" do
@@ -114,7 +123,11 @@ module Sequel
         end
 
         it "sets the values on the object" do
-          expect(subject.id).to eq original_version.id
+          expect(subject.branch).to eq "new-branch"
+        end
+
+        it "nils out values that weren't set on the second model" do
+          expect(subject.build_url).to eq nil
         end
 
         it "does not insert another row" do
