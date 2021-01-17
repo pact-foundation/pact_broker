@@ -12,6 +12,7 @@ module PactBroker
           p[:pacticipant_version_number] = i['version'] if i['version'] && i['version'] != ''
           p[:latest] = true if i['latest'] == 'true'
           p[:tag] = i['tag'] if i['tag'] && i['tag'] != ''
+          p[:branch] = i['branch'] if i['branch'] && i['branch'] != ''
           p
         end
         options = {}

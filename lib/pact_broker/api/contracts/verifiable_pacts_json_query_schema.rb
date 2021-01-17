@@ -27,6 +27,7 @@ module PactBroker
               # end
 
               optional(:tag).filled(:str?)
+              optional(:branch).filled(:str?)
               optional(:latest).filled(included_in?: [true, false])
               optional(:fallbackTag).filled(:str?)
               optional(:consumer).filled(:str?, :not_blank?)
@@ -52,19 +53,26 @@ module PactBroker
           if params[:consumerVersionSelectors].is_a?(Array)
             errors = []
             params[:consumerVersionSelectors].each_with_index do | selector, index |
-              if selector[:fallbackTag] && !selector[:latest]
-                errors << "fallbackTag can only be set if latest is true (at index #{index})"
-              end
-
-
-              if not_provided?(selector[:tag]) && selector[:latest] != true
-                errors << "latest must be true, or a tag must be provided (at index #{index})"
-              end
+              add_cross_field_validation_errors_for_selector(errors, selector, index)
             end
             if errors.any?
               results[:consumerVersionSelectors] ||= []
               results[:consumerVersionSelectors].concat(errors)
             end
+          end
+        end
+
+        def self.add_cross_field_validation_errors_for_selector(errors, selector, index)
+          if selector[:fallbackTag] && !selector[:latest]
+            errors << "fallbackTag can only be set if latest is true (at index #{index})"
+          end
+
+          if not_provided?(selector[:tag]) && selector[:latest] != true
+            errors << "latest must be true, or a tag must be provided (at index #{index})"
+          end
+
+          if selector[:tag] && selector[:branch]
+            errors << "cannot specify both a tag and a branch (at index #{index})"
           end
         end
 

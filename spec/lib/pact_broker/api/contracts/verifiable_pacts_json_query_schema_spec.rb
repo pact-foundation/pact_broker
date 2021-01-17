@@ -173,6 +173,20 @@ module PactBroker
 
           it { is_expected.to be_empty }
         end
+
+        context "when both a tag and a branch are specified" do
+          let(:consumer_version_selectors) do
+            [{
+              latest: true,
+              tag: "feat-x",
+              branch: "main"
+            }]
+          end
+
+          it "has an error" do
+            expect(subject[:consumerVersionSelectors].first).to include "cannot specify both a tag and a branch (at index 0)"
+          end
+        end
       end
     end
   end

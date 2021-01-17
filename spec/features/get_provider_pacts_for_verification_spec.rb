@@ -14,7 +14,7 @@ describe "Get provider pacts for verification" do
       TestDataBuilder.new
         .create_provider("Provider")
         .create_consumer("Consumer")
-        .create_consumer_version("0.0.1")
+        .create_consumer_version("0.0.1", branch: "main")
         .create_pact
         .create_consumer("Consumer 2")
         .create_consumer_version("4.5.6")
@@ -68,6 +68,18 @@ describe "Get provider pacts for verification" do
 
       it "does not include a deprecation notice" do
         expect(last_response_body[:_embedded][:pacts].first[:verificationProperties][:notices].first[:text]).to_not start_with("WARNING")
+      end
+
+      context "when specifying a branch in the selector" do
+        let(:request_body) do
+          {
+            consumerVersionSelectors: [ { branch: "main", latest: true }]
+          }
+        end
+
+        it "returns a list of links to the pacts", pending: true do
+          expect(pacts.size).to eq 1
+        end
       end
 
       context "when the provider does not exist" do

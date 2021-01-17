@@ -106,6 +106,14 @@ module PactBroker
           end
         end
 
+        context "when there is a branch" do
+          let(:query) { "q[][pacticipant]=Foo&q[][branch]=main" }
+
+          it "returns a selector with a branch" do
+            expect(subject.first).to eq [{ pacticipant_name: 'Foo', branch: 'main' }]
+          end
+        end
+
         context "when a limit is specified" do
           let(:query) { "limit=200" }
 
