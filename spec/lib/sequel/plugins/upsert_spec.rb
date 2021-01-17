@@ -102,7 +102,8 @@ module Sequel
 
       context "when a duplicate Version is inserted with upsert" do
         let!(:pacticipant) { Pacticipant.new(name: "Foo").save }
-        let!(:original_version) { Version.new(number: "1", pacticipant_id: pacticipant.id).upsert }
+        let!(:original_version) { Version.new(number: "1", pacticipant_id: pacticipant.id, created_at: yesterday, updated_at: yesterday).upsert }
+        let(:yesterday) { DateTime.now - 1 }
 
         subject do
           Version.new(number: "1", pacticipant_id: pacticipant.id).upsert
@@ -118,6 +119,14 @@ module Sequel
 
         it "does not insert another row" do
           expect { subject }.to_not change { Version.count }
+        end
+
+        it "does not change the created_at" do
+          expect { subject }.to_not change { Version.where(number: "1").first.created_at }
+        end
+
+        it "does change the updated_at" do
+          expect { subject }.to change { Version.where(number: "1").first.updated_at }
         end
       end
     end

@@ -67,7 +67,7 @@ module Sequel
           query = values.select{ |k, _| self.class.upsert_plugin_identifying_columns.include?(k) }
           existing_record = model.where(query).single_record
           if existing_record
-            existing_record.update(values)
+            existing_record.update(values_without_created_at)
           else
             save(opts)
           end
@@ -78,9 +78,9 @@ module Sequel
         def _insert_dataset
           if upsert_plugin_upserting
             if postgres?
-              super.insert_conflict(update: values, target: self.class.upsert_plugin_identifying_columns)
+              super.insert_conflict(update: values_without_created_at, target: self.class.upsert_plugin_identifying_columns)
             elsif mysql?
-              columns_to_update = values.keys - self.class.upsert_plugin_identifying_columns
+              columns_to_update = values_without_created_at.keys - self.class.upsert_plugin_identifying_columns
               super.on_duplicate_key_update(*columns_to_update)
             else
               super
@@ -96,6 +96,10 @@ module Sequel
 
         def postgres?
           model.db.adapter_scheme.to_s == "postgres"
+        end
+
+        def values_without_created_at
+          values.reject{ |k, v| k == :created_at }
         end
       end
     end

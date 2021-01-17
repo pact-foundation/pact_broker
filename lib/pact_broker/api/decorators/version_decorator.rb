@@ -6,7 +6,7 @@ module PactBroker
     module Decorators
       class VersionDecorator < BaseDecorator
 
-        property :number
+        property :number, writeable: false
         property :branch
         property :build_url, as: :buildUrl
 

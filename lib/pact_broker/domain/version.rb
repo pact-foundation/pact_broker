@@ -22,7 +22,7 @@ module PactBroker
 
     class Version < Sequel::Model
       plugin :timestamps, update_on_create: true
-      plugin :insert_ignore, identifying_columns: [:pacticipant_id, :number]
+      plugin :upsert, identifying_columns: [:pacticipant_id, :number]
 
       set_primary_key :id
       one_to_many :pact_publications, order: :revision_number, class: "PactBroker::Pacts::PactPublication", key: :consumer_version_id

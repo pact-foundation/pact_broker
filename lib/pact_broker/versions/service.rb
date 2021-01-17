@@ -1,7 +1,6 @@
 require 'pact_broker/repositories'
 
 module PactBroker
-
   module Versions
     class Service
 
@@ -19,8 +18,9 @@ module PactBroker
         version_repository.find_by_pacticipant_name_and_latest_tag(pacticipant_name, tag)
       end
 
-      def self.create_or_update(version, pacticipant_name)
-
+      def self.create_or_update(pacticipant_name, version_number, version)
+        pacticipant = pacticipant_repository.find_by_name_or_create(pacticipant_name)
+        version_repository.create_or_update(pacticipant, version_number, version)
       end
 
       def self.delete version
