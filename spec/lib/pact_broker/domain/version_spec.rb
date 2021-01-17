@@ -49,6 +49,25 @@ module PactBroker
           end
         end
 
+        context "when selecting the latest version for branch main with a pacticipant name" do
+          before do
+            td.create_consumer("Foo")
+              .create_consumer_version("1", branch: "main")
+              .create_consumer_version("2", branch: "main")
+              .create_consumer_version("3", branch: "not-main")
+              .create_consumer("Bar")
+              .create_consumer_version("10", branch: "main")
+              .create_consumer_version("11", branch: "main")
+          end
+
+          let(:selector) { PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: 'Foo', branch: 'main', latest: true) }
+
+
+          it "returns the latest version for Foo with branch main" do
+            expect(version_numbers).to eq %w{2}
+          end
+        end
+
         context "when selecting all prod versions without a pacticipant name" do
           before do
             td.create_consumer("Foo")

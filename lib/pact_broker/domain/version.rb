@@ -80,6 +80,10 @@ module PactBroker
           where(name_like(:number, number))
         end
 
+        def where_branch(branch)
+          where(branch: branch)
+        end
+
         def where_age_less_than(days)
           start_date = Date.today - days
           where{ versions[:created_at] >= start_date }
@@ -100,6 +104,7 @@ module PactBroker
           query = self
           query = query.where_pacticipant_name(selector.pacticipant_name) if selector.pacticipant_name
           query = query.where_tag(selector.tag) if selector.tag
+          query = query.where_branch(selector.branch) if selector.branch
           query = query.where_number(selector.pacticipant_version_number) if selector.pacticipant_version_number
           query = query.where_age_less_than(selector.max_age) if selector.max_age
 
