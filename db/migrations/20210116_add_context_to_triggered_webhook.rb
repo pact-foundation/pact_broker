@@ -5,7 +5,7 @@ include PactBroker::MigrationHelper
 Sequel.migration do
   change do
     alter_table(:triggered_webhooks) do
-      add_column(:context, String)
+      add_column(:event_context, String)
     end
   end
 end
