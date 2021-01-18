@@ -11,25 +11,25 @@
         %tr
           %th.consumer
             Consumer
-            %span.glyphicon.glyphicon-sort.relationships-sort
+            %span.sort-icon.relationships-sort
           %th.consumer-version-number
             Consumer<br>Version
-            %span.glyphicon.glyphicon-sort.relationships-sort
+            %span.sort-icon.relationships-sort
           %th.pact{ style: 'width: 40px' }
           %th.provider
             Provider
-            %span.glyphicon.glyphicon-sort.relationships-sort
+            %span.sort-icon.relationships-sort
           %th.provider-version-number
             Provider<br>Version
-            %span.glyphicon.glyphicon-sort.relationships-sort
+            %span.sort-icon.relationships-sort
           %th
             Published
-            %span.glyphicon.glyphicon-sort.relationships-sort
+            %span.sort-icon.relationships-sort
           %th
             Webhook<br>status
           %th
             Last<br>verified
-            %span.glyphicon.glyphicon-sort.relationships-sort
+            %span.sort-icon.relationships-sort
           %th
       %tbody
 
@@ -43,12 +43,12 @@
                 = index_item.consumer_version_number
                 - if index_item.consumer_version_number
                   %button.clippy.invisible{ title: "Copy to clipboard" }
-                    %span.glyphicon.glyphicon-copy
+                    %span.copy-icon
               - if index_item.latest?
-                .tag.label.label-success
+                .tag.badge.badge-success
                   latest
               - index_item.consumer_version_latest_tag_names.each do | tag_name |
-                .tag.label.label-primary
+                .tag.badge.badge-primary
                   = tag_name
             %td.pact
               %span.pact
@@ -63,27 +63,27 @@
                 = index_item.provider_version_number
                 - if index_item.provider_version_number
                   %button.clippy.invisible{ title: "Copy to clipboard" }
-                    %span.glyphicon.glyphicon-copy
+                    %span.copy-icon
               - index_item.provider_version_latest_tag_names.each do | tag_name |
-                .tag.label.label-primary
+                .tag.badge.badge-primary
                   = tag_name
             %td{"data-text": index_item.publication_date_of_latest_pact_order}
               = index_item.publication_date_of_latest_pact.gsub("about ", "")
-            %td{ class: index_item.webhook_status }
+            %td{ class: "table-#{index_item.webhook_status}" }
               - if index_item.show_webhook_status?
                 %a{ href: index_item.webhook_url }
                   = index_item.webhook_label
 
-            %td{ class: index_item.pseudo_branch_verification_status, title: index_item.verification_tooltip, "data-toggle": "tooltip", "data-placement": "left" }
+            %td{ class: "table-#{index_item.pseudo_branch_verification_status}", title: index_item.verification_tooltip, "data-toggle": "tooltip", "data-placement": "left" }
               %div
                 = index_item.last_verified_date.gsub("about ", "")
                 - if index_item.warning?
-                  %span.glyphicon.glyphicon-warning-sign{ 'aria-hidden': true }
+                  %span.warning-icon{ 'aria-hidden': true }
             %td
               - if index_item.show_settings?
-                %span.integration-settings.glyphicon.glyphicon-option-horizontal{ 'aria-hidden': true }
+                %span.integration-settings.kebab-horizontal{ 'aria-hidden': true }
 
-    %div.pagination
+    %p.pagination.text-center
 
     - pagination_locals = { page_number: page_number, page_size: page_size, pagination_record_count: pagination_record_count, current_page_size: current_page_size }
     != render :haml, :'index/_pagination', :layout => false, locals: pagination_locals

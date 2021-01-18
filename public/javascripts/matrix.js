@@ -55,7 +55,7 @@ function disableFieldsThatShouldNotBeSubmitted() {
 
 function highlightPactPublicationsWithSameData(td, field) {
   const value = $(td).data(field);
-  $('*[data-' + field + '="' + value +'"]').addClass('bg-info');
+  $('*[data-' + field + '="' + value +'"]').addClass('bg-warning');
 }
 
 function unHighlightPactPublicationsWithSameData(td, event, field) {
@@ -69,7 +69,7 @@ function unHighlightPactPublicationsWithSameData(td, event, field) {
   // the SHA so that it's wide enough to fit the SHA in.
   if (!$(td).find('a').is(destinationElement)) {
     const value = $(td).data(field);
-    $('*[data-' + field + '="' + value +'"]').removeClass('bg-info');
+    $('*[data-' + field + '="' + value +'"]').removeClass('bg-warning');
   }
 }
 

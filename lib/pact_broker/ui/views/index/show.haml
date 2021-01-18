@@ -12,12 +12,12 @@
           %th
           %th.consumer
             Consumer
-            %span.glyphicon.glyphicon-sort.relationships-sort
+            %span.sort-icon.relationships-sort
           %th.pact
 
           %th.provider
             Provider
-            %span.glyphicon.glyphicon-sort.relationships-sort
+            %span.sort-icon.relationships-sort
           %th
           %th
             Latest pact<br>published
@@ -44,17 +44,17 @@
             %td
             %td{"data-text": index_item.publication_date_of_latest_pact_order}
               = index_item.publication_date_of_latest_pact
-            %td{class: index_item.webhook_status}
+            %td{class: "table-#{index_item.webhook_status}"}
               %a{ href: index_item.webhook_url }
                 = index_item.webhook_label
 
-            %td{ class: index_item.pseudo_branch_verification_status, title: index_item.verification_tooltip, "data-toggle": "tooltip", "data-placement": "left" }
+            %td{ class: "table-#{index_item.pseudo_branch_verification_status}", title: index_item.verification_tooltip, "data-toggle": "tooltip", "data-placement": "left" }
               %div
                 = index_item.last_verified_date
                 - if index_item.warning?
-                  %span.glyphicon.glyphicon-warning-sign{ 'aria-hidden': true }
+                  %span.warning-icon{ 'aria-hidden': true }
             %td
-              %span.integration-settings.glyphicon.glyphicon-option-horizontal{ 'aria-hidden': true }
+              %span.integration-settings.kebab-horizontal{ 'aria-hidden': true }
     %div.pagination
 
     - pagination_locals = { page_number: page_number, page_size: page_size, pagination_record_count: pagination_record_count, current_page_size: current_page_size }

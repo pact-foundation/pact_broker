@@ -6,7 +6,7 @@
   %script{type: 'text/javascript', src: "#{base_url}/javascripts/jquery.tablesorter.min.js"}
   %script{type: 'text/javascript', src: "#{base_url}/javascripts/matrix.js"}
   %script{type: 'text/javascript', src: "#{base_url}/javascripts/clipboard.js"}
-  %script{type: 'text/javascript', src: "#{base_url}/js/bootstrap.min.js"}
+  %script{type: 'text/javascript', src: "#{base_url}/js/bootstrap.bundle.min.js"}
 
   .container
     .navbar-right
@@ -25,13 +25,14 @@
     %form{action: "#{base_url}/matrix", onsubmit:'return onSubmit()'}
       - selectors.each_with_index do | selector, index |
         .selector
-          %label{for: "pacticipant#{index}"}
-            Pacticipant name
-          %input{name: 'q[]pacticipant', id: "pacticipant1#{index}", class: 'pacticipant_name', value: selector.pacticipant_name}
+          .field
+            %label{for: "pacticipant#{index}"}
+              Pacticipant name
 
-          .input-group
+            %input{name: 'q[]pacticipant', id: "pacticipant1#{index}", class: 'pacticipant_name', value: selector.pacticipant_name}
 
-          .input-group
+          .field
+
             %select{ name: "ignorethis#{index}", class: 'version-selectorizor' }
               %option{ value: 'specify-all-versions', selected: selector.specify_all_versions }
                 All versions
@@ -59,20 +60,18 @@
           %input{name: 'latest', value: options.latest.to_s, hidden: true}
 
 
-      %div.top-of-group
+      %div.top-of-group.form-check
+        %input{type: 'radio', name: "latestby", class: 'form-check-input', value: '', id: 'all_rows', checked: options.all_rows_checked}
+        %label{for: 'all_rows', class: "form-check-label"}
+          Show all results
+      %div.form-check
+        %input{type: 'radio', name: "latestby", class: 'form-check-input', value: 'cvpv', id: 'cvpv', checked: options.cvpv_checked}
+        %label{for: 'cvpv', class: "form-check-label"}
+          Show latest result for each consumer version/provider version
+      %div.form-check
         .input-group
-          %input{type: 'radio', name: "latestby", class: '', value: '', id: 'all_rows', checked: options.all_rows_checked}
-          %label{for: 'all_rows'}
-            Show all results
-      %div
-        .input-group
-          %input{type: 'radio', name: "latestby", class: '', value: 'cvpv', id: 'cvpv', checked: options.cvpv_checked}
-          %label{for: 'cvpv'}
-            Show latest result for each consumer version/provider version
-      %div
-        .input-group
-          %input{type: 'radio', name: "latestby", class: '', value: 'cvp', id: 'cvp', checked: options.cvp_checked}
-          %label{for: 'cvp'}
+          %input{type: 'radio', name: "latestby", class: 'form-check-input', value: 'cvp', id: 'cvp', checked: options.cvp_checked}
+          %label{for: 'cvp', class: "form-check-label"}
             Show latest result for each consumer version/provider
       %div.top-of-group
         - limit_text = "Note that the 'Show latest...' options are summaries of the 'Show all results' query, and that the limit applies to the underlying query, rather than the number of rows returned in the summary."
@@ -90,22 +89,22 @@
         %tr
           %th.consumer
             = "Consumer"
-            %span.glyphicon.glyphicon-sort.sort
+            %span.sort-icon.sort
           %th.consumer-version
             = "Consumer Version"
-            %span.glyphicon.glyphicon-sort.sort
+            %span.sort-icon.sort
           %th.pact-published
             = "Pact Published"
-            %span.glyphicon.glyphicon-sort.sort
+            %span.sort-icon.sort
           %th.provider
             = "Provider"
-            %span.glyphicon.glyphicon-sort.sort
+            %span.sort-icon.sort
           %th.provider-version
             = "Provider Version"
-            %span.glyphicon.glyphicon-sort.sort
+            %span.sort-icon.sort
           %th.verification-result
             Pact verified
-            %span.glyphicon.glyphicon-sort.sort
+            %span.sort-icon.sort
       %tbody
       - lines.each do | line |
         %tr
@@ -118,16 +117,16 @@
                 = line.display_consumer_version_number
               - if line.display_consumer_version_number
                 %button.clippy.invisible{ title: "Copy to clipboard" }
-                  %span.glyphicon.glyphicon-copy
+                  %span.copy-icon
             - line.latest_consumer_version_tags.each do | tag |
               .tag-parent{"title": tag.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
                 %a{href: tag.url}
-                  .tag.label.label-primary
+                  .tag.badge.badge-primary
                     = tag.name
             - line.other_consumer_version_tags.each do | tag |
               .tag-parent{"title": tag.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
                 %a{href: tag.url}
-                  .tag.label.label-default
+                  .tag.badge.badge-secondary
                     = tag.name
           %td.pact-published{'data-sort-value' => line.pact_published_order, "data-toggle": "tooltip", "title": line.pact_version_sha_message, "data-placement": "right", "data-pact-version-sha": line.pact_version_sha}
             %a{href: line.pact_publication_date_url}
@@ -145,16 +144,16 @@
                 = line.display_provider_version_number
               - if line.display_provider_version_number
                 %button.clippy.invisible{ title: "Copy to clipboard" }
-                  %span.glyphicon.glyphicon-copy
+                  %span.copy-icon
             - line.latest_provider_version_tags.each do | tag |
               .tag-parent{"title": tag.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
                 %a{href: tag.url}
-                  .tag.label.label-primary
+                  .tag.badge.badge-primary
                     = tag.name
             - line.other_provider_version_tags.each do | tag |
               .tag-parent{"title": tag.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
                 %a{href: tag.url}
-                  .tag.label.label-default
+                  .tag.badge.badge-secondary
                     = tag.name
           %td.verification-result{class: line.verification_status_class, "title": line.pre_verified_message, "data-toggle": "tooltip", "data-placement": "left"}
             %a{href: line.verification_status_url}
@@ -163,4 +162,4 @@
               - else
                 = line.verification_status
             - if line.pre_verified_message
-              %span.glyphicon.glyphicon-time.pre-verified-icon{"aria-hidden": true}
+              %span.pre-verified-icon{"aria-hidden": true}
