@@ -137,6 +137,33 @@ module PactBroker
         self
       end
 
+      def create_global_webhook_for_contract_changed(uuid: nil, url: "https://postman-echo.com/post")
+        puts "Creating global webhook for contract changed event with uuid #{uuid}"
+        uuid ||= SecureRandom.uuid
+        request_body = {
+          "description" => "A webhook for all consumers and providers",
+          "events" => [{
+            "name" => "contract_content_changed"
+          }],
+          "request" => {
+            "method" => "POST",
+            "url" => url
+          }
+        }
+        path = "/webhooks/#{uuid}"
+        response = client.put(path, request_body.to_json).tap { |response| check_for_error(response) }
+        separate
+        self
+      end
+
+      def delete_webhook(uuid:)
+        puts "Deleting webhook with uuid #{uuid}"
+        path = "/webhooks/#{uuid}"
+        response = client.delete(path).tap { |response| check_for_error(response) }
+        separate
+        self
+      end
+
       def print_pacts_for_verification_response
         puts @pacts_for_verification_response.body
         self
