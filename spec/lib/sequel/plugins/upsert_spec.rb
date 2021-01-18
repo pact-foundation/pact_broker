@@ -24,6 +24,12 @@ module Sequel
         plugin :upsert, identifying_columns: [:provider_id, :consumer_version_id]
       end
 
+      describe PacticipantNoUpsert do
+        it "has an _insert_dataset method" do
+          expect(PacticipantNoUpsert.private_instance_methods).to include (:_insert_dataset)
+        end
+      end
+
       describe "LatestPactPublicationIdForConsumerVersion" do
         before do
           td.create_pact_with_hierarchy("Foo", "1", "Bar")

@@ -100,8 +100,7 @@ module Sequel
         end
 
         def values_to_update
-          ignore_cols = columns_to_not_update
-          columns_with_nil_values.merge(values).reject{ |k, v| ignore_cols.include?(k) }
+          columns_with_nil_values.merge(values).reject{ |k, _| columns_to_not_update.include?(k) }
         end
 
         def columns_with_nil_values
@@ -109,7 +108,7 @@ module Sequel
         end
 
         def columns_to_not_update
-          (self.class.upsert_plugin_identifying_columns + [:created_at, self.class.primary_key]).flatten
+          @columns_to_not_update ||= (self.class.upsert_plugin_identifying_columns + [:created_at, self.class.primary_key]).flatten
         end
       end
     end
