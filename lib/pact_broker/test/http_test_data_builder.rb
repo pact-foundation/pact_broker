@@ -202,6 +202,7 @@ module PactBroker
           },
           interactions: [
             {
+              description: "a request",
               request: {
                 method: "GET",
                 path: "/things/#{content_id}"
