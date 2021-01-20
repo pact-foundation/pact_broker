@@ -1,3 +1,22 @@
+<a name="v2.75.0"></a>
+### v2.75.0 (2021-01-18)
+
+#### Features
+
+* upgrade bootstrap (#370)	 ([a457c337](/../../commit/a457c337))
+* add indexes to webhook_executions and triggered_webhooks tables	 ([b05e7dbe](/../../commit/b05e7dbe))
+
+* **webhook**
+  * set read and open timeouts	 ([8b502c44](/../../commit/8b502c44))
+
+#### Bug Fixes
+
+* **ui**
+  * upgrade to jquery-3.5.1 to address vulnerabilities in jquery-3.3.1	 ([de41b231](/../../commit/de41b231))
+
+* **deps**
+  * upgrade redcarpet for CVE-2020-26298	 ([b57aad32](/../../commit/b57aad32))
+
 <a name="v2.74.1"></a>
 ### v2.74.1 (2021-01-05)
 
