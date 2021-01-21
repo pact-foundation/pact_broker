@@ -90,7 +90,6 @@ module PactBroker
         describe "base_url" do
           before do
             allow(env).to receive(:[]).with("pactbroker.base_url").and_return("http://rack")
-            allow(PactBroker.configuration).to receive(:base_url).and_return("http://foo")
           end
 
           context "when pactbroker.base_url is set on the env" do
@@ -99,19 +98,9 @@ module PactBroker
             end
           end
 
-          context "when PactBroker.configuration.base_url is not nil" do
+          context "when the rack env value is not set" do
             before do
               allow(env).to receive(:[]).with("pactbroker.base_url").and_return(nil)
-            end
-            it "returns the configured base URL" do
-              expect(subject.base_url).to eq "http://foo"
-            end
-          end
-
-          context "when PactBroker.configuration.base_url is nil and the rack env value is not set" do
-            before do
-              allow(env).to receive(:[]).with("pactbroker.base_url").and_return(nil)
-              allow(PactBroker.configuration).to receive(:base_url).and_return(nil)
             end
 
             it "returns the base URL from the request" do

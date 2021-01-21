@@ -68,12 +68,12 @@ module PactBroker
         alias_method :path_info, :identifier_from_path
 
         def base_url
-          request.env["pactbroker.base_url"] || PactBroker.configuration.base_url || request.base_uri.to_s.chomp('/')
+          request.env["pactbroker.base_url"] || request.base_uri.to_s.chomp('/')
         end
 
         # See comments for base_url in lib/pact_broker/doc/controllers/app.rb
         def ui_base_url
-          request.env["pactbroker.base_url"] || PactBroker.configuration.base_url || ''
+          request.env["pactbroker.base_url"] || ''
         end
 
         def charsets_provided
