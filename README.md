@@ -116,7 +116,7 @@ Use the HAL browser to view documentation as you browse.
 
 ### To have a play around on your local machine
 
-* Install ruby 2.2.0 or later and bundler >= 1.12.0
+* Install Ruby and Bundler (check the automated tests to find the most recent version of Ruby and Bundler that are supported)
     * Windows users: get a Rails/Ruby installer from [RailsInstaller](http://railsinstaller.org/) and run it
     * unix users just use your package manager
 * Run `git clone git@github.com:pact-foundation/pact_broker.git && cd pact_broker/example`
