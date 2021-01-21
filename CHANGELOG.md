@@ -1,3 +1,11 @@
+<a name="v2.76.0"></a>
+### v2.76.0 (2021-01-21)
+
+#### Features
+
+* **verification results**
+  * redirect requests for verification results to the HAL browser if requested in a web browser	 ([0f948de5](/../../commit/0f948de5))
+
 <a name="v2.75.0"></a>
 ### v2.75.0 (2021-01-18)
 
