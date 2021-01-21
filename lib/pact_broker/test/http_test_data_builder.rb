@@ -42,7 +42,7 @@ module PactBroker
 
       def create_tag(pacticipant:, version:, tag:)
         puts "Creating tag '#{tag}' for #{pacticipant} version #{version}"
-        client.put("/pacticipants/#{encode(pacticipant)}/versions/#{encode(version)}/tags/#{encode(tag)}", {}).tap { |response| check_for_error(response) }
+        client.put("pacticipants/#{encode(pacticipant)}/versions/#{encode(version)}/tags/#{encode(tag)}", {}).tap { |response| check_for_error(response) }
         self
       end
 
@@ -55,7 +55,7 @@ module PactBroker
 
       def create_pacticipant(name)
         puts "Creating pacticipant with name #{name}"
-        client.post("/pacticipants", { name: name}).tap { |response| check_for_error(response) }
+        client.post("pacticipants", { name: name}).tap { |response| check_for_error(response) }
         separate
         self
       end
@@ -72,7 +72,7 @@ module PactBroker
 
         content = generate_content(consumer, provider, content_id)
         puts "Publishing pact for consumer #{consumer} version #{consumer_version} and provider #{provider}"
-        pact_path = "/pacts/provider/#{encode(provider)}/consumer/#{encode(consumer)}/version/#{encode(consumer_version)}"
+        pact_path = "pacts/provider/#{encode(provider)}/consumer/#{encode(consumer)}/version/#{encode(consumer_version)}"
         @publish_pact_response = client.put(pact_path, content).tap { |response| check_for_error(response) }
         separate
         self
@@ -89,7 +89,7 @@ module PactBroker
         }.compact
         puts body.to_yaml
         puts ""
-        @pacts_for_verification_response = client.post("/pacts/provider/#{encode(provider)}/for-verification", body).tap { |response| check_for_error(response) }
+        @pacts_for_verification_response = client.post("pacts/provider/#{encode(provider)}/for-verification", body).tap { |response| check_for_error(response) }
 
         print_pacts_for_verification
         separate
@@ -150,7 +150,7 @@ module PactBroker
             "url" => url
           }
         }
-        path = "/webhooks/#{uuid}"
+        path = "webhooks/#{uuid}"
         response = client.put(path, request_body.to_json).tap { |response| check_for_error(response) }
         separate
         self
@@ -158,7 +158,7 @@ module PactBroker
 
       def delete_webhook(uuid:)
         puts "Deleting webhook with uuid #{uuid}"
-        path = "/webhooks/#{uuid}"
+        path = "webhooks/#{uuid}"
         response = client.delete(path).tap { |response| check_for_error(response) }
         separate
         self
@@ -170,7 +170,7 @@ module PactBroker
       end
 
       def can_i_deploy(pacticipant:, version:, to:)
-        can_i_deploy_response = client.get("/can-i-deploy", { pacticipant: pacticipant, version: version, to: to} ).tap { |response| check_for_error(response) }
+        can_i_deploy_response = client.get("can-i-deploy", { pacticipant: pacticipant, version: version, to: to} ).tap { |response| check_for_error(response) }
         can = !!(can_i_deploy_response.body['summary'] || {})['deployable']
         puts "can-i-deploy #{pacticipant} version #{version} to #{to}: #{can ? 'yes' : 'no'}"
         puts (can_i_deploy_response.body['summary'] || can_i_deploy_response.body).to_yaml
@@ -180,14 +180,14 @@ module PactBroker
 
       def delete_integration(consumer:, provider:)
         puts "Deleting all data for the integration between #{consumer} and #{provider}"
-        client.delete("/integrations/provider/#{encode(provider)}/consumer/#{encode(consumer)}").tap { |response| check_for_error(response) }
+        client.delete("integrations/provider/#{encode(provider)}/consumer/#{encode(consumer)}").tap { |response| check_for_error(response) }
         separate
         self
       end
 
       def delete_pacticipant(name)
         puts "Deleting pacticipant #{name}"
-        @publish_pact_response = client.delete("/pacticipants/#{encode(name)}").tap { |response| check_for_error(response) }
+        @publish_pact_response = client.delete("pacticipants/#{encode(name)}").tap { |response| check_for_error(response) }
         separate
         self
       end
