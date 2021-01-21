@@ -10,7 +10,7 @@ module PactBroker
 
       attr_reader :client, :last_consumer_name, :last_provider_name, :last_consumer_version_number, :last_provider_version_number
 
-      def initialize(pact_broker_base_url, auth)
+      def initialize(pact_broker_base_url, auth = {})
         @client = Faraday.new(url: pact_broker_base_url) do |faraday|
           faraday.request :json
           faraday.response :json, :content_type => /\bjson$/

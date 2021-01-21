@@ -1,0 +1,33 @@
+version: "3"
+
+services:
+  postgres:
+    image: postgres
+    healthcheck:
+      test: psql postgres --command "select 1" -U postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres
+
+  pact-broker:
+    image: pactfoundation/pact-broker:2.73.0.0
+    ports:
+      - "9292:9292"
+    depends_on:
+      - postgres
+    environment:
+      PACT_BROKER_PORT: '9292'
+      PACT_BROKER_DATABASE_URL: "postgres://postgres:password@postgres/postgres"
+      PACT_BROKER_LOG_LEVEL: INFO
+      PACT_BROKER_SQL_LOG_LEVEL: DEBUG
+
+  repro-issue:
+    build: .
+    depends_on:
+      - pact-broker
+    command: dockerize -wait http://pact-broker:9292 -timeout 30s /home/script/reproduce-issue.rb
+    environment:
+      - PACT_BROKER_BASE_URL=http://pact-broker:9292
+    volumes:
+      - $PWD:/home

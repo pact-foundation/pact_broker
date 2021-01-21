@@ -8,16 +8,16 @@ You can use it to easily reproduce issues.
 
 To use it:
 
-* Run the Pact Broker using the latest development code:
+* Run the Pact Broker using a specific Pact Broker Docker image by setting the required tag for the pact-broker service in the docker-compose-issue-repro-with-pact-broker-docker-image.yml file.
 
     ```
-    docker-compose -f docker-compose-issue-repro.yml up --build pact-broker
+    docker-compose -f docker-compose-issue-repro-with-pact-broker-docker-image.yml up --build pact-broker
     ```
 
 * Run the reproduction script.
 
     ```
-    docker-compose -f docker-compose-issue-repro.yml up repro-issue
+    docker-compose -f docker-compose-issue-repro-with-pact-broker-docker-image.yml up repro-issue
     ```
 
 You can modify `script/reproduce-issue.rb` and then re-run it with the change applied.
