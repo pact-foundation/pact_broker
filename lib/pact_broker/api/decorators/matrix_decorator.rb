@@ -39,13 +39,17 @@ module PactBroker
           query_results_with_deployment_status_summary
             .deployment_status_summary
             .reasons
-            .collect{ | reason | ReasonDecorator.new(reason).to_s }
+            .collect{ | reason | reason_decorator_class.new(reason).to_s }
             .join("\n")
         end
 
         private
 
         attr_reader :query_results_with_deployment_status_summary
+
+        def reason_decorator_class
+          ReasonDecorator
+        end
 
         def matrix(base_url)
           query_results_with_deployment_status_summary.rows.collect do | line |
