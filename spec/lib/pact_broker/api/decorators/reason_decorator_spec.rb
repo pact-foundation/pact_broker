@@ -38,7 +38,7 @@ module PactBroker
           context "when the reason is PactBroker::Matrix::VerificationFailed" do
             let(:reason) { PactBroker::Matrix::VerificationFailed.new(*selectors) }
 
-            its(:to_s) { is_expected.to eq "The verification between version 2 of Foo and version 6 of Bar failed" }
+            its(:to_s) { is_expected.to eq "The verification for the pact between version 2 of Foo and version 6 of Bar failed" }
           end
 
           context "when the reason is PactBroker::Matrix::NoDependenciesMissing" do
