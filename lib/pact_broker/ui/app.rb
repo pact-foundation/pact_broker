@@ -1,5 +1,6 @@
 require 'pact_broker/ui/controllers/index'
 require 'pact_broker/ui/controllers/groups'
+require 'pact_broker/ui/controllers/pacts'
 require 'pact_broker/ui/controllers/matrix'
 require 'pact_broker/ui/controllers/can_i_deploy'
 require 'pact_broker/ui/controllers/error_test'
@@ -45,6 +46,11 @@ module PactBroker
           map "/pacticipants/" do
             use PathInfoFixer
             run PactBroker::UI::Controllers::CanIDeploy
+          end
+
+          map "/pacts/" do
+            use PathInfoFixer
+            run PactBroker::UI::Controllers::Pacts
           end
 
           map "/test/error" do

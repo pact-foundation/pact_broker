@@ -5,7 +5,6 @@ require 'pact_broker/logging/default_formatter'
 require 'pact_broker/policies'
 require 'rack-protection'
 require 'rack/hal_browser'
-require 'rack/pact_broker/hal_browser_redirect'
 require 'rack/pact_broker/set_base_url'
 require 'rack/pact_broker/add_pact_broker_version_header'
 require 'rack/pact_broker/convert_file_extension_to_accept_header'
@@ -197,7 +196,6 @@ module PactBroker
       if configuration.use_hal_browser
         logger.info "Mounting HAL browser"
         @app_builder.use Rack::HalBrowser::Redirect
-        @app_builder.use Rack::PactBroker::HalBrowserRedirect
       else
         logger.info "Not mounting HAL browser"
       end
