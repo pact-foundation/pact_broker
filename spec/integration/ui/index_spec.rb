@@ -14,7 +14,9 @@ describe "UI index" do
     get "/"
   end
 
-  subject { get("/", params, {}); last_response }
+  let(:rack_env) { {} }
+
+  subject { get("/", params, rack_env) }
 
   describe "GET" do
     it "returns a success response" do
@@ -40,9 +42,7 @@ describe "UI index" do
     end
 
     context "with the base_url set" do
-      before do
-        allow(PactBroker.configuration).to receive(:base_url).and_return('http://example.org/pact-broker')
-      end
+      let(:rack_env) { { "pactbroker.base_url" => "http://example.org/pact-broker"} }
 
       it "returns absolute links" do
         expect(subject.body).to include "href='http://example.org/pact-broker/stylesheets"
