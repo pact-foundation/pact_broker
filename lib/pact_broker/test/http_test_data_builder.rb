@@ -173,7 +173,12 @@ module PactBroker
         can_i_deploy_response = client.get("can-i-deploy", { pacticipant: pacticipant, version: version, to: to} ).tap { |response| check_for_error(response) }
         can = !!(can_i_deploy_response.body['summary'] || {})['deployable']
         puts "can-i-deploy #{pacticipant} version #{version} to #{to}: #{can ? 'yes' : 'no'}"
-        puts (can_i_deploy_response.body['summary'] || can_i_deploy_response.body).to_yaml
+        summary = can_i_deploy_response.body['summary']
+        verification_result_urls = (can_i_deploy_response.body['matrix'] || []).collect do | row |
+          row.dig("verificationResult", "_links", "self", "href")
+        end.compact
+        summary.merge!("verification_result_urls" => verification_result_urls)
+        puts summary.to_yaml
         separate
         self
       end
