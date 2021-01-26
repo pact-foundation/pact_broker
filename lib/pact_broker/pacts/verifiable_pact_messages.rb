@@ -52,7 +52,7 @@ module PactBroker
 
       def verification_success_true_published_true
         if pending?
-          "This pact is no longer in pending state for #{pending_provider_tags_description}, as a successful verification result #{with_these_tags}has been published. If a verification for a version with  fails in the future, it will fail the build. #{READ_MORE_PENDING}"
+          "This pact is no longer in pending state for #{pending_provider_tags_description}, as a successful verification result #{with_these_tags}has been published. If a verification for a version of #{provider_name} #{with_these_tags}fails in the future, it will fail the build. #{READ_MORE_PENDING}"
         end
       end
 
