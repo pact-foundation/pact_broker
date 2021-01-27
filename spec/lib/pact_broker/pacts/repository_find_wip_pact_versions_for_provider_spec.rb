@@ -54,6 +54,32 @@ module PactBroker
           end
         end
 
+        context "when there are multiple wip pacts with the same content" do
+          before do
+            td.create_provider("bar")
+              .create_provider_version("333")
+              .create_provider_version_tag("dev")
+              .add_day
+              .create_pact_with_hierarchy("foo", "1", "bar", json_content)
+              .create_consumer_version_tag("feat-1")
+              .add_day
+              .create_pact_with_hierarchy("meep", "2", "bar", json_content)
+              .create_consumer_version_tag("feat-2")
+          end
+
+          let(:json_content) { { "interactions" => ["foo"] }.to_json }
+          let(:provider_tags) { %w[dev] }
+
+          it "de-duplicates them" do
+            expect(subject.size).to eq 1
+          end
+
+          it "merges the selectors" do
+            expect(subject.first.selectors.size).to eq 2
+            expect(subject.first.wip).to be true
+          end
+        end
+
         context "when the latest pact for a tag has been successfully verified by the given provider tag" do
           before do
             td.create_pact_with_hierarchy("foo", "1", "bar")
