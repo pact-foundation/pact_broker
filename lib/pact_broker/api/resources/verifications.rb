@@ -50,7 +50,7 @@ module PactBroker
         end
 
         def from_json
-          verification = verification_service.create(next_verification_number, verification_params, pact, webhook_options)
+          verification = verification_service.create(next_verification_number, verification_params, pact, metadata, webhook_options)
           response.body = decorator_for(verification).to_json(decorator_options)
           true
         end

@@ -11,6 +11,7 @@ module PactBroker
       let(:previous_pact_version_sha) { "111" }
       let(:previous_pacts) { { untagged: previous_pact } }
       let(:logger) { double('logger').as_null_object }
+      let(:event_context) { { some: "data" } }
       let(:webhook_options) { { the: 'options'} }
 
       before do
@@ -21,27 +22,27 @@ module PactBroker
 
       shared_examples_for "triggering a contract_published event" do
         it "triggers a contract_published webhook" do
-          expect(webhook_service).to receive(:trigger_webhooks).with(pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_PUBLISHED, webhook_options)
+          expect(webhook_service).to receive(:trigger_webhooks).with(pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_PUBLISHED, event_context, webhook_options)
           subject
         end
       end
 
       shared_examples_for "triggering a contract_content_changed event" do
         it "triggers a contract_content_changed webhook" do
-          expect(webhook_service).to receive(:trigger_webhooks).with(pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED, webhook_options)
+          expect(webhook_service).to receive(:trigger_webhooks).with(pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED, event_context, webhook_options)
           subject
         end
       end
 
       shared_examples_for "not triggering a contract_content_changed event" do
         it "does not trigger a contract_content_changed webhook" do
-          expect(webhook_service).to_not receive(:trigger_webhooks).with(anything, anything, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED, anything)
+          expect(webhook_service).to_not receive(:trigger_webhooks).with(anything, anything, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED, event_context, anything)
           subject
         end
       end
 
       describe "#trigger_webhooks_for_new_pact" do
-        subject { TriggerService.trigger_webhooks_for_new_pact(pact, webhook_options) }
+        subject { TriggerService.trigger_webhooks_for_new_pact(pact, event_context, webhook_options) }
 
         context "when no previous untagged pact exists" do
           let(:previous_pact) { nil }
@@ -117,7 +118,7 @@ module PactBroker
         end
         let(:existing_pact_version_sha) { pact_version_sha }
 
-        subject { TriggerService.trigger_webhooks_for_updated_pact(existing_pact, pact, webhook_options) }
+        subject { TriggerService.trigger_webhooks_for_updated_pact(existing_pact, pact, event_context, webhook_options) }
 
         context "when the pact version sha of the previous revision is different" do
           let(:existing_pact_version_sha) { "456" }
@@ -141,16 +142,16 @@ module PactBroker
         let(:verification) { double("verification", success: success) }
         let(:success) { true }
 
-        subject { TriggerService.trigger_webhooks_for_verification_results_publication(pact, verification, webhook_options) }
+        subject { TriggerService.trigger_webhooks_for_verification_results_publication(pact, verification, event_context, webhook_options) }
 
         context "when the verification is successful" do
           it "triggers a provider_verification_succeeded webhook" do
-            expect(webhook_service).to receive(:trigger_webhooks).with(pact, verification, PactBroker::Webhooks::WebhookEvent::VERIFICATION_SUCCEEDED, webhook_options)
+            expect(webhook_service).to receive(:trigger_webhooks).with(pact, verification, PactBroker::Webhooks::WebhookEvent::VERIFICATION_SUCCEEDED, event_context, webhook_options)
             subject
           end
 
           it "triggers a provider_verification_published webhook" do
-            expect(webhook_service).to receive(:trigger_webhooks).with(pact, verification, PactBroker::Webhooks::WebhookEvent::VERIFICATION_PUBLISHED, webhook_options)
+            expect(webhook_service).to receive(:trigger_webhooks).with(pact, verification, PactBroker::Webhooks::WebhookEvent::VERIFICATION_PUBLISHED, event_context, webhook_options)
             subject
           end
         end
@@ -159,12 +160,12 @@ module PactBroker
           let(:success) { false }
 
           it "triggers a provider_verification_failed webhook" do
-            expect(webhook_service).to receive(:trigger_webhooks).with(pact, verification, PactBroker::Webhooks::WebhookEvent::VERIFICATION_FAILED, webhook_options)
+            expect(webhook_service).to receive(:trigger_webhooks).with(pact, verification, PactBroker::Webhooks::WebhookEvent::VERIFICATION_FAILED, event_context, webhook_options)
             subject
           end
 
           it "triggeres a provider_verification_published webhook" do
-            expect(webhook_service).to receive(:trigger_webhooks).with(pact, verification, PactBroker::Webhooks::WebhookEvent::VERIFICATION_PUBLISHED, webhook_options)
+            expect(webhook_service).to receive(:trigger_webhooks).with(pact, verification, PactBroker::Webhooks::WebhookEvent::VERIFICATION_PUBLISHED, event_context, webhook_options)
             subject
           end
         end

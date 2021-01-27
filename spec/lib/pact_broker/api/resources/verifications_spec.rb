@@ -91,6 +91,7 @@ module PactBroker
                 next_verification_number,
                 hash_including('some' => 'params', 'wip' => false),
                 pact,
+                parsed_metadata,
                 {
                   webhook_execution_configuration: webhook_execution_configuration,
                   database_connector: database_connector
@@ -116,6 +117,7 @@ module PactBroker
                 expect(PactBroker::Verifications::Service).to receive(:create).with(
                   anything,
                   hash_including('wip' => true),
+                  anything,
                   anything,
                   anything
                 )

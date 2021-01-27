@@ -121,7 +121,7 @@ module PactBroker
         webhook_repository.find_by_consumer_and_provider consumer, provider
       end
 
-      def self.trigger_webhooks pact, verification, event_name, options
+      def self.trigger_webhooks pact, verification, event_name, event_context, options
         webhooks = webhook_repository.find_by_consumer_and_or_provider_and_event_name pact.consumer, pact.provider, event_name
 
         if webhooks.any?

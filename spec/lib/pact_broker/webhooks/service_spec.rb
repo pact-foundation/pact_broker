@@ -182,6 +182,7 @@ module PactBroker
         let(:triggered_webhook) { instance_double(PactBroker::Webhooks::TriggeredWebhook) }
         let(:webhook_execution_configuration) { double('webhook_execution_configuration', webhook_context: webhook_context) }
         let(:webhook_context) { double('webhook_context') }
+        let(:event_context) { { some: "data" } }
         let(:options) do
           { database_connector: double('database_connector'),
             webhook_execution_configuration: webhook_execution_configuration,
@@ -196,7 +197,7 @@ module PactBroker
           allow(Job).to receive(:perform_in)
         end
 
-        subject { Service.trigger_webhooks pact, verification, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED, options }
+        subject { Service.trigger_webhooks pact, verification, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED, event_context, options }
 
         it "finds the webhooks" do
           expect_any_instance_of(PactBroker::Webhooks::Repository).to receive(:find_by_consumer_and_or_provider_and_event_name).with(consumer, provider, PactBroker::Webhooks::WebhookEvent::DEFAULT_EVENT_NAME)
@@ -329,6 +330,7 @@ module PactBroker
             .with_webhook_context(base_url: 'http://example.org')
             .with_show_response(true)
         end
+        let(:event_context) { { some: "data" }}
         let(:options) do
           {
             database_connector: database_connector,
@@ -347,7 +349,7 @@ module PactBroker
             .and_return(:pact)
         end
 
-        subject { PactBroker::Webhooks::Service.trigger_webhooks pact, td.verification, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED, options }
+        subject { PactBroker::Webhooks::Service.trigger_webhooks pact, td.verification, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED, event_context, options }
 
         it "executes the HTTP request of the webhook" do
           subject
