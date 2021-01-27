@@ -1,3 +1,12 @@
+<a name="v2.76.1"></a>
+### v2.76.1 (2021-01-28)
+
+#### Bug Fixes
+
+* deduplicate wip pacts by content	 ([0af90776](/../../commit/0af90776))
+* message when pending pact is verified successfully for the first time (#376)	 ([4fc69190](/../../commit/4fc69190))
+* use base URL from rack env in UI	 ([5bf21324](/../../commit/5bf21324))
+
 <a name="v2.76.0"></a>
 ### v2.76.0 (2021-01-21)
 
