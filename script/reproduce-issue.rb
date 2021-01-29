@@ -6,7 +6,8 @@ begin
   base_url = ENV['PACT_BROKER_BASE_URL'] || 'http://localhost:9292'
 
   td = PactBroker::Test::HttpTestDataBuilder.new(base_url)
-  td.delete_integration(consumer: "foo-consumer", provider: "bar-provider")
+  td.delete_integration(consumer: "Foo", provider: "Bar")
+    .delete_integration(consumer: "foo-consumer", provider: "bar-provider")
     .publish_pact(consumer: "foo-consumer", consumer_version: "1", provider: "bar-provider", content_id: "111", tag: "main")
     .get_pacts_for_verification(
       enable_pending: true,

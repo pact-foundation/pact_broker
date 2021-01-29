@@ -24,8 +24,8 @@ module PactBroker
         end
       end
 
-      def sleep
-        Kernel.sleep 0.5
+      def sleep(seconds = 0.5)
+        Kernel.sleep(seconds)
         self
       end
 
@@ -148,6 +148,36 @@ module PactBroker
           "request" => {
             "method" => "POST",
             "url" => url
+          }
+        }
+        path = "webhooks/#{uuid}"
+        response = client.put(path, request_body.to_json).tap { |response| check_for_error(response) }
+        separate
+        self
+      end
+
+      def create_global_webhook_for_verification_published(uuid: nil, url: "https://postman-echo.com/post")
+        puts "Creating global webhook for contract changed event with uuid #{uuid}"
+        uuid ||= SecureRandom.uuid
+        request_body = {
+          "description" => "A webhook for all consumers and providers",
+          "events" => [{
+            "name" => "contract_published"
+          },{
+            "name" => "provider_verification_published"
+          }],
+          "request" => {
+            "method" => "POST",
+            "url" => url,
+            "headers" => { "Content-Type" => "application/json"},
+            "body" => {
+              "eventName" => "${pactbroker.eventName}",
+              "consumerVersionNumber" => "${pactbroker.consumerVersionNumber}",
+              "consumerVersionTags" => "${pactbroker.consumerVersionTags}",
+              "githubVerificationStatus" => "${pactbroker.githubVerificationStatus}",
+              "providerVersionNumber" => "${pactbroker.providerVersionNumber}",
+              "providerVersionTags" => "${pactbroker.providerVersionTags}"
+            }
           }
         }
         path = "webhooks/#{uuid}"
