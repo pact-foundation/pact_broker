@@ -111,28 +111,22 @@ module PactBroker
         self
       end
 
+      def verify_latest_pact_for_tag(success: true, provider: last_provider_name, consumer: last_consumer_name, consumer_version_tag: , provider_version:, provider_version_tag: nil)
+        @last_provider_name = provider
+        @last_consumer_name = consumer
+        url_of_pact_to_verify = "pacts/provider/#{encode(provider)}/consumer/#{encode(consumer)}/latest/#{encode(consumer_version_tag)}"
+        publish_verification_results(url_of_pact_to_verify, provider, provider_version, provider_version_tag, success)
+        separate
+        self
+      end
+
       def verify_pact(index: 0, success:, provider: last_provider_name, provider_version_tag: , provider_version: )
         @last_provider_name = provider
         pact_to_verify = @pacts_for_verification_response.body["_embedded"]["pacts"][index]
         raise "No pact found to verify at index #{index}" unless pact_to_verify
         url_of_pact_to_verify = pact_to_verify["_links"]["self"]["href"]
 
-        [*provider_version_tag].each do | tag |
-          create_tag(pacticipant: provider, version: provider_version, tag: tag)
-        end
-        puts "" if [*provider_version_tag].any?
-
-        pact_response = client.get(url_of_pact_to_verify).tap { |response| check_for_error(response) }
-        verification_results_url = pact_response.body["_links"]["pb:publish-verification-results"]["href"]
-
-        results = {
-          success: success,
-          testResults: [],
-          providerApplicationVersion: provider_version
-        }
-        puts "Publishing verification"
-        puts results.to_yaml
-        response = client.post(verification_results_url, results.to_json).tap { |response| check_for_error(response) }
+        publish_verification_results(url_of_pact_to_verify, provider, provider_version, provider_version_tag, success)
         separate
         self
       end
@@ -248,6 +242,27 @@ module PactBroker
             }
           ]
         }
+      end
+
+      private
+
+      def publish_verification_results(url_of_pact_to_verify, provider, provider_version, provider_version_tag, success)
+        [*provider_version_tag].each do | tag |
+          create_tag(pacticipant: provider, version: provider_version, tag: tag)
+        end
+        puts "" if [*provider_version_tag].any?
+
+        pact_response = client.get(url_of_pact_to_verify).tap { |response| check_for_error(response) }
+        verification_results_url = pact_response.body["_links"]["pb:publish-verification-results"]["href"]
+
+        results = {
+          success: success,
+          testResults: [],
+          providerApplicationVersion: provider_version
+        }
+        puts "Publishing verification"
+        puts results.to_yaml
+        response = client.post(verification_results_url, results.to_json).tap { |response| check_for_error(response) }
       end
 
       def encode string
