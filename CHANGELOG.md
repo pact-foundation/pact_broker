@@ -1,3 +1,10 @@
+<a name="v2.76.2"></a>
+### v2.76.2 (2021-01-29)
+
+#### Bug Fixes
+
+* trigger one webhook for each pact publication that the verified content belongs to when using the 'pacts for verification' API (#378)	 ([114ccad0](/../../commit/114ccad0))
+
 <a name="v2.76.1"></a>
 ### v2.76.1 (2021-01-28)
 
