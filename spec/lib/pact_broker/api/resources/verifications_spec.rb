@@ -81,11 +81,6 @@ module PactBroker
               expect(subject.headers['Location']).to eq("http://example.org/pacts/provider/Provider/consumer/Consumer/pact-version/1234/verification-results/2")
             end
 
-            it "merges the upstream verification metdata into the webhook context" do
-              expect(webhook_execution_configuration).to receive(:with_webhook_context).with(parsed_metadata)
-              subject
-            end
-
             it "stores the verification in the database" do
               expect(PactBroker::Verifications::Service).to receive(:create).with(
                 next_verification_number,

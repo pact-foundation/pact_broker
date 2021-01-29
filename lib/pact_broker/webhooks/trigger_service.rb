@@ -1,4 +1,5 @@
 require 'pact_broker/services'
+require 'pact_broker/hash_refinements'
 
 module PactBroker
   module Webhooks
@@ -8,6 +9,7 @@ module PactBroker
       extend PactBroker::Repositories
       extend PactBroker::Services
       include PactBroker::Logging
+      using PactBroker::HashRefinements
 
       def trigger_webhooks_for_new_pact(pact, event_context, webhook_options)
         webhook_service.trigger_webhooks pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_PUBLISHED, event_context, webhook_options
@@ -30,31 +32,33 @@ module PactBroker
       end
 
       def trigger_webhooks_for_verification_results_publication(pact, verification, event_context, webhook_options)
-        if verification.success
+        expand_events(event_context).each do | reconstituted_event_context |
+          if verification.success
+            webhook_service.trigger_webhooks(
+              pact,
+              verification,
+              PactBroker::Webhooks::WebhookEvent::VERIFICATION_SUCCEEDED,
+              reconstituted_event_context,
+              webhook_options
+            )
+          else
+            webhook_service.trigger_webhooks(
+              pact,
+              verification,
+              PactBroker::Webhooks::WebhookEvent::VERIFICATION_FAILED,
+              reconstituted_event_context,
+              webhook_options
+            )
+          end
+
           webhook_service.trigger_webhooks(
             pact,
             verification,
-            PactBroker::Webhooks::WebhookEvent::VERIFICATION_SUCCEEDED,
-            event_context,
-            webhook_options
-          )
-        else
-          webhook_service.trigger_webhooks(
-            pact,
-            verification,
-            PactBroker::Webhooks::WebhookEvent::VERIFICATION_FAILED,
-            event_context,
+            PactBroker::Webhooks::WebhookEvent::VERIFICATION_PUBLISHED,
+            reconstituted_event_context,
             webhook_options
           )
         end
-
-        webhook_service.trigger_webhooks(
-          pact,
-          verification,
-          PactBroker::Webhooks::WebhookEvent::VERIFICATION_PUBLISHED,
-          event_context,
-          webhook_options
-        )
       end
 
       private
@@ -69,6 +73,32 @@ module PactBroker
 
       def sha_changed_or_no_previous_version?(previous_pact, new_pact)
         previous_pact.nil? || new_pact.pact_version_sha != previous_pact.pact_version_sha
+      end
+
+      def merge_consumer_version_selectors(consumer_version_number, selectors, event_context)
+        event_context.merge(
+          consumer_version_number: consumer_version_number,
+          consumer_version_tags: selectors.collect{ | selector | selector[:tag] }.compact.uniq
+        )
+      end
+
+      # Now that we de-duplicate the pact contents when verifying though the 'pacts for verification' API,
+      # we no longer get a webhook triggered for the verification results publication of each indiviual
+      # consumer version tag, meaning that only the most recent commit will get the updated verification status.
+      # To fix this, each URL of the pacts returned by the 'pacts for verification' API now contains the
+      # relevant selectors in the metadata, so that when the verification results are published,
+      # we can parse that metadata, and trigger one webhook for each consumer version like we used to.
+      # Actually, we used to trigger one webhook per tag, but given that the most likely use of the
+      # verification published webhook is for reporting git statuses,
+      # it makes more sense to trigger per consumer version number (ie. commit).
+      def expand_events(event_context)
+        triggers = if event_context[:consumer_version_selectors].is_a?(Array)
+          event_context[:consumer_version_selectors]
+            .group_by{ | selector | selector[:consumer_version_number] }
+            .collect { | consumer_version_number, selectors | merge_consumer_version_selectors(consumer_version_number, selectors, event_context.without(:consumer_version_selectors)) }
+        else
+          [event_context]
+        end
       end
 
       def print_debug_messages(changed_pacts)

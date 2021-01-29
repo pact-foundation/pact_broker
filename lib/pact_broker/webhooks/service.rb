@@ -87,7 +87,7 @@ module PactBroker
         webhook_repository.find_all
       end
 
-      def self.test_execution webhook, execution_configuration
+      def self.test_execution webhook, event_context, execution_configuration
         merged_options = execution_configuration.with_failure_log_message("Webhook execution failed").to_hash
 
         verification = nil
@@ -96,7 +96,7 @@ module PactBroker
         end
 
         pact = pact_service.search_for_latest_pact(consumer_name: webhook.consumer_name, provider_name: webhook.provider_name) || PactBroker::Pacts::PlaceholderPact.new
-        webhook.execute(pact, verification, merged_options)
+        webhook.execute(pact, verification, event_context.merge(event_name: "test"), merged_options)
       end
 
       def self.execute_triggered_webhook_now triggered_webhook, webhook_execution_configuration_hash
@@ -126,18 +126,19 @@ module PactBroker
 
         if webhooks.any?
           webhook_execution_configuration = options.fetch(:webhook_execution_configuration).with_webhook_context(event_name: event_name)
-          run_later(webhooks, pact, verification, event_name, options.merge(webhook_execution_configuration: webhook_execution_configuration))
+          # bit messy to merge in base_url here, but easier than a big refactor
+          base_url = options.fetch(:webhook_execution_configuration).webhook_context.fetch(:base_url)
+          run_later(webhooks, pact, verification, event_name, event_context.merge(event_name: event_name, base_url: base_url), options.merge(webhook_execution_configuration: webhook_execution_configuration))
         else
           logger.info "No enabled webhooks found for consumer \"#{pact.consumer.name}\" and provider \"#{pact.provider.name}\" and event #{event_name}"
         end
       end
 
-      def self.run_later webhooks, pact, verification, event_name, options
+      def self.run_later webhooks, pact, verification, event_name, event_context, options
         trigger_uuid = next_uuid
         webhooks.each do | webhook |
           begin
-            webhook_context = options.fetch(:webhook_execution_configuration).webhook_context
-            triggered_webhook = webhook_repository.create_triggered_webhook(trigger_uuid, webhook, pact, verification, RESOURCE_CREATION, event_name, webhook_context)
+            triggered_webhook = webhook_repository.create_triggered_webhook(trigger_uuid, webhook, pact, verification, RESOURCE_CREATION, event_name, event_context)
             logger.info "Scheduling job for webhook with uuid #{webhook.uuid}"
             logger.debug "Schedule webhook with options #{options}"
             job_data = { triggered_webhook: triggered_webhook }.deep_merge(options)
