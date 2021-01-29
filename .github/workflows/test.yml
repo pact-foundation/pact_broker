@@ -24,6 +24,7 @@ jobs:
   postgres:
     runs-on: "ubuntu-latest"
     strategy:
+      fail-fast: false
       matrix:
         ruby_version: ["2.5", "2.7"]
     services:
@@ -53,6 +54,7 @@ jobs:
   mysql:
     runs-on: "ubuntu-latest"
     strategy:
+      fail-fast: false
       matrix:
         ruby_version: ["2.7"]
     steps:
