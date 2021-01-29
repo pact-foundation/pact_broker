@@ -5,12 +5,18 @@ on: push
 jobs:
   sqlite:
     runs-on: "ubuntu-latest"
+    continue-on-error: ${{ matrix.experimental }}
     strategy:
+      fail-fast: false
       matrix:
         ruby_version: ["2.7"]
+        experimental: [false]
+        include:
+          - ruby_version: "3.0"
+            experimental: true
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-ruby@v1
+      - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby_version }}
       - run: "bundle install"
@@ -18,6 +24,7 @@ jobs:
   postgres:
     runs-on: "ubuntu-latest"
     strategy:
+      fail-fast: false
       matrix:
         ruby_version: ["2.5", "2.7"]
     services:
@@ -34,7 +41,7 @@ jobs:
           - 5432:5432
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-ruby@v1
+      - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby_version }}
       - run: "gem install bundler && bundle install"
@@ -47,6 +54,7 @@ jobs:
   mysql:
     runs-on: "ubuntu-latest"
     strategy:
+      fail-fast: false
       matrix:
         ruby_version: ["2.7"]
     steps:

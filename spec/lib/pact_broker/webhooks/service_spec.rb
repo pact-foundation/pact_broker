@@ -181,7 +181,9 @@ module PactBroker
         let(:webhooks) { [instance_double(PactBroker::Domain::Webhook, description: 'description', uuid: '1244')]}
         let(:triggered_webhook) { instance_double(PactBroker::Webhooks::TriggeredWebhook) }
         let(:webhook_execution_configuration) { double('webhook_execution_configuration', webhook_context: webhook_context) }
-        let(:webhook_context) { double('webhook_context') }
+        let(:webhook_context) { { base_url: "http://example.org" } }
+        let(:event_context) { { some: "data" } }
+        let(:expected_event_context) { { some: "data", event_name: PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED, base_url: "http://example.org" } }
         let(:options) do
           { database_connector: double('database_connector'),
             webhook_execution_configuration: webhook_execution_configuration,
@@ -196,7 +198,7 @@ module PactBroker
           allow(Job).to receive(:perform_in)
         end
 
-        subject { Service.trigger_webhooks pact, verification, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED, options }
+        subject { Service.trigger_webhooks(pact, verification, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED, event_context, options) }
 
         it "finds the webhooks" do
           expect_any_instance_of(PactBroker::Webhooks::Repository).to receive(:find_by_consumer_and_or_provider_and_event_name).with(consumer, provider, PactBroker::Webhooks::WebhookEvent::DEFAULT_EVENT_NAME)
@@ -205,7 +207,7 @@ module PactBroker
 
         context "when webhooks are found" do
           it "executes the webhook" do
-            expect(Service).to receive(:run_later).with(webhooks, pact, verification, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED, options)
+            expect(Service).to receive(:run_later).with(webhooks, pact, verification, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED, expected_event_context, options)
             subject
           end
 
@@ -258,6 +260,7 @@ module PactBroker
           instance_double(PactBroker::Webhooks::ExecutionConfiguration, to_hash: execution_configuration_hash)
         end
         let(:execution_configuration_hash) { { the: 'options' } }
+        let(:event_context) { { some: "data" } }
 
         before do
           allow(PactBroker::Pacts::Service).to receive(:search_for_latest_pact).and_return(pact)
@@ -266,7 +269,7 @@ module PactBroker
           allow(execution_configuration).to receive(:with_failure_log_message).and_return(execution_configuration)
         end
 
-        subject { Service.test_execution(webhook, execution_configuration) }
+        subject { Service.test_execution(webhook, event_context, execution_configuration) }
 
         it "searches for the latest matching pact" do
           expect(PactBroker::Pacts::Service).to receive(:search_for_latest_pact).with(consumer_name: 'consumer', provider_name: 'provider')
@@ -279,7 +282,7 @@ module PactBroker
 
         context "when the trigger is not for a verification" do
           it "executes the webhook with the pact" do
-            expect(webhook).to receive(:execute).with(pact, nil, execution_configuration_hash)
+            expect(webhook).to receive(:execute).with(pact, nil, event_context.merge(event_name: "test"), execution_configuration_hash)
             subject
           end
         end
@@ -288,7 +291,7 @@ module PactBroker
           let(:pact) { nil }
 
           it "executes the webhook with a placeholder pact" do
-            expect(webhook).to receive(:execute).with(an_instance_of(PactBroker::Pacts::PlaceholderPact), anything, anything)
+            expect(webhook).to receive(:execute).with(an_instance_of(PactBroker::Pacts::PlaceholderPact), anything, anything, anything)
             subject
           end
         end
@@ -302,7 +305,7 @@ module PactBroker
           end
 
           it "executes the webhook with the pact and the verification" do
-            expect(webhook).to receive(:execute).with(pact, verification, execution_configuration_hash)
+            expect(webhook).to receive(:execute).with(pact, verification, event_context.merge(event_name: "test"), execution_configuration_hash)
             subject
           end
 
@@ -310,7 +313,7 @@ module PactBroker
             let(:verification) { nil }
 
             it "executes the webhook with a placeholder verification" do
-              expect(webhook).to receive(:execute).with(anything, an_instance_of(PactBroker::Verifications::PlaceholderVerification), anything)
+              expect(webhook).to receive(:execute).with(anything, an_instance_of(PactBroker::Verifications::PlaceholderVerification), anything, anything)
               subject
             end
           end
@@ -329,6 +332,7 @@ module PactBroker
             .with_webhook_context(base_url: 'http://example.org')
             .with_show_response(true)
         end
+        let(:event_context) { { some: "data", base_url: "http://example.org" }}
         let(:options) do
           {
             database_connector: database_connector,
@@ -347,7 +351,7 @@ module PactBroker
             .and_return(:pact)
         end
 
-        subject { PactBroker::Webhooks::Service.trigger_webhooks pact, td.verification, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED, options }
+        subject { PactBroker::Webhooks::Service.trigger_webhooks(pact, td.verification, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED, event_context, options) }
 
         it "executes the HTTP request of the webhook" do
           subject

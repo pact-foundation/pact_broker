@@ -1,0 +1,44 @@
+version: "3"
+
+services:
+  postgres:
+    image: postgres
+    healthcheck:
+      test: psql postgres --command "select 1" -U postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres
+
+  pact-broker:
+    image: pactfoundation/pact-broker:2.76.0.0
+    ports:
+      - "9292:9292"
+    # depends_on:
+    #   - postgres
+    environment:
+      PACT_BROKER_PORT: '9292'
+      #PACT_BROKER_DATABASE_URL: "postgres://postgres:password@postgres/postgres"
+      PACT_BROKER_DATABASE_URL: "sqlite:////tmp/pact_broker.sqlite3"
+      PACT_BROKER_LOG_LEVEL: INFO
+      PACT_BROKER_SQL_LOG_LEVEL: DEBUG
+      PACT_BROKER_WEBHOOK_SCHEME_WHITELIST: "http https"
+      PACT_BROKER_WEBHOOK_HOST_WHITELIST: "/.*/"
+
+  repro-issue:
+    build: .
+    depends_on:
+      - pact-broker
+    command: -wait http://pact-broker:9292 -timeout 30s /home/script/reproduce-issue.rb
+    entrypoint: dockerize
+    environment:
+      - PACT_BROKER_BASE_URL=http://pact-broker:9292
+    volumes:
+      - $PWD:/home
+    working_dir: /home
+
+  webhook-server:
+    build: .
+    entrypoint: ["/bin/sh", "-c", "bundle exec rackup -p 9393 -o 0.0.0.0 /home/script/webhook-server.ru"]
+    volumes:
+      - ./script/webhook-server.ru:/home/script/webhook-server.ru

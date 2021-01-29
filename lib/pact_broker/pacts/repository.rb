@@ -218,7 +218,7 @@ module PactBroker
 
         provider_version_count = scope_for(PactBroker::Domain::Version).where(pacticipant: provider).count
 
-        wip_pacts.collect do | pact|
+        verifiable_pacts = wip_pacts.collect do | pact|
           pending_tag_names = find_provider_tags_for_which_pact_publication_id_is_pending(pact, successfully_verified_head_pact_publication_ids_for_each_provider_tag)
           pre_existing_tag_names = find_provider_tag_names_that_were_first_used_before_pact_published(pact, provider_tag_collection)
 
@@ -229,6 +229,8 @@ module PactBroker
             VerifiablePact.new(pact.to_domain, selectors, true, pre_existing_pending_tags, [], true)
           end
         end.compact.sort
+
+        deduplicate_verifiable_pacts(verifiable_pacts)
       end
 
       def find_pact_versions_for_provider provider_name, tag = nil
@@ -594,6 +596,13 @@ module PactBroker
             .all
           hash[provider_tag] = head_pacts
         end
+      end
+
+      def deduplicate_verifiable_pacts(verifiable_pacts)
+        verifiable_pacts
+          .group_by { | verifiable_pact | verifiable_pact.pact_version_sha }
+          .values
+          .collect { | verifiable_pacts | verifiable_pacts.reduce(&:+) }
       end
     end
   end

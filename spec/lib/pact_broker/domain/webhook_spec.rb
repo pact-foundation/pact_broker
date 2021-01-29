@@ -12,9 +12,9 @@ module PactBroker
       let(:webhook_template_parameters_hash) { { 'foo' => 'bar' } }
       let(:http_request) { double('http request') }
       let(:http_response) { double('http response') }
-      let(:webhook_context) { { some: 'things' } }
+      let(:event_context) { { some: 'things' } }
       let(:logging_options) { { other: 'options' } }
-      let(:options) { { webhook_context: webhook_context, logging_options: logging_options } }
+      let(:options) { { logging_options: logging_options } }
       let(:pact) { double('pact') }
       let(:verification) { double('verification') }
       let(:logger) { double('logger').as_null_object }
@@ -61,11 +61,11 @@ module PactBroker
 
         let(:webhook_request_logger) { instance_double(PactBroker::Webhooks::WebhookRequestLogger, log: "logs") }
 
-        let(:execute) { subject.execute pact, verification, options }
+        let(:execute) { subject.execute(pact, verification, event_context, options) }
 
         it "creates the template parameters" do
           expect(PactBroker::Webhooks::PactAndVerificationParameters).to receive(:new).with(
-            pact, verification, webhook_context
+            pact, verification, event_context
           )
           execute
         end
@@ -81,7 +81,7 @@ module PactBroker
         end
 
         it "generates the execution logs" do
-          expect(webhook_request_logger).to receive(:log).with(uuid, webhook_request, http_response, nil, webhook_context)
+          expect(webhook_request_logger).to receive(:log).with(uuid, webhook_request, http_response, nil, event_context)
           execute
         end
 
@@ -106,7 +106,7 @@ module PactBroker
           end
 
           it "generates the execution logs" do
-            expect(webhook_request_logger).to receive(:log).with(uuid, webhook_request, nil, instance_of(error_class), webhook_context)
+            expect(webhook_request_logger).to receive(:log).with(uuid, webhook_request, nil, instance_of(error_class), event_context)
             execute
           end
 

@@ -10,7 +10,7 @@ module PactBroker
 
       attr_reader :client, :last_consumer_name, :last_provider_name, :last_consumer_version_number, :last_provider_version_number
 
-      def initialize(pact_broker_base_url, auth)
+      def initialize(pact_broker_base_url, auth = {})
         @client = Faraday.new(url: pact_broker_base_url) do |faraday|
           faraday.request :json
           faraday.response :json, :content_type => /\bjson$/
@@ -24,8 +24,8 @@ module PactBroker
         end
       end
 
-      def sleep
-        Kernel.sleep 0.5
+      def sleep(seconds = 0.5)
+        Kernel.sleep(seconds)
         self
       end
 
@@ -42,7 +42,7 @@ module PactBroker
 
       def create_tag(pacticipant:, version:, tag:)
         puts "Creating tag '#{tag}' for #{pacticipant} version #{version}"
-        client.put("/pacticipants/#{encode(pacticipant)}/versions/#{encode(version)}/tags/#{encode(tag)}", {}).tap { |response| check_for_error(response) }
+        client.put("pacticipants/#{encode(pacticipant)}/versions/#{encode(version)}/tags/#{encode(tag)}", {}).tap { |response| check_for_error(response) }
         self
       end
 
@@ -55,7 +55,7 @@ module PactBroker
 
       def create_pacticipant(name)
         puts "Creating pacticipant with name #{name}"
-        client.post("/pacticipants", { name: name}).tap { |response| check_for_error(response) }
+        client.post("pacticipants", { name: name}).tap { |response| check_for_error(response) }
         separate
         self
       end
@@ -72,7 +72,7 @@ module PactBroker
 
         content = generate_content(consumer, provider, content_id)
         puts "Publishing pact for consumer #{consumer} version #{consumer_version} and provider #{provider}"
-        pact_path = "/pacts/provider/#{encode(provider)}/consumer/#{encode(consumer)}/version/#{encode(consumer_version)}"
+        pact_path = "pacts/provider/#{encode(provider)}/consumer/#{encode(consumer)}/version/#{encode(consumer_version)}"
         @publish_pact_response = client.put(pact_path, content).tap { |response| check_for_error(response) }
         separate
         self
@@ -89,7 +89,7 @@ module PactBroker
         }.compact
         puts body.to_yaml
         puts ""
-        @pacts_for_verification_response = client.post("/pacts/provider/#{encode(provider)}/for-verification", body).tap { |response| check_for_error(response) }
+        @pacts_for_verification_response = client.post("pacts/provider/#{encode(provider)}/for-verification", body).tap { |response| check_for_error(response) }
 
         print_pacts_for_verification
         separate
@@ -111,28 +111,22 @@ module PactBroker
         self
       end
 
+      def verify_latest_pact_for_tag(success: true, provider: last_provider_name, consumer: last_consumer_name, consumer_version_tag: , provider_version:, provider_version_tag: nil)
+        @last_provider_name = provider
+        @last_consumer_name = consumer
+        url_of_pact_to_verify = "pacts/provider/#{encode(provider)}/consumer/#{encode(consumer)}/latest/#{encode(consumer_version_tag)}"
+        publish_verification_results(url_of_pact_to_verify, provider, provider_version, provider_version_tag, success)
+        separate
+        self
+      end
+
       def verify_pact(index: 0, success:, provider: last_provider_name, provider_version_tag: , provider_version: )
         @last_provider_name = provider
         pact_to_verify = @pacts_for_verification_response.body["_embedded"]["pacts"][index]
         raise "No pact found to verify at index #{index}" unless pact_to_verify
         url_of_pact_to_verify = pact_to_verify["_links"]["self"]["href"]
 
-        [*provider_version_tag].each do | tag |
-          create_tag(pacticipant: provider, version: provider_version, tag: tag)
-        end
-        puts "" if [*provider_version_tag].any?
-
-        pact_response = client.get(url_of_pact_to_verify).tap { |response| check_for_error(response) }
-        verification_results_url = pact_response.body["_links"]["pb:publish-verification-results"]["href"]
-
-        results = {
-          success: success,
-          testResults: [],
-          providerApplicationVersion: provider_version
-        }
-        puts "Publishing verification"
-        puts results.to_yaml
-        response = client.post(verification_results_url, results.to_json).tap { |response| check_for_error(response) }
+        publish_verification_results(url_of_pact_to_verify, provider, provider_version, provider_version_tag, success)
         separate
         self
       end
@@ -150,7 +144,37 @@ module PactBroker
             "url" => url
           }
         }
-        path = "/webhooks/#{uuid}"
+        path = "webhooks/#{uuid}"
+        response = client.put(path, request_body.to_json).tap { |response| check_for_error(response) }
+        separate
+        self
+      end
+
+      def create_global_webhook_for_verification_published(uuid: nil, url: "https://postman-echo.com/post")
+        puts "Creating global webhook for contract changed event with uuid #{uuid}"
+        uuid ||= SecureRandom.uuid
+        request_body = {
+          "description" => "A webhook for all consumers and providers",
+          "events" => [{
+            "name" => "contract_published"
+          },{
+            "name" => "provider_verification_published"
+          }],
+          "request" => {
+            "method" => "POST",
+            "url" => url,
+            "headers" => { "Content-Type" => "application/json"},
+            "body" => {
+              "eventName" => "${pactbroker.eventName}",
+              "consumerVersionNumber" => "${pactbroker.consumerVersionNumber}",
+              "consumerVersionTags" => "${pactbroker.consumerVersionTags}",
+              "githubVerificationStatus" => "${pactbroker.githubVerificationStatus}",
+              "providerVersionNumber" => "${pactbroker.providerVersionNumber}",
+              "providerVersionTags" => "${pactbroker.providerVersionTags}"
+            }
+          }
+        }
+        path = "webhooks/#{uuid}"
         response = client.put(path, request_body.to_json).tap { |response| check_for_error(response) }
         separate
         self
@@ -158,7 +182,7 @@ module PactBroker
 
       def delete_webhook(uuid:)
         puts "Deleting webhook with uuid #{uuid}"
-        path = "/webhooks/#{uuid}"
+        path = "webhooks/#{uuid}"
         response = client.delete(path).tap { |response| check_for_error(response) }
         separate
         self
@@ -170,24 +194,29 @@ module PactBroker
       end
 
       def can_i_deploy(pacticipant:, version:, to:)
-        can_i_deploy_response = client.get("/can-i-deploy", { pacticipant: pacticipant, version: version, to: to} ).tap { |response| check_for_error(response) }
+        can_i_deploy_response = client.get("can-i-deploy", { pacticipant: pacticipant, version: version, to: to} ).tap { |response| check_for_error(response) }
         can = !!(can_i_deploy_response.body['summary'] || {})['deployable']
         puts "can-i-deploy #{pacticipant} version #{version} to #{to}: #{can ? 'yes' : 'no'}"
-        puts (can_i_deploy_response.body['summary'] || can_i_deploy_response.body).to_yaml
+        summary = can_i_deploy_response.body['summary']
+        verification_result_urls = (can_i_deploy_response.body['matrix'] || []).collect do | row |
+          row.dig("verificationResult", "_links", "self", "href")
+        end.compact
+        summary.merge!("verification_result_urls" => verification_result_urls)
+        puts summary.to_yaml
         separate
         self
       end
 
       def delete_integration(consumer:, provider:)
         puts "Deleting all data for the integration between #{consumer} and #{provider}"
-        client.delete("/integrations/provider/#{encode(provider)}/consumer/#{encode(consumer)}").tap { |response| check_for_error(response) }
+        client.delete("integrations/provider/#{encode(provider)}/consumer/#{encode(consumer)}").tap { |response| check_for_error(response) }
         separate
         self
       end
 
       def delete_pacticipant(name)
         puts "Deleting pacticipant #{name}"
-        @publish_pact_response = client.delete("/pacticipants/#{encode(name)}").tap { |response| check_for_error(response) }
+        @publish_pact_response = client.delete("pacticipants/#{encode(name)}").tap { |response| check_for_error(response) }
         separate
         self
       end
@@ -202,6 +231,7 @@ module PactBroker
           },
           interactions: [
             {
+              description: "a request",
               request: {
                 method: "GET",
                 path: "/things/#{content_id}"
@@ -212,6 +242,27 @@ module PactBroker
             }
           ]
         }
+      end
+
+      private
+
+      def publish_verification_results(url_of_pact_to_verify, provider, provider_version, provider_version_tag, success)
+        [*provider_version_tag].each do | tag |
+          create_tag(pacticipant: provider, version: provider_version, tag: tag)
+        end
+        puts "" if [*provider_version_tag].any?
+
+        pact_response = client.get(url_of_pact_to_verify).tap { |response| check_for_error(response) }
+        verification_results_url = pact_response.body["_links"]["pb:publish-verification-results"]["href"]
+
+        results = {
+          success: success,
+          testResults: [],
+          providerApplicationVersion: provider_version
+        }
+        puts "Publishing verification"
+        puts results.to_yaml
+        response = client.post(verification_results_url, results.to_json).tap { |response| check_for_error(response) }
       end
 
       def encode string

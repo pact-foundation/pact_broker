@@ -94,5 +94,7 @@ mysql -hmysql -upact_broker -ppact_broker
   bundle exec rspec path_to_your_spec.rb
   ```
 
+NOTE: the spec tasks requires the `db:prepare:test` task to be executed at least once prior to running.
+
 [chruby]: https://github.com/postmodern/chruby
 [ruby-install]: https://github.com/postmodern/ruby-install

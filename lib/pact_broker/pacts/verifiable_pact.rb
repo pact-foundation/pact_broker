@@ -1,4 +1,5 @@
 require 'delegate'
+require 'pact_broker/error'
 
 module PactBroker
   module Pacts
@@ -23,12 +24,33 @@ module PactBroker
         wip
       end
 
+      def + other
+        if pact_version_sha != other.pact_version_sha
+          raise PactBroker::Error.new("Can't merge two verifiable pacts with different pact content")
+        end
+
+        latest_pact = [self, other].sort_by(&:consumer_version_order).last.__getobj__()
+
+        VerifiablePact.new(
+          latest_pact,
+          selectors + other.selectors,
+          pending || other.pending,
+          pending_provider_tags + other.pending_provider_tags,
+          non_pending_provider_tags + other.non_pending_provider_tags,
+          wip || other.wip
+        )
+      end
+
       def <=> other
         if self.consumer_name != other.consumer_name
           return self.consumer_name <=> other.consumer_name
         else
           return self.consumer_version.order <=> other.consumer_version.order
         end
+      end
+
+      def consumer_version_order
+        __getobj__().consumer_version.order
       end
     end
   end

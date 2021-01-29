@@ -1,3 +1,46 @@
+<a name="v2.76.2"></a>
+### v2.76.2 (2021-01-29)
+
+#### Bug Fixes
+
+* trigger one webhook for each pact publication that the verified content belongs to when using the 'pacts for verification' API (#378)	 ([114ccad0](/../../commit/114ccad0))
+
+<a name="v2.76.1"></a>
+### v2.76.1 (2021-01-28)
+
+#### Bug Fixes
+
+* deduplicate wip pacts by content	 ([0af90776](/../../commit/0af90776))
+* message when pending pact is verified successfully for the first time (#376)	 ([4fc69190](/../../commit/4fc69190))
+* use base URL from rack env in UI	 ([5bf21324](/../../commit/5bf21324))
+
+<a name="v2.76.0"></a>
+### v2.76.0 (2021-01-21)
+
+#### Features
+
+* **verification results**
+  * redirect requests for verification results to the HAL browser if requested in a web browser	 ([0f948de5](/../../commit/0f948de5))
+
+<a name="v2.75.0"></a>
+### v2.75.0 (2021-01-18)
+
+#### Features
+
+* upgrade bootstrap (#370)	 ([a457c337](/../../commit/a457c337))
+* add indexes to webhook_executions and triggered_webhooks tables	 ([b05e7dbe](/../../commit/b05e7dbe))
+
+* **webhook**
+  * set read and open timeouts	 ([8b502c44](/../../commit/8b502c44))
+
+#### Bug Fixes
+
+* **ui**
+  * upgrade to jquery-3.5.1 to address vulnerabilities in jquery-3.3.1	 ([de41b231](/../../commit/de41b231))
+
+* **deps**
+  * upgrade redcarpet for CVE-2020-26298	 ([b57aad32](/../../commit/b57aad32))
+
 <a name="v2.74.1"></a>
 ### v2.74.1 (2021-01-05)
 

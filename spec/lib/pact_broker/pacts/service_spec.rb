@@ -33,7 +33,7 @@ module PactBroker
         let(:provider) { double('provider', id: 2) }
         let(:version) { double('version', id: 3, pacticipant_id: 1) }
         let(:existing_pact) { nil }
-        let(:new_pact) { double('new_pact', consumer_version_tag_names: %[dev], json_content: json_content) }
+        let(:new_pact) { double('new_pact', consumer_version_tag_names: %w[dev], json_content: json_content) }
         let(:json_content) { { the: "contract" }.to_json }
         let(:json_content_with_ids) { { the: "contract with ids" }.to_json }
         let(:previous_pacts) { [] }
@@ -49,7 +49,7 @@ module PactBroker
         let(:content_with_interaction_ids) { double('content_with_interaction_ids', to_json: json_content_with_ids) }
         let(:webhook_options) { { webhook_execution_configuration: webhook_execution_configuration } }
         let(:webhook_execution_configuration) { instance_double(PactBroker::Webhooks::ExecutionConfiguration) }
-
+        let(:expected_event_context) { { consumer_version_tags: ["dev"] } }
 
         before do
           allow(Content).to receive(:from_json).and_return(content)
@@ -73,12 +73,12 @@ module PactBroker
           end
 
           it "sets the consumer version tags" do
-            expect(webhook_execution_configuration).to receive(:with_webhook_context).with(consumer_version_tags: %[dev]).and_return(webhook_execution_configuration)
+            expect(webhook_execution_configuration).to receive(:with_webhook_context).with(consumer_version_tags: %w[dev]).and_return(webhook_execution_configuration)
             subject
           end
 
           it "triggers webhooks" do
-            expect(webhook_trigger_service).to receive(:trigger_webhooks_for_new_pact).with(new_pact, webhook_options)
+            expect(webhook_trigger_service).to receive(:trigger_webhooks_for_new_pact).with(new_pact, expected_event_context, webhook_options)
             subject
           end
         end
@@ -92,6 +92,8 @@ module PactBroker
             )
           end
 
+          let(:expected_event_context) { { consumer_version_tags: ["dev"] } }
+
           it "creates the sha before adding the interaction ids" do
             expect(PactBroker::Pacts::GenerateSha).to receive(:call).ordered
             expect(content).to receive(:with_ids).ordered
@@ -104,7 +106,7 @@ module PactBroker
           end
 
           it "triggers webhooks" do
-            expect(webhook_trigger_service).to receive(:trigger_webhooks_for_updated_pact).with(existing_pact, new_pact, webhook_options)
+            expect(webhook_trigger_service).to receive(:trigger_webhooks_for_updated_pact).with(existing_pact, new_pact, expected_event_context, webhook_options)
             subject
           end
         end

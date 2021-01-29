@@ -5,6 +5,7 @@ require 'pact_broker/logging/default_formatter'
 require 'pact_broker/policies'
 require 'rack-protection'
 require 'rack/hal_browser'
+require 'rack/pact_broker/set_base_url'
 require 'rack/pact_broker/add_pact_broker_version_header'
 require 'rack/pact_broker/convert_file_extension_to_accept_header'
 require 'rack/pact_broker/database_transaction'
@@ -189,6 +190,8 @@ module PactBroker
       @app_builder.use Rack::Static, :urls => ["/stylesheets", "/css", "/fonts", "/js", "/javascripts", "/images"], :root => PactBroker.project_root.join("public")
       @app_builder.use Rack::Static, :urls => ["/favicon.ico"], :root => PactBroker.project_root.join("public/images"), header_rules: [[:all, {'Content-Type' => 'image/x-icon'}]]
       @app_builder.use Rack::PactBroker::ConvertFileExtensionToAcceptHeader
+      # Rack::PactBroker::SetBaseUrl needs to be before the Rack::PactBroker::HalBrowserRedirect
+      @app_builder.use Rack::PactBroker::SetBaseUrl, configuration.base_url
 
       if configuration.use_hal_browser
         logger.info "Mounting HAL browser"
