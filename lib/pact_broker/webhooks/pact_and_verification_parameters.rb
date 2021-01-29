@@ -13,6 +13,7 @@ module PactBroker
       BITBUCKET_VERIFICATION_STATUS = 'pactbroker.bitbucketVerificationStatus'
       CONSUMER_LABELS = 'pactbroker.consumerLabels'
       PROVIDER_LABELS = 'pactbroker.providerLabels'
+      EVENT_NAME = 'pactbroker.eventName'
 
       ALL = [
         CONSUMER_NAME,
@@ -26,7 +27,8 @@ module PactBroker
         GITHUB_VERIFICATION_STATUS,
         BITBUCKET_VERIFICATION_STATUS,
         CONSUMER_LABELS,
-        PROVIDER_LABELS
+        PROVIDER_LABELS,
+        EVENT_NAME
       ]
 
       def initialize(pact, trigger_verification, webhook_context)
@@ -49,7 +51,8 @@ module PactBroker
           GITHUB_VERIFICATION_STATUS => github_verification_status,
           BITBUCKET_VERIFICATION_STATUS => bitbucket_verification_status,
           CONSUMER_LABELS => pacticipant_labels(pact && pact.consumer),
-          PROVIDER_LABELS => pacticipant_labels(pact && pact.provider)
+          PROVIDER_LABELS => pacticipant_labels(pact && pact.provider),
+          EVENT_NAME => event_name
         }
       end
 
@@ -115,6 +118,10 @@ module PactBroker
 
       def pacticipant_labels pacticipant
         pacticipant && pacticipant.labels ? pacticipant.labels.collect(&:name).join(", ") : ""
+      end
+
+      def event_name
+        webhook_context.fetch(:event_name)
       end
     end
   end

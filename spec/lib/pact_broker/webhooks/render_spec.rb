@@ -94,7 +94,7 @@ module PactBroker
           [ double("label", name: "foo"), double("label", name: "bar") ]
         end
 
-        let(:webhook_context) { { base_url: base_url } }
+        let(:webhook_context) { { base_url: base_url, event_name: "something" } }
 
         let(:nil_pact) { nil }
         let(:nil_verification) { nil }
@@ -158,7 +158,8 @@ module PactBroker
             {
               consumer_version_number: "webhook-version-number",
               consumer_version_tags: %w[webhook tags],
-              base_url: base_url
+              base_url: base_url,
+              event_name: "something"
 
             }
           end
@@ -186,16 +187,16 @@ module PactBroker
         let(:base_url) { "http://broker" }
 
         let(:template_parameters) do
-          PactAndVerificationParameters.new(placeholder_pact, nil, { base_url: base_url }).to_hash
+          PactAndVerificationParameters.new(placeholder_pact, nil, { base_url: base_url, event_name: "something" }).to_hash
         end
 
         it "does not blow up with a placeholder pact" do
-          template_parameters = PactAndVerificationParameters.new(placeholder_pact, nil, { base_url: base_url }).to_hash
+          template_parameters = PactAndVerificationParameters.new(placeholder_pact, nil, { base_url: base_url, event_name: "something" }).to_hash
           Render.call("", template_parameters)
         end
 
         it "does not blow up with a placeholder verification" do
-          template_parameters = PactAndVerificationParameters.new(placeholder_pact, placeholder_verification, { base_url: base_url }).to_hash
+          template_parameters = PactAndVerificationParameters.new(placeholder_pact, placeholder_verification, { base_url: base_url, event_name: "something" }).to_hash
           Render.call("", template_parameters)
         end
       end
