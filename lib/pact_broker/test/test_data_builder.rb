@@ -344,6 +344,7 @@ module PactBroker
 
       def create_verification parameters = {}
         parameters.delete(:comment)
+        branch = parameters.delete(:branch)
         tag_names = [parameters.delete(:tag_names), parameters.delete(:tag_name)].flatten.compact
         provider_version_number = parameters[:provider_version] || '4.5.6'
         default_parameters = { success: true, number: 1, test_results: {some: 'results'}, wip: false }
@@ -353,6 +354,7 @@ module PactBroker
         verification = PactBroker::Domain::Verification.new(parameters)
         @verification = PactBroker::Verifications::Repository.new.create(verification, provider_version_number, @pact)
         @provider_version = PactBroker::Domain::Version.where(pacticipant_id: @provider.id, number: provider_version_number).single_record
+        @provider_version.update(branch: branch) if branch
 
         set_created_at_if_set(parameters[:created_at], :verifications, id: @verification.id)
         set_created_at_if_set(parameters[:created_at], :versions, id: @provider_version.id)
@@ -381,6 +383,10 @@ module PactBroker
           .create_webhook
           .create_triggered_webhook
           .create_webhook_execution
+      end
+
+      def find_pacticipant(name)
+        PactBroker::Domain::Pacticipant.where(name: name).single_record
       end
 
       def model_counter

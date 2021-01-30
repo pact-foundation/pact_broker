@@ -28,6 +28,81 @@ module PactBroker
       dataset_module do
         include PactBroker::Repositories::Helpers
 
+        def for_provider provider
+          where(provider: provider)
+        end
+
+        def latest_by_consumer_branch
+          versions_join = {
+            Sequel[:pact_publications][:consumer_version_id] => Sequel[:cv][:id]
+          }
+
+          base_query = select_all_qualified
+            .select_append(Sequel[:cv][:branch], Sequel[:cv][:order])
+            .remove_overridden_revisions
+            .join(:versions, versions_join, { table_alias: :cv }) do
+              Sequel.lit("cv.branch is not null")
+            end
+
+          self_join = {
+            Sequel[:pact_publications][:consumer_id] => Sequel[:pp2][:consumer_id],
+            Sequel[:cv][:branch] => Sequel[:pp2][:branch]
+          }
+          base_query.left_join(base_query, self_join, { table_alias: :pp2 } ) do | table, joined_table, js |
+            Sequel[:pp2][:order] > Sequel[:cv][:order]
+          end
+          .where(Sequel[:pp2][:order] => nil)
+        end
+
+        def latest_by_consumer_tag
+          versions_join = {
+            Sequel[:pact_publications][:consumer_version_id] => Sequel[:cv][:id]
+          }
+
+          tags_join = {
+            Sequel[:cv][:id] => Sequel[:tags][:version_id]
+          }
+
+          base_query = select_all_qualified
+            .select_append(Sequel[:cv][:order], Sequel[:tags][:name].as(:tag_name))
+            .remove_overridden_revisions
+            .join(:versions, versions_join, { table_alias: :cv })
+            .join(:tags, tags_join)
+
+          self_join = {
+            Sequel[:pact_publications][:consumer_id] => Sequel[:pp2][:consumer_id],
+            Sequel[:tags][:name] => Sequel[:pp2][:tag_name]
+          }
+          base_query.left_join(base_query, self_join, { table_alias: :pp2 } ) do | table, joined_table, js |
+            Sequel[:pp2][:order] > Sequel[:cv][:order]
+          end
+          .where(Sequel[:pp2][:order] => nil)
+        end
+
+        def successfully_verified_by_provider_branch(provider_id, provider_version_branch)
+          verifications_join = {
+            pact_version_id: :pact_version_id,
+            Sequel[:verifications][:success] => true,
+            Sequel[:verifications][:wip] => false,
+            Sequel[:verifications][:provider_id] => provider_id
+          }
+          versions_join = {
+            Sequel[:verifications][:provider_version_id] => Sequel[:provider_versions][:id],
+            Sequel[:provider_versions][:branch] => provider_version_branch,
+            Sequel[:provider_versions][:pacticipant_id] => provider_id
+          }
+
+          successfully_verified_pact_publications = from_self(alias: :pp).select(Sequel[:pp].*)
+            .join(:verifications, verifications_join)
+            .join(:versions, versions_join, { table_alias: :provider_versions } )
+            .where(Sequel[:pp][:provider_id] => provider_id)
+            .distinct
+        end
+
+        def created_after date
+          where(Sequel.lit("#{first_source_alias}.created_at > ?", date))
+        end
+
         def remove_overridden_revisions
           join(:latest_pact_publication_ids_for_consumer_versions, { Sequel[:lp][:pact_publication_id] => Sequel[:pact_publications][:id] }, { table_alias: :lp})
         end

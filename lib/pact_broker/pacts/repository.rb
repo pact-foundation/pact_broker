@@ -183,9 +183,13 @@ module PactBroker
       # provider tags they are pending for.
       # Don't include pact publications that were created before the provider tag was first used
       # (that is, before the provider's git branch was created).
-      def find_wip_pact_versions_for_provider provider_name, provider_tags_names = [], options = {}
+      def find_wip_pact_versions_for_provider provider_name, provider_version_branch, provider_tags_names = [], options = {}
         # TODO not sure about this
-        return [] if provider_tags_names.empty?
+        return [] if provider_tags_names.empty? && provider_version_branch == nil
+
+        if provider_version_branch
+          return find_wip_pact_versions_for_provider_by_provider_branch(provider_name, provider_version_branch, options)
+        end
 
         provider = pacticipant_repository.find_by_name(provider_name)
 
@@ -231,6 +235,39 @@ module PactBroker
         end.compact.sort
 
         deduplicate_verifiable_pacts(verifiable_pacts)
+      end
+
+      def find_wip_pact_versions_for_provider_by_provider_branch(provider_name, provider_version_branch, options)
+        provider = pacticipant_repository.find_by_name(provider_name)
+        wip_start_date = options.fetch(:include_wip_pacts_since)
+
+        wip_pact_publications_by_branch = remove_already_verified(
+          PactPublication.for_provider(provider).created_after(wip_start_date).latest_by_consumer_branch,
+          provider,
+          provider_version_branch
+        )
+
+        wip_pact_publications_by_tag = remove_already_verified(
+          PactPublication.for_provider(provider).created_after(wip_start_date).latest_by_consumer_tag,
+          provider,
+          provider_version_branch
+        )
+
+        verifiable_pacts_by_branch = wip_pact_publications_by_branch.collect do | pact_publication |
+          selectors = Selectors.create_for_latest_of_each_branch([provider_version_branch])
+          VerifiablePact.new(pact_publication.to_domain, selectors, true, [], [], true, provider_version_branch)
+        end
+
+        verifiable_pacts_by_tag = wip_pact_publications_by_tag.collect do | pact_publication |
+          selectors = Selectors.create_for_latest_of_each_branch([provider_version_branch])
+          VerifiablePact.new(pact_publication.to_domain, selectors, true, [], [], true, provider_version_branch)
+        end
+
+        deduplicate_verifiable_pacts(verifiable_pacts_by_branch + verifiable_pacts_by_tag).sort
+      end
+
+      def remove_already_verified(pact_publications, provider, provider_version_branch)
+        pact_publications.all - pact_publications.successfully_verified_by_provider_branch(provider.id, provider_version_branch).all
       end
 
       def find_pact_versions_for_provider provider_name, tag = nil
@@ -603,6 +640,33 @@ module PactBroker
           .group_by { | verifiable_pact | verifiable_pact.pact_version_sha }
           .values
           .collect { | verifiable_pacts | verifiable_pacts.reduce(&:+) }
+      end
+
+      # Find the head pacts that have been successfully verified by a provider version with the specified
+      # provider branch.
+      # Returns a list of LatestTaggedPactPublications with only pact publication id and tag_name populated
+      # This is the list of pacts we are EXCLUDING from the WIP list because they have already been verified successfully
+      def find_successfully_verified_head_pacts_by_provider_branch(provider_id, provider_version_branch)
+        verifications_join = {
+          pact_version_id: :pact_version_id,
+          Sequel[:verifications][:success] => true,
+          Sequel[:verifications][:wip] => false,
+          Sequel[:verifications][:provider_id] => provider_id
+        }
+        versions_join = {
+          Sequel[:verifications][:provider_version_id] => Sequel[:provider_versions][:id],
+          Sequel[:provider_versions][:branch] => provider_version_branch
+        }
+        head_pacts = scope_for(PactPublication)
+          .latest_by_consumer_branch.from_self(alias: :pp)
+          .join(:verifications, verifications_join)
+          .join(:versions, versions_join, { table_alias: :provider_versions } )
+          .where(Sequel[:pp][:provider_id] => provider_id)
+          .distinct
+          .all
+
+        require 'pry'; pry(binding);
+        head_pacts
       end
     end
   end

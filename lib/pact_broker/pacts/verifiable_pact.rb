@@ -4,15 +4,16 @@ require 'pact_broker/error'
 module PactBroker
   module Pacts
     class VerifiablePact < SimpleDelegator
-      attr_reader :selectors, :pending, :pending_provider_tags, :non_pending_provider_tags, :wip
+      attr_reader :selectors, :pending, :pending_provider_tags, :non_pending_provider_tags, :pending_provider_branch, :wip
 
       # TODO refactor this constructor
-      def initialize(pact, selectors, pending, pending_provider_tags = [], non_pending_provider_tags = [], wip = false)
+      def initialize(pact, selectors, pending, pending_provider_tags = [], non_pending_provider_tags = [], wip = false, pending_provider_branch = nil)
         super(pact)
         @pending = pending
         @selectors = selectors
         @pending_provider_tags = pending_provider_tags
         @non_pending_provider_tags = non_pending_provider_tags
+        @pending_provider_branch = pending_provider_branch
         @wip = wip
       end
 
@@ -29,6 +30,10 @@ module PactBroker
           raise PactBroker::Error.new("Can't merge two verifiable pacts with different pact content")
         end
 
+        if pending_provider_branch != other.pending_provider_branch
+          raise PactBroker::Error.new("Can't merge two verifiable pacts with different pending_provider_branch")
+        end
+
         latest_pact = [self, other].sort_by(&:consumer_version_order).last.__getobj__()
 
         VerifiablePact.new(
@@ -37,7 +42,8 @@ module PactBroker
           pending || other.pending,
           pending_provider_tags + other.pending_provider_tags,
           non_pending_provider_tags + other.non_pending_provider_tags,
-          wip || other.wip
+          wip || other.wip,
+          pending_provider_branch
         )
       end
 

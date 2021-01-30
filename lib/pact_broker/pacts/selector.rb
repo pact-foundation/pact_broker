@@ -13,6 +13,10 @@ module PactBroker
         self[:tag] = tag
       end
 
+      def branch= branch
+        self[:branch] = branch
+      end
+
       def latest= latest
         self[:latest] = latest
       end
@@ -25,8 +29,16 @@ module PactBroker
         self[:fallback_tag] = fallback_tag
       end
 
+      def fallback_branch= fallback_branch
+        self[:fallback_branch] = fallback_branch
+      end
+
       def fallback_tag
         self[:fallback_tag]
+      end
+
+      def fallback_branch
+        self[:fallback_branch]
       end
 
       def consumer= consumer
@@ -45,8 +57,16 @@ module PactBroker
         Selector.new(latest: true, tag: tag)
       end
 
+      def self.latest_for_branch(branch)
+        Selector.new(latest: true, branch: branch)
+      end
+
       def self.latest_for_tag_with_fallback(tag, fallback_tag)
         Selector.new(latest: true, tag: tag, fallback_tag: fallback_tag)
+      end
+
+      def self.latest_for_branch_with_fallback(branch, fallback_branch)
+        Selector.new(latest: true, branch: branch, fallback_branch: fallback_branch)
       end
 
       def self.all_for_tag(tag)
@@ -61,6 +81,10 @@ module PactBroker
         Selector.new(latest: true, tag: tag, consumer: consumer)
       end
 
+      def self.latest_for_branch_and_consumer(branch, consumer)
+        Selector.new(latest: true, branch: branch, consumer: consumer)
+      end
+
       def self.latest_for_consumer(consumer)
         Selector.new(latest: true, consumer: consumer)
       end
@@ -73,8 +97,16 @@ module PactBroker
         !!fallback_tag
       end
 
+      def fallback_branch?
+        !!fallback_branch
+      end
+
       def tag
         self[:tag]
+      end
+
+      def branch
+        self[:branch]
       end
 
       def overall_latest?
@@ -90,6 +122,15 @@ module PactBroker
         end
       end
 
+      # Not sure if the fallback_tag logic is needed
+      def latest_for_branch? potential_branch = nil
+        if potential_branch
+          !!(latest && branch == potential_branch)
+        else
+          !!(latest && !!branch)
+        end
+      end
+
       def all_for_tag_and_consumer?
         !!(tag && !latest? && consumer)
       end
@@ -98,10 +139,15 @@ module PactBroker
         !!(tag && !latest?)
       end
 
+      def all_for_branch?
+        !!(branch && !latest?)
+      end
+
       def == other
         other.class == self.class && super
       end
 
+      # TODO sort by branch
       def <=> other
         if overall_latest? || other.overall_latest?
           if overall_latest? == other.overall_latest?

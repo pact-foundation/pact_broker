@@ -85,10 +85,6 @@ module PactBroker
         pact_repository.find_latest_pact_versions_for_provider provider_name, options[:tag]
       end
 
-      def find_wip_pact_versions_for_provider provider_name
-        pact_repository.find_wip_pact_versions_for_provider provider_name
-      end
-
       def find_pact_versions_for_provider provider_name, options = {}
         pact_repository.find_pact_versions_for_provider provider_name, options[:tag]
       end
@@ -115,7 +111,7 @@ module PactBroker
         distinct
       end
 
-      def find_for_verification(provider_name, provider_version_tags, consumer_version_selectors, options)
+      def find_for_verification(provider_name, provider_version_branch, provider_version_tags, consumer_version_selectors, options)
         verifiable_pacts_specified_in_request = pact_repository
           .find_for_verification(provider_name, consumer_version_selectors)
           .collect do | selected_pact |
@@ -124,7 +120,7 @@ module PactBroker
 
         verifiable_wip_pacts = if options[:include_wip_pacts_since]
           exclude_specified_pacts(
-            pact_repository.find_wip_pact_versions_for_provider(provider_name, provider_version_tags, options),
+            pact_repository.find_wip_pact_versions_for_provider(provider_name, provider_version_branch, provider_version_tags, options),
             verifiable_pacts_specified_in_request)
         else
           []
