@@ -104,7 +104,7 @@ module PactBroker
           end
 
           it "sets the pending tags" do
-            expect(subject.first.pending_provider_branch).to eq provider_version_branch
+            expect(subject.first.provider_branch).to eq provider_version_branch
           end
         end
 
@@ -151,7 +151,7 @@ module PactBroker
           end
 
           it "sets the pending tags" do
-            expect(subject.first.pending_provider_branch).to eq provider_version_branch
+            expect(subject.first.provider_branch).to eq provider_version_branch
           end
         end
 

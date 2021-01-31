@@ -225,7 +225,7 @@ module PactBroker
 
             if pre_existing_pending_tags.any? || (PactBroker.feature_enabled?(:experimental_no_provider_versions_makes_all_head_pacts_wip) && provider_version_count == 0)
               selectors = Selectors.create_for_latest_of_each_tag(pact_publication.head_tag_names)
-              VerifiablePact.new(pact_publication.to_domain, selectors, true, pre_existing_pending_tags, [], true)
+              VerifiablePact.create_for_wip_for_provider_tags(pact_publication.to_domain, selectors, pre_existing_pending_tags)
             end
           end
         end.compact.sort
@@ -251,12 +251,12 @@ module PactBroker
 
         verifiable_pacts_by_branch = wip_pact_publications_by_branch.collect do | pact_publication |
           selectors = Selectors.create_for_latest_of_each_branch([provider_version_branch])
-          VerifiablePact.new(pact_publication.to_domain, selectors, true, [], [], true, provider_version_branch)
+          VerifiablePact.create_for_wip_for_provider_branch(pact_publication.to_domain, selectors, provider_version_branch)
         end
 
         verifiable_pacts_by_tag = wip_pact_publications_by_tag.collect do | pact_publication |
           selectors = Selectors.create_for_latest_of_each_branch([provider_version_branch])
-          VerifiablePact.new(pact_publication.to_domain, selectors, true, [], [], true, provider_version_branch)
+          VerifiablePact.create_for_wip_for_provider_branch(pact_publication.to_domain, selectors, provider_version_branch)
         end
 
         deduplicate_verifiable_pacts(verifiable_pacts_by_branch + verifiable_pacts_by_tag).sort
