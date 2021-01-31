@@ -54,6 +54,10 @@ module PactBroker
       def tag_names_of_selectors_for_latest_pacts
         select(&:latest_for_tag?).collect(&:tag).uniq
       end
+
+      def branches_of_selectors_for_latest_pacts
+        select(&:latest_for_branch?).collect(&:branch).uniq
+      end
     end
   end
 end

@@ -21,6 +21,10 @@ module PactBroker
         selectors.tag_names_of_selectors_for_latest_pacts
       end
 
+      def branches_of_selectors_for_latest_pacts
+        selectors.branches_of_selectors_for_latest_pacts
+      end
+
       def overall_latest?
         selectors.overall_latest?
       end
