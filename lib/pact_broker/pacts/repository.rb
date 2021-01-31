@@ -194,6 +194,7 @@ module PactBroker
         provider = pacticipant_repository.find_by_name(provider_name)
         wip_start_date = options.fetch(:include_wip_pacts_since)
 
+        # TODO latest by branch
         potential_wip_pacts_by_consumer_tag_query = PactPublication.for_provider(provider).created_after(wip_start_date).latest_by_consumer_tag
         potential_wip_pacts_by_consumer_tag = potential_wip_pacts_by_consumer_tag_query.all
 
@@ -224,7 +225,7 @@ module PactBroker
             pre_existing_pending_tags = [provider_tag_name] & pre_existing_tag_names
 
             if pre_existing_pending_tags.any? || (PactBroker.feature_enabled?(:experimental_no_provider_versions_makes_all_head_pacts_wip) && provider_version_count == 0)
-              selectors = Selectors.create_for_latest_of_each_tag(pact_publication.head_tag_names)
+              selectors = Selectors.create_for_latest_for_tag(pact_publication.values.fetch(:tag_name))
               VerifiablePact.create_for_wip_for_provider_tags(pact_publication.to_domain, selectors, pre_existing_pending_tags)
             end
           end
@@ -250,12 +251,12 @@ module PactBroker
         )
 
         verifiable_pacts_by_branch = wip_pact_publications_by_branch.collect do | pact_publication |
-          selectors = Selectors.create_for_latest_of_each_branch([provider_version_branch])
+          selectors = Selectors.create_for_latest_for_branch(pact_publication.consumer_version.branch)
           VerifiablePact.create_for_wip_for_provider_branch(pact_publication.to_domain, selectors, provider_version_branch)
         end
 
         verifiable_pacts_by_tag = wip_pact_publications_by_tag.collect do | pact_publication |
-          selectors = Selectors.create_for_latest_of_each_branch([provider_version_branch])
+          selectors = Selectors.create_for_latest_for_tag(pact_publication.values.fetch(:tag_name))
           VerifiablePact.create_for_wip_for_provider_branch(pact_publication.to_domain, selectors, provider_version_branch)
         end
 

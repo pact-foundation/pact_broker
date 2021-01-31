@@ -29,10 +29,12 @@ module PactBroker
               .create_pact_with_hierarchy("foo", "1", "bar")
               .create_consumer_version_tag("feat-1")
               .add_day
+              .create_consumer_version("2", branch: "branch-1")
+              .create_pact
               .create_pact_with_hierarchy("meep", "2", "bar")
               .create_consumer_version_tag("feat-2")
               .add_day
-              .create_pact_with_hierarchy("foo", "2", "bar")
+              .create_pact_with_hierarchy("foo", "3", "bar")
               .create_consumer_version_tag("feat-2")
               .add_day
               .create_pact_with_hierarchy("meep", "1", "bar")
@@ -46,11 +48,22 @@ module PactBroker
             expect(subject[1].consumer_name).to eq "foo"
             expect(subject[1].consumer_version_number).to eq "2"
 
-            expect(subject[2].consumer_name).to eq "meep"
-            expect(subject[2].consumer_version_number).to eq "2"
+            expect(subject[2].consumer_name).to eq "foo"
+            expect(subject[2].consumer_version_number).to eq "3"
 
             expect(subject[3].consumer_name).to eq "meep"
-            expect(subject[3].consumer_version_number).to eq "1"
+            expect(subject[3].consumer_version_number).to eq "2"
+
+            expect(subject[4].consumer_name).to eq "meep"
+            expect(subject[4].consumer_version_number).to eq "1"
+          end
+
+          it "sets the selectors" do
+            expect(subject[0].selectors).to eq Selectors.create_for_latest_for_tag("feat-1")
+            expect(subject[1].selectors).to eq Selectors.create_for_latest_for_branch("branch-1")
+            expect(subject[2].selectors).to eq Selectors.create_for_latest_for_tag("feat-2")
+            expect(subject[3].selectors).to eq Selectors.create_for_latest_for_tag("feat-2")
+            expect(subject[4].selectors).to eq Selectors.create_for_latest_for_tag("feat-1")
           end
         end
 
@@ -88,6 +101,24 @@ module PactBroker
           end
         end
 
+        context "when a pact is the latest for a tag and a branch and has no successful verifications" do
+          before do
+            td.create_provider("bar")
+              .create_provider_version("333", branch: provider_version_branch)
+              .add_day
+              .create_consumer("foo")
+              .create_consumer_version("1", branch: "branch-1", tag_names: ["feat-1"])
+              .comment("above not included because it's not the latest")
+              .create_consumer_version("2", branch: "branch-1", tag_names: ["feat-1"])
+              .create_pact
+          end
+
+          it "it has two selectors" do
+            expect(subject.size).to eq 1
+            expect(subject.first.selectors).to eq Selectors.new([Selector.latest_for_branch("branch-1"), Selector.latest_for_tag("feat-1")])
+          end
+        end
+
         context "when the latest pact for a tag has failed verification from the specified provider version branch" do
           before do
             td.create_provider("bar")
@@ -97,14 +128,20 @@ module PactBroker
               .create_pact_with_hierarchy("foo", "1", "bar")
               .create_consumer_version_tag("feat-1")
               .create_verification(provider_version: "3", success: false, branch: provider_version_branch)
+              .add_day
+              .create_consumer_version("2", branch: "branch-1")
+              .create_pact
+              .create_verification(provider_version: "3", success: false, branch: provider_version_branch)
+
           end
 
           it "is included" do
-            expect(subject.size).to be 1
+            expect(subject.size).to be 2
           end
 
           it "sets the pending tags" do
             expect(subject.first.provider_branch).to eq provider_version_branch
+            expect(subject.last.provider_branch).to eq provider_version_branch
           end
         end
 
@@ -119,7 +156,7 @@ module PactBroker
           end
         end
 
-        context "when the latest pact for a tag has successful and failed verifications" do
+        context "when the latest pact for a tag has successful then failed verifications" do
           before do
             td.create_provider("bar")
               .create_provider_version("333")
