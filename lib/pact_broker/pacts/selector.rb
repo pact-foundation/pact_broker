@@ -110,7 +110,7 @@ module PactBroker
       end
 
       def overall_latest?
-        !!(latest? && !tag)
+        !!(latest? && !tag && !branch)
       end
 
       # Not sure if the fallback_tag logic is needed
@@ -147,13 +147,18 @@ module PactBroker
         other.class == self.class && super
       end
 
-      # TODO sort by branch
       def <=> other
         if overall_latest? || other.overall_latest?
           if overall_latest? == other.overall_latest?
             0
           else
             overall_latest? ? -1 : 1
+          end
+        elsif latest_for_branch? || other.latest_for_branch?
+          if latest_for_branch? == other.latest_for_branch?
+            branch <=> other.branch
+          else
+            latest_for_branch? ? -1 : 1
           end
         elsif latest_for_tag? || other.latest_for_tag?
           if latest_for_tag? == other.latest_for_tag?
