@@ -99,6 +99,25 @@ module PactBroker
             .distinct
         end
 
+        def successfully_verified_by_provider_tag(provider_id, provider_tag)
+          verifications_join = {
+            pact_version_id: :pact_version_id,
+            Sequel[:verifications][:success] => true,
+            Sequel[:verifications][:wip] => false,
+            Sequel[:verifications][:provider_id] => provider_id
+          }
+          tags_join = {
+            Sequel[:verifications][:provider_version_id] => Sequel[:provider_tags][:version_id],
+            Sequel[:provider_tags][:name] => provider_tag
+          }
+
+          from_self(alias: :pp).select(Sequel[:pp].*)
+            .join(:verifications, verifications_join)
+            .join(:tags, tags_join, { table_alias: :provider_tags } )
+            .where(Sequel[:pp][:provider_id] => provider_id)
+            .distinct
+        end
+
         def created_after date
           where(Sequel.lit("#{first_source_alias}.created_at > ?", date))
         end
