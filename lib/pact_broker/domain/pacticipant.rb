@@ -51,6 +51,10 @@ module PactBroker
         messages << message('errors.validation.attribute_missing', attribute: 'name') unless name
         messages
       end
+
+      def any_versions?
+        PactBroker::Domain::Version.where(pacticipant: self).any?
+      end
     end
   end
 end

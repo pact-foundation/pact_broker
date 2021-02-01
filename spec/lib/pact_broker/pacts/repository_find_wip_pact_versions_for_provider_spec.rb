@@ -22,16 +22,17 @@ module PactBroker
         context "when there are multiple wip pacts" do
           before do
             td.create_provider("bar")
-              .create_provider_version("333")
-              .create_provider_version_tag("dev")
+              .create_provider_version("333", tag_names: provider_tags)
               .add_day
               .create_pact_with_hierarchy("foo", "1", "bar")
               .create_consumer_version_tag("feat-1")
               .add_day
+              .create_consumer_version("2", branch: "branch-1")
+              .create_pact
               .create_pact_with_hierarchy("meep", "2", "bar")
               .create_consumer_version_tag("feat-2")
               .add_day
-              .create_pact_with_hierarchy("foo", "2", "bar")
+              .create_pact_with_hierarchy("foo", "3", "bar")
               .create_consumer_version_tag("feat-2")
               .add_day
               .create_pact_with_hierarchy("meep", "1", "bar")
@@ -47,11 +48,22 @@ module PactBroker
             expect(subject[1].consumer_name).to eq "foo"
             expect(subject[1].consumer_version_number).to eq "2"
 
-            expect(subject[2].consumer_name).to eq "meep"
-            expect(subject[2].consumer_version_number).to eq "2"
+            expect(subject[2].consumer_name).to eq "foo"
+            expect(subject[2].consumer_version_number).to eq "3"
 
             expect(subject[3].consumer_name).to eq "meep"
-            expect(subject[3].consumer_version_number).to eq "1"
+            expect(subject[3].consumer_version_number).to eq "2"
+
+            expect(subject[4].consumer_name).to eq "meep"
+            expect(subject[4].consumer_version_number).to eq "1"
+          end
+
+          it "sets the selectors" do
+            expect(subject[0].selectors).to eq Selectors.create_for_latest_for_tag("feat-1")
+            expect(subject[1].selectors).to eq Selectors.create_for_latest_for_branch("branch-1")
+            expect(subject[2].selectors).to eq Selectors.create_for_latest_for_tag("feat-2")
+            expect(subject[3].selectors).to eq Selectors.create_for_latest_for_tag("feat-2")
+            expect(subject[4].selectors).to eq Selectors.create_for_latest_for_tag("feat-1")
           end
         end
 

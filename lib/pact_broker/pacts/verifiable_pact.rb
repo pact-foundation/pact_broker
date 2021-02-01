@@ -25,6 +25,12 @@ module PactBroker
         new(pact, selectors, true, pending_provider_tags, [], nil, true)
       end
 
+      def self.deduplicate(verifiable_pacts)
+        verifiable_pacts
+          .group_by { | verifiable_pact | verifiable_pact.pact_version_sha }
+          .values
+          .collect { | verifiable_pacts | verifiable_pacts.reduce(&:+) }
+      end
 
       def pending?
         pending
