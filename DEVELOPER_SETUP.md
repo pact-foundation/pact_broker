@@ -81,11 +81,15 @@ mysql -hmysql -upact_broker -ppact_broker
   ```sh
   bundle exec rake
   ```
+* To set up the database (this is done automatically when running the default rake task, but if you want to run a different task without running the default task first, this must be run once beforehand):
+  ```sh
+  bundle exec rake db:prepare:test
+  ```
 * To run a smaller subset of the tests:
   ```sh
   bundle exec rake spec
   ```
-* To run the "quick tests" (skip the lengthy migration specs)
+* To run the "quick tests" (skip the lengthy migration specs and db setup)
   ```sh
   bundle exec rake spec:quick
   ```
@@ -93,8 +97,6 @@ mysql -hmysql -upact_broker -ppact_broker
   ```sh
   bundle exec rspec path_to_your_spec.rb
   ```
-
-NOTE: the spec tasks requires the `db:prepare:test` task to be executed at least once prior to running.
 
 [chruby]: https://github.com/postmodern/chruby
 [ruby-install]: https://github.com/postmodern/ruby-install
