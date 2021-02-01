@@ -73,7 +73,7 @@ module PactBroker
             webhook ? [webhook]: [],
             pact_publication.integration.latest_triggered_webhooks,
             consumer_version_tags(pact_publication, options[:tags]).sort_by(&:created_at).collect(&:name),
-            options[:tags] && latest_verification ? latest_verification.provider_version.tags_with_latest_flag.select(&:latest?) : []
+            options[:tags] && latest_verification ? latest_verification.provider_version.tags_with_latest_flag.select(&:latest?).sort_by(&:created_at) : []
           )
         end.sort
 
@@ -134,7 +134,7 @@ module PactBroker
             [],
             [],
             pact_publication.head_pact_tags.sort_by(&:created_at).collect(&:name),
-            pact_publication.latest_verification ? pact_publication.latest_verification.provider_version.tags_with_latest_flag.select(&:latest?) : []
+            pact_publication.latest_verification ? pact_publication.latest_verification.provider_version.tags_with_latest_flag.select(&:latest?).sort_by(&:created_at) : []
           )
         end.sort
       end

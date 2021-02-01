@@ -135,7 +135,7 @@ module PactBroker
 
           let(:consumer_version_tags) do
             [
-              double("tag", name: "prod", latest?: true, version: consumer_version)
+              double("tag", name: "prod", latest?: true, version: consumer_version, created_at: DateTime.now )
             ]
           end
 
@@ -143,7 +143,7 @@ module PactBroker
 
           let(:provider_version_tags) do
             [
-              double("tag", name: "master", latest?: false, version: provider_version)
+              double("tag", name: "master", latest?: false, version: provider_version, created_at: DateTime.now)
             ]
           end
 

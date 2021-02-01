@@ -100,24 +100,28 @@ module PactBroker
         def latest_consumer_version_tags
           @line.consumer_version_tags
             .select(&:latest)
+            .sort_by(&:created_at)
             .collect{ | tag | MatrixTag.new(tag.to_hash.merge(pacticipant_name: consumer_name, version_number: consumer_version_number)) }
         end
 
         def other_consumer_version_tags
           @line.consumer_version_tags
             .reject(&:latest)
+            .sort_by(&:created_at)
             .collect{ | tag | MatrixTag.new(tag.to_hash.merge(pacticipant_name: consumer_name, version_number: consumer_version_number)) }
         end
 
         def latest_provider_version_tags
           @line.provider_version_tags
             .select(&:latest)
+            .sort_by(&:created_at)
             .collect{ | tag | MatrixTag.new(tag.to_hash.merge(pacticipant_name: provider_name, version_number: provider_version_number)) }
         end
 
         def other_provider_version_tags
           @line.provider_version_tags
             .reject(&:latest)
+            .sort_by(&:created_at)
             .collect{ | tag | MatrixTag.new(tag.to_hash.merge(pacticipant_name: provider_name, version_number: provider_version_number)) }
         end
 
