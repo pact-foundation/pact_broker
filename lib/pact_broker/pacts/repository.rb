@@ -227,7 +227,7 @@ module PactBroker
 
         provider_has_no_versions = !provider.any_versions?
 
-        verifiable_pacts = tag_to_pact_publications.flat_map do | provider_tag_name, pact_publications |
+        tag_to_pact_publications.flat_map do | provider_tag_name, pact_publications |
           pact_publications.collect do | pact_publication |
             pre_existing_tag_names = find_provider_tag_names_that_were_first_used_before_pact_published(pact_publication, provider_tags)
             pre_existing_pending_tags = [provider_tag_name] & pre_existing_tag_names
@@ -597,19 +597,6 @@ module PactBroker
           .where(Sequel.lit('latest_tagged_pact_publications.created_at > ?', options.fetch(:include_wip_pacts_since)))
           .exclude(id: pact_publication_ids_successfully_verified_by_all_provider_tags)
           .select_for_subquery(:id)
-      end
-
-      # Find the head pacts that have been successfully verified by a provider version with the specified
-      # provider version tags.
-      # Returns a Hash of provider_tag => LatestTaggedPactPublications with only pact publication id and tag_name populated
-      # This is the list of pacts we are EXCLUDING from the WIP list because they have already been verified successfully
-      def find_successfully_verified_head_pacts_by_provider_tag(provider, provider_tags, options)
-        provider_tags.compact.each_with_object({}) do | provider_tag, hash |
-
-          head_pacts = scope_for(PactPublication)
-            .for_provider()
-          hash[provider_tag] = head_pacts
-        end
       end
 
       def deduplicate_verifiable_pacts(verifiable_pacts)
