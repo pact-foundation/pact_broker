@@ -24,6 +24,7 @@ require 'pact_broker/tags/repository'
 require 'pact_broker/webhooks/repository'
 require 'pact_broker/certificates/certificate'
 require 'pact_broker/matrix/row'
+require 'pact_broker/deployments/environment_service'
 require 'ostruct'
 
 module PactBroker
@@ -45,6 +46,7 @@ module PactBroker
       attr_reader :webhook
       attr_reader :webhook_execution
       attr_reader :triggered_webhook
+      attr_reader :environment
 
       def initialize(params = {})
         @now = DateTime.now
@@ -365,6 +367,16 @@ module PactBroker
       def create_certificate options = {path: 'spec/fixtures/single-certificate.pem'}
         options.delete(:comment)
         PactBroker::Certificates::Certificate.create(uuid: SecureRandom.urlsafe_base64, content: File.read(options[:path]))
+        self
+      end
+
+      def create_environment(name, params = {})
+        @environment = PactBroker::Deployments::EnvironmentService.create(name, PactBroker::Deployments::Environment.new(params))
+        set_created_at_if_set(params[:created_at], :environments, id: environment.id)
+        self
+      end
+
+      def create_deployment(environment_name)
         self
       end
 

@@ -105,6 +105,8 @@ module PactBroker
         add ['dashboard', 'provider', :provider_name, 'consumer', :consumer_name ], Api::Resources::Dashboard, {resource_name: "integration_dashboard"}
         add ['test','error'], Api::Resources::ErrorTest, {resource_name: "error_test"}
 
+        add ['environments', :environment_name], Api::Resources::Environment, { resource_name: "environment" }
+
         add ['integrations'], Api::Resources::Integrations, {resource_name: "integrations"}
         add ['integrations', 'provider', :provider_name, 'consumer', :consumer_name], Api::Resources::Integration, {resource_name: "integration"}
         add ['metrics'], Api::Resources::Metrics, {resource_name: 'metrics'}
