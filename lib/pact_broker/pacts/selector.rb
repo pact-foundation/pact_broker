@@ -147,10 +147,6 @@ module PactBroker
         !!(tag && !latest?)
       end
 
-      def all_for_branch?
-        !!(branch && !latest?)
-      end
-
       def == other
         other.class == self.class && super
       end
