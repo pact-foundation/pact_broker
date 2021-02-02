@@ -1,20 +1,15 @@
 name: Test
 
-on: push
+on: [push, pull_request]
 
 jobs:
   sqlite:
     if: "!contains(github.event.head_commit.message, '[ci-skip]')"
     runs-on: "ubuntu-latest"
-    continue-on-error: ${{ matrix.experimental }}
     strategy:
       fail-fast: false
       matrix:
         ruby_version: ["2.7"]
-        experimental: [false]
-        include:
-          - ruby_version: "3.0"
-            experimental: true
     steps:
       - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1
