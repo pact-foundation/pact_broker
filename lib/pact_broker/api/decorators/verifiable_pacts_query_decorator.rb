@@ -16,6 +16,7 @@ module PactBroker
 
         collection :consumer_version_selectors, default: PactBroker::Pacts::Selectors.new, class: PactBroker::Pacts::Selector do
           property :tag
+          property :branch
           property :latest,
             setter: ->(fragment:, represented:, **) {
               represented.latest = (fragment == 'true' || fragment == true)

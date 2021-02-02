@@ -78,6 +78,18 @@ module PactBroker
           let(:pending_provider_tags) { %w[dev] }
 
           its(:inclusion_reason) { is_expected.to include "The pact at http://pact is being verified because it is a 'work in progress' pact (ie. it is the pact for the latest version of Foo tagged with 'feat-x' and is still in pending state)."}
+
+          context "when the pact is a WIP pact for a consumer branch" do
+            let(:selectors) { Selectors.create_for_latest_of_each_branch(%w[feat-x feat-y]) }
+
+            its(:inclusion_reason) { is_expected.to include "The pact at http://pact is being verified because it is a 'work in progress' pact (ie. it is the pact for the latest versions of Foo from branches 'feat-x' and 'feat-y' (both have the same content) and is still in pending state)."}
+          end
+
+          context "when the pact is a WIP pact for a consumer branch and consumer rags" do
+            let(:selectors) { Selectors.create_for_latest_of_each_branch(%w[feat-x feat-y]) + Selectors.create_for_latest_of_each_tag(%w[feat-z feat-w]) }
+
+            its(:inclusion_reason) { is_expected.to include "it is the pact for the latest versions of Foo from branches 'feat-x' and 'feat-y' and tagged with 'feat-z' and 'feat-w' (all have the same content)"}
+          end
         end
 
         context "when the pact is one of all versions for a tag" do

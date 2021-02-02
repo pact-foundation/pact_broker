@@ -26,10 +26,10 @@ module PactBroker
       end
 
       def inclusion_reason
-        version_text = head_consumer_tags.size == 1 ? "version" : "versions"
+        version_text = head_consumer_tags.size == 1 || branches.size == 1 ? "version" : "versions"
         if wip?
           # WIP pacts will always have tags, because it is part of the definition of being a WIP pact
-          "The pact at #{pact_version_url} is being verified because it is a 'work in progress' pact (ie. it is the pact for the latest #{version_text} of #{consumer_name} tagged with #{joined_head_consumer_tags} and is still in pending state). #{READ_MORE_WIP}"
+          "The pact at #{pact_version_url} is being verified because it is a 'work in progress' pact (ie. it is the pact for the latest #{version_text} of #{consumer_name} #{joined_head_consumer_tags_and_branches} and is still in pending state). #{READ_MORE_WIP}"
         else
           criteria_or_criterion = selectors.size > 1 ? "criteria" : "criterion"
           "The pact at #{pact_version_url} is being verified because it matches the following configured selection #{criteria_or_criterion}: #{selector_descriptions}#{same_content_note}"
@@ -85,8 +85,11 @@ module PactBroker
         end
       end
 
-      def joined_head_consumer_tags
-        join(head_consumer_tags) + same_content_note
+      def joined_head_consumer_tags_and_branches
+        parts = []
+        parts << "from #{branches.size == 1 ? "branch" : "branches"} #{join(branches)}" if branches.any?
+        parts << "tagged with #{join(head_consumer_tags)}" if head_consumer_tags.any?
+        parts.join(" and ") + same_content_note
       end
 
       def same_content_note
