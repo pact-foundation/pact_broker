@@ -35,3 +35,6 @@ exclude_patterns:
 - public/javascripts/highlight.pack.js
 - public/javascripts/jquery*.js
 - public/js/bootstrap*.js
+- public/javascripts/pagination.js
+- public/javascripts/material-menu.js
+
