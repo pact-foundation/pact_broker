@@ -1,7 +1,6 @@
 module PactBroker
   module Pacts
     module PactPublicationDatasetModule
-
       def for_provider provider
         where(provider: provider)
       end
