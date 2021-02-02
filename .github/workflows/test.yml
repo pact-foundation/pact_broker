@@ -16,7 +16,13 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby_version }}
       - run: "bundle install"
-      - run: "bundle exec rake"
+      - run: |
+          curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+          chmod +x ./cc-test-reporter
+      - run: bundle exec rake
+      - run: ./cc-test-reporter after-build --exit-code 0 || true
+    env:
+      CC_TEST_REPORTER_ID: dc2c30b67c9e2a5309e1aef699c30fdab55ba4f0e4f1beac029ba93e293835db
   postgres:
     if: "!contains(github.event.head_commit.message, '[ci-skip]')"
     runs-on: "ubuntu-latest"
