@@ -11,7 +11,7 @@ module PactBroker
       let(:webhook_template_parameters) { instance_double(PactBroker::Webhooks::PactAndVerificationParameters, to_hash: webhook_template_parameters_hash) }
       let(:webhook_template_parameters_hash) { { 'foo' => 'bar' } }
       let(:http_request) { double('http request') }
-      let(:http_response) { double('http response') }
+      let(:http_response) { double('http response', code: "200") }
       let(:event_context) { { some: 'things' } }
       let(:logging_options) { { other: 'options' } }
       let(:options) { { logging_options: logging_options } }

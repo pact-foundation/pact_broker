@@ -91,7 +91,7 @@ module PactBroker
         end
 
         def tags(tags, base_url)
-          tags.collect do | tag |
+          tags.sort_by(&:created_at).collect do | tag |
             {
               name: tag.name,
               latest: tag.latest?,
