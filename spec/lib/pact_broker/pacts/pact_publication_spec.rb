@@ -210,6 +210,46 @@ module PactBroker
         end
       end
 
+      describe "latest_for_consumer_branch" do
+        before do
+          td.create_consumer("Foo")
+            .create_provider("Bar")
+            .create_consumer_version("1", branch: "main")
+            .create_pact
+            .create_consumer_version("2", branch: "main")
+            .create_pact
+            .create_consumer_version("3", branch: "feat-x")
+            .create_pact
+            .create_consumer("Foo2")
+            .create_provider("Bar2")
+            .create_consumer_version("10", branch: "main")
+            .create_pact
+            .create_consumer_version("11", branch: "main")
+            .create_pact
+        end
+
+        subject { PactPublication.latest_for_consumer_branch("main") }
+
+        it "returns the latest pacts for the branches with the specified name (for any consumer/provider)" do
+          all = subject.all.sort_by{ |pact_publication| pact_publication.consumer_version.order }
+          expect(all.size).to eq 2
+          expect(all.first.consumer.name).to eq "Foo"
+          expect(all.first.provider.name).to eq "Bar"
+          expect(all.first.consumer_version.number).to eq "2"
+
+          expect(all.last.consumer.name).to eq "Foo2"
+          expect(all.last.provider.name).to eq "Bar2"
+          expect(all.last.consumer_version.number).to eq "11"
+        end
+
+        context "when chained" do
+          it "works" do
+            all = PactPublication.for_provider(td.find_pacticipant("Bar")).latest_for_consumer_branch("main").all
+            expect(all.first.provider.name).to eq "Bar"
+          end
+        end
+      end
+
       describe "latest_by_consumer_tag" do
         before do
           td.create_consumer("Foo")
@@ -232,10 +272,6 @@ module PactBroker
 
         subject { PactPublication.latest_by_consumer_tag.all }
 
-        let(:foo) { PactBroker::Domain::Pacticipant.where(name: "Foo").single_record }
-        let(:bar) { PactBroker::Domain::Pacticipant.where(name: "Bar").single_record }
-        let(:foo_z) { PactBroker::Domain::Pacticipant.where(name: "FooZ").single_record }
-
         it "returns the latest pact publications for each consumer/branch" do
           expect(subject.size).to eq 3
           hashes = subject.collect(&:values)
@@ -243,6 +279,46 @@ module PactBroker
           expect(subject.find { |pp| pp.consumer_id == foo.id && pp[:tag_name] == "main" }.consumer_version.number).to eq "3"
           expect(subject.find { |pp| pp.consumer_id == foo.id && pp[:tag_name] == "feat/x" }.consumer_version.number).to eq "4"
           expect(subject.find { |pp| pp.consumer_id == foo_z.id && pp[:tag_name] == "main" }.consumer_version.number).to eq "6"
+        end
+      end
+
+      describe "latest_for_consumer_tag" do
+        before do
+          td.create_consumer("Foo")
+            .create_provider("Bar")
+            .create_consumer_version("1", tag_names: ["main"])
+            .create_pact
+            .create_consumer_version("2", tag_names: ["main"])
+            .create_pact
+            .create_consumer_version("3", tag_names: ["feat/x"])
+            .create_pact
+            .create_consumer("Foo2")
+            .create_provider("Bar2")
+            .create_consumer_version("10", tag_names: ["main"])
+            .create_pact
+            .create_consumer_version("11", tag_names: ["main"])
+            .create_pact
+        end
+
+        subject { PactPublication.latest_for_consumer_tag("main") }
+
+        it "returns the latest pacts for the tags with the specified name (for any consumer/provider)" do
+          all = subject.all.sort_by{ |pact_publication| pact_publication.consumer_version.order }
+          expect(all.size).to eq 2
+          expect(all.first.consumer.name).to eq "Foo"
+          expect(all.first.provider.name).to eq "Bar"
+          expect(all.first.consumer_version.number).to eq "2"
+
+          expect(all.last.consumer.name).to eq "Foo2"
+          expect(all.last.provider.name).to eq "Bar2"
+          expect(all.last.consumer_version.number).to eq "11"
+        end
+
+        context "when chained" do
+          it "works" do
+            all = PactPublication.for_provider(td.find_pacticipant("Bar")).latest_for_consumer_tag("main").all
+            expect(all.first.provider.name).to eq "Bar"
+          end
         end
       end
 

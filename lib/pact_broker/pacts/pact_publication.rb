@@ -32,9 +32,45 @@ module PactBroker
           where(provider: provider)
         end
 
+        def for_consumer consumer
+          where(consumer: consumer)
+        end
+
+        def for_provider_and_consumer_version_selector provider, selector
+          query = for_provider(provider)
+          query = query.for_consumer(PactBroker::Domain::Pacticipant.find_by_name(selector.consumer)) if selector.consumer
+          # Do this last so that the provider/consumer criteria get included in the "latest" query before the join, rather than after
+          query = query.latest_for_consumer_branch(selector.branch) if selector.latest_for_branch?
+          query = query.latest_for_consumer_tag(selector.tag) if selector.latest_for_tag?
+          query
+        end
+
         def latest_by_consumer_branch
           versions_join = {
             Sequel[:pact_publications][:consumer_version_id] => Sequel[:cv][:id]
+          }
+
+          base_query = select_all_qualified
+            .select_append(Sequel[:cv][:branch], Sequel[:cv][:order])
+            .remove_overridden_revisions
+            .join(:versions, versions_join, { table_alias: :cv }) do
+              Sequel.lit("cv.branch is not null")
+            end
+
+          self_join = {
+            Sequel[:pact_publications][:consumer_id] => Sequel[:pp2][:consumer_id],
+            Sequel[:cv][:branch] => Sequel[:pp2][:branch]
+          }
+          base_query.left_join(base_query, self_join, { table_alias: :pp2 } ) do | table, joined_table, js |
+            Sequel[:pp2][:order] > Sequel[:cv][:order]
+          end
+          .where(Sequel[:pp2][:order] => nil)
+        end
+
+        def latest_for_consumer_branch(branch)
+          versions_join = {
+            Sequel[:pact_publications][:consumer_version_id] => Sequel[:cv][:id],
+            Sequel[:cv][:branch] => branch
           }
 
           base_query = select_all_qualified
@@ -68,6 +104,33 @@ module PactBroker
             .remove_overridden_revisions
             .join(:versions, versions_join, { table_alias: :cv })
             .join(:tags, tags_join)
+
+          self_join = {
+            Sequel[:pact_publications][:consumer_id] => Sequel[:pp2][:consumer_id],
+            Sequel[:tags][:name] => Sequel[:pp2][:tag_name]
+          }
+          base_query.left_join(base_query, self_join, { table_alias: :pp2 } ) do | table, joined_table, js |
+            Sequel[:pp2][:order] > Sequel[:cv][:order]
+          end
+          .where(Sequel[:pp2][:order] => nil)
+        end
+
+        def latest_for_consumer_tag(tag_name)
+          versions_join = {
+            Sequel[:pact_publications][:consumer_version_id] => Sequel[:cv][:id]
+          }
+
+          tags_join = {
+            Sequel[:cv][:id] => Sequel[:tags][:version_id],
+            Sequel[:tags][:name] => tag_name
+          }
+
+          base_query = select_all_qualified
+            .select_append(Sequel[:cv][:order], Sequel[:tags][:name].as(:tag_name))
+            .remove_overridden_revisions
+            .join(:versions, versions_join, { table_alias: :cv })
+            .join(:tags, tags_join)
+            .where(Sequel[:tags][:name] => tag_name)
 
           self_join = {
             Sequel[:pact_publications][:consumer_id] => Sequel[:pp2][:consumer_id],
