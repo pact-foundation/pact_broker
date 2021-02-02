@@ -1,4 +1,7 @@
 require_relative '../ddl_statements'
+require_relative 'migration_helper'
+
+include PactBroker::MigrationHelper
 
 Sequel.migration do
   up do
@@ -6,6 +9,6 @@ Sequel.migration do
   end
 
   down do
-    create_or_replace_view(:head_pact_tags, head_pact_tags_v1(self))
+    create_or_replace_view(:head_pact_tags, head_pact_tags_v2_rollback(self, postgres?))
   end
 end

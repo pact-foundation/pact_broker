@@ -9,6 +9,14 @@ def head_pact_tags_v1(connection)
   .select(Sequel[:o][:tag_name].as(:name), Sequel[:lp][:pact_publication_id])
 end
 
+def head_pact_tags_v2_rollback(connection, postgres)
+  if(postgres)
+    head_pact_tags_v1(connection).select_append(Sequel.lit("NULL").as(:created_at))
+  else
+    head_pact_tags_v1(connection)
+  end
+end
+
 def head_pact_tags_v2(connection)
   connection.from(Sequel.as(:latest_pact_publication_ids_for_consumer_versions, :lp))
   .join(:versions,{ Sequel[:lp][:consumer_version_id] => Sequel[:cv][:id]}, { table_alias: :cv })
