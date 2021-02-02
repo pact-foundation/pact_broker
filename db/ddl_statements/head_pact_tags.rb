@@ -11,7 +11,7 @@ end
 
 def head_pact_tags_v2_rollback(connection, postgres)
   if(postgres)
-    head_pact_tags_v1(connection).select_append(Sequel.lit("NULL").as(:created_at))
+    head_pact_tags_v1(connection).select_append(Sequel.lit("TIMESTAMP 'epoch'").as(:created_at))
   else
     head_pact_tags_v1(connection)
   end
