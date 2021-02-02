@@ -67,7 +67,7 @@ module PactBroker
         self
       end
 
-      def publish_pact(consumer: last_consumer_name, consumer_version:, provider: last_provider_name, content_id:, tag: nil, branch:)
+      def publish_pact(consumer: last_consumer_name, consumer_version:, provider: last_provider_name, content_id:, tag: nil, branch: nil)
         @last_consumer_name = consumer
         @last_provider_name = provider
         @last_consumer_version_number = consumer_version
@@ -110,7 +110,6 @@ module PactBroker
 
       def print_pacts_for_verification
         pacts = @pacts_for_verification_response.body&.dig("_embedded", "pacts")
-        puts @pacts_for_verification_response.body.to_json
         if pacts
           puts "Pacts for verification (#{pacts.count}):"
           pacts.each do | pact |
