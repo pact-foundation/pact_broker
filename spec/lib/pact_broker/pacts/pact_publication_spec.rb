@@ -272,6 +272,10 @@ module PactBroker
 
         subject { PactPublication.latest_by_consumer_tag.all }
 
+        let(:foo) { PactBroker::Domain::Pacticipant.where(name: "Foo").single_record }
+        let(:bar) { PactBroker::Domain::Pacticipant.where(name: "Bar").single_record }
+        let(:foo_z) { PactBroker::Domain::Pacticipant.where(name: "FooZ").single_record }
+
         it "returns the latest pact publications for each consumer/branch" do
           expect(subject.size).to eq 3
           hashes = subject.collect(&:values)
@@ -279,6 +283,49 @@ module PactBroker
           expect(subject.find { |pp| pp.consumer_id == foo.id && pp[:tag_name] == "main" }.consumer_version.number).to eq "3"
           expect(subject.find { |pp| pp.consumer_id == foo.id && pp[:tag_name] == "feat/x" }.consumer_version.number).to eq "4"
           expect(subject.find { |pp| pp.consumer_id == foo_z.id && pp[:tag_name] == "main" }.consumer_version.number).to eq "6"
+        end
+      end
+
+      describe "overall_latest" do
+        before do
+          td.create_consumer("Foo")
+            .create_provider("Bar")
+            .create_consumer_version("1", tag_names: ["main"])
+            .create_pact
+            .create_consumer_version("2", tag_names: ["main"])
+            .create_pact
+            .create_consumer_version("3", tag_names: ["feat/x"])
+            .create_pact
+            .create_consumer("Foo2")
+            .create_provider("Bar2")
+            .create_consumer_version("10", tag_names: ["main"])
+            .create_pact
+            .create_consumer_version("11", tag_names: ["main"])
+            .create_pact
+        end
+
+        subject { PactPublication.overall_latest }
+
+        it "returns the latest by consumer/provider" do
+          all = subject.all.sort_by{ | pact_publication | pact_publication.consumer_version.order }
+          expect(all.size).to eq 2
+        end
+
+        context "when chained" do
+          it "works with a consumer" do
+            expect(PactPublication.for_consumer(td.find_pacticipant("Foo")).overall_latest.all.first.consumer.name).to eq "Foo"
+          end
+
+          it "works with a consumer and provider" do
+            td.create_pact_with_hierarchy("Foo", "666", "Nope")
+            all = PactPublication
+              .for_consumer(td.find_pacticipant("Foo"))
+              .for_provider(td.find_pacticipant("Bar"))
+              .overall_latest.all
+            expect(all.size).to eq 1
+            expect(all.first.consumer.name).to eq "Foo"
+            expect(all.first.provider.name).to eq "Bar"
+          end
         end
       end
 

@@ -1,11 +1,19 @@
+require 'pact_broker/hash_refinements'
+
 module PactBroker
   module Pacts
     class Selector < Hash
+      using PactBroker::HashRefinements
+
       def initialize(options = {})
         merge!(options)
       end
 
       def resolve(consumer_version)
+        ResolvedSelector.new(self.to_h.without(:fallback_tag, :fallback_branch), consumer_version)
+      end
+
+      def resolve_for_fallback(consumer_version)
         ResolvedSelector.new(self.to_h, consumer_version)
       end
 

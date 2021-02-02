@@ -37,11 +37,13 @@ module PactBroker
         end
 
         def for_provider_and_consumer_version_selector provider, selector
+          # Does not yet support "all pacts for specified tag" - that code is still in the Pact::Repository
           query = for_provider(provider)
           query = query.for_consumer(PactBroker::Domain::Pacticipant.find_by_name(selector.consumer)) if selector.consumer
           # Do this last so that the provider/consumer criteria get included in the "latest" query before the join, rather than after
           query = query.latest_for_consumer_branch(selector.branch) if selector.latest_for_branch?
           query = query.latest_for_consumer_tag(selector.tag) if selector.latest_for_tag?
+          query = query.overall_latest if selector.overall_latest?
           query
         end
 
@@ -60,6 +62,26 @@ module PactBroker
           self_join = {
             Sequel[:pact_publications][:consumer_id] => Sequel[:pp2][:consumer_id],
             Sequel[:cv][:branch] => Sequel[:pp2][:branch]
+          }
+          base_query.left_join(base_query, self_join, { table_alias: :pp2 } ) do | table, joined_table, js |
+            Sequel[:pp2][:order] > Sequel[:cv][:order]
+          end
+          .where(Sequel[:pp2][:order] => nil)
+        end
+
+        def overall_latest
+          versions_join = {
+            Sequel[:pact_publications][:consumer_version_id] => Sequel[:cv][:id]
+          }
+
+          base_query = select_all_qualified
+            .select_append(Sequel[:cv][:order])
+            .remove_overridden_revisions
+            .join_consumer_versions # won't need to do this when we add the order to latest_pact_publication_ids_for_consumer_versions
+
+          self_join = {
+            Sequel[:pact_publications][:consumer_id] => Sequel[:pp2][:consumer_id],
+            Sequel[:pact_publications][:provider_id] => Sequel[:pp2][:provider_id]
           }
           base_query.left_join(base_query, self_join, { table_alias: :pp2 } ) do | table, joined_table, js |
             Sequel[:pp2][:order] > Sequel[:cv][:order]
