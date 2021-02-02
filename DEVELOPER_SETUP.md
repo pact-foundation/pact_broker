@@ -75,6 +75,12 @@ Running a mysql client in the mysql-tests container:
 mysql -hmysql -upact_broker -ppact_broker
 ```
 
+Running a postgresql client in the postgres-tests container:
+
+```
+psql postgres://postgres:postgres@postgres/postgres
+```
+
 ## Running the tests
 
 * To run everything (specs, pact verifications, vulnerability scan...):

@@ -16,6 +16,7 @@ RUN apk update \
       "tzdata>=2019" \
       "mariadb-dev>=10.3" \
       "mysql-client>=10.3.25" \
+      "postgresql-client>=11.10" \
     && rm -rf /var/cache/apk/*
 
 RUN apk add --no-cache openssl less
