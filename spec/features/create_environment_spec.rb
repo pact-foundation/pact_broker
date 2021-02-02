@@ -1,5 +1,3 @@
-require 'support/test_data_builder'
-
 describe "Creating an environment" do
   let(:path) { "/environments/test" }
   let(:headers) { {'CONTENT_TYPE' => 'application/json'} }

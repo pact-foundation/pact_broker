@@ -1,5 +1,3 @@
-require 'support/test_data_builder'
-
 describe "Updating an environment" do
   before do
     td.create_environment("test", owners: [ { name: "Foo" } ] )
