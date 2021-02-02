@@ -218,42 +218,6 @@ module PactBroker
             expect(subject.size).to be 0
           end
         end
-
-        context "when the first provider branch with a given name was created after the head pact was created" do
-          before do
-            td.create_pact_with_hierarchy("foo", "1", "bar")
-              .create_consumer_version_tag("feat-x")
-              .add_day
-              .create_provider_version("5", branch: provider_version_branch)
-          end
-
-          it "doesn't return any pacts", pending: "Planning to change this" do
-            expect(subject.size).to be 0
-          end
-        end
-
-        context "when the provider branch does not exist yet and there are no provider versions" do
-          before do
-            td.create_pact_with_hierarchy("foo", "1", "bar")
-              .create_consumer_version_tag("feat-x")
-          end
-
-          it "is included" do
-            expect(subject.size).to be 1
-          end
-        end
-
-        context "when the provider branch does not exist yet but there are other provider versions" do
-          before do
-            td.create_pact_with_hierarchy("foo", "1", "bar")
-              .create_consumer_version_tag("feat-x")
-              .create_provider_version("1")
-          end
-
-          it "doesn't return any pacts" do
-            expect(subject.size).to be 0
-          end
-        end
       end
     end
   end
