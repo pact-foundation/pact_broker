@@ -376,7 +376,7 @@ module PactBroker
         self
       end
 
-      def create_deployment(environment_name)
+      def create_deployment(_)
         self
       end
 
