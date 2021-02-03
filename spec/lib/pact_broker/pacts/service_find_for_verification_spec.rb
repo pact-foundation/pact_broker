@@ -2,9 +2,7 @@ require 'spec_helper'
 require 'pact_broker/pacts/service'
 require 'pact_broker/pacts/pact_params'
 
-
 module PactBroker
-
   module Pacts
     describe Service do
       let(:td) { TestDataBuilder.new }
@@ -38,13 +36,14 @@ module PactBroker
 
         let(:provider_name) { "Bar" }
         let(:provider_version_tags) { [] }
+        let(:provider_version_branch) { "main" }
         let(:consumer_version_selectors) { [] }
 
         before do
           allow(pact_repository).to receive(:find_for_verification).and_return(head_pacts)
         end
 
-        subject { Service.find_for_verification(provider_name, provider_version_tags, consumer_version_selectors) }
+        subject { Service.find_for_verification(provider_name, provider_version_branch, provider_version_tags, consumer_version_selectors) }
       end
     end
   end

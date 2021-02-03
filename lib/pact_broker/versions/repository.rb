@@ -57,7 +57,16 @@ module PactBroker
           updated_at: Sequel.datetime_class.now
         }
 
-        PactBroker::Domain::Version.new(version_params).insert_ignore
+        PactBroker::Domain::Version.new(version_params).upsert
+      end
+
+      def create_or_update(pacticipant, version_number, version)
+        PactBroker::Domain::Version.new(
+          number: version_number,
+          pacticipant: pacticipant,
+          build_url: version.build_url,
+          branch: version.branch
+        ).upsert
       end
 
       def find_by_pacticipant_id_and_number_or_create pacticipant_id, number

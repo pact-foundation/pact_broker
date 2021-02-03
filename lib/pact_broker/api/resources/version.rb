@@ -10,12 +10,24 @@ module PactBroker
           [["application/hal+json", :to_json]]
         end
 
+        def content_types_accepted
+          [["application/json", :from_json]]
+        end
+
         def allowed_methods
-          ["GET", "DELETE", "OPTIONS"]
+          ["GET", "PUT", "DELETE", "OPTIONS"]
         end
 
         def resource_exists?
           !!version
+        end
+
+        def from_json
+          response_code = version ? 200 : 201
+          parsed_version = Decorators::VersionDecorator.new(PactBroker::Domain::Version.new).from_json(request_body)
+          @version = version_service.create_or_update(pacticipant_name, pacticipant_version_number, parsed_version)
+          response.body = to_json
+          response_code
         end
 
         def to_json
@@ -23,7 +35,7 @@ module PactBroker
         end
 
         def delete_resource
-          version_service.delete version
+          version_service.delete(version)
           true
         end
 
@@ -34,13 +46,7 @@ module PactBroker
         private
 
         def version
-          if identifier_from_path[:tag]
-            @version ||= version_service.find_by_pacticipant_name_and_latest_tag(identifier_from_path[:pacticipant_name], identifier_from_path[:tag])
-          elsif identifier_from_path[:pacticipant_version_number]
-            @version ||= version_service.find_by_pacticipant_name_and_number(identifier_from_path)
-          else
-            @version ||= version_service.find_latest_by_pacticpant_name(identifier_from_path)
-          end
+          @version ||= version_service.find_by_pacticipant_name_and_number(identifier_from_path)
         end
       end
     end

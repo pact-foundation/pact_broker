@@ -4,6 +4,7 @@ require 'pact_broker/pacts/pact_version'
 require 'pact_broker/repositories/helpers'
 require 'pact_broker/integrations/integration'
 require 'pact_broker/tags/head_pact_tags'
+require 'pact_broker/pacts/pact_publication_dataset_module'
 
 module PactBroker
   module Pacts
@@ -27,86 +28,8 @@ module PactBroker
 
       dataset_module do
         include PactBroker::Repositories::Helpers
+        include PactPublicationDatasetModule
 
-        def remove_overridden_revisions
-          join(:latest_pact_publication_ids_for_consumer_versions, { Sequel[:lp][:pact_publication_id] => Sequel[:pact_publications][:id] }, { table_alias: :lp})
-        end
-
-        def join_consumer_versions(table_alias = :cv)
-          join(:versions, { Sequel[:pact_publications][:consumer_version_id] => Sequel[table_alias][:id] }, { table_alias: table_alias })
-        end
-
-        def join_consumer_version_tags(table_alias = :ct)
-          join(:tags, { Sequel[table_alias][:version_id] => Sequel[:pact_publications][:consumer_version_id]}, { table_alias: table_alias })
-        end
-
-        def join_consumer_version_tags_with_names(consumer_version_tag_names)
-          join(:tags, {
-            Sequel[:ct][:version_id] => Sequel[:pact_publications][:consumer_version_id],
-            Sequel[:ct][:name] => consumer_version_tag_names
-          }, {
-            table_alias: :ct
-          })
-        end
-
-        def join_providers(table_alias = :providers)
-          join(:pacticipants, { Sequel[:pact_publications][:provider_id] => Sequel[table_alias][:id] }, { table_alias: table_alias })
-        end
-
-        def join_consumers(table_alias = :consumers)
-          join(:pacticipants, { Sequel[:pact_publications][:consumer_id] => Sequel[table_alias][:id] }, { table_alias: table_alias })
-        end
-
-        def join_pact_versions
-          join(:pact_versions, { Sequel[:pact_publications][:pact_version_id] => Sequel[:pact_versions][:id] })
-        end
-
-        def eager_load_pact_versions
-          eager(:pact_versions)
-        end
-
-        def tag tag_name
-          filter = name_like(Sequel.qualify(:tags, :name), tag_name)
-          join(:tags, {version_id: :consumer_version_id}).where(filter)
-        end
-
-        def provider_name_like(name)
-          where(name_like(Sequel[:providers][:name], name))
-        end
-
-        def consumer_name_like(name)
-          where(name_like(Sequel[:consumers][:name], name))
-        end
-
-        def consumer_version_number_like(number)
-          where(name_like(Sequel[:cv][:number], number))
-        end
-
-        def consumer_version_tag(tag)
-          where(Sequel[:ct][:name] => tag)
-        end
-
-        def order_by_consumer_name
-          order_append_ignore_case(Sequel[:consumers][:name])
-        end
-
-        def order_by_consumer_version_order
-          order_append(Sequel[:cv][:order])
-        end
-
-        def where_consumer_if_set(consumer)
-          if consumer
-            where(consumer: consumer)
-          else
-            self
-          end
-        end
-
-        def delete
-          require 'pact_broker/webhooks/triggered_webhook'
-          PactBroker::Webhooks::TriggeredWebhook.where(pact_publication: self).delete
-          super
-        end
       end
 
       def before_create

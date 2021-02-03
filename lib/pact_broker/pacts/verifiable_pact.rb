@@ -4,16 +4,32 @@ require 'pact_broker/error'
 module PactBroker
   module Pacts
     class VerifiablePact < SimpleDelegator
-      attr_reader :selectors, :pending, :pending_provider_tags, :non_pending_provider_tags, :wip
+      attr_reader :selectors, :pending, :pending_provider_tags, :non_pending_provider_tags, :provider_branch, :wip
 
       # TODO refactor this constructor
-      def initialize(pact, selectors, pending, pending_provider_tags = [], non_pending_provider_tags = [], wip = false)
+      def initialize(pact, selectors, pending = nil, pending_provider_tags = [], non_pending_provider_tags = [], provider_branch = nil, wip = false)
         super(pact)
         @pending = pending
         @selectors = selectors
         @pending_provider_tags = pending_provider_tags
         @non_pending_provider_tags = non_pending_provider_tags
+        @provider_branch = provider_branch
         @wip = wip
+      end
+
+      def self.create_for_wip_for_provider_branch(pact, selectors, provider_branch)
+        new(pact, selectors, true, [], [], provider_branch, true)
+      end
+
+      def self.create_for_wip_for_provider_tags(pact, selectors, pending_provider_tags)
+        new(pact, selectors, true, pending_provider_tags, [], nil, true)
+      end
+
+      def self.deduplicate(verifiable_pacts)
+        verifiable_pacts
+          .group_by { | verifiable_pact | verifiable_pact.pact_version_sha }
+          .values
+          .collect { | verifiable_pacts | verifiable_pacts.reduce(&:+) }
       end
 
       def pending?
@@ -29,6 +45,10 @@ module PactBroker
           raise PactBroker::Error.new("Can't merge two verifiable pacts with different pact content")
         end
 
+        if provider_branch != other.provider_branch
+          raise PactBroker::Error.new("Can't merge two verifiable pacts with different provider_branch")
+        end
+
         latest_pact = [self, other].sort_by(&:consumer_version_order).last.__getobj__()
 
         VerifiablePact.new(
@@ -37,6 +57,7 @@ module PactBroker
           pending || other.pending,
           pending_provider_tags + other.pending_provider_tags,
           non_pending_provider_tags + other.non_pending_provider_tags,
+          provider_branch,
           wip || other.wip
         )
       end
