@@ -7,6 +7,9 @@
       "resource_class_name": "PactBroker::Api::Resources::Clean"
     },
     {
+      "resource_class_name": "PactBroker::Api::Resources::Environment"
+    },
+    {
       "resource_class_name": "PactBroker::Api::Resources::ErrorTest"
     },
     {
