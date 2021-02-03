@@ -12,17 +12,12 @@ require 'rspec/pact/matchers'
 require 'sucker_punch/testing/inline'
 require 'webmock/rspec'
 require 'pact_broker/policies'
-require 'approvals/rspec'
 
 Dir.glob("./spec/support/**/*.rb") { |file| require file  }
 
 WebMock.disable_net_connect!(allow_localhost: true)
 
 I18n.config.enforce_available_locales = false
-
-Approvals.configure do |c|
-  c.approvals_path = 'spec/fixtures/approvals/'
-end
 
 RSpec.configure do | config |
   config.before :each do
@@ -52,6 +47,19 @@ RSpec.configure do | config |
   config.include_context "test data builder"
   config.example_status_persistence_file_path = "./spec/examples.txt"
   config.filter_run_excluding skip: true
+
+  config.after(:each) do | example, something |
+    if example.exception.is_a?(Approvals::ApprovalError)
+      require "pact/support"
+      parts = example.exception.message.split('"')
+      received_file = parts[1]
+      approved_file = parts[3]
+      received_hash = JSON.parse(File.read(received_file))
+      approved_hash = JSON.parse(File.read(approved_file))
+      diff = Pact::Matchers.diff(approved_hash, received_hash)
+      puts Pact::Matchers::UnixDiffFormatter.call(diff)
+    end
+  end
 
   def app
     PactBroker::API
