@@ -25,9 +25,10 @@ module PactBroker
           @environment = if environment
             environment_service.update(environment_name, parsed_environment)
           else
-            environment_service.create(environment_name, parsed_environment)
-            # Make it return a 201 by setting the Location header
-            response.headers["Location"] = resource_url
+            environment_service.create(environment_name, parsed_environment).tap do
+              # Make it return a 201 by setting the Location header
+              response.headers["Location"] = resource_url
+            end
           end
 
           response.body = to_json
