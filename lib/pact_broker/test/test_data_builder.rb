@@ -393,6 +393,10 @@ module PactBroker
         PactBroker::Domain::Pacticipant.where(name: name).single_record
       end
 
+      def find_version(pacticipant_name, version_number)
+        PactBroker::Domain::Version.for(pacticipant_name, version_number)
+      end
+
       def model_counter
         @@model_counter ||= 0
         @@model_counter += 1

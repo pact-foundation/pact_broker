@@ -351,6 +351,10 @@ module PactBroker
         consumer_version.number
       end
 
+      def consumer_version_branch
+        consumer_version.branch
+      end
+
       def consumer_version_order
         consumer_version.order
       end
@@ -361,6 +365,10 @@ module PactBroker
 
       def provider_version_number
         provider_version&.number
+      end
+
+      def provider_version_branch
+        provider_version&.branch
       end
 
       def provider_version_order

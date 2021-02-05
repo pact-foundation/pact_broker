@@ -151,6 +151,12 @@ module PactBroker
       def latest_pact_publication
         pact_publications.last
       end
+
+      def latest_for_branch?
+        return nil unless branch
+        self_order = self.order
+        Version.where(branch: branch, pacticipant_id: pacticipant_id).where { order > self_order }.empty?
+      end
     end
   end
 end

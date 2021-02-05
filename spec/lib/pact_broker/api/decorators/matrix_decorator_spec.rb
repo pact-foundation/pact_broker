@@ -1,6 +1,7 @@
 require 'pact_broker/api/decorators/matrix_decorator'
 require 'pact_broker/matrix/query_results_with_deployment_status_summary'
 require 'pact_broker/matrix/deployment_status_summary'
+require 'pact_broker/matrix/quick_row'
 
 module PactBroker
   module Api
@@ -12,37 +13,39 @@ module PactBroker
           let(:row_1_success) { true }
           let(:row_2_success) { true }
           let(:row_1) do
-            double('PactBroker::Matrix::Row',
+            instance_double('PactBroker::Matrix::QuickRow',
               {
                 consumer_name: "Consumer",
                 consumer_version_number: "1.0.0",
+                consumer_version_branch: "main",
                 consumer_version_tags: consumer_version_tags,
                 provider_version_tags: provider_version_tags,
                 pact_version_sha: "1234",
                 pact_created_at: pact_created_at,
                 provider_version_number: "4.5.6",
+                provider_version_branch: "feat/x",
                 provider_name: "Provider",
                 success: row_1_success,
                 verification_number: 1,
-                verification_build_url: nil,
                 verification_executed_at: verification_date
               }
             )
           end
 
           let(:row_2) do
-            double('PactBroker::Matrix::Row',
+            instance_double('PactBroker::Matrix::QuickRow',
               {
                 consumer_name: "Consumer",
                 consumer_version_number: "1.0.0",
+                consumer_version_branch: "main",
                 consumer_version_tags: [],
                 pact_version_sha: "1234",
                 pact_created_at: pact_created_at,
                 provider_version_number: nil,
+                provider_version_branch: nil,
                 provider_name: "Provider",
                 success: row_2_success,
                 verification_number: nil,
-                verification_build_url: nil,
                 verification_executed_at: verification_date
               }
             )
@@ -58,6 +61,7 @@ module PactBroker
               },
               version: {
                 number: '1.0.0',
+                branch: 'main',
                 _links: {
                   self: {
                     href: 'http://example.org/pacticipants/Consumer/versions/1.0.0'
@@ -88,6 +92,7 @@ module PactBroker
               },
               version: {
                 number: '4.5.6',
+                branch: 'feat/x',
                 _links: {
                   self: {
                     href: 'http://example.org/pacticipants/Provider/versions/4.5.6'

@@ -75,6 +75,7 @@ module PactBroker
             name: line.consumer_name,
             version: {
               number: line.consumer_version_number,
+              branch: line.consumer_version_branch,
               _links: {
                 self: {
                   href: version_url(base_url, consumer_version)
@@ -118,6 +119,7 @@ module PactBroker
           if !line.provider_version_number.nil?
             hash[:version] = {
               number: line.provider_version_number,
+              branch: line.provider_version_branch,
               _links: {
                 self: {
                   href: version_url(base_url, provider_version)

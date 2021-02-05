@@ -51,6 +51,19 @@ module PactBroker
         pact_version.latest_verification
       end
 
+      def latest_for_branch?
+        return nil unless consumer_version.branch
+        self_order = self.consumer_version.order
+        versions_join = {
+          Sequel[:pact_publications][:consumer_version_id] => Sequel[:cv][:id]
+        }
+        PactPublication.where(consumer_id: consumer_id, provider_id: provider_id)
+          .join_consumer_versions(:cv, { Sequel[:cv][:branch] => consumer_version.branch} ) do
+            Sequel[:cv][:order] > self_order
+          end
+        .empty?
+      end
+
       def to_domain
         PactBroker::Domain::Pact.new(
           id: id,
@@ -83,11 +96,11 @@ module PactBroker
       end
 
       def to_version_domain
-        OpenStruct.new(number: consumer_version.number, pacticipant: consumer, tags: consumer_version.tags, order: consumer_version.order)
+        OpenStruct.new(number: consumer_version.number, pacticipant: consumer, tags: consumer_version.tags, order: consumer_version.order, branch: consumer_version.branch)
       end
 
       def to_version_domain_lightweight
-        OpenStruct.new(number: consumer_version.number, pacticipant: consumer, order: consumer_version.order)
+        OpenStruct.new(number: consumer_version.number, pacticipant: consumer, order: consumer_version.order, branch: consumer_version.branch)
       end
 
       private

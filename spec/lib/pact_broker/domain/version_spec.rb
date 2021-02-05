@@ -195,6 +195,35 @@ module PactBroker
           expect(version.tags_with_latest_flag.select(&:latest).collect(&:name)).to eq %w{prod}
         end
       end
+
+      describe "latest_for_branch?" do
+        before do
+          td.create_consumer("Foo")
+            .create_consumer_version("1", branch: "main")
+            .create_consumer_version("2", branch: "main")
+            .create_consumer_version("3", branch: nil)
+        end
+
+        subject { version.latest_for_branch? }
+
+        context "when there is a later verson with the same branch name" do
+          let(:version) { Version.for("Foo", "1") }
+
+          it { is_expected.to be false }
+        end
+
+        context "when there is a later verson with the same branch name" do
+          let(:version) { Version.for("Foo", "2") }
+
+          it { is_expected.to be true }
+        end
+
+        context "when there is no branch" do
+          let(:version) { Version.for("Foo", "3") }
+
+          it { is_expected.to be nil }
+        end
+      end
     end
   end
 end

@@ -20,7 +20,8 @@
               "href": "consumer_version_url"
             }
           },
-          "number": "1"
+          "number": "1",
+          "branch": "main"
         }
       },
       "latestVerificationResult": {
@@ -73,7 +74,8 @@
         },
         "name": "Bar",
         "version": {
-          "number": "2"
+          "number": "2",
+          "branch": "main"
         }
       },
       "verificationStatus": "wiffle",

@@ -183,8 +183,11 @@ module PactBroker
         join(:latest_pact_publication_ids_for_consumer_versions, { Sequel[:lp][:pact_publication_id] => Sequel[:pact_publications][:id] }, { table_alias: :lp})
       end
 
-      def join_consumer_versions(table_alias = :cv)
-        join(:versions, { Sequel[:pact_publications][:consumer_version_id] => Sequel[table_alias][:id] }, { table_alias: table_alias })
+      def join_consumer_versions(table_alias = :cv, extra_join_criteria = {}, &block)
+        versions_join = {
+          Sequel[:pact_publications][:consumer_version_id] => Sequel[table_alias][:id]
+        }.merge(extra_join_criteria)
+        join(:versions, versions_join, { table_alias: table_alias }, &block)
       end
 
       def join_consumer_version_tags(table_alias = :ct)

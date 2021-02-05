@@ -86,6 +86,32 @@ module PactBroker
         end
       end
 
+      describe "latest_for_branch?" do
+        before do
+          td.create_consumer("Foo")
+            .create_provider("Bar")
+            .create_consumer_version("1", branch: "main")
+            .create_pact
+            .create_consumer_version("2", branch: "main")
+            .create_pact
+            .create_consumer_version("3", branch: "main")
+        end
+
+        subject { pact_publication.latest_for_branch? }
+
+        context "when there are no later pacts with the same branch" do
+          let(:pact_publication) { PactPublication.where(consumer_version: td.find_version("Foo", "2")).single_record }
+
+          it { is_expected.to be true }
+        end
+
+        context "when there are later pacts with the same branch" do
+          let(:pact_publication) { PactPublication.where(consumer_version: td.find_version("Foo", "1")).single_record }
+
+          it { is_expected.to be false }
+        end
+      end
+
       describe "#consumer_version_tags" do
         before do
           td.create_pact_with_hierarchy("Foo", "1.2.3", "Bar")
