@@ -55,8 +55,8 @@ module PactBroker
           .eager(:provider)
           .eager(:pact_version)
           .eager(integration: [{latest_verification: :provider_version}, :latest_triggered_webhooks])
-          .eager(:consumer_version)
-          .eager(latest_verification: { provider_version: :tags_with_latest_flag })
+          .eager(consumer_version: [:latest_version_for_branch])
+          .eager(latest_verification: { provider_version: [:latest_version_for_branch, :tags_with_latest_flag] })
           .eager(:head_pact_tags)
 
         index_items = pact_publications.all.collect do | pact_publication |
@@ -117,8 +117,8 @@ module PactBroker
           .eager(:consumer)
           .eager(:provider)
           .eager(:pact_version)
-          .eager(:consumer_version)
-          .eager(latest_verification: { provider_version: :tags_with_latest_flag })
+          .eager(consumer_version: [:latest_version_for_branch])
+          .eager(latest_verification: { provider_version: [:tags_with_latest_flag, :latest_version_for_branch]})
           .eager(:head_pact_tags)
 
 
