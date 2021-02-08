@@ -1,6 +1,7 @@
 require 'sequel'
 require 'pact_broker/repositories/helpers'
 require 'pact_broker/webhooks/execution'
+require 'pact_broker/hash_refinements'
 
 # Represents the relationship between a webhook and the event and object
 # that caused it to be triggered. eg a pact publication
@@ -8,7 +9,9 @@ require 'pact_broker/webhooks/execution'
 module PactBroker
   module Webhooks
     class TriggeredWebhook < Sequel::Model(:triggered_webhooks)
+      using PactBroker::HashRefinements
       plugin :timestamps, update_on_create: true
+      plugin :serialization, :json, :event_context
 
       TRIGGER_TYPE_RESOURCE_CREATION = 'resource_creation'
       TRIGGER_TYPE_USER = 'user'
@@ -59,7 +62,7 @@ module PactBroker
         # getting a random 'no method to_domain for null' error
         # not sure on which object, so splitting this out into two lines
         pact = pact_publication.to_domain
-        webhook.to_domain.execute(pact, verification, options)
+        webhook.to_domain.execute(pact, verification, event_context.symbolize_keys, options)
       end
 
       def consumer_name

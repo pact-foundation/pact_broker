@@ -22,6 +22,8 @@ module PactBroker
         end
 
         let(:options) { { webhook_execution_configuration: webhook_execution_configuration } }
+        let(:event_context) { { some: "data" } }
+        let(:expected_event_context) { { some: "data", provider_version_tags: ["dev"] } }
         let(:webhook_execution_configuration) { instance_double(PactBroker::Webhooks::ExecutionConfiguration) }
         let(:params) { { 'success' => true, 'providerApplicationVersion' => '4.5.6', 'wip' => true, 'testResults' => { 'some' => 'results' }} }
         let(:pact) do
@@ -30,7 +32,7 @@ module PactBroker
             .create_provider_version_tag('dev')
             .and_return(:pact)
         end
-        let(:create_verification) { subject.create 3, params, pact, options }
+        let(:create_verification) { subject.create 3, params, pact, event_context, options }
 
         it "logs the creation" do
           expect(logger).to receive(:info).with(/.*verification.*3/, payload: {"providerApplicationVersion"=>"4.5.6", "success"=>true, "wip"=>true})
@@ -67,6 +69,7 @@ module PactBroker
           expect(PactBroker::Webhooks::TriggerService).to have_received(:trigger_webhooks_for_verification_results_publication).with(
             pact,
             verification,
+            expected_event_context,
             options
           )
         end

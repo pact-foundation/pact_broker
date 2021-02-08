@@ -20,7 +20,7 @@ module PactBroker
         verification_repository.next_number
       end
 
-      def create next_verification_number, params, pact, webhook_options
+      def create next_verification_number, params, pact, event_context, webhook_options
         logger.info "Creating verification #{next_verification_number} for pact_id=#{pact.id}", payload: params.reject{ |k,_| k == "testResults"}
         verification = PactBroker::Domain::Verification.new
         provider_version_number = params.fetch('providerApplicationVersion')
@@ -35,6 +35,7 @@ module PactBroker
         webhook_trigger_service.trigger_webhooks_for_verification_results_publication(
           pact,
           verification,
+          event_context.merge(provider_version_tags: verification.provider_version_tag_names),
           webhook_options.deep_merge(webhook_execution_configuration: execution_configuration)
         )
         verification

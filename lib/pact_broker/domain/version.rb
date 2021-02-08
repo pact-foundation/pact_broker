@@ -2,6 +2,8 @@ require 'pact_broker/db'
 require 'pact_broker/domain/order_versions'
 require 'pact_broker/repositories/helpers'
 require 'pact_broker/tags/tag_with_latest_flag'
+require 'pact_broker/versions/eager_loaders'
+require 'pact_broker/versions/lazy_loaders'
 
 module PactBroker
   module Domain
@@ -22,14 +24,14 @@ module PactBroker
 
     class Version < Sequel::Model
       plugin :timestamps, update_on_create: true
-      plugin :insert_ignore, identifying_columns: [:pacticipant_id, :number]
+      plugin :upsert, identifying_columns: [:pacticipant_id, :number]
 
       set_primary_key :id
       one_to_many :pact_publications, order: :revision_number, class: "PactBroker::Pacts::PactPublication", key: :consumer_version_id
       associate(:many_to_one, :pacticipant, :class => "PactBroker::Domain::Pacticipant", :key => :pacticipant_id, :primary_key => :id)
       one_to_many :tags, :reciprocal => :version, order: :created_at
 
-      one_to_many :tags_with_latest_flag, :class => "PactBroker::Tags::TagWithLatestFlag", primary_keys: [:id], key: [:version_id], :eager_loader=>(proc do |eo_opts|
+      one_to_many :tags_with_latest_flag, :class => "PactBroker::Tags::TagWithLatestFlag", primary_keys: [:id], key: [:version_id], :eager_loader => (proc do |eo_opts|
         tags_for_versions = PactBroker::Domain::Tag.where(version_id: eo_opts[:key_hash][:id].keys)
         latest_tag_for_pacticipants = PactBroker::Domain::Tag.latest_tags_for_pacticipant_ids(eo_opts[:rows].collect(&:pacticipant_id)).all
 
@@ -43,12 +45,29 @@ module PactBroker
         end
       end)
 
+      many_to_one :latest_version_for_branch, read_only: true, key: :id,
+        class: Version,
+        dataset: PactBroker::Versions::LazyLoaders::LATEST_VERSION_FOR_BRANCH,
+        eager_loader: PactBroker::Versions::EagerLoaders::LatestVersionForBranchEagerLoader
 
       dataset_module do
         include PactBroker::Repositories::Helpers
 
         def for(pacticipant_name, version_number)
           where_pacticipant_name(pacticipant_name).where_number(version_number).single_record
+        end
+
+        def latest_versions_for_pacticipant_branches(pacticipant, branches)
+          query = Version.where(pacticipant: pacticipant, Sequel[:versions][:branch] => branches)
+
+          self_join = {
+            Sequel[:versions][:pacticipant_id] => Sequel[:versions_2][:pacticipant_id],
+            Sequel[:versions][:branch] => Sequel[:versions_2][:branch]
+          }
+          query.select_all_qualified.left_join(query, self_join, table_alias: :versions_2) do
+            Sequel[:versions_2][:order] > Sequel[:versions][:order]
+          end
+          .where(Sequel[:versions_2][:order] => nil)
         end
 
         def where_pacticipant_name(pacticipant_name)
@@ -154,6 +173,10 @@ module PactBroker
       # What about provider??? This makes no sense
       def latest_pact_publication
         pact_publications.last
+      end
+
+      def latest_for_branch?
+        branch ? latest_version_for_branch.order == order : nil
       end
     end
   end

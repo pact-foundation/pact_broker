@@ -55,7 +55,7 @@ module PactBroker
             end
           rescue StandardError => e
             # Want to render a badge, even if there's an error
-            badge_service.error_badge_url("error", ErrorHandler.display_message(e, "reference: #{ErrorHandler.generate_error_reference}"))
+            badge_service.error_badge_url("error", ErrorResponseBodyGenerator.display_message(e, "reference: #{PactBroker::Errors.generate_error_reference}"))
           end
         end
 

@@ -50,7 +50,7 @@ module PactBroker
         end
 
         def from_json
-          verification = verification_service.create(next_verification_number, verification_params, pact, webhook_options)
+          verification = verification_service.create(next_verification_number, verification_params, pact, event_context, webhook_options)
           response.body = decorator_for(verification).to_json(decorator_options)
           true
         end
@@ -81,11 +81,14 @@ module PactBroker
           metadata[:wip] == 'true'
         end
 
+        def event_context
+          metadata
+        end
+
         def webhook_options
           {
             database_connector: database_connector,
             webhook_execution_configuration: webhook_execution_configuration
-                                      .with_webhook_context(metadata)
           }
         end
 

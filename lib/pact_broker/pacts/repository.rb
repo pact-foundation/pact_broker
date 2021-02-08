@@ -19,11 +19,11 @@ require 'pact_broker/pacts/selected_pact'
 require 'pact_broker/pacts/selector'
 require 'pact_broker/pacts/selectors'
 require 'pact_broker/feature_toggle'
+require 'pact_broker/pacts/pacts_for_verification_repository'
 
 module PactBroker
   module Pacts
     class Repository
-
       include PactBroker::Logging
       include PactBroker::Repositories
       include PactBroker::Repositories::Helpers
@@ -146,89 +146,12 @@ module PactBroker
         end
       end
 
-      def find_all_pact_versions_for_provider_with_consumer_version_tags provider_name, selector
-        provider = pacticipant_repository.find_by_name(provider_name)
-        consumer = selector.consumer ? pacticipant_repository.find_by_name(selector.consumer) : nil
-
-        scope_for(PactPublication)
-          .select_all_qualified
-          .select_append(Sequel[:cv][:order].as(:consumer_version_order))
-          .select_append(Sequel[:ct][:name].as(:consumer_version_tag_name))
-          .remove_overridden_revisions
-          .join_consumer_versions(:cv)
-          .join_consumer_version_tags_with_names(selector.tag)
-          .where(provider: provider)
-          .where_consumer_if_set(consumer)
-          .eager(:consumer)
-          .eager(:consumer_version)
-          .eager(:provider)
-          .eager(:pact_version)
-          .all
-          .group_by(&:pact_version_id)
-          .values
-          .collect do | pact_publications |
-            latest_pact_publication = pact_publications.sort_by{ |p| p.values.fetch(:consumer_version_order) }.last
-            SelectedPact.new(latest_pact_publication.to_domain, Selectors.new(selector).resolve(latest_pact_publication.consumer_version))
-          end
+      def find_for_verification(provider_name, consumer_version_selectors)
+        PactsForVerificationRepository.new.find(provider_name, consumer_version_selectors)
       end
 
-      # To find the work in progress pacts for this verification execution:
-      # For each provider tag that will be applied to this verification result (usually there will just be one, but
-      # we have to allow for multiple tags),
-      # find the head pacts (the pacts that are the latest for their tag) that have been successfully
-      # verified against the provider tag.
-      # Then, find all the head pacts, and remove the ones that have been successfully verified by ALL
-      # of the provider tags supplied, and the ones that were published before the include_wip_pacts_since date.
-      # Then, for all of the head pacts that are remaining (these are the WIP ones) work out which
-      # provider tags they are pending for.
-      # Don't include pact publications that were created before the provider tag was first used
-      # (that is, before the provider's git branch was created).
-      def find_wip_pact_versions_for_provider provider_name, provider_tags_names = [], options = {}
-        # TODO not sure about this
-        return [] if provider_tags_names.empty?
-
-        provider = pacticipant_repository.find_by_name(provider_name)
-
-        # Hash of provider tag name => list of head pacts that have been successfully verified by that tag
-        successfully_verified_head_pacts_for_provider_tags = find_successfully_verified_head_pacts_by_provider_tag(provider.id, provider_tags_names, options)
-        # Create hash of provider tag name => list of pact publication ids
-        successfully_verified_head_pact_publication_ids_for_each_provider_tag = successfully_verified_head_pacts_for_provider_tags.each_with_object({}) do | (provider_tag_name, head_pacts), hash |
-          hash[provider_tag_name] = head_pacts.collect(&:id).uniq
-        end
-
-        # list of head pact_publication_ids that are NOT work in progress because they've been verified by all of the provider version tags supplied
-        non_wip_pact_publication_ids = successfully_verified_head_pacts_for_provider_tags.values.collect{ |head_pacts| head_pacts.collect(&:id) }.reduce(:&)
-
-        wip_pact_publication_ids = find_head_pacts_that_have_not_been_successfully_verified_by_all_provider_tags(
-          provider.id,
-          non_wip_pact_publication_ids,
-          options)
-
-        wip_pacts = scope_for(PactPublication).where(id: wip_pact_publication_ids)
-
-        # The first instance (by date) of each provider tag with that name
-        provider_tag_collection = PactBroker::Domain::Tag
-          .select_group(Sequel[:tags][:name], Sequel[:versions][:pacticipant_id])
-          .select_append(Sequel.function(:min, Sequel[:tags][:created_at]).as(:created_at))
-          .distinct
-          .join(:versions, { Sequel[:tags][:version_id] => Sequel[:versions][:id] } )
-          .where(Sequel[:versions][:pacticipant_id] => provider.id)
-          .where(name: provider_tags_names)
-          .all
-
-        provider_version_count = scope_for(PactBroker::Domain::Version).where(pacticipant: provider).count
-
-        wip_pacts.collect do | pact|
-          pending_tag_names = find_provider_tags_for_which_pact_publication_id_is_pending(pact, successfully_verified_head_pact_publication_ids_for_each_provider_tag)
-          pre_existing_tag_names = find_provider_tag_names_that_were_first_used_before_pact_published(pact, provider_tag_collection)
-
-          pre_existing_pending_tags = pending_tag_names & pre_existing_tag_names
-
-          if pre_existing_pending_tags.any? || (PactBroker.feature_enabled?(:experimental_no_provider_versions_makes_all_head_pacts_wip) && provider_version_count == 0)
-            selectors = Selectors.create_for_latest_of_each_tag(pact.head_tag_names)
-            VerifiablePact.new(pact.to_domain, selectors, true, pre_existing_pending_tags, [], true)
-          end
-        end.compact.sort
+      def find_wip_pact_versions_for_provider provider_name, provider_version_branch, provider_tags_names = [], options = {}
+        PactsForVerificationRepository.new.find_wip(provider_name, provider_version_branch, provider_tags_names, options)
       end
 
       def find_pact_versions_for_provider provider_name, tag = nil
@@ -387,109 +310,7 @@ module PactBroker
         end
       end
 
-      # Returns a list of Domain::Pact objects the represent pact publications
-      def find_for_verification(provider_name, consumer_version_selectors)
-        selected_pacts = find_pacts_for_which_the_latest_version_is_required(provider_name, consumer_version_selectors) +
-        find_pacts_for_which_the_latest_version_for_the_tag_is_required(provider_name, consumer_version_selectors) +
-        find_pacts_for_which_all_versions_for_the_tag_are_required(provider_name, consumer_version_selectors)
-
-        selected_pacts = selected_pacts + find_pacts_for_fallback_tags(selected_pacts, provider_name, consumer_version_selectors)
-
-        selected_pacts
-          .group_by{ |p| [p.consumer_name, p.pact_version_sha] }
-          .values
-          .collect do | selected_pacts_for_pact_version_id |
-            SelectedPact.merge(selected_pacts_for_pact_version_id)
-          end
-      end
-
       private
-
-      def find_pacts_for_fallback_tags(selected_pacts, provider_name, consumer_version_selectors)
-        # TODO at the moment, the validation doesn't stop fallback being used with 'all' selectors
-        selectors_with_fallback_tags = consumer_version_selectors.select(&:fallback_tag?)
-        selectors_missing_a_pact = selectors_with_fallback_tags.reject do | selector |
-          selected_pacts.any? do | selected_pact |
-            selected_pact.latest_for_tag?(selector.tag)
-          end
-        end
-
-        if selectors_missing_a_pact.any?
-          find_pacts_for_which_the_latest_version_for_the_fallback_tag_is_required(provider_name, selectors_missing_a_pact)
-        else
-          []
-        end
-      end
-
-      def find_pacts_for_which_the_latest_version_is_required(provider_name, consumer_version_selectors)
-        if consumer_version_selectors.empty?
-          scope_for(LatestPactPublications)
-            .provider(provider_name)
-            .order_ignore_case(:consumer_name)
-            .collect do | latest_pact_publication |
-              pact_publication = PactPublication.find(id: latest_pact_publication.id)
-              SelectedPact.new(pact_publication.to_domain, Selectors.create_for_overall_latest.resolve(pact_publication.consumer_version))
-            end
-        else
-          selectors_for_overall_latest = consumer_version_selectors.select(&:overall_latest?)
-          selectors_for_overall_latest.flat_map do | selector |
-            query = scope_for(LatestPactPublications).provider(provider_name)
-            query = query.consumer(selector.consumer) if selector.consumer
-            query.collect do | latest_pact_publication |
-              pact_publication = PactPublication.find(id: latest_pact_publication.id)
-              resolved_selector = selector.consumer ? Selector.latest_for_consumer(selector.consumer) : Selector.overall_latest
-              SelectedPact.new(pact_publication.to_domain, Selectors.new(resolved_selector).resolve(pact_publication.consumer_version))
-            end
-          end
-        end
-      end
-
-      def find_pacts_for_which_the_latest_version_for_the_tag_is_required(provider_name, consumer_version_selectors)
-        # The tags for which only the latest version is specified
-        selectors = consumer_version_selectors.select(&:latest_for_tag?)
-
-        selectors.flat_map do | selector |
-          query = scope_for(LatestTaggedPactPublications).where(tag_name: selector.tag).provider(provider_name)
-          query = query.consumer(selector.consumer) if selector.consumer
-          query.all.collect do | latest_tagged_pact_publication |
-            pact_publication = PactPublication.find(id: latest_tagged_pact_publication.id)
-            resolved_selector = if selector.consumer
-              Selector.latest_for_tag_and_consumer(selector.tag, selector.consumer).resolve(pact_publication.consumer_version)
-            else
-              Selector.latest_for_tag(selector.tag).resolve(pact_publication.consumer_version)
-            end
-            SelectedPact.new(
-              pact_publication.to_domain,
-              Selectors.new(resolved_selector)
-            )
-          end
-        end
-      end
-
-      def find_pacts_for_which_the_latest_version_for_the_fallback_tag_is_required(provider_name, selectors)
-        selectors.collect do | selector |
-          query = scope_for(LatestTaggedPactPublications).provider(provider_name).where(tag_name: selector.fallback_tag)
-          query = query.consumer(selector.consumer) if selector.consumer
-          query.all
-            .collect do | latest_tagged_pact_publication |
-              pact_publication = unscoped(PactPublication).find(id: latest_tagged_pact_publication.id)
-              SelectedPact.new(
-                pact_publication.to_domain,
-                Selectors.new(selector.resolve(pact_publication.consumer_version))
-              )
-            end
-        end.flatten
-      end
-
-
-      def find_pacts_for_which_all_versions_for_the_tag_are_required(provider_name, consumer_version_selectors)
-        # The tags for which all versions are specified
-        selectors = consumer_version_selectors.select(&:all_for_tag?)
-
-        selectors.flat_map do | selector |
-          find_all_pact_versions_for_provider_with_consumer_version_tags(provider_name, selector)
-        end
-      end
 
       def find_previous_distinct_pact_by_sha pact
         current_pact_content_sha =
@@ -539,17 +360,6 @@ module PactBroker
         query
       end
 
-      def find_provider_tags_for_which_pact_publication_id_is_pending(pact_publication, successfully_verified_head_pact_publication_ids_for_each_provider_tag)
-        successfully_verified_head_pact_publication_ids_for_each_provider_tag
-          .select do | _, pact_publication_ids |
-            !pact_publication_ids.include?(pact_publication.id)
-          end.keys
-      end
-
-      def find_provider_tag_names_that_were_first_used_before_pact_published(pact_publication, provider_tag_collection)
-        provider_tag_collection.select { | tag| to_datetime(tag.created_at) < pact_publication.created_at }.collect(&:name)
-      end
-
       # Note: created_at is coming back as a string for sqlite
       # Can't work out how to to tell Sequel that this should be a date
       def to_datetime string_or_datetime
@@ -557,42 +367,6 @@ module PactBroker
           Sequel.string_to_datetime(string_or_datetime)
         else
           string_or_datetime
-        end
-      end
-
-      def find_head_pacts_that_have_not_been_successfully_verified_by_all_provider_tags(provider_id, pact_publication_ids_successfully_verified_by_all_provider_tags, options)
-        # Exclude the head pacts that have been successfully verified by all the specified provider tags
-        scope_for(LatestTaggedPactPublications)
-          .where(provider_id: provider_id)
-          .where(Sequel.lit('latest_tagged_pact_publications.created_at > ?', options.fetch(:include_wip_pacts_since)))
-          .exclude(id: pact_publication_ids_successfully_verified_by_all_provider_tags)
-          .select_for_subquery(:id)
-      end
-
-      # Find the head pacts that have been successfully verified by a provider version with the specified
-      # provider version tags.
-      # Returns a Hash of provider_tag => LatestTaggedPactPublications with only pact publication id and tag_name populated
-      # This is the list of pacts we are EXCLUDING from the WIP list because they have already been verified successfully
-      def find_successfully_verified_head_pacts_by_provider_tag(provider_id, provider_tags, options)
-        provider_tags.compact.each_with_object({}) do | provider_tag, hash |
-          verifications_join = {
-            pact_version_id: :pact_version_id,
-            Sequel[:verifications][:success] => true,
-            Sequel[:verifications][:wip] => false,
-            Sequel[:verifications][:provider_id] => provider_id
-          }
-          tags_join = {
-            Sequel[:verifications][:provider_version_id] => Sequel[:provider_tags][:version_id],
-            Sequel[:provider_tags][:name] => provider_tag
-          }
-          head_pacts = scope_for(LatestTaggedPactPublications)
-            .select(Sequel[:latest_tagged_pact_publications][:id].as(:id))
-            .join(:verifications, verifications_join)
-            .join(:tags, tags_join, { table_alias: :provider_tags } )
-            .where(Sequel[:latest_tagged_pact_publications][:provider_id] => provider_id)
-            .distinct
-            .all
-          hash[provider_tag] = head_pacts
         end
       end
     end

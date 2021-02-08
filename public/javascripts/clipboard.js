@@ -5,7 +5,7 @@
  *     %div.clippable
  *       = Text to be copied
  *       %button.clippy.invisible{ title: "Copy to clipboard" }
- *         %span.glyphicon.glyphicon-copy
+ *         %span.copy-icon
  */
 
 /**
@@ -64,10 +64,10 @@ function copyToClipboard(text) {
  */
 function flashClipped(clippyButton) {
   const icon = clippyButton.children("span");
-  icon.attr("class", "glyphicon glyphicon-ok success");
+  icon.attr("class", "copy-success-icon");
 
   setTimeout(
-    function() { icon.attr("class", "glyphicon glyphicon-copy"); },
+    function() { icon.attr("class", "copy-icon"); },
     2000
   );
 }

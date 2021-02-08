@@ -39,13 +39,17 @@ module PactBroker
           query_results_with_deployment_status_summary
             .deployment_status_summary
             .reasons
-            .collect{ | reason | ReasonDecorator.new(reason).to_s }
+            .collect{ | reason | reason_decorator_class.new(reason).to_s }
             .join("\n")
         end
 
         private
 
         attr_reader :query_results_with_deployment_status_summary
+
+        def reason_decorator_class
+          ReasonDecorator
+        end
 
         def matrix(base_url)
           query_results_with_deployment_status_summary.rows.collect do | line |
@@ -71,6 +75,7 @@ module PactBroker
             name: line.consumer_name,
             version: {
               number: line.consumer_version_number,
+              branch: line.consumer_version_branch,
               _links: {
                 self: {
                   href: version_url(base_url, consumer_version)
@@ -87,7 +92,7 @@ module PactBroker
         end
 
         def tags(tags, base_url)
-          tags.collect do | tag |
+          tags.sort_by(&:created_at).collect do | tag |
             {
               name: tag.name,
               latest: tag.latest?,
@@ -114,6 +119,7 @@ module PactBroker
           if !line.provider_version_number.nil?
             hash[:version] = {
               number: line.provider_version_number,
+              branch: line.provider_version_branch,
               _links: {
                 self: {
                   href: version_url(base_url, provider_version)

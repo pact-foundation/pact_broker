@@ -27,3 +27,17 @@ li.pact-badge > img {
 div.pact-badge-markdown {
   background-color: #f8f8f8
 }
+
+span.kebab-horizontal {
+  background-image: url('/images/kebab-horizontal.svg');
+  background-repeat: no-repeat;
+  display:block;
+  position: relative;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+span.more-options {
+  float: right;
+}

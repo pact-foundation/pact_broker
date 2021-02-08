@@ -51,7 +51,7 @@ module PactBroker
       end
 
       def execute
-        options = PactBroker::BuildHttpOptions.call(uri)
+        options = PactBroker::BuildHttpOptions.call(uri).merge(read_timeout: 15, open_timeout: 15)
         req = http_request
         Net::HTTP.start(uri.hostname, uri.port, :ENV, options) do |http|
           http.request req

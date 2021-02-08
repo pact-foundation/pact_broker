@@ -1,6 +1,17 @@
-.input-group {
-  display: inline-block;
-  padding-right: 20px
+div {
+  /*border: 1px solid red;*/
+ }
+
+.selector {
+  margin-top: 0.5em;
+}
+
+.field {
+  margin-right: 1em;
+}
+
+.selector label {
+  width: 10em;
 }
 
 input[type="radio"] {
@@ -16,12 +27,19 @@ div.tag-parent {
   margin-bottom: 1px;
 }
 
-div.tag {
+div.tag, div.version {
   display: inline-block;
 }
 
 span.pre-verified-icon {
   color: #337ab7;
+  background-image: url('/images/clock.svg');
+  background-repeat: no-repeat;
+  display:inline-block;
+  position: relative;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
 }
 
 /* Need to make the tooltip wide enough to show the full SHA */
@@ -33,11 +51,22 @@ input.pacticipant_name {
   width: 250px;
 }
 
-input.tag {
+input.tag, input.version {
   width: 250px;
+  margin-left: 0.5em;
 }
 
 img.pact_badge {
   float: right;
   margin-top: 15px;
+}
+
+.selector {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.field {
+  display: flex;
+  justify-content: flex-start;
 }

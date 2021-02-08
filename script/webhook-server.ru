@@ -1,10 +1,10 @@
 require 'rack/utils'
+STDOUT.sync = true
+puts "Starting webhook server"
 
-count = 0
 run -> (env) {
-  count += 1
-  status = (count % 3 == 0) ? 200 : 500
-  puts Rack::Utils.parse_nested_query(env['QUERY_STRING'])
+  status = 200
+  puts Rack::Utils.parse_nested_query(env['QUERY_STRING']) if env['QUERY_STRING'] && env['QUERY_STRING'] != ''
   puts env['rack.input'].read
-  [status, {}, ["Hello. This might be an error.\n"]]
+  [status, {"Content-Type" => "text/plain"}, ["Webhook response.\n"]]
 }

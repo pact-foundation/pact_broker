@@ -6,6 +6,7 @@ module PactBroker
       describe VerifiablePactsQueryDecorator do
 
         let(:provider_version_tags) { %w[dev] }
+        let(:provider_version_branch) { "main" }
 
         subject { VerifiablePactsQueryDecorator.new(OpenStruct.new).from_hash(params)  }
 
@@ -13,6 +14,7 @@ module PactBroker
           let(:params) do
             {
               "providerVersionTags" => provider_version_tags,
+              "providerVersionBranch" => provider_version_branch,
               "consumerVersionSelectors" => consumer_version_selectors
             }
           end
@@ -23,6 +25,10 @@ module PactBroker
 
           it "parses the consumer_version_selectors to a Selectors collection" do
             expect(subject.consumer_version_selectors).to be_a(PactBroker::Pacts::Selectors)
+          end
+
+          it "parses the provider version branch" do
+            expect(subject.provider_version_branch).to eq "main"
           end
 
           context "when latest is not specified" do

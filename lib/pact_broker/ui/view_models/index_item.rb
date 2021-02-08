@@ -3,11 +3,16 @@ require 'pact_broker/ui/helpers/url_helper'
 require 'pact_broker/date_helper'
 require 'pact_broker/versions/abbreviate_number'
 require 'pact_broker/configuration'
+require 'forwardable'
 
 module PactBroker
   module UI
     module ViewDomain
       class IndexItem
+        extend Forwardable
+
+        delegate [:consumer_version_branch, :provider_version_branch, :latest_for_branch?] => :relationship
+
 
         include PactBroker::Api::PactBrokerUrls
 
@@ -186,6 +191,10 @@ module PactBroker
         def base_url
           @options[:base_url]
         end
+
+        private
+
+        attr_reader :relationship
       end
     end
   end

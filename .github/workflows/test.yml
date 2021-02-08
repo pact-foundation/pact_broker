@@ -1,23 +1,36 @@
 name: Test
 
-on: push
+on: [push, pull_request]
 
 jobs:
   sqlite:
+    if: "!contains(github.event.head_commit.message, '[ci-skip]')"
     runs-on: "ubuntu-latest"
     strategy:
+      fail-fast: false
       matrix:
         ruby_version: ["2.7"]
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-ruby@v1
+      - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby_version }}
       - run: "bundle install"
-      - run: "bundle exec rake"
+      - name: "Install CodeClimate Test Reporter"
+        run: |
+          curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+          chmod +x ./cc-test-reporter
+      - name: Tests
+        run: bundle exec rake
+      - name: Report test coverage
+        run: ./cc-test-reporter after-build --exit-code 0 || true
+    env:
+      CC_TEST_REPORTER_ID: dc2c30b67c9e2a5309e1aef699c30fdab55ba4f0e4f1beac029ba93e293835db
   postgres:
+    if: "!contains(github.event.head_commit.message, '[ci-skip]')"
     runs-on: "ubuntu-latest"
     strategy:
+      fail-fast: false
       matrix:
         ruby_version: ["2.5", "2.7"]
     services:
@@ -34,7 +47,7 @@ jobs:
           - 5432:5432
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-ruby@v1
+      - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby_version }}
       - run: "gem install bundler && bundle install"
@@ -45,8 +58,10 @@ jobs:
           DATABASE_ADAPTER: github_actions_postgres
           INSTALL_PG: "true"
   mysql:
+    if: "!contains(github.event.head_commit.message, '[ci-skip]')"
     runs-on: "ubuntu-latest"
     strategy:
+      fail-fast: false
       matrix:
         ruby_version: ["2.7"]
     steps:

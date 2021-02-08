@@ -55,8 +55,8 @@ module PactBroker
           .eager(:provider)
           .eager(:pact_version)
           .eager(integration: [{latest_verification: :provider_version}, :latest_triggered_webhooks])
-          .eager(:consumer_version)
-          .eager(latest_verification: { provider_version: :tags_with_latest_flag })
+          .eager(consumer_version: [:latest_version_for_branch])
+          .eager(latest_verification: { provider_version: [:latest_version_for_branch, :tags_with_latest_flag] })
           .eager(:head_pact_tags)
 
         index_items = pact_publications.all.collect do | pact_publication |
@@ -72,8 +72,9 @@ module PactBroker
             latest_verification,
             webhook ? [webhook]: [],
             pact_publication.integration.latest_triggered_webhooks,
-            consumer_version_tags(pact_publication, options[:tags]),
-            options[:tags] && latest_verification ? latest_verification.provider_version.head_tags : []
+            consumer_version_tags(pact_publication, options[:tags]).sort_by(&:created_at).collect(&:name),
+            options[:tags] && latest_verification ? latest_verification.provider_version.tags_with_latest_flag.select(&:latest?).sort_by(&:created_at) : [],
+            pact_publication.latest_for_branch?
           )
         end.sort
 
@@ -98,9 +99,9 @@ module PactBroker
 
       def self.consumer_version_tags(pact_publication, tags_option)
         if tags_option == true
-          pact_publication.head_pact_tags.collect(&:name)
+          pact_publication.head_pact_tags
         elsif tags_option.is_a?(Array)
-          pact_publication.head_pact_tags.collect(&:name) & tags_option
+          pact_publication.head_pact_tags.select { |tag| tags_option.include?(tag.name) }
         else
           []
         end
@@ -116,8 +117,8 @@ module PactBroker
           .eager(:consumer)
           .eager(:provider)
           .eager(:pact_version)
-          .eager(:consumer_version)
-          .eager(latest_verification: { provider_version: :tags_with_latest_flag })
+          .eager(consumer_version: [:latest_version_for_branch])
+          .eager(latest_verification: { provider_version: [:tags_with_latest_flag, :latest_version_for_branch]})
           .eager(:head_pact_tags)
 
 
@@ -133,8 +134,8 @@ module PactBroker
             pact_publication.latest_verification,
             [],
             [],
-            pact_publication.head_pact_tags.collect(&:name),
-            pact_publication.latest_verification ? pact_publication.latest_verification.provider_version.tags_with_latest_flag.select(&:latest?) : []
+            pact_publication.head_pact_tags.sort_by(&:created_at).collect(&:name),
+            pact_publication.latest_verification ? pact_publication.latest_verification.provider_version.tags_with_latest_flag.select(&:latest?).sort_by(&:created_at) : []
           )
         end.sort
       end

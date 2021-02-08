@@ -30,6 +30,10 @@ module PactBroker
         keys.each_with_object(Hash.new) { |k, hash| hash[k] = self[k] if has_key?(k) }
       end
 
+      def without(*keys)
+        reject { |k,_| keys.include?(k) }
+      end
+
       def camelcase_keys
         camelcase_keys_private(self)
       end

@@ -9,6 +9,11 @@ RSpec::Core::RakeTask.new('spec:quick') do |task|
   task.rspec_opts = '--tag ~@no_db_clean --tag ~@migration --format progress'
 end
 
+RSpec::Core::RakeTask.new('regression') do |task|
+  task.pattern = 'regression/**{,/*/**}/*_spec.rb'
+  task.rspec_opts = '--require regression/regression_helper.rb'
+end
+
 RSpec::Core::RakeTask.new('spec:slow') do |task|
   task.rspec_opts = '--tag @no_db_clean --tag @migration  --format progress'
 end
@@ -24,3 +29,4 @@ end
 task 'spec:quick' => ['set_simplecov_command_to_spec_quick']
 task 'spec:slow' => ['set_simplecov_command_to_spec_slow']
 task :spec => ['spec:quick', 'spec:slow']
+

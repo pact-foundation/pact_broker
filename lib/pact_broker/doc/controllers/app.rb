@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'padrino-core'
 require 'redcarpet'
 
@@ -50,7 +51,7 @@ module PactBroker
           # https://www.acunetix.com/blog/articles/automated-detection-of-host-header-attacks/
           # Either use the explicitly configured base url or an empty string,
           # rather than request.base_url, which uses the X-Forwarded headers.
-          PactBroker.configuration.base_url || ''
+          env["pactbroker.base_url"] || ''
         end
       end
     end

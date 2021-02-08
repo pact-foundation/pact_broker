@@ -42,7 +42,7 @@ module PactBroker
             expect(logs.string).to include "ERROR -- :"
           end
 
-          it "does not appends a friendly message so people will correctly panic" do
+          it "does not append a friendly message so people will correctly panic" do
             expect(logs.string).to_not include "Don't panic."
           end
         end

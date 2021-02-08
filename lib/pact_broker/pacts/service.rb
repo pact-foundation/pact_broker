@@ -85,10 +85,6 @@ module PactBroker
         pact_repository.find_latest_pact_versions_for_provider provider_name, options[:tag]
       end
 
-      def find_wip_pact_versions_for_provider provider_name
-        pact_repository.find_wip_pact_versions_for_provider provider_name
-      end
-
       def find_pact_versions_for_provider provider_name, options = {}
         pact_repository.find_pact_versions_for_provider provider_name, options[:tag]
       end
@@ -115,7 +111,7 @@ module PactBroker
         distinct
       end
 
-      def find_for_verification(provider_name, provider_version_tags, consumer_version_selectors, options)
+      def find_for_verification(provider_name, provider_version_branch, provider_version_tags, consumer_version_selectors, options)
         verifiable_pacts_specified_in_request = pact_repository
           .find_for_verification(provider_name, consumer_version_selectors)
           .collect do | selected_pact |
@@ -124,7 +120,7 @@ module PactBroker
 
         verifiable_wip_pacts = if options[:include_wip_pacts_since]
           exclude_specified_pacts(
-            pact_repository.find_wip_pact_versions_for_provider(provider_name, provider_version_tags, options),
+            pact_repository.find_wip_pact_versions_for_provider(provider_name, provider_version_branch, provider_version_tags, options),
             verifiable_pacts_specified_in_request)
         else
           []
@@ -152,7 +148,8 @@ module PactBroker
         update_params = { pact_version_sha: pact_version_sha, json_content: json_content }
         updated_pact = pact_repository.update(existing_pact.id, update_params)
 
-        webhook_trigger_service.trigger_webhooks_for_updated_pact(existing_pact, updated_pact, merge_consumer_version_info(webhook_options, updated_pact))
+        event_context = { consumer_version_tags: updated_pact.consumer_version_tag_names }
+        webhook_trigger_service.trigger_webhooks_for_updated_pact(existing_pact, updated_pact, event_context, merge_consumer_version_info(webhook_options, updated_pact))
 
         updated_pact
       end
@@ -170,7 +167,8 @@ module PactBroker
           pact_version_sha: pact_version_sha,
           json_content: json_content
         )
-        webhook_trigger_service.trigger_webhooks_for_new_pact(pact, merge_consumer_version_info(webhook_options, pact))
+        event_context = { consumer_version_tags: pact.consumer_version_tag_names }
+        webhook_trigger_service.trigger_webhooks_for_new_pact(pact, event_context, merge_consumer_version_info(webhook_options, pact))
         pact
       end
 

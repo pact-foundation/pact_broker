@@ -67,7 +67,7 @@ module PactBroker
               it "only returns the pacts for the consumer" do
                 expect(subject.size).to eq 1
                 expect(subject.first.consumer.name).to eq "Foo"
-                expect(subject.first.selectors.first).to eq selector.resolve(PactBroker::Domain::Version.for("Foo", "1"))
+                expect(subject.first.selectors.first).to eq selector.resolve_for_fallback(PactBroker::Domain::Version.for("Foo", "1"))
               end
             end
           end

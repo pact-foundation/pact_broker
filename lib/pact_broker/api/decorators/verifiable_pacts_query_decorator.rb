@@ -12,9 +12,11 @@ module PactBroker
         using PactBroker::HashRefinements
 
         collection :provider_version_tags, default: []
+        property :provider_version_branch
 
         collection :consumer_version_selectors, default: PactBroker::Pacts::Selectors.new, class: PactBroker::Pacts::Selector do
           property :tag
+          property :branch
           property :latest,
             setter: ->(fragment:, represented:, **) {
               represented.latest = (fragment == 'true' || fragment == true)

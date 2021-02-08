@@ -6,8 +6,8 @@ services:
     image: postgres
     healthcheck:
       test: psql postgres --command "select 1" -U postgres
-    ports:
-      - "5432:5432"
+    # ports:
+    #   - "5432:5432"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -58,8 +58,8 @@ services:
       MYSQL_DATABASE: pact_broker
       MYSQL_USER: pact_broker
       MYSQL_PASSWORD: pact_broker
-    ports:
-      - "3306:3306"
+    # ports:
+    #   - "3306:3306"
 
   init-mysql:
     build: .

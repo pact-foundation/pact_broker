@@ -13,13 +13,13 @@ module PactBroker
         :latest_verification_latest_tags
 
       # rubocop:disable Metrics/ParameterLists
-      def self.create(consumer, provider, latest_pact, latest, latest_verification, webhooks = [], triggered_webhooks = [], tags = [], latest_verification_latest_tags = [])
-        new(consumer, provider, latest_pact, latest, latest_verification, webhooks, triggered_webhooks, tags, latest_verification_latest_tags)
+      def self.create(consumer, provider, latest_pact, latest, latest_verification, webhooks = [], triggered_webhooks = [], tags = [], latest_verification_latest_tags = [], latest_for_branch = nil)
+        new(consumer, provider, latest_pact, latest, latest_verification, webhooks, triggered_webhooks, tags, latest_verification_latest_tags, latest_for_branch)
       end
       # rubocop:enable Metrics/ParameterLists
 
       # rubocop:disable Metrics/ParameterLists
-      def initialize(consumer, provider, latest_pact = nil, latest = true, latest_verification = nil, webhooks = [], triggered_webhooks = [], tags = [], latest_verification_latest_tags = [])
+      def initialize(consumer, provider, latest_pact = nil, latest = true, latest_verification = nil, webhooks = [], triggered_webhooks = [], tags = [], latest_verification_latest_tags = [], latest_for_branch = nil)
         @consumer = consumer
         @provider = provider
         @latest_pact = latest_pact
@@ -29,6 +29,7 @@ module PactBroker
         @triggered_webhooks = triggered_webhooks
         @tags = tags
         @latest_verification_latest_tags = latest_verification_latest_tags
+        @latest_for_branch = latest_for_branch
       end
       # rubocop:enable Metrics/ParameterLists
 
@@ -37,7 +38,8 @@ module PactBroker
           other.latest_pact == latest_pact &&
           other.latest? == latest? &&
           other.latest_verification == latest_verification &&
-          other.webhooks == webhooks
+          other.webhooks == webhooks &&
+          other.latest_for_branch? == latest_for_branch?
       end
 
       def == other
@@ -68,12 +70,24 @@ module PactBroker
         @latest_pact.consumer_version
       end
 
+      def consumer_version_branch
+        consumer_version.branch
+      end
+
+      def latest_for_branch?
+        @latest_for_branch
+      end
+
       def provider_version
         @latest_verification ? @latest_verification.provider_version : nil
       end
 
       def provider_version_number
         @latest_verification ? @latest_verification.provider_version_number : nil
+      end
+
+      def provider_version_branch
+        provider_version&.branch
       end
 
       # these are the consumer tag names for which this pact publication

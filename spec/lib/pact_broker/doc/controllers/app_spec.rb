@@ -4,13 +4,13 @@ module PactBroker
   module Doc
     module Controllers
       describe App do
-
         describe "GET relation" do
 
           let(:app) { PactBroker::Doc::Controllers::App }
+          let(:rack_env) { {} }
 
           context "when the resource exists" do
-            subject { get "/webhooks" }
+            subject { get "/webhooks", nil, rack_env }
 
             it "returns a 200 status" do
               subject
@@ -34,9 +34,7 @@ module PactBroker
             end
 
             context "with the base_url set" do
-              before do
-                allow(PactBroker.configuration).to receive(:base_url).and_return('http://example.org/pact-broker')
-              end
+              let(:rack_env) { { "pactbroker.base_url" => "http://example.org/pact-broker"} }
 
               it "returns absolute links" do
                 expect(subject.body).to include "href='http://example.org/pact-broker/css"

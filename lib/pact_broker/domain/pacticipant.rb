@@ -27,6 +27,10 @@ module PactBroker
           filter = name_like(Sequel[:labels][:name], label_name)
           join(:labels, {pacticipant_id: :id}).where(filter)
         end
+
+        def find_by_name(name)
+          where(name_like(:name, name))
+        end
       end
 
       def before_destroy
@@ -50,6 +54,10 @@ module PactBroker
         messages = []
         messages << message('errors.validation.attribute_missing', attribute: 'name') unless name
         messages
+      end
+
+      def any_versions?
+        PactBroker::Domain::Version.where(pacticipant: self).any?
       end
     end
   end

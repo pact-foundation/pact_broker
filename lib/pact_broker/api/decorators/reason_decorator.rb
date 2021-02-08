@@ -14,8 +14,8 @@ module PactBroker
             "There is no verified pact between #{reason.consumer_selector.description} and #{reason.provider_selector.description}"
           when PactBroker::Matrix::PactNotVerifiedByRequiredProviderVersion
             "There is no verified pact between #{reason.consumer_selector.description} and #{reason.provider_selector.description}"
-          when PactBroker::Matrix::VerificationFailed
-            "The verification between #{reason.consumer_selector.description} and #{reason.provider_selector.description} failed"
+          # when PactBroker::Matrix::VerificationFailed
+          #   "The pact verification between #{reason.consumer_selector.description} and #{reason.provider_selector.description} failed"
           when PactBroker::Matrix::SpecifiedVersionDoesNotExist
             version_does_not_exist_description(reason.selector)
           when PactBroker::Matrix::VerificationFailed

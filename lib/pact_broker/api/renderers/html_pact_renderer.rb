@@ -45,7 +45,7 @@ module PactBroker
           <link rel='stylesheet' type='text/css' href='#{base_url}/stylesheets/material-menu.css'>
           <link rel='stylesheet' type='text/css' href='#{base_url}/stylesheets/jquery-confirm.min.css'>
           <script src='#{base_url}/javascripts/highlight.pack.js'></script>
-          <script src='#{base_url}/javascripts/jquery-3.3.1.min.js'></script>
+          <script src='#{base_url}/javascripts/jquery-3.5.1.min.js'></script>
           <script src='#{base_url}/js/bootstrap.min.js'></script>
           <script src='#{base_url}/javascripts/material-menu.js'></script>
           <script src='#{base_url}/javascripts/pact.js'></script>
@@ -80,7 +80,7 @@ module PactBroker
                       data-provider-name=\"#{provider_name}\"
                       data-consumer-version-number=\"#{consumer_version_number}\"
                       data-pact-url=\"#{pact_url}\"
-                      class='more-options glyphicon glyphicon-option-horizontal'
+                      class='more-options kebab-horizontal'
                       aria-hidden='true'></span>
               </li>
             </ul>

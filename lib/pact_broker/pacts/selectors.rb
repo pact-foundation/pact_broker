@@ -15,6 +15,18 @@ module PactBroker
         Selectors.new(tag_names.collect{ | tag_name | Selector.latest_for_tag(tag_name) })
       end
 
+      def self.create_for_latest_for_tag(tag_name)
+        Selectors.new([Selector.latest_for_tag(tag_name)])
+      end
+
+      def self.create_for_latest_of_each_branch(branches)
+        Selectors.new(branches.collect{ | branch | Selector.latest_for_branch(branch) })
+      end
+
+      def self.create_for_latest_for_branch(branch)
+        Selectors.new([Selector.latest_for_branch(branch)])
+      end
+
       def self.create_for_overall_latest
         Selectors.new([Selector.overall_latest])
       end
@@ -41,6 +53,10 @@ module PactBroker
 
       def tag_names_of_selectors_for_latest_pacts
         select(&:latest_for_tag?).collect(&:tag).uniq
+      end
+
+      def branches_of_selectors_for_latest_pacts
+        select(&:latest_for_branch?).collect(&:branch).uniq
       end
     end
   end

@@ -38,6 +38,7 @@ module PactBroker
         def pacts
           @pacts ||= pact_service.find_for_verification(
             provider_name,
+            parsed_query_params.provider_version_branch,
             parsed_query_params.provider_version_tags,
             parsed_query_params.consumer_version_selectors,
             {
