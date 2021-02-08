@@ -42,7 +42,7 @@ module PactBroker
 
           PactBroker::Domain::Tag
             .select_all_qualified
-            .left_join(:tags, self_join, { table_alias: :tags_2 }) do | t, jt, js |
+            .left_join(:tags, self_join, { table_alias: :tags_2 }) do
               Sequel[:tags_2][:version_order] > Sequel[:tags][:version_order]
             end
             .where(Sequel[:tags_2][:name] => nil)
@@ -59,7 +59,7 @@ module PactBroker
 
           Tag
             .select_all_qualified
-            .left_join(:tags, self_join, { table_alias: :tags_2 }) do | t, jt, js |
+            .left_join(:tags, self_join, { table_alias: :tags_2 }) do
               Sequel[:tags_2][:version_order] > Sequel[:tags][:version_order]
             end
             .where(Sequel[:tags_2][:name] => nil)
@@ -76,7 +76,7 @@ module PactBroker
 
           Tag
             .select_all_qualified
-            .left_join(:tags, self_join, { table_alias: :tags_2 }) do | t, jt, js |
+            .left_join(:tags, self_join, { table_alias: :tags_2 }) do
               Sequel[:tags_2][:version_order] > Sequel[:tags][:version_order]
             end
             .where(Sequel[:tags_2][:name] => nil)

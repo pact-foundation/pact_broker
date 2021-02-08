@@ -2,7 +2,7 @@ module PactBroker
   module Tags
     module EagerLoaders
       class HeadTag
-        def self.call(eo, **other)
+        def self.call(eo, **_other)
           initialize_association(eo[:rows])
           populate_associations(eo[:rows])
         end
