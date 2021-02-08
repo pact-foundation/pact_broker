@@ -2,13 +2,18 @@ require 'pact_broker/domain'
 require 'pact_broker/policies'
 require 'pact_broker/ui/app'
 
-RSpec.describe "regression tests for index page", no_db_clean: true, regression: true do
+RSpec.describe "regression tests for index page", no_db_clean: true, regression: true, focus: true do
   context "HTML" do
     let(:app) { PactBroker::UI::App.new }
 
-    it "has the same response" do
-      response = get("/", { "HTTP_ACCEPT" => "text/html" } )
+    it "has the same response without tags" do
+      response = get("/", nil, { "HTTP_ACCEPT" => "text/html" } )
       Approvals.verify(response.body, :name => "index_html", format: :html)
+    end
+
+    fit "has the same response with tags" do
+      response = get("/", { "tags" => "true", "pageNumber" => "1", "pageSize" => "100"}, { "HTTP_ACCEPT" => "text/html" } )
+      Approvals.verify(response.body, :name => "index_html_with_tags", format: :html)
     end
   end
 
