@@ -1,8 +1,8 @@
 require 'pact_broker/domain'
-PACTICIPANT_LIMIT = 2
-VERSION_LIMIT = 1
+PACTICIPANT_LIMIT = 10
+VERSION_LIMIT = 10
 
-PACTICIPANTS = PactBroker::Domain::Pacticipant.order(:id).limit(PACTICIPANT_LIMIT).all
+PACTICIPANTS = PactBroker::Domain::Pacticipant.order(Sequel.desc(:id)).limit(PACTICIPANT_LIMIT).all
 
 RSpec.describe "regression tests", no_db_clean: true, regression: true do
 
