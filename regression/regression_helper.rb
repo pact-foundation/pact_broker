@@ -42,7 +42,7 @@ RSpec.configure do | config |
   end
 
   config.after(:each) do | example, something |
-    if ENV["SHOW_REGRESSION_DIFF"] != "false"
+    if ENV["SHOW_REGRESSION_DIFF"] == "true"
       if example.exception.is_a?(Approvals::ApprovalError)
         require "pact/support"
         parts = example.exception.message.split('"')
