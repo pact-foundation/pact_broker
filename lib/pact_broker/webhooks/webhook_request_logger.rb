@@ -117,8 +117,12 @@ module PactBroker
       end
 
       def success?(response)
-        !response.nil? && response.code.to_i < 300
+        unless response.nil?
+          # Response HTTP Code must be in white list otherwise it is false
+          PactBroker.configuration.webhook_http_code_whitelist.include? response.code.to_i
+        end
       end
+
     end
   end
 end

@@ -26,6 +26,7 @@ app = PactBroker::App.new do | config |
   config.webhook_host_whitelist = [/.*/, "10.0.0.0/8"]
   config.webhook_scheme_whitelist = ['http', 'https']
   config.webhook_http_method_whitelist = ['GET', 'POST']
+  config.webhook_http_code_whitelist = [200, 201, 202]
   #config.base_url = ENV['PACT_BROKER_BASE_URL']
 
   database_logger = PactBroker::DB::LogQuietener.new(config.logger)
