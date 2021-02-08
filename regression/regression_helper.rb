@@ -38,6 +38,19 @@ RSpec.configure do | config |
   def app
     PactBroker::API
   end
+
+  config.after(:each) do | example, something |
+    if example.exception.is_a?(Approvals::ApprovalError)
+      require "pact/support"
+      parts = example.exception.message.split('"')
+      received_file = parts[1]
+      approved_file = parts[3]
+      received_hash = JSON.parse(File.read(received_file))
+      approved_hash = JSON.parse(File.read(approved_file))
+      diff = Pact::Matchers.diff(approved_hash, received_hash)
+      puts Pact::Matchers::UnixDiffFormatter.call(diff)
+    end
+  end
 end
 
 if ENV["DEBUG"] == "true"
