@@ -68,44 +68,6 @@ module PactBroker
         end
 
         def head_tags_for_pact_publication(pact_publication)
-          # self_join = {
-          #   Sequel[:tags][:pacticipant_id] => Sequel[:tags_2][:pacticipant_id],
-          #   Sequel[:tags][:name] => Sequel[:tags_2][:name],
-          #   Sequel[:tags_2][:pacticipant_id] => pact_publication.consumer_id,
-          # }
-
-          # select_all_qualified
-          # .join(:pact_publications)
-
-          # Tag
-          #   .select_all_qualified
-          #   .left_join(:tags, self_join, { table_alias: :tags_2 }) do | t, jt, js |
-          #     Sequel[:tags_2][:version_order] > Sequel[:tags][:version_order]
-          #   end
-          #   .where(Sequel[:tags_2][:name] => nil)
-          #   .where(Sequel[:tags][:pacticipant_id] => pacticipant_ids)
-
-
-          # Tag.select_all_qualified
-          #   .select_append(Sequel[:p][:id])
-
-
-
-          # head_tags_versions_join = {
-          #   Sequel[:head_tags][:latest_consumer_version_order] => Sequel[:versions][:order],
-          #   Sequel[:head_tags][:pacticipant_id] => Sequel[:versions][:pacticipant_id],
-          #   Sequel[:versions][:pacticipant_id] => pact_publication.consumer_id
-          # }
-
-          # # Find the head tags that belong to this pact publication
-          # # Note: The tag model has the name and version_id,
-          # # but does not have the created_at value set - but don't need it for now
-          # head_tags_for_consumer_id(pact_publication.consumer_id).from_self(alias: :head_tags)
-          #   .select(Sequel[:head_tags][:name], Sequel[:versions][:id].as(:version_id))
-          #   .join(:versions, head_tags_versions_join)
-          #   .where(Sequel[:versions][:id] => pact_publication.consumer_version_id)
-
-
           Tag.where(version_id: pact_publication.consumer_version_id).all.select do | tag |
             tag_pp_join = {
               Sequel[:pact_publications][:consumer_version_id] => Sequel[:tags][:version_id],
