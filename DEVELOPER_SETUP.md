@@ -36,7 +36,7 @@ Remember to rebuild the image if you change any of the gems or gem versions.
 
 ### With native install
 
-* You will need to install Ruby 2.5, and preferably a ruby version manager. I recommend using [chruby][chruby] and [ruby-install][ruby-install].
+* You will need to install Ruby 2.7, and preferably a ruby version manager. I recommend using [chruby][chruby] and [ruby-install][ruby-install].
 * Install bundler (the Ruby gem dependency manager) `gem install bundler`
 * Check out the pact_broker repository and cd into it.
 * Run `bundle install`. If you have any gem conflict issues, run `bundle update`.
@@ -103,6 +103,57 @@ psql postgres://postgres:postgres@postgres/postgres
   ```sh
   bundle exec rspec path_to_your_spec.rb
   ```
+
+## Running the regression tests
+
+The regression tests record a series of API requests/responses using a real exported database (not included in the git repository because of the size) and store the expectations in files using the Approvals gem. They allow you to make sure that the changes you have made have not made any (unexpected) changes to the interface.
+
+The tests and files are stored in the [regression](regression) directory.
+
+To run:
+
+1. Set up your local development environment as described above, making sure you have `INSTALL_PG=true` exported in your shell.
+
+1. Make sure you have the master branch checked out.
+
+1. Load an exported real database into a postgres docker image. The exported file must be in the pg dump format to use this script, and it must be located in the project root directory for it to be found via the mounted directory.
+
+    ```
+    script/docker/reload.sh <export>
+
+    ```
+1. Clear any previously generated approvals.
+
+    ```
+    regression/script/clear.sh
+    ```
+
+1. Run the tests. They will fail because there are no approval files yet.
+
+    ```
+    regression/script/run.sh
+    ```
+
+1. Approval all the things.
+
+    ```
+    regression/script/approval-all.sh
+    ```
+
+1. Run the tests again to make sure that the same results can be expected each time.
+
+    ```
+    regression/script/run.sh
+    ```
+
+1. Check out the feature branch (or enable the feature toggle)
+
+1. Run the tests again.
+    ```
+    regression/script/run.sh
+    ```
+
+1. If there is a diff, you can set `SHOW_REGRESSION_DIFF=true`, but the output is quite noisy, and you're probably better off using diff or diffmerge to view the differences.
 
 [chruby]: https://github.com/postmodern/chruby
 [ruby-install]: https://github.com/postmodern/ruby-install
