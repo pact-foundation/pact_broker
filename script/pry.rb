@@ -19,7 +19,7 @@ connection.timezone = :utc
 require 'pact_broker/db'
 require 'pact_broker'
 require 'support/test_data_builder'
-puts "bout to pry"
+puts "about to pry"
 
 require 'pry'; pry(binding);
-puts "fater pry"
+puts "after pry"
