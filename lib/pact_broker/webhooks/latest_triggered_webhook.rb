@@ -21,3 +21,5 @@ end
 #  status              | text                        |
 #  created_at          | timestamp without time zone |
 #  updated_at          | timestamp without time zone |
+#  verification_id     | integer                     |
+#  event_name          | text                        |

@@ -182,12 +182,18 @@ end
 # Table: tags
 # Primary Key: (name, version_id)
 # Columns:
-#  name       | text                        |
-#  version_id | integer                     |
-#  created_at | timestamp without time zone | NOT NULL
-#  updated_at | timestamp without time zone | NOT NULL
+#  name           | text                        |
+#  version_id     | integer                     |
+#  created_at     | timestamp without time zone | NOT NULL
+#  updated_at     | timestamp without time zone | NOT NULL
+#  pacticipant_id | integer                     |
+#  version_order  | integer                     |
 # Indexes:
-#  tags_pk      | PRIMARY KEY btree (version_id, name)
-#  ndx_tag_name | btree (name)
+#  tags_pk                                           | PRIMARY KEY btree (version_id, name)
+#  ndx_tag_name                                      | btree (name)
+#  tags_pacticipant_id_index                         | btree (pacticipant_id)
+#  tags_pacticipant_id_name_version_order_desc_index | btree (pacticipant_id, name, version_order DESC)
+#  tags_version_id_index                             | btree (version_id)
+#  tags_version_order_index                          | btree (version_order)
 # Foreign key constraints:
 #  tags_version_id_fkey | (version_id) REFERENCES versions(id)
