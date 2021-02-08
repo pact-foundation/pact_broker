@@ -11,7 +11,7 @@ RSpec.describe "regression tests for index page", no_db_clean: true, regression:
       Approvals.verify(response.body, :name => "index_html", format: :html)
     end
 
-    fit "has the same response with tags" do
+    it "has the same response with tags" do
       response = get("/", { "tags" => "true", "pageNumber" => "1", "pageSize" => "100"}, { "HTTP_ACCEPT" => "text/html" } )
       Approvals.verify(response.body, :name => "index_html_with_tags", format: :html)
     end
