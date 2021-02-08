@@ -3,22 +3,23 @@ require 'pact_broker/domain/tag'
 module PactBroker
   module Domain
     describe Tag do
-      before do
-        td.create_consumer("foo")
-          .create_consumer_version("1")
-          .create_consumer_version_tag("dev")
-          .create_consumer_version_tag("prod")
-          .create_consumer_version("2")
-          .create_consumer_version_tag("dev")
-          .create_consumer_version_tag("bloop")
-          .create_consumer_version("3")
-          .create_consumer_version_tag("dev")
-          .create_consumer("bar")
-          .create_consumer_version("1")
-          .create_consumer_version_tag("test")
-      end
 
       describe "#latest_tags_for_pacticipant_ids" do
+        before do
+          td.create_consumer("foo")
+            .create_consumer_version("1")
+            .create_consumer_version_tag("dev")
+            .create_consumer_version_tag("prod")
+            .create_consumer_version("2")
+            .create_consumer_version_tag("dev")
+            .create_consumer_version_tag("bloop")
+            .create_consumer_version("3")
+            .create_consumer_version_tag("dev")
+            .create_consumer("bar")
+            .create_consumer_version("1")
+            .create_consumer_version_tag("test")
+        end
+
         it "returns the latest tags for the given pacticipant ids" do
           pacticipant = PactBroker::Domain::Pacticipant.order(:id).first
           tags = Tag.latest_tags_for_pacticipant_ids([pacticipant.id]).all
@@ -32,6 +33,21 @@ module PactBroker
       end
 
       describe "latest_tags" do
+        before do
+          td.create_consumer("foo")
+            .create_consumer_version("1")
+            .create_consumer_version_tag("dev")
+            .create_consumer_version_tag("prod")
+            .create_consumer_version("2")
+            .create_consumer_version_tag("dev")
+            .create_consumer_version_tag("bloop")
+            .create_consumer_version("3")
+            .create_consumer_version_tag("dev")
+            .create_consumer("bar")
+            .create_consumer_version("1")
+            .create_consumer_version_tag("test")
+        end
+
         it "returns the tags that belong to the most recent version with that tag/pacticipant" do
           tags = Tag.latest_tags.all
           expect(tags.collect(&:name).sort).to eq %w{bloop dev prod test}
@@ -88,19 +104,31 @@ module PactBroker
           expect(Tag.head_tags_for_pact_publication(pact_2).collect(&:name).sort).to eq ["dev", "prod"]
         end
       end
+
+      describe "head_tag" do
+        before do
+          td.create_consumer("Foo")
+            .create_consumer_version("1", tag_names: ["main", "test"])
+            .create_consumer_version("2", tag_names: ["main", "test"])
+            .create_consumer_version("3", tag_names: ["main"])
+            .create_provider("Bar")
+            .create_provider_version("1", tag_names: ["main", "test"])
+            .create_provider_version("2", tag_names: ["main", "test"])
+            .create_provider_version("3", tag_names: ["main"])
+        end
+
+        it "lazy loads" do
+          expect(Tag.for("Foo", "2", "main").head_tag).to eq Tag.for("Foo", "3", "main")
+          expect(Tag.for("Foo", "3", "main").head_tag).to eq Tag.for("Foo", "3", "main")
+          expect(Tag.for("Bar", "1", "test").head_tag).to eq Tag.for("Bar", "2", "test")
+        end
+
+        it "eager loads" do
+          tags = Tag.order(:version_order, :name).eager(:head_tag).all
+          expect(tags[0].head_tag).to eq Tag.for("Foo", "3", "main")
+          expect(tags[1].head_tag).to eq Tag.for("Foo", "2", "test")
+        end
+      end
     end
   end
 end
-
-# Table: tags
-# Primary Key: (name, version_id)
-# Columns:
-#  name       | text                        |
-#  version_id | integer                     |
-#  created_at | timestamp without time zone | NOT NULL
-#  updated_at | timestamp without time zone | NOT NULL
-# Indexes:
-#  tags_pk      | PRIMARY KEY btree (version_id, name)
-#  ndx_tag_name | btree (name)
-# Foreign key constraints:
-#  tags_version_id_fkey | (version_id) REFERENCES versions(id)

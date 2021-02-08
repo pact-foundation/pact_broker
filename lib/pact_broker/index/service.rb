@@ -55,8 +55,8 @@ module PactBroker
           .eager(:provider)
           .eager(:pact_version)
           .eager(integration: [{latest_verification: :provider_version}, :latest_triggered_webhooks])
-          .eager(consumer_version: [:latest_version_for_branch])
-          .eager(latest_verification: { provider_version: [:latest_version_for_branch, :tags_with_latest_flag] })
+          .eager(consumer_version: [:latest_version_for_branch, { tags: :head_tag }])
+          .eager(latest_verification: { provider_version: [:latest_version_for_branch, { tags: :head_tag } ] })
           .eager(:head_pact_tags)
 
         index_items = pact_publications.all.collect do | pact_publication |
@@ -73,7 +73,7 @@ module PactBroker
             webhook ? [webhook]: [],
             pact_publication.integration.latest_triggered_webhooks,
             consumer_version_tags(pact_publication, options[:tags]).sort_by(&:created_at).collect(&:name),
-            options[:tags] && latest_verification ? latest_verification.provider_version.tags_with_latest_flag.select(&:latest?).sort_by(&:created_at) : [],
+            options[:tags] && latest_verification ? latest_verification.provider_version.tags.select(&:latest_for_pacticipant?).sort_by(&:created_at) : [],
             pact_publication.latest_for_branch?
           )
         end.sort
@@ -117,8 +117,8 @@ module PactBroker
           .eager(:consumer)
           .eager(:provider)
           .eager(:pact_version)
-          .eager(consumer_version: [:latest_version_for_branch])
-          .eager(latest_verification: { provider_version: [:tags_with_latest_flag, :latest_version_for_branch]})
+          .eager(consumer_version: [:latest_version_for_branch, { tags: :head_tag }])
+          .eager(latest_verification: { provider_version: [:latest_version_for_branch, { tags: :head_tag }]})
           .eager(:head_pact_tags)
 
 
@@ -135,7 +135,7 @@ module PactBroker
             [],
             [],
             pact_publication.head_pact_tags.sort_by(&:created_at).collect(&:name),
-            pact_publication.latest_verification ? pact_publication.latest_verification.provider_version.tags_with_latest_flag.select(&:latest?).sort_by(&:created_at) : []
+            pact_publication.latest_verification ? pact_publication.latest_verification.provider_version.tags.select(&:latest_for_pacticipant?).sort_by(&:created_at) : []
           )
         end.sort
       end

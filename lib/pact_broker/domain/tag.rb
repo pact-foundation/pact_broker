@@ -1,5 +1,6 @@
 require 'pact_broker/db'
 require 'pact_broker/repositories/helpers'
+require 'pact_broker/tags/eager_loaders'
 
 module PactBroker
   module Domain
@@ -10,8 +11,28 @@ module PactBroker
       unrestrict_primary_key
       associate(:many_to_one, :version, :class => "PactBroker::Domain::Version", :key => :version_id, :primary_key => :id)
 
+      # The tag for the latest version that has a tag with a matching name
+      many_to_one :head_tag, read_only: true, key: [:name, :pacticipant_id],
+        class: Tag,
+        dataset: lambda {
+          Tag.where(name: name, pacticipant_id: pacticipant_id)
+            .order(Sequel.desc(:version_order))
+            .limit(1)
+        },
+        eager_loader: PactBroker::Tags::EagerLoaders::HeadTag
+
       dataset_module do
         include PactBroker::Repositories::Helpers
+
+        def for(pacticipant_name, version_number, tag_name)
+          where(
+            version_id: db[:versions].select(:id).where(
+              number: version_number,
+              pacticipant_id: db[:pacticipants].select(:id).where(name_like(:name, pacticipant_name))
+            ),
+            name: tag_name
+          ).single_record
+        end
 
         def latest_tags
           self_join = {
@@ -43,6 +64,24 @@ module PactBroker
             end
             .where(Sequel[:tags_2][:name] => nil)
             .where(Sequel[:tags][:pacticipant_id] => pacticipant_ids)
+        end
+
+        def latest_tags_for_pacticipant_ids_and_tag_names(pacticipant_ids, tag_names)
+          self_join = {
+            Sequel[:tags][:pacticipant_id] => Sequel[:tags_2][:pacticipant_id],
+            Sequel[:tags][:name] => Sequel[:tags_2][:name],
+            Sequel[:tags_2][:pacticipant_id] => pacticipant_ids,
+            Sequel[:tags_2][:name] => tag_names
+          }
+
+          Tag
+            .select_all_qualified
+            .left_join(:tags, self_join, { table_alias: :tags_2 }) do | t, jt, js |
+              Sequel[:tags_2][:version_order] > Sequel[:tags][:version_order]
+            end
+            .where(Sequel[:tags_2][:name] => nil)
+            .where(Sequel[:tags][:pacticipant_id] => pacticipant_ids)
+            .where(Sequel[:tags][:name] => tag_names)
         end
 
         # ignores tags that don't have a pact publication
@@ -108,16 +147,10 @@ module PactBroker
       end
 
       def latest_for_pacticipant?
-        if defined?(@is_latest_for_pacticipant)
-          @is_latest_for_pacticipant
-        else
-          own_version_order = self.version_order
-          @is_latest_for_pacticipant = Tag.where(pacticipant_id: pacticipant_id, name: name)
-            .where{ version_order > own_version_order }
-            .limit(1)
-            .empty?
-        end
+        head_tag == self
       end
+
+      alias_method :latest?, :latest_for_pacticipant?
 
       def latest_for_pact_publication?(pact_publication)
         tag_pp_join = {
@@ -137,6 +170,10 @@ module PactBroker
 
       def <=> other
         name <=> other.name
+      end
+
+      def pacticipant
+        version.pacticipant
       end
     end
   end

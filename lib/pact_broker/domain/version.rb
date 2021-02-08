@@ -31,27 +31,24 @@ module PactBroker
       associate(:many_to_one, :pacticipant, :class => "PactBroker::Domain::Pacticipant", :key => :pacticipant_id, :primary_key => :id)
       one_to_many :tags, :reciprocal => :version, order: :created_at
 
-      one_to_many :tags_with_latest_flag, :class => "PactBroker::Tags::TagWithLatestFlag", primary_keys: [:id], key: [:version_id], :eager_loader => (proc do |eo_opts|
-        tags_for_versions = PactBroker::Domain::Tag.where(version_id: eo_opts[:key_hash][:id].keys)
-        latest_tag_for_pacticipants = PactBroker::Domain::Tag.latest_tags_for_pacticipant_ids(eo_opts[:rows].collect(&:pacticipant_id)).all
-
-        eo_opts[:rows].each{|row| row.associations[:tags_with_latest_flag] = [] }
-
-        tags_for_versions.each do | tag |
-          latest = latest_tag_for_pacticipants.any? { |latest_tag| latest_tag.name == tag.name && latest_tag.version_id == tag.version_id }
-          eo_opts[:id_map][tag.version_id].each do | version |
-            version.associations[:tags_with_latest_flag] << EagerTagWithLatestFlag.new(tag, latest)
-          end
-        end
-      end)
+      many_to_one :latest_version_for_pacticipant, read_only: true, key: :id,
+        class: Version,
+        dataset: lambda { Version.latest_version_for_pacticipant(pacticipant) },
+        eager_loader: PactBroker::Versions::EagerLoaders::LatestVersionForPacticipant
 
       many_to_one :latest_version_for_branch, read_only: true, key: :id,
         class: Version,
         dataset: PactBroker::Versions::LazyLoaders::LATEST_VERSION_FOR_BRANCH,
-        eager_loader: PactBroker::Versions::EagerLoaders::LatestVersionForBranchEagerLoader
+        eager_loader: PactBroker::Versions::EagerLoaders::LatestVersionForBranch
 
       dataset_module do
         include PactBroker::Repositories::Helpers
+
+        def latest_version_for_pacticipant(pacticipant)
+          where(pacticipant: pacticipant)
+          .order(Sequel.desc(:order))
+          .limit(1)
+        end
 
         def for(pacticipant_name, version_number)
           where_pacticipant_name(pacticipant_name).where_number(version_number).single_record
@@ -177,6 +174,10 @@ module PactBroker
 
       def latest_for_branch?
         branch ? latest_version_for_branch.order == order : nil
+      end
+
+      def latest_for_pacticipant?
+        latest_version_for_pacticipant == self
       end
     end
   end

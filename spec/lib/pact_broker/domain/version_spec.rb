@@ -142,6 +142,54 @@ module PactBroker
         end
       end
 
+      describe "latest_for_pacticipant?" do
+        before do
+          td.create_consumer("Foo")
+            .create_consumer_version("1")
+            .create_consumer_version("2")
+            .create_consumer("Bar")
+            .create_consumer_version("5")
+            .create_consumer_version("6")
+            .create_consumer_version("7")
+        end
+
+        context "when the version is the latest for the pacticipant" do
+          it "returns true" do
+            expect(Version.for("Foo", "2").latest_for_pacticipant?).to be true
+          end
+        end
+
+        context "when the version is not the latest version for the pacticipant" do
+          it "returns false" do
+            expect(Version.for("Foo", "1").latest_for_pacticipant?).to be false
+          end
+        end
+      end
+
+      describe "latest_version_for_pacticipant" do
+        before do
+          td.create_consumer("Foo")
+            .create_consumer_version("1")
+            .create_consumer_version("2")
+            .create_consumer("Bar")
+            .create_consumer_version("5")
+            .create_consumer_version("6")
+            .create_consumer_version("7")
+        end
+
+        subject { Version.order(:order) }
+
+        it "lazy loads" do
+          expect(subject.all[0].latest_version_for_pacticipant.number).to eq "2"
+        end
+
+        it "eager loads" do
+          all = subject.eager(:latest_version_for_pacticipant).all
+          expect(all[0].associations[:latest_version_for_pacticipant]).to_not be nil
+          expect(all[0].latest_version_for_pacticipant.number).to eq "2"
+        end
+      end
+
       describe "latest_version_for_branch" do
         before do
           td.create_consumer("Foo")
@@ -204,29 +252,6 @@ module PactBroker
           Sequel::Model.db[:versions].insert(number: '1', order: 0, pacticipant_id: consumer.id, created_at: DateTime.new(2017), updated_at: DateTime.new(2017))
           expect { Sequel::Model.db[:versions].insert(number: '2', order: 0, pacticipant_id: consumer.id, created_at: DateTime.new(2017), updated_at: DateTime.new(2017)) }
             .to raise_error(Sequel::UniqueConstraintViolation)
-        end
-      end
-
-      describe "tags_with_latest_flag" do
-        before do
-          td.create_consumer("foo")
-            .create_consumer_version("1")
-            .create_consumer_version_tag("dev")
-            .create_consumer_version_tag("prod")
-            .create_consumer_version("2")
-            .create_consumer_version_tag("dev")
-        end
-
-        it "uneager loads" do
-          version = Version.first(number: "1")
-          expect(version.tags.collect(&:name).sort).to eq %w{dev prod}
-          expect(version.tags_with_latest_flag.select(&:latest).collect(&:name)).to eq %w{prod}
-        end
-
-        it "eager loads" do
-          version = Version.eager(:tags, :tags_with_latest_flag).where(number: "1").all.first
-          expect(version.tags.collect(&:name).sort).to eq %w{dev prod}
-          expect(version.tags_with_latest_flag.select(&:latest).collect(&:name)).to eq %w{prod}
         end
       end
 

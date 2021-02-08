@@ -167,7 +167,8 @@ module PactBroker
         )
         set_created_at_if_set params[:created_at], :versions, { id: @consumer_version.id }
         tag_names.each do | tag_name |
-          PactBroker::Domain::Tag.create(name: tag_name, version: @consumer_version)
+          tag = PactBroker::Domain::Tag.create(name: tag_name, version: consumer_version)
+          set_created_at_if_set(params[:created_at], :tags, { name: tag.name, version_id: consumer_version.id })
         end
         self
       end
@@ -178,7 +179,8 @@ module PactBroker
         @version = PactBroker::Domain::Version.create(:number => version_number, :pacticipant => @provider)
         @provider_version = @version
         tag_names.each do | tag_name |
-          PactBroker::Domain::Tag.create(name: tag_name, version: @provider_version)
+          tag = PactBroker::Domain::Tag.create(name: tag_name, version: provider_version)
+          set_created_at_if_set(params[:created_at], :tags, { name: tag.name, version_id: provider_version.id })
         end
         self
       end
