@@ -1,10 +1,19 @@
-ENV['DATABASE_ADAPTER'] = 'docker_postgres'
-ENV['RACK_ENV'] = 'development'
+raise "Must set INSTALL_PG=true" unless ENV["INSTALL_PG"] == "true"
+raise "Must set DATABASE_ADAPTER=docker_postgres" unless ENV["DATABASE_ADAPTER"] == "docker_postgres"
+raise "Must set RACK_ENV=development" unless ENV["RACK_ENV"] == "development"
 
-require 'db'
+$LOAD_PATH  << "."
+
+require 'sequel'
+
+load 'lib/db.rb'
 require 'tasks/database'
 require 'pact_broker/db'
 PactBroker::DB.connection = PactBroker::Database.database = DB::PACT_BROKER_DB
+PactBroker::DB::Migrate.call(PactBroker::DB.connection)
+require 'approvals'
+require 'rack/test'
+require 'pact_broker/api'
 
 Approvals.configure do |c|
   c.approvals_path = 'regression/fixtures/approvals/'
