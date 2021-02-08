@@ -11,7 +11,7 @@ end
 
 RSpec::Core::RakeTask.new('regression') do |task|
   task.pattern = 'regression/**{,/*/**}/*_spec.rb'
-  task.rspec_opts = '--require regression/regression_helper.rb'
+  task.rspec_opts = '--require ./regression/regression_helper.rb'
 end
 
 RSpec::Core::RakeTask.new('spec:slow') do |task|

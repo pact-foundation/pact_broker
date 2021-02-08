@@ -1,3 +1,4 @@
+require 'pact_broker/domain'
 PACTICIPANT_LIMIT = 2
 VERSION_LIMIT = 1
 
