@@ -50,7 +50,7 @@ module PactBroker
     attr_accessor :check_for_potential_duplicate_pacticipant_names
     attr_accessor :webhook_retry_schedule
     attr_accessor :user_agent
-    attr_reader :webhook_http_method_whitelist, :webhook_scheme_whitelist, :webhook_host_whitelist, :webhook_http_code_whitelist
+    attr_reader :webhook_http_method_whitelist, :webhook_scheme_whitelist, :webhook_host_whitelist, :webhook_http_code_success
     attr_accessor :semver_formats
     attr_accessor :enable_public_badge_access, :shields_io_base_url, :badge_provider_mode
     attr_accessor :disable_ssl_verification
@@ -106,7 +106,7 @@ module PactBroker
       config.check_for_potential_duplicate_pacticipant_names = true
       config.disable_ssl_verification = false
       config.webhook_http_method_whitelist = ['POST']
-      config.webhook_http_code_whitelist = [200, 201, 202]
+      config.webhook_http_code_success = [200, 201, 202, 203, 204, 205, 206]
       config.webhook_scheme_whitelist = ['https']
       config.webhook_host_whitelist = []
       # TODO get rid of unsafe-inline
@@ -242,8 +242,8 @@ module PactBroker
       @webhook_http_method_whitelist = parse_space_delimited_string_list_property('webhook_http_method_whitelist', webhook_http_method_whitelist)
     end
 
-    def webhook_http_code_whitelist= webhook_http_code_whitelist
-      @webhook_http_code_whitelist = parse_space_delimited_integer_list_property('webhook_http_code_whitelist', webhook_http_code_whitelist)
+    def webhook_http_code_success= webhook_http_code_success
+      @webhook_http_code_success = parse_space_delimited_integer_list_property('webhook_http_code_success', webhook_http_code_success)
     end
 
     def webhook_scheme_whitelist= webhook_scheme_whitelist

@@ -123,26 +123,24 @@ module PactBroker
           end
         end
 
-        context "when the response code '200' is in 'webhook_http_code_whitelist'" do
-          let(:status) { 200 }
-
-          it "successful, code '200' is in 'webhook_http_code_whitelist'" do
+        context "when the response code is a success" do
+          it "does not log the failure_log_message" do
             expect(logs).to_not include "oops"
           end
         end
 
-        context "when the response code '100' is not in 'webhook_http_code_whitelist'" do
+        context "when the response code '100' is not in 'webhook_http_code_success'" do
           let(:status) { 100 }
 
-          it "not successful, code '100' not in 'webhook_http_code_whitelist'" do
+          it "not successful, code '100' not in 'webhook_http_code_success'" do
             expect(logs).to include "oops"
           end
         end
 
-        context "when the response code '400' is not in 'webhook_http_code_whitelist'" do
+        context "when the response code is not successful" do
           let(:status) { 400 }
 
-          it "not successful, code '100' not in 'webhook_http_code_whitelist'" do
+          it "logs the failure_log_message" do
             expect(logs).to include "oops"
           end
         end

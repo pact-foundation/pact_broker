@@ -12,7 +12,7 @@ module PactBroker
       def self.parse(string)
         array = (string || '')
                     .split(' ')
-                    .filter { |word| integer?(word) }
+                    .select { |word| integer?(word) }
                     .collect(&:to_i)
         SpaceDelimitedIntegerList.new(array)
       end

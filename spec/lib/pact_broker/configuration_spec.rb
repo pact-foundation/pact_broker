@@ -60,15 +60,15 @@ module PactBroker
         end
       end
 
-      describe "webhook_http_code_whitelist" do
-        it "allows setting the 'webhook_http_code_whitelist' by a space-delimited string" do
-          PactBroker.configuration.webhook_http_code_whitelist = "200 201 202"
-          expect(PactBroker.configuration.webhook_http_code_whitelist).to be_a Config::SpaceDelimitedIntegerList
+      describe "webhook_http_code_success" do
+        it "allows setting the 'webhook_http_code_success' by a space-delimited string" do
+          PactBroker.configuration.webhook_http_code_success = "200 201 202"
+          expect(PactBroker.configuration.webhook_http_code_success).to be_a Config::SpaceDelimitedIntegerList
         end
 
-        it "allows setting the 'webhook_http_code_whitelist' by an array" do
-          PactBroker.configuration.webhook_http_code_whitelist = [200, 201, 202]
-          expect(PactBroker.configuration.webhook_http_code_whitelist).to be_a Config::SpaceDelimitedIntegerList
+        it "allows setting the 'webhook_http_code_success' by an array" do
+          PactBroker.configuration.webhook_http_code_success = [200, 201, 202]
+          expect(PactBroker.configuration.webhook_http_code_success).to be_a Config::SpaceDelimitedIntegerList
         end
       end
 
