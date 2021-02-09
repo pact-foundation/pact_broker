@@ -131,22 +131,22 @@ module PactBroker
       end
 
       describe "#head_tag_names" do
-        before do
-          td.create_pact_with_hierarchy("Foo", "1.2.3", "Bar")
-            .create_consumer_version_tag("no")
-            .create_consumer_version("3.4.5")
-            .create_consumer_version_tag("yes")
-            .create_pact
-            .create_consumer_version("5.6.7")
-            .create_consumer_version_tag("no")
-            .create_consumer("Foo2")
-            .create_consumer_version("3.4.5")
-            .create_consumer_version_tag("yes", comment: "actually no, just here to make sure it selects the right one")
-        end
 
         let(:pact_publication) { PactPublication.find(id: td.pact.id) }
 
         context "when the pact is the latest for a tag" do
+          before do
+            td.create_pact_with_hierarchy("Foo", "1.2.3", "Bar")
+              .create_consumer_version_tag("no")
+              .create_consumer_version("3.4.5")
+              .create_consumer_version_tag("yes")
+              .create_pact
+              .create_consumer_version("5.6.7")
+              .create_consumer_version_tag("no")
+              .create_consumer("Foo2")
+              .create_consumer_version("3.4.5")
+              .create_consumer_version_tag("yes", comment: "actually no, just here to make sure it selects the right one")
+          end
           it "returns the relevant tag names" do
             expect(pact_publication.head_tag_names).to eq ["yes"]
             expect(pact_publication.head_pact_tags.collect(&:name)).to eq ["yes"]
@@ -154,9 +154,46 @@ module PactBroker
         end
 
         context "when the pact is not the latest for a tag" do
+          before do
+            td.create_pact_with_hierarchy("Foo", "1", "Bar")
+              .create_consumer_version_tag("prod")
+              .create_pact_with_hierarchy("Foo", "2", "Bar")
+              .create_consumer_version_tag("prod")
+
+          end
+          let(:pact_publication) { PactPublication.where(consumer_version_id: PactBroker::Domain::Version.for("Foo", "1").id).single_record }
+
           it "returns the relevant tag names" do
-            expect(pact_publication.head_tag_names).to eq ["yes"]
-            expect(pact_publication.head_pact_tags.collect(&:name)).to eq ["yes"]
+            expect(pact_publication.head_tag_names).to eq []
+          end
+        end
+      end
+
+      describe "#head_pact_publications_for_tags" do
+        before do
+          td.create_pact_with_hierarchy("Foo", "1", "Bar")
+            .create_consumer_version_tag("main")
+            .create_consumer_version_tag("prod")
+            .create_pact_with_hierarchy("Foo", "2", "Bar")
+            .create_consumer_version_tag("main")
+            .create_pact_with_hierarchy("Foo2", "6", "Bar")
+            .create_consumer_version_tag("main")
+        end
+
+        let(:pact_publication) { td.find_pact_publication("Foo", "1", "Bar") }
+
+        context "lazy loading" do
+          it "sets the head_pact_publications_for_tags" do
+            expect(pact_publication.head_pact_publications_for_tags.first.consumer_version.number).to eq "2"
+            expect(pact_publication.head_pact_publications_for_tags.last.consumer_version.number).to eq "1"
+          end
+        end
+
+        context "eager loading" do
+          it "sets the head_pact_publications_for_tags" do
+            all = PactPublication.eager(:head_pact_publications_for_tags).order(:id).all
+            expect(all.first.associations[:head_pact_publications_for_tags].first.consumer_version.number).to eq "2"
+            expect(all.first.associations[:head_pact_publications_for_tags].last.consumer_version.number).to eq "1"
           end
         end
       end

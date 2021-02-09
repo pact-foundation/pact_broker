@@ -12,18 +12,18 @@ module PactBroker
         end
 
         def self.populate_associations(versions)
-          group_by_pacticipant(versions).each do | pacticipant, versions |
+          group_by_pacticipant_id(versions).each do | pacticipant, versions |
             populate_associations_by_pacticipant(pacticipant, versions)
           end
         end
 
-        def self.group_by_pacticipant(versions)
-          versions.to_a.group_by(&:pacticipant)
+        def self.group_by_pacticipant_id(versions)
+          versions.to_a.group_by(&:pacticipant_id)
         end
 
-        def self.populate_associations_by_pacticipant(pacticipant, versions)
+        def self.populate_associations_by_pacticipant(pacticipant_id, versions)
           latest_versions_for_branches = latest_versions_for_pacticipant_branches(
-            pacticipant,
+            pacticipant_id,
             versions.collect(&:branch).uniq.compact,
             versions.first.class
           )
@@ -36,8 +36,8 @@ module PactBroker
           end
         end
 
-        def self.latest_versions_for_pacticipant_branches(pacticipant, branches, version_class)
-          version_class.latest_versions_for_pacticipant_branches(pacticipant, branches).each_with_object({}) do | row, hash |
+        def self.latest_versions_for_pacticipant_branches(pacticipant_id, branches, version_class)
+          version_class.latest_versions_for_pacticipant_branches(pacticipant_id, branches).each_with_object({}) do | row, hash |
             hash[[row.pacticipant_id, row.branch]] = row
           end
         end

@@ -24,6 +24,10 @@ module PactBroker
       dataset_module do
         include PactBroker::Repositories::Helpers
 
+        def join_pact_publications
+          join(:pact_publications, { Sequel[:tags][:version_id] => Sequel[:pact_publications][:consumer_version_id] } )
+        end
+
         def for(pacticipant_name, version_number, tag_name)
           where(
             version_id: db[:versions].select(:id).where(

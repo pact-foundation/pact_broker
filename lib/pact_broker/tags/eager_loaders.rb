@@ -12,18 +12,18 @@ module PactBroker
         end
 
         def self.populate_associations(tags)
-          group_by_pacticipant(tags).each do | pacticipant, tags |
-            populate_associations_by_pacticipant(pacticipant, tags)
+          group_by_pacticipant_id(tags).each do | pacticipant_id, tags |
+            populate_associations_by_pacticipant(pacticipant_id, tags)
           end
         end
 
-        def self.group_by_pacticipant(tags)
-          tags.to_a.group_by(&:pacticipant)
+        def self.group_by_pacticipant_id(tags)
+          tags.to_a.group_by(&:pacticipant_id)
         end
 
-        def self.populate_associations_by_pacticipant(pacticipant, tags)
-          latest_tags_for_tags = latest_tags_for_pacticipant(
-            pacticipant,
+        def self.populate_associations_by_pacticipant(pacticipant_id, tags)
+          latest_tags_for_tags = latest_tags_for_pacticipant_id(
+            pacticipant_id,
             tags.collect(&:name).uniq.compact,
             tags.first.class
           )
@@ -36,8 +36,8 @@ module PactBroker
           end
         end
 
-        def self.latest_tags_for_pacticipant(pacticipant, tag_names, tag_class)
-          tag_class.latest_tags_for_pacticipant_ids_and_tag_names(pacticipant.id, tag_names).each_with_object({}) do | tag, hash |
+        def self.latest_tags_for_pacticipant_id(pacticipant_id, tag_names, tag_class)
+          tag_class.latest_tags_for_pacticipant_ids_and_tag_names(pacticipant_id, tag_names).each_with_object({}) do | tag, hash |
             hash[[tag.pacticipant_id, tag.name]] = tag
           end
         end

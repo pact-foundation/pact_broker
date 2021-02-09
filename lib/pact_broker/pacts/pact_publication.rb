@@ -5,6 +5,8 @@ require 'pact_broker/repositories/helpers'
 require 'pact_broker/integrations/integration'
 require 'pact_broker/tags/head_pact_tags'
 require 'pact_broker/pacts/pact_publication_dataset_module'
+require 'pact_broker/pacts/eager_loaders'
+require 'pact_broker/pacts/lazy_loaders'
 
 module PactBroker
   module Pacts
@@ -21,7 +23,13 @@ module PactBroker
       associate(:many_to_one, :pact_version, class: "PactBroker::Pacts::PactVersion", :key => :pact_version_id, :primary_key => :id)
       associate(:many_to_one, :integration, class: "PactBroker::Integrations::Integration", key: [:consumer_id, :provider_id], primary_key: [:consumer_id, :provider_id])
       one_to_one(:latest_verification, class: "PactBroker::Verifications::LatestVerificationForPactVersion", key: :pact_version_id, primary_key: :pact_version_id)
-      one_to_many(:head_pact_tags, class: "PactBroker::Tags::HeadPactTag", primary_key: :id, key: :pact_publication_id)
+
+      one_to_many(:head_pact_publications_for_tags,
+        class: PactPublication,
+        read_only: true,
+        dataset: PactBroker::Pacts::LazyLoaders::HEAD_PACT_PUBLICATIONS_FOR_TAGS,
+        eager_loader: PactBroker::Pacts::EagerLoaders::HeadPactPublicationsForTags
+      )
 
       plugin :upsert, identifying_columns: [:consumer_version_id, :provider_id, :revision_number]
       plugin :timestamps, update_on_create: true
@@ -29,7 +37,6 @@ module PactBroker
       dataset_module do
         include PactBroker::Repositories::Helpers
         include PactPublicationDatasetModule
-
       end
 
       def before_create
@@ -37,10 +44,16 @@ module PactBroker
         self.revision_number ||= 1
       end
 
+      def head_pact_tags
+        consumer_version.tags.select{ |tag| head_tag_names.include?(tag.name) }
+      end
+
       # The names of the tags for which this pact is the latest pact with that tag
       # (ie. it is not necessarily the pact for the latest consumer version with the given tag)
       def head_tag_names
-        @head_tag_names ||= PactBroker::Domain::Tag.head_tags_for_pact_publication(self).collect(&:name)
+        @head_tag_names ||= head_pact_publications_for_tags
+          .select { |head_pact_publication| head_pact_publication.id == id }
+          .collect { | head_pact_publication| head_pact_publication.values.fetch(:tag_name) }
       end
 
       def consumer_version_tags

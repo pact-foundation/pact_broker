@@ -399,6 +399,18 @@ module PactBroker
         PactBroker::Domain::Version.for(pacticipant_name, version_number)
       end
 
+      def find_pact(consumer_name, consumer_version_number, provider_name)
+        pact_repository.find_pact(consumer_name, consumer_version_number, provider_name)
+      end
+
+      def find_pact_publication(consumer_name, consumer_version_number, provider_name)
+        PactBroker::Pacts::PactPublication
+          .remove_overridden_revisions
+          .where(provider: find_pacticipant(provider_name))
+          .where(consumer_version: find_version(consumer_name, consumer_version_number))
+          .single_record
+      end
+
       def model_counter
         @@model_counter ||= 0
         @@model_counter += 1

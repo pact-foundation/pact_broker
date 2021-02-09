@@ -57,7 +57,7 @@ module PactBroker
           .eager(integration: [{latest_verification: :provider_version}, :latest_triggered_webhooks])
           .eager(consumer_version: [:latest_version_for_branch, { tags: :head_tag }])
           .eager(latest_verification: { provider_version: [:latest_version_for_branch, { tags: :head_tag } ] })
-          .eager(:head_pact_tags)
+          .eager(:head_pact_publications_for_tags)
 
         index_items = pact_publications.all.collect do | pact_publication |
           is_overall_latest_for_integration = latest_pact_publication_ids.include?(pact_publication.id)
@@ -119,7 +119,7 @@ module PactBroker
           .eager(:pact_version)
           .eager(consumer_version: [:latest_version_for_branch, { tags: :head_tag }])
           .eager(latest_verification: { provider_version: [:latest_version_for_branch, { tags: :head_tag }]})
-          .eager(:head_pact_tags)
+          .eager(:head_pact_publications_for_tags)
 
 
         pact_publications.all.collect do | pact_publication |
