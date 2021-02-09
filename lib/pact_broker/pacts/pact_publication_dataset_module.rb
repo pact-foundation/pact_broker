@@ -85,18 +85,13 @@ module PactBroker
       end
 
       def latest_by_consumer_tag
-        versions_join = {
-          Sequel[:pact_publications][:consumer_version_id] => Sequel[:cv][:id]
-        }
-
         tags_join = {
-          Sequel[:cv][:id] => Sequel[:tags][:version_id]
+          Sequel[:pact_publications][:consumer_version_id] => Sequel[:tags][:version_id]
         }
 
         base_query = select_all_qualified
-          .select_append(Sequel[:cv][:order], Sequel[:tags][:name].as(:tag_name))
+          .select_append(Sequel[:tags][:version_order], Sequel[:tags][:name].as(:tag_name))
           .remove_overridden_revisions
-          .join(:versions, versions_join, { table_alias: :cv })
           .join(:tags, tags_join)
 
         self_join = {
@@ -104,25 +99,20 @@ module PactBroker
           Sequel[:tags][:name] => Sequel[:pp2][:tag_name]
         }
         base_query.left_join(base_query, self_join, { table_alias: :pp2 } ) do
-          Sequel[:pp2][:order] > Sequel[:cv][:order]
+          Sequel[:pp2][:version_order] > Sequel[:tags][:version_order]
         end
-        .where(Sequel[:pp2][:order] => nil)
+        .where(Sequel[:pp2][:version_order] => nil)
       end
 
       def latest_for_consumer_tag(tag_name)
-        versions_join = {
-          Sequel[:pact_publications][:consumer_version_id] => Sequel[:cv][:id]
-        }
-
         tags_join = {
-          Sequel[:cv][:id] => Sequel[:tags][:version_id],
+          Sequel[:pact_publications][:consumer_version_id] => Sequel[:tags][:version_id],
           Sequel[:tags][:name] => tag_name
         }
 
         base_query = select_all_qualified
-          .select_append(Sequel[:cv][:order], Sequel[:tags][:name].as(:tag_name))
+          .select_append(Sequel[:tags][:version_order], Sequel[:tags][:name].as(:tag_name))
           .remove_overridden_revisions
-          .join(:versions, versions_join, { table_alias: :cv })
           .join(:tags, tags_join)
           .where(Sequel[:tags][:name] => tag_name)
 
@@ -131,9 +121,9 @@ module PactBroker
           Sequel[:tags][:name] => Sequel[:pp2][:tag_name]
         }
         base_query.left_join(base_query, self_join, { table_alias: :pp2 } ) do
-          Sequel[:pp2][:order] > Sequel[:cv][:order]
+          Sequel[:pp2][:version_order] > Sequel[:tags][:version_order]
         end
-        .where(Sequel[:pp2][:order] => nil)
+        .where(Sequel[:pp2][:version_order] => nil)
       end
 
       def successfully_verified_by_provider_branch(provider_id, provider_version_branch)
