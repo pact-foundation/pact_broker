@@ -183,6 +183,7 @@ module PactBroker
             .create_pact
             .create_consumer_version("2", tag_names: ["main"])
             .create_pact
+            .revise_pact
             .create_consumer_version("3", tag_names: ["feat/x"])
             .create_pact
             .create_consumer("Foo2")

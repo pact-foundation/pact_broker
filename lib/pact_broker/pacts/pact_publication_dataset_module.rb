@@ -112,7 +112,6 @@ module PactBroker
 
         base_query = select_all_qualified
           .select_append(Sequel[:tags][:version_order], Sequel[:tags][:name].as(:tag_name))
-          .remove_overridden_revisions
           .join(:tags, tags_join)
           .where(Sequel[:tags][:name] => tag_name)
 
@@ -124,6 +123,8 @@ module PactBroker
           Sequel[:pp2][:version_order] > Sequel[:tags][:version_order]
         end
         .where(Sequel[:pp2][:version_order] => nil)
+        .from_self(alias: :p)
+        .join(:latest_pact_publication_ids_for_consumer_versions, { Sequel[:lp][:pact_publication_id] => Sequel[:p][:id] }, { table_alias: :lp})
       end
 
       def successfully_verified_by_provider_branch(provider_id, provider_version_branch)
