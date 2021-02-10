@@ -43,6 +43,10 @@ module PactBroker
         select(Sequel[model.table_name].*)
       end
 
+      def select_append_all_qualified
+        select_append(Sequel[model.table_name].*)
+      end
+
       def select_for_subquery column
         if mysql? #stoopid mysql doesn't allow you to modify datasets with subqueries
           column_name = column.respond_to?(:alias) ? column.alias : column

@@ -44,6 +44,10 @@ module PactBroker
           expect(subject.find { |pp| pp.consumer_id == foo_z.id && pp[:branch] == "main" }.consumer_version.number).to eq "6"
         end
 
+        it "does not return extra columns" do
+          expect(subject.first.values.keys.sort).to eq (PactPublication.columns + [:branch]).sort
+        end
+
         context "chained with created after" do
           subject { PactPublication.created_after(DateTime.new(2020, 1, 3)).latest_by_consumer_branch.all }
 
@@ -88,6 +92,18 @@ module PactBroker
           expect(all.last.consumer_version.number).to eq "11"
         end
 
+        it "does not return extra columns" do
+          expect(subject.first.values.keys.sort).to eq (PactPublication.columns + [:branch]).sort
+        end
+
+        context "when columns are already selected" do
+          subject { PactPublication.select(Sequel[:pact_publications][:id]).latest_for_consumer_branch("main") }
+
+          it "does not override them" do
+            expect(subject.all.first.values.keys).to eq [:id]
+          end
+        end
+
         context "when chained" do
           it "works" do
             all = PactPublication.for_provider(td.find_pacticipant("Bar")).latest_for_consumer_branch("main").all
@@ -130,6 +146,18 @@ module PactBroker
           expect(subject.find { |pp| pp.consumer_id == foo.id && pp[:tag_name] == "feat/x" }.consumer_version.number).to eq "4"
           expect(subject.find { |pp| pp.consumer_id == foo_z.id && pp[:tag_name] == "main" }.consumer_version.number).to eq "6"
         end
+
+        it "does not return extra columns" do
+          expect(subject.first.values.keys.sort).to eq (PactPublication.columns + [:tag_name]).sort
+        end
+
+        context "when columns are already selected" do
+          subject { PactPublication.select(Sequel[:pact_publications][:id]).latest_by_consumer_tag }
+
+          it "does not override them" do
+            expect(subject.all.first.values.keys).to eq [:id]
+          end
+        end
       end
 
       describe "overall_latest" do
@@ -155,6 +183,18 @@ module PactBroker
         it "returns the latest by consumer/provider" do
           all = subject.all.sort_by{ | pact_publication | pact_publication.consumer_version.order }
           expect(all.size).to eq 2
+        end
+
+        it "does not return extra columns" do
+          expect(subject.all.first.values.keys.sort).to eq PactPublication.columns.sort
+        end
+
+        context "when columns are already selected" do
+          subject { PactPublication.select(Sequel[:pact_publications][:id]).overall_latest }
+
+          it "does not override them" do
+            expect(subject.all.first.values.keys).to eq [:id]
+          end
         end
 
         context "when chained" do
@@ -183,6 +223,7 @@ module PactBroker
             .create_pact
             .create_consumer_version("2", tag_names: ["main"])
             .create_pact
+            .revise_pact
             .create_consumer_version("3", tag_names: ["feat/x"])
             .create_pact
             .create_consumer("Foo2")
@@ -205,6 +246,18 @@ module PactBroker
           expect(all.last.consumer.name).to eq "Foo2"
           expect(all.last.provider.name).to eq "Bar2"
           expect(all.last.consumer_version.number).to eq "11"
+        end
+
+        it "does not return extra columns" do
+          expect(subject.all.first.values.keys.sort).to eq (PactPublication.columns + [:tag_name]).sort
+        end
+
+        context "when columns are already selected" do
+          subject { PactPublication.select(Sequel[:pact_publications][:id]).latest_for_consumer_tag("main") }
+
+          it "does not override them" do
+            expect(subject.all.first.values.keys).to eq [:id]
+          end
         end
 
         context "when chained" do
@@ -233,6 +286,10 @@ module PactBroker
           it "returns the pact publications that have been succesfully verified by the given provider id and branch" do
             expect(subject.size).to eq 1
             expect(subject.first.consumer_version.number).to eq "2"
+          end
+
+          it "does not return extra columns" do
+            expect(subject.first.values.keys.sort).to eq PactPublication.columns.sort
           end
         end
 
@@ -320,7 +377,7 @@ module PactBroker
             it "with branches" do
               potential = PactPublication.for_provider(bar).latest_by_consumer_branch
               already_verified = potential.successfully_verified_by_provider_branch(bar.id, "provider-main")
-              not_verified = potential.all - already_verified.all
+              not_verified = PactPublication.subtract(potential.all, already_verified.all)
 
               expect(not_verified.size).to eq 1
               expect(not_verified.first.consumer_version_number).to eq "3"
@@ -329,7 +386,7 @@ module PactBroker
             it "with tags" do
               potential = PactPublication.for_provider(bar).latest_by_consumer_tag
               already_verified = potential.successfully_verified_by_provider_branch(bar.id, "provider-main")
-              not_verified = potential.all - already_verified.all
+              not_verified = PactPublication.subtract(potential.all, already_verified.all)
 
               expect(not_verified.size).to eq 1
               expect(not_verified.first.consumer_version_number).to eq "3"

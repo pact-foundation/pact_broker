@@ -98,6 +98,7 @@ namespace :db do
   desc 'Annotate the Sequel domain classes with schema information'
   task :annotate do
     begin
+      raise "Need to set INSTALL_PG=true" unless ENV["INSTALL_PG"] == "true"
       ENV['RACK_ENV'] = 'test'
       ENV['DATABASE_ADAPTER'] = 'docker_postgres'
       load 'tasks/docker_database.rb'

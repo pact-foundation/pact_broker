@@ -167,7 +167,8 @@ module PactBroker
         )
         set_created_at_if_set params[:created_at], :versions, { id: @consumer_version.id }
         tag_names.each do | tag_name |
-          PactBroker::Domain::Tag.create(name: tag_name, version: @consumer_version)
+          tag = PactBroker::Domain::Tag.create(name: tag_name, version: consumer_version)
+          set_created_at_if_set(params[:created_at], :tags, { name: tag.name, version_id: consumer_version.id })
         end
         self
       end
@@ -178,7 +179,8 @@ module PactBroker
         @version = PactBroker::Domain::Version.create(:number => version_number, :pacticipant => @provider)
         @provider_version = @version
         tag_names.each do | tag_name |
-          PactBroker::Domain::Tag.create(name: tag_name, version: @provider_version)
+          tag = PactBroker::Domain::Tag.create(name: tag_name, version: provider_version)
+          set_created_at_if_set(params[:created_at], :tags, { name: tag.name, version_id: provider_version.id })
         end
         self
       end
@@ -195,7 +197,7 @@ module PactBroker
 
       def create_tag tag_name, params = {}
         params.delete(:comment)
-        @tag = PactBroker::Domain::Tag.create(name: tag_name, version: @version)
+        @tag = PactBroker::Domain::Tag.create(name: tag_name, version: @version, version_order: @version.order, pacticipant_id: @version.pacticipant_id)
         set_created_at_if_set params[:created_at], :tags, { name: @tag.name, version_id: @tag.version_id }
         self
       end
@@ -395,6 +397,18 @@ module PactBroker
 
       def find_version(pacticipant_name, version_number)
         PactBroker::Domain::Version.for(pacticipant_name, version_number)
+      end
+
+      def find_pact(consumer_name, consumer_version_number, provider_name)
+        pact_repository.find_pact(consumer_name, consumer_version_number, provider_name)
+      end
+
+      def find_pact_publication(consumer_name, consumer_version_number, provider_name)
+        PactBroker::Pacts::PactPublication
+          .remove_overridden_revisions
+          .where(provider: find_pacticipant(provider_name))
+          .where(consumer_version: find_version(consumer_name, consumer_version_number))
+          .single_record
       end
 
       def model_counter

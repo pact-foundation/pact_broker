@@ -1,5 +1,6 @@
 require 'pact_broker/db'
 require 'pact_broker/repositories/helpers'
+require 'pact_broker/tags/eager_loaders'
 
 module PactBroker
   module Domain
@@ -10,47 +11,43 @@ module PactBroker
       unrestrict_primary_key
       associate(:many_to_one, :version, :class => "PactBroker::Domain::Version", :key => :version_id, :primary_key => :id)
 
+      # The tag for the latest version that has a tag with a matching name
+      many_to_one :head_tag, read_only: true, key: [:name, :pacticipant_id],
+        class: Tag,
+        dataset: lambda {
+          Tag.where(name: name, pacticipant_id: pacticipant_id)
+            .order(Sequel.desc(:version_order))
+            .limit(1)
+        },
+        eager_loader: PactBroker::Tags::EagerLoaders::HeadTag
+
       dataset_module do
         include PactBroker::Repositories::Helpers
 
+        def join_pact_publications
+          join(:pact_publications, { Sequel[:tags][:version_id] => Sequel[:pact_publications][:consumer_version_id] } )
+        end
+
+        def for(pacticipant_name, version_number, tag_name)
+          where(
+            version_id: db[:versions].select(:id).where(
+              number: version_number,
+              pacticipant_id: db[:pacticipants].select(:id).where(name_like(:name, pacticipant_name))
+            ),
+            name: tag_name
+          ).single_record
+        end
+
         def latest_tags
-          tags_versions_join = {
-            Sequel[:tags][:version_id] => Sequel[:versions][:id],
+          self_join = {
+            Sequel[:tags][:pacticipant_id] => Sequel[:tags_2][:pacticipant_id],
+            Sequel[:tags][:name] => Sequel[:tags_2][:name]
           }
-
-          latest_tags_versions_join = {
-            Sequel[:latest_tags][:name] => Sequel[:tags][:name],
-            Sequel[:latest_tags][:latest_order] => Sequel[:versions][:order],
-            Sequel[:latest_tags][:pacticipant_id] => Sequel[:versions][:pacticipant_id],
-          }
-
-          latest_tags = PactBroker::Domain::Tag
-            .select_group(Sequel[:tags][:name], Sequel[:versions][:pacticipant_id])
-            .select_append{ max(order).as(latest_order) }
-            .join(:versions, tags_versions_join)
 
           PactBroker::Domain::Tag
             .select_all_qualified
-            .join(:versions,
-              { Sequel[:tags][:version_id] => Sequel[:versions][:id] }
-            )
-            .join(latest_tags, latest_tags_versions_join, { table_alias: :latest_tags })
-        end
-
-        # Ron's fancy join
-        # performs every so slightly better
-        def latest_tags_2
-          tag_versions = PactBroker::Domain::Tag
-            .select_all_qualified
-            .select_append(Sequel[:versions][:pacticipant_id])
-            .select_append(Sequel[:versions][:order])
-            .join(:versions,
-              { Sequel[:tags][:version_id] => Sequel[:versions][:id] }
-            )
-
-          tag_versions
-            .left_join(tag_versions, { Sequel[:tags][:name] =>  Sequel[:tags_2][:name], Sequel[:versions][:pacticipant_id] => Sequel[:tags_2][:pacticipant_id] }, { table_alias: :tags_2 }) do | table, joined_table, js |
-              Sequel.qualify(table, :order) > Sequel.qualify(joined_table, :order)
+            .left_join(:tags, self_join, { table_alias: :tags_2 }) do
+              Sequel[:tags_2][:version_order] > Sequel[:tags][:version_order]
             end
             .where(Sequel[:tags_2][:name] => nil)
         end
@@ -58,32 +55,40 @@ module PactBroker
         # Does NOT care about whether or not there is a pact publication
         # for the version
         def latest_tags_for_pacticipant_ids(pacticipant_ids)
-          tags_versions_join = {
-            Sequel[:tags][:version_id] => Sequel[:versions][:id],
-            Sequel[:versions][:pacticipant_id] => pacticipant_ids
+          self_join = {
+            Sequel[:tags][:pacticipant_id] => Sequel[:tags_2][:pacticipant_id],
+            Sequel[:tags][:name] => Sequel[:tags_2][:name],
+            Sequel[:tags_2][:pacticipant_id] => pacticipant_ids,
           }
 
-          latest_tags_versions_join = {
-            Sequel[:latest_tags][:name] => Sequel[:tags][:name],
-            Sequel[:latest_tags][:latest_order] => Sequel[:versions][:order],
-            Sequel[:latest_tags][:pacticipant_id] => Sequel[:versions][:pacticipant_id],
-            Sequel[:versions][:pacticipant_id] => pacticipant_ids
-          }
-
-          latest_tags = PactBroker::Domain::Tag
-            .select_group(Sequel[:tags][:name], Sequel[:versions][:pacticipant_id])
-            .select_append{ max(order).as(latest_order) }
-            .join(:versions, tags_versions_join)
-
-          PactBroker::Domain::Tag
+          Tag
             .select_all_qualified
-            .join(:versions,
-              { Sequel[:tags][:version_id] => Sequel[:versions][:id],
-                Sequel[:versions][:pacticipant_id] => pacticipant_ids
-              })
-            .join(latest_tags, latest_tags_versions_join, { table_alias: :latest_tags })
+            .left_join(:tags, self_join, { table_alias: :tags_2 }) do
+              Sequel[:tags_2][:version_order] > Sequel[:tags][:version_order]
+            end
+            .where(Sequel[:tags_2][:name] => nil)
+            .where(Sequel[:tags][:pacticipant_id] => pacticipant_ids)
         end
 
+        def latest_tags_for_pacticipant_ids_and_tag_names(pacticipant_ids, tag_names)
+          self_join = {
+            Sequel[:tags][:pacticipant_id] => Sequel[:tags_2][:pacticipant_id],
+            Sequel[:tags][:name] => Sequel[:tags_2][:name],
+            Sequel[:tags_2][:pacticipant_id] => pacticipant_ids,
+            Sequel[:tags_2][:name] => tag_names
+          }
+
+          Tag
+            .select_all_qualified
+            .left_join(:tags, self_join, { table_alias: :tags_2 }) do
+              Sequel[:tags_2][:version_order] > Sequel[:tags][:version_order]
+            end
+            .where(Sequel[:tags_2][:name] => nil)
+            .where(Sequel[:tags][:pacticipant_id] => pacticipant_ids)
+            .where(Sequel[:tags][:name] => tag_names)
+        end
+
+        # ignores tags that don't have a pact publication
         def head_tags_for_consumer_id(consumer_id)
           lp = :latest_pact_publication_ids_for_consumer_versions
           tags_versions_join = {
@@ -98,7 +103,7 @@ module PactBroker
           # head tags for this consumer
           # the latest tag, pacticipant_id, version order
           # for versions that have a pact publication
-          PactBroker::Domain::Tag
+          Tag
             .select_group(Sequel[:tags][:name], Sequel[:versions][:pacticipant_id])
             .select_append{ max(order).as(latest_consumer_version_order) }
             .join(:versions, tags_versions_join)
@@ -106,24 +111,73 @@ module PactBroker
         end
 
         def head_tags_for_pact_publication(pact_publication)
-          head_tags_versions_join = {
-            Sequel[:head_tags][:latest_consumer_version_order] => Sequel[:versions][:order],
-            Sequel[:head_tags][:pacticipant_id] => Sequel[:versions][:pacticipant_id],
-            Sequel[:versions][:pacticipant_id] => pact_publication.consumer_id
-          }
-
-          # Find the head tags that belong to this pact publication
-          # Note: The tag model has the name and version_id,
-          # but does not have the created_at value set - but don't need it for now
-          head_tags_for_consumer_id(pact_publication.consumer_id).from_self(alias: :head_tags)
-            .select(Sequel[:head_tags][:name], Sequel[:versions][:id].as(:version_id))
-            .join(:versions, head_tags_versions_join)
-            .where(Sequel[:versions][:id] => pact_publication.consumer_version_id)
+          Tag.where(version_id: pact_publication.consumer_version_id).all.select do | tag |
+            tag_pp_join = {
+              Sequel[:pact_publications][:consumer_version_id] => Sequel[:tags][:version_id],
+              Sequel[:pact_publications][:consumer_id] => pact_publication.consumer_id,
+              Sequel[:pact_publications][:provider_id] => pact_publication.provider_id,
+              Sequel[:tags][:name] => tag.name
+            }
+            Tag.join(:pact_publications, tag_pp_join) do
+              Sequel[:tags][:version_order] > tag.version_order
+            end
+            .where(pacticipant_id: pact_publication.consumer_id)
+            .limit(1)
+            .empty?
+          end
         end
+      end
+
+      def before_save
+        if version
+          if version.order && self.version_order.nil?
+            self.version_order = version.order
+          end
+
+          if self.pacticipant_id.nil?
+            if version.pacticipant_id
+              self.pacticipant_id = version.pacticipant_id
+            elsif version&.pacticipant&.id
+              self.pacticipant_id = version.pacticipant.id
+            end
+          end
+        end
+
+        if version_order.nil? || pacticipant_id.nil?
+          raise PactBroker::Error.new("Need to set version_order and pacticipant_id for tags now")
+        else
+          super
+        end
+      end
+
+      def latest_for_pacticipant?
+        head_tag == self
+      end
+
+      alias_method :latest?, :latest_for_pacticipant?
+
+      def latest_for_pact_publication?(pact_publication)
+        tag_pp_join = {
+          Sequel[:pact_publications][:consumer_version_id] => Sequel[:tags][:version_id],
+          Sequel[:pact_publications][:consumer_id] => pact_publication.consumer_id,
+          Sequel[:pact_publications][:provider_id] => pact_publication.provider_id,
+          Sequel[:tags][:name] => name
+        }
+        own_version_order = self.version_order
+        Tag.join(:pact_publications, tag_pp_join) do
+          Sequel[:tags][:version_order] > own_version_order
+        end
+        .where(pacticipant_id: pact_publication.consumer_id)
+        .limit(1)
+        .empty?
       end
 
       def <=> other
         name <=> other.name
+      end
+
+      def pacticipant
+        version.pacticipant
       end
     end
   end
@@ -132,12 +186,18 @@ end
 # Table: tags
 # Primary Key: (name, version_id)
 # Columns:
-#  name       | text                        |
-#  version_id | integer                     |
-#  created_at | timestamp without time zone | NOT NULL
-#  updated_at | timestamp without time zone | NOT NULL
+#  name           | text                        |
+#  version_id     | integer                     |
+#  created_at     | timestamp without time zone | NOT NULL
+#  updated_at     | timestamp without time zone | NOT NULL
+#  pacticipant_id | integer                     |
+#  version_order  | integer                     |
 # Indexes:
-#  tags_pk      | PRIMARY KEY btree (version_id, name)
-#  ndx_tag_name | btree (name)
+#  tags_pk                                           | PRIMARY KEY btree (version_id, name)
+#  ndx_tag_name                                      | btree (name)
+#  tags_pacticipant_id_index                         | btree (pacticipant_id)
+#  tags_pacticipant_id_name_version_order_desc_index | btree (pacticipant_id, name, version_order DESC)
+#  tags_version_id_index                             | btree (version_id)
+#  tags_version_order_index                          | btree (version_order)
 # Foreign key constraints:
 #  tags_version_id_fkey | (version_id) REFERENCES versions(id)

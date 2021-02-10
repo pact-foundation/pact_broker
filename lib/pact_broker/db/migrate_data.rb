@@ -21,6 +21,7 @@ module PactBroker
         DataMigrations::DeleteDeprecatedWebhookExecutions.call(database_connection)
         DataMigrations::SetCreatedAtForLatestPactPublications.call(database_connection)
         DataMigrations::SetCreatedAtForLatestVerifications.call(database_connection)
+        DataMigrations::SetExtraColumnsForTags.call(database_connection)
       end
     end
   end
