@@ -174,6 +174,7 @@ module PactBroker
           .paginate(options[:page_number] || DEFAULT_PAGE_NUMBER, options[:page_size] || DEFAULT_PAGE_SIZE)
       end
 
+      # eager loading the tag stuff doesn't seem to make it quicker
       def self.latest_verifications_for_consumer_version_tags(options)
         # server side rendered index page with tags[]=a&tags=[]b
         if options[:tags].is_a?(Array)
