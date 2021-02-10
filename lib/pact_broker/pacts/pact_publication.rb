@@ -39,6 +39,11 @@ module PactBroker
         include PactPublicationDatasetModule
       end
 
+      def self.subtract(a, b)
+        b_ids = b.collect(&:id)
+        a.reject{ |pact_publication| b_ids.include?(pact_publication.id) }
+      end
+
       def before_create
         super
         self.revision_number ||= 1

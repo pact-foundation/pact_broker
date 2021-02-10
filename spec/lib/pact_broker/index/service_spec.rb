@@ -192,6 +192,43 @@ module PactBroker
               expect(rows[1].provider_name).to eq "Wiffle"
             end
           end
+
+          context "with tags[]=" do
+            before do
+              td.create_pact_with_hierarchy("Foo", "1.0.0", "Bar")
+                .create_verification(provider_version: "4.5.6")
+                .create_consumer_version("2.0.0")
+                .create_consumer_version_tag("dev")
+                .create_pact
+                .revise_pact
+                .create_consumer_version("2.1.0")
+                .create_consumer_version_tag("prod")
+                .create_consumer_version_tag("not-prod")
+                .create_pact
+                .revise_pact
+                .create_verification(provider_version: "4.5.6", number: 1)
+                .create_verification(provider_version: "4.5.7", number: 2)
+                .create_verification(provider_version: "4.5.8", number: 3)
+                .create_verification(provider_version: "4.5.9", number: 4)
+                .create_provider("Wiffle")
+                .create_pact
+            end
+
+            let(:options) { {tags: ["prod"]} }
+
+            it "returns a row for for the latest pact and a row for the prod pact (maybe it shouldn't return the latest as well)" do
+              expect(rows.size).to eq 2
+
+              expect(rows[0].latest?).to be true
+              expect(rows[0].provider_name).to eq "Bar"
+              expect(rows[0].tag_names).to eq ["prod"]
+              expect(rows[0].provider_version_number).to eq "4.5.9"
+
+              expect(rows[1].latest?).to be true
+              expect(rows[1].provider_name).to eq "Wiffle"
+              expect(rows[1].tag_names).to eq ["prod"]
+            end
+          end
         end
 
         context "when a pact with a tag has been verified, and then a new changed version has been published with the same tag" do
@@ -263,29 +300,66 @@ module PactBroker
           let(:page_size) { 2 }
           let(:tags) { nil }
 
-          before do
-            td.create_pact_with_hierarchy("Foo1", "1", "Bar1")
-              .create_pact_with_hierarchy("Foo2", "1", "Bar2")
-              .create_pact_with_hierarchy("Foo3", "1", "Bar3")
-          end
+          context "with no tags" do
+            before do
+              td.create_pact_with_hierarchy("Foo1", "1", "Bar1")
+                .create_pact_with_hierarchy("Foo2", "1", "Bar2")
+                .create_pact_with_hierarchy("Foo3", "1", "Bar3")
+            end
 
-          it "it returns the total number of records" do
-            expect(rows.pagination_record_count).to eq 3
-          end
+            it "it returns the total number of records" do
+              expect(rows.pagination_record_count).to eq 3
+            end
 
-          describe "the first page" do
-            it "contains 2 rows" do
-              expect(rows.count).to eq 2
+            describe "the first page" do
+              it "contains 2 rows" do
+                expect(rows.count).to eq 2
+              end
+            end
+
+            describe "the second page" do
+              let(:page_number) { 2 }
+
+              it "contains 1 row" do
+                expect(rows.count).to eq 1
+              end
             end
           end
 
-          describe "the second page" do
-            let(:page_number) { 2 }
+          context "with tags" do
+            before do
+              td.create_pact_with_hierarchy("Foo1", "1", "Bar1")
+                .create_consumer_version_tag("prod")
+                .create_consumer_version_tag("dev")
+                .create_pact_with_hierarchy("Foo2", "1", "Bar2")
+                .create_consumer_version_tag("prod")
+                .create_consumer_version_tag("dev")
+                .create_pact_with_hierarchy("Foo3", "1", "Bar3")
+                .create_consumer_version_tag("prod")
+                .create_consumer_version_tag("dev")
+            end
 
-            it "contains 1 row" do
-              expect(rows.count).to eq 1
+            let(:tags) { true }
+
+            it "it returns the total number of records" do
+              expect(rows.pagination_record_count).to eq 3
+            end
+
+            describe "the first page" do
+              it "contains 2 rows" do
+                expect(rows.count).to eq 2
+              end
+            end
+
+            describe "the second page" do
+              let(:page_number) { 2 }
+
+              it "contains 1 row" do
+                expect(rows.count).to eq 1
+              end
             end
           end
+
         end
       end
 

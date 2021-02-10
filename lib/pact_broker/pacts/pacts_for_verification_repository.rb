@@ -275,11 +275,11 @@ module PactBroker
       end
 
       def remove_already_verified_by_branch(pact_publications, provider, provider_version_branch)
-        pact_publications.all - pact_publications.successfully_verified_by_provider_branch(provider.id, provider_version_branch).all
+        PactPublication.subtract(pact_publications.all, pact_publications.successfully_verified_by_provider_branch(provider.id, provider_version_branch).all)
       end
 
       def remove_already_verified_by_tag(pact_publications, query, provider, tag)
-        pact_publications - query.successfully_verified_by_provider_tag(provider.id, tag).all
+        PactPublication.subtract(pact_publications, query.successfully_verified_by_provider_tag(provider.id, tag).all)
       end
     end
   end

@@ -13,14 +13,6 @@ module PactBroker
       extend PactBroker::Services
       extend PactBroker::Logging
 
-      COLS = [:id, :consumer_name, :provider_name, :consumer_version_order]
-      LATEST_PPS = Sequel::Model.db[:latest_pact_publications].select(*COLS)
-      LATEST_TAGGED_PPS = Sequel::Model.db[:latest_tagged_pact_publications].select(*COLS)
-      HEAD_PP_ORDER_COLUMNS = [
-          Sequel.asc(Sequel.function(:lower, :consumer_name)),
-          Sequel.desc(:consumer_version_order),
-          Sequel.asc(Sequel.function(:lower, :provider_name))
-        ].freeze
       DEFAULT_PAGE_SIZE = 30
       DEFAULT_PAGE_NUMBER = 1
 
@@ -40,17 +32,15 @@ module PactBroker
 
       def self.find_index_items options = {}
         latest_verifications_for_cv_tags = latest_verifications_for_consumer_version_tags(options)
-        latest_pact_publication_ids = latest_pact_publications.select(:id).all.collect{ |h| h[:id] }
+        latest_pp_ids = latest_pact_publication_ids
 
         # We only need to know if a webhook exists for an integration, not what its properties are
         webhooks = PactBroker::Webhooks::Webhook.select(:consumer_id, :provider_id).distinct.all
 
-        pact_publication_ids = head_pact_publication_ids(options)
-        pagination_record_count = pact_publication_ids.pagination_record_count
+        pact_publication_query = head_pact_publications(options)
+        pagination_record_count = pact_publication_query.pagination_record_count
 
-        pact_publications = pact_publication_scope
-          .where(id: pact_publication_ids)
-          .select_all_qualified
+        pact_publications = pact_publication_query
           .eager(:consumer)
           .eager(:provider)
           .eager(:pact_version)
@@ -60,7 +50,8 @@ module PactBroker
           .eager(:head_pact_publications_for_tags)
 
         index_items = pact_publications.all.collect do | pact_publication |
-          is_overall_latest_for_integration = latest_pact_publication_ids.include?(pact_publication.id)
+          is_overall_latest_for_integration = latest_pp_ids.include?(pact_publication.id)
+
           latest_verification = latest_verification_for_pseudo_branch(pact_publication, is_overall_latest_for_integration, latest_verifications_for_cv_tags, options[:tags])
           webhook = webhooks.find{ |webhook| webhook.is_for?(pact_publication.integration) }
 
@@ -101,19 +92,15 @@ module PactBroker
         if tags_option == true
           pact_publication.head_pact_tags
         elsif tags_option.is_a?(Array)
-          pact_publication.head_pact_tags.select { |tag| tags_option.include?(tag.name) }
+          pact_publication.head_pact_tags.select{ |tag| tags_option.include?(tag.name)}
         else
           []
         end
       end
 
       def self.find_index_items_for_api(consumer_name: nil, provider_name: nil, **ignored)
-        latest_pact_publication_ids = latest_pact_publications.select(:id).all.collect{ |h| h[:id] }
-        pact_publication_ids = head_pact_publication_ids(consumer_name: consumer_name, provider_name: provider_name, tags: true)
-
-        pact_publications = pact_publication_scope
-          .where(id: pact_publication_ids)
-          .select_all_qualified
+        latest_pp_ids = latest_pact_publication_ids
+        pact_publications = head_pact_publications(consumer_name: consumer_name, provider_name: provider_name, tags: true)
           .eager(:consumer)
           .eager(:provider)
           .eager(:pact_version)
@@ -121,10 +108,8 @@ module PactBroker
           .eager(latest_verification: { provider_version: [:latest_version_for_branch, { tags: :head_tag }]})
           .eager(:head_pact_publications_for_tags)
 
-
         pact_publications.all.collect do | pact_publication |
-
-          is_overall_latest_for_integration = latest_pact_publication_ids.include?(pact_publication.id)
+          is_overall_latest_for_integration = latest_pp_ids.include?(pact_publication.id)
 
           PactBroker::Domain::IndexItem.create(
             pact_publication.consumer,
@@ -141,33 +126,52 @@ module PactBroker
       end
 
       def self.latest_pact_publications
-        db[:latest_pact_publications]
+        PactBroker::Pacts::PactPublication.overall_latest
+      end
+
+      def self.latest_pact_publication_ids
+        PactBroker::Pacts::PactPublication.select(Sequel[:pact_publications][:id]).overall_latest.collect(&:id)
       end
 
       def self.db
         PactBroker::Pacts::PactPublication.db
       end
 
-      def self.head_pact_publication_ids(options = {})
-        query = if options[:tags].is_a?(Array)
-          LATEST_PPS.union(LATEST_TAGGED_PPS.where(tag_name: options[:tags]))
-        elsif options[:tags]
-          LATEST_PPS.union(LATEST_TAGGED_PPS)
-        else
-          LATEST_PPS
-        end
+      def self.head_pact_publications(options = {})
+        base = PactBroker::Pacts::PactPublication.select(Sequel[:pact_publications][:id])
 
         if options[:consumer_name]
-          query = query.where(PactBroker::Repositories::Helpers.name_like(:consumer_name, options[:consumer_name]))
+          consumer = pacticipant_repository.find_by_name!(options[:consumer_name])
+          base = base.for_consumer(consumer)
         end
 
         if options[:provider_name]
-          query = query.where(PactBroker::Repositories::Helpers.name_like(:provider_name, options[:provider_name]))
+          provider = pacticipant_repository.find_by_name!(options[:provider_name])
+          base = base.for_provider(provider)
         end
 
-        query.order(*HEAD_PP_ORDER_COLUMNS)
+        latest = base.overall_latest
+        ids_query = if options[:tags].is_a?(Array)
+          latest.union(base.latest_for_consumer_tag(options[:tags]))
+        elsif options[:tags]
+          latest.union(base.latest_by_consumer_tag)
+        else
+          latest
+        end
+
+        query = PactBroker::Pacts::PactPublication.select_all_qualified.where(Sequel[:pact_publications][:id] => ids_query)
+          .join_consumers(:consumers)
+          .join_providers(:providers)
+          .join(:versions, { Sequel[:pact_publications][:consumer_version_id] => Sequel[:cv][:id] }, { table_alias: :cv } )
+
+        order_columns = [
+          Sequel.asc(Sequel.function(:lower, Sequel[:consumers][:name])),
+          Sequel.desc(Sequel[:cv][:order]),
+          Sequel.asc(Sequel.function(:lower, Sequel[:providers][:name]))
+        ]
+
+        query.order(*order_columns)
           .paginate(options[:page_number] || DEFAULT_PAGE_NUMBER, options[:page_size] || DEFAULT_PAGE_SIZE)
-          .select(:id)
       end
 
       def self.latest_verifications_for_consumer_version_tags(options)
