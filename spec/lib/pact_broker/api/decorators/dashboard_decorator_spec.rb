@@ -21,7 +21,9 @@ module PactBroker
             webhook_status: 'blah',
             pseudo_branch_verification_status: 'wiffle',
             provider_version_number: provider_version.number,
+            provider_version_branch: provider_version.branch,
             consumer_version_number: consumer_version.number,
+            consumer_version_branch: consumer_version.branch,
             tag_names: ['prod'],
             latest_verification_latest_tags: [double('tag', name: 'dev', latest?: true)]
           )
@@ -30,8 +32,8 @@ module PactBroker
         let(:provider) { instance_double('PactBroker::Domain::Pacticipant', name: 'Bar') }
         let(:pact) { instance_double('PactBroker::Domain::Pact', created_at: created_at) }
         let(:verification) { instance_double('PactBroker::Domain::Verification', success: true, created_at: created_at) }
-        let(:consumer_version) { instance_double('PactBroker::Domain::Version', number: '1', pacticipant: consumer) }
-        let(:provider_version) { instance_double('PactBroker::Domain::Version', number: '2', pacticipant: provider) }
+        let(:consumer_version) { instance_double('PactBroker::Domain::Version', number: '1', pacticipant: consumer, branch: "main") }
+        let(:provider_version) { instance_double('PactBroker::Domain::Version', number: '2', pacticipant: provider, branch: "main") }
         let(:last_webhook_execution_date) { created_at }
         let(:base_url) { 'http://example.org' }
         let(:options) { { user_options: { base_url: base_url } } }

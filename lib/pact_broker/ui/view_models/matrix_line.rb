@@ -4,6 +4,7 @@ require 'pact_broker/date_helper'
 require 'pact_broker/ui/view_models/matrix_tag'
 require 'pact_broker/versions/abbreviate_number'
 require 'pact_broker/messages'
+require 'forwardable'
 
 module PactBroker
   module UI
@@ -11,6 +12,9 @@ module PactBroker
       class MatrixLine
         include PactBroker::Api::PactBrokerUrls
         include PactBroker::Messages
+        extend Forwardable
+
+        delegate [:consumer_version_branch, :provider_version_branch] => :line
 
         def initialize line, options = {}
           @line = line
@@ -95,6 +99,22 @@ module PactBroker
           else
             0
           end
+        end
+
+        def consumer_version_branch_tooltip
+          branch_tooltip(consumer_name, consumer_version_branch, consumer_version_latest_for_branch?)
+        end
+
+        def consumer_version_latest_for_branch?
+          @line.consumer_version.latest_for_branch?
+        end
+
+        def provider_version_branch_tooltip
+          branch_tooltip(provider_name, provider_version_branch, provider_version_latest_for_branch?)
+        end
+
+        def provider_version_latest_for_branch?
+          @line.provider_version.latest_for_branch?
         end
 
         def latest_consumer_version_tags
@@ -190,6 +210,18 @@ module PactBroker
 
         def base_url
           @options[:base_url]
+        end
+
+        private
+
+        attr_reader :line
+
+        def branch_tooltip(pacticipant_name, branch, latest)
+          if latest
+            "This is the latest version of #{pacticipant_name} from branch \"#{branch}\"."
+          else
+            "A more recent version of #{pacticipant_name} from branch \"#{branch}\" exists."
+          end
         end
       end
     end

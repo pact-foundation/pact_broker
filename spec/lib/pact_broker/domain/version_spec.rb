@@ -142,6 +142,88 @@ module PactBroker
         end
       end
 
+      describe "latest_for_pacticipant?" do
+        before do
+          td.create_consumer("Foo")
+            .create_consumer_version("1")
+            .create_consumer_version("2")
+            .create_consumer("Bar")
+            .create_consumer_version("5")
+            .create_consumer_version("6")
+            .create_consumer_version("7")
+        end
+
+        context "when the version is the latest for the pacticipant" do
+          it "returns true" do
+            expect(Version.for("Foo", "2").latest_for_pacticipant?).to be true
+          end
+        end
+
+        context "when the version is not the latest version for the pacticipant" do
+          it "returns false" do
+            expect(Version.for("Foo", "1").latest_for_pacticipant?).to be false
+          end
+        end
+      end
+
+      describe "latest_version_for_pacticipant" do
+        before do
+          td.create_consumer("Foo")
+            .create_consumer_version("1")
+            .create_consumer_version("2")
+            .create_consumer("Bar")
+            .create_consumer_version("5")
+            .create_consumer_version("6")
+            .create_consumer_version("7")
+        end
+
+        subject { Version.order(:order) }
+
+        it "lazy loads" do
+          expect(subject.all[0].latest_version_for_pacticipant.number).to eq "2"
+        end
+
+        it "eager loads" do
+          all = subject.eager(:latest_version_for_pacticipant).all
+          expect(all[0].associations[:latest_version_for_pacticipant]).to_not be nil
+          expect(all[0].latest_version_for_pacticipant.number).to eq "2"
+        end
+      end
+
+      describe "latest_version_for_branch" do
+        before do
+          td.create_consumer("Foo")
+            .create_consumer_version("1", branch: "main")
+            .create_consumer_version("2", branch: "main")
+            .create_consumer_version("3", branch: "feat/x")
+            .create_consumer_version("4", branch: "feat/x")
+            .create_consumer_version("5")
+        end
+
+        subject { Version.order(:order) }
+
+        it "lazy loads" do
+          expect(subject.all[0].latest_version_for_branch.number).to eq "2"
+          expect(subject.all[2].latest_version_for_branch.number).to eq "4"
+          expect(subject.all[4].latest_version_for_branch).to eq nil
+        end
+
+        it "eager loads" do
+          all = subject.eager(:latest_version_for_branch).all
+
+          expect(all[0].associations[:latest_version_for_branch]).to_not be nil
+          expect(all[1].associations[:latest_version_for_branch]).to_not be nil
+          expect(all[2].associations[:latest_version_for_branch]).to_not be nil
+          expect(all[3].associations[:latest_version_for_branch]).to_not be nil
+          expect(all[4].associations.fetch(:latest_version_for_branch)).to be nil
+
+          expect(all[0].latest_version_for_branch.number).to eq "2"
+          expect(all[1].latest_version_for_branch.number).to eq "2"
+          expect(all[2].latest_version_for_branch.number).to eq "4"
+          expect(all[4].latest_version_for_branch).to eq nil
+        end
+      end
+
       describe "#latest_pact_publication" do
         let!(:pact) do
           TestDataBuilder.new
@@ -173,26 +255,32 @@ module PactBroker
         end
       end
 
-      describe "tags_with_latest_flag" do
+      describe "latest_for_branch?" do
         before do
-          td.create_consumer("foo")
-            .create_consumer_version("1")
-            .create_consumer_version_tag("dev")
-            .create_consumer_version_tag("prod")
-            .create_consumer_version("2")
-            .create_consumer_version_tag("dev")
+          td.create_consumer("Foo")
+            .create_consumer_version("1", branch: "main")
+            .create_consumer_version("2", branch: "main")
+            .create_consumer_version("3", branch: nil)
         end
 
-        it "uneager loads" do
-          version = Version.first(number: "1")
-          expect(version.tags.collect(&:name).sort).to eq %w{dev prod}
-          expect(version.tags_with_latest_flag.select(&:latest).collect(&:name)).to eq %w{prod}
+        subject { version.latest_for_branch? }
+
+        context "when there is a later version with the same branch name" do
+          let(:version) { Version.for("Foo", "1") }
+
+          it { is_expected.to be false }
         end
 
-        it "eager loads" do
-          version = Version.eager(:tags, :tags_with_latest_flag).where(number: "1").all.first
-          expect(version.tags.collect(&:name).sort).to eq %w{dev prod}
-          expect(version.tags_with_latest_flag.select(&:latest).collect(&:name)).to eq %w{prod}
+        context "when there is a later version with the same branch name" do
+          let(:version) { Version.for("Foo", "2") }
+
+          it { is_expected.to be true }
+        end
+
+        context "when there is no branch" do
+          let(:version) { Version.for("Foo", "3") }
+
+          it { is_expected.to be nil }
         end
       end
     end

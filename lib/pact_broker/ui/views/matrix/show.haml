@@ -118,6 +118,11 @@
               - if line.display_consumer_version_number
                 %button.clippy.invisible{ title: "Copy to clipboard" }
                   %span.copy-icon
+            - if line.consumer_version_branch
+              .tag-parent{"title": line.consumer_version_branch_tooltip, "data-toggle": "tooltip", "data-placement": "right"}
+                - branch_class = line.consumer_version_latest_for_branch? ? "tag badge badge-dark" : "tag badge badge-secondary"
+                %div{"class": branch_class}
+                  = "[" + line.consumer_version_branch + "]"
             - line.latest_consumer_version_tags.each do | tag |
               .tag-parent{"title": tag.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
                 %a{href: tag.url}
@@ -145,6 +150,11 @@
               - if line.display_provider_version_number
                 %button.clippy.invisible{ title: "Copy to clipboard" }
                   %span.copy-icon
+            - if line.provider_version_branch
+              .tag-parent{"title": line.provider_version_branch_tooltip, "data-toggle": "tooltip", "data-placement": "right"}
+                - branch_class = line.provider_version_latest_for_branch? ? "tag badge badge-dark" : "tag badge badge-secondary"
+                %div{"class": branch_class}
+                  = "[" + line.provider_version_branch + "]"
             - line.latest_provider_version_tags.each do | tag |
               .tag-parent{"title": tag.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
                 %a{href: tag.url}

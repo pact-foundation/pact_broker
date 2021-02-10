@@ -2,6 +2,8 @@ require 'pact_broker/db'
 require 'pact_broker/domain/order_versions'
 require 'pact_broker/repositories/helpers'
 require 'pact_broker/tags/tag_with_latest_flag'
+require 'pact_broker/versions/eager_loaders'
+require 'pact_broker/versions/lazy_loaders'
 
 module PactBroker
   module Domain
@@ -22,37 +24,51 @@ module PactBroker
 
     class Version < Sequel::Model
       plugin :timestamps, update_on_create: true
-      plugin :insert_ignore, identifying_columns: [:pacticipant_id, :number]
+      plugin :upsert, identifying_columns: [:pacticipant_id, :number]
 
       set_primary_key :id
       one_to_many :pact_publications, order: :revision_number, class: "PactBroker::Pacts::PactPublication", key: :consumer_version_id
       associate(:many_to_one, :pacticipant, :class => "PactBroker::Domain::Pacticipant", :key => :pacticipant_id, :primary_key => :id)
       one_to_many :tags, :reciprocal => :version, order: :created_at
 
-      one_to_many :tags_with_latest_flag, :class => "PactBroker::Tags::TagWithLatestFlag", primary_keys: [:id], key: [:version_id], :eager_loader=>(proc do |eo_opts|
-        tags_for_versions = PactBroker::Domain::Tag.where(version_id: eo_opts[:key_hash][:id].keys)
-        latest_tag_for_pacticipants = PactBroker::Domain::Tag.latest_tags_for_pacticipant_ids(eo_opts[:rows].collect(&:pacticipant_id)).all
+      many_to_one :latest_version_for_pacticipant, read_only: true, key: :id,
+        class: Version,
+        dataset: lambda { Version.latest_version_for_pacticipant(pacticipant) },
+        eager_loader: PactBroker::Versions::EagerLoaders::LatestVersionForPacticipant
 
-        eo_opts[:rows].each{|row| row.associations[:tags_with_latest_flag] = [] }
-
-        tags_for_versions.each do | tag |
-          latest = latest_tag_for_pacticipants.any? { |latest_tag| latest_tag.name == tag.name && latest_tag.version_id == tag.version_id }
-          eo_opts[:id_map][tag.version_id].each do | version |
-            version.associations[:tags_with_latest_flag] << EagerTagWithLatestFlag.new(tag, latest)
-          end
-        end
-      end)
-
+      many_to_one :latest_version_for_branch, read_only: true, key: :id,
+        class: Version,
+        dataset: PactBroker::Versions::LazyLoaders::LATEST_VERSION_FOR_BRANCH,
+        eager_loader: PactBroker::Versions::EagerLoaders::LatestVersionForBranch
 
       dataset_module do
         include PactBroker::Repositories::Helpers
+
+        def latest_version_for_pacticipant(pacticipant)
+          where(pacticipant: pacticipant)
+          .order(Sequel.desc(:order))
+          .limit(1)
+        end
 
         def for(pacticipant_name, version_number)
           where_pacticipant_name(pacticipant_name).where_number(version_number).single_record
         end
 
+        def latest_versions_for_pacticipant_branches(pacticipant_id, branches)
+          query = Version.where(Sequel[:versions][:pacticipant_id] => pacticipant_id, Sequel[:versions][:branch] => branches)
+
+          self_join = {
+            Sequel[:versions][:pacticipant_id] => Sequel[:versions_2][:pacticipant_id],
+            Sequel[:versions][:branch] => Sequel[:versions_2][:branch]
+          }
+          query.select_all_qualified.left_join(query, self_join, table_alias: :versions_2) do
+            Sequel[:versions_2][:order] > Sequel[:versions][:order]
+          end
+          .where(Sequel[:versions_2][:order] => nil)
+        end
+
         def where_pacticipant_name(pacticipant_name)
-          where(pacticipant_id: db[:pacticipants].select(:id).where(name_like(:name, pacticipant_name)))
+          where(Sequel[:versions][:pacticipant_id] => db[:pacticipants].select(:id).where(name_like(:name, pacticipant_name)))
           # If we do a join, we get the extra columns from the pacticipant table that then
           # make == not work
           # join(:pacticipants) do | p |
@@ -118,7 +134,7 @@ module PactBroker
             Sequel[:versions][:order]          => Sequel[:latest][:latest_version_order]
           }
 
-          group_by_cols = selector.tag == true ? [:pacticipant_id, Sequel[:tags][:name]] : [:pacticipant_id]
+          group_by_cols = selector.tag == true ? [Sequel[:versions][:pacticipant_id], Sequel[:tags][:name]] : [Sequel[:versions][:pacticipant_id]]
 
           max_order_for_each_pacticipant = query
               .select_group(*group_by_cols)
@@ -147,9 +163,21 @@ module PactBroker
         "Version #{number} - #{updated_at.to_time.localtime.strftime("%d/%m/%Y")}"
       end
 
+      def head_tags
+        tags.select(&:latest_for_pacticipant?)
+      end
+
       # What about provider??? This makes no sense
       def latest_pact_publication
         pact_publications.last
+      end
+
+      def latest_for_branch?
+        branch ? latest_version_for_branch.order == order : nil
+      end
+
+      def latest_for_pacticipant?
+        latest_version_for_pacticipant == self
       end
     end
   end
@@ -157,19 +185,23 @@ end
 
 # Table: versions
 # Columns:
-#  id             | integer                     | PRIMARY KEY DEFAULT nextval('versions_id_seq'::regclass)
+#  id             | integer                     | PRIMARY KEY GENERATED BY DEFAULT AS IDENTITY
 #  number         | text                        |
 #  repository_ref | text                        |
 #  pacticipant_id | integer                     | NOT NULL
 #  order          | integer                     |
 #  created_at     | timestamp without time zone | NOT NULL
 #  updated_at     | timestamp without time zone | NOT NULL
+#  branch         | text                        |
+#  build_url      | text                        |
 # Indexes:
-#  versions_pkey                        | PRIMARY KEY btree (id)
-#  uq_ver_ppt_ord                       | UNIQUE btree (pacticipant_id, "order")
-#  versions_pacticipant_id_number_index | UNIQUE btree (pacticipant_id, number)
-#  ndx_ver_num                          | btree (number)
-#  ndx_ver_ord                          | btree ("order")
+#  versions_pkey                              | PRIMARY KEY btree (id)
+#  uq_ver_ppt_ord                             | UNIQUE btree (pacticipant_id, "order")
+#  versions_pacticipant_id_number_index       | UNIQUE btree (pacticipant_id, number)
+#  ndx_ver_num                                | btree (number)
+#  ndx_ver_ord                                | btree ("order")
+#  versions_pacticipant_id_branch_order_index | btree (pacticipant_id, branch, "order")
+#  versions_pacticipant_id_order_desc_index   | btree (pacticipant_id, "order" DESC)
 # Foreign key constraints:
 #  versions_pacticipant_id_fkey | (pacticipant_id) REFERENCES pacticipants(id)
 # Referenced By:

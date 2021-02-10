@@ -149,6 +149,10 @@ module PactBroker
           identifier_from_path[:consumer_version_number]
         end
 
+        def pacticipant_version_number
+          identifier_from_path[:pacticipant_version_number]
+        end
+
         def consumer_specified?
           identifier_from_path.key?(:consumer_name)
         end

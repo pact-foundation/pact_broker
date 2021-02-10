@@ -23,6 +23,8 @@ module PactBroker
         it "sets the properties" do
           expect(subject.name).to eq "prod"
           expect(subject.version.id).to eq td.version.id
+          expect(subject.version_order).to eq td.version.order
+          expect(subject.pacticipant_id).to eq td.version.pacticipant_id
         end
 
         context "when the tag already exists" do

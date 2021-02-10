@@ -122,6 +122,38 @@ module PactBroker
           end
         end
       end
+
+      describe "#create_or_update" do
+        before do
+          td.subtract_day
+            .create_consumer("Foo")
+            .create_consumer_version(version_number, branch: "original-branch", build_url: "original-build-url")
+            .create_consumer_version_tag("dev")
+        end
+
+        let(:pacticipant) { td.and_return(:consumer) }
+        let(:version_number) { "1234" }
+        let(:version) { PactBroker::Domain::Version.new(branch: "new-branch") }
+
+        subject { Repository.new.create_or_update(pacticipant, version_number, version) }
+
+        it "overwrites the values" do
+          expect(subject.branch).to eq "new-branch"
+          expect(subject.build_url).to eq nil
+        end
+
+        it "does not change the tags" do
+          expect { subject }.to_not change { PactBroker::Domain::Version.for("Foo", "1234").tags }
+        end
+
+        it "does not change the created date" do
+          expect { subject }.to_not change { PactBroker::Domain::Version.for("Foo", "1234").created_at }
+        end
+
+        it "does change the updated date" do
+          expect { subject }.to change { PactBroker::Domain::Version.for("Foo", "1234").updated_at }
+        end
+      end
     end
   end
 end

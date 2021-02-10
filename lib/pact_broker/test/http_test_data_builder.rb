@@ -8,7 +8,7 @@ module PactBroker
   module Test
     class HttpTestDataBuilder
 
-      attr_reader :client, :last_consumer_name, :last_provider_name, :last_consumer_version_number, :last_provider_version_number
+      attr_reader :client, :last_consumer_name, :last_provider_name, :last_consumer_version_number, :last_provider_version_number, :last_provider_version_tag, :last_provider_version_branch
 
       def initialize(pact_broker_base_url, auth = {})
         @client = Faraday.new(url: pact_broker_base_url) do |faraday|
@@ -46,6 +46,13 @@ module PactBroker
         self
       end
 
+      def create_version(pacticipant:, version:, branch:)
+        request_body = {
+          branch: branch
+        }
+        client.put("pacticipants/#{encode(pacticipant)}/versions/#{encode(version)}", request_body).tap { |response| check_for_error(response) }
+      end
+
       def deploy_to_prod(pacticipant:, version:)
         puts "Deploying #{pacticipant} version #{version} to prod"
         create_tag(pacticipant: pacticipant, version: version, tag: "prod")
@@ -60,10 +67,12 @@ module PactBroker
         self
       end
 
-      def publish_pact(consumer: last_consumer_name, consumer_version:, provider: last_provider_name, content_id:, tag:)
+      def publish_pact(consumer: last_consumer_name, consumer_version:, provider: last_provider_name, content_id:, tag: nil, branch: nil)
         @last_consumer_name = consumer
         @last_provider_name = provider
         @last_consumer_version_number = consumer_version
+
+        create_version(pacticipant: consumer, version: consumer_version, branch: branch) if branch
 
         [*tag].each do | tag |
           create_tag(pacticipant: consumer, version: consumer_version, tag: tag)
@@ -78,18 +87,21 @@ module PactBroker
         self
       end
 
-      def get_pacts_for_verification(provider: last_provider_name, provider_version_tag: , consumer_version_selectors:, enable_pending: false, include_wip_pacts_since: nil)
+      def get_pacts_for_verification(provider: last_provider_name, provider_version_tag: nil, provider_version_branch: nil, consumer_version_selectors:, enable_pending: false, include_wip_pacts_since: nil)
         @last_provider_name = provider
+        @last_provider_version_tag = provider_version_tag
+        @last_provder_version_branch = provider_version_branch
         puts "Fetching pacts for verification for #{provider}"
-        body = {
+        request_body = {
           providerVersionTags: [*provider_version_tag],
+          providerVersionBranch: provider_version_branch,
           consumerVersionSelectors: consumer_version_selectors,
           includePendingStatus: enable_pending,
           includeWipPactsSince: include_wip_pacts_since
         }.compact
-        puts body.to_yaml
+        puts request_body.to_yaml
         puts ""
-        @pacts_for_verification_response = client.post("pacts/provider/#{encode(provider)}/for-verification", body).tap { |response| check_for_error(response) }
+        @pacts_for_verification_response = client.post("pacts/provider/#{encode(provider)}/for-verification", request_body).tap { |response| check_for_error(response) }
 
         print_pacts_for_verification
         separate
@@ -114,14 +126,18 @@ module PactBroker
       def verify_latest_pact_for_tag(success: true, provider: last_provider_name, consumer: last_consumer_name, consumer_version_tag: , provider_version:, provider_version_tag: nil)
         @last_provider_name = provider
         @last_consumer_name = consumer
+
         url_of_pact_to_verify = "pacts/provider/#{encode(provider)}/consumer/#{encode(consumer)}/latest/#{encode(consumer_version_tag)}"
         publish_verification_results(url_of_pact_to_verify, provider, provider_version, provider_version_tag, success)
         separate
         self
       end
 
-      def verify_pact(index: 0, success:, provider: last_provider_name, provider_version_tag: , provider_version: )
+      def verify_pact(index: 0, success:, provider: last_provider_name, provider_version_tag: last_provider_version_tag, provider_version_branch: last_provider_version_branch, provider_version: )
         @last_provider_name = provider
+        @last_provider_version_tag = provider_version_tag
+        @last_provider_version_branch = provider_version_branch
+
         pact_to_verify = @pacts_for_verification_response.body["_embedded"]["pacts"][index]
         raise "No pact found to verify at index #{index}" unless pact_to_verify
         url_of_pact_to_verify = pact_to_verify["_links"]["self"]["href"]

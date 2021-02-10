@@ -70,24 +70,3 @@ img.pact_badge {
   display: flex;
   justify-content: flex-start;
 }
-
-span.copy-icon {
-  background-image: url('/images/copy.svg');
-  background-size: 16px 16px;
-  background-repeat: no-repeat;
-  display:block;
-  position: relative;
-  width: 16px;
-  height: 16px;
-  cursor: pointer;
-}
-
-span.copy-success-icon {
-  background-image: url('/images/check.svg');
-  background-size: 16px 16px;
-  background-repeat: no-repeat;
-  display:block;
-  position: relative;
-  width: 16px;
-  height: 16px;
-}

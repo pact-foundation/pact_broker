@@ -16,6 +16,7 @@ module PactBroker
         let(:decorator) { instance_double('PactBroker::Api::Decorators::VerifiablePactsDecorator') }
         let(:query) do
           {
+            provider_version_branch: "main",
             provider_version_tags: ['master'],
             consumer_version_selectors: [ { tag: 'dev', latest: 'true' }],
             include_pending_status: 'true',
@@ -30,6 +31,7 @@ module PactBroker
             # Naughty not mocking out the query parsing...
             expect(PactBroker::Pacts::Service).to receive(:find_for_verification).with(
               "Bar",
+              "main",
               ["master"],
               PactBroker::Pacts::Selectors.new([PactBroker::Pacts::Selector.latest_for_tag("dev")]),
               {
@@ -56,6 +58,7 @@ module PactBroker
         describe "POST" do
           let(:request_body) do
             {
+              providerVersionBranch: "main",
               providerVersionTags: ['master'],
               consumerVersionSelectors: [ { tag: 'dev', latest: true }],
               includePendingStatus: true,
@@ -76,6 +79,7 @@ module PactBroker
             # Naughty not mocking out the query parsing...
             expect(PactBroker::Pacts::Service).to receive(:find_for_verification).with(
               "Bar",
+              "main",
               ["master"],
               PactBroker::Pacts::Selectors.new([PactBroker::Pacts::Selector.latest_for_tag("dev")]),
               {

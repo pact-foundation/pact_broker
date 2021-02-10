@@ -161,18 +161,29 @@ module PactBroker
       def create_consumer_version version_number = "1.0.#{model_counter}", params = {}
         params.delete(:comment)
         tag_names = [params.delete(:tag_names), params.delete(:tag_name)].flatten.compact
-        @consumer_version = PactBroker::Domain::Version.create(:number => version_number, :pacticipant => @consumer)
+        @consumer_version = PactBroker::Domain::Version.create(
+          number: version_number,
+          pacticipant: @consumer,
+          branch: params[:branch],
+          build_url: params[:build_url]
+        )
         set_created_at_if_set params[:created_at], :versions, { id: @consumer_version.id }
         tag_names.each do | tag_name |
-          PactBroker::Domain::Tag.create(name: tag_name, version: @consumer_version)
+          tag = PactBroker::Domain::Tag.create(name: tag_name, version: consumer_version)
+          set_created_at_if_set(params[:created_at], :tags, { name: tag.name, version_id: consumer_version.id })
         end
         self
       end
 
       def create_provider_version version_number = "1.0.#{model_counter}", params = {}
         params.delete(:comment)
+        tag_names = [params.delete(:tag_names), params.delete(:tag_name)].flatten.compact
         @version = PactBroker::Domain::Version.create(:number => version_number, :pacticipant => @provider)
         @provider_version = @version
+        tag_names.each do | tag_name |
+          tag = PactBroker::Domain::Tag.create(name: tag_name, version: provider_version)
+          set_created_at_if_set(params[:created_at], :tags, { name: tag.name, version_id: provider_version.id })
+        end
         self
       end
 
@@ -188,7 +199,7 @@ module PactBroker
 
       def create_tag tag_name, params = {}
         params.delete(:comment)
-        @tag = PactBroker::Domain::Tag.create(name: tag_name, version: @version)
+        @tag = PactBroker::Domain::Tag.create(name: tag_name, version: @version, version_order: @version.order, pacticipant_id: @version.pacticipant_id)
         set_created_at_if_set params[:created_at], :tags, { name: @tag.name, version_id: @tag.version_id }
         self
       end
@@ -341,6 +352,7 @@ module PactBroker
 
       def create_verification parameters = {}
         parameters.delete(:comment)
+        branch = parameters.delete(:branch)
         tag_names = [parameters.delete(:tag_names), parameters.delete(:tag_name)].flatten.compact
         provider_version_number = parameters[:provider_version] || '4.5.6'
         default_parameters = { success: true, number: 1, test_results: {some: 'results'}, wip: false }
@@ -350,6 +362,7 @@ module PactBroker
         verification = PactBroker::Domain::Verification.new(parameters)
         @verification = PactBroker::Verifications::Repository.new.create(verification, provider_version_number, @pact)
         @provider_version = PactBroker::Domain::Version.where(pacticipant_id: @provider.id, number: provider_version_number).single_record
+        @provider_version.update(branch: branch) if branch
 
         set_created_at_if_set(parameters[:created_at], :verifications, id: @verification.id)
         set_created_at_if_set(parameters[:created_at], :versions, id: @provider_version.id)
@@ -388,6 +401,26 @@ module PactBroker
           .create_webhook
           .create_triggered_webhook
           .create_webhook_execution
+      end
+
+      def find_pacticipant(name)
+        PactBroker::Domain::Pacticipant.where(name: name).single_record
+      end
+
+      def find_version(pacticipant_name, version_number)
+        PactBroker::Domain::Version.for(pacticipant_name, version_number)
+      end
+
+      def find_pact(consumer_name, consumer_version_number, provider_name)
+        pact_repository.find_pact(consumer_name, consumer_version_number, provider_name)
+      end
+
+      def find_pact_publication(consumer_name, consumer_version_number, provider_name)
+        PactBroker::Pacts::PactPublication
+          .remove_overridden_revisions
+          .where(provider: find_pacticipant(provider_name))
+          .where(consumer_version: find_version(consumer_name, consumer_version_number))
+          .single_record
       end
 
       def model_counter

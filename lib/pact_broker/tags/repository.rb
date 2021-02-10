@@ -10,7 +10,9 @@ module PactBroker
       def create args
         params = {
           name: args.fetch(:name),
-          version_id: args.fetch(:version).id
+          version_id: args.fetch(:version).id,
+          version_order: args.fetch(:version).order,
+          pacticipant_id: args.fetch(:version).pacticipant_id
         }
         Domain::Tag.new(params).insert_ignore
       end

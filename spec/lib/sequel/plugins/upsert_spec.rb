@@ -24,6 +24,12 @@ module Sequel
         plugin :upsert, identifying_columns: [:provider_id, :consumer_version_id]
       end
 
+      describe PacticipantNoUpsert do
+        it "has an _insert_dataset method" do
+          expect(PacticipantNoUpsert.private_instance_methods).to include (:_insert_dataset)
+        end
+      end
+
       describe "LatestPactPublicationIdForConsumerVersion" do
         before do
           td.create_pact_with_hierarchy("Foo", "1", "Bar")
@@ -102,10 +108,20 @@ module Sequel
 
       context "when a duplicate Version is inserted with upsert" do
         let!(:pacticipant) { Pacticipant.new(name: "Foo").save }
-        let!(:original_version) { Version.new(number: "1", pacticipant_id: pacticipant.id).upsert }
+        let!(:original_version) do
+          version = Version.new(
+            number: "1",
+            pacticipant_id: pacticipant.id,
+            branch: "original-branch",
+            build_url: "original-url"
+          ).upsert
+          Version.where(id: version.id).update(created_at: yesterday, updated_at: yesterday)
+          version
+        end
+        let(:yesterday) { DateTime.now - 2 }
 
         subject do
-          Version.new(number: "1", pacticipant_id: pacticipant.id).upsert
+          Version.new(number: "1", pacticipant_id: pacticipant.id, branch: "new-branch").upsert
         end
 
         it "does not raise an error" do
@@ -113,11 +129,23 @@ module Sequel
         end
 
         it "sets the values on the object" do
-          expect(subject.id).to eq original_version.id
+          expect(subject.branch).to eq "new-branch"
+        end
+
+        it "nils out values that weren't set on the second model" do
+          expect(subject.build_url).to eq nil
         end
 
         it "does not insert another row" do
           expect { subject }.to_not change { Version.count }
+        end
+
+        it "does not change the created_at" do
+          expect { subject }.to_not change { Version.where(number: "1").first.created_at }
+        end
+
+        it "does change the updated_at" do
+          expect { subject }.to change { Version.where(number: "1").first.updated_at }
         end
       end
     end

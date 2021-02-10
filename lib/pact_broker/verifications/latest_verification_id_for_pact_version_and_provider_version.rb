@@ -16,12 +16,14 @@ module PactBroker
 end
 
 # Table: latest_verification_id_for_pact_version_and_provider_version
+# Primary Key: (pact_version_id, provider_version_id)
 # Columns:
-#  consumer_id         | integer | NOT NULL
-#  pact_version_id     | integer | NOT NULL
-#  provider_id         | integer | NOT NULL
-#  provider_version_id | integer | NOT NULL
-#  verification_id     | integer | NOT NULL
+#  consumer_id         | integer                     | NOT NULL
+#  pact_version_id     | integer                     | NOT NULL
+#  provider_id         | integer                     | NOT NULL
+#  provider_version_id | integer                     | NOT NULL
+#  verification_id     | integer                     | NOT NULL
+#  created_at          | timestamp without time zone |
 # Indexes:
 #  latest_v_id_for_pv_and_pv_pv_id_pv_id_unq | UNIQUE btree (pact_version_id, provider_version_id)
 #  latest_v_id_for_pv_and_pv_v_id_unq        | UNIQUE btree (verification_id)

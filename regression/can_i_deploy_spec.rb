@@ -1,9 +1,10 @@
-PACTICIPANT_LIMIT = 2
-VERSION_LIMIT = 1
+require 'pact_broker/domain'
+PACTICIPANT_LIMIT = 10
+VERSION_LIMIT = 10
 
-PACTICIPANTS = PactBroker::Domain::Pacticipant.order(:id).limit(PACTICIPANT_LIMIT).all
+PACTICIPANTS = PactBroker::Domain::Pacticipant.order(Sequel.desc(:id)).limit(PACTICIPANT_LIMIT).all
 
-RSpec.describe "regression tests", no_db_clean: true, regression: true do
+RSpec.describe "regression tests" do
 
   def can_i_deploy(pacticipant_name, version_number, to_tag)
     get("/can-i-deploy", { pacticipant: pacticipant_name, version: version_number, to: to_tag }, { "HTTP_ACCEPT" => "application/hal+json" })

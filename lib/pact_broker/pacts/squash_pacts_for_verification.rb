@@ -29,10 +29,7 @@ module PactBroker
         else
           VerifiablePact.new(
             domain_pact,
-            selected_pact.selectors,
-            nil,
-            [],
-            []
+            selected_pact.selectors
           )
         end
       end

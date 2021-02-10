@@ -67,7 +67,8 @@ module Sequel
           query = values.select{ |k, _| self.class.upsert_plugin_identifying_columns.include?(k) }
           existing_record = model.where(query).single_record
           if existing_record
-            existing_record.update(values)
+            existing_record.set(values_to_update)
+            existing_record.save(opts)
           else
             save(opts)
           end
@@ -78,9 +79,9 @@ module Sequel
         def _insert_dataset
           if upsert_plugin_upserting
             if postgres?
-              super.insert_conflict(update: values, target: self.class.upsert_plugin_identifying_columns)
+              super.insert_conflict(update: values_to_update, target: self.class.upsert_plugin_identifying_columns)
             elsif mysql?
-              columns_to_update = values.keys - self.class.upsert_plugin_identifying_columns
+              columns_to_update = values_to_update.keys - self.class.upsert_plugin_identifying_columns
               super.on_duplicate_key_update(*columns_to_update)
             else
               super
@@ -96,6 +97,18 @@ module Sequel
 
         def postgres?
           model.db.adapter_scheme.to_s == "postgres"
+        end
+
+        def values_to_update
+          columns_with_nil_values.merge(values).reject{ |k, _| columns_to_not_update.include?(k) }
+        end
+
+        def columns_with_nil_values
+          self.class.columns.each_with_object({}) {|key, hash| hash[key] = nil }
+        end
+
+        def columns_to_not_update
+          @columns_to_not_update ||= (self.class.upsert_plugin_identifying_columns + [:created_at, self.class.primary_key]).flatten
         end
       end
     end
