@@ -1,5 +1,6 @@
 require 'pact_broker/api/resources/base_resource'
 require 'pact_broker/api/resources/environment'
+require 'pact_broker/api/contracts/environment_schema'
 
 module PactBroker
   module Api
@@ -23,6 +24,10 @@ module PactBroker
 
         def post_is_create?
           true
+        end
+
+        def malformed_request?
+          invalid_json? || validation_errors_for_schema?(schema)
         end
 
         def create_path
@@ -55,6 +60,10 @@ module PactBroker
 
         def environments
           @environments ||= environment_service.find_all
+        end
+
+        def schema
+          PactBroker::Api::Contracts::EnvironmentSchema
         end
       end
     end

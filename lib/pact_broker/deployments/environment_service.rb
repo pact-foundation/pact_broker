@@ -27,6 +27,10 @@ module PactBroker
         PactBroker::Deployments::Environment.where(uuid: uuid).single_record
       end
 
+      def self.find_by_name(name)
+        PactBroker::Deployments::Environment.where(name: name).single_record
+      end
+
       def self.delete(uuid)
         PactBroker::Deployments::Environment.where(uuid: uuid).delete
       end

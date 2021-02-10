@@ -1,7 +1,7 @@
 describe "Creating an environment" do
   let(:path) { "/environments" }
   let(:headers) { {"CONTENT_TYPE" => "application/json"} }
-  let(:response_body) { JSON.parse(last_response.body, symbolize_names: true)}
+  let(:response_body) { JSON.parse(subject.body, symbolize_names: true)}
   let(:environment_hash) do
     {
       name: "test",
@@ -13,23 +13,28 @@ describe "Creating an environment" do
   subject { post(path, environment_hash.to_json, headers) }
 
   it "returns a 201 response" do
-    subject
-    expect(last_response.status).to be 201
+    expect(subject.status).to be 201
   end
 
   it "returns the Location header" do
-    subject
-    expect(last_response.headers["Location"]).to start_with "http://example.org/environments/"
+    expect(subject.headers["Location"]).to start_with "http://example.org/environments/"
   end
 
   it "returns a JSON Content Type" do
-    subject
-    expect(last_response.headers["Content-Type"]).to eq "application/hal+json;charset=utf-8"
+    expect(subject.headers["Content-Type"]).to eq "application/hal+json;charset=utf-8"
   end
 
   it "returns the newly created environment" do
-    subject
     expect(response_body).to include environment_hash.merge(name: "test")
     expect(response_body[:uuid]).to_not be nil
+  end
+
+  context "with invalid params" do
+    let(:environment_hash) { {} }
+
+    it "returns a 400 response" do
+      expect(subject.status).to be 400
+      expect(response_body[:errors]).to_not be nil
+    end
   end
 end
