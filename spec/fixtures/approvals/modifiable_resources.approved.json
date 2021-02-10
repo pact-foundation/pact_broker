@@ -10,6 +10,9 @@
       "resource_class_name": "PactBroker::Api::Resources::Environment"
     },
     {
+      "resource_class_name": "PactBroker::Api::Resources::Environments"
+    },
+    {
       "resource_class_name": "PactBroker::Api::Resources::ErrorTest"
     },
     {
