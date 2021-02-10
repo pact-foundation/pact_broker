@@ -7,6 +7,7 @@ describe "Updating an environment" do
   let(:response_body) { JSON.parse(last_response.body, symbolize_names: true)}
   let(:environment_hash) do
     {
+      name: "test",
       label: "Testing"
     }
   end
@@ -19,5 +20,22 @@ describe "Updating an environment" do
     subject
     expect(response_body[:label]).to eq "Testing"
     expect(response_body[:owners]).to be nil
+  end
+
+  context "when the environment doesn't exist" do
+    let(:path) { "/environments/5678" }
+
+    it "returns a 404" do
+      expect(subject.status).to eq 404
+    end
+  end
+
+  context "with invalid params" do
+    let(:environment_hash) { {} }
+
+    it "returns a 400 response" do
+      expect(subject.status).to be 400
+      expect(response_body[:errors]).to_not be nil
+    end
   end
 end

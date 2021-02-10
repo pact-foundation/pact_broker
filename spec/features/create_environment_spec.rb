@@ -30,7 +30,9 @@ describe "Creating an environment" do
   end
 
   context "with invalid params" do
-    let(:environment_hash) { {} }
+    before do
+      td.create_environment("test")
+    end
 
     it "returns a 400 response" do
       expect(subject.status).to be 400

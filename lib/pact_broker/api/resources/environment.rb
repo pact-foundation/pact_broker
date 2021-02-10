@@ -21,6 +21,14 @@ module PactBroker
           !!environment
         end
 
+        def malformed_request?
+          if request.put? && environment
+            invalid_json? || validation_errors_for_schema?(schema, params.merge(uuid: uuid))
+          else
+            false
+          end
+        end
+
         def from_json
           if environment
             @environment = update_environment
@@ -57,6 +65,10 @@ module PactBroker
 
         def update_environment
           environment_service.update(uuid, parsed_environment)
+        end
+
+        def schema
+          PactBroker::Api::Contracts::EnvironmentSchema
         end
       end
     end

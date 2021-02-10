@@ -27,7 +27,11 @@ module PactBroker
         end
 
         def malformed_request?
-          invalid_json? || validation_errors_for_schema?(schema)
+          if request.post?
+            invalid_json? || validation_errors_for_schema?(schema, params.merge(uuid: uuid))
+          else
+            false
+          end
         end
 
         def create_path
