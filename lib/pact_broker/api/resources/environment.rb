@@ -14,7 +14,7 @@ module PactBroker
         end
 
         def allowed_methods
-          ["PUT", "DELETE", "OPTIONS"]
+          ["GET", "PUT", "DELETE", "OPTIONS"]
         end
 
         def resource_exists?
@@ -22,8 +22,12 @@ module PactBroker
         end
 
         def from_json
-          @environment = create_or_update_environment
-          response.body = to_json
+          if environment
+            @environment = update_environment
+            response.body = to_json
+          else
+            response.code = 404
+          end
         end
 
         def policy_name
@@ -39,27 +43,20 @@ module PactBroker
         end
 
         def environment
-          @environment ||= environment_service.find(environment_name)
+          @environment ||= environment_service.find(uuid)
         end
 
         def delete_resource
-          environment_service.delete(environment_name)
+          environment_service.delete(uuid)
           true
         end
 
-        def environment_name
-          identifier_from_path[:environment_name]
+        def uuid
+          identifier_from_path[:environment_uuid]
         end
 
-        def create_or_update_environment
-          if environment
-            environment_service.update(environment_name, parsed_environment)
-          else
-            environment_service.create(environment_name, parsed_environment).tap do
-              # Make it return a 201 by setting the Location header
-              response.headers["Location"] = resource_url
-            end
-          end
+        def update_environment
+          environment_service.update(uuid, parsed_environment)
         end
       end
     end

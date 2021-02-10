@@ -1,9 +1,9 @@
 describe "Deleting an environment" do
   before do
-    td.create_environment("test")
+    td.create_environment("test", uuid: "1234")
   end
 
-  let(:path) { "/environments/test" }
+  let(:path) { "/environments/1234" }
 
   subject { delete(path, nil) }
 

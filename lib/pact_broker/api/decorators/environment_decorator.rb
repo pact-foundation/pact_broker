@@ -5,6 +5,7 @@ module PactBroker
   module Api
     module Decorators
       class EnvironmentDecorator < BaseDecorator
+        property :uuid, writeable: false
         property :name
         property :label
         property :owners
