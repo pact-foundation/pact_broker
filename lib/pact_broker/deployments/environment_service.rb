@@ -20,7 +20,7 @@ module PactBroker
       end
 
       def self.find_all
-        PactBroker::Deployments::Environment.order(Sequel.function(:lower, :label)).all
+        PactBroker::Deployments::Environment.order(Sequel.function(:lower, :display_name)).all
       end
 
       def self.find(uuid)

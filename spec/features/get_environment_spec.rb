@@ -1,6 +1,6 @@
 describe "Get an environment" do
   before do
-    td.create_environment("test", label: "Test", uuid: "1234", contacts: [ { name: "Foo" } ] )
+    td.create_environment("test", display_name: "Test", uuid: "1234", contacts: [ { name: "Foo" } ] )
   end
   let(:path) { "/environments/1234" }
   let(:headers) { {'HTTP_ACCEPT' => 'application/hal+json'} }

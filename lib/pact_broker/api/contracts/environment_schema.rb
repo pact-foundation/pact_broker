@@ -17,7 +17,7 @@ module PactBroker
             config.messages_file = File.expand_path("../../../locale/en.yml", __FILE__)
           end
           required(:name).filled(:str?)
-          required(:label).filled(:str?)
+          required(:displayName).filled(:str?)
           optional(:contacts).each do
             schema do
               required(:name).filled(:str?)

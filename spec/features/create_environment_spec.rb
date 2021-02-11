@@ -5,7 +5,7 @@ describe "Creating an environment" do
   let(:environment_hash) do
     {
       name: "test",
-      label: "Test",
+      displayName: "Test",
       contacts: [
         { name: "Team Awesome", details: { email: "foo@bar.com", arbitraryThing: "thing" } }
       ]

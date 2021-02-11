@@ -8,7 +8,7 @@ describe "Updating an environment" do
   let(:environment_hash) do
     {
       name: "test",
-      label: "Testing"
+      displayName: "Testing"
     }
   end
 
@@ -18,7 +18,7 @@ describe "Updating an environment" do
 
   it "returns the updated environment" do
     subject
-    expect(response_body[:label]).to eq "Testing"
+    expect(response_body[:displayName]).to eq "Testing"
     expect(response_body[:contacts]).to be nil
   end
 

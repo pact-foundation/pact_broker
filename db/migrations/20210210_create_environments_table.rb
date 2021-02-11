@@ -4,7 +4,7 @@ Sequel.migration do
       primary_key :id
       String :uuid, nullable: false
       String :name, nullable: false
-      String :label
+      String :display_name
       String :contacts
       DateTime :created_at, nullable: false
       DateTime :updated_at, nullable: false

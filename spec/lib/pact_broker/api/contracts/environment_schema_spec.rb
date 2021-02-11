@@ -13,7 +13,7 @@ module PactBroker
           {
             uuid: "1234",
             name: "test",
-            label: "Test",
+            displayName: "Test",
             contacts: contacts
           }
         end
@@ -25,7 +25,7 @@ module PactBroker
           }]
         end
 
-        subject { EnvironmentSchema.call(params).tap { |it| puts it } }
+        subject { EnvironmentSchema.call(params) }
 
         context "with valid params" do
           it { is_expected.to be_empty }

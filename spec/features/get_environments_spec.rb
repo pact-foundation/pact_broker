@@ -1,7 +1,7 @@
 describe "Get all environments" do
   before do
-    td.create_environment("test", label: "Test", uuid: "1234", contacts: [ { name: "Foo" } ] )
-      .create_environment("prod", label: "Production", uuid: "5678", contacts: [ { name: "Foo" } ] )
+    td.create_environment("test", display_name: "Test", uuid: "1234", contacts: [ { name: "Foo" } ] )
+      .create_environment("prod", display_name: "Production", uuid: "5678", contacts: [ { name: "Foo" } ] )
   end
   let(:path) { "/environments" }
   let(:headers) { {'HTTP_ACCEPT' => 'application/hal+json'} }

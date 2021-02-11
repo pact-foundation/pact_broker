@@ -7,14 +7,12 @@ module PactBroker
       class EnvironmentDecorator < BaseDecorator
         property :uuid, writeable: false
         property :name
-        property :label
+        property :display_name, camelize: true
 
-        # TODO strip arbitrary extra JSON keys
-        property :contacts
-        # collection :contacts, class: OpenStruct do
-        #   property :name
-        #   property :details
-        # end
+        collection :contacts, class: OpenStruct do
+          property :name
+          property :details
+        end
 
         include Timestamps
 
