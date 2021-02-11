@@ -9,10 +9,12 @@ module PactBroker
         property :name
         property :label
 
-        collection :contacts, class: OpenStruct do
-          property :name
-          property :details
-        end
+        # TODO strip arbitrary extra JSON keys
+        property :contacts
+        # collection :contacts, class: OpenStruct do
+        #   property :name
+        #   property :details
+        # end
 
         include Timestamps
 

@@ -1,6 +1,6 @@
 describe "Updating an environment" do
   before do
-    td.create_environment("test", uuid: "1234", owners: [ { name: "Foo" } ] )
+    td.create_environment("test", uuid: "1234", contacts: [ { name: "Foo" } ] )
   end
   let(:path) { "/environments/1234" }
   let(:headers) { {'CONTENT_TYPE' => 'application/json'} }
@@ -19,7 +19,7 @@ describe "Updating an environment" do
   it "returns the updated environment" do
     subject
     expect(response_body[:label]).to eq "Testing"
-    expect(response_body[:owners]).to be nil
+    expect(response_body[:contacts]).to be nil
   end
 
   context "when the environment doesn't exist" do
