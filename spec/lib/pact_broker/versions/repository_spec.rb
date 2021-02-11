@@ -157,6 +157,14 @@ module PactBroker
         it "maintains the order" do
           expect { subject }.to_not change { PactBroker::Domain::Version.for("Foo", "1234").order }
         end
+
+        context "when the version does not already exist" do
+          let(:version) { PactBroker::Domain::Version.new(number: "555", branch: "new-branch") }
+
+          it "sets the order" do
+            expect(subject.order).to_not be nil
+          end
+        end
       end
     end
   end
