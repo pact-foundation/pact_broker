@@ -144,10 +144,12 @@ module PactBroker
         end
       end
 
-      # Isn't called on upsert when the record is updated
+      # Isn't called on upsert when the record is updated with Sqlite
+      # Is called with Postgres/MySQL
+      # Haven't had time to dig into why
       def after_create
         super
-        OrderVersions.(self)
+        OrderVersions.(self) unless self.order
         refresh
       end
 
