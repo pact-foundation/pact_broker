@@ -18,11 +18,14 @@ module PactBroker
           end
           required(:name).filled(:str?)
           required(:label).filled(:str?)
-          # optional(:owners).each do
-          #   schema do
+          optional(:contacts).each do
+            schema do
+              required(:name).filled(:str?)
+              optional(:details).schema do
 
-          #   end
-          # end
+              end
+            end
+          end
         end
 
         def self.call(params_with_string_keys)

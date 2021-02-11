@@ -6,7 +6,9 @@ describe "Creating an environment" do
     {
       name: "test",
       label: "Test",
-      owners: [ { name: "Team Awesome", contacts: ["awesome@company.org"] } ]
+      contacts: [
+        { name: "Team Awesome", details: { email: "foo@bar.com", arbitraryThing: "thing" } }
+      ]
     }
   end
 

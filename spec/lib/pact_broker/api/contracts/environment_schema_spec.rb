@@ -14,11 +14,18 @@ module PactBroker
             uuid: "1234",
             name: "test",
             label: "Test",
-            owners: []
+            contacts: contacts
           }
         end
 
-        subject { EnvironmentSchema.call(params) }
+        let(:contacts) do
+          [{
+            name: "Foo",
+            details: { email: "foo@bar.com" }
+          }]
+        end
+
+        subject { EnvironmentSchema.call(params).tap { |it| puts it } }
 
         context "with valid params" do
           it { is_expected.to be_empty }
@@ -40,6 +47,27 @@ module PactBroker
           let(:existing_environment) { instance_double("PactBroker::Deployments::Environment", uuid: "1234")}
 
           it { is_expected.to be_empty }
+        end
+
+        context "with no owner name" do
+          let(:contacts) do
+            [{
+              details: { email: "foo@bar.com" }
+            }]
+          end
+
+          its([:contacts, 0]) { is_expected.to eq "name is missing at index 0" }
+        end
+
+        context "with string contact details" do
+          let(:contacts) do
+            [{
+              name: "foo",
+              details: "foo"
+            }]
+          end
+
+          its([:contacts, 0]) { is_expected.to eq "details must be a hash at index 0" }
         end
       end
     end

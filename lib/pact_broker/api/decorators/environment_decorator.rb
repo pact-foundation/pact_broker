@@ -8,7 +8,11 @@ module PactBroker
         property :uuid, writeable: false
         property :name
         property :label
-        property :owners
+
+        collection :contacts, class: OpenStruct do
+          property :name
+          property :details
+        end
 
         include Timestamps
 
