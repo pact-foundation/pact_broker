@@ -24,7 +24,7 @@ module PactBroker
 
     class Version < Sequel::Model
       plugin :timestamps, update_on_create: true
-      plugin :upsert, identifying_columns: [:pacticipant_id, :number]
+      plugin :upsert, { identifying_columns: [:pacticipant_id, :number], ignore_columns_on_update: [:id, :created_at, :order] }
 
       set_primary_key :id
       one_to_many :pact_publications, order: :revision_number, class: "PactBroker::Pacts::PactPublication", key: :consumer_version_id
@@ -144,6 +144,7 @@ module PactBroker
         end
       end
 
+      # Isn't called on upsert when the record is updated
       def after_create
         super
         OrderVersions.(self)

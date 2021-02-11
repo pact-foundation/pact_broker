@@ -153,6 +153,10 @@ module PactBroker
         it "does change the updated date" do
           expect { subject }.to change { PactBroker::Domain::Version.for("Foo", "1234").updated_at }
         end
+
+        it "maintains the order" do
+          expect { subject }.to_not change { PactBroker::Domain::Version.for("Foo", "1234").order }
+        end
       end
     end
   end

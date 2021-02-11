@@ -5,11 +5,12 @@ module Sequel
       def self.configure(model, opts=OPTS)
         model.instance_exec do
           @upsert_plugin_identifying_columns = opts.fetch(:identifying_columns)
+          @upsert_plugin_ignore_columns_on_update = opts[:ignore_columns_on_update]
         end
       end
 
       module ClassMethods
-        attr_reader :upsert_plugin_identifying_columns
+        attr_reader :upsert_plugin_identifying_columns, :upsert_plugin_ignore_columns_on_update
       end
 
       module InstanceMethods
@@ -100,15 +101,15 @@ module Sequel
         end
 
         def values_to_update
-          columns_with_nil_values.merge(values).reject{ |k, _| columns_to_not_update.include?(k) }
+          columns_with_nil_values.merge(values).reject{ |k, _| columns_to_not_update_when_exists.include?(k) }
         end
 
         def columns_with_nil_values
           self.class.columns.each_with_object({}) {|key, hash| hash[key] = nil }
         end
 
-        def columns_to_not_update
-          @columns_to_not_update ||= (self.class.upsert_plugin_identifying_columns + [:created_at, self.class.primary_key]).flatten
+        def columns_to_not_update_when_exists
+          @columns_to_not_update ||=  self.class.upsert_plugin_ignore_columns_on_update || (self.class.upsert_plugin_identifying_columns + [:created_at, self.class.primary_key]).flatten
         end
       end
     end
