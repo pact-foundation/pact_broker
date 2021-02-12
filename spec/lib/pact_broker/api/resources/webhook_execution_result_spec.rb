@@ -6,7 +6,7 @@ module PactBroker
         Net::HTTP::Get.new("http://example.org?foo=bar")
       end
 
-      context "When 'webhook_http_code_success' has: [200, 201]" do
+      context "When 'webhook_http_code_success' has [200, 201]" do
         before do
           allow(PactBroker.configuration).to receive(:webhook_http_code_success).and_return([200, 201])
         end
@@ -29,7 +29,7 @@ module PactBroker
       end
 
 
-      context "When 'webhook_http_code_success' has: [400, 401]" do
+      context "When 'webhook_http_code_success' has [400, 401]" do
         before do
           allow(PactBroker.configuration).to receive(:webhook_http_code_success).and_return([400, 401])
         end
