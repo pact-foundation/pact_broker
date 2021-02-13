@@ -255,4 +255,20 @@ Pact.provider_states_for "Pact Broker Client" do
         .create_consumer("Foo")
     end
   end
+
+  provider_state "the pb:pacticipant-version relation exists in the index resource" do
+    no_op
+  end
+
+  provider_state "version 26f353580936ad3b9baddb17b00e84f33c69e7cb of pacticipant Foo does not exist" do
+    no_op
+  end
+
+  provider_state "version 26f353580936ad3b9baddb17b00e84f33c69e7cb of pacticipant Foo does exist" do
+    set_up do
+      TestDataBuilder.new
+        .create_consumer("Foo")
+        .create_consumer_version("26f353580936ad3b9baddb17b00e84f33c69e7cb")
+    end
+  end
 end
