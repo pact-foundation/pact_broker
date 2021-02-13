@@ -31,6 +31,7 @@ module PactBroker
       :webhook_http_method_whitelist,
       :webhook_scheme_whitelist,
       :webhook_host_whitelist,
+      :webhook_http_code_success,
       :base_equality_only_on_content_that_affects_verification_results,
       :seed_example_data,
       :badge_provider_mode,
