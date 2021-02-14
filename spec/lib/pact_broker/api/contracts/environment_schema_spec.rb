@@ -8,11 +8,12 @@ module PactBroker
           allow(PactBroker::Deployments::EnvironmentService).to receive(:find_by_name).and_return(existing_environment)
         end
         let(:existing_environment) { nil }
+        let(:name) { "test" }
 
         let(:params) do
           {
             uuid: "1234",
-            name: "test",
+            name: name,
             displayName: "Test",
             production: false,
             contacts: contacts
@@ -30,6 +31,12 @@ module PactBroker
 
         context "with valid params" do
           it { is_expected.to be_empty }
+        end
+
+        context "with a name with a new line" do
+          let(:name) { "test 1" }
+
+          it { is_expected.to_not be_empty }
         end
 
         context "with empty params" do

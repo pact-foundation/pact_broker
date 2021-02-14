@@ -13,6 +13,14 @@ module PactBroker
         predicate(:not_blank?) do | value |
           value && value.is_a?(String) && value.strip.size > 0
         end
+
+        predicate(:single_line?) do | value |
+          value && value.is_a?(String) && !value.include?("\n")
+        end
+
+        predicate(:no_spaces?) do | value |
+          value && value.is_a?(String) && !value.include?(" ")
+        end
       end
     end
   end
