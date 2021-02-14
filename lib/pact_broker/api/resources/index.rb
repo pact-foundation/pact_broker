@@ -158,7 +158,7 @@ module PactBroker
             }
 
             links_hash['pb:environment'] = {
-              title: "Environments",
+              title: "Environment",
               href: environments_url(base_url) + "/{uuid}",
               templated: true
             }
