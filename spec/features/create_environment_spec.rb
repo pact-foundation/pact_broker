@@ -1,6 +1,8 @@
+require 'pact_broker/api/pact_broker_urls'
+
 describe "Creating an environment" do
-  let(:path) { "/environments" }
-  let(:headers) { {"CONTENT_TYPE" => "application/json"} }
+  let(:path) { PactBroker::Api::PactBrokerUrls.environments_url }
+  let(:headers) { { "CONTENT_TYPE" => "application/json" } }
   let(:response_body) { JSON.parse(subject.body, symbolize_names: true)}
   let(:environment_hash) do
     {
@@ -20,7 +22,7 @@ describe "Creating an environment" do
   end
 
   it "returns the Location header" do
-    expect(subject.headers["Location"]).to start_with "http://example.org/environments/"
+    expect(subject.headers["Location"]).to eq PactBroker::Api::PactBrokerUrls.environment_url(PactBroker::Deployments::Environment.order(:id).last, "http://example.org")
   end
 
   it "returns a JSON Content Type" do

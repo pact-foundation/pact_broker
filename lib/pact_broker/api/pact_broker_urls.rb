@@ -307,8 +307,12 @@ module PactBroker
         "#{base_url}/groups/#{url_encode(pacticipant_name)}"
       end
 
+      def environments_url(base_url = '')
+        "#{base_url}/environments"
+      end
+
       def environment_url(environment, base_url = '')
-        "#{base_url}/environments/#{environment.uuid}"
+        "#{environments_url(base_url)}/#{environment.uuid}"
       end
 
       def hal_browser_url target_url, base_url = ''

@@ -9,7 +9,12 @@ module PactBroker
 
         collection :entries, :as => :environments, :class => PactBroker::Deployments::Environment, :extend => PactBroker::Api::Decorators::EnvironmentDecorator, embedded: true
 
-
+        link :self do | options |
+          {
+            title: 'Environments',
+            href: options[:resource_url]
+          }
+        end
       end
     end
   end

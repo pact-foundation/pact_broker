@@ -21,7 +21,7 @@ module PactBroker
           {
             title: 'Environment',
             name: represented.name,
-            href: options[:resource_url]
+            href: environment_url(represented, options[:base_url])
           }
         end
       end

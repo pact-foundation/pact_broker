@@ -1,8 +1,10 @@
+require 'pact_broker/api/pact_broker_urls'
+
 describe "Updating an environment" do
   before do
     td.create_environment("test", uuid: "1234", contacts: [ { name: "Foo" } ] )
   end
-  let(:path) { "/environments/1234" }
+  let(:path) { PactBroker::Api::PactBrokerUrls.environment_url(td.and_return(:environment)) }
   let(:headers) { {'CONTENT_TYPE' => 'application/json'} }
   let(:response_body) { JSON.parse(last_response.body, symbolize_names: true)}
   let(:environment_hash) do
