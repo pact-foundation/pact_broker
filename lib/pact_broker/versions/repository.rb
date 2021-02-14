@@ -9,6 +9,7 @@ module PactBroker
 
       include PactBroker::Logging
       include PactBroker::Repositories::Helpers
+      include PactBroker::Repositories
 
       def find_by_pacticipant_id_and_number pacticipant_id, number
         PactBroker::Domain::Version.where(number: number, pacticipant_id: pacticipant_id).single_record
@@ -60,13 +61,23 @@ module PactBroker
         PactBroker::Domain::Version.new(version_params).upsert
       end
 
-      def create_or_update(pacticipant, version_number, version)
-        PactBroker::Domain::Version.new(
+      def create_or_overwrite(pacticipant, version_number, open_struct_version)
+        saved_version = PactBroker::Domain::Version.new(
           number: version_number,
           pacticipant: pacticipant,
-          build_url: version.build_url,
-          branch: version.branch
+          build_url: open_struct_version.build_url,
+          branch: open_struct_version.branch
         ).upsert
+
+        if open_struct_version.tags
+          tag_repository.delete_by_version_id(saved_version.id)
+          open_struct_version.tags.collect do | open_struct_tag |
+            tag_repository.create(version: saved_version, name: open_struct_tag.name)
+          end
+          saved_version.refresh
+        end
+
+        saved_version
       end
 
       def find_by_pacticipant_id_and_number_or_create pacticipant_id, number

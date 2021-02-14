@@ -2,7 +2,13 @@ describe "Creating a pacticipant version" do
   let(:path) { "/pacticipants/Foo/versions/1234" }
   let(:headers) { { 'CONTENT_TYPE' => 'application/json' } }
   let(:response_body) { JSON.parse(subject.body, symbolize_names: true)}
-  let(:version_hash) { { branch: "main", buildUrl: "http://build" } }
+  let(:version_hash) do
+    {
+      branch: "main",
+      buildUrl: "http://build",
+      tags: [{ name: "foo" }, { name: "bar" }]
+    }
+  end
 
   subject { put(path, version_hash.to_json, headers) }
 
@@ -15,7 +21,12 @@ describe "Creating a pacticipant version" do
   end
 
   it "returns the newly created version" do
-    expect(response_body).to include version_hash
+    expect(response_body).to include branch: "main", buildUrl: "http://build"
+    expect(response_body[:_embedded][:tags].size).to eq 2
+  end
+
+  it "creates the specified tags" do
+    expect { subject }.to change { PactBroker::Domain::Tag.count }.by(2)
   end
 
   context "when the version already exists" do
@@ -28,13 +39,28 @@ describe "Creating a pacticipant version" do
 
     let(:version_hash) { { branch: "new-branch" } }
 
+    it "returns a 200" do
+      expect(subject.status).to be 200
+    end
+
     it "overwrites the direct properties" do
       expect(response_body[:branch]).to eq "new-branch"
       expect(response_body).to_not have_key(:buildUrl)
     end
 
-    it "does not change the tags" do
-      expect { subject }.to_not change { PactBroker::Domain::Version.for("Foo", "1234").tags }
+    context "when not tags are specified" do
+      it "does not change the tags" do
+        expect { subject }.to_not change { PactBroker::Domain::Version.for("Foo", "1234").tags }
+      end
+    end
+
+    context "when tags are specified" do
+      let(:version_hash) { { branch: "new-branch", tags: [ { name: "main" }] } }
+
+      it "overwrites the tags" do
+        expect(response_body[:_embedded][:tags].size).to eq 1
+        expect(response_body[:_embedded][:tags].first[:name]).to eq "main"
+      end
     end
 
     it "does not change the created date" do
