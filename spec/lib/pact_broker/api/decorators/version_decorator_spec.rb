@@ -6,6 +6,24 @@ module PactBroker
     module Decorators
       describe VersionDecorator do
 
+        describe "from_json" do
+          let(:hash) do
+            {
+              branch: "branch",
+              buildUrl: "buildUrl",
+              tags: [{ name: "main" }]
+            }
+          end
+
+          subject { VersionDecorator.new(OpenStruct.new).from_json(hash.to_json) }
+
+          it "sets the properties" do
+            expect(subject.branch).to eq "branch"
+            expect(subject.build_url).to eq "buildUrl"
+            expect(subject.tags.first.name).to eq "main"
+          end
+        end
+
         let(:version) do
           TestDataBuilder.new
             .create_consumer("Consumer")

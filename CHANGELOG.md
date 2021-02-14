@@ -1,3 +1,18 @@
+<a name="v2.77.0"></a>
+### v2.77.0 (2021-02-11)
+
+#### Features
+
+* **webhooks**
+  * allow the http codes to be considered as "successful" to be configured.	 ([a84989b1](/../../commit/a84989b1))
+
+* add duplicate columns to tags table to reduce joins	 ([5ca9de62](/../../commit/5ca9de62))
+* set the branch in the seed data	 ([9a00ce6d](/../../commit/9a00ce6d))
+* display version branch on index and matrix pages	 ([2057df7d](/../../commit/2057df7d))
+* support creating version with branch (#371)	 ([5884a047](/../../commit/5884a047))
+* sort tags on index and matrix pages and APIs by creation date	 ([91590718](/../../commit/91590718))
+* sort consumer version tags by date in dashboard response	 ([f82ba1bc](/../../commit/f82ba1bc))
+
 <a name="v2.76.2"></a>
 ### v2.76.2 (2021-01-29)
 

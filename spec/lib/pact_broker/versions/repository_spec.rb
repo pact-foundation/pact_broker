@@ -123,7 +123,7 @@ module PactBroker
         end
       end
 
-      describe "#create_or_update" do
+      describe "#create_or_overwrite" do
         before do
           td.subtract_day
             .create_consumer("Foo")
@@ -133,9 +133,10 @@ module PactBroker
 
         let(:pacticipant) { td.and_return(:consumer) }
         let(:version_number) { "1234" }
-        let(:version) { PactBroker::Domain::Version.new(branch: "new-branch") }
+        let(:tags) { nil }
+        let(:open_struct_version) { OpenStruct.new(branch: "new-branch", tags: tags) }
 
-        subject { Repository.new.create_or_update(pacticipant, version_number, version) }
+        subject { Repository.new.create_or_overwrite(pacticipant, version_number, open_struct_version) }
 
         it "overwrites the values" do
           expect(subject.branch).to eq "new-branch"
@@ -146,12 +147,33 @@ module PactBroker
           expect { subject }.to_not change { PactBroker::Domain::Version.for("Foo", "1234").tags }
         end
 
+        context "when there are tags specified" do
+          let(:tags) { [ OpenStruct.new(name: "main")] }
+
+          it "overwrites the tags" do
+            expect(subject.tags.count).to eq 1
+            expect(subject.tags.first.name).to eq "main"
+          end
+        end
+
         it "does not change the created date" do
           expect { subject }.to_not change { PactBroker::Domain::Version.for("Foo", "1234").created_at }
         end
 
         it "does change the updated date" do
           expect { subject }.to change { PactBroker::Domain::Version.for("Foo", "1234").updated_at }
+        end
+
+        it "maintains the order" do
+          expect { subject }.to_not change { PactBroker::Domain::Version.for("Foo", "1234").order }
+        end
+
+        context "when the version does not already exist" do
+          let(:version) { OpenStruct.new(number: "555", branch: "new-branch") }
+
+          it "sets the order" do
+            expect(subject.order).to_not be nil
+          end
         end
       end
     end

@@ -10,7 +10,7 @@ module PactBroker
         property :branch
         property :build_url, as: :buildUrl
 
-        collection :tags, embedded: true, writeable: false, :extend => PactBroker::Api::Decorators::EmbeddedTagDecorator
+        collection :tags, embedded: true, :extend => PactBroker::Api::Decorators::EmbeddedTagDecorator, class: OpenStruct
 
         include Timestamps
 
@@ -61,6 +61,17 @@ module PactBroker
             href: options.fetch(:base_url) + '/doc/{rel}?context=version',
             templated: true
           }]
+        end
+
+        def from_hash(hash, options = {})
+          if hash["tags"]
+            updated_hash = hash.dup
+            updated_hash["_embedded"] ||= {}
+            updated_hash["_embedded"]["tags"] = updated_hash.delete("tags")
+            super(updated_hash, options)
+          else
+            super
+          end
         end
 
         private

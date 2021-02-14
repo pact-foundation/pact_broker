@@ -1,12 +1,9 @@
 require 'pact_broker/repositories'
 
 module PactBroker
-
   module Tags
     module Service
-
       extend self
-
       extend PactBroker::Repositories
 
       def create args

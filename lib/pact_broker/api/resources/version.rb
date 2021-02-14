@@ -24,8 +24,8 @@ module PactBroker
 
         def from_json
           response_code = version ? 200 : 201
-          parsed_version = Decorators::VersionDecorator.new(PactBroker::Domain::Version.new).from_json(request_body)
-          @version = version_service.create_or_update(pacticipant_name, pacticipant_version_number, parsed_version)
+          parsed_version = Decorators::VersionDecorator.new(OpenStruct.new).from_json(request_body)
+          @version = version_service.create_or_overwrite(pacticipant_name, pacticipant_version_number, parsed_version)
           response.body = to_json
           response_code
         end
