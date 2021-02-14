@@ -31,7 +31,7 @@ module PactBroker
         end
 
         def to_json
-          decorator_class(:version_decorator).new(version).to_json(decorator_options)
+          decorator_class(:version_decorator).new(version).to_json(decorator_options(environments: environments))
         end
 
         def delete_resource
@@ -44,6 +44,10 @@ module PactBroker
         end
 
         private
+
+        def environments
+          @environments ||= environment_service.find_for_pacticipant(version.pacticipant)
+        end
 
         def version
           @version ||= version_service.find_by_pacticipant_name_and_number(identifier_from_path)

@@ -6,6 +6,7 @@ module PactBroker
       class EmbeddedVersionDecorator < BaseDecorator
 
         property :number
+        property :branch
 
         link :self do | options |
           {

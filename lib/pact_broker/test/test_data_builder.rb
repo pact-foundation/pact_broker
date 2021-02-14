@@ -1,4 +1,5 @@
 require 'json'
+require 'pact_broker/string_refinements'
 require 'pact_broker/repositories'
 require 'pact_broker/services'
 require 'pact_broker/webhooks/repository'
@@ -30,9 +31,10 @@ require 'ostruct'
 module PactBroker
   module Test
     class TestDataBuilder
-
       include PactBroker::Repositories
       include PactBroker::Services
+      using PactBroker::StringRefinements
+
 
       attr_reader :pacticipant
       attr_reader :consumer
@@ -386,7 +388,9 @@ module PactBroker
       def create_environment(name, params = {})
         uuid = params[:uuid] || PactBroker::Deployments::EnvironmentService.next_uuid
         production = params[:production] || false
-        @environment = PactBroker::Deployments::EnvironmentService.create(uuid, PactBroker::Deployments::Environment.new(params.merge(name: name, production: production)))
+        display_name = params[:display_name] || name.camelcase(true)
+        the_params = params.merge(name: name, production: production, display_name: display_name)
+        @environment = PactBroker::Deployments::EnvironmentService.create(uuid, PactBroker::Deployments::Environment.new(the_params))
         set_created_at_if_set(params[:created_at], :environments, id: environment.id)
         self
       end

@@ -4,7 +4,6 @@ require 'securerandom'
 module PactBroker
   module Deployments
     module EnvironmentService
-
       def self.next_uuid
         SecureRandom.uuid
       end
@@ -33,6 +32,10 @@ module PactBroker
 
       def self.delete(uuid)
         PactBroker::Deployments::Environment.where(uuid: uuid).delete
+      end
+
+      def self.find_for_pacticipant(pacticipant)
+        find_all
       end
     end
   end
