@@ -243,6 +243,15 @@ module PactBroker
         def decorator_class(name)
           application_context.decorator_configuration.class_for(name)
         end
+
+        def validation_errors_for_schema?(schema, params_to_validate = params)
+          if (errors = schema.call(params_to_validate)).any?
+            set_json_validation_error_messages(errors)
+            true
+          else
+            false
+          end
+        end
       end
     end
   end

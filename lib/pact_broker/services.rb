@@ -73,6 +73,10 @@ module PactBroker
       get(:metrics_service)
     end
 
+    def environment_service
+      get(:environment_service)
+    end
+
     def register_default_services
       register_service(:index_service) do
         require 'pact_broker/index/service'
@@ -147,6 +151,11 @@ module PactBroker
       register_service(:webhook_trigger_service) do
         require 'pact_broker/webhooks/trigger_service'
         Webhooks::TriggerService
+      end
+
+      register_service(:environment_service) do
+        require 'pact_broker/deployments/environment_service'
+        Deployments::EnvironmentService
       end
     end
   end

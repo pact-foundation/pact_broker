@@ -45,7 +45,7 @@ module PactBroker
               if resource.respond_to?(:policy_pacticipant)
                 resource_class_data[:resource_class_data] = resource.policy_pacticipant
               end
-                resource_class_data
+              resource_class_data
             else
               nil
             end
