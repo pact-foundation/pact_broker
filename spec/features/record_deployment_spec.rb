@@ -1,5 +1,5 @@
 #
-# pact-broker record-deployment --pacticipant Foo --version 1 --environment test --end-previous-deployment
+# pact-broker record-deployment --pacticipant Foo --version 1 --environment test --replace-previous-deployed-version
 #
 
 describe "Record deployment" do
@@ -18,7 +18,7 @@ describe "Record deployment" do
       .fetch("href")
   end
 
-  subject { post(path, nil, headers).tap { |it| puts it.body } }
+  subject { post(path, nil, headers) }
 
   it { is_expected.to be_a_hal_json_created_response }
 
