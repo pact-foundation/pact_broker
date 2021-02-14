@@ -385,7 +385,8 @@ module PactBroker
 
       def create_environment(name, params = {})
         uuid = params[:uuid] || PactBroker::Deployments::EnvironmentService.next_uuid
-        @environment = PactBroker::Deployments::EnvironmentService.create(uuid, PactBroker::Deployments::Environment.new(params.merge(name: name)))
+        production = params[:production] || false
+        @environment = PactBroker::Deployments::EnvironmentService.create(uuid, PactBroker::Deployments::Environment.new(params.merge(name: name, production: production)))
         set_created_at_if_set(params[:created_at], :environments, id: environment.id)
         self
       end

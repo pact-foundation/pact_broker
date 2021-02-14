@@ -6,6 +6,7 @@ describe "Creating an environment" do
     {
       name: "test",
       displayName: "Test",
+      production: false,
       contacts: [
         { name: "Team Awesome", details: { email: "foo@bar.com", arbitraryThing: "thing" } }
       ]

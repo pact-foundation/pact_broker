@@ -8,6 +8,7 @@ describe "Updating an environment" do
   let(:environment_hash) do
     {
       name: "test",
+      production: false,
       displayName: "Testing"
     }
   end

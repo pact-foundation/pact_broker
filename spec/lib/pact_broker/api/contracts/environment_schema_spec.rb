@@ -14,6 +14,7 @@ module PactBroker
             uuid: "1234",
             name: "test",
             displayName: "Test",
+            production: false,
             contacts: contacts
           }
         end

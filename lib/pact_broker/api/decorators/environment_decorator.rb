@@ -8,6 +8,7 @@ module PactBroker
         property :uuid, writeable: false
         property :name
         property :display_name, camelize: true
+        property :production
 
         collection :contacts, class: OpenStruct do
           property :name

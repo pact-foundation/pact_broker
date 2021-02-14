@@ -18,11 +18,11 @@ module PactBroker
           end
           required(:name).filled(:str?)
           required(:displayName).filled(:str?)
+          required(:production).filled(included_in?: [true, false])
           optional(:contacts).each do
             schema do
               required(:name).filled(:str?)
               optional(:details).schema do
-
               end
             end
           end
