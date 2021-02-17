@@ -1,3 +1,12 @@
+<a name="v2.78.0"></a>
+### v2.78.0 (2021-02-15)
+
+#### Features
+
+* support create, update and delete of environment resources (#379)	 ([410f2e80](/../../commit/410f2e80))
+* allow version to be created with tags	 ([798afce9](/../../commit/798afce9))
+* Follow up for #239 + adding list of success codes to SAVABLE_SETTING_NAMES variable (#388)	 ([08c0ad09](/../../commit/08c0ad09))
+
 <a name="v2.77.0"></a>
 ### v2.77.0 (2021-02-11)
 
