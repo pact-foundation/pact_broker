@@ -40,12 +40,16 @@
                 Latest version
               %option{ value: 'specify-version', selected: selector.specify_version }
                 Version number ...
+              %option{ value: 'specify-latest-branch', selected: selector.specify_latest_branch }
+                Latest version from branch ...
               %option{ value: 'specify-latest-tag', selected: selector.specify_latest_tag }
                 Latest version with tag ...
               %option{ value: 'specify-all-tagged', selected: selector.specify_all_tagged }
                 All versions with tag...
 
             %input{name: 'q[]version', type: 'text', id: "pacticipant#{index}_version", class: 'version', value: selector.pacticipant_version_number}
+
+            %input{name: 'q[]branch', type: 'text', id: "pacticipant#{index}_branch", class: 'branch', value: selector.branch}
 
             %input{name: 'q[]tag', type: 'text', id: "pacticipant#{index}_tag", class: 'tag', value: selector.tag}
 
@@ -59,6 +63,9 @@
           %input{name: 'tag', id: 'to', value: options.tag }
           %input{name: 'latest', value: options.latest.to_s, hidden: true}
 
+      - if options.environment
+        .selector
+          %input{name: 'environment', id: 'environment', value: options.environment }
 
       %div.top-of-group.form-check
         %input{type: 'radio', name: "latestby", class: 'form-check-input', value: '', id: 'all_rows', checked: options.all_rows_checked}

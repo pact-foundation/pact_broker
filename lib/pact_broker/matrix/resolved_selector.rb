@@ -31,6 +31,7 @@ module PactBroker
           pacticipant_version_number: version.number,
           latest: original_selector[:latest],
           tag: original_selector[:tag],
+          environment_name: original_selector[:environment_name],
           type: type
         )
       end
@@ -43,6 +44,7 @@ module PactBroker
           pacticipant_version_number: original_selector[:pacticipant_version_number],
           latest: original_selector[:latest],
           tag: original_selector[:tag],
+          environment_name: original_selector[:environment_name],
           type: type
         )
       end
@@ -69,6 +71,10 @@ module PactBroker
 
       def tag
         self[:tag]
+      end
+
+      def environment_name
+        self[:environment_name]
       end
 
       def most_specific_criterion
@@ -127,6 +133,10 @@ module PactBroker
           "a version of #{pacticipant_name} with tag #{tag} (#{pacticipant_version_number})"
         elsif tag
           "a version of #{pacticipant_name} with tag #{tag} (no such version exists)"
+        elsif environment_name && pacticipant_version_number
+          "the version of #{pacticipant_name} currently deployed to #{environment_name} (#{pacticipant_version_number})"
+        elsif environment_name
+          "the version of #{pacticipant_name} currently deployed to #{environment_name} (no such version exists)"
         elsif pacticipant_version_number
           "version #{pacticipant_version_number} of #{pacticipant_name}"
         else

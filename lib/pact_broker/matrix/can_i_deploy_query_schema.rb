@@ -8,6 +8,7 @@ module PactBroker
           required(:pacticipant).filled(:str?)
           required(:version).filled(:str?)
           optional(:to).filled(:str?)
+          optional(:environment).filled(:str?)
         end
 
         def self.call(params)

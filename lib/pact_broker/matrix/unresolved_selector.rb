@@ -10,7 +10,7 @@ module PactBroker
       end
 
       def self.from_hash(hash)
-        new(hash.symbolize_keys.snakecase_keys.slice(:pacticipant_name, :pacticipant_version_number, :latest, :tag, :max_age))
+        new(hash.symbolize_keys.snakecase_keys.slice(:pacticipant_name, :pacticipant_version_number, :latest, :tag, :environment, :max_age))
       end
 
       def pacticipant_name
@@ -37,12 +37,20 @@ module PactBroker
         self[:tag]
       end
 
+      def environment_name
+        self[:environment_name]
+      end
+
       def latest= latest
         self[:latest] = latest
       end
 
       def tag= tag
         self[:tag] = tag
+      end
+
+      def environment_name= environment_name
+        self[:environment_name] = environment_name
       end
 
       def pacticipant_name= pacticipant_name
@@ -59,6 +67,10 @@ module PactBroker
 
       def max_age
         self[:max_age]
+      end
+
+      def all_for_pacticipant?
+        !!pacticipant_name && !pacticipant_version_number && !tag && !latest && !environment_name && !max_age
       end
 
       def latest_for_pacticipant_and_tag?

@@ -148,8 +148,7 @@ module PactBroker
       def find_versions_for_selector(selector)
         # For selectors that just set the pacticipant name, there's no need to resolve the version -
         # only the pacticipant ID will be used in the query
-        return nil unless (selector.tag || selector.latest || selector.pacticipant_version_number)
-
+        return nil if selector.all_for_pacticipant?
         versions = version_repository.find_versions_for_selector(selector)
 
         if selector.latest
@@ -176,7 +175,7 @@ module PactBroker
       end
 
       def infer_selectors_for_integrations?(options)
-        options[:latest] || options[:tag]
+        options[:latest] || options[:tag] || options[:environment_name]
       end
 
       # When only one selector is specified, (eg. checking to see if Foo version 2 can be deployed to prod),
@@ -193,6 +192,7 @@ module PactBroker
           selector = UnresolvedSelector.new(pacticipant_name: pacticipant_name)
           selector.tag = options[:tag] if options[:tag]
           selector.latest = options[:latest] if options[:latest]
+          selector.environment_name = options[:environment_name] if options[:environment_name]
           selector
         end
         resolve_versions_and_add_ids(selectors, :inferred)

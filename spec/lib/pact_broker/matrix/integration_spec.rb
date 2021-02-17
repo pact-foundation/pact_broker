@@ -3,8 +3,6 @@ require 'pact_broker/matrix/service'
 module PactBroker
   module Matrix
     describe Service do
-      let(:td) { TestDataBuilder.new }
-
       describe "find" do
         subject { Service.find(selectors, options) }
 
