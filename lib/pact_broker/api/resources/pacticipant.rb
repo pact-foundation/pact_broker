@@ -1,4 +1,5 @@
 require 'pact_broker/api/resources/base_resource'
+require 'pact_broker/api/contracts/pacticipant_schema'
 
 module Webmachine
   class Request
@@ -29,6 +30,14 @@ module PactBroker
           super + ['PATCH']
         end
 
+        def malformed_request?
+          if request.patch?
+            invalid_json? || validation_errors_for_schema?
+          else
+            false
+          end
+        end
+
         def from_json
           if pacticipant
             @pacticipant = pacticipant_service.update params(symbolize_names: false).merge('name' => pacticipant_name)
@@ -54,6 +63,10 @@ module PactBroker
 
         def policy_name
           :'pacticipants::pacticipant'
+        end
+
+        def schema
+          PactBroker::Api::Contracts::PacticipantSchema
         end
       end
     end

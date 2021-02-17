@@ -2,11 +2,8 @@ require 'spec_helper'
 require 'pact_broker/api/resources/pacticipant'
 
 module PactBroker::Api
-
   module Resources
-
     describe Pacticipant do
-
       describe "DELETE" do
 
         let(:pacticpant) { double("pacticpant") }
