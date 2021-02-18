@@ -14,9 +14,11 @@ module PactBroker
       end
 
       def success?
-        unless response.nil?
+        if response
           # Response HTTP Code must be in success list otherwise it is false
           PactBroker.configuration.webhook_http_code_success.include? response.code.to_i
+        else
+          false
         end
       end
     end
