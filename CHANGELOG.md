@@ -1,3 +1,10 @@
+<a name="v2.78.1"></a>
+### v2.78.1 (2021-02-18)
+
+#### Bug Fixes
+
+* handle nil response when determining webhook success status	 ([20ca9e66](/../../commit/20ca9e66))
+
 <a name="v2.78.0"></a>
 ### v2.78.0 (2021-02-15)
 
