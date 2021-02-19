@@ -148,3 +148,16 @@ In the beginning, I made a lot of Sequel models based on views that pulled in th
   * Write a spec for the repository.
 * Go back and make the original feature spec pass.
 * Profit.
+
+## Writing Data migrations
+
+The same database may be used by multiple application instances to support highly available set ups and no downtime deployments. This can lead to the situation where the database migrations have been applied, but new data is written to the database by old application code, which may lead to some columns not being populated. The mitigation to this problem is to run the *data* migrations only each time an application instance starts up. This ensures that that any data inserted into the database by a previous version of the application are migrated. This is done automatically in the `PactBroker::App` class.
+
+If you write a schema migration that then requires a data migration to populate or update any columns:
+
+* Create a data migrations class in `lib/pact_broker/db/data_migrations`, copying the existing pattern.
+* Add a call to the new class at the end of `lib/pact_broker/db/migrate_data.rb`
+* Make sure you check for the existance of the required columns, because you don't know which version of the database might be running with this code.
+* Add a null check (eg. `db[:my_table].where(my_column: nil).update(...)`) where appropriate to make sure that the data migration doesn't run more than once.
+* Don't use any Sequel Models, as this will run before the model classes are loaded, and migrations should never depend on Models because models change as the schema migrations are applied.
+* Create a migration file in `db/migrations` that calls the data migration (eg. like `db/migrations/20190603_migrate_webhook_headers.rb`)
