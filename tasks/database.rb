@@ -14,7 +14,7 @@ module PactBroker
     extend self
 
     def migrate target = nil
-      opts = target ? {target: target} : {}
+      opts = target ? { target: target } : {}
       PactBroker::DB::Migrate.call(database, opts)
     end
 
