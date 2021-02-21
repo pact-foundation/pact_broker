@@ -30,7 +30,11 @@ module PactBroker
         end
 
         def consumer_version_number
-          PactBroker::Versions::AbbreviateNumber.call(@relationship.consumer_version_number)
+          @relationship.consumer_version_number
+        end
+
+        def display_consumer_version_number
+          PactBroker::Versions::AbbreviateNumber.call(consumer_version_number)
         end
 
         def consumer_version_order
@@ -38,7 +42,11 @@ module PactBroker
         end
 
         def provider_version_number
-          PactBroker::Versions::AbbreviateNumber.call(@relationship.provider_version_number)
+          @relationship.provider_version_number
+        end
+
+        def display_provider_version_number
+          PactBroker::Versions::AbbreviateNumber.call(provider_version_number)
         end
 
         def latest?
