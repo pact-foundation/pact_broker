@@ -31,7 +31,7 @@ module PactBroker
         end
 
         def from_json
-          @deployed_version = deployed_version_service.create(deployed_version_uuid, version, environment)
+          @deployed_version = deployed_version_service.create(deployed_version_uuid, version, environment, replaced_previous_deployed_version)
           response.body = to_json
         end
 
@@ -61,6 +61,10 @@ module PactBroker
 
         def deployed_version_uuid
           @deployed_version_uuid ||= deployed_version_service.next_uuid
+        end
+
+        def replaced_previous_deployed_version
+          params[:replacedPreviousDeployedVersion] == true
         end
       end
     end

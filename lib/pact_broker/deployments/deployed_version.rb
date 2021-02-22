@@ -9,6 +9,14 @@ module PactBroker
       dataset_module do
         include PactBroker::Repositories::Helpers
 
+        def last_deployed_version(pacticipant, environment)
+          currently_deployed
+            .where(pacticipant_id: pacticipant.id)
+            .where(environment: environment)
+            .order(Sequel.desc(:created_at), Sequel.desc(:id))
+            .first
+        end
+
         def currently_deployed
           where(currently_deployed: true)
         end
@@ -20,6 +28,10 @@ module PactBroker
         def for_pacticipant_name(pacticipant_name)
           where(pacticipant_id: db[:pacticipants].select(:id).where(name_like(:name, pacticipant_name)))
         end
+      end
+
+      def record_undeployed
+        update(currently_deployed: false, undeployed_at: Sequel.datetime_class.now)
       end
     end
   end

@@ -520,7 +520,7 @@ module PactBroker
 
       def create_deployed_version(uuid: , currently_deployed: , version:, environment_name: , created_at: nil)
         env = find_environment(environment_name)
-        @deployed_version = PactBroker::Deployments::DeployedVersionService.create(uuid, version, env)
+        @deployed_version = PactBroker::Deployments::DeployedVersionService.create(uuid, version, env, false)
         @deployed_version.update(currently_deployed: false) unless currently_deployed
         set_created_at_if_set(created_at, :deployed_versions, id: deployed_version.id)
       end

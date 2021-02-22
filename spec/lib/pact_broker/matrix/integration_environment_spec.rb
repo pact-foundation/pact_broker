@@ -7,13 +7,13 @@ module PactBroker
         subject { Service.find(selectors, options) }
 
         # Useful for eyeballing the messages to make sure they read nicely
-        after do
-          require 'pact_broker/api/decorators/reason_decorator'
-          subject.deployment_status_summary.reasons.each do | reason |
-            puts reason
-            puts PactBroker::Api::Decorators::ReasonDecorator.new(reason).to_s
-          end
-        end
+        # after do
+        #   require 'pact_broker/api/decorators/reason_decorator'
+        #   subject.deployment_status_summary.reasons.each do | reason |
+        #     puts reason
+        #     puts PactBroker::Api::Decorators::ReasonDecorator.new(reason).to_s
+        #   end
+        # end
 
         context "when there is a successful verification between the provider in test environment and the consumer to be deployed" do
           before do
