@@ -20,7 +20,7 @@ describe "Record deployment" do
       .fetch("href")
   end
 
-  subject { post(path, { replacedPreviousDeployedVersion: replaced_previous }.to_json, headers).tap { |it| puts it.body } }
+  subject { post(path, { replacedPreviousDeployedVersion: replaced_previous }.to_json, headers) }
 
   it { is_expected.to be_a_hal_json_created_response }
 
