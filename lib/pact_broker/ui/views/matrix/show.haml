@@ -59,13 +59,15 @@
       - if options.latest || options.tag
         .selector
           %label{for: 'to'}
-            = options.latest ? 'To' : 'With all'
+            = options.latest ? 'To (tag)' : 'With all (tagged)'
           %input{name: 'tag', id: 'to', value: options.tag }
           %input{name: 'latest', value: options.latest.to_s, hidden: true}
 
-      - if options.environment
+      - if options.environment_name
         .selector
-          %input{name: 'environment', id: 'environment', value: options.environment }
+          %label{for: 'environment'}
+            To environment
+          %input{name: 'environment', id: 'environment', value: options.environment_name }
 
       %div.top-of-group.form-check
         %input{type: 'radio', name: "latestby", class: 'form-check-input', value: '', id: 'all_rows', checked: options.all_rows_checked}

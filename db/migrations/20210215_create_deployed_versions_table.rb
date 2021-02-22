@@ -6,8 +6,8 @@ Sequel.migration do
       foreign_key :version_id, :versions, null: false
       Integer :pacticipant_id, null: false
       foreign_key :environment_id, :environments, null: false
-      Boolean :replaced_previous_deployed_version
       Boolean :currently_deployed, null: false
+      Boolean :replaced_previous_deployed_version, null: false
       DateTime :created_at, nullable: false
       DateTime :updated_at, nullable: false
       DateTime :undeployed_at
