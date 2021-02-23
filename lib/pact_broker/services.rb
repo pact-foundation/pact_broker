@@ -77,6 +77,10 @@ module PactBroker
       get(:environment_service)
     end
 
+    def deployed_version_service
+      get(:deployed_version_service)
+    end
+
     def register_default_services
       register_service(:index_service) do
         require 'pact_broker/index/service'
@@ -156,6 +160,11 @@ module PactBroker
       register_service(:environment_service) do
         require 'pact_broker/deployments/environment_service'
         Deployments::EnvironmentService
+      end
+
+      register_service(:deployed_version_service) do
+        require 'pact_broker/deployments/deployed_version_service'
+        PactBroker::Deployments::DeployedVersionService
       end
     end
   end

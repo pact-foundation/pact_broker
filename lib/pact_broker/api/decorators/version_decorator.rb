@@ -55,6 +55,16 @@ module PactBroker
           end
         end
 
+        links :'pb:record-deployment' do | context |
+          context.fetch(:environments, []).collect do | environment |
+            {
+              title: "Record deployment to #{environment.display_name}",
+              name: environment.name,
+              href: deployed_versions_for_environment_url(represented, environment, context.fetch(:base_url))
+            }
+          end
+        end
+
         curies do | options |
           [{
             name: :pb,

@@ -48,6 +48,8 @@ en:
         invalid_webhook_uuid: The UUID can only contain the characters A-Z, a-z, 0-9, _ and -, and must be 16 or more characters.
         pacticipant_not_found: No pacticipant with name '%{name}' found
         environment_name_must_be_unique: Another environment with name '%{name}' already exists.
+        cannot_specify_tag_and_environment: Cannot specify both a 'to' tag and an environment.
+        cannot_specify_latest_and_environment: Cannot specify both latest=true and an environment.
       duplicate_pacticipant: |
         This is the first time a pact has been published for "%{new_name}".
         The name "%{new_name}" is very similar to the following existing consumers/providers:

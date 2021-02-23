@@ -1,4 +1,5 @@
 require 'json'
+require 'pact_broker/string_refinements'
 require 'pact_broker/repositories'
 require 'pact_broker/services'
 require 'pact_broker/webhooks/repository'
@@ -25,14 +26,16 @@ require 'pact_broker/webhooks/repository'
 require 'pact_broker/certificates/certificate'
 require 'pact_broker/matrix/row'
 require 'pact_broker/deployments/environment_service'
+require 'pact_broker/deployments/deployed_version_service'
 require 'ostruct'
 
 module PactBroker
   module Test
     class TestDataBuilder
-
       include PactBroker::Repositories
       include PactBroker::Services
+      using PactBroker::StringRefinements
+
 
       attr_reader :pacticipant
       attr_reader :consumer
@@ -47,6 +50,7 @@ module PactBroker
       attr_reader :webhook_execution
       attr_reader :triggered_webhook
       attr_reader :environment
+      attr_reader :deployed_version
 
       def initialize(params = {})
         @now = DateTime.now
@@ -93,9 +97,9 @@ module PactBroker
         self
       end
 
-      def create_pact_with_verification consumer_name = "Consumer", consumer_version = "1.0.#{model_counter}", provider_name = "Provider", provider_version = "1.0.#{model_counter}"
+      def create_pact_with_verification consumer_name = "Consumer", consumer_version = "1.0.#{model_counter}", provider_name = "Provider", provider_version = "1.0.#{model_counter}", success = true
         create_pact_with_hierarchy(consumer_name, consumer_version, provider_name)
-        create_verification(number: model_counter, provider_version: provider_version)
+        create_verification(number: model_counter, provider_version: provider_version, success: success)
         self
       end
 
@@ -355,7 +359,7 @@ module PactBroker
         branch = parameters.delete(:branch)
         tag_names = [parameters.delete(:tag_names), parameters.delete(:tag_name)].flatten.compact
         provider_version_number = parameters[:provider_version] || '4.5.6'
-        default_parameters = { success: true, number: 1, test_results: {some: 'results'}, wip: false }
+        default_parameters = { success: true, number: 1, test_results: { some: 'results' }, wip: false }
         default_parameters[:execution_date] = @now if @now
         parameters = default_parameters.merge(parameters)
         parameters.delete(:provider_version)
@@ -386,12 +390,20 @@ module PactBroker
       def create_environment(name, params = {})
         uuid = params[:uuid] || PactBroker::Deployments::EnvironmentService.next_uuid
         production = params[:production] || false
-        @environment = PactBroker::Deployments::EnvironmentService.create(uuid, PactBroker::Deployments::Environment.new(params.merge(name: name, production: production)))
+        display_name = params[:display_name] || name.camelcase(true)
+        the_params = params.merge(name: name, production: production, display_name: display_name)
+        @environment = PactBroker::Deployments::EnvironmentService.create(uuid, PactBroker::Deployments::Environment.new(the_params))
         set_created_at_if_set(params[:created_at], :environments, id: environment.id)
         self
       end
 
-      def create_deployment(_)
+      def create_deployed_version_for_consumer_version(uuid: SecureRandom.uuid, currently_deployed: true, environment_name: environment&.name, created_at: nil)
+        create_deployed_version(uuid: uuid, currently_deployed: currently_deployed, version: consumer_version, environment_name: environment_name, created_at: created_at)
+        self
+      end
+
+      def create_deployed_version_for_provider_version(uuid: SecureRandom.uuid, currently_deployed: true, environment_name: environment&.name, created_at: nil)
+        create_deployed_version(uuid: uuid, currently_deployed: currently_deployed, version: provider_version, environment_name: environment_name, created_at: created_at)
         self
       end
 
@@ -423,6 +435,10 @@ module PactBroker
           .where(provider: find_pacticipant(provider_name))
           .where(consumer_version: find_version(consumer_name, consumer_version_number))
           .single_record
+      end
+
+      def find_environment(environment_name)
+        PactBroker::Deployments::EnvironmentService.find_by_name(environment_name)
       end
 
       def model_counter
@@ -501,6 +517,13 @@ module PactBroker
       end
 
       private
+
+      def create_deployed_version(uuid: , currently_deployed: , version:, environment_name: , created_at: nil)
+        env = find_environment(environment_name)
+        @deployed_version = PactBroker::Deployments::DeployedVersionService.create(uuid, version, env, false)
+        @deployed_version.update(currently_deployed: false) unless currently_deployed
+        set_created_at_if_set(created_at, :deployed_versions, id: deployed_version.id)
+      end
 
       def pact_version_id
         PactBroker::Pacts::PactPublication.find(id: @pact.id).pact_version_id

@@ -23,6 +23,10 @@ module PactBroker
           options[:tag] = params[:to]
         end
 
+        if params[:environment].is_a?(String)
+          options[:environment_name] = params[:environment]
+        end
+
         return [selector], options
       end
     end

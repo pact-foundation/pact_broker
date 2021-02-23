@@ -4,11 +4,10 @@ require 'pact_broker/matrix/unresolved_selector'
 module PactBroker
   module Matrix
     describe Service do
-      let(:td) { TestDataBuilder.new }
-
       describe "validate_selectors" do
 
-        subject { Service.validate_selectors(selectors) }
+        subject { Service.validate_selectors(selectors, options) }
+        let(:options) { {} }
 
         context "when there are no selectors" do
           let(:selectors) { [] }
@@ -80,6 +79,36 @@ module PactBroker
 
           it "returns an error message" do
             expect(subject).to eq ["A version number and latest flag cannot both be specified for Foo"]
+          end
+        end
+
+        context "when both a to tag and an environment are specified" do
+          let(:selectors) { [] }
+
+          let(:options) do
+            {
+              tag: "prod",
+              environment_name: "prod"
+            }
+          end
+
+          it "returns an error message" do
+            expect(subject.last).to include "Cannot specify both"
+          end
+        end
+
+        context "when both latest=true and an environment are specified" do
+          let(:selectors) { [] }
+
+          let(:options) do
+            {
+              latest: true,
+              environment_name: "prod"
+            }
+          end
+
+          it "returns an error message" do
+            expect(subject.last).to include "Cannot specify both latest"
           end
         end
       end

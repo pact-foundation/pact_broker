@@ -30,6 +30,9 @@ module PactBroker
       one_to_many :pact_publications, order: :revision_number, class: "PactBroker::Pacts::PactPublication", key: :consumer_version_id
       associate(:many_to_one, :pacticipant, :class => "PactBroker::Domain::Pacticipant", :key => :pacticipant_id, :primary_key => :id)
       one_to_many :tags, :reciprocal => :version, order: :created_at
+      one_to_many :current_deployed_versions, class: "PactBroker::Deployments::DeployedVersion", key: :version_id, primary_key: :id do | ds |
+        ds.currently_deployed
+      end
 
       many_to_one :latest_version_for_pacticipant, read_only: true, key: :id,
         class: Version,
@@ -79,6 +82,12 @@ module PactBroker
           # end
         end
 
+        def currently_deployed_to_environment(environment_name, pacticipant_name)
+          deployed_version_query = PactBroker::Deployments::DeployedVersion.currently_deployed.for_environment_name(environment_name)
+          deployed_version_query = deployed_version_query.for_pacticipant_name(pacticipant_name) if pacticipant_name
+          where(id: deployed_version_query.select(:version_id))
+        end
+
         def where_tag(tag)
           if tag == true
             join(:tags, Sequel[:tags][:version_id] => Sequel[first_source_alias][:id])
@@ -115,6 +124,7 @@ module PactBroker
         def for_selector(selector)
           query = self
           query = query.where_pacticipant_name(selector.pacticipant_name) if selector.pacticipant_name
+          query = query.currently_deployed_to_environment(selector.environment_name, selector.pacticipant_name) if selector.environment_name
           query = query.where_tag(selector.tag) if selector.tag
           query = query.where_number(selector.pacticipant_version_number) if selector.pacticipant_version_number
           query = query.where_age_less_than(selector.max_age) if selector.max_age
