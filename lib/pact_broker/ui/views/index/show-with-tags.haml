@@ -39,9 +39,9 @@
               %a{:href => index_item.consumer_group_url }
                 = index_item.consumer_name
             %td.consumer-version-number{"data-text": index_item.consumer_version_order}
-              %div.clippable
-                = index_item.consumer_version_number
-                - if index_item.consumer_version_number
+              %div.clippable{"data-clippable": index_item.consumer_version_number}
+                = index_item.display_consumer_version_number
+                - if index_item.display_consumer_version_number
                   %button.clippy.invisible{ title: "Copy to clipboard" }
                     %span.copy-icon
               - if index_item.latest?
@@ -66,9 +66,9 @@
               %a{ href: index_item.provider_group_url }
                 = index_item.provider_name
             %td.provider-version-number
-              %div.clippable
-                = index_item.provider_version_number
-                - if index_item.provider_version_number
+              %div.clippable{"data-clippable": index_item.provider_version_number}
+                = index_item.display_provider_version_number
+                - if index_item.display_provider_version_number
                   %button.clippy.invisible{ title: "Copy to clipboard" }
                     %span.copy-icon
               - if index_item.provider_version_branch

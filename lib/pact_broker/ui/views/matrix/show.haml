@@ -121,7 +121,7 @@
             %a{href: line.consumer_name_url}
               = line.consumer_name
           %td.consumer-version{'data-sort-value' => line.consumer_version_order, 'data-consumer-version-id' => line.consumer_version_id}
-            %div.clippable
+            %div.clippable{'data-clippable': line.consumer_version_number}
               %a{href: line.consumer_version_number_url}
                 = line.display_consumer_version_number
               - if line.display_consumer_version_number
@@ -158,7 +158,7 @@
             %a{href: line.provider_name_url}
               = line.provider_name
           %td.provider-version{'data-sort-value' => line.provider_version_order, 'data-provider-version-id' => line.provider_version_id }
-            %div.clippable
+            %div.clippable{'data-clippable': line.provider_version_number}
               %a{href: line.provider_version_number_url}
                 = line.display_provider_version_number
               - if line.display_provider_version_number
