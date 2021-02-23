@@ -8,8 +8,6 @@ module PactBroker
       class MatrixDeployedVersion
         include PactBroker::Api::PactBrokerUrls
 
-        attr_reader :deployed_version
-
         def initialize deployed_version
           @deployed_version = deployed_version
         end
@@ -25,6 +23,10 @@ module PactBroker
         def url
           hal_browser_url(deployed_version_url(deployed_version))
         end
+
+        private
+
+        attr_reader :deployed_version
 
         def relative_date date
           DateHelper.distance_of_time_in_words(date, DateTime.now) + " ago"
