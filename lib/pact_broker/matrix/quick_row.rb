@@ -116,8 +116,8 @@ module PactBroker
         def eager_all_the_things
           eager(:consumer)
           .eager(:provider)
-          .eager(:consumer_version)
-          .eager(:provider_version)
+          .eager(consumer_version: { current_deployed_versions: :environment })
+          .eager(provider_version: { current_deployed_versions: :environment })
           .eager(:verification)
           .eager(:pact_publication)
           .eager(:pact_version)

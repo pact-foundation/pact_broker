@@ -11,7 +11,7 @@ module PactBroker
       class IndexItem
         extend Forwardable
 
-        delegate [:consumer_version_branch, :provider_version_branch, :latest_for_branch?] => :relationship
+        delegate [:consumer_version_branch, :provider_version_branch, :latest_for_branch?, :consumer_version_environment_names, :provider_version_environment_names] => :relationship
 
 
         include PactBroker::Api::PactBrokerUrls

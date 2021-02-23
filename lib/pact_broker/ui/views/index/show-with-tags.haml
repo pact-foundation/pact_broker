@@ -51,6 +51,9 @@
                 - branch_class = index_item.latest_for_branch? ? "tag badge badge-dark" : "tag badge badge-secondary"
                 %div{"class": branch_class}
                   = "[" + index_item.consumer_version_branch + "]"
+              - index_item.consumer_version_environment_names.each do | environment_name |
+                .tag.badge.badge-danger
+                  = environment_name
               - index_item.consumer_version_latest_tag_names.each do | tag_name |
                 .tag.badge.badge-primary
                   = tag_name
@@ -72,6 +75,9 @@
                 - branch_class = "tag badge badge-dark"
                 %div{"class": branch_class}
                   = "[" + index_item.provider_version_branch + "]"
+              - index_item.provider_version_environment_names.each do | environment_name |
+                .tag.badge.badge-danger
+                  = environment_name
               - index_item.provider_version_latest_tag_names.each do | tag_name |
                 .tag.badge.badge-primary
                   = tag_name
