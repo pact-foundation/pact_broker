@@ -54,7 +54,7 @@ module PactBroker
           let(:selectors) { [ UnresolvedSelector.new(pacticipant_name: "Bar", latest: true, tag: "test") ]}
           let(:options) { { tag: "prod", latestby: "cvp" } }
 
-          it "does not allow the consumer to be deployed" do
+          it "does not allow the provider to be deployed" do
             expect(subject.deployment_status_summary).to_not be_deployable
           end
         end
