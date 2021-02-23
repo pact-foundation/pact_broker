@@ -162,9 +162,10 @@ module PactBroker
       # the single selector into one selector for each version.
       def build_resolved_selectors(pacticipant, versions, original_selector, selector_type)
         if versions
+          one_of_many = versions.compact.size > 1
           versions.collect do | version |
             if version
-              selector_for_version(pacticipant, version, original_selector, selector_type)
+              selector_for_version(pacticipant, version, original_selector, selector_type, one_of_many)
             else
               selector_for_non_existing_version(pacticipant, original_selector, selector_type)
             end
@@ -202,8 +203,8 @@ module PactBroker
         ResolvedSelector.for_pacticipant_and_non_existing_version(pacticipant, original_selector, selector_type)
       end
 
-      def selector_for_version(pacticipant, version, original_selector, selector_type)
-        ResolvedSelector.for_pacticipant_and_version(pacticipant, version, original_selector, selector_type)
+      def selector_for_version(pacticipant, version, original_selector, selector_type, one_of_many)
+        ResolvedSelector.for_pacticipant_and_version(pacticipant, version, original_selector, selector_type, one_of_many)
       end
 
       def selector_without_version(pacticipant, selector_type)
