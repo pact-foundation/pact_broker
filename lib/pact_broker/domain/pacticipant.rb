@@ -7,10 +7,14 @@ require 'pact_broker/domain/label'
 module PactBroker
   module Domain
     class Pacticipant < Sequel::Model
-
       include Messages
-      plugin :insert_ignore, identifying_columns: [:name]
 
+      plugin :serialization
+      SPACE_DELIMITED_STRING_TO_ARRAY = lambda { |string| string.split(" ") }
+      ARRAY_TO_SPACE_DELIMITED_STRING = lambda { |array| array.join(" ") }
+      serialize_attributes [ARRAY_TO_SPACE_DELIMITED_STRING, SPACE_DELIMITED_STRING_TO_ARRAY], :main_development_branches
+
+      plugin :insert_ignore, identifying_columns: [:name]
       plugin :timestamps, update_on_create: true
 
       set_primary_key :id
@@ -48,12 +52,6 @@ module PactBroker
 
       def to_s
         "Pacticipant: id=#{id}, name=#{name}"
-      end
-
-      def validate
-        messages = []
-        messages << message('errors.validation.attribute_missing', attribute: 'name') unless name
-        messages
       end
 
       def any_versions?

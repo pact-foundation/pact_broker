@@ -4,31 +4,29 @@ require 'pact_broker/api/resources/pacticipants'
 module PactBroker
   module Api
     module Resources
-
       describe Pacticipants do
-
         describe "POST" do
-          let(:params) { {name: 'New Consumer'} }
-          let(:json) { params.to_json }
-          let(:model) { instance_double(model_class, validate: errors) }
+          let(:params) { { name: 'New Consumer' } }
+          let(:request_body) { params.to_json }
           let(:created_model) { instance_double(model_class) }
-          let(:errors) { [] }
+          let(:errors) { {} }
           let(:model_class) { PactBroker::Domain::Pacticipant }
           let(:decorator_class) { PactBroker::Api::Decorators::PacticipantDecorator }
-          let(:decorator) { instance_double(decorator_class, to_json: response_json, from_json: model) }
+          let(:parsed_model) { OpenStruct.new(name: "New Consumer") }
+          let(:decorator) { instance_double(decorator_class, to_json: response_json, from_json: parsed_model) }
           let(:response_json) { {some: 'json'}.to_json }
+          let(:schema) { PactBroker::Api::Contracts::PacticipantSchema }
 
           before do
-            allow(model_class).to receive(:new).and_return(model)
             allow(PactBroker::Pacticipants::Service).to receive(:create).and_return(created_model)
-            allow(decorator_class).to receive(:new).with(model).and_return(decorator)
-            allow(decorator_class).to receive(:new).with(created_model).and_return(decorator)
+            allow(decorator_class).to receive(:new).and_return(decorator)
+            allow(schema).to receive(:call).and_return(errors)
           end
 
-          subject { post "/pacticipants", json, 'CONTENT_TYPE' => 'application/json' }
+          subject { post "/pacticipants", request_body, 'CONTENT_TYPE' => 'application/json' }
 
           context "structurally incorrect JSON" do
-            let(:json) { "{" }
+            let(:request_body) { "{" }
 
             it "returns a 400" do
               subject
@@ -37,7 +35,7 @@ module PactBroker
           end
 
           context "when the model is invalid" do
-            let(:errors) { ['error'] }
+            let(:errors) { { "some" => ["errors"] } }
 
             it "returns a 400" do
               subject
@@ -52,7 +50,7 @@ module PactBroker
             end
 
             it "parses the request JSON" do
-              expect(decorator).to receive(:from_json).with(json)
+              expect(decorator).to receive(:from_json).with(request_body)
               subject
             end
 
@@ -83,9 +81,7 @@ module PactBroker
             end
           end
         end
-
       end
     end
-
   end
 end

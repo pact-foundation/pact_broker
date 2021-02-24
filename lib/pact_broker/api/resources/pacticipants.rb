@@ -2,6 +2,7 @@ require 'pact_broker/api/resources/base_resource'
 require 'pact_broker/api/decorators/pacticipant_decorator'
 require 'pact_broker/domain/pacticipant'
 require 'pact_broker/hash_refinements'
+require 'pact_broker/api/contracts/pacticipant_schema'
 
 module PactBroker
   module Api
@@ -23,7 +24,7 @@ module PactBroker
 
         def malformed_request?
           if request.post?
-            return invalid_json? || validation_errors?(new_model)
+            return invalid_json? || validation_errors_for_schema?
           end
           false
         end
@@ -33,7 +34,7 @@ module PactBroker
         end
 
         def from_json
-          created_model = pacticipant_service.create(params.symbolize_keys.snakecase_keys.slice(:name, :repository_url))
+          created_model = pacticipant_service.create(parsed_pacticipant.to_h)
           response.body = decorator_for(created_model).to_json(decorator_options)
         end
 
@@ -53,8 +54,8 @@ module PactBroker
           decorator_class(:pacticipant_decorator).new(model)
         end
 
-        def new_model
-          @new_model ||= decorator_for(PactBroker::Domain::Pacticipant.new).from_json(request.body.to_s)
+        def parsed_pacticipant
+          @new_model ||= decorator_for(OpenStruct.new).from_json(request_body)
         end
 
         def policy_name
@@ -62,6 +63,10 @@ module PactBroker
         end
 
         private
+
+        def schema
+          PactBroker::Api::Contracts::PacticipantSchema
+        end
 
         def pacticipants
           @pacticipants ||= pacticipant_service.find_all_pacticipants

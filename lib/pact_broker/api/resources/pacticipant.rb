@@ -1,14 +1,6 @@
 require 'pact_broker/api/resources/base_resource'
 require 'pact_broker/api/contracts/pacticipant_schema'
 
-module Webmachine
-  class Request
-    def put?
-      method == "PUT" || method == "PATCH"
-    end
-  end
-end
-
 module PactBroker
   module Api
     module Resources
@@ -23,7 +15,7 @@ module PactBroker
         end
 
         def allowed_methods
-          ["GET", "PATCH", "DELETE", "OPTIONS"]
+          ["GET", "PUT", "PATCH", "DELETE", "OPTIONS"]
         end
 
         def known_methods
@@ -40,10 +32,14 @@ module PactBroker
 
         def from_json
           if pacticipant
-            @pacticipant = pacticipant_service.update params(symbolize_names: false).merge('name' => pacticipant_name)
+            @pacticipant = update_existing_pacticipant
           else
-            @pacticipant = pacticipant_service.create params.merge(:name => pacticipant_name)
-            response.headers["Location"] = pacticipant_url(base_url, pacticipant)
+            if request.patch? # for backwards compatibility, wish I hadn't done this
+              @pacticipant = create_new_pacticipant
+              response.headers["Location"] = pacticipant_url(base_url, pacticipant)
+            else
+              return 404
+            end
           end
           response.body = to_json
         end
@@ -61,12 +57,28 @@ module PactBroker
           decorator_class(:pacticipant_decorator).new(pacticipant).to_json(decorator_options)
         end
 
+        def parsed_pacticipant
+          decorator_class(:pacticipant_decorator).new(OpenStruct.new).from_json(request_body)
+        end
+
         def policy_name
           :'pacticipants::pacticipant'
         end
 
         def schema
           PactBroker::Api::Contracts::PacticipantSchema
+        end
+
+        def update_existing_pacticipant
+          if request.really_put?
+            @pacticipant = pacticipant_service.replace(pacticipant_name, parsed_pacticipant)
+          else
+            @pacticipant = pacticipant_service.update params(symbolize_names: false).merge('name' => pacticipant_name)
+          end
+        end
+
+        def create_new_pacticipant
+          pacticipant_service.create parsed_pacticipant.to_h.merge(:name => pacticipant_name)
         end
       end
     end

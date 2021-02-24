@@ -18,6 +18,7 @@ module PactBroker
           end
           optional(:name).filled(:str?, :single_line?)
           optional(:displayName).maybe(:str?, :single_line?)
+          optional(:mainDevelopmentBranches).each(:str?, :single_line?, :no_spaces?)
           optional(:repositoryUrl).maybe(:str?, :single_line?)
           optional(:repositoryName).maybe(:str?, :single_line?)
           optional(:repositoryOrganization).maybe(:str?, :single_line?)

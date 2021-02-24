@@ -1,12 +1,18 @@
-require 'support/test_data_builder'
-
 describe "Creating a pacticipant" do
   let(:path) { "/pacticipants" }
   let(:headers) { {'CONTENT_TYPE' => 'application/json'} }
   let(:response_body) { JSON.parse(last_response.body, symbolize_names: true)}
-  let(:pacticipant_hash) { { name: 'Foo Thing' } }
+  let(:pacticipant_hash) do
+    {
+      name: 'Foo Thing',
+      mainDevelopmentBranches: ["main"],
+      repositoryUrl: "http://url",
+      repositoryName: "foo-thing",
+      repositoryOrganization: "some-group"
+    }
+  end
 
-  subject { post path, pacticipant_hash.to_json, headers; last_response }
+  subject { post(path, pacticipant_hash.to_json, headers) }
 
   it "returns a 201 response" do
     subject
