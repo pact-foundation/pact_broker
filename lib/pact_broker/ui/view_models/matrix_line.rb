@@ -2,6 +2,7 @@ require 'pact_broker/api/pact_broker_urls'
 require 'pact_broker/ui/helpers/url_helper'
 require 'pact_broker/date_helper'
 require 'pact_broker/ui/view_models/matrix_tag'
+require 'pact_broker/ui/view_models/matrix_deployed_version'
 require 'pact_broker/versions/abbreviate_number'
 require 'pact_broker/messages'
 require 'forwardable'
@@ -129,6 +130,18 @@ module PactBroker
             .reject(&:latest)
             .sort_by(&:created_at)
             .collect{ | tag | MatrixTag.new(tag.to_hash.merge(pacticipant_name: consumer_name, version_number: consumer_version_number)) }
+        end
+
+        def consumer_deployed_versions
+          @line.consumer_version.current_deployed_versions.collect do | deployed_version |
+            MatrixDeployedVersion.new(deployed_version)
+          end
+        end
+
+        def provider_deployed_versions
+          (@line.provider_version&.current_deployed_versions || []).collect do | deployed_version |
+            MatrixDeployedVersion.new(deployed_version)
+          end
         end
 
         def latest_provider_version_tags
