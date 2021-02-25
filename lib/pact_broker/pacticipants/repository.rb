@@ -47,7 +47,7 @@ module PactBroker
         if pacticipant = find_by_name(name)
           pacticipant
         else
-          create name: name
+          create(name: name)
         end
       end
 
@@ -57,6 +57,7 @@ module PactBroker
       def create params
         PactBroker::Domain::Pacticipant.new(
           name: params.fetch(:name),
+          display_name: params[:display_name],
           repository_url: params[:repository_url],
           repository_name: params[:repository_name],
           repository_organization: params[:repository_organization],
@@ -64,8 +65,14 @@ module PactBroker
         ).insert_ignore
       end
 
+      def update(pacticipant_name, pacticipant)
+        pacticipant.name = pacticipant_name
+        pacticipant.save
+      end
+
       def replace(pacticipant_name, open_struct_pacticipant)
         PactBroker::Domain::Pacticipant.new(
+          display_name: open_struct_pacticipant.display_name,
           repository_url: open_struct_pacticipant.repository_url,
           repository_name: open_struct_pacticipant.repository_name,
           repository_organization: open_struct_pacticipant.repository_organization,

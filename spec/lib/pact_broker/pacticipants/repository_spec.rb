@@ -13,15 +13,27 @@ module PactBroker
         context "when the pacticipant does not already exist" do
           before do
             td.create_pacticipant("Bar")
+            allow_any_instance_of(PactBroker::Domain::Pacticipant).to receive(:generate_display_name).and_return("display_name")
           end
 
-          subject { repository.create(name: "Foo", repository_url: "url", main_development_branches: ["main"]) }
+          let(:display_name) { "Foo" }
+
+          subject { repository.create(name: "foo", display_name: display_name, repository_url: "url", main_development_branches: ["main"]) }
 
           it "returns the new pacticipant" do
             expect(subject).to be_a(PactBroker::Domain::Pacticipant)
-            expect(subject.name).to eq "Foo"
+            expect(subject.name).to eq "foo"
             expect(subject.main_development_branches).to eq ["main"]
             expect(subject.repository_url).to eq "url"
+            expect(subject.display_name).to eq "Foo"
+          end
+
+          context "when no display name is provided" do
+            let(:display_name) { nil }
+
+            it "generates one" do
+              expect(subject.display_name).to eq "display_name"
+            end
           end
         end
 
@@ -42,16 +54,18 @@ module PactBroker
         end
       end
 
-      describe "replace the pacticipant" do
+      describe "replace" do
         before do
           td.create_pacticipant("Bar", main_development_branches: ["foo"], repository_organization: "foo")
+          allow_any_instance_of(PactBroker::Domain::Pacticipant).to receive(:generate_display_name).and_return("display_name")
         end
 
         subject { Repository.new.replace("Bar", OpenStruct.new(main_development_branches: ["bar"], repository_url: "new_url")) }
 
-        it "replaces" do
+        it "replaces the pacticipant" do
           expect(subject.main_development_branches).to eq ["bar"]
           expect(subject.repository_organization).to eq nil
+          expect(subject.display_name).to eq "display_name"
         end
       end
 

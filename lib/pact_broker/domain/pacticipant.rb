@@ -3,11 +3,15 @@ require 'pact_broker/messages'
 require 'pact_broker/repositories/helpers'
 require 'pact_broker/versions/latest_version'
 require 'pact_broker/domain/label'
+require 'pact_broker/string_refinements'
+require 'pact_broker/pacticipants/generate_display_name'
 
 module PactBroker
   module Domain
     class Pacticipant < Sequel::Model
       include Messages
+      include PactBroker::Pacticipants::GenerateDisplayName
+      using PactBroker::StringRefinements
 
       plugin :serialization
       SPACE_DELIMITED_STRING_TO_ARRAY = lambda { |string| string.split(" ") }
@@ -44,6 +48,13 @@ module PactBroker
         PactBroker::Pacts::PactVersion.where(consumer: self).or(provider: self).delete
         PactBroker::Domain::Label.where(pacticipant: self).destroy
         super
+      end
+
+      def before_save
+        super
+        if display_name.nil? || display_name.to_s.blank?
+          self.display_name = generate_display_name(name)
+        end
       end
 
       def latest_version

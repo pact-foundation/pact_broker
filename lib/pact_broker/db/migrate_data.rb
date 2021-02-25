@@ -22,6 +22,7 @@ module PactBroker
         DataMigrations::SetCreatedAtForLatestPactPublications.call(database_connection)
         DataMigrations::SetCreatedAtForLatestVerifications.call(database_connection)
         DataMigrations::SetExtraColumnsForTags.call(database_connection)
+        DataMigrations::SetPacticipantDisplayName.call(database_connection)
       end
     end
   end

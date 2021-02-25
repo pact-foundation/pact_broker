@@ -26,7 +26,6 @@ module PactBroker
         context "with empty params" do
           let(:params) do
             {
-              displayName: "",
               repositoryUrl: "",
               repositoryName: "",
               repositoryOrganization: ""

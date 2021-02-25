@@ -57,8 +57,8 @@ module PactBroker
           decorator_class(:pacticipant_decorator).new(pacticipant).to_json(decorator_options)
         end
 
-        def parsed_pacticipant
-          decorator_class(:pacticipant_decorator).new(OpenStruct.new).from_json(request_body)
+        def parsed_pacticipant(pacticipant)
+          decorator_class(:pacticipant_decorator).new(pacticipant).from_json(request_body)
         end
 
         def policy_name
@@ -71,14 +71,14 @@ module PactBroker
 
         def update_existing_pacticipant
           if request.really_put?
-            @pacticipant = pacticipant_service.replace(pacticipant_name, parsed_pacticipant)
+            @pacticipant = pacticipant_service.replace(pacticipant_name, parsed_pacticipant(OpenStruct.new))
           else
-            @pacticipant = pacticipant_service.update params(symbolize_names: false).merge('name' => pacticipant_name)
+            @pacticipant = pacticipant_service.update(pacticipant_name, parsed_pacticipant(pacticipant))
           end
         end
 
         def create_new_pacticipant
-          pacticipant_service.create parsed_pacticipant.to_h.merge(:name => pacticipant_name)
+          pacticipant_service.create parsed_pacticipant(OpenStruct.new).to_h.merge(:name => pacticipant_name)
         end
       end
     end
