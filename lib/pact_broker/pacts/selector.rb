@@ -57,6 +57,26 @@ module PactBroker
         self[:consumer]
       end
 
+      def currently_deployed= currently_deployed
+        self[:currently_deployed] = currently_deployed
+      end
+
+      def currently_deployed
+        self[:currently_deployed]
+      end
+
+      def currently_deployed?
+        currently_deployed
+      end
+
+      def environment= environment
+        self[:environment] = environment
+      end
+
+      def environment
+        self[:environment]
+      end
+
       def self.overall_latest
         Selector.new(latest: true)
       end
@@ -95,6 +115,10 @@ module PactBroker
 
       def self.latest_for_consumer(consumer)
         Selector.new(latest: true, consumer: consumer)
+      end
+
+      def self.for_currently_deployed(environment = nil)
+        Selector.new( { currently_deployed: true, environment: environment }.compact )
       end
 
       def self.from_hash hash
