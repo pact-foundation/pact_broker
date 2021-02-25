@@ -188,8 +188,8 @@ module PactBroker
 
         def verification_status_class
           case @line.success
-            when true then 'success'
-            when false then 'danger'
+            when true then 'table-success'
+            when false then 'table-danger'
             else ''
           end
         end
