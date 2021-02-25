@@ -17,6 +17,28 @@ module PactBroker
         ResolvedSelector.new(self.to_h, consumer_version)
       end
 
+      def resolve_for_environment(consumer_version, environment)
+        ResolvedSelector.new(self.to_h.merge(environment: environment), consumer_version)
+      end
+
+      # Only currently used to identify the currently_deployed from the others in
+      # verifiable_pact_messages, so don't need the "for_consumer" sub category
+      def type
+        if latest_for_branch?
+          :latest_for_branch
+        elsif currently_deployed?
+          :currently_deployed
+        elsif latest_for_tag?
+          :latest_for_tag
+        elsif all_for_tag?
+          :all_for_tag
+        elsif overall_latest?
+          :overall_latest
+        else
+          :undefined
+        end
+      end
+
       def tag= tag
         self[:tag] = tag
       end
@@ -142,7 +164,7 @@ module PactBroker
       end
 
       def overall_latest?
-        !!(latest? && !tag && !branch)
+        !!(latest? && !tag && !branch && !currently_deployed && !environment)
       end
 
       # Not sure if the fallback_tag logic is needed
@@ -187,6 +209,12 @@ module PactBroker
             branch <=> other.branch
           else
             latest_for_branch? ? -1 : 1
+          end
+        elsif currently_deployed? || other.currently_deployed?
+          if currently_deployed? == other.currently_deployed?
+            environment <=> other.environment
+          else
+            currently_deployed? ? -1 : 1
           end
         elsif latest_for_tag? || other.latest_for_tag?
           if latest_for_tag? == other.latest_for_tag?

@@ -155,21 +155,16 @@ module PactBroker
           Sequel[:pact_publications][:consumer_version_id] => Sequel[:deployed_versions][:version_id],
           Sequel[:deployed_versions][:currently_deployed] => true
         }
+        environments_join = {
+          Sequel[:deployed_versions][:environment_id] => Sequel[:environments][:id],
+          Sequel[:environments][:name] => environment_name
+        }.compact
+
         query = self
         if no_columns_selected?
-          query = query.select_all_qualified.select_append(Sequel[:deployed_versions][:environment_id])
+          query = query.select_all_qualified.select_append(Sequel[:environments][:name].as(:environment_name))
         end
-
-        query = query.join(:deployed_versions, deployed_versions_join)
-
-        if environment_name
-          environments_join = {
-            Sequel[:deployed_versions][:environment_id] => Sequel[:environments][:id],
-            Sequel[:environments][:name] => environment_name
-          }
-          query = query.join(:environments, environments_join)
-        end
-        query
+        query.join(:deployed_versions, deployed_versions_join).join(:environments, environments_join)
       end
 
       def successfully_verified_by_provider_branch(provider_id, provider_version_branch)

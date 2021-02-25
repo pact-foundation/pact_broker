@@ -116,9 +116,14 @@ module PactBroker
         selectors.flat_map do | selector |
           query = scope_for(PactPublication).for_provider_and_consumer_version_selector(provider, selector)
           query.all.collect do | pact_publication |
+            resolved_selector = if selector.currently_deployed?
+              selector.resolve_for_environment(pact_publication.consumer_version, pact_publication.values.fetch(:environment_name))
+            else
+              selector.resolve(pact_publication.consumer_version)
+            end
             SelectedPact.new(
               pact_publication.to_domain,
-              Selectors.new(selector.resolve(pact_publication.consumer_version))
+              Selectors.new(resolved_selector)
             )
           end
         end

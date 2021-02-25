@@ -121,6 +121,18 @@ module PactBroker
 
           its(:inclusion_reason) { is_expected.to include "The pact at http://pact is being verified because it matches the following configured selection criterion: latest pact between Foo and Bar"}
         end
+
+        context "when the consumer version is currently deployed to a single environment" do
+          let(:selectors) { Selectors.new(Selector.for_currently_deployed('test')) }
+
+          its(:inclusion_reason) { is_expected.to include "The pact at http://pact is being verified because it matches the following configured selection criterion: pacts for consumer version(s) currently deployed to test"}
+        end
+
+        context "when the consumer version is currently deployed to a multiple environments" do
+          let(:selectors) { Selectors.new(Selector.for_currently_deployed('dev'), Selector.for_currently_deployed('test'), Selector.for_currently_deployed('prod')) }
+
+          its(:inclusion_reason) { is_expected.to include "pacts for consumer version(s) currently deployed to dev, prod and test (all have the same content)"}
+        end
       end
 
       describe "#pending_reason" do

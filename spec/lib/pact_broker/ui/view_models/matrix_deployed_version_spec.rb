@@ -17,11 +17,11 @@ module PactBroker
             created_at: created_at
           )
         end
-        let(:created_at) { (Date.today - 1).to_datetime }
+        let(:created_at) { (Date.today - 400).to_datetime }
         let(:environment) { instance_double("PactBroker::Deployments::Environment", name: "test", display_name: "Test") }
 
         its(:environment_name) { is_expected.to eq "test" }
-        its(:tooltip) { is_expected.to eq "Currently deployed to Test (1 day ago)" }
+        its(:tooltip) { is_expected.to eq "Currently deployed to Test (about 1 year ago)" }
         its(:url) { is_expected.to eq "http://halbrowser#http://deployed_version" }
       end
     end
