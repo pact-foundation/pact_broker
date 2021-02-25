@@ -255,6 +255,10 @@ module PactBroker
       @webhook_host_whitelist = parse_space_delimited_string_list_property('webhook_host_whitelist', webhook_host_whitelist)
     end
 
+    def base_urls
+      base_url ? base_url.split(" ") : []
+    end
+
     def warning_error_classes
       warning_error_class_names.collect do | class_name |
         begin
