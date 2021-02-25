@@ -163,7 +163,10 @@ module PactBroker
 
       def selectors_descriptions(selectors)
         if selectors.first.currently_deployed?
-          "pacts for consumer version(s) currently deployed to #{join_unquoted(selectors.collect(&:environment))}"
+          selectors.group_by(&:consumer).flat_map do | consumer_name, selectors |
+            display_name = consumer_name ? "the version(s) of #{consumer_name}" : "the consumer version(s)"
+            "pacts for #{display_name} currently deployed to #{join_unquoted(selectors.collect(&:environment))}"
+          end
         else
           selectors.collect do | selector |
             selector_description(selector)

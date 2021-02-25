@@ -68,6 +68,34 @@ module PactBroker
           end
         end
 
+        context "when currently_deployed is true and an environment is and consumer specified" do
+          before do
+            td.create_environment("test")
+              .create_pact_with_hierarchy("Foo", "1", "Bar")
+              .create_deployed_version_for_consumer_version(currently_deployed: false)
+              .create_pact_with_hierarchy("Foo", "2", "Bar")
+              .create_deployed_version_for_consumer_version(currently_deployed: true)
+              .create_pact_with_hierarchy("Waffle", "3", "Bar")
+              .create_pact_with_hierarchy("Waffle", "4", "Bar")
+              .create_deployed_version_for_consumer_version(currently_deployed: true)
+              .create_environment("prod")
+              .create_pact_with_hierarchy("Foo", "5", "Bar")
+              .comment("not included, wrong environment")
+              .create_deployed_version_for_consumer_version(currently_deployed: true)
+          end
+
+          let(:consumer_version_selectors) do
+            PactBroker::Pacts::Selectors.new(
+              PactBroker::Pacts::Selector.for_currently_deployed_and_environment_and_consumer("test", "Foo")
+            )
+          end
+
+          it "returns the pacts for the currently deployed versions" do
+            expect(subject.size).to eq 1
+            expect(subject.first.selectors).to eq [PactBroker::Pacts::Selector.for_currently_deployed_and_environment_and_consumer("test", "Foo").resolve(td.find_version("Foo", "2"))]
+          end
+        end
+
         context "when the same version is deployed to multiple environments" do
           before do
             td.create_environment("test")

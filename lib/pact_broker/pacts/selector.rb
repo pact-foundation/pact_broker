@@ -143,6 +143,14 @@ module PactBroker
         Selector.new( { currently_deployed: true, environment: environment }.compact )
       end
 
+      def self.for_currently_deployed_and_consumer(consumer)
+        Selector.new(currently_deployed: true, consumer: consumer)
+      end
+
+      def self.for_currently_deployed_and_environment_and_consumer(environment, consumer)
+        Selector.new(currently_deployed: true, environment: environment, consumer: consumer)
+      end
+
       def self.from_hash hash
         Selector.new(hash)
       end

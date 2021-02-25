@@ -125,13 +125,28 @@ module PactBroker
         context "when the consumer version is currently deployed to a single environment" do
           let(:selectors) { Selectors.new(Selector.for_currently_deployed('test')) }
 
-          its(:inclusion_reason) { is_expected.to include "The pact at http://pact is being verified because it matches the following configured selection criterion: pacts for consumer version(s) currently deployed to test"}
+          its(:inclusion_reason) { is_expected.to include "The pact at http://pact is being verified because it matches the following configured selection criterion: pacts for the consumer version(s) currently deployed to test"}
         end
 
         context "when the consumer version is currently deployed to a multiple environments" do
           let(:selectors) { Selectors.new(Selector.for_currently_deployed('dev'), Selector.for_currently_deployed('test'), Selector.for_currently_deployed('prod')) }
 
-          its(:inclusion_reason) { is_expected.to include "pacts for consumer version(s) currently deployed to dev, prod and test (all have the same content)"}
+          its(:inclusion_reason) { is_expected.to include "pacts for the consumer version(s) currently deployed to dev, prod and test (all have the same content)"}
+        end
+
+        context "when the currently deployed consumer version is for a consumer" do
+          let(:selectors) do
+            Selectors.new(
+              Selector.for_currently_deployed_and_environment_and_consumer('test', 'Foo'),
+              Selector.for_currently_deployed_and_environment_and_consumer('prod', 'Foo'),
+              Selector.for_currently_deployed_and_environment_and_consumer('test', 'Bar'),
+              Selector.for_currently_deployed('test'),
+            )
+          end
+
+          its(:inclusion_reason) { is_expected.to include "pacts for the version(s) of Foo currently deployed to prod and test"}
+          its(:inclusion_reason) { is_expected.to include "pacts for the version(s) of Bar currently deployed to test"}
+          its(:inclusion_reason) { is_expected.to include "pacts for the consumer version(s) currently deployed to test"}
         end
       end
 
