@@ -23,13 +23,21 @@ services:
     environment:
       DATABASE_URL: postgres://postgres:postgres@postgres/postgres
       PACT_BROKER_HIDE_PACTFLOW_MESSAGES: 'true'
-    command: dockerize -wait tcp://postgres:5432 /home/start.sh
+      PACT_BROKER_BASE_URL: 'http://localhost:9292 http://pact-broker:9292'
+    command: -wait tcp://postgres:5432 /usr/local/bin/start
+    entrypoint: dockerize
     volumes:
       - ./lib:/home/lib
       - ./db:/home/db
       - ./config.ru:/home/config.ru
       - ./tasks:/home/tasks
       - ./Rakefile:/home/Rakefile
+
+  shell:
+    image: ruby:2.5.3-alpine
+    depends_on:
+      - pact-broker
+    entrypoint: /bin/sh
 
 volumes:
   postgres-volume:

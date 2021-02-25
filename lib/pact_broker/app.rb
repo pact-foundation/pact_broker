@@ -191,7 +191,7 @@ module PactBroker
       @app_builder.use Rack::Static, :urls => ["/favicon.ico"], :root => PactBroker.project_root.join("public/images"), header_rules: [[:all, {'Content-Type' => 'image/x-icon'}]]
       @app_builder.use Rack::PactBroker::ConvertFileExtensionToAcceptHeader
       # Rack::PactBroker::SetBaseUrl needs to be before the Rack::PactBroker::HalBrowserRedirect
-      @app_builder.use Rack::PactBroker::SetBaseUrl, configuration.base_url
+      @app_builder.use Rack::PactBroker::SetBaseUrl, configuration.base_urls
 
       if configuration.use_hal_browser
         logger.info "Mounting HAL browser"
