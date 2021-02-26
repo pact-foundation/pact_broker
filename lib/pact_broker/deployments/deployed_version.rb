@@ -6,6 +6,8 @@ module PactBroker
       many_to_one :version, :class => "PactBroker::Domain::Version", :key => :version_id, :primary_key => :id
       many_to_one :environment, :class => "PactBroker::Deployments::Environment", :key => :environment_id, :primary_key => :id
 
+      plugin :timestamps, update_on_create: true
+
       dataset_module do
         include PactBroker::Repositories::Helpers
 
