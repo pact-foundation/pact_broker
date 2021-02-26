@@ -2,13 +2,13 @@ Sequel.migration do
   change do
     create_table(:environments, charset: 'utf8') do
       primary_key :id
-      String :uuid, null: false
-      String :name, null: false
+      String :uuid
+      String :name
       String :display_name
-      Boolean :production, null: false
+      Boolean :production
       String :contacts
-      DateTime :created_at, null: false
-      DateTime :updated_at, null: false
+      DateTime :created_at
+      DateTime :updated_at
       index [:uuid], unique: true, name: "environments_uuid_index"
       index [:name], unique: true, name: "environments_name_index"
     end
