@@ -8,8 +8,8 @@ Sequel.migration do
       foreign_key :environment_id, :environments, null: false
       Boolean :currently_deployed, null: false
       Boolean :replaced_previous_deployed_version, null: false
-      DateTime :created_at, nullable: false
-      DateTime :updated_at, nullable: false
+      DateTime :created_at, null: false
+      DateTime :updated_at, null: false
       DateTime :undeployed_at
       index [:uuid], unique: true, name: "deployed_versions_uuid_index"
       index [:pacticipant_id, :currently_deployed], name: "deployed_versions_pacticipant_id_currently_deployed_index"
