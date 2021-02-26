@@ -23,7 +23,7 @@ module PactBroker
         )
       end
 
-      def self.for_pacticipant_and_version(pacticipant, version, original_selector, type)
+      def self.for_pacticipant_and_version(pacticipant, version, original_selector, type, one_of_many = false)
         ResolvedSelector.new(
           pacticipant_id: pacticipant.id,
           pacticipant_name: pacticipant.name,
@@ -31,7 +31,9 @@ module PactBroker
           pacticipant_version_number: version.number,
           latest: original_selector[:latest],
           tag: original_selector[:tag],
-          type: type
+          environment_name: original_selector[:environment_name],
+          type: type,
+          one_of_many: one_of_many
         )
       end
 
@@ -43,6 +45,7 @@ module PactBroker
           pacticipant_version_number: original_selector[:pacticipant_version_number],
           latest: original_selector[:latest],
           tag: original_selector[:tag],
+          environment_name: original_selector[:environment_name],
           type: type
         )
       end
@@ -69,6 +72,10 @@ module PactBroker
 
       def tag
         self[:tag]
+      end
+
+      def environment_name
+        self[:environment_name]
       end
 
       def most_specific_criterion
@@ -114,6 +121,10 @@ module PactBroker
         self[:type] == :inferred
       end
 
+      def one_of_many?
+        self[:one_of_many]
+      end
+
       def description
         if latest_tagged? && pacticipant_version_number
           "the latest version of #{pacticipant_name} with tag #{tag} (#{pacticipant_version_number})"
@@ -127,6 +138,11 @@ module PactBroker
           "a version of #{pacticipant_name} with tag #{tag} (#{pacticipant_version_number})"
         elsif tag
           "a version of #{pacticipant_name} with tag #{tag} (no such version exists)"
+        elsif environment_name && pacticipant_version_number
+          prefix = one_of_many? ? "one of the versions" : "the version"
+          "#{prefix} of #{pacticipant_name} currently deployed to #{environment_name} (#{pacticipant_version_number})"
+        elsif environment_name
+          "the version of #{pacticipant_name} currently deployed to #{environment_name} (no such version exists)"
         elsif pacticipant_version_number
           "version #{pacticipant_version_number} of #{pacticipant_name}"
         else

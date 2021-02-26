@@ -40,12 +40,16 @@
                 Latest version
               %option{ value: 'specify-version', selected: selector.specify_version }
                 Version number ...
+              %option{ value: 'specify-latest-branch', selected: selector.specify_latest_branch }
+                Latest version from branch ...
               %option{ value: 'specify-latest-tag', selected: selector.specify_latest_tag }
                 Latest version with tag ...
               %option{ value: 'specify-all-tagged', selected: selector.specify_all_tagged }
                 All versions with tag...
 
             %input{name: 'q[]version', type: 'text', id: "pacticipant#{index}_version", class: 'version', value: selector.pacticipant_version_number}
+
+            %input{name: 'q[]branch', type: 'text', id: "pacticipant#{index}_branch", class: 'branch', value: selector.branch}
 
             %input{name: 'q[]tag', type: 'text', id: "pacticipant#{index}_tag", class: 'tag', value: selector.tag}
 
@@ -55,10 +59,15 @@
       - if options.latest || options.tag
         .selector
           %label{for: 'to'}
-            = options.latest ? 'To' : 'With all'
+            = options.latest ? 'To (tag)' : 'With all (tagged)'
           %input{name: 'tag', id: 'to', value: options.tag }
           %input{name: 'latest', value: options.latest.to_s, hidden: true}
 
+      - if options.environment_name
+        .selector
+          %label{for: 'environment'}
+            To environment
+          %input{name: 'environment', id: 'environment', value: options.environment_name }
 
       %div.top-of-group.form-check
         %input{type: 'radio', name: "latestby", class: 'form-check-input', value: '', id: 'all_rows', checked: options.all_rows_checked}
@@ -112,7 +121,7 @@
             %a{href: line.consumer_name_url}
               = line.consumer_name
           %td.consumer-version{'data-sort-value' => line.consumer_version_order, 'data-consumer-version-id' => line.consumer_version_id}
-            %div.clippable
+            %div.clippable{'data-clippable': line.consumer_version_number}
               %a{href: line.consumer_version_number_url}
                 = line.display_consumer_version_number
               - if line.display_consumer_version_number
@@ -123,6 +132,11 @@
                 - branch_class = line.consumer_version_latest_for_branch? ? "tag badge badge-dark" : "tag badge badge-secondary"
                 %div{"class": branch_class}
                   = "[" + line.consumer_version_branch + "]"
+            - line.consumer_deployed_versions.each do | deployed_version |
+              .tag-parent{"title": deployed_version.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
+                %a{href: deployed_version.url}
+                  .tag.badge.badge-danger
+                    = deployed_version.environment_name
             - line.latest_consumer_version_tags.each do | tag |
               .tag-parent{"title": tag.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
                 %a{href: tag.url}
@@ -144,7 +158,7 @@
             %a{href: line.provider_name_url}
               = line.provider_name
           %td.provider-version{'data-sort-value' => line.provider_version_order, 'data-provider-version-id' => line.provider_version_id }
-            %div.clippable
+            %div.clippable{'data-clippable': line.provider_version_number}
               %a{href: line.provider_version_number_url}
                 = line.display_provider_version_number
               - if line.display_provider_version_number
@@ -155,6 +169,11 @@
                 - branch_class = line.provider_version_latest_for_branch? ? "tag badge badge-dark" : "tag badge badge-secondary"
                 %div{"class": branch_class}
                   = "[" + line.provider_version_branch + "]"
+            - line.provider_deployed_versions.each do | deployed_version |
+              .tag-parent{"title": deployed_version.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
+                %a{href: deployed_version.url}
+                  .tag.badge.badge-danger
+                    = deployed_version.environment_name
             - line.latest_provider_version_tags.each do | tag |
               .tag-parent{"title": tag.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
                 %a{href: tag.url}

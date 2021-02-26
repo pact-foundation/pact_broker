@@ -1,3 +1,31 @@
+<a name="v2.79.0"></a>
+### v2.79.0 (2021-02-25)
+
+#### Features
+
+* allow multiple base URLs to be configured	 ([6d0dc8b3](/../../commit/6d0dc8b3))
+* copy full git sha rather than abbreviated one when clicking the copy button next to an application version	 ([dae9cae5](/../../commit/dae9cae5))
+
+#### Bug Fixes
+
+* fix missing verification status colours in matrix rows	 ([687d4647](/../../commit/687d4647))
+
+<a name="v2.78.1"></a>
+### v2.78.1 (2021-02-18)
+
+#### Bug Fixes
+
+* handle nil response when determining webhook success status	 ([20ca9e66](/../../commit/20ca9e66))
+
+<a name="v2.78.0"></a>
+### v2.78.0 (2021-02-15)
+
+#### Features
+
+* support create, update and delete of environment resources (#379)	 ([410f2e80](/../../commit/410f2e80))
+* allow version to be created with tags	 ([798afce9](/../../commit/798afce9))
+* Follow up for #239 + adding list of success codes to SAVABLE_SETTING_NAMES variable (#388)	 ([08c0ad09](/../../commit/08c0ad09))
+
 <a name="v2.77.0"></a>
 ### v2.77.0 (2021-02-11)
 

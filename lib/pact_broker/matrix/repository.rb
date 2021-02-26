@@ -148,8 +148,7 @@ module PactBroker
       def find_versions_for_selector(selector)
         # For selectors that just set the pacticipant name, there's no need to resolve the version -
         # only the pacticipant ID will be used in the query
-        return nil unless (selector.tag || selector.latest || selector.pacticipant_version_number)
-
+        return nil if selector.all_for_pacticipant?
         versions = version_repository.find_versions_for_selector(selector)
 
         if selector.latest
@@ -163,9 +162,10 @@ module PactBroker
       # the single selector into one selector for each version.
       def build_resolved_selectors(pacticipant, versions, original_selector, selector_type)
         if versions
+          one_of_many = versions.compact.size > 1
           versions.collect do | version |
             if version
-              selector_for_version(pacticipant, version, original_selector, selector_type)
+              selector_for_version(pacticipant, version, original_selector, selector_type, one_of_many)
             else
               selector_for_non_existing_version(pacticipant, original_selector, selector_type)
             end
@@ -176,7 +176,7 @@ module PactBroker
       end
 
       def infer_selectors_for_integrations?(options)
-        options[:latest] || options[:tag]
+        options[:latest] || options[:tag] || options[:environment_name]
       end
 
       # When only one selector is specified, (eg. checking to see if Foo version 2 can be deployed to prod),
@@ -193,6 +193,7 @@ module PactBroker
           selector = UnresolvedSelector.new(pacticipant_name: pacticipant_name)
           selector.tag = options[:tag] if options[:tag]
           selector.latest = options[:latest] if options[:latest]
+          selector.environment_name = options[:environment_name] if options[:environment_name]
           selector
         end
         resolve_versions_and_add_ids(selectors, :inferred)
@@ -202,8 +203,8 @@ module PactBroker
         ResolvedSelector.for_pacticipant_and_non_existing_version(pacticipant, original_selector, selector_type)
       end
 
-      def selector_for_version(pacticipant, version, original_selector, selector_type)
-        ResolvedSelector.for_pacticipant_and_version(pacticipant, version, original_selector, selector_type)
+      def selector_for_version(pacticipant, version, original_selector, selector_type, one_of_many)
+        ResolvedSelector.for_pacticipant_and_version(pacticipant, version, original_selector, selector_type, one_of_many)
       end
 
       def selector_without_version(pacticipant, selector_type)

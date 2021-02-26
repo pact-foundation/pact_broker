@@ -29,7 +29,7 @@ module PactBroker
               selectors, options = PactBroker::Matrix::ParseQuery.call(request.env['QUERY_STRING'])
               locals[:selectors] = create_selector_objects(selectors)
               locals[:options] = create_options_model(options)
-              errors = matrix_service.validate_selectors(selectors)
+              errors = matrix_service.validate_selectors(selectors, options)
               if errors.empty?
                 lines = matrix_service.find(selectors, options)
                 locals[:lines] = PactBroker::UI::ViewDomain::MatrixLines.new(lines)

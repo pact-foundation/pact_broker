@@ -24,9 +24,15 @@ function initializeClipper(selector) {
     .children(".clippy")
     .click(function() {
       const clippyButton = $(this);
-      const text = $.trim(clippyButton.closest(selector).text());
+      const clipTarget = clippyButton.closest(selector);
+      let text = null;
+      if(clipTarget.data('clippable')) {
+        text = clipTarget.data('clippable');
+      } else {
+        text = clippyButton.closest(selector).text();
+      }
+      copyToClipboard($.trim(text));
 
-      copyToClipboard(text);
       flashClipped(clippyButton);
     });
 }

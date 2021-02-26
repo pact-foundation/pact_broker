@@ -27,7 +27,7 @@ app = PactBroker::App.new do | config |
   config.webhook_scheme_whitelist = ['http', 'https']
   config.webhook_http_method_whitelist = ['GET', 'POST']
   config.webhook_http_code_success = [200, 201, 202, 203, 204, 205, 206]
-  #config.base_url = ENV['PACT_BROKER_BASE_URL']
+  config.base_url = ENV['PACT_BROKER_BASE_URL']
 
   database_logger = PactBroker::DB::LogQuietener.new(config.logger)
   config.database_connection = Sequel.connect(DATABASE_URL, DB_OPTIONS.merge(logger: database_logger))

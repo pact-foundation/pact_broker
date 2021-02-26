@@ -11,7 +11,13 @@ module PactBroker
       class IndexItem
         extend Forwardable
 
-        delegate [:consumer_version_branch, :provider_version_branch, :latest_for_branch?] => :relationship
+        delegate [
+          :consumer_version_branch,
+          :provider_version_branch,
+          :latest_for_branch?,
+          :consumer_version_environment_names,
+          :provider_version_environment_names
+        ] => :relationship
 
 
         include PactBroker::Api::PactBrokerUrls
@@ -30,7 +36,11 @@ module PactBroker
         end
 
         def consumer_version_number
-          PactBroker::Versions::AbbreviateNumber.call(@relationship.consumer_version_number)
+          @relationship.consumer_version_number
+        end
+
+        def display_consumer_version_number
+          PactBroker::Versions::AbbreviateNumber.call(consumer_version_number)
         end
 
         def consumer_version_order
@@ -38,7 +48,11 @@ module PactBroker
         end
 
         def provider_version_number
-          PactBroker::Versions::AbbreviateNumber.call(@relationship.provider_version_number)
+          @relationship.provider_version_number
+        end
+
+        def display_provider_version_number
+          PactBroker::Versions::AbbreviateNumber.call(provider_version_number)
         end
 
         def latest?

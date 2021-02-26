@@ -118,7 +118,13 @@ module PactBroker
       end
 
       def to_version_domain_lightweight
-        OpenStruct.new(number: consumer_version.number, pacticipant: consumer, order: consumer_version.order, branch: consumer_version.branch)
+        OpenStruct.new(
+          number: consumer_version.number,
+          pacticipant: consumer,
+          order: consumer_version.order,
+          branch: consumer_version.branch,
+          current_deployed_versions: consumer_version.associations[:current_deployed_versions]
+        )
       end
 
       private

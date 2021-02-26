@@ -2,6 +2,8 @@ require 'pact_broker/logging'
 require 'pact_broker/repositories'
 require 'pact_broker/matrix/row'
 require 'pact_broker/matrix/deployment_status_summary'
+require 'pact_broker/messages'
+require 'pact_broker/string_refinements'
 
 module PactBroker
   module Matrix
@@ -11,6 +13,8 @@ module PactBroker
       extend PactBroker::Repositories
       extend PactBroker::Services
       include PactBroker::Logging
+      extend PactBroker::Messages
+      using PactBroker::StringRefinements
 
       def find selectors, options = {}
         logger.info "Querying matrix", selectors: selectors, options: options
@@ -48,7 +52,7 @@ module PactBroker
         matrix_repository.find_compatible_pacticipant_versions criteria
       end
 
-      def validate_selectors selectors
+      def validate_selectors selectors, options = {}
         error_messages = []
 
         selectors.each do | s |
@@ -69,6 +73,14 @@ module PactBroker
 
         if selectors.size == 0
           error_messages << "Please provide 1 or more version selectors."
+        end
+
+        if options[:tag]&.not_blank? && options[:environment_name]&.not_blank?
+          error_messages << message("errors.validation.cannot_specify_tag_and_environment")
+        end
+
+        if options[:latest] && options[:environment_name]&.not_blank?
+          error_messages << message("errors.validation.cannot_specify_latest_and_environment")
         end
 
         error_messages

@@ -68,6 +68,11 @@ module PactBroker
         alias_method :path_info, :identifier_from_path
 
         def base_url
+          # Have to use something for the base URL here - we can't use an empty string as we can in the UI.
+          # Can't work out if cache poisoning is a vulnerability for APIs or not.
+          # Using the request base URI as a fallback if the base_url is not configured may be a vulnerability,
+          # but the documentation recommends that the
+          # base_url should be set in the configuration to mitigate this.
           request.env["pactbroker.base_url"] || request.base_uri.to_s.chomp('/')
         end
 

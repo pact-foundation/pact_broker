@@ -11,6 +11,7 @@ module PactBroker
           p[:pacticipant_name] = i['pacticipant'] if i['pacticipant'] && i['pacticipant'] != ''
           p[:pacticipant_version_number] = i['version'] if i['version'] && i['version'] != ''
           p[:latest] = true if i['latest'] == 'true'
+          p[:branch] = i['branch'] if i['branch'] && i['branch'] != ''
           p[:tag] = i['tag'] if i['tag'] && i['tag'] != ''
           p
         end
@@ -20,9 +21,11 @@ module PactBroker
             value == '' ? nil : value == 'true'
           end
         end
+
         if params.key?('success') && params['success'].is_a?(String)
           options[:success] = [params['success'] == '' ? nil : params['success'] == 'true']
         end
+
         if params.key?('latestby') && params['latestby'] != ''
           options[:latestby] = params['latestby']
         end
@@ -40,9 +43,15 @@ module PactBroker
         if params.key?('latest') && params['latest'] != ''
           options[:latest] = params['latest'] == 'true'
         end
+
         if params.key?('tag') && params['tag'] != ''
           options[:tag] = params['tag']
         end
+
+        if params.key?('environment') && params['environment'] != ''
+          options[:environment_name] = params['environment']
+        end
+
         return selectors, options
       end
     end

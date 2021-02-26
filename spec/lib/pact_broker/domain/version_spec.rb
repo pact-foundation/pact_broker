@@ -140,6 +140,57 @@ module PactBroker
             expect(version_numbers).to eq %w{2 3}
           end
         end
+
+        context "when selecting all versions of a pacticipant currently deployed to an environment" do
+          let(:selector) { PactBroker::Matrix::UnresolvedSelector.new(environment_name: "prod", pacticipant_name: "Foo") }
+
+          before do
+            td.create_environment("test")
+              .create_consumer("Foo")
+              .create_consumer_version("1")
+              .create_deployed_version_for_consumer_version
+              .create_consumer_version("2")
+              .create_environment("prod")
+              .create_deployed_version_for_consumer_version
+              .create_consumer_version("3")
+              .create_deployed_version_for_consumer_version
+              .create_consumer_version("4")
+              .create_deployed_version_for_consumer_version(currently_deployed: false)
+              .create_consumer_version("5")
+              .create_consumer("Bar")
+              .create_consumer_version("10")
+              .create_consumer_version("11")
+          end
+
+          it "returns the versions of that pacticipant currently deployed to the environment" do
+            expect(version_numbers).to eq %w{2 3}
+          end
+        end
+
+        context "when selecting all versions currently deployed to an environment" do
+          let(:selector) { PactBroker::Matrix::UnresolvedSelector.new(environment_name: "prod") }
+
+          before do
+            td.create_environment("test")
+              .create_consumer("Foo")
+              .create_consumer_version("1")
+              .create_deployed_version_for_consumer_version
+              .create_consumer_version("2")
+              .create_environment("prod")
+              .create_deployed_version_for_consumer_version
+              .create_consumer_version("3")
+              .create_consumer_version("5")
+              .create_consumer("Bar")
+              .create_consumer_version("10")
+              .create_deployed_version_for_consumer_version
+              .create_consumer_version("11")
+              .create_deployed_version_for_consumer_version(currently_deployed: false)
+          end
+
+          it "returns the versions of that pacticipant currently deployed to the environment" do
+            expect(version_numbers).to eq %w{2 10}
+          end
+        end
       end
 
       describe "latest_for_pacticipant?" do
@@ -281,6 +332,30 @@ module PactBroker
           let(:version) { Version.for("Foo", "3") }
 
           it { is_expected.to be nil }
+        end
+      end
+
+      describe "current_deployed_versions" do
+        before do
+          td.create_environment("test")
+            .create_environment("prod")
+            .create_consumer("Foo")
+            .create_consumer_version("1")
+            .create_deployed_version_for_consumer_version(currently_deployed: false, environment_name: "test")
+            .create_deployed_version_for_consumer_version(currently_deployed: true, environment_name: "prod")
+            .create_consumer_version("2")
+            .create_deployed_version_for_consumer_version(currently_deployed: true, environment_name: "prod")
+        end
+
+        it "returns the currently active deployed versions" do
+          expect(td.find_version("Foo", "1").current_deployed_versions.size).to eq 1
+          expect(td.find_version("Foo", "1").current_deployed_versions.first.environment.name).to eq "prod"
+        end
+
+        it "eager loads" do
+          all = PactBroker::Domain::Version.where(number: "2").eager(:current_deployed_versions).all
+          expect(all.first.associations[:current_deployed_versions].size).to eq 1
+          expect(all.first.associations[:current_deployed_versions].first.environment.name).to eq "prod"
         end
       end
     end

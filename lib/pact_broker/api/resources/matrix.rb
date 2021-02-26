@@ -26,7 +26,7 @@ module PactBroker
         end
 
         def malformed_request?
-          error_messages = matrix_service.validate_selectors(selectors)
+          error_messages = matrix_service.validate_selectors(selectors, options)
           if error_messages.any?
             set_json_validation_error_messages error_messages
             true

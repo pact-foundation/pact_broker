@@ -22,7 +22,7 @@ module PactBroker
         subject { get path, params, {'Content-Type' => 'application/hal+json'}; last_response }
 
         it "validates the selectors" do
-          expect(PactBroker::Matrix::Service).to receive(:validate_selectors).with(selectors)
+          expect(PactBroker::Matrix::Service).to receive(:validate_selectors).with(selectors, options)
           subject
         end
 

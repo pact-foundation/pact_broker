@@ -201,7 +201,9 @@ module PactBroker
               pacticipant_version_number: bar_version.number,
               latest: nil,
               tag: nil,
-              type: :inferred
+              environment_name: nil,
+              type: :inferred,
+              one_of_many: false
             )
           end
 
