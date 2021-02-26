@@ -9,7 +9,7 @@ describe "Update a pacticipant" do
       {
         repositoryUrl: "http://foo",
         repositoryName: "name",
-        repositoryOrganization: "org",
+        repositoryNamespace: "org",
         mainDevelopmentBranches: ["main"]
       }
     end

@@ -11,7 +11,7 @@ module PactBroker
             mainDevelopmentBranches: branches,
             repositoryUrl: "https://github.com/pact-foundation/pact_broker",
             repositoryName: "pact_broker",
-            repositoryOrganization: "pact-foundation"
+            repositoryNamespace: "pact-foundation"
           }
         end
 
@@ -28,7 +28,7 @@ module PactBroker
             {
               repositoryUrl: "",
               repositoryName: "",
-              repositoryOrganization: ""
+              repositoryNamespace: ""
             }
           end
 

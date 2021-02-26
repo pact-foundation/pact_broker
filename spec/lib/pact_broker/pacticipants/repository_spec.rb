@@ -56,7 +56,7 @@ module PactBroker
 
       describe "replace" do
         before do
-          td.create_pacticipant("Bar", main_development_branches: ["foo"], repository_organization: "foo")
+          td.create_pacticipant("Bar", main_development_branches: ["foo"], repository_namespace: "foo")
           allow_any_instance_of(PactBroker::Domain::Pacticipant).to receive(:generate_display_name).and_return("display_name")
         end
 
@@ -64,7 +64,7 @@ module PactBroker
 
         it "replaces the pacticipant" do
           expect(subject.main_development_branches).to eq ["bar"]
-          expect(subject.repository_organization).to eq nil
+          expect(subject.repository_namespace).to eq nil
           expect(subject.display_name).to eq "display_name"
         end
       end

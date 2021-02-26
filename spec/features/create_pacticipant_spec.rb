@@ -8,7 +8,7 @@ describe "Creating a pacticipant" do
       mainDevelopmentBranches: ["main"],
       repositoryUrl: "http://url",
       repositoryName: "foo-thing",
-      repositoryOrganization: "some-group"
+      repositoryNamespace: "some-group"
     }
   end
 

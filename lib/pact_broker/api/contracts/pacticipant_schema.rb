@@ -21,7 +21,7 @@ module PactBroker
           optional(:mainDevelopmentBranches).each(:str?, :single_line?, :no_spaces?)
           optional(:repositoryUrl).maybe(:str?, :single_line?)
           optional(:repositoryName).maybe(:str?, :single_line?)
-          optional(:repositoryOrganization).maybe(:str?, :single_line?)
+          optional(:repositoryNamespace).maybe(:str?, :single_line?)
         end
 
         def self.call(params_with_string_keys)

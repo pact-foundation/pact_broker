@@ -13,7 +13,7 @@ module PactBroker
         property :display_name, camelize: true
         property :repository_name, camelize: true
         property :main_development_branches, camelize: true
-        property :repository_organization, camelize: true
+        property :repository_namespace, camelize: true
 
         property :latest_version, as: :latestVersion, :class => PactBroker::Domain::Version, extend: PactBroker::Api::Decorators::EmbeddedVersionDecorator, embedded: true, writeable: false
         collection :labels, :class => PactBroker::Domain::Label, extend: PactBroker::Api::Decorators::EmbeddedLabelDecorator, embedded: true
