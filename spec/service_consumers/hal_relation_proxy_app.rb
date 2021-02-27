@@ -11,7 +11,13 @@ class HalRelationProxyApp
     '/HAL-REL-PLACEHOLDER-PB-WEBHOOKS' =>
       '/webhooks',
     '/HAL-REL-PLACEHOLDER-INDEX-PB-PACTICIPANT-VERSION-Foo-26f353580936ad3b9baddb17b00e84f33c69e7cb' =>
-      '/pacticipants/Foo/versions/26f353580936ad3b9baddb17b00e84f33c69e7cb'
+      '/pacticipants/Foo/versions/26f353580936ad3b9baddb17b00e84f33c69e7cb',
+    '/HAL-REL-PLACEHOLDER-PB-ENVIRONMENTS' =>
+      '/environments',
+    '/HAL-REL-PLACEHOLDER-PB-PACTICIPANT-VERSION-Foo-5556b8149bf8bac76bc30f50a8a2dd4c22c85f30' =>
+      '/pacticipants/Foo/versions/5556b8149bf8bac76bc30f50a8a2dd4c22c85f30',
+    '/HAL-REL-PLACEHOLDER-PB-RECORD-DEPLOYMENT-FOO-5556B8149BF8BAC76BC30F50A8A2DD4C22C85F30-TEST' =>
+      '/pacticipants/Foo/versions/5556b8149bf8bac76bc30f50a8a2dd4c22c85f30/deployed-versions/environment/cb632df3-0a0d-4227-aac3-60114dd36479'
   }
 
   RESPONSE_BODY_REPLACEMENTS = {
