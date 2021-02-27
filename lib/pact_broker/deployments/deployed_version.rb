@@ -30,6 +30,14 @@ module PactBroker
         def for_pacticipant_name(pacticipant_name)
           where(pacticipant_id: db[:pacticipants].select(:id).where(name_like(:name, pacticipant_name)))
         end
+
+        def for_version_and_environment(version, environment)
+          where(version_id: version.id, environment_id: environment.id)
+        end
+
+        def order_by_date_desc
+          order(Sequel.desc(:created_at), Sequel.desc(:id))
+        end
       end
 
       def record_undeployed

@@ -25,7 +25,7 @@ module PactBroker
 
         describe "to_json" do
           before do
-            allow(decorator).to receive(:deployed_versions_for_environment_url).and_return("http://deployed-versions")
+            allow(decorator).to receive(:deployed_versions_for_version_and_environment_url).and_return("http://deployed-versions")
           end
 
           let(:version) do
@@ -102,7 +102,7 @@ module PactBroker
           end
 
           it "includes a list of environments that this version can be deployed to" do
-            expect(decorator).to receive(:deployed_versions_for_environment_url).with(version, environments.first, base_url)
+            expect(decorator).to receive(:deployed_versions_for_version_and_environment_url).with(version, environments.first, base_url)
             expect(subject[:_links][:'pb:record-deployment']).to be_instance_of(Array)
             expect(subject[:_links][:'pb:record-deployment'].first).to eq(
               name: "test",
