@@ -17,4 +17,14 @@ describe "Get all environments" do
     subject
     expect(response_body[:_embedded][:environments].size).to be 2
   end
+
+  context "by name" do
+    let(:path) { PactBroker::Api::PactBrokerUrls.environments_url + "?name=test" }
+
+    it "returns the environment with the matching name" do
+      subject
+      expect(response_body[:_embedded][:environments].size).to be 1
+      expect(response_body[:_embedded][:environments].first[:name]).to eq "test"
+    end
+  end
 end
