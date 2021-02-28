@@ -17,7 +17,7 @@ module PactBroker
             created_at: created_at
           )
         end
-        let(:created_at) { (Date.today - 1).to_datetime }
+        let(:created_at) { DateTime.now - 1 }
         let(:environment) { instance_double("PactBroker::Deployments::Environment", name: "test", display_name: "Test") }
 
         its(:environment_name) { is_expected.to eq "test" }
