@@ -35,6 +35,10 @@ module PactBroker
           where(version_id: version.id, environment_id: environment.id)
         end
 
+        def for_environment(environment)
+          where(environment_id: environment.id)
+        end
+
         def order_by_date_desc
           order(Sequel.desc(:created_at), Sequel.desc(:id))
         end

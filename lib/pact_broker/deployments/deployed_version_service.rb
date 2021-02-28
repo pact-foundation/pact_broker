@@ -28,6 +28,13 @@ module PactBroker
           .all
       end
 
+      def self.find_deployed_versions_for_environment(environment)
+        DeployedVersion
+          .for_environment(environment)
+          .order_by_date_desc
+          .all
+      end
+
       def self.record_previous_version_undeployed(pacticipant, environment)
         DeployedVersion.last_deployed_version(pacticipant, environment)&.record_undeployed
       end

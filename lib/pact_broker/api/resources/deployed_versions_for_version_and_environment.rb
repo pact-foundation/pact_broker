@@ -1,5 +1,4 @@
 require 'pact_broker/api/resources/base_resource'
-require 'pact_broker/configuration'
 require 'pact_broker/api/decorators/versions_decorator'
 
 module PactBroker
