@@ -34,6 +34,8 @@ module PactBroker
         ds.currently_deployed
       end
 
+      one_to_many :deployed_versions, class: "PactBroker::Deployments::DeployedVersion", key: :version_id, primary_key: :id, order: [:created_at, :id]
+
       many_to_one :latest_version_for_pacticipant, read_only: true, key: :id,
         class: Version,
         dataset: lambda { Version.latest_version_for_pacticipant(pacticipant) },

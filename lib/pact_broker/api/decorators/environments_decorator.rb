@@ -9,6 +9,16 @@ module PactBroker
 
         collection :entries, :as => :environments, :class => PactBroker::Deployments::Environment, :extend => PactBroker::Api::Decorators::EnvironmentDecorator, embedded: true
 
+        links :'pb:environments' do | user_options |
+          represented.collect do | environment |
+            {
+              title: "Environment",
+              name: environment.name,
+              href: environment_url(environment, user_options.fetch(:base_url))
+            }
+          end
+        end
+
         link :self do | options |
           {
             title: 'Environments',

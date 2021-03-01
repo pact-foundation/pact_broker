@@ -60,7 +60,7 @@ module PactBroker
             {
               title: "Record deployment to #{environment.display_name}",
               name: environment.name,
-              href: deployed_versions_for_environment_url(represented, environment, context.fetch(:base_url))
+              href: deployed_versions_for_version_and_environment_url(represented, environment, context.fetch(:base_url))
             }
           end
         end

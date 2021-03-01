@@ -315,7 +315,7 @@ module PactBroker
         "#{environments_url(base_url)}/#{environment.uuid}"
       end
 
-      def deployed_versions_for_environment_url(version, environment, base_url = '')
+      def deployed_versions_for_version_and_environment_url(version, environment, base_url = '')
         "#{version_url(base_url, version)}/deployed-versions/environment/#{environment.uuid}"
       end
 
