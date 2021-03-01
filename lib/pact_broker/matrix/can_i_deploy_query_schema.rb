@@ -1,5 +1,7 @@
 require 'dry-validation'
 require 'pact_broker/messages'
+require 'pact_broker/api/contracts/dry_validation_predicates'
+require 'pact_broker/project_root'
 
 module PactBroker
   module Api
@@ -8,10 +10,14 @@ module PactBroker
         extend PactBroker::Messages
 
         SCHEMA = Dry::Validation.Schema do
+          configure do
+            predicates(DryValidationPredicates)
+            config.messages_file = PactBroker.project_root.join("lib", "pact_broker", "locale", "en.yml")
+          end
           required(:pacticipant).filled(:str?)
           required(:version).filled(:str?)
           optional(:to).filled(:str?)
-          optional(:environment).filled(:str?)
+          optional(:environment).filled(:str?, :environment_with_name_exists?)
         end
 
         def self.call(params)

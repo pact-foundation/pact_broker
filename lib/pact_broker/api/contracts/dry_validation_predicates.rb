@@ -21,6 +21,11 @@ module PactBroker
         predicate(:no_spaces?) do | value |
           value && value.is_a?(String) && !value.include?(" ")
         end
+
+        predicate(:environment_with_name_exists?) do | value |
+          require 'pact_broker/deployments/environment_service'
+          !!PactBroker::Deployments::EnvironmentService.find_by_name(value)
+        end
       end
     end
   end

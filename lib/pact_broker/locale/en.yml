@@ -11,6 +11,7 @@ en:
     pacticipant_exists?: "does not match an existing pacticipant"
     single_line?: "cannot contain multiple lines"
     no_spaces?: "cannot contain spaces"
+    environment_with_name_exists?: "with name '%{value}' does not exist"
 
   pact_broker:
     messages:
@@ -50,6 +51,7 @@ en:
         environment_name_must_be_unique: Another environment with name '%{name}' already exists.
         cannot_specify_tag_and_environment: Cannot specify both a 'to' tag and an environment.
         cannot_specify_latest_and_environment: Cannot specify both latest=true and an environment.
+        environment_with_name_not_found: "Environment with name '%{name}' does not exist"
       duplicate_pacticipant: |
         This is the first time a pact has been published for "%{new_name}".
         The name "%{new_name}" is very similar to the following existing consumers/providers:

@@ -5,6 +5,10 @@ module PactBroker
   module Matrix
     describe Service do
       describe "validate_selectors" do
+        before do
+          allow(PactBroker::Deployments::EnvironmentService).to receive(:find_by_name).and_return(environment)
+        end
+        let(:environment) { double('environment') }
 
         subject { Service.validate_selectors(selectors, options) }
         let(:options) { {} }
@@ -109,6 +113,21 @@ module PactBroker
 
           it "returns an error message" do
             expect(subject.last).to include "Cannot specify both latest"
+          end
+        end
+
+        context "when the environment does not exist" do
+          let(:selectors) { [] }
+          let(:environment) { nil }
+
+          let(:options) do
+            {
+              environment_name: "prod"
+            }
+          end
+
+          it "returns an error message" do
+            expect(subject.last).to include "Environment with name 'prod' does not exist"
           end
         end
       end

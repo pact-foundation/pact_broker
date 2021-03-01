@@ -83,6 +83,10 @@ module PactBroker
           error_messages << message("errors.validation.cannot_specify_latest_and_environment")
         end
 
+        if options[:environment_name]&.not_blank? && environment_service.find_by_name(options[:environment_name]).nil?
+          error_messages << message("errors.validation.environment_with_name_not_found", name: options[:environment_name])
+        end
+
         error_messages
       end
     end
