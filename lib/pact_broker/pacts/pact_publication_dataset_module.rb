@@ -16,6 +16,7 @@ module PactBroker
         # Do this last so that the provider/consumer criteria get included in the "latest" query before the join, rather than after
         query = query.latest_for_consumer_branch(selector.branch) if selector.latest_for_branch?
         query = query.latest_for_consumer_tag(selector.tag) if selector.latest_for_tag?
+        query = query.for_currently_deployed_versions(selector.environment) if selector.currently_deployed?
         query = query.overall_latest if selector.overall_latest?
         query
       end
@@ -147,6 +148,23 @@ module PactBroker
         end
         .where(Sequel[:pp2][:version_order] => nil)
         .remove_overridden_revisions_from_complete_query
+      end
+
+      def for_currently_deployed_versions(environment_name)
+        deployed_versions_join = {
+          Sequel[:pact_publications][:consumer_version_id] => Sequel[:deployed_versions][:version_id],
+          Sequel[:deployed_versions][:currently_deployed] => true
+        }
+        environments_join = {
+          Sequel[:deployed_versions][:environment_id] => Sequel[:environments][:id],
+          Sequel[:environments][:name] => environment_name
+        }.compact
+
+        query = self
+        if no_columns_selected?
+          query = query.select_all_qualified.select_append(Sequel[:environments][:name].as(:environment_name))
+        end
+        query.join(:deployed_versions, deployed_versions_join).join(:environments, environments_join)
       end
 
       def successfully_verified_by_provider_branch(provider_id, provider_version_branch)

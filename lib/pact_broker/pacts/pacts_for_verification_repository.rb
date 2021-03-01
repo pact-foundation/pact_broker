@@ -17,7 +17,7 @@ module PactBroker
       include PactBroker::Repositories::Helpers
 
       def find(provider_name, consumer_version_selectors)
-        selected_pacts = find_pacts_for_which_the_latest_version_of_something_is_required(provider_name, consumer_version_selectors) +
+        selected_pacts = find_pacts_by_selector(provider_name, consumer_version_selectors) +
           find_pacts_for_which_all_versions_for_the_tag_are_required(provider_name, consumer_version_selectors)
         selected_pacts = selected_pacts + find_pacts_for_fallback_tags(selected_pacts, provider_name, consumer_version_selectors)
         merge_selected_pacts(selected_pacts)
@@ -101,7 +101,7 @@ module PactBroker
         end
       end
 
-      def find_pacts_for_which_the_latest_version_of_something_is_required(provider_name, consumer_version_selectors)
+      def find_pacts_by_selector(provider_name, consumer_version_selectors)
         provider = pacticipant_repository.find_by_name(provider_name)
 
         selectors = if consumer_version_selectors.empty?
@@ -109,15 +109,21 @@ module PactBroker
         else
           consumer_version_selectors.select(&:latest_for_tag?) +
             consumer_version_selectors.select(&:latest_for_branch?) +
-            consumer_version_selectors.select(&:overall_latest?)
+            consumer_version_selectors.select(&:overall_latest?) +
+            consumer_version_selectors.select(&:currently_deployed?)
         end
 
         selectors.flat_map do | selector |
           query = scope_for(PactPublication).for_provider_and_consumer_version_selector(provider, selector)
           query.all.collect do | pact_publication |
+            resolved_selector = if selector.currently_deployed?
+              selector.resolve_for_environment(pact_publication.consumer_version, pact_publication.values.fetch(:environment_name))
+            else
+              selector.resolve(pact_publication.consumer_version)
+            end
             SelectedPact.new(
               pact_publication.to_domain,
-              Selectors.new(selector.resolve(pact_publication.consumer_version))
+              Selectors.new(resolved_selector)
             )
           end
         end
@@ -141,6 +147,7 @@ module PactBroker
 
       def find_pacts_for_which_all_versions_for_the_tag_are_required(provider_name, consumer_version_selectors)
         # The tags for which all versions are specified
+        # Need to move support for this into PactPublication.for_provider_and_consumer_version_selector
         selectors = consumer_version_selectors.select(&:all_for_tag?)
 
         selectors.flat_map do | selector |

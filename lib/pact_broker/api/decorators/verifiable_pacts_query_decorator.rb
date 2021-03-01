@@ -23,6 +23,8 @@ module PactBroker
             }
           property :fallback_tag
           property :consumer
+          property :environment
+          property :currently_deployed
         end
 
         property :include_pending_status, default: false,

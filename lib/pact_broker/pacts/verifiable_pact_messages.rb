@@ -75,9 +75,12 @@ module PactBroker
       attr_reader :verifiable_pact, :pact_version_url
 
       def join(list, last_joiner = " and ")
-        quoted_list = list.collect { | tag | "'#{tag}'" }
-        comma_joined = quoted_list[0..-3] || []
-        and_joined =  quoted_list[-2..-1] || quoted_list
+        join_unquoted(list.collect { | word | "'#{word}'" }, last_joiner = " and ")
+      end
+
+      def join_unquoted(list, last_joiner = " and ")
+        comma_joined = list[0..-3] || []
+        and_joined =  list[-2..-1] || list
         if comma_joined.any?
           "#{comma_joined.join(', ')}, #{and_joined.join(last_joiner)}"
         else
@@ -153,9 +156,22 @@ module PactBroker
       end
 
       def selector_descriptions
-        selectors.sort.collect do | selector |
-          selector_description(selector)
+        selectors.sort.group_by(&:type).values.flat_map do | selectors |
+          selectors_descriptions(selectors)
         end.join(", ")
+      end
+
+      def selectors_descriptions(selectors)
+        if selectors.first.currently_deployed?
+          selectors.group_by(&:consumer).flat_map do | consumer_name, selectors |
+            display_name = consumer_name ? "the version(s) of #{consumer_name}" : "the consumer version(s)"
+            "pacts for #{display_name} currently deployed to #{join_unquoted(selectors.collect(&:environment))}"
+          end
+        else
+          selectors.collect do | selector |
+            selector_description(selector)
+          end
+        end
       end
 
       def selector_description selector
@@ -180,6 +196,8 @@ module PactBroker
           "pacts for all #{selector.consumer} versions tagged '#{selector.tag}'"
         elsif selector.all_for_tag?
           "pacts for all consumer versions tagged '#{selector.tag}'"
+        elsif selector.currently_deployed?
+          "pacts for consumer version(s) currently deployed to #{selector.environment}"
         else
           selector.to_json
         end
