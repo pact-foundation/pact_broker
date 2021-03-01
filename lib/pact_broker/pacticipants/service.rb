@@ -12,7 +12,7 @@ module PactBroker
       extend PactBroker::Services
       include PactBroker::Logging
 
-      def self.messages_for_potential_duplicate_pacticipants pacticipant_names, base_url
+      def self.messages_for_potential_duplicate_pacticipants(pacticipant_names, base_url)
         messages = []
         pacticipant_names.each do | name |
           potential_duplicate_pacticipants = find_potential_duplicate_pacticipants(name)
@@ -36,27 +36,27 @@ module PactBroker
         pacticipant_repository.find_all
       end
 
-      def self.find_pacticipant_by_name name
+      def self.find_pacticipant_by_name(name)
         pacticipant_repository.find_by_name(name)
       end
 
-      def self.find_pacticipant_by_name! name
+      def self.find_pacticipant_by_name!(name)
         pacticipant_repository.find_by_name!(name)
       end
 
-      def self.find_by_id id
+      def self.find_by_id(id)
         pacticipant_repository.find_by_id(id)
       end
 
-      def self.find options
+      def self.find(options)
         pacticipant_repository.find options
       end
 
-      def self.find_all_pacticipant_versions_in_reverse_order name, pagination_options = nil
+      def self.find_all_pacticipant_versions_in_reverse_order(name, pagination_options = nil)
         pacticipant_repository.find_all_pacticipant_versions_in_reverse_order(name, pagination_options)
       end
 
-      def self.find_pacticipant_repository_url_by_pacticipant_name name
+      def self.find_pacticipant_repository_url_by_pacticipant_name(name)
         pacticipant = pacticipant_repository.find_by_name(name)
         if pacticipant && pacticipant.repository_url
           pacticipant.repository_url
@@ -65,19 +65,19 @@ module PactBroker
         end
       end
 
-      def self.update params
-        # TODO move this to the repository!
-        pacticipant = pacticipant_repository.find_by_name(params.fetch('name'))
-        PactBroker::Api::Decorators::PacticipantDecorator.new(pacticipant).from_hash(params)
-        pacticipant.save
-        pacticipant_repository.find_by_name(params.fetch('name'))
+      def self.update(pacticipant_name, pacticipant)
+        pacticipant_repository.update(pacticipant_name, pacticipant)
       end
 
-      def self.create params
+      def self.create(params)
         pacticipant_repository.create(params)
       end
 
-      def self.delete name
+      def self.replace(pacticipant_name, open_struct_pacticipant)
+        pacticipant_repository.replace(pacticipant_name, open_struct_pacticipant)
+      end
+
+      def self.delete(name)
         pacticipant = find_pacticipant_by_name name
         webhook_service.delete_all_webhhook_related_objects_by_pacticipant(pacticipant)
         pacticipant.destroy

@@ -8,9 +8,12 @@ module PactBroker
   module Api
     module Decorators
       class PacticipantDecorator < BaseDecorator
-
         property :name
-        property :repository_url, as: :repositoryUrl
+        property :display_name, camelize: true
+        property :repository_url, camelize: true
+        property :repository_name, camelize: true
+        property :repository_namespace, camelize: true
+        property :main_development_branches, camelize: true
 
         property :latest_version, as: :latestVersion, :class => PactBroker::Domain::Version, extend: PactBroker::Api::Decorators::EmbeddedVersionDecorator, embedded: true, writeable: false
         collection :labels, :class => PactBroker::Domain::Label, extend: PactBroker::Api::Decorators::EmbeddedLabelDecorator, embedded: true

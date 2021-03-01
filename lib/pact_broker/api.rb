@@ -11,6 +11,15 @@ module Webmachine
     def patch?
       method == "PATCH"
     end
+
+    # This makes PATCH go through the PUT state machine path
+    def put?
+      method == "PUT" || method == "PATCH"
+    end
+
+    def really_put?
+      method == "PUT"
+    end
   end
 end
 

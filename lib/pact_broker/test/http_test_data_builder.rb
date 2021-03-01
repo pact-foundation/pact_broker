@@ -62,7 +62,7 @@ module PactBroker
 
       def create_pacticipant(name)
         puts "Creating pacticipant with name #{name}"
-        client.post("pacticipants", { name: name}).tap { |response| check_for_error(response) }
+        client.post("pacticipants", { name: name }).tap { |response| check_for_error(response) }
         separate
         self
       end

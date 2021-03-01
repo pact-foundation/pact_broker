@@ -47,21 +47,37 @@ module PactBroker
         if pacticipant = find_by_name(name)
           pacticipant
         else
-          create name: name
+          create(name: name)
         end
       end
 
       # Need to be able to handle two calls that make the pacticipant at the same time.
       # TODO raise error if attributes apart from name are different, because this indicates that
       # the second request is not at the same time.
-      def create args
+      def create params
         PactBroker::Domain::Pacticipant.new(
-          name: args[:name],
-          repository_url: args[:repository_url],
-          created_at: Sequel.datetime_class.now,
-          updated_at: Sequel.datetime_class.now
+          name: params.fetch(:name),
+          display_name: params[:display_name],
+          repository_url: params[:repository_url],
+          repository_name: params[:repository_name],
+          repository_namespace: params[:repository_namespace],
+          main_development_branches: params[:main_development_branches] || []
         ).insert_ignore
-        PactBroker::Domain::Pacticipant.find(name: args[:name])
+      end
+
+      def update(pacticipant_name, pacticipant)
+        pacticipant.name = pacticipant_name
+        pacticipant.save
+      end
+
+      def replace(pacticipant_name, open_struct_pacticipant)
+        PactBroker::Domain::Pacticipant.new(
+          display_name: open_struct_pacticipant.display_name,
+          repository_url: open_struct_pacticipant.repository_url,
+          repository_name: open_struct_pacticipant.repository_name,
+          repository_namespace: open_struct_pacticipant.repository_namespace,
+          main_development_branches: open_struct_pacticipant.main_development_branches || []
+        ).save
       end
 
       def pacticipant_names

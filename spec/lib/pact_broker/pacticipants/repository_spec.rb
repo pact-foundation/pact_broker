@@ -12,20 +12,34 @@ module PactBroker
 
         context "when the pacticipant does not already exist" do
           before do
-            TestDataBuilder.new.create_pacticipant("Bar")
+            td.create_pacticipant("Bar")
+            allow_any_instance_of(PactBroker::Domain::Pacticipant).to receive(:generate_display_name).and_return("display_name")
           end
 
-          subject { repository.create(name: "Foo") }
+          let(:display_name) { "Foo" }
+
+          subject { repository.create(name: "foo", display_name: display_name, repository_url: "url", main_development_branches: ["main"]) }
 
           it "returns the new pacticipant" do
             expect(subject).to be_a(PactBroker::Domain::Pacticipant)
-            expect(subject.name).to eq "Foo"
+            expect(subject.name).to eq "foo"
+            expect(subject.main_development_branches).to eq ["main"]
+            expect(subject.repository_url).to eq "url"
+            expect(subject.display_name).to eq "Foo"
+          end
+
+          context "when no display name is provided" do
+            let(:display_name) { nil }
+
+            it "generates one" do
+              expect(subject.display_name).to eq "display_name"
+            end
           end
         end
 
         context "when a race condition occurs and the pacticipant was already created by another request" do
           before do
-            TestDataBuilder.new.create_pacticipant("Foo")
+            td.create_pacticipant("Foo", repository_url: "original")
           end
 
           it "does not raise an error" do
@@ -35,13 +49,29 @@ module PactBroker
           it "returns the existing pacticipant" do
             expect(subject).to be_a(PactBroker::Domain::Pacticipant)
             expect(subject.name).to eq "Foo"
+            expect(subject.repository_url).to eq "original"
           end
+        end
+      end
+
+      describe "replace" do
+        before do
+          td.create_pacticipant("Bar", main_development_branches: ["foo"], repository_namespace: "foo")
+          allow_any_instance_of(PactBroker::Domain::Pacticipant).to receive(:generate_display_name).and_return("display_name")
+        end
+
+        subject { Repository.new.replace("Bar", OpenStruct.new(main_development_branches: ["bar"], repository_url: "new_url")) }
+
+        it "replaces the pacticipant" do
+          expect(subject.main_development_branches).to eq ["bar"]
+          expect(subject.repository_namespace).to eq nil
+          expect(subject.display_name).to eq "display_name"
         end
       end
 
       describe "#find" do
         before do
-          TestDataBuilder.new
+          td
             .create_pacticipant("Foo")
             .create_label("in")
             .create_pacticipant("Bar")
@@ -124,9 +154,8 @@ module PactBroker
       end
 
       describe "#pacticipant_names" do
-
         before do
-          TestDataBuilder.new
+          td
             .create_pacticipant("Plants")
             .create_pacticipant("Animals")
         end
@@ -141,7 +170,7 @@ module PactBroker
 
       describe "#find_all_pacticipant_versions_in_reverse_order" do
         before do
-          TestDataBuilder.new
+          td
             .create_consumer("Foo")
             .create_consumer_version("1.2.3")
             .create_consumer_version("4.5.6")

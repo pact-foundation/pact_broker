@@ -3,14 +3,22 @@ require 'pact_broker/messages'
 require 'pact_broker/repositories/helpers'
 require 'pact_broker/versions/latest_version'
 require 'pact_broker/domain/label'
+require 'pact_broker/string_refinements'
+require 'pact_broker/pacticipants/generate_display_name'
 
 module PactBroker
   module Domain
     class Pacticipant < Sequel::Model
-
       include Messages
-      plugin :insert_ignore, identifying_columns: [:name]
+      include PactBroker::Pacticipants::GenerateDisplayName
+      using PactBroker::StringRefinements
 
+      plugin :serialization
+      SPACE_DELIMITED_STRING_TO_ARRAY = lambda { |string| string.split(" ") }
+      ARRAY_TO_SPACE_DELIMITED_STRING = lambda { |array| array.join(" ") }
+      serialize_attributes [ARRAY_TO_SPACE_DELIMITED_STRING, SPACE_DELIMITED_STRING_TO_ARRAY], :main_development_branches
+
+      plugin :insert_ignore, identifying_columns: [:name]
       plugin :timestamps, update_on_create: true
 
       set_primary_key :id
@@ -42,18 +50,19 @@ module PactBroker
         super
       end
 
+      def before_save
+        super
+        if display_name.nil? || display_name.to_s.blank?
+          self.display_name = generate_display_name(name)
+        end
+      end
+
       def latest_version
         versions.last
       end
 
       def to_s
         "Pacticipant: id=#{id}, name=#{name}"
-      end
-
-      def validate
-        messages = []
-        messages << message('errors.validation.attribute_missing', attribute: 'name') unless name
-        messages
       end
 
       def any_versions?
