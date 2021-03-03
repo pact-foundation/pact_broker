@@ -10,14 +10,16 @@ module PactBroker
             .create_consumer_version("1")
             .create_environment("test")
             .create_deployed_version_for_consumer_version
+            .create_environment("prod")
+            .create_deployed_version_for_consumer_version
         end
 
-        it "deletes the associated deployed versions" do
+        it "deletes the associated deployed versions when deleting individual environments" do
           expect { Environment.find(name: "test").delete }.to change { DeployedVersion.count }.by(-1)
         end
 
-        it "deletes the associated deployed versions" do
-          expect { Environment.delete }.to change { DeployedVersion.count }.by(-1)
+        it "deletes the associated deployed versions when deleting an environment dataset" do
+          expect { Environment.where(name: "test").delete }.to change { DeployedVersion.count }.by(-1)
         end
       end
     end
