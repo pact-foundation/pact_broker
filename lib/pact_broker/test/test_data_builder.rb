@@ -417,6 +417,8 @@ module PactBroker
           .create_webhook
           .create_triggered_webhook
           .create_webhook_execution
+          .create_environment("test")
+          .create_deployed_version_for_consumer_version
       end
 
       def find_pacticipant(name)

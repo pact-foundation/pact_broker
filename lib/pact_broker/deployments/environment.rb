@@ -11,6 +11,18 @@ module PactBroker
       plugin :serialization
       plugin :timestamps, update_on_create: true
       serialize_attributes [OPEN_STRUCT_TO_JSON, JSON_TO_OPEN_STRUCT], :contacts
+
+      dataset_module do
+        def delete
+          PactBroker::Deployments::DeployedVersion.where(environment: self).delete
+          super
+        end
+      end
+
+      def delete
+        PactBroker::Deployments::DeployedVersion.where(environment: self).delete
+        super
+      end
     end
   end
 end

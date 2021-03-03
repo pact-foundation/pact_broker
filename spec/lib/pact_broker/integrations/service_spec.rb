@@ -31,8 +31,6 @@ module PactBroker
       end
 
       describe "#delete" do
-        let(:td) { TestDataBuilder.new }
-
         subject { Service.delete("Foo", "Bar") }
 
         context "with webhook data" do
@@ -252,6 +250,19 @@ module PactBroker
         context "when the pacticipants are not found for some bizarre reason (I can't see how this can happen, but it has)" do
           it "raises an error" do
             expect { Service.delete("Foo", "Bar") }.to raise_error(PactBroker::Error, /found/)
+          end
+        end
+
+        context "when there are deployed versions" do
+          before do
+            td.create_consumer("Foo")
+              .create_consumer_version("1")
+              .create_environment("test")
+              .create_deployed_version_for_consumer_version
+          end
+
+          it "doesn't blow up" do
+            Service.delete("Foo", "Foo")
           end
         end
       end
