@@ -32,6 +32,18 @@ module PactBroker
         create_pacticipant_url: pacticipants_url(base_url))
     end
 
+    def pluralize(word, count)
+      if count == 1
+        word
+      else
+        if word.end_with?("y")
+          word.chomp("y") + "ies"
+        else
+          word + "s"
+        end
+      end
+    end
+
     private
 
     def pacticipants_url base_url

@@ -22,6 +22,7 @@ module PactBroker
               represented.latest = (fragment == 'true' || fragment == true)
             }
           property :fallback_tag
+          property :fallback_branch
           property :consumer
           property :environment
           property :currently_deployed

@@ -104,13 +104,13 @@ module PactBroker
           it { is_expected.to have_key(:consumerVersionSelectors) }
         end
 
-        context "when the consumer_version_selector is missing a tag" do
+        context "when the consumer_version_selector is empty" do
           let(:consumer_version_selectors) do
             [{}]
           end
 
           it "flattens the messages" do
-            expect(subject[:consumerVersionSelectors].first).to eq "latest must be true, or a tag must be provided (at index 0)"
+            expect(subject[:consumerVersionSelectors].first).to match /must specify a value.*at index 0/
           end
         end
 
@@ -172,6 +172,149 @@ module PactBroker
           end
 
           it { is_expected.to be_empty }
+        end
+
+        context "when currentlyDeployed is specified" do
+          let(:consumer_version_selectors) do
+            [{
+              currentlyDeployed: true
+            }]
+          end
+
+          it { is_expected.to be_empty }
+        end
+
+        context "when the environment is specified" do
+          let(:consumer_version_selectors) do
+            [{
+              environment: "test"
+            }]
+          end
+
+          it { is_expected.to be_empty }
+        end
+
+        context "when currentlyDeployed with an environment is specified" do
+          let(:consumer_version_selectors) do
+            [{
+              environment: "feat",
+              currentlyDeployed: true
+            }]
+          end
+
+          it { is_expected.to be_empty }
+        end
+
+        context "when currentlyDeployed=false with an environment is specified" do
+          let(:consumer_version_selectors) do
+            [{
+              environment: "feat",
+              currentlyDeployed: false
+            }]
+          end
+
+          its([:consumerVersionSelectors, 0]) { is_expected.to eq "currentlyDeployed must be one of: true at index 0" }
+        end
+
+        context "when the environment is specified and currentlyDeployed is nil" do
+          let(:consumer_version_selectors) do
+            [{
+              environment: "feat",
+              currentlyDeployed: nil
+            }]
+          end
+
+          its([:consumerVersionSelectors, 0]) { is_expected.to eq "currentlyDeployed can't be blank at index 0" }
+        end
+
+        context "when currentlyDeployed is nil" do
+          let(:consumer_version_selectors) do
+            [{
+              currentlyDeployed: nil
+            }]
+          end
+
+          its([:consumerVersionSelectors, 0]) { is_expected.to eq "currentlyDeployed can't be blank at index 0" }
+        end
+
+        context "when latest=true and an environment is specified" do
+          let(:consumer_version_selectors) do
+            [{
+              environment: "feat",
+              latest: true
+            }]
+          end
+
+          its([:consumerVersionSelectors, 0]) { is_expected.to eq "cannot specify the field latest with the field environment (at index 0)" }
+        end
+
+        context "when latest=true, tag and an environment and currentlyDeployed are specified" do
+          let(:consumer_version_selectors) do
+            [{
+              environment: "feat",
+              latest: true,
+              tag: "foo",
+              currentlyDeployed: true
+            }]
+          end
+
+          its([:consumerVersionSelectors, 0]) { is_expected.to eq "cannot specify the fields tag/latest with the fields environment/currentlyDeployed (at index 0)" }
+        end
+
+        context "when a tag and a branch are specified" do
+          let(:consumer_version_selectors) do
+            [{
+              branch: "foo",
+              tag: "foo",
+              latest: true
+            }]
+          end
+
+          its([:consumerVersionSelectors, 0]) { is_expected.to eq "cannot specify both a tag and a branch (at index 0)" }
+        end
+
+        context "when a fallbackTag is specified without a tag" do
+          let(:consumer_version_selectors) do
+            [{
+              fallbackTag: "foo",
+              latest: true,
+              branch: "foo"
+            }]
+          end
+
+          its([:consumerVersionSelectors, 0]) { is_expected.to eq "a tag must be specified when a fallbackTag is specified (at index 0)" }
+        end
+
+        context "when a fallbackBranch is specified without a branch" do
+          let(:consumer_version_selectors) do
+            [{
+              fallbackBranch: "foo",
+              tag: "foo"
+            }]
+          end
+
+          its([:consumerVersionSelectors, 0]) { is_expected.to eq "a branch must be specified when a fallbackBranch is specified (at index 0)" }
+        end
+
+        context "when a branch is specified with no latest=true" do
+          let(:consumer_version_selectors) do
+            [{
+              branch: "foo"
+            }]
+          end
+
+          it { is_expected.to be_empty }
+        end
+
+        context "when a branch is specified with latest=false" do
+          let(:consumer_version_selectors) do
+            [{
+              branch: "foo",
+              latest: false
+            }]
+          end
+
+          its([:consumerVersionSelectors, 0]) { is_expected.to eq "cannot specify a branch with latest=false (at index 0)" }
         end
       end
     end
