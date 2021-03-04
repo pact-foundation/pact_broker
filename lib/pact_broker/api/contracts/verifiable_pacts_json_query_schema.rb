@@ -109,8 +109,8 @@ module PactBroker
             errors << "cannot specify a branch with latest=false (at index #{index})"
           end
 
-          non_environment_fields = selector.slice(:latest, :tag, :fallbackTag, :branch, :fallbackBranch).keys
-          environment_related_fields = selector.slice(:environment, :currentlyDeployed).keys
+          non_environment_fields = selector.slice(:latest, :tag, :fallbackTag, :branch, :fallbackBranch).keys.sort
+          environment_related_fields = selector.slice(:environment, :currentlyDeployed).keys.sort
 
           if (non_environment_fields.any? && environment_related_fields.any?)
             errors << "cannot specify the #{pluralize("field", non_environment_fields.count)} #{non_environment_fields.join("/")} with the #{pluralize("field", environment_related_fields.count)} #{environment_related_fields.join("/")} (at index #{index})"

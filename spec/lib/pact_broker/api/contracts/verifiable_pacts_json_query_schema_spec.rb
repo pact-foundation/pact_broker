@@ -258,7 +258,7 @@ module PactBroker
             }]
           end
 
-          its([:consumerVersionSelectors, 0]) { is_expected.to eq "cannot specify the fields tag/latest with the fields environment/currentlyDeployed (at index 0)" }
+          its([:consumerVersionSelectors, 0]) { is_expected.to eq "cannot specify the fields latest/tag with the fields currentlyDeployed/environment (at index 0)" }
         end
 
         context "when a tag and a branch are specified" do
