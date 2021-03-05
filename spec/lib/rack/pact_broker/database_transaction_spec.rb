@@ -25,7 +25,7 @@ module Rack
 
       let(:rack_headers) { {} }
 
-      subject { self.send(http_method, "/", rack_headers) }
+      subject { self.send(http_method, "/", nil, rack_headers) }
 
       it "sets the pactbroker.database_connector on the env" do
         actual_env = nil
@@ -38,17 +38,13 @@ module Rack
       end
 
       context "when the pactbroker.database_connector already exists" do
-        let(:rack_headers) { { "pactbroker.database_connector" => double('existing database connector') } }
+        let(:rack_headers) { { "pactbroker.database_connector" => existing_database_connector } }
         let(:existing_database_connector) { double('existing database connector') }
 
-        it "does not overwrite it", pending: "key is not showing up in rack env for some reason" do
+        it "does not overwrite it" do
           actual_env = nil
-          allow(api).to receive(:call) do | env |
-            actual_env = env
-            [200, {}, {}]
-          end
+          expect(api).to receive(:call).with(hash_including("pactbroker.database_connector" => existing_database_connector)).and_call_original
           subject
-          expect(actual_env["pactbroker.database_connector"]).to be existing_database_connector
         end
       end
 
