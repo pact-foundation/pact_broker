@@ -19,8 +19,9 @@ describe "Record deployment" do
       .find{ |relation| relation["name"] == "test" }
       .fetch("href")
   end
+  let(:request_body) { { replacedPreviousDeployedVersion: replaced_previous }.to_json }
 
-  subject { post(path, { replacedPreviousDeployedVersion: replaced_previous }.to_json, headers) }
+  subject { post(path, request_body, headers) }
 
   it { is_expected.to be_a_hal_json_created_response }
 
@@ -33,13 +34,31 @@ describe "Record deployment" do
   end
 
   it "marks the previous deployment as not currently deployed" do
+    expect { subject }.to change { PactBroker::Deployments::DeployedVersion.currently_deployed.collect(&:uuid) }
+  end
+
+  it "does not change the overall count of currently deployed versions" do
     expect { subject }.to_not change { PactBroker::Deployments::DeployedVersion.currently_deployed.count }
+  end
+
+  context "with an empty body" do
+    let(:request_body) { nil }
+
+    it { is_expected.to be_a_json_error_response("must be one of true, false") }
+
+    it "does not change the overall count of currently deployed versions" do
+      expect { subject }.to_not change { PactBroker::Deployments::DeployedVersion.currently_deployed.count }
+    end
   end
 
   context "when the deployment does not replace the previous deployed version" do
     let(:replaced_previous) { false }
 
     it "leaves the previous deployed version as currently deployed" do
+      expect { subject }.to change { PactBroker::Deployments::DeployedVersion.currently_deployed.count }.by(1)
+    end
+
+    it "increases the overall count of currently deployed versions" do
       expect { subject }.to change { PactBroker::Deployments::DeployedVersion.currently_deployed.count }.by(1)
     end
   end

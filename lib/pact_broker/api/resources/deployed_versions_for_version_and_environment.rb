@@ -25,6 +25,14 @@ module PactBroker
           true
         end
 
+        def malformed_request?
+          if request.post?
+            malformed_post_request?
+          else
+            false
+          end
+        end
+
         def create_path
           deployed_version_url(OpenStruct.new(uuid: deployed_version_uuid), base_url)
         end
@@ -67,11 +75,20 @@ module PactBroker
         end
 
         def replaced_previous_deployed_version
-          params[:replacedPreviousDeployedVersion] == true
+          params(default: {})[:replacedPreviousDeployedVersion]
         end
 
         def title
           "Deployed versions for #{pacticipant_name} version #{pacticipant_version_number}"
+        end
+
+        def malformed_post_request?
+          if ![true, false].include?(replaced_previous_deployed_version)
+            set_json_validation_error_messages({ replacedPreviousDeployedVersion: ["must be one of true, false"] })
+            true
+          else
+            false
+          end
         end
       end
     end
