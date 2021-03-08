@@ -16,7 +16,10 @@ module PactBroker
 
         collection :consumer_version_selectors, default: PactBroker::Pacts::Selectors.new, class: PactBroker::Pacts::Selector do
           property :tag
-          property :branch
+          property :branch, setter: -> (fragment:, represented:, **) {
+            represented.branch = fragment
+            represented.latest = true
+          }
           property :latest,
             setter: ->(fragment:, represented:, **) {
               represented.latest = (fragment == 'true' || fragment == true)
@@ -24,7 +27,10 @@ module PactBroker
           property :fallback_tag
           property :fallback_branch
           property :consumer
-          property :environment
+          property :environment, setter: -> (fragment:, represented:, **) {
+            represented.environment = fragment
+            represented.currently_deployed = true
+          }
           property :currently_deployed
         end
 

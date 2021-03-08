@@ -70,6 +70,28 @@ module PactBroker
               expect(subject.provider_version_tags).to eq []
             end
           end
+
+          context "when a branch is specified but the latest is not specified" do
+            let(:consumer_version_selectors) do
+              [{ "branch" => "main" }]
+            end
+
+            it "defaults the latest to true" do
+              expect(subject.consumer_version_selectors.first.branch).to eq "main"
+              expect(subject.consumer_version_selectors.first.latest).to be true
+            end
+          end
+
+          context "when an environment is specified but currently_deployed is not specified" do
+            let(:consumer_version_selectors) do
+              [{ "environment" => "prod" }]
+            end
+
+            it "sets the currently_deployed to true" do
+              expect(subject.consumer_version_selectors.first.environment).to eq "prod"
+              expect(subject.consumer_version_selectors.first.currently_deployed).to be true
+            end
+          end
         end
 
         context "when parsing query string params" do
