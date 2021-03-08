@@ -1,9 +1,11 @@
 require 'forwardable'
+require 'pact_broker/messages'
 
 module PactBroker
   module Pacts
     class VerifiablePactMessages
       extend Forwardable
+      include PactBroker::Messages
 
       READ_MORE_PENDING = "Read more at https://pact.io/pending"
       READ_MORE_WIP = "Read more at https://pact.io/wip"
@@ -32,7 +34,8 @@ module PactBroker
           "The pact at #{pact_version_url} is being verified because it is a 'work in progress' pact (ie. it is the pact for the latest #{version_text} of #{consumer_name} #{joined_head_consumer_tags_and_branches} and is still in pending state). #{READ_MORE_WIP}"
         else
           criteria_or_criterion = selectors.size > 1 ? "criteria" : "criterion"
-          "The pact at #{pact_version_url} is being verified because it matches the following configured selection #{criteria_or_criterion}: #{selector_descriptions}#{same_content_note}"
+          version_or_versions = pluralize("the consumer version", selectors.size)
+          "The pact at #{pact_version_url} is being verified because the pact content belongs to #{version_or_versions} matching the following #{criteria_or_criterion}:\n#{selector_descriptions}"
         end
       end
 
@@ -158,15 +161,13 @@ module PactBroker
       def selector_descriptions
         selectors.sort.group_by(&:type).values.flat_map do | selectors |
           selectors_descriptions(selectors)
-        end.join(", ")
+        end.collect{ |description| "    * #{description}" }
+          .join("\n")
       end
 
       def selectors_descriptions(selectors)
         if selectors.first.currently_deployed?
-          selectors.group_by(&:consumer).flat_map do | consumer_name, selectors |
-            display_name = consumer_name ? "the version(s) of #{consumer_name}" : "the consumer version(s)"
-            "pacts for #{display_name} currently deployed to #{join_unquoted(selectors.collect(&:environment))}"
-          end
+          currently_deployed_selectors_description(selectors)
         else
           selectors.collect do | selector |
             selector_description(selector)
@@ -175,31 +176,40 @@ module PactBroker
       end
 
       def selector_description selector
-        if selector.overall_latest?
+        description = if selector.overall_latest?
           consumer_label = selector.consumer ? selector.consumer : 'a consumer'
-          "latest pact between #{consumer_label} and #{provider_name}"
+          "latest version of #{consumer_label} that has a pact with #{provider_name}"
         elsif selector.latest_for_tag?
-          version_label = selector.consumer ? "version of #{selector.consumer}" : "consumer version"
+          version_label = selector.consumer ? "version of #{selector.consumer}" : "version"
           if selector.fallback_tag?
-            "latest pact for a #{version_label} tagged '#{selector.fallback_tag}' (fallback tag used as no pact was found with tag '#{selector.tag}')"
+            "latest #{version_label} tagged '#{selector.fallback_tag}' (fallback tag used as no pact was found with tag '#{selector.tag}')"
           else
-            "latest pact for a #{version_label} tagged '#{selector.tag}'"
+            "latest #{version_label} tagged '#{selector.tag}'"
           end
         elsif selector.latest_for_branch?
-          version_label = selector.consumer ? "version of #{selector.consumer}" : "consumer version"
+          version_label = selector.consumer ? "version of #{selector.consumer}" : "version"
           if selector.fallback_branch?
-            "latest pact for a #{version_label} from branch '#{selector.fallback_branch}' (fallback branch used as no pact was found from branch '#{selector.branch}')"
+            "latest #{version_label} from branch '#{selector.fallback_branch}' (fallback branch used as no pact was found from branch '#{selector.branch}')"
           else
-            "latest pact for a #{version_label} from branch '#{selector.branch}'"
+            "latest #{version_label} from branch '#{selector.branch}'"
           end
         elsif selector.all_for_tag_and_consumer?
-          "pacts for all #{selector.consumer} versions tagged '#{selector.tag}'"
+          "all #{selector.consumer} versions tagged '#{selector.tag}'"
         elsif selector.all_for_tag?
-          "pacts for all consumer versions tagged '#{selector.tag}'"
+          "all consumer versions tagged '#{selector.tag}'"
         elsif selector.currently_deployed?
-          "pacts for consumer version(s) currently deployed to #{selector.environment}"
+          "version(s) currently deployed to #{selector.environment}"
         else
           selector.to_json
+        end
+        "#{description} (#{selector.consumer_version.number})"
+      end
+
+      def currently_deployed_selectors_description(selectors)
+        selectors.group_by(&:consumer).flat_map do | consumer_name, selectors |
+          display_name = consumer_name ? "version(s) of #{consumer_name}" : "consumer version(s)"
+          environments_and_versions = selectors.collect{ | selector | "#{selector.environment} (#{selector.consumer_version.number})" }
+          "#{display_name} currently deployed to #{join_unquoted(environments_and_versions)}"
         end
       end
 
@@ -227,6 +237,8 @@ module PactBroker
           "one of #{selector.consumer} #{selector.tag}"
         elsif selector.tag
           "one of #{selector.tag}"
+        elsif selector.currently_deployed?
+          "deployed to #{selector.environment}"
         else
           selector.to_json
         end
