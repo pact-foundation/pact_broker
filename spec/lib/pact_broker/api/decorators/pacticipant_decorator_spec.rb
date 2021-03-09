@@ -36,6 +36,7 @@ module PactBroker
             pacticipant.created_at = created_at
             pacticipant.updated_at = updated_at
             allow_any_instance_of(PacticipantDecorator).to receive(:templated_tag_url_for_pacticipant).and_return('version_tag_url')
+            allow_any_instance_of(PacticipantDecorator).to receive(:templated_version_url_for_pacticipant).and_return('version_url')
           end
 
           subject { JSON.parse PacticipantDecorator.new(pacticipant).to_json(user_options: { base_url: base_url }), symbolize_names: true }
@@ -50,13 +51,14 @@ module PactBroker
             expect(subject[:_embedded][:labels].first[:_links][:self][:href]).to match %r{http://example.org/.*foo}
           end
 
-          it "creates the URL for a version tag" do
+          it "includes a relation for a version tag" do
             expect_any_instance_of(PacticipantDecorator).to receive(:templated_tag_url_for_pacticipant).with("Name", base_url)
-            subject
+            expect(subject[:_links][:'pb:version-tag'][:href]).to eq "version_tag_url"
           end
 
-          it "includes a relation for a version tag" do
-            expect(subject[:_links][:'pb:version-tag'][:href]).to eq "version_tag_url"
+          it "includes a relation for a version" do
+            expect_any_instance_of(PacticipantDecorator).to receive(:templated_version_url_for_pacticipant).with("Name", base_url)
+            expect(subject[:_links][:'pb:version'][:href]).to eq "version_url"
           end
 
           context "when there is a latest_version" do
