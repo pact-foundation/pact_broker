@@ -61,6 +61,27 @@ module PactBroker
         PactBroker::Domain::Version.new(version_params).upsert
       end
 
+      def create_or_update(pacticipant, version_number, open_struct_version)
+        saved_version = PactBroker::Domain::Version.where(pacticipant_id: pacticipant.id, number: version_number).single_record
+        params = open_struct_version.to_h
+        tags = params.delete(:tags)
+        if saved_version
+          saved_version.update(params)
+        else
+          # Upsert is only for race conditions
+          # Upsert blanks out any fields that are not provided
+          saved_version = PactBroker::Domain::Version.new(
+            open_struct_version.to_h.merge(
+              pacticipant_id: pacticipant,
+              number: version_number
+            )
+          ).upsert
+        end
+
+        replace_tags(saved_version, tags) if tags
+        saved_version
+      end
+
       def create_or_overwrite(pacticipant, version_number, open_struct_version)
         saved_version = PactBroker::Domain::Version.new(
           number: version_number,
@@ -70,14 +91,18 @@ module PactBroker
         ).upsert
 
         if open_struct_version.tags
-          tag_repository.delete_by_version_id(saved_version.id)
-          open_struct_version.tags.collect do | open_struct_tag |
-            tag_repository.create(version: saved_version, name: open_struct_tag.name)
-          end
-          saved_version.refresh
+          replace_tags(saved_version, open_struct_version.tags)
         end
 
         saved_version
+      end
+
+      def replace_tags(saved_version, open_struct_tags)
+        tag_repository.delete_by_version_id(saved_version.id)
+        open_struct_tags.collect do | open_struct_tag |
+          tag_repository.create(version: saved_version, name: open_struct_tag.name)
+        end
+        saved_version.refresh
       end
 
       def find_by_pacticipant_id_and_number_or_create pacticipant_id, number

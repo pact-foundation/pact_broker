@@ -37,25 +37,29 @@ describe "Creating a pacticipant version" do
         .create_consumer_version_tag("dev")
     end
 
-    let(:version_hash) { { branch: "new-branch" } }
+    context "when the branch is attempted to be changed" do
+      let(:version_hash) { { branch: "new-branch" } }
 
-    it "returns a 200" do
-      expect(subject.status).to be 200
+      its(:status) { is_expected.to eq 409 }
     end
 
-    it "overwrites the direct properties" do
-      expect(response_body[:branch]).to eq "new-branch"
-      expect(response_body).to_not have_key(:buildUrl)
+    context "when the branch is not attempted to be changed" do
+      let(:version_hash) { { branch: "original-branch" } }
+
+      it "overwrites the direct properties and blanks out any unprovided ones" do
+        expect(response_body[:branch]).to eq "original-branch"
+        expect(response_body).to_not have_key(:buildUrl)
+      end
     end
 
-    context "when not tags are specified" do
+    context "when no tags are specified" do
       it "does not change the tags" do
         expect { subject }.to_not change { PactBroker::Domain::Version.for("Foo", "1234").tags }
       end
     end
 
     context "when tags are specified" do
-      let(:version_hash) { { branch: "new-branch", tags: [ { name: "main" }] } }
+      let(:version_hash) { { branch: "original-branch", tags: [ { name: "main" }] } }
 
       it "overwrites the tags" do
         expect(response_body[:_embedded][:tags].size).to eq 1
