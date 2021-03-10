@@ -16,7 +16,7 @@ RSpec.describe "Get deployed versions for version" do
 
   let(:response_body_hash) { JSON.parse(subject.body, symbolize_names: true) }
 
-  subject { get(path, nil, { "HTTP_ACCEPT" => "application/hal+json" }).tap { |it| puts it.body } }
+  subject { get(path, nil, { "HTTP_ACCEPT" => "application/hal+json" }) }
 
   it "returns a list of deployed versions" do
     expect(response_body_hash[:_embedded][:deployedVersions]).to be_a(Array)

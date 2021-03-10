@@ -14,7 +14,7 @@ module PactBroker
             new_branch: open_struct_version.branch,
             version_url: version_url
           }
-          error_message = message("errors.validation.cannot_modify_version_branch", message_params).tap { |it| puts it }
+          error_message = message("errors.validation.cannot_modify_version_branch", message_params)
           { branch: [error_message] }
         else
           {}

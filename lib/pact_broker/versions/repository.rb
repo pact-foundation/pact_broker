@@ -71,8 +71,8 @@ module PactBroker
           # Upsert is only for race conditions
           # Upsert blanks out any fields that are not provided
           saved_version = PactBroker::Domain::Version.new(
-            open_struct_version.to_h.merge(
-              pacticipant_id: pacticipant,
+            params.merge(
+              pacticipant_id: pacticipant.id,
               number: version_number
             )
           ).upsert
