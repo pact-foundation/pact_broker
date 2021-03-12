@@ -19,6 +19,27 @@ module PactBroker
         new(pact_hash)
       end
 
+      # TODO group by specification
+      def self.aggregate contents, provider_name
+        unique_interactions = contents
+                              .select(&:interactions)
+                              .flat_map(&:interactions)
+                              .uniq{ | interaction | interaction["_id"] }
+        unique_messages = contents
+                              .select(&:messages)
+                              .flat_map(&:messages)
+                              .uniq{ | interaction | interaction["_id"] }
+
+        new_pact_hash = {
+           "provider" => { "name" => provider_name },
+           "consumer" => { "name" => "Aggregated consumers" }
+        }
+
+        new_pact_hash["interactions"] = unique_interactions if contents.select(&:interactions).any?
+        new_pact_hash["interactions"] = unique_messages if contents.select(&:messages).any?
+        new_pact_hash
+      end
+
       def to_hash
         pact_hash
       end

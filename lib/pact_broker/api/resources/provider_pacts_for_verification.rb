@@ -102,6 +102,7 @@ module PactBroker
         end
 
         def aggregated_pacts
+          # split into wip/non wip and group by pact specification version
           aggregated_pacts_url = resource_url.gsub("for-verification", "aggregated-for-verification") + "/" + encode_metadata(query)
           {
             "_embedded" => {

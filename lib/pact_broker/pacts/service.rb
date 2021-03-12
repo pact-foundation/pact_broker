@@ -70,18 +70,7 @@ module PactBroker
       end
 
       def aggregate_pacts(pacts, provider_name)
-        unique_interactions = pacts
-          .collect(&:content_object)
-          .flat_map(&:interactions)
-          .group_by{ | interaction | interaction["_id"] }
-          .values
-          .collect(&:first)
-
-         {
-            "provider" => { "name" => provider_name },
-            "consumer" => { "name" => "Aggregated consumers" },
-            "interactions" => unique_interactions
-         }
+        PactBroker::Pacts::Content.aggregate(pacts.collect(&:content_object), provider_name)
       end
 
       def find_all_pact_versions_between consumer, options
