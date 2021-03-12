@@ -97,7 +97,8 @@ module PactBroker
           providerVersionBranch: provider_version_branch,
           consumerVersionSelectors: consumer_version_selectors,
           includePendingStatus: enable_pending,
-          includeWipPactsSince: include_wip_pacts_since
+          includeWipPactsSince: include_wip_pacts_since,
+          aggregate: true
         }.compact
         puts request_body.to_yaml
         puts ""
@@ -269,6 +270,7 @@ module PactBroker
         puts "" if [*provider_version_tag].any?
 
         pact_response = client.get(url_of_pact_to_verify).tap { |response| check_for_error(response) }
+        puts pact_response.body
         verification_results_url = pact_response.body["_links"]["pb:publish-verification-results"]["href"]
 
         results = {

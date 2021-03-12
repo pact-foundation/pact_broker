@@ -70,6 +70,8 @@ module PactBroker
 
         # Pacts for verification
         add ['pacts', 'provider', :provider_name, 'for-verification'], Api::Resources::ProviderPactsForVerification, {resource_name: "pacts_for_verification"}
+        add ['pacts', 'provider', :provider_name, 'aggregated-for-verification', :query], Api::Resources::AggregatedPactForVerification, { resource_name: "aggregated_pact_for_verification" }
+        add ['pacts', 'provider', :provider_name, 'aggregated-for-verification', :query, 'verifications'], Api::Resources::AggregatedVerifications, { resource_name: "aggregated_verifications" }
 
         # Deprecated pact
         add ['pact', 'provider', :provider_name, 'consumer', :consumer_name, 'version', :consumer_version_number], Api::Resources::Pact, {resource_name: "pact_publication", deprecated: "true"} # Deprecate, singular /pact

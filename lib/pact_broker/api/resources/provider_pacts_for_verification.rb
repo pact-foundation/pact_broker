@@ -29,7 +29,11 @@ module PactBroker
         end
 
         def process_post
-          response.body = to_json
+          if aggregate_pacts?
+            response.body = aggregated_pacts
+          else
+            response.body = to_json
+          end
           true
         end
 
@@ -91,6 +95,39 @@ module PactBroker
 
         def nested_query
           @nested_query ||= Rack::Utils.parse_nested_query(request.uri.query)
+        end
+
+        def aggregate_pacts?
+          query["aggregate"] == true
+        end
+
+        def aggregated_pacts
+          aggregated_pacts_url = resource_url.gsub("for-verification", "aggregated-for-verification") + "/" + encode_metadata(query)
+          {
+            "_embedded" => {
+              "pacts" => [
+                {
+                  "shortDescription" => "short desc",
+                  "verificationProperties" => {
+                    "pending" => false,
+                    "notices" => [
+                      {
+                        "when" => "before_verification",
+                        "text" => "uber pact!"
+                      }
+                    ]
+                  },
+                  "_links" => {
+                    "self" => {
+                      "href" => aggregated_pacts_url,
+                      "name" => "Aggregated pact"
+                    }
+                  }
+                }
+              ]
+
+            }
+          }.to_json
         end
       end
     end
