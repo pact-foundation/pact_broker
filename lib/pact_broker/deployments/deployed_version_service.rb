@@ -21,15 +21,17 @@ module PactBroker
         )
       end
 
-      def self.find_deployed_versions_for_version_and_environment(version, environment)
+      def self.find_currently_deployed_versions_for_version_and_environment(version, environment)
         DeployedVersion
+          .currently_deployed
           .for_version_and_environment(version, environment)
           .order_by_date_desc
           .all
       end
 
-      def self.find_deployed_versions_for_environment(environment)
+      def self.find_currently_deployed_versions_for_environment(environment)
         DeployedVersion
+          .currently_deployed
           .for_environment(environment)
           .order_by_date_desc
           .all
@@ -42,6 +44,19 @@ module PactBroker
           .eager(:version)
           .eager(:environment)
           .all
+      end
+
+      def self.find_currently_deployed_versions_for_pacticipant_and_environment(pacticipant, environment, options = {})
+        query = DeployedVersion
+          .currently_deployed
+          .for_environment(environment)
+          .for_pacticipant(pacticipant)
+          .order_by_date_desc
+
+        if options[:pacticipant_version_number]
+          query = query.for_pacticipant_and_version_number(pacticipant, options[:pacticipant_version_number])
+        end
+        query.all
       end
 
       def self.record_previous_version_undeployed(pacticipant, environment)

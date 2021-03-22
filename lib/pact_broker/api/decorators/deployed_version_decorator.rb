@@ -12,6 +12,13 @@ module PactBroker
         property :replaced_previous_deployed_version, camelize: true
         include Timestamps
         property :undeployedAt, getter: lambda { |_|  undeployed_at ? FormatDateTime.call(undeployed_at) : nil }, writeable: false
+
+        link :self do | user_options |
+          {
+            title: "Deployed version",
+            href: deployed_version_url(represented, user_options.fetch(:base_url))
+          }
+        end
       end
     end
   end

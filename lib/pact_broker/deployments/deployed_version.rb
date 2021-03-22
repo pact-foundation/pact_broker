@@ -39,6 +39,18 @@ module PactBroker
           where(environment_id: environment.id)
         end
 
+        def for_pacticipant(pacticipant)
+          where(pacticipant_id: pacticipant.id)
+        end
+
+        def for_pacticipant_and_version_number(pacticipant, pacticipant_version_number)
+          version_id_query = db[:versions]
+                                .select(:id)
+                                .where(pacticipant_id: pacticipant.id)
+                                .where(number: pacticipant_version_number)
+          where(version_id: version_id_query)
+        end
+
         def order_by_date_desc
           order(Sequel.desc(:created_at), Sequel.desc(:id))
         end

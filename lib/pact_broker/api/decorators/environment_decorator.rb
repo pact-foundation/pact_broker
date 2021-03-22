@@ -17,6 +17,13 @@ module PactBroker
 
         include Timestamps
 
+        link :'pb:currently-deployed-versions-for-pacticipant' do | options |
+          {
+            title: "Currently deployed versions for pacticipant",
+            href: "#{environment_url(represented, options[:base_url])}/currently-deployed-versions/pacticipant/{pacticipant}"
+          }
+        end
+
         link :self do | options |
           {
             title: 'Environment',

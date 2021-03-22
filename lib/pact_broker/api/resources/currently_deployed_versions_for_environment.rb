@@ -1,10 +1,9 @@
-require 'pact_broker/api/resources/base_resource'
-require 'pact_broker/api/decorators/versions_decorator'
+require 'pact_broker/api/resources/currently_deployed_versions_for_environment'
 
 module PactBroker
   module Api
     module Resources
-      class DeployedVersionsForEnvironment < BaseResource
+      class CurrentlyDeployedVersionsForEnvironment < BaseResource
         def content_types_accepted
           [["application/json", :from_json]]
         end
@@ -31,14 +30,12 @@ module PactBroker
 
         private
 
-        attr_reader :deployed_versions
-
         def environment
           @environment ||= environment_service.find(environment_uuid)
         end
 
         def deployed_versions
-          @deployed_versions ||= deployed_version_service.find_deployed_versions_for_environment(environment)
+          @deployed_versions ||= deployed_version_service.find_currently_deployed_versions_for_environment(environment)
         end
 
         def environment_uuid

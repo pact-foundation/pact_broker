@@ -118,6 +118,7 @@ module PactBroker
         if PactBroker.feature_enabled?(:environments)
           add ['environments'], Api::Resources::Environments, { resource_name: "environments" }
           add ['environments', :environment_uuid], Api::Resources::Environment, { resource_name: "environment" }
+          add ['environments', :environment_uuid, 'currently-deployed-versions', 'pacticipant', :pacticipant_name], Api::Resources::CurrentlyDeployedVersionsForPacticipantAndEnvironment, { resource_name: "currently_deployed_versions_for_pacticipant_and_environment" }
           add ['pacticipants', :pacticipant_name, 'versions', :pacticipant_version_number, 'deployed-versions', 'environment', :environment_uuid], Api::Resources::DeployedVersionsForVersionAndEnvironment, { resource_name: "deployed_versions_for_version_and_environment" }
         end
 

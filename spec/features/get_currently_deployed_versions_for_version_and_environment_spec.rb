@@ -1,4 +1,5 @@
-RSpec.describe "Get deployed versions for version" do
+# TODO CURRENTLY DEPLOYED
+RSpec.describe "Get currently deployed versions for version" do
   let!(:version) { td.create_consumer("Foo").create_consumer_version("1").and_return(:consumer_version) }
   let!(:test_environment) { td.create_environment("test").and_return(:environment) }
   let!(:prod_environment) { td.create_environment("prod").and_return(:environment) }
