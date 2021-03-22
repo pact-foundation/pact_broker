@@ -9,6 +9,13 @@ module PactBroker
 
         collection :entries, :as => :environments, :class => PactBroker::Deployments::Environment, :extend => PactBroker::Api::Decorators::EnvironmentDecorator, embedded: true
 
+        link :self do | options |
+          {
+            title: 'Environments',
+            href: options[:resource_url]
+          }
+        end
+
         links :'pb:environments' do | user_options |
           represented.collect do | environment |
             {
@@ -17,13 +24,6 @@ module PactBroker
               href: environment_url(environment, user_options.fetch(:base_url))
             }
           end
-        end
-
-        link :self do | options |
-          {
-            title: 'Environments',
-            href: options[:resource_url]
-          }
         end
       end
     end
