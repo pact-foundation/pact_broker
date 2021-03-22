@@ -14,6 +14,7 @@ module PactBroker
       CONSUMER_LABELS = 'pactbroker.consumerLabels'
       PROVIDER_LABELS = 'pactbroker.providerLabels'
       EVENT_NAME = 'pactbroker.eventName'
+      CURRENTLY_DEPLOYED_PROVIDER_VERSION_NUMBER = 'pactbroker.currentlyDeployedProviderVersionNumber'
 
       ALL = [
         CONSUMER_NAME,
@@ -28,7 +29,8 @@ module PactBroker
         BITBUCKET_VERIFICATION_STATUS,
         CONSUMER_LABELS,
         PROVIDER_LABELS,
-        EVENT_NAME
+        EVENT_NAME,
+        CURRENTLY_DEPLOYED_PROVIDER_VERSION_NUMBER
       ]
 
       def initialize(pact, trigger_verification, webhook_context)
@@ -52,7 +54,8 @@ module PactBroker
           BITBUCKET_VERIFICATION_STATUS => bitbucket_verification_status,
           CONSUMER_LABELS => pacticipant_labels(pact && pact.consumer),
           PROVIDER_LABELS => pacticipant_labels(pact && pact.provider),
-          EVENT_NAME => event_name
+          EVENT_NAME => event_name,
+          CURRENTLY_DEPLOYED_PROVIDER_VERSION_NUMBER => currently_deployed_provider_version_number
         }
       end
 
@@ -122,6 +125,10 @@ module PactBroker
 
       def event_name
         webhook_context.fetch(:event_name)
+      end
+
+      def currently_deployed_provider_version_number
+        webhook_context[:currently_deployed_provider_version_number] || ""
       end
     end
   end

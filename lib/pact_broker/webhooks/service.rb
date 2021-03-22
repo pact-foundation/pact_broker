@@ -14,6 +14,7 @@ require 'pact_broker/hash_refinements'
 require 'pact_broker/webhooks/execution_configuration'
 require 'pact_broker/messages'
 require 'pact_broker/webhooks/pact_and_verification_parameters'
+require 'pact_broker/feature_toggle'
 
 module PactBroker
   module Webhooks
@@ -128,25 +129,36 @@ module PactBroker
           webhook_execution_configuration = options.fetch(:webhook_execution_configuration).with_webhook_context(event_name: event_name)
           # bit messy to merge in base_url here, but easier than a big refactor
           base_url = options.fetch(:webhook_execution_configuration).webhook_context.fetch(:base_url)
-          run_later(webhooks, pact, verification, event_name, event_context.merge(event_name: event_name, base_url: base_url), options.merge(webhook_execution_configuration: webhook_execution_configuration))
+
+          run_webhooks_later(webhooks, pact, verification, event_name, event_context.merge(event_name: event_name, base_url: base_url), options.merge(webhook_execution_configuration: webhook_execution_configuration))
         else
           logger.info "No enabled webhooks found for consumer \"#{pact.consumer.name}\" and provider \"#{pact.provider.name}\" and event #{event_name}"
         end
       end
 
-      def self.run_later webhooks, pact, verification, event_name, event_context, options
-        trigger_uuid = next_uuid
+      def self.run_webhooks_later webhooks, pact, verification, event_name, event_context, options
         webhooks.each do | webhook |
-          begin
-            triggered_webhook = webhook_repository.create_triggered_webhook(trigger_uuid, webhook, pact, verification, RESOURCE_CREATION, event_name, event_context)
-            logger.info "Scheduling job for webhook with uuid #{webhook.uuid}"
-            logger.debug "Schedule webhook with options #{options}"
-            job_data = { triggered_webhook: triggered_webhook }.deep_merge(options)
-            # Delay slightly to make sure the request transaction has finished before we execute the webhook
-            Job.perform_in(5, job_data)
-          rescue StandardError => e
-            logger.warn("Error scheduling webhook execution for webhook with uuid #{webhook.uuid}", e)
+          if PactBroker.feature_enabled?(:expand_currently_deployed_provider_versions) && webhook.expand_currently_deployed_provider_versions?
+            deployed_version_service.find_currently_deployed_versions_for_pacticipant(pact.provider).collect(&:version_number).uniq.each_with_index do | version_number, index |
+              schedule_webhook(webhook, pact, verification, event_name, event_context.merge(currently_deployed_provider_version_number: version_number), options, index * 5)
+            end
+          else
+            schedule_webhook(webhook, pact, verification, event_name, event_context, options)
           end
+        end
+      end
+
+      def self.schedule_webhook(webhook, pact, verification, event_name, event_context, options, extra_delay = 0)
+        begin
+          trigger_uuid = next_uuid
+          triggered_webhook = webhook_repository.create_triggered_webhook(trigger_uuid, webhook, pact, verification, RESOURCE_CREATION, event_name, event_context)
+          logger.info "Scheduling job for webhook with uuid #{webhook.uuid}, context: #{event_context}"
+          logger.debug "Schedule webhook with options #{options}"
+          job_data = { triggered_webhook: triggered_webhook }.deep_merge(options)
+          # Delay slightly to make sure the request transaction has finished before we execute the webhook
+          Job.perform_in(5 + extra_delay, job_data)
+        rescue StandardError => e
+          logger.warn("Error scheduling webhook execution for webhook with uuid #{webhook.uuid}", e)
         end
       end
 

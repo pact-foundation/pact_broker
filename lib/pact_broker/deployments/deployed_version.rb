@@ -47,6 +47,10 @@ module PactBroker
       def record_undeployed
         update(currently_deployed: false, undeployed_at: Sequel.datetime_class.now)
       end
+
+      def version_number
+        version.number
+      end
     end
   end
 end

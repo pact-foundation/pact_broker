@@ -62,6 +62,13 @@ module PactBroker
         @headers = Rack::Utils::HeaderHash.new(headers)
       end
 
+      def uses_parameter?(parameter_name)
+        !!body_string&.include?("${" + parameter_name + "}")
+      end
+
+      def body_string
+        String === body ? body : body&.to_json
+      end
 
       def to_s
         "#{method.upcase} #{url}, username=#{username}, password=#{display_password}, headers=#{redacted_headers}, body=#{body}"
