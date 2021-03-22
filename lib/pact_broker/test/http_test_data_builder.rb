@@ -60,6 +60,22 @@ module PactBroker
         self
       end
 
+      def record_deployment(pacticipant:, version:, environment_name:)
+        puts "Recoding deployment of #{pacticipant} version #{version} to #{environment_name}"
+        version_body = client.get("/pacticipants/#{encode(pacticipant)}/versions/#{encode(version)}").tap { |response| check_for_error(response) }.body
+        environment_relation = version_body["_links"]["pb:record-deployment"].find { |relation| relation["name"] == environment_name }
+        client.post(environment_relation["href"], { replacedPreviousDeployedVersion: true }).tap { |response| check_for_error(response) }
+        separate
+        self
+      end
+
+      def create_environment(name:, production: false)
+        puts "Creating environment #{name}"
+        client.post("/environments", { name: name, displayName: name, production: production }).tap { |response| check_for_error(response) }
+        separate
+        self
+      end
+
       def create_pacticipant(name)
         puts "Creating pacticipant with name #{name}"
         client.post("pacticipants", { name: name }).tap { |response| check_for_error(response) }
@@ -157,7 +173,10 @@ module PactBroker
           }],
           "request" => {
             "method" => "POST",
-            "url" => url
+            "url" => url,
+            "body" => {
+              "deployedProviderVersion" => "${pactbroker.currentlyDeployedProviderVersionNumber}"
+            }
           }
         }
         path = "webhooks/#{uuid}"

@@ -3,6 +3,7 @@ require 'pact_broker/messages'
 require 'pact_broker/logging'
 require 'pact_broker/api/contracts/webhook_contract'
 require 'pact_broker/webhooks/http_request_with_redacted_headers'
+require 'pact_broker/webhooks/pact_and_verification_parameters'
 
 module PactBroker
   module Domain
@@ -94,6 +95,10 @@ module PactBroker
 
       def trigger_on_provider_verification_failed?
         events.any?(&:provider_verification_failed?)
+      end
+
+      def expand_currently_deployed_provider_versions?
+        request.uses_parameter?(PactBroker::Webhooks::PactAndVerificationParameters::CURRENTLY_DEPLOYED_PROVIDER_VERSION_NUMBER)
       end
 
       private

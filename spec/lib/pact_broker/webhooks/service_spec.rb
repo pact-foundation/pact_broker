@@ -178,7 +178,11 @@ module PactBroker
         let(:consumer_version) { PactBroker::Domain::Version.new(number: '1.2.3') }
         let(:consumer) { PactBroker::Domain::Pacticipant.new(name: 'Consumer') }
         let(:provider) { PactBroker::Domain::Pacticipant.new(name: 'Provider') }
-        let(:webhooks) { [instance_double(PactBroker::Domain::Webhook, description: 'description', uuid: '1244')]}
+        let(:webhooks) { [webhook]}
+        let(:webhook) do
+          instance_double(PactBroker::Domain::Webhook, description: 'description', uuid: '1244', expand_currently_deployed_provider_versions?: expand_currently_deployed)
+        end
+        let(:expand_currently_deployed) { false }
         let(:triggered_webhook) { instance_double(PactBroker::Webhooks::TriggeredWebhook) }
         let(:webhook_execution_configuration) { double('webhook_execution_configuration', webhook_context: webhook_context) }
         let(:webhook_context) { { base_url: "http://example.org" } }
@@ -206,8 +210,8 @@ module PactBroker
         end
 
         context "when webhooks are found" do
-          it "executes the webhook" do
-            expect(Service).to receive(:run_later).with(webhooks, pact, verification, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED, expected_event_context, options)
+          it "schedules the webhook" do
+            expect(Service).to receive(:run_webhooks_later).with(webhooks, pact, verification, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED, expected_event_context, options)
             subject
           end
 
@@ -215,12 +219,39 @@ module PactBroker
             expect(webhook_execution_configuration).to receive(:with_webhook_context).with(event_name: PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED)
             subject
           end
+
+          context "when there should be a webhook triggered for each currently deployed version" do
+            before do
+              allow(Service).to receive(:deployed_version_service).and_return(deployed_version_service)
+              allow(deployed_version_service).to receive(:find_currently_deployed_versions_for_pacticipant).and_return(currently_deployed_versions)
+            end
+            let(:expand_currently_deployed) { true }
+            let(:deployed_version_service) { class_double("PactBroker::Deployments::DeployedVersionService").as_stubbed_const }
+            let(:currently_deployed_version_1) { instance_double("PactBroker::Deployments::DeployedVersion", version_number: "1") }
+            let(:currently_deployed_version_2) { instance_double("PactBroker::Deployments::DeployedVersion", version_number: "2") }
+            let(:currently_deployed_versions) { [currently_deployed_version_1, currently_deployed_version_2] }
+
+            it "schedules a triggered webhook for each currently deployed version" do
+              expect(Service).to receive(:schedule_webhook).with(webhook, pact, verification, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED, expected_event_context.merge(currently_deployed_provider_version_number: "1"), options, 0)
+              expect(Service).to receive(:schedule_webhook).with(webhook, pact, verification, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED, expected_event_context.merge(currently_deployed_provider_version_number: "2"), options, 5)
+              subject
+            end
+
+            context "when the same version is deployed to multiple environments" do
+              let(:currently_deployed_version_2) { instance_double("PactBroker::Deployments::DeployedVersion", version_number: "1") }
+
+              it "only triggers one webhook" do
+                expect(Service).to receive(:schedule_webhook).with(anything, anything, anything, anything, expected_event_context.merge(currently_deployed_provider_version_number: "1"), anything, 0)
+                subject
+              end
+            end
+          end
         end
 
         context "when no webhooks are found" do
           let(:webhooks) { [] }
           it "does nothing" do
-            expect(Service).to_not receive(:run_later)
+            expect(Service).to_not receive(:run_webhooks_later)
             subject
           end
 
