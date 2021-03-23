@@ -153,8 +153,17 @@ module PactBroker
         end
 
         describe 'from_json' do
-          let(:hash) { { request: request, events: [event] } }
-          let(:event) { {name: 'something_happened'} }
+          let(:hash) do
+            {
+              request: request,
+              events: [event],
+              consumerVersionSelectors: consumer_version_selectors
+            }
+          end
+          let(:consumer_version_selectors) do
+            [{ branch: "main" }]
+          end
+          let(:event) { { name: 'something_happened' } }
           let(:json) { hash.to_json }
           let(:webhook) { Domain::Webhook.new }
           let(:parsed_object) { subject.from_json(json) }

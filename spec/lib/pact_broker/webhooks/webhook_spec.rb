@@ -3,9 +3,6 @@ require 'pact_broker/webhooks/webhook'
 module PactBroker
   module Webhooks
     describe Webhook do
-
-      let(:td) { TestDataBuilder.new }
-
       before do
         td.create_consumer("Foo")
           .create_provider("Bar")

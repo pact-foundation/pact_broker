@@ -3,6 +3,7 @@ require 'pact_broker/api/decorators/webhook_request_template_decorator'
 require 'pact_broker/api/decorators/timestamps'
 require 'pact_broker/webhooks/webhook_request_template'
 require 'pact_broker/webhooks/webhook_event'
+require 'pact_broker/webhooks/version_matcher'
 require 'pact_broker/api/decorators/basic_pacticipant_decorator'
 require_relative 'pact_pacticipant_decorator'
 require_relative 'pacticipant_decorator'
@@ -13,6 +14,11 @@ module PactBroker
       class WebhookDecorator < BaseDecorator
         class WebhookEventDecorator < BaseDecorator
           property :name
+        end
+
+        class VersionMatcherDecorator < BaseDecorator
+          property :branch
+          property :tag
         end
 
         property :description, getter: lambda { |context| context[:represented].display_description }
@@ -29,6 +35,7 @@ module PactBroker
 
         property :request, :class => PactBroker::Webhooks::WebhookRequestTemplate, extend: WebhookRequestTemplateDecorator
         collection :events, :class => PactBroker::Webhooks::WebhookEvent, extend: WebhookEventDecorator
+        collection :consumer_version_matchers, camelize: true, :class => PactBroker::Webhooks::VersionMatcher, extend: VersionMatcherDecorator
 
         include Timestamps
 

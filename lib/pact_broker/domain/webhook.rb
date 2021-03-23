@@ -13,7 +13,7 @@ module PactBroker
       include Logging
 
       # request is actually a request_template
-      attr_accessor :uuid, :consumer, :provider, :request, :created_at, :updated_at, :events, :enabled, :description
+      attr_accessor :uuid, :consumer, :provider, :request, :created_at, :updated_at, :events, :enabled, :description, :consumer_version_matchers
       attr_reader :attributes
 
       def initialize attributes = {}
@@ -24,6 +24,7 @@ module PactBroker
         @consumer = attributes[:consumer]
         @provider = attributes[:provider]
         @events = attributes[:events]
+        @consumer_version_matchers = attributes[:consumer_version_matchers]
         @enabled = attributes[:enabled]
         @created_at = attributes[:created_at]
         @updated_at = attributes[:updated_at]
@@ -99,6 +100,16 @@ module PactBroker
 
       def expand_currently_deployed_provider_versions?
         request.uses_parameter?(PactBroker::Webhooks::PactAndVerificationParameters::CURRENTLY_DEPLOYED_PROVIDER_VERSION_NUMBER)
+      end
+
+      def version_matches_consumer_version_matchers?(version)
+        if consumer_version_matchers&.any?
+          consumer_version_matchers.any? do | matcher |
+            version.matches_webhook_matcher?(matcher)
+          end
+        else
+          true
+        end
       end
 
       private

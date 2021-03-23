@@ -180,7 +180,11 @@ module PactBroker
         let(:provider) { PactBroker::Domain::Pacticipant.new(name: 'Provider') }
         let(:webhooks) { [webhook]}
         let(:webhook) do
-          instance_double(PactBroker::Domain::Webhook, description: 'description', uuid: '1244', expand_currently_deployed_provider_versions?: expand_currently_deployed)
+          instance_double(PactBroker::Domain::Webhook,
+            description: 'description',
+            uuid: '1244',
+            expand_currently_deployed_provider_versions?: expand_currently_deployed,
+            version_matches_consumer_version_matchers?: true)
         end
         let(:expand_currently_deployed) { false }
         let(:triggered_webhook) { instance_double(PactBroker::Webhooks::TriggeredWebhook) }
@@ -269,6 +273,50 @@ module PactBroker
           it "logs the error" do
             allow(Service.logger).to receive(:warn)
             expect(Service.logger).to receive(:warn).with(/Error scheduling/, StandardError)
+            subject
+          end
+        end
+      end
+
+      describe ".trigger_webhooks integration" do
+        before do
+          allow(Job).to receive(:perform_in)
+        end
+
+        let(:pact) do
+          td.create_provider("Bar")
+            .create_consumer("Foo")
+            .create_webhook(
+              event_names: [PactBroker::Webhooks::WebhookEvent::CONTRACT_PUBLISHED],
+              consumer_version_matchers: [{ branch: "main" }]
+            )
+            .create_consumer_version("1", branch: branch)
+            .create_pact
+            .and_return(:pact)
+        end
+        let(:branch) { "main" }
+        let(:event_context) { {} }
+        let(:options) { { webhook_execution_configuration: webhook_execution_configuration } }
+        let(:webhook_execution_configuration) do
+          PactBroker::Webhooks::ExecutionConfiguration.new
+            .with_webhook_context(base_url: 'http://example.org')
+
+        end
+
+        subject { Service.trigger_webhooks(pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_PUBLISHED, event_context, options) }
+
+        context "when the webhook has a consumer version matcher that matches the pact's version" do
+          it "schedules a job" do
+            expect(Job).to receive(:perform_in)
+            subject
+          end
+        end
+
+        context "when the webhook has a consumer version matcher that does not match the pact's version" do
+          let(:branch) { "foo" }
+
+          it "does not schedule a job" do
+            expect(Job).to_not receive(:perform_in)
             subject
           end
         end

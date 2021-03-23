@@ -358,6 +358,63 @@ module PactBroker
           expect(all.first.associations[:current_deployed_versions].first.environment.name).to eq "prod"
         end
       end
+
+      describe "matches_webhook_matcher?" do
+        let(:version) do
+          td.create_consumer("Foo")
+            .create_consumer_version("1", branch: "right-branch", tag_names: ["right-tag"])
+            .and_return(:consumer_version)
+        end
+        let(:matcher) { PactBroker::Webhooks::VersionMatcher.new(branch: "right-branch") }
+
+        subject { version.matches_webhook_matcher?(matcher) }
+
+        context "when the matcher matches the branch" do
+          it { is_expected.to be true }
+        end
+
+        context "when the matcher does not match the branch" do
+          let(:matcher) { PactBroker::Webhooks::VersionMatcher.new(branch: "foo") }
+
+          it { is_expected.to be false }
+        end
+
+        context "when the matcher matches the tag" do
+          let(:matcher) { PactBroker::Webhooks::VersionMatcher.new(tag: "right-tag") }
+
+          it { is_expected.to be true }
+        end
+
+        context "when the matcher does not match the tag" do
+          let(:matcher) { PactBroker::Webhooks::VersionMatcher.new(tag: "bar") }
+
+          it { is_expected.to be false }
+        end
+
+        context "when the matcher matches the branch and tag" do
+          let(:matcher) { PactBroker::Webhooks::VersionMatcher.new(tag: "right-tag", branch: "right-branch") }
+
+          it { is_expected.to be true }
+        end
+
+        context "when the matcher matches the branch and not tag" do
+          let(:matcher) { PactBroker::Webhooks::VersionMatcher.new(tag: "bar", branch: "right-branch") }
+
+          it { is_expected.to be false }
+        end
+
+        context "when the matcher matches the tag and not branch" do
+          let(:matcher) { PactBroker::Webhooks::VersionMatcher.new(tag: "right-tag", branch: "wrong-branch") }
+
+          it { is_expected.to be false }
+        end
+
+        context "when the matcher has no properties" do
+          let(:matcher) { PactBroker::Webhooks::VersionMatcher.new({}) }
+
+          it { is_expected.to be true }
+        end
+      end
     end
   end
 end
