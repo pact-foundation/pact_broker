@@ -31,6 +31,7 @@ module PactBroker
           pacticipant_version_number: version.number,
           latest: original_selector[:latest],
           tag: original_selector[:tag],
+          branch: original_selector[:branch],
           environment_name: original_selector[:environment_name],
           type: type,
           one_of_many: one_of_many
@@ -45,6 +46,7 @@ module PactBroker
           pacticipant_version_number: original_selector[:pacticipant_version_number],
           latest: original_selector[:latest],
           tag: original_selector[:tag],
+          branch: original_selector[:branch],
           environment_name: original_selector[:environment_name],
           type: type
         )
@@ -74,6 +76,10 @@ module PactBroker
         self[:tag]
       end
 
+      def branch
+        self[:branch]
+      end
+
       def environment_name
         self[:environment_name]
       end
@@ -92,6 +98,10 @@ module PactBroker
 
       def latest_tagged?
         latest? && tag
+      end
+
+      def latest_from_branch?
+        latest? && branch
       end
 
       def version_does_not_exist?
@@ -130,6 +140,10 @@ module PactBroker
           "the latest version of #{pacticipant_name} with tag #{tag} (#{pacticipant_version_number})"
         elsif latest_tagged?
           "the latest version of #{pacticipant_name} with tag #{tag} (no such version exists)"
+        elsif latest_from_branch? && pacticipant_version_number
+          "the latest version of #{pacticipant_name} from branch #{branch} (#{pacticipant_version_number})"
+        elsif latest_from_branch?
+          "the latest version of #{pacticipant_name} from branch #{branch} (no such version exists)"
         elsif latest? && pacticipant_version_number
           "the latest version of #{pacticipant_name} (#{pacticipant_version_number})"
         elsif latest?

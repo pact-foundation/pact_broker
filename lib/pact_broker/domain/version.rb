@@ -103,6 +103,10 @@ module PactBroker
           end
         end
 
+        def where_branch(branch)
+          where(branch: branch)
+        end
+
         def where_number(number)
           where(name_like(:number, number))
         end
@@ -130,6 +134,7 @@ module PactBroker
           query = query.where_pacticipant_name(selector.pacticipant_name) if selector.pacticipant_name
           query = query.currently_deployed_to_environment(selector.environment_name, selector.pacticipant_name) if selector.environment_name
           query = query.where_tag(selector.tag) if selector.tag
+          query = query.where_branch(selector.branch) if selector.branch
           query = query.where_number(selector.pacticipant_version_number) if selector.pacticipant_version_number
           query = query.where_age_less_than(selector.max_age) if selector.max_age
 
