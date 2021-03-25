@@ -185,7 +185,7 @@ module PactBroker
       def create_provider_version version_number = "1.0.#{model_counter}", params = {}
         params.delete(:comment)
         tag_names = [params.delete(:tag_names), params.delete(:tag_name)].flatten.compact
-        @version = PactBroker::Domain::Version.create(:number => version_number, :pacticipant => @provider)
+        @version = PactBroker::Domain::Version.create(:number => version_number, :pacticipant => @provider, branch: params[:branch])
         @provider_version = @version
         tag_names.each do | tag_name |
           tag = PactBroker::Domain::Tag.create(name: tag_name, version: provider_version)

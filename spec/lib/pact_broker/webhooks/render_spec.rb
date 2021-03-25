@@ -71,11 +71,11 @@ module PactBroker
         end
 
         let(:provider_version) do
-          double("version", tags: provider_tags)
+          double("version", tags: provider_tags, branch: "provider-branch")
         end
 
         let(:consumer_version) do
-          double("version", tags: consumer_tags)
+          double("version", tags: consumer_tags, branch: "consumer-branch")
         end
 
         let(:provider_tags) do
@@ -122,7 +122,10 @@ module PactBroker
           ["${pactbroker.verificationResultUrl}", "http://verification", :pact_with_successful_verification, :nil_verification],
           ["${pactbroker.verificationResultUrl}", "http://verification", :pact_with_successful_verification, :verification],
           ["${pactbroker.providerVersionTags}", "test, prod", :pact_with_successful_verification, :verification],
+          ["${pactbroker.providerVersionBranch}", "provider-branch", :pact_with_successful_verification, :verification],
+          ["${pactbroker.providerVersionBranch}", "", :pact_with_no_verification, :nil_verification],
           ["${pactbroker.consumerVersionTags}", "test", :pact_with_successful_verification, :verification],
+          ["${pactbroker.consumerVersionBranch}", "consumer-branch", :pact_with_successful_verification, :verification],
           ["${pactbroker.consumerLabels}", "foo, bar", :pact_with_successful_verification, :verification],
           ["${pactbroker.providerLabels}", "finance, IT", :pact, :nil_verification],
         ]

@@ -6,7 +6,9 @@ module PactBroker
       CONSUMER_VERSION_NUMBER = 'pactbroker.consumerVersionNumber'
       PROVIDER_VERSION_NUMBER = 'pactbroker.providerVersionNumber'
       PROVIDER_VERSION_TAGS = 'pactbroker.providerVersionTags'
+      PROVIDER_VERSION_BRANCH = 'pactbroker.providerVersionBranch'
       CONSUMER_VERSION_TAGS = 'pactbroker.consumerVersionTags'
+      CONSUMER_VERSION_BRANCH = 'pactbroker.consumerVersionBranch'
       CONSUMER_NAME = 'pactbroker.consumerName'
       PROVIDER_NAME = 'pactbroker.providerName'
       GITHUB_VERIFICATION_STATUS = 'pactbroker.githubVerificationStatus'
@@ -22,7 +24,9 @@ module PactBroker
         CONSUMER_VERSION_NUMBER,
         PROVIDER_VERSION_NUMBER,
         PROVIDER_VERSION_TAGS,
+        PROVIDER_VERSION_BRANCH,
         CONSUMER_VERSION_TAGS,
+        CONSUMER_VERSION_BRANCH,
         PACT_URL,
         VERIFICATION_RESULT_URL,
         GITHUB_VERIFICATION_STATUS,
@@ -47,7 +51,9 @@ module PactBroker
           CONSUMER_VERSION_NUMBER => consumer_version_number,
           PROVIDER_VERSION_NUMBER => verification ? verification.provider_version_number : "",
           PROVIDER_VERSION_TAGS => provider_version_tags,
+          PROVIDER_VERSION_BRANCH => provider_version_branch,
           CONSUMER_VERSION_TAGS => consumer_version_tags,
+          CONSUMER_VERSION_BRANCH => consumer_version_branch,
           CONSUMER_NAME => pact ? pact.consumer_name : "",
           PROVIDER_NAME => pact ? pact.provider_name : "",
           GITHUB_VERIFICATION_STATUS => github_verification_status,
@@ -107,6 +113,14 @@ module PactBroker
         end
       end
 
+      def consumer_version_branch
+        if webhook_context[:consumer_version_branch]
+          webhook_context[:consumer_version_branch]
+        else
+          pact&.consumer_version&.branch || ""
+        end
+      end
+
       def provider_version_tags
         if webhook_context[:provider_version_tags]
           webhook_context[:provider_version_tags].join(", ")
@@ -116,6 +130,14 @@ module PactBroker
           else
             ""
           end
+        end
+      end
+
+      def provider_version_branch
+        if webhook_context[:provider_version_branch]
+          webhook_context[:provider_version_branch]
+        else
+          verification&.provider_version&.branch || ""
         end
       end
 

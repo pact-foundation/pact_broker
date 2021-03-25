@@ -191,6 +191,40 @@ module PactBroker
             expect(version_numbers).to eq %w{2 10}
           end
         end
+
+        context "selecting versions for a branch" do
+          before do
+            td.create_consumer("Foo")
+              .create_consumer_version("1", branch: "main")
+              .create_consumer_version("2", branch: "feat/foo")
+              .create_consumer_version("3", branch: "main")
+              .create_provider("Bar")
+              .create_provider_version("10", branch: "main")
+          end
+
+          let(:selector) { PactBroker::Matrix::UnresolvedSelector.new(branch: "main") }
+
+          it "returns the versions with the matching branch" do
+            expect(version_numbers).to eq %w{1 3 10}
+          end
+        end
+
+        context "selecting latest version for a branch" do
+          before do
+            td.create_consumer("Foo")
+              .create_consumer_version("1", branch: "main")
+              .create_consumer_version("2", branch: "feat/foo")
+              .create_consumer_version("3", branch: "main")
+              .create_provider("Bar")
+              .create_provider_version("10", branch: "main")
+          end
+
+          let(:selector) { PactBroker::Matrix::UnresolvedSelector.new(branch: "main", latest: true) }
+
+          it "returns the latest versions for each matching branch" do
+            expect(version_numbers).to eq %w{3 10}
+          end
+        end
       end
 
       describe "latest_for_pacticipant?" do

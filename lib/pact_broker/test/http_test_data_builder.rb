@@ -175,7 +175,8 @@ module PactBroker
             "method" => "POST",
             "url" => url,
             "body" => {
-              "deployedProviderVersion" => "${pactbroker.currentlyDeployedProviderVersionNumber}"
+              "deployedProviderVersion" => "${pactbroker.currentlyDeployedProviderVersionNumber}",
+              "consumerVersionBranch" => "${pactbroker.consumerVersionBranch}"
             }
           }
         }

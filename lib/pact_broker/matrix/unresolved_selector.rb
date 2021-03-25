@@ -10,7 +10,7 @@ module PactBroker
       end
 
       def self.from_hash(hash)
-        new(hash.symbolize_keys.snakecase_keys.slice(:pacticipant_name, :pacticipant_version_number, :latest, :tag, :environment_name, :max_age))
+        new(hash.symbolize_keys.snakecase_keys.slice(:pacticipant_name, :pacticipant_version_number, :latest, :tag, :branch, :environment_name, :max_age))
       end
 
       def pacticipant_name
@@ -37,6 +37,10 @@ module PactBroker
         self[:tag]
       end
 
+      def branch
+        self[:branch]
+      end
+
       def environment_name
         self[:environment_name]
       end
@@ -47,6 +51,10 @@ module PactBroker
 
       def tag= tag
         self[:tag] = tag
+      end
+
+      def branch= branch
+        self[:branch] = branch
       end
 
       def environment_name= environment_name
