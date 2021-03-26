@@ -50,6 +50,10 @@ body table.table {
   font-size: 11px;
 }
 
+body table.table td:nth-child(3) {
+  word-wrap: break-word;
+}
+
 .location-bar-container {
   line-height: 30px;
 }
@@ -70,7 +74,9 @@ body table.table {
 }
 .embedded-resource-title {
   font-style: italic;
+  word-wrap: break-word;
 }
+
 .embedded-resource-title:before {
   content: "\"";
 }

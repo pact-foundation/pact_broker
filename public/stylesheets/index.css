@@ -52,7 +52,10 @@ body { padding-top: 10px; }
   word-wrap: break-word;
 }
 
-.consumer-version-number, .provider-version-number {
+.consumer-version,
+.provider-version,
+.consumer-version-number,
+.provider-version-number {
   word-wrap: break-word;
 }
 
