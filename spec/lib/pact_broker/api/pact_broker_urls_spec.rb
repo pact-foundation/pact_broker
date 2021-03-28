@@ -126,14 +126,24 @@ module PactBroker
           end
         end
 
+        context "when the padding has been removed" do
+          let(:encoded_metadata) { Base64.strict_encode64("foo=bar").chomp("=") }
+
+          it "can still handle it" do
+            expect(PactBrokerUrls.decode_pact_metadata(encoded_metadata)).to eq("foo" => "bar")
+          end
+        end
+
         context "when the metadata is not valid base64" do
+          let(:encoded_metadata) { "%" }
+
           it "returns an empty hash" do
-            expect(PactBrokerUrls.decode_pact_metadata("foo==,")).to eq({})
+            expect(PactBrokerUrls.decode_pact_metadata(encoded_metadata)).to eq({})
           end
 
           it "logs a warning" do
-            expect(logger).to receive(:warn).with("Exception parsing webhook metadata: foo==,", ArgumentError)
-            PactBrokerUrls.decode_pact_metadata("foo==,")
+            expect(logger).to receive(:info).with("ArgumentError parsing webhook metadata: '%'. Trying non strict decode.")
+            PactBrokerUrls.decode_pact_metadata(encoded_metadata)
           end
         end
       end
