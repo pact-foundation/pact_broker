@@ -1,3 +1,13 @@
+<a name="v2.79.1"></a>
+### v2.79.1 (2021-03-01)
+
+#### Bug Fixes
+
+* lock reform gem	 ([53aa92f8](/../../commit/53aa92f8))
+
+* **ui**
+  * Make long pacticipant versions look nice (#407)	 ([96b50572](/../../commit/96b50572))
+
 <a name="v2.79.0"></a>
 ### v2.79.0 (2021-02-25)
 
