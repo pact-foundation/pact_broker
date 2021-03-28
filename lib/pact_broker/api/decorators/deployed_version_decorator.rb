@@ -19,6 +19,13 @@ module PactBroker
             href: deployed_version_url(represented, user_options.fetch(:base_url))
           }
         end
+
+        link :'pb:record-undeployment' do | user_options |
+          {
+            title: "Record undeployment",
+            href: record_undeployment_url(represented, user_options.fetch(:base_url))
+          }
+        end
       end
     end
   end

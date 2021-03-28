@@ -328,7 +328,11 @@ module PactBroker
       end
 
       def deployed_version_url(deployed_version, base_url = '')
-        "/deployed-versions/#{deployed_version.uuid}"
+        "#{base_url}/deployed-versions/#{deployed_version.uuid}"
+      end
+
+      def record_undeployment_url(deployed_version, base_url = '')
+        "#{deployed_version_url(deployed_version, base_url)}/record-undeployment"
       end
 
       def hal_browser_url target_url, base_url = ''
