@@ -9,7 +9,7 @@ using PactBroker::StringRefinements
 MODEL_CLASS_FULL_NAME = "PactBroker::Foos::Foo"
 
 TEMPLATE_DIR = Pathname.new(File.join(__dir__, "templates"))
-MIGRATIONS_DIR = PactBroker.project_root.join("db", "migrations").tap { |it| puts it }
+MIGRATIONS_DIR = PactBroker.project_root.join("db", "migrations")
 LIB_DIR = PactBroker.project_root.join("lib")
 
 def model_full_class_name
