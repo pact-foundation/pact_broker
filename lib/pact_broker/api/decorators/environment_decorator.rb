@@ -31,6 +31,13 @@ module PactBroker
             href: environment_url(represented, options[:base_url])
           }
         end
+
+        link :'pb:environments' do | user_options |
+          {
+            title: "Environments",
+            href: environments_url(user_options.fetch(:base_url))
+          }
+        end
       end
     end
   end

@@ -73,17 +73,12 @@ module PactBroker
       end
 
       def encode_metadata(metadata)
-        Base64.strict_encode64(Rack::Utils.build_nested_query(metadata))
+        Base64.urlsafe_encode64(Rack::Utils.build_nested_query(metadata), padding: false)
       end
 
       def decode_pact_metadata(metadata)
         if metadata && metadata != ''
-          begin
-            Rack::Utils.parse_nested_query(Base64.strict_decode64(metadata))
-          rescue StandardError => e
-            logger.warn("Exception parsing webhook metadata: #{metadata}", e)
-            {}
-          end
+          parse_nested_metadata_query(base64_decode_metadata(metadata))
         else
           {}
         end
@@ -391,6 +386,23 @@ module PactBroker
           thing[:provider_name]
         else
           nil
+        end
+      end
+
+      def base64_decode_metadata(metadata)
+        # Some people remove the == padding on the end
+        Base64.urlsafe_decode64(metadata)
+      rescue StandardError => e
+        logger.warn("Exception parsing webhook metadata: '#{metadata}'", e)
+        ""
+      end
+
+      def parse_nested_metadata_query(query)
+        begin
+          Rack::Utils.parse_nested_query(query)
+        rescue StandardError => e
+          logger.warn("Could not parse query: '#{query}'", e)
+          {}
         end
       end
     end
