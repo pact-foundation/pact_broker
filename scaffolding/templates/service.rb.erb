@@ -1,0 +1,22 @@
+require 'pact_broker/logging'
+require '<%= require_path_prefix %>/repositories'
+require '<%= require_path_prefix %>/services'
+
+module <%= model_top_module %>
+  module <%= model_secondary_module %>
+    class <%= service_class_name %>
+      extend self
+      extend <%= model_top_module %>::Repositories
+      extend <%= model_top_module %>::Services
+      include PactBroker::Logging
+
+      def self.find_by_uuid(uuid)
+        <%= repository_instance_name %>.find_by_uuid(uuid)
+      end
+
+      def self.find_by_uuid!(uuid)
+        <%= repository_instance_name %>.find_by_uuid!(uuid)
+      end
+    end
+  end
+end

@@ -1,0 +1,78 @@
+require 'spec_helper'
+require '<%= resource_require_path %>'
+
+module <%= resource_top_module %>
+  module Api
+    module Resources
+      describe <%= resource_class_name %> do
+        before do
+          allow_any_instance_of(described_class).to receive(:application_context).and_return(PactBroker::ApplicationContext.default_application_context)
+          allow_any_instance_of(described_class).to receive(:<%= service_instance_name %>).and_return(<%= service_instance_name %>)
+          allow(<%= service_instance_name %>).to receive(:find_by_uuid).and_return(<%= model_instance_name %>)
+          allow(<%= decorator_full_class_name %>).to receive(:new).and_return(decorator)
+        end
+
+        let(:<%= model_instance_name %>) { instance_double("<%= model_full_class_name %>", uuid: uuid) }
+        let(:parsed_<%= model_instance_name %>) { double("parsed <%= model_instance_name %>") }
+        let(:<%= service_instance_name %>) { class_double("<%= service_class_full_name %>").as_stubbed_const }
+        let(:path) { "/<%= resource_url_path %>/#{uuid}" }
+        let(:uuid) { "12345678" }
+        let(:rack_headers) do
+          {
+            "HTTP_ACCEPT" => "application/hal+json"
+          }
+        end
+        let(:decorator) do
+          instance_double("<%= decorator_full_class_name %>",
+            to_json: "response",
+            from_json: parsed_<%= model_instance_name %>
+          )
+        end
+
+        # Delete this when the route has been added to the API - this is just here so that the generated
+        # spec can be run to see if it works.
+        let(:app) do
+          pact_api = Webmachine::Application.new do |app|
+            app.routes do
+              add ["<%= resource_url_path %>", :<%= model_instance_name %>_uuid], <%= resource_class_full_name %>, { resource_name: "<%= model_instance_name %>" }
+            end
+          end
+          pact_api.configure do |config|
+            config.adapter = :RackMapped
+          end
+
+          pact_api.adapter
+        end
+
+        describe "GET" do
+          subject { get(path, nil, rack_headers) }
+
+          context "when the <%= model_instance_name %> does not exist" do
+            let(:<%= model_instance_name %>) { nil }
+
+            it { is_expected.to be_a_404_response }
+          end
+
+          context "when the <%= model_class_name %> exists" do
+            it "finds the <%= model_class_name %> by UUID" do
+              expect(<%= service_class_full_name %>).to receive(:find_by_uuid).with(uuid)
+              subject
+            end
+
+            it "generates a JSON representation of the <%= model_class_name %>" do
+              expect(<%= decorator_full_class_name %>).to receive(:new).with(<%= model_instance_name %>)
+              expect(decorator).to receive(:to_json).with(user_options: hash_including(base_url: "http://example.org"))
+              subject
+            end
+
+            it { is_expected.to be_a_hal_json_success_response }
+
+            it "includes the JSON representation in the response body" do
+              expect(subject.body).to eq "response"
+            end
+          end
+        end
+      end
+    end
+  end
+end
