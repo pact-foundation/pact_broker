@@ -7,7 +7,7 @@ require 'pathname'
 using PactBroker::StringRefinements
 
 MODEL_CLASS_FULL_NAME = "PactBroker::Foos::Foo"
-DRY_RUN = true
+DRY_RUN = false
 
 TEMPLATE_DIR = Pathname.new(File.join(__dir__, "templates"))
 MIGRATIONS_DIR = PactBroker.project_root.join("db", "migrations")
