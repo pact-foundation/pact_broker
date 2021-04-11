@@ -7,6 +7,7 @@ require 'pathname'
 using PactBroker::StringRefinements
 
 MODEL_CLASS_FULL_NAME = "PactBroker::Foos::Foo"
+DRY_RUN = true
 
 TEMPLATE_DIR = Pathname.new(File.join(__dir__, "templates"))
 MIGRATIONS_DIR = PactBroker.project_root.join("db", "migrations")
@@ -142,7 +143,7 @@ def resource_spec_path
 end
 
 def resource_require_path
-  Pathname.new(resource_path).relative_path_from(LIB_DIR)
+  Pathname.new(resource_path).relative_path_from(LIB_DIR).to_s.chomp(".rb")
 end
 
 def decorator_path
@@ -150,7 +151,7 @@ def decorator_path
 end
 
 def decorator_require_path
-  Pathname.new(decorator_path).relative_path_from(LIB_DIR)
+  Pathname.new(decorator_path).relative_path_from(LIB_DIR).to_s.chomp(".rb")
 end
 
 def service_path
@@ -158,7 +159,7 @@ def service_path
 end
 
 def service_require_path
-  Pathname.new(service_path).relative_path_from(LIB_DIR)
+  Pathname.new(service_path).relative_path_from(LIB_DIR).to_s.chomp(".rb")
 end
 
 def service_spec_path
@@ -167,6 +168,14 @@ end
 
 def repository_path
   LIB_DIR.join(*repository_class_full_name.split("::").collect(&:snakecase)).to_s.chomp("/") + ".rb"
+end
+
+def repository_require_path
+  Pathname.new(repository_path).relative_path_from(LIB_DIR).to_s.chomp(".rb")
+end
+
+def repository_spec_path
+  repository_path.to_s.gsub(LIB_DIR.to_s, SPEC_DIR.to_s).gsub(".rb", "_spec.rb")
 end
 
 # Generate
@@ -203,12 +212,18 @@ def generate_repository_file
   generate_file(TEMPLATE_DIR.join("repository.rb.erb"), repository_path)
 end
 
+def generate_repository_spec_file
+  generate_file(TEMPLATE_DIR.join("repository_spec.rb.erb"), repository_spec_path)
+end
+
 
 def generate_file(template, destination)
   puts "Generating file #{destination}"
   file_content = ERB.new(File.read(template)).result(binding).tap { |it| puts it }
-  FileUtils.mkdir_p(File.dirname(destination))
-  File.open(destination, "w") { |file| file << file_content }
+  if !DRY_RUN
+    FileUtils.mkdir_p(File.dirname(destination))
+    File.open(destination, "w") { |file| file << file_content }
+  end
 end
 
 generate_migration_file
@@ -218,3 +233,5 @@ generate_resource_spec
 generate_decorator_file
 generate_service_file
 generate_service_spec_file
+generate_repository_file
+generate_repository_spec_file

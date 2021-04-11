@@ -1,0 +1,18 @@
+require 'pact_broker/logging'
+require 'pact_broker/error'
+
+module <%= model_top_module %>
+  module <%= model_secondary_module %>
+    class <%= repository_class_name %>
+      include PactBroker::Logging
+
+      def self.find_by_uuid(uuid)
+        <%= model_class_name %>.where(uuid: uuid).single_record
+      end
+
+      def self.find_by_uuid!(uuid)
+        find_by_uuid(uuid) or raise PactBroker::Error.new("<%= model_class_name %> with UUID #{uuid} does not exist")
+      end
+    end
+  end
+end
