@@ -24,8 +24,10 @@ module PactBroker
         end
 
         def resource_exists?
-          if identifier_from_path[:verification_number] == "all"
+          if verification_number == "all"
             set_json_error_message("To see all the verifications for a pact, use the Matrix page")
+            false
+          elsif !verification_number_is_integer?
             false
           else
             !!verification
@@ -65,6 +67,14 @@ module PactBroker
 
         def extended_decorator_for model
           decorator_class(:extended_verification_decorator).new(model)
+        end
+
+        def verification_number
+          identifier_from_path[:verification_number]
+        end
+
+        def verification_number_is_integer?
+          verification_number =~ /^\d+$/
         end
       end
     end
