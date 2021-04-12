@@ -22,7 +22,6 @@ module PactBroker
 
       def trigger_webhooks_for_updated_pact(existing_pact, updated_pact, event_context, webhook_options)
         webhook_service.trigger_webhooks updated_pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_PUBLISHED, event_context, webhook_options
-        # TODO this should use the sha!
         if existing_pact.pact_version_sha != updated_pact.pact_version_sha
           logger.info "Existing pact for version #{existing_pact.consumer_version_number} has been updated with new content, triggering webhooks for changed content"
           webhook_service.trigger_webhooks updated_pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED, event_context, webhook_options
@@ -33,9 +32,12 @@ module PactBroker
 
       def trigger_webhooks_for_verification_results_publication(pact, verification, event_context, webhook_options)
         expand_events(event_context).each do | reconstituted_event_context |
+          # The pact passed in is the most recent one with the matching SHA.
+          # Find the pact with the right consumer version number
+          pact_for_triggered_webhook = find_pact_for_verification_triggered_webhook(pact, reconstituted_event_context)
           if verification.success
             webhook_service.trigger_webhooks(
-              pact,
+              pact_for_triggered_webhook,
               verification,
               PactBroker::Webhooks::WebhookEvent::VERIFICATION_SUCCEEDED,
               reconstituted_event_context,
@@ -43,7 +45,7 @@ module PactBroker
             )
           else
             webhook_service.trigger_webhooks(
-              pact,
+              pact_for_triggered_webhook,
               verification,
               PactBroker::Webhooks::WebhookEvent::VERIFICATION_FAILED,
               reconstituted_event_context,
@@ -52,7 +54,7 @@ module PactBroker
           end
 
           webhook_service.trigger_webhooks(
-            pact,
+            pact_for_triggered_webhook,
             verification,
             PactBroker::Webhooks::WebhookEvent::VERIFICATION_PUBLISHED,
             reconstituted_event_context,
@@ -98,6 +100,19 @@ module PactBroker
             .collect { | consumer_version_number, selectors | merge_consumer_version_selectors(consumer_version_number, selectors, event_context.without(:consumer_version_selectors)) }
         else
           [event_context]
+        end
+      end
+
+      def find_pact_for_verification_triggered_webhook(pact, reconstituted_event_context)
+        if reconstituted_event_context[:consumer_version_number]
+          find_pact_params = {
+            consumer_name: pact.consumer_name,
+            provider_name: pact.provider_name,
+            consumer_version_number: reconstituted_event_context[:consumer_version_number]
+          }
+          pact_service.find_pact(find_pact_params) || pact
+        else
+          pact
         end
       end
 

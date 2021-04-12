@@ -3,9 +3,10 @@ require 'pact_broker/webhooks/trigger_service'
 module PactBroker
   module Webhooks
     describe TriggerService do
-      let(:pact) { double("pact", pact_version_sha: pact_version_sha) }
+      let(:pact) { double("pact", pact_version_sha: pact_version_sha, consumer_name: "foo", provider_name: "bar") }
       let(:pact_version_sha) { "111" }
       let(:pact_repository) { double("pact_repository", find_previous_pacts: previous_pacts) }
+      let(:pact_service) { class_double("PactBroker::Pacts::Service").as_stubbed_const }
       let(:webhook_service) { double("webhook_service", trigger_webhooks: nil) }
       let(:previous_pact) { double("previous_pact", pact_version_sha: previous_pact_version_sha) }
       let(:previous_pact_version_sha) { "111" }
@@ -16,6 +17,7 @@ module PactBroker
 
       before do
         allow(TriggerService).to receive(:pact_repository).and_return(pact_repository)
+        allow(TriggerService).to receive(:pact_service).and_return(pact_service)
         allow(TriggerService).to receive(:webhook_service).and_return(webhook_service)
         allow(TriggerService).to receive(:logger).and_return(logger)
       end
@@ -139,6 +141,10 @@ module PactBroker
       end
 
       describe "#trigger_webhooks_for_verification_results_publication" do
+        before do
+          allow(pact_service).to receive(:find_pact).and_return(pact_for_consumer_version_1, pact_for_consumer_version_2)
+          # allow(pact_service).to receive(:find_pact).with(hash_including(consumer_version_number: "2")).and_return(pact_for_consumer_version_2)
+        end
         let(:verification) { double("verification", success: success) }
         let(:success) { true }
         # See lib/pact_broker/pacts/metadata.rb build_metadata_for_pact_for_verification
@@ -153,21 +159,28 @@ module PactBroker
         end
         let(:expected_event_context_1) { { consumer_version_number: "1", consumer_version_tags: ["prod", "main"], other: "foo" } }
         let(:expected_event_context_2) { { consumer_version_number: "2", consumer_version_tags: ["feat/2"], other: "foo" } }
+        let(:pact_for_consumer_version_1) { double('pact_for_consumer_version_1') }
+        let(:pact_for_consumer_version_2) { double('pact_for_consumer_version_2') }
 
         subject { TriggerService.trigger_webhooks_for_verification_results_publication(pact, verification, event_context, webhook_options) }
 
-        context "when the verification is successful" do
+        it "find the pact publication for each consumer version number" do
+          expect(pact_service).to receive(:find_pact).with(hash_including(consumer_version_number: "1")).and_return(pact_for_consumer_version_1)
+          expect(pact_service).to receive(:find_pact).with(hash_including(consumer_version_number: "2")).and_return(pact_for_consumer_version_2)
+          subject
+        end
 
+        context "when the verification is successful" do
           context "when there are consumer_version_selectors in the event_context" do
             it "triggers a provider_verification_succeeded webhook for each consumer version (ie. commit)" do
-              expect(webhook_service).to receive(:trigger_webhooks).with(pact, verification, PactBroker::Webhooks::WebhookEvent::VERIFICATION_SUCCEEDED, expected_event_context_1, webhook_options)
-              expect(webhook_service).to receive(:trigger_webhooks).with(pact, verification, PactBroker::Webhooks::WebhookEvent::VERIFICATION_SUCCEEDED, expected_event_context_2, webhook_options)
+              expect(webhook_service).to receive(:trigger_webhooks).with(pact_for_consumer_version_1, verification, PactBroker::Webhooks::WebhookEvent::VERIFICATION_SUCCEEDED, expected_event_context_1, webhook_options)
+              expect(webhook_service).to receive(:trigger_webhooks).with(pact_for_consumer_version_2, verification, PactBroker::Webhooks::WebhookEvent::VERIFICATION_SUCCEEDED, expected_event_context_2, webhook_options)
               subject
             end
 
             it "triggers a provider_verification_published webhook for each consumer version (ie. commit)" do
-              expect(webhook_service).to receive(:trigger_webhooks).with(pact, verification, PactBroker::Webhooks::WebhookEvent::VERIFICATION_PUBLISHED, expected_event_context_1, webhook_options)
-              expect(webhook_service).to receive(:trigger_webhooks).with(pact, verification, PactBroker::Webhooks::WebhookEvent::VERIFICATION_PUBLISHED, expected_event_context_2, webhook_options)
+              expect(webhook_service).to receive(:trigger_webhooks).with(pact_for_consumer_version_1, verification, PactBroker::Webhooks::WebhookEvent::VERIFICATION_PUBLISHED, expected_event_context_1, webhook_options)
+              expect(webhook_service).to receive(:trigger_webhooks).with(pact_for_consumer_version_2, verification, PactBroker::Webhooks::WebhookEvent::VERIFICATION_PUBLISHED, expected_event_context_2, webhook_options)
               subject
             end
           end
@@ -188,14 +201,14 @@ module PactBroker
 
           context "when there are consumer_version_selectors in the event_context" do
             it "triggers a provider_verification_failed webhook for each consumer version (ie. commit)" do
-              expect(webhook_service).to receive(:trigger_webhooks).with(pact, verification, PactBroker::Webhooks::WebhookEvent::VERIFICATION_FAILED, expected_event_context_1, webhook_options)
-              expect(webhook_service).to receive(:trigger_webhooks).with(pact, verification, PactBroker::Webhooks::WebhookEvent::VERIFICATION_FAILED, expected_event_context_2, webhook_options)
+              expect(webhook_service).to receive(:trigger_webhooks).with(pact_for_consumer_version_1, verification, PactBroker::Webhooks::WebhookEvent::VERIFICATION_FAILED, expected_event_context_1, webhook_options)
+              expect(webhook_service).to receive(:trigger_webhooks).with(pact_for_consumer_version_2, verification, PactBroker::Webhooks::WebhookEvent::VERIFICATION_FAILED, expected_event_context_2, webhook_options)
               subject
             end
 
             it "triggeres a provider_verification_published webhook for each consumer version (ie. commit)" do
-              expect(webhook_service).to receive(:trigger_webhooks).with(pact, verification, PactBroker::Webhooks::WebhookEvent::VERIFICATION_PUBLISHED, expected_event_context_1, webhook_options)
-              expect(webhook_service).to receive(:trigger_webhooks).with(pact, verification, PactBroker::Webhooks::WebhookEvent::VERIFICATION_PUBLISHED, expected_event_context_2, webhook_options)
+              expect(webhook_service).to receive(:trigger_webhooks).with(pact_for_consumer_version_1, verification, PactBroker::Webhooks::WebhookEvent::VERIFICATION_PUBLISHED, expected_event_context_1, webhook_options)
+              expect(webhook_service).to receive(:trigger_webhooks).with(pact_for_consumer_version_2, verification, PactBroker::Webhooks::WebhookEvent::VERIFICATION_PUBLISHED, expected_event_context_2, webhook_options)
               subject
             end
           end
