@@ -15,8 +15,12 @@ module PactBroker
         include FormatDateTime
         using PactBroker::StringRefinements
 
+        def self.camelize_property_names
+          @camelize = true
+        end
+
         def self.property(name, options={}, &block)
-          if options.delete(:camelize)
+          if options.delete(:camelize) || @camelize
             camelized_name = name.to_s.camelcase(false).to_sym
             super(name, { as: camelized_name }.merge(options), &block)
           else

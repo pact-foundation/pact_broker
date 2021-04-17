@@ -115,6 +115,8 @@ module PactBroker
         add ['dashboard', 'provider', :provider_name, 'consumer', :consumer_name ], Api::Resources::Dashboard, {resource_name: "integration_dashboard"}
         add ['test','error'], Api::Resources::ErrorTest, {resource_name: "error_test"}
 
+        add ['contracts', 'publish'], Api::Resources::PublishContracts, { resource_name: "publish_contracts" }
+
         if PactBroker.feature_enabled?(:environments)
           add ['environments'], Api::Resources::Environments, { resource_name: "environments" }
           add ['environments', :environment_uuid], Api::Resources::Environment, { resource_name: "environment" }

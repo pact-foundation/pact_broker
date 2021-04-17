@@ -107,17 +107,6 @@ module PactBroker
         def pact
           @pact ||= pact_service.find_pact(pact_params)
         end
-
-        def pact_params
-          @pact_params ||= PactBroker::Pacts::PactParams.from_request request, path_info
-        end
-
-        def webhook_options
-          {
-            database_connector: database_connector,
-            webhook_execution_configuration: webhook_execution_configuration
-          }
-        end
       end
     end
   end

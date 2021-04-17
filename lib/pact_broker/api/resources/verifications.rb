@@ -85,13 +85,6 @@ module PactBroker
           metadata
         end
 
-        def webhook_options
-          {
-            database_connector: database_connector,
-            webhook_execution_configuration: webhook_execution_configuration
-          }
-        end
-
         def verification_params
           params(symbolize_names: false).merge('wip' => wip?)
         end
