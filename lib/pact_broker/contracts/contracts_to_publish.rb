@@ -7,7 +7,7 @@ module PactBroker
           params[:tags],
           params[:branch],
           params[:build_url],
-          params[:contract]
+          params[:contracts]
         )
       end
     end

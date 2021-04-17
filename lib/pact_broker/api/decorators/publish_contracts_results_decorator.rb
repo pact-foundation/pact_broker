@@ -29,6 +29,16 @@ module PactBroker
           }
         end
 
+        links :'pb:pacticipant-version-tags' do | options |
+          represented.tags.collect do | tag |
+            {
+              title: "Tag",
+              name: tag.name,
+              href: tag_url(options.fetch(:base_url), tag)
+            }
+          end
+        end
+
         links :'pb:contracts' do | options |
           represented.contracts.collect do | contract |
             {
