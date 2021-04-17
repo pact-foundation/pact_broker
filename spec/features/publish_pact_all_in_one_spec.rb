@@ -16,7 +16,7 @@ RSpec.describe "publishing a pact using the all in one endpoint" do
         {
           :role => "consumer",
           :providerName => "Bar",
-          :contractSpecification => "pact",
+          :specification => "pact",
           :contentType => "application/json",
           :content => encoded_contract
         }
@@ -34,5 +34,13 @@ RSpec.describe "publishing a pact using the all in one endpoint" do
 
   it "creates a pact" do
     expect { subject }.to change { PactBroker::Pacts::PactPublication.count }.by(1)
+  end
+
+  context "with a validation error" do
+    before do
+      request_body_hash.delete(:pacticipantName)
+    end
+
+    it { is_expected.to be_a_json_error_response("missing") }
   end
 end

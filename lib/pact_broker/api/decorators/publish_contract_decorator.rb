@@ -9,7 +9,7 @@ module PactBroker
 
         property :role
         property :provider_name
-        property :contract_specification
+        property :specification
         property :content_type
         property :content
       end
