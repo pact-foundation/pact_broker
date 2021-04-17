@@ -148,12 +148,12 @@ module PactBroker
             td.create_environment("test")
               .create_consumer("Foo")
               .create_consumer_version("1")
-              .create_deployed_version_for_consumer_version
+              .create_deployed_version_for_consumer_version(target: "1")
               .create_consumer_version("2")
               .create_environment("prod")
-              .create_deployed_version_for_consumer_version
+              .create_deployed_version_for_consumer_version(target: "2")
               .create_consumer_version("3")
-              .create_deployed_version_for_consumer_version
+              .create_deployed_version_for_consumer_version(target: "3")
               .create_consumer_version("4")
               .create_deployed_version_for_consumer_version(currently_deployed: false)
               .create_consumer_version("5")
@@ -174,15 +174,15 @@ module PactBroker
             td.create_environment("test")
               .create_consumer("Foo")
               .create_consumer_version("1")
-              .create_deployed_version_for_consumer_version
+              .create_deployed_version_for_consumer_version(target: "1")
               .create_consumer_version("2")
               .create_environment("prod")
-              .create_deployed_version_for_consumer_version
+              .create_deployed_version_for_consumer_version(target: "2")
               .create_consumer_version("3")
               .create_consumer_version("5")
               .create_consumer("Bar")
               .create_consumer_version("10")
-              .create_deployed_version_for_consumer_version
+              .create_deployed_version_for_consumer_version(target: "3")
               .create_consumer_version("11")
               .create_deployed_version_for_consumer_version(currently_deployed: false)
           end
@@ -376,9 +376,9 @@ module PactBroker
             .create_consumer("Foo")
             .create_consumer_version("1")
             .create_deployed_version_for_consumer_version(currently_deployed: false, environment_name: "test")
-            .create_deployed_version_for_consumer_version(currently_deployed: true, environment_name: "prod")
+            .create_deployed_version_for_consumer_version(currently_deployed: true, environment_name: "prod", target: "1")
             .create_consumer_version("2")
-            .create_deployed_version_for_consumer_version(currently_deployed: true, environment_name: "prod")
+            .create_deployed_version_for_consumer_version(currently_deployed: true, environment_name: "prod", target: "2")
         end
 
         it "returns the currently active deployed versions" do

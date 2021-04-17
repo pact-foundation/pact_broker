@@ -399,13 +399,13 @@ module PactBroker
         self
       end
 
-      def create_deployed_version_for_consumer_version(uuid: SecureRandom.uuid, currently_deployed: true, environment_name: environment&.name, created_at: nil)
-        create_deployed_version(uuid: uuid, currently_deployed: currently_deployed, version: consumer_version, environment_name: environment_name, created_at: created_at)
+      def create_deployed_version_for_consumer_version(uuid: SecureRandom.uuid, currently_deployed: true, environment_name: environment&.name, target: nil, created_at: nil)
+        create_deployed_version(uuid: uuid, currently_deployed: currently_deployed, version: consumer_version, environment_name: environment_name, target: target, created_at: created_at)
         self
       end
 
-      def create_deployed_version_for_provider_version(uuid: SecureRandom.uuid, currently_deployed: true, environment_name: environment&.name, created_at: nil)
-        create_deployed_version(uuid: uuid, currently_deployed: currently_deployed, version: provider_version, environment_name: environment_name, created_at: created_at)
+      def create_deployed_version_for_provider_version(uuid: SecureRandom.uuid, currently_deployed: true, environment_name: environment&.name, target: nil, created_at: nil)
+        create_deployed_version(uuid: uuid, currently_deployed: currently_deployed, version: provider_version, environment_name: environment_name, target: target, created_at: created_at)
         self
       end
 
@@ -522,10 +522,10 @@ module PactBroker
 
       private
 
-      def create_deployed_version(uuid: , currently_deployed: , version:, environment_name: , created_at: nil)
+      def create_deployed_version(uuid: , currently_deployed: , version:, environment_name: , target: nil, created_at: nil)
         env = find_environment(environment_name)
-        @deployed_version = PactBroker::Deployments::DeployedVersionService.create(uuid, version, env, false)
-        @deployed_version.update(currently_deployed: false) unless currently_deployed
+        @deployed_version = PactBroker::Deployments::DeployedVersionService.create(uuid, version, env, target)
+        PactBroker::Deployments::DeployedVersionService.record_version_undeployed(deployed_version) unless currently_deployed
         set_created_at_if_set(created_at, :deployed_versions, id: deployed_version.id)
       end
 

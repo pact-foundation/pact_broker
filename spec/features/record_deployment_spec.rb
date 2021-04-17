@@ -14,12 +14,13 @@ describe "Record deployment" do
   let(:version_path) { "/pacticipants/Foo/versions/1" }
   let(:version_response) { get(version_path, nil, { "HTTP_ACCEPT" => "application/hal+json" } ) }
   let(:replaced_previous) { true }
+  let(:target) { nil }
   let(:path) do
     JSON.parse(version_response.body)["_links"]["pb:record-deployment"]
       .find{ |relation| relation["name"] == "test" }
       .fetch("href")
   end
-  let(:request_body) { { replacedPreviousDeployedVersion: replaced_previous }.to_json }
+  let(:request_body) { { target: target }.to_json }
 
   subject { post(path, request_body, headers) }
 
@@ -44,15 +45,11 @@ describe "Record deployment" do
   context "with an empty body" do
     let(:request_body) { nil }
 
-    it { is_expected.to be_a_json_error_response("must be one of true, false") }
-
-    it "does not change the overall count of currently deployed versions" do
-      expect { subject }.to_not change { PactBroker::Deployments::DeployedVersion.currently_deployed.count }
-    end
+    it { is_expected.to be_a_hal_json_created_response }
   end
 
   context "when the deployment does not replace the previous deployed version" do
-    let(:replaced_previous) { false }
+    let(:target) { "foo" }
 
     it "leaves the previous deployed version as currently deployed" do
       expect { subject }.to change { PactBroker::Deployments::DeployedVersion.currently_deployed.count }.by(1)

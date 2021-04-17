@@ -99,11 +99,11 @@ module PactBroker
           before do
             td.create_environment("prod")
               .create_pact_with_hierarchy("Foo", "1", "Bar")
-              .create_deployed_version_for_consumer_version(environment_name: "prod")
+              .create_deployed_version_for_consumer_version(environment_name: "prod", target: "1")
               .create_verification(provider_version: "10")
               .create_consumer_version("2")
               .create_pact
-              .create_deployed_version_for_consumer_version(environment_name: "prod")
+              .create_deployed_version_for_consumer_version(environment_name: "prod", target: "2")
           end
 
           let(:selectors) { [ UnresolvedSelector.new(pacticipant_name: "Bar", pacticipant_version_number: "10") ]}
@@ -137,11 +137,11 @@ module PactBroker
             td.create_environment("prod")
               .create_pact_with_hierarchy("Foo", "1", "Bar")
               .create_verification(provider_version: "10")
-              .create_deployed_version_for_provider_version(environment_name: "prod")
+              .create_deployed_version_for_provider_version(environment_name: "prod", target: "1")
               .create_consumer_version("2")
               .create_pact
               .create_provider_version("11")
-              .create_deployed_version_for_provider_version(environment_name: "prod")
+              .create_deployed_version_for_provider_version(environment_name: "prod", target: "2")
           end
 
           let(:selectors) { [ UnresolvedSelector.new(pacticipant_name: "Foo", pacticipant_version_number: "2") ]}

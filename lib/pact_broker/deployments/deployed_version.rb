@@ -1,10 +1,14 @@
 require 'pact_broker/repositories/helpers'
+require 'pact_broker/deployments/currently_deployed_version_id'
 
 module PactBroker
   module Deployments
-    class DeployedVersion < Sequel::Model
+    DEPLOYED_VERSION_COLUMNS = [:id, :uuid, :version_id, :pacticipant_id, :environment_id, :target, :created_at, :updated_at, :undeployed_at]
+    DEPLOYED_VERSION_DATASET = Sequel::Model.db[:deployed_versions].select(*DEPLOYED_VERSION_COLUMNS)
+    class DeployedVersion < Sequel::Model(DEPLOYED_VERSION_DATASET)
       many_to_one :version, :class => "PactBroker::Domain::Version", :key => :version_id, :primary_key => :id
       many_to_one :environment, :class => "PactBroker::Deployments::Environment", :key => :environment_id, :primary_key => :id
+      one_to_one :currently_deployed_version_id, :class => "PactBroker::Deployments::CurrentlyDeployedVersionId", key: :deployed_version_id, primary_key: :id
 
       plugin :timestamps, update_on_create: true
 
@@ -20,7 +24,7 @@ module PactBroker
         end
 
         def currently_deployed
-          where(currently_deployed: true)
+          where(id: CurrentlyDeployedVersionId.select(:deployed_version_id))
         end
 
         def for_environment_name(environment_name)
@@ -42,10 +46,25 @@ module PactBroker
         def order_by_date_desc
           order(Sequel.desc(:created_at), Sequel.desc(:id))
         end
+
+        def record_undeployed
+          update(undeployed_at: Sequel.datetime_class.now)
+        end
       end
 
-      def record_undeployed
-        update(currently_deployed: false, undeployed_at: Sequel.datetime_class.now)
+      def after_create
+        super
+        CurrentlyDeployedVersionId.new(
+          pacticipant_id: pacticipant_id,
+          environment_id: environment_id,
+          version_id: version_id,
+          target: target,
+          deployed_version_id: id
+        ).upsert
+      end
+
+      def currently_deployed
+        !!currently_deployed_version_id
       end
 
       def version_number
