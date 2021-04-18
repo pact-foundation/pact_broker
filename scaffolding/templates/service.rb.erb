@@ -4,7 +4,7 @@ require '<%= require_path_prefix %>/services'
 
 module <%= model_top_module %>
   module <%= model_secondary_module %>
-    class <%= service_class_name %>
+    module <%= service_class_name %>
       extend self
       extend <%= model_top_module %>::Repositories
       extend <%= model_top_module %>::Services
