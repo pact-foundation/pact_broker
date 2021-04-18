@@ -11,6 +11,7 @@ module PactBroker
       one_to_one :currently_deployed_version_id, :class => "PactBroker::Deployments::CurrentlyDeployedVersionId", key: :deployed_version_id, primary_key: :id
 
       plugin :timestamps, update_on_create: true
+      plugin :insert_ignore, identifying_columns: [:pacticipant_id, :version_id, :environment_id, :target]
 
       dataset_module do
         include PactBroker::Repositories::Helpers
@@ -25,6 +26,18 @@ module PactBroker
 
         def currently_deployed
           where(id: CurrentlyDeployedVersionId.select(:deployed_version_id))
+        end
+
+        def undeployed
+          exclude(undeployed_at: nil)
+        end
+
+        def for_version_and_environment_and_target(version, environment, target)
+          for_version_and_environment(version, environment).for_target(target)
+        end
+
+        def for_target(target)
+          where(target: target)
         end
 
         def for_environment_name(environment_name)

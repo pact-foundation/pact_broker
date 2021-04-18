@@ -1,5 +1,5 @@
 #
-# pact-broker record-deployment --pacticipant Foo --version 1 --environment test --replace-previous-deployed-version
+# pact-broker record-deployment --pacticipant Foo --version 1 --environment test --target instance1
 #
 
 describe "Record deployment" do
@@ -8,12 +8,12 @@ describe "Record deployment" do
       .create_consumer("Foo")
       .create_consumer_version("1")
       .create_deployed_version_for_consumer_version
+      .create_consumer_version("2")
   end
   let(:headers) { {"CONTENT_TYPE" => "application/json"} }
   let(:response_body) { JSON.parse(subject.body, symbolize_names: true) }
-  let(:version_path) { "/pacticipants/Foo/versions/1" }
+  let(:version_path) { "/pacticipants/Foo/versions/2" }
   let(:version_response) { get(version_path, nil, { "HTTP_ACCEPT" => "application/hal+json" } ) }
-  let(:replaced_previous) { true }
   let(:target) { nil }
   let(:path) do
     JSON.parse(version_response.body)["_links"]["pb:record-deployment"]
@@ -34,12 +34,42 @@ describe "Record deployment" do
     expect(response_body[:currentlyDeployed]).to be true
   end
 
+  it "creates a new deployed version" do
+    expect { subject }.to change { PactBroker::Deployments::DeployedVersion.count }.by(1)
+  end
+
   it "marks the previous deployment as not currently deployed" do
-    expect { subject }.to change { PactBroker::Deployments::DeployedVersion.currently_deployed.collect(&:uuid) }
+    expect { subject }.to change { PactBroker::Deployments::DeployedVersion.undeployed.count }.by(1)
   end
 
   it "does not change the overall count of currently deployed versions" do
     expect { subject }.to_not change { PactBroker::Deployments::DeployedVersion.currently_deployed.count }
+  end
+
+  context "when the version is already currently deployed to the environment and target" do
+    before do
+      td.create_deployed_version_for_consumer_version(uuid: "1234")
+    end
+
+    it "does not mark anything as undeployed" do
+      expect { subject }.to_not change { PactBroker::Deployments::DeployedVersion.undeployed.collect(&:uuid) }
+    end
+
+    it "returns the existing deployed version" do
+      expect(response_body[:uuid]).to eq "1234"
+    end
+  end
+
+  context "when the version was previously deployed to the environment and target but isn't any more" do
+    before do
+      td.create_deployed_version_for_consumer_version(uuid: "1234")
+        .create_consumer_version("3")
+        .create_deployed_version_for_consumer_version(uuid: "5678")
+    end
+
+    it "creates a new deployed version" do
+      expect { subject }.to change { PactBroker::Deployments::DeployedVersion.count }.by(1)
+    end
   end
 
   context "with an empty body" do
@@ -48,14 +78,10 @@ describe "Record deployment" do
     it { is_expected.to be_a_hal_json_created_response }
   end
 
-  context "when the deployment does not replace the previous deployed version" do
+  context "when the deployment is to a different target" do
     let(:target) { "foo" }
 
-    it "leaves the previous deployed version as currently deployed" do
-      expect { subject }.to change { PactBroker::Deployments::DeployedVersion.currently_deployed.count }.by(1)
-    end
-
-    it "increases the overall count of currently deployed versions" do
+    it "creates a new deployed version" do
       expect { subject }.to change { PactBroker::Deployments::DeployedVersion.currently_deployed.count }.by(1)
     end
   end

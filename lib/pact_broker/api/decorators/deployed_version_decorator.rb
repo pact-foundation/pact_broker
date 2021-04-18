@@ -6,6 +6,7 @@ module PactBroker
   module Api
     module Decorators
       class DeployedVersionDecorator < BaseDecorator
+        property :uuid
         property :version, :extend => EmbeddedVersionDecorator, writeable: false, embedded: true
         property :environment, :extend => EnvironmentDecorator, writeable: false, embedded: true
         property :currently_deployed, camelize: true

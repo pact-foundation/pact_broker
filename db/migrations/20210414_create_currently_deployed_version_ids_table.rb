@@ -7,7 +7,7 @@ Sequel.migration do
       foreign_key :environment_id, :environments, null: false, on_delete: :cascade
       foreign_key :version_id, :versions, null: false, on_delete: :cascade
       foreign_key :deployed_version_id, null: false, on_delete: :cascade
-      index [:pacticipant_id, :environment_id, :target], unique: true, name: "currently_deployed_version_ids_pacticipant_environment_target_index"
+      index [:pacticipant_id, :environment_id, :target], unique: true, name: "currently_deployed_version_ids_pacticipant_id_environment_id_target_index"
     end
   end
 end

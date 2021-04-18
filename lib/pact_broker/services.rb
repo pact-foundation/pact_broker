@@ -81,6 +81,10 @@ module PactBroker
       get(:deployed_version_service)
     end
 
+    def released_version_service
+      get(:released_version_service)
+    end
+
     def register_default_services
       register_service(:index_service) do
         require 'pact_broker/index/service'
@@ -165,6 +169,11 @@ module PactBroker
       register_service(:deployed_version_service) do
         require 'pact_broker/deployments/deployed_version_service'
         PactBroker::Deployments::DeployedVersionService
+      end
+
+      register_service(:released_version_service) do
+        require 'pact_broker/deployments/released_version_service'
+        PactBroker::Deployments::ReleasedVersionService
       end
     end
   end

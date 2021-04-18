@@ -25,6 +25,13 @@ module PactBroker
           .all
       end
 
+      def self.find_currently_deployed_version_for_version_and_environment_and_target(version, environment, target)
+        DeployedVersion
+          .currently_deployed
+          .for_version_and_environment_and_target(version, environment, target)
+          .single_record
+      end
+
       def self.find_deployed_versions_for_environment(environment)
         DeployedVersion
           .for_environment(environment)
