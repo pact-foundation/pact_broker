@@ -65,10 +65,6 @@ module PactBroker
 
       private
 
-      def scope_for(scope)
-        PactBroker.policy_scope!(scope)
-      end
-
       # For the times when it doesn't make sense to use the scoped class, this is a way to
       # indicate that it is an intentional use of the PactVersion class directly.
       def unscoped(scope)
@@ -287,6 +283,10 @@ module PactBroker
 
       def remove_already_verified_by_tag(pact_publications, query, provider, tag)
         PactPublication.subtract(pact_publications, query.successfully_verified_by_provider_tag(provider.id, tag).all)
+      end
+
+      def scope_for(scope)
+        PactBroker.policy_scope!(scope)
       end
     end
   end

@@ -6,10 +6,6 @@ module PactBroker
 
       extend self
 
-      def scope_for(scope)
-        PactBroker.policy_scope!(scope)
-      end
-
       def name_like column_name, value
         if PactBroker.configuration.use_case_sensitive_resource_names
           if mysql?

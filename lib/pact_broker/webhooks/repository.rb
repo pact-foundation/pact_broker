@@ -205,6 +205,10 @@ module PactBroker
 
       private
 
+      def scope_for(scope)
+        PactBroker.policy_scope!(scope)
+      end
+
       def delete_triggered_webhooks_and_executions triggered_webhook_ids
         Execution.where(triggered_webhook_id: triggered_webhook_ids).delete
         TriggeredWebhook.where(id: triggered_webhook_ids).delete

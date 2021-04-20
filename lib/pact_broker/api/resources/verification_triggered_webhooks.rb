@@ -22,7 +22,11 @@ module PactBroker
         end
 
         def policy_name
-          :'webhooks::triggered_webhooks'
+          :'verifications::verification'
+        end
+
+        def policy_record
+          verification
         end
 
         private

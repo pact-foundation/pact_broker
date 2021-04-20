@@ -4,7 +4,6 @@ require 'pact_broker/webhooks/triggered_webhook'
 module PactBroker
   module Api
     module Resources
-
       class TriggeredWebhookLogs < BaseResource
 
         def content_types_provided
@@ -26,6 +25,10 @@ module PactBroker
 
         def policy_name
           :'webhooks::webhook'
+        end
+
+        def policy_record
+          triggered_webhook&.webhook
         end
 
         private
