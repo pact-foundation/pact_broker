@@ -52,6 +52,10 @@ module PactBroker
           :'webhooks::webhook'
         end
 
+        def policy_record
+          uuid && webhook_service.find_by_uuid(uuid)
+        end
+
         private
 
         def post_response_body webhook_execution_result
