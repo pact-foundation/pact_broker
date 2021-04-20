@@ -122,15 +122,22 @@ module PactBroker
         webhook_repository.find_by_consumer_and_provider consumer, provider
       end
 
+      # this method is a mess.
       def self.trigger_webhooks pact, verification, event_name, event_context, options
         webhooks = webhook_repository.find_by_consumer_and_or_provider_and_event_name pact.consumer, pact.provider, event_name
 
-        if webhooks.any?
-          webhook_execution_configuration = options.fetch(:webhook_execution_configuration).with_webhook_context(event_name: event_name)
-          # bit messy to merge in base_url here, but easier than a big refactor
-          base_url = options.fetch(:webhook_execution_configuration).webhook_context.fetch(:base_url)
+        matching_webhooks = filter_webhooks(webhooks, pact)
 
-          run_webhooks_later(webhooks, pact, verification, event_name, event_context.merge(event_name: event_name, base_url: base_url), options.merge(webhook_execution_configuration: webhook_execution_configuration))
+        if webhooks.any?
+          if matching_webhooks.any?
+            webhook_execution_configuration = options.fetch(:webhook_execution_configuration).with_webhook_context(event_name: event_name)
+            # bit messy to merge in base_url here, but easier than a big refactor
+            base_url = options.fetch(:webhook_execution_configuration).webhook_context.fetch(:base_url)
+
+            run_webhooks_later(matching_webhooks, pact, verification, event_name, event_context.merge(event_name: event_name, base_url: base_url), options.merge(webhook_execution_configuration: webhook_execution_configuration))
+          else
+            logger.info "No enabled webhooks found for consumer \"#{pact.consumer.name}\" and provider \"#{pact.provider.name}\" and event #{event_name} that match the webhook's consumer version matchers"
+          end
         else
           logger.info "No enabled webhooks found for consumer \"#{pact.consumer.name}\" and provider \"#{pact.provider.name}\" and event #{event_name}"
         end
@@ -192,6 +199,14 @@ module PactBroker
       end
 
       private
+
+      def self.filter_webhooks(webhooks, pact)
+        # The consumer_version on the pact domain object is an OpenStruct - need to get the domain object
+        consumer_version = PactBroker::Domain::Version.for(pact.consumer.name, pact.consumer_version.number)
+        webhooks.select do | webhook |
+          webhook.version_matches_consumer_version_matchers?(consumer_version)
+        end
+      end
 
       # Dirty hack to maintain existing password or Authorization header if it is submitted with value ****
       # This is required because the password and Authorization header is **** out in the API response

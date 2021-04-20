@@ -2,6 +2,7 @@ require 'sequel'
 require 'pact_broker/domain/webhook'
 require 'pact_broker/webhooks/webhook_request_template'
 require 'pact_broker/domain/pacticipant'
+require 'pact_broker/webhooks/version_matcher'
 
 module PactBroker
   module Webhooks
@@ -9,6 +10,7 @@ module PactBroker
       set_primary_key :id
       plugin :serialization, :json, :headers
       plugin :timestamps, update_on_create: true
+      plugin :serialization, :json, :consumer_version_matchers
 
       associate(:many_to_one, :provider, :class => "PactBroker::Domain::Pacticipant", :key => :provider_id, :primary_key => :id)
       associate(:many_to_one, :consumer, :class => "PactBroker::Domain::Pacticipant", :key => :consumer_id, :primary_key => :id)
@@ -46,6 +48,7 @@ module PactBroker
           consumer: consumer,
           provider: provider,
           events: events,
+          consumer_version_matchers: consumer_version_matchers&.collect{ |m| VersionMatcher.from_hash(m) } || [],
           request: Webhooks::WebhookRequestTemplate.new(request_attributes),
           enabled: enabled,
           created_at: created_at,
@@ -85,7 +88,8 @@ module PactBroker
           enabled: webhook.enabled.nil? ? true : webhook.enabled,
           body: (is_json_request_body ? webhook.request.body.to_json : webhook.request.body),
           is_json_request_body: is_json_request_body,
-          headers: webhook.request.headers
+          headers: webhook.request.headers,
+          consumer_version_matchers: webhook.consumer_version_matchers || []
         }
       end
     end

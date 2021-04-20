@@ -5,6 +5,7 @@ require 'pact_broker/services'
 require 'pact_broker/webhooks/repository'
 require 'pact_broker/webhooks/service'
 require 'pact_broker/webhooks/webhook_execution_result'
+require 'pact_broker/webhooks/version_matcher'
 require 'pact_broker/pacts/repository'
 require 'pact_broker/pacts/service'
 require 'pact_broker/pacts/content'
@@ -286,14 +287,15 @@ module PactBroker
         provider = params.key?(:provider) ? params.delete(:provider) : @provider
         uuid = params[:uuid] || PactBroker::Webhooks::Service.next_uuid
         event_params = if params[:event_names]
-          params[:event_names].collect{ |event_name| {name: event_name} }
+          params[:event_names].collect{ |event_name| { name: event_name } }
         else
           params[:events] || [{ name: PactBroker::Webhooks::WebhookEvent::DEFAULT_EVENT_NAME }]
         end
+        consumer_version_matchers = params.delete(:consumer_version_matchers)&.collect{ |m| PactBroker::Webhooks::VersionMatcher.from_hash(m) } || []
         events = event_params.collect{ |e| PactBroker::Webhooks::WebhookEvent.new(e) }
         template_params = { method: 'POST', url: 'http://example.org', headers: {'Content-Type' => 'application/json'}, username: params[:username], password: params[:password]}
         request = PactBroker::Webhooks::WebhookRequestTemplate.new(template_params.merge(params))
-        @webhook = PactBroker::Webhooks::Repository.new.create uuid, PactBroker::Domain::Webhook.new(request: request, events: events, description: params[:description]), consumer, provider
+        @webhook = PactBroker::Webhooks::Repository.new.create uuid, PactBroker::Domain::Webhook.new(request: request, events: events, consumer_version_matchers: consumer_version_matchers, description: params[:description]), consumer, provider
         self
       end
 

@@ -13,6 +13,7 @@ describe "Creating a webhook" do
       events: [{
         name: 'contract_content_changed'
       }],
+      consumerVersionMatchers: [{ branch: "main" }],
       request: {
         method: 'POST',
         url: 'https://example.org',

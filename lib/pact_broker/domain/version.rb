@@ -202,6 +202,18 @@ module PactBroker
       def latest_for_pacticipant?
         latest_version_for_pacticipant == self
       end
+
+      def matches_webhook_matcher?(version_matcher)
+        if version_matcher.branch && version_matcher.branch != branch
+          return false
+        end
+
+        if version_matcher.tag
+          return tags.any?{ |tag| tag.name == version_matcher.tag }
+        end
+
+        true
+      end
     end
   end
 end
