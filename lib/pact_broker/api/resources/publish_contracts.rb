@@ -55,10 +55,7 @@ module PactBroker
           p = super(default: {}, symbolize_names: false)
           if p["contracts"].is_a?(Array)
             p["contracts"].each do | contract |
-              contract["decodedContent"] = Base64.strict_decode64(contract["content"]) rescue nil
-              if contract["decodedContent"]
-                contract["decodedParsedContent"] = PactBroker::Pacts::Parse.call(contract["decodedContent"]) rescue nil
-              end
+              decode_and_parse_content(contract)
             end
           end
           p
@@ -66,6 +63,13 @@ module PactBroker
 
         def schema
           PactBroker::Api::Contracts::PublishContractsSchema
+        end
+
+        def decode_and_parse_content(contract)
+          contract["decodedContent"] = Base64.strict_decode64(contract["content"]) rescue nil
+          if contract["decodedContent"]
+            contract["decodedParsedContent"] = PactBroker::Pacts::Parse.call(contract["decodedContent"]) rescue nil
+          end
         end
       end
     end

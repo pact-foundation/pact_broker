@@ -1,7 +1,4 @@
 RSpec.describe "publishing a pact using the all in one endpoint" do
-  # TODO not sure about "role"
-  # TODO validation
-  # TODO merge tags
   # TODO merge branches
   # TODO merge pacts
   # TODO warn when pact is overwritten with different content
