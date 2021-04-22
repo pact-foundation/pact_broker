@@ -55,7 +55,9 @@ module PactBroker
           p = super(default: {}, symbolize_names: false)
           if p["contracts"].is_a?(Array)
             p["contracts"].each do | contract |
-              decode_and_parse_content(contract)
+              if contract.is_a?(Hash)
+                decode_and_parse_content(contract)
+              end
             end
           end
           p
