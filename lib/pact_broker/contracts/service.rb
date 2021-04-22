@@ -1,7 +1,6 @@
 require 'pact_broker/logging'
 require 'pact_broker/repositories'
 require 'pact_broker/services'
-require 'base64'
 
 module PactBroker
   module Contracts
@@ -67,12 +66,11 @@ module PactBroker
       def self.create_pacts(parsed_contracts, webhook_options)
         logs = []
         pacts = parsed_contracts.contracts.collect do | contract |
-          decoded_content = Base64.strict_decode64(contract.content)
           pact_params = PactBroker::Pacts::PactParams.new(
             consumer_name: parsed_contracts.pacticipant_name,
             provider_name: contract.provider_name,
             consumer_version_number: parsed_contracts.version_number,
-            json_content: decoded_content
+            json_content: contract.decoded_content
           )
           logs << OpenStruct.new(level: "info", message: "Pact published")
           pact_service.create_or_update_pact(pact_params, webhook_options)

@@ -7,11 +7,11 @@ module PactBroker
       class PublishContractDecorator < BaseDecorator
         camelize_property_names
 
-        property :role
+        property :consumer_name
         property :provider_name
         property :specification
         property :content_type
-        property :content
+        property :decoded_content
       end
     end
   end

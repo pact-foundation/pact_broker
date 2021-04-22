@@ -14,7 +14,7 @@ RSpec.describe "publishing a pact using the all in one endpoint" do
       :buildUrl => "http://ci/builds/1234",
       :contracts => [
         {
-          :role => "consumer",
+          :consumerName => "Foo",
           :providerName => "Bar",
           :specification => "pact",
           :contentType => "application/json",
@@ -34,6 +34,7 @@ RSpec.describe "publishing a pact using the all in one endpoint" do
 
   it "creates a pact" do
     expect { subject }.to change { PactBroker::Pacts::PactPublication.count }.by(1)
+    expect(PactBroker::Pacts::PactVersion.last.content).to eq contract
   end
 
   context "with a validation error" do

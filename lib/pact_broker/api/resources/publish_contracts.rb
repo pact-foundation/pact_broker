@@ -2,6 +2,7 @@ require 'pact_broker/api/resources/base_resource'
 require 'pact_broker/api/resources/webhook_execution_methods'
 require 'pact_broker/contracts/contracts_to_publish'
 require 'pact_broker/api/contracts/publish_contracts_schema'
+require 'pact_broker/pacts/parse'
 
 module PactBroker
   module Api
@@ -47,7 +48,20 @@ module PactBroker
         private
 
         def parsed_contracts
-          @parsed_contracts ||= decorator_class(:publish_contracts_decorator).new(PactBroker::Contracts::ContractsToPublish.new).from_json(request_body)
+          @parsed_contracts ||= decorator_class(:publish_contracts_decorator).new(PactBroker::Contracts::ContractsToPublish.new).from_hash(params)
+        end
+
+        def params
+          p = super(default: {}, symbolize_names: false)
+          if p["contracts"].is_a?(Array)
+            p["contracts"].each do | contract |
+              contract["decodedContent"] = Base64.strict_decode64(contract["content"]) rescue nil
+              if contract["decodedContent"]
+                contract["decodedParsedContent"] = PactBroker::Pacts::Parse.call(contract["decodedContent"]) rescue nil
+              end
+            end
+          end
+          p
         end
 
         def schema

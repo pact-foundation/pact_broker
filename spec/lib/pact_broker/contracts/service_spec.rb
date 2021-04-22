@@ -18,13 +18,14 @@ module PactBroker
         let(:contracts) { [contract_1] }
         let(:contract_1) do
           ContractToPublish.from_hash(
+            consumer_name: "Foo",
             provider_name: "Bar",
-            content: encoded_contract
+            decoded_content: decoded_contract
           )
         end
 
-        let(:contract) { { consumer: { name: "Foo" }, provider: { name: "Bar" }, interactions: [] }.to_json }
-        let(:encoded_contract) { Base64.strict_encode64(contract) }
+        let(:contract_hash) { { consumer: { name: "Foo" }, provider: { name: "Bar" }, interactions: [] } }
+        let(:decoded_contract) { contract_hash.to_json }
         let(:webhook_options) do
           {
             webhook_execution_configuration: webhook_execution_configuration

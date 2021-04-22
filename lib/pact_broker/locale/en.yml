@@ -4,6 +4,7 @@ en:
     filled?: "can't be blank"
     valid_method?: "is not a recognised HTTP method"
     valid_url?: "is not a valid URL eg. http://example.org"
+    base64?: "is not valid Base64"
     valid_version_number?: "Version number '%{value}' cannot be parsed to a version number. The expected format (unless this configuration has been overridden) is a semantic version. eg. 1.3.0 or 2.0.4.rc1"
     name_in_path_matches_name_in_pact?: "does not match %{left} name in path ('%{right}')."
     valid_consumer_version_number?: "Consumer version number '%{value}' cannot be parsed to a version number. The expected format (unless this configuration has been overridden) is a semantic version. eg. 1.3.0 or 2.0.4.rc1"
@@ -45,6 +46,9 @@ en:
         consumer_version_number_header_invalid: "X-Pact-Consumer-Version '%{consumer_version_number}' cannot be parsed to a version number. The expected format (unless this configuration has been overridden) is a semantic version. eg. 1.3.0 or 2.0.4.rc1"
         consumer_version_number_invalid: "Consumer version number '%{consumer_version_number}' cannot be parsed to a version number. The expected format (unless this configuration has been overridden) is a semantic version. eg. 1.3.0 or 2.0.4.rc1"
         pacticipant_name_mismatch: "in pact ('%{name_in_pact}') does not match %{pacticipant} name in path ('%{name}')."
+        consumer_name_in_content_mismatch_pacticipant_name: "consumer name in contract content ('%{consumer_name_in_content}') must match pacticipantName ('%{pacticipant_name}')"
+        consumer_name_in_contract_mismatch_pacticipant_name: "consumerName ('%{consumer_name_in_contract}') must match pacticipantName ('%{pacticipant_name}')"
+        provider_name_in_content_mismatch: "provider name in contract content ('%{provider_name_in_content}') must match providerName ('%{provider_name}') in contracts"
         connection_encoding_not_utf8: "The Sequel connection encoding (%{encoding}) is strongly recommended to be \"utf8\". If you need to set it to %{encoding} for some particular reason, then disable this check by setting config.validate_database_connection_config = false"
         invalid_webhook_uuid: The UUID can only contain the characters A-Z, a-z, 0-9, _ and -, and must be 16 or more characters.
         pacticipant_not_found: No pacticipant with name '%{name}' found
@@ -53,6 +57,7 @@ en:
         cannot_specify_latest_and_environment: Cannot specify both latest=true and an environment.
         environment_with_name_not_found: "Environment with name '%{name}' does not exist"
         cannot_modify_version_branch: "The branch for a pacticipant version cannot be changed once set (currently '%{old_branch}', proposed value '%{new_branch}'). Your pact publication/verification publication configurations may be in conflict with each other if you are seeing this error. If the current branch value is incorrect, you must delete the pacticipant version resource at %{version_url} and publish the pacts/verification results again with a consistent branch name."
+        invalid_content_for_content_type: "The content could not be parsed as %{content_type}"
       duplicate_pacticipant: |
         This is the first time a pact has been published for "%{new_name}".
         The name "%{new_name}" is very similar to the following existing consumers/providers:
