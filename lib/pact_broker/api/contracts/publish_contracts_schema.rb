@@ -49,9 +49,9 @@ module PactBroker
               if contract.is_a?(Hash)
                 validate_consumer_name(params, contract, i, errors)
                 validate_consumer_name_in_content(params, contract, i, errors)
-                validate_provider_name_in_content(params, contract, i, errors)
-                validate_encoding(params, contract, i, errors)
-                validate_content_matches_content_type(params, contract, i, errors)
+                validate_provider_name_in_content(contract, i, errors)
+                validate_encoding(contract, i, errors)
+                validate_content_matches_content_type(contract, i, errors)
               end
             end
           end
@@ -71,20 +71,20 @@ module PactBroker
           end
         end
 
-        def self.validate_provider_name_in_content(params, contract, i, errors)
+        def self.validate_provider_name_in_content(contract, i, errors)
           provider_name_in_content = contract.dig(:decodedParsedContent, :provider, :name)
           if provider_name_in_content && provider_name_in_content != contract[:providerName]
             add_contract_error(validation_message('provider_name_in_content_mismatch', { provider_name_in_content: provider_name_in_content, provider_name: contract[:providerName] } ), i, errors)
           end
         end
 
-        def self.validate_encoding(params, contract, i, errors)
+        def self.validate_encoding(contract, i, errors)
           if contract[:decodedContent].nil?
             add_contract_error(message('errors.base64?', scope: nil), i, errors)
           end
         end
 
-        def self.validate_content_matches_content_type(params, contract, i, errors)
+        def self.validate_content_matches_content_type(contract, i, errors)
           if contract[:decodedParsedContent].nil? && contract[:contentType]
             add_contract_error(validation_message('invalid_content_for_content_type', { content_type: contract[:contentType]}), i, errors)
           end

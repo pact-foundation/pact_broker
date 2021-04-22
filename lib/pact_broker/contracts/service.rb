@@ -43,11 +43,7 @@ module PactBroker
           OpenStruct.new(version_params)
         )
 
-        message = if existing_version && version_params.any?
-          "Updated version #{parsed_contracts.version_number} of #{parsed_contracts.pacticipant_name}"
-        elsif !existing_version
-          "Created version #{parsed_contracts.version_number} of #{parsed_contracts.pacticipant_name}"
-        end
+        message = log_message_for_pact_creation(existing_version, version_params, parsed_contracts)
 
         if message && parsed_contracts.branch
           message = message + " (branch #{parsed_contracts.branch})"
@@ -76,6 +72,14 @@ module PactBroker
           pact_service.create_or_update_pact(pact_params, webhook_options)
         end
         return pacts, logs
+      end
+
+      def self.log_message_for_pact_creation(existing_version, version_params, parsed_contracts)
+        if existing_version && version_params.any?
+          "Updated version #{parsed_contracts.version_number} of #{parsed_contracts.pacticipant_name}"
+        elsif !existing_version
+          "Created version #{parsed_contracts.version_number} of #{parsed_contracts.pacticipant_name}"
+        end
       end
     end
   end
