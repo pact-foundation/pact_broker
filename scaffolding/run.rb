@@ -1,3 +1,5 @@
+#!/usr/bin/env ruby
+
 require 'pact_broker/string_refinements'
 require 'pact_broker/project_root'
 require 'date'
@@ -7,7 +9,7 @@ require 'pathname'
 using PactBroker::StringRefinements
 
 MODEL_CLASS_FULL_NAME = "PactBroker::Foos::Foo"
-DRY_RUN = false
+DRY_RUN = true
 
 TEMPLATE_DIR = Pathname.new(File.join(__dir__, "templates"))
 MIGRATIONS_DIR = PactBroker.project_root.join("db", "migrations")
@@ -117,7 +119,7 @@ end
 # Table
 
 def table_name
-  model_class_name.snakecase
+  model_class_name.snakecase + "s"
 end
 
 def model_class_name_snakecase
@@ -222,7 +224,11 @@ def generate_file(template, destination)
   file_content = ERB.new(File.read(template)).result(binding).tap { |it| puts it }
   if !DRY_RUN
     FileUtils.mkdir_p(File.dirname(destination))
-    File.open(destination, "w") { |file| file << file_content }
+    if File.exist?(destination)
+      raise "File #{destination} already exists"
+    else
+      File.open(destination, "w") { |file| file << file_content }
+    end
   end
 end
 
@@ -235,3 +241,5 @@ generate_service_file
 generate_service_spec_file
 generate_repository_file
 generate_repository_spec_file
+
+puts "THIS WAS A DRY RUN. Set DRY_RUN = true to generate the files." if DRY_RUN
