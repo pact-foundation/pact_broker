@@ -22,7 +22,7 @@ module PactBroker
           allow(pact_repository).to receive(:create).and_return(new_pact)
           allow(pact_repository).to receive(:update).and_return(new_pact)
           allow(pact_repository).to receive(:find_previous_pacts).and_return(previous_pacts)
-          allow(webhook_service).to receive(:trigger_webhooks)
+          allow(webhook_trigger_service).to receive(:trigger_webhooks)
           allow(webhook_trigger_service).to receive(:trigger_webhooks_for_new_pact)
           allow(webhook_trigger_service).to receive(:trigger_webhooks_for_updated_pact)
         end

@@ -5,29 +5,49 @@ module PactBroker
   module Webhooks
     module TriggerService
 
+      TriggerResult = Struct.new(:message, :triggered_webhooks)
+
+      RESOURCE_CREATION = PactBroker::Webhooks::TriggeredWebhook::TRIGGER_TYPE_RESOURCE_CREATION
+      USER = PactBroker::Webhooks::TriggeredWebhook::TRIGGER_TYPE_USER
+
+
       extend self
       extend PactBroker::Repositories
       extend PactBroker::Services
       include PactBroker::Logging
       using PactBroker::HashRefinements
 
+      def next_uuid
+        SecureRandom.uuid
+      end
+
+
       def trigger_webhooks_for_new_pact(pact, event_context, webhook_options)
-        webhook_service.trigger_webhooks pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_PUBLISHED, event_context, webhook_options
-        if pact_is_new_or_newly_tagged_or_pact_has_changed_since_previous_version?(pact)
-          webhook_service.trigger_webhooks pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED, event_context, webhook_options
+        trigger_results = []
+        triggered_webhooks = trigger_webhooks pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_PUBLISHED, event_context, webhook_options
+        trigger_results << TriggerResult.new("Pact published", triggered_webhooks)
+        changed, explanation = pact_is_new_or_newly_tagged_or_pact_has_changed_since_previous_version?(pact)
+        if changed
+          triggered_webhooks = trigger_webhooks pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED, event_context, webhook_options
+          trigger_results << TriggerResult.new(explanation, triggered_webhooks)
         else
-          logger.info "Pact content has not changed since previous version, not triggering webhooks for changed content"
+          trigger_results << TriggerResult.new("Pact content has not changed since previous version, not triggering webhooks for changed content")
         end
+        trigger_results
       end
 
       def trigger_webhooks_for_updated_pact(existing_pact, updated_pact, event_context, webhook_options)
-        webhook_service.trigger_webhooks updated_pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_PUBLISHED, event_context, webhook_options
+        trigger_results = []
+        triggered_webhooks = trigger_webhooks updated_pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_PUBLISHED, event_context, webhook_options
+        trigger_results << TriggerResult.new("Pact published", triggered_webhooks)
         if existing_pact.pact_version_sha != updated_pact.pact_version_sha
-          logger.info "Existing pact for version #{existing_pact.consumer_version_number} has been updated with new content, triggering webhooks for changed content"
-          webhook_service.trigger_webhooks updated_pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED, event_context, webhook_options
+          message = "Existing pact for version #{existing_pact.consumer_version_number} has been updated with new content, triggering webhooks for changed content"
+          triggered_webhooks = trigger_webhooks updated_pact, nil, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED, event_context, webhook_options
+          trigger_results << TriggerResult.new(message, triggered_webhooks)
         else
-          logger.info "Pact content has not changed since previous revision, not triggering webhooks for changed content"
+          trigger_results << TriggerResult.new("Pact content has not changed since previous revision, not triggering webhooks for changed content")
         end
+        trigger_results
       end
 
       def trigger_webhooks_for_verification_results_publication(pact, verification, event_context, webhook_options)
@@ -36,7 +56,7 @@ module PactBroker
           # Find the pact with the right consumer version number
           pact_for_triggered_webhook = find_pact_for_verification_triggered_webhook(pact, reconstituted_event_context)
           if verification.success
-            webhook_service.trigger_webhooks(
+            trigger_webhooks(
               pact_for_triggered_webhook,
               verification,
               PactBroker::Webhooks::WebhookEvent::VERIFICATION_SUCCEEDED,
@@ -44,7 +64,7 @@ module PactBroker
               webhook_options
             )
           else
-            webhook_service.trigger_webhooks(
+            trigger_webhooks(
               pact_for_triggered_webhook,
               verification,
               PactBroker::Webhooks::WebhookEvent::VERIFICATION_FAILED,
@@ -53,7 +73,7 @@ module PactBroker
             )
           end
 
-          webhook_service.trigger_webhooks(
+          trigger_webhooks(
             pact_for_triggered_webhook,
             verification,
             PactBroker::Webhooks::WebhookEvent::VERIFICATION_PUBLISHED,
@@ -63,14 +83,75 @@ module PactBroker
         end
       end
 
+      def test_execution webhook, event_context, execution_configuration
+        merged_options = execution_configuration.with_failure_log_message("Webhook execution failed").to_hash
+
+        verification = nil
+        if webhook.trigger_on_provider_verification_published?
+          verification = verification_service.search_for_latest(webhook.consumer_name, webhook.provider_name) || PactBroker::Verifications::PlaceholderVerification.new
+        end
+
+        pact = pact_service.search_for_latest_pact(consumer_name: webhook.consumer_name, provider_name: webhook.provider_name) || PactBroker::Pacts::PlaceholderPact.new
+        webhook.execute(pact, verification, event_context.merge(event_name: "test"), merged_options)
+      end
+
+      def execute_triggered_webhook_now triggered_webhook, webhook_execution_configuration_hash
+        webhook_execution_result = triggered_webhook.execute webhook_execution_configuration_hash
+        webhook_repository.create_execution triggered_webhook, webhook_execution_result
+        webhook_execution_result
+      end
+
+      def trigger_webhooks pact, verification, event_name, event_context, options
+        webhooks = webhook_repository.find_by_consumer_and_or_provider_and_event_name pact.consumer, pact.provider, event_name
+
+        if webhooks.any?
+          webhook_execution_configuration = options.fetch(:webhook_execution_configuration).with_webhook_context(event_name: event_name)
+          # bit messy to merge in base_url here, but easier than a big refactor
+          base_url = options.fetch(:webhook_execution_configuration).webhook_context.fetch(:base_url)
+
+          run_webhooks_later(webhooks, pact, verification, event_name, event_context.merge(event_name: event_name, base_url: base_url), options.merge(webhook_execution_configuration: webhook_execution_configuration))
+        else
+          logger.info "No enabled webhooks found for consumer \"#{pact.consumer.name}\" and provider \"#{pact.provider.name}\" and event #{event_name}"
+          []
+        end
+      end
+
+      def run_webhooks_later webhooks, pact, verification, event_name, event_context, options
+        webhooks.flat_map do | webhook |
+          if PactBroker.feature_enabled?(:expand_currently_deployed_provider_versions) && webhook.expand_currently_deployed_provider_versions?
+            deployed_version_service.find_currently_deployed_versions_for_pacticipant(pact.provider).collect(&:version_number).uniq.each_with_index do | version_number, index |
+              schedule_webhook(webhook, pact, verification, event_name, event_context.merge(currently_deployed_provider_version_number: version_number), options, index * 5)
+            end
+          else
+            schedule_webhook(webhook, pact, verification, event_name, event_context, options)
+          end
+        end
+      end
+
+      def schedule_webhook(webhook, pact, verification, event_name, event_context, options, extra_delay = 0)
+        begin
+          trigger_uuid = next_uuid
+          triggered_webhook = webhook_repository.create_triggered_webhook(trigger_uuid, webhook, pact, verification, RESOURCE_CREATION, event_name, event_context)
+          logger.info "Scheduling job for webhook with uuid #{webhook.uuid}, context: #{event_context}"
+          logger.debug "Schedule webhook with options #{options}"
+          job_data = { triggered_webhook: triggered_webhook }.deep_merge(options)
+          # Delay slightly to make sure the request transaction has finished before we execute the webhook
+          Job.perform_in(5 + extra_delay, job_data)
+          triggered_webhook
+        rescue StandardError => e
+          logger.warn("Error scheduling webhook execution for webhook with uuid #{webhook.uuid}", e)
+          nil
+        end
+      end
+
       private
 
       def pact_is_new_or_newly_tagged_or_pact_has_changed_since_previous_version? pact
         changed_pacts = pact_repository
           .find_previous_pacts(pact)
           .reject { |_, previous_pact| !sha_changed_or_no_previous_version?(previous_pact, pact) }
-        print_debug_messages(changed_pacts)
-        changed_pacts.any?
+        explanation = print_debug_messages(changed_pacts)
+        return changed_pacts.any?, explanation
       end
 
       def sha_changed_or_no_previous_version?(previous_pact, new_pact)
@@ -133,7 +214,9 @@ module PactBroker
               end
             end
           end
-          logger.info("Webhook triggered for the following reasons: #{messages.join(',')}" )
+          log_message = "Webhook triggered for the following reasons: #{messages.join(',')}"
+          logger.info(log_message)
+          log_message
         end
       end
     end
