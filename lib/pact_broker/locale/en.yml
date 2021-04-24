@@ -34,7 +34,16 @@ en:
             verificationResultUrl: the URL to the relevant verification result.
             githubVerificationStatus: the verification status using the correct keywords for posting to the Github commit status API. See https://developer.github.com/v3/repos/statuses.
             bitbucketVerificationStatus: the verification status using the correct keywords for posting to the Bitbucket commit status API. See https://developer.atlassian.com/server/bitbucket/how-tos/updating-build-status-for-commits/.
-
+      version:
+        created: "%{action} %{pacticipant_name} version %{version_number}"
+        created_for_branch: "%{action} %{pacticipant_name} version %{version_number} with branch %{branch}"
+        created_for_branch_with_tags: "%{action} %{pacticipant_name} version %{version_number} with branch %{branch} and tags %{tags}"
+        created_with_tags: "%{action} %{pacticipant_name} version %{version_number} with tags %{tags}"
+      contract:
+        pact_published: Pact published for %{consumer_name} version %{consumer_version_number}.
+        same_pact_content_published: Pact republished for %{consumer_name} version %{consumer_version_number} with no content changes.
+        pact_modified_for_same_version: Pact with changed content published over existing content for %{consumer_name} version %{consumer_version_number}. This is not recommended in normal cicumstances and may indicate that you have not configured your Pact pipeline correctly. For more information see https://docs.pact.io/versioning
+        pact_merged: Pact content merged with existing content for %{consumer_name} version %{consumer_version_number}.
     errors:
       validation:
         blank: "cannot be blank."

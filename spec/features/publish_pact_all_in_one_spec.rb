@@ -15,7 +15,8 @@ RSpec.describe "publishing a pact using the all in one endpoint" do
           :providerName => "Bar",
           :specification => "pact",
           :contentType => "application/json",
-          :content => encoded_contract
+          :content => encoded_contract,
+          :writeMode => "overwrite",
         }
       ]
     }

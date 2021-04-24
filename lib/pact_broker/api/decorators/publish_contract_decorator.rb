@@ -12,6 +12,7 @@ module PactBroker
         property :specification
         property :content_type
         property :decoded_content
+        property :write_mode, default: "overwrite"
       end
     end
   end
