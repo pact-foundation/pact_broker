@@ -131,8 +131,6 @@ module PactBroker
         verifiable_pacts_specified_in_request + verifiable_wip_pacts
       end
 
-      private
-
       def exclude_specified_pacts(wip_pacts, specified_pacts)
         wip_pacts.reject do | wip_pact |
           specified_pacts.any? do | specified_pacts |
@@ -140,6 +138,8 @@ module PactBroker
           end
         end
       end
+
+      private :exclude_specified_pacts
 
       # Overwriting an existing pact with the same consumer/provider/consumer version number
       def update_pact params, existing_pact
@@ -163,6 +163,8 @@ module PactBroker
 
         updated_pact
       end
+
+      private :update_pact
 
       # When no publication for the given consumer/provider/consumer version number exists
       def create_pact params, version, provider
@@ -191,15 +193,19 @@ module PactBroker
         pact
       end
 
+      private :create_pact
+
       def generate_sha(json_content)
         PactBroker.configuration.sha_generator.call(json_content)
       end
+
+      private :generate_sha
 
       def add_interaction_ids(json_content)
         Content.from_json(json_content).with_ids.to_json
       end
 
-      private
+      private :add_interaction_ids
 
       def pact_is_new_or_newly_tagged_or_pact_has_changed_since_previous_version? pact
         changed_pacts = pact_repository
@@ -209,9 +215,13 @@ module PactBroker
         return changed_pacts.any?, explanation
       end
 
+      private :pact_is_new_or_newly_tagged_or_pact_has_changed_since_previous_version?
+
       def sha_changed_or_no_previous_version?(previous_pact, new_pact)
         previous_pact.nil? || new_pact.pact_version_sha != previous_pact.pact_version_sha
       end
+
+      private :sha_changed_or_no_previous_version?
 
       def explanation_for_content_changed(changed_pacts)
         if changed_pacts.any?
@@ -233,6 +243,8 @@ module PactBroker
           messages.join(',')
         end
       end
+
+      private :explanation_for_content_changed
     end
   end
 end
