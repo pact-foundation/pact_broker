@@ -21,14 +21,19 @@ module PactBroker
 
         def handle_webhook_events
           Wisper.subscribe(webhook_event_listener) do
-            result = yield
-            schedule_triggered_webhooks
-            result
+            yield
           end
         end
 
         def schedule_triggered_webhooks
           webhook_event_listener.schedule_triggered_webhooks
+        end
+
+        def finish_request
+          if response.code < 400
+            schedule_triggered_webhooks
+          end
+          super
         end
       end
     end

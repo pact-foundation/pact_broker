@@ -3,8 +3,14 @@ describe "Publishing a pact" do
   let(:pact_content) { load_fixture('a_consumer-a_provider.json') }
   let(:path) { "/pacts/provider/A%20Provider/consumer/A%20Consumer/versions/1.2.3" }
   let(:response_body_json) { JSON.parse(subject.body) }
+  let(:rack_env) do
+    {
+      'CONTENT_TYPE' => 'application/json',
+      'pactbroker.database_connector' => lambda { |&block| block.call }
+    }
+  end
 
-  subject { put path, pact_content, {'CONTENT_TYPE' => 'application/json' }; last_response  }
+  subject { put(path, pact_content, rack_env)  }
 
   context "when a pact for this consumer version does not exist" do
     it "returns a 201 Created" do
@@ -69,6 +75,35 @@ describe "Publishing a pact" do
 
       it "returns a 201" do
         expect(subject.status).to eq 201
+      end
+    end
+  end
+
+  context "with a webhook configured", job: true do
+    before do
+      td.create_webhook(
+        method: 'POST',
+        url: 'http://example.org',
+        events: [{ name: PactBroker::Webhooks::WebhookEvent::CONTRACT_PUBLISHED }]
+      )
+    end
+    let!(:request) do
+      stub_request(:post, 'http://example.org').to_return(:status => 200)
+    end
+
+    it "executes the webhook" do
+      subject
+      expect(request).to have_been_made
+    end
+
+    context "when an error occurs rendering the pact" do
+      before do
+        allow_any_instance_of(PactBroker::Api::Decorators::PactDecorator).to receive(:to_json).and_raise("an error")
+      end
+
+      it "does not execute the webhook" do
+        subject
+        expect(request).to_not have_been_made
       end
     end
   end
