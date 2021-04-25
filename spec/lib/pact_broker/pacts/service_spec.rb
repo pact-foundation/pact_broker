@@ -4,17 +4,12 @@ require 'pact_broker/pacts/pact_params'
 require 'pact_broker/webhooks/execution_configuration'
 
 module PactBroker
-
   module Pacts
     describe Service do
-      let(:td) { TestDataBuilder.new }
-
       describe "create_or_update_pact" do
         include_context "stubbed repositories"
 
         before do
-          allow(described_class).to receive(:webhook_service).and_return(webhook_service)
-          allow(described_class).to receive(:webhook_trigger_service).and_return(webhook_trigger_service)
           allow(pacticipant_repository).to receive(:find_by_name_or_create).with(params[:consumer_name]).and_return(consumer)
           allow(pacticipant_repository).to receive(:find_by_name_or_create).with(params[:provider_name]).and_return(provider)
           allow(version_repository).to receive(:find_by_pacticipant_id_and_number_or_create).and_return(version)
@@ -22,18 +17,13 @@ module PactBroker
           allow(pact_repository).to receive(:create).and_return(new_pact)
           allow(pact_repository).to receive(:update).and_return(new_pact)
           allow(pact_repository).to receive(:find_previous_pacts).and_return(previous_pacts)
-          allow(webhook_trigger_service).to receive(:trigger_webhooks)
-          allow(webhook_trigger_service).to receive(:trigger_webhooks_for_new_pact)
-          allow(webhook_trigger_service).to receive(:trigger_webhooks_for_updated_pact)
         end
 
-        let(:webhook_service) { class_double("PactBroker::Webhooks::Service").as_stubbed_const }
-        let(:webhook_trigger_service) { class_double("PactBroker::Webhooks::TriggerService").as_stubbed_const }
         let(:consumer) { double('consumer', id: 1) }
         let(:provider) { double('provider', id: 2) }
         let(:version) { double('version', id: 3, pacticipant_id: 1) }
         let(:existing_pact) { nil }
-        let(:new_pact) { double('new_pact', consumer_version_tag_names: %w[dev], json_content: json_content) }
+        let(:new_pact) { double('new_pact', consumer_version_tag_names: %w[dev], json_content: json_content, pact_version_sha: "1") }
         let(:json_content) { { the: "contract" }.to_json }
         let(:json_content_with_ids) { { the: "contract with ids" }.to_json }
         let(:previous_pacts) { [] }
@@ -47,18 +37,16 @@ module PactBroker
         end
         let(:content) { double('content') }
         let(:content_with_interaction_ids) { double('content_with_interaction_ids', to_json: json_content_with_ids) }
-        let(:webhook_options) { { webhook_execution_configuration: webhook_execution_configuration } }
-        let(:webhook_execution_configuration) { instance_double(PactBroker::Webhooks::ExecutionConfiguration) }
         let(:expected_event_context) { { consumer_version_tags: ["dev"] } }
 
         before do
           allow(Content).to receive(:from_json).and_return(content)
           allow(content).to receive(:with_ids).and_return(content_with_interaction_ids)
           allow(PactBroker::Pacts::GenerateSha).to receive(:call).and_call_original
-          allow(webhook_execution_configuration).to receive(:with_webhook_context).and_return(webhook_execution_configuration)
+          allow(Service).to receive(:broadcast)
         end
 
-        subject { Service.create_or_update_pact(params, webhook_options) }
+        subject { Service.create_or_update_pact(params) }
 
         context "when no pact exists with the same params" do
           it "creates the sha before adding the interaction ids" do
@@ -72,14 +60,60 @@ module PactBroker
             subject
           end
 
-          it "sets the consumer version tags" do
-            expect(webhook_execution_configuration).to receive(:with_webhook_context).with(consumer_version_tags: %w[dev]).and_return(webhook_execution_configuration)
+          it "broadcasts the contract_published event" do
+            expect(Service).to receive(:broadcast).with(:contract_published, pact: new_pact, event_context: { consumer_version_tags: %w[dev] })
             subject
           end
 
-          it "triggers webhooks" do
-            expect(webhook_trigger_service).to receive(:trigger_webhooks_for_new_pact).with(new_pact, expected_event_context, webhook_options)
-            subject
+          # TODO test all this properly!
+          context "when the latest pact for one of the tags has a different pact_version_sha" do
+            before do
+              allow(pact_repository).to receive(:find_previous_pacts).and_return(previous_pacts_by_tag)
+            end
+
+            let(:previous_dev_pact_version_sha) { "2" }
+            let(:previous_pacts_by_tag) do
+              {
+                dev: double('previous pact', pact_version_sha: previous_dev_pact_version_sha)
+              }
+            end
+
+            it "broadcasts the contract_content_changed event" do
+              expect(Service).to receive(:broadcast).with(
+                :contract_content_changed,
+                  {
+                    pact: new_pact,
+                    event_comment: "Pact content has changed since the last consumer version tagged with dev",
+                    event_context: { consumer_version_tags: %w[dev] }
+                  }
+              )
+              subject
+            end
+          end
+
+          context "when the new pact has not changed content or tags since the previous version with the same tags" do
+            before do
+              allow(pact_repository).to receive(:find_previous_pacts).and_return(previous_pacts_by_tag)
+            end
+
+            let(:previous_dev_pact_version_sha) { "1" }
+            let(:previous_pacts_by_tag) do
+              {
+                dev: double('previous pact', pact_version_sha: previous_dev_pact_version_sha)
+              }
+            end
+
+            it "broadcasts the contract_content_unchanged event" do
+              expect(Service).to receive(:broadcast).with(
+                :contract_content_unchanged,
+                  {
+                    pact: new_pact,
+                    event_comment: "Pact content the same as previous version and no new tags were applied",
+                    event_context: { consumer_version_tags: %w[dev] }
+                  }
+              )
+              subject
+            end
           end
         end
 
@@ -88,9 +122,11 @@ module PactBroker
             double('existing_pact',
               id: 4,
               consumer_version_tag_names: %[dev],
-              json_content: { the: "contract" }.to_json
+              json_content: { the: "contract" }.to_json,
+              pact_version_sha: pact_version_sha
             )
           end
+          let(:pact_version_sha) { "1" }
 
           let(:expected_event_context) { { consumer_version_tags: ["dev"] } }
 
@@ -105,9 +141,39 @@ module PactBroker
             subject
           end
 
-          it "triggers webhooks" do
-            expect(webhook_trigger_service).to receive(:trigger_webhooks_for_updated_pact).with(existing_pact, new_pact, expected_event_context, webhook_options)
+          it "broadcasts the contract_published event" do
+            expect(Service).to receive(:broadcast).with(:contract_published, pact: new_pact, event_context: { consumer_version_tags: %w[dev] })
             subject
+          end
+
+          context "when the pact_version_sha is different" do
+            let(:pact_version_sha) { "2" }
+
+            it "broadcasts the contract_content_changed event" do
+              expect(Service).to receive(:broadcast).with(
+                :contract_content_changed,
+                  {
+                    pact: new_pact,
+                    event_comment: "Pact content modified since previous revision",
+                    event_context: { consumer_version_tags: %w[dev] }
+                  }
+              )
+              subject
+            end
+          end
+
+          context "when the pact_version_sha is the same" do
+            it "broadcasts the contract_content_unchanged event" do
+              expect(Service).to receive(:broadcast).with(
+                :contract_content_unchanged,
+                  {
+                    pact: new_pact,
+                    event_comment: "Pact content was unchanged",
+                    event_context: { consumer_version_tags: %w[dev] }
+                  }
+              )
+              subject
+            end
           end
         end
       end

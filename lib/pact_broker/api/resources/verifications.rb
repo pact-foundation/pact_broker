@@ -5,6 +5,7 @@ require 'pact_broker/api/contracts/verification_contract'
 require 'pact_broker/api/decorators/verification_decorator'
 require 'pact_broker/api/resources/webhook_execution_methods'
 require 'pact_broker/api/resources/metadata_resource_methods'
+require 'pact_broker/webhooks/event_listener'
 
 module PactBroker
   module Api
@@ -50,8 +51,10 @@ module PactBroker
         end
 
         def from_json
-          verification = verification_service.create(next_verification_number, verification_params, pact, event_context, webhook_options)
-          response.body = decorator_for(verification).to_json(decorator_options)
+          subscribe_to_webhook_events do
+            verification = verification_service.create(next_verification_number, verification_params, pact, event_context)
+            response.body = decorator_for(verification).to_json(decorator_options)
+          end
           true
         end
 
@@ -83,13 +86,6 @@ module PactBroker
 
         def event_context
           metadata
-        end
-
-        def webhook_options
-          {
-            database_connector: database_connector,
-            webhook_execution_configuration: webhook_execution_configuration
-          }
         end
 
         def verification_params

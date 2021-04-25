@@ -23,7 +23,7 @@ describe "Publishing a pact" do
   context "when a pact for this consumer version does exist" do
 
     before do
-      TestDataBuilder.new.create_pact_with_hierarchy("A Consumer", "1.2.3", "A Provider").and_return(:pact)
+      td.create_pact_with_hierarchy("A Consumer", "1.2.3", "A Provider").and_return(:pact)
     end
 
     it "returns a 200 Success" do
@@ -49,7 +49,7 @@ describe "Publishing a pact" do
 
   context "when the pacticipant name is an almost duplicate of an existing pacticipant name" do
     before do
-      TestDataBuilder.new.create_pacticipant("A Provider Service")
+      td.create_pacticipant("A Provider Service")
     end
 
     context "when duplicate checking is on" do
