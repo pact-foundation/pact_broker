@@ -126,29 +126,6 @@ module PactBroker
           pact
         end
       end
-
-      def print_debug_messages(changed_pacts)
-        if changed_pacts.any?
-          messages = changed_pacts.collect do |tag, previous_pact|
-            if tag == :untagged
-              if previous_pact
-                "pact content has changed since previous untagged version"
-              else
-                "first time untagged pact published"
-              end
-            else
-              if previous_pact
-                "pact content has changed since the last consumer version tagged with #{tag}"
-              else
-                "first time pact published with consumer version tagged #{tag}"
-              end
-            end
-          end
-          log_message = "Webhook triggered for the following reasons: #{messages.join(',')}"
-          logger.info(log_message)
-          log_message
-        end
-      end
     end
   end
 end
