@@ -177,12 +177,11 @@ module PactBroker
           pact_version_sha: pact_version_sha,
           json_content: json_content
         )
-        event_context = { consumer_version_tags: pact.consumer_version_tag_names }
 
-        content_changed, explanation = pact_is_new_or_newly_tagged_or_pact_has_changed_since_previous_version?(pact)
         event_params = { event_context: { consumer_version_tags: pact.consumer_version_tag_names }, pact: pact }
         broadcast(:contract_published, event_params)
 
+        content_changed, explanation = pact_is_new_or_newly_tagged_or_pact_has_changed_since_previous_version?(pact)
         if content_changed
           broadcast(:contract_content_changed, event_params.merge(event_comment: explanation))
         else
