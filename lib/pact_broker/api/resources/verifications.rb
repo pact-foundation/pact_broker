@@ -51,7 +51,7 @@ module PactBroker
         end
 
         def from_json
-          subscribe_to_webhook_events do
+          handle_webhook_events do
             verification = verification_service.create(next_verification_number, verification_params, pact, event_context)
             response.body = decorator_for(verification).to_json(decorator_options)
           end

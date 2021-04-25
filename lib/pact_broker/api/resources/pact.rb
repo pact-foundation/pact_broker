@@ -58,7 +58,7 @@ module PactBroker
         def from_json
           response_code = pact ? 200 : 201
 
-          subscribe_to_webhook_events do
+          handle_webhook_events do
             if request.patch? && resource_exists?
               @pact = pact_service.merge_pact(pact_params)
             else

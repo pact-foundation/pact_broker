@@ -22,7 +22,7 @@ module PactBroker
           let(:webhook_execution_configuration) { instance_double(PactBroker::Webhooks::ExecutionConfiguration) }
 
           before do
-            allow_any_instance_of(Verifications).to receive(:subscribe_to_webhook_events) { |&block| block.call }
+            allow_any_instance_of(Verifications).to receive(:handle_webhook_events) { |&block| block.call }
             allow(PactBroker::Verifications::Service).to receive(:create).and_return(verification)
             allow(PactBroker::Verifications::Service).to receive(:errors).and_return(double(:errors, messages: ['errors'], empty?: errors_empty))
             allow(PactBrokerUrls).to receive(:decode_pact_metadata).and_return(parsed_metadata)

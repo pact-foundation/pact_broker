@@ -19,7 +19,7 @@ module PactBroker
           @webhook_event_listener ||= PactBroker::Webhooks::EventListener.new(webhook_options)
         end
 
-        def subscribe_to_webhook_events
+        def handle_webhook_events
           Wisper.subscribe(webhook_event_listener) do
             result = yield
             schedule_triggered_webhooks
