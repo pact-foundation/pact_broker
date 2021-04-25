@@ -68,29 +68,11 @@ module PactBroker
           job_data = { triggered_webhook: triggered_webhook }.deep_merge(options)
           begin
             # Delay slightly to make sure the request transaction has finished before we execute the webhook
-            Job.perform_in(5 + (i * 5), job_data)
+            Job.perform_in(5 + (i * 3), job_data)
           rescue StandardError => e
             logger.warn("Error scheduling webhook execution for webhook with uuid #{triggered_webhook&.webhook&.uuid}", e)
             nil
           end
-        end
-      end
-
-      def schedule_webhook(webhook, pact, verification, event_name, event_context, options, extra_delay = 0)
-        begin
-          trigger_uuid = next_uuid
-          triggered_webhook = webhook_repository.create_triggered_webhook(trigger_uuid, webhook, pact, verification, RESOURCE_CREATION, event_name, event_context)
-
-          logger.info "Scheduling job for webhook with uuid #{webhook.uuid}, context: #{event_context}"
-          logger.debug "Schedule webhook with options #{options}"
-
-          job_data = { triggered_webhook: triggered_webhook }.deep_merge(options)
-          # Delay slightly to make sure the request transaction has finished before we execute the webhook
-          Job.perform_in(5 + extra_delay, job_data)
-          triggered_webhook
-        rescue StandardError => e
-          logger.warn("Error scheduling webhook execution for webhook with uuid #{webhook.uuid}", e)
-          nil
         end
       end
 
