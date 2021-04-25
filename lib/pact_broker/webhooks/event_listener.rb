@@ -77,12 +77,6 @@ module PactBroker
         )
         log_detected_event
       end
-
-      def webhook_options_with_updated_context(webhook_contex)
-        execution_configuration = webhook_options[:webhook_execution_configuration]
-                                    .with_webhook_context(webhook_contex)
-        webhook_options.merge(webhook_execution_configuration: execution_configuration)
-      end
     end
   end
 end
