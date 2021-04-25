@@ -96,18 +96,6 @@ module PactBroker
 
       private
 
-      def pact_is_new_or_newly_tagged_or_pact_has_changed_since_previous_version? pact
-        changed_pacts = pact_repository
-          .find_previous_pacts(pact)
-          .reject { |_, previous_pact| !sha_changed_or_no_previous_version?(previous_pact, pact) }
-        explanation = print_debug_messages(changed_pacts)
-        return changed_pacts.any?, explanation
-      end
-
-      def sha_changed_or_no_previous_version?(previous_pact, new_pact)
-        previous_pact.nil? || new_pact.pact_version_sha != previous_pact.pact_version_sha
-      end
-
       def merge_consumer_version_selectors(consumer_version_number, selectors, event_context)
         event_context.merge(
           consumer_version_number: consumer_version_number,
