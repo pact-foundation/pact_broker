@@ -3,7 +3,7 @@ require 'pact_broker/api/decorators/verification_decorator'
 require 'pact_broker/verifications/summary_for_consumer_version'
 require 'pact_broker/logging'
 require 'pact_broker/hash_refinements'
-require 'pact_broker/event_publisher'
+require 'pact_broker/events/publisher'
 
 module PactBroker
 
@@ -16,7 +16,7 @@ module PactBroker
       extend PactBroker::Services
       include PactBroker::Logging
       using PactBroker::HashRefinements
-      extend PactBroker::EventPublisher
+      extend PactBroker::Events::Publisher
 
       def next_number
         verification_repository.next_number

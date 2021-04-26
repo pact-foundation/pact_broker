@@ -4,14 +4,14 @@ require 'pact_broker/logging'
 require 'pact_broker/pacts/merger'
 require 'pact_broker/pacts/verifiable_pact'
 require 'pact_broker/pacts/squash_pacts_for_verification'
-require 'pact_broker/event_publisher'
+require 'pact_broker/events/publisher'
 
 module PactBroker
   module Pacts
     module Service
 
       extend self
-      extend PactBroker::EventPublisher
+      extend PactBroker::Events::Publisher
 
       extend PactBroker::Repositories
       extend PactBroker::Services
