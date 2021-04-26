@@ -7,7 +7,7 @@ module PactBroker
         let(:params) do
           {
             :pacticipantName => pacticipant_name,
-            :versionNumber => version_number,
+            :pacticipantVersionNumber => version_number,
             :tags => tags,
             :branch => branch,
             :buildUrl => build_url,

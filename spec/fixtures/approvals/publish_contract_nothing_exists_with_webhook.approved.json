@@ -7,7 +7,7 @@
     },
     "body": {
       "pacticipantName": "Foo",
-      "versionNumber": "1",
+      "pacticipantVersionNumber": "1",
       "tags": [
         "a",
         "b"

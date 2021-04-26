@@ -62,14 +62,14 @@ module PactBroker
       def find_existing_version(parsed_contracts)
         version_service.find_by_pacticipant_name_and_number(
           pacticipant_name: parsed_contracts.pacticipant_name,
-          pacticipant_version_number: parsed_contracts.version_number
+          pacticipant_version_number: parsed_contracts.pacticipant_version_number
         )
       end
 
       def create_or_update_version(parsed_contracts, version_params)
         version_service.create_or_update(
           parsed_contracts.pacticipant_name,
-          parsed_contracts.version_number,
+          parsed_contracts.pacticipant_version_number,
           OpenStruct.new(version_params)
         )
       end
@@ -98,7 +98,7 @@ module PactBroker
         PactBroker::Pacts::PactParams.new(
           consumer_name: parsed_contracts.pacticipant_name,
           provider_name: contract_to_publish.provider_name,
-          consumer_version_number: parsed_contracts.version_number,
+          consumer_version_number: parsed_contracts.pacticipant_version_number,
           json_content: contract_to_publish.decoded_content
         )
       end
@@ -137,7 +137,7 @@ module PactBroker
       def log_mesage_for_pact_publication(parsed_contracts, merge, existing_pact, created_pact)
         log_message_params = {
           consumer_name: parsed_contracts.pacticipant_name,
-          consumer_version_number: parsed_contracts.version_number,
+          consumer_version_number: parsed_contracts.pacticipant_version_number,
           provider_name: created_pact.provider_name
         }
         if merge

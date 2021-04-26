@@ -18,7 +18,7 @@ module PactBroker
           end
 
           required(:pacticipantName).filled(:str?, :not_blank?)
-          required(:versionNumber).filled(:not_blank?, :single_line?)
+          required(:pacticipantVersionNumber).filled(:not_blank?, :single_line?)
           optional(:tags).each(:not_blank?, :single_line?)
           optional(:branch).maybe(:not_blank?, :single_line?)
           optional(:buildUrl).maybe(:single_line?)

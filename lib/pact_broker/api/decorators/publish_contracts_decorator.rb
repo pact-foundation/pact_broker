@@ -9,7 +9,7 @@ module PactBroker
         camelize_property_names
 
         property :pacticipant_name
-        property :version_number
+        property :pacticipant_version_number
         property :tags
         property :branch
         property :build_url

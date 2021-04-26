@@ -39,10 +39,10 @@ en:
         webhook_triggered_for_event: Webhook %{webhook_description} triggered for event %{event_name}.
         triggered_webhook_see_logs: See logs at %{url}"
       version:
-        created: "%{action} %{pacticipant_name} version %{version_number}"
-        created_for_branch: "%{action} %{pacticipant_name} version %{version_number} with branch %{branch}"
-        created_for_branch_with_tags: "%{action} %{pacticipant_name} version %{version_number} with branch %{branch} and tags %{tags}"
-        created_with_tags: "%{action} %{pacticipant_name} version %{version_number} with tags %{tags}"
+        created: "%{action} %{pacticipant_name} version %{pacticipant_version_number}"
+        created_for_branch: "%{action} %{pacticipant_name} version %{pacticipant_version_number} with branch %{branch}"
+        created_for_branch_with_tags: "%{action} %{pacticipant_name} version %{pacticipant_version_number} with branch %{branch} and tags %{tags}"
+        created_with_tags: "%{action} %{pacticipant_name} version %{pacticipant_version_number} with tags %{tags}"
       contract:
         pact_published: Pact published for %{consumer_name} version %{consumer_version_number} and provider %{provider_name}.
         same_pact_content_published: Pact republished for %{consumer_name} version %{consumer_version_number} and provider %{provider_name} with no content changes.

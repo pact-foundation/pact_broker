@@ -7,7 +7,7 @@ module PactBroker
         let(:contracts_to_publish) do
           ContractsToPublish.from_hash(
             pacticipant_name: "Foo",
-            version_number: "1",
+            pacticipant_version_number: "1",
             tags: ["a", "b"],
             branch: branch,
             contracts: contracts
