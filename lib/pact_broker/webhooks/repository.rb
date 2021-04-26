@@ -54,7 +54,7 @@ module PactBroker
       end
 
       def find_all
-        Webhook.all.collect(&:to_domain)
+        scope_for(Webhook).all.collect(&:to_domain)
       end
 
       def find_for_pact pact
@@ -73,11 +73,11 @@ module PactBroker
           consumer_id: (consumer ? consumer.id : nil),
           provider_id: (provider ? provider.id : nil)
         }
-        Webhook.where(criteria).collect(&:to_domain)
+        scope_for(Webhook).where(criteria).collect(&:to_domain)
       end
 
       def delete_by_consumer_and_provider consumer, provider
-        Webhook.where(consumer: consumer, provider: provider).destroy
+        scope_for(Webhook).where(consumer: consumer, provider: provider).destroy
       end
 
       def find_by_consumer_and_or_provider_and_event_name consumer, provider, event_name
@@ -92,7 +92,7 @@ module PactBroker
           consumer_id: (consumer ? consumer.id : nil),
           provider_id: (provider ? provider.id : nil)
         }
-        Webhook
+        scope_for(Webhook)
           .select_all_qualified
           .enabled
           .where(criteria)
@@ -177,14 +177,14 @@ module PactBroker
       end
 
       def find_latest_triggered_webhooks consumer, provider
-        LatestTriggeredWebhook
+        scope_for(LatestTriggeredWebhook)
           .where(consumer: consumer, provider: provider)
           .order(:id)
           .all
       end
 
       def find_triggered_webhooks_for_pact pact
-        PactBroker::Webhooks::TriggeredWebhook
+        scope_for(PactBroker::Webhooks::TriggeredWebhook)
           .where(pact_publication_id: pact.pact_publication_id)
           .eager(:webhook)
           .eager(:webhook_executions)
@@ -192,7 +192,7 @@ module PactBroker
       end
 
       def find_triggered_webhooks_for_verification verification
-        PactBroker::Webhooks::TriggeredWebhook
+        scope_for(PactBroker::Webhooks::TriggeredWebhook)
           .where(verification_id: verification.id)
           .eager(:webhook)
           .eager(:webhook_executions)
@@ -204,6 +204,10 @@ module PactBroker
       end
 
       private
+
+      def scope_for(scope)
+        PactBroker.policy_scope!(scope)
+      end
 
       def delete_triggered_webhooks_and_executions triggered_webhook_ids
         Execution.where(triggered_webhook_id: triggered_webhook_ids).delete

@@ -61,6 +61,10 @@ module PactBroker
           :'webhooks::webhook'
         end
 
+        def policy_record
+          webhook
+        end
+
         private
 
         def webhook
