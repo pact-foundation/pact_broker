@@ -30,7 +30,7 @@
     "status": 200,
     "headers": {
       "Content-Type": "application/hal+json;charset=utf-8",
-      "Content-Length": "1474"
+      "Content-Length": "1593"
     },
     "body": {
       "logs": [
@@ -44,11 +44,15 @@
         },
         {
           "level": "debug",
+          "message": "  View the published pact at http://example.org/pacts/provider/Bar/consumer/Foo/version/1"
+        },
+        {
+          "level": "debug",
           "message": "  Events detected: contract_published, contract_content_changed (first time any pact published for this consumer with consumer version tagged a, first time any pact published for this consumer with consumer version tagged b)"
         },
         {
           "level": "debug",
-          "message": "  Webhook \"foo webhook\" triggered for event contract_content_changed.\n    See logs at http://example.org/triggered-webhooks/1234/logs\""
+          "message": "  Webhook \"foo webhook\" triggered for event contract_content_changed.\n    View logs at http://example.org/triggered-webhooks/1234/logs"
         }
       ],
       "_embedded": {

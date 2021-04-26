@@ -28,10 +28,10 @@ module PactBroker
         end
       end
 
-      def publish(parsed_contracts)
+      def publish(parsed_contracts, base_url: )
         version, version_logs = create_version(parsed_contracts)
         tags = create_tags(parsed_contracts, version)
-        pacts, pact_logs = create_pacts(parsed_contracts)
+        pacts, pact_logs = create_pacts(parsed_contracts, base_url)
         logs = version_logs + pact_logs
         results = ContractsPublicationResults.from_hash(
           pacticipant: version.pacticipant,
@@ -80,7 +80,7 @@ module PactBroker
         end
       end
 
-      def create_pacts(parsed_contracts)
+      def create_pacts(parsed_contracts, base_url)
         logs = []
         pacts = parsed_contracts.contracts.select(&:pact?).collect do | contract_to_publish |
           pact_params = create_pact_params(parsed_contracts, contract_to_publish)
@@ -88,6 +88,7 @@ module PactBroker
           listener = TriggeredWebhooksCreatedListener.new
           created_pact = create_or_merge_pact(contract_to_publish.merge?, existing_pact, pact_params, listener)
           logs << log_mesage_for_pact_publication(parsed_contracts, contract_to_publish.merge?, existing_pact, created_pact)
+          logs << log_message_for_pact_url(created_pact, base_url)
           logs.concat(event_and_webhook_logs(listener, created_pact))
           created_pact
         end
@@ -157,6 +158,10 @@ module PactBroker
             LogMessage.info(message("messages.contract.pact_published", log_message_params))
           end
         end
+      end
+
+      def log_message_for_pact_url(pact, base_url)
+        LogMessage.debug("  View the published pact at #{PactBroker::Api::PactBrokerUrls.pact_url(base_url, pact)}")
       end
 
       def event_and_webhook_logs(listener, pact)

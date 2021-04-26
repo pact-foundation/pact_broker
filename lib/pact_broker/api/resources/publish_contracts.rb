@@ -32,7 +32,7 @@ module PactBroker
 
         def process_post
           handle_webhook_events do
-            results = contract_service.publish(parsed_contracts)
+            results = contract_service.publish(parsed_contracts, base_url: base_url)
             response.body = decorator_class(:publish_contracts_results_decorator).new(results).to_json(decorator_options)
           end
           true

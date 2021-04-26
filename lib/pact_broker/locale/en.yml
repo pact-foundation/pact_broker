@@ -37,7 +37,7 @@ en:
         no_webhooks_enabled_for_event: No enabled webhooks found for the detected events
         no_webhooks_configured_for_pact: No webhooks have been configured for this consumer/provider. For more information on webhooks, see https://docs.pact.io/webhooks
         webhook_triggered_for_event: Webhook %{webhook_description} triggered for event %{event_name}.
-        triggered_webhook_see_logs: See logs at %{url}"
+        triggered_webhook_see_logs: View logs at %{url}
       version:
         created: "%{action} %{pacticipant_name} version %{pacticipant_version_number}"
         created_for_branch: "%{action} %{pacticipant_name} version %{pacticipant_version_number} with branch %{branch}"
@@ -48,6 +48,9 @@ en:
         same_pact_content_published: Pact republished for %{consumer_name} version %{consumer_version_number} and provider %{provider_name} with no content changes.
         pact_modified_for_same_version: Pact with changed content published over existing content for %{consumer_name} version %{consumer_version_number} and provider %{provider_name}. This is not recommended in normal cicumstances and may indicate that you have not configured your Pact pipeline correctly. For more information see https://docs.pact.io/versioning
         pact_merged: Pact content merged with existing content for %{consumer_name} version %{consumer_version_number} and provider %{provider_name}.
+      events:
+        pact_published_unchanged_with_single_tag: pact content is the same as previous version with tag %{tag_name} and no new tags were applied
+        pact_published_unchanged_with_multiple_tags: pact content is the same as previous versions with tags %{tag_names} and no new tags were applied
     errors:
       validation:
         blank: "cannot be blank."

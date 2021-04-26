@@ -29,17 +29,9 @@ module PactBroker
 
         let(:contract_hash) { { consumer: { name: "Foo" }, provider: { name: "Bar" }, interactions: [{a: "b"}] } }
         let(:decoded_contract) { contract_hash.to_json }
-        let(:webhook_options) do
-          {
-            webhook_execution_configuration: webhook_execution_configuration
-          }
-        end
-        let(:webhook_execution_configuration) do
-          PactBroker::Webhooks::ExecutionConfiguration.new
-            .with_webhook_context(base_url: 'http://example.org')
-        end
+        let(:base_url) { "http://example.org" }
 
-        subject { Service.publish(contracts_to_publish) }
+        subject { Service.publish(contracts_to_publish, base_url: base_url) }
 
         it "creates the tags" do
           expect { subject }.to change { PactBroker::Domain::Tag.count }.by 2

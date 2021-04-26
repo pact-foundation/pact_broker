@@ -5,6 +5,7 @@ require 'pact_broker/pacts/merger'
 require 'pact_broker/pacts/verifiable_pact'
 require 'pact_broker/pacts/squash_pacts_for_verification'
 require 'pact_broker/events/publisher'
+require 'pact_broker/messages'
 
 module PactBroker
   module Pacts
@@ -16,6 +17,7 @@ module PactBroker
       extend PactBroker::Repositories
       extend PactBroker::Services
       include PactBroker::Logging
+      extend PactBroker::Messages
       extend SquashPactsForVerification
 
       def find_latest_pact params
@@ -181,13 +183,13 @@ module PactBroker
         )
 
         event_params = { event_context: { consumer_version_tags: pact.consumer_version_tag_names }, pact: pact }
-        broadcast(:contract_published, event_params)
-
         content_changed, explanation = pact_is_new_or_newly_tagged_or_pact_has_changed_since_previous_version?(pact)
+
         if content_changed
+          broadcast(:contract_published, event_params)
           broadcast(:contract_content_changed, event_params.merge(event_comment: explanation))
         else
-          broadcast(:contract_content_unchanged, event_params.merge(event_comment: "Pact content the same as previous version and no new tags were applied"))
+          broadcast(:contract_published, event_params.merge(event_comment: contract_published_event_comment(pact)))
         end
 
         pact
@@ -245,6 +247,14 @@ module PactBroker
       end
 
       private :explanation_for_content_changed
+
+      def contract_published_event_comment pact
+        if pact.consumer_version_tag_names.count == 1
+          message("messages.events.pact_published_unchanged_with_single_tag", tag_name: pact.consumer_version_tag_names.first)
+        else
+          message("messages.events.pact_published_unchanged_with_multiple_tags", tag_names: pact.consumer_version_tag_names.join(", "))
+        end
+      end
     end
   end
 end

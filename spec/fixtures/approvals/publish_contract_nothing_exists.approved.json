@@ -30,7 +30,7 @@
     "status": 200,
     "headers": {
       "Content-Type": "application/hal+json;charset=utf-8",
-      "Content-Length": "1466"
+      "Content-Length": "1586"
     },
     "body": {
       "logs": [
@@ -41,6 +41,10 @@
         {
           "level": "info",
           "message": "Pact published for Foo version 1 and provider Bar."
+        },
+        {
+          "level": "debug",
+          "message": "  View the published pact at http://example.org/pacts/provider/Bar/consumer/Foo/version/1"
         },
         {
           "level": "debug",

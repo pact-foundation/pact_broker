@@ -60,12 +60,7 @@ module PactBroker
             subject
           end
 
-          it "broadcasts the contract_published event" do
-            expect(Service).to receive(:broadcast).with(:contract_published, pact: new_pact, event_context: { consumer_version_tags: %w[dev] })
-            subject
-          end
-
-          # TODO test all this properly!
+          # TODO test all this contract_content_changed logic properly!
           context "when the latest pact for one of the tags has a different pact_version_sha" do
             before do
               allow(pact_repository).to receive(:find_previous_pacts).and_return(previous_pacts_by_tag)
@@ -76,6 +71,17 @@ module PactBroker
               {
                 dev: double('previous pact', pact_version_sha: previous_dev_pact_version_sha)
               }
+            end
+
+            it "broadcasts the contract_published event" do
+              expect(Service).to receive(:broadcast).with(
+                :contract_published,
+                  {
+                    pact: new_pact,
+                    event_context: { consumer_version_tags: %w[dev] }
+                  }
+              )
+              subject
             end
 
             it "broadcasts the contract_content_changed event" do
@@ -103,12 +109,12 @@ module PactBroker
               }
             end
 
-            it "broadcasts the contract_content_unchanged event" do
+            it "broadcasts the contract_published event" do
               expect(Service).to receive(:broadcast).with(
-                :contract_content_unchanged,
+                :contract_published,
                   {
                     pact: new_pact,
-                    event_comment: "Pact content the same as previous version and no new tags were applied",
+                    event_comment: "pact content is the same as previous version with tag dev and no new tags were applied",
                     event_context: { consumer_version_tags: %w[dev] }
                   }
               )
