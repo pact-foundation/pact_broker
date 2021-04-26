@@ -6,7 +6,7 @@ module PactBroker
     describe Job do
       before do
         PactBroker.configuration.webhook_retry_schedule = [10, 60, 120, 300, 600, 1200]
-        allow(PactBroker::Webhooks::Service).to receive(:execute_triggered_webhook_now).and_return(result)
+        allow(PactBroker::Webhooks::TriggerService).to receive(:execute_triggered_webhook_now).and_return(result)
         allow(PactBroker::Webhooks::Service).to receive(:update_triggered_webhook_status)
         allow(PactBroker::Webhooks::TriggeredWebhook).to receive(:find).and_return(triggered_webhook)
         allow(Job).to receive(:logger).and_return(logger)
@@ -53,7 +53,7 @@ module PactBroker
 
       context "when an error occurs for the first time" do
         before do
-          allow(PactBroker::Webhooks::Service).to receive(:execute_triggered_webhook_now).and_raise(error)
+          allow(PactBroker::Webhooks::TriggerService).to receive(:execute_triggered_webhook_now).and_raise(error)
         end
 
         let(:error) { "an error" }
@@ -107,7 +107,7 @@ module PactBroker
         end
 
         it "executes the job with an log message indicating that the webhook will be retried" do
-          expect(PactBroker::Webhooks::Service).to receive(:execute_triggered_webhook_now)
+          expect(PactBroker::Webhooks::TriggerService).to receive(:execute_triggered_webhook_now)
             .with(triggered_webhook, webhook_execution_configuration_hash)
           subject
         end
@@ -121,7 +121,7 @@ module PactBroker
 
       context "when an error occurs for the second time" do
         before do
-          allow(PactBroker::Webhooks::Service).to receive(:execute_triggered_webhook_now).and_raise("an error")
+          allow(PactBroker::Webhooks::TriggerService).to receive(:execute_triggered_webhook_now).and_raise("an error")
           job_params[:error_count] = 1
         end
 
@@ -150,7 +150,7 @@ module PactBroker
           expect(webhook_execution_configuration).to receive(:with_failure_log_message).with("Webhook execution failed after 7 attempts")
           expect(webhook_execution_configuration).to receive(:with_success_log_message).with("Successfully executed webhook")
 
-          expect(PactBroker::Webhooks::Service).to receive(:execute_triggered_webhook_now)
+          expect(PactBroker::Webhooks::TriggerService).to receive(:execute_triggered_webhook_now)
             .with(triggered_webhook, webhook_execution_configuration_hash)
           subject
         end

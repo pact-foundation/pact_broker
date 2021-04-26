@@ -3,6 +3,7 @@ require 'pact_broker/api/decorators/verification_decorator'
 require 'pact_broker/verifications/summary_for_consumer_version'
 require 'pact_broker/logging'
 require 'pact_broker/hash_refinements'
+require 'wisper'
 
 module PactBroker
 
@@ -15,12 +16,13 @@ module PactBroker
       extend PactBroker::Services
       include PactBroker::Logging
       using PactBroker::HashRefinements
+      extend Wisper::Publisher
 
       def next_number
         verification_repository.next_number
       end
 
-      def create next_verification_number, params, pact, event_context, webhook_options
+      def create next_verification_number, params, pact, event_context
         logger.info "Creating verification #{next_verification_number} for pact_id=#{pact.id}", payload: params.reject{ |k,_| k == "testResults"}
         verification = PactBroker::Domain::Verification.new
         provider_version_number = params.fetch('providerApplicationVersion')
@@ -29,15 +31,8 @@ module PactBroker
         verification.number = next_verification_number
         verification = verification_repository.create(verification, provider_version_number, pact)
 
-        execution_configuration = webhook_options[:webhook_execution_configuration]
-                                    .with_webhook_context(provider_version_tags: verification.provider_version_tag_names)
+        broadcast_events(verification, pact, event_context)
 
-        webhook_trigger_service.trigger_webhooks_for_verification_results_publication(
-          pact,
-          verification,
-          event_context.merge(provider_version_tags: verification.provider_version_tag_names),
-          webhook_options.deep_merge(webhook_execution_configuration: execution_configuration)
-        )
         verification
       end
 
@@ -88,6 +83,23 @@ module PactBroker
 
       def delete_all_verifications_between(consumer_name, options)
         verification_repository.delete_all_verifications_between(consumer_name, options)
+      end
+
+      private
+
+      def broadcast_events(verification, pact, event_context)
+        event_params = {
+          pact: pact,
+          verification: verification,
+          event_context: event_context.merge(provider_version_tags: verification.provider_version_tag_names)
+        }
+
+        broadcast(:provider_verification_published, event_params)
+        if verification.success
+          broadcast(:provider_verification_succeeded, event_params)
+        else
+          broadcast(:provider_verification_failed, event_params)
+        end
       end
     end
   end
