@@ -64,4 +64,5 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'table_print', '~> 1.5'
   gem.add_runtime_dependency 'semantic_logger', '~> 4.3'
   gem.add_runtime_dependency 'sanitize', '>= 5.2.1', '~> 5.2'
+  gem.add_runtime_dependency 'wisper', '2.0.0'
 end

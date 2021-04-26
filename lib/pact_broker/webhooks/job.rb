@@ -36,7 +36,7 @@ module PactBroker
       def perform_with_triggered_webhook
         @error_count = data[:error_count] || 0
         begin
-          webhook_execution_result = PactBroker::Webhooks::Service.execute_triggered_webhook_now(triggered_webhook, webhook_options(data))
+          webhook_execution_result = PactBroker::Webhooks::TriggerService.execute_triggered_webhook_now(triggered_webhook, webhook_options(data))
           if webhook_execution_result.success?
             handle_success
           else
