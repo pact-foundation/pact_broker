@@ -27,7 +27,6 @@ module PactBroker
   end
 end
 
-
 module PactBroker
   module Events
     extend self
