@@ -1,5 +1,10 @@
 {
   "request": {
+    "path": "/contracts/publish",
+    "headers": {
+      "Content-Type": "application/json",
+      "Accept": "application/hal+json"
+    },
     "body": {
       "pacticipantName": "Foo",
       "versionNumber": "1",
