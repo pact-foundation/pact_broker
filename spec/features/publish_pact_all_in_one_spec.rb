@@ -4,8 +4,8 @@ RSpec.describe "publishing a pact using the all in one endpoint" do
     {
       :pacticipantName => "Foo",
       :pacticipantVersionNumber => "1",
-      :tags => ["a", "b"],
       :branch => "main",
+      :tags => ["a", "b"],
       :buildUrl => "http://ci/builds/1234",
       :contracts => [
         {

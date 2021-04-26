@@ -8,11 +8,11 @@
     "body": {
       "pacticipantName": "Foo",
       "pacticipantVersionNumber": "1",
+      "branch": "main",
       "tags": [
         "a",
         "b"
       ],
-      "branch": "main",
       "buildUrl": "http://ci/builds/1234",
       "contracts": [
         {

@@ -9,8 +9,8 @@ RSpec.describe "publishing a pact using the all in one endpoint" do
     {
       :pacticipantName => "Foo",
       :pacticipantVersionNumber => "1",
-      :tags => ["a", "b"],
       :branch => "main",
+      :tags => ["a", "b"],
       :buildUrl => "http://ci/builds/1234",
       :contracts => [
         {
@@ -54,6 +54,7 @@ RSpec.describe "publishing a pact using the all in one endpoint" do
       allow(PactBroker::Webhooks::TriggerService).to receive(:next_uuid).and_return("1234")
       td.create_global_webhook(description: "foo webhook")
     end
+
     it { Approvals.verify(fixture, :name => "publish_contract_nothing_exists_with_webhook", format: :json) }
   end
 end
