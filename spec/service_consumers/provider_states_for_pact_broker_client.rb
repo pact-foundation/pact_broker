@@ -271,4 +271,8 @@ Pact.provider_states_for "Pact Broker Client" do
         .create_consumer_version("26f353580936ad3b9baddb17b00e84f33c69e7cb")
     end
   end
+
+  provider_state "the pb:publish-contracts relations exists in the index resource" do
+    no_op
+  end
 end
