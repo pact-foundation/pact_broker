@@ -57,4 +57,12 @@ RSpec.describe "publishing a pact using the all in one endpoint" do
 
     it { Approvals.verify(fixture, :name => "publish_contract_nothing_exists_with_webhook", format: :json) }
   end
+
+  context "with a validation error" do
+    before do
+      request_body_hash.delete(:pacticipantVersionNumber)
+    end
+
+    it { Approvals.verify(fixture, :name => "publish_contract_with_validation_error", format: :json) }
+  end
 end
