@@ -1,0 +1,54 @@
+{
+  "logs": [
+    {
+      "level": "warn",
+      "message": "foo"
+    }
+  ],
+  "_embedded": {
+    "pacticipant": {
+      "name": "Foo",
+      "_links": {
+        "self": {
+          "href": "http://example.org/pacticipants/Foo"
+        }
+      }
+    },
+    "version": {
+      "number": "1",
+      "_links": {
+        "self": {
+          "title": "Version",
+          "name": "1",
+          "href": "http://example.org/pacticipants/Foo/versions/1"
+        }
+      }
+    }
+  },
+  "_links": {
+    "pb:pacticipant": {
+      "title": "Pacticipant",
+      "name": "Foo",
+      "href": "pacticipant_url"
+    },
+    "pb:pacticipant-version": {
+      "title": "Pacticipant version",
+      "name": "1",
+      "href": "version_url"
+    },
+    "pb:pacticipant-version-tags": [
+      {
+        "title": "Tag",
+        "name": "main",
+        "href": "tag_url"
+      }
+    ],
+    "pb:contracts": [
+      {
+        "title": "Pact",
+        "name": "pact name",
+        "href": "pact_url"
+      }
+    ]
+  }
+}

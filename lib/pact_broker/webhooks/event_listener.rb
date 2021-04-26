@@ -1,12 +1,14 @@
 require 'pact_broker/services'
 require 'pact_broker/events/event'
 require 'pact_broker/logging'
+require 'pact_broker/events/publisher'
 
 module PactBroker
   module Webhooks
     class EventListener
       include PactBroker::Services
       include PactBroker::Logging
+      include PactBroker::Events::Publisher
 
       def initialize(webhook_options)
         @webhook_options = webhook_options
@@ -70,11 +72,13 @@ module PactBroker
           event_name,
           base_webhook_context.merge(params.fetch(:event_context))
         )
-        detected_events << PactBroker::Events::Event.new(
+        event = PactBroker::Events::Event.new(
           event_name,
           params[:event_comment],
           triggered_webhooks
         )
+        detected_events << event
+        broadcast(:triggered_webhooks_created_for_event, event: event)
         log_detected_event
       end
     end

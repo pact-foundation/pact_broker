@@ -203,6 +203,10 @@ module PactBroker
         TriggeredWebhook.retrying.update(status: TriggeredWebhook::STATUS_FAILURE)
       end
 
+      def any_webhooks_exist?
+        scope_for(Webhook).any?
+      end
+
       private
 
       def scope_for(scope)

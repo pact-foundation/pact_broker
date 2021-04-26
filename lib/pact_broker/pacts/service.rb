@@ -156,9 +156,9 @@ module PactBroker
         broadcast(:contract_published, event_params)
 
         if existing_pact.pact_version_sha != updated_pact.pact_version_sha
-          broadcast(:contract_content_changed, event_params.merge(event_comment: "Pact content modified since previous revision"))
+          broadcast(:contract_content_changed, event_params.merge(event_comment: "pact content modified since previous publication for #{updated_pact.consumer_name} version #{updated_pact.consumer_version_number}"))
         else
-          broadcast(:contract_content_unchanged, event_params.merge(event_comment: "Pact content was unchanged"))
+          broadcast(:contract_content_unchanged, event_params.merge(event_comment: "pact content was unchanged"))
         end
 
         updated_pact
@@ -228,19 +228,19 @@ module PactBroker
           messages = changed_pacts.collect do |tag, previous_pact|
             if tag == :untagged
               if previous_pact
-                "Pact content has changed since previous untagged version"
+                "pact content has changed since previous untagged version"
               else
-                "First time untagged pact published"
+                "first time untagged pact published"
               end
             else
               if previous_pact
-                "Pact content has changed since the last consumer version tagged with #{tag}"
+                "pact content has changed since the last consumer version tagged with #{tag}"
               else
-                "First time pact published with consumer version tagged #{tag}"
+                "first time any pact published for this consumer with consumer version tagged #{tag}"
               end
             end
           end
-          messages.join(',')
+          messages.join(', ')
         end
       end
 

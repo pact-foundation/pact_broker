@@ -39,7 +39,7 @@ module PactBroker
             .with_webhook_context(base_url: 'http://example.org')
         end
 
-        subject { Service.publish(contracts_to_publish, webhook_options) }
+        subject { Service.publish(contracts_to_publish) }
 
         it "creates the tags" do
           expect { subject }.to change { PactBroker::Domain::Tag.count }.by 2

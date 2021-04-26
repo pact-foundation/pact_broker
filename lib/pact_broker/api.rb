@@ -98,7 +98,8 @@ module PactBroker
 
         add ['webhooks', 'execute' ], Api::Resources::WebhookExecution, {resource_name: "execute_unsaved_webhook"}
         add ['webhooks', :uuid ], Api::Resources::Webhook, {resource_name: "webhook"}
-        add ['webhooks', :uuid, 'trigger', :trigger_uuid, 'logs' ], Api::Resources::TriggeredWebhookLogs, {resource_name: "triggered_webhook_logs"}
+        add ['webhooks', :uuid, 'trigger', :trigger_uuid, 'logs' ], Api::Resources::TriggeredWebhookLogs, { resource_name: "triggered_webhook_logs" }
+        add ['triggered-webhooks', :trigger_uuid, 'logs' ], Api::Resources::TriggeredWebhookLogs, { resource_name: "triggered_webhook_logs" }
         add ['webhooks', :uuid, 'execute' ], Api::Resources::WebhookExecution, {resource_name: "execute_webhook"}
         add ['webhooks'], Api::Resources::AllWebhooks, {resource_name: "webhooks"}
 

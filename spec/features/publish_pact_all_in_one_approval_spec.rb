@@ -1,4 +1,7 @@
+require 'pact_broker/hash_refinements'
+
 RSpec.describe "publishing a pact using the all in one endpoint" do
+  using PactBroker::HashRefinements
   # TODO merge branches
   let(:request_body_hash) do
     {
@@ -23,21 +26,27 @@ RSpec.describe "publishing a pact using the all in one endpoint" do
   let(:contract) { { consumer: { name: "Foo" }, provider: { name: "Bar" }, interactions: [] }.to_json }
   let(:encoded_contract) { Base64.strict_encode64(contract) }
   let(:path) { "/contracts/publish" }
+  let(:fixture) do
+    {
+      request: { body: request_body_hash },
+      response: { status: subject.status, headers: subject.headers.without("Date", "Server"), body: JSON.parse(subject.body)}
+    }
+  end
+
 
   subject { post(path, request_body_hash.to_json, rack_headers) }
 
   it { is_expected.to be_a_hal_json_success_response }
 
-  it "creates a pact" do
-    expect { subject }.to change { PactBroker::Pacts::PactPublication.count }.by(1)
-    expect(PactBroker::Pacts::PactVersion.last.content).to eq contract
+  context "with no webhooks" do
+    it { Approvals.verify(fixture, :name => "publish_contract_nothing_exists", format: :json) }
   end
 
-  context "with a validation error" do
+  context "with a webhooks that gets triggered" do
     before do
-      request_body_hash.delete(:pacticipantName)
+      allow(PactBroker::Webhooks::TriggerService).to receive(:next_uuid).and_return("1234")
+      td.create_global_webhook(description: "foo webhook")
     end
-
-    it { is_expected.to be_a_json_error_response("missing") }
+    it { Approvals.verify(fixture, :name => "publish_contract_nothing_exists_with_webhook", format: :json) }
   end
 end

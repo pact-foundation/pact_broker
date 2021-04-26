@@ -23,7 +23,7 @@ module PactBroker
         let(:provider) { double('provider', id: 2) }
         let(:version) { double('version', id: 3, pacticipant_id: 1) }
         let(:existing_pact) { nil }
-        let(:new_pact) { double('new_pact', consumer_version_tag_names: %w[dev], json_content: json_content, pact_version_sha: "1") }
+        let(:new_pact) { double('new_pact', consumer_version_tag_names: %w[dev], json_content: json_content, pact_version_sha: "1", consumer_name: "Foo", consumer_version_number: "2") }
         let(:json_content) { { the: "contract" }.to_json }
         let(:json_content_with_ids) { { the: "contract with ids" }.to_json }
         let(:previous_pacts) { [] }
@@ -83,7 +83,7 @@ module PactBroker
                 :contract_content_changed,
                   {
                     pact: new_pact,
-                    event_comment: "Pact content has changed since the last consumer version tagged with dev",
+                    event_comment: "pact content has changed since the last consumer version tagged with dev",
                     event_context: { consumer_version_tags: %w[dev] }
                   }
               )
@@ -154,7 +154,7 @@ module PactBroker
                 :contract_content_changed,
                   {
                     pact: new_pact,
-                    event_comment: "Pact content modified since previous revision",
+                    event_comment: "pact content modified since previous publication for Foo version 2",
                     event_context: { consumer_version_tags: %w[dev] }
                   }
               )
@@ -168,7 +168,7 @@ module PactBroker
                 :contract_content_unchanged,
                   {
                     pact: new_pact,
-                    event_comment: "Pact content was unchanged",
+                    event_comment: "pact content was unchanged",
                     event_context: { consumer_version_tags: %w[dev] }
                   }
               )
