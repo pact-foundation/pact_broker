@@ -42,8 +42,6 @@ module PactBroker
         )
       end
 
-      # private
-
       def create_version(parsed_contracts)
         version_params = {
           build_url: parsed_contracts.build_url,
@@ -59,12 +57,16 @@ module PactBroker
         return version, logs
       end
 
+      private :create_version
+
       def find_existing_version(parsed_contracts)
         version_service.find_by_pacticipant_name_and_number(
           pacticipant_name: parsed_contracts.pacticipant_name,
           pacticipant_version_number: parsed_contracts.pacticipant_version_number
         )
       end
+
+      private :find_existing_version
 
       def create_or_update_version(parsed_contracts, version_params)
         version_service.create_or_update(
@@ -74,11 +76,15 @@ module PactBroker
         )
       end
 
+      private :create_or_update_version
+
       def create_tags(parsed_contracts, version)
         (parsed_contracts.tags || []).collect do | tag_name |
           tag_repository.create(version: version, name: tag_name)
         end
       end
+
+      private :create_tags
 
       def create_pacts(parsed_contracts, base_url)
         logs = []
@@ -96,6 +102,8 @@ module PactBroker
         return pacts, logs
       end
 
+      private :create_pacts
+
       def create_pact_params(parsed_contracts, contract_to_publish)
         PactBroker::Pacts::PactParams.new(
           consumer_name: parsed_contracts.pacticipant_name,
@@ -104,6 +112,8 @@ module PactBroker
           json_content: contract_to_publish.decoded_content
         )
       end
+
+      private :create_pact_params
 
       def create_or_merge_pact(merge, existing_pact, pact_params, listener)
         PactBroker::Events.subscribe(listener) do
@@ -115,6 +125,8 @@ module PactBroker
         end
       end
 
+      private :create_or_merge_pact
+
       def log_message_for_version_creation(existing_version, parsed_contracts)
         message_params = parsed_contracts.to_h
         if parsed_contracts.tags&.any?
@@ -123,6 +135,8 @@ module PactBroker
         message_params[:action] = existing_version ? "Updated" : "Created"
         LogMessage.debug(message(log_message_key_for_version_creation(parsed_contracts), message_params))
       end
+
+      private :log_message_for_version_creation
 
       def log_message_key_for_version_creation(parsed_contracts)
         if parsed_contracts.branch && parsed_contracts.tags&.any?
@@ -135,6 +149,8 @@ module PactBroker
           "messages.version.created"
         end
       end
+
+      private :log_message_key_for_version_creation
 
       def log_mesage_for_pact_publication(parsed_contracts, merge, existing_pact, created_pact)
         log_message_params = {
@@ -161,13 +177,19 @@ module PactBroker
         end
       end
 
+      private :log_mesage_for_pact_publication
+
       def log_message_for_pact_url(pact, base_url)
         LogMessage.debug("  View the published pact at #{PactBroker::Api::PactBrokerUrls.pact_url(base_url, pact)}")
       end
 
+      private :log_message_for_pact_url
+
       def event_and_webhook_logs(listener, pact)
         event_descriptions(listener) + triggered_webhook_logs(listener, pact)
       end
+
+      private :event_and_webhook_logs
 
       def event_descriptions(listener)
         event_descriptions = listener.detected_events.collect{ | event | event.name + (event.comment ? " (#{event.comment})" : "") }
@@ -177,6 +199,8 @@ module PactBroker
           []
         end
       end
+
+      private :event_descriptions
 
       # TODO add can-i-deploy and record-deployment
       def next_steps_logs(pact)
@@ -196,12 +220,14 @@ module PactBroker
         logs
       end
 
+      private :next_steps_logs
+
       def triggered_webhook_logs(listener, pact)
         triggered_webhooks = listener.detected_events.flat_map(&:triggered_webhooks)
         if triggered_webhooks.any?
           triggered_webhooks.collect do | triggered_webhook |
             base_url = triggered_webhook.event_context[:base_url]
-            triggered_webhooks_logs_url = PactBroker::Api::PactBrokerUrls.triggered_webhook_logs_url(triggered_webhook, base_url)
+            triggered_webhooks_logs_url = url_for_triggered_webhook(triggered_webhook, base_url)
             text_2_params = { webhook_description: triggered_webhook.webhook.description&.inspect || triggered_webhook.webhook_uuid, event_name: triggered_webhook.event_name }
             text_1 = message("messages.webhooks.webhook_triggered_for_event", text_2_params)
             text_2 = message("messages.webhooks.triggered_webhook_see_logs", url: triggered_webhooks_logs_url)
@@ -215,6 +241,12 @@ module PactBroker
           end
         end
       end
+
+      def url_for_triggered_webhook(triggered_webhook, base_url)
+        PactBroker::Api::PactBrokerUrls.triggered_webhook_logs_url(triggered_webhook, base_url)
+      end
+
+      private :url_for_triggered_webhook
     end
   end
 end
