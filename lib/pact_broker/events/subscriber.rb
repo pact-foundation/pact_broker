@@ -7,7 +7,7 @@ require 'wisper'
 module PactBroker
   module Events
     class TemporaryListeners < Wisper::TemporaryListeners
-      def subscribe(*listeners, &block)
+      def subscribe(*listeners)
         options = listeners.last.is_a?(Hash) ? listeners.pop : {}
         begin
           listeners.each { |listener| registrations << Wisper::ObjectRegistration.new(listener, options) }
