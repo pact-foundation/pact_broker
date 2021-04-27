@@ -52,19 +52,6 @@ RSpec.configure do | config |
   config.example_status_persistence_file_path = "./spec/examples.txt"
   config.filter_run_excluding skip: true
 
-  config.after(:each) do | example, something |
-    if example.exception.is_a?(Approvals::ApprovalError)
-      require "pact/support"
-      parts = example.exception.message.split('"')
-      received_file = parts[1]
-      approved_file = parts[3]
-      received_hash = JSON.parse(File.read(received_file))
-      approved_hash = JSON.parse(File.read(approved_file))
-      diff = Pact::Matchers.diff(approved_hash, received_hash)
-      puts Pact::Matchers::UnixDiffFormatter.call(diff)
-    end
-  end
-
   def app
     PactBroker::API
   end

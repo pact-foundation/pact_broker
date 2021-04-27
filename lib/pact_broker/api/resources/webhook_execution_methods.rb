@@ -1,4 +1,5 @@
 require 'pact_broker/webhooks/event_listener'
+require 'pact_broker/events/subscriber'
 
 module PactBroker
   module Api
@@ -20,7 +21,7 @@ module PactBroker
         end
 
         def handle_webhook_events
-          Wisper.subscribe(webhook_event_listener) do
+          PactBroker::Events.subscribe(webhook_event_listener) do
             yield
           end
         end

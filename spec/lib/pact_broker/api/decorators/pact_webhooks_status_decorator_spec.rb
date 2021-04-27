@@ -38,7 +38,7 @@ module PactBroker
         let(:failure) { false }
         let(:retrying) { false }
         let(:status) { PactBroker::Webhooks::TriggeredWebhook::STATUS_SUCCESS }
-        let(:logs_url) { "http://example.org/webhooks/4321/trigger/1234/logs" }
+        let(:logs_url) { "http://example.org/triggered-webhooks/1234/logs" }
         let(:triggered_webhooks) { [triggered_webhook] }
 
         let(:json) do

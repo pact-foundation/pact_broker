@@ -4,18 +4,20 @@ require 'pact_broker/logging'
 require 'pact_broker/pacts/merger'
 require 'pact_broker/pacts/verifiable_pact'
 require 'pact_broker/pacts/squash_pacts_for_verification'
-require 'wisper'
+require 'pact_broker/events/publisher'
+require 'pact_broker/messages'
 
 module PactBroker
   module Pacts
     module Service
 
       extend self
-      extend Wisper::Publisher
+      extend PactBroker::Events::Publisher
 
       extend PactBroker::Repositories
       extend PactBroker::Services
       include PactBroker::Logging
+      extend PactBroker::Messages
       extend SquashPactsForVerification
 
       def find_latest_pact params
@@ -156,9 +158,9 @@ module PactBroker
         broadcast(:contract_published, event_params)
 
         if existing_pact.pact_version_sha != updated_pact.pact_version_sha
-          broadcast(:contract_content_changed, event_params.merge(event_comment: "Pact content modified since previous revision"))
+          broadcast(:contract_content_changed, event_params.merge(event_comment: "pact content modified since previous publication for #{updated_pact.consumer_name} version #{updated_pact.consumer_version_number}"))
         else
-          broadcast(:contract_content_unchanged, event_params.merge(event_comment: "Pact content was unchanged"))
+          broadcast(:contract_content_unchanged, event_params.merge(event_comment: "pact content was unchanged"))
         end
 
         updated_pact
@@ -181,13 +183,13 @@ module PactBroker
         )
 
         event_params = { event_context: { consumer_version_tags: pact.consumer_version_tag_names }, pact: pact }
-        broadcast(:contract_published, event_params)
-
         content_changed, explanation = pact_is_new_or_newly_tagged_or_pact_has_changed_since_previous_version?(pact)
+
         if content_changed
+          broadcast(:contract_published, event_params)
           broadcast(:contract_content_changed, event_params.merge(event_comment: explanation))
         else
-          broadcast(:contract_content_unchanged, event_params.merge(event_comment: "Pact content the same as previous version and no new tags were applied"))
+          broadcast(:contract_published, event_params.merge(event_comment: contract_published_event_comment(pact)))
         end
 
         pact
@@ -228,23 +230,31 @@ module PactBroker
           messages = changed_pacts.collect do |tag, previous_pact|
             if tag == :untagged
               if previous_pact
-                "Pact content has changed since previous untagged version"
+                "pact content has changed since previous untagged version"
               else
-                "First time untagged pact published"
+                "first time untagged pact published"
               end
             else
               if previous_pact
-                "Pact content has changed since the last consumer version tagged with #{tag}"
+                "pact content has changed since the last consumer version tagged with #{tag}"
               else
-                "First time pact published with consumer version tagged #{tag}"
+                "first time any pact published for this consumer with consumer version tagged #{tag}"
               end
             end
           end
-          messages.join(',')
+          messages.join(', ')
         end
       end
 
       private :explanation_for_content_changed
+
+      def contract_published_event_comment pact
+        if pact.consumer_version_tag_names.count == 1
+          message("messages.events.pact_published_unchanged_with_single_tag", tag_name: pact.consumer_version_tag_names.first)
+        else
+          message("messages.events.pact_published_unchanged_with_multiple_tags", tag_names: pact.consumer_version_tag_names.join(", "))
+        end
+      end
     end
   end
 end

@@ -23,7 +23,7 @@ module PactBroker
         let(:provider) { double('provider', id: 2) }
         let(:version) { double('version', id: 3, pacticipant_id: 1) }
         let(:existing_pact) { nil }
-        let(:new_pact) { double('new_pact', consumer_version_tag_names: %w[dev], json_content: json_content, pact_version_sha: "1") }
+        let(:new_pact) { double('new_pact', consumer_version_tag_names: %w[dev], json_content: json_content, pact_version_sha: "1", consumer_name: "Foo", consumer_version_number: "2") }
         let(:json_content) { { the: "contract" }.to_json }
         let(:json_content_with_ids) { { the: "contract with ids" }.to_json }
         let(:previous_pacts) { [] }
@@ -60,12 +60,7 @@ module PactBroker
             subject
           end
 
-          it "broadcasts the contract_published event" do
-            expect(Service).to receive(:broadcast).with(:contract_published, pact: new_pact, event_context: { consumer_version_tags: %w[dev] })
-            subject
-          end
-
-          # TODO test all this properly!
+          # TODO test all this contract_content_changed logic properly!
           context "when the latest pact for one of the tags has a different pact_version_sha" do
             before do
               allow(pact_repository).to receive(:find_previous_pacts).and_return(previous_pacts_by_tag)
@@ -78,12 +73,23 @@ module PactBroker
               }
             end
 
+            it "broadcasts the contract_published event" do
+              expect(Service).to receive(:broadcast).with(
+                :contract_published,
+                  {
+                    pact: new_pact,
+                    event_context: { consumer_version_tags: %w[dev] }
+                  }
+              )
+              subject
+            end
+
             it "broadcasts the contract_content_changed event" do
               expect(Service).to receive(:broadcast).with(
                 :contract_content_changed,
                   {
                     pact: new_pact,
-                    event_comment: "Pact content has changed since the last consumer version tagged with dev",
+                    event_comment: "pact content has changed since the last consumer version tagged with dev",
                     event_context: { consumer_version_tags: %w[dev] }
                   }
               )
@@ -103,12 +109,12 @@ module PactBroker
               }
             end
 
-            it "broadcasts the contract_content_unchanged event" do
+            it "broadcasts the contract_published event" do
               expect(Service).to receive(:broadcast).with(
-                :contract_content_unchanged,
+                :contract_published,
                   {
                     pact: new_pact,
-                    event_comment: "Pact content the same as previous version and no new tags were applied",
+                    event_comment: "pact content is the same as previous version with tag dev and no new tags were applied",
                     event_context: { consumer_version_tags: %w[dev] }
                   }
               )
@@ -154,7 +160,7 @@ module PactBroker
                 :contract_content_changed,
                   {
                     pact: new_pact,
-                    event_comment: "Pact content modified since previous revision",
+                    event_comment: "pact content modified since previous publication for Foo version 2",
                     event_context: { consumer_version_tags: %w[dev] }
                   }
               )
@@ -168,7 +174,7 @@ module PactBroker
                 :contract_content_unchanged,
                   {
                     pact: new_pact,
-                    event_comment: "Pact content was unchanged",
+                    event_comment: "pact content was unchanged",
                     event_context: { consumer_version_tags: %w[dev] }
                   }
               )

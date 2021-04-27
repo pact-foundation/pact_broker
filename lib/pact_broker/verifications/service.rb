@@ -1,14 +1,16 @@
+require 'delegate'
 require 'pact_broker/repositories'
 require 'pact_broker/api/decorators/verification_decorator'
 require 'pact_broker/verifications/summary_for_consumer_version'
 require 'pact_broker/logging'
 require 'pact_broker/hash_refinements'
-require 'wisper'
+require 'pact_broker/events/publisher'
 
 module PactBroker
-
   module Verifications
     module Service
+
+      extend Forwardable
 
       extend self
 
@@ -16,7 +18,9 @@ module PactBroker
       extend PactBroker::Services
       include PactBroker::Logging
       using PactBroker::HashRefinements
-      extend Wisper::Publisher
+      extend PactBroker::Events::Publisher
+
+      delegate [:any_verifications?] => :verification_repository
 
       def next_number
         verification_repository.next_number
