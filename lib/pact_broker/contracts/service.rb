@@ -89,7 +89,9 @@ module PactBroker
           created_pact = create_or_merge_pact(contract_to_publish.merge?, existing_pact, pact_params, listener)
           logs << log_mesage_for_pact_publication(parsed_contracts, contract_to_publish.merge?, existing_pact, created_pact)
           logs << log_message_for_pact_url(created_pact, base_url)
+          logs.concat(verification_status_logs(created_pact))
           logs.concat(event_and_webhook_logs(listener, created_pact))
+          logs.concat(next_steps_logs(created_pact))
           created_pact
         end
         return pacts, logs
@@ -177,6 +179,28 @@ module PactBroker
         end
       end
 
+      # TODO add can-i-deploy and record-deployment
+      def next_steps_logs(pact)
+        logs = []
+        if !verification_service.any_verifications?(pact.consumer, pact.provider)
+          logs << LogMessage.warn("    * " + message("messages.next_steps.verifications", provider_name: pact.provider_name))
+        end
+
+        if !webhook_service.find_for_pact(pact).any?
+          logs << LogMessage.warn("    * " + message("messages.next_steps.webhooks", provider_name: pact.provider_name))
+        end
+
+        if logs.any?
+          logs.unshift(LogMessage.warn("  Next steps:"))
+        end
+
+        logs
+      end
+
+      def verification_status_logs(pact)
+        []
+      end
+
       def triggered_webhook_logs(listener, pact)
         triggered_webhooks = listener.detected_events.flat_map(&:triggered_webhooks)
         if triggered_webhooks.any?
@@ -192,7 +216,7 @@ module PactBroker
           if webhook_service.find_for_pact(pact).any?
             [LogMessage.debug("  " + message("messages.webhooks.no_webhooks_enabled_for_event"))]
           else
-            [LogMessage.debug("  " + message("messages.webhooks.no_webhooks_configured_for_pact"))]
+            []
           end
         end
       end

@@ -35,7 +35,7 @@ en:
             githubVerificationStatus: the verification status using the correct keywords for posting to the Github commit status API. See https://developer.github.com/v3/repos/statuses.
             bitbucketVerificationStatus: the verification status using the correct keywords for posting to the Bitbucket commit status API. See https://developer.atlassian.com/server/bitbucket/how-tos/updating-build-status-for-commits/.
         no_webhooks_enabled_for_event: No enabled webhooks found for the detected events
-        no_webhooks_configured_for_pact: No webhooks have been configured for this consumer/provider. For more information on webhooks, see https://docs.pact.io/webhooks
+
         webhook_triggered_for_event: Webhook %{webhook_description} triggered for event %{event_name}.
         triggered_webhook_see_logs: View logs at %{url}
       version:
@@ -44,13 +44,16 @@ en:
         created_for_branch_with_tags: "%{action} %{pacticipant_name} version %{pacticipant_version_number} with branch %{branch} and tags %{tags}"
         created_with_tags: "%{action} %{pacticipant_name} version %{pacticipant_version_number} with tags %{tags}"
       contract:
-        pact_published: Pact published for %{consumer_name} version %{consumer_version_number} and provider %{provider_name}.
-        same_pact_content_published: Pact republished for %{consumer_name} version %{consumer_version_number} and provider %{provider_name} with no content changes.
-        pact_modified_for_same_version: Pact with changed content published over existing content for %{consumer_name} version %{consumer_version_number} and provider %{provider_name}. This is not recommended in normal cicumstances and may indicate that you have not configured your Pact pipeline correctly. For more information see https://docs.pact.io/versioning
+        pact_published: Pact successfully published for %{consumer_name} version %{consumer_version_number} and provider %{provider_name}.
+        same_pact_content_published: Pact successfully republished for %{consumer_name} version %{consumer_version_number} and provider %{provider_name} with no content changes.
+        pact_modified_for_same_version: Pact with changed content published over existing content for %{consumer_name} version %{consumer_version_number} and provider %{provider_name}. This is not recommended in normal cicumstances and may indicate that you have not configured your Pact pipeline correctly. For more information see https://docs.pact.io/go/versioning
         pact_merged: Pact content merged with existing content for %{consumer_name} version %{consumer_version_number} and provider %{provider_name}.
       events:
         pact_published_unchanged_with_single_tag: pact content is the same as previous version with tag %{tag_name} and no new tags were applied
         pact_published_unchanged_with_multiple_tags: pact content is the same as previous versions with tags %{tag_names} and no new tags were applied
+      next_steps:
+        verifications: Add Pact verification tests to the %{provider_name} build. See https://docs.pact.io/go/provider_verification
+        webhooks: Configure separate %{provider_name} pact verification build and webhook to trigger it when the pact content changes. See https://docs.pact.io/go/webhooks
     errors:
       validation:
         blank: "cannot be blank."

@@ -30,17 +30,17 @@
     "status": 200,
     "headers": {
       "Content-Type": "application/hal+json;charset=utf-8",
-      "Content-Length": "1788"
+      "Content-Length": "1778"
     },
     "body": {
       "logs": [
         {
           "level": "debug",
-          "message": "Created Foo version 1 with branch main and tags a, b"
+          "message": "Updated Foo version 1 with branch main and tags a, b"
         },
         {
-          "level": "info",
-          "message": "Pact successfully published for Foo version 1 and provider Bar."
+          "level": "warn",
+          "message": "Pact with changed content published over existing content for Foo version 1 and provider Bar. This is not recommended in normal cicumstances and may indicate that you have not configured your Pact pipeline correctly. For more information see https://docs.pact.io/go/versioning"
         },
         {
           "level": "debug",
@@ -48,15 +48,11 @@
         },
         {
           "level": "debug",
-          "message": "  Events detected: contract_published, contract_content_changed (first time any pact published for this consumer with consumer version tagged a, first time any pact published for this consumer with consumer version tagged b)"
+          "message": "  Events detected: contract_published, contract_content_changed (pact content modified since previous publication for Foo version 1)"
         },
         {
           "level": "warn",
           "message": "  Next steps:"
-        },
-        {
-          "level": "warn",
-          "message": "    * Add Pact verification tests to the Bar build. See https://docs.pact.io/go/provider_verification"
         },
         {
           "level": "warn",

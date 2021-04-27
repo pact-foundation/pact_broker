@@ -62,6 +62,10 @@ module PactBroker
         PactBroker::Pacts::PactPublication.where(id: pact.id).single_record.latest_verification
       end
 
+      def any_verifications?(consumer, provider)
+        PactBroker::Domain::Verification.where(consumer_id: consumer.id, provider_id: provider.id).any?
+      end
+
       def search_for_latest consumer_name, provider_name
         query = LatestVerificationForPactVersion
                   .select_all_qualified

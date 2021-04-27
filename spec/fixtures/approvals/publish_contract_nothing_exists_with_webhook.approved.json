@@ -30,7 +30,7 @@
     "status": 200,
     "headers": {
       "Content-Type": "application/hal+json;charset=utf-8",
-      "Content-Length": "1593"
+      "Content-Length": "1780"
     },
     "body": {
       "logs": [
@@ -40,7 +40,7 @@
         },
         {
           "level": "info",
-          "message": "Pact published for Foo version 1 and provider Bar."
+          "message": "Pact successfully published for Foo version 1 and provider Bar."
         },
         {
           "level": "debug",
@@ -53,6 +53,14 @@
         {
           "level": "debug",
           "message": "  Webhook \"foo webhook\" triggered for event contract_content_changed.\n    View logs at http://example.org/triggered-webhooks/1234/logs"
+        },
+        {
+          "level": "warn",
+          "message": "  Next steps:"
+        },
+        {
+          "level": "warn",
+          "message": "    * Add Pact verification tests to the Bar build. See https://docs.pact.io/go/provider_verification"
         }
       ],
       "_embedded": {
