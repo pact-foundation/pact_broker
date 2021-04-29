@@ -69,12 +69,12 @@ module PactBroker
         let(:event_name) { PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED }
         let(:event_context) { { some: "data" } }
         let(:expected_event_context) { { some: "data", event_name: PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED } }
-        let(:webhook_repository) { instance_double(Repository, create_triggered_webhook: triggered_webhook, find_by_consumer_and_or_provider_and_event_name: webhooks) }
+        let(:webhook_repository) { instance_double(Repository, create_triggered_webhook: triggered_webhook, find_webhooks_to_trigger: webhooks) }
 
         subject { TriggerService.create_triggered_webhooks_for_event(pact, verification, event_name, event_context) }
 
         it "finds the webhooks" do
-          expect(webhook_repository).to receive(:find_by_consumer_and_or_provider_and_event_name).with(consumer, provider, PactBroker::Webhooks::WebhookEvent::DEFAULT_EVENT_NAME)
+          expect(webhook_repository).to receive(:find_webhooks_to_trigger).with(consumer: consumer, provider: provider, event_name: PactBroker::Webhooks::WebhookEvent::DEFAULT_EVENT_NAME)
           subject
         end
 

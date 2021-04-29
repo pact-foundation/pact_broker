@@ -209,7 +209,7 @@ module PactBroker
           logs << LogMessage.warn("    * " + message("messages.next_steps.verifications", provider_name: pact.provider_name))
         end
 
-        if !webhook_service.find_for_pact(pact).any?
+        if !webhook_service.any_webhooks_configured_for_pact?(pact)
           logs << LogMessage.warn("    * " + message("messages.next_steps.webhooks", provider_name: pact.provider_name))
         end
 
@@ -234,7 +234,8 @@ module PactBroker
             LogMessage.debug("  #{text_1}\n    #{text_2}")
           end
         else
-          if webhook_service.find_for_pact(pact).any?
+          if webhook_service.any_webhooks_configured_for_pact?(pact)
+            # There are some webhooks, just not any for this particular event
             [LogMessage.debug("  " + message("messages.webhooks.no_webhooks_enabled_for_event"))]
           else
             []

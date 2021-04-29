@@ -38,7 +38,7 @@ module PactBroker
 
       # the main entry point
       def create_triggered_webhooks_for_event pact, verification, event_name, event_context
-        webhooks = webhook_repository.find_by_consumer_and_or_provider_and_event_name pact.consumer, pact.provider, event_name
+        webhooks = webhook_repository.find_webhooks_to_trigger(consumer: pact.consumer, provider: pact.provider, event_name: event_name)
 
         if webhooks.any?
           create_triggered_webhooks_for_webhooks(webhooks, pact, verification, event_name, event_context.merge(event_name: event_name))

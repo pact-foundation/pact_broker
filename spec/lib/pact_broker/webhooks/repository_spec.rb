@@ -263,6 +263,7 @@ module PactBroker
 
       describe "find_all" do
         before do
+          allow(PactBroker).to receive(:policy_scope!).and_call_original
           Repository.new.create uuid, webhook, consumer, provider
           Repository.new.create 'some-other-uuid', webhook, consumer, provider
         end
@@ -272,6 +273,11 @@ module PactBroker
         it "returns a list of webhooks" do
           expect(subject.size).to be 2
           expect(subject.first).to be_instance_of Domain::Webhook
+        end
+
+        it "uses the policy" do
+          expect(PactBroker).to receive(:policy_scope!)
+          subject
         end
       end
 
@@ -345,34 +351,57 @@ module PactBroker
         end
       end
 
-      describe "find_by_consumer_and_provider_and_event_name" do
-        subject { Repository.new.find_by_consumer_and_provider_and_event_name td.consumer, td.provider, 'something_happened' }
+      describe "find_webhooks_to_trigger" do
+        before do
+          allow(PactBroker).to receive(:policy_scope!).and_call_original
+        end
 
-        context "when a webhook exists with a matching consumer and provider and event name" do
+        let(:enabled) { true }
+
+        subject { Repository.new.find_webhooks_to_trigger(consumer: td.consumer, provider: td.provider, event_name: "contract_published") }
+
+        it "does not use a policy" do
+          td.create_webhook(event_names: ["contract_published"], enabled: enabled)
+            .create_consumer("Foo")
+            .create_provider("Bar")
+          expect(PactBroker).to_not receive(:policy_scope!)
+          expect(subject.size).to eq 1
+        end
+
+        context "when the webhook is disabled" do
           before do
-            td
-              .create_consumer("Consumer")
-              .create_provider("Another Provider")
-              .create_webhook
-              .create_provider("Provider")
-              .create_webhook(uuid: '1', events: [{ name: 'something_happened' }])
-              .create_webhook(uuid: '2', events: [{ name: 'something_happened' }])
-              .create_webhook(uuid: '3', events: [{ name: 'something_else_happened' }])
+            td.create_webhook(event_names: ["contract_published"], enabled: enabled)
+              .create_consumer("Foo")
+              .create_provider("Bar")
+          end
+          let(:enabled) { false }
+          its(:size) { is_expected.to eq 0 }
+        end
+
+        context "when the webhook is specified for a consumer and all providers" do
+          before do
+            td.create_consumer("Foo1")
+              .create_provider("Bar1")
+              .create_webhook(provider: nil, event_names: ["contract_published"])
           end
 
-          it "returns an array of webhooks" do
-            expect(subject.collect(&:uuid).sort).to eq ['1', '2']
+          its(:size) { is_expected.to eq 1 }
+
+          it "returns the right webhook" do
+            expect(subject.first.consumer).to eq td.consumer
+            expect(subject.first.provider).to be nil
+          end
+        end
+
+        context "when the webhook is specified for matching consumer but not provider" do
+          before do
+            td.create_consumer("Foo1")
+              .create_provider("Bar1")
+              .create_webhook(event_names: ["contract_published"])
+              .create_provider("Bar3")
           end
 
-          context "when the webhook is not enabled" do
-            before do
-              Webhook.where(uuid: '2').update(enabled: false)
-            end
-
-            it "is not returned" do
-              expect(subject.collect(&:uuid).sort).to_not include('2  ')
-            end
-          end
+          its(:size) { is_expected.to eq 0 }
         end
       end
 

@@ -28,12 +28,14 @@ module PactBroker
         find_by_uuid db_webhook.uuid
       end
 
+      # policy applied at resource level
       def find_by_uuid uuid
-        Webhook.where(uuid: uuid).limit(1).collect(&:to_domain)[0]
+        deliberately_unscoped(Webhook).where(uuid: uuid).limit(1).collect(&:to_domain)[0]
       end
 
+      # policy applied at resource level
       def update_by_uuid uuid, webhook
-        existing_webhook = Webhook.find(uuid: uuid)
+        existing_webhook = deliberately_unscoped(Webhook).find(uuid: uuid)
         existing_webhook.consumer_id = webhook.consumer ? pacticipant_repository.find_by_name(webhook.consumer.name).id : nil
         existing_webhook.provider_id = webhook.provider ? pacticipant_repository.find_by_name(webhook.provider.name).id : nil
         existing_webhook.update_from_domain(webhook).save
@@ -44,65 +46,46 @@ module PactBroker
         find_by_uuid uuid
       end
 
+      # policy applied at resource level
       def delete_by_uuid uuid
-        Webhook.where(uuid: uuid).destroy
+        deliberately_unscoped(Webhook).where(uuid: uuid).destroy
       end
 
+      # policy applied at resource level for pacticipant
       def delete_by_pacticipant pacticipant
-        Webhook.where(consumer_id: pacticipant.id).destroy
-        Webhook.where(provider_id: pacticipant.id).destroy
+        deliberately_unscoped(Webhook).where(consumer_id: pacticipant.id).destroy
+        deliberately_unscoped(Webhook).where(provider_id: pacticipant.id).destroy
       end
 
+      # this needs the scope!
       def find_all
         scope_for(Webhook).all.collect(&:to_domain)
       end
 
-      def find_for_pact pact
-        find_by_consumer_and_or_provider(pact.consumer, pact.provider)
-      end
-
-      def find_by_consumer_and_or_provider consumer, provider
-        find_by_consumer_and_provider(consumer, provider) +
-          find_by_consumer_and_provider(nil, provider) +
-          find_by_consumer_and_provider(consumer, nil) +
-          find_by_consumer_and_provider(nil, nil)
+      # needs to know if there are any at all, regardless of whether or not user can edit them
+      def any_webhooks_configured_for_pact?(pact)
+        deliberately_unscoped(Webhook).find_by_consumer_and_or_provider(pact.consumer, pact.provider).any?
       end
 
       def find_by_consumer_and_provider consumer, provider
-        criteria = {
-          consumer_id: (consumer ? consumer.id : nil),
-          provider_id: (provider ? provider.id : nil)
-        }
-        scope_for(Webhook).where(criteria).collect(&:to_domain)
+        scope_for(Webhook).find_by_consumer_and_provider(consumer, provider).collect(&:to_domain)
       end
 
       def delete_by_consumer_and_provider consumer, provider
         scope_for(Webhook).where(consumer: consumer, provider: provider).destroy
       end
 
-      def find_by_consumer_and_or_provider_and_event_name consumer, provider, event_name
-        find_by_consumer_and_provider_and_event_name(consumer, provider, event_name) +
-          find_by_consumer_and_provider_and_event_name(nil, provider, event_name) +
-          find_by_consumer_and_provider_and_event_name(consumer, nil, event_name) +
-          find_by_consumer_and_provider_and_event_name(nil, nil, event_name)
-      end
-
-      def find_by_consumer_and_provider_and_event_name consumer, provider, event_name
-        criteria = {
-          consumer_id: (consumer ? consumer.id : nil),
-          provider_id: (provider ? provider.id : nil)
-        }
-        scope_for(Webhook)
+      def find_webhooks_to_trigger consumer: , provider: , event_name:
+        deliberately_unscoped(Webhook)
           .select_all_qualified
           .enabled
-          .where(criteria)
-          .join(:webhook_events, { webhook_id: :id })
-          .where(Sequel[:webhook_events][:name] => event_name)
+          .for_event_name(event_name)
+          .find_by_consumer_and_or_provider(consumer, provider)
           .collect(&:to_domain)
       end
 
       def create_triggered_webhook trigger_uuid, webhook, pact, verification, trigger_type, event_name, event_context
-        db_webhook = Webhook.where(uuid: webhook.uuid).single_record
+        db_webhook = deliberately_unscoped(Webhook).where(uuid: webhook.uuid).single_record
         TriggeredWebhook.create(
           status: TriggeredWebhook::STATUS_NOT_RUN,
           pact_publication_id: pact.id,
@@ -124,7 +107,7 @@ module PactBroker
 
       def create_execution triggered_webhook, webhook_execution_result
         # TriggeredWebhook may have been deleted since the webhook execution started
-        if TriggeredWebhook.where(id: triggered_webhook.id).any?
+        if deliberately_unscoped(TriggeredWebhook).where(id: triggered_webhook.id).any?
           Execution.create(
             triggered_webhook: triggered_webhook,
             success: webhook_execution_result.success?,
@@ -134,9 +117,10 @@ module PactBroker
         end
       end
 
+      # policy applied at resource level
       def delete_triggered_webhooks_by_pacticipant pacticipant
-        TriggeredWebhook.where(consumer: pacticipant).delete
-        TriggeredWebhook.where(provider: pacticipant).delete
+        deliberately_unscoped(TriggeredWebhook).where(consumer: pacticipant).delete
+        deliberately_unscoped(TriggeredWebhook).where(provider: pacticipant).delete
       end
 
       def delete_executions_by_pacticipant pacticipants
@@ -177,7 +161,8 @@ module PactBroker
       end
 
       def find_latest_triggered_webhooks consumer, provider
-        scope_for(LatestTriggeredWebhook)
+        # policy already applied to pact
+        deliberately_unscoped(LatestTriggeredWebhook)
           .where(consumer: consumer, provider: provider)
           .order(:id)
           .all
@@ -200,17 +185,21 @@ module PactBroker
       end
 
       def fail_retrying_triggered_webhooks
-        TriggeredWebhook.retrying.update(status: TriggeredWebhook::STATUS_FAILURE)
-      end
-
-      def any_webhooks_exist?
-        scope_for(Webhook).any?
+        deliberately_unscoped(TriggeredWebhook).retrying.update(status: TriggeredWebhook::STATUS_FAILURE)
       end
 
       private
 
+      def deliberately_unscoped(scope)
+        scope
+      end
+
       def scope_for(scope)
-        PactBroker.policy_scope!(scope)
+        if @no_policy
+          scope
+        else
+          PactBroker.policy_scope!(scope)
+        end
       end
 
       def delete_triggered_webhooks_and_executions triggered_webhook_ids
