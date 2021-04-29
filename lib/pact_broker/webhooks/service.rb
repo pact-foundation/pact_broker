@@ -73,7 +73,6 @@ module PactBroker
       end
 
       def delete_by_uuid uuid
-        webhook_repository.delete_triggered_webhooks_by_webhook_uuid uuid
         webhook_repository.delete_by_uuid uuid
       end
 

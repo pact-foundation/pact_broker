@@ -17,6 +17,13 @@ module PactBroker
       dataset_module do
         include PactBroker::Repositories::Helpers
 
+        # Keep the triggered webhooks after the webhook has been deleted
+        def delete
+          require 'pact_broker/webhooks/triggered_webhook'
+          TriggeredWebhook.where(webhook_id: id).update(webhook_id: nil)
+          super
+        end
+
         def for_event_name(event_name)
           join(:webhook_events, { webhook_id: :id })
             .where(Sequel[:webhook_events][:name] => event_name)
@@ -94,6 +101,13 @@ module PactBroker
 
       def is_for? integration
         (consumer_id == integration.consumer_id || !consumer_id) && (provider_id == integration.provider_id || !provider_id)
+      end
+
+      # Keep the triggered webhooks after the webhook has been deleted
+      def delete
+        require 'pact_broker/webhooks/triggered_webhook'
+        TriggeredWebhook.where(webhook_id: id).update(webhook_id: nil)
+        super
       end
 
       private
