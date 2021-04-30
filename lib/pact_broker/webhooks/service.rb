@@ -77,9 +77,7 @@ module PactBroker
       end
 
       def delete_all_webhhook_related_objects_by_pacticipant pacticipant
-        webhook_repository.delete_executions_by_pacticipant pacticipant
-        webhook_repository.delete_triggered_webhooks_by_pacticipant pacticipant
-        webhook_repository.delete_by_pacticipant pacticipant
+        webhook_repository.delete_by_pacticipant(pacticipant)
       end
 
       def delete_all_webhook_related_objects_by_pact_publication_ids pact_publication_ids

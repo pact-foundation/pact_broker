@@ -18,9 +18,12 @@ module PactBroker
             number_of_attempts_made: 1,
             number_of_attempts_remaining: 2,
             created_at: DateTime.new(2017),
-            updated_at: DateTime.new(2017)
+            updated_at: DateTime.new(2017),
+            webhook: webhook
           )
         end
+
+        let(:webhook) { double('webhook') }
 
         let(:pact) do
           double('pact',

@@ -84,34 +84,98 @@ module PactBroker
       end
 
       describe "delete_by_pacticipant" do
-
         before do
-          allow(SecureRandom).to receive(:urlsafe_base64).and_return(uuid, 'another-uuid')
-          Repository.new.create(uuid, webhook, consumer, provider)
+          td.create_consumer("other-consumer")
+            .create_provider("other-provider")
+            .create_consumer_version
+            .create_pact
+            .create_webhook(uuid: "other-uuid")
+            .create_triggered_webhook
+            .create_webhook_execution
+            .create_consumer("foo")
+            .create_provider("bar")
+            .create_consumer_version
+            .create_pact
+            .create_webhook(uuid: "1234")
+            .create_triggered_webhook
+            .create_webhook_execution
+            .create_webhook(uuid: "5555")
+            .create_triggered_webhook
+            .create_webhook_execution
+          # simulate resource already deleted
+          Webhook.where(uuid: "5555").delete
         end
 
         context "when the pacticipant is the consumer" do
 
-          subject { Repository.new.delete_by_pacticipant consumer }
+          subject { Repository.new.delete_by_pacticipant td.consumer }
 
-          it "deletes the webhook" do
-            expect { subject }.to change {
-              ::DB::PACT_BROKER_DB[:webhooks].where(uuid: uuid).count
-              }.by(-1)
+          it "deletes the matching webhook" do
+            expect { subject }.to change { Webhook.where(uuid: "1234").count }.by(-1)
+          end
+
+          it "does not delete the unmatching webhooks" do
+            expect { subject }.to change { Webhook.count }.by(-1)
+          end
+
+          it "deletes the triggered webhooks" do
+            expect { subject }.to change { TriggeredWebhook.count }.by(-2)
           end
         end
 
         context "when the pacticipant is the provider" do
+          subject { Repository.new.delete_by_pacticipant(td.provider) }
 
-          subject { Repository.new.delete_by_pacticipant provider }
+          it "deletes the matching webhooks" do
+            expect { subject }.to change { Webhook.where(uuid: "1234").count }.by(-1)
+          end
 
-          it "deletes the webhook" do
-            expect { subject }.to change {
-              ::DB::PACT_BROKER_DB[:webhooks].where(uuid: uuid).count
-              }.by(-1)
+          it "does not delete the unmatching webhooks" do
+            expect { subject }.to change { Webhook.count }.by(-1)
+          end
+
+          it "deletes the triggered webhooks" do
+            expect { subject }.to change { TriggeredWebhook.count }.by(-2)
           end
         end
+      end
 
+      describe "delete_by_consumer_and_provider" do
+        before do
+          td.create_consumer("foo")
+            .create_provider("other-provider")
+            .create_consumer_version
+            .create_pact
+            .create_webhook(uuid: "other-uuid")
+            .comment("kept because doesn't match provider")
+            .create_triggered_webhook
+            .create_webhook_execution
+            .create_provider("bar")
+            .create_consumer_version
+            .create_pact
+            .create_webhook(uuid: "1234")
+            .create_triggered_webhook
+            .create_webhook_execution
+            .create_webhook(uuid: "5555")
+            .create_triggered_webhook
+            .create_webhook_execution
+          # simulate resource already deleted
+          Webhook.where(uuid: "5555").delete
+        end
+
+        subject { Repository.new.delete_by_consumer_and_provider(td.consumer, td.provider) }
+
+        it "deletes the webhooks that match both consumer and provider" do
+          expect { subject }.to change { Webhook.where(uuid: "1234").count }.by(-1)
+        end
+
+        it "does not delete the unmatching webhooks" do
+          expect { subject }.to change { Webhook.count }.by(-1)
+        end
+
+        it "deletes the triggered webhooks" do
+          expect { subject }.to change { TriggeredWebhook.count }.by(-2)
+        end
       end
 
       describe "find_by_uuid" do
@@ -498,73 +562,6 @@ module PactBroker
           it "just logs the error" do
             expect(logger).to receive(:info).with(/triggered webhook with id #{td.triggered_webhook.id}/)
             subject
-          end
-        end
-      end
-
-      describe "delete_triggered_webhooks_by_webhook_uuid" do
-        before do
-          td.create_consumer
-            .create_provider
-            .create_consumer_version
-            .create_pact
-            .create_webhook
-            .create_triggered_webhook
-            .create_webhook_execution
-            .create_webhook
-            .create_triggered_webhook
-            .create_webhook_execution
-        end
-        let(:webhook_id) { Webhook.find(uuid: td.webhook.uuid).id }
-
-        subject { Repository.new.delete_triggered_webhooks_by_webhook_uuid td.webhook.uuid }
-
-        it "deletes the related triggered webhooks" do
-          expect { subject }.to change {
-              TriggeredWebhook.where(id: td.triggered_webhook.id).count
-            }.from(1).to(0)
-        end
-
-        it "does not delete the unrelated triggered webhooks" do
-          expect { subject }.to_not change {
-              TriggeredWebhook.exclude(id: td.triggered_webhook.id).count
-            }
-        end
-
-        it "deletes the related webhook executions" do
-          expect { subject }.to change {
-              Execution.count
-            }.by(-1)
-        end
-      end
-
-      describe "delete_executions_by_pacticipant" do
-        before do
-          td.create_consumer
-            .create_provider
-            .create_webhook
-            .create_consumer_version
-            .create_pact
-            .create_triggered_webhook
-            .create_webhook_execution
-          # Replicate the old way of doing it
-        end
-
-        context "with triggered webhooks" do
-          it "deletes the execution by consumer" do
-            expect { Repository.new.delete_executions_by_pacticipant td.consumer }
-              .to change { Execution.count }.by(-1)
-          end
-
-          it "deletes the execution by provider" do
-            expect { Repository.new.delete_executions_by_pacticipant td.provider }
-              .to change { Execution.count }.by(-1)
-          end
-
-          it "does not delete executions for non related pacticipants" do
-            another_consumer = td.create_consumer.and_return(:consumer)
-            expect { Repository.new.delete_executions_by_pacticipant another_consumer }
-              .to change { Execution.count }.by(0)
           end
         end
       end

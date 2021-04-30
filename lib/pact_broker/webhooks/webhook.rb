@@ -20,7 +20,7 @@ module PactBroker
         # Keep the triggered webhooks after the webhook has been deleted
         def delete
           require 'pact_broker/webhooks/triggered_webhook'
-          TriggeredWebhook.where(webhook_id: id).update(webhook_id: nil)
+          TriggeredWebhook.where(webhook: self).update(webhook_id: nil)
           super
         end
 

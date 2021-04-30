@@ -52,9 +52,14 @@ module PactBroker
       end
 
       # policy applied at resource level for pacticipant
+      # If we're deleting the pacticipant, then we actually do want to delete the triggered webhooks
       def delete_by_pacticipant pacticipant
-        deliberately_unscoped(Webhook).where(consumer_id: pacticipant.id).destroy
-        deliberately_unscoped(Webhook).where(provider_id: pacticipant.id).destroy
+        deliberately_unscoped(TriggeredWebhook).where(consumer_id: pacticipant.id).delete
+        deliberately_unscoped(TriggeredWebhook).where(provider_id: pacticipant.id).delete
+        deliberately_unscoped(TriggeredWebhook).where(webhook: deliberately_unscoped(Webhook).where(consumer_id: pacticipant.id)).delete
+        deliberately_unscoped(TriggeredWebhook).where(webhook: deliberately_unscoped(Webhook).where(provider_id: pacticipant.id)).delete
+        deliberately_unscoped(Webhook).where(consumer_id: pacticipant.id).delete
+        deliberately_unscoped(Webhook).where(provider_id: pacticipant.id).delete
       end
 
       # this needs the scope!
@@ -71,8 +76,15 @@ module PactBroker
         scope_for(Webhook).find_by_consumer_and_provider(consumer, provider).collect(&:to_domain)
       end
 
+      # deleting a particular integration
+      # do delete triggered webhooks
+      # only delete stuff matching both, as other integrations may still be present
       def delete_by_consumer_and_provider consumer, provider
-        scope_for(Webhook).where(consumer: consumer, provider: provider).destroy
+        webhooks_to_delete = deliberately_unscoped(Webhook).where(consumer: consumer, provider: provider)
+        TriggeredWebhook.where(webhook: webhooks_to_delete).delete
+        # Delete the orphaned triggerred webhooks
+        TriggeredWebhook.where(consumer: consumer, provider: provider).delete
+        webhooks_to_delete.delete
       end
 
       def find_webhooks_to_trigger consumer: , provider: , event_name:
@@ -115,27 +127,6 @@ module PactBroker
         else
           logger.info("Could not save webhook execution for triggered webhook with id #{triggered_webhook.id} as it has been delete from the database")
         end
-      end
-
-      # policy applied at resource level
-      def delete_triggered_webhooks_by_pacticipant pacticipant
-        deliberately_unscoped(TriggeredWebhook).where(consumer: pacticipant).delete
-        deliberately_unscoped(TriggeredWebhook).where(provider: pacticipant).delete
-      end
-
-      def delete_executions_by_pacticipant pacticipants
-        execution_ids = Execution
-          .join(:triggered_webhooks, {id: :triggered_webhook_id})
-          .where(Sequel.or(
-            Sequel[:triggered_webhooks][:consumer_id] => [*pacticipants].collect(&:id),
-            Sequel[:triggered_webhooks][:provider_id] => [*pacticipants].collect(&:id),
-          )).all.collect(&:id)
-        Execution.where(id: execution_ids).delete
-      end
-
-      def delete_triggered_webhooks_by_webhook_uuid uuid
-        triggered_webhook_ids = TriggeredWebhook.where(webhook: Webhook.where(uuid: uuid)).select_for_subquery(:id)
-        delete_triggered_webhooks_and_executions(triggered_webhook_ids)
       end
 
       def delete_triggered_webhooks_by_version_id version_id
