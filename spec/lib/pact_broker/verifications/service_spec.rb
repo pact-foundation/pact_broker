@@ -17,22 +17,20 @@ module PactBroker
 
       describe "#create" do
         before do
-          allow(PactBroker::Webhooks::TriggerService).to receive(:trigger_webhooks_for_verification_results_publication)
-          allow(webhook_execution_configuration).to receive(:with_webhook_context).and_return(webhook_execution_configuration)
+          allow(Service).to receive(:broadcast)
         end
 
-        let(:options) { { webhook_execution_configuration: webhook_execution_configuration } }
         let(:event_context) { { some: "data" } }
         let(:expected_event_context) { { some: "data", provider_version_tags: ["dev"] } }
-        let(:webhook_execution_configuration) { instance_double(PactBroker::Webhooks::ExecutionConfiguration) }
-        let(:params) { { 'success' => true, 'providerApplicationVersion' => '4.5.6', 'wip' => true, 'testResults' => { 'some' => 'results' }} }
+        let(:params) { { 'success' => success, 'providerApplicationVersion' => '4.5.6', 'wip' => true, 'testResults' => { 'some' => 'results' }} }
+        let(:success) { true }
         let(:pact) do
           td.create_pact_with_hierarchy
             .create_provider_version('4.5.6')
             .create_provider_version_tag('dev')
             .and_return(:pact)
         end
-        let(:create_verification) { subject.create 3, params, pact, event_context, options }
+        let(:create_verification) { subject.create 3, params, pact, event_context }
 
         it "logs the creation" do
           expect(logger).to receive(:info).with(/.*verification.*3/, payload: {"providerApplicationVersion"=>"4.5.6", "success"=>true, "wip"=>true})
@@ -59,20 +57,27 @@ module PactBroker
           expect(verification.provider_version_number).to eq '4.5.6'
         end
 
-        it "sets the provider version tags on the webhook execution configuration" do
-          expect(webhook_execution_configuration).to receive(:with_webhook_context).with(provider_version_tags: %w[dev])
+        it "it broadcasts the provider_verification_published event" do
+          expect(Service).to receive(:broadcast).with(:provider_verification_published, pact: pact, verification: instance_of(PactBroker::Domain::Verification), event_context: hash_including(provider_version_tags: %w[dev]))
           create_verification
         end
 
-        it "invokes the webhooks for the verification" do
-          verification = create_verification
-          expect(PactBroker::Webhooks::TriggerService).to have_received(:trigger_webhooks_for_verification_results_publication).with(
-            pact,
-            verification,
-            expected_event_context,
-            options
-          )
+        context "when the verification is successful" do
+          it "it broadcasts the provider_verification_succeeded event" do
+            expect(Service).to receive(:broadcast).with(:provider_verification_succeeded, pact: pact, verification: instance_of(PactBroker::Domain::Verification), event_context: hash_including(provider_version_tags: %w[dev]))
+            create_verification
+          end
         end
+
+        context "when the verification is not successful" do
+          let(:success) { false }
+
+          it "it broadcasts the provider_verification_failed event" do
+            expect(Service).to receive(:broadcast).with(:provider_verification_failed, pact: pact, verification: instance_of(PactBroker::Domain::Verification), event_context: hash_including(provider_version_tags: %w[dev]))
+            create_verification
+          end
+        end
+
       end
 
       describe "#errors" do

@@ -15,11 +15,11 @@ describe "Get provider pacts for verification" do
         .create_provider("Provider")
         .create_consumer("Consumer")
         .create_consumer_version("0.0.1")
-        .create_pact
+        .create_pact(json_content: { some: "content" }.to_json)
         .create_consumer("Consumer 2")
         .create_consumer_version("4.5.6")
         .create_consumer_version_tag("prod")
-        .create_pact
+        .create_pact(json_content: { some: "other content" }.to_json)
     end
 
     let(:path) { "/pacts/provider/Provider/for-verification" }
@@ -49,7 +49,9 @@ describe "Get provider pacts for verification" do
     context "when using POST" do
       let(:request_body) do
         {
-          consumerVersionSelectors: [ { tag: "prod", latest: true }]
+          consumerVersionSelectors: [ { tag: "prod", latest: true }],
+          includePendingStatus: false,
+          providerVersionTags: ["main"]
         }
       end
 
@@ -60,7 +62,16 @@ describe "Get provider pacts for verification" do
         }
       end
 
+      let(:fixture) do
+        {
+          request: { path: path, headers: rack_env_to_http_headers(request_headers), body: request_body },
+          response: { status: subject.status, headers: determinate_headers(subject.headers), body: JSON.parse(subject.body)}
+        }
+      end
+
       subject { post(path, request_body.to_json, request_headers) }
+
+      it { Approvals.verify(fixture, :name => "get_provider_pacts_for_verification", format: :json) }
 
       it "returns a list of links to the pacts" do
         expect(pacts.size).to eq 1

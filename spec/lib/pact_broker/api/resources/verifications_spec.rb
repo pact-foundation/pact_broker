@@ -22,11 +22,10 @@ module PactBroker
           let(:webhook_execution_configuration) { instance_double(PactBroker::Webhooks::ExecutionConfiguration) }
 
           before do
+            allow_any_instance_of(Verifications).to receive(:handle_webhook_events) { |&block| block.call }
             allow(PactBroker::Verifications::Service).to receive(:create).and_return(verification)
             allow(PactBroker::Verifications::Service).to receive(:errors).and_return(double(:errors, messages: ['errors'], empty?: errors_empty))
             allow(PactBrokerUrls).to receive(:decode_pact_metadata).and_return(parsed_metadata)
-            allow_any_instance_of(Verifications).to receive(:webhook_execution_configuration).and_return(webhook_execution_configuration)
-            allow(webhook_execution_configuration).to receive(:with_webhook_context).and_return(webhook_execution_configuration)
           end
 
           subject { post(url, request_body, rack_env) }
@@ -86,11 +85,7 @@ module PactBroker
                 next_verification_number,
                 hash_including('some' => 'params', 'wip' => false),
                 pact,
-                parsed_metadata,
-                {
-                  webhook_execution_configuration: webhook_execution_configuration,
-                  database_connector: database_connector
-                }
+                parsed_metadata
               )
               subject
             end
@@ -112,7 +107,6 @@ module PactBroker
                 expect(PactBroker::Verifications::Service).to receive(:create).with(
                   anything,
                   hash_including('wip' => true),
-                  anything,
                   anything,
                   anything
                 )

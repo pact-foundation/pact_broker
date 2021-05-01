@@ -7,6 +7,7 @@ require 'pact_broker/api/pact_broker_urls'
 require 'pact_broker/json'
 require 'pact_broker/pacts/pact_params'
 require 'pact_broker/api/resources/authentication'
+require 'pact_broker/api/resources/authorization'
 require 'pact_broker/errors'
 
 module PactBroker
@@ -18,6 +19,8 @@ module PactBroker
         include PactBroker::Services
         include PactBroker::Api::PactBrokerUrls
         include PactBroker::Api::Resources::Authentication
+        include PactBroker::Api::Resources::Authorization
+
         include PactBroker::Logging
 
         attr_accessor :user
@@ -260,6 +263,10 @@ module PactBroker
           else
             false
           end
+        end
+
+        def malformed_request_for_json_with_schema?(schema_to_use = schema, params_to_validate = params)
+          invalid_json? || validation_errors_for_schema?(schema_to_use, params_to_validate)
         end
       end
     end

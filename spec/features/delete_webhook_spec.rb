@@ -27,4 +27,8 @@ describe "Delete a webhook" do
     subject
     expect(last_response.status).to eq 204
   end
+
+  it "does not delete the triggered webhooks because these are needed to calculate the webhook status" do
+    expect { subject }.to_not change { PactBroker::Webhooks::TriggeredWebhook.count }
+  end
 end

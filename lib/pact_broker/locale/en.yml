@@ -4,6 +4,7 @@ en:
     filled?: "can't be blank"
     valid_method?: "is not a recognised HTTP method"
     valid_url?: "is not a valid URL eg. http://example.org"
+    base64?: "is not valid Base64"
     valid_version_number?: "Version number '%{value}' cannot be parsed to a version number. The expected format (unless this configuration has been overridden) is a semantic version. eg. 1.3.0 or 2.0.4.rc1"
     name_in_path_matches_name_in_pact?: "does not match %{left} name in path ('%{right}')."
     valid_consumer_version_number?: "Consumer version number '%{value}' cannot be parsed to a version number. The expected format (unless this configuration has been overridden) is a semantic version. eg. 1.3.0 or 2.0.4.rc1"
@@ -33,7 +34,28 @@ en:
             verificationResultUrl: the URL to the relevant verification result.
             githubVerificationStatus: the verification status using the correct keywords for posting to the Github commit status API. See https://developer.github.com/v3/repos/statuses.
             bitbucketVerificationStatus: the verification status using the correct keywords for posting to the Bitbucket commit status API. See https://developer.atlassian.com/server/bitbucket/how-tos/updating-build-status-for-commits/.
-
+            eventName: the name of the event that triggered the webhook
+            currentlyDeployedProviderVersionNumber: the version number of the currently deployed provider version (when used in a template, the webhook will be triggered once for each currently deployed provider version)
+        no_webhooks_enabled_for_event: No enabled webhooks found for the detected events
+        webhook_triggered_for_event: Webhook %{webhook_description} triggered for event %{event_name}.
+        triggered_webhook_see_logs: View logs at %{url}
+      version:
+        created: "%{action} %{pacticipant_name} version %{pacticipant_version_number}"
+        created_for_branch: "%{action} %{pacticipant_name} version %{pacticipant_version_number} with branch %{branch}"
+        created_for_branch_with_tags: "%{action} %{pacticipant_name} version %{pacticipant_version_number} with branch %{branch} and tags %{tags}"
+        created_with_tags: "%{action} %{pacticipant_name} version %{pacticipant_version_number} with tags %{tags}"
+      contract:
+        pact_published: Pact successfully published for %{consumer_name} version %{consumer_version_number} and provider %{provider_name}.
+        same_pact_content_published: Pact successfully republished for %{consumer_name} version %{consumer_version_number} and provider %{provider_name} with no content changes.
+        pact_modified_for_same_version: Pact with changed content published over existing content for %{consumer_name} version %{consumer_version_number} and provider %{provider_name}. This is not recommended in normal cicumstances and may indicate that you have not configured your Pact pipeline correctly. For more information see https://docs.pact.io/go/versioning
+        pact_merged: Pact content merged with existing content for %{consumer_name} version %{consumer_version_number} and provider %{provider_name}.
+      events:
+        pact_published_unchanged_with_single_tag: pact content is the same as previous version with tag %{tag_name} and no new tags were applied
+        pact_published_unchanged_with_multiple_tags: pact content is the same as previous versions with tags %{tag_names} and no new tags were applied
+      next_steps:
+        verifications: Add Pact verification tests to the %{provider_name} build. See https://docs.pact.io/go/provider_verification
+        webhooks: Configure separate %{provider_name} pact verification build and webhook to trigger it when the pact content changes. See https://docs.pact.io/go/webhooks
+        version_branch: Configure the version branch to be the value of your repository branch.
     errors:
       validation:
         blank: "cannot be blank."
@@ -45,6 +67,9 @@ en:
         consumer_version_number_header_invalid: "X-Pact-Consumer-Version '%{consumer_version_number}' cannot be parsed to a version number. The expected format (unless this configuration has been overridden) is a semantic version. eg. 1.3.0 or 2.0.4.rc1"
         consumer_version_number_invalid: "Consumer version number '%{consumer_version_number}' cannot be parsed to a version number. The expected format (unless this configuration has been overridden) is a semantic version. eg. 1.3.0 or 2.0.4.rc1"
         pacticipant_name_mismatch: "in pact ('%{name_in_pact}') does not match %{pacticipant} name in path ('%{name}')."
+        consumer_name_in_content_mismatch_pacticipant_name: "consumer name in contract content ('%{consumer_name_in_content}') must match pacticipantName ('%{pacticipant_name}')"
+        consumer_name_in_contract_mismatch_pacticipant_name: "consumerName ('%{consumer_name_in_contract}') must match pacticipantName ('%{pacticipant_name}')"
+        provider_name_in_content_mismatch: "provider name in contract content ('%{provider_name_in_content}') must match providerName ('%{provider_name}') in contracts"
         connection_encoding_not_utf8: "The Sequel connection encoding (%{encoding}) is strongly recommended to be \"utf8\". If you need to set it to %{encoding} for some particular reason, then disable this check by setting config.validate_database_connection_config = false"
         invalid_webhook_uuid: The UUID can only contain the characters A-Z, a-z, 0-9, _ and -, and must be 16 or more characters.
         pacticipant_not_found: No pacticipant with name '%{name}' found
@@ -53,6 +78,7 @@ en:
         cannot_specify_latest_and_environment: Cannot specify both latest=true and an environment.
         environment_with_name_not_found: "Environment with name '%{name}' does not exist"
         cannot_modify_version_branch: "The branch for a pacticipant version cannot be changed once set (currently '%{old_branch}', proposed value '%{new_branch}'). Your pact publication/verification publication configurations may be in conflict with each other if you are seeing this error. If the current branch value is incorrect, you must delete the pacticipant version resource at %{version_url} and publish the pacts/verification results again with a consistent branch name."
+        invalid_content_for_content_type: "The content could not be parsed as %{content_type}"
       duplicate_pacticipant: |
         This is the first time a pact has been published for "%{new_name}".
         The name "%{new_name}" is very similar to the following existing consumers/providers:

@@ -1,3 +1,5 @@
+#!/usr/bin/env ruby
+
 require 'pact_broker/string_refinements'
 require 'pact_broker/project_root'
 require 'date'
@@ -117,7 +119,7 @@ end
 # Table
 
 def table_name
-  model_class_name.snakecase
+  model_class_name.snakecase + "s"
 end
 
 def model_class_name_snakecase

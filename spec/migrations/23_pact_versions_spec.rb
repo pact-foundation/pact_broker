@@ -71,8 +71,6 @@ describe 'migrate to pact versions (migrate 22-31)', migration: true do
         provider_name: provider[:name],
         consumer_version_number: '1.2.3',
         json_content: load_fixture('a_consumer-a_provider.json')
-      },{
-        webhook_execution_configuration: PactBroker::Webhooks::ExecutionConfiguration.new
       }
     )
   end

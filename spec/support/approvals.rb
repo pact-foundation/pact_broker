@@ -9,10 +9,12 @@ def print_diff(exception)
   parts = exception.message.split('"')
   received_file = parts[1]
   approved_file = parts[3]
-  received_hash = JSON.parse(File.read(received_file))
-  approved_hash = JSON.parse(File.read(approved_file))
-  diff = Pact::Matchers.diff(approved_hash, received_hash)
-  puts Pact::Matchers::UnixDiffFormatter.call(diff)
+  if File.exist?(received_file) && File.exist?(approved_file)
+    received_hash = JSON.parse(File.read(received_file))
+    approved_hash = JSON.parse(File.read(approved_file))
+    diff = Pact::Matchers.diff(approved_hash, received_hash)
+    puts Pact::Matchers::UnixDiffFormatter.call(diff)
+  end
 end
 
 RSpec.configure do | config |

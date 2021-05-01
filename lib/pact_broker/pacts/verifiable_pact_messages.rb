@@ -7,8 +7,8 @@ module PactBroker
       extend Forwardable
       include PactBroker::Messages
 
-      READ_MORE_PENDING = "Read more at https://pact.io/pending"
-      READ_MORE_WIP = "Read more at https://pact.io/wip"
+      READ_MORE_PENDING = "Read more at https://docs.pact.io/go/pending"
+      READ_MORE_WIP = "Read more at https://docs.pact.io/go/wip"
 
       delegate [:consumer_name, :provider_name, :consumer_version_number, :pending_provider_tags, :non_pending_provider_tags, :provider_branch, :pending?, :wip?] => :verifiable_pact
 

@@ -4,16 +4,20 @@ require 'pact_broker/logging'
 require 'pact_broker/pacts/merger'
 require 'pact_broker/pacts/verifiable_pact'
 require 'pact_broker/pacts/squash_pacts_for_verification'
+require 'pact_broker/events/publisher'
+require 'pact_broker/messages'
 
 module PactBroker
   module Pacts
     module Service
 
       extend self
+      extend PactBroker::Events::Publisher
 
       extend PactBroker::Repositories
       extend PactBroker::Services
       include PactBroker::Logging
+      extend PactBroker::Messages
       extend SquashPactsForVerification
 
       def find_latest_pact params
@@ -43,20 +47,20 @@ module PactBroker
         pact_repository.delete(params)
       end
 
-      def create_or_update_pact params, webhook_options
+      def create_or_update_pact params
         provider = pacticipant_repository.find_by_name_or_create params[:provider_name]
         consumer = pacticipant_repository.find_by_name_or_create params[:consumer_name]
         consumer_version = version_repository.find_by_pacticipant_id_and_number_or_create consumer.id, params[:consumer_version_number]
         existing_pact = pact_repository.find_by_version_and_provider(consumer_version.id, provider.id)
 
         if existing_pact
-          update_pact params, existing_pact, webhook_options
+          update_pact params, existing_pact
         else
-          create_pact params, consumer_version, provider, webhook_options
+          create_pact params, consumer_version, provider
         end
       end
 
-      def merge_pact params, webhook_options
+      def merge_pact params
         provider = pacticipant_repository.find_by_name_or_create params[:provider_name]
         consumer = pacticipant_repository.find_by_name_or_create params[:consumer_name]
         consumer_version = version_repository.find_by_pacticipant_id_and_number_or_create consumer.id, params[:consumer_version_number]
@@ -66,7 +70,7 @@ module PactBroker
           existing_pact.json_content, params[:json_content]
         )
 
-        update_pact params, existing_pact, webhook_options
+        update_pact params, existing_pact
       end
 
       def find_all_pact_versions_between consumer, options
@@ -129,8 +133,6 @@ module PactBroker
         verifiable_pacts_specified_in_request + verifiable_wip_pacts
       end
 
-      private
-
       def exclude_specified_pacts(wip_pacts, specified_pacts)
         wip_pacts.reject do | wip_pact |
           specified_pacts.any? do | specified_pacts |
@@ -139,8 +141,10 @@ module PactBroker
         end
       end
 
+      private :exclude_specified_pacts
+
       # Overwriting an existing pact with the same consumer/provider/consumer version number
-      def update_pact params, existing_pact, webhook_options
+      def update_pact params, existing_pact
         logger.info "Updating existing pact publication with params #{params.reject{ |k, v| k == :json_content}}"
         logger.debug "Content #{params[:json_content]}"
         pact_version_sha = generate_sha(params[:json_content])
@@ -149,13 +153,23 @@ module PactBroker
         updated_pact = pact_repository.update(existing_pact.id, update_params)
 
         event_context = { consumer_version_tags: updated_pact.consumer_version_tag_names }
-        webhook_trigger_service.trigger_webhooks_for_updated_pact(existing_pact, updated_pact, event_context, merge_consumer_version_info(webhook_options, updated_pact))
+        event_params = { event_context: event_context, pact: updated_pact }
+
+        broadcast(:contract_published, event_params)
+
+        if existing_pact.pact_version_sha != updated_pact.pact_version_sha
+          broadcast(:contract_content_changed, event_params.merge(event_comment: "pact content modified since previous publication for #{updated_pact.consumer_name} version #{updated_pact.consumer_version_number}"))
+        else
+          broadcast(:contract_content_unchanged, event_params.merge(event_comment: "pact content was unchanged"))
+        end
 
         updated_pact
       end
 
+      private :update_pact
+
       # When no publication for the given consumer/provider/consumer version number exists
-      def create_pact params, version, provider, webhook_options
+      def create_pact params, version, provider
         logger.info "Creating new pact publication with params #{params.reject{ |k, v| k == :json_content}}"
         logger.debug "Content #{params[:json_content]}"
         pact_version_sha = generate_sha(params[:json_content])
@@ -167,23 +181,79 @@ module PactBroker
           pact_version_sha: pact_version_sha,
           json_content: json_content
         )
-        event_context = { consumer_version_tags: pact.consumer_version_tag_names }
-        webhook_trigger_service.trigger_webhooks_for_new_pact(pact, event_context, merge_consumer_version_info(webhook_options, pact))
+
+        event_params = { event_context: { consumer_version_tags: pact.consumer_version_tag_names }, pact: pact }
+        content_changed, explanation = pact_is_new_or_newly_tagged_or_pact_has_changed_since_previous_version?(pact)
+
+        if content_changed
+          broadcast(:contract_published, event_params)
+          broadcast(:contract_content_changed, event_params.merge(event_comment: explanation))
+        else
+          broadcast(:contract_published, event_params.merge(event_comment: contract_published_event_comment(pact)))
+        end
+
         pact
       end
+
+      private :create_pact
 
       def generate_sha(json_content)
         PactBroker.configuration.sha_generator.call(json_content)
       end
 
+      private :generate_sha
+
       def add_interaction_ids(json_content)
         Content.from_json(json_content).with_ids.to_json
       end
 
-      def merge_consumer_version_info(webhook_options, pact)
-        execution_configuration = webhook_options[:webhook_execution_configuration]
-                                    .with_webhook_context(consumer_version_tags: pact.consumer_version_tag_names)
-        webhook_options.merge(webhook_execution_configuration: execution_configuration)
+      private :add_interaction_ids
+
+      def pact_is_new_or_newly_tagged_or_pact_has_changed_since_previous_version? pact
+        changed_pacts = pact_repository
+          .find_previous_pacts(pact)
+          .reject { |_, previous_pact| !sha_changed_or_no_previous_version?(previous_pact, pact) }
+        explanation = explanation_for_content_changed(changed_pacts)
+        return changed_pacts.any?, explanation
+      end
+
+      private :pact_is_new_or_newly_tagged_or_pact_has_changed_since_previous_version?
+
+      def sha_changed_or_no_previous_version?(previous_pact, new_pact)
+        previous_pact.nil? || new_pact.pact_version_sha != previous_pact.pact_version_sha
+      end
+
+      private :sha_changed_or_no_previous_version?
+
+      def explanation_for_content_changed(changed_pacts)
+        if changed_pacts.any?
+          messages = changed_pacts.collect do |tag, previous_pact|
+            if tag == :untagged
+              if previous_pact
+                "pact content has changed since previous untagged version"
+              else
+                "first time untagged pact published"
+              end
+            else
+              if previous_pact
+                "pact content has changed since the last consumer version tagged with #{tag}"
+              else
+                "first time any pact published for this consumer with consumer version tagged #{tag}"
+              end
+            end
+          end
+          messages.join(', ')
+        end
+      end
+
+      private :explanation_for_content_changed
+
+      def contract_published_event_comment pact
+        if pact.consumer_version_tag_names.count == 1
+          message("messages.events.pact_published_unchanged_with_single_tag", tag_name: pact.consumer_version_tag_names.first)
+        else
+          message("messages.events.pact_published_unchanged_with_multiple_tags", tag_names: pact.consumer_version_tag_names.join(", "))
+        end
       end
     end
   end

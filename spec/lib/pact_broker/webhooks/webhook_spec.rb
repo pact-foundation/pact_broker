@@ -3,9 +3,6 @@ require 'pact_broker/webhooks/webhook'
 module PactBroker
   module Webhooks
     describe Webhook do
-
-      let(:td) { TestDataBuilder.new }
-
       before do
         td.create_consumer("Foo")
           .create_provider("Bar")
@@ -23,7 +20,7 @@ module PactBroker
       let(:pact) { double(consumer_id: consumer.id, provider_id: provider.id).as_null_object }
 
       describe "#is_for?" do
-        let(:matching_webhook_uuids) { Webhooks::Repository.new.find_by_consumer_and_or_provider(consumer, provider).collect(&:uuid) }
+        let(:matching_webhook_uuids) { Webhooks::Webhook.find_by_consumer_and_or_provider(consumer, provider).collect(&:uuid) }
         let(:matching_webhooks) { Webhooks::Webhook.where(uuid: matching_webhook_uuids) }
         let(:non_matching_webhooks) { Webhooks::Webhook.exclude(uuid: matching_webhook_uuids) }
 

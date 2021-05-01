@@ -55,7 +55,8 @@ module PactBroker
       associate(:many_to_one, :consumer, :class => "PactBroker::Domain::Pacticipant", :key => :consumer_id, :primary_key => :id)
 
       def request_description
-        webhook.to_domain.request_description
+        # webhook could be deleted
+        webhook&.to_domain&.request_description
       end
 
       def execute options

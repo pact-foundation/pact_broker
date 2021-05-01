@@ -16,7 +16,7 @@ module PactBroker
     #   variables to interpolate.
     # @return [String] the interpolated string
     def message(key, options={})
-      ::I18n.t(key, options.merge(:scope => :pact_broker))
+      ::I18n.t(key, { :scope => :pact_broker }.merge(options))
     end
 
     def validation_message key, options = {}

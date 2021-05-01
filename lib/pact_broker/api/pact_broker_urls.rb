@@ -264,7 +264,7 @@ module PactBroker
       end
 
       def triggered_webhook_logs_url triggered_webhook, base_url
-        "#{base_url}/webhooks/#{triggered_webhook.webhook_uuid}/trigger/#{triggered_webhook.trigger_uuid}/logs"
+        "#{base_url}/triggered-webhooks/#{triggered_webhook.trigger_uuid}/logs"
       end
 
       def badge_url_for_latest_pact pact, base_url = ''

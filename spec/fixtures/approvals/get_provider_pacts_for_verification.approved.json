@@ -1,0 +1,57 @@
+{
+  "request": {
+    "path": "/pacts/provider/Provider/for-verification",
+    "headers": {
+      "Content-Type": "application/json",
+      "Accept": "application/hal+json"
+    },
+    "body": {
+      "consumerVersionSelectors": [
+        {
+          "tag": "prod",
+          "latest": true
+        }
+      ],
+      "includePendingStatus": false,
+      "providerVersionTags": [
+        "main"
+      ]
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/hal+json;charset=utf-8",
+      "Content-Length": "815"
+    },
+    "body": {
+      "_embedded": {
+        "pacts": [
+          {
+            "shortDescription": "latest with tag prod",
+            "verificationProperties": {
+              "notices": [
+                {
+                  "when": "before_verification",
+                  "text": "The pact at http://example.org/pacts/provider/Provider/consumer/Consumer%202/pact-version/0f22f551a422b027066db7635cad8bd8a59ac869 is being verified because the pact content belongs to the consumer version matching the following criterion:\n    * latest version tagged 'prod' (4.5.6)"
+                }
+              ]
+            },
+            "_links": {
+              "self": {
+                "href": "http://example.org/pacts/provider/Provider/consumer/Consumer%202/pact-version/0f22f551a422b027066db7635cad8bd8a59ac869/metadata/c1tdW3RdPXByb2Qmc1tdW2xdPXRydWUmc1tdW2N2bl09NC41LjY",
+                "name": "Pact between Consumer 2 (4.5.6) and Provider"
+              }
+            }
+          }
+        ]
+      },
+      "_links": {
+        "self": {
+          "href": "http://example.org/pacts/provider/Provider/for-verification",
+          "title": "Pacts to be verified"
+        }
+      }
+    }
+  }
+}
