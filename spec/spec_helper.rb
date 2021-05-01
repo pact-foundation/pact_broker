@@ -51,6 +51,7 @@ RSpec.configure do | config |
   config.include_context "test data builder"
   config.example_status_persistence_file_path = "./spec/examples.txt"
   config.filter_run_excluding skip: true
+  config.include PactBroker::RackHelpers
 
   def app
     PactBroker::API
