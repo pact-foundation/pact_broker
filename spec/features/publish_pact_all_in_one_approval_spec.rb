@@ -1,9 +1,4 @@
-require 'pact_broker/hash_refinements'
-require 'pact_broker/string_refinements'
-
 RSpec.describe "publishing a pact using the all in one endpoint" do
-  using PactBroker::HashRefinements
-  using PactBroker::StringRefinements
   # TODO merge branches
   let(:request_body_hash) do
     {
@@ -29,16 +24,10 @@ RSpec.describe "publishing a pact using the all in one endpoint" do
   let(:branch) { "main" }
   let(:encoded_contract) { Base64.strict_encode64(contract) }
   let(:path) { "/contracts/publish" }
-  let(:request_headers) do
-    rack_headers.each_with_object({}) do |(name, value), converted_headers|
-      env_key = name.gsub(/^HTTP_/, '').split('_').collect{ |w| w.downcase.camelcase(true) }.join("-")
-      converted_headers[env_key] = value
-    end
-  end
   let(:fixture) do
     {
-      request: { path: path, headers: request_headers, body: request_body_hash },
-      response: { status: subject.status, headers: subject.headers.without("Date", "Server"), body: JSON.parse(subject.body)}
+      request: { path: path, headers: rack_env_to_http_headers(rack_headers), body: request_body_hash },
+      response: { status: subject.status, headers: determinate_headers(headers), body: JSON.parse(subject.body)}
     }
   end
 
