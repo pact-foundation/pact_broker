@@ -56,6 +56,9 @@
       "resource_class_name": "PactBroker::Api::Resources::ProviderPactsForVerification"
     },
     {
+      "resource_class_name": "PactBroker::Api::Resources::PublishContracts"
+    },
+    {
       "resource_class_name": "PactBroker::Api::Resources::Tag"
     },
     {

@@ -1,0 +1,14 @@
+require 'sequel'
+require 'pact_broker/repositories/helpers'
+
+module <%= model_top_module %>
+  module <%= model_secondary_module %>
+    class <%= model_class_name %> < Sequel::Model
+      plugin :timestamps, update_on_create: true
+
+      dataset_module do
+        include PactBroker::Repositories::Helpers
+      end
+    end
+  end
+end

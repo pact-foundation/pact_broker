@@ -6,7 +6,9 @@ module PactBroker
       CONSUMER_VERSION_NUMBER = 'pactbroker.consumerVersionNumber'
       PROVIDER_VERSION_NUMBER = 'pactbroker.providerVersionNumber'
       PROVIDER_VERSION_TAGS = 'pactbroker.providerVersionTags'
+      PROVIDER_VERSION_BRANCH = 'pactbroker.providerVersionBranch'
       CONSUMER_VERSION_TAGS = 'pactbroker.consumerVersionTags'
+      CONSUMER_VERSION_BRANCH = 'pactbroker.consumerVersionBranch'
       CONSUMER_NAME = 'pactbroker.consumerName'
       PROVIDER_NAME = 'pactbroker.providerName'
       GITHUB_VERIFICATION_STATUS = 'pactbroker.githubVerificationStatus'
@@ -14,6 +16,7 @@ module PactBroker
       CONSUMER_LABELS = 'pactbroker.consumerLabels'
       PROVIDER_LABELS = 'pactbroker.providerLabels'
       EVENT_NAME = 'pactbroker.eventName'
+      CURRENTLY_DEPLOYED_PROVIDER_VERSION_NUMBER = 'pactbroker.currentlyDeployedProviderVersionNumber'
 
       ALL = [
         CONSUMER_NAME,
@@ -21,14 +24,17 @@ module PactBroker
         CONSUMER_VERSION_NUMBER,
         PROVIDER_VERSION_NUMBER,
         PROVIDER_VERSION_TAGS,
+        PROVIDER_VERSION_BRANCH,
         CONSUMER_VERSION_TAGS,
+        CONSUMER_VERSION_BRANCH,
         PACT_URL,
         VERIFICATION_RESULT_URL,
         GITHUB_VERIFICATION_STATUS,
         BITBUCKET_VERIFICATION_STATUS,
         CONSUMER_LABELS,
         PROVIDER_LABELS,
-        EVENT_NAME
+        EVENT_NAME,
+        CURRENTLY_DEPLOYED_PROVIDER_VERSION_NUMBER
       ]
 
       def initialize(pact, trigger_verification, webhook_context)
@@ -45,14 +51,17 @@ module PactBroker
           CONSUMER_VERSION_NUMBER => consumer_version_number,
           PROVIDER_VERSION_NUMBER => verification ? verification.provider_version_number : "",
           PROVIDER_VERSION_TAGS => provider_version_tags,
+          PROVIDER_VERSION_BRANCH => provider_version_branch,
           CONSUMER_VERSION_TAGS => consumer_version_tags,
+          CONSUMER_VERSION_BRANCH => consumer_version_branch,
           CONSUMER_NAME => pact ? pact.consumer_name : "",
           PROVIDER_NAME => pact ? pact.provider_name : "",
           GITHUB_VERIFICATION_STATUS => github_verification_status,
           BITBUCKET_VERIFICATION_STATUS => bitbucket_verification_status,
           CONSUMER_LABELS => pacticipant_labels(pact && pact.consumer),
           PROVIDER_LABELS => pacticipant_labels(pact && pact.provider),
-          EVENT_NAME => event_name
+          EVENT_NAME => event_name,
+          CURRENTLY_DEPLOYED_PROVIDER_VERSION_NUMBER => currently_deployed_provider_version_number
         }
       end
 
@@ -104,6 +113,14 @@ module PactBroker
         end
       end
 
+      def consumer_version_branch
+        if webhook_context[:consumer_version_branch]
+          webhook_context[:consumer_version_branch]
+        else
+          pact&.consumer_version&.branch || ""
+        end
+      end
+
       def provider_version_tags
         if webhook_context[:provider_version_tags]
           webhook_context[:provider_version_tags].join(", ")
@@ -116,12 +133,24 @@ module PactBroker
         end
       end
 
+      def provider_version_branch
+        if webhook_context[:provider_version_branch]
+          webhook_context[:provider_version_branch]
+        else
+          verification&.provider_version&.branch || ""
+        end
+      end
+
       def pacticipant_labels pacticipant
         pacticipant && pacticipant.labels ? pacticipant.labels.collect(&:name).join(", ") : ""
       end
 
       def event_name
         webhook_context.fetch(:event_name)
+      end
+
+      def currently_deployed_provider_version_number
+        webhook_context[:currently_deployed_provider_version_number] || ""
       end
     end
   end

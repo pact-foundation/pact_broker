@@ -59,6 +59,7 @@ module PactBroker
           if s[:pacticipant_name].nil?
             error_messages << "Please specify the pacticipant name"
           else
+            # TODO a bunch more validation
             if s.key?(:pacticipant_version_number) && s.key?(:latest)
               error_messages << "A version number and latest flag cannot both be specified for #{s[:pacticipant_name]}"
             end

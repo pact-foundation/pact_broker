@@ -30,11 +30,13 @@ module PactBroker
         end
 
         link :'pb:webhook' do | context |
-          {
-            href: webhook_url(represented.webhook_uuid, context[:base_url]),
-            title: "Webhook",
-            name: represented.request_description
-          }
+          if represented.webhook
+            {
+              href: webhook_url(represented.webhook_uuid, context[:base_url]),
+              title: "Webhook",
+              name: represented.request_description
+            }
+          end
         end
       end
     end

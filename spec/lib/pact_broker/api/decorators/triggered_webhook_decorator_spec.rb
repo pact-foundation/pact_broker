@@ -18,9 +18,12 @@ module PactBroker
             number_of_attempts_made: 1,
             number_of_attempts_remaining: 2,
             created_at: DateTime.new(2017),
-            updated_at: DateTime.new(2017)
+            updated_at: DateTime.new(2017),
+            webhook: webhook
           )
         end
+
+        let(:webhook) { double('webhook') }
 
         let(:pact) do
           double('pact',
@@ -34,7 +37,7 @@ module PactBroker
         let(:failure) { false }
         let(:retrying) { false }
         let(:status) { PactBroker::Webhooks::TriggeredWebhook::STATUS_SUCCESS }
-        let(:logs_url) { "http://example.org/webhooks/4321/trigger/1234/logs" }
+        let(:logs_url) { "http://example.org/triggered-webhooks/1234/logs" }
         let(:user_options) { { base_url: "http://example.org" } }
 
         let(:json) do

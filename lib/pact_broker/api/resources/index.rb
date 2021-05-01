@@ -31,6 +31,11 @@ module PactBroker
               title: 'Publish a pact',
               templated: true
             },
+            'pb:publish-contracts' => {
+              href: base_url + '/contracts/publish',
+              title: 'Publish contracts',
+              templated: false
+            },
             'pb:latest-pact-versions' =>
             {
               href: base_url + '/pacts/latest',

@@ -100,7 +100,8 @@ module PactBroker
 
         add ['webhooks', 'execute' ], Api::Resources::WebhookExecution, {resource_name: "execute_unsaved_webhook"}
         add ['webhooks', :uuid ], Api::Resources::Webhook, {resource_name: "webhook"}
-        add ['webhooks', :uuid, 'trigger', :trigger_uuid, 'logs' ], Api::Resources::TriggeredWebhookLogs, {resource_name: "triggered_webhook_logs"}
+        add ['webhooks', :uuid, 'trigger', :trigger_uuid, 'logs' ], Api::Resources::TriggeredWebhookLogs, { resource_name: "triggered_webhook_logs" }
+        add ['triggered-webhooks', :trigger_uuid, 'logs' ], Api::Resources::TriggeredWebhookLogs, { resource_name: "triggered_webhook_logs" }
         add ['webhooks', :uuid, 'execute' ], Api::Resources::WebhookExecution, {resource_name: "execute_webhook"}
         add ['webhooks'], Api::Resources::AllWebhooks, {resource_name: "webhooks"}
 
@@ -116,6 +117,8 @@ module PactBroker
         add ['dashboard'], Api::Resources::Dashboard, {resource_name: "dashboard"}
         add ['dashboard', 'provider', :provider_name, 'consumer', :consumer_name ], Api::Resources::Dashboard, {resource_name: "integration_dashboard"}
         add ['test','error'], Api::Resources::ErrorTest, {resource_name: "error_test"}
+
+        add ['contracts', 'publish'], Api::Resources::PublishContracts, { resource_name: "publish_contracts" }
 
         if PactBroker.feature_enabled?(:environments)
           add ['environments'], Api::Resources::Environments, { resource_name: "environments" }

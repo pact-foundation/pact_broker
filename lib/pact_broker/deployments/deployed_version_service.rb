@@ -35,6 +35,15 @@ module PactBroker
           .all
       end
 
+      def self.find_currently_deployed_versions_for_pacticipant(pacticipant)
+        DeployedVersion
+          .currently_deployed
+          .where(pacticipant_id: pacticipant.id)
+          .eager(:version)
+          .eager(:environment)
+          .all
+      end
+
       def self.record_previous_version_undeployed(pacticipant, environment)
         DeployedVersion.last_deployed_version(pacticipant, environment)&.record_undeployed
       end

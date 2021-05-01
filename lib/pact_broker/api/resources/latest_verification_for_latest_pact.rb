@@ -4,6 +4,10 @@ module PactBroker
   module Api
     module Resources
       class LatestVerificationForLatestPact < Verification
+        def resource_exists?
+          !!verification
+        end
+
         private
 
         def pact

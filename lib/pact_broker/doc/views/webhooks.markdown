@@ -96,11 +96,13 @@ To specify an XML body, you will need to use a correctly escaped string (or use 
 The following variables may be used in the request path, parameters or body, and will be replaced with their appropriate values at runtime.
 
 * `${pactbroker.pactUrl}`: the "permalink" URL to the newly published pact (the URL specifying the consumer version URL, rather than the "/latest" format.)
-* `${pactbroker.consumerName}`: the consumer name
-* `${pactbroker.providerName}`: the provider name
+* `${pactbroker.consumerName}`: the consumer name.
+* `${pactbroker.providerName}`: the provider name.
 * `${pactbroker.consumerVersionNumber}`: the version number of the most recent consumer version associated with the pact content.
-* `${pactbroker.providerVersionNumber}`: the provider version number for the verification result
+* `${pactbroker.providerVersionNumber}`: the provider version number for the verification result.
+* `${pactbroker.consumerVersionBranch}`: the branch of the consumer version associated with the pact publication.
 * `${pactbroker.consumerVersionTags}`: the list of tag names for the most recent consumer version associated with the pact content, separated by ", ".
+* `${pactbroker.providerVersionBranch}`: the branch of the provider version associated with the verification result.
 * `${pactbroker.providerVersionTags}`: the list of tag names for the provider version associated with the verification result, separated by ", ".
 * `${pactbroker.consumerLabels}`: the list of labels for the consumer associated with the pact content, separated by ", ".
 * `${pactbroker.providerLabels}`: the list of labels for the provider associated with the pact content, separated by ", ".

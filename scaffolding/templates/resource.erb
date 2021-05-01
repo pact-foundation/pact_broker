@@ -1,0 +1,46 @@
+require 'pact_broker/api/resources/base_resource'
+require '<%= decorator_require_path %>'
+
+module <%= resource_top_module %>
+  module Api
+    module Resources
+      class <%= resource_class_name %> < BaseResource
+        def content_types_provided
+          [["application/hal+json", :to_json]]
+        end
+
+        def allowed_methods
+          ["GET", "OPTIONS"]
+        end
+
+        def resource_exists?
+          !!<%= model_instance_name %>
+        end
+
+        def to_json
+          decorator_class(:<%= decorator_instance_name %>).new(<%= model_instance_name %>).to_json(decorator_options)
+        end
+
+        def policy_name
+          :'<%= policy_name %>'
+        end
+
+        private
+
+        attr_reader :<%= model_instance_name %>
+
+        def <%= model_instance_name %>
+          @<%= model_instance_name %> ||= <%= service_instance_name %>.find_by_uuid(uuid)
+        end
+
+        # DELETE THIS!!! It's just here so that the generated test can be run
+        def <%= service_instance_name %>
+        end
+
+        def uuid
+          identifier_from_path[:<%= model_instance_name %>_uuid]
+        end
+      end
+    end
+  end
+end

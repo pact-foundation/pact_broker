@@ -1,0 +1,121 @@
+{
+  "request": {
+    "path": "/contracts/publish",
+    "headers": {
+      "Content-Type": "application/json",
+      "Accept": "application/hal+json"
+    },
+    "body": {
+      "pacticipantName": "Foo",
+      "pacticipantVersionNumber": "1",
+      "branch": "main",
+      "tags": [
+        "a",
+        "b"
+      ],
+      "buildUrl": "http://ci/builds/1234",
+      "contracts": [
+        {
+          "consumerName": "Foo",
+          "providerName": "Bar",
+          "specification": "pact",
+          "contentType": "application/json",
+          "content": "eyJjb25zdW1lciI6eyJuYW1lIjoiRm9vIn0sInByb3ZpZGVyIjp7Im5hbWUiOiJCYXIifSwiaW50ZXJhY3Rpb25zIjpbXX0=",
+          "writeMode": "overwrite"
+        }
+      ]
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/hal+json;charset=utf-8",
+      "Content-Length": "1780"
+    },
+    "body": {
+      "logs": [
+        {
+          "level": "debug",
+          "message": "Created Foo version 1 with branch main and tags a, b"
+        },
+        {
+          "level": "info",
+          "message": "Pact successfully published for Foo version 1 and provider Bar."
+        },
+        {
+          "level": "debug",
+          "message": "  View the published pact at http://example.org/pacts/provider/Bar/consumer/Foo/version/1"
+        },
+        {
+          "level": "debug",
+          "message": "  Events detected: contract_published, contract_content_changed (first time any pact published for this consumer with consumer version tagged a, first time any pact published for this consumer with consumer version tagged b)"
+        },
+        {
+          "level": "debug",
+          "message": "  Webhook \"foo webhook\" triggered for event contract_content_changed.\n    View logs at http://example.org/triggered-webhooks/1234/logs"
+        },
+        {
+          "level": "warn",
+          "message": "  Next steps:"
+        },
+        {
+          "level": "warn",
+          "message": "    * Add Pact verification tests to the Bar build. See https://docs.pact.io/go/provider_verification"
+        }
+      ],
+      "_embedded": {
+        "pacticipant": {
+          "name": "Foo",
+          "_links": {
+            "self": {
+              "href": "http://example.org/pacticipants/Foo"
+            }
+          }
+        },
+        "version": {
+          "number": "1",
+          "branch": "main",
+          "buildUrl": "http://ci/builds/1234",
+          "_links": {
+            "self": {
+              "title": "Version",
+              "name": "1",
+              "href": "http://example.org/pacticipants/Foo/versions/1"
+            }
+          }
+        }
+      },
+      "_links": {
+        "pb:pacticipant": {
+          "title": "Pacticipant",
+          "name": "Foo",
+          "href": "http://example.org/pacticipants/Foo"
+        },
+        "pb:pacticipant-version": {
+          "title": "Pacticipant version",
+          "name": "1",
+          "href": "http://example.org/pacticipants/Foo/versions/1"
+        },
+        "pb:pacticipant-version-tags": [
+          {
+            "title": "Tag",
+            "name": "a",
+            "href": "http://example.org/pacticipants/Foo/versions/1/tags/a"
+          },
+          {
+            "title": "Tag",
+            "name": "b",
+            "href": "http://example.org/pacticipants/Foo/versions/1/tags/b"
+          }
+        ],
+        "pb:contracts": [
+          {
+            "title": "Pact",
+            "name": "Pact between Foo (1) and Bar",
+            "href": "http://example.org/pacts/provider/Bar/consumer/Foo/version/1"
+          }
+        ]
+      }
+    }
+  }
+}

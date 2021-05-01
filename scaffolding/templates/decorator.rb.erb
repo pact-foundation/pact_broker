@@ -1,0 +1,13 @@
+require 'pact_broker/api/decorators/base_decorator'
+
+module <%= resource_top_module %>
+  module Api
+    module Decorators
+      class <%= decorator_class_name %> < BaseDecorator
+        property :uuid
+
+        include Timestamps
+      end
+    end
+  end
+end

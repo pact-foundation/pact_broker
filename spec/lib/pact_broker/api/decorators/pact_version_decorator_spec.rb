@@ -5,7 +5,6 @@ module PactBroker
   module Api
     module Decorators
       describe PactVersionDecorator do
-
         let(:json_content) {
           {
             'consumer' => {'name' => 'Consumer'},
@@ -25,9 +24,16 @@ module PactBroker
           consumer_version: consumer_version,
           consumer_version_number: '1234',
           name: 'pact_name')}
-        let(:consumer) { instance_double(PactBroker::Domain::Pacticipant, name: 'Consumer')}
-        let(:provider) { instance_double(PactBroker::Domain::Pacticipant, name: 'Provider')}
-        let(:consumer_version) { instance_double(PactBroker::Domain::Version, number: '1234', branch: 'main', pacticipant: consumer)}
+        let(:consumer) { instance_double(PactBroker::Domain::Pacticipant, name: 'Consumer') }
+        let(:provider) { instance_double(PactBroker::Domain::Pacticipant, name: 'Provider') }
+        let(:consumer_version) do
+          instance_double(PactBroker::Domain::Version,
+            number: '1234',
+            branch: 'main',
+            pacticipant: consumer,
+            build_url: "http://build"
+          )
+        end
         let(:decorator_context) { DecoratorContext.new(base_url, '', {}) }
 
         let(:json) { PactVersionDecorator.new(pact).to_json(user_options: decorator_context) }
@@ -49,7 +55,6 @@ module PactBroker
         it "includes timestamps" do
           expect(subject[:createdAt]).to_not be_nil
         end
-
       end
     end
   end
