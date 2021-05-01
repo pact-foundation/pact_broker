@@ -55,6 +55,7 @@ en:
       next_steps:
         verifications: Add Pact verification tests to the %{provider_name} build. See https://docs.pact.io/go/provider_verification
         webhooks: Configure separate %{provider_name} pact verification build and webhook to trigger it when the pact content changes. See https://docs.pact.io/go/webhooks
+        version_branch: Configure the version branch to be the value of your repository branch.
     errors:
       validation:
         blank: "cannot be blank."

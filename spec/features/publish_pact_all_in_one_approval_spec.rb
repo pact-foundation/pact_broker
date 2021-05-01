@@ -9,7 +9,7 @@ RSpec.describe "publishing a pact using the all in one endpoint" do
     {
       :pacticipantName => "Foo",
       :pacticipantVersionNumber => "1",
-      :branch => "main",
+      :branch => branch,
       :tags => ["a", "b"],
       :buildUrl => "http://ci/builds/1234",
       :contracts => [
@@ -26,6 +26,7 @@ RSpec.describe "publishing a pact using the all in one endpoint" do
   end
   let(:rack_headers) { { "CONTENT_TYPE" => "application/json", "HTTP_ACCEPT" => "application/hal+json" } }
   let(:contract) { { consumer: { name: "Foo" }, provider: { name: "Bar" }, interactions: [] }.to_json }
+  let(:branch) { "main" }
   let(:encoded_contract) { Base64.strict_encode64(contract) }
   let(:path) { "/contracts/publish" }
   let(:request_headers) do
@@ -72,5 +73,11 @@ RSpec.describe "publishing a pact using the all in one endpoint" do
     end
 
     it { Approvals.verify(fixture, :name => "publish_contract_verification_already_exists", format: :json) }
+  end
+
+  context "with no branch set" do
+    let(:branch) { nil }
+
+    it { Approvals.verify(fixture, :name => "publish_contract_no_branch", format: :json) }
   end
 end

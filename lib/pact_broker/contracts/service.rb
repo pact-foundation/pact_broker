@@ -50,11 +50,7 @@ module PactBroker
 
         existing_version = find_existing_version(parsed_contracts)
         version = create_or_update_version(parsed_contracts, version_params)
-
-        message = log_message_for_version_creation(existing_version, parsed_contracts)
-
-        logs = [message]
-        return version, logs
+        return version, log_messages_for_version_creation(existing_version, parsed_contracts)
       end
 
       private :create_version
@@ -93,10 +89,7 @@ module PactBroker
           existing_pact = pact_service.find_pact(pact_params)
           listener = TriggeredWebhooksCreatedListener.new
           created_pact = create_or_merge_pact(contract_to_publish.merge?, existing_pact, pact_params, listener)
-          logs << log_mesage_for_pact_publication(parsed_contracts, contract_to_publish.merge?, existing_pact, created_pact)
-          logs << log_message_for_pact_url(created_pact, base_url)
-          logs.concat(event_and_webhook_logs(listener, created_pact))
-          logs.concat(next_steps_logs(created_pact))
+          logs.concat(log_messages_for_pact(parsed_contracts, contract_to_publish, existing_pact, created_pact, listener, base_url))
           created_pact
         end
         return pacts, logs
@@ -127,16 +120,21 @@ module PactBroker
 
       private :create_or_merge_pact
 
-      def log_message_for_version_creation(existing_version, parsed_contracts)
+      def log_messages_for_version_creation(existing_version, parsed_contracts)
+        logs = []
         message_params = parsed_contracts.to_h
         if parsed_contracts.tags&.any?
           message_params[:tags] = parsed_contracts.tags.join(", ")
         end
         message_params[:action] = existing_version ? "Updated" : "Created"
-        LogMessage.debug(message(log_message_key_for_version_creation(parsed_contracts), message_params))
+        logs << LogMessage.debug(message(log_message_key_for_version_creation(parsed_contracts), message_params))
+        if parsed_contracts.branch.nil?
+          logs << LogMessage.warn("  Next steps:\n    " + message("messages.next_steps.version_branch"))
+        end
+        logs
       end
 
-      private :log_message_for_version_creation
+      private :log_messages_for_version_creation
 
       def log_message_key_for_version_creation(parsed_contracts)
         if parsed_contracts.branch && parsed_contracts.tags&.any?
@@ -151,6 +149,17 @@ module PactBroker
       end
 
       private :log_message_key_for_version_creation
+
+      def log_messages_for_pact(parsed_contracts, contract_to_publish, existing_pact, created_pact, listener, base_url)
+        logs = []
+        logs << log_mesage_for_pact_publication(parsed_contracts, contract_to_publish.merge?, existing_pact, created_pact)
+        logs << log_message_for_pact_url(created_pact, base_url)
+        logs.concat(event_and_webhook_logs(listener, created_pact))
+        logs.concat(next_steps_logs(created_pact))
+        logs
+      end
+
+      private :log_messages_for_pact
 
       def log_mesage_for_pact_publication(parsed_contracts, merge, existing_pact, created_pact)
         log_message_params = {
