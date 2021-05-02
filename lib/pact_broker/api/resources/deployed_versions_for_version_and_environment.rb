@@ -43,7 +43,7 @@ module PactBroker
         end
 
         def from_json
-          @deployed_version = existing_deployed_version || deployed_version_service.create(deployed_version_uuid, version, environment, target)
+          @deployed_version = deployed_version_service.create(deployed_version_uuid, version, environment, deployed_version_params)
           response.body = decorator_class(:deployed_version_decorator).new(deployed_version).to_json(decorator_options)
         end
 
@@ -79,8 +79,20 @@ module PactBroker
           @deployed_version_uuid ||= deployed_version_service.next_uuid
         end
 
+        def deployed_version_params
+          {
+            target: target,
+            deployment_complete: deployment_complete,
+          }
+        end
+
         def target
           params(default: {})[:target]&.to_s
+        end
+
+        def deployment_complete
+          complete = params(default: {})[:deploymentComplete]
+          complete.nil? ? true : complete
         end
 
         def title

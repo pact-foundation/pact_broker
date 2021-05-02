@@ -13,6 +13,7 @@ module PactBroker
       plugin :timestamps, update_on_create: true
       plugin :insert_ignore, identifying_columns: [:pacticipant_id, :version_id, :environment_id, :target]
 
+
       dataset_module do
         include PactBroker::Repositories::Helpers
 
@@ -72,6 +73,7 @@ module PactBroker
           environment_id: environment_id,
           version_id: version_id,
           target: target,
+          deployment_complete: deployment_complete,
           deployed_version_id: id
         ).upsert
       end

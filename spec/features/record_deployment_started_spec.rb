@@ -1,0 +1,66 @@
+#
+# pact-broker record-deployment-started --pacticipant Foo --version 1 --environment test --target blue
+# pact-broker record-deployment-completed --pacticipant Foo --version 1 --environment test --target blue
+#
+
+describe "Record deployment started", skip: true do
+  before do
+    td.create_environment("test", uuid: "1234")
+      .create_consumer("Foo")
+      .create_consumer_version("1")
+      .create_deployed_version_for_consumer_version
+  end
+  let(:headers) { {"CONTENT_TYPE" => "application/json"} }
+  let(:response_body) { JSON.parse(subject.body, symbolize_names: true) }
+  let(:version_path) { "/pacticipants/Foo/versions/1" }
+  let(:version_response) { get(version_path, nil, { "HTTP_ACCEPT" => "application/hal+json" } ) }
+  let(:replaced_previous) { true }
+  let(:path) do
+    JSON.parse(version_response.body)["_links"]["pb:record-deployment"]
+      .find{ |relation| relation["name"] == "test" }
+      .fetch("href")
+  end
+  let(:request_body) { { deploymentComplete: false }.to_json }
+
+  subject { post(path, request_body, headers) }
+
+  it { is_expected.to be_a_hal_json_created_response }
+
+  it "returns the Location header" do
+    expect(subject.headers["Location"]).to start_with "http://example.org/deployed-versions/"
+  end
+
+  it "returns the newly created deployment" do
+    expect(response_body[:status]).to eq "currently_deploying"
+  end
+
+  it "does not mark the previous deployed version as undeployed" do
+    expect { subject }.to change { PactBroker::Deployments::DeployedVersion.currently_deployed.collect(&:uuid) }
+  end
+
+  it "does not change the overall count of currently deployed versions" do
+    expect { subject }.to_not change { PactBroker::Deployments::DeployedVersion.currently_deployed.count }
+  end
+
+  context "with an empty body" do
+    let(:request_body) { nil }
+
+    it { is_expected.to be_a_json_error_response("must be one of true, false") }
+
+    it "does not change the overall count of currently deployed versions" do
+      expect { subject }.to_not change { PactBroker::Deployments::DeployedVersion.currently_deployed.count }
+    end
+  end
+
+  context "when the deployment does not replace the previous deployed version" do
+    let(:replaced_previous) { false }
+
+    it "leaves the previous deployed version as currently deployed" do
+      expect { subject }.to change { PactBroker::Deployments::DeployedVersion.currently_deployed.count }.by(1)
+    end
+
+    it "increases the overall count of currently deployed versions" do
+      expect { subject }.to change { PactBroker::Deployments::DeployedVersion.currently_deployed.count }.by(1)
+    end
+  end
+end

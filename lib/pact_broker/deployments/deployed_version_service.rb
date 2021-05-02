@@ -7,14 +7,15 @@ module PactBroker
         SecureRandom.uuid
       end
 
-      def self.create(uuid, version, environment, target)
+      def self.create(uuid, version, environment, target: , deployment_complete: )
         record_previous_version_undeployed(version.pacticipant, environment, target)
         DeployedVersion.create(
           uuid: uuid,
           version: version,
           pacticipant_id: version.pacticipant_id,
           environment: environment,
-          target: target
+          target: target,
+          deployment_complete: deployment_complete
         )
       end
 
