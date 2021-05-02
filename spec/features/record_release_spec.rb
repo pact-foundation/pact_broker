@@ -12,7 +12,6 @@ describe "Record release" do
   let(:response_body) { JSON.parse(subject.body, symbolize_names: true) }
   let(:version_path) { "/pacticipants/Foo/versions/1" }
   let(:version_response) { get(version_path, nil, { "HTTP_ACCEPT" => "application/hal+json" } ) }
-  let(:replaced_previous) { true }
   let(:target) { nil }
   let(:path) do
     JSON.parse(version_response.body)["_links"]["pb:record-release"]
