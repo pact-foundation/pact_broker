@@ -18,9 +18,8 @@ describe "Record release" do
       .find{ |relation| relation["name"] == "production" }
       .fetch("href")
   end
-  let(:request_body) { nil }
 
-  subject { post(path, request_body, headers) }
+  subject { post(path, nil, headers) }
 
   it { is_expected.to be_a_hal_json_created_response }
 
