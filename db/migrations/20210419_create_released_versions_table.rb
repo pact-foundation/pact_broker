@@ -11,7 +11,6 @@ Sequel.migration do
       DateTime :support_ended_at
       index [:uuid], unique: true, name: "released_versions_uuid_index"
       index [:version_id, :environment_id], unique: true, name: "released_versions_version_id_environment_id_index"
-      # TODO NULLS FIRST
       index [:support_ended_at], name: "released_version_support_ended_at_index"
     end
   end
