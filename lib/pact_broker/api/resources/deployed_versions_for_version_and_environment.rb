@@ -30,14 +30,6 @@ module PactBroker
           true
         end
 
-        def malformed_request?
-          if request.post?
-            malformed_post_request?
-          else
-            false
-          end
-        end
-
         def create_path
           deployed_version_url(existing_deployed_version || OpenStruct.new(uuid: deployed_version_uuid), base_url)
         end
@@ -85,10 +77,6 @@ module PactBroker
 
         def title
           "Deployed versions for #{pacticipant_name} version #{pacticipant_version_number}"
-        end
-
-        def malformed_post_request?
-          false
         end
       end
     end
