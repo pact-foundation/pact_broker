@@ -71,6 +71,7 @@ module PactBroker
           @deployed_version_uuid ||= deployed_version_service.next_uuid
         end
 
+        # TODO disallow an empty string because that is used as a NULL indicator in the database
         def target
           params(default: {})[:target]&.to_s
         end

@@ -41,6 +41,12 @@ module PactBroker
           expect{ subject }.to change { CurrentlyDeployedVersionId.count}.by(0)
         end
 
+        it "stores an empty string as the target_for_index in the database so that the unique constraint works" do
+          expect(subject.target).to be nil
+          expect(subject.target_for_index).to eq ""
+          expect(subject.currently_deployed_version_id.target_for_index).to eq ""
+        end
+
         it "updates the currently deployed version id" do
           expect { subject }.to change { CurrentlyDeployedVersionId.last.deployed_version_id }
           expect(CurrentlyDeployedVersionId.last.deployed_version_id).to eq subject.id

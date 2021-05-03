@@ -32,6 +32,7 @@ describe "Record deployment" do
 
   it "returns the newly created deployment" do
     expect(response_body[:currentlyDeployed]).to be true
+    expect(response_body).to_not have_key(:target)
   end
 
   it "creates a new deployed version" do
@@ -83,6 +84,10 @@ describe "Record deployment" do
 
     it "creates a new deployed version" do
       expect { subject }.to change { PactBroker::Deployments::DeployedVersion.currently_deployed.count }.by(1)
+    end
+
+    it "sets the target" do
+      expect(response_body).to have_key(:target)
     end
   end
 end
