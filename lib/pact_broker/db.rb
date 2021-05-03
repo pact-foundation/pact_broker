@@ -32,6 +32,10 @@ module PactBroker
       Sequel::TimestampMigrator.is_current?(database_connection, PactBroker::DB::MIGRATIONS_DIR, options)
     end
 
+    def self.check_current database_connection, options = {}
+      Sequel::TimestampMigrator.check_current(database_connection, PactBroker::DB::MIGRATIONS_DIR, options)
+    end
+
     def self.truncate database_connection, options = {}
       exceptions = options[:except] || []
       TableDependencyCalculator.call(database_connection).each do | table_name |
