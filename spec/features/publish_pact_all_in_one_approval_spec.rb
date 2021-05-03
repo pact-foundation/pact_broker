@@ -27,7 +27,7 @@ RSpec.describe "publishing a pact using the all in one endpoint" do
   let(:fixture) do
     {
       request: { path: path, headers: rack_env_to_http_headers(rack_headers), body: request_body_hash },
-      response: { status: subject.status, headers: determinate_headers(headers), body: JSON.parse(subject.body)}
+      response: { status: subject.status, headers: determinate_headers(subject.headers), body: JSON.parse(subject.body)}
     }
   end
 
