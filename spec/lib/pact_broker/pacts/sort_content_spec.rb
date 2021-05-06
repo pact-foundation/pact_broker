@@ -39,6 +39,19 @@ module PactBroker
           expect(SortContent.call(other_content)).to eq other_content
         end
       end
+
+      context "when interactions is a string" do
+        let(:other_content) do
+          {
+            'a' => 1,
+            'interactions' => 'interactions'
+          }
+        end
+
+        it "does not blow up" do
+          expect(SortContent.call(other_content)).to eq other_content
+        end
+      end
     end
   end
 end
