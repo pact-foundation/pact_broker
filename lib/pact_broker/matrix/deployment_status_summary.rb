@@ -8,26 +8,28 @@ module PactBroker
 
       attr_reader :rows, :resolved_selectors, :integrations
 
-      def initialize(rows, resolved_selectors, integrations)
+      def initialize(rows, resolved_selectors, integrations, ignored_pacticipants = [])
         @rows = rows
         @resolved_selectors = resolved_selectors
         @integrations = integrations
         @dummy_selectors = create_dummy_selectors
+        @ignored_pacticipant_ids = ignored_pacticipants.collect(&:id)
       end
 
       def counts
         {
-          success: rows.count(&:success),
+          success: rows_to_consider.count(&:success),
           failed: rows.count { |row| row.success == false },
+          ignored: ignored_rows.any? ? ignored_rows.count : nil,
           unknown: required_integrations_without_a_row.count + rows.count { |row| row.success.nil? }
-        }
+        }.compact
       end
 
       def deployable?
-        return false if specified_selectors_that_do_not_exist.any?
-        return nil if rows.any?{ |row| row.success.nil? }
+        return false if specified_selectors_that_do_not_exist_considering_ignored.any?
+        return nil if any_unverified?
         return nil if required_integrations_without_a_row.any?
-        rows.all?(&:success) # true if rows is empty
+        all_success? # true if rows is empty
       end
 
       def reasons
@@ -36,7 +38,27 @@ module PactBroker
 
       private
 
-      attr_reader :dummy_selectors
+      attr_reader :dummy_selectors, :ignored_pacticipant_ids
+
+      def rows_to_consider
+        without_ignored_pacticipants(rows)
+      end
+
+      def ignored_rows
+        rows.select { | row | ignore_pacticipants_with_ids?([row.consumer_id, row.provider_id]) }
+      end
+
+      def any_unverified?
+        without_ignored_pacticipants(rows).any?{ |row| row.success.nil? }
+      end
+
+      def all_success?
+        without_ignored_pacticipants(rows).all?(&:success)
+      end
+
+      def without_ignored_pacticipants(rows)
+        rows.reject { | row | ignore_pacticipant_with_id?(row.consumer_id) || ignore_pacticipant_with_id?(row.provider_id) }
+      end
 
       def error_messages
         @error_messages ||= begin
@@ -47,7 +69,7 @@ module PactBroker
             messages.concat(failure_messages)
             messages.concat(not_ever_verified_reasons)
           end
-          messages.uniq
+          maybe_ignore_reasons(messages.uniq)
         end
       end
 
@@ -59,10 +81,20 @@ module PactBroker
         resolved_selectors.select(&:specified_version_that_does_not_exist?)
       end
 
+      def specified_selectors_that_do_not_exist_considering_ignored
+        resolved_selectors
+          .reject { | selector | ignore_selector_that_does_not_exist?(selector) }
+           .select(&:specified_version_that_does_not_exist?)
+      end
+
       def specified_selectors_do_not_exist_messages
         specified_selectors_that_do_not_exist.collect do | selector |
           SpecifiedVersionDoesNotExist.new(selector)
         end
+      end
+
+      def ignore_selector_that_does_not_exist?(selector)
+        ignore_pacticipants_with_ids?(selector.pacticipant_id)
       end
 
       def not_ever_verified_reasons
@@ -110,7 +142,10 @@ module PactBroker
       # Will log it for a while and see.
       def required_integrations_without_a_row
         @required_integrations_without_a_row ||= begin
-          integrations.select(&:required?).select do | integration |
+          integrations
+          .reject { |integration| ignore_pacticipants_with_ids?([integration.consumer_id, integration.provider_id]) }
+          .select(&:required?)
+          .select do | integration |
             !row_exists_for_integration(integration)
           end
         end.tap { |it| log_required_integrations_without_a_row_occurred(it) if it.any? }
@@ -203,6 +238,32 @@ module PactBroker
 
       def report_missing_interaction_verifications(messages)
         logger.warn("Interactions missing verifications", messages)
+      end
+
+      def ignore_pacticipants_with_ids?(ids)
+        (ignored_pacticipant_ids & [*ids]).any?
+      end
+
+      def ignore_pacticipant_with_id?(id)
+        ignored_pacticipant_ids.include?(id)
+      end
+
+      def maybe_ignore_reasons(reasons)
+        reasons.collect do | reason |
+          if reason.is_a?(ErrorReason)
+            maybe_ignore_reason(reason)
+          else
+            reason
+          end
+        end
+      end
+
+      def maybe_ignore_reason(reason)
+        if ignore_pacticipants_with_ids?(reason.selectors.collect(&:pacticipant_id))
+          IgnoredReason.new(reason)
+        else
+          reason
+        end
       end
     end
   end

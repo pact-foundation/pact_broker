@@ -1,12 +1,31 @@
 module PactBroker
   module Matrix
+
     class Reason
       def == other
         self.class == other.class
       end
     end
 
-    class ErrorReason < Reason; end
+    class ErrorReason < Reason
+      def selectors
+        raise NotImplementedError
+      end
+    end
+
+    class IgnoredReason
+      attr_reader :root_reason
+
+      # todo equals
+
+      def initialize(root_reason)
+        @root_reason = root_reason
+      end
+
+      def == other
+        other.is_a?(IgnoredReason) && other.root_reason == self.root_reason
+      end
+    end
 
     class ErrorReasonWithTwoSelectors < ErrorReason
       attr_reader :consumer_selector, :provider_selector
@@ -20,6 +39,10 @@ module PactBroker
         super(other) &&
           consumer_selector == other.consumer_selector &&
           provider_selector == other.provider_selector
+      end
+
+      def selectors
+        [consumer_selector, provider_selector]
       end
 
       def to_s
@@ -57,6 +80,10 @@ module PactBroker
 
       def == other
         super(other) && selector == other.selector
+      end
+
+      def selectors
+        [selector]
       end
 
       def to_s

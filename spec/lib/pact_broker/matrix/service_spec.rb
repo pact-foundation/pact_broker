@@ -130,6 +130,34 @@ module PactBroker
             expect(subject.last).to include "Environment with name 'prod' does not exist"
           end
         end
+
+        context "when a pacticipant to ignore does not exist" do
+          let(:selectors) { [UnresolvedSelector.new(pacticipant_name: "Foo", pacticipant_version_number: "1")] }
+
+          let(:options) do
+            {
+              ignore_selectors: [UnresolvedSelector.new(pacticipant_name: "Bar", pacticipant_version_number: "1")]
+            }
+          end
+
+          it "returns an error message" do
+            expect(subject.last).to include "Pacticipant Bar not found to ignore"
+          end
+        end
+
+        context "when a pacticipant to ignore is missing a name" do
+          let(:selectors) { [UnresolvedSelector.new(pacticipant_name: "Foo", pacticipant_version_number: "1")] }
+
+          let(:options) do
+            {
+              ignore_selectors: [UnresolvedSelector.new(pacticipant_version_number: "1")]
+            }
+          end
+
+          it "returns an error message" do
+            expect(subject.last).to include "Please specify the pacticipant name to ignore"
+          end
+        end
       end
 
       describe "find_for_consumer_and_provider_with_tags integration test" do

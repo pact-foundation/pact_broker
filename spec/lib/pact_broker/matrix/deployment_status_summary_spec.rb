@@ -7,7 +7,6 @@ require 'pact_broker/matrix/resolved_selector'
 module PactBroker
   module Matrix
     describe DeploymentStatusSummary do
-
       before do
         allow(subject).to receive(:logger).and_return(logger)
       end
@@ -93,7 +92,9 @@ module PactBroker
           ]
         end
 
-        subject { DeploymentStatusSummary.new(rows, resolved_selectors, integrations) }
+        let(:ignored_pacticipants) { [] }
+
+        subject { DeploymentStatusSummary.new(rows, resolved_selectors, integrations, ignored_pacticipants) }
 
         context "when there is a row for all integrations" do
           its(:deployable?) { is_expected.to be true }
@@ -120,6 +121,14 @@ module PactBroker
           its(:deployable?) { is_expected.to be nil }
           its(:reasons) { is_expected.to eq [PactNotEverVerifiedByProvider.new(resolved_selectors.first, resolved_selectors[1]) ] }
           its(:counts) { is_expected.to eq success: 1, failed: 0, unknown: 1 }
+
+          context "when the pacticipant for the missing verification is ignored" do
+            let(:ignored_pacticipants) { [bar] }
+
+            its(:deployable?) { is_expected.to be true }
+            its(:reasons) { is_expected.to eq [IgnoredReason.new(PactNotEverVerifiedByProvider.new(resolved_selectors.first, resolved_selectors[1]))] }
+            its(:counts) { is_expected.to eq success: 1, failed: 0, unknown: 1, ignored: 1 }
+          end
         end
 
         context "when one or more of the success flags are false" do
@@ -128,6 +137,14 @@ module PactBroker
           its(:deployable?) { is_expected.to be false }
           its(:reasons) { is_expected.to eq [VerificationFailed.new(resolved_selectors.first, resolved_selectors[1])] }
           its(:counts) { is_expected.to eq success: 1, failed: 1, unknown: 0 }
+
+          context "when the failing pacticipant is ignored" do
+            let(:ignored_pacticipants) { [bar] }
+
+            its(:deployable?) { is_expected.to be true }
+            its(:reasons) { is_expected.to eq [IgnoredReason.new(VerificationFailed.new(resolved_selectors.first, resolved_selectors[1]))] }
+            its(:counts) { is_expected.to eq success: 1, failed: 1, unknown: 0, ignored: 1 }
+          end
         end
 
         context "when there is a provider relationship missing" do
@@ -136,6 +153,14 @@ module PactBroker
           its(:deployable?) { is_expected.to be nil }
           its(:reasons) { is_expected.to eq [PactNotVerifiedByRequiredProviderVersion.new(resolved_selectors.first, resolved_selectors.last)] }
           its(:counts) { is_expected.to eq success: 1, failed: 0, unknown: 1 }
+
+          context "when the missing pacticipant is ignored" do
+            let(:ignored_pacticipants) { [bar] }
+
+            its(:deployable?) { is_expected.to be true }
+            its(:reasons) { is_expected.to eq [IgnoredReason.new(VerificationFailed.new(resolved_selectors.first, resolved_selectors[1]))] }
+            its(:counts) { is_expected.to eq success: 1, failed: 1, unknown: 0, ignored: 1 }
+          end
         end
 
         # I think this is an impossible scenario now that the left outer join returns a row with blank verification fields
@@ -182,6 +207,14 @@ module PactBroker
           its(:deployable?) { is_expected.to be nil }
           its(:reasons) { is_expected.to eq [PactNotVerifiedByRequiredProviderVersion.new(resolved_selectors.first, resolved_selectors.last)] }
           its(:counts) { is_expected.to eq success: 1, failed: 0, unknown: 1 }
+
+          context "when the missing provider is ignored" do
+            let(:ignored_pacticipants) { [baz] }
+
+            its(:deployable?) { is_expected.to be true }
+            its(:reasons) { is_expected.to eq [IgnoredReason.new(PactNotVerifiedByRequiredProviderVersion.new(resolved_selectors.first, resolved_selectors.last))] }
+            its(:counts) { is_expected.to eq success: 1, failed: 0, unknown: 1, ignored: 1 }
+          end
         end
 
         context "when there are no inferred selectors and the pact has not ever been verified" do
@@ -217,6 +250,8 @@ module PactBroker
           its(:deployable?) { is_expected.to be nil }
           its(:reasons) { is_expected.to eq [PactNotEverVerifiedByProvider.new(resolved_selectors.first, dummy_selector)] }
         end
+
+
       end
     end
   end

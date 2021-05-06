@@ -72,6 +72,22 @@ module PactBroker
           end
         end
 
+        options.fetch(:ignore_selectors, []).each do | s |
+          if s[:pacticipant_name].nil?
+            error_messages << "Please specify the pacticipant name to ignore"
+          else
+            if s.key?(:pacticipant_version_number) && s.key?(:latest)
+              error_messages << "A version number and latest flag cannot both be specified for #{s[:pacticipant_name]} to ignore"
+            end
+          end
+        end
+
+        options.fetch(:ignore_selectors, []).collect{ |selector| selector[:pacticipant_name] }.compact.uniq.each do | pacticipant_name |
+          unless pacticipant_service.find_pacticipant_by_name(pacticipant_name)
+            error_messages << "Pacticipant #{pacticipant_name} not found to ignore"
+          end
+        end
+
         if selectors.size == 0
           error_messages << "Please provide 1 or more version selectors."
         end
