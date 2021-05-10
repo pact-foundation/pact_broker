@@ -15,14 +15,19 @@ module PactBroker
         end
 
         def to_s
-          (ignored ? "[IGNORED] " : "") +
+          (ignored ? "[IGNORED] " : "") + reason_text
+        end
+
+        private
+
+        attr_reader :reason, :ignored
+
+        def reason_text
           case reason
           when PactBroker::Matrix::PactNotEverVerifiedByProvider
             "There is no verified pact between #{reason.consumer_selector.description} and #{reason.provider_selector.description}"
           when PactBroker::Matrix::PactNotVerifiedByRequiredProviderVersion
             "There is no verified pact between #{reason.consumer_selector.description} and #{reason.provider_selector.description}"
-          # when PactBroker::Matrix::VerificationFailed
-          #   "The pact verification between #{reason.consumer_selector.description} and #{reason.provider_selector.description} failed"
           when PactBroker::Matrix::SpecifiedVersionDoesNotExist
             version_does_not_exist_description(reason.selector)
           when PactBroker::Matrix::VerificationFailed
@@ -40,10 +45,6 @@ module PactBroker
             reason.class.to_s
           end
         end
-
-        private
-
-        attr_reader :reason, :ignored
 
         def version_does_not_exist_description selector
           if selector.version_does_not_exist?

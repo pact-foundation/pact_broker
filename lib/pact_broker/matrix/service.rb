@@ -48,10 +48,6 @@ module PactBroker
         end
       end
 
-      def find_compatible_pacticipant_versions criteria
-        matrix_repository.find_compatible_pacticipant_versions criteria
-      end
-
       def validate_selectors selectors, options = {}
         error_messages = []
 

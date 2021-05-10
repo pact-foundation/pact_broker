@@ -55,27 +55,15 @@ module PactBroker
 
       # Return the latest matrix row (pact/verification) for each consumer_version_number/provider_version_number
       def find specified_selectors, options = {}
-        # TODO naughty to modify the options hash, just making it pass for now
-        # TODO should only be able to resolve ignore selectors for specific pacticipant name and version number, not tags
-        options[:ignore_selectors] = resolve_versions_and_add_ids(options.fetch(:ignore_selectors, []), :ignored, {})
+        options[:ignore_selectors] = resolve_ignore_selectors(options) # Naughty to modify the options hash! :shrug:
         resolved_specified_selectors = resolve_versions_and_add_ids(specified_selectors, :specified, options)
         integrations = find_integrations_for_specified_selectors(resolved_specified_selectors, infer_selectors_for_integrations?(options))
-        resolved_selectors = if infer_selectors_for_integrations?(options)
-          resolved_specified_selectors + inferred_selectors(resolved_specified_selectors, integrations, options)
-        else
-          resolved_specified_selectors
-        end
+        resolved_selectors = add_any_inferred_selectors(resolved_specified_selectors, integrations, options)
 
-        all_lines = query_matrix(resolved_selectors, options)
-        lines = apply_latestby(options, all_lines)
-
-        # This needs to be done after the latestby, so can't be done in the db unless
-        # the latestby logic is moved to the db
-        if options.key?(:success)
-          lines = lines.select{ |l| options[:success].include?(l.success) }
-        end
-
-        considered_rows, ignored_rows = split_into_considered_and_ignored(lines, options)
+        all_rows = query_matrix(resolved_selectors, options)
+        rows_with_latest_by_applied = apply_latestby(options, all_rows)
+        rows_with_latest_by_applied = apply_success_filter(rows_with_latest_by_applied, options)
+        considered_rows, ignored_rows = split_rows_into_considered_and_ignored(rows_with_latest_by_applied, options)
 
         QueryResults.new(considered_rows.sort, ignored_rows.sort, specified_selectors, options, resolved_selectors, integrations)
       end
@@ -86,9 +74,7 @@ module PactBroker
         find(selectors, options)
       end
 
-      def find_compatible_pacticipant_versions selectors
-        find(selectors, latestby: 'cvpv').select(&:success)
-      end
+      private
 
       def find_integrations_for_specified_selectors(resolved_specified_selectors, infer_integrations)
         specified_pacticipant_names = resolved_specified_selectors.collect(&:pacticipant_name)
@@ -101,7 +87,23 @@ module PactBroker
           end
       end
 
-      private
+      def add_any_inferred_selectors(resolved_specified_selectors, integrations, options)
+        if infer_selectors_for_integrations?(options)
+          resolved_specified_selectors + inferred_selectors(resolved_specified_selectors, integrations, options)
+        else
+          resolved_specified_selectors
+        end
+      end
+
+      def apply_success_filter(rows_with_latest_by_applied, options)
+        # This needs to be done after the latestby, so can't be done in the db unless
+        # the latestby logic is moved to the db
+        if options.key?(:success)
+           rows_with_latest_by_applied.select{ |l| options[:success].include?(l.success) }
+         else
+          rows_with_latest_by_applied
+        end
+      end
 
       # If a specified pacticipant is a consumer, then its provider is required to be deployed
       # to the same environment before the consumer can be deployed.
@@ -141,6 +143,10 @@ module PactBroker
         options[:latestby] ? QuickRow : EveryRow
       end
 
+      def resolve_ignore_selectors(options)
+        resolve_versions_and_add_ids(options.fetch(:ignore_selectors, []), :ignored, {})
+      end
+
       # Find the version number for selectors with the latest and/or tag specified
       def resolve_versions_and_add_ids(unresolved_selectors, selector_type, options)
         unresolved_selectors.collect do | unresolved_selector |
@@ -171,18 +177,18 @@ module PactBroker
           one_of_many = versions.compact.size > 1
           versions.collect do | version |
             if version
-              selector_for_version(pacticipant, version, unresolved_selector, selector_type, one_of_many, ignore_selectors)
+              selector_for_found_version(pacticipant, version, unresolved_selector, selector_type, one_of_many, ignore_selectors)
             else
               selector_for_non_existing_version(pacticipant, unresolved_selector, selector_type, ignore_selectors)
             end
           end
         else
-          selector_without_version(pacticipant, selector_type, ignore_selectors)
+          selector_for_all_versions_of_a_pacticipant(pacticipant, selector_type, ignore_selectors)
         end
       end
 
       def infer_selectors_for_integrations?(options)
-        options[:latest] || options[:tag] || options[:environment_name]
+        options[:latest] || options[:tag] || options[:branch] || options[:environment_name]
       end
 
       # When only one selector is specified, (eg. checking to see if Foo version 2 can be deployed to prod),
@@ -198,6 +204,7 @@ module PactBroker
         selectors = inferred_pacticipant_names.collect do | pacticipant_name |
           selector = UnresolvedSelector.new(pacticipant_name: pacticipant_name)
           selector.tag = options[:tag] if options[:tag]
+          selector.branch = options[:branch] if options[:branch]
           selector.latest = options[:latest] if options[:latest]
           selector.environment_name = options[:environment_name] if options[:environment_name]
           selector
@@ -207,26 +214,28 @@ module PactBroker
 
       def selector_for_non_existing_version(pacticipant, unresolved_selector, selector_type, ignore_selectors)
         ignore = ignore_selectors.any? do | s |
-          s.pacticipant_id == pacticipant.id && (s.only_pacticipant_name_specified? || s.pacticipant_version_number == unresolved_selector.pacticipant_version_number)
+          s.pacticipant_id == pacticipant.id && s.only_pacticipant_name_specified?
         end
         ResolvedSelector.for_pacticipant_and_non_existing_version(pacticipant, unresolved_selector, selector_type, ignore)
       end
 
-      def selector_for_version(pacticipant, version, unresolved_selector, selector_type, one_of_many, ignore_selectors)
+      def selector_for_found_version(pacticipant, version, unresolved_selector, selector_type, one_of_many, ignore_selectors)
         ignore = ignore_selectors.any? do | s |
           s.pacticipant_id == pacticipant.id && (s.only_pacticipant_name_specified? || s.pacticipant_version_id == version.id)
         end
         ResolvedSelector.for_pacticipant_and_version(pacticipant, version, unresolved_selector, selector_type, ignore, one_of_many)
       end
 
-      def selector_without_version(pacticipant, selector_type, ignore_selectors)
+      def selector_for_all_versions_of_a_pacticipant(pacticipant, selector_type, ignore_selectors)
+        # Doesn't make sense to ignore this, as you can't have a can-i-deploy query
+        # for "all versions of a pacticipant". But whatever.
         ignore = ignore_selectors.any? do | s |
           s.pacticipant_id == pacticipant.id && s.only_pacticipant_name_specified?
         end
         ResolvedSelector.for_pacticipant(pacticipant, selector_type, ignore)
       end
 
-      def split_into_considered_and_ignored(rows, options)
+      def split_rows_into_considered_and_ignored(rows, options)
         ignore_selectors = options.fetch(:ignore_selectors, [])
         if ignore_selectors.any?
           considered, ignored = [], []
@@ -245,8 +254,8 @@ module PactBroker
 
       def ignore_row?(ignore_selectors, row)
         ignore_selectors.any? do | s |
-          s.pacticipant_id == row.consumer_id  && (s.pacticipant_version_number.nil? || s.pacticipant_version_id == row.consumer_version_id) ||
-            s.pacticipant_id == row.provider_id  && (s.pacticipant_version_number.nil? || s.pacticipant_version_id == row.provider_version_id)
+          s.pacticipant_id == row.consumer_id  && (s.only_pacticipant_name_specified? || s.pacticipant_version_id == row.consumer_version_id) ||
+            s.pacticipant_id == row.provider_id  && (s.only_pacticipant_name_specified? || s.pacticipant_version_id == row.provider_version_id)
         end
       end
     end
