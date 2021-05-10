@@ -52,13 +52,19 @@ module PactBroker
         end
 
         def matrix(base_url)
-          query_results_with_deployment_status_summary.rows.collect do | line |
-            provider = OpenStruct.new(name: line.provider_name)
-            consumer = OpenStruct.new(name: line.consumer_name)
-            consumer_version = OpenStruct.new(number: line.consumer_version_number, pacticipant: consumer)
-            provider_version = line.provider_version_number ? OpenStruct.new(number: line.provider_version_number, pacticipant: provider) : nil
-            line_hash(consumer, provider, consumer_version, provider_version, line, base_url)
+          query_results_with_deployment_status_summary.considered_rows.collect do | line |
+            hash_for_row(line, base_url)
+          end + query_results_with_deployment_status_summary.ignored_rows.collect do | line |
+            hash_for_row(line, base_url).merge(ignored: true)
           end
+        end
+
+        def hash_for_row(line, base_url)
+          provider = OpenStruct.new(name: line.provider_name)
+          consumer = OpenStruct.new(name: line.consumer_name)
+          consumer_version = OpenStruct.new(number: line.consumer_version_number, pacticipant: consumer)
+          provider_version = line.provider_version_number ? OpenStruct.new(number: line.provider_version_number, pacticipant: provider) : nil
+          line_hash(consumer, provider, consumer_version, provider_version, line, base_url)
         end
 
         def line_hash(consumer, provider, consumer_version, provider_version, line, base_url)

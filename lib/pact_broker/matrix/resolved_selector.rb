@@ -15,15 +15,16 @@ module PactBroker
         merge!(params)
       end
 
-      def self.for_pacticipant(pacticipant, type)
+      def self.for_pacticipant(pacticipant, type, ignore)
         ResolvedSelector.new(
           pacticipant_id: pacticipant.id,
           pacticipant_name: pacticipant.name,
-          type: type
+          type: type,
+          ignore: ignore
         )
       end
 
-      def self.for_pacticipant_and_version(pacticipant, version, original_selector, type, one_of_many = false)
+      def self.for_pacticipant_and_version(pacticipant, version, original_selector, type, ignore, one_of_many = false)
         ResolvedSelector.new(
           pacticipant_id: pacticipant.id,
           pacticipant_name: pacticipant.name,
@@ -34,11 +35,12 @@ module PactBroker
           branch: original_selector[:branch],
           environment_name: original_selector[:environment_name],
           type: type,
+          ignore: ignore,
           one_of_many: one_of_many
         )
       end
 
-      def self.for_pacticipant_and_non_existing_version(pacticipant, original_selector, type)
+      def self.for_pacticipant_and_non_existing_version(pacticipant, original_selector, type, ignore)
         ResolvedSelector.new(
           pacticipant_id: pacticipant.id,
           pacticipant_name: pacticipant.name,
@@ -48,7 +50,8 @@ module PactBroker
           tag: original_selector[:tag],
           branch: original_selector[:branch],
           environment_name: original_selector[:environment_name],
-          type: type
+          type: type,
+          ignore: ignore
         )
       end
 
@@ -133,6 +136,14 @@ module PactBroker
 
       def one_of_many?
         self[:one_of_many]
+      end
+
+      def ignore?
+        self[:ignore]
+      end
+
+      def consider?
+        !ignore?
       end
 
       def description

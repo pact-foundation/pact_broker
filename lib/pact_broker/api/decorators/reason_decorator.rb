@@ -5,10 +5,17 @@ module PactBroker
     module Decorators
       class ReasonDecorator
         def initialize(reason)
-          @reason = reason
+          if reason.is_a?(PactBroker::Matrix::IgnoredReason)
+            @reason = reason.root_reason
+            @ignored = true
+          else
+            @reason = reason
+            @ignored = false
+          end
         end
 
         def to_s
+          (ignored ? "[IGNORED] " : "") +
           case reason
           when PactBroker::Matrix::PactNotEverVerifiedByProvider
             "There is no verified pact between #{reason.consumer_selector.description} and #{reason.provider_selector.description}"
@@ -30,13 +37,13 @@ module PactBroker
             end.join('; ')
             "WARNING: Although the verification was reported as successful, the results for #{reason.consumer_selector.description} and #{reason.provider_selector.description} may be missing tests for the following interactions: #{descriptions}"
           else
-            reason
+            reason.class.to_s
           end
         end
 
         private
 
-        attr_reader :reason
+        attr_reader :reason, :ignored
 
         def version_does_not_exist_description selector
           if selector.version_does_not_exist?

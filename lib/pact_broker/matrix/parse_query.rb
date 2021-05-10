@@ -47,9 +47,9 @@ module PactBroker
         end
 
         if params['ignore'].is_a?(Array)
-          options[:ignore_pacticipant_names] = params['ignore'].collect{ |i| parse_selector(i) }
+          options[:ignore_selectors] = params['ignore'].collect{ |i| parse_selector(i) }
         else
-          options[:ignore_pacticipant_names] = []
+          options[:ignore_selectors] = []
         end
 
         return selectors, options

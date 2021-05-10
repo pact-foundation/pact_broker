@@ -19,7 +19,7 @@ module PactBroker
       def find selectors, options = {}
         logger.info "Querying matrix", selectors: selectors, options: options
         query_results = matrix_repository.find selectors, options
-        deployment_status_summary = DeploymentStatusSummary.new(query_results.rows, query_results.resolved_selectors, query_results.integrations)
+        deployment_status_summary = DeploymentStatusSummary.new(query_results.considered_rows, query_results.ignored_rows, query_results.resolved_selectors, query_results.integrations)
         QueryResultsWithDeploymentStatusSummary.new(query_results, deployment_status_summary)
       end
 

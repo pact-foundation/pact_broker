@@ -154,13 +154,15 @@ module PactBroker
 
           let(:query_results) do
             double('QueryResults',
-              rows: [row_1, row_2],
+              considered_rows: [row_1, row_2],
+              ignored_rows: ignored_rows,
               selectors: selectors,
               options: options,
               resolved_selectors: resolved_selectors,
               integrations: integrations
             )
           end
+          let(:ignored_rows) { [] }
           let(:query_results_with_deployment_status_summary){ PactBroker::Matrix::QueryResultsWithDeploymentStatusSummary.new(query_results, deployment_status_summary)}
           let(:selectors) { nil }
           let(:integrations){ [] }
@@ -210,6 +212,19 @@ module PactBroker
 
             it "has a nil verificationResult" do
               expect(parsed_json[:matrix][1][:verificationResult]).to eq verification_hash
+            end
+          end
+
+          context "with ignored rows" do
+            let(:ignored_rows) { [row_1] }
+
+            it "includes the considered and ignored rows" do
+              expect(parsed_json[:matrix].size).to eq 3
+              expect(parsed_json[:matrix].first).to_not have_key(:ignored)
+            end
+
+            it "includes the ignored flag" do
+              expect(parsed_json[:matrix].last[:ignored]).to be true
             end
           end
         end

@@ -8,7 +8,7 @@ module PactBroker
 
       attr_reader :query_results, :deployment_status_summary
 
-      delegate [:selectors, :options, :resolved_selectors, :integrations] => :query_results
+      delegate [:selectors, :options, :resolved_selectors, :integrations, :considered_rows, :ignored_rows] => :query_results
       delegate (Array.instance_methods - Object.instance_methods) => :rows
       delegate [:deployable?] => :deployment_status_summary
 
