@@ -1,4 +1,9 @@
 #!/usr/bin/env ruby
+
+# The content_id is used to deterministically generate pact content. It doesn't matter what the value is.
+# If you want to simulate publishing a pact that has the same content as a previous pact, use the same ID.
+# If you want to simulate publishing a pact with different content, use a different ID.
+
 begin
 
   $LOAD_PATH << "#{Dir.pwd}/lib"

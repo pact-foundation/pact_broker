@@ -43,7 +43,7 @@ module PactBroker
         end
 
         def policy_name
-          :'deployments::environment'
+          :'deployments::environments'
         end
 
         def to_json

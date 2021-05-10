@@ -28,6 +28,7 @@ require 'pact_broker/certificates/certificate'
 require 'pact_broker/matrix/row'
 require 'pact_broker/deployments/environment_service'
 require 'pact_broker/deployments/deployed_version_service'
+require 'pact_broker/deployments/released_version_service'
 require 'ostruct'
 
 module PactBroker
@@ -52,6 +53,7 @@ module PactBroker
       attr_reader :triggered_webhook
       attr_reader :environment
       attr_reader :deployed_version
+      attr_reader :released_version
 
       def initialize(params = {})
         @now = DateTime.now
@@ -401,13 +403,18 @@ module PactBroker
         self
       end
 
-      def create_deployed_version_for_consumer_version(uuid: SecureRandom.uuid, currently_deployed: true, environment_name: environment&.name, created_at: nil)
-        create_deployed_version(uuid: uuid, currently_deployed: currently_deployed, version: consumer_version, environment_name: environment_name, created_at: created_at)
+      def create_deployed_version_for_consumer_version(uuid: SecureRandom.uuid, currently_deployed: true, environment_name: environment&.name, target: nil, created_at: nil)
+        create_deployed_version(uuid: uuid, currently_deployed: currently_deployed, version: consumer_version, environment_name: environment_name, target: target, created_at: created_at)
         self
       end
 
-      def create_deployed_version_for_provider_version(uuid: SecureRandom.uuid, currently_deployed: true, environment_name: environment&.name, created_at: nil)
-        create_deployed_version(uuid: uuid, currently_deployed: currently_deployed, version: provider_version, environment_name: environment_name, created_at: created_at)
+      def create_released_version_for_consumer_version(uuid: SecureRandom.uuid, currently_supported: true, environment_name: environment&.name, created_at: nil)
+        create_released_version(uuid: uuid, currently_supported: currently_supported, version: consumer_version, environment_name: environment_name, created_at: created_at)
+        self
+      end
+
+      def create_deployed_version_for_provider_version(uuid: SecureRandom.uuid, currently_deployed: true, environment_name: environment&.name, target: nil, created_at: nil)
+        create_deployed_version(uuid: uuid, currently_deployed: currently_deployed, version: provider_version, environment_name: environment_name, target: target, created_at: created_at)
         self
       end
 
@@ -524,11 +531,18 @@ module PactBroker
 
       private
 
-      def create_deployed_version(uuid: , currently_deployed: , version:, environment_name: , created_at: nil)
+      def create_deployed_version(uuid: , currently_deployed: , version:, environment_name: , target: nil, created_at: nil)
         env = find_environment(environment_name)
-        @deployed_version = PactBroker::Deployments::DeployedVersionService.create(uuid, version, env, false)
-        @deployed_version.update(currently_deployed: false) unless currently_deployed
+        @deployed_version = PactBroker::Deployments::DeployedVersionService.create(uuid, version, env, target)
+        PactBroker::Deployments::DeployedVersionService.record_version_undeployed(deployed_version) unless currently_deployed
         set_created_at_if_set(created_at, :deployed_versions, id: deployed_version.id)
+      end
+
+      def create_released_version(uuid: , currently_supported: true, version:, environment_name: , created_at: nil)
+        env = find_environment(environment_name)
+        @released_version = PactBroker::Deployments::ReleasedVersionService.create(uuid, version, env)
+        PactBroker::Deployments::ReleasedVersionService.record_version_support_ended(released_version) unless currently_supported
+        set_created_at_if_set(created_at, :released_versions, id: released_version.id)
       end
 
       def pact_version_id

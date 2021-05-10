@@ -318,8 +318,16 @@ module PactBroker
         "#{version_url(base_url, version)}/deployed-versions/environment/#{environment.uuid}"
       end
 
+      def released_versions_for_version_and_environment_url(version, environment, base_url = '')
+        "#{version_url(base_url, version)}/released-versions/environment/#{environment.uuid}"
+      end
+
       def deployed_version_url(deployed_version, base_url = '')
         "/deployed-versions/#{deployed_version.uuid}"
+      end
+
+      def released_version_url(released_version, base_url = '')
+        "/released-versions/#{released_version.uuid}"
       end
 
       def hal_browser_url target_url, base_url = ''

@@ -65,6 +65,16 @@ module PactBroker
           end
         end
 
+        links :'pb:record-release' do | context |
+          context.fetch(:environments, []).collect do | environment |
+            {
+              title: "Record release to #{environment.display_name}",
+              name: environment.name,
+              href: released_versions_for_version_and_environment_url(represented, environment, context.fetch(:base_url))
+            }
+          end
+        end
+
         curies do | options |
           [{
             name: :pb,
