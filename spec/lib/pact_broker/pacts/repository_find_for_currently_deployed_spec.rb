@@ -20,10 +20,10 @@ module PactBroker
               .create_pact_with_hierarchy("Foo", "1", "Bar")
               .create_deployed_version_for_consumer_version(currently_deployed: false)
               .create_pact_with_hierarchy("Foo", "2", "Bar")
-              .create_deployed_version_for_consumer_version(currently_deployed: true)
+              .create_deployed_version_for_consumer_version(currently_deployed: true, target: "1")
               .create_pact_with_hierarchy("Waffle", "3", "Bar")
               .create_pact_with_hierarchy("Waffle", "4", "Bar")
-              .create_deployed_version_for_consumer_version(currently_deployed: true)
+              .create_deployed_version_for_consumer_version(currently_deployed: true, target: "2")
           end
 
           let(:consumer_version_selectors) do

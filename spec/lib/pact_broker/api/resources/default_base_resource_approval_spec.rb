@@ -14,7 +14,9 @@ module PactBroker
 
         it "specifies which pacticipant is the one relevant to the policy" do
           data = pact_broker_resource_classes.collect do | resource_class |
-            request = double('request', uri: URI("http://example.org")).as_null_object
+            application_context = PactBroker::ApplicationContext.default_application_context
+            path_info = { pacticipant_name: "Foo", pacticipant_version_number: "1", application_context: application_context }
+            request = double('request', uri: URI("http://example.org"), path_info: path_info).as_null_object
             response = double('response')
             resource = resource_class.new(request, response)
             modifiable = resource.allowed_methods.any?{ | method | %w{PATCH POST PUT DELETE}.include?(method) }
