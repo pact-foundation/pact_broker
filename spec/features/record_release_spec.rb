@@ -50,4 +50,9 @@ describe "Record release" do
 
     it { is_expected.to be_a_hal_json_success_response }
   end
+
+  it "creates a released version resource" do
+    get(subject.headers["Location"])
+    expect(last_response.status).to eq 200
+  end
 end

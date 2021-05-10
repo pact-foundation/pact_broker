@@ -25,6 +25,16 @@ module PactBroker
           :'versions::versions'
         end
 
+        # For PF
+        def policy_record_context
+          # Not sure whether the context should be empty or the pacticipant should be nil
+          if released_version
+            { pacticipant: released_version.pacticipant }
+          else
+            {}
+          end
+        end
+
         private
 
         attr_reader :released_version
