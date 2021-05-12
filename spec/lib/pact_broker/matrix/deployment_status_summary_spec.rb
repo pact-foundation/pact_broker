@@ -117,6 +117,12 @@ module PactBroker
           its(:counts) { is_expected.to eq success: 2, failed: 0, unknown: 0 }
         end
 
+        context "when there are resolved_ignore_selectors" do
+          let(:resolved_ignore_selectors) { [ResolvedSelector.new()] }
+
+          its(:counts) { is_expected.to have_key(:ignored) }
+        end
+
         context "when there are no rows" do
           let(:rows) { [] }
 
@@ -138,6 +144,7 @@ module PactBroker
           its(:counts) { is_expected.to eq success: 1, failed: 0, unknown: 1 }
 
           context "when that row is ignored" do
+            let(:resolved_ignore_selectors) { [instance_double('PactBroker::Matrix::ResolvedSelector', pacticipant_or_version_does_not_exist?: false).as_null_object] }
             let(:rows) { [row_2] }
             let(:ignored_rows) { [row_1] }
 
@@ -156,6 +163,7 @@ module PactBroker
           its(:counts) { is_expected.to eq success: 1, failed: 1, unknown: 0 }
 
           context "when that row is ignored" do
+            let(:resolved_ignore_selectors) { [instance_double('PactBroker::Matrix::ResolvedSelector', pacticipant_or_version_does_not_exist?: false).as_null_object] }
             let(:rows) { [row_2] }
             let(:ignored_rows) { [row_1] }
 
@@ -252,6 +260,12 @@ module PactBroker
 
           its(:deployable?) { is_expected.to be nil }
           its(:reasons) { is_expected.to eq [PactNotEverVerifiedByProvider.new(resolved_selectors.first, dummy_selector)] }
+        end
+
+        context "when there are ignore selectors that don't match any pacticipant or version" do
+          let(:resolved_ignore_selectors) { [instance_double('PactBroker::Matrix::ResolvedSelector', pacticipant_or_version_does_not_exist?: true).as_null_object] }
+
+          its(:reasons) { is_expected.to eq [PactBroker::Matrix::Successful.new, IgnoreSelectorDoesNotExist.new(resolved_ignore_selectors.first)] }
         end
       end
     end

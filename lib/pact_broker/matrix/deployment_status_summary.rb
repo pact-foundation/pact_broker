@@ -22,7 +22,7 @@ module PactBroker
           success: considered_rows.count(&:success),
           failed: considered_rows.count { |row| row.success == false },
           unknown: required_integrations_without_a_row.count + considered_rows.count { |row| row.success.nil? },
-          ignored: ignored_rows.any? ? ignored_rows.count : nil
+          ignored: resolved_ignore_selectors.any? ? ignored_rows.count : nil
         }.compact
       end
 
