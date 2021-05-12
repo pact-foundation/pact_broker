@@ -19,8 +19,7 @@ module PactBroker
       def find selectors, options = {}
         logger.info "Querying matrix", selectors: selectors, options: options
         query_results = matrix_repository.find selectors, options
-        deployment_status_summary = DeploymentStatusSummary.new(query_results.considered_rows, query_results.ignored_rows, query_results.resolved_selectors, query_results.integrations)
-        QueryResultsWithDeploymentStatusSummary.new(query_results, deployment_status_summary)
+        QueryResultsWithDeploymentStatusSummary.new(query_results, DeploymentStatusSummary.new(query_results))
       end
 
       def find_for_consumer_and_provider params, options = {}
@@ -75,12 +74,6 @@ module PactBroker
             if s.key?(:pacticipant_version_number) && s.key?(:latest)
               error_messages << "A version number and latest flag cannot both be specified for #{s[:pacticipant_name]} to ignore"
             end
-          end
-        end
-
-        options.fetch(:ignore_selectors, []).collect{ |selector| selector[:pacticipant_name] }.compact.uniq.each do | pacticipant_name |
-          unless pacticipant_service.find_pacticipant_by_name(pacticipant_name)
-            error_messages << "Pacticipant #{pacticipant_name} not found to ignore"
           end
         end
 

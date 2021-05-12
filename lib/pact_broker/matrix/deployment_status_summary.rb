@@ -1,19 +1,19 @@
 require 'pact_broker/logging'
 require 'pact_broker/matrix/reason'
+require 'forwardable'
 
 module PactBroker
   module Matrix
     class DeploymentStatusSummary
       include PactBroker::Logging
+      extend Forwardable
 
-      attr_reader :considered_rows, :ignored_rows, :all_rows, :resolved_selectors, :integrations
+      attr_reader :query_results, :all_rows
+      delegate [:considered_rows, :ignored_rows, :resolved_selectors, :resolved_ignore_selectors, :integrations] => :query_results
 
-      def initialize(considered_rows, ignored_rows, resolved_selectors, integrations)
-        @considered_rows = considered_rows
-        @ignored_rows = ignored_rows
-        @all_rows = considered_rows + ignored_rows
-        @resolved_selectors = resolved_selectors
-        @integrations = integrations
+      def initialize(query_results)
+        @query_results = query_results
+        @all_rows = query_results.rows
         @dummy_selectors = create_dummy_selectors
       end
 
@@ -55,7 +55,9 @@ module PactBroker
       end
 
       def warning_messages
-        []
+        resolved_ignore_selectors.select(&:pacticipant_or_version_does_not_exist?).collect do | s |
+          IgnoreSelectorDoesNotExist.new(s)
+        end
       end
 
       def considered_specified_selectors_that_do_not_exist

@@ -10,6 +10,7 @@ module PactBroker
       # A version ID of -1 will not match any rows, which is what we want to ensure that
       # no matrix rows are returned for a version that does not exist.
       NULL_VERSION_ID = -1
+      NULL_PACTICIPANT_ID = -1
 
       def initialize(params = {})
         merge!(params)
@@ -19,6 +20,15 @@ module PactBroker
         ResolvedSelector.new(
           pacticipant_id: pacticipant.id,
           pacticipant_name: pacticipant.name,
+          type: type,
+          ignore: ignore
+        )
+      end
+
+      def self.for_non_existing_pacticipant(original_selector, type, ignore)
+        ResolvedSelector.new(
+          pacticipant_id: NULL_PACTICIPANT_ID,
+          pacticipant_name: original_selector[:pacticipant_name],
           type: type,
           ignore: ignore
         )
@@ -107,6 +117,14 @@ module PactBroker
         latest? && branch
       end
 
+      def pacticipant_or_version_does_not_exist?
+        pacticipant_does_not_exist? || version_does_not_exist?
+      end
+
+      def pacticipant_does_not_exist?
+        self[:pacticipant_id] == NULL_PACTICIPANT_ID
+      end
+
       def version_does_not_exist?
         !version_exists?
       end
@@ -168,9 +186,13 @@ module PactBroker
           "#{prefix} of #{pacticipant_name} currently deployed to #{environment_name} (#{pacticipant_version_number})"
         elsif environment_name
           "the version of #{pacticipant_name} currently deployed to #{environment_name} (no such version exists)"
+        elsif pacticipant_version_number && version_does_not_exist?
+          "version #{pacticipant_version_number} of #{pacticipant_name} (no such version exists)"
         elsif pacticipant_version_number
           "version #{pacticipant_version_number} of #{pacticipant_name}"
-        else
+        elsif pacticipant_does_not_exist?
+          "any version of #{pacticipant_name} (no such pacticipant exists)"
+        elsif
           "any version of #{pacticipant_name}"
         end
       end

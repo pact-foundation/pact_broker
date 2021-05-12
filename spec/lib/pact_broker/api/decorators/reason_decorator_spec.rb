@@ -8,9 +8,9 @@ module PactBroker
         REASON_CLASSES = ObjectSpace.each_object(Class).select { |klass| klass < PactBroker::Matrix::Reason && klass.name&.start_with?("PactBroker") }
 
         describe "the number of Reason classes" do
-          let(:expected_number_of_reason_classes) { 10 }
+          let(:expected_number_of_reason_classes) { 13 }
 
-          it "is 10 - add another spec here if a new Reason is added" do
+          it "is 13 - this is a reminder to add another spec here if a new Reason is added" do
             expect(REASON_CLASSES.size).to eq expected_number_of_reason_classes
           end
         end
@@ -51,6 +51,13 @@ module PactBroker
             let(:reason) { PactBroker::Matrix::Successful.new }
 
             its(:to_s) { is_expected.to eq "All required verification results are published and successful" }
+          end
+
+          context "when the reason is PactBroker::Matrix::IgnoreSelectorDoesNotExist" do
+            let(:reason) { PactBroker::Matrix::IgnoreSelectorDoesNotExist.new(selector) }
+            let(:selector) {  double('consumer selector', description: "version 2 of Foo (no such version exists)") }
+
+            its(:to_s) { is_expected.to eq "WARNING: Cannot ignore version 2 of Foo (no such version exists)" }
           end
 
           context "when the reason is PactBroker::Matrix::InteractionsMissingVerifications" do

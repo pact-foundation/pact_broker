@@ -91,6 +91,32 @@ module PactBroker
       end
     end
 
+    class Warning < Reason
+      def selectors
+        raise NotImplementedError
+      end
+    end
+
+    class IgnoreSelectorDoesNotExist < Warning
+      attr_reader :selector
+
+      def initialize(selector)
+        @selector = selector
+      end
+
+      def == other
+        super(other) && selector == other.selector
+      end
+
+      def selectors
+        [selector]
+      end
+
+      def to_s
+        "#{self.class} selector=#{selector}"
+      end
+    end
+
     # The pact for the required consumer version has been
     # successfully verified by the required provider version
     class Successful < Reason

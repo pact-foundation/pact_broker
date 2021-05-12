@@ -3,6 +3,8 @@ require 'pact_broker/matrix/row'
 require 'pact_broker/matrix/query_results'
 require 'pact_broker/matrix/integration'
 require 'pact_broker/matrix/resolved_selector'
+require 'pact_broker/matrix/query_results'
+
 
 module PactBroker
   module Matrix
@@ -94,8 +96,20 @@ module PactBroker
         end
 
         let(:ignored_rows) { [] }
+        let(:resolved_ignore_selectors) { [] }
 
-        subject { DeploymentStatusSummary.new(rows, ignored_rows, resolved_selectors, integrations) }
+        let(:query_results) do
+          instance_double(PactBroker::Matrix::QueryResults,
+            considered_rows: rows,
+            ignored_rows: ignored_rows,
+            resolved_selectors: resolved_selectors,
+            resolved_ignore_selectors: resolved_ignore_selectors,
+            integrations: integrations,
+            rows: rows + ignored_rows
+          )
+        end
+
+        subject { DeploymentStatusSummary.new(query_results) }
 
         context "when there is a row for all integrations" do
           its(:deployable?) { is_expected.to be true }

@@ -28,7 +28,6 @@ module PactBroker
           }.tap do | hash |
             hash[:summary].merge!(query_results_with_deployment_status_summary.deployment_status_summary.counts)
           end
-
         end
 
         def deployable

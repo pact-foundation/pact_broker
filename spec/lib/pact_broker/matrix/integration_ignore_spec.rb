@@ -127,6 +127,44 @@ module PactBroker
               expect(subject.deployment_status_summary.reasons.first.root_reason).to be_a(PactBroker::Matrix::SpecifiedVersionDoesNotExist)
             end
           end
+
+          describe "when the provider to ignore does not exist" do
+            before do
+              td.create_pact_with_hierarchy("Foo", "1", "NotBar")
+                .create_verification(provider_version: "2", success: true)
+            end
+
+            let(:selectors) do
+              [
+                UnresolvedSelector.new(pacticipant_name: "Foo", pacticipant_version_number: "1"),
+              ]
+            end
+
+            it "includes a warning about the incorrect ignore selector" do
+              expect(subject.deployment_status_summary.reasons.last).to be_a(PactBroker::Matrix::IgnoreSelectorDoesNotExist)
+            end
+          end
+
+          describe "when the provider version to ignore does not exist" do
+            before do
+              td.create_pact_with_hierarchy("Foo", "1", "Bar")
+                .create_verification(provider_version: "2", success: true)
+            end
+
+            let(:selectors) do
+              [
+                UnresolvedSelector.new(pacticipant_name: "Foo", pacticipant_version_number: "1"),
+              ]
+            end
+
+            let(:ignore_selectors) do
+              [ UnresolvedSelector.new(pacticipant_name: "Bar", pacticipant_version_number: "999") ]
+            end
+
+            it "includes a warning about the incorrect ignore selector" do
+              expect(subject.deployment_status_summary.reasons.last).to be_a(PactBroker::Matrix::IgnoreSelectorDoesNotExist)
+            end
+          end
         end
       end
     end
