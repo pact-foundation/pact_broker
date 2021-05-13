@@ -19,6 +19,7 @@ module PactBroker
       def find selectors, options = {}
         logger.info "Querying matrix", selectors: selectors, options: options
         query_results = matrix_repository.find selectors, options
+        # No point doing the deployment status summary if no versions are specified.
         QueryResultsWithDeploymentStatusSummary.new(query_results, DeploymentStatusSummary.new(query_results))
       end
 
