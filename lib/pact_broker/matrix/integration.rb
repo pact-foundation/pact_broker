@@ -42,7 +42,7 @@ module PactBroker
       end
 
       def == other
-        consumer_id == other.consumer_id && provider_id == other.provider_id
+        other.is_a?(Integration) && consumer_id == other.consumer_id && provider_id == other.provider_id && other.required? == required?
       end
 
       def <=> other
@@ -90,6 +90,10 @@ module PactBroker
 
       def involves_pacticipant_with_name?(pacticipant_name)
         pacticipant_names.include?(pacticipant_name)
+      end
+
+      def matches_pacticipant_ids?(other)
+        consumer_id == other.consumer_id && provider_id == other.provider_id
       end
     end
   end

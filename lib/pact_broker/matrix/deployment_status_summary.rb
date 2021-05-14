@@ -121,7 +121,7 @@ module PactBroker
       end
 
       def row_exists_for_integration(integration)
-        rows.find { | row | integration == row }
+        rows.find { | row | integration.matches_pacticipant_ids?(row) }
       end
 
       def missing_reasons
