@@ -17,7 +17,6 @@ module PactBroker
 
         let(:options) { {} }
 
-
         describe "when deploying a consumer and ignoring a provider" do
           let(:selectors) do
             [ UnresolvedSelector.new(pacticipant_name: "Foo", pacticipant_version_number: "1") ]
@@ -163,6 +162,73 @@ module PactBroker
 
             it "includes a warning about the incorrect ignore selector" do
               expect(subject.deployment_status_summary.reasons.last).to be_a(PactBroker::Matrix::IgnoreSelectorDoesNotExist)
+            end
+          end
+        end
+
+        describe "when deploying a provider and ignoring a consumer" do
+          let(:selectors) do
+            [ UnresolvedSelector.new(pacticipant_name: "Bar", pacticipant_version_number: "2") ]
+          end
+
+          let(:options) do
+            { latest: true, tag: "prod", latestby: "cvp", ignore_selectors: ignore_selectors }
+          end
+
+          let(:ignore_selectors) do
+            []
+          end
+
+          let(:ignore_selectors) do
+            [ UnresolvedSelector.new(pacticipant_name: "Foo") ]
+          end
+
+          describe "with a missing verification from a provider" do
+            before do
+              td.create_pact_with_hierarchy("Foo", "1", "Bar")
+                .create_consumer_version_tag("prod")
+                .create_provider_version("2")
+            end
+
+            let(:ignore_selectors) { [] }
+
+            it "does allows the provider to be deployed even without ignoring anything because there is no connection between that version of the provider and the consumer" do
+              expect(subject.deployment_status_summary).to be_deployable
+              expect(subject.deployment_status_summary.reasons.first).to be_a(PactBroker::Matrix::NoDependenciesMissing)
+            end
+          end
+
+          describe "with a failed verification from a provider" do
+            before do
+              td.create_pact_with_hierarchy("Foo", "1", "Bar")
+                .create_consumer_version_tag("prod")
+                .create_verification(provider_version: "2", success: false)
+            end
+
+            it "does allows the provider to be deployed" do
+              expect(subject.deployment_status_summary).to be_deployable
+              expect(subject.deployment_status_summary.reasons.first).to be_a(PactBroker::Matrix::IgnoredReason)
+              expect(subject.deployment_status_summary.reasons.first.root_reason).to be_a(PactBroker::Matrix::VerificationFailed)
+            end
+
+            context "when ignoring the specific consumer version" do
+              let(:ignore_selectors) do
+                [ UnresolvedSelector.new(pacticipant_name: "Foo", pacticipant_version_number: "1") ]
+              end
+
+              it "does allows the provider to be deployed" do
+                expect(subject.deployment_status_summary).to be_deployable
+              end
+            end
+
+            context "when ignoring the wrong specific consumer version" do
+              let(:ignore_selectors) do
+                [ UnresolvedSelector.new(pacticipant_name: "Foo", pacticipant_version_number: "wrong") ]
+              end
+
+              it "does not allow the provider to be deployed" do
+                expect(subject.deployment_status_summary).to_not be_deployable
+              end
             end
           end
         end
