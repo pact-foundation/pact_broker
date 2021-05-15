@@ -30,37 +30,37 @@
     "status": 200,
     "headers": {
       "Content-Type": "application/hal+json;charset=utf-8",
-      "Content-Length": "1788"
+      "Content-Length": "1772"
     },
     "body": {
       "logs": [
         {
-          "level": "debug",
-          "message": "Created Foo version 1 with branch main and tags a, b"
+          "type": "debug",
+          "text": "Created Foo version 1 with branch main and tags a, b"
         },
         {
-          "level": "info",
-          "message": "Pact successfully published for Foo version 1 and provider Bar."
+          "type": "success",
+          "text": "Pact successfully published for Foo version 1 and provider Bar."
         },
         {
-          "level": "debug",
-          "message": "  View the published pact at http://example.org/pacts/provider/Bar/consumer/Foo/version/1"
+          "type": "debug",
+          "text": "  View the published pact at http://example.org/pacts/provider/Bar/consumer/Foo/version/1"
         },
         {
-          "level": "debug",
-          "message": "  Events detected: contract_published, contract_content_changed (first time any pact published for this consumer with consumer version tagged a, first time any pact published for this consumer with consumer version tagged b)"
+          "type": "debug",
+          "text": "  Events detected: contract_published, contract_content_changed (first time any pact published for this consumer with consumer version tagged a, first time any pact published for this consumer with consumer version tagged b)"
         },
         {
-          "level": "warn",
-          "message": "  Next steps:"
+          "type": "warning",
+          "text": "  Next steps:"
         },
         {
-          "level": "warn",
-          "message": "    * Add Pact verification tests to the Bar build. See https://docs.pact.io/go/provider_verification"
+          "type": "warning",
+          "text": "    * Add Pact verification tests to the Bar build. See https://docs.pact.io/go/provider_verification"
         },
         {
-          "level": "warn",
-          "message": "    * Configure separate Bar pact verification build and webhook to trigger it when the pact content changes. See https://docs.pact.io/go/webhooks"
+          "type": "warning",
+          "text": "    * Configure separate Bar pact verification build and webhook to trigger it when the pact content changes. See https://docs.pact.io/go/webhooks"
         }
       ],
       "_embedded": {

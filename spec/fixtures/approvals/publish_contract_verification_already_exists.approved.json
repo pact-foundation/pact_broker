@@ -30,33 +30,33 @@
     "status": 200,
     "headers": {
       "Content-Type": "application/hal+json;charset=utf-8",
-      "Content-Length": "1778"
+      "Content-Length": "1763"
     },
     "body": {
       "logs": [
         {
-          "level": "debug",
-          "message": "Updated Foo version 1 with branch main and tags a, b"
+          "type": "debug",
+          "text": "Updated Foo version 1 with branch main and tags a, b"
         },
         {
-          "level": "warn",
-          "message": "Pact with changed content published over existing content for Foo version 1 and provider Bar. This is not recommended in normal cicumstances and may indicate that you have not configured your Pact pipeline correctly. For more information see https://docs.pact.io/go/versioning"
+          "type": "warning",
+          "text": "Pact with changed content published over existing content for Foo version 1 and provider Bar. This is not recommended in normal cicumstances and may indicate that you have not configured your Pact pipeline correctly. For more information see https://docs.pact.io/go/versioning"
         },
         {
-          "level": "debug",
-          "message": "  View the published pact at http://example.org/pacts/provider/Bar/consumer/Foo/version/1"
+          "type": "debug",
+          "text": "  View the published pact at http://example.org/pacts/provider/Bar/consumer/Foo/version/1"
         },
         {
-          "level": "debug",
-          "message": "  Events detected: contract_published, contract_content_changed (pact content modified since previous publication for Foo version 1)"
+          "type": "debug",
+          "text": "  Events detected: contract_published, contract_content_changed (pact content modified since previous publication for Foo version 1)"
         },
         {
-          "level": "warn",
-          "message": "  Next steps:"
+          "type": "warning",
+          "text": "  Next steps:"
         },
         {
-          "level": "warn",
-          "message": "    * Configure separate Bar pact verification build and webhook to trigger it when the pact content changes. See https://docs.pact.io/go/webhooks"
+          "type": "warning",
+          "text": "    * Configure separate Bar pact verification build and webhook to trigger it when the pact content changes. See https://docs.pact.io/go/webhooks"
         }
       ],
       "_embedded": {

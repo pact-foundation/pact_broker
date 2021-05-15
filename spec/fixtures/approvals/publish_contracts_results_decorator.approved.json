@@ -1,8 +1,15 @@
 {
   "logs": [
     {
-      "level": "warn",
-      "message": "foo"
+      "level": "warning",
+      "message": "foo",
+      "deprecation_warning": "Replaced by notices"
+    }
+  ],
+  "notices": [
+    {
+      "type": "warning",
+      "text": "foo"
     }
   ],
   "_embedded": {
