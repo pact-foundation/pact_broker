@@ -55,10 +55,10 @@ module PactBroker
       end
 
       def warning_messages
-        resolved_ignore_selectors.select(&:pacticipant_or_version_does_not_exist?).collect { | s | IgnoreSelectorDoesNotExist.new(s) } +
-          ignored_rows.select{ | row | row.success.nil? }.collect{ |row | IgnoredReason.new(pact_not_ever_verified_by_provider(row)) } +
-          specified_selectors_that_do_not_exist.select(&:ignore?).collect { | selector | IgnoredReason.new(SpecifiedVersionDoesNotExist.new(selector)) } +
-          ignored_rows.select{ |row| row.success == false }.collect { | row | IgnoredReason.new(VerificationFailed.new(*selectors_for(row))) }
+        resolved_ignore_selectors.select(&:pacticipant_or_version_does_not_exist?).collect { | s | IgnoreSelectorDoesNotExist.new(s) }
+          # ignored_rows.select{ | row | row.success.nil? }.collect{ |row | IgnoredReason.new(pact_not_ever_verified_by_provider(row)) } +
+          # specified_selectors_that_do_not_exist.select(&:ignore?).collect { | selector | IgnoredReason.new(SpecifiedVersionDoesNotExist.new(selector)) } +
+          # ignored_rows.select{ |row| row.success == false }.collect { | row | IgnoredReason.new(VerificationFailed.new(*selectors_for(row))) }
       end
 
       def considered_specified_selectors_that_do_not_exist

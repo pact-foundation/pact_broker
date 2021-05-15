@@ -17,6 +17,18 @@ module PactBroker
 
         let(:options) { {} }
 
+        shared_examples_for "without any ignore selectors" do
+          context "without any ignore selectors" do
+            let(:ignore_selectors) { [] }
+
+            its(:deployment_status_summary) { is_expected.to_not be_deployable}
+          end
+        end
+
+        shared_examples_for "with ignore selectors" do
+          its(:deployment_status_summary) { is_expected.to be_deployable}
+        end
+
         describe "when deploying a consumer and ignoring a provider" do
           let(:selectors) do
             [ UnresolvedSelector.new(pacticipant_name: "Foo", pacticipant_version_number: "1") ]
@@ -36,11 +48,8 @@ module PactBroker
                 .create_provider_version("2", tag_names: ["prod"])
             end
 
-            it "does allows the consumer to be deployed" do
-              expect(subject.deployment_status_summary).to be_deployable
-              expect(subject.deployment_status_summary.reasons.first).to be_a(PactBroker::Matrix::IgnoredReason)
-              expect(subject.deployment_status_summary.reasons.first.root_reason).to be_a(PactBroker::Matrix::PactNotEverVerifiedByProvider)
-            end
+            include_context "with ignore selectors"
+            include_examples "without any ignore selectors"
           end
 
           describe "with a failed verification from a provider" do
@@ -49,20 +58,15 @@ module PactBroker
                 .create_verification(provider_version: "2", tag_names: ["prod"], success: false)
             end
 
-            it "does allows the consumer to be deployed" do
-              expect(subject.deployment_status_summary).to be_deployable
-              expect(subject.deployment_status_summary.reasons.first).to be_a(PactBroker::Matrix::IgnoredReason)
-              expect(subject.deployment_status_summary.reasons.first.root_reason).to be_a(PactBroker::Matrix::VerificationFailed)
-            end
+            include_context "with ignore selectors"
+            include_examples "without any ignore selectors"
 
             context "when ignoring the specific provider version" do
               let(:ignore_selectors) do
                 [ UnresolvedSelector.new(pacticipant_name: "Bar", pacticipant_version_number: "2") ]
               end
 
-              it "does allows the consumer to be deployed" do
-                expect(subject.deployment_status_summary).to be_deployable
-              end
+              include_context "with ignore selectors"
             end
 
             context "when ignoring a different specific provider version" do
@@ -70,9 +74,7 @@ module PactBroker
                 [ UnresolvedSelector.new(pacticipant_name: "Bar", pacticipant_version_number: "999") ]
               end
 
-              it "does not allow the consumer to be deployed" do
-                expect(subject.deployment_status_summary).to_not be_deployable
-              end
+              its(:deployment_status_summary) { is_expected.to_not be_deployable}
             end
           end
 
@@ -82,11 +84,8 @@ module PactBroker
                 .create_verification(provider_version: "2")
             end
 
-            it "does allows the consumer to be deployed" do
-              expect(subject.deployment_status_summary).to be_deployable
-              expect(subject.deployment_status_summary.reasons.first).to be_a(PactBroker::Matrix::IgnoredReason)
-              expect(subject.deployment_status_summary.reasons.first.root_reason).to be_a(PactBroker::Matrix::PactNotEverVerifiedByProvider)
-            end
+            include_context "with ignore selectors"
+            include_examples "without any ignore selectors"
           end
 
           describe "when the consumer and provider have been specified" do
@@ -102,10 +101,8 @@ module PactBroker
               ]
             end
 
-            it "does allows the consumer to be deployed" do
-              expect(subject.deployment_status_summary).to be_deployable
-              expect(subject.deployment_status_summary.reasons.first.root_reason).to be_a(PactBroker::Matrix::VerificationFailed)
-            end
+            include_context "with ignore selectors"
+            include_examples "without any ignore selectors"
           end
 
           describe "when the consumer and provider have been specified and the provider version specified does not exist" do
@@ -121,10 +118,8 @@ module PactBroker
               ]
             end
 
-            it "does allows the consumer to be deployed" do
-              expect(subject.deployment_status_summary).to be_deployable
-              expect(subject.deployment_status_summary.reasons.first.root_reason).to be_a(PactBroker::Matrix::SpecifiedVersionDoesNotExist)
-            end
+            include_context "with ignore selectors"
+            include_examples "without any ignore selectors"
           end
 
           describe "when the provider to ignore does not exist" do
@@ -140,7 +135,7 @@ module PactBroker
             end
 
             it "includes a warning about the incorrect ignore selector" do
-              expect(subject.deployment_status_summary.reasons.last).to be_a(PactBroker::Matrix::IgnoreSelectorDoesNotExist)
+              expect(subject.deployment_status_summary.reasons.collect(&:class)).to include(PactBroker::Matrix::IgnoreSelectorDoesNotExist)
             end
           end
 
@@ -161,7 +156,7 @@ module PactBroker
             end
 
             it "includes a warning about the incorrect ignore selector" do
-              expect(subject.deployment_status_summary.reasons.last).to be_a(PactBroker::Matrix::IgnoreSelectorDoesNotExist)
+              expect(subject.deployment_status_summary.reasons.collect(&:class)).to include(PactBroker::Matrix::IgnoreSelectorDoesNotExist)
             end
           end
         end
@@ -194,7 +189,7 @@ module PactBroker
 
             it "does allows the provider to be deployed even without ignoring anything because there is no connection between that version of the provider and the consumer" do
               expect(subject.deployment_status_summary).to be_deployable
-              expect(subject.deployment_status_summary.reasons.first).to be_a(PactBroker::Matrix::NoDependenciesMissing)
+              expect(subject.deployment_status_summary.reasons.collect(&:class)).to include(PactBroker::Matrix::NoDependenciesMissing)
             end
           end
 
@@ -205,20 +200,15 @@ module PactBroker
                 .create_verification(provider_version: "2", success: false)
             end
 
-            it "does allows the provider to be deployed" do
-              expect(subject.deployment_status_summary).to be_deployable
-              expect(subject.deployment_status_summary.reasons.first).to be_a(PactBroker::Matrix::IgnoredReason)
-              expect(subject.deployment_status_summary.reasons.first.root_reason).to be_a(PactBroker::Matrix::VerificationFailed)
-            end
+            include_context "with ignore selectors"
+            include_examples "without any ignore selectors"
 
             context "when ignoring the specific consumer version" do
               let(:ignore_selectors) do
                 [ UnresolvedSelector.new(pacticipant_name: "Foo", pacticipant_version_number: "1") ]
               end
 
-              it "does allows the provider to be deployed" do
-                expect(subject.deployment_status_summary).to be_deployable
-              end
+              include_context "with ignore selectors"
             end
 
             context "when ignoring the wrong specific consumer version" do
@@ -226,9 +216,7 @@ module PactBroker
                 [ UnresolvedSelector.new(pacticipant_name: "Foo", pacticipant_version_number: "wrong") ]
               end
 
-              it "does not allow the provider to be deployed" do
-                expect(subject.deployment_status_summary).to_not be_deployable
-              end
+              its(:deployment_status_summary) { is_expected.to_not be_deployable}
             end
           end
         end

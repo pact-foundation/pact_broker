@@ -150,7 +150,7 @@ module PactBroker
 
             its(:deployable?) { is_expected.to be true }
 
-            its(:reasons) { is_expected.to eq [IgnoredReason.new(PactNotEverVerifiedByProvider.new(resolved_selectors.first, resolved_selectors[1])), Successful.new] }
+            its(:reasons) { is_expected.to eq [Successful.new] }
             its(:counts) { is_expected.to eq success: 1, failed: 0, unknown: 0, ignored: 1 }
           end
         end
@@ -168,7 +168,7 @@ module PactBroker
             let(:ignored_rows) { [row_1] }
 
             its(:deployable?) { is_expected.to be true }
-            its(:reasons) { is_expected.to eq [IgnoredReason.new(VerificationFailed.new(resolved_selectors.first, resolved_selectors[1])), Successful.new] }
+            its(:reasons) { is_expected.to eq [Successful.new] }
             its(:counts) { is_expected.to eq success: 1, failed: 0, unknown: 0, ignored: 1 }
           end
         end
