@@ -51,6 +51,12 @@ To make the barrier to entry as low as possible, the mysql2 and pg gems are not 
 
 You can set the `PACT_BROKER_DATABASE_URL` environment variable to use a postgres/mysql database using the format `driver://username:password@host:port/database` eg. `postgres://pact_broker:password@localhost/pact_broker`. Ensure you have set `INSTALL_MYSQL=true` or `INSTALL_PG=true` and run `bundle install` to make sure the required gems are present.
 
+## Listing the routes
+
+```
+bundle exec rake pact_broker:routes
+```
+
 ## Running the tests with postgres and mysql
 
 ```

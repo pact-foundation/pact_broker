@@ -134,7 +134,7 @@ module PactBroker
       end
 
       def row_exists_for_integration(integration)
-        all_rows.find { | row | integration == row }
+        all_rows.find { | row | integration.matches_pacticipant_ids?(row) }
       end
 
       def missing_reasons

@@ -81,7 +81,7 @@ module PactBroker
 
       def find_integrations_for_specified_selectors(resolved_specified_selectors, infer_integrations)
         specified_pacticipant_names = resolved_specified_selectors.collect(&:pacticipant_name)
-        QuickRow
+        base_model_for_integrations
           .distinct_integrations(resolved_specified_selectors, infer_integrations)
           .collect(&:to_hash)
           .collect do | hash |
@@ -142,12 +142,17 @@ module PactBroker
         query.eager_all_the_things.all
       end
 
-      def base_model(options)
+      def base_model(options = {})
         options[:latestby] ? QuickRow : EveryRow
       end
 
       def resolve_ignore_selectors(options)
         resolve_versions_and_add_ids(options.fetch(:ignore_selectors, []), :ignored)
+      end
+
+      # To make it easy for pf to override
+      def base_model_for_integrations
+        QuickRow
       end
 
       # Find the version number for selectors with the latest and/or tag specified

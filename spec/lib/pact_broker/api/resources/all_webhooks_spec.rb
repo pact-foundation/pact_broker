@@ -2,10 +2,13 @@ require 'spec_helper'
 require 'pact_broker/api/resources/all_webhooks'
 
 module PactBroker::Api
-
   module Resources
-
     describe AllWebhooks do
+      before do
+        allow(PactBroker::Pacticipants::Service).to receive(:find_pacticipant_by_name).with("Some Provider").and_return(provider)
+        allow(PactBroker::Pacticipants::Service).to receive(:find_pacticipant_by_name).with("Some Consumer").and_return(consumer)
+        allow(Decorators::WebhookDecorator).to receive(:new).and_return(webhook_decorator)
+      end
 
       let(:webhook_service) { PactBroker::Webhooks::Service }
       let(:uuid) { '1483234k24DKFGJ45K' }
@@ -19,13 +22,14 @@ module PactBroker::Api
       let(:saved_webhook) { double('saved_webhook')}
       let(:webhook_decorator) { instance_double(Decorators::WebhookDecorator, from_json: webhook) }
 
-      before do
-        allow(PactBroker::Pacticipants::Service).to receive(:find_pacticipant_by_name).with("Some Provider").and_return(provider)
-        allow(PactBroker::Pacticipants::Service).to receive(:find_pacticipant_by_name).with("Some Consumer").and_return(consumer)
-        allow(Decorators::WebhookDecorator).to receive(:new).and_return(webhook_decorator)
-      end
-
       describe "POST" do
+        before do
+          allow(webhook_service).to receive(:create).and_return(saved_webhook)
+          allow(webhook_service).to receive(:next_uuid).and_return(next_uuid)
+          allow(webhook_service).to receive(:errors).and_return(errors)
+          allow(PactBroker::Domain::Webhook).to receive(:new).and_return(webhook)
+        end
+
         let(:webhook_json) do
           {
             some: 'json'
@@ -35,13 +39,6 @@ module PactBroker::Api
         let(:next_uuid) { '123k2nvkkwjrwk34' }
         let(:valid) { true }
         let(:errors) { double("errors", empty?: valid, messages: ['messages']) }
-
-        before do
-          allow(webhook_service).to receive(:create).and_return(saved_webhook)
-          allow(webhook_service).to receive(:next_uuid).and_return(next_uuid)
-          allow(webhook_service).to receive(:errors).and_return(errors)
-          allow(PactBroker::Domain::Webhook).to receive(:new).and_return(webhook)
-        end
 
         subject { post path, webhook_json, headers }
 
@@ -55,7 +52,6 @@ module PactBroker::Api
         end
 
         context "with invalid attributes" do
-
           let(:valid) { false }
 
           it "returns a 400" do
@@ -76,13 +72,12 @@ module PactBroker::Api
         end
 
         context "with valid attributes" do
-
-          let(:webhook_response_json) { { some: 'webhook' }.to_json }
-
           before do
             allow_any_instance_of(Decorators::WebhookDecorator).to receive(:to_json).and_return(webhook_response_json)
             allow(webhook_decorator).to receive(:to_json).and_return(webhook_response_json)
           end
+
+          let(:webhook_response_json) { { some: 'webhook' }.to_json }
 
           it "saves the webhook" do
             expect(webhook_service).to receive(:create).with(next_uuid, webhook, consumer, provider)
@@ -118,7 +113,6 @@ module PactBroker::Api
       end
 
       describe "GET" do
-
         subject { get "/webhooks" }
 
         let(:webhooks) { [double('webhook')]}
@@ -145,10 +139,7 @@ module PactBroker::Api
           subject
           expect(last_response.body).to eq json
         end
-
       end
-
     end
   end
-
 end
