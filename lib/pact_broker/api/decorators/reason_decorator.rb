@@ -15,7 +15,7 @@ module PactBroker
         end
 
         def to_s
-          (ignored ? "[IGNORED] " : "") + reason_text
+          (ignored ? "Ignoring: " : "") + reason_text
         end
 
         private

@@ -24,6 +24,7 @@ module PactBroker
               deployable: deployable,
               reason: reason
             },
+            notices: notices,
             matrix: matrix(options[:user_options][:base_url])
           }.tap do | hash |
             hash[:summary].merge!(query_results_with_deployment_status_summary.deployment_status_summary.counts)
@@ -167,6 +168,13 @@ module PactBroker
           else
             nil
           end
+        end
+
+        def notices
+          query_results_with_deployment_status_summary
+            .deployment_status_summary
+            .reasons
+            .collect{ | reason | { type: reason.type, text: reason_decorator_class.new(reason).to_s } }
         end
       end
     end

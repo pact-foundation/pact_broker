@@ -5,11 +5,19 @@ module PactBroker
       def == other
         self.class == other.class
       end
+
+      def type
+        :info
+      end
     end
 
     class ErrorReason < Reason
       def selectors
         raise NotImplementedError
+      end
+
+      def type
+        :error
       end
     end
 
@@ -24,6 +32,10 @@ module PactBroker
 
       def == other
         other.is_a?(IgnoredReason) && other.root_reason == self.root_reason
+      end
+
+      def type
+        :info
       end
     end
 
@@ -115,16 +127,26 @@ module PactBroker
       def to_s
         "#{self.class} selector=#{selector}"
       end
+
+      def type
+        :warning
+      end
     end
 
     # The pact for the required consumer version has been
     # successfully verified by the required provider version
     class Successful < Reason
+      def type
+        :success
+      end
     end
 
     # There aren't any rows, but there are also no missing
     # provider verifications.
     class NoDependenciesMissing < Reason
+      def type
+        :success
+      end
     end
 
     class InteractionsMissingVerifications < ErrorReasonWithTwoSelectors
