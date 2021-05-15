@@ -275,4 +275,20 @@ Pact.provider_states_for "Pact Broker Client" do
   provider_state "the pb:publish-contracts relations exists in the index resource" do
     no_op
   end
+
+  provider_state "provider Bar version 4.5.6 has a successful verification for Foo version 1.2.3 tagged prod and a failed verification for version 3.4.5 tagged prod" do
+    set_up do
+      TestDataBuilder.new
+        .create_consumer("Foo")
+        .create_provider("Bar")
+        .create_consumer_version("1.2.3")
+        .create_consumer_version_tag("prod")
+        .create_pact
+        .create_verification(provider_version: "4.5.6")
+        .create_consumer_version("3.4.5")
+        .create_consumer_version_tag("prod")
+        .create_pact(json_content: TestDataBuilder.new.random_json_content("Foo", "Bar"))
+        .create_verification(provider_version: "4.5.6", success: false)
+    end
+  end
 end
