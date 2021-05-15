@@ -192,7 +192,7 @@ module PactBroker
           "version #{pacticipant_version_number} of #{pacticipant_name}"
         elsif pacticipant_does_not_exist?
           "any version of #{pacticipant_name} (no such pacticipant exists)"
-        elsif
+        else
           "any version of #{pacticipant_name}"
         end
       end
