@@ -72,10 +72,10 @@ module PactBroker
       private
 
       def find_considered_and_ignored_rows(resolved_selectors, resolved_ignore_selectors, options)
-        all_rows = query_matrix(resolved_selectors, options)
-        rows_with_latest_by_applied = apply_latestby(options, all_rows)
-        rows_with_latest_by_applied = apply_success_filter(rows_with_latest_by_applied, options)
-        considered_rows, ignored_rows = split_rows_into_considered_and_ignored(rows_with_latest_by_applied, resolved_ignore_selectors)
+        rows = query_matrix(resolved_selectors, options)
+        rows = apply_latestby(options, rows)
+        rows = apply_success_filter(rows, options)
+        considered_rows, ignored_rows = split_rows_into_considered_and_ignored(rows, resolved_ignore_selectors)
         return considered_rows, ignored_rows
       end
 

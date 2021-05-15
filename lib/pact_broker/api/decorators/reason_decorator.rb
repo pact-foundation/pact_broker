@@ -40,11 +40,11 @@ module PactBroker
             descriptions = reason.interactions.collect do | interaction |
               interaction_description(interaction)
             end.join('; ')
-            "WARNING: Although the verification was reported as successful, the results for #{reason.consumer_selector.description} and #{reason.provider_selector.description} may be missing tests for the following interactions: #{descriptions}"
+            "WARN: Although the verification was reported as successful, the results for #{reason.consumer_selector.description} and #{reason.provider_selector.description} may be missing tests for the following interactions: #{descriptions}"
           when PactBroker::Matrix::IgnoreSelectorDoesNotExist
-            "WARNING: Cannot ignore #{reason.selector.description}"
+            "WARN: Cannot ignore #{reason.selector.description}"
           else
-            reason.class.to_s
+            reason
           end
         end
 
