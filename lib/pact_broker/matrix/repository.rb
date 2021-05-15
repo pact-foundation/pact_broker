@@ -84,9 +84,9 @@ module PactBroker
         base_model_for_integrations
           .distinct_integrations(resolved_specified_selectors, infer_integrations)
           .collect(&:to_hash)
-          .collect do | hash |
-            required = is_a_row_for_this_integration_required?(specified_pacticipant_names, hash[:consumer_name])
-            Integration.from_hash(hash.merge(required: required))
+          .collect do | integration_hash |
+            required = is_a_row_for_this_integration_required?(specified_pacticipant_names, integration_hash[:consumer_name])
+            Integration.from_hash(integration_hash.merge(required: required))
           end
       end
 
