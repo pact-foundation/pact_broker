@@ -3,7 +3,7 @@
     {
       "level": "warning",
       "message": "foo",
-      "deprecation_warning": "Replaced by notices"
+      "deprecationWarning": "Replaced by notices"
     }
   ],
   "notices": [

@@ -50,7 +50,7 @@ module PactBroker
 
         existing_version = find_existing_version(parsed_contracts)
         version = create_or_update_version(parsed_contracts, version_params)
-        return version, log_messages_for_version_creation(existing_version, parsed_contracts)
+        return version, notices_for_version_creation(existing_version, parsed_contracts)
       end
 
       private :create_version
@@ -89,7 +89,7 @@ module PactBroker
           existing_pact = pact_service.find_pact(pact_params)
           listener = TriggeredWebhooksCreatedListener.new
           created_pact = create_or_merge_pact(contract_to_publish.merge?, existing_pact, pact_params, listener)
-          notices.concat(log_messages_for_pact(parsed_contracts, contract_to_publish, existing_pact, created_pact, listener, base_url))
+          notices.concat(notices_for_pact(parsed_contracts, contract_to_publish, existing_pact, created_pact, listener, base_url))
           created_pact
         end
         return pacts, notices
@@ -120,23 +120,23 @@ module PactBroker
 
       private :create_or_merge_pact
 
-      def log_messages_for_version_creation(existing_version, parsed_contracts)
+      def notices_for_version_creation(existing_version, parsed_contracts)
         notices = []
         message_params = parsed_contracts.to_h
         if parsed_contracts.tags&.any?
           message_params[:tags] = parsed_contracts.tags.join(", ")
         end
         message_params[:action] = existing_version ? "Updated" : "Created"
-        notices << Notice.debug(message(log_message_key_for_version_creation(parsed_contracts), message_params))
+        notices << Notice.debug(message(message_key_for_version_creation(parsed_contracts), message_params))
         if parsed_contracts.branch.nil?
           notices << Notice.warning("  Next steps:\n    " + message("messages.next_steps.version_branch"))
         end
         notices
       end
 
-      private :log_messages_for_version_creation
+      private :notices_for_version_creation
 
-      def log_message_key_for_version_creation(parsed_contracts)
+      def message_key_for_version_creation(parsed_contracts)
         if parsed_contracts.branch && parsed_contracts.tags&.any?
           "messages.version.created_for_branch_with_tags"
         elsif parsed_contracts.branch
@@ -148,51 +148,51 @@ module PactBroker
         end
       end
 
-      private :log_message_key_for_version_creation
+      private :message_key_for_version_creation
 
-      def log_messages_for_pact(parsed_contracts, contract_to_publish, existing_pact, created_pact, listener, base_url)
+      def notices_for_pact(parsed_contracts, contract_to_publish, existing_pact, created_pact, listener, base_url)
         notices = []
-        notices << log_mesage_for_pact_publication(parsed_contracts, contract_to_publish.merge?, existing_pact, created_pact)
-        notices << log_message_for_pact_url(created_pact, base_url)
+        notices << notice_for_pact_publication(parsed_contracts, contract_to_publish.merge?, existing_pact, created_pact)
+        notices << notice_for_pact_url(created_pact, base_url)
         notices.concat(event_and_webhook_notices(listener, created_pact))
         notices.concat(next_steps_notices(created_pact))
         notices
       end
 
-      private :log_messages_for_pact
+      private :notices_for_pact
 
-      def log_mesage_for_pact_publication(parsed_contracts, merge, existing_pact, created_pact)
-        log_message_params = {
+      def notice_for_pact_publication(parsed_contracts, merge, existing_pact, created_pact)
+        message_params = {
           consumer_name: parsed_contracts.pacticipant_name,
           consumer_version_number: parsed_contracts.pacticipant_version_number,
           provider_name: created_pact.provider_name
         }
         if merge
           if existing_pact
-            Notice.success(message("messages.contract.pact_merged", log_message_params))
+            Notice.success(message("messages.contract.pact_merged", message_params))
           else
-            Notice.success(message("messages.contract.pact_published", log_message_params))
+            Notice.success(message("messages.contract.pact_published", message_params))
           end
         else
           if existing_pact
             if existing_pact.pact_version_sha != created_pact.pact_version_sha
-              Notice.warning(message("messages.contract.pact_modified_for_same_version", log_message_params))
+              Notice.warning(message("messages.contract.pact_modified_for_same_version", message_params))
             else
-              Notice.success(message("messages.contract.same_pact_content_published", log_message_params))
+              Notice.success(message("messages.contract.same_pact_content_published", message_params))
             end
           else
-            Notice.success(message("messages.contract.pact_published", log_message_params))
+            Notice.success(message("messages.contract.pact_published", message_params))
           end
         end
       end
 
-      private :log_mesage_for_pact_publication
+      private :notice_for_pact_publication
 
-      def log_message_for_pact_url(pact, base_url)
+      def notice_for_pact_url(pact, base_url)
         Notice.debug("  View the published pact at #{PactBroker::Api::PactBrokerUrls.pact_url(base_url, pact)}")
       end
 
-      private :log_message_for_pact_url
+      private :notice_for_pact_url
 
       def event_and_webhook_notices(listener, pact)
         event_descriptions(listener) + triggered_webhook_notices(listener, pact)
@@ -253,7 +253,7 @@ module PactBroker
       end
 
       def url_for_triggered_webhook(triggered_webhook, base_url)
-        PactBroker::Api::PactBrokerUrls.triggered_webhook_notices_url(triggered_webhook, base_url)
+        PactBroker::Api::PactBrokerUrls.triggered_webhook_logs_url(triggered_webhook, base_url)
       end
 
       private :url_for_triggered_webhook

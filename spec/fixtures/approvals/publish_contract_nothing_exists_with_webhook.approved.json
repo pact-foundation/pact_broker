@@ -30,10 +30,47 @@
     "status": 200,
     "headers": {
       "Content-Type": "application/hal+json;charset=utf-8",
-      "Content-Length": "1761"
+      "Content-Length": "3022"
     },
     "body": {
       "logs": [
+        {
+          "level": "debug",
+          "message": "Created Foo version 1 with branch main and tags a, b",
+          "deprecationWarning": "Replaced by notices"
+        },
+        {
+          "level": "success",
+          "message": "Pact successfully published for Foo version 1 and provider Bar.",
+          "deprecationWarning": "Replaced by notices"
+        },
+        {
+          "level": "debug",
+          "message": "  View the published pact at http://example.org/pacts/provider/Bar/consumer/Foo/version/1",
+          "deprecationWarning": "Replaced by notices"
+        },
+        {
+          "level": "debug",
+          "message": "  Events detected: contract_published, contract_content_changed (first time any pact published for this consumer with consumer version tagged a, first time any pact published for this consumer with consumer version tagged b)",
+          "deprecationWarning": "Replaced by notices"
+        },
+        {
+          "level": "debug",
+          "message": "  Webhook \"foo webhook\" triggered for event contract_content_changed.\n    translation missing: en.pact_broker.messages.webhooks.triggered_webhook_see_notices",
+          "deprecationWarning": "Replaced by notices"
+        },
+        {
+          "level": "warning",
+          "message": "  Next steps:",
+          "deprecationWarning": "Replaced by notices"
+        },
+        {
+          "level": "warning",
+          "message": "    * Add Pact verification tests to the Bar build. See https://docs.pact.io/go/provider_verification",
+          "deprecationWarning": "Replaced by notices"
+        }
+      ],
+      "notices": [
         {
           "type": "debug",
           "text": "Created Foo version 1 with branch main and tags a, b"
@@ -52,7 +89,7 @@
         },
         {
           "type": "debug",
-          "text": "  Webhook \"foo webhook\" triggered for event contract_content_changed.\n    View logs at http://example.org/triggered-webhooks/1234/logs"
+          "text": "  Webhook \"foo webhook\" triggered for event contract_content_changed.\n    translation missing: en.pact_broker.messages.webhooks.triggered_webhook_see_notices"
         },
         {
           "type": "warning",
