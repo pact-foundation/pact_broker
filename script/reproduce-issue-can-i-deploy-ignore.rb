@@ -39,6 +39,7 @@ begin
       success: false
     )
     .deploy_to_prod(pacticipant: "baz-provider", version: "4")
+    .publish_pact(consumer: "foo-consumer", consumer_version: "1", provider: "dog-provider", content_id: "777", tag: "main") # missing
 
 rescue StandardError => e
   puts "#{e.class} #{e.message}"
