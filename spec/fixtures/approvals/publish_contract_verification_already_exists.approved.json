@@ -30,33 +30,65 @@
     "status": 200,
     "headers": {
       "Content-Type": "application/hal+json;charset=utf-8",
-      "Content-Length": "1778"
+      "Content-Length": "2933"
     },
     "body": {
       "logs": [
         {
           "level": "debug",
-          "message": "Updated Foo version 1 with branch main and tags a, b"
+          "message": "Updated Foo version 1 with branch main and tags a, b",
+          "deprecationWarning": "Replaced by notices"
         },
         {
-          "level": "warn",
-          "message": "Pact with changed content published over existing content for Foo version 1 and provider Bar. This is not recommended in normal cicumstances and may indicate that you have not configured your Pact pipeline correctly. For more information see https://docs.pact.io/go/versioning"
+          "level": "warning",
+          "message": "Pact with changed content published over existing content for Foo version 1 and provider Bar. This is not recommended in normal cicumstances and may indicate that you have not configured your Pact pipeline correctly. For more information see https://docs.pact.io/go/versioning",
+          "deprecationWarning": "Replaced by notices"
         },
         {
           "level": "debug",
-          "message": "  View the published pact at http://example.org/pacts/provider/Bar/consumer/Foo/version/1"
+          "message": "  View the published pact at http://example.org/pacts/provider/Bar/consumer/Foo/version/1",
+          "deprecationWarning": "Replaced by notices"
         },
         {
           "level": "debug",
-          "message": "  Events detected: contract_published, contract_content_changed (pact content modified since previous publication for Foo version 1)"
+          "message": "  Events detected: contract_published, contract_content_changed (pact content modified since previous publication for Foo version 1)",
+          "deprecationWarning": "Replaced by notices"
         },
         {
-          "level": "warn",
-          "message": "  Next steps:"
+          "level": "warning",
+          "message": "  Next steps:",
+          "deprecationWarning": "Replaced by notices"
         },
         {
-          "level": "warn",
-          "message": "    * Configure separate Bar pact verification build and webhook to trigger it when the pact content changes. See https://docs.pact.io/go/webhooks"
+          "level": "warning",
+          "message": "    * Configure separate Bar pact verification build and webhook to trigger it when the pact content changes. See https://docs.pact.io/go/webhooks",
+          "deprecationWarning": "Replaced by notices"
+        }
+      ],
+      "notices": [
+        {
+          "type": "debug",
+          "text": "Updated Foo version 1 with branch main and tags a, b"
+        },
+        {
+          "type": "warning",
+          "text": "Pact with changed content published over existing content for Foo version 1 and provider Bar. This is not recommended in normal cicumstances and may indicate that you have not configured your Pact pipeline correctly. For more information see https://docs.pact.io/go/versioning"
+        },
+        {
+          "type": "debug",
+          "text": "  View the published pact at http://example.org/pacts/provider/Bar/consumer/Foo/version/1"
+        },
+        {
+          "type": "debug",
+          "text": "  Events detected: contract_published, contract_content_changed (pact content modified since previous publication for Foo version 1)"
+        },
+        {
+          "type": "warning",
+          "text": "  Next steps:"
+        },
+        {
+          "type": "warning",
+          "text": "    * Configure separate Bar pact verification build and webhook to trigger it when the pact content changes. See https://docs.pact.io/go/webhooks"
         }
       ],
       "_embedded": {

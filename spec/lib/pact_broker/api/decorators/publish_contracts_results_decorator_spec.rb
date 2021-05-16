@@ -1,6 +1,6 @@
 require 'pact_broker/api/decorators/publish_contracts_results_decorator'
 require 'pact_broker/contracts/contracts_publication_results'
-require 'pact_broker/contracts/log_message'
+require 'pact_broker/contracts/notice'
 
 module PactBroker
   module Api
@@ -18,7 +18,7 @@ module PactBroker
 
           let(:results) do
             PactBroker::Contracts::ContractsPublicationResults.from_hash(
-              logs: logs,
+              notices: notices,
               pacticipant: pacticipant,
               version: version,
               contracts: contracts,
@@ -31,7 +31,7 @@ module PactBroker
           let(:tags) { [tag]}
           let(:tag) { PactBroker::Domain::Tag.new(name: "main")}
           let(:version) { PactBroker::Domain::Version.new(number: "1" ) }
-          let(:logs) { [PactBroker::Contracts::LogMessage.warn("foo") ] }
+          let(:notices) { [PactBroker::Contracts::Notice.warning("foo") ] }
           let(:decorator_options) { { user_options: user_options } }
           let(:user_options) do
             {

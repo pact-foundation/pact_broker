@@ -30,37 +30,74 @@
     "status": 200,
     "headers": {
       "Content-Type": "application/hal+json;charset=utf-8",
-      "Content-Length": "1788"
+      "Content-Length": "2998"
     },
     "body": {
       "logs": [
         {
           "level": "debug",
-          "message": "Created Foo version 1 with branch main and tags a, b"
+          "message": "Created Foo version 1 with branch main and tags a, b",
+          "deprecationWarning": "Replaced by notices"
         },
         {
-          "level": "info",
-          "message": "Pact successfully published for Foo version 1 and provider Bar."
+          "level": "success",
+          "message": "Pact successfully published for Foo version 1 and provider Bar.",
+          "deprecationWarning": "Replaced by notices"
         },
         {
           "level": "debug",
-          "message": "  View the published pact at http://example.org/pacts/provider/Bar/consumer/Foo/version/1"
+          "message": "  View the published pact at http://example.org/pacts/provider/Bar/consumer/Foo/version/1",
+          "deprecationWarning": "Replaced by notices"
         },
         {
           "level": "debug",
-          "message": "  Events detected: contract_published, contract_content_changed (first time any pact published for this consumer with consumer version tagged a, first time any pact published for this consumer with consumer version tagged b)"
+          "message": "  Events detected: contract_published, contract_content_changed (first time any pact published for this consumer with consumer version tagged a, first time any pact published for this consumer with consumer version tagged b)",
+          "deprecationWarning": "Replaced by notices"
         },
         {
-          "level": "warn",
-          "message": "  Next steps:"
+          "level": "warning",
+          "message": "  Next steps:",
+          "deprecationWarning": "Replaced by notices"
         },
         {
-          "level": "warn",
-          "message": "    * Add Pact verification tests to the Bar build. See https://docs.pact.io/go/provider_verification"
+          "level": "warning",
+          "message": "    * Add Pact verification tests to the Bar build. See https://docs.pact.io/go/provider_verification",
+          "deprecationWarning": "Replaced by notices"
         },
         {
-          "level": "warn",
-          "message": "    * Configure separate Bar pact verification build and webhook to trigger it when the pact content changes. See https://docs.pact.io/go/webhooks"
+          "level": "warning",
+          "message": "    * Configure separate Bar pact verification build and webhook to trigger it when the pact content changes. See https://docs.pact.io/go/webhooks",
+          "deprecationWarning": "Replaced by notices"
+        }
+      ],
+      "notices": [
+        {
+          "type": "debug",
+          "text": "Created Foo version 1 with branch main and tags a, b"
+        },
+        {
+          "type": "success",
+          "text": "Pact successfully published for Foo version 1 and provider Bar."
+        },
+        {
+          "type": "debug",
+          "text": "  View the published pact at http://example.org/pacts/provider/Bar/consumer/Foo/version/1"
+        },
+        {
+          "type": "debug",
+          "text": "  Events detected: contract_published, contract_content_changed (first time any pact published for this consumer with consumer version tagged a, first time any pact published for this consumer with consumer version tagged b)"
+        },
+        {
+          "type": "warning",
+          "text": "  Next steps:"
+        },
+        {
+          "type": "warning",
+          "text": "    * Add Pact verification tests to the Bar build. See https://docs.pact.io/go/provider_verification"
+        },
+        {
+          "type": "warning",
+          "text": "    * Configure separate Bar pact verification build and webhook to trigger it when the pact content changes. See https://docs.pact.io/go/webhooks"
         }
       ],
       "_embedded": {

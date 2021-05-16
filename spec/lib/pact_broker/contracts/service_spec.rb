@@ -49,7 +49,7 @@ module PactBroker
         context "when the pact does not already exist" do
           context "when the write mode is overwrite" do
             it "returns an info message" do
-              expect(subject.logs.find{ |log| log.level == "info" && log.message.include?(" published ") }).to_not be nil
+              expect(subject.notices.find{ |log| log.type == "success" && log.text.include?(" published ") }).to_not be nil
             end
           end
 
@@ -57,7 +57,7 @@ module PactBroker
             let(:write_mode) { "merge" }
 
             it "returns an info message" do
-              expect(subject.logs.find{ |log| log.level == "info" && log.message.include?(" published ") }).to_not be nil
+              expect(subject.notices.find{ |log| log.type == "success" && log.text.include?(" published ") }).to_not be nil
             end
           end
         end
@@ -81,7 +81,7 @@ module PactBroker
           context "when the write mode is overwrite" do
             context "when the content is different" do
               it "returns a warning message" do
-                expect(subject.logs.find{ |log| log.level == "warn" && log.message.include?("changed content") }).to_not be nil
+                expect(subject.notices.find{ |log| log.type == "warning" && log.text.include?("changed content") }).to_not be nil
               end
             end
 
@@ -89,7 +89,7 @@ module PactBroker
               let(:decoded_contract) { PactBroker::Pacts::PactVersion.last.content }
 
               it "returns an info message" do
-                expect(subject.logs.find{ |log| log.level == "info" && log.message.include?("republished") }).to_not be nil
+                expect(subject.notices.find{ |log| log.type == "success" && log.text.include?("republished") }).to_not be nil
               end
             end
           end
@@ -98,7 +98,7 @@ module PactBroker
             let(:write_mode) { "merge" }
 
             it "returns an info message" do
-              expect(subject.logs.find{ |log| log.level == "info" && log.message.include?("merged") }).to_not be nil
+              expect(subject.notices.find{ |log| log.type == "success" && log.text.include?("merged") }).to_not be nil
             end
           end
         end

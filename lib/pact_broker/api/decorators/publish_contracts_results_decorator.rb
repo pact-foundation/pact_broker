@@ -8,7 +8,8 @@ module PactBroker
       class PublishContractsResultsDecorator < BaseDecorator
         camelize_property_names
 
-        property :logs, getter: ->(represented:, **) { represented.logs.collect(&:to_h) }
+        property :logs, getter: ->(represented:, **) { represented.notices.collect{ | notice | { level: notice.type, message: notice.text, deprecationWarning: "Replaced by notices" } } }
+        property :notices, getter: ->(represented:, **) { represented.notices.collect(&:to_h) }
 
         property :pacticipant, embedded: true, extend: EmbeddedPacticipantDecorator
         property :version, embedded: true, extend: EmbeddedVersionDecorator
