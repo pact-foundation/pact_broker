@@ -27,6 +27,16 @@ module PactBroker
           options[:environment_name] = params[:environment]
         end
 
+        if params[:ignore].is_a?(Array)
+          options[:ignore_selectors] = params[:ignore].collect do | pacticipant_name |
+            if pacticipant_name.is_a?(String)
+              PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: pacticipant_name)
+            end
+          end.compact
+        else
+          options[:ignore_selectors] = []
+        end
+
         return [selector], options
       end
     end

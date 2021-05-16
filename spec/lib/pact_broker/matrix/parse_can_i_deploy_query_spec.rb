@@ -22,6 +22,20 @@ module PactBroker
 
           its([:latestby]) { is_expected.to eq "cvp" }
           its([:latest]) { is_expected.to eq true }
+          its([:ignore_selectors]) { is_expected.to eq [] }
+
+          context "with pacticipants to ignore" do
+            before do
+              params[:ignore] = ["foo", "bar", {"a" => "b"}]
+            end
+
+            its([:ignore_selectors]) do
+              is_expected.to eq [
+                PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: "foo"),
+                PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: "bar")
+              ]
+            end
+          end
         end
 
         describe "parsed_selectors" do
