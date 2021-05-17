@@ -49,6 +49,14 @@ module PactBroker
           :'webhooks::webhooks'
         end
 
+        def policy_record
+          if request.post?
+            webhook
+          else
+            nil
+          end
+        end
+
         private
 
         def validation_errors? webhook
