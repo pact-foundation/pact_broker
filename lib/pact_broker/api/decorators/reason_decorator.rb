@@ -5,17 +5,29 @@ module PactBroker
     module Decorators
       class ReasonDecorator
         def initialize(reason)
-          @reason = reason
+          if reason.is_a?(PactBroker::Matrix::IgnoredReason)
+            @reason = reason.root_reason
+            @ignored = true
+          else
+            @reason = reason
+            @ignored = false
+          end
         end
 
         def to_s
+          (ignored ? "Ignoring: " : "") + reason_text
+        end
+
+        private
+
+        attr_reader :reason, :ignored
+
+        def reason_text
           case reason
           when PactBroker::Matrix::PactNotEverVerifiedByProvider
             "There is no verified pact between #{reason.consumer_selector.description} and #{reason.provider_selector.description}"
           when PactBroker::Matrix::PactNotVerifiedByRequiredProviderVersion
             "There is no verified pact between #{reason.consumer_selector.description} and #{reason.provider_selector.description}"
-          # when PactBroker::Matrix::VerificationFailed
-          #   "The pact verification between #{reason.consumer_selector.description} and #{reason.provider_selector.description} failed"
           when PactBroker::Matrix::SpecifiedVersionDoesNotExist
             version_does_not_exist_description(reason.selector)
           when PactBroker::Matrix::VerificationFailed
@@ -28,15 +40,13 @@ module PactBroker
             descriptions = reason.interactions.collect do | interaction |
               interaction_description(interaction)
             end.join('; ')
-            "WARNING: Although the verification was reported as successful, the results for #{reason.consumer_selector.description} and #{reason.provider_selector.description} may be missing tests for the following interactions: #{descriptions}"
+            "WARN: Although the verification was reported as successful, the results for #{reason.consumer_selector.description} and #{reason.provider_selector.description} may be missing tests for the following interactions: #{descriptions}"
+          when PactBroker::Matrix::IgnoreSelectorDoesNotExist
+            "WARN: Cannot ignore #{reason.selector.description}"
           else
             reason
           end
         end
-
-        private
-
-        attr_reader :reason
 
         def version_does_not_exist_description selector
           if selector.version_does_not_exist?

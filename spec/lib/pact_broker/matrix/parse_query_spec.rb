@@ -9,7 +9,10 @@ module PactBroker
         subject { ParseQuery.call(query) }
 
         it "extracts the pacticipant names and respective versions" do
-          expect(subject.first).to eq([{ pacticipant_name: "Foo", pacticipant_version_number: "1.2.3" }, { pacticipant_name: "Bar", pacticipant_version_number: "9.9.9" }])
+          expect(subject.first).to eq([
+            PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: "Foo", pacticipant_version_number: "1.2.3"),
+            PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: "Bar", pacticipant_version_number: "9.9.9")
+          ])
         end
 
         context "with spaces" do
@@ -40,7 +43,7 @@ module PactBroker
           let(:query) { "" }
 
           it "sets the defaults" do
-            expect(subject.last).to eq(limit: "100")
+            expect(subject.last).to eq(limit: "100", ignore_selectors: [])
           end
         end
 
@@ -111,6 +114,25 @@ module PactBroker
 
           it "sets the limit" do
             expect(subject.last[:limit]).to eq "200"
+          end
+        end
+
+        context "when there are ignored selectors" do
+          let(:query) { "q[][pacticipant]=Foo&q[][tag]=prod&ignore[][pacticipant]=Bar&ignore[][pacticipant]=Waffle&ignore[][version]=1" }
+
+          it "sets the pacticipants to ignore" do
+            expect(subject.last[:ignore_selectors]).to eq [
+              PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: "Bar"),
+              PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: "Waffle", pacticipant_version_number: "1")
+            ]
+          end
+        end
+
+        context "when the ignored selectors isn't a hash" do
+          let(:query) { "q[][pacticipant]=Foo&q[][tag]=prod&ignore=1" }
+
+          it "sets an empty array" do
+            expect(subject.last[:ignore_selectors]).to eq []
           end
         end
       end

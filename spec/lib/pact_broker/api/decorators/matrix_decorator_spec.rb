@@ -8,6 +8,9 @@ module PactBroker
     module Decorators
       describe MatrixDecorator do
         describe "to_json" do
+          before do
+            allow_any_instance_of(ReasonDecorator).to receive(:to_s).and_return('foo')
+          end
           let(:verification_date) { DateTime.new(2017, 12, 31) }
           let(:pact_created_at) { DateTime.new(2017, 1, 1) }
           let(:row_1_success) { true }
@@ -154,13 +157,15 @@ module PactBroker
 
           let(:query_results) do
             double('QueryResults',
-              rows: [row_1, row_2],
+              considered_rows: [row_1, row_2],
+              ignored_rows: ignored_rows,
               selectors: selectors,
               options: options,
               resolved_selectors: resolved_selectors,
               integrations: integrations
             )
           end
+          let(:ignored_rows) { [] }
           let(:query_results_with_deployment_status_summary){ PactBroker::Matrix::QueryResultsWithDeploymentStatusSummary.new(query_results, deployment_status_summary)}
           let(:selectors) { nil }
           let(:integrations){ [] }
@@ -168,8 +173,10 @@ module PactBroker
           let(:resolved_selectors) { nil }
           let(:counts) { { success: 1 } }
           let(:deployment_status_summary) do
-            instance_double('PactBroker::Matrix::DeploymentStatusSummary', reasons: ['foo', 'bar'], deployable?: deployable, counts: counts)
+            instance_double('PactBroker::Matrix::DeploymentStatusSummary', reasons: [reason_1, reason_2], deployable?: deployable, counts: counts)
           end
+          let(:reason_1) { instance_double("PactBroker::Matrix::Reason", type: "info") }
+          let(:reason_2) { instance_double("PactBroker::Matrix::Reason", type: "warning") }
           let(:deployable) { true }
           let(:json) { MatrixDecorator.new(query_results_with_deployment_status_summary).to_json(user_options: { base_url: 'http://example.org' }) }
           let(:parsed_json) { JSON.parse(json, symbolize_names: true) }
@@ -192,8 +199,13 @@ module PactBroker
 
           it "includes a summary" do
             expect(parsed_json[:summary][:deployable]).to eq true
-            expect(parsed_json[:summary][:reason]).to eq "foo\nbar"
+            expect(parsed_json[:summary][:reason]).to eq "foo\nfoo"
             expect(parsed_json[:summary][:success]).to eq 1
+          end
+
+          it "includes notices" do
+            expect(parsed_json[:notices][0]).to eq text: "foo", type: "info"
+            expect(parsed_json[:notices][1]).to eq text: "foo", type: "warning"
           end
 
           context "when the pact has not been verified" do
@@ -210,6 +222,19 @@ module PactBroker
 
             it "has a nil verificationResult" do
               expect(parsed_json[:matrix][1][:verificationResult]).to eq verification_hash
+            end
+          end
+
+          context "with ignored rows" do
+            let(:ignored_rows) { [row_1] }
+
+            it "includes the considered and ignored rows" do
+              expect(parsed_json[:matrix].size).to eq 3
+              expect(parsed_json[:matrix].first).to_not have_key(:ignored)
+            end
+
+            it "includes the ignored flag" do
+              expect(parsed_json[:matrix].last[:ignored]).to be true
             end
           end
         end

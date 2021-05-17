@@ -1,37 +1,40 @@
 require 'pact_broker/logging'
 require 'pact_broker/matrix/reason'
+require 'forwardable'
 
 module PactBroker
   module Matrix
     class DeploymentStatusSummary
       include PactBroker::Logging
+      extend Forwardable
 
-      attr_reader :rows, :resolved_selectors, :integrations
+      attr_reader :query_results, :all_rows
+      delegate [:considered_rows, :ignored_rows, :resolved_selectors, :resolved_ignore_selectors, :integrations] => :query_results
 
-      def initialize(rows, resolved_selectors, integrations)
-        @rows = rows
-        @resolved_selectors = resolved_selectors
-        @integrations = integrations
+      def initialize(query_results)
+        @query_results = query_results
+        @all_rows = query_results.rows
         @dummy_selectors = create_dummy_selectors
       end
 
       def counts
         {
-          success: rows.count(&:success),
-          failed: rows.count { |row| row.success == false },
-          unknown: required_integrations_without_a_row.count + rows.count { |row| row.success.nil? }
-        }
+          success: considered_rows.count(&:success),
+          failed: considered_rows.count { |row| row.success == false },
+          unknown: required_integrations_without_a_row.count + considered_rows.count { |row| row.success.nil? },
+          ignored: resolved_ignore_selectors.any? ? ignored_rows.count : nil
+        }.compact
       end
 
       def deployable?
-        return false if specified_selectors_that_do_not_exist.any?
-        return nil if rows.any?{ |row| row.success.nil? }
+        return false if considered_specified_selectors_that_do_not_exist.any?
+        return nil if considered_rows.any?{ |row| row.success.nil? }
         return nil if required_integrations_without_a_row.any?
-        rows.all?(&:success) # true if rows is empty
+        considered_rows.all?(&:success) # true if considered_rows is empty
       end
 
       def reasons
-        error_messages.any? ? error_messages + warning_messages : success_messages + warning_messages
+        error_messages.any? ? warning_messages + error_messages  : warning_messages + success_messages
       end
 
       private
@@ -52,7 +55,14 @@ module PactBroker
       end
 
       def warning_messages
-        []
+        resolved_ignore_selectors.select(&:pacticipant_or_version_does_not_exist?).collect { | s | IgnoreSelectorDoesNotExist.new(s) }
+          # ignored_rows.select{ | row | row.success.nil? }.collect{ |row | IgnoredReason.new(pact_not_ever_verified_by_provider(row)) } +
+          # specified_selectors_that_do_not_exist.select(&:ignore?).collect { | selector | IgnoredReason.new(SpecifiedVersionDoesNotExist.new(selector)) } +
+          # ignored_rows.select{ |row| row.success == false }.collect { | row | IgnoredReason.new(VerificationFailed.new(*selectors_for(row))) }
+      end
+
+      def considered_specified_selectors_that_do_not_exist
+        resolved_selectors.select(&:consider?).select(&:specified_version_that_does_not_exist?)
       end
 
       def specified_selectors_that_do_not_exist
@@ -60,24 +70,20 @@ module PactBroker
       end
 
       def specified_selectors_do_not_exist_messages
-        specified_selectors_that_do_not_exist.collect do | selector |
-          SpecifiedVersionDoesNotExist.new(selector)
-        end
+        specified_selectors_that_do_not_exist.select(&:consider?).collect { | selector | SpecifiedVersionDoesNotExist.new(selector) }
       end
 
       def not_ever_verified_reasons
-        rows.select{ | row | row.success.nil? }.collect{ |row | pact_not_ever_verified_by_provider(row) }
+        considered_rows.select{ | row | row.success.nil? }.collect{ |row | pact_not_ever_verified_by_provider(row) }
       end
 
       def failure_messages
-        rows.select{ |row| row.success == false }.collect do | row |
-          VerificationFailed.new(*selectors_for(row))
-        end
+        considered_rows.select{ |row| row.success == false }.collect { | row | VerificationFailed.new(*selectors_for(row)) }
       end
 
       def success_messages
-        if rows.all?(&:success) && required_integrations_without_a_row.empty?
-          if rows.any?
+        if considered_rows.all?(&:success) && required_integrations_without_a_row.empty?
+          if considered_rows.any?
             [Successful.new]
           else
             [NoDependenciesMissing.new]
@@ -99,7 +105,7 @@ module PactBroker
       # Foo v2 -> Bar v1 (latest prod) [this line not included because CV doesn't match]
       # Foo v3 -> Bar v2               [this line not included because PV doesn't match]
       #
-      # No matrix rows would be returned. This method identifies that we have no row for
+      # No matrix considered_rows would be returned. This method identifies that we have no row for
       # the Foo -> Bar integration, and therefore cannot deploy Foo.
       # However, if we were to try and deploy the provider, Bar, that would be ok
       # as Bar does not rely on Foo, so this method would not return that integration.
@@ -117,11 +123,11 @@ module PactBroker
       end
 
       def log_required_integrations_without_a_row_occurred integrations
-        logger.info("required_integrations_without_a_row returned non empty", payload: { integrations: integrations, rows: rows })
+        logger.info("required_integrations_without_a_row returned non empty", payload: { integrations: integrations, considered_rows: considered_rows })
       end
 
       def row_exists_for_integration(integration)
-        rows.find { | row | integration.matches_pacticipant_ids?(row) }
+        all_rows.find { | row | integration.matches_pacticipant_ids?(row) }
       end
 
       def missing_reasons
@@ -163,33 +169,33 @@ module PactBroker
 
       # When the user has not specified a version of the provider (eg no 'latest' and/or 'tag', which means 'all versions')
       # so the "add inferred selectors" code in the Matrix::Repository has not run,
-      # we may end up with rows for which we do not have a selector.
+      # we may end up with considered_rows for which we do not have a selector.
       # To solve this, create dummy selectors from the row and integration data.
       def create_dummy_selectors
-        (dummy_selectors_from_rows + dummy_selectors_from_integrations).uniq
+        (dummy_selectors_from_considered_rows + dummy_selectors_from_integrations).uniq
       end
 
       def dummy_selectors_from_integrations
         integrations.collect do | row |
-          dummy_consumer_selector = ResolvedSelector.for_pacticipant(row.consumer, :inferred)
-          dummy_provider_selector = ResolvedSelector.for_pacticipant(row.provider, :inferred)
+          dummy_consumer_selector = ResolvedSelector.for_pacticipant(row.consumer, :inferred, false)
+          dummy_provider_selector = ResolvedSelector.for_pacticipant(row.provider, :inferred, false)
           [dummy_consumer_selector, dummy_provider_selector]
         end.flatten
       end
 
-      def dummy_selectors_from_rows
-        rows.collect do | row |
-          dummy_consumer_selector = ResolvedSelector.for_pacticipant_and_version(row.consumer, row.consumer_version, {}, :inferred)
+      def dummy_selectors_from_considered_rows
+        considered_rows.collect do | row |
+          dummy_consumer_selector = ResolvedSelector.for_pacticipant_and_version(row.consumer, row.consumer_version, {}, :inferred, false)
           dummy_provider_selector = row.provider_version ?
-            ResolvedSelector.for_pacticipant_and_version(row.provider, row.provider_version, {}, :inferred) :
-            ResolvedSelector.for_pacticipant(row.provider, :inferred)
+            ResolvedSelector.for_pacticipant_and_version(row.provider, row.provider_version, {}, :inferred, false) :
+            ResolvedSelector.for_pacticipant(row.provider, :inferred, false)
           [dummy_consumer_selector, dummy_provider_selector]
         end.flatten
       end
 
       # experimental
       def warnings_for_missing_interactions
-        rows.select(&:success).collect do | row |
+        considered_rows.select(&:success).collect do | row |
           begin
             if row.verification.interactions_missing_test_results.any? && !row.verification.all_interactions_missing_test_results?
               InteractionsMissingVerifications.new(selector_for(row.consumer_name), selector_for(row.provider_name), row.verification.interactions_missing_test_results)

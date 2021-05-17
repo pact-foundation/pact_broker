@@ -7,13 +7,7 @@ module PactBroker
       def self.call query
         params = Rack::Utils.parse_nested_query(query)
         selectors = (params['q'] || []).collect do |i|
-          p = PactBroker::Matrix::UnresolvedSelector.new
-          p.pacticipant_name = i['pacticipant'] if i['pacticipant'] && i['pacticipant'] != ''
-          p.pacticipant_version_number = i['version'] if i['version'] && i['version'] != ''
-          p.latest = true if i['latest'] == 'true'
-          p.branch = i['branch'] if i['branch'] && i['branch'] != ''
-          p.tag = i['tag'] if i['tag'] && i['tag'] != ''
-          p
+          parse_selector(i)
         end
         options = {}
         if params.key?('success') && params['success'].is_a?(Array)
@@ -52,7 +46,23 @@ module PactBroker
           options[:environment_name] = params['environment']
         end
 
+        if params['ignore'].is_a?(Array)
+          options[:ignore_selectors] = params['ignore'].collect{ |i| parse_selector(i) }
+        else
+          options[:ignore_selectors] = []
+        end
+
         return selectors, options
+      end
+
+      def self.parse_selector(i)
+        p = PactBroker::Matrix::UnresolvedSelector.new
+        p.pacticipant_name = i['pacticipant'] if i['pacticipant'] && i['pacticipant'] != ''
+        p.pacticipant_version_number = i['version'] if i['version'] && i['version'] != ''
+        p.latest = true if i['latest'] == 'true'
+        p.branch = i['branch'] if i['branch'] && i['branch'] != ''
+        p.tag = i['tag'] if i['tag'] && i['tag'] != ''
+        p
       end
     end
   end

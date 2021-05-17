@@ -11,6 +11,7 @@ module PactBroker
         let(:environment) { double('environment') }
 
         subject { Service.validate_selectors(selectors, options) }
+
         let(:options) { {} }
 
         context "when there are no selectors" do
@@ -128,6 +129,20 @@ module PactBroker
 
           it "returns an error message" do
             expect(subject.last).to include "Environment with name 'prod' does not exist"
+          end
+        end
+
+        context "when a pacticipant to ignore is missing a name" do
+          let(:selectors) { [UnresolvedSelector.new(pacticipant_name: "Foo", pacticipant_version_number: "1")] }
+
+          let(:options) do
+            {
+              ignore_selectors: [UnresolvedSelector.new(pacticipant_version_number: "1")]
+            }
+          end
+
+          it "returns an error message" do
+            expect(subject.last).to include "Please specify the pacticipant name to ignore"
           end
         end
       end

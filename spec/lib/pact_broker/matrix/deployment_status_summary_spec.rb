@@ -3,6 +3,8 @@ require 'pact_broker/matrix/row'
 require 'pact_broker/matrix/query_results'
 require 'pact_broker/matrix/integration'
 require 'pact_broker/matrix/resolved_selector'
+require 'pact_broker/matrix/query_results'
+
 
 module PactBroker
   module Matrix
@@ -93,12 +95,32 @@ module PactBroker
           ]
         end
 
-        subject { DeploymentStatusSummary.new(rows, resolved_selectors, integrations) }
+        let(:ignored_rows) { [] }
+        let(:resolved_ignore_selectors) { [] }
+
+        let(:query_results) do
+          instance_double(PactBroker::Matrix::QueryResults,
+            considered_rows: rows,
+            ignored_rows: ignored_rows,
+            resolved_selectors: resolved_selectors,
+            resolved_ignore_selectors: resolved_ignore_selectors,
+            integrations: integrations,
+            rows: rows + ignored_rows
+          )
+        end
+
+        subject { DeploymentStatusSummary.new(query_results) }
 
         context "when there is a row for all integrations" do
           its(:deployable?) { is_expected.to be true }
           its(:reasons) { is_expected.to eq [Successful.new] }
           its(:counts) { is_expected.to eq success: 2, failed: 0, unknown: 0 }
+        end
+
+        context "when there are resolved_ignore_selectors" do
+          let(:resolved_ignore_selectors) { [ResolvedSelector.new()] }
+
+          its(:counts) { is_expected.to have_key(:ignored) }
         end
 
         context "when there are no rows" do
@@ -120,6 +142,17 @@ module PactBroker
           its(:deployable?) { is_expected.to be nil }
           its(:reasons) { is_expected.to eq [PactNotEverVerifiedByProvider.new(resolved_selectors.first, resolved_selectors[1]) ] }
           its(:counts) { is_expected.to eq success: 1, failed: 0, unknown: 1 }
+
+          context "when that row is ignored" do
+            let(:resolved_ignore_selectors) { [instance_double('PactBroker::Matrix::ResolvedSelector', pacticipant_or_version_does_not_exist?: false).as_null_object] }
+            let(:rows) { [row_2] }
+            let(:ignored_rows) { [row_1] }
+
+            its(:deployable?) { is_expected.to be true }
+
+            its(:reasons) { is_expected.to eq [Successful.new] }
+            its(:counts) { is_expected.to eq success: 1, failed: 0, unknown: 0, ignored: 1 }
+          end
         end
 
         context "when one or more of the success flags are false" do
@@ -128,9 +161,21 @@ module PactBroker
           its(:deployable?) { is_expected.to be false }
           its(:reasons) { is_expected.to eq [VerificationFailed.new(resolved_selectors.first, resolved_selectors[1])] }
           its(:counts) { is_expected.to eq success: 1, failed: 1, unknown: 0 }
+
+          context "when that row is ignored" do
+            let(:resolved_ignore_selectors) { [instance_double('PactBroker::Matrix::ResolvedSelector', pacticipant_or_version_does_not_exist?: false).as_null_object] }
+            let(:rows) { [row_2] }
+            let(:ignored_rows) { [row_1] }
+
+            its(:deployable?) { is_expected.to be true }
+            its(:reasons) { is_expected.to eq [Successful.new] }
+            its(:counts) { is_expected.to eq success: 1, failed: 0, unknown: 0, ignored: 1 }
+          end
         end
 
-        context "when there is a provider relationship missing" do
+        # TODO
+        # I think this is an impossible scenario now that the left outer join returns a row with blank verification fields
+        context "when there is a provider relationship missing [don't think this is possible any more]" do
           let(:rows) { [row_1] }
 
           its(:deployable?) { is_expected.to be nil }
@@ -138,9 +183,7 @@ module PactBroker
           its(:counts) { is_expected.to eq success: 1, failed: 0, unknown: 1 }
         end
 
-        # I think this is an impossible scenario now that the left outer join returns a row with blank verification fields
         context "when there is a consumer row missing a verification and only the provider was specified in the query" do
-
           let(:rows) { [row_1] }
 
           let(:integrations) do
@@ -169,7 +212,7 @@ module PactBroker
           its(:counts) { is_expected.to eq success: 0, failed: 0, unknown: 0 }
         end
 
-        context "when there is a provider integration missing and only the consumer was specified in the query" do
+        context "when there is a provider integration that does not have a matching row and only the consumer was specified in the query" do
           let(:rows) { [row_1] }
 
           let(:integrations) do
@@ -204,6 +247,7 @@ module PactBroker
               branch: nil,
               environment_name: nil,
               type: :inferred,
+              ignore: false,
               one_of_many: false
             )
           end
@@ -216,6 +260,12 @@ module PactBroker
 
           its(:deployable?) { is_expected.to be nil }
           its(:reasons) { is_expected.to eq [PactNotEverVerifiedByProvider.new(resolved_selectors.first, dummy_selector)] }
+        end
+
+        context "when there are ignore selectors that don't match any pacticipant or version" do
+          let(:resolved_ignore_selectors) { [instance_double('PactBroker::Matrix::ResolvedSelector', pacticipant_or_version_does_not_exist?: true).as_null_object] }
+
+          its(:reasons) { is_expected.to eq [IgnoreSelectorDoesNotExist.new(resolved_ignore_selectors.first), PactBroker::Matrix::Successful.new] }
         end
       end
     end
