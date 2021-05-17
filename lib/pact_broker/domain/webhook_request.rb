@@ -26,13 +26,10 @@ module PactBroker
       alias_method :http_method, :method
 
       def initialize attributes = {}
-        @method = attributes[:method]
-        @url = attributes[:url]
-        @username = attributes[:username]
-        @password = attributes[:password]
+        attributes.each do | (name, value) |
+          instance_variable_set("@#{name}", value) if respond_to?(name)
+        end
         @headers = attributes[:headers] || {}
-        @body = attributes[:body]
-        @uuid = attributes[:uuid]
       end
 
       def description

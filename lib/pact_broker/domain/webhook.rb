@@ -18,15 +18,9 @@ module PactBroker
 
       def initialize attributes = {}
         @attributes = attributes
-        @uuid = attributes[:uuid]
-        @description = attributes[:description]
-        @request = attributes[:request]
-        @consumer = attributes[:consumer]
-        @provider = attributes[:provider]
-        @events = attributes[:events]
-        @enabled = attributes[:enabled]
-        @created_at = attributes[:created_at]
-        @updated_at = attributes[:updated_at]
+        attributes.each do | (name, value) |
+          instance_variable_set("@#{name}", value) if respond_to?(name)
+        end
       end
 
       def display_description
