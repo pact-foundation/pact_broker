@@ -1,4 +1,3 @@
-require 'pact_broker/domain/webhook_request_header'
 require 'pact_broker/webhooks/render'
 require 'cgi'
 require 'pact_broker/domain/webhook_request'
