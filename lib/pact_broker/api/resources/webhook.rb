@@ -23,11 +23,7 @@ module PactBroker
         end
 
         def resource_exists?
-          !!resource_object
-        end
-
-        def resource_object
-          webhook
+          !!webhook
         end
 
         def malformed_request?
