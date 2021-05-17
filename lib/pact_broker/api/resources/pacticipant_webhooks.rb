@@ -7,7 +7,7 @@ require 'pact_broker/api/resources/webhook_resource_methods'
 module PactBroker
   module Api
     module Resources
-      class Webhooks < BaseResource
+      class PacticipantWebhooks < BaseResource
         include WebhookResourceMethods
 
         def allowed_methods

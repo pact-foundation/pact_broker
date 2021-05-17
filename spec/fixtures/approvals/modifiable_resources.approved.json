@@ -50,6 +50,9 @@
       "resource_class_name": "PactBroker::Api::Resources::Pacticipant"
     },
     {
+      "resource_class_name": "PactBroker::Api::Resources::PacticipantWebhooks"
+    },
+    {
       "resource_class_name": "PactBroker::Api::Resources::Pacticipants"
     },
     {
@@ -84,9 +87,6 @@
     },
     {
       "resource_class_name": "PactBroker::Api::Resources::WebhookExecution"
-    },
-    {
-      "resource_class_name": "PactBroker::Api::Resources::Webhooks"
     }
   ]
 }
