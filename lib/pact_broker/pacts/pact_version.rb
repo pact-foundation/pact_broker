@@ -52,6 +52,32 @@ module PactBroker
         latest_consumer_version.number
       end
 
+      def select_provider_tags_with_successful_verifications_from_another_branch_from_before_this_branch_created(tags)
+        tags.select do | tag |
+          first_tag_with_name = PactBroker::Domain::Tag.where(pacticipant_id: provider_id, name: tag).order(:created_at).first
+
+          verifications_join = {
+            Sequel[:verifications][:pact_version_id] => Sequel[:pact_versions][:id],
+            Sequel[:verifications][:success] => true
+          }
+          tags_join = {
+            Sequel[:tags][:version_id] => Sequel[:versions][:id],
+          }
+          query = PactVersion.where(Sequel[:pact_versions][:id] => id)
+            .join(:verifications, verifications_join)
+            .join(:versions, Sequel[:versions][:id] => Sequel[:verifications][:provider_version_id])
+            .join(:tags, tags_join) do
+              Sequel.lit('tags.name != ?', tag)
+            end
+
+          if first_tag_with_name
+            query = query.where { Sequel[:verifications][:created_at] < first_tag_with_name.created_at }
+          end
+
+          query.any?
+        end
+      end
+
       def select_provider_tags_with_successful_verifications(tags)
         tags.select do | tag |
           verifications_join = {

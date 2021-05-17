@@ -144,6 +144,50 @@ module PactBroker
         end
       end
 
+      describe "select_provider_tags_with_successful_verifications_from_another_branch_from_before_this_branch_created" do
+        let(:pact_version) { PactVersion.last }
+
+        subject { pact_version.select_provider_tags_with_successful_verifications_from_another_branch_from_before_this_branch_created(tags) }
+
+        context "when the provider version tag specified does not exist yet but there are previous successful verifications from another branch" do
+          before do
+            td.create_pact_with_hierarchy("Foo", "1", "Bar")
+              .create_verification(provider_version: "20", tag_names: ['dev'], success: true)
+              .create_verification(provider_version: "21", number: 2)
+          end
+
+          let(:tags) { %w[feat-new-branch] }
+
+          it { is_expected.to eq ["feat-new-branch"] }
+        end
+
+        context "when there is a successful verification from before the first provider version with the specified tag was created" do
+          before do
+            td.create_pact_with_hierarchy("Foo", "1", "Bar")
+              .create_verification(provider_version: "20", tag_names: ['dev'], success: true)
+              .add_day
+              .create_verification(provider_version: "21", tag_names: ['feat-new-branch'], number: 2, success: false)
+          end
+
+          let(:tags) { %w[feat-new-branch] }
+
+          it { is_expected.to eq ["feat-new-branch"] }
+        end
+
+        context "when there is a successful verification from after the first provider version with the specified tag was created" do
+          before do
+            td.create_pact_with_hierarchy("Foo", "1", "Bar")
+              .create_verification(provider_version: "21", tag_names: ['feat-new-branch'], number: 2, success: false)
+              .add_day
+              .create_verification(provider_version: "20", tag_names: ['dev'], success: true)
+          end
+
+          let(:tags) { %w[feat-new-branch] }
+
+          it { is_expected.to eq [] }
+        end
+      end
+
       describe "#verified_successfully_by_any_provider_version?" do
 
         let(:pact_version) { PactVersion.last }
