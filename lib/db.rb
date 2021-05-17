@@ -4,6 +4,7 @@ require 'yaml'
 require 'pact_broker/logging'
 require 'erb'
 require 'pact_broker/project_root'
+require 'fileutils'
 
 module DB
   include PactBroker::Logging
@@ -29,6 +30,9 @@ module DB
     Sequel.datetime_class = DateTime
     if ENV['DEBUG'] == 'true'
       logger = Logger.new($stdout)
+    end
+    if db_credentials.fetch("adapter") == "sqlite"
+      FileUtils.mkdir_p(File.dirname(db_credentials.fetch("database")))
     end
     con = Sequel.connect(db_credentials.merge(:logger => logger, :pool_class => Sequel::ThreadedConnectionPool, :encoding => 'utf8'))
     con.extension(:connection_validator)

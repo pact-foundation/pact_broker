@@ -24,12 +24,12 @@ module PactBroker
 
     def delete_database_file
       ensure_not_production
-      FileUtils.rm_rf database_file_path
+      FileUtils.rm_rf(database_file_path) if sqlite?
     end
 
     def ensure_database_dir_exists
       ensure_not_production
-      FileUtils.mkdir_p File.dirname(database_file_path)
+      FileUtils.mkdir_p(File.dirname(database_file_path)) if sqlite?
     end
 
     def drop_objects
