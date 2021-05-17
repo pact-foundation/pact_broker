@@ -58,7 +58,7 @@ module PactBroker
         end
 
         def policy_record
-          webhook
+          webhook || parsed_webhook
         end
 
         private
