@@ -49,7 +49,7 @@ module PactBroker
         end
 
         def policy_record
-          uuid && webhook_service.find_by_uuid(uuid)
+          webhook
         end
 
         private
