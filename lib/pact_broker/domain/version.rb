@@ -59,6 +59,10 @@ module PactBroker
           where_pacticipant_name(pacticipant_name).where_number(version_number).single_record
         end
 
+        def first_for_pacticipant_id_and_branch(pacticipant_id, branch)
+          where(pacticipant_id: pacticipant_id, branch: branch).order(:created_at).first
+        end
+
         def latest_versions_for_pacticipant_branches(pacticipant_id, branches)
           query = Version.where(Sequel[:versions][:pacticipant_id] => pacticipant_id, Sequel[:versions][:branch] => branches)
 

@@ -268,10 +268,10 @@ module PactBroker
         end
       end
 
-      describe "#successfully_verified_by_provider_branch" do
+      describe "#successfully_verified_by_provider_branch_when_not_wip" do
         let(:bar) { td.find_pacticipant("Bar") }
 
-        subject { PactPublication.successfully_verified_by_provider_branch(bar.id, "main").all }
+        subject { PactPublication.successfully_verified_by_provider_branch_when_not_wip(bar.id, "main").all }
 
         context "PactPublication" do
           before do
@@ -295,7 +295,7 @@ module PactBroker
 
 
         context "with chained scopes" do
-          subject { PactPublication.latest_by_consumer_branch.successfully_verified_by_provider_branch(bar.id, "provider-main").all }
+          subject { PactPublication.latest_by_consumer_branch.successfully_verified_by_provider_branch_when_not_wip(bar.id, "provider-main").all }
 
           context "when there are no latest branch pacts that have been successfully verified by the specified provider branch" do
             before do
@@ -348,7 +348,7 @@ module PactBroker
                 .create_verification(provider_version: "2", success: true, branch: "provider-main", number: "2")
             end
 
-            subject { PactPublication.latest_by_consumer_tag.successfully_verified_by_provider_branch(bar.id, "provider-main").all }
+            subject { PactPublication.latest_by_consumer_tag.successfully_verified_by_provider_branch_when_not_wip(bar.id, "provider-main").all }
 
             its(:size) { is_expected.to eq 1 }
 
@@ -376,7 +376,7 @@ module PactBroker
 
             it "with branches" do
               potential = PactPublication.for_provider(bar).latest_by_consumer_branch
-              already_verified = potential.successfully_verified_by_provider_branch(bar.id, "provider-main")
+              already_verified = potential.successfully_verified_by_provider_branch_when_not_wip(bar.id, "provider-main")
               not_verified = PactPublication.subtract(potential.all, already_verified.all)
 
               expect(not_verified.size).to eq 1
@@ -385,7 +385,7 @@ module PactBroker
 
             it "with tags" do
               potential = PactPublication.for_provider(bar).latest_by_consumer_tag
-              already_verified = potential.successfully_verified_by_provider_branch(bar.id, "provider-main")
+              already_verified = potential.successfully_verified_by_provider_branch_when_not_wip(bar.id, "provider-main")
               not_verified = PactPublication.subtract(potential.all, already_verified.all)
 
               expect(not_verified.size).to eq 1

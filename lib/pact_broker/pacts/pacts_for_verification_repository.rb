@@ -199,18 +199,10 @@ module PactBroker
           )
         end
 
-        provider_has_no_versions = !provider.any_versions?
-
         tag_to_pact_publications.flat_map do | provider_tag_name, pact_publications |
           pact_publications.collect do | pact_publication |
-            force_include = PactBroker.feature_enabled?(:experimental_no_provider_versions_makes_all_head_pacts_wip) && provider_has_no_versions
-
-            pending_tag_names_to_use = [provider_tag_name]
-
-            if pending_tag_names_to_use.any?
-              selectors = create_selectors_for_wip_pact(pact_publication)
-              VerifiablePact.create_for_wip_for_provider_tags(pact_publication.to_domain, selectors, pending_tag_names_to_use)
-            end
+            selectors = create_selectors_for_wip_pact(pact_publication)
+            VerifiablePact.create_for_wip_for_provider_tags(pact_publication.to_domain, selectors, [provider_tag_name])
           end
         end.compact
       end
@@ -274,12 +266,13 @@ module PactBroker
       end
 
       def remove_already_verified_by_branch(pact_publications, provider, provider_version_branch)
-        PactPublication.subtract(pact_publications.all, pact_publications.successfully_verified_by_provider_branch(provider.id, provider_version_branch).all)
+        remaining_pact_publications = PactPublication.subtract(pact_publications.all, pact_publications.successfully_verified_by_provider_branch_when_not_wip(provider.id, provider_version_branch).all)
+        PactPublication.subtract(remaining_pact_publications, pact_publications.successfully_verified_by_provider_another_branch_before_this_branch_first_created(provider.id, provider_version_branch).all)
       end
 
       def remove_already_verified_by_tag(pact_publications, query, provider, tag)
         pact_publications = PactPublication.subtract(pact_publications, query.successfully_verified_by_provider_tag_when_not_wip(provider.id, tag).all)
-        PactPublication.subtract(pact_publications, query.successfully_verified_by_provider_another_tag_before_branch_created(provider.id, tag).all)
+        PactPublication.subtract(pact_publications, query.successfully_verified_by_provider_another_tag_before_this_tag_first_created(provider.id, tag).all)
       end
 
       def scope_for(scope)

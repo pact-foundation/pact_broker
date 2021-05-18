@@ -218,6 +218,64 @@ module PactBroker
             expect(subject.size).to be 0
           end
         end
+
+        context "when the provider version tag specified does not exist yet and there are previous successful verifications from another branch" do
+          before do
+            td.create_pact_with_hierarchy("foo", "1", "bar")
+              .create_consumer_version_tag("main")
+              .create_verification(provider_version: "20", branch: 'dev', success: true)
+              .create_verification(provider_version: "21", number: 2)
+          end
+
+          let(:provider_version_branch) { "feat-new-branch" }
+
+          it { is_expected.to be_empty }
+        end
+
+        context "when the provider version tag specified does not exist yet and there are previous failed verifications from another branch" do
+          before do
+            td.create_pact_with_hierarchy("foo", "1", "bar")
+              .create_consumer_version_tag("main")
+              .create_verification(provider_version: "20", branch: 'dev', success: false)
+              .create_verification(provider_version: "21", number: 2)
+          end
+
+          let(:provider_version_branch) { "feat-new-branch" }
+
+          it "is included" do
+            expect(subject.first.provider_branch).to eq provider_version_branch
+          end
+        end
+
+        context "when there is a successful verification from before the first provider version with the specified tag was created" do
+          before do
+            td.create_pact_with_hierarchy("foo", "1", "bar")
+              .create_consumer_version_tag("main")
+              .create_verification(provider_version: "20", branch: 'dev', success: true)
+              .add_day
+              .create_verification(provider_version: "21", branch: 'feat-new-branch', number: 2, success: false)
+          end
+
+          let(:provider_version_branch) { "feat-new-branch" }
+
+          it { is_expected.to be_empty }
+        end
+
+        context "when there is a successful verification from after the first provider version with the specified tag was created" do
+          before do
+            td.create_pact_with_hierarchy("foo", "1", "bar")
+              .create_consumer_version_tag("main")
+              .create_verification(provider_version: "21", branch: 'feat-new-branch', number: 2, success: false)
+              .add_day
+              .create_verification(provider_version: "20", branch: 'dev', success: true)
+          end
+
+          let(:provider_version_branch) { "feat-new-branch" }
+
+          it "is included" do
+            expect(subject.first.provider_branch).to eq provider_version_branch
+          end
+        end
       end
     end
   end

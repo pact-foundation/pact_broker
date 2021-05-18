@@ -168,7 +168,7 @@ module PactBroker
           .join(:environments, environments_join)
       end
 
-      def successfully_verified_by_provider_branch(provider_id, provider_version_branch)
+      def successfully_verified_by_provider_branch_when_not_wip(provider_id, provider_version_branch)
         verifications_join = {
           pact_version_id: :pact_version_id,
           Sequel[:verifications][:success] => true,
@@ -188,6 +188,33 @@ module PactBroker
           .distinct
       end
 
+      def successfully_verified_by_provider_another_branch_before_this_branch_first_created(provider_id, provider_version_branch)
+        first_version_for_branch = PactBroker::Domain::Version.first_for_pacticipant_id_and_branch(provider_id, provider_version_branch)
+        verifications_join = {
+          pact_version_id: :pact_version_id,
+          Sequel[:verifications][:success] => true,
+          Sequel[:verifications][:wip] => false,
+          Sequel[:verifications][:provider_id] => provider_id
+        }
+        versions_join = {
+          Sequel[:verifications][:provider_version_id] => Sequel[:provider_versions][:id],
+          Sequel[:provider_versions][:pacticipant_id] => provider_id
+        }
+
+        query = from_self(alias: :pp).select(Sequel[:pp].*)
+          .join(:verifications, verifications_join)
+          .join(:versions, versions_join, { table_alias: :provider_versions } ) do
+            Sequel.lit('provider_versions.branch != ?', provider_version_branch)
+          end
+          .where(Sequel[:pp][:provider_id] => provider_id)
+
+        if first_version_for_branch
+          query = query.where { Sequel[:verifications][:created_at] < first_version_for_branch.created_at }
+        end
+
+        query.distinct
+      end
+
       def successfully_verified_by_provider_tag_when_not_wip(provider_id, provider_tag)
         verifications_join = {
           pact_version_id: :pact_version_id,
@@ -195,6 +222,7 @@ module PactBroker
           Sequel[:verifications][:wip] => false,
           Sequel[:verifications][:provider_id] => provider_id
         }
+
         tags_join = {
           Sequel[:verifications][:provider_version_id] => Sequel[:provider_tags][:version_id],
           Sequel[:provider_tags][:name] => provider_tag
@@ -207,7 +235,7 @@ module PactBroker
           .distinct
       end
 
-      def successfully_verified_by_provider_another_tag_before_branch_created(provider_id, provider_tag)
+      def successfully_verified_by_provider_another_tag_before_this_tag_first_created(provider_id, provider_tag)
         first_tag_with_name = PactBroker::Domain::Tag.where(pacticipant_id: provider_id, name: provider_tag).order(:created_at).first
 
         verifications_join = {
