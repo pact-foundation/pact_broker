@@ -188,7 +188,7 @@ module PactBroker
           .distinct
       end
 
-      def successfully_verified_by_provider_tag(provider_id, provider_tag)
+      def successfully_verified_by_provider_tag_when_not_wip(provider_id, provider_tag)
         verifications_join = {
           pact_version_id: :pact_version_id,
           Sequel[:verifications][:success] => true,
@@ -205,6 +205,33 @@ module PactBroker
           .join(:tags, tags_join, { table_alias: :provider_tags } )
           .where(Sequel[:pp][:provider_id] => provider_id)
           .distinct
+      end
+
+      def successfully_verified_by_provider_another_tag_before_branch_created(provider_id, provider_tag)
+        first_tag_with_name = PactBroker::Domain::Tag.where(pacticipant_id: provider_id, name: provider_tag).order(:created_at).first
+
+        verifications_join = {
+          pact_version_id: :pact_version_id,
+          Sequel[:verifications][:success] => true,
+          Sequel[:verifications][:wip] => false,
+          Sequel[:verifications][:provider_id] => provider_id
+        }
+        tags_join = {
+          Sequel[:verifications][:provider_version_id] => Sequel[:provider_tags][:version_id],
+        }
+
+        query = from_self(alias: :pp).select(Sequel[:pp].*)
+          .join(:verifications, verifications_join)
+          .join(:tags, tags_join, { table_alias: :provider_tags } ) do
+            Sequel.lit('provider_tags.name != ?', provider_tag)
+          end
+          .where(Sequel[:pp][:provider_id] => provider_id)
+
+        if first_tag_with_name
+          query = query.where { Sequel[:verifications][:created_at] < first_tag_with_name.created_at }
+        end
+
+        query.distinct
       end
 
       def created_after date

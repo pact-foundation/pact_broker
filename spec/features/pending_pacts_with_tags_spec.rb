@@ -1,4 +1,4 @@
-RSpec.describe "the pending lifecycle of a pact (with no tags)" do
+RSpec.describe "the pending lifecycle of a pact (with tags)" do
   let(:pact_content_1) { { some: "interactions" }.to_json }
   let(:pact_content_2) { { some: "other interactions" }.to_json }
   let(:request_headers) { { "CONTENT_TYPE" => "application/json", "HTTP_ACCEPT" => "application/hal+json"} }

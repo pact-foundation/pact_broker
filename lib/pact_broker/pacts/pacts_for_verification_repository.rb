@@ -175,6 +175,7 @@ module PactBroker
           end
       end
 
+      # Tag object with created_at date for the first time that tag was created
       def provider_tag_objects_for(provider, provider_tags_names)
         PactBroker::Domain::Tag
           .select_group(Sequel[:tags][:name], Sequel[:pacticipant_id])
@@ -204,12 +205,7 @@ module PactBroker
           pact_publications.collect do | pact_publication |
             force_include = PactBroker.feature_enabled?(:experimental_no_provider_versions_makes_all_head_pacts_wip) && provider_has_no_versions
 
-            pending_tag_names_to_use = if force_include
-              [provider_tag_name]
-            else
-              pre_existing_tag_names = find_provider_tag_names_that_were_first_used_before_pact_published(pact_publication, provider_tags)
-              [provider_tag_name] & pre_existing_tag_names
-            end
+            pending_tag_names_to_use = [provider_tag_name]
 
             if pending_tag_names_to_use.any?
               selectors = create_selectors_for_wip_pact(pact_publication)
@@ -282,7 +278,8 @@ module PactBroker
       end
 
       def remove_already_verified_by_tag(pact_publications, query, provider, tag)
-        PactPublication.subtract(pact_publications, query.successfully_verified_by_provider_tag(provider.id, tag).all)
+        pact_publications = PactPublication.subtract(pact_publications, query.successfully_verified_by_provider_tag_when_not_wip(provider.id, tag).all)
+        PactPublication.subtract(pact_publications, query.successfully_verified_by_provider_another_tag_before_branch_created(provider.id, tag).all)
       end
 
       def scope_for(scope)
