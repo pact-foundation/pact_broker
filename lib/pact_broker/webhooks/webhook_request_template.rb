@@ -73,7 +73,35 @@ module PactBroker
         "#{method.upcase} #{url}, username=#{username}, password=#{display_password}, headers=#{redacted_headers}, body=#{body}"
       end
 
+      def template_parameters(scope = nil)
+        body_template_parameters(scope) + url_template_parameters(scope) + header_template_parameters(scope) + credentials_template_parameters(scope)
+      end
+
+      def body_template_parameters(scope = nil)
+        body_string.scan(parameter_pattern(scope)).flatten.uniq
+      end
+
+      def header_template_parameters(scope = nil)
+        pattern = parameter_pattern(scope)
+        headers.values.collect { |value| value.scan(pattern) }.flatten.uniq
+      end
+
+      def url_template_parameters(scope = nil)
+        url.scan(parameter_pattern(scope)).flatten.uniq
+      end
+
+      def credentials_template_parameters(scope = nil)
+        pattern = parameter_pattern(scope)
+        [username, password].compact.collect do | credential |
+          credential.scan(pattern)
+        end.flatten.uniq
+      end
+
       private
+
+      def parameter_pattern(scope)
+        scope ? /\${(#{scope}\.[a-zA-z]+)}/ : /\${([a-zA-z]+\.[a-zA-z]+)}/
+      end
 
       def build_url(template_params)
         URI(PactBroker::Webhooks::Render.call(url, template_params){ | value | CGI::escape(value) if !value.nil? } ).to_s

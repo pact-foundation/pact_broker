@@ -7,7 +7,7 @@ module PactBroker
         {
           method: 'POST',
           url: url,
-          username: "username",
+          username: username,
           password: password,
           uuid: "1234",
           body: body,
@@ -27,6 +27,7 @@ module PactBroker
         }
       end
 
+      let(:username) { "username" }
       let(:password) { "password" }
       let(:headers) { {'headername' => 'headervalue'} }
       let(:url) { "http://example.org/hook?foo=bar" }
@@ -177,6 +178,47 @@ module PactBroker
           let(:password) { "foo" }
 
           its(:display_password) { is_expected.to eq "**********" }
+        end
+      end
+
+      describe "template_parameters" do
+        subject { WebhookRequestTemplate.new(attributes) }
+
+        context "with a JSON body" do
+          let(:url) { "http://localhost?token=${bar.thing}"}
+          let(:body) do
+            {
+              "someKey" => "${pactbroker.something}",
+              "${pactbroker.someKey}" => "blah",
+              "blah" => "${foo.someFoo}"
+            }
+          end
+          let(:headers) do
+            {
+              "name" => "${header.thing}"
+            }
+          end
+
+          let(:username) { "${foo.username}" }
+          let(:password) { "${foo.password}" }
+
+          its(:template_parameters) { is_expected.to eq ["pactbroker.something", "pactbroker.someKey", "foo.someFoo", "bar.thing", "header.thing", "foo.username", "foo.password"] }
+          its(:body_template_parameters) { is_expected.to eq ["pactbroker.something", "pactbroker.someKey", "foo.someFoo"] }
+          its(:header_template_parameters) { is_expected.to eq ["header.thing"] }
+          its(:url_template_parameters) { is_expected.to eq ["bar.thing"] }
+          its(:credentials_template_parameters) { is_expected.to eq ["foo.username", "foo.password"]}
+
+          context "with a scope specified" do
+            it "returns the template_parameters that start with the specified scope" do
+              expect(subject.template_parameters("foo")).to eq ["foo.someFoo", "foo.username", "foo.password"]
+            end
+          end
+        end
+
+        context "with a string body" do
+          let(:body) { "${pactbroker.someKey} ${pactbroker.someOtherKey} ${pactbroker.someOtherKey} ${pactbroker.withSpace } pactbroker.invalid" }
+
+          its(:template_parameters) { is_expected.to eq ["pactbroker.someKey", "pactbroker.someOtherKey"] }
         end
       end
     end
