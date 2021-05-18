@@ -27,7 +27,9 @@ en:
             consumerVersionNumber: the version number of the most recent consumer version associated with the pact content.
             providerVersionNumber: the provider version number for the verification result
             consumerVersionTags: the list of tag names for the most recent consumer version associated with the pact content, separated by ", "
+            consumerVersionBranch: the git branch associated with the consumer version
             providerVersionTags: the list of tag names for the provider version associated with the verification result, separated by ", ".
+            providerVersionBranch: the git branch associated with the provider version
             consumerLabels: the list of labels for the consumer associated with the pact content, separated by ", ".
             providerLabels: the list of labels for the provider associated with the pact content, separated by ", ".
             pactUrl: the "permalink" URL to the newly published pact (the URL specifying the consumer version URL, rather than the "/latest" format.
