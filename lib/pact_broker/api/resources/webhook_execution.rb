@@ -48,6 +48,10 @@ module PactBroker
           :'webhooks::webhook'
         end
 
+        def action
+          :execute
+        end
+
         def policy_record
           webhook
         end

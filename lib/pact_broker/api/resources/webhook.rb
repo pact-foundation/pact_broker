@@ -57,6 +57,14 @@ module PactBroker
           :'webhooks::webhook'
         end
 
+        def action
+          if request.put?
+            webhook ? :update : :create
+          else
+            super
+          end
+        end
+
         def policy_record
           webhook || parsed_webhook
         end
