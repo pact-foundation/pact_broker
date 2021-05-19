@@ -255,6 +255,29 @@ RSpec.describe "the lifecycle of a WIP pact" do
         end
       end
 
+      describe "a feature branching scenario with multiple provider feature branches" do
+        it "is WIP on a second feature branch even if the first feature branch successfully verified it" do
+          # CONSUMER BUILD - feature branch
+          publish_pact_with_feature_tag
+
+          # PROVIDER BUILD for feature branch 1
+          # fetch pacts to verify
+          pacts_for_verification_response = get_pacts_for_verification(build_pacts_for_verification_request_body("feat-1", "master"))
+          pact_response = get_pact(wip_pact_url_from(pacts_for_verification_response))
+
+          # verify pact... success!
+
+          # publish success verification results
+          publish_verification_results("1", "feat-1", verification_results_url_from(pact_response), true)
+
+          # ANOTHER PROVIDER BUILD on a different new feature branch
+          # fetch pacts to verify
+          sleep 1 if ::DB.mysql?
+          pacts_for_verification_response = get_pacts_for_verification(build_pacts_for_verification_request_body("feat-2", "master"))
+          expect(wip_pacts_from(pacts_for_verification_response).size).to eq 1
+        end
+      end
+
       describe "a feature branching scenario with matching feature branches" do
         it "stays wip on master even after it has been successfully verified on the provider's feature branch" do
           # CONSUMER BUILD - feature branch
