@@ -8,7 +8,8 @@ RSpec.describe "the lifecycle of a WIP pact" do
     {
       consumerVersionSelectors: [ { tag: "master", latest: true } ],
       providerVersionTags: ["master"],
-      includeWipPactsSince: start_date
+      includeWipPactsSince: start_date,
+      includePendingStatus: true
     }.to_json
   end
 
@@ -91,7 +92,8 @@ RSpec.describe "the lifecycle of a WIP pact" do
     {
       consumerVersionSelectors: [ { tag: consumer_version_tag || provider_version_tag, latest: true, fallbackTag: "master" } ],
       providerVersionTags: [provider_version_tag],
-      includeWipPactsSince: start_date
+      includeWipPactsSince: start_date,
+      includePendingStatus: true
     }.to_json
   end
 
@@ -140,11 +142,12 @@ RSpec.describe "the lifecycle of a WIP pact" do
           publish_pact_with_master_tag
           publish_pact_with_feature_tag
 
-          # PROVIDER BUILD
+          # PROVIDER BUILD - master
           # fetch pacts to verify
           pacts_for_verification_response = get_pacts_for_verification
           pact_url = wip_pact_url_from(pacts_for_verification_response)
           pact_response = get_pact(pact_url)
+          expect(wip_pacts_from(pacts_for_verification_response).first["verificationProperties"]["pending"]).to be true
 
           # verify pact... success!
 
@@ -152,12 +155,14 @@ RSpec.describe "the lifecycle of a WIP pact" do
           verification_results_url = verification_results_url_from(pact_response)
           publish_verification_results_with_tag_master(verification_results_url, true)
 
-          # ANOTHER PROVIDER BUILD 2
+          # ANOTHER PROVIDER BUILD 2 - master
           # get pacts for verification
           # publish successful verification results
           pacts_for_verification_response = get_pacts_for_verification
           # still wip
           expect(wip_pacts_from(pacts_for_verification_response).size).to eq 1
+          # still pending - but maybe it should not be?
+          expect(wip_pacts_from(pacts_for_verification_response).first["verificationProperties"]["pending"]).to be true
         end
       end
 
@@ -170,6 +175,7 @@ RSpec.describe "the lifecycle of a WIP pact" do
           # PROVIDER BUILD
           # fetch pacts to verify
           pacts_for_verification_response = get_pacts_for_verification
+          expect(wip_pacts_from(pacts_for_verification_response).size).to eq 1
           pact_url = wip_pact_url_from(pacts_for_verification_response)
           pact_response = get_pact(pact_url)
 
@@ -226,7 +232,7 @@ RSpec.describe "the lifecycle of a WIP pact" do
           # however feat-x pact is no longer pending because it has a successful verification from master!!!
           # Question: do we want this behaviour? Or should pending use the same logic?
           expect(wip_pacts_from(pacts_for_verification_response).first['verificationProperties']['wip']).to be true
-          expect(wip_pacts_from(pacts_for_verification_response).first['verificationProperties']['pending']).to be nil
+          expect(wip_pacts_from(pacts_for_verification_response).first['verificationProperties']['pending']).to be true
 
           # verify pact... success!
 
