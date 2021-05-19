@@ -186,12 +186,13 @@ module PactBroker
           .all
       end
 
+      # TODO ? find the WIP pacts by consumer branch
       def find_wip_pact_versions_for_provider_by_provider_tags(provider, provider_tags_names, provider_tags, wip_start_date, pact_publication_scope)
         potential_wip_pacts_by_consumer_tag_query = PactPublication.for_provider(provider).created_after(wip_start_date).send(pact_publication_scope)
         potential_wip_pacts_by_consumer_tag = potential_wip_pacts_by_consumer_tag_query.all
 
         tag_to_pact_publications = provider_tags_names.each_with_object({}) do | provider_tag_name, tag_to_pact_publications |
-          tag_to_pact_publications[provider_tag_name] = remove_already_verified_by_tag(
+          tag_to_pact_publications[provider_tag_name] = remove_non_wip_for_tag(
             potential_wip_pacts_by_consumer_tag,
             potential_wip_pacts_by_consumer_tag_query,
             provider,
@@ -219,13 +220,13 @@ module PactBroker
         provider = pacticipant_repository.find_by_name(provider_name)
         wip_start_date = options.fetch(:include_wip_pacts_since)
 
-        wip_pact_publications_by_branch = remove_already_verified_by_branch(
+        wip_pact_publications_by_branch = remove_non_wip_for_branch(
           PactPublication.for_provider(provider).created_after(wip_start_date).latest_by_consumer_branch,
           provider,
           provider_version_branch
         )
 
-        wip_pact_publications_by_tag = remove_already_verified_by_branch(
+        wip_pact_publications_by_tag = remove_non_wip_for_branch(
           PactPublication.for_provider(provider).created_after(wip_start_date).latest_by_consumer_tag,
           provider,
           provider_version_branch
@@ -265,12 +266,12 @@ module PactBroker
           end
       end
 
-      def remove_already_verified_by_branch(pact_publications, provider, provider_version_branch)
+      def remove_non_wip_for_branch(pact_publications, provider, provider_version_branch)
         remaining_pact_publications = PactPublication.subtract(pact_publications.all, pact_publications.successfully_verified_by_provider_branch_when_not_wip(provider.id, provider_version_branch).all)
         PactPublication.subtract(remaining_pact_publications, pact_publications.successfully_verified_by_provider_another_branch_before_this_branch_first_created(provider.id, provider_version_branch).all)
       end
 
-      def remove_already_verified_by_tag(pact_publications, query, provider, tag)
+      def remove_non_wip_for_tag(pact_publications, query, provider, tag)
         pact_publications = PactPublication.subtract(pact_publications, query.successfully_verified_by_provider_tag_when_not_wip(provider.id, tag).all)
         PactPublication.subtract(pact_publications, query.successfully_verified_by_provider_another_tag_before_this_tag_first_created(provider.id, tag).all)
       end

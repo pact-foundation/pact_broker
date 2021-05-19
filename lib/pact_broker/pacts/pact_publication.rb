@@ -5,6 +5,7 @@ require 'pact_broker/repositories/helpers'
 require 'pact_broker/integrations/integration'
 require 'pact_broker/tags/head_pact_tags'
 require 'pact_broker/pacts/pact_publication_dataset_module'
+require 'pact_broker/pacts/pact_publication_wip_dataset_module'
 require 'pact_broker/pacts/eager_loaders'
 require 'pact_broker/pacts/lazy_loaders'
 
@@ -37,6 +38,7 @@ module PactBroker
       dataset_module do
         include PactBroker::Repositories::Helpers
         include PactPublicationDatasetModule
+        include PactPublicationWipDatasetModule
       end
 
       def self.subtract(a, b)
