@@ -16,6 +16,26 @@ module PactBroker
 
       dataset_module do
         include PactBroker::Repositories::Helpers
+
+        def join_successful_verifications
+          verifications_join = {
+            Sequel[:verifications][:pact_version_id] => Sequel[:pact_versions][:id],
+            Sequel[:verifications][:success] => true
+          }
+          join(:verifications, verifications_join)
+        end
+
+        def join_provider_versions
+          join(:versions, { Sequel[:provider_versions][:id] => Sequel[:verifications][:provider_version_id] }, { table_alias: :provider_versions })
+        end
+
+        def join_provider_version_tags_for_tag(tag)
+          tags_join = {
+            Sequel[:tags][:version_id] => Sequel[:provider_versions][:id],
+            Sequel[:tags][:name] => tag
+          }
+          join(:tags, tags_join)
+        end
       end
 
       def name
@@ -80,31 +100,17 @@ module PactBroker
 
       def select_provider_tags_with_successful_verifications(tags)
         tags.select do | tag |
-          verifications_join = {
-            Sequel[:verifications][:pact_version_id] => Sequel[:pact_versions][:id],
-            Sequel[:verifications][:success] => true
-          }
-          tags_join = {
-            Sequel[:tags][:version_id] => Sequel[:versions][:id],
-            Sequel[:tags][:name] => tag
-          }
           PactVersion.where(Sequel[:pact_versions][:id] => id)
-            .join(:verifications, verifications_join)
-            .join(:versions, Sequel[:versions][:id] => Sequel[:verifications][:provider_version_id])
-            .join(:tags, tags_join)
+            .join_successful_verifications
+            .join_provider_versions
+            .join_provider_version_tags_for_tag(tag)
             .any?
         end
       end
 
       def verified_successfully_by_any_provider_version?
-        verifications_join = {
-          Sequel[:verifications][:pact_version_id] => Sequel[:pact_versions][:id],
-          Sequel[:verifications][:pact_version_id] => id,
-          Sequel[:verifications][:success] => true
-        }
         PactVersion.where(Sequel[:pact_versions][:id] => id)
-          .join(:verifications, verifications_join)
-          .join(:versions, Sequel[:versions][:id] => Sequel[:verifications][:provider_version_id])
+          .join_successful_verifications
           .any?
       end
     end
