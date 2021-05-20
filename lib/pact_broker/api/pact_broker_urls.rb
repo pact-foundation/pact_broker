@@ -393,8 +393,12 @@ module PactBroker
         # Some people remove the == padding on the end
         Base64.urlsafe_decode64(metadata)
       rescue StandardError => e
-        logger.warn("Exception parsing webhook metadata: '#{metadata}'", e)
-        ""
+        begin
+          Base64.decode64(metadata)
+        rescue
+          logger.warn("Exception parsing webhook metadata: '#{metadata}'", e)
+          ""
+        end
       end
 
       def parse_nested_metadata_query(query)

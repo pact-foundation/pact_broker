@@ -142,6 +142,14 @@ module PactBroker
           end
         end
 
+        context "another example without the padding" do
+          let(:encoded_metadata) { "c1tdW2xdPXRydWUmc1tdW2" }
+
+          it "can still handle it" do
+            expect(PactBrokerUrls.decode_pact_metadata(encoded_metadata)).to eq({ "s" => [{ "l" => "true" }, nil] })
+          end
+        end
+
         context "when the metadata is not valid base64" do
           let(:encoded_metadata) { "%" }
 
