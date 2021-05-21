@@ -239,7 +239,7 @@ module PactBroker
             triggered_webhooks_notices_url = url_for_triggered_webhook(triggered_webhook, base_url)
             text_2_params = { webhook_description: triggered_webhook.webhook.description&.inspect || triggered_webhook.webhook_uuid, event_name: triggered_webhook.event_name }
             text_1 = message("messages.webhooks.webhook_triggered_for_event", text_2_params)
-            text_2 = message("messages.webhooks.triggered_webhook_see_notices", url: triggered_webhooks_notices_url)
+            text_2 = message("messages.webhooks.triggered_webhook_see_logs", url: triggered_webhooks_notices_url)
             Notice.debug("  #{text_1}\n    #{text_2}")
           end
         else
