@@ -22,22 +22,22 @@ en:
       webhooks:
         parameters:
           pactbroker:
-            consumerName: the consumer name
-            providerName: the provider name
-            consumerVersionNumber: the version number of the most recent consumer version associated with the pact content.
-            providerVersionNumber: the provider version number for the verification result
-            consumerVersionTags: the list of tag names for the most recent consumer version associated with the pact content, separated by ", "
-            consumerVersionBranch: the git branch associated with the consumer version
-            providerVersionTags: the list of tag names for the provider version associated with the verification result, separated by ", ".
-            providerVersionBranch: the git branch associated with the provider version
-            consumerLabels: the list of labels for the consumer associated with the pact content, separated by ", ".
-            providerLabels: the list of labels for the provider associated with the pact content, separated by ", ".
-            pactUrl: the "permalink" URL to the newly published pact (the URL specifying the consumer version URL, rather than the "/latest" format.
-            verificationResultUrl: the URL to the relevant verification result.
-            githubVerificationStatus: the verification status using the correct keywords for posting to the Github commit status API. See https://developer.github.com/v3/repos/statuses.
-            bitbucketVerificationStatus: the verification status using the correct keywords for posting to the Bitbucket commit status API. See https://developer.atlassian.com/server/bitbucket/how-tos/updating-build-status-for-commits/.
-            eventName: the name of the event that triggered the webhook
-            currentlyDeployedProviderVersionNumber: the version number of the currently deployed provider version (when used in a template, the webhook will be triggered once for each currently deployed provider version)
+            consumerName: The consumer name
+            providerName: The provider name
+            consumerVersionNumber: The version number of the most recent consumer version associated with the pact content.
+            providerVersionNumber: The provider version number for the verification result
+            consumerVersionTags: The list of tag names for the most recent consumer version associated with the pact content, separated by ", "
+            consumerVersionBranch: The git branch associated with the consumer version
+            providerVersionTags: The list of tag names for the provider version associated with the verification result, separated by ", ".
+            providerVersionBranch: The git branch associated with the provider version
+            consumerLabels: The list of labels for the consumer associated with the pact content, separated by ", ".
+            providerLabels: The list of labels for the provider associated with the pact content, separated by ", ".
+            pactUrl: The "permalink" URL to the newly published pact (the URL specifying the consumer version URL, rather than the "/latest" format.
+            verificationResultUrl: The URL to the relevant verification result.
+            githubVerificationStatus: The verification status using the correct keywords for posting to the Github commit status API. See https://developer.github.com/v3/repos/statuses.
+            bitbucketVerificationStatus: The verification status using the correct keywords for posting to the Bitbucket commit status API. See https://developer.atlassian.com/server/bitbucket/how-tos/updating-build-status-for-commits/.
+            eventName: The name of the event that triggered the webhook
+            currentlyDeployedProviderVersionNumber: The version number of the currently deployed provider version (when used in a template, the webhook will be triggered once for each currently deployed provider version)
         no_webhooks_enabled_for_event: No enabled webhooks found for the detected events
         webhook_triggered_for_event: Webhook %{webhook_description} triggered for event %{event_name}.
         triggered_webhook_see_logs: View logs at %{url}
