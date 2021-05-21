@@ -90,7 +90,9 @@ module PactBroker
       end
 
       def select_pending_provider_version_tags(provider_version_tags)
-        provider_version_tags - db_model.pact_version.select_provider_tags_with_successful_verifications(provider_version_tags)
+        tags_with_successful_verifications_from_that_branch = db_model.pact_version.select_provider_tags_with_successful_verifications(provider_version_tags)
+        tags_with_previous_successful_verifications_from_other_branches = db_model.pact_version.select_provider_tags_with_successful_verifications_from_another_branch_from_before_this_branch_created(provider_version_tags)
+        provider_version_tags - tags_with_successful_verifications_from_that_branch - tags_with_previous_successful_verifications_from_other_branches
       end
 
       def pending?

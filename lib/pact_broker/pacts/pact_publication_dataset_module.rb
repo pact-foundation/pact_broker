@@ -168,43 +168,8 @@ module PactBroker
           .join(:environments, environments_join)
       end
 
-      def successfully_verified_by_provider_branch(provider_id, provider_version_branch)
-        verifications_join = {
-          pact_version_id: :pact_version_id,
-          Sequel[:verifications][:success] => true,
-          Sequel[:verifications][:wip] => false,
-          Sequel[:verifications][:provider_id] => provider_id
-        }
-        versions_join = {
-          Sequel[:verifications][:provider_version_id] => Sequel[:provider_versions][:id],
-          Sequel[:provider_versions][:branch] => provider_version_branch,
-          Sequel[:provider_versions][:pacticipant_id] => provider_id
-        }
-
-        from_self(alias: :pp).select(Sequel[:pp].*)
-          .join(:verifications, verifications_join)
-          .join(:versions, versions_join, { table_alias: :provider_versions } )
-          .where(Sequel[:pp][:provider_id] => provider_id)
-          .distinct
-      end
-
-      def successfully_verified_by_provider_tag(provider_id, provider_tag)
-        verifications_join = {
-          pact_version_id: :pact_version_id,
-          Sequel[:verifications][:success] => true,
-          Sequel[:verifications][:wip] => false,
-          Sequel[:verifications][:provider_id] => provider_id
-        }
-        tags_join = {
-          Sequel[:verifications][:provider_version_id] => Sequel[:provider_tags][:version_id],
-          Sequel[:provider_tags][:name] => provider_tag
-        }
-
-        from_self(alias: :pp).select(Sequel[:pp].*)
-          .join(:verifications, verifications_join)
-          .join(:tags, tags_join, { table_alias: :provider_tags } )
-          .where(Sequel[:pp][:provider_id] => provider_id)
-          .distinct
+      def verified_before_date(date)
+        where { Sequel[:verifications][:execution_date] < date }
       end
 
       def created_after date

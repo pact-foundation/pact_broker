@@ -8,7 +8,8 @@ RSpec.describe "the lifecycle of a WIP pact" do
     {
       consumerVersionSelectors: [ { tag: "master", latest: true } ],
       providerVersionTags: ["master"],
-      includeWipPactsSince: start_date
+      includeWipPactsSince: start_date,
+      includePendingStatus: true
     }.to_json
   end
 
@@ -91,7 +92,8 @@ RSpec.describe "the lifecycle of a WIP pact" do
     {
       consumerVersionSelectors: [ { tag: consumer_version_tag || provider_version_tag, latest: true, fallbackTag: "master" } ],
       providerVersionTags: [provider_version_tag],
-      includeWipPactsSince: start_date
+      includeWipPactsSince: start_date,
+      includePendingStatus: true
     }.to_json
   end
 
@@ -99,8 +101,6 @@ RSpec.describe "the lifecycle of a WIP pact" do
     context "a pact published afer the specified date, with a tag that is not specified explictly in the 'pacts for verification' request" do
       describe "when it is first published" do
         it "is included in the list of pacts to verify as a WIP pact" do
-          create_initial_provider_version_on_master
-
           publish_pact_with_master_tag
           publish_pact_with_feature_tag
 
@@ -111,8 +111,6 @@ RSpec.describe "the lifecycle of a WIP pact" do
 
       describe "when it is verified unsuccessfully" do
         it "is still included as a WIP pact" do
-          create_initial_provider_version_on_master
-
           # CONSUMER BUILD
           # publish pact
           publish_pact_with_master_tag
@@ -140,17 +138,16 @@ RSpec.describe "the lifecycle of a WIP pact" do
 
       describe "when it is verified successfully while included as a WIP pact" do
         it "is still included as a WIP pact" do
-          create_initial_provider_version_on_master
-
           # CONSUMER BUILD
           publish_pact_with_master_tag
           publish_pact_with_feature_tag
 
-          # PROVIDER BUILD
+          # PROVIDER BUILD - master
           # fetch pacts to verify
           pacts_for_verification_response = get_pacts_for_verification
           pact_url = wip_pact_url_from(pacts_for_verification_response)
           pact_response = get_pact(pact_url)
+          expect(wip_pacts_from(pacts_for_verification_response).first["verificationProperties"]["pending"]).to be true
 
           # verify pact... success!
 
@@ -158,19 +155,19 @@ RSpec.describe "the lifecycle of a WIP pact" do
           verification_results_url = verification_results_url_from(pact_response)
           publish_verification_results_with_tag_master(verification_results_url, true)
 
-          # ANOTHER PROVIDER BUILD 2
+          # ANOTHER PROVIDER BUILD 2 - master
           # get pacts for verification
           # publish successful verification results
           pacts_for_verification_response = get_pacts_for_verification
           # still wip
           expect(wip_pacts_from(pacts_for_verification_response).size).to eq 1
+          # still pending - but maybe it should not be?
+          expect(wip_pacts_from(pacts_for_verification_response).first["verificationProperties"]["pending"]).to be true
         end
       end
 
       describe "when it is verified successfully when included explicitly" do
         it "is no longer included as a WIP pact" do
-          create_initial_provider_version_on_master
-
           # CONSUMER BUILD
           publish_pact_with_master_tag
           publish_pact_with_feature_tag
@@ -178,6 +175,7 @@ RSpec.describe "the lifecycle of a WIP pact" do
           # PROVIDER BUILD
           # fetch pacts to verify
           pacts_for_verification_response = get_pacts_for_verification
+          expect(wip_pacts_from(pacts_for_verification_response).size).to eq 1
           pact_url = wip_pact_url_from(pacts_for_verification_response)
           pact_response = get_pact(pact_url)
 
@@ -202,8 +200,6 @@ RSpec.describe "the lifecycle of a WIP pact" do
 
       describe "a feature branching scenario" do
         it "keeps being WIP until the branch is merged" do
-          create_initial_provider_version_on_master
-
           # CONSUMER BUILD - master
           publish_pact_with_master_tag
 
@@ -236,7 +232,7 @@ RSpec.describe "the lifecycle of a WIP pact" do
           # however feat-x pact is no longer pending because it has a successful verification from master!!!
           # Question: do we want this behaviour? Or should pending use the same logic?
           expect(wip_pacts_from(pacts_for_verification_response).first['verificationProperties']['wip']).to be true
-          expect(wip_pacts_from(pacts_for_verification_response).first['verificationProperties']['pending']).to be nil
+          expect(wip_pacts_from(pacts_for_verification_response).first['verificationProperties']['pending']).to be true
 
           # verify pact... success!
 
@@ -259,13 +255,31 @@ RSpec.describe "the lifecycle of a WIP pact" do
         end
       end
 
+      describe "a feature branching scenario with multiple provider feature branches" do
+        it "is WIP on a second feature branch even if the first feature branch successfully verified it" do
+          # CONSUMER BUILD - feature branch
+          publish_pact_with_feature_tag
+
+          # PROVIDER BUILD for feature branch 1
+          # fetch pacts to verify
+          pacts_for_verification_response = get_pacts_for_verification(build_pacts_for_verification_request_body("feat-1", "master"))
+          pact_response = get_pact(wip_pact_url_from(pacts_for_verification_response))
+
+          # verify pact... success!
+
+          # publish success verification results
+          publish_verification_results("1", "feat-1", verification_results_url_from(pact_response), true)
+
+          # ANOTHER PROVIDER BUILD on a different new feature branch
+          # fetch pacts to verify
+          sleep 1 if ::DB.mysql?
+          pacts_for_verification_response = get_pacts_for_verification(build_pacts_for_verification_request_body("feat-2", "master"))
+          expect(wip_pacts_from(pacts_for_verification_response).size).to eq 1
+        end
+      end
+
       describe "a feature branching scenario with matching feature branches" do
         it "stays wip on master even after it has been successfully verified on the provider's feature branch" do
-          create_initial_provider_version_on_master
-
-          # CONSUMER BUILD - master
-          publish_pact_with_master_tag
-
           # CONSUMER BUILD - feature branch
           publish_pact_with_feature_tag
 
@@ -283,7 +297,7 @@ RSpec.describe "the lifecycle of a WIP pact" do
 
           # PROVIDER BUILD - on a matching feature branch
           # fetch pacts to verify
-          pacts_for_verification_response = get_pacts_for_verification(build_pacts_for_verification_request_body("feat-x"))
+          pacts_for_verification_response = get_pacts_for_verification(build_pacts_for_verification_request_body("feat-x", "feat-x"))
           # pact is not WIP because it has been explicitly included
           expect(wip_pacts_from(pacts_for_verification_response).size).to eq 0
           pact_url = pact_urls_from(pacts_for_verification_response).first
@@ -303,36 +317,42 @@ RSpec.describe "the lifecycle of a WIP pact" do
       end
 
       describe "when a brand new provider branch is created" do
-        it "does not include any previously created WIP pacts because every single pact is pending for this new branch, and we don't want to verify the world" do
-          create_initial_provider_version_on_master
-
+        it "does not include any pacts already successfully verified by another branch before this branch was created" do
           # CONSUMER BUILD - master
           publish_pact_with_master_tag
+
+          # PROVIDER BUILD - master
+          pacts_for_verification_response = get_pacts_for_verification(build_pacts_for_verification_request_body("master", "master"))
+
+          # verify master pact successfully from provider master branch
+          pact_url = pact_urls_from(pacts_for_verification_response).first
+          pact_response = get_pact(pact_url)
+          verification_results_url = verification_results_url_from(pact_response)
+          publish_verification_results("1", "master", verification_results_url, true)
+          sleep 1 if ::DB.mysql?
 
           # CONSUMER BUILD - feature branch
           publish_pact_with_feature_tag
 
           # PROVIDER BUILD - brand new feature branch
           pacts_for_verification_response = get_pacts_for_verification(build_pacts_for_verification_request_body("feat-y", "master"))
-          expect(wip_pacts_from(pacts_for_verification_response).size).to eq 0
+          expect(wip_pacts_from(pacts_for_verification_response).size).to eq 1
 
-          # verify master pact successfully
-          pact_url = pact_urls_from(pacts_for_verification_response).first
-          pact_response = get_pact(pact_url)
+          # verify feature pact successfully
+          # pact_url = pact_urls_from(pacts_for_verification_response).first
+          # pact_response = get_pact(pact_url)
 
-          # publish successful results from feature branch
-          verification_results_url = verification_results_url_from(pact_response)
-          publish_verification_results("2", "feat-y", verification_results_url, true)
+          # # publish successful results from feature branch
+          # verification_results_url = verification_results_url_from(pact_response)
+          # publish_verification_results("2", "feat-y", verification_results_url, true)
 
-          # PROVIDER BUILD 2 - feature branch
-          pacts_for_verification_response = get_pacts_for_verification(build_pacts_for_verification_request_body("feat-y", "master"))
-          # still no wip pacts
-          expect(wip_pacts_from(pacts_for_verification_response).size).to eq 0
+          # # PROVIDER BUILD 2 - feature branch
+          # pacts_for_verification_response = get_pacts_for_verification(build_pacts_for_verification_request_body("feat-y", "master"))
+          # # still no wip pacts
+          # expect(wip_pacts_from(pacts_for_verification_response).size).to eq 0
         end
 
         it "does include any subsequently created new pacts" do
-          create_initial_provider_version_on_master
-
           # CONSUMER BUILD - master
           publish_pact_with_master_tag
 
@@ -341,7 +361,8 @@ RSpec.describe "the lifecycle of a WIP pact" do
 
           # PROVIDER BUILD - brand new feature branch
           pacts_for_verification_response = get_pacts_for_verification(build_pacts_for_verification_request_body("feat-y", "master"))
-          expect(wip_pacts_from(pacts_for_verification_response).size).to eq 0
+          expect(wip_pacts_from(pacts_for_verification_response).size).to eq 1
+
           # verify master pact successfully (creates a new provider version with tag feat-y)
           pact_url = pact_urls_from(pacts_for_verification_response).first
           pact_response = get_pact(pact_url)
@@ -356,7 +377,7 @@ RSpec.describe "the lifecycle of a WIP pact" do
           # CONSUMER BUILD - another feature branch
           publish_pact_with_feature_tag("4", "feat-z", pact_content_3)
 
-          # PROVIDER BUILD - brand new feature branch again
+          # PROVIDER BUILD - new feature branch again
           pacts_for_verification_response = get_pacts_for_verification(build_pacts_for_verification_request_body("feat-y", "master"))
           expect(wip_pacts_from(pacts_for_verification_response).size).to eq 2
         end

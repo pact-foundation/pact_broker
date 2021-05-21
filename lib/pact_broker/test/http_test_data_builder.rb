@@ -33,6 +33,13 @@ module PactBroker
         puts "\n=============================================================\n\n"
       end
 
+      def comment string
+        puts "**********************************************************"
+        puts string
+        puts "**********************************************************\n\n"
+        self
+      end
+
       def create_tagged_pacticipant_version(pacticipant:, version:, tag:)
         [*tag].each do | tag |
           create_tag(pacticipant: pacticipant, version: version, tag: tag)
@@ -51,6 +58,7 @@ module PactBroker
           branch: branch
         }
         client.put("pacticipants/#{encode(pacticipant)}/versions/#{encode(version)}", request_body).tap { |response| check_for_error(response) }
+        self
       end
 
       def deploy_to_prod(pacticipant:, version:)
