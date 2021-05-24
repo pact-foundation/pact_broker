@@ -5,6 +5,7 @@ require 'pact_broker/project_root'
 require 'date'
 require 'erb'
 require 'pathname'
+require 'fileutils'
 
 using PactBroker::StringRefinements
 
