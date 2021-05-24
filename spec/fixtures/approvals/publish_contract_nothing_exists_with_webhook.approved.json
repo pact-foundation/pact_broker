@@ -30,7 +30,7 @@
     "status": 200,
     "headers": {
       "Content-Type": "application/hal+json;charset=utf-8",
-      "Content-Length": "3022"
+      "Content-Length": "2976"
     },
     "body": {
       "logs": [
@@ -56,7 +56,7 @@
         },
         {
           "level": "debug",
-          "message": "  Webhook \"foo webhook\" triggered for event contract_content_changed.\n    translation missing: en.pact_broker.messages.webhooks.triggered_webhook_see_notices",
+          "message": "  Webhook \"foo webhook\" triggered for event contract_content_changed.\n    View logs at http://example.org/triggered-webhooks/1234/logs",
           "deprecationWarning": "Replaced by notices"
         },
         {
@@ -89,7 +89,7 @@
         },
         {
           "type": "debug",
-          "text": "  Webhook \"foo webhook\" triggered for event contract_content_changed.\n    translation missing: en.pact_broker.messages.webhooks.triggered_webhook_see_notices"
+          "text": "  Webhook \"foo webhook\" triggered for event contract_content_changed.\n    View logs at http://example.org/triggered-webhooks/1234/logs"
         },
         {
           "type": "warning",
