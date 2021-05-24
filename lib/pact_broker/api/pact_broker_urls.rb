@@ -394,9 +394,9 @@ module PactBroker
         Base64.urlsafe_decode64(metadata)
       rescue StandardError => e
         begin
+          logger.warn("Exception parsing webhook metadata: '#{metadata}'. Parsing using Base64.decode64 returns '#{Base64.decode64(metadata)}'", e)
           Base64.decode64(metadata)
         rescue
-          logger.warn("Exception parsing webhook metadata: '#{metadata}'", e)
           ""
         end
       end

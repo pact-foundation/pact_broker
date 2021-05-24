@@ -153,14 +153,12 @@ module PactBroker
         context "when the metadata is not valid base64" do
           let(:encoded_metadata) { "%" }
 
-          before { allow(Base64).to receive(:decode64).and_raise(ArgumentError) }
-
           it "returns an empty hash" do
             expect(PactBrokerUrls.decode_pact_metadata(encoded_metadata)).to eq({})
           end
 
           it "logs a warning" do
-            expect(logger).to receive(:warn).with("Exception parsing webhook metadata: '%'", ArgumentError)
+            expect(logger).to receive(:warn).with("Exception parsing webhook metadata: '%'. Parsing using Base64.decode64 returns ''", ArgumentError)
             PactBrokerUrls.decode_pact_metadata(encoded_metadata)
           end
         end
