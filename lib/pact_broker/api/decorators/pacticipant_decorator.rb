@@ -2,6 +2,8 @@ require_relative 'base_decorator'
 require_relative 'embedded_version_decorator'
 require_relative 'embedded_label_decorator'
 require_relative 'timestamps'
+require 'pact_broker/feature_toggle'
+
 require 'pact_broker/domain'
 
 module PactBroker
@@ -15,7 +17,8 @@ module PactBroker
         property :repository_url
         property :repository_name
         property :repository_namespace
-        property :main_development_branches
+        property :main_development_branches if PactBroker.feature_enabled?(:branches)
+
 
         property :latest_version, as: :latestVersion, :class => PactBroker::Domain::Version, extend: PactBroker::Api::Decorators::EmbeddedVersionDecorator, embedded: true, writeable: false
         collection :labels, :class => PactBroker::Domain::Label, extend: PactBroker::Api::Decorators::EmbeddedLabelDecorator, embedded: true

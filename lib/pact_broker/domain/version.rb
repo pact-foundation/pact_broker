@@ -125,8 +125,10 @@ module PactBroker
           require 'pact_broker/domain/verification'
           require 'pact_broker/domain/tag'
           require 'pact_broker/deployments/deployed_version'
+          require 'pact_broker/deployments/released_version'
 
           PactBroker::Deployments::DeployedVersion.where(version: self).delete
+          PactBroker::Deployments::ReleasedVersion.where(version: self).delete
           PactBroker::Domain::Verification.where(provider_version: self).delete
           PactBroker::Pacts::PactPublication.where(consumer_version: self).delete
           PactBroker::Domain::Tag.where(version: self).delete
@@ -178,6 +180,7 @@ module PactBroker
 
       def before_destroy
         PactBroker::Deployments::DeployedVersion.where(version: self).destroy
+        PactBroker::Deployments::ReleasedVersion.where(version: self).destroy
         PactBroker::Domain::Tag.where(version: self).destroy
         super
       end

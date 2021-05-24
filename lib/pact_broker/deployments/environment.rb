@@ -15,12 +15,14 @@ module PactBroker
       dataset_module do
         def delete
           PactBroker::Deployments::DeployedVersion.where(environment: self).delete
+          PactBroker::Deployments::ReleasedVersion.where(environment: self).delete
           super
         end
       end
 
       def delete
         PactBroker::Deployments::DeployedVersion.where(environment: self).delete
+        PactBroker::Deployments::ReleasedVersion.where(environment: self).delete
         super
       end
     end

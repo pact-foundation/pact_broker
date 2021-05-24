@@ -5,7 +5,6 @@ require 'pact_broker/api/contracts/verification_contract'
 require 'pact_broker/api/decorators/verification_decorator'
 require 'pact_broker/api/resources/webhook_execution_methods'
 require 'pact_broker/api/resources/metadata_resource_methods'
-require 'pact_broker/webhooks/event_listener'
 
 module PactBroker
   module Api

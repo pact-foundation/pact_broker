@@ -7,8 +7,10 @@ module PactBroker
         camelize_property_names
 
         property :number
-        property :branch
-        property :build_url
+        if PactBroker.feature_enabled?(:branches)
+          property :branch
+          property :build_url
+        end
 
         link :self do | options |
           {

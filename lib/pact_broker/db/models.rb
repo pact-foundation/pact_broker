@@ -12,6 +12,7 @@ require 'pact_broker/domain/label'
 require 'pact_broker/domain/pacticipant'
 require 'pact_broker/deployments/environment'
 require 'pact_broker/deployments/deployed_version'
+require 'pact_broker/deployments/released_version'
 
 module PactBroker
   INTEGRATIONS_TABLES = [
@@ -25,6 +26,7 @@ module PactBroker
     PactBroker::Pacts::PactVersion,
     PactBroker::Domain::Tag,
     PactBroker::Deployments::DeployedVersion,
+    PactBroker::Deployments::ReleasedVersion,
     PactBroker::Domain::Version,
     PactBroker::Domain::Label,
     PactBroker::Domain::Pacticipant

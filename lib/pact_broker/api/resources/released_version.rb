@@ -22,17 +22,11 @@ module PactBroker
         end
 
         def policy_name
-          :'versions::versions'
+          :'versions::version'
         end
 
-        # For PF
-        def policy_record_context
-          # Not sure whether the context should be empty or the pacticipant should be nil
-          if released_version
-            { pacticipant: released_version.pacticipant }
-          else
-            {}
-          end
+        def policy_record
+          released_version&.version
         end
 
         private
