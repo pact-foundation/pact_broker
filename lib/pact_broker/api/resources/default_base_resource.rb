@@ -107,11 +107,11 @@ module PactBroker
 
         def handle_exception(error)
           error_reference = PactBroker::Errors.generate_error_reference
-          application_context.error_logger.call(error, error_reference, request)
+          application_context.error_logger.call(error, error_reference, request.env)
           if PactBroker::Errors.reportable_error?(error)
-            PactBroker::Errors.report(error, error_reference, request)
+            PactBroker::Errors.report(error, error_reference, request.env)
           end
-          response.body = application_context.error_response_body_generator.call(error, error_reference, request)
+          response.body = application_context.error_response_body_generator.call(error, error_reference, request.env)
         end
 
         def params(options = {})
