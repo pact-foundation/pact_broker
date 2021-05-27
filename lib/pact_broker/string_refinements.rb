@@ -1,5 +1,11 @@
 module PactBroker
   module StringRefinements
+    refine NilClass do
+      def blank?
+        true
+      end
+    end
+
     refine String do
       def not_blank?
         !blank?

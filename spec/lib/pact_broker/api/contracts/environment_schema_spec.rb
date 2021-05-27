@@ -57,6 +57,14 @@ module PactBroker
           it { is_expected.to be_empty }
         end
 
+        context "with a blank displayName" do
+          before do
+            params[:displayName] = ""
+          end
+
+          it { is_expected.to be_empty }
+        end
+
         context "with no owner name" do
           let(:contacts) do
             [{
