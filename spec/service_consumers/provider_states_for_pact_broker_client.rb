@@ -276,6 +276,10 @@ Pact.provider_states_for "Pact Broker Client" do
     no_op
   end
 
+  provider_state "the pb:environments relation exists in the index resource" do
+    no_op
+  end
+
   provider_state "provider Bar version 4.5.6 has a successful verification for Foo version 1.2.3 tagged prod and a failed verification for version 3.4.5 tagged prod" do
     set_up do
       TestDataBuilder.new
