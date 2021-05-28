@@ -295,4 +295,10 @@ Pact.provider_states_for "Pact Broker Client" do
         .create_verification(provider_version: "4.5.6", success: false)
     end
   end
+
+  provider_state "an environment exists" do
+    set_up do
+      TestDataBuilder.new.create_environment("test", contacts: [ { name: "foo", details: { emailAddress: "foo@bar.com" } }])
+    end
+  end
 end
