@@ -18,7 +18,7 @@ Participants are created automatically when a pact is published to the pact brok
 $ curl -X POST http://pact-broker/pacticipants \
   -H "Content-Type: application/json" \
   -H "Accept: application/hal+json" \
-  -d '{ "name": "my-consumer", "displayName": "My Consumer"}'
+  -d '{ "name": "my-consumer", "displayName": "My Consumer" }'
 ```
 
 Properties:
