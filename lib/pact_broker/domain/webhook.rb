@@ -108,7 +108,7 @@ module PactBroker
         return http_response, error
       end
 
-      def template_parameters(pact, verification, event_context, options)
+      def template_parameters(pact, verification, event_context, _options)
         PactBroker::Webhooks::PactAndVerificationParameters.new(pact, verification, event_context).to_hash
       end
 

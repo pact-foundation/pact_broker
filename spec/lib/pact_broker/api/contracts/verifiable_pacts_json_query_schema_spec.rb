@@ -52,7 +52,7 @@ module PactBroker
             end
 
             it "has an error" do
-              expect(subject[:consumerVersionSelectors].first).to match /can only be set.*index 0/
+              expect(subject[:consumerVersionSelectors].first).to match(/can only be set.*index 0/)
             end
 
             context "when there are multiple errors" do
@@ -110,7 +110,7 @@ module PactBroker
           end
 
           it "flattens the messages" do
-            expect(subject[:consumerVersionSelectors].first).to match /must specify a value.*at index 0/
+            expect(subject[:consumerVersionSelectors].first).to match(/must specify a value.*at index 0/)
           end
         end
 

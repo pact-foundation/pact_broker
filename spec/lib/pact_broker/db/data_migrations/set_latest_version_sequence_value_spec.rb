@@ -7,7 +7,7 @@ module PactBroker
         include MigrationHelpers
 
         describe ".call" do
-          before (:all) do
+          before(:all) do
             PactBroker::Database.migrate(20190509)
           end
 

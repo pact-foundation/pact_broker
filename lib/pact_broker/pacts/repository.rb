@@ -23,6 +23,7 @@ require 'pact_broker/pacts/pacts_for_verification_repository'
 
 module PactBroker
   module Pacts
+    # rubocop: disable Metrics/ClassLength
     class Repository
       include PactBroker::Logging
       include PactBroker::Repositories
@@ -218,6 +219,7 @@ module PactBroker
         query.latest.all.collect(&:to_domain_with_content)[0]
       end
 
+      # rubocop: disable Metrics/CyclomaticComplexity, Metrics/MethodLength
       def find_pact consumer_name, consumer_version, provider_name, pact_version_sha = nil
         pact_publication_by_consumer_version = scope_for(LatestPactPublicationsByConsumerVersion)
             .consumer(consumer_name)
@@ -232,7 +234,7 @@ module PactBroker
             .reverse_order(:consumer_version_order, :revision_number)
             .limit(1)
 
-        query = if consumer_version && !pact_version_sha
+        if consumer_version && !pact_version_sha
           pact_publication_by_consumer_version
             .eager(:tags)
             .collect(&:to_domain_with_content).first
@@ -257,6 +259,7 @@ module PactBroker
             .collect(&:to_domain_with_content).first
         end
       end
+      # rubocop: enable Metrics/CyclomaticComplexity, Metrics/MethodLength
 
       def find_all_revisions consumer_name, consumer_version, provider_name
         scope_for(AllPactPublications)
@@ -370,5 +373,6 @@ module PactBroker
         end
       end
     end
+    # rubocop: enable Metrics/ClassLength
   end
 end

@@ -70,7 +70,7 @@ module Pact
         end
 
         it "renders the keys in a meaningful order" do
-          expect(subject.request).to match /"method".*"path".*"query".*"headers".*"body"/m
+          expect(subject.request).to match(/"method".*"path".*"query".*"headers".*"body"/m)
         end
 
         context "when the body hash is empty" do
@@ -116,7 +116,7 @@ module Pact
         end
 
         it "renders the keys in a meaningful order" do
-          expect(subject.response).to match /"status".*"headers".*"body"/m
+          expect(subject.response).to match(/"status".*"headers".*"body"/m)
         end
 
         context "when the body hash is empty" do

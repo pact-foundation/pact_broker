@@ -89,6 +89,7 @@ module PactBroker
       get(:contract_service)
     end
 
+    # rubocop: disable Metrics/MethodLength
     def register_default_services
       register_service(:index_service) do
         require 'pact_broker/index/service'
@@ -185,6 +186,7 @@ module PactBroker
         PactBroker::Contracts::Service
       end
     end
+    # rubocop: enable Metrics/MethodLength
   end
 end
 

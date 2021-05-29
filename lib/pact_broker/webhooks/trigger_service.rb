@@ -53,9 +53,9 @@ module PactBroker
           expanded_event_contexts = expand_events_for_currently_deployed_environments(webhook, pact, event_context)
           expanded_event_contexts = expanded_event_contexts.flat_map { | ec | expand_events_for_verification_of_multiple_selected_pacts(ec) }
 
-          expanded_event_contexts.collect do | event_context |
-            pact_for_triggered_webhook = verification ? find_pact_for_verification_triggered_webhook(pact, event_context) : pact
-            webhook_repository.create_triggered_webhook(next_uuid, webhook, pact_for_triggered_webhook, verification, RESOURCE_CREATION, event_name, event_context)
+          expanded_event_contexts.collect do | expanded_event_context |
+            pact_for_triggered_webhook = verification ? find_pact_for_verification_triggered_webhook(pact, expanded_event_context) : pact
+            webhook_repository.create_triggered_webhook(next_uuid, webhook, pact_for_triggered_webhook, verification, RESOURCE_CREATION, event_name, expanded_event_context)
           end
         end
       end
@@ -95,7 +95,7 @@ module PactBroker
       # verification published webhook is for reporting git statuses,
       # it makes more sense to trigger per consumer version number (ie. commit).
       def expand_events_for_verification_of_multiple_selected_pacts(event_context)
-        triggers = if event_context[:consumer_version_selectors].is_a?(Array)
+        if event_context[:consumer_version_selectors].is_a?(Array)
           event_context[:consumer_version_selectors]
             .group_by{ | selector | selector[:consumer_version_number] }
             .collect { | consumer_version_number, selectors | merge_consumer_version_selectors(consumer_version_number, selectors, event_context.without(:consumer_version_selectors)) }

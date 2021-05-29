@@ -271,7 +271,7 @@ module PactBroker
         "#{latest_pact_url(base_url, pact)}/badge.svg"
       end
 
-      def matrix_url consumer_name, provider_name, base_url = ''
+      def matrix_url consumer_name, provider_name, _base_url = ''
         "/matrix/provider/#{url_encode(provider_name)}/consumer/#{url_encode(consumer_name)}"
       end
 
@@ -322,11 +322,11 @@ module PactBroker
         "#{version_url(base_url, version)}/released-versions/environment/#{environment.uuid}"
       end
 
-      def deployed_version_url(deployed_version, base_url = '')
+      def deployed_version_url(deployed_version, _base_url = '')
         "/deployed-versions/#{deployed_version.uuid}"
       end
 
-      def released_version_url(released_version, base_url = '')
+      def released_version_url(released_version, _base_url = '')
         "/released-versions/#{released_version.uuid}"
       end
 

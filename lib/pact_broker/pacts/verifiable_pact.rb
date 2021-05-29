@@ -6,6 +6,7 @@ module PactBroker
     class VerifiablePact < SimpleDelegator
       attr_reader :selectors, :pending, :pending_provider_tags, :non_pending_provider_tags, :provider_branch, :wip
 
+      # rubocop: disable Metrics/ParameterLists
       # TODO refactor this constructor
       def initialize(pact, selectors, pending = nil, pending_provider_tags = [], non_pending_provider_tags = [], provider_branch = nil, wip = false)
         super(pact)
@@ -16,6 +17,7 @@ module PactBroker
         @provider_branch = provider_branch
         @wip = wip
       end
+      # rubocop: enable Metrics/ParameterLists
 
       def self.create_for_wip_for_provider_branch(pact, selectors, provider_branch)
         new(pact, selectors, true, [], [], provider_branch, true)
@@ -29,7 +31,7 @@ module PactBroker
         verifiable_pacts
           .group_by { | verifiable_pact | verifiable_pact.pact_version_sha }
           .values
-          .collect { | verifiable_pacts | verifiable_pacts.reduce(&:+) }
+          .collect { | verifiable_pact | verifiable_pact.reduce(&:+) }
       end
 
       def pending?

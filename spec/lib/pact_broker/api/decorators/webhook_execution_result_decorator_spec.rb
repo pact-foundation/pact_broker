@@ -118,7 +118,7 @@ module PactBroker
             end
 
             it "includes a message about why the response is hidden" do
-              expect(subject[:message]).to match /security purposes/
+              expect(subject[:message]).to match(/security purposes/)
             end
           end
         end

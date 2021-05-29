@@ -22,7 +22,7 @@ module PactBroker
           ["latest"]
         else
           head_consumer_tags.collect { |tag| "latest with tag #{tag}" } + branches.collect{ |branch| "latest from branch #{branch}" }
-        end
+                         end
 
         "Pact between #{consumer_name} and #{provider_name}, consumer version #{consumer_version_number}, #{position_descs.join(", ")}"
       end
@@ -78,7 +78,7 @@ module PactBroker
       attr_reader :verifiable_pact, :pact_version_url
 
       def join(list, last_joiner = " and ")
-        join_unquoted(list.collect { | word | "'#{word}'" }, last_joiner = " and ")
+        join_unquoted(list.collect { | word | "'#{word}'" }, last_joiner)
       end
 
       def join_unquoted(list, last_joiner = " and ")
@@ -175,6 +175,7 @@ module PactBroker
         end
       end
 
+      # rubocop: disable Metrics/CyclomaticComplexity
       def selector_description selector
         description = if selector.overall_latest?
           consumer_label = selector.consumer ? selector.consumer : 'a consumer'
@@ -201,14 +202,15 @@ module PactBroker
           "version(s) currently deployed to #{selector.environment}"
         else
           selector.to_json
-        end
+                      end
         "#{description} (#{selector.consumer_version.number})"
       end
+      # rubocop: enable Metrics/CyclomaticComplexity
 
       def currently_deployed_selectors_description(selectors)
-        selectors.group_by(&:consumer).flat_map do | consumer_name, selectors |
+        selectors.group_by(&:consumer).flat_map do | consumer_name, consumer_selectors |
           display_name = consumer_name ? "version(s) of #{consumer_name}" : "consumer version(s)"
-          environments_and_versions = selectors.collect{ | selector | "#{selector.environment} (#{selector.consumer_version.number})" }
+          environments_and_versions = consumer_selectors.collect{ | selector | "#{selector.environment} (#{selector.consumer_version.number})" }
           "#{display_name} currently deployed to #{join_unquoted(environments_and_versions)}"
         end
       end
@@ -217,6 +219,7 @@ module PactBroker
         selectors.collect{ | selector | short_selector_description(selector) }.join(", ")
       end
 
+      # rubocop: disable Metrics/CyclomaticComplexity
       # this is used by Pact Go to create the test method name, so needs to be concise
       def short_selector_description selector
         if selector.overall_latest?
@@ -243,6 +246,7 @@ module PactBroker
           selector.to_json
         end
       end
+      # rubocop: enable Metrics/CyclomaticComplexity
 
       def selectors
         verifiable_pact.selectors

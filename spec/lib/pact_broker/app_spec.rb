@@ -28,7 +28,7 @@ module PactBroker
 
     it "adds the X-Pact-Broker-Version header" do
       get "/"
-      expect(last_response.headers['X-Pact-Broker-Version']).to match /\d/
+      expect(last_response.headers['X-Pact-Broker-Version']).to match(/\d/)
     end
 
     class Middleware
@@ -55,8 +55,8 @@ module PactBroker
     describe "before_resource and after_resource" do
       CALLBACKS = []
       before do
-        PactBroker.configuration.before_resource { | resource | CALLBACKS << "before" }
-        PactBroker.configuration.after_resource { | resource | CALLBACKS << "after" }
+        PactBroker.configuration.before_resource { | _resource | CALLBACKS << "before" }
+        PactBroker.configuration.after_resource { | _resource | CALLBACKS << "after" }
       end
 
       it "executes the callbacks" do
@@ -113,7 +113,7 @@ module PactBroker
 
     describe "use_xxx_auth" do
       class TestAuth
-        def initialize app, *args, &block
+        def initialize app, *_args
           @app = Rack::Auth::Basic.new(app, "Protected") do | username, password |
             username == 'foo' && password == 'bar'
           end
@@ -182,7 +182,7 @@ module PactBroker
 
     describe "authenticate" do
       before do
-        PactBroker.configuration.authenticate do | resource, authorization_header, options |
+        PactBroker.configuration.authenticate do | _resource, authorization_header, _options |
           authorization_header == 'letmein'
         end
       end
@@ -204,7 +204,7 @@ module PactBroker
 
     describe "authenticate_with_basic_auth" do
       before do
-        PactBroker.configuration.authenticate_with_basic_auth do | resource, username, password, options |
+        PactBroker.configuration.authenticate_with_basic_auth do | _resource, username, password, _options |
           username == 'username' && password == 'password'
         end
       end
@@ -260,7 +260,7 @@ module PactBroker
 
     describe "authorize" do
       before do
-        PactBroker.configuration.authorize do | resource, options |
+        PactBroker.configuration.authorize do | resource, _options |
           resource.request.headers['Role'] == 'important'
         end
       end

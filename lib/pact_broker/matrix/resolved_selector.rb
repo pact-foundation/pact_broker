@@ -34,6 +34,7 @@ module PactBroker
         )
       end
 
+      # rubocop: disable Metrics/ParameterLists
       def self.for_pacticipant_and_version(pacticipant, version, original_selector, type, ignore, one_of_many = false)
         ResolvedSelector.new(
           pacticipant_id: pacticipant.id,
@@ -49,6 +50,7 @@ module PactBroker
           one_of_many: one_of_many
         )
       end
+      # rubocop: enable Metrics/ParameterLists
 
       def self.for_pacticipant_and_non_existing_version(pacticipant, original_selector, type, ignore)
         ResolvedSelector.new(
@@ -164,6 +166,7 @@ module PactBroker
         !ignore?
       end
 
+      # rubocop: disable Metrics/CyclomaticComplexity
       def description
         if latest_tagged? && pacticipant_version_number
           "the latest version of #{pacticipant_name} with tag #{tag} (#{pacticipant_version_number})"
@@ -196,6 +199,7 @@ module PactBroker
           "any version of #{pacticipant_name}"
         end
       end
+      # rubocop: enable Metrics/CyclomaticComplexity
     end
   end
 end

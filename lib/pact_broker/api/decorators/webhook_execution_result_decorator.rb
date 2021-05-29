@@ -25,7 +25,7 @@ module PactBroker
           def body
             begin
               ::JSON.parse(represented.body)
-            rescue StandardError => e
+            rescue StandardError => _ex
               represented.body
             end
           end
@@ -50,7 +50,7 @@ module PactBroker
           def body
             begin
               ::JSON.parse(represented.body)
-            rescue StandardError => e
+            rescue StandardError => _ex
               represented.body
             end
           end

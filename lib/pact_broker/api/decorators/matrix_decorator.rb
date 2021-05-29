@@ -67,6 +67,7 @@ module PactBroker
           line_hash(consumer, provider, consumer_version, provider_version, line, base_url)
         end
 
+        # rubocop: disable Metrics/ParameterLists
         def line_hash(consumer, provider, consumer_version, provider_version, line, base_url)
           {
             consumer: consumer_hash(line, consumer, consumer_version, base_url),
@@ -75,6 +76,7 @@ module PactBroker
             verificationResult: verification_hash(line, base_url)
           }
         end
+        # rubocop: enable Metrics/ParameterLists
 
         def consumer_hash(line, consumer, consumer_version, base_url)
           {

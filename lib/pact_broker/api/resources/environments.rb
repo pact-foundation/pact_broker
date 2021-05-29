@@ -67,7 +67,7 @@ module PactBroker
             [environment_service.find_by_name(request.query['name'])]
           else
             environment_service.find_all
-          end
+                            end
         end
 
         def schema

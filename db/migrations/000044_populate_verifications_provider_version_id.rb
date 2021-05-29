@@ -15,7 +15,7 @@ Sequel.migration do
               created_at: line[:created_at],
               updated_at: line[:created_at]
           )
-        end
+                     end
         from(:verifications).where(id: line[:id]).update(provider_version_id: version_id)
       end
   end

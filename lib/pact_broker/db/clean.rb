@@ -8,15 +8,11 @@ module PactBroker
     class Clean
       include PactBroker::Logging
 
-
       class Unionable < Array
-        alias_method :union, :+
-
         def union(other)
           Unionable.new(self + other)
         end
       end
-
 
       def self.call database_connection, options = {}
         new(database_connection, options).call

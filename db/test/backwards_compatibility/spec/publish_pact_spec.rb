@@ -32,7 +32,7 @@ describe "Code version #{CODE_VERSION} running against database version #{DATABA
     subject { put path, nil, {'CONTENT_TYPE' => 'application/json' }; last_response  }
 
     it "returns a success status" do
-      expect(subject.status.to_s).to match /20\d/
+      expect(subject.status.to_s).to match(/20\d/)
     end
   end
 
@@ -40,7 +40,7 @@ describe "Code version #{CODE_VERSION} running against database version #{DATABA
     subject { put path, pact_content, {'CONTENT_TYPE' => 'application/json' }; last_response  }
 
     it "returns a success status" do
-      expect(subject.status.to_s).to match /20\d/
+      expect(subject.status.to_s).to match(/20\d/)
     end
   end
 

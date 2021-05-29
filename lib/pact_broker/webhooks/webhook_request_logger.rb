@@ -13,7 +13,7 @@ module PactBroker
       class Formatter < Logger::Formatter
         Format = "[%s] %s: %s\n".freeze
 
-        def call(severity, time, progname, msg)
+        def call(severity, time, _progname, msg)
           Format % [format_datetime(time), severity, msg2str(msg)]
         end
 

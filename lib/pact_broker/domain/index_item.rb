@@ -33,6 +33,7 @@ module PactBroker
       end
       # rubocop:enable Metrics/ParameterLists
 
+      # rubocop: disable Metrics/CyclomaticComplexity
       def eq? other
         IndexItem === other && other.consumer == consumer && other.provider == provider &&
           other.latest_pact == latest_pact &&
@@ -41,6 +42,7 @@ module PactBroker
           other.webhooks == webhooks &&
           other.latest_for_branch? == latest_for_branch?
       end
+      # rubocop: enable Metrics/CyclomaticComplexity
 
       def == other
         eq?(other)
@@ -146,12 +148,6 @@ module PactBroker
 
       def include? pacticipant
         pacticipant.id == consumer.id || pacticipant.id == provider.id
-      end
-
-      def <=> other
-        comp = consumer_name <=> other.consumer_name
-        return comp unless comp == 0
-        provider_name <=> other.provider_name
       end
 
       # Add logic for ignoring case

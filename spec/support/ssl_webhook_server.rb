@@ -24,7 +24,7 @@ if __FILE__ == $0
     }
   end
 
-  app = ->(env) { puts "hello"; [200, {}, ['Hello world' + "\n"]] }
+  app = ->(_env) { puts "hello"; [200, {}, ['Hello world' + "\n"]] }
 
   require 'webrick'
   require 'webrick/https'

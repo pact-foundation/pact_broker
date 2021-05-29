@@ -41,10 +41,6 @@ def model_top_module
   model_full_class_name.split("::").first
 end
 
-def repository_class_full_name
-  model_full_class_name.split("::")[0..1].join("::") + "::Repository"
-end
-
 # Resource
 
 def resource_top_module
@@ -60,7 +56,7 @@ def resource_class_full_name
 end
 
 def resource_url_path
-  model_class_name_snakecase.gsub("_", "-") + "s"
+  model_class_name_snakecase.tr("_", "-") + "s"
 end
 
 # Decorator

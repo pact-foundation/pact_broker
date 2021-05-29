@@ -5,12 +5,13 @@ module PactBroker
 
         extend self
 
+        # rubocop: disable Metrics/CyclomaticComplexity
         def create_selector_objects(selector_hashes)
           selector_hashes.collect do | selector_hash |
             o = OpenStruct.new(selector_hash)
-            o.specify_latest_tag = o.tag && o.latest ? 'checked' : nil
-            o.specify_latest_branch = o.branch && o.latest ? 'checked' : nil
-            o.specify_all_tagged = o.tag && !o.latest ? 'checked' : nil
+            o.specify_latest_tag = (o.tag && o.latest) ? 'checked' : nil
+            o.specify_latest_branch = (o.branch && o.latest) ? 'checked' : nil
+            o.specify_all_tagged = (o.tag && !o.latest) ? 'checked' : nil
             o.specify_latest = o.latest ? 'checked' : nil
             o.specify_version = o.pacticipant_version_number ? 'checked' : nil
             o.specify_all_versions = !(o.tag || o.pacticipant_version_number || o.branch) ? 'checked' : nil
@@ -35,6 +36,7 @@ module PactBroker
             end
           end
         end
+        # rubocop: enable Metrics/CyclomaticComplexity
       end
     end
   end

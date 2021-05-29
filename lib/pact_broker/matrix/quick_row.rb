@@ -20,6 +20,7 @@ require 'pact_broker/matrix/query_ids'
 
 module PactBroker
   module Matrix
+    # rubocop: disable Metrics/ClassLength
     class QuickRow < Sequel::Model(Sequel.as(:latest_pact_publication_ids_for_consumer_versions, :p))
 
       # Tables
@@ -67,8 +68,8 @@ module PactBroker
       dataset_module do
         include PactBroker::Repositories::Helpers
 
-        select *SELECT_ALL_COLUMN_ARGS
-        select *SELECT_PACTICIPANT_IDS_ARGS
+        select(*SELECT_ALL_COLUMN_ARGS)
+        select(*SELECT_PACTICIPANT_IDS_ARGS)
 
         def distinct_integrations selectors, infer_integrations
           query = if selectors.size == 1
@@ -84,7 +85,7 @@ module PactBroker
                 query.matching_multiple_selectors_joining_verifications(selectors)
               end
             end
-          end
+                  end
 
           query.from_self(alias: :pacticipant_ids)
             .select(
@@ -261,10 +262,6 @@ module PactBroker
         end
       end # end dataset_module
 
-      def success
-        verification&.success
-      end
-
       def pact_version_sha
         pact_version.sha
       end
@@ -393,5 +390,6 @@ module PactBroker
         end
       end
     end
+    # rubocop: enable Metrics/ClassLength
   end
 end

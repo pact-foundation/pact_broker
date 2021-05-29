@@ -128,15 +128,15 @@ module PactBroker
             verifiable_pacts_specified_in_request)
         else
           []
-        end
+                               end
 
         verifiable_pacts_specified_in_request + verifiable_wip_pacts
       end
 
       def exclude_specified_pacts(wip_pacts, specified_pacts)
         wip_pacts.reject do | wip_pact |
-          specified_pacts.any? do | specified_pacts |
-            wip_pact.pact_version_sha == specified_pacts.pact_version_sha
+          specified_pacts.any? do | specified_pact |
+            wip_pact.pact_version_sha == specified_pact.pact_version_sha
           end
         end
       end
@@ -145,7 +145,7 @@ module PactBroker
 
       # Overwriting an existing pact with the same consumer/provider/consumer version number
       def update_pact params, existing_pact
-        logger.info "Updating existing pact publication with params #{params.reject{ |k, v| k == :json_content}}"
+        logger.info "Updating existing pact publication with params #{params.reject{ |k, _v| k == :json_content}}"
         logger.debug "Content #{params[:json_content]}"
         pact_version_sha = generate_sha(params[:json_content])
         json_content = add_interaction_ids(params[:json_content])
@@ -170,7 +170,7 @@ module PactBroker
 
       # When no publication for the given consumer/provider/consumer version number exists
       def create_pact params, version, provider
-        logger.info "Creating new pact publication with params #{params.reject{ |k, v| k == :json_content}}"
+        logger.info "Creating new pact publication with params #{params.reject{ |k, _v| k == :json_content}}"
         logger.debug "Content #{params[:json_content]}"
         pact_version_sha = generate_sha(params[:json_content])
         json_content = add_interaction_ids(params[:json_content])

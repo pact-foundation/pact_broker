@@ -205,6 +205,7 @@ module PactBroker
         other.class == self.class && super
       end
 
+      # rubocop: disable Metrics/CyclomaticComplexity, Metrics/MethodLength
       def <=> other
         if overall_latest? || other.overall_latest?
           if overall_latest? == other.overall_latest?
@@ -240,6 +241,7 @@ module PactBroker
           tag <=> other.tag
         end
       end
+      # rubocop: enable Metrics/CyclomaticComplexity, Metrics/MethodLength
 
       private
 

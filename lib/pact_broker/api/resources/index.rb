@@ -18,6 +18,7 @@ module PactBroker
           { _links: links }.to_json
         end
 
+        # rubocop: disable Metrics/MethodLength
         def links
           links_hash = {
             'self' =>
@@ -176,6 +177,7 @@ module PactBroker
 
           links_hash
         end
+        # rubocop: enable Metrics/MethodLength
 
         def policy_name
           :'index::index'

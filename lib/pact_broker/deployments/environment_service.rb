@@ -44,7 +44,7 @@ module PactBroker
         PactBroker::Deployments::Environment.where(uuid: uuid).delete
       end
 
-      def self.find_for_pacticipant(pacticipant)
+      def self.find_for_pacticipant(_pacticipant)
         find_all
       end
     end

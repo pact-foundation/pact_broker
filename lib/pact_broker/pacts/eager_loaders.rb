@@ -22,7 +22,7 @@ module PactBroker
           end
         end
 
-        def self.populate_associations_for_consumer_and_provider(key, pact_publications)
+        def self.populate_associations_for_consumer_and_provider(_key, pact_publications)
           head_pact_publications_by_tag = hash_of_head_pact_publications(
             pact_publications.first.class,
             pact_publications.first.consumer,

@@ -47,7 +47,7 @@ module PactBroker
           allow_any_instance_of(DashboardDecorator).to receive(:pacticipant_url).with(base_url, provider).and_return('provider_url')
           allow_any_instance_of(DashboardDecorator).to receive(:version_url).with(base_url, consumer_version).and_return('consumer_version_url')
           allow_any_instance_of(DashboardDecorator).to receive(:webhooks_status_url).with(consumer, provider, base_url).and_return('webhooks_status_url')
-          allow_any_instance_of(DashboardDecorator).to receive(:tag_url) do | instance, base_url, tag |
+          allow_any_instance_of(DashboardDecorator).to receive(:tag_url) do | _instance, base_url, tag |
             if tag.version == consumer_version
               expect(tag.name).to eq 'prod'
               expect(tag.version).to be consumer_version

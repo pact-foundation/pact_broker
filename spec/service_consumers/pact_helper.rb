@@ -23,7 +23,7 @@ app_to_verify = HalRelationProxyApp.new(pact_broker)
 module Rack
   module PactBroker
     class DatabaseTransaction
-      def do_not_rollback? response
+      def do_not_rollback? _response
         # Dodgey hack to stop exceptions raising a Rollback error while verifying
         # Otherwise the provider states that deliberately raise exceptions
         # end up raising exceptions that break the verification tests

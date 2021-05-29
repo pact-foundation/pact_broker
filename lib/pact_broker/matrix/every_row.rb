@@ -27,7 +27,7 @@ module PactBroker
 
       SELECT_ALL_COLUMN_ARGS = [:select_all_columns] + ALL_COLUMNS
       dataset_module do
-        select *SELECT_ALL_COLUMN_ARGS
+        select(*SELECT_ALL_COLUMN_ARGS)
 
         def join_verifications
           left_outer_join(:verifications, P_V_JOIN, { table_alias: :v } )

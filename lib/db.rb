@@ -39,9 +39,11 @@ module DB
     con.extension(:pagination)
     con.extension(:statement_timeout)
     con.extend_datasets do
+      # rubocop: disable Lint/NestedMethodDefinition
       def any?
         !empty?
       end
+      # rubocop: enable Lint/NestedMethodDefinition
     end
     con.pool.connection_validation_timeout = -1 #Check the connection on every request
     con.timezone = :utc
@@ -72,7 +74,7 @@ module DB
   PACT_BROKER_DB ||= connection_for_env ENV.fetch('RACK_ENV')
 
   def self.health_check
-    PACT_BROKER_DB.synchronize do |c| c
+    PACT_BROKER_DB.synchronize do |c|
       PACT_BROKER_DB.valid_connection? c
     end
   end

@@ -96,6 +96,7 @@ module PactBroker
           .collect(&:to_domain)
       end
 
+      # rubocop: disable Metrics/ParameterLists
       def create_triggered_webhook trigger_uuid, webhook, pact, verification, trigger_type, event_name, event_context
         db_webhook = deliberately_unscoped(Webhook).where(uuid: webhook.uuid).single_record
         TriggeredWebhook.create(
@@ -112,6 +113,7 @@ module PactBroker
           event_context: event_context
         )
       end
+      # rubocop: enable Metrics/ParameterLists
 
       def update_triggered_webhook_status triggered_webhook, status
         triggered_webhook.update(status: status)

@@ -31,8 +31,6 @@ module PactBroker
 
         private
 
-        attr_reader :deployed_versions
-
         def environment
           @environment ||= environment_service.find(environment_uuid)
         end

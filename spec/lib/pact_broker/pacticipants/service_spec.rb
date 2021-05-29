@@ -124,49 +124,49 @@ module PactBroker
           it "deletes the pacticipant" do
             expect{ delete_consumer }.to change{
                 PactBroker::Domain::Pacticipant.all.count
-              }.by(-1)
+                                         }.by(-1)
           end
 
           it "deletes the child versions" do
             expect{ delete_consumer }.to change{
               PactBroker::Domain::Version.where(number: "1.2.3").count
-              }.by(-1)
+                                         }.by(-1)
           end
 
           it "deletes the child tags" do
             expect{ delete_consumer }.to change{
               PactBroker::Domain::Tag.where(name: "prod").count
-              }.by(-1)
+                                         }.by(-1)
           end
 
           it "deletes the webhooks" do
             expect{ delete_consumer }.to change{
               PactBroker::Webhooks::Webhook.count
-              }.by(-1)
+                                         }.by(-1)
           end
 
           it "deletes the triggered webhooks" do
             expect{ delete_consumer }.to change{
               PactBroker::Webhooks::TriggeredWebhook.count
-              }.by(-1)
+                                         }.by(-1)
           end
 
           it "deletes the webhook executions" do
             expect{ delete_consumer }.to change{
               PactBroker::Webhooks::Execution.count
-              }.by(-1)
+                                         }.by(-1)
           end
 
           it "deletes the child pacts" do
             expect{ delete_consumer }.to change{
               PactBroker::Pacts::PactPublication.count
-              }.by(-2)
+                                         }.by(-2)
           end
 
           it "deletes the verifications" do
             expect{ delete_consumer }.to change{
               PactBroker::Domain::Verification.count
-              }.by(-1)
+                                         }.by(-1)
           end
         end
 
@@ -174,49 +174,49 @@ module PactBroker
           it "deletes the pacticipant" do
             expect{ delete_provider }.to change{
                 PactBroker::Domain::Pacticipant.all.count
-              }.by(-1)
+                                         }.by(-1)
           end
 
           it "does not delete any versions" do
             expect{ delete_provider }.to change{
               PactBroker::Domain::Version.where(number: "1.2.3").count
-              }.by(0)
+                                         }.by(0)
           end
 
           it "deletes the child tags only if there are any" do
             expect{ delete_provider }.to change{
               PactBroker::Domain::Tag.where(name: "prod").count
-              }.by(0)
+                                         }.by(0)
           end
 
           it "deletes the webhooks" do
             expect{ delete_provider }.to change{
               PactBroker::Webhooks::Webhook.count
-              }.by(-1)
+                                         }.by(-1)
           end
 
           it "deletes the triggered webhooks" do
             expect{ delete_provider }.to change{
               PactBroker::Webhooks::TriggeredWebhook.count
-              }.by(-1)
+                                         }.by(-1)
           end
 
           it "deletes the webhook executions" do
             expect{ delete_provider }.to change{
               PactBroker::Webhooks::Execution.count
-              }.by(-1)
+                                         }.by(-1)
           end
 
           it "deletes the child pacts" do
             expect{ delete_provider }.to change{
               PactBroker::Pacts::PactPublication.count
-              }.by(-2)
+                                         }.by(-2)
           end
 
           it "deletes the verifications" do
             expect{ delete_provider }.to change{
               PactBroker::Domain::Verification.count
-              }.by(-1)
+                                         }.by(-1)
           end
 
         end

@@ -8,7 +8,7 @@ module PactBroker
             .for_provider(provider)
             .latest_for_consumer_tag(consumer_version_tag_names)
             .from_self.order_by(:tag_name)
-          }
+      }
     end
   end
 end

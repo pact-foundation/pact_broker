@@ -7,7 +7,7 @@ module PactBroker
         include PactBroker::Logging
 
         # env not needed, just passing in in case PF ever needs it
-        def self.call error, error_reference, env = {}
+        def self.call error, error_reference, _env = {}
           response_body_hash(error, error_reference).to_json
         end
 

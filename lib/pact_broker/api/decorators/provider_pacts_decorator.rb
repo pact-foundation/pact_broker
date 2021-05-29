@@ -7,7 +7,6 @@ module PactBroker
       class ProviderPactsDecorator < BaseDecorator
 
         link :self do | context |
-          suffix = context[:tag] ? " with tag '#{context[:tag]}'" : ""
           {
             href: context[:resource_url],
             title: context[:title]

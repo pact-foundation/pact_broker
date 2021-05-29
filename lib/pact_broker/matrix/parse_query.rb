@@ -4,6 +4,8 @@ require 'pact_broker/matrix/unresolved_selector'
 module PactBroker
   module Matrix
     class ParseQuery
+      # rubocop: disable Metrics/CyclomaticComplexity
+      # rubocop: disable Metrics/MethodLength
       def self.call query
         params = Rack::Utils.parse_nested_query(query)
         selectors = (params['q'] || []).collect do |i|
@@ -64,6 +66,7 @@ module PactBroker
         p.tag = i['tag'] if i['tag'] && i['tag'] != ''
         p
       end
+      # rubocop: enable Metrics/CyclomaticComplexity
     end
   end
 end

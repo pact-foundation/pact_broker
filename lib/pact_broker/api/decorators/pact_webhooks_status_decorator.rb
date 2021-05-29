@@ -71,8 +71,8 @@ module PactBroker
         end
 
         def summary
-          counts = represented.group_by(&:status).each_with_object({}) do | (status, triggered_webhooks), counts |
-            counts[status] = triggered_webhooks.count
+          counts = represented.group_by(&:status).each_with_object({}) do | (status, triggered_webhooks), count |
+            count[status] = triggered_webhooks.count
           end
           OpenStruct.new(counts)
         end

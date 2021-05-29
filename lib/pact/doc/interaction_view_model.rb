@@ -21,7 +21,7 @@ module Pact
             "#{description} given #{interaction.provider_state}"
           else
             description
-          end
+                      end
           CGI.escapeHTML(full_desc.gsub(/\s+/,'_'))
         end
       end

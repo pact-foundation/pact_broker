@@ -65,7 +65,7 @@ module PactBroker
           }
 
           thing = base_query
-            .left_join(base_query, base_join, { table_alias: :v2 }) do | table, joined_table, something |
+            .left_join(base_query, base_join, { table_alias: :v2 }) do | _table, _joined_table, _something |
               :v2[:verification_id] > :v[:verification_id]
             end.where(:v2[:verification_id] => nil)
 

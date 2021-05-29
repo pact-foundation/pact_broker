@@ -13,7 +13,8 @@ module PactBroker
 
       HEADERS_TO_REDACT = [/authorization/i, /token/i]
 
-      attr_accessor :method, :url, :headers, :body, :username, :password, :uuid
+      attr_accessor :method, :url, :body, :username, :password, :uuid
+      attr_reader :headers
 
       # Reform gets confused by the :method method, as :method is a standard
       # Ruby method.

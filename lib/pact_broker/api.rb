@@ -24,6 +24,7 @@ module Webmachine
 end
 
 module PactBroker
+  # rubocop: disable Metrics/MethodLength
   def self.build_api(application_context = PactBroker::ApplicationContext.default_application_context)
     pact_api = Webmachine::Application.new do |app|
       app.routes do
@@ -149,4 +150,5 @@ module PactBroker
   API ||= begin
     build_api
   end
+  # rubocop: enable Metrics/MethodLength
 end

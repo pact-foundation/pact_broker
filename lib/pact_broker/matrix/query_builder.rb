@@ -73,7 +73,7 @@ module PactBroker
             { Sequel[pacts_qualifier][:consumer_id] => query_ids.pacticipant_id },
             { Sequel[pacts_qualifier][:provider_id] => query_ids.pacticipant_id }
           ]
-        end
+              end
 
         Sequel.|(*ors)
       end

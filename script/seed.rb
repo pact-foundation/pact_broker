@@ -9,7 +9,7 @@ ENV['RACK_ENV'] = 'development'
 require 'sequel'
 require 'logger'
 require 'stringio'
-logger = Logger.new($stdout)
+# logger = Logger.new($stdout)
 logger = Logger.new(StringIO.new)
 DATABASE_CREDENTIALS = {logger: logger, adapter: "sqlite", database: ARGV[0], :encoding => 'utf8'}.tap { |it| puts it }
 #DATABASE_CREDENTIALS = {adapter: "postgres", database: "pact_broker", username: 'pact_broker', password: 'pact_broker', :encoding => 'utf8'}
@@ -31,19 +31,19 @@ PactBroker::Database::TableDependencyCalculator.call(connection).each do | table
   connection[table_name].delete
 end
 
-  # .create_webhook(method: 'GET', url: 'https://localhost:9393?url=${pactbroker.pactUrl}', body: '${pactbroker.pactUrl}')
+# .create_webhook(method: 'GET', url: 'https://localhost:9393?url=${pactbroker.pactUrl}', body: '${pactbroker.pactUrl}')
 
-webhook_body = {
-  'pactUrl' => '${pactbroker.pactUrl}',
-  'verificationResultUrl' => '${pactbroker.verificationResultUrl}',
-  'consumerVersionNumber' => '${pactbroker.consumerVersionNumber}',
-  'providerVersionNumber' => '${pactbroker.providerVersionNumber}',
-  'providerVersionTags' => '${pactbroker.providerVersionTags}',
-  'consumerVersionTags' => '${pactbroker.consumerVersionTags}',
-  'consumerName' => '${pactbroker.consumerName}',
-  'providerName' => '${pactbroker.providerName}',
-  'githubVerificationStatus' => '${pactbroker.githubVerificationStatus}'
-}
+# webhook_body = {
+#   'pactUrl' => '${pactbroker.pactUrl}',
+#   'verificationResultUrl' => '${pactbroker.verificationResultUrl}',
+#   'consumerVersionNumber' => '${pactbroker.consumerVersionNumber}',
+#   'providerVersionNumber' => '${pactbroker.providerVersionNumber}',
+#   'providerVersionTags' => '${pactbroker.providerVersionTags}',
+#   'consumerVersionTags' => '${pactbroker.consumerVersionTags}',
+#   'consumerName' => '${pactbroker.consumerName}',
+#   'providerName' => '${pactbroker.providerName}',
+#   'githubVerificationStatus' => '${pactbroker.githubVerificationStatus}'
+# }
 
 PactBroker.configuration.base_equality_only_on_content_that_affects_verification_results = false
 

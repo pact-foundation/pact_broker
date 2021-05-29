@@ -74,9 +74,6 @@ module PactBroker
       def latest_for_branch?
         return nil unless consumer_version.branch
         self_order = self.consumer_version.order
-        versions_join = {
-          Sequel[:pact_publications][:consumer_version_id] => Sequel[:cv][:id]
-        }
         PactPublication.where(consumer_id: consumer_id, provider_id: provider_id)
           .join_consumer_versions(:cv, { Sequel[:cv][:branch] => consumer_version.branch} ) do
             Sequel[:cv][:order] > self_order

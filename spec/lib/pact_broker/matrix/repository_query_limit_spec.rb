@@ -62,14 +62,14 @@ module PactBroker
         subject { Repository.new.find(selectors, options) }
 
         it "includes rows from each direction" do
-          expect(subject.count{ |r| r.consumer_name == 'Foo' }).to eq (subject.count{ |r| r.consumer_name == 'Bar' })
+          expect(subject.count{ |r| r.consumer_name == 'Foo' }).to eq(subject.count{ |r| r.consumer_name == 'Bar' })
         end
 
         context "when where is a latestby" do
           let(:options) { { limit: 4, latestby: 'cvpv'} }
 
           it "includes rows from each direction" do
-            expect(subject.count{ |r| r.consumer_name == 'Foo' }).to eq (subject.count{ |r| r.consumer_name == 'Bar' })
+            expect(subject.count{ |r| r.consumer_name == 'Foo' }).to eq(subject.count{ |r| r.consumer_name == 'Bar' })
           end
         end
       end

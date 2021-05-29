@@ -140,7 +140,7 @@ module PactBroker
 
         it "returns the latest pact publications for each consumer/branch" do
           expect(subject.size).to eq 3
-          hashes = subject.collect(&:values)
+          subject.collect(&:values)
 
           expect(subject.find { |pp| pp.consumer_id == foo.id && pp[:tag_name] == "main" }.consumer_version.number).to eq "3"
           expect(subject.find { |pp| pp.consumer_id == foo.id && pp[:tag_name] == "feat/x" }.consumer_version.number).to eq "4"

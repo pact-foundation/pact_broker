@@ -18,7 +18,7 @@ module PactBroker
             logger.debug("Loading certificate #{certificate.subject} in to cert store")
             cert_store.add_cert(certificate)
           rescue StandardError => e
-            logger.warn("Error adding certificate object #{certificate.to_s} to store", e)
+            logger.warn("Error adding certificate object #{certificate} to store", e)
           end
         end
         cert_store

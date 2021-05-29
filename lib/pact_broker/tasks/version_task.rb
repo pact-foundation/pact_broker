@@ -18,7 +18,7 @@ module PactBroker
       attr_accessor :database_connection
 
       def initialize &block
-        rake_task &block
+        rake_task(&block)
       end
 
       def rake_task &block

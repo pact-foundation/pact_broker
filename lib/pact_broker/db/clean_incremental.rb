@@ -59,7 +59,7 @@ module PactBroker
           dry_run_results
         else
           before_counts = current_counts
-          result = PactBroker::Domain::Version.where(id: resolve_ids(version_ids_to_delete)).delete
+          PactBroker::Domain::Version.where(id: resolve_ids(version_ids_to_delete)).delete
           delete_orphan_pact_versions
           after_counts = current_counts
 
@@ -167,7 +167,7 @@ module PactBroker
           .where(id: version_ids_to_delete.select(:id))
           .all
           .group_by{ | v | v.pacticipant_id }
-          .each_with_object({}) do | (pacticipant_id, versions), thing |
+          .each_with_object({}) do | (_pacticipant_id, versions), thing |
             thing[versions.first.pacticipant.name] = {
               "count" => versions.count,
               "fromVersion" => version_info(versions.first),
@@ -176,6 +176,7 @@ module PactBroker
           end
       end
 
+      # rubocop: disable Metrics/CyclomaticComplexity
       def dry_run_to_keep
         latest_to_keep = dry_run_latest_versions_to_keep.eager(:tags).each_with_object({}) do | version, r |
           r[version.pacticipant_id] = {
@@ -197,6 +198,7 @@ module PactBroker
                       .merge(latest_to_keep[pacticipant_id] || {})
         end
       end
+      # rubocop: enable Metrics/CyclomaticComplexity
 
       def counts_to_keep
         db[:versions].where(id: version_ids_to_delete.select(:id))

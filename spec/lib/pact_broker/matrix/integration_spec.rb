@@ -106,11 +106,11 @@ module PactBroker
           end
 
           it "returns 1 row with a verification" do
-            expect(subject.rows.select(&:has_verification?).size).to eq 1
+            expect(subject.rows.count(&:has_verification?)).to eq 1
           end
 
           it "returns 1 row without a verification" do
-            expect(subject.rows.reject(&:has_verification?).size).to eq 1
+            expect(subject.rows.count{ |row| !row.has_verification? }).to eq 1
           end
 
           it "does not allow the consumer to be deployed" do
@@ -372,11 +372,11 @@ module PactBroker
             end
 
             it "finds all prod versions of Foo" do
-              expect(subject.select { |row| row.consumer_name == "Foo"}.size).to eq 2
+              expect(subject.count { |row| row.consumer_name == "Foo"}).to eq 2
             end
 
             it "finds the single prod version of Cat" do
-              expect(subject.select { |row| row.consumer_name == "Cat"}.size).to eq 1
+              expect(subject.count { |row| row.consumer_name == "Cat"}).to eq 1
             end
 
             it "is not deployable because of the missing verification for Cat v20" do

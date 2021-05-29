@@ -20,7 +20,10 @@ module PactBroker
             @first_errors.messages[key] = @first_errors.messages[key][0...1]
           end
 
+          # rubocop: disable Lint/NestedMethodDefinition
           def self.errors; @first_errors end
+          # rubocop: enable Lint/NestedMethodDefinition
+
           result
         end
 

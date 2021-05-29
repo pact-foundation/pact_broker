@@ -79,7 +79,7 @@ module PactBroker
         it "deletes the webhook" do
           expect { subject }.to change {
             ::DB::PACT_BROKER_DB[:webhooks].where(uuid: uuid).count
-            }.by(-1)
+                                }.by(-1)
         end
       end
 
@@ -765,7 +765,7 @@ module PactBroker
           end
 
           it "deletes the webhooks belonging to the consumer version" do
-            expect { subject }.to change{ TriggeredWebhook.count }.by (-1)
+            expect { subject }.to change{ TriggeredWebhook.count }.by(-1)
           end
         end
 
@@ -781,7 +781,7 @@ module PactBroker
           end
 
           it "deletes the webhooks belonging to the consumer version" do
-            expect { subject }.to change{ TriggeredWebhook.count }.by (-1)
+            expect { subject }.to change{ TriggeredWebhook.count }.by(-1)
           end
         end
       end

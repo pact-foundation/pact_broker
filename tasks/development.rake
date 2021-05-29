@@ -1,4 +1,3 @@
-
 desc 'Set up a dev instance of the Pact Broker'
 task 'pact_broker:dev:setup' do
   puts "Copying example directory"
@@ -19,7 +18,7 @@ task 'pact_broker:dev:setup' do
 end
 
 desc 'List the Pact Broker API routes'
-task 'pact_broker:routes', [:search_term] do | t, args |
+task 'pact_broker:routes', [:search_term] do | _, args |
   puts "Listing routes containing the term '#{args[:search_term]}'" if args[:search_term]
   require 'tempfile'
   require 'sequel'
@@ -33,7 +32,6 @@ task 'pact_broker:routes', [:search_term] do | t, args |
     PactBroker::DB.run_migrations(CONNECTION)
 
     require 'pact_broker/api'
-    PactBroker::API
 
     routes_debugging = PactBroker::API.application.routes.collect do | route |
       ["/" + route.path_spec.collect{ |part| part.is_a?(Symbol) ? ":#{part}" : part  }.join("/"), route.resource]

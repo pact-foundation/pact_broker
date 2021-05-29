@@ -29,6 +29,7 @@ module PactBroker
       GROUP_BY_PROVIDER = [:consumer_name, :consumer_version_number, :provider_name]
       GROUP_BY_PACT = [:consumer_name, :provider_name]
 
+      # rubocop: disable Metrics/CyclomaticComplexity
       def find_ids_for_pacticipant_names params
         criteria  = {}
 
@@ -52,6 +53,7 @@ module PactBroker
         criteria[:tag_name] = params[:tag_name] if params[:tag_name].is_a?(String) # Could be a sym from resource parameters in api.rb
         criteria
       end
+      # rubocop: enable Metrics/CyclomaticComplexity
 
       # Return the latest matrix row (pact/verification) for each consumer_version_number/provider_version_number
       def find specified_selectors, options = {}
@@ -116,6 +118,7 @@ module PactBroker
         specified_pacticipant_names.include?(consumer_name)
       end
 
+      # rubocop: disable Metrics/CyclomaticComplexity
       # It would be nicer to do this in the SQL, but it requires time that I don't have at the moment
       def apply_latestby options, lines
         return lines unless options[:latestby]
@@ -123,15 +126,16 @@ module PactBroker
         when 'cvpv' then GROUP_BY_PROVIDER_VERSION_NUMBER
         when 'cvp' then GROUP_BY_PROVIDER
         when 'cp' then GROUP_BY_PACT
-        end
+                           end
 
         # The group with the nil provider_version_numbers will be the results of the left outer join
         # that don't have verifications, so we need to include them all.
         lines.group_by{|line| group_by_columns.collect{|key| line.send(key) }}
           .values
-          .collect{ | lines | lines.first.provider_version_number.nil? ? lines : lines.sort_by(&:provider_version_order).last }
+          .collect{ | line | line.first.provider_version_number.nil? ? line : line.sort_by(&:provider_version_order).last }
           .flatten
       end
+      # rubocop: enable Metrics/CyclomaticComplexity
 
       def query_matrix selectors, options
         query = base_model(options).select_all_columns
@@ -230,12 +234,14 @@ module PactBroker
         ResolvedSelector.for_pacticipant_and_non_existing_version(pacticipant, unresolved_selector, selector_type, ignore)
       end
 
+      # rubocop: disable Metrics/ParameterLists
       def selector_for_found_version(pacticipant, version, unresolved_selector, selector_type, one_of_many, resolved_ignore_selectors)
         ignore = resolved_ignore_selectors.any? do | s |
           s.pacticipant_id == pacticipant.id && (s.only_pacticipant_name_specified? || s.pacticipant_version_id == version.id)
         end
         ResolvedSelector.for_pacticipant_and_version(pacticipant, version, unresolved_selector, selector_type, ignore, one_of_many)
       end
+      # rubocop: enable Metrics/ParameterLists
 
       def selector_for_all_versions_of_a_pacticipant(pacticipant, selector_type, resolved_ignore_selectors)
         # Doesn't make sense to ignore this, as you can't have a can-i-deploy query

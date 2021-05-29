@@ -14,7 +14,7 @@ module PactBroker
           subject { JSON.parse(ErrorResponseBodyGenerator.call(error, error_reference)) }
 
           it "includes an error reference" do
-            expect(subject['error']).to  include 'reference' => "bYWfnyWPlf"
+            expect(subject['error']).to include 'reference' => "bYWfnyWPlf"
           end
 
           context "when show_backtrace_in_error_response? is true" do
@@ -30,7 +30,7 @@ module PactBroker
               end
 
               it "includes the backtrace in the error response" do
-                expect(subject['error']).to include ('backtrace')
+                expect(subject['error']).to include('backtrace')
               end
             end
           end
@@ -48,17 +48,17 @@ module PactBroker
               end
 
               it "does not include the backtrace in the error response" do
-                expect(subject['error']).to_not include ('backtrace')
+                expect(subject['error']).to_not include('backtrace')
               end
             end
 
             context "when the error is not a PactBroker::Error or subclass" do
               it "uses a hardcoded error message" do
-                expect(subject['error']['message']).to match /An error/
+                expect(subject['error']['message']).to match(/An error/)
               end
 
               it "does not include the backtrace in the error response" do
-                expect(subject['error']).to_not include ('backtrace')
+                expect(subject['error']).to_not include('backtrace')
               end
             end
           end

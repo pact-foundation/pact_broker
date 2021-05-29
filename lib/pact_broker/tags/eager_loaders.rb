@@ -12,8 +12,8 @@ module PactBroker
         end
 
         def self.populate_associations(tags)
-          group_by_pacticipant_id(tags).each do | pacticipant_id, tags |
-            populate_associations_by_pacticipant(pacticipant_id, tags)
+          group_by_pacticipant_id(tags).each do | pacticipant_id, participant_tags |
+            populate_associations_by_pacticipant(pacticipant_id, participant_tags)
           end
         end
 

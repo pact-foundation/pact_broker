@@ -10,6 +10,8 @@ gem 'bump', '~> 0.5'
 group :development do
   gem 'pry-byebug'
   gem 'rubocop', '~>1.1'
+  gem 'rubocop-performance'
+  gem 'rubocop-rails'
   gem 'sequel-annotate', '~>1.3'
 end
 

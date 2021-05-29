@@ -58,7 +58,7 @@ module PactBroker
           when 'consumer' then consumer_name
           when 'provider' then provider_name
           else "#{consumer_name}/#{provider_name}"
-        end
+                end
         "#{title} pact".downcase
       end
 
@@ -154,7 +154,7 @@ module PactBroker
           when :failed then "pact-failed-red.svg"
           when :stale then "pact-changed-orange.svg"
           else "pact-unknown-lightgrey.svg"
-        end
+                    end
         file_name = "pact_not_found-unknown-lightgrey.svg" unless pact
         File.read(PactBroker.project_root.join("public", "images", file_name))
       end

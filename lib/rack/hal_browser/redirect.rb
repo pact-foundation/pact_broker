@@ -6,7 +6,7 @@ module Rack
   module HalBrowser
     class Redirect
 
-      def initialize(app, options = {}, &block)
+      def initialize(app, options = {})
         @app = app
         @excluded_paths = Array(options[:exclude]) << '/hal-browser'
         @hal_browser = Rack::Static.new(@app, :urls => ['/hal-browser'], :root => ::File.expand_path('../../../../vendor', __FILE__))

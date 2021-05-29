@@ -16,7 +16,7 @@ module Rack
       let(:headers) { {} }
 
       let(:api) do
-        ->(env) { ::PactBroker::Domain::Pacticipant.create(name: 'Foo'); [500, headers, []] }
+        ->(_env) { ::PactBroker::Domain::Pacticipant.create(name: 'Foo'); [500, headers, []] }
       end
 
       let(:app) do
@@ -42,7 +42,6 @@ module Rack
         let(:existing_database_connector) { double('existing database connector') }
 
         it "does not overwrite it" do
-          actual_env = nil
           expect(api).to receive(:call).with(hash_including("pactbroker.database_connector" => existing_database_connector)).and_call_original
           subject
         end
