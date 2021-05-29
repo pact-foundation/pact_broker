@@ -13,11 +13,6 @@ module PactBroker
       include PactBroker::Pacticipants::GenerateDisplayName
       using PactBroker::StringRefinements
 
-      plugin :serialization
-      SPACE_DELIMITED_STRING_TO_ARRAY = lambda { |string| string.split(" ") }
-      ARRAY_TO_SPACE_DELIMITED_STRING = lambda { |array| array.join(" ") }
-      serialize_attributes [ARRAY_TO_SPACE_DELIMITED_STRING, SPACE_DELIMITED_STRING_TO_ARRAY], :main_development_branches
-
       plugin :insert_ignore, identifying_columns: [:name]
       plugin :timestamps, update_on_create: true
 
@@ -52,9 +47,8 @@ module PactBroker
 
       def before_save
         super
-        if display_name.nil? || display_name.to_s.blank?
-          self.display_name = generate_display_name(name)
-        end
+        self.display_name = generate_display_name(name) if display_name.blank?
+        self.main_branch = nil if main_branch.blank?
       end
 
       def latest_version

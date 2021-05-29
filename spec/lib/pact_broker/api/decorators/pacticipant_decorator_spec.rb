@@ -12,14 +12,14 @@ module PactBroker
           let(:hash) do
             {
               name: "Foo",
-              mainDevelopmentBranches: ["main"]
+              mainBranch: "main"
             }
           end
 
           subject { decorator.from_json(hash.to_json) }
 
           its(:name) { is_expected.to eq "Foo" }
-          its(:main_development_branches) { is_expected.to eq ["main"] }
+          its(:main_branch) { is_expected.to eq "main" }
         end
         describe "to_json" do
           let(:pacticipant) do

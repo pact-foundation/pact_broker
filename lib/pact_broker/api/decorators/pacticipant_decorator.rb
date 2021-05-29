@@ -17,7 +17,7 @@ module PactBroker
         property :repository_url
         property :repository_name
         property :repository_namespace
-        property :main_development_branches if PactBroker.feature_enabled?(:branches)
+        property :main_branch
 
 
         property :latest_version, as: :latestVersion, :class => PactBroker::Domain::Version, extend: PactBroker::Api::Decorators::EmbeddedVersionDecorator, embedded: true, writeable: false

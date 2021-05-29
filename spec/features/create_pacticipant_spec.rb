@@ -5,7 +5,7 @@ describe "Creating a pacticipant" do
   let(:pacticipant_hash) do
     {
       name: 'Foo Thing',
-      mainDevelopmentBranches: ["main"],
+      mainBranch: "main",
       repositoryUrl: "http://url",
       repositoryName: "foo-thing",
       repositoryNamespace: "some-group"

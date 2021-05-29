@@ -18,12 +18,12 @@ module PactBroker
 
           let(:display_name) { "Foo" }
 
-          subject { repository.create(name: "foo", display_name: display_name, repository_url: "url", main_development_branches: ["main"]) }
+          subject { repository.create(name: "foo", display_name: display_name, repository_url: "url", main_branch: "main") }
 
           it "returns the new pacticipant" do
             expect(subject).to be_a(PactBroker::Domain::Pacticipant)
             expect(subject.name).to eq "foo"
-            expect(subject.main_development_branches).to eq ["main"]
+            expect(subject.main_branch).to eq "main"
             expect(subject.repository_url).to eq "url"
             expect(subject.display_name).to eq "Foo"
           end
@@ -56,14 +56,14 @@ module PactBroker
 
       describe "replace" do
         before do
-          td.create_pacticipant("Bar", main_development_branches: ["foo"], repository_namespace: "foo")
+          td.create_pacticipant("Bar", main_branch: "foo", repository_namespace: "foo")
           allow_any_instance_of(PactBroker::Domain::Pacticipant).to receive(:generate_display_name).and_return("display_name")
         end
 
-        subject { Repository.new.replace("Bar", OpenStruct.new(main_development_branches: ["bar"], repository_url: "new_url")) }
+        subject { Repository.new.replace("Bar", OpenStruct.new(main_branch: "bar", repository_url: "new_url")) }
 
         it "replaces the pacticipant" do
-          expect(subject.main_development_branches).to eq ["bar"]
+          expect(subject.main_branch).to eq "bar"
           expect(subject.repository_namespace).to eq nil
           expect(subject.display_name).to eq "display_name"
         end

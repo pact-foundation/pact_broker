@@ -10,11 +10,11 @@ describe "Update a pacticipant" do
         repositoryUrl: "http://foo",
         repositoryName: "name",
         repositoryNamespace: "org",
-        mainDevelopmentBranches: ["main"]
+        mainBranch: "main"
       }
     end
 
-    subject { put(path, request_body_hash.to_json, {'CONTENT_TYPE' => 'application/json' }) }
+    subject { put(path, request_body_hash.to_json, { 'CONTENT_TYPE' => 'application/json' }) }
 
     context "when the pacticipant exists" do
       before do

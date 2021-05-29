@@ -61,7 +61,7 @@ module PactBroker
           repository_url: params[:repository_url],
           repository_name: params[:repository_name],
           repository_namespace: params[:repository_namespace],
-          main_development_branches: params[:main_development_branches] || []
+          main_branch: params[:main_branch]
         ).insert_ignore
       end
 
@@ -76,7 +76,7 @@ module PactBroker
           repository_url: open_struct_pacticipant.repository_url,
           repository_name: open_struct_pacticipant.repository_name,
           repository_namespace: open_struct_pacticipant.repository_namespace,
-          main_development_branches: open_struct_pacticipant.main_development_branches || []
+          main_branch: open_struct_pacticipant.main_branch
         ).save
       end
 

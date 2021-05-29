@@ -8,14 +8,14 @@ module PactBroker
           {
             name: "pact-broker",
             displayName: "Pact Broker",
-            mainDevelopmentBranches: branches,
+            mainBranch: main_branch,
             repositoryUrl: "https://github.com/pact-foundation/pact_broker",
             repositoryName: "pact_broker",
             repositoryNamespace: "pact-foundation"
           }
         end
 
-        let(:branches) { ["main"] }
+        let(:main_branch) { "main" }
 
         subject { PacticipantSchema.call(params) }
 
@@ -36,9 +36,9 @@ module PactBroker
         end
 
         context "with branch names that contain spaces" do
-          let(:branches) { ["main foo"] }
+          let(:main_branch) { "main foo" }
 
-          its([:mainDevelopmentBranches, 0]) { is_expected.to include "cannot contain spaces" }
+          its([:mainBranch, 0]) { is_expected.to include "cannot contain spaces" }
         end
       end
     end
