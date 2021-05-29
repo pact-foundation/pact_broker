@@ -14,7 +14,7 @@ module PactBroker
           )
         end
 
-        let(:write_mode) { "overwrite" }
+        let(:on_conflict) { "overwrite" }
         let(:branch) { "main" }
         let(:contracts) { [contract_1] }
         let(:contract_1) do
@@ -23,7 +23,7 @@ module PactBroker
             provider_name: "Bar",
             decoded_content: decoded_contract,
             specification: "pact",
-            write_mode: write_mode
+            on_conflict: on_conflict
           )
         end
 
@@ -54,7 +54,7 @@ module PactBroker
           end
 
           context "when the write mode is merge" do
-            let(:write_mode) { "merge" }
+            let(:on_conflict) { "merge" }
 
             it "returns an info message" do
               expect(subject.notices.find{ |log| log.type == "success" && log.text.include?(" published ") }).to_not be nil
@@ -95,7 +95,7 @@ module PactBroker
           end
 
           context "when the write mode is merge" do
-            let(:write_mode) { "merge" }
+            let(:on_conflict) { "merge" }
 
             it "returns an info message" do
               expect(subject.notices.find{ |log| log.type == "success" && log.text.include?("merged") }).to_not be nil

@@ -29,7 +29,7 @@ module PactBroker
             required(:content).filled(:str?)
             required(:contentType).filled(included_in?: ["application/json"])
             required(:specification).filled(included_in?: ["pact"])
-            optional(:writeMode).filled(included_in?:["overwrite", "merge"])
+            optional(:onConflict).filled(included_in?:["overwrite", "merge"])
           end
         end
 

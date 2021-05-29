@@ -21,7 +21,7 @@
           "specification": "pact",
           "contentType": "application/json",
           "content": "eyJjb25zdW1lciI6eyJuYW1lIjoiRm9vIn0sInByb3ZpZGVyIjp7Im5hbWUiOiJCYXIifSwiaW50ZXJhY3Rpb25zIjpbXX0=",
-          "writeMode": "overwrite"
+          "onConflict": "overwrite"
         }
       ]
     }
