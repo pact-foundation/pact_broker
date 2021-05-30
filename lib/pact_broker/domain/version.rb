@@ -88,10 +88,24 @@ module PactBroker
           # end
         end
 
+        def currently_in_environment(environment_name, pacticipant_name)
+          deployed_version_query = PactBroker::Deployments::DeployedVersion.currently_deployed.for_environment_name(environment_name)
+          deployed_version_query = deployed_version_query.for_pacticipant_name(pacticipant_name) if pacticipant_name
+          supported_version_query = PactBroker::Deployments::ReleasedVersion.currently_supported.for_environment_name(environment_name)
+          supported_version_query = supported_version_query.for_pacticipant_name(pacticipant_name) if pacticipant_name
+          where(id: deployed_version_query.select(:version_id).union(supported_version_query.select(:version_id)))
+        end
+
         def currently_deployed_to_environment(environment_name, pacticipant_name)
           deployed_version_query = PactBroker::Deployments::DeployedVersion.currently_deployed.for_environment_name(environment_name)
           deployed_version_query = deployed_version_query.for_pacticipant_name(pacticipant_name) if pacticipant_name
           where(id: deployed_version_query.select(:version_id))
+        end
+
+        def currently_supported_in_environment(environment_name, pacticipant_name)
+          supported_version_query = PactBroker::Deployments::ReleasedVersion.currently_supported.for_environment_name(environment_name)
+          supported_version_query = supported_version_query.for_pacticipant_name(pacticipant_name) if pacticipant_name
+          where(id: supported_version_query.select(:version_id))
         end
 
         def where_tag(tag)
@@ -138,7 +152,7 @@ module PactBroker
         def for_selector(selector)
           query = self
           query = query.where_pacticipant_name(selector.pacticipant_name) if selector.pacticipant_name
-          query = query.currently_deployed_to_environment(selector.environment_name, selector.pacticipant_name) if selector.environment_name
+          query = query.currently_in_environment(selector.environment_name, selector.pacticipant_name) if selector.environment_name
           query = query.where_tag(selector.tag) if selector.tag
           query = query.where_branch(selector.branch) if selector.branch
           query = query.where_number(selector.pacticipant_version_number) if selector.pacticipant_version_number

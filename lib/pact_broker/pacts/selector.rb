@@ -28,6 +28,8 @@ module PactBroker
           :latest_for_branch
         elsif currently_deployed?
           :currently_deployed
+        elsif currently_supported?
+          :currently_supported
         elsif latest_for_tag?
           :latest_for_tag
         elsif all_for_tag?
@@ -91,6 +93,18 @@ module PactBroker
         currently_deployed
       end
 
+      def currently_supported= currently_supported
+        self[:currently_supported] = currently_supported
+      end
+
+      def currently_supported
+        self[:currently_supported]
+      end
+
+      def currently_supported?
+        currently_supported
+      end
+
       def environment= environment
         self[:environment] = environment
       end
@@ -143,6 +157,10 @@ module PactBroker
         Selector.new( { currently_deployed: true, environment: environment }.compact )
       end
 
+      def self.for_currently_supported(environment = nil)
+        Selector.new( { currently_supported: true, environment: environment }.compact )
+      end
+
       def self.for_currently_deployed_and_consumer(consumer)
         Selector.new(currently_deployed: true, consumer: consumer)
       end
@@ -172,7 +190,7 @@ module PactBroker
       end
 
       def overall_latest?
-        !!(latest? && !tag && !branch && !currently_deployed && !environment)
+        !!(latest? && !tag && !branch && !currently_deployed && !currently_supported && !environment)
       end
 
       # Not sure if the fallback_tag logic is needed
@@ -223,6 +241,12 @@ module PactBroker
             environment <=> other.environment
           else
             currently_deployed? ? -1 : 1
+          end
+        elsif currently_supported? || other.currently_supported?
+          if currently_supported? == other.currently_supported?
+            environment <=> other.environment
+          else
+            currently_supported? ? -1 : 1
           end
         elsif latest_for_tag? || other.latest_for_tag?
           if latest_for_tag? == other.latest_for_tag?
