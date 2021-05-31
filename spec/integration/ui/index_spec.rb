@@ -24,14 +24,14 @@ describe "UI index" do
     end
 
     it "returns a table of pacts" do
-      expect(subject.body.scan('<tr').to_a.count).to eq 2
+      expect(subject.body.scan('<tr').to_a.size).to eq 2
     end
 
     context "with an array of tags" do
       let(:params) { { tags: ['prod'] } }
 
       it "returns a table of pacts with the specfied tags" do
-        expect(subject.body.scan('<tr').to_a.count).to eq 3
+        expect(subject.body.scan('<tr').to_a.size).to eq 3
       end
     end
 

@@ -28,7 +28,7 @@ module PactBroker
 
     attr_accessor :configuration
 
-    def initialize &block
+    def initialize
       @app_builder = ::Rack::Builder.new
       @cascade_apps = []
       @make_it_later_api_auth = ::Rack::PactBroker::ConfigurableMakeItLater.new(Rack::PactBroker::NoAuth)
@@ -50,7 +50,7 @@ module PactBroker
     # the middleware with the app, and run it manually.
     # eg run MyMiddleware.new(app)
     def use *args, &block
-      @app_builder.use *args, &block
+      @app_builder.use(*args, &block)
     end
 
     # private API, not sure if this will continue to be supported
@@ -126,9 +126,11 @@ module PactBroker
       PactBroker::DB.connection = configuration.database_connection
       PactBroker::DB.connection.timezone = :utc
       PactBroker::DB.connection.extend_datasets do
+        # rubocop: disable Lint/NestedMethodDefinition
         def any?
           !empty?
         end
+        # rubocop: enable Lint/NestedMethodDefinition
       end
       PactBroker::DB.validate_connection_config if configuration.validate_database_connection_config
       PactBroker::DB.set_mysql_strict_mode_if_mysql

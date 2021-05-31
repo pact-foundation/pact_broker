@@ -42,7 +42,7 @@ module PactBroker
 
           it "returns a 400" do
             expect(subject.status).to eq 400
-            expect(JSON.parse(subject.body)["errors"]["pacticipant"].first).to match /Foo.*found/
+            expect(JSON.parse(subject.body)["errors"]["pacticipant"].first).to match(/Foo.*found/)
           end
         end
       end

@@ -8,7 +8,7 @@ module PactBroker
         include PactBroker::Logging
         extend Helpers
 
-        def self.call(connection, options = {})
+        def self.call(connection, _options = {})
           if required_columns_exist?(connection)
             connection[:pacticipants].select(:id, :name).where(main_branch: nil).each do | pacticipant_row |
               set_main_branch(connection, pacticipant_row)

@@ -19,6 +19,7 @@ module PactBroker
 
       extend self
 
+      # rubocop: disable Metrics/MethodLength
       def metrics
         {
           pacticipants: {
@@ -71,6 +72,7 @@ module PactBroker
           }
         }
       end
+      # rubocop: enable Metrics/MethodLength
 
       def pact_revision_counts
         query = "select revision_count as number_of_revisions, count(consumer_version_id) as consumer_version_count
@@ -80,7 +82,6 @@ module PactBroker
         PactBroker::Pacts::PactPublication.db[query].all.each_with_object({}) { |row, hash| hash[row[:number_of_revisions]] = row[:consumer_version_count] }
       end
 
-#
       def verification_distribution
         query = "select verification_count as number_of_verifications, count(*) as pact_version_count
           from (select pact_version_id, count(*) as verification_count from verifications group by pact_version_id) foo
@@ -94,7 +95,7 @@ module PactBroker
           PactBroker::Matrix::Row.db.with_statement_timeout(PactBroker.configuration.metrics_sql_statement_timeout) do
             PactBroker::Matrix::Row.count
           end
-        rescue Sequel::DatabaseError => e
+        rescue Sequel::DatabaseError => _ex
           -1
         end
       end

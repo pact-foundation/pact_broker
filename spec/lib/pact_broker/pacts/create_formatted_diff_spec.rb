@@ -19,8 +19,8 @@ module PactBroker
 
         it "returns the formatted diff" do
           expect(subject).to include 'interactions'
-          expect(subject).to match /\-.*post/
-          expect(subject).to match /\+.*get/
+          expect(subject).to match(/\-.*post/)
+          expect(subject).to match(/\+.*get/)
           expect(subject).to_not include 'Key'
         end
       end

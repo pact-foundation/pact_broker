@@ -18,10 +18,10 @@ module Pact
       def id
         @id ||= begin
           full_desc = if has_provider_state?
-            "#{description} given #{interaction.provider_state}"
-          else
-            description
-          end
+                        "#{description} given #{interaction.provider_state}"
+                      else
+                        description
+                      end
           CGI.escapeHTML(full_desc.gsub(/\s+/,'_'))
         end
       end

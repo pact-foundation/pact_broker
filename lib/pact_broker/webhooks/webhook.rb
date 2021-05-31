@@ -110,7 +110,6 @@ module PactBroker
         super
       end
 
-      private
 
       def self.properties_hash_from_domain webhook
         is_json_request_body = !(String === webhook.request.body || webhook.request.body.nil?) # Can't rely on people to set content type

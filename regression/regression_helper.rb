@@ -41,7 +41,7 @@ RSpec.configure do | config |
     PactBroker::API
   end
 
-  config.after(:each) do | example, something |
+  config.after(:each) do | example, _something |
     if ENV["SHOW_REGRESSION_DIFF"] == "true"
       if example.exception.is_a?(Approvals::ApprovalError)
         require "pact/support"

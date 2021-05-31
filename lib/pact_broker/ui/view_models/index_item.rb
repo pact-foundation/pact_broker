@@ -133,11 +133,11 @@ module PactBroker
 
         def webhook_url
           url = case @relationship.webhook_status
-            when :none
-              PactBroker::Api::PactBrokerUrls.webhooks_for_consumer_and_provider_url @relationship.latest_pact.consumer, @relationship.latest_pact.provider, base_url
-            else
-              PactBroker::Api::PactBrokerUrls.webhooks_status_url @relationship.latest_pact.consumer, @relationship.latest_pact.provider, base_url
-          end
+                when :none
+                  PactBroker::Api::PactBrokerUrls.webhooks_for_consumer_and_provider_url @relationship.latest_pact.consumer, @relationship.latest_pact.provider, base_url
+                else
+                  PactBroker::Api::PactBrokerUrls.webhooks_status_url @relationship.latest_pact.consumer, @relationship.latest_pact.provider, base_url
+                end
           PactBroker::Api::PactBrokerUrls.hal_browser_url(url, base_url)
         end
 

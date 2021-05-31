@@ -4,6 +4,7 @@ require 'pact_broker/matrix/unresolved_selector'
 module PactBroker
   module Matrix
     class ParseCanIDeployQuery
+      # rubocop: disable Metrics/CyclomaticComplexity
       def self.call params
         selector = PactBroker::Matrix::UnresolvedSelector.new
         options = {
@@ -39,6 +40,7 @@ module PactBroker
 
         return [selector], options
       end
+      # rubocop: enable Metrics/CyclomaticComplexity
     end
   end
 end

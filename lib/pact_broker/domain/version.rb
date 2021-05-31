@@ -135,6 +135,7 @@ module PactBroker
           super
         end
 
+        # rubocop: disable Metrics/CyclomaticComplexity
         def for_selector(selector)
           query = self
           query = query.where_pacticipant_name(selector.pacticipant_name) if selector.pacticipant_name
@@ -150,6 +151,7 @@ module PactBroker
             query
           end
         end
+        # rubocop: enable Metrics/CyclomaticComplexity
 
         # private
 

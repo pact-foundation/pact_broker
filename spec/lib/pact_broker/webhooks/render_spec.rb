@@ -11,7 +11,7 @@ module PactBroker
       describe "#call" do
         before do
           allow(PactBroker::Api::PactBrokerUrls).to receive(:pact_version_url_with_webhook_metadata).and_return("http://foo")
-          allow(PactBroker::Api::PactBrokerUrls).to receive(:verification_url) do | verification, base_url |
+          allow(PactBroker::Api::PactBrokerUrls).to receive(:verification_url) do | verification, _base_url |
             expect(verification).to_not be nil
             "http://verification"
           end
@@ -54,11 +54,11 @@ module PactBroker
             latest_verification: failed_verification)
         end
 
-        let (:provider) do
+        let(:provider) do
           double("provider", labels: provider_labels)
         end
 
-        let (:consumer) do
+        let(:consumer) do
           double("consumer", labels: consumer_labels)
         end
 

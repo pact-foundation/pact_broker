@@ -42,7 +42,7 @@ module PactBroker
         if !exceptions.include?(table_name)
           begin
             database_connection[table_name].truncate
-          rescue StandardError => e
+          rescue StandardError => _ex
             puts "Could not truncate table #{table_name}"
           end
         end

@@ -31,8 +31,6 @@ module PactBroker
 
         private
 
-        attr_reader :released_version
-
         def released_version
           @released_version ||= released_version_service.find_by_uuid(uuid)
         end

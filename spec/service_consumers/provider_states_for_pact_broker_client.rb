@@ -192,7 +192,7 @@ Pact.provider_states_for "Pact Broker Client" do
 
   provider_state "'Condor' does not exist in the pact-broker" do
      no_op
-   end
+  end
 
    provider_state "a pact between Condor and the Pricing Service exists for the production version of Condor" do
      set_up do

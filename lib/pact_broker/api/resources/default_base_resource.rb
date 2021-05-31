@@ -114,6 +114,7 @@ module PactBroker
           response.body = application_context.error_response_body_generator.call(error, error_reference, request.env)
         end
 
+        # rubocop: disable Metrics/CyclomaticComplexity
         def params(options = {})
           return options[:default] if options.key?(:default) && request_body.empty?
 
@@ -126,6 +127,7 @@ module PactBroker
         rescue JSON::JSONError => e
           raise InvalidJsonError.new("Error parsing JSON - #{e.message}")
         end
+        # rubocop: enable Metrics/CyclomaticComplexity
 
         def params_with_string_keys
           params(symbolize_names: false)

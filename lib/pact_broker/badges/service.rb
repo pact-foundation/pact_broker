@@ -58,7 +58,7 @@ module PactBroker
           when 'consumer' then consumer_name
           when 'provider' then provider_name
           else "#{consumer_name}/#{provider_name}"
-        end
+                end
         "#{title} pact".downcase
       end
 
@@ -150,11 +150,11 @@ module PactBroker
 
       def static_svg pact, pseudo_branch_verification_status
         file_name = case pseudo_branch_verification_status
-          when :success then "pact-verified-brightgreen.svg"
-          when :failed then "pact-failed-red.svg"
-          when :stale then "pact-changed-orange.svg"
-          else "pact-unknown-lightgrey.svg"
-        end
+                    when :success then "pact-verified-brightgreen.svg"
+                    when :failed then "pact-failed-red.svg"
+                    when :stale then "pact-changed-orange.svg"
+                    else "pact-unknown-lightgrey.svg"
+                    end
         file_name = "pact_not_found-unknown-lightgrey.svg" unless pact
         File.read(PactBroker.project_root.join("public", "images", file_name))
       end

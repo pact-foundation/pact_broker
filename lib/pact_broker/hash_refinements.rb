@@ -49,7 +49,7 @@ module PactBroker
             when Symbol then key.to_s.snakecase.to_sym
             else
               key
-            end
+                        end
             result.merge(snake_key => snakecase_keys_private(value))
           end
         when Array
@@ -68,7 +68,7 @@ module PactBroker
             when Symbol then key.to_s.camelcase.to_sym
             else
               key
-            end
+                        end
             result.merge(snake_key => camelcase_keys_private(value))
           end
         when Array

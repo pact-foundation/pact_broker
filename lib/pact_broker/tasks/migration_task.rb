@@ -20,14 +20,14 @@ module PactBroker
 
       def initialize &block
         @options = {}
-        rake_task &block
+        rake_task(&block)
       end
 
       def rake_task &block
         namespace :pact_broker do
           namespace :db do
             desc "Run sequel migrations for pact broker database"
-            task :migrate, [:target] do | t, args |
+            task :migrate, [:target] do | _t, args |
               require 'pact_broker/db/migrate'
               require 'pact_broker/db/version'
 

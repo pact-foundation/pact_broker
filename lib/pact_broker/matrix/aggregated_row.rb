@@ -34,7 +34,7 @@ module PactBroker
         @latest_verification ||= begin
           verification = matrix_rows.collect do | row|
               row.verification || latest_verification_for_consumer_version_tag(row)
-            end.compact.sort_by(&:id).last
+          end.compact.sort_by(&:id).last
 
           if !verification && overall_latest?
             overall_latest_verification

@@ -6,7 +6,7 @@ describe "executing a webhook to a server with a self signed certificate" do
   def wait_for_server_to_start
     Faraday.new(url: "https://localhost:4444", ssl: {verify: false}) do |builder|
       builder.request :retry, max: 20, interval: 0.5, exceptions: [StandardError]
-      builder.adapter  :net_http
+      builder.adapter :net_http
     end.get
   end
 

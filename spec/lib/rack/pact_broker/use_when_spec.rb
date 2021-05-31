@@ -21,7 +21,7 @@ module Rack
       end
 
       let(:app) do
-        target_app = -> (env) { [200, {}, []] }
+        target_app = -> (_env) { [200, {}, []] }
         builder = Rack::Builder.new
         condition = ->(env) { env['PATH_INFO'] == '/match' }
         builder.use_when condition, TestMiddleware, { "Foo" => "Bar" }

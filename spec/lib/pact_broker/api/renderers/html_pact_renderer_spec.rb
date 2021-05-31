@@ -63,13 +63,13 @@ module PactBroker
             expect(subject).to include("href='http://base/stylesheets/github.css'")
             expect(subject).to include('<pre><code')
             expect(subject).to include('&quot;method&quot;:')
-            expect(subject).to match /<h\d>.*Some Consumer/
-            expect(subject).to match /<h\d>.*Some Provider/
+            expect(subject).to match(/<h\d>.*Some Consumer/)
+            expect(subject).to match(/<h\d>.*Some Provider/)
             expect(subject).to include("Date published:")
             expect(subject).to include("Thu 27 Feb 2014, 11:00am +11:00")
             expect(subject).to include("3 days ago")
-            expect(subject).to match /title.*Pact between Consumer and Provider/
-            expect(subject).to match /prod, master/
+            expect(subject).to match(/title.*Pact between Consumer and Provider/)
+            expect(subject).to match(/prod, master/)
           end
 
           it "renders the badge image" do
@@ -126,7 +126,7 @@ module PactBroker
             end
 
             it "renders the JSON in HTML" do
-              expect(subject).to match /\[\s+1\s+\]/m
+              expect(subject).to match(/\[\s+1\s+\]/m)
             end
 
             it "logs a warning" do

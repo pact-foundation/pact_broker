@@ -38,7 +38,7 @@ module PactBroker
 
       describe "#build" do
         before do
-          allow(PactBroker::Webhooks::Render).to receive(:call) do | content, pact, verification, &block |
+          allow(PactBroker::Webhooks::Render).to receive(:call) do | content, _pact, _verification |
             content + "BUILT"
           end
         end

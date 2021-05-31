@@ -55,11 +55,11 @@ module PactBroker
       attr_reader :deployed_version
       attr_reader :released_version
 
-      def initialize(params = {})
+      def initialize(_params = {})
         @now = DateTime.now
       end
 
-      def comment *args
+      def comment *_args
         self
       end
 
@@ -283,6 +283,7 @@ module PactBroker
         self
       end
 
+      # rubocop: disable Metrics/CyclomaticComplexity
       def create_webhook parameters = {}
         params = parameters.dup
         consumer = params.key?(:consumer) ? params.delete(:consumer) : @consumer
@@ -290,16 +291,17 @@ module PactBroker
         uuid = params[:uuid] || PactBroker::Webhooks::Service.next_uuid
         enabled = params.key?(:enabled) ? params.delete(:enabled) : true
         event_params = if params[:event_names]
-          params[:event_names].collect{ |event_name| {name: event_name} }
-        else
-          params[:events] || [{ name: PactBroker::Webhooks::WebhookEvent::DEFAULT_EVENT_NAME }]
-        end
+                         params[:event_names].collect{ |event_name| {name: event_name} }
+                       else
+                         params[:events] || [{ name: PactBroker::Webhooks::WebhookEvent::DEFAULT_EVENT_NAME }]
+                       end
         events = event_params.collect{ |e| PactBroker::Webhooks::WebhookEvent.new(e) }
         template_params = { method: 'POST', url: 'http://example.org', headers: {'Content-Type' => 'application/json'}, username: params[:username], password: params[:password]}
         request = PactBroker::Webhooks::WebhookRequestTemplate.new(template_params.merge(params))
         @webhook = PactBroker::Webhooks::Repository.new.create uuid, PactBroker::Domain::Webhook.new(request: request, events: events, description: params[:description], enabled: enabled), consumer, provider
         self
       end
+      # rubocop: enable Metrics/CyclomaticComplexity
 
       def create_verification_webhook parameters = {}
         create_webhook(parameters.merge(event_names: [PactBroker::Webhooks::WebhookEvent::VERIFICATION_PUBLISHED]))
@@ -580,7 +582,7 @@ module PactBroker
            "interactions" => [],
            "random" => rand
          }.to_json
-       end
+      end
     end
   end
 end

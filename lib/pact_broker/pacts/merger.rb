@@ -56,7 +56,7 @@ module PactBroker
       end
 
       def same_request_properties? original, additional
-        attributes_match = %w(method path query body headers).all? do |attribute|
+        %w(method path query body headers).all? do |attribute|
           original[attribute] == additional[attribute]
         end
       end

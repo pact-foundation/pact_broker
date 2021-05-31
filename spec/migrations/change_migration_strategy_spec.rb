@@ -48,7 +48,7 @@ describe "changing from integer to timestamp migrations", no_db_clean: true, ski
     version_id = @db[:versions].insert(number: '1.2.3', order: 1, pacticipant_id: consumer_id, created_at: DateTime.now, updated_at: DateTime.now)
     pact_json = {consumer: {name: 'Foo'}, provider: {name: 'Bar'}, interactions: []}.to_json
     pact_version_id = @db[:pact_versions].insert(sha: '123', content: pact_json, created_at: DateTime.now, consumer_id: consumer_id, provider_id: provider_id)
-    pact_publication_id = @db[:pact_publications].insert(consumer_version_id: version_id, provider_id: provider_id, revision_number: 1, pact_version_id: pact_version_id, created_at: DateTime.now)
+    @db[:pact_publications].insert(consumer_version_id: version_id, provider_id: provider_id, revision_number: 1, pact_version_id: pact_version_id, created_at: DateTime.now)
   end
 
   it "does not have a schema_migrations table" do
@@ -65,7 +65,7 @@ describe "changing from integer to timestamp migrations", no_db_clean: true, ski
 
   it "uses the schema_migrations table after v2.6.0" do
     expect(@db.table_exists?(:schema_migrations)).to be true
-    migrations_count = Dir.glob("db/migrations/**.*").select{ |f| f =~ /\/\d+/ }.count
+    migrations_count = Dir.glob("db/migrations/**.*").count{ |f| f =~ /\/\d+/ }
     expect(migrations_count).to be >= 47
     expect(@db[:schema_migrations].count).to eq migrations_count
     expect(@db[:schema_migrations].order(:filename).first[:filename]).to eq '000001_create_pacticipant_table.rb'

@@ -8,6 +8,7 @@ module PactBroker
         self
       end
 
+      # rubocop: disable Metrics/CyclomaticComplexity
       def value_object
         case type
         when 'json'
@@ -26,6 +27,7 @@ module PactBroker
           value == "1"
         end
       end
+      # rubocop: enable Metrics/CyclomaticComplexity
 
       def self.get_db_value(object)
         case object
@@ -44,6 +46,7 @@ module PactBroker
         end
       end
 
+      # rubocop: disable Metrics/CyclomaticComplexity
       def self.get_db_type(object)
         case object
           when true, false
@@ -62,8 +65,9 @@ module PactBroker
             'symbol'
           else
             nil
-          end
+        end
       end
+      # rubocop: enable Metrics/CyclomaticComplexity
 
     end
 

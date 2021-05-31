@@ -34,7 +34,7 @@ module PactBroker
       end
 
       class DeprecatedPacticipantDecorator < PactBroker::Api::Decorators::PacticipantDecorator
-        property :title, getter: ->(something) { "DEPRECATED - Please use the embedded pacticipants collection" }
+        property :title, getter: ->(_something) { "DEPRECATED - Please use the embedded pacticipants collection" }
       end
 
       class NonEmbeddedPacticipantCollectionDecorator < BaseDecorator

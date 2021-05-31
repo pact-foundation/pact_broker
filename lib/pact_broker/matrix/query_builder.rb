@@ -64,16 +64,16 @@ module PactBroker
       # QueryIds is built from a single selector, so there is only one pacticipant_id or pacticipant_version_id
       def self.consumer_or_consumer_version_or_provider_or_provider_or_provider_version_match(query_ids, pacts_qualifier = :p, verifications_qualifier = :v)
         ors = if query_ids.pacticipant_version_id
-          [
-            { Sequel[pacts_qualifier][:consumer_version_id] => query_ids.pacticipant_version_id },
-            { Sequel[verifications_qualifier][:provider_version_id] => query_ids.pacticipant_version_id }
-          ]
-        else
-          [
-            { Sequel[pacts_qualifier][:consumer_id] => query_ids.pacticipant_id },
-            { Sequel[pacts_qualifier][:provider_id] => query_ids.pacticipant_id }
-          ]
-        end
+                [
+                  { Sequel[pacts_qualifier][:consumer_version_id] => query_ids.pacticipant_version_id },
+                  { Sequel[verifications_qualifier][:provider_version_id] => query_ids.pacticipant_version_id }
+                ]
+              else
+                [
+                  { Sequel[pacts_qualifier][:consumer_id] => query_ids.pacticipant_id },
+                  { Sequel[pacts_qualifier][:provider_id] => query_ids.pacticipant_id }
+                ]
+              end
 
         Sequel.|(*ors)
       end

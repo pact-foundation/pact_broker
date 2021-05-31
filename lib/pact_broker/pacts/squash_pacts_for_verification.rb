@@ -10,7 +10,6 @@ module PactBroker
 
         if include_pending_status
           pending_provider_tags = []
-          non_pending_provider_tags = []
           pending = nil
           if provider_version_tags.any?
             pending_provider_tags = domain_pact.select_pending_provider_version_tags(provider_version_tags)

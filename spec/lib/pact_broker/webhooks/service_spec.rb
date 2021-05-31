@@ -82,7 +82,7 @@ module PactBroker
 
         it "sends through the params to the repository" do
           updated_webhook = nil
-          allow_any_instance_of(PactBroker::Webhooks::Repository).to receive(:update_by_uuid) do | instance, uuid, webhook |
+          allow_any_instance_of(PactBroker::Webhooks::Repository).to receive(:update_by_uuid) do | _instance, _uuid, webhook |
             updated_webhook = webhook
             true
           end
@@ -95,7 +95,7 @@ module PactBroker
 
           it "does not overwite the password" do
             updated_webhook = nil
-            allow_any_instance_of(PactBroker::Webhooks::Repository).to receive(:update_by_uuid) do | instance, uuid, webhook |
+            allow_any_instance_of(PactBroker::Webhooks::Repository).to receive(:update_by_uuid) do | _instance, _uuid, webhook |
               updated_webhook = webhook
               true
             end
@@ -117,7 +117,7 @@ module PactBroker
 
           it "does not overwite the password" do
             updated_webhook = nil
-            allow_any_instance_of(PactBroker::Webhooks::Repository).to receive(:update_by_uuid) do | instance, uuid, webhook |
+            allow_any_instance_of(PactBroker::Webhooks::Repository).to receive(:update_by_uuid) do | _instance, _uuid, webhook |
               updated_webhook = webhook
               true
             end
@@ -141,7 +141,7 @@ module PactBroker
 
           it "does not overwite the authorization header" do
             updated_webhook = nil
-            allow_any_instance_of(PactBroker::Webhooks::Repository).to receive(:update_by_uuid) do | instance, uuid, webhook |
+            allow_any_instance_of(PactBroker::Webhooks::Repository).to receive(:update_by_uuid) do | _instance, _uuid, webhook |
               updated_webhook = webhook
               true
             end
@@ -161,7 +161,7 @@ module PactBroker
 
           it "updates the password" do
             updated_webhook = nil
-            allow_any_instance_of(PactBroker::Webhooks::Repository).to receive(:update_by_uuid) do | instance, uuid, webhook |
+            allow_any_instance_of(PactBroker::Webhooks::Repository).to receive(:update_by_uuid) do | _instance, _uuid, webhook |
               updated_webhook = webhook
               true
             end

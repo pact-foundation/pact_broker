@@ -146,7 +146,7 @@ Pact.provider_states_for "Pact Ruby" do
 
   provider_state "the relation for retrieving pacts for verifications exists in the index resource" do
       no_op
-    end
+  end
 
     provider_state "Foo has a pact tagged cdev with provider Bar" do
       set_up do

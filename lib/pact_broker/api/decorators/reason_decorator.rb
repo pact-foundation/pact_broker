@@ -22,6 +22,7 @@ module PactBroker
 
         attr_reader :reason, :ignored
 
+        # rubocop: disable Metrics/CyclomaticComplexity
         def reason_text
           case reason
           when PactBroker::Matrix::PactNotEverVerifiedByProvider
@@ -74,6 +75,7 @@ module PactBroker
           end
         end
       end
+      # rubocop: enable Metrics/CyclomaticComplexity
     end
   end
 end

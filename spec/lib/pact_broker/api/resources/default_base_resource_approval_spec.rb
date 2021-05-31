@@ -1,11 +1,10 @@
 require 'pact_broker/api/resources'
-
 module PactBroker
   module Api
     module Resources
       RSpec.describe "modifiable resources (ones that require write access)" do
         let(:pact_broker_resource_classes) do
-          all_resources = ObjectSpace.each_object(::Class)
+          ObjectSpace.each_object(::Class)
             .select { |klass| klass < DefaultBaseResource }
             .select(&:name)
             .reject { |klass| klass.name.end_with?("BaseResource") }

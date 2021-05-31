@@ -7,15 +7,15 @@ Sequel.migration do
         version = from(:versions)
           .where(number: line[:provider_version], pacticipant_id: line[:provider_id]).single_record
         version_id = if version
-          version[:id]
-        else
-          from(:versions).insert(
-              number: line[:provider_version],
-              pacticipant_id: line[:provider_id],
-              created_at: line[:created_at],
-              updated_at: line[:created_at]
-          )
-        end
+                       version[:id]
+                     else
+                       from(:versions).insert(
+                         number: line[:provider_version],
+                         pacticipant_id: line[:provider_id],
+                         created_at: line[:created_at],
+                         updated_at: line[:created_at]
+                       )
+                     end
         from(:verifications).where(id: line[:id]).update(provider_version_id: version_id)
       end
   end

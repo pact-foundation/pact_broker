@@ -20,7 +20,7 @@ module PactBroker
             end
           end
           faraday.headers['Authorization'] = "Bearer #{auth[:token]}" if auth[:token]
-          faraday.adapter  Faraday.default_adapter
+          faraday.adapter Faraday.default_adapter
         end
       end
 
@@ -41,8 +41,8 @@ module PactBroker
       end
 
       def create_tagged_pacticipant_version(pacticipant:, version:, tag:)
-        [*tag].each do | tag |
-          create_tag(pacticipant: pacticipant, version: version, tag: tag)
+        [*tag].each do | t |
+          create_tag(pacticipant: pacticipant, version: version, tag: t)
         end
         self
       end
@@ -98,8 +98,8 @@ module PactBroker
 
         create_version(pacticipant: consumer, version: consumer_version, branch: branch) if branch
 
-        [*tag].each do | tag |
-          create_tag(pacticipant: consumer, version: consumer_version, tag: tag)
+        [*tag].each do | t |
+          create_tag(pacticipant: consumer, version: consumer_version, tag: t)
         end
         puts "" if [*tag].any?
 
@@ -189,7 +189,7 @@ module PactBroker
           }
         }
         path = "webhooks/#{uuid}"
-        response = client.put(path, request_body.to_json).tap { |response| check_for_error(response) }
+        client.put(path, request_body.to_json).tap { |response| check_for_error(response) }
         separate
         self
       end
@@ -219,7 +219,7 @@ module PactBroker
           }
         }
         path = "webhooks/#{uuid}"
-        response = client.put(path, request_body.to_json).tap { |response| check_for_error(response) }
+        client.put(path, request_body.to_json).tap { |response| check_for_error(response) }
         separate
         self
       end
@@ -227,7 +227,7 @@ module PactBroker
       def delete_webhook(uuid:)
         puts "Deleting webhook with uuid #{uuid}"
         path = "webhooks/#{uuid}"
-        response = client.delete(path).tap { |response| check_for_error(response) }
+        client.delete(path).tap { |response| check_for_error(response) }
         separate
         self
       end
@@ -306,7 +306,7 @@ module PactBroker
         }
         puts "Publishing verification"
         puts results.to_yaml
-        response = client.post(verification_results_url, results.to_json).tap { |response| check_for_error(response) }
+        client.post(verification_results_url, results.to_json).tap { |response| check_for_error(response) }
       end
 
       def encode string

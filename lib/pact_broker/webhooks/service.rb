@@ -110,8 +110,8 @@ module PactBroker
 
         new_headers = params['request']['headers'] ||= {}
         existing_headers = webhook.request.headers
-        starred_new_headers = new_headers.select { |key, value| value =~ /^\**$/ }
-        starred_new_headers.each do | (key, value) |
+        starred_new_headers = new_headers.select { |_key, value| value =~ /^\**$/ }
+        starred_new_headers.each do | (key, _value) |
           new_headers[key] = existing_headers[key]
         end
         params['request']['headers'] = new_headers

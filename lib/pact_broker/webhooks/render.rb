@@ -18,11 +18,10 @@ module PactBroker
         render_template(escape_params(params, escaper || DEFAULT_ESCAPER), template)
       end
 
-      private
 
       def self.render_template(params, template)
-        params.inject(template) do | template, (key, value) |
-          template.gsub("${#{key}}", value)
+        params.inject(template) do | agg, (key, value) |
+          agg.gsub("${#{key}}", value)
         end
       end
 

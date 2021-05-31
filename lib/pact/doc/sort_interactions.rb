@@ -5,7 +5,6 @@ module Pact
         interactions.sort{|a, b| sortable_id(a) <=> sortable_id(b)}
       end
 
-      private
 
       def self.sortable_id interaction
         "#{(interaction.description || '').downcase} #{interaction.response.status} #{(interaction.provider_state || '').downcase}"

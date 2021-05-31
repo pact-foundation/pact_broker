@@ -38,6 +38,7 @@ module PactBroker
         end
       end
 
+      # rubocop: disable Metrics/CyclomaticComplexity
       def with_test_results(test_results)
         # new format
         if test_results.is_a?(Array)
@@ -60,6 +61,7 @@ module PactBroker
         end
         Content.from_hash(new_pact_hash)
       end
+      # rubocop: enable Metrics/CyclomaticComplexity
 
       def with_ids(overwrite_existing_id = true)
         new_pact_hash = pact_hash.dup

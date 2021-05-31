@@ -3,7 +3,7 @@ require 'rack/pact_broker/invalid_uri_protection'
 module Rack
   module PactBroker
     describe InvalidUriProtection do
-      let(:target_app) { ->(env){ [200, {}, []] } }
+      let(:target_app) { ->(_env){ [200, {}, []] } }
       let(:app) { InvalidUriProtection.new(target_app) }
       let(:path) { URI.encode("/foo") }
 

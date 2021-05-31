@@ -64,10 +64,10 @@ module PactBroker
 
         def environments
           @environments ||= if request.query['name']
-            [environment_service.find_by_name(request.query['name'])]
-          else
-            environment_service.find_all
-          end
+                              [environment_service.find_by_name(request.query['name'])]
+                            else
+                              environment_service.find_all
+                            end
         end
 
         def schema

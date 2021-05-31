@@ -3,7 +3,7 @@ module PactBroker
 
     extend self
 
-    #Ripped from actionview/lib/action_view/helpers/date_helper.rb
+    # Ripped from actionview/lib/action_view/helpers/date_helper.rb
 
     def local_date_in_words datetime
       datetime.to_time.localtime.to_datetime.strftime("%a %d %b %Y, %l:%M%P %:z").gsub('  ', ' ')
@@ -19,6 +19,7 @@ module PactBroker
       end
     end
 
+    # rubocop: disable Metrics/CyclomaticComplexity, Metrics/MethodLength
     def distance_of_time_in_words(from_time, to_time = 0, options = {})
       options = {
         scope: :'datetime.distance_in_words'
@@ -87,7 +88,8 @@ module PactBroker
           else
             locale.t(:almost_x_years, :count => distance_in_years + 1)
           end
-        end
       end
+    end
+    # rubocop: enable Metrics/CyclomaticComplexity, Metrics/MethodLength
   end
 end

@@ -7,7 +7,7 @@ module Rack
       include Rack::Test::Methods
 
       let(:inner_app) do
-        ->(env) { [200, {'Content-Type' => 'text/html'}, ['All good!']] }
+        ->(_env) { [200, {'Content-Type' => 'text/html'}, ['All good!']] }
       end
 
       let(:app) { Redirect.new(inner_app) }

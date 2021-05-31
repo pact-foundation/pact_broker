@@ -74,6 +74,7 @@ module PactBroker
       @semantic_logger = SemanticLogger["root"]
     end
 
+    # rubocop: disable Metrics/MethodLength
     def self.default_configuration
       require 'pact_broker/versions/parse_semantic_version'
       require 'pact_broker/pacts/generate_sha'
@@ -134,6 +135,7 @@ module PactBroker
       config.metrics_sql_statement_timeout = 30
       config
     end
+    # rubocop: enable Metrics/MethodLength
 
     def logger
       custom_logger || @semantic_logger

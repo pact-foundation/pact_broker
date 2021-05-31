@@ -48,7 +48,7 @@ module PactBroker
       def <=> other
         comparison = consumer_name <=> other.consumer_name
         return comparison if comparison != 0
-        comparison =provider_name <=> other.provider_name
+        provider_name <=> other.provider_name
       end
 
       def to_hash
@@ -82,10 +82,6 @@ module PactBroker
 
       def involves_consumer_with_name?(consumer_name)
         self.consumer_name == consumer_name
-      end
-
-      def pacticipant_names
-        [consumer_name, provider_name]
       end
 
       def involves_pacticipant_with_name?(pacticipant_name)

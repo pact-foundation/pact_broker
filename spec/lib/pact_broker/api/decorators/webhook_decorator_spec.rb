@@ -147,7 +147,7 @@ module PactBroker
             let(:description) { " " }
 
             it 'uses the scope description' do
-              expect(parsed_json[:description]).to match /example.org/
+              expect(parsed_json[:description]).to match(/example.org/)
             end
           end
         end
