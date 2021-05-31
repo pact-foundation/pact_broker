@@ -5,7 +5,7 @@ module PactBroker
     module DataMigrations
       describe SetPacticipantMainBranch, data_migration: true  do
         describe ".call" do
-          before (:all) do
+          before(:all) do
             PactBroker::Database.migrate(20210529)
           end
 

@@ -1,6 +1,5 @@
 require:
   - rubocop-performance
-  - rubocop-rails
 
 AllCops:
   DisabledByDefault: true
@@ -296,8 +295,6 @@ Performance/StringReplacement:
                   you are deleting characters.
   Reference: 'https://github.com/JuanitoFatas/fast-ruby#stringgsub-vs-stringtr-code'
   Enabled: true
-
-##################### Rails ##################################
 
 Layout/SpaceBeforeFirstArg:
   Description: >-
