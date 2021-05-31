@@ -102,21 +102,21 @@ module PactBroker
         provider = pacticipant_repository.find_by_name(provider_name)
 
         selectors = if consumer_version_selectors.empty?
-          Selectors.create_for_overall_latest
-        else
-          consumer_version_selectors.select(&:latest_for_tag?) +
-            consumer_version_selectors.select(&:latest_for_branch?) +
-            consumer_version_selectors.select(&:overall_latest?) +
-            consumer_version_selectors.select(&:currently_deployed?)
+                      Selectors.create_for_overall_latest
+                    else
+                      consumer_version_selectors.select(&:latest_for_tag?) +
+                        consumer_version_selectors.select(&:latest_for_branch?) +
+                        consumer_version_selectors.select(&:overall_latest?) +
+                        consumer_version_selectors.select(&:currently_deployed?)
                     end
 
         selectors.flat_map do | selector |
           query = scope_for(PactPublication).for_provider_and_consumer_version_selector(provider, selector)
           query.all.collect do | pact_publication |
             resolved_selector = if selector.currently_deployed?
-              selector.resolve_for_environment(pact_publication.consumer_version, pact_publication.values.fetch(:environment_name))
-            else
-              selector.resolve(pact_publication.consumer_version)
+                                  selector.resolve_for_environment(pact_publication.consumer_version, pact_publication.values.fetch(:environment_name))
+                                else
+                                  selector.resolve(pact_publication.consumer_version)
                                 end
             SelectedPact.new(
               pact_publication.to_domain,

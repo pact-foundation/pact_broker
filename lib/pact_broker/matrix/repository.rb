@@ -123,9 +123,9 @@ module PactBroker
       def apply_latestby options, lines
         return lines unless options[:latestby]
         group_by_columns = case options[:latestby]
-        when 'cvpv' then GROUP_BY_PROVIDER_VERSION_NUMBER
-        when 'cvp' then GROUP_BY_PROVIDER
-        when 'cp' then GROUP_BY_PACT
+                           when 'cvpv' then GROUP_BY_PROVIDER_VERSION_NUMBER
+                           when 'cvp' then GROUP_BY_PROVIDER
+                           when 'cp' then GROUP_BY_PACT
                            end
 
         # The group with the nil provider_version_numbers will be the results of the left outer join

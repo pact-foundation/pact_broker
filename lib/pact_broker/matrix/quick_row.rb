@@ -73,18 +73,18 @@ module PactBroker
 
         def distinct_integrations selectors, infer_integrations
           query = if selectors.size == 1
-            pacticipant_ids_matching_one_selector_optimised(selectors)
-          else
-            query = select_pacticipant_ids.distinct
-            if infer_integrations
-              query.matching_any_of_multiple_selectors(selectors)
-            else
-              if selectors.all?(&:only_pacticipant_name_specified?)
-                query.matching_multiple_selectors_without_joining_verifications(selectors)
-              else
-                query.matching_multiple_selectors_joining_verifications(selectors)
-              end
-            end
+                    pacticipant_ids_matching_one_selector_optimised(selectors)
+                  else
+                    query = select_pacticipant_ids.distinct
+                    if infer_integrations
+                      query.matching_any_of_multiple_selectors(selectors)
+                    else
+                      if selectors.all?(&:only_pacticipant_name_specified?)
+                        query.matching_multiple_selectors_without_joining_verifications(selectors)
+                      else
+                        query.matching_multiple_selectors_joining_verifications(selectors)
+                      end
+                    end
                   end
 
           query.from_self(alias: :pacticipant_ids)

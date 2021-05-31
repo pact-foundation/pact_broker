@@ -102,9 +102,9 @@ module PactBroker
 
         def badge_markdown
           warning = if badges_protected?
-            "If the broker is protected by authentication, set `enable_public_badge_access` to true in the configuration to enable badges to be embedded in a markdown file.\n"
-          else
-            ""
+                      "If the broker is protected by authentication, set `enable_public_badge_access` to true in the configuration to enable badges to be embedded in a markdown file.\n"
+                    else
+                      ""
                     end
           "#{warning}[![#{@pact.consumer.name}/#{@pact.provider.name} Pact Status](#{badge_url})](#{badge_target_url})"
         end

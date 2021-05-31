@@ -123,11 +123,11 @@ module PactBroker
           end
 
         verifiable_wip_pacts = if options[:include_wip_pacts_since]
-          exclude_specified_pacts(
-            pact_repository.find_wip_pact_versions_for_provider(provider_name, provider_version_branch, provider_version_tags, options),
-            verifiable_pacts_specified_in_request)
-        else
-          []
+                                 exclude_specified_pacts(
+                                   pact_repository.find_wip_pact_versions_for_provider(provider_name, provider_version_branch, provider_version_tags, options),
+                                   verifiable_pacts_specified_in_request)
+                               else
+                                 []
                                end
 
         verifiable_pacts_specified_in_request + verifiable_wip_pacts

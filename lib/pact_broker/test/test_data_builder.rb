@@ -291,9 +291,9 @@ module PactBroker
         uuid = params[:uuid] || PactBroker::Webhooks::Service.next_uuid
         enabled = params.key?(:enabled) ? params.delete(:enabled) : true
         event_params = if params[:event_names]
-          params[:event_names].collect{ |event_name| {name: event_name} }
-        else
-          params[:events] || [{ name: PactBroker::Webhooks::WebhookEvent::DEFAULT_EVENT_NAME }]
+                         params[:event_names].collect{ |event_name| {name: event_name} }
+                       else
+                         params[:events] || [{ name: PactBroker::Webhooks::WebhookEvent::DEFAULT_EVENT_NAME }]
                        end
         events = event_params.collect{ |e| PactBroker::Webhooks::WebhookEvent.new(e) }
         template_params = { method: 'POST', url: 'http://example.org', headers: {'Content-Type' => 'application/json'}, username: params[:username], password: params[:password]}

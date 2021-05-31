@@ -19,9 +19,9 @@ module PactBroker
 
       def pact_description
         position_descs = if head_consumer_tags.empty? && branches.empty?
-          ["latest"]
-        else
-          head_consumer_tags.collect { |tag| "latest with tag #{tag}" } + branches.collect{ |branch| "latest from branch #{branch}" }
+                           ["latest"]
+                         else
+                           head_consumer_tags.collect { |tag| "latest with tag #{tag}" } + branches.collect{ |branch| "latest from branch #{branch}" }
                          end
 
         "Pact between #{consumer_name} and #{provider_name}, consumer version #{consumer_version_number}, #{position_descs.join(", ")}"
@@ -178,30 +178,30 @@ module PactBroker
       # rubocop: disable Metrics/CyclomaticComplexity
       def selector_description selector
         description = if selector.overall_latest?
-          consumer_label = selector.consumer ? selector.consumer : 'a consumer'
-          "latest version of #{consumer_label} that has a pact with #{provider_name}"
-        elsif selector.latest_for_tag?
-          version_label = selector.consumer ? "version of #{selector.consumer}" : "version"
-          if selector.fallback_tag?
-            "latest #{version_label} tagged '#{selector.fallback_tag}' (fallback tag used as no pact was found with tag '#{selector.tag}')"
-          else
-            "latest #{version_label} tagged '#{selector.tag}'"
-          end
-        elsif selector.latest_for_branch?
-          version_label = selector.consumer ? "version of #{selector.consumer}" : "version"
-          if selector.fallback_branch?
-            "latest #{version_label} from branch '#{selector.fallback_branch}' (fallback branch used as no pact was found from branch '#{selector.branch}')"
-          else
-            "latest #{version_label} from branch '#{selector.branch}'"
-          end
-        elsif selector.all_for_tag_and_consumer?
-          "all #{selector.consumer} versions tagged '#{selector.tag}'"
-        elsif selector.all_for_tag?
-          "all consumer versions tagged '#{selector.tag}'"
-        elsif selector.currently_deployed?
-          "version(s) currently deployed to #{selector.environment}"
-        else
-          selector.to_json
+                        consumer_label = selector.consumer ? selector.consumer : 'a consumer'
+                        "latest version of #{consumer_label} that has a pact with #{provider_name}"
+                      elsif selector.latest_for_tag?
+                        version_label = selector.consumer ? "version of #{selector.consumer}" : "version"
+                        if selector.fallback_tag?
+                          "latest #{version_label} tagged '#{selector.fallback_tag}' (fallback tag used as no pact was found with tag '#{selector.tag}')"
+                        else
+                          "latest #{version_label} tagged '#{selector.tag}'"
+                        end
+                      elsif selector.latest_for_branch?
+                        version_label = selector.consumer ? "version of #{selector.consumer}" : "version"
+                        if selector.fallback_branch?
+                          "latest #{version_label} from branch '#{selector.fallback_branch}' (fallback branch used as no pact was found from branch '#{selector.branch}')"
+                        else
+                          "latest #{version_label} from branch '#{selector.branch}'"
+                        end
+                      elsif selector.all_for_tag_and_consumer?
+                        "all #{selector.consumer} versions tagged '#{selector.tag}'"
+                      elsif selector.all_for_tag?
+                        "all consumer versions tagged '#{selector.tag}'"
+                      elsif selector.currently_deployed?
+                        "version(s) currently deployed to #{selector.environment}"
+                      else
+                        selector.to_json
                       end
         "#{description} (#{selector.consumer_version.number})"
       end
