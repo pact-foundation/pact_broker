@@ -107,6 +107,10 @@ module PactBroker
       def selectors
         raise NotImplementedError
       end
+
+      def type
+        :warning
+      end
     end
 
     class IgnoreSelectorDoesNotExist < Warning
@@ -127,9 +131,17 @@ module PactBroker
       def to_s
         "#{self.class} selector=#{selector}"
       end
+    end
 
-      def type
-        :warning
+    class NoEnvironmentSpecified < Warning
+      def selectors
+        []
+      end
+    end
+
+    class SelectorWithoutPacticipantVersionNumberSpecified < Warning
+      def selectors
+        []
       end
     end
 

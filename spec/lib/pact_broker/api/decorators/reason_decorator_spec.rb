@@ -8,9 +8,9 @@ module PactBroker
         REASON_CLASSES = ObjectSpace.each_object(Class).select { |klass| klass < PactBroker::Matrix::Reason && klass.name&.start_with?("PactBroker") }
 
         describe "the number of Reason classes" do
-          let(:expected_number_of_reason_classes) { 12 }
+          let(:expected_number_of_reason_classes) { 14 }
 
-          it "is 12 - this is a reminder to add another spec here if a new Reason is added" do
+          it "is 14 - this is a reminder to add another spec here if a new Reason is added" do
             expect(REASON_CLASSES.size).to eq expected_number_of_reason_classes
           end
         end
@@ -75,6 +75,18 @@ module PactBroker
             end
 
             its(:to_s) { is_expected.to eq "WARN: Although the verification was reported as successful, the results for version 2 of Foo and version 6 of Bar may be missing tests for the following interactions: desc1 given p2; desc1 given desc3, desc4" }
+          end
+
+          context "when the reason is NoEnvironmentSpecified" do
+            let(:reason) { PactBroker::Matrix::NoEnvironmentSpecified.new }
+
+            its(:to_s) { is_expected.to start_with "WARN: For production use of can-i-deploy, it is recommended to specify the environment" }
+          end
+
+          context "when the reason is SelectorWithoutPacticipantVersionNumberSpecified" do
+            let(:reason) { PactBroker::Matrix::SelectorWithoutPacticipantVersionNumberSpecified.new }
+
+            its(:to_s) { is_expected.to start_with "WARN: For production use of can-i-deploy, it is recommended to specify the version number" }
           end
         end
       end

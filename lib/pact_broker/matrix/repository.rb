@@ -198,7 +198,7 @@ module PactBroker
             end
           end
         else
-          selector_for_all_versions_of_a_pacticipant(pacticipant, selector_type, resolved_ignore_selectors)
+          selector_for_all_versions_of_a_pacticipant(pacticipant, unresolved_selector, selector_type, resolved_ignore_selectors)
         end
       end
 
@@ -243,13 +243,13 @@ module PactBroker
       end
       # rubocop: enable Metrics/ParameterLists
 
-      def selector_for_all_versions_of_a_pacticipant(pacticipant, selector_type, resolved_ignore_selectors)
+      def selector_for_all_versions_of_a_pacticipant(pacticipant, unresolved_selector, selector_type, resolved_ignore_selectors)
         # Doesn't make sense to ignore this, as you can't have a can-i-deploy query
         # for "all versions of a pacticipant". But whatever.
         ignore = resolved_ignore_selectors.any? do | s |
           s.pacticipant_id == pacticipant.id && s.only_pacticipant_name_specified?
         end
-        ResolvedSelector.for_pacticipant(pacticipant, selector_type, ignore)
+        ResolvedSelector.for_pacticipant(pacticipant, unresolved_selector, selector_type, ignore)
       end
 
       # only relevant for ignore selectors, validation stops this happening for the normal

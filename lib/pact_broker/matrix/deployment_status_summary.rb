@@ -55,10 +55,44 @@ module PactBroker
       end
 
       def warning_messages
-        resolved_ignore_selectors.select(&:pacticipant_or_version_does_not_exist?).collect { | s | IgnoreSelectorDoesNotExist.new(s) }
-          # ignored_rows.select{ | row | row.success.nil? }.collect{ |row | IgnoredReason.new(pact_not_ever_verified_by_provider(row)) } +
-          # specified_selectors_that_do_not_exist.select(&:ignore?).collect { | selector | IgnoredReason.new(SpecifiedVersionDoesNotExist.new(selector)) } +
-          # ignored_rows.select{ |row| row.success == false }.collect { | row | IgnoredReason.new(VerificationFailed.new(*selectors_for(row))) }
+        resolved_ignore_selectors.select(&:pacticipant_or_version_does_not_exist?).collect { | s | IgnoreSelectorDoesNotExist.new(s) } +
+          bad_practice_warnings
+      end
+
+      def bad_practice_warnings
+        warnings = []
+
+        if no_to_tag_or_environment_specified?
+          warnings << NoEnvironmentSpecified.new
+        end
+
+        if selector_without_pacticipant_version_number_specified?
+          warnings << SelectorWithoutPacticipantVersionNumberSpecified.new
+        end
+
+        warnings
+      end
+
+      def selector_without_pacticipant_version_number_specified?
+        # If only the pacticipant name is specified, it can't be a can-i-deploy query, must be a matrix UI query
+        resolved_selectors
+          .select(&:specified?)
+          .reject(&:only_pacticipant_name_specified?)
+          .reject(&:pacticipant_version_specified_in_original_selector?)
+          .any?
+      end
+
+
+      def more_than_one_selector_specified?
+        # If only the pacticipant name is specified, it can't be a can-i-deploy query, must be a matrix UI query
+        resolved_selectors
+          .select(&:specified?)
+          .reject(&:only_pacticipant_name_specified?)
+          .any?
+      end
+
+      def no_to_tag_or_environment_specified?
+        !(query_results.options[:tag] || query_results.options[:environment_name])
       end
 
       def considered_specified_selectors_that_do_not_exist
@@ -177,8 +211,8 @@ module PactBroker
 
       def dummy_selectors_from_integrations
         integrations.collect do | row |
-          dummy_consumer_selector = ResolvedSelector.for_pacticipant(row.consumer, :inferred, false)
-          dummy_provider_selector = ResolvedSelector.for_pacticipant(row.provider, :inferred, false)
+          dummy_consumer_selector = ResolvedSelector.for_pacticipant(row.consumer, {}, :inferred, false)
+          dummy_provider_selector = ResolvedSelector.for_pacticipant(row.provider, {}, :inferred, false)
           [dummy_consumer_selector, dummy_provider_selector]
         end.flatten
       end
@@ -188,7 +222,7 @@ module PactBroker
           dummy_consumer_selector = ResolvedSelector.for_pacticipant_and_version(row.consumer, row.consumer_version, {}, :inferred, false)
           dummy_provider_selector = row.provider_version ?
             ResolvedSelector.for_pacticipant_and_version(row.provider, row.provider_version, {}, :inferred, false) :
-            ResolvedSelector.for_pacticipant(row.provider, :inferred, false)
+            ResolvedSelector.for_pacticipant(row.provider, {}, :inferred, false)
           [dummy_consumer_selector, dummy_provider_selector]
         end.flatten
       end

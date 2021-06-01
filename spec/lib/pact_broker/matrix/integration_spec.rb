@@ -380,8 +380,8 @@ module PactBroker
             end
 
             it "is not deployable because of the missing verification for Cat v20" do
-              expect(subject.deployment_status_summary.reasons.size).to eq 1
-              expect(subject.deployment_status_summary.reasons.first).to be_a_pact_never_verified_for_consumer "Cat"
+              expect(subject.deployment_status_summary.reasons.size).to eq 2
+              expect(subject.deployment_status_summary.reasons.last).to be_a_pact_never_verified_for_consumer "Cat"
             end
           end
 

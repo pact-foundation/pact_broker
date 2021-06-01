@@ -105,9 +105,12 @@ module PactBroker
             resolved_selectors: resolved_selectors,
             resolved_ignore_selectors: resolved_ignore_selectors,
             integrations: integrations,
-            rows: rows + ignored_rows
+            rows: rows + ignored_rows,
+            options: options
           )
         end
+
+        let(:options) { { environment_name: "prod" } }
 
         subject { DeploymentStatusSummary.new(query_results) }
 
@@ -248,7 +251,8 @@ module PactBroker
               environment_name: nil,
               type: :inferred,
               ignore: false,
-              one_of_many: false
+              one_of_many: false,
+              original_selector: {}
             )
           end
 
@@ -266,6 +270,29 @@ module PactBroker
           let(:resolved_ignore_selectors) { [instance_double('PactBroker::Matrix::ResolvedSelector', pacticipant_or_version_does_not_exist?: true).as_null_object] }
 
           its(:reasons) { is_expected.to eq [IgnoreSelectorDoesNotExist.new(resolved_ignore_selectors.first), PactBroker::Matrix::Successful.new] }
+        end
+
+        context "when there is a selector without a specified pacticipant version number" do
+          let(:resolved_selectors) do
+            [
+              ResolvedSelector.new(
+                pacticipant_id: foo.id,
+                pacticipant_name: foo.name,
+                pacticipant_version_number: foo_version.number,
+                pacticipant_version_id: foo_version.id,
+                type: :specified,
+                original_selector: { latest: true, tag: "asdf" }
+              )
+            ]
+          end
+
+          its(:reasons) { is_expected.to include SelectorWithoutPacticipantVersionNumberSpecified.new }
+        end
+
+        context "when there is no to tag or environment specified" do
+          let(:options) { { } }
+
+          its(:reasons) { is_expected.to include NoEnvironmentSpecified.new }
         end
       end
     end
