@@ -1,4 +1,4 @@
-require 'spec/support/test_data_builder'
+require "spec/support/test_data_builder"
 
 Pact.provider_states_for "Pact Broker Client" do
 
@@ -140,7 +140,7 @@ Pact.provider_states_for "Pact Broker Client" do
 
   provider_state "an error occurs while publishing a pact" do
     set_up do
-      require 'pact_broker/pacts/service'
+      require "pact_broker/pacts/service"
       allow(PactBroker::Pacts::Service).to receive(:create_or_update_pact).and_raise("an error")
     end
   end
@@ -149,7 +149,7 @@ Pact.provider_states_for "Pact Broker Client" do
     set_up do
       TestDataBuilder.new
         .create_condor
-        .create_consumer_version('1.3.0')
+        .create_consumer_version("1.3.0")
         .create_pricing_service
         .create_pact
     end
@@ -163,7 +163,7 @@ Pact.provider_states_for "Pact Broker Client" do
     set_up do
       TestDataBuilder.new
         .create_condor
-        .create_consumer_version('1.3.0')
+        .create_consumer_version("1.3.0")
         .create_pricing_service
         .create_pact
     end
@@ -177,7 +177,7 @@ Pact.provider_states_for "Pact Broker Client" do
 
   provider_state "'Condor' exists in the pact-broker" do
     set_up do
-      TestDataBuilder.new.create_condor.create_consumer_version('1.3.0')
+      TestDataBuilder.new.create_condor.create_consumer_version("1.3.0")
     end
   end
 
@@ -185,23 +185,23 @@ Pact.provider_states_for "Pact Broker Client" do
     set_up do
       TestDataBuilder.new
         .create_pacticipant("Condor")
-        .create_version('1.3.0')
-        .create_tag('prod')
+        .create_version("1.3.0")
+        .create_tag("prod")
     end
   end
 
   provider_state "'Condor' does not exist in the pact-broker" do
-     no_op
+    no_op
   end
 
    provider_state "a pact between Condor and the Pricing Service exists for the production version of Condor" do
      set_up do
-      TestDataBuilder.new
-        .create_consumer("Condor")
-        .create_consumer_version('1.3.0')
-        .create_consumer_version_tag('prod')
-        .create_provider("Pricing Service")
-        .create_pact
+       TestDataBuilder.new
+         .create_consumer("Condor")
+        .create_consumer_version("1.3.0")
+        .create_consumer_version_tag("prod")
+         .create_provider("Pricing Service")
+         .create_pact
      end
    end
 
@@ -219,7 +219,7 @@ Pact.provider_states_for "Pact Broker Client" do
     set_up do
       TestDataBuilder.new
           .create_consumer("Condor")
-          .create_consumer_version('1.3.0')
+          .create_consumer_version("1.3.0")
           .create_provider("Pricing Service")
           .create_pact
     end
@@ -229,8 +229,8 @@ Pact.provider_states_for "Pact Broker Client" do
     set_up do
       TestDataBuilder.new
           .create_consumer("Condor")
-          .create_consumer_version('1.3.0')
-          .create_consumer_version_tag('prod')
+          .create_consumer_version("1.3.0")
+          .create_consumer_version_tag("prod")
           .create_provider("Pricing Service")
           .create_pact
     end

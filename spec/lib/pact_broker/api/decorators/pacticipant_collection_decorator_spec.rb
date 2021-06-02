@@ -1,12 +1,12 @@
-require 'spec_helper'
-require 'pact_broker/api/decorators/pacticipant_collection_decorator'
-require 'pact_broker/domain/pacticipant'
+require "spec_helper"
+require "pact_broker/api/decorators/pacticipant_collection_decorator"
+require "pact_broker/domain/pacticipant"
 
 module PactBroker
   module Api
     module Decorators
       describe PacticipantCollectionDecorator do
-        let(:options) { {user_options: {base_url: 'http://example.org'} } }
+        let(:options) { {user_options: {base_url: "http://example.org"} } }
         let(:pacticipants) { [] }
         let(:json) { PacticipantCollectionDecorator.new(pacticipants).to_json(options) }
 
@@ -23,7 +23,7 @@ module PactBroker
         end
 
         context "with pacticipants" do
-          let(:pacticipant) { PactBroker::Domain::Pacticipant.new(name: 'Name', created_at: DateTime.new, updated_at: DateTime.new)}
+          let(:pacticipant) { PactBroker::Domain::Pacticipant.new(name: "Name", created_at: DateTime.new, updated_at: DateTime.new)}
           let(:pacticipants) { [pacticipant] }
 
           it "displays a list of pacticipants" do
@@ -34,8 +34,8 @@ module PactBroker
       end
 
       describe DeprecatedPacticipantCollectionDecorator do
-        let(:options) { {user_options: {base_url: 'http://example.org'} } }
-        let(:pacticipant) { PactBroker::Domain::Pacticipant.new(name: 'Name', created_at: DateTime.new, updated_at: DateTime.new)}
+        let(:options) { {user_options: {base_url: "http://example.org"} } }
+        let(:pacticipant) { PactBroker::Domain::Pacticipant.new(name: "Name", created_at: DateTime.new, updated_at: DateTime.new)}
         let(:pacticipants) { [pacticipant] }
         let(:json) { DeprecatedPacticipantCollectionDecorator.new(pacticipants).to_json(options) }
 

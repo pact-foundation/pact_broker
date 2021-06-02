@@ -1,4 +1,4 @@
-require 'rack/pact_broker/invalid_uri_protection'
+require "rack/pact_broker/invalid_uri_protection"
 
 module Rack
   module PactBroker

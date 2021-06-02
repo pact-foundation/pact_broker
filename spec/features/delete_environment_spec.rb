@@ -1,4 +1,4 @@
-require 'pact_broker/api/pact_broker_urls'
+require "pact_broker/api/pact_broker_urls"
 
 describe "Deleting an environment" do
   before do

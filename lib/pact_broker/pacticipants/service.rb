@@ -1,7 +1,7 @@
-require 'pact_broker/repositories'
-require 'pact_broker/logging'
-require 'pact_broker/messages'
-require 'pact_broker/pacticipants/find_potential_duplicate_pacticipant_names'
+require "pact_broker/repositories"
+require "pact_broker/logging"
+require "pact_broker/messages"
+require "pact_broker/pacticipants/find_potential_duplicate_pacticipant_names"
 
 module PactBroker
 

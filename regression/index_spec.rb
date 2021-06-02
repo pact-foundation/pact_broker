@@ -1,6 +1,6 @@
-require 'pact_broker/domain'
-require 'pact_broker/policies'
-require 'pact_broker/ui/app'
+require "pact_broker/domain"
+require "pact_broker/policies"
+require "pact_broker/ui/app"
 
 RSpec.describe "regression tests for index page" do
   context "HTML" do

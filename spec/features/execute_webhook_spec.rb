@@ -1,11 +1,11 @@
-require 'support/test_data_builder'
-require 'webmock/rspec'
-require 'rack/pact_broker/database_transaction'
+require "support/test_data_builder"
+require "webmock/rspec"
+require "rack/pact_broker/database_transaction"
 
 describe "Execute a webhook" do
   before do
     td.create_pact_with_hierarchy("Foo", "1", "Bar")
-      .create_webhook(method: 'POST', body: '${pactbroker.pactUrl}')
+      .create_webhook(method: "POST", body: "${pactbroker.pactUrl}")
   end
 
   let(:td) { TestDataBuilder.new }
@@ -70,7 +70,7 @@ describe "Execute a webhook" do
     before do
       PactBroker::Database.truncate
       td.create_pact_with_hierarchy("Some Consumer", "1", "Some Provider")
-        .create_webhook(method: 'POST')
+        .create_webhook(method: "POST")
     end
 
     after do

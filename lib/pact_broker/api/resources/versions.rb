@@ -1,6 +1,6 @@
-require 'pact_broker/api/resources/base_resource'
-require 'pact_broker/configuration'
-require 'pact_broker/api/decorators/versions_decorator'
+require "pact_broker/api/resources/base_resource"
+require "pact_broker/configuration"
+require "pact_broker/api/decorators/versions_decorator"
 
 module PactBroker
   module Api
@@ -31,10 +31,10 @@ module PactBroker
         end
 
         def pagination_options
-          if request.query['pageNumber'] || request.query['pageSize']
+          if request.query["pageNumber"] || request.query["pageSize"]
             {
-              page_number: request.query['pageNumber']&.to_i || 1,
-              page_size: request.query['pageSize']&.to_i || 100
+              page_number: request.query["pageNumber"]&.to_i || 1,
+              page_size: request.query["pageSize"]&.to_i || 100
             }
           else
             nil

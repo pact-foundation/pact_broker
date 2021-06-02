@@ -1,4 +1,4 @@
-require 'pact_broker/db/data_migrations/set_pacticipant_main_branch'
+require "pact_broker/db/data_migrations/set_pacticipant_main_branch"
 
 module PactBroker
   module DB

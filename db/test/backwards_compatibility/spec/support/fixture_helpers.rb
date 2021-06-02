@@ -1,4 +1,4 @@
-require 'json'
+require "json"
 
 module FixtureHelpers
   def load_fixture(file_name)
@@ -6,7 +6,7 @@ module FixtureHelpers
   end
 
   def load_json_fixture(file_name)
-    require 'json'
+    require "json"
     JSON.parse(load_fixture(file_name))
   end
 end

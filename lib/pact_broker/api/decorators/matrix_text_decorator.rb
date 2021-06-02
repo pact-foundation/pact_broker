@@ -1,8 +1,8 @@
-require 'ostruct'
-require 'pact_broker/api/pact_broker_urls'
-require 'pact_broker/api/decorators/matrix_decorator'
+require "ostruct"
+require "pact_broker/api/pact_broker_urls"
+require "pact_broker/api/decorators/matrix_decorator"
 
-require 'table_print'
+require "table_print"
 
 module PactBroker
   module Api

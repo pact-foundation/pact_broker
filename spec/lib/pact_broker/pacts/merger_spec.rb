@@ -1,12 +1,12 @@
-require 'spec_helper'
-require 'spec/support/test_data_builder'
-require 'pact_broker/pacts/merger'
-require 'json'
+require "spec_helper"
+require "spec/support/test_data_builder"
+require "pact_broker/pacts/merger"
+require "json"
 
 module PactBroker
   module Pacts
     describe Merger do
-      let(:example_pact) { load_json_fixture('consumer-provider.json') }
+      let(:example_pact) { load_json_fixture("consumer-provider.json") }
       let(:example_interaction) do
         {
           "description" => "some description",
@@ -29,7 +29,7 @@ module PactBroker
       end
 
       describe "#merge" do
-        let(:pact_to_merge) { load_json_fixture('consumer-provider.json') }
+        let(:pact_to_merge) { load_json_fixture("consumer-provider.json") }
 
         it "merges two pacts" do
           pact_to_merge["interactions"] << example_interaction
@@ -108,7 +108,7 @@ module PactBroker
       end
 
       describe "#conflict?" do
-        let(:pact_to_compare) { load_json_fixture('consumer-provider.json') }
+        let(:pact_to_compare) { load_json_fixture("consumer-provider.json") }
 
         it "returns false if interactions have different descriptions" do
           pact_to_compare["interactions"][0]["description"] = "something else"

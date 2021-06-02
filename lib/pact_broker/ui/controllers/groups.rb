@@ -1,6 +1,6 @@
-require 'pact_broker/ui/controllers/base_controller'
-require 'pact_broker/ui/view_models/index_items'
-require 'haml'
+require "pact_broker/ui/controllers/base_controller"
+require "pact_broker/ui/view_models/index_items"
+require "haml"
 
 module PactBroker
   module UI
@@ -19,7 +19,7 @@ module PactBroker
                 base_url: base_url
               }
             }, {
-              layout: 'layouts/main',
+              layout: "layouts/main",
             }
         end
 

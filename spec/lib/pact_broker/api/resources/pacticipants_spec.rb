@@ -1,12 +1,12 @@
-require 'spec_helper'
-require 'pact_broker/api/resources/pacticipants'
+require "spec_helper"
+require "pact_broker/api/resources/pacticipants"
 
 module PactBroker
   module Api
     module Resources
       describe Pacticipants do
         describe "POST" do
-          let(:params) { { name: 'New Consumer' } }
+          let(:params) { { name: "New Consumer" } }
           let(:request_body) { params.to_json }
           let(:created_model) { instance_double(model_class) }
           let(:errors) { {} }
@@ -14,7 +14,7 @@ module PactBroker
           let(:decorator_class) { PactBroker::Api::Decorators::PacticipantDecorator }
           let(:parsed_model) { OpenStruct.new(name: "New Consumer") }
           let(:decorator) { instance_double(decorator_class, to_json: response_json, from_json: parsed_model) }
-          let(:response_json) { {some: 'json'}.to_json }
+          let(:response_json) { {some: "json"}.to_json }
           let(:schema) { PactBroker::Api::Contracts::PacticipantSchema }
 
           before do
@@ -23,7 +23,7 @@ module PactBroker
             allow(schema).to receive(:call).and_return(errors)
           end
 
-          subject { post "/pacticipants", request_body, 'CONTENT_TYPE' => 'application/json' }
+          subject { post "/pacticipants", request_body, "CONTENT_TYPE" => "application/json" }
 
           context "structurally incorrect JSON" do
             let(:request_body) { "{" }
@@ -45,7 +45,7 @@ module PactBroker
 
           context "with valid JSON" do
             it "creates the pacticipant" do
-              expect(PactBroker::Pacticipants::Service).to receive(:create).with(:name => 'New Consumer')
+              expect(PactBroker::Pacticipants::Service).to receive(:create).with(:name => "New Consumer")
               subject
             end
 
@@ -61,7 +61,7 @@ module PactBroker
 
             it "returns a Content-Type of application/hal+json" do
               subject
-              expect(last_response.headers['Content-Type']).to eq 'application/hal+json;charset=utf-8'
+              expect(last_response.headers["Content-Type"]).to eq "application/hal+json;charset=utf-8"
             end
 
             it "creates a JSON representation of the new pacticipant" do
@@ -77,7 +77,7 @@ module PactBroker
 
             it "includes the newly created Location" do
               subject
-              expect(last_response.headers['Location']).to eq "http://example.org/pacticpants/New%20Consumer"
+              expect(last_response.headers["Location"]).to eq "http://example.org/pacticpants/New%20Consumer"
             end
           end
         end

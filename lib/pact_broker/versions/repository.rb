@@ -1,7 +1,7 @@
-require 'sequel'
-require 'pact_broker/logging'
-require 'pact_broker/domain/version'
-require 'pact_broker/tags/repository'
+require "sequel"
+require "pact_broker/logging"
+require "pact_broker/domain/version"
+require "pact_broker/tags/repository"
 
 module PactBroker
   module Versions

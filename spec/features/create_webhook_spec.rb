@@ -3,7 +3,7 @@ describe "Creating a webhook" do
     td.create_pact_with_hierarchy("Some Consumer", "1", "Some Provider")
   end
 
-  let(:headers) { {'CONTENT_TYPE' => 'application/json'} }
+  let(:headers) { {"CONTENT_TYPE" => "application/json"} }
   let(:response_body) { JSON.parse(subject.body, symbolize_names: true)}
   let(:webhook_json) { webhook_hash.to_json }
   let(:webhook_hash) do
@@ -11,16 +11,16 @@ describe "Creating a webhook" do
       description: "trigger build",
       enabled: false,
       events: [{
-        name: 'contract_content_changed'
+        name: "contract_content_changed"
       }],
       request: {
-        method: 'POST',
-        url: 'https://example.org',
+        method: "POST",
+        url: "https://example.org",
         headers: {
           :"Content-Type" => "application/json"
         },
         body: {
-          a: 'body'
+          a: "body"
         }
       }
     }
@@ -37,7 +37,7 @@ describe "Creating a webhook" do
       its(:status) { is_expected.to be 400 }
 
       it "returns a JSON content type" do
-        expect(subject.headers['Content-Type']).to eq 'application/hal+json;charset=utf-8'
+        expect(subject.headers["Content-Type"]).to eq "application/hal+json;charset=utf-8"
       end
 
       it "returns the validation errors" do
@@ -49,11 +49,11 @@ describe "Creating a webhook" do
       its(:status) { is_expected.to be 201 }
 
       it "returns the Location header" do
-        expect(subject.headers['Location']).to match(%r{http://example.org/webhooks/.+})
+        expect(subject.headers["Location"]).to match(%r{http://example.org/webhooks/.+})
       end
 
       it "returns a JSON Content Type" do
-        expect(subject.headers['Content-Type']).to eq 'application/hal+json;charset=utf-8'
+        expect(subject.headers["Content-Type"]).to eq "application/hal+json;charset=utf-8"
       end
 
       it "returns the newly created webhook" do
@@ -130,11 +130,11 @@ describe "Creating a webhook" do
     its(:status) { is_expected.to be 201 }
 
     it "returns the Location header" do
-      expect(subject.headers['Location']).to match(%r{http://example.org/webhooks/.+})
+      expect(subject.headers["Location"]).to match(%r{http://example.org/webhooks/.+})
     end
 
     it "returns a JSON Content Type" do
-      expect(subject.headers['Content-Type']).to eq 'application/hal+json;charset=utf-8'
+      expect(subject.headers["Content-Type"]).to eq "application/hal+json;charset=utf-8"
     end
 
     it "returns the newly created webhook" do

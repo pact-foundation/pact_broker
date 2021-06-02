@@ -7,13 +7,13 @@ module PactBroker
 
         def name_in_pact_present
           unless name_in_pact
-            errors.add(:'name', validation_message('pact_missing_pacticipant_name', pacticipant: pacticipant))
+            errors.add(:'name', validation_message("pact_missing_pacticipant_name", pacticipant: pacticipant))
           end
         end
 
         def name_not_blank
           if blank? name
-            errors.add(:'name', validation_message('blank'))
+            errors.add(:'name', validation_message("blank"))
           end
         end
 

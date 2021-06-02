@@ -1,6 +1,6 @@
-require 'spec_helper'
-require 'pact_broker/pacticipants/repository'
-require 'support/test_data_builder'
+require "spec_helper"
+require "pact_broker/pacticipants/repository"
+require "support/test_data_builder"
 
 module PactBroker
   module Pacticipants
@@ -93,7 +93,7 @@ module PactBroker
           td.create_pacticipant("Foo-Bar")
         end
 
-        subject { Repository.new.find_by_name('foo-bar') }
+        subject { Repository.new.find_by_name("foo-bar") }
 
         context "when the name is a different case" do
           context "with case sensitivity turned on" do
@@ -134,19 +134,19 @@ module PactBroker
               allow(PactBroker.configuration).to receive(:use_case_sensitive_resource_names).and_return(false)
             end
 
-            subject { Repository.new.find_by_name('foo_bar') }
+            subject { Repository.new.find_by_name("foo_bar") }
 
             it { is_expected.to be nil }
           end
 
           context "with case sensitivity turned on and searching for a name with an underscore" do
-            subject { Repository.new.find_by_name('foo_bar') }
+            subject { Repository.new.find_by_name("foo_bar") }
 
             it { is_expected.to be nil }
           end
 
           context "with case sensitivity turned off no record found" do
-            subject { Repository.new.find_by_name('blah') }
+            subject { Repository.new.find_by_name("blah") }
 
             it { is_expected.to be nil }
           end

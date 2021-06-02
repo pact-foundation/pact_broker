@@ -1,4 +1,4 @@
-require 'pact_broker/api/resources/pact_triggered_webhooks'
+require "pact_broker/api/resources/pact_triggered_webhooks"
 
 module PactBroker
   module Api
@@ -12,10 +12,10 @@ module PactBroker
             allow(webhook_service).to receive(:find_triggered_webhooks_for_pact).and_return(triggered_webhooks)
           end
 
-          let(:decorator) { instance_double(Decorators::TriggeredWebhooksDecorator, to_json: 'json') }
+          let(:decorator) { instance_double(Decorators::TriggeredWebhooksDecorator, to_json: "json") }
           let(:webhook_service) { class_double(PactBroker::Webhooks::Service) }
           let(:pact) { instance_double(PactBroker::Domain::Pact, name: "The pact") }
-          let(:triggered_webhooks) { double('triggered_webhooks') }
+          let(:triggered_webhooks) { double("triggered_webhooks") }
           let(:path) { "/pacts/provider/bar/consumer/foo/version/1/triggered-webhooks" }
 
           subject { get path; last_response }
@@ -38,7 +38,7 @@ module PactBroker
             end
 
             it "returns the generated JSON response body" do
-              expect(subject.body).to eq 'json'
+              expect(subject.body).to eq "json"
             end
           end
 

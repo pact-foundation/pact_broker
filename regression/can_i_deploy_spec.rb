@@ -1,4 +1,4 @@
-require 'pact_broker/domain'
+require "pact_broker/domain"
 PACTICIPANT_LIMIT = 10
 VERSION_LIMIT = 10
 

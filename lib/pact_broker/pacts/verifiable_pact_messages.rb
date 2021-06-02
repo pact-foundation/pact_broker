@@ -1,5 +1,5 @@
-require 'forwardable'
-require 'pact_broker/messages'
+require "forwardable"
+require "pact_broker/messages"
 
 module PactBroker
   module Pacts
@@ -178,7 +178,7 @@ module PactBroker
       # rubocop: disable Metrics/CyclomaticComplexity
       def selector_description selector
         description = if selector.overall_latest?
-                        consumer_label = selector.consumer ? selector.consumer : 'a consumer'
+                        consumer_label = selector.consumer ? selector.consumer : "a consumer"
                         "latest version of #{consumer_label} that has a pact with #{provider_name}"
                       elsif selector.latest_for_tag?
                         version_label = selector.consumer ? "version of #{selector.consumer}" : "version"

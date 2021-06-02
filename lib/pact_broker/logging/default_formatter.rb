@@ -1,5 +1,5 @@
-require 'logger'
-require 'semantic_logger'
+require "logger"
+require "semantic_logger"
 
 module PactBroker
   module Logging

@@ -1,8 +1,8 @@
-require 'pact_broker/api/resources/base_resource'
-require 'pact_broker/api/resources/webhook_execution_methods'
-require 'pact_broker/contracts/contracts_to_publish'
-require 'pact_broker/api/contracts/publish_contracts_schema'
-require 'pact_broker/pacts/parse'
+require "pact_broker/api/resources/base_resource"
+require "pact_broker/api/resources/webhook_execution_methods"
+require "pact_broker/contracts/contracts_to_publish"
+require "pact_broker/api/contracts/publish_contracts_schema"
+require "pact_broker/pacts/parse"
 
 module PactBroker
   module Api

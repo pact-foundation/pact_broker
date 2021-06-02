@@ -1,4 +1,4 @@
-require 'pact_broker/pacts/repository'
+require "pact_broker/pacts/repository"
 
 module PactBroker
   module Pacts
@@ -316,7 +316,7 @@ module PactBroker
           before do
             td.create_pact_with_hierarchy("foo", "1", "bar")
               .create_consumer_version_tag("main")
-              .create_verification(provider_version: "20", tag_names: ['dev'], success: true)
+              .create_verification(provider_version: "20", tag_names: ["dev"], success: true)
               .create_verification(provider_version: "21", number: 2)
           end
 
@@ -329,7 +329,7 @@ module PactBroker
           before do
             td.create_pact_with_hierarchy("foo", "1", "bar")
               .create_consumer_version_tag("main")
-              .create_verification(provider_version: "20", tag_names: ['dev'], success: false)
+              .create_verification(provider_version: "20", tag_names: ["dev"], success: false)
               .create_verification(provider_version: "21", number: 2)
           end
 
@@ -344,9 +344,9 @@ module PactBroker
           before do
             td.create_pact_with_hierarchy("foo", "1", "bar")
               .create_consumer_version_tag("main")
-              .create_verification(provider_version: "20", tag_names: ['dev'], success: true)
+              .create_verification(provider_version: "20", tag_names: ["dev"], success: true)
               .add_day
-              .create_verification(provider_version: "21", tag_names: ['feat-new-branch'], number: 2, success: false)
+              .create_verification(provider_version: "21", tag_names: ["feat-new-branch"], number: 2, success: false)
           end
 
           let(:provider_tags) { %w[feat-new-branch] }
@@ -358,9 +358,9 @@ module PactBroker
           before do
             td.create_pact_with_hierarchy("foo", "1", "bar")
               .create_consumer_version_tag("main")
-              .create_verification(provider_version: "21", tag_names: ['feat-new-branch'], number: 2, success: false)
+              .create_verification(provider_version: "21", tag_names: ["feat-new-branch"], number: 2, success: false)
               .add_day
-              .create_verification(provider_version: "20", tag_names: ['dev'], success: true)
+              .create_verification(provider_version: "20", tag_names: ["dev"], success: true)
           end
 
           let(:provider_tags) { %w[feat-new-branch] }

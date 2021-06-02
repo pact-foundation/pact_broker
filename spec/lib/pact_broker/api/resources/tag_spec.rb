@@ -1,5 +1,5 @@
-require 'spec_helper'
-require 'pact_broker/api/resources/tag'
+require "spec_helper"
+require "pact_broker/api/resources/tag"
 
 module PactBroker
   module Api
@@ -102,7 +102,7 @@ module PactBroker
 
         describe "PUT" do
 
-          let(:tag_url) { 'http://example.org/tag/url'}
+          let(:tag_url) { "http://example.org/tag/url"}
 
           before do
             allow_any_instance_of(PactBroker::Api::Resources::Tag).to receive(:tag_url).and_return(tag_url)

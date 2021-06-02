@@ -1,4 +1,4 @@
-require 'spec/support/test_data_builder'
+require "spec/support/test_data_builder"
 
 describe "Get latest verification for pact" do
   before do
@@ -25,7 +25,7 @@ describe "Get latest verification for pact" do
 
     it "returns a 200 OK" do
       expect(subject.status).to eq 200
-      expect(subject.headers['Content-Type']).to include content_type
+      expect(subject.headers["Content-Type"]).to include content_type
     end
 
     it "returns the verification" do

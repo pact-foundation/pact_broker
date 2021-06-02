@@ -1,5 +1,5 @@
-require 'pact_broker/config/load'
-require 'pact_broker/config/save'
+require "pact_broker/config/load"
+require "pact_broker/config/save"
 
 module PactBroker
   module Config

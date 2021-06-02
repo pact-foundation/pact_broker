@@ -1,5 +1,5 @@
-require 'pact_broker/api/resources/base_resource'
-require 'pact_broker/error'
+require "pact_broker/api/resources/base_resource"
+require "pact_broker/error"
 
 module PactBroker
   module Api

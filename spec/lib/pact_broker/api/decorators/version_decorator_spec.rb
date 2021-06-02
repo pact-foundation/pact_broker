@@ -1,5 +1,5 @@
-require 'spec_helper'
-require 'pact_broker/api/decorators/version_decorator'
+require "spec_helper"
+require "pact_broker/api/decorators/version_decorator"
 
 module PactBroker
   module Api
@@ -50,7 +50,7 @@ module PactBroker
             ]
           end
 
-          let(:base_url) { 'http://example.org' }
+          let(:base_url) { "http://example.org" }
           let(:options) { { user_options: { base_url: base_url, environments: environments } } }
           let(:decorator) { VersionDecorator.new(version) }
 

@@ -1,7 +1,7 @@
 describe "Creating a pacticipant version" do
   let(:path) { "/pacticipants/Foo/versions/1234" }
-  let(:headers) { { 'CONTENT_TYPE' => content_type } }
-  let(:content_type) { 'application/json' }
+  let(:headers) { { "CONTENT_TYPE" => content_type } }
+  let(:content_type) { "application/json" }
   let(:response_body) { JSON.parse(subject.body, symbolize_names: true)}
   let(:version_hash) do
     {
@@ -19,7 +19,7 @@ describe "Creating a pacticipant version" do
     end
 
     it "returns a HAL JSON Content Type" do
-      expect(subject.headers['Content-Type']).to eq 'application/hal+json;charset=utf-8'
+      expect(subject.headers["Content-Type"]).to eq "application/hal+json;charset=utf-8"
     end
 
     it "returns the newly created version" do
@@ -33,7 +33,7 @@ describe "Creating a pacticipant version" do
   end
 
   context "with a PATCH" do
-    let(:content_type) { 'application/merge-patch+json' }
+    let(:content_type) { "application/merge-patch+json" }
 
     subject { patch(path, version_hash.to_json, headers) }
 
@@ -42,7 +42,7 @@ describe "Creating a pacticipant version" do
     end
 
     it "returns a HAL JSON Content Type" do
-      expect(subject.headers['Content-Type']).to eq 'application/hal+json;charset=utf-8'
+      expect(subject.headers["Content-Type"]).to eq "application/hal+json;charset=utf-8"
     end
 
     it "returns the newly created version" do

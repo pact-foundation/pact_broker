@@ -1,4 +1,4 @@
-require 'pact_broker/api/decorators/decorator_context'
+require "pact_broker/api/decorators/decorator_context"
 
 module PactBroker
   module Api

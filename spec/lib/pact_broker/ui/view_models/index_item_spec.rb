@@ -1,27 +1,27 @@
-require 'spec_helper'
-require 'pact_broker/ui/view_models/index_item'
-require 'pact_broker/domain/index_item'
+require "spec_helper"
+require "pact_broker/ui/view_models/index_item"
+require "pact_broker/domain/index_item"
 
 module PactBroker
   module UI
     module ViewDomain
       describe IndexItem do
 
-        let(:consumer) { instance_double("PactBroker::Domain::Pacticipant", name: 'Consumer Name')}
-        let(:provider) { instance_double("PactBroker::Domain::Pacticipant", name: 'Provider Name')}
+        let(:consumer) { instance_double("PactBroker::Domain::Pacticipant", name: "Consumer Name")}
+        let(:provider) { instance_double("PactBroker::Domain::Pacticipant", name: "Provider Name")}
         let(:latest_pact) { instance_double("PactBroker::Domain::Pact", consumer_version_number: "1.2.3") }
         let(:latest_verification) { instance_double("PactBroker::Domain::Verification") }
         let(:domain_relationship) { PactBroker::Domain::IndexItem.new(consumer, provider, latest_pact, latest, latest_verification, [], [], tags, latest_verification_latest_tags)}
         let(:tags) { [] }
-        let(:verification_tag_1) { instance_double("PactBroker::Tags::TagWithLatestFlag", name: 'dev') }
-        let(:verification_tag_2) { instance_double("PactBroker::Tags::TagWithLatestFlag", name: 'prod') }
+        let(:verification_tag_1) { instance_double("PactBroker::Tags::TagWithLatestFlag", name: "dev") }
+        let(:verification_tag_2) { instance_double("PactBroker::Tags::TagWithLatestFlag", name: "prod") }
         let(:latest_verification_latest_tags) { [verification_tag_1, verification_tag_2]  }
         let(:latest) { true }
 
         subject { IndexItem.new(domain_relationship) }
 
-        its(:consumer_name) { should eq 'Consumer Name'}
-        its(:provider_name) { should eq 'Provider Name'}
+        its(:consumer_name) { should eq "Consumer Name"}
+        its(:provider_name) { should eq "Provider Name"}
         its(:latest_pact_url) { should eq "/pacts/provider/Provider%20Name/consumer/Consumer%20Name/latest" }
         its(:pact_url) { should eq "/pacts/provider/Provider%20Name/consumer/Consumer%20Name/version/1.2.3" }
         its(:pact_matrix_url) { should eq "/matrix/provider/Provider%20Name/consumer/Consumer%20Name" }

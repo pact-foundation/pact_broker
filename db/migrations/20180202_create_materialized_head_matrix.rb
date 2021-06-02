@@ -1,6 +1,6 @@
 Sequel.migration do
   up do
-    create_table(:materialized_head_matrix, charset: 'utf8') do
+    create_table(:materialized_head_matrix, charset: "utf8") do
       Integer :consumer_id, null: false
       String :consumer_name, null: false
       Integer :consumer_version_id, null: false
@@ -22,9 +22,9 @@ Sequel.migration do
       DateTime :verification_executed_at
       String :verification_build_url
       String :consumer_tag_name
-      index [:consumer_id], name: 'ndx_mhm_consumer_id'
-      index [:provider_id], name: 'ndx_mhm_provider_id'
-      index [:consumer_version_order], name: 'ndx_mhm_cv_ord'
+      index [:consumer_id], name: "ndx_mhm_consumer_id"
+      index [:provider_id], name: "ndx_mhm_provider_id"
+      index [:consumer_version_order], name: "ndx_mhm_cv_ord"
     end
   end
 

@@ -1,6 +1,6 @@
-require 'pact/doc/markdown/interaction_renderer'
-require 'pact/doc/sort_interactions'
-require 'rack/utils'
+require "pact/doc/markdown/interaction_renderer"
+require "pact/doc/sort_interactions"
+require "rack/utils"
 
 module Pact
   module Doc
@@ -60,7 +60,7 @@ module Pact
         end
 
         def markdown_escape string
-          string.gsub('*','\*').gsub('_','\_')
+          string.gsub("*",'\*').gsub("_",'\_')
         end
 
         def h(text)

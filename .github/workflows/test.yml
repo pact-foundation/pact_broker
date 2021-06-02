@@ -67,3 +67,17 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: script/test/run-rake-on-docker-compose-mysql.sh
+  rubocop:
+    if: "!contains(github.event.head_commit.message, '[ci-skip]')"
+    runs-on: "ubuntu-latest"
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby_version: ["2.7"]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby_version }}
+      - run: "gem install bundler && bundle install"
+      - run: "bundle exec rubocop"

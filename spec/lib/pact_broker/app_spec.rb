@@ -1,4 +1,4 @@
-require 'pact_broker/app'
+require "pact_broker/app"
 
 module PactBroker
   describe App do
@@ -28,7 +28,7 @@ module PactBroker
 
     it "adds the X-Pact-Broker-Version header" do
       get "/"
-      expect(last_response.headers['X-Pact-Broker-Version']).to match(/\d/)
+      expect(last_response.headers["X-Pact-Broker-Version"]).to match(/\d/)
     end
 
     class Middleware
@@ -72,7 +72,7 @@ module PactBroker
       end
 
       context "when the UI returns a non 404 response" do
-        let(:custom_ui) { double('ui', call: [200, {}, ["hello"]]) }
+        let(:custom_ui) { double("ui", call: [200, {}, ["hello"]]) }
 
         it "returns the given page" do
           expect(last_response.body).to eq "hello"
@@ -80,7 +80,7 @@ module PactBroker
       end
 
       context "when the UI returns a 404 response" do
-        let(:custom_ui) { double('ui', call: [404, {}, []]) }
+        let(:custom_ui) { double("ui", call: [404, {}, []]) }
 
         it "passes on the call to the rest of the app" do
           expect(last_response.status).to eq 200
@@ -95,7 +95,7 @@ module PactBroker
       end
 
       context "when the API returns a non 404 response" do
-        let(:custom_api) { double('api', call: [200, {}, ["hello"]]) }
+        let(:custom_api) { double("api", call: [200, {}, ["hello"]]) }
 
         it "returns the given resource" do
           expect(last_response.body).to eq "hello"
@@ -103,7 +103,7 @@ module PactBroker
       end
 
       context "when the custom API returns a 404 response" do
-        let(:custom_api) { double('api', call: [404, {}, []]) }
+        let(:custom_api) { double("api", call: [404, {}, []]) }
 
         it "passes on the call to the rest of the app" do
           expect(last_response.body).to_not eq "hello"
@@ -115,7 +115,7 @@ module PactBroker
       class TestAuth
         def initialize app, *_args
           @app = Rack::Auth::Basic.new(app, "Protected") do | username, password |
-            username == 'foo' && password == 'bar'
+            username == "foo" && password == "bar"
           end
         end
 
@@ -128,11 +128,11 @@ module PactBroker
         it "allows the API to be protected" do
           app.use_api_auth TestAuth
 
-          basic_authorize 'foo', 'bar'
+          basic_authorize "foo", "bar"
           get "/"
           expect(last_response.status).to eq 200
 
-          basic_authorize 'foo', 'wrong'
+          basic_authorize "foo", "wrong"
           get "/"
           expect(last_response.status).to eq 401
           expect(last_response.headers["WWW-Authenticate"]).to eq "Basic realm=\"Protected\""
@@ -143,12 +143,12 @@ module PactBroker
         it "allows the UI to be protected" do
           app.use_ui_auth TestAuth
 
-          basic_authorize 'foo', 'bar'
-          get "/", nil, {'HTTP_ACCEPT' => 'text/html'}
+          basic_authorize "foo", "bar"
+          get "/", nil, {"HTTP_ACCEPT" => "text/html"}
           expect(last_response.status).to eq 200
 
-          basic_authorize 'foo', 'wrong'
-          get "/", nil, {'HTTP_ACCEPT' => 'text/html'}
+          basic_authorize "foo", "wrong"
+          get "/", nil, {"HTTP_ACCEPT" => "text/html"}
           expect(last_response.status).to eq 401
           expect(last_response.headers["WWW-Authenticate"]).to eq "Basic realm=\"Protected\""
         end
@@ -167,15 +167,15 @@ module PactBroker
           allow(TestAuth2).to receive(:new).and_return(test_auth_2)
         end
 
-        let(:test_auth_1) { instance_double('TestAuth1', call: [404, {}, []]) }
-        let(:test_auth_2) { instance_double('TestAuth2', call: [404, {}, []]) }
+        let(:test_auth_1) { instance_double("TestAuth1", call: [404, {}, []]) }
+        let(:test_auth_2) { instance_double("TestAuth2", call: [404, {}, []]) }
 
         it "calls the UI auth before the API auth" do
           expect(test_auth_1).to receive(:call).ordered
           expect(test_auth_2).to receive(:call).ordered
           app.use_ui_auth TestAuth1
           app.use_api_auth TestAuth2
-          get "/", nil, {'HTTP_ACCEPT' => 'text/html'}
+          get "/", nil, {"HTTP_ACCEPT" => "text/html"}
         end
       end
     end
@@ -183,20 +183,20 @@ module PactBroker
     describe "authenticate" do
       before do
         PactBroker.configuration.authenticate do | _resource, authorization_header, _options |
-          authorization_header == 'letmein'
+          authorization_header == "letmein"
         end
       end
 
       context "with an invalid Authorization header" do
         it "returns a 401" do
-          get "/", {}, {'HTTP_AUTHORIZATION' => 'wrong'}
+          get "/", {}, {"HTTP_AUTHORIZATION" => "wrong"}
           expect(last_response.status).to eq 401
         end
       end
 
       context "with valid Authorization header" do
         it "returns a 200" do
-          get "/", {}, {'HTTP_AUTHORIZATION' => 'letmein'}
+          get "/", {}, {"HTTP_AUTHORIZATION" => "letmein"}
           expect(last_response.status).to eq 200
         end
       end
@@ -205,13 +205,13 @@ module PactBroker
     describe "authenticate_with_basic_auth" do
       before do
         PactBroker.configuration.authenticate_with_basic_auth do | _resource, username, password, _options |
-          username == 'username' && password == 'password'
+          username == "username" && password == "password"
         end
       end
 
       context "with a request for the API with incorrect username or password" do
         it "returns a 401" do
-          basic_authorize 'foo', 'password'
+          basic_authorize "foo", "password"
           get "/"
           expect(last_response.status).to eq 401
         end
@@ -219,15 +219,15 @@ module PactBroker
 
       context "with a request for the UI with incorrect username or password" do
         it "returns a 401" do
-          basic_authorize 'foo', 'password'
-          get "/", nil, {'HTTP_ACCEPT' => 'text/html'}
+          basic_authorize "foo", "password"
+          get "/", nil, {"HTTP_ACCEPT" => "text/html"}
           expect(last_response.status).to eq 401
         end
       end
 
       context "with a request for diagnostics with incorrect username or password" do
         it "returns a 401" do
-          basic_authorize 'foo', 'password'
+          basic_authorize "foo", "password"
           get "/diagnostic/status/heartbeat"
           expect(last_response.status).to eq 401
         end
@@ -235,7 +235,7 @@ module PactBroker
 
       context "with a request for the API with correct username and password" do
         it "returns a 200" do
-          basic_authorize 'username', 'password'
+          basic_authorize "username", "password"
           get "/"
           expect(last_response.status).to eq 200
         end
@@ -243,15 +243,15 @@ module PactBroker
 
       context "with a request for the UI with correct username or password" do
         it "returns a 200" do
-          basic_authorize 'username', 'password'
-          get "/", nil, {'HTTP_ACCEPT' => 'text/html'}
+          basic_authorize "username", "password"
+          get "/", nil, {"HTTP_ACCEPT" => "text/html"}
           expect(last_response.status).to eq 200
         end
       end
 
       context "with a request for diagnostics with correct username or password" do
         it "returns a 200" do
-          basic_authorize 'username', 'password'
+          basic_authorize "username", "password"
           get "/diagnostic/status/heartbeat"
           expect(last_response.status).to eq 200
         end
@@ -261,27 +261,27 @@ module PactBroker
     describe "authorize" do
       before do
         PactBroker.configuration.authorize do | resource, _options |
-          resource.request.headers['Role'] == 'important'
+          resource.request.headers["Role"] == "important"
         end
       end
 
       context "with a request for the API with an authorized request" do
         it "returns a 200" do
-          get "/", nil, {'HTTP_ROLE' => 'important'}
+          get "/", nil, {"HTTP_ROLE" => "important"}
           expect(last_response.status).to eq 200
         end
       end
 
       context "with a request for the UI with an authorized request" do
         it "returns a 200" do
-          get "/", nil, {'HTTP_ACCEPT' => 'text/html', 'HTTP_ROLE' => 'important'}
+          get "/", nil, {"HTTP_ACCEPT" => "text/html", "HTTP_ROLE" => "important"}
           expect(last_response.status).to eq 200
         end
       end
 
       context "with a request for diagnostics with an authorized request" do
         it "returns a 200" do
-          get "/diagnostic/status/heartbeat", nil, {'HTTP_ROLE' => 'important'}
+          get "/diagnostic/status/heartbeat", nil, {"HTTP_ROLE" => "important"}
           expect(last_response.status).to eq 200
         end
       end
@@ -295,7 +295,7 @@ module PactBroker
 
       context "with a request for the UI with an unauthorized request" do
         it "returns a 200 because there's no point doing authorization on the UI at the moment" do
-          get "/", nil, {'HTTP_ACCEPT' => 'text/html'}
+          get "/", nil, {"HTTP_ACCEPT" => "text/html"}
           expect(last_response.status).to eq 200
         end
       end
@@ -309,7 +309,7 @@ module PactBroker
     end
 
     describe "transactions", no_db_clean: true do
-      let(:pact_content) { load_fixture('a_consumer-a_provider.json') }
+      let(:pact_content) { load_fixture("a_consumer-a_provider.json") }
       let(:path) { "/pacts/provider/A%20Provider/consumer/A%20Consumer/versions/1.2.3" }
       let(:response_body_json) { JSON.parse(subject.body) }
 
@@ -322,7 +322,7 @@ module PactBroker
         PactBroker::Database.truncate
       end
 
-      subject { put path, pact_content, { 'CONTENT_TYPE' => 'application/json' }; last_response  }
+      subject { put path, pact_content, { "CONTENT_TYPE" => "application/json" }; last_response  }
 
       it "wraps the API with a database transaction" do
         expect { subject }.to_not change { PactBroker::Domain::Pacticipant.count }
@@ -330,10 +330,10 @@ module PactBroker
     end
 
     describe "when resource is not found" do
-      subject { get("/does/not/exist", nil, { 'CONTENT_TYPE' => 'application/hal+json' })  }
+      subject { get("/does/not/exist", nil, { "CONTENT_TYPE" => "application/hal+json" })  }
 
       it "returns a Content-Type of application/hal+json" do
-        expect(subject.headers['Content-Type']).to eq 'application/hal+json;charset=utf-8'
+        expect(subject.headers["Content-Type"]).to eq "application/hal+json;charset=utf-8"
       end
 
       it "returns a JSON body" do

@@ -1,4 +1,4 @@
-require 'pact_broker/api/contracts/verifiable_pacts_json_query_schema'
+require "pact_broker/api/contracts/verifiable_pacts_json_query_schema"
 
 module PactBroker
   module Api

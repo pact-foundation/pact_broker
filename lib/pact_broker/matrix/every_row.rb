@@ -1,4 +1,4 @@
-require 'pact_broker/matrix/quick_row'
+require "pact_broker/matrix/quick_row"
 
 module PactBroker
   module Matrix

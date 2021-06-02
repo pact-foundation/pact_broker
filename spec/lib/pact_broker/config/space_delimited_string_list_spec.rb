@@ -1,4 +1,4 @@
-require 'pact_broker/config/space_delimited_string_list'
+require "pact_broker/config/space_delimited_string_list"
 
 module PactBroker
   module Config

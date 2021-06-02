@@ -1,4 +1,4 @@
-require 'pact_broker/ui/view_models/index_item'
+require "pact_broker/ui/view_models/index_item"
 
 module PactBroker
   module UI

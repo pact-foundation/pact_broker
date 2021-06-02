@@ -1,4 +1,4 @@
-require 'pact_broker/matrix/repository'
+require "pact_broker/matrix/repository"
 
 module PactBroker
   module Matrix
@@ -21,14 +21,14 @@ module PactBroker
             .create_provider("Bar")
             .create_consumer_version("1")
             .create_pact
-            .create_verification(number: 1, provider_version: "2", tag_names: ['staging'])
+            .create_verification(number: 1, provider_version: "2", tag_names: ["staging"])
             .create_verification(number: 2, provider_version: "2")
             .create_verification(number: 3, provider_version: "2")
             .create_verification(number: 4, provider_version: "2")
             .create_verification(number: 5, provider_version: "3")
             .create_provider("Wiffle")
             .create_pact
-            .create_verification(number: 1, provider_version: "6", tag_names: ['staging'])
+            .create_verification(number: 1, provider_version: "6", tag_names: ["staging"])
         end
 
         let(:path) { "/matrix?q[][pacticipant]=Foo&q[][version]=1&tag=staging&latestby=cvp&limit=2" }
@@ -36,7 +36,7 @@ module PactBroker
         subject { get(path) }
 
         it "does not remove relevant rows from the query due to the specified limit" do
-          expect(JSON.parse(subject.body)['summary']['deployable']).to be true
+          expect(JSON.parse(subject.body)["summary"]["deployable"]).to be true
         end
       end
 
@@ -53,8 +53,8 @@ module PactBroker
         end
         let(:selectors) do
           [
-            UnresolvedSelector.new(pacticipant_name: 'Foo'),
-            UnresolvedSelector.new(pacticipant_name: 'Bar')
+            UnresolvedSelector.new(pacticipant_name: "Foo"),
+            UnresolvedSelector.new(pacticipant_name: "Bar")
           ]
         end
         let(:options) { { limit: 4 } }
@@ -62,14 +62,14 @@ module PactBroker
         subject { Repository.new.find(selectors, options) }
 
         it "includes rows from each direction" do
-          expect(subject.count{ |r| r.consumer_name == 'Foo' }).to eq(subject.count{ |r| r.consumer_name == 'Bar' })
+          expect(subject.count{ |r| r.consumer_name == "Foo" }).to eq(subject.count{ |r| r.consumer_name == "Bar" })
         end
 
         context "when where is a latestby" do
-          let(:options) { { limit: 4, latestby: 'cvpv'} }
+          let(:options) { { limit: 4, latestby: "cvpv"} }
 
           it "includes rows from each direction" do
-            expect(subject.count{ |r| r.consumer_name == 'Foo' }).to eq(subject.count{ |r| r.consumer_name == 'Bar' })
+            expect(subject.count{ |r| r.consumer_name == "Foo" }).to eq(subject.count{ |r| r.consumer_name == "Bar" })
           end
         end
       end

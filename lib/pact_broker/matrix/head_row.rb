@@ -1,5 +1,5 @@
-require 'pact_broker/matrix/row'
-require 'pact_broker/webhooks/webhook'
+require "pact_broker/matrix/row"
+require "pact_broker/webhooks/webhook"
 
 module PactBroker
   module Matrix

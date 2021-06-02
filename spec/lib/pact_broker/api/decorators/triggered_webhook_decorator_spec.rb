@@ -1,18 +1,18 @@
-require 'pact_broker/api/decorators/triggered_webhook_decorator'
+require "pact_broker/api/decorators/triggered_webhook_decorator"
 
 module PactBroker
   module Api
     module Decorators
       describe TriggeredWebhookDecorator do
         let(:triggered_webhook) do
-          double('PactBroker::Webhooks::TriggeredWebhook',
+          double("PactBroker::Webhooks::TriggeredWebhook",
             trigger_type: PactBroker::Webhooks::TriggeredWebhook::TRIGGER_TYPE_RESOURCE_CREATION,
-            event_name: 'some_event',
+            event_name: "some_event",
             status: status,
             failure?: failure,
             retrying?: retrying,
-            trigger_uuid: '1234',
-            webhook_uuid: '4321',
+            trigger_uuid: "1234",
+            webhook_uuid: "4321",
             request_description: "GET http://foo",
             pact_publication: pact,
             number_of_attempts_made: 1,
@@ -23,14 +23,14 @@ module PactBroker
           )
         end
 
-        let(:webhook) { double('webhook') }
+        let(:webhook) { double("webhook") }
 
         let(:pact) do
-          double('pact',
-            provider: double(name: 'provider'),
-            consumer: double(name: 'consumer'),
-            consumer_version_number: '1',
-            name: 'foo '
+          double("pact",
+            provider: double(name: "provider"),
+            consumer: double(name: "consumer"),
+            consumer_version_number: "1",
+            name: "foo "
           )
         end
 
@@ -56,11 +56,11 @@ module PactBroker
 
         it "includes the triggered webhooks properties" do
           expect(subject).to include(
-            status: 'success',
-            triggerType: 'resource_creation',
+            status: "success",
+            triggerType: "resource_creation",
             attemptsMade: 1,
             attemptsRemaining: 2,
-            eventName: 'some_event'
+            eventName: "some_event"
           )
         end
       end

@@ -1,6 +1,6 @@
 Sequel.migration do
   up do
-    create_table(:materialized_matrix, charset: 'utf8') do
+    create_table(:materialized_matrix, charset: "utf8") do
       Integer :consumer_id, null: false
       String :consumer_name, null: false
       Integer :consumer_version_id, null: false
@@ -21,9 +21,9 @@ Sequel.migration do
       Integer :verification_number
       DateTime :verification_executed_at
       String :verification_build_url
-      index [:consumer_id], name: 'ndx_mm_consumer_id'
-      index [:provider_id], name: 'ndx_mm_provider_id'
-      index [:consumer_version_order], name: 'ndx_mm_cv_ord'
+      index [:consumer_id], name: "ndx_mm_consumer_id"
+      index [:provider_id], name: "ndx_mm_provider_id"
+      index [:consumer_version_order], name: "ndx_mm_cv_ord"
     end
 
     from(:materialized_matrix).insert(from(:matrix).select_all)

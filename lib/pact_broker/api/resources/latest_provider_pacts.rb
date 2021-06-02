@@ -1,6 +1,6 @@
-require 'pact_broker/api/resources/provider_pacts'
-require 'pact_broker/configuration'
-require 'pact_broker/api/decorators/provider_pacts_decorator'
+require "pact_broker/api/resources/provider_pacts"
+require "pact_broker/configuration"
+require "pact_broker/api/decorators/provider_pacts_decorator"
 
 module PactBroker
   module Api

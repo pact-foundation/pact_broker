@@ -1,5 +1,5 @@
-require 'pact_broker/webhooks/webhook_request_logger'
-require 'pact_broker/domain/webhook_request'
+require "pact_broker/webhooks/webhook_request_logger"
+require "pact_broker/domain/webhook_request"
 
 module PactBroker
   module Webhooks
@@ -14,18 +14,18 @@ module PactBroker
         subject
       end
 
-      let(:logger) { double('logger').as_null_object }
+      let(:logger) { double("logger").as_null_object }
       let(:uuid) { "uuid" }
-      let(:options) { { failure_log_message: 'oops', show_response: show_response } }
+      let(:options) { { failure_log_message: "oops", show_response: show_response } }
       let(:show_response) { true }
       let(:username) { nil }
       let(:password) { nil }
-      let(:url) { 'http://example.org/hook' }
-      let(:headers) { {'Content-Type' => 'text/plain', 'Authorization' => 'foo'} }
-      let(:body) { 'reqbody' }
+      let(:url) { "http://example.org/hook" }
+      let(:headers) { {"Content-Type" => "text/plain", "Authorization" => "foo"} }
+      let(:body) { "reqbody" }
       let(:webhook_request) do
         PactBroker::Domain::WebhookRequest.new(
-          method: 'post',
+          method: "post",
           url: url,
           headers: headers,
           username: username,
@@ -35,7 +35,7 @@ module PactBroker
       let(:error) { nil }
       let(:status) { 200 }
       let(:response) do
-        double('response',
+        double("response",
           http_version: "1.0",
           message: "OK",
           code: status,
@@ -46,7 +46,7 @@ module PactBroker
       let(:response_body) { "respbod" }
       let(:response_headers) do
         {
-          'content-type' => 'text/foo, blah'
+          "content-type" => "text/foo, blah"
         }
       end
 
@@ -146,7 +146,7 @@ module PactBroker
         end
 
         context "with basic auth" do
-          let(:headers) { { 'authorization' => 'foo' } }
+          let(:headers) { { "authorization" => "foo" } }
 
           it "logs the Authorization header with a starred value" do
             expect(logs).to include "authorization: **********"

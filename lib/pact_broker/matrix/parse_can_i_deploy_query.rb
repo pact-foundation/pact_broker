@@ -1,5 +1,5 @@
-require 'rack/utils'
-require 'pact_broker/matrix/unresolved_selector'
+require "rack/utils"
+require "pact_broker/matrix/unresolved_selector"
 
 module PactBroker
   module Matrix
@@ -8,7 +8,7 @@ module PactBroker
       def self.call params
         selector = PactBroker::Matrix::UnresolvedSelector.new
         options = {
-          latestby: 'cvp',
+          latestby: "cvp",
           latest: true
         }
 

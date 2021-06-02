@@ -1,1 +1,1 @@
-require_relative 'hal_browser/redirect'
+require_relative "hal_browser/redirect"

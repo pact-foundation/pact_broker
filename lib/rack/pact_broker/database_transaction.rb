@@ -1,6 +1,6 @@
-require 'pact_broker/constants'
-require 'sequel'
-require 'ostruct'
+require "pact_broker/constants"
+require "sequel"
+require "ostruct"
 
 module Rack
   module PactBroker

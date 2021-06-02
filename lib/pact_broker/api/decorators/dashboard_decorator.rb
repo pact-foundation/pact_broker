@@ -1,6 +1,6 @@
-require 'ostruct'
-require 'pact_broker/api/pact_broker_urls'
-require 'pact_broker/api/decorators/format_date_time'
+require "ostruct"
+require "pact_broker/api/pact_broker_urls"
+require "pact_broker/api/decorators/format_date_time"
 
 module PactBroker
   module Api
@@ -163,7 +163,7 @@ module PactBroker
 
         def links(index_item, base_url)
           {
-            'pb:webhook-status' => {
+            "pb:webhook-status" => {
               title: "Status of webhooks for #{index_item.consumer_name}/#{index_item.provider_name} pact",
               href: webhooks_status_url(index_item.consumer, index_item.provider, base_url)
             }

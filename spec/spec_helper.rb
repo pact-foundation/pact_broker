@@ -4,18 +4,18 @@ return if ENV["REGRESSION"] == "true"
 
 $: << File.expand_path("../../", __FILE__)
 
-RACK_ENV = ENV['RACK_ENV'] = 'test'
-require 'spec/support/simplecov'
+RACK_ENV = ENV["RACK_ENV"] = "test"
+require "spec/support/simplecov"
 
-require 'support/logging'
-require 'support/database'
-require 'rack/test'
-require 'pact_broker/api'
-require 'rspec/its'
-require 'rspec/pact/matchers'
-require 'sucker_punch/testing/inline'
-require 'webmock/rspec'
-require 'pact_broker/policies'
+require "support/logging"
+require "support/database"
+require "rack/test"
+require "pact_broker/api"
+require "rspec/its"
+require "rspec/pact/matchers"
+require "sucker_punch/testing/inline"
+require "webmock/rspec"
+require "pact_broker/policies"
 
 Dir.glob("./spec/support/**/*.rb") { |file| require file  }
 
@@ -28,7 +28,7 @@ RSpec.configure do | config |
     PactBroker.reset_configuration
     PactBroker.configuration.seed_example_data = false
     PactBroker.configuration.base_equality_only_on_content_that_affects_verification_results = false
-    require 'pact_broker/badges/service'
+    require "pact_broker/badges/service"
     PactBroker::Badges::Service.clear_cache
   end
 

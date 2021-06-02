@@ -1,6 +1,6 @@
-require 'pact_broker/logging'
-require 'pact_broker/matrix/unresolved_selector'
-require 'pact_broker/date_helper'
+require "pact_broker/logging"
+require "pact_broker/matrix/unresolved_selector"
+require "pact_broker/date_helper"
 
 
 module PactBroker
@@ -53,7 +53,7 @@ module PactBroker
       end
 
       def call
-        require 'pact_broker/db/models'
+        require "pact_broker/db/models"
 
         if dry_run?
           dry_run_results

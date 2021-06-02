@@ -1,7 +1,7 @@
-require 'pact_broker/verifications/service'
-require 'pact_broker/verifications/repository'
-require 'pact_broker/webhooks/execution_configuration'
-require 'pact_broker/webhooks/trigger_service'
+require "pact_broker/verifications/service"
+require "pact_broker/verifications/repository"
+require "pact_broker/webhooks/execution_configuration"
+require "pact_broker/webhooks/trigger_service"
 
 module PactBroker
 
@@ -11,7 +11,7 @@ module PactBroker
         allow(Service).to receive(:logger).and_return(logger)
       end
 
-      let(:logger) { double('logger').as_null_object }
+      let(:logger) { double("logger").as_null_object }
 
       subject { PactBroker::Verifications::Service }
 
@@ -22,12 +22,12 @@ module PactBroker
 
         let(:event_context) { { some: "data" } }
         let(:expected_event_context) { { some: "data", provider_version_tags: ["dev"] } }
-        let(:params) { { 'success' => success, 'providerApplicationVersion' => '4.5.6', 'wip' => true, 'testResults' => { 'some' => 'results' }} }
+        let(:params) { { "success" => success, "providerApplicationVersion" => "4.5.6", "wip" => true, "testResults" => { "some" => "results" }} }
         let(:success) { true }
         let(:pact) do
           td.create_pact_with_hierarchy
-            .create_provider_version('4.5.6')
-            .create_provider_version_tag('dev')
+            .create_provider_version("4.5.6")
+            .create_provider_version_tag("dev")
             .and_return(:pact)
         end
         let(:create_verification) { subject.create 3, params, pact, event_context }
@@ -42,7 +42,7 @@ module PactBroker
           expect(verification.wip).to be true
           expect(verification.success).to be true
           expect(verification.number).to eq 3
-          expect(verification.test_results).to eq 'some' => 'results'
+          expect(verification.test_results).to eq "some" => "results"
         end
 
         it "sets the pact content for the verification" do
@@ -54,7 +54,7 @@ module PactBroker
         it "sets the provider version" do
           verification = create_verification
           expect(verification.provider_version).to_not be nil
-          expect(verification.provider_version_number).to eq '4.5.6'
+          expect(verification.provider_version_number).to eq "4.5.6"
         end
 
         it "it broadcasts the provider_verification_published event" do

@@ -1,8 +1,8 @@
-require 'faraday'
-require 'faraday_middleware'
-require 'logger'
-require 'erb'
-require 'yaml'
+require "faraday"
+require "faraday_middleware"
+require "logger"
+require "erb"
+require "yaml"
 
 module PactBroker
   module Test
@@ -14,12 +14,12 @@ module PactBroker
         @client = Faraday.new(url: pact_broker_base_url) do |faraday|
           faraday.request :json
           faraday.response :json, :content_type => /\bjson$/
-          if ENV['DEBUG'] == 'true'
+          if ENV["DEBUG"] == "true"
             faraday.response :logger, ::Logger.new($stdout), headers: false do | logger |
               logger.filter(/(Authorization: ).*/,'\1[REMOVED]')
             end
           end
-          faraday.headers['Authorization'] = "Bearer #{auth[:token]}" if auth[:token]
+          faraday.headers["Authorization"] = "Bearer #{auth[:token]}" if auth[:token]
           faraday.adapter Faraday.default_adapter
         end
       end
@@ -239,10 +239,10 @@ module PactBroker
 
       def can_i_deploy(pacticipant:, version:, to:)
         can_i_deploy_response = client.get("can-i-deploy", { pacticipant: pacticipant, version: version, to: to} ).tap { |response| check_for_error(response) }
-        can = !!(can_i_deploy_response.body['summary'] || {})['deployable']
+        can = !!(can_i_deploy_response.body["summary"] || {})["deployable"]
         puts "can-i-deploy #{pacticipant} version #{version} to #{to}: #{can ? 'yes' : 'no'}"
-        summary = can_i_deploy_response.body['summary']
-        verification_result_urls = (can_i_deploy_response.body['matrix'] || []).collect do | row |
+        summary = can_i_deploy_response.body["summary"]
+        verification_result_urls = (can_i_deploy_response.body["matrix"] || []).collect do | row |
           row.dig("verificationResult", "_links", "self", "href")
         end.compact
         summary.merge!("verification_result_urls" => verification_result_urls)

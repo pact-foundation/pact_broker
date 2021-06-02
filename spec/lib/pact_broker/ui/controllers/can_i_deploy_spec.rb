@@ -1,4 +1,4 @@
-require 'pact_broker/ui/controllers/can_i_deploy'
+require "pact_broker/ui/controllers/can_i_deploy"
 
 module PactBroker
   module UI

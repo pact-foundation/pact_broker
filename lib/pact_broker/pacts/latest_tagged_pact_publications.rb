@@ -1,5 +1,5 @@
-require 'pact_broker/pacts/latest_pact_publications_by_consumer_version'
-require 'pact_broker/pacts/head_pact'
+require "pact_broker/pacts/latest_pact_publications_by_consumer_version"
+require "pact_broker/pacts/head_pact"
 
 module PactBroker
   module Pacts

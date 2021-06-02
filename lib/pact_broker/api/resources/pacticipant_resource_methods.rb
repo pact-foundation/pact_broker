@@ -9,7 +9,7 @@ module PactBroker
             messages = pacticipant_service.messages_for_potential_duplicate_pacticipants pacticipant_names, base_url
             if messages.any?
               response.body = messages.join("\n")
-              response.headers['Content-Type'] = 'text/plain'
+              response.headers["Content-Type"] = "text/plain"
             end
             messages.any?
           else

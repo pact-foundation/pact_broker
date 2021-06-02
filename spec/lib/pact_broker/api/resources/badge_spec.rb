@@ -1,6 +1,6 @@
-require 'pact_broker/api/resources/badge'
-require 'pact_broker/badges/service'
-require 'pact_broker/matrix/service'
+require "pact_broker/api/resources/badge"
+require "pact_broker/badges/service"
+require "pact_broker/matrix/service"
 
 module PactBroker
   module Api
@@ -19,12 +19,12 @@ module PactBroker
         end
 
         let(:pact) { instance_double("PactBroker::Domain::Pact", consumer: consumer, provider: provider, consumer_version_number: "2", revision_number: "1") }
-        let(:consumer) { double('consumer') }
-        let(:provider) { double('provider') }
+        let(:consumer) { double("consumer") }
+        let(:provider) { double("provider") }
         let(:verification) { double("verification", provider_version_number: "3", number: "7") }
         let(:pseudo_branch_verification_status) { instance_double("PactBroker::Verifications::PseudoBranchStatus", to_sym: :verified) }
 
-        subject { get path, params, {'HTTP_ACCEPT' => 'image/svg+xml'}; last_response }
+        subject { get path, params, {"HTTP_ACCEPT" => "image/svg+xml"}; last_response }
 
         context "when enable_public_badge_access is false and the request is not authenticated" do
           before do
@@ -92,7 +92,7 @@ module PactBroker
             end
 
             it "does not allow caching" do
-              expect(subject.headers['Cache-Control']).to eq 'no-cache'
+              expect(subject.headers["Cache-Control"]).to eq "no-cache"
             end
 
             it "returns the badge" do
@@ -116,22 +116,22 @@ module PactBroker
 
             it "returns a 301 redirect to the badge URL" do
               expect(subject.status).to eq 307
-              expect(subject.headers['Location']).to eq 'http://badge'
-              expect(subject.headers['Cache-Control']).to eq 'no-cache'
+              expect(subject.headers["Location"]).to eq "http://badge"
+              expect(subject.headers["Cache-Control"]).to eq "no-cache"
             end
           end
 
           context "when the label param is specified" do
-            let(:params) { {label: 'consumer'} }
+            let(:params) { {label: "consumer"} }
 
             it "creates a badge with the specified label" do
-              expect(PactBroker::Badges::Service).to receive(:pact_verification_badge).with(anything, 'consumer', anything, anything, {})
+              expect(PactBroker::Badges::Service).to receive(:pact_verification_badge).with(anything, "consumer", anything, anything, {})
               subject
             end
           end
 
           context "when the initials param is true" do
-            let(:params) { {initials: 'true'} }
+            let(:params) { {initials: "true"} }
 
             it "creates a badge with initials" do
               expect(PactBroker::Badges::Service).to receive(:pact_verification_badge).with(anything, anything, true, anything, {})
@@ -151,7 +151,7 @@ module PactBroker
             let(:path) { "/pacts/provider/provider/consumer/consumer/latest/prod/badge" }
 
             it "retrieves the latest verification for the pact's consumer and provider and specified tag" do
-              expect(PactBroker::Verifications::Service).to receive(:find_latest_verification_for).with(anything, anything, 'prod')
+              expect(PactBroker::Verifications::Service).to receive(:find_latest_verification_for).with(anything, anything, "prod")
               subject
             end
           end
@@ -163,14 +163,14 @@ module PactBroker
             end
 
             let(:path) { "/matrix/provider/provider/latest/master/consumer/consumer/latest/prod/badge" }
-            let(:row) { { consumer_name: 'consumer', provider_name: 'provider' } }
+            let(:row) { { consumer_name: "consumer", provider_name: "provider" } }
 
             context "when a pact is found" do
               it "looks up the verification" do
                 expect(PactBroker::Verifications::Service).to receive(:find_latest_verification_for_tags) do | consumer, provider, tag|
-                  expect(consumer.name).to eq 'consumer'
-                  expect(provider.name).to eq 'provider'
-                  expect(tag).to eq 'prod'
+                  expect(consumer.name).to eq "consumer"
+                  expect(provider.name).to eq "provider"
+                  expect(tag).to eq "prod"
                 end
                 subject
               end

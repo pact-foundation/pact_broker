@@ -92,97 +92,97 @@ module PactBroker
     # rubocop: disable Metrics/MethodLength
     def register_default_services
       register_service(:index_service) do
-        require 'pact_broker/index/service'
+        require "pact_broker/index/service"
         Index::Service
       end
 
       register_service(:metrics_service) do
-        require 'pact_broker/metrics/service'
+        require "pact_broker/metrics/service"
         Metrics::Service
       end
 
       register_service(:matrix_service) do
-        require 'pact_broker/matrix/service'
+        require "pact_broker/matrix/service"
         Matrix::Service
       end
 
       register_service(:pact_service) do
-        require 'pact_broker/pacts/service'
+        require "pact_broker/pacts/service"
         Pacts::Service
       end
 
       register_service(:pacticipant_service) do
-        require 'pact_broker/pacticipants/service'
+        require "pact_broker/pacticipants/service"
         Pacticipants::Service
       end
 
       register_service(:tag_service) do
-        require 'pact_broker/tags/service'
+        require "pact_broker/tags/service"
         Tags::Service
       end
 
       register_service(:label_service) do
-        require 'pact_broker/labels/service'
+        require "pact_broker/labels/service"
         Labels::Service
       end
 
       register_service(:group_service) do
-        require 'pact_broker/groups/service'
+        require "pact_broker/groups/service"
         Groups::Service
       end
 
       register_service(:webhook_service) do
-        require 'pact_broker/webhooks/service'
+        require "pact_broker/webhooks/service"
         Webhooks::Service
       end
 
       register_service(:version_service) do
-        require 'pact_broker/versions/service'
+        require "pact_broker/versions/service"
         Versions::Service
       end
 
       register_service(:verification_service) do
-        require 'pact_broker/verifications/service'
+        require "pact_broker/verifications/service"
         Verifications::Service
       end
 
       register_service(:badge_service) do
-        require 'pact_broker/badges/service'
+        require "pact_broker/badges/service"
         Badges::Service
       end
 
       register_service(:certificate_service) do
-        require 'pact_broker/certificates/service'
+        require "pact_broker/certificates/service"
         Certificates::Service
       end
 
       register_service(:integration_service) do
-        require 'pact_broker/integrations/service'
+        require "pact_broker/integrations/service"
         Integrations::Service
       end
 
       register_service(:webhook_trigger_service) do
-        require 'pact_broker/webhooks/trigger_service'
+        require "pact_broker/webhooks/trigger_service"
         Webhooks::TriggerService
       end
 
       register_service(:environment_service) do
-        require 'pact_broker/deployments/environment_service'
+        require "pact_broker/deployments/environment_service"
         Deployments::EnvironmentService
       end
 
       register_service(:deployed_version_service) do
-        require 'pact_broker/deployments/deployed_version_service'
+        require "pact_broker/deployments/deployed_version_service"
         PactBroker::Deployments::DeployedVersionService
       end
 
       register_service(:released_version_service) do
-        require 'pact_broker/deployments/released_version_service'
+        require "pact_broker/deployments/released_version_service"
         PactBroker::Deployments::ReleasedVersionService
       end
 
       register_service(:contract_service) do
-        require 'pact_broker/contracts/service'
+        require "pact_broker/contracts/service"
         PactBroker::Contracts::Service
       end
     end

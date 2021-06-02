@@ -1,14 +1,14 @@
-require 'pact_broker/configuration'
-require 'pact_broker/error'
-require 'pact_broker/logging'
-require 'securerandom'
+require "pact_broker/configuration"
+require "pact_broker/error"
+require "pact_broker/logging"
+require "securerandom"
 
 module PactBroker
   module Errors
     include PactBroker::Logging
 
     def self.generate_error_reference
-      SecureRandom.urlsafe_base64.gsub(/[^a-z]/i, '')[0,10]
+      SecureRandom.urlsafe_base64.gsub(/[^a-z]/i, "")[0,10]
     end
 
     def self.reportable_error?(error)

@@ -1,10 +1,10 @@
-require 'spec_helper'
-require 'pact_broker/webhooks/service'
-require 'pact_broker/webhooks/triggered_webhook'
-require 'pact_broker/webhooks/webhook_event'
-require 'webmock/rspec'
-require 'sucker_punch/testing/inline'
-require 'pact_broker/webhooks/execution_configuration'
+require "spec_helper"
+require "pact_broker/webhooks/service"
+require "pact_broker/webhooks/triggered_webhook"
+require "pact_broker/webhooks/webhook_event"
+require "webmock/rspec"
+require "sucker_punch/testing/inline"
+require "pact_broker/webhooks/execution_configuration"
 
 module PactBroker
   module Webhooks
@@ -13,7 +13,7 @@ module PactBroker
         allow(Service).to receive(:logger).and_return(logger)
       end
 
-      let(:logger) { double('logger').as_null_object }
+      let(:logger) { double("logger").as_null_object }
 
       describe "validate - integration test" do
         let(:invalid_webhook) { PactBroker::Domain::Webhook.new }
@@ -22,21 +22,21 @@ module PactBroker
           subject { Service.errors(invalid_webhook) }
 
           it "does not contain an error for the uuid" do
-            expect(subject.messages).to_not have_key('uuid')
+            expect(subject.messages).to_not have_key("uuid")
           end
         end
 
         context "with a uuid" do
-          subject { Service.errors(invalid_webhook, '') }
+          subject { Service.errors(invalid_webhook, "") }
 
           it "merges the uuid errors with the webhook errors" do
-            expect(subject.messages['uuid'].first).to include "can only contain"
+            expect(subject.messages["uuid"].first).to include "can only contain"
           end
         end
       end
 
       describe ".valid_uuid_format?" do
-        it 'does something' do
+        it "does something" do
           expect(Service.valid_uuid_format?("_-bcdefghigHIJKLMNOP")).to be true
           expect(Service.valid_uuid_format?("HIJKLMNOP")).to be false
           expect(Service.valid_uuid_format?("abcdefghigHIJKLMNOP\\")).to be false
@@ -72,8 +72,8 @@ module PactBroker
         let(:existing_webhook) { PactBroker::Domain::Webhook.new(request: request) }
         let(:params) do
           {
-            'request' => {
-              'url' => "http://url"
+            "request" => {
+              "url" => "http://url"
             }
           }
         end
@@ -87,11 +87,11 @@ module PactBroker
             true
           end
           subject
-          expect(updated_webhook.request.url).to eq 'http://url'
+          expect(updated_webhook.request.url).to eq "http://url"
         end
 
         context "when the webhook has a password and the incoming parameters do not contain a password" do
-          let(:existing_password) { 'password' }
+          let(:existing_password) { "password" }
 
           it "does not overwite the password" do
             updated_webhook = nil
@@ -100,17 +100,17 @@ module PactBroker
               true
             end
             subject
-            expect(updated_webhook.request.password).to eq 'password'
+            expect(updated_webhook.request.password).to eq "password"
           end
         end
 
         context "when the webhook has a password and the incoming parameters contain a *** password" do
-          let(:existing_password) { 'password' }
+          let(:existing_password) { "password" }
           let(:params) do
             {
-              'request' => {
-                'url' => 'http://url',
-                'password' => '*******'
+              "request" => {
+                "url" => "http://url",
+                "password" => "*******"
               }
             }
           end
@@ -122,18 +122,18 @@ module PactBroker
               true
             end
             subject
-            expect(updated_webhook.request.password).to eq 'password'
+            expect(updated_webhook.request.password).to eq "password"
           end
         end
 
         context "when the webhook has an authorization header and the incoming parameters contain a *** authorization header" do
-          let(:headers) { { 'Authorization' => 'existing'} }
+          let(:headers) { { "Authorization" => "existing"} }
           let(:params) do
             {
-              'request' => {
-                'url' => "http://url",
-                'headers' => {
-                  'authorization' => "***********"
+              "request" => {
+                "url" => "http://url",
+                "headers" => {
+                  "authorization" => "***********"
                 }
               }
             }
@@ -146,15 +146,15 @@ module PactBroker
               true
             end
             subject
-            expect(updated_webhook.request.headers['Authorization']).to eq 'existing'
+            expect(updated_webhook.request.headers["Authorization"]).to eq "existing"
           end
         end
 
         context "the incoming parameters contain a password" do
           let(:params) do
             {
-              'request' => {
-                'password' => "updated"
+              "request" => {
+                "password" => "updated"
               }
             }
           end
@@ -166,7 +166,7 @@ module PactBroker
               true
             end
             subject
-            expect(updated_webhook.request.password).to eq 'updated'
+            expect(updated_webhook.request.password).to eq "updated"
           end
         end
       end

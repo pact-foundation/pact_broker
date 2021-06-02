@@ -1,22 +1,22 @@
-require 'pact_broker/ui/controllers/index'
-require 'pact_broker/ui/controllers/groups'
-require 'pact_broker/ui/controllers/pacts'
-require 'pact_broker/ui/controllers/matrix'
-require 'pact_broker/ui/controllers/can_i_deploy'
-require 'pact_broker/ui/controllers/error_test'
-require 'pact_broker/doc/controllers/app'
+require "pact_broker/ui/controllers/index"
+require "pact_broker/ui/controllers/groups"
+require "pact_broker/ui/controllers/pacts"
+require "pact_broker/ui/controllers/matrix"
+require "pact_broker/ui/controllers/can_i_deploy"
+require "pact_broker/ui/controllers/error_test"
+require "pact_broker/doc/controllers/app"
 
 module PactBroker
   module UI
     class PathInfoFixer
-      PATH_INFO = 'PATH_INFO'.freeze
+      PATH_INFO = "PATH_INFO".freeze
 
       def initialize app
         @app = app
       end
 
       def call env
-        env[PATH_INFO] = '/' if env[PATH_INFO] == ''
+        env[PATH_INFO] = "/" if env[PATH_INFO] == ""
         @app.call(env)
       end
     end

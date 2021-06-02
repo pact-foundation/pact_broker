@@ -1,5 +1,5 @@
-require 'pact_broker/repositories'
-require 'pact_broker/messages'
+require "pact_broker/repositories"
+require "pact_broker/messages"
 
 module PactBroker
   module Versions

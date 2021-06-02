@@ -1,9 +1,9 @@
-require 'json'
-require 'sequel'
-require 'pact_broker/repositories/helpers'
-require 'pact_broker/tags/tag_with_latest_flag'
-require 'pact_broker/pacts/content'
-require 'sequel/extensions/symbol_aref_refinement'
+require "json"
+require "sequel"
+require "pact_broker/repositories/helpers"
+require "pact_broker/tags/tag_with_latest_flag"
+require "pact_broker/pacts/content"
+require "sequel/extensions/symbol_aref_refinement"
 
 
 module PactBroker
@@ -108,7 +108,7 @@ module PactBroker
         # you may get the wrong column back in your model.
 
         def delete
-          require 'pact_broker/webhooks/triggered_webhook'
+          require "pact_broker/webhooks/triggered_webhook"
           PactBroker::Webhooks::TriggeredWebhook.where(verification: self).delete
           super
         end

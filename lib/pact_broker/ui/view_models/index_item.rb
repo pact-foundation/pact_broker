@@ -1,9 +1,9 @@
-require 'pact_broker/api/pact_broker_urls'
-require 'pact_broker/ui/helpers/url_helper'
-require 'pact_broker/date_helper'
-require 'pact_broker/versions/abbreviate_number'
-require 'pact_broker/configuration'
-require 'forwardable'
+require "pact_broker/api/pact_broker_urls"
+require "pact_broker/ui/helpers/url_helper"
+require "pact_broker/date_helper"
+require "pact_broker/versions/abbreviate_number"
+require "pact_broker/configuration"
+require "forwardable"
 
 module PactBroker
   module UI
@@ -169,7 +169,7 @@ module PactBroker
         end
 
         def warning?
-          pseudo_branch_verification_status == 'warning'
+          pseudo_branch_verification_status == "warning"
         end
 
         def verification_tooltip

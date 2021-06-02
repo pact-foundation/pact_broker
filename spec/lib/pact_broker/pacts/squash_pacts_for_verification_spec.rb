@@ -1,4 +1,4 @@
-require 'pact_broker/pacts/squash_pacts_for_verification'
+require "pact_broker/pacts/squash_pacts_for_verification"
 
 module PactBroker
   module Pacts
@@ -10,7 +10,7 @@ module PactBroker
         let(:pact_version_sha_1) { "1" }
         let(:pact_version_sha_2) { "2" }
         let(:domain_pact_1) do
-          double('pact1',
+          double("pact1",
             pending?: pending_1,
             select_pending_provider_version_tags: pending_provider_version_tags
           )
@@ -22,7 +22,7 @@ module PactBroker
           double("SelectedPact",
             tag_names_of_selectors_for_latest_pacts: %w[dev feat-x],
             pact: domain_pact_1,
-            selectors: double('selectors')
+            selectors: double("selectors")
           )
         end
 

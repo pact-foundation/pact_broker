@@ -1,5 +1,5 @@
-require 'pact_broker/api/resources/base_resource'
-require 'pact_broker/api/contracts/pacticipant_schema'
+require "pact_broker/api/resources/base_resource"
+require "pact_broker/api/contracts/pacticipant_schema"
 
 module PactBroker
   module Api
@@ -22,7 +22,7 @@ module PactBroker
         end
 
         def known_methods
-          super + ['PATCH']
+          super + ["PATCH"]
         end
 
         def malformed_request?

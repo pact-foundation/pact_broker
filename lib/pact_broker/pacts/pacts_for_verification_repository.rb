@@ -1,13 +1,13 @@
-require 'sequel'
-require 'pact_broker/logging'
-require 'pact_broker/pacts/pact_publication'
-require 'pact_broker/domain'
-require 'pact_broker/pacts/verifiable_pact'
-require 'pact_broker/repositories/helpers'
-require 'pact_broker/pacts/selected_pact'
-require 'pact_broker/pacts/selector'
-require 'pact_broker/pacts/selectors'
-require 'pact_broker/feature_toggle'
+require "sequel"
+require "pact_broker/logging"
+require "pact_broker/pacts/pact_publication"
+require "pact_broker/domain"
+require "pact_broker/pacts/verifiable_pact"
+require "pact_broker/repositories/helpers"
+require "pact_broker/pacts/selected_pact"
+require "pact_broker/pacts/selector"
+require "pact_broker/pacts/selectors"
+require "pact_broker/feature_toggle"
 
 module PactBroker
   module Pacts

@@ -1,7 +1,7 @@
 if __FILE__ == $0
 
-  SSL_KEY = 'spec/fixtures/certificates/key.pem'
-  SSL_CERT = 'spec/fixtures/certificates/cert.pem'
+  SSL_KEY = "spec/fixtures/certificates/key.pem"
+  SSL_CERT = "spec/fixtures/certificates/cert.pem"
 
   trap(:INT) do
     @server.shutdown
@@ -11,7 +11,7 @@ if __FILE__ == $0
   def webrick_opts port
     certificate = OpenSSL::X509::Certificate.new(File.read(SSL_CERT))
     cert_name = certificate.subject.to_a.collect{|a| a[0..1] }
-    logger_stream = ENV['DEBUG'] ? $stderr : StringIO.new
+    logger_stream = ENV["DEBUG"] ? $stderr : StringIO.new
     {
       Port: port,
       Host: "0.0.0.0",
@@ -24,12 +24,12 @@ if __FILE__ == $0
     }
   end
 
-  app = ->(_env) { puts "hello"; [200, {}, ['Hello world' + "\n"]] }
+  app = ->(_env) { puts "hello"; [200, {}, ["Hello world" + "\n"]] }
 
-  require 'webrick'
-  require 'webrick/https'
-  require 'rack'
-  require 'rack/handler/webrick'
+  require "webrick"
+  require "webrick/https"
+  require "rack"
+  require "rack/handler/webrick"
 
   opts = webrick_opts(4444)
 

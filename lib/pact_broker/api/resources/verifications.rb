@@ -1,10 +1,10 @@
-require 'pact_broker/api/resources/base_resource'
-require 'pact_broker/configuration'
-require 'pact_broker/domain/verification'
-require 'pact_broker/api/contracts/verification_contract'
-require 'pact_broker/api/decorators/verification_decorator'
-require 'pact_broker/api/resources/webhook_execution_methods'
-require 'pact_broker/api/resources/metadata_resource_methods'
+require "pact_broker/api/resources/base_resource"
+require "pact_broker/configuration"
+require "pact_broker/domain/verification"
+require "pact_broker/api/contracts/verification_contract"
+require "pact_broker/api/decorators/verification_decorator"
+require "pact_broker/api/resources/webhook_execution_methods"
+require "pact_broker/api/resources/metadata_resource_methods"
 
 module PactBroker
   module Api
@@ -80,7 +80,7 @@ module PactBroker
         end
 
         def wip?
-          metadata[:wip] == 'true'
+          metadata[:wip] == "true"
         end
 
         def event_context
@@ -88,7 +88,7 @@ module PactBroker
         end
 
         def verification_params
-          params(symbolize_names: false).merge('wip' => wip?)
+          params(symbolize_names: false).merge("wip" => wip?)
         end
       end
     end

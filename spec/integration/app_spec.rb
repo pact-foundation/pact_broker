@@ -1,15 +1,15 @@
-require 'spec_helper'
-require 'pact_broker/app'
-require 'db'
+require "spec_helper"
+require "pact_broker/app"
+require "db"
 
 module PactBroker
   describe App do
     before do
-      TestDataBuilder.new.create_pact_with_hierarchy('Some Consumer', '1.0', 'Some Provider').and_return(:pact)
+      TestDataBuilder.new.create_pact_with_hierarchy("Some Consumer", "1.0", "Some Provider").and_return(:pact)
     end
 
     let(:hal_browser_enabled) { true }
-    let(:group_url) { '/groups/Some%20Consumer' }
+    let(:group_url) { "/groups/Some%20Consumer" }
     let(:enable_diagnostic_endpoints) { false }
 
     let(:app) do
@@ -23,43 +23,43 @@ module PactBroker
 
     it "exposes a favicon.ico file" do
       get "/favicon.ico"
-      expect(last_response.headers['Content-Type']).to eq "image/x-icon"
+      expect(last_response.headers["Content-Type"]).to eq "image/x-icon"
     end
 
     context "when Accept includes text/html" do
-      let(:env) { {'HTTP_ACCEPT' => 'text/html'} }
+      let(:env) { {"HTTP_ACCEPT" => "text/html"} }
 
-      subject { get(path, '', env) }
+      subject { get(path, "", env) }
 
       describe "a request for root" do
-        let(:path) { '/' }
+        let(:path) { "/" }
 
         it "returns the relationships page" do
           expect(subject.status).to eq 200
-          expect(subject.headers['Content-Type']).to include 'text/html'
-          expect(subject.body).to include 'Pacts'
+          expect(subject.headers["Content-Type"]).to include "text/html"
+          expect(subject.body).to include "Pacts"
         end
 
       end
 
       describe "a request for /ui/relationships" do
-        let(:path) { '/ui/relationships/' }
+        let(:path) { "/ui/relationships/" }
 
         it "returns the relationships page" do
           expect(subject.status).to eq 200
-          expect(subject.headers['Content-Type']).to include 'text/html'
-          expect(subject.body).to include 'Pacts'
+          expect(subject.headers["Content-Type"]).to include "text/html"
+          expect(subject.body).to include "Pacts"
         end
       end
 
       describe "a request for /groups/:pacticipant_name" do
-        let(:path) { '/groups/Some%20Consumer' }
+        let(:path) { "/groups/Some%20Consumer" }
 
         it "returns the group page" do
           expect(subject.status).to eq 200
-          expect(subject.headers['Content-Type']).to include 'text/html'
-          expect(subject.body).to include 'Network graph'
-          expect(subject.body).to include 'Some Consumer'
+          expect(subject.headers["Content-Type"]).to include "text/html"
+          expect(subject.body).to include "Network graph"
+          expect(subject.body).to include "Some Consumer"
         end
 
         it "does not screw up the HTML escaping, haven't you heard of semantic versioning padrino?? Seriously." do
@@ -69,12 +69,12 @@ module PactBroker
       end
 
       describe "a request for /doc/:rel_name" do
-        let(:path) { '/doc/webhooks' }
+        let(:path) { "/doc/webhooks" }
 
         it "returns the HAL docs for the given rel" do
           expect(subject.status).to eq 200
-          expect(subject.headers['Content-Type']).to include 'text/html'
-          expect(subject.body).to include 'Webhooks'
+          expect(subject.headers["Content-Type"]).to include "text/html"
+          expect(subject.body).to include "Webhooks"
         end
       end
 
@@ -83,28 +83,28 @@ module PactBroker
 
         it "returns the HTML representation of the group" do
           expect(subject.status).to eq 200
-          expect(subject.headers['Content-Type']).to include 'text/html'
-          expect(subject.body).to include 'Network graph'
+          expect(subject.headers["Content-Type"]).to include "text/html"
+          expect(subject.body).to include "Network graph"
         end
       end
 
       describe "a request for a path that does not exist" do
-        let(:path) { '/foo' }
+        let(:path) { "/foo" }
 
         it "returns a 404" do
           expect(subject.status).to eq 404
-          expect(subject.headers['Content-Type']).to include 'text/html'
+          expect(subject.headers["Content-Type"]).to include "text/html"
         end
       end
 
       context "when the HALBrowser is enabled" do
         context "when application/hal+json is also specified as an Accept" do
-          let(:env) { {'HTTP_ACCEPT' => 'text/html;application/hal+json'} }
-          let(:path) { '/something' }
+          let(:env) { {"HTTP_ACCEPT" => "text/html;application/hal+json"} }
+          let(:path) { "/something" }
 
           it "redirects to the HAL Browser" do
             expect(subject.status).to eq 303
-            expect(subject.headers['Location']).to eq '/hal-browser/browser.html#/something'
+            expect(subject.headers["Location"]).to eq "/hal-browser/browser.html#/something"
           end
         end
       end
@@ -112,8 +112,8 @@ module PactBroker
       context "when the HALBrowser is not enabled" do
         context "when application/hal+json is also specified as an Accept" do
           let(:hal_browser_enabled) { false }
-          let(:env) { {'HTTP_ACCEPT' => 'text/html;application/hal+json'} }
-          let(:path) { '/something' }
+          let(:env) { {"HTTP_ACCEPT" => "text/html;application/hal+json"} }
+          let(:path) { "/something" }
 
           it "does not redirect to the HAL Browser" do
             expect(subject.status).to_not eq 303
@@ -122,27 +122,27 @@ module PactBroker
       end
 
       context "when a .csv extension is specified" do
-        let(:path) { '/groups/Some%20Consumer.csv' }
+        let(:path) { "/groups/Some%20Consumer.csv" }
 
         it "returns the CSV Content-Type" do
           expect(subject.status).to eq 200
-          expect(subject.headers['Content-Type']).to eq "text/csv;charset=utf-8"
+          expect(subject.headers["Content-Type"]).to eq "text/csv;charset=utf-8"
         end
       end
 
     end
 
     context "when the Accept header is */* (default curl)" do
-      let(:env) { { 'HTTP_ACCEPT' => '*/*' } }
+      let(:env) { { "HTTP_ACCEPT" => "*/*" } }
 
-      subject { get path, '', env; last_response }
+      subject { get path, "", env; last_response }
 
       describe "a request for root" do
         let(:path) { "/" }
 
         it "returns an API response" do
           expect(subject.status).to eq 200
-          expect(subject.headers['Content-Type']).to include 'application/hal+json'
+          expect(subject.headers["Content-Type"]).to include "application/hal+json"
         end
       end
     end
@@ -150,14 +150,14 @@ module PactBroker
     context "when no Accept header is specified" do
       let(:env) { {} }
 
-      subject { get path, '', env; last_response }
+      subject { get path, "", env; last_response }
 
       describe "a request for root" do
         let(:path) { "/" }
 
         it "returns an API response" do
           expect(subject.status).to eq 200
-          expect(subject.headers['Content-Type']).to_not include 'html'
+          expect(subject.headers["Content-Type"]).to_not include "html"
         end
       end
 
@@ -166,16 +166,16 @@ module PactBroker
 
         it "returns the API representation of the group" do
           expect(subject.status).to eq 200
-          expect(subject.headers['Content-Type']).to_not include 'html'
+          expect(subject.headers["Content-Type"]).to_not include "html"
         end
       end
 
       describe "a request for a stylesheet" do
-        let(:path) { '/stylesheets/pact.css' }
+        let(:path) { "/stylesheets/pact.css" }
 
         it "returns the stylesheet" do
           expect(subject.status).to eq 200
-          expect(subject.headers['Content-Type']).to include 'text/css'
+          expect(subject.headers["Content-Type"]).to include "text/css"
         end
       end
     end
@@ -199,7 +199,7 @@ module PactBroker
     describe "when a resource identifier contains a slash" do
       let(:path) { "/pacticipants/Foo/versions/1.2.3/tags/feat%2Fbar" }
 
-      subject { put path, nil, {'CONTENT_TYPE' => 'application/json'}; last_response }
+      subject { put path, nil, {"CONTENT_TYPE" => "application/json"}; last_response }
 
       it "returns a success status" do
         expect(subject.status).to eq 201

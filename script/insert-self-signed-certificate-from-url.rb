@@ -1,9 +1,9 @@
 #!/usr/bin/env ruby
 
-require 'uri'
-require 'securerandom'
-require 'logger'
-require 'sequel'
+require "uri"
+require "securerandom"
+require "logger"
+require "sequel"
 
 uri_string = ARGV[0]
 database = ARGV[1]
@@ -12,7 +12,7 @@ raise "Usage: #{__FILE__} URI SQLITE_DATABASE_PATH" unless uri_string && databas
 # Modify this hash with the configuration for your database
 # For example, a postgres connection would look like:
 # DATABASE_CREDENTIALS = {logger: Logger.new($stdout), adapter: "postgres", host: "HOST", username: "USERNAME", password: "PASSWORD", :encoding => 'utf8'}
-DATABASE_CREDENTIALS = {logger: Logger.new($stdout), adapter: "sqlite", database: database, :encoding => 'utf8'}
+DATABASE_CREDENTIALS = {logger: Logger.new($stdout), adapter: "sqlite", database: database, :encoding => "utf8"}
 
 uri = URI(uri_string)
 connection = Sequel.connect(DATABASE_CREDENTIALS)

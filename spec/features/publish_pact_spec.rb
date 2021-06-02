@@ -1,12 +1,12 @@
 describe "Publishing a pact" do
 
-  let(:pact_content) { load_fixture('a_consumer-a_provider.json') }
+  let(:pact_content) { load_fixture("a_consumer-a_provider.json") }
   let(:path) { "/pacts/provider/A%20Provider/consumer/A%20Consumer/versions/1.2.3" }
   let(:response_body_json) { JSON.parse(subject.body) }
   let(:rack_env) do
     {
-      'CONTENT_TYPE' => 'application/json',
-      'pactbroker.database_connector' => lambda { |&block| block.call }
+      "CONTENT_TYPE" => "application/json",
+      "pactbroker.database_connector" => lambda { |&block| block.call }
     }
   end
 
@@ -18,7 +18,7 @@ describe "Publishing a pact" do
     end
 
     it "returns a json body" do
-      expect(subject.headers['Content-Type']).to eq "application/hal+json;charset=utf-8"
+      expect(subject.headers["Content-Type"]).to eq "application/hal+json;charset=utf-8"
     end
 
     it "returns the pact in the body" do
@@ -37,7 +37,7 @@ describe "Publishing a pact" do
     end
 
     it "returns an application/json Content-Type" do
-      expect(subject.headers['Content-Type']).to eq "application/hal+json;charset=utf-8"
+      expect(subject.headers["Content-Type"]).to eq "application/hal+json;charset=utf-8"
     end
 
     it "returns the pact in the response body" do
@@ -82,13 +82,13 @@ describe "Publishing a pact" do
   context "with a webhook configured", job: true do
     before do
       td.create_webhook(
-        method: 'POST',
-        url: 'http://example.org',
+        method: "POST",
+        url: "http://example.org",
         events: [{ name: PactBroker::Webhooks::WebhookEvent::CONTRACT_PUBLISHED }]
       )
     end
     let!(:request) do
-      stub_request(:post, 'http://example.org').to_return(:status => 200)
+      stub_request(:post, "http://example.org").to_return(:status => 200)
     end
 
     it "executes the webhook" do

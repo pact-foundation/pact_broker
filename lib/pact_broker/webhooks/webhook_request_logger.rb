@@ -1,7 +1,7 @@
-require 'pact_broker/messages'
-require 'pact_broker/logging'
-require 'pact_broker/webhooks/http_request_with_redacted_headers'
-require 'pact_broker/webhooks/http_response_with_utf_8_safe_body'
+require "pact_broker/messages"
+require "pact_broker/logging"
+require "pact_broker/webhooks/http_request_with_redacted_headers"
+require "pact_broker/webhooks/http_response_with_utf_8_safe_body"
 
 module PactBroker
   module Webhooks
@@ -71,7 +71,7 @@ module PactBroker
       end
 
       def response_body_hidden_message(base_url)
-        PactBroker::Messages.message('messages.response_body_hidden', base_url: base_url)
+        PactBroker::Messages.message("messages.response_body_hidden", base_url: base_url)
       end
 
       def log_response_to_application_logger uuid, response

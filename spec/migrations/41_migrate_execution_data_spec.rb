@@ -1,14 +1,14 @@
-describe 'creating triggered webhooks from webhook executions (migrate 36-41)', migration: true do
+describe "creating triggered webhooks from webhook executions (migrate 36-41)", migration: true do
   before do
     PactBroker::Database.migrate(36)
   end
 
   let(:before_now) { DateTime.new(2016, 1, 1) }
   let(:now) { DateTime.new(2018, 2, 2) }
-  let(:consumer) { create(:pacticipants, {name: 'Consumer', created_at: now, updated_at: now}) }
-  let(:provider) { create(:pacticipants, {name: 'Provider', created_at: now, updated_at: now}) }
-  let(:consumer_version) { create(:versions, {number: '1.2.3', order: 1, pacticipant_id: consumer[:id], created_at: now, updated_at: now}) }
-  let(:pact_version) { create(:pact_versions, {content: {some: 'json'}.to_json, sha: '1234', consumer_id: consumer[:id], provider_id: provider[:id], created_at: now}) }
+  let(:consumer) { create(:pacticipants, {name: "Consumer", created_at: now, updated_at: now}) }
+  let(:provider) { create(:pacticipants, {name: "Provider", created_at: now, updated_at: now}) }
+  let(:consumer_version) { create(:versions, {number: "1.2.3", order: 1, pacticipant_id: consumer[:id], created_at: now, updated_at: now}) }
+  let(:pact_version) { create(:pact_versions, {content: {some: "json"}.to_json, sha: "1234", consumer_id: consumer[:id], provider_id: provider[:id], created_at: now}) }
   let(:pact_publication) do
     create(:pact_publications, {
       consumer_version_id: consumer_version[:id],
@@ -39,9 +39,9 @@ describe 'creating triggered webhooks from webhook executions (migrate 36-41)', 
   end
   let(:webhook) do
     create(:webhooks, {
-      uuid: '1234',
-      method: 'GET',
-      url: 'http://www.example.org',
+      uuid: "1234",
+      method: "GET",
+      url: "http://www.example.org",
       consumer_id: consumer[:id],
       provider_id: provider[:id],
       is_json_request_body: false,
@@ -55,7 +55,7 @@ describe 'creating triggered webhooks from webhook executions (migrate 36-41)', 
       consumer_id: consumer[:id],
       provider_id: provider[:id],
       success: true,
-      logs: 'logs',
+      logs: "logs",
       created_at: now
     })
   end
@@ -74,11 +74,11 @@ describe 'creating triggered webhooks from webhook executions (migrate 36-41)', 
       subject
       expect(database[:triggered_webhooks].count).to eq 1
       expect(database[:triggered_webhooks].first[:webhook_id]).to eq webhook[:id]
-      expect(database[:triggered_webhooks].first[:webhook_uuid]).to eq '1234'
+      expect(database[:triggered_webhooks].first[:webhook_uuid]).to eq "1234"
       expect(database[:triggered_webhooks].first[:consumer_id]).to eq consumer[:id]
       expect(database[:triggered_webhooks].first[:provider_id]).to eq provider[:id]
       expect(database[:triggered_webhooks].first[:pact_publication_id]).to eq pact_publication_2[:id]
-      expect(database[:triggered_webhooks].first[:status]).to eq 'success'
+      expect(database[:triggered_webhooks].first[:status]).to eq "success"
       expect(database[:triggered_webhooks].first[:created_at]).to eq webhook[:created_at]
       expect(database[:triggered_webhooks].first[:updated_at]).to eq webhook[:created_at]
     end

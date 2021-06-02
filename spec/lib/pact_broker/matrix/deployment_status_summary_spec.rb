@@ -1,9 +1,9 @@
-require 'pact_broker/matrix/deployment_status_summary'
-require 'pact_broker/matrix/row'
-require 'pact_broker/matrix/query_results'
-require 'pact_broker/matrix/integration'
-require 'pact_broker/matrix/resolved_selector'
-require 'pact_broker/matrix/query_results'
+require "pact_broker/matrix/deployment_status_summary"
+require "pact_broker/matrix/row"
+require "pact_broker/matrix/query_results"
+require "pact_broker/matrix/integration"
+require "pact_broker/matrix/resolved_selector"
+require "pact_broker/matrix/query_results"
 
 
 module PactBroker
@@ -14,7 +14,7 @@ module PactBroker
         allow(subject).to receive(:logger).and_return(logger)
       end
 
-      let(:logger) { double('logger').as_null_object }
+      let(:logger) { double("logger").as_null_object }
 
       describe ".call" do
         let(:rows) { [row_1, row_2] }
@@ -63,14 +63,14 @@ module PactBroker
           ]
         end
 
-        let(:foo) { double('foo', id: 1, name: "Foo") }
-        let(:bar) { double('bar', id: 2, name: "Bar") }
-        let(:baz) { double('baz', id: 3, name: "Baz") }
-        let(:foo_version) { double('foo version', number: "ddec8101dabf4edf9125a69f9a161f0f294af43c", id: 10)}
-        let(:bar_version) { double('bar version', number: "14131c5da3abf323ccf410b1b619edac76231243", id: 11)}
-        let(:baz_version) { double('baz version', number: "4ee06460f10e8207ad904fa9fa6c4842e462ab59", id: 12)}
-        let(:verification_1) { double('verification 1', interactions_missing_test_results: []) }
-        let(:verification_2) { double('verification 2', interactions_missing_test_results: []) }
+        let(:foo) { double("foo", id: 1, name: "Foo") }
+        let(:bar) { double("bar", id: 2, name: "Bar") }
+        let(:baz) { double("baz", id: 3, name: "Baz") }
+        let(:foo_version) { double("foo version", number: "ddec8101dabf4edf9125a69f9a161f0f294af43c", id: 10)}
+        let(:bar_version) { double("bar version", number: "14131c5da3abf323ccf410b1b619edac76231243", id: 11)}
+        let(:baz_version) { double("baz version", number: "4ee06460f10e8207ad904fa9fa6c4842e462ab59", id: 12)}
+        let(:verification_1) { double("verification 1", interactions_missing_test_results: []) }
+        let(:verification_2) { double("verification 2", interactions_missing_test_results: []) }
 
         let(:resolved_selectors) do
           [
@@ -147,7 +147,7 @@ module PactBroker
           its(:counts) { is_expected.to eq success: 1, failed: 0, unknown: 1 }
 
           context "when that row is ignored" do
-            let(:resolved_ignore_selectors) { [instance_double('PactBroker::Matrix::ResolvedSelector', pacticipant_or_version_does_not_exist?: false).as_null_object] }
+            let(:resolved_ignore_selectors) { [instance_double("PactBroker::Matrix::ResolvedSelector", pacticipant_or_version_does_not_exist?: false).as_null_object] }
             let(:rows) { [row_2] }
             let(:ignored_rows) { [row_1] }
 
@@ -166,7 +166,7 @@ module PactBroker
           its(:counts) { is_expected.to eq success: 1, failed: 1, unknown: 0 }
 
           context "when that row is ignored" do
-            let(:resolved_ignore_selectors) { [instance_double('PactBroker::Matrix::ResolvedSelector', pacticipant_or_version_does_not_exist?: false).as_null_object] }
+            let(:resolved_ignore_selectors) { [instance_double("PactBroker::Matrix::ResolvedSelector", pacticipant_or_version_does_not_exist?: false).as_null_object] }
             let(:rows) { [row_2] }
             let(:ignored_rows) { [row_1] }
 
@@ -267,7 +267,7 @@ module PactBroker
         end
 
         context "when there are ignore selectors that don't match any pacticipant or version" do
-          let(:resolved_ignore_selectors) { [instance_double('PactBroker::Matrix::ResolvedSelector', pacticipant_or_version_does_not_exist?: true).as_null_object] }
+          let(:resolved_ignore_selectors) { [instance_double("PactBroker::Matrix::ResolvedSelector", pacticipant_or_version_does_not_exist?: true).as_null_object] }
 
           its(:reasons) { is_expected.to eq [IgnoreSelectorDoesNotExist.new(resolved_ignore_selectors.first), PactBroker::Matrix::Successful.new] }
         end

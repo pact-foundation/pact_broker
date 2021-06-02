@@ -1,7 +1,7 @@
-require 'pact_broker/deployments/environment'
-require 'securerandom'
-require 'pact_broker/pacticipants/generate_display_name'
-require 'pact_broker/string_refinements'
+require "pact_broker/deployments/environment"
+require "securerandom"
+require "pact_broker/pacticipants/generate_display_name"
+require "pact_broker/string_refinements"
 
 module PactBroker
   module Deployments

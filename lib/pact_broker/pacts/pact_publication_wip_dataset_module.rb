@@ -17,7 +17,7 @@ module PactBroker
           .select(Sequel[:pp].*)
           .join_successful_non_wip_verifications_for_provider_id(provider_id)
           .join_provider_versions_for_provider_id(provider_id) do
-            Sequel.lit('provider_versions.branch != ?', provider_version_branch)
+            Sequel.lit("provider_versions.branch != ?", provider_version_branch)
           end
           .where(Sequel[:pp][:provider_id] => provider_id)
           .verified_before_creation_date_of(first_version_for_branch)
@@ -40,7 +40,7 @@ module PactBroker
           .where(Sequel[:pp][:provider_id] => provider_id)
           .join_successful_non_wip_verifications_for_provider_id(provider_id)
           .join_provider_version_tags do
-            Sequel.lit('provider_tags.name != ?', provider_tag)
+            Sequel.lit("provider_tags.name != ?", provider_tag)
           end
           .verified_before_creation_date_of(first_tag_with_name)
           .distinct

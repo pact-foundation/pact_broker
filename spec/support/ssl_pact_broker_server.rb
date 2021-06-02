@@ -1,7 +1,7 @@
 if __FILE__ == $0
 
-  SSL_KEY = 'spec/fixtures/certificates/key.pem'
-  SSL_CERT = 'spec/fixtures/certificates/cert.pem'
+  SSL_KEY = "spec/fixtures/certificates/key.pem"
+  SSL_CERT = "spec/fixtures/certificates/cert.pem"
 
   trap(:INT) do
     @server.shutdown
@@ -22,9 +22,9 @@ if __FILE__ == $0
     }
   end
 
-  require 'pact_broker'
+  require "pact_broker"
 
-  DATABASE_CREDENTIALS = { adapter: "sqlite", database: "/tmp/pact_broker_ssl_database.sqlite3", :encoding => 'utf8' }
+  DATABASE_CREDENTIALS = { adapter: "sqlite", database: "/tmp/pact_broker_ssl_database.sqlite3", :encoding => "utf8" }
 
   app = PactBroker::App.new do | config |
     config.logger = ::Logger.new($stdout)
@@ -33,10 +33,10 @@ if __FILE__ == $0
     config.database_connection = Sequel.connect(DATABASE_CREDENTIALS.merge(:logger => PactBroker::DB::LogQuietener.new(Logger.new(StringIO.new))))
   end
 
-  require 'webrick'
-  require 'webrick/https'
-  require 'rack'
-  require 'rack/handler/webrick'
+  require "webrick"
+  require "webrick/https"
+  require "rack"
+  require "rack/handler/webrick"
 
   opts = webrick_opts(4444)
 

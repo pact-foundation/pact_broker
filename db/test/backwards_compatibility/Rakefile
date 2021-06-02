@@ -1,6 +1,6 @@
-require 'rspec/core'
-require 'rspec/core/rake_task'
-require 'open-uri'
+require "rspec/core"
+require "rspec/core/rake_task"
+require "open-uri"
 
 TESTS = [
   %w{2.1.0 9293},
@@ -24,10 +24,10 @@ def start_pact_broker code_version, port
 end
 
 def kill_servers
-  Dir.chdir('pids') { Dir.glob("*") }.collect(&:to_i).each do | pid |
+  Dir.chdir("pids") { Dir.glob("*") }.collect(&:to_i).each do | pid |
     begin
       puts "Killing broker with pid #{pid}"
-      Process.kill 'KILL', pid
+      Process.kill "KILL", pid
     rescue Errno::ESRCH
       puts "Process with pid #{pid} already killed"
     end
@@ -36,20 +36,20 @@ def kill_servers
 end
 
 def clean
-  require 'fileutils'
-  FileUtils.rm_rf 'pids'
-  FileUtils.mkdir 'pids'
-  FileUtils.rm_rf 'pact_broker_database.sqlite3'
-  FileUtils.rm_rf 'log'
+  require "fileutils"
+  FileUtils.rm_rf "pids"
+  FileUtils.mkdir "pids"
+  FileUtils.rm_rf "pact_broker_database.sqlite3"
+  FileUtils.rm_rf "log"
 end
 
 RSpec::Core::RakeTask.new(:spec) do |task|
-  task.pattern = 'spec/**/*_spec.rb'
+  task.pattern = "spec/**/*_spec.rb"
 end
 
-desc 'Ensure code from previous versions is compatible with latest database'
-task 'db:check_backwards_compatibility' do
-  ENV['PACT_BROKER_DATABASE_VERSION'] = DATABASE_VERSION
+desc "Ensure code from previous versions is compatible with latest database"
+task "db:check_backwards_compatibility" do
+  ENV["PACT_BROKER_DATABASE_VERSION"] = DATABASE_VERSION
   clean
   begin
     TESTS.each do | (code_version, port) |
@@ -60,8 +60,8 @@ task 'db:check_backwards_compatibility' do
     # so that we have the latest version of the db running
 
     TESTS.each do | (code_version, port) |
-      ENV['PACT_BROKER_CODE_VERSION'] = code_version
-      ENV['PORT'] = port
+      ENV["PACT_BROKER_CODE_VERSION"] = code_version
+      ENV["PORT"] = port
       Rake::Task["spec"].execute
     end
   ensure
@@ -69,4 +69,4 @@ task 'db:check_backwards_compatibility' do
   end
 end
 
-task :default => ['db:check_backwards_compatibility']
+task :default => ["db:check_backwards_compatibility"]

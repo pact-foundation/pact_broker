@@ -9,7 +9,7 @@ module PactBroker
       attr_accessor :dry_run
 
       def initialize &block
-        require 'pact_broker/db/clean_incremental'
+        require "pact_broker/db/clean_incremental"
         @version_deletion_limit = 1000
         @dry_run = false
         @keep_version_selectors = PactBroker::DB::CleanIncremental::DEFAULT_KEEP_SELECTORS
@@ -17,7 +17,7 @@ module PactBroker
       end
 
       def keep_version_selectors=(keep_version_selectors)
-        require 'pact_broker/matrix/unresolved_selector'
+        require "pact_broker/matrix/unresolved_selector"
         @keep_version_selectors = [*keep_version_selectors].collect do | hash |
           PactBroker::Matrix::UnresolvedSelector.from_hash(hash)
         end
@@ -31,10 +31,10 @@ module PactBroker
 
               instance_eval(&block)
 
-              require 'pact_broker/db/clean_incremental'
-              require 'pact_broker/error'
-              require 'yaml'
-              require 'benchmark'
+              require "pact_broker/db/clean_incremental"
+              require "pact_broker/error"
+              require "yaml"
+              require "benchmark"
 
               raise PactBroker::Error.new("You must specify the version_deletion_limit") unless version_deletion_limit
 

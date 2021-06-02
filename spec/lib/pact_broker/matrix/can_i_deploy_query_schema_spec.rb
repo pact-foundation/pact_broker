@@ -1,4 +1,4 @@
-require 'pact_broker/matrix/can_i_deploy_query_schema'
+require "pact_broker/matrix/can_i_deploy_query_schema"
 
 module PactBroker
   module Api

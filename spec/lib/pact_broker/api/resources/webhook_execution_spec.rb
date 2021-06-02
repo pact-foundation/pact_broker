@@ -1,5 +1,5 @@
-require 'spec_helper'
-require 'pact_broker/api/resources/webhook_execution'
+require "spec_helper"
+require "pact_broker/api/resources/webhook_execution"
 
 module PactBroker
   module Api
@@ -23,8 +23,8 @@ module PactBroker
 
           context "when the webhook does exist" do
             let(:success) { true }
-            let(:execution_result) { double('execution_result', success?: success, to_json: json)}
-            let(:json) { {some: 'json'}.to_json }
+            let(:execution_result) { double("execution_result", success?: success, to_json: json)}
+            let(:json) { {some: "json"}.to_json }
             let(:webhook) { double("webhook", consumer_name: consumer_name, provider_name: provider_name) }
             let(:decorator) { instance_double(PactBroker::Api::Decorators::WebhookExecutionResultDecorator, to_json: json)}
             let(:pact) { instance_double("PactBroker::Domain::Pact") }
@@ -47,10 +47,10 @@ module PactBroker
             context "when execution is successful" do
               let(:expected_user_options) do
                 {
-                  resource_url: 'http://example.org/webhooks/some-uuid/execute',
-                  base_url: 'http://example.org',
+                  resource_url: "http://example.org/webhooks/some-uuid/execute",
+                  base_url: "http://example.org",
                   webhook: webhook,
-                  show_response: 'foo',
+                  show_response: "foo",
                 }
               end
 
@@ -60,7 +60,7 @@ module PactBroker
               end
 
               it "generates a JSON response body for the execution result" do
-                allow(PactBroker.configuration).to receive(:show_webhook_response?).and_return('foo')
+                allow(PactBroker.configuration).to receive(:show_webhook_response?).and_return("foo")
                 expect(decorator).to receive(:to_json).with(user_options: hash_including(expected_user_options))
                 subject
               end

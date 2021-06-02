@@ -1,6 +1,6 @@
-require 'pact_broker/api/decorators/base_decorator'
-require 'pact_broker/api/decorators/environment_decorator'
-require 'pact_broker/deployments/environment'
+require "pact_broker/api/decorators/base_decorator"
+require "pact_broker/api/decorators/environment_decorator"
+require "pact_broker/deployments/environment"
 
 module PactBroker
   module Api
@@ -11,7 +11,7 @@ module PactBroker
 
         link :self do | options |
           {
-            title: 'Environments',
+            title: "Environments",
             href: options[:resource_url]
           }
         end

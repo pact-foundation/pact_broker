@@ -1,6 +1,6 @@
-require 'support/fixture_helpers'
-require 'support/request_helpers'
-require 'rack/test'
+require "support/fixture_helpers"
+require "support/request_helpers"
+require "rack/test"
 
 RSpec.configure do | config |
 

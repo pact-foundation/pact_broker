@@ -1,5 +1,5 @@
-require_relative 'base_decorator'
-require_relative 'embedded_tag_decorator'
+require_relative "base_decorator"
+require_relative "embedded_tag_decorator"
 
 module PactBroker
   module Api
@@ -16,7 +16,7 @@ module PactBroker
 
         link :self do | options |
           {
-            title: 'Version',
+            title: "Version",
             name: represented.number,
             href: version_url(options.fetch(:base_url), represented)
           }
@@ -24,7 +24,7 @@ module PactBroker
 
         link :'pb:pacticipant' do | options |
           {
-            title: 'Pacticipant',
+            title: "Pacticipant",
             name: represented.pacticipant.name,
             href: pacticipant_url(options.fetch(:base_url), represented.pacticipant)
           }
@@ -32,7 +32,7 @@ module PactBroker
 
         link :'pb:tag' do | options |
           {
-            href: version_url(options.fetch(:base_url), represented) + '/tags/{tag}',
+            href: version_url(options.fetch(:base_url), represented) + "/tags/{tag}",
             title: "Get, create or delete a tag for this pacticipant version",
             templated: true
           }
@@ -78,7 +78,7 @@ module PactBroker
         curies do | options |
           [{
             name: :pb,
-            href: options.fetch(:base_url) + '/doc/{rel}?context=version',
+            href: options.fetch(:base_url) + "/doc/{rel}?context=version",
             templated: true
           }]
         end

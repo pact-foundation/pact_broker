@@ -1,11 +1,11 @@
-require 'pact_broker/api/pact_broker_urls'
+require "pact_broker/api/pact_broker_urls"
 
 describe "Get an environment" do
   before do
     td.create_environment("test", display_name: "Test", uuid: "1234", contacts: [ { name: "Foo" } ] )
   end
   let(:path) { PactBroker::Api::PactBrokerUrls.environment_url(td.and_return(:environment)) }
-  let(:headers) { {'HTTP_ACCEPT' => 'application/hal+json'} }
+  let(:headers) { {"HTTP_ACCEPT" => "application/hal+json"} }
   let(:response_body) { JSON.parse(subject.body, symbolize_names: true)}
 
   subject { get(path, nil, headers) }

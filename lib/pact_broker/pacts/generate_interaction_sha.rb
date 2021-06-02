@@ -1,5 +1,5 @@
-require 'digest/sha1'
-require 'pact_broker/pacts/order_hash_keys'
+require "digest/sha1"
+require "pact_broker/pacts/order_hash_keys"
 
 module PactBroker
   module Pacts

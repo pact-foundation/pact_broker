@@ -1,4 +1,4 @@
-require 'pact_broker/domain/tag'
+require "pact_broker/domain/tag"
 
 module PactBroker
   module Domain

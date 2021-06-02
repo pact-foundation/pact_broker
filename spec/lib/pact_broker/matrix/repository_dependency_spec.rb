@@ -1,4 +1,4 @@
-require 'pact_broker/matrix/repository'
+require "pact_broker/matrix/repository"
 
 module PactBroker
   module Matrix

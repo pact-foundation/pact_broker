@@ -1,5 +1,5 @@
-require 'pact_broker/configuration'
-require 'securerandom'
+require "pact_broker/configuration"
+require "securerandom"
 
 module PactBroker
   module Api
@@ -21,7 +21,7 @@ module PactBroker
         end
 
         def self.generate_error_reference
-          SecureRandom.urlsafe_base64.gsub(/[^a-z]/i, '')[0,10]
+          SecureRandom.urlsafe_base64.gsub(/[^a-z]/i, "")[0,10]
         end
 
         def self.reportable?(e)
@@ -36,7 +36,7 @@ module PactBroker
           if PactBroker.configuration.show_backtrace_in_error_response?
             e.message || obfuscated_message
           else
-           reportable?(e) ? obfuscated_message : e.message
+            reportable?(e) ? obfuscated_message : e.message
           end
         end
 

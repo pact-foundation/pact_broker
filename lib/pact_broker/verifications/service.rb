@@ -1,10 +1,10 @@
-require 'delegate'
-require 'pact_broker/repositories'
-require 'pact_broker/api/decorators/verification_decorator'
-require 'pact_broker/verifications/summary_for_consumer_version'
-require 'pact_broker/logging'
-require 'pact_broker/hash_refinements'
-require 'pact_broker/events/publisher'
+require "delegate"
+require "pact_broker/repositories"
+require "pact_broker/api/decorators/verification_decorator"
+require "pact_broker/verifications/summary_for_consumer_version"
+require "pact_broker/logging"
+require "pact_broker/hash_refinements"
+require "pact_broker/events/publisher"
 
 module PactBroker
   module Verifications
@@ -29,9 +29,9 @@ module PactBroker
       def create next_verification_number, params, pact, event_context
         logger.info "Creating verification #{next_verification_number} for pact_id=#{pact.id}", payload: params.reject{ |k,_| k == "testResults"}
         verification = PactBroker::Domain::Verification.new
-        provider_version_number = params.fetch('providerApplicationVersion')
+        provider_version_number = params.fetch("providerApplicationVersion")
         PactBroker::Api::Decorators::VerificationDecorator.new(verification).from_hash(params)
-        verification.wip = params.fetch('wip')
+        verification.wip = params.fetch("wip")
         verification.number = next_verification_number
         verification = verification_repository.create(verification, provider_version_number, pact)
 

@@ -1,7 +1,7 @@
-require_relative 'base_decorator'
-require 'pact_broker/api/pact_broker_urls'
-require 'pact_broker/pacts/build_verifiable_pact_notices'
-require 'pact_broker/pacts/metadata'
+require_relative "base_decorator"
+require "pact_broker/api/pact_broker_urls"
+require "pact_broker/pacts/build_verifiable_pact_notices"
+require "pact_broker/pacts/metadata"
 
 module PactBroker
   module Api

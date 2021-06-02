@@ -1,5 +1,5 @@
-require 'pact_broker/api/decorators/base_decorator'
-require 'pact_broker/api/decorators/released_version_decorator'
+require "pact_broker/api/decorators/base_decorator"
+require "pact_broker/api/decorators/released_version_decorator"
 
 module PactBroker
   module Api

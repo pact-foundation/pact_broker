@@ -1,5 +1,5 @@
-require_relative '../ddl_statements/latest_triggered_webhooks'
-require_relative 'migration_helper'
+require_relative "../ddl_statements/latest_triggered_webhooks"
+require_relative "migration_helper"
 
 Sequel.migration do
   up do

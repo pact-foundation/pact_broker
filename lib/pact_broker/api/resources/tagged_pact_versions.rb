@@ -1,7 +1,7 @@
-require 'pact_broker/api/resources/base_resource'
-require 'pact_broker/configuration'
-require 'pact_broker/api/decorators/tagged_pact_versions_decorator'
-require 'pact_broker/api/resources/pact_resource_methods'
+require "pact_broker/api/resources/base_resource"
+require "pact_broker/configuration"
+require "pact_broker/api/decorators/tagged_pact_versions_decorator"
+require "pact_broker/api/resources/pact_resource_methods"
 
 module PactBroker
   module Api

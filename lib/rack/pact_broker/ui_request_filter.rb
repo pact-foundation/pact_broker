@@ -4,7 +4,7 @@
 # to actually handle the request, as it would short circuit the cascade
 # logic.
 
-require 'rack/pact_broker/request_target'
+require "rack/pact_broker/request_target"
 
 module Rack
   module PactBroker

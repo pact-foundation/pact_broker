@@ -1,4 +1,4 @@
-require 'pact_broker/domain/group'
+require "pact_broker/domain/group"
 
 module PactBroker
 
@@ -26,15 +26,15 @@ module PactBroker
       end
 
       def clean name
-        self.class.split(name).collect{|w| w.chomp('s') } - ["api", "provider", "service"]
+        self.class.split(name).collect{|w| w.chomp("s") } - ["api", "provider", "service"]
       end
 
       def self.split(string)
-        string.gsub(/\s/, '_')
-              .gsub(/::/, '/')
+        string.gsub(/\s/, "_")
+              .gsub(/::/, "/")
               .gsub(/([A-Z]+)([A-Z][a-z])/, '\1_\2')
               .gsub(/([a-z\d])([A-Z])/, '\1_\2')
-              .tr('-', '_')
+              .tr("-", "_")
               .downcase
               .split("_")
       end

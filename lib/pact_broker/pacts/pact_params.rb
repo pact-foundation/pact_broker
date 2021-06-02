@@ -1,6 +1,6 @@
-require 'pact_broker/json'
-require 'pact_broker/constants'
-require 'ostruct'
+require "pact_broker/json"
+require "pact_broker/constants"
+require "ostruct"
 
 module PactBroker
   module Pacts
@@ -30,8 +30,8 @@ module PactBroker
           {}
         end
 
-        consumer_name_in_pact = parsed_content.is_a?(Hash) ? parsed_content.fetch('consumer',{})['name'] : nil
-        provider_name_in_pact = parsed_content.is_a?(Hash) ? parsed_content.fetch('provider',{})['name'] : nil
+        consumer_name_in_pact = parsed_content.is_a?(Hash) ? parsed_content.fetch("consumer",{})["name"] : nil
+        provider_name_in_pact = parsed_content.is_a?(Hash) ? parsed_content.fetch("provider",{})["name"] : nil
 
         new(
           consumer_name: path_info.fetch(:consumer_name),
@@ -82,11 +82,11 @@ module PactBroker
       end
 
       def consumer
-        PacticipantName.new(consumer_name, consumer_name_in_pact, 'consumer')
+        PacticipantName.new(consumer_name, consumer_name_in_pact, "consumer")
       end
 
       def provider
-        PacticipantName.new(provider_name, provider_name_in_pact, 'provider')
+        PacticipantName.new(provider_name, provider_name_in_pact, "provider")
       end
 
       class PacticipantName < Struct.new(:name, :name_in_pact, :pacticipant)

@@ -1,5 +1,5 @@
-require 'webmachine/request'
-require 'webmachine/adapters/rack'
+require "webmachine/request"
+require "webmachine/adapters/rack"
 
 # Monkey patch to make the Rack env available on the Webmachine Request object
 

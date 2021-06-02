@@ -1,4 +1,4 @@
-require 'pact_broker/services'
+require "pact_broker/services"
 
 module PactBroker
   class BuildHttpOptions
@@ -8,7 +8,7 @@ module PactBroker
       uri = URI(uri)
       options = {}
       
-      if uri.scheme == 'https'
+      if uri.scheme == "https"
         options[:use_ssl] = true
         options[:cert_store] = cert_store
         if disable_ssl_verification?

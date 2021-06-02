@@ -1,10 +1,10 @@
-require 'pact_broker/certificates/service'
+require "pact_broker/certificates/service"
 
 module PactBroker
   module Certificates
     describe Service do
-      let(:certificate_content) { File.read('spec/fixtures/certificate.pem') }
-      let(:logger) { spy('logger') }
+      let(:certificate_content) { File.read("spec/fixtures/certificate.pem") }
+      let(:logger) { spy("logger") }
 
       before do
         allow(Service).to receive(:logger).and_return(logger)
@@ -21,7 +21,7 @@ module PactBroker
           let(:cert_store) { instance_spy(OpenSSL::X509::Store) }
 
           before do
-            Certificate.create(uuid: '1234', content: certificate_content)
+            Certificate.create(uuid: "1234", content: certificate_content)
 
             allow(cert_store).to receive(:add_cert).and_raise(StandardError)
             allow(OpenSSL::X509::Store).to receive(:new).and_return(cert_store)
@@ -42,7 +42,7 @@ module PactBroker
 
       describe "#find_all_certificates" do
         let!(:certificate) do
-          Certificate.create(uuid: '1234', content: certificate_content)
+          Certificate.create(uuid: "1234", content: certificate_content)
         end
 
         subject { Service.find_all_certificates }
@@ -54,7 +54,7 @@ module PactBroker
         end
 
         context "with a valid CA file" do
-          let(:certificate_content) { File.read('spec/fixtures/certificates/cacert.pem') }
+          let(:certificate_content) { File.read("spec/fixtures/certificates/cacert.pem") }
 
           it "returns all the X509 Certificate objects" do
             expect(logger).to_not receive(:error).with(/Error.*1234/)
@@ -63,7 +63,7 @@ module PactBroker
         end
 
         context "with an invalid certificate file" do
-          let(:certificate_content) { File.read('spec/fixtures/certificate-invalid.pem') }
+          let(:certificate_content) { File.read("spec/fixtures/certificate-invalid.pem") }
 
           it "logs an error" do
             expect(logger).to receive(:warn).with(/Error.*1234/, StandardError)

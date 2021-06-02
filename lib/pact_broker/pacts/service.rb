@@ -1,11 +1,11 @@
-require 'pact_broker/repositories'
-require 'pact_broker/services'
-require 'pact_broker/logging'
-require 'pact_broker/pacts/merger'
-require 'pact_broker/pacts/verifiable_pact'
-require 'pact_broker/pacts/squash_pacts_for_verification'
-require 'pact_broker/events/publisher'
-require 'pact_broker/messages'
+require "pact_broker/repositories"
+require "pact_broker/services"
+require "pact_broker/logging"
+require "pact_broker/pacts/merger"
+require "pact_broker/pacts/verifiable_pact"
+require "pact_broker/pacts/squash_pacts_for_verification"
+require "pact_broker/events/publisher"
+require "pact_broker/messages"
 
 module PactBroker
   module Pacts
@@ -242,7 +242,7 @@ module PactBroker
               end
             end
           end
-          messages.join(', ')
+          messages.join(", ")
         end
       end
 

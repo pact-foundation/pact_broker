@@ -1,13 +1,13 @@
-require 'pact_broker/domain/pact'
+require "pact_broker/domain/pact"
 
 module PactBroker
   module Domain
     describe Pact do
       describe "latest_verification" do
         context "when it has been set to an object" do
-          subject { Pact.new(latest_verification: 'verification') }
+          subject { Pact.new(latest_verification: "verification") }
 
-          its(:latest_verification) { is_expected.to eq 'verification' }
+          its(:latest_verification) { is_expected.to eq "verification" }
         end
 
         context "when it has been set to nil" do

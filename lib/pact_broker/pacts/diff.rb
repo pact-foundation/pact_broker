@@ -1,10 +1,10 @@
-require 'pact_broker/api/pact_broker_urls'
-require 'pact_broker/date_helper'
-require 'pact_broker/pacts/create_formatted_diff'
-require 'pact_broker/pacts/sort_content'
-require 'pact_broker/pacts/parse'
-require 'pact_broker/repositories'
-require 'yaml'
+require "pact_broker/api/pact_broker_urls"
+require "pact_broker/date_helper"
+require "pact_broker/pacts/create_formatted_diff"
+require "pact_broker/pacts/sort_content"
+require "pact_broker/pacts/parse"
+require "pact_broker/repositories"
+require "yaml"
 
 module PactBroker
   module Pacts
@@ -95,7 +95,7 @@ module PactBroker
               "href" => previous_distinct_url
             }
           }
-          "## Links\n" + YAML.dump(links).gsub(/---/,'')
+          "## Links\n" + YAML.dump(links).gsub(/---/,"")
         end
 
         def diff

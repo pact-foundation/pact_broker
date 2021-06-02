@@ -266,7 +266,7 @@ module PactBroker
       end
 
       def delete
-        require 'pact_broker/webhooks/triggered_webhook'
+        require "pact_broker/webhooks/triggered_webhook"
         PactBroker::Webhooks::TriggeredWebhook.where(pact_publication: self).delete
         super
       end

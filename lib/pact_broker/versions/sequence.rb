@@ -1,4 +1,4 @@
-require 'sequel'
+require "sequel"
 
 module PactBroker
   module Versions

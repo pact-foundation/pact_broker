@@ -1,6 +1,6 @@
-require 'rack/test'
-require 'pact_broker/ui/controllers/index'
-require 'pact_broker/index/service'
+require "rack/test"
+require "pact_broker/ui/controllers/index"
+require "pact_broker/index/service"
 
 module PactBroker
   module UI
@@ -33,7 +33,7 @@ module PactBroker
             context "when pagination parameters are present" do
               it "passes through pagination parameters to the search" do
                 expect(PactBroker::Index::Service).to receive(:find_index_items).with(hash_including(page_number: 2, page_size: 40))
-                get "/", { page: '2', pageSize: '40' }
+                get "/", { page: "2", pageSize: "40" }
               end
             end
 
@@ -41,7 +41,7 @@ module PactBroker
               context "when tags=true" do
                 it "passes through default pagination parameters to the search with page_size=30" do
                   expect(PactBroker::Index::Service).to receive(:find_index_items).with(hash_including(page_number: 1, page_size: 30))
-                  get "/", { tags: 'true' }
+                  get "/", { tags: "true" }
                 end
               end
 
@@ -60,7 +60,7 @@ module PactBroker
 
               it "passes tags: true to the IndexService" do
                 expect(PactBroker::Index::Service).to receive(:find_index_items).with(hash_including(tags: true))
-                get "/", { tags: 'true' }
+                get "/", { tags: "true" }
               end
             end
 

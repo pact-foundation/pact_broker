@@ -1,8 +1,8 @@
-require_relative 'migration_helper'
+require_relative "migration_helper"
 
 Sequel.migration do
   change do
-    create_table(:webhook_executions, charset: 'utf8') do
+    create_table(:webhook_executions, charset: "utf8") do
       primary_key :id
       foreign_key :webhook_id, :webhooks
       foreign_key :pact_publication_id, :pact_publications

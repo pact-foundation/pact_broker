@@ -1,4 +1,4 @@
-require 'pact_broker/api/resources/badge'
+require "pact_broker/api/resources/badge"
 
 module PactBroker
   module Api

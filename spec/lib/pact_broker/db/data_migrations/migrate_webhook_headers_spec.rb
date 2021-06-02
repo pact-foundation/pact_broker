@@ -1,4 +1,4 @@
-require 'pact_broker/db/data_migrations/migrate_webhook_headers'
+require "pact_broker/db/data_migrations/migrate_webhook_headers"
 
 module PactBroker
   module DB

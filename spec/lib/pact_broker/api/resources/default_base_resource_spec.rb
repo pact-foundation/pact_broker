@@ -1,5 +1,5 @@
-require 'pact_broker/api/resources/default_base_resource'
-require 'pact_broker/application_context'
+require "pact_broker/api/resources/default_base_resource"
+require "pact_broker/application_context"
 
 module PactBroker
   module Api
@@ -8,28 +8,28 @@ module PactBroker
         before do
           allow(env).to receive(:[]).with("pactbroker.base_url").and_return(nil)
         end
-        let(:request) { double('request', body: body, uri: uri, base_uri: URI("http://example.org/"), env: env, path_info: path_info).as_null_object }
+        let(:request) { double("request", body: body, uri: uri, base_uri: URI("http://example.org/"), env: env, path_info: path_info).as_null_object }
         let(:path_info) { { application_context: application_context, key1: "foo%20bar", key2: :value2, key3: 1.2 }}
         let(:application_context) { PactBroker::ApplicationContext.default_application_context }
-        let(:response) { double('response').as_null_object }
-        let(:uri) { URI('http://example.org/path?query') }
-        let(:body) { double('body', to_s: body_string) }
-        let(:body_string) { '' }
-        let(:env) { double('env').as_null_object }
+        let(:response) { double("response").as_null_object }
+        let(:uri) { URI("http://example.org/path?query") }
+        let(:body) { double("body", to_s: body_string) }
+        let(:body_string) { "" }
+        let(:env) { double("env").as_null_object }
 
         subject(:resource) { BaseResource.new(request, response) }
 
-        its(:resource_url) { is_expected.to eq 'http://example.org/path' }
+        its(:resource_url) { is_expected.to eq "http://example.org/path" }
 
         describe "identifier_from_path" do
           its(:identifier_from_path) { is_expected.to eq key1: "foo bar", key2: :value2, key3: 1.2 }
         end
 
         describe "params" do
-          let(:body_string) { { foo: 'bar' }.to_json }
+          let(:body_string) { { foo: "bar" }.to_json }
 
           context "when the body is invalid JSON" do
-            let(:body_string) { '{' }
+            let(:body_string) { "{" }
 
             it "raises an error" do
               expect { subject.params }.to raise_error InvalidJsonError
@@ -37,15 +37,15 @@ module PactBroker
           end
 
           context "when the body is empty and a default is provided" do
-            let(:body_string) { '' }
+            let(:body_string) { "" }
 
             it "returns the default" do
-              expect(subject.params(default: 'foo')).to eq 'foo'
+              expect(subject.params(default: "foo")).to eq "foo"
             end
           end
 
           context "when the body is empty and no default is provided" do
-            let(:body_string) { '' }
+            let(:body_string) { "" }
 
             it "raises an error" do
               expect { subject.params }.to raise_error InvalidJsonError
@@ -66,7 +66,7 @@ module PactBroker
 
           context "when symbolize_names is false" do
             it "does not symbolize the names" do
-              expect(subject.params(symbolize_names: false).keys).to eq ['foo']
+              expect(subject.params(symbolize_names: false).keys).to eq ["foo"]
             end
           end
         end
@@ -75,12 +75,12 @@ module PactBroker
           subject { options "/"; last_response }
 
           it "returns a list of allowed methods" do
-            expect(subject.headers['Access-Control-Allow-Methods']).to eq "GET, OPTIONS"
+            expect(subject.headers["Access-Control-Allow-Methods"]).to eq "GET, OPTIONS"
           end
         end
 
         describe "resource_url" do
-          let(:uri) { URI('http://example.org/path/?query') }
+          let(:uri) { URI("http://example.org/path/?query") }
 
           it "cleans the query and trailing slash" do
             expect(subject.resource_url).to eq "http://example.org/path"
@@ -147,7 +147,7 @@ module PactBroker
         describe "forbidden?" do
           context "with the resource_authorizer configured" do
             let(:application_context) { PactBroker::ApplicationContext.default_application_context(resource_authorizer: resource_authorizer) }
-            let(:resource_authorizer) { double('resource_authorizer', call: allowed) }
+            let(:resource_authorizer) { double("resource_authorizer", call: allowed) }
             let(:allowed) { true }
 
             it "calls the resource authorizer" do
@@ -187,16 +187,16 @@ module PactBroker
         describe resource_class do
           before do
             # stub out all path info params for pf
-            allow(path_info).to receive(:[]).and_return('1')
+            allow(path_info).to receive(:[]).and_return("1")
             allow(path_info).to receive(:[]).with(:application_context).and_return(application_context)
           end
           let(:application_context) { PactBroker::ApplicationContext.default_application_context(before_resource: before_resource, after_resource: after_resource) }
-          let(:request) { double('request', uri: URI("http://example.org"), path_info: path_info).as_null_object }
+          let(:request) { double("request", uri: URI("http://example.org"), path_info: path_info).as_null_object }
           let(:path_info) { { pacticipant_name: "foo", pacticipant_version_number: "1" } }
-          let(:response) { double('response').as_null_object }
+          let(:response) { double("response").as_null_object }
           let(:resource) { resource_class.new(request, response) }
-          let(:before_resource) { double('before_resource', call: nil) }
-          let(:after_resource) { double('after_resource', call: nil) }
+          let(:before_resource) { double("before_resource", call: nil) }
+          let(:after_resource) { double("after_resource", call: nil) }
 
           it "includes OPTIONS in the list of allowed_methods" do
             expect(resource.allowed_methods).to include "OPTIONS"

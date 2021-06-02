@@ -1,9 +1,9 @@
-require 'bundler/setup'
-require 'pact_broker/tasks'
+require "bundler/setup"
+require "pact_broker/tasks"
 
 def create_connection
-  require 'sequel'
-  database_config = {adapter: "sqlite", database: "pact_broker_database.sqlite3", :encoding => 'utf8'}
+  require "sequel"
+  database_config = {adapter: "sqlite", database: "pact_broker_database.sqlite3", :encoding => "utf8"}
   Sequel.connect(database_config)
 end
 
@@ -15,7 +15,7 @@ PactBroker::DB::VersionTask.new do | task |
   task.database_connection = create_connection
 end
 
-task 'pact_broker:version' do
-  require 'pact_broker/version'
+task "pact_broker:version" do
+  require "pact_broker/version"
   puts PactBroker::VERSION
 end

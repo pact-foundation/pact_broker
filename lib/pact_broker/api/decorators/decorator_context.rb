@@ -9,7 +9,7 @@ module PactBroker
           @resource_url = self[:resource_url] = resource_url
           @resource_title = self[:resource_title] = options[:resource_title]
           @env = self[:env] = env
-          @query_string = self[:query_string] = (env['QUERY_STRING'] && !env['QUERY_STRING'].empty? ? env['QUERY_STRING'] : nil)
+          @query_string = self[:query_string] = (env["QUERY_STRING"] && !env["QUERY_STRING"].empty? ? env["QUERY_STRING"] : nil)
           merge!(options)
         end
 

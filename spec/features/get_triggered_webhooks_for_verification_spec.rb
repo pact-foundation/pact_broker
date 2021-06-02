@@ -16,6 +16,6 @@ RSpec.describe "Get triggered webhooks for verification" do
   it { is_expected.to be_a_hal_json_success_response }
 
   it "contains a list of triggered webhooks" do
-    expect(json_response_body['_embedded']['triggeredWebhooks'].size).to be 1
+    expect(json_response_body["_embedded"]["triggeredWebhooks"].size).to be 1
   end
 end

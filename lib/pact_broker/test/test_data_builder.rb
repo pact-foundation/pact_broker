@@ -1,35 +1,35 @@
-require 'json'
-require 'pact_broker/string_refinements'
-require 'pact_broker/repositories'
-require 'pact_broker/services'
-require 'pact_broker/webhooks/repository'
-require 'pact_broker/webhooks/service'
-require 'pact_broker/webhooks/trigger_service'
-require 'pact_broker/webhooks/webhook_execution_result'
-require 'pact_broker/pacts/repository'
-require 'pact_broker/pacts/service'
-require 'pact_broker/pacts/content'
-require 'pact_broker/pacticipants/repository'
-require 'pact_broker/pacticipants/service'
-require 'pact_broker/versions/repository'
-require 'pact_broker/versions/service'
-require 'pact_broker/tags/repository'
-require 'pact_broker/labels/repository'
-require 'pact_broker/tags/service'
-require 'pact_broker/domain'
-require 'pact_broker/versions/repository'
-require 'pact_broker/pacts/repository'
-require 'pact_broker/pacticipants/repository'
-require 'pact_broker/verifications/repository'
-require 'pact_broker/verifications/service'
-require 'pact_broker/tags/repository'
-require 'pact_broker/webhooks/repository'
-require 'pact_broker/certificates/certificate'
-require 'pact_broker/matrix/row'
-require 'pact_broker/deployments/environment_service'
-require 'pact_broker/deployments/deployed_version_service'
-require 'pact_broker/deployments/released_version_service'
-require 'ostruct'
+require "json"
+require "pact_broker/string_refinements"
+require "pact_broker/repositories"
+require "pact_broker/services"
+require "pact_broker/webhooks/repository"
+require "pact_broker/webhooks/service"
+require "pact_broker/webhooks/trigger_service"
+require "pact_broker/webhooks/webhook_execution_result"
+require "pact_broker/pacts/repository"
+require "pact_broker/pacts/service"
+require "pact_broker/pacts/content"
+require "pact_broker/pacticipants/repository"
+require "pact_broker/pacticipants/service"
+require "pact_broker/versions/repository"
+require "pact_broker/versions/service"
+require "pact_broker/tags/repository"
+require "pact_broker/labels/repository"
+require "pact_broker/tags/service"
+require "pact_broker/domain"
+require "pact_broker/versions/repository"
+require "pact_broker/pacts/repository"
+require "pact_broker/pacticipants/repository"
+require "pact_broker/verifications/repository"
+require "pact_broker/verifications/service"
+require "pact_broker/tags/repository"
+require "pact_broker/webhooks/repository"
+require "pact_broker/certificates/certificate"
+require "pact_broker/matrix/row"
+require "pact_broker/deployments/environment_service"
+require "pact_broker/deployments/deployed_version_service"
+require "pact_broker/deployments/released_version_service"
+require "ostruct"
 
 module PactBroker
   module Test
@@ -64,17 +64,17 @@ module PactBroker
       end
 
       def create_pricing_service
-        create_provider("Pricing Service", :repository_url => 'git@git.realestate.com.au:business-systems/pricing-service')
+        create_provider("Pricing Service", :repository_url => "git@git.realestate.com.au:business-systems/pricing-service")
         self
       end
 
       def create_contract_proposal_service
-        create_provider("Contract Proposal Service", :repository_url => 'git@git.realestate.com.au:business-systems/contract-proposal-service')
+        create_provider("Contract Proposal Service", :repository_url => "git@git.realestate.com.au:business-systems/contract-proposal-service")
         self
       end
 
       def create_contract_email_service
-        create_consumer("Contract Email Service", :repository_url => 'git@git.realestate.com.au:business-systems/contract-email-service')
+        create_consumer("Contract Email Service", :repository_url => "git@git.realestate.com.au:business-systems/contract-email-service")
         self
       end
 
@@ -296,7 +296,7 @@ module PactBroker
                          params[:events] || [{ name: PactBroker::Webhooks::WebhookEvent::DEFAULT_EVENT_NAME }]
                        end
         events = event_params.collect{ |e| PactBroker::Webhooks::WebhookEvent.new(e) }
-        template_params = { method: 'POST', url: 'http://example.org', headers: {'Content-Type' => 'application/json'}, username: params[:username], password: params[:password]}
+        template_params = { method: "POST", url: "http://example.org", headers: {"Content-Type" => "application/json"}, username: params[:username], password: params[:password]}
         request = PactBroker::Webhooks::WebhookRequestTemplate.new(template_params.merge(params))
         @webhook = PactBroker::Webhooks::Repository.new.create uuid, PactBroker::Domain::Webhook.new(request: request, events: events, description: params[:description], enabled: enabled), consumer, provider
         self
@@ -366,8 +366,8 @@ module PactBroker
         parameters.delete(:comment)
         branch = parameters.delete(:branch)
         tag_names = [parameters.delete(:tag_names), parameters.delete(:tag_name)].flatten.compact
-        provider_version_number = parameters[:provider_version] || '4.5.6'
-        default_parameters = { success: true, number: 1, test_results: { some: 'results' }, wip: false }
+        provider_version_number = parameters[:provider_version] || "4.5.6"
+        default_parameters = { success: true, number: 1, test_results: { some: "results" }, wip: false }
         default_parameters[:execution_date] = @now if @now
         parameters = default_parameters.merge(parameters)
         parameters.delete(:provider_version)
@@ -389,7 +389,7 @@ module PactBroker
         self
       end
 
-      def create_certificate options = {path: 'spec/fixtures/single-certificate.pem'}
+      def create_certificate options = {path: "spec/fixtures/single-certificate.pem"}
         options.delete(:comment)
         PactBroker::Certificates::Certificate.create(uuid: SecureRandom.urlsafe_base64, content: File.read(options[:path]))
         self
@@ -503,12 +503,12 @@ module PactBroker
       end
 
       def in_utc
-        original_tz = ENV['TZ']
+        original_tz = ENV["TZ"]
         begin
-          ENV['TZ'] = 'UTC'
+          ENV["TZ"] = "UTC"
           yield
         ensure
-          ENV['TZ'] = original_tz
+          ENV["TZ"] = original_tz
         end
       end
 

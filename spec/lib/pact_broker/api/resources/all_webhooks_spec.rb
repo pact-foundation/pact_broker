@@ -1,5 +1,5 @@
-require 'spec_helper'
-require 'pact_broker/api/resources/all_webhooks'
+require "spec_helper"
+require "pact_broker/api/resources/all_webhooks"
 
 module PactBroker::Api
   module Resources
@@ -11,15 +11,15 @@ module PactBroker::Api
       end
 
       let(:webhook_service) { PactBroker::Webhooks::Service }
-      let(:uuid) { '1483234k24DKFGJ45K' }
+      let(:uuid) { "1483234k24DKFGJ45K" }
       let(:path) { "/webhooks" }
-      let(:headers) { {'CONTENT_TYPE' => 'application/json'} }
-      let(:webhook) { double('webhook', consumer: parsed_consumer, provider: parsed_provider) }
+      let(:headers) { {"CONTENT_TYPE" => "application/json"} }
+      let(:webhook) { double("webhook", consumer: parsed_consumer, provider: parsed_provider) }
       let(:parsed_provider) { instance_double(PactBroker::Domain::Pacticipant, name: "Some Provider") }
       let(:parsed_consumer) { instance_double(PactBroker::Domain::Pacticipant, name: "Some Consumer") }
-      let(:consumer) { double('consumer', name: "Some Consumer") }
-      let(:provider) { double('provider', name: "Some Provider") }
-      let(:saved_webhook) { double('saved_webhook')}
+      let(:consumer) { double("consumer", name: "Some Consumer") }
+      let(:provider) { double("provider", name: "Some Provider") }
+      let(:saved_webhook) { double("saved_webhook")}
       let(:webhook_decorator) { instance_double(Decorators::WebhookDecorator, from_json: webhook) }
 
       describe "POST" do
@@ -32,13 +32,13 @@ module PactBroker::Api
 
         let(:webhook_json) do
           {
-            some: 'json'
+            some: "json"
           }.to_json
         end
 
-        let(:next_uuid) { '123k2nvkkwjrwk34' }
+        let(:next_uuid) { "123k2nvkkwjrwk34" }
         let(:valid) { true }
-        let(:errors) { double("errors", empty?: valid, messages: ['messages']) }
+        let(:errors) { double("errors", empty?: valid, messages: ["messages"]) }
 
         subject { post path, webhook_json, headers }
 
@@ -61,12 +61,12 @@ module PactBroker::Api
 
           it "returns a HAL JSON content type" do
             subject
-            expect(last_response.headers['Content-Type']).to eq 'application/hal+json;charset=utf-8'
+            expect(last_response.headers["Content-Type"]).to eq "application/hal+json;charset=utf-8"
           end
 
           it "returns the validation errors" do
             subject
-            expect(JSON.parse(last_response.body, symbolize_names: true)).to eq errors: ['messages']
+            expect(JSON.parse(last_response.body, symbolize_names: true)).to eq errors: ["messages"]
           end
 
         end
@@ -77,7 +77,7 @@ module PactBroker::Api
             allow(webhook_decorator).to receive(:to_json).and_return(webhook_response_json)
           end
 
-          let(:webhook_response_json) { { some: 'webhook' }.to_json }
+          let(:webhook_response_json) { { some: "webhook" }.to_json }
 
           it "saves the webhook" do
             expect(webhook_service).to receive(:create).with(next_uuid, webhook, consumer, provider)
@@ -91,17 +91,17 @@ module PactBroker::Api
 
           it "returns the Location header" do
             subject
-            expect(last_response.headers['Location']).to include(next_uuid)
+            expect(last_response.headers["Location"]).to include(next_uuid)
           end
 
           it "returns a HAL JSON content type" do
             subject
-            expect(last_response.headers['Content-Type']).to eq 'application/hal+json;charset=utf-8'
+            expect(last_response.headers["Content-Type"]).to eq "application/hal+json;charset=utf-8"
           end
 
           it "generates the JSON response body" do
             expect(Decorators::WebhookDecorator).to receive(:new).with(saved_webhook).and_return(webhook_decorator)
-            expect(webhook_decorator).to receive(:to_json).with(user_options: hash_including({ base_url: 'http://example.org' }))
+            expect(webhook_decorator).to receive(:to_json).with(user_options: hash_including({ base_url: "http://example.org" }))
             subject
           end
 
@@ -115,9 +115,9 @@ module PactBroker::Api
       describe "GET" do
         subject { get "/webhooks" }
 
-        let(:webhooks) { [double('webhook')]}
+        let(:webhooks) { [double("webhook")]}
         let(:decorator) { double(Decorators::WebhooksDecorator, to_json: json)}
-        let(:json) { {some: 'json'}.to_json }
+        let(:json) { {some: "json"}.to_json }
 
         before do
           allow(Decorators::WebhooksDecorator).to receive(:new).and_return(decorator)

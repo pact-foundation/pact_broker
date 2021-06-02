@@ -1,4 +1,4 @@
-require 'pact_broker/api/decorators/label_decorator'
+require "pact_broker/api/decorators/label_decorator"
 
 module PactBroker
   module Api
@@ -13,7 +13,7 @@ module PactBroker
             .and_return(:label)
         end
 
-        let(:options) { { user_options: { base_url: 'http://example.org' } } }
+        let(:options) { { user_options: { base_url: "http://example.org" } } }
 
         subject { JSON.parse LabelDecorator.new(label).to_json(options), symbolize_names: true }
 

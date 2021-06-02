@@ -1,8 +1,8 @@
-require 'roar/json/hal'
-require 'pact_broker/api/pact_broker_urls'
-require_relative 'embedded_version_decorator'
-require 'pact_broker/domain/pacticipant'
-require 'pact_broker/api/decorators/pacticipant_decorator'
+require "roar/json/hal"
+require "pact_broker/api/pact_broker_urls"
+require_relative "embedded_version_decorator"
+require "pact_broker/domain/pacticipant"
+require "pact_broker/api/decorators/pacticipant_decorator"
 
 module PactBroker
   module Api
@@ -24,12 +24,12 @@ module PactBroker
         end
 
         links :'pb:pacticipants' do | options |
-          represented.collect{ | pacticipant | {:href => pacticipant_url(options[:base_url], pacticipant), title: 'Pacticipant', name: pacticipant.name } }
+          represented.collect{ | pacticipant | {:href => pacticipant_url(options[:base_url], pacticipant), title: "Pacticipant", name: pacticipant.name } }
         end
 
         # TODO deprecate in v3
         links :pacticipants do | options |
-          represented.collect{ | pacticipant | {:href => pacticipant_url(options[:base_url], pacticipant), :title => pacticipant.name, name: 'DEPRECATED - please use pb:pacticipants' } }
+          represented.collect{ | pacticipant | {:href => pacticipant_url(options[:base_url], pacticipant), :title => pacticipant.name, name: "DEPRECATED - please use pb:pacticipants" } }
         end
       end
 

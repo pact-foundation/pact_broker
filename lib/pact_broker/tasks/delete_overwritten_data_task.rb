@@ -17,8 +17,8 @@ module PactBroker
           namespace :db do
             desc "Delete overwritten pacts and verifications from database"
             task :delete_overwritten_data do | _t, _args |
-              require 'pact_broker/db/delete_overwritten_data'
-              require 'yaml'
+              require "pact_broker/db/delete_overwritten_data"
+              require "yaml"
 
               instance_eval(&block)
               options = {}

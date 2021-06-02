@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-require 'pact_broker/api/paths'
+require "pact_broker/api/paths"
 
 module Rack
   module PactBroker
@@ -20,7 +20,7 @@ module Rack
       private
 
       def body_is_json(env)
-        env['CONTENT_TYPE']&.include?("json")
+        env["CONTENT_TYPE"]&.include?("json")
       end
 
       def explicit_request_for_api(env)
@@ -28,11 +28,11 @@ module Rack
       end
 
       def accepts_api_content_type(env)
-        is_api_content_type((env['HTTP_ACCEPT']&.downcase) || "")
+        is_api_content_type((env["HTTP_ACCEPT"]&.downcase) || "")
       end
 
       def body_is_api_content_type(env)
-        is_api_content_type((env['CONTENT_TYPE']&.downcase) || "")
+        is_api_content_type((env["CONTENT_TYPE"]&.downcase) || "")
       end
 
       def is_api_content_type(header)
@@ -40,23 +40,23 @@ module Rack
       end
 
       def is_badge_request?(env)
-        env['HTTP_ACCEPT'].include?('svg') && ::PactBroker::Api::Paths.is_badge_path?(env['PATH_INFO'])
+        env["HTTP_ACCEPT"].include?("svg") && ::PactBroker::Api::Paths.is_badge_path?(env["PATH_INFO"])
       end
 
       # default curl Accept header
       # Also used by browsers to request various web assets like woff files
       def accept_all(env)
-        env['HTTP_ACCEPT'] == "*/*"
+        env["HTTP_ACCEPT"] == "*/*"
       end
 
       # No browser ever makes a request without an accept header, so it must be an API
       # request if there is no Accept header
       def no_accept_header(env)
-        env['HTTP_ACCEPT'] == nil || env['HTTP_ACCEPT'] == ""
+        env["HTTP_ACCEPT"] == nil || env["HTTP_ACCEPT"] == ""
       end
 
       def is_web_extension(env)
-        env['PATH_INFO'].end_with?(*WEB_ASSET_EXTENSIONS)
+        env["PATH_INFO"].end_with?(*WEB_ASSET_EXTENSIONS)
       end
     end
   end

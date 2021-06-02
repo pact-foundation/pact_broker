@@ -1,8 +1,8 @@
-require 'digest/sha1'
-require 'pact_broker/configuration'
-require 'pact_broker/pacts/sort_content'
-require 'pact_broker/pacts/parse'
-require 'pact_broker/pacts/content'
+require "digest/sha1"
+require "pact_broker/configuration"
+require "pact_broker/pacts/sort_content"
+require "pact_broker/pacts/parse"
+require "pact_broker/pacts/content"
 
 module PactBroker
   module Pacts

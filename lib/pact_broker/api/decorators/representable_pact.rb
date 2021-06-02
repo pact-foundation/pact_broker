@@ -1,4 +1,4 @@
-require 'ostruct'
+require "ostruct"
 
 # TODO remove this class
 

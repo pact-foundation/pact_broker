@@ -1,4 +1,4 @@
-require 'pact_broker/api/decorators/verification_decorator'
+require "pact_broker/api/decorators/verification_decorator"
 
 module PactBroker
   module Api
@@ -10,7 +10,7 @@ module PactBroker
 
           link :self do | options |
             {
-              title: 'Tag',
+              title: "Tag",
               name: represented.name,
               href: tag_url(options[:base_url], represented)
             }

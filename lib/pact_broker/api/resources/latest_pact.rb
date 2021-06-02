@@ -1,7 +1,7 @@
-require 'pact_broker/api/resources/base_resource'
-require 'pact_broker/configuration'
-require 'pact_broker/api/decorators/extended_pact_decorator'
-require 'pact_broker/pacts/metadata'
+require "pact_broker/api/resources/base_resource"
+require "pact_broker/configuration"
+require "pact_broker/api/decorators/extended_pact_decorator"
+require "pact_broker/pacts/metadata"
 
 module PactBroker
   module Api
@@ -29,7 +29,7 @@ module PactBroker
         end
 
         def to_json
-          response.headers['X-Pact-Consumer-Version'] = pact.consumer_version_number
+          response.headers["X-Pact-Consumer-Version"] = pact.consumer_version_number
           decorator_class(:pact_decorator).new(pact).to_json(decorator_options(metadata: metadata))
         end
 

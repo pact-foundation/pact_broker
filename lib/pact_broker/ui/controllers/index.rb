@@ -1,6 +1,6 @@
-require 'pact_broker/ui/controllers/base_controller'
-require 'pact_broker/ui/view_models/index_items'
-require 'haml'
+require "pact_broker/ui/controllers/base_controller"
+require "pact_broker/ui/view_models/index_items"
+require "haml"
 
 module PactBroker
   module UI
@@ -12,7 +12,7 @@ module PactBroker
           set_headers
           tags = nil
           if params[:tags]
-            tags = params[:tags] == 'true' ? true : [*params[:tags]].compact
+            tags = params[:tags] == "true" ? true : [*params[:tags]].compact
           end
           page_number = params[:page]&.to_i || 1
           # Make page size smaller for data intensive query

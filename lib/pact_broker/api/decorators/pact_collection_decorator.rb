@@ -1,8 +1,8 @@
-require_relative 'base_decorator'
-require_relative 'embedded_version_decorator'
-require_relative 'latest_pact_decorator'
-require_relative 'representable_pact'
-require 'pact_broker/domain/pact'
+require_relative "base_decorator"
+require_relative "embedded_version_decorator"
+require_relative "latest_pact_decorator"
+require_relative "representable_pact"
+require "pact_broker/domain/pact"
 
 module PactBroker
   module Api
@@ -49,7 +49,7 @@ module PactBroker
         curies do | options |
           [{
             name: :pb,
-            href: options[:base_url] + '/doc/{rel}?context=pacts',
+            href: options[:base_url] + "/doc/{rel}?context=pacts",
             templated: true
           }]
         end

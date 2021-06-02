@@ -1,5 +1,5 @@
-require 'pact_broker/matrix/repository'
-require 'pact_broker/matrix/unresolved_selector'
+require "pact_broker/matrix/repository"
+require "pact_broker/matrix/unresolved_selector"
 
 module PactBroker
   module Matrix
@@ -29,15 +29,15 @@ module PactBroker
           # A2 - B?
           # A2 - C2
           td.create_pact_with_hierarchy("A", "1", "B")
-            .create_verification(provider_version: '1', success: false)
-            .create_verification(provider_version: '1', number: 2, success: true)
-            .create_verification(provider_version: '2', number: 3, success: true)
+            .create_verification(provider_version: "1", success: false)
+            .create_verification(provider_version: "1", number: 2, success: true)
+            .create_verification(provider_version: "2", number: 3, success: true)
             .create_provider("C")
             .create_pact
-            .create_verification(provider_version: '1')
+            .create_verification(provider_version: "1")
             .create_consumer_version("2")
             .create_pact
-            .create_verification(provider_version: '3')
+            .create_verification(provider_version: "3")
             .use_provider("B")
             .create_pact
         end
@@ -54,7 +54,7 @@ module PactBroker
         let(:a2_b__n_) { "A2 B? n?" }
 
         context "when just the consumer name is specified" do
-          let(:selectors) { build_selectors('A' => nil) }
+          let(:selectors) { build_selectors("A" => nil) }
 
           context "when no latestby is specified" do
             it "returns all rows" do
@@ -67,7 +67,7 @@ module PactBroker
           end
 
           context "when latestby=cvpv" do
-            let(:latestby) { 'cvpv' }
+            let(:latestby) { "cvpv" }
 
             it "returns the latest rows per consumer version/provider version" do
               expect(subject).to_not include a1_b1_n1
@@ -79,7 +79,7 @@ module PactBroker
           end
 
           context "when latestby=cvp", can_i_deploy: true do
-            let(:latestby) { 'cvp' }
+            let(:latestby) { "cvp" }
 
             it "returns the latest row for each provider for each consumer version" do
               expect(subject).to_not include a1_b1_n1
@@ -92,7 +92,7 @@ module PactBroker
           end
 
           context "when latestby=cp", pending: true do
-            let(:latestby) { 'cp' }
+            let(:latestby) { "cp" }
 
             it "returns the latest rows per consumer/provider" do
               expect(subject).to include "A2 C3 n1"
@@ -105,7 +105,7 @@ module PactBroker
         end
 
         context "when the consumer name/version are specified" do
-          let(:selectors) { build_selectors('A' => '1') }
+          let(:selectors) { build_selectors("A" => "1") }
 
           context "when no latestby is specified" do
             it "returns all the rows for the consumer version" do
@@ -114,7 +114,7 @@ module PactBroker
           end
 
           context "when latestby=cvpv" do
-            let(:latestby) { 'cvpv' }
+            let(:latestby) { "cvpv" }
 
             it "returns the latest verification for each provider version for the specified consumer version" do
               expect(subject).to_not include a1_b1_n1
@@ -125,7 +125,7 @@ module PactBroker
           end
 
           context "when latestby=cvp", can_i_deploy: true do
-            let(:latestby) { 'cvp' }
+            let(:latestby) { "cvp" }
 
             it "returns the latest verifications for each provider for the specified consumer version" do
               expect(subject).to_not include a1_b1_n1
@@ -137,7 +137,7 @@ module PactBroker
           end
 
           context "when latestby=cp" do
-            let(:latestby) { 'cp' }
+            let(:latestby) { "cp" }
 
             it "returns the same as latestby=cvp" do
               expect(subject).to_not include a1_b1_n1
@@ -150,7 +150,7 @@ module PactBroker
         end
 
         context "when the consumer name/version and the provider name are specified" do
-          let(:selectors) { build_selectors('A' => '1', 'B' => nil) }
+          let(:selectors) { build_selectors("A" => "1", "B" => nil) }
 
           context "when no latestby is specified" do
             it "returns all the rows for the given consumer version and given provider" do
@@ -163,7 +163,7 @@ module PactBroker
           end
 
           context "when latestby=cvpv" do
-            let(:latestby) { 'cvpv' }
+            let(:latestby) { "cvpv" }
 
             it "returns the latest verification for each provider version for the given consumer version" do
               expect(subject).to_not include a1_b1_n1
@@ -175,7 +175,7 @@ module PactBroker
           end
 
           context "when latestby=cvp" do
-            let(:latestby) { 'cvp' }
+            let(:latestby) { "cvp" }
 
             it "returns the latest verification for the given provider for the given consumer version" do
               expect(subject).to_not include a1_b1_n1
@@ -187,7 +187,7 @@ module PactBroker
           end
 
           context "when latestby=cp" do
-            let(:latestby) { 'cp' }
+            let(:latestby) { "cp" }
 
             it "returns the same as latestby=cvp" do
               expect(subject).to_not include a1_b1_n1
@@ -200,7 +200,7 @@ module PactBroker
         end
 
         context "when the consumer name/version and provider name/version are specified" do
-          let(:selectors) { build_selectors('A' => '1', 'B' => '1') }
+          let(:selectors) { build_selectors("A" => "1", "B" => "1") }
 
           context "when no latestby is specified" do
             it "returns all the rows for the given consumer/version and given provider/version" do
@@ -213,7 +213,7 @@ module PactBroker
           end
 
           context "when latestby=cvpv" do
-            let(:latestby) { 'cvpv' }
+            let(:latestby) { "cvpv" }
 
             it "returns the latest verification for the given provider version for the given consumer version" do
               expect(subject).to include a1_b1_n2
@@ -222,7 +222,7 @@ module PactBroker
           end
 
           context "when latestby=cvp" do
-            let(:latestby) { 'cvp' }
+            let(:latestby) { "cvp" }
 
             it "returns the same as latestby=cvpv" do
               expect(subject).to include a1_b1_n2
@@ -231,7 +231,7 @@ module PactBroker
           end
 
           context "when latestby=cp" do
-            let(:latestby) { 'cp' }
+            let(:latestby) { "cp" }
 
             it "returns the same as latestby=cvp" do
               expect(subject).to include a1_b1_n2
@@ -250,12 +250,12 @@ module PactBroker
               .revise_pact(first_pact.json_content)
           end
 
-          let(:selectors) { build_selectors('billy' => nil, 'bobby' => nil) }
+          let(:selectors) { build_selectors("billy" => nil, "bobby" => nil) }
 
           subject { Repository.new.find(selectors, options) }
 
           context "when latestby: cvpv" do
-            let(:options) { { latestby: 'cvpv' } }
+            let(:options) { { latestby: "cvpv" } }
 
             it "only includes the row for the latest revision" do
               expect(subject.size).to eq 1
@@ -264,7 +264,7 @@ module PactBroker
           end
 
           context "when latestby: cvp" do
-            let(:options) { { latestby: 'cvp' } }
+            let(:options) { { latestby: "cvp" } }
 
             it "only includes the row for the latest revision" do
               expect(subject.size).to eq 1
@@ -295,11 +295,11 @@ module PactBroker
           end
 
           context "when latestby=cvpv" do
-            let(:selectors) { build_selectors('A' => '1', 'B' => '1')}
-            let(:options) { { latestby: 'cvpv' } }
+            let(:selectors) { build_selectors("A" => "1", "B" => "1")}
+            let(:options) { { latestby: "cvpv" } }
 
             it "returns one row" do
-              expect(shorten_rows(subject)).to eq ['A1 B1 n1']
+              expect(shorten_rows(subject)).to eq ["A1 B1 n1"]
             end
           end
         end
@@ -430,15 +430,15 @@ module PactBroker
         context "when only one pacticipant/version is specified and it is a consumer and provider" do
           before do
             td.create_pact_with_hierarchy("A", "1", "B")
-              .create_verification(provider_version: '1')
-              .create_verification(provider_version: '2', number: 2, success: false)
-              .create_verification(provider_version: '4', number: 3)
+              .create_verification(provider_version: "1")
+              .create_verification(provider_version: "2", number: 2, success: false)
+              .create_verification(provider_version: "4", number: 3)
               .create_provider_version("5")
               .use_consumer("B")
               .use_consumer_version("1")
               .create_provider("C")
               .create_pact
-              .create_verification(provider_version: '1', success: false)
+              .create_verification(provider_version: "1", success: false)
           end
 
           let(:selectors) { build_selectors("B" => "1") }
@@ -598,7 +598,7 @@ module PactBroker
           end
 
           it "returns the tag information" do
-            expect(subject.first.provider_version_tags).to include_hash_matching name: 'prod', latest: 1
+            expect(subject.first.provider_version_tags).to include_hash_matching name: "prod", latest: 1
           end
         end
 
@@ -664,8 +664,8 @@ module PactBroker
               .create_verification(provider_version: "4", number: 2)
           end
 
-          let(:selectors) { build_selectors('A'=> '1') }
-          let(:options) { { tag: 'prod', latest: true } }
+          let(:selectors) { build_selectors("A"=> "1") }
+          let(:options) { { tag: "prod", latest: true } }
 
           it "finds the matrix for the latest tagged versions of each of the other other pacticipants" do
             expect(subject).to include "A1 B1 n1"
@@ -686,7 +686,7 @@ module PactBroker
               .create_verification(provider_version: "4", number: 2)
           end
 
-          let(:selectors) { build_selectors('A'=> '1') }
+          let(:selectors) { build_selectors("A"=> "1") }
           let(:options) { { latest: true } }
 
           it "finds the matrix for the latest tagged versions of each of the other other pacticipants" do
@@ -713,8 +713,8 @@ module PactBroker
               .create_pact
           end
 
-          let(:selectors) { build_selectors('A'=> nil) }
-          let(:options) { { tag: 'prod', latest: true } }
+          let(:selectors) { build_selectors("A"=> nil) }
+          let(:options) { { tag: "prod", latest: true } }
 
           it "finds the matrix for the latest tagged versions of each of the other other pacticipants" do
             expect(subject).to include "A1 B1 n1"
@@ -740,8 +740,8 @@ module PactBroker
               .create_verification(provider_version: "4", number: 2)
           end
 
-          let(:selectors) { build_selectors('B'=> '1') }
-          let(:options) { { tag: 'prod', latest: true } }
+          let(:selectors) { build_selectors("B"=> "1") }
+          let(:options) { { tag: "prod", latest: true } }
 
           it "finds the matrix for the latest tagged versions of each of the other other pacticipants" do
             expect(subject).to include "A1 B1 n1"
@@ -765,8 +765,8 @@ module PactBroker
               .create_verification(provider_version: "4", number: 2)
           end
 
-          let(:selectors) { [UnresolvedSelector.new(pacticipant_name: 'A', latest: true, tag: 'dev')] }
-          let(:options) { { tag: 'prod', latest: true } }
+          let(:selectors) { [UnresolvedSelector.new(pacticipant_name: "A", latest: true, tag: "dev")] }
+          let(:options) { { tag: "prod", latest: true } }
 
           it "finds the matrix for the latest tagged versions of each of the other other pacticipants" do
             expect(subject).to include "A1 B1 n1"
@@ -850,7 +850,7 @@ module PactBroker
 
         subject { Repository.new.find(selectors, options) }
 
-        let(:options) { { latestby: 'cvp' } }
+        let(:options) { { latestby: "cvp" } }
 
         let(:selectors) do
           [ UnresolvedSelector.new(pacticipant_name: "Bar", pacticipant_version_number: "5") ]

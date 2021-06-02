@@ -1,11 +1,11 @@
-require 'pact_broker/ui/controllers/base_controller'
-require 'pact_broker/ui/view_models/matrix_lines'
-require 'pact_broker/matrix/unresolved_selector'
-require 'pact_broker/matrix/parse_query'
-require 'pact_broker/logging'
-require 'pact_broker/api/pact_broker_urls'
-require 'pact_broker/ui/helpers/matrix_helper'
-require 'haml'
+require "pact_broker/ui/controllers/base_controller"
+require "pact_broker/ui/view_models/matrix_lines"
+require "pact_broker/matrix/unresolved_selector"
+require "pact_broker/matrix/parse_query"
+require "pact_broker/logging"
+require "pact_broker/api/pact_broker_urls"
+require "pact_broker/ui/helpers/matrix_helper"
+require "haml"
 
 module PactBroker
   module UI
@@ -18,7 +18,7 @@ module PactBroker
         get "/:pacticipant_name/latest-version/:tag/can-i-deploy/to/:environment_tag" do
           # selector and options must be in sync with lib/pact_broker/api/resources/can_i_deploy_badge.rb
           selectors = [ PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: params[:pacticipant_name], latest: true, tag: params[:tag]) ]
-          options = { latestby: 'cvp', limit: 100, tag: params[:to] }
+          options = { latestby: "cvp", limit: 100, tag: params[:to] }
           result = matrix_service.find(selectors, options)
           lines = PactBroker::UI::ViewDomain::MatrixLines.new(result, base_url: base_url)
           locals = {

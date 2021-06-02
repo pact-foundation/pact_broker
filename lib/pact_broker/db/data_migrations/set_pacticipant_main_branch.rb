@@ -1,5 +1,5 @@
-require 'pact_broker/db/data_migrations/helpers'
-require 'pact_broker/logging'
+require "pact_broker/db/data_migrations/helpers"
+require "pact_broker/logging"
 
 module PactBroker
   module DB

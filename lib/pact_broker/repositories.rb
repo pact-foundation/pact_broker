@@ -1,15 +1,15 @@
-require 'pact_broker/domain'
-require 'pact_broker/pacts/repository'
+require "pact_broker/domain"
+require "pact_broker/pacts/repository"
 
 module PactBroker
   module Repositories
     def pacticipant_repository
-      require 'pact_broker/pacticipants/repository'
+      require "pact_broker/pacticipants/repository"
       Pacticipants::Repository.new
     end
 
     def version_repository
-      require 'pact_broker/versions/repository'
+      require "pact_broker/versions/repository"
       Versions::Repository.new
     end
 
@@ -18,27 +18,27 @@ module PactBroker
     end
 
     def tag_repository
-      require 'pact_broker/tags/repository'
+      require "pact_broker/tags/repository"
       Tags::Repository.new
     end
 
     def label_repository
-      require 'pact_broker/labels/repository'
+      require "pact_broker/labels/repository"
       Labels::Repository.new
     end
 
     def webhook_repository
-      require 'pact_broker/webhooks/repository'
+      require "pact_broker/webhooks/repository"
       Webhooks::Repository.new
     end
 
     def verification_repository
-      require 'pact_broker/verifications/repository'
+      require "pact_broker/verifications/repository"
       Verifications::Repository.new
     end
 
     def matrix_repository
-      require 'pact_broker/matrix/repository'
+      require "pact_broker/matrix/repository"
       Matrix::Repository.new
     end
 

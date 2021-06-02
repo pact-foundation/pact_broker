@@ -1,5 +1,5 @@
-require 'date'
-require 'sequel'
+require "date"
+require "sequel"
 
 module PactBroker
   module DB
@@ -16,8 +16,8 @@ module PactBroker
       end
 
       def call
-        require 'pact_broker/pacts/pact_publication'
-        require 'pact_broker/domain/verification'
+        require "pact_broker/pacts/pact_publication"
+        require "pact_broker/domain/verification"
 
         deleted_counts = {}
         kept_counts = {}
@@ -55,7 +55,7 @@ module PactBroker
         resolved_ids_to_delete = db[:triggered_webhooks]
           .where(id: ids_to_keep)
           .invert
-          .where(Sequel.lit('created_at < ?', cut_off_date))
+          .where(Sequel.lit("created_at < ?", cut_off_date))
           .limit(limit)
           .collect{ |row| row[:id] }
 
@@ -76,7 +76,7 @@ module PactBroker
         resolved_ids_to_delete = db[:pact_publications]
           .where(id: ids_to_keep)
           .invert
-          .where(Sequel.lit('created_at < ?', cut_off_date))
+          .where(Sequel.lit("created_at < ?", cut_off_date))
           .order(:id)
           .limit(limit)
           .collect{ |row| row[:id] }
@@ -91,7 +91,7 @@ module PactBroker
         resolved_ids_to_delete = db[:verifications]
           .where(id: ids_to_keep)
           .invert
-          .where(Sequel.lit('created_at < ?', cut_off_date))
+          .where(Sequel.lit("created_at < ?", cut_off_date))
           .order(:id)
           .limit(limit)
           .collect{ |row| row[:id] }

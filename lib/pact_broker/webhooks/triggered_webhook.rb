@@ -1,7 +1,7 @@
-require 'sequel'
-require 'pact_broker/repositories/helpers'
-require 'pact_broker/webhooks/execution'
-require 'pact_broker/hash_refinements'
+require "sequel"
+require "pact_broker/repositories/helpers"
+require "pact_broker/webhooks/execution"
+require "pact_broker/hash_refinements"
 
 # Represents the relationship between a webhook and the event and object
 # that caused it to be triggered. eg a pact publication
@@ -13,19 +13,19 @@ module PactBroker
       plugin :timestamps, update_on_create: true
       plugin :serialization, :json, :event_context
 
-      TRIGGER_TYPE_RESOURCE_CREATION = 'resource_creation'
-      TRIGGER_TYPE_USER = 'user'
+      TRIGGER_TYPE_RESOURCE_CREATION = "resource_creation"
+      TRIGGER_TYPE_USER = "user"
 
-      STATUS_NOT_RUN = 'not_run'.freeze
-      STATUS_RETRYING = 'retrying'.freeze
-      STATUS_SUCCESS = 'success'.freeze
-      STATUS_FAILURE = 'failure'.freeze
+      STATUS_NOT_RUN = "not_run".freeze
+      STATUS_RETRYING = "retrying".freeze
+      STATUS_SUCCESS = "success".freeze
+      STATUS_FAILURE = "failure".freeze
 
       dataset_module do
         include PactBroker::Repositories::Helpers
 
         def delete
-          require 'pact_broker/webhooks/execution'
+          require "pact_broker/webhooks/execution"
           PactBroker::Webhooks::Execution.where(triggered_webhook: self).delete
           super
         end

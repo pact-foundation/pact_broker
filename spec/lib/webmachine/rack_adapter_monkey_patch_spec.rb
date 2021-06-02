@@ -1,7 +1,7 @@
-require 'webmachine'
-require 'webmachine/adapters/rack_mapped'
-require 'webmachine/rack_adapter_monkey_patch'
-require 'rack/test'
+require "webmachine"
+require "webmachine/adapters/rack_mapped"
+require "webmachine/rack_adapter_monkey_patch"
+require "rack/test"
 
 module Webmachine
   module Adapters
@@ -11,7 +11,7 @@ module Webmachine
       end
 
       def process_post
-        response.body = request.env['FOO']
+        response.body = request.env["FOO"]
         true
       end
     end
@@ -22,7 +22,7 @@ module Webmachine
       let(:app) do
         pact_api = Webmachine::Application.new do |app|
           app.routes do
-            add(['test'], TestResource)
+            add(["test"], TestResource)
           end
         end
 
@@ -35,7 +35,7 @@ module Webmachine
 
       let(:rack_env) do
         {
-          'FOO' => 'foo'
+          "FOO" => "foo"
         }
       end
 
@@ -43,7 +43,7 @@ module Webmachine
 
       it "passes the rack env through on the request" do
         expect(subject.status).to eq 200
-        expect(subject.body).to eq 'foo'
+        expect(subject.body).to eq "foo"
       end
     end
   end

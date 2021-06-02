@@ -1,5 +1,5 @@
-require 'sequel'
-require 'sequel/plugins/serialization'
+require "sequel"
+require "sequel/plugins/serialization"
 
 
 module PactBroker

@@ -1,6 +1,6 @@
-require 'pact_broker/api/resources/matrix'
-require 'pact_broker/matrix/can_i_deploy_query_schema'
-require 'pact_broker/matrix/parse_can_i_deploy_query'
+require "pact_broker/api/resources/matrix"
+require "pact_broker/matrix/can_i_deploy_query_schema"
+require "pact_broker/matrix/parse_can_i_deploy_query"
 
 module PactBroker
   module Api
@@ -10,7 +10,7 @@ module PactBroker
           super
           selector = PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: pacticipant_name, latest: true, tag: identifier_from_path[:tag])
           @options = {
-            latestby: 'cvp',
+            latestby: "cvp",
             latest: true,
             tag: identifier_from_path[:to]
           }

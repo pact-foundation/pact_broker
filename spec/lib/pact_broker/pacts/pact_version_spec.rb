@@ -1,4 +1,4 @@
-require 'pact_broker/pacts/pact_version'
+require "pact_broker/pacts/pact_version"
 
 module PactBroker
   module Pacts
@@ -112,7 +112,7 @@ module PactBroker
       describe "select_provider_tags_with_successful_verifications" do
         before do
           td.create_pact_with_hierarchy("Foo", "1", "Bar")
-            .create_verification(provider_version: "20", tag_names: ['dev'], success: true)
+            .create_verification(provider_version: "20", tag_names: ["dev"], success: true)
             .create_verification(provider_version: "21", number: 2)
         end
 
@@ -135,7 +135,7 @@ module PactBroker
 
         context "when the pact version has been verified unsuccessfully by all of the specified tags" do
           before do
-            td.create_verification(provider_version: "30", number: 10, tag_names: ['feat-bar'], success: false)
+            td.create_verification(provider_version: "30", number: 10, tag_names: ["feat-bar"], success: false)
           end
 
           let(:tags) { %w[feat-bar] }
@@ -152,7 +152,7 @@ module PactBroker
         context "when the provider version tag specified does not exist yet but there are previous successful verifications from another branch" do
           before do
             td.create_pact_with_hierarchy("Foo", "1", "Bar")
-              .create_verification(provider_version: "20", tag_names: ['dev'], success: true)
+              .create_verification(provider_version: "20", tag_names: ["dev"], success: true)
               .create_verification(provider_version: "21", number: 2)
           end
 
@@ -164,9 +164,9 @@ module PactBroker
         context "when there is a successful verification from before the first provider version with the specified tag was created" do
           before do
             td.create_pact_with_hierarchy("Foo", "1", "Bar")
-              .create_verification(provider_version: "20", tag_names: ['dev'], success: true)
+              .create_verification(provider_version: "20", tag_names: ["dev"], success: true)
               .add_day
-              .create_verification(provider_version: "21", tag_names: ['feat-new-branch'], number: 2, success: false)
+              .create_verification(provider_version: "21", tag_names: ["feat-new-branch"], number: 2, success: false)
           end
 
           let(:tags) { %w[feat-new-branch] }
@@ -177,9 +177,9 @@ module PactBroker
         context "when there is a successful verification from after the first provider version with the specified tag was created" do
           before do
             td.create_pact_with_hierarchy("Foo", "1", "Bar")
-              .create_verification(provider_version: "21", tag_names: ['feat-new-branch'], number: 2, success: false)
+              .create_verification(provider_version: "21", tag_names: ["feat-new-branch"], number: 2, success: false)
               .add_day
-              .create_verification(provider_version: "20", tag_names: ['dev'], success: true)
+              .create_verification(provider_version: "20", tag_names: ["dev"], success: true)
           end
 
           let(:tags) { %w[feat-new-branch] }

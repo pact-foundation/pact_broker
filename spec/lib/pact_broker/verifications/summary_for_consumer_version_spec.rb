@@ -1,4 +1,4 @@
-require 'pact_broker/verifications/summary_for_consumer_version'
+require "pact_broker/verifications/summary_for_consumer_version"
 
 module PactBroker
   module Verifications
@@ -8,19 +8,19 @@ module PactBroker
       let(:verification_1) do
         instance_double("PactBroker::Domain::Verification",
           success: true,
-          provider_name: 'Successful Provider'
+          provider_name: "Successful Provider"
         )
       end
       let(:verification_2) do
         instance_double("PactBroker::Domain::Verification",
           success: false,
-          provider_name: 'Failed Provider'
+          provider_name: "Failed Provider"
         )
       end
 
-      let(:pact_1) { instance_double("pact", provider_name: 'Successful Provider') }
-      let(:pact_2) { instance_double("pact", provider_name: 'Failed Provider') }
-      let(:pact_3) { instance_double("pact", provider_name: 'Unknown Provider') }
+      let(:pact_1) { instance_double("pact", provider_name: "Successful Provider") }
+      let(:pact_2) { instance_double("pact", provider_name: "Failed Provider") }
+      let(:pact_3) { instance_double("pact", provider_name: "Unknown Provider") }
 
       let(:pacts) do
         [pact_1, pact_2, pact_3]

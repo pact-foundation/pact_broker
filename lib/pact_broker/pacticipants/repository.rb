@@ -1,7 +1,7 @@
-require 'sequel'
-require 'pact_broker/domain/pacticipant'
-require 'pact_broker/repositories/helpers'
-require 'pact_broker/error'
+require "sequel"
+require "pact_broker/domain/pacticipant"
+require "pact_broker/repositories/helpers"
+require "pact_broker/error"
 
 module PactBroker
   module Pacticipants

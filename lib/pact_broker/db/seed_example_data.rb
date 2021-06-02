@@ -1,5 +1,5 @@
-require 'pact_broker/test/test_data_builder'
-require 'pact_broker/pacticipants/service'
+require "pact_broker/test/test_data_builder"
+require "pact_broker/pacticipants/service"
 
 module PactBroker
   module DB

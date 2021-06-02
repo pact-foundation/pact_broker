@@ -1,6 +1,6 @@
-require_relative 'base_decorator'
-require_relative 'verifiable_pact_decorator'
-require 'pact_broker/api/pact_broker_urls'
+require_relative "base_decorator"
+require_relative "verifiable_pact_decorator"
+require "pact_broker/api/pact_broker_urls"
 
 module PactBroker
   module Api

@@ -1,16 +1,16 @@
-require 'pact_broker/pacts/all_pact_publications'
-require 'pact_broker/repositories/helpers'
-require 'pact_broker/matrix/query_builder'
-require 'sequel'
-require 'pact_broker/repositories/helpers'
-require 'pact_broker/logging'
-require 'pact_broker/pacts/pact_version'
-require 'pact_broker/domain/pacticipant'
-require 'pact_broker/domain/version'
-require 'pact_broker/domain/verification'
-require 'pact_broker/pacts/pact_publication'
-require 'pact_broker/tags/tag_with_latest_flag'
-require 'pact_broker/matrix/query_ids'
+require "pact_broker/pacts/all_pact_publications"
+require "pact_broker/repositories/helpers"
+require "pact_broker/matrix/query_builder"
+require "sequel"
+require "pact_broker/repositories/helpers"
+require "pact_broker/logging"
+require "pact_broker/pacts/pact_version"
+require "pact_broker/domain/pacticipant"
+require "pact_broker/domain/version"
+require "pact_broker/domain/verification"
+require "pact_broker/pacts/pact_publication"
+require "pact_broker/tags/tag_with_latest_flag"
+require "pact_broker/matrix/query_ids"
 
 # The difference between `join_verifications_for` and `join_verifications` is that
 # the left outer join is done on a pre-filtered dataset in `join_verifications_for`,

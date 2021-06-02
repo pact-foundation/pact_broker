@@ -1,4 +1,4 @@
-require 'sequel/annotate'
+require "sequel/annotate"
 
 module PactBroker
   class Annotate
@@ -42,7 +42,7 @@ module PactBroker
     end
 
     def self.file_path_for_class klass
-      "lib/" + klass.name.gsub('::', '/').gsub(/([a-z])([A-Z])/) {|match| match[0] + "_" + match[1].downcase }.downcase + ".rb"
+      "lib/" + klass.name.gsub("::", "/").gsub(/([a-z])([A-Z])/) {|match| match[0] + "_" + match[1].downcase }.downcase + ".rb"
     end
   end
 end

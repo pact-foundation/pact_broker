@@ -1,4 +1,4 @@
-require 'delegate'
+require "delegate"
 
 # A head pact is the pact for the latest consumer version with the specified tag
 # (ignoring later versions that might have the specified tag but no pact)

@@ -1,13 +1,13 @@
-require 'pact_broker/webhooks/status'
+require "pact_broker/webhooks/status"
 
 module PactBroker
   module Webhooks
     describe Status do
-      let(:webhooks) { [double('webhook')]}
+      let(:webhooks) { [double("webhook")]}
       let(:latest_triggered_webhooks) { [ triggered_webhook_1, triggered_webhook_2] }
-      let(:pact) { double('pact') }
-      let(:triggered_webhook_1) { double('triggered_webhook', status: status_1) }
-      let(:triggered_webhook_2) { double('triggered_webhook', status: status_2) }
+      let(:pact) { double("pact") }
+      let(:triggered_webhook_1) { double("triggered_webhook", status: status_1) }
+      let(:triggered_webhook_2) { double("triggered_webhook", status: status_2) }
       let(:status_1) { TriggeredWebhook::STATUS_SUCCESS }
       let(:status_2) { TriggeredWebhook::STATUS_SUCCESS }
 

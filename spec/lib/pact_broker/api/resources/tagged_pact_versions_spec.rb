@@ -1,4 +1,4 @@
-require 'pact_broker/api/resources/tagged_pact_versions'
+require "pact_broker/api/resources/tagged_pact_versions"
 
 module PactBroker
   module Api
@@ -12,8 +12,8 @@ module PactBroker
         end
 
         let(:path) { "/pacts/provider/Bar/consumer/Foo/tag/prod" }
-        let(:consumer) { double('Bar') }
-        let(:provider) { double('Foo') }
+        let(:consumer) { double("Bar") }
+        let(:provider) { double("Foo") }
 
         context "GET" do
           before do
@@ -21,8 +21,8 @@ module PactBroker
             allow(pact_service).to receive(:find_all_pact_versions_between).and_return(pact_versions)
           end
 
-          let(:decorator) { instance_double(PactBroker::Api::Decorators::TaggedPactVersionsDecorator, to_json: 'json') }
-          let(:pact_versions) { double('pacts') }
+          let(:decorator) { instance_double(PactBroker::Api::Decorators::TaggedPactVersionsDecorator, to_json: "json") }
+          let(:pact_versions) { double("pacts") }
 
           subject { get(path) }
 
@@ -54,7 +54,7 @@ module PactBroker
           end
 
           it "returns the JSON representation of the pact versions" do
-            expect(subject.body).to eq 'json'
+            expect(subject.body).to eq "json"
           end
 
           context "with the consumer or provider do not exist" do
@@ -73,7 +73,7 @@ module PactBroker
             allow_any_instance_of(described_class).to receive(:latest_pact_url).and_return("http://latest-pact")
           end
 
-          let(:latest_pact) { double('pact') }
+          let(:latest_pact) { double("pact") }
 
           subject { delete(path) }
 

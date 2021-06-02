@@ -1,4 +1,4 @@
-require 'pact_broker/api/resources/provider_pacts'
+require "pact_broker/api/resources/provider_pacts"
 
 module PactBroker
   module Api
@@ -10,11 +10,11 @@ module PactBroker
           allow(PactBroker::Pacticipants::Service).to receive(:find_pacticipant_by_name).and_return(provider)
         end
 
-        let(:provider) { double('provider') }
-        let(:pacts) { double('pacts') }
-        let(:decorator) { instance_double('PactBroker::Api::Decorators::ProviderPactsDecorator', to_json: json) }
-        let(:json) { {some: 'json'}.to_json }
-        let(:path) { '/pacts/provider/Bar' }
+        let(:provider) { double("provider") }
+        let(:pacts) { double("pacts") }
+        let(:decorator) { instance_double("PactBroker::Api::Decorators::ProviderPactsDecorator", to_json: json) }
+        let(:json) { {some: "json"}.to_json }
+        let(:path) { "/pacts/provider/Bar" }
 
         subject { get path; last_response }
 
@@ -28,7 +28,7 @@ module PactBroker
         end
 
         it "returns a json response" do
-          expect(subject.headers['Content-Type']).to eq "application/hal+json;charset=utf-8"
+          expect(subject.headers["Content-Type"]).to eq "application/hal+json;charset=utf-8"
           expect(subject.body).to eq json
         end
 
@@ -47,7 +47,7 @@ module PactBroker
         end
 
         context "with a tag" do
-          let(:path) { '/pacts/provider/Bar/tag/prod' }
+          let(:path) { "/pacts/provider/Bar/tag/prod" }
 
           it "finds all the pacts with the given tag for the provider" do
             expect(PactBroker::Pacts::Service).to receive(:find_pact_versions_for_provider).with("Bar", tag: "prod")

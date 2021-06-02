@@ -1,4 +1,4 @@
-require 'pact_broker/integrations/service'
+require "pact_broker/integrations/service"
 
 module PactBroker
   module Integrations
@@ -10,17 +10,17 @@ module PactBroker
           allow(dataset).to receive(:all).and_return(integrations)
         end
 
-        let(:dataset) { double('integrations') }
+        let(:dataset) { double("integrations") }
         let(:integrations) { [ integration_1, integration_2 ] }
         let(:integration_1) do
           double(
-            'integration 1',
+            "integration 1",
             latest_pact_or_verification_publication_date: DateTime.new(2019, 1, 1)
           )
         end
         let(:integration_2) do
           double(
-            'integration 2',
+            "integration 2",
             latest_pact_or_verification_publication_date: DateTime.new(2019, 2, 1)
           )
         end

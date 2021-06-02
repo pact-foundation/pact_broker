@@ -1,4 +1,4 @@
-require 'pact_broker/pacts/metadata'
+require "pact_broker/pacts/metadata"
 
 module PactBroker
   module Pacts
@@ -7,8 +7,8 @@ module PactBroker
         let(:selectors) do
           Selectors.new([ResolvedSelector.new({ latest: true, consumer: "consumer", tag: "tag" }, consumer_version)])
         end
-        let(:consumer_version) { double('version', number: "2") }
-        let(:verifiable_pact) { double('PactBroker::Pacts::VerifiablePact', wip: wip, selectors: selectors) }
+        let(:consumer_version) { double("version", number: "2") }
+        let(:verifiable_pact) { double("PactBroker::Pacts::VerifiablePact", wip: wip, selectors: selectors) }
         let(:wip) { false }
 
         subject { Metadata.build_metadata_for_pact_for_verification(verifiable_pact) }

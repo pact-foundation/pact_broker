@@ -1,10 +1,10 @@
-require 'pact_broker/api/resources/base_resource'
-require 'pact_broker/services'
-require 'pact_broker/api/decorators/webhook_execution_result_decorator'
-require 'pact_broker/api/resources/webhook_resource_methods'
-require 'pact_broker/constants'
-require 'pact_broker/webhooks/execution_configuration'
-require 'pact_broker/api/resources/webhook_execution_methods'
+require "pact_broker/api/resources/base_resource"
+require "pact_broker/services"
+require "pact_broker/api/decorators/webhook_execution_result_decorator"
+require "pact_broker/api/resources/webhook_resource_methods"
+require "pact_broker/constants"
+require "pact_broker/webhooks/execution_configuration"
+require "pact_broker/api/resources/webhook_execution_methods"
 
 module PactBroker
   module Api
@@ -27,7 +27,7 @@ module PactBroker
 
         def process_post
           webhook_execution_result = webhook_trigger_service.test_execution(webhook, webhook_execution_configuration.webhook_context, webhook_execution_configuration)
-          response.headers['Content-Type'] = 'application/hal+json;charset=utf-8'
+          response.headers["Content-Type"] = "application/hal+json;charset=utf-8"
           response.body = post_response_body(webhook_execution_result)
           true
         end

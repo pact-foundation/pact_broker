@@ -1,18 +1,18 @@
-require 'rack/pact_broker/request_target'
+require "rack/pact_broker/request_target"
 
 module Rack
   module PactBroker
     describe RequestTarget do
       let(:rack_env) do
         {
-          'CONTENT_TYPE' => content_type,
-          'HTTP_ACCEPT' => accept,
-          'PATH_INFO' => path
+          "CONTENT_TYPE" => content_type,
+          "HTTP_ACCEPT" => accept,
+          "PATH_INFO" => path
         }
       end
       let(:content_type) { nil }
       let(:accept) { nil }
-      let(:path) { '' }
+      let(:path) { "" }
 
       describe "#request_for_ui?" do
         let(:path) { "/" }

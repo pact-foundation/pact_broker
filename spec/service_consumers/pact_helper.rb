@@ -1,17 +1,17 @@
 $: << File.expand_path("../../../", __FILE__)
 
-require 'spec/support/simplecov'
-require 'pact/provider/rspec'
-require 'db'
-require 'tasks/database'
-require 'pact_broker/db'
+require "spec/support/simplecov"
+require "pact/provider/rspec"
+require "db"
+require "tasks/database"
+require "pact_broker/db"
 PactBroker::DB.connection = PactBroker::Database.database = DB::PACT_BROKER_DB
 PactBroker.configuration.seed_example_data = false
-require 'spec/support/database_cleaner'
-require 'pact_broker'
-require 'pact_broker/app'
+require "spec/support/database_cleaner"
+require "pact_broker"
+require "pact_broker/app"
 
-require_relative 'hal_relation_proxy_app'
+require_relative "hal_relation_proxy_app"
 
 Dir.glob(File.join(File.dirname(__FILE__), "provider_states_for*.rb")).each do | path |
   require path

@@ -1,5 +1,5 @@
-require 'pact_broker/webhooks/pact_and_verification_parameters'
-require 'pact_broker/messages'
+require "pact_broker/webhooks/pact_and_verification_parameters"
+require "pact_broker/messages"
 
 module PactBroker
   module Webhooks

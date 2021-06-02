@@ -1,4 +1,4 @@
-require 'pact_broker/versions/service'
+require "pact_broker/versions/service"
 
 module PactBroker
 

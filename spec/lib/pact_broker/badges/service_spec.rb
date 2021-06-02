@@ -1,5 +1,5 @@
-require 'pact_broker/badges/service'
-require 'webmock/rspec'
+require "pact_broker/badges/service"
+require "webmock/rspec"
 
 module PactBroker
   module Badges
@@ -9,7 +9,7 @@ module PactBroker
       let(:label) { nil }
       let(:initials) { false }
       let(:pseudo_branch_verification_status) { :success }
-      let(:logger) { double('logger').as_null_object }
+      let(:logger) { double("logger").as_null_object }
       let(:expected_url) { "https://img.shields.io/badge/#{expected_left_text}-#{expected_right_text}-#{expected_color}.svg" }
       let(:expected_color) { "brightgreen" }
       let(:expected_right_text) { "verified" }
@@ -51,7 +51,7 @@ module PactBroker
 
       describe "#pact_verification_badge" do
         it "returns the svg file" do
-           expect(subject).to eq "svg"
+          expect(subject).to eq "svg"
         end
 
         it "caches the response" do
@@ -129,7 +129,7 @@ module PactBroker
 
         context "when label is consumer" do
           let(:expected_left_text) { "foo--bar%20pact" }
-          let(:label) { 'consumer' }
+          let(:label) { "consumer" }
 
           it "creates a badge with only the consumer name" do
             subject
@@ -151,7 +151,7 @@ module PactBroker
 
         context "when label is provider" do
           let(:expected_left_text) { "thing__blah%20pact" }
-          let(:label) { 'provider' }
+          let(:label) { "provider" }
 
           it "creates a badge with only the provider name" do
             subject

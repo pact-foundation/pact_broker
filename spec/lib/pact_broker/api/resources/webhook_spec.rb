@@ -1,5 +1,5 @@
-require 'spec_helper'
-require 'pact_broker/api/resources/webhook'
+require "spec_helper"
+require "pact_broker/api/resources/webhook"
 
 module PactBroker::Api
   module Resources
@@ -9,7 +9,7 @@ module PactBroker::Api
       end
 
       describe "GET" do
-        subject { get '/webhooks/some-uuid'; last_response }
+        subject { get "/webhooks/some-uuid"; last_response }
 
         context "when the webhook does not exist" do
           let(:webhook) { nil }
@@ -26,10 +26,10 @@ module PactBroker::Api
 
           let(:webhook) { double("webhook") }
           let(:decorator) { double(Decorators::WebhookDecorator, to_json: json)}
-          let(:json) { {some: 'json'}.to_json }
+          let(:json) { {some: "json"}.to_json }
 
           it "finds the webhook by UUID" do
-            expect(PactBroker::Webhooks::Service).to receive(:find_by_uuid).with('some-uuid')
+            expect(PactBroker::Webhooks::Service).to receive(:find_by_uuid).with("some-uuid")
             subject
           end
 
@@ -40,7 +40,7 @@ module PactBroker::Api
 
           it "generates a JSON representation of the webhook" do
             expect(Decorators::WebhookDecorator).to receive(:new).with(webhook)
-            expect(decorator).to receive(:to_json).with(user_options: hash_including(base_url: 'http://example.org'))
+            expect(decorator).to receive(:to_json).with(user_options: hash_including(base_url: "http://example.org"))
             subject
           end
 
@@ -60,19 +60,19 @@ module PactBroker::Api
           allow_any_instance_of(Webhook).to receive(:webhook_validation_errors?).and_return(false)
         end
 
-        let(:consumer) { double('consumer') }
-        let(:provider) { double('provider') }
+        let(:consumer) { double("consumer") }
+        let(:provider) { double("provider") }
         let(:webhook) { double("webhook") }
         let(:decorator) { double(Decorators::WebhookDecorator, from_json: parsed_webhook, to_json: json)}
-        let(:json) { {some: 'json'}.to_json }
+        let(:json) { {some: "json"}.to_json }
 
-        let(:parsed_webhook) { double('parsed_webhook') }
-        let(:created_webhook) { double('created_webhook') }
+        let(:parsed_webhook) { double("parsed_webhook") }
+        let(:created_webhook) { double("created_webhook") }
         let(:webhook) { nil }
-        let(:webhook_json) { load_fixture('webhook_valid.json') }
-        let(:uuid) { 'some-uuid' }
+        let(:webhook_json) { load_fixture("webhook_valid.json") }
+        let(:uuid) { "some-uuid" }
 
-        subject { put("/webhooks/#{uuid}", webhook_json, 'CONTENT_TYPE' => 'application/json') }
+        subject { put("/webhooks/#{uuid}", webhook_json, "CONTENT_TYPE" => "application/json") }
 
         it "validates the UUID" do
           expect_any_instance_of(Webhook).to receive(:webhook_validation_errors?).with(parsed_webhook, uuid)
@@ -96,7 +96,7 @@ module PactBroker::Api
           before do
             allow(PactBroker::Webhooks::Service).to receive(:update_by_uuid).and_return(created_webhook)
           end
-          let(:webhook) { double('existing webhook') }
+          let(:webhook) { double("existing webhook") }
 
           its(:status) { is_expected.to eq 200 }
 

@@ -1,5 +1,5 @@
-require 'pact_broker/api/resources/base_resource'
-require 'pact_broker/webhooks/triggered_webhook'
+require "pact_broker/api/resources/base_resource"
+require "pact_broker/webhooks/triggered_webhook"
 
 module PactBroker
   module Api

@@ -1,4 +1,4 @@
-require 'pact_broker/api/decorators/verification_decorator'
+require "pact_broker/api/decorators/verification_decorator"
 
 module PactBroker
   module Api
@@ -9,32 +9,32 @@ module PactBroker
         end
 
         let(:verification) do
-          instance_double('PactBroker::Domain::Verification',
+          instance_double("PactBroker::Domain::Verification",
             number: 1,
             success: true,
             provider_version_number: "4.5.6",
-            provider_name: 'Provider',
-            consumer_name: 'Consumer',
-            test_results: { 'arbitrary' => 'json' },
-            build_url: 'http://build-url',
-            pact_version_sha: '1234',
+            provider_name: "Provider",
+            consumer_name: "Consumer",
+            test_results: { "arbitrary" => "json" },
+            build_url: "http://build-url",
+            pact_version_sha: "1234",
             latest_pact_publication: pact_publication,
             execution_date: DateTime.now,
             provider_version_tags: provider_version_tags)
         end
 
         let(:pact_publication) do
-          instance_double('PactBroker::Pacts::PactPublication',
-            name: 'A name',
-            provider_name: 'Provider',
-            consumer_name: 'Consumer',
-            consumer_version_number: '1.2.3'
+          instance_double("PactBroker::Pacts::PactPublication",
+            name: "A name",
+            provider_name: "Provider",
+            consumer_name: "Consumer",
+            consumer_version_number: "1.2.3"
           )
         end
 
-        let(:provider_version_tags) { [instance_double(PactBroker::Tags::TagWithLatestFlag, name: 'prod', latest?: true)] }
+        let(:provider_version_tags) { [instance_double(PactBroker::Tags::TagWithLatestFlag, name: "prod", latest?: true)] }
 
-        let(:options) { { user_options: { base_url: 'http://example.org' } } }
+        let(:options) { { user_options: { base_url: "http://example.org" } } }
 
         let(:json) { VerificationDecorator.new(verification).to_json(options) }
 
@@ -49,7 +49,7 @@ module PactBroker
         end
 
         it "includes the test results" do
-          expect(subject[:testResults]).to eq(arbitrary: 'json')
+          expect(subject[:testResults]).to eq(arbitrary: "json")
         end
 
         it "includes the build URL" do

@@ -1,6 +1,6 @@
-require 'sucker_punch'
-require 'faraday'
-require 'pact_broker/logging'
+require "sucker_punch"
+require "faraday"
+require "pact_broker/logging"
 
 
 # Publishes verification results, as if they were triggered by a CI job
@@ -11,19 +11,19 @@ module PactBroker
 
     def perform data
       pact_url = data.fetch(:pactUrl)
-      pact = Faraday.get(pact_url, nil, { 'Accept' => 'application/hal+json'}).body
+      pact = Faraday.get(pact_url, nil, { "Accept" => "application/hal+json"}).body
       pact_hash = JSON.parse(pact)
 
       headers = {
-        'Content-Type' => 'application/json',
-        'Accept' => 'application/hal+json'
+        "Content-Type" => "application/json",
+        "Accept" => "application/hal+json"
       }
 
       provider_version = "1.2.#{(rand * 1000).to_i}"
-      provider_url = pact_hash['_links']['pb:provider']['href']
+      provider_url = pact_hash["_links"]["pb:provider"]["href"]
       Faraday.put("#{provider_url}/versions/#{provider_version}/tags/dev", nil, headers)
 
-      verification_url = pact_hash['_links']['pb:publish-verification-results']['href']
+      verification_url = pact_hash["_links"]["pb:publish-verification-results"]["href"]
       body = {
         success: true,
         providerApplicationVersion: provider_version

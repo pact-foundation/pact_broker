@@ -1,4 +1,4 @@
-require_relative '../ddl_statements/latest_triggered_webhooks'
+require_relative "../ddl_statements/latest_triggered_webhooks"
 
 Sequel.migration do
   up do

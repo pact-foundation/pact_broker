@@ -1,5 +1,5 @@
-require 'forwardable'
-require 'pact_broker/verifications/repository'
+require "forwardable"
+require "pact_broker/verifications/repository"
 
 # A collection of matrix rows with the same pact publication id
 # It's basically a normalised view of a denormalised view :(
@@ -33,7 +33,7 @@ module PactBroker
       def latest_verification_for_pseudo_branch
         @latest_verification ||= begin
           verification = matrix_rows.collect do | row|
-              row.verification || latest_verification_for_consumer_version_tag(row)
+            row.verification || latest_verification_for_consumer_version_tag(row)
           end.compact.sort_by(&:id).last
 
           if !verification && overall_latest?

@@ -1,4 +1,4 @@
-require 'pact_broker/pacts/generate_sha'
+require "pact_broker/pacts/generate_sha"
 
 module PactBroker
   module Pacts
@@ -9,7 +9,7 @@ module PactBroker
             interactions: [{a: 1, b: 2}, {c: 3, d: 4}],
             metadata: {
               pactSpecification: {
-                version: '1'
+                version: "1"
               }
             }
           }.to_json
@@ -20,7 +20,7 @@ module PactBroker
             interactions: [{d: 4, c: 3}, {b: 2, a: 1}],
             metadata: {
               :'pact-specification' => {
-                version: '1'
+                version: "1"
               }
             }
           }.to_json
@@ -31,7 +31,7 @@ module PactBroker
             interactions: [{a: 9999, b: 2}, {c: 3, d: 4}],
             metadata: {
               pactSpecification: {
-                version: '1'
+                version: "1"
               }
             }
           }.to_json
@@ -42,13 +42,13 @@ module PactBroker
           allow(content).to receive(:sort).and_return(content)
         end
 
-        let(:content) { instance_double('PactBroker::Pacts::Content', content_that_affects_verification_results: content_that_affects_verification_results) }
-        let(:content_that_affects_verification_results) { double('content', to_json: 'foo') }
+        let(:content) { instance_double("PactBroker::Pacts::Content", content_that_affects_verification_results: content_that_affects_verification_results) }
+        let(:content_that_affects_verification_results) { double("content", to_json: "foo") }
 
         subject { GenerateSha.call(json_content) }
 
         it "accepts options in case there is any future requirement for a second argument" do
-          expect{ GenerateSha.call(json_content, some: 'options') }.to_not raise_error
+          expect{ GenerateSha.call(json_content, some: "options") }.to_not raise_error
         end
 
         context "when equality is based on the verifiable content only" do

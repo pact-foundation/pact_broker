@@ -1,5 +1,5 @@
-require 'pact_broker/api/decorators/reason_decorator'
-require 'pact_broker/matrix/reason'
+require "pact_broker/api/decorators/reason_decorator"
+require "pact_broker/matrix/reason"
 
 module PactBroker
   module Api
@@ -16,15 +16,15 @@ module PactBroker
         end
 
         describe "#to_s" do
-          let(:consumer_selector) { double('consumer selector', description: "version 2 of Foo") }
-          let(:provider_selector) { double('provider selector', description: "version 6 of Bar") }
+          let(:consumer_selector) { double("consumer selector", description: "version 2 of Foo") }
+          let(:provider_selector) { double("provider selector", description: "version 6 of Bar") }
           let(:selectors) { [consumer_selector, provider_selector] }
 
           subject { ReasonDecorator.new(reason) }
 
           context "when the reason is PactBroker::Matrix::PactNotEverVerifiedByProvider" do
             let(:reason) { PactBroker::Matrix::PactNotEverVerifiedByProvider.new(*selectors) }
-            let(:provider_selector) { double('provider selector', description: "any version of Bar") }
+            let(:provider_selector) { double("provider selector", description: "any version of Bar") }
 
             its(:to_s) { is_expected.to eq "There is no verified pact between version 2 of Foo and any version of Bar" }
           end
@@ -55,7 +55,7 @@ module PactBroker
 
           context "when the reason is PactBroker::Matrix::IgnoreSelectorDoesNotExist" do
             let(:reason) { PactBroker::Matrix::IgnoreSelectorDoesNotExist.new(selector) }
-            let(:selector) {  double('consumer selector', description: "version 2 of Foo (no such version exists)") }
+            let(:selector) {  double("consumer selector", description: "version 2 of Foo (no such version exists)") }
 
             its(:to_s) { is_expected.to eq "WARN: Cannot ignore version 2 of Foo (no such version exists)" }
           end

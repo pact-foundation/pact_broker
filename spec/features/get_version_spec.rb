@@ -1,4 +1,4 @@
-require 'spec/support/test_data_builder'
+require "spec/support/test_data_builder"
 
 describe "Get version" do
 
@@ -23,7 +23,7 @@ describe "Get version" do
     end
 
     it "returns the JSON representation of the version" do
-      expect(last_response_body).to include number: '1.2.3'
+      expect(last_response_body).to include number: "1.2.3"
     end
 
   end

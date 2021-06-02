@@ -1,7 +1,7 @@
-require 'pact_broker/api/resources/base_resource'
-require 'pact_broker/services'
-require 'pact_broker/api/decorators/webhook_decorator'
-require 'pact_broker/api/resources/webhook_resource_methods'
+require "pact_broker/api/resources/base_resource"
+require "pact_broker/services"
+require "pact_broker/api/decorators/webhook_decorator"
+require "pact_broker/api/resources/webhook_resource_methods"
 
 module PactBroker
   module Api
