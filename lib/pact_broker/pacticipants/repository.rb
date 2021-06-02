@@ -80,7 +80,6 @@ module PactBroker
       def pacticipant_names
         PactBroker::Domain::Pacticipant.select(:name).order(:name).collect(&:name)
       end
-
       def delete_if_orphan(pacticipant)
         if PactBroker::Domain::Version.where(pacticipant: pacticipant).empty? &&
           PactBroker::Pacts::PactPublication.where(provider: pacticipant).or(consumer: pacticipant).empty? &&
@@ -93,6 +92,12 @@ module PactBroker
       def handle_multiple_pacticipants_found(name, pacticipants)
         names = pacticipants.collect(&:name).join(", ")
         raise PactBroker::Error.new("Found multiple pacticipants with a case insensitive name match for '#{name}': #{names}. Please delete one of them, or set PactBroker.configuration.use_case_sensitive_resource_names = true")
+      end
+
+      def search_by_name(pacticipant_name)
+        terms = pacticipant_name.split.map { |v| v.gsub("_", '\\_') }
+        string_match_query = Sequel.|( *terms.map { |term| Sequel.ilike(Sequel[:pacticipants][:name], "%#{term}%") })
+        PactBroker::Domain::Pacticipant.where(string_match_query)
       end
     end
   end

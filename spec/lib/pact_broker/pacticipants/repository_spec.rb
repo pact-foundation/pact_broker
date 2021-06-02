@@ -192,6 +192,48 @@ module PactBroker
           end
         end
       end
+
+      describe "#search_by_name" do
+        let(:consumer_name) { "This is_a test-consumer" }
+        let(:provider_name) { "and a test/provider" }
+
+        before do
+          td
+            .create_consumer(consumer_name)
+            .create_consumer(provider_name)
+        end
+
+        context "when there is a consumer/provider name which matches the search term" do
+          it "returns the pacticipants" do
+            searched_dataset =  Repository.new.search_by_name "consumer"
+            expect(searched_dataset.collect(&:name)).to eq([consumer_name])
+
+            searched_dataset =  Repository.new.search_by_name "provider"
+            expect(searched_dataset.collect(&:name)).to eq([provider_name])
+
+            searched_dataset =  Repository.new.search_by_name "test"
+            expect(searched_dataset.collect(&:name)).to include(*[consumer_name, provider_name])
+          end
+
+          # SQL escape character is '_'
+          it "escapes the '_' character" do
+            searched_dataset =  Repository.new.search_by_name "is_a"
+            expect(searched_dataset.collect(&:name)).to eq([consumer_name])
+          end
+
+          it "searches case insentively" do
+            searched_dataset =  Repository.new.search_by_name "TEST"
+            expect(searched_dataset.collect(&:name)).to include(*[consumer_name, provider_name])
+          end
+        end
+
+        context "when there is NO consumer/provider name which matches the search term" do
+          it "returns empty dataset" do
+            searched_dataset =  Repository.new.search_by_name "this_will_not_yield_any_result"
+            expect(searched_dataset.count).to eq(0)
+          end
+        end
+      end
     end
   end
 end

@@ -16,8 +16,16 @@ module PactBroker
 
             before do
               TestDataBuilder.new
-                .create_consumer
-                .create_provider
+                .create_consumer("Test App")
+                .create_provider("Test API")
+                .create_consumer_version
+                .create_pact
+                .create_webhook
+                .create_verification
+
+              TestDataBuilder.new
+                .create_consumer("Example App")
+                .create_provider("Example API")
                 .create_consumer_version
                 .create_pact
                 .create_webhook
@@ -83,6 +91,37 @@ module PactBroker
               it "passes tags: ['prod'] to the IndexService" do
                 expect(PactBroker::Index::Service).to receive(:find_index_items).with(hash_including(tags: ["prod"]))
                 get "/", { tags: "prod" }
+              end
+            end
+
+            context "when parameter pacticipant_name presents" do
+              context "when it is blank" do
+                it "ignores it" do
+                  get "/", { pacticipant_name_name: "" }
+
+                  expect(last_response.body).to include("Example App")
+                  expect(last_response.status).to eq(200)
+                end
+              end
+
+              context "when it is NOT blank and the pacticipant name exists" do
+                it "returns the pacticipant which matches the query" do
+                  get "/", { pacticipant_name: "app" }
+
+                  expect(last_response.body).to include("Example App")
+                  expect(last_response.status).to eq(200)
+                end
+              end
+
+              context "when it is NOT blank but the pacticipant name does NOT exist" do
+                it "returns no pacts" do
+                  get "/", { pacticipant_name: "does not exist" }
+
+                  expect(last_response.body).not_to include("does not exit")
+                  expect(last_response.body).not_to include("Example App")
+                  expect(last_response.body).not_to include("Test App")
+                  expect(last_response.status).to eq(200)
+                end
               end
             end
           end

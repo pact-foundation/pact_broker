@@ -2,10 +2,24 @@
   != render :haml, :'index/_css_and_js', :layout => false
   .container
     != render :haml, :'index/_navbar', :layout => false, locals: {tag_toggle: true, base_url: base_url}
-    - if index_items.empty?
+    - if index_items.empty? && pacticipant_name.blank?
       != render :haml, :'index/_getting-started', :layout => false
     %h1.page-header
       Pacts
+
+    - unless errors.blank?
+      - errors.each do | error |
+        %div.alert.alert-danger
+          = error
+
+    %form{action: "#{base_url}", onsubmit:'return onSubmit()'}
+      .field
+        %label{for: 'pacticipant_name'}
+          Search
+        %input{name: 'pacticipant_name', id: 'pacticipant_name', class: 'pacticipant_name', value: pacticipant_name}
+        %input{type: 'submit', value: 'Submit'}
+        %input{type: 'button', class: 'reset-search', value: 'Reset' }
+
     %table.table.table-bordered.table-striped{ id: 'relationships' }
       %thead
         %tr
@@ -75,3 +89,7 @@
         $(td).tooltip({container: $(td).first()});
       });
     });
+
+    $(".reset-search").on("click", function() {
+      window.location.replace(window.location.origin);
+    })
