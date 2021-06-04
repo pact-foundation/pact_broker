@@ -39,8 +39,19 @@ Pact.service_provider "Pact Broker" do
 
   app { HalRelationProxyApp.new(app_to_verify) }
 
+
+  # honours_pacts_from_pact_broker do
+  #   pact_broker_base_url "https://pact-oss.pactflow.io", token: ENV["PACT_BROKER_TOKEN"]
+  #   consumer_version_selectors [
+  #       { branch: 'master' }
+  #     ]
+  #   enable_pending true
+  #   include_wip_pacts_since "2000-01-01"
+  #   verbose true
+  # end
+
+
   honours_pact_with "Pact Broker Client" do
     pact_uri "https://raw.githubusercontent.com/pact-foundation/pact_broker-client/master/spec/pacts/pact_broker_client-pact_broker.json"
   end
-
 end
