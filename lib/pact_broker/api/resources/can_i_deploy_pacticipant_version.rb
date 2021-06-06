@@ -6,17 +6,6 @@ module PactBroker
   module Api
     module Resources
       class CanIDeployPacticipantVersion < Matrix
-        def initialize
-          super
-          selector = PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: pacticipant_name, latest: true, tag: identifier_from_path[:tag])
-          @options = {
-            latestby: "cvp",
-            latest: true,
-            tag: identifier_from_path[:to]
-          }
-          @selectors = [selector]
-        end
-
         def resource_exists?
           !!version
         end
@@ -27,12 +16,28 @@ module PactBroker
 
         private
 
-        def version
-          @version ||= version_service.find_by_pacticipant_name_and_latest_tag(identifier_from_path[:pacticipant_name], identifier_from_path[:tag])
+        def selectors
+          @selectors ||= begin
+            [
+              PactBroker::Matrix::UnresolvedSelector.new(
+                pacticipant_name: pacticipant_name,
+                latest: true,
+                tag: identifier_from_path[:tag]
+              )
+            ]
+          end
         end
 
-        def results
-          @results ||= matrix_service.find(selectors, options)
+        def options
+          @options ||= {
+            latestby: "cvp",
+            latest: true,
+            tag: identifier_from_path[:to]
+          }
+        end
+
+        def version
+          @version ||= version_service.find_by_pacticipant_name_and_latest_tag(identifier_from_path[:pacticipant_name], identifier_from_path[:tag])
         end
       end
     end

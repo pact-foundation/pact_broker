@@ -7,14 +7,6 @@ module PactBroker
   module Api
     module Resources
       class Matrix < BaseResource
-        attr_reader :selectors, :options
-
-        def initialize
-          super
-          @selectors, @options = PactBroker::Matrix::ParseQuery.call(request.uri.query)
-          logger.info("Parsed matrix query", payload: { selectors: selectors, options: options })
-        end
-
         def content_types_provided
           [
             ["application/hal+json", :to_json],
@@ -50,6 +42,18 @@ module PactBroker
 
         def results
           @results ||= matrix_service.find(selectors, options)
+        end
+
+        def parsed_query
+          @parsed_query ||= PactBroker::Matrix::ParseQuery.call(request.uri.query)
+        end
+
+        def selectors
+          parsed_query.first
+        end
+
+        def options
+          parsed_query.last
         end
       end
     end

@@ -9,12 +9,6 @@ module PactBroker
       class CanIDeploy < Matrix
         include PactBroker::Messages
 
-        def initialize
-          super
-          @query_params = JSON.parse(Rack::Utils.parse_nested_query(request.uri.query).to_json, symbolize_names: true)
-          @selectors, @options = PactBroker::Matrix::ParseCanIDeployQuery.call(query_params)
-        end
-
         def malformed_request?
           if (errors = query_schema.call(query_params)).any?
             set_json_validation_error_messages(errors)
@@ -33,8 +27,6 @@ module PactBroker
 
         private
 
-        attr_reader :query_params, :selectors, :options
-
         def query_schema
           PactBroker::Api::Contracts::CanIDeployQuerySchema
         end
@@ -45,6 +37,14 @@ module PactBroker
 
         def pacticipant_name
           selectors.first.pacticipant_name
+        end
+
+        def parsed_query
+          @parsed_query ||= PactBroker::Matrix::ParseCanIDeployQuery.call(query_params)
+        end
+
+        def query_params
+          @query_params ||= JSON.parse(Rack::Utils.parse_nested_query(request.uri.query).to_json, symbolize_names: true)
         end
       end
     end
