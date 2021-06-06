@@ -191,7 +191,7 @@ module PactBroker
             allow(path_info).to receive(:[]).with(:application_context).and_return(application_context)
           end
           let(:application_context) { PactBroker::ApplicationContext.default_application_context(before_resource: before_resource, after_resource: after_resource) }
-          let(:request) { double("request", uri: URI("http://example.org"), path_info: path_info).as_null_object }
+          let(:request) { double("request", uri: URI("http://example.org"), path_info: path_info, body: "{}").as_null_object }
           let(:path_info) { { pacticipant_name: "foo", pacticipant_version_number: "1" } }
           let(:response) { double("response").as_null_object }
           let(:resource) { resource_class.new(request, response) }

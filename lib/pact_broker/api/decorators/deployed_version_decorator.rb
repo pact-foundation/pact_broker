@@ -13,6 +13,12 @@ module PactBroker
         property :target, camelize: true
         include Timestamps
         property :undeployedAt, getter: lambda { |_|  undeployed_at ? FormatDateTime.call(undeployed_at) : nil }, writeable: false
+
+        link :self do | user_options |
+          {
+            href: deployed_version_url(represented, user_options.fetch(:base_url))
+          }
+        end
       end
     end
   end

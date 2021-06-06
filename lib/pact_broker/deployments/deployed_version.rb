@@ -61,7 +61,7 @@ module PactBroker
         end
 
         def record_undeployed
-          update(undeployed_at: Sequel.datetime_class.now)
+          where(undeployed_at: nil).update(undeployed_at: Sequel.datetime_class.now)
         end
       end
 
@@ -87,6 +87,11 @@ module PactBroker
 
       def version_number
         version.number
+      end
+
+      def record_undeployed
+        self.class.where(id: id).record_undeployed
+        self.refresh
       end
     end
   end
