@@ -12,6 +12,7 @@ module PactBroker
         def initialize
           super
           @selectors, @options = PactBroker::Matrix::ParseQuery.call(request.uri.query)
+          logger.info("Parsed matrix query", payload: { selectors: selectors, options: options })
         end
 
         def content_types_provided
