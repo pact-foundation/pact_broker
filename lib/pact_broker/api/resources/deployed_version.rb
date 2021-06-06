@@ -1,6 +1,6 @@
-require 'pact_broker/api/resources/base_resource'
-require 'pact_broker/api/decorators/deployed_version_decorator'
-require 'pact_broker/messages'
+require "pact_broker/api/resources/base_resource"
+require "pact_broker/api/decorators/deployed_version_decorator"
+require "pact_broker/messages"
 
 module PactBroker
   module Api
