@@ -49,9 +49,9 @@ RSpec.describe "Get currently deployed versions for environment" do
     end
 
     it "does not change the undeployedAt date" do
-     expect{ subject }.to_not change {
-       PactBroker::Deployments::DeployedVersion.find(uuid: deployed_version.uuid).undeployed_at
-     }
+      expect{ subject }.to_not change {
+        PactBroker::Deployments::DeployedVersion.find(uuid: deployed_version.uuid).undeployed_at
+      }
     end
 
     context "when trying to mark it as currentlyDeployed again" do
