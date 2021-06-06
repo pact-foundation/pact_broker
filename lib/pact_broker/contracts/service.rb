@@ -1,11 +1,11 @@
-require 'pact_broker/logging'
-require 'pact_broker/repositories'
-require 'pact_broker/services'
-require 'pact_broker/messages'
-require 'pact_broker/contracts/contracts_publication_results'
-require 'pact_broker/contracts/notice'
-require 'pact_broker/events/subscriber'
-require 'pact_broker/api/pact_broker_urls'
+require "pact_broker/logging"
+require "pact_broker/repositories"
+require "pact_broker/services"
+require "pact_broker/messages"
+require "pact_broker/contracts/contracts_publication_results"
+require "pact_broker/contracts/notice"
+require "pact_broker/events/subscriber"
+require "pact_broker/api/pact_broker_urls"
 
 module PactBroker
   module Contracts

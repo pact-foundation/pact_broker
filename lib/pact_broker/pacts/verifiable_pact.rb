@@ -1,5 +1,5 @@
-require 'delegate'
-require 'pact_broker/error'
+require "delegate"
+require "pact_broker/error"
 
 module PactBroker
   module Pacts

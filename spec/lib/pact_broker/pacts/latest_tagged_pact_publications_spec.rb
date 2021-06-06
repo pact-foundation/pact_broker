@@ -1,4 +1,4 @@
-require 'pact_broker/pacts/latest_tagged_pact_publications'
+require "pact_broker/pacts/latest_tagged_pact_publications"
 
 module PactBroker
   module Pacts

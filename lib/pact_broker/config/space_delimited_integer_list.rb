@@ -10,15 +10,15 @@ module PactBroker
       end
 
       def self.parse(string)
-        array = (string || '')
-                    .split(' ')
+        array = (string || "")
+                    .split(" ")
                     .select { |word| integer?(word) }
                     .collect(&:to_i)
         SpaceDelimitedIntegerList.new(array)
       end
 
       def to_s
-        collect(&:to_s).join(' ')
+        collect(&:to_s).join(" ")
       end
     end
   end

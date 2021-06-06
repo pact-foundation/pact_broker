@@ -1,5 +1,5 @@
-require 'pact_broker/matrix/service'
-require 'pact_broker/matrix/unresolved_selector'
+require "pact_broker/matrix/service"
+require "pact_broker/matrix/unresolved_selector"
 
 module PactBroker
   module Matrix
@@ -8,7 +8,7 @@ module PactBroker
         before do
           allow(PactBroker::Deployments::EnvironmentService).to receive(:find_by_name).and_return(environment)
         end
-        let(:environment) { double('environment') }
+        let(:environment) { double("environment") }
 
         subject { Service.validate_selectors(selectors, options) }
 
@@ -151,10 +151,10 @@ module PactBroker
 
         let(:params) do
           {
-            consumer_name: 'consumer',
-            provider_name: 'provider',
-            tag: 'prod',
-            provider_tag: 'master'
+            consumer_name: "consumer",
+            provider_name: "provider",
+            tag: "prod",
+            provider_tag: "master"
           }
         end
 
@@ -162,21 +162,21 @@ module PactBroker
 
         context "when the specified row exists" do
           before do
-            td.create_pact_with_hierarchy('consumer', '1', 'provider')
-              .create_consumer_version_tag('prod')
-              .create_verification(provider_version: '2')
-              .use_provider_version('2')
-              .create_provider_version_tag('master')
-              .create_verification(provider_version: '3', number: 2)
-              .create_consumer_version('2')
+            td.create_pact_with_hierarchy("consumer", "1", "provider")
+              .create_consumer_version_tag("prod")
+              .create_verification(provider_version: "2")
+              .use_provider_version("2")
+              .create_provider_version_tag("master")
+              .create_verification(provider_version: "3", number: 2)
+              .create_consumer_version("2")
               .create_pact
           end
 
           it "returns the row" do
-            expect(subject.consumer_name).to eq 'consumer'
-            expect(subject.provider_name).to eq 'provider'
-            expect(subject.consumer_version_number).to eq '1'
-            expect(subject.provider_version_number).to eq '2'
+            expect(subject.consumer_name).to eq "consumer"
+            expect(subject.provider_name).to eq "provider"
+            expect(subject.consumer_version_number).to eq "1"
+            expect(subject.provider_version_number).to eq "2"
           end
         end
 

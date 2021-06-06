@@ -7,8 +7,8 @@ module PactBroker
       end
 
       def self.parse(string)
-        array = (string || '').split(' ').collect do | word |
-          if word[0] == '/' and word[-1] == '/'
+        array = (string || "").split(" ").collect do | word |
+          if word[0] == "/" and word[-1] == "/"
             Regexp.new(word[1..-2])
           else
             word
@@ -24,7 +24,7 @@ module PactBroker
           else
             word
           end
-        end.join(' ')
+        end.join(" ")
       end
     end
   end

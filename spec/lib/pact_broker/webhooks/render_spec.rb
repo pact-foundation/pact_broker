@@ -1,9 +1,9 @@
-require 'pact_broker/webhooks/render'
-require 'pact_broker/pacts/placeholder_pact'
-require 'pact_broker/verifications/placeholder_verification'
-require 'pact_broker/webhooks/pact_and_verification_parameters'
+require "pact_broker/webhooks/render"
+require "pact_broker/pacts/placeholder_pact"
+require "pact_broker/verifications/placeholder_verification"
+require "pact_broker/webhooks/pact_and_verification_parameters"
 
-require 'cgi'
+require "cgi"
 
 module PactBroker
   module Webhooks

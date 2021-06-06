@@ -1,6 +1,6 @@
-require 'pact/matchers'
-require 'pact_broker/json'
-require 'pact/matchers/unix_diff_formatter'
+require "pact/matchers"
+require "pact_broker/json"
+require "pact/matchers/unix_diff_formatter"
 
 module PactBroker
   module Pacts

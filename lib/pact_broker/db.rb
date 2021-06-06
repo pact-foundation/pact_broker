@@ -1,9 +1,9 @@
-require 'sequel'
-require 'pact_broker/db/validate_encoding'
-require 'pact_broker/db/migrate'
-require 'pact_broker/db/migrate_data'
-require 'pact_broker/db/version'
-require 'pact_broker/db/table_dependency_calculator'
+require "sequel"
+require "pact_broker/db/validate_encoding"
+require "pact_broker/db/migrate"
+require "pact_broker/db/migrate_data"
+require "pact_broker/db/version"
+require "pact_broker/db/table_dependency_calculator"
 
 Sequel.datetime_class = DateTime
 

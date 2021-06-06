@@ -1,4 +1,4 @@
-require 'pact_broker/ui/app'
+require "pact_broker/ui/app"
 
 describe "UI matrix" do
   let(:app) { PactBroker::UI::App.new }
@@ -23,7 +23,7 @@ describe "UI matrix" do
     end
 
     it "returns a table of matrix rows" do
-      expect(subject.body.scan('<tr').to_a.size).to be > 1
+      expect(subject.body.scan("<tr").to_a.size).to be > 1
     end
   end
 

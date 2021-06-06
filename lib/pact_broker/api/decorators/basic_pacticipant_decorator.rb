@@ -1,4 +1,4 @@
-require_relative 'base_decorator'
+require_relative "base_decorator"
 
 module PactBroker
 

@@ -1,6 +1,6 @@
-require 'spec_helper'
-require 'pact_broker/relationships/groupify'
-require 'pact_broker/domain/index_item'
+require "spec_helper"
+require "pact_broker/relationships/groupify"
+require "pact_broker/domain/index_item"
 
 module PactBroker
 
@@ -10,18 +10,18 @@ module PactBroker
 
       describe ".call" do
 
-        let(:consumer_a) { double('consumer a', id: 1, name: 'consumer a') }
-        let(:consumer_b) { double('consumer b', id: 2, name: 'consumer b') }
-        let(:consumer_c) { double('consumer c', id: 3, name: 'consumer c') }
+        let(:consumer_a) { double("consumer a", id: 1, name: "consumer a") }
+        let(:consumer_b) { double("consumer b", id: 2, name: "consumer b") }
+        let(:consumer_c) { double("consumer c", id: 3, name: "consumer c") }
 
-        let(:consumer_l) { double('consumer l', id: 4, name: 'consumer l') }
-        let(:consumer_m) { double('consumer m', id: 5, name: 'consumer m') }
+        let(:consumer_l) { double("consumer l", id: 4, name: "consumer l") }
+        let(:consumer_m) { double("consumer m", id: 5, name: "consumer m") }
 
-        let(:provider_p) { double('provider p', id: 6, name: 'provider p') }
+        let(:provider_p) { double("provider p", id: 6, name: "provider p") }
 
-        let(:provider_x) { double('provider x', id: 7, name: 'provider x') }
-        let(:provider_y) { double('provider y', id: 8, name: 'provider y') }
-        let(:provider_z) { double('provider z', id: 9, name: 'provider z') }
+        let(:provider_x) { double("provider x", id: 7, name: "provider x") }
+        let(:provider_y) { double("provider y", id: 8, name: "provider y") }
+        let(:provider_z) { double("provider z", id: 9, name: "provider z") }
 
         let(:relationship_1) { Domain::IndexItem.new(consumer_a, provider_x) }
         let(:relationship_4) { Domain::IndexItem.new(consumer_a, provider_y) }

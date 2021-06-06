@@ -1,7 +1,7 @@
-require 'spec_helper'
-require 'pact_broker/api/resources/group'
-require 'pact_broker/groups/service'
-require 'rack/test'
+require "spec_helper"
+require "pact_broker/api/resources/group"
+require "pact_broker/groups/service"
+require "rack/test"
 
 module PactBroker::Api
   module Resources
@@ -11,10 +11,10 @@ module PactBroker::Api
       let(:app) { PactBroker::API }
 
       describe "GET" do
-        let(:group) { double('group') }
+        let(:group) { double("group") }
         let(:decorator) { instance_double(PactBroker::Api::Decorators::RelationshipsCsvDecorator) }
-        let(:csv) { 'csv' }
-        let(:pacticipant) { double('pacticipant')}
+        let(:csv) { "csv" }
+        let(:pacticipant) { double("pacticipant")}
 
         before do
           allow(PactBroker::Pacticipants::Service).to receive(:find_pacticipant_by_name).and_return(pacticipant)
@@ -23,12 +23,12 @@ module PactBroker::Api
           allow(decorator).to receive(:to_csv).and_return(csv)
         end
 
-        subject { get "/groups/Some%20Service", '', {"HTTP_X_My_App_Version" => '2'} }
+        subject { get "/groups/Some%20Service", "", {"HTTP_X_My_App_Version" => "2"} }
 
         context "when the pacticipant exists" do
 
           it "looks up the pacticipant by name" do
-            expect(PactBroker::Pacticipants::Service).to receive(:find_pacticipant_by_name).with('Some Service')
+            expect(PactBroker::Pacticipants::Service).to receive(:find_pacticipant_by_name).with("Some Service")
             subject
           end
 
@@ -49,7 +49,7 @@ module PactBroker::Api
 
           it "returns a CSV content type" do
             subject
-            expect(last_response.headers['Content-Type']).to eq 'text/csv;charset=utf-8'
+            expect(last_response.headers["Content-Type"]).to eq "text/csv;charset=utf-8"
           end
 
           it "returns a CSV of pacticipants that are in the same group as the given pacticipant" do
@@ -72,7 +72,7 @@ module PactBroker::Api
 
           it "returns an empty body" do
             expect(subject.status).to eq 200
-            expect(last_response.headers['Content-Type']).to eq 'text/csv;charset=utf-8'
+            expect(last_response.headers["Content-Type"]).to eq "text/csv;charset=utf-8"
             expect(subject.body).to eq ""
           end
         end

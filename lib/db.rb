@@ -1,10 +1,10 @@
-require 'sequel'
-require 'sequel/connection_pool/threaded'
-require 'yaml'
-require 'pact_broker/logging'
-require 'erb'
-require 'pact_broker/project_root'
-require 'fileutils'
+require "sequel"
+require "sequel/connection_pool/threaded"
+require "yaml"
+require "pact_broker/logging"
+require "erb"
+require "pact_broker/project_root"
+require "fileutils"
 
 module DB
   include PactBroker::Logging
@@ -28,13 +28,13 @@ module DB
   def self.connect db_credentials
     # Keep this conifiguration in sync with lib/pact_broker/app.rb#configure_database_connection
     Sequel.datetime_class = DateTime
-    if ENV['DEBUG'] == 'true'
+    if ENV["DEBUG"] == "true"
       logger = Logger.new($stdout)
     end
     if db_credentials.fetch("adapter") == "sqlite"
       FileUtils.mkdir_p(File.dirname(db_credentials.fetch("database")))
     end
-    con = Sequel.connect(db_credentials.merge(:logger => logger, :pool_class => Sequel::ThreadedConnectionPool, :encoding => 'utf8'))
+    con = Sequel.connect(db_credentials.merge(:logger => logger, :pool_class => Sequel::ThreadedConnectionPool, :encoding => "utf8"))
     con.extension(:connection_validator)
     con.extension(:pagination)
     con.extension(:statement_timeout)
@@ -58,9 +58,9 @@ module DB
   end
 
   def self.configuration_for_env env
-    database_yml = PactBroker.project_root.join('config','database.yml')
+    database_yml = PactBroker.project_root.join("config","database.yml")
     config = YAML.load(ERB.new(File.read(database_yml)).result)
-    config.fetch(env).fetch(ENV.fetch('DATABASE_ADAPTER','default'))
+    config.fetch(env).fetch(ENV.fetch("DATABASE_ADAPTER","default"))
   end
 
   def self.mysql?
@@ -71,7 +71,7 @@ module DB
     !!(PACT_BROKER_DB.adapter_scheme.to_s == "postgres")
   end
 
-  PACT_BROKER_DB ||= connection_for_env ENV.fetch('RACK_ENV')
+  PACT_BROKER_DB ||= connection_for_env ENV.fetch("RACK_ENV")
 
   def self.health_check
     PACT_BROKER_DB.synchronize do |c|

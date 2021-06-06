@@ -1,5 +1,5 @@
-require 'pact/doc/doc_file'
-require 'fileutils'
+require "pact/doc/doc_file"
+require "fileutils"
 
 module Pact
   module Doc

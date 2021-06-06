@@ -1,5 +1,5 @@
-require 'pact_broker/diagnostic/app'
-require 'rack/test'
+require "pact_broker/diagnostic/app"
+require "rack/test"
 
 module PactBroker
   module Diagnostic
@@ -16,11 +16,11 @@ module PactBroker
           subject { get "/diagnostic/status/dependencies"; last_response }
 
           it "returns application/hal+json" do
-            expect(subject.headers['Content-Type']).to eq "application/hal+json"
+            expect(subject.headers["Content-Type"]).to eq "application/hal+json"
           end
 
           it "returns a link to itself" do
-            expect(parsed_response_body['_links']['self']['href']).to eq "http://example.org/diagnostic/status/dependencies"
+            expect(parsed_response_body["_links"]["self"]["href"]).to eq "http://example.org/diagnostic/status/dependencies"
           end
 
           context "when we can connect to the database" do
@@ -33,7 +33,7 @@ module PactBroker
             end
 
             it "indicates that the database connectivity is OK" do
-              expect(parsed_response_body['database']['ok']).to be true
+              expect(parsed_response_body["database"]["ok"]).to be true
             end
           end
 
@@ -47,7 +47,7 @@ module PactBroker
             end
 
             it "indicates that the database connectivity is not OK" do
-              expect(parsed_response_body['database']['ok']).to be false
+              expect(parsed_response_body["database"]["ok"]).to be false
             end
           end
 
@@ -64,15 +64,15 @@ module PactBroker
             end
 
             it "indicates that the database connectivity is not OK" do
-              expect(parsed_response_body['database']['ok']).to be false
+              expect(parsed_response_body["database"]["ok"]).to be false
             end
 
             it "includes an error message" do
-              expect(parsed_response_body['database']['error']['message']).to eq "PactBroker::Diagnostic::Resources::TestError - a message"
+              expect(parsed_response_body["database"]["error"]["message"]).to eq "PactBroker::Diagnostic::Resources::TestError - a message"
             end
 
             it "logs the error" do
-              logger = double('Logger')
+              logger = double("Logger")
               allow_any_instance_of(PactBroker::Diagnostic::Resources::Dependencies).to receive(:logger).and_return(logger)
               expect(logger).to receive(:error).with(/TestError.*a message/)
               subject

@@ -1,5 +1,5 @@
-require 'webmachine'
-require 'pact_broker/api/resources/authentication'
+require "webmachine"
+require "pact_broker/api/resources/authentication"
 
 module PactBroker
   module Diagnostic

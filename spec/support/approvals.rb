@@ -1,8 +1,8 @@
-require 'approvals/rspec'
-require 'pact/support'
+require "approvals/rspec"
+require "pact/support"
 
 Approvals.configure do |c|
-  c.approvals_path = 'spec/fixtures/approvals/'
+  c.approvals_path = "spec/fixtures/approvals/"
 end
 
 def print_diff(exception)

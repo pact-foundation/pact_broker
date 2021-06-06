@@ -1,6 +1,6 @@
-require 'pact_broker/api/resources/base_resource'
-require 'pact_broker/api/renderers/integrations_dot_renderer'
-require 'pact_broker/api/decorators/integrations_decorator'
+require "pact_broker/api/resources/base_resource"
+require "pact_broker/api/renderers/integrations_dot_renderer"
+require "pact_broker/api/decorators/integrations_decorator"
 
 module PactBroker
   module Api

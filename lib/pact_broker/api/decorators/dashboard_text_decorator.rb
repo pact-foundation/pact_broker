@@ -1,5 +1,5 @@
-require 'ostruct'
-require 'pact_broker/api/pact_broker_urls'
+require "ostruct"
+require "pact_broker/api/pact_broker_urls"
 
 module PactBroker
   module Api

@@ -1,4 +1,4 @@
-require 'pact_broker/ui/view_models/matrix_deployed_version'
+require "pact_broker/ui/view_models/matrix_deployed_version"
 
 module PactBroker
   module UI

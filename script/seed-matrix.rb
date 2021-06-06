@@ -2,21 +2,21 @@
 
 raise "Please supply database path" unless ARGV[0]
 
-$LOAD_PATH.unshift './lib'
-$LOAD_PATH.unshift './spec'
-$LOAD_PATH.unshift './tasks'
-ENV['RACK_ENV'] = 'development'
-require 'sequel'
-require 'logger'
-DATABASE_CREDENTIALS = {logger: Logger.new($stdout), adapter: "sqlite", database: ARGV[0], :encoding => 'utf8'}
+$LOAD_PATH.unshift "./lib"
+$LOAD_PATH.unshift "./spec"
+$LOAD_PATH.unshift "./tasks"
+ENV["RACK_ENV"] = "development"
+require "sequel"
+require "logger"
+DATABASE_CREDENTIALS = {logger: Logger.new($stdout), adapter: "sqlite", database: ARGV[0], :encoding => "utf8"}
 connection = Sequel.connect(DATABASE_CREDENTIALS)
 connection.timezone = :utc
-require 'pact_broker/db'
+require "pact_broker/db"
 PactBroker::DB.connection = connection
-require 'pact_broker'
-require 'support/test_data_builder'
+require "pact_broker"
+require "support/test_data_builder"
 
-require 'database/table_dependency_calculator'
+require "database/table_dependency_calculator"
 PactBroker::Database::TableDependencyCalculator.call(connection).each do | table_name |
   connection[table_name].delete
 end
@@ -41,20 +41,20 @@ A -> B ->  C
 TestDataBuilder.new
   .create_pact_with_hierarchy("A", "1", "B")
   .create_consumer_version_tag("master")
-  .create_verification(provider_version: '1', success: false, execution_date: Date.today - 1 )
-  .create_verification(provider_version: '1', number: 2, success: true)
-  .create_verification(provider_version: '2', number: 3)
-  .create_verification(provider_version: '4', number: 4)
+  .create_verification(provider_version: "1", success: false, execution_date: Date.today - 1 )
+  .create_verification(provider_version: "1", number: 2, success: true)
+  .create_verification(provider_version: "2", number: 3)
+  .create_verification(provider_version: "4", number: 4)
   .create_provider_version("5")
   .use_consumer("B")
   .use_consumer_version("1")
   .create_consumer_version_tag("master")
   .create_provider("C")
   .create_pact
-  .create_verification(provider_version: '1', success: false)
+  .create_verification(provider_version: "1", success: false)
   .use_consumer_version("2")
   .create_pact
-  .create_verification(provider_version: '2', success: true)
+  .create_verification(provider_version: "2", success: true)
   .create_consumer_version("3")
   .create_pact
   .use_consumer("A")
@@ -62,14 +62,14 @@ TestDataBuilder.new
   .create_consumer_version_tag("master")
   .use_provider("B")
   .create_pact
-  .create_verification(provider_version: '5')
+  .create_verification(provider_version: "5")
   .create_pact_with_hierarchy("X", "1", "Z")
   .create_consumer_version_tag("feat-x")
-  .create_verification(provider_version: '6')
+  .create_verification(provider_version: "6")
   .create_consumer_version("2")
   .create_consumer_version_tag("feat-y")
   .create_pact
-  .create_verification(provider_version: '7')
+  .create_verification(provider_version: "7")
   .create_consumer_version("3")
   .create_consumer_version_tag("feat-x")
   .create_consumer_version_tag("feat-y")

@@ -1,5 +1,5 @@
-require 'sequel/plugins/upsert'
-require 'sequel'
+require "sequel/plugins/upsert"
+require "sequel"
 
 module Sequel
   module Plugins

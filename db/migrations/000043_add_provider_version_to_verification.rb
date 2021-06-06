@@ -1,7 +1,7 @@
 Sequel.migration do
   change do
     alter_table(:verifications) do
-      add_foreign_key(:provider_version_id, :versions, foreign_key_constraint_name: 'fk_verifications_versions')
+      add_foreign_key(:provider_version_id, :versions, foreign_key_constraint_name: "fk_verifications_versions")
     end
   end
 

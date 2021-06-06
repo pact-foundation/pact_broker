@@ -1,6 +1,6 @@
-require 'pact_broker/api/resources/base_resource'
-require 'pact_broker/db/clean'
-require 'pact_broker/matrix/unresolved_selector'
+require "pact_broker/api/resources/base_resource"
+require "pact_broker/db/clean"
+require "pact_broker/matrix/unresolved_selector"
 
 module PactBroker
   module Api

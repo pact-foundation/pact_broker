@@ -1,22 +1,22 @@
 module PactBroker
   module Webhooks
     class PactAndVerificationParameters
-      PACT_URL = 'pactbroker.pactUrl'
-      VERIFICATION_RESULT_URL = 'pactbroker.verificationResultUrl'
-      CONSUMER_VERSION_NUMBER = 'pactbroker.consumerVersionNumber'
-      PROVIDER_VERSION_NUMBER = 'pactbroker.providerVersionNumber'
-      PROVIDER_VERSION_TAGS = 'pactbroker.providerVersionTags'
-      PROVIDER_VERSION_BRANCH = 'pactbroker.providerVersionBranch'
-      CONSUMER_VERSION_TAGS = 'pactbroker.consumerVersionTags'
-      CONSUMER_VERSION_BRANCH = 'pactbroker.consumerVersionBranch'
-      CONSUMER_NAME = 'pactbroker.consumerName'
-      PROVIDER_NAME = 'pactbroker.providerName'
-      GITHUB_VERIFICATION_STATUS = 'pactbroker.githubVerificationStatus'
-      BITBUCKET_VERIFICATION_STATUS = 'pactbroker.bitbucketVerificationStatus'
-      CONSUMER_LABELS = 'pactbroker.consumerLabels'
-      PROVIDER_LABELS = 'pactbroker.providerLabels'
-      EVENT_NAME = 'pactbroker.eventName'
-      CURRENTLY_DEPLOYED_PROVIDER_VERSION_NUMBER = 'pactbroker.currentlyDeployedProviderVersionNumber'
+      PACT_URL = "pactbroker.pactUrl"
+      VERIFICATION_RESULT_URL = "pactbroker.verificationResultUrl"
+      CONSUMER_VERSION_NUMBER = "pactbroker.consumerVersionNumber"
+      PROVIDER_VERSION_NUMBER = "pactbroker.providerVersionNumber"
+      PROVIDER_VERSION_TAGS = "pactbroker.providerVersionTags"
+      PROVIDER_VERSION_BRANCH = "pactbroker.providerVersionBranch"
+      CONSUMER_VERSION_TAGS = "pactbroker.consumerVersionTags"
+      CONSUMER_VERSION_BRANCH = "pactbroker.consumerVersionBranch"
+      CONSUMER_NAME = "pactbroker.consumerName"
+      PROVIDER_NAME = "pactbroker.providerName"
+      GITHUB_VERIFICATION_STATUS = "pactbroker.githubVerificationStatus"
+      BITBUCKET_VERIFICATION_STATUS = "pactbroker.bitbucketVerificationStatus"
+      CONSUMER_LABELS = "pactbroker.consumerLabels"
+      PROVIDER_LABELS = "pactbroker.providerLabels"
+      EVENT_NAME = "pactbroker.eventName"
+      CURRENTLY_DEPLOYED_PROVIDER_VERSION_NUMBER = "pactbroker.currentlyDeployedProviderVersionNumber"
 
       ALL = [
         CONSUMER_NAME,

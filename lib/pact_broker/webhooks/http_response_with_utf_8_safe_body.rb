@@ -3,7 +3,7 @@ module PactBroker
     class HttpResponseWithUtf8SafeBody < SimpleDelegator
       def body
         if unsafe_body
-          unsafe_body.encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
+          unsafe_body.encode("UTF-8", "binary", invalid: :replace, undef: :replace, replace: "")
         else
           unsafe_body
         end

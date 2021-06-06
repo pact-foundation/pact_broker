@@ -1,5 +1,5 @@
-require 'spec_helper'
-require 'pact_broker/tags/service'
+require "spec_helper"
+require "pact_broker/tags/service"
 
 module PactBroker
   module Tags

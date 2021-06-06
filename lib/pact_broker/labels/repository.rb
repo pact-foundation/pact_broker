@@ -1,5 +1,5 @@
-require 'pact_broker/domain/label'
-require 'pact_broker/repositories/helpers'
+require "pact_broker/domain/label"
+require "pact_broker/repositories/helpers"
 
 module PactBroker
   module Labels

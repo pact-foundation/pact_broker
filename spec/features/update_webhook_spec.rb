@@ -1,4 +1,4 @@
-require 'support/test_data_builder'
+require "support/test_data_builder"
 
 describe "Updating a webhook" do
   let(:webhook) do
@@ -8,7 +8,7 @@ describe "Updating a webhook" do
       .and_return(:webhook)
   end
 
-  let(:headers) { {'CONTENT_TYPE' => 'application/json'} }
+  let(:headers) { {"CONTENT_TYPE" => "application/json"} }
   let(:response_body) { JSON.parse(last_response.body, symbolize_names: true)}
   let(:webhook_json) { webhook_hash.to_json }
   let(:webhook_hash) do
@@ -19,16 +19,16 @@ describe "Updating a webhook" do
       },
       enabled: false,
       events: [{
-        name: 'contract_published'
+        name: "contract_published"
       }],
       request: {
-        method: 'POST',
-        url: 'https://example.org',
+        method: "POST",
+        url: "https://example.org",
         headers: {
           :"Content-Type" => "application/json"
         },
         body: {
-          a: 'body'
+          a: "body"
         }
       }
     }

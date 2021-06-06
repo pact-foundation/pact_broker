@@ -1,6 +1,6 @@
-require 'support/test_data_builder'
-require 'webmock/rspec'
-require 'rack/pact_broker/database_transaction'
+require "support/test_data_builder"
+require "webmock/rspec"
+require "rack/pact_broker/database_transaction"
 
 describe "Execute a webhook" do
   before do
@@ -11,10 +11,10 @@ describe "Execute a webhook" do
   let(:params) do
     {
       request: {
-        method: 'POST',
-        url: 'http://example.org',
-        headers: {'Content-Type' => 'application/json'},
-        body: '${pactbroker.pactUrl}'
+        method: "POST",
+        url: "http://example.org",
+        headers: {"Content-Type" => "application/json"},
+        body: "${pactbroker.pactUrl}"
       }
     }
   end

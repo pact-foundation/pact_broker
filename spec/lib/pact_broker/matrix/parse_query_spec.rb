@@ -1,4 +1,4 @@
-require 'pact_broker/matrix/parse_query'
+require "pact_broker/matrix/parse_query"
 
 module PactBroker
   module Matrix
@@ -81,7 +81,7 @@ module PactBroker
           let(:query) { "q[][pacticipant]=Foo&q[][latest]=true" }
 
           it "returns a selector with latest true" do
-            expect(subject.first).to eq [{ pacticipant_name: 'Foo', latest: true }]
+            expect(subject.first).to eq [{ pacticipant_name: "Foo", latest: true }]
           end
         end
 
@@ -97,7 +97,7 @@ module PactBroker
           let(:query) { "q[][pacticipant]=Foo&q[][latest]=false" }
 
           it "returns a selector with no latest key" do
-            expect(subject.first).to eq [{ pacticipant_name: 'Foo' }]
+            expect(subject.first).to eq [{ pacticipant_name: "Foo" }]
           end
         end
 
@@ -105,7 +105,7 @@ module PactBroker
           let(:query) { "q[][pacticipant]=Foo&q[][tag]=prod" }
 
           it "returns a selector with a tag" do
-            expect(subject.first).to eq [{ pacticipant_name: 'Foo', tag: 'prod' }]
+            expect(subject.first).to eq [{ pacticipant_name: "Foo", tag: "prod" }]
           end
         end
 

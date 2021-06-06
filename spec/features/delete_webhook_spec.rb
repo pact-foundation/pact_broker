@@ -1,4 +1,4 @@
-require 'support/test_data_builder'
+require "support/test_data_builder"
 
 describe "Delete a webhook" do
 

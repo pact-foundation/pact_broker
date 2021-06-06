@@ -1,12 +1,12 @@
-require 'spec_helper'
-require 'pact_broker/messages'
+require "spec_helper"
+require "pact_broker/messages"
 
 module PactBroker
   module Messages
     describe "#potential_duplicate_pacticipant_message" do
-      let(:new_name) { 'Contracts' }
-      let(:fred) { double('Contracts Service', name: 'Contracts Service') }
-      let(:frederich) { double('Accepted Contracts', name: 'Accepted Contracts') }
+      let(:new_name) { "Contracts" }
+      let(:fred) { double("Contracts Service", name: "Contracts Service") }
+      let(:frederich) { double("Accepted Contracts", name: "Accepted Contracts") }
       let(:potential_duplicate_pacticipants) { [fred, frederich]}
 
       let(:expected_message) { String.new <<-EOS
@@ -19,7 +19,7 @@ If the pact is intended to be for a new consumer or provider, please manually cr
 $ curl -v -XPOST -H "Content-Type: application/json" -d "{\\\"name\\\": \\\"Contracts\\\"}" http://example.org/pacticipants
 EOS
       }
-      subject { Messages.potential_duplicate_pacticipant_message new_name, potential_duplicate_pacticipants, 'http://example.org' }
+      subject { Messages.potential_duplicate_pacticipant_message new_name, potential_duplicate_pacticipants, "http://example.org" }
 
       it "returns a message" do
         expect(subject).to start_with expected_message

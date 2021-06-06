@@ -1,4 +1,4 @@
-require 'wisper'
+require "wisper"
 
 module PactBroker
   module Events

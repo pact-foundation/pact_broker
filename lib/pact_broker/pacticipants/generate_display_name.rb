@@ -1,4 +1,4 @@
-require 'pact_broker/string_refinements'
+require "pact_broker/string_refinements"
 
 module PactBroker
   module Pacticipants

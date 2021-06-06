@@ -1,5 +1,5 @@
-require 'pact_broker/api/decorators/integration_decorator'
-require 'pact_broker/integrations/integration'
+require "pact_broker/api/decorators/integration_decorator"
+require "pact_broker/integrations/integration"
 
 module PactBroker
   module Api
@@ -22,7 +22,7 @@ module PactBroker
         let(:provider) { double("provider", name: "the provider") }
         let(:pseudo_branch_verification_status) { double("pseudo_branch_verification_status", to_s: "some_status") }
 
-        let(:options) { { user_options: { base_url: 'http://example.org' } } }
+        let(:options) { { user_options: { base_url: "http://example.org" } } }
         let(:expected_hash) do
           {
             "consumer" => {

@@ -1,4 +1,4 @@
-require 'pact_broker/errors/error_logger'
+require "pact_broker/errors/error_logger"
 
 module PactBroker
   module Errors
@@ -9,9 +9,9 @@ module PactBroker
         allow(PactBroker::Errors).to receive(:reportable_error?).and_return(reportable)
       end
 
-      let(:logger) { double('logger').as_null_object }
-      let(:error) { StandardError.new('test error') }
-      let(:env) { double('env') }
+      let(:logger) { double("logger").as_null_object }
+      let(:error) { StandardError.new("test error") }
+      let(:env) { double("env") }
       let(:error_reference) { "bYWfnyWPlf" }
       let(:reportable) { true }
 

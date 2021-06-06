@@ -1,5 +1,5 @@
-require 'pact_broker/repositories'
-require 'pact_broker/relationships/groupify'
+require "pact_broker/repositories"
+require "pact_broker/relationships/groupify"
 
 module PactBroker
   module Groups

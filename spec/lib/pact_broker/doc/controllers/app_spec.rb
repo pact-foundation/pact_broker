@@ -1,4 +1,4 @@
-require 'pact_broker/doc/controllers/app'
+require "pact_broker/doc/controllers/app"
 
 module PactBroker
   module Doc
@@ -19,7 +19,7 @@ module PactBroker
 
             it "returns a html content type" do
               subject
-              expect(last_response.headers['Content-Type']).to eq "text/html;charset=utf-8"
+              expect(last_response.headers["Content-Type"]).to eq "text/html;charset=utf-8"
             end
 
             it "returns a html body" do
@@ -52,7 +52,7 @@ module PactBroker
 
             it "returns a html content type" do
               subject
-              expect(last_response.headers['Content-Type']).to eq "text/html;charset=utf-8"
+              expect(last_response.headers["Content-Type"]).to eq "text/html;charset=utf-8"
             end
 
             it "returns a custom error page" do
@@ -72,7 +72,7 @@ module PactBroker
 
             it "returns a html content type" do
               subject
-              expect(last_response.headers['Content-Type']).to eq "text/html;charset=utf-8"
+              expect(last_response.headers["Content-Type"]).to eq "text/html;charset=utf-8"
             end
           end
         end

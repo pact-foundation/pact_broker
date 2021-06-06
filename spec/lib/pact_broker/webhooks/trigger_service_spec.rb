@@ -1,4 +1,4 @@
-require 'pact_broker/webhooks/trigger_service'
+require "pact_broker/webhooks/trigger_service"
 
 module PactBroker
   module Webhooks
@@ -10,9 +10,9 @@ module PactBroker
       let(:previous_pact) { double("previous_pact", pact_version_sha: previous_pact_version_sha) }
       let(:previous_pact_version_sha) { "111" }
       let(:previous_pacts) { { untagged: previous_pact } }
-      let(:logger) { double('logger').as_null_object }
+      let(:logger) { double("logger").as_null_object }
       let(:event_context) { { some: "data" } }
-      let(:webhook_options) { { the: 'options'} }
+      let(:webhook_options) { { the: "options"} }
 
       before do
         allow(TriggerService).to receive(:pact_repository).and_return(pact_repository)
@@ -54,15 +54,15 @@ module PactBroker
           allow(TriggerService).to receive(:pact_service).and_return(pact_service)
         end
         let(:pact_service) { class_double("PactBroker::Pacts::Service").as_stubbed_const }
-        let(:logger) { double('logger').as_null_object }
+        let(:logger) { double("logger").as_null_object }
         let(:verification) { instance_double(PactBroker::Domain::Verification)}
         let(:pact) { instance_double(PactBroker::Domain::Pact, consumer: consumer, provider: provider, consumer_version: consumer_version)}
-        let(:consumer_version) { PactBroker::Domain::Version.new(number: '1.2.3') }
-        let(:consumer) { PactBroker::Domain::Pacticipant.new(name: 'Consumer') }
-        let(:provider) { PactBroker::Domain::Pacticipant.new(name: 'Provider') }
+        let(:consumer_version) { PactBroker::Domain::Version.new(number: "1.2.3") }
+        let(:consumer) { PactBroker::Domain::Pacticipant.new(name: "Consumer") }
+        let(:provider) { PactBroker::Domain::Pacticipant.new(name: "Provider") }
         let(:webhooks) { [webhook]}
         let(:webhook) do
-          instance_double(PactBroker::Domain::Webhook, description: 'description', uuid: '1244', expand_currently_deployed_provider_versions?: expand_currently_deployed)
+          instance_double(PactBroker::Domain::Webhook, description: "description", uuid: "1244", expand_currently_deployed_provider_versions?: expand_currently_deployed)
         end
         let(:expand_currently_deployed) { false }
         let(:triggered_webhook) { instance_double(PactBroker::Webhooks::TriggeredWebhook) }
@@ -120,9 +120,9 @@ module PactBroker
             end
             let(:event_name) { PactBroker::Webhooks::WebhookEvent::VERIFICATION_SUCCEEDED }
             let(:pact) { instance_double(PactBroker::Domain::Pact, provider_name: provider.name, consumer_name: consumer.name, consumer: consumer, provider: provider, consumer_version: consumer_version)}
-            let(:consumer_version) { PactBroker::Domain::Version.new(number: '1.2.3') }
-            let(:consumer) { PactBroker::Domain::Pacticipant.new(name: 'Consumer') }
-            let(:provider) { PactBroker::Domain::Pacticipant.new(name: 'Provider') }
+            let(:consumer_version) { PactBroker::Domain::Version.new(number: "1.2.3") }
+            let(:consumer) { PactBroker::Domain::Pacticipant.new(name: "Consumer") }
+            let(:provider) { PactBroker::Domain::Pacticipant.new(name: "Provider") }
 
             # See lib/pact_broker/pacts/metadata.rb build_metadata_for_pact_for_verification
             let(:selector_1) { { latest: true, consumer_version_number: "1", tag: "prod" } }
@@ -136,8 +136,8 @@ module PactBroker
             end
             let(:expected_event_context_1) { { event_name: event_name, consumer_version_number: "1", consumer_version_tags: ["prod", "main"], other: "foo" } }
             let(:expected_event_context_2) { { event_name: event_name, consumer_version_number: "2", consumer_version_tags: ["feat/2"], other: "foo" } }
-            let(:pact_for_consumer_version_1) { double('pact_for_consumer_version_1') }
-            let(:pact_for_consumer_version_2) { double('pact_for_consumer_version_2') }
+            let(:pact_for_consumer_version_1) { double("pact_for_consumer_version_1") }
+            let(:pact_for_consumer_version_2) { double("pact_for_consumer_version_2") }
 
             it "finds the pact publication for each consumer version number" do
               expect(pact_service).to receive(:find_pact).with(hash_including(consumer_version_number: "1")).and_return(pact_for_consumer_version_1)
@@ -167,17 +167,17 @@ module PactBroker
 
       describe ".schedule_webhooks" do
         let(:options) do
-          { database_connector: double('database_connector'),
+          { database_connector: double("database_connector"),
             webhook_execution_configuration: webhook_execution_configuration,
             logging_options: {}
           }
         end
         let(:triggered_webhook) { instance_double(PactBroker::Webhooks::TriggeredWebhook, webhook: webhook, event_context: {}) }
         let(:triggered_webhooks) { [triggered_webhook] }
-        let(:webhook_execution_configuration) { double('webhook_execution_configuration', webhook_context: webhook_context) }
+        let(:webhook_execution_configuration) { double("webhook_execution_configuration", webhook_context: webhook_context) }
         let(:webhook_context) { { base_url: "http://example.org" } }
         let(:webhook) do
-          instance_double(PactBroker::Domain::Webhook, description: 'description', uuid: '1244')
+          instance_double(PactBroker::Domain::Webhook, description: "description", uuid: "1244")
         end
 
         subject { TriggerService.schedule_webhooks(triggered_webhooks, options) }
@@ -187,7 +187,7 @@ module PactBroker
             allow(TriggerService).to receive(:logger).and_return(logger)
           end
 
-          let(:logger) { double('logger').as_null_object }
+          let(:logger) { double("logger").as_null_object }
 
           before do
             allow(Job).to receive(:perform_in).and_raise("an error")
@@ -205,32 +205,32 @@ module PactBroker
         let(:webhook) do
           instance_double(PactBroker::Domain::Webhook,
             trigger_on_provider_verification_published?: trigger_on_verification,
-            consumer_name: 'consumer',
-            provider_name: 'provider',
+            consumer_name: "consumer",
+            provider_name: "provider",
             execute: result
           )
         end
         let(:pact) { instance_double(PactBroker::Domain::Pact) }
         let(:verification) { instance_double(PactBroker::Domain::Verification) }
         let(:trigger_on_verification) { false }
-        let(:result) { double('result') }
+        let(:result) { double("result") }
         let(:execution_configuration) do
           instance_double(PactBroker::Webhooks::ExecutionConfiguration, to_hash: execution_configuration_hash)
         end
-        let(:execution_configuration_hash) { { the: 'options' } }
+        let(:execution_configuration_hash) { { the: "options" } }
         let(:event_context) { { some: "data" } }
 
         before do
           allow(PactBroker::Pacts::Service).to receive(:search_for_latest_pact).and_return(pact)
           allow(PactBroker::Verifications::Service).to receive(:search_for_latest).and_return(verification)
-          allow(PactBroker.configuration).to receive(:show_webhook_response?).and_return('foo')
+          allow(PactBroker.configuration).to receive(:show_webhook_response?).and_return("foo")
           allow(execution_configuration).to receive(:with_failure_log_message).and_return(execution_configuration)
         end
 
         subject { TriggerService.test_execution(webhook, event_context, execution_configuration) }
 
         it "searches for the latest matching pact" do
-          expect(PactBroker::Pacts::Service).to receive(:search_for_latest_pact).with(consumer_name: 'consumer', provider_name: 'provider')
+          expect(PactBroker::Pacts::Service).to receive(:search_for_latest_pact).with(consumer_name: "consumer", provider_name: "provider")
           subject
         end
 
@@ -258,7 +258,7 @@ module PactBroker
           let(:trigger_on_verification) { true }
 
           it "searches for the latest matching verification" do
-            expect(PactBroker::Verifications::Service).to receive(:search_for_latest).with('consumer', 'provider')
+            expect(PactBroker::Verifications::Service).to receive(:search_for_latest).with("consumer", "provider")
             subject
           end
 
@@ -287,7 +287,7 @@ module PactBroker
         let(:events) { [{ name: PactBroker::Webhooks::WebhookEvent::DEFAULT_EVENT_NAME }] }
         let(:webhook_execution_configuration) do
           PactBroker::Webhooks::ExecutionConfiguration.new
-            .with_webhook_context(base_url: 'http://example.org')
+            .with_webhook_context(base_url: "http://example.org")
             .with_show_response(true)
         end
         let(:event_context) { { some: "data", base_url: "http://example.org" }}
@@ -305,7 +305,7 @@ module PactBroker
             .create_consumer_version
             .create_pact
             .create_verification
-            .create_webhook(method: 'GET', url: 'http://example.org', events: events)
+            .create_webhook(method: "GET", url: "http://example.org", events: events)
             .and_return(:pact)
         end
 

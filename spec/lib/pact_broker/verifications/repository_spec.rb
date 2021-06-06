@@ -1,4 +1,4 @@
-require 'pact_broker/verifications/repository'
+require "pact_broker/verifications/repository"
 
 module PactBroker
   module Verifications
@@ -36,7 +36,7 @@ module PactBroker
 
           builder
             .create_verification(number: 1)
-            .create_verification(number: 2, provider_version: '3.7.4')
+            .create_verification(number: 2, provider_version: "3.7.4")
             .create_consumer_version("1.2.3")
             .create_pact
             .create_verification(number: 1)
@@ -199,14 +199,14 @@ module PactBroker
               .create_pact
           end
 
-          subject { Repository.new.find_latest_verification_for("Consumer1", "Provider1", 'prod')}
+          subject { Repository.new.find_latest_verification_for("Consumer1", "Provider1", "prod")}
 
           it "finds the latest verifications for the given consumer version with the specified tag" do
             expect(subject.provider_version_number).to eq "5.4.3"
           end
 
           context "when no verification exists" do
-            subject { Repository.new.find_latest_verification_for("Consumer1", "Provider1", 'foo')}
+            subject { Repository.new.find_latest_verification_for("Consumer1", "Provider1", "foo")}
 
             it "returns nil" do
               expect(subject).to be nil

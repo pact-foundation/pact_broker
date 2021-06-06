@@ -1,11 +1,11 @@
 #!/usr/bin/env ruby
 
-require 'pact_broker/string_refinements'
-require 'pact_broker/project_root'
-require 'date'
-require 'erb'
-require 'pathname'
-require 'fileutils'
+require "pact_broker/string_refinements"
+require "pact_broker/project_root"
+require "date"
+require "erb"
+require "pathname"
+require "fileutils"
 
 using PactBroker::StringRefinements
 
@@ -22,7 +22,7 @@ def model_full_class_name
 end
 
 def today
-  DateTime.now.strftime('%Y%m%d')
+  DateTime.now.strftime("%Y%m%d")
 end
 
 def require_path_prefix

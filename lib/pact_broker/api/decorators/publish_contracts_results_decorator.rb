@@ -1,6 +1,6 @@
-require 'pact_broker/api/decorators/base_decorator'
-require 'pact_broker/api/decorators/publish_contract_decorator'
-require 'pact_broker/api/decorators/embedded_version_decorator'
+require "pact_broker/api/decorators/base_decorator"
+require "pact_broker/api/decorators/publish_contract_decorator"
+require "pact_broker/api/decorators/embedded_version_decorator"
 
 module PactBroker
   module Api
@@ -43,7 +43,7 @@ module PactBroker
         links :'pb:contracts' do | options |
           represented.contracts.collect do | contract |
             {
-              title: 'Pact',
+              title: "Pact",
               name: contract.name,
               href: pact_url(options.fetch(:base_url), contract)
             }

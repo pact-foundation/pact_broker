@@ -1,4 +1,4 @@
-require_relative 'base_decorator'
+require_relative "base_decorator"
 
 module PactBroker
   module Api
@@ -9,7 +9,7 @@ module PactBroker
 
         link :self do | options |
           {
-            title: 'Label',
+            title: "Label",
             name: represented.name,
             href: label_url(represented, options[:base_url])
           }

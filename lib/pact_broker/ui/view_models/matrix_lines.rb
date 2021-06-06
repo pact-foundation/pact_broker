@@ -1,4 +1,4 @@
-require 'pact_broker/ui/view_models/matrix_line'
+require "pact_broker/ui/view_models/matrix_line"
 
 module PactBroker
   module UI

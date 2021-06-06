@@ -9,12 +9,12 @@ module PactBroker
       extend self
 
       def is_verification_results_path?(path)
-        path.start_with?('/pacts') && (path =~ VERIFICATION_RESULTS)
+        path.start_with?("/pacts") && (path =~ VERIFICATION_RESULTS)
       end
 
       def is_badge_path?(path)
         # Optimise by checking include? first - regexp slow
-        path.include?('/badge') && (path =~ PACT_BADGE_PATH || path =~ MATRIX_BADGE_PATH || path =~ CAN_I_DEPLOY_BADGE_PATH)
+        path.include?("/badge") && (path =~ PACT_BADGE_PATH || path =~ MATRIX_BADGE_PATH || path =~ CAN_I_DEPLOY_BADGE_PATH)
       end
     end
   end

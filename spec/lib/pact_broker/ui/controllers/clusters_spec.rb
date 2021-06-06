@@ -1,6 +1,6 @@
-require 'spec_helper'
-require 'pact_broker/ui/controllers/clusters'
-require 'rack/test'
+require "spec_helper"
+require "pact_broker/ui/controllers/clusters"
+require "rack/test"
 
 module PactBroker
   module UI

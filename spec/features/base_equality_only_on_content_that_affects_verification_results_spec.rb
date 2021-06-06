@@ -1,9 +1,9 @@
 RSpec.describe "base_equality_only_on_content_that_affects_verification_results" do
   let(:td) { TestDataBuilder.new }
-  let(:json_content_1) { load_fixture('foo-bar.json') }
+  let(:json_content_1) { load_fixture("foo-bar.json") }
   let(:json_content_2) do
-    pact_hash = load_json_fixture('foo-bar.json')
-    pact_hash['interactions'] = pact_hash['interactions'].reverse
+    pact_hash = load_json_fixture("foo-bar.json")
+    pact_hash["interactions"] = pact_hash["interactions"].reverse
     pact_hash.to_json
   end
   let(:base_equality_only_on_content_that_affects_verification_results) { true }

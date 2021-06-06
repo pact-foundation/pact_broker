@@ -1,5 +1,5 @@
-require 'roar/json'
-require 'pact_broker/api/decorators/format_date_time'
+require "roar/json"
+require "pact_broker/api/decorators/format_date_time"
 
 module PactBroker
   module Api

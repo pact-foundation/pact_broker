@@ -1,19 +1,19 @@
-require 'pact_broker/pacts/sort_content'
+require "pact_broker/pacts/sort_content"
 
 module PactBroker
   module Pacts
     describe SortContent do
       let(:pact_content_1) do
         {
-          'a' => 1,
-          'interactions' => [{ 'a' => 1, 'b' => 2 }, { 'a' => [2, 1, 3], 'b' => 3 }]
+          "a" => 1,
+          "interactions" => [{ "a" => 1, "b" => 2 }, { "a" => [2, 1, 3], "b" => 3 }]
         }
       end
 
       let(:pact_content_2) do
         {
-          'interactions' => [{ 'b' => 3, 'a' => [2, 1, 3]}, { 'b' => 2, 'a' => 1 }],
-          'a' => 1
+          "interactions" => [{ "b" => 3, "a" => [2, 1, 3]}, { "b" => 2, "a" => 1 }],
+          "a" => 1
         }
       end
 
@@ -29,9 +29,9 @@ module PactBroker
       context "when there is no messages or interactions key" do
         let(:other_content) do
           {
-            'z' => 1,
-            'a' => 1,
-            'b' => 1,
+            "z" => 1,
+            "a" => 1,
+            "b" => 1,
           }
         end
 
@@ -43,8 +43,8 @@ module PactBroker
       context "when interactions is a string" do
         let(:other_content) do
           {
-            'a' => 1,
-            'interactions' => 'interactions'
+            "a" => 1,
+            "interactions" => "interactions"
           }
         end
 

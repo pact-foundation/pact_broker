@@ -1,5 +1,5 @@
-require 'sequel'
-require 'pact_broker/repositories/helpers'
+require "sequel"
+require "pact_broker/repositories/helpers"
 
 module PactBroker
   module Deployments

@@ -1,7 +1,7 @@
-require 'dry-validation'
-require 'pact_broker/api/contracts/dry_validation_workarounds'
-require 'pact_broker/api/contracts/dry_validation_predicates'
-require 'pact_broker/messages'
+require "dry-validation"
+require "pact_broker/api/contracts/dry_validation_workarounds"
+require "pact_broker/api/contracts/dry_validation_predicates"
+require "pact_broker/messages"
 
 module PactBroker
   module Api
@@ -39,7 +39,7 @@ module PactBroker
           if (environment_with_same_name = PactBroker::Deployments::EnvironmentService.find_by_name(params[:name]))
             if environment_with_same_name.uuid != params[:uuid]
               results[:name] ||= []
-              results[:name] << message('errors.validation.environment_name_must_be_unique', name: params[:name])
+              results[:name] << message("errors.validation.environment_name_must_be_unique", name: params[:name])
             end
           end
         end

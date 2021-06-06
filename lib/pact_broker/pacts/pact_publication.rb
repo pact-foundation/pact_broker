@@ -1,13 +1,13 @@
-require 'forwardable'
-require 'pact_broker/domain/pact'
-require 'pact_broker/pacts/pact_version'
-require 'pact_broker/repositories/helpers'
-require 'pact_broker/integrations/integration'
-require 'pact_broker/tags/head_pact_tags'
-require 'pact_broker/pacts/pact_publication_dataset_module'
-require 'pact_broker/pacts/pact_publication_wip_dataset_module'
-require 'pact_broker/pacts/eager_loaders'
-require 'pact_broker/pacts/lazy_loaders'
+require "forwardable"
+require "pact_broker/domain/pact"
+require "pact_broker/pacts/pact_version"
+require "pact_broker/repositories/helpers"
+require "pact_broker/integrations/integration"
+require "pact_broker/tags/head_pact_tags"
+require "pact_broker/pacts/pact_publication_dataset_module"
+require "pact_broker/pacts/pact_publication_wip_dataset_module"
+require "pact_broker/pacts/eager_loaders"
+require "pact_broker/pacts/lazy_loaders"
 
 module PactBroker
   module Pacts

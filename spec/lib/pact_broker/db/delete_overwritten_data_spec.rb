@@ -1,4 +1,4 @@
-require 'pact_broker/db/delete_overwritten_data'
+require "pact_broker/db/delete_overwritten_data"
 
 module PactBroker
   module DB

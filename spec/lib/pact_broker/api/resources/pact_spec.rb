@@ -1,8 +1,8 @@
-require 'spec_helper'
-require 'pact_broker/api/resources/pact'
-require 'rack/test'
-require 'pact_broker/pacts/service'
-require 'pact_broker/pacticipants/service'
+require "spec_helper"
+require "pact_broker/api/resources/pact"
+require "rack/test"
+require "pact_broker/pacts/service"
+require "pact_broker/pacticipants/service"
 
 module PactBroker::Api
   module Resources
@@ -10,25 +10,25 @@ module PactBroker::Api
       include Rack::Test::Methods
 
       let(:app) { PactBroker::API }
-      let(:json) { {some: 'json'}.to_json }
+      let(:json) { {some: "json"}.to_json }
 
       describe "GET" do
         context "Accept: text/html" do
 
-          let(:json_content) { 'json_content' }
+          let(:json_content) { "json_content" }
           let(:pact) { double("pact", json_content: json_content)}
-          let(:html) { 'html' }
+          let(:html) { "html" }
           let(:pact_id_params) { {provider_name: "provider_name", consumer_name: "consumer_name", consumer_version_number: "1.2.3"} }
-          let(:html_options) { { base_url: 'http://example.org', badge_url: 'http://badge' } }
+          let(:html_options) { { base_url: "http://example.org", badge_url: "http://badge" } }
 
           before do
-            allow_any_instance_of(Pact).to receive(:badge_url_for_latest_pact).and_return('http://badge')
-            allow_any_instance_of(Pact).to receive(:ui_base_url).and_return('http://example.org')
+            allow_any_instance_of(Pact).to receive(:badge_url_for_latest_pact).and_return("http://badge")
+            allow_any_instance_of(Pact).to receive(:ui_base_url).and_return("http://example.org")
             allow(PactBroker::Pacts::Service).to receive(:find_pact).and_return(pact)
             allow(PactBroker.configuration.html_pact_renderer).to receive(:call).and_return(html)
           end
 
-          subject { get "/pacts/provider/provider_name/consumer/consumer_name/versions/1.2.3",{}, {'HTTP_ACCEPT' => "text/html"} }
+          subject { get "/pacts/provider/provider_name/consumer/consumer_name/versions/1.2.3",{}, {"HTTP_ACCEPT" => "text/html"} }
 
           it "finds the pact" do
             expect(PactBroker::Pacts::Service).to receive(:find_pact).with(hash_including(pact_id_params))
@@ -36,7 +36,7 @@ module PactBroker::Api
           end
 
           it "determines the badge url for the HTML page" do
-            expect_any_instance_of(Pact).to receive(:badge_url_for_latest_pact).with(pact, 'http://example.org')
+            expect_any_instance_of(Pact).to receive(:badge_url_for_latest_pact).with(pact, "http://example.org")
             subject
           end
 
@@ -52,26 +52,26 @@ module PactBroker::Api
 
           it "returns a content type of HTML" do
             subject
-            expect(last_response.headers['Content-Type']).to eq 'text/html;charset=utf-8'
+            expect(last_response.headers["Content-Type"]).to eq "text/html;charset=utf-8"
           end
 
         end
       end
 
       shared_examples "an update endpoint" do |http_method|
-        subject { self.send http_method, "/pacts/provider/Provider/consumer/Consumer/version/1.2.3", json, {'CONTENT_TYPE' => "application/json"} ; last_response }
+        subject { self.send http_method, "/pacts/provider/Provider/consumer/Consumer/version/1.2.3", json, {"CONTENT_TYPE" => "application/json"} ; last_response }
 
         let(:response) { subject; last_response }
 
         context "with invalid JSON" do
-          let(:json) { '{' }
+          let(:json) { "{" }
 
           it "returns a 400 response" do
             expect(response.status).to eq 400
           end
 
           it "returns a JSON content type" do
-            expect(response.headers['Content-Type']).to eq "application/hal+json;charset=utf-8"
+            expect(response.headers["Content-Type"]).to eq "application/hal+json;charset=utf-8"
           end
 
           it "returns an error message" do
@@ -80,7 +80,7 @@ module PactBroker::Api
         end
 
         context "with validation errors" do
-          let(:errors) { double(:errors, messages: ['messages']) }
+          let(:errors) { double(:errors, messages: ["messages"]) }
 
           before do
             allow_any_instance_of(Contracts::PutPactParamsContract).to receive(:validate).and_return(false)
@@ -88,7 +88,7 @@ module PactBroker::Api
           end
 
           it "returns a 400 error" do
-            expect(subject).to be_a_json_error_response 'messages'
+            expect(subject).to be_a_json_error_response "messages"
           end
         end
 
@@ -102,7 +102,7 @@ module PactBroker::Api
           end
 
           it "checks for duplicates" do
-            expect(pacticipant_service).to receive(:messages_for_potential_duplicate_pacticipants).with(['Consumer', 'Provider'], 'http://example.org')
+            expect(pacticipant_service).to receive(:messages_for_potential_duplicate_pacticipants).with(["Consumer", "Provider"], "http://example.org")
             response
           end
 
@@ -111,7 +111,7 @@ module PactBroker::Api
           end
 
           it "returns a text response" do
-            expect(response.headers['Content-Type']).to eq 'text/plain'
+            expect(response.headers["Content-Type"]).to eq "text/plain"
           end
 
           it "returns the messages in the response body" do
@@ -136,11 +136,11 @@ module PactBroker::Api
           allow_any_instance_of(described_class).to receive(:latest_pact_url).and_return("http://latest-pact")
         end
 
-        let(:pact) { double('pact') }
+        let(:pact) { double("pact") }
         let(:pact_service) { PactBroker::Pacts::Service }
-        let(:latest_pact) { double('latest pact') }
+        let(:latest_pact) { double("latest pact") }
 
-        subject { delete "/pacts/provider/Provider/consumer/Consumer/version/1.2", json, {'CONTENT_TYPE' => "application/json"} ; last_response }
+        subject { delete "/pacts/provider/Provider/consumer/Consumer/version/1.2", json, {"CONTENT_TYPE" => "application/json"} ; last_response }
 
         context "when the pact exists" do
           it "deletes the pact using the pact service" do

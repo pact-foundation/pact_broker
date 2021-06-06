@@ -12,7 +12,7 @@ describe "Deleting a label" do
 
   let(:path) { "/pacticipants/foo/labels/ios" }
   let(:response_body_hash) { JSON.parse(subject.body, symbolize_names: true) }
-  let(:expected_response_body) { {name: 'ios'} }
+  let(:expected_response_body) { {name: "ios"} }
 
   subject { delete path; last_response  }
 

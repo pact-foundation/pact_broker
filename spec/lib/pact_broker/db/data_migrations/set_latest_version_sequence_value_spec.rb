@@ -1,4 +1,4 @@
-require 'pact_broker/db/data_migrations/set_latest_version_sequence_value'
+require "pact_broker/db/data_migrations/set_latest_version_sequence_value"
 
 module PactBroker
   module DB
@@ -24,9 +24,9 @@ module PactBroker
             end
 
             context "when there are pre-existing versions" do
-              let!(:consumer) { create(:pacticipants, {name: 'Consumer', created_at: now, updated_at: now}) }
-              let!(:consumer_version) { create(:versions, {number: '1.2.3', order: 1, pacticipant_id: consumer[:id], created_at: now, updated_at: now}) }
-              let!(:consumer_version) { create(:versions, {number: '1.2.5', order: 3, pacticipant_id: consumer[:id], created_at: now, updated_at: now}) }
+              let!(:consumer) { create(:pacticipants, {name: "Consumer", created_at: now, updated_at: now}) }
+              let!(:consumer_version) { create(:versions, {number: "1.2.3", order: 1, pacticipant_id: consumer[:id], created_at: now, updated_at: now}) }
+              let!(:consumer_version) { create(:versions, {number: "1.2.5", order: 3, pacticipant_id: consumer[:id], created_at: now, updated_at: now}) }
 
               it "initializes the sequence value to the max version order with a margin of error" do
                 subject
@@ -52,9 +52,9 @@ module PactBroker
               database[:version_sequence_number].insert(value: 3)
             end
 
-            let!(:consumer) { create(:pacticipants, {name: 'Consumer', created_at: now, updated_at: now}) }
-            let!(:consumer_version) { create(:versions, {number: '1.2.3', order: 1, pacticipant_id: consumer[:id], created_at: now, updated_at: now}) }
-            let!(:consumer_version) { create(:versions, {number: '1.2.5', order: 3, pacticipant_id: consumer[:id], created_at: now, updated_at: now}) }
+            let!(:consumer) { create(:pacticipants, {name: "Consumer", created_at: now, updated_at: now}) }
+            let!(:consumer_version) { create(:versions, {number: "1.2.3", order: 1, pacticipant_id: consumer[:id], created_at: now, updated_at: now}) }
+            let!(:consumer_version) { create(:versions, {number: "1.2.5", order: 3, pacticipant_id: consumer[:id], created_at: now, updated_at: now}) }
 
             it "updates the value" do
               subject

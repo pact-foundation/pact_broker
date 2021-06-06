@@ -1,4 +1,4 @@
-require 'pact_broker/webhooks/webhook'
+require "pact_broker/webhooks/webhook"
 
 module PactBroker
   module Webhooks

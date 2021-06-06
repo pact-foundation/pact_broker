@@ -1,5 +1,5 @@
-require_relative 'base_decorator'
-require 'pact_broker/api/decorators/webhook_decorator'
+require_relative "base_decorator"
+require "pact_broker/api/decorators/webhook_decorator"
 
 module PactBroker
   module Api
@@ -33,7 +33,7 @@ module PactBroker
         curies do | context |
           [{
             name: :pb,
-            href: context[:base_url] + '/doc/webhooks-{rel}',
+            href: context[:base_url] + "/doc/webhooks-{rel}",
             templated: true
           }]
         end

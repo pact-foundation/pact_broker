@@ -1,24 +1,24 @@
-require 'pact/doc/generator'
-require 'fileutils'
+require "pact/doc/generator"
+require "fileutils"
 
 module Pact
   module Doc
     describe Generator do
 
-      let(:doc_dir) { './tmp/doc' }
-      let(:pact_dir) { './tmp/pacts' }
+      let(:doc_dir) { "./tmp/doc" }
+      let(:pact_dir) { "./tmp/pacts" }
       let(:file_name) { "Some Consumer - Some Provider#{file_extension}" }
       let(:consumer_contract_renderer) { double("ConsumerContractRenderer", :call => doc_content) }
       let(:doc_content) { "doc_content" }
       let(:index_content) { "index_content" }
       let(:expected_doc_path) { "#{doc_dir}/#{doc_type}/#{file_name}" }
       let(:expected_index_path) { "#{doc_dir}/#{doc_type}/#{index_name}#{file_extension}" }
-      let(:doc_type) { 'markdown' }
+      let(:doc_type) { "markdown" }
       let(:file_extension) { ".md" }
       let(:actual_file_contents) { File.read(expected_doc_path) }
       let(:actual_index_contents) { File.read(expected_index_path)}
       let(:index_renderer) { double("IndexRenderer", :call => index_content)}
-      let(:index_name) { 'README' }
+      let(:index_name) { "README" }
       let(:after_hook) { double("hook", :call => nil)}
 
       before do
@@ -26,7 +26,7 @@ module Pact
         FileUtils.rm_rf pact_dir
         FileUtils.mkdir_p doc_dir
         FileUtils.mkdir_p pact_dir
-        FileUtils.cp './spec/support/markdown_pact.json', pact_dir
+        FileUtils.cp "./spec/support/markdown_pact.json", pact_dir
       end
 
       let(:options) { { consumer_contract_renderer: consumer_contract_renderer, doc_type: doc_type, file_extension: file_extension, index_renderer: index_renderer, index_name: index_name } }

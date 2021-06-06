@@ -1,4 +1,4 @@
-require 'pact_broker/api/pact_broker_urls'
+require "pact_broker/api/pact_broker_urls"
 
 describe "Creating an environment" do
   let(:path) { PactBroker::Api::PactBrokerUrls.environments_url }

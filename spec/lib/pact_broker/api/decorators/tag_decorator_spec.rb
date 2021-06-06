@@ -1,7 +1,7 @@
-require 'pact_broker/api/decorators/tag_decorator'
-require 'pact_broker/tags/repository'
+require "pact_broker/api/decorators/tag_decorator"
+require "pact_broker/tags/repository"
 
-require 'support/test_data_builder'
+require "support/test_data_builder"
 
 module PactBroker
 
@@ -19,7 +19,7 @@ module PactBroker
             .and_return(:tag)
         end
 
-        let(:options) { { user_options: { base_url: 'http://example.org' } } }
+        let(:options) { { user_options: { base_url: "http://example.org" } } }
 
         subject { JSON.parse TagDecorator.new(tag).to_json(options), symbolize_names: true }
 

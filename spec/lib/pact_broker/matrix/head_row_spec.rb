@@ -1,4 +1,4 @@
-require 'pact_broker/matrix/head_row'
+require "pact_broker/matrix/head_row"
 
 module PactBroker
   module Matrix

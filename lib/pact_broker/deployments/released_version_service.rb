@@ -1,4 +1,4 @@
-require 'pact_broker/deployments/released_version'
+require "pact_broker/deployments/released_version"
 
 module PactBroker
   module Deployments

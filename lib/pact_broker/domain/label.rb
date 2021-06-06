@@ -1,4 +1,4 @@
-require 'pact_broker/db'
+require "pact_broker/db"
 
 module PactBroker
   module Domain

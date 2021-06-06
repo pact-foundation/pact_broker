@@ -1,6 +1,6 @@
-require 'spec_helper'
-require 'pact_broker/api/renderers/html_pact_renderer'
-require 'timecop'
+require "spec_helper"
+require "pact_broker/api/renderers/html_pact_renderer"
+require "timecop"
 
 module PactBroker
   module Api
@@ -8,31 +8,31 @@ module PactBroker
       describe HtmlPactRenderer do
 
         before do
-          ENV['BACKUP_TZ'] = ENV['TZ']
-          ENV['TZ'] = "Australia/Melbourne"
+          ENV["BACKUP_TZ"] = ENV["TZ"]
+          ENV["TZ"] = "Australia/Melbourne"
           PactBroker.configuration.enable_public_badge_access = true
-          allow(PactBroker::Api::PactBrokerUrls).to receive(:pact_url).with('http://base', pact).and_return(pact_url)
-          allow(PactBroker::Api::PactBrokerUrls).to receive(:matrix_for_pact_url).with(pact, 'http://base').and_return(matrix_url)
+          allow(PactBroker::Api::PactBrokerUrls).to receive(:pact_url).with("http://base", pact).and_return(pact_url)
+          allow(PactBroker::Api::PactBrokerUrls).to receive(:matrix_for_pact_url).with(pact, "http://base").and_return(matrix_url)
           allow_any_instance_of(HtmlPactRenderer).to receive(:logger).and_return(logger)
 
           Timecop.freeze(created_at + 3)
         end
 
         after do
-          ENV['TZ'] = ENV['BACKUP_TZ']
+          ENV["TZ"] = ENV["BACKUP_TZ"]
           Timecop.return
         end
 
-        let(:consumer_name) { 'Consumer' }
-        let(:provider_name) { 'Provider' }
-        let(:consumer_version_number) { '1.2.3' }
-        let(:consumer) { double('consumer', name: consumer_name) }
-        let(:provider) { double('provider', name: provider_name) }
-        let(:consumer_version) { double('consumer version') }
+        let(:consumer_name) { "Consumer" }
+        let(:provider_name) { "Provider" }
+        let(:consumer_version_number) { "1.2.3" }
+        let(:consumer) { double("consumer", name: consumer_name) }
+        let(:provider) { double("provider", name: provider_name) }
+        let(:consumer_version) { double("consumer version") }
         let(:created_at) { DateTime.new(2014, 02, 27) }
-        let(:json_content) { load_fixture('renderer_pact.json') }
+        let(:json_content) { load_fixture("renderer_pact.json") }
         let(:pact) do
-          double('pact',
+          double("pact",
             json_content: json_content,
             consumer_version_number: consumer_version_number,
             consumer: consumer,
@@ -42,16 +42,16 @@ module PactBroker
             consumer_version: consumer_version
             )
         end
-        let(:consumer_version_tag_names) { ['prod', 'master'] }
-        let(:pact_url) { '/pact/url' }
-        let(:matrix_url) { '/matrix/url' }
+        let(:consumer_version_tag_names) { ["prod", "master"] }
+        let(:pact_url) { "/pact/url" }
+        let(:matrix_url) { "/matrix/url" }
         let(:options) do
           {
-            base_url: 'http://base',
-            badge_url: 'http://badge'
+            base_url: "http://base",
+            badge_url: "http://badge"
            }
         end
-        let(:logger) { double('logger').as_null_object }
+        let(:logger) { double("logger").as_null_object }
 
         subject { HtmlPactRenderer.call(pact, options) }
 
@@ -61,8 +61,8 @@ module PactBroker
             expect(subject).to include("</html>")
             expect(subject).to include("<link rel='stylesheet'")
             expect(subject).to include("href='http://base/stylesheets/github.css'")
-            expect(subject).to include('<pre><code')
-            expect(subject).to include('&quot;method&quot;:')
+            expect(subject).to include("<pre><code")
+            expect(subject).to include("&quot;method&quot;:")
             expect(subject).to match(/<h\d>.*Some Consumer/)
             expect(subject).to match(/<h\d>.*Some Provider/)
             expect(subject).to include("Date published:")
@@ -114,7 +114,7 @@ module PactBroker
               allow(pact).to receive(:content_hash).and_return(content_hash)
             end
 
-            let(:json_content) { '[1]' }
+            let(:json_content) { "[1]" }
             let(:content_hash) { [1] }
 
             it "includes a dismissive title" do

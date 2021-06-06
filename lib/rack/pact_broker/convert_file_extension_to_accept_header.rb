@@ -39,7 +39,7 @@ module Rack
 
       def set_accept_header_and_path_info env, file_extension
         env.merge(
-          "PATH_INFO" => env["PATH_INFO"].gsub(EXTENSION_REGEXP, ''),
+          "PATH_INFO" => env["PATH_INFO"].gsub(EXTENSION_REGEXP, ""),
           "HTTP_ACCEPT" => EXTENSIONS[file_extension]
         )
       end

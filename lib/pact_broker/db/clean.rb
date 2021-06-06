@@ -1,7 +1,7 @@
-require 'sequel'
-require 'pact_broker/project_root'
-require 'pact_broker/pacts/latest_tagged_pact_publications'
-require 'pact_broker/logging'
+require "sequel"
+require "pact_broker/project_root"
+require "pact_broker/pacts/latest_tagged_pact_publications"
+require "pact_broker/logging"
 
 module PactBroker
   module DB

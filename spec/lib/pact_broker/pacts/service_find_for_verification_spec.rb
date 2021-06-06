@@ -1,6 +1,6 @@
-require 'spec_helper'
-require 'pact_broker/pacts/service'
-require 'pact_broker/pacts/pact_params'
+require "spec_helper"
+require "pact_broker/pacts/service"
+require "pact_broker/pacts/pact_params"
 
 module PactBroker
   module Pacts
@@ -15,8 +15,8 @@ module PactBroker
         let(:head_tag_2) { "feat-x" }
         let(:pact_version_sha_1) { "1" }
         let(:pact_version_sha_2) { "2" }
-        let(:domain_pact_1) { double('pact1', pending?: true) }
-        let(:domain_pact_2) { double('pact2', pending?: true) }
+        let(:domain_pact_1) { double("pact1", pending?: true) }
+        let(:domain_pact_2) { double("pact2", pending?: true) }
 
         let(:pact_1) do
           double("HeadPact",

@@ -1,4 +1,4 @@
-require 'pact_broker/configuration'
+require "pact_broker/configuration"
 
 module PactBroker
   module Api

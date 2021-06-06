@@ -1,4 +1,4 @@
-require 'spec/support/test_data_builder'
+require "spec/support/test_data_builder"
 
 describe "Get previous distinct version of pact" do
 
@@ -7,10 +7,10 @@ describe "Get previous distinct version of pact" do
 
   subject { get path; last_response }
 
-  let(:pact_content_version_1) { load_fixture('consumer-provider.json') }
+  let(:pact_content_version_1) { load_fixture("consumer-provider.json") }
   let(:pact_content_version_2) do
-    hash = load_json_fixture('consumer-provider.json')
-    hash['interactions'].first['request']['method'] = 'post'
+    hash = load_json_fixture("consumer-provider.json")
+    hash["interactions"].first["request"]["method"] = "post"
     hash.to_json
   end
   let(:pact_content_version_3) { pact_content_version_2 }
@@ -34,7 +34,7 @@ describe "Get previous distinct version of pact" do
     end
 
     it "returns the JSON representation of the version" do
-      expect(last_response_body[:_links][:self][:href]).to end_with '/1'
+      expect(last_response_body[:_links][:self][:href]).to end_with "/1"
     end
 
   end

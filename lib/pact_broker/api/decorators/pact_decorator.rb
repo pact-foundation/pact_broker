@@ -1,6 +1,6 @@
-require_relative 'base_decorator'
-require 'pact_broker/json'
-require 'pact_broker/api/decorators/timestamps'
+require_relative "base_decorator"
+require "pact_broker/json"
+require "pact_broker/api/decorators/timestamps"
 
 module PactBroker
   module Api
@@ -20,7 +20,7 @@ module PactBroker
 
         link :self do | options |
           {
-            title: 'Pact',
+            title: "Pact",
             name: represented.name,
             href: pact_url(options.fetch(:base_url), represented)
           }
@@ -177,7 +177,7 @@ module PactBroker
         curies do | options |
           [{
             name: :pb,
-            href: options[:base_url] + '/doc/{rel}?context=pact',
+            href: options[:base_url] + "/doc/{rel}?context=pact",
             templated: true
           }]
         end

@@ -1,4 +1,4 @@
-require 'openssl'
+require "openssl"
 
 module PactBroker
   module Webhooks

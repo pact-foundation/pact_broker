@@ -1,7 +1,7 @@
-require 'pact_broker/api/resources/base_resource'
-require 'pact_broker/api/decorators/matrix_decorator'
-require 'pact_broker/api/decorators/matrix_text_decorator'
-require 'pact_broker/matrix/parse_query'
+require "pact_broker/api/resources/base_resource"
+require "pact_broker/api/decorators/matrix_decorator"
+require "pact_broker/api/decorators/matrix_text_decorator"
+require "pact_broker/matrix/parse_query"
 
 module PactBroker
   module Api

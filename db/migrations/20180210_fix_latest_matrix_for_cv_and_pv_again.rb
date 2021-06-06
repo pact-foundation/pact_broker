@@ -17,8 +17,8 @@ Sequel.migration do
     # materialized_matrix FIRST that may cause problems. Will see how it goes.
 
     alter_table(:materialized_matrix) do
-      add_index [:verification_id], name: 'ndx_mm_verif_id'
-      add_index [:pact_revision_number], name: 'ndx_mm_pact_rev_num'
+      add_index [:verification_id], name: "ndx_mm_verif_id"
+      add_index [:pact_revision_number], name: "ndx_mm_pact_rev_num"
     end
 
     create_or_replace_view(:latest_matrix_for_consumer_version_and_provider_version,

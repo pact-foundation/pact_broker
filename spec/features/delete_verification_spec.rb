@@ -1,11 +1,11 @@
-require 'support/test_data_builder'
-require 'pact_broker/api/pact_broker_urls'
+require "support/test_data_builder"
+require "pact_broker/api/pact_broker_urls"
 
 describe "Delete a verification" do
   let!(:verification) do
     TestDataBuilder.new
       .create_pact_with_verification("Foo", "1", "Bar", "2")
-      .create_provider_webhook(event_names: ['provider_verification_published'])
+      .create_provider_webhook(event_names: ["provider_verification_published"])
       .create_triggered_webhook
       .create_webhook_execution
       .and_return(:verification)

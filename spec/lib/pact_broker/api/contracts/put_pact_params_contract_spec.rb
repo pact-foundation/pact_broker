@@ -1,4 +1,4 @@
-require 'pact_broker/api/contracts/put_pact_params_contract'
+require "pact_broker/api/contracts/put_pact_params_contract"
 
 module PactBroker
   module Api
@@ -8,7 +8,7 @@ module PactBroker
           allow(PactBroker.configuration).to receive(:order_versions_by_date).and_return(order_versions_by_date)
         end
 
-        let(:json_content) { {'some' => 'json' }.to_json }
+        let(:json_content) { {"some" => "json" }.to_json }
         let(:pact_params) { Pacts::PactParams.new(attributes) }
         let(:order_versions_by_date) { false }
 
@@ -16,7 +16,7 @@ module PactBroker
           {
             consumer_name: "consumer",
             provider_name: "provider",
-            consumer_version_number: '1.2.3',
+            consumer_version_number: "1.2.3",
             json_content: json_content,
             consumer_name_in_pact: "consumer",
             provider_name_in_pact: "provider"
@@ -51,7 +51,7 @@ module PactBroker
 
           context "with an empty consumer version number" do
             let(:attributes) do
-              valid_attributes.merge(consumer_version_number: '')
+              valid_attributes.merge(consumer_version_number: "")
             end
 
             it "returns an error" do
@@ -61,7 +61,7 @@ module PactBroker
 
           context "with an invalid version number" do
             let(:attributes) do
-              valid_attributes.merge(consumer_version_number: 'blah')
+              valid_attributes.merge(consumer_version_number: "blah")
             end
 
             it "returns an error" do
@@ -74,7 +74,7 @@ module PactBroker
 
             context "with an invalid version number" do
               let(:attributes) do
-                valid_attributes.merge(consumer_version_number: 'blah')
+                valid_attributes.merge(consumer_version_number: "blah")
               end
 
               it "does not return an error" do

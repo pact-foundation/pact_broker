@@ -1,29 +1,29 @@
-require 'spec_helper'
-require 'pact_broker/webhooks/repository'
+require "spec_helper"
+require "pact_broker/webhooks/repository"
 
 module PactBroker
   module Webhooks
     describe Repository do
-      let(:url) { 'http://example.org' }
-      let(:body) { {'some' => 'json' } }
-      let(:headers) { {'Content-Type' => 'application/json', 'Accept' => 'application/json'} }
+      let(:url) { "http://example.org" }
+      let(:body) { {"some" => "json" } }
+      let(:headers) { {"Content-Type" => "application/json", "Accept" => "application/json"} }
       let(:request) do
         Webhooks::WebhookRequestTemplate.new(
-          method: 'post',
+          method: "post",
           url: url,
           headers: headers,
-          username: 'username',
-          password: 'password',
+          username: "username",
+          password: "password",
           body: body)
       end
       let(:event) do
-        PactBroker::Webhooks::WebhookEvent.new(name: 'something_happened')
+        PactBroker::Webhooks::WebhookEvent.new(name: "something_happened")
       end
       let(:events) { [event]}
       let(:webhook) { Domain::Webhook.new(request: request, events: events) }
-      let(:consumer) { td.create_pacticipant('Consumer').and_return(:pacticipant) }
-      let(:provider) { td.create_pacticipant('Provider').and_return(:pacticipant) }
-      let(:uuid) { 'the-uuid' }
+      let(:consumer) { td.create_pacticipant("Consumer").and_return(:pacticipant) }
+      let(:provider) { td.create_pacticipant("Provider").and_return(:pacticipant) }
+      let(:uuid) { "the-uuid" }
       let(:created_webhook_record) { ::DB::PACT_BROKER_DB[:webhooks].order(:id).last }
       let(:created_events) { ::DB::PACT_BROKER_DB[:webhook_events].where(webhook_id: created_webhook_record[:id]).order(:name).all }
       let(:expected_webhook_record) do
@@ -31,7 +31,7 @@ module PactBroker
           uuid: "the-uuid",
           method: "post",
           url: "http://example.org",
-          username: 'username',
+          username: "username",
           password:  "cGFzc3dvcmQ=",
           body: body.to_json,
           consumer_id:  consumer.id,
@@ -71,7 +71,7 @@ module PactBroker
       describe "delete_by_uuid" do
         before do
           Repository.new.create uuid, webhook, consumer, provider
-          Repository.new.create 'another-uuid', webhook, consumer, provider
+          Repository.new.create "another-uuid", webhook, consumer, provider
         end
 
         subject { Repository.new.delete_by_uuid(uuid) }
@@ -207,11 +207,11 @@ module PactBroker
           end
 
           it "returns a webhook with the username set" do
-            expect(subject.request.username).to eq 'username'
+            expect(subject.request.username).to eq "username"
           end
 
           it "returns a webhook with the password set" do
-            expect(subject.request.password).to eq 'password'
+            expect(subject.request.password).to eq "password"
           end
 
           it "returns a webhook with the url set" do
@@ -261,30 +261,30 @@ module PactBroker
             .create_consumer("Foo2")
         end
 
-        let(:uuid) { '1234' }
+        let(:uuid) { "1234" }
         let(:old_webhook_params) do
           {
-            events: [{ name: 'something' }],
+            events: [{ name: "something" }],
             uuid: uuid,
-            method: 'POST',
-            url: 'http://example.org',
+            method: "POST",
+            url: "http://example.org",
             body: '{"foo":1}',
-            headers: {'Content-Type' => 'application/json'},
-            username: 'username',
-            password: 'password'
+            headers: {"Content-Type" => "application/json"},
+            username: "username",
+            password: "password"
           }
         end
         let(:new_request_webhook_params) do
           {
-            method: 'GET',
-            url: 'http://example.com',
-            body: 'foo',
-            headers: {'Content-Type' => 'text/plain'}
+            method: "GET",
+            url: "http://example.com",
+            body: "foo",
+            headers: {"Content-Type" => "text/plain"}
           }
         end
         let(:new_request) { PactBroker::Domain::WebhookRequest.new(new_request_webhook_params) }
         let(:new_event) do
-          PactBroker::Webhooks::WebhookEvent.new(name: 'something_else')
+          PactBroker::Webhooks::WebhookEvent.new(name: "something_else")
         end
         let(:new_consumer) { PactBroker::Domain::Pacticipant.new(name: "Foo2") }
         let(:new_webhook) do
@@ -299,13 +299,13 @@ module PactBroker
 
         it "updates the webhook" do
           expect(subject.uuid).to eq uuid
-          expect(subject.request.method).to eq 'GET'
-          expect(subject.request.url).to eq 'http://example.com'
-          expect(subject.request.body).to eq 'foo'
-          expect(subject.request.headers).to eq 'Content-Type' => 'text/plain'
+          expect(subject.request.method).to eq "GET"
+          expect(subject.request.url).to eq "http://example.com"
+          expect(subject.request.body).to eq "foo"
+          expect(subject.request.headers).to eq "Content-Type" => "text/plain"
           expect(subject.request.username).to eq nil
           expect(subject.request.password).to eq nil
-          expect(subject.events.first.name).to eq 'something_else'
+          expect(subject.events.first.name).to eq "something_else"
           expect(subject.consumer.name).to eq "Foo2"
         end
 
@@ -327,7 +327,7 @@ module PactBroker
         before do
           allow(PactBroker).to receive(:policy_scope!).and_call_original
           Repository.new.create uuid, webhook, consumer, provider
-          Repository.new.create 'some-other-uuid', webhook, consumer, provider
+          Repository.new.create "some-other-uuid", webhook, consumer, provider
         end
 
         subject { Repository.new.find_all }
@@ -477,18 +477,18 @@ module PactBroker
             .create_verification
         end
 
-        let(:event_context) { { 'some' => 'info' } }
+        let(:event_context) { { "some" => "info" } }
 
-        subject { Repository.new.create_triggered_webhook '1234', td.webhook, td.pact, td.verification, 'publication', 'some_event', event_context }
+        subject { Repository.new.create_triggered_webhook "1234", td.webhook, td.pact, td.verification, "publication", "some_event", event_context }
 
         it "creates a TriggeredWebhook" do
           expect(subject.webhook_uuid ).to eq td.webhook.uuid
           expect(subject.consumer).to eq td.consumer
           expect(subject.provider).to eq td.provider
           expect(subject.verification).to eq td.verification
-          expect(subject.trigger_uuid).to eq '1234'
-          expect(subject.trigger_type).to eq 'publication'
-          expect(subject.event_name).to eq 'some_event'
+          expect(subject.trigger_uuid).to eq "1234"
+          expect(subject.trigger_type).to eq "publication"
+          expect(subject.event_name).to eq "some_event"
           expect(subject.event_context).to eq event_context
         end
 
@@ -513,7 +513,7 @@ module PactBroker
         end
 
         context "without a verification" do
-          subject { Repository.new.create_triggered_webhook '1234', td.webhook, td.pact, nil, 'publication', 'some_event', {} }
+          subject { Repository.new.create_triggered_webhook "1234", td.webhook, td.pact, nil, "publication", "some_event", {} }
 
           it "does not set the verification" do
             expect(subject.verification).to be nil
@@ -555,7 +555,7 @@ module PactBroker
             allow(repository).to receive(:logger).and_return(logger)
           end
 
-          let(:logger) { double('logger') }
+          let(:logger) { double("logger") }
 
           it "just logs the error" do
             expect(logger).to receive(:info).with(/triggered webhook with id #{td.triggered_webhook.id}/)
@@ -572,52 +572,52 @@ module PactBroker
             .create_triggered_webhook
             .create_webhook_execution
             .create_pact_with_hierarchy
-            .create_webhook(uuid: '123')
-            .create_triggered_webhook(trigger_uuid: '256', created_at: DateTime.new(2016))
+            .create_webhook(uuid: "123")
+            .create_triggered_webhook(trigger_uuid: "256", created_at: DateTime.new(2016))
             .create_webhook_execution
-            .create_triggered_webhook(trigger_uuid: '332', created_at: DateTime.new(2017))
+            .create_triggered_webhook(trigger_uuid: "332", created_at: DateTime.new(2017))
             .create_webhook_execution
-            .create_webhook(uuid: '987')
-            .create_triggered_webhook(trigger_uuid: '876', created_at: DateTime.new(2017))
+            .create_webhook(uuid: "987")
+            .create_triggered_webhook(trigger_uuid: "876", created_at: DateTime.new(2017))
             .create_webhook_execution
-            .create_triggered_webhook(trigger_uuid: '638', created_at: DateTime.new(2018))
+            .create_triggered_webhook(trigger_uuid: "638", created_at: DateTime.new(2018))
             .create_webhook_execution
         end
 
         subject { Repository.new.find_latest_triggered_webhooks(td.consumer, td.provider) }
 
         it "finds the latest triggered webhooks" do
-          expect(subject.collect(&:trigger_uuid).sort).to eq ['332', '638']
+          expect(subject.collect(&:trigger_uuid).sort).to eq ["332", "638"]
         end
 
         context "when a webhook has been triggered by different events" do
           before do
             td.create_pact_with_hierarchy("Foo2", "1.0.0", "Bar2")
               .create_webhook
-              .create_triggered_webhook(trigger_uuid: '333', event_name: 'foo')
-              .create_triggered_webhook(trigger_uuid: '555', event_name: 'foo')
+              .create_triggered_webhook(trigger_uuid: "333", event_name: "foo")
+              .create_triggered_webhook(trigger_uuid: "555", event_name: "foo")
               .create_webhook_execution
-              .create_triggered_webhook(trigger_uuid: '444', event_name: 'bar')
-              .create_triggered_webhook(trigger_uuid: '777', event_name: 'bar')
+              .create_triggered_webhook(trigger_uuid: "444", event_name: "bar")
+              .create_triggered_webhook(trigger_uuid: "777", event_name: "bar")
               .create_webhook_execution
-              .create_triggered_webhook(trigger_uuid: '111', event_name: nil)
-              .create_triggered_webhook(trigger_uuid: '888', event_name: nil)
+              .create_triggered_webhook(trigger_uuid: "111", event_name: nil)
+              .create_triggered_webhook(trigger_uuid: "888", event_name: nil)
               .create_webhook_execution
           end
 
           it "returns one for each event" do
-            expect(subject.collect(&:trigger_uuid).sort).to eq ['555', '777', '888']
+            expect(subject.collect(&:trigger_uuid).sort).to eq ["555", "777", "888"]
           end
         end
 
         context "when there are two 'latest' triggered webhooks at the same time" do
           before do
-            td.create_triggered_webhook(trigger_uuid: '888', created_at: DateTime.new(2018))
+            td.create_triggered_webhook(trigger_uuid: "888", created_at: DateTime.new(2018))
               .create_webhook_execution
           end
 
           it "returns the one with the bigger ID" do
-            expect(subject.collect(&:trigger_uuid).sort).to eq ['332', '888']
+            expect(subject.collect(&:trigger_uuid).sort).to eq ["332", "888"]
           end
         end
 
@@ -642,26 +642,26 @@ module PactBroker
             .create_webhook_execution
             .create_pact_with_hierarchy
             .create_webhook
-            .create_triggered_webhook(trigger_uuid: '256', created_at: DateTime.new(2016))
+            .create_triggered_webhook(trigger_uuid: "256", created_at: DateTime.new(2016))
             .create_webhook_execution
-            .create_triggered_webhook(trigger_uuid: '332', created_at: DateTime.new(2017))
+            .create_triggered_webhook(trigger_uuid: "332", created_at: DateTime.new(2017))
             .create_webhook_execution
-            .create_provider_webhook(uuid: '987')
-            .create_triggered_webhook(trigger_uuid: '876', created_at: DateTime.new(2017))
+            .create_provider_webhook(uuid: "987")
+            .create_triggered_webhook(trigger_uuid: "876", created_at: DateTime.new(2017))
             .create_webhook_execution
-            .create_triggered_webhook(trigger_uuid: '638', created_at: DateTime.new(2018))
+            .create_triggered_webhook(trigger_uuid: "638", created_at: DateTime.new(2018))
             .create_webhook_execution
             .create_consumer_webhook
-            .create_triggered_webhook(trigger_uuid: '555', created_at: DateTime.new(2017))
+            .create_triggered_webhook(trigger_uuid: "555", created_at: DateTime.new(2017))
             .create_webhook_execution
-            .create_triggered_webhook(trigger_uuid: '777', created_at: DateTime.new(2018))
+            .create_triggered_webhook(trigger_uuid: "777", created_at: DateTime.new(2018))
             .create_webhook_execution
         end
 
         subject { Repository.new.find_latest_triggered_webhooks_for_pact(td.pact) }
 
         it "finds the latest triggered webhooks" do
-          expect(subject.collect(&:trigger_uuid).sort).to eq ['332', '638', '777']
+          expect(subject.collect(&:trigger_uuid).sort).to eq ["332", "638", "777"]
         end
       end
 
@@ -772,7 +772,7 @@ module PactBroker
             td
               .create_pact_with_hierarchy
               .create_verification(provider_version: "1")
-              .create_provider_webhook(event_names: ['provider_verification_published'])
+              .create_provider_webhook(event_names: ["provider_verification_published"])
               .create_triggered_webhook
               .create_webhook_execution
               .and_return(:provider_version)

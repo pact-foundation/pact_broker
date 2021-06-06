@@ -1,8 +1,8 @@
-require 'pact_broker/api/decorators/configuration'
-require 'pact_broker/api/decorators/decorator_context_creator'
-require 'pact_broker/webhooks/execution_configuration_creator'
-require 'pact_broker/errors/error_logger'
-require 'pact_broker/api/resources/error_response_body_generator'
+require "pact_broker/api/decorators/configuration"
+require "pact_broker/api/decorators/decorator_context_creator"
+require "pact_broker/webhooks/execution_configuration_creator"
+require "pact_broker/errors/error_logger"
+require "pact_broker/api/resources/error_response_body_generator"
 
 module PactBroker
   class ApplicationContext

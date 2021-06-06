@@ -1,4 +1,4 @@
-require 'pact_broker/matrix/reason'
+require "pact_broker/matrix/reason"
 
 module PactBroker
   module Api
@@ -40,7 +40,7 @@ module PactBroker
           when PactBroker::Matrix::InteractionsMissingVerifications
             descriptions = reason.interactions.collect do | interaction |
               interaction_description(interaction)
-            end.join('; ')
+            end.join("; ")
             "WARN: Although the verification was reported as successful, the results for #{reason.consumer_selector.description} and #{reason.provider_selector.description} may be missing tests for the following interactions: #{descriptions}"
           when PactBroker::Matrix::IgnoreSelectorDoesNotExist
             "WARN: Cannot ignore #{reason.selector.description}"
@@ -69,13 +69,13 @@ module PactBroker
 
         # TODO move this somewhere else
         def interaction_description(interaction)
-          if interaction['providerState'] && interaction['providerState'] != ''
+          if interaction["providerState"] && interaction["providerState"] != ""
             "#{interaction['description']} given #{interaction['providerState']}"
-          elsif interaction['providerStates'] && interaction['providerStates'].is_a?(Array) && interaction['providerStates'].any?
-            provider_states = interaction['providerStates'].collect{ |ps| ps['name'] }.compact.join(', ')
+          elsif interaction["providerStates"] && interaction["providerStates"].is_a?(Array) && interaction["providerStates"].any?
+            provider_states = interaction["providerStates"].collect{ |ps| ps["name"] }.compact.join(", ")
             "#{interaction['description']} given #{provider_states}"
           else
-            interaction['description']
+            interaction["description"]
           end
         end
       end

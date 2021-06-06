@@ -1,11 +1,11 @@
-require_relative 'base_decorator'
-require 'pact_broker/api/decorators/webhook_request_template_decorator'
-require 'pact_broker/api/decorators/timestamps'
-require 'pact_broker/webhooks/webhook_request_template'
-require 'pact_broker/webhooks/webhook_event'
-require 'pact_broker/api/decorators/basic_pacticipant_decorator'
-require_relative 'pact_pacticipant_decorator'
-require_relative 'pacticipant_decorator'
+require_relative "base_decorator"
+require "pact_broker/api/decorators/webhook_request_template_decorator"
+require "pact_broker/api/decorators/timestamps"
+require "pact_broker/webhooks/webhook_request_template"
+require "pact_broker/webhooks/webhook_event"
+require "pact_broker/api/decorators/basic_pacticipant_decorator"
+require_relative "pact_pacticipant_decorator"
+require_relative "pacticipant_decorator"
 
 module PactBroker
   module Api

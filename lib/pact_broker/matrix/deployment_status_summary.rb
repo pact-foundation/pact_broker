@@ -1,6 +1,6 @@
-require 'pact_broker/logging'
-require 'pact_broker/matrix/reason'
-require 'forwardable'
+require "pact_broker/logging"
+require "pact_broker/matrix/reason"
+require "forwardable"
 
 module PactBroker
   module Matrix

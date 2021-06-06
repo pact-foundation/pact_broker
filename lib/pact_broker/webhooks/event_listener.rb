@@ -1,7 +1,7 @@
-require 'pact_broker/services'
-require 'pact_broker/events/event'
-require 'pact_broker/logging'
-require 'pact_broker/events/publisher'
+require "pact_broker/services"
+require "pact_broker/events/event"
+require "pact_broker/logging"
+require "pact_broker/events/publisher"
 
 module PactBroker
   module Webhooks

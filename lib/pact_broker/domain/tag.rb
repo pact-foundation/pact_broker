@@ -1,6 +1,6 @@
-require 'pact_broker/db'
-require 'pact_broker/repositories/helpers'
-require 'pact_broker/tags/eager_loaders'
+require "pact_broker/db"
+require "pact_broker/repositories/helpers"
+require "pact_broker/tags/eager_loaders"
 
 module PactBroker
   module Domain

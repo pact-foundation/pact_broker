@@ -1,5 +1,5 @@
-require 'pact_broker/events/subscriber'
-require 'pact_broker/events/publisher'
+require "pact_broker/events/subscriber"
+require "pact_broker/events/publisher"
 
 module PactBroker
   module Events

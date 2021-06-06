@@ -1,4 +1,4 @@
-require 'pact_broker/pacts/verifiable_pact_messages'
+require "pact_broker/pacts/verifiable_pact_messages"
 
 module PactBroker
   module Pacts
@@ -10,17 +10,17 @@ module PactBroker
         notices = []
 
         if options[:deprecated]
-          append_notice(notices, 'before_verification', 'WARNING - this version of the Pact library uses a beta version of the API which will be removed in the future. Please upgrade your Pact library. See https://docs.pact.io/pact_broker/advanced_topics/provider_verification_results/#pacts-for-verification for minimum required versions.')
+          append_notice(notices, "before_verification", "WARNING - this version of the Pact library uses a beta version of the API which will be removed in the future. Please upgrade your Pact library. See https://docs.pact.io/pact_broker/advanced_topics/provider_verification_results/#pacts-for-verification for minimum required versions.")
         end
 
-        append_notice(notices, 'before_verification', messages.inclusion_reason)
+        append_notice(notices, "before_verification", messages.inclusion_reason)
 
         if options[:include_pending_status]
-          append_notice(notices, 'before_verification', messages.pending_reason)
-          append_notice(notices, 'after_verification:success_true_published_false', messages.verification_success_true_published_false)
-          append_notice(notices, 'after_verification:success_false_published_false', messages.verification_success_false_published_false)
-          append_notice(notices, 'after_verification:success_true_published_true', messages.verification_success_true_published_true)
-          append_notice(notices, 'after_verification:success_false_published_true', messages.verification_success_false_published_true)
+          append_notice(notices, "before_verification", messages.pending_reason)
+          append_notice(notices, "after_verification:success_true_published_false", messages.verification_success_true_published_false)
+          append_notice(notices, "after_verification:success_false_published_false", messages.verification_success_false_published_false)
+          append_notice(notices, "after_verification:success_true_published_true", messages.verification_success_true_published_true)
+          append_notice(notices, "after_verification:success_false_published_true", messages.verification_success_false_published_true)
         end
         notices
       end

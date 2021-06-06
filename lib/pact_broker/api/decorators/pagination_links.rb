@@ -1,5 +1,5 @@
-require 'roar/decorator'
-require 'roar/json/hal'
+require "roar/decorator"
+require "roar/json/hal"
 
 module PactBroker
   module Api

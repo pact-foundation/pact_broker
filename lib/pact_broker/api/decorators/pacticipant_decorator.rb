@@ -1,10 +1,10 @@
-require_relative 'base_decorator'
-require_relative 'embedded_version_decorator'
-require_relative 'embedded_label_decorator'
-require_relative 'timestamps'
-require 'pact_broker/feature_toggle'
+require_relative "base_decorator"
+require_relative "embedded_version_decorator"
+require_relative "embedded_label_decorator"
+require_relative "timestamps"
+require "pact_broker/feature_toggle"
 
-require 'pact_broker/domain'
+require "pact_broker/domain"
 
 module PactBroker
   module Api
@@ -85,7 +85,7 @@ module PactBroker
         curies do | options |
           [{
             name: :pb,
-            href: options[:base_url] + '/doc/{rel}?context=pacticipant',
+            href: options[:base_url] + "/doc/{rel}?context=pacticipant",
             templated: true
           }]
         end
@@ -93,13 +93,13 @@ module PactBroker
         def to_hash options
           h = super
           dasherized = DasherizedVersionDecorator.new(represented).to_hash(options)
-          if dasherized['_embedded']
-            if dasherized['_embedded']['latest-version']
-              dasherized['_embedded']['latest-version']['title'] = 'DEPRECATED - please use latestVersion'
-              dasherized['_embedded']['latest-version']['name'] = 'DEPRECATED - please use latestVersion'
+          if dasherized["_embedded"]
+            if dasherized["_embedded"]["latest-version"]
+              dasherized["_embedded"]["latest-version"]["title"] = "DEPRECATED - please use latestVersion"
+              dasherized["_embedded"]["latest-version"]["name"] = "DEPRECATED - please use latestVersion"
             end
-            h['_embedded'] ||= {}
-            h['_embedded'].merge!(dasherized['_embedded'])
+            h["_embedded"] ||= {}
+            h["_embedded"].merge!(dasherized["_embedded"])
           end
           h
         end

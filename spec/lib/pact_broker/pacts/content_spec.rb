@@ -1,4 +1,4 @@
-require 'pact_broker/pacts/content'
+require "pact_broker/pacts/content"
 
 module PactBroker
   module Pacts
@@ -6,10 +6,10 @@ module PactBroker
       describe "with_ids" do
         let(:pact_hash) do
           {
-            'ignored' => 'foo',
-            'interactions' => [interaction],
-            'metadata' => {
-              'foo' => 'bar'
+            "ignored" => "foo",
+            "interactions" => [interaction],
+            "metadata" => {
+              "foo" => "bar"
             }
           }
         end
@@ -47,10 +47,10 @@ module PactBroker
         context "when the pact is a message pact" do
           let(:pact_hash) do
             {
-              'ignored' => 'foo',
-              'messages' => [interaction],
-              'metadata' => {
-                'foo' => 'bar'
+              "ignored" => "foo",
+              "messages" => [interaction],
+              "metadata" => {
+                "foo" => "bar"
               }
             }
           end
@@ -76,11 +76,11 @@ module PactBroker
         context "with messages" do
           let(:pact_hash) do
             {
-              'ignored' => 'foo',
-              'messages' => [1],
-              'metadata' => {
-                'pactSpecification' => {
-                  'version' => '1'
+              "ignored" => "foo",
+              "messages" => [1],
+              "metadata" => {
+                "pactSpecification" => {
+                  "version" => "1"
                 }
               }
             }
@@ -88,8 +88,8 @@ module PactBroker
 
           let(:expected_content) do
             {
-              'messages' => [1],
-              'pact_specification_version' => '1'
+              "messages" => [1],
+              "pact_specification_version" => "1"
             }
           end
 
@@ -101,11 +101,11 @@ module PactBroker
         context "with interactions" do
           let(:pact_hash) do
             {
-              'ignored' => 'foo',
-              'interactions' => [1],
-              'metadata' => {
-                'pactSpecification' => {
-                  'version' => '1'
+              "ignored" => "foo",
+              "interactions" => [1],
+              "metadata" => {
+                "pactSpecification" => {
+                  "version" => "1"
                 }
               }
             }
@@ -113,8 +113,8 @@ module PactBroker
 
           let(:expected_content) do
             {
-              'interactions' => [1],
-              'pact_specification_version' => '1'
+              "interactions" => [1],
+              "pact_specification_version" => "1"
             }
           end
 
@@ -126,12 +126,12 @@ module PactBroker
         context "with both messages and interactions, even though this should never happen" do
           let(:pact_hash) do
             {
-              'ignored' => 'foo',
-              'interactions' => [1],
-              'messages' => [2],
-              'metadata' => {
-                'pactSpecification' => {
-                  'version' => '1'
+              "ignored" => "foo",
+              "interactions" => [1],
+              "messages" => [2],
+              "metadata" => {
+                "pactSpecification" => {
+                  "version" => "1"
                 }
               }
             }
@@ -139,9 +139,9 @@ module PactBroker
 
           let(:expected_content) do
             {
-              'interactions' => [1],
-              'messages' => [2],
-              'pact_specification_version' => '1'
+              "interactions" => [1],
+              "messages" => [2],
+              "pact_specification_version" => "1"
             }
           end
 
@@ -153,11 +153,11 @@ module PactBroker
         context "with neither messages nor interactions" do
           let(:pact_hash) do
             {
-              'ignored' => 'foo',
-              'foo' => [1],
-              'metadata' => {
-                'pactSpecification' => {
-                  'version' => '1'
+              "ignored" => "foo",
+              "foo" => [1],
+              "metadata" => {
+                "pactSpecification" => {
+                  "version" => "1"
                 }
               }
             }
@@ -181,47 +181,47 @@ module PactBroker
 
       describe "#pact_specification_version" do
         subject { Content.from_hash(json) }
-        context 'with pactSpecification.version' do
+        context "with pactSpecification.version" do
           let(:json) do
             {
-              'metadata' => {
-                'pactSpecification' => {
-                  'version' => '1'
+              "metadata" => {
+                "pactSpecification" => {
+                  "version" => "1"
                 }
               }
             }
           end
 
-          its(:pact_specification_version) { is_expected.to eq '1' }
+          its(:pact_specification_version) { is_expected.to eq "1" }
         end
 
-        context 'with pact-specification.version' do
+        context "with pact-specification.version" do
           let(:json) do
             {
-              'metadata' => {
-                'pact-specification' => {
-                  'version' => '1'
+              "metadata" => {
+                "pact-specification" => {
+                  "version" => "1"
                 }
               }
             }
           end
 
-          its(:pact_specification_version) { is_expected.to eq '1' }
+          its(:pact_specification_version) { is_expected.to eq "1" }
         end
 
-        context 'with pactSpecificationVersion' do
+        context "with pactSpecificationVersion" do
           let(:json) do
             {
-              'metadata' => {
-                'pactSpecificationVersion' => '1'
+              "metadata" => {
+                "pactSpecificationVersion" => "1"
               }
             }
           end
 
-          its(:pact_specification_version) { is_expected.to eq '1' }
+          its(:pact_specification_version) { is_expected.to eq "1" }
         end
 
-        context 'with an array for content' do
+        context "with an array for content" do
           let(:json) { [] }
 
           its(:pact_specification_version) { is_expected.to eq nil }
@@ -411,13 +411,13 @@ module PactBroker
       describe "interaction_ids" do
         let(:interaction_1) do
           {
-            _id: '1'
+            _id: "1"
           }
         end
 
         let(:interaction_2) do
           {
-            _id: '2'
+            _id: "2"
           }
         end
 
@@ -434,7 +434,7 @@ module PactBroker
 
         subject { Content.from_json(content_hash.to_json) }
 
-        its(:interaction_ids) { is_expected.to eq ['1', '2'] }
+        its(:interaction_ids) { is_expected.to eq ["1", "2"] }
 
         context "when there are no interactions" do
           let(:content_hash) { {} }

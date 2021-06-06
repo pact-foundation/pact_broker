@@ -1,5 +1,5 @@
-require 'pact_broker/repositories/helpers'
-require 'pact_broker/deployments/currently_deployed_version_id'
+require "pact_broker/repositories/helpers"
+require "pact_broker/deployments/currently_deployed_version_id"
 
 module PactBroker
   module Deployments

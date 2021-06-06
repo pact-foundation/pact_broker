@@ -1,4 +1,4 @@
-require 'pact_broker/webhooks/redact_logs'
+require "pact_broker/webhooks/redact_logs"
 
 module PactBroker
   module Webhooks

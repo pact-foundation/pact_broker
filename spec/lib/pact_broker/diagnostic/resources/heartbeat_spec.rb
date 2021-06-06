@@ -1,6 +1,6 @@
-require 'pact_broker/diagnostic/resources/heartbeat'
-require 'pact_broker/diagnostic/app'
-require 'rack/test'
+require "pact_broker/diagnostic/resources/heartbeat"
+require "pact_broker/diagnostic/app"
+require "rack/test"
 
 module PactBroker
   module Diagnostic
@@ -22,11 +22,11 @@ module PactBroker
           end
 
           it "returns application/hal+json" do
-            expect(subject.headers['Content-Type']).to eq "application/hal+json"
+            expect(subject.headers["Content-Type"]).to eq "application/hal+json"
           end
 
           it "returns a link to itself" do
-            expect(parsed_response_body['_links']['self']['href']).to eq "http://example.org/diagnostic/status/heartbeat"
+            expect(parsed_response_body["_links"]["self"]["href"]).to eq "http://example.org/diagnostic/status/heartbeat"
           end
         end
       end

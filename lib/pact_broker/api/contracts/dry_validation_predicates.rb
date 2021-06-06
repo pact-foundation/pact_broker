@@ -1,4 +1,4 @@
-require 'dry-validation'
+require "dry-validation"
 
 module PactBroker
   module Api
@@ -27,7 +27,7 @@ module PactBroker
         end
 
         predicate(:environment_with_name_exists?) do | value |
-          require 'pact_broker/deployments/environment_service'
+          require "pact_broker/deployments/environment_service"
           !!PactBroker::Deployments::EnvironmentService.find_by_name(value)
         end
       end

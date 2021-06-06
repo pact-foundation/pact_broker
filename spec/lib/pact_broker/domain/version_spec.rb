@@ -1,4 +1,4 @@
-require 'pact_broker/domain/version'
+require "pact_broker/domain/version"
 
 module PactBroker
   module Domain
@@ -24,7 +24,7 @@ module PactBroker
               .create_consumer_version("11", tag_names: %w{prod})
           end
 
-          let(:selector) { PactBroker::Matrix::UnresolvedSelector.new(tag: 'prod', latest: true) }
+          let(:selector) { PactBroker::Matrix::UnresolvedSelector.new(tag: "prod", latest: true) }
 
           it "returns the latest prod version for each pacticipant" do
             expect(version_numbers).to eq %w{2 11}
@@ -41,7 +41,7 @@ module PactBroker
               .create_consumer_version("11", tag_names: %w{prod})
           end
 
-          let(:selector) { PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: 'Foo', tag: 'prod', latest: true) }
+          let(:selector) { PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: "Foo", tag: "prod", latest: true) }
 
 
           it "returns the latest prod version for Foo" do
@@ -60,7 +60,7 @@ module PactBroker
               .create_consumer_version("12", tag_names: %w{master})
           end
 
-          let(:selector) { PactBroker::Matrix::UnresolvedSelector.new(tag: 'prod') }
+          let(:selector) { PactBroker::Matrix::UnresolvedSelector.new(tag: "prod") }
 
           it "selects all the production versions without a pacticipant name" do
             expect(version_numbers).to eq %w{1 2 10 11}
@@ -131,7 +131,7 @@ module PactBroker
               .create_consumer_version("3", tag_names: %w{master})
           end
 
-          let(:selector) { PactBroker::Matrix::UnresolvedSelector.new(tag: 'master', max_age: max_age) }
+          let(:selector) { PactBroker::Matrix::UnresolvedSelector.new(tag: "master", max_age: max_age) }
 
           let(:max_age) { 3 }
           let(:four_days_ago) { Date.today - 4 }
@@ -334,8 +334,8 @@ module PactBroker
         end
 
         it "does not allow two versions with the same pacticipant and order" do
-          Sequel::Model.db[:versions].insert(number: '1', order: 0, pacticipant_id: consumer.id, created_at: DateTime.new(2017), updated_at: DateTime.new(2017))
-          expect { Sequel::Model.db[:versions].insert(number: '2', order: 0, pacticipant_id: consumer.id, created_at: DateTime.new(2017), updated_at: DateTime.new(2017)) }
+          Sequel::Model.db[:versions].insert(number: "1", order: 0, pacticipant_id: consumer.id, created_at: DateTime.new(2017), updated_at: DateTime.new(2017))
+          expect { Sequel::Model.db[:versions].insert(number: "2", order: 0, pacticipant_id: consumer.id, created_at: DateTime.new(2017), updated_at: DateTime.new(2017)) }
             .to raise_error(Sequel::UniqueConstraintViolation)
         end
       end

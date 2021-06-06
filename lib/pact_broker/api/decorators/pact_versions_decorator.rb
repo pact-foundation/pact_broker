@@ -1,5 +1,5 @@
-require_relative 'base_decorator'
-require_relative 'pact_version_decorator'
+require_relative "base_decorator"
+require_relative "pact_version_decorator"
 
 module PactBroker
   module Api

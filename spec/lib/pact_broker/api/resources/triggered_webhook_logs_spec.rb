@@ -1,4 +1,4 @@
-require 'pact_broker/api/resources/triggered_webhook_logs'
+require "pact_broker/api/resources/triggered_webhook_logs"
 
 module PactBroker
   module Api

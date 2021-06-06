@@ -1,4 +1,4 @@
-require 'rake/tasklib'
+require "rake/tasklib"
 
 =begin
 
@@ -26,7 +26,7 @@ module PactBroker
           namespace :db do
             desc "Run data migrations for pact broker database"
             task :migrate_data do | _t, _args |
-              require 'pact_broker/db'
+              require "pact_broker/db"
               instance_eval(&block)
               PactBroker::DB.run_data_migrations database_connection
             end

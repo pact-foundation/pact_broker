@@ -1,5 +1,5 @@
-require 'pact_broker/db'
-require 'pact_broker/repositories/helpers'
+require "pact_broker/db"
+require "pact_broker/repositories/helpers"
 
 module PactBroker
   module Tags

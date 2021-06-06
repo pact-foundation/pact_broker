@@ -1,4 +1,4 @@
-require 'spec/support/test_data_builder'
+require "spec/support/test_data_builder"
 
 describe "Get diff between versions" do
 
@@ -9,11 +9,11 @@ describe "Get diff between versions" do
   subject { get path; last_response }
 
   let(:pact_content_version_1) do
-    hash = load_json_fixture('consumer-provider.json')
-    hash['interactions'].first['request']['method'] = 'post'
+    hash = load_json_fixture("consumer-provider.json")
+    hash["interactions"].first["request"]["method"] = "post"
     hash.to_json
   end
-  let(:pact_content_version_2) { load_fixture('consumer-provider.json') }
+  let(:pact_content_version_2) { load_fixture("consumer-provider.json") }
   let(:pact_content_version_3) { pact_content_version_2 }
 
   before do
@@ -31,7 +31,7 @@ describe "Get diff between versions" do
   context "when the versions exist" do
 
     it "returns a 200 text response" do
-      expect(subject.headers['Content-Type']).to eq "text/plain;charset=utf-8"
+      expect(subject.headers["Content-Type"]).to eq "text/plain;charset=utf-8"
     end
 
     it "returns the JSON representation of the diff" do

@@ -1,4 +1,4 @@
-require 'pact_broker/pacts/build_verifiable_pact_notices'
+require "pact_broker/pacts/build_verifiable_pact_notices"
 
 module PactBroker
   module Pacts
@@ -9,18 +9,18 @@ module PactBroker
 
       let(:verifiable_pact_messages) do
         instance_double(VerifiablePactMessages,
-          inclusion_reason: 'the inclusion reason',
-          pending_reason: 'pending reason',
-          verification_success_true_published_false: 'verification_success_true_published_false',
-          verification_success_false_published_false: 'verification_success_false_published_false',
-          verification_success_true_published_true: 'verification_success_true_published_true',
-          verification_success_false_published_true: 'verification_success_false_published_true'
+          inclusion_reason: "the inclusion reason",
+          pending_reason: "pending reason",
+          verification_success_true_published_false: "verification_success_true_published_false",
+          verification_success_false_published_false: "verification_success_false_published_false",
+          verification_success_true_published_true: "verification_success_true_published_true",
+          verification_success_false_published_true: "verification_success_false_published_true"
         )
       end
 
       let(:options) { {} }
-      let(:pact_url) { 'http://pact' }
-      let(:verifiable_pact) { instance_double('PactBroker::Pacts::VerifiablePact') }
+      let(:pact_url) { "http://pact" }
+      let(:verifiable_pact) { instance_double("PactBroker::Pacts::VerifiablePact") }
 
       subject { BuildVerifiablePactNotices.call(verifiable_pact, pact_url, options) }
 
@@ -32,7 +32,7 @@ module PactBroker
               :text => "the inclusion reason"
             },{
               :when => "before_verification",
-              :text => 'pending reason'
+              :text => "pending reason"
             },{
               :when => "after_verification:success_true_published_false",
               :text => "verification_success_true_published_false"

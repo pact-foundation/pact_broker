@@ -1,4 +1,4 @@
-require 'pact_broker/api/resources/can_i_deploy_badge'
+require "pact_broker/api/resources/can_i_deploy_badge"
 
 module PactBroker
   module Api
@@ -22,9 +22,9 @@ module PactBroker
         let(:badge_service) { class_double("PactBroker::Badges::Service").as_stubbed_const }
         let(:matrix_service) { class_double("PactBroker::Matrix::Service").as_stubbed_const }
         let(:version_service) { class_double("PactBroker::Version::Service").as_stubbed_const }
-        let(:results) { double('results', deployable?: true) }
-        let(:pacticipant) { double('pacticipant') }
-        let(:version) { double('version') }
+        let(:results) { double("results", deployable?: true) }
+        let(:pacticipant) { double("pacticipant") }
+        let(:version) { double("version") }
 
         let(:path) { "/pacticipants/Foo/latest-version/main/can-i-deploy/to/prod/badge"}
 

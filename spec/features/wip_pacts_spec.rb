@@ -1,7 +1,7 @@
 RSpec.describe "the lifecycle of a WIP pact" do
-  let(:pact_content_1) { { interactions: [{ some: 'interaction'}] }.to_json }
-  let(:pact_content_2) { { interactions: [{ some: 'other interaction'}] }.to_json }
-  let(:pact_content_3) { { interactions: [{ some: 'other other interaction'}] }.to_json }
+  let(:pact_content_1) { { interactions: [{ some: "interaction"}] }.to_json }
+  let(:pact_content_2) { { interactions: [{ some: "other interaction"}] }.to_json }
+  let(:pact_content_3) { { interactions: [{ some: "other other interaction"}] }.to_json }
   let(:request_headers) { { "CONTENT_TYPE" => "application/json", "HTTP_ACCEPT" => "application/hal+json"} }
   let(:provider_version_number) { "2" }
   let(:pacts_for_verification_request_body) do
@@ -231,8 +231,8 @@ RSpec.describe "the lifecycle of a WIP pact" do
 
           # however feat-x pact is no longer pending because it has a successful verification from master!!!
           # Question: do we want this behaviour? Or should pending use the same logic?
-          expect(wip_pacts_from(pacts_for_verification_response).first['verificationProperties']['wip']).to be true
-          expect(wip_pacts_from(pacts_for_verification_response).first['verificationProperties']['pending']).to be true
+          expect(wip_pacts_from(pacts_for_verification_response).first["verificationProperties"]["wip"]).to be true
+          expect(wip_pacts_from(pacts_for_verification_response).first["verificationProperties"]["pending"]).to be true
 
           # verify pact... success!
 

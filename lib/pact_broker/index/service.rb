@@ -1,10 +1,10 @@
-require 'pact_broker/repositories'
-require 'pact_broker/logging'
-require 'pact_broker/domain/index_item'
-require 'pact_broker/matrix/head_row'
-require 'pact_broker/matrix/aggregated_row'
-require 'pact_broker/repositories/helpers'
-require 'pact_broker/index/page'
+require "pact_broker/repositories"
+require "pact_broker/logging"
+require "pact_broker/domain/index_item"
+require "pact_broker/matrix/head_row"
+require "pact_broker/matrix/aggregated_row"
+require "pact_broker/repositories/helpers"
+require "pact_broker/index/page"
 
 module PactBroker
   module Index
@@ -156,11 +156,11 @@ module PactBroker
 
         latest = base.overall_latest
         ids_query = if options[:tags].is_a?(Array)
-          latest.union(base.latest_for_consumer_tag(options[:tags]))
-        elsif options[:tags]
-          latest.union(base.latest_by_consumer_tag)
-        else
-          latest
+                      latest.union(base.latest_for_consumer_tag(options[:tags]))
+                    elsif options[:tags]
+                      latest.union(base.latest_by_consumer_tag)
+                    else
+                      latest
                     end
 
         query = PactBroker::Pacts::PactPublication.select_all_qualified.where(Sequel[:pact_publications][:id] => ids_query)

@@ -1,5 +1,5 @@
-require 'pact_broker/configuration'
-require 'pact_broker/logging'
+require "pact_broker/configuration"
+require "pact_broker/logging"
 
 module PactBroker
   module Errors

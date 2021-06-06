@@ -13,7 +13,7 @@ RSpec.describe "can i deploy" do
 
   let(:response_body) { JSON.parse(subject.body, symbolize_names: true) }
 
-  subject { get("/can-i-deploy", query, { 'HTTP_ACCEPT' => 'application/hal+json'}) }
+  subject { get("/can-i-deploy", query, { "HTTP_ACCEPT" => "application/hal+json"}) }
 
   it "returns the matrix response" do
     expect(subject).to be_a_hal_json_success_response

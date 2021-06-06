@@ -1,7 +1,7 @@
-require 'spec_helper'
-require 'pact_broker/pacticipants/service'
-require 'pact_broker/domain/tag'
-require 'pact_broker/domain/pact'
+require "spec_helper"
+require "pact_broker/pacticipants/service"
+require "pact_broker/domain/tag"
+require "pact_broker/domain/pact"
 
 module PactBroker
   module Pacticipants
@@ -11,15 +11,15 @@ module PactBroker
       end
 
       let(:td) { TestDataBuilder.new }
-      let(:logger) { double('logger').as_null_object }
+      let(:logger) { double("logger").as_null_object }
 
       subject{ Service }
 
       describe ".messages_for_potential_duplicate_pacticipants" do
 
-        let(:base_url) { 'http://example.org' }
-        let(:fred_duplicates) { [double('Frederich pacticipant')] }
-        let(:mary_dulicates) { [double('Marta pacticipant')] }
+        let(:base_url) { "http://example.org" }
+        let(:fred_duplicates) { [double("Frederich pacticipant")] }
+        let(:mary_dulicates) { [double("Marta pacticipant")] }
 
         before do
           allow(Service).to receive(:find_potential_duplicate_pacticipants).with("Fred").and_return(fred_duplicates)
@@ -59,11 +59,11 @@ module PactBroker
       end
 
       describe ".find_potential_duplicate_pacticipants" do
-        let(:pacticipant_name) { 'pacticipant_name' }
+        let(:pacticipant_name) { "pacticipant_name" }
         let(:duplicates) { ["Fred", "Mary"] }
         let(:pacticipant_names) { double("pacticipant_names") }
-        let(:fred) { double('fred pacticipant')}
-        let(:mary) { double('mary pacticipant')}
+        let(:fred) { double("fred pacticipant")}
+        let(:mary) { double("mary pacticipant")}
         let(:pacticipant_repository) { instance_double(PactBroker::Pacticipants::Repository)}
 
         before do

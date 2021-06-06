@@ -1,4 +1,4 @@
-require 'pact_broker/pacts/pact_publication'
+require "pact_broker/pacts/pact_publication"
 
 module PactBroker
   module Pacts

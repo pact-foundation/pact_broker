@@ -1,5 +1,5 @@
-require 'database_cleaner'
-require 'support/migration_helpers'
+require "database_cleaner"
+require "support/migration_helpers"
 
 RSpec.configure do |config|
 

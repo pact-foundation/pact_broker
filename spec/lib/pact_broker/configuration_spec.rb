@@ -1,7 +1,7 @@
-require 'spec_helper'
-require 'pact_broker/configuration'
-require 'pact_broker/api/renderers/html_pact_renderer'
-require 'pact_broker/config/setting'
+require "spec_helper"
+require "pact_broker/configuration"
+require "pact_broker/api/renderers/html_pact_renderer"
+require "pact_broker/config/setting"
 
 module PactBroker
   describe Configuration do
@@ -21,7 +21,7 @@ module PactBroker
 
       context "when RACK_ENV is not production" do
         before do
-          allow(ENV).to receive(:[]).with("RACK_ENV").and_return('development')
+          allow(ENV).to receive(:[]).with("RACK_ENV").and_return("development")
         end
 
         its(:show_backtrace_in_error_response?) { is_expected.to be true }
@@ -29,7 +29,7 @@ module PactBroker
 
       context "when RACK_ENV is production" do
         before do
-          allow(ENV).to receive(:[]).with("RACK_ENV").and_return('production')
+          allow(ENV).to receive(:[]).with("RACK_ENV").and_return("production")
         end
 
         its(:show_backtrace_in_error_response?) { is_expected.to be false }
@@ -39,8 +39,8 @@ module PactBroker
     context "default configuration" do
       describe ".html_pact_renderer" do
 
-        let(:pact) { double('pact') }
-        let(:options) { double('options') }
+        let(:pact) { double("pact") }
+        let(:options) { double("options") }
 
         it "calls the inbuilt HtmlPactRenderer" do
           expect(PactBroker::Api::Renderers::HtmlPactRenderer).to receive(:call).with(pact, options)
@@ -110,7 +110,7 @@ module PactBroker
         let(:configuration) { PactBroker::Configuration.new }
 
         before do
-          PactBroker::Config::Setting.create(name: 'use_case_sensitive_resource_names', type: 'string', value: 'foo')
+          PactBroker::Config::Setting.create(name: "use_case_sensitive_resource_names", type: "string", value: "foo")
         end
 
         it "loads the configurations from the database" do

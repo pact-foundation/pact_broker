@@ -1,4 +1,4 @@
-require 'support/test_data_builder'
+require "support/test_data_builder"
 
 describe "Creating a webhook" do
 
@@ -10,11 +10,11 @@ describe "Creating a webhook" do
   end
 
   let(:path) { "/webhooks/#{td.webhook.uuid}" }
-  let(:headers) { {'CONTENT_TYPE' => 'application/json'} }
+  let(:headers) { {"CONTENT_TYPE" => "application/json"} }
   let(:response_body) { JSON.parse(last_response.body, symbolize_names: true)}
   let(:webhook_json) do
-    h = load_json_fixture('webhook_valid.json')
-    h['request']['url'] = 'https://bar.com'
+    h = load_json_fixture("webhook_valid.json")
+    h["request"]["url"] = "https://bar.com"
     h.to_json
   end
 
@@ -23,7 +23,7 @@ describe "Creating a webhook" do
   subject { put path, webhook_json, headers; last_response }
 
   context "with invalid attributes" do
-    let(:webhook_json) { '{}' }
+    let(:webhook_json) { "{}" }
 
     it "returns a 400" do
       subject
@@ -36,7 +36,7 @@ describe "Creating a webhook" do
     end
 
     it "does not update the webhook" do
-      expect(reloaded_webhook.request.method).to eq 'POST'
+      expect(reloaded_webhook.request.method).to eq "POST"
     end
   end
 
@@ -50,12 +50,12 @@ describe "Creating a webhook" do
 
     it "returns a JSON Content Type" do
       subject
-      expect(last_response.headers['Content-Type']).to eq 'application/hal+json;charset=utf-8'
+      expect(last_response.headers["Content-Type"]).to eq "application/hal+json;charset=utf-8"
     end
 
     it "updates the webhook" do
       subject
-      expect(reloaded_webhook.request.url).to eq 'https://bar.com'
+      expect(reloaded_webhook.request.url).to eq "https://bar.com"
     end
   end
 end

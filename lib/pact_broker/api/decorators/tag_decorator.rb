@@ -1,6 +1,6 @@
-require_relative 'base_decorator'
-require_relative 'pact_pacticipant_decorator'
-require_relative 'timestamps'
+require_relative "base_decorator"
+require_relative "pact_pacticipant_decorator"
+require_relative "timestamps"
 
 module PactBroker
   module Api
@@ -13,7 +13,7 @@ module PactBroker
 
         link :self do | options |
           {
-            title: 'Tag',
+            title: "Tag",
             name: represented.name,
             href: tag_url(options[:base_url], represented)
           }
@@ -21,7 +21,7 @@ module PactBroker
 
         link :version do | options |
           {
-            title: 'Version',
+            title: "Version",
             name: represented.version.number,
             href: version_url(options.fetch(:base_url), represented.version)
           }
@@ -29,7 +29,7 @@ module PactBroker
 
         link :pacticipant do | options |
           {
-            title: 'Pacticipant',
+            title: "Pacticipant",
             name: represented.version.pacticipant.name,
             href: pacticipant_url(options.fetch(:base_url), represented.version.pacticipant)
           }

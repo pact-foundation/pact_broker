@@ -1,16 +1,16 @@
-require 'pact_broker/repositories/helpers'
-require 'pact_broker/matrix/row'
-require 'pact_broker/matrix/quick_row'
-require 'pact_broker/matrix/every_row'
-require 'pact_broker/matrix/head_row'
-require 'pact_broker/error'
-require 'pact_broker/matrix/query_results'
-require 'pact_broker/matrix/integration'
-require 'pact_broker/matrix/query_results_with_deployment_status_summary'
-require 'pact_broker/matrix/resolved_selector'
-require 'pact_broker/matrix/unresolved_selector'
-require 'pact_broker/verifications/latest_verification_id_for_pact_version_and_provider_version'
-require 'pact_broker/pacts/latest_pact_publications_by_consumer_version'
+require "pact_broker/repositories/helpers"
+require "pact_broker/matrix/row"
+require "pact_broker/matrix/quick_row"
+require "pact_broker/matrix/every_row"
+require "pact_broker/matrix/head_row"
+require "pact_broker/error"
+require "pact_broker/matrix/query_results"
+require "pact_broker/matrix/integration"
+require "pact_broker/matrix/query_results_with_deployment_status_summary"
+require "pact_broker/matrix/resolved_selector"
+require "pact_broker/matrix/unresolved_selector"
+require "pact_broker/verifications/latest_verification_id_for_pact_version_and_provider_version"
+require "pact_broker/pacts/latest_pact_publications_by_consumer_version"
 
 module PactBroker
   module Matrix
@@ -67,7 +67,7 @@ module PactBroker
 
       def find_for_consumer_and_provider pacticipant_1_name, pacticipant_2_name
         selectors = [ UnresolvedSelector.new(pacticipant_name: pacticipant_1_name), UnresolvedSelector.new(pacticipant_name: pacticipant_2_name)]
-        options = { latestby: 'cvpv' }
+        options = { latestby: "cvpv" }
         find(selectors, options)
       end
 
@@ -104,9 +104,9 @@ module PactBroker
         # This needs to be done after the latestby, so can't be done in the db unless
         # the latestby logic is moved to the db
         if options.key?(:success)
-           rows_with_latest_by_applied.select{ |l| options[:success].include?(l.success) }
+          rows_with_latest_by_applied.select{ |l| options[:success].include?(l.success) }
          else
-          rows_with_latest_by_applied
+           rows_with_latest_by_applied
         end
       end
 
@@ -123,9 +123,9 @@ module PactBroker
       def apply_latestby options, lines
         return lines unless options[:latestby]
         group_by_columns = case options[:latestby]
-                           when 'cvpv' then GROUP_BY_PROVIDER_VERSION_NUMBER
-                           when 'cvp' then GROUP_BY_PROVIDER
-                           when 'cp' then GROUP_BY_PACT
+                           when "cvpv" then GROUP_BY_PROVIDER_VERSION_NUMBER
+                           when "cvp" then GROUP_BY_PROVIDER
+                           when "cp" then GROUP_BY_PACT
                            end
 
         # The group with the nil provider_version_numbers will be the results of the left outer join

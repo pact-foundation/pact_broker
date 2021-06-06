@@ -1,10 +1,10 @@
-require 'pact_broker/project_root'
-require 'pact_broker/db/migrate'
-require 'pact_broker/db/version'
-require 'pact_broker/db'
-require 'sequel'
-require 'yaml'
-require_relative 'database/table_dependency_calculator'
+require "pact_broker/project_root"
+require "pact_broker/db/migrate"
+require "pact_broker/db/version"
+require "pact_broker/db"
+require "sequel"
+require "yaml"
+require_relative "database/table_dependency_calculator"
 
 Sequel.extension :migration
 
@@ -52,15 +52,15 @@ module PactBroker
           database.drop_view(view_name, cascade: psql?)
         rescue Sequel::DatabaseError => e
           # Cascade will have deleted some views already with pg
-          raise e unless e.cause.class.name == 'PG::UndefinedTable'
+          raise e unless e.cause.class.name == "PG::UndefinedTable"
         end
       end
     end
 
     def drop_sequences
       if psql?
-        database.run('DROP SEQUENCE verification_number_sequence')
-        database.run('DROP SEQUENCE version_order_sequence')
+        database.run("DROP SEQUENCE verification_number_sequence")
+        database.run("DROP SEQUENCE version_order_sequence")
       end
     end
 
@@ -100,7 +100,7 @@ module PactBroker
 
     def database
       @@database ||= begin
-        require 'db'
+        require "db"
         ::DB.connection_for_env env
       end
     end
@@ -124,38 +124,38 @@ module PactBroker
     end
 
     def ensure_not_production
-      raise "Cannot delete production database using this task" if env == 'production'
+      raise "Cannot delete production database using this task" if env == "production"
     end
 
     def psql?
-      adapter == 'postgres'
+      adapter == "postgres"
     end
 
     def sqlite?
-      adapter == 'sqlite'
+      adapter == "sqlite"
     end
 
     def migrations_dir
-      PactBroker.project_root.join('db','migrations')
+      PactBroker.project_root.join("db","migrations")
     end
 
     def database_file_path
-      configuration_for_env(env)['database']
+      configuration_for_env(env)["database"]
     end
 
     def adapter
-      configuration_for_env(env)['adapter']
+      configuration_for_env(env)["adapter"]
     end
 
     def configuration_for_env env
-      database_yml = PactBroker.project_root.join('config','database.yml')
+      database_yml = PactBroker.project_root.join("config","database.yml")
       config = YAML.load(ERB.new(File.read(database_yml)).result)
-      adapter = ENV.fetch('DATABASE_ADAPTER','default')
+      adapter = ENV.fetch("DATABASE_ADAPTER","default")
       config.fetch(env)[adapter]
     end
 
     def env
-      ENV.fetch('RACK_ENV')
+      ENV.fetch("RACK_ENV")
     end
   end
 end

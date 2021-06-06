@@ -1,5 +1,5 @@
-require_relative 'base_decorator'
-require_relative 'timestamps'
+require_relative "base_decorator"
+require_relative "timestamps"
 
 module PactBroker
   module Api
@@ -19,7 +19,7 @@ module PactBroker
 
         link :self do | options |
           {
-            title: 'Environment',
+            title: "Environment",
             name: represented.name,
             href: environment_url(represented, options[:base_url])
           }

@@ -1,5 +1,5 @@
-require 'pact_broker/db/clean'
-require 'pact_broker/matrix/unresolved_selector'
+require "pact_broker/db/clean"
+require "pact_broker/matrix/unresolved_selector"
 
 IS_MYSQL = !!DB.mysql?
 
@@ -120,8 +120,8 @@ module PactBroker
             PactBroker::Pacts::PactVersion.create(pact_version_params)
           end
 
-          let(:json_content_1) { { interactions: ['a', 'b']}.to_json }
-          let(:json_content_2) { { interactions: ['a', 'c']}.to_json }
+          let(:json_content_1) { { interactions: ["a", "b"]}.to_json }
+          let(:json_content_2) { { interactions: ["a", "c"]}.to_json }
 
           let(:options) { { keep: [latest_dev_selector] } }
 

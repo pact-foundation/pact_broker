@@ -1,5 +1,5 @@
-require 'pact_broker/api/decorators/triggered_webhooks_decorator'
-require 'pact_broker/webhooks/triggered_webhook'
+require "pact_broker/api/decorators/triggered_webhooks_decorator"
+require "pact_broker/webhooks/triggered_webhook"
 
 module PactBroker
   module Api
@@ -15,12 +15,12 @@ module PactBroker
         subject { JSON.parse(json) }
 
         it "includes a self relation" do
-          expect(subject['_links']['self']['title']).to eq "Title"
-          expect(subject['_links']['self']['href']).to eq "http://url"
+          expect(subject["_links"]["self"]["title"]).to eq "Title"
+          expect(subject["_links"]["self"]["href"]).to eq "http://url"
         end
 
         it "includes an embedded list of triggered webhooks" do
-          expect(subject['_embedded']['triggeredWebhooks']).to be_instance_of(Array)
+          expect(subject["_embedded"]["triggeredWebhooks"]).to be_instance_of(Array)
         end
       end
     end

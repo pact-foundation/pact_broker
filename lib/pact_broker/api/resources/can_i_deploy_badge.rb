@@ -1,5 +1,5 @@
-require 'pact_broker/matrix/can_i_deploy_query_schema'
-require 'pact_broker/matrix/parse_can_i_deploy_query'
+require "pact_broker/matrix/can_i_deploy_query_schema"
+require "pact_broker/matrix/parse_can_i_deploy_query"
 
 module PactBroker
   module Api
@@ -9,7 +9,7 @@ module PactBroker
           super
           selector = PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: pacticipant_name, latest: true, tag: identifier_from_path[:tag])
           @options = {
-            latestby: 'cvp',
+            latestby: "cvp",
             latest: true,
             tag: identifier_from_path[:to]
           }
@@ -21,7 +21,7 @@ module PactBroker
         end
 
         def content_types_provided
-          [['image/svg+xml', :to_svg]]
+          [["image/svg+xml", :to_svg]]
         end
 
         def resource_exists?
@@ -42,7 +42,7 @@ module PactBroker
         end
 
         def moved_temporarily?
-          response.headers['Cache-Control'] = 'no-cache'
+          response.headers["Cache-Control"] = "no-cache"
           begin
             if pacticipant
               if version
@@ -76,7 +76,7 @@ module PactBroker
         end
 
         def label
-          lab = request.query['label']
+          lab = request.query["label"]
           lab && !lab.empty? ? lab : nil
         end
       end

@@ -1,10 +1,10 @@
-require 'net/http'
-require 'uri'
-require 'pact_broker/project_root'
-require 'pact_broker/logging'
-require 'pact_broker/configuration'
-require 'pact_broker/build_http_options'
-require 'erb'
+require "net/http"
+require "uri"
+require "pact_broker/project_root"
+require "pact_broker/logging"
+require "pact_broker/configuration"
+require "pact_broker/build_http_options"
+require "erb"
 
 module PactBroker
   module Badges
@@ -51,19 +51,19 @@ module PactBroker
       private
 
       def badge_title pact, label, initials, metadata
-        return 'pact not found' if pact.nil?
+        return "pact not found" if pact.nil?
         consumer_name = prepare_name(pact.consumer_name, initials, metadata[:consumer_tag])
         provider_name = prepare_name(pact.provider_name, initials, metadata[:provider_tag])
-        title = case (label || '').downcase
-          when 'consumer' then consumer_name
-          when 'provider' then provider_name
+        title = case (label || "").downcase
+          when "consumer" then consumer_name
+          when "provider" then provider_name
           else "#{consumer_name}/#{provider_name}"
                 end
         "#{title} pact".downcase
       end
 
       def prepare_name name, initials, tag = nil
-        tag_suffix = tag ? " (#{tag})" : ''
+        tag_suffix = tag ? " (#{tag})" : ""
         if initials
           parts = split_space_dash_underscore(name)
           parts = split_camel_case(name) if parts.size == 1
@@ -79,8 +79,8 @@ module PactBroker
       def split_camel_case name
         name.gsub(/([A-Z]+)([A-Z][a-z])/, '\1_\2')
             .gsub(/([a-z\d])([A-Z])/, '\1_\2')
-            .tr('-', '_')
-            .split('_')
+            .tr("-", "_")
+            .split("_")
       end
 
       def badge_status pseudo_branch_verification_status
@@ -106,7 +106,7 @@ module PactBroker
         uri = pact_verification_badge_url(pact, label, initials, pseudo_branch_verification_status, metadata)
         begin
           response = do_request(uri)
-          response.code == '200' ? response.body : nil
+          response.code == "200" ? response.body : nil
         rescue Net::OpenTimeout => e
           logger.warn "Timeout retrieving badge from #{uri} #{e.class} - #{e.message}"
           nil
@@ -141,7 +141,7 @@ module PactBroker
       def with_cache uri
         if !(response = CACHE[uri])
           response = yield
-          if response.code == '200'
+          if response.code == "200"
             CACHE[uri] = response
           end
         end

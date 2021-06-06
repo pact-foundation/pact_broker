@@ -1,9 +1,9 @@
-require 'pact_broker/tasks'
+require "pact_broker/tasks"
 
 namespace :bundler do
   task :setup do
-    require 'rubygems'
-    require 'bundler/setup'
+    require "rubygems"
+    require "bundler/setup"
   end
 end
 
@@ -12,16 +12,16 @@ namespace :db do
   task :spec do
     Bundler.with_clean_env do
       # todo check for ruby version
-      system('cd db/test/backwards_compatibility && bundle exec rake db:check_backwards_compatibility')
+      system("cd db/test/backwards_compatibility && bundle exec rake db:check_backwards_compatibility")
       success = $?.exitstatus == 0
       exit(1) unless success
     end
   end
 
-  task :env => ['bundler:setup'] do
+  task :env => ["bundler:setup"] do
     # Require RACK_ENV to be set for tasks that will be called in production
-    raise "Please specify RACK_ENV" unless ENV['RACK_ENV']
-    require File.dirname(__FILE__) + '/database.rb'
+    raise "Please specify RACK_ENV" unless ENV["RACK_ENV"]
+    require File.dirname(__FILE__) + "/database.rb"
   end
 
   task :create do
@@ -49,7 +49,7 @@ namespace :db do
 
   namespace :drop do
     desc 'Delete the dev/test database - uses RACK_ENV, defaulting to "development"'
-    task :default => 'db:env' do
+    task :default => "db:env" do
       PactBroker::Database.delete_database_file
     end
 
@@ -62,66 +62,66 @@ namespace :db do
     end
   end
 
-  desc 'Print current schema version'
-  task :version => 'db:env' do
+  desc "Print current schema version"
+  task :version => "db:env" do
     puts "Schema Version: #{PactBroker::Database.version}"
   end
 
-  desc 'Migrate the Database'
-  task :migrate, [:target] => 'db:env' do |_t, args|
+  desc "Migrate the Database"
+  task :migrate, [:target] => "db:env" do |_t, args|
     target = args[:target] ? args[:target].to_i : nil
     PactBroker::Database.migrate(target)
   end
 
-  desc 'Rollback database to specified version'
-  task :rollback, [:target] => 'db:env' do |_t, args|
+  desc "Rollback database to specified version"
+  task :rollback, [:target] => "db:env" do |_t, args|
     args.with_defaults(target: 0)
     PactBroker::Database.migrate(args[:target].to_i)
   end
 
   desc 'Prepare the test database for running specs - RACK_ENV will be hardcoded to "test"'
-  task 'prepare:test' => ['db:set_test_env','db:prepare_dir','db:delete','db:migrate']
+  task "prepare:test" => ["db:set_test_env","db:prepare_dir","db:delete","db:migrate"]
 
   desc 'Reset the database (rollback then migrate) - uses RACK_ENV, defaulting to "development"'
-  task :reset => ['db:rollback', 'db:migrate']
+  task :reset => ["db:rollback", "db:migrate"]
 
   desc 'Delete the dev/test database - uses RACK_ENV, defaulting to "development"'
-  task 'delete' => 'db:env' do
+  task "delete" => "db:env" do
     PactBroker::Database.delete_database_file
   end
 
   # Private: Ensure the dev/test database directory exists
-  task 'prepare_dir' => 'db:env' do
+  task "prepare_dir" => "db:env" do
     PactBroker::Database.ensure_database_dir_exists
   end
 
-  desc 'Annotate the Sequel domain classes with schema information'
+  desc "Annotate the Sequel domain classes with schema information"
   task :annotate do
     begin
       raise "Need to set INSTALL_PG=true" unless ENV["INSTALL_PG"] == "true"
-      ENV['RACK_ENV'] = 'test'
-      ENV['DATABASE_ADAPTER'] = 'docker_postgres'
-      load 'tasks/docker_database.rb'
+      ENV["RACK_ENV"] = "test"
+      ENV["DATABASE_ADAPTER"] = "docker_postgres"
+      load "tasks/docker_database.rb"
       DockerDatabase.stop_and_remove("postgres-for-annotate")
       DockerDatabase.start(name: "postgres-for-annotate", port: "5433")
-      load 'tasks/database.rb'
+      load "tasks/database.rb"
       PactBroker::Database.wait_for_database
       PactBroker::Database.migrate
-      load 'tasks/database/annotate.rb'
-      require 'pact_broker/db'
+      load "tasks/database/annotate.rb"
+      require "pact_broker/db"
       PactBroker::Annotate.call
     ensure
       DockerDatabase.stop_and_remove("postgres-for-annotate")
     end
   end
 
-  task 'docker:start' do
-    load 'tasks/docker_database.rb'
+  task "docker:start" do
+    load "tasks/docker_database.rb"
     DockerDatabase.start(name: "postgres-for-pact-broker", port: "5433")
   end
 
-  task 'docker:stop' do
-    load 'tasks/docker_database.rb'
+  task "docker:stop" do
+    load "tasks/docker_database.rb"
     DockerDatabase.stop_and_remove("postgres-for-pact-broker")
   end
 
@@ -131,19 +131,19 @@ namespace :db do
 
   # Private
   task :set_test_env do
-    ENV['RACK_ENV'] = 'test'
+    ENV["RACK_ENV"] = "test"
   end
 
   task :set_postgres_database_adapter do
-    ENV['DATABASE_ADAPTER'] = 'postgres'
+    ENV["DATABASE_ADAPTER"] = "postgres"
   end
 
   # Private
-  task 'env:nonprod' => ['bundler:setup'] do
+  task "env:nonprod" => ["bundler:setup"] do
     # Allow default RACK_ENV to be set when not in production
-    RACK_ENV = ENV['RACK_ENV'] ||= 'development'
+    RACK_ENV = ENV["RACK_ENV"] ||= "development"
   end
 end
 
-task 'db:env' => 'db:env:nonprod'
-task 'db:migrate' => 'db:prepare_dir'
+task "db:env" => "db:env:nonprod"
+task "db:migrate" => "db:prepare_dir"

@@ -1,7 +1,7 @@
-require 'pact_broker/api/resources/matrix'
-require 'pact_broker/matrix/can_i_deploy_query_schema'
-require 'pact_broker/matrix/parse_can_i_deploy_query'
-require 'pact_broker/messages'
+require "pact_broker/api/resources/matrix"
+require "pact_broker/matrix/can_i_deploy_query_schema"
+require "pact_broker/matrix/parse_can_i_deploy_query"
+require "pact_broker/messages"
 
 module PactBroker
   module Api
@@ -20,7 +20,7 @@ module PactBroker
             set_json_validation_error_messages(errors)
             true
           elsif !pacticipant
-            set_json_validation_error_messages(pacticipant: [message('errors.validation.pacticipant_not_found', name: pacticipant_name)])
+            set_json_validation_error_messages(pacticipant: [message("errors.validation.pacticipant_not_found", name: pacticipant_name)])
             true
           else
             false

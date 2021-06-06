@@ -1,11 +1,11 @@
-require 'pact_broker/domain/index_item'
+require "pact_broker/domain/index_item"
 
 module PactBroker
   module Domain
     describe IndexItem do
       describe "#last_webhook_execution_date" do
-        let(:webhook_execution_1) { double('webhook_execution', created_at: DateTime.new(2013)) }
-        let(:webhook_execution_2) { double('webhook_execution', created_at: DateTime.new(2015)) }
+        let(:webhook_execution_1) { double("webhook_execution", created_at: DateTime.new(2013)) }
+        let(:webhook_execution_2) { double("webhook_execution", created_at: DateTime.new(2015)) }
 
         let(:webhook_executions) { [webhook_execution_1, webhook_execution_2] }
 

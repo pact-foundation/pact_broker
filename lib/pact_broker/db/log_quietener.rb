@@ -4,7 +4,7 @@
 # so that they don't freak newbies out when they start up the
 # broker for the first time.
 
-require 'delegate'
+require "delegate"
 
 module PactBroker
   module DB

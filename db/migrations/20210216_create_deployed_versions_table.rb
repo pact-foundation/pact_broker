@@ -1,6 +1,6 @@
 Sequel.migration do
   change do
-    create_table(:deployed_versions, charset: 'utf8') do
+    create_table(:deployed_versions, charset: "utf8") do
       primary_key :id
       String :uuid, null: false
       foreign_key :version_id, :versions, null: false

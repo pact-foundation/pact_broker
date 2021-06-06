@@ -1,9 +1,9 @@
-require_relative 'base_decorator'
-require_relative 'verifiable_pact_decorator'
-require 'pact_broker/api/pact_broker_urls'
-require 'pact_broker/hash_refinements'
-require 'pact_broker/pacts/selector'
-require 'pact_broker/pacts/selectors'
+require_relative "base_decorator"
+require_relative "verifiable_pact_decorator"
+require "pact_broker/api/pact_broker_urls"
+require "pact_broker/hash_refinements"
+require "pact_broker/pacts/selector"
+require "pact_broker/pacts/selectors"
 
 module PactBroker
   module Api
@@ -22,7 +22,7 @@ module PactBroker
           }
           property :latest,
             setter: ->(fragment:, represented:, **) {
-              represented.latest = (fragment == 'true' || fragment == true)
+              represented.latest = (fragment == "true" || fragment == true)
             }
           property :fallback_tag
           property :fallback_branch
@@ -36,7 +36,7 @@ module PactBroker
 
         property :include_pending_status, default: false,
           setter: ->(fragment:, represented:, **) {
-            represented.include_pending_status = (fragment == 'true' || fragment == true)
+            represented.include_pending_status = (fragment == "true" || fragment == true)
           }
 
         property :include_wip_pacts_since, default: nil,

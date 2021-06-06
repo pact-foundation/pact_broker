@@ -1,6 +1,6 @@
 describe "Update a pacticipant" do
 
-  let(:request_body) { {'repositoryUrl' => 'http://foo'} }
+  let(:request_body) { {"repositoryUrl" => "http://foo"} }
   let(:path) { "/pacticipants/Some%20Consumer" }
   let(:response_body_hash) { JSON.parse(subject.body, symbolize_names: true) }
 
@@ -14,7 +14,7 @@ describe "Update a pacticipant" do
       }
     end
 
-    subject { put(path, request_body_hash.to_json, { 'CONTENT_TYPE' => 'application/json' }) }
+    subject { put(path, request_body_hash.to_json, { "CONTENT_TYPE" => "application/json" }) }
 
     context "when the pacticipant exists" do
       before do
@@ -45,7 +45,7 @@ describe "Update a pacticipant" do
     end
 
     context "with application/merge-patch+json" do
-      subject { put(path, request_body.to_json, {'CONTENT_TYPE' => 'application/merge-patch+json' })  }
+      subject { put(path, request_body.to_json, {"CONTENT_TYPE" => "application/merge-patch+json" })  }
 
       its(:status) { is_expected.to eq 415 }
     end
@@ -53,7 +53,7 @@ describe "Update a pacticipant" do
   end
 
   context "with a PATCH" do
-    subject { patch(path, request_body.to_json, {'CONTENT_TYPE' => 'application/json' })  }
+    subject { patch(path, request_body.to_json, {"CONTENT_TYPE" => "application/json" })  }
 
     context "when the pacticipant exists" do
       before do
@@ -70,7 +70,7 @@ describe "Update a pacticipant" do
       end
 
       it "returns a json body with the updated pacticipant" do
-        expect(subject.headers['Content-Type']).to eq "application/hal+json;charset=utf-8"
+        expect(subject.headers["Content-Type"]).to eq "application/hal+json;charset=utf-8"
       end
     end
 
@@ -79,7 +79,7 @@ describe "Update a pacticipant" do
         td.create_pacticipant("Some Consumer", repository_name: "existing")
       end
 
-      subject { patch(path, request_body.to_json, {'CONTENT_TYPE' => 'application/merge-patch+json' })  }
+      subject { patch(path, request_body.to_json, {"CONTENT_TYPE" => "application/merge-patch+json" })  }
 
       it "returns a 200 OK" do
         puts subject.body unless subject.status == 200
@@ -91,7 +91,7 @@ describe "Update a pacticipant" do
       end
 
       it "returns a json body with the updated pacticipant" do
-        expect(subject.headers['Content-Type']).to eq "application/hal+json;charset=utf-8"
+        expect(subject.headers["Content-Type"]).to eq "application/hal+json;charset=utf-8"
       end
     end
   end

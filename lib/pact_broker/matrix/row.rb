@@ -1,9 +1,9 @@
-require 'pact_broker/repositories/helpers'
-require 'pact_broker/webhooks/latest_triggered_webhook'
-require 'pact_broker/tags/tag_with_latest_flag'
-require 'pact_broker/logging'
-require 'pact_broker/verifications/latest_verification_for_consumer_version_tag'
-require 'pact_broker/verifications/latest_verification_for_consumer_and_provider'
+require "pact_broker/repositories/helpers"
+require "pact_broker/webhooks/latest_triggered_webhook"
+require "pact_broker/tags/tag_with_latest_flag"
+require "pact_broker/logging"
+require "pact_broker/verifications/latest_verification_for_consumer_version_tag"
+require "pact_broker/verifications/latest_verification_for_consumer_and_provider"
 
 # TODO DELETE THIS!!!
 

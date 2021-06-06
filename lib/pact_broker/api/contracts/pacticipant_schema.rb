@@ -1,7 +1,7 @@
-require 'dry-validation'
-require 'pact_broker/api/contracts/dry_validation_workarounds'
-require 'pact_broker/api/contracts/dry_validation_predicates'
-require 'pact_broker/messages'
+require "dry-validation"
+require "pact_broker/api/contracts/dry_validation_workarounds"
+require "pact_broker/api/contracts/dry_validation_predicates"
+require "pact_broker/messages"
 
 module PactBroker
   module Api

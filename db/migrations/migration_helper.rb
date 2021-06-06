@@ -23,7 +23,7 @@ module PactBroker
     end
 
     def postgres?
-      adapter == 'postgres'
+      adapter == "postgres"
     end
 
     def adapter
@@ -39,8 +39,8 @@ module PactBroker
     end
 
     def sqlite_safe string
-      if adapter == 'sqlite'
-        string.gsub(/(?:\b|")order(?:"|\b)/, '`order`')
+      if adapter == "sqlite"
+        string.gsub(/(?:\b|")order(?:"|\b)/, "`order`")
       else
         string
       end

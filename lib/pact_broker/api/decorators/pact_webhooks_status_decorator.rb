@@ -1,7 +1,7 @@
-require_relative 'base_decorator'
-require_relative 'timestamps'
-require_relative 'pact_version_decorator'
-require_relative 'triggered_webhook_decorator'
+require_relative "base_decorator"
+require_relative "timestamps"
+require_relative "pact_version_decorator"
+require_relative "triggered_webhook_decorator"
 
 module PactBroker
   module Api

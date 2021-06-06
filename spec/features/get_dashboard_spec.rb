@@ -23,7 +23,7 @@ describe "Get dashboard" do
   end
 
   it "returns a list of items" do
-    items = JSON.parse(subject.body)['items']
+    items = JSON.parse(subject.body)["items"]
     expect(items).to be_instance_of(Array)
   end
 end

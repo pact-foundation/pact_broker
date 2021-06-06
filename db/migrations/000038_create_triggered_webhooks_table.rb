@@ -1,6 +1,6 @@
 Sequel.migration do
   change do
-    create_table(:triggered_webhooks, charset: 'utf8') do
+    create_table(:triggered_webhooks, charset: "utf8") do
       primary_key :id
       String :trigger_uuid, null: false
       String :trigger_type, null: false # publication or manual
@@ -12,8 +12,8 @@ Sequel.migration do
       String :status, null: false
       DateTime :created_at, null: false
       DateTime :updated_at, null: false
-      index [:webhook_id, :trigger_uuid], unique: true, name: 'uq_triggered_webhook_wi'
-      index [:pact_publication_id, :webhook_id, :trigger_uuid], unique: true, name: 'uq_triggered_webhook_ppi_wi'
+      index [:webhook_id, :trigger_uuid], unique: true, name: "uq_triggered_webhook_wi"
+      index [:pact_publication_id, :webhook_id, :trigger_uuid], unique: true, name: "uq_triggered_webhook_ppi_wi"
     end
   end
 end

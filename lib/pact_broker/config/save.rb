@@ -1,7 +1,7 @@
-require 'pact_broker/configuration'
-require 'pact_broker/logging'
-require 'pact_broker/config/setting'
-require 'pact_broker/config/repository'
+require "pact_broker/configuration"
+require "pact_broker/logging"
+require "pact_broker/config/setting"
+require "pact_broker/config/repository"
 
 module PactBroker
   module Config

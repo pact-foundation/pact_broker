@@ -1,4 +1,4 @@
-require 'pact_broker/string_refinements'
+require "pact_broker/string_refinements"
 
 module PactBroker
   module Api
@@ -16,7 +16,7 @@ module PactBroker
           elsif overrides[name].is_a?(Class)
             overrides[name]
           else
-           Object.const_get("PactBroker::Api::Decorators::#{name.to_s.camelcase(true)}")
+            Object.const_get("PactBroker::Api::Decorators::#{name.to_s.camelcase(true)}")
           end
         end
 

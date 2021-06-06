@@ -1,5 +1,5 @@
-require 'pact_broker/api/resources/matrix'
-require 'pact_broker/matrix/service'
+require "pact_broker/api/resources/matrix"
+require "pact_broker/matrix/service"
 
 module PactBroker
   module Api
@@ -14,12 +14,12 @@ module PactBroker
         let(:td) { TestDataBuilder.new }
         let(:path) { "/matrix" }
         let(:json_response_body) { JSON.parse(subject.body, symbolize_names: true) }
-        let(:params) { {q: [{pacticipant: 'Foo', version: '1'}, {pacticipant: 'Bar', version: '2'}]} }
+        let(:params) { {q: [{pacticipant: "Foo", version: "1"}, {pacticipant: "Bar", version: "2"}]} }
         let(:error_messages) { [] }
-        let(:selectors) { double('selectors') }
-        let(:options) { double('options') }
+        let(:selectors) { double("selectors") }
+        let(:options) { double("options") }
 
-        subject { get path, params, {'Content-Type' => 'application/hal+json'}; last_response }
+        subject { get path, params, {"Content-Type" => "application/hal+json"}; last_response }
 
         it "validates the selectors" do
           expect(PactBroker::Matrix::Service).to receive(:validate_selectors).with(selectors, options)
@@ -27,13 +27,13 @@ module PactBroker
         end
 
         context "when a validation error occurs" do
-          let(:error_messages) { ['foo'] }
+          let(:error_messages) { ["foo"] }
           it "returns a 400 status" do
             expect(subject.status).to eq 400
           end
 
           it "returns error messages" do
-            expect(json_response_body[:errors]).to eq ['foo']
+            expect(json_response_body[:errors]).to eq ["foo"]
           end
         end
       end

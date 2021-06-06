@@ -1,6 +1,6 @@
 Sequel.migration do
   change do
-    create_table(:currently_deployed_version_ids, charset: 'utf8') do
+    create_table(:currently_deployed_version_ids, charset: "utf8") do
       primary_key :id
       String :target_for_index, null: false
       foreign_key :pacticipant_id, :pacticipants, null: false, on_delete: :cascade

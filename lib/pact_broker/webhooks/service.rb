@@ -1,21 +1,21 @@
-require 'delegate'
-require 'pact_broker/repositories'
-require 'pact_broker/services'
-require 'pact_broker/logging'
-require 'base64'
-require 'securerandom'
-require 'pact_broker/webhooks/job'
-require 'pact_broker/webhooks/triggered_webhook'
-require 'pact_broker/webhooks/status'
-require 'pact_broker/webhooks/webhook_event'
-require 'pact_broker/verifications/placeholder_verification'
-require 'pact_broker/pacts/placeholder_pact'
-require 'pact_broker/api/decorators/webhook_decorator'
-require 'pact_broker/hash_refinements'
-require 'pact_broker/webhooks/execution_configuration'
-require 'pact_broker/messages'
-require 'pact_broker/webhooks/pact_and_verification_parameters'
-require 'pact_broker/feature_toggle'
+require "delegate"
+require "pact_broker/repositories"
+require "pact_broker/services"
+require "pact_broker/logging"
+require "base64"
+require "securerandom"
+require "pact_broker/webhooks/job"
+require "pact_broker/webhooks/triggered_webhook"
+require "pact_broker/webhooks/status"
+require "pact_broker/webhooks/webhook_event"
+require "pact_broker/verifications/placeholder_verification"
+require "pact_broker/pacts/placeholder_pact"
+require "pact_broker/api/decorators/webhook_decorator"
+require "pact_broker/hash_refinements"
+require "pact_broker/webhooks/execution_configuration"
+require "pact_broker/messages"
+require "pact_broker/webhooks/pact_and_verification_parameters"
+require "pact_broker/feature_toggle"
 
 module PactBroker
   module Webhooks
@@ -105,21 +105,21 @@ module PactBroker
       # TODO implement proper 'secrets' management.
       def maintain_redacted_params(webhook, params)
         if webhook.request.password && password_key_does_not_exist_or_is_starred?(params)
-          params['request']['password'] = webhook.request.password
+          params["request"]["password"] = webhook.request.password
         end
 
-        new_headers = params['request']['headers'] ||= {}
+        new_headers = params["request"]["headers"] ||= {}
         existing_headers = webhook.request.headers
         starred_new_headers = new_headers.select { |_key, value| value =~ /^\**$/ }
         starred_new_headers.each do | (key, _value) |
           new_headers[key] = existing_headers[key]
         end
-        params['request']['headers'] = new_headers
+        params["request"]["headers"] = new_headers
         params
       end
 
       def password_key_does_not_exist_or_is_starred?(params)
-        !params['request'].key?('password') || params.dig('request','password') =~ /^\**$/
+        !params["request"].key?("password") || params.dig("request","password") =~ /^\**$/
       end
     end
   end

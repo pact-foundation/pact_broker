@@ -1,7 +1,7 @@
-require 'pact_broker/api/decorators/matrix_decorator'
-require 'pact_broker/matrix/query_results_with_deployment_status_summary'
-require 'pact_broker/matrix/deployment_status_summary'
-require 'pact_broker/matrix/quick_row'
+require "pact_broker/api/decorators/matrix_decorator"
+require "pact_broker/matrix/query_results_with_deployment_status_summary"
+require "pact_broker/matrix/deployment_status_summary"
+require "pact_broker/matrix/quick_row"
 
 module PactBroker
   module Api
@@ -9,14 +9,14 @@ module PactBroker
       describe MatrixDecorator do
         describe "to_json" do
           before do
-            allow_any_instance_of(ReasonDecorator).to receive(:to_s).and_return('foo')
+            allow_any_instance_of(ReasonDecorator).to receive(:to_s).and_return("foo")
           end
           let(:verification_date) { DateTime.new(2017, 12, 31) }
           let(:pact_created_at) { DateTime.new(2017, 1, 1) }
           let(:row_1_success) { true }
           let(:row_2_success) { true }
           let(:row_1) do
-            instance_double('PactBroker::Matrix::QuickRow',
+            instance_double("PactBroker::Matrix::QuickRow",
               {
                 consumer_name: "Consumer",
                 consumer_version_number: "1.0.0",
@@ -36,7 +36,7 @@ module PactBroker
           end
 
           let(:row_2) do
-            instance_double('PactBroker::Matrix::QuickRow',
+            instance_double("PactBroker::Matrix::QuickRow",
               {
                 consumer_name: "Consumer",
                 consumer_version_number: "1.0.0",
@@ -56,27 +56,27 @@ module PactBroker
 
           let(:consumer_hash) do
             {
-              name: 'Consumer',
+              name: "Consumer",
               _links: {
                 self: {
-                  href: 'http://example.org/pacticipants/Consumer'
+                  href: "http://example.org/pacticipants/Consumer"
                 }
               },
               version: {
-                number: '1.0.0',
-                branch: 'main',
+                number: "1.0.0",
+                branch: "main",
                 _links: {
                   self: {
-                    href: 'http://example.org/pacticipants/Consumer/versions/1.0.0'
+                    href: "http://example.org/pacticipants/Consumer/versions/1.0.0"
                   }
                 },
                 tags: [
                   {
-                    name: 'prod',
+                    name: "prod",
                     latest: true,
                     _links: {
                       self: {
-                        href: 'http://example.org/pacticipants/Consumer/versions/1.0.0/tags/prod'
+                        href: "http://example.org/pacticipants/Consumer/versions/1.0.0/tags/prod"
                       }
                     }
                   }
@@ -87,27 +87,27 @@ module PactBroker
 
           let(:provider_hash) do
             {
-              name: 'Provider',
+              name: "Provider",
               _links: {
                 self: {
-                  href: 'http://example.org/pacticipants/Provider'
+                  href: "http://example.org/pacticipants/Provider"
                 }
               },
               version: {
-                number: '4.5.6',
-                branch: 'feat/x',
+                number: "4.5.6",
+                branch: "feat/x",
                 _links: {
                   self: {
-                    href: 'http://example.org/pacticipants/Provider/versions/4.5.6'
+                    href: "http://example.org/pacticipants/Provider/versions/4.5.6"
                   }
                 },
                 tags: [
                   {
-                    name: 'master',
+                    name: "master",
                     latest: false,
                     _links: {
                       self: {
-                        href: 'http://example.org/pacticipants/Provider/versions/4.5.6/tags/master'
+                        href: "http://example.org/pacticipants/Provider/versions/4.5.6/tags/master"
                       }
                     }
                   }
@@ -156,7 +156,7 @@ module PactBroker
           end
 
           let(:query_results) do
-            double('QueryResults',
+            double("QueryResults",
               considered_rows: [row_1, row_2],
               ignored_rows: ignored_rows,
               selectors: selectors,
@@ -173,12 +173,12 @@ module PactBroker
           let(:resolved_selectors) { nil }
           let(:counts) { { success: 1 } }
           let(:deployment_status_summary) do
-            instance_double('PactBroker::Matrix::DeploymentStatusSummary', reasons: [reason_1, reason_2], deployable?: deployable, counts: counts)
+            instance_double("PactBroker::Matrix::DeploymentStatusSummary", reasons: [reason_1, reason_2], deployable?: deployable, counts: counts)
           end
           let(:reason_1) { instance_double("PactBroker::Matrix::Reason", type: "info") }
           let(:reason_2) { instance_double("PactBroker::Matrix::Reason", type: "warning") }
           let(:deployable) { true }
-          let(:json) { MatrixDecorator.new(query_results_with_deployment_status_summary).to_json(user_options: { base_url: 'http://example.org' }) }
+          let(:json) { MatrixDecorator.new(query_results_with_deployment_status_summary).to_json(user_options: { base_url: "http://example.org" }) }
           let(:parsed_json) { JSON.parse(json, symbolize_names: true) }
 
           it "includes the consumer details" do

@@ -1,6 +1,6 @@
-require_relative 'base_decorator'
-require_relative 'version_decorator'
-require_relative 'pagination_links'
+require_relative "base_decorator"
+require_relative "version_decorator"
+require_relative "pagination_links"
 
 module PactBroker
   module Api
@@ -38,7 +38,7 @@ module PactBroker
         link :pacticipant do | context |
           {
             href: pacticipant_url(context[:base_url], OpenStruct.new(name: context[:pacticipant_name])),
-            title: 'Deprecated - please use pb:pacticipant'
+            title: "Deprecated - please use pb:pacticipant"
           }
         end
 
@@ -46,7 +46,7 @@ module PactBroker
           represented.collect do | version |
             {
               :href => version_url(context[:base_url], version),
-              :title => 'Deprecated - please use pb:versions'
+              :title => "Deprecated - please use pb:versions"
             }
           end
         end

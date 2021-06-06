@@ -1,6 +1,6 @@
-require 'pact_broker/certificates/certificate'
-require 'pact_broker/logging'
-require 'openssl'
+require "pact_broker/certificates/certificate"
+require "pact_broker/logging"
+require "openssl"
 
 module PactBroker
   module Certificates
