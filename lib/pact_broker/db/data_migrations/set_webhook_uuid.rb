@@ -1,6 +1,6 @@
-require 'pact_broker/db/data_migrations/helpers'
-require 'sequel/extensions/core_refinements'
-require 'securerandom'
+require "pact_broker/db/data_migrations/helpers"
+require "sequel/extensions/core_refinements"
+require "securerandom"
 
 module PactBroker
   module DB
