@@ -125,8 +125,10 @@ end
 #  verification_id     | integer                     |
 #  event_name          | text                        |
 #  event_context       | text                        |
+#  uuid                | text                        |
 # Indexes:
 #  triggered_webhooks_pkey                      | PRIMARY KEY btree (id)
+#  triggered_webhooks_uuid                      | UNIQUE btree (uuid)
 #  uq_triggered_webhook_ppi_wi                  | UNIQUE btree (pact_publication_id, webhook_id, trigger_uuid)
 #  uq_triggered_webhook_wi                      | UNIQUE btree (webhook_id, trigger_uuid)
 #  triggered_webhooks_consumer_id_index         | btree (consumer_id)

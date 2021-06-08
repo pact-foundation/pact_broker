@@ -11,7 +11,7 @@ module PactBroker
             status: status,
             failure?: failure,
             retrying?: retrying,
-            trigger_uuid: "1234",
+            uuid: "1234",
             webhook_uuid: "4321",
             request_description: "GET http://foo",
             pact_publication: pact,

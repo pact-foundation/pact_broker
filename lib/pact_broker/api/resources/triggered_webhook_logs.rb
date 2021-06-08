@@ -20,8 +20,8 @@ module PactBroker
 
         def to_text
           # Too simple to bother putting into a service
-          if triggered_webhook.webhook_executions.any?
-            triggered_webhook.webhook_executions.collect(&:logs).join("\n")
+          if webhook_executions.any?
+            webhook_executions.collect(&:logs).join("\n")
           else
             "Webhook has not executed yet. Please retry in a few seconds."
           end
@@ -37,11 +37,12 @@ module PactBroker
 
         private
 
+        def webhook_executions
+          @webhook_executions ||= triggered_webhook.webhook_executions
+        end
+
         def triggered_webhook
-          @triggered_webhook ||= begin
-            criteria = { webhook_uuid: identifier_from_path[:uuid], trigger_uuid: identifier_from_path[:trigger_uuid] }.compact
-            PactBroker::Webhooks::TriggeredWebhook.where(criteria).single_record
-          end
+          @triggered_webhook ||= PactBroker::Webhooks::TriggeredWebhook.find(uuid: identifier_from_path[:uuid])
         end
       end
     end

@@ -24,6 +24,7 @@ module PactBroker
         DataMigrations::SetExtraColumnsForTags.call(database_connection)
         DataMigrations::SetPacticipantDisplayName.call(database_connection)
         DataMigrations::SetPacticipantMainBranch.call(database_connection)
+        DataMigrations::SetWebhookUuid.call(database_connection)
       end
     end
   end

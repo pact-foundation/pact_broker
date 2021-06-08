@@ -486,7 +486,7 @@ module PactBroker
           expect(subject.consumer).to eq td.consumer
           expect(subject.provider).to eq td.provider
           expect(subject.verification).to eq td.verification
-          expect(subject.trigger_uuid).to eq "1234"
+          expect(subject.uuid).to eq "1234"
           expect(subject.trigger_type).to eq "publication"
           expect(subject.event_name).to eq "some_event"
           expect(subject.event_context).to eq event_context
@@ -573,51 +573,53 @@ module PactBroker
             .create_webhook_execution
             .create_pact_with_hierarchy
             .create_webhook(uuid: "123")
-            .create_triggered_webhook(trigger_uuid: "256", created_at: DateTime.new(2016))
+            .create_triggered_webhook(uuid: "256", created_at: DateTime.new(2016))
             .create_webhook_execution
-            .create_triggered_webhook(trigger_uuid: "332", created_at: DateTime.new(2017))
+            .create_triggered_webhook(uuid: "332", created_at: DateTime.new(2017))
             .create_webhook_execution
             .create_webhook(uuid: "987")
-            .create_triggered_webhook(trigger_uuid: "876", created_at: DateTime.new(2017))
+            .create_triggered_webhook(uuid: "876", created_at: DateTime.new(2017))
             .create_webhook_execution
-            .create_triggered_webhook(trigger_uuid: "638", created_at: DateTime.new(2018))
+            .create_triggered_webhook(uuid: "638", created_at: DateTime.new(2018))
             .create_webhook_execution
         end
 
         subject { Repository.new.find_latest_triggered_webhooks(td.consumer, td.provider) }
 
         it "finds the latest triggered webhooks" do
-          expect(subject.collect(&:trigger_uuid).sort).to eq ["332", "638"]
+          expect(subject.collect(&:uuid).sort).to eq ["332", "638"]
         end
 
         context "when a webhook has been triggered by different events" do
           before do
             td.create_pact_with_hierarchy("Foo2", "1.0.0", "Bar2")
               .create_webhook
-              .create_triggered_webhook(trigger_uuid: "333", event_name: "foo")
-              .create_triggered_webhook(trigger_uuid: "555", event_name: "foo")
+              .create_triggered_webhook(uuid: "333", event_name: "foo")
+              .create_triggered_webhook(uuid: "555", event_name: "foo")
               .create_webhook_execution
-              .create_triggered_webhook(trigger_uuid: "444", event_name: "bar")
-              .create_triggered_webhook(trigger_uuid: "777", event_name: "bar")
+              .create_triggered_webhook(uuid: "444", event_name: "bar")
+              .create_triggered_webhook(uuid: "777", event_name: "bar")
               .create_webhook_execution
-              .create_triggered_webhook(trigger_uuid: "111", event_name: nil)
-              .create_triggered_webhook(trigger_uuid: "888", event_name: nil)
+              .create_triggered_webhook(uuid: "111", event_name: nil)
+              .create_triggered_webhook(uuid: "888", event_name: nil)
               .create_webhook_execution
           end
 
           it "returns one for each event" do
-            expect(subject.collect(&:trigger_uuid).sort).to eq ["555", "777", "888"]
+            # ignoring the ones with nil event_names because they're old data, and shouldn't be
+            # considered as a separate "group"
+            expect(subject.collect(&:uuid).sort).to eq ["555", "777"]
           end
         end
 
         context "when there are two 'latest' triggered webhooks at the same time" do
           before do
-            td.create_triggered_webhook(trigger_uuid: "888", created_at: DateTime.new(2018))
+            td.create_triggered_webhook(uuid: "888", created_at: DateTime.new(2018))
               .create_webhook_execution
           end
 
           it "returns the one with the bigger ID" do
-            expect(subject.collect(&:trigger_uuid).sort).to eq ["332", "888"]
+            expect(subject.collect(&:uuid).sort).to eq ["332", "888"]
           end
         end
 
@@ -642,26 +644,26 @@ module PactBroker
             .create_webhook_execution
             .create_pact_with_hierarchy
             .create_webhook
-            .create_triggered_webhook(trigger_uuid: "256", created_at: DateTime.new(2016))
+            .create_triggered_webhook(uuid: "256", created_at: DateTime.new(2016))
             .create_webhook_execution
-            .create_triggered_webhook(trigger_uuid: "332", created_at: DateTime.new(2017))
+            .create_triggered_webhook(uuid: "332", created_at: DateTime.new(2017))
             .create_webhook_execution
-            .create_provider_webhook(uuid: "987")
-            .create_triggered_webhook(trigger_uuid: "876", created_at: DateTime.new(2017))
+            .create_provider_webhook(uuidd: "987")
+            .create_triggered_webhook(uuid: "876", created_at: DateTime.new(2017))
             .create_webhook_execution
-            .create_triggered_webhook(trigger_uuid: "638", created_at: DateTime.new(2018))
+            .create_triggered_webhook(uuid: "638", created_at: DateTime.new(2018))
             .create_webhook_execution
             .create_consumer_webhook
-            .create_triggered_webhook(trigger_uuid: "555", created_at: DateTime.new(2017))
+            .create_triggered_webhook(uuid: "555", created_at: DateTime.new(2017))
             .create_webhook_execution
-            .create_triggered_webhook(trigger_uuid: "777", created_at: DateTime.new(2018))
+            .create_triggered_webhook(uuid: "777", created_at: DateTime.new(2018))
             .create_webhook_execution
         end
 
         subject { Repository.new.find_latest_triggered_webhooks_for_pact(td.pact) }
 
         it "finds the latest triggered webhooks" do
-          expect(subject.collect(&:trigger_uuid).sort).to eq ["332", "638", "777"]
+          expect(subject.collect(&:uuid).sort).to eq ["332", "638", "777"]
         end
       end
 
@@ -670,18 +672,18 @@ module PactBroker
           td
             .create_pact_with_hierarchy("Foo", "1", "Bar")
             .create_webhook
-            .create_triggered_webhook(trigger_uuid: "1")
+            .create_triggered_webhook(uuid: "1")
             .create_webhook_execution
             .create_consumer_version("2")
             .create_pact
-            .create_triggered_webhook(trigger_uuid: "2")
+            .create_triggered_webhook(uuid: "2")
             .create_webhook_execution
         end
 
         subject { Repository.new.find_triggered_webhooks_for_pact(td.pact) }
 
         it "finds the triggered webhooks" do
-          expect(subject.collect(&:trigger_uuid).sort).to eq ["2"]
+          expect(subject.collect(&:uuid).sort).to eq ["2"]
         end
       end
 
@@ -691,15 +693,15 @@ module PactBroker
             .create_pact_with_hierarchy("Foo", "1", "Bar")
             .create_verification_webhook
             .create_verification(provider_version: "1")
-            .create_triggered_webhook(trigger_uuid: "1")
+            .create_triggered_webhook(uuid: "1")
             .create_verification(provider_version: "2", number: 2)
-            .create_triggered_webhook(trigger_uuid: "2")
+            .create_triggered_webhook(uuid: "2")
         end
 
         subject { Repository.new.find_triggered_webhooks_for_verification(td.verification) }
 
         it "finds the triggered webhooks" do
-          expect(subject.collect(&:trigger_uuid).sort).to eq ["2"]
+          expect(subject.collect(&:uuid).sort).to eq ["2"]
         end
       end
 
