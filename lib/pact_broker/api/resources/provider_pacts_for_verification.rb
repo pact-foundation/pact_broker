@@ -33,6 +33,10 @@ module PactBroker
           true
         end
 
+        def read_methods
+          super + %w{POST}
+        end
+
         private
 
         def pacts
