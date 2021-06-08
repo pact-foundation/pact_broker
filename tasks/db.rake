@@ -95,23 +95,18 @@ namespace :db do
     PactBroker::Database.ensure_database_dir_exists
   end
 
-  desc "Annotate the Sequel domain classes with schema information"
+  desc "Annotate the Sequel domain classes with schema information - start the postgres db with script/docker/db-start.sh first"
   task :annotate do
     begin
       raise "Need to set INSTALL_PG=true" unless ENV["INSTALL_PG"] == "true"
       ENV["RACK_ENV"] = "test"
       ENV["DATABASE_ADAPTER"] = "docker_postgres"
-      load "tasks/docker_database.rb"
-      DockerDatabase.stop_and_remove("postgres-for-annotate")
-      DockerDatabase.start(name: "postgres-for-annotate", port: "5433")
       load "tasks/database.rb"
       PactBroker::Database.wait_for_database
       PactBroker::Database.migrate
       load "tasks/database/annotate.rb"
       require "pact_broker/db"
       PactBroker::Annotate.call
-    ensure
-      DockerDatabase.stop_and_remove("postgres-for-annotate")
     end
   end
 
