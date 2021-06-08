@@ -18,7 +18,7 @@ module PactBroker
         end
 
         def allowed_methods
-          ["GET", "POST", "OPTIONS", "OPTIONS"]
+          ["GET", "POST", "OPTIONS"]
         end
 
         def create_path

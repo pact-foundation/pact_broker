@@ -47,11 +47,15 @@ module PactBroker
         end
 
         def to_json
-          decorator_class(:webhooks_decorator).new(webhooks).to_json(decorator_options(resource_title: "Pact webhooks"))
+          decorator_class(:webhooks_decorator).new(webhooks).to_json(decorator_options(resource_title: "Webhooks"))
         end
 
         def policy_name
           :'webhooks::webhooks'
+        end
+
+        def policy_record
+          request.post? ? webhook : nil
         end
 
         private

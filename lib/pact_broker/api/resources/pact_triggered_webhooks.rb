@@ -22,7 +22,11 @@ module PactBroker
         end
 
         def policy_name
-          :'webhooks::webhooks'
+          :'pacts::pact'
+        end
+
+        def policy_record
+          pact
         end
 
         private

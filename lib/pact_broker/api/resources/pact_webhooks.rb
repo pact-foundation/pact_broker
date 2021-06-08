@@ -60,7 +60,7 @@ module PactBroker
         end
 
         def policy_name
-          :'webhooks::webhooks'
+          :"integrations::integration"
         end
 
         private
@@ -76,7 +76,6 @@ module PactBroker
         def next_uuid
           @next_uuid ||= webhook_service.next_uuid
         end
-
       end
     end
   end
