@@ -94,7 +94,7 @@ module PactBroker
         if verification
           verification.success ? "succeeded" : "failed"
         else
-          "notSet"
+          "pending"
         end
       end
 
