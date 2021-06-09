@@ -15,7 +15,7 @@ module PactBroker
           faraday.request :json
           faraday.response :json, :content_type => /\bjson$/
           if ENV["DEBUG"] == "true"
-            faraday.response :logger, ::Logger.new($stdout), headers: false do | logger |
+            faraday.response :logger, ::Logger.new($stdout), headers: false, body: true do | logger |
               logger.filter(/(Authorization: ).*/,'\1[REMOVED]')
             end
           end
@@ -84,9 +84,9 @@ module PactBroker
         self
       end
 
-      def create_pacticipant(name)
+      def create_pacticipant(name, main_branch: nil)
         puts "Creating pacticipant with name #{name}"
-        client.post("pacticipants", { name: name }).tap { |response| check_for_error(response) }
+        client.post("pacticipants", { name: name, mainBranch: main_branch }).tap { |response| check_for_error(response) }
         separate
         self
       end
@@ -147,12 +147,12 @@ module PactBroker
         self
       end
 
-      def verify_latest_pact_for_tag(success: true, provider: last_provider_name, consumer: last_consumer_name, consumer_version_tag: , provider_version:, provider_version_tag: nil)
+      def verify_latest_pact_for_tag(success: true, provider: last_provider_name, consumer: last_consumer_name, consumer_version_tag: , provider_version:, provider_version_tag: nil, provider_version_branch: nil)
         @last_provider_name = provider
         @last_consumer_name = consumer
 
         url_of_pact_to_verify = "pacts/provider/#{encode(provider)}/consumer/#{encode(consumer)}/latest/#{encode(consumer_version_tag)}"
-        publish_verification_results(url_of_pact_to_verify, provider, provider_version, provider_version_tag, success)
+        publish_verification_results(url_of_pact_to_verify, provider, provider_version, provider_version_tag, provider_version_branch, success)
         separate
         self
       end
@@ -166,14 +166,18 @@ module PactBroker
         raise "No pact found to verify at index #{index}" unless pact_to_verify
         url_of_pact_to_verify = pact_to_verify["_links"]["self"]["href"]
 
-        publish_verification_results(url_of_pact_to_verify, provider, provider_version, provider_version_tag, success)
+        publish_verification_results(url_of_pact_to_verify, provider, provider_version, provider_version_tag, provider_version_branch, success)
         separate
         self
       end
 
-      def create_global_webhook_for_contract_changed(uuid: nil, url: "https://postman-echo.com/post")
+      def create_global_webhook_for_contract_changed(uuid: nil, url: "https://postman-echo.com/post", body: nil)
         puts "Creating global webhook for contract changed event with uuid #{uuid}"
         uuid ||= SecureRandom.uuid
+        default_body = {
+          "deployedProviderVersion" => "${pactbroker.currentlyDeployedProviderVersionNumber}",
+          "consumerVersionBranch" => "${pactbroker.consumerVersionBranch}"
+        }
         request_body = {
           "description" => "A webhook for all consumers and providers",
           "events" => [{
@@ -182,10 +186,7 @@ module PactBroker
           "request" => {
             "method" => "POST",
             "url" => url,
-            "body" => {
-              "deployedProviderVersion" => "${pactbroker.currentlyDeployedProviderVersionNumber}",
-              "consumerVersionBranch" => "${pactbroker.consumerVersionBranch}"
-            }
+            "body" => body || default_body
           }
         }
         path = "webhooks/#{uuid}"
@@ -194,7 +195,7 @@ module PactBroker
         self
       end
 
-      def create_global_webhook_for_verification_published(uuid: nil, url: "https://postman-echo.com/post")
+      def create_global_webhook_for_anything_published(uuid: nil, url: "https://postman-echo.com/post")
         puts "Creating global webhook for contract changed event with uuid #{uuid}"
         uuid ||= SecureRandom.uuid
         request_body = {
@@ -214,7 +215,8 @@ module PactBroker
               "consumerVersionTags" => "${pactbroker.consumerVersionTags}",
               "githubVerificationStatus" => "${pactbroker.githubVerificationStatus}",
               "providerVersionNumber" => "${pactbroker.providerVersionNumber}",
-              "providerVersionTags" => "${pactbroker.providerVersionTags}"
+              "providerVersionTags" => "${pactbroker.providerVersionTags}",
+              "canIMerge" => "${pactbroker.providerMainBranchGithubVerificationStatus}"
             }
           }
         }
@@ -290,11 +292,13 @@ module PactBroker
 
       private
 
-      def publish_verification_results(url_of_pact_to_verify, provider, provider_version, provider_version_tag, success)
+      def publish_verification_results(url_of_pact_to_verify, provider, provider_version, provider_version_tag, provider_version_branch, success)
         [*provider_version_tag].each do | tag |
           create_tag(pacticipant: provider, version: provider_version, tag: tag)
         end
         puts "" if [*provider_version_tag].any?
+
+        create_version(pacticipant: provider, version: provider_version, branch: provider_version_branch) if provider_version_branch
 
         pact_response = client.get(url_of_pact_to_verify).tap { |response| check_for_error(response) }
         verification_results_url = pact_response.body["_links"]["pb:publish-verification-results"]["href"]
