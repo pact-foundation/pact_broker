@@ -28,6 +28,23 @@ module PactBroker
         find(selectors, options)
       end
 
+      def status_for_consumer_version_and_default_provider_branch(consumer_name, consumer_version_number, provider_name)
+        provider_main_branch = pacticipant_service.find_pacticipant_by_name(provider_name).main_branch
+        if provider_main_branch
+          consumer_selector = UnresolvedSelector.new(
+            pacticipant_name: consumer_name,
+            pacticipant_version_number: consumer_version_number
+          )
+
+          provider_selector = UnresolvedSelector.new(
+            pacticipant_name: provider_name,
+            branch: provider_main_branch,
+            latest: true
+          )
+          find([consumer_selector, provider_selector], { latestby: "cvpv" }).deployable?
+        end
+      end
+
       def find_for_consumer_and_provider_with_tags params
         consumer_selector = UnresolvedSelector.new(
           pacticipant_name: params[:consumer_name],

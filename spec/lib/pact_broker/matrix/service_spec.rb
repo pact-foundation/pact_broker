@@ -186,6 +186,38 @@ module PactBroker
           end
         end
       end
+
+      describe "status_for_consumer_version_and_default_provider_branch" do
+        before do
+          td.create_consumer("Foo")
+            .create_provider("Bar", main_branch: "main")
+            .create_provider_version("1", branch: "main")
+            .create_consumer_version("2")
+            .create_pact
+        end
+
+        subject { Service.status_for_consumer_version_and_default_provider_branch("Foo", "2", "Bar") }
+
+        context "with no verification" do
+          it { is_expected.to be nil }
+        end
+
+        context "with a failed verification" do
+          before do
+            td.create_verification(provider_version: "2", branch: "main", success: false)
+          end
+
+          it { is_expected.to be false }
+        end
+
+        context "with a successful verification" do
+          before do
+            td.create_verification(provider_version: "2", branch: "main", success: true)
+          end
+
+          it { is_expected.to be true }
+        end
+      end
     end
   end
 end

@@ -8,8 +8,8 @@ $LOAD_PATH.unshift "./tasks"
 ENV["RACK_ENV"] = "development"
 require "sequel"
 require "logger"
-#DATABASE_CREDENTIALS = {logger: Logger.new($stdout), adapter: "sqlite", database: ARGV[0], :encoding => 'utf8'}.tap { |it| puts it }
-DATABASE_CREDENTIALS = {adapter: "postgres", database: "postgres", username: "postgres", password: "postgres", host: "localhost", :encoding => "utf8"}
+DATABASE_CREDENTIALS = {logger: Logger.new($stdout), adapter: "sqlite", database: ARGV[0], :encoding => 'utf8'}.tap { |it| puts it }
+#DATABASE_CREDENTIALS = {adapter: "postgres", database: "postgres", username: "postgres", password: "postgres", host: "localhost", :encoding => "utf8"}
 
 connection = Sequel.connect(DATABASE_CREDENTIALS)
 connection.timezone = :utc

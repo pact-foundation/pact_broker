@@ -17,6 +17,7 @@ module PactBroker
       PROVIDER_LABELS = "pactbroker.providerLabels"
       EVENT_NAME = "pactbroker.eventName"
       CURRENTLY_DEPLOYED_PROVIDER_VERSION_NUMBER = "pactbroker.currentlyDeployedProviderVersionNumber"
+      MAIN_BRANCH_GITHUB_VERIFICATION_STATUS = "pactbroker.providerMainBranchGithubVerificationStatus"
 
       ALL = [
         CONSUMER_NAME,
@@ -62,7 +63,8 @@ module PactBroker
           CONSUMER_LABELS => pacticipant_labels(pact && pact.consumer),
           PROVIDER_LABELS => pacticipant_labels(pact && pact.provider),
           EVENT_NAME => event_name,
-          CURRENTLY_DEPLOYED_PROVIDER_VERSION_NUMBER => currently_deployed_provider_version_number
+          CURRENTLY_DEPLOYED_PROVIDER_VERSION_NUMBER => currently_deployed_provider_version_number,
+          MAIN_BRANCH_GITHUB_VERIFICATION_STATUS => provider_main_branch_github_verification_status
         }
       end
       # rubocop: enable Metrics/CyclomaticComplexity
@@ -82,6 +84,19 @@ module PactBroker
       def github_verification_status
         if verification
           verification.success ? "success" : "failure"
+        else
+          "pending"
+        end
+      end
+
+      def provider_main_branch_github_verification_status
+        if pact&.consumer_name && consumer_version_number && pact&.provider_name
+          puts "STATUS #{provider_main_branch_success.inspect}"
+          case provider_main_branch_success
+            when true then "success"
+            when false then "failure"
+            else "pending"
+          end
         else
           "pending"
         end
@@ -153,6 +168,10 @@ module PactBroker
 
       def currently_deployed_provider_version_number
         webhook_context[:currently_deployed_provider_version_number] || ""
+      end
+
+      def provider_main_branch_success
+        @provider_main_branch_success ||= PactBroker::Services.matrix_service.status_for_consumer_version_and_default_provider_branch(pact.consumer_name, consumer_version_number, pact.provider_name)
       end
     end
   end
