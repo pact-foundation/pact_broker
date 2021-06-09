@@ -47,12 +47,13 @@ module PactBroker
         end
 
         def query_params
+          # Webmachine request.query drops parameters with blank values, and we need to know if
+          # a blank target was specified.
+          query = Rack::Utils.parse_query(request.env["QUERY_STRING"])
           q = {}
-          if request.query["pacticipant"]
-            q[:pacticipant_name] = request.query["pacticipant"]
-          end
-          if request.query["target"]
-            q[:target] = request.query["target"].blank? ? nil : request.query["target"]
+          q[:pacticipant_name] = request.query["pacticipant"] if query["pacticipant"]
+          if query["target"]
+            q[:target] = query["target"].blank? ? nil : query["target"]
           end
           q
         end

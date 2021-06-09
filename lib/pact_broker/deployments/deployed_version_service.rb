@@ -39,14 +39,14 @@ module PactBroker
           .single_record
       end
 
-      def self.find_currently_deployed_versions_for_environment(environment, pacticipant_name: nil, target: nil)
+      def self.find_currently_deployed_versions_for_environment(environment, pacticipant_name: nil, target: :unspecified)
         query = scope_for(DeployedVersion)
           .currently_deployed
           .for_environment(environment)
           .order_by_date_desc
 
         query = query.for_pacticipant_name(pacticipant_name) if pacticipant_name
-        query = query.for_target(target) if target
+        query = query.for_target(target) if target != :unspecified
         query.all
       end
 
