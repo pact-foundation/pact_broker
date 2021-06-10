@@ -1,4 +1,4 @@
-RSpec.describe "Get currently deployed versions for environment" do
+RSpec.describe "Record undeployment" do
   let!(:version) { td.create_consumer("Foo").create_consumer_version("1").and_return(:consumer_version) }
   let!(:test_environment) { td.create_environment("test").and_return(:environment) }
   let!(:deployed_version) do
