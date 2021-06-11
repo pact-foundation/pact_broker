@@ -20,6 +20,15 @@ module PactBroker
         ).insert_ignore
       end
 
+      def self.find_currently_supported_versions_for_environment(environment, pacticipant_name: nil, pacticipant_version_number: nil)
+        query = ReleasedVersion
+          .currently_supported
+          .for_environment(environment)
+        query = query.for_pacticipant_name(pacticipant_name) if pacticipant_name
+        query = query.for_pacticipant_version_number(pacticipant_version_number) if pacticipant_version_number
+        query.all
+      end
+
       def self.find_released_version_for_version_and_environment(version, environment)
         ReleasedVersion
           .for_version_and_environment(version, environment)

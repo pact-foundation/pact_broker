@@ -410,15 +410,21 @@ module PactBroker
         self
       end
 
+      def create_deployed_version_for_provider_version(uuid: SecureRandom.uuid, currently_deployed: true, environment_name: environment&.name, target: nil, created_at: nil)
+        create_deployed_version(uuid: uuid, currently_deployed: currently_deployed, version: provider_version, environment_name: environment_name, target: target, created_at: created_at)
+        self
+      end
+
       def create_released_version_for_consumer_version(uuid: SecureRandom.uuid, currently_supported: true, environment_name: environment&.name, created_at: nil)
         create_released_version(uuid: uuid, currently_supported: currently_supported, version: consumer_version, environment_name: environment_name, created_at: created_at)
         self
       end
 
-      def create_deployed_version_for_provider_version(uuid: SecureRandom.uuid, currently_deployed: true, environment_name: environment&.name, target: nil, created_at: nil)
-        create_deployed_version(uuid: uuid, currently_deployed: currently_deployed, version: provider_version, environment_name: environment_name, target: target, created_at: created_at)
+      def create_released_version_for_provider_version(uuid: SecureRandom.uuid, currently_supported: true, environment_name: environment&.name, created_at: nil)
+        create_released_version(uuid: uuid, currently_supported: currently_supported, version: provider_version, environment_name: environment_name, created_at: created_at)
         self
       end
+
 
       def create_everything_for_an_integration
         create_pact_with_verification("Foo", "1", "Bar", "2")

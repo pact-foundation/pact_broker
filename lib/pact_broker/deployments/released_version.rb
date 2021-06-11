@@ -26,6 +26,10 @@ module PactBroker
           where(pacticipant_id: db[:pacticipants].select(:id).where(name_like(:name, pacticipant_name)))
         end
 
+        def for_pacticipant_version_number(pacticipant_version_number)
+          where(version_id: db[:versions].select(:id).where(name_like(:number, pacticipant_version_number)))
+        end
+
         def for_version_and_environment(version, environment)
           where(version_id: version.id, environment_id: environment.id)
         end

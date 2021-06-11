@@ -7,12 +7,13 @@ module PactBroker
     module Decorators
       class DeployedVersionDecorator < BaseDecorator
         property :uuid
-        property :version, :extend => EmbeddedVersionDecorator, writeable: false, embedded: true
-        property :environment, :extend => EnvironmentDecorator, writeable: false, embedded: true
         property :currently_deployed, camelize: true
         property :target, camelize: true
         include Timestamps
         property :undeployedAt, getter: lambda { |_|  undeployed_at ? FormatDateTime.call(undeployed_at) : nil }, writeable: false
+
+        property :version, :extend => EmbeddedVersionDecorator, writeable: false, embedded: true
+        property :environment, :extend => EnvironmentDecorator, writeable: false, embedded: true
 
         link :self do | user_options |
           {

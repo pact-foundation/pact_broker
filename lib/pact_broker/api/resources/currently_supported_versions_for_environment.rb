@@ -5,7 +5,7 @@ require "pact_broker/string_refinements"
 module PactBroker
   module Api
     module Resources
-      class CurrentlyDeployedVersionsForEnvironment < BaseResource
+      class CurrentlySupportedVersionsForEnvironment < BaseResource
         using PactBroker::StringRefinements
 
         def content_types_accepted
@@ -25,7 +25,7 @@ module PactBroker
         end
 
         def to_json
-          decorator_class(decorator_name).new(deployed_versions).to_json(decorator_options(title: title))
+          decorator_class(decorator_name).new(released_versions).to_json(decorator_options(title: title))
         end
 
         def policy_name
@@ -37,7 +37,7 @@ module PactBroker
         end
 
         def decorator_name
-          :deployed_versions_decorator
+          :released_versions_decorator
         end
 
         private
@@ -46,8 +46,8 @@ module PactBroker
           @environment ||= environment_service.find(environment_uuid)
         end
 
-        def deployed_versions
-          @deployed_versions ||= deployed_version_service.find_currently_deployed_versions_for_environment(environment, query_params)
+        def released_versions
+          @released_versions ||= released_version_service.find_currently_supported_versions_for_environment(environment, query_params)
         end
 
         def environment_uuid
@@ -55,19 +55,14 @@ module PactBroker
         end
 
         def query_params
-          # Webmachine request.query drops parameters with blank values, and we need to know if
-          # a blank target was specified.
-          query = Rack::Utils.parse_query(request.env["QUERY_STRING"])
-          q = {}
-          q[:pacticipant_name] = request.query["pacticipant"] if query["pacticipant"]
-          if query["target"]
-            q[:target] = query["target"].blank? ? nil : query["target"]
-          end
-          q
+          {
+            pacticipant_name: request.query["pacticipant"],
+            pacticipant_version_number: request.query["version"]
+          }.compact
         end
 
         def title
-          "Currently deployed versions for #{environment.display_name}"
+          "Currently supported versions in #{environment.display_name}"
         end
       end
     end

@@ -10,13 +10,10 @@ RSpec.describe "Get currently deployed versions for environment" do
       .create_deployed_version_for_provider_version(environment_name: "test", target: "customer-1")
       .create_provider_version("5")
       .create_deployed_version_for_provider_version(environment_name: "test")
-
   end
 
   let(:path) do
-    PactBroker::Api::PactBrokerUrls.currently_deployed_versions_for_environment_url(
-      test_environment
-    )
+    PactBroker::Api::PactBrokerUrls.currently_deployed_versions_for_environment_url(test_environment)
   end
 
   let(:query_params) { {} }

@@ -32,6 +32,13 @@ module PactBroker
           }
         end
 
+        link :'pb:currently-supported-versions' do | user_options |
+          {
+            title: "Versions currently supported in #{represented.display_name} environment",
+            href: currently_supported_versions_for_environment_url(represented, user_options.fetch(:base_url))
+          }
+        end
+
         link :'pb:environments' do | user_options |
           {
             title: "Environments",
