@@ -65,6 +65,9 @@
       "resource_class_name": "PactBroker::Api::Resources::PublishContracts"
     },
     {
+      "resource_class_name": "PactBroker::Api::Resources::ReleasedVersion"
+    },
+    {
       "resource_class_name": "PactBroker::Api::Resources::ReleasedVersionsForVersionAndEnvironment"
     },
     {
