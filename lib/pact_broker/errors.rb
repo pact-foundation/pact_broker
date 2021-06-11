@@ -15,10 +15,10 @@ module PactBroker
       !error.is_a?(PactBroker::Error) && !error.is_a?(JSON::JSONError)
     end
 
-    def self.report error, error_reference, request
+    def self.report error, error_reference, env
       PactBroker.configuration.api_error_reporters.each do | error_notifier |
         begin
-          error_notifier.call(error, env: request.env, error_reference: error_reference)
+          error_notifier.call(error, env: env, error_reference: error_reference)
         rescue StandardError => e
           log_error(e, "Error executing api_error_reporter")
         end
