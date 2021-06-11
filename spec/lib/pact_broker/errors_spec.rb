@@ -16,12 +16,11 @@ module PactBroker
 
       let(:error) { StandardError.new("test error") }
       let(:thing) { double("thing", call: nil, another_call: nil) }
-      let(:request) { double("request", env: env ) }
       let(:error_reference) { "bYWfnyWPlf" }
       let(:expected_options) { { env: env, error_reference: "bYWfnyWPlf" } }
       let(:env) { double("env") }
 
-      subject { PactBroker::Errors.report(error, error_reference, request) }
+      subject { PactBroker::Errors.report(error, error_reference, env) }
 
 
       it "invokes the api error reporters" do
