@@ -1,35 +1,35 @@
-require 'json'
-require 'pact_broker/string_refinements'
-require 'pact_broker/repositories'
-require 'pact_broker/services'
-require 'pact_broker/webhooks/repository'
-require 'pact_broker/webhooks/service'
-require 'pact_broker/webhooks/trigger_service'
-require 'pact_broker/webhooks/webhook_execution_result'
-require 'pact_broker/pacts/repository'
-require 'pact_broker/pacts/service'
-require 'pact_broker/pacts/content'
-require 'pact_broker/pacticipants/repository'
-require 'pact_broker/pacticipants/service'
-require 'pact_broker/versions/repository'
-require 'pact_broker/versions/service'
-require 'pact_broker/tags/repository'
-require 'pact_broker/labels/repository'
-require 'pact_broker/tags/service'
-require 'pact_broker/domain'
-require 'pact_broker/versions/repository'
-require 'pact_broker/pacts/repository'
-require 'pact_broker/pacticipants/repository'
-require 'pact_broker/verifications/repository'
-require 'pact_broker/verifications/service'
-require 'pact_broker/tags/repository'
-require 'pact_broker/webhooks/repository'
-require 'pact_broker/certificates/certificate'
-require 'pact_broker/matrix/row'
-require 'pact_broker/deployments/environment_service'
-require 'pact_broker/deployments/deployed_version_service'
-require 'pact_broker/deployments/released_version_service'
-require 'ostruct'
+require "json"
+require "pact_broker/string_refinements"
+require "pact_broker/repositories"
+require "pact_broker/services"
+require "pact_broker/webhooks/repository"
+require "pact_broker/webhooks/service"
+require "pact_broker/webhooks/trigger_service"
+require "pact_broker/webhooks/webhook_execution_result"
+require "pact_broker/pacts/repository"
+require "pact_broker/pacts/service"
+require "pact_broker/pacts/content"
+require "pact_broker/pacticipants/repository"
+require "pact_broker/pacticipants/service"
+require "pact_broker/versions/repository"
+require "pact_broker/versions/service"
+require "pact_broker/tags/repository"
+require "pact_broker/labels/repository"
+require "pact_broker/tags/service"
+require "pact_broker/domain"
+require "pact_broker/versions/repository"
+require "pact_broker/pacts/repository"
+require "pact_broker/pacticipants/repository"
+require "pact_broker/verifications/repository"
+require "pact_broker/verifications/service"
+require "pact_broker/tags/repository"
+require "pact_broker/webhooks/repository"
+require "pact_broker/certificates/certificate"
+require "pact_broker/matrix/row"
+require "pact_broker/deployments/environment_service"
+require "pact_broker/deployments/deployed_version_service"
+require "pact_broker/deployments/released_version_service"
+require "ostruct"
 
 module PactBroker
   module Test
@@ -55,26 +55,26 @@ module PactBroker
       attr_reader :deployed_version
       attr_reader :released_version
 
-      def initialize(params = {})
+      def initialize(_params = {})
         @now = DateTime.now
       end
 
-      def comment *args
+      def comment *_args
         self
       end
 
       def create_pricing_service
-        create_provider("Pricing Service", :repository_url => 'git@git.realestate.com.au:business-systems/pricing-service')
+        create_provider("Pricing Service", :repository_url => "git@git.realestate.com.au:business-systems/pricing-service")
         self
       end
 
       def create_contract_proposal_service
-        create_provider("Contract Proposal Service", :repository_url => 'git@git.realestate.com.au:business-systems/contract-proposal-service')
+        create_provider("Contract Proposal Service", :repository_url => "git@git.realestate.com.au:business-systems/contract-proposal-service")
         self
       end
 
       def create_contract_email_service
-        create_consumer("Contract Email Service", :repository_url => 'git@git.realestate.com.au:business-systems/contract-email-service')
+        create_consumer("Contract Email Service", :repository_url => "git@git.realestate.com.au:business-systems/contract-email-service")
         self
       end
 
@@ -283,6 +283,7 @@ module PactBroker
         self
       end
 
+      # rubocop: disable Metrics/CyclomaticComplexity
       def create_webhook parameters = {}
         params = parameters.dup
         consumer = params.key?(:consumer) ? params.delete(:consumer) : @consumer
@@ -290,16 +291,17 @@ module PactBroker
         uuid = params[:uuid] || PactBroker::Webhooks::Service.next_uuid
         enabled = params.key?(:enabled) ? params.delete(:enabled) : true
         event_params = if params[:event_names]
-          params[:event_names].collect{ |event_name| {name: event_name} }
-        else
-          params[:events] || [{ name: PactBroker::Webhooks::WebhookEvent::DEFAULT_EVENT_NAME }]
-        end
+                         params[:event_names].collect{ |event_name| {name: event_name} }
+                       else
+                         params[:events] || [{ name: PactBroker::Webhooks::WebhookEvent::DEFAULT_EVENT_NAME }]
+                       end
         events = event_params.collect{ |e| PactBroker::Webhooks::WebhookEvent.new(e) }
-        template_params = { method: 'POST', url: 'http://example.org', headers: {'Content-Type' => 'application/json'}, username: params[:username], password: params[:password]}
+        template_params = { method: "POST", url: "http://example.org", headers: {"Content-Type" => "application/json"}, username: params[:username], password: params[:password]}
         request = PactBroker::Webhooks::WebhookRequestTemplate.new(template_params.merge(params))
         @webhook = PactBroker::Webhooks::Repository.new.create uuid, PactBroker::Domain::Webhook.new(request: request, events: events, description: params[:description], enabled: enabled), consumer, provider
         self
       end
+      # rubocop: enable Metrics/CyclomaticComplexity
 
       def create_verification_webhook parameters = {}
         create_webhook(parameters.merge(event_names: [PactBroker::Webhooks::WebhookEvent::VERIFICATION_PUBLISHED]))
@@ -339,11 +341,11 @@ module PactBroker
 
       def create_triggered_webhook params = {}
         params.delete(:comment)
-        trigger_uuid = params[:trigger_uuid] || webhook_service.next_uuid
+        uuid = params[:uuid] || webhook_service.next_uuid
         event_name = params.key?(:event_name) ? params[:event_name] : @webhook.events.first.name # could be nil, for backwards compatibility
         verification = @webhook.trigger_on_provider_verification_published? ? @verification : nil
         event_context = params[:event_context]
-        @triggered_webhook = webhook_repository.create_triggered_webhook(trigger_uuid, @webhook, @pact, verification, PactBroker::Webhooks::TriggerService::RESOURCE_CREATION, event_name, event_context)
+        @triggered_webhook = webhook_repository.create_triggered_webhook(uuid, @webhook, @pact, verification, PactBroker::Webhooks::TriggerService::RESOURCE_CREATION, event_name, event_context)
         @triggered_webhook.update(status: params[:status]) if params[:status]
         set_created_at_if_set params[:created_at], :triggered_webhooks, { id: @triggered_webhook.id }
         self
@@ -364,8 +366,8 @@ module PactBroker
         parameters.delete(:comment)
         branch = parameters.delete(:branch)
         tag_names = [parameters.delete(:tag_names), parameters.delete(:tag_name)].flatten.compact
-        provider_version_number = parameters[:provider_version] || '4.5.6'
-        default_parameters = { success: true, number: 1, test_results: { some: 'results' }, wip: false }
+        provider_version_number = parameters[:provider_version] || "4.5.6"
+        default_parameters = { success: true, number: 1, test_results: { some: "results" }, wip: false }
         default_parameters[:execution_date] = @now if @now
         parameters = default_parameters.merge(parameters)
         parameters.delete(:provider_version)
@@ -387,7 +389,7 @@ module PactBroker
         self
       end
 
-      def create_certificate options = {path: 'spec/fixtures/single-certificate.pem'}
+      def create_certificate options = {path: "spec/fixtures/single-certificate.pem"}
         options.delete(:comment)
         PactBroker::Certificates::Certificate.create(uuid: SecureRandom.urlsafe_base64, content: File.read(options[:path]))
         self
@@ -408,15 +410,21 @@ module PactBroker
         self
       end
 
+      def create_deployed_version_for_provider_version(uuid: SecureRandom.uuid, currently_deployed: true, environment_name: environment&.name, target: nil, created_at: nil)
+        create_deployed_version(uuid: uuid, currently_deployed: currently_deployed, version: provider_version, environment_name: environment_name, target: target, created_at: created_at)
+        self
+      end
+
       def create_released_version_for_consumer_version(uuid: SecureRandom.uuid, currently_supported: true, environment_name: environment&.name, created_at: nil)
         create_released_version(uuid: uuid, currently_supported: currently_supported, version: consumer_version, environment_name: environment_name, created_at: created_at)
         self
       end
 
-      def create_deployed_version_for_provider_version(uuid: SecureRandom.uuid, currently_deployed: true, environment_name: environment&.name, target: nil, created_at: nil)
-        create_deployed_version(uuid: uuid, currently_deployed: currently_deployed, version: provider_version, environment_name: environment_name, target: target, created_at: created_at)
+      def create_released_version_for_provider_version(uuid: SecureRandom.uuid, currently_supported: true, environment_name: environment&.name, created_at: nil)
+        create_released_version(uuid: uuid, currently_supported: currently_supported, version: provider_version, environment_name: environment_name, created_at: created_at)
         self
       end
+
 
       def create_everything_for_an_integration
         create_pact_with_verification("Foo", "1", "Bar", "2")
@@ -501,12 +509,12 @@ module PactBroker
       end
 
       def in_utc
-        original_tz = ENV['TZ']
+        original_tz = ENV["TZ"]
         begin
-          ENV['TZ'] = 'UTC'
+          ENV["TZ"] = "UTC"
           yield
         ensure
-          ENV['TZ'] = original_tz
+          ENV["TZ"] = original_tz
         end
       end
 
@@ -541,8 +549,9 @@ module PactBroker
 
       def create_released_version(uuid: , currently_supported: true, version:, environment_name: , created_at: nil)
         env = find_environment(environment_name)
-        @released_version = PactBroker::Deployments::ReleasedVersionService.create(uuid, version, env)
+        @released_version = PactBroker::Deployments::ReleasedVersionService.create_or_update(uuid, version, env)
         PactBroker::Deployments::ReleasedVersionService.record_version_support_ended(released_version) unless currently_supported
+        released_version.refresh
         set_created_at_if_set(created_at, :released_versions, id: released_version.id)
       end
 
@@ -580,7 +589,7 @@ module PactBroker
            "interactions" => [],
            "random" => rand
          }.to_json
-       end
+      end
     end
   end
 end

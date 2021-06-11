@@ -1,4 +1,4 @@
-require 'pact_broker/matrix/row'
+require "pact_broker/matrix/row"
 
 module PactBroker
   module Matrix
@@ -29,20 +29,20 @@ module PactBroker
       describe "<=>" do
         let(:row_1) do
           Row.new(
-            consumer_name: 'A',
+            consumer_name: "A",
             consumer_version_order: 1,
             pact_revision_number: 1,
-            provider_name: 'B',
+            provider_name: "B",
             provider_version_order: 1,
             verification_id: 1
           )
         end
         let(:row_2) do
           Row.new(
-            consumer_name: 'A',
+            consumer_name: "A",
             consumer_version_order: 1,
             pact_revision_number: 1,
-            provider_name: 'B',
+            provider_name: "B",
             provider_version_order: 1,
             verification_id: 2
           )
@@ -55,10 +55,10 @@ module PactBroker
         context "with a nil column" do
           let(:row_2) do
             Row.new(
-              consumer_name: 'A',
+              consumer_name: "A",
               consumer_version_order: 1,
               pact_revision_number: 1,
-              provider_name: 'B',
+              provider_name: "B",
               provider_version_order: nil,
               verification_id: nil
             )

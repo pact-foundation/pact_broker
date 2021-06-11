@@ -1,9 +1,9 @@
-require 'pact_broker/api/resources/provider_pacts'
-require 'pact_broker/api/decorators/verifiable_pacts_decorator'
-require 'pact_broker/api/contracts/verifiable_pacts_query_schema'
-require 'pact_broker/api/decorators/verifiable_pacts_query_decorator'
-require 'pact_broker/api/contracts/verifiable_pacts_json_query_schema'
-require 'pact_broker/hash_refinements'
+require "pact_broker/api/resources/provider_pacts"
+require "pact_broker/api/decorators/verifiable_pacts_decorator"
+require "pact_broker/api/contracts/verifiable_pacts_query_schema"
+require "pact_broker/api/decorators/verifiable_pacts_query_decorator"
+require "pact_broker/api/contracts/verifiable_pacts_json_query_schema"
+require "pact_broker/hash_refinements"
 
 module PactBroker
   module Api
@@ -31,6 +31,10 @@ module PactBroker
         def process_post
           response.body = to_json
           true
+        end
+
+        def read_methods
+          super + %w{POST}
         end
 
         private

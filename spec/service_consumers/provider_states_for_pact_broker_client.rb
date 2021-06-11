@@ -1,4 +1,4 @@
-require 'spec/support/test_data_builder'
+require "spec/support/test_data_builder"
 
 Pact.provider_states_for "Pact Broker Client" do
 
@@ -140,7 +140,7 @@ Pact.provider_states_for "Pact Broker Client" do
 
   provider_state "an error occurs while publishing a pact" do
     set_up do
-      require 'pact_broker/pacts/service'
+      require "pact_broker/pacts/service"
       allow(PactBroker::Pacts::Service).to receive(:create_or_update_pact).and_raise("an error")
     end
   end
@@ -149,7 +149,7 @@ Pact.provider_states_for "Pact Broker Client" do
     set_up do
       TestDataBuilder.new
         .create_condor
-        .create_consumer_version('1.3.0')
+        .create_consumer_version("1.3.0")
         .create_pricing_service
         .create_pact
     end
@@ -163,7 +163,7 @@ Pact.provider_states_for "Pact Broker Client" do
     set_up do
       TestDataBuilder.new
         .create_condor
-        .create_consumer_version('1.3.0')
+        .create_consumer_version("1.3.0")
         .create_pricing_service
         .create_pact
     end
@@ -177,7 +177,7 @@ Pact.provider_states_for "Pact Broker Client" do
 
   provider_state "'Condor' exists in the pact-broker" do
     set_up do
-      TestDataBuilder.new.create_condor.create_consumer_version('1.3.0')
+      TestDataBuilder.new.create_condor.create_consumer_version("1.3.0")
     end
   end
 
@@ -185,23 +185,23 @@ Pact.provider_states_for "Pact Broker Client" do
     set_up do
       TestDataBuilder.new
         .create_pacticipant("Condor")
-        .create_version('1.3.0')
-        .create_tag('prod')
+        .create_version("1.3.0")
+        .create_tag("prod")
     end
   end
 
   provider_state "'Condor' does not exist in the pact-broker" do
-     no_op
-   end
+    no_op
+  end
 
    provider_state "a pact between Condor and the Pricing Service exists for the production version of Condor" do
      set_up do
-      TestDataBuilder.new
-        .create_consumer("Condor")
-        .create_consumer_version('1.3.0')
-        .create_consumer_version_tag('prod')
-        .create_provider("Pricing Service")
-        .create_pact
+       TestDataBuilder.new
+         .create_consumer("Condor")
+        .create_consumer_version("1.3.0")
+        .create_consumer_version_tag("prod")
+         .create_provider("Pricing Service")
+         .create_pact
      end
    end
 
@@ -219,7 +219,7 @@ Pact.provider_states_for "Pact Broker Client" do
     set_up do
       TestDataBuilder.new
           .create_consumer("Condor")
-          .create_consumer_version('1.3.0')
+          .create_consumer_version("1.3.0")
           .create_provider("Pricing Service")
           .create_pact
     end
@@ -229,8 +229,8 @@ Pact.provider_states_for "Pact Broker Client" do
     set_up do
       TestDataBuilder.new
           .create_consumer("Condor")
-          .create_consumer_version('1.3.0')
-          .create_consumer_version_tag('prod')
+          .create_consumer_version("1.3.0")
+          .create_consumer_version_tag("prod")
           .create_provider("Pricing Service")
           .create_pact
     end
@@ -298,7 +298,44 @@ Pact.provider_states_for "Pact Broker Client" do
 
   provider_state "an environment exists" do
     set_up do
-      TestDataBuilder.new.create_environment("test", contacts: [ { name: "foo", details: { emailAddress: "foo@bar.com" } }])
+      TestDataBuilder.new
+        .create_environment("test", contacts: [ { name: "foo", details: { emailAddress: "foo@bar.com" } }])
+    end
+  end
+
+  provider_state "version 5556b8149bf8bac76bc30f50a8a2dd4c22c85f30 of pacticipant Foo exists with a test environment available for release" do
+    set_up do
+      TestDataBuilder.new
+        .create_environment("test", uuid: "cb632df3-0a0d-4227-aac3-60114dd36479")
+        .create_consumer("Foo")
+        .create_consumer_version("5556b8149bf8bac76bc30f50a8a2dd4c22c85f30")
+    end
+  end
+
+  provider_state "an environment with name test and UUID 16926ef3-590f-4e3f-838e-719717aa88c9 exists" do
+    set_up do
+      TestDataBuilder.new
+        .create_environment("test", uuid: "16926ef3-590f-4e3f-838e-719717aa88c9")
+    end
+  end
+
+  provider_state "an version is deployed to environment with UUID 16926ef3-590f-4e3f-838e-719717aa88c9 with target customer-1" do
+    set_up do
+      TestDataBuilder.new
+        .create_environment("test", uuid: "16926ef3-590f-4e3f-838e-719717aa88c9")
+        .create_consumer("Foo")
+        .create_consumer_version("5556b8149bf8bac76bc30f50a8a2dd4c22c85f30")
+        .create_deployed_version_for_consumer_version(uuid: "ff3adecf-cfc5-4653-a4e3-f1861092f8e0", target: "customer-1")
+    end
+  end
+
+  provider_state "a currently deployed version exists" do
+    set_up do
+      TestDataBuilder.new
+        .create_environment("test", uuid: "cb632df3-0a0d-4227-aac3-60114dd36479")
+        .create_consumer("Foo")
+        .create_consumer_version("5556b8149bf8bac76bc30f50a8a2dd4c22c85f30")
+        .create_deployed_version_for_consumer_version(uuid: "ff3adecf-cfc5-4653-a4e3-f1861092f8e0")
     end
   end
 end

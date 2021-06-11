@@ -1,6 +1,6 @@
-require 'pact_broker/db'
-require 'pact_broker/json'
-require 'pact_broker/pacts/content'
+require "pact_broker/db"
+require "pact_broker/json"
+require "pact_broker/pacts/content"
 
 =begin
 This class most accurately represents a PactPublication
@@ -17,14 +17,13 @@ module PactBroker
       attr_accessor :id,
         :provider,
         :consumer_version,
-        :consumer,
         :created_at,
         :json_content,
         :consumer_version_number,
         :revision_number,
         :pact_version_sha,
-        :latest_verification,
         :head_tag_names
+      attr_writer :consumer, :latest_verification
 
       def initialize attributes = {}
         @latest_verification = UnsetAttribute.new
@@ -61,7 +60,7 @@ module PactBroker
         "Pact: consumer=#{consumer.name} provider=#{provider.name}"
       end
 
-      def to_json options = {}
+      def to_json _options = {}
         json_content
       end
 

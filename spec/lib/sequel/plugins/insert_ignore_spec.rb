@@ -1,5 +1,5 @@
-require 'sequel/plugins/insert_ignore'
-require 'sequel'
+require "sequel/plugins/insert_ignore"
+require "sequel"
 
 module Sequel
   module Plugins

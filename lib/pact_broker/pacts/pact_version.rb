@@ -1,6 +1,6 @@
-require 'sequel'
-require 'pact_broker/repositories/helpers'
-require 'pact_broker/verifications/latest_verification_for_pact_version'
+require "sequel"
+require "pact_broker/repositories/helpers"
+require "pact_broker/verifications/latest_verification_for_pact_version"
 
 module PactBroker
   module Pacts
@@ -87,7 +87,7 @@ module PactBroker
             .join(:verifications, verifications_join)
             .join(:versions, Sequel[:versions][:id] => Sequel[:verifications][:provider_version_id])
             .join(:tags, tags_join) do
-              Sequel.lit('tags.name != ?', tag)
+              Sequel.lit("tags.name != ?", tag)
             end
 
           if first_tag_with_name

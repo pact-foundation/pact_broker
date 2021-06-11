@@ -1,8 +1,8 @@
-require 'pact_broker/api/contracts/base_contract'
-require 'pact_broker/webhooks/check_host_whitelist'
-require 'pact_broker/webhooks/render'
-require 'pact_broker/pacticipants/service'
-require 'pact_broker/webhooks/webhook_event'
+require "pact_broker/api/contracts/base_contract"
+require "pact_broker/webhooks/check_host_whitelist"
+require "pact_broker/webhooks/render"
+require "pact_broker/pacticipants/service"
+require "pact_broker/webhooks/webhook_event"
 
 module PactBroker
   module Api
@@ -20,7 +20,10 @@ module PactBroker
             @first_errors.messages[key] = @first_errors.messages[key][0...1]
           end
 
+          # rubocop: disable Lint/NestedMethodDefinition
           def self.errors; @first_errors end
+          # rubocop: enable Lint/NestedMethodDefinition
+
           result
         end
 
@@ -136,14 +139,14 @@ module PactBroker
               end
 
               def non_templated_host?(url)
-                parse_uri(url).host == parse_uri(url, 'differentplaceholder').host
+                parse_uri(url).host == parse_uri(url, "differentplaceholder").host
               end
 
               def host_whitelist
                 PactBroker.configuration.webhook_host_whitelist
               end
 
-              def parse_uri(uri_string, placeholder = 'placeholder')
+              def parse_uri(uri_string, placeholder = "placeholder")
                 URI(PactBroker::Webhooks::Render.render_with_placeholder(uri_string, placeholder))
               end
             end

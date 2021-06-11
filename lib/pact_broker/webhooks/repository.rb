@@ -1,13 +1,13 @@
-require 'sequel'
-require 'pact_broker/domain/webhook'
-require 'pact_broker/domain/pacticipant'
-require 'pact_broker/db'
-require 'pact_broker/webhooks/webhook'
-require 'pact_broker/webhooks/webhook_event'
-require 'pact_broker/webhooks/triggered_webhook'
-require 'pact_broker/webhooks/latest_triggered_webhook'
-require 'pact_broker/webhooks/execution'
-require 'pact_broker/logging'
+require "sequel"
+require "pact_broker/domain/webhook"
+require "pact_broker/domain/pacticipant"
+require "pact_broker/db"
+require "pact_broker/webhooks/webhook"
+require "pact_broker/webhooks/webhook_event"
+require "pact_broker/webhooks/triggered_webhook"
+require "pact_broker/webhooks/latest_triggered_webhook"
+require "pact_broker/webhooks/execution"
+require "pact_broker/logging"
 
 module PactBroker
   module Webhooks
@@ -96,15 +96,20 @@ module PactBroker
           .collect(&:to_domain)
       end
 
-      def create_triggered_webhook trigger_uuid, webhook, pact, verification, trigger_type, event_name, event_context
+      # rubocop: disable Metrics/ParameterLists
+      def create_triggered_webhook uuid, webhook, pact, verification, trigger_type, event_name, event_context
         db_webhook = deliberately_unscoped(Webhook).where(uuid: webhook.uuid).single_record
+        # trigger_uuid was meant to be one per *event*, not one per triggered webhook, but its intent got lost over time.
+        # Retiring it now in favour of uuid, but can't leave it empty because
+        # it has a not-null and unique webhook_uuid/trigger_uuid constraint on it.
         TriggeredWebhook.create(
+          uuid: uuid,
           status: TriggeredWebhook::STATUS_NOT_RUN,
           pact_publication_id: pact.id,
           verification: verification,
           webhook: db_webhook,
           webhook_uuid: db_webhook.uuid,
-          trigger_uuid: trigger_uuid,
+          trigger_uuid: uuid,
           trigger_type: trigger_type,
           consumer: pact.consumer,
           provider: pact.provider,
@@ -112,6 +117,7 @@ module PactBroker
           event_context: event_context
         )
       end
+      # rubocop: enable Metrics/ParameterLists
 
       def update_triggered_webhook_status triggered_webhook, status
         triggered_webhook.update(status: status)

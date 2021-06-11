@@ -9,15 +9,15 @@ module PactBroker
       attr_accessor :dry_run
 
       def initialize &block
-        require 'pact_broker/db/clean_incremental'
+        require "pact_broker/db/clean_incremental"
         @version_deletion_limit = 1000
         @dry_run = false
         @keep_version_selectors = PactBroker::DB::CleanIncremental::DEFAULT_KEEP_SELECTORS
-        rake_task &block
+        rake_task(&block)
       end
 
       def keep_version_selectors=(keep_version_selectors)
-        require 'pact_broker/matrix/unresolved_selector'
+        require "pact_broker/matrix/unresolved_selector"
         @keep_version_selectors = [*keep_version_selectors].collect do | hash |
           PactBroker::Matrix::UnresolvedSelector.from_hash(hash)
         end
@@ -27,14 +27,14 @@ module PactBroker
         namespace :pact_broker do
           namespace :db do
             desc "Clean unnecessary pacts and verifications from database"
-            task :clean do | t, args |
+            task :clean do | _t, _args |
 
               instance_eval(&block)
 
-              require 'pact_broker/db/clean_incremental'
-              require 'pact_broker/error'
-              require 'yaml'
-              require 'benchmark'
+              require "pact_broker/db/clean_incremental"
+              require "pact_broker/error"
+              require "yaml"
+              require "benchmark"
 
               raise PactBroker::Error.new("You must specify the version_deletion_limit") unless version_deletion_limit
 
@@ -57,12 +57,12 @@ module PactBroker
               elapsed_seconds = (end_time - start_time).to_i
               output "Results (#{elapsed_seconds} seconds)", results
             end
-
-            def output string, payload = {}
-              logger ? logger.info(string, payload: payload) : puts("#{string} #{payload.to_json}")
-            end
           end
         end
+      end
+
+      def output string, payload = {}
+        logger ? logger.info(string, payload: payload) : puts("#{string} #{payload.to_json}")
       end
     end
   end

@@ -1,5 +1,5 @@
-require 'spec_helper'
-require 'pact_broker/api/decorators/webhook_execution_result_decorator'
+require "spec_helper"
+require "pact_broker/api/decorators/webhook_execution_result_decorator"
 
 module PactBroker
   module Api
@@ -11,25 +11,25 @@ module PactBroker
           let(:headers) { { "Something" => ["blah", "thing"]} }
           let(:request) do
             req = Net::HTTP::Get.new("http://example.org?foo=bar")
-            req['Foo'] = ['bar', 'wiffle']
-            req.body = { foo: 'bar' }.to_json
+            req["Foo"] = ["bar", "wiffle"]
+            req.body = { foo: "bar" }.to_json
             req
           end
-          let(:response) { double('http_response', code: '200', body: response_body, to_hash: headers) }
-          let(:response_body) { 'body' }
+          let(:response) { double("http_response", code: "200", body: response_body, to_hash: headers) }
+          let(:response_body) { "body" }
           let(:error) { nil }
           let(:webhook) { instance_double(PactBroker::Domain::Webhook, uuid: uuid) }
-          let(:uuid) { 'some-uuid' }
+          let(:uuid) { "some-uuid" }
           let(:show_response) { true }
           let(:json) {
             WebhookExecutionResultDecorator.new(webhook_execution_result)
-            .to_json(user_options: { resource_url: 'http://resource-url', base_url: 'http://example.org', webhook: webhook, show_response: show_response })
+            .to_json(user_options: { resource_url: "http://resource-url", base_url: "http://example.org", webhook: webhook, show_response: show_response })
           }
 
           let(:subject) { JSON.parse(json, symbolize_names: true) }
 
           it "includes a link to execute the webhook again" do
-            expect(subject[:_links][:'try-again'][:href]).to eq 'http://resource-url'
+            expect(subject[:_links][:'try-again'][:href]).to eq "http://resource-url"
           end
 
           it "includes a success flag" do
@@ -42,7 +42,7 @@ module PactBroker
 
           context "when there is a uuid" do
             it "include a link to the webhook" do
-              expect(subject[:_links][:webhook][:href]).to eq 'http://example.org/webhooks/some-uuid'
+              expect(subject[:_links][:webhook][:href]).to eq "http://example.org/webhooks/some-uuid"
             end
           end
 
@@ -55,10 +55,10 @@ module PactBroker
           end
 
           context "when there is an error" do
-            let(:error) { double('error', message: 'message', backtrace: ['blah','blah']) }
+            let(:error) { double("error", message: "message", backtrace: ["blah","blah"]) }
 
             it "includes the message" do
-              expect(subject[:error][:message]).to eq 'message'
+              expect(subject[:error][:message]).to eq "message"
             end
           end
 
@@ -73,7 +73,7 @@ module PactBroker
 
             context "when the request body is JSON" do
               it "includes the request body as JSON" do
-                expect(subject[:request][:body]).to include( foo: 'bar' )
+                expect(subject[:request][:body]).to include( foo: "bar" )
               end
             end
 
@@ -102,7 +102,7 @@ module PactBroker
             end
 
             context "when the response body is JSON" do
-              let(:response_body_hash) { {some: 'json'} }
+              let(:response_body_hash) { {some: "json"} }
               let(:response_body) { response_body_hash.to_json }
               it "returns the response as JSON" do
                 expect(subject[:response][:body]).to eq response_body_hash
@@ -118,7 +118,7 @@ module PactBroker
             end
 
             it "includes a message about why the response is hidden" do
-              expect(subject[:message]).to match /security purposes/
+              expect(subject[:message]).to match(/security purposes/)
             end
           end
         end

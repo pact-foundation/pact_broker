@@ -1,9 +1,9 @@
-require 'pact_broker/domain/webhook_request'
-require 'pact_broker/messages'
-require 'pact_broker/logging'
-require 'pact_broker/api/contracts/webhook_contract'
-require 'pact_broker/webhooks/http_request_with_redacted_headers'
-require 'pact_broker/webhooks/pact_and_verification_parameters'
+require "pact_broker/domain/webhook_request"
+require "pact_broker/messages"
+require "pact_broker/logging"
+require "pact_broker/api/contracts/webhook_contract"
+require "pact_broker/webhooks/http_request_with_redacted_headers"
+require "pact_broker/webhooks/pact_and_verification_parameters"
 
 module PactBroker
   module Domain
@@ -108,7 +108,7 @@ module PactBroker
         return http_response, error
       end
 
-      def template_parameters(pact, verification, event_context, options)
+      def template_parameters(pact, verification, event_context, _options)
         PactBroker::Webhooks::PactAndVerificationParameters.new(pact, verification, event_context).to_hash
       end
 

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'uri'
-require 'pact_broker/messages'
+require "uri"
+require "pact_broker/messages"
 
 
 # This class is for https://github.com/pact-foundation/pact_broker/issues/101
@@ -19,7 +19,7 @@ module Rack
       def call env
         if (uri = valid_uri?(env))
           if (error_message = validate(uri))
-            [422, {'Content-Type' => 'text/plain'}, [error_message]]
+            [422, {"Content-Type" => "text/plain"}, [error_message]]
           else
             app.call(env)
           end
@@ -47,9 +47,9 @@ module Rack
       def validate(uri)
         decoded_path = URI.decode(uri.path)
         if decoded_path.include?("\n")
-          message('errors.new_line_in_url_path')
+          message("errors.new_line_in_url_path")
         elsif decoded_path.include?("\t")
-          message('errors.tab_in_url_path')
+          message("errors.tab_in_url_path")
         end
       end
     end

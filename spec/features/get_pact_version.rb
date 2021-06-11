@@ -21,7 +21,7 @@ RSpec.describe "retrieving a pact" do
     let(:path) { PactBroker::Api::PactBrokerUrls.pact_version_url(pact) }
 
     it "returns the latest" do
-      expect(JSON.parse(subject.body)['_links']['pb:consumer-version']['name']).to eq "2"
+      expect(JSON.parse(subject.body)["_links"]["pb:consumer-version"]["name"]).to eq "2"
     end
 
     context "when there is metadata specifying the consumer version number" do
@@ -29,7 +29,7 @@ RSpec.describe "retrieving a pact" do
       let(:path) { PactBroker::Api::PactBrokerUrls.pact_version_url_with_webhook_metadata(pact) }
 
       it "returns the pact with the matching consumer version number" do
-        expect(JSON.parse(subject.body)['_links']['pb:consumer-version']['name']).to eq "1"
+        expect(JSON.parse(subject.body)["_links"]["pb:consumer-version"]["name"]).to eq "1"
       end
     end
   end

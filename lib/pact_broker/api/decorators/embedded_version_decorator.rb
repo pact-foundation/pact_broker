@@ -1,4 +1,4 @@
-require_relative 'base_decorator'
+require_relative "base_decorator"
 
 module PactBroker
   module Api
@@ -14,7 +14,7 @@ module PactBroker
 
         link :self do | options |
           {
-            title: 'Version',
+            title: "Version",
             name: represented.number,
             href: version_url(options.fetch(:base_url), represented)
           }

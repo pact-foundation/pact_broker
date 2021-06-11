@@ -1,4 +1,4 @@
-require 'pact_broker/webhooks/pact_and_verification_parameters'
+require "pact_broker/webhooks/pact_and_verification_parameters"
 
 module PactBroker
   module Webhooks
@@ -10,7 +10,7 @@ module PactBroker
         value =~ TEMPLATE_PARAMETER_REGEXP
       end
 
-      def self.render_with_placeholder(value, placeholder = 'placeholder')
+      def self.render_with_placeholder(value, placeholder = "placeholder")
         value.gsub(TEMPLATE_PARAMETER_REGEXP, placeholder)
       end
 
@@ -18,11 +18,10 @@ module PactBroker
         render_template(escape_params(params, escaper || DEFAULT_ESCAPER), template)
       end
 
-      private
 
       def self.render_template(params, template)
-        params.inject(template) do | template, (key, value) |
-          template.gsub("${#{key}}", value)
+        params.inject(template) do | agg, (key, value) |
+          agg.gsub("${#{key}}", value)
         end
       end
 

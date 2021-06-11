@@ -1,7 +1,7 @@
-require 'sequel'
-require 'pact_broker/logging'
-require 'pact_broker/domain/version'
-require 'pact_broker/tags/repository'
+require "sequel"
+require "pact_broker/logging"
+require "pact_broker/domain/version"
+require "pact_broker/tags/repository"
 
 module PactBroker
   module Versions
@@ -106,11 +106,9 @@ module PactBroker
       end
 
       def find_by_pacticipant_id_and_number_or_create pacticipant_id, number
-        if version = find_by_pacticipant_id_and_number(pacticipant_id, number)
-          version
-        else
-          create(pacticipant_id: pacticipant_id, number: number)
-        end
+        version = find_by_pacticipant_id_and_number(pacticipant_id, number)
+
+        version ? version : create(pacticipant_id: pacticipant_id, number: number)
       end
 
       def delete_by_id version_ids
@@ -121,8 +119,6 @@ module PactBroker
         version_ids_with_pact_publications = PactBroker::Pacts::PactPublication.where(consumer_id: [consumer.id, provider.id]).select(:consumer_version_id).collect{|r| r[:consumer_version_id]}
         version_ids_with_verifications = PactBroker::Domain::Verification.where(provider_id: [provider.id, consumer.id]).select(:provider_version_id).collect{|r| r[:provider_version_id]}
         # Hope we don't hit max parameter constraints here...
-        version_ids_to_keep = (version_ids_with_pact_publications + version_ids_with_verifications).uniq
-
         PactBroker::Domain::Version
           .where(Sequel[:versions][:pacticipant_id] => [consumer.id, provider.id])
           .exclude(id: (version_ids_with_pact_publications + version_ids_with_verifications).uniq)

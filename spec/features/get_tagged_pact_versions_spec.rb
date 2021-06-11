@@ -21,6 +21,6 @@ describe "retrieving tagged pact versions" do
   end
 
   it "returns the list of tagged pact versions" do
-    expect(json_response_body['_links']['pb:pact-versions']).to be_a Array
+    expect(json_response_body["_links"]["pb:pact-versions"]).to be_a Array
   end
 end

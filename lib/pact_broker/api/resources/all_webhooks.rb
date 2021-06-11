@@ -1,8 +1,8 @@
-require 'pact_broker/services'
-require 'pact_broker/api/resources/base_resource'
-require 'pact_broker/api/decorators/webhooks_decorator'
-require 'pact_broker/api/decorators/webhook_decorator'
-require 'pact_broker/api/contracts/webhook_contract'
+require "pact_broker/services"
+require "pact_broker/api/resources/base_resource"
+require "pact_broker/api/decorators/webhooks_decorator"
+require "pact_broker/api/decorators/webhook_decorator"
+require "pact_broker/api/contracts/webhook_contract"
 
 module PactBroker
   module Api
@@ -18,7 +18,7 @@ module PactBroker
         end
 
         def allowed_methods
-          ["GET", "POST", "OPTIONS", "OPTIONS"]
+          ["GET", "POST", "OPTIONS"]
         end
 
         def create_path

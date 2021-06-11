@@ -1,7 +1,7 @@
-require 'sequel'
-require 'pact_broker/domain/pacticipant'
-require 'pact_broker/repositories/helpers'
-require 'pact_broker/error'
+require "sequel"
+require "pact_broker/domain/pacticipant"
+require "pact_broker/repositories/helpers"
+require "pact_broker/error"
 
 module PactBroker
   module Pacticipants
@@ -44,11 +44,8 @@ module PactBroker
       end
 
       def find_by_name_or_create name
-        if pacticipant = find_by_name(name)
-          pacticipant
-        else
-          create(name: name)
-        end
+        pacticipant = find_by_name(name)
+        pacticipant ? pacticipant : create(name: name)
       end
 
       # Need to be able to handle two calls that make the pacticipant at the same time.
@@ -70,7 +67,7 @@ module PactBroker
         pacticipant.save
       end
 
-      def replace(pacticipant_name, open_struct_pacticipant)
+      def replace(_pacticipant_name, open_struct_pacticipant)
         PactBroker::Domain::Pacticipant.new(
           display_name: open_struct_pacticipant.display_name,
           repository_url: open_struct_pacticipant.repository_url,

@@ -1,4 +1,4 @@
-require 'pact_broker/string_refinements'
+require "pact_broker/string_refinements"
 
 module PactBroker
   module Webhooks
@@ -14,8 +14,8 @@ module PactBroker
       def self.call logs, values
         substitutions = HEADER_SUBSTITUTIONS + value_substitutions(values)
 
-        substitutions.reduce(logs) do | logs, (find, replace) |
-          logs.gsub(find, replace)
+        substitutions.reduce(logs) do | agg_logs, (find, replace) |
+          agg_logs.gsub(find, replace)
         end
       end
 

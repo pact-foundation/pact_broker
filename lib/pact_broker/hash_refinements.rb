@@ -1,4 +1,4 @@
-require 'pact_broker/string_refinements'
+require "pact_broker/string_refinements"
 
 module PactBroker
   module HashRefinements
@@ -8,7 +8,7 @@ module PactBroker
 
       def deep_merge(other_hash, &block)
         block_actual = Proc.new {|key, oldval, newval|
-            newval = block.call(key, oldval, newval) if block_given?
+          newval = block.call(key, oldval, newval) if block_given?
             [oldval, newval].all? {|v| v.is_a?(Hash)} ? oldval.merge(newval, &block_actual) : newval
         }
         merge(other_hash, &block_actual)
@@ -49,7 +49,7 @@ module PactBroker
             when Symbol then key.to_s.snakecase.to_sym
             else
               key
-            end
+                        end
             result.merge(snake_key => snakecase_keys_private(value))
           end
         when Array
@@ -68,7 +68,7 @@ module PactBroker
             when Symbol then key.to_s.camelcase.to_sym
             else
               key
-            end
+                        end
             result.merge(snake_key => camelcase_keys_private(value))
           end
         when Array

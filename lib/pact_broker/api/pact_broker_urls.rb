@@ -1,8 +1,8 @@
-require 'erb'
-require 'pact_broker/pacts/metadata'
-require 'pact_broker/logging'
-require 'base64'
-require 'rack'
+require "erb"
+require "pact_broker/pacts/metadata"
+require "pact_broker/logging"
+require "base64"
+require "rack"
 
 module PactBroker
   module Api
@@ -22,10 +22,10 @@ module PactBroker
         "#{pacticipants_url(base_url)}/#{url_encode(pacticipant.name)}"
       end
 
-      def pacticipant_url_from_params params, base_url = ''
+      def pacticipant_url_from_params params, base_url = ""
         [
           base_url,
-          'pacticipants',
+          "pacticipants",
           url_encode(params.fetch(:pacticipant_name))
         ].join("/")
       end
@@ -42,12 +42,12 @@ module PactBroker
         "#{pacticipant_url(base_url, version.pacticipant)}/versions/#{url_encode(version.number)}"
       end
 
-      def version_url_from_params params, base_url = ''
+      def version_url_from_params params, base_url = ""
         [
           base_url,
-          'pacticipants',
+          "pacticipants",
           url_encode(params.fetch(:pacticipant_name)),
-          'versions',
+          "versions",
           url_encode(params.fetch(:version_number)),
         ].join("/")
       end
@@ -56,11 +56,11 @@ module PactBroker
         "#{pactigration_base_url(base_url, pact)}/version/#{url_encode(pact.consumer_version_number)}"
       end
 
-      def pact_version_url pact, base_url = ''
+      def pact_version_url pact, base_url = ""
         "#{pactigration_base_url(base_url, pact)}/pact-version/#{pact.pact_version_sha}"
       end
 
-      def pact_version_url_with_metadata pact, metadata, base_url = ''
+      def pact_version_url_with_metadata pact, metadata, base_url = ""
         if metadata && metadata.any?
           "#{pact_version_url(pact, base_url)}/metadata/#{encode_metadata(metadata)}"
         else
@@ -68,7 +68,7 @@ module PactBroker
         end
       end
 
-      def pact_version_url_with_webhook_metadata pact, base_url = ''
+      def pact_version_url_with_webhook_metadata pact, base_url = ""
         pact_version_url_with_metadata(pact, build_metadata_for_webhook_triggered_by_pact_publication(pact), base_url)
       end
 
@@ -77,7 +77,7 @@ module PactBroker
       end
 
       def decode_pact_metadata(metadata)
-        if metadata && metadata != ''
+        if metadata && metadata != ""
           parse_nested_metadata_query(base64_decode_metadata(metadata))
         else
           {}
@@ -85,10 +85,10 @@ module PactBroker
       end
 
       def pact_url_from_params base_url, params
-        [ base_url, 'pacts',
-          'provider', url_encode(params[:provider_name]),
-          'consumer', url_encode(params[:consumer_name]),
-          'version', url_encode(params[:consumer_version_number]) ].join('/')
+        [ base_url, "pacts",
+          "provider", url_encode(params[:provider_name]),
+          "consumer", url_encode(params[:consumer_name]),
+          "version", url_encode(params[:consumer_version_number]) ].join("/")
       end
 
       def latest_pact_url base_url, pact
@@ -127,7 +127,7 @@ module PactBroker
         pact_url(base_url, pact) + "/diff/previous-distinct"
       end
 
-      def templated_diff_url pact, base_url = ''
+      def templated_diff_url pact, base_url = ""
         pact_version_url(pact, base_url) + "/diff/pact-version/{pactVersion}"
       end
 
@@ -140,30 +140,30 @@ module PactBroker
       end
 
       def new_verification_url pact, number, base_url
-        [ base_url, 'pacts',
-          'provider', url_encode(pact.provider_name),
-          'consumer', url_encode(pact.consumer_name),
-          'pact-version', pact.pact_version_sha,
-          'verification-results', number
-        ].join('/')
+        [ base_url, "pacts",
+          "provider", url_encode(pact.provider_name),
+          "consumer", url_encode(pact.consumer_name),
+          "pact-version", pact.pact_version_sha,
+          "verification-results", number
+        ].join("/")
       end
 
-      def verification_url verification, base_url = ''
-        [ base_url, 'pacts',
-          'provider', url_encode(verification.provider_name),
-          'consumer', url_encode(verification.consumer_name),
-          'pact-version', verification.pact_version_sha,
-          'verification-results', verification.number
-        ].join('/')
+      def verification_url verification, base_url = ""
+        [ base_url, "pacts",
+          "provider", url_encode(verification.provider_name),
+          "consumer", url_encode(verification.consumer_name),
+          "pact-version", verification.pact_version_sha,
+          "verification-results", verification.number
+        ].join("/")
       end
 
-      def verification_url_from_params params, base_url = ''
-        [ base_url, 'pacts',
-          'provider', url_encode(params.fetch(:provider_name)),
-          'consumer', url_encode(params.fetch(:consumer_name)),
-          'pact-version', params.fetch(:pact_version_sha),
-          'verification-results', params.fetch(:verification_number)
-        ].join('/')
+      def verification_url_from_params params, base_url = ""
+        [ base_url, "pacts",
+          "provider", url_encode(params.fetch(:provider_name)),
+          "consumer", url_encode(params.fetch(:consumer_name)),
+          "pact-version", params.fetch(:pact_version_sha),
+          "verification-results", params.fetch(:verification_number)
+        ].join("/")
       end
 
       def latest_verifications_for_consumer_version_url version, base_url
@@ -177,7 +177,7 @@ module PactBroker
               provider_name: provider_name(pact),
               consumer_name: consumer_name(pact),
               pact_version_sha: pact.pact_version_sha,
-              verification_number: 'latest'
+              verification_number: "latest"
             },
             base_url
           )
@@ -186,7 +186,7 @@ module PactBroker
         end
       end
 
-      def verification_triggered_webhooks_url verification, base_url = ''
+      def verification_triggered_webhooks_url verification, base_url = ""
         "#{verification_url(verification, base_url)}/triggered-webhooks"
       end
 
@@ -239,98 +239,110 @@ module PactBroker
         "#{base_url}/webhooks/#{webhook.uuid}/execute"
       end
 
-      def webhooks_for_consumer_and_provider_url consumer, provider, base_url = ''
+      def webhooks_for_consumer_and_provider_url consumer, provider, base_url = ""
         "#{base_url}/webhooks/provider/#{url_encode(provider.name)}/consumer/#{url_encode(consumer.name)}"
       end
 
-      def consumer_webhooks_url consumer, base_url = ''
+      def consumer_webhooks_url consumer, base_url = ""
         "#{base_url}/webhooks/consumer/#{url_encode(consumer.name)}"
       end
 
-      def provider_webhooks_url provider, base_url = ''
+      def provider_webhooks_url provider, base_url = ""
         "#{base_url}/webhooks/provider/#{url_encode(provider.name)}"
       end
 
-      def webhooks_for_pact_url consumer, provider, base_url = ''
+      def webhooks_for_pact_url consumer, provider, base_url = ""
         "#{base_url}/pacts/provider/#{url_encode(provider.name)}/consumer/#{url_encode(consumer.name)}/webhooks"
       end
 
-      def webhooks_status_url consumer, provider, base_url = ''
+      def webhooks_status_url consumer, provider, base_url = ""
         "#{webhooks_for_pact_url(consumer, provider, base_url)}/status"
       end
 
-      def pact_triggered_webhooks_url pact, base_url = ''
+      def pact_triggered_webhooks_url pact, base_url = ""
         "#{pact_url(base_url, pact)}/triggered-webhooks"
       end
 
       def triggered_webhook_logs_url triggered_webhook, base_url
-        "#{base_url}/triggered-webhooks/#{triggered_webhook.trigger_uuid}/logs"
+        "#{base_url}/triggered-webhooks/#{triggered_webhook.uuid}/logs"
       end
 
-      def badge_url_for_latest_pact pact, base_url = ''
+      def badge_url_for_latest_pact pact, base_url = ""
         "#{latest_pact_url(base_url, pact)}/badge.svg"
       end
 
-      def matrix_url consumer_name, provider_name, base_url = ''
+      def matrix_url consumer_name, provider_name, _base_url = ""
         "/matrix/provider/#{url_encode(provider_name)}/consumer/#{url_encode(consumer_name)}"
       end
 
-      def matrix_badge_url_for_selectors consumer_selector, provider_selector, base_url = ''
+      def matrix_badge_url_for_selectors consumer_selector, provider_selector, base_url = ""
         "#{base_url}/matrix/provider/#{url_encode(provider_selector.pacticipant_name)}/latest/#{url_encode(provider_selector.tag)}/consumer/#{url_encode(consumer_selector.pacticipant_name)}/latest/#{url_encode(consumer_selector.tag)}/badge.svg"
       end
 
-      def matrix_for_pacticipant_version_url(version, base_url = '')
+      def matrix_for_pacticipant_version_url(version, base_url = "")
         query = {
           q: [{ pacticipant: version.pacticipant.name, version: version.number }],
-          latestby: 'cvpv'
+          latestby: "cvpv"
         }
         "#{base_url}/matrix?#{Rack::Utils.build_nested_query(query)}"
       end
 
-      def matrix_for_pact_url(pact, base_url = '')
+      def matrix_for_pact_url(pact, base_url = "")
         query = {
           q: [
             { pacticipant: pact.consumer_name, version: pact.consumer_version_number },
             { pacticipant: pact.provider_name, latest: true }
           ],
-          latestby: 'cvpv'
+          latestby: "cvpv"
         }
         "#{base_url}/matrix?#{Rack::Utils.build_nested_query(query)}"
       end
 
-      def matrix_url_from_params params, base_url = ''
+      def matrix_url_from_params params, base_url = ""
         matrix_url(params.fetch(:consumer_name), params.fetch(:provider_name), base_url)
       end
 
-      def group_url(pacticipant_name, base_url = '')
+      def group_url(pacticipant_name, base_url = "")
         "#{base_url}/groups/#{url_encode(pacticipant_name)}"
       end
 
-      def environments_url(base_url = '')
+      def environments_url(base_url = "")
         "#{base_url}/environments"
       end
 
-      def environment_url(environment, base_url = '')
+      def environment_url(environment, base_url = "")
         "#{environments_url(base_url)}/#{environment.uuid}"
       end
 
-      def deployed_versions_for_version_and_environment_url(version, environment, base_url = '')
+      def deployed_versions_for_version_and_environment_url(version, environment, base_url = "")
         "#{version_url(base_url, version)}/deployed-versions/environment/#{environment.uuid}"
       end
 
-      def released_versions_for_version_and_environment_url(version, environment, base_url = '')
+      def currently_deployed_versions_for_environment_url(environment, base_url = "")
+        "#{base_url}/environments/#{environment.uuid}/currently-deployed-versions"
+      end
+
+      def currently_supported_versions_for_environment_url(environment, base_url = "")
+        "#{base_url}/environments/#{environment.uuid}/currently-supported-versions"
+      end
+
+      def record_undeployment_url(deployed_version, base_url = "")
+        "#{deployed_version_url(deployed_version, base_url)}/record-undeployment"
+      end
+
+      def released_versions_for_version_and_environment_url(version, environment, base_url = "")
         "#{version_url(base_url, version)}/released-versions/environment/#{environment.uuid}"
       end
 
-      def deployed_version_url(deployed_version, base_url = '')
-        "/deployed-versions/#{deployed_version.uuid}"
+      def deployed_version_url(deployed_version, base_url = "")
+        "#{base_url}/deployed-versions/#{deployed_version.uuid}"
       end
 
-      def released_version_url(released_version, base_url = '')
-        "/released-versions/#{released_version.uuid}"
+      def released_version_url(released_version, base_url = "")
+        "#{base_url}/released-versions/#{released_version.uuid}"
       end
 
-      def hal_browser_url target_url, base_url = ''
+      def hal_browser_url target_url, base_url = ""
         "#{base_url}/hal-browser/browser.html#" + target_url
       end
 
@@ -359,10 +371,10 @@ module PactBroker
       end
 
       def pactigration_base_url_from_params base_url, params
-        [ base_url, 'pacts',
-          'provider', url_encode(params[:provider_name]),
-          'consumer', url_encode(params[:consumer_name])
-        ].join('/')
+        [ base_url, "pacts",
+          "provider", url_encode(params[:provider_name]),
+          "consumer", url_encode(params[:consumer_name])
+        ].join("/")
       end
 
       def consumer_name(thing)

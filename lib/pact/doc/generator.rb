@@ -1,5 +1,5 @@
-require 'pact/doc/doc_file'
-require 'fileutils'
+require "pact/doc/doc_file"
+require "fileutils"
 
 module Pact
   module Doc
@@ -14,7 +14,7 @@ module Pact
         @file_extension = options[:file_extension]
         @index_renderer = options[:index_renderer]
         @index_name = options[:index_name]
-        @after = options.fetch(:after, lambda{|pact_dir, target_dir, consumer_contracts| })
+        @after = options.fetch(:after, lambda{|pact_dir_arg, target_dir_arg, consumer_contracts_arg| })
       end
 
       def call

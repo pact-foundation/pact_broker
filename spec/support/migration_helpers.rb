@@ -1,4 +1,4 @@
-require 'tasks/database'
+require "tasks/database"
 
 module MigrationHelpers
   def create table_name, params, id_column_name = :id

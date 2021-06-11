@@ -1,4 +1,4 @@
-require 'spec/support/test_data_builder'
+require "spec/support/test_data_builder"
 
 describe "Get pact versions" do
   let(:path) { "/pacts/provider/Provider/consumer/Consumer/versions" }

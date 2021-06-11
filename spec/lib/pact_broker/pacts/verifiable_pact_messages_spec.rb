@@ -1,6 +1,6 @@
-require 'pact_broker/pacts/verifiable_pact_messages'
-require 'pact_broker/pacts/verifiable_pact'
-require 'pact_broker/pacts/selectors'
+require "pact_broker/pacts/verifiable_pact_messages"
+require "pact_broker/pacts/verifiable_pact"
+require "pact_broker/pacts/selectors"
 
 module PactBroker
   module Pacts
@@ -25,7 +25,7 @@ module PactBroker
             provider_branch: provider_branch
         )
       end
-      let(:consumer_version) { double('version', number: "1234" )}
+      let(:consumer_version) { double("version", number: "1234" )}
 
       subject { VerifiablePactMessages.new(verifiable_pact, pact_version_url) }
 
@@ -109,37 +109,37 @@ module PactBroker
         end
 
         context "when the pact is one of all versions for a tag and consumer" do
-          let(:selectors) { Selectors.new(Selector.all_for_tag_and_consumer('prod', 'Foo')).resolve(consumer_version) }
+          let(:selectors) { Selectors.new(Selector.all_for_tag_and_consumer("prod", "Foo")).resolve(consumer_version) }
 
           its(:inclusion_reason) { is_expected.to include "all Foo versions tagged 'prod' (1234)"}
         end
 
         context "when the pact is the latest version for a tag and consumer" do
-          let(:selectors) { Selectors.new(Selector.latest_for_tag_and_consumer('prod', 'Foo')).resolve(consumer_version) }
+          let(:selectors) { Selectors.new(Selector.latest_for_tag_and_consumer("prod", "Foo")).resolve(consumer_version) }
 
           its(:inclusion_reason) { is_expected.to include "latest version of Foo tagged 'prod' (1234)"}
         end
 
         context "when the pact is the latest version for a branch and consumer" do
-          let(:selectors) { Selectors.new(Selector.latest_for_branch_and_consumer('main', 'Foo')).resolve(consumer_version) }
+          let(:selectors) { Selectors.new(Selector.latest_for_branch_and_consumer("main", "Foo")).resolve(consumer_version) }
 
           its(:inclusion_reason) { is_expected.to include "latest version of Foo from branch 'main' (1234)"}
         end
 
         context "when the pact is the latest version for a consumer" do
-          let(:selectors) { Selectors.new(Selector.latest_for_consumer('Foo')).resolve(consumer_version) }
+          let(:selectors) { Selectors.new(Selector.latest_for_consumer("Foo")).resolve(consumer_version) }
 
           its(:inclusion_reason) { is_expected.to include "latest version of Foo that has a pact with Bar (1234)"}
         end
 
         context "when the consumer version is currently deployed to a single environment" do
-          let(:selectors) { Selectors.new(Selector.for_currently_deployed('test')).resolve(consumer_version) }
+          let(:selectors) { Selectors.new(Selector.for_currently_deployed("test")).resolve(consumer_version) }
 
           its(:inclusion_reason) { is_expected.to include "consumer version(s) currently deployed to test (1234)"}
         end
 
         context "when the consumer version is currently deployed to a multiple environments" do
-          let(:selectors) { Selectors.new(Selector.for_currently_deployed('dev'), Selector.for_currently_deployed('test'), Selector.for_currently_deployed('prod')).resolve(consumer_version) }
+          let(:selectors) { Selectors.new(Selector.for_currently_deployed("dev"), Selector.for_currently_deployed("test"), Selector.for_currently_deployed("prod")).resolve(consumer_version) }
 
           its(:inclusion_reason) { is_expected.to include "consumer version(s) currently deployed to dev (1234), prod (1234) and test (1234)"}
         end
@@ -147,10 +147,10 @@ module PactBroker
         context "when the currently deployed consumer version is for a consumer" do
           let(:selectors) do
             Selectors.new(
-              Selector.for_currently_deployed_and_environment_and_consumer('test', 'Foo'),
-              Selector.for_currently_deployed_and_environment_and_consumer('prod', 'Foo'),
-              Selector.for_currently_deployed_and_environment_and_consumer('test', 'Bar'),
-              Selector.for_currently_deployed('test'),
+              Selector.for_currently_deployed_and_environment_and_consumer("test", "Foo"),
+              Selector.for_currently_deployed_and_environment_and_consumer("prod", "Foo"),
+              Selector.for_currently_deployed_and_environment_and_consumer("test", "Bar"),
+              Selector.for_currently_deployed("test"),
             ).resolve(consumer_version)
           end
 

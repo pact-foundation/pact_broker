@@ -1,4 +1,4 @@
-require 'pact_broker/db/clean'
+require "pact_broker/db/clean"
 
 IS_MYSQL = !!DB.mysql?
 

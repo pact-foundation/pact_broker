@@ -1,14 +1,14 @@
 # frozen_string_literal: true
-require 'webmachine'
-require 'pact_broker/services'
-require 'pact_broker/api/decorators'
-require 'pact_broker/logging'
-require 'pact_broker/api/pact_broker_urls'
-require 'pact_broker/json'
-require 'pact_broker/pacts/pact_params'
-require 'pact_broker/api/resources/authentication'
-require 'pact_broker/api/resources/authorization'
-require 'pact_broker/errors'
+require "webmachine"
+require "pact_broker/services"
+require "pact_broker/api/decorators"
+require "pact_broker/logging"
+require "pact_broker/api/pact_broker_urls"
+require "pact_broker/json"
+require "pact_broker/pacts/pact_params"
+require "pact_broker/api/resources/authentication"
+require "pact_broker/api/resources/authorization"
+require "pact_broker/errors"
 
 module PactBroker
   module Api
@@ -31,11 +31,11 @@ module PactBroker
         end
 
         def options
-          { 'Access-Control-Allow-Methods' => allowed_methods.join(", ")}
+          { "Access-Control-Allow-Methods" => allowed_methods.join(", ")}
         end
 
         def known_methods
-          super + ['PATCH']
+          super + ["PATCH"]
         end
 
         def finish_request
@@ -76,12 +76,12 @@ module PactBroker
           # Using the request base URI as a fallback if the base_url is not configured may be a vulnerability,
           # but the documentation recommends that the
           # base_url should be set in the configuration to mitigate this.
-          request.env["pactbroker.base_url"] || request.base_uri.to_s.chomp('/')
+          request.env["pactbroker.base_url"] || request.base_uri.to_s.chomp("/")
         end
 
         # See comments for base_url in lib/pact_broker/doc/controllers/app.rb
         def ui_base_url
-          request.env["pactbroker.base_url"] || ''
+          request.env["pactbroker.base_url"] || ""
         end
 
         def charsets_provided
@@ -94,7 +94,7 @@ module PactBroker
         end
 
         def resource_url
-          request.uri.to_s.gsub(/\?.*/, '').chomp('/')
+          request.uri.to_s.gsub(/\?.*/, "").chomp("/")
         end
 
         def decorator_context options = {}
@@ -114,6 +114,7 @@ module PactBroker
           response.body = application_context.error_response_body_generator.call(error, error_reference, request.env)
         end
 
+        # rubocop: disable Metrics/CyclomaticComplexity
         def params(options = {})
           return options[:default] if options.key?(:default) && request_body.empty?
 
@@ -126,6 +127,7 @@ module PactBroker
         rescue JSON::JSONError => e
           raise InvalidJsonError.new("Error parsing JSON - #{e.message}")
         end
+        # rubocop: enable Metrics/CyclomaticComplexity
 
         def params_with_string_keys
           params(symbolize_names: false)
@@ -136,12 +138,12 @@ module PactBroker
         end
 
         def set_json_error_message message
-          response.headers['Content-Type'] = 'application/hal+json;charset=utf-8'
+          response.headers["Content-Type"] = "application/hal+json;charset=utf-8"
           response.body = { error: message }.to_json
         end
 
         def set_json_validation_error_messages errors
-          response.headers['Content-Type'] = 'application/hal+json;charset=utf-8'
+          response.headers["Content-Type"] = "application/hal+json;charset=utf-8"
           response.body = { errors: errors }.to_json
         end
 
@@ -188,7 +190,7 @@ module PactBroker
           rescue StandardError => e
             logger.info "Error parsing JSON #{e} - #{request_body}"
             set_json_error_message "Error parsing JSON - #{e.message}"
-            response.headers['Content-Type'] = 'application/hal+json;charset=utf-8'
+            response.headers["Content-Type"] = "application/hal+json;charset=utf-8"
             true
           end
         end

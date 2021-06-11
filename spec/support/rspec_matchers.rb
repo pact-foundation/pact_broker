@@ -1,4 +1,4 @@
-RSpec::Matchers.define :be_datey do |expected|
+RSpec::Matchers.define :be_datey do |_expected|
   match do |actual|
     actual.instance_of?(DateTime) || actual.instance_of?(Time)
   end

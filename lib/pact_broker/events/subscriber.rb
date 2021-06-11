@@ -1,4 +1,4 @@
-require 'wisper'
+require "wisper"
 
 # The Wisper implementation of temporary listeners clears all listeners at the end of the block,
 # rather the just the ones that were supplied in block. This implementation just clears the specified ones,

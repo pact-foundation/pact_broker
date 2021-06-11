@@ -1,5 +1,5 @@
-require 'ostruct'
-require 'pact_broker/api/pact_broker_urls'
+require "ostruct"
+require "pact_broker/api/pact_broker_urls"
 
 module PactBroker
   module Api
@@ -27,7 +27,7 @@ module PactBroker
 
         attr_reader :index_items
 
-        def items(index_items, base_url)
+        def items(index_items, _base_url)
           index_items.collect do | index_item |
             index_item_object(index_item)
           end

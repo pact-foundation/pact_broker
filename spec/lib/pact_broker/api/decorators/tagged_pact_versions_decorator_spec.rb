@@ -1,4 +1,4 @@
-require 'pact_broker/api/decorators/tagged_pact_versions_decorator'
+require "pact_broker/api/decorators/tagged_pact_versions_decorator"
 
 module PactBroker
   module Api
@@ -6,9 +6,9 @@ module PactBroker
       describe TaggedPactVersionsDecorator do
         before do
           allow(PactBroker::Api::Decorators::PactVersionDecorator).to receive(:new).and_return(_version_decorator)
-          allow_any_instance_of(TaggedPactVersionsDecorator).to receive(:pact_url).and_return('pact_url')
-          allow_any_instance_of(TaggedPactVersionsDecorator).to receive(:pacticipant_url).and_return('pacticipant_url')
-          allow_any_instance_of(TaggedPactVersionsDecorator).to receive(:pacticipant_url).and_return('pacticipant_url')
+          allow_any_instance_of(TaggedPactVersionsDecorator).to receive(:pact_url).and_return("pact_url")
+          allow_any_instance_of(TaggedPactVersionsDecorator).to receive(:pacticipant_url).and_return("pacticipant_url")
+          allow_any_instance_of(TaggedPactVersionsDecorator).to receive(:pacticipant_url).and_return("pacticipant_url")
         end
 
         let(:user_options) do

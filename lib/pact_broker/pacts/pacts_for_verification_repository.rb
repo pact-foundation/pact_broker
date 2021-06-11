@@ -1,13 +1,13 @@
-require 'sequel'
-require 'pact_broker/logging'
-require 'pact_broker/pacts/pact_publication'
-require 'pact_broker/domain'
-require 'pact_broker/pacts/verifiable_pact'
-require 'pact_broker/repositories/helpers'
-require 'pact_broker/pacts/selected_pact'
-require 'pact_broker/pacts/selector'
-require 'pact_broker/pacts/selectors'
-require 'pact_broker/feature_toggle'
+require "sequel"
+require "pact_broker/logging"
+require "pact_broker/pacts/pact_publication"
+require "pact_broker/domain"
+require "pact_broker/pacts/verifiable_pact"
+require "pact_broker/repositories/helpers"
+require "pact_broker/pacts/selected_pact"
+require "pact_broker/pacts/selector"
+require "pact_broker/pacts/selectors"
+require "pact_broker/feature_toggle"
 
 module PactBroker
   module Pacts
@@ -97,26 +97,27 @@ module PactBroker
         end
       end
 
+      # rubocop: disable Metrics/CyclomaticComplexity
       def find_pacts_by_selector(provider_name, consumer_version_selectors)
         provider = pacticipant_repository.find_by_name(provider_name)
 
         selectors = if consumer_version_selectors.empty?
-          Selectors.create_for_overall_latest
-        else
-          consumer_version_selectors.select(&:latest_for_tag?) +
-            consumer_version_selectors.select(&:latest_for_branch?) +
-            consumer_version_selectors.select(&:overall_latest?) +
-            consumer_version_selectors.select(&:currently_deployed?)
-        end
+                      Selectors.create_for_overall_latest
+                    else
+                      consumer_version_selectors.select(&:latest_for_tag?) +
+                        consumer_version_selectors.select(&:latest_for_branch?) +
+                        consumer_version_selectors.select(&:overall_latest?) +
+                        consumer_version_selectors.select(&:currently_deployed?)
+                    end
 
         selectors.flat_map do | selector |
           query = scope_for(PactPublication).for_provider_and_consumer_version_selector(provider, selector)
           query.all.collect do | pact_publication |
             resolved_selector = if selector.currently_deployed?
-              selector.resolve_for_environment(pact_publication.consumer_version, pact_publication.values.fetch(:environment_name))
-            else
-              selector.resolve(pact_publication.consumer_version)
-            end
+                                  selector.resolve_for_environment(pact_publication.consumer_version, pact_publication.values.fetch(:environment_name))
+                                else
+                                  selector.resolve(pact_publication.consumer_version)
+                                end
             SelectedPact.new(
               pact_publication.to_domain,
               Selectors.new(resolved_selector)
@@ -124,6 +125,7 @@ module PactBroker
           end
         end
       end
+      # rubocop: enable Metrics/CyclomaticComplexity
 
       def find_pacts_for_which_the_latest_version_for_the_fallback_tag_is_required(provider_name, selectors)
         selectors.collect do | selector |
@@ -187,12 +189,12 @@ module PactBroker
       end
 
       # TODO ? find the WIP pacts by consumer branch
-      def find_wip_pact_versions_for_provider_by_provider_tags(provider, provider_tags_names, provider_tags, wip_start_date, pact_publication_scope)
+      def find_wip_pact_versions_for_provider_by_provider_tags(provider, provider_tags_names, _provider_tags, wip_start_date, pact_publication_scope)
         potential_wip_pacts_by_consumer_tag_query = PactPublication.for_provider(provider).created_after(wip_start_date).send(pact_publication_scope)
         potential_wip_pacts_by_consumer_tag = potential_wip_pacts_by_consumer_tag_query.all
 
-        tag_to_pact_publications = provider_tags_names.each_with_object({}) do | provider_tag_name, tag_to_pact_publications |
-          tag_to_pact_publications[provider_tag_name] = remove_non_wip_for_tag(
+        tag_to_pact_publications = provider_tags_names.each_with_object({}) do | provider_tag_name, tag_to_pact_publication |
+          tag_to_pact_publication[provider_tag_name] = remove_non_wip_for_tag(
             potential_wip_pacts_by_consumer_tag,
             potential_wip_pacts_by_consumer_tag_query,
             provider,

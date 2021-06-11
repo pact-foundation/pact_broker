@@ -1,21 +1,21 @@
-require 'spec_helper'
-require 'pact_broker/pacts/pact_params'
+require "spec_helper"
+require "pact_broker/pacts/pact_params"
 
 module PactBroker
   module Pacts
     describe PactParams do
 
-      let(:body) { load_fixture('a_consumer-a_provider.json') }
-      let(:consumer_version_number) { '1.2.3' }
-      let(:headers) { { 'X-Pact-Consumer-Version' => consumer_version_number, 'Host' => 'example.org' } }
-      let(:revision_number) { '1' }
+      let(:body) { load_fixture("a_consumer-a_provider.json") }
+      let(:consumer_version_number) { "1.2.3" }
+      let(:headers) { { "X-Pact-Consumer-Version" => consumer_version_number, "Host" => "example.org" } }
+      let(:revision_number) { "1" }
       let(:path_info) do
         {
-          consumer_name: 'Consumer',
-          provider_name: 'Provider',
-          consumer_version_number: '1.2.3',
+          consumer_name: "Consumer",
+          provider_name: "Provider",
+          consumer_version_number: "1.2.3",
           revision_number: revision_number,
-          pact_version_sha: '123'
+          pact_version_sha: "123"
         }
       end
 
@@ -90,7 +90,7 @@ module PactBroker
           end
 
           context "with missing data" do
-            let(:body){ '' }
+            let(:body){ "" }
 
             it "the consumer name from the pact is nil" do
               expect(subject.consumer_name_in_pact).to be nil
@@ -101,7 +101,7 @@ module PactBroker
             end
 
             it "extracts the json_content" do
-              expect(subject.json_content).to eq ''
+              expect(subject.json_content).to eq ""
             end
           end
         end

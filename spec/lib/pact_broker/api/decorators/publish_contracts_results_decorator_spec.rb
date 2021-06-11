@@ -1,6 +1,6 @@
-require 'pact_broker/api/decorators/publish_contracts_results_decorator'
-require 'pact_broker/contracts/contracts_publication_results'
-require 'pact_broker/contracts/notice'
+require "pact_broker/api/decorators/publish_contracts_results_decorator"
+require "pact_broker/contracts/contracts_publication_results"
+require "pact_broker/contracts/notice"
 
 module PactBroker
   module Api
@@ -35,7 +35,7 @@ module PactBroker
           let(:decorator_options) { { user_options: user_options } }
           let(:user_options) do
             {
-              base_url: 'http://example.org'
+              base_url: "http://example.org"
             }
           end
 

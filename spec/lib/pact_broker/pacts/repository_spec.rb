@@ -1,23 +1,23 @@
 # Yes, I know this file is too bug, but cmd+shift+t is too useful!
 
-require 'pact_broker/pacts/repository'
-require 'pact_broker/pacts/pact_params'
-require 'pact_broker/versions/repository'
-require 'pact_broker/pacticipants/repository'
+require "pact_broker/pacts/repository"
+require "pact_broker/pacts/pact_params"
+require "pact_broker/versions/repository"
+require "pact_broker/pacticipants/repository"
 
 module PactBroker
   module Pacts
     describe Repository do
 
-      let(:consumer_name) { 'Consumer' }
-      let(:provider_name) { 'Provider' }
+      let(:consumer_name) { "Consumer" }
+      let(:provider_name) { "Provider" }
 
       describe "create" do
-        let(:consumer) { Pacticipants::Repository.new.create name: 'Consumer' }
-        let(:provider) { Pacticipants::Repository.new.create name: 'Provider' }
-        let(:version) { PactBroker::Versions::Repository.new.create number: '1.2.3', pacticipant_id: consumer.id }
-        let(:pact_version_sha) { '123' }
-        let(:json_content) { {some: 'json'}.to_json }
+        let(:consumer) { Pacticipants::Repository.new.create name: "Consumer" }
+        let(:provider) { Pacticipants::Repository.new.create name: "Provider" }
+        let(:version) { PactBroker::Versions::Repository.new.create number: "1.2.3", pacticipant_id: consumer.id }
+        let(:pact_version_sha) { "123" }
+        let(:json_content) { {some: "json"}.to_json }
 
         let(:params) do
           {
@@ -47,8 +47,8 @@ module PactBroker
         it "sets all the Pact::Model attributes" do
           expect(subject.consumer).to eq consumer
           expect(subject.provider).to eq provider
-          expect(subject.consumer_version_number).to eq '1.2.3'
-          expect(subject.consumer_version.number).to eq '1.2.3'
+          expect(subject.consumer_version_number).to eq "1.2.3"
+          expect(subject.consumer_version.number).to eq "1.2.3"
           expect(subject.json_content).to eq json_content
           expect(subject.created_at).to be_datey
         end
@@ -63,7 +63,7 @@ module PactBroker
         end
 
         context "when a pact already exists with exactly the same content" do
-          let(:another_version) { Versions::Repository.new.create number: '2.0.0', pacticipant_id: consumer.id }
+          let(:another_version) { Versions::Repository.new.create number: "2.0.0", pacticipant_id: consumer.id }
 
           before do
             Repository.new.create(
@@ -111,9 +111,9 @@ module PactBroker
         end
 
         context "when base_equality_only_on_content_that_affects_verification_results is true" do
-          let(:another_version) { Versions::Repository.new.create number: '2.0.0', pacticipant_id: consumer.id }
-          let(:sha_1) { '1' }
-          let(:sha_2) { '1' }
+          let(:another_version) { Versions::Repository.new.create number: "2.0.0", pacticipant_id: consumer.id }
+          let(:sha_1) { "1" }
+          let(:sha_2) { "1" }
 
           before do
             # PactBroker.configuration.base_equality_only_on_content_that_affects_verification_results = true
@@ -144,7 +144,7 @@ module PactBroker
           end
 
           context "when the sha is not the same" do
-            let(:sha_2) { '2' }
+            let(:sha_2) { "2" }
 
             it "creates a new PactVersion" do
               expect { subject }.to change{ PactVersion.count }.by(1)
@@ -153,8 +153,8 @@ module PactBroker
         end
 
         context "when a pact already exists with the same content but with a different consumer/provider" do
-          let(:another_version) { Versions::Repository.new.create number: '2.0.0', pacticipant_id: consumer.id }
-          let(:another_provider) { Pacticipants::Repository.new.create name: 'Provider2' }
+          let(:another_version) { Versions::Repository.new.create number: "2.0.0", pacticipant_id: consumer.id }
+          let(:another_provider) { Pacticipants::Repository.new.create name: "Provider2" }
           before do
             Repository.new.create(
               version_id: version.id,
@@ -181,14 +181,14 @@ module PactBroker
         end
 
         context "when a pact already exists with different content" do
-          let(:another_version) { Versions::Repository.new.create number: '2.0.0', pacticipant_id: consumer.id }
+          let(:another_version) { Versions::Repository.new.create number: "2.0.0", pacticipant_id: consumer.id }
 
           before do
             Repository.new.create(
               version_id: version.id,
               consumer_id: consumer.id,
               provider_id: provider.id,
-              json_content: {some_other: 'json_content'}.to_json,
+              json_content: {some_other: "json_content"}.to_json,
               pact_version_sha: pact_version_sha
             )
           end
@@ -232,10 +232,10 @@ module PactBroker
 
         let(:created_at) { DateTime.new(2014, 3, 2) }
 
-        let(:original_json_content) { {some: 'json'}.to_json }
-        let(:json_content) { {some_other: 'json'}.to_json }
-        let(:pact_version_sha) { '123' }
-        let(:new_pact_version_sha) { '567' }
+        let(:original_json_content) { {some: "json"}.to_json }
+        let(:json_content) { {some_other: "json"}.to_json }
+        let(:pact_version_sha) { "123" }
+        let(:new_pact_version_sha) { "567" }
 
         context "when the pact_version_sha has changed" do
           subject { repository.update(existing_pact.id, json_content: json_content, pact_version_sha: new_pact_version_sha) }
@@ -325,7 +325,7 @@ module PactBroker
             .create_pact
         end
 
-        let(:pact_params) { PactBroker::Pacts::PactParams.new(consumer_name: consumer_name, provider_name: provider_name, consumer_version_number: '1.2.3') }
+        let(:pact_params) { PactBroker::Pacts::PactParams.new(consumer_name: consumer_name, provider_name: provider_name, consumer_version_number: "1.2.3") }
 
         subject { Repository.new.delete pact_params }
 
@@ -807,18 +807,18 @@ module PactBroker
 
       describe "find_previous_distinct_pact" do
 
-        let(:pact_content_version_1) { load_fixture('consumer-provider.json') }
+        let(:pact_content_version_1) { load_fixture("consumer-provider.json") }
         let(:pact_content_version_2) do
-          hash = load_json_fixture('consumer-provider.json')
-          hash['interactions'].first['foo'] = 'bar' # Extra key in interactions will affect equality
+          hash = load_json_fixture("consumer-provider.json")
+          hash["interactions"].first["foo"] = "bar" # Extra key in interactions will affect equality
           hash.to_json
         end
-        let(:pact_content_version_3) {  load_fixture('consumer-provider.json') }
+        let(:pact_content_version_3) {  load_fixture("consumer-provider.json") }
         let(:pact_content_version_4) do
           # Move description to end of hash, should not affect equality
-          hash = load_json_fixture('consumer-provider.json')
-          description = hash['interactions'].first.delete('description')
-          hash['interactions'].first['description'] = description
+          hash = load_json_fixture("consumer-provider.json")
+          description = hash["interactions"].first.delete("description")
+          hash["interactions"].first["description"] = description
           hash.to_json
         end
 
@@ -851,7 +851,7 @@ module PactBroker
         end
 
         context "when there isn't a previous distinct version" do
-          let(:pact_content_version_2) { load_fixture('consumer-provider.json') }
+          let(:pact_content_version_2) { load_fixture("consumer-provider.json") }
 
           it "returns nil" do
             expect(subject).to be nil
@@ -983,19 +983,19 @@ module PactBroker
         before do
           TestDataBuilder.new
             .create_consumer("Condor")
-            .create_consumer_version('1.3.0')
+            .create_consumer_version("1.3.0")
             .create_provider("Pricing Service")
             .create_pact
-            .create_consumer_version('1.4.0')
+            .create_consumer_version("1.4.0")
             .create_consumer_version_tag("prod")
             .create_pact
             .create_consumer("Contract Email Service")
             .create_consumer_version("2.6.0")
             .create_provider("Contract Proposal Service")
             .create_pact
-            .create_consumer_version('2.7.0')
+            .create_consumer_version("2.7.0")
             .create_pact
-            .create_consumer_version('2.8.0') # Create a version without a pact, it shouldn't be used
+            .create_consumer_version("2.8.0") # Create a version without a pact, it shouldn't be used
         end
 
         it "finds the latest pact for each consumer/provider pair" do

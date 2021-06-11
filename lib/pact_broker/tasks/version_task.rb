@@ -1,4 +1,4 @@
-require 'rake/tasklib'
+require "rake/tasklib"
 
 =begin
 
@@ -18,7 +18,7 @@ module PactBroker
       attr_accessor :database_connection
 
       def initialize &block
-        rake_task &block
+        rake_task(&block)
       end
 
       def rake_task &block
@@ -27,7 +27,7 @@ module PactBroker
             desc "Display the current database migration version"
             task :version do
               instance_eval(&block)
-              require 'pact_broker/db/version'
+              require "pact_broker/db/version"
               puts PactBroker::DB::Version.call(database_connection)
             end
           end

@@ -1,9 +1,9 @@
-require 'dry-validation'
-require 'pact_broker/hash_refinements'
-require 'pact_broker/string_refinements'
-require 'pact_broker/api/contracts/dry_validation_workarounds'
-require 'pact_broker/api/contracts/dry_validation_predicates'
-require 'pact_broker/messages'
+require "dry-validation"
+require "pact_broker/hash_refinements"
+require "pact_broker/string_refinements"
+require "pact_broker/api/contracts/dry_validation_workarounds"
+require "pact_broker/api/contracts/dry_validation_predicates"
+require "pact_broker/messages"
 
 module PactBroker
   module Api
@@ -74,6 +74,7 @@ module PactBroker
         # when setting a tag, latest=true and latest=false are both valid
         # when setting the branch, it doesn't make sense to verify all pacts for a branch,
         # so latest is not required, but cannot be set to false
+        # rubocop: disable Metrics/CyclomaticComplexity, Metrics/MethodLength
         def self.validate_consumer_version_selector(selector, index)
           errors = []
 
@@ -118,6 +119,7 @@ module PactBroker
 
           errors
         end
+        # rubocop: enable Metrics/CyclomaticComplexity, Metrics/MethodLength
       end
     end
   end

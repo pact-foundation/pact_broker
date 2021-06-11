@@ -1,9 +1,8 @@
-require_relative 'migration_helper'
-require_relative '../ddl_statements'
+require_relative "migration_helper"
+require_relative "../ddl_statements"
 
 Sequel.migration do
   up do
-    pp = :pact_publications
     # For each consumer_id/provider_id/tag_name, the version order of the latest version that has a pact
     create_or_replace_view(:latest_tagged_pact_consumer_version_orders,
       latest_tagged_pact_consumer_version_orders_v2(self))

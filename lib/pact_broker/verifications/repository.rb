@@ -1,8 +1,8 @@
-require 'sequel'
-require 'pact_broker/domain/verification'
-require 'pact_broker/verifications/latest_verification_for_pact_version'
-require 'pact_broker/verifications/sequence'
-require 'pact_broker/verifications/latest_verification_id_for_pact_version_and_provider_version'
+require "sequel"
+require "pact_broker/domain/verification"
+require "pact_broker/verifications/latest_verification_for_pact_version"
+require "pact_broker/verifications/sequence"
+require "pact_broker/verifications/latest_verification_id_for_pact_version_and_provider_version"
 
 module PactBroker
   module Verifications

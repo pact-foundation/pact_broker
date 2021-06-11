@@ -1,18 +1,18 @@
-require 'spec/support/test_data_builder'
+require "spec/support/test_data_builder"
 
 describe "Get matrix for consumer and provider" do
   before do
     TestDataBuilder.new
-      .create_pact_with_hierarchy('Consumer', '1.0.0', 'Provider')
-      .create_verification(provider_version: '4.5.6')
+      .create_pact_with_hierarchy("Consumer", "1.0.0", "Provider")
+      .create_verification(provider_version: "4.5.6")
   end
 
   let(:path) { "/matrix" }
   let(:params) do
     {
       q: [
-        { pacticipant: 'Consumer', version: '1.0.0' },
-        { pacticipant: 'Provider', version: '4.5.6' }
+        { pacticipant: "Consumer", version: "1.0.0" },
+        { pacticipant: "Provider", version: "4.5.6" }
       ]
     }
   end

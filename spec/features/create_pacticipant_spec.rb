@@ -1,10 +1,10 @@
 describe "Creating a pacticipant" do
   let(:path) { "/pacticipants" }
-  let(:headers) { {'CONTENT_TYPE' => 'application/json'} }
+  let(:headers) { {"CONTENT_TYPE" => "application/json"} }
   let(:response_body) { JSON.parse(last_response.body, symbolize_names: true)}
   let(:pacticipant_hash) do
     {
-      name: 'Foo Thing',
+      name: "Foo Thing",
       mainBranch: "main",
       repositoryUrl: "http://url",
       repositoryName: "foo-thing",
@@ -21,12 +21,12 @@ describe "Creating a pacticipant" do
 
   it "returns the Location header" do
     subject
-    expect(last_response.headers['Location']).to eq 'http://example.org/pacticpants/Foo%20Thing'
+    expect(last_response.headers["Location"]).to eq "http://example.org/pacticpants/Foo%20Thing"
   end
 
   it "returns a JSON Content Type" do
     subject
-    expect(last_response.headers['Content-Type']).to eq 'application/hal+json;charset=utf-8'
+    expect(last_response.headers["Content-Type"]).to eq "application/hal+json;charset=utf-8"
   end
 
   it "returns the newly created webhook" do

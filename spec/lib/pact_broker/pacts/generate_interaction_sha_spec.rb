@@ -1,4 +1,4 @@
-require 'pact_broker/pacts/generate_interaction_sha'
+require "pact_broker/pacts/generate_interaction_sha"
 
 module PactBroker
   module Pacts

@@ -1,11 +1,11 @@
-require 'pact_broker/webhooks/webhook_request_template'
+require "pact_broker/webhooks/webhook_request_template"
 
 module PactBroker
   module Webhooks
     describe WebhookRequestTemplate do
       let(:attributes) do
         {
-          method: 'POST',
+          method: "POST",
           url: url,
           username: username,
           password: password,
@@ -17,19 +17,19 @@ module PactBroker
 
       let(:new_attributes) do
         {
-          method: 'POST',
+          method: "POST",
           url: built_url,
           username: "usernameBUILT",
           password: "passwordBUILT",
           uuid: "1234",
           body: built_body,
-          headers: {'headername' => 'headervalueBUILT'}
+          headers: {"headername" => "headervalueBUILT"}
         }
       end
 
       let(:username) { "username" }
       let(:password) { "password" }
-      let(:headers) { {'headername' => 'headervalue'} }
+      let(:headers) { {"headername" => "headervalue"} }
       let(:url) { "http://example.org/hook?foo=bar" }
       let(:base_url) { "http://broker" }
       let(:built_url) { "http://example.org/hook?foo=barBUILT" }
@@ -38,12 +38,12 @@ module PactBroker
 
       describe "#build" do
         before do
-          allow(PactBroker::Webhooks::Render).to receive(:call) do | content, pact, verification, &block |
+          allow(PactBroker::Webhooks::Render).to receive(:call) do | content, _pact, _verification |
             content + "BUILT"
           end
         end
 
-        let(:params_hash) { double('params hash') }
+        let(:params_hash) { double("params hash") }
 
         subject { WebhookRequestTemplate.new(attributes).build(params_hash) }
 
@@ -59,10 +59,10 @@ module PactBroker
         end
 
         context "when the body is a string" do
-          let(:body) { 'body' }
+          let(:body) { "body" }
 
           it "renders the body template with the String" do
-            expect(PactBroker::Webhooks::Render).to receive(:call).with('body', params_hash)
+            expect(PactBroker::Webhooks::Render).to receive(:call).with("body", params_hash)
             subject
           end
         end
@@ -77,17 +77,17 @@ module PactBroker
         end
 
         it "renders each header value" do
-          expect(PactBroker::Webhooks::Render).to receive(:call).with('headervalue', params_hash)
+          expect(PactBroker::Webhooks::Render).to receive(:call).with("headervalue", params_hash)
           subject
         end
 
         it "renders the username" do
-          expect(PactBroker::Webhooks::Render).to receive(:call).with('username', params_hash)
+          expect(PactBroker::Webhooks::Render).to receive(:call).with("username", params_hash)
           subject
         end
 
         it "renders the password" do
-          expect(PactBroker::Webhooks::Render).to receive(:call).with('password', params_hash)
+          expect(PactBroker::Webhooks::Render).to receive(:call).with("password", params_hash)
           subject
         end
 
@@ -99,7 +99,7 @@ module PactBroker
         context "when optional attributes are missing" do
           let(:attributes) do
             {
-              method: 'POST',
+              method: "POST",
               url: url,
               uuid: "1234",
             }
@@ -116,23 +116,23 @@ module PactBroker
 
         let(:headers) do
           {
-            'Authorization' => 'foo',
-            'X-authorization' => 'bar',
-            'Token' => 'bar',
-            'X-Auth-Token' => 'bar',
-            'X-Authorization-Token' => 'bar',
-            'OK' => 'ok'
+            "Authorization" => "foo",
+            "X-authorization" => "bar",
+            "Token" => "bar",
+            "X-Auth-Token" => "bar",
+            "X-Authorization-Token" => "bar",
+            "OK" => "ok"
           }
         end
 
         let(:expected_headers) do
           {
-            'Authorization' => '**********',
-            'X-authorization' => '**********',
-            'Token' => '**********',
-            'X-Auth-Token' => '**********',
-            'X-Authorization-Token' => '**********',
-            'OK' => 'ok'
+            "Authorization" => "**********",
+            "X-authorization" => "**********",
+            "Token" => "**********",
+            "X-Auth-Token" => "**********",
+            "X-Authorization-Token" => "**********",
+            "OK" => "ok"
           }
         end
 
@@ -143,13 +143,13 @@ module PactBroker
         context "when there is a parameter in the value" do
           let(:headers) do
             {
-              'Authorization' => '${pactbroker.secret}'
+              "Authorization" => "${pactbroker.secret}"
             }
           end
 
           let(:expected_headers) do
             {
-              'Authorization' => '${pactbroker.secret}'
+              "Authorization" => "${pactbroker.secret}"
             }
           end
 

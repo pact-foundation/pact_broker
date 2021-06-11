@@ -1,11 +1,11 @@
-require 'pact_broker/pacts/selectors'
-require 'pact_broker/pacts/selector'
+require "pact_broker/pacts/selectors"
+require "pact_broker/pacts/selector"
 
 module PactBroker
   module Pacts
     describe Selectors do
       let(:selector_1) { Selector.overall_latest }
-      let(:selector_2) { Selector.latest_for_tag('dev') }
+      let(:selector_2) { Selector.latest_for_tag("dev") }
       let(:selectors_1) { Selectors.new([selector_1]) }
       let(:selectors_2) { Selectors.new([selector_2]) }
       let(:selectors_array) { [selectors_1, selectors_2] }

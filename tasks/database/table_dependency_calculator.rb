@@ -1,4 +1,4 @@
-require 'pact_broker/db/table_dependency_calculator'
+require "pact_broker/db/table_dependency_calculator"
 
 module PactBroker
   module Database

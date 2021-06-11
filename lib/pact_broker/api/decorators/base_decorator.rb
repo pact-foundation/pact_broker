@@ -1,9 +1,9 @@
-require 'roar/decorator'
-require 'roar/json/hal'
-require 'pact_broker/api/pact_broker_urls'
-require 'pact_broker/api/decorators/decorator_context'
-require 'pact_broker/api/decorators/format_date_time'
-require 'pact_broker/string_refinements'
+require "roar/decorator"
+require "roar/json/hal"
+require "pact_broker/api/pact_broker_urls"
+require "pact_broker/api/decorators/decorator_context"
+require "pact_broker/api/decorators/format_date_time"
+require "pact_broker/string_refinements"
 
 module PactBroker
   module Api

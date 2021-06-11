@@ -1,24 +1,24 @@
-require 'spec_helper'
-require 'pact_broker/api/decorators/webhook_request_template_decorator'
-require 'json'
+require "spec_helper"
+require "pact_broker/api/decorators/webhook_request_template_decorator"
+require "json"
 
 module PactBroker
   module Api
     module Decorators
       describe WebhookRequestTemplateDecorator do
 
-        let(:username) { 'username' }
-        let(:display_password) { '*****' }
+        let(:username) { "username" }
+        let(:display_password) { "*****" }
         let(:webhook_request) do
           instance_double(
             PactBroker::Webhooks::WebhookRequestTemplate,
             username: username,
             display_password: display_password,
-            method: 'POST',
-            url: 'url',
-            body: 'body',
+            method: "POST",
+            url: "url",
+            body: "body",
             redacted_headers: {
-              'foo' => '***'
+              "foo" => "***"
             })
         end
 
@@ -47,14 +47,14 @@ module PactBroker
         end
 
         describe "from_json" do
-          let(:password) { 'password' }
+          let(:password) { "password" }
           let(:hash) do
             {
               username: username,
               password: password,
-              method: 'POST',
-              url: 'url',
-              body: 'body',
+              method: "POST",
+              url: "url",
+              body: "body",
               headers: {}
             }
           end

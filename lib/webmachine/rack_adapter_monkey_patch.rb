@@ -1,5 +1,5 @@
-require 'webmachine/request'
-require 'webmachine/adapters/rack'
+require "webmachine/request"
+require "webmachine/adapters/rack"
 
 # Monkey patch to make the Rack env available on the Webmachine Request object
 
@@ -7,10 +7,12 @@ module Webmachine
   class RackRequest < Webmachine::Request
     attr_reader :env
 
+    # rubocop: disable Metrics/ParameterLists
     def initialize(method, uri, headers, body, routing_tokens, base_uri, env)
       super(method, uri, headers, body, routing_tokens, base_uri)
       @env = env
     end
+    # rubocop: enable Metrics/ParameterLists
   end
 end
 

@@ -1,4 +1,4 @@
-require 'pact_broker/api/decorators/verifiable_pacts_query_decorator'
+require "pact_broker/api/decorators/verifiable_pacts_query_decorator"
 
 module PactBroker
   module Api

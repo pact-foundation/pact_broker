@@ -1,9 +1,9 @@
-require 'pact_broker/logging'
-require 'pact_broker/repositories'
-require 'pact_broker/matrix/row'
-require 'pact_broker/matrix/deployment_status_summary'
-require 'pact_broker/messages'
-require 'pact_broker/string_refinements'
+require "pact_broker/logging"
+require "pact_broker/repositories"
+require "pact_broker/matrix/row"
+require "pact_broker/matrix/deployment_status_summary"
+require "pact_broker/messages"
+require "pact_broker/string_refinements"
 
 module PactBroker
   module Matrix
@@ -40,7 +40,7 @@ module PactBroker
           latest: true
         )
         selectors = [consumer_selector, provider_selector]
-        options = { latestby: 'cvpv' }
+        options = { latestby: "cvpv" }
         if validate_selectors(selectors).empty?
           matrix_repository.find(selectors, options).first
         else
@@ -48,6 +48,7 @@ module PactBroker
         end
       end
 
+      # rubocop: disable Metrics/CyclomaticComplexity, Metrics/MethodLength
       def validate_selectors selectors, options = {}
         error_messages = []
 
@@ -96,6 +97,7 @@ module PactBroker
 
         error_messages
       end
+      # rubocop: enable Metrics/CyclomaticComplexity, Metrics/MethodLength
     end
   end
 end

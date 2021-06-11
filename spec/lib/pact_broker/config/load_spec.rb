@@ -1,4 +1,4 @@
-require 'pact_broker/config/load'
+require "pact_broker/config/load"
 
 module PactBroker
   module Config
@@ -11,16 +11,16 @@ module PactBroker
         end
 
         before do
-          Setting.create(name: 'foo', type: 'json', value: {"a" => "thing"}.to_json)
-          Setting.create(name: 'bar', type: 'string', value: "bar")
-          Setting.create(name: 'nana', type: 'integer', value: "1")
-          Setting.create(name: 'meep', type: 'float', value: "1.2")
-          Setting.create(name: 'lalala', type: 'boolean', value: "1")
-          Setting.create(name: 'meow', type: 'boolean', value: "0")
-          Setting.create(name: 'peebo', type: 'string', value: nil)
-          Setting.create(name: 'unknown', type: 'string', value: nil)
-          Setting.create(name: 'whitelist', type: 'space_delimited_string_list', value: 'foo bar')
-          Setting.create(name: 'blah', type: 'symbol', value: 'boop')
+          Setting.create(name: "foo", type: "json", value: {"a" => "thing"}.to_json)
+          Setting.create(name: "bar", type: "string", value: "bar")
+          Setting.create(name: "nana", type: "integer", value: "1")
+          Setting.create(name: "meep", type: "float", value: "1.2")
+          Setting.create(name: "lalala", type: "boolean", value: "1")
+          Setting.create(name: "meow", type: "boolean", value: "0")
+          Setting.create(name: "peebo", type: "string", value: nil)
+          Setting.create(name: "unknown", type: "string", value: nil)
+          Setting.create(name: "whitelist", type: "space_delimited_string_list", value: "foo bar")
+          Setting.create(name: "blah", type: "symbol", value: "boop")
         end
 
         let(:configuration) { MockConfig.new }

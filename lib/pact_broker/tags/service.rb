@@ -1,4 +1,4 @@
-require 'pact_broker/repositories'
+require "pact_broker/repositories"
 
 module PactBroker
   module Tags

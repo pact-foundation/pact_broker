@@ -1,5 +1,5 @@
-require 'spec_helper'
-require 'pact_broker/labels/repository'
+require "spec_helper"
+require "pact_broker/labels/repository"
 
 module PactBroker
   module Labels

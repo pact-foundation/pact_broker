@@ -1,11 +1,11 @@
-require 'rack/pact_broker/set_base_url'
+require "rack/pact_broker/set_base_url"
 
 module Rack
   module PactBroker
     describe SetBaseUrl do
       let(:base_urls) { ["http://pact-broker"] }
       let(:rack_env) { {} }
-      let(:target_app) { double('app', call: [200, {}, []]) }
+      let(:target_app) { double("app", call: [200, {}, []]) }
       let(:app) { SetBaseUrl.new(target_app, base_urls) }
 
       subject { get("/", {}, rack_env) }

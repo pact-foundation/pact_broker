@@ -1,10 +1,16 @@
-require 'pact_broker/deployments/deployed_version'
+require "pact_broker/deployments/deployed_version"
 
 module PactBroker
   module Deployments
     class DeployedVersionService
+
       def self.next_uuid
         SecureRandom.uuid
+      end
+
+      # Policy applied at resource level to Version
+      def self.find_by_uuid(uuid)
+        DeployedVersion.where(uuid: uuid).single_record
       end
 
       def self.create(uuid, version, environment, target)
@@ -19,12 +25,13 @@ module PactBroker
       end
 
       def self.find_deployed_versions_for_version_and_environment(version, environment)
-        DeployedVersion
+        scope_for(DeployedVersion)
           .for_version_and_environment(version, environment)
           .order_by_date_desc
           .all
       end
 
+      # Policy applied at resource level to Version
       def self.find_currently_deployed_version_for_version_and_environment_and_target(version, environment, target)
         DeployedVersion
           .currently_deployed
@@ -32,15 +39,19 @@ module PactBroker
           .single_record
       end
 
-      def self.find_deployed_versions_for_environment(environment)
-        DeployedVersion
+      def self.find_currently_deployed_versions_for_environment(environment, pacticipant_name: nil, target: :unspecified)
+        query = scope_for(DeployedVersion)
+          .currently_deployed
           .for_environment(environment)
           .order_by_date_desc
-          .all
+
+        query = query.for_pacticipant_name(pacticipant_name) if pacticipant_name
+        query = query.for_target(target) if target != :unspecified
+        query.all
       end
 
       def self.find_currently_deployed_versions_for_pacticipant(pacticipant)
-        DeployedVersion
+        scope_for(DeployedVersion)
           .currently_deployed
           .where(pacticipant_id: pacticipant.id)
           .eager(:version)
@@ -49,12 +60,9 @@ module PactBroker
       end
 
       def self.record_version_undeployed(deployed_version)
-        deployed_version.currently_deployed_version_id.delete
-        # CurrentlyDeployedVersionId.where(pacticipant_id: pacticipant.id, environment_id: environment.id, target: target).delete
-        record_previous_version_undeployed(deployed_version.version.pacticipant, deployed_version.environment, deployed_version.target)
+        deployed_version.currently_deployed_version_id&.delete
+        deployed_version.record_undeployed
       end
-
-      # private
 
       def self.record_previous_version_undeployed(pacticipant, environment, target)
         DeployedVersion.where(
@@ -64,6 +72,14 @@ module PactBroker
           target: target
         ).record_undeployed
       end
+
+      private_class_method :record_previous_version_undeployed
+
+      def self.scope_for(scope)
+        PactBroker.policy_scope!(scope)
+      end
+
+      private_class_method :scope_for
     end
   end
 end

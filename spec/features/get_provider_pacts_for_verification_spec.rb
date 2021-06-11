@@ -57,8 +57,8 @@ describe "Get provider pacts for verification" do
 
       let(:request_headers) do
         {
-          'CONTENT_TYPE' => 'application/json',
-          'HTTP_ACCEPT' => 'application/hal+json'
+          "CONTENT_TYPE" => "application/json",
+          "HTTP_ACCEPT" => "application/hal+json"
         }
       end
 

@@ -1,4 +1,4 @@
-require 'pact_broker/api/pact_broker_urls'
+require "pact_broker/api/pact_broker_urls"
 
 module PactBroker
   module Api
@@ -6,7 +6,7 @@ module PactBroker
       before do
         allow(PactBrokerUrls).to receive(:logger).and_return(logger)
       end
-      let(:logger) { double('logger').as_null_object }
+      let(:logger) { double("logger").as_null_object }
 
       # Regex find all the URL parameter names
       # \/\{[^\}\s\[\(\.]+\}
@@ -15,15 +15,15 @@ module PactBroker
       let(:consumer_name) { "Foo/Foo" }
       let(:provider_name) { "Bar/Bar" }
       let(:pact) do
-        double('pact',
+        double("pact",
           consumer: consumer,
           provider: provider,
           consumer_version_number: "123/456",
           pact_version_sha: "5hbfu",
           consumer_version_tag_names: ["dev"])
       end
-      let(:consumer) { double('pacticipant', name: consumer_name) }
-      let(:provider) { double('pacticipant', name: provider_name) }
+      let(:consumer) { double("pacticipant", name: consumer_name) }
+      let(:provider) { double("pacticipant", name: provider_name) }
       let(:verification) do
         instance_double(PactBroker::Domain::Verification,
           consumer_name: consumer_name,
@@ -32,11 +32,11 @@ module PactBroker
           number: "1")
       end
       let(:version) do
-        double('version',
+        double("version",
           pacticipant: consumer,
           number: "2/4")
       end
-      let(:tag) { double('tag', name: "feat/foo", version: version) }
+      let(:tag) { double("tag", name: "feat/foo", version: version) }
 
       matcher :match_route_in_api do |api|
         match do |url|

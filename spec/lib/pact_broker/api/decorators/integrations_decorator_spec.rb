@@ -1,4 +1,4 @@
-require 'pact_broker/api/decorators/integrations_decorator'
+require "pact_broker/api/decorators/integrations_decorator"
 
 module PactBroker
   module Api
@@ -8,9 +8,9 @@ module PactBroker
           allow(IntegrationDecorator).to receive(:new).and_return(integration_decorator)
         end
         let(:integration_decorator) { instance_double(IntegrationDecorator).as_null_object }
-        let(:integration) { double('integration') }
+        let(:integration) { double("integration") }
         let(:integrations_decorator) { IntegrationsDecorator.new([integration]) }
-        let(:options) { { user_options: { resource_url: 'http://example.org/integrations' } } }
+        let(:options) { { user_options: { resource_url: "http://example.org/integrations" } } }
 
         let(:json) { integrations_decorator.to_json(options) }
 

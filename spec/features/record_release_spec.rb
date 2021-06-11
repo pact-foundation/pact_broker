@@ -40,6 +40,10 @@ describe "Record release" do
       td.create_released_version_for_consumer_version(uuid: "1234")
     end
 
+    it "returns the Location header" do
+      expect(subject.headers["Location"]).to include "1234"
+    end
+
     it "does not change the overall count of released versions" do
       expect { subject }.to_not change { PactBroker::Deployments::ReleasedVersion.count }
     end
@@ -49,6 +53,28 @@ describe "Record release" do
     end
 
     it { is_expected.to be_a_hal_json_success_response }
+  end
+
+  context "when the version is currently unsupported" do
+    before do
+      td.create_released_version_for_consumer_version(uuid: "1234", currently_supported: false, created_at: DateTime.now - 1 )
+    end
+
+    it "returns the Location header" do
+      expect(subject.headers["Location"]).to include "1234"
+    end
+
+    it "returns the existing release with the currentlySupported parameter set back to true" do
+      expect(response_body[:currentlySupported]).to be true
+    end
+
+    it "does not change the createdAt" do
+      expect { subject }.to_not change { PactBroker::Deployments::ReleasedVersion.find(uuid: "1234").created_at }
+    end
+
+    it "updates the updatedAt" do
+      expect { subject }.to change { PactBroker::Deployments::ReleasedVersion.find(uuid: "1234").updated_at }
+    end
   end
 
   it "creates a released version resource" do

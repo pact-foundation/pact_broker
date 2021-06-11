@@ -1,5 +1,5 @@
-require 'logger'
-require 'semantic_logger'
+require "logger"
+require "semantic_logger"
 
 module PactBroker
   module Logging
@@ -8,7 +8,7 @@ module PactBroker
         @formatter = ::Logger::Formatter.new
       end
 
-      def call(log, output)
+      def call(log, _output)
         self.log    = log
         self.logger = logger
         @formatter.call(log.level.upcase, log.time, nil, [tags, named_tags, duration, message, payload, exception].compact.join(" "))

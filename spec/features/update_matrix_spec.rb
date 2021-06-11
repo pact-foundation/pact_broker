@@ -89,7 +89,7 @@ describe "Creating a resource that affects the matrix" do
   let(:td) { TestDataBuilder.new }
   let(:response_body_json) { JSON.parse(subject.body) }
 
-  subject { put(path, nil, {'CONTENT_TYPE' => 'application/json'}); last_response }
+  subject { put(path, nil, {"CONTENT_TYPE" => "application/json"}); last_response }
 
   context "creating a tag" do
     before do
@@ -108,10 +108,10 @@ describe "Creating a resource that affects the matrix" do
   end
 
   context "creating a pact" do
-    let(:pact_content) { load_fixture('foo-bar.json') }
+    let(:pact_content) { load_fixture("foo-bar.json") }
     let(:path) { "/pacts/provider/Bar/consumer/Foo/versions/1.2.3" }
 
-    subject { put path, pact_content, {'CONTENT_TYPE' => 'application/json'}; last_response }
+    subject { put path, pact_content, {"CONTENT_TYPE" => "application/json"}; last_response }
 
     it "adds the relevant lines to the matrix" do
       expect{ subject }.to change{ PactBroker::Matrix::Row.count }.by(1)
@@ -125,11 +125,11 @@ describe "Creating a resource that affects the matrix" do
   context "creating a verification" do
     let(:td) { TestDataBuilder.new }
     let(:path) { "/pacts/provider/Bar/consumer/Foo/pact-version/#{pact.pact_version_sha}/verification-results" }
-    let(:verification_content) { load_fixture('verification.json') }
+    let(:verification_content) { load_fixture("verification.json") }
     let(:parsed_response_body) { JSON.parse(subject.body) }
     let(:pact) { td.pact }
 
-    subject { post path, verification_content, {'CONTENT_TYPE' => 'application/json' }; last_response  }
+    subject { post path, verification_content, {"CONTENT_TYPE" => "application/json" }; last_response  }
 
     before do
       td.create_pact_with_hierarchy("Foo", "1", "Bar")

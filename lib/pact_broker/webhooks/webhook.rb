@@ -1,7 +1,7 @@
-require 'sequel'
-require 'pact_broker/domain/webhook'
-require 'pact_broker/webhooks/webhook_request_template'
-require 'pact_broker/domain/pacticipant'
+require "sequel"
+require "pact_broker/domain/webhook"
+require "pact_broker/webhooks/webhook_request_template"
+require "pact_broker/domain/pacticipant"
 
 module PactBroker
   module Webhooks
@@ -19,7 +19,7 @@ module PactBroker
 
         # Keep the triggered webhooks after the webhook has been deleted
         def delete
-          require 'pact_broker/webhooks/triggered_webhook'
+          require "pact_broker/webhooks/triggered_webhook"
           TriggeredWebhook.where(webhook: self).update(webhook_id: nil)
           super
         end
@@ -93,7 +93,7 @@ module PactBroker
 
       def parsed_body
         if body && is_json_request_body
-           JSON.parse(body)
+          JSON.parse(body)
         else
           body
         end
@@ -105,12 +105,11 @@ module PactBroker
 
       # Keep the triggered webhooks after the webhook has been deleted
       def delete
-        require 'pact_broker/webhooks/triggered_webhook'
+        require "pact_broker/webhooks/triggered_webhook"
         TriggeredWebhook.where(webhook_id: id).update(webhook_id: nil)
         super
       end
 
-      private
 
       def self.properties_hash_from_domain webhook
         is_json_request_body = !(String === webhook.request.body || webhook.request.body.nil?) # Can't rely on people to set content type

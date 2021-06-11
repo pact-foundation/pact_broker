@@ -1,5 +1,5 @@
-require 'pact_broker/configuration'
-require 'pact_broker/versions/sequence'
+require "pact_broker/configuration"
+require "pact_broker/versions/sequence"
 
 module PactBroker
   module Domain

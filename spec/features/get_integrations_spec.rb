@@ -7,7 +7,7 @@ describe "Get integrations dot file" do
   let(:path) { "/integrations" }
   let(:response_body_hash) { JSON.parse(subject.body, symbolize_names: true) }
 
-  subject { get path, nil, {'HTTP_ACCEPT' => 'application/hal+json' }  }
+  subject { get path, nil, {"HTTP_ACCEPT" => "application/hal+json" }  }
 
   it { is_expected.to be_a_hal_json_success_response }
 

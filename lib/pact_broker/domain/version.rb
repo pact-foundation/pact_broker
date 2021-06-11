@@ -1,9 +1,9 @@
-require 'pact_broker/db'
-require 'pact_broker/domain/order_versions'
-require 'pact_broker/repositories/helpers'
-require 'pact_broker/tags/tag_with_latest_flag'
-require 'pact_broker/versions/eager_loaders'
-require 'pact_broker/versions/lazy_loaders'
+require "pact_broker/db"
+require "pact_broker/domain/order_versions"
+require "pact_broker/repositories/helpers"
+require "pact_broker/tags/tag_with_latest_flag"
+require "pact_broker/versions/eager_loaders"
+require "pact_broker/versions/lazy_loaders"
 
 module PactBroker
   module Domain
@@ -135,11 +135,11 @@ module PactBroker
         end
 
         def delete
-          require 'pact_broker/pacts/pact_publication'
-          require 'pact_broker/domain/verification'
-          require 'pact_broker/domain/tag'
-          require 'pact_broker/deployments/deployed_version'
-          require 'pact_broker/deployments/released_version'
+          require "pact_broker/pacts/pact_publication"
+          require "pact_broker/domain/verification"
+          require "pact_broker/domain/tag"
+          require "pact_broker/deployments/deployed_version"
+          require "pact_broker/deployments/released_version"
 
           PactBroker::Deployments::DeployedVersion.where(version: self).delete
           PactBroker::Deployments::ReleasedVersion.where(version: self).delete
@@ -149,6 +149,7 @@ module PactBroker
           super
         end
 
+        # rubocop: disable Metrics/CyclomaticComplexity
         def for_selector(selector)
           query = self
           query = query.where_pacticipant_name(selector.pacticipant_name) if selector.pacticipant_name
@@ -164,6 +165,7 @@ module PactBroker
             query
           end
         end
+        # rubocop: enable Metrics/CyclomaticComplexity
 
         # private
 
@@ -254,3 +256,6 @@ end
 #  verifications                                                | fk_verifications_versions                                       | (provider_version_id) REFERENCES versions(id)
 #  latest_pact_publication_ids_for_consumer_versions            | latest_pact_publication_ids_for_consum_consumer_version_id_fkey | (consumer_version_id) REFERENCES versions(id) ON DELETE CASCADE
 #  latest_verification_id_for_pact_version_and_provider_version | latest_v_id_for_pv_and_pv_provider_version_id_fk                | (provider_version_id) REFERENCES versions(id) ON DELETE CASCADE
+#  deployed_versions                                            | deployed_versions_version_id_fkey                               | (version_id) REFERENCES versions(id)
+#  currently_deployed_version_ids                               | currently_deployed_version_ids_version_id_fkey                  | (version_id) REFERENCES versions(id) ON DELETE CASCADE
+#  released_versions                                            | released_versions_version_id_fkey                               | (version_id) REFERENCES versions(id)

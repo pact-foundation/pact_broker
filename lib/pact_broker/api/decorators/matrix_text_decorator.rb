@@ -1,8 +1,8 @@
-require 'ostruct'
-require 'pact_broker/api/pact_broker_urls'
-require 'pact_broker/api/decorators/matrix_decorator'
+require "ostruct"
+require "pact_broker/api/pact_broker_urls"
+require "pact_broker/api/decorators/matrix_decorator"
 
-require 'table_print'
+require "table_print"
 
 module PactBroker
   module Api
@@ -14,7 +14,7 @@ module PactBroker
           @lines = lines
         end
 
-        def to_text(options)
+        def to_text(_options)
           json_decorator = PactBroker::Api::Decorators::MatrixDecorator.new(lines)
           data = lines.collect do | line |
             Line.new(line.consumer_name, line.consumer_version_number, line.pact_revision_number, line.provider_name, line.provider_version_number, line.verification_number, line.success)

@@ -1,22 +1,18 @@
-require 'sequel'
-require 'pact_broker/project_root'
-require 'pact_broker/pacts/latest_tagged_pact_publications'
-require 'pact_broker/logging'
+require "sequel"
+require "pact_broker/project_root"
+require "pact_broker/pacts/latest_tagged_pact_publications"
+require "pact_broker/logging"
 
 module PactBroker
   module DB
     class Clean
       include PactBroker::Logging
 
-
       class Unionable < Array
-        alias_method :union, :+
-
         def union(other)
           Unionable.new(self + other)
         end
       end
-
 
       def self.call database_connection, options = {}
         new(database_connection, options).call

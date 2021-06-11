@@ -1,4 +1,4 @@
-require_relative 'migration_helper'
+require_relative "migration_helper"
 
 Sequel.migration do
   up do

@@ -1,16 +1,16 @@
-require 'sequel'
-require 'pact_broker/repositories/helpers'
+require "sequel"
+require "pact_broker/repositories/helpers"
 
 module PactBroker
   module Webhooks
     class WebhookEvent < Sequel::Model
       plugin :timestamps, update_on_create: true
 
-      CONTRACT_PUBLISHED = 'contract_published'
-      CONTRACT_CONTENT_CHANGED = 'contract_content_changed'
-      VERIFICATION_PUBLISHED = 'provider_verification_published'
-      VERIFICATION_SUCCEEDED = 'provider_verification_succeeded'
-      VERIFICATION_FAILED = 'provider_verification_failed'
+      CONTRACT_PUBLISHED = "contract_published"
+      CONTRACT_CONTENT_CHANGED = "contract_content_changed"
+      VERIFICATION_PUBLISHED = "provider_verification_published"
+      VERIFICATION_SUCCEEDED = "provider_verification_succeeded"
+      VERIFICATION_FAILED = "provider_verification_failed"
       DEFAULT_EVENT_NAME = CONTRACT_CONTENT_CHANGED
 
       EVENT_NAMES = [CONTRACT_PUBLISHED, CONTRACT_CONTENT_CHANGED, VERIFICATION_PUBLISHED, VERIFICATION_SUCCEEDED, VERIFICATION_FAILED]

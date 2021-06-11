@@ -1,10 +1,10 @@
-require 'pact/consumer_contract'
-require 'pact/reification'
-require 'redcarpet'
-require 'pact/doc/markdown/consumer_contract_renderer'
-require 'pact_broker/api/pact_broker_urls'
-require 'pact_broker/logging'
-require 'rack'
+require "pact/consumer_contract"
+require "pact/reification"
+require "redcarpet"
+require "pact/doc/markdown/consumer_contract_renderer"
+require "pact_broker/api/pact_broker_urls"
+require "pact_broker/logging"
+require "rack"
 
 module PactBroker
   module Api
@@ -37,7 +37,7 @@ module PactBroker
         private
 
         def head
-         "<title>#{title}</title>
+          "<title>#{title}</title>
           <link rel='stylesheet' type='text/css' href='#{base_url}/stylesheets/github.css'>
           <link rel='stylesheet' type='text/css' href='#{base_url}/stylesheets/pact.css'>
           <link rel='stylesheet' type='text/css' href='#{base_url}/stylesheets/github-json.css'>
@@ -88,10 +88,9 @@ module PactBroker
         end
 
         def badge_list_item
-            "<li class='pact-badge'>
-              <img src=\"#{badge_url}\"/>
-            </li>
-            "
+          "<li class='pact-badge'>
+            <img src=\"#{badge_url}\"/>
+          </li>"
         end
 
         def badge_markdown_item
@@ -102,10 +101,10 @@ module PactBroker
 
         def badge_markdown
           warning = if badges_protected?
-            "If the broker is protected by authentication, set `enable_public_badge_access` to true in the configuration to enable badges to be embedded in a markdown file.\n"
-          else
-            ""
-          end
+                      "If the broker is protected by authentication, set `enable_public_badge_access` to true in the configuration to enable badges to be embedded in a markdown file.\n"
+                    else
+                      ""
+                    end
           "#{warning}[![#{@pact.consumer.name}/#{@pact.provider.name} Pact Status](#{badge_url})](#{badge_target_url})"
         end
 
@@ -114,7 +113,7 @@ module PactBroker
         end
 
         def base_url
-          @options[:base_url] || ''
+          @options[:base_url] || ""
         end
 
         def title

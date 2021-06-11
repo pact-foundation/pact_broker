@@ -1,5 +1,5 @@
-require 'semver'
-require 'pact_broker/configuration'
+require "semver"
+require "pact_broker/configuration"
 
 module PactBroker
   module Versions

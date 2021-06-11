@@ -1,5 +1,5 @@
-require 'pact_broker/configuration'
-require 'pact_broker/logging'
+require "pact_broker/configuration"
+require "pact_broker/logging"
 
 module PactBroker
   module Errors
@@ -7,7 +7,7 @@ module PactBroker
       include PactBroker::Logging
 
       # don't need the env, just in case PF needs it
-      def self.call(error, error_reference, env = {})
+      def self.call(error, error_reference, _env = {})
         if log_as_warning?(error)
           logger.warn("Error reference #{error_reference}", error)
         elsif PactBroker::Errors.reportable_error?(error)

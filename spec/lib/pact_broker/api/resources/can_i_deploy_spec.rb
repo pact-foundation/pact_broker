@@ -1,4 +1,4 @@
-require 'pact_broker/api/resources/can_i_deploy'
+require "pact_broker/api/resources/can_i_deploy"
 
 module PactBroker
   module Api
@@ -13,9 +13,9 @@ module PactBroker
           allow(PactBroker::Api::Decorators::MatrixDecorator).to receive(:new).and_return(decorator)
         end
 
-        let(:results) { double('results') }
-        let(:pacticipant) { double('pacticipant') }
-        let(:decorator) { instance_double('PactBroker::Api::Decorators::MatrixDecorator', to_json: 'response_body') }
+        let(:results) { double("results") }
+        let(:pacticipant) { double("pacticipant") }
+        let(:decorator) { instance_double("PactBroker::Api::Decorators::MatrixDecorator", to_json: "response_body") }
         let(:matrix_service) { class_double("PactBroker::Matrix::Service").as_stubbed_const }
 
         let(:query) do
@@ -26,7 +26,7 @@ module PactBroker
           }
         end
 
-        subject { get("/can-i-deploy", query, { 'HTTP_ACCEPT' => 'application/hal+json'}) }
+        subject { get("/can-i-deploy", query, { "HTTP_ACCEPT" => "application/hal+json"}) }
 
         context "with the wrong query" do
           let(:query) { {} }
@@ -42,7 +42,7 @@ module PactBroker
 
           it "returns a 400" do
             expect(subject.status).to eq 400
-            expect(JSON.parse(subject.body)["errors"]["pacticipant"].first).to match /Foo.*found/
+            expect(JSON.parse(subject.body)["errors"]["pacticipant"].first).to match(/Foo.*found/)
           end
         end
       end

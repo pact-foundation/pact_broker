@@ -1,6 +1,6 @@
 Sequel.migration do
   up do
-    create_table(:verifications, charset: 'utf8') do
+    create_table(:verifications, charset: "utf8") do
       primary_key :id
       Integer :number
       Boolean :success, null: false

@@ -1,20 +1,20 @@
-require 'spec_helper'
-require 'pact_broker/domain/webhook_request'
-require 'webmock/rspec'
+require "spec_helper"
+require "pact_broker/domain/webhook_request"
+require "webmock/rspec"
 
 module PactBroker
   module Domain
     describe WebhookRequest do
       let(:username) { nil }
       let(:password) { nil }
-      let(:url) { 'http://example.org/hook' }
-      let(:headers) { {'Content-Type' => 'text/plain', 'Authorization' => 'foo'} }
-      let(:body) { 'reqbody' }
-      let(:logger) { double('logger').as_null_object }
+      let(:url) { "http://example.org/hook" }
+      let(:headers) { {"Content-Type" => "text/plain", "Authorization" => "foo"} }
+      let(:body) { "reqbody" }
+      let(:logger) { double("logger").as_null_object }
 
       subject do
         WebhookRequest.new(
-          method: 'post',
+          method: "post",
           url: url,
           headers: headers,
           username: username,
@@ -26,13 +26,13 @@ module PactBroker
 
       describe "description" do
         it "returns a brief description of the HTTP request" do
-          expect(subject.description).to eq 'POST example.org'
+          expect(subject.description).to eq "POST example.org"
         end
       end
 
       describe "display_password" do
         context "when a password is set" do
-          let(:password) { 'password' }
+          let(:password) { "password" }
           it "returns stars" do
             expect(subject.display_password).to eq "**********"
           end
@@ -47,25 +47,25 @@ module PactBroker
       describe "redacted_headers" do
         let(:headers) do
           {
-            'Authorization' => 'foo',
-            'X-authorization' => 'bar',
-            'token' => 'bar',
-            'Token' => 'bar',
-            'X-Auth-Token' => 'bar',
-            'X-Authorization-Token' => 'bar',
-            'OK' => 'ok'
+            "Authorization" => "foo",
+            "X-authorization" => "bar",
+            "token" => "bar",
+            "Token" => "bar",
+            "X-Auth-Token" => "bar",
+            "X-Authorization-Token" => "bar",
+            "OK" => "ok"
           }
         end
 
         let(:expected_headers) do
           {
-            'Authorization' => '**********',
-            'X-authorization' => '**********',
-            'token' => '**********',
-            'Token' => '**********',
-            'X-Auth-Token' => '**********',
-            'X-Authorization-Token' => '**********',
-            'OK' => 'ok'
+            "Authorization" => "**********",
+            "X-authorization" => "**********",
+            "token" => "**********",
+            "Token" => "**********",
+            "X-Auth-Token" => "**********",
+            "X-Authorization-Token" => "**********",
+            "OK" => "ok"
           }
         end
 
@@ -77,8 +77,8 @@ module PactBroker
       describe "execute" do
         let!(:http_request) do
           stub_request(:post, "http://example.org/hook").
-            with(:headers => {'Content-Type'=>'text/plain', 'User-Agent' => /Pact Broker/}, :body => request_body).
-            to_return(:status => status, :body => "respbod", :headers => {'Content-Type' => 'text/foo, blah'})
+            with(:headers => {"Content-Type"=>"text/plain", "User-Agent" => /Pact Broker/}, :body => request_body).
+            to_return(:status => status, :body => "respbod", :headers => {"Content-Type" => "text/foo, blah"})
         end
 
         before do
@@ -88,7 +88,7 @@ module PactBroker
         end
 
         let(:status) { 200 }
-        let(:request_body) { 'reqbody' }
+        let(:request_body) { "reqbody" }
 
         it "executes the configured request" do
           execute
@@ -101,9 +101,9 @@ module PactBroker
             stub_request(:post, "http://example.org/hook").
               with(
                 basic_auth: [username, password],
-                :headers => {'Content-Type'=>'text/plain'},
-                :body => 'reqbody').
-              to_return(:status => 200, :body => "respbod", :headers => {'Content-Type' => 'text/foo, blah'})
+                :headers => {"Content-Type"=>"text/plain"},
+                :body => "reqbody").
+              to_return(:status => 200, :body => "respbod", :headers => {"Content-Type" => "text/foo, blah"})
           end
 
           context "with normal characters" do
@@ -128,13 +128,13 @@ module PactBroker
         end
 
         context "when the URL has a https scheme" do
-          let(:url) { 'https://example.org/hook' }
+          let(:url) { "https://example.org/hook" }
 
           let!(:https_request) do
             # webmock will set the request signature scheme to 'https' _only_ if the use_ssl option is set
             stub_request(:post, "https://example.org/hook").
-              with(:headers => {'Content-Type'=>'text/plain'}, :body => 'reqbody').
-              to_return(:status => 200, :body => "respbod", :headers => {'Content-Type' => 'text/foo, blah'})
+              with(:headers => {"Content-Type"=>"text/plain"}, :body => "reqbody").
+              to_return(:status => 200, :body => "respbod", :headers => {"Content-Type" => "text/foo, blah"})
           end
 
           it "uses SSL" do
@@ -148,8 +148,8 @@ module PactBroker
 
           let!(:http_request) do
             stub_request(:post, "http://example.org/hook").
-              with(:headers => {'Content-Type'=>'text/plain'}, :body => nil).
-              to_return(:status => 200, :body => "respbod", :headers => {'Content-Type' => 'text/foo, blah'})
+              with(:headers => {"Content-Type"=>"text/plain"}, :body => nil).
+              to_return(:status => 200, :body => "respbod", :headers => {"Content-Type" => "text/foo, blah"})
           end
 
           it "executes the request without a body" do
@@ -168,7 +168,7 @@ module PactBroker
 
           let!(:http_request) do
             stub_request(:post, "http://example.org/hook").
-              with(:headers => {'Content-Type'=>'text/plain'}, :body => 'reqbody').
+              with(:headers => {"Content-Type"=>"text/plain"}, :body => "reqbody").
               to_return(:status => 500, :body => "An error")
           end
 

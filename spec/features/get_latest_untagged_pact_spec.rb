@@ -12,7 +12,7 @@ describe "retrieving the latest untagged pact" do
       .create_consumer_version("1.2.3")
       .create_pact
       .create_consumer_version("4.5.6")
-      .create_consumer_version_tag('prod')
+      .create_consumer_version_tag("prod")
       .create_pact
   end
 

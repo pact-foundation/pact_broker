@@ -1,4 +1,4 @@
-require 'csv'
+require "csv"
 
 module PactBroker
   module Api
@@ -9,6 +9,7 @@ module PactBroker
           @index_items = pacts.collect{|pact| PactBroker::Domain::IndexItem.new(pact.consumer, pact.provider)}
         end
 
+        # rubocop: disable Metrics/CyclomaticComplexity
         def to_csv
           hash = {}
 
@@ -32,6 +33,7 @@ module PactBroker
             end
           end
         end
+        # rubocop: enable Metrics/CyclomaticComplexity
 
         def pacticipant_array pacticipant, order
           [pacticipant.id, pacticipant.name, 1, 1, 0, order]

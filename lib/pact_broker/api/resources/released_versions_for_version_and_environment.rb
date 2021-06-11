@@ -1,5 +1,5 @@
-require 'pact_broker/api/resources/base_resource'
-require 'pact_broker/api/decorators/versions_decorator'
+require "pact_broker/api/resources/base_resource"
+require "pact_broker/api/decorators/versions_decorator"
 
 module PactBroker
   module Api
@@ -35,7 +35,7 @@ module PactBroker
         end
 
         def from_json
-          @released_version = existing_released_version || released_version_service.create(next_released_version_uuid, version, environment)
+          @released_version = released_version_service.create_or_update(next_released_version_uuid, version, environment)
           response.body = decorator_class(:released_version_decorator).new(released_version).to_json(decorator_options)
           true
         end

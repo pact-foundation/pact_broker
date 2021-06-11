@@ -1,5 +1,5 @@
-require 'pact_broker/api/contracts/base_contract'
-require 'uri'
+require "pact_broker/api/contracts/base_contract"
+require "uri"
 
 module PactBroker
   module Api

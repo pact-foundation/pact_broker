@@ -1,7 +1,7 @@
 describe "Updating a pacticipant version" do
   let(:path) { "/pacticipants/Foo/versions/1234" }
-  let(:headers) { { 'CONTENT_TYPE' => content_type } }
-  let(:content_type) { 'application/merge-patch+json' }
+  let(:headers) { { "CONTENT_TYPE" => content_type } }
+  let(:content_type) { "application/merge-patch+json" }
   let(:response_body) { JSON.parse(subject.body, symbolize_names: true)}
   let(:version_hash) do
     {
@@ -92,7 +92,7 @@ describe "Updating a pacticipant version" do
     end
 
     context "when using a PATCH with application/json" do
-      let(:content_type) { 'application/json' }
+      let(:content_type) { "application/json" }
 
       its(:status) { is_expected.to eq 415 }
     end
@@ -105,7 +105,7 @@ describe "Updating a pacticipant version" do
   end
 
   context "with a PUT" do
-    let(:content_type) { 'application/json' }
+    let(:content_type) { "application/json" }
 
     subject { put(path, version_hash.to_json, headers) }
 

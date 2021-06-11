@@ -1,6 +1,6 @@
-require_relative 'base_decorator'
-require_relative 'pact_pacticipant_decorator'
-require 'pact_broker/api/decorators/timestamps'
+require_relative "base_decorator"
+require_relative "pact_pacticipant_decorator"
+require "pact_broker/api/decorators/timestamps"
 
 module PactBroker
   module Api

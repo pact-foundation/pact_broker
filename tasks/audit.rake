@@ -1,5 +1,5 @@
 begin
-  require 'bundler/audit/task'
+  require "bundler/audit/task"
   Bundler::Audit::Task.new
 rescue LoadError
   # in production

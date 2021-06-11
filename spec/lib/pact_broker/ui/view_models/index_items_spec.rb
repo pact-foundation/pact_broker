@@ -1,6 +1,6 @@
-require 'spec_helper'
-require 'pact_broker/ui/view_models/index_items'
-require 'pact_broker/index/page'
+require "spec_helper"
+require "pact_broker/ui/view_models/index_items"
+require "pact_broker/index/page"
 
 module PactBroker
   module UI

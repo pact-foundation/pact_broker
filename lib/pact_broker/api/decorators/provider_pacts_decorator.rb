@@ -1,5 +1,5 @@
-require_relative 'base_decorator'
-require_relative 'pact_version_decorator'
+require_relative "base_decorator"
+require_relative "pact_version_decorator"
 
 module PactBroker
   module Api
@@ -7,7 +7,6 @@ module PactBroker
       class ProviderPactsDecorator < BaseDecorator
 
         link :self do | context |
-          suffix = context[:tag] ? " with tag '#{context[:tag]}'" : ""
           {
             href: context[:resource_url],
             title: context[:title]

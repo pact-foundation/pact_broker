@@ -1,5 +1,5 @@
-require 'pact_broker/webhooks/event_listener'
-require 'pact_broker/events/subscriber'
+require "pact_broker/webhooks/event_listener"
+require "pact_broker/events/subscriber"
 
 module PactBroker
   module Api

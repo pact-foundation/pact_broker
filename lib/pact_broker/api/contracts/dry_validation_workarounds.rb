@@ -14,12 +14,8 @@ module PactBroker
         end
 
         def flatten_array_of_hashes(array_of_hashes)
-          new_messages = array_of_hashes.collect do | index, hash_or_array |
-            array = if hash_or_array.is_a?(Hash)
-              hash_or_array.values.flatten
-            else
-              hash_or_array
-            end
+          array_of_hashes.collect do | index, hash_or_array |
+            array = hash_or_array.is_a?(Hash) ?  hash_or_array.values.flatten : hash_or_array
             array.collect { | text | "#{text} at index #{index}"}
           end.flatten
         end

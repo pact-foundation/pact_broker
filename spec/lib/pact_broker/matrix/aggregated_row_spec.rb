@@ -1,11 +1,11 @@
-require 'pact_broker/matrix/aggregated_row'
+require "pact_broker/matrix/aggregated_row"
 
 module PactBroker
   module Matrix
     describe AggregatedRow do
       describe "latest_verification_for_pseudo_branch" do
         let(:row_1) do
-          instance_double('PactBroker::Matrix::HeadRow',
+          instance_double("PactBroker::Matrix::HeadRow",
             consumer_name: "Foo",
             provider_name: "Bar",
             verification: verification_1,
@@ -13,17 +13,17 @@ module PactBroker
             consumer_version_tag_name: consumer_version_tag_name_1)
         end
         let(:row_2) do
-          instance_double('PactBroker::Matrix::HeadRow',
+          instance_double("PactBroker::Matrix::HeadRow",
             verification: verification_2,
             latest_verification_for_consumer_version_tag: tag_verification_2,
             consumer_version_tag_name: consumer_version_tag_name_2)
         end
-        let(:verification_1) { instance_double('PactBroker::Domain::Verification', id: 1) }
-        let(:verification_2) { instance_double('PactBroker::Domain::Verification', id: 2) }
-        let(:tag_verification_1) { instance_double('PactBroker::Domain::Verification', id: 3) }
-        let(:tag_verification_2) { instance_double('PactBroker::Domain::Verification', id: 4) }
-        let(:consumer_version_tag_name_1) { 'master' }
-        let(:consumer_version_tag_name_2) { 'prod' }
+        let(:verification_1) { instance_double("PactBroker::Domain::Verification", id: 1) }
+        let(:verification_2) { instance_double("PactBroker::Domain::Verification", id: 2) }
+        let(:tag_verification_1) { instance_double("PactBroker::Domain::Verification", id: 3) }
+        let(:tag_verification_2) { instance_double("PactBroker::Domain::Verification", id: 4) }
+        let(:consumer_version_tag_name_1) { "master" }
+        let(:consumer_version_tag_name_2) { "prod" }
         let(:rows) { [row_1, row_2] }
         let(:aggregated_row) { AggregatedRow.new(rows) }
 
@@ -52,7 +52,7 @@ module PactBroker
 
           context "when one of the rows is the overall latest" do
             let(:consumer_version_tag_name_1) { nil }
-            let(:overall_latest_verification) { instance_double('PactBroker::Domain::Verification', id: 1) }
+            let(:overall_latest_verification) { instance_double("PactBroker::Domain::Verification", id: 1) }
             before do
               allow(row_1).to receive(:latest_verification_for_consumer_and_provider).and_return(overall_latest_verification)
             end
@@ -77,15 +77,15 @@ module PactBroker
 
       describe "latest_verification_for_pact_version" do
         let(:row_1) do
-          instance_double('PactBroker::Matrix::HeadRow',
+          instance_double("PactBroker::Matrix::HeadRow",
             verification: verification_1)
         end
         let(:row_2) do
-          instance_double('PactBroker::Matrix::HeadRow',
+          instance_double("PactBroker::Matrix::HeadRow",
             verification: verification_2)
         end
-        let(:verification_1) { instance_double('PactBroker::Domain::Verification', id: 2) }
-        let(:verification_2) { instance_double('PactBroker::Domain::Verification', id: 1) }
+        let(:verification_1) { instance_double("PactBroker::Domain::Verification", id: 2) }
+        let(:verification_2) { instance_double("PactBroker::Domain::Verification", id: 1) }
         let(:rows) { [row_1, row_2] }
         let(:aggregated_row) { AggregatedRow.new(rows) }
 

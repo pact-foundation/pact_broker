@@ -1,13 +1,13 @@
-require 'forwardable'
-require 'pact_broker/domain/pact'
-require 'pact_broker/pacts/pact_version'
-require 'pact_broker/repositories/helpers'
-require 'pact_broker/integrations/integration'
-require 'pact_broker/tags/head_pact_tags'
-require 'pact_broker/pacts/pact_publication_dataset_module'
-require 'pact_broker/pacts/pact_publication_wip_dataset_module'
-require 'pact_broker/pacts/eager_loaders'
-require 'pact_broker/pacts/lazy_loaders'
+require "forwardable"
+require "pact_broker/domain/pact"
+require "pact_broker/pacts/pact_version"
+require "pact_broker/repositories/helpers"
+require "pact_broker/integrations/integration"
+require "pact_broker/tags/head_pact_tags"
+require "pact_broker/pacts/pact_publication_dataset_module"
+require "pact_broker/pacts/pact_publication_wip_dataset_module"
+require "pact_broker/pacts/eager_loaders"
+require "pact_broker/pacts/lazy_loaders"
 
 module PactBroker
   module Pacts
@@ -74,9 +74,6 @@ module PactBroker
       def latest_for_branch?
         return nil unless consumer_version.branch
         self_order = self.consumer_version.order
-        versions_join = {
-          Sequel[:pact_publications][:consumer_version_id] => Sequel[:cv][:id]
-        }
         PactPublication.where(consumer_id: consumer_id, provider_id: provider_id)
           .join_consumer_versions(:cv, { Sequel[:cv][:branch] => consumer_version.branch} ) do
             Sequel[:cv][:order] > self_order

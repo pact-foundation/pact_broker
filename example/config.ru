@@ -1,14 +1,14 @@
-require 'fileutils'
-require 'logger'
-require 'sequel'
+require "fileutils"
+require "logger"
+require "sequel"
 # require 'pg' # for postgres
-require 'pact_broker'
+require "pact_broker"
 
-ENV['RACK_ENV'] ||= 'production'
+ENV["RACK_ENV"] ||= "production"
 
 # Create a real database, and set the credentials for it here
 # It is highly recommended to set the encoding to utf8
-DATABASE_CREDENTIALS = { adapter: "sqlite", database: "pact_broker_database.sqlite3", :encoding => 'utf8', sql_log_level: :debug }
+DATABASE_CREDENTIALS = { adapter: "sqlite", database: "pact_broker_database.sqlite3", :encoding => "utf8", sql_log_level: :debug }
 
 # For postgres:
 #
@@ -21,7 +21,7 @@ DATABASE_CREDENTIALS = { adapter: "sqlite", database: "pact_broker_database.sqli
 # Have a look at the Sequel documentation to make decisions about things like connection pooling
 # and connection validation.
 
-ENV['TZ'] = 'Australia/Melbourne' # Set the timezone you want your dates to appear in
+ENV["TZ"] = "Australia/Melbourne" # Set the timezone you want your dates to appear in
 
 app = PactBroker::App.new do | config |
   # change these from their default values if desired

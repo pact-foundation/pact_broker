@@ -1,5 +1,5 @@
-require 'pact_broker/db/clean_incremental'
-require 'pact_broker/matrix/unresolved_selector'
+require "pact_broker/db/clean_incremental"
+require "pact_broker/matrix/unresolved_selector"
 
 module PactBroker
   module DB
@@ -84,7 +84,7 @@ module PactBroker
             end
 
             it "returns info on what will be deleted" do
-              Approvals.verify(subject, :name => 'clean_incremental_dry_run', format: :json)
+              Approvals.verify(subject, :name => "clean_incremental_dry_run", format: :json)
             end
           end
         end
@@ -102,8 +102,8 @@ module PactBroker
             PactBroker::Pacts::PactVersion.create(pact_version_params)
           end
 
-          let(:json_content_1) { { interactions: ['a', 'b']}.to_json }
-          let(:json_content_2) { { interactions: ['a', 'c']}.to_json }
+          let(:json_content_1) { { interactions: ["a", "b"]}.to_json }
+          let(:json_content_2) { { interactions: ["a", "c"]}.to_json }
 
           let(:options) { { keep: [latest_dev_selector] } }
 

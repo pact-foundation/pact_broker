@@ -2,7 +2,7 @@ module PactBroker
   module Versions
     module EagerLoaders
       class LatestVersionForBranch
-        def self.call(eo, **other)
+        def self.call(eo, **_other)
           initialize_association(eo[:rows])
           populate_associations(eo[:rows])
         end
@@ -12,8 +12,8 @@ module PactBroker
         end
 
         def self.populate_associations(versions)
-          group_by_pacticipant_id(versions).each do | pacticipant, versions |
-            populate_associations_by_pacticipant(pacticipant, versions)
+          group_by_pacticipant_id(versions).each do | pacticipant, participant_versions |
+            populate_associations_by_pacticipant(pacticipant, participant_versions)
           end
         end
 
@@ -44,13 +44,13 @@ module PactBroker
       end
 
       class LatestVersionForPacticipant
-        def self.call(eo, **other)
+        def self.call(eo, **_other)
           populate_associations(eo[:rows])
         end
 
         def self.populate_associations(versions)
-          group_by_pacticipant(versions).each do | pacticipant, versions |
-            populate_associations_by_pacticipant(pacticipant, versions)
+          group_by_pacticipant(versions).each do | pacticipant, participant_versions |
+            populate_associations_by_pacticipant(pacticipant, participant_versions)
           end
         end
 

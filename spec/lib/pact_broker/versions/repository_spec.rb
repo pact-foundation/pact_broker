@@ -1,5 +1,5 @@
-require 'spec_helper'
-require 'pact_broker/versions/repository'
+require "spec_helper"
+require "pact_broker/versions/repository"
 
 module PactBroker
   module Versions

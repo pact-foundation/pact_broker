@@ -1,4 +1,4 @@
-require 'securerandom'
+require "securerandom"
 
 Sequel.migration do
   up do
@@ -15,11 +15,11 @@ Sequel.migration do
 
         if webhook
           webhook_uuid = webhook[:uuid]
-          status = execution[:success] ? 'success' : 'failure'
+          status = execution[:success] ? "success" : "failure"
 
           from(:triggered_webhooks).insert(
             trigger_uuid: SecureRandom.urlsafe_base64,
-            trigger_type: 'pact_publication',
+            trigger_type: "pact_publication",
             pact_publication_id: pact_publication[:id],
             webhook_id: execution[:webhook_id],
             webhook_uuid: webhook_uuid,

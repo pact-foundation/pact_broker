@@ -1,6 +1,6 @@
-require 'pact_broker/api/contracts/verification_contract'
-require 'pact_broker/api/decorators/verification_decorator'
-require 'pact_broker/domain/verification'
+require "pact_broker/api/contracts/verification_contract"
+require "pact_broker/api/decorators/verification_decorator"
+require "pact_broker/domain/verification"
 
 module PactBroker
   module Api
@@ -14,7 +14,7 @@ module PactBroker
 
         let(:success) { true }
         let(:provider_version) { "4.5.6" }
-        let(:build_url) { 'http://foo' }
+        let(:build_url) { "http://foo" }
         let(:order_versions_by_date) { false }
 
         def modify hash, options

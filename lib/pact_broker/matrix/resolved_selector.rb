@@ -16,12 +16,13 @@ module PactBroker
         merge!(params)
       end
 
-      def self.for_pacticipant(pacticipant, type, ignore)
+      def self.for_pacticipant(pacticipant, original_selector, type, ignore)
         ResolvedSelector.new(
           pacticipant_id: pacticipant.id,
           pacticipant_name: pacticipant.name,
           type: type,
-          ignore: ignore
+          ignore: ignore,
+          original_selector: original_selector
         )
       end
 
@@ -30,10 +31,12 @@ module PactBroker
           pacticipant_id: NULL_PACTICIPANT_ID,
           pacticipant_name: original_selector[:pacticipant_name],
           type: type,
-          ignore: ignore
+          ignore: ignore,
+          original_selector: original_selector
         )
       end
 
+      # rubocop: disable Metrics/ParameterLists
       def self.for_pacticipant_and_version(pacticipant, version, original_selector, type, ignore, one_of_many = false)
         ResolvedSelector.new(
           pacticipant_id: pacticipant.id,
@@ -46,9 +49,11 @@ module PactBroker
           environment_name: original_selector[:environment_name],
           type: type,
           ignore: ignore,
-          one_of_many: one_of_many
+          one_of_many: one_of_many,
+          original_selector: original_selector
         )
       end
+      # rubocop: enable Metrics/ParameterLists
 
       def self.for_pacticipant_and_non_existing_version(pacticipant, original_selector, type, ignore)
         ResolvedSelector.new(
@@ -61,8 +66,13 @@ module PactBroker
           branch: original_selector[:branch],
           environment_name: original_selector[:environment_name],
           type: type,
-          ignore: ignore
+          ignore: ignore,
+          original_selector: original_selector
         )
+      end
+
+      def pacticipant_version_specified_in_original_selector?
+        !!self.dig(:original_selector, :pacticipant_version_number)
       end
 
       def pacticipant_id
@@ -106,7 +116,7 @@ module PactBroker
       end
 
       def only_pacticipant_name_specified?
-        pacticipant_name && !tag && !latest? && !pacticipant_version_number
+        !!pacticipant_name && !branch && !tag && !latest? && !pacticipant_version_number
       end
 
       def latest_tagged?
@@ -164,6 +174,7 @@ module PactBroker
         !ignore?
       end
 
+      # rubocop: disable Metrics/CyclomaticComplexity
       def description
         if latest_tagged? && pacticipant_version_number
           "the latest version of #{pacticipant_name} with tag #{tag} (#{pacticipant_version_number})"
@@ -196,6 +207,7 @@ module PactBroker
           "any version of #{pacticipant_name}"
         end
       end
+      # rubocop: enable Metrics/CyclomaticComplexity
     end
   end
 end

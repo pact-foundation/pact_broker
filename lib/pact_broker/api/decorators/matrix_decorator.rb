@@ -1,7 +1,7 @@
-require 'ostruct'
-require 'pact_broker/api/pact_broker_urls'
-require 'pact_broker/api/decorators/reason_decorator'
-require 'pact_broker/api/decorators/format_date_time'
+require "ostruct"
+require "pact_broker/api/pact_broker_urls"
+require "pact_broker/api/decorators/reason_decorator"
+require "pact_broker/api/decorators/format_date_time"
 
 module PactBroker
   module Api
@@ -67,6 +67,7 @@ module PactBroker
           line_hash(consumer, provider, consumer_version, provider_version, line, base_url)
         end
 
+        # rubocop: disable Metrics/ParameterLists
         def line_hash(consumer, provider, consumer_version, provider_version, line, base_url)
           {
             consumer: consumer_hash(line, consumer, consumer_version, base_url),
@@ -75,6 +76,7 @@ module PactBroker
             verificationResult: verification_hash(line, base_url)
           }
         end
+        # rubocop: enable Metrics/ParameterLists
 
         def consumer_hash(line, consumer, consumer_version, base_url)
           {

@@ -1,21 +1,21 @@
-require 'uri'
-require 'rack/request'
-require 'rack/static'
+require "uri"
+require "rack/request"
+require "rack/static"
 
 module Rack
   module HalBrowser
     class Redirect
 
-      def initialize(app, options = {}, &block)
+      def initialize(app, options = {})
         @app = app
-        @excluded_paths = Array(options[:exclude]) << '/hal-browser'
-        @hal_browser = Rack::Static.new(@app, :urls => ['/hal-browser'], :root => ::File.expand_path('../../../../vendor', __FILE__))
+        @excluded_paths = Array(options[:exclude]) << "/hal-browser"
+        @hal_browser = Rack::Static.new(@app, :urls => ["/hal-browser"], :root => ::File.expand_path("../../../../vendor", __FILE__))
       end
 
       def call(env)
         request = Rack::Request.new(env)
         if match?(request)
-          return [303, {'Location' => hal_browser_url_from_request(request)}, []]
+          return [303, {"Location" => hal_browser_url_from_request(request)}, []]
         end
         @hal_browser.call(env)
       end
@@ -28,7 +28,7 @@ module Rack
 
       def prefers_html?(request)
         # TODO: actually follow real HTTP content negotiation rules
-        request.env.fetch('HTTP_ACCEPT', '').start_with?('text/html') && request.env.fetch('HTTP_ACCEPT', '').include?('json')
+        request.env.fetch("HTTP_ACCEPT", "").start_with?("text/html") && request.env.fetch("HTTP_ACCEPT", "").include?("json")
       end
 
       def path_not_excluded?(request)
@@ -36,7 +36,7 @@ module Rack
       end
 
       def hal_browser_url_from_request(request)
-        url = URI.parse('/hal-browser/browser.html')
+        url = URI.parse("/hal-browser/browser.html")
         url.fragment = request.path_info
         url.to_s
       end

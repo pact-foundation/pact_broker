@@ -1,4 +1,4 @@
-require 'pact_broker/matrix/repository'
+require "pact_broker/matrix/repository"
 
 module PactBroker
   module Matrix
@@ -50,7 +50,7 @@ module PactBroker
 
         it "returns an array with one row that does not have a verification" do
           expect(results.first).to_not have_verification
-          expect(results.resolved_selectors.find{ |s | s[:pacticipant_name] == "Bar"}.pacticipant_version_id).to eq -1
+          expect(results.resolved_selectors.find{ |s | s[:pacticipant_name] == "Bar"}.pacticipant_version_id).to eq(-1)
         end
       end
     end

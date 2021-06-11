@@ -1,5 +1,5 @@
-require 'pact_broker/repositories'
-require 'pact_broker/messages'
+require "pact_broker/repositories"
+require "pact_broker/messages"
 
 module PactBroker
   module Versions
@@ -7,7 +7,7 @@ module PactBroker
       extend PactBroker::Messages
       extend PactBroker::Repositories
 
-      def self.conflict_errors(existing_version, open_struct_version, version_url)
+      def self.conflict_errors(_existing_version, _open_struct_version, _version_url)
         # This validation is causing problems in the PF build when branches are merged
         # TODO remove this properly when re-doing the version -> branch relationship
         {}

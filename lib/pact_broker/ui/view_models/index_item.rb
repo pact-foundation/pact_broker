@@ -1,9 +1,9 @@
-require 'pact_broker/api/pact_broker_urls'
-require 'pact_broker/ui/helpers/url_helper'
-require 'pact_broker/date_helper'
-require 'pact_broker/versions/abbreviate_number'
-require 'pact_broker/configuration'
-require 'forwardable'
+require "pact_broker/api/pact_broker_urls"
+require "pact_broker/ui/helpers/url_helper"
+require "pact_broker/date_helper"
+require "pact_broker/versions/abbreviate_number"
+require "pact_broker/configuration"
+require "forwardable"
 
 module PactBroker
   module UI
@@ -133,11 +133,11 @@ module PactBroker
 
         def webhook_url
           url = case @relationship.webhook_status
-            when :none
-              PactBroker::Api::PactBrokerUrls.webhooks_for_consumer_and_provider_url @relationship.latest_pact.consumer, @relationship.latest_pact.provider, base_url
-            else
-              PactBroker::Api::PactBrokerUrls.webhooks_status_url @relationship.latest_pact.consumer, @relationship.latest_pact.provider, base_url
-          end
+                when :none
+                  PactBroker::Api::PactBrokerUrls.webhooks_for_consumer_and_provider_url @relationship.latest_pact.consumer, @relationship.latest_pact.provider, base_url
+                else
+                  PactBroker::Api::PactBrokerUrls.webhooks_status_url @relationship.latest_pact.consumer, @relationship.latest_pact.provider, base_url
+                end
           PactBroker::Api::PactBrokerUrls.hal_browser_url(url, base_url)
         end
 
@@ -169,7 +169,7 @@ module PactBroker
         end
 
         def warning?
-          pseudo_branch_verification_status == 'warning'
+          pseudo_branch_verification_status == "warning"
         end
 
         def verification_tooltip

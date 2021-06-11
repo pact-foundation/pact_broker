@@ -1,4 +1,4 @@
-require 'pact_broker/api/resources/authentication'
+require "pact_broker/api/resources/authentication"
 
 module Rack
   module PactBroker
@@ -14,12 +14,12 @@ module Rack
         if auth? env
           @app.call(env)
         else
-          [401, {'WWW-Authenticate' => 'Basic realm="Restricted Area"'}, []]
+          [401, {"WWW-Authenticate" => 'Basic realm="Restricted Area"'}, []]
         end
       end
 
       def auth? env
-        authenticated? nil, env['HTTP_AUTHORIZATION']
+        authenticated? nil, env["HTTP_AUTHORIZATION"]
       end
     end
   end

@@ -1,5 +1,5 @@
-require_relative 'base_decorator'
-require_relative 'integration_decorator'
+require_relative "base_decorator"
+require_relative "integration_decorator"
 
 module PactBroker
   module Api

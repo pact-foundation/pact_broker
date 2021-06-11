@@ -1,11 +1,11 @@
-require 'pact_broker/api/pact_broker_urls'
-require 'pact_broker/ui/helpers/url_helper'
-require 'pact_broker/date_helper'
-require 'pact_broker/ui/view_models/matrix_tag'
-require 'pact_broker/ui/view_models/matrix_deployed_version'
-require 'pact_broker/versions/abbreviate_number'
-require 'pact_broker/messages'
-require 'forwardable'
+require "pact_broker/api/pact_broker_urls"
+require "pact_broker/ui/helpers/url_helper"
+require "pact_broker/date_helper"
+require "pact_broker/ui/view_models/matrix_tag"
+require "pact_broker/ui/view_models/matrix_deployed_version"
+require "pact_broker/versions/abbreviate_number"
+require "pact_broker/messages"
+require "forwardable"
 
 module PactBroker
   module UI
@@ -170,7 +170,7 @@ module PactBroker
           if @line.verification_executed_at
             DateHelper.distance_of_time_in_words(@line.verification_executed_at, DateTime.now) + " ago"
           else
-            ''
+            ""
           end
           # case @line.success
           #   when true then "Verified"
@@ -201,9 +201,9 @@ module PactBroker
 
         def verification_status_class
           case @line.success
-            when true then 'table-success'
-            when false then 'table-danger'
-            else ''
+            when true then "table-success"
+            when false then "table-danger"
+            else ""
           end
         end
 

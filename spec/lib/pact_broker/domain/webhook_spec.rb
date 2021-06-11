@@ -1,23 +1,23 @@
-require 'pact_broker/domain/webhook'
+require "pact_broker/domain/webhook"
 
 module PactBroker
   module Domain
     describe Webhook do
       let(:uuid) { "uuid" }
-      let(:consumer) { Pacticipant.new(name: 'Consumer')}
-      let(:provider) { Pacticipant.new(name: 'Provider')}
+      let(:consumer) { Pacticipant.new(name: "Consumer")}
+      let(:provider) { Pacticipant.new(name: "Provider")}
       let(:request_template) { instance_double(PactBroker::Webhooks::WebhookRequestTemplate, build: webhook_request)}
       let(:webhook_request) { instance_double(PactBroker::Domain::WebhookRequest, execute: http_response, http_request: http_request) }
       let(:webhook_template_parameters) { instance_double(PactBroker::Webhooks::PactAndVerificationParameters, to_hash: webhook_template_parameters_hash) }
-      let(:webhook_template_parameters_hash) { { 'foo' => 'bar' } }
-      let(:http_request) { double('http request') }
-      let(:http_response) { double('http response', code: "200") }
-      let(:event_context) { { some: 'things' } }
-      let(:logging_options) { { other: 'options' } }
+      let(:webhook_template_parameters_hash) { { "foo" => "bar" } }
+      let(:http_request) { double("http request") }
+      let(:http_response) { double("http response", code: "200") }
+      let(:event_context) { { some: "things" } }
+      let(:logging_options) { { other: "options" } }
       let(:options) { { logging_options: logging_options } }
-      let(:pact) { double('pact') }
-      let(:verification) { double('verification') }
-      let(:logger) { double('logger').as_null_object }
+      let(:pact) { double("pact") }
+      let(:verification) { double("verification") }
+      let(:logger) { double("logger").as_null_object }
 
       before do
         allow(webhook).to receive(:logger).and_return(logger)

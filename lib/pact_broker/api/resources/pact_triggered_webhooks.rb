@@ -1,5 +1,5 @@
-require 'pact_broker/api/resources/base_resource'
-require 'pact_broker/api/decorators/triggered_webhooks_decorator'
+require "pact_broker/api/resources/base_resource"
+require "pact_broker/api/decorators/triggered_webhooks_decorator"
 
 module PactBroker
   module Api
@@ -22,7 +22,11 @@ module PactBroker
         end
 
         def policy_name
-          :'webhooks::webhooks'
+          :'pacts::pact'
+        end
+
+        def policy_record
+          pact
         end
 
         private

@@ -1,5 +1,5 @@
-require 'pact_broker/json'
-require 'pact_broker/pacts/order_hash_keys'
+require "pact_broker/json"
+require "pact_broker/pacts/order_hash_keys"
 
 module PactBroker
   module Pacts
@@ -20,10 +20,10 @@ module PactBroker
       end
 
       def self.verifiable_content_key_for pact_hash
-        if pact_hash['interactions']
-          'interactions'
-        elsif pact_hash['messages']
-          'messages'
+        if pact_hash["interactions"]
+          "interactions"
+        elsif pact_hash["messages"]
+          "messages"
         else
           nil
         end

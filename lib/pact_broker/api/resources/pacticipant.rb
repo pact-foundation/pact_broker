@@ -1,5 +1,5 @@
-require 'pact_broker/api/resources/base_resource'
-require 'pact_broker/api/contracts/pacticipant_schema'
+require "pact_broker/api/resources/base_resource"
+require "pact_broker/api/contracts/pacticipant_schema"
 
 module PactBroker
   module Api
@@ -11,7 +11,10 @@ module PactBroker
         end
 
         def content_types_accepted
-          [["application/json", :from_json]]
+          [
+            ["application/json", :from_json],
+            ["application/merge-patch+json", :from_merge_patch_json]
+          ]
         end
 
         def allowed_methods
@@ -19,7 +22,7 @@ module PactBroker
         end
 
         def known_methods
-          super + ['PATCH']
+          super + ["PATCH"]
         end
 
         def malformed_request?
@@ -42,6 +45,14 @@ module PactBroker
             end
           end
           response.body = to_json
+        end
+
+        def from_merge_patch_json
+          if request.patch?
+            from_json
+          else
+            415
+          end
         end
 
         def resource_exists?

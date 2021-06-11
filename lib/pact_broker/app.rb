@@ -1,24 +1,24 @@
-require 'pact_broker/configuration'
-require 'pact_broker/db'
-require 'pact_broker/project_root'
-require 'pact_broker/logging/default_formatter'
-require 'pact_broker/policies'
-require 'rack-protection'
-require 'rack/hal_browser'
-require 'rack/pact_broker/set_base_url'
-require 'rack/pact_broker/add_pact_broker_version_header'
-require 'rack/pact_broker/convert_file_extension_to_accept_header'
-require 'rack/pact_broker/database_transaction'
-require 'rack/pact_broker/invalid_uri_protection'
-require 'rack/pact_broker/ui_request_filter'
-require 'rack/pact_broker/ui_authentication'
-require 'rack/pact_broker/configurable_make_it_later'
-require 'rack/pact_broker/no_auth'
-require 'rack/pact_broker/convert_404_to_hal'
-require 'rack/pact_broker/reset_thread_data'
-require 'rack/pact_broker/add_vary_header'
-require 'rack/pact_broker/use_when'
-require 'sucker_punch'
+require "pact_broker/configuration"
+require "pact_broker/db"
+require "pact_broker/project_root"
+require "pact_broker/logging/default_formatter"
+require "pact_broker/policies"
+require "rack-protection"
+require "rack/hal_browser"
+require "rack/pact_broker/set_base_url"
+require "rack/pact_broker/add_pact_broker_version_header"
+require "rack/pact_broker/convert_file_extension_to_accept_header"
+require "rack/pact_broker/database_transaction"
+require "rack/pact_broker/invalid_uri_protection"
+require "rack/pact_broker/ui_request_filter"
+require "rack/pact_broker/ui_authentication"
+require "rack/pact_broker/configurable_make_it_later"
+require "rack/pact_broker/no_auth"
+require "rack/pact_broker/convert_404_to_hal"
+require "rack/pact_broker/reset_thread_data"
+require "rack/pact_broker/add_vary_header"
+require "rack/pact_broker/use_when"
+require "sucker_punch"
 
 module PactBroker
 
@@ -28,13 +28,13 @@ module PactBroker
 
     attr_accessor :configuration
 
-    def initialize &block
+    def initialize
       @app_builder = ::Rack::Builder.new
       @cascade_apps = []
       @make_it_later_api_auth = ::Rack::PactBroker::ConfigurableMakeItLater.new(Rack::PactBroker::NoAuth)
       @make_it_later_ui_auth = ::Rack::PactBroker::ConfigurableMakeItLater.new(Rack::PactBroker::NoAuth)
       # Can only be required after database connection has been made because the decorators rely on the Sequel models
-      @create_pact_broker_api_block = ->() { require 'pact_broker/api'; PactBroker::API }
+      @create_pact_broker_api_block = ->() { require "pact_broker/api"; PactBroker::API }
       @configuration = PactBroker.configuration
       yield configuration
       post_configure
@@ -50,7 +50,7 @@ module PactBroker
     # the middleware with the app, and run it manually.
     # eg run MyMiddleware.new(app)
     def use *args, &block
-      @app_builder.use *args, &block
+      @app_builder.use(*args, &block)
     end
 
     # private API, not sure if this will continue to be supported
@@ -85,7 +85,7 @@ module PactBroker
 
     def post_configure
       configure_logger
-      SuckerPunch.logger = configuration.custom_logger || SemanticLogger['SuckerPunch']
+      SuckerPunch.logger = configuration.custom_logger || SemanticLogger["SuckerPunch"]
       configure_database_connection
       configure_sucker_punch
     end
@@ -112,12 +112,12 @@ module PactBroker
         logger.info "Skipping data migrations"
       end
 
-      require 'pact_broker/webhooks/service'
+      require "pact_broker/webhooks/service"
       PactBroker::Webhooks::Service.fail_retrying_triggered_webhooks
     end
 
     def load_configuration_from_database
-      require 'pact_broker/config/load'
+      require "pact_broker/config/load"
       PactBroker::Config::Load.call(configuration)
     end
 
@@ -126,9 +126,11 @@ module PactBroker
       PactBroker::DB.connection = configuration.database_connection
       PactBroker::DB.connection.timezone = :utc
       PactBroker::DB.connection.extend_datasets do
+        # rubocop: disable Lint/NestedMethodDefinition
         def any?
           !empty?
         end
+        # rubocop: enable Lint/NestedMethodDefinition
       end
       PactBroker::DB.validate_connection_config if configuration.validate_database_connection_config
       PactBroker::DB.set_mysql_strict_mode_if_mysql
@@ -147,7 +149,7 @@ module PactBroker
         configuration.example_data_seeder.call
         logger.info "Marking seed as done"
         configuration.seed_example_data = false
-        require 'pact_broker/config/save'
+        require "pact_broker/config/save"
         PactBroker::Config::Save.call(configuration, [:seed_example_data])
       else
         logger.info "Not seeding example data"
@@ -174,8 +176,8 @@ module PactBroker
       if configuration.use_rack_protection
         @app_builder.use Rack::Protection, except: [:path_traversal, :remote_token, :session_hijacking, :http_origin]
 
-        is_hal_browser = ->(env) { env['PATH_INFO'] == '/hal-browser/browser.html' }
-        not_hal_browser = ->(env) { env['PATH_INFO'] != '/hal-browser/browser.html' }
+        is_hal_browser = ->(env) { env["PATH_INFO"] == "/hal-browser/browser.html" }
+        not_hal_browser = ->(env) { env["PATH_INFO"] != "/hal-browser/browser.html" }
 
         @app_builder.use_when not_hal_browser,
           Rack::Protection::ContentSecurityPolicy, configuration.content_security_policy
@@ -188,7 +190,7 @@ module PactBroker
       @app_builder.use Rack::PactBroker::AddPactBrokerVersionHeader
       @app_builder.use Rack::PactBroker::AddVaryHeader
       @app_builder.use Rack::Static, :urls => ["/stylesheets", "/css", "/fonts", "/js", "/javascripts", "/images"], :root => PactBroker.project_root.join("public")
-      @app_builder.use Rack::Static, :urls => ["/favicon.ico"], :root => PactBroker.project_root.join("public/images"), header_rules: [[:all, {'Content-Type' => 'image/x-icon'}]]
+      @app_builder.use Rack::Static, :urls => ["/favicon.ico"], :root => PactBroker.project_root.join("public/images"), header_rules: [[:all, {"Content-Type" => "image/x-icon"}]]
       @app_builder.use Rack::PactBroker::ConvertFileExtensionToAcceptHeader
       # Rack::PactBroker::SetBaseUrl needs to be before the Rack::PactBroker::HalBrowserRedirect
       @app_builder.use Rack::PactBroker::SetBaseUrl, configuration.base_urls
@@ -203,7 +205,7 @@ module PactBroker
 
     def build_ui
       logger.info "Mounting UI"
-      require 'pact_broker/ui'
+      require "pact_broker/ui"
       ui_apps = [PactBroker::UI::App.new]
       ui_apps.unshift(@custom_ui) if @custom_ui
       builder = ::Rack::Builder.new
@@ -227,7 +229,7 @@ module PactBroker
     end
 
     def build_diagnostic
-      require 'pact_broker/diagnostic/app'
+      require "pact_broker/diagnostic/app"
       builder = ::Rack::Builder.new
       builder.use @make_it_later_api_auth
       builder.run PactBroker::Diagnostic::App.new
@@ -260,7 +262,7 @@ module PactBroker
     end
 
     def print_startup_message
-      if ENV['PACT_BROKER_HIDE_PACTFLOW_MESSAGES'] != 'true'
+      if ENV["PACT_BROKER_HIDE_PACTFLOW_MESSAGES"] != "true"
         logger.info "\n\n#{'*' * 80}\n\nWant someone to manage your Pact Broker for you? Check out https://pactflow.io/oss for a hardened, fully supported SaaS version of the Pact Broker with an improved UI + more.\n\n#{'*' * 80}\n"
       end
     end

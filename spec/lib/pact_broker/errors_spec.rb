@@ -1,5 +1,5 @@
-require 'pact_broker/errors'
-require 'pact_broker/configuration'
+require "pact_broker/errors"
+require "pact_broker/configuration"
 
 module PactBroker
   module Errors
@@ -14,14 +14,13 @@ module PactBroker
         end
       end
 
-      let(:error) { StandardError.new('test error') }
-      let(:thing) { double('thing', call: nil, another_call: nil) }
-      let(:request) { double('request', env: env ) }
+      let(:error) { StandardError.new("test error") }
+      let(:thing) { double("thing", call: nil, another_call: nil) }
       let(:error_reference) { "bYWfnyWPlf" }
       let(:expected_options) { { env: env, error_reference: "bYWfnyWPlf" } }
-      let(:env) { double('env') }
+      let(:env) { double("env") }
 
-      subject { PactBroker::Errors.report(error, error_reference, request) }
+      subject { PactBroker::Errors.report(error, error_reference, env) }
 
 
       it "invokes the api error reporters" do
@@ -33,7 +32,7 @@ module PactBroker
       context "when the error reporter raises an error itself" do
         class TestError < StandardError; end
 
-        let(:logger) { double('logger').as_null_object }
+        let(:logger) { double("logger").as_null_object }
 
         before do
           expect(thing).to receive(:call).and_raise(TestError.new)

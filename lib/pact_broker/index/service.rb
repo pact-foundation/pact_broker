@@ -1,10 +1,10 @@
-require 'pact_broker/repositories'
-require 'pact_broker/logging'
-require 'pact_broker/domain/index_item'
-require 'pact_broker/matrix/head_row'
-require 'pact_broker/matrix/aggregated_row'
-require 'pact_broker/repositories/helpers'
-require 'pact_broker/index/page'
+require "pact_broker/repositories"
+require "pact_broker/logging"
+require "pact_broker/domain/index_item"
+require "pact_broker/matrix/head_row"
+require "pact_broker/matrix/aggregated_row"
+require "pact_broker/repositories/helpers"
+require "pact_broker/index/page"
 
 module PactBroker
   module Index
@@ -30,6 +30,7 @@ module PactBroker
         find_index_items(page_number: 1, page_size: 100000000000)
       end
 
+      # rubocop: disable Metrics/CyclomaticComplexity, Metrics/MethodLength
       def self.find_index_items options = {}
         latest_verifications_for_cv_tags = latest_verifications_for_consumer_version_tags(options)
         latest_pp_ids = latest_pact_publication_ids
@@ -53,7 +54,7 @@ module PactBroker
           is_overall_latest_for_integration = latest_pp_ids.include?(pact_publication.id)
 
           latest_verification = latest_verification_for_pseudo_branch(pact_publication, is_overall_latest_for_integration, latest_verifications_for_cv_tags, options[:tags])
-          webhook = webhooks.find{ |webhook| webhook.is_for?(pact_publication.integration) }
+          webhook = webhooks.find{ |wh| wh.is_for?(pact_publication.integration) }
 
           PactBroker::Domain::IndexItem.create(
             pact_publication.consumer,
@@ -71,9 +72,11 @@ module PactBroker
 
         Page.new(index_items, pagination_record_count)
       end
+      # rubocop: enable Metrics/CyclomaticComplexity, Metrics/MethodLength
 
       # Worst. Code. Ever.
       #
+      # rubocop: disable Metrics/CyclomaticComplexity
       def self.latest_verification_for_pseudo_branch(pact_publication, is_overall_latest, latest_verifications_for_cv_tags, tags_option)
         if tags_option == true
           latest_verifications_for_cv_tags
@@ -87,6 +90,7 @@ module PactBroker
           pact_publication.integration.latest_verification
         end
       end
+      # rubocop: enable Metrics/CyclomaticComplexity
 
       def self.consumer_version_tags(pact_publication, tags_option)
         if tags_option == true
@@ -98,7 +102,7 @@ module PactBroker
         end
       end
 
-      def self.find_index_items_for_api(consumer_name: nil, provider_name: nil, **ignored)
+      def self.find_index_items_for_api(consumer_name: nil, provider_name: nil, **_ignored)
         latest_pp_ids = latest_pact_publication_ids
         pact_publications = head_pact_publications(consumer_name: consumer_name, provider_name: provider_name, tags: true)
           .eager(:consumer)
@@ -152,12 +156,12 @@ module PactBroker
 
         latest = base.overall_latest
         ids_query = if options[:tags].is_a?(Array)
-          latest.union(base.latest_for_consumer_tag(options[:tags]))
-        elsif options[:tags]
-          latest.union(base.latest_by_consumer_tag)
-        else
-          latest
-        end
+                      latest.union(base.latest_for_consumer_tag(options[:tags]))
+                    elsif options[:tags]
+                      latest.union(base.latest_by_consumer_tag)
+                    else
+                      latest
+                    end
 
         query = PactBroker::Pacts::PactPublication.select_all_qualified.where(Sequel[:pact_publications][:id] => ids_query)
           .join_consumers(:consumers)

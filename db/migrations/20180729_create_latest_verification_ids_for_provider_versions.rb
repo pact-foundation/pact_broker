@@ -1,4 +1,4 @@
-require_relative '../ddl_statements'
+require_relative "../ddl_statements"
 
 Sequel.migration do
   change do

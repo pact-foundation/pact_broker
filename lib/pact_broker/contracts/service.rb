@@ -1,11 +1,11 @@
-require 'pact_broker/logging'
-require 'pact_broker/repositories'
-require 'pact_broker/services'
-require 'pact_broker/messages'
-require 'pact_broker/contracts/contracts_publication_results'
-require 'pact_broker/contracts/notice'
-require 'pact_broker/events/subscriber'
-require 'pact_broker/api/pact_broker_urls'
+require "pact_broker/logging"
+require "pact_broker/repositories"
+require "pact_broker/services"
+require "pact_broker/messages"
+require "pact_broker/contracts/contracts_publication_results"
+require "pact_broker/contracts/notice"
+require "pact_broker/events/subscriber"
+require "pact_broker/api/pact_broker_urls"
 
 module PactBroker
   module Contracts
@@ -150,6 +150,7 @@ module PactBroker
 
       private :message_key_for_version_creation
 
+      # rubocop: disable Metrics/ParameterLists
       def notices_for_pact(parsed_contracts, contract_to_publish, existing_pact, created_pact, listener, base_url)
         notices = []
         notices << notice_for_pact_publication(parsed_contracts, contract_to_publish.merge?, existing_pact, created_pact)
@@ -158,6 +159,7 @@ module PactBroker
         notices.concat(next_steps_notices(created_pact))
         notices
       end
+      # rubocop: enable Metrics/ParameterLists
 
       private :notices_for_pact
 

@@ -1,11 +1,10 @@
-require 'pact_broker/api/resources'
-
+require "pact_broker/api/resources"
 module PactBroker
   module Api
     module Resources
       RSpec.describe "modifiable resources (ones that require write access)" do
         let(:pact_broker_resource_classes) do
-          all_resources = ObjectSpace.each_object(::Class)
+          ObjectSpace.each_object(::Class)
             .select { |klass| klass < DefaultBaseResource }
             .select(&:name)
             .reject { |klass| klass.name.end_with?("BaseResource") }
@@ -16,8 +15,8 @@ module PactBroker
           data = pact_broker_resource_classes.collect do | resource_class |
             application_context = PactBroker::ApplicationContext.default_application_context
             path_info = { pacticipant_name: "Foo", pacticipant_version_number: "1", application_context: application_context }
-            request = double('request', uri: URI("http://example.org"), path_info: path_info).as_null_object
-            response = double('response')
+            request = double("request", uri: URI("http://example.org"), path_info: path_info, body: "{}").as_null_object
+            response = double("response")
             resource = resource_class.new(request, response)
             modifiable = resource.allowed_methods.any?{ | method | %w{PATCH POST PUT DELETE}.include?(method) }
             # We only care about getting the right pacticipant for the policy if the
@@ -25,15 +24,15 @@ module PactBroker
             # Read only resources can be read by anybody - no point wasting time getting the right pacticipant
             if modifiable
               def resource.consumer
-                'consumer'
+                "consumer"
               end
 
               def resource.provider
-                'provider'
+                "provider"
               end
 
               def resource.pacticipant
-                'pacticipant'
+                "pacticipant"
               end
 
               def resource.resource_exists?
@@ -53,7 +52,7 @@ module PactBroker
             end
           end.compact
 
-          Approvals.verify({ resource_classes: data }, :name => 'modifiable_resources', format: :json)
+          Approvals.verify({ resource_classes: data }, :name => "modifiable_resources", format: :json)
         end
       end
     end

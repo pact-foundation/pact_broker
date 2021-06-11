@@ -1,4 +1,4 @@
-require 'pact_broker/configuration'
+require "pact_broker/configuration"
 
 module PactBroker
   module Api
@@ -7,7 +7,7 @@ module PactBroker
         include PactBroker::Logging
 
         # env not needed, just passing in in case PF ever needs it
-        def self.call error, error_reference, env = {}
+        def self.call error, error_reference, _env = {}
           response_body_hash(error, error_reference).to_json
         end
 
@@ -15,7 +15,7 @@ module PactBroker
           if PactBroker.configuration.show_backtrace_in_error_response?
             error.message || obfuscated_message
           else
-           PactBroker::Errors.reportable_error?(error) ? obfuscated_message : error.message
+            PactBroker::Errors.reportable_error?(error) ? obfuscated_message : error.message
           end
         end
 

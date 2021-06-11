@@ -1,5 +1,5 @@
-require 'spec_helper'
-require 'pact_broker/pacticipants/find_potential_duplicate_pacticipant_names'
+require "spec_helper"
+require "pact_broker/pacticipants/find_potential_duplicate_pacticipant_names"
 
 module PactBroker
 
@@ -36,14 +36,14 @@ module PactBroker
           ["The Accounts", ["Accounts"], []],
           ["accounts", ["account-service", "account-api", "account-provider"], ["account-service", "account-api", "account-provider"]],
           ["accounts-api", ["account-service", "account-provider"], ["account-service", "account-provider"]],
-          ['Contracts Service', ['Contracts Service', 'Contracts', 'Something'], []],
-          ['Contracts', ['Contract Service', 'Contacts', 'Something'], ['Contract Service']],
-          ['Contracts Service', ['Contract', 'Contacts', 'Something'], ['Contract']],
-          ['Contract Service', ['Contracts', 'Contacts', 'Something'], ['Contracts']],
-          ['Contract Service', ['contracts', 'Contacts', 'Something'], ['contracts']],
-          ['ContractService', ['Contracts Service', 'Contacts', 'Something'], ['Contracts Service']],
-          ['Contract Service', ['ContractsService', 'Contacts', 'Something'], ['ContractsService']],
-          ['Contract_Service', ['ContractsService', 'Contracts Service', 'contracts-service', 'Contacts', 'Something'], ['ContractsService', 'Contracts Service', 'contracts-service']]
+          ["Contracts Service", ["Contracts Service", "Contracts", "Something"], []],
+          ["Contracts", ["Contract Service", "Contacts", "Something"], ["Contract Service"]],
+          ["Contracts Service", ["Contract", "Contacts", "Something"], ["Contract"]],
+          ["Contract Service", ["Contracts", "Contacts", "Something"], ["Contracts"]],
+          ["Contract Service", ["contracts", "Contacts", "Something"], ["contracts"]],
+          ["ContractService", ["Contracts Service", "Contacts", "Something"], ["Contracts Service"]],
+          ["Contract Service", ["ContractsService", "Contacts", "Something"], ["ContractsService"]],
+          ["Contract_Service", ["ContractsService", "Contracts Service", "contracts-service", "Contacts", "Something"], ["ContractsService", "Contracts Service", "contracts-service"]]
         ]
 
         CALL_TEST_CASES.each do | the_new_name, the_existing_names, the_expected_duplicates |

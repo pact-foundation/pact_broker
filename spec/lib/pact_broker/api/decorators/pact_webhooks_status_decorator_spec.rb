@@ -1,4 +1,4 @@
-require 'pact_broker/api/decorators/pact_webhooks_status_decorator'
+require "pact_broker/api/decorators/pact_webhooks_status_decorator"
 
 module PactBroker
   module Api
@@ -6,36 +6,36 @@ module PactBroker
       describe PactWebhooksStatusDecorator do
 
         let(:user_options) do
-          {consumer: 'Foo', provider: 'Bar', resource_url: 'http://example.org/foo', base_url: 'http://example.org'}
+          {consumer: "Foo", provider: "Bar", resource_url: "http://example.org/foo", base_url: "http://example.org"}
         end
 
         let(:triggered_webhook) do
-          double('PactBroker::Webhooks::TriggeredWebhook',
+          double("PactBroker::Webhooks::TriggeredWebhook",
             trigger_type: PactBroker::Webhooks::TriggeredWebhook::TRIGGER_TYPE_RESOURCE_CREATION,
             status: status,
             failure?: failure,
             retrying?: retrying,
-            trigger_uuid: '1234',
-            webhook_uuid: '4321',
+            uuid: "1234",
+            webhook_uuid: "4321",
             request_description: "GET http://foo",
             pact_publication: pact,
             number_of_attempts_made: 1,
             number_of_attempts_remaining: 2,
             created_at: DateTime.new(2017),
             updated_at: DateTime.new(2017),
-            event_name: 'some_event',
+            event_name: "some_event",
             webhook: webhook
           )
         end
 
-        let(:webhook) { double('webhook') }
+        let(:webhook) { double("webhook") }
 
         let(:pact) do
-          double('pact',
-            provider: double(name: 'provider'),
-            consumer: double(name: 'consumer'),
-            consumer_version_number: '1',
-            name: 'foo '
+          double("pact",
+            provider: double(name: "provider"),
+            consumer: double(name: "consumer"),
+            consumer_version_number: "1",
+            name: "foo "
           )
         end
         let(:failure) { false }
@@ -64,8 +64,8 @@ module PactBroker
 
         it "includes the triggered webhooks properties" do
           expect(subject[:_embedded][:triggeredWebhooks].first).to include(
-            status: 'success',
-            triggerType: 'resource_creation',
+            status: "success",
+            triggerType: "resource_creation",
             attemptsMade: 1,
             attemptsRemaining: 2
           )

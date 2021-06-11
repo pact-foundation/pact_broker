@@ -1,9 +1,9 @@
-require 'pact_broker/webhooks/render'
-require 'pact_broker/pacts/placeholder_pact'
-require 'pact_broker/verifications/placeholder_verification'
-require 'pact_broker/webhooks/pact_and_verification_parameters'
+require "pact_broker/webhooks/render"
+require "pact_broker/pacts/placeholder_pact"
+require "pact_broker/verifications/placeholder_verification"
+require "pact_broker/webhooks/pact_and_verification_parameters"
 
-require 'cgi'
+require "cgi"
 
 module PactBroker
   module Webhooks
@@ -11,7 +11,7 @@ module PactBroker
       describe "#call" do
         before do
           allow(PactBroker::Api::PactBrokerUrls).to receive(:pact_version_url_with_webhook_metadata).and_return("http://foo")
-          allow(PactBroker::Api::PactBrokerUrls).to receive(:verification_url) do | verification, base_url |
+          allow(PactBroker::Api::PactBrokerUrls).to receive(:verification_url) do | verification, _base_url |
             expect(verification).to_not be nil
             "http://verification"
           end
@@ -54,11 +54,11 @@ module PactBroker
             latest_verification: failed_verification)
         end
 
-        let (:provider) do
+        let(:provider) do
           double("provider", labels: provider_labels)
         end
 
-        let (:consumer) do
+        let(:consumer) do
           double("consumer", labels: consumer_labels)
         end
 
@@ -118,6 +118,12 @@ module PactBroker
           ["${pactbroker.bitbucketVerificationStatus}", "INPROGRESS", :pact_with_no_verification, :nil_verification],
           ["${pactbroker.bitbucketVerificationStatus}", "SUCCESSFUL", :pact_with_successful_verification, :nil_verification],
           ["${pactbroker.bitbucketVerificationStatus}", "FAILED", :pact_with_failed_verification, :nil_verification],
+          ["${pactbroker.azureDevOpsVerificationStatus}", "succeeded", :pact, :verification],
+          ["${pactbroker.azureDevOpsVerificationStatus}", "failed", :pact, :failed_verification],
+          ["${pactbroker.azureDevOpsVerificationStatus}", "pending", :nil_pact, :nil_verification],
+          ["${pactbroker.azureDevOpsVerificationStatus}", "pending", :pact_with_no_verification, :nil_verification],
+          ["${pactbroker.azureDevOpsVerificationStatus}", "succeeded", :pact_with_successful_verification, :nil_verification],
+          ["${pactbroker.azureDevOpsVerificationStatus}", "failed", :pact_with_failed_verification, :nil_verification],
           ["${pactbroker.verificationResultUrl}", "", :pact_with_no_verification, :nil_verification],
           ["${pactbroker.verificationResultUrl}", "http://verification", :pact_with_successful_verification, :nil_verification],
           ["${pactbroker.verificationResultUrl}", "http://verification", :pact_with_successful_verification, :verification],

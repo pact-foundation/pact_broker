@@ -1,9 +1,9 @@
-require 'sequel'
-require 'pact_broker/db/validate_encoding'
-require 'pact_broker/db/migrate'
-require 'pact_broker/db/migrate_data'
-require 'pact_broker/db/version'
-require 'pact_broker/db/table_dependency_calculator'
+require "sequel"
+require "pact_broker/db/validate_encoding"
+require "pact_broker/db/migrate"
+require "pact_broker/db/migrate_data"
+require "pact_broker/db/version"
+require "pact_broker/db/table_dependency_calculator"
 
 Sequel.datetime_class = DateTime
 
@@ -42,7 +42,7 @@ module PactBroker
         if !exceptions.include?(table_name)
           begin
             database_connection[table_name].truncate
-          rescue StandardError => e
+          rescue StandardError => _ex
             puts "Could not truncate table #{table_name}"
           end
         end

@@ -1,14 +1,14 @@
-require 'cgi'
-require 'pact_broker/api/resources/base_resource'
-require 'pact_broker/api/resources/pacticipant_resource_methods'
-require 'pact_broker/api/decorators/pact_decorator'
-require 'pact_broker/api/decorators/extended_pact_decorator'
-require 'pact_broker/json'
-require 'pact_broker/pacts/pact_params'
-require 'pact_broker/api/contracts/put_pact_params_contract'
-require 'pact_broker/webhooks/execution_configuration'
-require 'pact_broker/api/resources/webhook_execution_methods'
-require 'pact_broker/api/resources/pact_resource_methods'
+require "cgi"
+require "pact_broker/api/resources/base_resource"
+require "pact_broker/api/resources/pacticipant_resource_methods"
+require "pact_broker/api/decorators/pact_decorator"
+require "pact_broker/api/decorators/extended_pact_decorator"
+require "pact_broker/json"
+require "pact_broker/pacts/pact_params"
+require "pact_broker/api/contracts/put_pact_params_contract"
+require "pact_broker/webhooks/execution_configuration"
+require "pact_broker/api/resources/webhook_execution_methods"
+require "pact_broker/api/resources/pact_resource_methods"
 
 module PactBroker
   module Api

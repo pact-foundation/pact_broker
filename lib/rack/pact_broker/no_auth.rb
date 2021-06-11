@@ -1,7 +1,7 @@
 module Rack
   module PactBroker
     class NoAuth
-      def initialize app, *args, &block
+      def initialize app, *_args
         @app = app
       end
 

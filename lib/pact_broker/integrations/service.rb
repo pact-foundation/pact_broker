@@ -1,9 +1,9 @@
-require 'pact_broker/services'
-require 'pact_broker/repositories'
-require 'pact_broker/logging'
-require 'pact_broker/integrations/integration'
-require 'pact_broker/db/models'
-require 'pact_broker/repositories/helpers'
+require "pact_broker/services"
+require "pact_broker/repositories"
+require "pact_broker/logging"
+require "pact_broker/integrations/integration"
+require "pact_broker/db/models"
+require "pact_broker/repositories/helpers"
 
 module PactBroker
   module Integrations

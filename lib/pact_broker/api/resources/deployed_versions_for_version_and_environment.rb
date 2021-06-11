@@ -1,5 +1,5 @@
-require 'pact_broker/api/resources/base_resource'
-require 'pact_broker/api/decorators/versions_decorator'
+require "pact_broker/api/resources/base_resource"
+require "pact_broker/api/decorators/versions_decorator"
 
 module PactBroker
   module Api
@@ -44,7 +44,11 @@ module PactBroker
         end
 
         def policy_name
-          :'versions::versions'
+          :'versions::version'
+        end
+
+        def policy_record
+          version
         end
 
         private

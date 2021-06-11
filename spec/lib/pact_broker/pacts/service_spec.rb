@@ -1,7 +1,7 @@
-require 'spec_helper'
-require 'pact_broker/pacts/service'
-require 'pact_broker/pacts/pact_params'
-require 'pact_broker/webhooks/execution_configuration'
+require "spec_helper"
+require "pact_broker/pacts/service"
+require "pact_broker/pacts/pact_params"
+require "pact_broker/webhooks/execution_configuration"
 
 module PactBroker
   module Pacts
@@ -19,11 +19,11 @@ module PactBroker
           allow(pact_repository).to receive(:find_previous_pacts).and_return(previous_pacts)
         end
 
-        let(:consumer) { double('consumer', id: 1) }
-        let(:provider) { double('provider', id: 2) }
-        let(:version) { double('version', id: 3, pacticipant_id: 1) }
+        let(:consumer) { double("consumer", id: 1) }
+        let(:provider) { double("provider", id: 2) }
+        let(:version) { double("version", id: 3, pacticipant_id: 1) }
         let(:existing_pact) { nil }
-        let(:new_pact) { double('new_pact', consumer_version_tag_names: %w[dev], json_content: json_content, pact_version_sha: "1", consumer_name: "Foo", consumer_version_number: "2") }
+        let(:new_pact) { double("new_pact", consumer_version_tag_names: %w[dev], json_content: json_content, pact_version_sha: "1", consumer_name: "Foo", consumer_version_number: "2") }
         let(:json_content) { { the: "contract" }.to_json }
         let(:json_content_with_ids) { { the: "contract with ids" }.to_json }
         let(:previous_pacts) { [] }
@@ -35,8 +35,8 @@ module PactBroker
             json_content: json_content
           }
         end
-        let(:content) { double('content') }
-        let(:content_with_interaction_ids) { double('content_with_interaction_ids', to_json: json_content_with_ids) }
+        let(:content) { double("content") }
+        let(:content_with_interaction_ids) { double("content_with_interaction_ids", to_json: json_content_with_ids) }
         let(:expected_event_context) { { consumer_version_tags: ["dev"] } }
 
         before do
@@ -69,7 +69,7 @@ module PactBroker
             let(:previous_dev_pact_version_sha) { "2" }
             let(:previous_pacts_by_tag) do
               {
-                dev: double('previous pact', pact_version_sha: previous_dev_pact_version_sha)
+                dev: double("previous pact", pact_version_sha: previous_dev_pact_version_sha)
               }
             end
 
@@ -105,7 +105,7 @@ module PactBroker
             let(:previous_dev_pact_version_sha) { "1" }
             let(:previous_pacts_by_tag) do
               {
-                dev: double('previous pact', pact_version_sha: previous_dev_pact_version_sha)
+                dev: double("previous pact", pact_version_sha: previous_dev_pact_version_sha)
               }
             end
 
@@ -125,7 +125,7 @@ module PactBroker
 
         context "when a pact exists with the same params" do
           let(:existing_pact) do
-            double('existing_pact',
+            double("existing_pact",
               id: 4,
               consumer_version_tag_names: %[dev],
               json_content: { the: "contract" }.to_json,
@@ -185,10 +185,10 @@ module PactBroker
       end
 
       describe "find_distinct_pacts_between" do
-        let(:pact_1) { double('pact 1', json_content: 'content 1')}
-        let(:pact_2) { double('pact 2', json_content: 'content 2')}
-        let(:pact_3) { double('pact 3', json_content: 'content 2')}
-        let(:pact_4) { double('pact 4', json_content: 'content 3')}
+        let(:pact_1) { double("pact 1", json_content: "content 1")}
+        let(:pact_2) { double("pact 2", json_content: "content 2")}
+        let(:pact_3) { double("pact 3", json_content: "content 2")}
+        let(:pact_4) { double("pact 4", json_content: "content 3")}
 
         let(:all_pacts) { [pact_4, pact_3, pact_2, pact_1]}
 
@@ -196,7 +196,7 @@ module PactBroker
           allow_any_instance_of(Pacts::Repository).to receive(:find_all_pact_versions_between).and_return(all_pacts)
         end
 
-        subject { Service.find_distinct_pacts_between 'consumer', :and => 'provider' }
+        subject { Service.find_distinct_pacts_between "consumer", :and => "provider" }
 
         it "returns the distinct pacts" do
           expect(subject).to eq [pact_4, pact_2, pact_1]

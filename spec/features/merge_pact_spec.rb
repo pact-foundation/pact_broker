@@ -1,13 +1,13 @@
-require 'spec/support/test_data_builder'
+require "spec/support/test_data_builder"
 
 describe "Merging a pact" do
 
-  let(:pact_content) { load_fixture('a_consumer-a_provider.json') }
+  let(:pact_content) { load_fixture("a_consumer-a_provider.json") }
   let(:path) { "/pacts/provider/A%20Provider/consumer/A%20Consumer/version/1.2.3" }
   let(:response_body_json) { JSON.parse(subject.body) }
 
   subject do
-    patch path, pact_content, {'CONTENT_TYPE' => 'application/json' }; last_response
+    patch path, pact_content, {"CONTENT_TYPE" => "application/json" }; last_response
   end
 
   context "when a pact for this consumer version does not exist" do
@@ -16,7 +16,7 @@ describe "Merging a pact" do
     end
 
     it "returns a json body" do
-      expect(subject.headers['Content-Type']).to eq "application/hal+json;charset=utf-8"
+      expect(subject.headers["Content-Type"]).to eq "application/hal+json;charset=utf-8"
     end
 
     it "returns the pact in the body" do
@@ -25,8 +25,8 @@ describe "Merging a pact" do
   end
 
   context "when a pact for this consumer version does exist" do
-    let(:existing_pact_content) { load_fixture('a_consumer-a_provider-3.json') }
-    let(:merged_pact_content) { load_fixture('a_consumer-a_provider-merged.json') }
+    let(:existing_pact_content) { load_fixture("a_consumer-a_provider-3.json") }
+    let(:merged_pact_content) { load_fixture("a_consumer-a_provider-merged.json") }
 
     before do
       TestDataBuilder.new.create_pact_with_hierarchy("A Consumer", "1.2.3", "A Provider", existing_pact_content)
@@ -37,7 +37,7 @@ describe "Merging a pact" do
     end
 
     it "returns an application/json Content-Type" do
-      expect(subject.headers['Content-Type']).to eq "application/hal+json;charset=utf-8"
+      expect(subject.headers["Content-Type"]).to eq "application/hal+json;charset=utf-8"
     end
 
     it "returns the merged pact in the response body" do
@@ -45,7 +45,7 @@ describe "Merging a pact" do
     end
 
     context "with a conflicting request" do
-      let(:existing_pact_content) { load_fixture('a_consumer-a_provider-conflict.json') }
+      let(:existing_pact_content) { load_fixture("a_consumer-a_provider-conflict.json") }
 
       it "returns a 409 Conflict" do
         expect(subject.status).to be 409

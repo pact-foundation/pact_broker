@@ -1,5 +1,5 @@
-require 'pact_broker/hash_refinements'
-require 'pact_broker/pacts/metadata'
+require "pact_broker/hash_refinements"
+require "pact_broker/pacts/metadata"
 
 module PactBroker
   module Api

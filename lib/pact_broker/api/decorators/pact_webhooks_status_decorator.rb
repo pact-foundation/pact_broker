@@ -1,7 +1,7 @@
-require_relative 'base_decorator'
-require_relative 'timestamps'
-require_relative 'pact_version_decorator'
-require_relative 'triggered_webhook_decorator'
+require_relative "base_decorator"
+require_relative "timestamps"
+require_relative "pact_version_decorator"
+require_relative "triggered_webhook_decorator"
 
 module PactBroker
   module Api
@@ -71,8 +71,8 @@ module PactBroker
         end
 
         def summary
-          counts = represented.group_by(&:status).each_with_object({}) do | (status, triggered_webhooks), counts |
-            counts[status] = triggered_webhooks.count
+          counts = represented.group_by(&:status).each_with_object({}) do | (status, triggered_webhooks), count |
+            count[status] = triggered_webhooks.count
           end
           OpenStruct.new(counts)
         end

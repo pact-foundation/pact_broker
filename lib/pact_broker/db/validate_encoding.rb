@@ -1,5 +1,5 @@
-require 'sequel'
-require 'pact_broker/messages'
+require "sequel"
+require "pact_broker/messages"
 
 module PactBroker
   module DB
@@ -11,9 +11,9 @@ module PactBroker
       extend PactBroker::Messages
 
       def self.call connection
-        encoding = connection.opts[:encoding] || connection.opts['encoding']
+        encoding = connection.opts[:encoding] || connection.opts["encoding"]
         unless encoding =~ /utf\-?8/i
-          raise ConnectionConfigurationError.new(message('errors.validation.connection_encoding_not_utf8', encoding: encoding.inspect))
+          raise ConnectionConfigurationError.new(message("errors.validation.connection_encoding_not_utf8", encoding: encoding.inspect))
         end
       end
 

@@ -9,7 +9,7 @@ module PactBroker
     end
 
     def self.not_production?
-      ENV['RACK_ENV'] != 'production'
+      ENV["RACK_ENV"] != "production"
     end
 
     def self.feature_in_env_var?(feature)
@@ -17,7 +17,7 @@ module PactBroker
     end
 
     def self.features
-      ENV['PACT_BROKER_FEATURES'] || ""
+      ENV["PACT_BROKER_FEATURES"] || ""
     end
   end
 

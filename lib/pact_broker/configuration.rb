@@ -1,8 +1,8 @@
-require 'pact_broker/version'
-require 'pact_broker/error'
-require 'pact_broker/config/space_delimited_string_list'
-require 'pact_broker/config/space_delimited_integer_list'
-require 'semantic_logger'
+require "pact_broker/version"
+require "pact_broker/error"
+require "pact_broker/config/space_delimited_string_list"
+require "pact_broker/config/space_delimited_integer_list"
+require "semantic_logger"
 
 module PactBroker
 
@@ -74,9 +74,10 @@ module PactBroker
       @semantic_logger = SemanticLogger["root"]
     end
 
+    # rubocop: disable Metrics/MethodLength
     def self.default_configuration
-      require 'pact_broker/versions/parse_semantic_version'
-      require 'pact_broker/pacts/generate_sha'
+      require "pact_broker/versions/parse_semantic_version"
+      require "pact_broker/pacts/generate_sha"
 
       config = Configuration.new
       config.log_dir = File.expand_path("./log")
@@ -96,7 +97,7 @@ module PactBroker
       config.sha_generator = PactBroker::Pacts::GenerateSha
       config.seed_example_data = true
       config.example_data_seeder = lambda do
-        require 'pact_broker/db/seed_example_data'
+        require "pact_broker/db/seed_example_data"
         PactBroker::DB::SeedExampleData.call
       end
       config.user_agent = "Pact Broker v#{PactBroker::VERSION}"
@@ -106,9 +107,9 @@ module PactBroker
       config.webhook_retry_schedule = [10, 60, 120, 300, 600, 1200] #10 sec, 1 min, 2 min, 5 min, 10 min, 20 min => 38 minutes
       config.check_for_potential_duplicate_pacticipant_names = true
       config.disable_ssl_verification = false
-      config.webhook_http_method_whitelist = ['POST']
+      config.webhook_http_method_whitelist = ["POST"]
       config.webhook_http_code_success = [200, 201, 202, 203, 204, 205, 206]
-      config.webhook_scheme_whitelist = ['https']
+      config.webhook_scheme_whitelist = ["https"]
       config.webhook_host_whitelist = []
       # TODO get rid of unsafe-inline
       config.content_security_policy = {
@@ -127,13 +128,14 @@ module PactBroker
       config.policy_builder = -> (object) { DefaultPolicy.new(nil, object) }
       config.policy_scope_builder = -> (scope) { scope }
       config.base_resource_class_factory = -> () {
-        require 'pact_broker/api/resources/default_base_resource'
+        require "pact_broker/api/resources/default_base_resource"
         PactBroker::Api::Resources::DefaultBaseResource
       }
-      config.warning_error_class_names = ['Sequel::ForeignKeyConstraintViolation', 'PG::QueryCanceled']
+      config.warning_error_class_names = ["Sequel::ForeignKeyConstraintViolation", "PG::QueryCanceled"]
       config.metrics_sql_statement_timeout = 30
       config
     end
+    # rubocop: enable Metrics/MethodLength
 
     def logger
       custom_logger || @semantic_logger
@@ -151,13 +153,13 @@ module PactBroker
 
     def self.default_html_pact_render
       lambda { |pact, options|
-        require 'pact_broker/api/renderers/html_pact_renderer'
+        require "pact_broker/api/renderers/html_pact_renderer"
         PactBroker::Api::Renderers::HtmlPactRenderer.call pact, options
       }
     end
 
     def show_backtrace_in_error_response?
-      !!(ENV['RACK_ENV'] && ENV['RACK_ENV'].downcase != 'production')
+      !!(ENV["RACK_ENV"] && ENV["RACK_ENV"].downcase != "production")
     end
 
     def authentication_configured?
@@ -229,30 +231,30 @@ module PactBroker
 
     def save_to_database
       # Can't require a Sequel::Model class before the connection has been set
-      require 'pact_broker/config/save'
+      require "pact_broker/config/save"
       PactBroker::Config::Save.call(self, SAVABLE_SETTING_NAMES)
     end
 
     def load_from_database!
       # Can't require a Sequel::Model class before the connection has been set
-      require 'pact_broker/config/load'
+      require "pact_broker/config/load"
       PactBroker::Config::Load.call(self)
     end
 
     def webhook_http_method_whitelist= webhook_http_method_whitelist
-      @webhook_http_method_whitelist = parse_space_delimited_string_list_property('webhook_http_method_whitelist', webhook_http_method_whitelist)
+      @webhook_http_method_whitelist = parse_space_delimited_string_list_property("webhook_http_method_whitelist", webhook_http_method_whitelist)
     end
 
     def webhook_http_code_success= webhook_http_code_success
-      @webhook_http_code_success = parse_space_delimited_integer_list_property('webhook_http_code_success', webhook_http_code_success)
+      @webhook_http_code_success = parse_space_delimited_integer_list_property("webhook_http_code_success", webhook_http_code_success)
     end
 
     def webhook_scheme_whitelist= webhook_scheme_whitelist
-      @webhook_scheme_whitelist = parse_space_delimited_string_list_property('webhook_scheme_whitelist', webhook_scheme_whitelist)
+      @webhook_scheme_whitelist = parse_space_delimited_string_list_property("webhook_scheme_whitelist", webhook_scheme_whitelist)
     end
 
     def webhook_host_whitelist= webhook_host_whitelist
-      @webhook_host_whitelist = parse_space_delimited_string_list_property('webhook_host_whitelist', webhook_host_whitelist)
+      @webhook_host_whitelist = parse_space_delimited_string_list_property("webhook_host_whitelist", webhook_host_whitelist)
     end
 
     def base_urls

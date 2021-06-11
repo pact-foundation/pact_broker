@@ -1,5 +1,5 @@
-require 'sequel/plugins/upsert'
-require 'sequel'
+require "sequel/plugins/upsert"
+require "sequel"
 
 module Sequel
   module Plugins
@@ -26,7 +26,7 @@ module Sequel
 
       describe PacticipantNoUpsert do
         it "has an _insert_dataset method" do
-          expect(PacticipantNoUpsert.private_instance_methods).to include (:_insert_dataset)
+          expect(PacticipantNoUpsert.private_instance_methods).to include(:_insert_dataset)
         end
       end
 

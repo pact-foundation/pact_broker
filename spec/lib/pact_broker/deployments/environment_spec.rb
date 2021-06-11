@@ -1,5 +1,5 @@
-require 'pact_broker/deployments/environment'
-require 'pact_broker/deployments/deployed_version'
+require "pact_broker/deployments/environment"
+require "pact_broker/deployments/deployed_version"
 
 module PactBroker
   module Deployments

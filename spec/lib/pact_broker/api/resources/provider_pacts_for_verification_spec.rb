@@ -1,4 +1,4 @@
-require 'pact_broker/api/resources/provider_pacts_for_verification'
+require "pact_broker/api/resources/provider_pacts_for_verification"
 
 module PactBroker
   module Api
@@ -10,17 +10,17 @@ module PactBroker
           allow_any_instance_of(ProviderPactsForVerification).to receive(:resource_exists?).and_return(provider)
         end
 
-        let(:provider) { double('provider') }
+        let(:provider) { double("provider") }
         let(:pacts) { [] }
-        let(:path) { '/pacts/provider/Bar/for-verification' }
-        let(:decorator) { instance_double('PactBroker::Api::Decorators::VerifiablePactsDecorator') }
+        let(:path) { "/pacts/provider/Bar/for-verification" }
+        let(:decorator) { instance_double("PactBroker::Api::Decorators::VerifiablePactsDecorator") }
         let(:query) do
           {
             provider_version_branch: "main",
-            provider_version_tags: ['master'],
-            consumer_version_selectors: [ { tag: 'dev', latest: 'true' }],
-            include_pending_status: 'true',
-            include_wip_pacts_since: '2018-01-01'
+            provider_version_tags: ["master"],
+            consumer_version_selectors: [ { tag: "dev", latest: "true" }],
+            include_pending_status: "true",
+            include_wip_pacts_since: "2018-01-01"
           }
         end
 
@@ -35,7 +35,7 @@ module PactBroker
               ["master"],
               PactBroker::Pacts::Selectors.new([PactBroker::Pacts::Selector.latest_for_tag("dev")]),
               {
-                include_wip_pacts_since: DateTime.parse('2018-01-01'),
+                include_wip_pacts_since: DateTime.parse("2018-01-01"),
                 include_pending_status: true
               }
             )
@@ -50,7 +50,7 @@ module PactBroker
             end
 
             it "returns the keys with the right case" do
-              expect(JSON.parse(subject.body)['errors']).to have_key('provider_version_tags')
+              expect(JSON.parse(subject.body)["errors"]).to have_key("provider_version_tags")
             end
           end
         end
@@ -59,17 +59,17 @@ module PactBroker
           let(:request_body) do
             {
               providerVersionBranch: "main",
-              providerVersionTags: ['master'],
-              consumerVersionSelectors: [ { tag: 'dev', latest: true }],
+              providerVersionTags: ["master"],
+              consumerVersionSelectors: [ { tag: "dev", latest: true }],
               includePendingStatus: true,
-              includeWipPactsSince: '2018-01-01',
+              includeWipPactsSince: "2018-01-01",
             }
           end
 
           let(:request_headers) do
             {
-              'CONTENT_TYPE' => 'application/json',
-              'HTTP_ACCEPT' => 'application/hal+json'
+              "CONTENT_TYPE" => "application/json",
+              "HTTP_ACCEPT" => "application/hal+json"
             }
           end
 
@@ -83,7 +83,7 @@ module PactBroker
               ["master"],
               PactBroker::Pacts::Selectors.new([PactBroker::Pacts::Selector.latest_for_tag("dev")]),
               {
-                include_wip_pacts_since: DateTime.parse('2018-01-01'),
+                include_wip_pacts_since: DateTime.parse("2018-01-01"),
                 include_pending_status: true
               }
             )
@@ -98,7 +98,7 @@ module PactBroker
             end
 
             it "returns the keys with the right case" do
-              expect(JSON.parse(subject.body)['errors']).to have_key('providerVersionTags')
+              expect(JSON.parse(subject.body)["errors"]).to have_key("providerVersionTags")
             end
           end
         end

@@ -1,4 +1,4 @@
-require 'pact_broker/db/data_migrations/set_webhooks_enabled'
+require "pact_broker/db/data_migrations/set_webhooks_enabled"
 
 Sequel.migration do
   up do

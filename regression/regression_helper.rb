@@ -4,19 +4,19 @@ raise "Must set RACK_ENV=development" unless ENV["RACK_ENV"] == "development"
 
 $LOAD_PATH  << "."
 
-require 'sequel'
+require "sequel"
 
-load 'lib/db.rb'
-require 'tasks/database'
-require 'pact_broker/db'
+load "lib/db.rb"
+require "tasks/database"
+require "pact_broker/db"
 PactBroker::DB.connection = PactBroker::Database.database = DB::PACT_BROKER_DB
 PactBroker::DB::Migrate.call(PactBroker::DB.connection)
-require 'approvals'
-require 'rack/test'
-require 'pact_broker/api'
+require "approvals"
+require "rack/test"
+require "pact_broker/api"
 
 Approvals.configure do |c|
-  c.approvals_path = 'regression/fixtures/approvals/'
+  c.approvals_path = "regression/fixtures/approvals/"
 end
 
 RSpec.configure do | config |
@@ -41,7 +41,7 @@ RSpec.configure do | config |
     PactBroker::API
   end
 
-  config.after(:each) do | example, something |
+  config.after(:each) do | example, _something |
     if ENV["SHOW_REGRESSION_DIFF"] == "true"
       if example.exception.is_a?(Approvals::ApprovalError)
         require "pact/support"

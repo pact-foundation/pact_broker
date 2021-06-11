@@ -12,7 +12,7 @@ module PactBroker
         end
 
         context "and response is '200'" do
-          let(:response) { double(code: '200') }
+          let(:response) { double(code: "200") }
 
           it "then it should be success" do
             expect(subject.success?).to be_truthy
@@ -20,7 +20,7 @@ module PactBroker
         end
 
         context "and response is '400'" do
-          let(:response) { double(code: '400') }
+          let(:response) { double(code: "400") }
 
           it "then it should fail" do
             expect(subject.success?).to be_falsey
@@ -35,7 +35,7 @@ module PactBroker
         end
 
         context "and response is '200'" do
-          let(:response) { double(code: '200') }
+          let(:response) { double(code: "200") }
 
           it "then it should fail" do
             expect(subject.success?).to be_falsey
@@ -43,7 +43,7 @@ module PactBroker
         end
 
         context "and response is '400'" do
-          let(:response) { double(code: '400') }
+          let(:response) { double(code: "400") }
 
           it "then it should be success" do
             expect(subject.success?).to be_truthy

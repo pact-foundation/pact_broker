@@ -1,4 +1,4 @@
-require 'pact_broker/api/decorators/verifiable_pacts_decorator'
+require "pact_broker/api/decorators/verifiable_pacts_decorator"
 
 module PactBroker
   module Api
@@ -8,9 +8,9 @@ module PactBroker
           allow(VerifiablePactDecorator).to receive(:new).and_return(verifiable_pact_decorator)
         end
         let(:verifiable_pact_decorator) { instance_double(VerifiablePactDecorator).as_null_object }
-        let(:pact) { double('pact') }
+        let(:pact) { double("pact") }
         let(:decorator) { VerifiablePactsDecorator.new([pact]) }
-        let(:options) { { user_options: { resource_url: 'http://example.org/pacts' } } }
+        let(:options) { { user_options: { resource_url: "http://example.org/pacts" } } }
 
         let(:json) { decorator.to_json(options) }
 

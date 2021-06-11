@@ -1,4 +1,4 @@
-require 'pact_broker/domain/group'
+require "pact_broker/domain/group"
 
 =begin
   Splits all index_items up into groups of non-connecting index_items.

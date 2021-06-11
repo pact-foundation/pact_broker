@@ -1,4 +1,4 @@
-require 'pact_broker/db/log_quietener'
+require "pact_broker/db/log_quietener"
 
 module PactBroker
   module DB

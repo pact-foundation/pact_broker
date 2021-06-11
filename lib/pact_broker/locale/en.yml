@@ -34,8 +34,9 @@ en:
             providerLabels: The list of labels for the provider associated with the pact content, separated by ", ".
             pactUrl: The "permalink" URL to the newly published pact (the URL specifying the consumer version URL, rather than the "/latest" format.
             verificationResultUrl: The URL to the relevant verification result.
-            githubVerificationStatus: The verification status using the correct keywords for posting to the Github commit status API. See https://developer.github.com/v3/repos/statuses.
-            bitbucketVerificationStatus: The verification status using the correct keywords for posting to the Bitbucket commit status API. See https://developer.atlassian.com/server/bitbucket/how-tos/updating-build-status-for-commits/.
+            githubVerificationStatus: The verification status using the correct keywords for posting to the Github commit status API. See https://developer.github.com/v3/repos/statuses
+            bitbucketVerificationStatus: The verification status using the correct keywords for posting to the Bitbucket commit status API. See https://developer.atlassian.com/server/bitbucket/how-tos/updating-build-status-for-commits/
+            azureDevOpsVerificationStatus: The verification status using the correct keywords for posting to the Azure DevOps GitStatusState API. See https://docs.microsoft.com/en-us/rest/api/azure/devops/git/statuses/create?view=azure-devops-rest-6.0
             eventName: The name of the event that triggered the webhook
             currentlyDeployedProviderVersionNumber: The version number of the currently deployed provider version (when used in a template, the webhook will be triggered once for each currently deployed provider version)
         no_webhooks_enabled_for_event: No enabled webhooks found for the detected events
@@ -81,6 +82,8 @@ en:
         environment_with_name_not_found: "Environment with name '%{name}' does not exist"
         cannot_modify_version_branch: "The branch for a pacticipant version cannot be changed once set (currently '%{old_branch}', proposed value '%{new_branch}'). Your pact publication/verification publication configurations may be in conflict with each other if you are seeing this error. If the current branch value is incorrect, you must delete the pacticipant version resource at %{version_url} and publish the pacts/verification results again with a consistent branch name."
         invalid_content_for_content_type: "The content could not be parsed as %{content_type}"
+        cannot_set_currently_deployed_true: The currentlyDeployed property cannot be set back to true. Please record a new deployment.
+        cannot_set_currently_supported_true: The currentlySupported property cannot be set back to true. Please record a new deployment.
       duplicate_pacticipant: |
         This is the first time a pact has been published for "%{new_name}".
         The name "%{new_name}" is very similar to the following existing consumers/providers:

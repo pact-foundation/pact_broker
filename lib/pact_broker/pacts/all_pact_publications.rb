@@ -1,9 +1,9 @@
-require 'forwardable'
-require 'pact_broker/domain/tag'
-require 'pact_broker/domain/pacticipant'
-require 'pact_broker/domain/version'
-require 'pact_broker/pacts/pact_version'
-require 'pact_broker/repositories/helpers'
+require "forwardable"
+require "pact_broker/domain/tag"
+require "pact_broker/domain/pacticipant"
+require "pact_broker/domain/version"
+require "pact_broker/pacts/pact_version"
+require "pact_broker/repositories/helpers"
 
 module PactBroker
   module Pacts

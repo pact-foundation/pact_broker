@@ -1,4 +1,4 @@
-require 'pact_broker/matrix/reason'
+require "pact_broker/matrix/reason"
 
 module PactBroker
   module Api
@@ -22,6 +22,7 @@ module PactBroker
 
         attr_reader :reason, :ignored
 
+        # rubocop: disable Metrics/CyclomaticComplexity
         def reason_text
           case reason
           when PactBroker::Matrix::PactNotEverVerifiedByProvider
@@ -39,10 +40,14 @@ module PactBroker
           when PactBroker::Matrix::InteractionsMissingVerifications
             descriptions = reason.interactions.collect do | interaction |
               interaction_description(interaction)
-            end.join('; ')
+            end.join("; ")
             "WARN: Although the verification was reported as successful, the results for #{reason.consumer_selector.description} and #{reason.provider_selector.description} may be missing tests for the following interactions: #{descriptions}"
           when PactBroker::Matrix::IgnoreSelectorDoesNotExist
             "WARN: Cannot ignore #{reason.selector.description}"
+          when PactBroker::Matrix::SelectorWithoutPacticipantVersionNumberSpecified
+            "WARN: For production use of can-i-deploy, it is recommended to specify the version number (rather than latest tag or branch) of each pacticipant to avoid race conditions."
+          when PactBroker::Matrix::NoEnvironmentSpecified
+            "WARN: For production use of can-i-deploy, it is recommended to specify the environment into which you are deploying. Without the environment, this result will not be reliable."
           else
             reason
           end
@@ -64,16 +69,17 @@ module PactBroker
 
         # TODO move this somewhere else
         def interaction_description(interaction)
-          if interaction['providerState'] && interaction['providerState'] != ''
+          if interaction["providerState"] && interaction["providerState"] != ""
             "#{interaction['description']} given #{interaction['providerState']}"
-          elsif interaction['providerStates'] && interaction['providerStates'].is_a?(Array) && interaction['providerStates'].any?
-            provider_states = interaction['providerStates'].collect{ |ps| ps['name'] }.compact.join(', ')
+          elsif interaction["providerStates"] && interaction["providerStates"].is_a?(Array) && interaction["providerStates"].any?
+            provider_states = interaction["providerStates"].collect{ |ps| ps["name"] }.compact.join(", ")
             "#{interaction['description']} given #{provider_states}"
           else
-            interaction['description']
+            interaction["description"]
           end
         end
       end
+      # rubocop: enable Metrics/CyclomaticComplexity
     end
   end
 end

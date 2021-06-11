@@ -1,5 +1,5 @@
-require 'pact_broker/webhooks/job'
-require 'pact_broker/webhooks/execution_configuration'
+require "pact_broker/webhooks/job"
+require "pact_broker/webhooks/execution_configuration"
 
 module PactBroker
   module Webhooks
@@ -15,12 +15,12 @@ module PactBroker
       end
 
       let(:base_url) { "http://broker" }
-      let(:triggered_webhook) { instance_double("PactBroker::Webhooks::TriggeredWebhook", webhook_uuid: '1234', id: 1) }
+      let(:triggered_webhook) { instance_double("PactBroker::Webhooks::TriggeredWebhook", webhook_uuid: "1234", id: 1) }
       let(:result) { instance_double("PactBroker::Domain::WebhookExecutionResult", success?: success) }
       let(:webhook_execution_configuration) { instance_double(PactBroker::Webhooks::ExecutionConfiguration, to_hash: webhook_execution_configuration_hash) }
-      let(:webhook_execution_configuration_hash) { { the: 'options' } }
+      let(:webhook_execution_configuration_hash) { { the: "options" } }
       let(:success) { true }
-      let(:logger) { double('logger').as_null_object }
+      let(:logger) { double("logger").as_null_object }
       let(:database_connector) { ->(&block) { block.call } }
       let(:webhook_context) { { the: "context" } }
       let(:job_params) do

@@ -1,4 +1,4 @@
-require 'pact_broker/pacts/repository'
+require "pact_broker/pacts/repository"
 
 module PactBroker
   module Pacts
@@ -116,27 +116,27 @@ module PactBroker
               .create_pact
           end
 
-          let(:pact_selector_1) { Selector.latest_for_tag('dev') }
-          let(:pact_selector_2) { Selector.latest_for_tag('prod') }
+          let(:pact_selector_1) { Selector.latest_for_tag("dev") }
+          let(:pact_selector_2) { Selector.latest_for_tag("prod") }
           let(:consumer_version_selectors) do
             Selectors.new(pact_selector_1, pact_selector_2)
           end
           let(:expected_sorted_selectors) do
             [
-              ResolvedSelector.new({ tag: 'dev', latest: true }, PactBroker::Domain::Version.for("Baz", "baz-latest-dev-version")),
-              ResolvedSelector.new({ tag: 'prod', latest: true }, PactBroker::Domain::Version.for("Baz", "baz-latest-dev-version"))
+              ResolvedSelector.new({ tag: "dev", latest: true }, PactBroker::Domain::Version.for("Baz", "baz-latest-dev-version")),
+              ResolvedSelector.new({ tag: "prod", latest: true }, PactBroker::Domain::Version.for("Baz", "baz-latest-dev-version"))
             ]
           end
 
           it "returns the latest pact with the specified tags for each consumer" do
-            expect(find_by_consumer_version_number("foo-latest-prod-version").selectors).to eq [Selector.latest_for_tag('prod').resolve(PactBroker::Domain::Version.for("Foo", "foo-latest-prod-version"))]
-            expect(find_by_consumer_version_number("foo-latest-dev-version").selectors).to eq [Selector.latest_for_tag('dev').resolve(PactBroker::Domain::Version.for("Foo", "foo-latest-dev-version"))]
+            expect(find_by_consumer_version_number("foo-latest-prod-version").selectors).to eq [Selector.latest_for_tag("prod").resolve(PactBroker::Domain::Version.for("Foo", "foo-latest-prod-version"))]
+            expect(find_by_consumer_version_number("foo-latest-dev-version").selectors).to eq [Selector.latest_for_tag("dev").resolve(PactBroker::Domain::Version.for("Foo", "foo-latest-dev-version"))]
             expect(find_by_consumer_version_number("baz-latest-dev-version").selectors.sort_by{ |s| s[:tag] }).to eq expected_sorted_selectors
             expect(subject.size).to eq 3
           end
 
           it "sets the latest_consumer_version_tag_names" do
-            expect(find_by_consumer_version_number("foo-latest-prod-version").selectors.collect(&:tag)).to eq ['prod']
+            expect(find_by_consumer_version_number("foo-latest-prod-version").selectors.collect(&:tag)).to eq ["prod"]
           end
 
           context "when a consumer name is specified" do
@@ -151,17 +151,17 @@ module PactBroker
             end
 
             let(:consumer_version_selectors) do
-              Selectors.new(Selector.all_for_tag_and_consumer('prod', 'Foo'))
+              Selectors.new(Selector.all_for_tag_and_consumer("prod", "Foo"))
             end
 
             it "returns all the pacts with that tag for that consumer" do
               expect(subject.size).to eq 3
-              expect(find_by_consumer_version_number("foo-latest-prod-version").selectors).to eq [Selector.all_for_tag_and_consumer('prod', 'Foo').resolve(PactBroker::Domain::Version.for("Foo", "foo-latest-prod-version"))]
+              expect(find_by_consumer_version_number("foo-latest-prod-version").selectors).to eq [Selector.all_for_tag_and_consumer("prod", "Foo").resolve(PactBroker::Domain::Version.for("Foo", "foo-latest-prod-version"))]
             end
 
             it "uses the latest consumer verison number as the resolved version when the same pact content is selected multiple times" do
               expect(find_by_consumer_version_number("3")).to be nil
-              expect(find_by_consumer_version_number("4").selectors).to eq [Selector.all_for_tag_and_consumer('prod', 'Foo').resolve(PactBroker::Domain::Version.for("Foo", "4"))]
+              expect(find_by_consumer_version_number("4").selectors).to eq [Selector.all_for_tag_and_consumer("prod", "Foo").resolve(PactBroker::Domain::Version.for("Foo", "4"))]
             end
           end
         end
@@ -177,7 +177,7 @@ module PactBroker
           end
 
           let(:consumer_version_selectors) { Selectors.new(pact_selector_1) }
-          let(:pact_selector_1) { Selector.all_for_tag('prod') }
+          let(:pact_selector_1) { Selector.all_for_tag("prod") }
 
           subject { Repository.new.find_for_verification("Bar2", consumer_version_selectors) }
 
@@ -209,7 +209,7 @@ module PactBroker
           end
 
           let(:consumer_version_selectors) { Selectors.new(pact_selector_1) }
-          let(:pact_selector_1) { Selector.all_for_tag_and_consumer('prod', "Foo2") }
+          let(:pact_selector_1) { Selector.all_for_tag_and_consumer("prod", "Foo2") }
 
           subject { Repository.new.find_for_verification("Bar2", consumer_version_selectors) }
 
@@ -221,8 +221,8 @@ module PactBroker
           end
 
           it "sets the selectors" do
-            expect(find_by_consumer_version_number("prod-version-1").selectors.first.tag).to eq 'prod'
-            expect(find_by_consumer_version_number("prod-version-1").selectors.first.consumer).to eq 'Foo2'
+            expect(find_by_consumer_version_number("prod-version-1").selectors.first.tag).to eq "prod"
+            expect(find_by_consumer_version_number("prod-version-1").selectors.first.consumer).to eq "Foo2"
           end
         end
 
@@ -233,8 +233,8 @@ module PactBroker
               .create_consumer_version_tag("prod")
           end
 
-          let(:pact_selector_1) { Selector.all_for_tag('prod') }
-          let(:pact_selector_2) { Selector.latest_for_tag('dev') }
+          let(:pact_selector_1) { Selector.all_for_tag("prod") }
+          let(:pact_selector_2) { Selector.latest_for_tag("dev") }
           let(:consumer_version_selectors) { Selectors.new(pact_selector_1, pact_selector_2) }
 
           it "returns a single selected pact with multiple selectors" do
@@ -276,10 +276,10 @@ module PactBroker
             td.create_consumer
               .create_provider("Bar")
               .create_consumer_version
-              .create_pact(json_content: { interactions: ['foo'] }.to_json )
+              .create_pact(json_content: { interactions: ["foo"] }.to_json )
               .create_consumer
               .create_consumer_version
-              .create_pact(json_content: { interactions: ['foo'] }.to_json )
+              .create_pact(json_content: { interactions: ["foo"] }.to_json )
           end
 
           let(:consumer_version_selectors) { Selectors.new }

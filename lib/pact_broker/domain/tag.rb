@@ -1,6 +1,6 @@
-require 'pact_broker/db'
-require 'pact_broker/repositories/helpers'
-require 'pact_broker/tags/eager_loaders'
+require "pact_broker/db"
+require "pact_broker/repositories/helpers"
+require "pact_broker/tags/eager_loaders"
 
 module PactBroker
   module Domain
@@ -128,6 +128,7 @@ module PactBroker
         end
       end
 
+      # rubocop: disable Metrics/CyclomaticComplexity
       def before_save
         if version
           if version.order && self.version_order.nil?
@@ -149,6 +150,7 @@ module PactBroker
           super
         end
       end
+      # rubocop: enable Metrics/CyclomaticComplexity
 
       def latest_for_pacticipant?
         head_tag == self

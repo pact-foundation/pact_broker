@@ -1,11 +1,11 @@
-require 'pact_broker/ui/controllers/base_controller'
-require 'pact_broker/ui/view_models/matrix_lines'
-require 'pact_broker/matrix/unresolved_selector'
-require 'pact_broker/matrix/parse_query'
-require 'pact_broker/logging'
-require 'pact_broker/api/pact_broker_urls'
-require 'pact_broker/ui/helpers/matrix_helper'
-require 'haml'
+require "pact_broker/ui/controllers/base_controller"
+require "pact_broker/ui/view_models/matrix_lines"
+require "pact_broker/matrix/unresolved_selector"
+require "pact_broker/matrix/parse_query"
+require "pact_broker/logging"
+require "pact_broker/api/pact_broker_urls"
+require "pact_broker/ui/helpers/matrix_helper"
+require "haml"
 
 module PactBroker
   module UI
@@ -26,7 +26,7 @@ module PactBroker
           }
           begin
             if params[:q]
-              selectors, options = PactBroker::Matrix::ParseQuery.call(request.env['QUERY_STRING'])
+              selectors, options = PactBroker::Matrix::ParseQuery.call(request.env["QUERY_STRING"])
               locals[:selectors] = create_selector_objects(selectors)
               locals[:options] = create_options_model(options)
               errors = matrix_service.validate_selectors(selectors, options)
@@ -47,7 +47,7 @@ module PactBroker
 
         get "/provider/:provider_name/consumer/:consumer_name" do
           selectors = [ PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: params[:consumer_name]), PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: params[:provider_name]) ]
-          options = {latestby: 'cvpv', limit: 100}
+          options = {latestby: "cvpv", limit: 100}
           lines = matrix_service.find(selectors, options)
           lines = PactBroker::UI::ViewDomain::MatrixLines.new(lines, base_url: base_url)
           locals = {

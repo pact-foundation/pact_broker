@@ -1,4 +1,4 @@
-require 'pact_broker/api/contracts/verifiable_pacts_json_query_schema'
+require "pact_broker/api/contracts/verifiable_pacts_json_query_schema"
 
 module PactBroker
   module Api
@@ -40,7 +40,7 @@ module PactBroker
             extra_keys = ALL_PROPERTIES.keys - valid_key_combination - [:consumer]
             extra_keys.each do | extra_key |
               selector_with_extra_key = selector.merge(extra_key => ALL_PROPERTIES[extra_key])
-              expect_to_be_valid = !!VALID_KEY_COMBINATIONS.find{ | valid_key_combination | valid_key_combination.sort == selector_with_extra_key.keys.sort }
+              expect_to_be_valid = !!VALID_KEY_COMBINATIONS.find{ | k | k.sort == selector_with_extra_key.keys.sort }
               params = { consumerVersionSelectors: [selector_with_extra_key] }
 
               describe "with #{selector_with_extra_key}" do

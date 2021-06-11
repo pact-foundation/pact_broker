@@ -1,4 +1,4 @@
-require 'pact_broker/test/test_data_builder'
+require "pact_broker/test/test_data_builder"
 
 RSpec.shared_context "stubbed services" do
 

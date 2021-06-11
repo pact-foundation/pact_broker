@@ -7,6 +7,9 @@
       "resource_class_name": "PactBroker::Api::Resources::Clean"
     },
     {
+      "resource_class_name": "PactBroker::Api::Resources::DeployedVersion"
+    },
+    {
       "resource_class_name": "PactBroker::Api::Resources::DeployedVersionsForVersionAndEnvironment"
     },
     {
@@ -60,6 +63,9 @@
     },
     {
       "resource_class_name": "PactBroker::Api::Resources::PublishContracts"
+    },
+    {
+      "resource_class_name": "PactBroker::Api::Resources::ReleasedVersion"
     },
     {
       "resource_class_name": "PactBroker::Api::Resources::ReleasedVersionsForVersionAndEnvironment"

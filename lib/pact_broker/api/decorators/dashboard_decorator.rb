@@ -1,6 +1,6 @@
-require 'ostruct'
-require 'pact_broker/api/pact_broker_urls'
-require 'pact_broker/api/decorators/format_date_time'
+require "ostruct"
+require "pact_broker/api/pact_broker_urls"
+require "pact_broker/api/decorators/format_date_time"
 
 module PactBroker
   module Api
@@ -27,7 +27,7 @@ module PactBroker
 
         attr_reader :index_items
 
-        def items(index_items, base_url)
+        def items(_index_items, base_url)
           sorted_index_items.collect do | index_item |
             index_item_hash(index_item.consumer, index_item.provider, index_item.consumer_version, index_item, base_url)
           end
@@ -53,7 +53,7 @@ module PactBroker
           }
         end
 
-        def consumer_hash(index_item, consumer, consumer_version, base_url)
+        def consumer_hash(index_item, _consumer, _consumer_version, base_url)
           {
             name: index_item.consumer_name,
             version: {
@@ -73,7 +73,7 @@ module PactBroker
           }
         end
 
-        def provider_hash(index_item, provider, base_url)
+        def provider_hash(index_item, _provider, base_url)
           hash = {
             name: index_item.provider_name,
             version: nil,
@@ -153,7 +153,7 @@ module PactBroker
           end
         end
 
-        def latest_webhook_execution(index_item, base_url)
+        def latest_webhook_execution(index_item, _base_url)
           if index_item.last_webhook_execution_date
             {
               triggeredAt: format_date_time(index_item.last_webhook_execution_date)
@@ -163,7 +163,7 @@ module PactBroker
 
         def links(index_item, base_url)
           {
-            'pb:webhook-status' => {
+            "pb:webhook-status" => {
               title: "Status of webhooks for #{index_item.consumer_name}/#{index_item.provider_name} pact",
               href: webhooks_status_url(index_item.consumer, index_item.provider, base_url)
             }

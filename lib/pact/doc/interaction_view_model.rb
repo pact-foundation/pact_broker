@@ -1,6 +1,6 @@
-require 'pact/shared/active_support_support'
-require 'pact/reification'
-require 'cgi'
+require "pact/shared/active_support_support"
+require "pact/reification"
+require "cgi"
 
 module Pact
   module Doc
@@ -8,7 +8,7 @@ module Pact
 
       include Pact::ActiveSupportSupport
 
-      MARKDOWN_BOLD_CHARACTERS = '**'
+      MARKDOWN_BOLD_CHARACTERS = "**"
 
       def initialize interaction, consumer_contract
         @interaction = interaction
@@ -18,11 +18,11 @@ module Pact
       def id
         @id ||= begin
           full_desc = if has_provider_state?
-            "#{description} given #{interaction.provider_state}"
-          else
-            description
-          end
-          CGI.escapeHTML(full_desc.gsub(/\s+/,'_'))
+                        "#{description} given #{interaction.provider_state}"
+                      else
+                        description
+                      end
+          CGI.escapeHTML(full_desc.gsub(/\s+/,"_"))
         end
       end
 
@@ -55,17 +55,17 @@ module Pact
       end
 
       def formatted_provider_states mark_bold: false
-        bold_marker = mark_bold ? MARKDOWN_BOLD_CHARACTERS : ''
+        bold_marker = mark_bold ? MARKDOWN_BOLD_CHARACTERS : ""
 
         (@interaction.provider_states || []).map do |ps| 
           "#{bold_marker}" \
           "#{markdown_escape(apply_capitals(ps.name.strip, false))}" \
           "#{bold_marker}"
-        end.join(' and ')
+        end.join(" and ")
       end
 
       def description start_of_sentence = false
-        return '' unless @interaction.description
+        return "" unless @interaction.description
         markdown_escape apply_capitals(@interaction.description.strip, start_of_sentence)
       end
 
@@ -129,7 +129,7 @@ module Pact
 
       def markdown_escape string
         return nil unless string
-        string.gsub('*','\*').gsub('_','\_')
+        string.gsub("*",'\*').gsub("_",'\_')
       end
     end
   end

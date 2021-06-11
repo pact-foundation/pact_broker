@@ -1,5 +1,5 @@
-require 'spec_helper'
-require 'pact_broker/api/decorators/embedded_version_decorator'
+require "spec_helper"
+require "pact_broker/api/decorators/embedded_version_decorator"
 
 module PactBroker
   module Api
@@ -13,7 +13,7 @@ module PactBroker
           PactBroker::Versions::Repository.new.find_by_pacticipant_name_and_number "Consumer", "1.2.3"
         end
 
-        let(:options) { { user_options: { base_url: 'http://example.org' } } }
+        let(:options) { { user_options: { base_url: "http://example.org" } } }
 
         subject { JSON.parse EmbeddedVersionDecorator.new(version).to_json(options), symbolize_names: true }
 

@@ -1,4 +1,4 @@
-require 'pact_broker/domain/verification'
+require "pact_broker/domain/verification"
 
 module PactBroker
 
@@ -71,12 +71,12 @@ module PactBroker
         let!(:verification) do
           TestDataBuilder.new
             .create_pact_with_hierarchy("A", "1", "B")
-            .create_verification(test_results: {'some' => 'thing'})
+            .create_verification(test_results: {"some" => "thing"})
             .and_return(:verification)
         end
 
         it "saves and loads the test_results" do
-          expect(Verification.find(id: verification.id).test_results).to eq({ 'some' => 'thing' })
+          expect(Verification.find(id: verification.id).test_results).to eq({ "some" => "thing" })
         end
       end
 

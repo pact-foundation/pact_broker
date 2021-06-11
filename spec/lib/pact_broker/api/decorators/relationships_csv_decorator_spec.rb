@@ -1,5 +1,5 @@
-require 'spec_helper'
-require 'pact_broker/api/decorators/relationships_csv_decorator'
+require "spec_helper"
+require "pact_broker/api/decorators/relationships_csv_decorator"
 
 module PactBroker
   module Api
@@ -13,8 +13,8 @@ module PactBroker
 
         describe "#to_csv" do
 
-          let(:line_1) { '1,My Consumer,1,3158419,0,1,2,0,0,0,0,0,0,0,0'}
-          let(:line_2) { '2,My Provider,1,3158419,0,2,0,0,0,0,0,0,0,0,0' }
+          let(:line_1) { "1,My Consumer,1,3158419,0,1,2,0,0,0,0,0,0,0,0"}
+          let(:line_2) { "2,My Provider,1,3158419,0,2,0,0,0,0,0,0,0,0,0" }
           let(:expected_text) { [line_1, line_2].join("\n") + "\n" }
 
           xit "returns the relationships as CSV" do

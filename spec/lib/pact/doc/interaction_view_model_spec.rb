@@ -1,9 +1,9 @@
-require 'pact/doc/interaction_view_model'
+require "pact/doc/interaction_view_model"
 
 module Pact
   module Doc
     describe InteractionViewModel do
-      let(:consumer_contract) { Pact::ConsumerContract.from_uri './spec/support/interaction_view_model.json' }
+      let(:consumer_contract) { Pact::ConsumerContract.from_uri "./spec/support/interaction_view_model.json" }
       let(:interaction_with_request_with_body_and_headers) { consumer_contract.find_interaction description: "a request with a body and headers" }
       let(:interaction_with_request_without_body_and_headers) { consumer_contract.find_interaction description: "a request with an empty body and empty headers" }
       let(:interaction_with_response_with_body_and_headers) { consumer_contract.find_interaction description: "a response with a body and headers" }
@@ -70,7 +70,7 @@ module Pact
         end
 
         it "renders the keys in a meaningful order" do
-          expect(subject.request).to match /"method".*"path".*"query".*"headers".*"body"/m
+          expect(subject.request).to match(/"method".*"path".*"query".*"headers".*"body"/m)
         end
 
         context "when the body hash is empty" do
@@ -89,7 +89,7 @@ module Pact
         end
 
         context "when a Pact::Term is present" do
-          let(:consumer_contract) { Pact::ConsumerContract.from_uri './spec/support/interaction_view_model_with_terms.json'}
+          let(:consumer_contract) { Pact::ConsumerContract.from_uri "./spec/support/interaction_view_model_with_terms.json"}
           let(:interaction) { consumer_contract.interactions.first }
 
           it "uses the generated value" do
@@ -116,7 +116,7 @@ module Pact
         end
 
         it "renders the keys in a meaningful order" do
-          expect(subject.response).to match /"status".*"headers".*"body"/m
+          expect(subject.response).to match(/"status".*"headers".*"body"/m)
         end
 
         context "when the body hash is empty" do
@@ -136,7 +136,7 @@ module Pact
         end
 
         context "when a Pact::Term is present" do
-          let(:consumer_contract) { Pact::ConsumerContract.from_uri './spec/support/interaction_view_model_with_terms.json'}
+          let(:consumer_contract) { Pact::ConsumerContract.from_uri "./spec/support/interaction_view_model_with_terms.json"}
           let(:interaction) { consumer_contract.interactions.first }
 
           it "uses the generated value" do
@@ -154,14 +154,14 @@ module Pact
           end
 
           it "does not blow up" do
-            expect(subject.description(true)).to eq ''
-            expect(subject.description(false)).to eq ''
+            expect(subject.description(true)).to eq ""
+            expect(subject.description(false)).to eq ""
           end
         end
 
         context "with markdown characters in the name" do
           let(:interaction) do
-            interaction_with_request_with_body_and_headers.description = 'a *description'
+            interaction_with_request_with_body_and_headers.description = "a *description"
             interaction_with_request_with_body_and_headers
           end
           it "escapes the markdown characters" do
@@ -173,7 +173,7 @@ module Pact
       describe "provider_state" do
         context "with markdown characters in the name" do
           let(:interaction) do
-            interaction_with_request_with_body_and_headers.provider_state = 'a *provider state'
+            interaction_with_request_with_body_and_headers.provider_state = "a *provider state"
             interaction_with_request_with_body_and_headers
           end
           it "escapes the markdown characters" do
@@ -183,7 +183,7 @@ module Pact
       end
 
       describe "formatted_provider_states" do
-        let(:consumer_contract) { Pact::ConsumerContract.from_uri './spec/support/markdown_pact.json' }
+        let(:consumer_contract) { Pact::ConsumerContract.from_uri "./spec/support/markdown_pact.json" }
         let(:interaction) { consumer_contract.interactions.first }
 
         context "when no provider state" do
@@ -207,21 +207,21 @@ module Pact
         end
 
         context "when using v3 specification" do
-          let(:consumer_contract) { Pact::ConsumerContract.from_uri './spec/support/markdown_pact_v3.json' }
+          let(:consumer_contract) { Pact::ConsumerContract.from_uri "./spec/support/markdown_pact_v3.json" }
           let(:interaction) { consumer_contract.interactions.first }
 
           context "when marking provider states in bold" do
             it "formats the provider states in bold" do
-              expected_result = '**alligators exist** and **the city of Tel Aviv has a zoo** ' \
-                                'and **the zoo keeps record of its alligator population**'
+              expected_result = "**alligators exist** and **the city of Tel Aviv has a zoo** " \
+                                "and **the zoo keeps record of its alligator population**"
               expect(subject.formatted_provider_states mark_bold: true).to eq expected_result
             end
           end
 
           context "when not marking provider states in bold" do
             it "formats the provider states without bold" do
-              expected_result = 'alligators exist and the city of Tel Aviv has a zoo ' \
-                                'and the zoo keeps record of its alligator population'
+              expected_result = "alligators exist and the city of Tel Aviv has a zoo " \
+                                "and the zoo keeps record of its alligator population"
               expect(subject.formatted_provider_states).to eq expected_result
             end
           end

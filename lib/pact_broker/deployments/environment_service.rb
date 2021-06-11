@@ -1,7 +1,7 @@
-require 'pact_broker/deployments/environment'
-require 'securerandom'
-require 'pact_broker/pacticipants/generate_display_name'
-require 'pact_broker/string_refinements'
+require "pact_broker/deployments/environment"
+require "securerandom"
+require "pact_broker/pacticipants/generate_display_name"
+require "pact_broker/string_refinements"
 
 module PactBroker
   module Deployments
@@ -44,7 +44,7 @@ module PactBroker
         PactBroker::Deployments::Environment.where(uuid: uuid).delete
       end
 
-      def self.find_for_pacticipant(pacticipant)
+      def self.find_for_pacticipant(_pacticipant)
         find_all
       end
     end

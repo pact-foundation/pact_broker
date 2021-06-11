@@ -1,20 +1,20 @@
-require 'pact_broker/api/contracts/webhook_contract'
-require 'pact_broker/api/decorators/webhook_decorator'
+require "pact_broker/api/contracts/webhook_contract"
+require "pact_broker/api/decorators/webhook_decorator"
 
 module PactBroker
   module Api
     module Contracts
       describe WebhookContract do
-        let(:json) { load_fixture 'webhook_valid_with_pacticipants.json' }
+        let(:json) { load_fixture "webhook_valid_with_pacticipants.json" }
         let(:hash) { JSON.parse(json) }
         let(:webhook) { PactBroker::Api::Decorators::WebhookDecorator.new(Domain::Webhook.new).from_json(json) }
         let(:subject) { WebhookContract.new(webhook) }
-        let(:matching_hosts) { ['foo'] }
+        let(:matching_hosts) { ["foo"] }
         let(:consumer) { double("consumer") }
         let(:provider) { double("provider") }
 
         def valid_webhook_with
-          hash = load_json_fixture 'webhook_valid_with_pacticipants.json'
+          hash = load_json_fixture "webhook_valid_with_pacticipants.json"
           yield hash
           hash.to_json
         end
@@ -29,8 +29,8 @@ module PactBroker
             subject.validate(hash)
           end
 
-          let(:webhook_http_method_whitelist) { ['POST'] }
-          let(:whitelist_matches) { ['foo'] }
+          let(:webhook_http_method_whitelist) { ["POST"] }
+          let(:whitelist_matches) { ["foo"] }
           let(:webhook_host_whitelist) { [] }
 
           context "with valid fields" do
@@ -42,7 +42,7 @@ module PactBroker
           context "with a nil consumer name" do
             let(:json) do
               valid_webhook_with do |hash|
-                hash['consumer']['name'] = nil
+                hash["consumer"]["name"] = nil
               end
             end
 
@@ -54,7 +54,7 @@ module PactBroker
           context "with no consumer name key" do
             let(:json) do
               valid_webhook_with do |hash|
-                hash['consumer'].delete('name')
+                hash["consumer"].delete("name")
               end
             end
 
@@ -68,7 +68,7 @@ module PactBroker
           context "with no consumer" do
             let(:json) do
               valid_webhook_with do |hash|
-                hash.delete('consumer')
+                hash.delete("consumer")
               end
             end
 
@@ -88,7 +88,7 @@ module PactBroker
           context "with a nil provider name" do
             let(:json) do
               valid_webhook_with do |hash|
-                hash['provider']['name'] = nil
+                hash["provider"]["name"] = nil
               end
             end
 
@@ -100,7 +100,7 @@ module PactBroker
           context "with no provider name key" do
             let(:json) do
               valid_webhook_with do |hash|
-                hash['provider'].delete('name')
+                hash["provider"].delete("name")
               end
             end
 
@@ -114,7 +114,7 @@ module PactBroker
           context "with no provider" do
             let(:json) do
               valid_webhook_with do |hash|
-                hash.delete('provider')
+                hash.delete("provider")
               end
             end
 
@@ -150,7 +150,7 @@ module PactBroker
           context "with empty events" do
             let(:json) do
               valid_webhook_with do |hash|
-                hash['events'] = []
+                hash["events"] = []
               end
             end
 
@@ -162,7 +162,7 @@ module PactBroker
           context "with an event with an invalid name" do
             let(:json) do
               valid_webhook_with do |hash|
-                hash['events'].first['name'] = 'foo'
+                hash["events"].first["name"] = "foo"
               end
             end
 
@@ -174,7 +174,7 @@ module PactBroker
           context "with no method" do
             let(:json) do
               valid_webhook_with do |hash|
-                hash['request'].delete('method')
+                hash["request"].delete("method")
               end
             end
 
@@ -186,7 +186,7 @@ module PactBroker
           context "with an invalid method" do
             let(:json) do
               valid_webhook_with do |hash|
-                hash['request']['method'] = 'blah'
+                hash["request"]["method"] = "blah"
               end
             end
 
@@ -198,7 +198,7 @@ module PactBroker
           context "with an invalid scheme" do
             let(:json) do
               valid_webhook_with do |hash|
-                hash['request']['url'] = 'ftp://foo'
+                hash["request"]["url"] = "ftp://foo"
               end
             end
 
@@ -210,7 +210,7 @@ module PactBroker
           context "with an HTTP method that is not whitelisted" do
             let(:json) do
               valid_webhook_with do |hash|
-                hash['request']['method'] = 'DELETE'
+                hash["request"]["method"] = "DELETE"
               end
             end
 
@@ -221,7 +221,7 @@ module PactBroker
             end
 
             context "when there is more than one allowed HTTP method", pending: "need to work out how to dynamically create this message" do
-              let(:webhook_http_method_whitelist) { ['POST', 'GET'] }
+              let(:webhook_http_method_whitelist) { ["POST", "GET"] }
 
               it "contains an error for invalid method" do
                 expect(subject.errors[:"request.http_method"]).to include "must be one of POST, GET"
@@ -254,7 +254,7 @@ module PactBroker
           context "with no URL" do
             let(:json) do
               valid_webhook_with do |hash|
-                hash['request'].delete('url')
+                hash["request"].delete("url")
               end
             end
 
@@ -266,7 +266,7 @@ module PactBroker
           context "with an invalid URL" do
             let(:json) do
               valid_webhook_with do |hash|
-                hash['request']['url'] = 'bl ah'
+                hash["request"]["url"] = "bl ah"
               end
             end
 
@@ -278,7 +278,7 @@ module PactBroker
           context "with an URL missing a scheme" do
             let(:json) do
               valid_webhook_with do |hash|
-                hash['request']['url'] = 'blah'
+                hash["request"]["url"] = "blah"
               end
             end
 
@@ -290,7 +290,7 @@ module PactBroker
           context "with a URL that has templated parameters in it" do
             let(:json) do
               valid_webhook_with do |hash|
-                hash['request']['url'] = 'https://foo/commits/${pactbroker.consumerVersionNumber}'
+                hash["request"]["url"] = "https://foo/commits/${pactbroker.consumerVersionNumber}"
               end
             end
 
@@ -302,7 +302,7 @@ module PactBroker
           context "with a URL that has templated parameters in the host" do
             let(:json) do
               valid_webhook_with do |hash|
-                hash['request']['url'] = 'https://${pactbroker.consumerVersionNumber}/commits'
+                hash["request"]["url"] = "https://${pactbroker.consumerVersionNumber}/commits"
               end
             end
 
@@ -314,7 +314,7 @@ module PactBroker
           context "when enabled is not a boolean", pending: "I can't work out why this doesn't work" do
             let(:json) do
               valid_webhook_with do |hash|
-                hash['enabled'] = 'foo'
+                hash["enabled"] = "foo"
               end
             end
 

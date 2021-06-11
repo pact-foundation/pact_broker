@@ -1,4 +1,4 @@
-def latest_pact_publications_by_consumer_versions_v2(connection = nil)
+def latest_pact_publications_by_consumer_versions_v2(_connection = nil)
   "select app.*
   from latest_pact_publication_ids_for_consumer_versions lpp
   inner join all_pact_publications app
@@ -8,7 +8,7 @@ def latest_pact_publications_by_consumer_versions_v2(connection = nil)
 end
 
 # Don't need all the join keys, just pact_publication_id
-def latest_pact_publications_by_consumer_versions_v3(connection)
+def latest_pact_publications_by_consumer_versions_v3(_connection)
   "select app.*
   from latest_pact_publication_ids_for_consumer_versions lpp
   inner join all_pact_publications app

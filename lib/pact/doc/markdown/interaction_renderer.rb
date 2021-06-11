@@ -1,6 +1,6 @@
-require 'erb'
-require 'pact/doc/interaction_view_model'
-require 'rack/utils'
+require "erb"
+require "pact/doc/interaction_view_model"
+require "rack/utils"
 
 module Pact
   module Doc
@@ -19,7 +19,7 @@ module Pact
         end
 
         def render_full_interaction
-          render('/interaction.erb')
+          render("/interaction.erb")
         end
 
         def render template_file

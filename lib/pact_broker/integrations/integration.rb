@@ -1,8 +1,8 @@
-require 'pact_broker/db'
-require 'pact_broker/verifications/pseudo_branch_status'
-require 'pact_broker/domain/verification'
-require 'pact_broker/webhooks/latest_triggered_webhook'
-require 'pact_broker/webhooks/webhook'
+require "pact_broker/db"
+require "pact_broker/verifications/pseudo_branch_status"
+require "pact_broker/domain/verification"
+require "pact_broker/webhooks/latest_triggered_webhook"
+require "pact_broker/webhooks/webhook"
 
 module PactBroker
   module Integrations

@@ -1,4 +1,4 @@
-require 'pact_broker/api/resources/error_response_body_generator'
+require "pact_broker/api/resources/error_response_body_generator"
 
 module PactBroker
   module Api
@@ -8,13 +8,13 @@ module PactBroker
           before do
             allow(error).to receive(:backtrace).and_return(["backtrace"])
           end
-          let(:error) { StandardError.new('test error') }
+          let(:error) { StandardError.new("test error") }
           let(:error_reference) { "bYWfnyWPlf" }
 
           subject { JSON.parse(ErrorResponseBodyGenerator.call(error, error_reference)) }
 
           it "includes an error reference" do
-            expect(subject['error']).to  include 'reference' => "bYWfnyWPlf"
+            expect(subject["error"]).to include "reference" => "bYWfnyWPlf"
           end
 
           context "when show_backtrace_in_error_response? is true" do
@@ -23,14 +23,14 @@ module PactBroker
             end
 
             context "when the error is a PactBroker::Error or subclass" do
-              let(:error) { Class.new(PactBroker::Error).new('test error') }
+              let(:error) { Class.new(PactBroker::Error).new("test error") }
 
               it "uses the error message as the message" do
-                expect(subject['error']).to include 'message' => "test error"
+                expect(subject["error"]).to include "message" => "test error"
               end
 
               it "includes the backtrace in the error response" do
-                expect(subject['error']).to include ('backtrace')
+                expect(subject["error"]).to include("backtrace")
               end
             end
           end
@@ -41,24 +41,24 @@ module PactBroker
             end
 
             context "when the error is a PactBroker::Error or subclass" do
-              let(:error) { Class.new(PactBroker::Error).new('test error') }
+              let(:error) { Class.new(PactBroker::Error).new("test error") }
 
               it "uses the error message as the message" do
-                expect(subject['error']).to include 'message' => "test error"
+                expect(subject["error"]).to include "message" => "test error"
               end
 
               it "does not include the backtrace in the error response" do
-                expect(subject['error']).to_not include ('backtrace')
+                expect(subject["error"]).to_not include("backtrace")
               end
             end
 
             context "when the error is not a PactBroker::Error or subclass" do
               it "uses a hardcoded error message" do
-                expect(subject['error']['message']).to match /An error/
+                expect(subject["error"]["message"]).to match(/An error/)
               end
 
               it "does not include the backtrace in the error response" do
-                expect(subject['error']).to_not include ('backtrace')
+                expect(subject["error"]).to_not include("backtrace")
               end
             end
           end

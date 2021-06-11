@@ -1,4 +1,4 @@
-require 'pact_broker/api/resources/latest_provider_pacts'
+require "pact_broker/api/resources/latest_provider_pacts"
 
 module PactBroker
   module Api
@@ -10,10 +10,10 @@ module PactBroker
           allow_any_instance_of(LatestProviderPacts).to receive(:resource_exists?).and_return(provider)
         end
 
-        let(:provider) { double('provider') }
-        let(:pacts) { double('pacts') }
-        let(:path) { '/pacts/provider/Bar/latest' }
-        let(:decorator) { instance_double('PactBroker::Api::Decorators::ProviderPactsDecorator') }
+        let(:provider) { double("provider") }
+        let(:pacts) { double("pacts") }
+        let(:path) { "/pacts/provider/Bar/latest" }
+        let(:decorator) { instance_double("PactBroker::Api::Decorators::ProviderPactsDecorator") }
 
         subject { get path; last_response }
 
@@ -32,7 +32,7 @@ module PactBroker
         end
 
         context "with a tag" do
-          let(:path) { '/pacts/provider/Bar/latest/prod' }
+          let(:path) { "/pacts/provider/Bar/latest/prod" }
 
           it "finds the pacts with a tag" do
             expect(PactBroker::Pacts::Service).to receive(:find_latest_pact_versions_for_provider).with("Bar", tag: "prod")

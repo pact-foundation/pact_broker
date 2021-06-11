@@ -1,4 +1,4 @@
-require 'pact_broker/api/contracts/publish_contracts_schema'
+require "pact_broker/api/contracts/publish_contracts_schema"
 
 module PactBroker
   module Api

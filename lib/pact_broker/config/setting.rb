@@ -8,24 +8,26 @@ module PactBroker
         self
       end
 
+      # rubocop: disable Metrics/CyclomaticComplexity
       def value_object
         case type
-        when 'json'
+        when "json"
           JSON.parse(value, symbolize_names: true)
-        when 'string'
+        when "string"
           value
-        when 'symbol'
+        when "symbol"
           value.to_sym
-        when 'integer'
+        when "integer"
           Integer(value)
-        when 'float'
+        when "float"
           Float(value)
-        when 'space_delimited_string_list'
+        when "space_delimited_string_list"
           SpaceDelimitedStringList.parse(value)
-        when 'boolean'
+        when "boolean"
           value == "1"
         end
       end
+      # rubocop: enable Metrics/CyclomaticComplexity
 
       def self.get_db_value(object)
         case object
@@ -44,26 +46,28 @@ module PactBroker
         end
       end
 
+      # rubocop: disable Metrics/CyclomaticComplexity
       def self.get_db_type(object)
         case object
-          when true, false
-            'boolean'
-          when String, nil
-            'string'
-          when SpaceDelimitedStringList
-            'space_delimited_string_list'
-          when Array, Hash
-            'json'
-          when Integer
-            'integer'
-          when Float
-            'float'
-          when Symbol
-            'symbol'
-          else
-            nil
-          end
+        when true, false
+          "boolean"
+        when String, nil
+          "string"
+        when SpaceDelimitedStringList
+          "space_delimited_string_list"
+        when Array, Hash
+          "json"
+        when Integer
+          "integer"
+        when Float
+          "float"
+        when Symbol
+          "symbol"
+        else
+          nil
+        end
       end
+      # rubocop: enable Metrics/CyclomaticComplexity
 
     end
 

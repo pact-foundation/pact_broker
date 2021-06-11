@@ -1,5 +1,5 @@
-require 'spec_helper'
-require 'pact_broker/api/decorators/version_decorator'
+require "spec_helper"
+require "pact_broker/api/decorators/version_decorator"
 
 module PactBroker
   module Api
@@ -50,7 +50,7 @@ module PactBroker
             ]
           end
 
-          let(:base_url) { 'http://example.org' }
+          let(:base_url) { "http://example.org" }
           let(:options) { { user_options: { base_url: base_url, environments: environments } } }
           let(:decorator) { VersionDecorator.new(version) }
 
@@ -91,10 +91,10 @@ module PactBroker
 
           it "includes a list of sorted pacts" do
             expect(subject[:_links][:'pb:pact-versions']).to be_instance_of(Array)
-            expect(subject[:_links][:'pb:pact-versions'].first[:href]).to include ("1.2.3")
-            expect(subject[:_links][:'pb:pact-versions'].first[:name]).to include ("Pact between")
-            expect(subject[:_links][:'pb:pact-versions'].first[:name]).to include ("providerA")
-            expect(subject[:_links][:'pb:pact-versions'].last[:name]).to include ("ProviderB")
+            expect(subject[:_links][:'pb:pact-versions'].first[:href]).to include("1.2.3")
+            expect(subject[:_links][:'pb:pact-versions'].first[:name]).to include("Pact between")
+            expect(subject[:_links][:'pb:pact-versions'].first[:name]).to include("providerA")
+            expect(subject[:_links][:'pb:pact-versions'].last[:name]).to include("ProviderB")
           end
 
           it "includes a link to the latest verification results for the pacts for this version" do

@@ -13,7 +13,7 @@ end
 module PactBroker
   module DB
     class MigrateData
-      def self.call database_connection, options = {}
+      def self.call database_connection, _options = {}
         DataMigrations::SetPacticipantIdsForVerifications.call(database_connection)
         DataMigrations::SetConsumerIdsForPactPublications.call(database_connection)
         DataMigrations::SetLatestVersionSequenceValue.call(database_connection)
@@ -23,6 +23,8 @@ module PactBroker
         DataMigrations::SetCreatedAtForLatestVerifications.call(database_connection)
         DataMigrations::SetExtraColumnsForTags.call(database_connection)
         DataMigrations::SetPacticipantDisplayName.call(database_connection)
+        DataMigrations::SetPacticipantMainBranch.call(database_connection)
+        DataMigrations::SetWebhookUuid.call(database_connection)
       end
     end
   end

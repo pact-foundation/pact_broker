@@ -1,5 +1,5 @@
-require 'pact_broker/api/resources/base_resource'
-require 'pact_broker/api/decorators/pacticipant_collection_decorator'
+require "pact_broker/api/resources/base_resource"
+require "pact_broker/api/decorators/pacticipant_collection_decorator"
 
 module PactBroker
   module Api

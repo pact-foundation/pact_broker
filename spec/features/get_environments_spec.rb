@@ -1,4 +1,4 @@
-require 'pact_broker/api/pact_broker_urls'
+require "pact_broker/api/pact_broker_urls"
 
 describe "Get all environments" do
   before do
@@ -6,7 +6,7 @@ describe "Get all environments" do
       .create_environment("prod", display_name: "Production", uuid: "5678", contacts: [ { name: "Foo" } ] )
   end
   let(:path) { PactBroker::Api::PactBrokerUrls.environments_url }
-  let(:headers) { {'HTTP_ACCEPT' => 'application/hal+json'} }
+  let(:headers) { {"HTTP_ACCEPT" => "application/hal+json"} }
   let(:response_body) { JSON.parse(last_response.body, symbolize_names: true)}
 
   subject { get(path, nil, headers) }

@@ -1,6 +1,6 @@
-require 'pact_broker/api/resources/base_resource'
-require 'pact_broker/api/resources/environment'
-require 'pact_broker/api/contracts/environment_schema'
+require "pact_broker/api/resources/base_resource"
+require "pact_broker/api/resources/environment"
+require "pact_broker/api/contracts/environment_schema"
 
 module PactBroker
   module Api
@@ -63,11 +63,11 @@ module PactBroker
         end
 
         def environments
-          @environments ||= if request.query['name']
-            [environment_service.find_by_name(request.query['name'])]
-          else
-            environment_service.find_all
-          end
+          @environments ||= if request.query["name"]
+                              [environment_service.find_by_name(request.query["name"])]
+                            else
+                              environment_service.find_all
+                            end
         end
 
         def schema
