@@ -57,7 +57,7 @@ describe "Record release" do
 
   context "when the version is currently unsupported" do
     before do
-      td.create_released_version_for_consumer_version(uuid: "1234", currently_supported: false)
+      td.create_released_version_for_consumer_version(uuid: "1234", currently_supported: false, created_at: DateTime.now - 1 )
     end
 
     it "returns the Location header" do
