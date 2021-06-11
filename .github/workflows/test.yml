@@ -22,6 +22,9 @@ jobs:
           chmod +x ./cc-test-reporter
       - name: Tests
         run: bundle exec rake
+        env:
+          PACTFLOW_PACT_OSS_TOKEN: ${{ secrets.PACTFLOW_PACT_OSS_TOKEN }}
+
       #- name: Report test coverage
       #  run: ./cc-test-reporter after-build --exit-code 0 || true
     # env:

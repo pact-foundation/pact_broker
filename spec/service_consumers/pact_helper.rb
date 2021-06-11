@@ -41,15 +41,14 @@ Pact.service_provider "Pact Broker" do
   app_version ENV["GIT_SHA"] if ENV["GIT_SHA"]
   app_version_tags [ENV["GIT_BRANCH"]] if ENV["GIT_BRANCH"]
 
-  if ENV["PACT_OSS_PACTFLOW_TOKEN"]
+  if ENV["PACTFLOW_PACT_OSS_TOKEN"]
     honours_pacts_from_pact_broker do
-      pact_broker_base_url "https://pact-oss.pactflow.io", token: ENV["PACT_OSS_PACTFLOW_TOKEN"]
+      pact_broker_base_url "https://pact-oss.pactflow.io", token: ENV["PACTFLOW_PACT_OSS_TOKEN"]
       consumer_version_selectors [
           { tag: "master", latest: true }
         ]
       enable_pending true
       include_wip_pacts_since "2000-01-01"
-      verbose true
     end
   end
 
