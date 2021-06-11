@@ -9,12 +9,18 @@ ENV["RACK_ENV"] = "development"
 require "sequel"
 require "logger"
 #DATABASE_CREDENTIALS = {logger: Logger.new($stdout), adapter: "sqlite", database: ARGV[0], :encoding => 'utf8'}.tap { |it| puts it }
-DATABASE_CREDENTIALS = {adapter: "postgres", database: "postgres", username: "postgres", password: "postgres", host: "localhost", :encoding => "utf8"}
+DATABASE_CREDENTIALS = {
+  adapter: "postgres",
+  database: ENV["DATABASE"] || "postgres",
+  username: ENV["DATABASE_USERNAME"] || "postgres",
+  password: ENV["DATABASE_PASSWORD"] || "postgres",
+  host: "localhost",
+  :encoding => "utf8"
+}
 
 connection = Sequel.connect(DATABASE_CREDENTIALS)
 connection.timezone = :utc
 # Uncomment these lines to open a pry session for inspecting the database
-
 
 require "pact_broker/db"
 require "pact_broker"
