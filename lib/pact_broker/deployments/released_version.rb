@@ -45,6 +45,10 @@ module PactBroker
         def record_support_ended
           where(support_ended_at: nil).update(support_ended_at: Sequel.datetime_class.now)
         end
+
+        def set_currently_supported
+          exclude(support_ended_at: nil).update(support_ended_at: nil, updated_at: Sequel.datetime_class.now)
+        end
       end
 
       def record_support_ended

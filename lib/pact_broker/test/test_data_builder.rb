@@ -549,7 +549,7 @@ module PactBroker
 
       def create_released_version(uuid: , currently_supported: true, version:, environment_name: , created_at: nil)
         env = find_environment(environment_name)
-        @released_version = PactBroker::Deployments::ReleasedVersionService.create(uuid, version, env)
+        @released_version = PactBroker::Deployments::ReleasedVersionService.create_or_update(uuid, version, env)
         PactBroker::Deployments::ReleasedVersionService.record_version_support_ended(released_version) unless currently_supported
         released_version.refresh
         set_created_at_if_set(created_at, :released_versions, id: released_version.id)

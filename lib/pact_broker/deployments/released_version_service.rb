@@ -11,13 +11,17 @@ module PactBroker
         ReleasedVersion.where(uuid: uuid).single_record
       end
 
-      def self.create(uuid, version, environment)
-        ReleasedVersion.new(
-          uuid: uuid,
+      def self.create_or_update(uuid_for_new_released_version, version, environment)
+        released_version = ReleasedVersion.new(
+          uuid: uuid_for_new_released_version,
           version: version,
           pacticipant_id: version.pacticipant_id,
           environment: environment
         ).insert_ignore
+        # Can't reproduce it in a test, but am getting a "Attempt to update object did not result in a single row modification"
+        # error when marking an existing row as supported again IRL.
+        ReleasedVersion.where(id: released_version.id).set_currently_supported
+        released_version.refresh
       end
 
       def self.find_currently_supported_versions_for_environment(environment, pacticipant_name: nil, pacticipant_version_number: nil)
