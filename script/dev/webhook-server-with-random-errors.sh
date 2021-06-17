@@ -1,3 +1,6 @@
+#!/bin/sh
+
+ruby_script=$(cat << EOM
 require 'rack/utils'
 require 'rack'
 
@@ -16,3 +19,7 @@ Rack::Server.start(
  :server => 'webrick',
  :Port => 9393
 )
+EOM
+)
+
+echo "${ruby_script}" | bundle exec ruby
