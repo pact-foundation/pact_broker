@@ -1,12 +1,10 @@
 require "pact_broker/db/clean"
 require "pact_broker/matrix/unresolved_selector"
 
-IS_MYSQL = !!DB.mysql?
-
 module PactBroker
   module DB
     # Inner queries don't work on MySQL. Seriously, MySQL???
-    describe Clean, pending: IS_MYSQL  do
+    describe Clean, pending: !!DB.mysql?  do
 
       def pact_publication_count_for(consumer_name, version_number)
         PactBroker::Pacts::PactPublication.where(consumer_version: PactBroker::Domain::Version.where_pacticipant_name(consumer_name).where(number: version_number)).count
