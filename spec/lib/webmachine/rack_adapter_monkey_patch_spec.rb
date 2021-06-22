@@ -1,6 +1,5 @@
 require "webmachine"
 require "webmachine/adapters/rack_mapped"
-require "webmachine/rack_adapter_monkey_patch"
 require "rack/test"
 
 module Webmachine
