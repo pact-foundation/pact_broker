@@ -172,7 +172,6 @@ module PactBroker
     end
 
     def configure_middleware
-      # NOTE THAT NONE OF THIS IS PROTECTED BY AUTH - is that ok?
       if configuration.use_rack_protection
         @app_builder.use Rack::Protection, except: [:path_traversal, :remote_token, :session_hijacking, :http_origin]
 
@@ -180,7 +179,7 @@ module PactBroker
         not_hal_browser = ->(env) { env["PATH_INFO"] != "/hal-browser/browser.html" }
 
         @app_builder.use_when not_hal_browser,
-          Rack::Protection::ContentSecurityPolicy, configuration.content_security_policy
+          Rack::Protection::ContentSecurityPolicy, configuration.content_security_policy.tap { |it| puts it }
         @app_builder.use_when is_hal_browser,
           Rack::Protection::ContentSecurityPolicy,
           configuration.content_security_policy.merge(configuration.hal_browser_content_security_policy_overrides)

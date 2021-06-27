@@ -113,13 +113,14 @@ module PactBroker
       config.webhook_host_whitelist = []
       # TODO get rid of unsafe-inline
       config.content_security_policy = {
-        script_src: "'self' 'unsafe-inline'",
+        script_src: "'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com",
         style_src: "'self' 'unsafe-inline'",
         img_src: "'self' data: #{URI(config.shields_io_base_url).host}",
         font_src: "'self' data:",
         base_uri: "'self'",
         frame_src: "'self'",
-        frame_ancestors: "'self'"
+        frame_ancestors: "'self'",
+        connect_src: "'self' https://www.google-analytics.com"
       }
       config.hal_browser_content_security_policy_overrides = {
         script_src: "'self' 'unsafe-inline' 'unsafe-eval'",
