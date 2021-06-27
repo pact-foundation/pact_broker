@@ -41,7 +41,7 @@ module PactBroker
         end
 
         def results
-          @results ||= matrix_service.find(selectors, options)
+          @results ||= matrix_service.can_i_deploy(selectors, options)
         end
 
         def parsed_query

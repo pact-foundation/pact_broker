@@ -4,7 +4,7 @@ module PactBroker
   module Matrix
     describe Service do
       describe "find" do
-        subject { Service.find(selectors, options) }
+        subject { Service.can_i_deploy(selectors, options) }
 
         # Useful for eyeballing the messages to make sure they read nicely
         after do
