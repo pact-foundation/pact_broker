@@ -1,0 +1,55 @@
+#! /usr/bin/env ruby
+
+require "sequel"
+Sequel::Model.plugin :subclasses
+
+DATABASE_CREDENTIALS = {
+  adapter: "postgres",
+  database: ENV["DATABASE"] || "postgres",
+  username: ENV["DATABASE_USERNAME"] || "postgres",
+  password: ENV["DATABASE_PASSWORD"] || "postgres",
+  host: "localhost",
+  :encoding => "utf8"
+}
+Sequel.connect(DATABASE_CREDENTIALS)
+
+$LOAD_PATH.unshift "./lib"
+$LOAD_PATH.unshift "./tasks"
+ENV["RACK_ENV"] = "development"
+require "pact_broker/db/models"
+
+def generate_erd_graphviz()
+  associations = []
+  Sequel::Model.descendents.each do |model|
+    next if model.name.nil?
+    model.associations.each do |a|
+      ar = model.association_reflection(a)
+      associations << [model.name, ar[:type], ar.associated_class.name]
+    end
+  end
+  styles = {
+    :many_to_one=>:bold,
+    :one_to_many=>:solid,
+    :many_to_many=>:dashed,
+    :one_to_one=>:dotted
+  }
+
+  graph = "digraph G {\n"
+  graph += associations.uniq.map{|c, t, ac| "  \"#{c}\" -> \"#{ac}\" [style=#{styles[t]}];"}.sort.join("\n")
+  graph += "\n}"
+
+  graph
+end
+
+puts "Usage:"
+puts "generate-erd [erd-filename]"
+puts "CAUTION: Please make sure that you have graphviz installed"
+puts
+
+GRAPHVIZ_FILENAME = ARGV[0] || "erd"
+
+puts "Generating graphviz file ..."
+File.write("#{GRAPHVIZ_FILENAME}.dot", generate_erd_graphviz())
+
+puts "Converting graphviz file to a pdf"
+`dot -Tpdf "#{GRAPHVIZ_FILENAME}.dot" > "#{GRAPHVIZ_FILENAME}.pdf"`
