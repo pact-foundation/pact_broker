@@ -168,6 +168,8 @@ module PactBroker
       def selectors_descriptions(selectors)
         if selectors.first.currently_deployed?
           currently_deployed_selectors_description(selectors)
+        elsif selectors.first.currently_supported?
+          currently_supported_selectors_description(selectors)
         else
           selectors.collect do | selector |
             selector_description(selector)
@@ -198,8 +200,9 @@ module PactBroker
                         "all #{selector.consumer} versions tagged '#{selector.tag}'"
                       elsif selector.all_for_tag?
                         "all consumer versions tagged '#{selector.tag}'"
-                      elsif selector.currently_deployed?
-                        "version(s) currently deployed to #{selector.environment.name}"
+                      elsif selector.in_environment?
+                        consumer_label = selector.consumer ? selector.consumer : "a consumer"
+                        "#{consumer_label} version in environment #{selector.environment.name}"
                       else
                         selector.to_json
                       end
@@ -212,6 +215,14 @@ module PactBroker
           display_name = consumer_name ? "version(s) of #{consumer_name}" : "consumer version(s)"
           environments_and_versions = consumer_selectors.collect{ | selector | "#{selector.environment.name} (#{selector.consumer_version.number})" }
           "#{display_name} currently deployed to #{join_unquoted(environments_and_versions)}"
+        end
+      end
+
+      def currently_supported_selectors_description(selectors)
+        selectors.group_by(&:consumer).flat_map do | consumer_name, consumer_selectors |
+          display_name = consumer_name ? "version(s) of #{consumer_name}" : "consumer version(s)"
+          environments_and_versions = consumer_selectors.collect{ | selector | "#{selector.environment.name} (#{selector.consumer_version.number})" }
+          "#{display_name} released and supported in #{join_unquoted(environments_and_versions)}"
         end
       end
 

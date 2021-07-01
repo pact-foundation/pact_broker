@@ -141,6 +141,24 @@ module PactBroker
           its(:inclusion_reason) { is_expected.to include "consumer version(s) currently deployed to test (1234)"}
         end
 
+        context "when the consumer version is released and supported in a single environment" do
+          let(:selectors) { Selectors.new(Selector.for_currently_supported("test")).resolve_for_environment(consumer_version, environment) }
+
+          its(:inclusion_reason) { is_expected.to include "consumer version(s) released and supported in test (1234)"}
+        end
+
+        context "when the consumer version is currently released/deployed in single environment" do
+          let(:selectors) { Selectors.new(Selector.for_environment("test")).resolve_for_environment(consumer_version, environment) }
+
+          its(:inclusion_reason) { is_expected.to include "a consumer version in environment test (1234)"}
+        end
+
+        context "when the verison of a specific consumer is currently released/deployed in single environment" do
+          let(:selectors) { Selectors.new(Selector.for_environment_and_consumer("test", "Foo")).resolve_for_environment(consumer_version, environment) }
+
+          its(:inclusion_reason) { is_expected.to include "Foo version in environment test (1234)"}
+        end
+
         context "when the consumer version is currently deployed to a multiple environments" do
           let(:selectors) do
             Selectors.new(

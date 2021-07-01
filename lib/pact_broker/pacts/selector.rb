@@ -33,6 +33,8 @@ module PactBroker
           :currently_deployed
         elsif currently_supported?
           :currently_supported
+        elsif in_environment?
+          :in_environment
         elsif latest_for_tag?
           :latest_for_tag
         elsif all_for_tag?
@@ -116,6 +118,10 @@ module PactBroker
         self[:environment_name]
       end
 
+      def in_environment?
+        !!environment_name
+      end
+
       def self.overall_latest
         Selector.new(latest: true)
       end
@@ -178,6 +184,10 @@ module PactBroker
 
       def self.for_environment(environment_name)
         Selector.new(environment_name: environment_name)
+      end
+
+      def self.for_environment_and_consumer(environment_name, consumer)
+        Selector.new(environment_name: environment_name, consumer: consumer)
       end
 
       def self.from_hash hash
