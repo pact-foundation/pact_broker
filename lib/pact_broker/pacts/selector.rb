@@ -5,8 +5,11 @@ module PactBroker
     class Selector < Hash
       using PactBroker::HashRefinements
 
-      def initialize(options = {})
-        merge!(options)
+      PROPERTY_NAMES = [:latest, :tag, :branch, :consumer, :consumer_version, :environment, :fallback_tag, :fallback_branch, :currently_supported, :currently_deployed]
+
+      def initialize(properties = {})
+        properties.without(*PROPERTY_NAMES).tap { |it| warn("WARN: Unsupported property for #{self.class.name}: #{it.keys.join(", ")} at #{caller[0..3]}") if it.any? }
+        merge!(properties)
       end
 
       def resolve(consumer_version)
@@ -283,8 +286,13 @@ module PactBroker
     end
 
     class ResolvedSelector < Selector
-      def initialize(options = {}, consumer_version)
-        super(options.merge(consumer_version: consumer_version))
+      using PactBroker::HashRefinements
+
+      PROPERTY_NAMES = Selector::PROPERTY_NAMES + [:consumer_version, :target]
+
+      def initialize(properties = {}, consumer_version)
+        properties.without(*PROPERTY_NAMES).tap { |it| warn("WARN: Unsupported property for #{self.class.name}: #{it.keys.join(", ")} at #{caller[0..3]}") if it.any? }
+        merge!(properties.merge(consumer_version: consumer_version))
       end
 
       def consumer_version
