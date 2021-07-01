@@ -15,6 +15,8 @@ module PactBroker
           property :name
         end
 
+        property :uuid
+
         property :description, getter: lambda { |context| context[:represented].display_description }
 
         property :consumer, :class => PactBroker::Domain::Pacticipant, default: nil do

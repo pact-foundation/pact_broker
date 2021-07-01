@@ -7,7 +7,7 @@ module PactBroker
       describe Matrix do
         before do
           allow(PactBroker::Matrix::Service).to receive(:validate_selectors).and_return(error_messages)
-          allow(PactBroker::Matrix::Service).to receive(:find).and_return([])
+          allow(PactBroker::Matrix::Service).to receive(:can_i_deploy).and_return([])
           allow(PactBroker::Matrix::ParseQuery).to receive(:call).and_return([selectors, options])
         end
 

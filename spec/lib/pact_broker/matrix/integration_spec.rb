@@ -4,7 +4,7 @@ module PactBroker
   module Matrix
     describe Service do
       describe "find" do
-        subject { Service.find(selectors, options) }
+        subject { Service.can_i_deploy(selectors, options) }
 
         # Useful for eyeballing the messages to make sure they read nicely
         # after do
@@ -167,7 +167,7 @@ module PactBroker
             { latest: true, tag: "prod", latestby: "cvp" }
           end
 
-          subject { Service.find(selectors, options) }
+          subject { Service.can_i_deploy(selectors, options) }
 
           it "allows the app to be deployed" do
             expect(subject.deployment_status_summary).to be_deployable
@@ -362,7 +362,7 @@ module PactBroker
           let(:selector_2) { UnresolvedSelector.new(pacticipant_name: "Foo", tag: "prod") }
           let(:selectors)  { [ selector_1, selector_2 ] }
 
-          subject { Service.find(selectors, options) }
+          subject { Service.can_i_deploy(selectors, options) }
 
           context "with inferred selectors" do
             let(:options) { { latest: true, tag: "prod"} }

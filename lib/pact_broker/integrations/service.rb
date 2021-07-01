@@ -21,7 +21,7 @@ module PactBroker
         # so it would be better to create a Verification::PactStatus class
         # that doesn't have the 'stale' logic in it.
         # Then we can remove the eager loading of the pact_version
-        PactBroker::Integrations::Integration
+        scope_for(PactBroker::Integrations::Integration)
           .eager(:consumer)
           .eager(:provider)
           .eager(latest_pact: [:latest_verification, :pact_version])
@@ -58,6 +58,10 @@ module PactBroker
             model.dataset.delete
           end
         end
+      end
+
+      def self.scope_for(scope)
+        PactBroker.policy_scope!(scope)
       end
     end
   end

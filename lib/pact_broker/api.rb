@@ -1,5 +1,4 @@
 require "webmachine/adapters/rack_mapped"
-require "webmachine/rack_adapter_monkey_patch"
 require "pact_broker/db/models"
 require "pact_broker/api/resources"
 require "pact_broker/api/decorators"

@@ -41,7 +41,7 @@ Pact.service_provider "Pact Broker" do
   app_version ENV["GIT_SHA"] if ENV["GIT_SHA"]
   app_version_tags [ENV["GIT_BRANCH"]] if ENV["GIT_BRANCH"]
 
-  if ENV["PACTFLOW_PACT_OSS_TOKEN"]
+  if ENV.fetch("PACTFLOW_PACT_OSS_TOKEN", "") != ""
     honours_pacts_from_pact_broker do
       pact_broker_base_url "https://pact-oss.pactflow.io", token: ENV["PACTFLOW_PACT_OSS_TOKEN"]
       consumer_version_selectors [

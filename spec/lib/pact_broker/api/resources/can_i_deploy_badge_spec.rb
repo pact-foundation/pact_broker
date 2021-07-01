@@ -11,7 +11,7 @@ module PactBroker
           allow_any_instance_of(described_class).to receive(:version_service).and_return(version_service)
           allow(badge_service).to receive(:can_i_deploy_badge_url).and_return("http://badge")
           allow(badge_service).to receive(:error_badge_url).and_return("http://error")
-          allow(matrix_service).to receive(:find).and_return(results)
+          allow(matrix_service).to receive(:can_i_deploy).and_return(results)
           allow(pacticipant_service).to receive(:find_pacticipant_by_name).and_return(pacticipant)
           allow(version_service).to receive(:find_by_pacticipant_name_and_latest_tag).and_return(version)
           allow(PactBroker.configuration).to receive(:show_backtrace_in_error_response?).and_return(false)
@@ -66,7 +66,7 @@ module PactBroker
 
         context "when there is an error" do
           before do
-            allow(matrix_service).to receive(:find).and_raise("foo error")
+            allow(matrix_service).to receive(:can_i_deploy).and_raise("foo error")
           end
 
           it "returns a redirect to a badge with an error message" do

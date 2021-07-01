@@ -2,6 +2,7 @@ require "pact_broker/logging"
 require "pact_broker/repositories"
 require "pact_broker/matrix/row"
 require "pact_broker/matrix/deployment_status_summary"
+require "pact_broker/matrix/query_results_with_deployment_status_summary"
 require "pact_broker/messages"
 require "pact_broker/string_refinements"
 
@@ -16,16 +17,20 @@ module PactBroker
       extend PactBroker::Messages
       using PactBroker::StringRefinements
 
+      def can_i_deploy(selectors, options = {})
+        # No point doing the deployment status summary if no versions are specified.
+        query_results = find(selectors, options)
+        QueryResultsWithDeploymentStatusSummary.new(query_results, DeploymentStatusSummary.new(query_results))
+      end
+
       def find selectors, options = {}
         logger.info "Querying matrix", selectors: selectors, options: options
-        query_results = matrix_repository.find selectors, options
-        # No point doing the deployment status summary if no versions are specified.
-        QueryResultsWithDeploymentStatusSummary.new(query_results, DeploymentStatusSummary.new(query_results))
+        matrix_repository.find(selectors, options)
       end
 
       def find_for_consumer_and_provider params, options = {}
         selectors = [ UnresolvedSelector.new(pacticipant_name: params[:consumer_name]), UnresolvedSelector.new(pacticipant_name: params[:provider_name]) ]
-        find(selectors, options)
+        can_i_deploy(selectors, options)
       end
 
       def find_for_consumer_and_provider_with_tags params

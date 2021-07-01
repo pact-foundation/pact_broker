@@ -8,7 +8,7 @@ module PactBroker
         include_context "stubbed services"
 
         before do
-          allow(PactBroker::Matrix::Service).to receive(:find).and_return([])
+          allow(PactBroker::Matrix::Service).to receive(:can_i_deploy).and_return([])
           allow(pacticipant_service).to receive(:find_pacticipant_by_name).and_return(pacticipant)
           allow(version_service).to receive(:find_by_pacticipant_name_and_latest_tag).and_return(version)
           allow(PactBroker::Api::Decorators::MatrixDecorator).to receive(:new).and_return(decorator)

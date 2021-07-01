@@ -1,16 +1,13 @@
-require "spec/support/test_data_builder"
-
 describe "Get matrix for consumer and provider" do
   before do
-    TestDataBuilder.new
-      .create_pact_with_hierarchy("Consumer", "1.0.0", "Provider")
+    td.create_pact_with_hierarchy("Consumer", "1.0.0", "Provider")
       .create_verification(provider_version: "4.5.6")
   end
 
   let(:path) { "/matrix/provider/Provider/consumer/Consumer" }
   let(:last_response_body) { JSON.parse(subject.body, symbolize_names: true) }
 
-  subject { get path; last_response }
+  subject { get(path) }
 
   it "returns a 200 HAL JSON response" do
     expect(subject).to be_a_hal_json_success_response

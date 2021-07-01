@@ -8,7 +8,7 @@ module PactBroker
 
         before do
           allow(pacticipant_service).to receive(:find_pacticipant_by_name).and_return(pacticipant)
-          allow(matrix_service).to receive(:find).and_return(results)
+          allow(matrix_service).to receive(:can_i_deploy).and_return(results)
           allow_any_instance_of(described_class).to receive(:matrix_service).and_return(matrix_service)
           allow(PactBroker::Api::Decorators::MatrixDecorator).to receive(:new).and_return(decorator)
         end
