@@ -107,14 +107,15 @@ module PactBroker
                       consumer_version_selectors.select(&:latest_for_tag?) +
                         consumer_version_selectors.select(&:latest_for_branch?) +
                         consumer_version_selectors.select(&:overall_latest?) +
-                        consumer_version_selectors.select(&:currently_deployed?)
+                        consumer_version_selectors.select(&:currently_deployed?) +
+                        consumer_version_selectors.select(&:currently_supported?)
                     end
 
         selectors.flat_map do | selector |
           query = scope_for(PactPublication).for_provider_and_consumer_version_selector(provider, selector)
           query.all.collect do | pact_publication |
-            resolved_selector = if selector.currently_deployed?
-                                  selector.resolve_for_environment(pact_publication.consumer_version, pact_publication.values.fetch(:environment_name))
+            resolved_selector = if selector.currently_deployed? || selector.currently_supported?
+                                  selector.resolve_for_environment(pact_publication.consumer_version, pact_publication.values.fetch(:environment_name), pact_publication.values[:target])
                                 else
                                   selector.resolve(pact_publication.consumer_version)
                                 end

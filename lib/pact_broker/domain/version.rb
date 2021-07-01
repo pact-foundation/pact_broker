@@ -89,11 +89,7 @@ module PactBroker
         end
 
         def currently_in_environment(environment_name, pacticipant_name)
-          deployed_version_query = PactBroker::Deployments::DeployedVersion.currently_deployed.for_environment_name(environment_name)
-          deployed_version_query = deployed_version_query.for_pacticipant_name(pacticipant_name) if pacticipant_name
-          supported_version_query = PactBroker::Deployments::ReleasedVersion.currently_supported.for_environment_name(environment_name)
-          supported_version_query = supported_version_query.for_pacticipant_name(pacticipant_name) if pacticipant_name
-          where(id: deployed_version_query.select(:version_id).union(supported_version_query.select(:version_id)))
+          currently_deployed_to_environment(environment_name, pacticipant_name).union(currently_supported_in_environment(environment_name, pacticipant_name))
         end
 
         def currently_deployed_to_environment(environment_name, pacticipant_name)

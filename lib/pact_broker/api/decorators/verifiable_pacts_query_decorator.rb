@@ -30,10 +30,10 @@ module PactBroker
           property :environment, setter: -> (fragment:, represented:, **) {
             represented.environment = fragment
             represented.currently_deployed = true
-            represented.currently_released = true
+            represented.currently_supported = true
           }
           property :currently_deployed
-          property :currently_released
+          property :currently_supported
         end
 
         property :include_pending_status, default: false,

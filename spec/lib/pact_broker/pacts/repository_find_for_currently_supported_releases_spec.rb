@@ -14,100 +14,100 @@ module PactBroker
 
         subject { Repository.new.find_for_verification("Bar", consumer_version_selectors) }
 
-        context "when currently_deployed is true" do
+        context "when currently_supported is true" do
           before do
             td.create_environment("test")
               .create_pact_with_hierarchy("Foo", "1", "Bar")
-              .create_deployed_version_for_consumer_version(currently_deployed: false)
+              .create_released_version_for_consumer_version(currently_supported: false)
               .create_pact_with_hierarchy("Foo", "2", "Bar")
-              .create_deployed_version_for_consumer_version(currently_deployed: true, target: "1")
+              .create_released_version_for_consumer_version(currently_supported: true)
               .create_pact_with_hierarchy("Waffle", "3", "Bar")
               .create_pact_with_hierarchy("Waffle", "4", "Bar")
-              .create_deployed_version_for_consumer_version(currently_deployed: true, target: "2")
+              .create_released_version_for_consumer_version(currently_supported: true)
           end
 
           let(:consumer_version_selectors) do
             PactBroker::Pacts::Selectors.new(
-              PactBroker::Pacts::Selector.for_currently_deployed
+              PactBroker::Pacts::Selector.for_currently_supported
             )
           end
 
-          it "returns the pacts for the currently deployed versions" do
+          it "returns the pacts for the currently supported versions" do
             expect(subject.size).to eq 2
-            expect(subject.first.selectors).to eq [PactBroker::Pacts::Selector.for_currently_deployed.resolve_for_environment(td.find_version("Foo", "2"), "test", "1")]
-            expect(subject.last.selectors).to eq [PactBroker::Pacts::Selector.for_currently_deployed.resolve_for_environment(td.find_version("Waffle", "4"), "test", "2")]
+            expect(subject.first.selectors).to eq [PactBroker::Pacts::Selector.for_currently_supported.resolve_for_environment(td.find_version("Foo", "2"), "test")]
+            expect(subject.last.selectors).to eq [PactBroker::Pacts::Selector.for_currently_supported.resolve_for_environment(td.find_version("Waffle", "4"), "test")]
           end
         end
 
-        context "when currently_deployed is true and an environment is specified" do
+        context "when currently_supported is true and an environment is specified" do
           before do
             td.create_environment("test")
               .create_pact_with_hierarchy("Foo", "1", "Bar")
-              .create_deployed_version_for_consumer_version(currently_deployed: false)
+              .create_released_version_for_consumer_version(currently_supported: false)
               .create_pact_with_hierarchy("Foo", "2", "Bar")
-              .create_deployed_version_for_consumer_version(currently_deployed: true)
+              .create_released_version_for_consumer_version(currently_supported: true)
               .create_pact_with_hierarchy("Waffle", "3", "Bar")
               .create_pact_with_hierarchy("Waffle", "4", "Bar")
-              .create_deployed_version_for_consumer_version(currently_deployed: true)
+              .create_released_version_for_consumer_version(currently_supported: true)
               .create_environment("prod")
               .create_pact_with_hierarchy("Foo", "5", "Bar")
               .comment("not included, wrong environment")
-              .create_deployed_version_for_consumer_version(currently_deployed: true)
+              .create_released_version_for_consumer_version(currently_supported: true)
           end
 
           let(:consumer_version_selectors) do
             PactBroker::Pacts::Selectors.new(
-              PactBroker::Pacts::Selector.for_currently_deployed("test")
+              PactBroker::Pacts::Selector.for_currently_supported("test")
             )
           end
 
-          it "returns the pacts for the currently deployed versions" do
+          it "returns the pacts for the currently supported versions" do
             expect(subject.size).to eq 2
-            expect(subject.first.selectors).to eq [PactBroker::Pacts::Selector.for_currently_deployed("test").resolve(td.find_version("Foo", "2"))]
-            expect(subject.last.selectors).to eq [PactBroker::Pacts::Selector.for_currently_deployed("test").resolve(td.find_version("Waffle", "4"))]
+            expect(subject.first.selectors).to eq [PactBroker::Pacts::Selector.for_currently_supported("test").resolve(td.find_version("Foo", "2"))]
+            expect(subject.last.selectors).to eq [PactBroker::Pacts::Selector.for_currently_supported("test").resolve(td.find_version("Waffle", "4"))]
           end
         end
 
-        context "when currently_deployed is true and an environment is and consumer specified" do
+        context "when currently_supported is true and an environment is and consumer specified" do
           before do
             td.create_environment("test")
               .create_pact_with_hierarchy("Foo", "1", "Bar")
-              .create_deployed_version_for_consumer_version(currently_deployed: false)
+              .create_released_version_for_consumer_version(currently_supported: false)
               .create_pact_with_hierarchy("Foo", "2", "Bar")
-              .create_deployed_version_for_consumer_version(currently_deployed: true)
+              .create_released_version_for_consumer_version(currently_supported: true)
               .create_pact_with_hierarchy("Waffle", "3", "Bar")
               .create_pact_with_hierarchy("Waffle", "4", "Bar")
-              .create_deployed_version_for_consumer_version(currently_deployed: true)
+              .create_released_version_for_consumer_version(currently_supported: true)
               .create_environment("prod")
               .create_pact_with_hierarchy("Foo", "5", "Bar")
               .comment("not included, wrong environment")
-              .create_deployed_version_for_consumer_version(currently_deployed: true)
+              .create_released_version_for_consumer_version(currently_supported: true)
           end
 
           let(:consumer_version_selectors) do
             PactBroker::Pacts::Selectors.new(
-              PactBroker::Pacts::Selector.for_currently_deployed_and_environment_and_consumer("test", "Foo")
+              PactBroker::Pacts::Selector.for_currently_supported_and_environment_and_consumer("test", "Foo")
             )
           end
 
-          it "returns the pacts for the currently deployed versions" do
+          it "returns the pacts for the currently supported versions" do
             expect(subject.size).to eq 1
-            expect(subject.first.selectors).to eq [PactBroker::Pacts::Selector.for_currently_deployed_and_environment_and_consumer("test", "Foo").resolve(td.find_version("Foo", "2"))]
+            expect(subject.first.selectors).to eq [PactBroker::Pacts::Selector.for_currently_supported_and_environment_and_consumer("test", "Foo").resolve(td.find_version("Foo", "2"))]
           end
         end
 
-        context "when the same version is deployed to multiple environments" do
+        context "when the same version is supported in multiple environments" do
           before do
             td.create_environment("test")
               .create_environment("prod")
               .create_pact_with_hierarchy("Foo", "1", "Bar")
-              .create_deployed_version_for_consumer_version(environment_name: "test")
-              .create_deployed_version_for_consumer_version(environment_name: "prod")
+              .create_released_version_for_consumer_version(environment_name: "test")
+              .create_released_version_for_consumer_version(environment_name: "prod")
           end
 
           let(:consumer_version_selectors) do
             PactBroker::Pacts::Selectors.new(
-              PactBroker::Pacts::Selector.for_currently_deployed
+              PactBroker::Pacts::Selector.for_currently_supported
             )
           end
 

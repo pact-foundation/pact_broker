@@ -17,8 +17,8 @@ module PactBroker
         ResolvedSelector.new(self.to_h, consumer_version)
       end
 
-      def resolve_for_environment(consumer_version, environment)
-        ResolvedSelector.new(self.to_h.merge(environment: environment), consumer_version)
+      def resolve_for_environment(consumer_version, environment, target = nil)
+        ResolvedSelector.new(self.to_h.merge({ environment: environment, target: target }.compact), consumer_version)
       end
 
       # Only currently used to identify the currently_deployed from the others in
@@ -167,6 +167,10 @@ module PactBroker
 
       def self.for_currently_deployed_and_environment_and_consumer(environment, consumer)
         Selector.new(currently_deployed: true, environment: environment, consumer: consumer)
+      end
+
+      def self.for_currently_supported_and_environment_and_consumer(environment, consumer)
+        Selector.new(currently_supported: true, environment: environment, consumer: consumer)
       end
 
       def self.from_hash hash
