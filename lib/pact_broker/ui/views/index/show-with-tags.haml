@@ -44,19 +44,19 @@
                 - if index_item.display_consumer_version_number
                   %button.clippy.invisible{ title: "Copy to clipboard" }
                     %span.copy-icon
-              - if index_item.latest?
-                .tag.badge.badge-success
-                  latest
               - if index_item.consumer_version_branch
                 - branch_class = index_item.latest_for_branch? ? "tag badge badge-dark" : "tag badge badge-secondary"
                 %div{"class": branch_class}
-                  = "[" + index_item.consumer_version_branch + "]"
-              - index_item.consumer_version_environment_names.each do | environment_name |
-                .tag.badge.badge-danger
-                  = environment_name
+                  = "branch: " + index_item.consumer_version_branch
               - index_item.consumer_version_latest_tag_names.each do | tag_name |
                 .tag.badge.badge-primary
-                  = tag_name
+                  = "tag: " + tag_name
+              - index_item.consumer_version_environment_names.each do | environment_name |
+                .tag.badge.badge-success
+                  = "env: " + environment_name
+              - if index_item.latest?
+                .tag.badge.bg-light
+                  latest
             %td.pact
               %span.pact
                 %a{ href: index_item.pact_url, title: "View pact" }
@@ -74,13 +74,13 @@
               - if index_item.provider_version_branch
                 - branch_class = "tag badge badge-dark"
                 %div{"class": branch_class}
-                  = "[" + index_item.provider_version_branch + "]"
-              - index_item.provider_version_environment_names.each do | environment_name |
-                .tag.badge.badge-danger
-                  = environment_name
+                  = "branch: " + index_item.provider_version_branch
               - index_item.provider_version_latest_tag_names.each do | tag_name |
                 .tag.badge.badge-primary
-                  = tag_name
+                  = "tag: " + tag_name
+              - index_item.provider_version_environment_names.each do | environment_name |
+                .tag.badge.badge-success
+                  = "env: " + environment_name
             %td{"data-text": index_item.publication_date_of_latest_pact_order}
               = index_item.publication_date_of_latest_pact.gsub("about ", "")
             %td{ class: "table-#{index_item.webhook_status}" }
