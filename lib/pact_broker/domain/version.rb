@@ -33,6 +33,9 @@ module PactBroker
       one_to_many :current_deployed_versions, class: "PactBroker::Deployments::DeployedVersion", key: :version_id, primary_key: :id, order: [:created_at, :id] do | ds |
         ds.currently_deployed
       end
+      one_to_many :current_supported_released_versions, class: "PactBroker::Deployments::ReleasedVersion", key: :version_id, primary_key: :id, order: [:created_at, :id] do | ds |
+        ds.currently_supported
+      end
 
       one_to_many :deployed_versions, class: "PactBroker::Deployments::DeployedVersion", key: :version_id, primary_key: :id, order: [:created_at, :id]
 

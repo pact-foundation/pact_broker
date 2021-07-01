@@ -132,11 +132,11 @@
                 - branch_class = line.consumer_version_latest_for_branch? ? "tag badge badge-dark" : "tag badge badge-secondary"
                 %div{"class": branch_class}
                   = "[" + line.consumer_version_branch + "]"
-            - line.consumer_deployed_versions.each do | deployed_version |
-              .tag-parent{"title": deployed_version.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
-                %a{href: deployed_version.url}
+            - line.consumer_versions_in_environments.each do | version_in_environment |
+              .tag-parent{"title": version_in_environment.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
+                %a{href: version_in_environment.url}
                   .tag.badge.badge-danger
-                    = deployed_version.environment_name
+                    = version_in_environment.environment_name
             - line.latest_consumer_version_tags.each do | tag |
               .tag-parent{"title": tag.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
                 %a{href: tag.url}
@@ -169,11 +169,11 @@
                 - branch_class = line.provider_version_latest_for_branch? ? "tag badge badge-dark" : "tag badge badge-secondary"
                 %div{"class": branch_class}
                   = "[" + line.provider_version_branch + "]"
-            - line.provider_deployed_versions.each do | deployed_version |
-              .tag-parent{"title": deployed_version.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
-                %a{href: deployed_version.url}
+            - line.provider_versions_in_environments.each do | version_in_environment |
+              .tag-parent{"title": version_in_environment.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
+                %a{href: version_in_environment.url}
                   .tag.badge.badge-danger
-                    = deployed_version.environment_name
+                    = version_in_environment.environment_name
             - line.latest_provider_version_tags.each do | tag |
               .tag-parent{"title": tag.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
                 %a{href: tag.url}

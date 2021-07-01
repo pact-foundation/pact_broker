@@ -69,9 +69,18 @@ module PactBroker
       end
 
       def record_deployment(pacticipant:, version:, environment_name:)
-        puts "Recoding deployment of #{pacticipant} version #{version} to #{environment_name}"
+        puts "Recording deployment of #{pacticipant} version #{version} to #{environment_name}"
         version_body = client.get("/pacticipants/#{encode(pacticipant)}/versions/#{encode(version)}").tap { |response| check_for_error(response) }.body
         environment_relation = version_body["_links"]["pb:record-deployment"].find { |relation| relation["name"] == environment_name }
+        client.post(environment_relation["href"], { replacedPreviousDeployedVersion: true }).tap { |response| check_for_error(response) }
+        separate
+        self
+      end
+
+      def record_release(pacticipant:, version:, environment_name:)
+        puts "Recording release of #{pacticipant} version #{version} to #{environment_name}"
+        version_body = client.get("/pacticipants/#{encode(pacticipant)}/versions/#{encode(version)}").tap { |response| check_for_error(response) }.body
+        environment_relation = version_body["_links"]["pb:record-release"].find { |relation| relation["name"] == environment_name }
         client.post(environment_relation["href"], { replacedPreviousDeployedVersion: true }).tap { |response| check_for_error(response) }
         separate
         self

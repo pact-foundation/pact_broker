@@ -3,6 +3,7 @@ require "pact_broker/ui/helpers/url_helper"
 require "pact_broker/date_helper"
 require "pact_broker/ui/view_models/matrix_tag"
 require "pact_broker/ui/view_models/matrix_deployed_version"
+require "pact_broker/ui/view_models/matrix_released_version"
 require "pact_broker/versions/abbreviate_number"
 require "pact_broker/messages"
 require "forwardable"
@@ -132,16 +133,12 @@ module PactBroker
             .collect{ | tag | MatrixTag.new(tag.to_hash.merge(pacticipant_name: consumer_name, version_number: consumer_version_number)) }
         end
 
-        def consumer_deployed_versions
-          @line.consumer_version.current_deployed_versions.collect do | deployed_version |
-            MatrixDeployedVersion.new(deployed_version)
-          end
+        def consumer_versions_in_environments
+          consumer_deployed_versions + consumer_released_versions
         end
 
-        def provider_deployed_versions
-          (@line.provider_version&.current_deployed_versions || []).collect do | deployed_version |
-            MatrixDeployedVersion.new(deployed_version)
-          end
+        def provider_versions_in_environments
+          provider_deployed_versions + provider_released_versions
         end
 
         def latest_provider_version_tags
@@ -234,6 +231,30 @@ module PactBroker
             "This is the latest version of #{pacticipant_name} from branch \"#{branch}\"."
           else
             "A more recent version of #{pacticipant_name} from branch \"#{branch}\" exists."
+          end
+        end
+
+        def consumer_deployed_versions
+          @line.consumer_version.current_deployed_versions.collect do | deployed_version |
+            MatrixDeployedVersion.new(deployed_version)
+          end
+        end
+
+        def consumer_released_versions
+          @line.consumer_version.current_supported_released_versions.collect do | released_version |
+            MatrixReleasedVersion.new(released_version)
+          end
+        end
+
+        def provider_deployed_versions
+          (@line.provider_version&.current_deployed_versions || []).collect do | deployed_version |
+            MatrixDeployedVersion.new(deployed_version)
+          end
+        end
+
+        def provider_released_versions
+          (@line.provider_version&.current_supported_released_versions || []).collect do | released_version |
+            MatrixReleasedVersion.new(released_version)
           end
         end
       end
