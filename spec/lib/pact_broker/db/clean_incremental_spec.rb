@@ -4,7 +4,7 @@ require "pact_broker/matrix/unresolved_selector"
 module PactBroker
   module DB
     # Inner queries don't work on MySQL. Seriously, MySQL???
-    describe CleanIncremental, skip: true  do
+    describe CleanIncremental do
 
       def pact_publication_count_for(consumer_name, version_number)
         PactBroker::Pacts::PactPublication.where(consumer_version: PactBroker::Domain::Version.where_pacticipant_name(consumer_name).where(number: version_number)).count
@@ -24,7 +24,8 @@ module PactBroker
       describe ".call"do
         context "when there are specified versions to keep" do
           before do
-            td.create_pact_with_hierarchy("Foo", "1", "Bar")
+            td.create_environment("test")
+              .create_pact_with_hierarchy("Foo", "1", "Bar")
               .create_webhook
               .create_triggered_webhook
               .create_webhook_execution
@@ -37,6 +38,7 @@ module PactBroker
               .create_pact
               .add_day
               .create_consumer_version("4", tag_names: %w{dev}).comment("DELETE as not latest")
+              .create_deployed_version_for_consumer_version
               .create_pact
               .add_day
               .create_consumer_version("5", tag_names: %w{dev}).comment("keep as latest dev")
@@ -47,6 +49,7 @@ module PactBroker
               .add_day
               .create_consumer_version("7").comment("keep as deletion limit is 3")
               .create_pact
+
           end
 
           let(:options) { { keep: [all_prod_selector, latest_dev_selector], limit: limit, dry_run: dry_run } }
