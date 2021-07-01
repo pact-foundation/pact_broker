@@ -25,7 +25,7 @@ class HalRelationProxyApp
     "/PLACEHOLDER-DEPLOYED-VERSION-ff3adecf-cfc5-4653-a4e3-f1861092f8e0" =>
       "/deployed-versions/ff3adecf-cfc5-4653-a4e3-f1861092f8e0",
     "/PLACEHOLDER-ENVIRONMENT-CURRENTLY-DEPLOYED-16926ef3-590f-4e3f-838e-719717aa88c9" =>
-      "/environments/16926ef3-590f-4e3f-838e-719717aa88c9/currently-deployed-versions",
+      "/environments/16926ef3-590f-4e3f-838e-719717aa88c9/deployed-versions/currently-deployed",
     "/HAL-REL-PLACEHOLDER-PB-ENVIRONMENT-16926ef3-590f-4e3f-838e-719717aa88c9" =>
       "/environments/16926ef3-590f-4e3f-838e-719717aa88c9"
   }
