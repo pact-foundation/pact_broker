@@ -11,6 +11,7 @@ module PactBroker
             o = OpenStruct.new(selector_hash)
             o.specify_latest_tag = (o.tag && o.latest) ? "checked" : nil
             o.specify_latest_branch = (o.branch && o.latest) ? "checked" : nil
+            o.specify_environment = o.environment_name ? "checked" : nil
             o.specify_all_tagged = (o.tag && !o.latest) ? "checked" : nil
             o.specify_latest = o.latest ? "checked" : nil
             o.specify_version = o.pacticipant_version_number ? "checked" : nil

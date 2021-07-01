@@ -42,14 +42,19 @@
                 Version number ...
               %option{ value: 'specify-latest-branch', selected: selector.specify_latest_branch }
                 Latest version from branch ...
+              %option{ value: 'specify-environment', selected: selector.specify_environment }
+                Version(s) in environment ...
               %option{ value: 'specify-latest-tag', selected: selector.specify_latest_tag }
                 Latest version with tag ...
               %option{ value: 'specify-all-tagged', selected: selector.specify_all_tagged }
                 All versions with tag...
 
+
             %input{name: 'q[]version', type: 'text', id: "pacticipant#{index}_version", class: 'version', value: selector.pacticipant_version_number}
 
             %input{name: 'q[]branch', type: 'text', id: "pacticipant#{index}_branch", class: 'branch', value: selector.branch}
+
+            %input{name: 'q[]environment', type: 'text', id: "pacticipant#{index}_environment", class: 'environment', value: selector.environment_name}
 
             %input{name: 'q[]tag', type: 'text', id: "pacticipant#{index}_tag", class: 'tag', value: selector.tag}
 

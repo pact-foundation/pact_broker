@@ -20,25 +20,22 @@ function toggleLatestFlag(selectBox, enabled) {
 
 function showApplicableTextBoxes(selectorizor) {
   var selectorizorType = selectorizor.val();
+  setTextboxVisibility(selectorizor, '.version', false);
+  setTextboxVisibility(selectorizor, '.branch', false);
+  setTextboxVisibility(selectorizor, '.environment', false);
+  setTextboxVisibility(selectorizor, '.tag', false);
+
   if( selectorizorType === 'specify-version') {
     setTextboxVisibility(selectorizor, '.version', true);
-    setTextboxVisibility(selectorizor, '.branch', false);
-    setTextboxVisibility(selectorizor, '.tag', false);
   }
   else if( selectorizorType === 'specify-latest-tag' || selectorizorType === 'specify-all-tagged') {
-    setTextboxVisibility(selectorizor, '.version', false);
-    setTextboxVisibility(selectorizor, '.branch', false);
     setTextboxVisibility(selectorizor, '.tag', true);
   }
   else if( selectorizorType === 'specify-latest-branch') {
-    setTextboxVisibility(selectorizor, '.version', false);
     setTextboxVisibility(selectorizor, '.branch', true);
-    setTextboxVisibility(selectorizor, '.tag', false);
   }
-  else if ( selectorizorType === 'specify-all-versions' || selectorizorType === 'specify-latest') {
-    setTextboxVisibility(selectorizor, '.version', false);
-    setTextboxVisibility(selectorizor, '.branch', false);
-    setTextboxVisibility(selectorizor, '.tag', false);
+  else if ( selectorizorType === 'specify-environment') {
+    setTextboxVisibility(selectorizor, '.environment', true);
   }
 
   if (selectorizorType === 'specify-latest' || selectorizorType === 'specify-latest-tag' || selectorizorType === 'specify-latest-branch') {

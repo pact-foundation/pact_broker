@@ -64,6 +64,7 @@ module PactBroker
         p.latest = true if i["latest"] == "true"
         p.branch = i["branch"] if i["branch"] && i["branch"] != ""
         p.tag = i["tag"] if i["tag"] && i["tag"] != ""
+        p.environment_name = i["environment"] if i["environment"] && i["environment"] != ""
         p
       end
       # rubocop: enable Metrics/CyclomaticComplexity
