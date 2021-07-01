@@ -27,13 +27,9 @@ module PactBroker
           property :fallback_tag
           property :fallback_branch
           property :consumer
-          property :environment, setter: -> (fragment:, represented:, **) {
-            represented.environment = fragment
-            represented.currently_deployed = true
-            represented.currently_supported = true
-          }
+          property :environment
           property :currently_deployed
-          property :currently_supported
+          property :currently_supported, as: :currently_supported_releases
         end
 
         property :include_pending_status, default: false,

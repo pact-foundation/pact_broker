@@ -7,6 +7,34 @@ module PactBroker
 
         subject { PactPublication.for_provider_and_consumer_version_selector(provider, consumer_version_selector).all }
 
+        context "for environment" do
+          before do
+            td.create_environment("test")
+              .create_consumer("Foo")
+              .create_provider("Bar")
+              .create_consumer_version("1")
+              .create_pact
+              .create_deployed_version_for_consumer_version(currently_deployed: false)
+              .create_deployed_version_for_consumer_version(target: "ipad-1")
+              .create_deployed_version_for_consumer_version(target: "iphone-1")
+              .create_released_version_for_consumer_version
+          end
+
+          let(:provider) { td.find_pacticipant("Bar") }
+          let(:consumer_version_selector) { Selector.for_environment("test") }
+
+          context "when a version is deployed and released" do
+            it "returns the deployed and released pacts" do
+              expect(subject.size).to eq 3
+              expect(subject.collect { |p| p.values[:environment_name] }).to eq ["test", "test", "test"]
+              targets = subject.collect{ |p| p.values[:target] }
+              expect(targets).to include nil
+              expect(targets).to include "ipad-1"
+              expect(targets).to include "iphone-1"
+            end
+          end
+        end
+
         context "for currently deployed versions" do
           before do
             td.create_environment("test")

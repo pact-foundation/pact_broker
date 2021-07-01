@@ -173,6 +173,10 @@ module PactBroker
         Selector.new(currently_supported: true, environment: environment, consumer: consumer)
       end
 
+      def self.for_environment(environment)
+        Selector.new(environment: environment)
+      end
+
       def self.from_hash hash
         Selector.new(hash)
       end
