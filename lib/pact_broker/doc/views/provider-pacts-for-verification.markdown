@@ -10,7 +10,7 @@ Returns a deduplicated list of pacts to be verified by the specified provider.
 
 ### Body
 
-Example: This data structure represents the way a user might specify "I want to verify the latest 'main' pact, all the pacts for the consumer versionst that are currently deployed, and when I publish the verification results, the provider version will be be on the "main" branch.
+Example: This data structure represents the way a user might specify "I want to verify the latest 'main' pact, all the pacts for the consumer versions that are currently deployed, and when I publish the verification results, the provider version will be be on the "main" branch.
 
     {
       "consumerVersionSelectors": [
@@ -18,7 +18,7 @@ Example: This data structure represents the way a user might specify "I want to 
           "branch": "main"
         },
         {
-          "currentlyDeployed": true
+          "deployed": true
         }
       ],
       "providerVersionBranch": "main",
@@ -30,9 +30,11 @@ Example: This data structure represents the way a user might specify "I want to 
 
 `consumerVersionSelectors.fallbackBranch`: the name of the branch to fallback to if the specified `branch` does not exist. This is useful when the consumer and provider use matching branch names to coordinate the development of new features.
 
-`consumerVersionSelectors.currentlyDeployed`: if the key is specified, can only be set to `true`. Returns the pacts for all versions of the consumer that are currently deployed to any environment. Use of this selector requires that the deployment of the consumer application is recorded in the Pact Broker using the `pact-broker record-deployment` CLI.
+`consumerVersionSelectors.deployed`: if the key is specified, can only be set to `true`. Returns the pacts for all versions of the consumer that are currently deployed to any environment. Use of this selector requires that the deployment of the consumer application is recorded in the Pact Broker using the `pact-broker record-deployment` CLI.
 
-`consumerVersionSelectors.environment`: the name of the environment containing the consumer versions for which to return the pacts. Used to further qualify `{ "currentlyDeployed": true }`. Normally, this would not be needed, as it is recommended to verify the pacts for all currently deployed versions. If the `environment` is set, `currentlyDeployed` must be set to `true`, or the key ommitted (in which case it will be inferred to be `true`).
+`consumerVersionSelectors.released`: if the key is specified, can only be set to `true`. Returns the pacts for all versions of the consumer that are released and currently supported in any environment. Use of this selector requires that the deployment of the consumer application is recorded in the Pact Broker using the `pact-broker record-release` CLI.
+
+`consumerVersionSelectors.environment`: the name of the environment containing the consumer versions for which to return the pacts. Used to further qualify `{ "deployed": true }` or `{ "released": true }`. Normally, this would not be needed, as it is recommended to verify the pacts for all currently deployed/currently supported released versions.
 
 `consumerVersionSelectors.latest`: true. Used in conjuction with the `tag` and `branch` properties. When used with a `branch`, it may be `true` or the key ommitted (in which case it will be inferred to be `true`). This is because it only makes sense to verify the latest pact for a branch. If a `tag` is specified, and `latest` is `true`, then the latest pact for each of the consumers with that tag will be returned. If a `tag` is specified and the latest flag is *not* set to `true`, *all* the pacts with the specified tag will be returned. (This might seem a bit weird, but it's done this way to match the syntax used for the matrix query params. See https://docs.pact.io/selectors). 
 

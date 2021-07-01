@@ -11,7 +11,8 @@ module PactBroker
           fallbackTag: "fallbackTag",
           fallbackBranch: "fallbackBranch",
           environment: "environment",
-          currentlyDeployed: true,
+          deployed: true,
+          released: true,
           consumer: "consumer"
         }
 
@@ -24,8 +25,10 @@ module PactBroker
           [:branch, :latest, :fallbackBranch],
           [:branch, :fallbackBranch],
           [:environment],
-          [:environment, :currentlyDeployed],
-          [:currentlyDeployed],
+          [:environment, :deployed],
+          [:environment, :released],
+          [:deployed],
+          [:released],
         ]
 
         VALID_KEY_COMBINATIONS.each do | valid_key_combination |

@@ -28,8 +28,8 @@ module PactBroker
           property :fallback_branch
           property :consumer
           property :environment
-          property :currently_deployed
-          property :currently_supported, as: :currently_supported_releases
+          property :currently_deployed, as: :deployed
+          property :currently_supported, as: :released
         end
 
         property :include_pending_status, default: false,

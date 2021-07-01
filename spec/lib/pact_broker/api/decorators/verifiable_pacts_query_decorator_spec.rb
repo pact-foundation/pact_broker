@@ -92,26 +92,25 @@ module PactBroker
             end
           end
 
-          context "when an environment is specified and currentlySupportedReleases is specified" do
+          context "when an environment is specified and released is true" do
             let(:consumer_version_selectors) do
-              [{ "environment" => "prod", "currentlySupportedReleases" => true }]
+              [{ "environment" => "prod", "released" => true }]
             end
 
-            it "sets the currently_supported to true and currently_deployed to nil" do
+            it "sets the currently_supported to true" do
               expect(subject.consumer_version_selectors.first.environment).to eq "prod"
               expect(subject.consumer_version_selectors.first.currently_supported).to be true
             end
           end
 
-          context "when an environment is specified and currentlyDeployed is true" do
+          context "when an environment is specified and deployed is true" do
             let(:consumer_version_selectors) do
-              [{ "environment" => "prod", "currentlyDeployed" => true }]
+              [{ "environment" => "prod", "deployed" => true }]
             end
 
-            it "sets the currently_deployed to true and currently_supported to nil" do
+            it "sets the currently_deployed to true" do
               expect(subject.consumer_version_selectors.first.environment).to eq "prod"
               expect(subject.consumer_version_selectors.first.currently_deployed).to be true
-              expect(subject.consumer_version_selectors.first.currently_supported).to be nil
             end
           end
         end
