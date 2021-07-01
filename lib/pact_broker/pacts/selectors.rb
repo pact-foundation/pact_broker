@@ -35,6 +35,10 @@ module PactBroker
         Selectors.new(collect{ |selector| selector.resolve(consumer_version) })
       end
 
+      def resolve_for_environment(consumer_version, environment)
+        Selectors.new(collect{ |selector| selector.resolve_for_environment(consumer_version, environment) })
+      end
+
       def + other
         Selectors.new(super)
       end

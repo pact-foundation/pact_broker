@@ -199,7 +199,7 @@ module PactBroker
                       elsif selector.all_for_tag?
                         "all consumer versions tagged '#{selector.tag}'"
                       elsif selector.currently_deployed?
-                        "version(s) currently deployed to #{selector.environment}"
+                        "version(s) currently deployed to #{selector.environment.name}"
                       else
                         selector.to_json
                       end
@@ -210,7 +210,7 @@ module PactBroker
       def currently_deployed_selectors_description(selectors)
         selectors.group_by(&:consumer).flat_map do | consumer_name, consumer_selectors |
           display_name = consumer_name ? "version(s) of #{consumer_name}" : "consumer version(s)"
-          environments_and_versions = consumer_selectors.collect{ | selector | "#{selector.environment} (#{selector.consumer_version.number})" }
+          environments_and_versions = consumer_selectors.collect{ | selector | "#{selector.environment.name} (#{selector.consumer_version.number})" }
           "#{display_name} currently deployed to #{join_unquoted(environments_and_versions)}"
         end
       end
@@ -241,7 +241,7 @@ module PactBroker
         elsif selector.tag
           "one of #{selector.tag}"
         elsif selector.currently_deployed?
-          "deployed to #{selector.environment}"
+          "deployed to #{selector.environment.name}"
         else
           selector.to_json
         end

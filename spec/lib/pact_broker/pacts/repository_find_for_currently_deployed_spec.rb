@@ -34,8 +34,8 @@ module PactBroker
 
           it "returns the pacts for the currently deployed versions" do
             expect(subject.size).to eq 2
-            expect(subject.first.selectors).to eq [PactBroker::Pacts::Selector.for_currently_deployed.resolve_for_environment(td.find_version("Foo", "2"), "test", "1")]
-            expect(subject.last.selectors).to eq [PactBroker::Pacts::Selector.for_currently_deployed.resolve_for_environment(td.find_version("Waffle", "4"), "test", "2")]
+            expect(subject.first.selectors).to eq [PactBroker::Pacts::Selector.for_currently_deployed.resolve_for_environment(td.find_version("Foo", "2"), td.find_environment("test"), "1")]
+            expect(subject.last.selectors).to eq [PactBroker::Pacts::Selector.for_currently_deployed.resolve_for_environment(td.find_version("Waffle", "4"), td.find_environment("test"), "2")]
           end
         end
 
@@ -63,8 +63,8 @@ module PactBroker
 
           it "returns the pacts for the currently deployed versions" do
             expect(subject.size).to eq 2
-            expect(subject.first.selectors).to eq [PactBroker::Pacts::Selector.for_currently_deployed("test").resolve(td.find_version("Foo", "2"))]
-            expect(subject.last.selectors).to eq [PactBroker::Pacts::Selector.for_currently_deployed("test").resolve(td.find_version("Waffle", "4"))]
+            expect(subject.first.selectors).to eq [PactBroker::Pacts::Selector.for_currently_deployed("test").resolve_for_environment(td.find_version("Foo", "2"), td.find_environment("test"))]
+            expect(subject.last.selectors).to eq [PactBroker::Pacts::Selector.for_currently_deployed("test").resolve_for_environment(td.find_version("Waffle", "4"), td.find_environment("test"))]
           end
         end
 
@@ -92,7 +92,7 @@ module PactBroker
 
           it "returns the pacts for the currently deployed versions" do
             expect(subject.size).to eq 1
-            expect(subject.first.selectors).to eq [PactBroker::Pacts::Selector.for_currently_deployed_and_environment_and_consumer("test", "Foo").resolve(td.find_version("Foo", "2"))]
+            expect(subject.first.selectors.first).to eq consumer_version_selectors.first.resolve_for_environment(td.find_version("Foo", "2"), td.find_environment("test"))
           end
         end
 
@@ -114,8 +114,8 @@ module PactBroker
           it "returns one pact_publication with multiple selectors" do
             expect(subject.size).to eq 1
             expect(subject.first.selectors.size).to eq 2
-            expect(subject.first.selectors.first.environment).to eq "test"
-            expect(subject.first.selectors.last.environment).to eq "prod"
+            expect(subject.first.selectors.first.environment.name).to eq "test"
+            expect(subject.first.selectors.last.environment.name).to eq "prod"
           end
         end
       end

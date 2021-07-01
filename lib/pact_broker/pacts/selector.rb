@@ -5,7 +5,7 @@ module PactBroker
     class Selector < Hash
       using PactBroker::HashRefinements
 
-      PROPERTY_NAMES = [:latest, :tag, :branch, :consumer, :consumer_version, :environment, :fallback_tag, :fallback_branch, :currently_supported, :currently_deployed]
+      PROPERTY_NAMES = [:latest, :tag, :branch, :consumer, :consumer_version, :environment_name, :fallback_tag, :fallback_branch, :currently_supported, :currently_deployed]
 
       def initialize(properties = {})
         properties.without(*PROPERTY_NAMES).tap { |it| warn("WARN: Unsupported property for #{self.class.name}: #{it.keys.join(", ")} at #{caller[0..3]}") if it.any? }
@@ -108,12 +108,12 @@ module PactBroker
         currently_supported
       end
 
-      def environment= environment
-        self[:environment] = environment
+      def environment_name= environment_name
+        self[:environment_name] = environment_name
       end
 
-      def environment
-        self[:environment]
+      def environment_name
+        self[:environment_name]
       end
 
       def self.overall_latest
@@ -156,28 +156,28 @@ module PactBroker
         Selector.new(latest: true, consumer: consumer)
       end
 
-      def self.for_currently_deployed(environment = nil)
-        Selector.new( { currently_deployed: true, environment: environment }.compact )
+      def self.for_currently_deployed(environment_name = nil)
+        Selector.new( { currently_deployed: true, environment_name: environment_name }.compact )
       end
 
-      def self.for_currently_supported(environment = nil)
-        Selector.new( { currently_supported: true, environment: environment }.compact )
+      def self.for_currently_supported(environment_name = nil)
+        Selector.new( { currently_supported: true, environment_name: environment_name }.compact )
       end
 
       def self.for_currently_deployed_and_consumer(consumer)
         Selector.new(currently_deployed: true, consumer: consumer)
       end
 
-      def self.for_currently_deployed_and_environment_and_consumer(environment, consumer)
-        Selector.new(currently_deployed: true, environment: environment, consumer: consumer)
+      def self.for_currently_deployed_and_environment_and_consumer(environment_name, consumer)
+        Selector.new(currently_deployed: true, environment_name: environment_name, consumer: consumer)
       end
 
-      def self.for_currently_supported_and_environment_and_consumer(environment, consumer)
-        Selector.new(currently_supported: true, environment: environment, consumer: consumer)
+      def self.for_currently_supported_and_environment_and_consumer(environment_name, consumer)
+        Selector.new(currently_supported: true, environment_name: environment_name, consumer: consumer)
       end
 
-      def self.for_environment(environment)
-        Selector.new(environment: environment)
+      def self.for_environment(environment_name)
+        Selector.new(environment_name: environment_name)
       end
 
       def self.from_hash hash
@@ -201,7 +201,7 @@ module PactBroker
       end
 
       def overall_latest?
-        !!(latest? && !tag && !branch && !currently_deployed && !currently_supported && !environment)
+        !!(latest? && !tag && !branch && !currently_deployed && !currently_supported && !environment_name)
       end
 
       # Not sure if the fallback_tag logic is needed
@@ -250,13 +250,13 @@ module PactBroker
           end
         elsif currently_deployed? || other.currently_deployed?
           if currently_deployed? == other.currently_deployed?
-            environment <=> other.environment
+            environment_name <=> other.environment_name
           else
             currently_deployed? ? -1 : 1
           end
         elsif currently_supported? || other.currently_supported?
           if currently_supported? == other.currently_supported?
-            environment <=> other.environment
+            environment_name <=> other.environment_name
           else
             currently_supported? ? -1 : 1
           end
@@ -288,7 +288,7 @@ module PactBroker
     class ResolvedSelector < Selector
       using PactBroker::HashRefinements
 
-      PROPERTY_NAMES = Selector::PROPERTY_NAMES + [:consumer_version, :target]
+      PROPERTY_NAMES = Selector::PROPERTY_NAMES + [:consumer_version, :environment, :target]
 
       def initialize(properties = {}, consumer_version)
         properties.without(*PROPERTY_NAMES).tap { |it| warn("WARN: Unsupported property for #{self.class.name}: #{it.keys.join(", ")} at #{caller[0..3]}") if it.any? }
@@ -297,6 +297,10 @@ module PactBroker
 
       def consumer_version
         self[:consumer_version]
+      end
+
+      def environment
+        self[:environment]
       end
 
       def == other

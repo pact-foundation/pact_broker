@@ -14,6 +14,7 @@ module PactBroker
     class PactsForVerificationRepository
       include PactBroker::Logging
       include PactBroker::Repositories
+      include PactBroker::Services
       include PactBroker::Repositories::Helpers
 
       def find(provider_name, consumer_version_selectors)
@@ -115,7 +116,8 @@ module PactBroker
           query = scope_for(PactPublication).for_provider_and_consumer_version_selector(provider, selector)
           query.all.collect do | pact_publication |
             resolved_selector = if selector.currently_deployed? || selector.currently_supported?
-                                  selector.resolve_for_environment(pact_publication.consumer_version, pact_publication.values.fetch(:environment_name), pact_publication.values[:target])
+                                  environment = environment_service.find_by_name(pact_publication.values.fetch(:environment_name))
+                                  selector.resolve_for_environment(pact_publication.consumer_version, environment, pact_publication.values[:target])
                                 else
                                   selector.resolve(pact_publication.consumer_version)
                                 end

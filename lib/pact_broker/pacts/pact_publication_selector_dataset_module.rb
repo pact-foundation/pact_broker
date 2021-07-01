@@ -5,11 +5,11 @@ module PactBroker
         # Does not yet support "all pacts for specified tag" - that code is still in the Pact::Repository
         query = for_provider(provider)
         query = query.for_consumer(PactBroker::Domain::Pacticipant.find_by_name(selector.consumer)) if selector.consumer
-        query = query.for_currently_deployed_versions(selector.environment) if selector.currently_deployed?
-        query = query.for_currently_supported_versions(selector.environment) if selector.currently_supported?
+        query = query.for_currently_deployed_versions(selector.environment_name) if selector.currently_deployed?
+        query = query.for_currently_supported_versions(selector.environment_name) if selector.currently_supported?
 
-        if selector.environment && !selector.currently_deployed? && !selector.currently_supported?
-          query = query.for_environment(selector.environment)
+        if selector.environment_name && !selector.currently_deployed? && !selector.currently_supported?
+          query = query.for_environment(selector.environment_name)
         end
 
         # Do the "latest" logic last so that the provider/consumer criteria get included in the "latest" query before the join, rather than after

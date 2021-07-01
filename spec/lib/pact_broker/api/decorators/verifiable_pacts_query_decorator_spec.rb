@@ -88,7 +88,7 @@ module PactBroker
             end
 
             it "sets the environment" do
-              expect(subject.consumer_version_selectors.first.environment).to eq "prod"
+              expect(subject.consumer_version_selectors.first.environment_name).to eq "prod"
             end
           end
 
@@ -98,7 +98,7 @@ module PactBroker
             end
 
             it "sets the currently_supported to true" do
-              expect(subject.consumer_version_selectors.first.environment).to eq "prod"
+              expect(subject.consumer_version_selectors.first.environment_name).to eq "prod"
               expect(subject.consumer_version_selectors.first.currently_supported).to be true
             end
           end
@@ -109,7 +109,7 @@ module PactBroker
             end
 
             it "sets the currently_deployed to true" do
-              expect(subject.consumer_version_selectors.first.environment).to eq "prod"
+              expect(subject.consumer_version_selectors.first.environment_name).to eq "prod"
               expect(subject.consumer_version_selectors.first.currently_deployed).to be true
             end
           end
