@@ -122,7 +122,8 @@ module PactBroker
           pacticipant: consumer,
           order: consumer_version.order,
           branch: consumer_version.branch,
-          current_deployed_versions: consumer_version.associations[:current_deployed_versions]
+          current_deployed_versions: consumer_version.associations[:current_deployed_versions],
+          current_supported_released_versions: consumer_version.associations[:current_supported_released_versions],
         )
       end
 

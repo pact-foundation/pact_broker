@@ -46,8 +46,8 @@ module PactBroker
           .eager(:provider)
           .eager(:pact_version)
           .eager(integration: [{latest_verification: :provider_version}, :latest_triggered_webhooks])
-          .eager(consumer_version: [{ current_deployed_versions: :environment }, :latest_version_for_branch, { tags: :head_tag }])
-          .eager(latest_verification: { provider_version: [{ current_deployed_versions: :environment }, :latest_version_for_branch, { tags: :head_tag } ] })
+          .eager(consumer_version: [{ current_deployed_versions: :environment }, { current_supported_released_versions: :environment }, :latest_version_for_branch, { tags: :head_tag }])
+          .eager(latest_verification: { provider_version: [{ current_deployed_versions: :environment }, { current_supported_released_versions: :environment }, :latest_version_for_branch, { tags: :head_tag } ] })
           .eager(:head_pact_publications_for_tags)
 
         index_items = pact_publications.all.collect do | pact_publication |
@@ -108,8 +108,8 @@ module PactBroker
           .eager(:consumer)
           .eager(:provider)
           .eager(:pact_version)
-          .eager(consumer_version: [{ current_deployed_versions: :environment }, :latest_version_for_branch, { tags: :head_tag }])
-          .eager(latest_verification: { provider_version: [{ current_deployed_versions: :environment }, :latest_version_for_branch, { tags: :head_tag }]})
+          .eager(consumer_version: [{ current_deployed_versions: :environment }, { current_supported_released_versions: :environment }, :latest_version_for_branch, { tags: :head_tag }])
+          .eager(latest_verification: { provider_version: [{ current_deployed_versions: :environment }, { current_supported_released_versions: :environment }, :latest_version_for_branch, { tags: :head_tag }]})
           .eager(:head_pact_publications_for_tags)
 
         pact_publications.all.collect do | pact_publication |
@@ -188,7 +188,7 @@ module PactBroker
             .all
         elsif options[:tags] # server side rendered index page with tags=true
           PactBroker::Verifications::LatestVerificationForConsumerVersionTag
-            .eager(provider_version: { current_deployed_versions: :environment })
+            .eager(provider_version: [{ current_deployed_versions: :environment }, { current_supported_released_versions: :environment }])
             .all
         else
           nil # should not be used

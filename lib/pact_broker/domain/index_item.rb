@@ -77,7 +77,7 @@ module PactBroker
       end
 
       def consumer_version_environment_names
-        consumer_version.current_deployed_versions.collect(&:environment).collect(&:name)
+        (consumer_version.current_deployed_versions.collect(&:environment).collect(&:name) + consumer_version.current_supported_released_versions.collect(&:environment).collect(&:name)).uniq
       end
 
       def latest_for_branch?
@@ -97,7 +97,12 @@ module PactBroker
       end
 
       def provider_version_environment_names
-        provider_version&.current_deployed_versions&.collect(&:environment)&.collect(&:name) || []
+        if provider_version
+          (provider_version.current_deployed_versions.collect(&:environment)&.collect(&:name) + provider_version.current_supported_released_versions.collect(&:environment)&.collect(&:name)).uniq
+        else
+          []
+        end
+
       end
 
       # these are the consumer tag names for which this pact publication
