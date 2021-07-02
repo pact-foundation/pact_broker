@@ -79,10 +79,9 @@ jobs:
           ruby-version: "2.7"
       - run: "bundle install"
       - name: Verify pacts
-        run: "GIT_BRANCH=${GITHUB_REF##*/} bundle exec rake pact:verify"
+        run: "GIT_SHA=${GITHUB_SHA} GIT_BRANCH=${GITHUB_REF##*/} bundle exec rake pact:verify"
         env:
           PACTFLOW_PACT_OSS_TOKEN: ${{ secrets.PACTFLOW_PACT_OSS_TOKEN }}
-          GIT_SHA: ${{ env.GITHUB_SHA }}
   bundle-audit:
     if: "!contains(github.event.head_commit.message, '[ci-skip]')"
     runs-on: "ubuntu-latest"
