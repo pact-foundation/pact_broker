@@ -26,6 +26,7 @@ module PactBroker
 
       # Only currently used to identify the currently_deployed from the others in
       # verifiable_pact_messages, so don't need the "for_consumer" sub category
+      # rubocop: disable Metrics/CyclomaticComplexity
       def type
         if latest_for_branch?
           :latest_for_branch
@@ -45,6 +46,7 @@ module PactBroker
           :undefined
         end
       end
+      # rubocop: enable Metrics/CyclomaticComplexity
 
       def tag= tag
         self[:tag] = tag

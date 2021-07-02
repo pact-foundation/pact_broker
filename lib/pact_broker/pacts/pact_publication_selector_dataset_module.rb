@@ -1,6 +1,7 @@
 module PactBroker
   module Pacts
     module PactPublicationSelectorDatasetModule
+      # rubocop: disable Metrics/CyclomaticComplexity
       def for_provider_and_consumer_version_selector provider, selector
         # Does not yet support "all pacts for specified tag" - that code is still in the Pact::Repository
         query = for_provider(provider)
@@ -18,6 +19,7 @@ module PactBroker
         query = query.overall_latest if selector.overall_latest?
         query
       end
+      # rubocop: enable Metrics/CyclomaticComplexity
 
       def for_currently_deployed_versions(environment_name)
         deployed_versions_join = {
@@ -53,7 +55,7 @@ module PactBroker
 
         query = self
         if no_columns_selected?
-          query = query.select_all_qualified.select_append(Sequel[:environments][:name].as(:environment_name), Sequel.lit('NULL').as(:target))
+          query = query.select_all_qualified.select_append(Sequel[:environments][:name].as(:environment_name), Sequel.lit("NULL").as(:target))
         end
         query
           .join(:released_versions, released_versions_join)
