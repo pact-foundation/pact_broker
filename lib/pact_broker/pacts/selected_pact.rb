@@ -36,6 +36,10 @@ module PactBroker
       def consumer_version_order
         pact.consumer_version.order
       end
+
+      def <=> other
+        pact <=> other.pact
+      end
     end
   end
 end

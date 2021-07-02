@@ -178,6 +178,7 @@ module PactBroker
           .collect do | selected_pacts_for_pact_version_id |
             SelectedPact.merge(selected_pacts_for_pact_version_id)
           end
+          .sort
       end
 
       # Tag object with created_at date for the first time that tag was created
