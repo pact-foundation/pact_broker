@@ -40,6 +40,7 @@ Pact.service_provider "Pact Broker" do
   app { HalRelationProxyApp.new(app_to_verify) }
   app_version ENV["GIT_SHA"] if ENV["GIT_SHA"]
   app_version_tags [ENV["GIT_BRANCH"]] if ENV["GIT_BRANCH"]
+  publish_verification_results ENV["CI"] == "true"
 
   if ENV.fetch("PACTFLOW_PACT_OSS_TOKEN", "") != ""
     honours_pacts_from_pact_broker do
