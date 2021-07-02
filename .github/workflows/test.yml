@@ -17,9 +17,7 @@ jobs:
           ruby-version: ${{ matrix.ruby_version }}
       - run: "bundle install"
       - name: Tests
-        run: "bundle exec rake"
-        env:
-          PACTFLOW_PACT_OSS_TOKEN: ${{ secrets.PACTFLOW_PACT_OSS_TOKEN }}
+        run: "bundle exec rake ci"
   postgres:
     if: "!contains(github.event.head_commit.message, '[ci-skip]')"
     runs-on: "ubuntu-latest"
@@ -44,10 +42,10 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby_version }}
-      - run: "gem install bundler && bundle install"
+      - run: "bundle install"
         env:
           INSTALL_PG: "true"
-      - run: "bundle exec rake"
+      - run: "bundle exec rake ci"
         env:
           DATABASE_ADAPTER: github_actions_postgres
           INSTALL_PG: "true"
@@ -69,5 +67,29 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: "2.7"
-      - run: "gem install bundler && bundle install"
+      - run: "bundle install"
       - run: "bundle exec rubocop"
+  pact-verify:
+    if: "!contains(github.event.head_commit.message, '[ci-skip]')"
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "2.7"
+      - run: "bundle install"
+      - name: Verify pacts
+        run: "bundle exec rake pact:verify"
+        env:
+          PACTFLOW_PACT_OSS_TOKEN: ${{ secrets.PACTFLOW_PACT_OSS_TOKEN }}
+  bundle-audit:
+    if: "!contains(github.event.head_commit.message, '[ci-skip]')"
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "2.7"
+      - run: "bundle install"
+      - name: Audit
+        run: "bundle exec rake bundle:audit"

@@ -1,3 +1,3 @@
 #!/bin/sh
 
-bundle exec rake
+bundle exec rake ci

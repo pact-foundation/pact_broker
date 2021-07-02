@@ -16,6 +16,8 @@ FileList["tasks/**/*.rake"].each { |task| load "#{Dir.pwd}/#{task}" }
 
 task :default => ["db:prepare:test", :boot, :spec, "pact:verify", "bundle:audit"]
 
+task :ci => ["db:prepare:test", :boot, :spec]
+
 task :boot do
   require File.join(File.dirname(__FILE__), "config/boot")
 end
