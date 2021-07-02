@@ -14,6 +14,7 @@ module PactBroker
     class PactsForVerificationRepository
       include PactBroker::Logging
       include PactBroker::Repositories
+      include PactBroker::Services
       include PactBroker::Repositories::Helpers
 
       def find(provider_name, consumer_version_selectors)
@@ -107,14 +108,16 @@ module PactBroker
                       consumer_version_selectors.select(&:latest_for_tag?) +
                         consumer_version_selectors.select(&:latest_for_branch?) +
                         consumer_version_selectors.select(&:overall_latest?) +
-                        consumer_version_selectors.select(&:currently_deployed?)
+                        consumer_version_selectors.select(&:currently_deployed?) +
+                        consumer_version_selectors.select(&:currently_supported?)
                     end
 
         selectors.flat_map do | selector |
           query = scope_for(PactPublication).for_provider_and_consumer_version_selector(provider, selector)
           query.all.collect do | pact_publication |
-            resolved_selector = if selector.currently_deployed?
-                                  selector.resolve_for_environment(pact_publication.consumer_version, pact_publication.values.fetch(:environment_name))
+            resolved_selector = if selector.currently_deployed? || selector.currently_supported?
+                                  environment = environment_service.find_by_name(pact_publication.values.fetch(:environment_name))
+                                  selector.resolve_for_environment(pact_publication.consumer_version, environment, pact_publication.values[:target])
                                 else
                                   selector.resolve(pact_publication.consumer_version)
                                 end
@@ -175,6 +178,7 @@ module PactBroker
           .collect do | selected_pacts_for_pact_version_id |
             SelectedPact.merge(selected_pacts_for_pact_version_id)
           end
+          .sort
       end
 
       # Tag object with created_at date for the first time that tag was created

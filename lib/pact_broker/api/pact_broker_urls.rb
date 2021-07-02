@@ -319,11 +319,11 @@ module PactBroker
       end
 
       def currently_deployed_versions_for_environment_url(environment, base_url = "")
-        "#{base_url}/environments/#{environment.uuid}/currently-deployed-versions"
+        "#{base_url}/environments/#{environment.uuid}/deployed-versions/currently-deployed"
       end
 
       def currently_supported_versions_for_environment_url(environment, base_url = "")
-        "#{base_url}/environments/#{environment.uuid}/currently-supported-versions"
+        "#{base_url}/environments/#{environment.uuid}/released-versions/currently-supported"
       end
 
       def record_undeployment_url(deployed_version, base_url = "")

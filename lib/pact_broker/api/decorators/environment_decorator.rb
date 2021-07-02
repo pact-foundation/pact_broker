@@ -25,16 +25,16 @@ module PactBroker
           }
         end
 
-        link :'pb:currently-deployed-versions' do | user_options |
+        link :'pb:currently-deployed-deployed-versions' do | user_options |
           {
             title: "Versions currently deployed to #{represented.display_name} environment",
             href: currently_deployed_versions_for_environment_url(represented, user_options.fetch(:base_url))
           }
         end
 
-        link :'pb:currently-supported-versions' do | user_options |
+        link :'pb:currently-supported-released-versions' do | user_options |
           {
-            title: "Versions currently supported in #{represented.display_name} environment",
+            title: "Versions released and supported in #{represented.display_name} environment",
             href: currently_supported_versions_for_environment_url(represented, user_options.fetch(:base_url))
           }
         end

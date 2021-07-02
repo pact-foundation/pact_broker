@@ -5,8 +5,11 @@ module PactBroker
     class Selector < Hash
       using PactBroker::HashRefinements
 
-      def initialize(options = {})
-        merge!(options)
+      PROPERTY_NAMES = [:latest, :tag, :branch, :consumer, :consumer_version, :environment_name, :fallback_tag, :fallback_branch, :currently_supported, :currently_deployed]
+
+      def initialize(properties = {})
+        properties.without(*PROPERTY_NAMES).tap { |it| warn("WARN: Unsupported property for #{self.class.name}: #{it.keys.join(", ")} at #{caller[0..3]}") if it.any? }
+        merge!(properties)
       end
 
       def resolve(consumer_version)
@@ -17,17 +20,22 @@ module PactBroker
         ResolvedSelector.new(self.to_h, consumer_version)
       end
 
-      def resolve_for_environment(consumer_version, environment)
-        ResolvedSelector.new(self.to_h.merge(environment: environment), consumer_version)
+      def resolve_for_environment(consumer_version, environment, target = nil)
+        ResolvedSelector.new(self.to_h.merge({ environment: environment, target: target }.compact), consumer_version)
       end
 
       # Only currently used to identify the currently_deployed from the others in
       # verifiable_pact_messages, so don't need the "for_consumer" sub category
+      # rubocop: disable Metrics/CyclomaticComplexity
       def type
         if latest_for_branch?
           :latest_for_branch
         elsif currently_deployed?
           :currently_deployed
+        elsif currently_supported?
+          :currently_supported
+        elsif in_environment?
+          :in_environment
         elsif latest_for_tag?
           :latest_for_tag
         elsif all_for_tag?
@@ -38,6 +46,7 @@ module PactBroker
           :undefined
         end
       end
+      # rubocop: enable Metrics/CyclomaticComplexity
 
       def tag= tag
         self[:tag] = tag
@@ -91,12 +100,28 @@ module PactBroker
         currently_deployed
       end
 
-      def environment= environment
-        self[:environment] = environment
+      def currently_supported= currently_supported
+        self[:currently_supported] = currently_supported
       end
 
-      def environment
-        self[:environment]
+      def currently_supported
+        self[:currently_supported]
+      end
+
+      def currently_supported?
+        currently_supported
+      end
+
+      def environment_name= environment_name
+        self[:environment_name] = environment_name
+      end
+
+      def environment_name
+        self[:environment_name]
+      end
+
+      def in_environment?
+        !!environment_name
       end
 
       def self.overall_latest
@@ -139,16 +164,32 @@ module PactBroker
         Selector.new(latest: true, consumer: consumer)
       end
 
-      def self.for_currently_deployed(environment = nil)
-        Selector.new( { currently_deployed: true, environment: environment }.compact )
+      def self.for_currently_deployed(environment_name = nil)
+        Selector.new( { currently_deployed: true, environment_name: environment_name }.compact )
+      end
+
+      def self.for_currently_supported(environment_name = nil)
+        Selector.new( { currently_supported: true, environment_name: environment_name }.compact )
       end
 
       def self.for_currently_deployed_and_consumer(consumer)
         Selector.new(currently_deployed: true, consumer: consumer)
       end
 
-      def self.for_currently_deployed_and_environment_and_consumer(environment, consumer)
-        Selector.new(currently_deployed: true, environment: environment, consumer: consumer)
+      def self.for_currently_deployed_and_environment_and_consumer(environment_name, consumer)
+        Selector.new(currently_deployed: true, environment_name: environment_name, consumer: consumer)
+      end
+
+      def self.for_currently_supported_and_environment_and_consumer(environment_name, consumer)
+        Selector.new(currently_supported: true, environment_name: environment_name, consumer: consumer)
+      end
+
+      def self.for_environment(environment_name)
+        Selector.new(environment_name: environment_name)
+      end
+
+      def self.for_environment_and_consumer(environment_name, consumer)
+        Selector.new(environment_name: environment_name, consumer: consumer)
       end
 
       def self.from_hash hash
@@ -172,7 +213,7 @@ module PactBroker
       end
 
       def overall_latest?
-        !!(latest? && !tag && !branch && !currently_deployed && !environment)
+        !!(latest? && !tag && !branch && !currently_deployed && !currently_supported && !environment_name)
       end
 
       # Not sure if the fallback_tag logic is needed
@@ -221,9 +262,15 @@ module PactBroker
           end
         elsif currently_deployed? || other.currently_deployed?
           if currently_deployed? == other.currently_deployed?
-            environment <=> other.environment
+            environment_name <=> other.environment_name
           else
             currently_deployed? ? -1 : 1
+          end
+        elsif currently_supported? || other.currently_supported?
+          if currently_supported? == other.currently_supported?
+            environment_name <=> other.environment_name
+          else
+            currently_supported? ? -1 : 1
           end
         elsif latest_for_tag? || other.latest_for_tag?
           if latest_for_tag? == other.latest_for_tag?
@@ -251,12 +298,21 @@ module PactBroker
     end
 
     class ResolvedSelector < Selector
-      def initialize(options = {}, consumer_version)
-        super(options.merge(consumer_version: consumer_version))
+      using PactBroker::HashRefinements
+
+      PROPERTY_NAMES = Selector::PROPERTY_NAMES + [:consumer_version, :environment, :target]
+
+      def initialize(properties = {}, consumer_version)
+        properties.without(*PROPERTY_NAMES).tap { |it| warn("WARN: Unsupported property for #{self.class.name}: #{it.keys.join(", ")} at #{caller[0..3]}") if it.any? }
+        merge!(properties.merge(consumer_version: consumer_version))
       end
 
       def consumer_version
         self[:consumer_version]
+      end
+
+      def environment
+        self[:environment]
       end
 
       def == other

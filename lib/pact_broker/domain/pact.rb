@@ -98,6 +98,12 @@ module PactBroker
         !pact_version.verified_successfully_by_any_provider_version?
       end
 
+      def <=> other
+        self_fields = [consumer_name.downcase, provider_name.downcase, consumer_version.order || 0]
+        other_fields = [other.consumer_name.downcase, other.provider_name.downcase, other.consumer_version.order || 0]
+        self_fields <=> other_fields
+      end
+
       private
 
       attr_accessor :db_model

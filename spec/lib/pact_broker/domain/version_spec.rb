@@ -167,7 +167,7 @@ module PactBroker
           end
         end
 
-        context "when selecting all versions currently deployed to an environment" do
+        context "when selecting all versions currently in an environment" do
           let(:selector) { PactBroker::Matrix::UnresolvedSelector.new(environment_name: "prod") }
 
           before do
@@ -185,10 +185,12 @@ module PactBroker
               .create_deployed_version_for_consumer_version(target: "3")
               .create_consumer_version("11")
               .create_deployed_version_for_consumer_version(currently_deployed: false)
+              .create_consumer_version("12")
+              .create_released_version_for_consumer_version
           end
 
           it "returns the versions of that pacticipant currently deployed to the environment" do
-            expect(version_numbers).to eq %w{2 10}
+            expect(version_numbers).to eq %w{2 10 12}
           end
         end
 

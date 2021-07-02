@@ -174,15 +174,26 @@ module PactBroker
           it { is_expected.to be_empty }
         end
 
-        context "when currentlyDeployed is specified" do
+        context "when deployed is specified" do
           let(:consumer_version_selectors) do
             [{
-              currentlyDeployed: true
+              deployed: true
             }]
           end
 
           it { is_expected.to be_empty }
         end
+
+        context "when released is specified" do
+          let(:consumer_version_selectors) do
+            [{
+              released: true
+            }]
+          end
+
+          it { is_expected.to be_empty }
+        end
+
 
         context "when the environment is specified" do
           let(:consumer_version_selectors) do
@@ -194,47 +205,47 @@ module PactBroker
           it { is_expected.to be_empty }
         end
 
-        context "when currentlyDeployed with an environment is specified" do
+        context "when deployed with an environment is specified" do
           let(:consumer_version_selectors) do
             [{
               environment: "feat",
-              currentlyDeployed: true
+              deployed: true
             }]
           end
 
           it { is_expected.to be_empty }
         end
 
-        context "when currentlyDeployed=false with an environment is specified" do
+        context "when deployed=false with an environment is specified" do
           let(:consumer_version_selectors) do
             [{
               environment: "feat",
-              currentlyDeployed: false
+              deployed: false
             }]
           end
 
-          its([:consumerVersionSelectors, 0]) { is_expected.to eq "currentlyDeployed must be one of: true at index 0" }
+          its([:consumerVersionSelectors, 0]) { is_expected.to eq "deployed must be one of: true at index 0" }
         end
 
-        context "when the environment is specified and currentlyDeployed is nil" do
+        context "when the environment is specified and deployed is nil" do
           let(:consumer_version_selectors) do
             [{
               environment: "feat",
-              currentlyDeployed: nil
+              deployed: nil
             }]
           end
 
-          its([:consumerVersionSelectors, 0]) { is_expected.to eq "currentlyDeployed can't be blank at index 0" }
+          its([:consumerVersionSelectors, 0]) { is_expected.to eq "deployed can't be blank at index 0" }
         end
 
-        context "when currentlyDeployed is nil" do
+        context "when deployed is nil" do
           let(:consumer_version_selectors) do
             [{
-              currentlyDeployed: nil
+              deployed: nil
             }]
           end
 
-          its([:consumerVersionSelectors, 0]) { is_expected.to eq "currentlyDeployed can't be blank at index 0" }
+          its([:consumerVersionSelectors, 0]) { is_expected.to eq "deployed can't be blank at index 0" }
         end
 
         context "when latest=true and an environment is specified" do
@@ -248,17 +259,17 @@ module PactBroker
           its([:consumerVersionSelectors, 0]) { is_expected.to eq "cannot specify the field latest with the field environment (at index 0)" }
         end
 
-        context "when latest=true, tag and an environment and currentlyDeployed are specified" do
+        context "when latest=true, tag and an environment and deployed are specified" do
           let(:consumer_version_selectors) do
             [{
               environment: "feat",
               latest: true,
               tag: "foo",
-              currentlyDeployed: true
+              deployed: true
             }]
           end
 
-          its([:consumerVersionSelectors, 0]) { is_expected.to eq "cannot specify the fields latest/tag with the fields currentlyDeployed/environment (at index 0)" }
+          its([:consumerVersionSelectors, 0]) { is_expected.to eq "cannot specify the fields latest/tag with the fields deployed/environment (at index 0)" }
         end
 
         context "when a tag and a branch are specified" do

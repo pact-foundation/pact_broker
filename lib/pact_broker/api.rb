@@ -120,8 +120,8 @@ module PactBroker
         if PactBroker.feature_enabled?(:environments)
           add ["environments"], Api::Resources::Environments, { resource_name: "environments" }
           add ["environments", :environment_uuid], Api::Resources::Environment, { resource_name: "environment" }
-          add ["environments", :environment_uuid, "currently-deployed-versions"], Api::Resources::CurrentlyDeployedVersionsForEnvironment, { resource_name: "environment_deployed_versions" }
-          add ["environments", :environment_uuid, "currently-supported-versions"], Api::Resources::CurrentlySupportedVersionsForEnvironment, { resource_name: "environment_supported_versions" }
+          add ["environments", :environment_uuid, "deployed-versions", "currently-deployed"], Api::Resources::CurrentlyDeployedVersionsForEnvironment, { resource_name: "environment_currently_deployed_deployed_versions" }
+          add ["environments", :environment_uuid, "released-versions", "currently-supported"], Api::Resources::CurrentlySupportedVersionsForEnvironment, { resource_name: "environment_currently_supported_released_versions" }
           add ["pacticipants", :pacticipant_name, "versions", :pacticipant_version_number, "deployed-versions", "environment", :environment_uuid], Api::Resources::DeployedVersionsForVersionAndEnvironment, { resource_name: "deployed_versions_for_version_and_environment" }
           add ["pacticipants", :pacticipant_name, "versions", :pacticipant_version_number, "released-versions", "environment", :environment_uuid], Api::Resources::ReleasedVersionsForVersionAndEnvironment, { resource_name: "released_versions_for_version_and_environment" }
           add ["released-versions", :uuid], Api::Resources::ReleasedVersion, { resource_name: "released_version" }

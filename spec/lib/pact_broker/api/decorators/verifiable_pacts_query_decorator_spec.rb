@@ -82,13 +82,34 @@ module PactBroker
             end
           end
 
-          context "when an environment is specified but currently_deployed is not specified" do
+          context "when an environment is specified" do
             let(:consumer_version_selectors) do
               [{ "environment" => "prod" }]
             end
 
+            it "sets the environment" do
+              expect(subject.consumer_version_selectors.first.environment_name).to eq "prod"
+            end
+          end
+
+          context "when an environment is specified and released is true" do
+            let(:consumer_version_selectors) do
+              [{ "environment" => "prod", "released" => true }]
+            end
+
+            it "sets the currently_supported to true" do
+              expect(subject.consumer_version_selectors.first.environment_name).to eq "prod"
+              expect(subject.consumer_version_selectors.first.currently_supported).to be true
+            end
+          end
+
+          context "when an environment is specified and deployed is true" do
+            let(:consumer_version_selectors) do
+              [{ "environment" => "prod", "deployed" => true }]
+            end
+
             it "sets the currently_deployed to true" do
-              expect(subject.consumer_version_selectors.first.environment).to eq "prod"
+              expect(subject.consumer_version_selectors.first.environment_name).to eq "prod"
               expect(subject.consumer_version_selectors.first.currently_deployed).to be true
             end
           end
