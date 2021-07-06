@@ -10,34 +10,47 @@ module PactBroker
 
         get "/" do
           set_headers
-          tags = nil
-          if params[:tags]
-            tags = params[:tags] == "true" ? true : [*params[:tags]].compact
-          end
+          tags = if params[:tags]
+                   params[:tags] == "true" ? true : [*params[:tags]].compact
+                 end
+          pacticipant_name = params[:pacticipant_name].present? ? params[:pacticipant_name] : nil
           page_number = params[:page]&.to_i || 1
           # Make page size smaller for data intensive query
           page_size = params[:pageSize]&.to_i || (tags == true ? 30 : 100)
           options = {
             tags: tags,
             page_number: page_number,
-            page_size: page_size
-          }
+            page_size: page_size,
+            pacticipant_name: pacticipant_name
+          }.compact
+          error_messages = []
 
-          index_items = ViewDomain::IndexItems.new(index_service.find_index_items(options), base_url: base_url)
+          index_items = index_service.find_index_items(options)
+
+          if index_items.blank? && !pacticipant_name.blank?
+            error_messages << "Pacticipant's name: \"#{pacticipant_name}\" cannot be found"
+          end
+
+          view_index_items = ViewDomain::IndexItems.new(index_items, base_url: base_url)
 
           page = tags ? :'index/show-with-tags' : :'index/show'
           locals = {
-            title: "Pacts",
-            index_items: index_items,
+            title: PactBroker::Messages.message("messages.index.title"),
+            index_items: view_index_items,
             page_number: page_number,
             page_size: page_size,
-            pagination_record_count: index_items.pagination_record_count,
-            current_page_size: index_items.size,
-            base_url: base_url
+            pagination_record_count: view_index_items.pagination_record_count,
+            current_page_size: view_index_items.size,
+            base_url: base_url,
+            errors: error_messages,
+            tags: tags,
+            pacticipant_name: pacticipant_name
           }
 
           haml page, { locals: locals, layout: :'layouts/main', escape_html: true }
         end
+
+        private
 
         def set_headers
           response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"

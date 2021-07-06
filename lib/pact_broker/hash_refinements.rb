@@ -45,10 +45,10 @@ module PactBroker
         when Hash
           params.inject({}) do |result, (key, value)|
             snake_key = case key
-            when String then key.snakecase
-            when Symbol then key.to_s.snakecase.to_sym
-            else
-              key
+                        when String then key.snakecase
+                        when Symbol then key.to_s.snakecase.to_sym
+                        else
+                          key
                         end
             result.merge(snake_key => snakecase_keys_private(value))
           end
@@ -64,10 +64,10 @@ module PactBroker
         when Hash
           params.inject({}) do |result, (key, value)|
             snake_key = case key
-            when String then key.camelcase
-            when Symbol then key.to_s.camelcase.to_sym
-            else
-              key
+                        when String then key.camelcase
+                        when Symbol then key.to_s.camelcase.to_sym
+                        else
+                          key
                         end
             result.merge(snake_key => camelcase_keys_private(value))
           end
