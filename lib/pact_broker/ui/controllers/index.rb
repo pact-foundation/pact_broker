@@ -13,7 +13,7 @@ module PactBroker
           tags = if params[:tags]
                    params[:tags] == "true" ? true : [*params[:tags]].compact
                  end
-          pacticipant_name = params[:pacticipant_name].present? ? params[:pacticipant_name] : nil
+          search = params[:search].present? ? params[:search] : nil
           page_number = params[:page]&.to_i || 1
           # Make page size smaller for data intensive query
           page_size = params[:pageSize]&.to_i || (tags == true ? 30 : 100)
@@ -21,14 +21,14 @@ module PactBroker
             tags: tags,
             page_number: page_number,
             page_size: page_size,
-            pacticipant_name: pacticipant_name
+            search: search
           }.compact
           error_messages = []
 
           index_items = index_service.find_index_items(options)
 
-          if index_items.blank? && !pacticipant_name.blank?
-            error_messages << "Pacticipant's name: \"#{pacticipant_name}\" cannot be found"
+          if index_items.blank? && !search.blank?
+            error_messages << "No pacticipants found matching: \"#{search}\""
           end
 
           view_index_items = ViewDomain::IndexItems.new(index_items, base_url: base_url)
@@ -44,7 +44,7 @@ module PactBroker
             base_url: base_url,
             errors: error_messages,
             tags: tags,
-            pacticipant_name: pacticipant_name
+            search: search
           }
 
           haml page, { locals: locals, layout: :'layouts/main', escape_html: true }

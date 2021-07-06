@@ -94,10 +94,10 @@ module PactBroker
               end
             end
 
-            context "when parameter pacticipant_name presents" do
+            context "when parameter search presents" do
               context "when it is blank" do
                 it "ignores it" do
-                  get "/", { pacticipant_name_name: "" }
+                  get "/", { search_name: "" }
 
                   expect(last_response.body).to include("Example App")
                   expect(last_response.status).to eq(200)
@@ -106,7 +106,7 @@ module PactBroker
 
               context "when it is NOT blank and the pacticipant name exists" do
                 it "returns the pacticipant which matches the query" do
-                  get "/", { pacticipant_name: "app" }
+                  get "/", { search: "app" }
 
                   expect(last_response.body).to include("Example App")
                   expect(last_response.status).to eq(200)
@@ -115,7 +115,7 @@ module PactBroker
 
               context "when it is NOT blank but the pacticipant name does NOT exist" do
                 it "returns no pacts" do
-                  get "/", { pacticipant_name: "does not exist" }
+                  get "/", { search: "does not exist" }
 
                   expect(last_response.body).not_to include("does not exit")
                   expect(last_response.body).not_to include("Example App")

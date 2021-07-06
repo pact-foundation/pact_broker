@@ -144,8 +144,8 @@ module PactBroker
       def self.head_pact_publications(options = {})
         base = base_query(options)
 
-        if options[:pacticipant_name]
-          pacticipant_ids = pact_pacticipant_ids_by_name(options[:pacticipant_name])
+        if options[:search]
+          pacticipant_ids = pact_pacticipant_ids_by_name(options[:search])
           base = base.where(Sequel.|(
             { Sequel[:pact_publications][:consumer_id] => pacticipant_ids },
             { Sequel[:pact_publications][:provider_id] => pacticipant_ids }

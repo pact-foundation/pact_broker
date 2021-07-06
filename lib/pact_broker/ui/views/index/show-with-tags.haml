@@ -2,7 +2,7 @@
   != render :haml, :'index/_css_and_js', :layout => false
   .container
     != render :haml, :'index/_navbar', :layout => false, locals: {tag_toggle: false, base_url: base_url}
-    - if index_items.empty? && pacticipant_name.blank?
+    - if index_items.empty? && search.blank?
       != render :haml, :'index/_getting-started', :layout => false
     %h1.page-header
       Pacts
@@ -14,9 +14,9 @@
 
     %form{action: "#{base_url}"}
       .field
-        %label{for: 'pacticipant_name'}
+        %label{for: 'search'}
           Search
-        %input{name: 'pacticipant_name', id: 'pacticipant_name', class: 'pacticipant-name', value: pacticipant_name}
+        %input{name: 'search', id: 'search', class: 'search', value: search}
         %input{type: 'button', class: 'submit-search', value: 'Submit'}
         %input{type: 'button', class: 'reset-search', value: 'Reset' }
 
@@ -134,22 +134,27 @@
     });
 
     $(".reset-search").on("click", function() {
-      location = window.location.href
-      window.location.replace("#{base_url}/?tags=#{tags}");
+      const url = new URL(window.location)
+      url.searchParams.delete('search')
+      window.location = url.toString();
     })
 
     $(".submit-search").on("click", function() {
-      pacticipant_name = $("#pacticipant_name").val();
-      window.location.replace("#{base_url}/?tags=#{tags}" + `&pacticipant_name=${pacticipant_name}`);
+      search = $("#search").val();
+      const url = new URL(window.location)
+      url.searchParams.set('search', search)
+      window.location = url.toString();
     })
 
-    $(".pacticipant-name").keypress(function(event) {
+    $(".search").keypress(function(event) {
       const enterKeyCode = 13;
 
       const key = event.which;
       if (key === enterKeyCode) {
         event.preventDefault();
-        pacticipant_name = $("#pacticipant_name").val();
-        window.location.replace("#{base_url}/?tags=#{tags}" + `&pacticipant_name=${pacticipant_name}`);
+        search = $("#search").val();
+        const url = new URL(window.location)
+        url.searchParams.set('search', search)
+        window.location = url.toString();
       }
     })
