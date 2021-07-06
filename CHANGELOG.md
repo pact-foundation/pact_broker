@@ -1,3 +1,77 @@
+<a name="v2.80.0"></a>
+### v2.80.0 (2021-07-06)
+
+#### Features
+
+* filter pacticipant name on index page (#446)	 ([fd882da4](/../../commit/fd882da4))
+* add uuid to webhook decorator	 ([3a916064](/../../commit/3a916064))
+* add endpoint to list currently supported versions for an environment	 ([9608be8b](/../../commit/9608be8b))
+* support marking a released version as unsupported	 ([f6c4ee27](/../../commit/f6c4ee27))
+* add pactbroker.azureDevOpsVerificationStatus webhook parameter	 ([8804a90f](/../../commit/8804a90f))
+* add deployed version resource, supporting marking deployed version as undeployed	 ([3dd19955](/../../commit/3dd19955))
+* add warnings to can-i-deploy response when bad practice selectors are used	 ([85540c85](/../../commit/85540c85))
+* support PATCH for pacticipant with application/merge-patch+json	 ([404e14cb](/../../commit/404e14cb))
+* set main branch for pacticipant	 ([ab1cd016](/../../commit/ab1cd016))
+* rename writeMode to onConflict for contract publishing endpoint	 ([26a4e358](/../../commit/26a4e358))
+* replace mainDevelopmentBranches with mainBranch for pacticipant	 ([02d4525e](/../../commit/02d4525e))
+* updating pending and wip logic to exclude pacts already verified by another branch before the specified branch was created (#432)	 ([db643d3c](/../../commit/db643d3c))
+* ignore pacticipant for can i deploy (#429)	 ([25e62fd9](/../../commit/25e62fd9))
+* add notices to contract publishing response, with intent to rem… (#430)	 ([dacbe906](/../../commit/dacbe906))
+* support deployments and releases as separate concepts (#426)	 ([58d173db](/../../commit/58d173db))
+* keep the triggered webhooks after the webhook has been deleted	 ([a5ab2a35](/../../commit/a5ab2a35))
+* add endpoint to create pacts, pacticipant, version, tags in one request (#420)	 ([df899ebd](/../../commit/df899ebd))
+* add pb:version relation to the pacticipant resource	 ([83ce38a4](/../../commit/83ce38a4))
+* add repository and branch properties to pacticipant	 ([98a799b2](/../../commit/98a799b2))
+* currently deployed selector (#396)	 ([8666d709](/../../commit/8666d709))
+* add relations to environments endpoint for each environment	 ([784c3535](/../../commit/784c3535))
+* allow multiple base URLs to be configured	 ([f88c69de](/../../commit/f88c69de))
+* support recording deployments (#389)	 ([19ac1fcc](/../../commit/19ac1fcc))
+
+* **pacts for verification**
+  * support released:true selector (#451)	 ([8a90cc57](/../../commit/8a90cc57))
+  * default latest to true when branch is specified and currentlyDeployed to true when an environment is specified	 ([984320b6](/../../commit/984320b6))
+  * display selectors in a formatted list	 ([3cab7a00](/../../commit/3cab7a00))
+  * update validation for consumer version selectors for the fields environment, currentlyDeployed and branch	 ([ec7dc435](/../../commit/ec7dc435))
+
+* **webhooks**
+  * support consumerVersionBranch and providerVersionBranch in the template parameters	 ([6637644f](/../../commit/6637644f))
+  * support ${pactbroker.currentlyDeployedProviderVersionNumber} in webhook templates (#402)	 ([1e5487f8](/../../commit/1e5487f8))
+
+* **matrix**
+  * support querying by branch	 ([110578dc](/../../commit/110578dc))
+
+* **pacticipant versions**
+  * support use of PATCH with application/merge-patch+json to create versions	 ([0429398f](/../../commit/0429398f))
+  * do not allow branch to be modified once set	 ([4aa8e121](/../../commit/4aa8e121))
+
+* **record deployment**
+  * require replacedPreviousDeployedVersion to be set	 ([70398069](/../../commit/70398069))
+
+* **environments**
+  * validate environment name in can-i-deploy and matrix queries	 ([dcad5fb5](/../../commit/dcad5fb5))
+  * allow environments endpoint to be searched by name	 ([ce4b188e](/../../commit/ce4b188e))
+
+* **deployed versions**
+  * add endpoint to list deployed versions for an environment	 ([bd0ca9d6](/../../commit/bd0ca9d6))
+
+#### Bug Fixes
+
+* add rubocop and fix offenses (#441)	 ([7c1c3044](/../../commit/7c1c3044))
+* gracefully handle an interactions value that is not an array	 ([a9a5df3d](/../../commit/a9a5df3d))
+* Dockerfile to reduce vulnerabilities (#418)	 ([5319a997](/../../commit/5319a997))
+* select pact publication with matching consumer version when triggering webhook for verification	 ([274e1456](/../../commit/274e1456))
+* issue-reproduction/Dockerfile-pact-broker to reduce vulnerabilities (#414)	 ([34c70984](/../../commit/34c70984))
+* use URL safe base64 encoding for pact metadata	 ([fa1a3333](/../../commit/fa1a3333))
+* handle metadata that has had its padding removed	 ([06bd6d3d](/../../commit/06bd6d3d))
+* lock reform gem	 ([00cbac8c](/../../commit/00cbac8c))
+* fix missing verification status colours in matrix rows	 ([d91662d9](/../../commit/d91662d9))
+
+* **verifications**
+  * gracefully handle a verification number in the URL that is not an integer	 ([7fe98a7d](/../../commit/7fe98a7d))
+
+* **ui**
+  * Make long pacticipant versions look nice (#407)	 ([dbb967e3](/../../commit/dbb967e3))
+
 <a name="v2.79.0"></a>
 ### v2.79.0 (2021-02-25)
 
