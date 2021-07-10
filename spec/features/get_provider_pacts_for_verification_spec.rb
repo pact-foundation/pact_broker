@@ -11,8 +11,7 @@ describe "Get provider pacts for verification" do
 
   context "when the provider exists" do
     before do
-      TestDataBuilder.new
-        .create_provider("Provider")
+      td.create_provider("Provider")
         .create_consumer("Consumer")
         .create_consumer_version("0.0.1")
         .create_pact(json_content: { some: "content" }.to_json)

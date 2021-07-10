@@ -112,12 +112,23 @@ module PactBroker
           )
       end
 
+      # Think we really could just use the version here.
       def to_version_domain
-        OpenStruct.new(number: consumer_version.number, pacticipant: consumer, tags: consumer_version.tags, order: consumer_version.order, branch: consumer_version.branch)
+        OpenStruct.new(
+          id: consumer_version.id,
+          number: consumer_version.number,
+          pacticipant: consumer,
+          tags: consumer_version.tags,
+          order: consumer_version.order,
+          branch: consumer_version.branch,
+          current_deployed_versions: consumer_version.current_deployed_versions,
+          current_supported_released_versions: consumer_version.current_supported_released_versions
+        )
       end
 
       def to_version_domain_lightweight
         OpenStruct.new(
+          id: consumer_version.id,
           number: consumer_version.number,
           pacticipant: consumer,
           order: consumer_version.order,

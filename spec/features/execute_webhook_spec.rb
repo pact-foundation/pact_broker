@@ -1,4 +1,3 @@
-require "support/test_data_builder"
 require "webmock/rspec"
 require "rack/pact_broker/database_transaction"
 
@@ -8,7 +7,6 @@ describe "Execute a webhook" do
       .create_webhook(method: "POST", body: "${pactbroker.pactUrl}")
   end
 
-  let(:td) { TestDataBuilder.new }
   let(:path) { "/webhooks/#{td.webhook.uuid}/execute" }
   let(:response_body) { JSON.parse(last_response.body, symbolize_names: true)}
 
@@ -77,7 +75,7 @@ describe "Execute a webhook" do
       PactBroker::Database.truncate
     end
 
-    subject { post path; last_response }
+    subject { post(path) }
 
     it "returns a 200 response" do
       expect(subject.status).to be 200

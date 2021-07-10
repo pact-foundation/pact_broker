@@ -1,3 +1,5 @@
+require "pact_broker/domain/version"
+
 module PactBroker
   module Pacts
     module Metadata
@@ -5,7 +7,8 @@ module PactBroker
 
       MAPPINGS = [
         [:consumer_version_tags, "cvt"],
-        [:consumer_version_number, "cvn"],
+        [:consumer_version_number, "cvn"], # for old urls
+        [:consumer_version_id, "cv"],
         [:wip, "w"],
         [:consumer_version_selectors, "s"],
         [:tag, "t"],
@@ -21,11 +24,11 @@ module PactBroker
         if selection_parameters[:tag]
           {
             "cvt" => [selection_parameters[:tag]],
-            "cvn" => pact.consumer_version_number
+            "cv" => pact.consumer_version.id
           }
         else
           {
-            "cvn" => pact.consumer_version_number
+            "cv" => pact.consumer_version.id
           }
         end
       end
@@ -56,7 +59,7 @@ module PactBroker
               {
                 "t" => selector.tag,
                 "l" => selector.latest,
-                "cvn" => selector.consumer_version.number
+                "cv" => selector.consumer_version.id
               }.compact
             end
           }
@@ -78,7 +81,11 @@ module PactBroker
       def parse_hash(hash)
         hash.each_with_object({}) do | (key, value), new_hash |
           long_key = MAPPINGS.find{ |mapping| mapping.last == key }&.first
-          new_hash[long_key || key] = parse_object(value)
+          if long_key == :consumer_version_id
+            new_hash[:consumer_version_number] = PactBroker::Domain::Version.find(id: value.to_i)&.number
+          else
+            new_hash[long_key || key] = parse_object(value)
+          end
         end
       end
     end

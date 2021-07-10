@@ -17,6 +17,7 @@ module PactBroker
       associate(:one_to_many, :tags, :class => "PactBroker::Domain::Tag", :reciprocal => :version, :key => :version_id, :primary_key => :consumer_version_id)
       associate(:many_to_one, :pact_version, :key => :pact_version_id, :primary_key => :id)
       associate(:many_to_one, :latest_verification, :class => "PactBroker::Verifications::LatestVerificationForPactVersion", key: :pact_version_id, primary_key: :pact_version_id)
+      associate(:many_to_one, :consumer_version, :class => "PactBroker::Domain::Version", :key => :consumer_version_id, :primary_key => :id)
 
       dataset_module do
         include PactBroker::Repositories::Helpers
@@ -98,7 +99,8 @@ module PactBroker
         consumer.id = consumer_id
         provider = Domain::Pacticipant.new(name: provider_name)
         provider.id = provider_id
-        consumer_version = OpenStruct.new(
+        consumer_version_struct = OpenStruct.new(
+          id: consumer_version_id,
           number: consumer_version_number,
           order: consumer_version_order,
           pacticipant: consumer,
@@ -107,7 +109,7 @@ module PactBroker
         Domain::Pact.new(
           id: id,
           consumer: consumer,
-          consumer_version: consumer_version,
+          consumer_version: consumer_version_struct,
           provider: provider,
           consumer_version_number: consumer_version_number,
           revision_number: revision_number,
