@@ -447,8 +447,7 @@ module PactBroker
       describe "#find_latest_pact_versions_for_provider" do
         context "with no tag specified" do
           before do
-            TestDataBuilder.new
-              .create_consumer(consumer_name)
+            td.create_consumer(consumer_name)
               .create_consumer_version("1.0.0")
               .create_provider(provider_name)
               .create_pact
@@ -477,8 +476,7 @@ module PactBroker
 
         context "with a tag specified" do
           before do
-            TestDataBuilder.new
-              .create_consumer(consumer_name)
+            td.create_consumer(consumer_name)
               .create_consumer_version("1.2.3")
               .create_consumer_version_tag("prod")
               .create_provider(provider_name)
@@ -513,8 +511,7 @@ module PactBroker
       describe "#find_pact_versions_for_provider" do
         context "with no tag specified" do
           before do
-            TestDataBuilder.new
-              .create_consumer(consumer_name)
+            td.create_consumer(consumer_name)
               .create_consumer_version("1.0.0")
               .create_provider(provider_name)
               .create_pact
@@ -539,8 +536,7 @@ module PactBroker
 
         context "with a tag specified" do
           before do
-            TestDataBuilder.new
-              .create_consumer(consumer_name)
+            td.create_consumer(consumer_name)
               .create_consumer_version("1")
               .create_consumer_version_tag("prod")
               .create_provider(provider_name)
@@ -945,8 +941,7 @@ module PactBroker
       describe "search_for_latest_pact" do
         context "when one or more versions of a pact exist without any tags" do
           before do
-            TestDataBuilder.new
-              .create_consumer("Consumer")
+            td.create_consumer("Consumer")
               .create_provider("Provider")
               .create_consumer_version("1")
               .create_pact
