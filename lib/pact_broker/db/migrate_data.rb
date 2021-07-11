@@ -25,6 +25,7 @@ module PactBroker
         DataMigrations::SetPacticipantDisplayName.call(database_connection)
         DataMigrations::SetPacticipantMainBranch.call(database_connection)
         DataMigrations::SetWebhookUuid.call(database_connection)
+        DataMigrations::SetConsumerVersionOrderForPactPublications.call(database_connection)
       end
     end
   end
