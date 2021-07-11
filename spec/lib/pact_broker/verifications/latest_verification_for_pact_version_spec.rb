@@ -1,4 +1,4 @@
-require 'pact_broker/verifications/latest_verification_for_pact_version'
+require "pact_broker/verifications/latest_verification_for_pact_version"
 
 module PactBroker
   module Verifications

@@ -147,10 +147,10 @@ module PactBroker
                   .eager(:consumer)
 
         query = if tag
-          query = query.latest_for_consumer_tag(tag)
-        else
-          query = query.overall_latest
-        end
+                  query = query.latest_for_consumer_tag(tag)
+                else
+                  query = query.overall_latest
+                end
 
         query.sort_by{ | p| p.consumer_name.downcase }.collect(&:to_head_pact)
       end

@@ -37,7 +37,7 @@ module PactBroker
         end
       end
 
-      one_to_one(:latest_pact, class: "PactBroker::Pacts::PactPublication", :key => [:consumer_id, :provider_id], primary_key: [:consumer_id, :provider_id], :eager_loader=> LATEST_PACT_EAGER_LOADER) do | ds |
+      one_to_one(:latest_pact, class: "PactBroker::Pacts::PactPublication", :key => [:consumer_id, :provider_id], primary_key: [:consumer_id, :provider_id], :eager_loader=> LATEST_PACT_EAGER_LOADER) do
         PactBroker::Pacts::PactPublication.overall_latest_for_consumer_id_and_provider_id(consumer_id, provider_id)
       end
 

@@ -13,7 +13,7 @@ RSpec.describe "passing the pact selection criteria through the verification res
       .create_global_verification_webhook
   end
 
-  let(:verification_content) { load_fixture('verification.json') }
+  let(:verification_content) { load_fixture("verification.json") }
   let(:event_context) { PactBroker::Webhooks::TriggeredWebhook.last.event_context }
 
   context "when verifying the latest pact by URL" do
