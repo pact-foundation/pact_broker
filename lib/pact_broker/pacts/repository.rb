@@ -222,11 +222,11 @@ module PactBroker
       end
 
       # rubocop: disable Metrics/CyclomaticComplexity, Metrics/MethodLength
-      def find_pact consumer_name, consumer_version, provider_name, pact_version_sha = nil
-        pact_publication_by_consumer_version = scope_for(LatestPactPublicationsByConsumerVersion)
-            .consumer(consumer_name)
-            .provider(provider_name)
-            .maybe_consumer_version_number(consumer_version)
+      def find_pact consumer_name, consumer_version_number, provider_name, pact_version_sha = nil
+        pact_publication_by_consumer_version = scope_for(PactPublication)
+            .for_consumer_name_and_maybe_number(consumer_name, consumer_version_number)
+            .for_provider_name(provider_name)
+            .remove_overridden_revisions
             .limit(1)
 
         latest_pact_publication_by_sha = scope_for(PactPublication)
@@ -236,15 +236,15 @@ module PactBroker
             .reverse_order(:consumer_version_order, :revision_number)
             .limit(1)
 
-        if consumer_version && !pact_version_sha
+        if consumer_version_number && !pact_version_sha
           pact_publication_by_consumer_version
             .eager(:tags)
             .collect(&:to_domain_with_content).first
-        elsif pact_version_sha && !consumer_version
+        elsif pact_version_sha && !consumer_version_number
           latest_pact_publication_by_sha
             .eager(:tags)
             .collect(&:to_domain_with_content).first
-        elsif consumer_version && pact_version_sha
+        elsif consumer_version_number && pact_version_sha
           pact_publication = pact_publication_by_consumer_version.all.first
           if pact_publication && pact_publication.pact_version.sha == pact_version_sha
             pact_publication.tags

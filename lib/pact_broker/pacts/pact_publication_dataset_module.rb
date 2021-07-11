@@ -21,6 +21,14 @@ module PactBroker
         where(consumer: consumer)
       end
 
+      def for_consumer_name_and_maybe_number(consumer_name, consumer_version_number)
+        if consumer_version_number
+          where(consumer_version: PactBroker::Domain::Version.where_pacticipant_name_and_version_number(consumer_name, consumer_version_number))
+        else
+          where(consumer: PactBroker::Domain::Pacticipant.find_by_name(consumer_name))
+        end
+      end
+
       def latest_by_consumer_branch
         versions_join = {
           Sequel[:pact_publications][:consumer_version_id] => Sequel[:cv][:id]
