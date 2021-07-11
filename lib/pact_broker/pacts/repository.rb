@@ -197,7 +197,12 @@ module PactBroker
       end
 
       def find_latest_pacts
-        scope_for(LatestPactPublications).order(:consumer_name, :provider_name).collect(&:to_domain)
+        scope_for(PactPublication)
+          .overall_latest
+          .eager(:consumer)
+          .eager(:provider)
+          .collect(&:to_domain)
+          .sort
       end
 
       def find_latest_pact(consumer_name, provider_name, tag = nil)
