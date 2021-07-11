@@ -13,16 +13,9 @@ module PactBroker
       associate(:one_to_one, :latest_verification, :class => "PactBroker::Verifications::LatestVerificationForConsumerAndProvider", key: [:consumer_id, :provider_id], primary_key: [:consumer_id, :provider_id])
       associate(:one_to_many, :latest_triggered_webhooks, :class => "PactBroker::Webhooks::LatestTriggeredWebhook", key: [:consumer_id, :provider_id], primary_key: [:consumer_id, :provider_id])
 
-      # one_to_one(:latest_pact, :class => "PactBroker::Pacts::PactPublication", key: [:consumer_id, :provider_id], primary_key: [:consumer_id, :provider_id]) do | ds |
-      #   ds.overall_latest
-      # end
-
-
       # When viewing the index, every latest_pact in the database will match at least one of the rows, so
       # it makes sense to load the entire table and match each pact to the appropriate row.
-      # This will only work when using eager loading. The keys are just blanked out to avoid errors.
-      # I don't understand how they work at all.
-      # It would be nice to do this declaratively.
+      # Update: now we have pagination, we should probably filter the pacts by consumer/provider id.
       LATEST_PACT_EAGER_LOADER = proc do |eo_opts|
         eo_opts[:rows].each do |integration|
           integration.associations[:latest_pact] = []
@@ -37,7 +30,7 @@ module PactBroker
         end
       end
 
-      one_to_one(:latest_pact, class: "PactBroker::Pacts::PactPublication", :key => [:consumer_id, :provider_id], primary_key: [:consumer_id, :provider_id], :eager_loader=> LATEST_PACT_EAGER_LOADER) do
+      one_to_one(:latest_pact, class: "PactBroker::Pacts::PactPublication", :key => [:consumer_id, :provider_id], primary_key: [:consumer_id, :provider_id], :eager_loader=> LATEST_PACT_EAGER_LOADER) do | _ds |
         PactBroker::Pacts::PactPublication.overall_latest_for_consumer_id_and_provider_id(consumer_id, provider_id)
       end
 
@@ -47,13 +40,13 @@ module PactBroker
       # I don't understand how they work at all.
       # It would be nice to do this declaratively.
       many_to_many :webhooks, class: "PactBroker::Webhooks::Webhook", :left_key => [], left_primary_key: [], :eager_loader=>(proc do |eo_opts|
-        eo_opts[:rows].each do |row|
-          row.associations[:webhooks] = []
+        eo_opts[:rows].each do |integration|
+          integration.associations[:webhooks] = []
         end
 
         PactBroker::Webhooks::Webhook.each do | webhook |
-          eo_opts[:rows].each do | row |
-            if webhook.is_for?(row)
+          eo_opts[:rows].each do | integration |
+            if webhook.is_for?(integration)
               row.associations[:webhooks] << webhook
             end
           end
