@@ -689,8 +689,7 @@ module PactBroker
 
       describe "find_all_revisions" do
         before do
-          TestDataBuilder.new
-            .create_pact_with_hierarchy("foo", "3.0.0", "bar")
+          td.create_pact_with_hierarchy("foo", "3.0.0", "bar")
             .revise_pact
             .create_pact_with_hierarchy(consumer_name, "1.2.3", provider_name)
             .revise_pact
@@ -710,8 +709,7 @@ module PactBroker
 
       describe "find_previous_pact" do
         before do
-          TestDataBuilder.new
-            .create_consumer("Consumer")
+          td.create_consumer("Consumer")
             .create_consumer_version("1.2.2")
             .create_provider("Provider")
             .create_consumer_version_tag("a_tag")
@@ -787,8 +785,7 @@ module PactBroker
 
       describe "find_next_pact" do
         before do
-          TestDataBuilder.new
-            .create_consumer("Consumer")
+          td.create_consumer("Consumer")
             .create_consumer_version("1.2.2")
             .create_provider("Provider")
             .create_pact
@@ -832,8 +829,7 @@ module PactBroker
         end
 
         before do
-          TestDataBuilder.new
-            .create_consumer("Consumer")
+          td.create_consumer("Consumer")
             .create_provider("Provider")
             .create_consumer_version("1")
             .create_pact(json_content: pact_content_version_1)
@@ -873,8 +869,7 @@ module PactBroker
         context "with a tag" do
           context "when a version with a pact exists with the given tag" do
             before do
-              TestDataBuilder.new
-                .create_consumer("Consumer")
+              td.create_consumer("Consumer")
                 .create_consumer_version("2.3.4")
                 .create_provider("Provider")
                 .create_pact
@@ -903,8 +898,7 @@ module PactBroker
         context "without a tag" do
           context "when one or more versions of a pact exist without any tags" do
             before do
-              TestDataBuilder.new
-                .create_consumer("Consumer")
+              td.create_consumer("Consumer")
                 .create_provider("Provider")
                 .create_consumer_version("1.0.0")
                 .create_pact
@@ -932,8 +926,7 @@ module PactBroker
 
           context "when all versions have a tag" do
             before do
-              TestDataBuilder.new
-                .create_consumer("Consumer")
+              td.create_consumer("Consumer")
                 .create_provider("Provider")
                 .create_consumer_version("2.3.4")
                 .create_consumer_version_tag("prod")
