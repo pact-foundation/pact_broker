@@ -263,12 +263,12 @@ module PactBroker
       end
       # rubocop: enable Metrics/CyclomaticComplexity, Metrics/MethodLength
 
-      def find_all_revisions consumer_name, consumer_version, provider_name
-        scope_for(AllPactPublications)
-          .consumer(consumer_name)
-          .provider(provider_name)
-          .consumer_version_number(consumer_version)
-          .order(:consumer_version_order, :revision_number).collect(&:to_domain_with_content)
+      def find_all_revisions consumer_name, consumer_version_number, provider_name
+        scope_for(PactPublication)
+          .for_provider_name(provider_name)
+          .for_consumer_name_and_maybe_number(consumer_name, consumer_version_number)
+          .order_by_consumer_version_order
+          .collect(&:to_domain_with_content)
       end
 
       def find_previous_pact pact, tag = nil

@@ -253,7 +253,7 @@ module PactBroker
       end
 
       def order_by_consumer_version_order
-        order_append(Sequel[:cv][:order])
+        order_append(:consumer_version_order, :revision_number)
       end
 
       def where_consumer_if_set(consumer)
