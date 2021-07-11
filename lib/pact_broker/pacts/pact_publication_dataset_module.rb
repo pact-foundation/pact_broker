@@ -5,6 +5,10 @@ module PactBroker
     module PactPublicationDatasetModule
       include PactPublicationSelectorDatasetModule
 
+      def for_consumer_id_and_provider_id(consumer_id, provider_id)
+        where(Sequel[:pact_publications][:consumer_id] => consumer_id, Sequel[:pact_publications][:provider_id] => provider_id)
+      end
+
       def for_provider_name(provider_name)
         where(provider: PactBroker::Domain::Pacticipant.find_by_name(provider_name))
       end
@@ -68,6 +72,12 @@ module PactBroker
         end
         .where(Sequel[:pp2][:consumer_version_order] => nil)
         .remove_overridden_revisions_from_complete_query
+      end
+
+      def overall_latest_for_consumer_id_and_provider_id(consumer_id, provider_id)
+        for_consumer_id_and_provider_id(consumer_id, provider_id)
+          .order(Sequel.desc(Sequel[:pact_publications][:consumer_version_order]), Sequel.desc(:revision_number))
+          .limit(1)
       end
 
       def latest_for_consumer_branch(branch)
