@@ -1,5 +1,3 @@
-require "pact_broker/domain/version"
-
 module PactBroker
   module Pacts
     module Metadata
@@ -79,6 +77,7 @@ module PactBroker
       end
 
       def parse_hash(hash)
+        require "pact_broker/domain/version" # can't load this before the db models
         hash.each_with_object({}) do | (key, value), new_hash |
           long_key = MAPPINGS.find{ |mapping| mapping.last == key }&.first
           if long_key == :consumer_version_id
