@@ -55,19 +55,18 @@ module PactBroker
       end
 
       def overall_latest
-        base_query = join_consumer_versions # won't need to do this when we add the order to latest_pact_publication_ids_for_consumer_versions
-
         self_join = {
           Sequel[:pact_publications][:consumer_id] => Sequel[:pp2][:consumer_id],
           Sequel[:pact_publications][:provider_id] => Sequel[:pp2][:provider_id]
         }
 
+        base_query = self
         base_query = base_query.select_all_qualified if no_columns_selected?
 
-        base_query.left_join(base_query.select(:consumer_id, :provider_id, :order), self_join, { table_alias: :pp2 } ) do
-          Sequel[:pp2][:order] > Sequel[:cv][:order]
+        base_query.left_join(base_query.select(:consumer_id, :provider_id, :consumer_version_order), self_join, { table_alias: :pp2 } ) do
+          Sequel[:pp2][:consumer_version_order] > Sequel[:pact_publications][:consumer_version_order]
         end
-        .where(Sequel[:pp2][:order] => nil)
+        .where(Sequel[:pp2][:consumer_version_order] => nil)
         .remove_overridden_revisions_from_complete_query
       end
 

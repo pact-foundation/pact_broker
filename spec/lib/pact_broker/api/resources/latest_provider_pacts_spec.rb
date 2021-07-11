@@ -5,7 +5,7 @@ module PactBroker
     module Resources
       describe LatestProviderPacts do
         before do
-          allow(PactBroker::Pacts::Service).to receive(:find_latest_pact_versions_for_provider).and_return(pacts)
+          allow(PactBroker::Pacts::Service).to receive(:find_latest_pacts_for_provider).and_return(pacts)
           allow(PactBroker::Api::Decorators::ProviderPactsDecorator).to receive(:new).and_return(decorator)
           allow_any_instance_of(LatestProviderPacts).to receive(:resource_exists?).and_return(provider)
         end
@@ -19,7 +19,7 @@ module PactBroker
 
         context "with no tag" do
           it "finds the pacts" do
-            expect(PactBroker::Pacts::Service).to receive(:find_latest_pact_versions_for_provider).with("Bar", tag: nil)
+            expect(PactBroker::Pacts::Service).to receive(:find_latest_pacts_for_provider).with("Bar", tag: nil)
             subject
           end
 
@@ -35,7 +35,7 @@ module PactBroker
           let(:path) { "/pacts/provider/Bar/latest/prod" }
 
           it "finds the pacts with a tag" do
-            expect(PactBroker::Pacts::Service).to receive(:find_latest_pact_versions_for_provider).with("Bar", tag: "prod")
+            expect(PactBroker::Pacts::Service).to receive(:find_latest_pacts_for_provider).with("Bar", tag: "prod")
             subject
           end
 

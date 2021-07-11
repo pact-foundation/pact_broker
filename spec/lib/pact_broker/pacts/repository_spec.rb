@@ -444,7 +444,7 @@ module PactBroker
         end
       end
 
-      describe "#find_latest_pact_versions_for_provider" do
+      describe "#find_latest_pacts_for_provider" do
         context "with no tag specified" do
           before do
             td.create_consumer(consumer_name)
@@ -462,15 +462,17 @@ module PactBroker
               .create_pact
           end
 
-          subject { Repository.new.find_latest_pact_versions_for_provider provider_name }
+          subject { Repository.new.find_latest_pacts_for_provider provider_name }
 
           it "returns the pacts between the specified consumer and provider" do
             expect(subject.size).to eq 2
             expect(subject.first.consumer.name).to eq consumer_name
             expect(subject.first.provider.name).to eq provider_name
             expect(subject.first.consumer_version.number).to eq "1.2.3"
-            expect(subject.first.json_content).to be nil
+            expect(subject.first.json_content).to_not be nil
             expect(subject.last.consumer.name).to eq "wiffle consumer"
+            expect(subject.last.tag).to eq nil
+            expect(subject.last.overall_latest?).to be true
           end
         end
 
@@ -494,16 +496,19 @@ module PactBroker
               .create_pact
           end
 
-          subject { Repository.new.find_latest_pact_versions_for_provider provider_name, "prod" }
+          subject { Repository.new.find_latest_pacts_for_provider provider_name, "prod" }
 
-          it "returns the pacts between the specified consumer and provider with the given tag" do
+          it "returns the pacts between the specified consumer and provider with the given consumer version tag" do
             expect(subject.size).to eq 2
             expect(subject.first.provider.name).to eq provider_name
             expect(subject.first.consumer.name).to eq consumer_name
             expect(subject.first.consumer_version.number).to eq "1.2.3"
-            expect(subject.first.json_content).to be nil
+            expect(subject.first.json_content).to_not be nil
+            expect(subject.first.tag).to eq "prod"
             expect(subject.last.consumer.name).to eq "wiffle consumer"
             expect(subject.last.consumer_version.number).to eq "5.0.0"
+            expect(subject.last.tag).to eq "prod"
+            expect(subject.last.overall_latest?).to be false
           end
         end
       end

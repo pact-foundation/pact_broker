@@ -141,12 +141,18 @@ module PactBroker
         scope_for(PactVersion).where(consumer: consumer, provider: provider).delete
       end
 
-      def find_latest_pact_versions_for_provider provider_name, tag = nil
-        if tag
-          scope_for(LatestTaggedPactPublications).provider(provider_name).order_ignore_case(:consumer_name).where(tag_name: tag).collect(&:to_domain)
+      def find_latest_pacts_for_provider provider_name, tag = nil
+        query = scope_for(PactPublication)
+                  .for_provider_name(provider_name)
+                  .eager(:consumer)
+
+        query = if tag
+          query = query.latest_for_consumer_tag(tag)
         else
-          scope_for(LatestPactPublications).provider(provider_name).order_ignore_case(:consumer_name).collect(&:to_domain)
+          query = query.overall_latest
         end
+
+        query.sort_by{ | p| p.consumer_name.downcase }.collect(&:to_head_pact)
       end
 
       def find_for_verification(provider_name, consumer_version_selectors)

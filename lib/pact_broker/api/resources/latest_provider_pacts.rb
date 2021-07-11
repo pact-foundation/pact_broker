@@ -9,7 +9,7 @@ module PactBroker
         private
 
         def pacts
-          pact_service.find_latest_pact_versions_for_provider provider_name, tag: identifier_from_path[:tag]
+          pact_service.find_latest_pacts_for_provider(provider_name, tag: identifier_from_path[:tag])
         end
 
         def resource_title

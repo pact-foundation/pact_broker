@@ -85,8 +85,8 @@ module PactBroker
         pact_repository.delete_all_pact_versions_between consumer, options
       end
 
-      def find_latest_pact_versions_for_provider provider_name, options = {}
-        pact_repository.find_latest_pact_versions_for_provider provider_name, options[:tag]
+      def find_latest_pacts_for_provider provider_name, options = {}
+        pact_repository.find_latest_pacts_for_provider provider_name, options[:tag]
       end
 
       def find_pact_versions_for_provider provider_name, options = {}

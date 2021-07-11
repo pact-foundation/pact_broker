@@ -144,6 +144,10 @@ module PactBroker
         to_domain
       end
 
+      def to_head_pact
+        HeadPact.new(to_domain, consumer_version.number, values[:tag_name])
+      end
+
       private
 
       def cached_domain_for_delegation

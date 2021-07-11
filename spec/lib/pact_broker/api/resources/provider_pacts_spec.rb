@@ -5,7 +5,7 @@ module PactBroker
     module Resources
       describe ProviderPacts do
         before do
-          allow(PactBroker::Pacts::Service).to receive(:find_latest_pact_versions_for_provider).and_return(pacts)
+          allow(PactBroker::Pacts::Service).to receive(:find_latest_pacts_for_provider).and_return(pacts)
           allow(PactBroker::Api::Decorators::ProviderPactsDecorator).to receive(:new).and_return(decorator)
           allow(PactBroker::Pacticipants::Service).to receive(:find_pacticipant_by_name).and_return(provider)
         end
