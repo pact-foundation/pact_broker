@@ -179,7 +179,8 @@ module PactBroker
           provider_id: provider.id,
           consumer_id: version.pacticipant_id,
           pact_version_sha: pact_version_sha,
-          json_content: json_content
+          json_content: json_content,
+          version: version
         )
 
         event_params = { event_context: { consumer_version_tags: pact.consumer_version_tag_names }, pact: pact }

@@ -25,7 +25,8 @@ module PactBroker
             consumer_id: consumer.id,
             provider_id: provider.id,
             json_content: json_content,
-            pact_version_sha: pact_version_sha
+            pact_version_sha: pact_version_sha,
+            version: version
           }
         end
 
@@ -71,7 +72,8 @@ module PactBroker
               consumer_id: consumer.id,
               provider_id: provider.id,
               json_content: json_content,
-              pact_version_sha: pact_version_sha
+              pact_version_sha: pact_version_sha,
+              version: version
             )
           end
 
@@ -81,7 +83,8 @@ module PactBroker
               consumer_id: consumer.id,
               provider_id: provider.id,
               json_content: json_content,
-              pact_version_sha: pact_version_sha
+              pact_version_sha: pact_version_sha,
+              version: another_version
             )
           end
 
@@ -123,7 +126,8 @@ module PactBroker
               consumer_id: consumer.id,
               provider_id: provider.id,
               json_content: json_content,
-              pact_version_sha: sha_1
+              pact_version_sha: sha_1,
+              version: version
             )
           end
 
@@ -133,7 +137,8 @@ module PactBroker
               consumer_id: consumer.id,
               provider_id: provider.id,
               json_content: json_content,
-              pact_version_sha: sha_2
+              pact_version_sha: sha_2,
+              version: another_version
             )
           end
 
@@ -161,7 +166,8 @@ module PactBroker
               consumer_id: consumer.id,
               provider_id: another_provider.id,
               json_content: json_content,
-              pact_version_sha: pact_version_sha
+              pact_version_sha: pact_version_sha,
+              version: version
             )
           end
 
@@ -171,7 +177,8 @@ module PactBroker
               consumer_id: consumer.id,
               provider_id: provider.id,
               json_content: json_content,
-              pact_version_sha: pact_version_sha
+              pact_version_sha: pact_version_sha,
+              version: another_version
             )
           end
 
@@ -189,7 +196,8 @@ module PactBroker
               consumer_id: consumer.id,
               provider_id: provider.id,
               json_content: {some_other: "json_content"}.to_json,
-              pact_version_sha: pact_version_sha
+              pact_version_sha: pact_version_sha,
+              version: version
             )
           end
 
@@ -199,7 +207,8 @@ module PactBroker
               consumer_id: consumer.id,
               provider_id: provider.id,
               json_content: json_content,
-              pact_version_sha: "#{pact_version_sha}111"
+              pact_version_sha: "#{pact_version_sha}111",
+              version: another_version
             )
           end
 

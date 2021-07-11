@@ -243,6 +243,7 @@ module PactBroker
           provider_id: @provider.id,
           pact_version_sha: pact_version_sha,
           json_content: prepare_json_content(json_content),
+          version: @consumer_version
         )
         pact_versions_count_after = PactBroker::Pacts::PactVersion.count
         set_created_at_if_set(params[:created_at], :pact_publications, id: @pact.id)

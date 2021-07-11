@@ -5,6 +5,14 @@ module PactBroker
     module PactPublicationDatasetModule
       include PactPublicationSelectorDatasetModule
 
+      def for_provider_name(provider_name)
+        where(provider: PactBroker::Domain::Pacticipant.find_by_name(provider_name))
+      end
+
+      def for_consumer_name(consumer_name)
+        where(consumer: PactBroker::Domain::Pacticipant.find_by_name(consumer_name))
+      end
+
       def for_provider provider
         where(provider: provider)
       end
@@ -200,6 +208,11 @@ module PactBroker
 
       def join_pact_versions
         join(:pact_versions, { Sequel[:pact_publications][:pact_version_id] => Sequel[:pact_versions][:id] })
+      end
+
+      def for_pact_version_sha(pact_version_sha)
+        join_pact_versions
+          .where(Sequel[:pact_versions][:sha] => pact_version_sha)
       end
 
       def eager_load_pact_versions

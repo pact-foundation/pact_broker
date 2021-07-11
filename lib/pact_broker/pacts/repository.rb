@@ -51,7 +51,8 @@ module PactBroker
           provider_id: params[:provider_id],
           consumer_id: params[:consumer_id],
           pact_version: pact_version,
-          revision_number: 1
+          revision_number: 1,
+          consumer_version_order: params.fetch(:version).order,
         ).upsert
         update_latest_pact_publication_ids(pact_publication)
         pact_publication.to_domain
@@ -71,6 +72,7 @@ module PactBroker
             provider_id: existing_model.provider_id,
             revision_number: next_revision_number(existing_model),
             consumer_id: existing_model.consumer_id,
+            consumer_version_order: existing_model.consumer_version_order,
             pact_version_id: pact_version.id,
             created_at: Sequel.datetime_class.now
           ).upsert
@@ -227,10 +229,10 @@ module PactBroker
             .maybe_consumer_version_number(consumer_version)
             .limit(1)
 
-        latest_pact_publication_by_sha = scope_for(AllPactPublications)
-            .consumer(consumer_name)
-            .provider(provider_name)
-            .pact_version_sha(pact_version_sha)
+        latest_pact_publication_by_sha = scope_for(PactPublication)
+            .for_consumer_name(consumer_name)
+            .for_provider_name(provider_name)
+            .for_pact_version_sha(pact_version_sha)
             .reverse_order(:consumer_version_order, :revision_number)
             .limit(1)
 

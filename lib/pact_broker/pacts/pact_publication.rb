@@ -24,6 +24,8 @@ module PactBroker
       associate(:many_to_one, :pact_version, class: "PactBroker::Pacts::PactVersion", :key => :pact_version_id, :primary_key => :id)
       associate(:many_to_one, :integration, class: "PactBroker::Integrations::Integration", key: [:consumer_id, :provider_id], primary_key: [:consumer_id, :provider_id])
       one_to_one(:latest_verification, class: "PactBroker::Verifications::LatestVerificationForPactVersion", key: :pact_version_id, primary_key: :pact_version_id)
+      # TODO rename to consumer_version_tags
+      associate(:one_to_many, :tags, :class => "PactBroker::Domain::Tag", :key => :version_id, :primary_key => :consumer_version_id)
 
       one_to_many(:head_pact_publications_for_tags,
         class: PactPublication,
@@ -64,7 +66,7 @@ module PactBroker
       end
 
       def consumer_version_tags
-        consumer_version.tags
+        tags
       end
 
       def latest_verification
@@ -95,7 +97,7 @@ module PactBroker
           created_at: created_at,
           head_tag_names: [],
           db_model: self
-          )
+        )
       end
 
       def to_domain_lightweight
@@ -136,6 +138,10 @@ module PactBroker
           current_deployed_versions: consumer_version.associations[:current_deployed_versions],
           current_supported_released_versions: consumer_version.associations[:current_supported_released_versions],
         )
+      end
+
+      def to_domain_with_content
+        to_domain
       end
 
       private
