@@ -63,6 +63,10 @@ module DB
     config.fetch(env).fetch(ENV.fetch("DATABASE_ADAPTER","default"))
   end
 
+  def self.sqlite?
+    !!(PACT_BROKER_DB.adapter_scheme.to_s =~ /sqlite/)
+  end
+
   def self.mysql?
     !!(PACT_BROKER_DB.adapter_scheme.to_s =~ /mysql/)
   end

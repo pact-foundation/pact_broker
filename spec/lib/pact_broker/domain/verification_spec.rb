@@ -4,6 +4,23 @@ module PactBroker
 
   module Domain
     describe Verification do
+      describe "latest_by_pact_version" do
+        before do
+          td.create_pact_with_hierarchy("Foo", "10", "Bar")
+            .create_verification(provider_version: "3", number: 1)
+            .create_verification(provider_version: "4", number: 2)
+            .create_pact_with_hierarchy("Foo2", "10", "Bar2")
+            .create_verification(provider_version: "30", number: 1)
+            .create_verification(provider_version: "31", number: 2)
+        end
+
+        subject { Verification.latest_by_pact_version.order(:id).all }
+
+        it "returns the latest by pact version" do
+          expect(subject.size).to eq 2
+          expect(subject.collect(&:provider_version_number).sort).to eq ["31", "4"]
+        end
+      end
       describe "latest_verifications_for_all_consumer_version_tags" do
         before do
           td.create_pact_with_verification_and_tags("Foo", "1", ["fmain"], "Bar", "2")

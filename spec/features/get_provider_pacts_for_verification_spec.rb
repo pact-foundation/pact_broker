@@ -70,7 +70,10 @@ describe "Get provider pacts for verification" do
 
       subject { post(path, request_body.to_json, request_headers) }
 
-      it { Approvals.verify(fixture, :name => "get_provider_pacts_for_verification", format: :json) }
+      # The metadata is different when the database IDs are different
+      it "matches the expected body", skip: !DB.sqlite? do
+        Approvals.verify(fixture, :name => "get_provider_pacts_for_verification", format: :json)
+      end
 
       it "returns a list of links to the pacts" do
         expect(pacts.size).to eq 1

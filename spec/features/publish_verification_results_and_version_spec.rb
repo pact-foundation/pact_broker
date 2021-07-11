@@ -13,7 +13,7 @@ describe "Publishing a pact verification and provider version" do
     }
   end
 
-  subject { post path, verification_content, rack_env; last_response  }
+  subject { post(path, verification_content, rack_env)  }
 
   before do
     td.create_provider("Provider")

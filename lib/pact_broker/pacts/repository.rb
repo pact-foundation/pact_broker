@@ -235,12 +235,14 @@ module PactBroker
       # rubocop: disable Metrics/CyclomaticComplexity, Metrics/MethodLength
       def find_pact consumer_name, consumer_version_number, provider_name, pact_version_sha = nil
         pact_publication_by_consumer_version = scope_for(PactPublication)
+            .select_all_qualified
             .for_consumer_name_and_maybe_number(consumer_name, consumer_version_number)
             .for_provider_name(provider_name)
             .remove_overridden_revisions
             .limit(1)
 
         latest_pact_publication_by_sha = scope_for(PactPublication)
+            .select_all_qualified
             .for_consumer_name(consumer_name)
             .for_provider_name(provider_name)
             .for_pact_version_sha(pact_version_sha)

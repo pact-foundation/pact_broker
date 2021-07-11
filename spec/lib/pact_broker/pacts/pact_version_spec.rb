@@ -96,16 +96,35 @@ module PactBroker
       describe "#latest_verification" do
         before do
           td.create_pact_with_hierarchy
+            .create_verification(provider_version: "4", number: 1)
+            .create_verification(provider_version: "5", number: 2)
+            .create_verification(provider_version: "6", number: 3)
+            .create_pact_with_hierarchy
             .create_verification
-            .create_verification(number: 2)
-            .create_verification(number: 3)
+            .create_verification(provider_version: "1", number: 2)
+            .create_verification(provider_version: "2", number: 3)
         end
-        let(:pact_version) { PactVersion.last }
 
-        subject { pact_version.latest_verification }
+        describe "lazy loading" do
+          let(:pact_version) { PactVersion.last }
 
-        it "returns the latest verification by execution date" do
-          expect(subject.number).to eq 3
+          subject { pact_version.latest_verification }
+
+          it "returns the latest verification by verification id" do
+            expect(subject.number).to eq 3
+          end
+        end
+
+        describe "eager loading" do
+          let(:first_pact_latest_verification) { PactVersion.eager(:latest_verification).order(:id).all.first.associations[:latest_verification] }
+          let(:last_pact_latest_verification) { PactVersion.eager(:latest_verification).order(:id).all.last.associations[:latest_verification] }
+
+          it "returns the latest verification by verification id" do
+            expect(first_pact_latest_verification.number).to eq 3
+            expect(first_pact_latest_verification.provider_version_number).to eq "6"
+            expect(last_pact_latest_verification.number).to eq 3
+            expect(last_pact_latest_verification.provider_version_number).to eq "2"
+          end
         end
       end
 

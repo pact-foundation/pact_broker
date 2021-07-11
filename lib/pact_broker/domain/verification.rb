@@ -27,6 +27,30 @@ module PactBroker
       dataset_module do
         include PactBroker::Repositories::Helpers
 
+        def for_provider_name(provider_name)
+          where(provider: PactBroker::Domain::Pacticipant.find_by_name(provider_name))
+        end
+
+        def for_consumer_name(consumer_name)
+          where(consumer: PactBroker::Domain::Pacticipant.find_by_name(consumer_name))
+        end
+
+        def latest_by_pact_version
+          base_query = self
+          base_join = {
+            Sequel[:verifications][:pact_version_id] => Sequel[:v2][:pact_version_id]
+          }
+
+          if no_columns_selected?
+            base_query = base_query.select_all_qualified
+          end
+
+          base_query.left_join(base_query.select(Sequel[:verifications][:id], Sequel[:verifications][:pact_version_id]), base_join, { table_alias: :v2 }) do
+            Sequel[:v2][:id] > Sequel[:verifications][:id]
+          end
+          .where(Sequel[:v2][:id] => nil)
+        end
+
         def latest_verification_ids_for_all_consumer_version_tags
           verif_pact_join = { Sequel[:verifications][:pact_version_id] => Sequel[:lpp][:pact_version_id] }
           tag_join = { Sequel[:lpp][:consumer_version_id] => Sequel[:cvt][:version_id] }
@@ -103,6 +127,10 @@ module PactBroker
             .join(latest_ids_for_cv_tags, join_cols, { table_alias: :t2 })
         end
 
+        def remove_verifications_for_overridden_consumer_versions
+          join(:latest_pact_publication_ids_for_consumer_versions, { pact_version_id: :pact_version_id } )
+        end
+
         # Expects to be joined with AllPactPublications or subclass
         # Beware that when columns with the same name exist in both datasets
         # you may get the wrong column back in your model.
@@ -142,6 +170,18 @@ module PactBroker
           join(:pact_publications, {pact_version_id: :pact_version_id})
             .left_outer_join(:tags, {version_id: :consumer_version_id})
             .where(Sequel.qualify(:tags, :name) => nil)
+        end
+
+        def join_pact_publications
+          join(:pact_publications, { Sequel[:pact_publications][:pact_version_id] => Sequel[:verifications][:pact_version_id] })
+        end
+
+        def for_consumer_name_and_consumer_version_number(consumer_name, consumer_version_number)
+          consumer_versions = PactBroker::Domain::Version.select(:id).where_pacticipant_name_and_version_number(consumer_name, consumer_version_number)
+          join(:pact_publications, {
+            Sequel[:pact_publications][:pact_version_id] => Sequel[:verifications][:pact_version_id],
+            Sequel[:pact_publications][:consumer_version_id] => consumer_versions
+          })
         end
       end
 

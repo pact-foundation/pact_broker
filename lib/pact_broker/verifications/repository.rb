@@ -67,24 +67,23 @@ module PactBroker
       end
 
       def search_for_latest consumer_name, provider_name
-        query = LatestVerificationForPactVersion
-                  .select_all_qualified
-                  .join(:all_pact_publications, pact_version_id: :pact_version_id)
-        query = query.consumer(consumer_name) if consumer_name
-        query = query.provider(provider_name) if provider_name
+        query = PactBroker::Domain::Verification.select_all_qualified
+        query = query.for_consumer_name(consumer_name) if consumer_name
+        query = query.for_provider_name(provider_name) if provider_name
         query.reverse(:execution_date, :id).first
       end
 
       def find_latest_verifications_for_consumer_version consumer_name, consumer_version_number
         # Use LatestPactPublicationsByConsumerVersion not AllPactPublcations because we don't
         # want verifications for shadowed revisions as it would be misleading.
-        LatestVerificationForPactVersion
+        PactBroker::Domain::Verification
           .select_all_qualified
-          .join(:latest_pact_publications_by_consumer_versions, pact_version_id: :pact_version_id)
-          .consumer(consumer_name)
-          .consumer_version_number(consumer_version_number)
-          .order(:provider_name)
+          .remove_verifications_for_overridden_consumer_versions
+          .for_consumer_name_and_consumer_version_number(consumer_name, consumer_version_number)
+          .latest_by_pact_version
+          .eager(:provider)
           .all
+          .sort_by { | v | v.provider_name.downcase }
       end
 
       # The most recent verification for the latest revision of the pact

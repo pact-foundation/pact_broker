@@ -55,6 +55,10 @@ module PactBroker
           select(column)
         end
       end
+
+      def no_columns_selected?
+        opts[:select].nil?
+      end
     end
   end
 end
