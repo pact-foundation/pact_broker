@@ -55,12 +55,13 @@ module PactBroker
       end
 
       def latest_pact_publication
-        PactBroker::Pacts::LatestPactPublicationsByConsumerVersion
-          .where(pact_version_id: id)
+        PactBroker::Pacts::PactPublication
+          .remove_overridden_revisions
+          .for_pact_version_id(id)
           .order(:consumer_version_order)
-          .last || PactBroker::Pacts::AllPactPublications
-          .where(pact_version_id: id)
-          .order(:consumer_version_order)
+          .last || PactBroker::Pacts::PactPublication
+          .for_pact_version_id(id)
+          .order(:consumer_version_order, :revision_number)
           .last
       end
 

@@ -160,6 +160,10 @@ module PactBroker
         .remove_overridden_revisions(:p)
       end
 
+      def for_pact_version_id(pact_version_id)
+        where(Sequel[:pact_publications][:pact_version_id] => pact_version_id)
+      end
+
       def join_consumer_versions(table_alias = :cv, extra_join_criteria = {}, &block)
         versions_join = {
           Sequel[:pact_publications][:consumer_version_id] => Sequel[table_alias][:id]
