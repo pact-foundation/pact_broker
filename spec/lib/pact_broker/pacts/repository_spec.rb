@@ -321,8 +321,7 @@ module PactBroker
 
       describe "delete" do
         before do
-          TestDataBuilder.new
-            .create_consumer(consumer_name)
+          td.create_consumer(consumer_name)
             .create_consumer_version("1.2.3")
             .create_provider(provider_name)
             .create_pact
@@ -350,8 +349,7 @@ module PactBroker
 
       describe "delete_by_version_id" do
         let!(:version) do
-          TestDataBuilder.new
-            .create_consumer
+          td.create_consumer
             .create_provider
             .create_consumer_version("4.5.6")
             .create_pact
@@ -374,8 +372,7 @@ module PactBroker
       describe "#find_all_pact_versions_between" do
 
         before do
-          TestDataBuilder.new
-            .create_consumer(consumer_name)
+          td.create_consumer(consumer_name)
             .create_consumer_version("1.2.3")
             .create_provider(provider_name)
             .create_pact
@@ -410,8 +407,7 @@ module PactBroker
       describe "#delete_all_pact_publications_between" do
 
         before do
-          TestDataBuilder.new
-            .create_consumer(consumer_name)
+          td.create_consumer(consumer_name)
             .create_consumer_version("1.2.3")
             .create_provider(provider_name)
             .create_pact
@@ -983,8 +979,7 @@ module PactBroker
 
       describe "find_latest_pacts" do
         before do
-          TestDataBuilder.new
-            .create_consumer("Condor")
+          td.create_consumer("Condor")
             .create_consumer_version("1.3.0")
             .create_provider("Pricing Service")
             .create_pact
