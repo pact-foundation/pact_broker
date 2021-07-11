@@ -236,7 +236,7 @@ module PactBroker
       def find_pact consumer_name, consumer_version_number, provider_name, pact_version_sha = nil
         pact_publication_by_consumer_version = scope_for(PactPublication)
             .select_all_qualified
-            .for_consumer_name_and_maybe_number(consumer_name, consumer_version_number)
+            .for_consumer_name_and_maybe_version_number(consumer_name, consumer_version_number)
             .for_provider_name(provider_name)
             .remove_overridden_revisions
             .limit(1)
@@ -279,7 +279,7 @@ module PactBroker
       def find_all_revisions consumer_name, consumer_version_number, provider_name
         scope_for(PactPublication)
           .for_provider_name(provider_name)
-          .for_consumer_name_and_maybe_number(consumer_name, consumer_version_number)
+          .for_consumer_name_and_maybe_version_number(consumer_name, consumer_version_number)
           .order_by_consumer_version_order
           .collect(&:to_domain_with_content)
       end

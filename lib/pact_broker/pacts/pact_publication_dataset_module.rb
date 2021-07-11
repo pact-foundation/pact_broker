@@ -25,7 +25,7 @@ module PactBroker
         where(consumer: consumer)
       end
 
-      def for_consumer_name_and_maybe_number(consumer_name, consumer_version_number)
+      def for_consumer_name_and_maybe_version_number(consumer_name, consumer_version_number)
         if consumer_version_number
           where(consumer_version: PactBroker::Domain::Version.where_pacticipant_name_and_version_number(consumer_name, consumer_version_number))
         else
@@ -176,7 +176,9 @@ module PactBroker
       end
 
       def remove_overridden_revisions(pact_publications_alias = :pact_publications)
-        join(:latest_pact_publication_ids_for_consumer_versions, { Sequel[:lp][:pact_publication_id] => Sequel[pact_publications_alias][:id] }, { table_alias: :lp})
+        base = self
+        base = base.select_all_qualified if no_columns_selected?
+        base.join(:latest_pact_publication_ids_for_consumer_versions, { Sequel[:lp][:pact_publication_id] => Sequel[pact_publications_alias][:id] }, { table_alias: :lp})
       end
 
       def remove_overridden_revisions_from_complete_query
@@ -263,6 +265,10 @@ module PactBroker
 
       def order_by_consumer_version_order
         order_append(:consumer_version_order, :revision_number)
+      end
+
+      def latest
+        order(:consumer_version_order, :revision_number).last
       end
 
       def where_consumer_if_set(consumer)

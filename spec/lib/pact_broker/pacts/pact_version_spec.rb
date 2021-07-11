@@ -6,8 +6,7 @@ module PactBroker
 
       describe "pacticipant names" do
         subject(:pact_version) do
-          TestDataBuilder.new
-            .create_consumer("consumer")
+          td.create_consumer("consumer")
             .create_provider("provider")
             .create_consumer_version("1.0.1")
             .create_pact
@@ -18,12 +17,50 @@ module PactBroker
         its(:provider_name) { is_expected.to eq("provider") }
       end
 
-      describe "#latest_pact_publication" do
+      describe "consumer_versions" do
+        subject(:pact_version) do
+          td.create_consumer("consumer")
+            .create_provider("provider")
+            .create_consumer_version("1")
+            .create_pact
+            .create_consumer_version("2")
+            .republish_same_pact
+            .create_consumer_version("3")
+            .create_pact
 
+          PactVersion.order(:id).first
+        end
+
+        it "returns the consuemr versions" do
+          expect(subject.consumer_versions.collect(&:number).sort).to eq ["1", "2"]
+        end
+      end
+
+      describe "latest_consumer_version" do
+        before do
+          td.create_consumer("consumer")
+            .create_provider("provider")
+            .create_consumer_version("1")
+            .create_pact
+            .create_consumer_version("2")
+            .republish_same_pact
+            .create_consumer_version("3")
+            .create_pact
+            .create_consumer_version("4")
+            .republish_same_pact
+        end
+
+        it "does not work eager loading because the Version needs a latest_by_pact_version method, but we don't need it for now", skip: true do
+          pact_versions = PactVersion.eager(:latest_consumer_version).order(:id).all
+          expect(pact_versions.first.latest_consumer_version.number).to eq 2
+          expect(pact_versions.last.latest_consumer_version.number).to eq 4
+        end
+      end
+
+      describe "#latest_pact_publication" do
         context "when the latest pact publication is not an overwritten one" do
           before do
-            TestDataBuilder.new
-              .create_provider("Bar")
+            td.create_provider("Bar")
               .create_consumer("Foo")
               .create_consumer_version("1.2.100")
               .create_pact
@@ -48,7 +85,6 @@ module PactBroker
         end
 
         context "when the only pact publication with the given sha is an overwritten one" do
-          let(:td) { TestDataBuilder.new }
           let!(:first_version) do
             td.create_provider("Bar")
               .create_consumer("Foo")
@@ -64,6 +100,7 @@ module PactBroker
             pact_version = PactBroker::Pacts::PactVersion.find(sha: first_version.pact_version_sha)
             latest_pact_publication = pact_version.latest_pact_publication
             expect(latest_pact_publication.revision_number).to eq 1
+            expect(latest_pact_publication.id).to eq PactBroker::Pacts::PactPublication.order(:id).first.id
           end
         end
       end

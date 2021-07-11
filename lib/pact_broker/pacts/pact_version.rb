@@ -16,6 +16,12 @@ module PactBroker
 
       associate(:many_to_one, :provider, class: "PactBroker::Domain::Pacticipant", key: :provider_id, primary_key: :id)
       associate(:many_to_one, :consumer, class: "PactBroker::Domain::Pacticipant", key: :consumer_id, primary_key: :id)
+      associate(:many_to_many, :consumer_versions, class: "PactBroker::Domain::Version", join_table: :pact_publications, left_key: :pact_version_id, right_key: :consumer_version_id, order: :order)
+
+      # do not eager load this - it won't work because of the limit(1)
+      one_through_one(:latest_consumer_version, class: "PactBroker::Domain::Version", join_table: :pact_publications, left_key: :pact_version_id, right_key: :consumer_version_id) do | ds |
+        ds.unlimited.order(Sequel.desc(:order)).limit(1)
+      end
 
       dataset_module do
         include PactBroker::Repositories::Helpers
@@ -53,24 +59,13 @@ module PactBroker
         pact_publications.last.consumer.name
       end
 
-      def latest_consumer_version
-        consumer_versions.last
-      end
-
       def latest_pact_publication
         PactBroker::Pacts::PactPublication
-          .remove_overridden_revisions
           .for_pact_version_id(id)
-          .order(:consumer_version_order)
-          .last || PactBroker::Pacts::PactPublication
-          .for_pact_version_id(id)
-          .order(:consumer_version_order, :revision_number)
-          .last
+          .remove_overridden_revisions_from_complete_query
+          .latest || PactBroker::Pacts::PactPublication.for_pact_version_id(id).latest
       end
 
-      def consumer_versions
-        PactBroker::Domain::Version.where(id: PactBroker::Pacts::PactPublication.select(:consumer_version_id).where(pact_version_id: id)).order(:order)
-      end
 
       def latest_consumer_version_number
         latest_consumer_version.number

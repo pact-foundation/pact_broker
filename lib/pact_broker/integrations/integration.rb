@@ -47,7 +47,7 @@ module PactBroker
         PactBroker::Webhooks::Webhook.each do | webhook |
           eo_opts[:rows].each do | integration |
             if webhook.is_for?(integration)
-              row.associations[:webhooks] << webhook
+              integration.associations[:webhooks] << webhook
             end
           end
         end
