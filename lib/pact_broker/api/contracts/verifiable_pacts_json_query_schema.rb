@@ -38,7 +38,7 @@ module PactBroker
               optional(:deployed).filled(included_in?: [true])
               optional(:released).filled(included_in?: [true])
               optional(:deployedOrReleased).filled(included_in?: [true])
-              optional(:environment).filled(:str?)
+              optional(:environment).filled(:str?, :environment_with_name_exists?)
 
               # rule(fallbackTagMustBeForLatest: [:fallbackTag, :latest]) do | fallback_tag, latest |
               #   fallback_tag.filled?.then(latest.eql?(true))

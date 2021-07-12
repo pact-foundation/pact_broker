@@ -4,6 +4,11 @@ module PactBroker
   module Api
     module Contracts
       describe VerifiablePactsJSONQuerySchema do
+        before do
+          allow(PactBroker::Deployments::EnvironmentService).to receive(:find_by_name).and_return(environment)
+        end
+        let(:environment) { double('environment') }
+
         let(:params) do
           {
             providerVersionTags: provider_version_tags,
@@ -326,6 +331,16 @@ module PactBroker
           end
 
           its([:consumerVersionSelectors, 0]) { is_expected.to eq "cannot specify a branch with latest=false (at index 0)" }
+        end
+
+        context "when the environment does not exist" do
+          let(:environment) { nil }
+
+          let(:consumer_version_selectors) do
+            [{ environment: "prod" }]
+          end
+
+          its([:consumerVersionSelectors, 0]) { is_expected.to eq "environment with name 'prod' does not exist at index 0" }
         end
       end
     end
