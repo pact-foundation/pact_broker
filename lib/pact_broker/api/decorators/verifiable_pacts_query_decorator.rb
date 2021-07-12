@@ -31,7 +31,7 @@ module PactBroker
           property :currently_deployed, as: :deployed
           property :currently_supported, as: :released
           property :deployed_or_released,
-            setter: ->(fragment:, represented:, **) {
+            setter: ->(represented:, **) {
               represented.currently_deployed = true
               represented.currently_supported = true
             }
