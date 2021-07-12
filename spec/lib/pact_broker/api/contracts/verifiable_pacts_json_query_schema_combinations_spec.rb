@@ -38,6 +38,10 @@ module PactBroker
           selector = ALL_PROPERTIES.slice(*valid_key_combination)
 
           describe "with #{selector}" do
+            before do
+              allow(PactBroker::Deployments::EnvironmentService).to receive(:find_by_name).and_return(double("environment"))
+            end
+
             it "is valid" do
               params = { consumerVersionSelectors: [selector] }
               expect(VerifiablePactsJSONQuerySchema.(params)).to be_empty

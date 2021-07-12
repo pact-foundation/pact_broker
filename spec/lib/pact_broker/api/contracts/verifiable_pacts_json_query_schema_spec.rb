@@ -7,7 +7,7 @@ module PactBroker
         before do
           allow(PactBroker::Deployments::EnvironmentService).to receive(:find_by_name).and_return(environment)
         end
-        let(:environment) { double('environment') }
+        let(:environment) { double("environment") }
 
         let(:params) do
           {
