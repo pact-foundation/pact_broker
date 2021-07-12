@@ -123,7 +123,7 @@ module PactBroker
           end
         end
 
-        context "with both messages and interactions, even though this should never happen" do
+        context "with both messages and interactions (v4)" do
           let(:pact_hash) do
             {
               "ignored" => "foo",

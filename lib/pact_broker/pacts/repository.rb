@@ -20,6 +20,7 @@ require "pact_broker/pacts/selector"
 require "pact_broker/pacts/selectors"
 require "pact_broker/feature_toggle"
 require "pact_broker/pacts/pacts_for_verification_repository"
+require "pact_broker/pacts/content"
 
 module PactBroker
   module Pacts
@@ -355,7 +356,9 @@ module PactBroker
           provider_id: provider_id,
           sha: sha,
           content: json_content,
-          created_at: Sequel.datetime_class.now
+          created_at: Sequel.datetime_class.now,
+          interactions_count: Content.from_json(json_content).interactions&.count || 0,
+          messages_count: Content.from_json(json_content).messages&.count || 0
         ).upsert
       end
 

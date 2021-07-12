@@ -95,11 +95,11 @@ module PactBroker
       end
 
       def messages
-        pact_hash.is_a?(Hash) ? pact_hash["messages"] : nil
+        pact_hash.is_a?(Hash) && pact_hash["messages"].is_a?(Array) ? pact_hash["messages"] : nil
       end
 
       def interactions
-        pact_hash.is_a?(Hash) ? pact_hash["interactions"] : nil
+        pact_hash.is_a?(Hash) && pact_hash["interactions"].is_a?(Array) ? pact_hash["interactions"] : nil
       end
 
       def messages_or_interactions

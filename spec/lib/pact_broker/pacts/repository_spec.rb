@@ -17,7 +17,7 @@ module PactBroker
         let(:provider) { Pacticipants::Repository.new.create name: "Provider" }
         let(:version) { PactBroker::Versions::Repository.new.create number: "1.2.3", pacticipant_id: consumer.id }
         let(:pact_version_sha) { "123" }
-        let(:json_content) { {some: "json"}.to_json }
+        let(:json_content) { { interactions: ["json"] }.to_json }
 
         let(:params) do
           {
@@ -61,6 +61,16 @@ module PactBroker
         it "sets the created_at of the LatestPactPublicationIdForConsumerVersion to the same as the consumer version, because that's how pacts are ordered" do
           subject
           expect(LatestPactPublicationIdForConsumerVersion.first.created_at).to eq PactBroker::Domain::Version.find(number: subject.consumer_version_number).created_at
+        end
+
+        it "sets the interactions count" do
+          subject
+          expect(PactVersion.order(:id).last.interactions_count).to eq 1
+        end
+
+        it "sets the messages count" do
+          subject
+          expect(PactVersion.order(:id).last.messages_count).to eq 0
         end
 
         context "when a pact already exists with exactly the same content" do
