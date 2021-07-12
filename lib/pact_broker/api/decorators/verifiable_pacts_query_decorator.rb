@@ -30,6 +30,11 @@ module PactBroker
           property :environment_name, as: :environment
           property :currently_deployed, as: :deployed
           property :currently_supported, as: :released
+          property :deployed_or_released,
+            setter: ->(fragment:, represented:, **) {
+              represented.currently_deployed = true
+              represented.currently_supported = true
+            }
         end
 
         property :include_pending_status, default: false,
@@ -45,10 +50,28 @@ module PactBroker
         def from_hash(hash)
           # This handles both the snakecase keys from the GET query and the camelcase JSON POST body
           result = super(hash&.snakecase_keys)
+
+          result.consumer_version_selectors = split_out_deployed_or_released_selectors(result.consumer_version_selectors)
+
           if result.consumer_version_selectors && !result.consumer_version_selectors.is_a?(PactBroker::Pacts::Selectors)
             result.consumer_version_selectors = PactBroker::Pacts::Selectors.new(result.consumer_version_selectors)
           end
           result
+        end
+
+        private
+
+        def split_out_deployed_or_released_selectors(consumer_version_selectors)
+          consumer_version_selectors.flat_map do | selector |
+            if selector.currently_deployed && selector.currently_supported
+              [
+                PactBroker::Pacts::Selector.new(selector.to_hash.without(:currently_supported)),
+                PactBroker::Pacts::Selector.new(selector.to_hash.without(:currently_deployed))
+              ]
+            else
+              [selector]
+            end
+          end
         end
       end
     end

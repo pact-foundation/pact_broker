@@ -37,6 +37,7 @@ module PactBroker
               optional(:consumer).filled(:str?, :not_blank?)
               optional(:deployed).filled(included_in?: [true])
               optional(:released).filled(included_in?: [true])
+              optional(:deployedOrReleased).filled(included_in?: [true])
               optional(:environment).filled(:str?)
 
               # rule(fallbackTagMustBeForLatest: [:fallbackTag, :latest]) do | fallback_tag, latest |
@@ -92,8 +93,9 @@ module PactBroker
               not_provided?(selector[:environment]) &&
               selector[:deployed] != true &&
               selector[:released] != true &&
+              selector[:deployedOrReleased] != true &&
               selector[:latest] != true
-            errors << "must specify a value for environment or tag, or specify latest=true, or specify deployed=true or released=true (at index #{index})"
+            errors << "must specify a value for environment or tag or branch, or specify latest=true, deployed=true, released=true or deployedOrReleased=true (at index #{index})"
           end
 
           if selector[:tag] && selector[:branch]
@@ -116,8 +118,16 @@ module PactBroker
             errors << "cannot specify both deployed=true and released=true (at index #{index})"
           end
 
+          if selector[:deployed] && selector[:deployedOrReleased]
+            errors << "cannot specify both deployed=true and deployedOrReleased=true (at index #{index})"
+          end
+
+          if selector[:released] && selector[:deployedOrReleased]
+            errors << "cannot specify both released=true and deployedOrReleased=true (at index #{index})"
+          end
+
           non_environment_fields = selector.slice(:latest, :tag, :fallbackTag, :branch, :fallbackBranch).keys.sort
-          environment_related_fields = selector.slice(:environment, :deployed, :released).keys.sort
+          environment_related_fields = selector.slice(:environment, :deployed, :released, :deployedOrReleased).keys.sort
 
           if (non_environment_fields.any? && environment_related_fields.any?)
             errors << "cannot specify the #{pluralize("field", non_environment_fields.count)} #{non_environment_fields.join("/")} with the #{pluralize("field", environment_related_fields.count)} #{environment_related_fields.join("/")} (at index #{index})"

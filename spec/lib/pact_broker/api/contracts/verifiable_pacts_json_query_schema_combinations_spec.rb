@@ -13,6 +13,7 @@ module PactBroker
           environment: "environment",
           deployed: true,
           released: true,
+          deployedOrReleased: true,
           consumer: "consumer"
         }
 
@@ -29,6 +30,8 @@ module PactBroker
           [:environment, :released],
           [:deployed],
           [:released],
+          [:deployedOrReleased],
+          [:environment, :deployedOrReleased]
         ]
 
         VALID_KEY_COMBINATIONS.each do | valid_key_combination |

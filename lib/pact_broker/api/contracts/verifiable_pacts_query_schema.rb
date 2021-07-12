@@ -30,7 +30,6 @@ module PactBroker
         def self.call(params)
           select_first_message(flatten_indexed_messages(SCHEMA.call(params&.symbolize_keys).messages(full: true)))
         end
-
       end
     end
   end

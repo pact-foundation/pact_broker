@@ -253,6 +253,8 @@ module PactBroker
           "one of #{selector.tag}"
         elsif selector.currently_deployed?
           "deployed to #{selector.environment.name}"
+        elsif selector.currently_supported?
+          "released in #{selector.environment.name}"
         else
           selector.to_json
         end

@@ -113,6 +113,18 @@ module PactBroker
               expect(subject.consumer_version_selectors.first.currently_deployed).to be true
             end
           end
+
+          context "when deployedOrReleased is set to true" do
+            let(:consumer_version_selectors) do
+              [{ "deployedOrReleased" => true }]
+            end
+
+            it "creates two selectors - one for deployed and one for released" do
+              expect(subject.consumer_version_selectors.size).to eq 2
+              expect(subject.consumer_version_selectors.first).to eq PactBroker::Pacts::Selector.for_currently_deployed
+              expect(subject.consumer_version_selectors.last).to eq PactBroker::Pacts::Selector.for_currently_supported
+            end
+          end
         end
 
         context "when parsing query string params" do
