@@ -560,13 +560,13 @@ module PactBroker
 
           subject { Repository.new.find_pact_versions_for_provider provider_name, "prod" }
 
-          it "returns the pacts between the specified consumer and provider with the given tag" do
+          it "returns the pacts between the specified provider with the given consumer tag" do
             expect(subject.size).to eq 3
             expect(subject.first.provider.name).to eq provider_name
             expect(subject.first.consumer.name).to eq consumer_name
             expect(subject.first.consumer_version.number).to eq "1"
             expect(subject[1].consumer_version.number).to eq "2"
-            expect(subject.first.json_content).to be nil
+            expect(subject.first.json_content).to_not be nil
             expect(subject.last.consumer.name).to eq "wiffle consumer"
             expect(subject.last.consumer_version.number).to eq "11"
           end

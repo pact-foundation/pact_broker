@@ -164,21 +164,13 @@ module PactBroker
       end
 
       def find_pact_versions_for_provider provider_name, tag = nil
-        if tag
-          scope_for(LatestPactPublicationsByConsumerVersion)
-            .join(:tags, {version_id: :consumer_version_id})
-            .provider(provider_name)
-            .order_ignore_case(:consumer_name)
-            .order_append(:consumer_version_order)
-            .where(Sequel[:tags][:name] => tag)
-            .collect(&:to_domain)
-        else
-          scope_for(LatestPactPublicationsByConsumerVersion)
-            .provider(provider_name)
-            .order_ignore_case(:consumer_name)
-            .order_append(:consumer_version_order)
-            .collect(&:to_domain)
-        end
+        query = scope_for(PactPublication)
+            .select_all_qualified
+            .for_provider_name(provider_name)
+            .eager(:consumer)
+            .eager(:provider)
+        query = query.for_consumer_version_tag(tag) if tag
+        query.collect(&:to_domain).sort
       end
 
       # Returns latest pact version for the consumer_version_number
