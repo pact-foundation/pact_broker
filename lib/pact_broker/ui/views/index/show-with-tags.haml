@@ -111,7 +111,7 @@
               - if index_item.show_settings?
                 %span.integration-settings.kebab-horizontal{ 'aria-hidden': true }
 
-    %p.pagination.text-center
+    %div.pagination.text-center
 
     - pagination_locals = { page_number: page_number, page_size: page_size, pagination_record_count: pagination_record_count, current_page_size: current_page_size }
     != render :haml, :'index/_pagination', :layout => false, locals: pagination_locals
