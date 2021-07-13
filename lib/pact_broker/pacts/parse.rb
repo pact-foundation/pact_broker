@@ -1,4 +1,5 @@
 require "pact_broker/json"
+require "json"
 
 module PactBroker
   module Pacts
