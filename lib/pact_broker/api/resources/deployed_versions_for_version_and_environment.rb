@@ -5,11 +5,6 @@ module PactBroker
   module Api
     module Resources
       class DeployedVersionsForVersionAndEnvironment < BaseResource
-        def initialize
-          super
-          @existing_deployed_version = version && environment && deployed_version_service.find_currently_deployed_version_for_version_and_environment_and_target(version, environment, target)
-        end
-
         def content_types_accepted
           [["application/json", :from_json]]
         end
@@ -31,11 +26,12 @@ module PactBroker
         end
 
         def create_path
-          deployed_version_url(existing_deployed_version || OpenStruct.new(uuid: deployed_version_uuid), base_url)
+          "dummy"
         end
 
         def from_json
-          @deployed_version = existing_deployed_version || deployed_version_service.create(deployed_version_uuid, version, environment, target)
+          @deployed_version = deployed_version_service.find_or_create(deployed_version_uuid, version, environment, target)
+          response.headers["Location"] = deployed_version_url(deployed_version, base_url)
           response.body = decorator_class(:deployed_version_decorator).new(deployed_version).to_json(decorator_options)
         end
 

@@ -172,7 +172,7 @@ module PactBroker
               let(:environment) { double("environment") }
 
               it "creates a deployed version" do
-                expect(deployed_version_service).to receive(:create).with(anything, version, environment, nil)
+                expect(deployed_version_service).to receive(:find_or_create).with(anything, version, environment, nil)
                 subject
               end
             end

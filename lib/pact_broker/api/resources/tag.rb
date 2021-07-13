@@ -51,7 +51,7 @@ module PactBroker
         def create_deployed_version
           if create_deployed_versions_for_tags?
             if (environment = environment_service.find_by_name(identifier_from_path[:tag_name]))
-              deployed_version_service.create(deployed_version_service.next_uuid, tag.version, environment, nil)
+              deployed_version_service.find_or_create(deployed_version_service.next_uuid, tag.version, environment, nil)
             end
           end
         end

@@ -13,15 +13,19 @@ module PactBroker
         DeployedVersion.where(uuid: uuid).single_record
       end
 
-      def self.create(uuid, version, environment, target)
-        record_previous_version_undeployed(version.pacticipant, environment, target)
-        DeployedVersion.create(
-          uuid: uuid,
-          version: version,
-          pacticipant_id: version.pacticipant_id,
-          environment: environment,
-          target: target
-        )
+      def self.find_or_create(uuid, version, environment, target)
+        if (deployed_version = find_currently_deployed_version_for_version_and_environment_and_target(version, environment, target))
+          deployed_version
+        else
+          record_previous_version_undeployed(version.pacticipant, environment, target)
+          DeployedVersion.create(
+            uuid: uuid,
+            version: version,
+            pacticipant_id: version.pacticipant_id,
+            environment: environment,
+            target: target
+          )
+        end
       end
 
       def self.find_deployed_versions_for_version_and_environment(version, environment)
