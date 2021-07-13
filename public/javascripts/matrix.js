@@ -34,6 +34,9 @@ function showApplicableTextBoxes(selectorizor) {
   else if( selectorizorType === 'specify-latest-branch') {
     setTextboxVisibility(selectorizor, '.branch', true);
   }
+  else if( selectorizorType === 'specify-all-branch') {
+    setTextboxVisibility(selectorizor, '.branch', true);
+  }
   else if ( selectorizorType === 'specify-environment') {
     setTextboxVisibility(selectorizor, '.environment', true);
   }

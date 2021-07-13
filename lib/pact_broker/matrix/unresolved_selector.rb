@@ -78,7 +78,7 @@ module PactBroker
       end
 
       def all_for_pacticipant?
-        !!pacticipant_name && !pacticipant_version_number && !tag && !latest && !environment_name && !max_age
+        !!pacticipant_name && !pacticipant_version_number && !tag && !branch && !latest && !environment_name && !max_age
       end
 
       def latest_for_pacticipant_and_tag?
