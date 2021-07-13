@@ -41,7 +41,8 @@ module PactBroker
       :allow_missing_migration_files,
       :auto_migrate_db_data,
       :use_rack_protection,
-      :metrics_sql_statement_timeout
+      :metrics_sql_statement_timeout,
+      :create_deployed_versions_for_tags
     ]
 
     attr_accessor :base_url, :log_dir, :database_connection, :auto_migrate_db, :auto_migrate_db_data, :allow_missing_migration_files, :example_data_seeder, :seed_example_data, :use_hal_browser, :html_pact_renderer, :use_rack_protection
@@ -61,6 +62,7 @@ module PactBroker
     attr_reader :custom_logger
     attr_accessor :policy_builder, :policy_scope_builder, :base_resource_class_factory
     attr_accessor :metrics_sql_statement_timeout
+    attr_accessor :create_deployed_versions_for_tags
 
     alias_method :policy_finder=, :policy_builder=
     alias_method :policy_scope_finder=, :policy_scope_builder=
@@ -133,6 +135,7 @@ module PactBroker
       }
       config.warning_error_class_names = ["Sequel::ForeignKeyConstraintViolation", "PG::QueryCanceled"]
       config.metrics_sql_statement_timeout = 30
+      config.create_deployed_versions_for_tags = true
       config
     end
     # rubocop: enable Metrics/MethodLength

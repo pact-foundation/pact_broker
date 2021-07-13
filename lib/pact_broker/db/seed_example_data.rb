@@ -11,6 +11,7 @@ module PactBroker
         new.call
       end
 
+      # rubocop: disable Metrics/MethodLength
       def call(consumer_name: CONSUMER_NAME, provider_name: PROVIDER_NAME)
         return unless database_empty?
         PactBroker::Test::TestDataBuilder.new
@@ -45,6 +46,7 @@ module PactBroker
           .create_deployed_version_for_consumer_version(environment_name: "test", created_at: days_ago(0.5))
           .republish_same_pact(created_at: days_ago(0.5))
       end
+      # rubocop: enable Metrics/MethodLength
 
       def database_empty?
         PactBroker::Pacticipants::Service.find_all_pacticipants.empty?

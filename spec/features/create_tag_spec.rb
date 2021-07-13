@@ -29,4 +29,14 @@ describe "Creating a tag" do
       expect(subject.status).to be 200
     end
   end
+
+  context "when there is an envionment with a matching name" do
+    before do
+      td.create_environment("foo")
+    end
+
+    it "creates a deployed version" do
+      expect { subject }.to change { PactBroker::Deployments::DeployedVersion.count }.by(1)
+    end
+  end
 end
