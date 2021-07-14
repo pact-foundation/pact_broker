@@ -107,6 +107,7 @@ module PactBroker
                     else
                       consumer_version_selectors.select(&:latest_for_tag?) +
                         consumer_version_selectors.select(&:latest_for_branch?) +
+                        consumer_version_selectors.select(&:latest_for_main_branch?) +
                         consumer_version_selectors.select(&:overall_latest?) +
                         consumer_version_selectors.select(&:currently_deployed?) +
                         consumer_version_selectors.select(&:currently_supported?)

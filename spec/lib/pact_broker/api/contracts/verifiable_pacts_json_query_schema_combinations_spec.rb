@@ -5,6 +5,7 @@ module PactBroker
     module Contracts
       describe VerifiablePactsJSONQuerySchema do
         ALL_PROPERTIES = {
+          mainBranch: true,
           tag: "tag",
           branch: "branch",
           latest: true,
@@ -18,6 +19,7 @@ module PactBroker
         }
 
         VALID_KEY_COMBINATIONS = [
+          [:mainBranch],
           [:tag],
           [:tag, :latest],
           [:tag, :latest, :fallbackTag],

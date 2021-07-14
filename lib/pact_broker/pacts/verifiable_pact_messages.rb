@@ -77,6 +77,10 @@ module PactBroker
 
       attr_reader :verifiable_pact, :pact_version_url
 
+      def consumer_main_branch
+        verifiable_pact.consumer.main_branch
+      end
+
       def join(list, last_joiner = " and ")
         join_unquoted(list.collect { | word | "'#{word}'" }, last_joiner)
       end
@@ -189,6 +193,9 @@ module PactBroker
                         else
                           "latest #{version_label} tagged '#{selector.tag}'"
                         end
+                      elsif selector.latest_for_main_branch?
+                        version_label = selector.consumer ? "version of #{selector.consumer}" : "version"
+                        "latest #{version_label} from the main branch '#{consumer_main_branch}'"
                       elsif selector.latest_for_branch?
                         version_label = selector.consumer ? "version of #{selector.consumer}" : "version"
                         if selector.fallback_branch?

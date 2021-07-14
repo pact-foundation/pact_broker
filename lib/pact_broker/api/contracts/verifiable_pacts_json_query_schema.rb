@@ -15,6 +15,10 @@ module PactBroker
         using PactBroker::HashRefinements
         using PactBroker::StringRefinements
 
+        BRANCH_KEYS = [:latest, :tag, :fallbackTag, :branch, :fallbackBranch]
+        ENVIRONMENT_KEYS = [:environment, :deployed, :released, :deployedOrReleased]
+        ALL_KEYS = BRANCH_KEYS + ENVIRONMENT_KEYS
+
         SCHEMA = Dry::Validation.Schema do
           configure do
             predicates(DryValidationPredicates)
@@ -29,6 +33,7 @@ module PactBroker
               #   end
               # end
 
+              optional(:mainBranch).filled(included_in?: [true])
               optional(:tag).filled(:str?)
               optional(:branch).filled(:str?)
               optional(:latest).filled(included_in?: [true, false])
@@ -88,14 +93,19 @@ module PactBroker
             errors << "fallbackBranch can only be set if latest is true (at index #{index})"
           end
 
-          if not_provided?(selector[:tag]) &&
+          if not_provided?(selector[:mainBranch]) &&
+              not_provided?(selector[:tag]) &&
               not_provided?(selector[:branch]) &&
               not_provided?(selector[:environment]) &&
               selector[:deployed] != true &&
               selector[:released] != true &&
               selector[:deployedOrReleased] != true &&
               selector[:latest] != true
-            errors << "must specify a value for environment or tag or branch, or specify latest=true, deployed=true, released=true or deployedOrReleased=true (at index #{index})"
+            errors << "must specify a value for environment or tag or branch, or specify mainBranch=true, latest=true, deployed=true, released=true or deployedOrReleased=true (at index #{index})"
+          end
+
+          if selector[:mainBranch] && selector.slice(*ALL_KEYS - [:consumer, :mainBranch]).any?
+            errors << "cannot specify mainBranch=true with any other criteria apart from consumer (at index #{index})"
           end
 
           if selector[:tag] && selector[:branch]
@@ -126,8 +136,8 @@ module PactBroker
             errors << "cannot specify both released=true and deployedOrReleased=true (at index #{index})"
           end
 
-          non_environment_fields = selector.slice(:latest, :tag, :fallbackTag, :branch, :fallbackBranch).keys.sort
-          environment_related_fields = selector.slice(:environment, :deployed, :released, :deployedOrReleased).keys.sort
+          non_environment_fields = selector.slice(*BRANCH_KEYS).keys.sort
+          environment_related_fields = selector.slice(*ENVIRONMENT_KEYS).keys.sort
 
           if (non_environment_fields.any? && environment_related_fields.any?)
             errors << "cannot specify the #{pluralize("field", non_environment_fields.count)} #{non_environment_fields.join("/")} with the #{pluralize("field", environment_related_fields.count)} #{environment_related_fields.join("/")} (at index #{index})"

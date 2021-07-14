@@ -14,6 +14,7 @@ module PactBroker
       let(:pact_version_url) { "http://pact" }
       let(:verifiable_pact) do
         double(VerifiablePact,
+            consumer: double("consumer", main_branch: "main"),
             consumer_name: "Foo",
             consumer_version_number: "123",
             provider_name: "Bar",
@@ -82,6 +83,14 @@ module PactBroker
         context "when the pact was selected by the fallback tag" do
           let(:selectors) { Selectors.new(Selector.latest_for_branch_with_fallback("feat-x", "master").resolve_for_fallback(consumer_version)) }
           its(:inclusion_reason) { is_expected.to include "latest version from branch 'master' (fallback branch used as no pact was found from branch 'feat-x') (1234)" }
+        end
+
+        context "when the pact was for the main branch" do
+          let(:selectors) { Selectors.new(Selector.for_main_branch.resolve(consumer_version)) }
+
+          context "when the main branch is called main" do
+            its(:inclusion_reason) { is_expected.to include "latest version from the main branch 'main' (1234)" }
+          end
         end
 
         context "when the pact is a WIP pact for the specified provider tags" do

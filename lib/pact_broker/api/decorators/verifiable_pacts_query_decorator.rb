@@ -15,6 +15,7 @@ module PactBroker
         property :provider_version_branch
 
         collection :consumer_version_selectors, default: PactBroker::Pacts::Selectors.new, class: PactBroker::Pacts::Selector do
+          property :main_branch
           property :tag
           property :branch, setter: -> (fragment:, represented:, **) {
             represented.branch = fragment

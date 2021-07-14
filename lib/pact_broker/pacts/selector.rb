@@ -204,7 +204,7 @@ module PactBroker
         Selector.new(hash)
       end
 
-      def main_branch?
+      def latest_for_main_branch?
         !!main_branch
       end
 
