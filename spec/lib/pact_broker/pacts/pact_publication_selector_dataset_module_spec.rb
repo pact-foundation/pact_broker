@@ -7,6 +7,45 @@ module PactBroker
 
         subject { PactPublication.for_provider_and_consumer_version_selector(provider, consumer_version_selector).all }
 
+        context "for main branch" do
+          let(:consumer_version_selector) { Selector.for_main_branch }
+          let(:provider) { td.find_pacticipant("Bar") }
+
+          before do
+            td.create_provider("Bar")
+              .create_consumer("Foo", main_branch: "main")
+              .create_consumer_version("1", branch: "main")
+              .create_pact
+              .create_consumer_version("2", branch: "main")
+              .create_pact
+              .create_consumer_version("3", branch: "not-main")
+              .create_pact
+              .create_consumer("Bob", main_branch: "develop")
+              .create_consumer_version("3", branch: "develop")
+              .create_pact
+              .create_consumer_version("5", branch: "develop")
+              .create_pact
+              .create_consumer_version("6", branch: "not-develop")
+              .create_pact
+              .create_provider("NotBar")
+              .create_pact
+              .create_consumer("Waffle")
+              .create_consumer_version("7")
+              .create_pact
+          end
+
+          it "returns the latest pact for the main branch of every consumer" do
+            expect(subject.size).to eq 2
+            expect(subject.sort_by(&:id).first.consumer.name).to eq "Foo"
+            expect(subject.sort_by(&:id).first.consumer_version.branch).to eq "main"
+            expect(subject.sort_by(&:id).first.consumer_version.number).to eq "2"
+
+            expect(subject.sort_by(&:id).last.consumer.name).to eq "Bob"
+            expect(subject.sort_by(&:id).last.consumer_version.branch).to eq "develop"
+            expect(subject.sort_by(&:id).last.consumer_version.number).to eq "5"
+          end
+        end
+
         context "for environment" do
           before do
             td.create_environment("test")

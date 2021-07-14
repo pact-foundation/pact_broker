@@ -13,13 +13,33 @@ module PactBroker
           query = query.for_environment(selector.environment_name)
         end
 
+
         # Do the "latest" logic last so that the provider/consumer criteria get included in the "latest" query before the join, rather than after
+        query = query.latest_for_main_branches if selector.main_branch?
         query = query.latest_for_consumer_branch(selector.branch) if selector.latest_for_branch?
         query = query.latest_for_consumer_tag(selector.tag) if selector.latest_for_tag?
         query = query.overall_latest if selector.overall_latest?
         query
       end
       # rubocop: enable Metrics/CyclomaticComplexity
+
+      def latest_for_main_branches
+        self_join = {
+          Sequel[:pact_publications][:provider_id] => Sequel[:pp2][:provider_id],
+          Sequel[:pact_publications][:consumer_id] => Sequel[:pp2][:consumer_id],
+          Sequel[:cv][:branch] => Sequel[:pp2][:branch]
+        }
+
+        base_query = join_consumers(:consumers)
+                      .join_consumer_versions(:cv, { Sequel[:cv][:branch] => Sequel[:consumers][:main_branch] })
+
+        base_query = base_query.select_all_qualified if no_columns_selected?
+
+        base_query.left_join(base_query.select(:provider_id, :consumer_id, Sequel[:cv][:branch], :consumer_version_order), self_join, { table_alias: :pp2 }) do
+          Sequel[:pp2][:consumer_version_order] > Sequel[:pact_publications][:consumer_version_order]
+        end
+        .where(Sequel[:pp2][:consumer_version_order] => nil)
+      end
 
       def for_currently_deployed_versions(environment_name)
         deployed_versions_join = {

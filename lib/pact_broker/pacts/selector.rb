@@ -5,7 +5,7 @@ module PactBroker
     class Selector < Hash
       using PactBroker::HashRefinements
 
-      PROPERTY_NAMES = [:latest, :tag, :branch, :consumer, :consumer_version, :environment_name, :fallback_tag, :fallback_branch, :currently_supported, :currently_deployed]
+      PROPERTY_NAMES = [:latest, :tag, :branch, :consumer, :consumer_version, :environment_name, :fallback_tag, :fallback_branch, :main_branch, :currently_supported, :currently_deployed]
 
       def initialize(properties = {})
         properties.without(*PROPERTY_NAMES).tap { |it| warn("WARN: Unsupported property for #{self.class.name}: #{it.keys.join(", ")} at #{caller[0..3]}") if it.any? }
@@ -47,6 +47,10 @@ module PactBroker
         end
       end
       # rubocop: enable Metrics/CyclomaticComplexity
+
+      def main_branch= main_branch
+        self[:main_branch] = main_branch
+      end
 
       def tag= tag
         self[:tag] = tag
@@ -128,6 +132,10 @@ module PactBroker
         Selector.new(latest: true)
       end
 
+      def self.for_main_branch
+        Selector.new(main_branch: true)
+      end
+
       def self.latest_for_tag(tag)
         Selector.new(latest: true, tag: tag)
       end
@@ -196,12 +204,20 @@ module PactBroker
         Selector.new(hash)
       end
 
+      def main_branch?
+        !!main_branch
+      end
+
       def fallback_tag?
         !!fallback_tag
       end
 
       def fallback_branch?
         !!fallback_branch
+      end
+
+      def main_branch
+        self[:main_branch]
       end
 
       def tag
@@ -213,7 +229,7 @@ module PactBroker
       end
 
       def overall_latest?
-        !!(latest? && !tag && !branch && !currently_deployed && !currently_supported && !environment_name)
+        !!(latest? && !tag && !branch && !main_branch && !currently_deployed && !currently_supported && !environment_name)
       end
 
       # Not sure if the fallback_tag logic is needed
