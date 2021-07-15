@@ -6,6 +6,31 @@ module PactBroker
       describe "#metrics" do
         subject { Service.metrics }
 
+        describe "interactions latestCount" do
+          before do
+            td.create_consumer
+              .create_provider
+              .create_consumer_version
+              .create_pact(json_content: { interactions: [1, 2], messages: [1] }.to_json)
+              .create_consumer
+              .create_provider
+              .create_consumer_version
+              .create_pact(json_content: { interactions: [1, 2], messages: [1] }.to_json)
+              .create_consumer
+              .create_provider
+              .create_consumer_version
+              .create_pact(json_content: { foo: "bar" }.to_json)
+          end
+
+          it "includes a count of the number of interactions in the overall latest pacts" do
+            expect(subject[:interactions]).to eq({
+              latestInteractionsCount: 4,
+              latestMessagesCount: 2,
+              latestInteractionsAndMessagesCount: 6
+            })
+          end
+        end
+
         describe "verificationResultsPerPactVersion" do
           before do
             td.create_pact_with_hierarchy

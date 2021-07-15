@@ -22,6 +22,7 @@ module PactBroker
       # rubocop: disable Metrics/MethodLength
       def metrics
         {
+          interactions: interactions_counts,
           pacticipants: {
             count: PactBroker::Domain::Pacticipant.count
           },
@@ -73,6 +74,22 @@ module PactBroker
         }
       end
       # rubocop: enable Metrics/MethodLength
+
+      def interactions_counts
+        latest_pact_versions = PactBroker::Pacts::PactVersion.where(
+          id: PactBroker::Pacts::PactPublication.overall_latest.from_self.select(:pact_version_id)
+        )
+        counts = latest_pact_versions
+          .select(
+            Sequel.function(:sum, :interactions_count).as(:interactions_count),
+            Sequel.function(:sum, :messages_count).as(:messages_count)
+        ).first
+        {
+          latestInteractionsCount: counts[:interactions_count] || 0,
+          latestMessagesCount: counts[:messages_count] || 0,
+          latestInteractionsAndMessagesCount: (counts[:interactions_count] || 0) + (counts[:messages_count] || 0)
+        }
+      end
 
       def pact_revision_counts
         query = "select revision_count as number_of_revisions, count(consumer_version_id) as consumer_version_count
