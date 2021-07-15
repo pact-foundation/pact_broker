@@ -363,27 +363,39 @@ module PactBroker
       end
 
       describe "find_index_items_for_api" do
-        before do
-          td.create_pact_with_hierarchy("Foo", "1", "Bar")
-            .create_consumer_version_tag("feat-x")
-            .create_verification(provider_version: "1", comment: "latest feat-x verif")
-            .create_consumer_version("2")
-            .create_consumer_version_tag("feat-y")
-            .create_pact
-            .create_verification(provider_version: "2", comment: "latest feat-y verif")
-            .create_consumer_version("3")
-            .create_consumer_version_tag("feat-x")
-            .create_consumer_version_tag("feat-y")
-            .create_pact
-            .create_consumer_version("4")
-            .create_pact
-        end
-
         let(:rows) { subject.find_index_items_for_api(consumer_name: td.consumer.name, provider_name: td.provider.name) }
 
         context "when the pact has not yet been verified" do
+          before do
+            td.create_pact_with_hierarchy("Foo", "1", "Bar")
+              .create_consumer_version_tag("feat-x")
+              .create_verification(provider_version: "1", comment: "latest feat-x verif")
+              .create_consumer_version("2")
+              .create_consumer_version_tag("feat-y")
+              .create_pact
+              .create_verification(provider_version: "2", comment: "latest feat-y verif")
+              .create_consumer_version("3")
+              .create_consumer_version_tag("feat-x")
+              .create_consumer_version_tag("feat-y")
+              .create_pact
+              .create_consumer_version("4")
+              .create_pact
+          end
           it "returns the latest verification as nil (unlike the pseudo branch code for the server side rendered UI)" do
             expect(rows.last.provider_version_number).to be nil
+          end
+        end
+
+        context "when a version is currently deployed" do
+          before do
+            td.create_environment("test")
+              .create_pact_with_hierarchy("Foo", "1", "Bar")
+              .create_deployed_version_for_consumer_version
+              .create_pact_with_hierarchy("Foo", "2", "Bar")
+          end
+
+          it "includes the deployed versions" do
+            expect(rows.size).to eq 2
           end
         end
       end

@@ -173,7 +173,7 @@ module PactBroker
         ]
 
         query.order(*order_columns)
-             .paginate(options[:page_number] || DEFAULT_PAGE_NUMBER, options[:page_size] || DEFAULT_PAGE_SIZE)
+          .paginate(options[:page_number] || DEFAULT_PAGE_NUMBER, options[:page_size] || DEFAULT_PAGE_SIZE)
       end
 
       # eager loading the tag stuff doesn't seem to make it quicker
@@ -196,8 +196,7 @@ module PactBroker
       def self.query_pact_publication_ids_by_tags(base, tags)
         latest = base.overall_latest
         return latest.union(base.latest_for_consumer_tag(tags)) if tags.is_a?(Array)
-        return latest.union(base.latest_by_consumer_tag) if tags
-
+        return latest.union(base.latest_by_consumer_tag).union(base.for_environment(nil)) if tags
         latest
       end
 
