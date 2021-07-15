@@ -152,6 +152,10 @@ module PactBroker
         HeadPact.new(to_domain, consumer_version.number, values[:tag_name])
       end
 
+      def pact_version_sha
+        pact_version.sha
+      end
+
       private
 
       def cached_domain_for_delegation
