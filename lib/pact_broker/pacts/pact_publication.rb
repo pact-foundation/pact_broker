@@ -156,6 +156,12 @@ module PactBroker
         pact_version.sha
       end
 
+      def <=> other
+        self_fields = [consumer.name.downcase, provider.name.downcase, consumer_version_order || 0]
+        other_fields = [other.consumer.name.downcase, other.provider.name.downcase, other.consumer_version_order || 0]
+        self_fields <=> other_fields
+      end
+
       private
 
       def cached_domain_for_delegation

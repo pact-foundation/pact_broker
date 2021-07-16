@@ -37,7 +37,12 @@ module PactBroker
       # (that is, before the provider's git branch was created).
       def find_wip provider_name, provider_version_branch, provider_tags_names = [], options = {}
         # TODO not sure about this
-        return [] if provider_tags_names.empty? && provider_version_branch == nil
+        if provider_tags_names.empty? && provider_version_branch == nil
+          log_debug_for_wip do
+            logger.debug("No provider tags or branch provided. Cannot calculate WIP pacts. Returning an empty list.")
+          end
+          return []
+        end
 
         if provider_version_branch
           return find_wip_pact_versions_for_provider_by_provider_branch(provider_name, provider_version_branch, options)
@@ -196,6 +201,11 @@ module PactBroker
       # TODO ? find the WIP pacts by consumer branch
       def find_wip_pact_versions_for_provider_by_provider_tags(provider, provider_tags_names, _provider_tags, wip_start_date, pact_publication_scope)
         potential_wip_pacts_by_consumer_tag_query = PactPublication.for_provider(provider).created_after(wip_start_date).send(pact_publication_scope)
+
+        log_debug_for_wip do
+          log_pact_publications("Potential WIP pacts for provider tag(s) #{provider_tags_names.join(", ")} created after #{wip_start_date} by #{pact_publication_scope}", potential_wip_pacts_by_consumer_tag_query)
+        end
+
         potential_wip_pacts_by_consumer_tag = potential_wip_pacts_by_consumer_tag_query.all
 
         tag_to_pact_publications = provider_tags_names.each_with_object({}) do | provider_tag_name, tag_to_pact_publication |
@@ -227,14 +237,22 @@ module PactBroker
         provider = pacticipant_repository.find_by_name(provider_name)
         wip_start_date = options.fetch(:include_wip_pacts_since)
 
+        potential_wip_by_consumer_branch = PactPublication.for_provider(provider).created_after(wip_start_date).latest_by_consumer_branch
+        potential_wip_by_consumer_tag = PactPublication.for_provider(provider).created_after(wip_start_date).latest_by_consumer_tag
+
+        log_debug_for_wip do
+          log_pact_publications("Potential WIP pacts for provider branch #{provider_version_branch} created after #{wip_start_date} by consumer branch", potential_wip_by_consumer_branch)
+          log_pact_publications("Potential WIP pacts for provider branch #{provider_version_branch} created after #{wip_start_date} by consumer tag", potential_wip_by_consumer_tag)
+        end
+
         wip_pact_publications_by_branch = remove_non_wip_for_branch(
-          PactPublication.for_provider(provider).created_after(wip_start_date).latest_by_consumer_branch,
+          potential_wip_by_consumer_branch,
           provider,
           provider_version_branch
         )
 
         wip_pact_publications_by_tag = remove_non_wip_for_branch(
-          PactPublication.for_provider(provider).created_after(wip_start_date).latest_by_consumer_tag,
+          potential_wip_by_consumer_tag,
           provider,
           provider_version_branch
         )
@@ -273,18 +291,56 @@ module PactBroker
           end
       end
 
+
       def remove_non_wip_for_branch(pact_publications, provider, provider_version_branch)
-        remaining_pact_publications = PactPublication.subtract(pact_publications.all, pact_publications.successfully_verified_by_provider_branch_when_not_wip(provider.id, provider_version_branch).all)
-        PactPublication.subtract(remaining_pact_publications, pact_publications.successfully_verified_by_provider_another_branch_before_this_branch_first_created(provider.id, provider_version_branch).all)
+        verified_by_this_branch = pact_publications.successfully_verified_by_provider_branch_when_not_wip(provider.id, provider_version_branch)
+        verified_by_other_branch = pact_publications.successfully_verified_by_provider_another_branch_before_this_branch_first_created(provider.id, provider_version_branch)
+
+        log_debug_for_wip do
+          log_pact_publications("Ignoring pacts successfully verified by this provider branch when not WIP", verified_by_this_branch)
+          log_pact_publications("Ignoring pacts successfully verified by another provider branch when not WIP", verified_by_other_branch)
+        end
+
+        remaining_pact_publications = PactPublication.subtract(pact_publications.all, verified_by_this_branch.all)
+        PactPublication.subtract(remaining_pact_publications, verified_by_other_branch.all)
       end
 
       def remove_non_wip_for_tag(pact_publications, query, provider, tag)
-        pact_publications = PactPublication.subtract(pact_publications, query.successfully_verified_by_provider_tag_when_not_wip(provider.id, tag).all)
-        PactPublication.subtract(pact_publications, query.successfully_verified_by_provider_another_tag_before_this_tag_first_created(provider.id, tag).all)
+        verified_by_this_tag = query.successfully_verified_by_provider_tag_when_not_wip(provider.id, tag)
+        verified_by_another_tag = query.successfully_verified_by_provider_another_tag_before_this_tag_first_created(provider.id, tag)
+
+        log_debug_for_wip do
+          log_pact_publications("Ignoring pacts successfully verified by this provider tag when not WIP", verified_by_this_tag)
+          log_pact_publications("Ignoring pacts successfully verified by another provider tag when not WIP", verified_by_another_tag)
+        end
+
+        pact_publications = PactPublication.subtract(pact_publications, verified_by_this_tag.all)
+        PactPublication.subtract(pact_publications, verified_by_another_tag.all)
       end
 
       def scope_for(scope)
         PactBroker.policy_scope!(scope)
+      end
+
+      def collect_consumer_name_and_version_number(pact_publications_query)
+        pact_publications_query.eager(:provider).eager(:consumer).eager(:consumer_version).order(:consumer_version_order).all.sort.collect{ |p| "#{p.consumer_name} #{p.consumer_version_number}" }
+      end
+
+      def log_pact_publications(message, pact_publications_query)
+        pact_publication_descriptions = collect_consumer_name_and_version_number(pact_publications_query)
+        if pact_publication_descriptions.any?
+          logger.debug("#{message}", payload: pact_publication_descriptions)
+        else
+          logger.debug("#{message} (none)")
+        end
+      end
+
+      def log_debug_for_wip
+        if logger.debug?
+          log_with_tag(:wip) do
+            yield
+          end
+        end
       end
     end
   end
