@@ -1,11 +1,14 @@
 require "pact_broker/api/resources/base_resource"
 require "pact_broker/api/decorators/dashboard_decorator"
 require "pact_broker/api/decorators/dashboard_text_decorator"
+require "pact_broker/api/resources/pagination_methods"
 
 module PactBroker
   module Api
     module Resources
       class Dashboard < BaseResource
+        include PaginationMethods
+
         def content_types_provided
           [
             ["application/hal+json", :to_json],
@@ -32,7 +35,7 @@ module PactBroker
         private
 
         def index_items
-          index_service.find_index_items_for_api(identifier_from_path)
+          index_service.find_index_items_for_api(identifier_from_path.merge(pagination_options))
         end
       end
     end

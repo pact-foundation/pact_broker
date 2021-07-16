@@ -102,9 +102,9 @@ module PactBroker
         end
       end
 
-      def self.find_index_items_for_api(consumer_name: nil, provider_name: nil, **_ignored)
+      def self.find_index_items_for_api(consumer_name: nil, provider_name: nil, page_number: nil, page_size: nil, **_ignored)
         latest_pp_ids = latest_pact_publication_ids
-        pact_publications = head_pact_publications(consumer_name: consumer_name, provider_name: provider_name, tags: true)
+        pact_publications = head_pact_publications(consumer_name: consumer_name, provider_name: provider_name, tags: true, page_number: page_number, page_size: page_size)
           .eager(:consumer)
           .eager(:provider)
           .eager(:pact_version)
