@@ -4,11 +4,25 @@ module PactBroker
   module Config
     class RuntimeConfiguration < Anyway::Config
       DATABASE_ATTRIBUTES = {
+        database_adapter: "postgres",
+        database_username: nil,
+        database_password: nil,
+        database_name: nil,
+        database_host: nil,
+        database_port: nil,
+        database_url: nil,
+        database_sslmode: nil,
+        sql_log_level: :debug,
+        sql_log_warn_duration: 5,
+        database_max_connections: nil,
+        database_pool_timeout: 5,
+        database_connect_max_retries: 0,
         auto_migrate_db: true,
         auto_migrate_db_data: true,
         allow_missing_migration_files: false,
         validate_database_connection_config: true,
         use_case_sensitive_resource_names: true,
+        database_statement_timeout: 15,
         metrics_sql_statement_timeout: 30,
       }
 
@@ -48,7 +62,7 @@ module PactBroker
       ALL_ATTRIBUTES = [DATABASE_ATTRIBUTES, LOGGING_ATTRIBUTES, WEBHOOK_ATTRIBUTES, RESOURCE_ATTRIBUTES, DOMAIN_ATTRIBUTES].inject(&:merge)
 
       def self.attribute_names
-        ALL_ATTRIBUTES.keys + [:base_urls, :warning_error_classes]
+        ALL_ATTRIBUTES.keys + [:base_urls, :warning_error_classes, :database_configuration]
       end
 
       def self.getters_and_setters
@@ -58,6 +72,18 @@ module PactBroker
       config_name :pact_broker
 
       attr_config(ALL_ATTRIBUTES)
+
+      def database_port= database_port
+        super(database_port&.to_i)
+      end
+
+      def sql_log_level= sql_log_level
+        super(sql_log_level&.to_sym)
+      end
+
+      def sql_log_warn_duration= sql_log_warn_duration
+        super(sql_log_warn_duration&.to_f)
+      end
 
       def badge_provider_mode= badge_provider_mode
         super(badge_provider_mode&.to_sym)
@@ -111,12 +137,72 @@ module PactBroker
       end
 
       def log_configuration(logger)
-        self.class.attribute_names.sort.each do | setting |
-          logger.info "PactBroker.configuration.#{setting}=#{self.send(setting).inspect}"
+        loggable_attributes.sort.each do | setting |
+          value = self.send(setting).inspect
+          logger.info "PactBroker.configuration.#{setting}=#{maybe_redact(setting.to_s, self.send(setting))}"
         end
       end
 
+      def database_configuration
+        database_credentials
+          .merge(
+            encoding: 'utf8',
+            sslmode: database_sslmode,
+            sql_log_level: sql_log_level,
+            log_warn_duration: sql_log_warn_duration,
+            max_connections: database_max_connections,
+            pool_timeout: database_pool_timeout,
+            driver_options: driver_options
+          ).compact
+      end
+
       private
+
+      def loggable_attributes
+        self.class.attribute_names - [:database_configuration]
+      end
+
+      def postgres?
+        database_credentials[:adapter] == "postgres"
+      end
+
+      def driver_options
+        if postgres?
+          { options: "-c statement_timeout=#{database_statement_timeout}s" }
+        end
+      end
+
+      def database_credentials
+        if database_url
+          database_configuration_from_url
+        else
+          database_configuration_from_parts
+        end
+      end
+
+      def database_configuration_from_parts
+        {
+          adapter: database_adapter,
+          user: database_username,
+          password: database_password,
+          host: database_host,
+          database: database_name,
+          database_port: database_port
+        }.compact
+
+      end
+
+      def database_configuration_from_url
+        uri = URI(database_url)
+        {
+          adapter: uri.scheme,
+          user: uri.user,
+          password: uri.password,
+          host: uri.host,
+          database: uri.path.sub(/^\//, ''),
+          port: uri.port&.to_i,
+        }.compact
+      end
 
       def value_to_string_array value, property_name
         if value.is_a?(String)
@@ -144,6 +230,22 @@ module PactBroker
           [value]
         else
           raise ConfigurationError.new("Pact Broker configuration property `#{property_name}` must be a space delimited String or an Array of Integers. Got: #{value.inspect}")
+        end
+      end
+
+      def maybe_redact name, value
+        if value && name == "database_url"
+          begin
+            uri = URI(value)
+            uri.password = "*****"
+            uri.to_s
+          rescue StandardError => e
+            "*****"
+          end
+        elsif value && (name.include?("password") || name.include?("key"))
+          "*****"
+        else
+          value.inspect
         end
       end
     end
