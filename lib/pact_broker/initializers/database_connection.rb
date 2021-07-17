@@ -1,5 +1,5 @@
-require 'sequel'
-require 'pact_broker/db/log_quietener'
+require "sequel"
+require "pact_broker/db/log_quietener"
 
 ##
 # Sequel by default does not test connections in its connection pool before

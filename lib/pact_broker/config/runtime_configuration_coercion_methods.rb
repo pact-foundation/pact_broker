@@ -7,11 +7,11 @@ module PactBroker
           PactBroker::Config::SpaceDelimitedStringList.parse(value)
         elsif value.is_a?(Array)
           # parse structured values to possible regexp
-          [*value].flat_map do | value |
-            if value.is_a?(String)
-              PactBroker::Config::SpaceDelimitedStringList.parse(value)
+          [*value].flat_map do | val |
+            if val.is_a?(String)
+              PactBroker::Config::SpaceDelimitedStringList.parse(val)
             else
-              [value]
+              [val]
             end
           end
         else

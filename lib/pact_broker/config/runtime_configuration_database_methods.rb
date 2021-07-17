@@ -4,7 +4,7 @@ module PactBroker
       def database_configuration
         database_credentials
           .merge(
-            encoding: 'utf8',
+            encoding: "utf8",
             sslmode: database_sslmode,
             sql_log_level: sql_log_level,
             log_warn_duration: sql_log_warn_duration,
@@ -55,7 +55,7 @@ module PactBroker
           user: uri.user,
           password: uri.password,
           host: uri.host,
-          database: uri.path.sub(/^\//, ''),
+          database: uri.path.sub(/^\//, ""),
           port: uri.port&.to_i,
         }.compact
       end
