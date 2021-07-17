@@ -1,8 +1,15 @@
 require "anyway_config"
+require "pact_broker/config/runtime_configuration_logging_methods"
+require "pact_broker/config/runtime_configuration_database_methods"
+require "pact_broker/config/runtime_configuration_coercion_methods"
 
 module PactBroker
   module Config
     class RuntimeConfiguration < Anyway::Config
+      include RuntimeConfigurationLoggingMethods
+      include RuntimeConfigurationDatabaseMethods
+      include RuntimeConfigurationCoercionMethods
+
       DATABASE_ATTRIBUTES = {
         database_adapter: "postgres",
         database_username: nil,
@@ -42,6 +49,7 @@ module PactBroker
       }
 
       RESOURCE_ATTRIBUTES = {
+        port: 9292,
         base_url: nil,
         use_hal_browser: true,
         enable_diagnostic_endpoints: true,
@@ -65,7 +73,7 @@ module PactBroker
         ALL_ATTRIBUTES.keys + [:base_urls, :warning_error_classes, :database_configuration]
       end
 
-      def self.getters_and_setters
+      def self.getter_and_setter_method_names
         attribute_names + ALL_ATTRIBUTES.keys.collect{ |k| "#{k}=".to_sym }
       end
 
@@ -134,119 +142,6 @@ module PactBroker
             nil
           end
         end.compact
-      end
-
-      def log_configuration(logger)
-        loggable_attributes.sort.each do | setting |
-          value = self.send(setting).inspect
-          logger.info "PactBroker.configuration.#{setting}=#{maybe_redact(setting.to_s, self.send(setting))}"
-        end
-      end
-
-      def database_configuration
-        database_credentials
-          .merge(
-            encoding: 'utf8',
-            sslmode: database_sslmode,
-            sql_log_level: sql_log_level,
-            log_warn_duration: sql_log_warn_duration,
-            max_connections: database_max_connections,
-            pool_timeout: database_pool_timeout,
-            driver_options: driver_options
-          ).compact
-      end
-
-      private
-
-      def loggable_attributes
-        self.class.attribute_names - [:database_configuration]
-      end
-
-      def postgres?
-        database_credentials[:adapter] == "postgres"
-      end
-
-      def driver_options
-        if postgres?
-          { options: "-c statement_timeout=#{database_statement_timeout}s" }
-        end
-      end
-
-      def database_credentials
-        if database_url
-          database_configuration_from_url
-        else
-          database_configuration_from_parts
-        end
-      end
-
-      def database_configuration_from_parts
-        {
-          adapter: database_adapter,
-          user: database_username,
-          password: database_password,
-          host: database_host,
-          database: database_name,
-          database_port: database_port
-        }.compact
-
-      end
-
-      def database_configuration_from_url
-        uri = URI(database_url)
-        {
-          adapter: uri.scheme,
-          user: uri.user,
-          password: uri.password,
-          host: uri.host,
-          database: uri.path.sub(/^\//, ''),
-          port: uri.port&.to_i,
-        }.compact
-      end
-
-      def value_to_string_array value, property_name
-        if value.is_a?(String)
-          PactBroker::Config::SpaceDelimitedStringList.parse(value)
-        elsif value.is_a?(Array)
-          # parse structured values to possible regexp
-          [*value].flat_map do | value |
-            if value.is_a?(String)
-              PactBroker::Config::SpaceDelimitedStringList.parse(value)
-            else
-              [value]
-            end
-          end
-        else
-          raise ConfigurationError.new("Pact Broker configuration property `#{property_name}` must be a space delimited String or an Array. Got: #{value.inspect}")
-        end
-      end
-
-      def value_to_integer_array value, property_name
-        if value.is_a?(String)
-          PactBroker::Config::SpaceDelimitedIntegerList.parse(value)
-        elsif value.is_a?(Array)
-          value.collect { |v| v.to_i }
-        elsif value.is_a?(Integer)
-          [value]
-        else
-          raise ConfigurationError.new("Pact Broker configuration property `#{property_name}` must be a space delimited String or an Array of Integers. Got: #{value.inspect}")
-        end
-      end
-
-      def maybe_redact name, value
-        if value && name == "database_url"
-          begin
-            uri = URI(value)
-            uri.password = "*****"
-            uri.to_s
-          rescue StandardError => e
-            "*****"
-          end
-        elsif value && (name.include?("password") || name.include?("key"))
-          "*****"
-        else
-          value.inspect
-        end
       end
     end
   end

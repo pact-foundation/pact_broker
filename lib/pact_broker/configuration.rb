@@ -21,7 +21,7 @@ module PactBroker
   class Configuration
     extend Forwardable
 
-    delegate PactBroker::Config::RuntimeConfiguration.getters_and_setters => :runtime_configuration
+    delegate PactBroker::Config::RuntimeConfiguration.getter_and_setter_method_names => :runtime_configuration
 
     SAVABLE_SETTING_NAMES = [
       :order_versions_by_date,
@@ -59,7 +59,7 @@ module PactBroker
     alias_method :policy_finder=, :policy_builder=
     alias_method :policy_scope_finder=, :policy_scope_builder=
 
-    attr_reader :runtime_configuration
+    attr_accessor :runtime_configuration
 
     def initialize
       @runtime_configuration = PactBroker::Config::RuntimeConfiguration.new
