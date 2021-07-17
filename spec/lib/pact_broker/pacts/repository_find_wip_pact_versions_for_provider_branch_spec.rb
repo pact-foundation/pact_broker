@@ -10,7 +10,7 @@ module PactBroker
         let(:options) { { include_wip_pacts_since: include_wip_pacts_since } }
         let(:include_wip_pacts_since) { (Date.today - 1).to_datetime }
 
-        subject { Repository.new.find_wip_pact_versions_for_provider("bar", provider_version_branch, provider_tags, options) }
+        subject { Repository.new.find_wip_pact_versions_for_provider("bar", provider_version_branch, provider_tags, [], options) }
 
         context "when there are no tags or branch" do
           let(:provider_tags) { [] }

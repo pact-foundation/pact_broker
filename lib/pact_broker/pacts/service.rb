@@ -116,32 +116,22 @@ module PactBroker
       end
 
       def find_for_verification(provider_name, provider_version_branch, provider_version_tags, consumer_version_selectors, options)
-        verifiable_pacts_specified_in_request = pact_repository
+        explicitly_specified_verifiable_pacts = pact_repository
           .find_for_verification(provider_name, consumer_version_selectors)
           .collect do | selected_pact |
+            # Todo move this into the repository
             squash_pacts_for_verification(provider_version_tags, selected_pact, options[:include_pending_status])
           end
 
         verifiable_wip_pacts = if options[:include_wip_pacts_since]
-                                 exclude_specified_pacts(
-                                   pact_repository.find_wip_pact_versions_for_provider(provider_name, provider_version_branch, provider_version_tags, options),
-                                   verifiable_pacts_specified_in_request)
+                                  specified_pact_version_shas = explicitly_specified_verifiable_pacts.collect(&:pact_version_sha)
+                                  pact_repository.find_wip_pact_versions_for_provider(provider_name, provider_version_branch, provider_version_tags, specified_pact_version_shas, options)
                                else
                                  []
                                end
 
-        verifiable_pacts_specified_in_request + verifiable_wip_pacts
+        explicitly_specified_verifiable_pacts + verifiable_wip_pacts
       end
-
-      def exclude_specified_pacts(wip_pacts, specified_pacts)
-        wip_pacts.reject do | wip_pact |
-          specified_pacts.any? do | specified_pact |
-            wip_pact.pact_version_sha == specified_pact.pact_version_sha
-          end
-        end
-      end
-
-      private :exclude_specified_pacts
 
       # Overwriting an existing pact with the same consumer/provider/consumer version number
       def update_pact params, existing_pact
