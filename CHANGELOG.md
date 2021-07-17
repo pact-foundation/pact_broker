@@ -1,3 +1,24 @@
+<a name="v2.81.0"></a>
+### v2.81.0 (2021-07-17)
+
+#### Features
+
+* enable environments, deployed versions and released versions endpoints without a feature toggle required	 ([84a59c10](/../../commit/84a59c10))
+* add detailed debug logging for WIP pact calculations	 ([81290238](/../../commit/81290238))
+* add debug level logging for WIP pacts calculations	 ([a7c16833](/../../commit/a7c16833))
+* include deployed and released versions in index page when viewing latest tags	 ([655e9dd5](/../../commit/655e9dd5))
+* add interactions counts to metrics endpoint	 ([c765afe1](/../../commit/c765afe1))
+* automatically create a deployed version when a tag is created with the same name as an environment	 ([56a583af](/../../commit/56a583af))
+* support viewing all versions for branch in matrix UI	 ([12f92951](/../../commit/12f92951))
+* validate environment name in consumer version selector	 ([f1ad8f6b](/../../commit/f1ad8f6b))
+* support the deployedOrReleased: true consumer version selector	 ([042a1612](/../../commit/042a1612))
+* add interactions_count and messages_count to pact_versions table	 ([c17adbe6](/../../commit/c17adbe6))
+* shorten length of metadata in pact URLs by using the consumer version id instead of number	 ([27b34bc9](/../../commit/27b34bc9))
+
+#### Bug Fixes
+
+* Display pagination correctly in index page with tag (#469)	 ([cda9c15e](/../../commit/cda9c15e))
+
 <a name="v2.80.0"></a>
 ### v2.80.0 (2021-07-06)
 
