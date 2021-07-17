@@ -50,12 +50,10 @@ module PactBroker
 
         provider = pacticipant_repository.find_by_name(provider_name)
         wip_start_date = options.fetch(:include_wip_pacts_since)
-        provider_tags = provider_tag_objects_for(provider, provider_tags_names)
 
         wip_by_consumer_tags = find_wip_pact_versions_for_provider_by_provider_tags(
           provider,
           provider_tags_names,
-          provider_tags,
           wip_start_date,
           specified_pact_version_shas,
           :latest_by_consumer_tag
@@ -64,7 +62,6 @@ module PactBroker
         wip_by_consumer_branches = find_wip_pact_versions_for_provider_by_provider_tags(
           provider,
           provider_tags_names,
-          provider_tags,
           wip_start_date,
           specified_pact_version_shas,
           :latest_by_consumer_branch
@@ -203,7 +200,7 @@ module PactBroker
       end
 
       # TODO ? find the WIP pacts by consumer branch
-      def find_wip_pact_versions_for_provider_by_provider_tags(provider, provider_tags_names, _provider_tags, wip_start_date, specified_pact_version_shas, pact_publication_scope)
+      def find_wip_pact_versions_for_provider_by_provider_tags(provider, provider_tags_names, wip_start_date, specified_pact_version_shas, pact_publication_scope)
         potential_wip_pacts_by_consumer_tag_query = PactPublication.for_provider(provider).created_after(wip_start_date).send(pact_publication_scope)
 
         log_debug_for_wip do

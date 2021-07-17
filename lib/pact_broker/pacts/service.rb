@@ -127,7 +127,7 @@ module PactBroker
                                   specified_pact_version_shas = explicitly_specified_verifiable_pacts.collect(&:pact_version_sha)
                                   pact_repository.find_wip_pact_versions_for_provider(provider_name, provider_version_branch, provider_version_tags, specified_pact_version_shas, options)
                                else
-                                 []
+                                  []
                                end
 
         explicitly_specified_verifiable_pacts + verifiable_wip_pacts
