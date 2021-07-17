@@ -13,7 +13,7 @@ module PactBroker
               [val]
             end
           end
-        else
+        elsif value
           raise ConfigurationError.new("Pact Broker configuration property `#{property_name}` must be a space delimited String or an Array. Got: #{value.inspect}")
         end
       end
@@ -27,7 +27,7 @@ module PactBroker
           value.collect { |v| v.to_i }
         elsif value.is_a?(Integer)
           [value]
-        else
+        elsif value
           raise ConfigurationError.new("Pact Broker configuration property `#{property_name}` must be a space delimited String or an Array of Integers. Got: #{value.inspect}")
         end
       end

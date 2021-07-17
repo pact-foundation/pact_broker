@@ -51,6 +51,7 @@ module PactBroker
       RESOURCE_ATTRIBUTES = {
         port: 9292,
         base_url: nil,
+        base_urls: [],
         use_hal_browser: true,
         enable_diagnostic_endpoints: true,
         use_rack_protection: true,
@@ -70,7 +71,7 @@ module PactBroker
       ALL_ATTRIBUTES = [DATABASE_ATTRIBUTES, LOGGING_ATTRIBUTES, WEBHOOK_ATTRIBUTES, RESOURCE_ATTRIBUTES, DOMAIN_ATTRIBUTES].inject(&:merge)
 
       def self.attribute_names
-        ALL_ATTRIBUTES.keys + [:base_urls, :warning_error_classes, :database_configuration]
+        ALL_ATTRIBUTES.keys + [:base_urls, :warning_error_classes, :database_configuration] - [:base_url]
       end
 
       def self.getter_and_setter_method_names
@@ -129,8 +130,22 @@ module PactBroker
         super(value_to_string_array(webhook_host_whitelist, "webhook_host_whitelist"))
       end
 
+      def base_url= base_url
+        super(value_to_string_array(base_url, "base_url"))
+      end
+
+      alias_method :original_base_url, :base_url
+
+      def base_url
+        raise NotImplementedError
+      end
+
+      def base_urls= base_urls
+        super(value_to_string_array(base_urls, "base_urls"))
+      end
+
       def base_urls
-        base_url ? base_url.split(" ") : []
+        (super + [*original_base_url]).uniq
       end
 
       def warning_error_classes
