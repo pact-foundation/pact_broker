@@ -8,6 +8,7 @@ require "pact_broker/pacts/selected_pact"
 require "pact_broker/pacts/selector"
 require "pact_broker/pacts/selectors"
 require "pact_broker/feature_toggle"
+require "pact_broker/repositories/scopes"
 
 module PactBroker
   module Pacts
@@ -16,6 +17,7 @@ module PactBroker
       include PactBroker::Repositories
       include PactBroker::Services
       include PactBroker::Repositories::Helpers
+      include PactBroker::Repositories::Scopes
 
       def find(provider_name, consumer_version_selectors)
         selected_pacts = find_pacts_by_selector(provider_name, consumer_version_selectors) +
@@ -71,12 +73,6 @@ module PactBroker
       end
 
       private
-
-      # For the times when it doesn't make sense to use the scoped class, this is a way to
-      # indicate that it is an intentional use of the PactVersion class directly.
-      def unscoped(scope)
-        scope
-      end
 
       # Note: created_at is coming back as a string for sqlite
       # Can't work out how to to tell Sequel that this should be a date
@@ -319,10 +315,6 @@ module PactBroker
         end
 
         PactPublication.subtract(pact_publications_query.all, specified_explicitly.all, verified_by_this_tag.all, verified_by_another_tag.all)
-      end
-
-      def scope_for(scope)
-        PactBroker.policy_scope!(scope)
       end
 
       def collect_consumer_name_and_version_number(pact_publications_query)
