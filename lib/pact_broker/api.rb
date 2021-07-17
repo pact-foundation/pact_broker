@@ -117,16 +117,14 @@ module PactBroker
 
         add ["contracts", "publish"], Api::Resources::PublishContracts, { resource_name: "publish_contracts" }
 
-        if PactBroker.feature_enabled?(:environments)
-          add ["environments"], Api::Resources::Environments, { resource_name: "environments" }
-          add ["environments", :environment_uuid], Api::Resources::Environment, { resource_name: "environment" }
-          add ["environments", :environment_uuid, "deployed-versions", "currently-deployed"], Api::Resources::CurrentlyDeployedVersionsForEnvironment, { resource_name: "environment_currently_deployed_deployed_versions" }
-          add ["environments", :environment_uuid, "released-versions", "currently-supported"], Api::Resources::CurrentlySupportedVersionsForEnvironment, { resource_name: "environment_currently_supported_released_versions" }
-          add ["pacticipants", :pacticipant_name, "versions", :pacticipant_version_number, "deployed-versions", "environment", :environment_uuid], Api::Resources::DeployedVersionsForVersionAndEnvironment, { resource_name: "deployed_versions_for_version_and_environment" }
-          add ["pacticipants", :pacticipant_name, "versions", :pacticipant_version_number, "released-versions", "environment", :environment_uuid], Api::Resources::ReleasedVersionsForVersionAndEnvironment, { resource_name: "released_versions_for_version_and_environment" }
-          add ["released-versions", :uuid], Api::Resources::ReleasedVersion, { resource_name: "released_version" }
-          add ["deployed-versions", :uuid], Api::Resources::DeployedVersion, { resource_name: "deployed_version" }
-        end
+        add ["environments"], Api::Resources::Environments, { resource_name: "environments" }
+        add ["environments", :environment_uuid], Api::Resources::Environment, { resource_name: "environment" }
+        add ["environments", :environment_uuid, "deployed-versions", "currently-deployed"], Api::Resources::CurrentlyDeployedVersionsForEnvironment, { resource_name: "environment_currently_deployed_deployed_versions" }
+        add ["environments", :environment_uuid, "released-versions", "currently-supported"], Api::Resources::CurrentlySupportedVersionsForEnvironment, { resource_name: "environment_currently_supported_released_versions" }
+        add ["pacticipants", :pacticipant_name, "versions", :pacticipant_version_number, "deployed-versions", "environment", :environment_uuid], Api::Resources::DeployedVersionsForVersionAndEnvironment, { resource_name: "deployed_versions_for_version_and_environment" }
+        add ["pacticipants", :pacticipant_name, "versions", :pacticipant_version_number, "released-versions", "environment", :environment_uuid], Api::Resources::ReleasedVersionsForVersionAndEnvironment, { resource_name: "released_versions_for_version_and_environment" }
+        add ["released-versions", :uuid], Api::Resources::ReleasedVersion, { resource_name: "released_version" }
+        add ["deployed-versions", :uuid], Api::Resources::DeployedVersion, { resource_name: "deployed_version" }
 
         add ["integrations"], Api::Resources::Integrations, {resource_name: "integrations"}
         add ["integrations", "provider", :provider_name, "consumer", :consumer_name], Api::Resources::Integration, {resource_name: "integration"}
