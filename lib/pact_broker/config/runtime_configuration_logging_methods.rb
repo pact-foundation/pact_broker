@@ -3,7 +3,6 @@ module PactBroker
     module RuntimeConfigurationLoggingMethods
       def log_configuration(logger)
         loggable_attributes.sort.each do | setting |
-          value = self.send(setting).inspect
           logger.info "PactBroker.configuration.#{setting}=#{maybe_redact(setting.to_s, self.send(setting))}"
         end
       end
@@ -19,7 +18,7 @@ module PactBroker
             uri = URI(value)
             uri.password = "*****"
             uri.to_s
-          rescue StandardError => e
+          rescue StandardError
             "*****"
           end
         elsif value && (name.include?("password") || name.include?("key"))
