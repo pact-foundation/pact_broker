@@ -1,7 +1,6 @@
 module PactBroker
   module Config
     module RuntimeConfigurationCoercionMethods
-
       def value_to_string_array value, property_name
         if value.is_a?(String)
           PactBroker::Config::SpaceDelimitedStringList.parse(value)
