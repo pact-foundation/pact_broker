@@ -47,8 +47,8 @@ module PactBroker
         include PactPublicationWipDatasetModule
       end
 
-      def self.subtract(a, b)
-        b_ids = b.collect(&:id)
+      def self.subtract(a, *b)
+        b_ids = b.flat_map{ |pact_publications| pact_publications.collect(&:id) }
         a.reject{ |pact_publication| b_ids.include?(pact_publication.id) }
       end
 
@@ -150,6 +150,16 @@ module PactBroker
 
       def to_head_pact
         HeadPact.new(to_domain, consumer_version.number, values[:tag_name])
+      end
+
+      def pact_version_sha
+        pact_version.sha
+      end
+
+      def <=> other
+        self_fields = [consumer.name.downcase, provider.name.downcase, consumer_version_order || 0]
+        other_fields = [other.consumer.name.downcase, other.provider.name.downcase, other.consumer_version_order || 0]
+        self_fields <=> other_fields
       end
 
       private

@@ -31,6 +31,16 @@ module PactBroker
       end
     end
 
+    def log_with_tag(tag)
+      if logger.respond_to?(:tagged)
+        logger.tagged(tag) do
+          yield
+        end
+      else
+        yield
+      end
+    end
+
     def log_error e, description = nil
       if logger.instance_of?(SemanticLogger::Logger)
         if description

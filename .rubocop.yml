@@ -209,9 +209,9 @@ Metrics/BlockNesting:
   Max: 4
 
 Metrics/ClassLength:
-  Description: 'Avoid classes longer than 250 lines of code.'
+  Description: 'Avoid classes longer than 260 lines of code.'
   Enabled: true
-  Max: 250
+  Max: 260
   Exclude:
     - lib/pact_broker/test/*.rb
 

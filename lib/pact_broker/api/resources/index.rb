@@ -156,19 +156,17 @@ module PactBroker
             }]
           }
 
-          if PactBroker.feature_enabled?(:environments)
-            links_hash["pb:environments"] = {
-              title: "Environments",
-              href: environments_url(base_url),
-              templated: false
-            }
+          links_hash["pb:environments"] = {
+            title: "Environments",
+            href: environments_url(base_url),
+            templated: false
+          }
 
-            links_hash["pb:environment"] = {
-              title: "Environment",
-              href: environments_url(base_url) + "/{uuid}",
-              templated: true
-            }
-          end
+          links_hash["pb:environment"] = {
+            title: "Environment",
+            href: environments_url(base_url) + "/{uuid}",
+            templated: true
+          }
 
           if PactBroker.feature_enabled?("disable_pacts_for_verification", true)
             links_hash.delete("pb:provider-pacts-for-verification")

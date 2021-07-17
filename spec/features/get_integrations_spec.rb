@@ -1,7 +1,7 @@
 describe "Get integrations dot file" do
   before do
-    TestDataBuilder.new
-      .create_pact_with_hierarchy("Foo", "1", "Bar")
+    td.create_pact_with_hierarchy("Foo", "1", "Bar")
+      .create_verification(provider_version: "2")
   end
 
   let(:path) { "/integrations" }

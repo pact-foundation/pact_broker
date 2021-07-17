@@ -186,9 +186,9 @@ module PactBroker
       end
 
       def remove_overridden_revisions_from_complete_query
-        from_self(alias: :p)
-        .select(Sequel[:p].*)
-        .remove_overridden_revisions(:p)
+        from_self(alias: :pact_publications)
+          .select(Sequel[:pact_publications].*)
+          .remove_overridden_revisions(:pact_publications)
       end
 
       def for_pact_version_id(pact_version_id)

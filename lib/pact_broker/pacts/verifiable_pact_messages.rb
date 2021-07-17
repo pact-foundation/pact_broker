@@ -182,6 +182,7 @@ module PactBroker
       end
 
       # rubocop: disable Metrics/CyclomaticComplexity
+      # rubocop: disable Metrics/MethodLength
       def selector_description selector
         description = if selector.overall_latest?
                         consumer_label = selector.consumer ? selector.consumer : "a consumer"
@@ -216,6 +217,7 @@ module PactBroker
         "#{description} (#{selector.consumer_version.number})"
       end
       # rubocop: enable Metrics/CyclomaticComplexity
+      # rubocop: enable Metrics/MethodLength
 
       def currently_deployed_selectors_description(selectors)
         selectors.group_by(&:consumer).flat_map do | consumer_name, consumer_selectors |
