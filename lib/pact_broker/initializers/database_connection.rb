@@ -47,7 +47,7 @@ module PactBroker
     logger&.info "Connected to database #{config[:database]}"
     connection.extension(:connection_validator)
     connection.pool.connection_validation_timeout = -1
-    connection.database_timezone = config[:database_timezone]
+    connection.timezone = config[:database_timezone]
     connection
   end
 end

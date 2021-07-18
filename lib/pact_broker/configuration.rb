@@ -1,7 +1,5 @@
 require "pact_broker/version"
 require "pact_broker/error"
-require "pact_broker/config/space_delimited_string_list"
-require "pact_broker/config/space_delimited_integer_list"
 require "semantic_logger"
 require "forwardable"
 require "pact_broker/config/runtime_configuration"
@@ -40,7 +38,7 @@ module PactBroker
       :seed_example_data,
       :badge_provider_mode,
       :warning_error_class_names,
-      :base_url,
+      :base_urls,
       :log_dir,
       :allow_missing_migration_files,
       :auto_migrate_db_data,

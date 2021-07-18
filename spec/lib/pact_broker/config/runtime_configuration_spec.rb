@@ -5,7 +5,7 @@ module PactBroker
     describe RuntimeConfiguration do
       describe "base_url" do
         it "does not expose base_url for delegation" do
-          expect(RuntimeConfiguration.attribute_names).to_not include :base_url
+          expect(RuntimeConfiguration.getter_and_setter_method_names).to_not include :base_url
         end
 
         it "does not support the method base_url as base_urls should be used instead" do

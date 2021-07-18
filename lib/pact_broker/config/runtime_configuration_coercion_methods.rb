@@ -1,3 +1,6 @@
+require "pact_broker/config/space_delimited_string_list"
+require "pact_broker/config/space_delimited_integer_list"
+
 module PactBroker
   module Config
     module RuntimeConfigurationCoercionMethods

@@ -71,12 +71,8 @@ module PactBroker
 
       ALL_ATTRIBUTES = [DATABASE_ATTRIBUTES, LOGGING_ATTRIBUTES, WEBHOOK_ATTRIBUTES, RESOURCE_ATTRIBUTES, DOMAIN_ATTRIBUTES].inject(&:merge)
 
-      def self.attribute_names
-        ALL_ATTRIBUTES.keys + [:base_urls, :warning_error_classes, :database_configuration] - [:base_url]
-      end
-
       def self.getter_and_setter_method_names
-        attribute_names + ALL_ATTRIBUTES.keys.collect{ |k| "#{k}=".to_sym }
+        ALL_ATTRIBUTES.keys + ALL_ATTRIBUTES.keys.collect{ |k| "#{k}=".to_sym } + [:warning_error_classes, :database_configuration]  - [:base_url]
       end
 
       config_name :pact_broker

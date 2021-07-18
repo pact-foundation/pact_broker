@@ -2,15 +2,10 @@ module PactBroker
   module Config
     module RuntimeConfigurationLoggingMethods
       def log_configuration(logger)
-        loggable_attributes.sort.each do | setting |
-          logger.info "PactBroker.configuration.#{setting}=#{maybe_redact(setting.to_s, self.send(setting))}"
+        to_h.to_a.sort_by(&:first).each do | key, value |
+          logger.info "PactBroker.configuration.#{key}=#{maybe_redact(key.to_s, value)}"
         end
       end
-
-      def loggable_attributes
-        self.class.attribute_names - [:database_configuration]
-      end
-      private :loggable_attributes
 
       def maybe_redact name, value
         if value && name == "database_url"
