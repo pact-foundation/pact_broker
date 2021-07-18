@@ -2,6 +2,7 @@ require "anyway_config"
 require "pact_broker/config/runtime_configuration_logging_methods"
 require "pact_broker/config/runtime_configuration_database_methods"
 require "pact_broker/config/runtime_configuration_coercion_methods"
+require "pact_broker/version"
 
 module PactBroker
   module Config
@@ -9,6 +10,21 @@ module PactBroker
       include RuntimeConfigurationLoggingMethods
       include RuntimeConfigurationDatabaseMethods
       include RuntimeConfigurationCoercionMethods
+
+      class << self
+        def sensitive_values(*values)
+          @sensitive_values ||= []
+          if values
+            @sensitive_values.concat([*values])
+          else
+            @sensitive_values
+          end
+        end
+
+        def sensitive_value?(value)
+          sensitive_values.any? { |key| key == value || key == value.to_sym || key.kind_of?(Regexp) && key =~ value }
+        end
+      end
 
       DATABASE_ATTRIBUTES = {
         database_adapter: "postgres",
@@ -78,6 +94,8 @@ module PactBroker
       config_name :pact_broker
 
       attr_config(ALL_ATTRIBUTES)
+
+      sensitive_values(:database_url, :database_password)
 
       def database_port= database_port
         super(database_port&.to_i)
