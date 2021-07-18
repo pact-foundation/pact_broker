@@ -24,9 +24,10 @@ module PactBroker
         database_max_connections: nil,
         database_pool_timeout: 5,
         database_connect_max_retries: 0,
+        database_timezone: :utc,
         auto_migrate_db: true,
         auto_migrate_db_data: true,
-        allow_missing_migration_files: false,
+        allow_missing_migration_files: true,
         validate_database_connection_config: true,
         use_case_sensitive_resource_names: true,
         database_statement_timeout: 15,
@@ -86,8 +87,16 @@ module PactBroker
         super(database_port&.to_i)
       end
 
+      def database_connect_max_retries= database_connect_max_retries
+        super(database_connect_max_retries&.to_i)
+      end
+
+      def database_timezone= database_timezone
+        super(database_timezone&.to_sym)
+      end
+
       def sql_log_level= sql_log_level
-        super(sql_log_level&.to_sym)
+        super(sql_log_level&.downcase&.to_sym)
       end
 
       def sql_log_warn_duration= sql_log_warn_duration
@@ -153,7 +162,7 @@ module PactBroker
           begin
             Object.const_get(class_name)
           rescue NameError => e
-            logger.warn("Class #{class_name} couldn't be loaded as a warning error class (#{e.class} - #{e.message}). Ignoring.")
+            puts("Class #{class_name} couldn't be loaded as a warning error class (#{e.class} - #{e.message}). Ignoring.")
             nil
           end
         end.compact
