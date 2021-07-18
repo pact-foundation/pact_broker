@@ -14,55 +14,55 @@ module PactBroker
       end
 
       context "with a base_url and base_urls as strings" do
-        subject {
+        subject do
           runtime_configuration = RuntimeConfiguration.new
           runtime_configuration.base_url = "foo blah"
           runtime_configuration.base_urls = "bar wiffle"
           runtime_configuration
-        }
+        end
 
         its(:base_urls) { is_expected.to eq %w[bar wiffle foo blah] }
       end
 
       context "with a base_url and base_urls as the same strings" do
-        subject {
+        subject do
           runtime_configuration = RuntimeConfiguration.new
           runtime_configuration.base_url = "foo blah"
           runtime_configuration.base_urls = "foo meep"
           runtime_configuration
-        }
+        end
 
         its(:base_urls) { is_expected.to eq %w[foo meep blah] }
       end
 
       context "with just base_url as a string" do
-        subject {
+        subject do
           runtime_configuration = RuntimeConfiguration.new
           runtime_configuration.base_url = "foo blah"
           runtime_configuration
-        }
+        end
 
         its(:base_urls) { is_expected.to eq %w[foo blah] }
       end
 
       context "with just base_urls as a string" do
-        subject {
+        subject do
           runtime_configuration = RuntimeConfiguration.new
           runtime_configuration.base_url = nil
           runtime_configuration.base_urls = "bar wiffle"
           runtime_configuration
-        }
+        end
 
         its(:base_urls) { is_expected.to eq %w[bar wiffle] }
       end
 
       context "with base_url and base_urls as arrays" do
-        subject {
+        subject do
           runtime_configuration = RuntimeConfiguration.new
           runtime_configuration.base_url = %w[foo blah]
           runtime_configuration.base_urls = %w[bar wiffle]
           runtime_configuration
-        }
+        end
 
         its(:base_urls) { is_expected.to eq %w[bar wiffle foo blah] }
       end
