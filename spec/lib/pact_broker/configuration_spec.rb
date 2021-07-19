@@ -55,8 +55,8 @@ module PactBroker
         end
 
         it "allows setting the whitelist by an array" do
-          PactBroker.configuration.webhook_http_method_whitelist = ["foo"]
-          expect(PactBroker.configuration.webhook_http_method_whitelist).to be_a Config::SpaceDelimitedStringList
+          PactBroker.configuration.webhook_http_method_whitelist = ["foo", "/.*/"]
+          expect(PactBroker.configuration.webhook_http_method_whitelist).to eq ["foo", /.*/]
         end
       end
 
@@ -68,7 +68,7 @@ module PactBroker
 
         it "allows setting the 'webhook_http_code_success' by an array" do
           PactBroker.configuration.webhook_http_code_success = [200, 201, 202]
-          expect(PactBroker.configuration.webhook_http_code_success).to be_a Config::SpaceDelimitedIntegerList
+          expect(PactBroker.configuration.webhook_http_code_success).to eq [200, 201, 202]
         end
       end
 
