@@ -11,21 +11,6 @@ module PactBroker
       include RuntimeConfigurationDatabaseMethods
       include RuntimeConfigurationCoercionMethods
 
-      class << self
-        def sensitive_values(*values)
-          @sensitive_values ||= []
-          if values
-            @sensitive_values.concat([*values])
-          else
-            @sensitive_values
-          end
-        end
-
-        def sensitive_value?(value)
-          sensitive_values.any? { |key| key == value || key == value.to_sym || key.kind_of?(Regexp) && key =~ value }
-        end
-      end
-
       DATABASE_ATTRIBUTES = {
         database_adapter: "postgres",
         database_username: nil,

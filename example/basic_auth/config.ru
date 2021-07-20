@@ -2,18 +2,28 @@ require "fileutils"
 require "logger"
 require "sequel"
 require "pact_broker"
-require "pg"
+require "pact_broker/api/middleware/basic_auth"
+require "pact_broker/config/basic_auth_configuration"
+require "pact_broker/api/authorization/resource_access_policy"
+require "pact_broker/initializers/database_connection"
 
-use Rack::Auth::Basic, "Restricted Area" do |username, password|
-  username == ENV["PACT_BROKER_USERNAME"] and password == ENV["PACT_BROKER_PASSWORD"]
+SemanticLogger.add_appender(io: $stdout)
+SemanticLogger.default_level = :info
+$logger  = SemanticLogger['pact-broker']
+
+basic_auth_configuration = PactBroker::Config::BasicAuthRuntimeConfiguration.new
+basic_auth_configuration.log_configuration($logger)
+
+if basic_auth_configuration.use_basic_auth?
+  policy = PactBroker::Api::Authorization::ResourceAccessPolicy.build(basic_auth_configuration.allow_public_read, basic_auth_configuration.public_heartbeat)
+  use PactBroker::Api::Middleware::BasicAuth,
+    basic_auth_configuration.write_credentials,
+    basic_auth_configuration.read_credentials,
+    policy
 end
 
 app = PactBroker::App.new do | config |
-  # change these from their default values if desired
-  # config.log_dir = "./log"
-  # config.auto_migrate_db = true
-  # config.use_hal_browser = true
-  config.database_connection = Sequel.connect(ENV["DATABASE_URL"], adapter: "postgres", encoding: "utf8")
+  config.database_connection = PactBroker.create_database_connection(config.logger, config.database_configuration, 0)
 end
 
 run app
