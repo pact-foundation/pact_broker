@@ -37,7 +37,10 @@ module PactBroker
 
       LOGGING_ATTRIBUTES = {
         log_dir: File.expand_path("./log"),
+        log_level: :info,
+        log_format: nil,
         warning_error_class_names: ["Sequel::ForeignKeyConstraintViolation", "PG::QueryCanceled"],
+        hide_pactflow_messages: false
       }
 
       WEBHOOK_ATTRIBUTES = {
@@ -81,6 +84,14 @@ module PactBroker
       attr_config(ALL_ATTRIBUTES)
 
       sensitive_values(:database_url, :database_password)
+
+      def log_level= log_level
+        super(log_level&.to_sym)
+      end
+
+      def log_format= log_format
+        super(log_format&.to_sym)
+      end
 
       def database_port= database_port
         super(database_port&.to_i)

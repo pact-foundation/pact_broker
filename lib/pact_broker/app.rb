@@ -84,7 +84,6 @@ module PactBroker
     attr_reader :custom_ui, :create_pact_broker_api_block
 
     def post_configure
-      configure_logger
       SuckerPunch.logger = configuration.custom_logger || SemanticLogger["SuckerPunch"]
       configure_database_connection
       configure_sucker_punch
@@ -242,14 +241,6 @@ module PactBroker
       end
     end
 
-    def configure_logger
-      if SemanticLogger.appenders.empty?
-        path = configuration.log_dir + "/pact_broker.log"
-        FileUtils.mkdir_p(configuration.log_dir)
-        SemanticLogger.add_appender(file_name: path, formatter: PactBroker::Logging::DefaultFormatter.new)
-      end
-    end
-
     def running_app
       @running_app ||= begin
         prepare_app
@@ -262,7 +253,7 @@ module PactBroker
     end
 
     def print_startup_message
-      if ENV["PACT_BROKER_HIDE_PACTFLOW_MESSAGES"] != "true"
+      unless configuration.hide_pactflow_messages
         logger.info "\n\n#{'*' * 80}\n\nWant someone to manage your Pact Broker for you? Check out https://pactflow.io/oss for a hardened, fully supported SaaS version of the Pact Broker with an improved UI + more.\n\n#{'*' * 80}\n"
       end
     end

@@ -66,7 +66,6 @@ module PactBroker
       @authenticate_with_basic_auth = nil
       @authorize = nil
       @api_error_reporters = []
-      @semantic_logger = SemanticLogger["root"]
     end
 
     # rubocop: disable Metrics/MethodLength
@@ -108,11 +107,29 @@ module PactBroker
     end
     # rubocop: enable Metrics/MethodLength
 
+    def logger_from_runtime_configuration
+      @logger_from_runtime_configuration ||= begin
+        SemanticLogger.default_level = runtime_configuration.log_level
+        if runtime_configuration.log_dir
+          path = runtime_configuration.log_dir + "/pact_broker.log"
+          FileUtils.mkdir_p(runtime_configuration.log_dir)
+          @default_appender = SemanticLogger.add_appender(file_name: path, formatter: runtime_configuration.log_format)
+        else
+          @default_appender = SemanticLogger.add_appender(io: $stdout, formatter: runtime_configuration.log_format)
+        end
+        @logger_from_runtime_configuration = SemanticLogger["pact-broker"]
+      end
+    end
+
     def logger
-      custom_logger || @semantic_logger
+      custom_logger || logger_from_runtime_configuration
     end
 
     def logger= logger
+      if @default_appender && SemanticLogger.appenders.include?(@default_appender)
+        SemanticLogger.remove_appender(@default_appender)
+        @default_appender = nil
+      end
       @custom_logger = logger
     end
 

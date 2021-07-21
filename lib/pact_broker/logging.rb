@@ -53,7 +53,7 @@ module PactBroker
         message = "#{description} - #{message}" if description
         logger.error message
       end
-      if ENV["PACT_BROKER_HIDE_PACTFLOW_MESSAGES"] != "true"
+      unless PactBroker.configuration.hide_pactflow_messages
         logger.info "\n\n#{'*' * 80}\n\nPrefer it was someone else's job to deal with this error? Check out https://pactflow.io/oss for a hardened, fully supported SaaS version of the Pact Broker with an improved UI  + more.\n\n#{'*' * 80}\n"
       end
     end
