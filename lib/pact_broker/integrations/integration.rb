@@ -69,6 +69,7 @@ module PactBroker
 end
 
 # Table: integrations
+# Primary Key: (consumer_id, provider_id)
 # Columns:
 #  consumer_id   | integer |
 #  consumer_name | text    |

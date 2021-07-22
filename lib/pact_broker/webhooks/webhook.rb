@@ -153,7 +153,7 @@ end
 #  fk_webhooks_consumer | (consumer_id) REFERENCES pacticipants(id)
 #  fk_webhooks_provider | (provider_id) REFERENCES pacticipants(id)
 # Referenced By:
-#  webhook_headers    | fk_webhookheaders_webhooks         | (webhook_id) REFERENCES webhooks(id)
-#  webhook_executions | webhook_executions_webhook_id_fkey | (webhook_id) REFERENCES webhooks(id)
 #  triggered_webhooks | triggered_webhooks_webhook_id_fkey | (webhook_id) REFERENCES webhooks(id)
 #  webhook_events     | webhook_events_webhook_id_fkey     | (webhook_id) REFERENCES webhooks(id) ON DELETE CASCADE
+#  webhook_executions | webhook_executions_webhook_id_fkey | (webhook_id) REFERENCES webhooks(id)
+#  webhook_headers    | fk_webhookheaders_webhooks         | (webhook_id) REFERENCES webhooks(id)
