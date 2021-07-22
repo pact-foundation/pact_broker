@@ -26,7 +26,8 @@ module PactBroker
         end
       end
 
-      DATABASE_ATTRIBUTES = {
+      # database attributes
+      attr_config(
         database_adapter: "postgres",
         database_username: nil,
         database_password: nil,
@@ -48,14 +49,16 @@ module PactBroker
         use_case_sensitive_resource_names: true,
         database_statement_timeout: 15,
         metrics_sql_statement_timeout: 30,
-      }
+      )
 
-      LOGGING_ATTRIBUTES = {
+      # logging attributes
+      attr_config(
         log_dir: File.expand_path("./log"),
         warning_error_class_names: ["Sequel::ForeignKeyConstraintViolation", "PG::QueryCanceled"],
-      }
+      )
 
-      WEBHOOK_ATTRIBUTES = {
+      # webhook attributes
+      attr_config(
         webhook_retry_schedule: [10, 60, 120, 300, 600, 1200], #10 sec, 1 min, 2 min, 5 min, 10 min, 20 min => 38 minutes
         webhook_http_method_whitelist: ["POST"],
         webhook_http_code_success: [200, 201, 202, 203, 204, 205, 206],
@@ -63,9 +66,10 @@ module PactBroker
         webhook_host_whitelist: [],
         disable_ssl_verification: false,
         user_agent: "Pact Broker v#{PactBroker::VERSION}",
-      }
+      )
 
-      RESOURCE_ATTRIBUTES = {
+      # resource attributes
+      attr_config(
         port: 9292,
         base_url: nil,
         base_urls: [],
@@ -75,25 +79,22 @@ module PactBroker
         badge_provider_mode: :proxy,
         enable_public_badge_access: false,
         shields_io_base_url: "https://img.shields.io",
-      }
+      )
 
-      DOMAIN_ATTRIBUTES = {
+      # domain attributes
+      attr_config(
         order_versions_by_date: true,
         base_equality_only_on_content_that_affects_verification_results: true,
         check_for_potential_duplicate_pacticipant_names: true,
         create_deployed_versions_for_tags: true,
         semver_formats: ["%M.%m.%p%s%d", "%M.%m", "%M"]
-      }
-
-      ALL_ATTRIBUTES = [DATABASE_ATTRIBUTES, LOGGING_ATTRIBUTES, WEBHOOK_ATTRIBUTES, RESOURCE_ATTRIBUTES, DOMAIN_ATTRIBUTES].inject(&:merge)
+      )
 
       def self.getter_and_setter_method_names
-        ALL_ATTRIBUTES.keys + ALL_ATTRIBUTES.keys.collect{ |k| "#{k}=".to_sym } + [:warning_error_classes, :database_configuration]  - [:base_url]
+        config_attributes + config_attributes.collect{ |k| "#{k}=".to_sym } + [:warning_error_classes, :database_configuration]  - [:base_url]
       end
 
       config_name :pact_broker
-
-      attr_config(ALL_ATTRIBUTES)
 
       sensitive_values(:database_url, :database_password)
 
