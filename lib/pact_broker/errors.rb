@@ -12,7 +12,7 @@ module PactBroker
     end
 
     def self.reportable_error?(error)
-      !error.is_a?(PactBroker::Error) && !error.is_a?(JSON::JSONError)
+      error.is_a?(PactBroker::TestError) || (!error.is_a?(PactBroker::Error) && !error.is_a?(JSON::JSONError))
     end
 
     def self.report error, error_reference, env
