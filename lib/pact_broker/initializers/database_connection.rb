@@ -1,5 +1,6 @@
 require "sequel"
 require "pact_broker/db/log_quietener"
+require "fileutils"
 
 ##
 # Sequel by default does not test connections in its connection pool before
@@ -32,6 +33,11 @@ module PactBroker
     max_tries = max_retries + 1
     connection = nil
     wait = 3
+
+    if config[:adapter] == "sqlite" && config[:database] && !File.exist?(File.dirname(config[:database]))
+      logger&.info "Creating directory #{File.expand_path(File.dirname(config[:database]))} for Sqlite database"
+      FileUtils.mkdir_p(File.dirname(config[:database]))
+    end
 
     begin
       connection = Sequel.connect(config_with_logger)

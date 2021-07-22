@@ -1,5 +1,6 @@
 require "pact_broker/configuration"
 require "pact_broker/db"
+require "pact_broker/initializers/database_connection"
 require "pact_broker/project_root"
 require "pact_broker/logging/default_formatter"
 require "pact_broker/policies"
@@ -122,6 +123,7 @@ module PactBroker
 
     def configure_database_connection
       # Keep this configuration in sync with lib/db.rb
+      configuration.database_connection ||= PactBroker.create_database_connection(configuration.logger, configuration.database_configuration, configuration.database_connect_max_retries)
       PactBroker::DB.connection = configuration.database_connection
       PactBroker::DB.connection.timezone = :utc
       PactBroker::DB.connection.extend_datasets do
