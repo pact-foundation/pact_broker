@@ -18,6 +18,9 @@ module PactBroker
       subject { ErrorLogger.call(error, error_reference, env) }
 
       context "when the error class is in the warning_error_classes list" do
+        before do
+          allow(PactBroker.configuration).to receive(:warning_error_classes).and_return([Sequel::ForeignKeyConstraintViolation])
+        end
         let(:error) { Sequel::ForeignKeyConstraintViolation.new }
 
         it "logs at warn so as not to wake everyone up in the middle of the night" do

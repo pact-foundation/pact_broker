@@ -44,6 +44,6 @@ end
 #  environments_name_index | UNIQUE btree (name)
 #  environments_uuid_index | UNIQUE btree (uuid)
 # Referenced By:
-#  deployed_versions              | deployed_versions_environment_id_fkey              | (environment_id) REFERENCES environments(id)
 #  currently_deployed_version_ids | currently_deployed_version_ids_environment_id_fkey | (environment_id) REFERENCES environments(id) ON DELETE CASCADE
+#  deployed_versions              | deployed_versions_environment_id_fkey              | (environment_id) REFERENCES environments(id)
 #  released_versions              | released_versions_environment_id_fkey              | (environment_id) REFERENCES environments(id)

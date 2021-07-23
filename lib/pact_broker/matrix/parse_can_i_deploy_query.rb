@@ -8,8 +8,7 @@ module PactBroker
       def self.call params
         selector = PactBroker::Matrix::UnresolvedSelector.new
         options = {
-          latestby: "cvp",
-          latest: true
+          latestby: "cvp"
         }
 
         if params[:pacticipant].is_a?(String)
@@ -22,6 +21,7 @@ module PactBroker
 
         if params[:to].is_a?(String)
           options[:tag] = params[:to]
+          options[:latest] = true
         end
 
         if params[:environment].is_a?(String)

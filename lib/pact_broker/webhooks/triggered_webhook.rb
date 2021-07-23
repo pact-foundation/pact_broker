@@ -136,6 +136,7 @@ end
 #  triggered_webhooks_provider_id_index         | btree (provider_id)
 #  triggered_webhooks_verification_id_index     | btree (verification_id)
 #  triggered_webhooks_webhook_id_index          | btree (webhook_id)
+#  triggered_webhooks_webhook_uuid_index        | btree (webhook_uuid)
 # Foreign key constraints:
 #  triggered_webhooks_consumer_id_fkey         | (consumer_id) REFERENCES pacticipants(id)
 #  triggered_webhooks_pact_publication_id_fkey | (pact_publication_id) REFERENCES pact_publications(id)
