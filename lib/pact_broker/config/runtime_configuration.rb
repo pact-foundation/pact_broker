@@ -54,7 +54,7 @@ module PactBroker
       # logging attributes
       attr_config(
         log_dir: File.expand_path("./log"),
-        warning_error_class_names: ["Sequel::ForeignKeyConstraintViolation", "PG::QueryCanceled"],
+        warning_error_class_names: ["Sequel::ForeignKeyConstraintViolation"],
       )
 
       # webhook attributes
