@@ -3,38 +3,16 @@ require "pact_broker/config/runtime_configuration_logging_methods"
 require "pact_broker/config/runtime_configuration_database_methods"
 require "pact_broker/config/runtime_configuration_coercion_methods"
 require "pact_broker/version"
+require "pact_broker/config/basic_auth_configuration"
 
 module PactBroker
   module Config
     class RuntimeConfiguration < Anyway::Config
       include RuntimeConfigurationLoggingMethods
-      include RuntimeConfigurationDatabaseMethods
       include RuntimeConfigurationCoercionMethods
 
-      # database attributes
-      attr_config(
-        database_adapter: "postgres",
-        database_username: nil,
-        database_password: nil,
-        database_name: nil,
-        database_host: nil,
-        database_port: nil,
-        database_url: nil,
-        database_sslmode: nil,
-        sql_log_level: :debug,
-        sql_log_warn_duration: 5,
-        database_max_connections: nil,
-        database_pool_timeout: 5,
-        database_connect_max_retries: 0,
-        database_timezone: :utc,
-        auto_migrate_db: true,
-        auto_migrate_db_data: true,
-        allow_missing_migration_files: true,
-        validate_database_connection_config: true,
-        use_case_sensitive_resource_names: true,
-        database_statement_timeout: 15,
-        metrics_sql_statement_timeout: 30,
-      )
+      include RuntimeConfigurationDatabaseMethods
+      include RuntimeConfigurationBasicAuthMethods
 
       # logging attributes
       attr_config(
@@ -64,9 +42,10 @@ module PactBroker
         use_hal_browser: true,
         enable_diagnostic_endpoints: true,
         use_rack_protection: true,
-        badge_provider_mode: :proxy,
+        badge_provider_mode: :redirect,
         enable_public_badge_access: false,
         shields_io_base_url: "https://img.shields.io",
+        use_case_sensitive_resource_names: true
       )
 
       # domain attributes
@@ -79,7 +58,14 @@ module PactBroker
       )
 
       def self.getter_and_setter_method_names
-        config_attributes + config_attributes.collect{ |k| "#{k}=".to_sym } + [:warning_error_classes, :database_configuration]  - [:base_url]
+        extra_methods = [
+          :warning_error_classes,
+          :database_configuration,
+          :basic_auth_credentials_provided?,
+          :basic_auth_write_credentials,
+          :basic_auth_read_credentials
+        ]
+        config_attributes + config_attributes.collect{ |k| "#{k}=".to_sym } + extra_methods  - [:base_url]
       end
 
       config_name :pact_broker
@@ -94,32 +80,26 @@ module PactBroker
         super(log_format&.to_sym)
       end
 
-      def database_port= database_port
-        super(database_port&.to_i)
+      def base_url= base_url
+        super(value_to_string_array(base_url, "base_url"))
       end
 
-      def database_connect_max_retries= database_connect_max_retries
-        super(database_connect_max_retries&.to_i)
+      alias_method :original_base_url, :base_url
+
+      def base_url
+        raise NotImplementedError
       end
 
-      def database_timezone= database_timezone
-        super(database_timezone&.to_sym)
+      def base_urls= base_urls
+        super(value_to_string_array(base_urls, "base_urls"))
       end
 
-      def sql_log_level= sql_log_level
-        super(sql_log_level&.downcase&.to_sym)
-      end
-
-      def sql_log_warn_duration= sql_log_warn_duration
-        super(sql_log_warn_duration&.to_f)
+      def base_urls
+        (super + [*original_base_url]).uniq
       end
 
       def badge_provider_mode= badge_provider_mode
         super(badge_provider_mode&.to_sym)
-      end
-
-      def metrics_sql_statement_timeout= metrics_sql_statement_timeout
-        super(metrics_sql_statement_timeout&.to_i)
       end
 
       def warning_error_class_names= warning_error_class_names
@@ -148,24 +128,6 @@ module PactBroker
 
       def webhook_host_whitelist= webhook_host_whitelist
         super(value_to_string_array(webhook_host_whitelist, "webhook_host_whitelist"))
-      end
-
-      def base_url= base_url
-        super(value_to_string_array(base_url, "base_url"))
-      end
-
-      alias_method :original_base_url, :base_url
-
-      def base_url
-        raise NotImplementedError
-      end
-
-      def base_urls= base_urls
-        super(value_to_string_array(base_urls, "base_urls"))
-      end
-
-      def base_urls
-        (super + [*original_base_url]).uniq
       end
 
       def warning_error_classes

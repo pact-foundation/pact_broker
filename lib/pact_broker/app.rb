@@ -25,6 +25,9 @@ require "rack/pact_broker/reset_thread_data"
 require "rack/pact_broker/add_vary_header"
 require "rack/pact_broker/use_when"
 require "sucker_punch"
+require "pact_broker/api/middleware/basic_auth"
+require "pact_broker/config/basic_auth_configuration"
+require "pact_broker/api/authorization/resource_access_policy"
 
 module PactBroker
 
@@ -128,9 +131,8 @@ module PactBroker
 
     def configure_database_connection
       # Keep this configuration in sync with lib/db.rb
-      configuration.database_connection ||= PactBroker.create_database_connection(configuration.logger, configuration.database_configuration, configuration.database_connect_max_retries)
+      configuration.database_connection ||= PactBroker.create_database_connection(configuration.database_configuration, configuration.logger)
       PactBroker::DB.connection = configuration.database_connection
-      PactBroker::DB.connection.timezone = :utc
       PactBroker::DB.connection.extend_datasets do
         # rubocop: disable Lint/NestedMethodDefinition
         def any?
@@ -142,7 +144,7 @@ module PactBroker
       PactBroker::DB.set_mysql_strict_mode_if_mysql
       PactBroker::DB.connection.extension(:pagination)
       PactBroker::DB.connection.extension(:statement_timeout)
-
+      PactBroker::DB.connection.timezone = :utc
       Sequel.datetime_class = DateTime
       Sequel.database_timezone = :utc # Store all dates in UTC, assume any date without a TZ is UTC
       Sequel.application_timezone = :local # Convert dates to localtime when retrieving from database
@@ -178,7 +180,8 @@ module PactBroker
     end
 
     def configure_middleware
-      # NOTE THAT NONE OF THIS IS PROTECTED BY AUTH - is that ok?
+      configure_basic_auth
+
       if configuration.use_rack_protection
         @app_builder.use Rack::Protection, except: [:path_traversal, :remote_token, :session_hijacking, :http_origin]
 
@@ -206,6 +209,23 @@ module PactBroker
         @app_builder.use Rack::HalBrowser::Redirect
       else
         logger.info "Not mounting HAL browser"
+      end
+    end
+
+    def configure_basic_auth
+      if configuration.basic_auth_enabled && configuration.basic_auth_credentials_provided?
+        logger.info "Configuring basic auth"
+        logger.info "Public read access is enabled" if configuration.allow_public_read
+        policy = PactBroker::Api::Authorization::ResourceAccessPolicy
+                  .build(
+                    configuration.allow_public_read,
+                    configuration.public_heartbeat
+                  )
+
+        @app_builder.use PactBroker::Api::Middleware::BasicAuth,
+          configuration.basic_auth_write_credentials,
+          configuration.basic_auth_read_credentials,
+          policy
       end
     end
 

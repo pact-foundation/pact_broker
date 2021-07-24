@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-gem "pact_broker"
-gem "sqlite3", "~>1.3" # Sqlite is just for testing, replace this with your choice of database driver
-# gem 'pg' # Recommended production gem for postgres
-gem "thin", "~>1.7" # Keep, or replace with your choice of web server
+gem "pact_broker", path: "../"
+gem "sqlite3", "~>1.3" # Sqlite is just for testing. Replace this with "pg" for production.
+gem "pg" # Production database gem
+gem "puma", "~> 5.3" # Can be replaced with your choice of application server

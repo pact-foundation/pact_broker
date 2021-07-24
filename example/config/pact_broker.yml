@@ -1,3 +1,7 @@
+port: 9292
+log_dir: null
+log_level: info
+basic_auth_enabled: false # set to true to enable the user below
 basic_auth_username: "user"
 basic_auth_password: "pass"
 basic_auth_read_only_username: "rouser"
