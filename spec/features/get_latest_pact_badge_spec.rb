@@ -4,6 +4,7 @@ describe "get latest pact badge" do
 
   before do
     PactBroker.configuration.enable_public_badge_access = true
+    PactBroker.configuration.badge_provider_mode = :proxy
     TestDataBuilder.new
       .create_consumer("consumer")
       .create_provider("provider")

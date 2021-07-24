@@ -7,14 +7,16 @@ module PactBroker
       describe "basic auth" do
         let(:protected_app) { ->(_) { [200, {}, []]} }
 
-        let(:policy) { PactBroker::Api::Authorization::ResourceAccessPolicy.build(allow_public_read_access, allow_public_access_to_heartbeat) }
+        let(:policy) { PactBroker::Api::Authorization::ResourceAccessPolicy.build(allow_public_read_access, allow_public_access_to_heartbeat, enable_public_badge_access) }
         let(:app) { BasicAuth.new(protected_app, [write_username, write_password], [read_username, read_password], policy) }
+        let(:allow_public_read_access) { false }
         let(:allow_public_read_access) { false }
         let(:write_username) { "write_username" }
         let(:write_password) { "write_password" }
         let(:read_username) { "read_username" }
         let(:read_password) { "read_password" }
         let(:allow_public_access_to_heartbeat) { true }
+        let(:enable_public_badge_access) { true }
 
         context "when requesting the heartbeat" do
           let(:path) { "/diagnostic/status/heartbeat" }
@@ -53,6 +55,15 @@ module PactBroker
             it "allows GET" do
               get "/pacts/provider/foo/consumer/bar/badge"
               expect(last_response.status).to eq 200
+            end
+          end
+
+          context "when enable_public_badge_access=false" do
+            let(:enable_public_badge_access) { false }
+
+            it "does not allow GET" do
+              get "/pacts/provider/foo/consumer/bar/badge"
+              expect(last_response.status).to eq 401
             end
           end
         end

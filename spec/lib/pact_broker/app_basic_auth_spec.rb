@@ -22,7 +22,8 @@ module PactBroker
         "PACT_BROKER_BASIC_AUTH_PASSWORD" => basic_auth_password,
         "PACT_BROKER_BASIC_AUTH_READ_ONLY_USERNAME" => basic_auth_read_only_username,
         "PACT_BROKER_BASIC_AUTH_READ_ONLY_PASSWORD" => basic_auth_read_only_password,
-        "PACT_BROKER_ALLOW_PUBLIC_READ" => allow_public_read
+        "PACT_BROKER_ALLOW_PUBLIC_READ" => allow_public_read,
+        "PACT_BROKER_ENABLE_PUBLIC_BADGE_ACCESS" => enable_public_badge_access
       }
       with_env(env_vars, &example)
     end
@@ -33,6 +34,7 @@ module PactBroker
     let(:basic_auth_read_only_username) { "rouser" }
     let(:basic_auth_read_only_password) { "ropass" }
     let(:allow_public_read) { "false" }
+    let(:enable_public_badge_access) { "false" }
 
     let(:app) do
       TestApp2.new do | configuration |
@@ -92,6 +94,28 @@ module PactBroker
 
       context "with no credentials" do
         its(:status) { is_expected.to eq 200 }
+      end
+    end
+
+    context "accessing a badge" do
+      before do
+        td.create_pact_with_hierarchy("foo", "1", "bar")
+      end
+
+      subject { get(PactBroker::Api::PactBrokerUrls.badge_url_for_latest_pact(td.and_return(:pact))) }
+
+      its(:status) { is_expected.to eq 401 }
+
+      context "with no basic auth configured" do
+        let(:basic_auth_enabled) { "false" }
+
+        its(:status) { is_expected.to eq 307 }
+      end
+
+      context "with public badge access enabled" do
+        let(:enable_public_badge_access) { "true" }
+
+        its(:status) { is_expected.to eq 307 }
       end
     end
   end

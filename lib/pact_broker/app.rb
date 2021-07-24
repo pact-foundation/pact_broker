@@ -181,19 +181,7 @@ module PactBroker
 
     def configure_middleware
       configure_basic_auth
-
-      if configuration.use_rack_protection
-        @app_builder.use Rack::Protection, except: [:path_traversal, :remote_token, :session_hijacking, :http_origin]
-
-        is_hal_browser = ->(env) { env["PATH_INFO"] == "/hal-browser/browser.html" }
-        not_hal_browser = ->(env) { env["PATH_INFO"] != "/hal-browser/browser.html" }
-
-        @app_builder.use_when not_hal_browser,
-          Rack::Protection::ContentSecurityPolicy, configuration.content_security_policy
-        @app_builder.use_when is_hal_browser,
-          Rack::Protection::ContentSecurityPolicy,
-          configuration.content_security_policy.merge(configuration.hal_browser_content_security_policy_overrides)
-      end
+      configure_rack_protection
       @app_builder.use Rack::PactBroker::InvalidUriProtection
       @app_builder.use Rack::PactBroker::ResetThreadData
       @app_builder.use Rack::PactBroker::AddPactBrokerVersionHeader
@@ -220,13 +208,29 @@ module PactBroker
         policy = PactBroker::Api::Authorization::ResourceAccessPolicy
                   .build(
                     configuration.allow_public_read,
-                    configuration.public_heartbeat
+                    configuration.public_heartbeat,
+                    configuration.enable_public_badge_access
                   )
 
         @app_builder.use PactBroker::Api::Middleware::BasicAuth,
           configuration.basic_auth_write_credentials,
           configuration.basic_auth_read_credentials,
           policy
+      end
+    end
+
+    def configure_rack_protection
+      if configuration.use_rack_protection
+        @app_builder.use Rack::Protection, except: [:path_traversal, :remote_token, :session_hijacking, :http_origin]
+
+        is_hal_browser = ->(env) { env["PATH_INFO"] == "/hal-browser/browser.html" }
+        not_hal_browser = ->(env) { env["PATH_INFO"] != "/hal-browser/browser.html" }
+
+        @app_builder.use_when not_hal_browser,
+          Rack::Protection::ContentSecurityPolicy, configuration.content_security_policy
+        @app_builder.use_when is_hal_browser,
+          Rack::Protection::ContentSecurityPolicy,
+          configuration.content_security_policy.merge(configuration.hal_browser_content_security_policy_overrides)
       end
     end
 
