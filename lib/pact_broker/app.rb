@@ -213,8 +213,9 @@ module PactBroker
     end
 
     def configure_basic_auth
-      if configuration.basic_auth_enabled && configuration.basic_auth_credentials_provided?
+      if configuration.basic_auth_enabled
         logger.info "Configuring basic auth"
+        logger.warn "No basic auth credentials are configured" unless configuration.basic_auth_credentials_provided?
         logger.info "Public read access is enabled" if configuration.allow_public_read
         policy = PactBroker::Api::Authorization::ResourceAccessPolicy
                   .build(

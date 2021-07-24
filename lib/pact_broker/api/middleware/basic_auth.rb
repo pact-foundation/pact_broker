@@ -1,9 +1,12 @@
 require "rack"
+require "pact_broker/hash_refinements"
 
 module PactBroker
   module Api
     module Middleware
       class BasicAuth
+        using PactBroker::HashRefinements
+
         def initialize(app, write_credentials, read_credentials, policy)
           @app = app
           @write_credentials = write_credentials
@@ -26,11 +29,11 @@ module PactBroker
         protected
 
         def write_credentials_match(*credentials)
-          credentials == write_credentials
+          is_present?(write_credentials) && credentials == write_credentials
         end
 
         def read_credentials_match(*credentials)
-          is_set(read_credentials[0]) && credentials == read_credentials
+          is_present?(read_credentials) && credentials == read_credentials
         end
 
         private
@@ -51,8 +54,8 @@ module PactBroker
           end
         end
 
-        def is_set(string)
-          string && string.strip.size > 0
+        def is_present?(credentials)
+          !credentials.first.blank? && !credentials.last.blank?
         end
       end
     end

@@ -2,7 +2,6 @@ require "pact_broker/string_refinements"
 
 module PactBroker
   module HashRefinements
-
     refine Hash do
       using PactBroker::StringRefinements
 

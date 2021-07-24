@@ -8,8 +8,10 @@ module PactBroker
         let(:protected_app) { ->(_) { [200, {}, []]} }
 
         let(:policy) { PactBroker::Api::Authorization::ResourceAccessPolicy.build(allow_public_read_access, allow_public_access_to_heartbeat) }
-        let(:app) { BasicAuth.new(protected_app, ["write_username", "write_password"], [read_username, read_password], policy) }
+        let(:app) { BasicAuth.new(protected_app, [write_username, write_password], [read_username, read_password], policy) }
         let(:allow_public_read_access) { false }
+        let(:write_username) { "write_username" }
+        let(:write_password) { "write_password" }
         let(:read_username) { "read_username" }
         let(:read_password) { "read_password" }
         let(:allow_public_access_to_heartbeat) { true }
@@ -279,6 +281,19 @@ module PactBroker
               end
             end
           end
+        end
+
+        context "when the credentials are configured with empty strings" do
+          before do
+            basic_authorize("", "")
+          end
+
+          let(:write_username) { "" }
+          let(:write_password) { "" }
+
+          subject { get("/") }
+
+          its(:status) { is_expected.to eq 401 }
         end
       end
     end

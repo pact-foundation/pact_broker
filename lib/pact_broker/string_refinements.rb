@@ -6,6 +6,12 @@ module PactBroker
       end
     end
 
+    refine Numeric do
+      def blank?
+        false
+      end
+    end
+
     refine String do
       def not_blank?
         !blank?
