@@ -4,10 +4,12 @@ require "pact_broker/config/runtime_configuration_database_methods"
 require "pact_broker/config/runtime_configuration_coercion_methods"
 require "pact_broker/version"
 require "pact_broker/config/basic_auth_configuration"
+require "pact_broker/string_refinements"
 
 module PactBroker
   module Config
     class RuntimeConfiguration < Anyway::Config
+      using PactBroker::StringRefinements
       include RuntimeConfigurationLoggingMethods
       include RuntimeConfigurationCoercionMethods
 
@@ -17,11 +19,14 @@ module PactBroker
       # logging attributes
       attr_config(
         log_dir: File.expand_path("./log"),
+        log_stream: :file,
         log_level: :info,
         log_format: nil,
         warning_error_class_names: ["Sequel::ForeignKeyConstraintViolation"],
         hide_pactflow_messages: false
       )
+
+      on_load :validate_logging_attributes
 
       # webhook attributes
       attr_config(
@@ -75,6 +80,10 @@ module PactBroker
 
       def log_level= log_level
         super(log_level&.to_sym)
+      end
+
+      def log_stream= log_stream
+        super(log_stream&.to_sym)
       end
 
       def log_format= log_format
@@ -144,6 +153,17 @@ module PactBroker
             nil
           end
         end.compact
+      end
+
+      def validate_logging_attributes
+        valid_log_streams = [:file, :stdout]
+        unless valid_log_streams.include?(log_stream)
+          raise_validation_error("log_stream must be one of #{valid_log_streams.join(", ")}")
+        end
+
+        if log_stream == :file && log_dir.blank?
+          raise_validation_error("Must specify log_dir if log_stream is set to file")
+        end
       end
     end
   end

@@ -110,7 +110,7 @@ module PactBroker
     def logger_from_runtime_configuration
       @logger_from_runtime_configuration ||= begin
         SemanticLogger.default_level = runtime_configuration.log_level
-        if runtime_configuration.log_dir
+        if runtime_configuration.log_stream == :file
           path = runtime_configuration.log_dir + "/pact_broker.log"
           FileUtils.mkdir_p(runtime_configuration.log_dir)
           @default_appender = SemanticLogger.add_appender(file_name: path, formatter: runtime_configuration.log_format)
