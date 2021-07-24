@@ -1,6 +1,6 @@
 # Must be defined before loading Padrino
 PADRINO_LOGGER ||= {
-  ENV.fetch("RACK_ENV", "production").to_sym =>  { log_level: :error, stream: :stdout, format_datetime: '%Y-%m-%dT%H:%M:%S.000%:z' }
+  ENV.fetch("RACK_ENV", "production").to_sym =>  { log_level: :error, stream: :stdout, format_datetime: "%Y-%m-%dT%H:%M:%S.000%:z" }
 }
 
 require "pact_broker/configuration"
