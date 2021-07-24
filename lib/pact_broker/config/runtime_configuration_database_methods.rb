@@ -1,6 +1,9 @@
 module PactBroker
   module Config
     module RuntimeConfigurationDatabaseMethods
+
+      # rubocop: disable Metrics/MethodLength
+      # rubocop: disable Metrics/CyclomaticComplexity
       def self.included(anyway_config)
         anyway_config.class_eval do
 
@@ -109,6 +112,8 @@ module PactBroker
           private :database_configuration_from_url
         end
       end
+      # rubocop: enable Metrics/MethodLength
+      # rubocop: enable Metrics/CyclomaticComplexity
     end
   end
 end

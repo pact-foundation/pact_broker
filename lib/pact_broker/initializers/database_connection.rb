@@ -8,7 +8,6 @@ module PactBroker
 
     sequel_config = config.dup
     max_retries = sequel_config.delete(:connect_max_retries) || 0
-    timezone = config.delete(:timezone)
     connection_validation_timeout = config.delete(:connection_validation_timeout)
     configure_logger(sequel_config)
     create_sqlite_database_dir(config)
@@ -19,7 +18,7 @@ module PactBroker
 
     logger&.info "Connected to database #{sequel_config[:database]}"
 
-    configure_connection(connection, timezone, connection_validation_timeout)
+    configure_connection(connection, connection_validation_timeout)
   end
 
   private_class_method def self.with_retries(max_retries, logger)
@@ -39,7 +38,6 @@ module PactBroker
       end
     end
   end
-   :with_retries
 
   private_class_method def self.create_sqlite_database_dir(config)
     if config[:adapter] == "sqlite" && config[:database] && !File.exist?(File.dirname(config[:database]))
@@ -74,7 +72,7 @@ module PactBroker
   # when databases are restarted and connections are killed.  This has a performance
   # penalty, so consider increasing this timeout if building a frequently accessed service.
 
-  private_class_method def self.configure_connection(connection, timezone, connection_validation_timeout)
+  private_class_method def self.configure_connection(connection, connection_validation_timeout)
     connection.extension(:connection_validator)
     connection.pool.connection_validation_timeout = connection_validation_timeout if connection_validation_timeout
     connection
