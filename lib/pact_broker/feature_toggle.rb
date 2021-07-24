@@ -1,3 +1,5 @@
+require "pact_broker/config/runtime_configuration"
+
 module PactBroker
   class FeatureToggle
     def self.enabled?(feature, ignore_env)
@@ -13,11 +15,7 @@ module PactBroker
     end
 
     def self.feature_in_env_var?(feature)
-      (features =~ /\b#{feature}\b/i) != nil
-    end
-
-    def self.features
-      ENV["PACT_BROKER_FEATURES"] || ""
+      PactBroker.configuration.features.include?(feature.to_s.downcase)
     end
   end
 

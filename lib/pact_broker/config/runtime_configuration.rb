@@ -54,7 +54,8 @@ module PactBroker
         base_equality_only_on_content_that_affects_verification_results: true,
         check_for_potential_duplicate_pacticipant_names: true,
         create_deployed_versions_for_tags: true,
-        semver_formats: ["%M.%m.%p%s%d", "%M.%m", "%M"]
+        semver_formats: ["%M.%m.%p%s%d", "%M.%m", "%M"],
+        features: []
       )
 
       def self.getter_and_setter_method_names
@@ -128,6 +129,10 @@ module PactBroker
 
       def webhook_host_whitelist= webhook_host_whitelist
         super(value_to_string_array(webhook_host_whitelist, "webhook_host_whitelist"))
+      end
+
+      def features= features
+        super(value_to_string_array(features, "features").collect(&:downcase))
       end
 
       def warning_error_classes
