@@ -79,7 +79,7 @@ module PactBroker
       sensitive_values(:database_url, :database_password)
 
       def log_level= log_level
-        super(log_level&.to_sym)
+        super(log_level&.downcase&.to_sym)
       end
 
       def log_stream= log_stream
