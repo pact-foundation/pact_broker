@@ -135,6 +135,16 @@ module PactBroker
           its(:provider_version_latest_tag_names) { is_expected.to eq ["dev", "prod"] }
         end
 
+        describe "tagged_pacts" do
+          let(:tags) { ["master", "prod"] }
+          its(:tagged_pacts) do
+            is_expected.to eq([
+              { tag: "master", deletionUrl: "/pacts/provider/Provider%20Name/consumer/Consumer%20Name/tag/master" }.to_json,
+              { tag: "prod", deletionUrl: "/pacts/provider/Provider%20Name/consumer/Consumer%20Name/tag/prod" }.to_json
+            ])
+          end
+        end
+
         describe "<=>" do
 
           let(:relationship_model_4) { double("PactBroker::Domain::IndexItem", consumer_name: "A", provider_name: "X") }

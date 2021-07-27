@@ -5,12 +5,12 @@ module PactBroker
   module Domain
     class IndexItem
       attr_reader :consumer,
-        :provider,
-        :latest_pact,
-        :latest_verification,
-        :webhooks,
-        :triggered_webhooks,
-        :latest_verification_latest_tags
+                  :provider,
+                  :latest_pact,
+                  :latest_verification,
+                  :webhooks,
+                  :triggered_webhooks,
+                  :latest_verification_latest_tags,
 
       # rubocop:disable Metrics/ParameterLists
       def self.create(consumer, provider, latest_pact, latest, latest_verification, webhooks = [], triggered_webhooks = [], tags = [], latest_verification_latest_tags = [], latest_for_branch = nil)
