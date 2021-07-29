@@ -5,6 +5,7 @@ require "pact_broker/config/runtime_configuration_coercion_methods"
 require "pact_broker/version"
 require "pact_broker/config/basic_auth_configuration"
 require "pact_broker/string_refinements"
+require "pact_broker/error"
 
 module PactBroker
   module Config
@@ -26,7 +27,7 @@ module PactBroker
         hide_pactflow_messages: false
       )
 
-      on_load :validate_logging_attributes
+      on_load :validate_logging_attributes!
 
       # webhook attributes
       attr_config(
@@ -155,15 +156,19 @@ module PactBroker
         end.compact
       end
 
-      def validate_logging_attributes
+      def validate_logging_attributes!
         valid_log_streams = [:file, :stdout]
         unless valid_log_streams.include?(log_stream)
-          raise_validation_error("log_stream must be one of #{valid_log_streams.join(", ")}")
+          raise_validation_error("log_stream must be one of: #{valid_log_streams.join(", ")}")
         end
 
         if log_stream == :file && log_dir.blank?
           raise_validation_error("Must specify log_dir if log_stream is set to file")
         end
+      end
+
+      def raise_validation_error(msg)
+        raise PactBroker::ConfigurationError, msg
       end
     end
   end
