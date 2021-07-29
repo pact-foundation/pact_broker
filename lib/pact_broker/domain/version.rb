@@ -52,6 +52,10 @@ module PactBroker
       dataset_module do
         include PactBroker::Repositories::Helpers
 
+        def with_branch_set
+          exclude(branch: nil)
+        end
+
         def latest_version_for_pacticipant(pacticipant)
           where(pacticipant: pacticipant)
           .order(Sequel.desc(:order))

@@ -26,6 +26,10 @@ module PactBroker
       dataset_module do
         include PactBroker::Repositories::Helpers
 
+        def with_main_branch_set
+          exclude(main_branch: nil)
+        end
+
         def label label_name
           filter = name_like(Sequel[:labels][:name], label_name)
           join(:labels, {pacticipant_id: :id}).where(filter)

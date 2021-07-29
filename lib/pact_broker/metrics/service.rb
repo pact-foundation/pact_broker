@@ -1,16 +1,6 @@
 require "pact_broker/configuration"
-require "pact_broker/pacts/pact_publication"
-require "pact_broker/pacts/pact_version"
-require "pact_broker/domain/pacticipant"
-require "pact_broker/integrations/integration"
-require "pact_broker/domain/verification"
-require "pact_broker/domain/version"
+require "pact_broker/db/models"
 require "pact_broker/api/decorators/format_date_time"
-require "pact_broker/webhooks/webhook"
-require "pact_broker/webhooks/triggered_webhook"
-require "pact_broker/webhooks/execution"
-require "pact_broker/matrix/row"
-require "pact_broker/matrix/head_row"
 
 module PactBroker
   module Metrics
@@ -24,7 +14,8 @@ module PactBroker
         {
           interactions: interactions_counts,
           pacticipants: {
-            count: PactBroker::Domain::Pacticipant.count
+            count: PactBroker::Domain::Pacticipant.count,
+            withMainBranchSetCount: PactBroker::Domain::Pacticipant.with_main_branch_set.count
           },
           integrations: {
             count: PactBroker::Integrations::Integration.count
@@ -52,7 +43,8 @@ module PactBroker
             distribution: verification_distribution
           },
           pacticipantVersions: {
-            count: PactBroker::Domain::Version.count
+            count: PactBroker::Domain::Version.count,
+            withBranchSetCount: PactBroker::Domain::Version.with_branch_set.count
           },
           webhooks: {
             count: PactBroker::Webhooks::Webhook.count
@@ -70,6 +62,17 @@ module PactBroker
           },
           matrix: {
             count: matrix_count
+          },
+          environments: {
+            count: PactBroker::Deployments::Environment.count
+          },
+          deployedVersions: {
+            count: PactBroker::Deployments::DeployedVersion.count,
+            currentlyDeployedCount: PactBroker::Deployments::DeployedVersion.currently_deployed.count
+          },
+          releasedVersions: {
+            count: PactBroker::Deployments::ReleasedVersion.count,
+            currentlySupportedCount: PactBroker::Deployments::ReleasedVersion.currently_supported.count
           }
         }
       end

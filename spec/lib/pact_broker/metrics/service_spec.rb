@@ -6,6 +6,50 @@ module PactBroker
       describe "#metrics" do
         subject { Service.metrics }
 
+        describe "pacticipants" do
+          before do
+            td.create_consumer("Foo")
+              .create_consumer("Bar", main_branch: "foo")
+          end
+
+          its([:pacticipants, :count]) { is_expected.to eq 2 }
+          its([:pacticipants, :withMainBranchSetCount]) { is_expected.to eq 1 }
+        end
+
+        describe "pacticipant versions" do
+          before do
+            td.create_consumer("Foo")
+              .create_consumer_version("2")
+              .create_consumer_version("3", branch: "main")
+          end
+
+          its([:pacticipantVersions, :count]) { is_expected.to eq 2 }
+          its([:pacticipantVersions, :withBranchSetCount]) { is_expected.to eq 1 }
+        end
+
+        describe "environments, deployed versions, released versions" do
+          before do
+            td.create_environment("test")
+              .create_consumer("Foo")
+              .create_consumer_version("2")
+              .create_deployed_version_for_consumer_version(currently_deployed: false)
+              .create_consumer_version("3")
+              .create_deployed_version_for_consumer_version
+              .create_consumer_version("4")
+              .create_released_version_for_consumer_version(currently_supported: false)
+              .create_consumer_version("5")
+              .create_released_version_for_consumer_version
+              .create_consumer_version("6")
+              .create_released_version_for_consumer_version
+          end
+
+          its([:environments, :count]) { is_expected.to eq 1 }
+          its([:deployedVersions, :count]) { is_expected.to eq 2 }
+          its([:deployedVersions, :currentlyDeployedCount]) { is_expected.to eq 1 }
+          its([:releasedVersions, :count]) { is_expected.to eq 3 }
+          its([:releasedVersions, :currentlySupportedCount]) { is_expected.to eq 2 }
+        end
+
         describe "interactions latestCount" do
           before do
             td.create_consumer

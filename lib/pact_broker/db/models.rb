@@ -3,6 +3,7 @@ require "pact_broker/webhooks/triggered_webhook"
 require "pact_broker/webhooks/webhook"
 require "pact_broker/pacts/latest_pact_publication_id_for_consumer_version"
 require "pact_broker/verifications/latest_verification_id_for_pact_version_and_provider_version"
+require "pact_broker/integrations/integration"
 require "pact_broker/pacts/pact_publication"
 require "pact_broker/pacts/pact_version"
 require "pact_broker/domain/verification"
@@ -13,6 +14,8 @@ require "pact_broker/domain/pacticipant"
 require "pact_broker/deployments/environment"
 require "pact_broker/deployments/deployed_version"
 require "pact_broker/deployments/released_version"
+require "pact_broker/matrix/row"
+require "pact_broker/matrix/head_row"
 
 module PactBroker
   INTEGRATIONS_TABLES = [
