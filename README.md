@@ -9,7 +9,7 @@
 The Pact Broker is an application for sharing of consumer driven contracts and verification results. It is optimised for use with "pacts" (contracts created by the [Pact][pact-docs] framework), but can be used for any type of contract that can be serialized to JSON.
 
 <br/>
-<a href="https:/pactflow.io/?utm_source=github&utm_campaign=pact_broker_intro"><img src="docs/images/Pactflow logo - black small.png"></a>
+<a href="https://pactflow.io/?utm_source=github&utm_campaign=pact_broker_intro"><img src="docs/images/Pactflow logo - black small.png"></a>
 <br/>
 
 You can try out a Pact Broker for free at <a href="https://pactflow.io/?utm_source=github&utm_campaign=pact_broker_intro"/>pactflow.io</a>. Built by a group of core Pact maintainers, Pactflow is a fork of the OSS Pact Broker with extra goodies like an improved UI, field level verification results and federated login.
@@ -166,7 +166,7 @@ Please read the [UPGRADING.md](UPGRADING.md) documentation before upgrading your
 [different-teams]: https://github.com/pact-foundation/pact-ruby/wiki/Using-pact-where-the-consumer-team-is-different-from-the-provider-team
 [docker]: https://github.com/pact-foundation/pact-broker-docker
 [terraform]: https://github.com/nadnerb/terraform-pact-broker
-[pactflow]: https:/pactflow.io/?utm_source=github&utm_campaign=pact_broker_usage
+[pactflow]: https://pactflow.io/?utm_source=github&utm_campaign=pact_broker_usage
 [wiki]: https://github.com/pact-foundation/pact_broker/wiki
 [reverse-proxy-docs]: https://github.com/pact-foundation/pact_broker/wiki/Configuration#running-the-broker-behind-a-reverse-proxy
 [stackoverflow]: http://stackoverflow.com/questions/tagged/pact-broker
