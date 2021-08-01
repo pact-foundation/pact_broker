@@ -8,11 +8,11 @@ module PactBroker
         query = query.for_consumer(PactBroker::Domain::Pacticipant.find_by_name(selector.consumer)) if selector.consumer
         query = query.for_currently_deployed_versions(selector.environment_name) if selector.currently_deployed?
         query = query.for_currently_supported_versions(selector.environment_name) if selector.currently_supported?
+        query = query.for_consumer_version_tag(selector.tag) if selector.all_for_tag?
 
         if selector.environment_name && !selector.currently_deployed? && !selector.currently_supported?
           query = query.for_environment(selector.environment_name)
         end
-
 
         # Do the "latest" logic last so that the provider/consumer criteria get included in the "latest" query before the join, rather than after
         query = query.latest_for_main_branches if selector.latest_for_main_branch?

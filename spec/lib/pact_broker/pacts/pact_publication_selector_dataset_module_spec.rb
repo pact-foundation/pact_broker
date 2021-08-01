@@ -7,6 +7,31 @@ module PactBroker
 
         subject { PactPublication.for_provider_and_consumer_version_selector(provider, consumer_version_selector).all }
 
+        context "all_for_tag" do
+          before do
+            td.create_provider("Bar")
+              .create_consumer("Foo")
+              .create_consumer_version("1", tag_name: "prod")
+              .create_pact
+              .create_consumer_version("2", tag_name: "not-prod")
+              .create_pact
+              .create_consumer_version("3", tag_name: "prod")
+              .create_pact
+              .create_provider("NotBar")
+              .create_pact
+          end
+
+          let(:provider) { td.find_pacticipant("Bar") }
+          let(:consumer_version_selector) { Selector.all_for_tag("prod") }
+
+          it "returns all the pacts for the specified consumer version tag" do
+            expect(subject.size).to eq 2
+            expect(subject.first.values[:tag_name]).to eq "prod"
+            expect(subject.last.values[:tag_name]).to eq "prod"
+          end
+
+        end
+
         context "for main branch" do
           let(:consumer_version_selector) { Selector.for_main_branch }
           let(:provider) { td.find_pacticipant("Bar") }

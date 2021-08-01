@@ -26,7 +26,12 @@ module PactBroker
       end
 
       def for_consumer_version_tag tag_name
-        join(:tags, { version_id: :consumer_version_id, Sequel[:tags][:name] => tag_name })
+        base_query = self
+        if no_columns_selected?
+          base_query = base_query.select_all_qualified.select_append(Sequel[:tags][:name].as(:tag_name))
+        end
+
+        base_query.join(:tags, { version_id: :consumer_version_id, Sequel[:tags][:name] => tag_name })
       end
 
       def for_consumer_name_and_maybe_version_number(consumer_name, consumer_version_number)

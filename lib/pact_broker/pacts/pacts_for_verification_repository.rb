@@ -20,8 +20,7 @@ module PactBroker
       include PactBroker::Repositories::Scopes
 
       def find(provider_name, consumer_version_selectors)
-        selected_pacts = find_pacts_by_selector(provider_name, consumer_version_selectors) +
-          find_pacts_for_which_all_versions_for_the_tag_are_required(provider_name, consumer_version_selectors)
+        selected_pacts = find_pacts_by_selector(provider_name, consumer_version_selectors)
         selected_pacts = selected_pacts + find_pacts_for_fallback_tags(selected_pacts, provider_name, consumer_version_selectors)
         merge_selected_pacts(selected_pacts)
       end
@@ -107,7 +106,8 @@ module PactBroker
         selectors = if consumer_version_selectors.empty?
                       Selectors.create_for_overall_latest
                     else
-                      consumer_version_selectors.select(&:latest_for_tag?) +
+                      consumer_version_selectors.select(&:all_for_tag?) +
+                        consumer_version_selectors.select(&:latest_for_tag?) +
                         consumer_version_selectors.select(&:latest_for_branch?) +
                         consumer_version_selectors.select(&:latest_for_main_branch?) +
                         consumer_version_selectors.select(&:overall_latest?) +
@@ -148,17 +148,6 @@ module PactBroker
         end.flatten
       end
 
-
-      def find_pacts_for_which_all_versions_for_the_tag_are_required(provider_name, consumer_version_selectors)
-        # The tags for which all versions are specified
-        # Need to move support for this into PactPublication.for_provider_and_consumer_version_selector
-        selectors = consumer_version_selectors.select(&:all_for_tag?)
-
-        selectors.flat_map do | selector |
-          find_all_pact_versions_for_provider_with_consumer_version_tags(provider_name, selector)
-        end
-      end
-
       def find_provider_tags_for_which_pact_publication_id_is_pending(pact_publication, successfully_verified_head_pact_publication_ids_for_each_provider_tag)
         successfully_verified_head_pact_publication_ids_for_each_provider_tag
           .select do | _, pact_publication_ids |
@@ -182,17 +171,6 @@ module PactBroker
             SelectedPact.merge(selected_pacts_for_pact_version_id)
           end
           .sort
-      end
-
-      # Tag object with created_at date for the first time that tag was created
-      def provider_tag_objects_for(provider, provider_tags_names)
-        PactBroker::Domain::Tag
-          .select_group(Sequel[:tags][:name], Sequel[:pacticipant_id])
-          .select_append(Sequel.function(:min, Sequel[:tags][:created_at]).as(:created_at))
-          .distinct
-          .where(pacticipant_id: provider.id)
-          .where(name: provider_tags_names)
-          .all
       end
 
       # TODO ? find the WIP pacts by consumer branch
@@ -261,33 +239,6 @@ module PactBroker
 
         deduplicate_verifiable_pacts(verifiable_pacts).sort
       end
-
-      def find_all_pact_versions_for_provider_with_consumer_version_tags provider_name, selector
-        provider = pacticipant_repository.find_by_name(provider_name)
-        consumer = selector.consumer ? pacticipant_repository.find_by_name(selector.consumer) : nil
-
-        scope_for(PactPublication)
-          .select_all_qualified
-          .select_append(Sequel[:cv][:order].as(:consumer_version_order))
-          .select_append(Sequel[:ct][:name].as(:consumer_version_tag_name))
-          .remove_overridden_revisions
-          .join_consumer_versions(:cv)
-          .join_consumer_version_tags_with_names(selector.tag)
-          .where(provider: provider)
-          .where_consumer_if_set(consumer)
-          .eager(:consumer)
-          .eager(:consumer_version)
-          .eager(:provider)
-          .eager(:pact_version)
-          .all
-          .group_by(&:pact_version_id)
-          .values
-          .collect do | pact_publications |
-            latest_pact_publication = pact_publications.sort_by{ |p| p.values.fetch(:consumer_version_order) }.last
-            SelectedPact.new(latest_pact_publication.to_domain, Selectors.new(selector).resolve(latest_pact_publication.consumer_version))
-          end
-      end
-
 
       def remove_non_wip_for_branch(pact_publications_query, provider, provider_version_branch, specified_pact_version_shas)
         specified_explicitly = pact_publications_query.for_pact_version_sha(specified_pact_version_shas)

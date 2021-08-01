@@ -159,9 +159,10 @@ module PactBroker
               expect(find_by_consumer_version_number("foo-latest-prod-version").selectors).to eq [Selector.all_for_tag_and_consumer("prod", "Foo").resolve(PactBroker::Domain::Version.for("Foo", "foo-latest-prod-version"))]
             end
 
-            it "uses the latest consumer verison number as the resolved version when the same pact content is selected multiple times" do
+            it "includes all the selectors when the same pact content is selected multiple times (used to just use the latest, not sure about this)" do
               expect(find_by_consumer_version_number("3")).to be nil
-              expect(find_by_consumer_version_number("4").selectors).to eq [Selector.all_for_tag_and_consumer("prod", "Foo").resolve(PactBroker::Domain::Version.for("Foo", "4"))]
+              expect(find_by_consumer_version_number("4").selectors.first).to eq Selector.all_for_tag_and_consumer("prod", "Foo").resolve(PactBroker::Domain::Version.for("Foo", "3"))
+              expect(find_by_consumer_version_number("4").selectors.last).to eq Selector.all_for_tag_and_consumer("prod", "Foo").resolve(PactBroker::Domain::Version.for("Foo", "4"))
             end
           end
         end
