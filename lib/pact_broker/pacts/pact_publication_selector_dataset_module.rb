@@ -3,7 +3,6 @@ module PactBroker
     module PactPublicationSelectorDatasetModule
       # rubocop: disable Metrics/CyclomaticComplexity
       def for_provider_and_consumer_version_selector provider, selector
-        # Does not yet support "all pacts for specified tag" - that code is still in the Pact::Repository
         query = for_provider(provider)
         query = query.for_consumer(PactBroker::Domain::Pacticipant.find_by_name(selector.consumer)) if selector.consumer
         query = query.for_currently_deployed_versions(selector.environment_name) if selector.currently_deployed?
