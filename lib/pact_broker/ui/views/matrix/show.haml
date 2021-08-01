@@ -1,12 +1,14 @@
+- require "pact_broker/version"
+
 %body
-  %link{rel: 'stylesheet', href: "#{base_url}/css/bootstrap.min.css"}
-  %link{rel: 'stylesheet', href: "#{base_url}/stylesheets/index.css"}
-  %link{rel: 'stylesheet', href: "#{base_url}/stylesheets/matrix.css"}
-  %script{type: 'text/javascript', src: "#{base_url}/javascripts/jquery-3.5.1.min.js"}
-  %script{type: 'text/javascript', src: "#{base_url}/javascripts/jquery.tablesorter.min.js"}
-  %script{type: 'text/javascript', src: "#{base_url}/javascripts/matrix.js"}
-  %script{type: 'text/javascript', src: "#{base_url}/javascripts/clipboard.js"}
-  %script{type: 'text/javascript', src: "#{base_url}/js/bootstrap.bundle.min.js"}
+  %link{rel: 'stylesheet', href: "#{base_url}/css/bootstrap.min.css?v=#{PactBroker::VERSION}"}
+  %link{rel: 'stylesheet', href: "#{base_url}/stylesheets/index.css?v=#{PactBroker::VERSION}"}
+  %link{rel: 'stylesheet', href: "#{base_url}/stylesheets/matrix.css?v=#{PactBroker::VERSION}"}
+  %script{type: 'text/javascript', src: "#{base_url}/javascripts/jquery-3.5.1.min.js?v=#{PactBroker::VERSION}"}
+  %script{type: 'text/javascript', src: "#{base_url}/javascripts/jquery.tablesorter.min.js?v=#{PactBroker::VERSION}"}
+  %script{type: 'text/javascript', src: "#{base_url}/javascripts/matrix.js?v=#{PactBroker::VERSION}"}
+  %script{type: 'text/javascript', src: "#{base_url}/javascripts/clipboard.js?v=#{PactBroker::VERSION}"}
+  %script{type: 'text/javascript', src: "#{base_url}/js/bootstrap.bundle.min.js?v=#{PactBroker::VERSION}"}
 
   .container
     .navbar-right

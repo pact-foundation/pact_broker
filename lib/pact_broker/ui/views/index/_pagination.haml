@@ -1,4 +1,6 @@
-%script{type: 'text/javascript', src:"#{base_url}/javascripts/pagination.js"}
+- require "pact_broker/version"
+
+%script{type: 'text/javascript', src:"#{base_url}/javascripts/pagination.js?v=#{PactBroker::VERSION}"}
 
 :javascript
   const PAGE_NUMBER = #{page_number};

@@ -1,9 +1,11 @@
-%link{rel: 'stylesheet', href: "#{base_url}/stylesheets/index.css"}
-%link{rel: 'stylesheet', href: "#{base_url}/stylesheets/material-menu.css"}
-%link{rel: 'stylesheet', href: "#{base_url}/stylesheets/material-icon.css"}
-%link{rel: 'stylesheet', href: "#{base_url}/stylesheets/jquery-confirm.min.css"}
-%script{type: 'text/javascript', src:"#{base_url}/javascripts/jquery.tablesorter.min.js"}
-%script{type: 'text/javascript', src:"#{base_url}/javascripts/material-menu.js"}
-%script{type: 'text/javascript', src:"#{base_url}/javascripts/index.js"}
-%script{type: 'text/javascript', src:"#{base_url}/javascripts/clipboard.js"}
-%script{type: 'text/javascript', src:"#{base_url}/javascripts/jquery-confirm.min.js"}
+- require "pact_broker/version"
+
+%link{rel: 'stylesheet', href: "#{base_url}/stylesheets/index.css?v=#{PactBroker::VERSION}"}
+%link{rel: 'stylesheet', href: "#{base_url}/stylesheets/material-menu.css?v=#{PactBroker::VERSION}"}
+%link{rel: 'stylesheet', href: "#{base_url}/stylesheets/material-icon.css?v=#{PactBroker::VERSION}"}
+%link{rel: 'stylesheet', href: "#{base_url}/stylesheets/jquery-confirm.min.css?v=#{PactBroker::VERSION}"}
+%script{type: 'text/javascript', src:"#{base_url}/javascripts/jquery.tablesorter.min.js?v=#{PactBroker::VERSION}"}
+%script{type: 'text/javascript', src:"#{base_url}/javascripts/material-menu.js?v=#{PactBroker::VERSION}"}
+%script{type: 'text/javascript', src:"#{base_url}/javascripts/index.js?v=#{PactBroker::VERSION}"}
+%script{type: 'text/javascript', src:"#{base_url}/javascripts/clipboard.js?v=#{PactBroker::VERSION}"}
+%script{type: 'text/javascript', src:"#{base_url}/javascripts/jquery-confirm.min.js?v=#{PactBroker::VERSION}"}
