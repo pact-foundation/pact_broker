@@ -13,6 +13,10 @@ module PactBroker
         Notice.new("warning", text)
       end
 
+      def self.prompt(text)
+        Notice.new("prompt", text)
+      end
+
       def self.success(text)
         Notice.new("success", text)
       end

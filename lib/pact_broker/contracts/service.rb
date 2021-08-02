@@ -129,7 +129,7 @@ module PactBroker
         message_params[:action] = existing_version ? "Updated" : "Created"
         notices << Notice.debug(message(message_key_for_version_creation(parsed_contracts), message_params))
         if parsed_contracts.branch.nil?
-          notices << Notice.warning("  Next steps:\n    " + message("messages.next_steps.version_branch"))
+          notices << Notice.prompt("  Next steps:\n    " + message("messages.next_steps.version_branch"))
         end
         notices
       end
@@ -217,15 +217,15 @@ module PactBroker
       def next_steps_notices(pact)
         notices = []
         if !verification_service.any_verifications?(pact.consumer, pact.provider)
-          notices << Notice.warning("    * " + message("messages.next_steps.verifications", provider_name: pact.provider_name))
+          notices << Notice.prompt("    * " + message("messages.next_steps.verifications", provider_name: pact.provider_name))
         end
 
         if !webhook_service.any_webhooks_configured_for_pact?(pact)
-          notices << Notice.warning("    * " + message("messages.next_steps.webhooks", provider_name: pact.provider_name))
+          notices << Notice.prompt("    * " + message("messages.next_steps.webhooks", provider_name: pact.provider_name))
         end
 
         if notices.any?
-          notices.unshift(Notice.warning("  Next steps:"))
+          notices.unshift(Notice.prompt("  Next steps:"))
         end
 
         notices

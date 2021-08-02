@@ -30,7 +30,7 @@
     "status": 200,
     "headers": {
       "Content-Type": "application/hal+json;charset=utf-8",
-      "Content-Length": "2976"
+      "Content-Length": "2972"
     },
     "body": {
       "logs": [
@@ -60,12 +60,12 @@
           "deprecationWarning": "Replaced by notices"
         },
         {
-          "level": "warning",
+          "level": "prompt",
           "message": "  Next steps:",
           "deprecationWarning": "Replaced by notices"
         },
         {
-          "level": "warning",
+          "level": "prompt",
           "message": "    * Add Pact verification tests to the Bar build. See https://docs.pact.io/go/provider_verification",
           "deprecationWarning": "Replaced by notices"
         }
@@ -92,11 +92,11 @@
           "text": "  Webhook \"foo webhook\" triggered for event contract_content_changed.\n    View logs at http://example.org/triggered-webhooks/1234/logs"
         },
         {
-          "type": "warning",
+          "type": "prompt",
           "text": "  Next steps:"
         },
         {
-          "type": "warning",
+          "type": "prompt",
           "text": "    * Add Pact verification tests to the Bar build. See https://docs.pact.io/go/provider_verification"
         }
       ],

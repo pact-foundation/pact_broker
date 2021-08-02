@@ -30,7 +30,7 @@
     "status": 200,
     "headers": {
       "Content-Type": "application/hal+json;charset=utf-8",
-      "Content-Length": "2998"
+      "Content-Length": "2992"
     },
     "body": {
       "logs": [
@@ -55,17 +55,17 @@
           "deprecationWarning": "Replaced by notices"
         },
         {
-          "level": "warning",
+          "level": "prompt",
           "message": "  Next steps:",
           "deprecationWarning": "Replaced by notices"
         },
         {
-          "level": "warning",
+          "level": "prompt",
           "message": "    * Add Pact verification tests to the Bar build. See https://docs.pact.io/go/provider_verification",
           "deprecationWarning": "Replaced by notices"
         },
         {
-          "level": "warning",
+          "level": "prompt",
           "message": "    * Configure separate Bar pact verification build and webhook to trigger it when the pact content changes. See https://docs.pact.io/go/webhooks",
           "deprecationWarning": "Replaced by notices"
         }
@@ -88,15 +88,15 @@
           "text": "  Events detected: contract_published, contract_content_changed (first time any pact published for this consumer with consumer version tagged a, first time any pact published for this consumer with consumer version tagged b)"
         },
         {
-          "type": "warning",
+          "type": "prompt",
           "text": "  Next steps:"
         },
         {
-          "type": "warning",
+          "type": "prompt",
           "text": "    * Add Pact verification tests to the Bar build. See https://docs.pact.io/go/provider_verification"
         },
         {
-          "type": "warning",
+          "type": "prompt",
           "text": "    * Configure separate Bar pact verification build and webhook to trigger it when the pact content changes. See https://docs.pact.io/go/webhooks"
         }
       ],
