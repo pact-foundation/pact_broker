@@ -175,7 +175,7 @@ module PactBroker
             expect(subject).to eq [
               RequiredVerification.new(
                 provider_version: td.find_version("Bar", "1"),
-                provider_version_descriptions: ["currently released and supported version"]
+                provider_version_descriptions: ["currently released version"]
               )
             ]
           end
@@ -219,7 +219,7 @@ module PactBroker
               provider_version_descriptions: [
                 "latest version from main branch",
                 "currently deployed version",
-                "currently released and supported version"
+                "currently released version"
               ])
             ]
           end

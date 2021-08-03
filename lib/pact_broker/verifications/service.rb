@@ -117,19 +117,19 @@ module PactBroker
       end
       private :broadcast_events
 
-      def build_required_version(pact_version, provider_version, description)
+      def identify_required_verification(pact_version, provider_version, description)
         any_verifications = PactBroker::Domain::Verification.where(pact_version_id: pact_version.id, provider_version_id: provider_version.id).any?
         if !any_verifications
           RequiredVerification.new(provider_version: provider_version, provider_version_descriptions: [description])
         end
       end
-      private :build_required_version
+      private :identify_required_verification
 
       def required_verifications_for_main_branch(pact_version)
         latest_version_from_main_branch = [version_service.find_latest_version_from_main_branch(pact_version.provider)].compact
 
         latest_version_from_main_branch.collect do | main_branch_version |
-          build_required_version(pact_version, main_branch_version, "latest version from main branch")
+          identify_required_verification(pact_version, main_branch_version, "latest version from main branch")
         end.compact
       end
       private :required_verifications_for_main_branch
@@ -139,7 +139,7 @@ module PactBroker
           unscoped_service.find_currently_deployed_versions_for_pacticipant(pact_version.provider)
         end
         deployed_versions.collect do | deployed_version |
-          build_required_version(pact_version, deployed_version.version, "currently deployed version")
+          identify_required_verification(pact_version, deployed_version.version, "currently deployed version")
         end.compact
       end
       private :required_verifications_for_deployed_versions
@@ -149,7 +149,7 @@ module PactBroker
           unscoped_service.find_currently_supported_versions_for_pacticipant(pact_version.provider)
         end
         released_versions.collect do | released_versions |
-          build_required_version(pact_version, released_versions.version, "currently released and supported version")
+          identify_required_verification(pact_version, released_versions.version, "currently released version")
         end.compact
       end
       private :required_verifications_for_released_versions
