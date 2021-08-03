@@ -123,7 +123,6 @@ module PactBroker
           RequiredVerification.new(provider_version: provider_version, provider_version_descriptions: [description])
         end
       end
-
       private :build_required_version
 
       def required_verifications_for_main_branch(pact_version)
