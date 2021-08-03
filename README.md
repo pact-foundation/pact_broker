@@ -3,8 +3,6 @@
  ![Build status](https://github.com/pact-foundation/pact_broker/workflows/Test/badge.svg)
  [![Join the chat at https://pact-foundation.slack.com/](https://img.shields.io/badge/chat-on%20slack-blue.svg?logo=slack)](https://slack.pact.io)
  [![security](https://hakiri.io/github/pact-foundation/pact_broker/master.svg)](https://hakiri.io/github/pact-foundation/pact_broker/master)
- [![Code Climate](https://codeclimate.com/github/pact-foundation/pact_broker/badges/gpa.svg)](https://codeclimate.com/github/pact-foundation/pact_broker)
- [![Test Coverage](https://codeclimate.com/github/pact-foundation/pact_broker/badges/coverage.svg)](https://codeclimate.com/github/pact-foundation/pact_broker/coverage)
 
 The Pact Broker is an application for sharing of consumer driven contracts and verification results. It is optimised for use with "pacts" (contracts created by the [Pact][pact-docs] framework), but can be used for any type of contract that can be serialized to JSON.
 
@@ -160,7 +158,11 @@ You can use the [Pact Broker Docker image][docker] or [Terraform on AWS][terrafo
 
 Please read the [UPGRADING.md](UPGRADING.md) documentation before upgrading your Pact Broker, for information on the supported upgrade paths.
 
-[decouple]: http://techblog.realestate.com.au/enter-the-pact-matrix-or-how-to-decouple-the-release-cycles-of-your-microservices/
+## Versioning
+
+The Pact Broker follows the [semantic versioning](https://semver.org/) scheme.
+
+[decouple]: https://www.rea-group.com/blog/enter-the-pact-matrix-or-how-to-decouple-the-release-cycles-of-your-microservices/
 [pact]: https://github.com/pact-foundation/pact-ruby
 [nerf]: https://github.com/pact-foundation/pact_broker/wiki/pact-broker-ci-nerf-gun
 [different-teams]: https://github.com/pact-foundation/pact-ruby/wiki/Using-pact-where-the-consumer-team-is-different-from-the-provider-team
