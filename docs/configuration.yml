@@ -1,0 +1,250 @@
+groups:
+  - title: Logging
+    vars:
+      log_level:
+        description: "The application log level"
+        default: info
+        allowed_values:
+          - debug
+          - info
+          - warn
+          - error
+          - fatal
+      log_format:
+        description: "The application log format"
+        default: "default"
+        allowed_values:
+          - default
+          - json
+          - color
+        more_info: https://github.com/rocketjob/semantic_logger/tree/master/lib/semantic_logger/formatters
+  - title: TODO
+    vars:
+      basic_auth_enabled:
+        description: ""
+        default:
+        allowed_values:
+          - todo
+        more_info: null
+      basic_auth_username:
+        description: ""
+        default:
+        allowed_values:
+          - todo
+        more_info: null
+      basic_auth_password:
+        description: ""
+        default:
+        allowed_values:
+          - todo
+        more_info: null
+      basic_auth_read_only_username:
+        description: ""
+        default:
+        allowed_values:
+          - todo
+        more_info: null
+      basic_auth_read_only_password:
+        description: ""
+        default:
+        allowed_values:
+          - todo
+        more_info: null
+      allow_public_read:
+        description: ""
+        default:
+        allowed_values:
+          - todo
+        more_info: null
+      public_heartbeat:
+        description: ""
+        default:
+        allowed_values:
+          - todo
+        more_info: null
+      log_dir:
+        description: ""
+        default:
+        allowed_values:
+          - todo
+        more_info: null
+      log_stream:
+        description: ""
+        default:
+        allowed_values:
+          - todo
+        more_info: null
+      log_level:
+        description: ""
+        default:
+        allowed_values:
+          - todo
+        more_info: null
+      log_format:
+        description: ""
+        default:
+        allowed_values:
+          - todo
+        more_info: null
+      warning_error_class_names:
+        description: ""
+        default:
+        allowed_values:
+          - todo
+        more_info: null
+      hide_pactflow_messages:
+        description: ""
+        default:
+        allowed_values:
+          - todo
+        more_info: null
+      webhook_retry_schedule:
+        description: ""
+        default:
+        allowed_values:
+          - todo
+        more_info: null
+      webhook_http_method_whitelist:
+        description: ""
+        default:
+        allowed_values:
+          - todo
+        more_info: null
+      webhook_http_code_success:
+        description: ""
+        default:
+        allowed_values:
+          - todo
+        more_info: null
+      webhook_scheme_whitelist:
+        description: ""
+        default:
+        allowed_values:
+          - todo
+        more_info: null
+      webhook_host_whitelist:
+        description: ""
+        default:
+        allowed_values:
+          - todo
+        more_info: null
+      disable_ssl_verification:
+        description: ""
+        default:
+        allowed_values:
+          - todo
+        more_info: null
+      user_agent:
+        description: ""
+        default:
+        allowed_values:
+          - todo
+        more_info: null
+      port:
+        description: ""
+        default:
+        allowed_values:
+          - todo
+        more_info: null
+      base_url:
+        description: ""
+        default:
+        allowed_values:
+          - todo
+        more_info: null
+      base_urls:
+        description: ""
+        default:
+        allowed_values:
+          - todo
+        more_info: null
+      use_hal_browser:
+        description: ""
+        default:
+        allowed_values:
+          - todo
+        more_info: null
+      enable_diagnostic_endpoints:
+        description: ""
+        default:
+        allowed_values:
+          - todo
+        more_info: null
+      use_rack_protection:
+        description: ""
+        default:
+        allowed_values:
+          - todo
+        more_info: null
+      badge_provider_mode:
+        description: ""
+        default:
+        allowed_values:
+          - todo
+        more_info: null
+      enable_public_badge_access:
+        description: ""
+        default:
+        allowed_values:
+          - todo
+        more_info: null
+      shields_io_base_url:
+        description: ""
+        default:
+        allowed_values:
+          - todo
+        more_info: null
+      use_case_sensitive_resource_names:
+        description: ""
+        default:
+        allowed_values:
+          - todo
+        more_info: null
+      order_versions_by_date:
+        description: ""
+        default:
+        allowed_values:
+          - todo
+        more_info: null
+      base_equality_only_on_content_that_affects_verification_results:
+        description: ""
+        default:
+        allowed_values:
+          - todo
+        more_info: null
+      check_for_potential_duplicate_pacticipant_names:
+        description: ""
+        default:
+        allowed_values:
+          - todo
+        more_info: null
+      create_deployed_versions_for_tags:
+        description: ""
+        default:
+        allowed_values:
+          - todo
+        more_info: null
+      use_first_tag_as_branch:
+        description: ""
+        default:
+        allowed_values:
+          - todo
+        more_info: null
+      use_first_tag_as_branch_time_limit:
+        description: ""
+        default:
+        allowed_values:
+          - todo
+        more_info: null
+      semver_formats:
+        description: ""
+        default:
+        allowed_values:
+          - todo
+        more_info: null
+      features:
+        description: ""
+        default:
+        allowed_values:
+          - todo
+        more_info: null
