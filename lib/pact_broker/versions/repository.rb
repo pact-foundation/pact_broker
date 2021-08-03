@@ -128,6 +128,11 @@ module PactBroker
       def find_versions_for_selector(selector)
         PactBroker::Domain::Version.select_all_qualified.for_selector(selector).all
       end
+
+      def set_branch_if_unset(version, branch)
+        version.update(branch: branch) if version.branch.nil?
+        version
+      end
     end
   end
 end
