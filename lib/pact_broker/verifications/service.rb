@@ -98,7 +98,7 @@ module PactBroker
         required_verifications
           .group_by(&:provider_version)
           .values
-          .flat_map { | rvs | rvs.reduce(&:+) }.tap { |it| puts it }
+          .flat_map { | required_verifications_for_provider_version | required_verifications_for_provider_version.reduce(&:+) }
       end
 
       def broadcast_events(verification, pact, event_context)
