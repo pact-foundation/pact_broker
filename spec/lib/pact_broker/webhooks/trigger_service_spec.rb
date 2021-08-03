@@ -62,13 +62,18 @@ module PactBroker
         let(:provider) { PactBroker::Domain::Pacticipant.new(name: "Provider") }
         let(:webhooks) { [webhook]}
         let(:webhook) do
-          instance_double(PactBroker::Domain::Webhook, description: "description", uuid: "1244", expand_currently_deployed_provider_versions?: expand_currently_deployed)
+          instance_double(PactBroker::Domain::Webhook,
+            description: "description",
+            uuid: "1244",
+            expand_currently_deployed_provider_versions?: expand_currently_deployed
+          )
         end
         let(:expand_currently_deployed) { false }
+        let(:trigger_on_contract_requiring_verification_published) { false }
         let(:triggered_webhook) { instance_double(PactBroker::Webhooks::TriggeredWebhook) }
         let(:event_name) { PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED }
         let(:event_context) { { some: "data" } }
-        let(:expected_event_context) { { some: "data", event_name: PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED } }
+        let(:expected_event_context) { { some: "data", event_name: event_name } }
         let(:webhook_repository) { instance_double(Repository, create_triggered_webhook: triggered_webhook, find_webhooks_to_trigger: webhooks) }
 
         subject { TriggerService.create_triggered_webhooks_for_event(pact, verification, event_name, event_context) }
@@ -107,6 +112,53 @@ module PactBroker
               it "only creates one triggered webhook" do
                 expect(webhook_repository).to receive(:create_triggered_webhook).with(anything, anything, anything, anything, anything, anything, expected_event_context.merge(currently_deployed_provider_version_number: "1"))
                 subject
+              end
+            end
+          end
+
+          context "when the event is contract_requiring_verification_published" do
+            before do
+              allow(TriggerService).to receive(:verification_service).and_return(verification_service)
+              allow(verification_service).to receive(:calculate_required_verifications_for_pact).and_return(required_verifications)
+            end
+
+            let(:event_name) { PactBroker::Webhooks::WebhookEvent::CONTRACT_REQUIRING_VERIFICATION_PUBLISHED }
+            let(:verification_service) { class_double("PactBroker::Verifications::Service").as_stubbed_const }
+            let(:required_verifications) { [required_verification] }
+            let(:required_verification) do
+              instance_double("PactBroker::Verifications::RequiredVerification",
+                provider_version: double("version", number: "1"),
+                provider_version_descriptions: ["foo"]
+              )
+            end
+
+            it "creates a triggered webhook for each required verification" do
+              expect(webhook_repository).to receive(:create_triggered_webhook).with(
+                anything,
+                webhook,
+                pact,
+                verification,
+                TriggerService::RESOURCE_CREATION,
+                PactBroker::Webhooks::WebhookEvent::CONTRACT_REQUIRING_VERIFICATION_PUBLISHED,
+                expected_event_context.merge(provider_version_number: "1")
+              )
+              subject
+            end
+
+            it "returns the triggered webhooks" do
+              expect(subject.size).to eq 1
+            end
+
+            context "when there are no required verifications" do
+              let(:required_verifications) { [] }
+
+              it "does not create any triggered webhooks" do
+                expect(webhook_repository).to_not receive(:create_triggered_webhook)
+                subject
+              end
+
+              it "returns an empty array" do
+                expect(subject).to eq []
               end
             end
           end

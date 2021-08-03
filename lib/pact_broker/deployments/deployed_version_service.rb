@@ -1,8 +1,10 @@
 require "pact_broker/deployments/deployed_version"
+require "pact_broker/repositories/scopes"
 
 module PactBroker
   module Deployments
     class DeployedVersionService
+      extend PactBroker::Repositories::Scopes
 
       def self.next_uuid
         SecureRandom.uuid
@@ -78,12 +80,6 @@ module PactBroker
       end
 
       private_class_method :record_previous_version_undeployed
-
-      def self.scope_for(scope)
-        PactBroker.policy_scope!(scope)
-      end
-
-      private_class_method :scope_for
     end
   end
 end

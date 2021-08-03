@@ -30,7 +30,7 @@
     "status": 200,
     "headers": {
       "Content-Type": "application/hal+json;charset=utf-8",
-      "Content-Length": "2929"
+      "Content-Length": "3015"
     },
     "body": {
       "logs": [
@@ -51,7 +51,7 @@
         },
         {
           "level": "debug",
-          "message": "  Events detected: contract_published, contract_content_changed (pact content modified since previous publication for Foo version 1)",
+          "message": "  Events detected: contract_published, contract_requiring_verification_published, contract_content_changed (pact content modified since previous publication for Foo version 1)",
           "deprecationWarning": "Replaced by notices"
         },
         {
@@ -80,7 +80,7 @@
         },
         {
           "type": "debug",
-          "text": "  Events detected: contract_published, contract_content_changed (pact content modified since previous publication for Foo version 1)"
+          "text": "  Events detected: contract_published, contract_requiring_verification_published, contract_content_changed (pact content modified since previous publication for Foo version 1)"
         },
         {
           "type": "prompt",

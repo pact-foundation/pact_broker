@@ -19,6 +19,7 @@ module PactBroker
 
       def contract_published(params)
         handle_event_for_webhook(PactBroker::Webhooks::WebhookEvent::CONTRACT_PUBLISHED, params)
+        handle_event_for_webhook(PactBroker::Webhooks::WebhookEvent::CONTRACT_REQUIRING_VERIFICATION_PUBLISHED, params)
       end
 
       def contract_content_changed(params)

@@ -26,6 +26,14 @@ module PactBroker
       dataset_module do
         include PactBroker::Repositories::Helpers
 
+        def for_pact_domain(pact_domain)
+          where(
+            sha: pact_domain.pact_version_sha,
+            consumer_id: pact_domain.consumer.id,
+            provider_id: pact_domain.provider.id
+          ).single_record
+        end
+
         def join_successful_verifications
           verifications_join = {
             Sequel[:verifications][:pact_version_id] => Sequel[:pact_versions][:id],

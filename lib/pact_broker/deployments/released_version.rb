@@ -59,6 +59,10 @@ module PactBroker
       def currently_supported
         support_ended_at == nil
       end
+
+      def version_number
+        version.number
+      end
     end
   end
 end

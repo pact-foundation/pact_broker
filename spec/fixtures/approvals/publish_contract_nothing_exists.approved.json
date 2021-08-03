@@ -30,7 +30,7 @@
     "status": 200,
     "headers": {
       "Content-Type": "application/hal+json;charset=utf-8",
-      "Content-Length": "2992"
+      "Content-Length": "3078"
     },
     "body": {
       "logs": [
@@ -51,7 +51,7 @@
         },
         {
           "level": "debug",
-          "message": "  Events detected: contract_published, contract_content_changed (first time any pact published for this consumer with consumer version tagged a, first time any pact published for this consumer with consumer version tagged b)",
+          "message": "  Events detected: contract_published, contract_requiring_verification_published, contract_content_changed (first time any pact published for this consumer with consumer version tagged a, first time any pact published for this consumer with consumer version tagged b)",
           "deprecationWarning": "Replaced by notices"
         },
         {
@@ -85,7 +85,7 @@
         },
         {
           "type": "debug",
-          "text": "  Events detected: contract_published, contract_content_changed (first time any pact published for this consumer with consumer version tagged a, first time any pact published for this consumer with consumer version tagged b)"
+          "text": "  Events detected: contract_published, contract_requiring_verification_published, contract_content_changed (first time any pact published for this consumer with consumer version tagged a, first time any pact published for this consumer with consumer version tagged b)"
         },
         {
           "type": "prompt",
