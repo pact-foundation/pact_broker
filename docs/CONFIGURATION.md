@@ -18,12 +18,82 @@ The application log level
 
 ### log_format
 
-The application log format
+The application log format. Can be any value supported by Semantic Logger.
 
 **Required:** false<br/>
 **Default:** `default`<br/>
 **Allowed values:** `default`, `json`, `color`<br/>
 **More information:** https://github.com/rocketjob/semantic_logger/tree/master/lib/semantic_logger/formatters<br/>
+
+### log_dir
+
+The log file directory
+
+**Required:** false<br/>
+**Default:** `./logs`<br/>
+
+### log_stream
+
+The stream to which the logs will be sent. Set to `stdout` to stream to standard out.
+
+**Required:** false<br/>
+**Default:** `file`<br/>
+**Allowed values:** `stdout`, `file`<br/>
+
+<br/>
+
+## Authentication and authorization
+
+<hr/>
+The Pact Broker comes with 2 configurable basic auth users - one with read/write privileges, and one with read only privileges.
+The read only credentials should be distributed to the developers for use from development machines, and the read/write credentials
+should be used for CI/CD.
+
+
+### basic_auth_enabled
+
+Whether to enabled basic authorization
+
+**Required:** false<br/>
+**Allowed values:** `true`, `false`<br/>
+
+### basic_auth_username
+
+The username for the read/write basic auth user
+
+**Required:** false<br/>
+
+### basic_auth_password
+
+The password for the read/write basic auth user
+
+**Required:** false<br/>
+
+### basic_auth_read_only_username
+
+The username for the read only basic auth user
+
+**Required:** false<br/>
+
+### basic_auth_read_only_password
+
+The password for the read only basic auth user
+
+**Required:** false<br/>
+
+### allow_public_read
+
+If you want to allow public read access, but still require credentials for writing, then leave `basic_auth_read_only_username` and `basic_auth_read_only_password` unset, and set `allow_public_read` to `true`
+
+**Required:** false<br/>
+**Allowed values:** `true`, `false`<br/>
+
+### public_heartbeat
+
+If you have enabled basic auth, but require unauthenticated access to the heartbeat URL (eg. for use within an AWS autoscaling group), set `public_heartbeat` to `true`
+
+**Required:** false<br/>
+**Allowed values:** `true`, `false`<br/>
 
 <br/>
 
@@ -31,83 +101,6 @@ The application log format
 
 <hr/>
 
-
-### basic_auth_enabled
-
-
-
-**Required:** false<br/>
-**Allowed values:** `todo`<br/>
-
-### basic_auth_username
-
-
-
-**Required:** false<br/>
-**Allowed values:** `todo`<br/>
-
-### basic_auth_password
-
-
-
-**Required:** false<br/>
-**Allowed values:** `todo`<br/>
-
-### basic_auth_read_only_username
-
-
-
-**Required:** false<br/>
-**Allowed values:** `todo`<br/>
-
-### basic_auth_read_only_password
-
-
-
-**Required:** false<br/>
-**Allowed values:** `todo`<br/>
-
-### allow_public_read
-
-
-
-**Required:** false<br/>
-**Allowed values:** `todo`<br/>
-
-### public_heartbeat
-
-
-
-**Required:** false<br/>
-**Allowed values:** `todo`<br/>
-
-### log_dir
-
-
-
-**Required:** false<br/>
-**Allowed values:** `todo`<br/>
-
-### log_stream
-
-
-
-**Required:** false<br/>
-**Allowed values:** `todo`<br/>
-
-### log_level
-
-
-
-**Required:** false<br/>
-**Allowed values:** `todo`<br/>
-
-### log_format
-
-
-
-**Required:** false<br/>
-**Allowed values:** `todo`<br/>
 
 ### warning_error_class_names
 

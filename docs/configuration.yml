@@ -11,81 +11,57 @@ groups:
           - error
           - fatal
       log_format:
-        description: "The application log format"
+        description: "The application log format. Can be any value supported by Semantic Logger."
         default: "default"
         allowed_values:
           - default
           - json
           - color
         more_info: https://github.com/rocketjob/semantic_logger/tree/master/lib/semantic_logger/formatters
-  - title: TODO
+      log_dir:
+        description: "The log file directory"
+        default: "./logs"
+      log_stream:
+        description: "The stream to which the logs will be sent. Set to `stdout` to stream to standard out."
+        default: "file"
+        allowed_values:
+          - stdout
+          - file
+  - title: Authentication and authorization
+    comments: |
+      The Pact Broker comes with 2 configurable basic auth users - one with read/write privileges, and one with read only privileges.
+      The read only credentials should be distributed to the developers for use from development machines, and the read/write credentials
+      should be used for CI/CD.
     vars:
       basic_auth_enabled:
-        description: ""
-        default:
+        description: "Whether to enabled basic authorization"
+        default: false
         allowed_values:
-          - todo
-        more_info: null
+          - true
+          - false
       basic_auth_username:
-        description: ""
-        default:
-        allowed_values:
-          - todo
-        more_info: null
+        description: "The username for the read/write basic auth user"
       basic_auth_password:
-        description: ""
-        default:
-        allowed_values:
-          - todo
-        more_info: null
+        description: "The password for the read/write basic auth user"
       basic_auth_read_only_username:
-        description: ""
-        default:
-        allowed_values:
-          - todo
-        more_info: null
+        description: "The username for the read only basic auth user"
       basic_auth_read_only_password:
-        description: ""
-        default:
-        allowed_values:
-          - todo
-        more_info: null
+        description: "The password for the read only basic auth user"
       allow_public_read:
-        description: ""
-        default:
+        description: "If you want to allow public read access, but still require credentials for writing, then leave `basic_auth_read_only_username` and `basic_auth_read_only_password` unset, and set `allow_public_read` to `true`"
+        default: false
         allowed_values:
-          - todo
-        more_info: null
+          - true
+          - false
       public_heartbeat:
-        description: ""
-        default:
+        description: "If you have enabled basic auth, but require unauthenticated access to the heartbeat URL (eg. for use within an AWS autoscaling group), set `public_heartbeat` to `true`"
+        default: false
         allowed_values:
-          - todo
-        more_info: null
-      log_dir:
-        description: ""
-        default:
-        allowed_values:
-          - todo
-        more_info: null
-      log_stream:
-        description: ""
-        default:
-        allowed_values:
-          - todo
-        more_info: null
-      log_level:
-        description: ""
-        default:
-        allowed_values:
-          - todo
-        more_info: null
-      log_format:
-        description: ""
-        default:
-        allowed_values:
-          - todo
-        more_info: null
+          - true
+          - false
+  - title: TODO
+    vars:
+
       warning_error_class_names:
         description: ""
         default:

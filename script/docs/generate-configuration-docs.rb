@@ -8,8 +8,12 @@ def write string
   $stream.puts string
 end
 
-def escape_backticks string
-  string.gsub('`', '``')
+def escape_backticks value
+  if value.is_a?(String)
+    value.gsub('`', '``')
+  else
+    value
+  end
 end
 
 docs_dir = File.expand_path('../../../docs', __FILE__)
