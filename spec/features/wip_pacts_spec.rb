@@ -43,7 +43,7 @@ RSpec.describe "the lifecycle of a WIP pact" do
 
   def publish_new_pact_with_master_tag_after_merging_in_feature_branch
     put("/pacts/provider/Bar/consumer/Foo/version/3", pact_content_2, request_headers)
-    put("/pacticipants/Foo/versions/2/tags/master", nil, request_headers)
+    put("/pacticipants/Foo/versions/3/tags/master", nil, request_headers)
   end
 
   def get_pacts_for_verification(request_body = nil)
