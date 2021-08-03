@@ -66,7 +66,7 @@ module PactBroker
       def create_triggered_webhooks_for_webhooks webhooks, pact, verification, event_name, event_context
         webhooks.flat_map do | webhook |
           expanded_event_contexts = expand_events_for_currently_deployed_environments(webhook, pact, event_context)
-          expanded_event_contexts = expand_events_for_required_verifications(webhook, event_name, pact, expanded_event_contexts)
+          expanded_event_contexts = expand_events_for_required_verifications(event_name, pact, expanded_event_contexts)
           expanded_event_contexts = expanded_event_contexts.flat_map { | ec | expand_events_for_verification_of_multiple_selected_pacts(ec) }
 
           expanded_event_contexts.collect do | expanded_event_context |
@@ -130,7 +130,7 @@ module PactBroker
       end
       private :find_pact_for_verification_triggered_webhook
 
-      def expand_events_for_required_verifications(webhook, event_name, pact, event_contexts)
+      def expand_events_for_required_verifications(event_name, pact, event_contexts)
         if event_name == PactBroker::Webhooks::WebhookEvent::CONTRACT_REQUIRING_VERIFICATION_PUBLISHED
           required_verifications = verification_service.calculate_required_verifications_for_pact(pact)
           event_contexts.flat_map do | event_context |

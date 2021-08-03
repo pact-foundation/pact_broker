@@ -148,8 +148,8 @@ module PactBroker
         released_versions = released_version_service.with_no_scope do | unscoped_service |
           unscoped_service.find_currently_supported_versions_for_pacticipant(pact_version.provider)
         end
-        released_versions.collect do | released_versions |
-          identify_required_verification(pact_version, released_versions.version, "currently released version")
+        released_versions.collect do | released_version |
+          identify_required_verification(pact_version, released_version.version, "currently released version")
         end.compact
       end
       private :required_verifications_for_released_versions
