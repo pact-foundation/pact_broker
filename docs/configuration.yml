@@ -27,6 +27,13 @@ groups:
         allowed_values:
           - stdout
           - file
+      hide_pactflow_messages:
+        description: "Set to `true` to hide the messages in the logs about Pactflow"
+        default: true
+        allowed_values:
+          - true
+          - false
+        more_info: https://pactflow.io
   - title: Authentication and authorization
     comments: |
       The Pact Broker comes with 2 configurable basic auth users - one with read/write privileges, and one with read only privileges.
@@ -59,143 +66,117 @@ groups:
         allowed_values:
           - true
           - false
-  - title: TODO
-    vars:
-
-      warning_error_class_names:
-        description: ""
-        default:
-        allowed_values:
-          - todo
-        more_info: null
-      hide_pactflow_messages:
-        description: ""
-        default:
-        allowed_values:
-          - todo
-        more_info: null
-      webhook_retry_schedule:
-        description: ""
-        default:
-        allowed_values:
-          - todo
-        more_info: null
-      webhook_http_method_whitelist:
-        description: ""
-        default:
-        allowed_values:
-          - todo
-        more_info: null
-      webhook_http_code_success:
-        description: ""
-        default:
-        allowed_values:
-          - todo
-        more_info: null
-      webhook_scheme_whitelist:
-        description: ""
-        default:
-        allowed_values:
-          - todo
-        more_info: null
-      webhook_host_whitelist:
-        description: ""
-        default:
-        allowed_values:
-          - todo
-        more_info: null
-      disable_ssl_verification:
-        description: ""
-        default:
-        allowed_values:
-          - todo
-        more_info: null
-      user_agent:
-        description: ""
-        default:
-        allowed_values:
-          - todo
-        more_info: null
-      port:
-        description: ""
-        default:
-        allowed_values:
-          - todo
-        more_info: null
-      base_url:
-        description: ""
-        default:
-        allowed_values:
-          - todo
-        more_info: null
-      base_urls:
-        description: ""
-        default:
-        allowed_values:
-          - todo
-        more_info: null
-      use_hal_browser:
-        description: ""
-        default:
-        allowed_values:
-          - todo
-        more_info: null
-      enable_diagnostic_endpoints:
-        description: ""
-        default:
-        allowed_values:
-          - todo
-        more_info: null
-      use_rack_protection:
-        description: ""
-        default:
-        allowed_values:
-          - todo
-        more_info: null
-      badge_provider_mode:
-        description: ""
-        default:
-        allowed_values:
-          - todo
-        more_info: null
       enable_public_badge_access:
-        description: ""
-        default:
+        description: "Set this to true to allow status badges to be embedded in README files without requiring a hardcoded password"
+        default: false
         allowed_values:
-          - todo
-        more_info: null
+          - true
+          - false
+  - title: Webhooks
+    vars:
+      webhook_retry_schedule:
+        description: |-
+          The schedule of seconds to wait between webhook execution attempts.
+          The default schedule is 10 sec, 1 min, 2 min, 5 min, 10 min, 20 min (38 minutes in total)
+        default: "10 60 120 300 600 1200"
+        format: A space separated list of integers.
+      webhook_http_method_whitelist:
+        description: |-
+          The allowed HTTP methods for webhooks.
+          It is highly recommended that only `POST` requests are allowed to ensure that webhooks cannot be used to retrieve sensitive information from hosts within the same network.
+        default: "POST"
+        format: A space separated list.
+        allowed_values:
+          - POST
+          - GET (not recommended)
+          - PUT (not recommended)
+          - PATCH (not recommended)
+          - DELETE (not recommended)
+      webhook_http_code_success:
+        description: |-
+          If webhook call returns the response with an HTTP code that is listed in the success codes then the operation is
+          considered a success, otherwise the webhook will be re-triggered based on the `webhook_retry_schedule` configuration.
+
+          In most cases, configuring this is not necessary, but there are some CI systems that return a non 200 status for a success,
+          which is why this feature exists.
+        default: "200 201 202 203 204 205 206"
+        format: A space separated list of integers.
+        allowed_values:
+          - any valid HTTP status code
+      webhook_scheme_whitelist:
+        description: "The allowed URL schemes for webhooks."
+        default: "https"
+        format: "A space delimited list."
+        allowed_values:
+          - https
+          - http
+      webhook_host_whitelist:
+        description: |-
+          A list of hosts, network ranges, or host regular expressions.
+          Regular expressions should start and end with a `/` to differentiate them from Strings.
+          Note that backslashes need to be escaped with a second backslash when setting via an environment variable.
+          Please read the Webhook whitelists section of the Pact Broker configuration documentation to understand how the whitelist is used.
+        default:
+        examples:
+          - github.com
+          - 10.2.3.41/24
+          - /.*\\.foo\\.com$/
+        more_info: https://docs.pact.io/pact_broker/configuration/#webhook-whitelists
+      disable_ssl_verification:
+        description: "If set to true, SSL verification will be disabled for the HTTP requests made by the webhooks"
+        default: false
+        allowed_values:
+          - true
+          - false
+  - title: HTTP
+    vars:
+      port:
+        description: |-
+          The HTTP port that the Pact Broker application will run on. This will only be honoured if you are deploying the Pact Broker using
+          a package that actually reads from this property (eg. one of the Docker images). If you are running the vanilla Ruby application,
+          the application will run on the port the server has been configured to run on (eg. `bundle exec rackup -p 9393`)
+        default: 9292
+      base_url:
+        description: |-
+          The full URL (including port, if non-standard for the protocol) at which the application will be made available to users.
+          This is used to create the links in the API.
+          The application may run correctly without this attribute, however, it is strongly recommended to set it when
+          deploying the Pact Broker to production as it prevents cache poisoning security vulnerabilities.
+          It is also required when deploying the Broker behind a reverse proxy, and when the application has been mounted at a non-root context.
+          Note that this attribute does not change where the application is actually mounted (that is the concern of the deployment configuration) - it just changes the links.
+        examples:
+          - https://pact-broker.mycompany.com
+          - https://my-company.com:9292/pact-broker
+      base_urls:
+        description: |-
+          An alias of base_url. From version 2.79.0, multiple base URLs can be configured for architectures that use
+          gateways or proxies that allow the same Pact Broker instance to be addressed with different base URLs.
+        format: A space separated list.
+        example: "http://my-internal-pact-broker:9292 https://my-external-pact-broker"
       shields_io_base_url:
-        description: ""
-        default:
-        allowed_values:
-          - todo
-        more_info: null
-      use_case_sensitive_resource_names:
-        description: ""
-        default:
-        allowed_values:
-          - todo
-        more_info: null
-      order_versions_by_date:
-        description: ""
-        default:
-        allowed_values:
-          - todo
-        more_info: null
-      base_equality_only_on_content_that_affects_verification_results:
-        description: ""
-        default:
-        allowed_values:
-          - todo
-        more_info: null
+        description: The URL of the shields.io server used to generate the README badges.
+        default: https://img.shields.io
+        more_info: https://shields.io
       check_for_potential_duplicate_pacticipant_names:
-        description: ""
-        default:
+        description: |-
+          When a pact is published, the consumer, provider and consumer version resources are automatically created.
+
+          To prevent a pacticipant (consumer or provider) being created multiple times with slightly different name variants
+          (eg. FooBar/foo-bar/foo bar/Foo Bar Service), a check is performed to determine if a new pacticipant name is likely to be a duplicate
+          of any existing applications. If it is deemed similar enough to an existing name, a 409 will be returned.
+
+          The response body will contain instructions indicating that the pacticipant name should be corrected if it was intended to be an existing one,
+          or that the pacticipant should be created manually if it was intended to be a new one.
+
+          To turn this feature off, set `check_for_potential_duplicate_pacticipant_names` to `false`, and make sure everyone is very careful with their naming!
+          The usefulness of the Broker depends on the integrity of the data, which in turn depends on the correctness of the pacticipant names.
+        default: true
         allowed_values:
-          - todo
+          - true
+          - false
         more_info: null
       create_deployed_versions_for_tags:
-        description: ""
+        description: "To assist in migrating from tags to deployed "
         default:
         allowed_values:
           - todo

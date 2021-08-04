@@ -48,12 +48,17 @@ doc['groups'].each do | group |
     write "#{metadata['description']}\n\n"
 
     write "**Required:** #{metadata['required'] || 'false'}<br/>"
+    write "**Format:** #{metadata['format']}<br/>" if metadata['format']
     write "**Default:** `#{metadata['default']}`<br/>" if metadata['default']
     if metadata['allowed_values']
       allowed_values = metadata['allowed_values'].collect{ |val| "`#{escape_backticks(val)}`"}.join(', ')
       write "**Allowed values:** #{allowed_values}<br/>"
     end
     write "**Example:** `#{metadata['example']}`<br/>" if metadata['example']
+    if metadata['examples']
+      allowed_values = metadata['examples'].collect{ |val| "`#{escape_backticks(val)}`"}.join(', ')
+      write "**Examples:** #{allowed_values}<br/>"
+    end
     write "**More information:** #{metadata['more_info']}<br/>" if metadata['more_info']
     write "\n"
   end
