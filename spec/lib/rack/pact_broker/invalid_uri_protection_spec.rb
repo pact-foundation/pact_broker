@@ -5,7 +5,7 @@ module Rack
     describe InvalidUriProtection do
       let(:target_app) { ->(_env){ [200, {}, []] } }
       let(:app) { InvalidUriProtection.new(target_app) }
-      let(:path) { URI.encode("/foo") }
+      let(:path) { "/foo" }
 
       subject { get(path) }
 
@@ -28,7 +28,7 @@ module Rack
         end
 
         context "when the URI contains a new line because someone forgot to strip the result of `git rev-parse HEAD`, and I have totally never done this before myself" do
-          let(:path) { URI.encode("/foo\n/bar") }
+          let(:path) { "/foo%0A/bar" }
 
           it "returns a 422" do
             expect(subject.status).to eq 422
@@ -37,7 +37,7 @@ module Rack
         end
 
         context "when the URI contains a tab because sooner or later someone is eventually going to do this" do
-          let(:path) { URI.encode("/foo\t/bar") }
+          let(:path) { "/foo%09/bar" }
 
           it "returns a 422" do
             expect(subject.status).to eq 422
