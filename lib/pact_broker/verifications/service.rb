@@ -5,6 +5,7 @@ require "pact_broker/verifications/summary_for_consumer_version"
 require "pact_broker/logging"
 require "pact_broker/hash_refinements"
 require "pact_broker/events/publisher"
+require "pact_broker/verifications/required_verification"
 
 module PactBroker
   module Verifications
@@ -89,7 +90,16 @@ module PactBroker
         verification_repository.delete_all_verifications_between(consumer_name, options)
       end
 
-      private
+      def calculate_required_verifications_for_pact(pact)
+        pact_version = PactBroker::Pacts::PactVersion.for_pact_domain(pact)
+        required_verifications =  required_verifications_for_main_branch(pact_version) +
+                                  required_verifications_for_deployed_versions(pact_version) +
+                                  required_verifications_for_released_versions(pact_version)
+        required_verifications
+          .group_by(&:provider_version)
+          .values
+          .flat_map { | required_verifications_for_provider_version | required_verifications_for_provider_version.reduce(&:+) }
+      end
 
       def broadcast_events(verification, pact, event_context)
         event_params = {
@@ -105,6 +115,44 @@ module PactBroker
           broadcast(:provider_verification_failed, event_params)
         end
       end
+      private :broadcast_events
+
+      def identify_required_verification(pact_version, provider_version, description)
+        any_verifications = PactBroker::Domain::Verification.where(pact_version_id: pact_version.id, provider_version_id: provider_version.id).any?
+        if !any_verifications
+          RequiredVerification.new(provider_version: provider_version, provider_version_descriptions: [description])
+        end
+      end
+      private :identify_required_verification
+
+      def required_verifications_for_main_branch(pact_version)
+        latest_version_from_main_branch = [version_service.find_latest_version_from_main_branch(pact_version.provider)].compact
+
+        latest_version_from_main_branch.collect do | main_branch_version |
+          identify_required_verification(pact_version, main_branch_version, "latest version from main branch")
+        end.compact
+      end
+      private :required_verifications_for_main_branch
+
+      def required_verifications_for_deployed_versions(pact_version)
+        deployed_versions = deployed_version_service.with_no_scope do | unscoped_service |
+          unscoped_service.find_currently_deployed_versions_for_pacticipant(pact_version.provider)
+        end
+        deployed_versions.collect do | deployed_version |
+          identify_required_verification(pact_version, deployed_version.version, "currently deployed version")
+        end.compact
+      end
+      private :required_verifications_for_deployed_versions
+
+      def required_verifications_for_released_versions(pact_version)
+        released_versions = released_version_service.with_no_scope do | unscoped_service |
+          unscoped_service.find_currently_supported_versions_for_pacticipant(pact_version.provider)
+        end
+        released_versions.collect do | released_version |
+          identify_required_verification(pact_version, released_version.version, "currently released version")
+        end.compact
+      end
+      private :required_verifications_for_released_versions
     end
   end
 end

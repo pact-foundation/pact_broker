@@ -1,8 +1,11 @@
 require "pact_broker/deployments/released_version"
+require "pact_broker/repositories/scopes"
 
 module PactBroker
   module Deployments
     class ReleasedVersionService
+      extend PactBroker::Repositories::Scopes
+
       def self.next_uuid
         SecureRandom.uuid
       end
@@ -41,6 +44,15 @@ module PactBroker
 
       def self.record_version_support_ended(released_version)
         released_version.record_support_ended
+      end
+
+      def self.find_currently_supported_versions_for_pacticipant(pacticipant)
+        scope_for(ReleasedVersion)
+          .currently_supported
+          .where(pacticipant_id: pacticipant.id)
+          .eager(:version)
+          .eager(:environment)
+          .all
       end
     end
   end
