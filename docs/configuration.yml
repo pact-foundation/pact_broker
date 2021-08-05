@@ -176,12 +176,18 @@ groups:
           - false
         more_info: null
       create_deployed_versions_for_tags:
-        description: "To assist in migrating from tags to deployed "
+        description: |-
+          When `create_deployed_versions_for_tags` is `true` and a tag is created, if there is an environment with the name of the newly created tag, a deployed version is
+          also created for the pacticipant version.
+
+          This is to assist in the migration from using tags to track deployments to using the
         default:
         allowed_values:
           - todo
         more_info: null
-      use_first_tag_as_branch:
+      use_first_tag_as_branch: |-
+          When `use_first_tag_as_branch` is `true`, the first tag applied to a version within the `use_first_tag_as_branch_time_limit` (10 seconds)
+          will be used to populate the `branch` property of the version.
         description: ""
         default:
         allowed_values:
