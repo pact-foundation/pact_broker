@@ -135,7 +135,7 @@ module PactBroker
           required_verifications = verification_service.calculate_required_verifications_for_pact(pact)
           event_contexts.flat_map do | event_context |
             required_verifications.collect do | required_verification |
-              event_context.merge(provider_version_number: required_verification.provider_version.number) #, debug: required_verification.provider_version_descriptions
+              event_context.merge(provider_version_number: required_verification.provider_version.number, provider_version_descriptions: required_verification.provider_version_descriptions)
             end
           end
         else

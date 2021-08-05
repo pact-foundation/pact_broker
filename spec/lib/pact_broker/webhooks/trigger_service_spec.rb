@@ -140,7 +140,7 @@ module PactBroker
                 verification,
                 TriggerService::RESOURCE_CREATION,
                 PactBroker::Webhooks::WebhookEvent::CONTRACT_REQUIRING_VERIFICATION_PUBLISHED,
-                expected_event_context.merge(provider_version_number: "1")
+                expected_event_context.merge(provider_version_number: "1", provider_version_descriptions: ["foo"])
               )
               subject
             end
