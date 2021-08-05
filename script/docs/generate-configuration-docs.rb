@@ -16,6 +16,14 @@ def escape_backticks value
   end
 end
 
+def in_backticks value
+  if value =~ /\s\(.+\)/
+    "`#{escape_backticks(value)}".gsub(" (", "` (")
+  else
+    "`#{escape_backticks(value)}`"
+  end
+end
+
 docs_dir = File.expand_path('../../../docs', __FILE__)
 environment_variable_file = File.join(docs_dir, 'configuration.yml')
 doc = YAML.load(File.read(environment_variable_file))
@@ -47,16 +55,16 @@ doc['groups'].each do | group |
     write "### #{name}\n\n"
     write "#{metadata['description']}\n\n"
 
-    write "**Required:** #{metadata['required'] || 'false'}<br/>"
+    write "**Required:** #{metadata['required'] || 'false'}<br/>" if metadata['required']
     write "**Format:** #{metadata['format']}<br/>" if metadata['format']
-    write "**Default:** `#{metadata['default']}`<br/>" if metadata['default']
+    write "**Default:** #{in_backticks(metadata['default'])}<br/>" if !metadata['default'].nil?
     if metadata['allowed_values']
-      allowed_values = metadata['allowed_values'].collect{ |val| "`#{escape_backticks(val)}`"}.join(', ')
+      allowed_values = metadata['allowed_values'].collect{ |val| in_backticks(val) }.join(', ')
       write "**Allowed values:** #{allowed_values}<br/>"
     end
-    write "**Example:** `#{metadata['example']}`<br/>" if metadata['example']
+    write "**Example:** #{in_backticks(metadata['example']) }<br/>" if metadata['example']
     if metadata['examples']
-      allowed_values = metadata['examples'].collect{ |val| "`#{escape_backticks(val)}`"}.join(', ')
+      allowed_values = metadata['examples'].collect{ |val| in_backticks(val) }.join(', ')
       write "**Examples:** #{allowed_values}<br/>"
     end
     write "**More information:** #{metadata['more_info']}<br/>" if metadata['more_info']
