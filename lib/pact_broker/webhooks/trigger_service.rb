@@ -47,19 +47,6 @@ module PactBroker
         end
       end
 
-      # private
-      def create_triggered_webhooks_for_webhooks webhooks, pact, verification, event_name, event_context
-        webhooks.flat_map do | webhook |
-          expanded_event_contexts = expand_events_for_currently_deployed_environments(webhook, pact, event_context)
-          expanded_event_contexts = expanded_event_contexts.flat_map { | ec | expand_events_for_verification_of_multiple_selected_pacts(ec) }
-
-          expanded_event_contexts.collect do | expanded_event_context |
-            pact_for_triggered_webhook = verification ? find_pact_for_verification_triggered_webhook(pact, expanded_event_context) : pact
-            webhook_repository.create_triggered_webhook(next_uuid, webhook, pact_for_triggered_webhook, verification, RESOURCE_CREATION, event_name, expanded_event_context)
-          end
-        end
-      end
-
       def schedule_webhooks(triggered_webhooks, options)
         triggered_webhooks.each_with_index do | triggered_webhook, i |
           logger.info "Scheduling job for webhook with uuid #{triggered_webhook.webhook.uuid}, context: #{triggered_webhook.event_context}"
@@ -76,7 +63,19 @@ module PactBroker
         end
       end
 
-      private
+      def create_triggered_webhooks_for_webhooks webhooks, pact, verification, event_name, event_context
+        webhooks.flat_map do | webhook |
+          expanded_event_contexts = expand_events_for_currently_deployed_environments(webhook, pact, event_context)
+          expanded_event_contexts = expand_events_for_required_verifications(event_name, pact, expanded_event_contexts)
+          expanded_event_contexts = expanded_event_contexts.flat_map { | ec | expand_events_for_verification_of_multiple_selected_pacts(ec) }
+
+          expanded_event_contexts.collect do | expanded_event_context |
+            pact_for_triggered_webhook = verification ? find_pact_for_verification_triggered_webhook(pact, expanded_event_context) : pact
+            webhook_repository.create_triggered_webhook(next_uuid, webhook, pact_for_triggered_webhook, verification, RESOURCE_CREATION, event_name, expanded_event_context)
+          end
+        end
+      end
+      private :create_triggered_webhooks_for_webhooks
 
       def merge_consumer_version_selectors(consumer_version_number, selectors, event_context)
         event_context.merge(
@@ -84,6 +83,7 @@ module PactBroker
           consumer_version_tags: selectors.collect{ | selector | selector[:tag] }.compact.uniq
         )
       end
+      private :merge_consumer_version_selectors
 
       # Now that we de-duplicate the pact contents when verifying though the 'pacts for verification' API,
       # we no longer get a webhook triggered for the verification results publication of each indiviual
@@ -103,6 +103,7 @@ module PactBroker
           [event_context]
         end
       end
+      private :expand_events_for_verification_of_multiple_selected_pacts
 
       def expand_events_for_currently_deployed_environments(webhook, pact, event_context)
         if PactBroker.feature_enabled?(:expand_currently_deployed_provider_versions) && webhook.expand_currently_deployed_provider_versions?
@@ -113,6 +114,7 @@ module PactBroker
           [event_context]
         end
       end
+      private :expand_events_for_currently_deployed_environments
 
       def find_pact_for_verification_triggered_webhook(pact, reconstituted_event_context)
         if reconstituted_event_context[:consumer_version_number]
@@ -124,6 +126,20 @@ module PactBroker
           pact_service.find_pact(find_pact_params) || pact
         else
           pact
+        end
+      end
+      private :find_pact_for_verification_triggered_webhook
+
+      def expand_events_for_required_verifications(event_name, pact, event_contexts)
+        if event_name == PactBroker::Webhooks::WebhookEvent::CONTRACT_REQUIRING_VERIFICATION_PUBLISHED
+          required_verifications = verification_service.calculate_required_verifications_for_pact(pact)
+          event_contexts.flat_map do | event_context |
+            required_verifications.collect do | required_verification |
+              event_context.merge(provider_version_number: required_verification.provider_version.number, provider_version_descriptions: required_verification.provider_version_descriptions)
+            end
+          end
+        else
+          event_contexts
         end
       end
     end

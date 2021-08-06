@@ -12,8 +12,9 @@ module PactBroker
       VERIFICATION_SUCCEEDED = "provider_verification_succeeded"
       VERIFICATION_FAILED = "provider_verification_failed"
       DEFAULT_EVENT_NAME = CONTRACT_CONTENT_CHANGED
+      CONTRACT_REQUIRING_VERIFICATION_PUBLISHED = "contract_requiring_verification_published"
 
-      EVENT_NAMES = [CONTRACT_PUBLISHED, CONTRACT_CONTENT_CHANGED, VERIFICATION_PUBLISHED, VERIFICATION_SUCCEEDED, VERIFICATION_FAILED]
+      EVENT_NAMES = [CONTRACT_PUBLISHED, CONTRACT_CONTENT_CHANGED, VERIFICATION_PUBLISHED, VERIFICATION_SUCCEEDED, VERIFICATION_FAILED, CONTRACT_REQUIRING_VERIFICATION_PUBLISHED]
 
       dataset_module do
         include PactBroker::Repositories::Helpers
@@ -37,6 +38,10 @@ module PactBroker
 
       def provider_verification_failed?
         name == VERIFICATION_FAILED
+      end
+
+      def contract_requiring_verification_published?
+        name == CONTRACT_REQUIRING_VERIFICATION_PUBLISHED
       end
     end
   end

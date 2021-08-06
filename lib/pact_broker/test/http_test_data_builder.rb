@@ -180,17 +180,19 @@ module PactBroker
         self
       end
 
-      def create_global_webhook_for_contract_changed(uuid: nil, url: "https://postman-echo.com/post", body: nil)
+      def create_global_webhook_for_event(uuid: nil, url: "https://postman-echo.com/post", body: nil, event_name: )
         puts "Creating global webhook for contract changed event with uuid #{uuid}"
         uuid ||= SecureRandom.uuid
         default_body = {
-          "deployedProviderVersion" => "${pactbroker.currentlyDeployedProviderVersionNumber}",
+          "providerVersionNumber" => "${pactbroker.providerVersionNumber}",
+          "providerVersionBranch" => "${pactbroker.providerVersionBranch}",
+          "consumerVersionNumber" => "${pactbroker.consumerVersionNumber}",
           "consumerVersionBranch" => "${pactbroker.consumerVersionBranch}"
         }
         request_body = {
           "description" => "A webhook for all consumers and providers",
           "events" => [{
-            "name" => "contract_content_changed"
+            "name" => event_name
           }],
           "request" => {
             "method" => "POST",
@@ -202,6 +204,10 @@ module PactBroker
         client.put(path, request_body.to_json).tap { |response| check_for_error(response) }
         separate
         self
+      end
+
+      def create_global_webhook_for_contract_changed(uuid: nil, url: "https://postman-echo.com/post", body: nil)
+        create_global_webhook_for_event(uuid: uuid, url: url, body: body, event_name: "contract_content_changed")
       end
 
       def create_global_webhook_for_anything_published(uuid: nil, url: "https://postman-echo.com/post")

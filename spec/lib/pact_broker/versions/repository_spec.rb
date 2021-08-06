@@ -4,8 +4,6 @@ require "pact_broker/versions/repository"
 module PactBroker
   module Versions
     describe Repository do
-
-      let(:td) { TestDataBuilder.new }
       let(:pacticipant_name) { "test_pacticipant" }
       let(:version_number) { "1.2.3" }
 
@@ -174,6 +172,44 @@ module PactBroker
           it "sets the order" do
             expect(subject.order).to_not be nil
           end
+        end
+      end
+
+      describe "#find_latest_version_from_main_branch" do
+        subject { Repository.new.find_latest_version_from_main_branch(td.find_pacticipant("Foo")) }
+
+        context "when there is a version with the provider's configured main branch as the branch" do
+          before do
+            td.create_consumer("Foo", main_branch: "main")
+              .create_consumer_version("1", branch: "main")
+              .create_consumer_version("2", branch: "main")
+              .create_consumer_version("3", tag_name: "main")
+              .create_consumer_version("4", branch: "not-main")
+          end
+
+          its(:number) { is_expected.to eq "2" }
+        end
+
+        context "when there is a version with the provider's configured main branch as the tag" do
+          before do
+            td.create_consumer("Foo", main_branch: "main")
+              .create_consumer_version("1", branch: "not-main")
+              .create_consumer_version("2", branch: "not-main")
+              .create_consumer_version("3", tag_name: "main")
+              .create_consumer_version("4", branch: "not-main")
+          end
+
+          its(:number) { is_expected.to eq "3" }
+        end
+
+        context "when there are no versions with a matching branch or tag set" do
+          before do
+            td.create_consumer("Foo", main_branch: "main")
+              .create_consumer_version("1", branch: "not-main")
+              .create_consumer_version("2", tag_name: "not-main")
+          end
+
+          it { is_expected.to be_nil }
         end
       end
     end

@@ -91,6 +91,10 @@ module PactBroker
         events.any?(&:provider_verification_failed?)
       end
 
+      def trigger_on_contract_requiring_verification_published?
+        events.any?(&:contract_requiring_verification_published?)
+      end
+
       def expand_currently_deployed_provider_versions?
         request.uses_parameter?(PactBroker::Webhooks::PactAndVerificationParameters::CURRENTLY_DEPLOYED_PROVIDER_VERSION_NUMBER)
       end
