@@ -60,6 +60,8 @@ module PactBroker
         base_equality_only_on_content_that_affects_verification_results: true,
         check_for_potential_duplicate_pacticipant_names: true,
         create_deployed_versions_for_tags: true,
+        use_first_tag_as_branch: true,
+        use_first_tag_as_branch_time_limit: 10,
         semver_formats: ["%M.%m.%p%s%d", "%M.%m", "%M"],
         features: []
       )
