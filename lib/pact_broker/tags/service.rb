@@ -14,10 +14,9 @@ module PactBroker
         tag_name = args.fetch(:tag_name)
         pacticipant = pacticipant_repository.find_by_name_or_create args.fetch(:pacticipant_name)
         version = version_repository.find_by_pacticipant_id_and_number_or_create pacticipant.id, args.fetch(:pacticipant_version_number)
-        tag = tag_repository.create(version: version, name: tag_name)
         version_service.maybe_set_version_branch_from_tag(version, tag_name)
         pacticipant_service.maybe_set_main_branch(version.pacticipant, tag_name)
-        tag
+        tag_repository.create(version: version, name: tag_name)
       end
 
       def find args

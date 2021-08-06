@@ -12,6 +12,7 @@ module PactBroker
       end
       let(:pacticipant_service) { class_double("PactBroker::Pacticipants::Service").as_stubbed_const }
       let(:version_service) { class_double("PactBroker::Versions::Service").as_stubbed_const }
+      let(:tag_reposistory) { instance_double("PactBroker::Tags::Repository", create: double("tag")) }
       let(:pacticipant_name) { "test_pacticipant" }
       let(:version_number) { "1.2.3" }
       let(:tag_name) { "prod" }
@@ -27,8 +28,11 @@ module PactBroker
           expect(subject.version.pacticipant.name).to eq pacticipant_name
         end
 
-        it "calls the version_service.maybe_set_version_branch_from_tag" do
-          expect(version_service).to receive(:maybe_set_version_branch_from_tag).with(instance_of(PactBroker::Domain::Version), tag_name)
+        it "calls the version_service.maybe_set_version_branch_from_tag before creating the tag" do
+          # so that we use the version before the tag is created (we have to detect if there are no tags present)
+          allow(Service).to receive(:tag_repository).and_return(tag_reposistory)
+          expect(version_service).to receive(:maybe_set_version_branch_from_tag).with(instance_of(PactBroker::Domain::Version), tag_name).ordered
+          expect(tag_reposistory).to receive(:create).ordered
           subject
         end
 
