@@ -23,7 +23,7 @@ module PactBroker
             # Make it return a 201 by setting the Location header
             response.headers["Location"] = tag_url(base_url, tag)
           end
-          create_deployed_version
+          deployed_version_service.maybe_create_deployed_version_for_tag(tag.version, identifier_from_path[:tag_name])
           response.body = to_json
         end
 
@@ -46,19 +46,6 @@ module PactBroker
 
         def policy_name
           :'tags::tag'
-        end
-
-        def create_deployed_version
-          if create_deployed_versions_for_tags?
-            if (environment = environment_service.find_by_name(identifier_from_path[:tag_name]))
-              deployed_version_service.find_or_create(deployed_version_service.next_uuid, tag.version, environment, nil)
-            end
-          end
-        end
-
-        # Come up with a cleaner way to abstract this for PF so it can be configured per tenant
-        def create_deployed_versions_for_tags?
-          PactBroker.configuration.create_deployed_versions_for_tags
         end
       end
     end

@@ -5,6 +5,7 @@ module PactBroker
   module Deployments
     class DeployedVersionService
       extend PactBroker::Repositories::Scopes
+      extend PactBroker::Services
 
       def self.next_uuid
         SecureRandom.uuid
@@ -68,6 +69,14 @@ module PactBroker
       def self.record_version_undeployed(deployed_version)
         deployed_version.currently_deployed_version_id&.delete
         deployed_version.record_undeployed
+      end
+
+      def self.maybe_create_deployed_version_for_tag(version, environment_name)
+        if PactBroker.configuration.create_deployed_versions_for_tags
+          if (environment = environment_service.find_by_name(environment_name))
+            find_or_create(next_uuid, version, environment, nil)
+          end
+        end
       end
 
       def self.record_previous_version_undeployed(pacticipant, environment, target)

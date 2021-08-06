@@ -77,10 +77,12 @@ module PactBroker
           PactBroker.configuration.use_first_tag_as_branch &&
           ((now - version.created_at.to_datetime) * 24 * 60 * 60) <= PactBroker.configuration.use_first_tag_as_branch_time_limit
       end
+      private_class_method :use_tag_as_branch?
 
       def self.now
         Time.now.utc.to_datetime
       end
+      private_class_method :now
     end
   end
 end
