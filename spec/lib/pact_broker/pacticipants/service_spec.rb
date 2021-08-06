@@ -10,10 +10,9 @@ module PactBroker
         allow(Service).to receive(:logger).and_return(logger)
       end
 
-      let(:td) { TestDataBuilder.new }
       let(:logger) { double("logger").as_null_object }
 
-      subject{ Service }
+      subject { Service }
 
       describe ".messages_for_potential_duplicate_pacticipants" do
 
@@ -100,10 +99,35 @@ module PactBroker
         end
       end
 
+      describe ".maybe_set_main_branch" do
+        before do
+          allow(PactBroker.configuration).to receive(:auto_detect_main_branch).and_return(true)
+          allow(PactBroker.configuration).to receive(:main_branch_candidates).and_return(["foo", "bar"])
+          td.create_pacticipant("Foo", main_branch: main_branch)
+        end
+
+        let(:main_branch) { nil }
+
+        subject { Service.maybe_set_main_branch(td.find_pacticipant("Foo"), "bar") }
+
+        context "when the main branch is nil and auto_detect_main_branch=true and the potential branch is in the list of candidate main branch names" do
+          it "sets the main branch" do
+            expect(subject.main_branch).to eq "bar"
+          end
+        end
+
+        context "when the branch is already set" do
+          let(:main_branch) { "main" }
+
+          it "does not overwrite it" do
+            expect(subject.main_branch).to eq "main"
+          end
+        end
+      end
+
       describe "delete" do
         before do
-          TestDataBuilder.new
-            .create_consumer("Consumer")
+          td.create_consumer("Consumer")
             .create_label("finance")
             .create_consumer_version("2.3.4")
             .create_provider("Provider")
@@ -186,7 +210,6 @@ module PactBroker
           it "deletes the verifications" do
             expect{ delete_provider }.to change{ PactBroker::Domain::Verification.count }.by(-1)
           end
-
         end
       end
     end

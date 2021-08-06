@@ -99,6 +99,10 @@ module PactBroker
         string_match_query = Sequel.|( *terms.map { |term| Sequel.ilike(Sequel[:pacticipants][:name], "%#{term}%") })
         PactBroker::Domain::Pacticipant.where(string_match_query)
       end
+
+      def set_main_branch(pacticipant, main_branch)
+        pacticipant.update(main_branch: main_branch)
+      end
     end
   end
 end

@@ -62,6 +62,8 @@ module PactBroker
         create_deployed_versions_for_tags: true,
         use_first_tag_as_branch: true,
         use_first_tag_as_branch_time_limit: 10,
+        auto_detect_main_branch: true,
+        main_branch_candidates: ["develop", "main", "master"],
         semver_formats: ["%M.%m.%p%s%d", "%M.%m", "%M"],
         features: []
       )

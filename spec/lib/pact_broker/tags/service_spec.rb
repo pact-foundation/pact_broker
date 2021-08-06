@@ -5,14 +5,19 @@ module PactBroker
   module Tags
     describe Service do
       before do
-        allow(PactBroker.configuration).to receive(:use_first_tag_as_branch).and_return(use_first_tag_as_branch)
+        allow(Service).to receive(:version_service).and_return(version_service)
+        allow(Service).to receive(:pacticipant_service).and_return(pacticipant_service)
+        allow(version_service).to receive(:maybe_set_version_branch_from_tag)
+        allow(pacticipant_service).to receive(:maybe_set_main_branch)
       end
+      let(:pacticipant_service) { class_double("PactBroker::Pacticipants::Service").as_stubbed_const }
+      let(:version_service) { class_double("PactBroker::Versions::Service").as_stubbed_const }
+      let(:tag_reposistory) { instance_double("PactBroker::Tags::Repository", create: double("tag")) }
       let(:pacticipant_name) { "test_pacticipant" }
       let(:version_number) { "1.2.3" }
       let(:tag_name) { "prod" }
       let(:options) { { pacticipant_name: pacticipant_name, pacticipant_version_number: version_number, tag_name: tag_name }}
       let(:use_first_tag_as_branch) { false }
-
 
       describe ".create" do
         subject { Service.create(options) }
@@ -23,82 +28,17 @@ module PactBroker
           expect(subject.version.pacticipant.name).to eq pacticipant_name
         end
 
-        context "when use_first_tag_as_branch_time_limit is true" do
-          let(:use_first_tag_as_branch) { true }
+        it "calls the version_service.maybe_set_version_branch_from_tag before creating the tag" do
+          # so that we use the version before the tag is created (we have to detect if there are no tags present)
+          allow(Service).to receive(:tag_repository).and_return(tag_reposistory)
+          expect(version_service).to receive(:maybe_set_version_branch_from_tag).with(instance_of(PactBroker::Domain::Version), tag_name).ordered
+          expect(tag_reposistory).to receive(:create).ordered
+          subject
+        end
 
-          context "when there is already a tag" do
-            before do
-              td.create_consumer(pacticipant_name)
-                .create_consumer_version(version_number, tag_name: "foo")
-            end
-
-            it "does not set the branch" do
-              subject
-              expect(td.find_version(pacticipant_name, version_number).branch).to be_nil
-            end
-          end
-
-          context "when the branch is already set" do
-            before do
-              td.create_consumer(pacticipant_name)
-                .create_consumer_version(version_number, branch: "foo")
-            end
-
-            it "does not update the branch" do
-              subject
-              expect(td.find_version(pacticipant_name, version_number).branch).to eq "foo"
-            end
-          end
-
-          context "when use_first_tag_as_branch is false" do
-            let(:use_first_tag_as_branch) { false }
-
-            it "does not set the branch" do
-              subject
-              expect(td.find_version(pacticipant_name, version_number).branch).to be_nil
-            end
-          end
-
-          context "when the version was outside of the time difference limit" do
-            before do
-              version = td.create_consumer(pacticipant_name)
-                .create_consumer_version(version_number)
-                .and_return(:consumer_version)
-
-              version.update(created_at: created_at)
-              allow(PactBroker.configuration).to receive(:use_first_tag_as_branch_time_limit).and_return(10)
-              allow(Time).to receive(:now).and_return(td.in_utc { Time.new(2021, 1, 2, 10, 10, 11) } )
-            end
-
-            let(:created_at) { td.in_utc { Time.new(2021, 1, 2, 10, 10, 0) }.to_datetime  }
-
-            let(:one_second) { 1/(24 * 60 * 60) }
-
-            it "does not set the branch" do
-              subject
-              expect(td.find_version(pacticipant_name, version_number).branch).to be_nil
-            end
-          end
-
-          context "when the version was created within the limit" do
-            before do
-              version = td.create_consumer(pacticipant_name)
-                .create_consumer_version(version_number)
-                .and_return(:consumer_version)
-
-              version.update(created_at: created_at)
-              allow(PactBroker.configuration).to receive(:use_first_tag_as_branch_time_limit).and_return(10)
-              allow(Time).to receive(:now).and_return(td.in_utc { Time.new(2021, 1, 2, 10, 10, 10) } )
-            end
-
-            let(:created_at) { td.in_utc { Time.new(2021, 1, 2, 10, 10, 0) }.to_datetime  }
-            let(:one_second) { 1/(24 * 60 * 60) }
-
-            it "sets the branch" do
-              subject
-              expect(td.find_version(pacticipant_name, version_number).branch).to eq "prod"
-            end
-          end
+        it "calls the pacticipant_service.maybe_set_main_branch" do
+          expect(pacticipant_service).to receive(:maybe_set_main_branch).with(instance_of(PactBroker::Domain::Pacticipant), tag_name)
+          subject
         end
       end
 
