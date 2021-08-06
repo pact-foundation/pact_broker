@@ -7,17 +7,17 @@ module PactBroker
     module Service
       extend self
       extend PactBroker::Repositories
+      extend PactBroker::Services
       include PactBroker::Logging
 
       def create args
         tag_name = args.fetch(:tag_name)
         pacticipant = pacticipant_repository.find_by_name_or_create args.fetch(:pacticipant_name)
         version = version_repository.find_by_pacticipant_id_and_number_or_create pacticipant.id, args.fetch(:pacticipant_version_number)
-        if use_tag_as_branch?(version) && !version.branch
-          logger.info "Setting #{version.pacticipant.name} version #{version.number} branch to '#{tag_name}' from first tag (because use_first_tag_as_branch=true)"
-          version_repository.set_branch_if_unset(version, tag_name)
-        end
-        tag_repository.create version: version, name: tag_name
+        tag = tag_repository.create(version: version, name: tag_name)
+        version_service.maybe_set_version_branch_from_tag(version, tag_name)
+        pacticipant_service.maybe_set_main_branch(version.pacticipant, tag_name)
+        tag
       end
 
       def find args
@@ -32,16 +32,6 @@ module PactBroker
 
       def find_all_tag_names_for_pacticipant pacticipant_name
         tag_repository.find_all_tag_names_for_pacticipant pacticipant_name
-      end
-
-      def use_tag_as_branch?(version)
-        version.tags.count == 0 &&
-          PactBroker.configuration.use_first_tag_as_branch &&
-          ((now - version.created_at.to_datetime) * 24 * 60 * 60) <= PactBroker.configuration.use_first_tag_as_branch_time_limit
-      end
-
-      def now
-        Time.now.utc.to_datetime
       end
     end
   end

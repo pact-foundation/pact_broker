@@ -1,3 +1,4 @@
+require "pact_broker/logging"
 require "pact_broker/repositories"
 require "pact_broker/messages"
 
@@ -6,6 +7,8 @@ module PactBroker
     class Service
       extend PactBroker::Messages
       extend PactBroker::Repositories
+      extend PactBroker::Services
+      include PactBroker::Logging
 
       def self.conflict_errors(_existing_version, _open_struct_version, _version_url)
         # This validation is causing problems in the PF build when branches are merged
@@ -38,12 +41,16 @@ module PactBroker
 
       def self.create_or_overwrite(pacticipant_name, version_number, version)
         pacticipant = pacticipant_repository.find_by_name_or_create(pacticipant_name)
-        version_repository.create_or_overwrite(pacticipant, version_number, version)
+        version = version_repository.create_or_overwrite(pacticipant, version_number, version)
+        pacticipant_service.maybe_set_main_branch(pacticipant, version.branch)
+        version
       end
 
       def self.create_or_update(pacticipant_name, version_number, version)
         pacticipant = pacticipant_repository.find_by_name_or_create(pacticipant_name)
-        version_repository.create_or_update(pacticipant, version_number, version)
+        version = version_repository.create_or_update(pacticipant, version_number, version)
+        pacticipant_service.maybe_set_main_branch(pacticipant, version.branch)
+        version
       end
 
       def self.find_latest_version_from_main_branch(pacticipant)
@@ -56,6 +63,23 @@ module PactBroker
         pact_repository.delete_by_version_id version.id
         verification_repository.delete_by_provider_version_id version.id
         version_repository.delete_by_id version.id
+      end
+
+      def self.maybe_set_version_branch_from_tag(version, tag_name)
+        if use_tag_as_branch?(version) && !version.branch
+          logger.info "Setting #{version.pacticipant.name} version #{version.number} branch to '#{tag_name}' from first tag (because use_first_tag_as_branch=true)"
+          version_repository.set_branch_if_unset(version, tag_name)
+        end
+      end
+
+      def self.use_tag_as_branch?(version)
+        version.tags.count == 0 &&
+          PactBroker.configuration.use_first_tag_as_branch &&
+          ((now - version.created_at.to_datetime) * 24 * 60 * 60) <= PactBroker.configuration.use_first_tag_as_branch_time_limit
+      end
+
+      def self.now
+        Time.now.utc.to_datetime
       end
     end
   end

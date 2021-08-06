@@ -7,8 +7,8 @@ begin
 
   td = PactBroker::Test::HttpTestDataBuilder.new(base_url)
   td.create_global_webhook_for_event(uuid: "7a5da39c-8e50-4cc9-ae16-dfa5be043e8c", event_name: "contract_requiring_verification_published")
-    .delete_by_pacticipant("NewWebhookTestConsumer")
-    .delete_by_pacticipant("NewWebhookTestProvider")
+    .delete_pacticipant("NewWebhookTestConsumer")
+    .delete_pacticipant("NewWebhookTestProvider")
     .create_environment(name: "test")
     .create_environment(name: "prod", production: true)
     .create_pacticipant("NewWebhookTestConsumer", main_branch: "main")

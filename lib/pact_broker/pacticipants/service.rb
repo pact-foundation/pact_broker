@@ -4,7 +4,6 @@ require "pact_broker/messages"
 require "pact_broker/pacticipants/find_potential_duplicate_pacticipant_names"
 
 module PactBroker
-
   module Pacticipants
     class Service
 
@@ -89,6 +88,15 @@ module PactBroker
 
       def self.pacticipant_names
         pacticipant_repository.pacticipant_names
+      end
+
+      def self.maybe_set_main_branch(pacticipant, potential_main_branch)
+        if pacticipant.main_branch.nil? && PactBroker.configuration.auto_detect_main_branch && PactBroker.configuration.main_branch_candidates.include?(potential_main_branch)
+          logger.info "Setting #{pacticipant.name} main_branch to '#{potential_main_branch}' (because the #{pacticipant.name} main_branch was nil and auto_detect_main_branch=true)"
+          pacticipant_repository.set_main_branch(pacticipant, potential_main_branch)
+        else
+          pacticipant
+        end
       end
     end
   end
