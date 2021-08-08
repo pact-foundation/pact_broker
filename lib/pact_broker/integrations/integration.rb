@@ -64,6 +64,10 @@ module PactBroker
       def latest_verification_publication_date
         latest_verification&.execution_date
       end
+
+      def <=>(other)
+        [consumer.name.downcase, provider.name.downcase] <=> [other.consumer.name.downcase, other.provider.name.downcase]
+      end
     end
   end
 end

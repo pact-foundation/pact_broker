@@ -4,6 +4,7 @@ require "pact_broker/logging"
 require "pact_broker/integrations/integration"
 require "pact_broker/db/models"
 require "pact_broker/repositories/helpers"
+require "pact_broker/repositories/scopes"
 
 module PactBroker
   module Integrations
@@ -11,6 +12,7 @@ module PactBroker
       extend PactBroker::Repositories
       extend PactBroker::Services
       include PactBroker::Logging
+      extend PactBroker::Repositories::Scopes
 
       def self.find_all
         # The only reason the pact_version needs to be loaded is that
@@ -60,8 +62,8 @@ module PactBroker
         end
       end
 
-      def self.scope_for(scope)
-        PactBroker.policy_scope!(scope)
+      def self.find_for_provider(provider)
+        scope_for(PactBroker::Integrations::Integration).where(provider_id: provider.id).eager(:consumer).eager(:provider).all.sort
       end
     end
   end

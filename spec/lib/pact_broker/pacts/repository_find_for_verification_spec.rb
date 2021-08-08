@@ -15,26 +15,112 @@ module PactBroker
         subject { Repository.new.find_for_verification("Bar", consumer_version_selectors) }
 
         context "when there are no selectors" do
-          before do
-            td.create_pact_with_hierarchy("Foo", "foo-latest-prod-version", "Bar")
-              .create_consumer_version_tag("prod")
-              .create_consumer_version("not-latest-dev-version", tag_names: ["dev"])
-              .comment("next pact not selected")
-              .create_pact
-              .create_consumer_version("foo-latest-dev-version", tag_names: ["dev"])
-              .create_pact
-              .create_consumer("Baz")
-              .create_consumer_version("baz-latest-dev-version", tag_names: ["dev"])
-              .create_pact
-          end
+
+          let(:foo_main_branch) { nil }
 
           let(:consumer_version_selectors) { Selectors.new }
 
-          it "returns the latest pact for each consumer" do
-            expect(subject.size).to eq 2
-            expect(find_by_consumer_name_and_consumer_version_number("Foo", "foo-latest-dev-version")).to_not be nil
-            expect(find_by_consumer_name_and_consumer_version_number("Baz", "baz-latest-dev-version")).to_not be nil
-            expect(subject.all?(&:overall_latest?)).to be true
+          context "when there is no main branch version" do
+            before do
+              td.create_consumer("Foo")
+                .create_pact_with_hierarchy("Foo", "foo-latest-prod-version", "Bar")
+                .create_consumer_version_tag("prod")
+                .create_consumer_version("not-latest-dev-version", tag_names: ["dev"])
+                .comment("next pact not selected")
+                .create_pact
+                .create_consumer_version("foo-latest-dev-version", tag_names: ["dev"])
+                .create_pact
+                .create_consumer("Baz")
+                .create_consumer_version("baz-latest-dev-version", tag_names: ["dev"])
+                .create_pact
+            end
+
+            it "returns the latest pact for each consumer" do
+              expect(subject.size).to eq 2
+              expect(find_by_consumer_name_and_consumer_version_number("Foo", "foo-latest-dev-version")).to_not be nil
+              expect(find_by_consumer_name_and_consumer_version_number("Baz", "baz-latest-dev-version")).to_not be nil
+              expect(subject.all?(&:overall_latest?)).to be true
+            end
+          end
+
+          context "when there is a version from the main branch" do
+            before do
+              td.create_consumer("Foo", main_branch: "main")
+                .create_consumer_version("1", branch: "main")
+                .create_provider("Bar")
+                .create_pact
+                .create_pact_with_hierarchy("Foo", "2", "Bar")
+            end
+
+            it "returns the latest version from the main branch" do
+              expect(subject.size).to eq 1
+              expect(find_by_consumer_name_and_consumer_version_number("Foo", "1")).to_not be_nil
+              expect(subject.first.selectors.first).to be_latest_for_main_branch
+            end
+          end
+
+          context "when there is a version with a tag with the name of the main branch" do
+            before do
+              td.create_consumer("Foo", main_branch: "main")
+                .create_consumer_version("1", tag_name: "main")
+                .create_provider("Bar")
+                .create_pact
+                .create_pact_with_hierarchy("Foo", "2", "Bar")
+            end
+
+            it "returns the latest version from the main branch" do
+              expect(subject.size).to eq 1
+              expect(find_by_consumer_name_and_consumer_version_number("Foo", "1")).to_not be_nil
+              expect(subject.first.selectors.first).to be_latest_for_tag
+              expect(subject.first.selectors.first.tag).to eq "main"
+            end
+          end
+
+          context "when there is a not version from the main branch" do
+            before do
+              td.create_pact_with_hierarchy("Foo", "1", "Bar")
+                .create_pact_with_hierarchy("Foo", "2", "Bar")
+            end
+
+            it "returns the latest version from the main branch" do
+              expect(subject.size).to eq 1
+              expect(find_by_consumer_name_and_consumer_version_number("Foo", "2")).to_not be_nil
+              expect(subject.first.selectors.first).to be_overall_latest
+            end
+          end
+
+          context "when there are currently deployed versons" do
+            before do
+              td.create_environment("test")
+                .create_pact_with_hierarchy("Foo", "1", "Bar")
+                .create_deployed_version_for_consumer_version(currently_deployed: false)
+                .create_pact_with_hierarchy("Foo", "2", "Bar")
+                .create_deployed_version_for_consumer_version
+                .create_pact_with_hierarchy("Foo", "3", "Bar")
+            end
+
+            it "returns the currently deployed pacts" do
+              expect(find_by_consumer_name_and_consumer_version_number("Foo", "1")).to be_nil
+              expect(find_by_consumer_name_and_consumer_version_number("Foo", "2")).to_not be_nil
+              expect(find_by_consumer_name_and_consumer_version_number("Foo", "2").selectors.first).to be_currently_deployed
+            end
+          end
+
+          context "when there are currently released+supported versions" do
+            before do
+              td.create_environment("test")
+                .create_pact_with_hierarchy("Foo", "1", "Bar")
+                .create_released_version_for_consumer_version(currently_supported: false)
+                .create_pact_with_hierarchy("Foo", "2", "Bar")
+                .create_released_version_for_consumer_version
+                .create_pact_with_hierarchy("Foo", "3", "Bar")
+            end
+
+            it "returns the currently deployed pacts" do
+              expect(find_by_consumer_name_and_consumer_version_number("Foo", "1")).to be_nil
+              expect(find_by_consumer_name_and_consumer_version_number("Foo", "2")).to_not be_nil
+              expect(find_by_consumer_name_and_consumer_version_number("Foo", "2").selectors.first).to be_currently_supported
+            end
           end
         end
 
@@ -267,7 +353,7 @@ module PactBroker
           end
 
           it "does not set the tag name" do
-            expect(find_by_consumer_version_number("foo-latest-dev-version").selectors).to eq [ResolvedSelector.new({ latest: true }, PactBroker::Domain::Version.find(number: "foo-latest-dev-version"))]
+            expect(find_by_consumer_version_number("foo-latest-dev-version").selectors).to eq [ResolvedSelector.new({ latest: true, consumer: "Foo" }, PactBroker::Domain::Version.find(number: "foo-latest-dev-version"))]
             expect(find_by_consumer_version_number("foo-latest-dev-version").overall_latest?).to be true
           end
         end

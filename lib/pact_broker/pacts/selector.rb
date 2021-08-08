@@ -101,7 +101,7 @@ module PactBroker
       end
 
       def currently_deployed?
-        currently_deployed
+        !!currently_deployed
       end
 
       def currently_supported= currently_supported
@@ -113,7 +113,7 @@ module PactBroker
       end
 
       def currently_supported?
-        currently_supported
+        !!currently_supported
       end
 
       def environment_name= environment_name
@@ -202,6 +202,10 @@ module PactBroker
 
       def self.from_hash hash
         Selector.new(hash)
+      end
+
+      def for_consumer(consumer)
+        Selector.new(to_h.merge(consumer: consumer))
       end
 
       def latest_for_main_branch?

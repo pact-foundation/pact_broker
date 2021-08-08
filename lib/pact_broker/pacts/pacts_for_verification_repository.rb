@@ -99,39 +99,58 @@ module PactBroker
         end
       end
 
-      # rubocop: disable Metrics/CyclomaticComplexity
       def find_pacts_by_selector(provider_name, consumer_version_selectors)
         provider = pacticipant_repository.find_by_name(provider_name)
 
-        selectors = if consumer_version_selectors.empty?
-                      Selectors.create_for_overall_latest
-                    else
-                      consumer_version_selectors.select(&:all_for_tag?) +
-                        consumer_version_selectors.select(&:latest_for_tag?) +
-                        consumer_version_selectors.select(&:latest_for_branch?) +
-                        consumer_version_selectors.select(&:latest_for_main_branch?) +
-                        consumer_version_selectors.select(&:overall_latest?) +
-                        consumer_version_selectors.select(&:currently_deployed?) +
-                        consumer_version_selectors.select(&:currently_supported?)
-                    end
-
-        selectors.flat_map do | selector |
+        specified_selectors_or_defaults(consumer_version_selectors, provider).flat_map do | selector |
           query = scope_for(PactPublication).for_provider_and_consumer_version_selector(provider, selector)
           query.all.collect do | pact_publication |
-            resolved_selector = if selector.currently_deployed? || selector.currently_supported?
-                                  environment = environment_service.find_by_name(pact_publication.values.fetch(:environment_name))
-                                  selector.resolve_for_environment(pact_publication.consumer_version, environment, pact_publication.values[:target])
-                                else
-                                  selector.resolve(pact_publication.consumer_version)
-                                end
-            SelectedPact.new(
-              pact_publication.to_domain,
-              Selectors.new(resolved_selector)
-            )
+            create_selected_pact(pact_publication, selector)
           end
         end
       end
-      # rubocop: enable Metrics/CyclomaticComplexity
+
+      def create_selected_pact(pact_publication, selector)
+        resolved_selector = if selector.currently_deployed? || selector.currently_supported?
+                              environment = environment_service.find_by_name(pact_publication.values.fetch(:environment_name))
+                              selector.resolve_for_environment(pact_publication.consumer_version, environment, pact_publication.values[:target])
+                            else
+                              selector.resolve(pact_publication.consumer_version)
+                            end
+        SelectedPact.new(pact_publication.to_domain, Selectors.new(resolved_selector))
+      end
+
+      def specified_selectors_or_defaults(consumer_version_selectors, provider)
+        if consumer_version_selectors.empty?
+          default_selectors(provider)
+        else
+          consumer_version_selectors
+        end
+      end
+
+      def default_selectors(provider)
+        selectors = selector_for_latest_main_version_or_overall_latest(provider)
+        selectors << Selector.for_currently_deployed
+        selectors << Selector.for_currently_supported
+        selectors
+      end
+
+      def selector_for_latest_main_version_or_overall_latest(provider)
+        selectors = Selectors.new
+        consumers = integration_service.find_for_provider(provider).collect(&:consumer)
+
+        consumers.collect do | consumer |
+          if consumer.main_branch && PactBroker::Domain::Version.for_selector(PactBroker::Matrix::UnresolvedSelector.new(branch: consumer.main_branch, latest: true)).any?
+            selectors << Selector.for_main_branch.for_consumer(consumer.name)
+          elsif consumer.main_branch && PactBroker::Domain::Version.for_selector(PactBroker::Matrix::UnresolvedSelector.new(tag: consumer.main_branch, latest: true)).any?
+            selectors << Selector.latest_for_tag(consumer.main_branch).for_consumer(consumer.name)
+          else
+            selectors << Selector.overall_latest.for_consumer(consumer.name)
+          end
+        end
+
+        selectors
+      end
 
       def find_pacts_for_which_the_latest_version_for_the_fallback_tag_is_required(provider_name, selectors)
         selectors.collect do | selector |

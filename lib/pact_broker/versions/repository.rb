@@ -133,7 +133,7 @@ module PactBroker
         version.update(branch: branch) if version.branch.nil?
         version
       end
-      
+
       def find_latest_version_from_main_branch(pacticipant)
         if pacticipant.main_branch
           latest_from_main_branch = PactBroker::Domain::Version
