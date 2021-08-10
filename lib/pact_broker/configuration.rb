@@ -40,7 +40,6 @@ module PactBroker
       @api_error_reporters = []
     end
 
-    # rubocop: disable Metrics/MethodLength
     def self.default_configuration
       require "pact_broker/versions/parse_semantic_version"
       require "pact_broker/pacts/generate_sha"
@@ -76,7 +75,6 @@ module PactBroker
       }
       config
     end
-    # rubocop: enable Metrics/MethodLength
 
     def logger_from_runtime_configuration
       @logger_from_runtime_configuration ||= begin
