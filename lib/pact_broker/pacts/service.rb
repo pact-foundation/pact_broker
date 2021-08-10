@@ -157,7 +157,7 @@ module PactBroker
       end
 
       def disallowed_modification?(existing_pact, new_json_content)
-        !PactBroker.configuration.allow_contract_modification && existing_pact && existing_pact.pact_version_sha != generate_sha(new_json_content)
+        !PactBroker.configuration.allow_dangerous_contract_modification && existing_pact && existing_pact.pact_version_sha != generate_sha(new_json_content)
       end
 
       private :update_pact

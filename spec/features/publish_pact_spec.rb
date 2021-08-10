@@ -30,12 +30,12 @@ describe "Publishing a pact" do
 
     before do
       td.create_pact_with_hierarchy("A Consumer", "1.2.3", "A Provider").and_return(:pact)
-      allow(PactBroker.configuration).to receive(:allow_contract_modification).and_return(allow_contract_modification)
+      allow(PactBroker.configuration).to receive(:allow_dangerous_contract_modification).and_return(allow_dangerous_contract_modification)
     end
 
     context "when the content is different" do
       context "when pact modification is allowed" do
-        let(:allow_contract_modification) { true }
+        let(:allow_dangerous_contract_modification) { true }
 
         it "returns a 200 Success" do
           expect(subject.status).to be 200
@@ -52,7 +52,7 @@ describe "Publishing a pact" do
     end
 
     context "when pact modification is not allowed" do
-      let(:allow_contract_modification) { false }
+      let(:allow_dangerous_contract_modification) { false }
 
       its(:status) { is_expected.to eq 409 }
       its(:body) { is_expected.to include "Cannot change the content of the pact for A Consumer version 1.2.3" }
