@@ -86,26 +86,6 @@ module PactBroker
         end
       end
 
-      describe "SETTING_NAMES" do
-        let(:configuration) { PactBroker::Configuration.new}
-
-        Configuration::SAVABLE_SETTING_NAMES.each do | setting_name |
-          describe setting_name do
-            it "exists as a method on a PactBroker::Configuration instance" do
-              expect(configuration).to respond_to(setting_name)
-            end
-          end
-        end
-      end
-
-      describe "save_to_database" do
-        let(:configuration) { PactBroker::Configuration.default_configuration }
-
-        it "saves the configuration to the database" do
-          expect { configuration.save_to_database }.to change { PactBroker::Config::Setting.count }.by(Configuration::SAVABLE_SETTING_NAMES.size)
-        end
-      end
-
       describe "load_from_database!" do
         let(:configuration) { PactBroker::Configuration.new }
 

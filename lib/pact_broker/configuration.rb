@@ -19,34 +19,8 @@ module PactBroker
 
     delegate PactBroker::Config::RuntimeConfiguration.getter_and_setter_method_names => :runtime_configuration
 
-    SAVABLE_SETTING_NAMES = [
-      :order_versions_by_date,
-      :use_case_sensitive_resource_names,
-      :enable_public_badge_access,
-      :shields_io_base_url,
-      :check_for_potential_duplicate_pacticipant_names,
-      :webhook_retry_schedule,
-      :semver_formats,
-      :disable_ssl_verification,
-      :webhook_http_method_whitelist,
-      :webhook_scheme_whitelist,
-      :webhook_host_whitelist,
-      :webhook_http_code_success,
-      :base_equality_only_on_content_that_affects_verification_results,
-      :seed_example_data,
-      :badge_provider_mode,
-      :warning_error_class_names,
-      :base_urls,
-      :log_dir,
-      :allow_missing_migration_files,
-      :auto_migrate_db_data,
-      :use_rack_protection,
-      :create_deployed_versions_for_tags,
-      :metrics_sql_statement_timeout
-    ]
-
     attr_accessor :database_connection
-    attr_accessor :example_data_seeder, :seed_example_data
+    attr_accessor :example_data_seeder
     attr_accessor :html_pact_renderer, :version_parser, :sha_generator
     attr_accessor :content_security_policy, :hal_browser_content_security_policy_overrides
     attr_accessor :api_error_reporters
@@ -75,7 +49,6 @@ module PactBroker
       config.html_pact_renderer = default_html_pact_render
       config.version_parser = PactBroker::Versions::ParseSemanticVersion
       config.sha_generator = PactBroker::Pacts::GenerateSha
-      config.seed_example_data = true
       config.example_data_seeder = lambda do
         require "pact_broker/db/seed_example_data"
         PactBroker::DB::SeedExampleData.call
@@ -133,7 +106,10 @@ module PactBroker
     end
 
     def log_configuration
+      logger.info "------------------------------------------------------------------------"
+      logger.info "PACT BROKER CONFIGURATION:"
       runtime_configuration.log_configuration(logger)
+      logger.info "------------------------------------------------------------------------"
     end
 
     def self.default_html_pact_render
@@ -214,16 +190,10 @@ module PactBroker
       self.enable_public_badge_access = enable_badge_resources
     end
 
-    def save_to_database
-      # Can't require a Sequel::Model class before the connection has been set
-      require "pact_broker/config/save"
-      PactBroker::Config::Save.call(self, SAVABLE_SETTING_NAMES)
-    end
-
     def load_from_database!
       # Can't require a Sequel::Model class before the connection has been set
       require "pact_broker/config/load"
-      PactBroker::Config::Load.call(self)
+      PactBroker::Config::Load.call(runtime_configuration)
     end
   end
 end

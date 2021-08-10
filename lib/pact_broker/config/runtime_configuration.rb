@@ -24,7 +24,8 @@ module PactBroker
         log_level: :info,
         log_format: nil,
         warning_error_class_names: ["Sequel::ForeignKeyConstraintViolation"],
-        hide_pactflow_messages: false
+        hide_pactflow_messages: false,
+        log_configuration_on_startup: true
       )
 
       on_load :validate_logging_attributes!
@@ -65,6 +66,7 @@ module PactBroker
         auto_detect_main_branch: true,
         main_branch_candidates: ["develop", "main", "master"],
         semver_formats: ["%M.%m.%p%s%d", "%M.%m", "%M"],
+        seed_example_data: true,
         features: []
       )
 

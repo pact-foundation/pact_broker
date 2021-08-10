@@ -20,19 +20,16 @@ module PactBroker
 
       module InstanceMethods
         def log_configuration(logger)
-          logger.info "------------------------------------------------------------------------"
-          logger.info "PACT BROKER CONFIGURATION:"
           to_source_trace.sort_by { |key, _| key }.each { |key, value| log_config_inner(key, value, logger) }
-          logger.info "------------------------------------------------------------------------"
         end
 
         def log_config_inner(key, value, logger)
           if !value.has_key? :value
             value.sort_by { |inner_key, _| inner_key }.each { |inner_key, inner_value| log_config_inner("#{key}:#{inner_key}", inner_value) }
           elsif self.class.sensitive_value?(key)
-            logger.info "#{key}=#{redact(key, value[:value])} source=[#{value[:source]}]"
+            logger.info "#{key}=#{redact(key, value[:value])} source=#{value[:source]}"
           else
-            logger.info "#{key}=#{value[:value]} source=[#{value[:source]}]"
+            logger.info "#{key}=#{value[:value]} source=#{value[:source]}"
           end
         end
         private :log_config_inner

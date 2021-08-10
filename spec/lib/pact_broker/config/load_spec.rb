@@ -3,11 +3,23 @@ require "pact_broker/config/load"
 module PactBroker
   module Config
     describe Load do
-
       describe ".call" do
 
-        class MockConfig
-          attr_accessor :foo, :bar, :nana, :meep, :lalala, :meow, :peebo, :whitelist, :blah
+        class MockConfig < Anyway::Config
+          attr_config(
+            foo: "default",
+            bar: "default",
+            nana: "default",
+            meep: "default",
+            lalala: "default",
+            meow: "default",
+            peebo: "default",
+            whitelist: "default",
+            blah: "default",
+            setting_with_override: "default"
+          )
+          attr_config(:setting_with_no_default)
+          config_name :foo
         end
 
         before do
@@ -21,9 +33,14 @@ module PactBroker
           Setting.create(name: "unknown", type: "string", value: nil)
           Setting.create(name: "whitelist", type: "space_delimited_string_list", value: "foo bar")
           Setting.create(name: "blah", type: "symbol", value: "boop")
+          Setting.create(name: "setting_with_no_default", type: "string", value: "boop")
+          Setting.create(name: "setting_with_override", type: "string", value: "meep")
+
+          allow(Load.logger).to receive(:warn)
+          allow(Load.logger).to receive(:debug)
         end
 
-        let(:configuration) { MockConfig.new }
+        let(:configuration) { MockConfig.new(setting_with_override: "overridden") }
 
         subject { Load.call(configuration) }
 
@@ -72,9 +89,19 @@ module PactBroker
           expect(configuration.whitelist).to eq ["foo", "bar"]
         end
 
+        it "loads settings where there is no default" do
+          subject
+          expect(configuration.setting_with_no_default).to eq "boop"
+        end
+
+        it "does not overwrite settings that did not come from the default class" do
+          expect(Load.logger).to receive(:debug).with(/Ignoring.*setting_with_override/)
+          subject
+          expect(configuration.setting_with_override).to eq "overridden"
+        end
+
         it "does not load a setting where the Configuration object does not have a matching property" do
-          allow(Load.logger).to receive(:warn)
-          expect(Load.logger).to receive(:warn).with("Could not load configuration setting \"unknown\" as there is no matching attribute on the Configuration class")
+          expect(Load.logger).to receive(:warn).with("Could not load configuration setting \"unknown\" as there is no matching attribute on the PactBroker::Config::MockConfig class")
           subject
         end
       end

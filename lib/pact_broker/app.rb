@@ -125,8 +125,7 @@ module PactBroker
     end
 
     def load_configuration_from_database
-      require "pact_broker/config/load"
-      PactBroker::Config::Load.call(configuration)
+      configuration.load_from_database!
     end
 
     def configure_database_connection
@@ -156,9 +155,8 @@ module PactBroker
         logger.info "Seeding example data"
         configuration.example_data_seeder.call
         logger.info "Marking seed as done"
-        configuration.seed_example_data = false
-        require "pact_broker/config/save"
-        PactBroker::Config::Save.call(configuration, [:seed_example_data])
+        require "pact_broker/config/repository"
+        PactBroker::Config::Repository.new.create_or_update_setting(:seed_example_data, false)
       else
         logger.info "Not seeding example data"
       end
@@ -285,6 +283,7 @@ module PactBroker
     end
 
     def print_startup_message
+      configuration.log_configuration if configuration.log_configuration_on_startup
       unless configuration.hide_pactflow_messages
         logger.info "\n\n#{'*' * 80}\n\nWant someone to manage your Pact Broker for you? Check out https://pactflow.io/oss for a hardened, fully supported SaaS version of the Pact Broker with an improved UI + more.\n\n#{'*' * 80}\n"
       end
