@@ -4,6 +4,10 @@ module PactBroker
   module Matrix
     describe Service do
       describe "find with environments" do
+        include MatrixQueryContentForApproval
+
+        ENVIRONMENT_APPROVALS = {}
+
         subject { Service.can_i_deploy(selectors, options) }
 
         # Useful for eyeballing the messages to make sure they read nicely
@@ -14,6 +18,14 @@ module PactBroker
         #     puts PactBroker::Api::Decorators::ReasonDecorator.new(reason).to_s
         #   end
         # end
+
+        after do | example |
+          ENVIRONMENT_APPROVALS[example.full_description] = matrix_query_content_for_approval(subject)
+        end
+
+        after(:all) do
+          Approvals.verify(ENVIRONMENT_APPROVALS, :name => file_name_to_approval_name(__FILE__) , format: "YamlFormat")
+        end
 
         context "when there is a successful verification between the provider in test environment and the consumer to be deployed" do
           before do

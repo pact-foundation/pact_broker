@@ -3,8 +3,6 @@ require "pact_broker/matrix/repository"
 module PactBroker
   module Matrix
     describe Repository do
-      let(:td) { TestDataBuilder.new}
-
       def build_selectors(hash)
         hash.collect do | key, value |
           UnresolvedSelector.new(pacticipant_name: key, pacticipant_version_number: value)
