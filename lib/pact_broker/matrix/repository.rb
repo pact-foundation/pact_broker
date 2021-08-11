@@ -64,7 +64,6 @@ module PactBroker
         integrations = find_integrations_for_specified_selectors(resolved_specified_selectors, options)
         resolved_selectors = add_any_inferred_selectors(resolved_specified_selectors, resolved_ignore_selectors, integrations, options)
 
-        #puts resolved_selectors
         considered_rows, ignored_rows = find_considered_and_ignored_rows(resolved_selectors, resolved_ignore_selectors, options)
         QueryResults.new(considered_rows.sort, ignored_rows.sort, specified_selectors, options, resolved_selectors, resolved_ignore_selectors, integrations)
       end
@@ -86,61 +85,39 @@ module PactBroker
       end
 
       def find_integrations_for_specified_selectors(resolved_specified_selectors, options)
-        infer_integrations = infer_selectors_for_integrations?(options)
-
-        integrations_calculated_another_way = nil
-
-        if infer_integrations
-          specified_pacticipant_ids = resolved_specified_selectors.collect(&:pacticipant_id)
-          potential_integrations_ids = base_model_for_integrations.select(:consumer_id, :provider_id).distinct.where{ Sequel.|({ consumer_id: specified_pacticipant_ids }, { provider_id: specified_pacticipant_ids }) }.all
-          pacticipants_involved_in_integrations = potential_integrations_ids.flat_map{ | integration | [integration.consumer, integration.provider ] }.uniq
-          potential_integrated_pacticipants = pacticipants_involved_in_integrations.reject { |pacticipant| specified_pacticipant_ids.include?(pacticipant.id) }
-
-          destination_selector = PactBroker::Matrix::UnresolvedSelector.new(options.slice(:latest, :tag, :branch, :environment_name).compact)
-          pacticipants_in_environment = potential_integrated_pacticipants.select do | pacticipant |
-            PactBroker::Domain::Version.where(pacticipant: pacticipant).for_selector(destination_selector).any?
-          end
-
-          pacticipant_ids_to_consider = pacticipants_in_environment.collect(&:id) + specified_pacticipant_ids
-
-          integration_ids_to_consider = potential_integrations_ids.select do | integration |
-            (pacticipant_ids_to_consider.include?(integration[:consumer_id]) && pacticipant_ids_to_consider.include?(integration[:provider_id])) ||
-              is_a_row_for_this_integration_required?(specified_pacticipant_ids, integration[:consumer_id])
-          end
-
-          integrations_calculated_another_way = potential_integrations_ids.collect do | integration |
-            consumer = PactBroker::Domain::Pacticipant.where(id: integration[:consumer_id]).single_record
-            provider = PactBroker::Domain::Pacticipant.where(id: integration[:provider_id]).single_record
-
-            required = is_a_row_for_this_integration_required?(specified_pacticipant_ids, integration[:consumer_id]) # (pacticipant_ids_to_consider.include?(integration[:consumer_id]) && pacticipant_ids_to_consider.include?(integration[:provider_id])) ||
-
-            Integration.from_hash(
-              consumer_id: consumer.id,
-              consumer_name: consumer.name,
-              provider_id: provider.id,
-              provider_name: provider.name,
-              required: required
-            )
-          end
+        if infer_selectors_for_integrations?(options)
+          find_integrations_for_specified_selectors_with_inferred_integrations(resolved_specified_selectors)
+        else
+          specified_pacticipant_names = resolved_specified_selectors.collect(&:pacticipant_name)
+          base_model_for_integrations
+            .distinct_integrations(resolved_specified_selectors, false)
+            .collect(&:to_hash)
+            .collect do | integration_hash |
+              required = is_a_row_for_this_integration_required?(specified_pacticipant_names, integration_hash[:consumer_name])
+              Integration.from_hash(integration_hash.merge(required: required))
+            end
         end
+      end
 
-        specified_pacticipant_names = resolved_specified_selectors.collect(&:pacticipant_name)
-        integrations = base_model_for_integrations
-          .distinct_integrations(resolved_specified_selectors, infer_integrations)
-          .collect(&:to_hash)
-          .collect do | integration_hash |
-            required = is_a_row_for_this_integration_required?(specified_pacticipant_names, integration_hash[:consumer_name])
-            Integration.from_hash(integration_hash.merge(required: required))
-          end.tap { |it| logger.debug? && logger.debug("Identified integrations", payload: it) }
+      def find_integrations_for_specified_selectors_with_inferred_integrations(resolved_specified_selectors)
+        specified_pacticipant_ids = resolved_specified_selectors.collect(&:pacticipant_id)
+        integrations_involving_specified_pacticipants = PactBroker::Integrations::Integration
+                                                          .including_pacticipants_with_ids(specified_pacticipant_ids)
+                                                          .eager(:consumer)
+                                                          .eager(:provider)
+                                                          .all
 
-        if integrations_calculated_another_way
-          if integrations.sort != integrations_calculated_another_way.sort
-            puts "OLD #{integrations.sort.collect(&:to_s)} \nNEW #{integrations_calculated_another_way.sort.collect(&:to_s)}"
-          end
-          integrations = integrations_calculated_another_way
+        integrations_involving_specified_pacticipants.collect do | integration |
+          required = is_a_row_for_this_integration_required?(specified_pacticipant_ids, integration[:consumer_id])
 
+          Integration.from_hash(
+            consumer_id: integration.consumer.id,
+            consumer_name: integration.consumer.name,
+            provider_id: integration.provider.id,
+            provider_name: integration.provider.name,
+            required: required
+          )
         end
-        integrations
       end
 
       def add_any_inferred_selectors(resolved_specified_selectors, resolved_ignore_selectors, integrations, options)

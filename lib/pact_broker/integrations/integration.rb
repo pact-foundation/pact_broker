@@ -53,6 +53,12 @@ module PactBroker
         end
       end)
 
+      dataset_module do
+        def including_pacticipants_with_ids(pacticipant_ids)
+          where(Sequel.|({ consumer_id: pacticipant_ids }, { provider_id: pacticipant_ids }))
+        end
+      end
+
       def verification_status_for_latest_pact
         @verification_status_for_latest_pact ||= PactBroker::Verifications::PseudoBranchStatus.new(latest_pact, latest_pact&.latest_verification)
       end
@@ -67,6 +73,10 @@ module PactBroker
 
       def <=>(other)
         [consumer.name.downcase, provider.name.downcase] <=> [other.consumer.name.downcase, other.provider.name.downcase]
+      end
+
+      def pacticipants
+        [consumer, provider]
       end
     end
   end
