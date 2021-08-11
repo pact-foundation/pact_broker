@@ -65,7 +65,7 @@ module PactBroker
       end
 
       def to_s
-        "Integration between #{consumer_name} (id=#{consumer_id}) and #{provider_name} (id=#{provider_id})"
+        "Integration between #{consumer_name} (id=#{consumer_id}) and #{provider_name} (id=#{provider_id}) required=#{required?}"
       end
 
       def involves_consumer_with_id?(consumer_id)

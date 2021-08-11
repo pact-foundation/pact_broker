@@ -60,5 +60,5 @@ end
 
 if ENV["DEBUG"] == "true"
   SemanticLogger.add_appender(io: $stdout)
-  SemanticLogger.default_level = :info
+  SemanticLogger.default_level = :debug
 end

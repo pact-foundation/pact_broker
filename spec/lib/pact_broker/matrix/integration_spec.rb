@@ -408,10 +408,33 @@ module PactBroker
             ]
           end
 
-          let(:options) { { latestby: "cvpv"} }
+          let(:options) { { latestby: "cvpv" } }
 
-          it "should allow the consumer to be deployed" do
+          it "allows the consumer to be deployed" do
             expect(subject.deployment_status_summary).to be_deployable
+          end
+        end
+
+        # https://github.com/pact-foundation/pact_broker/issues/485
+        describe "when a provider version has no verification results with the consumer version already in the environment" do
+          before do
+            td.create_pact_with_verification("Foo", "1", "Bar", "1")
+              .create_pact_with_verification("NotInTest", "1", "Bar", "1")
+              .create_consumer_version_tag("test")
+              .create_provider_version("2")
+          end
+
+          let(:selectors) do
+            [
+              UnresolvedSelector.new(pacticipant_name: "Bar", pacticipant_version_number: "2"),
+            ]
+          end
+
+          let(:options) { { latestby: "cvp", tag: "test", latest: true } }
+
+          it "does not allow the provider to be deployed" do
+            expect(subject.deployment_status_summary).to_not be_deployable
+            expect(subject.deployment_status_summary.reasons.collect(&:class)).to eq [PactBroker::Matrix::PactNotEverVerifiedByProvider]
           end
         end
 
