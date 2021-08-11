@@ -1,0 +1,167 @@
+{
+  "PactBroker::Matrix::Service find find returns a QueryResultsWithDeploymentStatusSummary": {
+    "deployable": true,
+    "reasons": [
+      "PactBroker::Matrix::Successful"
+    ]
+  },
+  "PactBroker::Matrix::Service find when deploying a version of a provider with multiple versions of a consumer in production that is missing a verification for the latest prod version does not allow the provider to be deployed": {
+    "deployable": null,
+    "reasons": [
+      "PactBroker::Matrix::PactNotEverVerifiedByProvider",
+      "PactBroker::Matrix::SelectorWithoutPacticipantVersionNumberSpecified"
+    ]
+  },
+  "PactBroker::Matrix::Service find when deploying a consumer that has not been verified by any providers returns 2 integrations": {
+    "deployable": null,
+    "reasons": [
+      "PactBroker::Matrix::PactNotEverVerifiedByProvider",
+      "PactBroker::Matrix::PactNotEverVerifiedByProvider"
+    ]
+  },
+  "PactBroker::Matrix::Service find when deploying a consumer that has not been verified by any providers it creates selectors for the providers": {
+    "deployable": null,
+    "reasons": [
+      "PactBroker::Matrix::PactNotEverVerifiedByProvider",
+      "PactBroker::Matrix::PactNotEverVerifiedByProvider"
+    ]
+  },
+  "PactBroker::Matrix::Service find when deploying a consumer that has not been verified by any providers does not allow the consumer to be deployed": {
+    "deployable": null,
+    "reasons": [
+      "PactBroker::Matrix::PactNotEverVerifiedByProvider",
+      "PactBroker::Matrix::PactNotEverVerifiedByProvider"
+    ]
+  },
+  "PactBroker::Matrix::Service find when deploying a consumer that has two providers in prod, but it is not verified by one of the prod provider versions, pact_broker-client issue #33 returns 2 integrations": {
+    "deployable": null,
+    "reasons": [
+      "PactBroker::Matrix::PactNotEverVerifiedByProvider"
+    ]
+  },
+  "PactBroker::Matrix::Service find when deploying a consumer that has two providers in prod, but it is not verified by one of the prod provider versions, pact_broker-client issue #33 returns 1 row with a verification": {
+    "deployable": null,
+    "reasons": [
+      "PactBroker::Matrix::PactNotEverVerifiedByProvider"
+    ]
+  },
+  "PactBroker::Matrix::Service find when deploying a consumer that has two providers in prod, but it is not verified by one of the prod provider versions, pact_broker-client issue #33 returns 1 row without a verification": {
+    "deployable": null,
+    "reasons": [
+      "PactBroker::Matrix::PactNotEverVerifiedByProvider"
+    ]
+  },
+  "PactBroker::Matrix::Service find when deploying a consumer that has two providers in prod, but it is not verified by one of the prod provider versions, pact_broker-client issue #33 does not allow the consumer to be deployed": {
+    "deployable": null,
+    "reasons": [
+      "PactBroker::Matrix::PactNotEverVerifiedByProvider"
+    ]
+  },
+  "PactBroker::Matrix::Service find when deploying an old version of a consumer that has added a new provider since that version allows the old version of the consumer to be deployed": {
+    "deployable": true,
+    "reasons": [
+      "PactBroker::Matrix::Successful"
+    ]
+  },
+  "PactBroker::Matrix::Service find when the specified version does not exist does not allow the app to be deployed": {
+    "deployable": false,
+    "reasons": [
+      "PactBroker::Matrix::NoEnvironmentSpecified",
+      "PactBroker::Matrix::SpecifiedVersionDoesNotExist"
+    ]
+  },
+  "PactBroker::Matrix::Service find when deploying a provider to prod for the first time and the consumer is not yet deployed allows the app to be deployed": {
+    "deployable": true,
+    "reasons": [
+      "PactBroker::Matrix::NoDependenciesMissing"
+    ]
+  },
+  "PactBroker::Matrix::Service find when deploying a consumer to prod for the first time and the provider is not yet deployed does not allow the app to be deployed": {
+    "deployable": null,
+    "reasons": [
+      "PactBroker::Matrix::PactNotEverVerifiedByProvider"
+    ]
+  },
+  "PactBroker::Matrix::Service find when deploying an app that is both a consumer and a provider to prod for the first time and the downstream provider is not yet deployed does not allow the app to be deployed": {
+    "deployable": null,
+    "reasons": [
+      "PactBroker::Matrix::PactNotEverVerifiedByProvider"
+    ]
+  },
+  "PactBroker::Matrix::Service find when deploying an app that is both a consumer and a provider to prod for the first time and the downstream provider has been deployed allows the app to be deployed": {
+    "deployable": true,
+    "reasons": [
+      "PactBroker::Matrix::Successful"
+    ]
+  },
+  "PactBroker::Matrix::Service find when deploying a provider where the pact has not been verified allows the app to be deployed": {
+    "deployable": true,
+    "reasons": [
+      "PactBroker::Matrix::NoDependenciesMissing"
+    ]
+  },
+  "PactBroker::Matrix::Service find when deploying a consumer where the pact has been verified, but not by the required provider version returns a reason indicating that the pact has not been verified by the required provider version": {
+    "deployable": null,
+    "reasons": [
+      "PactBroker::Matrix::PactNotEverVerifiedByProvider"
+    ]
+  },
+  "PactBroker::Matrix::Service find when two applications have pacts with each other (nureva use case) when both application versions are specified explictly does not allow the two apps to be deployed together": {
+    "deployable": null,
+    "reasons": [
+      "PactBroker::Matrix::NoEnvironmentSpecified",
+      "PactBroker::Matrix::PactNotEverVerifiedByProvider"
+    ]
+  },
+  "PactBroker::Matrix::Service find when two applications have pacts with each other (nureva use case) when only one application is specified does not allow the two apps to be deployed together": {
+    "deployable": null,
+    "reasons": [
+      "PactBroker::Matrix::NoEnvironmentSpecified",
+      "PactBroker::Matrix::PactNotEverVerifiedByProvider"
+    ]
+  },
+  "PactBroker::Matrix::Service find specifying a provider which has multiple prod versions of one consumer (explicit) and a single version of another (inferred) with inferred selectors determines the number of integrations": {
+    "deployable": null,
+    "reasons": [
+      "PactBroker::Matrix::PactNotEverVerifiedByProvider",
+      "PactBroker::Matrix::SelectorWithoutPacticipantVersionNumberSpecified"
+    ]
+  },
+  "PactBroker::Matrix::Service find specifying a provider which has multiple prod versions of one consumer (explicit) and a single version of another (inferred) with inferred selectors finds all prod versions of Foo": {
+    "deployable": null,
+    "reasons": [
+      "PactBroker::Matrix::PactNotEverVerifiedByProvider",
+      "PactBroker::Matrix::SelectorWithoutPacticipantVersionNumberSpecified"
+    ]
+  },
+  "PactBroker::Matrix::Service find specifying a provider which has multiple prod versions of one consumer (explicit) and a single version of another (inferred) with inferred selectors finds the single prod version of Cat": {
+    "deployable": null,
+    "reasons": [
+      "PactBroker::Matrix::PactNotEverVerifiedByProvider",
+      "PactBroker::Matrix::SelectorWithoutPacticipantVersionNumberSpecified"
+    ]
+  },
+  "PactBroker::Matrix::Service find specifying a provider which has multiple prod versions of one consumer (explicit) and a single version of another (inferred) with inferred selectors is not deployable because of the missing verification for Cat v20": {
+    "deployable": null,
+    "reasons": [
+      "PactBroker::Matrix::PactNotEverVerifiedByProvider",
+      "PactBroker::Matrix::SelectorWithoutPacticipantVersionNumberSpecified"
+    ]
+  },
+  "PactBroker::Matrix::Service find specifying a provider which has multiple prod versions of one consumer (explicit) and a single version of another (inferred) without inferred selectors is deployable": {
+    "deployable": true,
+    "reasons": [
+      "PactBroker::Matrix::NoEnvironmentSpecified",
+      "PactBroker::Matrix::SelectorWithoutPacticipantVersionNumberSpecified",
+      "PactBroker::Matrix::Successful"
+    ]
+  },
+  "PactBroker::Matrix::Service find when there is a consumer with two providers, and only one of them has a verification, and the consumer and the verified provider are explicitly specified should allow the consumer to be deployed": {
+    "deployable": true,
+    "reasons": [
+      "PactBroker::Matrix::NoEnvironmentSpecified",
+      "PactBroker::Matrix::SelectorWithoutPacticipantVersionNumberSpecified",
+      "PactBroker::Matrix::Successful"
+    ]
+  }
+}

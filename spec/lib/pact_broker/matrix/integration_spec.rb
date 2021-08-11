@@ -24,7 +24,7 @@ module PactBroker
         end
 
         after(:all) do
-          Approvals.verify(INTEGRATION_APPROVALS, :name => file_name_to_approval_name(__FILE__) , format: "YamlFormat")
+          Approvals.verify(INTEGRATION_APPROVALS, :name => file_name_to_approval_name(__FILE__) , format: :json)
         end
 
         let(:options) { {} }
