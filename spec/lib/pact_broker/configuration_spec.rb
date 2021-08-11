@@ -5,7 +5,6 @@ require "pact_broker/config/setting"
 
 module PactBroker
   describe Configuration do
-
     describe "show_backtrace_in_error_response?" do
       before do
         allow(ENV).to receive(:[]).and_call_original
@@ -36,7 +35,54 @@ module PactBroker
       end
     end
 
-    context "default configuration" do
+    describe "with_runtime_configuration_overrides" do
+      before do
+        allow(PactBroker.configuration).to receive(:logger).and_return(logger)
+      end
+      let(:logger) { double("logger", debug?: true, debug: nil, warn: nil) }
+
+      it "overrides the specified runtime configuration attributes within the block" do
+        attribute_in_block = nil
+        PactBroker.with_runtime_configuration_overrides(webhook_http_code_success: [400]) do
+          attribute_in_block = PactBroker.configuration.webhook_http_code_success
+        end
+        expect(attribute_in_block).to eq [400]
+        expect(PactBroker.configuration.webhook_http_code_success).to_not eq [400]
+      end
+
+      it "logs the overrides at debug level" do
+        expect(logger).to receive(:debug).with("Overridding runtime configuration attribute 'webhook_http_code_success' with value [400]")
+        PactBroker.with_runtime_configuration_overrides(webhook_http_code_success: [400]) do
+          "foo"
+        end
+      end
+
+      it "does not override the other runtime configuration attributes within the block" do
+        attribute_in_block = nil
+        PactBroker.with_runtime_configuration_overrides(webhook_http_code_success: [400]) do
+          attribute_in_block = PactBroker.configuration.webhook_scheme_whitelist
+        end
+        expect(PactBroker.configuration.webhook_scheme_whitelist).to eq attribute_in_block
+      end
+
+      it "returns the results of the block" do
+        return_value = PactBroker.with_runtime_configuration_overrides(webhook_http_code_success: [400]) do
+          "foo"
+        end
+        expect(return_value).to eq "foo"
+      end
+
+      context "when the specified runtime attribute does not exist" do
+        it "logs an error" do
+          expect(logger).to receive(:warn).with(/Cannot override runtime configuration attribute 'no_existy'/)
+          PactBroker.with_runtime_configuration_overrides(no_existy: true) do
+            "foo"
+          end
+        end
+      end
+    end
+
+    describe "default configuration" do
       describe ".html_pact_renderer" do
 
         let(:pact) { double("pact") }

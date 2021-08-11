@@ -9,6 +9,10 @@ module PactBroker
     @@configuration ||= Configuration.default_configuration
   end
 
+  def self.with_runtime_configuration_overrides(overrides, &block)
+    self.configuration.with_runtime_configuration_overrides(overrides, &block)
+  end
+
   # @private, for testing only
   def self.reset_configuration
     @@configuration = Configuration.default_configuration
@@ -74,6 +78,14 @@ module PactBroker
         PactBroker::Api::Resources::DefaultBaseResource
       }
       config
+    end
+
+    def with_runtime_configuration_overrides(overrides)
+      original_runtime_configuration = runtime_configuration
+      self.runtime_configuration = override_runtime_configuration(overrides, original_runtime_configuration.dup)
+      yield
+    ensure
+      self.runtime_configuration = original_runtime_configuration
     end
 
     def logger_from_runtime_configuration
@@ -192,6 +204,22 @@ module PactBroker
       # Can't require a Sequel::Model class before the connection has been set
       require "pact_broker/config/load"
       PactBroker::Config::Load.call(runtime_configuration)
+    end
+
+    private
+
+    def override_runtime_configuration(overrides, new_runtime_configuration)
+      overrides.each do | key, value |
+        if new_runtime_configuration.respond_to?("#{key}=".to_sym)
+          if logger.debug?
+            logger.debug "Overridding runtime configuration attribute '#{key}' with value #{value.inspect}"
+          end
+          new_runtime_configuration.public_send("#{key}=", value)
+        else
+          logger.warn("Cannot override runtime configuration attribute '#{key}' as #{new_runtime_configuration.class} does not respond to #{key}=")
+        end
+      end
+      new_runtime_configuration
     end
   end
 end
