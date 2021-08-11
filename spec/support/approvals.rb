@@ -30,12 +30,11 @@ end
 
 module MatrixQueryContentForApproval
   def matrix_query_content_for_approval(result)
-    content = {
+    {
       "deployable" => result.deployment_status_summary.deployable?,
       "reasons" => result.deployment_status_summary.reasons.collect(&:class).collect(&:name).sort
     }
   end
-
 end
 
 RSpec.configure do | config |
