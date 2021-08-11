@@ -63,7 +63,6 @@ module PactBroker
         resolved_specified_selectors = resolve_versions_and_add_ids(specified_selectors, :specified, resolved_ignore_selectors)
         integrations = find_integrations_for_specified_selectors(resolved_specified_selectors, options)
         resolved_selectors = add_any_inferred_selectors(resolved_specified_selectors, resolved_ignore_selectors, integrations, options)
-
         considered_rows, ignored_rows = find_considered_and_ignored_rows(resolved_selectors, resolved_ignore_selectors, options)
         QueryResults.new(considered_rows.sort, ignored_rows.sort, specified_selectors, options, resolved_selectors, resolved_ignore_selectors, integrations)
       end
@@ -88,15 +87,25 @@ module PactBroker
         if infer_selectors_for_integrations?(options)
           find_integrations_for_specified_selectors_with_inferred_integrations(resolved_specified_selectors, options)
         else
-          specified_pacticipant_names = resolved_specified_selectors.collect(&:pacticipant_name)
-          base_model_for_integrations
-            .distinct_integrations(resolved_specified_selectors, false)
-            .collect(&:to_hash)
-            .collect do | integration_hash |
-              required = is_a_row_for_this_integration_required?(specified_pacticipant_names, integration_hash[:consumer_name])
-              Integration.from_hash(integration_hash.merge(required: required))
-            end
+          find_integrations_for_specified_selectors_only(resolved_specified_selectors)
         end
+      end
+
+      def find_integrations_for_specified_selectors_only(resolved_specified_selectors)
+        specified_pacticipant_names = resolved_specified_selectors.collect(&:pacticipant_name)
+        base_model_for_integrations
+          .distinct_integrations(resolved_specified_selectors, false)
+          .collect(&:to_hash)
+          .collect do | integration_hash |
+            required = is_a_row_for_this_integration_required?(specified_pacticipant_names, integration_hash[:consumer_name])
+            Integration.from_hash(integration_hash.merge(required: required))
+          end
+      end
+
+      def find_integrations_for_specified_selectors_with_inferred_integrations(resolved_specified_selectors, options)
+        integrations = integrations_where_specified_selector_is_consumer(resolved_specified_selectors) +
+                        integrations_where_specified_selector_is_provider(resolved_specified_selectors, options)
+        integrations.uniq{ | integration| [integration.consumer_id, integration.provider_id] }
       end
 
       def integrations_where_specified_selector_is_consumer(resolved_specified_selectors)
@@ -136,12 +145,6 @@ module PactBroker
             required: required
           )
         end
-      end
-
-      def find_integrations_for_specified_selectors_with_inferred_integrations(resolved_specified_selectors, options)
-        integrations = integrations_where_specified_selector_is_consumer(resolved_specified_selectors) +
-                        integrations_where_specified_selector_is_provider(resolved_specified_selectors, options)
-        integrations.uniq{ | integration| [integration.consumer_id, integration.provider_id] }
       end
 
       def add_any_inferred_selectors(resolved_specified_selectors, resolved_ignore_selectors, integrations, options)
