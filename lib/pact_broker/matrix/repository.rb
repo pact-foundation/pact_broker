@@ -150,7 +150,7 @@ module PactBroker
         integrations
           .group_by{ | integration| [integration.consumer_id, integration.provider_id] }
           .values
-          .collect { | integrations | integrations.find(&:required?) || integrations.first }
+          .collect { | duplicate_integrations | duplicate_integrations.find(&:required?) || duplicate_integrations.first }
       end
 
       def add_any_inferred_selectors(resolved_specified_selectors, resolved_ignore_selectors, integrations, options)
