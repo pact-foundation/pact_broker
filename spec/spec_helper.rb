@@ -5,6 +5,7 @@ return if ENV["REGRESSION"] == "true"
 $: << File.expand_path("../../", __FILE__)
 
 RACK_ENV = ENV["RACK_ENV"] = "test"
+ENV["PACT_BROKER_LOG_LEVEL"] ||= "info"
 require "spec/support/simplecov"
 
 require "support/logging"

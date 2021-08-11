@@ -4,6 +4,10 @@ module PactBroker
   module Matrix
     describe Service do
       describe "find" do
+        include MatrixQueryContentForApproval
+
+        INTEGRATION_IGNORE_APPROVALS = {}
+
         subject { Service.can_i_deploy(selectors, options) }
 
         # Useful for eyeballing the messages to make sure they read nicely
@@ -13,6 +17,14 @@ module PactBroker
           #   puts reason
           #   puts PactBroker::Api::Decorators::ReasonDecorator.new(reason).to_s
           # end
+        end
+
+        after do | example |
+          INTEGRATION_IGNORE_APPROVALS[example.full_description] = matrix_query_content_for_approval(subject)
+        end
+
+        after(:all) do
+          Approvals.verify(INTEGRATION_IGNORE_APPROVALS, :name => file_name_to_approval_name(__FILE__) , format: "YamlFormat")
         end
 
         let(:options) { {} }

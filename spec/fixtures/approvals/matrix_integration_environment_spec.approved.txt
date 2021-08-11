@@ -1,0 +1,61 @@
+---
+? PactBroker::Matrix::Service find with environments when there is a successful verification
+  between the provider in test environment and the consumer to be deployed allows
+  the consumer to be deployed
+: deployable: true
+  reasons:
+  - PactBroker::Matrix::Successful
+? PactBroker::Matrix::Service find with environments when there is an unsuccessful
+  verification between the provider in test environment and the consumer to be deployed
+  does not allow the consumer to be deployed
+: deployable: false
+  reasons:
+  - PactBroker::Matrix::VerificationFailed
+? PactBroker::Matrix::Service find with environments when the provider has not been
+  deployed to the given environment does not allow the consumer to be deployed
+: deployable:
+  reasons:
+  - PactBroker::Matrix::PactNotEverVerifiedByProvider
+? PactBroker::Matrix::Service find with environments when the consumer has not been
+  deployed to the given environment allows the provider to be deployed
+: deployable: true
+  reasons:
+  - PactBroker::Matrix::NoDependenciesMissing
+? PactBroker::Matrix::Service find with environments when deploying a version of a
+  provider with multiple versions of a consumer in production knows that there are
+  multiple versions of the consumer in production
+: deployable:
+  reasons:
+  - PactBroker::Matrix::PactNotEverVerifiedByProvider
+? PactBroker::Matrix::Service find with environments when deploying a version of a
+  provider with multiple versions of a consumer in production when a verification
+  for the latest prod version is missing does not allow the provider to be deployed
+: deployable:
+  reasons:
+  - PactBroker::Matrix::PactNotEverVerifiedByProvider
+? PactBroker::Matrix::Service find with environments when deploying a version of a
+  provider with multiple versions of a consumer in production when there is a successful
+  verification for every prod version of the consumer does allow the provider to be
+  deployed
+: deployable: true
+  reasons:
+  - PactBroker::Matrix::Successful
+? PactBroker::Matrix::Service find with environments when deploying a version of a
+  consumer with multiple versions of a provider in production knows that there are
+  multiple versions of the provider in production
+: deployable:
+  reasons:
+  - PactBroker::Matrix::PactNotEverVerifiedByProvider
+? PactBroker::Matrix::Service find with environments when deploying a version of a
+  consumer with multiple versions of a provider in production when a verification
+  for the latest prod version is missing does not allow the consumer to be deployed
+: deployable:
+  reasons:
+  - PactBroker::Matrix::PactNotEverVerifiedByProvider
+? PactBroker::Matrix::Service find with environments when deploying a version of a
+  consumer with multiple versions of a provider in production when there is a successful
+  verification for every prod version of the consumer does allow the consumer to be
+  deployed
+: deployable: true
+  reasons:
+  - PactBroker::Matrix::Successful
