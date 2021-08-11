@@ -24,7 +24,7 @@ module PactBroker
         end
 
         after(:all) do
-          Approvals.verify(ENVIRONMENT_APPROVALS, :name => file_name_to_approval_name(__FILE__) , format: "YamlFormat")
+          Approvals.verify(ENVIRONMENT_APPROVALS, :name => file_name_to_approval_name(__FILE__) , format: :json)
         end
 
         context "when there is a successful verification between the provider in test environment and the consumer to be deployed" do
