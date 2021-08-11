@@ -65,6 +65,7 @@ module PactBroker
         use_first_tag_as_branch_time_limit: 10,
         auto_detect_main_branch: true,
         main_branch_candidates: ["develop", "main", "master"],
+        allow_dangerous_contract_modification: false,
         semver_formats: ["%M.%m.%p%s%d", "%M.%m", "%M"],
         seed_example_data: true,
         features: []

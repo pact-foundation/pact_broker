@@ -3,7 +3,7 @@ require "pact_broker/api/resources/base_resource"
 require "pact_broker/api/resources/pacticipant_resource_methods"
 require "pact_broker/api/decorators/pact_decorator"
 require "pact_broker/api/decorators/extended_pact_decorator"
-require "pact_broker/json"
+require "pact_broker/messages"
 require "pact_broker/pacts/pact_params"
 require "pact_broker/api/contracts/put_pact_params_contract"
 require "pact_broker/webhooks/execution_configuration"
@@ -17,6 +17,7 @@ module PactBroker
         include PacticipantResourceMethods
         include WebhookExecutionMethods
         include PactResourceMethods
+        include PactBroker::Messages
 
         def content_types_provided
           [
@@ -36,16 +37,14 @@ module PactBroker
         end
 
         def is_conflict?
-          merge_conflict = request.patch? && resource_exists? &&
-            Pacts::Merger.conflict?(pact.json_content, pact_params.json_content)
+          merge_conflict = request.patch? && resource_exists? && Pacts::Merger.conflict?(pact.json_content, pact_params.json_content)
 
-          potential_duplicate_pacticipants?(pact_params.pacticipant_names) || merge_conflict
+          potential_duplicate_pacticipants?(pact_params.pacticipant_names) || merge_conflict || disallowed_modification?
         end
 
         def malformed_request?
           if request.patch? || request.put?
-            invalid_json? ||
-              contract_validation_errors?(Contracts::PutPactParamsContract.new(pact_params), pact_params)
+            invalid_json? || contract_validation_errors?(Contracts::PutPactParamsContract.new(pact_params), pact_params)
           else
             false
           end
@@ -107,6 +106,16 @@ module PactBroker
 
         def pact
           @pact ||= pact_service.find_pact(pact_params)
+        end
+
+        def disallowed_modification?
+          if request.really_put? && pact_service.disallowed_modification?(pact, pact_params.json_content)
+            message_params = { consumer_name: pact_params.consumer_name, consumer_version_number: pact_params.consumer_version_number }
+            set_json_error_message(message("errors.validation.pact_content_modification_not_allowed", message_params))
+            true
+          else
+            false
+          end
         end
       end
     end

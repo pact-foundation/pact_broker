@@ -30,18 +30,32 @@ describe "Publishing a pact" do
 
     before do
       td.create_pact_with_hierarchy("A Consumer", "1.2.3", "A Provider").and_return(:pact)
+      allow(PactBroker.configuration).to receive(:allow_dangerous_contract_modification).and_return(allow_dangerous_contract_modification)
     end
 
-    it "returns a 200 Success" do
-      expect(subject.status).to be 200
+    context "when the content is different" do
+      context "when pact modification is allowed" do
+        let(:allow_dangerous_contract_modification) { true }
+
+        it "returns a 200 Success" do
+          expect(subject.status).to be 200
+        end
+
+        it "returns an application/json Content-Type" do
+          expect(subject.headers["Content-Type"]).to eq "application/hal+json;charset=utf-8"
+        end
+
+        it "returns the pact in the response body" do
+          expect(response_body_json).to match_pact JSON.parse(pact_content)
+        end
+      end
     end
 
-    it "returns an application/json Content-Type" do
-      expect(subject.headers["Content-Type"]).to eq "application/hal+json;charset=utf-8"
-    end
+    context "when pact modification is not allowed" do
+      let(:allow_dangerous_contract_modification) { false }
 
-    it "returns the pact in the response body" do
-      expect(response_body_json).to match_pact JSON.parse(pact_content)
+      its(:status) { is_expected.to eq 409 }
+      its(:body) { is_expected.to include "Cannot change the content of the pact for A Consumer version 1.2.3" }
     end
   end
 

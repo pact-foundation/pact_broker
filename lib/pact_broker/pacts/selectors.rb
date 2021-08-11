@@ -43,6 +43,10 @@ module PactBroker
         Selectors.new(super)
       end
 
+      def sort
+        Selectors.new(super)
+      end
+
       def overall_latest?
         any?(&:overall_latest?)
       end
