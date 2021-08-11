@@ -26,7 +26,7 @@ module PactBroker
             provider_branch: provider_branch
         )
       end
-      let(:consumer_version) { double("version", number: "1234" )}
+      let(:consumer_version) { double("version", number: "1234", order: 1) }
       let(:environment) { instance_double("PactBroker::Deployments::Environment", name: "test") }
       let(:test_environment) { environment }
       let(:prod_environment) { instance_double("PactBroker::Deployments::Environment", name: "prod") }

@@ -338,6 +338,15 @@ module PactBroker
       def == other
         super && consumer_version == other.consumer_version
       end
+
+      def <=> other
+        comparison = super
+        if comparison == 0
+          consumer_version.order <=> other.consumer_version.order
+        else
+          comparison
+        end
+      end
     end
   end
 end

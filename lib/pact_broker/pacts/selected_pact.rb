@@ -13,7 +13,7 @@ module PactBroker
 
       def self.merge(selected_pacts)
         latest_selected_pact = selected_pacts.sort_by(&:consumer_version_order).last
-        selectors = selected_pacts.collect(&:selectors).reduce(&:+)
+        selectors = selected_pacts.collect(&:selectors).reduce(&:+).sort
         SelectedPact.new(latest_selected_pact.pact, selectors)
       end
 
