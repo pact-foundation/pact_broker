@@ -13,21 +13,18 @@ PactBroker::Matrix::Service find find returns a QueryResultsWithDeploymentStatus
 PactBroker::Matrix::Service find when deploying a consumer that has not been verified by any providers returns 2 integrations:
   deployable:
   reasons:
-  - PactBroker::Matrix::NoEnvironmentSpecified
   - PactBroker::Matrix::PactNotEverVerifiedByProvider
   - PactBroker::Matrix::PactNotEverVerifiedByProvider
 ? PactBroker::Matrix::Service find when deploying a consumer that has not been verified
-  by any providers but cannot resolve selectors for the providers
+  by any providers it creates selectors for the providers
 : deployable:
   reasons:
-  - PactBroker::Matrix::NoEnvironmentSpecified
   - PactBroker::Matrix::PactNotEverVerifiedByProvider
   - PactBroker::Matrix::PactNotEverVerifiedByProvider
 ? PactBroker::Matrix::Service find when deploying a consumer that has not been verified
   by any providers does not allow the consumer to be deployed
 : deployable:
   reasons:
-  - PactBroker::Matrix::NoEnvironmentSpecified
   - PactBroker::Matrix::PactNotEverVerifiedByProvider
   - PactBroker::Matrix::PactNotEverVerifiedByProvider
 ? 'PactBroker::Matrix::Service find when deploying a consumer that has two providers
@@ -59,7 +56,6 @@ PactBroker::Matrix::Service find when deploying a consumer that has not been ver
   to be deployed
 : deployable: true
   reasons:
-  - PactBroker::Matrix::NoEnvironmentSpecified
   - PactBroker::Matrix::Successful
 PactBroker::Matrix::Service find when the specified version does not exist does not allow the app to be deployed:
   deployable: false

@@ -81,12 +81,16 @@ module PactBroker
             [ UnresolvedSelector.new(pacticipant_name: "Foo", pacticipant_version_number: "1") ]
           end
 
+          let(:options) do
+            { latest: true, tag: "prod", latestby: "cvp" }
+          end
+
           it "returns 2 integrations" do
             expect(subject.integrations.size).to eq 2
           end
 
-          it "but cannot resolve selectors for the providers" do
-            expect(subject.resolved_selectors.size).to eq 1
+          it "it creates selectors for the providers" do
+            expect(subject.resolved_selectors.size).to eq 3
           end
 
           it "does not allow the consumer to be deployed" do
@@ -111,7 +115,7 @@ module PactBroker
             [ UnresolvedSelector.new(pacticipant_name: "Foo", pacticipant_version_number: "3.0.0") ]
           end
 
-          let(:options) { {latest: true, tag: "prod", latestby: "cvp"} }
+          let(:options) { { latest: true, tag: "prod", latestby: "cvp" } }
 
           it "returns 2 integrations" do
             expect(subject.integrations.size).to eq 2
@@ -133,7 +137,7 @@ module PactBroker
         describe "when deploying an old version of a consumer that has added a new provider since that version" do
           before do
             td.create_pact_with_hierarchy("Foo", "1", "Bar")
-              .create_verification(provider_version: "2")
+              .create_verification(provider_version: "2", tag_names: ["prod"])
               .create_consumer_version("2")
               .create_pact
               .create_verification(provider_version: "3")
@@ -145,6 +149,8 @@ module PactBroker
           let(:selectors) do
             [ UnresolvedSelector.new(pacticipant_name: "Foo", pacticipant_version_number: "1") ]
           end
+
+          let(:options) { { latest: true, tag: "prod", latestby: "cvp" } }
 
           it "allows the old version of the consumer to be deployed" do
             expect(subject.deployment_status_summary).to be_deployable
