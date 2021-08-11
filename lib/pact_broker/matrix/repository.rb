@@ -105,7 +105,7 @@ module PactBroker
       def find_integrations_for_specified_selectors_with_inferred_integrations(resolved_specified_selectors, options)
         integrations = integrations_where_specified_selector_is_consumer(resolved_specified_selectors) +
                         integrations_where_specified_selector_is_provider(resolved_specified_selectors, options)
-        integrations.uniq{ | integration| [integration.consumer_id, integration.provider_id] }
+        deduplicate_integrations(integrations)
       end
 
       def integrations_where_specified_selector_is_consumer(resolved_specified_selectors)
@@ -126,9 +126,8 @@ module PactBroker
       end
 
       def integrations_where_specified_selector_is_provider(resolved_specified_selectors, options)
-        specified_pacticipant_ids = resolved_specified_selectors.collect(&:pacticipant_id)
         integrations_involving_specified_providers = PactBroker::Integrations::Integration
-                                                      .where(provider_id: specified_pacticipant_ids)
+                                                      .where(provider_id: resolved_specified_selectors.collect(&:pacticipant_id))
                                                       .eager(:consumer)
                                                       .all
 
@@ -145,6 +144,13 @@ module PactBroker
             required: required
           )
         end
+      end
+
+      def deduplicate_integrations(integrations)
+        integrations
+          .group_by{ | integration| [integration.consumer_id, integration.provider_id] }
+          .values
+          .collect { | integrations | integrations.find(&:required?) || integrations.first }
       end
 
       def add_any_inferred_selectors(resolved_specified_selectors, resolved_ignore_selectors, integrations, options)
