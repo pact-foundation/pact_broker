@@ -156,12 +156,18 @@
       "PactBroker::Matrix::Successful"
     ]
   },
-  "PactBroker::Matrix::Service find when there is a consumer with two providers, and only one of them has a verification, and the consumer and the verified provider are explicitly specified should allow the consumer to be deployed": {
+  "PactBroker::Matrix::Service find when there is a consumer with two providers, and only one of them has a verification, and the consumer and the verified provider are explicitly specified allows the consumer to be deployed": {
     "deployable": true,
     "reasons": [
       "PactBroker::Matrix::NoEnvironmentSpecified",
       "PactBroker::Matrix::SelectorWithoutPacticipantVersionNumberSpecified",
       "PactBroker::Matrix::Successful"
+    ]
+  },
+  "PactBroker::Matrix::Service find when a provider version has no verification results with the consumer version already in the environment does not allow the provider to be deployed": {
+    "deployable": null,
+    "reasons": [
+      "PactBroker::Matrix::PactNotEverVerifiedByProvider"
     ]
   }
 }

@@ -90,10 +90,10 @@
       "PactBroker::Matrix::PactNotEverVerifiedByProvider"
     ]
   },
-  "PactBroker::Matrix::Service find when deploying a provider and ignoring a consumer with a missing verification from a provider does allows the provider to be deployed even without ignoring anything because there is no connection between that version of the provider and the consumer": {
-    "deployable": true,
+  "PactBroker::Matrix::Service find when deploying a provider and ignoring a consumer with a missing verification from a provider does not allows the provider to be deployed": {
+    "deployable": null,
     "reasons": [
-      "PactBroker::Matrix::NoDependenciesMissing"
+      "PactBroker::Matrix::PactNotEverVerifiedByProvider"
     ]
   },
   "PactBroker::Matrix::Service find when deploying a provider and ignoring a consumer with a failed verification from a provider deployment_status_summary is expected to be deployable": {

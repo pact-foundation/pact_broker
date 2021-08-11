@@ -199,9 +199,9 @@ module PactBroker
 
             let(:ignore_selectors) { [] }
 
-            it "does allows the provider to be deployed even without ignoring anything because there is no connection between that version of the provider and the consumer" do
-              expect(subject.deployment_status_summary).to be_deployable
-              expect(subject.deployment_status_summary.reasons.collect(&:class)).to include(PactBroker::Matrix::NoDependenciesMissing)
+            it "does not allows the provider to be deployed" do
+              expect(subject.deployment_status_summary).to_not be_deployable
+              expect(subject.deployment_status_summary.reasons.collect(&:class)).to include(PactBroker::Matrix::PactNotEverVerifiedByProvider)
             end
           end
 
