@@ -71,6 +71,16 @@ module PactBroker
         select(*SELECT_ALL_COLUMN_ARGS)
         select(*SELECT_PACTICIPANT_IDS_ARGS)
 
+        def distinct_integrations_for_selector_as_consumer(selector)
+          select(:consumer_id, :provider_id)
+            .distinct
+            .where({ consumer_id: selector.pacticipant_id, consumer_version_id: selector.pacticipant_version_id }.compact)
+            .from_self(alias: :integrations)
+            .select(:consumer_id, :provider_id, Sequel[:consumers][:name].as(:consumer_name), Sequel[:providers][:name].as(:provider_name))
+            .join_consumers(:integrations, :consumers)
+            .join_providers(:integrations, :providers)
+        end
+
         def distinct_integrations selectors, infer_integrations
           query = if selectors.size == 1
                     pacticipant_ids_matching_one_selector_optimised(selectors)

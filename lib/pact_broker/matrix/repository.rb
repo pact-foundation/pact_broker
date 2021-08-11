@@ -86,7 +86,7 @@ module PactBroker
 
       def find_integrations_for_specified_selectors(resolved_specified_selectors, options)
         if infer_selectors_for_integrations?(options)
-          find_integrations_for_specified_selectors_with_inferred_integrations(resolved_specified_selectors)
+          find_integrations_for_specified_selectors_with_inferred_integrations(resolved_specified_selectors, options)
         else
           specified_pacticipant_names = resolved_specified_selectors.collect(&:pacticipant_name)
           base_model_for_integrations
@@ -99,16 +99,34 @@ module PactBroker
         end
       end
 
-      def find_integrations_for_specified_selectors_with_inferred_integrations(resolved_specified_selectors)
-        specified_pacticipant_ids = resolved_specified_selectors.collect(&:pacticipant_id)
-        integrations_involving_specified_pacticipants = PactBroker::Integrations::Integration
-                                                          .including_pacticipants_with_ids(specified_pacticipant_ids)
-                                                          .eager(:consumer)
-                                                          .eager(:provider)
-                                                          .all
+      def integrations_where_specified_selector_is_consumer(resolved_specified_selectors)
+        resolved_specified_selectors.flat_map do | selector |
+          base_model_for_integrations
+            .distinct_integrations_for_selector_as_consumer(selector)
+            .all
+            .collect do | integration |
+              Integration.from_hash(
+                consumer_id: integration[:consumer_id],
+                consumer_name: integration[:consumer_name],
+                provider_id: integration[:provider_id],
+                provider_name: integration[:provider_name],
+                required: true
+              )
+            end
+        end
+      end
 
-        integrations_involving_specified_pacticipants.collect do | integration |
-          required = is_a_row_for_this_integration_required?(specified_pacticipant_ids, integration[:consumer_id])
+      def integrations_where_specified_selector_is_provider(resolved_specified_selectors, options)
+        specified_pacticipant_ids = resolved_specified_selectors.collect(&:pacticipant_id)
+        integrations_involving_specified_providers = PactBroker::Integrations::Integration
+                                                      .where(provider_id: specified_pacticipant_ids)
+                                                      .eager(:consumer)
+                                                      .all
+
+        destination_selector = PactBroker::Matrix::UnresolvedSelector.new(options.slice(:latest, :tag, :branch, :environment_name).compact)
+
+        integrations_involving_specified_providers.collect do | integration |
+          required = PactBroker::Domain::Version.where(pacticipant: integration.consumer).for_selector(destination_selector).any?
 
           Integration.from_hash(
             consumer_id: integration.consumer.id,
@@ -118,6 +136,12 @@ module PactBroker
             required: required
           )
         end
+      end
+
+      def find_integrations_for_specified_selectors_with_inferred_integrations(resolved_specified_selectors, options)
+        integrations = integrations_where_specified_selector_is_consumer(resolved_specified_selectors) +
+                        integrations_where_specified_selector_is_provider(resolved_specified_selectors, options)
+        integrations.uniq{ | integration| [integration.consumer_id, integration.provider_id] }
       end
 
       def add_any_inferred_selectors(resolved_specified_selectors, resolved_ignore_selectors, integrations, options)
