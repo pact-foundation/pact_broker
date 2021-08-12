@@ -9,7 +9,7 @@ module SemanticLogger
         self.log    = log
         self.logger = logger
 
-        [time, level, tags, named_tags, duration, message, payload, exception].compact.join(' ')
+        [time, level, tags, named_tags, duration, message, payload, exception].compact.join(" ")
       end
 
       def time
@@ -17,7 +17,7 @@ module SemanticLogger
       end
 
       def named_tags
-        named_tags = log.named_tags.reject{ | k, v | TAGS_TO_REMOVE.include?(k) }
+        named_tags = log.named_tags.reject{ | k, _ | TAGS_TO_REMOVE.include?(k) }
         return if named_tags.nil? || named_tags.empty?
 
         list = []
