@@ -5,12 +5,14 @@ require "pact_broker/config/runtime_configuration_coercion_methods"
 require "pact_broker/version"
 require "pact_broker/config/basic_auth_configuration"
 require "pact_broker/string_refinements"
+require "pact_broker/hash_refinements"
 require "pact_broker/error"
 
 module PactBroker
   module Config
     class RuntimeConfiguration < Anyway::Config
       using PactBroker::StringRefinements
+      using PactBroker::HashRefinements
       include RuntimeConfigurationLoggingMethods
       include RuntimeConfigurationCoercionMethods
 
@@ -25,7 +27,8 @@ module PactBroker
         log_format: nil,
         warning_error_class_names: ["Sequel::ForeignKeyConstraintViolation"],
         hide_pactflow_messages: false,
-        log_configuration_on_startup: true
+        log_configuration_on_startup: true,
+        custom_log_formatters: { short: "PactBroker::Logging::ShortFormatter" }
       )
 
       on_load :validate_logging_attributes!
@@ -96,6 +99,18 @@ module PactBroker
 
       def log_format= log_format
         super(log_format&.to_sym)
+      end
+
+      def custom_log_formatters= custom_log_formatters
+        super(custom_log_formatters&.symbolize_keys)
+      end
+
+      def log_formatter
+        if custom_log_formatters[log_format]
+          Object.const_get(custom_log_formatters[log_format]).new
+        else
+          log_format
+        end
       end
 
       def base_url= base_url

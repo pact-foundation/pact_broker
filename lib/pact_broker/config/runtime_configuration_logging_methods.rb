@@ -25,7 +25,7 @@ module PactBroker
 
         def log_config_inner(key, value, logger)
           if !value.has_key? :value
-            value.sort_by { |inner_key, _| inner_key }.each { |inner_key, inner_value| log_config_inner("#{key}:#{inner_key}", inner_value) }
+            value.sort_by { |inner_key, _| inner_key }.each { |inner_key, inner_value| log_config_inner("#{key}.#{inner_key}", inner_value, logger) }
           elsif self.class.sensitive_value?(key)
             logger.info "#{key}=#{redact(key, value[:value])} source=#{value[:source]}"
           else
