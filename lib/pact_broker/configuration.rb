@@ -95,9 +95,9 @@ module PactBroker
         if runtime_configuration.log_stream == :file
           path = runtime_configuration.log_dir + "/pact_broker.log"
           FileUtils.mkdir_p(runtime_configuration.log_dir)
-          @default_appender = SemanticLogger.add_appender(file_name: path, formatter: runtime_configuration.log_formatter)
+          @default_appender = SemanticLogger.add_appender(file_name: path, formatter: runtime_configuration.log_format)
         else
-          @default_appender = SemanticLogger.add_appender(io: $stdout, formatter: runtime_configuration.log_formatter)
+          @default_appender = SemanticLogger.add_appender(io: $stdout, formatter: runtime_configuration.log_format)
         end
         @logger_from_runtime_configuration = SemanticLogger["pact-broker"]
       end

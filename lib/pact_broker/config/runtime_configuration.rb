@@ -27,8 +27,7 @@ module PactBroker
         log_format: nil,
         warning_error_class_names: ["Sequel::ForeignKeyConstraintViolation"],
         hide_pactflow_messages: false,
-        log_configuration_on_startup: true,
-        custom_log_formatters: { short: "PactBroker::Logging::ShortFormatter" }
+        log_configuration_on_startup: true
       )
 
       on_load :validate_logging_attributes!
@@ -103,14 +102,6 @@ module PactBroker
 
       def custom_log_formatters= custom_log_formatters
         super(custom_log_formatters&.symbolize_keys)
-      end
-
-      def log_formatter
-        if custom_log_formatters[log_format]
-          Object.const_get(custom_log_formatters[log_format]).new
-        else
-          log_format
-        end
       end
 
       def base_url= base_url
