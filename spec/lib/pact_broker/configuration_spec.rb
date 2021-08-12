@@ -43,39 +43,39 @@ module PactBroker
 
       it "overrides the specified runtime configuration attributes within the block" do
         attribute_in_block = nil
-        PactBroker.with_runtime_configuration_overrides(webhook_http_code_success: [400]) do
-          attribute_in_block = PactBroker.configuration.webhook_http_code_success
+        PactBroker.with_runtime_configuration_overrides(disable_ssl_verification: "true") do
+          attribute_in_block = PactBroker.configuration.disable_ssl_verification
         end
-        expect(attribute_in_block).to eq [400]
-        expect(PactBroker.configuration.webhook_http_code_success).to_not eq [400]
+        expect(attribute_in_block).to eq true
+        expect(PactBroker.configuration.disable_ssl_verification).to eq false
       end
 
       it "logs the overrides at debug level" do
-        expect(logger).to receive(:debug).with("Overridding runtime configuration attribute 'webhook_http_code_success' with value [400]")
-        PactBroker.with_runtime_configuration_overrides(webhook_http_code_success: [400]) do
+        expect(logger).to receive(:debug).with("Overridding runtime configuration", payload: hash_including(overrides: { disable_ssl_verification: true }))
+        PactBroker.with_runtime_configuration_overrides(disable_ssl_verification: "true") do
           "foo"
         end
       end
 
       it "does not override the other runtime configuration attributes within the block" do
         attribute_in_block = nil
-        PactBroker.with_runtime_configuration_overrides(webhook_http_code_success: [400]) do
+        PactBroker.with_runtime_configuration_overrides(disable_ssl_verification: "true") do
           attribute_in_block = PactBroker.configuration.webhook_scheme_whitelist
         end
         expect(PactBroker.configuration.webhook_scheme_whitelist).to eq attribute_in_block
       end
 
       it "returns the results of the block" do
-        return_value = PactBroker.with_runtime_configuration_overrides(webhook_http_code_success: [400]) do
+        return_value = PactBroker.with_runtime_configuration_overrides(disable_ssl_verification: "true") do
           "foo"
         end
         expect(return_value).to eq "foo"
       end
 
       context "when the specified runtime attribute does not exist" do
-        it "logs an error" do
-          expect(logger).to receive(:warn).with(/Cannot override runtime configuration attribute 'no_existy'/)
-          PactBroker.with_runtime_configuration_overrides(no_existy: true) do
+        it "logs that it has ignored those attributes" do
+          expect(logger).to receive(:debug).with("Overridding runtime configuration", payload: hash_including(ignoring: { no_existy: true }))
+          PactBroker.with_runtime_configuration_overrides(no_existy: "true") do
             "foo"
           end
         end

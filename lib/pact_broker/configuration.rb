@@ -3,6 +3,7 @@ require "pact_broker/error"
 require "semantic_logger"
 require "forwardable"
 require "pact_broker/config/runtime_configuration"
+require "anyway/auto_cast"
 
 module PactBroker
   def self.configuration
@@ -209,16 +210,25 @@ module PactBroker
     private
 
     def override_runtime_configuration(overrides, new_runtime_configuration)
+      valid_overrides = {}
+      invalid_overrides = {}
+
       overrides.each do | key, value |
-        if new_runtime_configuration.respond_to?("#{key}=".to_sym)
-          if logger.debug?
-            logger.debug "Overridding runtime configuration attribute '#{key}' with value #{value.inspect}"
-          end
-          new_runtime_configuration.public_send("#{key}=", value)
+        if new_runtime_configuration.respond_to?("#{key}=")
+          valid_overrides[key] = Anyway::AutoCast.call(value)
         else
-          logger.warn("Cannot override runtime configuration attribute '#{key}' as #{new_runtime_configuration.class} does not respond to #{key}=")
+          invalid_overrides[key] = Anyway::AutoCast.call(value)
         end
       end
+
+      if logger.debug?
+        logger.debug("Overridding runtime configuration", payload: { overrides: valid_overrides, ignoring: invalid_overrides })
+      end
+
+      valid_overrides.each do | key, value |
+        new_runtime_configuration.public_send("#{key}=", value)
+      end
+
       new_runtime_configuration
     end
   end
