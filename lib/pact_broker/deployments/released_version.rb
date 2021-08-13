@@ -63,6 +63,10 @@ module PactBroker
       def version_number
         version.number
       end
+
+      def environment_name
+        environment.name
+      end
     end
   end
 end

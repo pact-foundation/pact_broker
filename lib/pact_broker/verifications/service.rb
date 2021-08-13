@@ -139,7 +139,7 @@ module PactBroker
           unscoped_service.find_currently_deployed_versions_for_pacticipant(pact_version.provider)
         end
         deployed_versions.collect do | deployed_version |
-          identify_required_verification(pact_version, deployed_version.version, "currently deployed version")
+          identify_required_verification(pact_version, deployed_version.version, "currently deployed version (#{deployed_version.environment_name})")
         end.compact
       end
       private :required_verifications_for_deployed_versions
@@ -149,7 +149,7 @@ module PactBroker
           unscoped_service.find_currently_supported_versions_for_pacticipant(pact_version.provider)
         end
         released_versions.collect do | released_version |
-          identify_required_verification(pact_version, released_version.version, "currently released version")
+          identify_required_verification(pact_version, released_version.version, "currently released version (#{released_version.environment_name})")
         end.compact
       end
       private :required_verifications_for_released_versions

@@ -87,10 +87,15 @@ module PactBroker
         version.number
       end
 
+      def environment_name
+        environment.name
+      end
+
       def record_undeployed
         self.class.where(id: id).record_undeployed
         self.refresh
       end
+
     end
   end
 end
