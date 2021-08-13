@@ -4,6 +4,7 @@ require "pact_broker/deployments/currently_deployed_version_id"
 module PactBroker
   module Deployments
     class DeployedVersion < Sequel::Model
+      many_to_one :pacticipant, :class => "PactBroker::Domain::Pacticipant", :key => :pacticipant_id, :primary_key => :id
       many_to_one :version, :class => "PactBroker::Domain::Version", :key => :version_id, :primary_key => :id
       many_to_one :environment, :class => "PactBroker::Deployments::Environment", :key => :environment_id, :primary_key => :id
       one_to_one :currently_deployed_version_id, :class => "PactBroker::Deployments::CurrentlyDeployedVersionId", key: :deployed_version_id, primary_key: :id
