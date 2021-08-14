@@ -41,22 +41,26 @@ module PactBroker
             .create_verification(provider_version: "3", number: 2)
             .create_pact_with_verification("NotFoo", "1", "Bar", "4")
             .create_verification(provider_version: "5", number: 3)
+            .create_pact_with_verification("NotFoo2", "1", "NotBar", "4")
+            .create_verification(provider_version: "6", number: 5)
+            .create_pact_with_verification("NotFoo3", "2", "NotBar", "5")
+            .create_verification(provider_version: "7", number: 6)
         end
 
         context "lazy loading" do
           it "lazy loads" do
             expect(PactPublication.first.pact_version.latest_verification.provider_version_number).to eq "3"
-            expect(PactPublication.last.pact_version.latest_verification.provider_version_number).to eq "5"
+            expect(PactPublication.last.pact_version.latest_verification.provider_version_number).to eq "7"
           end
         end
 
         context "eager loading" do
-          let(:pact_version_1) { PactVersion.eager(:latest_verification).all.first }
-          let(:pact_version_2) { PactVersion.eager(:latest_verification).all.last }
+          let(:pact_version_1) { PactVersion.eager(:latest_verification).order(:id).all.first }
+          let(:pact_version_2) { PactVersion.eager(:latest_verification).order(:id).all.last }
 
           it "eager loads" do
             expect(pact_version_1.associations[:latest_verification].provider_version_number).to eq "3"
-            expect(pact_version_2.associations[:latest_verification].provider_version_number).to eq "5"
+            expect(pact_version_2.associations[:latest_verification].provider_version_number).to eq "7"
           end
         end
       end
