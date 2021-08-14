@@ -5,7 +5,6 @@ require "pact_broker/tags/tag_with_latest_flag"
 require "pact_broker/pacts/content"
 require "sequel/extensions/symbol_aref_refinement"
 
-
 module PactBroker
   module Domain
     class Verification < Sequel::Model
@@ -45,27 +44,10 @@ module PactBroker
             base_query = base_query.select_all_qualified
           end
 
-          base_query.left_join(base_query.select(Sequel[:verifications][:id], Sequel[:verifications][:pact_version_id]), base_join, { table_alias: :v2 }) do
-            Sequel[:v2][:id] > Sequel[:verifications][:id]
+          base_query.left_join(:latest_verification_id_for_pact_version_and_provider_version, base_join, { table_alias: :v2 }) do
+            Sequel[:v2][:verification_id] > Sequel[:verifications][:id]
           end
-          .where(Sequel[:v2][:id] => nil)
-        end
-
-        def latest_verification_ids_for_all_consumer_version_tags
-          verif_pact_join = { Sequel[:verifications][:pact_version_id] => Sequel[:lpp][:pact_version_id] }
-          tag_join = { Sequel[:lpp][:consumer_version_id] => Sequel[:cvt][:version_id] }
-          verisons_join = { Sequel[:v][:provider_version_id] => Sequel[:pv][:id] }
-
-          db[:verifications]
-            .select_group(
-              Sequel[:pv][:pacticipant_id].as(:provider_id),
-              Sequel[:lpp][:consumer_id],
-              Sequel[:cvt][:name].as(:consumer_version_tag_name)
-            )
-            .select_append{ max(verifications[id]).as(latest_verification_id) }
-            .join(:latest_pact_publication_ids_for_consumer_versions, verif_pact_join, { table_alias: :lpp } )
-            .join(:tags, tag_join, { table_alias: :cvt })
-            .join(:versions, verisons_join, { table_alias: :pv })
+          .where(Sequel[:v2][:verification_id] => nil)
         end
 
         # Do not use this query. It performs worse than the view.
