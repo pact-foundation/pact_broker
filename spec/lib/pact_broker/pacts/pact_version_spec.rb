@@ -49,8 +49,8 @@ module PactBroker
 
         context "lazy loading" do
           it "lazy loads" do
-            expect(PactPublication.first.pact_version.latest_verification.provider_version_number).to eq "3"
-            expect(PactPublication.last.pact_version.latest_verification.provider_version_number).to eq "7"
+            expect(PactPublication.order(:id).all.first.pact_version.latest_verification.provider_version_number).to eq "3"
+            expect(PactPublication.order(:id).all.last.pact_version.latest_verification.provider_version_number).to eq "7"
           end
         end
 
