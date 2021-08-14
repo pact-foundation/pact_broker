@@ -125,7 +125,7 @@ To run:
 1. Load an exported real database into a postgres docker image. The exported file must be in the pg dump format to use this script, and it must be located in the project root directory for it to be found via the mounted directory.
 
     ```
-    script/docker/reload.sh <export>
+    script/docker/restore.sh <export>
 
     ```
 1. Clear any previously generated approvals.
