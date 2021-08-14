@@ -24,10 +24,6 @@ module PactBroker
       associate(:many_to_one, :pact_version, class: "PactBroker::Pacts::PactVersion", :key => :pact_version_id, :primary_key => :id)
       associate(:many_to_one, :integration, class: "PactBroker::Integrations::Integration", key: [:consumer_id, :provider_id], primary_key: [:consumer_id, :provider_id])
 
-      one_to_one(:latest_verification, class: "PactBroker::Domain::Verification", key: :pact_version_id, primary_key: :pact_version_id) do | ds |
-        ds.unlimited.latest_by_pact_version
-      end
-
       # TODO rename to consumer_version_tags
       associate(:one_to_many, :tags, :class => "PactBroker::Domain::Tag", :key => :version_id, :primary_key => :consumer_version_id)
 

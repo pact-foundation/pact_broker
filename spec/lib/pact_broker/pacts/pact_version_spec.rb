@@ -3,7 +3,6 @@ require "pact_broker/pacts/pact_version"
 module PactBroker
   module Pacts
     describe PactVersion do
-
       describe "pacticipant names" do
         subject(:pact_version) do
           td.create_consumer("consumer")
@@ -33,6 +32,32 @@ module PactBroker
 
         it "returns the consuemr versions" do
           expect(subject.consumer_versions.collect(&:number).sort).to eq ["1", "2"]
+        end
+      end
+
+      describe "#latest_verification" do
+        before do
+          td.create_pact_with_verification("Foo", "1", "Bar", "2")
+            .create_verification(provider_version: "3", number: 2)
+            .create_pact_with_verification("NotFoo", "1", "Bar", "4")
+            .create_verification(provider_version: "5", number: 3)
+        end
+
+        context "lazy loading" do
+          it "lazy loads" do
+            expect(PactPublication.first.pact_version.latest_verification.provider_version_number).to eq "3"
+            expect(PactPublication.last.pact_version.latest_verification.provider_version_number).to eq "5"
+          end
+        end
+
+        context "eager loading" do
+          let(:pact_version_1) { PactVersion.eager(:latest_verification).all.first }
+          let(:pact_version_2) { PactVersion.eager(:latest_verification).all.last }
+
+          it "eager loads" do
+            expect(pact_version_1.associations[:latest_verification].provider_version_number).to eq "3"
+            expect(pact_version_2.associations[:latest_verification].provider_version_number).to eq "5"
+          end
         end
       end
 

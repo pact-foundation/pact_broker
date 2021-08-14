@@ -14,9 +14,13 @@ module PactBroker
       associate(:many_to_one, :consumer, class: "PactBroker::Domain::Pacticipant", key: :consumer_id, primary_key: :id)
       associate(:many_to_many, :consumer_versions, class: "PactBroker::Domain::Version", join_table: :pact_publications, left_key: :pact_version_id, right_key: :consumer_version_id, order: :order)
 
-      one_to_one(:latest_verification, class: "PactBroker::Domain::Verification", key: :pact_version_id, primary_key: :id) do | ds |
-        ds.unlimited.latest_by_pact_version
-      end
+      one_to_one(:latest_verification,
+        class: "PactBroker::Domain::Verification",
+        read_only: true,
+        dataset: lambda { PactBroker::Domain::Verification.where(id: PactBroker::Domain::Verification.select(Sequel.function(:max, :id)).where(pact_version_id: id)) },
+        key: :pact_version_id, primary_key: :id,
+        eager_block: lambda { | ds | ds.latest_by_pact_version }
+      )
 
       # do not eager load this - it won't work because of the limit(1)
       one_through_one(:latest_consumer_version, class: "PactBroker::Domain::Version", join_table: :pact_publications, left_key: :pact_version_id, right_key: :consumer_version_id) do | ds |
