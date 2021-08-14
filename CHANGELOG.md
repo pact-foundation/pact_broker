@@ -1,3 +1,33 @@
+<a name="v2.82.0"></a>
+### v2.82.0 (2021-08-14)
+
+#### Features
+
+* do not allow contract content for a consumer version to be modified for all new Broker instances (#484)	 ([b1819749](/../../commit/b1819749))
+* ensure saved configuration is loaded appropriately into the RuntimeConfiguration	 ([c5ab52ad](/../../commit/c5ab52ad))
+* automatically set main branch (#483)	 ([63e287ee](/../../commit/63e287ee))
+* allow the first tag to be used as the branch name to assist migrating to branches (#478)	 ([a086214a](/../../commit/a086214a))
+* add support for contract_requiring_verification_published webhook (#476)	 ([b4699df0](/../../commit/b4699df0))
+* automatically create database connection from YAML or environment variable config	 ([ca34b030](/../../commit/ca34b030))
+* move basic auth code in from pact-broker-docker	 ([869bcd61](/../../commit/869bcd61))
+* allow Pact Broker to be configured using a YAML file and environment variables (#471)	 ([6e3d0e62](/../../commit/6e3d0e62))
+
+* **pacts for verification**
+  * if no consumer version selectors are specified, return the pacts for the latest main version, and all the deployed and released versions	 ([5fccd524](/../../commit/5fccd524))
+
+* **metrics**
+  * add counts for environment, deployed version, released version, pacticipants and versions with branch set	 ([8272b08b](/../../commit/8272b08b))
+
+#### Bug Fixes
+
+* lazy load latest verification using select max, and eager load using the skynet query	 ([e6ee6ab5](/../../commit/e6ee6ab5))
+* improve performance of query for latest verification for pact_version	 ([d63081d8](/../../commit/d63081d8))
+* do not allow the deployment of a provider version with no results when one of its consumers is already deployed (#486)	 ([219029c0](/../../commit/219029c0))
+* add cache busting parameters to css and js links	 ([9cab749a](/../../commit/9cab749a))
+
+* **can-i-deploy**
+  * correctly construct options when environment is used in the can-i-deploy GET endpoint	 ([cb79a404](/../../commit/cb79a404))
+
 <a name="v2.81.0"></a>
 ### v2.81.0 (2021-07-17)
 
