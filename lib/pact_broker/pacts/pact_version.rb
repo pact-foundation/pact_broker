@@ -1,6 +1,7 @@
 require "sequel"
 require "pact_broker/repositories/helpers"
 require "pact_broker/verifications/latest_verification_for_pact_version"
+require "pact_broker/verifications/latest_verification_id_for_pact_version_and_provider_version"
 
 module PactBroker
   module Pacts
@@ -17,7 +18,7 @@ module PactBroker
       one_to_one(:latest_verification,
         class: "PactBroker::Domain::Verification",
         read_only: true,
-        dataset: lambda { PactBroker::Domain::Verification.where(id: PactBroker::Domain::Verification.select(Sequel.function(:max, :id)).where(pact_version_id: id)) },
+        dataset: lambda { PactBroker::Domain::Verification.where(id: PactBroker::Verifications::LatestVerificationIdForPactVersionAndProviderVersion.select(Sequel.function(:max, :verification_id)).where(pact_version_id: id)) },
         key: :pact_version_id, primary_key: :id,
         eager_block: lambda { | ds | ds.latest_by_pact_version }
       )
