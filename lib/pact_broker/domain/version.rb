@@ -31,6 +31,7 @@ module PactBroker
       associate(:many_to_one, :pacticipant, :class => "PactBroker::Domain::Pacticipant", :key => :pacticipant_id, :primary_key => :id)
       one_to_many :tags, :reciprocal => :version, order: :created_at
       one_to_many :branch_versions, :reciprocal => :branch_version, class: "PactBroker::Versions::BranchVersion", order: [:created_at, :id]
+      one_to_many :branch_heads, reciprocal: :branch_head, class: "PactBroker::Versions::BranchHead", order: :id
       one_to_many :current_deployed_versions, class: "PactBroker::Deployments::DeployedVersion", key: :version_id, primary_key: :id, order: [:created_at, :id] do | ds |
         ds.currently_deployed
       end
@@ -241,7 +242,7 @@ module PactBroker
       end
 
       def latest_for_branch?
-        branch ? latest_version_for_branch.order == order : nil
+        branch_heads.any?
       end
 
       def latest_for_pacticipant?

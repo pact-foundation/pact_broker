@@ -367,7 +367,7 @@ module PactBroker
         context "when there is no branch" do
           let(:version) { Version.for("Foo", "3") }
 
-          it { is_expected.to be nil }
+          it { is_expected.to be false }
         end
       end
 
