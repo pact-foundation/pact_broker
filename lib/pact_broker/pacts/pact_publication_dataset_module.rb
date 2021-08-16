@@ -84,7 +84,7 @@ module PactBroker
           Sequel[:pp2][:consumer_version_order] > Sequel[:pact_publications][:consumer_version_order]
         end
         .where(Sequel[:pp2][:consumer_version_order] => nil)
-        .remove_overridden_revisions_from_complete_query # do we need this?
+        .remove_overridden_revisions_from_complete_query
       end
 
       def overall_latest_for_consumer_id_and_provider_id(consumer_id, provider_id)

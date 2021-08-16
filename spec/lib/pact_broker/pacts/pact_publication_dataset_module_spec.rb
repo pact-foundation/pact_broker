@@ -174,6 +174,7 @@ module PactBroker
             .create_pact
             .create_consumer_version("3", tag_names: ["feat/x"])
             .create_pact
+            .revise_pact
             .create_consumer("Foo2")
             .create_provider("Bar2")
             .create_consumer_version("10", tag_names: ["main"])
@@ -187,6 +188,7 @@ module PactBroker
         it "returns the latest by consumer/provider" do
           all = subject.all.sort_by{ | pact_publication | pact_publication.consumer_version.order }
           expect(all.size).to eq 2
+          expect(all.first.revision_number).to eq 2
         end
 
         it "does not return extra columns" do
