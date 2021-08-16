@@ -199,6 +199,11 @@ module PactBroker
         "#{tags_url(base_url, tag.version)}/#{url_encode(tag.name)}"
       end
 
+      # This resource does not actually exist
+      def branch_version_url(branch_version, base_url = "")
+        "#{version_url(base_url, branch_version.version)}/branches/#{branch_version.branch_name}"
+      end
+
       def templated_tag_url_for_pacticipant pacticipant_name, base_url = ""
         pacticipant_url_from_params({ pacticipant_name: pacticipant_name }, base_url) + "/versions/{version}/tags/{tag}"
       end

@@ -7,7 +7,7 @@ module PactBroker
       class VersionDecorator < BaseDecorator
 
         property :number, writeable: false
-        property :branch
+        collection :branch_versions, as: :branches, embedded: true, writeable: false, extend: PactBroker::Api::Decorators::EmbeddedBranchVersionDecorator
         property :build_url, as: :buildUrl
 
         collection :tags, embedded: true, :extend => PactBroker::Api::Decorators::EmbeddedTagDecorator, class: OpenStruct
