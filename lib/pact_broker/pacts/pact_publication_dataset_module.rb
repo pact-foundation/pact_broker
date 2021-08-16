@@ -89,30 +89,32 @@ module PactBroker
           .limit(1)
       end
 
-      def latest_for_consumer_branch(branch)
-        versions_join = {
-          Sequel[:pact_publications][:consumer_version_id] => Sequel[:cv][:id],
-          Sequel[:cv][:branch] => branch
+      def latest_for_consumer_branch(branch_name)
+        branch_versions_join = {
+          Sequel[:pact_publications][:consumer_version_id] => Sequel[:branch_versions][:version_id]
         }
 
-        base_query = join(:versions, versions_join, { table_alias: :cv }) do
-          Sequel.lit("cv.branch is not null")
-        end
-
-        self_join = {
-          Sequel[:pact_publications][:consumer_id] => Sequel[:pp2][:consumer_id],
-          Sequel[:cv][:branch] => Sequel[:pp2][:branch]
+        # TODO use name like
+        branches_join = {
+          Sequel[:branch_versions][:branch_id] => Sequel[:branches][:id],
+          Sequel[:branches][:name] => branch_name
         }
 
+        max_orders = join(:branch_versions, branch_versions_join)
+                      .join(:branches, branches_join)
+                      .select_group(:consumer_id, Sequel[:branches][:name].as(:branch_name))
+                      .select_append{ max(consumer_version_order).as(latest_consumer_version_order) }
+
+        max_join = {
+          Sequel[:max_orders][:consumer_id] => Sequel[:pact_publications][:consumer_id],
+          Sequel[:max_orders][:latest_consumer_version_order] => Sequel[:pact_publications][:consumer_version_order]
+        }
+
+        base_query = self
         if no_columns_selected?
-          base_query = base_query.select_all_qualified.select_append(Sequel[:cv][:branch])
+          base_query = base_query.select_all_qualified.select_append(Sequel[:max_orders][:branch_name].as(:branch))
         end
-
-        base_query.left_join(base_query.select(:consumer_id, :branch, :order), self_join, { table_alias: :pp2 } ) do
-          Sequel[:pp2][:order] > Sequel[:cv][:order]
-        end
-        .where(Sequel[:pp2][:order] => nil)
-        .remove_overridden_revisions_from_complete_query
+        base_query.join(max_orders, max_join, { table_alias: :max_orders })
       end
 
       def latest_by_consumer_tag
