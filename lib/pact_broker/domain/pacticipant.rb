@@ -23,6 +23,7 @@ module PactBroker
       one_to_many :pacts
       one_to_one :latest_version, :class => "PactBroker::Versions::LatestVersion", primary_key: :id, key: :pacticipant_id
       one_to_many :branch_heads, class: "PactBroker::Versions::BranchHead", primary_key: :id, key: :pacticipant_id
+      one_to_many :branches, class: "PactBroker::Versions::Branch", primary_key: :id, key: :pacticipant_id
 
       dataset_module do
         include PactBroker::Repositories::Helpers
@@ -66,6 +67,10 @@ module PactBroker
 
       def any_versions?
         PactBroker::Domain::Version.where(pacticipant: self).any?
+      end
+
+      def branch_head_for(branch_name)
+        branch_heads.find{ | branch_head | branch_head.branch_name == branch_name }
       end
     end
   end

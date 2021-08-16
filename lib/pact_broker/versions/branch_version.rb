@@ -10,6 +10,13 @@ module PactBroker
       associate(:many_to_one, :branch, :class => "PactBroker::Versions::Branch", :key => :branch_id, :primary_key => :id)
       associate(:many_to_one, :version, :class => "PactBroker::Domain::Version", :key => :version_id, :primary_key => :id)
 
+      dataset_module do
+        def find_latest_for_branch(branch)
+          max_version_order = BranchVersion.select(Sequel.function(:max, :version_order)).where(branch_id: branch.id)
+          BranchVersion.where(branch_id: branch.id, version_order: max_version_order).single_record
+        end
+      end
+
       def before_save
         super
 

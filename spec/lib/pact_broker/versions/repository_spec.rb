@@ -63,8 +63,7 @@ module PactBroker
 
       describe "#delete_by_id" do
         let!(:version) do
-          TestDataBuilder.new
-            .create_consumer
+          td.create_consumer("Foo")
             .create_consumer_version("1.2.3")
             .create_consumer_version("4.5.6")
             .and_return(:consumer_version)
@@ -75,6 +74,35 @@ module PactBroker
         it "deletes the version" do
           expect { subject }.to change{ PactBroker::Domain::Version.count }.by(-1)
         end
+
+        context "when the deleted version is the latest for a branch" do
+          let!(:version) do
+            td.create_consumer("Foo")
+              .create_consumer_version("1.2.3", branch: "main")
+              .create_consumer_version("4.5.6", branch: "main")
+              .and_return(:consumer_version)
+          end
+
+          it "updates the branch head" do
+            subject
+            expect(td.find_pacticipant("Foo").branch_head_for("main").version.number).to eq "1.2.3"
+          end
+        end
+
+        context "when the deleted version is the latest and last for a branch" do
+          let!(:version) do
+            td.create_consumer("Foo")
+              .create_consumer_version("4.5.6", branch: "main")
+              .and_return(:consumer_version)
+          end
+
+          it "leaves the branch, but deletes the branch head (not sure about this, but thinking the branch creation date is handy for the WIP/pending calculation)" do
+            subject
+            foo = td.find_pacticipant("Foo")
+            expect(foo.branches.collect(&:name)).to include "main"
+            expect(td.find_pacticipant("Foo").branch_head_for("main")).to be nil
+          end
+        end
       end
 
       describe "#find_by_pacticipant_name_and_number" do
@@ -83,8 +111,7 @@ module PactBroker
 
         context "when the version exists" do
           before do
-            TestDataBuilder.new
-              .create_consumer("Another Consumer")
+            td.create_consumer("Another Consumer")
               .create_consumer(pacticipant_name)
               .create_consumer_version(version_number)
               .create_consumer_version_tag("prod")

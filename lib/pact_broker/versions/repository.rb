@@ -130,7 +130,15 @@ module PactBroker
       end
 
       def delete_by_id version_ids
+        branches = Versions::Branch.where(id: Versions::BranchHead.select(:branch_id).where(version_id: version_ids)).all # these will be deleted
         Domain::Version.where(id: version_ids).delete
+        branches.each do | branch |
+          new_head_branch_version = Versions::BranchVersion.find_latest_for_branch(branch)
+          if new_head_branch_version
+            PactBroker::Versions::BranchHead.new(branch: branch, branch_version: new_head_branch_version).upsert
+          end
+        end
+        nil
       end
 
       def delete_orphan_versions consumer, provider
