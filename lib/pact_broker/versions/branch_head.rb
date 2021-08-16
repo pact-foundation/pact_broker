@@ -14,6 +14,7 @@ module PactBroker
         super
         self.pacticipant_id = branch.pacticipant_id
         self.version_id = branch_version.version_id
+        self.branch_name = branch.name
       end
 
       def branch_name

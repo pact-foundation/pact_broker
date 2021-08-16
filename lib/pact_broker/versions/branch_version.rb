@@ -32,13 +32,7 @@ module PactBroker
           end
         end
 
-        if version_order.nil? || pacticipant_id.nil?
-          raise PactBroker::Error.new("Need to set version_order and pacticipant_id for tags now")
-        end
-      end
-
-      def branch_name
-        branch.name
+        self.branch_name = branch.name
       end
     end
   end

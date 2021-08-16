@@ -129,8 +129,16 @@ module PactBroker
           end
         end
 
-        def where_branch(branch)
-          where(branch: branch)
+        def where_branch_name(branch_name)
+          matching_branch_ids = PactBroker::Versions::Branch.select(:id).where(name: branch_name)
+          matching_branch_version_ids = PactBroker::Versions::BranchVersion
+                                          .select(:version_id)
+                                          .where(branch_id: matching_branch_ids)
+          where(id: matching_branch_version_ids)
+        end
+
+        def where_branch_head_name(branch_name)
+          where(id: PactBroker::Versions::BranchHead.select(:version_id).where(branch_name: branch_name))
         end
 
         def where_number(number)
@@ -163,11 +171,17 @@ module PactBroker
           query = query.where_pacticipant_name(selector.pacticipant_name) if selector.pacticipant_name
           query = query.currently_in_environment(selector.environment_name, selector.pacticipant_name) if selector.environment_name
           query = query.where_tag(selector.tag) if selector.tag
-          query = query.where_branch(selector.branch) if selector.branch
           query = query.where_number(selector.pacticipant_version_number) if selector.pacticipant_version_number
           query = query.where_age_less_than(selector.max_age) if selector.max_age
+          if selector.branch
+            if selector.latest
+              query = query.where_branch_head_name(selector.branch)
+            else
+              query = query.where_branch_name(selector.branch)
+            end
+          end
 
-          if selector.latest
+          if selector.latest && !selector.branch
             calculate_max_version_order_and_join_back_to_versions(query, selector)
           else
             query
