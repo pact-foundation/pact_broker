@@ -272,6 +272,7 @@ end
 # Foreign key constraints:
 #  versions_pacticipant_id_fkey | (pacticipant_id) REFERENCES pacticipants(id)
 # Referenced By:
+#  branch_versions                                              | branch_versions_versions_fk                                     | (version_id) REFERENCES versions(id) ON DELETE CASCADE
 #  currently_deployed_version_ids                               | currently_deployed_version_ids_version_id_fkey                  | (version_id) REFERENCES versions(id) ON DELETE CASCADE
 #  deployed_versions                                            | deployed_versions_version_id_fkey                               | (version_id) REFERENCES versions(id)
 #  latest_pact_publication_ids_for_consumer_versions            | latest_pact_publication_ids_for_consum_consumer_version_id_fkey | (consumer_version_id) REFERENCES versions(id) ON DELETE CASCADE

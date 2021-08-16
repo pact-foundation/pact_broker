@@ -236,6 +236,7 @@ end
 #  verifications_pkey                          | PRIMARY KEY btree (id)
 #  verifications_pact_version_id_number_index  | UNIQUE btree (pact_version_id, number)
 #  verifications_consumer_id_index             | btree (consumer_id)
+#  verifications_pact_version_id_id_index      | btree (pact_version_id, id)
 #  verifications_provider_id_consumer_id_index | btree (provider_id, consumer_id)
 #  verifications_provider_id_index             | btree (provider_id)
 # Foreign key constraints:

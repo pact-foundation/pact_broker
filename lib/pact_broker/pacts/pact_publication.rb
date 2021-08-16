@@ -178,10 +178,11 @@ end
 #  consumer_id            | integer                     |
 #  consumer_version_order | integer                     |
 # Indexes:
-#  pact_publications_pkey              | PRIMARY KEY btree (id)
-#  cv_prov_revision_unq                | UNIQUE btree (consumer_version_id, provider_id, revision_number)
-#  cv_prov_id_ndx                      | btree (consumer_version_id, provider_id, id)
-#  pact_publications_consumer_id_index | btree (consumer_id)
+#  pact_publications_pkey                               | PRIMARY KEY btree (id)
+#  cv_prov_revision_unq                                 | UNIQUE btree (consumer_version_id, provider_id, revision_number)
+#  cv_prov_id_ndx                                       | btree (consumer_version_id, provider_id, id)
+#  pact_publications_consumer_id_consumer_version_order | btree (consumer_id, consumer_version_order)
+#  pact_publications_consumer_id_index                  | btree (consumer_id)
 # Foreign key constraints:
 #  pact_publications_consumer_id_fkey         | (consumer_id) REFERENCES pacticipants(id)
 #  pact_publications_consumer_version_id_fkey | (consumer_version_id) REFERENCES versions(id)

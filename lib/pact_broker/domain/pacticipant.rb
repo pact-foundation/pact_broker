@@ -93,6 +93,7 @@ end
 #  pacticipants_name_key | UNIQUE btree (name)
 #  ndx_ppt_name          | btree (name)
 # Referenced By:
+#  branches                                                     | branches_pacticipant_id_fkey                                    | (pacticipant_id) REFERENCES pacticipants(id) ON DELETE CASCADE
 #  currently_deployed_version_ids                               | currently_deployed_version_ids_pacticipant_id_fkey              | (pacticipant_id) REFERENCES pacticipants(id) ON DELETE CASCADE
 #  labels                                                       | labels_pacticipant_id_fkey                                      | (pacticipant_id) REFERENCES pacticipants(id)
 #  latest_pact_publication_ids_for_consumer_versions            | latest_pact_publication_ids_for_consumer_versi_consumer_id_fkey | (consumer_id) REFERENCES pacticipants(id) ON DELETE CASCADE
