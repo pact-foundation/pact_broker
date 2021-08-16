@@ -19,19 +19,8 @@ module PactBroker
 
       def before_save
         super
-
-        if version.order && self.version_order.nil?
-          self.version_order = version.order
-        end
-
-        if self.pacticipant_id.nil?
-          if version.pacticipant_id
-            self.pacticipant_id = version.pacticipant_id
-          elsif version&.pacticipant&.id
-            self.pacticipant_id = version.pacticipant.id
-          end
-        end
-
+        self.version_order = version.order
+        self.pacticipant_id = version.pacticipant_id
         self.branch_name = branch.name
       end
     end
