@@ -23,6 +23,7 @@ module PactBroker
             .create_consumer("FooZ")
             .create_consumer_version("6", branch: "main", comment: "latest, different consumer")
             .create_pact
+            .revise_pact
             .set_now(Date.new(2020, 1, 6))
             .create_consumer_version("7", comment: "No branch")
             .create_pact
@@ -42,6 +43,7 @@ module PactBroker
           expect(subject.find { |pp| pp.consumer_id == foo.id && pp[:branch] == "main" }.consumer_version.number).to eq "3"
           expect(subject.find { |pp| pp.consumer_id == foo.id && pp[:branch] == "feat/x" }.consumer_version.number).to eq "4"
           expect(subject.find { |pp| pp.consumer_id == foo_z.id && pp[:branch] == "main" }.consumer_version.number).to eq "6"
+          expect(subject.find { |pp| pp.consumer_id == foo_z.id && pp[:branch] == "main" }.revision_number).to eq 2
         end
 
         it "does not return extra columns" do
@@ -68,6 +70,7 @@ module PactBroker
             .create_pact
             .create_consumer_version("2", branch: "main")
             .create_pact
+            .revise_pact
             .create_consumer_version("3", branch: "feat-x")
             .create_pact
             .create_consumer("Foo2")
@@ -86,6 +89,7 @@ module PactBroker
           expect(all.first.consumer.name).to eq "Foo"
           expect(all.first.provider.name).to eq "Bar"
           expect(all.first.consumer_version.number).to eq "2"
+          expect(all.first.revision_number).to eq 2
 
           expect(all.last.consumer.name).to eq "Foo2"
           expect(all.last.provider.name).to eq "Bar2"
