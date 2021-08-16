@@ -188,8 +188,8 @@ module PactBroker
           end
 
           it "updates the branch head" do
-            branch_head = subject.pacticipant.branch_heads.find{ | bh | bh.branch_name == "new-branch" }
-            expect(branch_head.version).to eq subject
+            branch_head = subject.pacticipant.branch_head_for("new-branch")
+            expect(branch_head.version.id).to eq subject.refresh.id
           end
         end
 
@@ -210,7 +210,7 @@ module PactBroker
           end
 
           it "does not change the branch head" do
-            branch_head = subject.pacticipant.branch_heads.find{ | bh | bh.branch_name == "original-branch" }
+            branch_head = subject.pacticipant.branch_head_for("original-branch")
             expect(branch_head.version).to eq subject
           end
         end
