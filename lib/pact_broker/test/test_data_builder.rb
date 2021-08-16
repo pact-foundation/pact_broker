@@ -170,12 +170,15 @@ module PactBroker
       def create_consumer_version version_number = "1.0.#{model_counter}", params = {}
         params.delete(:comment)
         tag_names = [params.delete(:tag_names), params.delete(:tag_name)].flatten.compact
-        @consumer_version = PactBroker::Domain::Version.create(
+        args = {
           number: version_number,
-          pacticipant: @consumer,
+          pacticipant_id: @consumer.id,
           branch: params[:branch],
           build_url: params[:build_url]
-        )
+        }
+
+        @consumer_version = PactBroker::Versions::Repository.new.create(args)
+
         set_created_at_if_set params[:created_at], :versions, { id: @consumer_version.id }
         tag_names.each do | tag_name |
           tag = PactBroker::Domain::Tag.create(name: tag_name, version: consumer_version)

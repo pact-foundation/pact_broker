@@ -2,6 +2,8 @@ require "sequel"
 require "pact_broker/logging"
 require "pact_broker/domain/version"
 require "pact_broker/tags/repository"
+require "pact_broker/versions/branch"
+require "pact_broker/versions/branch_version"
 
 module PactBroker
   module Versions
@@ -55,16 +57,25 @@ module PactBroker
           number: args[:number],
           pacticipant_id: args[:pacticipant_id],
           created_at: Sequel.datetime_class.now,
-          updated_at: Sequel.datetime_class.now
-        }
+          updated_at: Sequel.datetime_class.now,
+          build_url: args[:build_url],
+          branch: args[:branch]
+        }.compact
 
-        PactBroker::Domain::Version.new(version_params).upsert
+        version = PactBroker::Domain::Version.new(version_params).upsert
+
+        if args[:branch]
+          add_branch(version, args[:branch])
+        end
+
+        version
       end
 
       def create_or_update(pacticipant, version_number, open_struct_version)
         saved_version = PactBroker::Domain::Version.where(pacticipant_id: pacticipant.id, number: version_number).single_record
         params = open_struct_version.to_h
         tags = params.delete(:tags)
+        branch_name = params[:branch] # TODO branches
         if saved_version
           saved_version.update(params)
         else
@@ -73,11 +84,13 @@ module PactBroker
           saved_version = PactBroker::Domain::Version.new(
             params.merge(
               pacticipant_id: pacticipant.id,
-              number: version_number
-            )
+              number: version_number,
+              branch: branch_name,
+            ).compact
           ).upsert
         end
 
+        add_branch(saved_version, branch_name) if branch_name
         replace_tags(saved_version, tags) if tags
         saved_version
       end
@@ -92,6 +105,10 @@ module PactBroker
 
         if open_struct_version.tags
           replace_tags(saved_version, open_struct_version.tags)
+        end
+
+        if open_struct_version.branches
+          update_branches(saved_version, open_struct_version.branches)
         end
 
         saved_version
@@ -141,6 +158,13 @@ module PactBroker
             .single_record
 
           latest_from_main_branch || find_by_pacticipant_name_and_latest_tag(pacticipant.name, pacticipant.main_branch)
+        end
+      end
+
+      def add_branch(version, branch_name)
+        branch = PactBroker::Versions::Branch.new(pacticipant: version.pacticipant, name: branch_name).insert_ignore
+        if !version.belongs_to_branch?(branch)
+          PactBroker::Versions::BranchVersion.new(version: version, branch: branch, branch_name: branch_name).insert_ignore
         end
       end
     end

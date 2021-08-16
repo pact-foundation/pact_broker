@@ -121,6 +121,93 @@ module PactBroker
         end
       end
 
+      describe "#create_or_update" do
+        before do
+          td.subtract_day
+            .create_consumer("Foo")
+            .create_consumer_version(version_number, branch: "original-branch", build_url: "original-build-url")
+            .create_consumer_version_tag("dev")
+        end
+
+        let(:pacticipant) { td.and_return(:consumer) }
+        let(:version_number) { "1234" }
+        let(:tags) { nil }
+        let(:open_struct_version) { OpenStruct.new(branch: new_branch, tags: tags) }
+        let(:new_branch) { "new-branch" }
+
+        subject { Repository.new.create_or_update(pacticipant, version_number, open_struct_version) }
+
+        it "does not overwrite missing values the values" do
+          expect(subject.branch).to eq "new-branch"
+          expect(subject.build_url).to eq "original-build-url"
+        end
+
+        it "does not change the tags" do
+          expect { subject }.to_not change { PactBroker::Domain::Version.for("Foo", "1234").tags }
+        end
+
+        context "when the branch does not already exist" do
+          it "creates a branch" do
+            expect { subject }.to change { PactBroker::Versions::Branch.count }.by(1)
+          end
+
+          it "creates a branch_version" do
+            expect { subject }.to change { PactBroker::Versions::BranchVersion.count }.by(1)
+          end
+
+          it "adds the branch_version to the version" do
+            expect(subject.branch_versions.count).to eq 2
+            expect(subject.branch_versions.last.branch_name).to eq "new-branch"
+          end
+        end
+
+        context "when the branch and branch version do already exist" do
+          let(:new_branch) { "original-branch" }
+
+          it "does not creates a branch" do
+            expect { subject }.to_not change { PactBroker::Versions::Branch.order(:name).collect(&:name) }
+          end
+
+          it "does not create a branch_version" do
+            expect { subject }.to change { PactBroker::Versions::BranchVersion.count }.by(0)
+          end
+
+          it "keeps the branch_version on the version" do
+            expect(subject.branch_versions.count).to eq 1
+            expect(subject.branch_versions.first.branch_name).to eq "original-branch"
+          end
+        end
+
+        context "when there are tags specified" do
+          let(:tags) { [ OpenStruct.new(name: "main")] }
+
+          it "overwrites the tags" do
+            expect(subject.tags.count).to eq 1
+            expect(subject.tags.first.name).to eq "main"
+          end
+        end
+
+        it "does not change the created date" do
+          expect { subject }.to_not change { PactBroker::Domain::Version.for("Foo", "1234").created_at }
+        end
+
+        it "does change the updated date" do
+          expect { subject }.to change { PactBroker::Domain::Version.for("Foo", "1234").updated_at }
+        end
+
+        it "maintains the order" do
+          expect { subject }.to_not change { PactBroker::Domain::Version.for("Foo", "1234").order }
+        end
+
+        context "when the version does not already exist" do
+          let(:version) { OpenStruct.new(number: "555", branch: "new-branch") }
+
+          it "sets the order" do
+            expect(subject.order).to_not be nil
+          end
+        end
+      end
+
       describe "#create_or_overwrite" do
         before do
           td.subtract_day
