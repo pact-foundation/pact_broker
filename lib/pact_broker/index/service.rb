@@ -44,9 +44,9 @@ module PactBroker
         pact_publications = pact_publication_query
           .eager(:consumer)
           .eager(:provider)
-          .eager(pact_version: { latest_verification: { provider_version: [{ current_deployed_versions: :environment }, { current_supported_released_versions: :environment }, :latest_version_for_branch, { tags: :head_tag } ] } })
+          .eager(pact_version: { latest_verification: { provider_version: [{ current_deployed_versions: :environment }, { current_supported_released_versions: :environment }, :branch_heads, { tags: :head_tag } ] } })
           .eager(integration: [{latest_verification: :provider_version}, :latest_triggered_webhooks])
-          .eager(consumer_version: [{ current_deployed_versions: :environment }, { current_supported_released_versions: :environment }, :latest_version_for_branch, { tags: :head_tag }])
+          .eager(consumer_version: [{ current_deployed_versions: :environment }, { current_supported_released_versions: :environment }, :branch_heads, { tags: :head_tag }])
           .eager(:head_pact_publications_for_tags)
 
         index_items = pact_publications.all.collect do | pact_publication |
@@ -106,8 +106,8 @@ module PactBroker
         pact_publications = head_pact_publications(consumer_name: consumer_name, provider_name: provider_name, tags: true, page_number: page_number, page_size: page_size)
           .eager(:consumer)
           .eager(:provider)
-          .eager(pact_version: { latest_verification: { provider_version: [{ current_deployed_versions: :environment }, { current_supported_released_versions: :environment }, :latest_version_for_branch, { tags: :head_tag }]} })
-          .eager(consumer_version: [{ current_deployed_versions: :environment }, { current_supported_released_versions: :environment }, :latest_version_for_branch, { tags: :head_tag }])
+          .eager(pact_version: { latest_verification: { provider_version: [{ current_deployed_versions: :environment }, { current_supported_released_versions: :environment }, :branch_heads, { tags: :head_tag }]} })
+          .eager(consumer_version: [{ current_deployed_versions: :environment }, { current_supported_released_versions: :environment }, :branch_heads, { tags: :head_tag }])
           .eager(:head_pact_publications_for_tags)
 
         pact_publications.all.collect do | pact_publication |

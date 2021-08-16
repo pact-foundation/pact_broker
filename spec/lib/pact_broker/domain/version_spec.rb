@@ -277,40 +277,6 @@ module PactBroker
         end
       end
 
-      describe "latest_version_for_branch" do
-        before do
-          td.create_consumer("Foo")
-            .create_consumer_version("1", branch: "main")
-            .create_consumer_version("2", branch: "main")
-            .create_consumer_version("3", branch: "feat/x")
-            .create_consumer_version("4", branch: "feat/x")
-            .create_consumer_version("5")
-        end
-
-        subject { Version.order(:order) }
-
-        it "lazy loads" do
-          expect(subject.all[0].latest_version_for_branch.number).to eq "2"
-          expect(subject.all[2].latest_version_for_branch.number).to eq "4"
-          expect(subject.all[4].latest_version_for_branch).to eq nil
-        end
-
-        it "eager loads" do
-          all = subject.eager(:latest_version_for_branch).all
-
-          expect(all[0].associations[:latest_version_for_branch]).to_not be nil
-          expect(all[1].associations[:latest_version_for_branch]).to_not be nil
-          expect(all[2].associations[:latest_version_for_branch]).to_not be nil
-          expect(all[3].associations[:latest_version_for_branch]).to_not be nil
-          expect(all[4].associations.fetch(:latest_version_for_branch)).to be nil
-
-          expect(all[0].latest_version_for_branch.number).to eq "2"
-          expect(all[1].latest_version_for_branch.number).to eq "2"
-          expect(all[2].latest_version_for_branch.number).to eq "4"
-          expect(all[4].latest_version_for_branch).to eq nil
-        end
-      end
-
       describe "#latest_pact_publication" do
         let!(:pact) do
           TestDataBuilder.new

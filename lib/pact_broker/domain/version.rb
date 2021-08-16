@@ -3,7 +3,6 @@ require "pact_broker/domain/order_versions"
 require "pact_broker/repositories/helpers"
 require "pact_broker/tags/tag_with_latest_flag"
 require "pact_broker/versions/eager_loaders"
-require "pact_broker/versions/lazy_loaders"
 
 module PactBroker
   module Domain
@@ -45,11 +44,6 @@ module PactBroker
         class: Version,
         dataset: lambda { Version.latest_version_for_pacticipant(pacticipant) },
         eager_loader: PactBroker::Versions::EagerLoaders::LatestVersionForPacticipant
-
-      many_to_one :latest_version_for_branch, read_only: true, key: :id,
-        class: Version,
-        dataset: PactBroker::Versions::LazyLoaders::LATEST_VERSION_FOR_BRANCH,
-        eager_loader: PactBroker::Versions::EagerLoaders::LatestVersionForBranch
 
       dataset_module do
         include PactBroker::Repositories::Helpers
