@@ -17,6 +17,8 @@ Dir.glob(File.join(File.dirname(__FILE__), "provider_states_for*.rb")).each do |
   require path
 end
 
+PactBroker.configuration.base_urls = ["http://example.org"]
+
 pact_broker = PactBroker::App.new { |c| c.database_connection = DB::PACT_BROKER_DB }
 app_to_verify = HalRelationProxyApp.new(pact_broker)
 
