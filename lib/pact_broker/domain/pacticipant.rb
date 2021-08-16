@@ -22,6 +22,7 @@ module PactBroker
       one_to_many :labels, :order => :name, :reciprocal => :pacticipant
       one_to_many :pacts
       one_to_one :latest_version, :class => "PactBroker::Versions::LatestVersion", primary_key: :id, key: :pacticipant_id
+      one_to_many :branch_heads, class: "PactBroker::Versions::BranchHead", primary_key: :id, key: :pacticipant_id
 
       dataset_module do
         include PactBroker::Repositories::Helpers

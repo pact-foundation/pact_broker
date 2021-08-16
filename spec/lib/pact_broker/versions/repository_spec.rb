@@ -159,6 +159,11 @@ module PactBroker
             expect(subject.branch_versions.count).to eq 2
             expect(subject.branch_versions.last.branch_name).to eq "new-branch"
           end
+
+          it "updates the branch head" do
+            branch_head = subject.pacticipant.branch_heads.find{ | branch_head | branch_head.branch_name == "new-branch" }
+            expect(branch_head.version).to eq subject
+          end
         end
 
         context "when the branch and branch version do already exist" do
@@ -175,6 +180,11 @@ module PactBroker
           it "keeps the branch_version on the version" do
             expect(subject.branch_versions.count).to eq 1
             expect(subject.branch_versions.first.branch_name).to eq "original-branch"
+          end
+
+          it "does not change the branch head" do
+            branch_head = subject.pacticipant.branch_heads.find{ | branch_head | branch_head.branch_name == "original-branch" }
+            expect(branch_head.version).to eq subject
           end
         end
 

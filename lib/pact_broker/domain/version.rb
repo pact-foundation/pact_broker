@@ -234,8 +234,8 @@ module PactBroker
         latest_version_for_pacticipant == self
       end
 
-      def belongs_to_branch?(branch)
-        branch_versions.any? { | branch_version | branch_version.branch_id == branch.id }
+      def branch_version_for_branch(branch)
+        branch_versions.find { | branch_version | branch_version.branch_id == branch.id }
       end
     end
   end

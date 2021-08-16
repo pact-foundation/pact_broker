@@ -4,6 +4,7 @@ require "pact_broker/domain/version"
 require "pact_broker/tags/repository"
 require "pact_broker/versions/branch"
 require "pact_broker/versions/branch_version"
+require "pact_broker/versions/branch_head"
 
 module PactBroker
   module Versions
@@ -163,9 +164,11 @@ module PactBroker
 
       def add_branch(version, branch_name)
         branch = PactBroker::Versions::Branch.new(pacticipant: version.pacticipant, name: branch_name).insert_ignore
-        if !version.belongs_to_branch?(branch)
-          PactBroker::Versions::BranchVersion.new(version: version, branch: branch, branch_name: branch_name).insert_ignore
+        branch_version = version.branch_version_for_branch(branch)
+        if !branch_version
+          branch_version = PactBroker::Versions::BranchVersion.new(version: version, branch: branch).insert_ignore
         end
+        PactBroker::Versions::BranchHead.new(branch: branch, branch_version: branch_version).upsert
       end
     end
   end
