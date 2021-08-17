@@ -115,6 +115,16 @@ module PactBroker
           where(id: supported_version_query.select(:version_id))
         end
 
+        def currently_deployed
+          deployed_version_query = PactBroker::Deployments::DeployedVersion.currently_deployed
+          where(id: deployed_version_query.select(:version_id))
+        end
+
+        def currently_supported
+          supported_version_query = PactBroker::Deployments::ReleasedVersion.currently_supported
+          where(id: supported_version_query.select(:version_id))
+        end
+
         def where_tag(tag)
           if tag == true
             join(:tags, Sequel[:tags][:version_id] => Sequel[first_source_alias][:id])
@@ -129,7 +139,19 @@ module PactBroker
         end
 
         def where_branch(branch)
-          where(branch: branch)
+          if branch == true
+            exclude(branch: nil)
+          else
+            where(branch: branch)
+          end
+        end
+
+        def for_main_branches
+          pacticipants_join = {
+            Sequel[:versions][:pacticipant_id] => Sequel[:pacticipants][:id],
+            Sequel[:pacticipants][:main_branch] => Sequel[:versions][:branch]
+          }
+          where(id: select(Sequel[:versions][:id]).join(:pacticipants, pacticipants_join))
         end
 
         def where_number(number)
@@ -161,10 +183,13 @@ module PactBroker
           query = self
           query = query.where_pacticipant_name(selector.pacticipant_name) if selector.pacticipant_name
           query = query.currently_in_environment(selector.environment_name, selector.pacticipant_name) if selector.environment_name
+          query = query.currently_deployed if selector.respond_to?(:currently_deployed?) && selector.currently_deployed?
+          query = query.currently_supported if selector.respond_to?(:currently_supported?) && selector.currently_supported?
           query = query.where_tag(selector.tag) if selector.tag
           query = query.where_branch(selector.branch) if selector.branch
-          query = query.where_number(selector.pacticipant_version_number) if selector.pacticipant_version_number
-          query = query.where_age_less_than(selector.max_age) if selector.max_age
+          query = query.for_main_branches if selector.respond_to?(:main_branch) && selector.main_branch
+          query = query.where_number(selector.pacticipant_version_number) if selector.respond_to?(:pacticipant_version_number) && selector.pacticipant_version_number
+          query = query.where_age_less_than(selector.max_age) if selector.respond_to?(:max_age) && selector.max_age
 
           if selector.latest
             calculate_max_version_order_and_join_back_to_versions(query, selector)

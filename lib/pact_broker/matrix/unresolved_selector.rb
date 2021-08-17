@@ -10,7 +10,7 @@ module PactBroker
       end
 
       def self.from_hash(hash)
-        new(hash.symbolize_keys.snakecase_keys.slice(:pacticipant_name, :pacticipant_version_number, :latest, :tag, :branch, :environment_name, :max_age))
+        new(hash.symbolize_keys.snakecase_keys.slice(:pacticipant_name, :pacticipant_version_number, :latest, :tag, :branch, :environment_name))
       end
 
       def pacticipant_name
@@ -26,7 +26,7 @@ module PactBroker
       end
 
       def overall_latest?
-        latest? && !tag && !max_age
+        latest? && !tag && !branch
       end
 
       def latest
@@ -69,6 +69,7 @@ module PactBroker
         self[:pacticipant_version_number] = pacticipant_version_number
       end
 
+      # TODO delete this once docker image uses new selector class for clean
       def max_age= max_age
         self[:max_age] = max_age
       end
