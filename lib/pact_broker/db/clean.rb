@@ -26,11 +26,11 @@ module PactBroker
 
       def keep
         @keep ||= if options[:keep]
-          # Could be a Matrix::UnresolvedSelector from the docker image, convert it
-          options[:keep].collect { | unknown_thing | Selector.from_hash(unknown_thing.to_hash) }
-        else
-          [Selector.new(tag: true, latest: true), Selector.new(branch: true, latest: true), Selector.new(latest: true), Selector.new(deployed: true), Selector.new(released: true)]
-        end
+                    # Could be a Matrix::UnresolvedSelector from the docker image, convert it
+                    options[:keep].collect { | unknown_thing | Selector.from_hash(unknown_thing.to_hash) }
+                  else
+                    [Selector.new(tag: true, latest: true), Selector.new(branch: true, latest: true), Selector.new(latest: true), Selector.new(deployed: true), Selector.new(released: true)]
+                  end
       end
 
       def resolve_ids(query, column_name = :id)

@@ -8,7 +8,7 @@ module PactBroker
 
         ATTRIBUTES = [:pacticipant_name, :latest, :tag, :branch, :environment_name, :max_age, :deployed, :released, :main_branch]
 
-        attr_accessor *ATTRIBUTES
+        attr_accessor(*ATTRIBUTES)
 
         def initialize(attributes = {})
           attributes.each do | (name, value) |

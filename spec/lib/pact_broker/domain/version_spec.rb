@@ -138,7 +138,6 @@ module PactBroker
           let(:four_days_ago) { Date.today - 4 }
 
           it "selects the consumer versions younger than the max age" do
-            require 'pry'; pry(binding);
             expect(version_numbers).to eq %w{2 3}
           end
         end
