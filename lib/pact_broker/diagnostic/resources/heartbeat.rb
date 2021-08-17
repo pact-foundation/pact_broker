@@ -18,7 +18,7 @@ module PactBroker
             "ok" => true,
             "_links" => {
               "self" => {
-                "href" => request.uri.to_s
+                "href" => base_url + "/diagnostic/status/heartbeat"
               }
             }
           }.to_json

@@ -16,6 +16,10 @@ module PactBroker
           return false if PactBroker.configuration.authorize.nil?
           !PactBroker.configuration.authorize.call(self, {})
         end
+
+        def base_url
+          request.env["pactbroker.base_url"] || request.base_uri.to_s.chomp("/")
+        end
       end
     end
   end
