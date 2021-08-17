@@ -1,15 +1,18 @@
 require "pact_broker/logging"
 require "pact_broker/matrix/unresolved_selector"
 require "pact_broker/date_helper"
-
+require "pact_broker/db/clean/selector"
 
 module PactBroker
   module DB
     class CleanIncremental
       DEFAULT_KEEP_SELECTORS = [
-        PactBroker::Matrix::UnresolvedSelector.new(tag: true, latest: true),
-        PactBroker::Matrix::UnresolvedSelector.new(latest: true),
-        PactBroker::Matrix::UnresolvedSelector.new(max_age: 90)
+        PactBroker::DB::Clean::Selector.new(tag: true, latest: true),
+        PactBroker::DB::Clean::Selector.new(branch: true, latest: true),
+        PactBroker::DB::Clean::Selector.new(latest: true),
+        PactBroker::DB::Clean::Selector.new(deployed: true),
+        PactBroker::DB::Clean::Selector.new(released: true),
+        PactBroker::DB::Clean::Selector.new(max_age: 90)
       ]
       TABLES = [:versions, :pact_publications, :pact_versions, :verifications, :triggered_webhooks, :webhook_executions]
 
@@ -27,7 +30,12 @@ module PactBroker
       end
 
       def keep
-        options[:keep] || DEFAULT_KEEP_SELECTORS
+        @keep ||= if options[:keep]
+                    # Could be a Matrix::UnresolvedSelector from the docker image, convert it
+                    options[:keep].collect { | unknown_thing | PactBroker::DB::Clean::Selector.from_hash(unknown_thing.to_hash) }
+                  else
+                    DEFAULT_KEEP_SELECTORS
+                  end
       end
 
       def limit
