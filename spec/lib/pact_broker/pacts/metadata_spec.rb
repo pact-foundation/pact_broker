@@ -131,7 +131,6 @@ module PactBroker
           it "expands the key names" do
             expect(Metadata.parse_metadata(incoming_metadata)).to eq parsed_metadata
           end
-
         end
       end
     end
