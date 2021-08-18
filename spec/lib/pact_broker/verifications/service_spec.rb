@@ -29,7 +29,8 @@ module PactBroker
             .create_provider_version_tag("dev")
             .and_return(:pact)
         end
-        let(:create_verification) { subject.create 3, params, pact, event_context }
+        let(:selected_pacts) { [PactBroker::Pacts::SelectedPact.new(pact, PactBroker::Pacts::Selectors.new)]}
+        let(:create_verification) { subject.create 3, params, selected_pacts, event_context }
 
         it "logs the creation" do
           expect(logger).to receive(:info).with(/.*verification.*3/, payload: {"providerApplicationVersion"=>"4.5.6", "success"=>true, "wip"=>true})

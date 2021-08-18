@@ -6,10 +6,12 @@ require "pact_broker/pacts/verifiable_pact"
 require "pact_broker/pacts/squash_pacts_for_verification"
 require "pact_broker/events/publisher"
 require "pact_broker/messages"
+require "pact_broker/hash_refinements"
 
 module PactBroker
   module Pacts
     module Service
+      using PactBroker::HashRefinements
 
       extend self
       extend PactBroker::Events::Publisher
@@ -131,6 +133,25 @@ module PactBroker
                                 end
 
         explicitly_specified_verifiable_pacts + verifiable_wip_pacts
+      end
+
+      def find_for_verification_publication(pact_params, consumer_version_selector_hashes)
+        if consumer_version_selector_hashes&.any?
+          selected_pacts = consumer_version_selector_hashes.collect do | consumer_version_selector_hash |
+            find_pact_params = {
+              consumer_name: pact_params.consumer_name,
+              provider_name: pact_params.provider_name,
+              pact_version_sha: pact_params.pact_version_sha,
+              consumer_version_number: consumer_version_selector_hash[:consumer_version_number]
+            }
+            pact = find_pact(find_pact_params)
+            resolved_selector = Selector.new(consumer_version_selector_hash.without(:consumer_version_number)).resolve(pact.consumer_version)
+            SelectedPact.new(pact, Selectors.new(resolved_selector))
+          end
+          SelectedPact.merge_by_consumer_version_number(selected_pacts)
+        else
+          [SelectedPact.new(find_pact(pact_params), Selectors.new)]
+        end
       end
 
       # Overwriting an existing pact with the same consumer/provider/consumer version number
