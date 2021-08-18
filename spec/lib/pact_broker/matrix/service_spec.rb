@@ -12,7 +12,7 @@ module PactBroker
 
         subject { Service.validate_selectors(selectors, options) }
 
-        let(:options) { {} }
+        let(:options) { { limit: "1" } }
 
         context "when there are no selectors" do
           let(:selectors) { [] }
@@ -143,6 +143,15 @@ module PactBroker
 
           it "returns an error message" do
             expect(subject.last).to include "Please specify the pacticipant name to ignore"
+          end
+        end
+
+        context "with an invalid limit" do
+          let(:options) { { limit: "limit" } }
+          let(:selectors) { [] }
+
+          it "returns an error message" do
+            expect(subject.last).to include "The limit"
           end
         end
       end
