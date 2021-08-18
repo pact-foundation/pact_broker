@@ -154,6 +154,19 @@ module PactBroker
         end
       end
 
+      # verified_pacts is an array of SelectedPact objects
+      def set_latest_verification(verified_pacts, verification)
+        if verification.from_latest_main_version?
+          verified_pacts.each do | verified_pact |
+            pact_repository.set_latest_main_verification(verified_pact, verification)
+          end
+        else
+          verified_pacts.each do | verified_pact |
+            pact_repository.set_last_verified_at(verified_pact)
+          end
+        end
+      end
+
       # Overwriting an existing pact with the same consumer/provider/consumer version number
       def update_pact params, existing_pact
         logger.info "Updating existing pact publication with params #{params.reject{ |k, _v| k == :json_content}}"

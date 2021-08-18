@@ -325,6 +325,24 @@ module PactBroker
         PactBroker::Pacts::PactVersion.where(consumer_id: consumer.id, provider_id: provider.id, sha: pact_version_sha).single_record
       end
 
+      def set_latest_main_verification(pact, verification)
+        PactBroker::Pacts::PactPublication
+          .where(id: pact.id)
+          .update(
+            latest_main_verification_id: verification.id,
+            last_verified_at: Sequel.datetime_class.now
+          )
+        pact
+      end
+
+      def set_last_verified_at(pact)
+        PactBroker::Pacts::PactPublication
+          .where(id: pact.id)
+          .update(
+            last_verified_at: Sequel.datetime_class.now
+          )
+      end
+
       private
 
       def find_previous_distinct_pact_by_sha pact

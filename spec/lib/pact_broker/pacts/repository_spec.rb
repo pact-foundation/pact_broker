@@ -1028,6 +1028,31 @@ module PactBroker
           expect(pacts[0].created_at).to be_datey
         end
       end
+
+      describe "set_latest_main_verification" do
+        before do
+          td.create_pact_with_hierarchy("Foo", "1", "Bar")
+            .create_provider_version("2")
+        end
+
+        let(:verification) do
+          PactBroker::Domain::Verification.new(
+            consumer_id: td.consumer.id,
+            provider_id: td.provider.id,
+            provider_version_id: td.find_version("Bar", "2").id,
+            pact_version_id: PactVersion.first.id,
+            success: true
+          ).save
+        end
+
+        subject { Repository.new.set_latest_main_verification(td.and_return(:pact), verification) }
+
+        it "sets the latest main verification" do
+          subject
+          expect(PactPublication.first.latest_main_verification.id).to eq verification.id
+          expect(PactPublication.first.last_verified_at).to_not be nil
+        end
+      end
     end
   end
 end

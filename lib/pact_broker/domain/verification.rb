@@ -11,6 +11,7 @@ module PactBroker
       using Sequel::SymbolAref
       TO_JSON = lambda { | thing | Sequel.object_to_json(thing) }
       FROM_JSON_WITH_SYMBOL_KEYS = lambda { | json | JSON.parse(json, symbolize_names: true) }
+      plugin :timestamps
 
       set_primary_key :id
       associate(:many_to_one, :pact_version, class: "PactBroker::Pacts::PactVersion", key: :pact_version_id, primary_key: :id)
@@ -206,6 +207,10 @@ module PactBroker
         @pact_content_with_test_results = PactBroker::Pacts::Content.from_json(pact_version.content).with_test_results(test_results)
       end
 
+      def from_latest_main_version?
+        latest_version_from_branch_matching_main_branch_name? || latest_version_with_tag_name_matching_main_branch_name?
+      end
+
       # So consumer_version_tag_name can be accessed by method name
       def method_missing(m, *args, &block)
         if values.key?(m) && args.size == 0
@@ -214,9 +219,22 @@ module PactBroker
           super
         end
       end
-    end
 
-    Verification.plugin :timestamps
+      # TODO set the branch on the verification from the contract service
+      def branch_name
+        provider_version.branch
+      end
+
+      private
+
+      def latest_version_from_branch_matching_main_branch_name?
+        branch_name == provider.main_branch && provider_version.latest_for_branch?
+      end
+
+      def latest_version_with_tag_name_matching_main_branch_name?
+        tag_names.include?(provider.main_branch) && provider_version.tags.find{ |t| t.name == provider.main_branch }&.latest_for_pacticipant?
+      end
+    end
   end
 end
 

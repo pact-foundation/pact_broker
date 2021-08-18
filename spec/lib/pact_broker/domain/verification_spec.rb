@@ -97,35 +97,77 @@ module PactBroker
         end
       end
 
-      describe "#consumer" do
-        let!(:consumer) do
-          TestDataBuilder.new
-            .create_consumer
-            .create_provider
-            .create_consumer_version
-            .create_pact
-            .create_verification
-            .and_return(:consumer)
+      describe "#from_latest_main_version?" do
+        before do
+          allow(PactBroker.configuration).to receive(:use_first_tag_as_branch).and_return(false)
         end
 
-        it "returns the consumer for the verification" do
-          expect(Verification.order(:id).first.consumer).to eq consumer
-        end
-      end
 
-      describe "#provider" do
-        let!(:provider) do
-          TestDataBuilder.new
-            .create_consumer
-            .create_provider
-            .create_consumer_version
-            .create_pact
-            .create_verification
-            .and_return(:provider)
+        subject { verification.from_latest_main_version? }
+
+
+        context "when the tag name matches the main branch name" do
+          let!(:verification) do
+            td.create_consumer
+              .create_provider("Bar", main_branch: "develop")
+              .create_consumer_version
+              .create_pact
+              .create_verification(provider_version: "2", tag_names: ["develop"])
+              .and_return(:verification)
+              .reload
+          end
+
+          context "it is the latest" do
+            it { is_expected.to be true }
+          end
+
+          context "it is not the latest" do
+            before do
+              verification
+              td.create_provider_version("3", tag_names: ["develop"] )
+            end
+
+            it { is_expected.to be false }
+          end
         end
 
-        it "returns the provider for the verification" do
-          expect(Verification.order(:id).first.provider).to eq provider
+        context "when the branch name matches the main branch name" do
+          let!(:verification) do
+            td.create_consumer
+              .create_provider("Bar", main_branch: "develop")
+              .create_consumer_version
+              .create_pact
+              .create_verification(provider_version: "2", branch: "develop")
+              .and_return(:verification)
+              .reload
+          end
+
+          context "it is the latest" do
+            it { is_expected.to be true }
+          end
+
+          context "it is not the latest" do
+            before do
+              verification
+              td.create_provider_version("3", branch: ["develop"] )
+            end
+
+            it { is_expected.to be false }
+          end
+        end
+
+        context "the tag and branch do not match" do
+          let!(:verification) do
+            td.create_consumer
+              .create_provider("Bar", main_branch: "develop")
+              .create_consumer_version
+              .create_pact
+              .create_verification(provider_version: "2", tag_names: ["foo"], branch: "bar")
+              .and_return(:verification)
+              .reload
+          end
+
+          it { is_expected.to be false }
         end
       end
     end

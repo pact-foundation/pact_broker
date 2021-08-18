@@ -358,7 +358,7 @@ module PactBroker
         webhook_execution_result = PactBroker::Webhooks::WebhookExecutionResult.new(nil, OpenStruct.new(code: "200"), logs, nil)
         @webhook_execution = PactBroker::Webhooks::Repository.new.create_execution @triggered_webhook, webhook_execution_result
         created_at = params[:created_at] || @pact.created_at + Rational(1, 86400)
-        set_created_at_if_set created_at, :webhook_executions, {id: @webhook_execution.id}
+        set_created_at_if_set(created_at, :webhook_executions, { id: @webhook_execution.id })
         @webhook_execution = PactBroker::Webhooks::Execution.find(id: @webhook_execution.id)
         self
       end
@@ -373,6 +373,14 @@ module PactBroker
         parameters = default_parameters.merge(parameters)
         parameters.delete(:provider_version)
         verification = PactBroker::Domain::Verification.new(parameters)
+
+        if tag_names.any?
+          tag_names.each do | tag_name |
+            tag = PactBroker::Tags::Service.create(tag_name: tag_name, pacticipant_name: @provider.name, pacticipant_version_number: provider_version_number)
+            set_created_at_if_set(parameters[:created_at], :tags, version_id: tag.pacticipant_id, name: tag_name)
+          end
+        end
+
         pact_version = PactBroker::Pacts::Repository.new.find_pact_version(@consumer, @provider, pact.pact_version_sha)
         @verification = PactBroker::Verifications::Repository.new.create(verification, provider_version_number, pact_version)
         @provider_version = PactBroker::Domain::Version.where(pacticipant_id: @provider.id, number: provider_version_number).single_record
@@ -381,13 +389,6 @@ module PactBroker
         set_created_at_if_set(parameters[:created_at], :verifications, id: @verification.id)
         set_created_at_if_set(parameters[:created_at], :versions, id: @provider_version.id)
         set_created_at_if_set(parameters[:created_at], :latest_verification_id_for_pact_version_and_provider_version, pact_version_id: pact_version_id, provider_version_id: @provider_version.id)
-
-        if tag_names.any?
-          tag_names.each do | tag_name |
-            PactBroker::Domain::Tag.new(name: tag_name, version: @provider_version).insert_ignore
-            set_created_at_if_set(parameters[:created_at], :tags, version_id: @provider_version.id, name: tag_name)
-          end
-        end
         self
       end
 

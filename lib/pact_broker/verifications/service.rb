@@ -39,6 +39,7 @@ module PactBroker
         verification.consumer_version_selector_hashes = event_context[:consumer_version_selectors]
         pact_version = pact_repository.find_pact_version(first_verified_pact.consumer, first_verified_pact.provider, first_verified_pact.pact_version_sha)
         verification = verification_repository.create(verification, provider_version_number, pact_version)
+        pact_service.set_latest_verification(verified_pacts, verification)
         # TODO set the latest_verification_id on each PactPublication
         # TODO broadcast the verified_pacts for the webhooks
         broadcast_events(verification, first_verified_pact.pact, event_context)
