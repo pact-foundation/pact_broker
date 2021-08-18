@@ -257,6 +257,10 @@ module PactBroker
       def latest_for_pacticipant?
         latest_version_for_pacticipant == self
       end
+
+      def tag_names
+        tags.collect(&:name)
+      end
     end
   end
 end

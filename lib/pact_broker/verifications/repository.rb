@@ -27,6 +27,7 @@ module PactBroker
         verification.provider_version = version
         verification.provider_id = provider.id
         verification.consumer_id = consumer.id
+        verification.tag_names = version.tag_names # TODO pass this in from contracts service
         verification.save
         update_latest_verification_id(verification)
         verification

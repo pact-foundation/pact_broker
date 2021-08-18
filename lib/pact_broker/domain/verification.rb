@@ -9,6 +9,8 @@ module PactBroker
   module Domain
     class Verification < Sequel::Model
       using Sequel::SymbolAref
+      TO_JSON = lambda { | thing | Sequel.object_to_json(thing) }
+      FROM_JSON_WITH_SYMBOL_KEYS = lambda { | json | JSON.parse(json, symbolize_names: true) }
 
       set_primary_key :id
       associate(:many_to_one, :pact_version, class: "PactBroker::Pacts::PactVersion", key: :pact_version_id, primary_key: :id)
@@ -16,7 +18,8 @@ module PactBroker
       associate(:many_to_one, :provider, class: "PactBroker::Domain::Pacticipant", key: :provider_id, primary_key: :id)
       associate(:many_to_one, :consumer, class: "PactBroker::Domain::Pacticipant", key: :consumer_id, primary_key: :id)
       associate(:one_to_many, :provider_version_tags, :class => "PactBroker::Domain::Tag", primary_key: :provider_version_id, key: :version_id)
-      plugin :serialization, :json, :test_results
+      plugin :serialization, :json, :test_results, :tag_names
+      serialize_attributes [TO_JSON, FROM_JSON_WITH_SYMBOL_KEYS], :consumer_version_selector_hashes
 
       def before_create
         super

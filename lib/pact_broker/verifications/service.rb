@@ -35,6 +35,7 @@ module PactBroker
         verification.wip = params.fetch("wip")
         verification.number = next_verification_number
         verification = verification_repository.create(verification, provider_version_number, pact)
+        verification.consumer_version_selector_hashes = event_context[:consumer_version_selectors]
 
         broadcast_events(verification, pact, event_context)
 

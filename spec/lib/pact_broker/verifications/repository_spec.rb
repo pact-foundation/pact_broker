@@ -4,8 +4,15 @@ module PactBroker
   module Verifications
     describe Repository do
       describe "#create" do
+        before do
+          td.create_pact_with_hierarchy("Foo", "1", "Bar").and_return(:pact)
+        end
+
         let(:verification) do
-          PactBroker::Domain::Verification.new(success: true)
+          PactBroker::Domain::Verification.new(
+            success: true,
+            consumer_version_selector_hashes: [{ foo: "bar" }]
+          )
         end
 
         let(:provider_version_number) { "2" }
@@ -21,6 +28,20 @@ module PactBroker
 
         it "sets the created_at of the LatestVerificationIdForPactVersionAndProviderVersion to the same as the verification" do
           expect(subject.created_at).to eq LatestVerificationIdForPactVersionAndProviderVersion.first.created_at
+        end
+
+        context "when the provider version already exists" do
+          before do
+            td.create_provider_version(provider_version_number, tag_names: ["foo", "bar"], branch: "main")
+          end
+
+          it "sets the tag names" do
+            expect(subject.reload.tag_names).to eq ["foo", "bar"]
+          end
+
+          it "saves the consumer_version_selector_hashes" do
+            expect(subject.reload.consumer_version_selector_hashes).to eq [{ foo: "bar" }]
+          end
         end
       end
 
