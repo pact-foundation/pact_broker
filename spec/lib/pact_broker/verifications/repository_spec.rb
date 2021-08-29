@@ -36,7 +36,7 @@ module PactBroker
           end
 
           it "sets the tag names" do
-            expect(subject.reload.tag_names).to eq ["foo", "bar"]
+            expect(subject.reload.tag_names.sort).to eq ["bar", "foo"]
           end
 
           it "saves the consumer_version_selector_hashes" do
