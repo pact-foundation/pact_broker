@@ -14,8 +14,8 @@ module PactBroker
       let(:db) { PactBroker::DB.connection }
 
       subject { Clean.call(PactBroker::DB.connection, options) }
-      let(:latest_dev_selector) { PactBroker::Matrix::UnresolvedSelector.new(tag: "dev", latest: true) }
-      let(:all_prod_selector) { PactBroker::Matrix::UnresolvedSelector.new(tag: "prod") }
+      let(:latest_dev_selector) { { tag: "dev", latest: true } }
+      let(:all_prod_selector) { { tag: "prod" } }
 
       describe ".call"do
         context "when there are specified versions to keep" do

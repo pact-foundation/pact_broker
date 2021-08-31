@@ -1,3 +1,19 @@
+<a name="v2.83.0"></a>
+### v2.83.0 (2021-08-19)
+
+#### Features
+
+* **clean**
+  * update default selectors for clean task to include deployed, released and branch head versions	 ([aaffe71f](/../../commit/aaffe71f))
+  * support keeping currently deployed and released versions, and the latest version for each branch	 ([e4fbd766](/../../commit/e4fbd766))
+
+* add index to verifications table to improve performance of 'latest verification' query	 ([02eeb424](/../../commit/02eeb424))
+
+#### Bug Fixes
+
+* use provider_version_number from webhook context	 ([3cf421ac](/../../commit/3cf421ac))
+* validate matrix query limit	 ([ac5e0890](/../../commit/ac5e0890))
+
 <a name="v2.82.0"></a>
 ### v2.82.0 (2021-08-14)
 

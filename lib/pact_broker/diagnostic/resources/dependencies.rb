@@ -27,7 +27,7 @@ module PactBroker
             "database" => report,
             "_links" => {
               "self" => {
-                "href" => request.uri.to_s
+                "href" => base_url + "/diagnostic/status/dependencies"
               }
             }
           }.to_json

@@ -100,6 +100,10 @@ module PactBroker
           error_messages << message("errors.validation.environment_with_name_not_found", name: options[:environment_name])
         end
 
+        if options[:limit] && options[:limit].to_i < 1
+          error_messages << message("errors.validation.invalid_limit")
+        end
+
         error_messages
       end
       # rubocop: enable Metrics/CyclomaticComplexity, Metrics/MethodLength

@@ -2,6 +2,7 @@ require "sequel"
 require "pact_broker/project_root"
 require "pact_broker/pacts/latest_tagged_pact_publications"
 require "pact_broker/logging"
+require "pact_broker/db/clean/selector"
 
 module PactBroker
   module DB
@@ -24,7 +25,12 @@ module PactBroker
       end
 
       def keep
-        options[:keep] || [PactBroker::Matrix::UnresolvedSelector.new(tag: true, latest: true), PactBroker::Matrix::UnresolvedSelector.new(latest: true)]
+        @keep ||= if options[:keep]
+                    # Could be a Matrix::UnresolvedSelector from the docker image, convert it
+                    options[:keep].collect { | unknown_thing | Selector.from_hash(unknown_thing.to_hash) }
+                  else
+                    [Selector.new(tag: true, latest: true), Selector.new(branch: true, latest: true), Selector.new(latest: true), Selector.new(deployed: true), Selector.new(released: true)]
+                  end
       end
 
       def resolve_ids(query, column_name = :id)

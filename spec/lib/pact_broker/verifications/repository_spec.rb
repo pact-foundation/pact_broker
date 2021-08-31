@@ -4,16 +4,23 @@ module PactBroker
   module Verifications
     describe Repository do
       describe "#create" do
-        let(:verification) do
-          PactBroker::Domain::Verification.new(success: true)
-        end
-
-        let(:provider_version_number) { "2" }
-        let(:pact) do
+        before do
           td.create_pact_with_hierarchy("Foo", "1", "Bar").and_return(:pact)
         end
 
-        subject { Repository.new.create verification, provider_version_number, pact}
+        let(:verification) do
+          PactBroker::Domain::Verification.new(
+            success: true,
+            consumer_version_selector_hashes: [{ foo: "bar" }]
+          )
+        end
+
+        let(:provider_version_number) { "2" }
+        let(:pact_version) do
+          PactBroker::Pacts::PactVersion.first
+        end
+
+        subject { Repository.new.create(verification, provider_version_number, pact_version) }
 
         it "creates a LatestVerificationIdForPactVersionAndProviderVersion" do
           expect { subject }.to change { LatestVerificationIdForPactVersionAndProviderVersion.count }.by(1)
@@ -22,27 +29,39 @@ module PactBroker
         it "sets the created_at of the LatestVerificationIdForPactVersionAndProviderVersion to the same as the verification" do
           expect(subject.created_at).to eq LatestVerificationIdForPactVersionAndProviderVersion.first.created_at
         end
+
+        context "when the provider version already exists" do
+          before do
+            td.create_provider_version(provider_version_number, tag_names: ["foo", "bar"], branch: "main")
+          end
+
+          it "sets the tag names" do
+            expect(subject.reload.tag_names.sort).to eq ["bar", "foo"]
+          end
+
+          it "saves the consumer_version_selector_hashes" do
+            expect(subject.reload.consumer_version_selector_hashes).to eq [{ foo: "bar" }]
+          end
+        end
       end
 
       describe "#find" do
         let!(:pact) do
-          builder = TestDataBuilder.new
-          pact = builder
+
+          pact = td
             .create_provider("Provider1")
             .create_consumer("Consumer1")
             .create_consumer_version("1.0.0")
             .create_pact
             .and_return(:pact)
 
-          builder
-            .create_verification(number: 1)
+          td.create_verification(number: 1)
             .create_verification(number: 2, provider_version: "3.7.4")
             .create_consumer_version("1.2.3")
             .create_pact
             .create_verification(number: 1)
 
-            TestDataBuilder.new
-            .create_provider("Provider3")
+          td.create_provider("Provider3")
             .create_consumer("Consumer2")
             .create_consumer_version("1.2.3")
             .create_pact
@@ -62,8 +81,7 @@ module PactBroker
 
       describe "#find_latest_verifications_for_consumer_version" do
         before do
-          TestDataBuilder.new
-            .create_provider("Provider1")
+          td.create_provider("Provider1")
             .create_consumer("Consumer1")
             .create_consumer_version("1.0.0")
             .create_pact
@@ -76,8 +94,7 @@ module PactBroker
             .create_pact
             .create_verification(number: 1, provider_version: "6.5.4")
 
-            TestDataBuilder.new
-            .create_provider("Provider3")
+          td.create_provider("Provider3")
             .create_consumer("Consumer2")
             .create_consumer_version("1.2.3")
             .create_pact
@@ -94,8 +111,7 @@ module PactBroker
 
       describe "#search_for_latest" do
         before do
-          TestDataBuilder.new
-            .create_pact_with_hierarchy("Foo", "1", "Bar")
+          td.create_pact_with_hierarchy("Foo", "1", "Bar")
             .create_verification(provider_version: "2")
             .create_verification(provider_version: "3", number: 2)
             .create_provider("Wiffle")
@@ -131,8 +147,7 @@ module PactBroker
       describe "#find_latest_verification_for" do
         context "when there is a revision" do
           before do
-            TestDataBuilder.new
-              .create_provider("Provider1")
+            td.create_provider("Provider1")
               .create_consumer("Consumer1")
               .create_consumer_version("1.2.3")
               .create_pact
@@ -151,8 +166,7 @@ module PactBroker
         context "when no tag is specified" do
           before do
             PactBroker.configuration.order_versions_by_date = false
-            TestDataBuilder.new
-              .create_provider("Provider1")
+            td.create_provider("Provider1")
               .create_consumer("Consumer1")
               .create_consumer_version("1.2.3")
               .create_pact
@@ -177,8 +191,7 @@ module PactBroker
 
         context "when a tag is specified" do
           before do
-            TestDataBuilder.new
-              .create_provider("Provider1")
+            td.create_provider("Provider1")
               .create_consumer("Consumer1")
               .create_consumer_version("1.0.0")
               .create_consumer_version_tag("prod")
@@ -216,8 +229,7 @@ module PactBroker
 
         context "when the latest untagged verification is required" do
           before do
-            TestDataBuilder.new
-              .create_provider("Provider1")
+            td.create_provider("Provider1")
               .create_consumer("Consumer1")
               .create_consumer_version("1.0.0")
               .create_pact
@@ -249,8 +261,7 @@ module PactBroker
       describe "find_latest_verification_for_tags" do
         context "with no revisions" do
           before do
-            TestDataBuilder.new
-              .create_pact_with_hierarchy("Foo", "1", "Bar")
+            td.create_pact_with_hierarchy("Foo", "1", "Bar")
               .create_consumer_version_tag("feat-x")
               .create_verification(provider_version: "5")
               .use_provider_version("5")
@@ -276,8 +287,7 @@ module PactBroker
           let(:content_2) { { content: 2 }.to_json }
 
           before do
-            TestDataBuilder.new
-              .create_pact_with_hierarchy("Foo", "1", "Bar", content_1)
+            td.create_pact_with_hierarchy("Foo", "1", "Bar", content_1)
               .create_consumer_version_tag("develop")
               .create_verification(provider_version: "5", number: 1, tag_name: "develop", comment: "not this because pact revised")
               .create_verification(provider_version: "6", number: 2, tag_name: "develop", comment: "not this because pact revised")
@@ -319,8 +329,7 @@ module PactBroker
 
       describe "delete_by_provider_version_id" do
         let!(:provider_version) do
-          TestDataBuilder.new
-            .create_consumer
+          td.create_consumer
             .create_provider
             .create_consumer_version
             .create_pact

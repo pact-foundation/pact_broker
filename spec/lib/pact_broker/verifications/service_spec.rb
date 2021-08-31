@@ -4,7 +4,6 @@ require "pact_broker/webhooks/execution_configuration"
 require "pact_broker/webhooks/trigger_service"
 
 module PactBroker
-
   module Verifications
     describe Service do
       before do
@@ -20,7 +19,7 @@ module PactBroker
           allow(Service).to receive(:broadcast)
         end
 
-        let(:event_context) { { some: "data" } }
+        let(:event_context) { { some: "data", consumer_version_selectors: [{ foo: "bar" }] } }
         let(:expected_event_context) { { some: "data", provider_version_tags: ["dev"] } }
         let(:params) { { "success" => success, "providerApplicationVersion" => "4.5.6", "wip" => true, "testResults" => { "some" => "results" }} }
         let(:success) { true }
@@ -30,7 +29,8 @@ module PactBroker
             .create_provider_version_tag("dev")
             .and_return(:pact)
         end
-        let(:create_verification) { subject.create 3, params, pact, event_context }
+        let(:selected_pacts) { [PactBroker::Pacts::SelectedPact.new(pact, PactBroker::Pacts::Selectors.new)]}
+        let(:create_verification) { subject.create 3, params, selected_pacts, event_context }
 
         it "logs the creation" do
           expect(logger).to receive(:info).with(/.*verification.*3/, payload: {"providerApplicationVersion"=>"4.5.6", "success"=>true, "wip"=>true})
@@ -43,6 +43,8 @@ module PactBroker
           expect(verification.success).to be true
           expect(verification.number).to eq 3
           expect(verification.test_results).to eq "some" => "results"
+          expect(verification.consumer_version_selector_hashes).to eq [{ foo: "bar" }]
+          expect(verification.tag_names).to eq ["dev"]
         end
 
         it "sets the pact content for the verification" do

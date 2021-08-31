@@ -321,6 +321,10 @@ module PactBroker
         end
       end
 
+      def find_pact_version(consumer, provider, pact_version_sha)
+        PactBroker::Pacts::PactVersion.where(consumer_id: consumer.id, provider_id: provider.id, sha: pact_version_sha).single_record
+      end
+
       private
 
       def find_previous_distinct_pact_by_sha pact

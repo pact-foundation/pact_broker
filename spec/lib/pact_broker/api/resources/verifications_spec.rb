@@ -62,10 +62,13 @@ module PactBroker
 
             before do
               allow(Pacts::Service).to receive(:find_pact).and_return(pact)
+              allow(Pacts::Service).to receive(:find_for_verification_publication).and_return(verified_pacts)
               allow(PactBroker::Verifications::Service).to receive(:next_number).and_return(next_verification_number)
               allow(PactBroker::Api::Decorators::VerificationDecorator).to receive(:new).and_return(decorator)
               allow(PactBroker.configuration).to receive(:show_webhook_response?).and_return("some-boolean")
             end
+
+            let(:verified_pacts) { double("verified pacts") }
 
             it "parses the webhook metadata" do
               expect(PactBrokerUrls).to receive(:decode_pact_metadata).with("abcd")
@@ -84,7 +87,7 @@ module PactBroker
               expect(PactBroker::Verifications::Service).to receive(:create).with(
                 next_verification_number,
                 hash_including("some" => "params", "wip" => false),
-                pact,
+                verified_pacts,
                 parsed_metadata
               )
               subject

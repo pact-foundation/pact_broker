@@ -46,13 +46,12 @@ module PactBroker
         @base_url = webhook_context.fetch(:base_url)
       end
 
-      # rubocop: disable Metrics/CyclomaticComplexity
       def to_hash
         @hash ||= {
           PACT_URL => pact ? PactBroker::Api::PactBrokerUrls.pact_version_url_with_webhook_metadata(pact, base_url) : "",
           VERIFICATION_RESULT_URL => verification_url,
           CONSUMER_VERSION_NUMBER => consumer_version_number,
-          PROVIDER_VERSION_NUMBER => verification ? verification.provider_version_number : "",
+          PROVIDER_VERSION_NUMBER => provider_version_number,
           PROVIDER_VERSION_TAGS => provider_version_tags,
           PROVIDER_VERSION_BRANCH => provider_version_branch,
           CONSUMER_VERSION_TAGS => consumer_version_tags,
@@ -68,7 +67,6 @@ module PactBroker
           CURRENTLY_DEPLOYED_PROVIDER_VERSION_NUMBER => currently_deployed_provider_version_number
         }
       end
-      # rubocop: enable Metrics/CyclomaticComplexity
 
       private
 
@@ -143,6 +141,14 @@ module PactBroker
           else
             ""
           end
+        end
+      end
+
+      def provider_version_number
+        if webhook_context[:provider_version_number]
+          webhook_context[:provider_version_number]
+        else
+          verification ? verification.provider_version_number : ""
         end
       end
 

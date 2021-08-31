@@ -5,22 +5,22 @@ module PactBroker
   module Diagnostic
     module Resources
       describe Dependencies do
-
         describe "GET /diagnostic/status/dependencies" do
-
           include Rack::Test::Methods
 
+          let(:rack_env) { { "pactbroker.base_url" => "http://pact-broker"} }
           let(:app) { PactBroker::Diagnostic::App.new }
           let(:parsed_response_body) { JSON.parse(subject.body) }
 
-          subject { get "/diagnostic/status/dependencies"; last_response }
+
+          subject { get("/diagnostic/status/dependencies", nil, rack_env) }
 
           it "returns application/hal+json" do
             expect(subject.headers["Content-Type"]).to eq "application/hal+json"
           end
 
           it "returns a link to itself" do
-            expect(parsed_response_body["_links"]["self"]["href"]).to eq "http://example.org/diagnostic/status/dependencies"
+            expect(parsed_response_body["_links"]["self"]["href"]).to eq "http://pact-broker/diagnostic/status/dependencies"
           end
 
           context "when we can connect to the database" do

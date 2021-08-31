@@ -1,4 +1,5 @@
 require "pact_broker/domain/version"
+require "pact_broker/db/clean/selector"
 
 module PactBroker
   module Domain
@@ -131,13 +132,83 @@ module PactBroker
               .create_consumer_version("3", tag_names: %w{master})
           end
 
-          let(:selector) { PactBroker::Matrix::UnresolvedSelector.new(tag: "master", max_age: max_age) }
+          let(:selector) { PactBroker::DB::Clean::Selector.new(tag: "master", max_age: max_age) }
 
           let(:max_age) { 3 }
           let(:four_days_ago) { Date.today - 4 }
 
           it "selects the consumer versions younger than the max age" do
             expect(version_numbers).to eq %w{2 3}
+          end
+        end
+
+        context "when selecting the latest version for each branch" do
+          before do
+            td.create_consumer("Foo")
+              .create_consumer_version("1", branch: "main")
+              .create_consumer_version("2", branch: "main")
+              .create_consumer("Bar")
+              .create_consumer_version("3", branch: "main")
+          end
+
+          let(:selector) { PactBroker::DB::Clean::Selector.new(branch: true, latest: true) }
+
+          it "selects the consumer versions that are the latest for their branches" do
+            expect(version_numbers).to eq %w{2 3}
+          end
+        end
+
+        context "when selecting all versions with a branch" do
+          before do
+            td.create_consumer("Foo")
+              .create_consumer_version("1", branch: "main")
+              .create_consumer_version("2")
+              .create_consumer("Bar")
+              .create_consumer_version("3", branch: "main")
+          end
+
+          let(:selector) { PactBroker::DB::Clean::Selector.new(branch: true, latest: true) }
+
+          it "selects the consumer versions that are the latest for their branches" do
+            expect(version_numbers).to eq %w{1 3}
+          end
+        end
+
+        context "when selecting the latest versions from the main branches" do
+          before do
+            td.create_consumer("Foo", main_branch: "main")
+              .create_consumer_version("1", branch: "main")
+              .create_consumer_version("2", branch: "main")
+              .create_consumer_version("3", branch: "not-main")
+              .create_consumer("Bar", main_branch: "develop")
+              .create_consumer_version("4", branch: "develop")
+              .create_consumer_version("5", branch: "develop")
+              .create_consumer_version("6", branch: "main")
+          end
+
+          let(:selector) { PactBroker::DB::Clean::Selector.new(main_branch: true, latest: true) }
+
+          it "selects the consumer versions that are the latest for their branches" do
+            expect(version_numbers).to eq %w{2 5}
+          end
+        end
+
+        context "when selecting all versions from the main branches" do
+          before do
+            td.create_consumer("Foo", main_branch: "main")
+              .create_consumer_version("1", branch: "main")
+              .create_consumer_version("2", branch: "main")
+              .create_consumer_version("3", branch: "not-main")
+              .create_consumer("Bar", main_branch: "develop")
+              .create_consumer_version("4", branch: "develop")
+              .create_consumer_version("5", branch: "develop")
+              .create_consumer_version("6", branch: "main")
+          end
+
+          let(:selector) { PactBroker::DB::Clean::Selector.new(main_branch: true) }
+
+          it "selects the consumer versions that are the latest for their branches" do
+            expect(version_numbers).to eq %w{1 2 4 5}
           end
         end
 
@@ -191,6 +262,60 @@ module PactBroker
 
           it "returns the versions of that pacticipant currently deployed to the environment" do
             expect(version_numbers).to eq %w{2 10 12}
+          end
+        end
+
+        context "when selecting all currently deployed versions" do
+          let(:selector) { PactBroker::DB::Clean::Selector.new(deployed: true) }
+
+          before do
+            td.create_environment("test")
+              .create_consumer("Foo")
+              .create_consumer_version("1")
+              .create_deployed_version_for_consumer_version(target: "1")
+              .create_consumer_version("2")
+              .create_environment("prod")
+              .create_deployed_version_for_consumer_version(target: "2")
+              .create_consumer_version("3")
+              .create_consumer_version("5")
+              .create_consumer("Bar")
+              .create_consumer_version("10")
+              .create_deployed_version_for_consumer_version(target: "3")
+              .create_consumer_version("11")
+              .create_deployed_version_for_consumer_version(currently_deployed: false)
+              .create_consumer_version("12")
+              .create_released_version_for_consumer_version
+          end
+
+          it "returns the versions that are currently deployed" do
+            expect(version_numbers).to eq %w{1 2 10}
+          end
+        end
+
+        context "when selecting all currently released+supported versions" do
+          let(:selector) { PactBroker::DB::Clean::Selector.new(released: true) }
+
+          before do
+            td.create_environment("test")
+              .create_consumer("Foo")
+              .create_consumer_version("1")
+              .create_released_version_for_consumer_version
+              .create_consumer_version("2")
+              .create_environment("prod")
+              .create_released_version_for_consumer_version
+              .create_consumer_version("3")
+              .create_consumer_version("5")
+              .create_consumer("Bar")
+              .create_consumer_version("10")
+              .create_released_version_for_consumer_version
+              .create_consumer_version("11")
+              .create_released_version_for_consumer_version(currently_supported: false)
+              .create_consumer_version("12")
+              .create_deployed_version_for_consumer_version
+          end
+
+          it "returns the versions that are currently released+supported" do
+            expect(version_numbers).to eq %w{1 2 10}
           end
         end
 

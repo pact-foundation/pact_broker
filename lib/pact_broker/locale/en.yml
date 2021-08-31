@@ -87,6 +87,7 @@ en:
         invalid_content_for_content_type: "The content could not be parsed as %{content_type}"
         cannot_set_currently_deployed_true: The currentlyDeployed property cannot be set back to true. Please record a new deployment.
         cannot_set_currently_supported_true: The currentlySupported property cannot be set back to true. Please record a new deployment.
+        invalid_limit: The limit must be 1 or greater.
       duplicate_pacticipant: |
         This is the first time a pact has been published for "%{new_name}".
         The name "%{new_name}" is very similar to the following existing consumers/providers:

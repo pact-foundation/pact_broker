@@ -111,6 +111,16 @@ module PactBroker
           where(id: supported_version_query.select(:version_id))
         end
 
+        def currently_deployed
+          deployed_version_query = PactBroker::Deployments::DeployedVersion.currently_deployed
+          where(id: deployed_version_query.select(:version_id))
+        end
+
+        def currently_supported
+          supported_version_query = PactBroker::Deployments::ReleasedVersion.currently_supported
+          where(id: supported_version_query.select(:version_id))
+        end
+
         def where_tag(tag)
           if tag == true
             join(:tags, Sequel[:tags][:version_id] => Sequel[first_source_alias][:id])
@@ -125,15 +135,33 @@ module PactBroker
         end
 
         def where_branch_name(branch_name)
-          matching_branch_ids = PactBroker::Versions::Branch.select(:id).where(name: branch_name)
-          matching_branch_version_ids = PactBroker::Versions::BranchVersion
-                                          .select(:version_id)
-                                          .where(branch_id: matching_branch_ids)
-          where(id: matching_branch_version_ids)
+          if branch_name == true
+            where(id: PactBroker::Versions::BranchVersion.select(:version_id))
+          else
+            matching_branch_ids = PactBroker::Versions::Branch.select(:id).where(name: branch_name)
+            matching_branch_version_ids = PactBroker::Versions::BranchVersion
+                                            .select(:version_id)
+                                            .where(branch_id: matching_branch_ids)
+            where(id: matching_branch_version_ids)
+          end
         end
 
         def where_branch_head_name(branch_name)
-          where(id: PactBroker::Versions::BranchHead.select(:version_id).where(branch_name: branch_name))
+          if branch_name == true
+            where(id: PactBroker::Versions::BranchHead.select(:version_id))
+          else
+            where(id: PactBroker::Versions::BranchHead.select(:version_id).where(branch_name: branch_name))
+          end
+        end
+
+
+        def for_main_branches
+          matching_branch_version_ids = PactBroker::Versions::BranchVersion
+                                          .select(:version_id)
+                                          .join(:pacticipants, { Sequel[:branch_versions][:pacticipant_id] => Sequel[:pacticipants][:id] })
+                                          .join(:branches, { Sequel[:branches][:id] => Sequel[:branch_versions][:branch_id], Sequel[:branches][:name] => Sequel[:pacticipants][:main_branch] })
+
+          where(id: matching_branch_version_ids)
         end
 
         def where_number(number)
@@ -165,9 +193,12 @@ module PactBroker
           query = self
           query = query.where_pacticipant_name(selector.pacticipant_name) if selector.pacticipant_name
           query = query.currently_in_environment(selector.environment_name, selector.pacticipant_name) if selector.environment_name
+          query = query.currently_deployed if selector.respond_to?(:currently_deployed?) && selector.currently_deployed?
+          query = query.currently_supported if selector.respond_to?(:currently_supported?) && selector.currently_supported?
           query = query.where_tag(selector.tag) if selector.tag
-          query = query.where_number(selector.pacticipant_version_number) if selector.pacticipant_version_number
-          query = query.where_age_less_than(selector.max_age) if selector.max_age
+          query = query.where_number(selector.pacticipant_version_number) if selector.respond_to?(:pacticipant_version_number) && selector.pacticipant_version_number
+          query = query.where_age_less_than(selector.max_age) if selector.respond_to?(:max_age) && selector.max_age
+          query = query.for_main_branches if selector.respond_to?(:main_branch) && selector.main_branch
           if selector.branch
             if selector.latest
               query = query.where_branch_head_name(selector.branch)
@@ -176,7 +207,7 @@ module PactBroker
             end
           end
 
-          if selector.latest && !selector.branch
+          if selector.latest && !selector.branch # latest branch logic already done
             calculate_max_version_order_and_join_back_to_versions(query, selector)
           else
             query
@@ -245,6 +276,10 @@ module PactBroker
 
       def branch_version_for_branch(branch)
         branch_versions.find { | branch_version | branch_version.branch_id == branch.id }
+      end
+
+      def tag_names
+        tags.collect(&:name)
       end
     end
   end

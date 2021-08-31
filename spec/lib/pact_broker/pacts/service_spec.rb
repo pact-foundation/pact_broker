@@ -289,6 +289,67 @@ module PactBroker
           end
         end
       end
+
+      describe "find_for_verification_publication integration test" do
+        before do
+          json_content = { interactions: [] }.to_json
+          td.create_pact_with_hierarchy("Foo", "1", "Bar", json_content)
+            .create_pact_with_hierarchy("Foo", "2", "Bar", json_content)
+        end
+
+        let(:consumer_version_selector_hashes) do
+          [
+            { tag: "foo", latest: true, consumer_version_number: "1"},
+            { tag: "bar", latest: true, consumer_version_number: "1"},
+            { branch: "beep", latest: true, consumer_version_number: "2"}
+          ]
+        end
+
+        let(:pact_params) do
+          PactParams.new(
+            consumer_name: "Foo",
+            provider_name: "Bar",
+            pact_version_sha: td.and_return(:pact).pact_version_sha
+          )
+        end
+
+        subject { Service.find_for_verification_publication(pact_params, consumer_version_selector_hashes) }
+
+        it "deduplicates the pacts by consumer version number" do
+          expect(subject.size).to eq 2
+        end
+
+        it "sets the selectors" do
+          expect(subject.first.selectors.size).to eq 2
+          expect(subject.first.selectors.first).to have_attributes(latest: true, tag: "bar")
+          expect(subject.first.selectors.first.consumer_version).to have_attributes(number: "1")
+
+          expect(subject.first.selectors.last).to have_attributes(latest: true, tag: "foo")
+          expect(subject.first.selectors.last.consumer_version).to have_attributes(number: "1")
+
+          expect(subject.last.selectors.size).to eq 1
+          expect(subject.last.selectors.first).to have_attributes(latest: true, branch: "beep")
+          expect(subject.last.selectors.last.consumer_version).to have_attributes(number: "2")
+        end
+
+        context "when there are no consumer version selectors" do
+          let(:consumer_version_selector_hashes) { nil }
+
+          it "returns the latest pact for the sha" do
+            expect(subject.size).to eq 1
+            expect(subject.first.consumer_version_number).to eq "2"
+          end
+        end
+
+        context "when the consumer version selectors is empty" do
+          let(:consumer_version_selector_hashes) { [] }
+
+          it "returns the latest pact for the sha" do
+            expect(subject.size).to eq 1
+            expect(subject.first.consumer_version_number).to eq "2"
+          end
+        end
+      end
     end
   end
 end

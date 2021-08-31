@@ -27,16 +27,21 @@ module PactBroker
         verification_repository.next_number
       end
 
-      def create next_verification_number, params, pact, event_context
-        logger.info "Creating verification #{next_verification_number} for pact_id=#{pact.id}", payload: params.reject{ |k,_| k == "testResults"}
+      # verified_pacts is an array of SelectedPact objects
+      def create next_verification_number, params, verified_pacts, event_context
+        first_verified_pact = verified_pacts.first
+        logger.info "Creating verification #{next_verification_number} for pact_version_sha=#{first_verified_pact.pact_version_sha}", payload: params.reject{ |k,_| k == "testResults"}
         verification = PactBroker::Domain::Verification.new
         provider_version_number = params.fetch("providerApplicationVersion")
         PactBroker::Api::Decorators::VerificationDecorator.new(verification).from_hash(params)
         verification.wip = params.fetch("wip")
         verification.number = next_verification_number
-        verification = verification_repository.create(verification, provider_version_number, pact)
-
-        broadcast_events(verification, pact, event_context)
+        verification.consumer_version_selector_hashes = event_context[:consumer_version_selectors]
+        pact_version = pact_repository.find_pact_version(first_verified_pact.consumer, first_verified_pact.provider, first_verified_pact.pact_version_sha)
+        verification = verification_repository.create(verification, provider_version_number, pact_version)
+        # TODO set the latest_verification_id on each PactPublication
+        # TODO broadcast the verified_pacts for the webhooks
+        broadcast_events(verification, first_verified_pact.pact, event_context)
 
         verification
       end

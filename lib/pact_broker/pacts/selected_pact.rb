@@ -11,6 +11,26 @@ module PactBroker
         @selectors = selectors
       end
 
+      def self.merge_by_pact_version_sha(selected_pacts)
+        selected_pacts
+          .group_by{ |p| [p.consumer_name, p.pact_version_sha] }
+          .values
+          .collect do | selected_pacts_for_pact_version_id |
+            SelectedPact.merge(selected_pacts_for_pact_version_id)
+          end
+          .sort
+      end
+
+      def self.merge_by_consumer_version_number(selected_pacts)
+        selected_pacts
+          .group_by{ |p| [p.consumer_name, p.consumer_version_number] }
+          .values
+          .collect do | selected_pacts_for_consumer_version_number |
+            SelectedPact.merge(selected_pacts_for_consumer_version_number)
+          end
+          .sort
+      end
+
       def self.merge(selected_pacts)
         latest_selected_pact = selected_pacts.sort_by(&:consumer_version_order).last
         selectors = selected_pacts.collect(&:selectors).reduce(&:+).sort

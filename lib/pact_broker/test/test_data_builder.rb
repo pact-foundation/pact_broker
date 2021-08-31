@@ -383,7 +383,8 @@ module PactBroker
         parameters = default_parameters.merge(parameters)
         parameters.delete(:provider_version)
         verification = PactBroker::Domain::Verification.new(parameters)
-        @verification = PactBroker::Verifications::Repository.new.create(verification, provider_version_number, @pact)
+        pact_version = PactBroker::Pacts::Repository.new.find_pact_version(@consumer, @provider, pact.pact_version_sha)
+        @verification = PactBroker::Verifications::Repository.new.create(verification, provider_version_number, pact_version)
         @provider_version = PactBroker::Domain::Version.where(pacticipant_id: @provider.id, number: provider_version_number).single_record
         @provider_version.update(branch: branch) if branch
 

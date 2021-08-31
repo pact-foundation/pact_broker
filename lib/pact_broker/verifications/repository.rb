@@ -19,14 +19,13 @@ module PactBroker
         Sequence.next_val
       end
 
-      def create verification, provider_version_number, pact
-        provider = pacticipant_repository.find_by_name(pact.provider_name)
-        consumer = pacticipant_repository.find_by_name(pact.consumer_name)
-        version = version_repository.find_by_pacticipant_id_and_number_or_create(provider.id, provider_version_number)
-        verification.pact_version_id = pact_version_id_for(pact)
+      def create verification, provider_version_number, pact_version
+        version = version_repository.find_by_pacticipant_id_and_number_or_create(pact_version.provider_id, provider_version_number)
+        verification.pact_version_id = pact_version.id
         verification.provider_version = version
-        verification.provider_id = provider.id
-        verification.consumer_id = consumer.id
+        verification.provider_id = pact_version.provider_id
+        verification.consumer_id = pact_version.consumer_id
+        verification.tag_names = version.tag_names # TODO pass this in from contracts service
         verification.save
         update_latest_verification_id(verification)
         verification
@@ -149,10 +148,6 @@ module PactBroker
         consumer = pacticipant_repository.find_by_name!(consumer_name)
         provider = pacticipant_repository.find_by_name!(options.fetch(:and))
         PactBroker::Domain::Verification.where(provider: provider, consumer: consumer).delete
-      end
-
-      def pact_version_id_for pact
-        PactBroker::Pacts::PactPublication.select(:pact_version_id).where(id: pact.id)
       end
     end
   end

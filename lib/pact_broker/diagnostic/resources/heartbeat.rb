@@ -4,7 +4,6 @@ module PactBroker
   module Diagnostic
     module Resources
       class Heartbeat < BaseResource
-
         def allowed_methods
           ["GET"]
         end
@@ -14,11 +13,11 @@ module PactBroker
         end
 
         def to_json
-          @@json ||= {
+          {
             "ok" => true,
             "_links" => {
               "self" => {
-                "href" => request.uri.to_s
+                "href" => base_url + "/diagnostic/status/heartbeat"
               }
             }
           }.to_json
