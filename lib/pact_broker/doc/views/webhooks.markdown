@@ -108,6 +108,7 @@ The following variables may be used in the request path, parameters or body, and
 * `${pactbroker.providerLabels}`: the list of labels for the provider associated with the pact content, separated by ", ".
 * `${pactbroker.githubVerificationStatus}`: the verification status using the correct keywords for posting to the the [Github commit status API](https://developer.github.com/v3/repos/statuses).
 * `${pactbroker.bitbucketVerificationStatus}`: the verification status using the correct keywords for posting to the the [Bitbucket commit status API](https://developer.atlassian.com/server/bitbucket/how-tos/updating-build-status-for-commits/).
+* `${pactbroker.gitlabVerificationStatus}`: the verification status using the correct keywords for posting to the the [Gitlab Commits API](https://docs.gitlab.com/ee/api/commits.html#post-the-build-status-to-a-commit).
 * `${pactbroker.verificationResultUrl}`: the URL to the relevant verification result.
 
 Example usage:
