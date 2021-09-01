@@ -164,6 +164,18 @@ module PactBroker
           where(id: matching_branch_version_ids)
         end
 
+        def latest_for_main_branches
+          pacticipants_join = {
+            Sequel[:branch_heads][:pacticipant_id] => Sequel[:pacticipants][:id],
+            Sequel[:branch_heads][:branch_name] => Sequel[:pacticipants][:main_branch]
+          }
+          matching_branch_version_ids = PactBroker::Versions::BranchHead
+                                          .select(:version_id)
+                                          .join(:pacticipants, pacticipants_join)
+
+          where(id: matching_branch_version_ids)
+        end
+
         def where_number(number)
           where(name_like(:number, number))
         end
@@ -198,16 +210,28 @@ module PactBroker
           query = query.where_tag(selector.tag) if selector.tag
           query = query.where_number(selector.pacticipant_version_number) if selector.respond_to?(:pacticipant_version_number) && selector.pacticipant_version_number
           query = query.where_age_less_than(selector.max_age) if selector.respond_to?(:max_age) && selector.max_age
-          query = query.for_main_branches if selector.respond_to?(:main_branch) && selector.main_branch
+
+          latest_applied = false
+
+          if selector.respond_to?(:main_branch) && selector.main_branch
+            if selector.latest
+              latest_applied = true
+              query = query.latest_for_main_branches
+            else
+              query = query.for_main_branches
+            end
+          end
+
           if selector.branch
             if selector.latest
+              latest_applied = true
               query = query.where_branch_head_name(selector.branch)
             else
               query = query.where_branch_name(selector.branch)
             end
           end
 
-          if selector.latest && !selector.branch # latest branch logic already done
+          if selector.latest && !latest_applied
             calculate_max_version_order_and_join_back_to_versions(query, selector)
           else
             query
