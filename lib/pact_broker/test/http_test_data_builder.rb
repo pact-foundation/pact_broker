@@ -55,10 +55,11 @@ module PactBroker
       end
 
       def create_version(pacticipant:, version:, branch:)
-        request_body = {
-          branch: branch
-        }
-        client.put("pacticipants/#{encode(pacticipant)}/versions/#{encode(version)}", request_body).tap { |response| check_for_error(response) }
+        if branch
+          client.put("pacticipants/#{encode(pacticipant)}/branches/#{encode(branch)}/versions/#{encode(version)}", {}).tap { |response| check_for_error(response) }
+        else
+          client.put("pacticipants/#{encode(pacticipant)}/versions/#{encode(version)}").tap { |response| check_for_error(response) }
+        end
         self
       end
 

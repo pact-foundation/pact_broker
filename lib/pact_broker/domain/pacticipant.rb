@@ -40,6 +40,10 @@ module PactBroker
         def find_by_name(name)
           where(name_like(:name, name))
         end
+
+        def where_name(name)
+          where(name_like(:name, name))
+        end
       end
 
       def before_destroy

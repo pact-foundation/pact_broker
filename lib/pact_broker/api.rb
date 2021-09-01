@@ -87,6 +87,7 @@ module PactBroker
         add ["pacticipants", :pacticipant_name, "latest-version"], Api::Resources::LatestVersion, {resource_name: "latest_pacticipant_version"}
         add ["pacticipants", :pacticipant_name, "versions", :pacticipant_version_number, "tags", :tag_name], Api::Resources::Tag, {resource_name: "pacticipant_version_tag"}
         add ["pacticipants", :pacticipant_name, "labels", :label_name], Api::Resources::Label, {resource_name: "pacticipant_label"}
+        add ["pacticipants", :pacticipant_name, "branches", :branch_name, "versions", :version_number], Api::Resources::BranchVersion, { resource_name: "branch_version" }
 
         # Webhooks
         add ["webhooks", "provider", :provider_name, "consumer", :consumer_name ], Api::Resources::PacticipantWebhooks, {resource_name: "pacticipant_webhooks"}

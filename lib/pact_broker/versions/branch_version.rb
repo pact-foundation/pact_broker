@@ -6,6 +6,7 @@ module PactBroker
     class BranchVersion < Sequel::Model(:branch_versions)
       plugin :timestamps, update_on_create: true
       plugin :insert_ignore, identifying_columns: [:branch_id, :version_id]
+      plugin :upsert, identifying_columns: [:branch_id, :version_id]
 
       associate(:many_to_one, :branch, :class => "PactBroker::Versions::Branch", :key => :branch_id, :primary_key => :id)
       associate(:many_to_one, :version, :class => "PactBroker::Domain::Version", :key => :version_id, :primary_key => :id)
@@ -27,6 +28,14 @@ module PactBroker
 
       def latest?
         branch_head.branch_version_id == id
+      end
+
+      def version_number
+        version.number
+      end
+
+      def pacticipant
+        branch.pacticipant
       end
     end
   end
