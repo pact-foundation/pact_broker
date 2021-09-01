@@ -7,11 +7,13 @@ module PactBroker
     module ViewDomain
       describe IndexItem do
 
-        let(:consumer) { instance_double("PactBroker::Domain::Pacticipant", name: "Consumer Name")}
-        let(:provider) { instance_double("PactBroker::Domain::Pacticipant", name: "Provider Name")}
+        let(:consumer) { instance_double("PactBroker::Domain::Pacticipant", name: "Consumer Name") }
+        let(:provider) { instance_double("PactBroker::Domain::Pacticipant", name: "Provider Name") }
+        let(:consumer_version) { instance_double("PactBroker::Domain::Version") }
+
         let(:latest_pact) { instance_double("PactBroker::Domain::Pact", consumer_version_number: "1.2.3") }
         let(:latest_verification) { instance_double("PactBroker::Domain::Verification") }
-        let(:domain_relationship) { PactBroker::Domain::IndexItem.new(consumer, provider, latest_pact, latest, latest_verification, [], [], tags, latest_verification_latest_tags)}
+        let(:domain_relationship) { PactBroker::Domain::IndexItem.new(consumer, provider, consumer_version, latest_pact, latest, latest_verification, [], [], tags, latest_verification_latest_tags)}
         let(:tags) { [] }
         let(:verification_tag_1) { instance_double("PactBroker::Tags::TagWithLatestFlag", name: "dev") }
         let(:verification_tag_2) { instance_double("PactBroker::Tags::TagWithLatestFlag", name: "prod") }

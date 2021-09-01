@@ -3,6 +3,7 @@ require "faraday_middleware"
 require "logger"
 require "erb"
 require "yaml"
+require "base64"
 
 module PactBroker
   module Test
@@ -100,6 +101,29 @@ module PactBroker
         self
       end
 
+      def publish_contract(consumer: last_consumer_name, consumer_version:, provider: last_provider_name, content_id:, tag: nil, branch: nil)
+        content = generate_content(consumer, provider, content_id)
+        request_body_hash = {
+          :pacticipantName => consumer,
+          :pacticipantVersionNumber => consumer_version,
+          :branch => branch,
+          :tags => tag ? [tag] : nil,
+          :contracts => [
+            {
+              :consumerName => consumer,
+              :providerName => provider,
+              :specification => "pact",
+              :contentType => "application/json",
+              :content => Base64.strict_encode64(content.to_json)
+            }
+          ]
+        }.compact
+        response = client.post("contracts/publish", request_body_hash).tap { |response| check_for_error(response) }
+        puts response.body["logs"].collect{ |log| log["message"]}
+        separate
+        self
+      end
+
       def publish_pact(consumer: last_consumer_name, consumer_version:, provider: last_provider_name, content_id:, tag: nil, branch: nil)
         @last_consumer_name = consumer
         @last_provider_name = provider
@@ -120,7 +144,7 @@ module PactBroker
         self
       end
 
-      def get_pacts_for_verification(provider: last_provider_name, provider_version_tag: nil, provider_version_branch: nil, consumer_version_selectors: [], enable_pending: false, include_wip_pacts_since: nil)
+      def get_pacts_for_verification(provider: last_provider_name, provider_version_tag: nil, provider_version_branch: nil, consumer_version_selectors: nil, enable_pending: false, include_wip_pacts_since: nil)
         @last_provider_name = provider
         @last_provider_version_tag = provider_version_tag
         @last_provder_version_branch = provider_version_branch

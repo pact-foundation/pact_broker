@@ -22,22 +22,10 @@ module PactBroker
       end
       # rubocop: enable Metrics/CyclomaticComplexity
 
+      # Updated logic - the pacts for the latest version of each main branch,
+      # not the latest pact that belongs to the main branch.
       def latest_for_main_branches
-        self_join = {
-          Sequel[:pact_publications][:provider_id] => Sequel[:pp2][:provider_id],
-          Sequel[:pact_publications][:consumer_id] => Sequel[:pp2][:consumer_id],
-          Sequel[:cv][:branch] => Sequel[:pp2][:branch]
-        }
-
-        base_query = join_consumers(:consumers)
-                      .join_consumer_versions(:cv, { Sequel[:cv][:branch] => Sequel[:consumers][:main_branch] })
-
-        base_query = base_query.select_all_qualified if no_columns_selected?
-
-        base_query.left_join(base_query.select(:provider_id, :consumer_id, Sequel[:cv][:branch], :consumer_version_order), self_join, { table_alias: :pp2 }) do
-          Sequel[:pp2][:consumer_version_order] > Sequel[:pact_publications][:consumer_version_order]
-        end
-        .where(Sequel[:pp2][:consumer_version_order] => nil)
+        where(consumer_version: PactBroker::Domain::Version.latest_for_main_branches)
       end
 
       def for_currently_deployed_versions(environment_name)

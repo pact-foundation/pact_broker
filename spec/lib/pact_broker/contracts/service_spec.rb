@@ -74,8 +74,8 @@ module PactBroker
             expect { subject }.to change { PactBroker::Domain::Version.order(:id).last.tags.count}.from(1).to(3)
           end
 
-          it "updates the branch (TODO this should add to the branches when branches is updated to be a collection)" do
-            expect { subject }.to change { PactBroker::Domain::Version.order(:id).last.branch}.from("feat/x").to("main")
+          it "adds the branch to the existing version" do
+            expect { subject }.to change { PactBroker::Domain::Version.order(:id).last.branch_versions.collect(&:branch_name)}.from(["feat/x"]).to(["feat/x", "main"])
           end
 
           context "when the write mode is overwrite" do

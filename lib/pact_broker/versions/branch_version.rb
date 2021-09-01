@@ -9,6 +9,7 @@ module PactBroker
 
       associate(:many_to_one, :branch, :class => "PactBroker::Versions::Branch", :key => :branch_id, :primary_key => :id)
       associate(:many_to_one, :version, :class => "PactBroker::Domain::Version", :key => :version_id, :primary_key => :id)
+      associate(:many_to_one, :branch_head, :class => "PactBroker::Versions::BranchHead", :key => :branch_id, :primary_key => :branch_id)
 
       dataset_module do
         def find_latest_for_branch(branch)
@@ -22,6 +23,10 @@ module PactBroker
         self.version_order = version.order
         self.pacticipant_id = version.pacticipant_id
         self.branch_name = branch.name
+      end
+
+      def latest?
+        branch_head.branch_version_id == id
       end
     end
   end

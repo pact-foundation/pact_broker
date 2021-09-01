@@ -2,6 +2,7 @@ require "pact_broker/api/pact_broker_urls"
 require "pact_broker/ui/helpers/url_helper"
 require "pact_broker/date_helper"
 require "pact_broker/ui/view_models/matrix_tag"
+require "pact_broker/ui/view_models/matrix_branch"
 require "pact_broker/ui/view_models/matrix_deployed_version"
 require "pact_broker/ui/view_models/matrix_released_version"
 require "pact_broker/versions/abbreviate_number"
@@ -15,8 +16,6 @@ module PactBroker
         include PactBroker::Api::PactBrokerUrls
         include PactBroker::Messages
         extend Forwardable
-
-        delegate [:consumer_version_branch, :provider_version_branch] => :line
 
         def initialize line, options = {}
           @line = line
@@ -103,20 +102,10 @@ module PactBroker
           end
         end
 
-        def consumer_version_branch_tooltip
-          branch_tooltip(consumer_name, consumer_version_branch, consumer_version_latest_for_branch?)
-        end
-
-        def consumer_version_latest_for_branch?
-          @line.consumer_version.latest_for_branch?
-        end
-
-        def provider_version_branch_tooltip
-          branch_tooltip(provider_name, provider_version_branch, provider_version_latest_for_branch?)
-        end
-
-        def provider_version_latest_for_branch?
-          @line.provider_version.latest_for_branch?
+        def consumer_version_branches
+          @line.consumer_version_branch_versions.collect do | branch_version |
+            MatrixBranch.new(branch_version, consumer_name)
+          end
         end
 
         def latest_consumer_version_tags
@@ -139,6 +128,12 @@ module PactBroker
 
         def provider_versions_in_environments
           provider_deployed_versions + provider_released_versions
+        end
+
+        def provider_version_branches
+          @line.provider_version_branch_versions.collect do | branch_version |
+            MatrixBranch.new(branch_version, provider_name)
+          end
         end
 
         def latest_provider_version_tags

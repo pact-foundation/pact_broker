@@ -13,7 +13,9 @@ module PactBroker
 
         delegate [
           :consumer_version_branch,
+          :consumer_version_branches,
           :provider_version_branch,
+          :provider_version_branches,
           :latest_for_branch?,
           :consumer_version_environment_names,
           :provider_version_environment_names

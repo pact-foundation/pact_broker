@@ -58,10 +58,9 @@
                 - if index_item.display_consumer_version_number
                   %button.clippy.invisible{ title: "Copy to clipboard" }
                     %span.copy-icon
-              - if index_item.consumer_version_branch
-                - branch_class = index_item.latest_for_branch? ? "tag badge badge-dark" : "tag badge badge-secondary"
-                %div{"class": branch_class}
-                  = "branch: " + index_item.consumer_version_branch
+              - index_item.consumer_version_branches.each do | branch_name |
+                %div{"class": "tag badge badge-dark"}
+                  = "branch: " + branch_name
               - index_item.consumer_version_latest_tag_names.each do | tag_name |
                 .tag.badge.badge-primary
                   = "tag: " + tag_name

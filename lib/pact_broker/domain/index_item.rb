@@ -6,6 +6,7 @@ module PactBroker
     class IndexItem
       attr_reader :consumer,
         :provider,
+        :consumer_version,
         :latest_pact,
         :latest_verification,
         :webhooks,
@@ -13,15 +14,16 @@ module PactBroker
         :latest_verification_latest_tags
 
       # rubocop:disable Metrics/ParameterLists
-      def self.create(consumer, provider, latest_pact, latest, latest_verification, webhooks = [], triggered_webhooks = [], tags = [], latest_verification_latest_tags = [], latest_for_branch = nil)
-        new(consumer, provider, latest_pact, latest, latest_verification, webhooks, triggered_webhooks, tags, latest_verification_latest_tags, latest_for_branch)
+      def self.create(consumer, provider, consumer_version, latest_pact, latest, latest_verification, webhooks = [], triggered_webhooks = [], tags = [], latest_verification_latest_tags = [], latest_for_branch = nil)
+        new(consumer, provider, consumer_version, latest_pact, latest, latest_verification, webhooks, triggered_webhooks, tags, latest_verification_latest_tags, latest_for_branch)
       end
       # rubocop:enable Metrics/ParameterLists
 
       # rubocop:disable Metrics/ParameterLists
-      def initialize(consumer, provider, latest_pact = nil, latest = true, latest_verification = nil, webhooks = [], triggered_webhooks = [], tags = [], latest_verification_latest_tags = [], latest_for_branch = nil)
+      def initialize(consumer, provider, consumer_version = nil, latest_pact = nil, latest = true, latest_verification = nil, webhooks = [], triggered_webhooks = [], tags = [], latest_verification_latest_tags = [], latest_for_branch = nil)
         @consumer = consumer
         @provider = provider
+        @consumer_version = consumer_version
         @latest_pact = latest_pact
         @latest = latest
         @latest_verification = latest_verification
@@ -68,12 +70,12 @@ module PactBroker
         consumer_version.order
       end
 
-      def consumer_version
-        @latest_pact.consumer_version
-      end
-
       def consumer_version_branch
         consumer_version.branch
+      end
+
+      def consumer_version_branches
+        consumer_version.branch_heads.collect(&:branch_name)
       end
 
       def consumer_version_environment_names
@@ -94,6 +96,10 @@ module PactBroker
 
       def provider_version_branch
         provider_version&.branch
+      end
+
+      def provider_version_branches
+        provider_version&.branch_heads&.collect(&:branch_name) || []
       end
 
       def provider_version_environment_names

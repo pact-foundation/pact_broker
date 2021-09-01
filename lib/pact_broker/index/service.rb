@@ -58,6 +58,7 @@ module PactBroker
           PactBroker::Domain::IndexItem.create(
             pact_publication.consumer,
             pact_publication.provider,
+            pact_publication.consumer_version,
             pact_publication.to_domain_lightweight,
             is_overall_latest_for_integration,
             latest_verification,
@@ -116,6 +117,7 @@ module PactBroker
           PactBroker::Domain::IndexItem.create(
             pact_publication.consumer,
             pact_publication.provider,
+            pact_publication.consumer_version,
             pact_publication.to_domain_lightweight,
             is_overall_latest_for_integration,
             pact_publication.latest_verification,
