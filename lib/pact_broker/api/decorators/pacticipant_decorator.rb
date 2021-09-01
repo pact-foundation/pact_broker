@@ -49,6 +49,14 @@ module PactBroker
           }
         end
 
+        link :'pb:branch-version' do | options |
+          {
+            title: "Get or add/create a version for a branch of #{represented.name}",
+            href: templated_branch_version_url_for_pacticipant(represented.name, options[:base_url]),
+            templated: true
+          }
+        end
+
         link :'pb:label' do | options |
           {
             title: "Get, create or delete a label for #{represented.name}",
