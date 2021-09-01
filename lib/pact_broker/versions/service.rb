@@ -42,14 +42,12 @@ module PactBroker
       def self.create_or_overwrite(pacticipant_name, version_number, version)
         pacticipant = pacticipant_repository.find_by_name_or_create(pacticipant_name)
         version = version_repository.create_or_overwrite(pacticipant, version_number, version)
-        pacticipant_service.maybe_set_main_branch(pacticipant, version.branch)
         version
       end
 
       def self.create_or_update(pacticipant_name, version_number, version)
         pacticipant = pacticipant_repository.find_by_name_or_create(pacticipant_name)
         version = version_repository.create_or_update(pacticipant, version_number, version)
-        pacticipant_service.maybe_set_main_branch(pacticipant, version.branch)
         version
       end
 
@@ -66,9 +64,9 @@ module PactBroker
       end
 
       def self.maybe_set_version_branch_from_tag(version, tag_name)
-        if use_tag_as_branch?(version) && !version.branch
+        if use_tag_as_branch?(version) && version.branch_versions.empty?
           logger.info "Setting #{version.pacticipant.name} version #{version.number} branch to '#{tag_name}' from first tag (because use_first_tag_as_branch=true)"
-          version_repository.set_branch_if_unset(version, tag_name)
+          branch_version_repository.add_branch(version, tag_name)
         end
       end
 

@@ -39,7 +39,7 @@ module PactBroker
 
         it "sets the version branch" do
           subject
-          expect(PactBroker::Domain::Version.order(:id).last.branch).to eq "main"
+          expect(PactBroker::Domain::Version.order(:id).last.branch_names).to include "main"
         end
 
         it "returns a results object" do

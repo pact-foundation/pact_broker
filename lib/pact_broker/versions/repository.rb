@@ -52,23 +52,21 @@ module PactBroker
       end
 
       # There may be a race condition if two simultaneous requests come in to create the same version
-      def create args
+      def create(args)
         logger.info "Upserting version #{args[:number]} for pacticipant_id=#{args[:pacticipant_id]}"
         version_params = {
           number: args[:number],
           pacticipant_id: args[:pacticipant_id],
           created_at: Sequel.datetime_class.now,
           updated_at: Sequel.datetime_class.now,
-          build_url: args[:build_url],
-          branch: args[:branch]
+          build_url: args[:build_url]
         }.compact
 
+
         version = PactBroker::Domain::Version.new(version_params).upsert
-
-        if args[:branch]
-          add_branch(version, args[:branch])
-        end
-
+        # branch can't be set from CRUD on the version resource, but it's convenient to be able
+        # to make a version with a branch for internal code.
+        branch_version_repository.add_branch(version, args[:branch]) if args[:branch]
         version
       end
 
@@ -76,7 +74,7 @@ module PactBroker
         saved_version = PactBroker::Domain::Version.where(pacticipant_id: pacticipant.id, number: version_number).single_record
         params = open_struct_version.to_h
         tags = params.delete(:tags)
-        branch_name = params[:branch] # TODO branches
+        branch_name = params.delete(:branch)
         if saved_version
           saved_version.update(params)
         else
@@ -85,13 +83,12 @@ module PactBroker
           saved_version = PactBroker::Domain::Version.new(
             params.merge(
               pacticipant_id: pacticipant.id,
-              number: version_number,
-              branch: branch_name,
+              number: version_number
             ).compact
           ).upsert
         end
 
-        add_branch(saved_version, branch_name) if branch_name
+        branch_version_repository.add_branch(saved_version, branch_name) if branch_name
         replace_tags(saved_version, tags) if tags
         saved_version
       end
@@ -106,10 +103,6 @@ module PactBroker
 
         if open_struct_version.tags
           replace_tags(saved_version, open_struct_version.tags)
-        end
-
-        if open_struct_version.branches
-          update_branches(saved_version, open_struct_version.branches)
         end
 
         saved_version
@@ -155,11 +148,6 @@ module PactBroker
         PactBroker::Domain::Version.select_all_qualified.for_selector(selector).all
       end
 
-      def set_branch_if_unset(version, branch)
-        version.update(branch: branch) if version.branch.nil?
-        version
-      end
-
       def find_latest_version_from_main_branch(pacticipant)
         if pacticipant.main_branch
           latest_from_main_branch = PactBroker::Domain::Version
@@ -168,15 +156,6 @@ module PactBroker
 
           latest_from_main_branch || find_by_pacticipant_name_and_latest_tag(pacticipant.name, pacticipant.main_branch)
         end
-      end
-
-      def add_branch(version, branch_name)
-        branch = PactBroker::Versions::Branch.new(pacticipant: version.pacticipant, name: branch_name).insert_ignore
-        branch_version = version.branch_version_for_branch(branch)
-        if !branch_version
-          branch_version = PactBroker::Versions::BranchVersion.new(version: version, branch: branch).insert_ignore
-        end
-        PactBroker::Versions::BranchHead.new(branch: branch, branch_version: branch_version).upsert
       end
     end
   end

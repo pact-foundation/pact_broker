@@ -215,7 +215,7 @@ module PactBroker
         if pact_publication.values[:tag_name]
           Selectors.create_for_latest_for_tag(pact_publication.values[:tag_name])
         else
-          Selectors.create_for_latest_for_branch(pact_publication.consumer_version.branch)
+          Selectors.create_for_latest_for_branch(pact_publication.values.fetch(:branch))
         end
       end
 

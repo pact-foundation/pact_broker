@@ -159,59 +159,20 @@ module PactBroker
         let(:pacticipant) { td.and_return(:consumer) }
         let(:version_number) { "1234" }
         let(:tags) { nil }
-        let(:open_struct_version) { OpenStruct.new(branch: new_branch, tags: tags) }
-        let(:new_branch) { "new-branch" }
+        let(:open_struct_version) { OpenStruct.new(build_url: new_build_url, tags: tags) }
+        let(:new_build_url) { "new-build-url" }
 
         subject { Repository.new.create_or_update(pacticipant, version_number, open_struct_version) }
 
-        it "does not overwrite missing values the values" do
-          expect(subject.branch).to eq "new-branch"
-          expect(subject.build_url).to eq "original-build-url"
-        end
+        context "with empty properties" do
+          let(:open_struct_version) { OpenStruct.new }
 
-        it "does not change the tags" do
-          expect { subject }.to_not change { PactBroker::Domain::Version.for("Foo", "1234").tags }
-        end
-
-        context "when the branch does not already exist" do
-          it "creates a branch" do
-            expect { subject }.to change { PactBroker::Versions::Branch.count }.by(1)
+          it "does not overwrite missing values the values" do
+            expect(subject.build_url).to eq "original-build-url"
           end
 
-          it "creates a branch_version" do
-            expect { subject }.to change { PactBroker::Versions::BranchVersion.count }.by(1)
-          end
-
-          it "adds the branch_version to the version" do
-            expect(subject.branch_versions.count).to eq 2
-            expect(subject.branch_versions.last.branch_name).to eq "new-branch"
-          end
-
-          it "updates the branch head" do
-            branch_head = subject.pacticipant.branch_head_for("new-branch")
-            expect(branch_head.version.id).to eq subject.refresh.id
-          end
-        end
-
-        context "when the branch and branch version do already exist" do
-          let(:new_branch) { "original-branch" }
-
-          it "does not creates a branch" do
-            expect { subject }.to_not change { PactBroker::Versions::Branch.order(:name).collect(&:name) }
-          end
-
-          it "does not create a branch_version" do
-            expect { subject }.to change { PactBroker::Versions::BranchVersion.count }.by(0)
-          end
-
-          it "keeps the branch_version on the version" do
-            expect(subject.branch_versions.count).to eq 1
-            expect(subject.branch_versions.first.branch_name).to eq "original-branch"
-          end
-
-          it "does not change the branch head" do
-            branch_head = subject.pacticipant.branch_head_for("original-branch")
-            expect(branch_head.version).to eq subject
+          it "does not change the tags" do
+            expect { subject }.to_not change { PactBroker::Domain::Version.for("Foo", "1234").tags }
           end
         end
 
@@ -256,12 +217,12 @@ module PactBroker
         let(:pacticipant) { td.and_return(:consumer) }
         let(:version_number) { "1234" }
         let(:tags) { nil }
-        let(:open_struct_version) { OpenStruct.new(branch: "new-branch", tags: tags) }
+        let(:open_struct_version) { OpenStruct.new(tags: tags) }
 
         subject { Repository.new.create_or_overwrite(pacticipant, version_number, open_struct_version) }
 
         it "overwrites the values" do
-          expect(subject.branch).to eq "new-branch"
+          expect(subject.branch_names).to eq ["original-branch"]
           expect(subject.build_url).to eq nil
         end
 

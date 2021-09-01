@@ -37,7 +37,7 @@ module PactBroker
 
             it "does not update the branch" do
               subject
-              expect(td.find_version(pacticipant_name, version_number).branch).to eq "foo"
+              expect(td.find_version(pacticipant_name, version_number).branch_names).to eq ["foo"]
             end
           end
 
@@ -77,7 +77,8 @@ module PactBroker
 
           context "when the version was created within the limit" do
             before do
-              version = td.create_consumer(pacticipant_name)
+              version = td
+                .create_consumer(pacticipant_name)
                 .create_consumer_version(version_number)
                 .and_return(:consumer_version)
 
@@ -91,7 +92,7 @@ module PactBroker
 
             it "sets the branch" do
               subject
-              expect(td.find_version(pacticipant_name, version_number).branch).to eq "prod"
+              expect(td.find_version(pacticipant_name, version_number).branch_names).to include "prod"
             end
           end
         end

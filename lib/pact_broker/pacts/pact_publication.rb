@@ -74,13 +74,26 @@ module PactBroker
       end
 
       def latest_for_branch?
-        return nil unless consumer_version.branch
-        self_order = self.consumer_version.order
-        PactPublication.where(consumer_id: consumer_id, provider_id: provider_id)
-          .join_consumer_versions(:cv, { Sequel[:cv][:branch] => consumer_version.branch} ) do
-            Sequel[:cv][:order] > self_order
+        if !defined?(@latest_for_branch)
+          if consumer_version.branch_versions.empty?
+            @latest_for_branch = nil
+          else
+            self_order = self.consumer_version.order
+            @latest_for_branch = consumer_version.branch_versions.any? do | branch_version |
+              branch_versions_join = {
+                Sequel[:cv][:id] => Sequel[:branch_versions][:version_id],
+                Sequel[:branch_versions][:branch_name] => branch_version.branch_name
+              }
+              PactPublication.where(consumer_id: consumer_id, provider_id: provider_id)
+                .join_consumer_versions(:cv) do
+                  Sequel[:cv][:order] > self_order
+                end
+                .join(:branch_versions, branch_versions_join)
+              .empty?
+            end
           end
-        .empty?
+        end
+        @latest_for_branch
       end
 
       def to_domain

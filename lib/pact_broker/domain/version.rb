@@ -21,7 +21,9 @@ module PactBroker
       end
     end
 
-    class Version < Sequel::Model
+    VERSION_COLUMNS = [:id, :number, :repository_ref, :pacticipant_id, :order, :created_at, :updated_at, :build_url]
+
+    class Version < Sequel::Model(Sequel::Model.db[:versions].select(*VERSION_COLUMNS.collect{ | column | Sequel.qualify(:versions, column) }))
       plugin :timestamps, update_on_create: true
       plugin :upsert, { identifying_columns: [:pacticipant_id, :number], ignore_columns_on_update: [:id, :created_at, :order] }
 
@@ -49,7 +51,7 @@ module PactBroker
         include PactBroker::Repositories::Helpers
 
         def with_branch_set
-          exclude(branch: nil)
+          where(id: PactBroker::Versions::BranchVersion.select(:version_id))
         end
 
         def latest_version_for_pacticipant(pacticipant)
@@ -67,20 +69,16 @@ module PactBroker
         end
 
         def first_for_pacticipant_id_and_branch(pacticipant_id, branch)
-          where(pacticipant_id: pacticipant_id, branch: branch).order(:created_at).first
+          first_version_id = PactBroker::Versions::BranchVersion
+                              .select(:version_id)
+                              .where(pacticipant_id: pacticipant_id, branch_name: branch)
+                              .order(:created_at)
+                              .limit(1)
+          where(id: first_version_id).single_record
         end
 
-        def latest_versions_for_pacticipant_branches(pacticipant_id, branches)
-          query = Version.where(Sequel[:versions][:pacticipant_id] => pacticipant_id, Sequel[:versions][:branch] => branches)
-
-          self_join = {
-            Sequel[:versions][:pacticipant_id] => Sequel[:versions_2][:pacticipant_id],
-            Sequel[:versions][:branch] => Sequel[:versions_2][:branch]
-          }
-          query.select_all_qualified.left_join(query, self_join, table_alias: :versions_2) do
-            Sequel[:versions_2][:order] > Sequel[:versions][:order]
-          end
-          .where(Sequel[:versions_2][:order] => nil)
+        def latest_versions_for_pacticipant_branches(pacticipant_id, branch_names)
+          where(id: PactBroker::Versions::BranchHead.where(pacticipant_id: pacticipant_id, branch_name: branch_names).select(:version_id))
         end
 
         def where_pacticipant_name(pacticipant_name)
@@ -300,6 +298,14 @@ module PactBroker
 
       def branch_version_for_branch(branch)
         branch_versions.find { | branch_version | branch_version.branch_id == branch.id }
+      end
+
+      def branch_version_for_branch_name(branch_name)
+        branch_versions.find { | branch_version | branch_version.branch_name == branch_name }
+      end
+
+      def branch_names
+        branch_versions.collect(&:branch_name)
       end
 
       def tag_names
