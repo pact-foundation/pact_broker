@@ -40,14 +40,14 @@ module PactBroker
         it "returns the latest pact publications for each consumer/branch" do
           expect(subject.size).to eq 3
 
-          expect(subject.find { |pp| pp.consumer_id == foo.id && pp[:branch] == "main" }.consumer_version.number).to eq "3"
-          expect(subject.find { |pp| pp.consumer_id == foo.id && pp[:branch] == "feat/x" }.consumer_version.number).to eq "4"
-          expect(subject.find { |pp| pp.consumer_id == foo_z.id && pp[:branch] == "main" }.consumer_version.number).to eq "6"
-          expect(subject.find { |pp| pp.consumer_id == foo_z.id && pp[:branch] == "main" }.revision_number).to eq 2
+          expect(subject.find { |pp| pp.consumer_id == foo.id && pp[:branch_name] == "main" }.consumer_version.number).to eq "3"
+          expect(subject.find { |pp| pp.consumer_id == foo.id && pp[:branch_name] == "feat/x" }.consumer_version.number).to eq "4"
+          expect(subject.find { |pp| pp.consumer_id == foo_z.id && pp[:branch_name] == "main" }.consumer_version.number).to eq "6"
+          expect(subject.find { |pp| pp.consumer_id == foo_z.id && pp[:branch_name] == "main" }.revision_number).to eq 2
         end
 
         it "does not return extra columns" do
-          expect(subject.first.values.keys.sort).to eq (PactPublication.columns + [:branch]).sort
+          expect(subject.first.values.keys.sort).to eq (PactPublication.columns + [:branch_name]).sort
         end
 
         context "chained with created after" do
@@ -56,8 +56,8 @@ module PactBroker
           its(:size) { is_expected.to eq 2 }
 
           it "returns the right versions" do
-            expect(subject.find { |pp| pp.consumer_id == foo.id && pp[:branch] == "feat/x" }.consumer_version.number).to eq "4"
-            expect(subject.find { |pp| pp.consumer_id == foo_z.id && pp[:branch] == "main" }.consumer_version.number).to eq "6"
+            expect(subject.find { |pp| pp.consumer_id == foo.id && pp[:branch_name] == "feat/x" }.consumer_version.number).to eq "4"
+            expect(subject.find { |pp| pp.consumer_id == foo_z.id && pp[:branch_name] == "main" }.consumer_version.number).to eq "6"
           end
         end
       end
@@ -97,7 +97,7 @@ module PactBroker
         end
 
         it "does not return extra columns" do
-          expect(subject.first.values.keys.sort).to eq (PactPublication.columns + [:branch]).sort
+          expect(subject.first.values.keys.sort).to eq (PactPublication.columns + [:branch_name]).sort
         end
 
         context "when columns are already selected" do

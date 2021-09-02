@@ -25,7 +25,30 @@ module PactBroker
       # Updated logic - the pacts for the latest version of each main branch,
       # not the latest pact that belongs to the main branch.
       def latest_for_main_branches
-        where(consumer_version: PactBroker::Domain::Version.latest_for_main_branches)
+        pacticipants_join = {
+          Sequel[:branch_heads][:pacticipant_id] => Sequel[:pacticipants][:id],
+          Sequel[:branch_heads][:branch_name] => Sequel[:pacticipants][:main_branch]
+        }
+        matching_branch_version_ids = PactBroker::Versions::BranchHead
+                                        .select(:version_id)
+                                        .join(:pacticipants, pacticipants_join)
+
+        consumers_join = { Sequel[:pact_publications][:consumer_id] => Sequel[:consumers][:id] }
+
+        branch_heads_join = {
+          Sequel[:pact_publications][:consumer_version_id] => Sequel[:branch_heads][:version_id],
+          Sequel[:consumers][:main_branch] => Sequel[:branch_heads][:branch_name]
+        }
+
+        query = self
+        if no_columns_selected?
+          query = query.select_all_qualified.select_append(Sequel[:branch_heads][:branch_name].as(:branch_name))
+        end
+
+        query
+          .join(:pacticipants, consumers_join, { table_alias: :consumers })
+          .join(:branch_heads, branch_heads_join)
+          .remove_overridden_revisions_from_complete_query
       end
 
       def for_currently_deployed_versions(environment_name)
@@ -48,6 +71,7 @@ module PactBroker
           .join(:deployed_versions, deployed_versions_join)
           .join(:currently_deployed_version_ids, currently_deployed_versions_join)
           .join(:environments, environments_join)
+          .remove_overridden_revisions_from_complete_query
       end
 
       def for_currently_supported_versions(environment_name)
@@ -67,6 +91,7 @@ module PactBroker
         query
           .join(:released_versions, released_versions_join)
           .join(:environments, environments_join)
+          .remove_overridden_revisions_from_complete_query
       end
 
       def for_environment(environment_name)

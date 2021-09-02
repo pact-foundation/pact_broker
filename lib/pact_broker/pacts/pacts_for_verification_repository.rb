@@ -215,7 +215,7 @@ module PactBroker
         if pact_publication.values[:tag_name]
           Selectors.create_for_latest_for_tag(pact_publication.values[:tag_name])
         else
-          Selectors.create_for_latest_for_branch(pact_publication.values.fetch(:branch))
+          Selectors.create_for_latest_for_branch(pact_publication.values.fetch(:branch_name))
         end
       end
 
@@ -285,8 +285,8 @@ module PactBroker
         pact_publications_query.eager(:provider).eager(:consumer).eager(:consumer_version).order(:consumer_version_order).all.sort.collect do |p|
           suffix =  if p.values[:tag_name]
                       " (tag #{p.values[:tag_name]})"
-                    elsif p.values[:branch]
-                      " (branch #{p.values[:branch]})"
+                    elsif p.values[:branch_name]
+                      " (branch #{p.values[:branch_name]})"
                     else
                       ""
                     end

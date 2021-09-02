@@ -34,6 +34,7 @@ Sequel.migration do
       index [:branch_id], unique: true, name: :branch_heads_branch_id_index
       index [:branch_name], name: :branch_heads_branch_name_index
       index [:pacticipant_id], name: :branch_heads_pacticipant_id_index
+      index [:version_id], name: :branch_heads_version_id_index
     end
   end
 end

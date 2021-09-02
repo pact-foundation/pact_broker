@@ -149,7 +149,7 @@ module PactBroker
           let(:consumer_version) { double("consumer version", number: "1.0.0", pacticipant: double("consumer", name: "Consumer")) }
 
           let(:consumer_version_branch_versions) do
-            [ instance_double("PactBroker::Versions::BranchVersion", branch_name: "main") ]
+            [ instance_double("PactBroker::Versions::BranchVersion", branch_name: "main", latest?: true) ]
           end
 
           let(:consumer_version_tags) do
@@ -161,7 +161,7 @@ module PactBroker
           let(:provider_version) { double("provider version", number: "4.5.6", pacticipant: double("provider", name: "Provider")) }
 
           let(:provider_version_branch_versions) do
-            [ instance_double("PactBroker::Versions::BranchVersion", branch_name: "feat/x") ]
+            [ instance_double("PactBroker::Versions::BranchVersion", branch_name: "feat/x", latest?: true) ]
           end
 
           let(:provider_version_tags) do

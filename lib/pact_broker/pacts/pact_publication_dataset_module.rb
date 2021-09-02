@@ -31,7 +31,9 @@ module PactBroker
           base_query = base_query.select_all_qualified.select_append(Sequel[:tags][:name].as(:tag_name))
         end
 
-        base_query.join(:tags, { version_id: :consumer_version_id, Sequel[:tags][:name] => tag_name })
+        base_query
+          .join(:tags, { version_id: :consumer_version_id, Sequel[:tags][:name] => tag_name })
+          .remove_overridden_revisions_from_complete_query
       end
 
       def for_consumer_name_and_maybe_version_number(consumer_name, consumer_version_number)
@@ -63,7 +65,7 @@ module PactBroker
 
         base_query = self
         if no_columns_selected?
-          base_query = base_query.select_all_qualified.select_append(Sequel[:max_orders][:branch_name].as(:branch))
+          base_query = base_query.select_all_qualified.select_append(Sequel[:max_orders][:branch_name].as(:branch_name))
         end
 
         base_query
@@ -116,7 +118,7 @@ module PactBroker
 
         base_query = self
         if no_columns_selected?
-          base_query = base_query.select_all_qualified.select_append(Sequel[:max_orders][:branch_name].as(:branch))
+          base_query = base_query.select_all_qualified.select_append(Sequel[:max_orders][:branch_name].as(:branch_name))
         end
         base_query
           .join(max_orders, max_join, { table_alias: :max_orders })

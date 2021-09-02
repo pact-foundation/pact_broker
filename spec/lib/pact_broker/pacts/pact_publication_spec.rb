@@ -256,9 +256,9 @@ module PactBroker
           expect(subject.size).to eq 3
           subject.collect(&:values)
 
-          expect(subject.find { |pp| pp.consumer_id == foo.id && pp[:branch] == "main" }.consumer_version.number).to eq "3"
-          expect(subject.find { |pp| pp.consumer_id == foo.id && pp[:branch] == "feat/x" }.consumer_version.number).to eq "4"
-          expect(subject.find { |pp| pp.consumer_id == foo_z.id && pp[:branch] == "main" }.consumer_version.number).to eq "6"
+          expect(subject.find { |pp| pp.consumer_id == foo.id && pp[:branch_name] == "main" }.consumer_version.number).to eq "3"
+          expect(subject.find { |pp| pp.consumer_id == foo.id && pp[:branch_name] == "feat/x" }.consumer_version.number).to eq "4"
+          expect(subject.find { |pp| pp.consumer_id == foo_z.id && pp[:branch_name] == "main" }.consumer_version.number).to eq "6"
         end
 
         context "chained with created after" do
@@ -267,8 +267,8 @@ module PactBroker
           its(:size) { is_expected.to eq 2 }
 
           it "returns the right versions" do
-            expect(subject.find { |pp| pp.consumer_id == foo.id && pp[:branch] == "feat/x" }.consumer_version.number).to eq "4"
-            expect(subject.find { |pp| pp.consumer_id == foo_z.id && pp[:branch] == "main" }.consumer_version.number).to eq "6"
+            expect(subject.find { |pp| pp.consumer_id == foo.id && pp[:branch_name] == "feat/x" }.consumer_version.number).to eq "4"
+            expect(subject.find { |pp| pp.consumer_id == foo_z.id && pp[:branch_name] == "main" }.consumer_version.number).to eq "6"
           end
         end
       end
