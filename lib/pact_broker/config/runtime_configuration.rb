@@ -8,6 +8,18 @@ require "pact_broker/string_refinements"
 require "pact_broker/hash_refinements"
 require "pact_broker/error"
 
+module Anyway
+  module Tracing
+    class << self
+      # Override this method so that we get the real caller location, not the forwardable one from
+      # the `extend Forwardable` in the PactBroker::Configuration class.
+      def current_trace_source
+        source_stack.last || accessor_source(caller_locations(2, 2).find { | location | !location.path.end_with?("forwardable.rb") })
+      end
+    end
+  end
+end
+
 module PactBroker
   module Config
     class RuntimeConfiguration < Anyway::Config

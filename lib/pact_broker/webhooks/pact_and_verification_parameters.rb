@@ -14,6 +14,7 @@ module PactBroker
       GITHUB_VERIFICATION_STATUS = "pactbroker.githubVerificationStatus"
       BITBUCKET_VERIFICATION_STATUS = "pactbroker.bitbucketVerificationStatus"
       AZURE_DEV_OPS_VERIFICATION_STATUS = "pactbroker.azureDevOpsVerificationStatus"
+      GITLAB_VERIFICATION_STATUS = "pactbroker.gitlabVerificationStatus"
       CONSUMER_LABELS = "pactbroker.consumerLabels"
       PROVIDER_LABELS = "pactbroker.providerLabels"
       EVENT_NAME = "pactbroker.eventName"
@@ -33,6 +34,7 @@ module PactBroker
         GITHUB_VERIFICATION_STATUS,
         BITBUCKET_VERIFICATION_STATUS,
         AZURE_DEV_OPS_VERIFICATION_STATUS,
+        GITLAB_VERIFICATION_STATUS,
         CONSUMER_LABELS,
         PROVIDER_LABELS,
         EVENT_NAME,
@@ -61,6 +63,7 @@ module PactBroker
           GITHUB_VERIFICATION_STATUS => github_verification_status,
           BITBUCKET_VERIFICATION_STATUS => bitbucket_verification_status,
           AZURE_DEV_OPS_VERIFICATION_STATUS => azure_dev_ops_verification_status,
+          GITLAB_VERIFICATION_STATUS => gitlab_verification_status,
           CONSUMER_LABELS => pacticipant_labels(pact && pact.consumer),
           PROVIDER_LABELS => pacticipant_labels(pact && pact.provider),
           EVENT_NAME => event_name,
@@ -91,6 +94,14 @@ module PactBroker
       def azure_dev_ops_verification_status
         if verification
           verification.success ? "succeeded" : "failed"
+        else
+          "pending"
+        end
+      end
+
+      def gitlab_verification_status
+        if verification
+          verification.success ? "success" : "failed"
         else
           "pending"
         end

@@ -26,6 +26,10 @@ module Sequel
           self
         rescue Sequel::NoExistingObject
           load_values_from_previously_inserted_object
+          # Need to clear out the _update_dataset when the NoExistingObject is thrown because
+          # the ID gets incremented somewhere in the Sequel code
+          @this = nil
+          self
         end
 
         private
