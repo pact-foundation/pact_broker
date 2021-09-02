@@ -53,7 +53,7 @@ module PactBroker
 
         max_orders = join(:branch_versions, branch_versions_join)
                       .join(:branches, branches_join)
-                      .select_group(Sequel[:pact_publications][:consumer_id], Sequel[:branches][:name].as(:branch_name))
+                      .select_group(Sequel[:branches][:pacticipant_id].as(:consumer_id), Sequel[:branches][:name].as(:branch_name))
                       .select_append{ max(consumer_version_order).as(latest_consumer_version_order) }
 
         max_join = {
