@@ -6,7 +6,6 @@ require "pact_broker/contracts/contracts_publication_results"
 require "pact_broker/contracts/notice"
 require "pact_broker/events/subscriber"
 require "pact_broker/api/pact_broker_urls"
-require "pact_broker/versions/branch_version_repository"
 
 module PactBroker
   module Contracts
