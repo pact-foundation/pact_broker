@@ -6,6 +6,7 @@ module PactBroker
     module Decorators
       class EmbeddedBranchVersionDecorator < BaseDecorator
         property :branch_name, as: :name
+        property :latest?, as: :latest
 
         link :self do | options |
           {

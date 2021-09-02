@@ -86,6 +86,7 @@ module PactBroker
           it "includes the branches" do
             expect(subject[:_embedded][:branches]).to be_instance_of(Array)
             expect(subject[:_embedded][:branches].first[:name]).to eq "main"
+            expect(subject[:_embedded][:branches].first[:latest]).to eq true
           end
 
           it "includes the timestamps" do
