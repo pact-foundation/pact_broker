@@ -45,7 +45,8 @@ module PactBroker
 
       def create_version(parsed_contracts)
         version_params = {
-          build_url: parsed_contracts.build_url
+          build_url: parsed_contracts.build_url,
+          branch: parsed_contracts.branch
         }.compact
 
         existing_version = find_existing_version(parsed_contracts)
@@ -70,7 +71,6 @@ module PactBroker
           parsed_contracts.pacticipant_version_number,
           OpenStruct.new(version_params)
         )
-        branch_version_repository.add_branch(version, branch_name) if branch_name
         version
       end
 
