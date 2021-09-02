@@ -26,9 +26,6 @@ module Sequel
           self
         rescue Sequel::NoExistingObject
           load_values_from_previously_inserted_object
-          # Need to clear out the _update_dataset when the NoExistingObject is thrown because
-          # the ID gets incremented somewhere in the Sequel code
-          @this = nil
           self
         end
 
@@ -45,6 +42,9 @@ module Sequel
             insert_ignore_primary_key_columns.each do | column |
               self.send("#{column}=".to_sym, existing_record[column])
             end
+            # Need to clear out the _update_dataset when the NoExistingObject is thrown because
+            # the ID gets incremented somewhere in the Sequel code
+            @this = nil
           end
         end
 
