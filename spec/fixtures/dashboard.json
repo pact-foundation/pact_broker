@@ -21,7 +21,8 @@
             }
           },
           "number": "1",
-          "branch": "main"
+          "branch": "main",
+          "headBranchNames": ["main"]
         }
       },
       "latestVerificationResult": {
@@ -75,7 +76,8 @@
         "name": "Bar",
         "version": {
           "number": "2",
-          "branch": "main"
+          "branch": "main",
+          "headBranchNames": ["main"]
         }
       },
       "verificationStatus": "wiffle",

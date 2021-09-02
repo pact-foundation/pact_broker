@@ -10,23 +10,6 @@ module PactBroker
       extend PactBroker::Services
       include PactBroker::Logging
 
-      def self.conflict_errors(_existing_version, _open_struct_version, _version_url)
-        # This validation is causing problems in the PF build when branches are merged
-        # TODO remove this properly when re-doing the version -> branch relationship
-        {}
-        # if existing_version&.branch && open_struct_version.to_h.key?(:branch) && existing_version.branch != open_struct_version.branch
-        #   message_params = {
-        #     old_branch: existing_version&.branch,
-        #     new_branch: open_struct_version.branch,
-        #     version_url: version_url
-        #   }
-        #   error_message = message("errors.validation.cannot_modify_version_branch", message_params)
-        #   { branch: [error_message] }
-        # else
-        #   {}
-        # end
-      end
-
       def self.find_latest_by_pacticpant_name params
         version_repository.find_latest_by_pacticpant_name params.fetch(:pacticipant_name)
       end

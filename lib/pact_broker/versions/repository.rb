@@ -97,8 +97,7 @@ module PactBroker
         saved_version = PactBroker::Domain::Version.new(
           number: version_number,
           pacticipant: pacticipant,
-          build_url: open_struct_version.build_url,
-          branch: open_struct_version.branch
+          build_url: open_struct_version.build_url
         ).upsert
 
         if open_struct_version.tags

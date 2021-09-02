@@ -70,10 +70,6 @@ module PactBroker
         consumer_version.order
       end
 
-      def consumer_version_branch
-        consumer_version.branch
-      end
-
       def consumer_version_branches
         consumer_version.branch_heads.collect(&:branch_name)
       end
@@ -92,10 +88,6 @@ module PactBroker
 
       def provider_version_number
         @latest_verification ? @latest_verification.provider_version_number : nil
-      end
-
-      def provider_version_branch
-        provider_version&.branch
       end
 
       def provider_version_branches

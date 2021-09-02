@@ -21,9 +21,9 @@ module PactBroker
             webhook_status: "blah",
             pseudo_branch_verification_status: "wiffle",
             provider_version_number: provider_version.number,
-            provider_version_branch: provider_version.branch,
+            provider_version_branches: ["main"],
             consumer_version_number: consumer_version.number,
-            consumer_version_branch: consumer_version.branch,
+            consumer_version_branches: ["main"],
             tag_names: ["prod"],
             latest_verification_latest_tags: [double("tag", name: "dev", latest?: true)]
           )
@@ -32,8 +32,8 @@ module PactBroker
         let(:provider) { instance_double("PactBroker::Domain::Pacticipant", name: "Bar") }
         let(:pact) { instance_double("PactBroker::Domain::Pact", created_at: created_at) }
         let(:verification) { instance_double("PactBroker::Domain::Verification", success: true, created_at: created_at) }
-        let(:consumer_version) { instance_double("PactBroker::Domain::Version", number: "1", pacticipant: consumer, branch: "main") }
-        let(:provider_version) { instance_double("PactBroker::Domain::Version", number: "2", pacticipant: provider, branch: "main") }
+        let(:consumer_version) { instance_double("PactBroker::Domain::Version", number: "1", pacticipant: consumer) }
+        let(:provider_version) { instance_double("PactBroker::Domain::Version", number: "2", pacticipant: provider) }
         let(:last_webhook_execution_date) { created_at }
         let(:base_url) { "http://example.org" }
         let(:options) { { user_options: { base_url: base_url } } }
@@ -67,7 +67,7 @@ module PactBroker
         subject { JSON.parse(dashboard_json) }
 
         it "creates some json" do
-          expect(subject).to match_pact(expected_hash, {allow_unexpected_keys: false})
+          expect(subject).to match_pact(expected_hash, { allow_unexpected_keys: false })
         end
 
         context "when the pact has never been verified" do
@@ -76,7 +76,7 @@ module PactBroker
           it "has a null last verification and provider version" do
             expected_hash["items"][0]["latestVerificationResult"] = nil
             expected_hash["items"][0]["provider"]["version"] = nil
-            expect(subject).to match_pact(expected_hash, {allow_unexpected_keys: false})
+            expect(subject).to match_pact(expected_hash, { allow_unexpected_keys: false })
           end
         end
 
@@ -85,7 +85,7 @@ module PactBroker
 
           it "has a null latestWebhookExecution" do
             expected_hash["items"][0]["latestWebhookExecution"] = nil
-            expect(subject).to match_pact(expected_hash, {allow_unexpected_keys: false})
+            expect(subject).to match_pact(expected_hash, { allow_unexpected_keys: false })
           end
         end
       end

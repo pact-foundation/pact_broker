@@ -112,7 +112,6 @@ module Sequel
           version = Version.new(
             number: "1",
             pacticipant_id: pacticipant.id,
-            branch: "original-branch",
             build_url: "original-url"
           ).upsert
           Version.where(id: version.id).update(created_at: yesterday, updated_at: yesterday)
@@ -121,7 +120,7 @@ module Sequel
         let(:yesterday) { DateTime.now - 2 }
 
         subject do
-          Version.new(number: "1", pacticipant_id: pacticipant.id, branch: "new-branch").upsert
+          Version.new(number: "1", pacticipant_id: pacticipant.id, build_url: "new-url").upsert
         end
 
         it "does not raise an error" do
@@ -129,12 +128,19 @@ module Sequel
         end
 
         it "sets the values on the object" do
-          expect(subject.branch).to eq "new-branch"
+          expect(subject.build_url).to eq "new-url"
         end
 
-        it "nils out values that weren't set on the second model" do
-          expect(subject.build_url).to eq nil
+        context "when an attribute is not set" do
+          subject do
+            Version.new(number: "1", pacticipant_id: pacticipant.id).upsert
+          end
+
+          it "nils out values that weren't set on the second model" do
+            expect(subject.build_url).to eq nil
+          end
         end
+
 
         it "does not insert another row" do
           expect { subject }.to_not change { Version.count }

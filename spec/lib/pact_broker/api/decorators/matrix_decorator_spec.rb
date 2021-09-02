@@ -10,6 +10,7 @@ module PactBroker
         describe "to_json" do
           before do
             allow_any_instance_of(ReasonDecorator).to receive(:to_s).and_return("foo")
+            allow_any_instance_of(PactBroker::Api::PactBrokerUrls).to receive(:branch_version_url).and_return("branch_version_url")
           end
           let(:verification_date) { DateTime.new(2017, 12, 31) }
           let(:pact_created_at) { DateTime.new(2017, 1, 1) }
@@ -20,13 +21,13 @@ module PactBroker
               {
                 consumer_name: "Consumer",
                 consumer_version_number: "1.0.0",
-                consumer_version_branch: "main",
+                consumer_version_branch_versions: consumer_version_branch_versions,
                 consumer_version_tags: consumer_version_tags,
                 provider_version_tags: provider_version_tags,
                 pact_version_sha: "1234",
                 pact_created_at: pact_created_at,
                 provider_version_number: "4.5.6",
-                provider_version_branch: "feat/x",
+                provider_version_branch_versions: provider_version_branch_versions,
                 provider_name: "Provider",
                 success: row_1_success,
                 verification_number: 1,
@@ -40,12 +41,12 @@ module PactBroker
               {
                 consumer_name: "Consumer",
                 consumer_version_number: "1.0.0",
-                consumer_version_branch: "main",
+                consumer_version_branch_versions: [],
                 consumer_version_tags: [],
                 pact_version_sha: "1234",
                 pact_created_at: pact_created_at,
                 provider_version_number: nil,
-                provider_version_branch: nil,
+                provider_version_branch_versions: [],
                 provider_name: "Provider",
                 success: row_2_success,
                 verification_number: nil,
@@ -65,6 +66,12 @@ module PactBroker
               version: {
                 number: "1.0.0",
                 branch: "main",
+                branches: [
+                  name: "main",
+                  _links: {
+
+                  }
+                ],
                 _links: {
                   self: {
                     href: "http://example.org/pacticipants/Consumer/versions/1.0.0"
@@ -141,6 +148,10 @@ module PactBroker
 
           let(:consumer_version) { double("consumer version", number: "1.0.0", pacticipant: double("consumer", name: "Consumer")) }
 
+          let(:consumer_version_branch_versions) do
+            [ instance_double("PactBroker::Versions::BranchVersion", branch_name: "main") ]
+          end
+
           let(:consumer_version_tags) do
             [
               double("tag", name: "prod", latest?: true, version: consumer_version, created_at: DateTime.now )
@@ -148,6 +159,10 @@ module PactBroker
           end
 
           let(:provider_version) { double("provider version", number: "4.5.6", pacticipant: double("provider", name: "Provider")) }
+
+          let(:provider_version_branch_versions) do
+            [ instance_double("PactBroker::Versions::BranchVersion", branch_name: "feat/x") ]
+          end
 
           let(:provider_version_tags) do
             [

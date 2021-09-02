@@ -58,7 +58,8 @@ module PactBroker
             name: index_item.consumer_name,
             version: {
               number: index_item.consumer_version_number,
-              branch: index_item.consumer_version_branch,
+              branch: index_item.consumer_version_branches.last,
+              headBranchNames: index_item.consumer_version_branches,
               _links: {
                 self: {
                   href: version_url(base_url, index_item.consumer_version)
@@ -87,7 +88,8 @@ module PactBroker
           if index_item.latest_verification
             hash[:version] = {
               number: index_item.provider_version_number,
-              branch: index_item.provider_version_branch
+              branch: index_item.provider_version_branches.last,
+              headBranchNames: index_item.provider_version_branches
             }
           end
 
