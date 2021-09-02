@@ -66,12 +66,11 @@ module PactBroker
       private :find_existing_version
 
       def create_or_update_version(parsed_contracts, version_params)
-        version = version_service.create_or_update(
+        version_service.create_or_update(
           parsed_contracts.pacticipant_name,
           parsed_contracts.pacticipant_version_number,
           OpenStruct.new(version_params)
         )
-        version
       end
 
       private :create_or_update_version
