@@ -119,7 +119,7 @@ module PactBroker
             }
           ]
         }.compact
-        response = client.post("contracts/publish", request_body_hash).tap { |response| check_for_error(response) }
+        response = client.post("contracts/publish", request_body_hash).tap { |resp| check_for_error(resp) }
         puts response.body["logs"].collect{ |log| log["message"]}
         separate
         self

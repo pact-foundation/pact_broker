@@ -39,8 +39,6 @@ module PactBroker
 
         private
 
-        attr_reader :branch_version
-
         def branch_version
           @branch_version ||= branch_service.find_branch_version(identifier_from_path)
         end

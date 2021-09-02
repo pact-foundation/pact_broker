@@ -31,6 +31,7 @@ module PactBroker
       end
 
       # rubocop: disable Metrics/CyclomaticComplexity
+      # rubocop: disable Metrics/MethodLength
       def self.find_index_items options = {}
         latest_verifications_for_cv_tags = latest_verifications_for_consumer_version_tags(options)
         latest_pp_ids = latest_pact_publication_ids
@@ -72,6 +73,7 @@ module PactBroker
 
         Page.new(index_items, pagination_record_count)
       end
+      # rubocop: enable Metrics/MethodLength
       # rubocop: enable Metrics/CyclomaticComplexity
 
       # Worst. Code. Ever.
