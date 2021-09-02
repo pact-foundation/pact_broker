@@ -50,7 +50,7 @@ module PactBroker
         }.compact
 
         existing_version = find_existing_version(parsed_contracts)
-        version = create_or_update_version(parsed_contracts, version_params, parsed_contracts.branch)
+        version = create_or_update_version(parsed_contracts, version_params)
         return version, notices_for_version_creation(existing_version, parsed_contracts)
       end
 
@@ -65,7 +65,7 @@ module PactBroker
 
       private :find_existing_version
 
-      def create_or_update_version(parsed_contracts, version_params, branch_name)
+      def create_or_update_version(parsed_contracts, version_params)
         version = version_service.create_or_update(
           parsed_contracts.pacticipant_name,
           parsed_contracts.pacticipant_version_number,
