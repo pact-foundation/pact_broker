@@ -4,11 +4,9 @@ Sequel.migration do
       primary_key :id
       String :name
       foreign_key :pacticipant_id, :pacticipants, null: false, on_delete: :cascade
-      Integer :latest_branch_version_id
-      Integer :latest_version_id
       DateTime :created_at, null: false
       DateTime :updated_at, null: false
-      index [:name, :pacticipant_id], unique: true, name: :branches_name_pacticipant_id_index
+      index [:pacticipant_id, :name], unique: true, name: :branches_pacticipant_id_name_index
     end
 
     create_table(:branch_versions, charset: "utf8") do
@@ -21,8 +19,9 @@ Sequel.migration do
       DateTime :created_at, null: false
       DateTime :updated_at, null: false
       index [:branch_id, :version_id], unique: true, name: :branch_versions_branch_id_version_id_index
-      index [:pacticipant_id, :branch_id, :version_order], name: :branch_versions_pacticipant_id_branch_id_version_order_index
       index [:branch_name], name: :branch_versions_branch_name_index
+      # Can probably drop this index when the "latest pact" logic changes
+      index [:pacticipant_id, :branch_id, :version_order], name: :branch_versions_pacticipant_id_branch_id_version_order_index
     end
 
     create_table(:branch_heads) do
@@ -34,6 +33,7 @@ Sequel.migration do
       String :branch_name, null: false
       index [:branch_id], unique: true, name: :branch_heads_branch_id_index
       index [:branch_name], name: :branch_heads_branch_name_index
+      index [:pacticipant_id], name: :branch_heads_pacticipant_id_index
     end
   end
 end
