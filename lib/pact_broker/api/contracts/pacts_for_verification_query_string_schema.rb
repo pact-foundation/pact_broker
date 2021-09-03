@@ -5,7 +5,7 @@ require "pact_broker/api/contracts/dry_validation_predicates"
 module PactBroker
   module Api
     module Contracts
-      class VerifiablePactsQuerySchema
+      class PactsForVerificationQueryStringSchema
         extend DryValidationWorkarounds
         using PactBroker::HashRefinements
 

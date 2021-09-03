@@ -1,9 +1,9 @@
-require "pact_broker/api/contracts/verifiable_pacts_query_schema"
+require "pact_broker/api/contracts/pacts_for_verification_query_string_schema"
 
 module PactBroker
   module Api
     module Contracts
-      describe VerifiablePactsQuerySchema do
+      describe PactsForVerificationQueryStringSchema do
         let(:params) do
           {
             provider_version_tags: provider_version_tags,
@@ -20,7 +20,7 @@ module PactBroker
           }]
         end
 
-        subject { VerifiablePactsQuerySchema.(params) }
+        subject { PactsForVerificationQueryStringSchema.(params) }
 
         context "when the params are valid" do
           it "has no errors" do
