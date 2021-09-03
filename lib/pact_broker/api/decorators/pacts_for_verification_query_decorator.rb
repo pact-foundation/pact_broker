@@ -8,7 +8,7 @@ require "pact_broker/pacts/selectors"
 module PactBroker
   module Api
     module Decorators
-      class VerifiablePactsQueryDecorator < BaseDecorator
+      class PactsForVerificationQueryDecorator < BaseDecorator
         using PactBroker::HashRefinements
 
         collection :provider_version_tags, default: []

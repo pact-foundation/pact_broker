@@ -1,14 +1,14 @@
-require "pact_broker/api/decorators/verifiable_pacts_query_decorator"
+require "pact_broker/api/decorators/pacts_for_verification_query_decorator"
 
 module PactBroker
   module Api
     module Decorators
-      describe VerifiablePactsQueryDecorator do
+      describe PactsForVerificationQueryDecorator do
 
         let(:provider_version_tags) { %w[dev] }
         let(:provider_version_branch) { "main" }
 
-        subject { VerifiablePactsQueryDecorator.new(OpenStruct.new).from_hash(params)  }
+        subject { PactsForVerificationQueryDecorator.new(OpenStruct.new).from_hash(params)  }
 
         context "when parsing JSON params" do
           let(:params) do

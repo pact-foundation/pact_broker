@@ -1,7 +1,7 @@
 require "pact_broker/api/resources/provider_pacts"
 require "pact_broker/api/decorators/verifiable_pacts_decorator"
 require "pact_broker/api/contracts/pacts_for_verification_query_string_schema"
-require "pact_broker/api/decorators/verifiable_pacts_query_decorator"
+require "pact_broker/api/decorators/pacts_for_verification_query_decorator"
 require "pact_broker/api/contracts/pacts_for_verification_json_query_schema"
 require "pact_broker/hash_refinements"
 
@@ -76,7 +76,7 @@ module PactBroker
         end
 
         def parsed_query_params
-          @parsed_query_params ||= decorator_class(:verifiable_pacts_query_decorator).new(OpenStruct.new).from_hash(query)
+          @parsed_query_params ||= decorator_class(:pacts_for_verification_query_decorator).new(OpenStruct.new).from_hash(query)
         end
 
         def query
