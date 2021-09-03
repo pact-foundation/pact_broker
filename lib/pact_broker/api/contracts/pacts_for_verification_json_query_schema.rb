@@ -8,7 +8,7 @@ require "pact_broker/messages"
 module PactBroker
   module Api
     module Contracts
-      class VerifiablePactsJSONQuerySchema
+      class PactsForVerificationJSONQuerySchema
         extend DryValidationWorkarounds
         extend PactBroker::Messages
 

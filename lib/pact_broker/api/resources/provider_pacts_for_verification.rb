@@ -2,7 +2,7 @@ require "pact_broker/api/resources/provider_pacts"
 require "pact_broker/api/decorators/verifiable_pacts_decorator"
 require "pact_broker/api/contracts/verifiable_pacts_query_schema"
 require "pact_broker/api/decorators/verifiable_pacts_query_decorator"
-require "pact_broker/api/contracts/verifiable_pacts_json_query_schema"
+require "pact_broker/api/contracts/pacts_for_verification_json_query_schema"
 require "pact_broker/hash_refinements"
 
 module PactBroker
@@ -71,7 +71,7 @@ module PactBroker
           if request.get?
             PactBroker::Api::Contracts::VerifiablePactsQuerySchema
           else
-            PactBroker::Api::Contracts::VerifiablePactsJSONQuerySchema
+            PactBroker::Api::Contracts::PactsForVerificationJSONQuerySchema
           end
         end
 
