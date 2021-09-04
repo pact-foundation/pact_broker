@@ -25,14 +25,6 @@ module PactBroker
       # Updated logic - the pacts for the latest version of each main branch,
       # not the latest pact that belongs to the main branch.
       def latest_for_main_branches
-        pacticipants_join = {
-          Sequel[:branch_heads][:pacticipant_id] => Sequel[:pacticipants][:id],
-          Sequel[:branch_heads][:branch_name] => Sequel[:pacticipants][:main_branch]
-        }
-        matching_branch_version_ids = PactBroker::Versions::BranchHead
-                                        .select(:version_id)
-                                        .join(:pacticipants, pacticipants_join)
-
         consumers_join = { Sequel[:pact_publications][:consumer_id] => Sequel[:consumers][:id] }
 
         branch_heads_join = {

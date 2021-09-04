@@ -1,4 +1,4 @@
-require 'pact_broker/db/data_migrations/create_branches'
+require "pact_broker/db/data_migrations/create_branches"
 
 module PactBroker
   module DB
