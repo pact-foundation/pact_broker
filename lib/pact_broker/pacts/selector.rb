@@ -387,22 +387,28 @@ module PactBroker
         end
       end
 
-      # TODO sort by non prod first
       def currently_deployed_comparison(other)
         if currently_deployed? == other.currently_deployed?
-          environment.name <=> other.environment.name
+          production_comparison(other)
         else
           currently_deployed? ? -1 : 1
         end
 
       end
 
-      # TODO sort by non prod first
       def currently_supported_comparison(other)
         if currently_supported? == other.currently_supported?
-          environment.name <=> other.environment.name
+          production_comparison(other)
         else
           currently_supported? ? -1 : 1
+        end
+      end
+
+      def production_comparison(other)
+        if environment.production? == other.environment.production?
+          environment.name <=> other.environment.name
+        else
+          environment.production? ? 1 : -1
         end
       end
     end

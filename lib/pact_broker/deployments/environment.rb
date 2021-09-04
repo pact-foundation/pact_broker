@@ -25,6 +25,10 @@ module PactBroker
         PactBroker::Deployments::ReleasedVersion.where(environment: self).delete
         super
       end
+
+      def production?
+        production
+      end
     end
   end
 end

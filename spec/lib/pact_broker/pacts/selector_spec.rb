@@ -45,9 +45,27 @@ module PactBroker
         end
 
         context "with resolved selectors" do
-          let(:currently_deployed_to_prod) { Selector.for_currently_deployed("prod").resolve_for_environment(double("version", order: 1), double("environment", name: "prod")) }
-          let(:currently_deployed_to_test) { Selector.for_currently_deployed("test").resolve_for_environment(double("version", order: 1), double("environment", name: "test")) }
-          let(:currently_supported_in_prod) { Selector.for_currently_supported("prod").resolve_for_environment(double("version", order: 1), double("environment", name: "prod")) }
+          let(:currently_deployed_to_prod) { Selector.for_currently_deployed("prod").resolve_for_environment(double("version", order: 1), double("environment", name: "prod", production?: true)) }
+          let(:currently_deployed_to_test) { Selector.for_currently_deployed("test").resolve_for_environment(double("version", order: 1), double("environment", name: "test", production?: false)) }
+          let(:currently_supported_in_prod) { Selector.for_currently_supported("prod").resolve_for_environment(double("version", order: 1), double("environment", name: "prod", production?: true)) }
+
+          let(:expected_sorted_selectors) do
+            [
+              overall_latest_1,
+              overall_latest_1,
+              latest_for_branch_main,
+              latest_for_tag_dev,
+              latest_for_tag_prod,
+              all_dev_for_consumer_1,
+              all_dev,
+              all_prod_for_consumer_2,
+              all_prod_for_consumer_1,
+              all_tagged_prod,
+              currently_deployed_to_test,
+              currently_deployed_to_prod,
+              currently_supported_in_prod,
+            ]
+          end
 
           it "sorts the selectors" do
             expect(unsorted_selectors.sort).to eq(expected_sorted_selectors)
