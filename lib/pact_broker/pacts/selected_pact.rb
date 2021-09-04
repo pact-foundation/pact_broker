@@ -15,8 +15,8 @@ module PactBroker
         selected_pacts
           .group_by{ |p| [p.consumer_name, p.pact_version_sha] }
           .values
-          .collect do | selected_pacts_for_pact_version_id |
-            SelectedPact.merge(selected_pacts_for_pact_version_id)
+          .collect do | selected_pacts_for_pact_version_sha |
+            SelectedPact.merge(selected_pacts_for_pact_version_sha)
           end
           .sort
       end

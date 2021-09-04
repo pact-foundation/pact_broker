@@ -149,8 +149,8 @@ module PactBroker
           it "returns one pact_publication with multiple selectors" do
             expect(subject.size).to eq 1
             expect(subject.first.selectors.size).to eq 2
-            expect(subject.first.selectors.first.environment.name).to eq "test"
-            expect(subject.first.selectors.last.environment.name).to eq "prod"
+            expect(subject.first.selectors.first.environment.name).to eq "prod"
+            expect(subject.first.selectors.last.environment.name).to eq "test"
           end
         end
       end
