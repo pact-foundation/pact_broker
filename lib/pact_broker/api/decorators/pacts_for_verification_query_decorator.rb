@@ -8,7 +8,7 @@ require "pact_broker/pacts/selectors"
 module PactBroker
   module Api
     module Decorators
-      class VerifiablePactsQueryDecorator < BaseDecorator
+      class PactsForVerificationQueryDecorator < BaseDecorator
         using PactBroker::HashRefinements
 
         collection :provider_version_tags, default: []
@@ -38,7 +38,7 @@ module PactBroker
             }
         end
 
-        property :include_pending_status, default: false,
+        property :include_pending_status, default: true,
           setter: ->(fragment:, represented:, **) {
             represented.include_pending_status = (fragment == "true" || fragment == true)
           }

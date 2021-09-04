@@ -1,9 +1,9 @@
-require "pact_broker/api/contracts/verifiable_pacts_json_query_schema"
+require "pact_broker/api/contracts/pacts_for_verification_json_query_schema"
 
 module PactBroker
   module Api
     module Contracts
-      describe VerifiablePactsJSONQuerySchema do
+      describe PactsForVerificationJSONQuerySchema do
         before do
           allow(PactBroker::Deployments::EnvironmentService).to receive(:find_by_name).and_return(environment)
         end
@@ -25,7 +25,7 @@ module PactBroker
           }]
         end
 
-        subject { VerifiablePactsJSONQuerySchema.(params) }
+        subject { PactsForVerificationJSONQuerySchema.(params) }
 
         context "when the params are valid" do
           it "has no errors" do
