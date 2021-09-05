@@ -4,7 +4,6 @@ module PactBroker
   module DB
     module DataMigrations
       describe CreateBranches do
-
         let(:db) { PactBroker::Domain::Version.db }
 
         subject { CreateBranches.call(db) }
