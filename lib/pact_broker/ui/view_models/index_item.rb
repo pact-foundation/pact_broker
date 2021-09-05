@@ -206,6 +206,15 @@ module PactBroker
           @options[:base_url]
         end
 
+        def tagged_pacts
+          @relationship.tag_names.map do |tag|
+            {
+              tag: tag,
+              deletionUrl: PactBroker::Api::PactBrokerUrls.tagged_pact_versions_url(consumer_name, provider_name, tag, base_url)
+            }.to_json
+          end
+        end
+
         private
 
         attr_reader :relationship
