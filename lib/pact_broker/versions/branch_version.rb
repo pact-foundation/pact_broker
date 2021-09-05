@@ -56,6 +56,7 @@ end
 #  branch_versions_branch_id_version_id_index                   | UNIQUE btree (branch_id, version_id)
 #  branch_versions_branch_name_index                            | btree (branch_name)
 #  branch_versions_pacticipant_id_branch_id_version_order_index | btree (pacticipant_id, branch_id, version_order)
+#  branch_versions_version_id_index                             | btree (version_id)
 # Foreign key constraints:
 #  branch_versions_branches_fk | (branch_id) REFERENCES branches(id) ON DELETE CASCADE
 #  branch_versions_versions_fk | (version_id) REFERENCES versions(id) ON DELETE CASCADE

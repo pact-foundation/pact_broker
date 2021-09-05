@@ -324,7 +324,6 @@ end
 #  order          | integer                     |
 #  created_at     | timestamp without time zone | NOT NULL
 #  updated_at     | timestamp without time zone | NOT NULL
-#  branch         | text                        |
 #  build_url      | text                        |
 # Indexes:
 #  versions_pkey                              | PRIMARY KEY btree (id)

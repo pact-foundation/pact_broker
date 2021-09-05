@@ -33,9 +33,11 @@ end
 #  pacticipant_id    | integer | NOT NULL
 #  branch_name       | text    | NOT NULL
 # Indexes:
-#  branch_heads_pkey              | PRIMARY KEY btree (id)
-#  branch_heads_branch_id_index   | UNIQUE btree (branch_id)
-#  branch_heads_branch_name_index | btree (branch_name)
+#  branch_heads_pkey                 | PRIMARY KEY btree (id)
+#  branch_heads_branch_id_index      | UNIQUE btree (branch_id)
+#  branch_heads_branch_name_index    | btree (branch_name)
+#  branch_heads_pacticipant_id_index | btree (pacticipant_id)
+#  branch_heads_version_id_index     | btree (version_id)
 # Foreign key constraints:
 #  branch_heads_branch_id_fkey         | (branch_id) REFERENCES branches(id) ON DELETE CASCADE
 #  branch_heads_branch_version_id_fkey | (branch_version_id) REFERENCES branch_versions(id) ON DELETE CASCADE
