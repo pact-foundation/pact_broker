@@ -101,7 +101,6 @@ module PactBroker
           Sequel[:pact_publications][:consumer_version_id] => Sequel[:branch_versions][:version_id]
         }
 
-        # TODO use name like
         branches_join = {
           Sequel[:branch_versions][:branch_id] => Sequel[:branches][:id],
           Sequel[:branches][:name] => branch_name
@@ -109,11 +108,12 @@ module PactBroker
 
         max_orders = join(:branch_versions, branch_versions_join)
                       .join(:branches, branches_join)
-                      .select_group(:consumer_id, Sequel[:branches][:name].as(:branch_name))
+                      .select_group(:consumer_id, :provider_id, Sequel[:branches][:name].as(:branch_name))
                       .select_append{ max(consumer_version_order).as(latest_consumer_version_order) }
 
         max_join = {
           Sequel[:max_orders][:consumer_id] => Sequel[:pact_publications][:consumer_id],
+          Sequel[:max_orders][:provider_id] => Sequel[:pact_publications][:provider_id],
           Sequel[:max_orders][:latest_consumer_version_order] => Sequel[:pact_publications][:consumer_version_order]
         }
 
