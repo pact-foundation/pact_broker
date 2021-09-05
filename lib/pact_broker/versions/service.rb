@@ -48,7 +48,7 @@ module PactBroker
 
       def self.maybe_set_version_branch_from_tag(version, tag_name)
         if use_tag_as_branch?(version) && version.branch_versions.empty?
-          logger.info "Setting #{version.pacticipant.name} version #{version.number} branch to '#{tag_name}' from first tag (because use_first_tag_as_branch=true)"
+          logger.info "Adding #{version.pacticipant.name} version #{version.number} to branch '#{tag_name}' (from first tag, because use_first_tag_as_branch=true)"
           branch_version_repository.add_branch(version, tag_name)
         end
       end
