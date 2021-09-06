@@ -64,6 +64,7 @@ module PactBroker
               .create_provider
               .create_consumer_version
               .create_pact(json_content: { foo: "bar" }.to_json)
+            PactBroker::Pacts::PactVersion.dataset.update(interactions_count: nil, messages_count: nil)
           end
 
           it "includes a count of the number of interactions in the overall latest pacts" do

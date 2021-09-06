@@ -82,6 +82,9 @@ module PactBroker
         latest_pact_versions = PactBroker::Pacts::PactVersion.where(
           id: PactBroker::Pacts::PactPublication.overall_latest.from_self.select(:pact_version_id)
         )
+
+        latest_pact_versions.all.each(&:set_interactions_and_messages_counts!)
+
         counts = latest_pact_versions
           .select(
             Sequel.function(:sum, :interactions_count).as(:interactions_count),

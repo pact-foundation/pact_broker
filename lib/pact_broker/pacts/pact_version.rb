@@ -125,6 +125,16 @@ module PactBroker
           .join_successful_verifications
           .any?
       end
+
+      def set_interactions_and_messages_counts!
+        if interactions_count.nil? || messages_count.nil?
+          content_object = PactBroker::Pacts::Content.from_json(content)
+          update(
+            messages_count: content_object.messages&.count || 0,
+            interactions_count: content_object.interactions&.count || 0
+          )
+        end
+      end
     end
   end
 end
