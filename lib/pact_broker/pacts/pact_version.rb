@@ -2,6 +2,7 @@ require "sequel"
 require "pact_broker/repositories/helpers"
 require "pact_broker/verifications/latest_verification_for_pact_version"
 require "pact_broker/verifications/latest_verification_id_for_pact_version_and_provider_version"
+require "pact_broker/pacts/content"
 
 module PactBroker
   module Pacts
