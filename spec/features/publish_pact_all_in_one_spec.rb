@@ -1,5 +1,4 @@
 RSpec.describe "publishing a pact using the all in one endpoint" do
-  # TODO merge branches
   let(:request_body_hash) do
     {
       :pacticipantName => "Foo",

@@ -3,11 +3,8 @@ require "pact_broker/relationships/groupify"
 require "pact_broker/domain/index_item"
 
 module PactBroker
-
   module Relationships
-
     describe Groupify do
-
       describe ".call" do
 
         let(:consumer_a) { double("consumer a", id: 1, name: "consumer a") }
@@ -40,9 +37,7 @@ module PactBroker
           expect(groups[1]).to eq(Domain::Group.new(relationship_3))
           expect(groups[2]).to eq(Domain::Group.new(relationship_5, relationship_6))
         end
-
       end
     end
-
   end
 end

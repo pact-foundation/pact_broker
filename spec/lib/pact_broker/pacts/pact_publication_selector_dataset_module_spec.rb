@@ -43,6 +43,7 @@ module PactBroker
               .create_pact
               .create_consumer_version("2", branch: "main")
               .create_pact
+              .revise_pact
               .create_consumer_version("3", branch: "not-main")
               .create_pact
               .create_consumer("Bob", main_branch: "develop")
@@ -62,12 +63,12 @@ module PactBroker
           it "returns the latest pact for the main branch of every consumer" do
             expect(subject.size).to eq 2
             expect(subject.sort_by(&:id).first.consumer.name).to eq "Foo"
-            expect(subject.sort_by(&:id).first.consumer_version.branch).to eq "main"
             expect(subject.sort_by(&:id).first.consumer_version.number).to eq "2"
+            expect(subject.sort_by(&:id).first.values[:branch_name]).to eq "main"
 
             expect(subject.sort_by(&:id).last.consumer.name).to eq "Bob"
-            expect(subject.sort_by(&:id).last.consumer_version.branch).to eq "develop"
             expect(subject.sort_by(&:id).last.consumer_version.number).to eq "5"
+            expect(subject.sort_by(&:id).last.values[:branch_name]).to eq "develop"
           end
         end
 

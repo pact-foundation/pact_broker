@@ -74,13 +74,26 @@ module PactBroker
       end
 
       def latest_for_branch?
-        return nil unless consumer_version.branch
-        self_order = self.consumer_version.order
-        PactPublication.where(consumer_id: consumer_id, provider_id: provider_id)
-          .join_consumer_versions(:cv, { Sequel[:cv][:branch] => consumer_version.branch} ) do
-            Sequel[:cv][:order] > self_order
+        if !defined?(@latest_for_branch)
+          if consumer_version.branch_versions.empty?
+            @latest_for_branch = nil
+          else
+            self_order = self.consumer_version.order
+            @latest_for_branch = consumer_version.branch_versions.any? do | branch_version |
+              branch_versions_join = {
+                Sequel[:cv][:id] => Sequel[:branch_versions][:version_id],
+                Sequel[:branch_versions][:branch_name] => branch_version.branch_name
+              }
+              PactPublication.where(consumer_id: consumer_id, provider_id: provider_id)
+                .join_consumer_versions(:cv) do
+                  Sequel[:cv][:order] > self_order
+                end
+                .join(:branch_versions, branch_versions_join)
+              .empty?
+            end
           end
-        .empty?
+        end
+        @latest_for_branch
       end
 
       def to_domain
@@ -116,28 +129,11 @@ module PactBroker
 
       # Think we really could just use the version here.
       def to_version_domain
-        OpenStruct.new(
-          id: consumer_version.id,
-          number: consumer_version.number,
-          pacticipant: consumer,
-          tags: consumer_version.tags,
-          order: consumer_version.order,
-          branch: consumer_version.branch,
-          current_deployed_versions: consumer_version.current_deployed_versions,
-          current_supported_released_versions: consumer_version.current_supported_released_versions
-        )
+        consumer_version
       end
 
       def to_version_domain_lightweight
-        OpenStruct.new(
-          id: consumer_version.id,
-          number: consumer_version.number,
-          pacticipant: consumer,
-          order: consumer_version.order,
-          branch: consumer_version.branch,
-          current_deployed_versions: consumer_version.associations[:current_deployed_versions],
-          current_supported_released_versions: consumer_version.associations[:current_supported_released_versions],
-        )
+        consumer_version
       end
 
       def to_domain_with_content
@@ -181,6 +177,7 @@ end
 #  pact_publications_pkey              | PRIMARY KEY btree (id)
 #  cv_prov_revision_unq                | UNIQUE btree (consumer_version_id, provider_id, revision_number)
 #  cv_prov_id_ndx                      | btree (consumer_version_id, provider_id, id)
+#  pact_publications_cid_pid_cvo_index | btree (consumer_id, provider_id, consumer_version_order)
 #  pact_publications_consumer_id_index | btree (consumer_id)
 # Foreign key constraints:
 #  pact_publications_consumer_id_fkey         | (consumer_id) REFERENCES pacticipants(id)

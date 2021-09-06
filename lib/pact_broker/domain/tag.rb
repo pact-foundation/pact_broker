@@ -130,6 +130,7 @@ module PactBroker
 
       # rubocop: disable Metrics/CyclomaticComplexity
       def before_save
+        super
         if version
           if version.order && self.version_order.nil?
             self.version_order = version.order
@@ -146,8 +147,6 @@ module PactBroker
 
         if version_order.nil? || pacticipant_id.nil?
           raise PactBroker::Error.new("Need to set version_order and pacticipant_id for tags now")
-        else
-          super
         end
       end
       # rubocop: enable Metrics/CyclomaticComplexity

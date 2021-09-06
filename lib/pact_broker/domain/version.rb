@@ -3,7 +3,6 @@ require "pact_broker/domain/order_versions"
 require "pact_broker/repositories/helpers"
 require "pact_broker/tags/tag_with_latest_flag"
 require "pact_broker/versions/eager_loaders"
-require "pact_broker/versions/lazy_loaders"
 
 module PactBroker
   module Domain
@@ -22,7 +21,9 @@ module PactBroker
       end
     end
 
-    class Version < Sequel::Model
+    VERSION_COLUMNS = [:id, :number, :repository_ref, :pacticipant_id, :order, :created_at, :updated_at, :build_url]
+
+    class Version < Sequel::Model(Sequel::Model.db[:versions].select(*VERSION_COLUMNS.collect{ | column | Sequel.qualify(:versions, column) }))
       plugin :timestamps, update_on_create: true
       plugin :upsert, { identifying_columns: [:pacticipant_id, :number], ignore_columns_on_update: [:id, :created_at, :order] }
 
@@ -30,6 +31,8 @@ module PactBroker
       one_to_many :pact_publications, order: :revision_number, class: "PactBroker::Pacts::PactPublication", key: :consumer_version_id
       associate(:many_to_one, :pacticipant, :class => "PactBroker::Domain::Pacticipant", :key => :pacticipant_id, :primary_key => :id)
       one_to_many :tags, :reciprocal => :version, order: :created_at
+      one_to_many :branch_versions, :reciprocal => :branch_version, class: "PactBroker::Versions::BranchVersion", order: [:created_at, :id]
+      one_to_many :branch_heads, reciprocal: :branch_head, class: "PactBroker::Versions::BranchHead", order: :id
       one_to_many :current_deployed_versions, class: "PactBroker::Deployments::DeployedVersion", key: :version_id, primary_key: :id, order: [:created_at, :id] do | ds |
         ds.currently_deployed
       end
@@ -44,16 +47,11 @@ module PactBroker
         dataset: lambda { Version.latest_version_for_pacticipant(pacticipant) },
         eager_loader: PactBroker::Versions::EagerLoaders::LatestVersionForPacticipant
 
-      many_to_one :latest_version_for_branch, read_only: true, key: :id,
-        class: Version,
-        dataset: PactBroker::Versions::LazyLoaders::LATEST_VERSION_FOR_BRANCH,
-        eager_loader: PactBroker::Versions::EagerLoaders::LatestVersionForBranch
-
       dataset_module do
         include PactBroker::Repositories::Helpers
 
         def with_branch_set
-          exclude(branch: nil)
+          where(id: PactBroker::Versions::BranchVersion.select(:version_id))
         end
 
         def latest_version_for_pacticipant(pacticipant)
@@ -71,20 +69,16 @@ module PactBroker
         end
 
         def first_for_pacticipant_id_and_branch(pacticipant_id, branch)
-          where(pacticipant_id: pacticipant_id, branch: branch).order(:created_at).first
+          first_version_id = PactBroker::Versions::BranchVersion
+                              .select(:version_id)
+                              .where(pacticipant_id: pacticipant_id, branch_name: branch)
+                              .order(:created_at)
+                              .limit(1)
+          where(id: first_version_id).single_record
         end
 
-        def latest_versions_for_pacticipant_branches(pacticipant_id, branches)
-          query = Version.where(Sequel[:versions][:pacticipant_id] => pacticipant_id, Sequel[:versions][:branch] => branches)
-
-          self_join = {
-            Sequel[:versions][:pacticipant_id] => Sequel[:versions_2][:pacticipant_id],
-            Sequel[:versions][:branch] => Sequel[:versions_2][:branch]
-          }
-          query.select_all_qualified.left_join(query, self_join, table_alias: :versions_2) do
-            Sequel[:versions_2][:order] > Sequel[:versions][:order]
-          end
-          .where(Sequel[:versions_2][:order] => nil)
+        def latest_versions_for_pacticipant_branches(pacticipant_id, branch_names)
+          where(id: PactBroker::Versions::BranchHead.where(pacticipant_id: pacticipant_id, branch_name: branch_names).select(:version_id))
         end
 
         def where_pacticipant_name(pacticipant_name)
@@ -138,20 +132,46 @@ module PactBroker
           end
         end
 
-        def where_branch(branch)
-          if branch == true
-            exclude(branch: nil)
+        def where_branch_name(branch_name)
+          if branch_name == true
+            where(id: PactBroker::Versions::BranchVersion.select(:version_id))
           else
-            where(branch: branch)
+            matching_branch_ids = PactBroker::Versions::Branch.select(:id).where(name: branch_name)
+            matching_branch_version_ids = PactBroker::Versions::BranchVersion
+                                            .select(:version_id)
+                                            .where(branch_id: matching_branch_ids)
+            where(id: matching_branch_version_ids)
           end
         end
 
+        def where_branch_head_name(branch_name)
+          if branch_name == true
+            where(id: PactBroker::Versions::BranchHead.select(:version_id))
+          else
+            where(id: PactBroker::Versions::BranchHead.select(:version_id).where(branch_name: branch_name))
+          end
+        end
+
+
         def for_main_branches
+          matching_branch_version_ids = PactBroker::Versions::BranchVersion
+                                          .select(:version_id)
+                                          .join(:pacticipants, { Sequel[:branch_versions][:pacticipant_id] => Sequel[:pacticipants][:id] })
+                                          .join(:branches, { Sequel[:branches][:id] => Sequel[:branch_versions][:branch_id], Sequel[:branches][:name] => Sequel[:pacticipants][:main_branch] })
+
+          where(id: matching_branch_version_ids)
+        end
+
+        def latest_for_main_branches
           pacticipants_join = {
-            Sequel[:versions][:pacticipant_id] => Sequel[:pacticipants][:id],
-            Sequel[:pacticipants][:main_branch] => Sequel[:versions][:branch]
+            Sequel[:branch_heads][:pacticipant_id] => Sequel[:pacticipants][:id],
+            Sequel[:branch_heads][:branch_name] => Sequel[:pacticipants][:main_branch]
           }
-          where(id: select(Sequel[:versions][:id]).join(:pacticipants, pacticipants_join))
+          matching_branch_version_ids = PactBroker::Versions::BranchHead
+                                          .select(:version_id)
+                                          .join(:pacticipants, pacticipants_join)
+
+          where(id: matching_branch_version_ids)
         end
 
         def where_number(number)
@@ -186,12 +206,30 @@ module PactBroker
           query = query.currently_deployed if selector.respond_to?(:currently_deployed?) && selector.currently_deployed?
           query = query.currently_supported if selector.respond_to?(:currently_supported?) && selector.currently_supported?
           query = query.where_tag(selector.tag) if selector.tag
-          query = query.where_branch(selector.branch) if selector.branch
-          query = query.for_main_branches if selector.respond_to?(:main_branch) && selector.main_branch
           query = query.where_number(selector.pacticipant_version_number) if selector.respond_to?(:pacticipant_version_number) && selector.pacticipant_version_number
           query = query.where_age_less_than(selector.max_age) if selector.respond_to?(:max_age) && selector.max_age
 
-          if selector.latest
+          latest_applied = false
+
+          if selector.respond_to?(:main_branch) && selector.main_branch
+            if selector.latest
+              latest_applied = true
+              query = query.latest_for_main_branches
+            else
+              query = query.for_main_branches
+            end
+          end
+
+          if selector.branch
+            if selector.latest
+              latest_applied = true
+              query = query.where_branch_head_name(selector.branch)
+            else
+              query = query.where_branch_name(selector.branch)
+            end
+          end
+
+          if selector.latest && !latest_applied
             calculate_max_version_order_and_join_back_to_versions(query, selector)
           else
             query
@@ -251,11 +289,23 @@ module PactBroker
       end
 
       def latest_for_branch?
-        branch ? latest_version_for_branch.order == order : nil
+        branch_heads.any?
       end
 
       def latest_for_pacticipant?
         latest_version_for_pacticipant == self
+      end
+
+      def branch_version_for_branch(branch)
+        branch_versions.find { | branch_version | branch_version.branch_id == branch.id }
+      end
+
+      def branch_version_for_branch_name(branch_name)
+        branch_versions.find { | branch_version | branch_version.branch_name == branch_name }
+      end
+
+      def branch_names
+        branch_versions.collect(&:branch_name)
       end
 
       def tag_names
@@ -274,7 +324,6 @@ end
 #  order          | integer                     |
 #  created_at     | timestamp without time zone | NOT NULL
 #  updated_at     | timestamp without time zone | NOT NULL
-#  branch         | text                        |
 #  build_url      | text                        |
 # Indexes:
 #  versions_pkey                              | PRIMARY KEY btree (id)
@@ -287,6 +336,7 @@ end
 # Foreign key constraints:
 #  versions_pacticipant_id_fkey | (pacticipant_id) REFERENCES pacticipants(id)
 # Referenced By:
+#  branch_versions                                              | branch_versions_versions_fk                                     | (version_id) REFERENCES versions(id) ON DELETE CASCADE
 #  currently_deployed_version_ids                               | currently_deployed_version_ids_version_id_fkey                  | (version_id) REFERENCES versions(id) ON DELETE CASCADE
 #  deployed_versions                                            | deployed_versions_version_id_fkey                               | (version_id) REFERENCES versions(id)
 #  latest_pact_publication_ids_for_consumer_versions            | latest_pact_publication_ids_for_consum_consumer_version_id_fkey | (consumer_version_id) REFERENCES versions(id) ON DELETE CASCADE

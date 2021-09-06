@@ -22,6 +22,8 @@ module PactBroker
       one_to_many :labels, :order => :name, :reciprocal => :pacticipant
       one_to_many :pacts
       one_to_one :latest_version, :class => "PactBroker::Versions::LatestVersion", primary_key: :id, key: :pacticipant_id
+      one_to_many :branch_heads, class: "PactBroker::Versions::BranchHead", primary_key: :id, key: :pacticipant_id
+      one_to_many :branches, class: "PactBroker::Versions::Branch", primary_key: :id, key: :pacticipant_id
 
       dataset_module do
         include PactBroker::Repositories::Helpers
@@ -36,6 +38,10 @@ module PactBroker
         end
 
         def find_by_name(name)
+          where(name_like(:name, name))
+        end
+
+        def where_name(name)
           where(name_like(:name, name))
         end
       end
@@ -66,6 +72,10 @@ module PactBroker
       def any_versions?
         PactBroker::Domain::Version.where(pacticipant: self).any?
       end
+
+      def branch_head_for(branch_name)
+        branch_heads.find{ | branch_head | branch_head.branch_name == branch_name }
+      end
     end
   end
 end
@@ -87,6 +97,7 @@ end
 #  pacticipants_name_key | UNIQUE btree (name)
 #  ndx_ppt_name          | btree (name)
 # Referenced By:
+#  branches                                                     | branches_pacticipant_id_fkey                                    | (pacticipant_id) REFERENCES pacticipants(id) ON DELETE CASCADE
 #  currently_deployed_version_ids                               | currently_deployed_version_ids_pacticipant_id_fkey              | (pacticipant_id) REFERENCES pacticipants(id) ON DELETE CASCADE
 #  labels                                                       | labels_pacticipant_id_fkey                                      | (pacticipant_id) REFERENCES pacticipants(id)
 #  latest_pact_publication_ids_for_consumer_versions            | latest_pact_publication_ids_for_consumer_versi_consumer_id_fkey | (consumer_id) REFERENCES pacticipants(id) ON DELETE CASCADE

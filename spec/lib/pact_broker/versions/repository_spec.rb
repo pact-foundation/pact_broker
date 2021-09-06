@@ -63,8 +63,7 @@ module PactBroker
 
       describe "#delete_by_id" do
         let!(:version) do
-          TestDataBuilder.new
-            .create_consumer
+          td.create_consumer("Foo")
             .create_consumer_version("1.2.3")
             .create_consumer_version("4.5.6")
             .and_return(:consumer_version)
@@ -75,6 +74,35 @@ module PactBroker
         it "deletes the version" do
           expect { subject }.to change{ PactBroker::Domain::Version.count }.by(-1)
         end
+
+        context "when the deleted version is the latest for a branch" do
+          let!(:version) do
+            td.create_consumer("Foo")
+              .create_consumer_version("1.2.3", branch: "main")
+              .create_consumer_version("4.5.6", branch: "main")
+              .and_return(:consumer_version)
+          end
+
+          it "updates the branch head" do
+            subject
+            expect(td.find_pacticipant("Foo").branch_head_for("main").version.number).to eq "1.2.3"
+          end
+        end
+
+        context "when the deleted version is the latest and last for a branch" do
+          let!(:version) do
+            td.create_consumer("Foo")
+              .create_consumer_version("4.5.6", branch: "main")
+              .and_return(:consumer_version)
+          end
+
+          it "leaves the branch, but deletes the branch head (not sure about this, but thinking the branch creation date is handy for the WIP/pending calculation)" do
+            subject
+            foo = td.find_pacticipant("Foo")
+            expect(foo.branches.collect(&:name)).to include "main"
+            expect(td.find_pacticipant("Foo").branch_head_for("main")).to be nil
+          end
+        end
       end
 
       describe "#find_by_pacticipant_name_and_number" do
@@ -83,8 +111,7 @@ module PactBroker
 
         context "when the version exists" do
           before do
-            TestDataBuilder.new
-              .create_consumer("Another Consumer")
+            td.create_consumer("Another Consumer")
               .create_consumer(pacticipant_name)
               .create_consumer_version(version_number)
               .create_consumer_version_tag("prod")
@@ -121,6 +148,64 @@ module PactBroker
         end
       end
 
+      describe "#create_or_update" do
+        before do
+          td.subtract_day
+            .create_consumer("Foo")
+            .create_consumer_version(version_number, branch: "original-branch", build_url: "original-build-url")
+            .create_consumer_version_tag("dev")
+        end
+
+        let(:pacticipant) { td.and_return(:consumer) }
+        let(:version_number) { "1234" }
+        let(:tags) { nil }
+        let(:open_struct_version) { OpenStruct.new(build_url: new_build_url, tags: tags) }
+        let(:new_build_url) { "new-build-url" }
+
+        subject { Repository.new.create_or_update(pacticipant, version_number, open_struct_version) }
+
+        context "with empty properties" do
+          let(:open_struct_version) { OpenStruct.new }
+
+          it "does not overwrite missing values the values" do
+            expect(subject.build_url).to eq "original-build-url"
+          end
+
+          it "does not change the tags" do
+            expect { subject }.to_not change { PactBroker::Domain::Version.for("Foo", "1234").tags }
+          end
+        end
+
+        context "when there are tags specified" do
+          let(:tags) { [ OpenStruct.new(name: "main")] }
+
+          it "overwrites the tags" do
+            expect(subject.tags.count).to eq 1
+            expect(subject.tags.first.name).to eq "main"
+          end
+        end
+
+        it "does not change the created date" do
+          expect { subject }.to_not change { PactBroker::Domain::Version.for("Foo", "1234").created_at }
+        end
+
+        it "does change the updated date" do
+          expect { subject }.to change { PactBroker::Domain::Version.for("Foo", "1234").updated_at }
+        end
+
+        it "maintains the order" do
+          expect { subject }.to_not change { PactBroker::Domain::Version.for("Foo", "1234").order }
+        end
+
+        context "when the version does not already exist" do
+          let(:version) { OpenStruct.new(number: "555", branch: "new-branch") }
+
+          it "sets the order" do
+            expect(subject.order).to_not be nil
+          end
+        end
+      end
+
       describe "#create_or_overwrite" do
         before do
           td.subtract_day
@@ -132,12 +217,12 @@ module PactBroker
         let(:pacticipant) { td.and_return(:consumer) }
         let(:version_number) { "1234" }
         let(:tags) { nil }
-        let(:open_struct_version) { OpenStruct.new(branch: "new-branch", tags: tags) }
+        let(:open_struct_version) { OpenStruct.new(tags: tags) }
 
         subject { Repository.new.create_or_overwrite(pacticipant, version_number, open_struct_version) }
 
         it "overwrites the values" do
-          expect(subject.branch).to eq "new-branch"
+          expect(subject.branch_names).to eq ["original-branch"]
           expect(subject.build_url).to eq nil
         end
 

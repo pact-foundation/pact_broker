@@ -2,6 +2,7 @@ require "ostruct"
 require "pact_broker/api/pact_broker_urls"
 require "pact_broker/api/decorators/reason_decorator"
 require "pact_broker/api/decorators/format_date_time"
+require "pact_broker/api/decorators/embedded_branch_version_decorator"
 
 module PactBroker
   module Api
@@ -83,7 +84,8 @@ module PactBroker
             name: line.consumer_name,
             version: {
               number: line.consumer_version_number,
-              branch: line.consumer_version_branch,
+              branch: line.consumer_version_branch_versions.last&.branch_name,
+              branches: branches(line.consumer_version_branch_versions, base_url),
               _links: {
                 self: {
                   href: version_url(base_url, consumer_version)
@@ -97,6 +99,12 @@ module PactBroker
               }
             }
           }
+        end
+
+        def branches(branch_versions, base_url)
+          branch_versions.collect do | branch_version |
+            PactBroker::Api::Decorators::EmbeddedBranchVersionDecorator.new(branch_version).to_hash(user_options: { base_url: base_url })
+          end
         end
 
         def tags(tags, base_url)
@@ -127,7 +135,8 @@ module PactBroker
           if !line.provider_version_number.nil?
             hash[:version] = {
               number: line.provider_version_number,
-              branch: line.provider_version_branch,
+              branch: line.provider_version_branch_versions.last&.branch_name,
+              branches: branches(line.provider_version_branch_versions, base_url),
               _links: {
                 self: {
                   href: version_url(base_url, provider_version)

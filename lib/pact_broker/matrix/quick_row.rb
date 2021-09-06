@@ -127,8 +127,8 @@ module PactBroker
         def eager_all_the_things
           eager(:consumer)
           .eager(:provider)
-          .eager(consumer_version: { current_deployed_versions: :environment })
-          .eager(provider_version: { current_deployed_versions: :environment })
+          .eager(consumer_version: [{ current_deployed_versions: :environment }, { current_supported_released_versions: :environment }, { branch_versions: :branch_head }])
+          .eager(provider_version: [{ current_deployed_versions: :environment }, { current_supported_released_versions: :environment }, { branch_versions: :branch_head }])
           .eager(:verification)
           .eager(:pact_publication)
           .eager(:pact_version)
@@ -358,8 +358,8 @@ module PactBroker
         consumer_version.number
       end
 
-      def consumer_version_branch
-        consumer_version.branch
+      def consumer_version_branch_versions
+        consumer_version.branch_versions
       end
 
       def consumer_version_order
@@ -374,8 +374,8 @@ module PactBroker
         provider_version&.number
       end
 
-      def provider_version_branch
-        provider_version&.branch
+      def provider_version_branch_versions
+        provider_version&.branch_versions || []
       end
 
       def provider_version_order

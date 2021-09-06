@@ -8,7 +8,6 @@ module PactBroker
         describe "from_json" do
           let(:hash) do
             {
-              branch: "branch",
               buildUrl: "buildUrl",
               tags: [{ name: "main" }]
             }
@@ -17,7 +16,6 @@ module PactBroker
           subject { VersionDecorator.new(OpenStruct.new).from_json(hash.to_json) }
 
           it "sets the properties" do
-            expect(subject.branch).to eq "branch"
             expect(subject.build_url).to eq "buildUrl"
             expect(subject.tags.first.name).to eq "main"
           end
@@ -32,7 +30,7 @@ module PactBroker
             TestDataBuilder.new
               .create_consumer("Consumer")
               .create_provider("providerA")
-              .create_consumer_version("1.2.3")
+              .create_consumer_version("1.2.3", branch: "main")
               .create_consumer_version_tag("prod")
               .create_pact
               .create_provider("ProviderB")
@@ -83,6 +81,12 @@ module PactBroker
           it "includes a list of the tags" do
             expect(subject[:_embedded][:tags]).to be_instance_of(Array)
             expect(subject[:_embedded][:tags].first[:name]).to eq "prod"
+          end
+
+          it "includes the branches" do
+            expect(subject[:_embedded][:branches]).to be_instance_of(Array)
+            expect(subject[:_embedded][:branches].first[:name]).to eq "main"
+            expect(subject[:_embedded][:branches].first[:latest]).to eq true
           end
 
           it "includes the timestamps" do

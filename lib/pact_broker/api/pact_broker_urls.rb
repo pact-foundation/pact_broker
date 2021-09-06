@@ -199,8 +199,16 @@ module PactBroker
         "#{tags_url(base_url, tag.version)}/#{url_encode(tag.name)}"
       end
 
+      def branch_version_url(branch_version, base_url = "")
+        "#{pacticipant_url(base_url, branch_version.pacticipant)}/branches/#{url_encode(branch_version.branch_name)}/versions/#{url_encode(branch_version.version_number)}"
+      end
+
       def templated_tag_url_for_pacticipant pacticipant_name, base_url = ""
         pacticipant_url_from_params({ pacticipant_name: pacticipant_name }, base_url) + "/versions/{version}/tags/{tag}"
+      end
+
+      def templated_branch_version_url_for_pacticipant pacticipant_name, base_url = ""
+        pacticipant_url_from_params({ pacticipant_name: pacticipant_name }, base_url) + "/branches/{branch}/versions/{version}"
       end
 
       def templated_version_url_for_pacticipant pacticipant_name, base_url = ""

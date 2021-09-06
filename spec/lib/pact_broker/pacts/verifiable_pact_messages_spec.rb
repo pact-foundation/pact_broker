@@ -27,9 +27,9 @@ module PactBroker
         )
       end
       let(:consumer_version) { double("version", number: "1234", order: 1) }
-      let(:environment) { instance_double("PactBroker::Deployments::Environment", name: "test") }
+      let(:environment) { instance_double("PactBroker::Deployments::Environment", name: "test", production?: false) }
       let(:test_environment) { environment }
-      let(:prod_environment) { instance_double("PactBroker::Deployments::Environment", name: "prod") }
+      let(:prod_environment) { instance_double("PactBroker::Deployments::Environment", name: "prod", production?: true) }
 
       subject { VerifiablePactMessages.new(verifiable_pact, pact_version_url) }
 
@@ -171,13 +171,13 @@ module PactBroker
         context "when the consumer version is currently deployed to a multiple environments" do
           let(:selectors) do
             Selectors.new(
-              Selector.for_currently_deployed("dev").resolve_for_environment(consumer_version, double("environment", name: "dev")),
+              Selector.for_currently_deployed("dev").resolve_for_environment(consumer_version, double("environment", name: "dev", production?: false)),
               Selector.for_currently_deployed("test").resolve_for_environment(consumer_version, test_environment),
               Selector.for_currently_deployed("prod").resolve_for_environment(consumer_version, prod_environment)
             )
           end
 
-          its(:inclusion_reason) { is_expected.to include "consumer version(s) currently deployed to dev (1234), prod (1234) and test (1234)"}
+          its(:inclusion_reason) { is_expected.to include "consumer version(s) currently deployed to dev (1234), test (1234) and prod (1234)"}
         end
 
         context "when the currently deployed consumer version is for a consumer" do
@@ -190,7 +190,7 @@ module PactBroker
             )
           end
 
-          its(:inclusion_reason) { is_expected.to include "version(s) of Foo currently deployed to prod (1234) and test (1234)"}
+          its(:inclusion_reason) { is_expected.to include "version(s) of Foo currently deployed to test (1234) and prod (1234)"}
           its(:inclusion_reason) { is_expected.to include "version(s) of Bar currently deployed to test (1234)"}
           its(:inclusion_reason) { is_expected.to include "consumer version(s) currently deployed to test (1234)"}
         end

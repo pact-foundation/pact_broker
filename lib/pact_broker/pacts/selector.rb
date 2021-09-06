@@ -2,6 +2,7 @@ require "pact_broker/hash_refinements"
 
 module PactBroker
   module Pacts
+    # rubocop: disable Metrics/ClassLength
     class Selector < Hash
       using PactBroker::HashRefinements
 
@@ -266,51 +267,89 @@ module PactBroker
         other.class == self.class && super
       end
 
-      # rubocop: disable Metrics/CyclomaticComplexity, Metrics/MethodLength
+      # rubocop: disable Metrics/CyclomaticComplexity
       def <=> other
+        # elsif consumer || other.consumer
+        #   consumer_comparison(other)
         if overall_latest? || other.overall_latest?
-          if overall_latest? == other.overall_latest?
-            0
-          else
-            overall_latest? ? -1 : 1
-          end
+          overall_latest_comparison(other)
         elsif latest_for_branch? || other.latest_for_branch?
-          if latest_for_branch? == other.latest_for_branch?
-            branch <=> other.branch
-          else
-            latest_for_branch? ? -1 : 1
-          end
-        elsif currently_deployed? || other.currently_deployed?
-          if currently_deployed? == other.currently_deployed?
-            environment_name <=> other.environment_name
-          else
-            currently_deployed? ? -1 : 1
-          end
-        elsif currently_supported? || other.currently_supported?
-          if currently_supported? == other.currently_supported?
-            environment_name <=> other.environment_name
-          else
-            currently_supported? ? -1 : 1
-          end
+          branch_comparison(other)
         elsif latest_for_tag? || other.latest_for_tag?
-          if latest_for_tag? == other.latest_for_tag?
-            tag <=> other.tag
-          else
-            latest_for_tag? ? -1 : 1
-          end
-        elsif consumer || other.consumer
-          if consumer == other.consumer
-            tag <=> other.tag
-          else
-            consumer ? -1 : 1
-          end
+          latest_for_tag_comparison(other)
+        elsif tag || other.tag
+          tag_comparison(other)
+        elsif currently_deployed? || other.currently_deployed?
+          currently_deployed_comparison(other)
+        elsif currently_supported? || other.currently_supported?
+          currently_supported_comparison(other)
         else
-          tag <=> other.tag
+          0
         end
       end
-      # rubocop: enable Metrics/CyclomaticComplexity, Metrics/MethodLength
+      # rubocop: enable Metrics/CyclomaticComplexity
 
       private
+
+      def overall_latest_comparison(other)
+        if overall_latest? == other.overall_latest?
+          0
+        else
+          overall_latest? ? -1 : 1
+        end
+      end
+
+      def branch_comparison(other)
+        if latest_for_branch? == other.latest_for_branch?
+          branch <=> other.branch
+        else
+          latest_for_branch? ? -1 : 1
+        end
+      end
+
+      def currently_deployed_comparison(other)
+        if currently_deployed? == other.currently_deployed?
+          environment_name <=> other.environment_name
+        else
+          currently_deployed? ? -1 : 1
+        end
+      end
+
+      def currently_supported_comparison(other)
+        if currently_supported? == other.currently_supported?
+          environment_name <=> other.environment_name
+        else
+          currently_supported? ? -1 : 1
+        end
+      end
+
+      def latest_for_tag_comparison(other)
+        if latest_for_tag? == other.latest_for_tag?
+          tag <=> other.tag
+        else
+          latest_for_tag? ? -1 : 1
+        end
+      end
+
+      def tag_comparison(other)
+        if tag && other.tag
+          if tag == other.tag
+            consumer_comparison(other)
+          else
+            tag <=> other.tag
+          end
+        else
+          tag ? -1 : 1
+        end
+      end
+
+      def consumer_comparison(other)
+        if consumer == other.consumer
+          0
+        else
+          consumer ? -1 : 1
+        end
+      end
 
       def latest?
         !!self[:latest]
@@ -347,6 +386,32 @@ module PactBroker
           comparison
         end
       end
+
+      def currently_deployed_comparison(other)
+        if currently_deployed? == other.currently_deployed?
+          production_comparison(other)
+        else
+          currently_deployed? ? -1 : 1
+        end
+
+      end
+
+      def currently_supported_comparison(other)
+        if currently_supported? == other.currently_supported?
+          production_comparison(other)
+        else
+          currently_supported? ? -1 : 1
+        end
+      end
+
+      def production_comparison(other)
+        if environment.production? == other.environment.production?
+          environment.name <=> other.environment.name
+        else
+          environment.production? ? 1 : -1
+        end
+      end
     end
+    # rubocop: enable Metrics/ClassLength
   end
 end

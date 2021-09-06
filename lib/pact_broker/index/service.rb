@@ -31,6 +31,7 @@ module PactBroker
       end
 
       # rubocop: disable Metrics/CyclomaticComplexity
+      # rubocop: disable Metrics/MethodLength
       def self.find_index_items options = {}
         latest_verifications_for_cv_tags = latest_verifications_for_consumer_version_tags(options)
         latest_pp_ids = latest_pact_publication_ids
@@ -44,9 +45,9 @@ module PactBroker
         pact_publications = pact_publication_query
           .eager(:consumer)
           .eager(:provider)
-          .eager(pact_version: { latest_verification: { provider_version: [{ current_deployed_versions: :environment }, { current_supported_released_versions: :environment }, :latest_version_for_branch, { tags: :head_tag } ] } })
+          .eager(pact_version: { latest_verification: { provider_version: [{ current_deployed_versions: :environment }, { current_supported_released_versions: :environment }, :branch_heads, { tags: :head_tag } ] } })
           .eager(integration: [{latest_verification: :provider_version}, :latest_triggered_webhooks])
-          .eager(consumer_version: [{ current_deployed_versions: :environment }, { current_supported_released_versions: :environment }, :latest_version_for_branch, { tags: :head_tag }])
+          .eager(consumer_version: [{ current_deployed_versions: :environment }, { current_supported_released_versions: :environment }, :branch_heads, { tags: :head_tag }])
           .eager(:head_pact_publications_for_tags)
 
         index_items = pact_publications.all.collect do | pact_publication |
@@ -58,6 +59,7 @@ module PactBroker
           PactBroker::Domain::IndexItem.create(
             pact_publication.consumer,
             pact_publication.provider,
+            pact_publication.consumer_version,
             pact_publication.to_domain_lightweight,
             is_overall_latest_for_integration,
             latest_verification,
@@ -71,6 +73,7 @@ module PactBroker
 
         Page.new(index_items, pagination_record_count)
       end
+      # rubocop: enable Metrics/MethodLength
       # rubocop: enable Metrics/CyclomaticComplexity
 
       # Worst. Code. Ever.
@@ -106,8 +109,8 @@ module PactBroker
         pact_publications = head_pact_publications(consumer_name: consumer_name, provider_name: provider_name, tags: true, page_number: page_number, page_size: page_size)
           .eager(:consumer)
           .eager(:provider)
-          .eager(pact_version: { latest_verification: { provider_version: [{ current_deployed_versions: :environment }, { current_supported_released_versions: :environment }, :latest_version_for_branch, { tags: :head_tag }]} })
-          .eager(consumer_version: [{ current_deployed_versions: :environment }, { current_supported_released_versions: :environment }, :latest_version_for_branch, { tags: :head_tag }])
+          .eager(pact_version: { latest_verification: { provider_version: [{ current_deployed_versions: :environment }, { current_supported_released_versions: :environment }, :branch_heads, { tags: :head_tag }]} })
+          .eager(consumer_version: [{ current_deployed_versions: :environment }, { current_supported_released_versions: :environment }, :branch_heads, { tags: :head_tag }])
           .eager(:head_pact_publications_for_tags)
 
         pact_publications.all.collect do | pact_publication |
@@ -116,6 +119,7 @@ module PactBroker
           PactBroker::Domain::IndexItem.create(
             pact_publication.consumer,
             pact_publication.provider,
+            pact_publication.consumer_version,
             pact_publication.to_domain_lightweight,
             is_overall_latest_for_integration,
             pact_publication.latest_verification,

@@ -136,11 +136,11 @@
               - if line.display_consumer_version_number
                 %button.clippy.invisible{ title: "Copy to clipboard" }
                   %span.copy-icon
-            - if line.consumer_version_branch
-              .tag-parent{"title": line.consumer_version_branch_tooltip, "data-toggle": "tooltip", "data-placement": "right"}
-                - branch_class = line.consumer_version_latest_for_branch? ? "tag badge badge-dark" : "tag badge badge-secondary"
+            - line.consumer_version_branches.each do | branch |
+              .tag-parent{"title": branch.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
+                - branch_class = branch.latest? ? "tag badge badge-dark" : "tag badge badge-secondary"
                 %div{"class": branch_class}
-                  = "branch: " + line.consumer_version_branch
+                  = "branch: " + branch.name
             - line.consumer_versions_in_environments.each do | version_in_environment |
               .tag-parent{"title": version_in_environment.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
                 %a{href: version_in_environment.url}
@@ -173,11 +173,11 @@
               - if line.display_provider_version_number
                 %button.clippy.invisible{ title: "Copy to clipboard" }
                   %span.copy-icon
-            - if line.provider_version_branch
-              .tag-parent{"title": line.provider_version_branch_tooltip, "data-toggle": "tooltip", "data-placement": "right"}
-                - branch_class = line.provider_version_latest_for_branch? ? "tag badge badge-dark" : "tag badge badge-secondary"
+            - line.provider_version_branches.each do | branch |
+              .tag-parent{"title": branch.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
+                - branch_class = branch.latest? ? "tag badge badge-dark" : "tag badge badge-secondary"
                 %div{"class": branch_class}
-                  = "branch: " + line.provider_version_branch
+                  = "branch: " + branch.name
             - line.provider_versions_in_environments.each do | version_in_environment |
               .tag-parent{"title": version_in_environment.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
                 %a{href: version_in_environment.url}

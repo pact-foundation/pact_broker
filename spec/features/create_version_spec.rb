@@ -5,7 +5,6 @@ describe "Creating a pacticipant version" do
   let(:response_body) { JSON.parse(subject.body, symbolize_names: true)}
   let(:version_hash) do
     {
-      branch: "main",
       buildUrl: "http://build",
       tags: [{ name: "foo" }, { name: "bar" }]
     }
@@ -23,7 +22,7 @@ describe "Creating a pacticipant version" do
     end
 
     it "returns the newly created version" do
-      expect(response_body).to include branch: "main", buildUrl: "http://build"
+      expect(response_body).to include buildUrl: "http://build"
       expect(response_body[:_embedded][:tags].size).to eq 2
     end
 
@@ -46,7 +45,7 @@ describe "Creating a pacticipant version" do
     end
 
     it "returns the newly created version" do
-      expect(response_body).to include branch: "main", buildUrl: "http://build"
+      expect(response_body).to include buildUrl: "http://build"
       expect(response_body[:_embedded][:tags].size).to eq 2
     end
 
@@ -54,5 +53,4 @@ describe "Creating a pacticipant version" do
       expect { subject }.to change { PactBroker::Domain::Tag.count }.by(2)
     end
   end
-
 end

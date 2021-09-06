@@ -21,14 +21,6 @@ module PactBroker
           ["GET", "PUT", "PATCH", "DELETE", "OPTIONS"]
         end
 
-        def is_conflict?
-          if (errors = version_service.conflict_errors(version, parsed_version, resource_url)).any?
-            set_json_validation_error_messages(errors)
-          else
-            false
-          end
-        end
-
         def resource_exists?
           !!version
         end

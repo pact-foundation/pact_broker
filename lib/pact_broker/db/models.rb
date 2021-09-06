@@ -16,6 +16,9 @@ require "pact_broker/deployments/deployed_version"
 require "pact_broker/deployments/released_version"
 require "pact_broker/matrix/row"
 require "pact_broker/matrix/head_row"
+require "pact_broker/versions/branch"
+require "pact_broker/versions/branch_version"
+require "pact_broker/versions/branch_head"
 
 module PactBroker
   INTEGRATIONS_TABLES = [
@@ -30,6 +33,9 @@ module PactBroker
     PactBroker::Domain::Tag,
     PactBroker::Deployments::DeployedVersion,
     PactBroker::Deployments::ReleasedVersion,
+    PactBroker::Versions::BranchHead,
+    PactBroker::Versions::BranchVersion,
+    PactBroker::Versions::Branch,
     PactBroker::Domain::Version,
     PactBroker::Domain::Label,
     PactBroker::Domain::Pacticipant

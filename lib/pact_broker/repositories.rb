@@ -42,6 +42,11 @@ module PactBroker
       Matrix::Repository.new
     end
 
+    def branch_version_repository
+      require "pact_broker/versions/branch_version_repository"
+      PactBroker::Versions::BranchVersionRepository.new
+    end
+
     extend self
   end
 end

@@ -23,11 +23,14 @@ module PactBroker
             .create_consumer("FooZ")
             .create_consumer_version("6", branch: "main", comment: "latest, different consumer")
             .create_pact
+            .revise_pact
             .set_now(Date.new(2020, 1, 6))
             .create_consumer_version("7", comment: "No branch")
             .create_pact
             .set_now(Date.new(2020, 1, 7))
             .create_consumer_version("8", branch: "main", comment: "No pact")
+            .create_provider("NotBar")
+            .create_pact
         end
 
         subject { PactPublication.latest_by_consumer_branch.all }
@@ -35,27 +38,30 @@ module PactBroker
         let(:foo) { PactBroker::Domain::Pacticipant.where(name: "Foo").single_record }
         let(:bar) { PactBroker::Domain::Pacticipant.where(name: "Bar").single_record }
         let(:foo_z) { PactBroker::Domain::Pacticipant.where(name: "FooZ").single_record }
+        let(:not_bar) { td.find_pacticipant("NotBar") }
 
         it "returns the latest pact publications for each consumer/branch" do
-          expect(subject.size).to eq 3
+          expect(subject.size).to eq 4
 
-          expect(subject.find { |pp| pp.consumer_id == foo.id && pp[:branch] == "main" }.consumer_version.number).to eq "3"
-          expect(subject.find { |pp| pp.consumer_id == foo.id && pp[:branch] == "feat/x" }.consumer_version.number).to eq "4"
-          expect(subject.find { |pp| pp.consumer_id == foo_z.id && pp[:branch] == "main" }.consumer_version.number).to eq "6"
+          expect(subject.find { |pp| pp.consumer_id == foo.id && pp.provider_id == bar.id && pp[:branch_name] == "main" }.consumer_version.number).to eq "3"
+          expect(subject.find { |pp| pp.consumer_id == foo.id && pp.provider_id == bar.id && pp[:branch_name] == "feat/x" }.consumer_version.number).to eq "4"
+          expect(subject.find { |pp| pp.consumer_id == foo_z.id && pp.provider_id == bar.id && pp[:branch_name] == "main" }.consumer_version.number).to eq "6"
+          expect(subject.find { |pp| pp.consumer_id == foo_z.id && pp.provider_id == bar.id && pp[:branch_name] == "main" }.revision_number).to eq 2
+          expect(subject.find { |pp| pp.consumer_id == foo_z.id && pp.provider_id == not_bar.id && pp[:branch_name] == "main" }.consumer_version.number).to eq "8"
         end
 
         it "does not return extra columns" do
-          expect(subject.first.values.keys.sort).to eq (PactPublication.columns + [:branch]).sort
+          expect(subject.first.values.keys.sort).to eq (PactPublication.columns + [:branch_name]).sort
         end
 
         context "chained with created after" do
           subject { PactPublication.created_after(DateTime.new(2020, 1, 3)).latest_by_consumer_branch.all }
 
-          its(:size) { is_expected.to eq 2 }
+          its(:size) { is_expected.to eq 3 }
 
           it "returns the right versions" do
-            expect(subject.find { |pp| pp.consumer_id == foo.id && pp[:branch] == "feat/x" }.consumer_version.number).to eq "4"
-            expect(subject.find { |pp| pp.consumer_id == foo_z.id && pp[:branch] == "main" }.consumer_version.number).to eq "6"
+            expect(subject.find { |pp| pp.consumer_id == foo.id && pp[:branch_name] == "feat/x" }.consumer_version.number).to eq "4"
+            expect(subject.find { |pp| pp.consumer_id == foo_z.id && pp[:branch_name] == "main" }.consumer_version.number).to eq "6"
           end
         end
       end
@@ -68,6 +74,7 @@ module PactBroker
             .create_pact
             .create_consumer_version("2", branch: "main")
             .create_pact
+            .revise_pact
             .create_consumer_version("3", branch: "feat-x")
             .create_pact
             .create_consumer("Foo2")
@@ -86,6 +93,7 @@ module PactBroker
           expect(all.first.consumer.name).to eq "Foo"
           expect(all.first.provider.name).to eq "Bar"
           expect(all.first.consumer_version.number).to eq "2"
+          expect(all.first.revision_number).to eq 2
 
           expect(all.last.consumer.name).to eq "Foo2"
           expect(all.last.provider.name).to eq "Bar2"
@@ -93,7 +101,7 @@ module PactBroker
         end
 
         it "does not return extra columns" do
-          expect(subject.first.values.keys.sort).to eq (PactPublication.columns + [:branch]).sort
+          expect(subject.first.values.keys.sort).to eq (PactPublication.columns + [:branch_name]).sort
         end
 
         context "when columns are already selected" do
@@ -170,6 +178,7 @@ module PactBroker
             .create_pact
             .create_consumer_version("3", tag_names: ["feat/x"])
             .create_pact
+            .revise_pact
             .create_consumer("Foo2")
             .create_provider("Bar2")
             .create_consumer_version("10", tag_names: ["main"])
@@ -183,6 +192,7 @@ module PactBroker
         it "returns the latest by consumer/provider" do
           all = subject.all.sort_by{ | pact_publication | pact_publication.consumer_version.order }
           expect(all.size).to eq 2
+          expect(all.first.revision_number).to eq 2
         end
 
         it "does not return extra columns" do

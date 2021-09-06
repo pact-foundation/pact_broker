@@ -29,6 +29,7 @@ require "pact_broker/matrix/row"
 require "pact_broker/deployments/environment_service"
 require "pact_broker/deployments/deployed_version_service"
 require "pact_broker/deployments/released_version_service"
+require "pact_broker/versions/branch_version_repository"
 require "ostruct"
 
 module PactBroker
@@ -162,37 +163,17 @@ module PactBroker
       end
 
       def create_version version_number = "1.0.#{model_counter}", params = {}
-        params.delete(:comment)
-        @version = PactBroker::Domain::Version.create(:number => version_number, :pacticipant => @pacticipant)
+        @version = create_pacticipant_version(version_number, pacticipant, params)
         self
       end
 
       def create_consumer_version version_number = "1.0.#{model_counter}", params = {}
-        params.delete(:comment)
-        tag_names = [params.delete(:tag_names), params.delete(:tag_name)].flatten.compact
-        @consumer_version = PactBroker::Domain::Version.create(
-          number: version_number,
-          pacticipant: @consumer,
-          branch: params[:branch],
-          build_url: params[:build_url]
-        )
-        set_created_at_if_set params[:created_at], :versions, { id: @consumer_version.id }
-        tag_names.each do | tag_name |
-          tag = PactBroker::Domain::Tag.create(name: tag_name, version: consumer_version)
-          set_created_at_if_set(params[:created_at], :tags, { name: tag.name, version_id: consumer_version.id })
-        end
+        @consumer_version = create_pacticipant_version(version_number, consumer, params)
         self
       end
 
       def create_provider_version version_number = "1.0.#{model_counter}", params = {}
-        params.delete(:comment)
-        tag_names = [params.delete(:tag_names), params.delete(:tag_name)].flatten.compact
-        @version = PactBroker::Domain::Version.create(:number => version_number, :pacticipant => @provider, branch: params[:branch])
-        @provider_version = @version
-        tag_names.each do | tag_name |
-          tag = PactBroker::Domain::Tag.create(name: tag_name, version: provider_version)
-          set_created_at_if_set(params[:created_at], :tags, { name: tag.name, version_id: provider_version.id })
-        end
+        @provider_version = create_pacticipant_version(version_number, provider, params)
         self
       end
 
@@ -376,7 +357,7 @@ module PactBroker
         pact_version = PactBroker::Pacts::Repository.new.find_pact_version(@consumer, @provider, pact.pact_version_sha)
         @verification = PactBroker::Verifications::Repository.new.create(verification, provider_version_number, pact_version)
         @provider_version = PactBroker::Domain::Version.where(pacticipant_id: @provider.id, number: provider_version_number).single_record
-        @provider_version.update(branch: branch) if branch
+        PactBroker::Versions::BranchVersionRepository.new.add_branch(@provider_version, branch) if branch
 
         set_created_at_if_set(parameters[:created_at], :verifications, id: @verification.id)
         set_created_at_if_set(parameters[:created_at], :versions, id: @provider_version.id)
@@ -541,6 +522,26 @@ module PactBroker
       end
 
       private
+
+      def create_pacticipant_version(version_number, pacticipant, params = {})
+        params.delete(:comment)
+        tag_names = [params.delete(:tag_names), params.delete(:tag_name)].flatten.compact
+        args = {
+          number: version_number,
+          pacticipant_id: pacticipant.id,
+          branch: params[:branch],
+          build_url: params[:build_url]
+        }
+
+        version = PactBroker::Versions::Repository.new.create(args)
+
+        set_created_at_if_set params[:created_at], :versions, { id: version.id }
+        tag_names.each do | tag_name |
+          tag = PactBroker::Domain::Tag.create(name: tag_name, version: version)
+          set_created_at_if_set(params[:created_at], :tags, { name: tag.name, version_id: version.id })
+        end
+        version
+      end
 
       def create_deployed_version(uuid: , currently_deployed: , version:, environment_name: , target: nil, created_at: nil)
         env = find_environment(environment_name)

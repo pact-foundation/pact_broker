@@ -2,6 +2,9 @@ require "sequel"
 require "pact_broker/logging"
 require "pact_broker/domain/version"
 require "pact_broker/tags/repository"
+require "pact_broker/versions/branch"
+require "pact_broker/versions/branch_version"
+require "pact_broker/versions/branch_head"
 
 module PactBroker
   module Versions
@@ -49,22 +52,29 @@ module PactBroker
       end
 
       # There may be a race condition if two simultaneous requests come in to create the same version
-      def create args
+      def create(args)
         logger.info "Upserting version #{args[:number]} for pacticipant_id=#{args[:pacticipant_id]}"
         version_params = {
           number: args[:number],
           pacticipant_id: args[:pacticipant_id],
           created_at: Sequel.datetime_class.now,
-          updated_at: Sequel.datetime_class.now
-        }
+          updated_at: Sequel.datetime_class.now,
+          build_url: args[:build_url]
+        }.compact
 
-        PactBroker::Domain::Version.new(version_params).upsert
+
+        version = PactBroker::Domain::Version.new(version_params).upsert
+        # branch can't be set from CRUD on the version resource, but it's convenient to be able
+        # to make a version with a branch for internal code.
+        branch_version_repository.add_branch(version, args[:branch]) if args[:branch]
+        version
       end
 
       def create_or_update(pacticipant, version_number, open_struct_version)
         saved_version = PactBroker::Domain::Version.where(pacticipant_id: pacticipant.id, number: version_number).single_record
         params = open_struct_version.to_h
         tags = params.delete(:tags)
+        branch_name = params.delete(:branch)
         if saved_version
           saved_version.update(params)
         else
@@ -74,10 +84,11 @@ module PactBroker
             params.merge(
               pacticipant_id: pacticipant.id,
               number: version_number
-            )
+            ).compact
           ).upsert
         end
 
+        branch_version_repository.add_branch(saved_version, branch_name) if branch_name
         replace_tags(saved_version, tags) if tags
         saved_version
       end
@@ -86,8 +97,7 @@ module PactBroker
         saved_version = PactBroker::Domain::Version.new(
           number: version_number,
           pacticipant: pacticipant,
-          build_url: open_struct_version.build_url,
-          branch: open_struct_version.branch
+          build_url: open_struct_version.build_url
         ).upsert
 
         if open_struct_version.tags
@@ -112,7 +122,15 @@ module PactBroker
       end
 
       def delete_by_id version_ids
+        branches = Versions::Branch.where(id: Versions::BranchHead.select(:branch_id).where(version_id: version_ids)).all # these will be deleted
         Domain::Version.where(id: version_ids).delete
+        branches.each do | branch |
+          new_head_branch_version = Versions::BranchVersion.find_latest_for_branch(branch)
+          if new_head_branch_version
+            PactBroker::Versions::BranchHead.new(branch: branch, branch_version: new_head_branch_version).upsert
+          end
+        end
+        nil
       end
 
       def delete_orphan_versions consumer, provider
@@ -127,11 +145,6 @@ module PactBroker
 
       def find_versions_for_selector(selector)
         PactBroker::Domain::Version.select_all_qualified.for_selector(selector).all
-      end
-
-      def set_branch_if_unset(version, branch)
-        version.update(branch: branch) if version.branch.nil?
-        version
       end
 
       def find_latest_version_from_main_branch(pacticipant)

@@ -16,12 +16,20 @@ module PactBroker
         from_self(alias: :pp)
           .select(Sequel[:pp].*)
           .join_successful_non_wip_verifications_for_provider_id(provider_id)
-          .join_provider_versions_for_provider_id(provider_id) do
-            Sequel.lit("provider_versions.branch != ?", provider_version_branch)
-          end
+          .join_provider_versions_for_provider_id(provider_id)
+          .join_branch_versions_excluding_branch(provider_version_branch)
           .where(Sequel[:pp][:provider_id] => provider_id)
           .verified_before_creation_date_of(first_version_for_branch)
           .distinct
+      end
+
+      def join_branch_versions_excluding_branch(branch_name)
+        branch_versions_join = {
+          Sequel[:provider_versions][:id] => Sequel[:branch_versions][:version_id]
+        }
+        join(:branch_versions, branch_versions_join) do
+          Sequel.lit("branch_versions.branch_name != ?", branch_name)
+        end
       end
 
       def successfully_verified_by_provider_tag_when_not_wip(provider_id, provider_tag)
@@ -80,10 +88,14 @@ module PactBroker
       def join_provider_versions_for_provider_id_and_branch(provider_id, provider_version_branch)
         versions_join = {
           Sequel[:verifications][:provider_version_id] => Sequel[:provider_versions][:id],
-          Sequel[:provider_versions][:branch] => provider_version_branch,
           Sequel[:provider_versions][:pacticipant_id] => provider_id
         }
+        branch_versions_join = {
+          Sequel[:provider_versions][:id] => Sequel[:branch_versions][:version_id],
+          Sequel[:branch_versions][:branch_name] => provider_version_branch
+        }
         join(:versions, versions_join, { table_alias: :provider_versions } )
+          .join(:branch_versions, branch_versions_join)
       end
 
       def join_provider_versions_for_provider_id(provider_id, &block)

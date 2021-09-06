@@ -2,7 +2,6 @@ require "pact_broker/ui/app"
 
 describe "UI matrix" do
   let(:app) { PactBroker::UI::App.new }
-  let(:td) { TestDataBuilder.new }
   let(:params) { {} }
 
   before do

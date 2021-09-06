@@ -27,6 +27,7 @@ module PactBroker
         DataMigrations::SetWebhookUuid.call(database_connection)
         DataMigrations::SetConsumerVersionOrderForPactPublications.call(database_connection)
         DataMigrations::SetExtraColumnsForTags.call(database_connection)
+        DataMigrations::CreateBranches.call(database_connection)
       end
     end
   end
