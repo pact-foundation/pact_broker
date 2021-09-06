@@ -26,7 +26,6 @@ Sequel.migration do
     end
 
     create_table(:branch_heads) do
-      primary_key :id
       foreign_key :branch_id, :branches, null: false, on_delete: :cascade
       foreign_key :branch_version_id, :branch_versions, null: false, on_delete: :cascade
       Integer :version_id, null: false

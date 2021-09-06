@@ -28,8 +28,8 @@ module PactBroker
             expect(db[:branches].count).to eq 2
             expect(db[:branch_heads].count).to eq 2
             expect(db[:branch_versions].count).to eq 4
-            expect(db[:branch_heads].order(:id).first[:version_id]).to eq db[:versions].where(number: "2").single_record[:id]
-            expect(db[:branch_heads].order(:id).last[:version_id]).to eq db[:versions].where(number: "11").single_record[:id]
+            expect(db[:branch_heads].order(:branch_id).first[:version_id]).to eq db[:versions].where(number: "2").single_record[:id]
+            expect(db[:branch_heads].order(:branch_id).last[:version_id]).to eq db[:versions].where(number: "11").single_record[:id]
           end
         end
 
@@ -48,7 +48,7 @@ module PactBroker
             expect(db[:branches].count).to eq 1
             expect(db[:branch_heads].count).to eq 1
             expect(db[:branch_versions].count).to eq 3
-            expect(db[:branch_heads].order(:id).last[:version_id]).to eq db[:versions].where(number: "3").single_record[:id]
+            expect(db[:branch_heads].order(:branch_id).last[:version_id]).to eq db[:versions].where(number: "3").single_record[:id]
           end
         end
       end
