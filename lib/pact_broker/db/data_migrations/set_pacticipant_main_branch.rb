@@ -1,6 +1,8 @@
 require "pact_broker/db/data_migrations/helpers"
 require "pact_broker/logging"
 
+# Not required now we have the auto_detect_main_branch feature
+
 module PactBroker
   module DB
     module DataMigrations
