@@ -465,6 +465,50 @@ module PactBroker
 
           its(:size) { is_expected.to eq 0 }
         end
+
+        context "when the webhook is specified for matching consumer label" do
+          before do
+            td.create_webhook(event_names: ["contract_published"], consumer_label: "my_label")
+              .create_consumer("Consumer")
+              .create_label("my_label")
+              .create_provider("Provider")
+          end
+
+          its(:size) { is_expected.to eq 1 }
+        end
+
+        context "when the webhook is specified for consumer label that does not match" do
+          before do
+            td.create_webhook(event_names: ["contract_published"], consumer_label: "my_label")
+              .create_consumer("Consumer")
+              .create_label("other_label")
+              .create_provider("Provider")
+          end
+
+          its(:size) { is_expected.to eq 0 }
+        end
+
+        context "when the webhook is specified for matching provider label" do
+          before do
+            td.create_webhook(event_names: ["contract_published"], provider_label: "my_label")
+              .create_consumer("Consumer")
+              .create_provider("Provider")
+              .create_label("my_label")
+          end
+
+          its(:size) { is_expected.to eq 1 }
+        end
+
+        context "when the webhook is specified for provider label that does not match" do
+          before do
+            td.create_webhook(event_names: ["contract_published"], provider_label: "my_label")
+              .create_consumer("Consumer")
+              .create_provider("Provider")
+              .create_label("other_label")
+          end
+
+          its(:size) { is_expected.to eq 0 }
+        end
       end
 
       describe "create_triggered_webhook" do

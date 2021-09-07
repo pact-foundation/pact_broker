@@ -85,6 +85,31 @@ module PactBroker
             end
           end
 
+          context "with a consumer label" do
+            let(:json) do
+              valid_webhook_with do |hash|
+                hash["consumer"].delete("name")
+                hash["consumer"]["label"] = "my_label"
+              end
+            end
+
+            it "contains no errors" do
+              expect(subject.errors).to be_empty
+            end
+          end
+
+          context "with a consumer label and name provided" do
+            let(:json) do
+              valid_webhook_with do |hash|
+                hash["consumer"]["label"] = "my_label"
+              end
+            end
+
+            it "contains consumer.name error" do
+              expect(subject.errors[:'consumer.name']).to eq ['cannot be provided when label is present']
+            end
+          end
+
           context "with a nil provider name" do
             let(:json) do
               valid_webhook_with do |hash|
@@ -128,6 +153,31 @@ module PactBroker
 
             it "contains no errors" do
               expect(subject.errors[:'provider.name']).to eq ["does not match an existing pacticipant"]
+            end
+          end
+
+          context "with provider label" do
+            let(:json) do
+              valid_webhook_with do |hash|
+                hash["provider"].delete("name")
+                hash["provider"]['label'] = 'my_label'
+              end
+            end
+
+            it "contains no errors" do
+              expect(subject.errors).to be_empty
+            end
+          end
+
+          context "with a provider label and name" do
+            let(:json) do
+              valid_webhook_with do |hash|
+                hash["provider"]['label'] = 'my_label'
+              end
+            end
+
+            it "contains no errors" do
+              expect(subject.errors[:'provider.name']).to eq ["cannot be provided when label is present"]
             end
           end
 
