@@ -44,7 +44,9 @@ module PactBroker
           },
           pacticipantVersions: {
             count: PactBroker::Domain::Version.count,
-            withBranchSetCount: PactBroker::Domain::Version.with_branch_set.count
+            withUserCreatedBranchCount: PactBroker::Domain::Version.with_user_created_branch.count,
+            withBranchCount: PactBroker::Domain::Version.with_branch.count,
+            withBranchSetCount: PactBroker::Domain::Version.with_branch.count # todo remove when checked it's not used
           },
           webhooks: {
             count: PactBroker::Webhooks::Webhook.count
@@ -68,6 +70,7 @@ module PactBroker
           },
           deployedVersions: {
             count: PactBroker::Deployments::DeployedVersion.count,
+            userCreatedCount: PactBroker::Deployments::DeployedVersion.user_created.count,
             currentlyDeployedCount: PactBroker::Deployments::DeployedVersion.currently_deployed.count
           },
           releasedVersions: {

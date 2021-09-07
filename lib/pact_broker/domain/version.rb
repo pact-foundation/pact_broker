@@ -50,8 +50,12 @@ module PactBroker
       dataset_module do
         include PactBroker::Repositories::Helpers
 
-        def with_branch_set
+        def with_branch
           where(id: PactBroker::Versions::BranchVersion.select(:version_id))
+        end
+
+        def with_user_created_branch
+          where(id: PactBroker::Versions::BranchVersion.select(:version_id).where(auto_created: false))
         end
 
         def latest_version_for_pacticipant(pacticipant)

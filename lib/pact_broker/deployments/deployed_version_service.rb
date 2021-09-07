@@ -17,7 +17,7 @@ module PactBroker
         DeployedVersion.where(uuid: uuid).single_record
       end
 
-      def self.find_or_create(uuid, version, environment, target)
+      def self.find_or_create(uuid, version, environment, target, auto_created: false)
         if (deployed_version = find_currently_deployed_version_for_version_and_environment_and_target(version, environment, target))
           deployed_version
         else
@@ -27,7 +27,8 @@ module PactBroker
             version: version,
             pacticipant_id: version.pacticipant_id,
             environment: environment,
-            target: target
+            target: target,
+            auto_created: auto_created
           )
         end
       end
@@ -76,7 +77,7 @@ module PactBroker
         if PactBroker.configuration.create_deployed_versions_for_tags
           if (environment = environment_service.find_by_name(environment_name))
             logger.info("Creating deployed version for #{version.pacticipant.name} version #{version.number} in environment #{environment_name} (because create_deployed_versions_for_tags=true)")
-            find_or_create(next_uuid, version, environment, nil)
+            find_or_create(next_uuid, version, environment, nil, auto_created: true)
           end
         end
       end

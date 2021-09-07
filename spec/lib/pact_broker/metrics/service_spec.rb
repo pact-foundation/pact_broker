@@ -24,7 +24,8 @@ module PactBroker
           end
 
           its([:pacticipantVersions, :count]) { is_expected.to eq 2 }
-          its([:pacticipantVersions, :withBranchSetCount]) { is_expected.to eq 1 }
+          its([:pacticipantVersions, :withBranchCount]) { is_expected.to eq 1 }
+          its([:pacticipantVersions, :withUserCreatedBranchCount]) { is_expected.to eq 1 }
         end
 
         describe "environments, deployed versions, released versions" do
@@ -46,6 +47,7 @@ module PactBroker
           its([:environments, :count]) { is_expected.to eq 1 }
           its([:deployedVersions, :count]) { is_expected.to eq 2 }
           its([:deployedVersions, :currentlyDeployedCount]) { is_expected.to eq 1 }
+          its([:deployedVersions, :userCreatedCount]) { is_expected.to eq 2 }
           its([:releasedVersions, :count]) { is_expected.to eq 3 }
           its([:releasedVersions, :currentlySupportedCount]) { is_expected.to eq 2 }
         end

@@ -21,6 +21,11 @@ module PactBroker
         end
 
         context "when the branch does not already exist" do
+          it "default auto_created to false" do
+            subject
+            expect(PactBroker::Versions::BranchVersion.last.auto_created).to be false
+          end
+
           it "creates a branch" do
             expect { subject }.to change { PactBroker::Versions::Branch.count }.by(1)
           end
@@ -37,6 +42,15 @@ module PactBroker
           it "updates the branch head" do
             branch_head = subject.pacticipant.branch_head_for("new-branch")
             expect(branch_head.version.id).to eq subject.refresh.id
+          end
+
+          context "when auto_created is true" do
+            subject { repository.add_branch(version, new_branch_name, auto_created: true) }
+
+            it "default auto_created to false" do
+              subject
+              expect(PactBroker::Versions::BranchVersion.last.auto_created).to be true
+            end
           end
         end
 

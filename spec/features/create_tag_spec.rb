@@ -36,7 +36,7 @@ describe "Creating a tag" do
     end
 
     it "creates a deployed version" do
-      expect { subject }.to change { PactBroker::Deployments::DeployedVersion.count }.by(1)
+      expect { subject }.to change { PactBroker::Deployments::DeployedVersion.where(auto_created: true).count }.by(1)
     end
   end
 end

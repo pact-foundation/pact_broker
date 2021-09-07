@@ -15,6 +15,10 @@ module PactBroker
       dataset_module do
         include PactBroker::Repositories::Helpers
 
+        def user_created
+          where(auto_created: false)
+        end
+
         def last_deployed_version(pacticipant, environment)
           currently_deployed
             .where(pacticipant_id: pacticipant.id)
