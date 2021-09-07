@@ -76,7 +76,7 @@ module PactBroker
 
       def create_tags(parsed_contracts, version)
         (parsed_contracts.tags || []).collect do | tag_name |
-          tag_repository.create(version: version, name: tag_name)
+          tag_service.create(pacticipant_name: version.pacticipant.name, pacticipant_version_number: version.number, tag_name: tag_name)
         end
       end
 

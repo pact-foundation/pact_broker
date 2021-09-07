@@ -60,6 +60,27 @@ module PactBroker
               expect(subject.notices.find{ |log| log.type == "success" && log.text.include?(" published ") }).to_not be nil
             end
           end
+
+          context "when no branch is specified but tags are" do
+            before do
+              allow(PactBroker.configuration).to receive(:use_first_tag_as_branch).and_return(true)
+            end
+
+            let(:contracts_to_publish) do
+              ContractsToPublish.from_hash(
+                pacticipant_name: "Foo",
+                pacticipant_version_number: "1",
+                tags: ["a", "b"],
+                branch: nil,
+                contracts: contracts
+              )
+            end
+
+            it "uses the first tag as the branch" do
+              subject
+              expect(PactBroker::Domain::Version.order(:id).last.branch_versions.collect(&:branch_name)).to eq ["a"]
+            end
+          end
         end
 
         context "when the pact already exists" do
