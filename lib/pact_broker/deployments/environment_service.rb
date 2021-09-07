@@ -7,12 +7,17 @@ module PactBroker
   module Deployments
     module EnvironmentService
       using PactBroker::StringRefinements
+      extend self
 
-      def self.next_uuid
+      def self.included(base)
+        base.extend(self)
+      end
+
+      def next_uuid
         SecureRandom.uuid
       end
 
-      def self.create(uuid, environment)
+      def create(uuid, environment)
         environment.uuid = uuid
         if environment.display_name.blank?
           environment.display_name = PactBroker::Pacticipants::GenerateDisplayName.call(environment.name)
@@ -20,7 +25,7 @@ module PactBroker
         environment.save
       end
 
-      def self.update(uuid, environment)
+      def update(uuid, environment)
         environment.uuid = uuid
         if environment.display_name.blank?
           environment.display_name = PactBroker::Pacticipants::GenerateDisplayName.call(environment.name)
@@ -28,23 +33,23 @@ module PactBroker
         environment.upsert
       end
 
-      def self.find_all
+      def find_all
         PactBroker::Deployments::Environment.order(Sequel.function(:lower, :display_name)).all
       end
 
-      def self.find(uuid)
+      def find(uuid)
         PactBroker::Deployments::Environment.where(uuid: uuid).single_record
       end
 
-      def self.find_by_name(name)
+      def find_by_name(name)
         PactBroker::Deployments::Environment.where(name: name).single_record
       end
 
-      def self.delete(uuid)
+      def delete(uuid)
         PactBroker::Deployments::Environment.where(uuid: uuid).delete
       end
 
-      def self.find_for_pacticipant(_pacticipant)
+      def find_for_pacticipant(_pacticipant)
         find_all
       end
     end
