@@ -465,6 +465,46 @@ module PactBroker
 
           its(:size) { is_expected.to eq 0 }
         end
+
+        context "when the webhook is specified for matching consumer pattern" do
+          before do
+            td.create_webhook(event_names: ["contract_published"], consumer_pattern: "* Async")
+              .create_consumer("Consumer Async")
+              .create_provider("Provider")
+          end
+
+          its(:size) { is_expected.to eq 1 }
+        end
+
+        context "when the webhook is specified for consumer pattern that does not match" do
+          before do
+            td.create_webhook(event_names: ["contract_published"], consumer_pattern: "* Async")
+              .create_consumer("Consumer")
+              .create_provider("Provider")
+          end
+
+          its(:size) { is_expected.to eq 0 }
+        end
+
+        context "when the webhook is specified for matching provider pattern" do
+          before do
+            td.create_webhook(event_names: ["contract_published"], provider_pattern: "* Async")
+              .create_consumer("Consumer")
+              .create_provider("Provider Async")
+          end
+
+          its(:size) { is_expected.to eq 1 }
+        end
+
+        context "when the webhook is specified for provider pattern that does not match" do
+          before do
+            td.create_webhook(event_names: ["contract_published"], provider_pattern: "* Async")
+              .create_consumer("Consumer")
+              .create_provider("Provider")
+          end
+
+          its(:size) { is_expected.to eq 0 }
+        end
       end
 
       describe "create_triggered_webhook" do

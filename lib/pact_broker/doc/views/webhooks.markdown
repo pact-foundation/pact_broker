@@ -79,6 +79,23 @@ To specify an XML body, you will need to use a correctly escaped string (or use 
 
 **BEWARE** While the basic auth password, and any header containing the word `authorization` or `token` will be redacted from the UI and the logs, the password could be reverse engineered from the database, so make a separate account for the Pact Broker to use in your webhooks. Don't use your personal account!
 
+#### Consumer or provider wildcard pattern matching
+
+Webhooks can be created to match certain set of consumers or providers events. Use `pattern` attribute for either `provider` or `consumer`. Both are optional, but they cannot be provided when `name` attribute is present. You can use wildcard pattern here: `*` - matching any sequence (including empty) or `?` - matching any single character. Following example would trigger a webhook when any contract with provider matching `* Async` (e.g. `Zoo App Async`, `Animal Service Async` but not `Visitor Async Service`) changed its content:
+
+        {
+          "provider": {
+            "pattern": "* Async"
+          },
+          "events": [{
+            "name": "contract_content_changed"
+          }],
+          "request": {
+            "method": "POST",
+            "url": "http://master.ci.my.domain:8085/rest/api/latest/queue/SOME-PROJECT"
+          }
+        }
+
 #### Event types
 
 `contract_published:` triggered every time a contract is published. It is not recommended to trigger your provider verification build every time a contract is published - see `contract_content_changed` below.
