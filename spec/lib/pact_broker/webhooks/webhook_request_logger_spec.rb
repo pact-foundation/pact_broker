@@ -16,7 +16,7 @@ module PactBroker
 
       let(:logger) { double("logger").as_null_object }
       let(:uuid) { "uuid" }
-      let(:options) { { failure_log_message: "oops", show_response: show_response } }
+      let(:options) { { failure_log_message: "oops", show_response: show_response, http_code_success: [200] } }
       let(:show_response) { true }
       let(:username) { nil }
       let(:password) { nil }
@@ -54,8 +54,9 @@ module PactBroker
       let(:webhook_context) { { consumer_version_number: "123", base_url: base_url } }
 
       let(:webhook_request_logger) { WebhookRequestLogger.new(options) }
+      let(:success) { true }
 
-      subject(:logs) { webhook_request_logger.log(uuid, webhook_request, response, error, webhook_context) }
+      subject(:logs) { webhook_request_logger.log(uuid, webhook_request, response, success, error, webhook_context) }
 
       describe "application logs" do
         it "logs the request" do
@@ -129,16 +130,8 @@ module PactBroker
           end
         end
 
-        context "when the response code '100' is not in 'webhook_http_code_success'" do
-          let(:status) { 100 }
-
-          it "not successful, code '100' not in 'webhook_http_code_success'" do
-            expect(logs).to include "oops"
-          end
-        end
-
-        context "when the response code is not successful" do
-          let(:status) { 400 }
+        context "when the status is not successful" do
+          let(:success) { false }
 
           it "logs the failure_log_message" do
             expect(logs).to include "oops"
@@ -174,6 +167,7 @@ module PactBroker
           end
 
           let(:response) { nil }
+          let(:success) { false }
           let(:error) do
             err = WebhookTestError.new("blah")
             allow(err).to receive(:backtrace).and_return([])

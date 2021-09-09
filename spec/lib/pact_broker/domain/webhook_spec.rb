@@ -11,10 +11,11 @@ module PactBroker
       let(:webhook_template_parameters) { instance_double(PactBroker::Webhooks::PactAndVerificationParameters, to_hash: webhook_template_parameters_hash) }
       let(:webhook_template_parameters_hash) { { "foo" => "bar" } }
       let(:http_request) { double("http request") }
-      let(:http_response) { double("http response", code: "200") }
+      let(:http_response) { double("http response", code: response_code) }
+      let(:response_code) { "200" }
       let(:event_context) { { some: "things" } }
       let(:logging_options) { { other: "options" } }
-      let(:options) { { logging_options: logging_options } }
+      let(:options) { { logging_options: logging_options, http_success_codes: [200] } }
       let(:pact) { double("pact") }
       let(:verification) { double("verification") }
       let(:logger) { double("logger").as_null_object }
@@ -81,7 +82,7 @@ module PactBroker
         end
 
         it "generates the execution logs" do
-          expect(webhook_request_logger).to receive(:log).with(uuid, webhook_request, http_response, nil, event_context)
+          expect(webhook_request_logger).to receive(:log).with(uuid, webhook_request, http_response, true, nil, event_context)
           execute
         end
 
@@ -90,12 +91,21 @@ module PactBroker
           expect(execute.response).to_not be nil
           expect(execute.logs).to eq "logs"
           expect(execute.error).to be nil
+          expect(execute.success?).to be true
         end
 
         it "logs before and after" do
           allow(logger).to receive(:info)
           expect(logger).to receive(:info).with(/Executing/)
           execute
+        end
+
+        context "when a response status is returned that is not in the http_success_codes" do
+          let(:response_code) { "301" }
+
+          it "returns a result with success? false" do
+            expect(execute.success?).to be false
+          end
         end
 
         context "when an error is thrown" do
@@ -106,7 +116,7 @@ module PactBroker
           end
 
           it "generates the execution logs" do
-            expect(webhook_request_logger).to receive(:log).with(uuid, webhook_request, nil, instance_of(error_class), event_context)
+            expect(webhook_request_logger).to receive(:log).with(uuid, webhook_request, nil, false, instance_of(error_class), event_context)
             execute
           end
 

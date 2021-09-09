@@ -7,7 +7,7 @@ begin
 
   td = PactBroker::Test::HttpTestDataBuilder.new(base_url)
   td.delete_webhook(uuid: "7a5da39c-8e50-4cc9-ae16-dfa5be043e8c")
-    .create_global_webhook_for_contract_changed(uuid: "7a5da39c-8e50-4cc9-ae16-dfa5be043e8c", url: "http://localhost:9393")
+    .create_global_webhook_for_contract_changed(uuid: "7a5da39c-8e50-4cc9-ae16-dfa5be043e8c")
     .delete_pacticipant("foo-consumer")
     .delete_pacticipant("bar-provider")
     .create_pacticipant("foo-consumer")

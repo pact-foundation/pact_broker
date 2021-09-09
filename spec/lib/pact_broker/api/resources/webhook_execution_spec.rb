@@ -30,7 +30,7 @@ module PactBroker
             let(:pact) { instance_double("PactBroker::Domain::Pact") }
             let(:consumer_name) { "foo" }
             let(:provider_name) { "bar" }
-            let(:webhook_execution_configuration) { instance_double(PactBroker::Webhooks::ExecutionConfiguration, retry_schedule: [], webhook_context: event_context) }
+            let(:webhook_execution_configuration) { instance_double(PactBroker::Webhooks::ExecutionConfiguration, http_success_codes: [200], retry_schedule: [], webhook_context: event_context) }
             let(:event_context) { { some: "data" } }
 
             before do

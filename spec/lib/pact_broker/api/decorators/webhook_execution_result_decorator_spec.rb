@@ -6,7 +6,7 @@ module PactBroker
     module Decorators
       describe WebhookExecutionResultDecorator do
         describe "to_json" do
-          let(:webhook_execution_result) { PactBroker::Webhooks::WebhookExecutionResult.new(request, response, logs, error) }
+          let(:webhook_execution_result) { PactBroker::Webhooks::WebhookExecutionResult.new(request, response, true, logs, error) }
           let(:logs) { "logs" }
           let(:headers) { { "Something" => ["blah", "thing"]} }
           let(:request) do
