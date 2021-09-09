@@ -2,6 +2,7 @@ require "pact_broker/pacts/pact_publication_selector_dataset_module"
 
 module PactBroker
   module Pacts
+    # rubocop: disable Metrics/ModuleLength
     module PactPublicationDatasetModule
       include PactPublicationSelectorDatasetModule
 
@@ -187,6 +188,29 @@ module PactBroker
         .remove_overridden_revisions_from_complete_query
       end
 
+      # The pacts for the latest versions with the specified tag (new logic)
+      # NOT the latest pact that belongs to a version with the specified tag.
+      def for_latest_consumer_versions_with_tag(tag_name)
+        head_tags = PactBroker::Domain::Tag
+                      .select_group(:pacticipant_id, :name)
+                      .select_append{ max(version_order).as(:latest_version_order) }
+                      .where(name: tag_name)
+
+        head_tags_join = {
+          Sequel[:pact_publications][:consumer_id] => Sequel[:head_tags][:pacticipant_id],
+          Sequel[:pact_publications][:consumer_version_order] => Sequel[:head_tags][:latest_version_order]
+        }
+
+        base_query = self
+        if no_columns_selected?
+          base_query = base_query.select_all_qualified.select_append(Sequel[:head_tags][:name].as(:tag_name))
+        end
+
+        base_query
+          .join(head_tags, head_tags_join, { table_alias: :head_tags })
+         .remove_overridden_revisions_from_complete_query
+      end
+
       def verified_before_date(date)
         where { Sequel[:verifications][:execution_date] < date }
       end
@@ -311,5 +335,6 @@ module PactBroker
         opts[:select].nil?
       end
     end
+    # rubocop: enable Metrics/ModuleLength
   end
 end
