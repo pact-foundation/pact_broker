@@ -87,17 +87,11 @@ module PactBroker
     end
 
     def with_runtime_configuration_overrides(overrides)
-      if overrides.any?
-        begin
-          original_runtime_configuration = runtime_configuration
-          self.runtime_configuration = override_runtime_configuration!(overrides)
-          yield
-        ensure
-          self.runtime_configuration = original_runtime_configuration
-        end
-      else
-        yield
-      end
+      original_runtime_configuration = runtime_configuration
+      self.runtime_configuration = override_runtime_configuration!(overrides)
+      yield
+    ensure
+      self.runtime_configuration = original_runtime_configuration
     end
 
     def override_runtime_configuration!(overrides)

@@ -13,9 +13,6 @@ module PactBroker
 
         def call(env)
           if (overrides = env["pactbroker.configuration_overrides"])&.any?
-            if logger.warn?
-              logger.warn("Overriding configuration", payload: overrides)
-            end
             dupped_configuration = configuration.dup
             dupped_configuration.override_runtime_configuration!(overrides)
             dupped_configuration.freeze
