@@ -340,6 +340,7 @@ module PactBroker
         let(:webhook_execution_configuration) do
           PactBroker::Webhooks::ExecutionConfiguration.new
             .with_webhook_context(base_url: "http://example.org")
+            .with_retry_schedule([10, 60, 120, 300, 600, 1200])
             .with_show_response(true)
         end
         let(:event_context) { { some: "data", base_url: "http://example.org" }}
