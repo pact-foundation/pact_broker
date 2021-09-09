@@ -25,6 +25,7 @@ require "rack/pact_broker/reset_thread_data"
 require "rack/pact_broker/add_vary_header"
 require "rack/pact_broker/use_when"
 require "sucker_punch"
+require "pact_broker/api/middleware/configuration"
 require "pact_broker/api/middleware/basic_auth"
 require "pact_broker/config/basic_auth_configuration"
 require "pact_broker/api/authorization/resource_access_policy"
@@ -51,6 +52,7 @@ module PactBroker
       load_configuration_from_database
       seed_example_data
       print_startup_message
+      @configuration.freeze
     end
 
     # Allows middleware to be inserted at the bottom of the shared middlware stack
@@ -178,6 +180,8 @@ module PactBroker
     end
 
     def configure_middleware
+      @app_builder.use RequestStore::Middleware
+      @app_builder.use PactBroker::Api::Middleware::Configuration, configuration
       configure_basic_auth
       configure_rack_protection
       @app_builder.use Rack::PactBroker::InvalidUriProtection

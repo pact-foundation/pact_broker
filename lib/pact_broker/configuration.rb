@@ -4,10 +4,15 @@ require "semantic_logger"
 require "forwardable"
 require "pact_broker/config/runtime_configuration"
 require "anyway/auto_cast"
+require "request_store"
 
 module PactBroker
   def self.configuration
-    @@configuration ||= Configuration.default_configuration
+    RequestStore.store[:pact_broker_configuration] ||= Configuration.default_configuration
+  end
+
+  def self.set_configuration(configuration)
+    RequestStore.store[:pact_broker_configuration] = configuration
   end
 
   def self.with_runtime_configuration_overrides(overrides, &block)
@@ -16,7 +21,7 @@ module PactBroker
 
   # @private, for testing only
   def self.reset_configuration
-    @@configuration = Configuration.default_configuration
+    RequestStore.store[:pact_broker_configuration] = Configuration.default_configuration
   end
 
   class Configuration
@@ -82,11 +87,41 @@ module PactBroker
     end
 
     def with_runtime_configuration_overrides(overrides)
-      original_runtime_configuration = runtime_configuration
-      self.runtime_configuration = override_runtime_configuration(overrides, original_runtime_configuration.dup)
-      yield
-    ensure
-      self.runtime_configuration = original_runtime_configuration
+      if overrides.any?
+        begin
+          original_runtime_configuration = runtime_configuration
+          self.runtime_configuration = override_runtime_configuration!(overrides)
+          yield
+        ensure
+          self.runtime_configuration = original_runtime_configuration
+        end
+      else
+        yield
+      end
+    end
+
+    def override_runtime_configuration!(overrides)
+      new_runtime_configuration = runtime_configuration.dup
+      valid_overrides = {}
+      invalid_overrides = {}
+
+      overrides.each do | key, value |
+        if new_runtime_configuration.respond_to?("#{key}=")
+          valid_overrides[key] = Anyway::AutoCast.call(value)
+        else
+          invalid_overrides[key] = Anyway::AutoCast.call(value)
+        end
+      end
+
+      if logger.debug?
+        logger.debug("Overridding runtime configuration", payload: { overrides: valid_overrides, ignoring: invalid_overrides })
+      end
+
+      valid_overrides.each do | key, value |
+        new_runtime_configuration.public_send("#{key}=", value)
+      end
+
+      self.runtime_configuration = new_runtime_configuration
     end
 
     def logger_from_runtime_configuration
@@ -205,31 +240,6 @@ module PactBroker
       # Can't require a Sequel::Model class before the connection has been set
       require "pact_broker/config/load"
       PactBroker::Config::Load.call(runtime_configuration)
-    end
-
-    private
-
-    def override_runtime_configuration(overrides, new_runtime_configuration)
-      valid_overrides = {}
-      invalid_overrides = {}
-
-      overrides.each do | key, value |
-        if new_runtime_configuration.respond_to?("#{key}=")
-          valid_overrides[key] = Anyway::AutoCast.call(value)
-        else
-          invalid_overrides[key] = Anyway::AutoCast.call(value)
-        end
-      end
-
-      if logger.debug?
-        logger.debug("Overridding runtime configuration", payload: { overrides: valid_overrides, ignoring: invalid_overrides })
-      end
-
-      valid_overrides.each do | key, value |
-        new_runtime_configuration.public_send("#{key}=", value)
-      end
-
-      new_runtime_configuration
     end
   end
 end
