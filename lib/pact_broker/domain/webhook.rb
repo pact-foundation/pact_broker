@@ -115,6 +115,7 @@ module PactBroker
         !http_response.nil? && options.fetch(:http_success_codes).include?(http_response.code.to_i)
       end
 
+      # rubocop: disable Metrics/ParameterLists
       def generate_logs(webhook_request, http_response, success, error, event_context, logging_options)
         webhook_request_logger = PactBroker::Webhooks::WebhookRequestLogger.new(logging_options)
         webhook_request_logger.log(
@@ -126,6 +127,7 @@ module PactBroker
           event_context
         )
       end
+      # robocop: enable Metrics/ParameterLists
 
       def result(http_request, http_response, success, logs, error)
         PactBroker::Webhooks::WebhookExecutionResult.new(

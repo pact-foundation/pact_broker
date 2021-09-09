@@ -4,7 +4,7 @@ module PactBroker
   module Api
     module Middleware
       class TestApp
-        def call(env)
+        def call(_)
           [200, {}, [PactBroker.configuration.allow_dangerous_contract_modification.to_s]]
         end
       end

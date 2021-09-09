@@ -29,6 +29,7 @@ module PactBroker
         @options = options
       end
 
+      # rubocop: disable Metrics/ParameterLists
       def log(uuid, webhook_request, http_response, success, error, webhook_context)
         safe_response = http_response ? HttpResponseWithUtf8SafeBody.new(http_response) : nil
         log_webhook_context(webhook_context)
@@ -38,6 +39,7 @@ module PactBroker
         log_completion_message(success)
         log_stream.string
       end
+      # rubocop: enable Metrics/ParameterLists
 
       private
 
