@@ -21,16 +21,13 @@ module PactBroker
       alias_method :http_method, :method
 
       def initialize attributes = {}
-        @method = attributes[:method]
-        @url = attributes[:url]
-        @username = attributes[:username]
-        @password = attributes[:password]
+        attributes.each do | (name, value) |
+          instance_variable_set("@#{name}", value) if respond_to?(name)
+        end
         @headers = Rack::Utils::HeaderHash.new(attributes[:headers] || {})
-        @body = attributes[:body]
-        @uuid = attributes[:uuid]
       end
 
-      def build(template_params)
+      def build(template_params, user_agent)
         attributes = {
           method: http_method,
           url: build_url(template_params),
@@ -38,7 +35,8 @@ module PactBroker
           username: build_string(username, template_params),
           password: build_string(password, template_params),
           uuid: uuid,
-          body: build_body(template_params)
+          body: build_body(template_params),
+          user_agent: user_agent
         }
         PactBroker::Domain::WebhookRequest.new(attributes)
       end

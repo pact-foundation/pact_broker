@@ -19,7 +19,8 @@ module PactBroker
           headers: headers,
           username: username,
           password: password,
-          body: body)
+          body: body,
+          user_agent: "Pact Broker")
       end
 
       let(:execute) { subject.execute }

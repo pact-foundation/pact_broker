@@ -37,16 +37,16 @@ module PactBroker
         with_updated_attribute(webhook_context: value)
       end
 
+      def with_user_agent(value)
+        with_updated_attribute(user_agent: value)
+      end
+
       def webhook_context
         self[:webhook_context]
       end
 
       def retry_schedule
         self[:retry_schedule]
-      end
-
-      def http_success_codes
-        self[:http_success_codes]
       end
 
       def [](key)
