@@ -61,7 +61,7 @@ module PactBroker
 
           it "returns the right versions" do
             expect(subject.find { |pp| pp.consumer_id == foo.id && pp[:branch_name] == "feat/x" }.consumer_version.number).to eq "4"
-            expect(subject.find { |pp| pp.consumer_id == foo_z.id && pp[:branch_name] == "main" }.consumer_version.number).to eq "6"
+            expect(subject.find { |pp| pp.consumer_id == foo_z.id && pp.provider_id == not_bar.id && pp[:branch_name] == "main" }.consumer_version.number).to eq "8"
           end
         end
       end
