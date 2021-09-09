@@ -54,7 +54,7 @@ module PactBroker
         self
       end
 
-      def create_version(pacticipant:, version:, branch:)
+      def create_version(pacticipant:, version:, branch: nil)
         if branch
           client.put("pacticipants/#{encode(pacticipant)}/branches/#{encode(branch)}/versions/#{encode(version)}", {}).tap { |response| check_for_error(response) }
         else
