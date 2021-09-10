@@ -180,8 +180,6 @@ module PactBroker
     end
 
     def configure_middleware
-      @app_builder.use RequestStore::Middleware
-      @app_builder.use PactBroker::Api::Middleware::Configuration, configuration
       configure_basic_auth
       configure_rack_protection
       @app_builder.use Rack::PactBroker::InvalidUriProtection
