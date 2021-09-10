@@ -9,6 +9,7 @@ module PactBroker
     end
 
     let(:hal_browser_enabled) { true }
+    let(:network_url) { "/pacticipants/Some%20Consumer/network" }
     let(:group_url) { "/groups/Some%20Consumer" }
     let(:enable_diagnostic_endpoints) { false }
 
@@ -52,13 +53,12 @@ module PactBroker
         end
       end
 
-      describe "a request for /groups/:pacticipant_name" do
-        let(:path) { "/groups/Some%20Consumer" }
+      describe "a request for /pacticipants/:pacticipant_name" do
+        let(:path) { "/pacticipants/Some%20Consumer" }
 
         it "returns the group page" do
           expect(subject.status).to eq 200
           expect(subject.headers["Content-Type"]).to include "text/html"
-          expect(subject.body).to include "Network graph"
           expect(subject.body).to include "Some Consumer"
         end
 
@@ -79,12 +79,12 @@ module PactBroker
       end
 
       describe "a request the group containing a pacticipant" do
-        let(:path) { group_url }
+        let(:path) { network_url }
 
-        it "returns the HTML representation of the group" do
+        it "returns the HTML representation of the pacticipant" do
           expect(subject.status).to eq 200
           expect(subject.headers["Content-Type"]).to include "text/html"
-          expect(subject.body).to include "Network graph"
+          expect(subject.body).to include "Network Graph"
         end
       end
 

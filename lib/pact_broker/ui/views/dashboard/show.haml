@@ -36,7 +36,9 @@
               'data-consumer-name': index_item.consumer_name,
               'data-provider-name': index_item.provider_name,
               'data-integration-url': index_item.integration_url,
-              'data-tagged-pacts': index_item.tagged_pacts}
+              'data-pact-tags': index_item.pact_tags,
+              'data-pact-branches': index_item.pact_branches
+              }
             %td.consumer-version-number{"data-text": index_item.consumer_version_order}
               %div.clippable{"data-clippable": index_item.consumer_version_number}
                 = index_item.display_consumer_version_number

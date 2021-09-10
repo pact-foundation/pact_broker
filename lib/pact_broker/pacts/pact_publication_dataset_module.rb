@@ -292,6 +292,20 @@ module PactBroker
         join(:tags, {version_id: :consumer_version_id}).where(filter)
       end
 
+      def for_branch_name branch_name
+        branch_versions_join = {
+          Sequel[:branch_versions][:version_id] => Sequel[:pact_publications][:consumer_version_id],
+          Sequel[:branch_versions][:branch_name] => branch_name
+        }
+
+        base_query = self
+        if no_columns_selected?
+          base_query = base_query.select_all_qualified.select_append(Sequel[:branch_versions][:branch_name].as(:branch_name))
+        end
+
+        base_query.join(:branch_versions, branch_versions_join)
+      end
+
       def provider_name_like(name)
         where(name_like(Sequel[:providers][:name], name))
       end

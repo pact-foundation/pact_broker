@@ -81,6 +81,10 @@ module PactBroker
           "#{pactigration_base_url(base_url, @relationship)}/latest"
         end
 
+        def dashboard_url
+          Helpers::URLHelper.dashboard_url(consumer_name, provider_name, base_url)
+        end
+
         def pact_url
           PactBroker::Api::PactBrokerUrls.pact_url(base_url, @relationship)
         end
@@ -208,13 +212,22 @@ module PactBroker
           @options[:base_url]
         end
 
-        def tagged_pacts
+        def pact_tags
           @relationship.tag_names.map do |tag|
             {
-              tag: tag,
+              name: tag,
               deletionUrl: PactBroker::Api::PactBrokerUrls.tagged_pact_versions_url(consumer_name, provider_name, tag, base_url)
-            }.to_json
-          end
+            }
+          end.to_json
+        end
+
+        def pact_branches
+          consumer_version_branches.map do | branch_name |
+            {
+              name: branch_name,
+              deletionUrl: PactBroker::Api::PactBrokerUrls.pact_versions_for_branch_url(consumer_name, provider_name, branch_name, base_url)
+            }
+          end.to_json
         end
 
         private

@@ -7,6 +7,10 @@ module PactBroker
 
         extend self
 
+        def dashboard_url consumer_name, provider_name, base_url = ""
+          "#{base_url}/dashboard/provider/#{provider_name}/consumer/#{consumer_name}"
+        end
+
         def group_url pacticipant_name, base_url = ""
           "#{base_url}/pacticipants/#{ERB::Util.url_encode(pacticipant_name)}"
         end

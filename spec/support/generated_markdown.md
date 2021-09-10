@@ -1,12 +1,12 @@
-### A pact between Some Consumer and Some Provider
+# A pact between Some Consumer and Some Provider
 
-#### Requests from Some Consumer to Some Provider
+### Requests from Some Consumer to Some Provider
 
 * [A request for alligators in Brüssel](#a_request_for_alligators_in_Brüssel_given_alligators_exist) given alligators exist
 
 * [A request for polar bears](#a_request_for_polar_bears)
 
-#### Interactions
+### Interactions
 
 <a name="a_request_for_alligators_in_Brüssel_given_alligators_exist"></a>
 Given **alligators exist**, upon receiving **a request for alligators in Brüssel** from Some Consumer, with

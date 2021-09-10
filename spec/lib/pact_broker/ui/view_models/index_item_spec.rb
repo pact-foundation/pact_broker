@@ -27,8 +27,8 @@ module PactBroker
         its(:latest_pact_url) { should eq "/pacts/provider/Provider%20Name/consumer/Consumer%20Name/latest" }
         its(:pact_url) { should eq "/pacts/provider/Provider%20Name/consumer/Consumer%20Name/version/1.2.3" }
         its(:pact_matrix_url) { should eq "/matrix/provider/Provider%20Name/consumer/Consumer%20Name" }
-        its(:consumer_group_url) { should eq "/groups/Consumer%20Name" }
-        its(:provider_group_url) { should eq "/groups/Provider%20Name" }
+        its(:consumer_group_url) { should eq "/pacticipants/Consumer%20Name" }
+        its(:provider_group_url) { should eq "/pacticipants/Provider%20Name" }
 
         describe "pseudo_branch_verification_status" do
           let(:domain_relationship) do
@@ -137,13 +137,13 @@ module PactBroker
           its(:provider_version_latest_tag_names) { is_expected.to eq ["dev", "prod"] }
         end
 
-        describe "tagged_pacts" do
+        describe "pact_tags" do
           let(:tags) { ["master", "prod"] }
-          its(:tagged_pacts) do
+          its(:pact_tags) do
             is_expected.to eq([
-              { tag: "master", deletionUrl: "/pacts/provider/Provider%20Name/consumer/Consumer%20Name/tag/master" }.to_json,
-              { tag: "prod", deletionUrl: "/pacts/provider/Provider%20Name/consumer/Consumer%20Name/tag/prod" }.to_json
-            ])
+              { name: "master", deletionUrl: "/pacts/provider/Provider%20Name/consumer/Consumer%20Name/tag/master" },
+              { name: "prod", deletionUrl: "/pacts/provider/Provider%20Name/consumer/Consumer%20Name/tag/prod" }
+            ].to_json)
           end
         end
 

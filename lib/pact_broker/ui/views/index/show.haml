@@ -42,7 +42,15 @@
           %th
       %tbody
         - index_items.each do | index_item |
-          %tr{'class':'pact-row', 'data-pact-versions-url': index_item.pact_versions_url, 'data-consumer-name': index_item.consumer_name, 'data-provider-name': index_item.provider_name, 'data-integration-url': index_item.integration_url, 'data-href':"/dashboard/provider/#{index_item.provider_name}/consumer/#{index_item.consumer_name}"}
+          %tr{
+            'class':'pact-row',
+            'data-pact-versions-url': index_item.pact_versions_url,
+            'data-consumer-name': index_item.consumer_name,
+            'data-provider-name': index_item.provider_name,
+            'data-integration-url': index_item.integration_url,
+            'data-href': index_item.dashboard_url,
+            'data-index': "true"
+            }
             %td{'role':"button"}
             %td.consumer{'role':"button"}
               %a{ href: index_item.consumer_group_url }

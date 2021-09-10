@@ -50,6 +50,10 @@
       "resource_class_data": "consumer"
     },
     {
+      "resource_class_name": "PactBroker::Api::Resources::PactVersionsForBranch",
+      "resource_class_data": "consumer"
+    },
+    {
       "resource_class_name": "PactBroker::Api::Resources::PactWebhooks"
     },
     {

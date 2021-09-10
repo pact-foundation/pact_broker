@@ -415,7 +415,6 @@ module PactBroker
       end
 
       describe "#delete_all_pact_publications_between" do
-
         before do
           td.create_consumer(consumer_name)
             .create_consumer_version("1.2.3")
@@ -426,7 +425,7 @@ module PactBroker
             .create_webhook
             .create_triggered_webhook
             .create_webhook_execution
-            .create_consumer_version("2.3.4")
+            .create_consumer_version("2.3.4", branch: "main")
             .create_consumer_version_tag("prod")
             .create_consumer_version_tag("branch")
             .create_pact
@@ -446,6 +445,20 @@ module PactBroker
 
           it "deletes the pacts between the specified consumer and provider with the given tag" do
             expect { subject }.to change { PactPublication.count }.by(-1)
+          end
+        end
+
+        context "with a branch" do
+          subject { Repository.new.delete_all_pact_publications_between(consumer_name, :and => provider_name, branch_name: "main") }
+
+          it "deletes the pacts between the specified consumer and provider with the given branch" do
+            expect { subject }.to change {
+              PactPublication
+                .for_consumer_name(consumer_name)
+                .for_provider_name(provider_name)
+                .for_branch_name("main")
+                .count
+            }.by(-1)
           end
         end
       end

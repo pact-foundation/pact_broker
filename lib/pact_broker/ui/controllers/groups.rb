@@ -2,15 +2,15 @@ require "pact_broker/ui/controllers/base_controller"
 require "pact_broker/ui/view_models/index_items"
 require "haml"
 
+# TODO handle 404 gracefully
+
 module PactBroker
   module UI
     module Controllers
       class Groups < Base
-
         include PactBroker::Services
 
         get ":name" do
-          pacticipant = pacticipant_service.find_pacticipant_by_name(params[:name])
           erb :'groups/show.html', {
               locals: locals(tab: "properties")
             }, {
@@ -19,7 +19,6 @@ module PactBroker
         end
 
         get ":name/network" do
-
           erb :'groups/show.html', {
               locals: locals(tab: "network")
             }, {

@@ -24,14 +24,15 @@ function createIntegrationDeletionConfirmationText(rowData) {
   }, and all associated data (pacts, verifications, application versions, tags and webhooks) that are not associated with other integrations. Do you wish to continue?`;
 }
 
-function createPactTagDeletionConfirmationText({
+function createPactTagOrBranchDeletionConfirmationText({
   providerName,
   consumerName,
-  pactTagName
+  refName,
+  scope
 }) {
   return `This will delete the pacts for provider ${providerName} and all versions of ${
     consumerName
-  } with tag ${pactTagName}. Do you wish to continue?`;
+  } ${scope} ${refName}. Do you wish to continue?`;
 }
 
 function handleDeletePactsSelected(clickedElement) {
@@ -50,24 +51,26 @@ function handleDeleteIntegrationsSelected(clickedElement) {
   handleDeleteResourcesSelected(tr, tr.data().integrationUrl, confirmationText);
 }
 
-function handleDeleteTagSelected({
+function handleDeleteTagOrBranchSelected({
   providerName,
   consumerName,
-  pactTagName,
-  deletionUrl
+  refName,
+  deletionUrl,
+  scope
 }) {
   return function(clickedElement) {
     const tr = $(clickedElement).closest("tr");
-    const confirmationText = createPactTagDeletionConfirmationText({
+    const confirmationText = createPactTagOrBranchDeletionConfirmationText({
       providerName,
       consumerName,
-      pactTagName
+      refName,
+      scope
     });
     handleDeleteResourcesSelected(
       tr,
       deletionUrl,
       confirmationText,
-      pactTagName
+      refName
     );
   };
 }
@@ -220,28 +223,43 @@ function buildMaterialMenuItems(clickedElementData) {
     }
   ];
 
-  const taggedPacts = clickedElementData.taggedPacts || [];
   const providerName = clickedElementData.providerName;
   const consumerName = clickedElementData.consumerName;
-  const taggedPactsOptions = taggedPacts.map(taggedPact => {
-    const taggedPactObject = JSON.parse(taggedPact);
-    const pactTagName = taggedPactObject.tag;
-    const taggedPactUrl = taggedPactObject.deletionUrl;
+  const taggedPactsOptions = (clickedElementData.pactTags || []).map(tag => {
+    const refName = tag.name;
+    const deletionUrl = tag.deletionUrl;
     return {
       type: "normal",
-      text: `Delete pacts for tag ${pactTagName}...`,
-      click: handleDeleteTagSelected({
+      text: `Delete pacts for tag ${refName}...`,
+      click: handleDeleteTagOrBranchSelected({
         providerName,
         consumerName,
-        pactTagName,
-        deletionUrl: taggedPactUrl
+        refName,
+        deletionUrl,
+        scope: "with tag"
       })
     };
   });
 
-  if(taggedPactsOptions.length) {
-    return taggedPactsOptions;
-  } else {
+  const branchOptions = (clickedElementData.pactBranches || []).map(branch => {
+      const refName = branch.name;
+      const deletionUrl = branch.deletionUrl;
+      return {
+        type: "normal",
+        text: `Delete pacts from branch ${refName}...`,
+        click: handleDeleteTagOrBranchSelected({
+          providerName,
+          consumerName,
+          refName,
+          deletionUrl: deletionUrl,
+          scope: "for branch"
+        })
+      };
+    });
+
+  if (clickedElementData.index) {
     return baseOptions;
+  } else {
+    return [...branchOptions, ...taggedPactsOptions];
   }
 }

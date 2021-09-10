@@ -130,8 +130,9 @@ module PactBroker
         provider = pacticipant_repository.find_by_name!(options.fetch(:and))
         query = scope_for(PactPublication).where(consumer: consumer, provider: provider)
         query = query.tag(options[:tag]) if options[:tag]
+        query = query.for_branch_name(options[:branch_name]) if options[:branch_name]
 
-        ids = query.select_for_subquery(:id)
+        ids = query.select_for_subquery(Sequel[:pact_publications][:id])
         webhook_repository.delete_triggered_webhooks_by_pact_publication_ids(ids)
         unscoped(PactPublication).where(id: ids).delete
       end
