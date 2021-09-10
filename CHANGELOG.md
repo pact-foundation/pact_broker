@@ -1,3 +1,22 @@
+<a name="v2.84.0"></a>
+### v2.84.0 (2021-09-10)
+
+#### Features
+
+* use the first tag as the branch when publishing pacts using the contracts/publish endpoint	 ([7b903c1d](/../../commit/7b903c1d))
+* support multiple branches per version (#495)	 ([acff2fcc](/../../commit/acff2fcc))
+* Support deleting all pacts for a specific tag in the UI (#480)	 ([10dda8ae](/../../commit/10dda8ae))
+* add webhook template parameter for GItlab verification statuses (#493)	 ([390ae0d8](/../../commit/390ae0d8))
+
+* **pacts for verification**
+  * include pending status for responses by default when includePendingStatus is not specified	 ([748d3b87](/../../commit/748d3b87))
+
+#### Bug Fixes
+
+* when the latest version for a tag does not have a pact, do not return a pact for the 'latest tag' selector	 ([374c77ce](/../../commit/374c77ce))
+* issue-reproduction/Dockerfile-pact-broker to reduce vulnerabilities (#491)	 ([9692b465](/../../commit/9692b465))
+* Dockerfile to reduce vulnerabilities (#496)	 ([57c190ef](/../../commit/57c190ef))
+
 <a name="v2.83.0"></a>
 ### v2.83.0 (2021-08-19)
 
