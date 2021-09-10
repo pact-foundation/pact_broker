@@ -51,12 +51,12 @@ module PactBroker
 
       def log_detected_event
         event = detected_events.last
-        logger.info "Event detected", payload: { event_name: event.name, event_comment: event.comment }
+        logger.debug "Event detected", payload: { event_name: event.name, event_comment: event.comment }
         if event.triggered_webhooks&.any?
-          triggered_webhook_descriptions = event.triggered_webhooks.collect{ |tw| { webhook_uuid: tw.webhook_uuid, triggered_webhook_uuid: tw.uuid, webhook_description: tw.webhook.description } }
+          triggered_webhook_descriptions = event.triggered_webhooks.collect{ |tw| { event_name: event.name, webhook_uuid: tw.webhook_uuid, triggered_webhook_uuid: tw.uuid, webhook_description: tw.webhook.description } }
           logger.info "Triggered webhooks for #{event.name}", payload: { triggered_webhooks: triggered_webhook_descriptions }
         else
-          logger.info "No enabled webhooks found for event #{event.name}"
+          logger.debug "No enabled webhooks found for event #{event.name}"
         end
       end
 
