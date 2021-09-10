@@ -311,7 +311,7 @@ module PactBroker
       end
 
       def group_url(pacticipant_name, base_url = "")
-        "#{base_url}/groups/#{url_encode(pacticipant_name)}"
+        "#{base_url}/pacticipants/#{url_encode(pacticipant_name)}"
       end
 
       def environments_url(base_url = "")

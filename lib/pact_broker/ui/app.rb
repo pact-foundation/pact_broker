@@ -4,6 +4,7 @@ require "pact_broker/ui/controllers/pacts"
 require "pact_broker/ui/controllers/matrix"
 require "pact_broker/ui/controllers/can_i_deploy"
 require "pact_broker/ui/controllers/error_test"
+require "pact_broker/ui/controllers/dashboard"
 require "pact_broker/doc/controllers/app"
 
 module PactBroker
@@ -30,7 +31,7 @@ module PactBroker
             run PactBroker::UI::Controllers::Index
           end
 
-          map "/groups" do
+          map "/pacticipants" do
             run PactBroker::UI::Controllers::Groups
           end
 
@@ -56,6 +57,11 @@ module PactBroker
           map "/test/error" do
             use PathInfoFixer
             run PactBroker::UI::Controllers::ErrorTest
+          end
+
+          map "/dashboard" do
+            use PathInfoFixer
+            run PactBroker::UI::Controllers::Dashboard
           end
 
           map "/" do

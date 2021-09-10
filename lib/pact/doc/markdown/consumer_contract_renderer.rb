@@ -24,7 +24,7 @@ module Pact
         attr_reader :consumer_contract
 
         def title
-          "### A pact between #{consumer_name} and #{provider_name}\n\n"
+          "# A pact between #{consumer_name} and #{provider_name}\n\n"
         end
 
         def interaction_renderers
@@ -32,11 +32,11 @@ module Pact
         end
 
         def summaries_title
-          "#### Requests from #{consumer_name} to #{provider_name}\n\n"
+          "### Requests from #{consumer_name} to #{provider_name}\n\n"
         end
 
         def interactions_title
-          "#### Interactions\n\n"
+          "### Interactions\n\n"
         end
 
         def summaries

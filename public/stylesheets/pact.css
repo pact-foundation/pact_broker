@@ -1,4 +1,5 @@
 div.pact-metadata {
+  margin-top: 40px;
   float: right;
 }
 
@@ -40,4 +41,14 @@ span.kebab-horizontal {
 
 span.more-options {
   float: right;
+}
+
+/* same as .page-header */
+h1 {
+  padding-bottom: 2rem;
+  margin: 40px 0 20px;
+}
+
+h3 {
+  margin-top: 2rem;
 }

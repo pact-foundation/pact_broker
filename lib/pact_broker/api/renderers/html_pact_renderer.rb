@@ -29,7 +29,7 @@ module PactBroker
           "<html>
             <head>#{head}</head>
             <body>
-              #{pact_metadata}#{html}
+              #{breadcrumbs}#{pact_metadata}#{html}
             </body>
           </html>"
         end
@@ -39,10 +39,10 @@ module PactBroker
         def head
           "<title>#{title}</title>
           <link rel='stylesheet' type='text/css' href='#{base_url}/stylesheets/github.css'>
-          <link rel='stylesheet' type='text/css' href='#{base_url}/stylesheets/pact.css'>
           <link rel='stylesheet' type='text/css' href='#{base_url}/stylesheets/github-json.css'>
           <link rel='stylesheet' type='text/css' href='#{base_url}/css/bootstrap.min.css'>
           <link rel='stylesheet' type='text/css' href='#{base_url}/stylesheets/material-menu.css'>
+          <link rel='stylesheet' type='text/css' href='#{base_url}/stylesheets/pact.css'>
           <link rel='stylesheet' type='text/css' href='#{base_url}/stylesheets/jquery-confirm.min.css'>
           <script src='#{base_url}/javascripts/highlight.pack.js'></script>
           <script src='#{base_url}/javascripts/jquery-3.5.1.min.js'></script>
@@ -51,6 +51,17 @@ module PactBroker
           <script src='#{base_url}/javascripts/pact.js'></script>
           <script src='#{base_url}/javascripts/jquery-confirm.min.js'></script>
           <script>hljs.initHighlightingOnLoad();</script>"
+        end
+
+        def breadcrumbs
+          "
+          <nav aria-label=\"breadcrumb\">
+            <ol class=\"breadcrumb\" style=\"margin:0; margin-bottom:1rem\">
+              <li class=\"breadcrumb-item\" style=\"margin:0;\"><a href=\"#{base_url}/\">Home</a></li>
+              <li class=\"breadcrumb-item active\" aria-current=\"page\" style=\"margin:0;\">Pact</li>
+            </ol>
+          </nav>
+          "
         end
 
         def pact_metadata
@@ -67,18 +78,11 @@ module PactBroker
                 <span class='value' title='#{published_date}'>#{published_date_in_words}</span>
               </li>
               <li>
-                <a href=\"#{json_url}\">View in API Browser</a>
-              </li>
-              <li>
-                <a href=\"#{matrix_url}\">View Matrix</a>
-              </li>
-              <li>
-                <a href=\"#{base_url}/\">Home</a>
-              </li>
-              <li>
                 <span data-consumer-name=\"#{consumer_name}\"
                       data-provider-name=\"#{provider_name}\"
                       data-consumer-version-number=\"#{consumer_version_number}\"
+                      data-api-browser-url=\"#{json_url}\"
+                      data-matrix-url=\"#{matrix_url}\"
                       data-pact-url=\"#{pact_url}\"
                       class='more-options kebab-horizontal'
                       aria-hidden='true'></span>

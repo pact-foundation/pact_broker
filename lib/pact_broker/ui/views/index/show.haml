@@ -13,7 +13,7 @@
           = error
 
     %form{action: "#{base_url}"}
-      .field
+      .search-field
         %label{for: 'search'}
           Search
         %input{name: 'search', id: 'search', class: 'search', value: search}
@@ -42,27 +42,27 @@
           %th
       %tbody
         - index_items.each do | index_item |
-          %tr{'data-pact-versions-url': index_item.pact_versions_url, 'data-consumer-name': index_item.consumer_name, 'data-provider-name': index_item.provider_name, 'data-integration-url': index_item.integration_url}
-            %td
-            %td.consumer
+          %tr{'class':'pact-row', 'data-pact-versions-url': index_item.pact_versions_url, 'data-consumer-name': index_item.consumer_name, 'data-provider-name': index_item.provider_name, 'data-integration-url': index_item.integration_url, 'data-href':"/dashboard/provider/#{index_item.provider_name}/consumer/#{index_item.consumer_name}"}
+            %td{'role':"button"}
+            %td.consumer{'role':"button"}
               %a{ href: index_item.consumer_group_url }
                 = index_item.consumer_name
-            %td.pact
+            %td.pact{'role':"button"}
               %span.pact
                 %a{ href: index_item.latest_pact_url, :title => "View pact" }
               %span.pact-matrix
                 %a{ href: index_item.pact_matrix_url, title: "View pact matrix" }
-            %td.provider
+            %td.provider{'role':"button"}
               %a{ href: index_item.provider_group_url }
                 = index_item.provider_name
-            %td
-            %td{"data-text": index_item.publication_date_of_latest_pact_order}
+            %td{'role':"button"}
+            %td{"data-text": index_item.publication_date_of_latest_pact_order, 'role':"button"}
               = index_item.publication_date_of_latest_pact
-            %td{class: "table-#{index_item.webhook_status}"}
+            %td{class: "table-#{index_item.webhook_status}", 'role':"button"}
               %a{ href: index_item.webhook_url }
                 = index_item.webhook_label
 
-            %td{ class: "table-#{index_item.pseudo_branch_verification_status}", title: index_item.verification_tooltip, "data-toggle": "tooltip", "data-placement": "left" }
+            %td{ class: "table-#{index_item.pseudo_branch_verification_status}", title: index_item.verification_tooltip, "data-toggle": "tooltip", "data-placement": "left", 'role':"button"}
               %div
                 = index_item.last_verified_date
                 - if index_item.warning?
@@ -75,6 +75,11 @@
     - pagination_locals = { page_number: page_number, page_size: page_size, pagination_record_count: pagination_record_count, current_page_size: current_page_size }
     != render :haml, :'index/_pagination', :layout => false, locals: pagination_locals
 
+  :css
+    .table tbody tr:hover td, .table tbody tr:hover th {
+        background-color: #ccc;
+        cursor: pointer;
+    }
 
   :javascript
     $(function(){
@@ -88,6 +93,12 @@
         //appended tooltip div screws up table if it's appended after a
         //td, so need to append it to a div
         $(td).tooltip({container: $(td).first()});
+      });
+
+      $(function(){
+        $(".table").on("click", "td[role=\"button\"]", function (e) {
+          window.location = $(this).parent("tr").data("href");
+        });
       });
     });
 

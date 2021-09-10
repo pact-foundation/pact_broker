@@ -8,20 +8,20 @@ $(document).ready(function() {
       position: "overlay",
       animationSpeed: 1,
       items: [
-        // {
-        //   type: "normal",
-        //   text: "View in API Browser",
-        //   click: function(openMenuElement) {
-        //     window.location.href = openMenuElement.data().apiBrowserUrl;
-        //   }
-        // },
-        // {
-        //   type: "normal",
-        //   text: "View Matrix",
-        //   click: function(openMenuElement) {
-        //     window.location.href = openMenuElement.data().matrixUrl;
-        //   }
-        // },
+        {
+          type: "normal",
+          text: "View in API Browser",
+          click: function(openMenuElement) {
+            window.location.href = openMenuElement.data().apiBrowserUrl;
+          }
+        },
+        {
+          type: "normal",
+          text: "View Matrix",
+          click: function(openMenuElement) {
+            window.location.href = openMenuElement.data().matrixUrl;
+          }
+        },
         {
           type: "normal",
           text: "Delete ...",

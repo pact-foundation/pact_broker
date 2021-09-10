@@ -233,12 +233,11 @@ span.copy-success-icon {
   height: 16px;
 }
 
-.field {
+.search-field {
   margin-top: 15px;
   margin-bottom: 15px;
 }
 
 div.top-of-group {
   margin-top: 20px;
-  margin-bottom: 20px;
 }

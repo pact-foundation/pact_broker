@@ -134,53 +134,32 @@ function handleDeleteResourcesSelected(
     rowData.providerName,
     tagName
   );
-  const isRefreshingThePage = !!tagName;
   const cancelled = function() {
-    unHighlightRows(rows);
+    unHighlightRows(row);
   };
   const confirmed = function() {
     deleteResources(
       deletionUrl,
-      function() {
-        handleDeletionSuccess(rows, isRefreshingThePage);
-      },
+      handleDeletionSuccess,
       function(response) {
-        handleDeletionFailure(rows, response);
+        handleDeletionFailure(row, response);
       }
     );
   };
 
-  if (!isRefreshingThePage) {
-    highlightRowsToBeDeleted(rows);
-  }
-  confirmDeleteResources(confirmationText, confirmed, cancelled);
-}
 
-function hideDeletedRows(rows) {
-  rows
-    .children("td, th")
-    .animate({ padding: 0 })
-    .wrapInner("<div />")
-    .children()
-    .slideUp(function() {
-      $(this)
-        .closest("tr")
-        .remove();
-    });
+  highlightRowsToBeDeleted(row);
+
+  confirmDeleteResources(confirmationText, confirmed, cancelled);
 }
 
 function refreshPage() {
   const url = new URL(window.location);
-  url.searchParams.delete("search");
   window.location = url.toString();
 }
 
-function handleDeletionSuccess(rows, isRefreshingThePage) {
-  if (isRefreshingThePage) {
-    return refreshPage();
-  }
-
-  hideDeletedRows(rows);
+function handleDeletionSuccess() {
+  return refreshPage();
 }
 
 function createErrorMessage(responseBody) {
@@ -250,7 +229,7 @@ function buildMaterialMenuItems(clickedElementData) {
     const taggedPactUrl = taggedPactObject.deletionUrl;
     return {
       type: "normal",
-      text: `Delete pacts for ${pactTagName}...`,
+      text: `Delete pacts for tag ${pactTagName}...`,
       click: handleDeleteTagSelected({
         providerName,
         consumerName,
@@ -260,5 +239,9 @@ function buildMaterialMenuItems(clickedElementData) {
     };
   });
 
-  return [...baseOptions, ...taggedPactsOptions];
+  if(taggedPactsOptions.length) {
+    return taggedPactsOptions;
+  } else {
+    return baseOptions;
+  }
 }

@@ -8,7 +8,7 @@ module PactBroker
         extend self
 
         def group_url pacticipant_name, base_url = ""
-          "#{base_url}/groups/#{ERB::Util.url_encode(pacticipant_name)}"
+          "#{base_url}/pacticipants/#{ERB::Util.url_encode(pacticipant_name)}"
         end
 
         def matrix_url consumer_name, provider_name, base_url = ""
