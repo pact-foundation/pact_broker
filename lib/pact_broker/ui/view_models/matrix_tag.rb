@@ -6,7 +6,6 @@ module PactBroker
   module UI
     module ViewDomain
       class MatrixTag
-
         include PactBroker::Api::PactBrokerUrls
 
         attr_reader :name, :pacticipant_name, :version_number

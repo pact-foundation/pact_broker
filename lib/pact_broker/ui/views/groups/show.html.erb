@@ -55,14 +55,14 @@ svg{
 
 <ul class="nav nav-tabs">
   <li class="nav-item">
-    <a class="nav-link <%= tab == "properties" ? "active" : "" %>" href="<%= properties_url %>">Properties</a>
+    <a class="nav-link <%= tab == "details" ? "active" : "" %>" href="<%= details_url %>">Details</a>
   </li>
   <li class="nav-item">
     <a class="nav-link <%= tab == "network" ? "active" : "" %>" href="<%= network_url %>">Network Graph</a>
   </li>
 </ul>
 
-<% if tab == "properties" %>
+<% if tab == "details" %>
   <div class="container mt-5">
     <div class="row">
       <div class="col col-md-2">

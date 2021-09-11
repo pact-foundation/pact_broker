@@ -22,7 +22,7 @@ module PactBroker
           if branch_version.latest?
             "This is the latest version of #{pacticipant_name} from branch \"#{branch_version.branch_name}\"."
           else
-            "A more recent version of #{pacticipant_name} from branch \"#{branch_version.branch_name}\" exists."
+            "This version of #{pacticipant_name} is from branch \"#{branch_version.branch_name}\". A more recent version from this branch exists."
           end
         end
 

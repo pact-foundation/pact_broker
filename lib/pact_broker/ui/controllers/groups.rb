@@ -12,7 +12,7 @@ module PactBroker
 
         get ":name" do
           erb :'groups/show.html', {
-              locals: locals(tab: "properties")
+              locals: locals(tab: "details")
             }, {
               layout: "layouts/main",
             }
@@ -34,7 +34,7 @@ module PactBroker
             repository_url: pacticipant&.repository_url,
             base_url: base_url,
             pacticipant: pacticipant,
-            properties_url: "#{base_url}/pacticipants/#{ERB::Util.url_encode(params[:name])}",
+            details_url: "#{base_url}/pacticipants/#{ERB::Util.url_encode(params[:name])}",
             network_url: "#{base_url}/pacticipants/#{ERB::Util.url_encode(params[:name])}/network"
           }.merge(overrides)
         end
