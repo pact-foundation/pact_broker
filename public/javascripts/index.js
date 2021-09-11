@@ -210,38 +210,11 @@ function deleteResources(url, successCallback, errorCallback) {
 }
 
 function buildMaterialMenuItems(clickedElementData) {
-  const baseOptions = [
-    {
-      type: "normal",
-      text: "Delete pacts ...",
-      click: handleDeletePactsSelected
-    },
-    {
-      type: "normal",
-      text: "Delete integration...",
-      click: handleDeleteIntegrationsSelected
-    }
-  ];
-
   const providerName = clickedElementData.providerName;
   const consumerName = clickedElementData.consumerName;
-  const taggedPactsOptions = (clickedElementData.pactTags || []).map(tag => {
-    const refName = tag.name;
-    const deletionUrl = tag.deletionUrl;
-    return {
-      type: "normal",
-      text: `Delete pacts for tag ${refName}...`,
-      click: handleDeleteTagOrBranchSelected({
-        providerName,
-        consumerName,
-        refName,
-        deletionUrl,
-        scope: "with tag"
-      })
-    };
-  });
 
-  const branchOptions = (clickedElementData.pactBranches || []).map(branch => {
+  if (clickedElementData.view === "branch" || clickedElementData.view === "all") {
+    return (clickedElementData.pactBranches || []).map(branch => {
       const refName = branch.name;
       const deletionUrl = branch.deletionUrl;
       return {
@@ -256,10 +229,36 @@ function buildMaterialMenuItems(clickedElementData) {
         })
       };
     });
-
-  if (clickedElementData.index) {
-    return baseOptions;
+  } else if (clickedElementData.view === "tag" || clickedElementData.view === "all") {
+    return (clickedElementData.pactTags || []).map(tag => {
+    const refName = tag.name;
+    const deletionUrl = tag.deletionUrl;
+      return {
+        type: "normal",
+        text: `Delete pacts for tag ${refName}...`,
+        click: handleDeleteTagOrBranchSelected({
+          providerName,
+          consumerName,
+          refName,
+          deletionUrl,
+          scope: "with tag"
+        })
+      };
+    });
+  } else if (clickedElementData.index) {
+    return [
+      {
+        type: "normal",
+        text: "Delete pacts ...",
+        click: handleDeletePactsSelected
+      },
+      {
+        type: "normal",
+        text: "Delete integration...",
+        click: handleDeleteIntegrationsSelected
+      }
+    ];
   } else {
-    return [...branchOptions, ...taggedPactsOptions];
+    return []
   }
 }

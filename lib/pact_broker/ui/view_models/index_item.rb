@@ -57,6 +57,10 @@ module PactBroker
           PactBroker::Versions::AbbreviateNumber.call(provider_version_number)
         end
 
+        def display_latest_label?
+          consumer_version_latest_tag_names.empty? && @relationship.tag_names.empty?
+        end
+
         def latest?
           @relationship.latest?
         end

@@ -216,6 +216,27 @@ module PactBroker
         end
       end
 
+      def in_environments
+        currently_deployed_join = {
+          Sequel[:pact_publications][:consumer_version_id] => Sequel[:currently_deployed_version_ids][:version_id]
+        }
+
+        released_join = {
+          Sequel[:pact_publications][:consumer_version_id] => Sequel[:released_versions][:version_id],
+          Sequel[:released_versions][:support_ended_at] => nil
+        }
+
+        base_query = self
+        if no_columns_selected?
+          base_query = base_query.select_all_qualified
+        end
+
+        deployed = base_query.join(:currently_deployed_version_ids, currently_deployed_join)
+        released = base_query.join(:released_versions, released_join)
+
+        deployed.union(released)
+      end
+
       def verified_before_date(date)
         where { Sequel[:verifications][:execution_date] < date }
       end

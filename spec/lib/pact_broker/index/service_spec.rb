@@ -1,12 +1,8 @@
-require "spec_helper"
 require "pact_broker/index/service"
-require "pact_broker/domain/tag"
-require "pact_broker/domain/pact"
 
 module PactBroker
   module Index
     describe Service do
-      let(:td) { TestDataBuilder.new }
       let(:tags) { ["prod", "production"] }
       let(:options) { { tags: tags, page_size: page_size, page_number: page_number } }
       let(:page_number) { nil }
@@ -19,7 +15,7 @@ module PactBroker
 
       subject { Service }
 
-      describe "find_relationships integration test" do
+      describe "find_index_items integration test" do
         context "when a prod pact exists and is not the latest version" do
           before do
             td.create_pact_with_hierarchy("Foo", "1.2.3", "Bar")

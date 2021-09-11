@@ -27,11 +27,11 @@
           %th.consumer
             Consumer
             %span.sort-icon.relationships-sort
-          %th.pact
 
           %th.provider
             Provider
             %span.sort-icon.relationships-sort
+          %th.pact
           %th
           %th
             Latest pact<br>published
@@ -55,14 +55,14 @@
             %td.consumer{'role':"button"}
               %a{ href: index_item.consumer_group_url }
                 = index_item.consumer_name
+            %td.provider{'role':"button"}
+              %a{ href: index_item.provider_group_url }
+                = index_item.provider_name
             %td.pact{'role':"button"}
               %span.pact
                 %a{ href: index_item.latest_pact_url, :title => "View pact" }
               %span.pact-matrix
                 %a{ href: index_item.pact_matrix_url, title: "View pact matrix" }
-            %td.provider{'role':"button"}
-              %a{ href: index_item.provider_group_url }
-                = index_item.provider_name
             %td{'role':"button"}
             %td{"data-text": index_item.publication_date_of_latest_pact_order, 'role':"button"}
               = index_item.publication_date_of_latest_pact

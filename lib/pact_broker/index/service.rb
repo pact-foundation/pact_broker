@@ -157,25 +157,27 @@ module PactBroker
           return base.paginate(options[:page_number] || DEFAULT_PAGE_NUMBER, options[:page_size] || DEFAULT_PAGE_SIZE) if pacticipant_ids.blank?
         end
 
-        ids_query = query_pact_publication_ids_by_tags(base, options[:tags])
-        query = PactBroker::Pacts::PactPublication
-                  .select_all_qualified
-                  .where(Sequel[:pact_publications][:id] => ids_query)
-                  .join_consumers(:consumers)
-                  .join_providers(:providers)
-                  .join(:versions,
-                        { Sequel[:pact_publications][:consumer_version_id] => Sequel[:cv][:id] },
-                        { table_alias: :cv }
-                       )
+        ids_query = if options[:view]
+                      pact_publications_by_view(base, options)
+                    else
+                      query_pact_publication_ids_by_tags(base, options[:tags])
+                    end
 
-        order_columns = [
-          Sequel.asc(Sequel.function(:lower, Sequel[:consumers][:name])),
-          Sequel.desc(Sequel[:cv][:order]),
-          Sequel.asc(Sequel.function(:lower, Sequel[:providers][:name]))
-        ]
+        select_columns_and_order(ids_query, options)
+      end
 
-        query.order(*order_columns)
-          .paginate(options[:page_number] || DEFAULT_PAGE_NUMBER, options[:page_size] || DEFAULT_PAGE_SIZE)
+      def self.pact_publications_by_view(query, options)
+        case options[:view]
+        when "branch" then query.latest_by_consumer_branch
+        when "tag" then query.latest_by_consumer_tag
+        when "environment" then query.in_environments
+        else
+          query
+            .overall_latest
+            .union(query.latest_by_consumer_branch)
+            .union(query.latest_by_consumer_tag)
+            .union(query.in_environments)
+        end
       end
 
       # eager loading the tag stuff doesn't seem to make it quicker
@@ -223,7 +225,27 @@ module PactBroker
         pacticipant_repository.search_by_name(pacticipant_name).collect(&:id)
       end
 
-      private_class_method :base_query, :query_pact_publication_ids_by_tags, :pact_pacticipant_ids_by_name
+      def self.select_columns_and_order(ids_query, options)
+        query = PactBroker::Pacts::PactPublication
+                  .select_all_qualified
+                  .where(Sequel[:pact_publications][:id] => ids_query)
+                  .join_consumers(:consumers)
+                  .join_providers(:providers)
+
+
+        order_columns = [
+          Sequel.asc(Sequel.function(:lower, Sequel[:consumers][:name])),
+          Sequel.desc(Sequel[:pact_publications][:consumer_version_order]),
+          Sequel.asc(Sequel.function(:lower, Sequel[:providers][:name]))
+        ]
+
+        pact_number = options[:page_number] || DEFAULT_PAGE_NUMBER
+        page_size = options[:page_size] || DEFAULT_PAGE_SIZE
+
+        query.order(*order_columns).paginate(pact_number, page_size)
+      end
+
+      private_class_method :base_query, :query_pact_publication_ids_by_tags, :pact_pacticipant_ids_by_name, :select_columns_and_order
     end
   end
 end

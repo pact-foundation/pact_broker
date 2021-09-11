@@ -14,12 +14,14 @@ module PactBroker
           page_number = params[:page]&.to_i || 1
           # Make page size smaller for data intensive query
           page_size = params[:pageSize]&.to_i || 30
+          view = params[:view] || "branch"
           options = {
             tags: tags,
             page_number: page_number,
             page_size: page_size,
             consumer_name: params[:consumer_name],
-            provider_name: params[:provider_name]
+            provider_name: params[:provider_name],
+            view: view
           }.compact
           error_messages = []
 
@@ -44,7 +46,8 @@ module PactBroker
             current_page_size: view_index_items.size,
             base_url: base_url,
             errors: error_messages,
-            tags: tags
+            tags: tags,
+            view: view
           }
 
           haml page, { locals: locals, layout: :'layouts/main', escape_html: true }
