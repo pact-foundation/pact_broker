@@ -104,7 +104,7 @@ module PactBroker
       end
 
       def retry_schedule
-        PactBroker.configuration.webhook_retry_schedule
+        data[:webhook_execution_configuration].retry_schedule
       end
     end
   end

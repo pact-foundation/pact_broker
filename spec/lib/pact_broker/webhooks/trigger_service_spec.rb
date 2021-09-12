@@ -340,6 +340,9 @@ module PactBroker
         let(:webhook_execution_configuration) do
           PactBroker::Webhooks::ExecutionConfiguration.new
             .with_webhook_context(base_url: "http://example.org")
+            .with_retry_schedule([10, 60, 120, 300, 600, 1200])
+            .with_http_success_codes([200])
+            .with_user_agent("Pact Broker")
             .with_show_response(true)
         end
         let(:event_context) { { some: "data", base_url: "http://example.org" }}
@@ -361,7 +364,7 @@ module PactBroker
             .and_return(:pact)
         end
 
-        let(:triggered_webhooks) { PactBroker::Webhooks::TriggerService.create_triggered_webhooks_for_event(pact, td.verification, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED, event_context) }
+        let!(:triggered_webhooks) { PactBroker::Webhooks::TriggerService.create_triggered_webhooks_for_event(pact, td.verification, PactBroker::Webhooks::WebhookEvent::CONTRACT_CONTENT_CHANGED, event_context) }
 
         subject {  PactBroker::Webhooks::TriggerService.schedule_webhooks(triggered_webhooks, options) }
 
@@ -375,10 +378,6 @@ module PactBroker
           subject
         end
 
-        it "saves the triggered webhook" do
-          expect { subject }.to change { PactBroker::Webhooks::TriggeredWebhook.count }.by(1)
-        end
-
         it "saves the execution" do
           expect { subject }.to change { PactBroker::Webhooks::Execution.count }.by(1)
         end
@@ -386,6 +385,11 @@ module PactBroker
         it "marks the triggered webhook as a success" do
           subject
           expect(TriggeredWebhook.first.status).to eq TriggeredWebhook::STATUS_SUCCESS
+        end
+
+        it "does not call the PactBroker.configuration as it will have been reset after the end of the request" do
+          expect(PactBroker).to_not receive(:configuration)
+          subject
         end
       end
     end

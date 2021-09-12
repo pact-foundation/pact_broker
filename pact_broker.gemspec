@@ -66,4 +66,5 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency "sanitize", ">= 5.2.1", "~> 5.2"
   gem.add_runtime_dependency "wisper", "~> 2.0"
   gem.add_runtime_dependency "anyway_config", "~> 2.1"
+  gem.add_runtime_dependency "request_store", "~> 1.5"
 end

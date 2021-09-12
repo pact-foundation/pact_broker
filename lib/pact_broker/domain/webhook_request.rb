@@ -18,7 +18,7 @@ module PactBroker
 
       HEADERS_TO_REDACT = [/authorization/i, /token/i]
 
-      attr_accessor :method, :url, :headers, :body, :username, :password, :uuid
+      attr_accessor :method, :url, :headers, :body, :username, :password, :uuid, :user_agent
 
       # Reform gets confused by the :method method, as :method is a standard
       # Ruby method.
@@ -58,7 +58,7 @@ module PactBroker
         @http_request ||= begin
           req = Net::HTTP.const_get(method.capitalize).new(uri.request_uri)
           req.delete("accept-encoding")
-          req["user-agent"] = PactBroker.configuration.user_agent
+          req["user-agent"] = user_agent
           headers.each_pair { | name, value | req[name] = value }
           req.basic_auth(username, password) if username && username.size > 0
           req.body = body unless body.nil?

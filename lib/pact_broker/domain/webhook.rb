@@ -50,17 +50,12 @@ module PactBroker
       def execute pact, verification, event_context, options
         logger.info "Executing #{self} event_context=#{event_context}"
         template_params = template_parameters(pact, verification, event_context, options)
-        webhook_request = request.build(template_params)
+        webhook_request = request.build(template_params, options.fetch(:user_agent))
         http_response, error = execute_request(webhook_request)
-
-        logs = generate_logs(webhook_request, http_response, error, event_context, options.fetch(:logging_options))
+        success = success?(http_response, options)
         http_request = webhook_request.http_request
-        PactBroker::Webhooks::WebhookExecutionResult.new(
-          http_request,
-          http_response,
-          logs,
-          error
-        )
+        logs = generate_logs(webhook_request, http_response, success, error, event_context, options.fetch(:logging_options))
+        result(http_request, http_response, success, logs, error)
       end
 
       def to_s
@@ -116,14 +111,31 @@ module PactBroker
         PactBroker::Webhooks::PactAndVerificationParameters.new(pact, verification, event_context).to_hash
       end
 
-      def generate_logs(webhook_request, http_response, error, event_context, logging_options)
+      def success?(http_response, options)
+        !http_response.nil? && options.fetch(:http_success_codes).include?(http_response.code.to_i)
+      end
+
+      # rubocop: disable Metrics/ParameterLists
+      def generate_logs(webhook_request, http_response, success, error, event_context, logging_options)
         webhook_request_logger = PactBroker::Webhooks::WebhookRequestLogger.new(logging_options)
         webhook_request_logger.log(
           uuid,
           webhook_request,
           http_response,
+          success,
           error,
           event_context
+        )
+      end
+      # robocop: enable Metrics/ParameterLists
+
+      def result(http_request, http_response, success, logs, error)
+        PactBroker::Webhooks::WebhookExecutionResult.new(
+          http_request,
+          http_response,
+          success,
+          logs,
+          error
         )
       end
     end

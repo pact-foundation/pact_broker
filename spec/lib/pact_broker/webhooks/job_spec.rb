@@ -5,7 +5,6 @@ module PactBroker
   module Webhooks
     describe Job do
       before do
-        PactBroker.configuration.webhook_retry_schedule = [10, 60, 120, 300, 600, 1200]
         allow(PactBroker::Webhooks::TriggerService).to receive(:execute_triggered_webhook_now).and_return(result)
         allow(PactBroker::Webhooks::Service).to receive(:update_triggered_webhook_status)
         allow(PactBroker::Webhooks::TriggeredWebhook).to receive(:find).and_return(triggered_webhook)
@@ -17,12 +16,15 @@ module PactBroker
       let(:base_url) { "http://broker" }
       let(:triggered_webhook) { instance_double("PactBroker::Webhooks::TriggeredWebhook", webhook_uuid: "1234", id: 1) }
       let(:result) { instance_double("PactBroker::Domain::WebhookExecutionResult", success?: success) }
-      let(:webhook_execution_configuration) { instance_double(PactBroker::Webhooks::ExecutionConfiguration, to_hash: webhook_execution_configuration_hash) }
+      let(:webhook_execution_configuration) do
+        instance_double(PactBroker::Webhooks::ExecutionConfiguration, retry_schedule: retry_schedule, to_hash: webhook_execution_configuration_hash)
+      end
       let(:webhook_execution_configuration_hash) { { the: "options" } }
       let(:success) { true }
       let(:logger) { double("logger").as_null_object }
       let(:database_connector) { ->(&block) { block.call } }
       let(:webhook_context) { { the: "context" } }
+      let(:retry_schedule) { [10, 60, 120, 300, 600, 1200] }
       let(:job_params) do
         {
           triggered_webhook: triggered_webhook,
@@ -124,8 +126,6 @@ module PactBroker
           allow(PactBroker::Webhooks::TriggerService).to receive(:execute_triggered_webhook_now).and_raise("an error")
           job_params[:error_count] = 1
         end
-
-        # subject { Job.new.perform(triggered_webhook: triggered_webhook, error_count: 1, database_connector: database_connector, base_url: base_url) }
 
         it "reschedules the job in 60 seconds" do
           expect(Job).to receive(:perform_in).with(60, hash_including(error_count: 2))

@@ -29,15 +29,17 @@ module PactBroker
         @options = options
       end
 
-      def log(uuid, webhook_request, http_response, error, webhook_context)
+      # rubocop: disable Metrics/ParameterLists
+      def log(uuid, webhook_request, http_response, success, error, webhook_context)
         safe_response = http_response ? HttpResponseWithUtf8SafeBody.new(http_response) : nil
         log_webhook_context(webhook_context)
         log_request(webhook_request)
         log_response(uuid, safe_response, webhook_context[:base_url]) if safe_response
         log_error(uuid, error, webhook_context[:base_url]) if error
-        log_completion_message(success?(safe_response))
+        log_completion_message(success)
         log_stream.string
       end
+      # rubocop: enable Metrics/ParameterLists
 
       private
 
@@ -115,16 +117,6 @@ module PactBroker
           execution_logger.error "Error executing webhook #{uuid}. #{response_body_hidden_message(base_url)}"
         end
       end
-
-      def success?(response)
-        if response
-          # Response HTTP Code must be in success list otherwise it is false
-          PactBroker.configuration.webhook_http_code_success.include? response.code.to_i
-        else
-          false
-        end
-      end
-
     end
   end
 end

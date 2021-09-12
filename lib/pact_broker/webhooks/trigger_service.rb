@@ -31,8 +31,8 @@ module PactBroker
       end
 
       def execute_triggered_webhook_now triggered_webhook, webhook_execution_configuration_hash
-        webhook_execution_result = triggered_webhook.execute webhook_execution_configuration_hash
-        webhook_repository.create_execution triggered_webhook, webhook_execution_result
+        webhook_execution_result = triggered_webhook.execute(webhook_execution_configuration_hash)
+        webhook_repository.create_execution(triggered_webhook, webhook_execution_result)
         webhook_execution_result
       end
 

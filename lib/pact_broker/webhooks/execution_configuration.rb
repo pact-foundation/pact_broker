@@ -25,12 +25,28 @@ module PactBroker
         with_updated_attribute(logging_options: { failure_log_message: value })
       end
 
+      def with_retry_schedule(value)
+        with_updated_attribute(retry_schedule: value)
+      end
+
+      def with_http_success_codes(value)
+        with_updated_attribute(http_success_codes: value)
+      end
+
       def with_webhook_context(value)
         with_updated_attribute(webhook_context: value)
       end
 
+      def with_user_agent(value)
+        with_updated_attribute(user_agent: value)
+      end
+
       def webhook_context
         self[:webhook_context]
+      end
+
+      def retry_schedule
+        self[:retry_schedule]
       end
 
       def [](key)
