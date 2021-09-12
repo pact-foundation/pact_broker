@@ -53,7 +53,7 @@ module PactBroker
         index_items = pact_publications.all.collect do | pact_publication |
           is_overall_latest_for_integration = latest_pp_ids.include?(pact_publication.id)
 
-          latest_verification = latest_verification_for_pseudo_branch(pact_publication, is_overall_latest_for_integration, latest_verifications_for_cv_tags, options[:tags])
+          latest_verification = latest_verification_for_pseudo_branch(pact_publication, is_overall_latest_for_integration, latest_verifications_for_cv_tags, options[:tags], options)
           webhook = webhooks.find{ |wh| wh.is_for?(pact_publication.integration) }
 
           PactBroker::Domain::IndexItem.create(
@@ -77,10 +77,13 @@ module PactBroker
       # rubocop: enable Metrics/CyclomaticComplexity
 
       # Worst. Code. Ever.
-      #
+      # This needs a big rethink.
+      # TODO environments view
       # rubocop: disable Metrics/CyclomaticComplexity
-      def self.latest_verification_for_pseudo_branch(pact_publication, is_overall_latest, latest_verifications_for_cv_tags, tags_option)
-        if tags_option == true
+      def self.latest_verification_for_pseudo_branch(pact_publication, is_overall_latest, latest_verifications_for_cv_tags, tags_option, options)
+        if options[:view] == "branch" || (options[:view] == "all" && pact_publication.consumer_version.branch_heads.any?)
+          pact_publication.latest_verification || pact_publication.latest_verification_for_consumer_branches
+        elsif tags_option == true
           latest_verifications_for_cv_tags
             .select{ | v | v.consumer_id == pact_publication.consumer_id && v.provider_id == pact_publication.provider_id && pact_publication.head_pact_tags.collect(&:name).include?(v.consumer_version_tag_name) }
             .sort{ |v1, v2| v1.id <=> v2.id }.last || (is_overall_latest && pact_publication.integration.latest_verification)

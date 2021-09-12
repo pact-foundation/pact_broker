@@ -10,7 +10,7 @@ module PactBroker
 
         get "/provider/:provider_name/consumer/:consumer_name" do
           set_headers
-          tags = true
+          tags = params[:view] == "tag" || params[:view] == "all"
           page_number = params[:page]&.to_i || 1
           # Make page size smaller for data intensive query
           page_size = params[:pageSize]&.to_i || 30

@@ -234,6 +234,10 @@ module PactBroker
         self
       end
 
+      def create_pact_with_different_content params = {}
+        create_pact(params.merge(json_content: random_json_content(consumer.name, provider.name)))
+      end
+
       def republish_same_pact params = {}
         params.delete(:comment)
         last_pact_version = PactBroker::Pacts::PactVersion.order(:id).last

@@ -47,94 +47,55 @@ end
 
 PactBroker.configuration.base_equality_only_on_content_that_affects_verification_results = false
 
-json_content = <<-HEREDOC
-{
-  "consumer": {
-    "name": "Foo"
-  },
-  "provider": {
-    "name": "Bar"
-  },
-  "interactions": [
-    {
-      "description": "a retrieve thing request",
-      "request": {
-        "method": "get",
-        "path": "/thing"
-      },
-      "response": {
-        "status": 200,
-        "headers": {
-          "Content-Type": "application/json"
-        },
-        "body": {
-          "name": "Thing 1"
-        }
-      }
-    }
-  ],
-  "metadata": {
-    "pactSpecification": {
-      "version": "2.0.0"
-    }
-  }
-}
-HEREDOC
+# json_content = <<-HEREDOC
+# {
+#   "consumer": {
+#     "name": "Foo"
+#   },
+#   "provider": {
+#     "name": "Bar"
+#   },
+#   "interactions": [
+#     {
+#       "description": "a retrieve thing request",
+#       "request": {
+#         "method": "get",
+#         "path": "/thing"
+#       },
+#       "response": {
+#         "status": 200,
+#         "headers": {
+#           "Content-Type": "application/json"
+#         },
+#         "body": {
+#           "name": "Thing 1"
+#         }
+#       }
+#     }
+#   ],
+#   "metadata": {
+#     "pactSpecification": {
+#       "version": "2.0.0"
+#     }
+#   }
+# }
+# HEREDOC
 
-TestDataBuilder.new
-  .create_pact_with_hierarchy("Foo", "1", "Bar", json_content)
-  .create_consumer_version_tag("master")
-  .create_verification(provider_version: "1", tag_name: "master")
-  .create_pact_with_hierarchy("Foo", "2", "Bar", json_content.gsub("200", "201"))
-  .create_consumer_version_tag("feat/x")
+td = TestDataBuilder.new
 
-  # .create_certificate(path: 'spec/fixtures/certificates/self-signed.badssl.com.pem')
-  # .create_consumer("Bethtest")
-  # .create_verification_webhook(method: 'GET', url: "http://localhost:9292", body: webhook_body, username: "foo", password: "bar", headers: {"Accept" => "application/json"})
-  # .create_consumer("Foo")
-  # .create_label("microservice")
-  # .create_provider("Bar")
-  # .create_label("microservice")
-  # .create_verification_webhook(method: 'GET', url: "http://example.org")
-  # .create_consumer_webhook(method: 'GET', url: 'https://www.google.com.au', event_names: ['provider_verification_published'])
-  # .create_provider_webhook(method: 'GET', url: 'https://theage.com.au')
-  # .create_webhook(method: 'GET', url: 'https://self-signed.badssl.com')
-  # .create_consumer_version("1.2.100")
-  # .create_pact
-  # .create_verification(provider_version: "1.4.234", success: true, execution_date: DateTime.now - 15)
-  # .revise_pact
-  # .create_consumer_version("1.2.101")
-  # .create_consumer_version_tag('prod')
-  # .create_pact
-  # .create_verification(provider_version: "9.9.10", success: false, execution_date: DateTime.now - 15)
-  # .create_consumer_version("1.2.102")
-  # .create_pact(created_at: (Date.today - 7).to_datetime)
-  # .create_verification(provider_version: "9.9.9", success: true, execution_date: DateTime.now - 14)
-  # .create_provider("Animals")
-  # .create_webhook(method: 'GET', url: 'http://localhost:9393/')
-  # .create_pact(created_at: (Time.now - 140).to_datetime)
-  # .create_verification(provider_version: "2.0.366", execution_date: Date.today - 2) #changed
-  # .create_provider("Wiffles")
-  # .create_pact
-  # .create_verification(provider_version: "3.6.100", success: false, execution_date: Date.today - 7)
-  # .create_provider("Hello World App")
-  # .create_consumer_version("1.2.107")
-  # .create_pact(created_at: (Date.today - 1).to_datetime)
-  # .create_consumer("The Android App")
-  # .create_provider("The back end")
-  # .create_webhook(method: 'GET', url: 'http://localhost:9393/')
-  # .create_consumer_version("1.2.106")
-  # .create_consumer_version_tag("production")
-  # .create_consumer_version_tag("feat-x")
-  # .create_pact
-  # .create_consumer("Some other app")
-  # .create_provider("A service")
-  # .create_webhook(method: 'GET', url: 'http://localhost:9393/')
-  # .create_triggered_webhook(status: 'success')
-  # .create_webhook_execution
-  # .create_webhook(method: 'POST', url: 'http://foo:9393/')
-  # .create_triggered_webhook(status: 'failure')
-  # .create_webhook_execution
-  # .create_consumer_version("1.2.106")
-  # .create_pact(created_at: (Date.today - 26).to_datetime)
-  # .create_verification(provider_version: "4.8.152", execution_date: DateTime.now)
+td.create_consumer("Foo")
+  .create_provider("Bar")
+  .create_consumer_version("1", branch: "main", tag_names: ["foo", "bar"])
+  .create_pact
+  .create_verification(provider_version: "1", branch: "feat/x")
+  .create_verification(provider_version: "3", branch: "feat/x", number: 2)
+  .create_verification(provider_version: "4", branch: "main", number: 3)
+  .create_verification(provider_version: "5", branch: "main", number: 4)
+  .create_consumer_version("2", branch: "feat/y")
+  .create_pact(json_content: td.random_json_content("Foo", "Bar"))
+  .create_verification(provider_version: "11", branch: "feat/x")
+  .create_verification(provider_version: "13", branch: "feat/x", number: 2)
+  .create_verification(provider_version: "14", branch: "main", number: 3)
+  .create_verification(provider_version: "15", branch: "main", number: 4)
+  .create_consumer_version("3", branch: "feat/y", tag_names: ["a", "b"])
+  .create_pact(json_content: td.random_json_content("Foo", "Bar"))

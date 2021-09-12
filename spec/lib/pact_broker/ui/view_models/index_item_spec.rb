@@ -35,7 +35,10 @@ module PactBroker
             instance_double("PactBroker::Domain::IndexItem",
               pseudo_branch_verification_status: pseudo_branch_verification_status,
               provider_name: "Foo",
-              latest_verification_provider_version_number: "4.5.6")
+              latest_verification_provider_version_number: "4.5.6",
+              tag_names: [],
+              consumer_version_branches: []
+            )
           end
           let(:ever_verified) { true }
           let(:pact_changed) { false }

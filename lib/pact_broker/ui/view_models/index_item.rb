@@ -187,7 +187,16 @@ module PactBroker
           when :success
             "Successfully verified by #{provider_name} (#{short_version_number(@relationship.latest_verification_provider_version_number)})"
           when :stale
-            "Pact has changed since last successful verification by #{provider_name} (#{short_version_number(@relationship.latest_verification_provider_version_number)})"
+            # TODO when there are multiple tags/branches, the tag/branch shown may not be the relevant one, but
+            # it shouldn't happen very often. Can change this to "tag a or b"
+            desc =  if @relationship.consumer_version_branches.any?
+                      "from branch #{@relationship.consumer_version_branches.first} "
+                    elsif @relationship.tag_names.any?
+                      "with tag #{@relationship.tag_names.first} "
+                    else
+                      ""
+                    end
+            "Pact #{desc}has changed since last successful verification by #{provider_name} (#{short_version_number(@relationship.latest_verification_provider_version_number)})"
           when :failed
             "Verification by #{provider_name} (#{short_version_number(@relationship.latest_verification_provider_version_number)}) failed"
           else
