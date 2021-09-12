@@ -2,8 +2,27 @@
   != render :haml, :'index/_css_and_js', :layout => false
   .container
     != render :haml, :'index/_dashboard_navbar', :layout => false, locals: {tag_toggle: nil, base_url: base_url}
-    %h1.page-header
-      = title
+
+
+    %div.mt-4
+      .row
+        .col
+          .row.my-0
+            .col.my-0{ style: "text-transform: uppercase; font-size: 70%"}
+              Consumer
+          .row.my-0
+            .col.my-0
+              %h2.page-header{ style: "margin-top: 0" }
+                = consumer_name
+        .col
+          .row
+            .col.my-0{ style: "text-transform: uppercase; font-size: 70%"}
+              Provider
+          .row.my-0
+            .col.my-0
+              %h2.page-header{ style: "margin-top: 0" }
+                = provider_name
+
 
     - unless errors.blank?
       - errors.each do | error |
@@ -11,7 +30,7 @@
           = error
 
     %form
-      %div.my-3
+      %div.mt-4.mb-2
         %label.mr-2
           View pacts by:
         %div.form-check.form-check-inline

@@ -47,7 +47,9 @@ module PactBroker
             base_url: base_url,
             errors: error_messages,
             tags: tags,
-            view: view
+            view: view,
+            consumer_name: params[:consumer_name],
+            provider_name: params[:provider_name]
           }
 
           haml page, { locals: locals, layout: :'layouts/main', escape_html: true }
