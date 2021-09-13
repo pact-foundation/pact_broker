@@ -221,6 +221,10 @@ module PactBroker
           end
         end
 
+        def show_menu?
+          !view_by_environment? && (@relationship.tag_names.any? || consumer_version_branches.any?)
+        end
+
         def base_url
           @options[:base_url]
         end
@@ -241,6 +245,10 @@ module PactBroker
               deletionUrl: PactBroker::Api::PactBrokerUrls.pact_versions_for_branch_url(consumer_name, provider_name, branch_name, base_url)
             }
           end.to_json
+        end
+
+        def view_by_environment?
+          @options[:view] == "environment"
         end
 
         private

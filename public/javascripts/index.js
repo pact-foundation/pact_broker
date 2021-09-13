@@ -213,8 +213,7 @@ function buildMaterialMenuItems(clickedElementData) {
   const providerName = clickedElementData.providerName;
   const consumerName = clickedElementData.consumerName;
 
-  if (clickedElementData.view === "branch" || clickedElementData.view === "all") {
-    return (clickedElementData.pactBranches || []).map(branch => {
+  const branchOptions = (clickedElementData.pactBranches || []).map(branch => {
       const refName = branch.name;
       const deletionUrl = branch.deletionUrl;
       return {
@@ -229,8 +228,8 @@ function buildMaterialMenuItems(clickedElementData) {
         })
       };
     });
-  } else if (clickedElementData.view === "tag" || clickedElementData.view === "all") {
-    return (clickedElementData.pactTags || []).map(tag => {
+
+  const tagOptions = (clickedElementData.pactTags || []).map(tag => {
     const refName = tag.name;
     const deletionUrl = tag.deletionUrl;
       return {
@@ -245,6 +244,14 @@ function buildMaterialMenuItems(clickedElementData) {
         })
       };
     });
+
+
+  if (clickedElementData.view === "branch") {
+    return branchOptions;
+  } else if (clickedElementData.view === "tag") {
+    return tagOptions;
+  } else if (clickedElementData.view === "all") {
+    return [...branchOptions, ...tagOptions];
   } else if (clickedElementData.index) {
     return [
       {

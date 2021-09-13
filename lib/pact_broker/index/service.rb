@@ -30,6 +30,32 @@ module PactBroker
         find_index_items(page_number: 1, page_size: 100000000000)
       end
 
+      def self.smart_default_view(consumer_name, provider_name)
+        consumer = pacticipant_repository.find_by_name(consumer_name)
+        provider = pacticipant_repository.find_by_name(provider_name)
+        if consumer && provider
+          pact_publications_with_branches = PactBroker::Pacts::PactPublication
+                                            .for_consumer_name(consumer_name)
+                                            .for_provider_name(provider_name)
+                                            .join_consumer_branch_versions
+
+          pact_publication_with_tags =   PactBroker::Pacts::PactPublication
+            .for_consumer_name(consumer_name)
+            .for_provider_name(provider_name)
+            .join_consumer_version_tags
+
+          if pact_publications_with_branches.any?
+            "branch"
+          elsif pact_publication_with_tags.any?
+            "tag"
+          else
+            "all"
+          end
+        else
+          nil
+        end
+      end
+
       # rubocop: disable Metrics/CyclomaticComplexity
       # rubocop: disable Metrics/MethodLength
       def self.find_index_items options = {}

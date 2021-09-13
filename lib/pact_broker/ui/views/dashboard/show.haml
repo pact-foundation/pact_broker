@@ -28,119 +28,120 @@
         %div.alert.alert-danger
           = error
 
-    %form
-      %div.mt-4.mb-2
-        %label.mr-2
-          View pacts by:
-        %div.form-check.form-check-inline
-          %input.form-check-input{ type: "radio", name: "view", id: "by_branch", value: "branch", checked: view == "branch" }
-          %label.form-check-label{ for:"by_branch"} branches
-        %div.form-check.form-check-inline
-          %input.form-check-input{ type: "radio", name: "view", id: "by_tag", value: "tag", checked: view == "tag"}
-          %label.form-check-label{ for:"by_tag"} tags
-        %div.form-check.form-check-inline
-          %input.form-check-input{ type: "radio", name: "view", id: "by_environment", value: "environment", checked: view == "environment"}
-          %label.form-check-label{ for:"by_environment"} environments
-        %div.form-check.form-check-inline
-          %input.form-check-input{ type: "radio", name: "view", id: "by_all", value: "all", checked: view == "all"}
-          %label.form-check-label{ for:"by_all"} no filter
-      %input{ type: "hidden", name: "page", value: page_number }
-      %input{ type: "hidden", name: "pageSize", value: page_size }
+    - if consumer && provider
+      %form
+        %div.mt-4.mb-2
+          %label.mr-2
+            View pacts by:
+          %div.form-check.form-check-inline
+            %input.form-check-input{ type: "radio", name: "view", id: "by_branch", value: "branch", checked: view == "branch" }
+            %label.form-check-label{ for:"by_branch"} branches
+          %div.form-check.form-check-inline
+            %input.form-check-input{ type: "radio", name: "view", id: "by_tag", value: "tag", checked: view == "tag"}
+            %label.form-check-label{ for:"by_tag"} tags
+          %div.form-check.form-check-inline
+            %input.form-check-input{ type: "radio", name: "view", id: "by_environment", value: "environment", checked: view == "environment"}
+            %label.form-check-label{ for:"by_environment"} environments
+          %div.form-check.form-check-inline
+            %input.form-check-input{ type: "radio", name: "view", id: "by_all", value: "all", checked: view == "all"}
+            %label.form-check-label{ for:"by_all"} no filter
+        %input{ type: "hidden", name: "page", value: page_number }
+        %input{ type: "hidden", name: "pageSize", value: page_size }
 
-    %table.table.table-bordered.table-striped{ id: 'relationships' }
-      %thead
-        %tr
-          %th.consumer-version-number
-            Consumer<br>Version
-            %span.sort-icon.relationships-sort
-          %th.provider-version-number
-            Provider<br>Version
-            %span.sort-icon.relationships-sort
-          %th.pact{ style: 'width: 40px' }
-          %th
-            Published
-            %span.sort-icon.relationships-sort
-          %th
-            Webhook<br>status
-          %th
-            Last<br>verified
-            %span.sort-icon.relationships-sort
-          %th
-      %tbody
+      %table.table.table-bordered.table-striped{ id: 'relationships' }
+        %thead
+          %tr
+            %th.consumer-version-number
+              Consumer<br>Version
+              %span.sort-icon.relationships-sort
+            %th.provider-version-number
+              Provider<br>Version
+              %span.sort-icon.relationships-sort
+            %th.pact{ style: 'width: 40px' }
+            %th
+              Published
+              %span.sort-icon.relationships-sort
+            %th
+              Webhook<br>status
+            %th
+              Last<br>verified
+              %span.sort-icon.relationships-sort
+            %th
+        %tbody
 
-        - index_items.each do | index_item |
-          %tr{'data-pact-versions-url': index_item.pact_versions_url,
-              'data-consumer-name': index_item.consumer_name,
-              'data-provider-name': index_item.provider_name,
-              'data-integration-url': index_item.integration_url,
-              'data-pact-tags': index_item.pact_tags,
-              'data-pact-branches': index_item.pact_branches,
-              'data-view': view
-              }
-            %td.consumer-version-number{"data-text": index_item.consumer_version_order}
-              %div.clippable{"data-clippable": index_item.consumer_version_number}
-                = index_item.display_consumer_version_number
-                - if index_item.display_consumer_version_number
-                  %button.clippy.invisible{ title: "Copy to clipboard" }
-                    %span.copy-icon
-              - if view == "branch" || view == "all"
-                - index_item.consumer_version_branches.each do | branch_name |
-                  %div{"class": "tag badge badge-dark"}
-                    = "branch: " + branch_name
-              - if view == "tag" || view == "all"
-                - index_item.consumer_version_latest_tag_names.each do | tag_name |
-                  .tag.badge.badge-primary
-                    = "tag: " + tag_name
-              - if view == "environment" || view == "all"
-                - index_item.consumer_version_environment_names.each do | environment_name |
-                  .tag.badge.badge-success
-                    = "env: " + environment_name
-              - if view == "all" && index_item.display_latest_label? && index_item.latest?
-                .tag.badge.bg-light
-                  latest
-            %td.provider-version-number
-              %div.clippable{"data-clippable": index_item.provider_version_number}
-                = index_item.display_provider_version_number
-                - if index_item.display_provider_version_number
-                  %button.clippy.invisible{ title: "Copy to clipboard" }
-                    %span.copy-icon
-              - if view == "branch" || view == "all"
-                - index_item.provider_version_branches.each do | branch_name |
-                  %div{"class": "tag badge badge-dark"}
-                    = "branch: " + branch_name
-              - if view == "tag" || view == "all"
-                - index_item.provider_version_latest_tag_names.each do | tag_name |
-                  .tag.badge.badge-primary
-                    = "tag: " + tag_name
-              - if view == "environment" || view == "all"
-                - index_item.provider_version_environment_names.each do | environment_name |
-                  .tag.badge.badge-success
-                    = "env: " + environment_name
-            %td.pact
-              %span.pact
-                %a{ href: index_item.pact_url, title: "View pact" }
-              %span.pact-matrix
-                %a{ href: index_item.pact_matrix_url, title: "View pact matrix" }
-            %td{"data-text": index_item.publication_date_of_latest_pact_order}
-              = index_item.publication_date_of_latest_pact.gsub("about ", "")
-            %td{ class: "table-#{index_item.webhook_status}" }
-              - if index_item.show_webhook_status?
-                %a{ href: index_item.webhook_url }
-                  = index_item.webhook_label
+          - index_items.each do | index_item |
+            %tr{'data-pact-versions-url': index_item.pact_versions_url,
+                'data-consumer-name': index_item.consumer_name,
+                'data-provider-name': index_item.provider_name,
+                'data-integration-url': index_item.integration_url,
+                'data-pact-tags': index_item.pact_tags,
+                'data-pact-branches': index_item.pact_branches,
+                'data-view': view
+                }
+              %td.consumer-version-number{"data-text": index_item.consumer_version_order}
+                %div.clippable{"data-clippable": index_item.consumer_version_number}
+                  = index_item.display_consumer_version_number
+                  - if index_item.display_consumer_version_number
+                    %button.clippy.invisible{ title: "Copy to clipboard" }
+                      %span.copy-icon
+                - if view == "branch" || view == "all"
+                  - index_item.consumer_version_branches.each do | branch_name |
+                    %div{"class": "tag badge badge-dark"}
+                      = "branch: " + branch_name
+                - if view == "tag" || view == "all"
+                  - index_item.consumer_version_latest_tag_names.each do | tag_name |
+                    .tag.badge.badge-primary
+                      = "tag: " + tag_name
+                - if view == "environment" || view == "all"
+                  - index_item.consumer_version_environment_names.each do | environment_name |
+                    .tag.badge.badge-success
+                      = "env: " + environment_name
+                - if view == "all" && index_item.display_latest_label? && index_item.latest?
+                  .tag.badge.bg-light
+                    latest
+              %td.provider-version-number
+                %div.clippable{"data-clippable": index_item.provider_version_number}
+                  = index_item.display_provider_version_number
+                  - if index_item.display_provider_version_number
+                    %button.clippy.invisible{ title: "Copy to clipboard" }
+                      %span.copy-icon
+                - if view == "branch" || view == "all"
+                  - index_item.provider_version_branches.each do | branch_name |
+                    %div{"class": "tag badge badge-dark"}
+                      = "branch: " + branch_name
+                - if view == "tag" || view == "all"
+                  - index_item.provider_version_latest_tag_names.each do | tag_name |
+                    .tag.badge.badge-primary
+                      = "tag: " + tag_name
+                - if view == "environment" || view == "all"
+                  - index_item.provider_version_environment_names.each do | environment_name |
+                    .tag.badge.badge-success
+                      = "env: " + environment_name
+              %td.pact
+                %span.pact
+                  %a{ href: index_item.pact_url, title: "View pact" }
+                %span.pact-matrix
+                  %a{ href: index_item.pact_matrix_url, title: "View pact matrix" }
+              %td{"data-text": index_item.publication_date_of_latest_pact_order}
+                = index_item.publication_date_of_latest_pact.gsub("about ", "")
+              %td{ class: "table-#{index_item.webhook_status}" }
+                - if index_item.show_webhook_status?
+                  %a{ href: index_item.webhook_url }
+                    = index_item.webhook_label
 
-            %td{ class: "table-#{index_item.pseudo_branch_verification_status}", title: index_item.verification_tooltip, "data-toggle": "tooltip", "data-placement": "left" }
-              %div
-                = index_item.last_verified_date.gsub("about ", "")
-                - if index_item.warning?
-                  %span.warning-icon{ 'aria-hidden': true }
-            %td
-              - if view != "environment"
-                %span.integration-settings.kebab-horizontal{ 'aria-hidden': true }
+              %td{ class: "table-#{index_item.pseudo_branch_verification_status}", title: index_item.verification_tooltip, "data-toggle": "tooltip", "data-placement": "left" }
+                %div
+                  = index_item.last_verified_date.gsub("about ", "")
+                  - if index_item.warning?
+                    %span.warning-icon{ 'aria-hidden': true }
+              %td
+                - if index_item.show_menu?
+                  %span.integration-settings.kebab-horizontal{ 'aria-hidden': true }
 
-    %div.pagination.text-center
+      %div.pagination.text-center
 
-    - pagination_locals = { page_number: page_number, page_size: page_size, pagination_record_count: pagination_record_count, current_page_size: current_page_size }
-    != render :haml, :'index/_pagination', :layout => false, locals: pagination_locals
+      - pagination_locals = { page_number: page_number, page_size: page_size, pagination_record_count: pagination_record_count, current_page_size: current_page_size }
+      != render :haml, :'index/_pagination', :layout => false, locals: pagination_locals
 
   :javascript
     $(function(){

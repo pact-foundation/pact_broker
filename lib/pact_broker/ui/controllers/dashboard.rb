@@ -10,11 +10,13 @@ module PactBroker
 
         get "/provider/:provider_name/consumer/:consumer_name" do
           set_headers
-          tags = params[:view] == "tag" || params[:view] == "all"
+          consumer_name = params[:consumer_name]
+          provider_name = params[:provider_name]
+          view = params[:view] || index_service.smart_default_view(consumer_name, provider_name) || "branch"
+          tags = view == "tag" || view == "all"
           page_number = params[:page]&.to_i || 1
           # Make page size smaller for data intensive query
           page_size = params[:pageSize]&.to_i || 30
-          view = params[:view] || "branch"
           options = {
             tags: tags,
             page_number: page_number,
@@ -28,13 +30,21 @@ module PactBroker
           consumer = pacticipant_service.find_pacticipant_by_name(params[:consumer_name])
           provider = pacticipant_service.find_pacticipant_by_name(params[:provider_name])
 
+          if !consumer
+            error_messages << "No pacticipant found with name #{consumer_name}"
+          end
+
+          if !provider
+            error_messages << "No pacticipant found with name #{provider_name}"
+          end
+
           index_items = if consumer && provider
                           index_service.find_index_items(options)
                         else
                           []
                         end
 
-          view_index_items = ViewDomain::IndexItems.new(index_items, base_url: base_url)
+          view_index_items = ViewDomain::IndexItems.new(index_items, base_url: base_url, view: view)
 
           page = :'dashboard/show'
           locals = {
@@ -49,7 +59,9 @@ module PactBroker
             tags: tags,
             view: view,
             consumer_name: params[:consumer_name],
-            provider_name: params[:provider_name]
+            provider_name: params[:provider_name],
+            consumer: consumer,
+            provider: provider
           }
 
           haml page, { locals: locals, layout: :'layouts/main', escape_html: true }

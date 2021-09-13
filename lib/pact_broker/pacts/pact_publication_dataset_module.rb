@@ -272,6 +272,10 @@ module PactBroker
         join(:tags, { Sequel[table_alias][:version_id] => Sequel[:pact_publications][:consumer_version_id]}, { table_alias: table_alias })
       end
 
+      def join_consumer_branch_versions
+        join(:branch_versions, { Sequel[:pact_publications][:consumer_version_id] => Sequel[:branch_versions][:version_id] })
+      end
+
       def join_consumer_version_tags_with_names(consumer_version_tag_names)
         join(:tags, {
           Sequel[:ct][:version_id] => Sequel[:pact_publications][:consumer_version_id],
