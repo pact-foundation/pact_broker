@@ -222,7 +222,7 @@ module PactBroker
     end
 
     def show_webhook_response?
-      webhook_host_whitelist.any?
+      webhook_host_whitelist&.any?
     end
 
     def enable_badge_resources= enable_badge_resources
