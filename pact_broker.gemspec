@@ -48,6 +48,9 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency "roar", "~> 1.1"
   gem.add_runtime_dependency "reform", "~> 2.3.3"
   gem.add_runtime_dependency "dry-validation", "~> 0.10.5"
+  # /usr/local/bundle/gems/dry-validation-0.10.7/lib/dry/validation/schema/class_interface.rb:7:in `<module:Validation>' [dry-configurable] default value as positional argument to settings is deprecated and will be removed in the next major version
+  # Provide a `default:` keyword argument instead
+  gem.add_runtime_dependency "dry-configurable", "0.12.1"
   gem.add_runtime_dependency "sequel", "~> 5.28"
   gem.add_runtime_dependency "webmachine", "1.6.0"
   gem.add_runtime_dependency "semver2", "~> 3.4.2"
