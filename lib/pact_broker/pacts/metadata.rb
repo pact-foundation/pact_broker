@@ -8,6 +8,7 @@ module PactBroker
         [:consumer_version_number, "cvn"], # for old urls
         [:consumer_version_id, "cv"],
         [:wip, "w"],
+        [:pending, "p"],
         [:consumer_version_selectors, "s"],
         [:tag, "t"],
         [:branch, "b"],
@@ -62,8 +63,9 @@ module PactBroker
                 "l" => selector.latest,
                 "cv" => selector.consumer_version.id
               }.compact
-            end
-          }
+            end,
+            "p" => verifiable_pact.pending?
+          }.compact
         end
       end
 

@@ -8,7 +8,8 @@ module PactBroker
           Selectors.new([ResolvedSelector.new({ latest: true, consumer: "consumer", tag: "tag" }, consumer_version)])
         end
         let(:consumer_version) { double("version", number: "2", id: 1) }
-        let(:verifiable_pact) { double("PactBroker::Pacts::VerifiablePact", wip: wip, selectors: selectors) }
+        let(:verifiable_pact) { double("PactBroker::Pacts::VerifiablePact", wip: wip, selectors: selectors, pending?: is_pending) }
+        let(:is_pending) { nil }
         let(:wip) { false }
 
         subject { Metadata.build_metadata_for_pact_for_verification(verifiable_pact) }
@@ -29,7 +30,12 @@ module PactBroker
           let(:wip) { true }
 
           it { is_expected.to eq "w" => true }
+        end
 
+        context "when the pact is pending" do
+          let(:is_pending) { true }
+
+          it { is_expected.to include "p" => true }
         end
       end
 
@@ -52,7 +58,8 @@ module PactBroker
                   "t" => "tag",
                   "cv" => 1
                 }
-              ]
+              ],
+              "p" => true
             }
           end
 
@@ -61,6 +68,7 @@ module PactBroker
               :consumer_version_number => "2",
               :consumer_version_tags => ["tag"],
               :wip => true,
+              :pending => true,
               :consumer_version_selectors => [
                 {
                   :latest => true,
@@ -83,6 +91,7 @@ module PactBroker
                 :consumer_version_number => nil,
                 :consumer_version_tags => ["tag"],
                 :wip => true,
+                :pending => true,
                 :consumer_version_selectors => [
                   {
                     :latest => true,

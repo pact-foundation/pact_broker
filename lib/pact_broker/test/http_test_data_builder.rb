@@ -145,7 +145,7 @@ module PactBroker
         self
       end
 
-      def get_pacts_for_verification(provider: last_provider_name, provider_version_tag: nil, provider_version_branch: nil, consumer_version_selectors: nil, enable_pending: false, include_wip_pacts_since: nil)
+      def get_pacts_for_verification(provider: last_provider_name, provider_version_tag: nil, provider_version_branch: nil, consumer_version_selectors: nil, enable_pending: nil, include_wip_pacts_since: nil)
         @last_provider_name = provider
         @last_provider_version_tag = provider_version_tag
         @last_provder_version_branch = provider_version_branch

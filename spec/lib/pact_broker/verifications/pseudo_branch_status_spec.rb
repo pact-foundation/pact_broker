@@ -5,11 +5,12 @@ module PactBroker
     describe PseudoBranchStatus do
       describe "pseudo_branch_verification_status" do
 
-        let(:latest_verification) { instance_double("PactBroker::Domain::Verification", pact_version_sha: latest_verification_pact_version_sha, success: success) }
+        let(:latest_verification) { instance_double("PactBroker::Domain::Verification", pending: is_pending, pact_version_sha: latest_verification_pact_version_sha, success: success) }
         let(:latest_pact) { instance_double("PactBroker::Domain::Pact", pact_version_sha: pact_pact_version_sha) }
         let(:pact_pact_version_sha) { "1234" }
         let(:latest_verification_pact_version_sha) { "1234" }
         let(:success) { true }
+        let(:is_pending) { nil }
 
         subject { PseudoBranchStatus.new(latest_pact, latest_verification) }
 
@@ -30,6 +31,13 @@ module PactBroker
         context "when the pact has not changed since the last failed verification" do
           let(:success) { false }
           its(:to_sym) { is_expected.to eq :failed }
+        end
+
+        context "when the pact has not changed since the last failed verification and the pact was pending" do
+          let(:is_pending) { true }
+          let(:success) { false }
+
+          its(:to_sym) { is_expected.to eq :failed_pending }
         end
 
         context "when the pact has changed since the last successful verification" do

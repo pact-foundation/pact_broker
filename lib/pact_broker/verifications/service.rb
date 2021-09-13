@@ -35,6 +35,7 @@ module PactBroker
         provider_version_number = params.fetch("providerApplicationVersion")
         PactBroker::Api::Decorators::VerificationDecorator.new(verification).from_hash(params)
         verification.wip = params.fetch("wip")
+        verification.pending = params.fetch("pending")
         verification.number = next_verification_number
         verification.consumer_version_selector_hashes = event_context[:consumer_version_selectors]
         pact_version = pact_repository.find_pact_version(first_verified_pact.consumer, first_verified_pact.provider, first_verified_pact.pact_version_sha)

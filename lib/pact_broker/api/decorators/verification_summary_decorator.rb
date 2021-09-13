@@ -6,9 +6,9 @@ require "ostruct"
 module PactBroker
   module Api
     module Decorators
-
       class VerificationSummaryDecorator < BaseDecorator
 
+        # TODO count pending failures?
         property :success
         property :provider_summary, as: :providerSummary do
           property :successful
@@ -30,7 +30,6 @@ module PactBroker
             successful: represented.select(&:success).collect(&:provider_name),
             failed: represented.select{|verification| !verification.success }.collect(&:provider_name))
         end
-
       end
     end
   end

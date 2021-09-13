@@ -29,7 +29,11 @@ module PactBroker
             :success
           end
         else
-          :failed
+          if latest_verification.pending
+            :failed_pending
+          else
+            :failed
+          end
         end
       end
 

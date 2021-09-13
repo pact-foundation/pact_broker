@@ -84,12 +84,16 @@ module PactBroker
           metadata[:wip] == "true"
         end
 
+        def pending?
+          metadata[:pending]
+        end
+
         def event_context
           metadata
         end
 
         def verification_params
-          params(symbolize_names: false).merge("wip" => wip?)
+          params(symbolize_names: false).merge("wip" => wip?, "pending" => pending?)
         end
       end
     end

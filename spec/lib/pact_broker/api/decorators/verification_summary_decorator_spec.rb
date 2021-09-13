@@ -20,15 +20,18 @@ module PactBroker
             pact_version_sha: "1234",
             latest_pact_publication: pact,
             test_results: nil,
+            pending: is_pending,
             execution_date: DateTime.now,
             provider_version_tags: provider_version_tags)
         end
+
         let(:pact_version) do
           instance_double("PactBroker::Pacts::PactVersion", name: "Name")
         end
 
         let(:provider_version_tags) { [instance_double(PactBroker::Tags::TagWithLatestFlag, name: "prod", latest?: true)] }
         let(:pact) { instance_double("PactBroker::Domain::Pact", name: "Some pact", consumer_name: "Foo", provider_name: "Bar", consumer_version_number: "1.2.3") }
+        let(:is_pending) { true }
         let(:options) { {base_url: "http://example.org", consumer_name: "Foo", consumer_version_number: "1.2.3", resource_url: "http://self"} }
 
         subject { JSON.parse VerificationSummaryDecorator.new(summary).to_json(user_options: options), symbolize_names: true }

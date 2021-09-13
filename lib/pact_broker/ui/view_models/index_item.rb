@@ -18,7 +18,8 @@ module PactBroker
           :provider_version_branches,
           :latest_for_branch?,
           :consumer_version_environment_names,
-          :provider_version_environment_names
+          :provider_version_environment_names,
+          :latest_verification
         ] => :relationship
 
 
@@ -153,8 +154,13 @@ module PactBroker
 
         def last_verified_date
           if @relationship.ever_verified?
-            date = @relationship.latest_verification.execution_date
-            PactBroker::DateHelper.distance_of_time_in_words(date, DateTime.now) + " ago"
+            date = latest_verification.execution_date
+            ago = PactBroker::DateHelper.distance_of_time_in_words(date, DateTime.now) + " ago"
+            if latest_verification.pending
+              "#{ago} (pending)"
+            else
+              ago
+            end
           else
             ""
           end
@@ -174,6 +180,7 @@ module PactBroker
             when :success then "success"
             when :stale then "warning"
             when :failed then "danger"
+            when :failed_pending then "danger"
             else ""
           end
         end
@@ -197,6 +204,8 @@ module PactBroker
                       ""
                     end
             "Pact #{desc}has changed since last successful verification by #{provider_name} (#{short_version_number(@relationship.latest_verification_provider_version_number)})"
+          when :failed_pending
+            "Verification by #{provider_name} (#{short_version_number(@relationship.latest_verification_provider_version_number)}) failed, but did not fail the build as the pact content was in pending state for that provider branch"
           when :failed
             "Verification by #{provider_name} (#{short_version_number(@relationship.latest_verification_provider_version_number)}) failed"
           else

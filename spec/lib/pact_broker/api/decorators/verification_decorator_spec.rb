@@ -18,6 +18,7 @@ module PactBroker
             test_results: { "arbitrary" => "json" },
             build_url: "http://build-url",
             pact_version_sha: "1234",
+            pending: is_pending,
             latest_pact_publication: pact_publication,
             execution_date: DateTime.now,
             provider_version_tags: provider_version_tags)
@@ -32,6 +33,8 @@ module PactBroker
           )
         end
 
+        let(:is_pending) { true }
+
         let(:provider_version_tags) { [instance_double(PactBroker::Tags::TagWithLatestFlag, name: "prod", latest?: true)] }
 
         let(:options) { { user_options: { base_url: "http://example.org" } } }
@@ -42,6 +45,10 @@ module PactBroker
 
         it "includes the success status" do
           expect(subject[:success]).to eq true
+        end
+
+        it "includes the pending status" do
+          expect(subject[:pending]).to eq true
         end
 
         it "includes the provider version" do

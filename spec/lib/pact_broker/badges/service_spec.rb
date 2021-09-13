@@ -203,6 +203,18 @@ module PactBroker
           end
         end
 
+        context "when the pseudo_branch_verification_status is :failed_pending" do
+          let(:pseudo_branch_verification_status) { :failed_pending }
+          let(:expected_color) { "red" }
+          let(:expected_right_text) { "failed%20%28pending%29" }
+
+          it "create a red badge with left text 'failed'" do
+            subject
+            expect(http_request).to have_been_made
+            expect(pact_verification_badge_url).to eq URI(expected_url)
+          end
+        end
+
         context "when the pseudo_branch_verification_status is :stale" do
           let(:pseudo_branch_verification_status) { :stale }
           let(:expected_color) { "orange" }
@@ -241,6 +253,16 @@ module PactBroker
 
           context "when the pseudo_branch_verification_status is failed" do
             let(:pseudo_branch_verification_status) { :failed }
+
+            it "returns a static failed image" do
+              expect(subject).to include ">pact</"
+              expect(subject).to include ">failed</"
+            end
+          end
+
+          # TODO save a static image for this
+          context "when the pseudo_branch_verification_status is failed_pending" do
+            let(:pseudo_branch_verification_status) { :failed_pending }
 
             it "returns a static failed image" do
               expect(subject).to include ">pact</"

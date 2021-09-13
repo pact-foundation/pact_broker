@@ -1,4 +1,3 @@
-require "spec_helper"
 require "pact_broker/api/resources/verifications"
 require "pact_broker/pacts/service"
 require "pact_broker/verifications/service"
@@ -17,7 +16,7 @@ module PactBroker
           let(:database_connector) { double("database_connector" )}
           let(:verification) { double(PactBroker::Domain::Verification) }
           let(:errors_empty) { true }
-          let(:parsed_metadata) { { the: "metadata", consumer_version_number: "2"} }
+          let(:parsed_metadata) { { the: "metadata", consumer_version_number: "2", pending: true } }
           let(:base_url) { "http://example.org" }
           let(:webhook_execution_configuration) { instance_double(PactBroker::Webhooks::ExecutionConfiguration) }
 
@@ -86,7 +85,7 @@ module PactBroker
             it "stores the verification in the database" do
               expect(PactBroker::Verifications::Service).to receive(:create).with(
                 next_verification_number,
-                hash_including("some" => "params", "wip" => false),
+                hash_including("some" => "params", "wip" => false, "pending" => true),
                 verified_pacts,
                 parsed_metadata
               )
