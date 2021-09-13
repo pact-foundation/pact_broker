@@ -1,4 +1,5 @@
 require_relative "base_decorator"
+require "pact_broker/domain/webhook_pacticipant"
 require "pact_broker/api/decorators/webhook_request_template_decorator"
 require "pact_broker/api/decorators/timestamps"
 require "pact_broker/webhooks/webhook_request_template"
@@ -19,12 +20,14 @@ module PactBroker
 
         property :description, getter: lambda { |context| context[:represented].display_description }
 
-        property :consumer, :class => PactBroker::Domain::Pacticipant, default: nil do
+        property :consumer, class: Domain::WebhookPacticipant, default: nil do
           property :name
+          property :label
         end
 
-        property :provider, :class => PactBroker::Domain::Pacticipant, default: nil do
+        property :provider, class: Domain::WebhookPacticipant, default: nil do
           property :name
+          property :label
         end
 
         property :enabled, default: true

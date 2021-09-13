@@ -23,6 +23,8 @@ module PactBroker
       let(:webhook) { Domain::Webhook.new(request: request, events: events) }
       let(:consumer) { td.create_pacticipant("Consumer").and_return(:pacticipant) }
       let(:provider) { td.create_pacticipant("Provider").and_return(:pacticipant) }
+      let(:webhook_consumer) { Domain::WebhookPacticipant.new(name: consumer.name) }
+      let(:webhook_provider) { Domain::WebhookPacticipant.new(name: provider.name) }
       let(:uuid) { "the-uuid" }
       let(:created_webhook_record) { ::DB::PACT_BROKER_DB[:webhooks].order(:id).last }
       let(:created_events) { ::DB::PACT_BROKER_DB[:webhook_events].where(webhook_id: created_webhook_record[:id]).order(:name).all }
@@ -57,13 +59,13 @@ module PactBroker
         end
 
         context "when consumer and provider domain objects are set on the object rather than passed in" do
-          let(:webhook) { Domain::Webhook.new(request: request, events: events, consumer: consumer, provider: provider) }
+          let(:webhook) { Domain::Webhook.new(request: request, events: events, consumer: webhook_consumer, provider: webhook_provider) }
 
           subject { Repository.new.create(uuid, webhook, nil, nil) }
 
           it "sets the consumer and provider relationships" do
-            expect(subject.consumer.id).to eq consumer.id
-            expect(subject.provider.id).to eq provider.id
+            expect(subject.consumer.name).to eq consumer.name
+            expect(subject.provider.name).to eq provider.name
           end
         end
       end
@@ -185,12 +187,10 @@ module PactBroker
           end
 
           it "returns a webhook with the consumer set" do
-            expect(subject.consumer.id).to eq consumer.id
             expect(subject.consumer.name).to eq consumer.name
           end
 
           it "returns a webhook with the provider set" do
-            expect(subject.provider.id).to eq provider.id
             expect(subject.provider.name).to eq provider.name
           end
 

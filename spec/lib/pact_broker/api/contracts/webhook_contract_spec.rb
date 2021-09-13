@@ -105,8 +105,8 @@ module PactBroker
               end
             end
 
-            it "contains consumer.name error" do
-              expect(subject.errors[:'consumer.name']).to eq ['cannot be provided when label is present']
+            it "contains consumer.label error" do
+              expect(subject.errors.messages).to eq({:'consumer.label' => ["cannot be provided"]})
             end
           end
 
@@ -176,8 +176,8 @@ module PactBroker
               end
             end
 
-            it "contains no errors" do
-              expect(subject.errors[:'provider.name']).to eq ["cannot be provided when label is present"]
+            it "contains provider.label error" do
+              expect(subject.errors.messages).to eq({:'provider.label' => ["cannot be provided"]})
             end
           end
 

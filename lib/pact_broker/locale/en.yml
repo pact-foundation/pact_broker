@@ -13,6 +13,7 @@ en:
     single_line?: "cannot contain multiple lines"
     no_spaces?: "cannot contain spaces"
     environment_with_name_exists?: "with name '%{value}' does not exist"
+    none?: "cannot be provided"
 
   pact_broker:
     messages:

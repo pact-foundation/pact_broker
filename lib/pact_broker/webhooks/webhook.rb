@@ -74,8 +74,8 @@ module PactBroker
         Domain::Webhook.new(
           uuid: uuid,
           description: description,
-          consumer: consumer,
-          provider: provider,
+          consumer: webhook_consumer,
+          provider: webhook_provider,
           events: events,
           request: Webhooks::WebhookRequestTemplate.new(request_attributes),
           enabled: enabled,
@@ -122,8 +122,22 @@ module PactBroker
           enabled: webhook.enabled.nil? ? true : webhook.enabled,
           body: (is_json_request_body ? webhook.request.body.to_json : webhook.request.body),
           is_json_request_body: is_json_request_body,
-          headers: webhook.request.headers
+          headers: webhook.request.headers,
+          consumer_label: webhook.consumer&.label,
+          provider_label: webhook.provider&.label
         }
+      end
+
+      def webhook_consumer
+        return if consumer_id.nil? && consumer_label.nil?
+
+        Domain::WebhookPacticipant.new(name: consumer.name, label: consumer_label)
+      end
+
+      def webhook_provider
+        return if provider_id.nil? && provider_label.nil?
+
+        Domain::WebhookPacticipant.new(name: provider.name, label: provider_label)
       end
     end
   end

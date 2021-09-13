@@ -20,8 +20,8 @@ module PactBroker
           Webhooks::WebhookRequestTemplate.new(request)
         end
 
-        let(:consumer) { Domain::Pacticipant.new(name: "Consumer") }
-        let(:provider) { Domain::Pacticipant.new(name: "Provider") }
+        let(:consumer) { Domain::WebhookPacticipant.new(name: "Consumer") }
+        let(:provider) { Domain::WebhookPacticipant.new(name: "Provider") }
         let(:event)    { Webhooks::WebhookEvent.new(name: "something_happened") }
         let(:created_at) { DateTime.now }
         let(:updated_at) { created_at + 1 }
@@ -193,8 +193,8 @@ module PactBroker
           context "when the decorated object has a consumer/provider but the incoming JSON does not" do
             let(:webhook) do
               Domain::Webhook.new(
-                consumer: Domain::Pacticipant.new(name: "consumer"),
-                provider: Domain::Pacticipant.new(name: "provider")
+                consumer: Domain::WebhookPacticipant.new(name: "consumer"),
+                provider: Domain::WebhookPacticipant.new(name: "provider")
               )
             end
 

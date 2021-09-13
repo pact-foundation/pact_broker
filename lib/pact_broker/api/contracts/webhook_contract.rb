@@ -40,6 +40,7 @@ module PactBroker
 
         property :consumer do
           property :name
+          property :label
 
           validation do
             configure do
@@ -50,12 +51,23 @@ module PactBroker
               end
             end
 
-            required(:name).filled(:pacticipant_exists?)
+            optional(:name)
+              .maybe(:pacticipant_exists?)
+              .when(:none?) { value(:label).filled? }
+
+            optional(:label)
+              .maybe(:str?)
+              .when(:none?) { value(:name).filled? }
+
+            rule(label: [:name, :label]) do |name, label|
+              (name.filled? & label.filled?) > label.none?
+            end
           end
         end
 
         property :provider do
           property :name
+          property :label
 
           validation do
             configure do
@@ -66,7 +78,17 @@ module PactBroker
               end
             end
 
-            required(:name).filled(:pacticipant_exists?)
+            optional(:name)
+              .maybe(:pacticipant_exists?)
+              .when(:none?) { value(:label).filled? }
+
+            optional(:label)
+              .maybe(:str?)
+              .when(:none?) { value(:name).filled? }
+
+            rule(label: [:name, :label]) do |name, label|
+              (name.filled? & label.filled?) > label.none?
+            end
           end
         end
 
