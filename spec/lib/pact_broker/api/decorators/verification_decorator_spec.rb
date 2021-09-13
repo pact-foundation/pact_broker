@@ -47,10 +47,6 @@ module PactBroker
           expect(subject[:success]).to eq true
         end
 
-        it "includes the pending status" do
-          expect(subject[:pending]).to eq true
-        end
-
         it "includes the provider version" do
           expect(subject[:providerApplicationVersion]).to eq "4.5.6"
         end
