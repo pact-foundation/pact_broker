@@ -318,7 +318,7 @@ module PactBroker
       def find_previous_distinct_pact pact
         previous, current = nil, pact
         loop do
-          previous = find_previous_distinct_pact_by_sha current
+          previous = find_previous_distinct_pact_by_sha(current)
           return previous if previous.nil? || different?(current, previous)
           current = previous
         end
@@ -341,20 +341,14 @@ module PactBroker
       private
 
       def find_previous_distinct_pact_by_sha pact
-        current_pact_content_sha =
-          scope_for(LatestPactPublicationsByConsumerVersion).select(:pact_version_sha)
-          .consumer(pact.consumer.name)
-          .provider(pact.provider.name)
-          .consumer_version_number(pact.consumer_version_number)
-          .limit(1)
-
-        scope_for(LatestPactPublicationsByConsumerVersion)
+        pact_version = PactVersion.for_pact_domain(pact)
+        scope_for(PactPublication)
           .eager(:tags)
-          .consumer(pact.consumer.name)
-          .provider(pact.provider.name)
+          .for_consumer_name(pact.consumer.name)
+          .for_provider_name(pact.provider.name)
           .consumer_version_order_before(pact.consumer_version.order)
-          .where(Sequel.lit("pact_version_sha != ?", current_pact_content_sha))
-          .latest
+          .exclude(pact_version_id: pact_version.id)
+          .latest_by_consumer_version_order
           .collect(&:to_domain_with_content)[0]
       end
 
