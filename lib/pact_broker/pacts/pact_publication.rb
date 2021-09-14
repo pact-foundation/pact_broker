@@ -9,6 +9,7 @@ require "pact_broker/pacts/pact_publication_wip_dataset_module"
 require "pact_broker/pacts/eager_loaders"
 require "pact_broker/pacts/lazy_loaders"
 require "pact_broker/pacts/pact_publication_clean_selector_dataset_module"
+require "pact_broker/pacts/head_pact"
 
 module PactBroker
   module Pacts
