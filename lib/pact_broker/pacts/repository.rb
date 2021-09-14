@@ -177,17 +177,19 @@ module PactBroker
 
       # Returns latest pact version for the consumer_version_number
       def find_by_consumer_version consumer_name, consumer_version_number
-        scope_for(LatestPactPublicationsByConsumerVersion)
-          .consumer(consumer_name)
-          .consumer_version_number(consumer_version_number)
+        scope_for(PactPublication)
+          .for_consumer_name_and_maybe_version_number(consumer_name, consumer_version_number)
+          .remove_overridden_revisions_from_complete_query
           .collect(&:to_domain_with_content)
       end
 
       def find_by_version_and_provider version_id, provider_id
-        scope_for(LatestPactPublicationsByConsumerVersion)
+        scope_for(PactPublication)
           .eager(:tags)
           .where(consumer_version_id: version_id, provider_id: provider_id)
-          .limit(1).collect(&:to_domain_with_content)[0]
+          .remove_overridden_revisions_from_complete_query
+          .limit(1)
+          .collect(&:to_domain_with_content)[0]
       end
 
       def find_latest_pacts
