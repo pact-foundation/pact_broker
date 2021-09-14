@@ -967,6 +967,9 @@ module PactBroker
           before do
             td.create_consumer("Consumer")
               .create_provider("Provider")
+              .create_consumer_version("0")
+              .create_consumer_version_tag("main")
+              .create_pact
               .create_consumer_version("1")
               .create_pact
               .create_provider("Another Provider")
@@ -995,6 +998,36 @@ module PactBroker
 
             it "returns the latest" do
               expect(pact.consumer_version.number).to eq("2")
+            end
+          end
+
+          context "with a tag" do
+            let(:pact) { Repository.new.search_for_latest_pact("Consumer", "Provider", "main") }
+
+            it "returns the latest" do
+              expect(pact.consumer_version.number).to eq("0")
+            end
+          end
+
+          context "untagged" do
+            before do
+              td.create_consumer("Foo")
+                .create_provider("Bar")
+                .create_consumer_version("0")
+                .create_consumer_version_tag("main")
+                .create_pact
+                .create_consumer_version("1")
+                .create_pact
+                .create_consumer_version("2")
+                .create_consumer_version_tag("main")
+                .create_pact
+
+            end
+
+            let(:pact) { Repository.new.search_for_latest_pact("Foo", "Bar", :untagged) }
+
+            it "returns the latest" do
+              expect(pact.consumer_version.number).to eq("1")
             end
           end
         end

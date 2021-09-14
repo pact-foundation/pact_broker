@@ -217,16 +217,20 @@ module PactBroker
 
       # Allows optional consumer_name and provider_name
       def search_for_latest_pact(consumer_name, provider_name, tag = nil)
-        query = scope_for(LatestPactPublicationsByConsumerVersion).select_all_qualified
-        query = query.consumer(consumer_name) if consumer_name
-        query = query.provider(provider_name) if provider_name
+        query = scope_for(PactPublication).select_all_qualified
+        query = query.for_consumer_name(consumer_name) if consumer_name
+        query = query.for_provider_name(provider_name) if provider_name
 
         if tag == :untagged
           query = query.untagged
         elsif tag
-          query = query.tag(tag)
+          query = query.join_consumer_version_tags.consumer_version_tag(tag)
         end
-        query.latest.all.collect(&:to_domain_with_content)[0]
+        query
+          .remove_overridden_revisions_from_complete_query
+          .latest_by_consumer_version_order
+          .all
+          .collect(&:to_domain_with_content)[0]
       end
 
       # rubocop: disable Metrics/CyclomaticComplexity, Metrics/MethodLength
