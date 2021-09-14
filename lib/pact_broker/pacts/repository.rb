@@ -132,7 +132,7 @@ module PactBroker
         query = query.tag(options[:tag]) if options[:tag]
         query = query.for_branch_name(options[:branch_name]) if options[:branch_name]
 
-        ids = query.select_for_subquery(Sequel[:pact_publications][:id])
+        ids = query.select_for_subquery(Sequel.qualify(:pact_publications, :id).as(:id))
         webhook_repository.delete_triggered_webhooks_by_pact_publication_ids(ids)
         unscoped(PactPublication).where(id: ids).delete
       end
