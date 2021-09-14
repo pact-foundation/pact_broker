@@ -1,3 +1,14 @@
+<a name="v2.85.0"></a>
+### v2.85.0 (2021-09-13)
+
+#### Features
+
+* show in the UI whether or not a pact was pending when verification failed	 ([326c068e](/../../commit/326c068e))
+* thread safe configuration overrides (#500)	 ([50900231](/../../commit/50900231))
+* allow dashboard pacts to be viewed by branch, tag, environment or all	 ([1ec8fc82](/../../commit/1ec8fc82))
+* support deleting pacts by branch in the UI	 ([bc8fef1d](/../../commit/bc8fef1d))
+* update UI	 ([0ba5eda3](/../../commit/0ba5eda3))
+
 <a name="v2.84.0"></a>
 ### v2.84.0 (2021-09-10)
 
