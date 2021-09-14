@@ -423,12 +423,12 @@ module PactBroker
         subject { Repository.new.find_webhooks_to_trigger(consumer: td.consumer, provider: td.provider, event_name: "contract_published") }
 
         it "does not use a policy" do
-          td.create_webhook(event_names: ["contract_published"], enabled: enabled, description: 'Enabled webhook')
+          td.create_webhook(event_names: ["contract_published"], enabled: enabled, description: "Enabled webhook")
             .create_consumer("Foo")
             .create_provider("Bar")
           expect(PactBroker).to_not receive(:policy_scope!)
           is_expected.to contain_exactly(
-            have_attributes(description: 'Enabled webhook')
+            have_attributes(description: "Enabled webhook")
           )
         end
 
@@ -440,7 +440,7 @@ module PactBroker
           end
           let(:enabled) { false }
 
-          it 'finds no webhooks to trigger' do
+          it "finds no webhooks to trigger" do
             is_expected.to be_empty
           end
         end
@@ -449,14 +449,14 @@ module PactBroker
           before do
             td.create_consumer("Foo1")
               .create_provider("Bar1")
-              .create_webhook(provider: nil, event_names: ["contract_published"], description: 'Right webhook')
+              .create_webhook(provider: nil, event_names: ["contract_published"], description: "Right webhook")
           end
 
           let(:webhook_consumer) { Domain::WebhookPacticipant.new(name: td.consumer.name) }
 
-          it 'finds one webhook to trigger' do
+          it "finds one webhook to trigger" do
             is_expected.to contain_exactly(
-              have_attributes(description: 'Right webhook')
+              have_attributes(description: "Right webhook")
             )
           end
         end
@@ -469,7 +469,7 @@ module PactBroker
               .create_provider("Bar3")
           end
 
-          it 'finds no webhooks to trigger' do
+          it "finds no webhooks to trigger" do
             is_expected.to be_empty
           end
         end
@@ -479,16 +479,16 @@ module PactBroker
             td.create_webhook(
                 event_names: ["contract_published"],
                 consumer_label: "my_label",
-                description: 'Labeled webhook'
+                description: "Labeled webhook"
               )
               .create_consumer("Consumer")
               .create_label("my_label")
               .create_provider("Provider")
           end
 
-          it 'finds one webhook to trigger' do
+          it "finds one webhook to trigger" do
             is_expected.to contain_exactly(
-              have_attributes(description: 'Labeled webhook')
+              have_attributes(description: "Labeled webhook")
             )
           end
         end
@@ -499,15 +499,15 @@ module PactBroker
               .create_webhook(
                 event_names: ["contract_published"],
                 consumer_label: "my_label",
-                description: 'Labeled webhook'
+                description: "Labeled webhook"
               )
               .create_consumer("Consumer")
               .create_label("my_label")
           end
 
-          it 'finds one webhook to trigger' do
+          it "finds one webhook to trigger" do
             is_expected.to contain_exactly(
-              have_attributes(description: 'Labeled webhook')
+              have_attributes(description: "Labeled webhook")
             )
           end
         end
@@ -520,7 +520,7 @@ module PactBroker
               .create_provider("Provider")
           end
 
-          it 'finds no webhooks to trigger' do
+          it "finds no webhooks to trigger" do
             is_expected.to be_empty
           end
         end
@@ -530,16 +530,16 @@ module PactBroker
             td.create_webhook(
                 event_names: ["contract_published"],
                 provider_label: "my_label",
-                description: 'Labeled webhook'
+                description: "Labeled webhook"
               )
               .create_consumer("Consumer")
               .create_provider("Provider")
               .create_label("my_label")
           end
 
-          it 'finds one webhook to trigger' do
+          it "finds one webhook to trigger" do
             is_expected.to contain_exactly(
-              have_attributes(description: 'Labeled webhook')
+              have_attributes(description: "Labeled webhook")
             )
           end
         end
@@ -550,15 +550,15 @@ module PactBroker
               .create_webhook(
                 event_names: ["contract_published"],
                 provider_label: "my_label",
-                description: 'Labeled webhook'
+                description: "Labeled webhook"
               )
               .create_provider("Provider")
               .create_label("my_label")
           end
 
-          it 'finds one webhook to trigger' do
+          it "finds one webhook to trigger" do
             is_expected.to contain_exactly(
-              have_attributes(description: 'Labeled webhook')
+              have_attributes(description: "Labeled webhook")
             )
           end
         end
@@ -571,7 +571,7 @@ module PactBroker
               .create_label("other_label")
           end
 
-          it 'find no webhooks to trigger' do
+          it "find no webhooks to trigger" do
             is_expected.to be_empty
           end
         end
@@ -580,31 +580,31 @@ module PactBroker
           before do
             td.create_webhook(
                 event_names: ["contract_published"],
-                consumer_label: 'clabel',
-                provider_label: 'plabel',
-                description: 'Labeled webhook'
+                consumer_label: "clabel",
+                provider_label: "plabel",
+                description: "Labeled webhook"
               )
               .create_webhook(
                 event_names: ["contract_published"],
-                consumer_label: 'clabel',
-                provider_label: 'plabel2',
-                description: 'Labeled consumer webhook'
+                consumer_label: "clabel",
+                provider_label: "plabel2",
+                description: "Labeled consumer webhook"
               )
               .create_webhook(
                 event_names: ["contract_published"],
-                consumer_label: 'clabel2',
-                provider_label: 'plabel',
-                description: 'Labeled provider webhook'
+                consumer_label: "clabel2",
+                provider_label: "plabel",
+                description: "Labeled provider webhook"
               )
               .create_consumer("Consumer")
-              .create_label('clabel')
+              .create_label("clabel")
               .create_provider("Provider")
-              .create_label('plabel')
+              .create_label("plabel")
           end
 
-          it 'finds one webhook to trigger' do
+          it "finds one webhook to trigger" do
             is_expected.to contain_exactly(
-              have_attributes(description: 'Labeled webhook')
+              have_attributes(description: "Labeled webhook")
             )
           end
         end

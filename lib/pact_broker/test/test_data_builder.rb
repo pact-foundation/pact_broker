@@ -269,7 +269,6 @@ module PactBroker
         self
       end
 
-      # rubocop: disable Metrics/CyclomaticComplexity
       def create_webhook parameters = {}
         params = parameters.dup
         consumer, webhook_consumer = webhook_pacticipant(:consumer, params)

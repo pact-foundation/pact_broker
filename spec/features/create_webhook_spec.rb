@@ -91,7 +91,7 @@ describe "Creating a webhook" do
       end
     end
 
-    context 'with both label and name' do
+    context "with both label and name" do
       let(:provider) { { name: "Some Provider", label: "my_label" } }
 
       its(:status) { is_expected.to eq 400 }
@@ -127,7 +127,7 @@ describe "Creating a webhook" do
       end
     end
 
-    context 'with both label and name' do
+    context "with both label and name" do
       let(:consumer) { { name: "Some Consumer", label: "my_label" } }
 
       its(:status) { is_expected.to eq 400 }

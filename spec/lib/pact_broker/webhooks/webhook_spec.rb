@@ -6,7 +6,7 @@ module PactBroker
       before do
         td.create_consumer("Foo")
           .create_provider("Bar")
-          .create_label('label1')
+          .create_label("label1")
           .create_consumer_version
           .create_pact
           .create_global_webhook
@@ -14,8 +14,8 @@ module PactBroker
           .create_provider_webhook
           .create_provider("Wiffle")
           .create_provider_webhook
-          .create_webhook(provider: nil, consumer: nil, provider_label: 'label1')
-          .create_webhook(provider: nil, consumer: nil, consumer_label: 'label2', provider_label: 'label1')
+          .create_webhook(provider: nil, consumer: nil, provider_label: "label1")
+          .create_webhook(provider: nil, consumer: nil, consumer_label: "label2", provider_label: "label1")
       end
 
       let(:consumer) { PactBroker::Domain::Pacticipant.find(name: "Foo") }

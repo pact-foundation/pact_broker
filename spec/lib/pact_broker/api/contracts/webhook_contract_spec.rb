@@ -160,7 +160,7 @@ module PactBroker
             let(:json) do
               valid_webhook_with do |hash|
                 hash["provider"].delete("name")
-                hash["provider"]['label'] = 'my_label'
+                hash["provider"]["label"] = "my_label"
               end
             end
 
@@ -172,7 +172,7 @@ module PactBroker
           context "with a provider label and name" do
             let(:json) do
               valid_webhook_with do |hash|
-                hash["provider"]['label'] = 'my_label'
+                hash["provider"]["label"] = "my_label"
               end
             end
 

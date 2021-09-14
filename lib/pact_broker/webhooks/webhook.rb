@@ -130,12 +130,12 @@ module PactBroker
       def is_for? integration
         (
           consumer_id == integration.consumer_id ||
-          (consumer_id.nil? && integration.consumer.label?(consumer_label)) ||
-          (consumer_id.nil? && consumer_label.nil?)
+          match_label?(:consumer, integration) ||
+          match_all?(:consumer)
         ) && (
           provider_id == integration.provider_id ||
-          (provider_id.nil? && integration.provider.label?(provider_label)) ||
-          (provider_id.nil? && provider_label.nil?)
+          match_label?(:provider, integration) ||
+          match_all?(:provider)
         )
       end
 
@@ -163,8 +163,6 @@ module PactBroker
         }
       end
 
-      private
-
       def webhook_consumer
         return if consumer.nil? && consumer_label.nil?
 
@@ -175,6 +173,15 @@ module PactBroker
         return if provider.nil? && provider_label.nil?
 
         Domain::WebhookPacticipant.new(name: provider&.name, label: provider_label)
+      end
+
+      def match_all?(name)
+        public_send(:"#{name}_id").nil? && public_send(:"#{name}_label").nil?
+      end
+
+      def match_label?(name, integration)
+        label = public_send(:"#{name}_label")
+        public_send(:"#{name}_id").nil? && integration.public_send(name).label?(label)
       end
     end
   end
