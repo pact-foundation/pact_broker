@@ -352,6 +352,10 @@ module PactBroker
         where(Sequel[:ct][:name] => tag)
       end
 
+      def consumer_version_order_before order
+        where(Sequel.lit("consumer_version_order < ?", order))
+      end
+
       def latest_by_consumer_version_order
         reverse_order(:consumer_version_order).limit(1)
       end

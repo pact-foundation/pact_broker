@@ -286,19 +286,22 @@ module PactBroker
       end
 
       def find_previous_pact pact, tag = nil
-        query = scope_for(LatestPactPublicationsByConsumerVersion)
+        query = scope_for(PactPublication)
+            .remove_overridden_revisions
             .eager(:tags)
-            .consumer(pact.consumer.name)
-            .provider(pact.provider.name)
+            .for_consumer_name(pact.consumer.name)
+            .for_provider_name(pact.provider.name)
 
         if tag == :untagged
           query = query.untagged
         elsif tag
-          query = query.tag(tag)
+          query = query.join_consumer_version_tags.consumer_version_tag(tag)
         end
 
-        query.consumer_version_order_before(pact.consumer_version.order)
-            .latest.collect(&:to_domain_with_content)[0]
+        query
+          .consumer_version_order_before(pact.consumer_version.order)
+          .latest_by_consumer_version_order
+          .collect(&:to_domain_with_content)[0]
       end
 
       def find_next_pact pact
