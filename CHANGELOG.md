@@ -1,3 +1,10 @@
+<a name="v2.85.1"></a>
+### v2.85.1 (2021-09-14)
+
+#### Bug Fixes
+
+* fix bug identifying latest verification for tagged pact	 ([43ac4b03](/../../commit/43ac4b03))
+
 <a name="v2.85.0"></a>
 ### v2.85.0 (2021-09-13)
 
