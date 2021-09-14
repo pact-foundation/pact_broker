@@ -349,7 +349,7 @@ module PactBroker
       end
 
       def consumer_version_tag(tag)
-        where(Sequel[:ct][:name] => tag)
+        where(name_like(Sequel[:ct][:name],tag))
       end
 
       def consumer_version_order_before order
