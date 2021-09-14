@@ -154,8 +154,8 @@ module PactBroker
 
       def find_pacts_for_which_the_latest_version_for_the_fallback_tag_is_required(provider_name, selectors)
         selectors.collect do | selector |
-          query = scope_for(LatestTaggedPactPublications).provider(provider_name).where(tag_name: selector.fallback_tag)
-          query = query.consumer(selector.consumer) if selector.consumer
+          query = scope_for(PactPublication).for_provider_name(provider_name).for_latest_consumer_versions_with_tag(selector.fallback_tag)
+          query = query.for_consumer_name(selector.consumer) if selector.consumer
           query.all
             .collect do | latest_tagged_pact_publication |
               pact_publication = unscoped(PactPublication).find(id: latest_tagged_pact_publication.id)

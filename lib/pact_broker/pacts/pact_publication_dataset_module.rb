@@ -139,6 +139,7 @@ module PactBroker
           .remove_overridden_revisions_from_complete_query
       end
 
+      # The latest pact publication for each tag
       def latest_by_consumer_tag
         tags_join = {
           Sequel[:pact_publications][:consumer_version_id] => Sequel[:tags][:version_id]
