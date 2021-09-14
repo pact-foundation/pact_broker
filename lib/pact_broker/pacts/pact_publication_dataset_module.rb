@@ -43,6 +43,12 @@ module PactBroker
           .remove_overridden_revisions_from_complete_query
       end
 
+      def for_consumer_version_tag_all_revisions tag_name
+        join(:tags, { version_id: :consumer_version_id }) do
+          name_like(Sequel[:tags][:name], tag_name)
+        end
+      end
+
       def for_consumer_name_and_maybe_version_number(consumer_name, consumer_version_number)
         if consumer_version_number
           where(consumer_version: PactBroker::Domain::Version.where_pacticipant_name_and_version_number(consumer_name, consumer_version_number))

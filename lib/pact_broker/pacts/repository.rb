@@ -210,7 +210,7 @@ module PactBroker
         if tag == :untagged
           query = query.untagged
         elsif tag
-          query = query.join_consumer_version_tags.consumer_version_tag(tag)
+          query = query.for_consumer_version_tag_all_revisions(tag)
         end
         query.latest_by_consumer_version_order.all.collect(&:to_domain_with_content)[0]
       end
@@ -224,7 +224,7 @@ module PactBroker
         if tag == :untagged
           query = query.untagged
         elsif tag
-          query = query.join_consumer_version_tags.consumer_version_tag(tag)
+          query = query.for_consumer_version_tag_all_revisions(tag)
         end
         query
           .remove_overridden_revisions_from_complete_query
@@ -295,7 +295,7 @@ module PactBroker
         if tag == :untagged
           query = query.untagged
         elsif tag
-          query = query.join_consumer_version_tags.consumer_version_tag(tag)
+          query = query.for_consumer_version_tag_all_revisions(tag)
         end
 
         query
@@ -373,14 +373,15 @@ module PactBroker
         ).upsert
       end
 
-      def find_all_database_versions_between(consumer_name, options, base_class = LatestPactPublicationsByConsumerVersion)
+      def find_all_database_versions_between(consumer_name, options)
         provider_name = options.fetch(:and)
 
-        query = scope_for(base_class)
-          .consumer(consumer_name)
-          .provider(provider_name)
+        query = scope_for(PactPublication)
+          .for_consumer_name(consumer_name)
+          .for_provider_name(provider_name)
+          .remove_overridden_revisions
 
-        query = query.tag(options[:tag]) if options[:tag]
+        query = query.for_consumer_version_tag_all_revisions(options[:tag]) if options[:tag]
         query
       end
 
