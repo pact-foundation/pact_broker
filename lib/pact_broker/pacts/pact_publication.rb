@@ -8,6 +8,7 @@ require "pact_broker/pacts/pact_publication_dataset_module"
 require "pact_broker/pacts/pact_publication_wip_dataset_module"
 require "pact_broker/pacts/eager_loaders"
 require "pact_broker/pacts/lazy_loaders"
+require "pact_broker/pacts/pact_publication_clean_selector_dataset_module"
 
 module PactBroker
   module Pacts
@@ -77,6 +78,7 @@ module PactBroker
       dataset_module do
         include PactBroker::Repositories::Helpers
         include PactPublicationDatasetModule
+        include PactPublicationCleanSelectorDatasetModule
         include PactPublicationWipDatasetModule
       end
 
