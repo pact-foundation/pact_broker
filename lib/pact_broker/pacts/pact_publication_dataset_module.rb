@@ -234,7 +234,7 @@ module PactBroker
         deployed = base_query.join(:currently_deployed_version_ids, currently_deployed_join)
         released = base_query.join(:released_versions, released_join)
 
-        deployed.union(released)
+        deployed.union(released).remove_overridden_revisions_from_complete_query
       end
 
       def verified_before_date(date)
