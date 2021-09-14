@@ -202,16 +202,17 @@ module PactBroker
       end
 
       def find_latest_pact(consumer_name, provider_name, tag = nil)
-        query = scope_for(LatestPactPublicationsByConsumerVersion)
+        query = scope_for(PactPublication)
           .select_all_qualified
-          .consumer(consumer_name)
-          .provider(provider_name)
+          .for_consumer_name(consumer_name)
+          .for_provider_name(provider_name)
+          .remove_overridden_revisions
         if tag == :untagged
           query = query.untagged
         elsif tag
-          query = query.tag(tag)
+          query = query.join_consumer_version_tags.consumer_version_tag(tag)
         end
-        query.latest.all.collect(&:to_domain_with_content)[0]
+        query.latest_by_consumer_version_order.all.collect(&:to_domain_with_content)[0]
       end
 
       # Allows optional consumer_name and provider_name

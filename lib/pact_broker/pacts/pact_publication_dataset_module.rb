@@ -27,6 +27,11 @@ module PactBroker
         where(consumer: consumer)
       end
 
+      def untagged
+        left_outer_join(:tags, { version_id: :consumer_version_id })
+          .where(Sequel.qualify(:tags, :name) => nil)
+      end
+
       def for_consumer_version_tag tag_name
         base_query = self
         if no_columns_selected?
@@ -345,6 +350,10 @@ module PactBroker
 
       def consumer_version_tag(tag)
         where(Sequel[:ct][:name] => tag)
+      end
+
+      def latest_by_consumer_version_order
+        reverse_order(:consumer_version_order).limit(1)
       end
 
       def order_by_consumer_name
