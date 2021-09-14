@@ -112,11 +112,11 @@ module PactBroker
         elsif tags_option == true
           latest_verifications_for_cv_tags
             .select{ | v | v.consumer_id == pact_publication.consumer_id && v.provider_id == pact_publication.provider_id && pact_publication.head_pact_tags.collect(&:name).include?(v.consumer_version_tag_name) }
-            .sort{ |v1, v2| v1.id <=> v2.id }.last || (is_overall_latest && pact_publication.integration.latest_verification)
+            .sort{ |v1, v2| v1.id <=> v2.id }.last || (is_overall_latest ? pact_publication.integration.latest_verification : nil)
         elsif tags_option.is_a?(Array)
           latest_verifications_for_cv_tags
           .select{ | v | v.consumer_id == pact_publication.consumer_id && v.provider_id == pact_publication.provider_id && pact_publication.head_pact_tags.collect(&:name).include?(v.consumer_version_tag_name) && tags_option.include?(v.consumer_version_tag_name) }
-          .sort{ |v1, v2| v1.id <=> v2.id }.last  || (is_overall_latest && pact_publication.integration.latest_verification)
+          .sort{ |v1, v2| v1.id <=> v2.id }.last  || (is_overall_latest ? pact_publication.integration.latest_verification : nil)
         else
           pact_publication.integration.latest_verification
         end
