@@ -150,11 +150,11 @@ module PactBroker
       end
 
       def consumer
-        @consumer ||= OpenStruct.new(name: consumer_name, id: consumer_id)
+        @consumer ||= Domain::Pacticipant.new(name: consumer_name).tap { |pacticipant| pacticipant.id = consumer_id }
       end
 
       def provider
-        @provider ||= OpenStruct.new(name: provider_name, id: provider_id)
+        @provider ||= Domain::Pacticipant.new(name: provider_name).tap { |pacticipant| pacticipant.id = provider_id }
       end
 
       def consumer_version

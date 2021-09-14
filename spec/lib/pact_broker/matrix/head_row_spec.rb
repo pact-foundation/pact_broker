@@ -13,18 +13,22 @@ module PactBroker
             .create_provider("Bar")
             .create_consumer_version
             .create_pact
-            .create_global_webhook
-            .create_consumer_webhook
-            .create_provider_webhook
+            .create_global_webhook(description: 'global')
+            .create_consumer_webhook(description: 'consumer')
+            .create_provider_webhook(description: 'provider')
             .create_provider("Wiffle")
-            .create_provider_webhook
+            .create_provider_webhook(description: 'wiffle')
         end
 
         let(:row) { HeadRow.where(consumer_name: "Foo", provider_name: "Bar").single_record }
 
         it "returns all the webhooks" do
           rows = HeadRow.eager(:webhooks).all
-          expect(rows.first.webhooks.count).to eq 3
+          expect(rows.first.webhooks).to contain_exactly(
+            have_attributes(description: 'global'),
+            have_attributes(description: 'provider'),
+            have_attributes(description: 'consumer')
+          )
         end
       end
 

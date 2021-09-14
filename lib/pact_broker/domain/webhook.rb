@@ -63,11 +63,11 @@ module PactBroker
       end
 
       def consumer_name
-        consumer && consumer.name
+        consumer && (consumer.name || (consumer.label && "label:#{consumer.label}"))
       end
 
       def provider_name
-        provider && provider.name
+        provider && (provider.name || (provider.label && "label:#{provider.label}"))
       end
 
       def trigger_on_contract_content_changed?

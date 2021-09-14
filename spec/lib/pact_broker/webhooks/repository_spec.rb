@@ -286,7 +286,7 @@ module PactBroker
         let(:new_event) do
           PactBroker::Webhooks::WebhookEvent.new(name: "something_else")
         end
-        let(:new_consumer) { PactBroker::Domain::Pacticipant.new(name: "Foo2") }
+        let(:new_consumer) { Domain::WebhookPacticipant.new(name: "Foo2") }
         let(:new_webhook) do
           PactBroker::Domain::Webhook.new(
             consumer: new_consumer,
@@ -423,11 +423,13 @@ module PactBroker
         subject { Repository.new.find_webhooks_to_trigger(consumer: td.consumer, provider: td.provider, event_name: "contract_published") }
 
         it "does not use a policy" do
-          td.create_webhook(event_names: ["contract_published"], enabled: enabled)
+          td.create_webhook(event_names: ["contract_published"], enabled: enabled, description: 'Enabled webhook')
             .create_consumer("Foo")
             .create_provider("Bar")
           expect(PactBroker).to_not receive(:policy_scope!)
-          expect(subject.size).to eq 1
+          is_expected.to contain_exactly(
+            have_attributes(description: 'Enabled webhook')
+          )
         end
 
         context "when the webhook is disabled" do
@@ -437,21 +439,25 @@ module PactBroker
               .create_provider("Bar")
           end
           let(:enabled) { false }
-          its(:size) { is_expected.to eq 0 }
+
+          it 'finds no webhooks to trigger' do
+            is_expected.to be_empty
+          end
         end
 
         context "when the webhook is specified for a consumer and all providers" do
           before do
             td.create_consumer("Foo1")
               .create_provider("Bar1")
-              .create_webhook(provider: nil, event_names: ["contract_published"])
+              .create_webhook(provider: nil, event_names: ["contract_published"], description: 'Right webhook')
           end
 
-          its(:size) { is_expected.to eq 1 }
+          let(:webhook_consumer) { Domain::WebhookPacticipant.new(name: td.consumer.name) }
 
-          it "returns the right webhook" do
-            expect(subject.first.consumer).to eq td.consumer
-            expect(subject.first.provider).to be nil
+          it 'finds one webhook to trigger' do
+            is_expected.to contain_exactly(
+              have_attributes(description: 'Right webhook')
+            )
           end
         end
 
@@ -463,18 +469,47 @@ module PactBroker
               .create_provider("Bar3")
           end
 
-          its(:size) { is_expected.to eq 0 }
+          it 'finds no webhooks to trigger' do
+            is_expected.to be_empty
+          end
         end
 
         context "when the webhook is specified for matching consumer label" do
           before do
-            td.create_webhook(event_names: ["contract_published"], consumer_label: "my_label")
+            td.create_webhook(
+                event_names: ["contract_published"],
+                consumer_label: "my_label",
+                description: 'Labeled webhook'
+              )
               .create_consumer("Consumer")
               .create_label("my_label")
               .create_provider("Provider")
           end
 
-          its(:size) { is_expected.to eq 1 }
+          it 'finds one webhook to trigger' do
+            is_expected.to contain_exactly(
+              have_attributes(description: 'Labeled webhook')
+            )
+          end
+        end
+
+        context "when the webhook is specified for matching consumer label and specific provider" do
+          before do
+            td.create_provider("Provider")
+              .create_webhook(
+                event_names: ["contract_published"],
+                consumer_label: "my_label",
+                description: 'Labeled webhook'
+              )
+              .create_consumer("Consumer")
+              .create_label("my_label")
+          end
+
+          it 'finds one webhook to trigger' do
+            is_expected.to contain_exactly(
+              have_attributes(description: 'Labeled webhook')
+            )
+          end
         end
 
         context "when the webhook is specified for consumer label that does not match" do
@@ -485,18 +520,47 @@ module PactBroker
               .create_provider("Provider")
           end
 
-          its(:size) { is_expected.to eq 0 }
+          it 'finds no webhooks to trigger' do
+            is_expected.to be_empty
+          end
         end
 
         context "when the webhook is specified for matching provider label" do
           before do
-            td.create_webhook(event_names: ["contract_published"], provider_label: "my_label")
+            td.create_webhook(
+                event_names: ["contract_published"],
+                provider_label: "my_label",
+                description: 'Labeled webhook'
+              )
               .create_consumer("Consumer")
               .create_provider("Provider")
               .create_label("my_label")
           end
 
-          its(:size) { is_expected.to eq 1 }
+          it 'finds one webhook to trigger' do
+            is_expected.to contain_exactly(
+              have_attributes(description: 'Labeled webhook')
+            )
+          end
+        end
+
+        context "when the webhook is specified for matching provider label and specific consumer" do
+          before do
+            td.create_consumer("Consumer")
+              .create_webhook(
+                event_names: ["contract_published"],
+                provider_label: "my_label",
+                description: 'Labeled webhook'
+              )
+              .create_provider("Provider")
+              .create_label("my_label")
+          end
+
+          it 'finds one webhook to trigger' do
+            is_expected.to contain_exactly(
+              have_attributes(description: 'Labeled webhook')
+            )
+          end
         end
 
         context "when the webhook is specified for provider label that does not match" do
@@ -507,7 +571,42 @@ module PactBroker
               .create_label("other_label")
           end
 
-          its(:size) { is_expected.to eq 0 }
+          it 'find no webhooks to trigger' do
+            is_expected.to be_empty
+          end
+        end
+
+        context "when the webhook is specified for consumer and provider label" do
+          before do
+            td.create_webhook(
+                event_names: ["contract_published"],
+                consumer_label: 'clabel',
+                provider_label: 'plabel',
+                description: 'Labeled webhook'
+              )
+              .create_webhook(
+                event_names: ["contract_published"],
+                consumer_label: 'clabel',
+                provider_label: 'plabel2',
+                description: 'Labeled consumer webhook'
+              )
+              .create_webhook(
+                event_names: ["contract_published"],
+                consumer_label: 'clabel2',
+                provider_label: 'plabel',
+                description: 'Labeled provider webhook'
+              )
+              .create_consumer("Consumer")
+              .create_label('clabel')
+              .create_provider("Provider")
+              .create_label('plabel')
+          end
+
+          it 'finds one webhook to trigger' do
+            is_expected.to contain_exactly(
+              have_attributes(description: 'Labeled webhook')
+            )
+          end
         end
       end
 

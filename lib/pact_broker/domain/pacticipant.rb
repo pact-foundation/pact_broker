@@ -76,6 +76,10 @@ module PactBroker
       def branch_head_for(branch_name)
         branch_heads.find{ | branch_head | branch_head.branch_name == branch_name }
       end
+
+      def label?(name)
+        labels.any? { |label| label.name == name }
+      end
     end
   end
 end

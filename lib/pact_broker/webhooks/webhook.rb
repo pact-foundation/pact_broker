@@ -30,12 +30,14 @@ module PactBroker
         end
 
         def find_by_consumer_and_or_provider consumer, provider
+
           where(
             Sequel.|(
               { consumer_id: consumer.id, provider_id: provider.id },
-              { consumer_id: nil, provider_id: provider.id },
-              { consumer_id: consumer.id, provider_id: nil },
-              { consumer_id: nil, provider_id: nil}
+              { consumer_id: nil, provider_id: provider.id, consumer_label: nil },
+              { consumer_id: consumer.id, provider_id: nil, provider_label: nil },
+              { consumer_id: nil, provider_id: nil, consumer_label: nil, provider_label: nil },
+              *labels_criteria_for_consumer_or_provider(consumer, provider)
             )
           )
         end
@@ -50,6 +52,32 @@ module PactBroker
 
         def enabled
           where(enabled: true)
+        end
+
+        private
+
+        def labels_criteria_for_consumer_or_provider(consumer, provider)
+          consumer_labels = consumer.labels.map(&:name)
+          provider_labels = provider.labels.map(&:name)
+
+          [].then do |criteria|
+            next criteria if consumer_labels.empty?
+            criteria + [
+              { consumer_label: consumer_labels, provider_label: nil, provider_id: nil },
+              { consumer_label: consumer_labels, provider_label: nil, provider_id: provider.id }
+            ]
+          end.then do |criteria|
+            next criteria if provider_labels.empty?
+            criteria + [
+              { provider_label: provider_labels, consumer_label: nil, consumer_id: nil },
+              { provider_label: provider_labels, consumer_label: nil, consumer_id: consumer.id }
+            ]
+          end.then do |criteria|
+            next criteria if consumer_labels.empty? || provider_labels.empty?
+            criteria + [
+              { consumer_label: consumer_labels, provider_label: provider_labels }
+            ]
+          end
         end
       end
 
@@ -100,7 +128,15 @@ module PactBroker
       end
 
       def is_for? integration
-        (consumer_id == integration.consumer_id || !consumer_id) && (provider_id == integration.provider_id || !provider_id)
+        (
+          consumer_id == integration.consumer_id ||
+          (consumer_id.nil? && integration.consumer.label?(consumer_label)) ||
+          (consumer_id.nil? && consumer_label.nil?)
+        ) && (
+          provider_id == integration.provider_id ||
+          (provider_id.nil? && integration.provider.label?(provider_label)) ||
+          (provider_id.nil? && provider_label.nil?)
+        )
       end
 
       # Keep the triggered webhooks after the webhook has been deleted
@@ -109,7 +145,6 @@ module PactBroker
         TriggeredWebhook.where(webhook_id: id).update(webhook_id: nil)
         super
       end
-
 
       def self.properties_hash_from_domain webhook
         is_json_request_body = !(String === webhook.request.body || webhook.request.body.nil?) # Can't rely on people to set content type
@@ -128,16 +163,18 @@ module PactBroker
         }
       end
 
-      def webhook_consumer
-        return if consumer_id.nil? && consumer_label.nil?
+      private
 
-        Domain::WebhookPacticipant.new(name: consumer.name, label: consumer_label)
+      def webhook_consumer
+        return if consumer.nil? && consumer_label.nil?
+
+        Domain::WebhookPacticipant.new(name: consumer&.name, label: consumer_label)
       end
 
       def webhook_provider
-        return if provider_id.nil? && provider_label.nil?
+        return if provider.nil? && provider_label.nil?
 
-        Domain::WebhookPacticipant.new(name: provider.name, label: provider_label)
+        Domain::WebhookPacticipant.new(name: provider&.name, label: provider_label)
       end
     end
   end
