@@ -73,7 +73,7 @@ module PactBroker
       end
 
       def find_latest_verifications_for_consumer_version consumer_name, consumer_version_number
-        # Use LatestPactPublicationsByConsumerVersion not AllPactPublcations because we don't
+        # Use remove_verifications_for_overridden_consumer_versions because we don't
         # want verifications for shadowed revisions as it would be misleading.
         PactBroker::Domain::Verification
           .select_all_qualified
