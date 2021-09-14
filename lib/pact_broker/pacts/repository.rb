@@ -305,12 +305,14 @@ module PactBroker
       end
 
       def find_next_pact pact
-        scope_for(LatestPactPublicationsByConsumerVersion)
+        scope_for(PactPublication)
           .eager(:tags)
-          .consumer(pact.consumer.name)
-          .provider(pact.provider.name)
+          .for_consumer_name(pact.consumer.name)
+          .for_provider_name(pact.provider.name)
+          .remove_overridden_revisions
           .consumer_version_order_after(pact.consumer_version.order)
-          .earliest.collect(&:to_domain_with_content)[0]
+          .earliest
+          .collect(&:to_domain_with_content)[0]
       end
 
       def find_previous_distinct_pact pact

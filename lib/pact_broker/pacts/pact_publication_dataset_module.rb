@@ -356,6 +356,10 @@ module PactBroker
         where(Sequel.lit("consumer_version_order < ?", order))
       end
 
+      def consumer_version_order_after order
+        where(Sequel.lit("consumer_version_order > ?", order))
+      end
+
       def latest_by_consumer_version_order
         reverse_order(:consumer_version_order).limit(1)
       end
@@ -366,6 +370,10 @@ module PactBroker
 
       def order_by_consumer_version_order
         order_append(:consumer_version_order, :revision_number)
+      end
+
+      def earliest
+        order(:consumer_version_order).limit(1)
       end
 
       def latest
