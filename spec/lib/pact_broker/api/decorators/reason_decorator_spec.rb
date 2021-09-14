@@ -80,13 +80,13 @@ module PactBroker
           context "when the reason is NoEnvironmentSpecified" do
             let(:reason) { PactBroker::Matrix::NoEnvironmentSpecified.new }
 
-            its(:to_s) { is_expected.to start_with "WARN: For production use of can-i-deploy, it is recommended to specify the environment" }
+            its(:to_s) { is_expected.to start_with "WARN: It is recommended to specify the environment" }
           end
 
           context "when the reason is SelectorWithoutPacticipantVersionNumberSpecified" do
             let(:reason) { PactBroker::Matrix::SelectorWithoutPacticipantVersionNumberSpecified.new }
 
-            its(:to_s) { is_expected.to start_with "WARN: For production use of can-i-deploy, it is recommended to specify the version number" }
+            its(:to_s) { is_expected.to start_with "WARN: It is recommended to specify the version number" }
           end
         end
       end

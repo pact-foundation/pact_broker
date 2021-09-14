@@ -45,9 +45,9 @@ module PactBroker
           when PactBroker::Matrix::IgnoreSelectorDoesNotExist
             "WARN: Cannot ignore #{reason.selector.description}"
           when PactBroker::Matrix::SelectorWithoutPacticipantVersionNumberSpecified
-            "WARN: For production use of can-i-deploy, it is recommended to specify the version number (rather than latest tag or branch) of each pacticipant to avoid race conditions."
+            "WARN: It is recommended to specify the version number (rather than the tag or branch) of the pacticipant you wish to deploy to avoid race conditions. Without a version number, this result will not be reliable."
           when PactBroker::Matrix::NoEnvironmentSpecified
-            "WARN: For production use of can-i-deploy, it is recommended to specify the environment into which you are deploying. Without the environment, this result will not be reliable."
+            "WARN: It is recommended to specify the environment into which you are deploying. Without the environment, this result will not be reliable."
           else
             reason
           end
