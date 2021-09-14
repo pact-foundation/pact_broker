@@ -134,6 +134,9 @@
                   = index_item.last_verified_date.gsub("about ", "")
                   - if index_item.warning?
                     %span.warning-icon{ 'aria-hidden': true }
+                - if index_item.failed_and_pact_pending?
+                  %div
+                    (pact pending)
               %td
                 - if index_item.show_menu?
                   %span.integration-settings.kebab-horizontal{ 'aria-hidden': true }

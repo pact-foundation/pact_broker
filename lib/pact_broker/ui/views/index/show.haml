@@ -75,6 +75,9 @@
                 = index_item.last_verified_date
                 - if index_item.warning?
                   %span.warning-icon{ 'aria-hidden': true }
+                - if index_item.failed_and_pact_pending?
+                  %div
+                    (pact pending)
             %td
               %span.integration-settings.kebab-horizontal{ 'aria-hidden': true }
 

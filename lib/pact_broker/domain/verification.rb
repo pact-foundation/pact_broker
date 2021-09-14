@@ -206,6 +206,15 @@ module PactBroker
         @pact_content_with_test_results = PactBroker::Pacts::Content.from_json(pact_version.content).with_test_results(test_results)
       end
 
+      # Whether the pact content was pending at the time the verification was run
+      def pact_pending?
+        pact_pending
+      end
+
+      def failed_and_pact_pending?
+        !success && pact_pending
+      end
+
       # So consumer_version_tag_name can be accessed by method name
       def method_missing(m, *args, &block)
         if values.key?(m) && args.size == 0

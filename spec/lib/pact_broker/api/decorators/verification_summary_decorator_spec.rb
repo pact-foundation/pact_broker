@@ -20,7 +20,6 @@ module PactBroker
             pact_version_sha: "1234",
             latest_pact_publication: pact,
             test_results: nil,
-            pending: is_pending,
             execution_date: DateTime.now,
             provider_version_tags: provider_version_tags)
         end

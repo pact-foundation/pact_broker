@@ -41,7 +41,7 @@ module PactBroker
         it "sets the verification attributes" do
           verification = create_verification
           expect(verification.wip).to be true
-          expect(verification.pending).to eq is_pending
+          expect(verification.pact_pending?).to eq is_pending
           expect(verification.success).to be true
           expect(verification.number).to eq 3
           expect(verification.test_results).to eq "some" => "results"

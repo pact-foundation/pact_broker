@@ -18,7 +18,6 @@ module PactBroker
             test_results: { "arbitrary" => "json" },
             build_url: "http://build-url",
             pact_version_sha: "1234",
-            pending: is_pending,
             latest_pact_publication: pact_publication,
             execution_date: DateTime.now,
             provider_version_tags: provider_version_tags)
@@ -32,8 +31,6 @@ module PactBroker
             consumer_version_number: "1.2.3"
           )
         end
-
-        let(:is_pending) { true }
 
         let(:provider_version_tags) { [instance_double(PactBroker::Tags::TagWithLatestFlag, name: "prod", latest?: true)] }
 

@@ -155,12 +155,7 @@ module PactBroker
         def last_verified_date
           if @relationship.ever_verified?
             date = latest_verification.execution_date
-            ago = PactBroker::DateHelper.distance_of_time_in_words(date, DateTime.now) + " ago"
-            if latest_verification.pending
-              "#{ago} (pending)"
-            else
-              ago
-            end
+            PactBroker::DateHelper.distance_of_time_in_words(date, DateTime.now) + " ago"
           else
             ""
           end
@@ -183,6 +178,10 @@ module PactBroker
             when :failed_pending then "danger"
             else ""
           end
+        end
+
+        def failed_and_pact_pending?
+          latest_verification&.failed_and_pact_pending?
         end
 
         def warning?
