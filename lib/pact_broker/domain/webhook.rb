@@ -33,11 +33,11 @@ module PactBroker
 
       def scope_description
         if consumer && provider
-          "A webhook for the pact between #{consumer.name} and #{provider.name}"
+          "A webhook for the pact between #{consumer_name} and #{provider_name}"
         elsif provider
-          "A webhook for all pacts with provider #{provider.name}"
+          "A webhook for all pacts with provider #{provider_name}"
         elsif consumer
-          "A webhook for all pacts with consumer #{consumer.name}"
+          "A webhook for all pacts with consumer #{consumer_name}"
         else
           "A webhook for all pacts"
         end
@@ -63,11 +63,11 @@ module PactBroker
       end
 
       def consumer_name
-        consumer && (consumer.name || (consumer.label && "label:#{consumer.label}"))
+        consumer && (consumer.name || (consumer.label && "labeled `#{consumer.label}`"))
       end
 
       def provider_name
-        provider && (provider.name || (provider.label && "label:#{provider.label}"))
+        provider && (provider.name || (provider.label && "labeled `#{provider.label}`"))
       end
 
       def trigger_on_contract_content_changed?

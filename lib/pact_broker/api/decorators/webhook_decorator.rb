@@ -56,8 +56,8 @@ module PactBroker
           if represented.consumer
             {
               title: "Consumer",
-              name: represented.consumer.name,
-              href: pacticipant_url(options.fetch(:base_url), represented.consumer)
+              name: represented.consumer_name,
+              href: webhook_pacticipant_url(options, represented.consumer)
             }
           end
         end
@@ -66,8 +66,8 @@ module PactBroker
           if represented.provider
             {
               title: "Provider",
-              name: represented.provider.name,
-              href: pacticipant_url(options.fetch(:base_url), represented.provider)
+              name: represented.provider_name,
+              href: webhook_pacticipant_url(options, represented.provider)
             }
           end
         end
@@ -93,6 +93,16 @@ module PactBroker
             if webhook.events == nil
               webhook.events = [PactBroker::Webhooks::WebhookEvent.new(name: PactBroker::Webhooks::WebhookEvent::DEFAULT_EVENT_NAME)]
             end
+          end
+        end
+
+        private
+
+        def webhook_pacticipant_url(options, pacticipant)
+          if pacticipant.name
+            pacticipant_url(options.fetch(:base_url), pacticipant)
+          else
+            pacticipants_with_label_url(options.fetch(:base_url), pacticipant.label)
           end
         end
       end

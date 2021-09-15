@@ -22,6 +22,10 @@ module PactBroker
         "#{pacticipants_url(base_url)}/#{url_encode(pacticipant.name)}"
       end
 
+      def pacticipants_with_label_url base_url, label_name
+        "#{pacticipants_url(base_url)}/label/#{url_encode(label_name)}"
+      end
+
       def pacticipant_url_from_params params, base_url = ""
         [
           base_url,
