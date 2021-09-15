@@ -45,7 +45,6 @@ module DB
       end
       # rubocop: enable Lint/NestedMethodDefinition
     end
-    con.pool.connection_validation_timeout = -1 #Check the connection on every request
     con.timezone = :utc
     con.run("SET sql_mode='STRICT_TRANS_TABLES';") if db_credentials[:adapter].to_s =~ /mysql/
     con
