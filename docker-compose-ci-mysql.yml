@@ -33,5 +33,6 @@ services:
       - ./.gitignore:/home/.gitignore
       - ./public:/home/public
       - ./script/docker-container/test.sh:/usr/local/bin/test
+      - ./docs:/home/docs
     entrypoint: dockerize
     command: --wait tcp://mysql:3306 -timeout 60s test
