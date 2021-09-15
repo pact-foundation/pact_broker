@@ -102,6 +102,13 @@ module PactBroker
         self
       end
 
+      def create_label(name, label)
+        puts "Creating label `#{label}` for #{name}"
+        client.put("pacticipants/#{encode(name)}/labels/#{encode(label)}", {}).tap { |response| check_for_error(response) }
+        separate
+        self
+      end
+
       def publish_contract(consumer: last_consumer_name, consumer_version:, provider: last_provider_name, content_id:, tag: nil, branch: nil)
         content = generate_content(consumer, provider, content_id)
         request_body_hash = {
@@ -206,26 +213,35 @@ module PactBroker
         self
       end
 
-      def create_global_webhook_for_event(uuid: nil, url: "https://postman-echo.com/post", body: nil, event_name: )
-        puts "Creating global webhook for contract changed event with uuid #{uuid}"
+      def create_global_webhook_for_event(**kwargs)
+        create_webhook_for_event(**kwargs)
+      end
+
+      def create_webhook_for_event(uuid: nil, url: "https://postman-echo.com/post", body: nil, provider: nil, consumer: nil, event_name:)
+        require "securerandom"
+        webhook_prefix = "global " if provider.nil? && consumer.nil?
+        puts "Creating #{webhook_prefix}webhook for contract changed event with uuid #{uuid}"
         uuid ||= SecureRandom.uuid
         default_body = {
-          "providerVersionNumber" => "${pactbroker.providerVersionNumber}",
-          "providerVersionBranch" => "${pactbroker.providerVersionBranch}",
+          "eventName" => "${pactbroker.eventName}",
+          "consumerName" => "${pactbroker.consumerName}",
           "consumerVersionNumber" => "${pactbroker.consumerVersionNumber}",
-          "consumerVersionBranch" => "${pactbroker.consumerVersionBranch}"
+          "providerVersionBranch" => "${pactbroker.providerVersionBranch}",
+          "providerName" => "${pactbroker.providerName}",
+          "providerVersionNumber" => "${pactbroker.providerVersionNumber}",
+          "consumerVersionBranch" => "${pactbroker.consumerVersionBranch}",
         }
         request_body = {
-          "description" => "A webhook for all consumers and providers",
-          "events" => [{
-            "name" => event_name
-          }],
+          "consumer" => consumer,
+          "provider" => provider,
+          "description" => webhook_description(consumer, provider),
+          "events" => Array(event_name).map { |name| {"name" => name} },
           "request" => {
             "method" => "POST",
             "url" => url,
             "body" => body || default_body
           }
-        }
+        }.compact
         path = "webhooks/#{uuid}"
         client.put(path, request_body.to_json).tap { |response| check_for_error(response) }
         separate
@@ -332,6 +348,17 @@ module PactBroker
       end
 
       private
+
+      def webhook_description(consumer, provider)
+        return "A webhook for all consumers and providers" if consumer.nil? && provider.nil?
+
+        suffix = {consumer: consumer, provider: provider}.compact.map do |name, pacticipant|
+          desc = pacticipant.compact.map { |k, v| "#{k}: `#{v}`"}.first
+          "#{name}s by #{desc}"
+        end
+
+        "A webhook for #{suffix.join(' and ')}"
+      end
 
       def publish_verification_results(url_of_pact_to_verify, provider, provider_version, provider_version_tag, provider_version_branch, success)
         [*provider_version_tag].each do | tag |
