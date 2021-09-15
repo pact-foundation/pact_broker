@@ -166,6 +166,10 @@ module PactBroker
         super(value_to_string_array(webhook_host_whitelist, "webhook_host_whitelist"))
       end
 
+      def main_branch_candidates= main_branch_candidates
+        super(value_to_string_array(main_branch_candidates, "main_branch_candidates"))
+      end
+
       def features= features
         super(value_to_string_array(features, "features").collect(&:downcase))
       end
