@@ -116,10 +116,6 @@ module PactBroker
           join(:latest_pact_publication_ids_for_consumer_versions, { pact_version_id: :pact_version_id } )
         end
 
-        # Expects to be joined with AllPactPublications or subclass
-        # Beware that when columns with the same name exist in both datasets
-        # you may get the wrong column back in your model.
-
         def delete
           require "pact_broker/webhooks/triggered_webhook"
           PactBroker::Webhooks::TriggeredWebhook.where(verification: self).delete

@@ -1,4 +1,3 @@
-require "pact_broker/pacts/all_pact_publications"
 require "pact_broker/repositories/helpers"
 require "pact_broker/matrix/query_builder"
 require "sequel"

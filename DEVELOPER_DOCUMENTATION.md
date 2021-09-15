@@ -85,8 +85,6 @@ pact publication resource will be created with an incremented revision number, b
 
 * `latest_pact_publications_by_consumer_versions` - This view has the same columns as `all_pact_publications`, but it only contains the latest revision of the pact for each provider/consumer/version. It maps to what a user would consider the "pact" resource ie. `/pacts/provider/PROVIDER/consumer/CONSUMER/version/VERSION`. Previous revisions are not currently exposed via the API.
 
- The `AllPactPublications` Sequel model in the code is what is used when querying data for displaying in a response, rather than the normalised separate PactPublication and PactVersion models.
-
 * `latest_pact_publications` - This view has the same columns as `all_pact_publications`, but it only contains the latest revision of the pact for the latest consumer version for each consumer/provider pair. It is what a user would consider the "latest pact", and maps to the resource at `/pacts/provider/PROVIDER/consumer/CONSUMER/latest`
 
 * `latest_tagged_pact_publications` - This view has the same columns as `all_pact_publications`, plus a `tag_name` column. It is used to return the pact for the latest tagged version of a consumer.
