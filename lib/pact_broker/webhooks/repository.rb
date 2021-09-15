@@ -17,8 +17,8 @@ module PactBroker
       include Repositories
 
       def create uuid, webhook, consumer, provider
-        consumer = pacticipant_repository.find_by_name(webhook.consumer.name) if webhook.consumer
-        provider = pacticipant_repository.find_by_name(webhook.provider.name) if webhook.provider
+        consumer = pacticipant_repository.find_by_name(webhook.consumer.name) if webhook.consumer&.name
+        provider = pacticipant_repository.find_by_name(webhook.provider.name) if webhook.provider&.name
         db_webhook = Webhook.from_domain webhook, consumer, provider
         db_webhook.uuid = uuid
         db_webhook.save

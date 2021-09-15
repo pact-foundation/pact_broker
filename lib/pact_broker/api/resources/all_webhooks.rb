@@ -70,11 +70,11 @@ module PactBroker
         end
 
         def consumer
-          webhook.consumer ? pacticipant_service.find_pacticipant_by_name(webhook.consumer.name) : nil
+          webhook.consumer&.name ? pacticipant_service.find_pacticipant_by_name(webhook.consumer.name) : nil
         end
 
         def provider
-          webhook.provider ? pacticipant_service.find_pacticipant_by_name(webhook.provider.name) : nil
+          webhook.provider&.name ? pacticipant_service.find_pacticipant_by_name(webhook.provider.name) : nil
         end
 
         def webhooks
