@@ -1,6 +1,5 @@
 # Pact Broker Configuration
 
-
 <!-- This is a generated file. Please do not edit it directly. -->
 
 The Pact Broker use the [anyway](https://github.com/palkan/anyway_config) gem to support configuration via
