@@ -27,6 +27,7 @@ module PactBroker
         verification_repository.next_number
       end
 
+      # TODO use a decorator instead of passing in params, srsly, Beth
       # verified_pacts is an array of SelectedPact objects
       def create next_verification_number, params, verified_pacts, event_context
         first_verified_pact = verified_pacts.first
@@ -37,6 +38,8 @@ module PactBroker
         verification.wip = params.fetch("wip")
         verification.pact_pending = params.fetch("pending")
         verification.number = next_verification_number
+        verification.verified_by_implementation = params.dig("verifiedBy", "implementation")
+        verification.verified_by_version = params.dig("verifiedBy", "version")
         verification.consumer_version_selector_hashes = event_context[:consumer_version_selectors]
         pact_version = pact_repository.find_pact_version(first_verified_pact.consumer, first_verified_pact.provider, first_verified_pact.pact_version_sha)
         verification = verification_repository.create(verification, provider_version_number, pact_version)

@@ -3,5 +3,9 @@
   "providerApplicationVersion": "4.5.6",
   "testResults": {
     "some": "results"
+  },
+  "verifiedBy": {
+    "implementation" : "Ruby",
+    "version": "1234"
   }
 }

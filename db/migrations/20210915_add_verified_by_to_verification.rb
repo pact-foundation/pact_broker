@@ -1,5 +1,3 @@
-require_relative 'migration_helper'
-
 Sequel.migration do
   change do
     add_column(:verifications, :verified_by_implementation, String)

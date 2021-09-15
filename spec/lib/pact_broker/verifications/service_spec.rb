@@ -21,7 +21,19 @@ module PactBroker
 
         let(:event_context) { { some: "data", consumer_version_selectors: [{ foo: "bar" }] } }
         let(:expected_event_context) { { some: "data", provider_version_tags: ["dev"] } }
-        let(:params) { { "success" => success, "providerApplicationVersion" => "4.5.6", "wip" => true, "pending" => is_pending, "testResults" => { "some" => "results" }} }
+        let(:params) do
+          {
+            "success" => success,
+            "providerApplicationVersion" => "4.5.6",
+            "wip" => true,
+            "pending" => is_pending,
+            "testResults" => { "some" => "results" },
+            "verifiedBy" => {
+              "implementation" => "Ruby",
+              "version" => "1234"
+            }
+          }
+        end
         let(:is_pending) { true }
         let(:success) { true }
         let(:pact) do
@@ -34,7 +46,7 @@ module PactBroker
         let(:create_verification) { subject.create 3, params, selected_pacts, event_context }
 
         it "logs the creation" do
-          expect(logger).to receive(:info).with(/.*verification.*3/, payload: {"providerApplicationVersion"=>"4.5.6", "success"=>true, "wip"=>true, "pending" => is_pending})
+          expect(logger).to receive(:info).with(/.*verification.*3/, payload: hash_including("providerApplicationVersion"=>"4.5.6", "success"=>true, "wip"=>true, "pending" => is_pending))
           create_verification
         end
 
@@ -47,6 +59,8 @@ module PactBroker
           expect(verification.test_results).to eq "some" => "results"
           expect(verification.consumer_version_selector_hashes).to eq [{ foo: "bar" }]
           expect(verification.tag_names).to eq ["dev"]
+          expect(verification.verified_by_implementation).to eq "Ruby"
+          expect(verification.verified_by_version).to eq "1234"
         end
 
         it "sets the pact content for the verification" do
