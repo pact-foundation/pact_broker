@@ -38,7 +38,7 @@ module PactBroker
       # This will only work when using eager loading. The keys are just blanked out to avoid errors.
       # I don't understand how they work at all.
       # It would be nice to do this declaratively.
-      many_to_many :webhooks, :left_key => [], left_primary_key: [], :eager_loader=>(proc do |eo_opts|
+      many_to_many :webhooks, class: :'PactBroker::Webhooks::Webhook', :left_key => [], left_primary_key: [], :eager_loader=>(proc do |eo_opts|
         eo_opts[:rows].each do |row|
           row.associations[:webhooks] = []
         end
