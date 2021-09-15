@@ -2,7 +2,7 @@ require "pact_broker/deployments/environment_service"
 
 module PactBroker
   module Deployments
-    module EnvironmentService
+    describe EnvironmentService do
       describe ".create" do
         let(:environment) do
           Environment.new(
