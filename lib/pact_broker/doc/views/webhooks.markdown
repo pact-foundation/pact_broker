@@ -81,7 +81,7 @@ To specify an XML body, you will need to use a correctly escaped string (or use 
 
 #### Consumer or provider label matching
 
-Webhooks can be created to match events of certain set of [consumers or providers by label](/doc/label?context=pacticipants). Use `label` attribute for either `provider` or `consumer`. Both are optional, but they cannot be provided when `name` attribute is present. Following example would trigger a webhook when any contract with `async` labeled provider changed its content:
+Webhooks can be created to match events of certain set of [consumers or providers by label](/doc/label?context=pacticipant). Use `label` attribute for either `provider` or `consumer`. Both are optional, but they cannot be provided when `name` attribute is present. Following example would trigger a webhook when any contract with `async` labeled provider changed its content:
 
         {
           "provider": {
