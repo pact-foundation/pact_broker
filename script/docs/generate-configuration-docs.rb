@@ -68,8 +68,8 @@ doc["groups"].each do | group |
     write "### #{name}\n\n"
     write "#{metadata["description"]}\n\n"
 
-    write "**YAML configuration key name:** #{name}"
-    write "**Environment variable name:** PACT_BROKER_#{name.upcase}"
+    write "**YAML configuration key name:** #{in_backticks(name)}<br/>"
+    write "**Environment variable name:** `PACT_BROKER_#{name.upcase}`<br/>"
     write "**Supported versions:** #{metadata["supported_versions"]}<br/>" if metadata["supported_versions"]
     write "**Required:** #{metadata["required"] || "false"}<br/>" if metadata["required"]
     write "**Format:** #{metadata["format"]}<br/>" if metadata["format"]
