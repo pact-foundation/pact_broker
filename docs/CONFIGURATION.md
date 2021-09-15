@@ -3,8 +3,7 @@
 
 <!-- This is a generated file. Please do not edit it directly. -->
 
-The Pact Broker use the [anyway](https://github.com/palkan/anyway_config) gem to support configuration via
-environment variables or a YAML file.
+The Pact Broker supports configuration via environment variables or a YAML file.
 
 To configure the application using a YAML file, place it in the location `config/pact_broker.yml`,
 relative to the working directory of the application, or set the environment
