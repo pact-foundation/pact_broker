@@ -1,4 +1,42 @@
 groups:
+  - title: Logging
+    vars:
+      log_level:
+        description: "The application log level"
+        default_value: info
+        allowed_values:
+          - debug
+          - info
+          - warn
+          - error
+          - fatal
+      log_format:
+        description: "The application log format. Can be any value supported by Semantic Logger."
+        default_value: "default"
+        allowed_values:
+          - default
+          - json
+          - color
+        more_info: https://github.com/rocketjob/semantic_logger/tree/master/lib/semantic_logger/formatters
+      log_dir:
+        description: "The log file directory"
+        default_value: "./logs"
+      log_stream:
+        description: |-
+          The stream to which the logs will be sent.
+
+          While the default is `file` for the Ruby application, it is set to `stdout` on the supported Docker images.
+        default_value: "file"
+        allowed_values:
+          - stdout
+          - file
+      hide_pactflow_messages:
+        description: "Set to `true` to hide the messages in the logs about Pactflow"
+        default_value: true
+        allowed_values:
+          - true
+          - false
+        more_info: https://pactflow.io
   - title: Database
     vars:
       database_adapter:
@@ -7,7 +45,7 @@ groups:
 
           For investigations/spikes on a development machine, you can use SQlite. It is not supported as a production database, as it does not support
           concurrent requests.
-        default: "postgres"
+        default_value: "postgres"
         allowed_values:
           - postgres (for production use)
           - sqlite (for spikes only)
@@ -28,13 +66,14 @@ groups:
       database_url:
         description: |-
           The full database URL may be specified instead of the separate adapter, username, password, name, host and port.
-        format: "{database_adapter}://{database_username}:{database_password}@{database_host}:{database_port}/{database_name}"
+        format: "`{database_adapter}://{database_username}:{database_password}@{database_host}:{database_port}/{database_name}`"
         examples:
           - postgres://pact_broker_user:pact_broker_password@pact_broker_db_host/pact_broker
-          - sqlite:////tmp/pact_broker.sqlite3
+          - sqlite:///tmp/pact_broker.sqlite3 (relative path to working directory)
+          - sqlite:////tmp/pact_broker.sqlite3 (absolute path)
       database_sslmode:
         description: The Postgresql ssl mode.
-        default: prefer
+        default_value: prefer
         allowed_values:
           - disable
           - allow
@@ -48,7 +87,7 @@ groups:
           The log level that will be used when the SQL query statements are logged.
 
           To disable noisy SQL query logging when the application `log_level` is set to `debug` for other reasons, use the value `none`.
-        default: debug
+        default_value: debug
         allowed_values:
           - none
           - debug
@@ -57,98 +96,71 @@ groups:
           - error
           - fatal
       sql_log_warn_duration:
-        description: ""
-        default: 5
-        allowed_values:
-        more_info:
+        description: "The number of seconds after which to log an SQL query at warn level. Use this for detecting slow queries."
+        default_value: 5
+        allowed_values_description: A positive integer or float, as a string.
+        more_info: https://sequel.jeremyevans.net/rdoc/files/doc/opening_databases_rdoc.html#label-General+connection+options
       database_max_connections:
-        description: ""
-        default: nil
-        allowed_values:
-        more_info:
+        description: "The maximum size of the connection pool (4 connections by default on most databases)"
+        default_value: 4
+        allowed_values_description: A positive integer value.
+        more_info: https://sequel.jeremyevans.net/rdoc/files/doc/opening_databases_rdoc.html#label-General+connection+options
       database_pool_timeout:
-        description: ""
-        default: 5
-        allowed_values:
-        more_info:
+        description: "The number of seconds to wait if a connection cannot be acquired before raising an error"
+        default_value: 5
+        allowed_values_description: A positive integer.
+        more_info: https://sequel.jeremyevans.net/rdoc/files/doc/opening_databases_rdoc.html#label-General+connection+options
       database_connect_max_retries:
-        description: ""
-        default: 0
-        allowed_values:
-        more_info:
-      auto_migrate_db:
-        description: ""
-        default: true
-        allowed_values:
-        more_info:
-      auto_migrate_db_data:
-        description: ""
-        default: true
-        allowed_values:
-        more_info:
-      allow_missing_migration_files:
-        description: ""
-        default: true
-        allowed_values:
-        more_info:
-      validate_database_connection_config:
-        description: ""
-        default: true
-        allowed_values:
-        more_info:
-      database_statement_timeout:
-        description: ""
-        default: 15
-        allowed_values:
-        more_info:
-      metrics_sql_statement_timeout:
-        description: ""
-        default: 30
-        allowed_values:
-        more_info:
-      database_connection_validation_timeout:
-        description: ""
-        default:
-        allowed_values:
-        more_info:
-  - title: Logging
-    vars:
-      log_level:
-        description: "The application log level"
-        default: info
-        allowed_values:
-          - debug
-          - info
-          - warn
-          - error
-          - fatal
-      log_format:
-        description: "The application log format. Can be any value supported by Semantic Logger."
-        default: "default"
-        allowed_values:
-          - default
-          - json
-          - color
-        more_info: https://github.com/rocketjob/semantic_logger/tree/master/lib/semantic_logger/formatters
-      log_dir:
-        description: "The log file directory"
-        default: "./logs"
-      log_stream:
         description: |-
-          The stream to which the logs will be sent.
-
-          While the default is `file` for the Ruby application, it is set to `stdout` on the supported Docker images.
-        default: "file"
-        allowed_values:
-          - stdout
-          - file
-      hide_pactflow_messages:
-        description: "Set to `true` to hide the messages in the logs about Pactflow"
-        default: true
+          When running the Pact Broker Docker image experimentally using Docker Compose on a local development machine,
+          the Broker application process may be ready before the database is available for connection, causing the application
+          container to exit with an error. Setting the max retries to a non-zero number will allow it to retry the connection the
+          configured number of times, waiting 3 seconds between attempts.
+        default_value: 0
+        allowed_values_description: A positive integer value.
+      auto_migrate_db:
+        description: "Whether or not to run the database schema migrations on start up. It is recommended to set this to `true`."
+        default_value: true
         allowed_values:
           - true
           - false
-        more_info: https://pactflow.io
+      auto_migrate_db_data:
+        description: "Whether or not to run the database data migrations on start up. It is recommended to set this to `true`."
+        default_value: true
+        allowed_values:
+          - true
+          - false
+      allow_missing_migration_files:
+        description: |-
+          If `true`, will not raise an error if a database migration is recorded in the database that does not have an
+          equivalent file in the codebase. If this is true, an older version of the code may be used with a newer version of the database,
+          however, data integrity issues may occur.
+        default_value: true
+        allowed_values:
+        more_info: https://sequel.jeremyevans.net/rdoc/classes/Sequel/Migrator.html
+      database_statement_timeout:
+        description: "The number of seconds after which an SQL query will be aborted. Only supported for Postgresql connections."
+        default_value: 15
+        allowed_values_description: A positive integer or float.
+        more_info: https://www.postgresql.org/docs/9.3/runtime-config-client.html
+      metrics_sql_statement_timeout:
+        description: |-
+          The number of seconds after which the SQL queries used for the metrics endpoint will be aborted.
+          This is configurable separately from the standard `database_statement_timeout` as it may need to be significantly
+          longer than the desired value for standard queries.
+        default_value: 30
+        allowed_values_description: A positive integer.
+      database_connection_validation_timeout:
+        description: |-
+          The number of seconds after which to check the health of a connection from a connection pool before passing it to the application.
+
+          `-1` means that connections will be validated every time, which avoids errors
+          when databases are restarted and connections are killed.  This has a performance
+          penalty, so consider increasing this timeout if building a frequently accessed service.
+
+        default_description: -1 for v2.85.1 and earlier, 3600 for later versions.
+        allowed_values_description: -1 or any positive integer.
+        more_info: https://sequel.jeremyevans.net/rdoc-plugins/files/lib/sequel/extensions/connection_validator_rb.html
   - title: Authentication and authorization
     comments: |
       The Pact Broker comes with 2 configurable basic auth users - one with read/write privileges, and one with read only privileges.
@@ -156,8 +168,8 @@ groups:
       should be used for CI/CD.
     vars:
       basic_auth_enabled:
-        description: "Whether to enable basic authorization"
-        default: false
+        description: "Whether to enable basic authorization. This is automatically set to true for the Docker images if the `basic_auth_username` and `basic_auth_password` are set."
+        default_value: false
         allowed_values:
           - true
           - false
@@ -171,19 +183,19 @@ groups:
         description: "The password for the read only basic auth user."
       allow_public_read:
         description: "If you want to allow public read access, but still require credentials for writing, then leave `basic_auth_read_only_username` and `basic_auth_read_only_password` unset, and set `allow_public_read` to `true`."
-        default: false
+        default_value: false
         allowed_values:
           - true
           - false
       public_heartbeat:
         description: "If you have enabled basic auth, but require unauthenticated access to the heartbeat URL (eg. for use within an AWS autoscaling group), set `public_heartbeat` to `true`."
-        default: false
+        default_value: false
         allowed_values:
           - true
           - false
       enable_public_badge_access:
         description: "Set this to true to allow status badges to be embedded in README files without requiring a hardcoded password."
-        default: false
+        default_value: false
         allowed_values:
           - true
           - false
@@ -193,13 +205,13 @@ groups:
         description: |-
           The schedule of seconds to wait between webhook execution attempts.
           The default schedule is 10 sec, 1 min, 2 min, 5 min, 10 min, 20 min (38 minutes in total).
-        default: "10 60 120 300 600 1200"
+        default_value: "10 60 120 300 600 1200"
         format: A space separated list of integers.
       webhook_http_method_whitelist:
         description: |-
           The allowed HTTP methods for webhooks.
           It is highly recommended that only `POST` requests are allowed to ensure that webhooks cannot be used to retrieve sensitive information from hosts within the same network.
-        default: "POST"
+        default_value: "POST"
         format: A space separated list.
         allowed_values:
           - POST
@@ -214,13 +226,13 @@ groups:
 
           In most cases, configuring this is not necessary, but there are some CI systems that return a non 200 status for a success,
           which is why this feature exists.
-        default: "200 201 202 203 204 205 206"
+        default_value: "200 201 202 203 204 205 206"
         format: A space separated list of integers.
         allowed_values:
           - Any valid HTTP status code
       webhook_scheme_whitelist:
         description: "The allowed URL schemes for webhooks."
-        default: "https"
+        default_value: "https"
         format: "A space delimited list."
         allowed_values:
           - https
@@ -231,7 +243,7 @@ groups:
           Regular expressions should start and end with a `/` to differentiate them from Strings.
           Note that backslashes need to be escaped with a second backslash when setting via an environment variable.
           Please read the Webhook whitelists section of the Pact Broker configuration documentation to understand how the whitelist is used.
-        default:
+        default_value:
         examples:
           - github.com
           - 10.2.3.41/24
@@ -239,18 +251,22 @@ groups:
         more_info: https://docs.pact.io/pact_broker/configuration/#webhook-whitelists
       disable_ssl_verification:
         description: "If set to true, SSL verification will be disabled for the HTTP requests made by the webhooks"
-        default: false
+        default_value: false
         allowed_values:
           - true
           - false
-  - title: HTTP
+      user_agent:
+        description: |-
+          The user agent to set when making HTTP requests for webhooks.
+        default_value: "Pact Broker v{VERSION}"
+  - title: Resources
     vars:
       port:
         description: |-
           The HTTP port that the Pact Broker application will run on. This will only be honoured if you are deploying the Pact Broker using
           a package that actually reads this property (eg. one of the supported Docker images). If you are running the vanilla Ruby application,
           the application will run on the port the server has been configured to run on (eg. `bundle exec rackup -p 9393`)
-        default: 9292
+        default_value: 9292
       base_url:
         description: |-
           The full URL (including port, if non-standard for the protocol) at which the application will be made available to users.
@@ -270,8 +286,27 @@ groups:
         example: "http://my-internal-pact-broker:9292 https://my-external-pact-broker"
       shields_io_base_url:
         description: The URL of the shields.io server used to generate the README badges.
-        default: https://img.shields.io
+        default_value: https://img.shields.io
         more_info: https://shields.io
+      badge_provider_mode:
+        description: |-
+          The method by which the badges are generated. When set to `redirect`, a request to the Pact Broker for a badge will be sent a redirect response
+          to render the badge from the shields.io server directly in the browser. This is the recommended value.
+          When set to `proxy`, the Pact Broker will make a request directly to the configured shields.io server, and then send the returned file
+          back to the browser. This mode is not recommended for security and performance reasons.
+        default_value: redirect
+        allowed_values:
+          - redirect
+          - proxy
+      enable_diagnostic_endpoints:
+        description: |-
+          Whether or not to enable the diagnostic endpoints at `/diagnostic/status/heartbeat` and `"diagnostic/status/dependencies`.
+          The heartbeat endpoint is for use by load balancers, and the dependencies endpoint is for checking that the database
+          is available (do not use this for load balancing, as it makes a database connection).
+        default_value: true
+        allowed_values:
+          - true
+          - false
   - title: Domain
     vars:
       check_for_potential_duplicate_pacticipant_names:
@@ -287,7 +322,7 @@ groups:
 
           To turn this feature off, set `check_for_potential_duplicate_pacticipant_names` to `false`, and make sure everyone is very careful with their naming!
           The usefulness of the Broker depends on the integrity of the data, which in turn depends on the correctness of the pacticipant names.
-        default: true
+        default_value: true
         allowed_values:
           - true
           - false
@@ -298,7 +333,8 @@ groups:
           also created for the pacticipant version.
 
           This is to assist in the migration from using tags to track deployments to using the deployed and released versions feature.
-        default: true
+        supported_versions: From v2.81.0
+        default_value: true
         allowed_values:
           - true
           - false
@@ -309,10 +345,39 @@ groups:
           will be used to populate the `branch` property of the version.
 
           This is to assist in the migration from using tags to track branches to using the branches feature.
-        default: true
+        supported_versions: From v2.82.0
+        default_value: true
         allowed_values:
           - true
           - false
+      auto_detect_main_branch:
+        description: |-
+          When `true` and a pacticipant version is created with a tag or a branch that matches one of the names in `main_branch_candidates`,
+          the `mainBranch` property is set for that pacticipant if it is not already set.
+
+          This is to assist in the migration from using tags to track branches to using the branches feature.
+        supported_versions: From v2.82.0
+        default_value: true
+        allowed_values:
+          - true
+          - false
+      main_branch_candidates:
+        description: |-
+          An array of potential main branch names used when automatically detecting the main branch for a pacticipant.
+        format: "A space delimited list."
+        default_value: "develop main master"
+        supported_versions: From v2.82.0
+      allow_dangerous_contract_modification:
+        description: |-
+          Whether or not to allow the pact content for an existing consumer version to be modified. It is strongly recommended that this is set to false,
+          as allowing modification makes the results of can-i-deploy unreliable. When this is set to false as recommended, each commit must publish pacts
+          with a unique version number.
+        default_description: For new installations of v2.82.0 and later, this defaults to `false`.
+        supported_versions: From v2.82.0
+        allowed_values:
+          - true
+          - false
+        more_info: https://docs.pact.io/versioning
   - title: Miscellaneous
     vars:
       features:
