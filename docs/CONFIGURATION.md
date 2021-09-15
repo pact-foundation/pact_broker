@@ -386,7 +386,7 @@ The allowed URL schemes for webhooks.
 A list of hosts, network ranges, or host regular expressions.
 Regular expressions should start and end with a `/` to differentiate them from Strings.
 Note that backslashes need to be escaped with a second backslash when setting via an environment variable.
-Please read the Webhook whitelists section of the Pact Broker configuration documentation to understand how the whitelist is used.
+Please read the [Webhook whitelists section](https://docs.pact.io/pact_broker/configuration/features#webhooks) of the Pact Broker configuration documentation to understand how the whitelist is used.
 
 **YAML configuration key name:** `webhook_host_whitelist`<br/>
 **Environment variable name:** `PACT_BROKER_WEBHOOK_HOST_WHITELIST`<br/>
