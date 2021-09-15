@@ -27,7 +27,7 @@ module PactBroker
             validate_database_connection_config: true,
             database_statement_timeout: 15,
             metrics_sql_statement_timeout: 30,
-            database_connection_validation_timeout: -1
+            database_connection_validation_timeout: nil
           )
 
           def database_configuration
