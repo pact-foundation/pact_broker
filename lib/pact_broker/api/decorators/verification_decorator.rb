@@ -15,6 +15,10 @@ module PactBroker
         property :execution_date, as: :verificationDate
         property :build_url, as: :buildUrl
         property :test_results, as: :testResults
+        nested :verifiedBy do
+          property :verified_by_implementation, as: :implementation
+          property :verified_by_version, as: :version
+        end
 
         link :self do | options |
           {
