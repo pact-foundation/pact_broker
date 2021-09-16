@@ -53,21 +53,41 @@ module PactBroker
         end
 
         link :'pb:consumer' do | options |
-          if represented.consumer
+          if represented.consumer&.name
             {
               title: "Consumer",
-              name: represented.consumer_name,
-              href: webhook_pacticipant_url(options, represented.consumer)
+              name: represented.consumer.name,
+              href: pacticipant_url(options.fetch(:base_url), represented.consumer)
+            }
+          end
+        end
+
+        link :'pb:consumers' do | options |
+          if represented.consumer&.label
+            {
+              title: "Consumers by label",
+              name: represented.consumer.label,
+              href: pacticipants_with_label_url(options.fetch(:base_url), represented.consumer.label)
             }
           end
         end
 
         link :'pb:provider' do | options |
-          if represented.provider
+          if represented.provider&.name
             {
               title: "Provider",
-              name: represented.provider_name,
-              href: webhook_pacticipant_url(options, represented.provider)
+              name: represented.provider.name,
+              href: pacticipant_url(options.fetch(:base_url), represented.provider)
+            }
+          end
+        end
+
+        link :'pb:providers' do | options |
+          if represented.provider&.label
+            {
+              title: "Providers by label",
+              name: represented.provider.label,
+              href: pacticipants_with_label_url(options.fetch(:base_url), represented.provider.label)
             }
           end
         end
@@ -93,16 +113,6 @@ module PactBroker
             if webhook.events == nil
               webhook.events = [PactBroker::Webhooks::WebhookEvent.new(name: PactBroker::Webhooks::WebhookEvent::DEFAULT_EVENT_NAME)]
             end
-          end
-        end
-
-        private
-
-        def webhook_pacticipant_url(options, pacticipant)
-          if pacticipant.name
-            pacticipant_url(options.fetch(:base_url), pacticipant)
-          else
-            pacticipants_with_label_url(options.fetch(:base_url), pacticipant.label)
           end
         end
       end

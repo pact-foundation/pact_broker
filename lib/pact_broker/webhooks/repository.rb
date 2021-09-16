@@ -17,8 +17,8 @@ module PactBroker
       include Repositories
 
       def create uuid, webhook, consumer, provider
-        consumer = pacticipant_repository.find_by_name(webhook.consumer.name) if webhook.consumer&.name
-        provider = pacticipant_repository.find_by_name(webhook.provider.name) if webhook.provider&.name
+        consumer = find_pacticipant_by_name(webhook.consumer) || consumer
+        provider = find_pacticipant_by_name(webhook.provider) || provider
         db_webhook = Webhook.from_domain webhook, consumer, provider
         db_webhook.uuid = uuid
         db_webhook.save
@@ -36,8 +36,8 @@ module PactBroker
       # policy applied at resource level
       def update_by_uuid uuid, webhook
         existing_webhook = deliberately_unscoped(Webhook).find(uuid: uuid)
-        existing_webhook.consumer_id = webhook.consumer ? pacticipant_repository.find_by_name(webhook.consumer.name).id : nil
-        existing_webhook.provider_id = webhook.provider ? pacticipant_repository.find_by_name(webhook.provider.name).id : nil
+        existing_webhook.consumer_id = find_pacticipant_by_name(webhook.consumer)&.id
+        existing_webhook.provider_id = find_pacticipant_by_name(webhook.provider)&.id
         existing_webhook.update_from_domain(webhook).save
         existing_webhook.events.collect(&:delete)
         (webhook.events || []).each do | webhook_event |
@@ -186,6 +186,12 @@ module PactBroker
       end
 
       private
+
+      def find_pacticipant_by_name(pacticipant)
+        return unless pacticipant&.name
+
+        pacticipant_repository.find_by_name(pacticipant.name)
+      end
 
       def deliberately_unscoped(scope)
         scope
