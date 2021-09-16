@@ -65,6 +65,38 @@ module PactBroker
         end
       end
 
+      describe "#latest_main_branch_verification" do
+        before do
+          td.create_pact_with_verification("Foo", "1", "Bar", "2")
+            .create_verification(provider_version: "3", number: 2, branch: "main")
+            .create_verification(provider_version: "3", number: 3)
+            .create_verification(provider_version: "3", number: 4)
+            .create_pact_with_verification("NotFoo", "1", "Bar", "4")
+            .create_verification(provider_version: "5", number: 5)
+            .create_pact_with_verification("NotFoo2", "1", "NotBar", "4")
+            .create_verification(provider_version: "6", number: 6)
+            .create_pact_with_verification("NotFoo3", "2", "NotBar", "5")
+            .create_verification(provider_version: "7", number: 7)
+        end
+
+        context "lazy loading" do
+          it "lazy loads" do
+            expect(PactPublication.order(:id).all.first.pact_version.latest_main_branch_verification).to have_attributes(provider_version_number: "3", number: 4)
+            expect(PactPublication.order(:id).all.last.pact_version.latest_main_branch_verification).to be_nil
+          end
+        end
+
+        context "eager loading" do
+          let(:pact_version_1) { PactVersion.eager(:latest_main_branch_verification).order(:id).all.first }
+          let(:pact_version_2) { PactVersion.eager(:latest_main_branch_verification).order(:id).all.last }
+
+          it "eager loads" do
+            expect(PactPublication.order(:id).all.first.pact_version.latest_main_branch_verification).to have_attributes(provider_version_number: "3", number: 4)
+            expect(pact_version_2.associations[:latest_main_branch_verification]).to be_nil
+          end
+        end
+      end
+
       describe "latest_consumer_version" do
         before do
           td.create_consumer("consumer")

@@ -60,6 +60,10 @@ module PactBroker
         PactBroker::Pacts::PactPublication.where(id: pact.id).single_record.latest_verification
       end
 
+      def find_latest_from_main_branch_for_pact(pact)
+        PactBroker::Pacts::PactPublication.where(id: pact.id).single_record.latest_main_branch_verification
+      end
+
       def any_verifications?(consumer, provider)
         PactBroker::Domain::Verification.where(consumer_id: consumer.id, provider_id: provider.id).any?
       end

@@ -113,6 +113,10 @@ module PactBroker
         pact_version.latest_verification
       end
 
+      def latest_main_branch_verification
+        pact_version.latest_main_branch_verification
+      end
+
       def latest_for_branch?
         if !defined?(@latest_for_branch)
           if consumer_version.branch_versions.empty?

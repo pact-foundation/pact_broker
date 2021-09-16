@@ -21,7 +21,7 @@ module PactBroker
       using PactBroker::HashRefinements
       extend PactBroker::Events::Publisher
 
-      delegate [:any_verifications?] => :verification_repository
+      delegate [:any_verifications?, :find_latest_from_main_branch_for_pact] => :verification_repository
 
       def next_number
         verification_repository.next_number

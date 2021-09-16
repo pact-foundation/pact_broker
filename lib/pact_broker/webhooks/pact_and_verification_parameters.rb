@@ -41,6 +41,7 @@ module PactBroker
         CURRENTLY_DEPLOYED_PROVIDER_VERSION_NUMBER
       ]
 
+      # TODO change this verification to the latest main branch
       def initialize(pact, trigger_verification, webhook_context)
         @pact = pact
         @verification = trigger_verification || (pact && pact.latest_verification)

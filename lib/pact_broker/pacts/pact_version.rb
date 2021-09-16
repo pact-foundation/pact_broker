@@ -15,6 +15,30 @@ module PactBroker
       associate(:many_to_one, :consumer, class: "PactBroker::Domain::Pacticipant", key: :consumer_id, primary_key: :id)
       associate(:many_to_many, :consumer_versions, class: "PactBroker::Domain::Version", join_table: :pact_publications, left_key: :pact_version_id, right_key: :consumer_version_id, order: :order)
 
+      one_to_one(:latest_main_branch_verification,
+        class: "PactBroker::Domain::Verification",
+        read_only: true,
+        dataset: lambda {
+          providers_join = {
+            Sequel[:providers][:id] => Sequel[:latest_verification_id_for_pact_version_and_provider_version][:provider_id]
+          }
+
+          branch_versions_join = {
+            Sequel[:latest_verification_id_for_pact_version_and_provider_version][:provider_version_id] => Sequel[:branch_versions][:version_id],
+            Sequel[:providers][:main_branch] => Sequel[:branch_versions][:branch_name]
+          }
+          max_verification_id_for_pact_version =  PactBroker::Verifications::LatestVerificationIdForPactVersionAndProviderVersion
+                                                    .join(:pacticipants, providers_join, { table_alias: :providers })
+                                                    .join(:branch_versions, branch_versions_join)
+                                                    .select(Sequel.function(:max, :verification_id))
+                                                    .where(pact_version_id: id)
+          PactBroker::Domain::Verification.where(id: max_verification_id_for_pact_version)
+        },
+        key: :pact_version_id,
+        primary_key: :id,
+        eager_block: lambda { | ds | ds.from_provider_main_branch.latest_by_pact_version }
+      )
+
       one_to_one(:latest_verification,
         class: "PactBroker::Domain::Verification",
         read_only: true,

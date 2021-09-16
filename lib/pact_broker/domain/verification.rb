@@ -37,6 +37,22 @@ module PactBroker
           where(consumer: PactBroker::Domain::Pacticipant.find_by_name(consumer_name))
         end
 
+        # TODO optimise this
+        def from_provider_main_branch
+          providers_join = {
+            Sequel[:verifications][:provider_id] => Sequel[:providers][:id]
+          }
+
+          branch_versions_join = {
+            Sequel[:verifications][:provider_version_id] => Sequel[:branch_versions][:version_id],
+            Sequel[:providers][:main_branch] => Sequel[:branch_versions][:branch_name]
+          }
+
+          join(:pacticipants, providers_join, { table_alias: :providers })
+            .join(:branch_versions, branch_versions_join)
+        end
+
+        # TODO change this to a group by
         def latest_by_pact_version
           base_query = self
           base_join = {
