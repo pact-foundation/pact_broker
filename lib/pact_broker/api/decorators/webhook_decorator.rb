@@ -1,4 +1,5 @@
 require_relative "base_decorator"
+require "pact_broker/domain/webhook_pacticipant"
 require "pact_broker/api/decorators/webhook_request_template_decorator"
 require "pact_broker/api/decorators/timestamps"
 require "pact_broker/webhooks/webhook_request_template"
@@ -19,12 +20,14 @@ module PactBroker
 
         property :description, getter: lambda { |context| context[:represented].display_description }
 
-        property :consumer, :class => PactBroker::Domain::Pacticipant, default: nil do
+        property :consumer, class: Domain::WebhookPacticipant, default: nil do
           property :name
+          property :label
         end
 
-        property :provider, :class => PactBroker::Domain::Pacticipant, default: nil do
+        property :provider, class: Domain::WebhookPacticipant, default: nil do
           property :name
+          property :label
         end
 
         property :enabled, default: true
@@ -50,7 +53,7 @@ module PactBroker
         end
 
         link :'pb:consumer' do | options |
-          if represented.consumer
+          if represented.consumer&.name
             {
               title: "Consumer",
               name: represented.consumer.name,
@@ -59,12 +62,32 @@ module PactBroker
           end
         end
 
+        link :'pb:consumers' do | options |
+          if represented.consumer&.label
+            {
+              title: "Consumers by label",
+              name: represented.consumer.label,
+              href: pacticipants_with_label_url(options.fetch(:base_url), represented.consumer.label)
+            }
+          end
+        end
+
         link :'pb:provider' do | options |
-          if represented.provider
+          if represented.provider&.name
             {
               title: "Provider",
               name: represented.provider.name,
               href: pacticipant_url(options.fetch(:base_url), represented.provider)
+            }
+          end
+        end
+
+        link :'pb:providers' do | options |
+          if represented.provider&.label
+            {
+              title: "Providers by label",
+              name: represented.provider.label,
+              href: pacticipants_with_label_url(options.fetch(:base_url), represented.provider.label)
             }
           end
         end

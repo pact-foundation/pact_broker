@@ -269,11 +269,10 @@ module PactBroker
         self
       end
 
-      # rubocop: disable Metrics/CyclomaticComplexity
       def create_webhook parameters = {}
         params = parameters.dup
-        consumer = params.key?(:consumer) ? params.delete(:consumer) : @consumer
-        provider = params.key?(:provider) ? params.delete(:provider) : @provider
+        consumer, webhook_consumer = webhook_pacticipant(:consumer, params)
+        provider, webhook_provider = webhook_pacticipant(:provider, params)
         uuid = params[:uuid] || PactBroker::Webhooks::Service.next_uuid
         enabled = params.key?(:enabled) ? params.delete(:enabled) : true
         event_params = if params[:event_names]
@@ -284,7 +283,15 @@ module PactBroker
         events = event_params.collect{ |e| PactBroker::Webhooks::WebhookEvent.new(e) }
         template_params = { method: "POST", url: "http://example.org", headers: {"Content-Type" => "application/json"}, username: params[:username], password: params[:password] }
         request = PactBroker::Webhooks::WebhookRequestTemplate.new(template_params.merge(params))
-        @webhook = PactBroker::Webhooks::Repository.new.create uuid, PactBroker::Domain::Webhook.new(request: request, events: events, description: params[:description], enabled: enabled), consumer, provider
+        new_webhook = PactBroker::Domain::Webhook.new(
+          request: request,
+          events: events,
+          description: params[:description],
+          enabled: enabled,
+          consumer: webhook_consumer,
+          provider: webhook_provider
+        )
+        @webhook = PactBroker::Webhooks::Repository.new.create uuid, new_webhook, consumer, provider
         self
       end
       # rubocop: enable Metrics/CyclomaticComplexity
@@ -596,6 +603,16 @@ module PactBroker
            "interactions" => [],
            "random" => rand
          }.to_json
+      end
+
+      def webhook_pacticipant(name, params)
+        pacticipant = params.key?(name) ? params.delete(name) : instance_variable_get(:"@#{name}")
+        label = params.delete(:"#{name}_label")
+        if pacticipant
+          [pacticipant, Domain::WebhookPacticipant.new(name: pacticipant.name)]
+        elsif label
+          [nil, Domain::WebhookPacticipant.new(label: label)]
+        end
       end
     end
   end

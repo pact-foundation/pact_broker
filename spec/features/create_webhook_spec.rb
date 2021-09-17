@@ -6,10 +6,14 @@ describe "Creating a webhook" do
   let(:headers) { {"CONTENT_TYPE" => "application/json"} }
   let(:response_body) { JSON.parse(subject.body, symbolize_names: true)}
   let(:webhook_json) { webhook_hash.to_json }
+  let(:provider) { nil }
+  let(:consumer) { nil }
   let(:webhook_hash) do
     {
       description: "trigger build",
       enabled: false,
+      provider: provider,
+      consumer: consumer,
       events: [{
         name: "contract_content_changed"
       }],
@@ -23,7 +27,7 @@ describe "Creating a webhook" do
           a: "body"
         }
       }
-    }
+    }.compact
   end
 
   subject { post(path, webhook_json, headers) }
@@ -64,32 +68,73 @@ describe "Creating a webhook" do
 
   context "for a provider" do
     let(:path) { "/webhooks" }
+    let(:provider) { { name: "Some Provider" } }
 
-    before do
-      webhook_hash[:provider] = { name: "Some Provider" }
-    end
-
-    its(:status) { is_expected.to be 201 }
+    its(:status) { is_expected.to eq 201 }
 
     it "creates a webhook without a consumer" do
       subject
       expect(PactBroker::Webhooks::Webhook.first.provider).to_not be nil
       expect(PactBroker::Webhooks::Webhook.first.consumer).to be nil
     end
+
+    context "with label" do
+      let(:provider) { { label: "my_label" } }
+
+      its(:status) { is_expected.to eq 201 }
+
+      it "creates a webhook without explicit consumer and provider with provider label" do
+        subject
+        expect(PactBroker::Webhooks::Webhook.first.provider).to be nil
+        expect(PactBroker::Webhooks::Webhook.first.consumer).to be nil
+        expect(PactBroker::Webhooks::Webhook.first.provider_label).to eq "my_label"
+      end
+    end
+
+    context "with both label and name" do
+      let(:provider) { { name: "Some Provider", label: "my_label" } }
+
+      its(:status) { is_expected.to eq 400 }
+
+      it "returns the validation errors" do
+        expect(response_body[:errors]).to_not be_empty
+      end
+    end
   end
 
   context "for a consumer" do
     let(:path) { "/webhooks" }
-    before do
-      webhook_hash[:consumer] = { name: "Some Consumer" }
-    end
+    let(:consumer) { { name: "Some Consumer" } }
 
-    its(:status) { is_expected.to be 201 }
+    its(:status) { is_expected.to eq 201 }
 
     it "creates a webhook without a provider" do
       subject
       expect(PactBroker::Webhooks::Webhook.first.consumer).to_not be nil
       expect(PactBroker::Webhooks::Webhook.first.provider).to be nil
+    end
+
+    context "with label" do
+      let(:consumer) { { label: "my_label" } }
+
+      its(:status) { is_expected.to eq 201 }
+
+      it "creates a webhook without explicit consumer and provider with consumer label" do
+        subject
+        expect(PactBroker::Webhooks::Webhook.first.provider).to be nil
+        expect(PactBroker::Webhooks::Webhook.first.consumer).to be nil
+        expect(PactBroker::Webhooks::Webhook.first.consumer_label).to eq "my_label"
+      end
+    end
+
+    context "with both label and name" do
+      let(:consumer) { { name: "Some Consumer", label: "my_label" } }
+
+      its(:status) { is_expected.to eq 400 }
+
+      it "returns the validation errors" do
+        expect(response_body[:errors]).to_not be_empty
+      end
     end
   end
 
