@@ -103,7 +103,7 @@ module PactBroker
       end
 
       def create_label(name, label)
-        puts "Creating label `#{label}` for #{name}"
+        puts "Creating label '#{label}' for #{name}"
         client.put("pacticipants/#{encode(name)}/labels/#{encode(label)}", {}).tap { |response| check_for_error(response) }
         separate
         self
@@ -353,7 +353,7 @@ module PactBroker
         return "A webhook for all consumers and providers" if consumer.nil? && provider.nil?
 
         suffix = {consumer: consumer, provider: provider}.compact.map do |name, pacticipant|
-          desc = pacticipant.compact.map { |k, v| "#{k}: `#{v}`"}.first
+          desc = pacticipant.compact.map { |k, v| "#{k}: '#{v}'"}.first
           "#{name}s by #{desc}"
         end
 
