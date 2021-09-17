@@ -68,7 +68,7 @@ module PactBroker
         end
 
         def schema
-          PactBroker::Api::Contracts::EnvironmentSchema
+          api_contract_class(:environment_schema)
         end
       end
     end

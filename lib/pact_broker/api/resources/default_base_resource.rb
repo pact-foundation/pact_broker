@@ -254,6 +254,10 @@ module PactBroker
           application_context.decorator_configuration.class_for(name)
         end
 
+        def api_contract_class(name)
+          application_context.api_contract_configuration.class_for(name)
+        end
+
         def schema
           nil
         end
