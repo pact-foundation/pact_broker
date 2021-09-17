@@ -1,3 +1,13 @@
+<a name="v2.86.0"></a>
+### v2.86.0 (2021-09-17)
+
+#### Features
+
+* allow webhooks to match pacticipants by label (#501)	 ([f30a9dcc](/../../commit/f30a9dcc))
+* in the webhook body for contract_published and contract_content_changed, use the latest verification from the main branch if present	 ([b45398bd](/../../commit/b45398bd))
+* change default database_connection_validation_timeout from -1 (every request) to nil (which Sequel will set to 3600 seconds)	 ([0c508572](/../../commit/0c508572))
+* add version details of the implementation that verified a Pact (#363)	 ([021a8692](/../../commit/021a8692))
+
 <a name="v2.85.1"></a>
 ### v2.85.1 (2021-09-14)
 
