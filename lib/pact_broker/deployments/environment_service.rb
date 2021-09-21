@@ -2,11 +2,14 @@ require "pact_broker/deployments/environment"
 require "securerandom"
 require "pact_broker/pacticipants/generate_display_name"
 require "pact_broker/string_refinements"
+require "pact_broker/repositories/scopes"
 
 module PactBroker
   module Deployments
     module EnvironmentService
       using PactBroker::StringRefinements
+      extend PactBroker::Repositories::Scopes
+
       extend self
 
       def self.included(base)
@@ -34,7 +37,7 @@ module PactBroker
       end
 
       def find_all
-        PactBroker::Deployments::Environment.order(Sequel.function(:lower, :display_name)).all
+        scope_for(PactBroker::Deployments::Environment).order(Sequel.function(:lower, :display_name)).all
       end
 
       def find(uuid)
