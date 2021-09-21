@@ -53,7 +53,6 @@ module PactBroker
 
       # There may be a race condition if two simultaneous requests come in to create the same version
       def create(args)
-        logger.info "Upserting version #{args[:number]} for pacticipant_id=#{args[:pacticipant_id]}"
         version_params = {
           number: args[:number],
           pacticipant_id: args[:pacticipant_id],
