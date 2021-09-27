@@ -132,6 +132,7 @@ module PactBroker
         selectors = selector_for_latest_main_version_or_overall_latest(provider)
         selectors << Selector.for_currently_deployed
         selectors << Selector.for_currently_supported
+        logger.debug("Default selectors", payload: selectors)
         selectors
       end
 
@@ -140,9 +141,9 @@ module PactBroker
         consumers = integration_service.find_for_provider(provider).collect(&:consumer)
 
         consumers.collect do | consumer |
-          if consumer.main_branch && PactBroker::Domain::Version.for_selector(PactBroker::Matrix::UnresolvedSelector.new(branch: consumer.main_branch, latest: true)).any?
+          if consumer.main_branch && PactBroker::Domain::Version.for_selector(PactBroker::Matrix::UnresolvedSelector.new(branch: consumer.main_branch, pacticipant_name: consumer.name, latest: true)).any?
             selectors << Selector.for_main_branch.for_consumer(consumer.name)
-          elsif consumer.main_branch && PactBroker::Domain::Version.for_selector(PactBroker::Matrix::UnresolvedSelector.new(tag: consumer.main_branch, latest: true)).any?
+          elsif consumer.main_branch && PactBroker::Domain::Version.for_selector(PactBroker::Matrix::UnresolvedSelector.new(tag: consumer.main_branch, pacticipant_name: consumer.name, latest: true)).any?
             selectors << Selector.latest_for_tag(consumer.main_branch).for_consumer(consumer.name)
           else
             selectors << Selector.overall_latest.for_consumer(consumer.name)

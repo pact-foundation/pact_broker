@@ -15,14 +15,13 @@ module PactBroker
         subject { Repository.new.find_for_verification("Bar", consumer_version_selectors) }
 
         context "when there are no selectors" do
-
           let(:foo_main_branch) { nil }
 
           let(:consumer_version_selectors) { Selectors.new }
 
           context "when there is no main branch version" do
             before do
-              td.create_consumer("Foo")
+              td.create_consumer("Foo", main_branch: "main")
                 .create_pact_with_hierarchy("Foo", "foo-latest-prod-version", "Bar")
                 .create_consumer_version_tag("prod")
                 .create_consumer_version("not-latest-dev-version", tag_names: ["dev"])
@@ -31,14 +30,14 @@ module PactBroker
                 .create_consumer_version("foo-latest-dev-version", tag_names: ["dev"])
                 .create_pact
                 .create_consumer("Baz")
-                .create_consumer_version("baz-latest-dev-version", tag_names: ["dev"])
+                .create_consumer_version("baz-latest-dev-version", tag_names: ["dev", "main"])
                 .create_pact
             end
 
             it "returns the latest pact for each consumer" do
               expect(subject.size).to eq 2
-              expect(find_by_consumer_name_and_consumer_version_number("Foo", "foo-latest-dev-version")).to_not be nil
-              expect(find_by_consumer_name_and_consumer_version_number("Baz", "baz-latest-dev-version")).to_not be nil
+              expect(subject).to include(have_attributes(consumer_name: "Foo", consumer_version_number: "foo-latest-dev-version"))
+              expect(subject).to include(have_attributes(consumer_name: "Baz", consumer_version_number: "baz-latest-dev-version"))
               expect(subject.all?(&:overall_latest?)).to be true
             end
           end
