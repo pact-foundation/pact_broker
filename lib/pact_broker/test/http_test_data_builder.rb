@@ -20,6 +20,7 @@ module PactBroker
               logger.filter(/(Authorization: ).*/,'\1[REMOVED]')
             end
           end
+          faraday.basic_auth(auth[:username], auth[:password]) if auth[:username]
           faraday.headers["Authorization"] = "Bearer #{auth[:token]}" if auth[:token]
           faraday.adapter Faraday.default_adapter
         end
