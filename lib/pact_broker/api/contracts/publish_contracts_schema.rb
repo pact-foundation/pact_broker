@@ -34,14 +34,14 @@ module PactBroker
         end
 
         def self.call(params)
-          select_first_message(
-            flatten_indexed_messages(
-              add_cross_field_validation_errors(
-                params&.symbolize_keys,
-                SCHEMA.call(params&.symbolize_keys).messages(full: true)
-              )
-            )
-          )
+          dry_results = SCHEMA.call(params&.symbolize_keys).messages(full: true)
+          dry_results.then do | results |
+            add_cross_field_validation_errors(params&.symbolize_keys, results)
+          end.then do | results |
+            flatten_indexed_messages(results)
+          end.then do | results |
+            select_first_message(results)
+          end
         end
 
         def self.add_cross_field_validation_errors(params, errors)
@@ -61,41 +61,42 @@ module PactBroker
 
         def self.validate_consumer_name(params, contract, i, errors)
           if params[:pacticipantName] && contract[:consumerName] && (contract[:consumerName] != params[:pacticipantName])
-            add_contract_error(validation_message("consumer_name_in_contract_mismatch_pacticipant_name", { consumer_name_in_contract: contract[:consumerName], pacticipant_name: params[:pacticipantName] } ), i, errors)
+            add_contract_error(:consumerName, validation_message("consumer_name_in_contract_mismatch_pacticipant_name", { consumer_name_in_contract: contract[:consumerName], pacticipant_name: params[:pacticipantName] } ), i, errors)
           end
         end
 
         def self.validate_consumer_name_in_content(params, contract, i, errors)
           consumer_name_in_content = contract.dig(:decodedParsedContent, :consumer, :name)
           if consumer_name_in_content && consumer_name_in_content != params[:pacticipantName]
-            add_contract_error(validation_message("consumer_name_in_content_mismatch_pacticipant_name", { consumer_name_in_content: consumer_name_in_content, pacticipant_name: params[:pacticipantName] } ), i, errors)
+            add_contract_error(:consumerName, validation_message("consumer_name_in_content_mismatch_pacticipant_name", { consumer_name_in_content: consumer_name_in_content, pacticipant_name: params[:pacticipantName] } ), i, errors)
           end
         end
 
         def self.validate_provider_name_in_content(contract, i, errors)
           provider_name_in_content = contract.dig(:decodedParsedContent, :provider, :name)
           if provider_name_in_content && provider_name_in_content != contract[:providerName]
-            add_contract_error(validation_message("provider_name_in_content_mismatch", { provider_name_in_content: provider_name_in_content, provider_name: contract[:providerName] } ), i, errors)
+            add_contract_error(:providerName, validation_message("provider_name_in_content_mismatch", { provider_name_in_content: provider_name_in_content, provider_name: contract[:providerName] } ), i, errors)
           end
         end
 
         def self.validate_encoding(contract, i, errors)
           if contract[:decodedContent].nil?
-            add_contract_error(message("errors.base64?", scope: nil), i, errors)
+            add_contract_error(:content, message("errors.base64?", scope: nil), i, errors)
           end
         end
 
         def self.validate_content_matches_content_type(contract, i, errors)
           if contract[:decodedParsedContent].nil? && contract[:contentType]
-            add_contract_error(validation_message("invalid_content_for_content_type", { content_type: contract[:contentType]}), i, errors)
+            add_contract_error(:content, validation_message("invalid_content_for_content_type", { content_type: contract[:contentType]}), i, errors)
           end
         end
 
 
-        def self.add_contract_error(message, i, errors)
+        def self.add_contract_error(field, message, i, errors)
           errors[:contracts] ||= {}
-          errors[:contracts][i] ||= []
-          errors[:contracts][i] << message
+          errors[:contracts][i] ||= {}
+          errors[:contracts][i][field] ||= []
+          errors[:contracts][i][field] << message
           errors
         end
       end

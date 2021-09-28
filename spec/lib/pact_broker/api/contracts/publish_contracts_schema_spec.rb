@@ -108,6 +108,14 @@ module PactBroker
 
           its([:contracts, 0]) { is_expected.to include "provider name in contract content ('WRONG') must match providerName ('Bar') in contracts at index 0" }
         end
+
+        context "when the consumer name is missing and there is a validation error with the content" do
+          let(:params) do
+            JSON.parse(File.read("spec/fixtures/invalid-publish-contract-body.json"), symbolize_names: true)
+          end
+
+          its([:contracts, 0]) { is_expected.to eq "consumerName is missing at index 0" }
+        end
       end
     end
   end
