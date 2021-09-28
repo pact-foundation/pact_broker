@@ -230,6 +230,7 @@ module PactBroker
           "providerVersionBranch" => "${pactbroker.providerVersionBranch}",
           "providerName" => "${pactbroker.providerName}",
           "providerVersionNumber" => "${pactbroker.providerVersionNumber}",
+          "providerVersionDescriptions" => "${pactbroker.providerVersionDescriptions}",
           "consumerVersionBranch" => "${pactbroker.consumerVersionBranch}",
         }
         request_body = {

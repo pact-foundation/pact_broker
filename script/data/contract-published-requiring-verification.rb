@@ -14,7 +14,6 @@ begin
     .create_pacticipant("NewWebhookTestConsumer")
     .create_pacticipant("NewWebhookTestProvider")
     .create_tagged_pacticipant_version(pacticipant: "NewWebhookTestProvider", version: "1", tag: "main")
-    .deploy_to_prod(pacticipant: "NewWebhookTestProvider", version: "1")
     .record_deployment(pacticipant: "NewWebhookTestProvider", version: "1", environment_name: "test")
     .record_deployment(pacticipant: "NewWebhookTestProvider", version: "1", environment_name: "prod")
     .create_version(pacticipant: "NewWebhookTestProvider", version: "2", branch: "main")

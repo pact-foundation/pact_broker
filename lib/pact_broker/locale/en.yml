@@ -34,10 +34,11 @@ en:
             consumerVersionTags: The list of tag names for the most recent consumer version associated with the pact content, separated by ", "
             consumerVersionBranch: The repository branch associated with the consumer version
             providerVersionTags: The list of tag names for the provider version associated with the verification result, separated by ", ".
+            providerVersionDescriptions: The descriptions of the provider version(s) for which the contract_requiring_verification_published webhook has been triggered.
             providerVersionBranch: The repository branch associated with the provider version
             consumerLabels: The list of labels for the consumer associated with the pact content, separated by ", ".
             providerLabels: The list of labels for the provider associated with the pact content, separated by ", ".
-            pactUrl: The "permalink" URL to the newly published pact (the URL specifying the consumer version URL, rather than the "/latest" format.
+            pactUrl: The "permalink" URL to the newly published pact content (using the pact version SHA).
             verificationResultUrl: The URL to the relevant verification result.
             githubVerificationStatus: The verification status using the correct keywords for posting to the Github commit status API. See https://developer.github.com/v3/repos/statuses
             bitbucketVerificationStatus: The verification status using the correct keywords for posting to the Bitbucket commit status API. See https://developer.atlassian.com/server/bitbucket/how-tos/updating-build-status-for-commits/

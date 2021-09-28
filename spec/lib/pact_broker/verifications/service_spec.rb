@@ -115,7 +115,7 @@ module PactBroker
             expect(subject).to eq [
               RequiredVerification.new(
                 provider_version: td.find_version("Bar", "1"),
-                provider_version_descriptions: ["latest version from main branch"]
+                provider_version_descriptions: ["latest from main branch"]
               )
             ]
           end
@@ -153,7 +153,7 @@ module PactBroker
             expect(subject).to eq [
               RequiredVerification.new(
                 provider_version: td.find_version("Bar", "1"),
-                provider_version_descriptions: ["currently deployed version (test)"]
+                provider_version_descriptions: ["deployed in test"]
               )
             ]
           end
@@ -193,7 +193,7 @@ module PactBroker
             expect(subject).to eq [
               RequiredVerification.new(
                 provider_version: td.find_version("Bar", "1"),
-                provider_version_descriptions: ["currently released version (test)"]
+                provider_version_descriptions: ["released in test"]
               )
             ]
           end
@@ -235,9 +235,9 @@ module PactBroker
               RequiredVerification.new(
               provider_version: td.find_version("Bar", "1"),
               provider_version_descriptions: [
-                "latest version from main branch",
-                "currently deployed version (test)",
-                "currently released version (test)"
+                "latest from main branch",
+                "deployed in test",
+                "released in test"
               ])
             ]
           end

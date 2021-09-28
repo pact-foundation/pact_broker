@@ -138,7 +138,7 @@ module PactBroker
         latest_version_from_main_branch = [version_service.find_latest_version_from_main_branch(pact_version.provider)].compact
 
         latest_version_from_main_branch.collect do | main_branch_version |
-          identify_required_verification(pact_version, main_branch_version, "latest version from main branch")
+          identify_required_verification(pact_version, main_branch_version, "latest from main branch")
         end.compact
       end
       private :required_verifications_for_main_branch
@@ -148,7 +148,7 @@ module PactBroker
           unscoped_service.find_currently_deployed_versions_for_pacticipant(pact_version.provider)
         end
         deployed_versions.collect do | deployed_version |
-          identify_required_verification(pact_version, deployed_version.version, "currently deployed version (#{deployed_version.environment_name})")
+          identify_required_verification(pact_version, deployed_version.version, "deployed in #{deployed_version.environment_name}")
         end.compact
       end
       private :required_verifications_for_deployed_versions
@@ -158,7 +158,7 @@ module PactBroker
           unscoped_service.find_currently_supported_versions_for_pacticipant(pact_version.provider)
         end
         released_versions.collect do | released_version |
-          identify_required_verification(pact_version, released_version.version, "currently released version (#{released_version.environment_name})")
+          identify_required_verification(pact_version, released_version.version, "released in #{released_version.environment_name}")
         end.compact
       end
       private :required_verifications_for_released_versions

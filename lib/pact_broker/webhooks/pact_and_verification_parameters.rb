@@ -7,6 +7,7 @@ module PactBroker
       PROVIDER_VERSION_NUMBER = "pactbroker.providerVersionNumber"
       PROVIDER_VERSION_TAGS = "pactbroker.providerVersionTags"
       PROVIDER_VERSION_BRANCH = "pactbroker.providerVersionBranch"
+      PROVIDER_VERSION_DESCRIPTIONS = "pactbroker.providerVersionDescriptions"
       CONSUMER_VERSION_TAGS = "pactbroker.consumerVersionTags"
       CONSUMER_VERSION_BRANCH = "pactbroker.consumerVersionBranch"
       CONSUMER_NAME = "pactbroker.consumerName"
@@ -27,6 +28,7 @@ module PactBroker
         CONSUMER_VERSION_NUMBER,
         PROVIDER_VERSION_NUMBER,
         PROVIDER_VERSION_TAGS,
+        PROVIDER_VERSION_DESCRIPTIONS,
         PROVIDER_VERSION_BRANCH,
         CONSUMER_VERSION_TAGS,
         CONSUMER_VERSION_BRANCH,
@@ -59,6 +61,7 @@ module PactBroker
           PROVIDER_VERSION_NUMBER => provider_version_number,
           PROVIDER_VERSION_TAGS => provider_version_tags,
           PROVIDER_VERSION_BRANCH => provider_version_branch,
+          PROVIDER_VERSION_DESCRIPTIONS => provider_version_descriptions,
           CONSUMER_VERSION_TAGS => consumer_version_tags,
           CONSUMER_VERSION_BRANCH => consumer_version_branch,
           CONSUMER_NAME => pact ? pact.consumer_name : "",
@@ -173,6 +176,10 @@ module PactBroker
         else
           verification&.provider_version&.branch || ""
         end
+      end
+
+      def provider_version_descriptions
+        webhook_context[:provider_version_descriptions]&.join(", ") || ""
       end
 
       def pacticipant_labels pacticipant

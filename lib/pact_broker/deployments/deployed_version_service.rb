@@ -65,6 +65,7 @@ module PactBroker
           .where(pacticipant_id: pacticipant.id)
           .eager(:version)
           .eager(:environment)
+          .order(:created_at, :id)
           .all
       end
 
