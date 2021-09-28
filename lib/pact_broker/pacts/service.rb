@@ -56,7 +56,7 @@ module PactBroker
         existing_pact = pact_repository.find_by_version_and_provider(consumer_version.id, provider.id)
 
         if existing_pact
-          update_pact params, existing_pact
+          create_pact_revision params, existing_pact
         else
           create_pact params, consumer_version, provider
         end
@@ -72,7 +72,7 @@ module PactBroker
           existing_pact.json_content, params[:json_content]
         )
 
-        update_pact params, existing_pact
+        create_pact_revision params, existing_pact
       end
 
       def find_all_pact_versions_between consumer, options
@@ -155,7 +155,7 @@ module PactBroker
       end
 
       # Overwriting an existing pact with the same consumer/provider/consumer version number
-      def update_pact params, existing_pact
+      def create_pact_revision params, existing_pact
         logger.info "Updating existing pact publication with params #{params.reject{ |k, _v| k == :json_content}}"
         logger.debug "Content #{params[:json_content]}"
         pact_version_sha = generate_sha(params[:json_content])
@@ -177,11 +177,11 @@ module PactBroker
         updated_pact
       end
 
+      private :create_pact_revision
+
       def disallowed_modification?(existing_pact, new_json_content)
         !PactBroker.configuration.allow_dangerous_contract_modification && existing_pact && existing_pact.pact_version_sha != generate_sha(new_json_content)
       end
-
-      private :update_pact
 
       # When no publication for the given consumer/provider/consumer version number exists
       def create_pact params, version, provider
