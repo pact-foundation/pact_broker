@@ -75,7 +75,7 @@ module PactBroker
         end
 
         let(:consumer_version) do
-          double("version", tags: consumer_tags, branch: "consumer-branch")
+          double("version", tags: consumer_tags, branch_names: ["foo-branch","consumer-branch"])
         end
 
         let(:provider_tags) do

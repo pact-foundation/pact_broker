@@ -137,10 +137,10 @@ module PactBroker
       end
 
       def consumer_version_branch
-        if webhook_context[:consumer_version_branch]
-          webhook_context[:consumer_version_branch]
+        if webhook_context.key?(:consumer_version_branch)
+          webhook_context[:consumer_version_branch] || ""
         else
-          pact&.consumer_version&.branch || ""
+          pact&.consumer_version&.branch_names&.last || ""
         end
       end
 

@@ -11,7 +11,7 @@ RSpec.describe "triggering a webhook for a pact publication" do
 
   let(:database_connector) { ->(&block) { block.call } }
 
-  subject { put("/pacts/provider/Bar/consumer/Foo/version/2", pact_content, { "CONTENT_TYPE" => "application/json", "pactbroker.database_connector" => database_connector}) }
+  subject { put("/pacts/provider/Bar/consumer/Foo/version/2", pact_content, { "CONTENT_TYPE" => "application/json", "pactbroker.database_connector" => database_connector }) }
 
   context "when there is a verification from the main branch of the provider" do
     before do

@@ -5,29 +5,15 @@ module PactBroker
   module Api
     module Resources
       module WebhookExecutionMethods
-        def webhook_execution_configuration
-          application_context.webhook_execution_configuration_creator.call(self)
-        end
-
-        def webhook_options
-          {
-            database_connector: database_connector,
-            webhook_execution_configuration: webhook_execution_configuration
-          }
-        end
-
-        def webhook_event_listener
-          @webhook_event_listener ||= PactBroker::Webhooks::EventListener.new(webhook_options)
-        end
-
-        def handle_webhook_events
+        def handle_webhook_events(event_context = {})
+          @webhook_event_listener = PactBroker::Webhooks::EventListener.new(webhook_options(event_context))
           PactBroker::Events.subscribe(webhook_event_listener) do
             yield
           end
         end
 
         def schedule_triggered_webhooks
-          webhook_event_listener.schedule_triggered_webhooks
+          webhook_event_listener&.schedule_triggered_webhooks
         end
 
         def finish_request
@@ -36,6 +22,26 @@ module PactBroker
           end
           super
         end
+
+
+        def webhook_options(event_context = {})
+          {
+            database_connector: database_connector,
+            webhook_execution_configuration: webhook_execution_configuration.with_webhook_context(event_context)
+          }
+        end
+        private :webhook_options
+
+        def webhook_execution_configuration
+          application_context.webhook_execution_configuration_creator.call(self)
+        end
+        private :webhook_execution_configuration
+
+        def webhook_event_listener
+          @webhook_event_listener
+        end
+
+        private :webhook_event_listener
       end
     end
   end
