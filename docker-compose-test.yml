@@ -49,6 +49,7 @@ services:
       - ./.rubocop:/home/.rubocop
       - ./.gitignore:/home/.gitignore
       - ./public:/home/public
+      - ./docs:/home/docs
 
   mysql:
     image: mysql:5.7.28
@@ -97,4 +98,5 @@ services:
       - ./.rubocop:/home/.rubocop
       - ./.gitignore:/home/.gitignore
       - ./public:/home/public
+      - ./docs:/home/docs
 
