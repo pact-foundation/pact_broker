@@ -17,6 +17,7 @@ module PactBroker
       GITLAB_VERIFICATION_STATUS = "pactbroker.gitlabVerificationStatus"
       CONSUMER_LABELS = "pactbroker.consumerLabels"
       PROVIDER_LABELS = "pactbroker.providerLabels"
+      BUILD_URL = "pactbroker.buildUrl"
       EVENT_NAME = "pactbroker.eventName"
       CURRENTLY_DEPLOYED_PROVIDER_VERSION_NUMBER = "pactbroker.currentlyDeployedProviderVersionNumber"
 
@@ -38,6 +39,7 @@ module PactBroker
         CONSUMER_LABELS,
         PROVIDER_LABELS,
         EVENT_NAME,
+        BUILD_URL,
         CURRENTLY_DEPLOYED_PROVIDER_VERSION_NUMBER
       ]
 
@@ -68,6 +70,7 @@ module PactBroker
           CONSUMER_LABELS => pacticipant_labels(pact && pact.consumer),
           PROVIDER_LABELS => pacticipant_labels(pact && pact.provider),
           EVENT_NAME => event_name,
+          BUILD_URL => build_url,
           CURRENTLY_DEPLOYED_PROVIDER_VERSION_NUMBER => currently_deployed_provider_version_number
         }
       end
@@ -178,6 +181,10 @@ module PactBroker
 
       def event_name
         webhook_context.fetch(:event_name)
+      end
+
+      def build_url
+        webhook_context[:build_url] || ""
       end
 
       def currently_deployed_provider_version_number

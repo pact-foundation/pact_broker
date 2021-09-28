@@ -7,6 +7,7 @@ RSpec.describe "triggering a webhook for a contract publication" do
     {
       "consumer_version_number" => "${pactbroker.consumerVersionNumber}",
       "consumer_version_branch" => "${pactbroker.consumerVersionBranch}",
+      "build_url" => "${pactbroker.buildUrl}",
       "consumer_version_tags" => "${pactbroker.consumerVersionTags}",
     }
   end
@@ -16,6 +17,7 @@ RSpec.describe "triggering a webhook for a contract publication" do
       consumer_version_number: "1",
       consumer_version_branch: "main",
       consumer_version_tags: "a, b",
+      build_url: "http://ci/builds/1234"
     }
   end
 

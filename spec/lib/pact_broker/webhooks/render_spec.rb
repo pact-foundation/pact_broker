@@ -94,7 +94,7 @@ module PactBroker
           [ double("label", name: "foo"), double("label", name: "bar") ]
         end
 
-        let(:webhook_context) { { base_url: base_url, event_name: "something" } }
+        let(:webhook_context) { { base_url: base_url, event_name: "something", build_url: "http://build"} }
 
         let(:nil_pact) { nil }
         let(:nil_verification) { nil }
@@ -140,6 +140,7 @@ module PactBroker
           ["${pactbroker.consumerVersionBranch}", "consumer-branch", :pact_with_successful_verification, :verification],
           ["${pactbroker.consumerLabels}", "foo, bar", :pact_with_successful_verification, :verification],
           ["${pactbroker.providerLabels}", "finance, IT", :pact, :nil_verification],
+          ["${pactbroker.buildUrl}", "http://build", :nil_pact, :nil_verification]
         ]
 
         TEST_CASES.each do | (template, expected_output, pact_var_name, verification_var_name) |
