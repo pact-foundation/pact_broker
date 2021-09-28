@@ -20,8 +20,7 @@ The previous tag and pact endpoints are still supported, however, future feature
   * `specification`: currently, only contracts of type "pact" are supported, but this will be extended in the future. Required.
   * `contentType`: currently, only contracts with a content type of "application/json" are supported. Required.
   * `content`: the content of the contract. Must be Base64 encoded. Required.
-  * `onConflict`: Specifies the action to take when a contract for this consumer version already exists with different content. Allowed values are `overwrite`|`merge`. Optional. Defaults to `overwrite`. When `merge` is specified, the interactions are merged into any pre-existing pact. This is required when the tests that generate pact files are split over multiple nodes.
-
+  
 ## Example
 
     POST http://broker/contracts/publish
@@ -45,7 +44,7 @@ The previous tag and pact endpoints are still supported, however, future feature
     
     {
       {
-        "logs": [
+        "notices": [
           {
             "level": "debug",
             "message": "Created Foo version dc5eb529230038a4673b8c971395bd2922d8b240 with branch main and tags main"
