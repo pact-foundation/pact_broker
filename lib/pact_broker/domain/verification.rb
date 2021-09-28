@@ -258,6 +258,9 @@ end
 #  wip                              | boolean                     | NOT NULL DEFAULT false
 #  consumer_version_selector_hashes | text                        |
 #  tag_names                        | text                        |
+#  pact_pending                     | boolean                     |
+#  verified_by_implementation       | text                        |
+#  verified_by_version              | text                        |
 # Indexes:
 #  verifications_pkey                          | PRIMARY KEY btree (id)
 #  verifications_pact_version_id_number_index  | UNIQUE btree (pact_version_id, number)

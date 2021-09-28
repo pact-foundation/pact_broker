@@ -95,7 +95,10 @@ namespace :db do
     PactBroker::Database.ensure_database_dir_exists
   end
 
-  desc "Annotate the Sequel domain classes with schema information - start the postgres db with script/docker/db-start.sh first"
+  desc "Annotate the Sequel domain classes with schema information.
+  Start the postgres db with script/docker/db-start.sh first and run
+  INSTALL_PG=true bundle exec rake db:annotate
+  "
   task :annotate do
     begin
       raise "Need to set INSTALL_PG=true" unless ENV["INSTALL_PG"] == "true"

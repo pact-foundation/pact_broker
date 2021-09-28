@@ -51,6 +51,7 @@ end
 #  branch_name    | text                        | NOT NULL
 #  created_at     | timestamp without time zone | NOT NULL
 #  updated_at     | timestamp without time zone | NOT NULL
+#  auto_created   | boolean                     | DEFAULT false
 # Indexes:
 #  branch_versions_pkey                                         | PRIMARY KEY btree (id)
 #  branch_versions_branch_id_version_id_index                   | UNIQUE btree (branch_id, version_id)

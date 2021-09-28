@@ -204,9 +204,14 @@ end
 #  enabled              | boolean                     | DEFAULT true
 #  description          | text                        |
 #  headers              | text                        |
+#  consumer_label       | text                        |
+#  provider_label       | text                        |
 # Indexes:
 #  webhooks_pkey   | PRIMARY KEY btree (id)
 #  uq_webhook_uuid | UNIQUE btree (uuid)
+# Check constraints:
+#  consumer_label_exclusion | (consumer_id IS NULL OR consumer_id IS NOT NULL AND consumer_label IS NULL)
+#  provider_label_exclusion | (provider_id IS NULL OR provider_id IS NOT NULL AND provider_label IS NULL)
 # Foreign key constraints:
 #  fk_webhooks_consumer | (consumer_id) REFERENCES pacticipants(id)
 #  fk_webhooks_provider | (provider_id) REFERENCES pacticipants(id)
