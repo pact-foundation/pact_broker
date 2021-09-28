@@ -38,9 +38,9 @@ module PactBroker
           dry_results.then do | results |
             add_cross_field_validation_errors(params&.symbolize_keys, results)
           end.then do | results |
-            flatten_indexed_messages(results)
-          end.then do | results |
             select_first_message(results)
+          end.then do | results |
+            flatten_indexed_messages(results)
           end
         end
 
@@ -98,6 +98,24 @@ module PactBroker
           errors[:contracts][i][field] ||= []
           errors[:contracts][i][field] << message
           errors
+        end
+
+        # Need to fix this whole dry-validation eff up
+        def self.select_first_message(results)
+          case results
+          when Hash then results.each_with_object({}) { |(key, value), new_hash| new_hash[key] = select_first_message(value) }
+          when Array then select_first_message_from_array(results)
+          else
+            results
+          end
+        end
+
+        def self.select_first_message_from_array(results)
+          if results.all?{ |value| value.is_a?(String) }
+            results[0...1]
+          else
+            results.collect { |value| select_first_message(value) }
+          end
         end
       end
     end

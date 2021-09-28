@@ -114,7 +114,12 @@ module PactBroker
             JSON.parse(File.read("spec/fixtures/invalid-publish-contract-body.json"), symbolize_names: true)
           end
 
-          its([:contracts, 0]) { is_expected.to eq "consumerName is missing at index 0" }
+          it "handles multiple errors" do
+            expect(subject[:contracts]).to include "consumerName is missing at index 0"
+            expect(subject[:contracts]).to include "providerName is missing at index 0"
+            expect(subject[:contracts]).to include "contentType is missing at index 0"
+            expect(subject[:contracts]).to include "specification is missing at index 0"
+          end
         end
       end
     end
