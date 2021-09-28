@@ -1,0 +1,38 @@
+{
+    "contracts":
+    [
+        {
+            "consumer":
+            {
+                "name": "foo"
+            },
+            "interactions":
+            [
+                {
+                    "description": "a request",
+                    "providerState": "some state",
+                    "request":
+                    {
+                        "method": "post",
+                        "path": "/path"
+                    },
+                    "response":
+                    {
+                        "status": 200
+                    }
+                }
+            ],
+            "metadata":
+            {
+                "pactSpecification":
+                {
+                    "version": "2.0.0"
+                }
+            },
+            "provider":
+            {
+                "name": "provider"
+            }
+        }
+    ]
+}
