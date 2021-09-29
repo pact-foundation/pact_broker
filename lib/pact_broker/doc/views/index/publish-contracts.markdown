@@ -36,8 +36,7 @@ The previous tag and pact endpoints are still supported, however, future feature
           "providerName": "Bar",
           "specification": "pact",
           "contentType": "application/json",
-          "content": "<base64 encoded JSON pact>",
-          "onConflict": "overwrite"
+          "content": "<base64 encoded JSON pact>"
         }
       ]
     }
