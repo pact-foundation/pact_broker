@@ -6,11 +6,14 @@ Path: `/contracts/publish`
 
 Index relation: `pb:publish-contracts`
 
+Supported from: `v2.86.0`
+
 This is the preferred endpoint with which to publish contracts (previously, contracts were published using multiple calls to different endpoints to create the tag and contract resources). To detect whether this endpoint exists in a particular version of the Pact Broker, make a request to the index resource, and locate the `pb:publish-contracts` relation. Do a `POST` to the href specified for that relation. 
 
 The previous tag and pact endpoints are still supported, however, future features that build on this endpoint may not be able to be backported into those endpoints.
 
 ## Parameters
+
 * `pacticipantName`: the name of the application. Required.
 * `pacticipantVersionNumber`: the version number of the application. Required. It is recommended that this should be or include the git SHA. See [http://docs.pact.io/versioning](http://docs.pact.io/versioning).
 * `branch`: The git branch name. Optional but strongly recommended.
@@ -22,7 +25,32 @@ The previous tag and pact endpoints are still supported, however, future feature
   * `specification`: currently, only contracts of type "pact" are supported, but this will be extended in the future. Required.
   * `contentType`: currently, only contracts with a content type of "application/json" are supported. Required.
   * `content`: the content of the contract. Must be Base64 encoded. Required.
-  
+
+## Responses
+
+### Success
+
+* `notices`
+  * `level`: one of `debug`, `info`, `warning`,`prompt`,`success`
+  * `text`: the text of the notice. This is designed to be displayed in the output of a CLI.
+
+The `_links` section will contain links to all the resources created by the publication. The relations are:
+
+* `pb:contracts` (array)
+* `pb:pacticipant-version-tags` (array)
+* `pb:pacticipant-version`
+* `pb:pacticipant`
+
+### Errors
+
+Any validation errors will be returned in the standard Pact Broker format:
+
+    {
+      "errors": {
+        "<fieldName>": ["message 1", "message 2"]
+      }
+    }
+
 ## Example
 
     POST http://broker/contracts/publish
@@ -48,19 +76,19 @@ The previous tag and pact endpoints are still supported, however, future feature
         "notices": [
           {
             "level": "debug",
-            "message": "Created Foo version dc5eb529230038a4673b8c971395bd2922d8b240 with branch main and tags main"
+            "text": "Created Foo version dc5eb529230038a4673b8c971395bd2922d8b240 with branch main and tags main"
           },
           {
             "level": "info",
-            "message": "Pact published for Foo version dc5eb529230038a4673b8c971395bd2922d8b240 and provider Bar."
+            "text": "Pact published for Foo version dc5eb529230038a4673b8c971395bd2922d8b240 and provider Bar."
           },
           {
             "level": "debug",
-            "message": "  Events detected: contract_published, contract_content_changed (first time any pact published for this consumer with consumer version tagged main)"
+            "text": "  Events detected: contract_published, contract_content_changed (first time any pact published for this consumer with consumer version tagged main)"
           },
           {
             "level": "debug",
-            "message": "  Webhook \"foo webhook\" triggered for event contract_content_changed.\n    See logs at http://example.org/triggered-webhooks/1234/logs\""
+            "text": "  Webhook \"foo webhook\" triggered for event contract_content_changed.\n    See logs at http://example.org/triggered-webhooks/1234/logs\""
           }
         ],
         "_embedded": {
@@ -118,3 +146,4 @@ The previous tag and pact endpoints are still supported, however, future feature
         }
       }
     }
+
