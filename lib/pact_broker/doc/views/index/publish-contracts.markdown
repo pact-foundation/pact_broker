@@ -6,7 +6,7 @@ Path: `/contracts/publish`
 
 This is the preferred endpoint with which to publish contracts (previously, contracts were published using multiple calls to different endpoints to create the tag and contract resources). To detect whether this endpoint exists in a particular version of the Pact Broker, make a request to the index resource, and locate the `pb:publish-contracts` relation. Do a `POST` to the href specified for that relation. 
 
-The previous tag and pact endpoints are still supported, however, future features that build on this endpoint may not be able to be backported into those endpoints (eg. publishing pacts with a branch).
+The previous tag and pact endpoints are still supported, however, future features that build on this endpoint may not be able to be backported into those endpoints.
 
 ## Parameters
 * `pacticipantName`: the name of the application. Required.
