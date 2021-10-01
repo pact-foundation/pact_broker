@@ -6,6 +6,7 @@ module PactBroker
       describe VerificationDecorator do
         before do
           allow_any_instance_of(VerificationDecorator).to receive(:verification_triggered_webhooks_url).and_return("http://triggered-webhooks")
+          allow_any_instance_of(VerificationDecorator).to receive(:pact_version_with_consumer_version_metadata_url).and_return("http://pact")
         end
 
         let(:verification) do
@@ -18,25 +19,25 @@ module PactBroker
             test_results: { "arbitrary" => "json" },
             build_url: "http://build-url",
             pact_version_sha: "1234",
-            latest_pact_publication: pact_publication,
             execution_date: DateTime.now,
             provider_version_tags: provider_version_tags,
             verified_by_implementation: "Ruby",
             verified_by_version: "1234")
         end
 
-        let(:pact_publication) do
-          instance_double("PactBroker::Pacts::PactPublication",
+        let(:pact) do
+          instance_double("PactBroker::Domain::Pact",
             name: "A name",
             provider_name: "Provider",
             consumer_name: "Consumer",
-            consumer_version_number: "1.2.3"
+            consumer_version_number: "1.2.3",
+            pact_version_sha: "1234",
           )
         end
 
         let(:provider_version_tags) { [instance_double(PactBroker::Tags::TagWithLatestFlag, name: "prod", latest?: true)] }
 
-        let(:options) { { user_options: { base_url: "http://example.org" } } }
+        let(:options) { { user_options: { base_url: "http://example.org", pact: pact } } }
 
         let(:json) { VerificationDecorator.new(verification).to_json(options) }
 
@@ -63,7 +64,7 @@ module PactBroker
         end
 
         it "includes a link to its pact" do
-          expect(subject[:_links][:'pb:pact-version'][:href]).to match %r{http://example.org/pacts/}
+          expect(subject[:_links][:'pb:pact-version'][:href]).to eq "http://pact"
         end
 
         it "includes a link to the triggered webhooks" do

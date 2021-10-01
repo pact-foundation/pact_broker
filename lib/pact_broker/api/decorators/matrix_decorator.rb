@@ -162,9 +162,11 @@ module PactBroker
 
         def verification_hash(line, base_url)
           if !line.success.nil?
-            url_params = { consumer_name: line.consumer_name,
+            url_params = {
+              consumer_name: line.consumer_name,
               provider_name: line.provider_name,
               pact_version_sha: line.pact_version_sha,
+              consumer_version_number: line.consumer_version_number,
               verification_number: line.verification_number
             }
             {

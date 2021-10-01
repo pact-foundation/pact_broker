@@ -21,18 +21,20 @@ module PactBroker
         end
 
         link :self do | options |
+          pact = options[:pact] || represented.latest_pact_publication
           {
             title: "Verification result",
-            name: "Verification result #{represented.number} for #{represented.latest_pact_publication.name}",
+            name: "Verification result #{represented.number} for #{pact.name}",
             href: verification_url(represented, options.fetch(:base_url), )
           }
         end
 
         link "pb:pact-version" do | options |
+          pact = options[:pact] || represented.latest_pact_publication
           {
             title: "Pact",
-            name: represented.latest_pact_publication.name,
-            href: pact_url(options.fetch(:base_url), represented.latest_pact_publication)
+            name: pact.name,
+            href: pact_version_with_consumer_version_metadata_url(pact, options.fetch(:base_url))
           }
         end
 

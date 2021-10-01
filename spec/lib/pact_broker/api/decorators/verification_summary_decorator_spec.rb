@@ -31,7 +31,7 @@ module PactBroker
         end
 
         let(:provider_version_tags) { [instance_double(PactBroker::Tags::TagWithLatestFlag, name: "prod", latest?: true)] }
-        let(:pact) { instance_double("PactBroker::Domain::Pact", name: "Some pact", consumer_name: "Foo", provider_name: "Bar", consumer_version_number: "1.2.3") }
+        let(:pact) { instance_double("PactBroker::Domain::Pact", name: "Some pact", consumer_name: "Foo", provider_name: "Bar", consumer_version_number: "1.2.3", pact_version_sha: "1234") }
         let(:is_pending) { true }
         let(:options) { {base_url: "http://example.org", consumer_name: "Foo", consumer_version_number: "1.2.3", resource_url: "http://self"} }
 

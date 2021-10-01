@@ -64,6 +64,10 @@ module PactBroker
         "#{pactigration_base_url(base_url, pact)}/pact-version/#{pact.pact_version_sha}"
       end
 
+      def pact_version_with_consumer_version_metadata_url pact, base_url = ""
+        "#{pactigration_base_url(base_url, pact)}/pact-version/#{pact.pact_version_sha}/metadata/#{encode_metadata(build_metadata_for_consumer_version_number(pact.consumer_version_number))}"
+      end
+
       def pact_version_url_with_metadata pact, metadata, base_url = ""
         if metadata && metadata.any?
           "#{pact_version_url(pact, base_url)}/metadata/#{encode_metadata(metadata)}"
@@ -166,12 +170,28 @@ module PactBroker
       end
 
       def verification_url_from_params params, base_url = ""
-        [ base_url, "pacts",
-          "provider", url_encode(params.fetch(:provider_name)),
-          "consumer", url_encode(params.fetch(:consumer_name)),
-          "pact-version", params.fetch(:pact_version_sha),
-          "verification-results", params.fetch(:verification_number)
-        ].join("/")
+        if params[:consumer_version_number]
+          metadata = encode_metadata(build_metadata_for_consumer_version_number(params[:consumer_version_number]))
+
+          [
+            base_url,
+            "pacts",
+            "provider", url_encode(params.fetch(:provider_name)),
+            "consumer", url_encode(params.fetch(:consumer_name)),
+            "pact-version", params.fetch(:pact_version_sha),
+            "metadata", metadata,
+            "verification-results", params.fetch(:verification_number)
+          ].join("/")
+        else
+          [
+            base_url,
+            "pacts",
+            "provider", url_encode(params.fetch(:provider_name)),
+            "consumer", url_encode(params.fetch(:consumer_name)),
+            "pact-version", params.fetch(:pact_version_sha),
+            "verification-results", params.fetch(:verification_number)
+          ].join("/")
+        end
       end
 
       def latest_verifications_for_consumer_version_url version, base_url

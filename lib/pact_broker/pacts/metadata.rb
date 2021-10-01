@@ -5,7 +5,7 @@ module PactBroker
 
       MAPPINGS = [
         [:consumer_version_tags, "cvt"],
-        [:consumer_version_number, "cvn"], # for old urls
+        [:consumer_version_number, "cvn"], # for old urls and build_metadata_for_consumer_version_number
         [:consumer_version_id, "cv"],
         [:wip, "w"],
         [:pending, "p"],
@@ -31,6 +31,12 @@ module PactBroker
             "cv" => pact.consumer_version.id
           }
         end
+      end
+
+      def build_metadata_for_consumer_version_number(consumer_version_number)
+        {
+          "cvn" => consumer_version_number
+        }
       end
 
       # When a pact is published, and a webhook is triggered, this stores

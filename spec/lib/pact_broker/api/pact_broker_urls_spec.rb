@@ -100,6 +100,24 @@ module PactBroker
         end
       end
 
+      describe "verification_url_from_params" do
+        context "with consumer_version_number" do
+          let(:params) do
+            {
+              consumer_name: consumer_name,
+              provider_name: provider_name,
+              pact_version_sha: "1234",
+              consumer_version_number: "2",
+              verification_number: "1"
+            }
+          end
+
+          subject { PactBrokerUrls.verification_url_from_params(params, base_url)}
+
+          it { is_expected.to eq "http://example.org/pacts/provider/Bar%2FBar/consumer/Foo%2FFoo/pact-version/1234/metadata/Y3ZuPTI/verification-results/1" }
+        end
+      end
+
       describe "templated_diff_url" do
         subject { PactBrokerUrls.templated_diff_url(pact, base_url) }
 

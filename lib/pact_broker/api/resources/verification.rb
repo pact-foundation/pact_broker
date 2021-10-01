@@ -4,11 +4,14 @@ require "pact_broker/domain/verification"
 require "pact_broker/api/contracts/verification_contract"
 require "pact_broker/api/decorators/verification_decorator"
 require "pact_broker/api/decorators/extended_verification_decorator"
+require "pact_broker/api/resources/metadata_resource_methods"
 
 module PactBroker
   module Api
     module Resources
       class Verification < BaseResource
+        include MetadataResourceMethods
+
         def content_types_provided
           [
             ["application/hal+json", :to_json],
@@ -35,11 +38,11 @@ module PactBroker
         end
 
         def to_json
-          decorator_for(verification).to_json(decorator_options)
+          decorator_for(verification).to_json(decorator_options(pact: pact))
         end
 
         def to_extended_json
-          extended_decorator_for(verification).to_json(decorator_options)
+          extended_decorator_for(verification).to_json(decorator_options(pact: pact))
         end
 
         def delete_resource

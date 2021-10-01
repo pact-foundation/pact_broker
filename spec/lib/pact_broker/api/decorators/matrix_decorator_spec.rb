@@ -129,7 +129,7 @@ module PactBroker
               verifiedAt: "2017-12-31T00:00:00+00:00",
               _links: {
                 self: {
-                  href: "http://example.org/pacts/provider/Provider/consumer/Consumer/pact-version/1234/verification-results/1"
+                  href: "http://example.org/pacts/provider/Provider/consumer/Consumer/pact-version/1234/metadata/Y3ZuPTEuMC4w/verification-results/1"
                 }
               }
             }
