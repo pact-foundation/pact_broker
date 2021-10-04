@@ -136,7 +136,13 @@ module PactBroker
             "pb:can-i-deploy-pacticipant-version-to-tag" =>
             {
               href: base_url + "/can-i-deploy?pacticipant={pacticipant}&version={version}&to={tag}",
-              title: "Determine if an application can be safely deployed to an environment identified by the given tag",
+              title: "Determine if an application version can be safely deployed to an environment identified by the given tag",
+              templated: true
+            }
+            "pb:can-i-deploy-pacticipant-version-to-environment" =>
+            {
+              href: base_url + "/can-i-deploy?pacticipant={pacticipant}&version={version}&environment={environment}",
+              title: "Determine if an application version can be safely deployed to an environment",
               templated: true
             },
             "pb:provider-pacts-for-verification" => {
