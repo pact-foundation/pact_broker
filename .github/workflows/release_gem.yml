@@ -35,7 +35,7 @@ jobs:
     needs: release
     strategy:
       matrix:
-        repository: [pact-foundation/pact-broker-docker, DiUS/pact_broker-docker, pact-foundation/gem-released]
+        repository: [pact-foundation/pact-broker-docker, DiUS/pact_broker-docker]
     runs-on: ubuntu-latest
     steps:
       - name: Notify ${{ matrix.repository }} of gem release
