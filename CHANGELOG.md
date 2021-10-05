@@ -1,3 +1,38 @@
+<a name="v2.87.0"></a>
+### v2.87.0 (2021-10-05)
+
+#### Features
+
+* **matrix**
+  * preselect the consumer version when clicking through to matrix page from integration dashboard	 ([b550b470](/../../commit/b550b470))
+
+* **dashboard**
+  * show tooltip explaining auto created branches	 ([cdaf7f6e](/../../commit/cdaf7f6e))
+
+* **can-i-deploy**
+  * support ignoring specific version numbers	 ([2ac5a946](/../../commit/2ac5a946))
+  * make verification results URL reference the appropriate consumer version as the pb:pact-version	 ([145bb37b](/../../commit/145bb37b))
+
+* add pb:can-i-deploy-pacticipant-version-to-environment relation	 ([67328194](/../../commit/67328194))
+
+* **webhooks**
+  * support ${pactbroker.providerVersionDescriptions} template parameter	 ([54a073eb](/../../commit/54a073eb))
+  * support ${pactbroker.buildUrl} template parameter	 ([9b79b33f](/../../commit/9b79b33f))
+  * support $pactbroker.consumerVersionBranch template parameter	 ([b97ba84c](/../../commit/b97ba84c))
+
+#### Bug Fixes
+
+* **mysql**
+  * increase size of event_context column	 ([c1596419](/../../commit/c1596419))
+
+* correctly merge dry validation and custom validation error messages when publishing contracts	 ([688b1e3f](/../../commit/688b1e3f))
+
+* **pacts for verification**
+  * correct logic for returning pact for main branch when no consumer version selectors are specified	 ([8847e442](/../../commit/8847e442))
+
+* **db clean**
+  * optimise calls to identify overwritten data to delete	 ([aaef9e6d](/../../commit/aaef9e6d))
+
 <a name="v2.86.0"></a>
 ### v2.86.0 (2021-09-17)
 
