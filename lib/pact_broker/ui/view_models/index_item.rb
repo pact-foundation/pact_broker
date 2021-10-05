@@ -3,6 +3,8 @@ require "pact_broker/ui/helpers/url_helper"
 require "pact_broker/date_helper"
 require "pact_broker/versions/abbreviate_number"
 require "pact_broker/configuration"
+require "pact_broker/ui/view_models/index_item_branch_head"
+require "pact_broker/ui/view_models/index_item_provider_branch_head"
 require "forwardable"
 
 module PactBroker
@@ -66,12 +68,24 @@ module PactBroker
           @relationship.latest?
         end
 
+        def consumer_version_branch_heads
+          @relationship.consumer_version_branch_heads.collect do | branch_head |
+            IndexItemBranchHead.new(branch_head, consumer_name)
+          end
+        end
+
         def consumer_version_latest_tag_names
           @relationship.tag_names
         end
 
         def provider_version_latest_tag_names
           @relationship.latest_verification_latest_tags.collect(&:name)
+        end
+
+        def provider_version_branch_heads
+          @relationship.provider_version_branch_heads.collect do | branch_head |
+            IndexItemProviderBranchHead.new(branch_head, provider_name)
+          end
         end
 
         def consumer_group_url

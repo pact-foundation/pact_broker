@@ -138,8 +138,8 @@ module PactBroker
         pact_publications = head_pact_publications(consumer_name: consumer_name, provider_name: provider_name, tags: true, page_number: page_number, page_size: page_size)
           .eager(:consumer)
           .eager(:provider)
-          .eager(pact_version: { latest_verification: { provider_version: [{ current_deployed_versions: :environment }, { current_supported_released_versions: :environment }, :branch_heads, { tags: :head_tag }]} })
-          .eager(consumer_version: [{ current_deployed_versions: :environment }, { current_supported_released_versions: :environment }, :branch_heads, { tags: :head_tag }])
+          .eager(pact_version: { latest_verification: { provider_version: [{ current_deployed_versions: :environment }, { current_supported_released_versions: :environment }, { branch_heads: :branch_version }, { tags: :head_tag }]} })
+          .eager(consumer_version: [{ current_deployed_versions: :environment }, { current_supported_released_versions: :environment }, { branch_heads: :branch_version }, { tags: :head_tag }])
           .eager(:head_pact_publications_for_tags)
 
         pact_publications.all.collect do | pact_publication |

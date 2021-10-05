@@ -74,6 +74,10 @@ module PactBroker
         consumer_version.branch_heads.collect(&:branch_name)
       end
 
+      def consumer_version_branch_heads
+        consumer_version.branch_heads
+      end
+
       def consumer_version_environment_names
         (consumer_version.current_deployed_versions.collect(&:environment).collect(&:name) + consumer_version.current_supported_released_versions.collect(&:environment).collect(&:name)).uniq
       end
@@ -89,6 +93,11 @@ module PactBroker
       def provider_version_number
         @latest_verification ? @latest_verification.provider_version_number : nil
       end
+
+      def provider_version_branch_heads
+        provider_version&.branch_heads || []
+      end
+
 
       def provider_version_branches
         provider_version&.branch_heads&.collect(&:branch_name) || []

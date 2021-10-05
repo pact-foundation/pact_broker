@@ -85,9 +85,9 @@
                     %button.clippy.invisible{ title: "Copy to clipboard" }
                       %span.copy-icon
                 - if view == "branch" || view == "all"
-                  - index_item.consumer_version_branches.each do | branch_name |
-                    %div{"class": "tag badge badge-dark"}
-                      = "branch: " + branch_name
+                  - index_item.consumer_version_branch_heads.each do | branch_head |
+                    %div{"class": "tag badge badge-dark", "title": branch_head.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
+                      = "branch: " + branch_head.branch_name
                 - if view == "tag" || view == "all"
                   - index_item.consumer_version_latest_tag_names.each do | tag_name |
                     .tag.badge.badge-primary
@@ -106,9 +106,9 @@
                     %button.clippy.invisible{ title: "Copy to clipboard" }
                       %span.copy-icon
                 - if view == "branch" || view == "all"
-                  - index_item.provider_version_branches.each do | branch_name |
-                    %div{"class": "tag badge badge-dark"}
-                      = "branch: " + branch_name
+                  - index_item.provider_version_branch_heads.each do | branch_head |
+                    %div{"class": "tag badge badge-dark", "title": branch_head.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
+                      = "branch: " + branch_head.branch_name
                 - if view == "tag" || view == "all"
                   - index_item.provider_version_latest_tag_names.each do | tag_name |
                     .tag.badge.badge-primary
@@ -159,8 +159,15 @@
       $('td[data-toggle="tooltip"]').each(function(index, td){
         //appended tooltip div screws up table if it's appended after a
         //td, so need to append it to a div
-        $(td).tooltip({container: $(td).first()});
+        $(td).tooltip({ container: $(td).first() });
       });
+
+      // https://www.w3schools.com/bootstrap/bootstrap_ref_js_tooltip.asp
+
+      $('div[data-toggle="tooltip"]').each(function(index, div){
+        $(div).tooltip()
+      });
+
     });
 
     $(".reset-search").on("click", function() {

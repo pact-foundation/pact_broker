@@ -13,6 +13,7 @@ begin
     .deploy_to_prod(pacticipant: "AutoDetectTestProvider", version: "1")
     .publish_pact(consumer: "AutoDetectTestConsumer", provider: "AutoDetectTestProvider", consumer_version: "1", tag: "feat/x", content_id: "2111")
     .publish_pact(consumer: "AutoDetectTestConsumer", provider: "AutoDetectTestProvider", consumer_version: "2", tag: "feat/y", content_id: "21asdfd")
+    .deploy_to_prod(pacticipant: "AutoDetectTestConsumer", version: "1")
 
 rescue StandardError => e
   puts "#{e.class} #{e.message}"

@@ -241,3 +241,8 @@ span.copy-success-icon {
 div.top-of-group {
   margin-top: 20px;
 }
+
+
+div[data-toggle="tooltip"] {
+  cursor: pointer;
+}
