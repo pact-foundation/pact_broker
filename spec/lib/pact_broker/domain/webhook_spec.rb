@@ -32,18 +32,53 @@ module PactBroker
 
         context "with a consumer and provider" do
           it { is_expected.to eq "A webhook for the pact between Consumer and Provider" }
+
+          context "when provider is specified by a label" do
+            let(:provider) { WebhookPacticipant.new(label: "provider-label")}
+
+            it { is_expected.to eq "A webhook for the pact between Consumer and providers labeled 'provider-label'" }
+          end
+
+          context "when consumer is specified by a label" do
+            let(:consumer) { WebhookPacticipant.new(label: "consumer-label")}
+
+            it { is_expected.to eq "A webhook for the pact between consumers labeled 'consumer-label' and Provider" }
+          end
+
+          context "when both are specified by labels" do
+            let(:consumer) { WebhookPacticipant.new(label: "consumer-label")}
+            let(:provider) { WebhookPacticipant.new(label: "provider-label")}
+
+            it do
+              is_expected.to eq(
+                "A webhook for the pact between consumers labeled 'consumer-label' and providers labeled 'provider-label'"
+              )
+            end
+          end
         end
 
         context "with a consumer only" do
           let(:provider) { nil }
 
           it { is_expected.to eq "A webhook for all pacts with consumer Consumer" }
+
+          context "when specified by a label" do
+            let(:consumer) { WebhookPacticipant.new(label: "consumer-label")}
+
+            it { is_expected.to eq "A webhook for all pacts with consumer labeled 'consumer-label'" }
+          end
         end
 
         context "with a provider only" do
           let(:consumer) { nil }
 
           it { is_expected.to eq "A webhook for all pacts with provider Provider" }
+
+          context "when specified by a label" do
+            let(:provider) { WebhookPacticipant.new(label: "provider-label")}
+
+            it { is_expected.to eq "A webhook for all pacts with provider labeled 'provider-label'" }
+          end
         end
 
         context "with neither a consumer nor a provider" do
