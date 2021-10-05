@@ -109,7 +109,7 @@ module PactBroker
         end
 
         def pact_matrix_url
-          Helpers::URLHelper.matrix_url(consumer_name, provider_name, base_url)
+          Helpers::URLHelper.matrix_url_for_consumer_version(consumer_name, consumer_version_number, provider_name, base_url)
         end
 
         def any_webhooks?
