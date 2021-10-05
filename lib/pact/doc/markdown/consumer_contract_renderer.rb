@@ -60,7 +60,7 @@ module Pact
         end
 
         def markdown_escape string
-          string.gsub("*",'\*').gsub("_",'\_')
+          string.gsub("*","\\*").gsub("_","\\_")
         end
 
         def h(text)

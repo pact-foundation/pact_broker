@@ -27,8 +27,8 @@ module Pact
             let(:consumer_contract) { Pact::ConsumerContract.from_uri "./spec/support/markdown_pact_with_markdown_chars_in_names.json" }
 
             it "escapes the markdown characters" do
-              expect(subject.call).to include '# A pact between Some\*Consumer\*App and Some\_Provider\_App'
-              expect(subject.call).to include '### Requests from Some\*Consumer\*App to Some\_Provider\_App'
+              expect(subject.call).to include "# A pact between Some\\*Consumer\\*App and Some\\_Provider\\_App"
+              expect(subject.call).to include "### Requests from Some\\*Consumer\\*App to Some\\_Provider\\_App"
             end
           end
 

@@ -57,7 +57,7 @@ module Pact
       def formatted_provider_states mark_bold: false
         bold_marker = mark_bold ? MARKDOWN_BOLD_CHARACTERS : ""
 
-        (@interaction.provider_states || []).map do |ps| 
+        (@interaction.provider_states || []).map do |ps|
           "#{bold_marker}" \
           "#{markdown_escape(apply_capitals(ps.name.strip, false))}" \
           "#{bold_marker}"
@@ -129,7 +129,7 @@ module Pact
 
       def markdown_escape string
         return nil unless string
-        string.gsub("*",'\*').gsub("_",'\_')
+        string.gsub("*","\\*").gsub("_","\\_")
       end
     end
   end

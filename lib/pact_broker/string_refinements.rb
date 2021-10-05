@@ -38,7 +38,7 @@ module PactBroker
           first_letter = separators.shift
         end
 
-        separators = ["_", '\s'] if separators.empty?
+        separators = ["_", "\\s"] if separators.empty?
 
         str = self.dup
 
