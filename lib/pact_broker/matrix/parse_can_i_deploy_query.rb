@@ -29,9 +29,11 @@ module PactBroker
         end
 
         if params[:ignore].is_a?(Array)
-          options[:ignore_selectors] = params[:ignore].collect do | pacticipant_name |
-            if pacticipant_name.is_a?(String)
-              PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: pacticipant_name)
+          options[:ignore_selectors] = params[:ignore].collect do | param |
+            if param.is_a?(String)
+              PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: param)
+            elsif param.is_a?(Hash) && param.key?(:pacticipant)
+              PactBroker::Matrix::UnresolvedSelector.new({ pacticipant_name: param[:pacticipant], pacticipant_version_number: param[:version] }.compact)
             end
           end.compact
         else

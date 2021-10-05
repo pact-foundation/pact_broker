@@ -38,6 +38,19 @@ module PactBroker
             end
           end
 
+          context "with pacticipant selectors to ignore" do
+            before do
+              params[:ignore] = [{ pacticipant: "foo" }, { pacticipant: "bar", version: "2" }]
+            end
+
+            its([:ignore_selectors]) do
+              is_expected.to eq [
+                PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: "foo"),
+                PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: "bar", pacticipant_version_number: "2")
+              ]
+            end
+          end
+
           context "with a tag" do
             let(:params) do
               {
