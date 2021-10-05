@@ -17,6 +17,7 @@ module PactBroker
           "webhooks-webhooks" => "webhooks",
           "webhook" => "webhooks",
           "can-i-deploy-pacticipant-version-to-tag" => "can-i-deploy",
+          "can-i-deploy-pacticipant-version-to-environment" => "can-i-deploy",
           "pacticipant" => "pacticipants"
         }.freeze
 
