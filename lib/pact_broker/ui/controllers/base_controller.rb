@@ -1,11 +1,13 @@
 require "padrino-core"
 require "haml"
 require "pact_broker/services"
+require "pact_broker/string_refinements"
 
 module PactBroker
   module UI
     module Controllers
       class Base < Padrino::Application
+        using PactBroker::StringRefinements
 
         set :root, File.join(File.dirname(__FILE__), "..")
         set :show_exceptions, ENV["RACK_ENV"] != "production"
@@ -17,6 +19,12 @@ module PactBroker
           # Either use the explicitly configured base url or an empty string,
           # rather than request.base_url, which uses the X-Forwarded headers.
           env["pactbroker.base_url"] || ""
+        end
+
+        helpers do
+          def ellipsisize(string)
+            string.ellipsisize
+          end
         end
       end
     end

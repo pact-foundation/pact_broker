@@ -4,7 +4,6 @@ module PactBroker
     extend self
 
     # Ripped from actionview/lib/action_view/helpers/date_helper.rb
-
     def local_date_in_words datetime
       datetime.to_time.localtime.to_datetime.strftime("%a %d %b %Y, %l:%M%P %:z").gsub("  ", " ")
     end
@@ -31,9 +30,6 @@ module PactBroker
       distance_in_minutes = ((to_time - from_time)/60.0).round
       distance_in_seconds = (to_time - from_time).round
 
-      # require 'pry'; pry(binding);
-
-      # locale = I18n.with_options :locale => options[:locale], :scope => options[:scope]
       locale = Locale.new(:locale => options[:locale], :scope => options[:scope])
       case distance_in_minutes
       when 0..1

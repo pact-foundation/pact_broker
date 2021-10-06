@@ -145,22 +145,22 @@
               .tag-parent{"title": branch.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
                 - branch_class = branch.latest? ? "tag badge badge-dark" : "tag badge badge-secondary"
                 %div{"class": branch_class}
-                  = "branch: " + branch.name
+                  = "branch: " + ellipsisize(branch.name)
             - line.consumer_versions_in_environments.each do | version_in_environment |
               .tag-parent{"title": version_in_environment.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
                 %a{href: version_in_environment.url}
                   .tag.badge.badge-success
-                    = "env: " + version_in_environment.environment_name
+                    = "env: " + ellipsisize(version_in_environment.environment_name)
             - line.latest_consumer_version_tags.each do | tag |
               .tag-parent{"title": tag.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
                 %a{href: tag.url}
                   .tag.badge.badge-primary
-                    = "tag: " + tag.name
+                    = "tag: " + ellipsisize(tag.name)
             - line.other_consumer_version_tags.each do | tag |
               .tag-parent{"title": tag.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
                 %a{href: tag.url}
                   .tag.badge.badge-secondary
-                    = "tag: " + tag.name
+                    = "tag: " + ellipsisize(tag.name)
           %td.pact-published{'data-sort-value' => line.pact_published_order, "data-toggle": "tooltip", "title": line.pact_version_sha_message, "data-placement": "right", "data-pact-version-sha": line.pact_version_sha}
             %a{href: line.pact_publication_date_url}
               - if options.all_rows_checked
@@ -182,22 +182,22 @@
               .tag-parent{"title": branch.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
                 - branch_class = branch.latest? ? "tag badge badge-dark" : "tag badge badge-secondary"
                 %div{"class": branch_class}
-                  = "branch: " + branch.name
+                  = "branch: " + ellipsisize(branch.name)
             - line.provider_versions_in_environments.each do | version_in_environment |
               .tag-parent{"title": version_in_environment.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
                 %a{href: version_in_environment.url}
                   .tag.badge.badge-success
-                    = "env: " + version_in_environment.environment_name
+                    = "env: " + ellipsisize(version_in_environment.environment_name)
             - line.latest_provider_version_tags.each do | tag |
               .tag-parent{"title": tag.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
                 %a{href: tag.url}
                   .tag.badge.badge-primary
-                    = "tag:" + tag.name
+                    = "tag:" + ellipsisize(tag.name)
             - line.other_provider_version_tags.each do | tag |
               .tag-parent{"title": tag.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
                 %a{href: tag.url}
                   .tag.badge.badge-secondary
-                    = "tag: " + tag.name
+                    = "tag: " + ellipsisize(tag.name)
           %td.verification-result{class: line.verification_status_class, "title": line.pre_verified_message, "data-toggle": "tooltip", "data-placement": "left"}
             %a{href: line.verification_status_url}
               - if options.all_rows_checked && line.number

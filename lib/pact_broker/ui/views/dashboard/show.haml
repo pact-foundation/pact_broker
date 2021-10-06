@@ -87,15 +87,15 @@
                 - if view == "branch" || view == "all"
                   - index_item.consumer_version_branch_heads.each do | branch_head |
                     %div{"class": "tag badge badge-dark", "title": branch_head.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
-                      = "branch: " + branch_head.branch_name
+                      = "branch: " + ellipsisize(branch_head.branch_name)
                 - if view == "tag" || view == "all"
                   - index_item.consumer_version_latest_tag_names.each do | tag_name |
                     .tag.badge.badge-primary
-                      = "tag: " + tag_name
+                      = "tag: " + ellipsisize(tag_name)
                 - if view == "environment" || view == "all"
                   - index_item.consumer_version_environment_names.each do | environment_name |
                     .tag.badge.badge-success
-                      = "env: " + environment_name
+                      = "env: " + ellipsisize(environment_name)
                 - if view == "all" && index_item.display_latest_label? && index_item.latest?
                   .tag.badge.bg-light
                     latest
@@ -108,15 +108,15 @@
                 - if view == "branch" || view == "all"
                   - index_item.provider_version_branch_heads.each do | branch_head |
                     %div{"class": "tag badge badge-dark", "title": branch_head.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
-                      = "branch: " + branch_head.branch_name
+                      = "branch: " + ellipsisize(branch_head.branch_name)
                 - if view == "tag" || view == "all"
                   - index_item.provider_version_latest_tag_names.each do | tag_name |
                     .tag.badge.badge-primary
-                      = "tag: " + tag_name
+                      = "tag: " + ellipsisize(tag_name)
                 - if view == "environment" || view == "all"
                   - index_item.provider_version_environment_names.each do | environment_name |
                     .tag.badge.badge-success
-                      = "env: " + environment_name
+                      = "env: " + ellipsisize(environment_name)
               %td.pact
                 %span.pact
                   %a{ href: index_item.pact_url, title: "View pact" }
