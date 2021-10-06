@@ -1,0 +1,68 @@
+{
+  "request": {
+    "method": "GET",
+    "path_template": "/webhooks/:uuid",
+    "path": "/webhooks/d2181b32-8b03-4daf-8cc0-d9168b2f6fac",
+    "headers": {
+      "Accept": "application/hal+json"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/hal+json;charset=utf-8"
+    },
+    "body": {
+      "uuid": "d2181b32-8b03-4daf-8cc0-d9168b2f6fac",
+      "description": "POST example.org",
+      "consumer": {
+        "name": "Foo"
+      },
+      "provider": {
+        "name": "Bar"
+      },
+      "enabled": true,
+      "request": {
+        "method": "POST",
+        "url": "http://example.org",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "events": [
+        {
+          "name": "contract_content_changed"
+        }
+      ],
+      "createdAt": "2021-09-01T00:00:00+00:00",
+      "_links": {
+        "self": {
+          "title": "POST example.org",
+          "href": "http://example.org/webhooks/d2181b32-8b03-4daf-8cc0-d9168b2f6fac"
+        },
+        "pb:execute": {
+          "title": "Test the execution of the webhook with the latest matching pact or verification by sending a POST request to this URL",
+          "href": "http://example.org/webhooks/d2181b32-8b03-4daf-8cc0-d9168b2f6fac/execute"
+        },
+        "pb:consumer": {
+          "title": "Consumer",
+          "name": "Foo",
+          "href": "http://example.org/pacticipants/Foo"
+        },
+        "pb:provider": {
+          "title": "Provider",
+          "name": "Bar",
+          "href": "http://example.org/pacticipants/Bar"
+        },
+        "pb:pact-webhooks": {
+          "title": "All webhooks for consumer Foo and provider Bar",
+          "href": "http://example.org/webhooks/provider/Bar/consumer/Foo"
+        },
+        "pb:webhooks": {
+          "title": "All webhooks",
+          "href": "http://example.org/webhooks"
+        }
+      }
+    }
+  }
+}

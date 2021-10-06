@@ -1,0 +1,49 @@
+{
+  "request": {
+    "method": "GET",
+    "path_template": "/pacts/provider/:provider_name/consumer/:consumer_name/version/:consumer_version_number/triggered-webhooks",
+    "path": "/pacts/provider/Bar/consumer/Foo/version/2/triggered-webhooks",
+    "headers": {
+      "Accept": "application/hal+json"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/hal+json;charset=utf-8"
+    },
+    "body": {
+      "_embedded": {
+        "triggeredWebhooks": [
+          {
+            "name": "POST example.org",
+            "status": "not_run",
+            "attemptsMade": 1,
+            "attemptsRemaining": 6,
+            "triggerType": "resource_creation",
+            "eventName": "contract_content_changed",
+            "triggeredAt": "2021-09-01T10:00:00+10:00",
+            "_links": {
+              "pb:logs": {
+                "href": "http://example.org/triggered-webhooks/6cd5cc48-db3c-4a4c-a36d-e9bedeb9d91e/logs",
+                "title": "Webhook execution logs",
+                "name": "POST example.org"
+              },
+              "pb:webhook": {
+                "href": "http://example.org/webhooks/d2181b32-8b03-4daf-8cc0-d9168b2f6fac",
+                "title": "Webhook",
+                "name": "POST example.org"
+              }
+            }
+          }
+        ]
+      },
+      "_links": {
+        "self": {
+          "title": "Webhooks triggered by the publication of the pact between Foo (2) and Bar",
+          "href": "http://example.org/pacts/provider/Bar/consumer/Foo/version/2/triggered-webhooks"
+        }
+      }
+    }
+  }
+}

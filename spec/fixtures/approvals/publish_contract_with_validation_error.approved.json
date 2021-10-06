@@ -28,8 +28,7 @@
   "response": {
     "status": 400,
     "headers": {
-      "Content-Type": "application/hal+json;charset=utf-8",
-      "Content-Length": "79"
+      "Content-Type": "application/hal+json;charset=utf-8"
     },
     "body": {
       "errors": {

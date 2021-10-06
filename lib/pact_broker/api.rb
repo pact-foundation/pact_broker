@@ -152,5 +152,10 @@ module PactBroker
   API ||= begin
     build_api
   end
+
+  def self.routes
+    require "webmachine/describe_routes"
+    @routes ||= Webmachine::DescribeRoutes.call([API.application])
+  end
   # rubocop: enable Metrics/MethodLength
 end

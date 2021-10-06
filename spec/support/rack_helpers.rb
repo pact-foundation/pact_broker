@@ -7,7 +7,7 @@ module PactBroker
     using PactBroker::StringRefinements
 
     def determinate_headers(headers)
-      headers.without("Date", "Server")
+      headers.without("Date", "Server", "Content-Length")
     end
 
     def rack_env_to_http_headers(rack_env)

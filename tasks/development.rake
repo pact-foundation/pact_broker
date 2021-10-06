@@ -18,34 +18,35 @@ task "pact_broker:dev:setup" do
 end
 
 desc "List the Pact Broker API routes"
-task "pact_broker:routes", [:search_term] do | _, args |
-  puts "Listing routes containing the term '#{args[:search_term]}'" if args[:search_term]
-  require "tempfile"
-  require "sequel"
-  require "pact_broker"
-  require "pact_broker/project_root"
+task :'pact_broker:routes', [:search_term] do | t, args |
+  project_root = File.absolute_path(File.join(__dir__, '..', '..', '..'))
+  $LOAD_PATH << File.join(project_root,'app_shared','lib')
 
-  Tempfile.create("pact_broker_routes") do |f|
-    CONNECTION = Sequel.connect({ adapter: "sqlite", database: f.path, encoding: "utf8", sql_log_level: :debug })
+  search_term = args[:search_term]
+  puts "Listing Pact Broker routes containing the term '#{search_term}'" if search_term
+  require 'tempfile'
+  require 'sequel'
+  require 'pact_broker'
+  require 'pact_broker/project_root'
+  require 'pathname'
 
-    require "pact_broker/db"
+  Tempfile.create('pact_broker_routes') do |f|
+    CONNECTION = Sequel.connect({ adapter: "sqlite", database: f.path, encoding: 'utf8', sql_log_level: :debug })
+
+    require 'pact_broker/db'
     PactBroker::DB.run_migrations(CONNECTION)
 
-    require "pact_broker/api"
+    require 'pact_broker/api'
+    require 'webmachine/describe_routes'
 
-    routes_debugging = PactBroker::API.application.routes.collect do | route |
-      ["/" + route.path_spec.collect{ |part| part.is_a?(Symbol) ? ":#{part}" : part  }.join("/"), route.resource]
-    end
+    routes = Webmachine::DescribeRoutes.call([PactBroker::API.application], search_term: search_term)
 
-    if args[:search_term]
-      routes_debugging = routes_debugging.select{ |(route, _)| route.include?(args[:search_term]) }
-    end
-
-    routes_debugging.sort_by(&:first).each do | (path, resource_class) |
+    routes.each do | route |
       puts ""
-      puts "#{path}"
-      puts "      class: #{resource_class}"
-      puts "      location: #{resource_class.instance_method(:allowed_methods).source_location.first.gsub(PactBroker.project_root.to_s + "/", "")}"
+      puts "#{route[:path]}"
+      puts "      allowed_methods: #{route[:allowed_methods].join(", ")}"
+      puts "      class: #{route[:resource_class]}"
+      puts "            location: #{route[:resource_class_location]}"
     end
   end
 end

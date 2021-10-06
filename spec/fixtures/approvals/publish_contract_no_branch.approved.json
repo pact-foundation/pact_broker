@@ -29,8 +29,7 @@
   "response": {
     "status": 200,
     "headers": {
-      "Content-Type": "application/hal+json;charset=utf-8",
-      "Content-Length": "3227"
+      "Content-Type": "application/hal+json;charset=utf-8"
     },
     "body": {
       "logs": [

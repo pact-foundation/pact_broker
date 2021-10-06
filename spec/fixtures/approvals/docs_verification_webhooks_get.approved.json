@@ -1,0 +1,29 @@
+{
+  "request": {
+    "method": "GET",
+    "path_template": "/pacts/provider/:provider_name/consumer/:consumer_name/pact-version/:pact_version_sha/verification-results/:verification_number/triggered-webhooks",
+    "path": "/pacts/provider/Bar/consumer/Foo/pact-version/3e193ecb37ad04b43ce974a38352c704b2e0ed6b/verification-results/1/triggered-webhooks",
+    "headers": {
+      "Accept": "application/hal+json"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/hal+json;charset=utf-8"
+    },
+    "body": {
+      "_embedded": {
+        "triggeredWebhooks": [
+
+        ]
+      },
+      "_links": {
+        "self": {
+          "title": "Webhooks triggered by the publication of verification result 1",
+          "href": "http://example.org/pacts/provider/Bar/consumer/Foo/pact-version/3e193ecb37ad04b43ce974a38352c704b2e0ed6b/verification-results/1/triggered-webhooks"
+        }
+      }
+    }
+  }
+}

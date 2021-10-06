@@ -1,0 +1,42 @@
+{
+  "request": {
+    "method": "GET",
+    "path_template": "/webhooks/provider/:provider_name/consumer/:consumer_name",
+    "path": "/webhooks/provider/Bar/consumer/Foo",
+    "headers": {
+      "Accept": "application/hal+json"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/hal+json;charset=utf-8"
+    },
+    "body": {
+      "_links": {
+        "self": {
+          "title": "Webhooks",
+          "href": "http://example.org/webhooks/provider/Bar/consumer/Foo"
+        },
+        "pb:create": {
+          "title": "POST to create a webhook",
+          "href": "http://example.org/webhooks/provider/Bar/consumer/Foo"
+        },
+        "pb:webhooks": [
+          {
+            "title": "A webhook for the pact between Foo and Bar",
+            "name": "POST example.org",
+            "href": "http://example.org/webhooks/d2181b32-8b03-4daf-8cc0-d9168b2f6fac"
+          }
+        ],
+        "curies": [
+          {
+            "name": "pb",
+            "href": "http://example.org/doc/webhooks-{rel}",
+            "templated": true
+          }
+        ]
+      }
+    }
+  }
+}

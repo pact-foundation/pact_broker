@@ -292,6 +292,7 @@ module PactBroker
           provider: webhook_provider
         )
         @webhook = PactBroker::Webhooks::Repository.new.create uuid, new_webhook, consumer, provider
+        set_created_at_if_set(params[:created_at], :webhooks, uuid: @webhook.uuid)
         self
       end
       # rubocop: enable Metrics/CyclomaticComplexity
