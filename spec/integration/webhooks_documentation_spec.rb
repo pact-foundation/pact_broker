@@ -166,9 +166,7 @@ RSpec.describe "webhook routes" do
 
   shared_examples "supports GET" do
     describe "GET" do
-      it "supports GET" do
-        expect(subject.status).to eq 200
-      end
+      its(:status) { is_expected.to eq 200 }
 
       include_examples "request"
     end
@@ -177,6 +175,9 @@ RSpec.describe "webhook routes" do
 
   shared_examples "supports POST" do
     describe "POST" do
+      before do
+        allow(PactBroker::Webhooks::Service).to receive(:next_uuid).and_return("dCGCl-Ba3PqEFJ_iE9mJkQ")
+      end
       let(:http_method) { "POST" }
       let(:rack_headers) do
         {
@@ -185,6 +186,7 @@ RSpec.describe "webhook routes" do
         }
       end
 
+      its(:status) { is_expected.to be_between(200, 201) }
       include_examples "request"
     end
   end
@@ -199,6 +201,8 @@ RSpec.describe "webhook routes" do
         }
       end
 
+      its(:status) { is_expected.to be_between(200, 201) }
+
       include_examples "request"
     end
   end
@@ -207,6 +211,7 @@ RSpec.describe "webhook routes" do
     describe "OPTIONS" do
       let(:http_method) { "OPTIONS" }
 
+      its(:status) { is_expected.to eq 200 }
       include_examples "request"
     end
   end
@@ -216,6 +221,7 @@ RSpec.describe "webhook routes" do
     let(:custom_parameter_values) { { uuid: webhook_uuid } }
 
     include_examples "supports GET"
+
     describe "PUT" do
       let(:http_params) { webhook_hash.to_json }
       include_examples "supports PUT"
@@ -227,6 +233,11 @@ RSpec.describe "webhook routes" do
     let(:path_template) { "/webhooks" }
 
     include_examples "supports GET"
+
+    describe "POST" do
+      let(:http_params) { webhook_hash.to_json }
+      include_examples "supports POST"
+    end
     include_examples "supports OPTIONS"
   end
 

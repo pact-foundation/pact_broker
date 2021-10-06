@@ -205,6 +205,83 @@ Body:
 ```
 
 
+### POST
+
+#### Request
+
+Headers: `{"Content-Type":"application/json","Accept":"application/hal+json"}`<br/>
+Body:
+
+```
+{
+  "events": [
+    {
+      "name": "contract_content_changed"
+    }
+  ],
+  "request": {
+    "method": "POST",
+    "url": "https://example.org/example",
+    "username": "username",
+    "password": "password",
+    "headers": {
+      "Accept": "application/json"
+    },
+    "body": {
+      "pactUrl": "${pactbroker.pactUrl}"
+    }
+  }
+}
+```
+
+
+#### Response
+
+Status: `201`<br/>
+Headers: `{"Content-Type":"application/hal+json;charset=utf-8","Location":"http://example.org/webhooks/dCGCl-Ba3PqEFJ_iE9mJkQ"}`<br/>
+Body:
+
+```
+{
+  "uuid": "dCGCl-Ba3PqEFJ_iE9mJkQ",
+  "description": "POST example.org",
+  "enabled": true,
+  "request": {
+    "method": "POST",
+    "url": "https://example.org/example",
+    "headers": {
+      "Accept": "application/json"
+    },
+    "body": {
+      "pactUrl": "${pactbroker.pactUrl}"
+    },
+    "username": "username",
+    "password": "**********"
+  },
+  "events": [
+    {
+      "name": "contract_content_changed"
+    }
+  ],
+  "createdAt": "2021-09-01T00:07:21+00:00",
+  "_links": {
+    "self": {
+      "title": "POST example.org",
+      "href": "http://example.org/webhooks/dCGCl-Ba3PqEFJ_iE9mJkQ"
+    },
+    "pb:execute": {
+      "title": "Test the execution of the webhook with the latest matching pact or verification by sending a POST request to this URL",
+      "href": "http://example.org/webhooks/dCGCl-Ba3PqEFJ_iE9mJkQ/execute"
+    },
+    "pb:webhooks": {
+      "title": "All webhooks",
+      "href": "http://example.org/webhooks"
+    }
+  }
+}
+```
+
+
 
 ## Webhooks for consumer
 

@@ -1,7 +1,7 @@
 {
   "category": "Webhooks",
   "name": "Triggered webhooks for pact publication",
-  "order": 28,
+  "order": 41,
   "request": {
     "method": "GET",
     "path_template": "/pacts/provider/:provider_name/consumer/:consumer_name/version/:consumer_version_number/triggered-webhooks",
