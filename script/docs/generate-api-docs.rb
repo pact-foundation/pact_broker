@@ -6,16 +6,48 @@ require "fileutils"
 EXAMPLES_FILE_PATTERN = "spec/fixtures/approvals/docs_*"
 API_DOCS_DIR = Pathname.new("docs/api")
 
-def generate_example_markdown_for_examples(name, examples)
-  options = examples.select { | example | example[:request][:method] == "OPTIONS" }.first
-  other = examples.select { | example | example[:request][:method] != "OPTIONS" }
 
-  not_options_docs = other.collect { | example | generate_example_markdown(example) }
+class Category
+  attr_reader :name, :examples, :not_options_examples
+
+  def initialize(name, examples)
+    @name = name
+    @examples = examples
+    @options_example = examples.select { | example | example[:request][:method] == "OPTIONS" }.first
+    @not_options_examples = examples.select { | example | example[:request][:method] != "OPTIONS" }
+  end
+
+  def path_template
+    not_options_examples.first[:request][:path_template]
+  end
+
+  def allowed_methods
+    if options_example
+      options_example[:response][:headers][:'Access-Control-Allow-Methods'].split(",").collect(&:strip).reject { |m| m == "OPTIONS" }
+    else
+      []
+    end
+  end
+
+  private
+
+  attr_reader :other_examples, :options_example
+
+end
+
+def generate_example_markdown_for_examples(name, examples)
+  category = Category.new(name, examples)
+
+
+  not_options_docs = category.not_options_examples.collect { | example | generate_example_markdown(example) }
+
+  allowed_methods = category.allowed_methods.collect{ | meth| "`#{meth}`"}.join(", ")
 
 "
 ## #{name}
 
-Allowed methods: #{options && options[:response][:headers][:'Access-Control-Allow-Methods']}
+Path: `#{category.path_template}`<br/>
+Allowed methods: #{allowed_methods}<br/>
 #{not_options_docs.join("\n")}
 "
 end
@@ -26,7 +58,6 @@ def generate_example_markdown(hash)
 
 #### Request
 
-Path: `#{hash[:request][:path_template]}`<br/>
 Headers: `#{hash[:request][:headers]&.to_json}`<br/>
 
 #### Response

@@ -4,13 +4,13 @@
 
 ## Webhook
 
-Allowed methods: GET, PUT, DELETE, OPTIONS
+Path: `/webhooks/:uuid`<br/>
+Allowed methods: `GET`, `PUT`, `DELETE`<br/>
 
 ### GET
 
 #### Request
 
-Path: `/webhooks/:uuid`<br/>
 Headers: `{"Accept":"application/hal+json"}`<br/>
 
 #### Response
@@ -78,13 +78,13 @@ Body:
 
 ## Webhooks
 
-Allowed methods: GET, POST, OPTIONS
+Path: `/webhooks`<br/>
+Allowed methods: `GET`, `POST`<br/>
 
 ### GET
 
 #### Request
 
-Path: `/webhooks`<br/>
 Headers: `{"Accept":"application/hal+json"}`<br/>
 
 #### Response
@@ -126,13 +126,13 @@ Body:
 
 ## Webhooks for consumer
 
-Allowed methods: POST, GET, OPTIONS
+Path: `/webhooks/consumer/:consumer_name`<br/>
+Allowed methods: `POST`, `GET`<br/>
 
 ### GET
 
 #### Request
 
-Path: `/webhooks/consumer/:consumer_name`<br/>
 Headers: `{"Accept":"application/hal+json"}`<br/>
 
 #### Response
@@ -170,13 +170,13 @@ Body:
 
 ## Webhooks for a provider
 
-Allowed methods: POST, GET, OPTIONS
+Path: `/webhooks/provider/:provider_name`<br/>
+Allowed methods: `POST`, `GET`<br/>
 
 ### GET
 
 #### Request
 
-Path: `/webhooks/provider/:provider_name`<br/>
 Headers: `{"Accept":"application/hal+json"}`<br/>
 
 #### Response
@@ -214,13 +214,13 @@ Body:
 
 ## Webhooks for consumer and provider
 
-Allowed methods: POST, GET, OPTIONS
+Path: `/webhooks/provider/:provider_name/consumer/:consumer_name`<br/>
+Allowed methods: `POST`, `GET`<br/>
 
 ### GET
 
 #### Request
 
-Path: `/webhooks/provider/:provider_name/consumer/:consumer_name`<br/>
 Headers: `{"Accept":"application/hal+json"}`<br/>
 
 #### Response
@@ -262,13 +262,13 @@ Body:
 
 ## Pact webhooks
 
-Allowed methods: POST, GET, OPTIONS
+Path: `/pacts/provider/:provider_name/consumer/:consumer_name/webhooks`<br/>
+Allowed methods: `POST`, `GET`<br/>
 
 ### GET
 
 #### Request
 
-Path: `/pacts/provider/:provider_name/consumer/:consumer_name/webhooks`<br/>
 Headers: `{"Accept":"application/hal+json"}`<br/>
 
 #### Response
@@ -310,13 +310,13 @@ Body:
 
 ## Webhooks status
 
-Allowed methods: GET, OPTIONS
+Path: `/pacts/provider/:provider_name/consumer/:consumer_name/webhooks/status`<br/>
+Allowed methods: `GET`<br/>
 
 ### GET
 
 #### Request
 
-Path: `/pacts/provider/:provider_name/consumer/:consumer_name/webhooks/status`<br/>
 Headers: `{"Accept":"application/hal+json"}`<br/>
 
 #### Response
@@ -392,13 +392,13 @@ Body:
 
 ## Executing a saved webhook
 
-Allowed methods: POST, OPTIONS
+Path: `/webhooks/:uuid/execute`<br/>
+Allowed methods: `POST`<br/>
 
 ### POST
 
 #### Request
 
-Path: `/webhooks/:uuid/execute`<br/>
 Headers: `{"Content-Type":"application/json","Accept":"application/hal+json"}`<br/>
 
 #### Response
@@ -434,13 +434,13 @@ Body:
 
 ## Executing an unsaved webhook
 
-Allowed methods: POST, OPTIONS
+Path: `/webhooks/execute`<br/>
+Allowed methods: `POST`<br/>
 
 ### POST
 
 #### Request
 
-Path: `/webhooks/execute`<br/>
 Headers: `{"Content-Type":"application/json","Accept":"application/hal+json"}`<br/>
 
 #### Response
@@ -479,13 +479,13 @@ Body:
 
 ## Triggered webhooks for pact publication
 
-Allowed methods: GET, OPTIONS
+Path: `/pacts/provider/:provider_name/consumer/:consumer_name/version/:consumer_version_number/triggered-webhooks`<br/>
+Allowed methods: `GET`<br/>
 
 ### GET
 
 #### Request
 
-Path: `/pacts/provider/:provider_name/consumer/:consumer_name/version/:consumer_version_number/triggered-webhooks`<br/>
 Headers: `{"Accept":"application/hal+json"}`<br/>
 
 #### Response
@@ -534,13 +534,13 @@ Body:
 
 ## Triggered webhooks for verification publication
 
-Allowed methods: GET, OPTIONS
+Path: `/pacts/provider/:provider_name/consumer/:consumer_name/pact-version/:pact_version_sha/verification-results/:verification_number/triggered-webhooks`<br/>
+Allowed methods: `GET`<br/>
 
 ### GET
 
 #### Request
 
-Path: `/pacts/provider/:provider_name/consumer/:consumer_name/pact-version/:pact_version_sha/verification-results/:verification_number/triggered-webhooks`<br/>
 Headers: `{"Accept":"application/hal+json"}`<br/>
 
 #### Response
@@ -569,13 +569,13 @@ Body:
 
 ## Logs of triggered webhook
 
-Allowed methods: GET, OPTIONS
+Path: `/triggered-webhooks/:uuid/logs`<br/>
+Allowed methods: `GET`<br/>
 
 ### GET
 
 #### Request
 
-Path: `/triggered-webhooks/:uuid/logs`<br/>
 Headers: `{"Accept":"application/hal+json"}`<br/>
 
 #### Response
