@@ -32,6 +32,27 @@ module PactBroker
           end
         end
       end
+
+      describe ".replace" do
+        before do
+          td.create_environment("foo", uuid: "1", display_name: "bar", production: false)
+        end
+
+        subject { EnvironmentService.replace("1", Environment.new(name: "bar", display_name: "bar-2", production: true) ) }
+
+        it "replaces the attributes" do
+          subject
+          expect(Environment.first).to have_attributes(name: "bar", display_name: "bar-2", production: true)
+        end
+
+        context "with missing attributes" do
+          subject { EnvironmentService.replace("1", Environment.new ) }
+
+          it "raises an error" do
+            expect { subject }.to raise_error Sequel::NotNullConstraintViolation
+          end
+        end
+      end
     end
   end
 end

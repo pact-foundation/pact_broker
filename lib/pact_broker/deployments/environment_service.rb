@@ -28,13 +28,15 @@ module PactBroker
         environment.save
       end
 
-      def update(uuid, environment)
+      def replace(uuid, environment)
         environment.uuid = uuid
         if environment.display_name.blank?
           environment.display_name = PactBroker::Pacticipants::GenerateDisplayName.call(environment.name)
         end
         environment.upsert
       end
+
+      alias_method :update, :replace # For PF
 
       def find_all
         scope_for(PactBroker::Deployments::Environment).order(Sequel.function(:lower, :display_name)).all

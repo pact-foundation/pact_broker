@@ -31,7 +31,7 @@ module PactBroker
 
         def from_json
           if environment
-            @environment = update_environment
+            @environment = replace_environment
             response.body = to_json
           else
             response.code = 404
@@ -63,8 +63,8 @@ module PactBroker
           identifier_from_path[:environment_uuid]
         end
 
-        def update_environment
-          environment_service.update(uuid, parsed_environment)
+        def replace_environment
+          environment_service.replace(uuid, parsed_environment)
         end
 
         def schema
