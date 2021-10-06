@@ -4,13 +4,16 @@
 
 ## Webhook
 
-### Request
+Allowed methods: GET, PUT, DELETE, OPTIONS
 
-Method: `GET`<br/>
+### GET
+
+#### Request
+
 Path: `/webhooks/:uuid`<br/>
 Headers: `{"Accept":"application/hal+json"}`<br/>
 
-### Response
+#### Response
 
 Status: `200`<br/>
 Headers: `{"Content-Type":"application/hal+json;charset=utf-8"}`<br/>
@@ -72,166 +75,19 @@ Body:
 ```
 
 
-## Webhooks
-
-### Request
-
-Method: `GET`<br/>
-Path: `/webhooks`<br/>
-Headers: `{"Accept":"application/hal+json"}`<br/>
-
-### Response
-
-Status: `200`<br/>
-Headers: `{"Content-Type":"application/hal+json;charset=utf-8"}`<br/>
-Body:
-
-```
-{
-  "_links": {
-    "self": {
-      "title": "Webhooks",
-      "href": "http://example.org/webhooks"
-    },
-    "pb:create": {
-      "title": "POST to create a webhook",
-      "href": "http://example.org/webhooks"
-    },
-    "pb:webhooks": [
-      {
-        "title": "A webhook for the pact between Foo and Bar",
-        "name": "POST example.org",
-        "href": "http://example.org/webhooks/d2181b32-8b03-4daf-8cc0-d9168b2f6fac"
-      }
-    ],
-    "curies": [
-      {
-        "name": "pb",
-        "href": "http://example.org/doc/webhooks-{rel}",
-        "templated": true
-      }
-    ]
-  }
-}
-```
-
-
-## Pact webhooks
-
-### Request
-
-Method: `GET`<br/>
-Path: `/pacts/provider/:provider_name/consumer/:consumer_name/webhooks`<br/>
-Headers: `{"Accept":"application/hal+json"}`<br/>
-
-### Response
-
-Status: `200`<br/>
-Headers: `{"Content-Type":"application/hal+json;charset=utf-8"}`<br/>
-Body:
-
-```
-{
-  "_links": {
-    "self": {
-      "title": "Pact webhooks",
-      "href": "http://example.org/pacts/provider/Bar/consumer/Foo/webhooks"
-    },
-    "pb:create": {
-      "title": "POST to create a webhook",
-      "href": "http://example.org/pacts/provider/Bar/consumer/Foo/webhooks"
-    },
-    "pb:webhooks": [
-      {
-        "title": "A webhook for the pact between Foo and Bar",
-        "name": "POST example.org",
-        "href": "http://example.org/webhooks/d2181b32-8b03-4daf-8cc0-d9168b2f6fac"
-      }
-    ],
-    "curies": [
-      {
-        "name": "pb",
-        "href": "http://example.org/doc/webhooks-{rel}",
-        "templated": true
-      }
-    ]
-  }
-}
-```
-
-
-## Webhooks for consumer and provider
-
-### Request
-
-Method: `GET`<br/>
-Path: `/webhooks/provider/:provider_name/consumer/:consumer_name`<br/>
-Headers: `{"Accept":"application/hal+json"}`<br/>
-
-### Response
-
-Status: `200`<br/>
-Headers: `{"Content-Type":"application/hal+json;charset=utf-8"}`<br/>
-Body:
-
-```
-{
-  "_links": {
-    "self": {
-      "title": "Webhooks",
-      "href": "http://example.org/webhooks/provider/Bar/consumer/Foo"
-    },
-    "pb:create": {
-      "title": "POST to create a webhook",
-      "href": "http://example.org/webhooks/provider/Bar/consumer/Foo"
-    },
-    "pb:webhooks": [
-      {
-        "title": "A webhook for the pact between Foo and Bar",
-        "name": "POST example.org",
-        "href": "http://example.org/webhooks/d2181b32-8b03-4daf-8cc0-d9168b2f6fac"
-      }
-    ],
-    "curies": [
-      {
-        "name": "pb",
-        "href": "http://example.org/doc/webhooks-{rel}",
-        "templated": true
-      }
-    ]
-  }
-}
-```
-
-
-## Triggered webhook logs
-
-### Request
-
-Method: `GET`<br/>
-Path: `/triggered-webhooks/:trigger_uuid/logs`<br/>
-Headers: `{"Accept":"application/hal+json"}`<br/>
-
-### Response
-
-Status: `200`<br/>
-Headers: `{"Content-Type":"text/plain;charset=utf-8"}`<br/>
-Body:
-
-```
-logs
-```
-
 
 ## Pact triggered webhooks
 
-### Request
+Allowed methods: GET, OPTIONS
 
-Method: `GET`<br/>
+### GET
+
+#### Request
+
 Path: `/pacts/provider/:provider_name/consumer/:consumer_name/version/:consumer_version_number/triggered-webhooks`<br/>
 Headers: `{"Accept":"application/hal+json"}`<br/>
 
-### Response
+#### Response
 
 Status: `200`<br/>
 Headers: `{"Content-Type":"application/hal+json;charset=utf-8"}`<br/>
@@ -274,15 +130,221 @@ Body:
 ```
 
 
+
+## Webhooks
+
+Allowed methods: GET, POST, OPTIONS
+
+### GET
+
+#### Request
+
+Path: `/webhooks`<br/>
+Headers: `{"Accept":"application/hal+json"}`<br/>
+
+#### Response
+
+Status: `200`<br/>
+Headers: `{"Content-Type":"application/hal+json;charset=utf-8"}`<br/>
+Body:
+
+```
+{
+  "_links": {
+    "self": {
+      "title": "Webhooks",
+      "href": "http://example.org/webhooks"
+    },
+    "pb:create": {
+      "title": "POST to create a webhook",
+      "href": "http://example.org/webhooks"
+    },
+    "pb:webhooks": [
+      {
+        "title": "A webhook for the pact between Foo and Bar",
+        "name": "POST example.org",
+        "href": "http://example.org/webhooks/d2181b32-8b03-4daf-8cc0-d9168b2f6fac"
+      }
+    ],
+    "curies": [
+      {
+        "name": "pb",
+        "href": "http://example.org/doc/webhooks-{rel}",
+        "templated": true
+      }
+    ]
+  }
+}
+```
+
+
+
+## Pact webhooks
+
+Allowed methods: POST, GET, OPTIONS
+
+### GET
+
+#### Request
+
+Path: `/pacts/provider/:provider_name/consumer/:consumer_name/webhooks`<br/>
+Headers: `{"Accept":"application/hal+json"}`<br/>
+
+#### Response
+
+Status: `200`<br/>
+Headers: `{"Content-Type":"application/hal+json;charset=utf-8"}`<br/>
+Body:
+
+```
+{
+  "_links": {
+    "self": {
+      "title": "Pact webhooks",
+      "href": "http://example.org/pacts/provider/Bar/consumer/Foo/webhooks"
+    },
+    "pb:create": {
+      "title": "POST to create a webhook",
+      "href": "http://example.org/pacts/provider/Bar/consumer/Foo/webhooks"
+    },
+    "pb:webhooks": [
+      {
+        "title": "A webhook for the pact between Foo and Bar",
+        "name": "POST example.org",
+        "href": "http://example.org/webhooks/d2181b32-8b03-4daf-8cc0-d9168b2f6fac"
+      }
+    ],
+    "curies": [
+      {
+        "name": "pb",
+        "href": "http://example.org/doc/webhooks-{rel}",
+        "templated": true
+      }
+    ]
+  }
+}
+```
+
+
+
+## Webhooks for consumer and provider
+
+Allowed methods: POST, GET, OPTIONS
+
+### GET
+
+#### Request
+
+Path: `/webhooks/provider/:provider_name/consumer/:consumer_name`<br/>
+Headers: `{"Accept":"application/hal+json"}`<br/>
+
+#### Response
+
+Status: `200`<br/>
+Headers: `{"Content-Type":"application/hal+json;charset=utf-8"}`<br/>
+Body:
+
+```
+{
+  "_links": {
+    "self": {
+      "title": "Webhooks",
+      "href": "http://example.org/webhooks/provider/Bar/consumer/Foo"
+    },
+    "pb:create": {
+      "title": "POST to create a webhook",
+      "href": "http://example.org/webhooks/provider/Bar/consumer/Foo"
+    },
+    "pb:webhooks": [
+      {
+        "title": "A webhook for the pact between Foo and Bar",
+        "name": "POST example.org",
+        "href": "http://example.org/webhooks/d2181b32-8b03-4daf-8cc0-d9168b2f6fac"
+      }
+    ],
+    "curies": [
+      {
+        "name": "pb",
+        "href": "http://example.org/doc/webhooks-{rel}",
+        "templated": true
+      }
+    ]
+  }
+}
+```
+
+
+
+## Triggered webhook logs
+
+Allowed methods: GET, OPTIONS
+
+### GET
+
+#### Request
+
+Path: `/triggered-webhooks/:trigger_uuid/logs`<br/>
+Headers: `{"Accept":"application/hal+json"}`<br/>
+
+#### Response
+
+Status: `200`<br/>
+Headers: `{"Content-Type":"text/plain;charset=utf-8"}`<br/>
+Body:
+
+```
+logs
+```
+
+
+
+## Verification webhooks
+
+Allowed methods: GET, OPTIONS
+
+### GET
+
+#### Request
+
+Path: `/pacts/provider/:provider_name/consumer/:consumer_name/pact-version/:pact_version_sha/verification-results/:verification_number/triggered-webhooks`<br/>
+Headers: `{"Accept":"application/hal+json"}`<br/>
+
+#### Response
+
+Status: `200`<br/>
+Headers: `{"Content-Type":"application/hal+json;charset=utf-8"}`<br/>
+Body:
+
+```
+{
+  "_embedded": {
+    "triggeredWebhooks": [
+
+    ]
+  },
+  "_links": {
+    "self": {
+      "title": "Webhooks triggered by the publication of verification result 1",
+      "href": "http://example.org/pacts/provider/Bar/consumer/Foo/pact-version/3e193ecb37ad04b43ce974a38352c704b2e0ed6b/verification-results/1/triggered-webhooks"
+    }
+  }
+}
+```
+
+
+
 ## Webhooks status
 
-### Request
+Allowed methods: GET, OPTIONS
 
-Method: `GET`<br/>
+### GET
+
+#### Request
+
 Path: `/pacts/provider/:provider_name/consumer/:consumer_name/webhooks/status`<br/>
 Headers: `{"Accept":"application/hal+json"}`<br/>
 
-### Response
+#### Response
 
 Status: `200`<br/>
 Headers: `{"Content-Type":"application/hal+json;charset=utf-8"}`<br/>
@@ -352,15 +414,19 @@ Body:
 ```
 
 
+
 ## Webhooks for consumer
 
-### Request
+Allowed methods: POST, GET, OPTIONS
 
-Method: `GET`<br/>
+### GET
+
+#### Request
+
 Path: `/webhooks/consumer/:consumer_name`<br/>
 Headers: `{"Accept":"application/hal+json"}`<br/>
 
-### Response
+#### Response
 
 Status: `200`<br/>
 Headers: `{"Content-Type":"application/hal+json;charset=utf-8"}`<br/>
@@ -390,17 +456,49 @@ Body:
   }
 }
 ```
+
+
+
+## Executing a saved webhook
+
+Allowed methods: POST, OPTIONS
+
+### POST
+
+#### Request
+
+Path: `/webhooks/:uuid/execute`<br/>
+Headers: `{"Content-Type":"application/json","Accept":"application/hal+json"}`<br/>
+
+#### Response
+
+Status: `404`<br/>
+Headers: `{"Content-Type":"text/html"}`<br/>
+Body:
+
+```
+<!DOCTYPE html><html>
+ <head><title>404 Not Found</title></head>
+ <body><h1>404 Not Found</h1>
+ <p>The requested document was not found on this server.</p>
+ <address>Webmachine-Ruby/1.6.0 server</address></body></html>
+
+```
+
 
 
 ## Webhooks for a provider
 
-### Request
+Allowed methods: POST, GET, OPTIONS
 
-Method: `GET`<br/>
+### GET
+
+#### Request
+
 Path: `/webhooks/provider/:provider_name`<br/>
 Headers: `{"Accept":"application/hal+json"}`<br/>
 
-### Response
+#### Response
 
 Status: `200`<br/>
 Headers: `{"Content-Type":"application/hal+json;charset=utf-8"}`<br/>
@@ -432,15 +530,19 @@ Body:
 ```
 
 
+
 ## Logs of triggered webhook for webhook
 
-### Request
+Allowed methods: GET, OPTIONS
 
-Method: `GET`<br/>
+### GET
+
+#### Request
+
 Path: `/triggered-webhooks/:uuid/logs`<br/>
 Headers: `{"Accept":"application/hal+json"}`<br/>
 
-### Response
+#### Response
 
 Status: `200`<br/>
 Headers: `{"Content-Type":"text/plain;charset=utf-8"}`<br/>
@@ -451,15 +553,19 @@ logs
 ```
 
 
-## Verification webhooks
 
-### Request
+## Executing an unsaved webhook
 
-Method: `GET`<br/>
-Path: `/pacts/provider/:provider_name/consumer/:consumer_name/pact-version/:pact_version_sha/verification-results/:verification_number/triggered-webhooks`<br/>
-Headers: `{"Accept":"application/hal+json"}`<br/>
+Allowed methods: POST, OPTIONS
 
-### Response
+### POST
+
+#### Request
+
+Path: `/webhooks/execute`<br/>
+Headers: `{"Content-Type":"application/json","Accept":"application/hal+json"}`<br/>
+
+#### Response
 
 Status: `200`<br/>
 Headers: `{"Content-Type":"application/hal+json;charset=utf-8"}`<br/>
@@ -467,17 +573,28 @@ Body:
 
 ```
 {
-  "_embedded": {
-    "triggeredWebhooks": [
-
-    ]
+  "request": {
+    "headers": {
+      "accept": "application/json",
+      "user-agent": "Pact Broker v2.87.0",
+      "authorization": "**********"
+    },
+    "body": {
+      "a": "body"
+    },
+    "url": "/post"
   },
+  "response": {
+    "status": 200,
+    "headers": {
+    },
+    "body": ""
+  },
+  "logs": "[2021-09-01T10:07:21Z] DEBUG: Webhook context {\"base_url\":\"http://example.org\",\"event_name\":\"test\"}\n[2021-09-01T10:07:21Z] INFO: HTTP/1.1 POST https://postman-echo.com/post\n[2021-09-01T10:07:21Z] INFO: accept: application/json\n[2021-09-01T10:07:21Z] INFO: user-agent: Pact Broker v2.87.0\n[2021-09-01T10:07:21Z] INFO: authorization: **********\n[2021-09-01T10:07:21Z] INFO: {\"a\":\"body\"}\n[2021-09-01T10:07:21Z] INFO: HTTP/1.0 200 \n[2021-09-01T10:07:21Z] INFO: \n",
+  "success": true,
   "_links": {
-    "self": {
-      "title": "Webhooks triggered by the publication of verification result 1",
-      "href": "http://example.org/pacts/provider/Bar/consumer/Foo/pact-version/3e193ecb37ad04b43ce974a38352c704b2e0ed6b/verification-results/1/triggered-webhooks"
-    }
   }
 }
 ```
+
 

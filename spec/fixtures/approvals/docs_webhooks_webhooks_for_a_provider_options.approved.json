@@ -1,0 +1,19 @@
+{
+  "category": "Webhooks",
+  "name": "Webhooks for a provider",
+  "request": {
+    "method": "OPTIONS",
+    "path_template": "/webhooks/provider/:provider_name",
+    "path": "/webhooks/provider/Bar",
+    "headers": {
+      "Accept": "application/hal+json"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Access-Control-Allow-Methods": "POST, GET, OPTIONS"
+    },
+    "body": ""
+  }
+}

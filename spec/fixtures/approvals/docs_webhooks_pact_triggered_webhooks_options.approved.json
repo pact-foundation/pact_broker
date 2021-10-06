@@ -1,0 +1,19 @@
+{
+  "category": "Webhooks",
+  "name": "Pact triggered webhooks",
+  "request": {
+    "method": "OPTIONS",
+    "path_template": "/pacts/provider/:provider_name/consumer/:consumer_name/version/:consumer_version_number/triggered-webhooks",
+    "path": "/pacts/provider/Bar/consumer/Foo/version/2/triggered-webhooks",
+    "headers": {
+      "Accept": "application/hal+json"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Access-Control-Allow-Methods": "GET, OPTIONS"
+    },
+    "body": ""
+  }
+}

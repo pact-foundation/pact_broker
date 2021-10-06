@@ -1,0 +1,19 @@
+{
+  "category": "Webhooks",
+  "name": "Logs of triggered webhook for webhook",
+  "request": {
+    "method": "OPTIONS",
+    "path_template": "/triggered-webhooks/:uuid/logs",
+    "path": "/triggered-webhooks/6cd5cc48-db3c-4a4c-a36d-e9bedeb9d91e/logs",
+    "headers": {
+      "Accept": "application/hal+json"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Access-Control-Allow-Methods": "GET, OPTIONS"
+    },
+    "body": ""
+  }
+}

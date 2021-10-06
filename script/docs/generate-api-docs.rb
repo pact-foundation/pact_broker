@@ -6,17 +6,30 @@ require "fileutils"
 EXAMPLES_FILE_PATTERN = "spec/fixtures/approvals/docs_*"
 API_DOCS_DIR = Pathname.new("docs/api")
 
+def generate_example_markdown_for_examples(name, examples)
+  options = examples.select { | example | example[:request][:method] == "OPTIONS" }.first
+  other = examples.select { | example | example[:request][:method] != "OPTIONS" }
+
+  not_options_docs = other.collect { | example | generate_example_markdown(example) }
+
+"
+## #{name}
+
+Allowed methods: #{options && options[:response][:headers][:'Access-Control-Allow-Methods']}
+#{not_options_docs.join("\n")}
+"
+end
+
 def generate_example_markdown(hash)
 "
-## #{hash[:name]}
+### #{hash[:request][:method]}
 
-### Request
+#### Request
 
-Method: `#{hash[:request][:method]}`<br/>
 Path: `#{hash[:request][:path_template]}`<br/>
 Headers: `#{hash[:request][:headers]&.to_json}`<br/>
 
-### Response
+#### Response
 
 Status: `#{hash[:response][:status]}`<br/>
 Headers: `#{hash[:response][:headers]&.to_json}`<br/>
@@ -34,18 +47,21 @@ end
 
 file_names = Dir.glob(EXAMPLES_FILE_PATTERN)
 
-hashes = file_names.collect do | file_name |
+examples = file_names.collect do | file_name |
   JSON.parse(File.read(file_name), symbolize_names: true)
 end
 
-hashes_by_category = hashes.group_by { | hash | hash[:category] }
+examples_by_category = examples.group_by { | hash | hash[:category] }
 
 FileUtils.rm_rf(API_DOCS_DIR)
 FileUtils.mkdir_p(API_DOCS_DIR)
 
-hashes_by_category.each do | category, hashes |
-  docs = hashes.collect do | hash |
-    generate_example_markdown(hash)
+examples_by_category.each do | category, examples |
+
+  examples_by_name = examples.group_by { | hash | hash[:name] }
+
+  docs = examples_by_name.collect do | name, examples |
+    generate_example_markdown_for_examples(name, examples)
   end
 
   file_name = (API_DOCS_DIR / category.upcase).to_s + ".md"

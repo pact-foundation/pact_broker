@@ -1,0 +1,19 @@
+{
+  "category": "Webhooks",
+  "name": "Executing a saved webhook",
+  "request": {
+    "method": "OPTIONS",
+    "path_template": "/webhooks/:uuid/execute",
+    "path": "/webhooks/:uuid/execute",
+    "headers": {
+      "Accept": "application/hal+json"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Access-Control-Allow-Methods": "POST, OPTIONS"
+    },
+    "body": ""
+  }
+}

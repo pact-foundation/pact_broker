@@ -1,3 +1,5 @@
+require "timecop"
+
 TESTED_PATHS = []
 
 WEBHOOK_ROUTES_REQURING_A_TEST = PactBroker.routes
@@ -26,12 +28,13 @@ RSpec.describe "webhook routes" do
   after(:all) do
     missed_routes = WEBHOOK_ROUTES_REQURING_A_TEST.reject { | route | TESTED_PATHS.include?(route[:path]) }
 
-    if missed_routes.any?
+    if missed_routes.any? && ENV["DEBUG"] != "true"
       puts "WEBHOOK ROUTES MISSING COVERAGE:"
       puts missed_routes.to_yaml
     end
   end
 
+  let(:category) { "Webhooks" }
   let(:pact_version_sha) { PactBroker::Pacts::PactVersion.last.sha }
   let(:triggered_webhook_uuid) { PactBroker::Webhooks::TriggeredWebhook.last.trigger_uuid }
   let(:webhook_uuid) { PactBroker::Webhooks::TriggeredWebhook.last.webhook.uuid }
@@ -69,8 +72,12 @@ RSpec.describe "webhook routes" do
     end
   end
 
-  let(:approval_example_name) do | example |
-    "docs_webhooks_" + example.example_group.description.gsub(" ", "_") + "_" + http_method
+  let(:approval_request_example_name) do | example |
+    "docs_webhooks_" + pact_broker_example_name.gsub(" ", "_") + "_" + http_method
+  end
+
+  let(:pact_broker_example_name) do | example |
+    example.example_group.parent_groups[-2].description
   end
 
   def remove_deprecated_links(thing)
@@ -96,14 +103,10 @@ RSpec.describe "webhook routes" do
 
   subject { send(http_method.downcase, path, http_params, rack_headers) }
 
-  shared_examples "supports GET" do | body_format: :json |
-    it "supports GET" do
-      expect(subject.status).to eq 200
-    end
-
+  shared_examples "request" do
     it "returns a body" do | example |
       subject
-      expectated_body = body_format == :json ? remove_deprecated_links(JSON.parse(subject.body)) : subject.body
+      expectated_body = subject.headers["Content-Type"]&.include?("json") && subject.body && subject.body != "" ? remove_deprecated_links(JSON.parse(subject.body)) : subject.body
       expected_response = {
         status: subject.status,
         headers: determinate_headers(subject.headers),
@@ -117,29 +120,48 @@ RSpec.describe "webhook routes" do
       }
 
       to_approve = {
-        category: "Webhooks",
-        name: example.example_group.description,
+        category: category,
+        name: pact_broker_example_name,
         request: request,
         response: expected_response
       }
-      Approvals.verify(to_approve, :name => approval_example_name, format: :json)
+      Approvals.verify(to_approve, :name => approval_request_example_name, format: :json)
     end
   end
+
+  shared_examples "supports GET" do
+    describe "GET" do
+      it "supports GET" do
+        expect(subject.status).to eq 200
+      end
+
+      include_examples "request"
+    end
+  end
+
 
   shared_examples "supports POST" do
-    let(:http_method) { "POST" }
-    let(:rack_headers) do
-      {
-        "CONTENT_TYPE" => "application/json",
-        "ACCEPT" => "application/hal+json"
-      }
-    end
+    describe "POST" do
+      let(:http_method) { "POST" }
+      let(:rack_headers) do
+        {
+          "CONTENT_TYPE" => "application/json",
+          "ACCEPT" => "application/hal+json"
+        }
+      end
 
-    it "supports POST" do
-
-      subject
+      include_examples "request"
     end
   end
+
+  shared_examples "supports OPTIONS" do
+    describe "OPTIONS" do
+      let(:http_method) { "OPTIONS" }
+
+      include_examples "request"
+    end
+  end
+
 
   describe "Verification webhooks" do
     let(:path_template) do
@@ -147,6 +169,7 @@ RSpec.describe "webhook routes" do
     end
 
     include_examples "supports GET"
+    include_examples "supports OPTIONS"
   end
 
   describe "Pact triggered webhooks" do
@@ -155,6 +178,7 @@ RSpec.describe "webhook routes" do
     end
 
     include_examples "supports GET"
+    include_examples "supports OPTIONS"
   end
 
   describe "Pact webhooks" do
@@ -163,6 +187,7 @@ RSpec.describe "webhook routes" do
     end
 
     include_examples "supports GET"
+    include_examples "supports OPTIONS"
   end
 
   describe "Webhooks status" do
@@ -171,18 +196,21 @@ RSpec.describe "webhook routes" do
     end
 
     include_examples "supports GET"
+    include_examples "supports OPTIONS"
   end
 
   describe "Triggered webhook logs" do
     let(:path_template) { "/triggered-webhooks/:trigger_uuid/logs" }
 
-    include_examples "supports GET", body_format: :txt
+    include_examples "supports GET"
+    include_examples "supports OPTIONS"
   end
 
   describe "Webhooks" do
     let(:path_template) { "/webhooks" }
 
     include_examples "supports GET"
+    include_examples "supports OPTIONS"
   end
 
   describe "Webhook" do
@@ -190,42 +218,81 @@ RSpec.describe "webhook routes" do
     let(:custom_parameter_values) { { uuid: webhook_uuid } }
 
     include_examples "supports GET"
+    include_examples "supports OPTIONS"
   end
 
   describe "Logs of triggered webhook for webhook" do
     let(:path_template) { "/triggered-webhooks/:uuid/logs" }
     let(:custom_parameter_values) { { uuid: triggered_webhook_uuid } }
 
-    include_examples "supports GET", body_format: :txt
+    include_examples "supports GET"
+    include_examples "supports OPTIONS"
   end
 
   describe "Webhooks for consumer" do
     let(:path_template) { "/webhooks/consumer/:consumer_name" }
 
     include_examples "supports GET"
+    include_examples "supports OPTIONS"
   end
 
   describe "Webhooks for a provider" do
     let(:path_template) { "/webhooks/provider/:provider_name" }
 
     include_examples "supports GET"
+    include_examples "supports OPTIONS"
   end
 
   describe "Webhooks for consumer and provider" do
     let(:path_template) { "/webhooks/provider/:provider_name/consumer/:consumer_name" }
 
     include_examples "supports GET"
+    include_examples "supports OPTIONS"
   end
 
   describe "Executing a saved webhook" do
     let(:path_template) { "/webhooks/:uuid/execute" }
 
+    include_examples "supports OPTIONS"
     include_examples "supports POST"
   end
 
   describe "Executing an unsaved webhook" do
     let(:path_template) { "/webhooks/execute" }
 
-    include_examples "supports POST"
+    include_examples "supports OPTIONS"
+
+    describe "POST" do
+      before do
+        stub_request(:post, /http/).to_return(:status => 200)
+        Timecop.freeze(Time.new(2021, 9, 1, 10, 7, 21))
+        allow(PactBroker.configuration).to receive(:webhook_host_whitelist).and_return([/.*/])
+      end
+
+      after do
+        Timecop.return
+      end
+
+      let(:http_params) do
+        {
+          "events" => [{
+            "name" => "contract_content_changed"
+          }],
+          "request" =>{
+            "method" =>"POST",
+            "url" =>"https://postman-echo.com/post",
+            "username" =>"username",
+            "password" =>"password",
+            "headers" =>{
+              "Accept" =>"application/json"
+            },
+            "body" => {
+              "a" =>"body"
+            }
+          }
+        }.to_json
+      end
+      include_examples "supports POST"
+    end
   end
 end

@@ -1,0 +1,19 @@
+{
+  "category": "Webhooks",
+  "name": "Webhooks status",
+  "request": {
+    "method": "OPTIONS",
+    "path_template": "/pacts/provider/:provider_name/consumer/:consumer_name/webhooks/status",
+    "path": "/pacts/provider/Bar/consumer/Foo/webhooks/status",
+    "headers": {
+      "Accept": "application/hal+json"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Access-Control-Allow-Methods": "GET, OPTIONS"
+    },
+    "body": ""
+  }
+}

@@ -37,10 +37,14 @@ module PactBroker
         end
 
         def malformed_request?
-          if uuid
-            false
+          if request.post?
+            if uuid
+              false
+            else
+              webhook_validation_errors?(webhook)
+            end
           else
-            webhook_validation_errors?(webhook)
+            super
           end
         end
 

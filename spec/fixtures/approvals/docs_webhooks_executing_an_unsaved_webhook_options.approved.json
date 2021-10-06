@@ -1,0 +1,19 @@
+{
+  "category": "Webhooks",
+  "name": "Executing an unsaved webhook",
+  "request": {
+    "method": "OPTIONS",
+    "path_template": "/webhooks/execute",
+    "path": "/webhooks/execute",
+    "headers": {
+      "Accept": "application/hal+json"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Access-Control-Allow-Methods": "POST, OPTIONS"
+    },
+    "body": ""
+  }
+}

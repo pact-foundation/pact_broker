@@ -1,0 +1,19 @@
+{
+  "category": "Webhooks",
+  "name": "Webhooks for consumer",
+  "request": {
+    "method": "OPTIONS",
+    "path_template": "/webhooks/consumer/:consumer_name",
+    "path": "/webhooks/consumer/Foo",
+    "headers": {
+      "Accept": "application/hal+json"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Access-Control-Allow-Methods": "POST, GET, OPTIONS"
+    },
+    "body": ""
+  }
+}

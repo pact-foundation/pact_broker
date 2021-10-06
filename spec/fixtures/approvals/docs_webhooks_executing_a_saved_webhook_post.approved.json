@@ -1,0 +1,20 @@
+{
+  "category": "Webhooks",
+  "name": "Executing a saved webhook",
+  "request": {
+    "method": "POST",
+    "path_template": "/webhooks/:uuid/execute",
+    "path": "/webhooks/:uuid/execute",
+    "headers": {
+      "Content-Type": "application/json",
+      "Accept": "application/hal+json"
+    }
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "Content-Type": "text/html"
+    },
+    "body": "<!DOCTYPE html><html>\n <head><title>404 Not Found</title></head>\n <body><h1>404 Not Found</h1>\n <p>The requested document was not found on this server.</p>\n <address>Webmachine-Ruby/1.6.0 server</address></body></html>\n"
+  }
+}

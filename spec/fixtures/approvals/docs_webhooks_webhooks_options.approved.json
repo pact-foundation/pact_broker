@@ -1,0 +1,19 @@
+{
+  "category": "Webhooks",
+  "name": "Webhooks",
+  "request": {
+    "method": "OPTIONS",
+    "path_template": "/webhooks",
+    "path": "/webhooks",
+    "headers": {
+      "Accept": "application/hal+json"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Access-Control-Allow-Methods": "GET, POST, OPTIONS"
+    },
+    "body": ""
+  }
+}
