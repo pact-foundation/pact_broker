@@ -1,6 +1,7 @@
 {
   "category": "Webhooks",
   "name": "Webhooks",
+  "order": 6,
   "request": {
     "method": "OPTIONS",
     "path_template": "/webhooks",

@@ -1,6 +1,7 @@
 {
   "category": "Webhooks",
   "name": "Webhooks for consumer and provider",
+  "order": 14,
   "request": {
     "method": "GET",
     "path_template": "/webhooks/provider/:provider_name/consumer/:consumer_name",
@@ -27,7 +28,7 @@
         "pb:webhooks": [
           {
             "title": "A webhook for the pact between Foo and Bar",
-            "name": "POST example.org",
+            "name": "an example webhook",
             "href": "http://example.org/webhooks/d2181b32-8b03-4daf-8cc0-d9168b2f6fac"
           }
         ],

@@ -1,9 +1,11 @@
 require "timecop"
 
-TESTED_PATHS = []
-
+WEBHOOK_TESTED_PATHS = []
+WEBHOOKS_NO_DOCUMENTATION = %w[
+]
 WEBHOOK_ROUTES_REQURING_A_TEST = PactBroker.routes
       .select { | route | route[:path].include?("webhook") }
+      .reject { | route | WEBHOOKS_NO_DOCUMENTATION.include?(route[:path]) }
 
 RSpec.describe "webhook routes" do
   before do
@@ -13,7 +15,7 @@ RSpec.describe "webhook routes" do
       .create_consumer_version("2")
       .create_pact(json_content: { integrations: [] }.to_json )
       .create_verification(provider_version: "3")
-      .create_webhook(uuid: "d2181b32-8b03-4daf-8cc0-d9168b2f6fac")
+      .create_webhook(uuid: "d2181b32-8b03-4daf-8cc0-d9168b2f6fac", url: "https://example.org/example", description: "an example webhook")
       .create_triggered_webhook(uuid: "6cd5cc48-db3c-4a4c-a36d-e9bedeb9d91e")
       .create_webhook_execution
   end
@@ -22,11 +24,11 @@ RSpec.describe "webhook routes" do
     if ENV["DEBUG"] == "true"
       PactBroker.routes.find{ | route| route[:path] == path_template }
     end
-    TESTED_PATHS << path_template
+    WEBHOOK_TESTED_PATHS << path_template
   end
 
   after(:all) do
-    missed_routes = WEBHOOK_ROUTES_REQURING_A_TEST.reject { | route | TESTED_PATHS.include?(route[:path]) }
+    missed_routes = WEBHOOK_ROUTES_REQURING_A_TEST.reject { | route | WEBHOOK_TESTED_PATHS.include?(route[:path]) }
 
     if missed_routes.any? && ENV["DEBUG"] != "true"
       puts "WEBHOOK ROUTES MISSING COVERAGE:"
@@ -122,6 +124,7 @@ RSpec.describe "webhook routes" do
       to_approve = {
         category: category,
         name: pact_broker_example_name,
+        order: WEBHOOK_TESTED_PATHS.size,
         request: request,
         response: expected_response
       }
@@ -162,57 +165,6 @@ RSpec.describe "webhook routes" do
     end
   end
 
-
-  describe "Verification webhooks" do
-    let(:path_template) do
-      "/pacts/provider/:provider_name/consumer/:consumer_name/pact-version/:pact_version_sha/verification-results/:verification_number/triggered-webhooks"
-    end
-
-    include_examples "supports GET"
-    include_examples "supports OPTIONS"
-  end
-
-  describe "Pact triggered webhooks" do
-    let(:path_template) do
-      "/pacts/provider/:provider_name/consumer/:consumer_name/version/:consumer_version_number/triggered-webhooks"
-    end
-
-    include_examples "supports GET"
-    include_examples "supports OPTIONS"
-  end
-
-  describe "Pact webhooks" do
-    let(:path_template) do
-      "/pacts/provider/:provider_name/consumer/:consumer_name/webhooks"
-    end
-
-    include_examples "supports GET"
-    include_examples "supports OPTIONS"
-  end
-
-  describe "Webhooks status" do
-    let(:path_template) do
-      "/pacts/provider/:provider_name/consumer/:consumer_name/webhooks/status"
-    end
-
-    include_examples "supports GET"
-    include_examples "supports OPTIONS"
-  end
-
-  describe "Triggered webhook logs" do
-    let(:path_template) { "/triggered-webhooks/:trigger_uuid/logs" }
-
-    include_examples "supports GET"
-    include_examples "supports OPTIONS"
-  end
-
-  describe "Webhooks" do
-    let(:path_template) { "/webhooks" }
-
-    include_examples "supports GET"
-    include_examples "supports OPTIONS"
-  end
-
   describe "Webhook" do
     let(:path_template) { "/webhooks/:uuid" }
     let(:custom_parameter_values) { { uuid: webhook_uuid } }
@@ -221,9 +173,8 @@ RSpec.describe "webhook routes" do
     include_examples "supports OPTIONS"
   end
 
-  describe "Logs of triggered webhook for webhook" do
-    let(:path_template) { "/triggered-webhooks/:uuid/logs" }
-    let(:custom_parameter_values) { { uuid: triggered_webhook_uuid } }
+  describe "Webhooks" do
+    let(:path_template) { "/webhooks" }
 
     include_examples "supports GET"
     include_examples "supports OPTIONS"
@@ -250,11 +201,44 @@ RSpec.describe "webhook routes" do
     include_examples "supports OPTIONS"
   end
 
+  describe "Pact webhooks" do
+    let(:path_template) do
+      "/pacts/provider/:provider_name/consumer/:consumer_name/webhooks"
+    end
+
+    include_examples "supports GET"
+    include_examples "supports OPTIONS"
+  end
+
+  describe "Webhooks status" do
+    let(:path_template) do
+      "/pacts/provider/:provider_name/consumer/:consumer_name/webhooks/status"
+    end
+
+    include_examples "supports GET"
+    include_examples "supports OPTIONS"
+  end
+
   describe "Executing a saved webhook" do
     let(:path_template) { "/webhooks/:uuid/execute" }
+    let(:custom_parameter_values) { { uuid: webhook_uuid } }
 
     include_examples "supports OPTIONS"
-    include_examples "supports POST"
+
+    describe "POST" do
+      before do
+        stub_request(:post, /http/).to_return(:status => 200)
+        Timecop.freeze(Time.new(2021, 9, 1, 10, 7, 21))
+        allow(PactBroker.configuration).to receive(:webhook_host_whitelist).and_return([/.*/])
+      end
+
+      after do
+        Timecop.return
+      end
+
+      include_examples "supports POST"
+    end
+
   end
 
   describe "Executing an unsaved webhook" do
@@ -280,7 +264,7 @@ RSpec.describe "webhook routes" do
           }],
           "request" =>{
             "method" =>"POST",
-            "url" =>"https://postman-echo.com/post",
+            "url" =>"https://example.org/example",
             "username" =>"username",
             "password" =>"password",
             "headers" =>{
@@ -294,5 +278,31 @@ RSpec.describe "webhook routes" do
       end
       include_examples "supports POST"
     end
+  end
+
+  describe "Triggered webhooks for pact publication" do
+    let(:path_template) do
+      "/pacts/provider/:provider_name/consumer/:consumer_name/version/:consumer_version_number/triggered-webhooks"
+    end
+
+    include_examples "supports GET"
+    include_examples "supports OPTIONS"
+  end
+
+  describe "Triggered webhooks for verification publication" do
+    let(:path_template) do
+      "/pacts/provider/:provider_name/consumer/:consumer_name/pact-version/:pact_version_sha/verification-results/:verification_number/triggered-webhooks"
+    end
+
+    include_examples "supports GET"
+    include_examples "supports OPTIONS"
+  end
+
+  describe "Logs of triggered webhook" do
+    let(:path_template) { "/triggered-webhooks/:uuid/logs" }
+    let(:custom_parameter_values) { { uuid: triggered_webhook_uuid } }
+
+    include_examples "supports GET"
+    include_examples "supports OPTIONS"
   end
 end

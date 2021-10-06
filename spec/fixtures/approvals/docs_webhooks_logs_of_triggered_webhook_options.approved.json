@@ -1,6 +1,7 @@
 {
   "category": "Webhooks",
-  "name": "Logs of triggered webhook for webhook",
+  "name": "Logs of triggered webhook",
+  "order": 34,
   "request": {
     "method": "OPTIONS",
     "path_template": "/triggered-webhooks/:uuid/logs",

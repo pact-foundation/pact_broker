@@ -58,7 +58,7 @@ FileUtils.mkdir_p(API_DOCS_DIR)
 
 examples_by_category.each do | category, examples |
 
-  examples_by_name = examples.group_by { | hash | hash[:name] }
+  examples_by_name = examples.sort_by{ |hash| hash[:order] }.group_by { | hash | hash[:name] }
 
   docs = examples_by_name.collect do | name, examples |
     generate_example_markdown_for_examples(name, examples)

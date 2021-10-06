@@ -1,6 +1,7 @@
 {
   "category": "Webhooks",
   "name": "Webhooks for a provider",
+  "order": 12,
   "request": {
     "method": "OPTIONS",
     "path_template": "/webhooks/provider/:provider_name",

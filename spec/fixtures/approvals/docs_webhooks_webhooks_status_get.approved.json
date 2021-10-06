@@ -1,6 +1,7 @@
 {
   "category": "Webhooks",
   "name": "Webhooks status",
+  "order": 20,
   "request": {
     "method": "GET",
     "path_template": "/pacts/provider/:provider_name/consumer/:consumer_name/webhooks/status",

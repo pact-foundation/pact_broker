@@ -1,6 +1,7 @@
 {
   "category": "Webhooks",
   "name": "Webhook",
+  "order": 2,
   "request": {
     "method": "GET",
     "path_template": "/webhooks/:uuid",
@@ -16,7 +17,7 @@
     },
     "body": {
       "uuid": "d2181b32-8b03-4daf-8cc0-d9168b2f6fac",
-      "description": "POST example.org",
+      "description": "an example webhook",
       "consumer": {
         "name": "Foo"
       },
@@ -26,7 +27,7 @@
       "enabled": true,
       "request": {
         "method": "POST",
-        "url": "http://example.org",
+        "url": "https://example.org/example",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -39,7 +40,7 @@
       "createdAt": "2021-09-01T10:00:00+00:00",
       "_links": {
         "self": {
-          "title": "POST example.org",
+          "title": "an example webhook",
           "href": "http://example.org/webhooks/d2181b32-8b03-4daf-8cc0-d9168b2f6fac"
         },
         "pb:execute": {
