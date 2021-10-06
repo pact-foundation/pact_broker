@@ -11,6 +11,7 @@
       "Accept": "application/hal+json"
     },
     "body": {
+      "description": "an example webhook",
       "events": [
         {
           "name": "contract_content_changed"

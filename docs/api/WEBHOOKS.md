@@ -88,6 +88,7 @@ Body:
 
 ```
 {
+  "description": "an example webhook",
   "events": [
     {
       "name": "contract_content_changed"
@@ -214,6 +215,7 @@ Body:
 
 ```
 {
+  "description": "an example webhook",
   "events": [
     {
       "name": "contract_content_changed"
@@ -244,7 +246,7 @@ Body:
 ```
 {
   "uuid": "dCGCl-Ba3PqEFJ_iE9mJkQ",
-  "description": "POST example.org",
+  "description": "an example webhook",
   "enabled": true,
   "request": {
     "method": "POST",
@@ -266,7 +268,7 @@ Body:
   "createdAt": "2021-09-01T00:07:21+00:00",
   "_links": {
     "self": {
-      "title": "POST example.org",
+      "title": "an example webhook",
       "href": "http://example.org/webhooks/dCGCl-Ba3PqEFJ_iE9mJkQ"
     },
     "pb:execute": {
@@ -614,6 +616,7 @@ Body:
 
 ```
 {
+  "description": "an example webhook",
   "events": [
     {
       "name": "contract_content_changed"

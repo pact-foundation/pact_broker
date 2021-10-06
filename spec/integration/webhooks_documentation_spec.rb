@@ -56,6 +56,7 @@ RSpec.describe "webhook routes" do
 
   let(:webhook_hash) do
     {
+      "description" => "an example webhook",
       "events" => [{
         "name" => "contract_content_changed"
       }],
