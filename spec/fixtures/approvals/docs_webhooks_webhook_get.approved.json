@@ -30,6 +30,9 @@
         "url": "https://example.org/example",
         "headers": {
           "Content-Type": "application/json"
+        },
+        "body": {
+          "pactUrl": "${pactbroker.pactUrl}"
         }
       },
       "events": [

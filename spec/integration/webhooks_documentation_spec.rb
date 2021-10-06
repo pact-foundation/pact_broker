@@ -15,9 +15,18 @@ RSpec.describe "webhook routes" do
       .create_consumer_version("2")
       .create_pact(json_content: { integrations: [] }.to_json )
       .create_verification(provider_version: "3")
-      .create_webhook(uuid: "d2181b32-8b03-4daf-8cc0-d9168b2f6fac", url: "https://example.org/example", description: "an example webhook")
+      .create_webhook(
+        uuid: "d2181b32-8b03-4daf-8cc0-d9168b2f6fac",
+        url: "https://example.org/example",
+        description: "an example webhook",
+        body: webhook_body
+      )
       .create_triggered_webhook(uuid: "6cd5cc48-db3c-4a4c-a36d-e9bedeb9d91e")
       .create_webhook_execution
+  end
+
+  let(:webhook_body) do
+    { "pactUrl" =>"${pactbroker.pactUrl}" }
   end
 
   before do
@@ -270,9 +279,7 @@ RSpec.describe "webhook routes" do
             "headers" =>{
               "Accept" =>"application/json"
             },
-            "body" => {
-              "a" =>"body"
-            }
+            "body" => webhook_body
           }
         }.to_json
       end
