@@ -1,8 +1,10 @@
 {
+  "category": "Webhooks",
+  "name": "Webhooks for consumer",
   "request": {
     "method": "GET",
-    "path_template": "/webhooks/provider/:provider_name",
-    "path": "/webhooks/provider/Bar",
+    "path_template": "/webhooks/consumer/:consumer_name",
+    "path": "/webhooks/consumer/Foo",
     "headers": {
       "Accept": "application/hal+json"
     }
@@ -16,11 +18,11 @@
       "_links": {
         "self": {
           "title": "Webhooks",
-          "href": "http://example.org/webhooks/provider/Bar"
+          "href": "http://example.org/webhooks/consumer/Foo"
         },
         "pb:create": {
           "title": "POST to create a webhook",
-          "href": "http://example.org/webhooks/provider/Bar"
+          "href": "http://example.org/webhooks/consumer/Foo"
         },
         "pb:webhooks": [
 

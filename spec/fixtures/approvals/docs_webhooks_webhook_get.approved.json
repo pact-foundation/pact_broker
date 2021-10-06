@@ -1,4 +1,6 @@
 {
+  "category": "Webhooks",
+  "name": "Webhook",
   "request": {
     "method": "GET",
     "path_template": "/webhooks/:uuid",
@@ -34,7 +36,7 @@
           "name": "contract_content_changed"
         }
       ],
-      "createdAt": "2021-09-01T00:00:00+00:00",
+      "createdAt": "2021-09-01T10:00:00+00:00",
       "_links": {
         "self": {
           "title": "POST example.org",

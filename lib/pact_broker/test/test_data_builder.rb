@@ -473,6 +473,11 @@ module PactBroker
         self
       end
 
+      def set_now_date_time date_time
+        @now = date_time
+        self
+      end
+
       def add_day
         @now = @now + 1
         self

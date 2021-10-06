@@ -1,4 +1,6 @@
 {
+  "category": "Webhooks",
+  "name": "Verification webhooks",
   "request": {
     "method": "GET",
     "path_template": "/pacts/provider/:provider_name/consumer/:consumer_name/pact-version/:pact_version_sha/verification-results/:verification_number/triggered-webhooks",

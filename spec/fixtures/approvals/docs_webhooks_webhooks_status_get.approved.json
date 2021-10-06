@@ -1,4 +1,6 @@
 {
+  "category": "Webhooks",
+  "name": "Webhooks status",
   "request": {
     "method": "GET",
     "path_template": "/pacts/provider/:provider_name/consumer/:consumer_name/webhooks/status",
@@ -27,7 +29,7 @@
             "attemptsRemaining": 6,
             "triggerType": "resource_creation",
             "eventName": "contract_content_changed",
-            "triggeredAt": "2021-09-01T10:00:00+10:00",
+            "triggeredAt": "2021-09-01T10:00:00+00:00",
             "_links": {
               "pb:logs": {
                 "href": "http://example.org/triggered-webhooks/6cd5cc48-db3c-4a4c-a36d-e9bedeb9d91e/logs",

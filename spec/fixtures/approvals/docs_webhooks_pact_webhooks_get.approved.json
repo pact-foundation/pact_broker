@@ -1,8 +1,10 @@
 {
+  "category": "Webhooks",
+  "name": "Pact webhooks",
   "request": {
     "method": "GET",
-    "path_template": "/webhooks",
-    "path": "/webhooks",
+    "path_template": "/pacts/provider/:provider_name/consumer/:consumer_name/webhooks",
+    "path": "/pacts/provider/Bar/consumer/Foo/webhooks",
     "headers": {
       "Accept": "application/hal+json"
     }
@@ -15,12 +17,12 @@
     "body": {
       "_links": {
         "self": {
-          "title": "Webhooks",
-          "href": "http://example.org/webhooks"
+          "title": "Pact webhooks",
+          "href": "http://example.org/pacts/provider/Bar/consumer/Foo/webhooks"
         },
         "pb:create": {
           "title": "POST to create a webhook",
-          "href": "http://example.org/webhooks"
+          "href": "http://example.org/pacts/provider/Bar/consumer/Foo/webhooks"
         },
         "pb:webhooks": [
           {
