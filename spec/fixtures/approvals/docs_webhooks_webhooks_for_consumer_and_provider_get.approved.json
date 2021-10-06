@@ -1,7 +1,7 @@
 {
   "category": "Webhooks",
   "name": "Webhooks for consumer and provider",
-  "order": 14,
+  "order": 15,
   "request": {
     "method": "GET",
     "path_template": "/webhooks/provider/:provider_name/consumer/:consumer_name",

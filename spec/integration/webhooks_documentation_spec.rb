@@ -9,8 +9,8 @@ WEBHOOK_ROUTES_REQURING_A_TEST = PactBroker.routes
 
 RSpec.describe "webhook routes" do
   before do
-    td.set_now_date_time(DateTime.new(2021, 9, 1, 10, 0, 0))
-      .create_consumer("Foo")
+    Timecop.freeze(Time.new(2021, 9, 1, 10, 7, 21))
+    td.create_consumer("Foo")
       .create_provider("Bar")
       .create_consumer_version("2")
       .create_pact(json_content: { integrations: [] }.to_json )
@@ -23,6 +23,10 @@ RSpec.describe "webhook routes" do
       )
       .create_triggered_webhook(uuid: "6cd5cc48-db3c-4a4c-a36d-e9bedeb9d91e")
       .create_webhook_execution
+  end
+
+  after do
+    Timecop.return
   end
 
   let(:webhook_body) do
@@ -49,6 +53,24 @@ RSpec.describe "webhook routes" do
   let(:pact_version_sha) { PactBroker::Pacts::PactVersion.last.sha }
   let(:triggered_webhook_uuid) { PactBroker::Webhooks::TriggeredWebhook.last.trigger_uuid }
   let(:webhook_uuid) { PactBroker::Webhooks::TriggeredWebhook.last.webhook.uuid }
+
+  let(:webhook_hash) do
+    {
+      "events" => [{
+        "name" => "contract_content_changed"
+      }],
+      "request" =>{
+        "method" =>"POST",
+        "url" =>"https://example.org/example",
+        "username" =>"username",
+        "password" =>"password",
+        "headers" =>{
+          "Accept" =>"application/json"
+        },
+        "body" => webhook_body
+      }
+    }
+  end
 
   let(:parameter_values) do
     {
@@ -127,8 +149,9 @@ RSpec.describe "webhook routes" do
         method: http_method,
         path_template: path_template,
         path: path,
-        headers: rack_env_to_http_headers(rack_headers)
-      }
+        headers: rack_env_to_http_headers(rack_headers),
+        body: http_params.is_a?(String) ? JSON.parse(http_params) : nil
+      }.compact
 
       to_approve = {
         category: category,
@@ -166,6 +189,20 @@ RSpec.describe "webhook routes" do
     end
   end
 
+  shared_examples "supports PUT" do
+    describe "PUT" do
+      let(:http_method) { "PUT" }
+      let(:rack_headers) do
+        {
+          "CONTENT_TYPE" => "application/json",
+          "ACCEPT" => "application/hal+json"
+        }
+      end
+
+      include_examples "request"
+    end
+  end
+
   shared_examples "supports OPTIONS" do
     describe "OPTIONS" do
       let(:http_method) { "OPTIONS" }
@@ -179,6 +216,10 @@ RSpec.describe "webhook routes" do
     let(:custom_parameter_values) { { uuid: webhook_uuid } }
 
     include_examples "supports GET"
+    describe "PUT" do
+      let(:http_params) { webhook_hash.to_json }
+      include_examples "supports PUT"
+    end
     include_examples "supports OPTIONS"
   end
 
@@ -237,12 +278,7 @@ RSpec.describe "webhook routes" do
     describe "POST" do
       before do
         stub_request(:post, /http/).to_return(:status => 200)
-        Timecop.freeze(Time.new(2021, 9, 1, 10, 7, 21))
         allow(PactBroker.configuration).to receive(:webhook_host_whitelist).and_return([/.*/])
-      end
-
-      after do
-        Timecop.return
       end
 
       include_examples "supports POST"
@@ -258,30 +294,11 @@ RSpec.describe "webhook routes" do
     describe "POST" do
       before do
         stub_request(:post, /http/).to_return(:status => 200)
-        Timecop.freeze(Time.new(2021, 9, 1, 10, 7, 21))
         allow(PactBroker.configuration).to receive(:webhook_host_whitelist).and_return([/.*/])
       end
 
-      after do
-        Timecop.return
-      end
-
       let(:http_params) do
-        {
-          "events" => [{
-            "name" => "contract_content_changed"
-          }],
-          "request" =>{
-            "method" =>"POST",
-            "url" =>"https://example.org/example",
-            "username" =>"username",
-            "password" =>"password",
-            "headers" =>{
-              "Accept" =>"application/json"
-            },
-            "body" => webhook_body
-          }
-        }.to_json
+        webhook_hash.to_json
       end
       include_examples "supports POST"
     end

@@ -1,13 +1,33 @@
 {
   "category": "Webhooks",
   "name": "Webhook",
-  "order": 2,
+  "order": 3,
   "request": {
-    "method": "GET",
+    "method": "PUT",
     "path_template": "/webhooks/:uuid",
     "path": "/webhooks/d2181b32-8b03-4daf-8cc0-d9168b2f6fac",
     "headers": {
+      "Content-Type": "application/json",
       "Accept": "application/hal+json"
+    },
+    "body": {
+      "events": [
+        {
+          "name": "contract_content_changed"
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "url": "https://example.org/example",
+        "username": "username",
+        "password": "password",
+        "headers": {
+          "Accept": "application/json"
+        },
+        "body": {
+          "pactUrl": "${pactbroker.pactUrl}"
+        }
+      }
     }
   },
   "response": {
@@ -18,22 +38,18 @@
     "body": {
       "uuid": "d2181b32-8b03-4daf-8cc0-d9168b2f6fac",
       "description": "an example webhook",
-      "consumer": {
-        "name": "Foo"
-      },
-      "provider": {
-        "name": "Bar"
-      },
       "enabled": true,
       "request": {
         "method": "POST",
         "url": "https://example.org/example",
         "headers": {
-          "Content-Type": "application/json"
+          "Accept": "application/json"
         },
         "body": {
           "pactUrl": "${pactbroker.pactUrl}"
-        }
+        },
+        "username": "username",
+        "password": "**********"
       },
       "events": [
         {
@@ -49,20 +65,6 @@
         "pb:execute": {
           "title": "Test the execution of the webhook with the latest matching pact or verification by sending a POST request to this URL",
           "href": "http://example.org/webhooks/d2181b32-8b03-4daf-8cc0-d9168b2f6fac/execute"
-        },
-        "pb:consumer": {
-          "title": "Consumer",
-          "name": "Foo",
-          "href": "http://example.org/pacticipants/Foo"
-        },
-        "pb:provider": {
-          "title": "Provider",
-          "name": "Bar",
-          "href": "http://example.org/pacticipants/Bar"
-        },
-        "pb:pact-webhooks": {
-          "title": "All webhooks for consumer Foo and provider Bar",
-          "href": "http://example.org/webhooks/provider/Bar/consumer/Foo"
         },
         "pb:webhooks": {
           "title": "All webhooks",

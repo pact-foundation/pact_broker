@@ -1,7 +1,7 @@
 {
   "category": "Webhooks",
   "name": "Webhooks",
-  "order": 5,
+  "order": 6,
   "request": {
     "method": "GET",
     "path_template": "/webhooks",

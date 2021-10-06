@@ -1,7 +1,7 @@
 {
   "category": "Webhooks",
   "name": "Executing an unsaved webhook",
-  "order": 25,
+  "order": 26,
   "request": {
     "method": "POST",
     "path_template": "/webhooks/execute",
@@ -9,6 +9,25 @@
     "headers": {
       "Content-Type": "application/json",
       "Accept": "application/hal+json"
+    },
+    "body": {
+      "events": [
+        {
+          "name": "contract_content_changed"
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "url": "https://example.org/example",
+        "username": "username",
+        "password": "password",
+        "headers": {
+          "Accept": "application/json"
+        },
+        "body": {
+          "pactUrl": "${pactbroker.pactUrl}"
+        }
+      }
     }
   },
   "response": {

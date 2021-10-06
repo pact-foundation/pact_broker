@@ -53,12 +53,23 @@ Allowed methods: #{allowed_methods}<br/>
 end
 
 def generate_example_markdown(hash)
+body = nil
+if hash[:request][:body]
+  body = "Body:
+
+```
+#{JSON.pretty_generate(hash[:request][:body])}
+```
+"
+end
+
 "
 ### #{hash[:request][:method]}
 
 #### Request
 
 Headers: `#{hash[:request][:headers]&.to_json}`<br/>
+#{body}
 
 #### Response
 

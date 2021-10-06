@@ -1,7 +1,7 @@
 {
   "category": "Webhooks",
   "name": "Triggered webhooks for pact publication",
-  "order": 27,
+  "order": 28,
   "request": {
     "method": "GET",
     "path_template": "/pacts/provider/:provider_name/consumer/:consumer_name/version/:consumer_version_number/triggered-webhooks",
@@ -25,7 +25,7 @@
             "attemptsRemaining": 6,
             "triggerType": "resource_creation",
             "eventName": "contract_content_changed",
-            "triggeredAt": "2021-09-01T10:00:00+00:00",
+            "triggeredAt": "2021-09-01T00:07:21+00:00",
             "_links": {
               "pb:logs": {
                 "href": "http://example.org/triggered-webhooks/6cd5cc48-db3c-4a4c-a36d-e9bedeb9d91e/logs",
