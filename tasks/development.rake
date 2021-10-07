@@ -18,26 +18,26 @@ task "pact_broker:dev:setup" do
 end
 
 desc "List the Pact Broker API routes"
-task :'pact_broker:routes', [:search_term] do | t, args |
-  project_root = File.absolute_path(File.join(__dir__, '..', '..', '..'))
-  $LOAD_PATH << File.join(project_root,'app_shared','lib')
+task :'pact_broker:routes', [:search_term] do | _t, args |
+  project_root = File.absolute_path(File.join(__dir__, "..", "..", ".."))
+  $LOAD_PATH << File.join(project_root,"app_shared","lib")
 
   search_term = args[:search_term]
   puts "Listing Pact Broker routes containing the term '#{search_term}'" if search_term
-  require 'tempfile'
-  require 'sequel'
-  require 'pact_broker'
-  require 'pact_broker/project_root'
-  require 'pathname'
+  require "tempfile"
+  require "sequel"
+  require "pact_broker"
+  require "pact_broker/project_root"
+  require "pathname"
 
-  Tempfile.create('pact_broker_routes') do |f|
-    CONNECTION = Sequel.connect({ adapter: "sqlite", database: f.path, encoding: 'utf8', sql_log_level: :debug })
+  Tempfile.create("pact_broker_routes") do |f|
+    CONNECTION = Sequel.connect({ adapter: "sqlite", database: f.path, encoding: "utf8", sql_log_level: :debug })
 
-    require 'pact_broker/db'
+    require "pact_broker/db"
     PactBroker::DB.run_migrations(CONNECTION)
 
-    require 'pact_broker/api'
-    require 'webmachine/describe_routes'
+    require "pact_broker/api"
+    require "webmachine/describe_routes"
 
     routes = Webmachine::DescribeRoutes.call([PactBroker::API.application], search_term: search_term)
 

@@ -104,7 +104,7 @@ RSpec.describe "webhook routes" do
     build_path(path_template, parameter_values, custom_parameter_values)
   end
 
-  let(:approval_request_example_name) do | example |
+  let(:approval_request_example_name) do
     build_approval_name(category, pact_broker_example_name, http_method)
   end
 
@@ -115,7 +115,7 @@ RSpec.describe "webhook routes" do
   subject { send(http_method.downcase, path, http_params, rack_headers) }
 
   shared_examples "request" do
-    it "returns a body" do | example |
+    it "returns a body" do
       subject
       Approvals.verify(expected_interaction(subject, WEBHOOK_TESTED_PATHS.size), :name => approval_request_example_name, format: :json)
     end

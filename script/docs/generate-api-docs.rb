@@ -13,7 +13,7 @@ class Category
   def initialize(name, examples)
     @name = name
     @examples = examples
-    @options_example = examples.select { | example | example[:request][:method] == "OPTIONS" }.first
+    @options_example = examples.find { | example | example[:request][:method] == "OPTIONS" }
     @not_options_examples = examples.select { | example | example[:request][:method] != "OPTIONS" }
   end
 
@@ -53,15 +53,15 @@ Allowed methods: #{allowed_methods}<br/>
 end
 
 def generate_example_markdown(hash)
-body = nil
-if hash[:request][:body]
-  body = "Body:
+  body = nil
+  if hash[:request][:body]
+    body = "Body:
 
 ```
 #{JSON.pretty_generate(hash[:request][:body])}
 ```
 "
-end
+  end
 
 "
 ### #{hash[:request][:method]}
@@ -98,12 +98,12 @@ examples_by_category = examples.group_by { | hash | hash[:category] }
 FileUtils.rm_rf(API_DOCS_DIR)
 FileUtils.mkdir_p(API_DOCS_DIR)
 
-examples_by_category.each do | category, examples |
+examples_by_category.each do | category, category_examples |
 
-  examples_by_name = examples.sort_by{ |hash| hash[:order] }.group_by { | hash | hash[:name] }
+  examples_by_name = category_examples.sort_by{ |hash| hash[:order] }.group_by { | hash | hash[:name] }
 
-  docs = examples_by_name.collect do | name, examples |
-    generate_example_markdown_for_examples(name, examples)
+  docs = examples_by_name.collect do | name, examples_for_name |
+    generate_example_markdown_for_examples(name, examples_for_name)
   end
 
   file_name = (API_DOCS_DIR / category.upcase).to_s + ".md"

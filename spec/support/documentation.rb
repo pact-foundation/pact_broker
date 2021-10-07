@@ -12,8 +12,8 @@ module PactBroker
     def remove_deprecated_links_from_hash(body)
       body.each_with_object({}) do | (key, value), new_body |
         if key == "_links"
-          links = value.select do | key, _value |
-            key.start_with?("pb:", "self", "next", "previous", "curies")
+          links = value.select do | link_key, _value |
+            link_key.start_with?("pb:", "self", "next", "previous", "curies")
           end
           new_body["_links"] = links
         else
@@ -23,7 +23,7 @@ module PactBroker
     end
 
     def build_approval_name(category, example_name, http_method)
-      "docs_#{category}_" + example_name.gsub(" ", "_") + "_" + http_method
+      "docs_#{category}_" + example_name.tr(" ", "_") + "_" + http_method
     end
 
     def build_path(path_template, parameter_values, custom_parameter_values)
@@ -47,7 +47,7 @@ module PactBroker
         body: http_params.is_a?(String) ? JSON.parse(http_params) : nil
       }.compact
 
-      to_approve = {
+      {
         category: category,
         name: pact_broker_example_name,
         order: order,
