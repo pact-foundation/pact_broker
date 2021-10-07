@@ -49,7 +49,7 @@ module PactBroker
           subject { EnvironmentService.replace("1", Environment.new ) }
 
           it "raises an error" do
-            expect { subject }.to raise_error Sequel::NotNullConstraintViolation
+            expect { subject }.to raise_error Sequel::DatabaseError
           end
         end
       end
