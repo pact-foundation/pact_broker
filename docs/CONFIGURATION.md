@@ -3,7 +3,7 @@
 
 <!-- This is a generated file. Please do not edit it directly. -->
 
-The Pact Broker supports configuration via environment variables or a YAML file.
+The Pact Broker supports configuration via environment variables or a YAML file from version 2.87.0.1 of the Docker images.
 
 To configure the application using a YAML file, place it in the location `config/pact_broker.yml`,
 relative to the working directory of the application, or set the environment
