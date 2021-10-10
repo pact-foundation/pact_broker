@@ -29,7 +29,7 @@ module PactBroker
         end
 
         def pact_params
-          @pact_params ||= PactBroker::Pacts::PactParams.from_request request, path_info
+          @pact_params ||= PactBroker::Pacts::PactParams.from_request request, identifier_from_path
         end
 
         def policy_name

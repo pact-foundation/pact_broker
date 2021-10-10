@@ -8,7 +8,7 @@ module PactBroker
         using PactBroker::HashRefinements
 
         def pact_params
-          @pact_params ||= PactBroker::Pacts::PactParams.from_request(request, maybe_params_with_consumer_version_number.merge(path_info))
+          @pact_params ||= PactBroker::Pacts::PactParams.from_request(request, maybe_consumer_version_number_param.merge(identifier_from_path))
         end
 
         def maybe_consumer_version_number_param
