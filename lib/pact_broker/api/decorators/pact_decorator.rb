@@ -42,6 +42,18 @@ module PactBroker
           }
         end
 
+        links :'pb:consumer-versions' do | options |
+          if options[:consumer_versions]
+            options[:consumer_versions].collect do | consumer_version |
+              {
+                title: "Consumer version",
+                name: consumer_version.number,
+                href: version_url(options.fetch(:base_url), consumer_version)
+              }
+            end
+          end
+        end
+
         link :'pb:provider' do | options |
           {
             title: "Provider",

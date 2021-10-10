@@ -11,7 +11,7 @@ begin
     .publish_contract(consumer: "branch-consumer", provider: "branch-provider", consumer_version: "1", content_id: "1111", branch: "main")
     .publish_contract(consumer: "branch-consumer", provider: "branch-provider", consumer_version: "1", content_id: "1111", branch: "feat/x")
     .publish_contract(consumer: "branch-consumer", provider: "branch-provider", consumer_version: "2", content_id: "1111", branch: "feat/x")
-    .get_pacts_for_verification(provider: "branch-provider", enable_pending: false)
+    .get_pacts_for_verification(provider: "branch-provider", enable_pending: false, consumer_version_selectors: [ { branch: "main" }, { branch: "feat/x" }])
     .verify_pact(
       provider_version_branch: "main",
       provider_version: "1",

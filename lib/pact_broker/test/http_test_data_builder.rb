@@ -224,6 +224,7 @@ module PactBroker
         puts "Creating #{webhook_prefix}webhook for contract changed event with uuid #{uuid}"
         uuid ||= SecureRandom.uuid
         default_body = {
+          "pactUrl" => "${pactbroker.pactUrl}",
           "eventName" => "${pactbroker.eventName}",
           "consumerName" => "${pactbroker.consumerName}",
           "consumerVersionNumber" => "${pactbroker.consumerVersionNumber}",
