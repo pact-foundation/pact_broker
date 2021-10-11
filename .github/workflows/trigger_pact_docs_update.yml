@@ -9,6 +9,7 @@ on:
   repository_dispatch:
     types:
       - gem-released
+  workflow_dispatch:
 
 jobs:
   build:
