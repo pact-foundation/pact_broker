@@ -1,3 +1,18 @@
+<a name="v2.88.0"></a>
+### v2.88.0 (2021-10-11)
+
+#### Features
+
+* include relations for each consumer version that a pact version belongs to when retrieved using the URL from the 'pacts for verification' response	 ([3458c9e5](/../../commit/3458c9e5))
+
+#### Bug Fixes
+
+* use the decoded path info rather than the encoded one when creating the pact info	 ([dd30a1a2](/../../commit/dd30a1a2))
+* edge case in webhook description rendering with participants specified by labels (#512)	 ([7e6a78d8](/../../commit/7e6a78d8))
+
+* **matrix**
+  * prevent long version names overlfow the table (#511)	 ([3c279556](/../../commit/3c279556))
+
 <a name="v2.87.0"></a>
 ### v2.87.0 (2021-10-05)
 
