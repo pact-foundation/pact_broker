@@ -25,7 +25,7 @@ module PactBroker
           }]
         end
 
-        subject { PactsForVerificationJSONQuerySchema.(params).tap { |it| puts it } }
+        subject { PactsForVerificationJSONQuerySchema.(params) }
 
         context "when the params are valid" do
           it "has no errors" do

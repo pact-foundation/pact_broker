@@ -47,7 +47,7 @@ module PactBroker
             end
 
             it "is valid" do
-              params = { consumerVersionSelectors: [selector] }
+              params = { consumerVersionSelectors: [selector], providerVersionBranch: "main" }
               expect(PactsForVerificationJSONQuerySchema.(params)).to be_empty
             end
 
@@ -55,7 +55,7 @@ module PactBroker
             extra_keys.each do | extra_key |
               selector_with_extra_key = selector.merge(extra_key => ALL_PROPERTIES[extra_key])
               expect_to_be_valid = !!VALID_KEY_COMBINATIONS.find{ | k | k.sort == selector_with_extra_key.keys.sort }
-              params = { consumerVersionSelectors: [selector_with_extra_key] }
+              params = { consumerVersionSelectors: [selector_with_extra_key], providerVersionBranch: "main"  }
 
               describe "with #{selector_with_extra_key}" do
                 if expect_to_be_valid
@@ -73,7 +73,7 @@ module PactBroker
 
               describe "with #{selector_with_consumer}" do
                 it "is valid" do
-                  params = { consumerVersionSelectors: [selector_with_consumer] }
+                  params = { consumerVersionSelectors: [selector_with_consumer], providerVersionBranch: "main" }
 
                   expect(PactsForVerificationJSONQuerySchema.(params).empty?).to be true
                 end
