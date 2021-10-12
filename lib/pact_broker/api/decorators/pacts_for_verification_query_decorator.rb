@@ -21,7 +21,7 @@ module PactBroker
             represented.branch = fragment
             represented.latest = true
           }
-          property :matching_branch, setter: -> (fragment:, represented:, **other) {
+          property :matching_branch, setter: -> (fragment:, represented:, **) {
             represented.matching_branch = fragment
             represented.latest = true
           }
