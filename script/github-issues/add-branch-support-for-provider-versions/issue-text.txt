@@ -1,0 +1,9 @@
+Add support for publishing verification results with a branch using the pact-ruby-standalone
+
+The Pact Broker now supports branches as first class entities. You can read more about this here: https://github.com/pact-foundation/docs.pact.io/blob/feat/deployments-and-releases/website/blog/2021-07-04-why-we-are-getting-rid-of-tags.md
+
+To allow users to use this feature:
+
+* Upgrade the pact-ruby-standalone to at least version `1.88.70`
+* Add an appropriately prefixed "branch" property to the user facing interface (make it match the existing provider name, tag, and version properties)
+* Pass the branch through to the pact provider verifier CLI using the parameter `--provider-version-branch`

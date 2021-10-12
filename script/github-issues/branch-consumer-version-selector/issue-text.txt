@@ -1,0 +1,47 @@
+Add support for branches in consumer version selectors used
+
+The Pact Broker now supports branches as first class entities. You can read more about this here: https://docs.pact.io/pact_broker/branches
+
+## Description
+
+Please add support for specifying branch related properties in the consumer version selectors that are sent to the Pact Broker when requesting pacts to verify. Please do not do any verification of the consumer version selectors on the client side - the validation rules are subject to change. Just ensure that any error response is displayed to the user.
+
+* Allow a String `branch` property to be set for the consumer version selector.
+* Allow a Boolean `mainBranch` property to be set for the consumer version selector.
+* Expose and document the `branch` and `mainBranch` properties in the user facing API.
+
+## Verifying the changes
+
+* Publish tests pacts to the test broker
+
+```
+export PACT_BROKER_BASE_URL="https://test.pact.dius.com.au"
+export PACT_BROKER_USERNAME="dXfltyFMgNOFZAxr8io9wJ37iUpY42M"
+export PACT_BROKER_PASSWORD="O5AIZWxelWbLvqMd8PkAVycBJh2Psyg1"
+
+docker run --rm  \
+  -e PACT_BROKER_BASE_URL  \
+  -e PACT_BROKER_USERNAME  \
+  -e PACT_BROKER_PASSWORD  \
+  pactfoundation/pact-cli:0.50.0.14 \
+  publish \
+  /pact/example/pacts \
+  --consumer-app-version fake-git-sha-for-demo-$(date +%s) \
+  --branch main
+
+docker run --rm  \
+  -e PACT_BROKER_BASE_URL  \
+  -e PACT_BROKER_USERNAME  \
+  -e PACT_BROKER_PASSWORD  \
+  pactfoundation/pact-cli:0.50.0.14 \
+  publish \
+  /pact/example/pacts \
+  --consumer-app-version fake-git-sha-for-demo-$(date +%s) \
+  --branch feat/x
+```
+
+* Using your pact client library, verify `{ "mainBranch": true }`
+  * You should receive the main pact
+* Using your pact client library, verify `{ "branch": "feat/x" }`
+  * You should receive the feat/x pact
+

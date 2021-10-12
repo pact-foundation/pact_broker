@@ -1,0 +1,9 @@
+https://github.com/pact-foundation/pact-js/issues/715
+https://github.com/pact-foundation/pact-jvm/issues/1407
+https://github.com/pact-foundation/pact-net/issues/311
+https://github.com/pact-foundation/pact-python/issues/246
+https://github.com/ITV/scala-pact/issues/224
+https://github.com/pact-foundation/pact-php/issues/206
+https://github.com/pact-foundation/pact-go/issues/172
+https://github.com/pact-foundation/pact-ruby/issues/243
+https://github.com/pact-foundation/pact-reference/issues/125

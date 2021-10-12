@@ -1,0 +1,5 @@
+Set "enable pending" to true by default
+
+The [pending](https://docs.pact.io/pending) feature has been used for long enough now to show that it works, and that there is little reason to ever have it turned off any more. The Pact Broker now defaults to `true` if the `includePendingStatus` field is not set, however, this will not take effect if the client side has it set to false by default. Please set `enablePending` to true by default now, to ensure it is turned on for all older and future versions of the Pact Broker.
+
+Consider printing a warning message if the user does set it to false explicitly, along the lines of "We recommend setting enablePending to true. For more information, please see https://docs.pact.io/pending"

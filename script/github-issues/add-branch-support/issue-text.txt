@@ -1,0 +1,7 @@
+Add branch support
+
+The Pact Broker now supports branches as first class entities. You can read more about this here: https://github.com/pact-foundation/docs.pact.io/blob/feat/deployments-and-releases/website/blog/2021-07-04-why-we-are-getting-rid-of-tags.md
+
+Please add support for branches in the following way (depending on how you publish pacts and verifications):
+
+* If this

@@ -1,0 +1,26 @@
+Add support for consumer version selectors for deployed and released versions
+
+Please add support for the following keys to be used in the consumer version selectors when fetching pacts for verification:
+
+```
+{ "deployedOrReleased": true }
+
+{ "deployed": true }
+
+{ "released": true }
+
+{ "environment": "<env name>" }
+
+{ "deployed": true }
+
+{ "released": true }
+
+```
+
+These keys can be used in various combinations ( eg. `{ "environment": "prod", released: true, consumer: "Foo" }` ). Please allow any combination of keys, and do not validate them locally, as the validation rules can change over time as support is added for new selectors - just ensure that any errors returned from the API are displayed clearly to the user.
+
+See https://github.com/pact-foundation/pact_broker/blob/master/lib/pact_broker/doc/views/provider-pacts-for-verification.markdown for the usage docs of each selector.
+
+As more selectors will be added over time, it's my preference that the consumer version selectors are not strongly typed, and are just passed through straight from the configuration object to the API, so that we don't have to make code changes to the Pact clients each time we add new selectors. (eg. there will be new selectors coming for branch support very soon). I understand that this is not compatible with the idioms of every Pact client language however, so do whatever you need to do to make the new selectors work elegantly within your language.
+
+Please update https://docs.pact.io/pact_broker/advanced_topics/consumer_version_selectors/ for your language once the selectors have been released.
