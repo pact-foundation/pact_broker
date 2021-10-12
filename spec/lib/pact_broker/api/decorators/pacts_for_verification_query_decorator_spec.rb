@@ -125,6 +125,16 @@ module PactBroker
               expect(subject.consumer_version_selectors.last).to eq PactBroker::Pacts::Selector.for_currently_supported
             end
           end
+
+          context "when matchingBranch is true" do
+            let(:consumer_version_selectors) do
+              [{ "matchingBranch" => true }]
+            end
+
+            it "sets the branch and latest and matching branch properties" do
+              expect(subject.consumer_version_selectors).to contain_exactly(have_attributes(branch: "main", matching_branch: true, latest: true))
+            end
+          end
         end
 
         context "when parsing query string params" do

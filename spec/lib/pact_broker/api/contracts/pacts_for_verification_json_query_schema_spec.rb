@@ -25,7 +25,7 @@ module PactBroker
           }]
         end
 
-        subject { PactsForVerificationJSONQuerySchema.(params) }
+        subject { PactsForVerificationJSONQuerySchema.(params).tap { |it| puts it } }
 
         context "when the params are valid" do
           it "has no errors" do
@@ -341,6 +341,16 @@ module PactBroker
           end
 
           its([:consumerVersionSelectors, 0]) { is_expected.to eq "environment with name 'prod' does not exist at index 0" }
+        end
+
+        context "when matchingBranch is true, but the providerVersionBranch is not set" do
+          let(:consumer_version_selectors) do
+            [{
+              matchingBranch: true
+            }]
+          end
+
+          its([:consumerVersionSelectors, 0]) { is_expected.to include "the providerVersionBranch must be specified"}
         end
       end
     end

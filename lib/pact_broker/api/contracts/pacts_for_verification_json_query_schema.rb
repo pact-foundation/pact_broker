@@ -15,7 +15,7 @@ module PactBroker
         using PactBroker::HashRefinements
         using PactBroker::StringRefinements
 
-        BRANCH_KEYS = [:latest, :tag, :fallbackTag, :branch, :fallbackBranch]
+        BRANCH_KEYS = [:latest, :tag, :fallbackTag, :branch, :fallbackBranch, :matchingBranch]
         ENVIRONMENT_KEYS = [:environment, :deployed, :released, :deployedOrReleased]
         ALL_KEYS = BRANCH_KEYS + ENVIRONMENT_KEYS
 
@@ -36,6 +36,7 @@ module PactBroker
               optional(:mainBranch).filled(included_in?: [true])
               optional(:tag).filled(:str?)
               optional(:branch).filled(:str?)
+              optional(:matchingBranch).filled(included_in?: [true])
               optional(:latest).filled(included_in?: [true, false])
               optional(:fallbackTag).filled(:str?)
               optional(:fallbackBranch).filled(:str?)
@@ -65,7 +66,7 @@ module PactBroker
           # This is a ducking joke. Need to get rid of dry-validation
           if params[:consumerVersionSelectors].is_a?(Array)
             errors = params[:consumerVersionSelectors].each_with_index.flat_map do | selector, index |
-              validate_consumer_version_selector(selector, index)
+              validate_consumer_version_selector(selector, index, params)
             end
             if errors.any?
               results[:consumerVersionSelectors] ||= []
@@ -82,7 +83,7 @@ module PactBroker
         # when setting the branch, it doesn't make sense to verify all pacts for a branch,
         # so latest is not required, but cannot be set to false
         # rubocop: disable Metrics/CyclomaticComplexity, Metrics/MethodLength
-        def self.validate_consumer_version_selector(selector, index)
+        def self.validate_consumer_version_selector(selector, index, params)
           errors = []
 
           if selector[:fallbackTag] && !selector[:latest]
@@ -97,15 +98,20 @@ module PactBroker
               not_provided?(selector[:tag]) &&
               not_provided?(selector[:branch]) &&
               not_provided?(selector[:environment]) &&
+              selector[:matchingBranch] != true &&
               selector[:deployed] != true &&
               selector[:released] != true &&
               selector[:deployedOrReleased] != true &&
               selector[:latest] != true
-            errors << "must specify a value for environment or tag or branch, or specify mainBranch=true, latest=true, deployed=true, released=true or deployedOrReleased=true (at index #{index})"
+            errors << "must specify a value for environment or tag or branch, or specify mainBranch=true, matchingBranch=true, latest=true, deployed=true, released=true or deployedOrReleased=true (at index #{index})"
           end
 
           if selector[:mainBranch] && selector.slice(*ALL_KEYS - [:consumer, :mainBranch]).any?
             errors << "cannot specify mainBranch=true with any other criteria apart from consumer (at index #{index})"
+          end
+
+          if selector[:matchingBranch] && selector.slice(*ALL_KEYS - [:consumer, :matchingBranch]).any?
+            errors << "cannot specify matchingBranch=true with any other criteria apart from consumer (at index #{index})"
           end
 
           if selector[:tag] && selector[:branch]
@@ -134,6 +140,10 @@ module PactBroker
 
           if selector[:released] && selector[:deployedOrReleased]
             errors << "cannot specify both released=true and deployedOrReleased=true (at index #{index})"
+          end
+
+          if selector[:matchingBranch] && not_provided?(params[:providerVersionBranch])
+            errors << "the providerVersionBranch must be specified when the selector matchingBranch=true is used (at index #{index})"
           end
 
           non_environment_fields = selector.slice(*BRANCH_KEYS).keys.sort

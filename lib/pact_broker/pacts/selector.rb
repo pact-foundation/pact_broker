@@ -6,7 +6,7 @@ module PactBroker
     class Selector < Hash
       using PactBroker::HashRefinements
 
-      PROPERTY_NAMES = [:latest, :tag, :branch, :consumer, :consumer_version, :environment_name, :fallback_tag, :fallback_branch, :main_branch, :currently_supported, :currently_deployed]
+      PROPERTY_NAMES = [:latest, :tag, :branch, :consumer, :consumer_version, :environment_name, :fallback_tag, :fallback_branch, :main_branch, :matching_branch, :currently_supported, :currently_deployed]
 
       def initialize(properties = {})
         properties.without(*PROPERTY_NAMES).tap { |it| warn("WARN: Unsupported property for #{self.class.name}: #{it.keys.join(", ")} at #{caller[0..3]}") if it.any? }
@@ -31,6 +31,8 @@ module PactBroker
       def type
         if latest_for_branch?
           :latest_for_branch
+        elsif matching_branch?
+          :matching_branch
         elsif currently_deployed?
           :currently_deployed
         elsif currently_supported?
@@ -51,6 +53,10 @@ module PactBroker
 
       def main_branch= main_branch
         self[:main_branch] = main_branch
+      end
+
+      def matching_branch= matching_branch
+        self[:matching_branch] = matching_branch
       end
 
       def tag= tag
@@ -231,6 +237,14 @@ module PactBroker
 
       def branch
         self[:branch]
+      end
+
+      def matching_branch
+        self[:matching_branch]
+      end
+
+      def matching_branch?
+        !!matching_branch
       end
 
       def overall_latest?

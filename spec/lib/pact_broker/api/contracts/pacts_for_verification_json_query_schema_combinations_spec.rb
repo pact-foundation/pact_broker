@@ -6,6 +6,7 @@ module PactBroker
       describe PactsForVerificationJSONQuerySchema do
         ALL_PROPERTIES = {
           mainBranch: true,
+          matchingBranch: true,
           tag: "tag",
           branch: "branch",
           latest: true,
@@ -20,6 +21,7 @@ module PactBroker
 
         VALID_KEY_COMBINATIONS = [
           [:mainBranch],
+          [:matchingBranch],
           [:tag],
           [:tag, :latest],
           [:tag, :latest, :fallbackTag],

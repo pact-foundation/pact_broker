@@ -21,6 +21,10 @@ module PactBroker
             represented.branch = fragment
             represented.latest = true
           }
+          property :matching_branch, setter: -> (fragment:, represented:, **other) {
+            represented.matching_branch = fragment
+            represented.latest = true
+          }
           property :latest,
             setter: ->(fragment:, represented:, **) {
               represented.latest = (fragment == "true" || fragment == true)
@@ -53,6 +57,9 @@ module PactBroker
           result = super(hash&.snakecase_keys)
 
           result.consumer_version_selectors = split_out_deployed_or_released_selectors(result.consumer_version_selectors)
+          if result.provider_version_branch
+            result.consumer_version_selectors = set_branch_for_matching_branch_selectors(result.consumer_version_selectors, result.provider_version_branch)
+          end
 
           if result.consumer_version_selectors && !result.consumer_version_selectors.is_a?(PactBroker::Pacts::Selectors)
             result.consumer_version_selectors = PactBroker::Pacts::Selectors.new(result.consumer_version_selectors)
@@ -61,6 +68,17 @@ module PactBroker
         end
 
         private
+
+        def set_branch_for_matching_branch_selectors(consumer_version_selectors, provider_version_branch)
+          consumer_version_selectors.collect do | consumer_version_selector |
+            if consumer_version_selector[:matching_branch]
+              consumer_version_selector[:branch] = provider_version_branch
+              consumer_version_selector
+            else
+              consumer_version_selector
+            end
+          end
+        end
 
         def split_out_deployed_or_released_selectors(consumer_version_selectors)
           consumer_version_selectors.flat_map do | selector |

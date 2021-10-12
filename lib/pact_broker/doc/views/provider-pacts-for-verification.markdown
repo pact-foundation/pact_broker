@@ -30,6 +30,8 @@ Example: This data structure represents the way a user might specify "I want to 
 
 `consumerVersionSelectors.branch`: the branch name of the consumer versions to get the pacts for. Use of this selector requires that the consumer has configured a branch name when publishing the pacts.
 
+`consumerVersionSelectors.matchingBranch`: if the key is specified, can only be set to `true`. When true, returns the latest pact for any branch with the same name as the specified `providerVersionBranch`.
+
 `consumerVersionSelectors.fallbackBranch`: the name of the branch to fallback to if the specified `branch` does not exist. Use of this property is discouraged as it may allow a pact to pass on a feature branch while breaking backwards compatibility with the main branch, which is generally not desired. It is better to use two separate consumer version selectors, one with the main branch name, and one with the feature branch name, rather than use this property.
 
 `consumerVersionSelectors.deployed`: if the key is specified, can only be set to `true`. Returns the pacts for all versions of the consumer that are currently deployed to any environment. Use of this selector requires that the deployment of the consumer application is recorded in the Pact Broker using the `pact-broker record-deployment` CLI.
