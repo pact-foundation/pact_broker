@@ -6,6 +6,7 @@ module PactBroker
     class SortContent
       extend OrderHashKeys
 
+      # TODO handle interactions and messages at the same time
       def self.call pact_hash
         key = verifiable_content_key_for(pact_hash)
 

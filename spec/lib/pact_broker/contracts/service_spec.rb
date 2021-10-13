@@ -124,6 +124,70 @@ module PactBroker
           end
         end
       end
+
+      describe "#conflict_errors" do
+        let(:contracts_to_publish) do
+          ContractsToPublish.from_hash(
+            pacticipant_name: "Foo",
+            pacticipant_version_number: "1",
+            tags: ["a", "b"],
+            branch: branch,
+            contracts: contracts
+          )
+        end
+
+        let(:on_conflict) { "overwrite" }
+        let(:branch) { "main" }
+        let(:contracts) { [contract_1] }
+        let(:contract_1) do
+          ContractToPublish.from_hash(
+            consumer_name: "Foo",
+            provider_name: "Bar",
+            decoded_content: decoded_contract,
+            specification: "pact",
+            on_conflict: on_conflict
+          )
+        end
+
+        let(:contract_hash) { { consumer: { name: "Foo" }, provider: { name: "Bar" }, interactions: [{a: "b"}] } }
+        let(:decoded_contract) { contract_hash.to_json }
+
+        subject { Service.conflict_notices(contracts_to_publish) }
+
+        context "when a pact already exists" do
+          before do
+            allow(PactBroker.configuration).to receive(:allow_dangerous_contract_modification).and_return(allow_dangerous_contract_modification)
+            td.create_pact_with_hierarchy("Foo", "1", "Bar", existing_json_content)
+          end
+
+          let(:existing_json_content) { td.random_json_content("Foo", "Bar") }
+
+          context "when allow_dangerous_contract_modification=false and the pact content is different" do
+            let(:allow_dangerous_contract_modification) { false }
+
+            it "returns errors" do
+              expect(subject).to_not be_empty
+            end
+          end
+
+          context "when allow_dangerous_contract_modification=false and the pact content is the same" do
+            let(:allow_dangerous_contract_modification) { false }
+            let(:existing_json_content) { decoded_contract }
+
+            it { is_expected.to be_empty }
+          end
+
+          context "when allow_dangerous_contract_modification=true and the pact content is different" do
+            let(:allow_dangerous_contract_modification) { true }
+
+            it { is_expected.to be_empty }
+          end
+        end
+
+        context "when no pacts exist" do
+          it { is_expected.to be_empty }
+        end
+      end
     end
   end
 end

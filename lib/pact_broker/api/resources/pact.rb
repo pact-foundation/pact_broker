@@ -110,7 +110,7 @@ module PactBroker
 
         def disallowed_modification?
           if request.really_put? && pact_service.disallowed_modification?(pact, pact_params.json_content)
-            message_params = { consumer_name: pact_params.consumer_name, consumer_version_number: pact_params.consumer_version_number }
+            message_params = { consumer_name: pact_params.consumer_name, consumer_version_number: pact_params.consumer_version_number, provider_name: pact_params.provider_name }
             set_json_error_message(message("errors.validation.pact_content_modification_not_allowed", message_params))
             true
           else

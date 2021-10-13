@@ -6,6 +6,7 @@ require "pact_broker/contracts/contracts_publication_results"
 require "pact_broker/contracts/notice"
 require "pact_broker/events/subscriber"
 require "pact_broker/api/pact_broker_urls"
+require "pact_broker/pacts/create_formatted_diff"
 
 module PactBroker
   module Contracts
@@ -41,6 +42,30 @@ module PactBroker
           notices: notices
         )
       end
+
+      def conflict_notices(parsed_contracts)
+        notices = []
+        parsed_contracts.contracts.collect do | contract_to_publish, i |
+          pact_params = create_pact_params(parsed_contracts, contract_to_publish)
+          existing_pact = pact_service.find_pact(pact_params)
+          if existing_pact && pact_service.disallowed_modification?(existing_pact, contract_to_publish.decoded_content)
+            add_conflict_notice(notices, parsed_contracts, contract_to_publish, existing_pact.json_content, contract_to_publish.decoded_content)
+          end
+        end
+        notices
+      end
+
+      def add_conflict_notice(notices, parsed_contracts, contract_to_publish, existing_json_content, new_json_content)
+        message_params = {
+          consumer_name: contract_to_publish.provider_name,
+          consumer_version_number: parsed_contracts.pacticipant_version_number,
+          provider_name: contract_to_publish.provider_name
+        }
+        notices << Notice.error(message("errors.validation.pact_content_modification_not_allowed", message_params))
+        notices << Notice.info(PactBroker::Pacts::CreateFormattedDiff.call(new_json_content, existing_json_content))
+      end
+
+      private :add_conflict_notice
 
       def create_version(parsed_contracts)
         version_params = {

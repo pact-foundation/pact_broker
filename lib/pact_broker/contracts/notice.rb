@@ -20,6 +20,14 @@ module PactBroker
       def self.success(text)
         Notice.new("success", text)
       end
+
+      def self.error(text)
+        Notice.new("error", text)
+      end
+
+      def error?
+        type == "error"
+      end
     end
   end
 end

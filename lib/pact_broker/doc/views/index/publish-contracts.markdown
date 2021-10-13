@@ -12,6 +12,8 @@ This is the preferred endpoint with which to publish contracts (previously, cont
 
 The previous tag and pact endpoints are still supported, however, future features that build on this endpoint may not be able to be backported into those endpoints.
 
+This endpoint is designed to be used by a command line tool, and hence, the response notices are designed for output to the user in a terminal.
+
 ## Parameters
 
 * `pacticipantName`: the name of the application. Required.
@@ -31,7 +33,7 @@ The previous tag and pact endpoints are still supported, however, future feature
 ### Success
 
 * `notices`
-  * `level`: one of `debug`, `info`, `warning`,`prompt`,`success`
+  * `level`: one of `debug`, `info`, `warning`,`prompt`,`success`, `error`, `danger`
   * `text`: the text of the notice. This is designed to be displayed in the output of a CLI.
 
 The `_links` section will contain links to all the resources created by the publication. The relations are:
@@ -43,13 +45,41 @@ The `_links` section will contain links to all the resources created by the publ
 
 ### Errors
 
-Any validation errors will be returned in the standard Pact Broker format:
+### Schema validation errors
+
+Any validation errors will be returned in the standard Pact Broker format with a 400 status:
 
     {
       "errors": {
         "<fieldName>": ["message 1", "message 2"]
       }
     }
+
+### Contract conflict errors
+
+If there is a conflict with an existing published pact and `allow_dangerous_contract_modification` is set to false, a 409 will be returned with an array of notices, which will contain a diff between the existing pact content and the content that was attempted to be published. For consistency with the existing error responses, the errors hash will also contain the error messages, but there will be no diff included. For CLI usage, when there are notices and errors, just the notices should be displayed to the user.
+
+    {
+        "notices":
+        [
+            {
+                "text": "Cannot change the content of the pact for Foo version 183a77b0 and provider Bar, as race conditions will cause unreliable results for can-i-deploy. Each pact must be published with a unique consumer version number. For more information see https://docs.pact.io/go/versioning",
+                "type": "error"
+            },
+            {
+                "text": "<the diff, will include new lines>",
+                "type": "info"
+            }
+        ],
+        "errors":
+        {
+            "content":
+            [
+                "Cannot change the content of the pact for Foo version 183a77b0 and provider Bar, as race conditions will cause unreliable results for can-i-deploy. Each pact must be published with a unique consumer version number. For more information see https://docs.pact.io/go/versioning"
+            ]
+        }
+    }
+
 
 ## Example
 

@@ -31,11 +31,13 @@ module PactBroker
         end
 
         def process_post
-          handle_webhook_events(consumer_version_branch: parsed_contracts.branch, build_url: parsed_contracts.build_url) do
-            results = contract_service.publish(parsed_contracts, base_url: base_url)
-            response.body = decorator_class(:publish_contracts_results_decorator).new(results).to_json(decorator_options)
+          if conflict_notices.any?
+            set_conflict_response
+            409
+          else
+            publish_contracts
+            true
           end
-          true
         end
 
         def policy_name
@@ -74,6 +76,27 @@ module PactBroker
           if contract["decodedContent"]
             contract["decodedParsedContent"] = PactBroker::Pacts::Parse.call(contract["decodedContent"]) rescue nil
           end
+        end
+
+        def publish_contracts
+          handle_webhook_events(consumer_version_branch: parsed_contracts.branch, build_url: parsed_contracts.build_url) do
+            results = contract_service.publish(parsed_contracts, base_url: base_url)
+            response.body = decorator_class(:publish_contracts_results_decorator).new(results).to_json(decorator_options)
+          end
+        end
+
+        def set_conflict_response
+          response.body = {
+            notices: conflict_notices.collect(&:to_h),
+            errors: {
+              contracts: conflict_notices.select(&:error?).collect(&:text)
+            }
+          }.to_json
+          response.headers["Content-Type"] = "application/json;charset=utf-8"
+        end
+
+        def conflict_notices
+          @conflict_notices ||= contract_service.conflict_notices(parsed_contracts)
         end
       end
     end

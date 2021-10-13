@@ -1,11 +1,13 @@
 require "pact_broker/pacts/parse"
 require "pact_broker/pacts/sort_content"
 require "pact_broker/pacts/generate_interaction_sha"
+require "pact_broker/hash_refinements"
 
 module PactBroker
   module Pacts
     class Content
       include GenerateInteractionSha
+      using PactBroker::HashRefinements
 
       def initialize pact_hash
         @pact_hash = pact_hash
@@ -75,6 +77,18 @@ module PactBroker
         Content.from_hash(new_pact_hash)
       end
 
+      def without_ids
+        new_pact_hash = pact_hash.dup
+        if interactions && interactions.is_a?(Array)
+          new_pact_hash["interactions"] = remove_ids(interactions)
+        end
+
+        if messages && messages.is_a?(Array)
+          new_pact_hash["messages"] = remove_ids(messages)
+        end
+        Content.from_hash(new_pact_hash)
+      end
+
       def interaction_ids
         messages_or_interaction_or_empty_array.collect do | interaction |
           interaction["_id"]
@@ -136,6 +150,10 @@ module PactBroker
             interaction
           end
         end
+      end
+
+      def remove_ids(interactions_or_messages)
+        interactions_or_messages.collect{ | h | h.without("_id") }
       end
 
       def merge_verification_results(interactions, tests)

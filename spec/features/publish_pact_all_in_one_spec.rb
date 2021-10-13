@@ -39,4 +39,23 @@ RSpec.describe "publishing a pact using the all in one endpoint" do
 
     it { is_expected.to be_a_json_error_response("missing") }
   end
+
+  context "with a conflicting pact" do
+    before do
+      allow(PactBroker.configuration).to receive(:allow_dangerous_contract_modification).and_return(false)
+      td.create_pact_with_hierarchy("Foo", "1", "Bar")
+    end
+
+    its(:status) { is_expected.to eq 409 }
+
+    it "returns notices" do
+      expect(JSON.parse(subject.body)["notices"]).to be_a(Array)
+    end
+
+    it "returns errors" do
+      contract_errors = JSON.parse(subject.body)["errors"]["contracts"]
+      expect(contract_errors).to be_a(Array)
+      expect(contract_errors.size).to eq 1
+    end
+  end
 end
