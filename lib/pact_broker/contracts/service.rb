@@ -45,7 +45,7 @@ module PactBroker
 
       def conflict_notices(parsed_contracts)
         notices = []
-        parsed_contracts.contracts.collect do | contract_to_publish, i |
+        parsed_contracts.contracts.collect do | contract_to_publish |
           pact_params = create_pact_params(parsed_contracts, contract_to_publish)
           existing_pact = pact_service.find_pact(pact_params)
           if existing_pact && pact_service.disallowed_modification?(existing_pact, contract_to_publish.decoded_content)
