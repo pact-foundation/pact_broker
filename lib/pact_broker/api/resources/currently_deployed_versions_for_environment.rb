@@ -60,7 +60,9 @@ module PactBroker
           query = Rack::Utils.parse_query(request.env["QUERY_STRING"])
           q = {}
           q[:pacticipant_name] = request.query["pacticipant"] if query["pacticipant"]
-          if query["target"]
+          if query["applicationInstance"]
+            q[:target] = query["applicationInstance"].blank? ? nil : query["applicationInstance"]
+          elsif query["target"]
             q[:target] = query["target"].blank? ? nil : query["target"]
           end
           q

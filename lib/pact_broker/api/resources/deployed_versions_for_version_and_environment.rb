@@ -30,7 +30,7 @@ module PactBroker
         end
 
         def from_json
-          @deployed_version = deployed_version_service.find_or_create(deployed_version_uuid, version, environment, target)
+          @deployed_version = deployed_version_service.find_or_create(deployed_version_uuid, version, environment, application_instance)
           response.headers["Location"] = deployed_version_url(deployed_version, base_url)
           response.body = decorator_class(:deployed_version_decorator).new(deployed_version).to_json(decorator_options)
         end
@@ -72,8 +72,9 @@ module PactBroker
         end
 
         # TODO disallow an empty string because that is used as a NULL indicator in the database
-        def target
-          params(default: {})[:target]&.to_s
+        def application_instance
+          parameters = params(default: {})
+          (parameters[:applicationInstance] || parameters[:target])&.to_s
         end
 
         def title

@@ -29,8 +29,33 @@ RSpec.describe "Get currently deployed versions for environment" do
   end
 
   context "with query params" do
+    context "with a pacticipant name and applicationInstance" do
+      let(:query_params) { { pacticipant: "Bar", applicationInstance: "customer-1" } }
 
-    context "with a pacticipant name and target" do
+      it "returns a list of matching deployed versions" do
+        expect(response_body_hash[:_embedded][:deployedVersions].size).to eq 1
+        expect(response_body_hash[:_embedded][:deployedVersions].first[:_embedded][:version][:number]).to eq "4"
+      end
+    end
+
+    context "with pacticipant name and a blank applicationInstance" do
+      let(:query_params) { { pacticipant: "Bar", applicationInstance: "" } }
+
+      it "returns a list of matching deployed versions" do
+        expect(response_body_hash[:_embedded][:deployedVersions].size).to eq 1
+        expect(response_body_hash[:_embedded][:deployedVersions].first[:_embedded][:version][:number]).to eq "5"
+      end
+    end
+
+    context "with pacticipant name and no target or applicationInstance" do
+      let(:query_params) { { pacticipant: "Bar" } }
+
+      it "returns a list of matching deployed versions" do
+        expect(response_body_hash[:_embedded][:deployedVersions].size).to eq 2
+      end
+    end
+
+    context "with a pacticipant name and target (deprecated)" do
       let(:query_params) { { pacticipant: "Bar", target: "customer-1" } }
 
       it "returns a list of matching deployed versions" do
@@ -39,20 +64,12 @@ RSpec.describe "Get currently deployed versions for environment" do
       end
     end
 
-    context "with pacticipant name and a blank target" do
+    context "with pacticipant name and a blank target (deprecated)" do
       let(:query_params) { { pacticipant: "Bar", target: "" } }
 
       it "returns a list of matching deployed versions" do
         expect(response_body_hash[:_embedded][:deployedVersions].size).to eq 1
         expect(response_body_hash[:_embedded][:deployedVersions].first[:_embedded][:version][:number]).to eq "5"
-      end
-    end
-
-    context "with pacticipant name and no target" do
-      let(:query_params) { { pacticipant: "Bar" } }
-
-      it "returns a list of matching deployed versions" do
-        expect(response_body_hash[:_embedded][:deployedVersions].size).to eq 2
       end
     end
   end
