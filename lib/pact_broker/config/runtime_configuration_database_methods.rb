@@ -93,7 +93,7 @@ module PactBroker
               password: database_password,
               host: database_host,
               database: database_name,
-              database_port: database_port
+              port: database_port
             }.compact
           end
           private :database_credentials
