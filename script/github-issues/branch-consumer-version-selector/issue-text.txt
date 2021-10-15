@@ -1,4 +1,4 @@
-Add support for branches in consumer version selectors used
+Add support for branches in consumer version selectors
 
 The Pact Broker now supports branches as first class entities. You can read more about this here: https://docs.pact.io/pact_broker/branches
 
@@ -6,13 +6,17 @@ The Pact Broker now supports branches as first class entities. You can read more
 
 Please add support for specifying branch related properties in the consumer version selectors that are sent to the Pact Broker when requesting pacts to verify. Please do not do any verification of the consumer version selectors on the client side - the validation rules are subject to change. Just ensure that any error response is displayed to the user.
 
-* Allow a String `branch` property to be set for the consumer version selector.
-* Allow a Boolean `mainBranch` property to be set for the consumer version selector.
-* Expose and document the `branch` and `mainBranch` properties in the user facing API.
+* For implementations that wrap the pact-ruby-standalone, update to the latest standalone version
+* For implementations that use the rust implementation, update to the latest rust version.
+* Add a String `branch` property to the consumer version selector (if there is a domain model for this).
+* Add a Boolean `mainBranch` (or `main_branch` for snake case languages) property consumer version selector (if there is a domain model for this).
+* Add a Boolean `matchingBranch` (or `matching_branch` for snake case languages) property consumer version selector (if there is a domain model for this).
+* Expose and document the `branch`, `mainBranch` (or `main_branch` for snake case languages) and `matchingBranch` (or `matching_branch`) properties in the user facing API.
+* Pass the `branch`, `mainBranch` and `matchingBranch` (must be camelcase) through to the relevant implementation (ruby and/or rust)
 
 ## Verifying the changes
 
-* Publish tests pacts to the test broker
+* Publish test pacts to the test broker
 
 ```
 export PACT_BROKER_BASE_URL="https://test.pact.dius.com.au"
@@ -44,4 +48,5 @@ docker run --rm  \
   * You should receive the main pact
 * Using your pact client library, verify `{ "branch": "feat/x" }`
   * You should receive the feat/x pact
-
+* Using your pact client library, verify `{ "matchingBranch": true }` with the provider branch set to `feat/x`
+  * You should receive the feat/x pact
