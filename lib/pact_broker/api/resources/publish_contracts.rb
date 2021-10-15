@@ -74,7 +74,11 @@ module PactBroker
         def decode_and_parse_content(contract)
           contract["decodedContent"] = Base64.strict_decode64(contract["content"]) rescue nil
           if contract["decodedContent"]
-            contract["decodedParsedContent"] = PactBroker::Pacts::Parse.call(contract["decodedContent"]) rescue nil
+            if contract["contentType"]&.include?("json")
+              contract["decodedParsedContent"] = PactBroker::Pacts::Parse.call(contract["decodedContent"]) rescue nil
+            elsif contract["contentType"]&.include?("yml")
+              contract["decodedParsedContent"] = YAML.safe_load(contract["decodedContent"], [Time, Date, DateTime]) rescue nil
+            end
           end
         end
 
