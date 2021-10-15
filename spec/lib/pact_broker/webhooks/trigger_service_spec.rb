@@ -158,14 +158,14 @@ module PactBroker
 
             context "when a version is required because it was the main branch" do
               it "uses the main branch" do
-                 expect(webhook_repository).to receive(:create_triggered_webhook).with(
-                   anything,
-                   anything,
-                   anything,
-                   anything,
-                   anything,
-                   anything,
-                   hash_including(provider_version_branch: "the-main-branch")
+                expect(webhook_repository).to receive(:create_triggered_webhook).with(
+                  anything,
+                  anything,
+                  anything,
+                  anything,
+                  anything,
+                  anything,
+                  hash_including(provider_version_branch: "the-main-branch")
                 )
                 subject
               end
