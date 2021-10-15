@@ -1,3 +1,17 @@
+<a name="v2.89.0"></a>
+### v2.89.0 (2021-10-15)
+
+#### Features
+
+* add applicationInstance to deployed version resource as a replacement for target	 ([9bfafc8a](/../../commit/9bfafc8a))
+* apply allow_dangerous_contract_modification setting when publishing using the /contracts/publish endpoint	 ([956227fe](/../../commit/956227fe))
+* add support for matchingBranch property in consumer version selectors	 ([48068d29](/../../commit/48068d29))
+
+#### Bug Fixes
+
+* set missing provider branch name parameter for contract_requiring_verification_published webhooks	 ([777ccdd2](/../../commit/777ccdd2))
+* correct misnamed database port configuration property causing the PACT_BROKER_DATABASE_PORT not to be respected	 ([3d14013a](/../../commit/3d14013a))
+
 <a name="v2.88.0"></a>
 ### v2.88.0 (2021-10-11)
 
