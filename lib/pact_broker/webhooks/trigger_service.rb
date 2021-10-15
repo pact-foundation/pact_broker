@@ -135,12 +135,20 @@ module PactBroker
           required_verifications = verification_service.calculate_required_verifications_for_pact(pact)
           event_contexts.flat_map do | event_context |
             required_verifications.collect do | required_verification |
-              event_context.merge(provider_version_number: required_verification.provider_version.number, provider_version_descriptions: required_verification.provider_version_descriptions.uniq)
+              event_context.merge(
+                provider_version_number: required_verification.provider_version.number,
+                provider_version_branch: provider_version_branch_for_required_verification(required_verification, ),
+                provider_version_descriptions: required_verification.provider_version_descriptions.uniq
+              )
             end
           end
         else
           event_contexts
         end
+      end
+
+      def provider_version_branch_for_required_verification(required_verification)
+        required_verification.provider_version_selectors.find(&:latest_for_main_branch?)&.resolved_branch_name || required_verification.provider_version.branch_versions.last&.branch_name
       end
     end
   end

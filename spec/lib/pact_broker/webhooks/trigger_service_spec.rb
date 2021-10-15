@@ -1,4 +1,6 @@
 require "pact_broker/webhooks/trigger_service"
+require "pact_broker/versions/selectors"
+require "pact_broker/versions/selector"
 
 module PactBroker
   module Webhooks
@@ -59,7 +61,8 @@ module PactBroker
         let(:pact) { instance_double(PactBroker::Domain::Pact, consumer: consumer, provider: provider, consumer_version: consumer_version)}
         let(:consumer_version) { PactBroker::Domain::Version.new(number: "1.2.3") }
         let(:consumer) { PactBroker::Domain::Pacticipant.new(name: "Consumer") }
-        let(:provider) { PactBroker::Domain::Pacticipant.new(name: "Provider") }
+        let(:provider) { PactBroker::Domain::Pacticipant.new(name: "Provider", main_branch: provider_main_branch) }
+        let(:provider_main_branch) { "main" }
         let(:webhooks) { [webhook]}
         let(:webhook) do
           instance_double(PactBroker::Domain::Webhook,
@@ -127,10 +130,14 @@ module PactBroker
             let(:required_verifications) { [required_verification] }
             let(:required_verification) do
               instance_double("PactBroker::Verifications::RequiredVerification",
-                provider_version: double("version", number: "1"),
+                provider_version: double("version", number: "1", branch_versions: branch_versions),
+                provider_version_selectors: provider_version_selectors,
                 provider_version_descriptions: ["foo"]
               )
             end
+            let(:provider_version_selectors) { [instance_double("PactBroker::Versions::ResolvedSelector", latest_for_main_branch?: latest_for_main_branch, resolved_branch_name: "the-main-branch")] }
+            let(:latest_for_main_branch) { true }
+            let(:branch_versions) { [instance_double("PactBroker::Versions::BranchVersion", branch_name: "main")] }
 
             it "creates a triggered webhook for each required verification" do
               expect(webhook_repository).to receive(:create_triggered_webhook).with(
@@ -140,13 +147,70 @@ module PactBroker
                 verification,
                 TriggerService::RESOURCE_CREATION,
                 PactBroker::Webhooks::WebhookEvent::CONTRACT_REQUIRING_VERIFICATION_PUBLISHED,
-                expected_event_context.merge(provider_version_number: "1", provider_version_descriptions: ["foo"])
+                expected_event_context.merge(provider_version_number: "1", provider_version_branch: "the-main-branch", provider_version_descriptions: ["foo"])
               )
               subject
             end
 
             it "returns the triggered webhooks" do
               expect(subject.size).to eq 1
+            end
+
+            context "when a version is required because it was the main branch" do
+              it "uses the main branch" do
+                 expect(webhook_repository).to receive(:create_triggered_webhook).with(
+                   anything,
+                   anything,
+                   anything,
+                   anything,
+                   anything,
+                   anything,
+                   hash_including(provider_version_branch: "the-main-branch")
+                )
+                subject
+              end
+            end
+
+            context "when a version was required but not because it was for the main branch" do
+              let(:latest_for_main_branch) { false }
+
+              context "when there are multiple branches" do
+                let(:branch_versions) do
+                  [
+                    instance_double("PactBroker::Versions::BranchVersion", branch_name: "foo"),
+                    instance_double("PactBroker::Versions::BranchVersion", branch_name: "bar")
+                  ]
+                end
+                it "uses the last branch" do
+                  expect(webhook_repository).to receive(:create_triggered_webhook).with(
+                    anything,
+                    anything,
+                    anything,
+                    anything,
+                    anything,
+                    anything,
+                    hash_including(provider_version_branch: "bar")
+                 )
+                 subject
+                end
+              end
+
+              context "when there are no branches" do
+                let(:branch_versions) { [] }
+
+                it "uses nil" do
+                  expect(webhook_repository).to receive(:create_triggered_webhook).with(
+                    anything,
+                    anything,
+                    anything,
+                    anything,
+                    anything,
+                    anything,
+                    hash_including(provider_version_branch: nil)
+                 )
+                 subject
+                end
+              end
             end
 
             context "when there are no required verifications" do

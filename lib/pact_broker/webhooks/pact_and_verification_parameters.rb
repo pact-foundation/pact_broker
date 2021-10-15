@@ -171,8 +171,8 @@ module PactBroker
       end
 
       def provider_version_branch
-        if webhook_context[:provider_version_branch]
-          webhook_context[:provider_version_branch]
+        if webhook_context.key?(:provider_version_branch)
+          webhook_context[:provider_version_branch] || ""
         else
           verification&.provider_version&.branch || ""
         end

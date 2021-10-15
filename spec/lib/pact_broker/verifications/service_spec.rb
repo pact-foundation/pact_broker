@@ -112,12 +112,15 @@ module PactBroker
           end
 
           it "returns the required verification for the main branch" do
-            expect(subject).to eq [
-              RequiredVerification.new(
+            expect(subject).to contain_exactly(
+              have_attributes(
                 provider_version: td.find_version("Bar", "1"),
+                provider_version_selectors: contain_exactly(
+                  have_attributes(resolved_branch_name: "main", main_branch: true)
+                ),
                 provider_version_descriptions: ["latest from main branch"]
               )
-            ]
+            )
           end
         end
 
@@ -153,6 +156,7 @@ module PactBroker
             expect(subject).to eq [
               RequiredVerification.new(
                 provider_version: td.find_version("Bar", "1"),
+                provider_version_selectors: PactBroker::Versions::Selectors.new(PactBroker::Versions::Selector.for_currently_deployed),
                 provider_version_descriptions: ["deployed in test"]
               )
             ]
@@ -193,6 +197,7 @@ module PactBroker
             expect(subject).to eq [
               RequiredVerification.new(
                 provider_version: td.find_version("Bar", "1"),
+                provider_version_selectors: PactBroker::Versions::Selectors.new(PactBroker::Versions::Selector.for_currently_supported),
                 provider_version_descriptions: ["released in test"]
               )
             ]
@@ -231,15 +236,16 @@ module PactBroker
           end
 
           it "deduplicates the required versions" do
-            expect(subject).to eq [
-              RequiredVerification.new(
-              provider_version: td.find_version("Bar", "1"),
-              provider_version_descriptions: [
-                "latest from main branch",
-                "deployed in test",
-                "released in test"
-              ])
-            ]
+            expect(subject.size).to eq 1
+            expect(subject.first.provider_version).to eq td.find_version("Bar", "1")
+            expect(subject.first.provider_version_selectors[0]).to have_attributes(main_branch: true, resolved_branch_name: "main")
+            expect(subject.first.provider_version_selectors[1]).to eq PactBroker::Versions::Selector.for_currently_deployed
+            expect(subject.first.provider_version_selectors[2]).to eq PactBroker::Versions::Selector.for_currently_supported
+            expect(subject.first.provider_version_descriptions).to eq [
+                                                                        "latest from main branch",
+                                                                        "deployed in test",
+                                                                        "released in test"
+                                                                      ]
           end
         end
       end

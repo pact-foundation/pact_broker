@@ -136,83 +136,83 @@ module PactBroker
       end
 
       def self.overall_latest
-        Selector.new(latest: true)
+        new(latest: true)
       end
 
       def self.for_main_branch
-        Selector.new(main_branch: true)
+        new(main_branch: true)
       end
 
       def self.latest_for_tag(tag)
-        Selector.new(latest: true, tag: tag)
+        new(latest: true, tag: tag)
       end
 
       def self.latest_for_branch(branch)
-        Selector.new(latest: true, branch: branch)
+        new(latest: true, branch: branch)
       end
 
       def self.latest_for_tag_with_fallback(tag, fallback_tag)
-        Selector.new(latest: true, tag: tag, fallback_tag: fallback_tag)
+        new(latest: true, tag: tag, fallback_tag: fallback_tag)
       end
 
       def self.latest_for_branch_with_fallback(branch, fallback_branch)
-        Selector.new(latest: true, branch: branch, fallback_branch: fallback_branch)
+        new(latest: true, branch: branch, fallback_branch: fallback_branch)
       end
 
       def self.all_for_tag(tag)
-        Selector.new(tag: tag)
+        new(tag: tag)
       end
 
       def self.all_for_tag_and_consumer(tag, consumer)
-        Selector.new(tag: tag, consumer: consumer)
+        new(tag: tag, consumer: consumer)
       end
 
       def self.latest_for_tag_and_consumer(tag, consumer)
-        Selector.new(latest: true, tag: tag, consumer: consumer)
+        new(latest: true, tag: tag, consumer: consumer)
       end
 
       def self.latest_for_branch_and_consumer(branch, consumer)
-        Selector.new(latest: true, branch: branch, consumer: consumer)
+        new(latest: true, branch: branch, consumer: consumer)
       end
 
       def self.latest_for_consumer(consumer)
-        Selector.new(latest: true, consumer: consumer)
+        new(latest: true, consumer: consumer)
       end
 
       def self.for_currently_deployed(environment_name = nil)
-        Selector.new( { currently_deployed: true, environment_name: environment_name }.compact )
+        new( { currently_deployed: true, environment_name: environment_name }.compact )
       end
 
       def self.for_currently_supported(environment_name = nil)
-        Selector.new( { currently_supported: true, environment_name: environment_name }.compact )
+        new( { currently_supported: true, environment_name: environment_name }.compact )
       end
 
       def self.for_currently_deployed_and_consumer(consumer)
-        Selector.new(currently_deployed: true, consumer: consumer)
+        new(currently_deployed: true, consumer: consumer)
       end
 
       def self.for_currently_deployed_and_environment_and_consumer(environment_name, consumer)
-        Selector.new(currently_deployed: true, environment_name: environment_name, consumer: consumer)
+        new(currently_deployed: true, environment_name: environment_name, consumer: consumer)
       end
 
       def self.for_currently_supported_and_environment_and_consumer(environment_name, consumer)
-        Selector.new(currently_supported: true, environment_name: environment_name, consumer: consumer)
+        new(currently_supported: true, environment_name: environment_name, consumer: consumer)
       end
 
       def self.for_environment(environment_name)
-        Selector.new(environment_name: environment_name)
+        new(environment_name: environment_name)
       end
 
       def self.for_environment_and_consumer(environment_name, consumer)
-        Selector.new(environment_name: environment_name, consumer: consumer)
+        new(environment_name: environment_name, consumer: consumer)
       end
 
       def self.from_hash hash
-        Selector.new(hash)
+        new(hash)
       end
 
       def for_consumer(consumer)
-        Selector.new(to_h.merge(consumer: consumer))
+        self.class.new(to_h.merge(consumer: consumer))
       end
 
       def latest_for_main_branch?

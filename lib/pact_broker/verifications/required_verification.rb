@@ -1,7 +1,7 @@
 module PactBroker
   module Verifications
     class RequiredVerification
-      attr_reader :provider_version, :provider_version_descriptions
+      attr_reader :provider_version, :provider_version_selectors, :provider_version_descriptions
 
       def initialize(attributes = {})
         attributes.each do | (name, value) |
@@ -10,7 +10,9 @@ module PactBroker
       end
 
       def == other
-        provider_version == other.provider_version && provider_version_descriptions == other.provider_version_descriptions
+        provider_version == other.provider_version &&
+          provider_version_selectors == other.provider_version_selectors &&
+          provider_version_descriptions == other.provider_version_descriptions
       end
 
       def + other
@@ -20,6 +22,7 @@ module PactBroker
 
         RequiredVerification.new(
           provider_version: provider_version,
+          provider_version_selectors: provider_version_selectors + other.provider_version_selectors,
           provider_version_descriptions: (provider_version_descriptions + other.provider_version_descriptions).uniq
         )
       end
