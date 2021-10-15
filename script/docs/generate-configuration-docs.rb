@@ -1,9 +1,9 @@
 #!/usr/bin/env ruby
 
 INTRO = <<EOM
-<!-- This is a generated file. Please do not edit it directly. -->
+<!-- This is a generated file. Please do not edit it directly. The source is https://github.com/pact-foundation/pact_broker/blob/master/docs/configuration.yml -->
 
-The Pact Broker supports configuration via environment variables or a YAML file.
+The Pact Broker supports configuration via environment variables or a YAML file from version 2.87.0.1 of the Docker images.
 
 To configure the application using a YAML file, place it in the location `config/pact_broker.yml`,
 relative to the working directory of the application, or set the environment
@@ -94,14 +94,14 @@ end
 
 File.open(configuration_doc_path, "w") { |file| file << $stream.string }
 
-required_env_vars = []
-
-doc["groups"].each do | group |
-  group["vars"].each do | name, metadata |
-    required_env_vars << name if metadata["required"] && !metadata["default"]
-  end
+required_env_vars = doc["groups"].flat_map do | group |
+  group["vars"].collect do | name, _metadata |
+    if name != "port"
+      "env PACT_BROKER_#{name.upcase};"
+    end
+  end.compact
 end
 
-puts "Required:"
+puts "Env vars for https://github.com/DiUS/pact_broker-docker/blob/master/container/etc/nginx/main.d/pactbroker-env.conf :"
 puts required_env_vars
 puts configuration_doc_path
