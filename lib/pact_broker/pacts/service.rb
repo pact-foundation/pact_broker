@@ -156,7 +156,7 @@ module PactBroker
 
       # Overwriting an existing pact with the same consumer/provider/consumer version number
       def create_pact_revision params, existing_pact
-        logger.info "Updating existing pact publication with params #{params.reject{ |k, _v| k == :json_content}}"
+        logger.info "Updating existing pact publication", payload: params.reject{ |k, _v| k == :json_content }
         logger.debug "Content #{params[:json_content]}"
         pact_version_sha = generate_sha(params[:json_content])
         json_content = add_interaction_ids(params[:json_content])
