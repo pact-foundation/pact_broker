@@ -27,7 +27,8 @@ module PactBroker
       end
 
       def latest?
-        branch_head.branch_version_id == id
+        # Should not be possible, not to have a branch head, but have seen this error in the logs
+        branch_head&.branch_version_id == id
       end
 
       def version_number
