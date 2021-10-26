@@ -42,7 +42,7 @@ Example: This data structure represents the way a user might specify "I want to 
 
 `consumerVersionSelectors.environment`: the name of the environment containing the consumer versions for which to return the pacts. Used to further qualify `{ "deployed": true }` or `{ "released": true }`. Normally, this would not be needed, as it is recommended to verify the pacts for all currently deployed/currently supported released versions.
 
-`consumerVersionSelectors.latest`: true. Used in conjuction with the `tag` and `branch` properties. When used with a `branch`, it may be `true` or the key ommitted (in which case it will be inferred to be `true`). This is because it only makes sense to verify the latest pact for a branch. If a `tag` is specified, and `latest` is `true`, then the latest pact for each of the consumers with that tag will be returned. If a `tag` is specified and the latest flag is *not* set to `true`, *all* the pacts with the specified tag will be returned. (This might seem a bit weird, but it's done this way to match the syntax used for the matrix query params. See https://docs.pact.io/selectors). 
+`consumerVersionSelectors.latest`: true. Used in conjuction with the tag property. If a tag is specified, and latest is true, then the latest pact for each of the consumers with that tag will be returned. If a tag is specified and the latest flag is not set to true, all the pacts with the specified tag will be returned. (This might seem a bit weird, but it's done this way to match the syntax used for the matrix query params. See https://docs.pact.io/selectors).
 
 `consumerVersionSelectors.consumer`: allows a selector to only be applied to a certain consumer.
 
