@@ -33,7 +33,7 @@ module PactBroker
         end
         alias_method :to_h, :to_hash
 
-        def to_json(opts = nil)
+        def to_json(_opts = nil)
           (@source_hash || to_hash).to_json
         end
 

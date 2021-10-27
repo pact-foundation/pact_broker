@@ -72,12 +72,12 @@ module PactBroker
         end
 
         def decode_and_parse_content(contract)
-          contract["decodedContent"] = Base64.strict_decode64(contract["content"]) rescue nil
+          contract["decodedContent"] = base64_decode(contract["content"])
           if contract["decodedContent"]
             if contract["contentType"]&.include?("json")
-              contract["decodedParsedContent"] = PactBroker::Pacts::Parse.call(contract["decodedContent"]) rescue nil
+              contract["decodedParsedContent"] = parse_json(contract["decodedContent"])
             elsif contract["contentType"]&.include?("yml")
-              contract["decodedParsedContent"] = YAML.safe_load(contract["decodedContent"], [Time, Date, DateTime]) rescue nil
+              contract["decodedParsedContent"] = parse_yaml(contract["decodedContent"])
             end
           end
         end
@@ -101,6 +101,19 @@ module PactBroker
 
         def conflict_notices
           @conflict_notices ||= contract_service.conflict_notices(parsed_contracts)
+        end
+
+        def base64_decode(content)
+          Base64.strict_decode64(content) rescue nil
+        end
+
+        # TODO put this somewhere shareable
+        def parse_yaml(content)
+          YAML.safe_load(content, [Time, Date, DateTime]) rescue nil
+        end
+
+        def parse_json(content)
+          PactBroker::Pacts::Parse.call(content) rescue nil
         end
       end
     end
