@@ -1,3 +1,13 @@
+<a name="v2.89.1"></a>
+### v2.89.1 (2021-10-28)
+
+#### Bug Fixes
+
+* **clean**
+  * honour max_age when set in clean selector	 ([828420d4](/../../commit/828420d4))
+
+* null safe navigation in case a branch head does not exist for a branch version	 ([4b259a81](/../../commit/4b259a81))
+
 <a name="v2.89.0"></a>
 ### v2.89.0 (2021-10-15)
 
