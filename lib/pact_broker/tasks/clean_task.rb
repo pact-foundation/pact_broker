@@ -17,9 +17,9 @@ module PactBroker
       end
 
       def keep_version_selectors=(keep_version_selectors)
-        require "pact_broker/matrix/unresolved_selector"
+        require "pact_broker/db/clean/selector"
         @keep_version_selectors = [*keep_version_selectors].collect do | hash |
-          PactBroker::Matrix::UnresolvedSelector.from_hash(hash)
+          PactBroker::DB::Clean::Selector.from_hash(hash)
         end
       end
 
