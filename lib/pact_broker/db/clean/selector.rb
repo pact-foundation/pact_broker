@@ -22,6 +22,7 @@ module PactBroker
           new_hash = standard_hash.slice(*ATTRIBUTES)
           new_hash[:pacticipant_name] ||= standard_hash[:pacticipant] if standard_hash[:pacticipant]
           new_hash[:environment_name] ||= standard_hash[:environment] if standard_hash[:environment]
+          new_hash[:max_age] = Integer(new_hash[:max_age]) if new_hash[:max_age]
           new_hash[:source_hash] = hash
           new(new_hash.compact)
         end
