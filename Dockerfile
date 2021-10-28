@@ -7,6 +7,7 @@ ENV INSTALL_PG=true
 RUN apk update \
     && apk --no-cache add \
       "build-base>=0.5" \
+      "libucontext-dev>=1.0-r0" \
       "bash>=4.4" \
       "ca-certificates>=20190108" \
       "git>=2.20" \
