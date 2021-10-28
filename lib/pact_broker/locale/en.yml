@@ -46,7 +46,6 @@ en:
             gitlabVerificationStatus: The verification status using the correct keywords for posting to the Gitlab Commits API. See https://docs.gitlab.com/ee/api/commits.html#post-the-build-status-to-a-commit
             eventName: The name of the event that triggered the webhook
             buildUrl: The URL of the build that published the resources that have triggered the webhook (currently only supported for contracts published using the 'all in one' endpoint).
-            currentlyDeployedProviderVersionNumber: The version number of the currently deployed provider version (when used in a template, the webhook will be triggered once for each currently deployed provider version)
         no_webhooks_enabled_for_event: No enabled webhooks found for the detected events
         webhook_triggered_for_event: Webhook %{webhook_description} triggered for event %{event_name}.
         triggered_webhook_see_logs: View logs at %{url}

@@ -41,8 +41,7 @@ module PactBroker
         CONSUMER_LABELS,
         PROVIDER_LABELS,
         EVENT_NAME,
-        BUILD_URL,
-        CURRENTLY_DEPLOYED_PROVIDER_VERSION_NUMBER
+        BUILD_URL
       ]
 
       # TODO change this verification to the latest main branch
