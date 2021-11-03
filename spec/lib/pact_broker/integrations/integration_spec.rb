@@ -19,19 +19,19 @@ module PactBroker
         end
 
         it "has a relationship to the latest pact (eager)" do
-          integrations = Integration.eager(:latest_pact).order(:consumer_name, :provider_name).all
+          integrations = Integration.eager(:latest_pact).order(Sequel.desc(:id)).all
           expect(integrations.first.latest_pact.consumer_version_number).to eq "2"
           expect(integrations.last.latest_pact.consumer_version_number).to eq "1"
         end
 
         it "has a relationship to the latest pact (not eager)" do
-          integrations = Integration.order(:consumer_name, :provider_name).all
+          integrations = Integration.order(Sequel.desc(:id)).all
           expect(integrations.first.latest_pact.consumer_version_number).to eq "2"
           expect(integrations.last.latest_pact.consumer_version_number).to eq "1"
         end
 
         it "has a relationship to the latest verification via the latest pact" do
-          integration = Integration.eager(latest_pact: :latest_verification).order(:consumer_name, :provider_name).all.first
+          integration = Integration.eager(latest_pact: :latest_verification).order(Sequel.desc(:id)).all.first
           expect(integration.latest_pact.latest_verification.provider_version_number).to eq "4"
         end
 
@@ -40,12 +40,12 @@ module PactBroker
         end
 
         it "has a latest verification - this may not be the same as the latest verification for the latest pact" do
-          integration = Integration.eager(:latest_verification).order(:consumer_name, :provider_name).all.first
+          integration = Integration.eager(:latest_verification).order(Sequel.desc(:id)).all.first
           expect(integration.latest_verification.provider_version_number).to eq "4"
         end
 
         describe "latest_pact_or_verification_publication_date" do
-          let(:first_integration) { Integration.order(:consumer_name, :provider_name).first }
+          let(:first_integration) { Integration.order(:id).last }
 
           context "when the last publication is a verification" do
             it "returns the verification execution date" do
@@ -80,7 +80,7 @@ module PactBroker
         end
 
         it "returns a list of triggered webhooks" do
-          integrations = Integration.eager(:latest_triggered_webhooks).order(:consumer_name, :provider_name).all
+          integrations = Integration.eager(:latest_triggered_webhooks).order(Sequel.desc(:id)).all
           expect(integrations.first.latest_triggered_webhooks.count).to eq 1
         end
       end
@@ -99,7 +99,7 @@ module PactBroker
         end
 
         it "returns all the webhooks" do
-          integrations = Integration.eager(:webhooks).order(:consumer_name, :provider_name).all
+          integrations = Integration.eager(:webhooks).order(Sequel.desc(:id)).all
           expect(integrations.first.webhooks.count).to eq 3
         end
       end
