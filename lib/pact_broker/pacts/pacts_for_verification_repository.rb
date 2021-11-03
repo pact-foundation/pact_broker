@@ -111,7 +111,7 @@ module PactBroker
       end
 
       def create_selected_pact(pact_publication, selector)
-        resolved_selector = if selector.currently_deployed? || selector.currently_supported?
+        resolved_selector = if selector.currently_deployed? || selector.currently_supported? || selector.in_environment?
                               environment = environment_service.find_by_name(pact_publication.values.fetch(:environment_name))
                               selector.resolve_for_environment(pact_publication.consumer_version, environment, pact_publication.values[:target])
                             else
