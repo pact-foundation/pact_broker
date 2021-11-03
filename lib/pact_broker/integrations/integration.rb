@@ -6,8 +6,8 @@ require "pact_broker/webhooks/webhook"
 
 module PactBroker
   module Integrations
-    class Integration < Sequel::Model
-      set_primary_key [:consumer_id, :provider_id]
+    class Integration < Sequel::Model(Sequel::Model.db[:integrations].select(:id, :consumer_id, :provider_id))
+      plugin :insert_ignore, identifying_columns: [:consumer_id, :provider_id]
       associate(:many_to_one, :consumer, :class => "PactBroker::Domain::Pacticipant", :key => :consumer_id, :primary_key => :id)
       associate(:many_to_one, :provider, :class => "PactBroker::Domain::Pacticipant", :key => :provider_id, :primary_key => :id)
       associate(:one_to_one, :latest_verification, :class => "PactBroker::Verifications::LatestVerificationForConsumerAndProvider", key: [:consumer_id, :provider_id], primary_key: [:consumer_id, :provider_id])
@@ -67,6 +67,14 @@ module PactBroker
 
       def <=>(other)
         [consumer.name.downcase, provider.name.downcase] <=> [other.consumer.name.downcase, other.provider.name.downcase]
+      end
+
+      def consumer_name
+        consumer.name
+      end
+
+      def provider_name
+        provider.name
       end
     end
   end

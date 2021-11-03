@@ -37,6 +37,7 @@ module PactBroker
       end
 
       def create params
+        integration_repository.create_for_pact(params.fetch(:consumer_id), params.fetch(:provider_id))
         pact_version = find_or_create_pact_version(
           params.fetch(:consumer_id),
           params.fetch(:provider_id),

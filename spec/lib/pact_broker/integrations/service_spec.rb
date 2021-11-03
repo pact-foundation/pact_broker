@@ -33,6 +33,16 @@ module PactBroker
       describe "#delete" do
         subject { Service.delete("Foo", "Bar") }
 
+        describe "the integration" do
+          before do
+            td.create_pact_with_hierarchy("Foo", "1", "Bar")
+          end
+
+          it "deletes it" do
+            expect{ subject }.to change { Integration.count }.by(-1)
+          end
+        end
+
         context "with webhook data" do
           before do
             td.create_pact_with_hierarchy("Foo", "1", "Bar")
