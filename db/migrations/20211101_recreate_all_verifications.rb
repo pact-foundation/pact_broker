@@ -11,7 +11,7 @@ Sequel.migration do
         :provider_version_id,
         Sequel[:v][:number].as(:provider_version_number),
         Sequel[:v][:order].as(:provider_version_order),
-        Sequel[:v][:build_url],
+        Sequel[:verifications][:build_url],
         :pact_version_id,
         :execution_date,
         Sequel[:verifications][:created_at],
