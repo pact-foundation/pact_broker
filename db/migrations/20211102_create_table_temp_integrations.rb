@@ -6,6 +6,7 @@ Sequel.migration do
       foreign_key(:provider_id, :pacticipants, null: false, on_delete: :cascade, foreign_key_constraint_name: "integrations_provider_id_foreign_key")
       String :consumer_name
       String :provider_name
+      DateTime :created_at, null: false
     end
 
     # TODO drop these columns
