@@ -13,6 +13,10 @@ module PactBroker
         end
         nil
       end
+
+      def delete(consumer_id, provider_id)
+        Integration.where(consumer_id: consumer_id, provider_id: provider_id).delete
+      end
     end
   end
 end

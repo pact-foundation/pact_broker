@@ -69,6 +69,18 @@ module PactBroker
         end
       end
 
+      describe "delete" do
+        before do
+          td.create_pact_with_hierarchy("Foo", "1", "Bar")
+        end
+
+        subject { Repository.new.delete(td.consumer) }
+
+        it "deletes the integration" do
+          expect { subject }.to change{ PactBroker::Integrations::Integration.count }.by(-1)
+        end
+      end
+
       describe "#find" do
         before do
           td

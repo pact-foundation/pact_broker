@@ -41,7 +41,7 @@ module PactBroker
         pact_service.delete_all_pact_versions_between(consumer_name, and: provider_name)
         webhook_repository.delete_by_consumer_and_provider(consumer, provider)
         version_repository.delete_orphan_versions(consumer, provider)
-
+        integration_repository.delete(consumer.id, provider.id)
         pacticipant_service.delete_if_orphan(consumer)
         pacticipant_service.delete_if_orphan(provider) unless consumer == provider
       end
