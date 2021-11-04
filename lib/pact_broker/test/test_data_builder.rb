@@ -30,6 +30,7 @@ require "pact_broker/deployments/environment_service"
 require "pact_broker/deployments/deployed_version_service"
 require "pact_broker/deployments/released_version_service"
 require "pact_broker/versions/branch_version_repository"
+require "pact_broker/integrations/repository"
 require "ostruct"
 
 module PactBroker
@@ -154,6 +155,11 @@ module PactBroker
         params.delete(:comment)
         create_pacticipant provider_name, params
         @provider = @pacticipant
+        self
+      end
+
+      def create_integration
+        PactBroker::Integrations::Repository.new.create_for_pact(consumer.id, provider.id)
         self
       end
 

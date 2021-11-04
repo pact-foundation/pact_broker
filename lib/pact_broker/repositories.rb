@@ -47,6 +47,11 @@ module PactBroker
       PactBroker::Versions::BranchVersionRepository.new
     end
 
+    def integration_repository
+      require "pact_broker/integrations/repository"
+      PactBroker::Integrations::Repository.new
+    end
+
     extend self
   end
 end

@@ -6,8 +6,8 @@ require "pact_broker/webhooks/webhook"
 
 module PactBroker
   module Integrations
-    class Integration < Sequel::Model
-      set_primary_key [:consumer_id, :provider_id]
+    class Integration < Sequel::Model(Sequel::Model.db[:integrations].select(:id, :consumer_id, :provider_id))
+      plugin :insert_ignore, identifying_columns: [:consumer_id, :provider_id]
       associate(:many_to_one, :consumer, :class => "PactBroker::Domain::Pacticipant", :key => :consumer_id, :primary_key => :id)
       associate(:many_to_one, :provider, :class => "PactBroker::Domain::Pacticipant", :key => :provider_id, :primary_key => :id)
       associate(:one_to_one, :latest_verification, :class => "PactBroker::Verifications::LatestVerificationForConsumerAndProvider", key: [:consumer_id, :provider_id], primary_key: [:consumer_id, :provider_id])
@@ -18,7 +18,7 @@ module PactBroker
       # Update: now we have pagination, we should probably filter the pacts by consumer/provider id.
       LATEST_PACT_EAGER_LOADER = proc do |eo_opts|
         eo_opts[:rows].each do |integration|
-          integration.associations[:latest_pact] = []
+          integration.associations[:latest_pact] = nil
         end
 
         PactBroker::Pacts::PactPublication.overall_latest.each do | pact |
@@ -58,7 +58,7 @@ module PactBroker
       end
 
       def latest_pact_or_verification_publication_date
-        [latest_pact.created_at, latest_verification_publication_date].compact.max
+        [latest_pact&.created_at, latest_verification_publication_date].compact.max
       end
 
       def latest_verification_publication_date
@@ -67,6 +67,14 @@ module PactBroker
 
       def <=>(other)
         [consumer.name.downcase, provider.name.downcase] <=> [other.consumer.name.downcase, other.provider.name.downcase]
+      end
+
+      def consumer_name
+        consumer.name
+      end
+
+      def provider_name
+        provider.name
       end
     end
   end

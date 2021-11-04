@@ -79,7 +79,7 @@ module PactBroker
       def self.delete(name)
         pacticipant = find_pacticipant_by_name name
         webhook_service.delete_all_webhhook_related_objects_by_pacticipant(pacticipant)
-        pacticipant.destroy
+        pacticipant_repository.delete(pacticipant)
       end
 
       def self.delete_if_orphan(pacticipant)
