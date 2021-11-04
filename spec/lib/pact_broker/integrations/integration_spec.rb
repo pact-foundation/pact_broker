@@ -65,6 +65,18 @@ module PactBroker
               expect(first_integration.latest_pact_or_verification_publication_date.to_datetime).to eq date
             end
           end
+
+          context "when there is no pact or verification" do
+            before do
+              td.create_consumer("orphan-consumer")
+                .create_provider("orphan-consumer")
+                .create_integration
+            end
+
+            it "returns nil" do
+              expect(Integration.last.latest_pact_or_verification_publication_date).to be nil
+            end
+          end
         end
       end
 

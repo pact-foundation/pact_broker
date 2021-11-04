@@ -18,7 +18,7 @@ module PactBroker
       # Update: now we have pagination, we should probably filter the pacts by consumer/provider id.
       LATEST_PACT_EAGER_LOADER = proc do |eo_opts|
         eo_opts[:rows].each do |integration|
-          integration.associations[:latest_pact] = []
+          integration.associations[:latest_pact] = nil
         end
 
         PactBroker::Pacts::PactPublication.overall_latest.each do | pact |
@@ -58,7 +58,7 @@ module PactBroker
       end
 
       def latest_pact_or_verification_publication_date
-        [latest_pact.created_at, latest_verification_publication_date].compact.max
+        [latest_pact&.created_at, latest_verification_publication_date].compact.max
       end
 
       def latest_verification_publication_date
