@@ -69,7 +69,7 @@ module PactBroker
           context "when there is no pact or verification" do
             before do
               td.create_consumer("orphan-consumer")
-                .create_provider("orphan-consumer")
+                .create_provider("orphan-provider")
                 .create_integration
             end
 
