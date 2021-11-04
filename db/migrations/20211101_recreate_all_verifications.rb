@@ -14,7 +14,8 @@ Sequel.migration do
         Sequel[:v][:build_url],
         :pact_version_id,
         :execution_date,
-        Sequel[:verifications][:created_at]
+        Sequel[:verifications][:created_at],
+        :test_results
         ).join(:versions, {id: :provider_version_id}, {:table_alias => :v})
     )
   end
