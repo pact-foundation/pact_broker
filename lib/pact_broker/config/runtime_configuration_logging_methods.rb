@@ -38,8 +38,12 @@ module PactBroker
           if value && name.to_s.end_with?("_url")
             begin
               uri = URI(value)
-              uri.password = "*****"
-              uri.to_s
+              if uri.password
+                uri.password = "*****"
+                uri.to_s
+              else
+                value
+              end
             rescue StandardError
               "*****"
             end
