@@ -15,7 +15,6 @@ describe "executing a webhook to a server with a self signed certificate" do
     wait_for_server_to_start
   end
 
-  let(:td) { TestDataBuilder.new }
   let(:webhook_request) do
     PactBroker::Domain::WebhookRequest.new(
       method: "get",
@@ -30,9 +29,22 @@ describe "executing a webhook to a server with a self signed certificate" do
     end
   end
 
-  context "with the correct cacert" do
+  context "with the correct cacert in the database" do
     let!(:certificate) do
       td.create_certificate(path: "spec/fixtures/certificates/cacert.pem")
+    end
+
+    it "succeeds" do
+      puts subject.body unless subject.code == "200"
+      expect(subject.code).to eq "200"
+    end
+  end
+
+  context "with the correct embedded cacert in the configuration" do
+    include Anyway::Testing::Helpers
+
+    around do |ex|
+      with_env("PACT_BROKER_CONF" => PactBroker.project_root.join("spec/support/config_webhook_certificates.yml").to_s, &ex)
     end
 
     it "succeeds" do

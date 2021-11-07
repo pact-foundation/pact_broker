@@ -52,6 +52,7 @@ module PactBroker
         webhook_scheme_whitelist: ["https"],
         webhook_host_whitelist: [],
         disable_ssl_verification: false,
+        webhook_certificates: [],
         user_agent: "Pact Broker v#{PactBroker::VERSION}",
       )
 
@@ -172,6 +173,14 @@ module PactBroker
 
       def features= features
         super(value_to_string_array(features, "features").collect(&:downcase))
+      end
+
+      def webhook_certificates= webhook_certificates
+        if webhook_certificates.is_a?(Array)
+          super(webhook_certificates.collect(&:symbolize_keys))
+        elsif !webhook_certificates.nil?
+          raise_validation_error("webhook_certificates must be an array")
+        end
       end
 
       def warning_error_classes

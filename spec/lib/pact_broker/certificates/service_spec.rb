@@ -41,37 +41,74 @@ module PactBroker
       end
 
       describe "#find_all_certificates" do
-        let!(:certificate) do
-          Certificate.create(uuid: "1234", content: certificate_content)
-        end
-
         subject { Service.find_all_certificates }
 
-        context "with a valid certificate chain" do
-          it "returns all the X509 Certificate objects" do
-            expect(subject.size).to eq 2
+        context "with a certificate from the configuration (embedded)" do
+          before do
+            allow(PactBroker.configuration).to receive(:webhook_certificates).and_return([{ description: "foo", content: File.read("spec/fixtures/certificates/cacert.pem") }])
           end
-        end
-
-        context "with a valid CA file" do
-          let(:certificate_content) { File.read("spec/fixtures/certificates/cacert.pem") }
 
           it "returns all the X509 Certificate objects" do
-            expect(logger).to_not receive(:error).with(/Error.*1234/)
             expect(subject.size).to eq 1
           end
         end
 
-        context "with an invalid certificate file" do
-          let(:certificate_content) { File.read("spec/fixtures/certificate-invalid.pem") }
-
-          it "logs an error" do
-            expect(logger).to receive(:warn).with(/Error.*1234/, StandardError)
-            subject
+        context "with a certificate from the configuration (path)" do
+          before do
+            allow(PactBroker.configuration).to receive(:webhook_certificates).and_return([{ description: "foo", path: "spec/fixtures/certificates/cacert.pem" }])
           end
 
-          it "returns all the valid X509 Certificate objects" do
+          it "returns all the X509 Certificate objects" do
             expect(subject.size).to eq 1
+          end
+
+          context "when the file does not exist" do
+            before do
+              allow(PactBroker.configuration).to receive(:webhook_certificates).and_return([{ description: "foo", path: "wrong" }])
+            end
+
+            it "logs an error" do
+              expect(logger).to receive(:warn).with(/Error.*foo/, StandardError)
+              subject
+            end
+
+            it "does not return the certificate" do
+              expect(subject.size).to eq 0
+            end
+          end
+        end
+
+        context "with a certificate in the database" do
+          let!(:certificate) do
+            Certificate.create(uuid: "1234", content: certificate_content)
+          end
+
+          context "with a valid certificate chain" do
+            it "returns all the X509 Certificate objects" do
+              expect(subject.size).to eq 2
+            end
+          end
+
+          context "with a valid CA file" do
+            let(:certificate_content) { File.read("spec/fixtures/certificates/cacert.pem") }
+
+            it "returns all the X509 Certificate objects" do
+              expect(logger).to_not receive(:error).with(/Error.*1234/)
+              expect(subject.size).to eq 1
+            end
+          end
+
+          context "with an invalid certificate file" do
+            let(:certificate_content) { File.read("spec/fixtures/certificate-invalid.pem") }
+
+            it "logs an error" do
+              expect(logger).to receive(:warn).with(/Error.*1234/, StandardError)
+              subject
+            end
+
+            it "returns all the valid X509 Certificate objects" do
+              expect(subject.size).to eq 1
+            end
           end
         end
       end
