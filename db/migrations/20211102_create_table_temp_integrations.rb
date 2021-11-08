@@ -9,7 +9,7 @@ Sequel.migration do
       String :consumer_name
       String :provider_name
       DateTime :created_at, null: false
-      add_index([:provider_id, :consumer_id], unique: true, name: "integrations_consumer_id_provider_id_unique")
+      index([:provider_id, :consumer_id], unique: true, name: "integrations_consumer_id_provider_id_unique")
     end
 
     # TODO drop these columns
