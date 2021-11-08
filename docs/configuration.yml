@@ -264,6 +264,7 @@ groups:
           The certificate configuration is not validated on startup. If any of the configured certificates cannot be loaded during the execution of a webhook, an error
           will be logged, and they will be ignored. You can check if the configuration is working by testing the execution of
           a webhook that connects to the server with the self signed certificate by following these instructions https://docs.pact.io/pact_broker/webhooks/debugging_webhooks#testing-webhook-execution
+        supported_versions: From v2.90.0
       disable_ssl_verification:
         description: "If set to true, SSL verification will be disabled for the HTTP requests made by the webhooks"
         default_value: false
