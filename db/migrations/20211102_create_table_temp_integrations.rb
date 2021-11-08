@@ -1,5 +1,7 @@
 Sequel.migration do
   up do
+    # Have not created indexes on the consumer_id or provider_id because the table is likely to be small
+    # (in the 10s or 100s) and it would probably just do a full table scan anyway.
     create_table(:temp_integrations, charset: "utf8") do
       primary_key :id
       foreign_key(:consumer_id, :pacticipants, null: false, on_delete: :cascade, foreign_key_constraint_name: "integrations_consumer_id_foreign_key")
@@ -7,6 +9,7 @@ Sequel.migration do
       String :consumer_name
       String :provider_name
       DateTime :created_at, null: false
+      add_index([:provider_id, :consumer_id], unique: true, name: "integrations_consumer_id_provider_id_unique")
     end
 
     # TODO drop these columns
