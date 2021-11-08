@@ -322,6 +322,14 @@ groups:
         allowed_values:
           - true
           - false
+      use_hal_browser:
+        description: |-
+          Whether or not to enable the embedded HAL Browser.
+        default_value: true
+        allowed_values:
+          - true
+          - false
+        more_info: https://github.com/mikekelly/hal-browser
   - title: Domain
     vars:
       check_for_potential_duplicate_pacticipant_names:

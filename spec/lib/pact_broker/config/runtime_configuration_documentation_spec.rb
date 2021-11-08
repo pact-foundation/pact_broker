@@ -9,7 +9,6 @@ module PactBroker
       DELIBERATELY_UNDOCUMENTED_ATTRIBUTES = [
         :warning_error_class_names,
         :log_configuration_on_startup,
-        :use_hal_browser,
         :use_rack_protection,
         :use_case_sensitive_resource_names,
         :order_versions_by_date,
