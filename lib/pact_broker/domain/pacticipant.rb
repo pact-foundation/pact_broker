@@ -103,6 +103,8 @@ end
 # Referenced By:
 #  branches                                                     | branches_pacticipant_id_fkey                                    | (pacticipant_id) REFERENCES pacticipants(id) ON DELETE CASCADE
 #  currently_deployed_version_ids                               | currently_deployed_version_ids_pacticipant_id_fkey              | (pacticipant_id) REFERENCES pacticipants(id) ON DELETE CASCADE
+#  integrations                                                 | integrations_consumer_id_foreign_key                            | (consumer_id) REFERENCES pacticipants(id) ON DELETE CASCADE
+#  integrations                                                 | integrations_provider_id_foreign_key                            | (provider_id) REFERENCES pacticipants(id) ON DELETE CASCADE
 #  labels                                                       | labels_pacticipant_id_fkey                                      | (pacticipant_id) REFERENCES pacticipants(id)
 #  latest_pact_publication_ids_for_consumer_versions            | latest_pact_publication_ids_for_consumer_versi_consumer_id_fkey | (consumer_id) REFERENCES pacticipants(id) ON DELETE CASCADE
 #  latest_pact_publication_ids_for_consumer_versions            | latest_pact_publication_ids_for_consumer_versi_provider_id_fkey | (provider_id) REFERENCES pacticipants(id) ON DELETE CASCADE
