@@ -12,21 +12,43 @@ module PactBroker
 
         let(:dataset) { double("integrations") }
         let(:integrations) { [ integration_1, integration_2 ] }
+        let(:latest_pact_or_verification_publication_date_1) { DateTime.new(2019, 1, 1) }
+        let(:latest_pact_or_verification_publication_date_2) { DateTime.new(2019, 2, 1) }
         let(:integration_1) do
-          double(
-            "integration 1",
-            latest_pact_or_verification_publication_date: DateTime.new(2019, 1, 1)
-          )
+          int = Integration.new
+          allow(int).to receive(:consumer_name).and_return("consumer 1")
+          allow(int).to receive(:provider_name).and_return("provider 1")
+          allow(int).to receive(:latest_pact_or_verification_publication_date).and_return(latest_pact_or_verification_publication_date_1)
+          int
         end
+
         let(:integration_2) do
-          double(
-            "integration 2",
-            latest_pact_or_verification_publication_date: DateTime.new(2019, 2, 1)
-          )
+          int = Integration.new
+          allow(int).to receive(:consumer_name).and_return("consumer 2")
+          allow(int).to receive(:provider_name).and_return("provider 2")
+          allow(int).to receive(:latest_pact_or_verification_publication_date).and_return(latest_pact_or_verification_publication_date_2)
+          int
         end
 
         it "sorts the integrations with the most recently active first so that the UI doesn't need to do it" do
           expect(Service.find_all.first).to be integration_2
+        end
+
+        context "when an integration has no publication date" do
+          let(:latest_pact_or_verification_publication_date_1) { nil }
+
+          it "sorts the integration with the nil date last" do
+            expect(Service.find_all.first).to be integration_2
+          end
+        end
+
+        context "when all integrations have no publication date" do
+          let(:latest_pact_or_verification_publication_date_1) { nil }
+          let(:latest_pact_or_verification_publication_date_2) { nil }
+
+          it "sorts the integrations by name" do
+            expect(Service.find_all.first).to be integration_1
+          end
         end
       end
 

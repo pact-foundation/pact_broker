@@ -29,7 +29,7 @@ module PactBroker
           .eager(latest_pact: [:latest_verification, :pact_version])
           .eager(:latest_verification)
           .all
-          .sort { | a, b| b.latest_pact_or_verification_publication_date <=> a.latest_pact_or_verification_publication_date }
+          .sort { | a, b| Integration.compare_by_last_action_date(a, b) }
       end
 
       def self.delete(consumer_name, provider_name)

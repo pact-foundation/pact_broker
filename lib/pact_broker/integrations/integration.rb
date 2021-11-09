@@ -53,6 +53,18 @@ module PactBroker
         end
       end)
 
+      def self.compare_by_last_action_date a, b
+        if b.latest_pact_or_verification_publication_date && a.latest_pact_or_verification_publication_date
+          b.latest_pact_or_verification_publication_date <=> a.latest_pact_or_verification_publication_date
+        elsif b.latest_pact_or_verification_publication_date
+          1
+        elsif a.latest_pact_or_verification_publication_date
+          -1
+        else
+          a <=> b
+        end
+      end
+
       def verification_status_for_latest_pact
         @verification_status_for_latest_pact ||= PactBroker::Verifications::PseudoBranchStatus.new(latest_pact, latest_pact&.latest_verification)
       end
@@ -66,7 +78,7 @@ module PactBroker
       end
 
       def <=>(other)
-        [consumer.name.downcase, provider.name.downcase] <=> [other.consumer.name.downcase, other.provider.name.downcase]
+        [consumer_name.downcase, provider_name.downcase] <=> [other.consumer_name.downcase, other.provider_name.downcase]
       end
 
       def consumer_name
