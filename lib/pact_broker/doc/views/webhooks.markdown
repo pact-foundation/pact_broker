@@ -154,7 +154,7 @@ and how it has been triggered.
 ##### contract published/changed
 
 * *Consumer version*: The consumer version the pact is published with.
-* *Provider version*: This is the provider version of the latest verification for this pact content from the main branch of the provider, if it exists.  Otherwise, it is the overall latest provider version that has verified the pact content.
+* *Provider version*: This is the provider version of the latest verification for this pact content from the main branch of the provider, if it exists.  Otherwise, it is the overall latest provider version that has verified the pact content. If there is none, it will be empty.
 
 ##### contract requiring verification published
 
