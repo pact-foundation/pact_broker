@@ -34,7 +34,7 @@ en:
             consumerVersionTags: The list of tag names for the most recent consumer version associated with the pact content, separated by ", "
             consumerVersionBranch: The repository branch associated with the consumer version
             providerVersionTags: The list of tag names for the provider version associated with the verification result, separated by ", ".
-            providerVersionDescriptions: The descriptions of the provider version(s) for which the contract_requiring_verification_published webhook has been triggered.
+            providerVersionDescriptions: The descriptions of the provider version(s) for which the contract_requiring_verification_published webhook has been triggered. Only populated for the contract_requiring_verification_published event.
             providerVersionBranch: The repository branch associated with the provider version
             consumerLabels: The list of labels for the consumer associated with the pact content, separated by ", ".
             providerLabels: The list of labels for the provider associated with the pact content, separated by ", ".

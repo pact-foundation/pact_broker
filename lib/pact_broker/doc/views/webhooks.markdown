@@ -102,6 +102,8 @@ Webhooks can be created to match events of certain set of [consumers or provider
 
 `contract_content_changed:` triggered when the content of the contract, or tags applied to the contract have changed since the previous publication. If `base_equality_only_on_content_that_affects_verification_results` is set to `true` in the configuration (the default), any changes to whitespace, ordering of keys, or the ordering of the `interactions` or `messages` will be ignored, and will not trigger this event. It is recommended to trigger a provider verification build for this event.
 
+`contract_requiring_verification_published:` when a pact is published, triggered once for each unique provider version that is either the latest from the main branch of the provider, or is currently deployed or released.
+
 `provider_verification_published:` triggered whenever a provider publishes a verification result.
 
 `provider_verification_succeeded:` triggered whenever a provider publishes a successful verification result.
@@ -127,6 +129,7 @@ The following variables may be used in the request path, parameters or body, and
 * `${pactbroker.bitbucketVerificationStatus}`: the verification status using the correct keywords for posting to the the [Bitbucket commit status API](https://developer.atlassian.com/server/bitbucket/how-tos/updating-build-status-for-commits/).
 * `${pactbroker.gitlabVerificationStatus}`: the verification status using the correct keywords for posting to the the [Gitlab Commits API](https://docs.gitlab.com/ee/api/commits.html#post-the-build-status-to-a-commit).
 * `${pactbroker.verificationResultUrl}`: the URL to the relevant verification result.
+* `${pactbroker.providerVersionDescriptions}`: The descriptions of the provider version(s) for which the contract_requiring_verification_published webhook has been triggered. Only populated for the contract_requiring_verification_published event.
 
 Example usage:
 
@@ -142,6 +145,26 @@ Example usage:
         }
       }
     }
+
+#### Pacticipant versions used in the template parameters
+
+The consumer version and provider version will be populated from different sources depending on which event has been triggered,
+and how it has been triggered.
+
+##### contract published/changed
+
+* *Consumer version*: The consumer version the pact is published with.
+* *Provider version*: This is the provider version of the latest verification for this pact content from the main branch of the provider, if it exists.  Otherwise, it is the overall latest provider version that has verified the pact content.
+
+##### contract requiring verification published
+
+* *Consumer version*: The consumer version the pact is published with.
+* *Provider version*: A webhook will be triggered for each unique provider version that is either the latest from the main branch of the provider, or is currently deployed or released.
+
+##### provider verification published/failed/succeeded
+
+* *Consumer version*: If the pact was verified using the URL  passed through from the webhook, then the consumer version will be the one from the pact publication that triggered the webhook.  If the result was from the provider verification task, then a webhook will be triggered for each unique consumer version identified by the consumer version selectors that selected that pact content.
+* *Provider version*: The provider version that the verification was published with.
 
 <a name="whitelist"></a>
 ### Webhook Whitelist
