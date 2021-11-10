@@ -18,6 +18,7 @@ RSpec.describe "passing the pact selection criteria through the verification res
 
   context "when verifying the latest pact by URL" do
     let(:pact_url) { PactBroker::Api::PactBrokerUrls.latest_pact_url("", pact) }
+
     it "passes the consumer version number into the verification event context" do
       response = get(pact_url)
       publish_verification_results_url = JSON.parse(response.body)["_links"]["pb:publish-verification-results"]["href"]
