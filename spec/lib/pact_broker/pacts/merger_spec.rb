@@ -160,6 +160,16 @@ module PactBroker
             pact_to_compare["interactions"][0]["request"]["headers"].delete("Content-Type")
             expect(compare_pacts(example_pact, pact_to_compare)).to eq true
           end
+
+          it "returns true if the existing pact has no interactions and the new one does" do
+            example_pact["interactions"] = nil
+            expect(compare_pacts(example_pact, pact_to_compare)).to eq true
+          end
+
+          it "returns true if the new pact has no interactions and the existing one does" do
+            pact_to_compare["interactions"] = nil
+            expect(compare_pacts(example_pact, pact_to_compare)).to eq true
+          end
         end
 
         def compare_pacts(a, b)

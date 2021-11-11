@@ -9,10 +9,14 @@ module PactBroker
       def conflict? original_json, additional_json
         original, additional = [original_json, additional_json].map{|str| JSON.parse(str, PACT_PARSING_OPTIONS) }
 
-        additional["interactions"].any? do |new_interaction|
-          original["interactions"].any? do |original_interaction|
-            same_description_and_state?(original_interaction, new_interaction) &&
-              !same_request_properties?(original_interaction["request"], new_interaction["request"])
+        if original["interactions"].nil? || additional["interactions"].nil?
+          true
+        else
+          additional["interactions"].any? do |new_interaction|
+            original["interactions"].any? do |original_interaction|
+              same_description_and_state?(original_interaction, new_interaction) &&
+                !same_request_properties?(original_interaction["request"], new_interaction["request"])
+            end
           end
         end
       end
