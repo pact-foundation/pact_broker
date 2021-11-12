@@ -1,5 +1,5 @@
 port: 9292
-log_dir: null
+log_stream: stdout
 log_level: info
 basic_auth_enabled: false # set to true to enable the user below
 basic_auth_username: "user"

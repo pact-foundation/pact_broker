@@ -25,7 +25,7 @@ bundle install
 Run Pact Broker
 
 ```bash
-bundle exec puma
+RACK_ENV=production bundle exec puma
 ```
 
 Now Pact Broker can be access locally at [http://localhost:9292](http://localhost:9292).
@@ -55,7 +55,7 @@ bundle install
 Run Pact Broker
 
 ```bash
-bundle exec puma
+RACK_ENV=production bundle exec puma
 ```
 
 Now Pact Broker can be access locally at [http://localhost:9292](http://localhost:9292).
