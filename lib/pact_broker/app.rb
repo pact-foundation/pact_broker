@@ -46,7 +46,7 @@ module PactBroker
       # Can only be required after database connection has been made because the decorators rely on the Sequel models
       @create_pact_broker_api_block = ->() { require "pact_broker/api"; PactBroker::API }
       @configuration = PactBroker.configuration
-      yield configuration
+      yield configuration if block_given?
       post_configure
       prepare_database
       load_configuration_from_database
