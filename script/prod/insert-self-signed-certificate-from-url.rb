@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# Requires openssl to be installed on the machine
 
 require "uri"
 require "securerandom"
@@ -11,11 +12,10 @@ raise "Usage: #{__FILE__} URI SQLITE_DATABASE_PATH" unless uri_string && databas
 
 # Modify this hash with the configuration for your database
 # For example, a postgres connection would look like:
-# DATABASE_CREDENTIALS = {logger: Logger.new($stdout), adapter: "postgres", host: "HOST", username: "USERNAME", password: "PASSWORD", :encoding => 'utf8'}
-DATABASE_CREDENTIALS = {logger: Logger.new($stdout), adapter: "sqlite", database: database, :encoding => "utf8"}
+# DATABASE_CREDENTIALS = { logger: Logger.new($stdout), adapter: "postgres", host: "HOST", username: "USERNAME", password: "PASSWORD", :encoding => 'utf8' }
+DATABASE_CREDENTIALS = { logger: Logger.new($stdout), adapter: "sqlite", database: database, :encoding => "utf8" }
 
 uri = URI(uri_string)
-connection = Sequel.connect(DATABASE_CREDENTIALS)
 
 certificate_command = "openssl s_client -showcerts -servername #{uri.host} -connect #{uri.host}:#{uri.port} </dev/null 2>/dev/null | openssl x509 -outform PEM"
 certificate_content = `#{certificate_command}`
@@ -30,6 +30,8 @@ certificate_hash = {
   updated_at: DateTime.now
 }
 
-connection[:certificates].insert(certificate_hash)
+Sequel.connect(DATABASE_CREDENTIALS) do | connection |
+  connection[:certificates].insert(certificate_hash)
+end
 
 puts "Done"
