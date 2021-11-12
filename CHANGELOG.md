@@ -1,3 +1,21 @@
+<a name="v2.90.0"></a>
+### v2.90.0 (2021-11-12)
+
+#### Features
+
+* do not let clean task delete currently deployed or currently released+supported versions	 ([b05f0b67](/../../commit/b05f0b67))
+* allow webhook certificates to be configured in the pact_broker.yml file	 ([7c60c955](/../../commit/7c60c955))
+
+#### Bug Fixes
+
+* handle conflict check for pacts where the interactions are missing in one or the other	 ([71844f0f](/../../commit/71844f0f))
+* fix error that occurs in some versions of Sqlite when running 20210702_drop_unused_columns_from_deployed_versions.rb	 ([0daa4459](/../../commit/0daa4459))
+* correct logic when redacting database URL without a password	 ([30d66cf7](/../../commit/30d66cf7))
+* set resolved environment for environment selectors	 ([f02474b7](/../../commit/f02474b7))
+
+* **deps**
+  * upgrade to bootstrap v4.6.1	 ([0433107c](/../../commit/0433107c))
+
 <a name="v2.89.1"></a>
 ### v2.89.1 (2021-10-28)
 
