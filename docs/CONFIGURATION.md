@@ -392,6 +392,26 @@ Please read the [Webhook whitelists section](https://docs.pact.io/pact_broker/co
 **Examples:** `github.com`, `10.2.3.41/24`, `/.*\\.foo\\.com$/`<br/>
 **More information:** https://docs.pact.io/pact_broker/configuration/#webhook-whitelists<br/>
 
+### webhook_certificates
+
+A list of SSL certificate configuration objects with the keys `description`, and either `content` or `path`. These
+certificates are used when a webhook needs to connect to a server that uses a self signed certificate.
+
+Each certificate configuration item accepts a chain of certificates in PEM format - there may be multiple 'BEGIN CERTIFICATE' and 'END CERTIFICATE' in the content of each item.
+
+When setting the content, use the syntax "content: |-" followed by a new line, and then the contents of the certificate
+chain in PEM format, indented by 2 more characters.
+
+When setting the path, the full path to the certificate file in PEM format must be specified.
+
+The certificate configuration is not validated on startup. If any of the configured certificates cannot be loaded during the execution of a webhook, an error
+will be logged, and they will be ignored. You can check if the configuration is working by testing the execution of
+a webhook that connects to the server with the self signed certificate by following these instructions https://docs.pact.io/pact_broker/webhooks/debugging_webhooks#testing-webhook-execution
+
+**YAML configuration key name:** `webhook_certificates`<br/>
+**Environment variable name:** `PACT_BROKER_WEBHOOK_CERTIFICATES`<br/>
+**Supported versions:** From v2.90.0<br/>
+
 ### disable_ssl_verification
 
 If set to true, SSL verification will be disabled for the HTTP requests made by the webhooks
@@ -480,6 +500,16 @@ is available (do not use this for load balancing, as it makes a database connect
 **Environment variable name:** `PACT_BROKER_ENABLE_DIAGNOSTIC_ENDPOINTS`<br/>
 **Default:** `true`<br/>
 **Allowed values:** `true`, `false`<br/>
+
+### use_hal_browser
+
+Whether or not to enable the embedded HAL Browser.
+
+**YAML configuration key name:** `use_hal_browser`<br/>
+**Environment variable name:** `PACT_BROKER_USE_HAL_BROWSER`<br/>
+**Default:** `true`<br/>
+**Allowed values:** `true`, `false`<br/>
+**More information:** https://github.com/mikekelly/hal-browser<br/>
 
 <br/>
 
