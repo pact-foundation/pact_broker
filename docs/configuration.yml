@@ -251,7 +251,7 @@ groups:
         more_info: https://docs.pact.io/pact_broker/configuration/#webhook-whitelists
       webhook_certificates:
         description: |-
-          A list of SSL certificate configuration objects with the keys `description`, and either `content` or `path`. These
+          A list of SSL certificate configuration objects with the key `description`, and either `content` or `path`. These
           certificates are used when a webhook needs to connect to a server that uses a self signed certificate.
 
           Each certificate configuration item accepts a chain of certificates in PEM format - there may be multiple 'BEGIN CERTIFICATE' and 'END CERTIFICATE' in the content of each item.
