@@ -24,7 +24,7 @@ Gem::Specification.new do |gem|
                             include_list = include_patterns.flat_map{ | pattern | Dir.glob(pattern) } - exclude_patterns.flat_map{ | pattern | Dir.glob(pattern) }
 
                             `git ls-files -z`.split("\x0") & include_list
-                          end.tap { |it| puts it }
+                          end
                         else
                           # Can't remember why this is ever needed
                           root_path      = File.dirname(__FILE__)
