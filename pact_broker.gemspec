@@ -18,8 +18,15 @@ Gem::Specification.new do |gem|
 
   gem.files         = begin
                         if Dir.exist?(".git")
-                          `git ls-files`.split($/)
+                          Dir.chdir(File.expand_path(__dir__)) do
+                            include_patterns = %w[lib/**/* db/**/* docs/**/*.md public/**/* vendor/**/* README.md CHANGELOG.md Gemfile pact_broker.gemspec]
+                            exclude_patterns = %w[db/test/**/*]
+                            include_list = include_patterns.flat_map{ | pattern | Dir.glob(pattern) } - exclude_patterns.flat_map{ | pattern | Dir.glob(pattern) }
+
+                            `git ls-files -z`.split("\x0") & include_list
+                          end.tap { |it| puts it }
                         else
+                          # Can't remember why this is ever needed
                           root_path      = File.dirname(__FILE__)
                           all_files      = Dir.chdir(root_path) { Dir.glob("**/{*,.*}") }
                           all_files.reject! { |file| [".", ".."].include?(File.basename(file)) || File.directory?(file)}
