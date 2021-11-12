@@ -1,6 +1,9 @@
 #!/usr/bin/env ruby
 # Requires openssl to be installed on the machine
 
+require "bundler/setup"
+Bundler.require
+
 require "uri"
 require "securerandom"
 require "logger"
@@ -8,7 +11,7 @@ require "sequel"
 
 uri_string = ARGV[0]
 database = ARGV[1]
-raise "Usage: #{__FILE__} URI SQLITE_DATABASE_PATH" unless uri_string && database
+raise "Usage: bundle exec #{__FILE__} URI SQLITE_DATABASE_PATH" unless uri_string && database
 
 # Modify this hash with the configuration for your database
 # For example, a postgres connection would look like:
