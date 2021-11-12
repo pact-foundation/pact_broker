@@ -43,14 +43,7 @@ module PactBroker
               if keep_version_selectors.nil? || keep_version_selectors.empty?
                 raise PactBroker::Error.new("You must specify which versions to keep")
               else
-                if keep_version_selectors.none?(&:currently_deployed?)
-                  keep_version_selectors << PactBroker::DB::Clean::Selector.new(deployed: true)
-                end
-
-                if keep_version_selectors.none?(&:currently_supported?)
-                  keep_version_selectors <<  PactBroker::DB::Clean::Selector.new(released: true)
-                end
-
+                add_defaults_to_keep_selectors
                 output "#{prefix}Deleting oldest #{version_deletion_limit} versions, keeping versions that match the configured selectors", keep_version_selectors
               end
 
@@ -71,6 +64,16 @@ module PactBroker
 
       def output string, payload = {}
         logger ? logger.info(string, payload: payload) : puts("#{string} #{payload.to_json}")
+      end
+
+      def add_defaults_to_keep_selectors
+        if keep_version_selectors.none?(&:currently_deployed?)
+          keep_version_selectors << PactBroker::DB::Clean::Selector.new(deployed: true)
+        end
+
+        if keep_version_selectors.none?(&:currently_supported?)
+          keep_version_selectors <<  PactBroker::DB::Clean::Selector.new(released: true)
+        end
       end
     end
   end
