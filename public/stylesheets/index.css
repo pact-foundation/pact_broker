@@ -1,3 +1,12 @@
+:root {
+  /* See public/javascripts/set-css-asset-base-url.js */
+  --kebab-url: url('/images/kebab-horizontal.svg');
+  --arrow-switch-url: url('/images/arrow-switch.svg');
+  --alert-url: url('/images/alert.svg');
+  --copy-url:  url('/images/copy.svg');
+  --check-url: url('/images/check.svg');
+}
+
 .table-striped>tbody>tr>td.pact, .table-striped>thead>tr>th.pact {
   border-left: none;
   border-right: none;
@@ -173,7 +182,7 @@ span.integration-settings {
 }
 
 span.kebab-horizontal {
-  background-image: url('/images/kebab-horizontal.svg');
+  background-image: var(--kebab-url);
   background-repeat: no-repeat;
   display:block;
   position: relative;
@@ -183,7 +192,7 @@ span.kebab-horizontal {
 }
 
 span.sort-icon {
-  background-image: url('/images/arrow-switch.svg');
+  background-image: var(--arrow-switch-url);
   background-repeat: no-repeat;
   display:inline-block;
   position: relative;
@@ -194,7 +203,7 @@ span.sort-icon {
 }
 
 span.warning-icon {
- background-image: url('/images/alert.svg');
+ background-image: var(--alert-url);
  background-repeat: no-repeat;
  display:inline-block;
  position: relative;
@@ -213,7 +222,7 @@ span.warning-icon {
 }
 
 span.copy-icon {
-  background-image: url('/images/copy.svg');
+  background-image: var(--copy-url);
   background-size: 16px 16px;
   background-repeat: no-repeat;
   display:block;
@@ -224,7 +233,7 @@ span.copy-icon {
 }
 
 span.copy-success-icon {
-  background-image: url('/images/check.svg');
+  background-image: var(--check-url);
   background-size: 16px 16px;
   background-repeat: no-repeat;
   display:block;

@@ -44,6 +44,10 @@ module PactBroker
           <link rel='stylesheet' type='text/css' href='#{base_url}/stylesheets/material-menu.css'>
           <link rel='stylesheet' type='text/css' href='#{base_url}/stylesheets/pact.css'>
           <link rel='stylesheet' type='text/css' href='#{base_url}/stylesheets/jquery-confirm.min.css'>
+          <script type='text/javascript'>
+            const BASE_URL = '#{base_url}';
+          </script>
+          <script src='#{base_url}/javascripts/set-css-asset-base-url.js'></script>
           <script src='#{base_url}/javascripts/highlight.pack.js'></script>
           <script src='#{base_url}/javascripts/jquery-3.5.1.min.js'></script>
           <script src='#{base_url}/js/bootstrap.min.js'></script>

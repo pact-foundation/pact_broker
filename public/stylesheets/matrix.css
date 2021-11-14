@@ -1,3 +1,8 @@
+:root {
+  /* See public/javascripts/set-css-asset-base-url.js */
+  --clock-url: url('/images/clock.svg');
+}
+
 div {
   /*border: 1px solid red;*/
  }
@@ -33,7 +38,7 @@ div.tag, div.version {
 
 span.pre-verified-icon {
   color: #337ab7;
-  background-image: url('/images/clock.svg');
+  background-image: var(--clock-url);
   background-repeat: no-repeat;
   display:inline-block;
   position: relative;

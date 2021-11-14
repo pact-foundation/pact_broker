@@ -1,3 +1,8 @@
+:root {
+  /* See public/javascripts/set-css-asset-base-url.js */
+  --pact-kebab-url: url('/images/kebab-horizontal.svg');
+}
+
 div.pact-metadata {
   margin-top: 40px;
   float: right;
@@ -30,7 +35,7 @@ div.pact-badge-markdown {
 }
 
 span.kebab-horizontal {
-  background-image: url('/images/kebab-horizontal.svg');
+  background-image: var(--pact-kebab-url);
   background-repeat: no-repeat;
   display:block;
   position: relative;
