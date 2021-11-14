@@ -204,28 +204,24 @@ module PactBroker
       # The pacts for the latest versions with the specified tag (new logic)
       # NOT the latest pact that belongs to a version with the specified tag.
       def for_latest_consumer_versions_with_tag(tag_name)
-        if PactBroker.feature_enabled?(:fix_issue_494)
-          head_tags = PactBroker::Domain::Tag
-                        .select_group(:pacticipant_id, :name)
-                        .select_append{ max(version_order).as(:latest_version_order) }
-                        .where(name: tag_name)
+        head_tags = PactBroker::Domain::Tag
+                      .select_group(:pacticipant_id, :name)
+                      .select_append{ max(version_order).as(:latest_version_order) }
+                      .where(name: tag_name)
 
-          head_tags_join = {
-            Sequel[:pact_publications][:consumer_id] => Sequel[:head_tags][:pacticipant_id],
-            Sequel[:pact_publications][:consumer_version_order] => Sequel[:head_tags][:latest_version_order]
-          }
+        head_tags_join = {
+          Sequel[:pact_publications][:consumer_id] => Sequel[:head_tags][:pacticipant_id],
+          Sequel[:pact_publications][:consumer_version_order] => Sequel[:head_tags][:latest_version_order]
+        }
 
-          base_query = self
-          if no_columns_selected?
-            base_query = base_query.select_all_qualified.select_append(Sequel[:head_tags][:name].as(:tag_name))
-          end
-
-          base_query
-            .join(head_tags, head_tags_join, { table_alias: :head_tags })
-           .remove_overridden_revisions_from_complete_query
-        else
-          latest_for_consumer_tag(tag_name)
+        base_query = self
+        if no_columns_selected?
+          base_query = base_query.select_all_qualified.select_append(Sequel[:head_tags][:name].as(:tag_name))
         end
+
+        base_query
+          .join(head_tags, head_tags_join, { table_alias: :head_tags })
+         .remove_overridden_revisions_from_complete_query
       end
 
       def in_environments

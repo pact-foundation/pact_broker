@@ -339,16 +339,6 @@ module PactBroker
           it "returns an empty list" do
             expect(subject.all).to eq []
           end
-
-          context "with the feature_toggle disabled" do
-            before do
-              allow(PactBroker).to receive(:feature_enabled?).with(:fix_issue_494).and_return(false)
-            end
-
-            it "returns pacts" do
-              expect(subject.all.size).to eq 2
-            end
-          end
         end
 
         context "when columns are already selected" do
