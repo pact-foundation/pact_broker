@@ -1,3 +1,15 @@
+<a name="v2.91.0"></a>
+### v2.91.0 (2021-11-15)
+
+#### Features
+
+* add environments to matrix response	 ([fd50f22c](/../../commit/fd50f22c))
+* remove feature toggle around change to return the pact for the latest tagged version, rather than the latest pact that has a version with the tag	 ([fac3fc8a](/../../commit/fac3fc8a))
+
+#### Bug Fixes
+
+* load images from the correct path when the Pact Broker application is run from a non root context	 ([a268ef25](/../../commit/a268ef25))
+
 <a name="v2.90.0"></a>
 ### v2.90.0 (2021-11-12)
 
