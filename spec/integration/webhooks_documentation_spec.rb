@@ -1,9 +1,9 @@
 require "timecop"
 
-WEBHOOK_TESTED_PATHS = []
+WEBHOOK_TESTED_DOCUMENTATION_PATHS = []
 WEBHOOKS_NO_DOCUMENTATION = %w[
 ]
-WEBHOOK_ROUTES_REQURING_A_TEST = PactBroker.routes
+WEBHOOK_ROUTES_REQURING_A_DOCUMENTATION_TEST = PactBroker.routes
       .select { | route | route[:path].include?("webhook") }
       .reject { | route | WEBHOOKS_NO_DOCUMENTATION.include?(route[:path]) }
 
@@ -38,14 +38,14 @@ RSpec.describe "webhook routes", skip: true do
     if ENV["DEBUG"] == "true"
       PactBroker.routes.find{ | route| route[:path] == path_template }
     end
-    WEBHOOK_TESTED_PATHS << path_template
+    WEBHOOK_TESTED_DOCUMENTATION_PATHS << path_template
   end
 
   after(:all) do
-    missed_routes = WEBHOOK_ROUTES_REQURING_A_TEST.reject { | route | WEBHOOK_TESTED_PATHS.include?(route[:path]) }
+    missed_routes = WEBHOOK_ROUTES_REQURING_A_DOCUMENTATION_TEST.reject { | route | WEBHOOK_TESTED_DOCUMENTATION_PATHS.include?(route[:path]) }
 
     if missed_routes.any? && ENV["DEBUG"] != "true"
-      puts "WEBHOOK ROUTES MISSING COVERAGE:"
+      puts "WEBHOOK ROUTES MISSING DOCUMENTATION COVERAGE:"
       puts missed_routes.to_yaml
     end
   end
@@ -118,7 +118,7 @@ RSpec.describe "webhook routes", skip: true do
   shared_examples "request" do
     it "returns a body" do
       subject
-      Approvals.verify(expected_interaction(subject, WEBHOOK_TESTED_PATHS.size), :name => approval_request_example_name, format: :json)
+      Approvals.verify(expected_interaction(subject, WEBHOOK_TESTED_DOCUMENTATION_PATHS.size), :name => approval_request_example_name, format: :json)
     end
   end
 
