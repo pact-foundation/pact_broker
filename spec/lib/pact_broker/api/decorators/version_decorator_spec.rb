@@ -83,10 +83,10 @@ module PactBroker
             expect(subject[:_embedded][:tags].first[:name]).to eq "prod"
           end
 
-          it "includes the branches" do
-            expect(subject[:_embedded][:branches]).to be_instance_of(Array)
-            expect(subject[:_embedded][:branches].first[:name]).to eq "main"
-            expect(subject[:_embedded][:branches].first[:latest]).to eq true
+          it "includes the branch versions" do
+            expect(subject[:_embedded][:branchVersions]).to be_instance_of(Array)
+            expect(subject[:_embedded][:branchVersions].first[:name]).to eq "main"
+            expect(subject[:_embedded][:branchVersions].first[:latest]).to eq true
           end
 
           it "includes the timestamps" do

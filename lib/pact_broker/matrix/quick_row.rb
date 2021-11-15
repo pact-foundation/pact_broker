@@ -361,6 +361,14 @@ module PactBroker
         consumer_version.branch_versions
       end
 
+      def consumer_version_deployed_versions
+        consumer_version.current_deployed_versions
+      end
+
+      def consumer_version_released_versions
+        consumer_version.current_supported_released_versions
+      end
+
       def consumer_version_order
         consumer_version.order
       end
@@ -375,6 +383,14 @@ module PactBroker
 
       def provider_version_branch_versions
         provider_version&.branch_versions || []
+      end
+
+      def provider_version_deployed_versions
+        provider_version&.current_deployed_versions || []
+      end
+
+      def provider_version_released_versions
+        provider_version&.current_supported_released_versions || []
       end
 
       def provider_version_order

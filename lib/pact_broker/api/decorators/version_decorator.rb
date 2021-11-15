@@ -7,7 +7,9 @@ module PactBroker
       class VersionDecorator < BaseDecorator
 
         property :number, writeable: false
+        # TODO delete branches in preference for branchVersions
         collection :branch_versions, as: :branches, embedded: true, writeable: false, extend: PactBroker::Api::Decorators::EmbeddedBranchVersionDecorator
+        collection :branch_versions, as: :branchVersions, embedded: true, writeable: false, extend: PactBroker::Api::Decorators::EmbeddedBranchVersionDecorator
         property :build_url, as: :buildUrl
 
         collection :tags, embedded: true, :extend => PactBroker::Api::Decorators::EmbeddedTagDecorator, class: OpenStruct

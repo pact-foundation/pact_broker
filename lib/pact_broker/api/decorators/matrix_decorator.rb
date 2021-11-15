@@ -3,6 +3,7 @@ require "pact_broker/api/pact_broker_urls"
 require "pact_broker/api/decorators/reason_decorator"
 require "pact_broker/api/decorators/format_date_time"
 require "pact_broker/api/decorators/embedded_branch_version_decorator"
+require "pact_broker/api/decorators/embedded_environment_decorator"
 
 module PactBroker
   module Api
@@ -85,7 +86,9 @@ module PactBroker
             version: {
               number: line.consumer_version_number,
               branch: line.consumer_version_branch_versions.last&.branch_name,
-              branches: branches(line.consumer_version_branch_versions, base_url),
+              branches: branches(line.consumer_version_branch_versions, base_url), # TODO delete this
+              branchVersions: branches(line.consumer_version_branch_versions, base_url),
+              environments: environments(line.consumer_version_deployed_versions, line.consumer_version_released_versions, base_url),
               _links: {
                 self: {
                   href: version_url(base_url, consumer_version)
@@ -105,6 +108,16 @@ module PactBroker
           branch_versions.collect do | branch_version |
             PactBroker::Api::Decorators::EmbeddedBranchVersionDecorator.new(branch_version).to_hash(user_options: { base_url: base_url })
           end
+        end
+
+        def environments(deployed_versions, released_versions, base_url)
+          (deployed_versions + released_versions).sort_by(&:created_at).collect(&:environment).uniq.collect do | environment |
+            environment_decorator_class.new(environment).to_hash(user_options: { base_url: base_url })
+          end
+        end
+
+        def environment_decorator_class
+          PactBroker::Api::Decorators::EmbeddedEnvironmentDecorator
         end
 
         def tags(tags, base_url)
@@ -136,7 +149,9 @@ module PactBroker
             hash[:version] = {
               number: line.provider_version_number,
               branch: line.provider_version_branch_versions.last&.branch_name,
-              branches: branches(line.provider_version_branch_versions, base_url),
+              branches: branches(line.provider_version_branch_versions, base_url), # TODO delete this
+              branchVersions: branches(line.provider_version_branch_versions, base_url),
+              environments: environments(line.provider_version_deployed_versions, line.provider_version_released_versions, base_url),
               _links: {
                 self: {
                   href: version_url(base_url, provider_version)

@@ -22,12 +22,16 @@ module PactBroker
                 consumer_name: "Consumer",
                 consumer_version_number: "1.0.0",
                 consumer_version_branch_versions: consumer_version_branch_versions,
+                consumer_version_deployed_versions: deployed_versions,
+                consumer_version_released_versions: released_versions,
                 consumer_version_tags: consumer_version_tags,
                 provider_version_tags: provider_version_tags,
                 pact_version_sha: "1234",
                 pact_created_at: pact_created_at,
                 provider_version_number: "4.5.6",
                 provider_version_branch_versions: provider_version_branch_versions,
+                provider_version_deployed_versions: deployed_versions,
+                provider_version_released_versions: released_versions,
                 provider_name: "Provider",
                 success: row_1_success,
                 verification_number: 1,
@@ -42,11 +46,15 @@ module PactBroker
                 consumer_name: "Consumer",
                 consumer_version_number: "1.0.0",
                 consumer_version_branch_versions: [],
+                consumer_version_deployed_versions: [],
+                consumer_version_released_versions: [],
                 consumer_version_tags: [],
                 pact_version_sha: "1234",
                 pact_created_at: pact_created_at,
                 provider_version_number: nil,
                 provider_version_branch_versions: [],
+                provider_version_deployed_versions: [],
+                provider_version_released_versions: [],
                 provider_name: "Provider",
                 success: row_2_success,
                 verification_number: nil,
@@ -70,6 +78,22 @@ module PactBroker
                   name: "main",
                   _links: {
 
+                  }
+                ],
+                branchVersions: [
+                  name: "main",
+                  _links: {
+
+                  }
+                ],
+                environments: [
+                  {
+                    name: "test",
+                    displayName: "Test"
+                  },
+                  {
+                    name: "production",
+                    displayName: "Production"
                   }
                 ],
                 _links: {
@@ -103,6 +127,22 @@ module PactBroker
               version: {
                 number: "4.5.6",
                 branch: "feat/x",
+                branchVersions: [
+                  {
+                    name: "feat/x",
+                    latest: true
+                  }
+                ],
+                environments: [
+                  {
+                    name: "test",
+                    displayName: "Test"
+                  },
+                  {
+                    name: "production",
+                    displayName: "Production"
+                  }
+                ],
                 _links: {
                   self: {
                     href: "http://example.org/pacticipants/Provider/versions/4.5.6"
@@ -150,6 +190,26 @@ module PactBroker
 
           let(:consumer_version_branch_versions) do
             [ instance_double("PactBroker::Versions::BranchVersion", branch_name: "main", latest?: true) ]
+          end
+
+          let(:deployed_versions) do
+            [
+              instance_double("PactBroker::Deployments::DeployedVersion", environment: test_environment, created_at: DateTime.new(2021, 1, 1))
+            ]
+          end
+
+          let(:released_versions) do
+            [
+              instance_double("PactBroker::Deployments::ReleasedVersion", environment: prod_environment, created_at: DateTime.new(2021, 1, 2))
+            ]
+          end
+
+          let(:test_environment) do
+            instance_double("PactBroker::Deployments::Environment", uuid: "uuid", production: false, name: "test", display_name: "Test", created_at: DateTime.now, updated_at: DateTime.now ).as_null_object
+          end
+
+          let(:prod_environment) do
+            instance_double("PactBroker::Deployments::Environment", uuid: "uuid", production: true, name: "production", display_name: "Production", created_at: DateTime.now, updated_at: DateTime.now ).as_null_object
           end
 
           let(:consumer_version_tags) do
