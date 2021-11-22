@@ -88,6 +88,15 @@ module PactBroker
         !!currently_deployed_version_id
       end
 
+      # target has been renamed to applicationInstance in the API.
+      def application_instance
+        target
+      end
+
+      def application_instance= application_instance
+        self.target = application_instance
+      end
+
       def version_number
         version.number
       end
@@ -100,7 +109,6 @@ module PactBroker
         self.class.where(id: id).record_undeployed
         self.refresh
       end
-
     end
   end
 end
