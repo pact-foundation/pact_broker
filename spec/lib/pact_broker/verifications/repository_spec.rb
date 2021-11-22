@@ -11,7 +11,8 @@ module PactBroker
         let(:verification) do
           PactBroker::Domain::Verification.new(
             success: true,
-            consumer_version_selector_hashes: [{ foo: "bar" }]
+            consumer_version_selector_hashes: [{ foo: "bar" }],
+            wip: false
           )
         end
 
@@ -41,6 +42,14 @@ module PactBroker
 
           it "saves the consumer_version_selector_hashes" do
             expect(subject.reload.consumer_version_selector_hashes).to eq [{ foo: "bar" }]
+          end
+
+          it "creates a PactVersionProviderTagSuccessfulVerification for each tag" do
+            expect { subject }.to change { PactVersionProviderTagSuccessfulVerification.count }.by(2)
+            expect(PactVersionProviderTagSuccessfulVerification.first).to have_attributes(
+              wip: false,
+              provider_version_tag_name: "foo"
+            )
           end
         end
       end

@@ -33,6 +33,8 @@ module PactBroker
       end
 
       def successfully_verified_by_provider_tag_when_not_wip(provider_id, provider_tag)
+        return new_successfully_verified_by_provider_tag_when_not_wip(provider_id, provider_tag) if PactBroker.feature_enabled?(:new_wip_calculation)
+
         from_self(alias: :pp)
           .select(Sequel[:pp].*)
           .where(Sequel[:pp][:provider_id] => provider_id)
@@ -41,7 +43,23 @@ module PactBroker
           .distinct
       end
 
+      def new_successfully_verified_by_provider_tag_when_not_wip(provider_id, provider_tag)
+        pact_version_provider_tag_verifications_join = {
+          Sequel[:sv][:pact_version_id] => Sequel[:pp][:pact_version_id],
+          Sequel[:sv][:provider_version_tag_name] => provider_tag,
+          Sequel[:sv][:wip] => false
+        }
+
+        from_self(alias: :pp)
+          .select(Sequel[:pp].*)
+          .join(:pact_version_provider_tag_successful_verifications, pact_version_provider_tag_verifications_join, { table_alias: :sv })
+          .distinct
+
+      end
+
       def successfully_verified_by_provider_another_tag_before_this_tag_first_created(provider_id, provider_tag)
+        return new_successfully_verified_by_provider_another_tag_before_this_tag_first_created(provider_id, provider_tag) if PactBroker.feature_enabled?(:new_wip_calculation)
+
         first_tag_with_name = PactBroker::Domain::Tag.where(pacticipant_id: provider_id, name: provider_tag).order(:created_at).first
         from_self(alias: :pp)
           .select(Sequel[:pp].*)
@@ -51,6 +69,32 @@ module PactBroker
             Sequel.lit("provider_tags.name != ?", provider_tag)
           end
           .verified_before_creation_date_of(first_tag_with_name)
+          .distinct
+      end
+
+      def new_successfully_verified_by_provider_another_tag_before_this_tag_first_created(provider_id, provider_tag)
+        first_tag_with_name = PactBroker::Domain::Tag.where(pacticipant_id: provider_id, name: provider_tag).order(:created_at).first
+
+        pact_version_provider_tag_verifications_join = {
+          Sequel[:sv][:pact_version_id] => Sequel[:pp][:pact_version_id],
+          Sequel[:sv][:wip] => false
+        }
+
+        created_at_criteria = if first_tag_with_name
+                                Sequel.lit("sv.execution_date < ?", first_tag_with_name.created_at)
+                              else
+                                Sequel.lit("1 = 1")
+                              end
+
+        from_self(alias: :pp)
+          .select(Sequel[:pp].*)
+          .where(Sequel[:pp][:provider_id] => provider_id)
+          .join(:pact_version_provider_tag_successful_verifications, pact_version_provider_tag_verifications_join, { table_alias: :sv }) do
+            Sequel.&(
+              Sequel.lit("sv.provider_version_tag_name NOT IN (?)", provider_tag),
+              created_at_criteria
+            )
+          end
           .distinct
       end
 

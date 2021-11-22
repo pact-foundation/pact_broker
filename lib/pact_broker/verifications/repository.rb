@@ -2,6 +2,7 @@ require "sequel"
 require "pact_broker/domain/verification"
 require "pact_broker/verifications/sequence"
 require "pact_broker/verifications/latest_verification_id_for_pact_version_and_provider_version"
+require "pact_broker/verifications/pact_version_provider_tag_successful_verification"
 
 module PactBroker
   module Verifications
@@ -27,6 +28,7 @@ module PactBroker
         verification.tag_names = version.tag_names # TODO pass this in from contracts service
         verification.save
         update_latest_verification_id(verification)
+        update_pact_version_provider_tag_verifications(verification, version.tag_names)
         verification
       end
 
@@ -44,6 +46,20 @@ module PactBroker
           created_at: verification.created_at
         }
         LatestVerificationIdForPactVersionAndProviderVersion.new(params).upsert
+      end
+
+      def update_pact_version_provider_tag_verifications(verification, tag_names)
+        if verification.success
+          tag_names&.each do | tag_name |
+            PactVersionProviderTagSuccessfulVerification.new(
+              pact_version_id: verification.pact_version_id,
+              provider_version_tag_name: tag_name,
+              wip: verification.wip,
+              verification_id: verification.id,
+              execution_date: verification.execution_date
+            ).insert_ignore
+          end
+        end
       end
 
       def find consumer_name, provider_name, pact_version_sha, verification_number

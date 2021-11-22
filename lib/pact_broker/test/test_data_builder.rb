@@ -31,6 +31,8 @@ require "pact_broker/deployments/deployed_version_service"
 require "pact_broker/deployments/released_version_service"
 require "pact_broker/versions/branch_version_repository"
 require "pact_broker/integrations/repository"
+require "pact_broker/contracts/service"
+
 require "ostruct"
 
 module PactBroker
@@ -219,6 +221,27 @@ module PactBroker
         self
       end
 
+      def publish_pact(consumer_name:, provider_name:, consumer_version_number: , tags: nil, branch: nil, build_url: nil, json_content: nil)
+        json_content = json_content || random_json_content(consumer_name, provider_name)
+        contracts = [
+          PactBroker::Contracts::ContractToPublish.from_hash(consumer_name: consumer_name, provider_name: provider_name, decoded_content: json_content, content_type: "application/json", specification: "pact")
+        ]
+        contracts_to_publish = PactBroker::Contracts::ContractsToPublish.from_hash(
+          pacticipant_name: consumer_name,
+          pacticipant_version_number: consumer_version_number,
+          tags: tags,
+          branch: branch,
+          build_url: build_url,
+          contracts: contracts
+        )
+        PactBroker::Contracts::Service.publish(contracts_to_publish, base_url: "http://example.org")
+        @consumer = find_pacticipant(consumer_name)
+        @consumer_version = find_version(consumer_name, consumer_version_number)
+        @provider = find_pacticipant(provider_name)
+        @pact = PactBroker::Pacts::PactPublication.last.to_domain
+        self
+      end
+
       def create_pact params = {}
         params.delete(:comment)
         json_content = params[:json_content] || default_json_content
@@ -363,6 +386,7 @@ module PactBroker
       end
 
       def create_verification parameters = {}
+        # This should use the verification service. what a mess
         parameters.delete(:comment)
         branch = parameters.delete(:branch)
         tag_names = [parameters.delete(:tag_names), parameters.delete(:tag_name)].flatten.compact
@@ -373,20 +397,23 @@ module PactBroker
         parameters.delete(:provider_version)
         verification = PactBroker::Domain::Verification.new(parameters)
         pact_version = PactBroker::Pacts::Repository.new.find_pact_version(@consumer, @provider, pact.pact_version_sha)
-        @verification = PactBroker::Verifications::Repository.new.create(verification, provider_version_number, pact_version)
-        @provider_version = PactBroker::Domain::Version.where(pacticipant_id: @provider.id, number: provider_version_number).single_record
+        @provider_version = version_repository.find_by_pacticipant_id_and_number_or_create(provider.id, provider_version_number)
         PactBroker::Versions::BranchVersionRepository.new.add_branch(@provider_version, branch) if branch
+
+        if tag_names.any?
+          tag_names.each do | tag_name |
+            PactBroker::Domain::Tag.new(name: tag_name, version: @provider_version, version_order: @provider_version.order).insert_ignore
+            set_created_at_if_set(parameters[:created_at], :tags, version_id: @provider_version.id, name: tag_name)
+          end
+        end
+
+        @verification = PactBroker::Verifications::Repository.new.create(verification, provider_version_number, pact_version)
 
         set_created_at_if_set(parameters[:created_at], :verifications, id: @verification.id)
         set_created_at_if_set(parameters[:created_at], :versions, id: @provider_version.id)
         set_created_at_if_set(parameters[:created_at], :latest_verification_id_for_pact_version_and_provider_version, pact_version_id: pact_version_id, provider_version_id: @provider_version.id)
+        set_created_at_if_set(parameters[:created_at], :pact_version_provider_tag_successful_verifications, { verification_id: @verification.id }, :execution_date)
 
-        if tag_names.any?
-          tag_names.each do | tag_name |
-            PactBroker::Domain::Tag.new(name: tag_name, version: @provider_version).insert_ignore
-            set_created_at_if_set(parameters[:created_at], :tags, version_id: @provider_version.id, name: tag_name)
-          end
-        end
         self
       end
 
@@ -594,10 +621,10 @@ module PactBroker
         PactBroker::Pacts::Content.from_json(json_content).with_ids(false).to_json
       end
 
-      def set_created_at_if_set created_at, table_name, selector
+      def set_created_at_if_set created_at, table_name, selector, date_column_name = :created_at
         date_to_set = created_at || @now
         if date_to_set
-          Sequel::Model.db[table_name].where(selector).update(created_at: date_to_set)
+          Sequel::Model.db[table_name].where(selector).update(date_column_name => date_to_set)
           if Sequel::Model.db.schema(table_name).any?{ |col| col.first == :updated_at }
             Sequel::Model.db[table_name].where(selector.keys.first => selector.values.first).update(updated_at: date_to_set)
           end

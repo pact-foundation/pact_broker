@@ -28,6 +28,7 @@ module PactBroker
         DataMigrations::SetExtraColumnsForTags.call(database_connection)
         DataMigrations::CreateBranches.call(database_connection)
         DataMigrations::MigrateIntegrations.call(database_connection)
+        DataMigrations::MigratePactVersionProviderTagSuccessfulVerifications.call(database_connection)
       end
     end
   end
