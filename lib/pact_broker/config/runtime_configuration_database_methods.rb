@@ -65,6 +65,10 @@ module PactBroker
             super(metrics_sql_statement_timeout&.to_i)
           end
 
+          def database_connection_validation_timeout= database_connection_validation_timeout
+            super(database_connection_validation_timeout&.to_i)
+          end
+
           def postgres?
             database_credentials[:adapter] == "postgres"
           end
