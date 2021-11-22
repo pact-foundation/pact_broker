@@ -140,65 +140,62 @@ module PactBroker
       end
 
       # The latest pact publication for each tag
+      # This uses the old logic of "the latest pact for a version that has a tag" (which always returns a pact)
+      # rather than "the pact for the latest version with a tag"
+      # Need to see about updating this.
       def latest_by_consumer_tag
         tags_join = {
-          Sequel[:pact_publications][:consumer_version_id] => Sequel[:tags][:version_id]
+          Sequel[:pact_publications][:consumer_version_id] => Sequel[:tags][:version_id],
         }
 
-        base_query = join(:tags, tags_join)
+        max_orders = join(:tags, tags_join)
+                      .select_group(:consumer_id, :provider_id, Sequel[:tags][:name].as(:tag_name))
+                      .select_append{ max(consumer_version_order).as(latest_consumer_version_order) }
 
+        max_join = {
+          Sequel[:max_orders][:consumer_id] => Sequel[:pact_publications][:consumer_id],
+          Sequel[:max_orders][:provider_id] => Sequel[:pact_publications][:provider_id],
+          Sequel[:max_orders][:latest_consumer_version_order] => Sequel[:pact_publications][:consumer_version_order]
+        }
+
+        base_query = self
         if no_columns_selected?
-          base_query = base_query.select_all_qualified.select_append(Sequel[:tags][:name].as(:tag_name))
+          base_query = base_query.select_all_qualified.select_append(Sequel[:max_orders][:tag_name])
         end
 
-        joined_query = base_query.select(
-          Sequel[:pact_publications][:consumer_id],
-          Sequel[:tags][:version_order],
-          Sequel[:tags][:name].as(:tag_name)
-        )
-
-        self_join = {
-          Sequel[:pact_publications][:consumer_id] => Sequel[:pp2][:consumer_id],
-          Sequel[:tags][:name] => Sequel[:pp2][:tag_name]
-        }
-        base_query.left_join(joined_query, self_join, { table_alias: :pp2 } ) do
-          Sequel[:pp2][:version_order] > Sequel[:tags][:version_order]
-        end
-        .where(Sequel[:pp2][:version_order] => nil)
-        .remove_overridden_revisions_from_complete_query
+        base_query
+          .join(max_orders, max_join, { table_alias: :max_orders })
+          .remove_overridden_revisions_from_complete_query
       end
 
+      # This uses the old logic of "the latest pact for a version that has a tag" (which always returns a pact)
+      # rather than "the pact for the latest version with a tag"
+      # Need to see about updating this.
       def latest_for_consumer_tag(tag_name)
         tags_join = {
           Sequel[:pact_publications][:consumer_version_id] => Sequel[:tags][:version_id],
           Sequel[:tags][:name] => tag_name
         }
 
-        base_query = self
-        if no_columns_selected?
-          base_query = base_query.select_all_qualified.select_append(Sequel[:tags][:name].as(:tag_name))
-        end
+        max_orders = join(:tags, tags_join)
+                      .select_group(:consumer_id, :provider_id, Sequel[:tags][:name].as(:tag_name))
+                      .select_append{ max(consumer_version_order).as(latest_consumer_version_order) }
 
-        base_query = base_query
-          .join(:tags, tags_join)
-          .where(Sequel[:tags][:name] => tag_name)
 
-        joined_query = base_query.select(
-          Sequel[:pact_publications][:consumer_id],
-          Sequel[:tags][:name].as(:tag_name),
-          Sequel[:tags][:version_order]
-        )
-
-        self_join = {
-          Sequel[:pact_publications][:consumer_id] => Sequel[:pp2][:consumer_id],
-          Sequel[:tags][:name] => Sequel[:pp2][:tag_name]
+        max_join = {
+          Sequel[:max_orders][:consumer_id] => Sequel[:pact_publications][:consumer_id],
+          Sequel[:max_orders][:provider_id] => Sequel[:pact_publications][:provider_id],
+          Sequel[:max_orders][:latest_consumer_version_order] => Sequel[:pact_publications][:consumer_version_order]
         }
 
-        base_query.left_join(joined_query, self_join, { table_alias: :pp2 } ) do
-          Sequel[:pp2][:version_order] > Sequel[:tags][:version_order]
+        base_query = self
+        if no_columns_selected?
+          base_query = base_query.select_all_qualified.select_append(Sequel[:max_orders][:tag_name])
         end
-        .where(Sequel[:pp2][:version_order] => nil)
-        .remove_overridden_revisions_from_complete_query
+
+        base_query
+          .join(max_orders, max_join, { table_alias: :max_orders })
+          .remove_overridden_revisions_from_complete_query
       end
 
       # The pacts for the latest versions with the specified tag (new logic)
