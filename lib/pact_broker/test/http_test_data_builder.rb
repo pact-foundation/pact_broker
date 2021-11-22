@@ -273,6 +273,7 @@ module PactBroker
               "eventName" => "${pactbroker.eventName}",
               "consumerVersionNumber" => "${pactbroker.consumerVersionNumber}",
               "consumerVersionTags" => "${pactbroker.consumerVersionTags}",
+              "consumerVersionBranch" => "${pactbroker.consumerVersionBranch}",
               "githubVerificationStatus" => "${pactbroker.githubVerificationStatus}",
               "providerVersionNumber" => "${pactbroker.providerVersionNumber}",
               "providerVersionTags" => "${pactbroker.providerVersionTags}",
