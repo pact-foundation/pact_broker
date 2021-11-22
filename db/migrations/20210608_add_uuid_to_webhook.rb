@@ -8,7 +8,7 @@ Sequel.migration do
 
   down do
     alter_table(:triggered_webhooks) do
-      drop_index([:uuid], name: "triggered_webhooks_uuid")
+      drop_index([:uuid], name: "triggered_webhooks_uuid", unique: true)
       drop_column(:uuid)
     end
   end
