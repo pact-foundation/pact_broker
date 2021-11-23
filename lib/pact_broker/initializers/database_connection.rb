@@ -9,7 +9,7 @@ module PactBroker
     sequel_config = config.dup
     max_retries = sequel_config.delete(:connect_max_retries) || 0
     connection_validation_timeout = config.delete(:connection_validation_timeout)
-    configure_logger(sequel_config)
+    configure_logger(sequel_config, logger)
     create_sqlite_database_dir(config)
 
     connection = with_retries(max_retries, logger) do
@@ -46,7 +46,7 @@ module PactBroker
     end
   end
 
-  private_class_method def self.configure_logger(sequel_config)
+  private_class_method def self.configure_logger(sequel_config, logger)
     if sequel_config[:sql_log_level] == :none
       sequel_config.delete(:sql_log_level)
     elsif logger
