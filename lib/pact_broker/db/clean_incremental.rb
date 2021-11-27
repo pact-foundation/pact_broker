@@ -94,8 +94,23 @@ module PactBroker
       end
 
       def delete_orphan_pact_versions
-        referenced_pact_version_ids = db[:pact_publications].select(:pact_version_id).union(db[:verifications].select(:pact_version_id))
-        db[:pact_versions].where(id: referenced_pact_version_ids).invert.delete
+        db[:pact_versions].where(id: orphan_pact_versions).delete
+      rescue Sequel::DatabaseError => e
+        raise unless e.cause.class.name == "Mysql2::Error"
+
+        ids = orphan_pact_versions.map { |row| row[:id] }
+        db[:pact_versions].where(id: ids).delete
+      end
+
+      def orphan_pact_versions
+        db[:pact_versions]
+          .left_join(:pact_publications, pact_version_id: :id)
+          .left_join(:verifications, pact_version_id: :id)
+          .select(Sequel[:pact_versions][:id])
+          .where(
+            Sequel[:pact_publications][:id] => nil,
+            Sequel[:verifications][:id] => nil
+          )
       end
 
       def version_info(version)
