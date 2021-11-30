@@ -31,7 +31,7 @@ module PactBroker
                             .join(max_orders, max_orders_join, { table_alias: :max_orders})
 
         latest_versions.each do | version |
-          pacticipant = pacticipants.find{ | pacticipant | pacticipant.id == version.pacticipant_id }
+          pacticipant = pacticipants.find{ | p | p.id == version.pacticipant_id }
           pacticipant.associations[:latest_version] = version
         end
       end
