@@ -95,10 +95,6 @@ module PactBroker
         self.main_branch = nil if main_branch.blank?
       end
 
-      def latest_version
-        versions.last
-      end
-
       def to_s
         "Pacticipant: id=#{id}, name=#{name}"
       end
