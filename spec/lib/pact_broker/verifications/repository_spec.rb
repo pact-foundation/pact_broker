@@ -46,9 +46,9 @@ module PactBroker
 
           it "creates a PactVersionProviderTagSuccessfulVerification for each tag" do
             expect { subject }.to change { PactVersionProviderTagSuccessfulVerification.count }.by(2)
-            expect(PactVersionProviderTagSuccessfulVerification.all).to contain_exactly(
-              have_attributes(wip: false, provider_version_tag_name: "foo"),
-              have_attributes(wip: false, provider_version_tag_name: "bar"),
+            expect(PactVersionProviderTagSuccessfulVerification.first).to have_attributes(
+              wip: false,
+              provider_version_tag_name: "foo"
             )
           end
         end
