@@ -100,15 +100,6 @@ groups:
         default_value: 5
         allowed_values_description: A positive integer or float, as a string.
         more_info: https://sequel.jeremyevans.net/rdoc/files/doc/opening_databases_rdoc.html#label-General+connection+options
-      sql_enable_caller_logging:
-        description: |-
-          Whether or not to enable caller_logging extension for database connection.
-          When enabled it logs source path that caused SQL query.
-        default_value: false
-        allowed_values:
-          - true
-          - false
-        more_info: https://sequel.jeremyevans.net/rdoc-plugins/files/lib/sequel/extensions/caller_logging_rb.html
       database_max_connections:
         description: "The maximum size of the connection pool (4 connections by default on most databases)"
         default_value: 4
