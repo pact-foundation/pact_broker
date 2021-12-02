@@ -93,9 +93,15 @@ module PactBroker
 
         context "with orphan pact versions" do
           before do
-            # Create a pact that will not be deleted
-            td.create_pact_with_hierarchy("Foo", "0", "Bar", json_content_1)
+            # json_content_3 referenced by pact_publication for Foo v1
+            td.create_pact_with_hierarchy("Foo", "1", "Bar", json_content_3).comment("Foo v1 kept because latest dev")
               .create_consumer_version_tag("dev")
+
+            # json_content_4 referenced by a verification (but not a pact_publication)
+            td.create_pact_with_hierarchy("Waffle", "0", "Meep", json_content_4)
+              .create_verification(provider_version: "5", tag_names: ["dev"], comment: "Meep v5 kept because latest dev")
+            PactBroker::Pacts::PactPublication.order(:id).last.delete
+
             # Create an orphan pact version
             pact_version_params = PactBroker::Pacts::PactVersion.first.to_hash
             pact_version_params.delete(:id)
@@ -105,6 +111,8 @@ module PactBroker
 
           let(:json_content_1) { { interactions: ["a", "b"]}.to_json }
           let(:json_content_2) { { interactions: ["a", "c"]}.to_json }
+          let(:json_content_3) { { interactions: ["a", "f"]}.to_json }
+          let(:json_content_4) { { interactions: ["a", "h"]}.to_json }
 
           let(:options) { { keep: [latest_dev_selector] } }
 

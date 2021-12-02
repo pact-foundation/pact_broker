@@ -104,8 +104,8 @@ module PactBroker
 
       def orphan_pact_versions
         db[:pact_versions]
-          .left_join(:pact_publications, pact_version_id: :id)
-          .left_join(:verifications, pact_version_id: :id)
+          .left_join(:pact_publications, Sequel[:pact_publications][:pact_version_id]=> Sequel[:pact_versions][:id])
+          .left_join(:verifications, Sequel[:verifications][:pact_version_id]=> Sequel[:pact_versions][:id])
           .select(Sequel[:pact_versions][:id])
           .where(
             Sequel[:pact_publications][:id] => nil,
