@@ -66,13 +66,15 @@ module PactBroker
         if dry_run?
           dry_run_results
         else
-          before_counts = current_counts
-          PactBroker::Domain::Version.where(id: resolve_ids(version_ids_to_delete)).delete
-          delete_orphan_pact_versions
-          after_counts = current_counts
+          db.transaction do
+            before_counts = current_counts
+            PactBroker::Domain::Version.where(id: resolve_ids(version_ids_to_delete)).delete
+            delete_orphan_pact_versions
+            after_counts = current_counts
 
-          TABLES.each_with_object({}) do | table_name, comparison_counts |
-            comparison_counts[table_name.to_s] = { "deleted" => before_counts[table_name] - after_counts[table_name], "kept" => after_counts[table_name] }
+            TABLES.each_with_object({}) do | table_name, comparison_counts |
+              comparison_counts[table_name.to_s] = { "deleted" => before_counts[table_name] - after_counts[table_name], "kept" => after_counts[table_name] }
+            end
           end
         end
       end
