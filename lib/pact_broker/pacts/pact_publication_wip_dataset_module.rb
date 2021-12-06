@@ -33,17 +33,6 @@ module PactBroker
       end
 
       def successfully_verified_by_provider_tag_when_not_wip(provider_id, provider_tag)
-        return new_successfully_verified_by_provider_tag_when_not_wip(provider_id, provider_tag) if PactBroker.feature_enabled?(:new_wip_calculation)
-
-        from_self(alias: :pp)
-          .select(Sequel[:pp].*)
-          .where(Sequel[:pp][:provider_id] => provider_id)
-          .join_successful_non_wip_verifications_for_provider_id(provider_id)
-          .join_provider_version_tags_for_tag(provider_tag)
-          .distinct
-      end
-
-      def new_successfully_verified_by_provider_tag_when_not_wip(_provider_id, provider_tag)
         pact_version_provider_tag_verifications_join = {
           Sequel[:sv][:pact_version_id] => Sequel[:pp][:pact_version_id],
           Sequel[:sv][:provider_version_tag_name] => provider_tag,
