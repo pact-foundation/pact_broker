@@ -1,8 +1,6 @@
 require "pact_broker/domain/verification"
 
 describe "Publishing a pact verification" do
-
-  let(:td) { TestDataBuilder.new }
   let(:path) { "/pacts/provider/Provider/consumer/Consumer/pact-version/#{pact.pact_version_sha}/verification-results" }
   let(:verification_content) { load_fixture("verification.json") }
   let(:parsed_response_body) { JSON.parse(subject.body) }
