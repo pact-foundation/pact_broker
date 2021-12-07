@@ -1,3 +1,16 @@
+<a name="v2.93.0"></a>
+### v2.93.0 (2021-12-07)
+
+#### Features
+
+* remove feature flag for new_wip_calculations	 ([972ceadd](/../../commit/972ceadd))
+* call the database clean within a transaction	 ([408c84ef](/../../commit/408c84ef))
+
+#### Bug Fixes
+
+* fix clean performance fix (#530)	 ([6c71e57b](/../../commit/6c71e57b))
+* fix performance issue loading latest version for pacticipant	 ([c575d132](/../../commit/c575d132))
+
 <a name="v2.92.0"></a>
 ### v2.92.0 (2021-11-27)
 
