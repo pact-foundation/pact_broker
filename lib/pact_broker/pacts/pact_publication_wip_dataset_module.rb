@@ -32,7 +32,7 @@ module PactBroker
         end
       end
 
-      def successfully_verified_by_provider_tag_when_not_wip(provider_id, provider_tag)
+      def successfully_verified_by_provider_tag_when_not_wip(provider_tag)
         pact_version_provider_tag_verifications_join = {
           Sequel[:sv][:pact_version_id] => Sequel[:pp][:pact_version_id],
           Sequel[:sv][:provider_version_tag_name] => provider_tag,

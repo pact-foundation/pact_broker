@@ -270,7 +270,7 @@ module PactBroker
 
       def remove_non_wip_for_tag(pact_publications_query, provider, tag, specified_pact_version_shas)
         specified_explicitly = pact_publications_query.for_pact_version_sha(specified_pact_version_shas)
-        verified_by_this_tag = pact_publications_query.successfully_verified_by_provider_tag_when_not_wip(provider.id, tag)
+        verified_by_this_tag = pact_publications_query.successfully_verified_by_provider_tag_when_not_wip(tag)
         verified_by_another_tag = pact_publications_query.successfully_verified_by_provider_another_tag_before_this_tag_first_created(provider.id, tag)
 
         log_debug_for_wip do
