@@ -1,3 +1,10 @@
+<a name="v2.93.1"></a>
+### v2.93.1 (2021-12-21)
+
+#### Bug Fixes
+
+* optimise query for calculating the latest overall pacts	 ([f44aaa70](/../../commit/f44aaa70))
+
 <a name="v2.93.0"></a>
 ### v2.93.0 (2021-12-07)
 
