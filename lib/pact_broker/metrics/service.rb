@@ -18,7 +18,7 @@ module PactBroker
             withMainBranchSetCount: PactBroker::Domain::Pacticipant.with_main_branch_set.count
           },
           integrations: {
-            count: PactBroker::Integrations::Integration.count
+            count: PactBroker::Pacts::PactPublication.select(:consumer_id, :provider_id).distinct.count
           },
           pactPublications: {
             count: PactBroker::Pacts::PactPublication.count,

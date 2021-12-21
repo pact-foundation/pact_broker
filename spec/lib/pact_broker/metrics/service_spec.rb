@@ -16,6 +16,18 @@ module PactBroker
           its([:pacticipants, :withMainBranchSetCount]) { is_expected.to eq 1 }
         end
 
+        describe "integrations" do
+          before do
+            td.create_pact_with_hierarchy("Foo", "1", "Bar")
+              .create_pact_with_hierarchy("Foo", "1", "Bar2")
+              .create_consumer("NoPactConsumer")
+              .create_provider("NoPactProvider")
+              .create_integration
+          end
+
+          its([:integrations, :count]) { is_expected.to eq 2 }
+        end
+
         describe "pacticipant versions" do
           before do
             td.create_consumer("Foo")
