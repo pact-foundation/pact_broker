@@ -1,3 +1,10 @@
+<a name="v2.93.2"></a>
+### v2.93.2 (2021-12-23)
+
+#### Bug Fixes
+
+* Improve SortContent performance on large contracts (#538)	 ([1914c01f](/../../commit/1914c01f))
+
 <a name="v2.93.1"></a>
 ### v2.93.1 (2021-12-21)
 
