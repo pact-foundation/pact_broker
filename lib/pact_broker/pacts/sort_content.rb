@@ -34,7 +34,7 @@ module PactBroker
         # You never can tell what people will do...
         if probably_array.is_a?(Array)
           array_with_ordered_hashes = order_hash_keys(probably_array)
-          array_with_ordered_hashes.sort{ |a, b| a.to_json <=> b.to_json }
+          array_with_ordered_hashes.sort_by(&:to_json)
         else
           probably_array
         end
