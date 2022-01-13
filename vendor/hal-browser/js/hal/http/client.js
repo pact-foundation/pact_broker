@@ -1,6 +1,6 @@
 HAL.Http.Client = function(opts) {
   this.vent = opts.vent;
-  this.defaultHeaders = { 'Accept': 'application/hal+json, application/json, */*; q=0.01', 'X-Interface': 'HAL Browser' }; //pact_broker
+  this.defaultHeaders = { 'Accept': 'application/hal+json, application/json, */*; q=0.01' };
   cookie = document.cookie.match('(^|;)\\s*' + 'MyHalBrowserToken' + '\\s*=\\s*([^;]+)');
   cookie ? this.defaultHeaders.Authorization = 'Bearer ' + cookie.pop() : '';
   this.headers = this.defaultHeaders;
@@ -23,7 +23,7 @@ HAL.Http.Client.prototype.get = function(url) {
         headers: jqXHR.getAllResponseHeaders()
       });
     }
-  }).error(function() {
+  }).fail(function() {
     self.vent.trigger('fail-response', { jqxhr: jqxhr });
   });
 };
