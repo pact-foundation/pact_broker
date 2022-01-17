@@ -5,7 +5,12 @@ module PactBroker
     module Decorators
       class DecoratorContextCreator
         def self.call(resource, options)
-          Decorators::DecoratorContext.new(resource.base_url, resource.resource_url, resource.request.env, options)
+          Decorators::DecoratorContext.new(
+            resource.base_url,
+            resource.resource_url,
+            resource.request.env,
+            { path_params: resource.identifier_from_path }.merge(options)
+          )
         end
       end
     end
