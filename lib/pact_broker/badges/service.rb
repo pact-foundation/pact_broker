@@ -132,7 +132,7 @@ module PactBroker
         with_cache uri do
           request = Net::HTTP::Get.new(uri)
           options = {read_timeout: 3, open_timeout: 1, ssl_timeout: 1, continue_timeout: 1}
-          options.merge! PactBroker::BuildHttpOptions.call(uri)
+          options.merge! PactBroker::BuildHttpOptions.call(uri, disable_ssl_verification: PactBroker.configuration.disable_ssl_verification)
 
           Net::HTTP.start(uri.hostname, uri.port, :ENV, options) do |http|
             http.request request

@@ -45,6 +45,10 @@ module PactBroker
         with_updated_attribute(disable_ssl_verification: value)
       end
 
+      def with_cert_store(value)
+        with_updated_attribute(cert_store: value)
+      end
+
       def webhook_context
         self[:webhook_context]
       end

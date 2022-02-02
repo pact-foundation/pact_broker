@@ -15,7 +15,8 @@ module PactBroker
       let(:response_code) { "200" }
       let(:event_context) { { some: "things" } }
       let(:logging_options) { { other: "options" } }
-      let(:options) { { logging_options: logging_options, http_success_codes: [200], user_agent: "user agent", disable_ssl_verification: true} }
+      let(:options) { { logging_options: logging_options, http_success_codes: [200], user_agent: "user agent", disable_ssl_verification: true, cert_store: cert_store } }
+      let(:cert_store) { double("cert store") }
       let(:pact) { double("pact") }
       let(:verification) { double("verification") }
       let(:logger) { double("logger").as_null_object }
@@ -107,7 +108,12 @@ module PactBroker
         end
 
         it "builds the request" do
-          expect(request_template).to receive(:build).with(webhook_template_parameters_hash, user_agent: "user agent", disable_ssl_verification: true)
+          expect(request_template).to receive(:build).with(
+            webhook_template_parameters_hash,
+            user_agent: "user agent",
+            disable_ssl_verification: true,
+            cert_store: cert_store
+          )
           execute
         end
 

@@ -25,7 +25,8 @@ module PactBroker
           body: built_body,
           headers: {"headername" => "headervalueBUILT"},
           user_agent: "Pact Broker",
-          disable_ssl_verification: true
+          disable_ssl_verification: true,
+          cert_store: cert_store
         }
       end
 
@@ -37,6 +38,7 @@ module PactBroker
       let(:built_url) { "http://example.org/hook?foo=barBUILT" }
       let(:body) { { foo: "bar" } }
       let(:built_body) { '{"foo":"bar"}BUILT' }
+      let(:cert_store) { double("cert_store") }
 
       describe "#build" do
         before do
@@ -47,7 +49,14 @@ module PactBroker
 
         let(:params_hash) { double("params hash") }
 
-        subject { WebhookRequestTemplate.new(attributes).build(params_hash, user_agent: "Pact Broker", disable_ssl_verification: true) }
+        subject do
+          WebhookRequestTemplate.new(attributes).build(
+            params_hash,
+            user_agent: "Pact Broker",
+            disable_ssl_verification: true,
+            cert_store: cert_store
+          )
+        end
 
         it "renders the url template" do
           expect(PactBroker::Webhooks::Render).to receive(:call).with(url, params_hash) do | content, pact, verification, &block |

@@ -27,7 +27,7 @@ module PactBroker
         @headers = Rack::Utils::HeaderHash.new(attributes[:headers] || {})
       end
 
-      def build(template_params, user_agent: nil, disable_ssl_verification: false)
+      def build(template_params, user_agent: nil, disable_ssl_verification: false, cert_store: nil)
         attributes = {
           method: http_method,
           url: build_url(template_params),
@@ -37,7 +37,8 @@ module PactBroker
           uuid: uuid,
           body: build_body(template_params),
           user_agent: user_agent,
-          disable_ssl_verification: disable_ssl_verification
+          disable_ssl_verification: disable_ssl_verification,
+          cert_store: cert_store
         }
         PactBroker::Domain::WebhookRequest.new(attributes)
       end
