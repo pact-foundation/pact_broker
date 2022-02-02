@@ -4,14 +4,14 @@ module PactBroker
   class BuildHttpOptions
     extend PactBroker::Services
 
-    def self.call  uri
+    def self.call uri, disable_ssl_verification: false
       uri = URI(uri)
       options = {}
-      
+
       if uri.scheme == "https"
         options[:use_ssl] = true
         options[:cert_store] = cert_store
-        if disable_ssl_verification?
+        if disable_ssl_verification
           options[:verify_mode] = OpenSSL::SSL::VERIFY_NONE
         else
           options[:verify_mode] = OpenSSL::SSL::VERIFY_PEER
@@ -19,14 +19,10 @@ module PactBroker
       end
       options
     end
-    
-    def self.disable_ssl_verification?
-      PactBroker.configuration.disable_ssl_verification
-    end
-    
+
     def self.cert_store
       certificate_service.cert_store
-    end    
+    end
   end
 end
 

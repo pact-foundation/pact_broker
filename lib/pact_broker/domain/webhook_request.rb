@@ -18,7 +18,7 @@ module PactBroker
 
       HEADERS_TO_REDACT = [/authorization/i, /token/i]
 
-      attr_accessor :method, :url, :headers, :body, :username, :password, :uuid, :user_agent
+      attr_accessor :method, :url, :headers, :body, :username, :password, :uuid, :user_agent, :disable_ssl_verification
 
       # Reform gets confused by the :method method, as :method is a standard
       # Ruby method.
@@ -47,7 +47,7 @@ module PactBroker
       end
 
       def execute
-        options = PactBroker::BuildHttpOptions.call(uri).merge(read_timeout: 15, open_timeout: 15)
+        options = PactBroker::BuildHttpOptions.call(uri, disable_ssl_verification: disable_ssl_verification).merge(read_timeout: 15, open_timeout: 15)
         req = http_request
         Net::HTTP.start(uri.hostname, uri.port, :ENV, options) do |http|
           http.request req

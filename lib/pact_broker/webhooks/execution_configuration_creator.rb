@@ -10,6 +10,7 @@ module PactBroker
           .with_retry_schedule(PactBroker.configuration.webhook_retry_schedule)
           .with_http_success_codes(PactBroker.configuration.webhook_http_code_success)
           .with_user_agent(PactBroker.configuration.user_agent)
+          .with_disable_ssl_verification(PactBroker.configuration.disable_ssl_verification)
           .with_webhook_context(base_url: resource.base_url)
       end
     end
