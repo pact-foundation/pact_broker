@@ -122,7 +122,8 @@ module PactBroker
                   resource_url: "http://example.org/path",
                   env: env,
                   resource_title: nil,
-                  query_string: "foo=bar"
+                  query_string: "foo=bar",
+                  path_params: { key1: "foo bar", key2: :value2, key3: 1.2 }
                 }
               )
             end
@@ -137,7 +138,8 @@ module PactBroker
                   env: env,
                   resource_title: "foo",
                   something: "else",
-                  query_string: "foo=bar"
+                  query_string: "foo=bar",
+                  path_params: { key1: "foo bar", key2: :value2, key3: 1.2 }
                 }
               )
             end
