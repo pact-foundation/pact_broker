@@ -24,7 +24,8 @@ module PactBroker
           uuid: "1234",
           body: built_body,
           headers: {"headername" => "headervalueBUILT"},
-          user_agent: "Pact Broker"
+          user_agent: "Pact Broker",
+          disable_ssl_verification: true
         }
       end
 
@@ -46,7 +47,7 @@ module PactBroker
 
         let(:params_hash) { double("params hash") }
 
-        subject { WebhookRequestTemplate.new(attributes).build(params_hash, "Pact Broker") }
+        subject { WebhookRequestTemplate.new(attributes).build(params_hash, user_agent: "Pact Broker", disable_ssl_verification: true) }
 
         it "renders the url template" do
           expect(PactBroker::Webhooks::Render).to receive(:call).with(url, params_hash) do | content, pact, verification, &block |
