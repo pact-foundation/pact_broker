@@ -15,7 +15,7 @@ module PactBroker
         cert_store.set_default_paths
         find_all_certificates.each do | certificate |
           begin
-            logger.debug("Loading certificate #{certificate.subject} in to cert store")
+            logger.debug("Loading certificate for subject #{certificate.subject} and issuer #{certificate.issuer} in to cert store")
             cert_store.add_cert(certificate)
           rescue StandardError => e
             logger.warn("Error adding certificate object #{certificate} to store", e)
@@ -42,7 +42,7 @@ module PactBroker
       end
 
       def certificates_from_config
-        PactBroker.configuration.webhook_certificates.select{| c| c[:content] || c[:path] }.collect do | certificate_config, i |
+        PactBroker.configuration.webhook_certificates.select{| c| c[:content] || c[:path] }.collect.with_index do | certificate_config, i |
           load_certificate_config(certificate_config, i)
         end.flatten.compact
       end
@@ -54,7 +54,7 @@ module PactBroker
             begin
               OpenSSL::X509::Certificate.new(c)
             rescue StandardError => e
-              logger.warn("Error creating certificate object from webhook_certificate at index #{i} with description #{certificate_config[:description]}", e)
+              logger.warn("Error creating certificate object from webhook_certificates at index #{i} with description #{certificate_config[:description]}", e)
               nil
             end
           end
