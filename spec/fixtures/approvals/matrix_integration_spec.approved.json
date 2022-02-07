@@ -169,5 +169,17 @@
     "reasons": [
       "PactBroker::Matrix::PactNotEverVerifiedByProvider"
     ]
+  },
+  "PactBroker::Matrix::Service find when adding a new provider c1 v2 is not allowed to be deployed because it relies on p2 which has not been deployed yet": {
+    "deployable": null,
+    "reasons": [
+      "PactBroker::Matrix::PactNotEverVerifiedByProvider"
+    ]
+  },
+  "PactBroker::Matrix::Service find when adding a new provider p2 v1 is allowed to be deployed because the version of c1 that is in test does not care about p2": {
+    "deployable": null,
+    "reasons": [
+      "PactBroker::Matrix::PactNotVerifiedByRequiredProviderVersion"
+    ]
   }
 }
