@@ -11,13 +11,20 @@ module PactBroker
         subject { Service.can_i_deploy(selectors, options) }
 
         # Useful for eyeballing the messages to make sure they read nicely
-        # after do
-        #   require 'pact_broker/api/decorators/reason_decorator'
-        #   subject.deployment_status_summary.reasons.each do | reason |
-        #     puts reason
-        #     puts PactBroker::Api::Decorators::ReasonDecorator.new(reason).to_s
-        #   end
-        # end
+        after do
+          if ENV["DEBUG"] == "true"
+            require "pact_broker/api/decorators/reason_decorator"
+
+            subject.considered_rows.each do | row |
+              puts [row.consumer_name, row.consumer_version_number, row.provider_name, row.provider_version_number].join(" ")
+            end
+
+            subject.deployment_status_summary.reasons.each do | reason |
+              puts reason
+              puts PactBroker::Api::Decorators::ReasonDecorator.new(reason).to_s
+            end
+          end
+        end
 
         after do | example |
           INTEGRATION_APPROVALS[example.full_description] = matrix_query_content_for_approval(subject)
@@ -496,6 +503,42 @@ module PactBroker
 
           xit "should include a warning" do
             expect(subject.deployment_status_summary.reasons.last).to be_a(PactBroker::Matrix::InteractionsMissingVerifications)
+          end
+        end
+
+        describe "when adding a new provider" do
+          before do
+            td.publish_pact(consumer_name: "c1", provider_name: "p1", consumer_version_number: "1")
+              .create_consumer_version_tag("test")
+              .create_verification(provider_version: "1", tag_names: "test")
+              .publish_pact(consumer_name: "c1", provider_name: "p2", consumer_version_number: "2")
+              .create_verification(provider_version: "1")
+          end
+
+          let(:options) { { latestby: "cvp", latest: true, tag: "test" } }
+
+          describe "c1 v2" do
+            let(:selectors) do
+              [
+                UnresolvedSelector.new(pacticipant_name: "c1", pacticipant_version_number: "2")
+              ]
+            end
+
+            it "is not allowed to be deployed" do
+              expect(subject.deployment_status_summary).to_not be_deployable
+            end
+          end
+
+          describe "p2 v1" do
+            let(:selectors) do
+              [
+                UnresolvedSelector.new(pacticipant_name: "p2", pacticipant_version_number: "1")
+              ]
+            end
+
+            it "is allowed to be deployed", pending: "this should allow the provider to be deployed because the version of the consumer that is in test does not care about p2" do
+              expect(subject.deployment_status_summary).to be_deployable
+            end
           end
         end
       end
