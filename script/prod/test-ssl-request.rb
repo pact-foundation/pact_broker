@@ -4,7 +4,7 @@
 require "net/http"
 require "openssl"
 
-TEST_URL = 'https://localhost:4444'
+TEST_URL = "https://localhost:4444"
 TEST_CERTIFICATE = "-----BEGIN CERTIFICATE-----
 MIIDZDCCAkygAwIBAgIBATANBgkqhkiG9w0BAQsFADBCMRMwEQYKCZImiZPyLGQB
 GRYDb3JnMRkwFwYKCZImiZPyLGQBGRYJcnVieS1sYW5nMRAwDgYDVQQDDAdSdWJ5
