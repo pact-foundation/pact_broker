@@ -1,3 +1,16 @@
+<a name="v2.93.3"></a>
+### v2.93.3 (2022-02-02)
+
+#### Bug Fixes
+
+* ensure webhook_certificates setting is honoured in webhook	 ([7933a526](/../../commit/7933a526))
+* ensure disable_ssl_verification setting is honoured in webhook	 ([08bc758c](/../../commit/08bc758c))
+* ensure webhook_certificates setting is honoured in webhook	 ([8a720cdb](/../../commit/8a720cdb))
+* ensure disable_ssl_verification setting is honoured in webhook	 ([0728b3d7](/../../commit/0728b3d7))
+
+* **hal-browser**
+  * fixing vulnerability by upgrading HAL browser dependencies	 ([a6b06f66](/../../commit/a6b06f66))
+
 <a name="v2.93.2"></a>
 ### v2.93.2 (2021-12-23)
 
