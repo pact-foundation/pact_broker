@@ -1,6 +1,6 @@
 HAL.Http.Client = function(opts) {
   this.vent = opts.vent;
-  this.defaultHeaders = { 'Accept': 'application/hal+json, application/json, */*; q=0.01' };
+  this.defaultHeaders = { 'Accept': 'application/hal+json, application/json, */*; q=0.01', 'X-Interface': 'HAL Browser' }; //pact_broker
   cookie = document.cookie.match('(^|;)\\s*' + 'MyHalBrowserToken' + '\\s*=\\s*([^;]+)');
   cookie ? this.defaultHeaders.Authorization = 'Bearer ' + cookie.pop() : '';
   this.headers = this.defaultHeaders;
