@@ -524,7 +524,7 @@ module PactBroker
               ]
             end
 
-            it "is not allowed to be deployed" do
+            it "is not allowed to be deployed because it relies on p2 which has not been deployed yet" do
               expect(subject.deployment_status_summary).to_not be_deployable
             end
           end
@@ -536,7 +536,7 @@ module PactBroker
               ]
             end
 
-            it "is allowed to be deployed", pending: "this should allow the provider to be deployed because the version of the consumer that is in test does not care about p2" do
+            it "is allowed to be deployed because the version of c1 that is in test does not care about p2", pending: true do
               expect(subject.deployment_status_summary).to be_deployable
             end
           end
