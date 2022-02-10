@@ -39,6 +39,7 @@ begin
       success: true
     )
     .can_i_deploy(pacticipant: PROVIDER_2_NAME, version: "1", to: "env:test")
+    .can_i_deploy(pacticipant: CONSUMER_NAME, version: "2", to: "env:test")
 
 rescue StandardError => e
   puts "#{e.class} #{e.message}"
