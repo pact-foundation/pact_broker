@@ -283,8 +283,6 @@ module PactBroker
 
       # rubocop: disable Metrics/CyclomaticComplexity
       def <=> other
-        # elsif consumer || other.consumer
-        #   consumer_comparison(other)
         if overall_latest? || other.overall_latest?
           overall_latest_comparison(other)
         elsif latest_for_branch? || other.latest_for_branch?
@@ -297,6 +295,8 @@ module PactBroker
           currently_deployed_comparison(other)
         elsif currently_supported? || other.currently_supported?
           currently_supported_comparison(other)
+        elsif consumer || other.consumer
+          consumer_comparison(other)
         else
           0
         end
@@ -358,8 +358,8 @@ module PactBroker
       end
 
       def consumer_comparison(other)
-        if consumer == other.consumer
-          0
+        if consumer && other.consumer
+          consumer <=> other.consumer
         else
           consumer ? -1 : 1
         end
