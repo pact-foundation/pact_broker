@@ -1,4 +1,4 @@
-FROM ruby:2.7.4-alpine3.13
+FROM ruby:2.7.5-alpine3.15
 
 WORKDIR /home
 
@@ -9,15 +9,15 @@ RUN apk update \
       "build-base>=0.5" \
       "libucontext-dev>=1.0-r0" \
       "bash>=4.4" \
-      "ca-certificates>=20190108" \
+      "ca-certificates>=20211220" \
       "git>=2.20" \
-      "postgresql-dev>=11.3" \
-      "sqlite-dev>=3.28" \
-      "sqlite>=3.28" \
+      "postgresql14-dev>=14.2" \
+      "sqlite-dev>=3.36" \
+      "sqlite>=3.36" \
       "tzdata>=2019" \
       "mariadb-dev>=10.3" \
       "mysql-client>=10.3.25" \
-      "postgresql-client>=11.10" \
+      "postgresql14-client>=14.2" \
     && rm -rf /var/cache/apk/*
 
 RUN apk add --no-cache openssl less

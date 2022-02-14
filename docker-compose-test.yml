@@ -100,3 +100,22 @@ services:
       - ./public:/home/public
       - ./docs:/home/docs
 
+  sqlite-tests:
+    build: .
+    environment:
+      PACT_BROKER_HIDE_PACTFLOW_MESSAGES: 'true'
+      INSTALL_MYSQL: 'true'
+    volumes:
+      - ./lib:/home/lib
+      - ./spec:/home/spec
+      - ./db:/home/db
+      - ./config.ru:/home/config.ru
+      - ./tasks:/home/tasks
+      - ./Rakefile:/home/Rakefile
+      - ./config:/home/config
+      - ./.rspec:/home/.rspec
+      - ./.rubocop:/home/.rubocop
+      - ./.gitignore:/home/.gitignore
+      - ./public:/home/public
+      - ./docs:/home/docs
+
