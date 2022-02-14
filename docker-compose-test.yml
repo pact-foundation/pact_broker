@@ -118,4 +118,3 @@ services:
       - ./.gitignore:/home/.gitignore
       - ./public:/home/public
       - ./docs:/home/docs
-
