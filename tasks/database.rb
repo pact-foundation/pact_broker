@@ -128,7 +128,7 @@ module PactBroker
     end
 
     def psql?
-      adapter == "postgres"
+      adapter =~ /postgres/
     end
 
     def sqlite?

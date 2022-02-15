@@ -71,7 +71,7 @@ module DB
   end
 
   def self.postgres?
-    !!(PACT_BROKER_DB.adapter_scheme.to_s == "postgres")
+    !!(PACT_BROKER_DB.adapter_scheme.to_s =~ /postgres/)
   end
 
   PACT_BROKER_DB ||= connection_for_env ENV.fetch("RACK_ENV")

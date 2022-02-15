@@ -23,7 +23,7 @@ module PactBroker
     end
 
     def postgres?
-      adapter == "postgres"
+      adapter =~ /postgres/
     end
 
     def adapter

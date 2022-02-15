@@ -101,7 +101,7 @@ module Sequel
         end
 
         def postgres?
-          model.db.adapter_scheme.to_s == "postgres"
+          model.db.adapter_scheme.to_s =~ /postgres/
         end
 
         def values_to_update

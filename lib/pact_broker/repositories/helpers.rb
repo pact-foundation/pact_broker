@@ -36,7 +36,7 @@ module PactBroker
       end
 
       def postgres?
-        Sequel::Model.db.adapter_scheme.to_s == "postgres"
+        Sequel::Model.db.adapter_scheme.to_s =~ /postgres/
       end
 
       def select_all_qualified

@@ -72,7 +72,7 @@ module PactBroker
           end
 
           def postgres?
-            database_credentials[:adapter] == "postgres"
+            database_credentials[:adapter] =~ /postgres/
           end
           private :postgres?
 
