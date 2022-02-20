@@ -32,7 +32,7 @@ module PactBroker
               errors = matrix_service.validate_selectors(selectors, options)
               if errors.empty?
                 lines = matrix_service.find(selectors, options)
-                locals[:lines] = PactBroker::UI::ViewDomain::MatrixLines.new(lines)
+                locals[:lines] = PactBroker::UI::ViewDomain::MatrixLines.new(lines, base_url: base_url)
                 locals[:badge_url] = matrix_badge_url(selectors, lines, base_url)
               else
                 locals[:errors] = errors
