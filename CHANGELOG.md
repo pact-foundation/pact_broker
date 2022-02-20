@@ -1,3 +1,13 @@
+<a name="v2.93.4"></a>
+### v2.93.4 (2022-02-21)
+
+#### Bug Fixes
+
+* **matrix page**
+  * set correct base URL for links when a path is specified in the base URL	 ([8305456b](/../../commit/8305456b))
+
+* handle DateTimes that come back from Sqlite as Strings	 ([1312a049](/../../commit/1312a049))
+
 <a name="v2.93.3"></a>
 ### v2.93.3 (2022-02-02)
 
