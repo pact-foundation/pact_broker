@@ -13,11 +13,9 @@ To use it:
     ```
     git clone git@github.com:pact-foundation/pact_broker.git
     cd pact_broker
+    git checkout spike/dummy-webhooks
 
-    docker-compose  -f docker-compose-issue-repro-with-pact-broker-docker-image.yml up --build pact-broker
-
-    # if needing webhooks - run this in a new window so the logs are clearer
-    docker-compose -f docker-compose-issue-repro-with-pact-broker-docker-image.yml up webhook-server
+    docker-compose  -f docker-compose-issue-repro-with-pact-broker-docker-image.yml up pact-broker
 
     ```
 
@@ -28,4 +26,4 @@ To use it:
     docker-compose -f docker-compose-issue-repro-with-pact-broker-docker-image.yml run repro-issue
     ```
 
-You can modify `script/reproduce-issue.rb` and then re-run it with the change applied.
+You can modify `script/data/dummy-webhooks.rb` and then re-run it with the change applied.

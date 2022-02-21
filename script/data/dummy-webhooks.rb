@@ -26,10 +26,13 @@ begin
   puts "Sleeping 7 seconds to wait for the webhook to execute..."
   sleep 7
 
-  triggered_webhooks_response_body = JSON.parse(Faraday.get("#{base_url}/pacts/provider/#{PROVIDER_NAME}/consumer/#{CONSUMER_NAME}/version/1/triggered-webhooks").body)
+  # get the triggered webhooks for the pact
+  triggered_webhooks_response_body = JSON.parse(http_client.get("#{base_url}/pacts/provider/#{PROVIDER_NAME}/consumer/#{CONSUMER_NAME}/version/1/triggered-webhooks").body)
 
+  # get the URLs of the log endpoints
   logs_urls =  triggered_webhooks_response_body["_embedded"]["triggeredWebhooks"].collect { | tw | tw["_links"]["pb:logs"]["href"] }
 
+  # print out the logs
   requests = logs_urls.collect do | logs_url |
     logs = http_client.get(logs_url).body
     puts "\n\n"
@@ -38,8 +41,10 @@ begin
     puts "\n--------------------------------------------"
   end
 
+  # get the URLs of the webhooks that got triggered
   webhook_urls =  triggered_webhooks_response_body["_embedded"]["triggeredWebhooks"].collect { | tw | tw["_links"]["pb:webhook"]["href"]}
 
+  # print out the webhook details
   requests = webhook_urls.collect do | webhook_url |
     webhook_response_body = JSON.parse(http_client.get(webhook_url).body)
     puts "\n\n"
