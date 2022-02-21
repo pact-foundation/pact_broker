@@ -53,7 +53,7 @@ HAL.Views.EmbeddedResource = Backbone.View.extend({
       $inner.append(embeddedResourcesView.el);
     }
 
-    this.$accordionBody = $('<div class="accordion-body"></div>');
+    this.$accordionBody = $('<div class="accordion-body collapse"></div>');
     this.$accordionBody.append($inner)
 
     this.$el.append(this.$accordionBody);
