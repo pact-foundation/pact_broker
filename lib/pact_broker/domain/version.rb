@@ -241,6 +241,13 @@ module PactBroker
         end
         # rubocop: enable Metrics/CyclomaticComplexity
 
+        def pacticipants_set
+          from_self(alias: :v)
+            .select_group(Sequel[:v][:pacticipant_id])
+            .collect(&:pacticipant_id)
+            .to_set
+        end
+
         # private
 
         def calculate_max_version_order_and_join_back_to_versions(query, selector)

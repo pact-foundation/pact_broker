@@ -124,15 +124,17 @@ module PactBroker
         end
 
         def eager_all_the_things
-          eager(:consumer)
-          .eager(:provider)
-          .eager(consumer_version: [{ current_deployed_versions: :environment }, { current_supported_released_versions: :environment }, { branch_versions: :branch_head }])
-          .eager(provider_version: [{ current_deployed_versions: :environment }, { current_supported_released_versions: :environment }, { branch_versions: :branch_head }])
-          .eager(:verification)
-          .eager(:pact_publication)
-          .eager(:pact_version)
-          .eager(:consumer_version_tags)
-          .eager(:provider_version_tags)
+          eager(
+            :consumer,
+            :provider,
+            :verification,
+            :pact_publication,
+            :pact_version,
+            consumer_version: { current_deployed_versions: :environment, current_supported_released_versions: :environment, branch_versions: [:branch_head, :version, branch: :pacticipant] },
+            provider_version: { current_deployed_versions: :environment, current_supported_released_versions: :environment, branch_versions: [:branch_head, :version, branch: :pacticipant] },
+            consumer_version_tags: { version: :pacticipant },
+            provider_version_tags: { version: :pacticipant }
+          )
         end
 
         def default_scope

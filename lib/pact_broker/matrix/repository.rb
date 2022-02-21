@@ -127,20 +127,19 @@ module PactBroker
       def integrations_where_specified_selector_is_provider(resolved_specified_selectors, options)
         integrations_involving_specified_providers = PactBroker::Integrations::Integration
                                                       .where(provider_id: resolved_specified_selectors.collect(&:pacticipant_id))
-                                                      .eager(:consumer)
+                                                      .eager(:consumer, :provider)
                                                       .all
 
         destination_selector = PactBroker::Matrix::UnresolvedSelector.new(options.slice(:latest, :tag, :branch, :environment_name).compact)
+        required = PactBroker::Domain::Version.for_selector(destination_selector).pacticipants_set
 
         integrations_involving_specified_providers.collect do | integration |
-          required = PactBroker::Domain::Version.where(pacticipant: integration.consumer).for_selector(destination_selector).any?
-
           Integration.from_hash(
             consumer_id: integration.consumer.id,
             consumer_name: integration.consumer.name,
             provider_id: integration.provider.id,
             provider_name: integration.provider.name,
-            required: required
+            required: required.member?(integration.consumer.id)
           )
         end
       end
@@ -221,8 +220,10 @@ module PactBroker
 
       # Find the version number for selectors with the latest and/or tag specified
       def resolve_versions_and_add_ids(unresolved_selectors, selector_type, resolved_ignore_selectors = [])
+        names = unresolved_selectors.collect(&:pacticipant_name)
+        pacticipants = PactBroker::Domain::Pacticipant.where(name: names).to_a.group_by(&:name).transform_values(&:first)
         unresolved_selectors.collect do | unresolved_selector |
-          pacticipant = PactBroker::Domain::Pacticipant.find(name: unresolved_selector.pacticipant_name)
+          pacticipant = pacticipants[unresolved_selector.pacticipant_name]
           if pacticipant
             versions = find_versions_for_selector(unresolved_selector)
             build_resolved_selectors(pacticipant, versions, unresolved_selector, selector_type, resolved_ignore_selectors)
