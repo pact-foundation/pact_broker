@@ -1,3 +1,22 @@
+<a name="v2.94.0"></a>
+### v2.94.0 (2022-02-22)
+
+#### Features
+
+* add can-i-deploy endpoint for checking if the latest version for a branch can be deployed to a particular environment	 ([34b145e8](/../../commit/34b145e8))
+* truncate tags, branches and versions in UI when they are super long (#513)	 ([94bbf915](/../../commit/94bbf915))
+
+* **integration dashboard**
+  * add copy buttons next to the branch, tag and environment labels	 ([5b86ac88](/../../commit/5b86ac88))
+
+#### Bug Fixes
+
+* Improve Matrix request performance (#537)	 ([123f8629](/../../commit/123f8629))
+* Eagerly load pact publication fields (#536)	 ([c3f6993b](/../../commit/c3f6993b))
+
+* **hal-browser**
+  * properties accordion should be collapsed by default (#544)	 ([19466121](/../../commit/19466121))
+
 <a name="v2.93.4"></a>
 ### v2.93.4 (2022-02-21)
 
