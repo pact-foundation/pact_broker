@@ -124,6 +124,9 @@ en:
   datetime:
     distance_in_words:
       half_a_minute: "half a minute"
+      less_than_x_minutes:
+        one: "less than 1 minute"
+        other: "less than %{count} minutes"
       less_than_x_seconds:
         one:   "less than 1 second"
         other: "less than %{count} seconds"
