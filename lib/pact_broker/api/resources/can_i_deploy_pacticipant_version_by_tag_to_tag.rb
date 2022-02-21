@@ -5,7 +5,7 @@ require "pact_broker/matrix/parse_can_i_deploy_query"
 module PactBroker
   module Api
     module Resources
-      class CanIDeployPacticipantVersion < Matrix
+      class CanIDeployPacticipantVersionByTagToTag < Matrix
         def resource_exists?
           !!version
         end
@@ -14,26 +14,29 @@ module PactBroker
           :'matrix::can_i_deploy'
         end
 
+        def malformed_request?
+          false
+        end
+
         private
 
         def selectors
-          @selectors ||= begin
-            [
-              PactBroker::Matrix::UnresolvedSelector.new(
-                pacticipant_name: pacticipant_name,
-                latest: true,
-                tag: identifier_from_path[:tag]
-              )
-            ]
-          end
+          @selectors ||= [
+                            PactBroker::Matrix::UnresolvedSelector.new(
+                              pacticipant_name: pacticipant_name,
+                              latest: true,
+                              tag: identifier_from_path[:tag],
+                            )
+                          ]
+
         end
 
         def options
           @options ||= {
-            latestby: "cvp",
-            latest: true,
-            tag: identifier_from_path[:to]
-          }
+                          latestby: "cvp",
+                          latest: true,
+                          tag: identifier_from_path[:to]
+                        }
         end
 
         def version

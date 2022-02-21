@@ -27,6 +27,14 @@ module PactBroker
           .first
       end
 
+      def find_latest_by_pacticipant_name_and_branch_name(pacticipant_name, branch_name)
+        branch_heads_join = { Sequel[:versions][:id] => Sequel[:branch_heads][:version_id], Sequel[:branch_heads][:branch_name] => branch_name }
+        PactBroker::Domain::Version
+          .where_pacticipant_name(pacticipant_name)
+          .join(:branch_heads, branch_heads_join)
+          .single_record
+      end
+
       def find_by_pacticipant_name_and_tag pacticipant_name, tag
         PactBroker::Domain::Version
           .select_all_qualified

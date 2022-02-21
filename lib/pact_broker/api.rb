@@ -81,15 +81,19 @@ module PactBroker
         add ["pacticipants"], Api::Resources::Pacticipants, {resource_name: "pacticipants"}
         add ["pacticipants", "label", :label_name], PactBroker::Api::Resources::PacticipantsForLabel, {resource_name: "pacticipants_for_label"}
         add ["pacticipants", :pacticipant_name], Api::Resources::Pacticipant, {resource_name: "pacticipant"}
+        add ["pacticipants", :pacticipant_name, "labels", :label_name], Api::Resources::Label, {resource_name: "pacticipant_label"}
+
+        # Versions
         add ["pacticipants", :pacticipant_name, "versions"], Api::Resources::Versions, {resource_name: "pacticipant_versions"}
         add ["pacticipants", :pacticipant_name, "versions", :pacticipant_version_number], Api::Resources::Version, {resource_name: "pacticipant_version"}
         add ["pacticipants", :pacticipant_name, "latest-version", :tag], Api::Resources::LatestVersion, {resource_name: "latest_tagged_pacticipant_version"}
-        add ["pacticipants", :pacticipant_name, "latest-version", :tag, "can-i-deploy", "to", :to], Api::Resources::CanIDeployPacticipantVersion, { resource_name: "can_i_deploy_latest_tagged_version" }
-        add ["pacticipants", :pacticipant_name, "latest-version", :tag, "can-i-deploy", "to", :to, "badge"], Api::Resources::CanIDeployBadge, { resource_name: "can_i_deploy_badge" }
+        add ["pacticipants", :pacticipant_name, "latest-version", :tag, "can-i-deploy", "to", :to], Api::Resources::CanIDeployPacticipantVersionByTagToTag, { resource_name: "can_i_deploy_latest_tagged_version_to_tag" }
+        add ["pacticipants", :pacticipant_name, "latest-version", :tag, "can-i-deploy", "to", :to, "badge"], Api::Resources::CanIDeployBadge, { resource_name: "can_i_deploy_latest_tagged_version_to_tag_badge" }
         add ["pacticipants", :pacticipant_name, "latest-version"], Api::Resources::LatestVersion, {resource_name: "latest_pacticipant_version"}
         add ["pacticipants", :pacticipant_name, "versions", :pacticipant_version_number, "tags", :tag_name], Api::Resources::Tag, {resource_name: "pacticipant_version_tag"}
-        add ["pacticipants", :pacticipant_name, "labels", :label_name], Api::Resources::Label, {resource_name: "pacticipant_label"}
         add ["pacticipants", :pacticipant_name, "branches", :branch_name, "versions", :version_number], Api::Resources::BranchVersion, { resource_name: "branch_version" }
+        add ["pacticipants", :pacticipant_name, "branches", :branch_name, "latest-version", "can-i-deploy", "to-environment", :environment_name], Api::Resources::CanIDeployPacticipantVersionByBranchToEnvironment, { resource_name: "can_i_deploy_latest_branch_version_to_environment" }
+        #add ["pacticipants", :pacticipant_name, "branches", :branch_name, "latest-version", "can-i-deploy", "to-environment", :environment_name, "badge"], Api::Resources::CanIDeployPacticipantVersionByBranchToEnvironment, { resource_name: "can_i_deploy_latest_branch_version_to_environment_badge" }
 
         # Webhooks
         add ["webhooks", "provider", :provider_name, "consumer", :consumer_name ], Api::Resources::PacticipantWebhooks, {resource_name: "pacticipant_webhooks"}

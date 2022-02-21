@@ -9,6 +9,7 @@ module PactBroker
         merge!(params)
       end
 
+      # TODO rename branch to branch_name
       def self.from_hash(hash)
         new(hash.symbolize_keys.snakecase_keys.slice(:pacticipant_name, :pacticipant_version_number, :latest, :tag, :branch, :environment_name))
       end

@@ -7,6 +7,24 @@ module PactBroker
       let(:pacticipant_name) { "test_pacticipant" }
       let(:version_number) { "1.2.3" }
 
+      describe "#find_latest_by_pacticipant_name_and_branch_name" do
+        before do
+          td.create_consumer("Bar")
+            .create_consumer_version("2.3.4", branch: "prod")
+            .create_consumer("Foo")
+            .create_consumer_version("1.2.3", branch: "prod")
+            .create_consumer_version("2.3.4", branch: "prod")
+            .create_consumer_version("5.6.7")
+        end
+
+        subject { Repository.new.find_latest_by_pacticipant_name_and_branch_name("Foo", "prod") }
+
+        it "returns the most recent version from the specified branch for the specified pacticipant" do
+          expect(subject.number).to eq "2.3.4"
+          expect(subject.pacticipant.name).to eq "Foo"
+        end
+      end
+
       describe "#find_by_pacticipant_name_and_latest_tag" do
         before do
           td.create_consumer("Bar")
