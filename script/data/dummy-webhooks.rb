@@ -17,8 +17,19 @@ begin
   CONSUMER_NAME = "consumer-1"
   PROVIDER_NAME = "provider-1"
 
+  webhook_request_body = {
+    "message" => "This is the webhook request body. These are some of the details about the pact that just got published.",
+    "pactUrl" => "${pactbroker.pactUrl}",
+    "eventName" => "${pactbroker.eventName}",
+    "consumerName" => "${pactbroker.consumerName}",
+    "consumerVersionNumber" => "${pactbroker.consumerVersionNumber}",
+    "providerVersionBranch" => "${pactbroker.providerVersionBranch}",
+    "providerName" => "${pactbroker.providerName}",
+    "consumerVersionBranch" => "${pactbroker.consumerVersionBranch}",
+  }
+
   td = PactBroker::Test::HttpTestDataBuilder.new(base_url)
-  td.create_global_webhook_for_contract_changed(uuid: "72b78b05-9509-4465-ba8b-040605f6d634", url: "https://this-domain-does-not-exist")
+  td.create_global_webhook_for_contract_changed(uuid: "72b78b05-9509-4465-ba8b-040605f6d634", url: "https://this-domain-does-not-exist", body: webhook_request_body)
     .delete_pacticipant(CONSUMER_NAME)
     .delete_pacticipant(PROVIDER_NAME)
     .publish_pact(consumer: CONSUMER_NAME, consumer_version: "1", provider: PROVIDER_NAME, content_id: "111")
