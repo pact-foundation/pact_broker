@@ -19,6 +19,13 @@ module PactBroker
       include PactBroker::Repositories::Helpers
       include PactBroker::Repositories::Scopes
 
+      PUBLICATION_ASSOCIATIONS_FOR_EAGER_LOAD = [
+        :provider,
+        :consumer,
+        :consumer_version,
+        pact_version: :latest_verification
+      ]
+
       def find(provider_name, consumer_version_selectors)
         selected_pacts = find_pacts_by_selector(provider_name, consumer_version_selectors)
         selected_pacts = selected_pacts + find_pacts_for_fallback_tags(selected_pacts, provider_name, consumer_version_selectors)
@@ -104,7 +111,7 @@ module PactBroker
 
         specified_selectors_or_defaults(consumer_version_selectors, provider).flat_map do | selector |
           query = scope_for(PactPublication).for_provider_and_consumer_version_selector(provider, selector)
-          query.all.collect do | pact_publication |
+          query.eager(*PUBLICATION_ASSOCIATIONS_FOR_EAGER_LOAD).all.collect do | pact_publication |
             create_selected_pact(pact_publication, selector)
           end
         end
@@ -265,7 +272,12 @@ module PactBroker
           log_pact_publications("Ignoring pacts successfully verified by another provider branch when not WIP", verified_by_other_branch)
         end
 
-        PactPublication.subtract(pact_publications_query.all, specified_explicitly.all, verified_by_this_branch.all, verified_by_other_branch.all)
+        PactPublication.subtract(
+          pact_publications_query.eager(*PUBLICATION_ASSOCIATIONS_FOR_EAGER_LOAD).all,
+          specified_explicitly.all,
+          verified_by_this_branch.all,
+          verified_by_other_branch.all
+        )
       end
 
       def remove_non_wip_for_tag(pact_publications_query, provider, tag, specified_pact_version_shas)
@@ -279,7 +291,11 @@ module PactBroker
           log_pact_publications("Ignoring pacts successfully verified by another provider tag when not WIP", verified_by_another_tag)
         end
 
-        PactPublication.subtract(pact_publications_query.all, specified_explicitly.all, verified_by_this_tag.all, verified_by_another_tag.all)
+        PactPublication.subtract(
+          pact_publications_query.eager(*PUBLICATION_ASSOCIATIONS_FOR_EAGER_LOAD).all,
+          specified_explicitly.all,
+          verified_by_this_tag.all,
+          verified_by_another_tag.all)
       end
 
       def collect_consumer_name_and_version_number(pact_publications_query)
