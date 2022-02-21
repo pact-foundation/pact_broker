@@ -11,7 +11,7 @@ services:
       POSTGRES_DB: postgres
 
   pact-broker:
-    image: pactfoundation/pact-broker:2.76.0.0
+    image: pactfoundation/pact-broker:2.93.3.0
     ports:
       - "9292:9292"
     # depends_on:
@@ -24,12 +24,13 @@ services:
       PACT_BROKER_SQL_LOG_LEVEL: DEBUG
       PACT_BROKER_WEBHOOK_SCHEME_WHITELIST: "http https"
       PACT_BROKER_WEBHOOK_HOST_WHITELIST: "/.*/"
+      PACT_BROKER_WEBHOOK_RETRY_SCHEDULE: ""
 
   repro-issue:
     build: .
     depends_on:
       - pact-broker
-    command: -wait http://pact-broker:9292 -timeout 30s /home/script/reproduce-issue.rb
+    command: -wait http://pact-broker:9292 -timeout 30s /home/script/data/dummy-webhooks.rb
     entrypoint: dockerize
     environment:
       - PACT_BROKER_BASE_URL=http://pact-broker:9292

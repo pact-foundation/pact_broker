@@ -14,7 +14,7 @@ To use it:
     git clone git@github.com:pact-foundation/pact_broker.git
     cd pact_broker
 
-    docker-compose  -f docker-compose-issue-repro-with-pact-broker-docker-image.yml up pact-broker
+    docker-compose  -f docker-compose-issue-repro-with-pact-broker-docker-image.yml up --build pact-broker
 
     # if needing webhooks - run this in a new window so the logs are clearer
     docker-compose -f docker-compose-issue-repro-with-pact-broker-docker-image.yml up webhook-server
