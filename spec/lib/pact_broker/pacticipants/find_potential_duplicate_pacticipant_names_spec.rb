@@ -2,9 +2,7 @@ require "spec_helper"
 require "pact_broker/pacticipants/find_potential_duplicate_pacticipant_names"
 
 module PactBroker
-
   module Pacticipants
-
     describe FindPotentialDuplicatePacticipantNames do
 
       describe "split" do
@@ -27,7 +25,6 @@ module PactBroker
       end
 
       describe ".call" do
-
         subject { FindPotentialDuplicatePacticipantNames.call(new_name, existing_names) }
 
         CALL_TEST_CASES = [

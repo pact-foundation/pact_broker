@@ -1,11 +1,8 @@
 require "pact_broker/domain/group"
 
 module PactBroker
-
   module Pacticipants
-
     class FindPotentialDuplicatePacticipantNames
-
       attr_reader :new_name, :existing_names
 
       def initialize new_name, existing_names
