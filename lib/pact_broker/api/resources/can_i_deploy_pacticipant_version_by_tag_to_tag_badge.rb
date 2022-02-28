@@ -5,7 +5,7 @@ require "pact_broker/api/resources/badge_methods"
 module PactBroker
   module Api
     module Resources
-      class CanIDeployBadge < BaseResource
+      class CanIDeployPacticipantVersionByTagToTagBadge < BaseResource
         include BadgeMethods
         def initialize
           super

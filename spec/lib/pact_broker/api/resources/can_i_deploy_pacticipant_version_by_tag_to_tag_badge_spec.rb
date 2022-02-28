@@ -1,9 +1,9 @@
-require "pact_broker/api/resources/can_i_deploy_badge"
+require "pact_broker/api/resources/can_i_deploy_pacticipant_version_by_tag_to_tag_badge"
 
 module PactBroker
   module Api
     module Resources
-      describe CanIDeployBadge do
+      describe CanIDeployPacticipantVersionByTagToTagBadge do
         before do
           allow_any_instance_of(described_class).to receive(:badge_service).and_return(badge_service)
           allow_any_instance_of(described_class).to receive(:matrix_service).and_return(matrix_service)
