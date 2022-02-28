@@ -1,35 +1,20 @@
 require "pact_broker/api/resources/base_resource"
 require "pact_broker/verifications/pseudo_branch_status"
 require "pact_broker/configuration"
+require "pact_broker/api/resources/badge_methods"
 
 module PactBroker
   module Api
     module Resources
       class Badge < BaseResource
-
-        def allowed_methods
-          ["GET", "OPTIONS"]
-        end
-
-        def content_types_provided
-          [["image/svg+xml", :to_svg]]
-        end
+        include BadgeMethods
 
         def resource_exists?
           !badge_service.can_provide_badge_using_redirect?
         end
 
-        # Only called if resource_exists? returns false
-        def previously_existed?
-          true
-        end
-
         def is_authorized?(authorization_header)
           super || PactBroker.configuration.enable_public_badge_access
-        end
-
-        def forbidden?
-          false
         end
 
         def to_svg
@@ -40,10 +25,6 @@ module PactBroker
         def moved_temporarily?
           response.headers["Cache-Control"] = "no-cache"
           badge_service.pact_verification_badge_url(pact, label, initials, pseudo_branch_verification_status, tags)
-        end
-
-        def policy_name
-          :'badges::badge'
         end
 
         private

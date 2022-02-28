@@ -1,10 +1,12 @@
 require "pact_broker/matrix/can_i_deploy_query_schema"
 require "pact_broker/matrix/parse_can_i_deploy_query"
+require "pact_broker/api/resources/badge_methods"
 
 module PactBroker
   module Api
     module Resources
       class CanIDeployBadge < BaseResource
+        include BadgeMethods
         def initialize
           super
           selector = PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: pacticipant_name, latest: true, tag: identifier_from_path[:tag])
@@ -16,51 +18,16 @@ module PactBroker
           @selectors = [selector]
         end
 
-        def allowed_methods
-          ["GET", "OPTIONS"]
-        end
-
-        def content_types_provided
-          [["image/svg+xml", :to_svg]]
-        end
-
-        def resource_exists?
-          false
-        end
-
-        # Only called if resource_exists? returns false
-        def previously_existed?
-          true
-        end
-
-        def is_authorized?(authorization_header)
-          super || PactBroker.configuration.enable_public_badge_access
-        end
-
-        def forbidden?
-          false
-        end
-
-        def moved_temporarily?
-          response.headers["Cache-Control"] = "no-cache"
-          begin
-            if pacticipant
-              if version
-                badge_service.can_i_deploy_badge_url(identifier_from_path[:tag], identifier_from_path[:to], label, results.deployable?)
-              else
-                badge_service.error_badge_url("version", "not found")
-              end
+        def badge_url
+          if pacticipant
+            if version
+              badge_service.can_i_deploy_badge_url(identifier_from_path[:tag], identifier_from_path[:to], label, results.deployable?)
             else
-              badge_service.error_badge_url(selectors.first.pacticipant_name, "not found")
+              badge_service.error_badge_url("version", "not found")
             end
-          rescue StandardError => e
-            # Want to render a badge, even if there's an error
-            badge_service.error_badge_url("error", ErrorResponseBodyGenerator.display_message(e, "reference: #{PactBroker::Errors.generate_error_reference}"))
+          else
+            badge_service.error_badge_url(selectors.first.pacticipant_name, "not found")
           end
-        end
-
-        def policy_name
-          :'badges::badge'
         end
 
         private
