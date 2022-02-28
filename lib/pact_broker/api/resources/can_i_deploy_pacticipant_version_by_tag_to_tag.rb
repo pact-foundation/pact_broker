@@ -11,7 +11,7 @@ module PactBroker
         end
 
         def policy_name
-          :'matrix::can_i_deploy'
+          :'versions::version'
         end
 
         def malformed_request?

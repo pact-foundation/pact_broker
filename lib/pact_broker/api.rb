@@ -93,7 +93,7 @@ module PactBroker
         add ["pacticipants", :pacticipant_name, "versions", :pacticipant_version_number, "tags", :tag_name], Api::Resources::Tag, {resource_name: "pacticipant_version_tag"}
         add ["pacticipants", :pacticipant_name, "branches", :branch_name, "versions", :version_number], Api::Resources::BranchVersion, { resource_name: "branch_version" }
         add ["pacticipants", :pacticipant_name, "branches", :branch_name, "latest-version", "can-i-deploy", "to-environment", :environment_name], Api::Resources::CanIDeployPacticipantVersionByBranchToEnvironment, { resource_name: "can_i_deploy_latest_branch_version_to_environment" }
-        #add ["pacticipants", :pacticipant_name, "branches", :branch_name, "latest-version", "can-i-deploy", "to-environment", :environment_name, "badge"], Api::Resources::CanIDeployPacticipantVersionByBranchToEnvironment, { resource_name: "can_i_deploy_latest_branch_version_to_environment_badge" }
+        add ["pacticipants", :pacticipant_name, "branches", :branch_name, "latest-version", "can-i-deploy", "to-environment", :environment_name, "badge"], Api::Resources::CanIDeployPacticipantVersionByBranchToEnvironmentBadge, { resource_name: "can_i_deploy_latest_branch_version_to_environment_badge" }
 
         # Webhooks
         add ["webhooks", "provider", :provider_name, "consumer", :consumer_name ], Api::Resources::PacticipantWebhooks, {resource_name: "pacticipant_webhooks"}

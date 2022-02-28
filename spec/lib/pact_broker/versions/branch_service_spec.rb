@@ -3,6 +3,31 @@ require "pact_broker/versions/branch_service"
 module PactBroker
   module Versions
     describe BranchService do
+      describe ".find_branch" do
+        subject { BranchService.find_branch(pacticipant_name: "Foo", branch_name: "main") }
+
+        context "when it exists" do
+          before do
+            td.create_consumer("Foo")
+              .create_consumer_version("1", branch: "main")
+              .create_consumer_version("1", branch: "not-the-main")
+              .create_consumer("Bar")
+              .create_consumer_version("2", branch: "main")
+          end
+
+          it "is returned" do
+            expect(subject.pacticipant.name).to eq "Foo"
+            expect(subject.name).to eq "main"
+          end
+        end
+
+        context "when it does not exist" do
+          it "returns nil" do
+            expect(subject).to be nil
+          end
+        end
+      end
+
       describe ".find_branch_version" do
         before do
           td.create_consumer("Foo")

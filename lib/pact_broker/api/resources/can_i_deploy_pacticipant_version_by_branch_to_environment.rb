@@ -1,21 +1,30 @@
 require "pact_broker/api/resources/matrix"
 require "pact_broker/matrix/can_i_deploy_query_schema"
 require "pact_broker/matrix/parse_can_i_deploy_query"
+require "pact_broker/api/decorators/matrix_decorator"
+require "pact_broker/api/decorators/matrix_text_decorator"
 
 module PactBroker
   module Api
     module Resources
-      class CanIDeployPacticipantVersionByBranchToEnvironment < Matrix
+      class CanIDeployPacticipantVersionByBranchToEnvironment < BaseResource
+        def allowed_methods
+          ["GET", "OPTIONS"]
+        end
+
+        def content_types_provided
+          [
+            ["application/hal+json", :to_json],
+            ["text/plain", :to_text]
+          ]
+        end
+
         def resource_exists?
           !!(version && environment)
         end
 
-        def malformed_request?
-          false
-        end
-
         def policy_name
-          :'matrix::can_i_deploy'
+          :'versions::version'
         end
 
         private
@@ -35,6 +44,14 @@ module PactBroker
                           latestby: "cvp",
                           environment_name: identifier_from_path[:environment_name]
                         }
+        end
+
+        def to_json
+          decorator_class(:matrix_decorator).new(results).to_json(decorator_options)
+        end
+
+        def results
+          @results ||= matrix_service.can_i_deploy(selectors, options)
         end
 
         def version

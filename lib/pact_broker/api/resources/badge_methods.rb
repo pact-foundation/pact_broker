@@ -40,6 +40,17 @@ module PactBroker
             badge_service.error_badge_url("error", ErrorResponseBodyGenerator.display_message(e, "reference: #{PactBroker::Errors.generate_error_reference}"))
           end
         end
+
+        def badge_url
+          raise NotImplementedError
+        end
+
+        private
+
+        def label
+          lab = request.query["label"]
+          lab && !lab.empty? ? lab : nil
+        end
       end
     end
   end

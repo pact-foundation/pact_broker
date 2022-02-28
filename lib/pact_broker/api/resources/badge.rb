@@ -42,10 +42,6 @@ module PactBroker
           @pseudo_branch_verification_status ||= PactBroker::Verifications::PseudoBranchStatus.new(pact, latest_verification).to_sym
         end
 
-        def label
-          request.query["label"]
-        end
-
         def initials
           request.query["initials"] == "true"
         end

@@ -28,6 +28,17 @@ RSpec.describe "can i deploy" do
       expect(subject).to be_a_hal_json_success_response
       expect(response_body[:matrix]).to be_instance_of(Array)
     end
+
+    context "the badge" do
+      subject { get("/pacticipants/Foo/latest-version/dev/can-i-deploy/to/prod/badge") }
+
+      it "returns a redirect URL" do
+        expect(subject.status).to eq 307
+        expect(subject.headers["Location"]).to start_with("https://img.shields.io/badge/")
+        expect(subject.headers["Location"]).to match(/dev/)
+        expect(subject.headers["Location"]).to match(/prod/)
+      end
+    end
   end
 
   context "using the URL format for branch/environment" do
@@ -36,6 +47,17 @@ RSpec.describe "can i deploy" do
     it "returns the matrix response" do
       expect(subject).to be_a_hal_json_success_response
       expect(response_body[:matrix]).to be_instance_of(Array)
+    end
+
+    context "the badge" do
+      subject { get("/pacticipants/Foo/branches/main/latest-version/can-i-deploy/to-environment/prod/badge") }
+
+      it "returns a redirect URL" do
+        expect(subject.status).to eq 307
+        expect(subject.headers["Location"]).to start_with("https://img.shields.io/badge/")
+        expect(subject.headers["Location"]).to match(/main/)
+        expect(subject.headers["Location"]).to match(/prod/)
+      end
     end
   end
 
