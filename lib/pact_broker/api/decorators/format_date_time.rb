@@ -8,7 +8,7 @@ module PactBroker
 
         def self.call(date_time)
           if date_time.is_a?(String)
-            DATE_TIME_CLASS.strptime(date_time).to_time.utc.to_datetime.xmlschema
+            Sequel.string_to_datetime(date_time).to_time.utc.to_datetime.xmlschema
           elsif date_time
             date_time.to_time.utc.to_datetime.xmlschema if date_time
           end
