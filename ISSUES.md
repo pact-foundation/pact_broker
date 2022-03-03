@@ -2,7 +2,7 @@
 
 ## Reproducing an issue
 
-In [script/reproduce-issue.rb](script/reproduce-issue.rb) you will find an example fluent API script that allows you to simulate client libraries interacting with the Pact Broker.
+In [script/data/dummy-webhooks.rb](script/data/dummy-webhooks.rb) you will find an example fluent API script that allows you to simulate client libraries interacting with the Pact Broker.
 
 You can use it to easily reproduce issues. You will need Docker and Docker Compose installed (but not Ruby).
 
