@@ -3,6 +3,28 @@ require "webmachine/adapters/rack_mapped"
 module Webmachine
   class DescribeRoutes
 
+    Route = Struct.new(
+        :path,
+        :resource_class,
+        :resource_name,
+        :resource_class_location,
+        :allowed_methods,
+        :policy_class,
+        keyword_init: true) do
+
+      def [](key)
+        if respond_to?(key)
+          send(key)
+        else
+          nil
+        end
+      end
+
+      def path_include?(component)
+        path.include?(component)
+      end
+    end
+
     def self.call(webmachine_applications, search_term: nil)
       path_mappings = webmachine_applications.flat_map { | webmachine_application | paths_to_resource_class_mappings(webmachine_application) }
 
@@ -16,12 +38,12 @@ module Webmachine
     def self.paths_to_resource_class_mappings(webmachine_application)
       webmachine_application.routes.collect do | route |
         resource_path_absolute = Pathname.new(source_location_for(route.resource))
-        {
+        Route.new({
           path: "/" + route.path_spec.collect{ |part| part.is_a?(Symbol) ? ":#{part}" : part  }.join("/"),
           resource_class: route.resource,
           resource_name: route.instance_variable_get(:@bindings)[:resource_name],
           resource_class_location: resource_path_absolute.relative_path_from(Pathname.pwd).to_s
-        }.merge(info_from_resource_instance(route))
+        }.merge(info_from_resource_instance(route)))
       end
     end
 
