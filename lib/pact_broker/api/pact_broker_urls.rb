@@ -255,6 +255,10 @@ module PactBroker
         templated_can_i_deploy_url(pacticipant_name, base_url) + "/badge"
       end
 
+      def templated_can_i_deploy_branch_to_environment_badge_url pacticipant_name, base_url = ""
+        pacticipant_url_from_params({ pacticipant_name: pacticipant_name }, base_url) + "/branches/{branch}/latest-version/can-i-deploy/to-environment/{environment}/badge"
+      end
+
       def label_url label, base_url
         "#{labels_url(label.pacticipant, base_url)}/#{url_encode(label.name)}"
       end
