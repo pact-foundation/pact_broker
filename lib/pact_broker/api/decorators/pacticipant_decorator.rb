@@ -90,6 +90,14 @@ module PactBroker
           }
         end
 
+        link :'pb:can-i-deploy-branch-to-environment-badge' do | options |
+          {
+            title: "Can I Deploy #{represented.name} from branch to environment badge",
+            href: templated_can_i_deploy_branch_to_environment_badge_url(represented.name, options[:base_url]),
+            templated: true
+          }
+        end
+
         curies do | options |
           [{
             name: :pb,
