@@ -7,6 +7,8 @@ module PactBroker
       CAN_I_DEPLOY_BRANCH_ENV_BADGE_PATH = %r{^/pacticipants/[^/]+/branches/[^/]+/latest-version/can-i-deploy/to-environment/[^/]+/badge(?:\.[A-Za-z]+)?$}.freeze
       VERIFICATION_RESULTS =    %r{^/pacts/provider/[^/]+/consumer/[^/]+/pact-version/[^/]+/verification-results/[^/]+}
 
+      BADGE_PATHS = [PACT_BADGE_PATH, MATRIX_BADGE_PATH, CAN_I_DEPLOY_TAG_BADGE_PATH, CAN_I_DEPLOY_BRANCH_ENV_BADGE_PATH]
+
       extend self
 
       def is_verification_results_path?(path)
@@ -15,7 +17,7 @@ module PactBroker
 
       def is_badge_path?(path)
         # Optimise by checking include? first - regexp slow
-        path.include?("/badge") && (path =~ PACT_BADGE_PATH || path =~ MATRIX_BADGE_PATH || path =~ CAN_I_DEPLOY_TAG_BADGE_PATH || path =~ CAN_I_DEPLOY_BRANCH_ENV_BADGE_PATH)
+        path.include?("/badge") && BADGE_PATHS.any?{ | regex | path =~ regex }
       end
     end
   end

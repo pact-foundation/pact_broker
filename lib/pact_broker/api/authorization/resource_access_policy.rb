@@ -38,11 +38,7 @@ module PactBroker
           ]
 
           if enable_public_badge_access
-            rules.concat([
-              [PUBLIC, READ_METHODS, PACT_BADGE_PATH],
-              [PUBLIC, READ_METHODS, MATRIX_BADGE_PATH],
-              [PUBLIC, READ_METHODS, CAN_I_DEPLOY_BADGE_PATH]
-            ])
+            rules.concat(BADGE_PATHS.collect { | badge_path | [PUBLIC, READ_METHODS, badge_path] })
           end
 
           if allow_public_access_to_heartbeat
