@@ -21,14 +21,15 @@ begin
   td = PactBroker::Test::HttpTestDataBuilder.new(base_url)
   td.delete_integration(consumer: "Foo", provider: "Bar")
     .delete_integration(consumer: "foo-consumer", provider: "bar-provider")
-    .publish_pact(consumer: "foo-consumer", consumer_version: "1", provider: "bar-provider", content_id: "111", branch: "main")
+    .delete_integration(consumer: "foo-consumer-2", provider: "bar-provider")
+    .publish_pact(consumer: "foo-consumer", consumer_version: "1", provider: "bar-provider", content_id: "111", branch: "feat/y")
     .publish_pact(consumer: "foo-consumer", consumer_version: "2", provider: "bar-provider", content_id: "111", branch: "feat/x")
-    .publish_pact(consumer: "foo-consumer-2", consumer_version: "1", provider: "bar-provider", content_id: "111", branch: "main")
+    .publish_pact(consumer: "foo-consumer-2", consumer_version: "1", provider: "bar-provider", content_id: "111", branch: "feat/y")
     .get_pacts_for_verification(
       enable_pending: true,
       provider_version_branch: "main",
       include_wip_pacts_since: "2020-01-01",
-      consumer_version_selectors: [{ branch: "main" }, { branch: "feat/x" }]
+      consumer_version_selectors: [{ branch: "main" }]
     )
 
 rescue StandardError => e
