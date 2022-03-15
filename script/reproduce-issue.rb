@@ -4,6 +4,14 @@
 # If you want to simulate publishing a pact that has the same content as a previous pact, use the same ID.
 # If you want to simulate publishing a pact with different content, use a different ID.
 
+require "bundler/inline"
+
+gemfile do
+  source "https://rubygems.org"
+  gem "faraday"
+  gem "faraday_middleware"
+end
+
 begin
 
   $LOAD_PATH << "#{Dir.pwd}/lib"
@@ -14,21 +22,13 @@ begin
   td.delete_integration(consumer: "Foo", provider: "Bar")
     .delete_integration(consumer: "foo-consumer", provider: "bar-provider")
     .publish_pact(consumer: "foo-consumer", consumer_version: "1", provider: "bar-provider", content_id: "111", tag: "main")
+    .publish_pact(consumer: "foo-consumer-2", consumer_version: "1", provider: "bar-provider", content_id: "111", tag: "main")
     .get_pacts_for_verification(
       enable_pending: true,
       provider_version_tag: "main",
       include_wip_pacts_since: "2020-01-01",
-      consumer_version_selectors: [{ tag: "main", latest: true }])
-    .verify_pact(
-      index: 0,
-      provider_version_tag: "main",
-      provider_version: "1",
-      success: true
+      consumer_version_selectors: [{ tag: "main", latest: true }]
     )
-    .can_i_deploy(pacticipant: "bar-provider", version: "1", to: "prod")
-    .deploy_to_prod(pacticipant: "bar-provider", version: "1")
-    .can_i_deploy(pacticipant: "foo-consumer", version: "1", to: "prod")
-    .deploy_to_prod(pacticipant: "foo-consumer", version: "1")
 
 rescue StandardError => e
   puts "#{e.class} #{e.message}"
