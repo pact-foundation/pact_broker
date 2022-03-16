@@ -76,7 +76,7 @@ module PactBroker
               .create_pact_with_hierarchy("foo", "1", "bar", json_content)
               .create_consumer_version_tag("feat-1")
               .add_day
-              .create_pact_with_hierarchy("meep", "2", "bar", json_content)
+              .create_pact_with_hierarchy("foo", "2", "bar", json_content)
               .create_consumer_version_tag("feat-2")
           end
 

@@ -29,7 +29,7 @@ module PactBroker
 
       def self.deduplicate(verifiable_pacts)
         verifiable_pacts
-          .group_by { | verifiable_pact | verifiable_pact.pact_version_sha }
+          .group_by { | verifiable_pact | [verifiable_pact.consumer_name, verifiable_pact.pact_version_sha] }
           .values
           .collect { | verifiable_pact | verifiable_pact.reduce(&:+) }
       end
@@ -49,6 +49,10 @@ module PactBroker
 
         if provider_branch != other.provider_branch
           raise PactBroker::Error.new("Can't merge two verifiable pacts with different provider_branch")
+        end
+
+        if consumer_name != other.consumer_name
+          raise PactBroker::Error.new("Can't merge two verifiable pacts with different consumer names")
         end
 
         latest_pact = [self, other].sort_by(&:consumer_version_order).last.__getobj__()
