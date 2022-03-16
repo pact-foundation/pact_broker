@@ -1,3 +1,16 @@
+<a name="v2.95.0"></a>
+### v2.95.0 (2022-03-16)
+
+#### Features
+
+* add relation for can-i-deploy branch to environment badge	 ([6ece8e93](/../../commit/6ece8e93))
+* add badge url for 'can I deploy latest version of branch to envionment' endpoint	 ([086b8c10](/../../commit/086b8c10))
+
+#### Bug Fixes
+
+* **pacts for verification**
+  * do not de-duplicate pacts with the same content but different consumers	 ([ae3bb541](/../../commit/ae3bb541))
+
 <a name="v2.94.0"></a>
 ### v2.94.0 (2022-02-22)
 
