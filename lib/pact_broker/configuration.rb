@@ -35,7 +35,7 @@ module PactBroker
     attr_accessor :content_security_policy, :hal_browser_content_security_policy_overrides
     attr_accessor :api_error_reporters
     attr_reader :custom_logger
-    attr_accessor :policy_builder, :policy_scope_builder, :base_resource_class_factory
+    attr_accessor :policy_builder, :policy_scope_builder
     alias_method :policy_finder=, :policy_builder=
     alias_method :policy_scope_finder=, :policy_scope_builder=
 
@@ -79,10 +79,6 @@ module PactBroker
       }
       config.policy_builder = -> (object) { DefaultPolicy.new(nil, object) }
       config.policy_scope_builder = -> (scope) { scope }
-      config.base_resource_class_factory = -> () {
-        require "pact_broker/api/resources/default_base_resource"
-        PactBroker::Api::Resources::DefaultBaseResource
-      }
       config
     end
 

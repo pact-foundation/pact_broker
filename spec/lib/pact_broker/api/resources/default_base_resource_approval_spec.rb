@@ -5,7 +5,7 @@ module PactBroker
       RSpec.describe "modifiable resources (ones that require write access)" do
         let(:pact_broker_resource_classes) do
           ObjectSpace.each_object(::Class)
-            .select { |klass| klass < DefaultBaseResource }
+            .select { |klass| klass < BaseResource }
             .select(&:name)
             .reject { |klass| klass.name.end_with?("BaseResource") }
             .sort_by(&:name)

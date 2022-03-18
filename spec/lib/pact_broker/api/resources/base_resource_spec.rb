@@ -1,10 +1,10 @@
-require "pact_broker/api/resources/default_base_resource"
+require "pact_broker/api/resources/base_resource"
 require "pact_broker/application_context"
 
 module PactBroker
   module Api
     module Resources
-      describe DefaultBaseResource do
+      describe BaseResource do
         before do
           allow(env).to receive(:[]).with("pactbroker.base_url").and_return(nil)
         end
@@ -179,7 +179,7 @@ module PactBroker
       end
 
       ALL_RESOURCES = ObjectSpace.each_object(::Class)
-        .select { |klass| klass < DefaultBaseResource }
+        .select { |klass| klass < BaseResource }
         .select { |klass| !klass.name.end_with?("BaseResource") }
         .sort_by(&:name)
 
