@@ -118,7 +118,7 @@ module PactBroker
                 consumer_name: integration[:consumer_name],
                 provider_id: integration[:provider_id],
                 provider_name: integration[:provider_name],
-                required: true
+                required: true # synchronous consumer requires the provider to be present
               )
             end
         end
@@ -130,16 +130,13 @@ module PactBroker
                                                       .eager(:consumer, :provider)
                                                       .all
 
-        destination_selector = PactBroker::Matrix::UnresolvedSelector.new(options.slice(:latest, :tag, :branch, :environment_name).compact)
-        required = PactBroker::Domain::Version.for_selector(destination_selector).pacticipants_set
-
         integrations_involving_specified_providers.collect do | integration |
           Integration.from_hash(
             consumer_id: integration.consumer.id,
             consumer_name: integration.consumer.name,
             provider_id: integration.provider.id,
             provider_name: integration.provider.name,
-            required: required.member?(integration.consumer.id)
+            required: false # synchronous provider does not require the consumer to be present
           )
         end
       end

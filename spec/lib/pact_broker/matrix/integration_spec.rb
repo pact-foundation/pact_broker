@@ -536,7 +536,7 @@ module PactBroker
               ]
             end
 
-            it "is allowed to be deployed because the version of c1 that is in test does not care about p2", pending: true do
+            it "is allowed to be deployed because the version of c1 that is in test does not care about p2" do
               expect(subject.deployment_status_summary).to be_deployable
             end
           end

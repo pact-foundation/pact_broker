@@ -177,9 +177,9 @@
     ]
   },
   "PactBroker::Matrix::Service find when adding a new provider p2 v1 is allowed to be deployed because the version of c1 that is in test does not care about p2": {
-    "deployable": null,
+    "deployable": true,
     "reasons": [
-      "PactBroker::Matrix::PactNotVerifiedByRequiredProviderVersion"
+      "PactBroker::Matrix::NoDependenciesMissing"
     ]
   }
 }
