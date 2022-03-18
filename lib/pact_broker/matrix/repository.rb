@@ -260,6 +260,9 @@ module PactBroker
         end
       end
 
+      # The user has specified --to TAG or --to-environment ENVIRONMENT in the CLI
+      # (or nothing, which to defaults to "with the latest version of the other integrated applications")
+      # The branch isn't implemented in the CLI yet (March 2022), but the API supports it.
       def infer_selectors_for_integrations?(options)
         options[:latest] || options[:tag] || options[:branch] || options[:environment_name]
       end
