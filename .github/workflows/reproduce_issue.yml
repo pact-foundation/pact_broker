@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - 'issue/**'
+  pull_request:
+    branches:
+      - 'issue/**'
+  workflow_dispatch:
 
 jobs:
   run:
