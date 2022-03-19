@@ -103,7 +103,7 @@ module PactBroker
 
       def find_integrations_for_specified_selectors_with_inferred_integrations(resolved_specified_selectors, options)
         integrations = integrations_where_specified_selector_is_consumer(resolved_specified_selectors) +
-                        integrations_where_specified_selector_is_provider(resolved_specified_selectors, options)
+                        integrations_where_specified_selector_is_provider(resolved_specified_selectors)
         deduplicate_integrations(integrations)
       end
 
@@ -124,7 +124,7 @@ module PactBroker
         end
       end
 
-      def integrations_where_specified_selector_is_provider(resolved_specified_selectors, options)
+      def integrations_where_specified_selector_is_provider(resolved_specified_selectors)
         integrations_involving_specified_providers = PactBroker::Integrations::Integration
                                                       .where(provider_id: resolved_specified_selectors.collect(&:pacticipant_id))
                                                       .eager(:consumer, :provider)
