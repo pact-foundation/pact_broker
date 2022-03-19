@@ -84,7 +84,7 @@ module PactBroker
 
       def find_integrations_for_specified_selectors(resolved_specified_selectors, options)
         if infer_selectors_for_integrations?(options)
-          find_integrations_for_specified_selectors_with_inferred_integrations(resolved_specified_selectors, options)
+          find_integrations_for_specified_selectors_with_inferred_integrations(resolved_specified_selectors)
         else
           find_integrations_for_specified_selectors_only(resolved_specified_selectors)
         end
@@ -101,7 +101,7 @@ module PactBroker
           end
       end
 
-      def find_integrations_for_specified_selectors_with_inferred_integrations(resolved_specified_selectors, options)
+      def find_integrations_for_specified_selectors_with_inferred_integrations(resolved_specified_selectors)
         integrations = integrations_where_specified_selector_is_consumer(resolved_specified_selectors) +
                         integrations_where_specified_selector_is_provider(resolved_specified_selectors)
         deduplicate_integrations(integrations)
