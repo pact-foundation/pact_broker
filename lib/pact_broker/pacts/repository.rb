@@ -257,6 +257,7 @@ module PactBroker
             .collect(&:to_domain_with_content).first
         elsif consumer_version_number && pact_version_sha
           pact_publication = pact_publication_by_consumer_version.all.first
+          pact_publication&.allow_lazy_load
           if pact_publication && pact_publication.pact_version.sha == pact_version_sha
             pact_publication.tags
             pact_publication.to_domain_with_content

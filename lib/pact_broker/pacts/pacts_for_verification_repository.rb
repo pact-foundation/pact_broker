@@ -299,7 +299,15 @@ module PactBroker
       end
 
       def collect_consumer_name_and_version_number(pact_publications_query)
-        pact_publications_query.eager(:provider).eager(:consumer).eager(:consumer_version).order(:consumer_version_order).all.sort.collect do |p|
+        pact_publications = pact_publications_query
+                              .eager(:provider)
+                              .eager(:consumer)
+                              .eager(:consumer_version)
+                              .order(:consumer_version_order)
+                              .all_forbidding_lazy_load
+                              .sort
+
+        pact_publications.collect do |p|
           suffix =  if p.values[:tag_name]
                       " (tag #{p.values[:tag_name]})"
                     elsif p.values[:branch_name]
@@ -308,7 +316,7 @@ module PactBroker
                       ""
                     end
 
-          "#{p.consumer_name} #{p.consumer_version_number}" + suffix
+          "#{p.consumer.name} #{p.consumer_version.number}" + suffix
         end
       end
 

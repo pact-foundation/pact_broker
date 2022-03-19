@@ -38,6 +38,7 @@ module DB
     con.extension(:connection_validator)
     con.extension(:pagination)
     con.extension(:statement_timeout)
+    #con.extension(:caller_logging)
     con.extend_datasets do
       # rubocop: disable Lint/NestedMethodDefinition
       def any?

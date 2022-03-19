@@ -191,7 +191,7 @@ module PactBroker
 
         context "eager loading" do
           it "sets the head_pact_publications_for_tags" do
-            all = PactPublication.eager(:head_pact_publications_for_tags).order(:id).all
+            all = PactPublication.eager(:tags, :head_pact_publications_for_tags).order(:id).all
             expect(all.first.associations[:head_pact_publications_for_tags].first.consumer_version.number).to eq "2"
             expect(all.first.associations[:head_pact_publications_for_tags].last.consumer_version.number).to eq "1"
           end
