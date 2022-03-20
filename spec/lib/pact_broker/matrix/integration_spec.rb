@@ -541,6 +541,26 @@ module PactBroker
             end
           end
         end
+
+        describe "when the consumer version currently deployed has no pacts with a provider" do
+          before do
+            td.publish_pact(consumer_name: "c1", provider_name: "p1", consumer_version_number: "1")
+              .create_verification(provider_version: "1")
+              .create_consumer_version("2", tag_names: "prod")
+          end
+
+          let(:options) { { latestby: "cvp", latest: true, tag: "prod" } }
+
+          let(:selectors) do
+            [
+              UnresolvedSelector.new(pacticipant_name: "p1", pacticipant_version_number: "1")
+            ]
+          end
+
+          it "allows the provider to be deployed", pending: true do
+            expect(subject.deployment_status_summary).to be_deployable
+          end
+        end
       end
     end
   end
