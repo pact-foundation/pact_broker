@@ -20,6 +20,13 @@ module PactBroker
 
           sensitive_values(:basic_auth_password, :basic_auth_read_only_password)
 
+          coerce_types(
+            basic_auth_username: :string,
+            basic_auth_password: :string,
+            basic_auth_read_only_username: :string,
+            basic_auth_read_only_password: :string
+          )
+
           def basic_auth_credentials_provided?
             basic_auth_username&.not_blank? && basic_auth_password&.not_blank?
           end

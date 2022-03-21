@@ -31,6 +31,11 @@ module PactBroker
             database_connection_validation_timeout: nil
           )
 
+          coerce_types(
+            database_username: :string,
+            database_password: :string
+          )
+
           def database_configuration
             database_credentials
               .merge(
