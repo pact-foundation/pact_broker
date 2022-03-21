@@ -183,9 +183,9 @@
     ]
   },
   "PactBroker::Matrix::Service find when the consumer version currently deployed has no pacts with a provider allows the provider to be deployed": {
-    "deployable": null,
+    "deployable": true,
     "reasons": [
-      "PactBroker::Matrix::PactNotVerifiedByRequiredProviderVersion"
+      "PactBroker::Matrix::NoDependenciesMissing"
     ]
   }
 }

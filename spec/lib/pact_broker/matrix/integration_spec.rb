@@ -557,7 +557,7 @@ module PactBroker
             ]
           end
 
-          it "allows the provider to be deployed", pending: true do
+          it "allows the provider to be deployed" do
             expect(subject.deployment_status_summary).to be_deployable
           end
         end
