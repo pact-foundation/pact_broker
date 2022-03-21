@@ -36,9 +36,6 @@ module PactBroker
     end
 
     describe "override_runtime_configuration!" do
-      before do
-        allow(duped_config).to receive(:logger).and_return(logger)
-      end
       let(:logger) { double("logger", debug?: true, debug: nil, warn: nil) }
 
       let(:duped_config) { PactBroker.configuration.dup }
@@ -50,6 +47,7 @@ module PactBroker
       end
 
       it "logs the overrides at debug level" do
+        allow(duped_config).to receive(:logger).and_return(logger)
         expect(logger).to receive(:debug).with("Overridding runtime configuration", payload: hash_including(overrides: { disable_ssl_verification: true }))
         duped_config.override_runtime_configuration!(disable_ssl_verification: "true")
       end
@@ -62,6 +60,7 @@ module PactBroker
 
       context "when the specified runtime attribute does not exist" do
         it "logs that it has ignored those attributes" do
+          allow(duped_config).to receive(:logger).and_return(logger)
           expect(logger).to receive(:debug).with("Overridding runtime configuration", payload: hash_including(ignoring: { no_existy: true }))
           duped_config.override_runtime_configuration!(no_existy: "true")
         end
