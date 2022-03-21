@@ -34,43 +34,19 @@ module PactBroker
         read_only: true,
         key: :id,
         primary_key: :id,
-        dataset: lambda {
-
-          bv_pp_join = {
-            Sequel[:branch_versions][:version_id] => Sequel[:pact_publications][:consumer_version_id],
-            Sequel[:pact_publications][:provider_id] => provider_id
-          }
-
-          verifications_join = {
-            Sequel[:verifications][:pact_version_id] => Sequel[:pact_publications][:pact_version_id]
-          }
-
-          branch_ids = PactBroker::Versions::BranchVersion
-            .select(:branch_id)
-            .where(version_id: consumer_version_id)
-
-
-          latest_verification_id = PactBroker::Versions::BranchVersion
-            .select(Sequel[:verifications][:id])
-            .where(Sequel[:branch_versions][:branch_id] => branch_ids)
-            .join(:pact_publications, bv_pp_join)
-            .join(:verifications, verifications_join)
-            .order(Sequel.desc(Sequel[:verifications][:id]))
-            .limit(1)
-
-          PactBroker::Domain::Verification.where(id: latest_verification_id)
-        },
+        forbid_lazy_load: false,
+        dataset: PactBroker::Pacts::LazyLoaders::LATEST_VERIFICATION_FOR_CONSUMER_BRANCHES,
         eager_loader: proc do | _ |
           raise NotImplementedError
         end
       )
 
-
       one_to_many(:head_pact_publications_for_tags,
         class: PactPublication,
         read_only: true,
         dataset: PactBroker::Pacts::LazyLoaders::HEAD_PACT_PUBLICATIONS_FOR_TAGS,
-        eager_loader: PactBroker::Pacts::EagerLoaders::HeadPactPublicationsForTags
+        eager_loader: PactBroker::Pacts::EagerLoaders::HeadPactPublicationsForTags,
+        forbid_lazy_load: false
       )
 
       plugin :upsert, identifying_columns: [:consumer_version_id, :provider_id, :revision_number]

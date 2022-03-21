@@ -10,6 +10,10 @@ module PactBroker
         all.each{ | row | row.forbid_lazy_load if row.respond_to?(:forbid_lazy_load) }
       end
 
+      def all_allowing_lazy_load
+        all.each{ | row | row.allow_lazy_load if row.respond_to?(:allow_lazy_load) }
+      end
+
       def name_like column_name, value
         if PactBroker.configuration.use_case_sensitive_resource_names
           if mysql?

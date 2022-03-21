@@ -250,14 +250,14 @@ module PactBroker
         if consumer_version_number && !pact_version_sha
           pact_publication_by_consumer_version
             .eager(:tags)
+            .all_allowing_lazy_load
             .collect(&:to_domain_with_content).first
         elsif pact_version_sha && !consumer_version_number
           latest_pact_publication_by_sha
             .eager(:tags)
             .collect(&:to_domain_with_content).first
         elsif consumer_version_number && pact_version_sha
-          pact_publication = pact_publication_by_consumer_version.all.first
-          pact_publication&.allow_lazy_load
+          pact_publication = pact_publication_by_consumer_version.all_allowing_lazy_load.first
           if pact_publication && pact_publication.pact_version.sha == pact_version_sha
             pact_publication.tags
             pact_publication.to_domain_with_content
