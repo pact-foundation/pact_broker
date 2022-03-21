@@ -89,11 +89,11 @@ module PactBroker
       end
 
       def provider_name
-        pact_publications.last.provider.name
+        provider.name
       end
 
       def consumer_name
-        pact_publications.last.consumer.name
+        consumer.name
       end
 
       def latest_pact_publication

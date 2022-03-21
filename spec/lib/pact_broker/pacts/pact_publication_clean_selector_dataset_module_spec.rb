@@ -1,7 +1,7 @@
 module PactBroker
   module Pacts
     describe PactPublicationCleanSelectorDatasetModule do
-      subject { PactPublication.latest_by_consumer_tag_for_clean_selector(selector).all.sort_by{ | pp | [pp.consumer_name, pp.consumer_version_number]} }
+      subject { PactPublication.latest_by_consumer_tag_for_clean_selector(selector).all_allowing_lazy_load.sort_by{ | pp | [pp.consumer_name, pp.consumer_version_number]} }
 
       context "for latest for a specified tag" do
         before do

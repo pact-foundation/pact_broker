@@ -88,7 +88,7 @@ module PactBroker
         subject { PactPublication.latest_for_consumer_branch("main") }
 
         it "returns the latest pacts for the branches with the specified name (for any consumer/provider)" do
-          all = subject.all.sort_by{ |pact_publication| pact_publication.consumer_version.order }
+          all = subject.all_allowing_lazy_load.sort_by{ |pact_publication| pact_publication.consumer_version.order }
           expect(all.size).to eq 2
           expect(all.first.consumer.name).to eq "Foo"
           expect(all.first.provider.name).to eq "Bar"
@@ -209,7 +209,7 @@ module PactBroker
 
         context "when chained" do
           it "works with a consumer" do
-            expect(PactPublication.for_consumer(td.find_pacticipant("Foo")).overall_latest.all.first.consumer.name).to eq "Foo"
+            expect(PactPublication.for_consumer(td.find_pacticipant("Foo")).overall_latest.all_allowing_lazy_load.first.consumer.name).to eq "Foo"
           end
 
           it "works with a consumer and provider" do
@@ -217,7 +217,7 @@ module PactBroker
             all = PactPublication
               .for_consumer(td.find_pacticipant("Foo"))
               .for_provider(td.find_pacticipant("Bar"))
-              .overall_latest.all
+              .overall_latest.all_allowing_lazy_load
             expect(all.size).to eq 1
             expect(all.first.consumer.name).to eq "Foo"
             expect(all.first.provider.name).to eq "Bar"
@@ -247,7 +247,7 @@ module PactBroker
         subject { PactPublication.latest_for_consumer_tag("main") }
 
         it "returns the pacts for the latest versions with the specified tags with the specified name (for any consumer/provider)" do
-          all = subject.all.sort_by{ |pact_publication| pact_publication.consumer_version.order }
+          all = subject.all_allowing_lazy_load.sort_by{ |pact_publication| pact_publication.consumer_version.order }
           expect(all.size).to eq 2
           expect(all.first.consumer.name).to eq "Foo"
           expect(all.first.provider.name).to eq "Bar"
@@ -313,7 +313,7 @@ module PactBroker
         subject { PactPublication.for_latest_consumer_versions_with_tag("main") }
 
         it "returns the pacts for the latest versions with the specified tags with the specified name (for any consumer/provider)" do
-          all = subject.all.sort_by{ |pact_publication| pact_publication.consumer_version.order }
+          all = subject.all_allowing_lazy_load.sort_by{ |pact_publication| pact_publication.consumer_version.order }
           expect(all.size).to eq 2
           expect(all.first.consumer.name).to eq "Foo"
           expect(all.first.provider.name).to eq "Bar"
@@ -466,7 +466,7 @@ module PactBroker
             it "with branches" do
               potential = PactPublication.for_provider(bar).latest_by_consumer_branch
               already_verified = potential.successfully_verified_by_provider_branch_when_not_wip(bar.id, "provider-main")
-              not_verified = PactPublication.subtract(potential.all, already_verified.all)
+              not_verified = PactPublication.subtract(potential.all_allowing_lazy_load, already_verified.all_allowing_lazy_load)
 
               expect(not_verified.size).to eq 1
               expect(not_verified.first.consumer_version_number).to eq "3"
@@ -475,7 +475,7 @@ module PactBroker
             it "with tags" do
               potential = PactPublication.for_provider(bar).latest_by_consumer_tag
               already_verified = potential.successfully_verified_by_provider_branch_when_not_wip(bar.id, "provider-main")
-              not_verified = PactPublication.subtract(potential.all, already_verified.all)
+              not_verified = PactPublication.subtract(potential.all_allowing_lazy_load, already_verified.all_allowing_lazy_load)
 
               expect(not_verified.size).to eq 1
               expect(not_verified.first.consumer_version_number).to eq "3"

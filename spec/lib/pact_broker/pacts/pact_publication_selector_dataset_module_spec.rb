@@ -5,7 +5,7 @@ module PactBroker
     module PactPublicationSelectorDatasetModule
       describe "#for_provider_and_consumer_version_selector" do
 
-        subject { PactPublication.for_provider_and_consumer_version_selector(provider, consumer_version_selector).all }
+        subject { PactPublication.for_provider_and_consumer_version_selector(provider, consumer_version_selector).all_allowing_lazy_load }
 
         context "all_for_tag" do
           before do

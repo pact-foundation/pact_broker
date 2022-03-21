@@ -386,7 +386,6 @@ module PactBroker
       end
 
       describe "#find_all_pact_versions_between" do
-
         before do
           td.create_consumer(consumer_name)
             .create_consumer_version("1.2.3")

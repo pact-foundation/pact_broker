@@ -117,8 +117,9 @@ module PactBroker
 
       def find_all_pact_versions_between consumer_name, options
         find_all_database_versions_between(consumer_name, options)
-          .eager(:tags)
+          .eager(:tags, :consumer)
           .reverse_order(:consumer_version_order)
+          .all
           .collect(&:to_domain)
       end
 
@@ -151,7 +152,7 @@ module PactBroker
           query = query.overall_latest
         end
 
-        query.sort_by{ | p| p.consumer_name.downcase }.collect(&:to_head_pact)
+        query.all.sort_by{ | p| p.consumer_name.downcase }.collect(&:to_head_pact)
       end
 
       def find_for_verification(provider_name, consumer_version_selectors)
@@ -169,7 +170,7 @@ module PactBroker
             .eager(:consumer)
             .eager(:provider)
         query = query.for_consumer_version_tag(tag) if tag
-        query.collect(&:to_domain).sort
+        query.all.collect(&:to_domain).sort
       end
 
       # Returns latest pact version for the consumer_version_number
@@ -249,13 +250,13 @@ module PactBroker
 
         if consumer_version_number && !pact_version_sha
           pact_publication_by_consumer_version
-            .eager(:tags)
+            .eager(:tags, :consumer)
             .all_allowing_lazy_load
             .collect(&:to_domain_with_content).first
         elsif pact_version_sha && !consumer_version_number
           latest_pact_publication_by_sha
-            .eager(:tags)
-            .collect(&:to_domain_with_content).first
+            .eager(:tags, :consumer)
+            .all.collect(&:to_domain_with_content).first
         elsif consumer_version_number && pact_version_sha
           pact_publication = pact_publication_by_consumer_version.all_allowing_lazy_load.first
           if pact_publication && pact_publication.pact_version.sha == pact_version_sha
@@ -263,13 +264,13 @@ module PactBroker
             pact_publication.to_domain_with_content
           else
             latest_pact_publication_by_sha
-              .eager(:tags)
+              .eager(:tags, :consumer)
               .all_allowing_lazy_load
               .collect(&:to_domain_with_content).first
           end
         else
           pact_publication_by_consumer_version
-            .eager(:tags)
+            .eager(:tags, :consumer)
             .reverse_order(:consumer_version_order, :revision_number)
             .all_allowing_lazy_load
             .collect(&:to_domain_with_content).first
@@ -312,6 +313,7 @@ module PactBroker
           .remove_overridden_revisions
           .consumer_version_order_after(pact.consumer_version.order)
           .earliest
+          .all_allowing_lazy_load
           .collect(&:to_domain_with_content)[0]
       end
 
@@ -349,6 +351,7 @@ module PactBroker
           .consumer_version_order_before(pact.consumer_version.order)
           .exclude(pact_version_id: pact_version.id)
           .latest_by_consumer_version_order
+          .all_allowing_lazy_load
           .collect(&:to_domain_with_content)[0]
       end
 
