@@ -264,12 +264,14 @@ module PactBroker
           else
             latest_pact_publication_by_sha
               .eager(:tags)
+              .all_allowing_lazy_load
               .collect(&:to_domain_with_content).first
           end
         else
           pact_publication_by_consumer_version
             .eager(:tags)
             .reverse_order(:consumer_version_order, :revision_number)
+            .all_allowing_lazy_load
             .collect(&:to_domain_with_content).first
         end
       end
