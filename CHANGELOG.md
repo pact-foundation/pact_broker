@@ -1,3 +1,11 @@
+<a name="v2.95.1"></a>
+### v2.95.1 (2022-03-18)
+
+#### Bug Fixes
+
+* **can-i-deploy**
+  * allow new provider to be introduced to existing consumer without can-i-deploy having circular dependency issues	 ([e43974ca](/../../commit/e43974ca))
+
 <a name="v2.95.0"></a>
 ### v2.95.0 (2022-03-16)
 
