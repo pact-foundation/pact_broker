@@ -15,10 +15,6 @@ module PactBroker
     RequestStore.store[:pact_broker_configuration] = configuration
   end
 
-  def self.with_runtime_configuration_overrides(overrides, &block)
-    self.configuration.with_runtime_configuration_overrides(overrides, &block)
-  end
-
   # @private, for testing only
   def self.reset_configuration
     RequestStore.store[:pact_broker_configuration] = Configuration.default_configuration
@@ -80,14 +76,6 @@ module PactBroker
       config.policy_builder = -> (object) { DefaultPolicy.new(nil, object) }
       config.policy_scope_builder = -> (scope) { scope }
       config
-    end
-
-    def with_runtime_configuration_overrides(overrides)
-      original_runtime_configuration = runtime_configuration
-      self.runtime_configuration = override_runtime_configuration!(overrides)
-      yield
-    ensure
-      self.runtime_configuration = original_runtime_configuration
     end
 
     def override_runtime_configuration!(overrides)

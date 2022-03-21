@@ -35,49 +35,42 @@ module PactBroker
       end
     end
 
-    describe "with_runtime_configuration_overrides" do
+    describe "override_runtime_configuration!" do
       before do
-        allow(PactBroker.configuration).to receive(:logger).and_return(logger)
+        allow(duped_config).to receive(:logger).and_return(logger)
       end
       let(:logger) { double("logger", debug?: true, debug: nil, warn: nil) }
 
+      let(:duped_config) { PactBroker.configuration.dup }
+
       it "overrides the specified runtime configuration attributes within the block" do
-        attribute_in_block = nil
-        PactBroker.with_runtime_configuration_overrides(disable_ssl_verification: "true") do
-          attribute_in_block = PactBroker.configuration.disable_ssl_verification
-        end
-        expect(attribute_in_block).to eq true
+        duped_config.override_runtime_configuration!(disable_ssl_verification: "true")
+        expect(duped_config.disable_ssl_verification).to eq true
         expect(PactBroker.configuration.disable_ssl_verification).to eq false
       end
 
       it "logs the overrides at debug level" do
         expect(logger).to receive(:debug).with("Overridding runtime configuration", payload: hash_including(overrides: { disable_ssl_verification: true }))
-        PactBroker.with_runtime_configuration_overrides(disable_ssl_verification: "true") do
-          "foo"
-        end
+        duped_config.override_runtime_configuration!(disable_ssl_verification: "true")
       end
 
       it "does not override the other runtime configuration attributes within the block" do
-        attribute_in_block = nil
-        PactBroker.with_runtime_configuration_overrides(disable_ssl_verification: "true") do
-          attribute_in_block = PactBroker.configuration.webhook_scheme_whitelist
-        end
-        expect(PactBroker.configuration.webhook_scheme_whitelist).to eq attribute_in_block
-      end
-
-      it "returns the results of the block" do
-        return_value = PactBroker.with_runtime_configuration_overrides(disable_ssl_verification: "true") do
-          "foo"
-        end
-        expect(return_value).to eq "foo"
+        attribute_in_block = PactBroker.configuration.webhook_scheme_whitelist
+        duped_config.override_runtime_configuration!(disable_ssl_verification: "true")
+        expect(duped_config.webhook_scheme_whitelist).to eq attribute_in_block
       end
 
       context "when the specified runtime attribute does not exist" do
         it "logs that it has ignored those attributes" do
           expect(logger).to receive(:debug).with("Overridding runtime configuration", payload: hash_including(ignoring: { no_existy: true }))
-          PactBroker.with_runtime_configuration_overrides(no_existy: "true") do
-            "foo"
-          end
+          duped_config.override_runtime_configuration!(no_existy: "true")
+        end
+      end
+
+      context "when the configuration is frozen" do
+        it "raises an error" do
+          duped_config.freeze
+          expect { duped_config.override_runtime_configuration!(disable_ssl_verification: "true") }.to raise_error FrozenError
         end
       end
     end
