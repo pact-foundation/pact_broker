@@ -31,7 +31,7 @@ module PactBroker
       expect(last_response.headers["X-Pact-Broker-Version"]).to match(/\d/)
     end
 
-    class Middleware
+    class TestMiddleware
 
       def initialize app
         @app = app
@@ -48,8 +48,8 @@ module PactBroker
     end
 
     it "acts like a ::Rack::Builder" do
-      app.use Middleware
-      expect { get "/" }.to change { Middleware.calls.count }.by(1)
+      app.use TestMiddleware
+      expect { get "/" }.to change { TestMiddleware.calls.count }.by(1)
     end
 
     describe "before_resource and after_resource" do
