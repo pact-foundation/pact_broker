@@ -57,6 +57,10 @@ module PactBroker
         include PactPublicationDatasetModule
         include PactPublicationCleanSelectorDatasetModule
         include PactPublicationWipDatasetModule
+
+        def eager_for_domain_with_content
+          eager(:tags, :consumer, :provider, :consumer_version, :pact_version)
+        end
       end
 
       def self.subtract(a, *b)

@@ -20,14 +20,14 @@ module PactBroker
 
         it "has a relationship to the latest pact (eager)" do
           integrations = Integration.eager(:latest_pact).order(Sequel.desc(:id)).all
-          expect(integrations.first.latest_pact.consumer_version_number).to eq "2"
-          expect(integrations.last.latest_pact.consumer_version_number).to eq "1"
+          expect(integrations.first.associations[:latest_pact].consumer_version.number).to eq "2"
+          expect(integrations.last.associations[:latest_pact].consumer_version.number).to eq "1"
         end
 
-        it "has a relationship to the latest pact (not eager)" do
+        it "has a relationship to the latest pact (lazy)" do
           integrations = Integration.order(Sequel.desc(:id)).all
-          expect(integrations.first.latest_pact.consumer_version_number).to eq "2"
-          expect(integrations.last.latest_pact.consumer_version_number).to eq "1"
+          expect(integrations.first.latest_pact.consumer_version.number).to eq "2"
+          expect(integrations.last.latest_pact.consumer_version.number).to eq "1"
         end
 
         it "has a relationship to the latest verification via the latest pact" do

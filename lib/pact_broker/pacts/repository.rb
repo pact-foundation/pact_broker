@@ -166,9 +166,8 @@ module PactBroker
       def find_pact_versions_for_provider provider_name, tag = nil
         query = scope_for(PactPublication)
             .select_all_qualified
+            .eager_for_domain_with_content
             .for_provider_name(provider_name)
-            .eager(:consumer)
-            .eager(:provider)
         query = query.for_consumer_version_tag(tag) if tag
         query.all.collect(&:to_domain).sort
       end
@@ -176,14 +175,16 @@ module PactBroker
       # Returns latest pact version for the consumer_version_number
       def find_by_consumer_version consumer_name, consumer_version_number
         scope_for(PactPublication)
+          .eager_for_domain_with_content
           .for_consumer_name_and_maybe_version_number(consumer_name, consumer_version_number)
           .remove_overridden_revisions_from_complete_query
+          .all
           .collect(&:to_domain_with_content)
       end
 
       def find_by_version_and_provider version_id, provider_id
         scope_for(PactPublication)
-          .eager(:tags)
+          .eager_for_domain_with_content
           .where(consumer_version_id: version_id, provider_id: provider_id)
           .remove_overridden_revisions_from_complete_query
           .limit(1)
@@ -192,15 +193,17 @@ module PactBroker
 
       def find_latest_pacts
         scope_for(PactPublication)
+          .eager_for_domain_with_content
           .overall_latest
-          .eager(:consumer)
           .eager(:provider)
+          .all
           .collect(&:to_domain)
           .sort
       end
 
       def find_latest_pact(consumer_name, provider_name, tag = nil)
         query = scope_for(PactPublication)
+          .eager_for_domain_with_content
           .select_all_qualified
           .for_consumer_name(consumer_name)
           .for_provider_name(provider_name)
@@ -215,7 +218,7 @@ module PactBroker
 
       # Allows optional consumer_name and provider_name
       def search_for_latest_pact(consumer_name, provider_name, tag = nil)
-        query = scope_for(PactPublication).select_all_qualified
+        query = scope_for(PactPublication).select_all_qualified.eager_for_domain_with_content
         query = query.for_consumer_name(consumer_name) if consumer_name
         query = query.for_provider_name(provider_name) if provider_name
 
@@ -234,6 +237,7 @@ module PactBroker
       # rubocop: disable Metrics/CyclomaticComplexity, Metrics/MethodLength
       def find_pact consumer_name, consumer_version_number, provider_name, pact_version_sha = nil
         pact_publication_by_consumer_version = scope_for(PactPublication)
+            .eager_for_domain_with_content
             .select_all_qualified
             .for_consumer_name_and_maybe_version_number(consumer_name, consumer_version_number)
             .for_provider_name(provider_name)
@@ -241,6 +245,7 @@ module PactBroker
             .limit(1)
 
         latest_pact_publication_by_sha = scope_for(PactPublication)
+            .eager_for_domain_with_content
             .select_all_qualified
             .for_consumer_name(consumer_name)
             .for_provider_name(provider_name)
@@ -250,46 +255,43 @@ module PactBroker
 
         if consumer_version_number && !pact_version_sha
           pact_publication_by_consumer_version
-            .eager(:tags, :consumer)
-            .all_allowing_lazy_load
-            .collect(&:to_domain_with_content).first
+            .first
+            &.to_domain_with_content
         elsif pact_version_sha && !consumer_version_number
           latest_pact_publication_by_sha
-            .eager(:tags, :consumer)
-            .all.collect(&:to_domain_with_content).first
+            .first
+            &.to_domain_with_content
         elsif consumer_version_number && pact_version_sha
-          pact_publication = pact_publication_by_consumer_version.all_allowing_lazy_load.first
+          pact_publication = pact_publication_by_consumer_version.first
           if pact_publication && pact_publication.pact_version.sha == pact_version_sha
-            pact_publication.tags
             pact_publication.to_domain_with_content
           else
-            latest_pact_publication_by_sha
-              .eager(:tags, :consumer)
-              .all_allowing_lazy_load
-              .collect(&:to_domain_with_content).first
+            latest_pact_publication_by_sha.first&.to_domain_with_content
           end
         else
           pact_publication_by_consumer_version
-            .eager(:tags, :consumer)
             .reverse_order(:consumer_version_order, :revision_number)
-            .all_allowing_lazy_load
-            .collect(&:to_domain_with_content).first
+            .first
+            &.to_domain_with_content
         end
       end
       # rubocop: enable Metrics/CyclomaticComplexity, Metrics/MethodLength
 
       def find_all_revisions consumer_name, consumer_version_number, provider_name
         scope_for(PactPublication)
+          .eager(:tags, :consumer)
           .for_provider_name(provider_name)
           .for_consumer_name_and_maybe_version_number(consumer_name, consumer_version_number)
           .order_by_consumer_version_order
+          .all
           .collect(&:to_domain_with_content)
       end
 
       def find_previous_pact pact, tag = nil
         query = scope_for(PactPublication)
+            .eager_for_domain_with_content
             .remove_overridden_revisions
-            .eager(:tags)
+            .eager(:tags, :consumer)
             .for_consumer_name(pact.consumer.name)
             .for_provider_name(pact.provider.name)
 
@@ -302,6 +304,7 @@ module PactBroker
         query
           .consumer_version_order_before(pact.consumer_version.order)
           .latest_by_consumer_version_order
+          .all
           .collect(&:to_domain_with_content)[0]
       end
 

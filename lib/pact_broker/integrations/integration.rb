@@ -21,7 +21,10 @@ module PactBroker
           integration.associations[:latest_pact] = nil
         end
 
-        PactBroker::Pacts::PactPublication.overall_latest.each do | pact |
+        # Would prefer to be able to eager load only the fields specified in the original Integrations
+        # query, but we don't seem to have that information in this context.
+        # We may not need all these assocations eager loaded.
+        PactBroker::Pacts::PactPublication.eager_for_domain_with_content.overall_latest.each do | pact |
           eo_opts[:rows].each do | integration |
             if integration.consumer_id == pact.consumer_id && integration.provider_id == pact.provider_id
               integration.associations[:latest_pact] = pact
@@ -31,7 +34,10 @@ module PactBroker
       end
 
       one_to_one(:latest_pact, class: "PactBroker::Pacts::PactPublication", :key => [:consumer_id, :provider_id], primary_key: [:consumer_id, :provider_id], :eager_loader=> LATEST_PACT_EAGER_LOADER) do | _ds |
-        PactBroker::Pacts::PactPublication.overall_latest_for_consumer_id_and_provider_id(consumer_id, provider_id)
+        # Would prefer to be able to eager load only the fields specified in the original Integrations
+        # query, but we don't seem to have that information in this context.
+        # We may not need all these assocations eager loaded.
+        PactBroker::Pacts::PactPublication.eager_for_domain_with_content.overall_latest_for_consumer_id_and_provider_id(consumer_id, provider_id)
       end
 
       # When viewing the index, every webhook in the database will match at least one of the rows, so
