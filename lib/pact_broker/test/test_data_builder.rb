@@ -260,6 +260,8 @@ module PactBroker
         set_created_at_if_set(params[:created_at], :pact_versions, sha: @pact.pact_version_sha) if pact_versions_count_after > pact_versions_count_before
         set_created_at_if_set(params[:created_at], :latest_pact_publication_ids_for_consumer_versions, consumer_version_id: @consumer_version.id)
         @pact = PactBroker::Pacts::PactPublication.find(id: @pact.id).to_domain
+        consumer_version.reload
+        consumer_version.pact_publications.each(&:allow_lazy_load)
         self
       end
 

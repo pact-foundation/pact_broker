@@ -188,6 +188,7 @@ module PactBroker
           .where(consumer_version_id: version_id, provider_id: provider_id)
           .remove_overridden_revisions_from_complete_query
           .limit(1)
+          .all
           .collect(&:to_domain_with_content)[0]
       end
 
@@ -255,12 +256,10 @@ module PactBroker
 
         if consumer_version_number && !pact_version_sha
           pact_publication_by_consumer_version
-            .first
-            &.to_domain_with_content
+            .first&.to_domain_with_content
         elsif pact_version_sha && !consumer_version_number
           latest_pact_publication_by_sha
-            .first
-            &.to_domain_with_content
+            .first&.to_domain_with_content
         elsif consumer_version_number && pact_version_sha
           pact_publication = pact_publication_by_consumer_version.first
           if pact_publication && pact_publication.pact_version.sha == pact_version_sha
@@ -271,8 +270,7 @@ module PactBroker
         else
           pact_publication_by_consumer_version
             .reverse_order(:consumer_version_order, :revision_number)
-            .first
-            &.to_domain_with_content
+            .first&.to_domain_with_content
         end
       end
       # rubocop: enable Metrics/CyclomaticComplexity, Metrics/MethodLength

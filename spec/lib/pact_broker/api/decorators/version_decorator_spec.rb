@@ -27,8 +27,7 @@ module PactBroker
           end
 
           let(:version) do
-            TestDataBuilder.new
-              .create_consumer("Consumer")
+            td.create_consumer("Consumer")
               .create_provider("providerA")
               .create_consumer_version("1.2.3", branch: "main")
               .create_consumer_version_tag("prod")
