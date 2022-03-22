@@ -29,7 +29,7 @@ services:
     build: .
     depends_on:
       - pact-broker
-    command: -wait http://pact-broker:9292 -timeout 30s /home/script/reproduce-issue.rb
+    command: -wait http://pact-broker:9292 -timeout 30s /home/script/data/reproduce-issue.rb
     entrypoint: dockerize
     environment:
       - PACT_BROKER_BASE_URL=http://pact-broker:9292

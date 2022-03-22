@@ -1,0 +1,28 @@
+version: "3"
+
+services:
+  pact-broker:
+    build: .
+    ports:
+      - "9292:9292"
+    entrypoint: /usr/local/bin/start
+    environment:
+      - RACK_ENV=production
+    volumes:
+      - $PWD:/home
+
+  repro-issue:
+    build: .
+    depends_on:
+      - pact-broker
+    command: dockerize -wait http://pact-broker:9292 -timeout 30s /home/script/data/reproduce-issue.rb
+    environment:
+      - PACT_BROKER_BASE_URL=http://pact-broker:9292
+    volumes:
+      - $PWD:/home
+
+  webhook-server:
+    build: .
+    entrypoint: ["/bin/sh", "-c", "bundle exec rackup -p 9393 -o 0.0.0.0 /home/script/webhook-server.ru"]
+    volumes:
+      - ./script/webhook-server.ru:/home/script/webhook-server.ru
