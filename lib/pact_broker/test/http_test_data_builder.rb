@@ -74,8 +74,15 @@ module PactBroker
       def record_deployment(pacticipant:, version:, environment_name:)
         puts "Recording deployment of #{pacticipant} version #{version} to #{environment_name}"
         version_body = client.get("/pacticipants/#{encode(pacticipant)}/versions/#{encode(version)}").tap { |response| check_for_error(response) }.body
+
         environment_relation = version_body["_links"]["pb:record-deployment"].find { |relation| relation["name"] == environment_name }
-        client.post(environment_relation["href"], { replacedPreviousDeployedVersion: true }).tap { |response| check_for_error(response) }
+        if environment_relation.nil?
+          available_environments = version_body["_links"]["pb:record-deployment"].collect{ | relation | relation["name"]}.join
+          puts "Environment with name #{environment_name} not found. Available environments: #{available_environments}"
+        else
+          client.post(environment_relation["href"], { replacedPreviousDeployedVersion: true }).tap { |response| check_for_error(response) }
+        end
+
         separate
         self
       end
