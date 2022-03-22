@@ -1,0 +1,1553 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Module: PactBroker::Services
+  
+    &mdash; Documentation by YARD 0.9.27
+  
+</title>
+
+  <link rel="stylesheet" href="../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "PactBroker::Services";
+  relpath = '../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../_index.html">Index (S)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../PactBroker.html" title="PactBroker (module)">PactBroker</a></span></span>
+     &raquo; 
+    <span class="title">Services</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Module: PactBroker::Services
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+
+  
+  
+  <dl>
+      <dt>Extended by:</dt>
+      <dd><span class='object_link'><a href="" title="PactBroker::Services (module)">Services</a></span></dd>
+  </dl>
+  
+  
+  
+  
+
+  
+  <dl>
+    <dt>Included in:</dt>
+    <dd><span class='object_link'><a href="Api/Resources/BaseResource.html" title="PactBroker::Api::Resources::BaseResource (class)">Api::Resources::BaseResource</a></span>, <span class='object_link'><a href="BuildHttpOptions.html" title="PactBroker::BuildHttpOptions (class)">BuildHttpOptions</a></span>, <span class='object_link'><a href="Contracts/Service.html" title="PactBroker::Contracts::Service (module)">Contracts::Service</a></span>, <span class='object_link'><a href="Deployments/DeployedVersionService.html" title="PactBroker::Deployments::DeployedVersionService (class)">Deployments::DeployedVersionService</a></span>, <span class='object_link'><a href="Groups/Service.html" title="PactBroker::Groups::Service (module)">Groups::Service</a></span>, <span class='object_link'><a href="Index/Service.html" title="PactBroker::Index::Service (class)">Index::Service</a></span>, <span class='object_link'><a href="Integrations/Service.html" title="PactBroker::Integrations::Service (class)">Integrations::Service</a></span>, <span class='object_link'><a href="Matrix/Service.html" title="PactBroker::Matrix::Service (module)">Matrix::Service</a></span>, <span class='object_link'><a href="Pacticipants/Service.html" title="PactBroker::Pacticipants::Service (class)">Pacticipants::Service</a></span>, <span class='object_link'><a href="Pacts/PactsForVerificationRepository.html" title="PactBroker::Pacts::PactsForVerificationRepository (class)">Pacts::PactsForVerificationRepository</a></span>, <span class='object_link'><a href="Pacts/Service.html" title="PactBroker::Pacts::Service (module)">Pacts::Service</a></span>, <span class='object_link'><a href="" title="PactBroker::Services (module)">Services</a></span>, <span class='object_link'><a href="Tags/Service.html" title="PactBroker::Tags::Service (module)">Tags::Service</a></span>, <span class='object_link'><a href="Test/TestDataBuilder.html" title="PactBroker::Test::TestDataBuilder (class)">Test::TestDataBuilder</a></span>, <span class='object_link'><a href="UI/Controllers/CanIDeploy.html" title="PactBroker::UI::Controllers::CanIDeploy (class)">UI::Controllers::CanIDeploy</a></span>, <span class='object_link'><a href="UI/Controllers/Dashboard.html" title="PactBroker::UI::Controllers::Dashboard (class)">UI::Controllers::Dashboard</a></span>, <span class='object_link'><a href="UI/Controllers/ErrorTest.html" title="PactBroker::UI::Controllers::ErrorTest (class)">UI::Controllers::ErrorTest</a></span>, <span class='object_link'><a href="UI/Controllers/Groups.html" title="PactBroker::UI::Controllers::Groups (class)">UI::Controllers::Groups</a></span>, <span class='object_link'><a href="UI/Controllers/Index.html" title="PactBroker::UI::Controllers::Index (class)">UI::Controllers::Index</a></span>, <span class='object_link'><a href="UI/Controllers/Matrix.html" title="PactBroker::UI::Controllers::Matrix (class)">UI::Controllers::Matrix</a></span>, <span class='object_link'><a href="UI/Controllers/Pacts.html" title="PactBroker::UI::Controllers::Pacts (class)">UI::Controllers::Pacts</a></span>, <span class='object_link'><a href="Verifications/Service.html" title="PactBroker::Verifications::Service (module)">Verifications::Service</a></span>, <span class='object_link'><a href="Versions/BranchVersionRepository.html" title="PactBroker::Versions::BranchVersionRepository (class)">Versions::BranchVersionRepository</a></span>, <span class='object_link'><a href="Versions/Service.html" title="PactBroker::Versions::Service (class)">Versions::Service</a></span>, <span class='object_link'><a href="Webhooks/EventListener.html" title="PactBroker::Webhooks::EventListener (class)">Webhooks::EventListener</a></span>, <span class='object_link'><a href="Webhooks/ExecutionConfigurationCreator.html" title="PactBroker::Webhooks::ExecutionConfigurationCreator (class)">Webhooks::ExecutionConfigurationCreator</a></span>, <span class='object_link'><a href="Webhooks/Service.html" title="PactBroker::Webhooks::Service (module)">Webhooks::Service</a></span>, <span class='object_link'><a href="Webhooks/TriggerService.html" title="PactBroker::Webhooks::TriggerService (module)">Webhooks::TriggerService</a></span></dd>
+  </dl>
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/pact_broker/services.rb</dd>
+  </dl>
+  
+</div>
+
+
+  
+    <h2>
+      Constant Summary
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="FACTORIES-constant" class="">FACTORIES =
+          
+        </dt>
+        <dd><pre class="code"><span class='lbrace'>{</span><span class='rbrace'>}</span></pre></dd>
+      
+    </dl>
+  
+
+
+
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#badge_service-instance_method" title="#badge_service (instance method)">#<strong>badge_service</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#branch_service-instance_method" title="#branch_service (instance method)">#<strong>branch_service</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#certificate_service-instance_method" title="#certificate_service (instance method)">#<strong>certificate_service</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#contract_service-instance_method" title="#contract_service (instance method)">#<strong>contract_service</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#deployed_version_service-instance_method" title="#deployed_version_service (instance method)">#<strong>deployed_version_service</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#environment_service-instance_method" title="#environment_service (instance method)">#<strong>environment_service</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#get-instance_method" title="#get (instance method)">#<strong>get</strong>(name)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#group_service-instance_method" title="#group_service (instance method)">#<strong>group_service</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#index_service-instance_method" title="#index_service (instance method)">#<strong>index_service</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#integration_service-instance_method" title="#integration_service (instance method)">#<strong>integration_service</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#label_service-instance_method" title="#label_service (instance method)">#<strong>label_service</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#matrix_service-instance_method" title="#matrix_service (instance method)">#<strong>matrix_service</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#metrics_service-instance_method" title="#metrics_service (instance method)">#<strong>metrics_service</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#pact_service-instance_method" title="#pact_service (instance method)">#<strong>pact_service</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#pacticipant_service-instance_method" title="#pacticipant_service (instance method)">#<strong>pacticipant_service</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#register_default_services-instance_method" title="#register_default_services (instance method)">#<strong>register_default_services</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>rubocop: disable Metrics/MethodLength.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#register_service-instance_method" title="#register_service (instance method)">#<strong>register_service</strong>(name, &amp;block)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#released_version_service-instance_method" title="#released_version_service (instance method)">#<strong>released_version_service</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#tag_service-instance_method" title="#tag_service (instance method)">#<strong>tag_service</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#verification_service-instance_method" title="#verification_service (instance method)">#<strong>verification_service</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#version_service-instance_method" title="#version_service (instance method)">#<strong>version_service</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#webhook_service-instance_method" title="#webhook_service (instance method)">#<strong>webhook_service</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#webhook_trigger_service-instance_method" title="#webhook_trigger_service (instance method)">#<strong>webhook_trigger_service</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="badge_service-instance_method">
+  
+    #<strong>badge_service</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+52
+53
+54</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/services.rb', line 52</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_badge_service'>badge_service</span>
+  <span class='id identifier rubyid_get'>get</span><span class='lparen'>(</span><span class='symbol'>:badge_service</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="branch_service-instance_method">
+  
+    #<strong>branch_service</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+92
+93
+94</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/services.rb', line 92</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_branch_service'>branch_service</span>
+  <span class='id identifier rubyid_get'>get</span><span class='lparen'>(</span><span class='symbol'>:branch_service</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="certificate_service-instance_method">
+  
+    #<strong>certificate_service</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+60
+61
+62</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/services.rb', line 60</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_certificate_service'>certificate_service</span>
+  <span class='id identifier rubyid_get'>get</span><span class='lparen'>(</span><span class='symbol'>:certificate_service</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="contract_service-instance_method">
+  
+    #<strong>contract_service</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+88
+89
+90</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/services.rb', line 88</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_contract_service'>contract_service</span>
+  <span class='id identifier rubyid_get'>get</span><span class='lparen'>(</span><span class='symbol'>:contract_service</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="deployed_version_service-instance_method">
+  
+    #<strong>deployed_version_service</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+80
+81
+82</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/services.rb', line 80</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_deployed_version_service'>deployed_version_service</span>
+  <span class='id identifier rubyid_get'>get</span><span class='lparen'>(</span><span class='symbol'>:deployed_version_service</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="environment_service-instance_method">
+  
+    #<strong>environment_service</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+76
+77
+78</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/services.rb', line 76</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_environment_service'>environment_service</span>
+  <span class='id identifier rubyid_get'>get</span><span class='lparen'>(</span><span class='symbol'>:environment_service</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="get-instance_method">
+  
+    #<strong>get</strong>(name)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+12
+13
+14</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/services.rb', line 12</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_get'>get</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
+  <span class='const'><span class='object_link'><a href="#FACTORIES-constant" title="PactBroker::Services::FACTORIES (constant)">FACTORIES</a></span></span><span class='lbracket'>[</span><span class='id identifier rubyid_name'>name</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="group_service-instance_method">
+  
+    #<strong>group_service</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+36
+37
+38</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/services.rb', line 36</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_group_service'>group_service</span>
+  <span class='id identifier rubyid_get'>get</span><span class='lparen'>(</span><span class='symbol'>:group_service</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="index_service-instance_method">
+  
+    #<strong>index_service</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+16
+17
+18</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/services.rb', line 16</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_index_service'>index_service</span>
+  <span class='id identifier rubyid_get'>get</span><span class='lparen'>(</span><span class='symbol'>:index_service</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="integration_service-instance_method">
+  
+    #<strong>integration_service</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+64
+65
+66</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/services.rb', line 64</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_integration_service'>integration_service</span>
+  <span class='id identifier rubyid_get'>get</span><span class='lparen'>(</span><span class='symbol'>:integration_service</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="label_service-instance_method">
+  
+    #<strong>label_service</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+32
+33
+34</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/services.rb', line 32</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_label_service'>label_service</span>
+  <span class='id identifier rubyid_get'>get</span><span class='lparen'>(</span><span class='symbol'>:label_service</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="matrix_service-instance_method">
+  
+    #<strong>matrix_service</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+56
+57
+58</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/services.rb', line 56</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_matrix_service'>matrix_service</span>
+  <span class='id identifier rubyid_get'>get</span><span class='lparen'>(</span><span class='symbol'>:matrix_service</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="metrics_service-instance_method">
+  
+    #<strong>metrics_service</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+72
+73
+74</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/services.rb', line 72</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_metrics_service'>metrics_service</span>
+  <span class='id identifier rubyid_get'>get</span><span class='lparen'>(</span><span class='symbol'>:metrics_service</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="pact_service-instance_method">
+  
+    #<strong>pact_service</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+20
+21
+22</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/services.rb', line 20</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_pact_service'>pact_service</span>
+  <span class='id identifier rubyid_get'>get</span><span class='lparen'>(</span><span class='symbol'>:pact_service</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="pacticipant_service-instance_method">
+  
+    #<strong>pacticipant_service</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+24
+25
+26</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/services.rb', line 24</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_pacticipant_service'>pacticipant_service</span>
+  <span class='id identifier rubyid_get'>get</span><span class='lparen'>(</span><span class='symbol'>:pacticipant_service</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="register_default_services-instance_method">
+  
+    #<strong>register_default_services</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>rubocop: disable Metrics/MethodLength</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/services.rb', line 97</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_register_default_services'>register_default_services</span>
+  <span class='id identifier rubyid_register_service'>register_service</span><span class='lparen'>(</span><span class='symbol'>:index_service</span><span class='rparen'>)</span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>pact_broker/index/service</span><span class='tstring_end'>&quot;</span></span>
+    <span class='const'><span class='object_link'><a href="Index.html" title="PactBroker::Index (module)">Index</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Index/Service.html" title="PactBroker::Index::Service (class)">Service</a></span></span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_register_service'>register_service</span><span class='lparen'>(</span><span class='symbol'>:metrics_service</span><span class='rparen'>)</span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>pact_broker/metrics/service</span><span class='tstring_end'>&quot;</span></span>
+    <span class='const'><span class='object_link'><a href="Metrics.html" title="PactBroker::Metrics (module)">Metrics</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Metrics/Service.html" title="PactBroker::Metrics::Service (module)">Service</a></span></span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_register_service'>register_service</span><span class='lparen'>(</span><span class='symbol'>:matrix_service</span><span class='rparen'>)</span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>pact_broker/matrix/service</span><span class='tstring_end'>&quot;</span></span>
+    <span class='const'><span class='object_link'><a href="Matrix.html" title="PactBroker::Matrix (module)">Matrix</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Matrix/Service.html" title="PactBroker::Matrix::Service (module)">Service</a></span></span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_register_service'>register_service</span><span class='lparen'>(</span><span class='symbol'>:pact_service</span><span class='rparen'>)</span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>pact_broker/pacts/service</span><span class='tstring_end'>&quot;</span></span>
+    <span class='const'><span class='object_link'><a href="Pacts.html" title="PactBroker::Pacts (module)">Pacts</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Pacts/Service.html" title="PactBroker::Pacts::Service (module)">Service</a></span></span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_register_service'>register_service</span><span class='lparen'>(</span><span class='symbol'>:pacticipant_service</span><span class='rparen'>)</span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>pact_broker/pacticipants/service</span><span class='tstring_end'>&quot;</span></span>
+    <span class='const'><span class='object_link'><a href="Pacticipants.html" title="PactBroker::Pacticipants (module)">Pacticipants</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Pacticipants/Service.html" title="PactBroker::Pacticipants::Service (class)">Service</a></span></span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_register_service'>register_service</span><span class='lparen'>(</span><span class='symbol'>:tag_service</span><span class='rparen'>)</span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>pact_broker/tags/service</span><span class='tstring_end'>&quot;</span></span>
+    <span class='const'><span class='object_link'><a href="Tags.html" title="PactBroker::Tags (module)">Tags</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Tags/Service.html" title="PactBroker::Tags::Service (module)">Service</a></span></span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_register_service'>register_service</span><span class='lparen'>(</span><span class='symbol'>:label_service</span><span class='rparen'>)</span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>pact_broker/labels/service</span><span class='tstring_end'>&quot;</span></span>
+    <span class='const'><span class='object_link'><a href="Labels.html" title="PactBroker::Labels (module)">Labels</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Labels/Service.html" title="PactBroker::Labels::Service (module)">Service</a></span></span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_register_service'>register_service</span><span class='lparen'>(</span><span class='symbol'>:group_service</span><span class='rparen'>)</span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>pact_broker/groups/service</span><span class='tstring_end'>&quot;</span></span>
+    <span class='const'><span class='object_link'><a href="Groups.html" title="PactBroker::Groups (module)">Groups</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Groups/Service.html" title="PactBroker::Groups::Service (module)">Service</a></span></span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_register_service'>register_service</span><span class='lparen'>(</span><span class='symbol'>:webhook_service</span><span class='rparen'>)</span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>pact_broker/webhooks/service</span><span class='tstring_end'>&quot;</span></span>
+    <span class='const'><span class='object_link'><a href="Webhooks.html" title="PactBroker::Webhooks (module)">Webhooks</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Webhooks/Service.html" title="PactBroker::Webhooks::Service (module)">Service</a></span></span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_register_service'>register_service</span><span class='lparen'>(</span><span class='symbol'>:version_service</span><span class='rparen'>)</span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>pact_broker/versions/service</span><span class='tstring_end'>&quot;</span></span>
+    <span class='const'><span class='object_link'><a href="Versions.html" title="PactBroker::Versions (module)">Versions</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Versions/Service.html" title="PactBroker::Versions::Service (class)">Service</a></span></span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_register_service'>register_service</span><span class='lparen'>(</span><span class='symbol'>:verification_service</span><span class='rparen'>)</span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>pact_broker/verifications/service</span><span class='tstring_end'>&quot;</span></span>
+    <span class='const'><span class='object_link'><a href="Verifications.html" title="PactBroker::Verifications (module)">Verifications</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Verifications/Service.html" title="PactBroker::Verifications::Service (module)">Service</a></span></span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_register_service'>register_service</span><span class='lparen'>(</span><span class='symbol'>:badge_service</span><span class='rparen'>)</span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>pact_broker/badges/service</span><span class='tstring_end'>&quot;</span></span>
+    <span class='const'><span class='object_link'><a href="Badges.html" title="PactBroker::Badges (module)">Badges</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Badges/Service.html" title="PactBroker::Badges::Service (module)">Service</a></span></span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_register_service'>register_service</span><span class='lparen'>(</span><span class='symbol'>:certificate_service</span><span class='rparen'>)</span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>pact_broker/certificates/service</span><span class='tstring_end'>&quot;</span></span>
+    <span class='const'><span class='object_link'><a href="Certificates.html" title="PactBroker::Certificates (module)">Certificates</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Certificates/Service.html" title="PactBroker::Certificates::Service (module)">Service</a></span></span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_register_service'>register_service</span><span class='lparen'>(</span><span class='symbol'>:integration_service</span><span class='rparen'>)</span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>pact_broker/integrations/service</span><span class='tstring_end'>&quot;</span></span>
+    <span class='const'><span class='object_link'><a href="Integrations.html" title="PactBroker::Integrations (module)">Integrations</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Integrations/Service.html" title="PactBroker::Integrations::Service (class)">Service</a></span></span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_register_service'>register_service</span><span class='lparen'>(</span><span class='symbol'>:webhook_trigger_service</span><span class='rparen'>)</span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>pact_broker/webhooks/trigger_service</span><span class='tstring_end'>&quot;</span></span>
+    <span class='const'><span class='object_link'><a href="Webhooks.html" title="PactBroker::Webhooks (module)">Webhooks</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Webhooks/TriggerService.html" title="PactBroker::Webhooks::TriggerService (module)">TriggerService</a></span></span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_register_service'>register_service</span><span class='lparen'>(</span><span class='symbol'>:environment_service</span><span class='rparen'>)</span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>pact_broker/deployments/environment_service</span><span class='tstring_end'>&quot;</span></span>
+    <span class='const'><span class='object_link'><a href="Deployments.html" title="PactBroker::Deployments (module)">Deployments</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Deployments/EnvironmentService.html" title="PactBroker::Deployments::EnvironmentService (module)">EnvironmentService</a></span></span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_register_service'>register_service</span><span class='lparen'>(</span><span class='symbol'>:deployed_version_service</span><span class='rparen'>)</span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>pact_broker/deployments/deployed_version_service</span><span class='tstring_end'>&quot;</span></span>
+    <span class='const'><span class='object_link'><a href="../PactBroker.html" title="PactBroker (module)">PactBroker</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Deployments.html" title="PactBroker::Deployments (module)">Deployments</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Deployments/DeployedVersionService.html" title="PactBroker::Deployments::DeployedVersionService (class)">DeployedVersionService</a></span></span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_register_service'>register_service</span><span class='lparen'>(</span><span class='symbol'>:released_version_service</span><span class='rparen'>)</span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>pact_broker/deployments/released_version_service</span><span class='tstring_end'>&quot;</span></span>
+    <span class='const'><span class='object_link'><a href="../PactBroker.html" title="PactBroker (module)">PactBroker</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Deployments.html" title="PactBroker::Deployments (module)">Deployments</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Deployments/ReleasedVersionService.html" title="PactBroker::Deployments::ReleasedVersionService (class)">ReleasedVersionService</a></span></span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_register_service'>register_service</span><span class='lparen'>(</span><span class='symbol'>:contract_service</span><span class='rparen'>)</span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>pact_broker/contracts/service</span><span class='tstring_end'>&quot;</span></span>
+    <span class='const'><span class='object_link'><a href="../PactBroker.html" title="PactBroker (module)">PactBroker</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Contracts.html" title="PactBroker::Contracts (module)">Contracts</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Contracts/Service.html" title="PactBroker::Contracts::Service (module)">Service</a></span></span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_register_service'>register_service</span><span class='lparen'>(</span><span class='symbol'>:branch_service</span><span class='rparen'>)</span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>pact_broker/versions/branch_service</span><span class='tstring_end'>&quot;</span></span>
+    <span class='const'><span class='object_link'><a href="../PactBroker.html" title="PactBroker (module)">PactBroker</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Versions.html" title="PactBroker::Versions (module)">Versions</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Versions/BranchService.html" title="PactBroker::Versions::BranchService (class)">BranchService</a></span></span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="register_service-instance_method">
+  
+    #<strong>register_service</strong>(name, &amp;block)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+8
+9
+10</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/services.rb', line 8</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_register_service'>register_service</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+  <span class='const'><span class='object_link'><a href="#FACTORIES-constant" title="PactBroker::Services::FACTORIES (constant)">FACTORIES</a></span></span><span class='lbracket'>[</span><span class='id identifier rubyid_name'>name</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_block'>block</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="released_version_service-instance_method">
+  
+    #<strong>released_version_service</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+84
+85
+86</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/services.rb', line 84</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_released_version_service'>released_version_service</span>
+  <span class='id identifier rubyid_get'>get</span><span class='lparen'>(</span><span class='symbol'>:released_version_service</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="tag_service-instance_method">
+  
+    #<strong>tag_service</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+28
+29
+30</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/services.rb', line 28</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_tag_service'>tag_service</span>
+  <span class='id identifier rubyid_get'>get</span><span class='lparen'>(</span><span class='symbol'>:tag_service</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="verification_service-instance_method">
+  
+    #<strong>verification_service</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+48
+49
+50</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/services.rb', line 48</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_verification_service'>verification_service</span>
+  <span class='id identifier rubyid_get'>get</span><span class='lparen'>(</span><span class='symbol'>:verification_service</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="version_service-instance_method">
+  
+    #<strong>version_service</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+44
+45
+46</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/services.rb', line 44</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_version_service'>version_service</span>
+  <span class='id identifier rubyid_get'>get</span><span class='lparen'>(</span><span class='symbol'>:version_service</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="webhook_service-instance_method">
+  
+    #<strong>webhook_service</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+40
+41
+42</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/services.rb', line 40</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_webhook_service'>webhook_service</span>
+  <span class='id identifier rubyid_get'>get</span><span class='lparen'>(</span><span class='symbol'>:webhook_service</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="webhook_trigger_service-instance_method">
+  
+    #<strong>webhook_trigger_service</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+68
+69
+70</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/services.rb', line 68</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_webhook_trigger_service'>webhook_trigger_service</span>
+  <span class='id identifier rubyid_get'>get</span><span class='lparen'>(</span><span class='symbol'>:webhook_trigger_service</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Tue Mar 22 17:40:10 2022 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.27 (ruby-2.7.5).
+</div>
+
+    </div>
+  </body>
+</html>

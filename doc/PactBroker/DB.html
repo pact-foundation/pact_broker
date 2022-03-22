@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Module: PactBroker::DB
+  
+    &mdash; Documentation by YARD 0.9.27
+  
+</title>
+
+  <link rel="stylesheet" href="../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "PactBroker::DB";
+  relpath = '../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../_index.html">Index (D)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../PactBroker.html" title="PactBroker (module)">PactBroker</a></span></span>
+     &raquo; 
+    <span class="title">DB</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Module: PactBroker::DB
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/pact_broker/db.rb<span class="defines">,<br />
+  lib/pact_broker/db/clean.rb,<br /> lib/pact_broker/db/models.rb,<br /> lib/pact_broker/db/migrate.rb,<br /> lib/pact_broker/db/version.rb,<br /> lib/pact_broker/db/migrate_data.rb,<br /> lib/pact_broker/db/log_quietener.rb,<br /> lib/pact_broker/tasks/clean_task.rb,<br /> lib/pact_broker/db/clean/selector.rb,<br /> lib/pact_broker/tasks/version_task.rb,<br /> lib/pact_broker/db/clean_incremental.rb,<br /> lib/pact_broker/db/seed_example_data.rb,<br /> lib/pact_broker/db/validate_encoding.rb,<br /> lib/pact_broker/tasks/migration_task.rb,<br /> lib/pact_broker/tasks/data_migration_task.rb,<br /> lib/pact_broker/db/data_migrations/helpers.rb,<br /> lib/pact_broker/db/delete_overwritten_data.rb,<br /> lib/pact_broker/db/table_dependency_calculator.rb,<br /> lib/pact_broker/db/data_migrations/create_branches.rb,<br /> lib/pact_broker/tasks/delete_overwritten_data_task.rb,<br /> lib/pact_broker/db/data_migrations/set_webhook_uuid.rb,<br /> lib/pact_broker/db/data_migrations/migrate_integrations.rb,<br /> lib/pact_broker/db/data_migrations/set_webhooks_enabled.rb,<br /> lib/pact_broker/db/data_migrations/migrate_webhook_headers.rb,<br /> lib/pact_broker/db/data_migrations/set_interactions_counts.rb,<br /> lib/pact_broker/db/data_migrations/set_extra_columns_for_tags.rb,<br /> lib/pact_broker/db/data_migrations/set_pacticipant_main_branch.rb,<br /> lib/pact_broker/db/data_migrations/set_pacticipant_display_name.rb,<br /> lib/pact_broker/db/data_migrations/set_latest_version_sequence_value.rb,<br /> lib/pact_broker/db/data_migrations/delete_deprecated_webhook_executions.rb,<br /> lib/pact_broker/db/data_migrations/set_pacticipant_ids_for_verifications.rb,<br /> lib/pact_broker/db/data_migrations/set_consumer_ids_for_pact_publications.rb,<br /> lib/pact_broker/db/data_migrations/set_created_at_for_latest_verifications.rb,<br /> lib/pact_broker/db/data_migrations/set_created_at_for_latest_pact_publications.rb,<br /> lib/pact_broker/db/data_migrations/set_consumer_version_order_for_pact_publications.rb,<br /> lib/pact_broker/db/data_migrations/migrate_pact_version_provider_tag_successful_verifications.rb</span>
+</dd>
+  </dl>
+  
+</div>
+
+<h2>Defined Under Namespace</h2>
+<p class="children">
+  
+    
+      <strong class="modules">Modules:</strong> <span class='object_link'><a href="DB/DataMigrations.html" title="PactBroker::DB::DataMigrations (module)">DataMigrations</a></span>
+    
+  
+    
+      <strong class="classes">Classes:</strong> <span class='object_link'><a href="DB/Clean.html" title="PactBroker::DB::Clean (class)">Clean</a></span>, <span class='object_link'><a href="DB/CleanIncremental.html" title="PactBroker::DB::CleanIncremental (class)">CleanIncremental</a></span>, <span class='object_link'><a href="DB/CleanTask.html" title="PactBroker::DB::CleanTask (class)">CleanTask</a></span>, <span class='object_link'><a href="DB/ConnectionConfigurationError.html" title="PactBroker::DB::ConnectionConfigurationError (class)">ConnectionConfigurationError</a></span>, <span class='object_link'><a href="DB/DataMigrationTask.html" title="PactBroker::DB::DataMigrationTask (class)">DataMigrationTask</a></span>, <span class='object_link'><a href="DB/DeleteOverwrittenData.html" title="PactBroker::DB::DeleteOverwrittenData (class)">DeleteOverwrittenData</a></span>, <span class='object_link'><a href="DB/DeleteOverwrittenDataTask.html" title="PactBroker::DB::DeleteOverwrittenDataTask (class)">DeleteOverwrittenDataTask</a></span>, <span class='object_link'><a href="DB/LogQuietener.html" title="PactBroker::DB::LogQuietener (class)">LogQuietener</a></span>, <span class='object_link'><a href="DB/Migrate.html" title="PactBroker::DB::Migrate (class)">Migrate</a></span>, <span class='object_link'><a href="DB/MigrateData.html" title="PactBroker::DB::MigrateData (class)">MigrateData</a></span>, <span class='object_link'><a href="DB/MigrationTask.html" title="PactBroker::DB::MigrationTask (class)">MigrationTask</a></span>, <span class='object_link'><a href="DB/SeedExampleData.html" title="PactBroker::DB::SeedExampleData (class)">SeedExampleData</a></span>, <span class='object_link'><a href="DB/TableDependencyCalculator.html" title="PactBroker::DB::TableDependencyCalculator (class)">TableDependencyCalculator</a></span>, <span class='object_link'><a href="DB/ValidateEncoding.html" title="PactBroker::DB::ValidateEncoding (class)">ValidateEncoding</a></span>, <span class='object_link'><a href="DB/Version.html" title="PactBroker::DB::Version (class)">Version</a></span>, <span class='object_link'><a href="DB/VersionTask.html" title="PactBroker::DB::VersionTask (class)">VersionTask</a></span>
+    
+  
+</p>
+
+  
+    <h2>
+      Constant Summary
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="MIGRATIONS_DIR-constant" class="">MIGRATIONS_DIR =
+          
+        </dt>
+        <dd><pre class="code"><span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_expand_path'>expand_path</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>../../../db/migrations</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='kw'>__FILE__</span><span class='rparen'>)</span></pre></dd>
+      
+    </dl>
+  
+
+
+
+
+
+
+
+  
+    <h2>
+      Class Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#check_current-class_method" title="check_current (class method)">.<strong>check_current</strong>(database_connection, options = {})  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#connection-class_method" title="connection (class method)">.<strong>connection</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#connection=-class_method" title="connection= (class method)">.<strong>connection=</strong>(connection)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#each_integration_model-class_method" title="each_integration_model (class method)">.<strong>each_integration_model</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#is_current%3F-class_method" title="is_current? (class method)">.<strong>is_current?</strong>(database_connection, options = {})  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#mysql%3F-class_method" title="mysql? (class method)">.<strong>mysql?</strong>  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#run_data_migrations-class_method" title="run_data_migrations (class method)">.<strong>run_data_migrations</strong>(database_connection)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#run_migrations-class_method" title="run_migrations (class method)">.<strong>run_migrations</strong>(database_connection, options = {})  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#set_mysql_strict_mode_if_mysql-class_method" title="set_mysql_strict_mode_if_mysql (class method)">.<strong>set_mysql_strict_mode_if_mysql</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#truncate-class_method" title="truncate (class method)">.<strong>truncate</strong>(database_connection, options = {})  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#validate_connection_config-class_method" title="validate_connection_config (class method)">.<strong>validate_connection_config</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#version-class_method" title="version (class method)">.<strong>version</strong>(database_connection)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+
+  <div id="class_method_details" class="method_details_list">
+    <h2>Class Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="check_current-class_method">
+  
+    .<strong>check_current</strong>(database_connection, options = {})  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+35
+36
+37</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/db.rb', line 35</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_check_current'>check_current</span> <span class='id identifier rubyid_database_connection'>database_connection</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
+  <span class='const'><span class='object_link'><a href="../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='op'>::</span><span class='const'>TimestampMigrator</span><span class='period'>.</span><span class='id identifier rubyid_check_current'>check_current</span><span class='lparen'>(</span><span class='id identifier rubyid_database_connection'>database_connection</span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="../PactBroker.html" title="PactBroker (module)">PactBroker</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="" title="PactBroker::DB (module)">DB</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="#MIGRATIONS_DIR-constant" title="PactBroker::DB::MIGRATIONS_DIR (constant)">MIGRATIONS_DIR</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="connection-class_method">
+  
+    .<strong>connection</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+18
+19
+20</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/db.rb', line 18</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_connection'>connection</span>
+  <span class='ivar'>@connection</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="connection=-class_method">
+  
+    .<strong>connection=</strong>(connection)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+14
+15
+16</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/db.rb', line 14</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_connection='>connection=</span> <span class='id identifier rubyid_connection'>connection</span>
+  <span class='ivar'>@connection</span> <span class='op'>=</span> <span class='id identifier rubyid_connection'>connection</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="each_integration_model-class_method">
+  
+    .<strong>each_integration_model</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+45
+46
+47
+48
+49</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/db/models.rb', line 45</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_each_integration_model'>each_integration_model</span>
+  <span class='const'><span class='object_link'><a href="../PactBroker.html#INTEGRATIONS_TABLES-constant" title="PactBroker::INTEGRATIONS_TABLES (constant)">INTEGRATIONS_TABLES</a></span></span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span> <span class='id identifier rubyid_model'>model</span> <span class='op'>|</span>
+    <span class='kw'>yield</span> <span class='id identifier rubyid_model'>model</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="is_current?-class_method">
+  
+    .<strong>is_current?</strong>(database_connection, options = {})  &#x21d2; <tt>Boolean</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+31
+32
+33</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/db.rb', line 31</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_is_current?'>is_current?</span> <span class='id identifier rubyid_database_connection'>database_connection</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
+  <span class='const'><span class='object_link'><a href="../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='op'>::</span><span class='const'>TimestampMigrator</span><span class='period'>.</span><span class='id identifier rubyid_is_current?'>is_current?</span><span class='lparen'>(</span><span class='id identifier rubyid_database_connection'>database_connection</span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="../PactBroker.html" title="PactBroker (module)">PactBroker</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="" title="PactBroker::DB (module)">DB</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="#MIGRATIONS_DIR-constant" title="PactBroker::DB::MIGRATIONS_DIR (constant)">MIGRATIONS_DIR</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="mysql?-class_method">
+  
+    .<strong>mysql?</strong>  &#x21d2; <tt>Boolean</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+64
+65
+66</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/db.rb', line 64</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_mysql?'>mysql?</span>
+  <span class='id identifier rubyid_connection'>connection</span><span class='period'>.</span><span class='id identifier rubyid_adapter_scheme'>adapter_scheme</span> <span class='op'>=~</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>mysql</span><span class='regexp_end'>/</span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="run_data_migrations-class_method">
+  
+    .<strong>run_data_migrations</strong>(database_connection)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+27
+28
+29</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/db.rb', line 27</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_run_data_migrations'>run_data_migrations</span> <span class='id identifier rubyid_database_connection'>database_connection</span>
+  <span class='const'><span class='object_link'><a href="../PactBroker.html" title="PactBroker (module)">PactBroker</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="" title="PactBroker::DB (module)">DB</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="DB/MigrateData.html" title="PactBroker::DB::MigrateData (class)">MigrateData</a></span></span><span class='period'>.</span><span class='lparen'>(</span><span class='id identifier rubyid_database_connection'>database_connection</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="run_migrations-class_method">
+  
+    .<strong>run_migrations</strong>(database_connection, options = {})  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+22
+23
+24
+25</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/db.rb', line 22</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_run_migrations'>run_migrations</span> <span class='id identifier rubyid_database_connection'>database_connection</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
+  <span class='const'><span class='object_link'><a href="../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='period'>.</span><span class='id identifier rubyid_extension'>extension</span> <span class='symbol'>:migration</span>
+  <span class='const'><span class='object_link'><a href="../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='op'>::</span><span class='const'>TimestampMigrator</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_database_connection'>database_connection</span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="../PactBroker.html" title="PactBroker (module)">PactBroker</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="" title="PactBroker::DB (module)">DB</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="#MIGRATIONS_DIR-constant" title="PactBroker::DB::MIGRATIONS_DIR (constant)">MIGRATIONS_DIR</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_run'>run</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="set_mysql_strict_mode_if_mysql-class_method">
+  
+    .<strong>set_mysql_strict_mode_if_mysql</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+60
+61
+62</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/db.rb', line 60</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_set_mysql_strict_mode_if_mysql'>set_mysql_strict_mode_if_mysql</span>
+  <span class='id identifier rubyid_connection'>connection</span><span class='period'>.</span><span class='id identifier rubyid_run'>run</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>SET sql_mode=&#39;STRICT_TRANS_TABLES&#39;;</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_mysql?'>mysql?</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="truncate-class_method">
+  
+    .<strong>truncate</strong>(database_connection, options = {})  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/db.rb', line 39</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_truncate'>truncate</span> <span class='id identifier rubyid_database_connection'>database_connection</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
+  <span class='id identifier rubyid_exceptions'>exceptions</span> <span class='op'>=</span> <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='symbol'>:except</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+  <span class='const'><span class='object_link'><a href="DB/TableDependencyCalculator.html" title="PactBroker::DB::TableDependencyCalculator (class)">TableDependencyCalculator</a></span></span><span class='period'>.</span><span class='id identifier rubyid_call'><span class='object_link'><a href="DB/TableDependencyCalculator.html#call-class_method" title="PactBroker::DB::TableDependencyCalculator.call (method)">call</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_database_connection'>database_connection</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span> <span class='id identifier rubyid_table_name'>table_name</span> <span class='op'>|</span>
+    <span class='kw'>if</span> <span class='op'>!</span><span class='id identifier rubyid_exceptions'>exceptions</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_table_name'>table_name</span><span class='rparen'>)</span>
+      <span class='kw'>begin</span>
+        <span class='id identifier rubyid_database_connection'>database_connection</span><span class='lbracket'>[</span><span class='id identifier rubyid_table_name'>table_name</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_truncate'>truncate</span>
+      <span class='kw'>rescue</span> <span class='const'>StandardError</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid__ex'>_ex</span>
+        <span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Could not truncate table </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_table_name'>table_name</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+      <span class='kw'>end</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="validate_connection_config-class_method">
+  
+    .<strong>validate_connection_config</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+56
+57
+58</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/db.rb', line 56</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_validate_connection_config'>validate_connection_config</span>
+  <span class='const'><span class='object_link'><a href="../PactBroker.html" title="PactBroker (module)">PactBroker</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="" title="PactBroker::DB (module)">DB</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="DB/ValidateEncoding.html" title="PactBroker::DB::ValidateEncoding (class)">ValidateEncoding</a></span></span><span class='period'>.</span><span class='lparen'>(</span><span class='id identifier rubyid_connection'>connection</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="version-class_method">
+  
+    .<strong>version</strong>(database_connection)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+52
+53
+54</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/db.rb', line 52</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_version'>version</span> <span class='id identifier rubyid_database_connection'>database_connection</span>
+  <span class='const'><span class='object_link'><a href="../PactBroker.html" title="PactBroker (module)">PactBroker</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="" title="PactBroker::DB (module)">DB</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="DB/Version.html" title="PactBroker::DB::Version (class)">Version</a></span></span><span class='period'>.</span><span class='id identifier rubyid_call'><span class='object_link'><a href="DB/Version.html#call-class_method" title="PactBroker::DB::Version.call (method)">call</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_database_connection'>database_connection</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Tue Mar 22 17:40:10 2022 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.27 (ruby-2.7.5).
+</div>
+
+    </div>
+  </body>
+</html>

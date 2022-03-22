@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Module: PactBroker::Pacts::LazyLoaders
+  
+    &mdash; Documentation by YARD 0.9.27
+  
+</title>
+
+  <link rel="stylesheet" href="../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "PactBroker::Pacts::LazyLoaders";
+  relpath = '../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../_index.html">Index (L)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../PactBroker.html" title="PactBroker (module)">PactBroker</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Pacts.html" title="PactBroker::Pacts (module)">Pacts</a></span></span>
+     &raquo; 
+    <span class="title">LazyLoaders</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Module: PactBroker::Pacts::LazyLoaders
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/pact_broker/pacts/lazy_loaders.rb</dd>
+  </dl>
+  
+</div>
+
+
+  
+    <h2>
+      Constant Summary
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="HEAD_PACT_PUBLICATIONS_FOR_TAGS-constant" class="">HEAD_PACT_PUBLICATIONS_FOR_TAGS =
+          
+        </dt>
+        <dd><pre class="code"><span class='id identifier rubyid_lambda'>lambda</span> <span class='lbrace'>{</span>
+  <span class='id identifier rubyid_consumer_version_tag_names'>consumer_version_tag_names</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../../PactBroker.html" title="PactBroker (module)">PactBroker</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Domain.html" title="PactBroker::Domain (module)">Domain</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Domain/Tag.html" title="PactBroker::Domain::Tag (class)">Tag</a></span></span><span class='period'>.</span><span class='id identifier rubyid_select'>select</span><span class='lparen'>(</span><span class='symbol'>:name</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>version_id:</span> <span class='id identifier rubyid_consumer_version_id'>consumer_version_id</span><span class='rparen'>)</span>
+    <span class='const'><span class='object_link'><a href="PactPublication.html" title="PactBroker::Pacts::PactPublication (class)">PactPublication</a></span></span>
+      <span class='period'>.</span><span class='id identifier rubyid_for_consumer'>for_consumer</span><span class='lparen'>(</span><span class='id identifier rubyid_consumer'>consumer</span><span class='rparen'>)</span>
+      <span class='period'>.</span><span class='id identifier rubyid_for_provider'>for_provider</span><span class='lparen'>(</span><span class='id identifier rubyid_provider'>provider</span><span class='rparen'>)</span>
+      <span class='period'>.</span><span class='id identifier rubyid_latest_for_consumer_tag'>latest_for_consumer_tag</span><span class='lparen'>(</span><span class='id identifier rubyid_consumer_version_tag_names'>consumer_version_tag_names</span><span class='rparen'>)</span>
+      <span class='period'>.</span><span class='id identifier rubyid_from_self'>from_self</span><span class='period'>.</span><span class='id identifier rubyid_order_by'>order_by</span><span class='lparen'>(</span><span class='symbol'>:tag_name</span><span class='rparen'>)</span>
+<span class='rbrace'>}</span></pre></dd>
+      
+        <dt id="LATEST_VERIFICATION_FOR_CONSUMER_BRANCHES-constant" class="">LATEST_VERIFICATION_FOR_CONSUMER_BRANCHES =
+          
+        </dt>
+        <dd><pre class="code"><span class='id identifier rubyid_lambda'>lambda</span> <span class='lbrace'>{</span>
+  <span class='id identifier rubyid_bv_pp_join'>bv_pp_join</span> <span class='op'>=</span> <span class='lbrace'>{</span>
+    <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:branch_versions</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:version_id</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:pact_publications</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:consumer_version_id</span><span class='rbracket'>]</span><span class='comma'>,</span>
+    <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:pact_publications</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:provider_id</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_provider_id'>provider_id</span>
+  <span class='rbrace'>}</span>
+
+  <span class='id identifier rubyid_verifications_join'>verifications_join</span> <span class='op'>=</span> <span class='lbrace'>{</span>
+    <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:verifications</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:pact_version_id</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:pact_publications</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:pact_version_id</span><span class='rbracket'>]</span>
+  <span class='rbrace'>}</span>
+
+  <span class='id identifier rubyid_branch_ids'>branch_ids</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../../PactBroker.html" title="PactBroker (module)">PactBroker</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Versions.html" title="PactBroker::Versions (module)">Versions</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Versions/BranchVersion.html" title="PactBroker::Versions::BranchVersion (class)">BranchVersion</a></span></span>
+    <span class='period'>.</span><span class='id identifier rubyid_select'>select</span><span class='lparen'>(</span><span class='symbol'>:branch_id</span><span class='rparen'>)</span>
+    <span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>version_id:</span> <span class='id identifier rubyid_consumer_version_id'>consumer_version_id</span><span class='rparen'>)</span>
+
+
+  <span class='id identifier rubyid_latest_verification_id'>latest_verification_id</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../../PactBroker.html" title="PactBroker (module)">PactBroker</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Versions.html" title="PactBroker::Versions (module)">Versions</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Versions/BranchVersion.html" title="PactBroker::Versions::BranchVersion (class)">BranchVersion</a></span></span>
+    <span class='period'>.</span><span class='id identifier rubyid_select'>select</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:verifications</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:id</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+    <span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:branch_versions</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:branch_id</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_branch_ids'>branch_ids</span><span class='rparen'>)</span>
+    <span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='symbol'>:pact_publications</span><span class='comma'>,</span> <span class='id identifier rubyid_bv_pp_join'>bv_pp_join</span><span class='rparen'>)</span>
+    <span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='symbol'>:verifications</span><span class='comma'>,</span> <span class='id identifier rubyid_verifications_join'>verifications_join</span><span class='rparen'>)</span>
+    <span class='period'>.</span><span class='id identifier rubyid_order'>order</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='period'>.</span><span class='id identifier rubyid_desc'>desc</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:verifications</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:id</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='rparen'>)</span>
+    <span class='period'>.</span><span class='id identifier rubyid_limit'>limit</span><span class='lparen'>(</span><span class='int'>1</span><span class='rparen'>)</span>
+
+  <span class='const'><span class='object_link'><a href="../../PactBroker.html" title="PactBroker (module)">PactBroker</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Domain.html" title="PactBroker::Domain (module)">Domain</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Domain/Verification.html" title="PactBroker::Domain::Verification (class)">Verification</a></span></span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>id:</span> <span class='id identifier rubyid_latest_verification_id'>latest_verification_id</span><span class='rparen'>)</span>
+<span class='rbrace'>}</span></pre></dd>
+      
+    </dl>
+  
+
+
+
+
+
+
+
+
+
+</div>
+
+      <div id="footer">
+  Generated on Tue Mar 22 17:40:11 2022 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.27 (ruby-2.7.5).
+</div>
+
+    </div>
+  </body>
+</html>

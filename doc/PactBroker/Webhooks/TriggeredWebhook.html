@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Class: PactBroker::Webhooks::TriggeredWebhook
+  
+    &mdash; Documentation by YARD 0.9.27
+  
+</title>
+
+  <link rel="stylesheet" href="../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "PactBroker::Webhooks::TriggeredWebhook";
+  relpath = '../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../_index.html">Index (T)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../PactBroker.html" title="PactBroker (module)">PactBroker</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Webhooks.html" title="PactBroker::Webhooks (module)">Webhooks</a></span></span>
+     &raquo; 
+    <span class="title">TriggeredWebhook</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Class: PactBroker::Webhooks::TriggeredWebhook
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd>
+      <span class="inheritName">Object</span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">PactBroker::Webhooks::TriggeredWebhook</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+    </dd>
+  </dl>
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/pact_broker/webhooks/triggered_webhook.rb</dd>
+  </dl>
+  
+</div>
+
+<div id="subclasses">
+  <h2>Direct Known Subclasses</h2>
+  <p class="children"><span class='object_link'><a href="LatestTriggeredWebhook.html" title="PactBroker::Webhooks::LatestTriggeredWebhook (class)">LatestTriggeredWebhook</a></span></p>
+</div>
+
+  
+    <h2>
+      Constant Summary
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="TRIGGER_TYPE_RESOURCE_CREATION-constant" class="">TRIGGER_TYPE_RESOURCE_CREATION =
+          
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>resource_creation</span><span class='tstring_end'>&quot;</span></span></pre></dd>
+      
+        <dt id="TRIGGER_TYPE_USER-constant" class="">TRIGGER_TYPE_USER =
+          
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>user</span><span class='tstring_end'>&quot;</span></span></pre></dd>
+      
+        <dt id="STATUS_NOT_RUN-constant" class="">STATUS_NOT_RUN =
+          
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>not_run</span><span class='tstring_end'>&quot;</span></span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
+        <dt id="STATUS_RETRYING-constant" class="">STATUS_RETRYING =
+          
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>retrying</span><span class='tstring_end'>&quot;</span></span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
+        <dt id="STATUS_SUCCESS-constant" class="">STATUS_SUCCESS =
+          
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>success</span><span class='tstring_end'>&quot;</span></span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
+        <dt id="STATUS_FAILURE-constant" class="">STATUS_FAILURE =
+          
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>failure</span><span class='tstring_end'>&quot;</span></span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
+    </dl>
+  
+
+
+
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#consumer_name-instance_method" title="#consumer_name (instance method)">#<strong>consumer_name</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#execute-instance_method" title="#execute (instance method)">#<strong>execute</strong>(options)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#failure%3F-instance_method" title="#failure? (instance method)">#<strong>failure?</strong>  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#finished%3F-instance_method" title="#finished? (instance method)">#<strong>finished?</strong>  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#not_run%3F-instance_method" title="#not_run? (instance method)">#<strong>not_run?</strong>  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#number_of_attempts_made-instance_method" title="#number_of_attempts_made (instance method)">#<strong>number_of_attempts_made</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#number_of_attempts_remaining-instance_method" title="#number_of_attempts_remaining (instance method)">#<strong>number_of_attempts_remaining</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#provider_name-instance_method" title="#provider_name (instance method)">#<strong>provider_name</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#request_description-instance_method" title="#request_description (instance method)">#<strong>request_description</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#retrying%3F-instance_method" title="#retrying? (instance method)">#<strong>retrying?</strong>  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#success%3F-instance_method" title="#success? (instance method)">#<strong>success?</strong>  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="consumer_name-instance_method">
+  
+    #<strong>consumer_name</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+69
+70
+71</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/webhooks/triggered_webhook.rb', line 69</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_consumer_name'>consumer_name</span>
+  <span class='id identifier rubyid_consumer'>consumer</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_consumer'>consumer</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="execute-instance_method">
+  
+    #<strong>execute</strong>(options)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+62
+63
+64
+65
+66
+67</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/webhooks/triggered_webhook.rb', line 62</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_execute'>execute</span> <span class='id identifier rubyid_options'>options</span>
+  <span class='comment'># getting a random &#39;no method to_domain for null&#39; error
+</span>  <span class='comment'># not sure on which object, so splitting this out into two lines
+</span>  <span class='id identifier rubyid_pact'>pact</span> <span class='op'>=</span> <span class='id identifier rubyid_pact_publication'>pact_publication</span><span class='period'>.</span><span class='id identifier rubyid_to_domain'>to_domain</span>
+  <span class='id identifier rubyid_webhook'>webhook</span><span class='period'>.</span><span class='id identifier rubyid_to_domain'>to_domain</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span><span class='lparen'>(</span><span class='id identifier rubyid_pact'>pact</span><span class='comma'>,</span> <span class='id identifier rubyid_verification'>verification</span><span class='comma'>,</span> <span class='id identifier rubyid_event_context'>event_context</span><span class='period'>.</span><span class='id identifier rubyid_symbolize_keys'>symbolize_keys</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="failure?-instance_method">
+  
+    #<strong>failure?</strong>  &#x21d2; <tt>Boolean</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+81
+82
+83</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/webhooks/triggered_webhook.rb', line 81</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_failure?'>failure?</span>
+  <span class='id identifier rubyid_status'>status</span> <span class='op'>==</span> <span class='const'><span class='object_link'><a href="#STATUS_FAILURE-constant" title="PactBroker::Webhooks::TriggeredWebhook::STATUS_FAILURE (constant)">STATUS_FAILURE</a></span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="finished?-instance_method">
+  
+    #<strong>finished?</strong>  &#x21d2; <tt>Boolean</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+97
+98
+99</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/webhooks/triggered_webhook.rb', line 97</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_finished?'>finished?</span>
+  <span class='id identifier rubyid_success?'>success?</span> <span class='op'>||</span> <span class='id identifier rubyid_failure?'>failure?</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="not_run?-instance_method">
+  
+    #<strong>not_run?</strong>  &#x21d2; <tt>Boolean</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+89
+90
+91</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/webhooks/triggered_webhook.rb', line 89</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_not_run?'>not_run?</span>
+  <span class='id identifier rubyid_status'>status</span> <span class='op'>==</span> <span class='const'><span class='object_link'><a href="#STATUS_NOT_RUN-constant" title="PactBroker::Webhooks::TriggeredWebhook::STATUS_NOT_RUN (constant)">STATUS_NOT_RUN</a></span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="number_of_attempts_made-instance_method">
+  
+    #<strong>number_of_attempts_made</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+93
+94
+95</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/webhooks/triggered_webhook.rb', line 93</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_number_of_attempts_made'>number_of_attempts_made</span>
+  <span class='id identifier rubyid_webhook_executions'>webhook_executions</span><span class='period'>.</span><span class='id identifier rubyid_size'>size</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="number_of_attempts_remaining-instance_method">
+  
+    #<strong>number_of_attempts_remaining</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+101
+102
+103
+104
+105
+106
+107</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/webhooks/triggered_webhook.rb', line 101</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_number_of_attempts_remaining'>number_of_attempts_remaining</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_finished?'>finished?</span>
+    <span class='int'>0</span>
+  <span class='kw'>else</span>
+    <span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../../PactBroker.html" title="PactBroker (module)">PactBroker</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configuration'><span class='object_link'><a href="../../PactBroker.html#configuration-class_method" title="PactBroker.configuration (method)">configuration</a></span></span><span class='period'>.</span><span class='id identifier rubyid_webhook_retry_schedule'>webhook_retry_schedule</span><span class='period'>.</span><span class='id identifier rubyid_size'>size</span> <span class='op'>+</span> <span class='int'>1</span><span class='rparen'>)</span> <span class='op'>-</span> <span class='id identifier rubyid_number_of_attempts_made'>number_of_attempts_made</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="provider_name-instance_method">
+  
+    #<strong>provider_name</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+73
+74
+75</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/webhooks/triggered_webhook.rb', line 73</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_provider_name'>provider_name</span>
+  <span class='id identifier rubyid_provider'>provider</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_provider'>provider</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="request_description-instance_method">
+  
+    #<strong>request_description</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+57
+58
+59
+60</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/webhooks/triggered_webhook.rb', line 57</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_request_description'>request_description</span>
+  <span class='comment'># webhook could be deleted
+</span>  <span class='id identifier rubyid_webhook'>webhook</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_domain'>to_domain</span><span class='op'>&amp;.</span><span class='id identifier rubyid_request_description'>request_description</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="retrying?-instance_method">
+  
+    #<strong>retrying?</strong>  &#x21d2; <tt>Boolean</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+85
+86
+87</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/webhooks/triggered_webhook.rb', line 85</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_retrying?'>retrying?</span>
+  <span class='id identifier rubyid_status'>status</span> <span class='op'>==</span> <span class='const'><span class='object_link'><a href="#STATUS_RETRYING-constant" title="PactBroker::Webhooks::TriggeredWebhook::STATUS_RETRYING (constant)">STATUS_RETRYING</a></span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="success?-instance_method">
+  
+    #<strong>success?</strong>  &#x21d2; <tt>Boolean</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+77
+78
+79</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/webhooks/triggered_webhook.rb', line 77</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_success?'>success?</span>
+  <span class='id identifier rubyid_status'>status</span> <span class='op'>==</span> <span class='const'><span class='object_link'><a href="#STATUS_SUCCESS-constant" title="PactBroker::Webhooks::TriggeredWebhook::STATUS_SUCCESS (constant)">STATUS_SUCCESS</a></span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Tue Mar 22 17:40:23 2022 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.27 (ruby-2.7.5).
+</div>
+
+    </div>
+  </body>
+</html>

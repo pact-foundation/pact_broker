@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Class: PactBroker::Webhooks::Webhook
+  
+    &mdash; Documentation by YARD 0.9.27
+  
+</title>
+
+  <link rel="stylesheet" href="../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "PactBroker::Webhooks::Webhook";
+  relpath = '../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../_index.html">Index (W)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../PactBroker.html" title="PactBroker (module)">PactBroker</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Webhooks.html" title="PactBroker::Webhooks (module)">Webhooks</a></span></span>
+     &raquo; 
+    <span class="title">Webhook</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Class: PactBroker::Webhooks::Webhook
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd>
+      <span class="inheritName">Sequel::Model</span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">Sequel::Model</li>
+          
+            <li class="next">PactBroker::Webhooks::Webhook</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+    </dd>
+  </dl>
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/pact_broker/webhooks/webhook.rb</dd>
+  </dl>
+  
+</div>
+
+
+
+
+
+
+
+
+  
+    <h2>
+      Class Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#from_domain-class_method" title="from_domain (class method)">.<strong>from_domain</strong>(webhook, consumer, provider)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#not_plain_text_password-class_method" title="not_plain_text_password (class method)">.<strong>not_plain_text_password</strong>(password)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#properties_hash_from_domain-class_method" title="properties_hash_from_domain (class method)">.<strong>properties_hash_from_domain</strong>(webhook)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+    </ul>
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#delete-instance_method" title="#delete (instance method)">#<strong>delete</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Keep the triggered webhooks after the webhook has been deleted.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#is_for%3F-instance_method" title="#is_for? (instance method)">#<strong>is_for?</strong>(integration)  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#match_all%3F-instance_method" title="#match_all? (instance method)">#<strong>match_all?</strong>(name)  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#match_label%3F-instance_method" title="#match_label? (instance method)">#<strong>match_label?</strong>(name, integration)  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#parsed_body-instance_method" title="#parsed_body (instance method)">#<strong>parsed_body</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#plain_text_password-instance_method" title="#plain_text_password (instance method)">#<strong>plain_text_password</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#request_attributes-instance_method" title="#request_attributes (instance method)">#<strong>request_attributes</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#to_domain-instance_method" title="#to_domain (instance method)">#<strong>to_domain</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#update_from_domain-instance_method" title="#update_from_domain (instance method)">#<strong>update_from_domain</strong>(webhook)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#webhook_consumer-instance_method" title="#webhook_consumer (instance method)">#<strong>webhook_consumer</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#webhook_provider-instance_method" title="#webhook_provider (instance method)">#<strong>webhook_provider</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+  
+
+  <div id="class_method_details" class="method_details_list">
+    <h2>Class Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="from_domain-class_method">
+  
+    .<strong>from_domain</strong>(webhook, consumer, provider)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+88
+89
+90
+91
+92
+93
+94
+95</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/webhooks/webhook.rb', line 88</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_from_domain'>from_domain</span> <span class='id identifier rubyid_webhook'>webhook</span><span class='comma'>,</span> <span class='id identifier rubyid_consumer'>consumer</span><span class='comma'>,</span> <span class='id identifier rubyid_provider'>provider</span>
+  <span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span>
+    <span class='id identifier rubyid_properties_hash_from_domain'>properties_hash_from_domain</span><span class='lparen'>(</span><span class='id identifier rubyid_webhook'>webhook</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_merge'>merge</span><span class='lparen'>(</span><span class='label'>uuid:</span> <span class='id identifier rubyid_webhook'>webhook</span><span class='period'>.</span><span class='id identifier rubyid_uuid'>uuid</span><span class='rparen'>)</span>
+  <span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_tap'>tap</span> <span class='kw'>do</span> <span class='op'>|</span> <span class='id identifier rubyid_db_webhook'>db_webhook</span> <span class='op'>|</span>
+    <span class='id identifier rubyid_db_webhook'>db_webhook</span><span class='period'>.</span><span class='id identifier rubyid_consumer_id'>consumer_id</span> <span class='op'>=</span> <span class='id identifier rubyid_consumer'>consumer</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span> <span class='kw'>if</span> <span class='id identifier rubyid_consumer'>consumer</span>
+    <span class='id identifier rubyid_db_webhook'>db_webhook</span><span class='period'>.</span><span class='id identifier rubyid_provider_id'>provider_id</span> <span class='op'>=</span> <span class='id identifier rubyid_provider'>provider</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span> <span class='kw'>if</span> <span class='id identifier rubyid_provider'>provider</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="not_plain_text_password-class_method">
+  
+    .<strong>not_plain_text_password</strong>(password)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+97
+98
+99</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/webhooks/webhook.rb', line 97</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_not_plain_text_password'>not_plain_text_password</span> <span class='id identifier rubyid_password'>password</span>
+  <span class='id identifier rubyid_password'>password</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>?</span> <span class='kw'>nil</span> <span class='op'>:</span> <span class='const'>Base64</span><span class='period'>.</span><span class='id identifier rubyid_strict_encode64'>strict_encode64</span><span class='lparen'>(</span><span class='id identifier rubyid_password'>password</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="properties_hash_from_domain-class_method">
+  
+    .<strong>properties_hash_from_domain</strong>(webhook)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/webhooks/webhook.rb', line 149</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_properties_hash_from_domain'>properties_hash_from_domain</span> <span class='id identifier rubyid_webhook'>webhook</span>
+  <span class='id identifier rubyid_is_json_request_body'>is_json_request_body</span> <span class='op'>=</span> <span class='op'>!</span><span class='lparen'>(</span><span class='const'>String</span> <span class='op'>===</span> <span class='id identifier rubyid_webhook'>webhook</span><span class='period'>.</span><span class='id identifier rubyid_request'>request</span><span class='period'>.</span><span class='id identifier rubyid_body'>body</span> <span class='op'>||</span> <span class='id identifier rubyid_webhook'>webhook</span><span class='period'>.</span><span class='id identifier rubyid_request'>request</span><span class='period'>.</span><span class='id identifier rubyid_body'>body</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span><span class='rparen'>)</span> <span class='comment'># Can&#39;t rely on people to set content type
+</span>  <span class='lbrace'>{</span>
+    <span class='label'>description:</span> <span class='id identifier rubyid_webhook'>webhook</span><span class='period'>.</span><span class='id identifier rubyid_description'>description</span><span class='comma'>,</span>
+    <span class='label'>method:</span> <span class='id identifier rubyid_webhook'>webhook</span><span class='period'>.</span><span class='id identifier rubyid_request'>request</span><span class='period'>.</span><span class='id identifier rubyid_method'>method</span><span class='comma'>,</span>
+    <span class='label'>url:</span> <span class='id identifier rubyid_webhook'>webhook</span><span class='period'>.</span><span class='id identifier rubyid_request'>request</span><span class='period'>.</span><span class='id identifier rubyid_url'>url</span><span class='comma'>,</span>
+    <span class='label'>username:</span> <span class='id identifier rubyid_webhook'>webhook</span><span class='period'>.</span><span class='id identifier rubyid_request'>request</span><span class='period'>.</span><span class='id identifier rubyid_username'>username</span><span class='comma'>,</span>
+    <span class='label'>password:</span> <span class='id identifier rubyid_not_plain_text_password'>not_plain_text_password</span><span class='lparen'>(</span><span class='id identifier rubyid_webhook'>webhook</span><span class='period'>.</span><span class='id identifier rubyid_request'>request</span><span class='period'>.</span><span class='id identifier rubyid_password'>password</span><span class='rparen'>)</span><span class='comma'>,</span>
+    <span class='label'>enabled:</span> <span class='id identifier rubyid_webhook'>webhook</span><span class='period'>.</span><span class='id identifier rubyid_enabled'>enabled</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>?</span> <span class='kw'>true</span> <span class='op'>:</span> <span class='id identifier rubyid_webhook'>webhook</span><span class='period'>.</span><span class='id identifier rubyid_enabled'>enabled</span><span class='comma'>,</span>
+    <span class='label'>body:</span> <span class='lparen'>(</span><span class='id identifier rubyid_is_json_request_body'>is_json_request_body</span> <span class='op'>?</span> <span class='id identifier rubyid_webhook'>webhook</span><span class='period'>.</span><span class='id identifier rubyid_request'>request</span><span class='period'>.</span><span class='id identifier rubyid_body'>body</span><span class='period'>.</span><span class='id identifier rubyid_to_json'>to_json</span> <span class='op'>:</span> <span class='id identifier rubyid_webhook'>webhook</span><span class='period'>.</span><span class='id identifier rubyid_request'>request</span><span class='period'>.</span><span class='id identifier rubyid_body'>body</span><span class='rparen'>)</span><span class='comma'>,</span>
+    <span class='label'>is_json_request_body:</span> <span class='id identifier rubyid_is_json_request_body'>is_json_request_body</span><span class='comma'>,</span>
+    <span class='label'>headers:</span> <span class='id identifier rubyid_webhook'>webhook</span><span class='period'>.</span><span class='id identifier rubyid_request'>request</span><span class='period'>.</span><span class='id identifier rubyid_headers'>headers</span><span class='comma'>,</span>
+    <span class='label'>consumer_label:</span> <span class='id identifier rubyid_webhook'>webhook</span><span class='period'>.</span><span class='id identifier rubyid_consumer'>consumer</span><span class='op'>&amp;.</span><span class='id identifier rubyid_label'>label</span><span class='comma'>,</span>
+    <span class='label'>provider_label:</span> <span class='id identifier rubyid_webhook'>webhook</span><span class='period'>.</span><span class='id identifier rubyid_provider'>provider</span><span class='op'>&amp;.</span><span class='id identifier rubyid_label'>label</span>
+  <span class='rbrace'>}</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="delete-instance_method">
+  
+    #<strong>delete</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Keep the triggered webhooks after the webhook has been deleted</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+143
+144
+145
+146
+147</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/webhooks/webhook.rb', line 143</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_delete'>delete</span>
+  <span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>pact_broker/webhooks/triggered_webhook</span><span class='tstring_end'>&quot;</span></span>
+  <span class='const'><span class='object_link'><a href="TriggeredWebhook.html" title="PactBroker::Webhooks::TriggeredWebhook (class)">TriggeredWebhook</a></span></span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>webhook_id:</span> <span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_update'>update</span><span class='lparen'>(</span><span class='label'>webhook_id:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='kw'>super</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="is_for?-instance_method">
+  
+    #<strong>is_for?</strong>(integration)  &#x21d2; <tt>Boolean</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/webhooks/webhook.rb', line 130</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_is_for?'>is_for?</span> <span class='id identifier rubyid_integration'>integration</span>
+  <span class='lparen'>(</span>
+    <span class='id identifier rubyid_consumer_id'>consumer_id</span> <span class='op'>==</span> <span class='id identifier rubyid_integration'>integration</span><span class='period'>.</span><span class='id identifier rubyid_consumer_id'>consumer_id</span> <span class='op'>||</span>
+    <span class='id identifier rubyid_match_label?'>match_label?</span><span class='lparen'>(</span><span class='symbol'>:consumer</span><span class='comma'>,</span> <span class='id identifier rubyid_integration'>integration</span><span class='rparen'>)</span> <span class='op'>||</span>
+    <span class='id identifier rubyid_match_all?'>match_all?</span><span class='lparen'>(</span><span class='symbol'>:consumer</span><span class='rparen'>)</span>
+  <span class='rparen'>)</span> <span class='op'>&amp;&amp;</span> <span class='lparen'>(</span>
+    <span class='id identifier rubyid_provider_id'>provider_id</span> <span class='op'>==</span> <span class='id identifier rubyid_integration'>integration</span><span class='period'>.</span><span class='id identifier rubyid_provider_id'>provider_id</span> <span class='op'>||</span>
+    <span class='id identifier rubyid_match_label?'>match_label?</span><span class='lparen'>(</span><span class='symbol'>:provider</span><span class='comma'>,</span> <span class='id identifier rubyid_integration'>integration</span><span class='rparen'>)</span> <span class='op'>||</span>
+    <span class='id identifier rubyid_match_all?'>match_all?</span><span class='lparen'>(</span><span class='symbol'>:provider</span><span class='rparen'>)</span>
+  <span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="match_all?-instance_method">
+  
+    #<strong>match_all?</strong>(name)  &#x21d2; <tt>Boolean</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+178
+179
+180</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/webhooks/webhook.rb', line 178</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_match_all?'>match_all?</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_public_send'>public_send</span><span class='lparen'>(</span><span class='symbol'>:&quot;#{</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_content'>_id</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_public_send'>public_send</span><span class='lparen'>(</span><span class='symbol'>:&quot;#{</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_content'>_label</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="match_label?-instance_method">
+  
+    #<strong>match_label?</strong>(name, integration)  &#x21d2; <tt>Boolean</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+182
+183
+184
+185</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/webhooks/webhook.rb', line 182</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_match_label?'>match_label?</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_integration'>integration</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_label'>label</span> <span class='op'>=</span> <span class='id identifier rubyid_public_send'>public_send</span><span class='lparen'>(</span><span class='symbol'>:&quot;#{</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_content'>_label</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_public_send'>public_send</span><span class='lparen'>(</span><span class='symbol'>:&quot;#{</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_content'>_id</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_integration'>integration</span><span class='period'>.</span><span class='id identifier rubyid_public_send'>public_send</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_label?'>label?</span><span class='lparen'>(</span><span class='id identifier rubyid_label'>label</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="parsed_body-instance_method">
+  
+    #<strong>parsed_body</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+122
+123
+124
+125
+126
+127
+128</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/webhooks/webhook.rb', line 122</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_parsed_body'>parsed_body</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_body'>body</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_is_json_request_body'>is_json_request_body</span>
+    <span class='const'>JSON</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='id identifier rubyid_body'>body</span><span class='rparen'>)</span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid_body'>body</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="plain_text_password-instance_method">
+  
+    #<strong>plain_text_password</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+118
+119
+120</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/webhooks/webhook.rb', line 118</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_plain_text_password'>plain_text_password</span>
+  <span class='id identifier rubyid_password'>password</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>?</span> <span class='kw'>nil</span> <span class='op'>:</span> <span class='const'>Base64</span><span class='period'>.</span><span class='id identifier rubyid_strict_decode64'>strict_decode64</span><span class='lparen'>(</span><span class='id identifier rubyid_password'>password</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="request_attributes-instance_method">
+  
+    #<strong>request_attributes</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+114
+115
+116</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/webhooks/webhook.rb', line 114</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_request_attributes'>request_attributes</span>
+  <span class='id identifier rubyid_values'>values</span><span class='period'>.</span><span class='id identifier rubyid_merge'>merge</span><span class='lparen'>(</span><span class='label'>headers:</span> <span class='id identifier rubyid_headers'>headers</span><span class='comma'>,</span> <span class='label'>body:</span> <span class='id identifier rubyid_parsed_body'>parsed_body</span><span class='comma'>,</span> <span class='label'>password:</span> <span class='id identifier rubyid_plain_text_password'>plain_text_password</span><span class='comma'>,</span> <span class='label'>uuid:</span> <span class='id identifier rubyid_uuid'>uuid</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="to_domain-instance_method">
+  
+    #<strong>to_domain</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/webhooks/webhook.rb', line 101</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_to_domain'>to_domain</span>
+  <span class='const'><span class='object_link'><a href="../Domain.html" title="PactBroker::Domain (module)">Domain</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Domain/Webhook.html" title="PactBroker::Domain::Webhook (class)">Webhook</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="../Domain/Webhook.html#initialize-instance_method" title="PactBroker::Domain::Webhook#initialize (method)">new</a></span></span><span class='lparen'>(</span>
+    <span class='label'>uuid:</span> <span class='id identifier rubyid_uuid'>uuid</span><span class='comma'>,</span>
+    <span class='label'>description:</span> <span class='id identifier rubyid_description'>description</span><span class='comma'>,</span>
+    <span class='label'>consumer:</span> <span class='id identifier rubyid_webhook_consumer'>webhook_consumer</span><span class='comma'>,</span>
+    <span class='label'>provider:</span> <span class='id identifier rubyid_webhook_provider'>webhook_provider</span><span class='comma'>,</span>
+    <span class='label'>events:</span> <span class='id identifier rubyid_events'>events</span><span class='comma'>,</span>
+    <span class='label'>request:</span> <span class='const'><span class='object_link'><a href="../Webhooks.html" title="PactBroker::Webhooks (module)">Webhooks</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="WebhookRequestTemplate.html" title="PactBroker::Webhooks::WebhookRequestTemplate (class)">WebhookRequestTemplate</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="WebhookRequestTemplate.html#initialize-instance_method" title="PactBroker::Webhooks::WebhookRequestTemplate#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_request_attributes'>request_attributes</span><span class='rparen'>)</span><span class='comma'>,</span>
+    <span class='label'>enabled:</span> <span class='id identifier rubyid_enabled'>enabled</span><span class='comma'>,</span>
+    <span class='label'>created_at:</span> <span class='id identifier rubyid_created_at'>created_at</span><span class='comma'>,</span>
+    <span class='label'>updated_at:</span> <span class='id identifier rubyid_updated_at'>updated_at</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="update_from_domain-instance_method">
+  
+    #<strong>update_from_domain</strong>(webhook)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+84
+85
+86</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/webhooks/webhook.rb', line 84</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_update_from_domain'>update_from_domain</span> <span class='id identifier rubyid_webhook'>webhook</span>
+  <span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_properties_hash_from_domain'>properties_hash_from_domain</span><span class='lparen'>(</span><span class='id identifier rubyid_webhook'>webhook</span><span class='rparen'>)</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="webhook_consumer-instance_method">
+  
+    #<strong>webhook_consumer</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+166
+167
+168
+169
+170</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/webhooks/webhook.rb', line 166</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_webhook_consumer'>webhook_consumer</span>
+  <span class='kw'>return</span> <span class='kw'>if</span> <span class='id identifier rubyid_consumer'>consumer</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_consumer_label'>consumer_label</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+
+  <span class='const'><span class='object_link'><a href="../Domain.html" title="PactBroker::Domain (module)">Domain</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Domain/WebhookPacticipant.html" title="PactBroker::Domain::WebhookPacticipant (class)">WebhookPacticipant</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>name:</span> <span class='id identifier rubyid_consumer'>consumer</span><span class='op'>&amp;.</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='label'>label:</span> <span class='id identifier rubyid_consumer_label'>consumer_label</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="webhook_provider-instance_method">
+  
+    #<strong>webhook_provider</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+172
+173
+174
+175
+176</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/webhooks/webhook.rb', line 172</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_webhook_provider'>webhook_provider</span>
+  <span class='kw'>return</span> <span class='kw'>if</span> <span class='id identifier rubyid_provider'>provider</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_provider_label'>provider_label</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+
+  <span class='const'><span class='object_link'><a href="../Domain.html" title="PactBroker::Domain (module)">Domain</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Domain/WebhookPacticipant.html" title="PactBroker::Domain::WebhookPacticipant (class)">WebhookPacticipant</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>name:</span> <span class='id identifier rubyid_provider'>provider</span><span class='op'>&amp;.</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='label'>label:</span> <span class='id identifier rubyid_provider_label'>provider_label</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Tue Mar 22 17:40:15 2022 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.27 (ruby-2.7.5).
+</div>
+
+    </div>
+  </body>
+</html>

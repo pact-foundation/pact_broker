@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Class: PactBroker::Matrix::Repository
+  
+    &mdash; Documentation by YARD 0.9.27
+  
+</title>
+
+  <link rel="stylesheet" href="../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "PactBroker::Matrix::Repository";
+  relpath = '../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../_index.html">Index (R)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../PactBroker.html" title="PactBroker (module)">PactBroker</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Matrix.html" title="PactBroker::Matrix (module)">Matrix</a></span></span>
+     &raquo; 
+    <span class="title">Repository</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Class: PactBroker::Matrix::Repository
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd>
+      <span class="inheritName">Object</span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">PactBroker::Matrix::Repository</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+    </dd>
+  </dl>
+  
+
+  
+  
+  
+  
+  <dl>
+      <dt>Includes:</dt>
+      <dd><span class='object_link'><a href="../Logging.html" title="PactBroker::Logging (module)">Logging</a></span>, <span class='object_link'><a href="../Repositories.html" title="PactBroker::Repositories (module)">Repositories</a></span>, <span class='object_link'><a href="../Repositories/Helpers.html" title="PactBroker::Repositories::Helpers (module)">Repositories::Helpers</a></span></dd>
+  </dl>
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/pact_broker/matrix/repository.rb</dd>
+  </dl>
+  
+</div>
+
+
+  
+    <h2>
+      Constant Summary
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="TP_COLS-constant" class="">TP_COLS =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>TODO move latest verification logic in to database</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='const'><span class='object_link'><a href="../../PactBroker.html" title="PactBroker (module)">PactBroker</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Matrix.html" title="PactBroker::Matrix (module)">Matrix</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Row.html" title="PactBroker::Matrix::Row (class)">Row</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Row.html#TP_COLS-constant" title="PactBroker::Matrix::Row::TP_COLS (constant)">TP_COLS</a></span></span></pre></dd>
+      
+        <dt id="GROUP_BY_PROVIDER_VERSION_NUMBER-constant" class="">GROUP_BY_PROVIDER_VERSION_NUMBER =
+          
+        </dt>
+        <dd><pre class="code"><span class='lbracket'>[</span><span class='symbol'>:consumer_name</span><span class='comma'>,</span> <span class='symbol'>:consumer_version_number</span><span class='comma'>,</span> <span class='symbol'>:provider_name</span><span class='comma'>,</span> <span class='symbol'>:provider_version_number</span><span class='rbracket'>]</span></pre></dd>
+      
+        <dt id="GROUP_BY_PROVIDER-constant" class="">GROUP_BY_PROVIDER =
+          
+        </dt>
+        <dd><pre class="code"><span class='lbracket'>[</span><span class='symbol'>:consumer_name</span><span class='comma'>,</span> <span class='symbol'>:consumer_version_number</span><span class='comma'>,</span> <span class='symbol'>:provider_name</span><span class='rbracket'>]</span></pre></dd>
+      
+        <dt id="GROUP_BY_PACT-constant" class="">GROUP_BY_PACT =
+          
+        </dt>
+        <dd><pre class="code"><span class='lbracket'>[</span><span class='symbol'>:consumer_name</span><span class='comma'>,</span> <span class='symbol'>:provider_name</span><span class='rbracket'>]</span></pre></dd>
+      
+    </dl>
+  
+
+
+
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#find-instance_method" title="#find (instance method)">#<strong>find</strong>(specified_selectors, options = {})  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Return the latest matrix row (pact/verification) for each consumer_version_number/provider_version_number.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#find_for_consumer_and_provider-instance_method" title="#find_for_consumer_and_provider (instance method)">#<strong>find_for_consumer_and_provider</strong>(pacticipant_1_name, pacticipant_2_name)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#find_ids_for_pacticipant_names-instance_method" title="#find_ids_for_pacticipant_names (instance method)">#<strong>find_ids_for_pacticipant_names</strong>(params)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>rubocop: disable Metrics/CyclomaticComplexity.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../Logging.html" title="PactBroker::Logging (module)">Logging</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Logging.html#included-class_method" title="PactBroker::Logging.included (method)">included</a></span>, <span class='object_link'><a href="../Logging.html#log_error-instance_method" title="PactBroker::Logging#log_error (method)">#log_error</a></span>, <span class='object_link'><a href="../Logging.html#log_with_tag-instance_method" title="PactBroker::Logging#log_with_tag (method)">#log_with_tag</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../Repositories.html" title="PactBroker::Repositories (module)">Repositories</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Repositories.html#branch_version_repository-instance_method" title="PactBroker::Repositories#branch_version_repository (method)">#branch_version_repository</a></span>, <span class='object_link'><a href="../Repositories.html#integration_repository-instance_method" title="PactBroker::Repositories#integration_repository (method)">#integration_repository</a></span>, <span class='object_link'><a href="../Repositories.html#label_repository-instance_method" title="PactBroker::Repositories#label_repository (method)">#label_repository</a></span>, <span class='object_link'><a href="../Repositories.html#matrix_repository-instance_method" title="PactBroker::Repositories#matrix_repository (method)">#matrix_repository</a></span>, <span class='object_link'><a href="../Repositories.html#pact_repository-instance_method" title="PactBroker::Repositories#pact_repository (method)">#pact_repository</a></span>, <span class='object_link'><a href="../Repositories.html#pacticipant_repository-instance_method" title="PactBroker::Repositories#pacticipant_repository (method)">#pacticipant_repository</a></span>, <span class='object_link'><a href="../Repositories.html#tag_repository-instance_method" title="PactBroker::Repositories#tag_repository (method)">#tag_repository</a></span>, <span class='object_link'><a href="../Repositories.html#verification_repository-instance_method" title="PactBroker::Repositories#verification_repository (method)">#verification_repository</a></span>, <span class='object_link'><a href="../Repositories.html#version_repository-instance_method" title="PactBroker::Repositories#version_repository (method)">#version_repository</a></span>, <span class='object_link'><a href="../Repositories.html#webhook_repository-instance_method" title="PactBroker::Repositories#webhook_repository (method)">#webhook_repository</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../Repositories/Helpers.html" title="PactBroker::Repositories::Helpers (module)">Repositories::Helpers</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Repositories/Helpers.html#all_allowing_lazy_load-instance_method" title="PactBroker::Repositories::Helpers#all_allowing_lazy_load (method)">#all_allowing_lazy_load</a></span>, <span class='object_link'><a href="../Repositories/Helpers.html#all_forbidding_lazy_load-instance_method" title="PactBroker::Repositories::Helpers#all_forbidding_lazy_load (method)">#all_forbidding_lazy_load</a></span>, <span class='object_link'><a href="../Repositories/Helpers.html#mysql%3F-instance_method" title="PactBroker::Repositories::Helpers#mysql? (method)">#mysql?</a></span>, <span class='object_link'><a href="../Repositories/Helpers.html#name_like-instance_method" title="PactBroker::Repositories::Helpers#name_like (method)">#name_like</a></span>, <span class='object_link'><a href="../Repositories/Helpers.html#no_columns_selected%3F-instance_method" title="PactBroker::Repositories::Helpers#no_columns_selected? (method)">#no_columns_selected?</a></span>, <span class='object_link'><a href="../Repositories/Helpers.html#order_append_ignore_case-instance_method" title="PactBroker::Repositories::Helpers#order_append_ignore_case (method)">#order_append_ignore_case</a></span>, <span class='object_link'><a href="../Repositories/Helpers.html#order_ignore_case-instance_method" title="PactBroker::Repositories::Helpers#order_ignore_case (method)">#order_ignore_case</a></span>, <span class='object_link'><a href="../Repositories/Helpers.html#pacticipant_id_for_name-instance_method" title="PactBroker::Repositories::Helpers#pacticipant_id_for_name (method)">#pacticipant_id_for_name</a></span>, <span class='object_link'><a href="../Repositories/Helpers.html#postgres%3F-instance_method" title="PactBroker::Repositories::Helpers#postgres? (method)">#postgres?</a></span>, <span class='object_link'><a href="../Repositories/Helpers.html#select_all_qualified-instance_method" title="PactBroker::Repositories::Helpers#select_all_qualified (method)">#select_all_qualified</a></span>, <span class='object_link'><a href="../Repositories/Helpers.html#select_append_all_qualified-instance_method" title="PactBroker::Repositories::Helpers#select_append_all_qualified (method)">#select_append_all_qualified</a></span>, <span class='object_link'><a href="../Repositories/Helpers.html#select_for_subquery-instance_method" title="PactBroker::Repositories::Helpers#select_for_subquery (method)">#select_for_subquery</a></span></p>
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="find-instance_method">
+  
+    #<strong>find</strong>(specified_selectors, options = {})  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Return the latest matrix row (pact/verification) for each consumer_version_number/provider_version_number</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+60
+61
+62
+63
+64
+65
+66
+67</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/matrix/repository.rb', line 60</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_find'>find</span> <span class='id identifier rubyid_specified_selectors'>specified_selectors</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
+  <span class='id identifier rubyid_resolved_ignore_selectors'>resolved_ignore_selectors</span> <span class='op'>=</span> <span class='id identifier rubyid_resolve_ignore_selectors'>resolve_ignore_selectors</span><span class='lparen'>(</span><span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_resolved_specified_selectors'>resolved_specified_selectors</span> <span class='op'>=</span> <span class='id identifier rubyid_resolve_versions_and_add_ids'>resolve_versions_and_add_ids</span><span class='lparen'>(</span><span class='id identifier rubyid_specified_selectors'>specified_selectors</span><span class='comma'>,</span> <span class='symbol'>:specified</span><span class='comma'>,</span> <span class='id identifier rubyid_resolved_ignore_selectors'>resolved_ignore_selectors</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_integrations'>integrations</span> <span class='op'>=</span> <span class='id identifier rubyid_find_integrations_for_specified_selectors'>find_integrations_for_specified_selectors</span><span class='lparen'>(</span><span class='id identifier rubyid_resolved_specified_selectors'>resolved_specified_selectors</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_resolved_selectors'>resolved_selectors</span> <span class='op'>=</span> <span class='id identifier rubyid_add_any_inferred_selectors'>add_any_inferred_selectors</span><span class='lparen'>(</span><span class='id identifier rubyid_resolved_specified_selectors'>resolved_specified_selectors</span><span class='comma'>,</span> <span class='id identifier rubyid_resolved_ignore_selectors'>resolved_ignore_selectors</span><span class='comma'>,</span> <span class='id identifier rubyid_integrations'>integrations</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_considered_rows'>considered_rows</span><span class='comma'>,</span> <span class='id identifier rubyid_ignored_rows'>ignored_rows</span> <span class='op'>=</span> <span class='id identifier rubyid_find_considered_and_ignored_rows'>find_considered_and_ignored_rows</span><span class='lparen'>(</span><span class='id identifier rubyid_resolved_selectors'>resolved_selectors</span><span class='comma'>,</span> <span class='id identifier rubyid_resolved_ignore_selectors'>resolved_ignore_selectors</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
+  <span class='const'><span class='object_link'><a href="QueryResults.html" title="PactBroker::Matrix::QueryResults (class)">QueryResults</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="QueryResults.html#initialize-instance_method" title="PactBroker::Matrix::QueryResults#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_considered_rows'>considered_rows</span><span class='period'>.</span><span class='id identifier rubyid_sort'>sort</span><span class='comma'>,</span> <span class='id identifier rubyid_ignored_rows'>ignored_rows</span><span class='period'>.</span><span class='id identifier rubyid_sort'>sort</span><span class='comma'>,</span> <span class='id identifier rubyid_specified_selectors'>specified_selectors</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='comma'>,</span> <span class='id identifier rubyid_resolved_selectors'>resolved_selectors</span><span class='comma'>,</span> <span class='id identifier rubyid_resolved_ignore_selectors'>resolved_ignore_selectors</span><span class='comma'>,</span> <span class='id identifier rubyid_integrations'>integrations</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="find_for_consumer_and_provider-instance_method">
+  
+    #<strong>find_for_consumer_and_provider</strong>(pacticipant_1_name, pacticipant_2_name)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+69
+70
+71
+72
+73</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/matrix/repository.rb', line 69</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_find_for_consumer_and_provider'>find_for_consumer_and_provider</span> <span class='id identifier rubyid_pacticipant_1_name'>pacticipant_1_name</span><span class='comma'>,</span> <span class='id identifier rubyid_pacticipant_2_name'>pacticipant_2_name</span>
+  <span class='id identifier rubyid_selectors'>selectors</span> <span class='op'>=</span> <span class='lbracket'>[</span> <span class='const'><span class='object_link'><a href="UnresolvedSelector.html" title="PactBroker::Matrix::UnresolvedSelector (class)">UnresolvedSelector</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="UnresolvedSelector.html#initialize-instance_method" title="PactBroker::Matrix::UnresolvedSelector#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='label'>pacticipant_name:</span> <span class='id identifier rubyid_pacticipant_1_name'>pacticipant_1_name</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="UnresolvedSelector.html" title="PactBroker::Matrix::UnresolvedSelector (class)">UnresolvedSelector</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="UnresolvedSelector.html#initialize-instance_method" title="PactBroker::Matrix::UnresolvedSelector#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='label'>pacticipant_name:</span> <span class='id identifier rubyid_pacticipant_2_name'>pacticipant_2_name</span><span class='rparen'>)</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_options'>options</span> <span class='op'>=</span> <span class='lbrace'>{</span> <span class='label'>latestby:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>cvpv</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span>
+  <span class='id identifier rubyid_find'>find</span><span class='lparen'>(</span><span class='id identifier rubyid_selectors'>selectors</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="find_ids_for_pacticipant_names-instance_method">
+  
+    #<strong>find_ids_for_pacticipant_names</strong>(params)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>rubocop: disable Metrics/CyclomaticComplexity</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/matrix/repository.rb', line 34</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_find_ids_for_pacticipant_names'>find_ids_for_pacticipant_names</span> <span class='id identifier rubyid_params'>params</span>
+  <span class='id identifier rubyid_criteria'>criteria</span>  <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
+
+  <span class='kw'>if</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:consumer_name</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:provider_name</span><span class='rbracket'>]</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:consumer_name</span><span class='rbracket'>]</span>
+      <span class='id identifier rubyid_pacticipant'>pacticipant</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../../PactBroker.html" title="PactBroker (module)">PactBroker</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Domain.html" title="PactBroker::Domain (module)">Domain</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Domain/Pacticipant.html" title="PactBroker::Domain::Pacticipant (class)">Pacticipant</a></span></span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='id identifier rubyid_name_like'>name_like</span><span class='lparen'>(</span><span class='symbol'>:name</span><span class='comma'>,</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:consumer_name</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_single_record'>single_record</span>
+      <span class='id identifier rubyid_criteria'>criteria</span><span class='lbracket'>[</span><span class='symbol'>:consumer_id</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_pacticipant'>pacticipant</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span> <span class='kw'>if</span> <span class='id identifier rubyid_pacticipant'>pacticipant</span>
+    <span class='kw'>end</span>
+
+    <span class='kw'>if</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:provider_name</span><span class='rbracket'>]</span>
+      <span class='id identifier rubyid_pacticipant'>pacticipant</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../../PactBroker.html" title="PactBroker (module)">PactBroker</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Domain.html" title="PactBroker::Domain (module)">Domain</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Domain/Pacticipant.html" title="PactBroker::Domain::Pacticipant (class)">Pacticipant</a></span></span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='id identifier rubyid_name_like'>name_like</span><span class='lparen'>(</span><span class='symbol'>:name</span><span class='comma'>,</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:provider_name</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_single_record'>single_record</span>
+      <span class='id identifier rubyid_criteria'>criteria</span><span class='lbracket'>[</span><span class='symbol'>:provider_id</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_pacticipant'>pacticipant</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span> <span class='kw'>if</span> <span class='id identifier rubyid_pacticipant'>pacticipant</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>if</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:pacticipant_name</span><span class='rbracket'>]</span>
+    <span class='id identifier rubyid_pacticipant'>pacticipant</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../../PactBroker.html" title="PactBroker (module)">PactBroker</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Domain.html" title="PactBroker::Domain (module)">Domain</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Domain/Pacticipant.html" title="PactBroker::Domain::Pacticipant (class)">Pacticipant</a></span></span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='id identifier rubyid_name_like'>name_like</span><span class='lparen'>(</span><span class='symbol'>:name</span><span class='comma'>,</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:pacticipant_name</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_single_record'>single_record</span>
+    <span class='id identifier rubyid_criteria'>criteria</span><span class='lbracket'>[</span><span class='symbol'>:pacticipant_id</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_pacticipant'>pacticipant</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span> <span class='kw'>if</span> <span class='id identifier rubyid_pacticipant'>pacticipant</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_criteria'>criteria</span><span class='lbracket'>[</span><span class='symbol'>:tag_name</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:tag_name</span><span class='rbracket'>]</span> <span class='kw'>if</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:tag_name</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>String</span><span class='rparen'>)</span> <span class='comment'># Could be a sym from resource parameters in api.rb
+</span>  <span class='id identifier rubyid_criteria'>criteria</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Tue Mar 22 17:40:15 2022 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.27 (ruby-2.7.5).
+</div>
+
+    </div>
+  </body>
+</html>

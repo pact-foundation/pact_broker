@@ -12,6 +12,7 @@ group :development do
   gem "rubocop", "~>1.1"
   gem "rubocop-performance", "~> 1.11"
   gem "sequel-annotate", "~>1.3"
+  gem "yard", "~> 0.9"
 end
 
 group :test do

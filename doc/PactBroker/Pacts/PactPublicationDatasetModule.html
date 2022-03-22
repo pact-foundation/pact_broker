@@ -1,0 +1,2972 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Module: PactBroker::Pacts::PactPublicationDatasetModule
+  
+    &mdash; Documentation by YARD 0.9.27
+  
+</title>
+
+  <link rel="stylesheet" href="../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "PactBroker::Pacts::PactPublicationDatasetModule";
+  relpath = '../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../_index.html">Index (P)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../PactBroker.html" title="PactBroker (module)">PactBroker</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Pacts.html" title="PactBroker::Pacts (module)">Pacts</a></span></span>
+     &raquo; 
+    <span class="title">PactPublicationDatasetModule</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Module: PactBroker::Pacts::PactPublicationDatasetModule
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+
+  
+  
+  
+  
+  <dl>
+      <dt>Includes:</dt>
+      <dd><span class='object_link'><a href="PactPublicationSelectorDatasetModule.html" title="PactBroker::Pacts::PactPublicationSelectorDatasetModule (module)">PactPublicationSelectorDatasetModule</a></span></dd>
+  </dl>
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/pact_broker/pacts/pact_publication_dataset_module.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>rubocop: disable Metrics/ModuleLength</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+
+
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#consumer_name_like-instance_method" title="#consumer_name_like (instance method)">#<strong>consumer_name_like</strong>(name)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#consumer_version_number_like-instance_method" title="#consumer_version_number_like (instance method)">#<strong>consumer_version_number_like</strong>(number)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#consumer_version_order_after-instance_method" title="#consumer_version_order_after (instance method)">#<strong>consumer_version_order_after</strong>(order)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#consumer_version_order_before-instance_method" title="#consumer_version_order_before (instance method)">#<strong>consumer_version_order_before</strong>(order)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#consumer_version_tag-instance_method" title="#consumer_version_tag (instance method)">#<strong>consumer_version_tag</strong>(tag)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#created_after-instance_method" title="#created_after (instance method)">#<strong>created_after</strong>(date)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#delete-instance_method" title="#delete (instance method)">#<strong>delete</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#eager_load_pact_versions-instance_method" title="#eager_load_pact_versions (instance method)">#<strong>eager_load_pact_versions</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#earliest-instance_method" title="#earliest (instance method)">#<strong>earliest</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#for_branch_name-instance_method" title="#for_branch_name (instance method)">#<strong>for_branch_name</strong>(branch_name)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#for_consumer-instance_method" title="#for_consumer (instance method)">#<strong>for_consumer</strong>(consumer)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#for_consumer_id_and_provider_id-instance_method" title="#for_consumer_id_and_provider_id (instance method)">#<strong>for_consumer_id_and_provider_id</strong>(consumer_id, provider_id)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#for_consumer_name-instance_method" title="#for_consumer_name (instance method)">#<strong>for_consumer_name</strong>(consumer_name)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#for_consumer_name_and_maybe_version_number-instance_method" title="#for_consumer_name_and_maybe_version_number (instance method)">#<strong>for_consumer_name_and_maybe_version_number</strong>(consumer_name, consumer_version_number)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#for_consumer_version_tag-instance_method" title="#for_consumer_version_tag (instance method)">#<strong>for_consumer_version_tag</strong>(tag_name)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#for_consumer_version_tag_all_revisions-instance_method" title="#for_consumer_version_tag_all_revisions (instance method)">#<strong>for_consumer_version_tag_all_revisions</strong>(tag_name)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#for_latest_consumer_versions_with_tag-instance_method" title="#for_latest_consumer_versions_with_tag (instance method)">#<strong>for_latest_consumer_versions_with_tag</strong>(tag_name)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>The pacts for the latest versions with the specified tag (new logic) NOT the latest pact that belongs to a version with the specified tag.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#for_pact_version_id-instance_method" title="#for_pact_version_id (instance method)">#<strong>for_pact_version_id</strong>(pact_version_id)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#for_pact_version_sha-instance_method" title="#for_pact_version_sha (instance method)">#<strong>for_pact_version_sha</strong>(pact_version_sha)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#for_provider-instance_method" title="#for_provider (instance method)">#<strong>for_provider</strong>(provider)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#for_provider_name-instance_method" title="#for_provider_name (instance method)">#<strong>for_provider_name</strong>(provider_name)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#in_environments-instance_method" title="#in_environments (instance method)">#<strong>in_environments</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#join_consumer_branch_versions-instance_method" title="#join_consumer_branch_versions (instance method)">#<strong>join_consumer_branch_versions</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#join_consumer_version_tags-instance_method" title="#join_consumer_version_tags (instance method)">#<strong>join_consumer_version_tags</strong>(table_alias = :ct)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#join_consumer_version_tags_with_names-instance_method" title="#join_consumer_version_tags_with_names (instance method)">#<strong>join_consumer_version_tags_with_names</strong>(consumer_version_tag_names)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#join_consumer_versions-instance_method" title="#join_consumer_versions (instance method)">#<strong>join_consumer_versions</strong>(table_alias = :cv, extra_join_criteria = {}, &amp;block)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#join_consumers-instance_method" title="#join_consumers (instance method)">#<strong>join_consumers</strong>(table_alias = :consumers, base_table = :pact_publications, extra_join_criteria = {})  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#join_pact_versions-instance_method" title="#join_pact_versions (instance method)">#<strong>join_pact_versions</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#join_providers-instance_method" title="#join_providers (instance method)">#<strong>join_providers</strong>(table_alias = :providers, base_table = :pact_publications, extra_join_criteria = {})  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#latest-instance_method" title="#latest (instance method)">#<strong>latest</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#latest_by_consumer_branch-instance_method" title="#latest_by_consumer_branch (instance method)">#<strong>latest_by_consumer_branch</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#latest_by_consumer_tag-instance_method" title="#latest_by_consumer_tag (instance method)">#<strong>latest_by_consumer_tag</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>The latest pact publication for each tag This uses the old logic of “the latest pact for a version that has a tag” (which always returns a pact) rather than “the pact for the latest version with a tag” Need to see about updating this.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#latest_by_consumer_version_order-instance_method" title="#latest_by_consumer_version_order (instance method)">#<strong>latest_by_consumer_version_order</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#latest_for_consumer_branch-instance_method" title="#latest_for_consumer_branch (instance method)">#<strong>latest_for_consumer_branch</strong>(branch_name)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#latest_for_consumer_tag-instance_method" title="#latest_for_consumer_tag (instance method)">#<strong>latest_for_consumer_tag</strong>(tag_name)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>This uses the old logic of “the latest pact for a version that has a tag” (which always returns a pact) rather than “the pact for the latest version with a tag” Need to see about updating this.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#order_by_consumer_name-instance_method" title="#order_by_consumer_name (instance method)">#<strong>order_by_consumer_name</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#order_by_consumer_version_order-instance_method" title="#order_by_consumer_version_order (instance method)">#<strong>order_by_consumer_version_order</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#overall_latest-instance_method" title="#overall_latest (instance method)">#<strong>overall_latest</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#overall_latest_for_consumer_id_and_provider_id-instance_method" title="#overall_latest_for_consumer_id_and_provider_id (instance method)">#<strong>overall_latest_for_consumer_id_and_provider_id</strong>(consumer_id, provider_id)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#provider_name_like-instance_method" title="#provider_name_like (instance method)">#<strong>provider_name_like</strong>(name)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#remove_overridden_revisions-instance_method" title="#remove_overridden_revisions (instance method)">#<strong>remove_overridden_revisions</strong>(pact_publications_alias = :pact_publications)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#remove_overridden_revisions_from_complete_query-instance_method" title="#remove_overridden_revisions_from_complete_query (instance method)">#<strong>remove_overridden_revisions_from_complete_query</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#tag-instance_method" title="#tag (instance method)">#<strong>tag</strong>(tag_name)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#untagged-instance_method" title="#untagged (instance method)">#<strong>untagged</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#verified_before_date-instance_method" title="#verified_before_date (instance method)">#<strong>verified_before_date</strong>(date)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#where_consumer_if_set-instance_method" title="#where_consumer_if_set (instance method)">#<strong>where_consumer_if_set</strong>(consumer)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="PactPublicationSelectorDatasetModule.html" title="PactBroker::Pacts::PactPublicationSelectorDatasetModule (module)">PactPublicationSelectorDatasetModule</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="PactPublicationSelectorDatasetModule.html#for_currently_deployed_versions-instance_method" title="PactBroker::Pacts::PactPublicationSelectorDatasetModule#for_currently_deployed_versions (method)">#for_currently_deployed_versions</a></span>, <span class='object_link'><a href="PactPublicationSelectorDatasetModule.html#for_currently_supported_versions-instance_method" title="PactBroker::Pacts::PactPublicationSelectorDatasetModule#for_currently_supported_versions (method)">#for_currently_supported_versions</a></span>, <span class='object_link'><a href="PactPublicationSelectorDatasetModule.html#for_environment-instance_method" title="PactBroker::Pacts::PactPublicationSelectorDatasetModule#for_environment (method)">#for_environment</a></span>, <span class='object_link'><a href="PactPublicationSelectorDatasetModule.html#for_provider_and_consumer_version_selector-instance_method" title="PactBroker::Pacts::PactPublicationSelectorDatasetModule#for_provider_and_consumer_version_selector (method)">#for_provider_and_consumer_version_selector</a></span>, <span class='object_link'><a href="PactPublicationSelectorDatasetModule.html#latest_for_main_branches-instance_method" title="PactBroker::Pacts::PactPublicationSelectorDatasetModule#latest_for_main_branches (method)">#latest_for_main_branches</a></span></p>
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="consumer_name_like-instance_method">
+  
+    #<strong>consumer_name_like</strong>(name)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+345
+346
+347</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 345</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_consumer_name_like'>consumer_name_like</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='id identifier rubyid_name_like'>name_like</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:consumers</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:name</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="consumer_version_number_like-instance_method">
+  
+    #<strong>consumer_version_number_like</strong>(number)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+349
+350
+351</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 349</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_consumer_version_number_like'>consumer_version_number_like</span><span class='lparen'>(</span><span class='id identifier rubyid_number'>number</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='id identifier rubyid_name_like'>name_like</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:cv</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:number</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_number'>number</span><span class='rparen'>)</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="consumer_version_order_after-instance_method">
+  
+    #<strong>consumer_version_order_after</strong>(order)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+361
+362
+363</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 361</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_consumer_version_order_after'>consumer_version_order_after</span> <span class='id identifier rubyid_order'>order</span>
+  <span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='period'>.</span><span class='id identifier rubyid_lit'>lit</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>consumer_version_order &gt; ?</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_order'>order</span><span class='rparen'>)</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="consumer_version_order_before-instance_method">
+  
+    #<strong>consumer_version_order_before</strong>(order)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+357
+358
+359</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 357</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_consumer_version_order_before'>consumer_version_order_before</span> <span class='id identifier rubyid_order'>order</span>
+  <span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='period'>.</span><span class='id identifier rubyid_lit'>lit</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>consumer_version_order &lt; ?</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_order'>order</span><span class='rparen'>)</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="consumer_version_tag-instance_method">
+  
+    #<strong>consumer_version_tag</strong>(tag)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+353
+354
+355</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 353</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_consumer_version_tag'>consumer_version_tag</span><span class='lparen'>(</span><span class='id identifier rubyid_tag'>tag</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='id identifier rubyid_name_like'>name_like</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:ct</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:name</span><span class='rbracket'>]</span><span class='comma'>,</span><span class='id identifier rubyid_tag'>tag</span><span class='rparen'>)</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="created_after-instance_method">
+  
+    #<strong>created_after</strong>(date)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+251
+252
+253</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 251</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_created_after'>created_after</span> <span class='id identifier rubyid_date'>date</span>
+  <span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='period'>.</span><span class='id identifier rubyid_lit'>lit</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_first_source_alias'>first_source_alias</span><span class='embexpr_end'>}</span><span class='tstring_content'>.created_at &gt; ?</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_date'>date</span><span class='rparen'>)</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="delete-instance_method">
+  
+    #<strong>delete</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+393
+394
+395
+396
+397</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 393</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_delete'>delete</span>
+  <span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>pact_broker/webhooks/triggered_webhook</span><span class='tstring_end'>&quot;</span></span>
+  <span class='const'><span class='object_link'><a href="../../PactBroker.html" title="PactBroker (module)">PactBroker</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Webhooks.html" title="PactBroker::Webhooks (module)">Webhooks</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Webhooks/TriggeredWebhook.html" title="PactBroker::Webhooks::TriggeredWebhook (class)">TriggeredWebhook</a></span></span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>pact_publication:</span> <span class='kw'>self</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span>
+  <span class='kw'>super</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="eager_load_pact_versions-instance_method">
+  
+    #<strong>eager_load_pact_versions</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+318
+319
+320</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 318</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_eager_load_pact_versions'>eager_load_pact_versions</span>
+  <span class='id identifier rubyid_eager'>eager</span><span class='lparen'>(</span><span class='symbol'>:pact_versions</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="earliest-instance_method">
+  
+    #<strong>earliest</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+377
+378
+379</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 377</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_earliest'>earliest</span>
+  <span class='id identifier rubyid_order'>order</span><span class='lparen'>(</span><span class='symbol'>:consumer_version_order</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_limit'>limit</span><span class='lparen'>(</span><span class='int'>1</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="for_branch_name-instance_method">
+  
+    #<strong>for_branch_name</strong>(branch_name)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+327
+328
+329
+330
+331
+332
+333
+334
+335
+336
+337
+338
+339</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 327</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_for_branch_name'>for_branch_name</span> <span class='id identifier rubyid_branch_name'>branch_name</span>
+  <span class='id identifier rubyid_branch_versions_join'>branch_versions_join</span> <span class='op'>=</span> <span class='lbrace'>{</span>
+    <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:branch_versions</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:version_id</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:pact_publications</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:consumer_version_id</span><span class='rbracket'>]</span><span class='comma'>,</span>
+    <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:branch_versions</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:branch_name</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_branch_name'>branch_name</span>
+  <span class='rbrace'>}</span>
+
+  <span class='id identifier rubyid_base_query'>base_query</span> <span class='op'>=</span> <span class='kw'>self</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_no_columns_selected?'>no_columns_selected?</span>
+    <span class='id identifier rubyid_base_query'>base_query</span> <span class='op'>=</span> <span class='id identifier rubyid_base_query'>base_query</span><span class='period'>.</span><span class='id identifier rubyid_select_all_qualified'>select_all_qualified</span><span class='period'>.</span><span class='id identifier rubyid_select_append'>select_append</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:branch_versions</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:branch_name</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_as'>as</span><span class='lparen'>(</span><span class='symbol'>:branch_name</span><span class='rparen'>)</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_base_query'>base_query</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='symbol'>:branch_versions</span><span class='comma'>,</span> <span class='id identifier rubyid_branch_versions_join'>branch_versions_join</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="for_consumer-instance_method">
+  
+    #<strong>for_consumer</strong>(consumer)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+26
+27
+28</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 26</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_for_consumer'>for_consumer</span> <span class='id identifier rubyid_consumer'>consumer</span>
+  <span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>consumer:</span> <span class='id identifier rubyid_consumer'>consumer</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="for_consumer_id_and_provider_id-instance_method">
+  
+    #<strong>for_consumer_id_and_provider_id</strong>(consumer_id, provider_id)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+10
+11
+12</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 10</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_for_consumer_id_and_provider_id'>for_consumer_id_and_provider_id</span><span class='lparen'>(</span><span class='id identifier rubyid_consumer_id'>consumer_id</span><span class='comma'>,</span> <span class='id identifier rubyid_provider_id'>provider_id</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:pact_publications</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:consumer_id</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_consumer_id'>consumer_id</span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:pact_publications</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:provider_id</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_provider_id'>provider_id</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="for_consumer_name-instance_method">
+  
+    #<strong>for_consumer_name</strong>(consumer_name)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+18
+19
+20</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 18</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_for_consumer_name'>for_consumer_name</span><span class='lparen'>(</span><span class='id identifier rubyid_consumer_name'>consumer_name</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>consumer:</span> <span class='const'><span class='object_link'><a href="../../PactBroker.html" title="PactBroker (module)">PactBroker</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Domain.html" title="PactBroker::Domain (module)">Domain</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Domain/Pacticipant.html" title="PactBroker::Domain::Pacticipant (class)">Pacticipant</a></span></span><span class='period'>.</span><span class='id identifier rubyid_find_by_name'>find_by_name</span><span class='lparen'>(</span><span class='id identifier rubyid_consumer_name'>consumer_name</span><span class='rparen'>)</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="for_consumer_name_and_maybe_version_number-instance_method">
+  
+    #<strong>for_consumer_name_and_maybe_version_number</strong>(consumer_name, consumer_version_number)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+52
+53
+54
+55
+56
+57
+58</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 52</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_for_consumer_name_and_maybe_version_number'>for_consumer_name_and_maybe_version_number</span><span class='lparen'>(</span><span class='id identifier rubyid_consumer_name'>consumer_name</span><span class='comma'>,</span> <span class='id identifier rubyid_consumer_version_number'>consumer_version_number</span><span class='rparen'>)</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_consumer_version_number'>consumer_version_number</span>
+    <span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>consumer_version:</span> <span class='const'><span class='object_link'><a href="../../PactBroker.html" title="PactBroker (module)">PactBroker</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Domain.html" title="PactBroker::Domain (module)">Domain</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Domain/Version.html" title="PactBroker::Domain::Version (class)">Version</a></span></span><span class='period'>.</span><span class='id identifier rubyid_where_pacticipant_name_and_version_number'>where_pacticipant_name_and_version_number</span><span class='lparen'>(</span><span class='id identifier rubyid_consumer_name'>consumer_name</span><span class='comma'>,</span> <span class='id identifier rubyid_consumer_version_number'>consumer_version_number</span><span class='rparen'>)</span><span class='rparen'>)</span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>consumer:</span> <span class='const'><span class='object_link'><a href="../../PactBroker.html" title="PactBroker (module)">PactBroker</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Domain.html" title="PactBroker::Domain (module)">Domain</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Domain/Pacticipant.html" title="PactBroker::Domain::Pacticipant (class)">Pacticipant</a></span></span><span class='period'>.</span><span class='id identifier rubyid_find_by_name'>find_by_name</span><span class='lparen'>(</span><span class='id identifier rubyid_consumer_name'>consumer_name</span><span class='rparen'>)</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="for_consumer_version_tag-instance_method">
+  
+    #<strong>for_consumer_version_tag</strong>(tag_name)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 35</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_for_consumer_version_tag'>for_consumer_version_tag</span> <span class='id identifier rubyid_tag_name'>tag_name</span>
+  <span class='id identifier rubyid_base_query'>base_query</span> <span class='op'>=</span> <span class='kw'>self</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_no_columns_selected?'>no_columns_selected?</span>
+    <span class='id identifier rubyid_base_query'>base_query</span> <span class='op'>=</span> <span class='id identifier rubyid_base_query'>base_query</span><span class='period'>.</span><span class='id identifier rubyid_select_all_qualified'>select_all_qualified</span><span class='period'>.</span><span class='id identifier rubyid_select_append'>select_append</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:tags</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:name</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_as'>as</span><span class='lparen'>(</span><span class='symbol'>:tag_name</span><span class='rparen'>)</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_base_query'>base_query</span>
+    <span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='symbol'>:tags</span><span class='comma'>,</span> <span class='lbrace'>{</span> <span class='label'>version_id:</span> <span class='symbol'>:consumer_version_id</span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:tags</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:name</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_tag_name'>tag_name</span> <span class='rbrace'>}</span><span class='rparen'>)</span>
+    <span class='period'>.</span><span class='id identifier rubyid_remove_overridden_revisions_from_complete_query'>remove_overridden_revisions_from_complete_query</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="for_consumer_version_tag_all_revisions-instance_method">
+  
+    #<strong>for_consumer_version_tag_all_revisions</strong>(tag_name)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+46
+47
+48
+49
+50</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 46</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_for_consumer_version_tag_all_revisions'>for_consumer_version_tag_all_revisions</span> <span class='id identifier rubyid_tag_name'>tag_name</span>
+  <span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='symbol'>:tags</span><span class='comma'>,</span> <span class='lbrace'>{</span> <span class='label'>version_id:</span> <span class='symbol'>:consumer_version_id</span> <span class='rbrace'>}</span><span class='rparen'>)</span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_name_like'>name_like</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:tags</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:name</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_tag_name'>tag_name</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="for_latest_consumer_versions_with_tag-instance_method">
+  
+    #<strong>for_latest_consumer_versions_with_tag</strong>(tag_name)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>The pacts for the latest versions with the specified tag (new logic) NOT the latest pact that belongs to a version with the specified tag.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 205</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_for_latest_consumer_versions_with_tag'>for_latest_consumer_versions_with_tag</span><span class='lparen'>(</span><span class='id identifier rubyid_tag_name'>tag_name</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_head_tags'>head_tags</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../../PactBroker.html" title="PactBroker (module)">PactBroker</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Domain.html" title="PactBroker::Domain (module)">Domain</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Domain/Tag.html" title="PactBroker::Domain::Tag (class)">Tag</a></span></span>
+                <span class='period'>.</span><span class='id identifier rubyid_select_group'>select_group</span><span class='lparen'>(</span><span class='symbol'>:pacticipant_id</span><span class='comma'>,</span> <span class='symbol'>:name</span><span class='rparen'>)</span>
+                <span class='period'>.</span><span class='id identifier rubyid_select_append'>select_append</span><span class='lbrace'>{</span> <span class='id identifier rubyid_max'>max</span><span class='lparen'>(</span><span class='id identifier rubyid_version_order'>version_order</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_as'>as</span><span class='lparen'>(</span><span class='symbol'>:latest_version_order</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+                <span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>name:</span> <span class='id identifier rubyid_tag_name'>tag_name</span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_head_tags_join'>head_tags_join</span> <span class='op'>=</span> <span class='lbrace'>{</span>
+    <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:pact_publications</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:consumer_id</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:head_tags</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:pacticipant_id</span><span class='rbracket'>]</span><span class='comma'>,</span>
+    <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:pact_publications</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:consumer_version_order</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:head_tags</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:latest_version_order</span><span class='rbracket'>]</span>
+  <span class='rbrace'>}</span>
+
+  <span class='id identifier rubyid_base_query'>base_query</span> <span class='op'>=</span> <span class='kw'>self</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_no_columns_selected?'>no_columns_selected?</span>
+    <span class='id identifier rubyid_base_query'>base_query</span> <span class='op'>=</span> <span class='id identifier rubyid_base_query'>base_query</span><span class='period'>.</span><span class='id identifier rubyid_select_all_qualified'>select_all_qualified</span><span class='period'>.</span><span class='id identifier rubyid_select_append'>select_append</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:head_tags</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:name</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_as'>as</span><span class='lparen'>(</span><span class='symbol'>:tag_name</span><span class='rparen'>)</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_base_query'>base_query</span>
+    <span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='id identifier rubyid_head_tags'>head_tags</span><span class='comma'>,</span> <span class='id identifier rubyid_head_tags_join'>head_tags_join</span><span class='comma'>,</span> <span class='lbrace'>{</span> <span class='label'>table_alias:</span> <span class='symbol'>:head_tags</span> <span class='rbrace'>}</span><span class='rparen'>)</span>
+   <span class='period'>.</span><span class='id identifier rubyid_remove_overridden_revisions_from_complete_query'>remove_overridden_revisions_from_complete_query</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="for_pact_version_id-instance_method">
+  
+    #<strong>for_pact_version_id</strong>(pact_version_id)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+267
+268
+269</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 267</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_for_pact_version_id'>for_pact_version_id</span><span class='lparen'>(</span><span class='id identifier rubyid_pact_version_id'>pact_version_id</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:pact_publications</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:pact_version_id</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_pact_version_id'>pact_version_id</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="for_pact_version_sha-instance_method">
+  
+    #<strong>for_pact_version_sha</strong>(pact_version_sha)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+313
+314
+315
+316</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 313</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_for_pact_version_sha'>for_pact_version_sha</span><span class='lparen'>(</span><span class='id identifier rubyid_pact_version_sha'>pact_version_sha</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_join_pact_versions'>join_pact_versions</span>
+    <span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:pact_versions</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:sha</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_pact_version_sha'>pact_version_sha</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="for_provider-instance_method">
+  
+    #<strong>for_provider</strong>(provider)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+22
+23
+24</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 22</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_for_provider'>for_provider</span> <span class='id identifier rubyid_provider'>provider</span>
+  <span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>provider:</span> <span class='id identifier rubyid_provider'>provider</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="for_provider_name-instance_method">
+  
+    #<strong>for_provider_name</strong>(provider_name)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+14
+15
+16</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 14</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_for_provider_name'>for_provider_name</span><span class='lparen'>(</span><span class='id identifier rubyid_provider_name'>provider_name</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>provider:</span> <span class='const'><span class='object_link'><a href="../../PactBroker.html" title="PactBroker (module)">PactBroker</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Domain.html" title="PactBroker::Domain (module)">Domain</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Domain/Pacticipant.html" title="PactBroker::Domain::Pacticipant (class)">Pacticipant</a></span></span><span class='period'>.</span><span class='id identifier rubyid_find_by_name'>find_by_name</span><span class='lparen'>(</span><span class='id identifier rubyid_provider_name'>provider_name</span><span class='rparen'>)</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="in_environments-instance_method">
+  
+    #<strong>in_environments</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 226</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_in_environments'>in_environments</span>
+  <span class='id identifier rubyid_currently_deployed_join'>currently_deployed_join</span> <span class='op'>=</span> <span class='lbrace'>{</span>
+    <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:pact_publications</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:consumer_version_id</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:currently_deployed_version_ids</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:version_id</span><span class='rbracket'>]</span>
+  <span class='rbrace'>}</span>
+
+  <span class='id identifier rubyid_released_join'>released_join</span> <span class='op'>=</span> <span class='lbrace'>{</span>
+    <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:pact_publications</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:consumer_version_id</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:released_versions</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:version_id</span><span class='rbracket'>]</span><span class='comma'>,</span>
+    <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:released_versions</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:support_ended_at</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='kw'>nil</span>
+  <span class='rbrace'>}</span>
+
+  <span class='id identifier rubyid_base_query'>base_query</span> <span class='op'>=</span> <span class='kw'>self</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_no_columns_selected?'>no_columns_selected?</span>
+    <span class='id identifier rubyid_base_query'>base_query</span> <span class='op'>=</span> <span class='id identifier rubyid_base_query'>base_query</span><span class='period'>.</span><span class='id identifier rubyid_select_all_qualified'>select_all_qualified</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_deployed'>deployed</span> <span class='op'>=</span> <span class='id identifier rubyid_base_query'>base_query</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='symbol'>:currently_deployed_version_ids</span><span class='comma'>,</span> <span class='id identifier rubyid_currently_deployed_join'>currently_deployed_join</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_released'>released</span> <span class='op'>=</span> <span class='id identifier rubyid_base_query'>base_query</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='symbol'>:released_versions</span><span class='comma'>,</span> <span class='id identifier rubyid_released_join'>released_join</span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_deployed'>deployed</span><span class='period'>.</span><span class='id identifier rubyid_union'>union</span><span class='lparen'>(</span><span class='id identifier rubyid_released'>released</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_remove_overridden_revisions_from_complete_query'>remove_overridden_revisions_from_complete_query</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="join_consumer_branch_versions-instance_method">
+  
+    #<strong>join_consumer_branch_versions</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+282
+283
+284</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 282</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_join_consumer_branch_versions'>join_consumer_branch_versions</span>
+  <span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='symbol'>:branch_versions</span><span class='comma'>,</span> <span class='lbrace'>{</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:pact_publications</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:consumer_version_id</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:branch_versions</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:version_id</span><span class='rbracket'>]</span> <span class='rbrace'>}</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="join_consumer_version_tags-instance_method">
+  
+    #<strong>join_consumer_version_tags</strong>(table_alias = :ct)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+278
+279
+280</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 278</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_join_consumer_version_tags'>join_consumer_version_tags</span><span class='lparen'>(</span><span class='id identifier rubyid_table_alias'>table_alias</span> <span class='op'>=</span> <span class='symbol'>:ct</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='symbol'>:tags</span><span class='comma'>,</span> <span class='lbrace'>{</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='id identifier rubyid_table_alias'>table_alias</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:version_id</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:pact_publications</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:consumer_version_id</span><span class='rbracket'>]</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='lbrace'>{</span> <span class='label'>table_alias:</span> <span class='id identifier rubyid_table_alias'>table_alias</span> <span class='rbrace'>}</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="join_consumer_version_tags_with_names-instance_method">
+  
+    #<strong>join_consumer_version_tags_with_names</strong>(consumer_version_tag_names)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+286
+287
+288
+289
+290
+291
+292
+293</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 286</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_join_consumer_version_tags_with_names'>join_consumer_version_tags_with_names</span><span class='lparen'>(</span><span class='id identifier rubyid_consumer_version_tag_names'>consumer_version_tag_names</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='symbol'>:tags</span><span class='comma'>,</span> <span class='lbrace'>{</span>
+    <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:ct</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:version_id</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:pact_publications</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:consumer_version_id</span><span class='rbracket'>]</span><span class='comma'>,</span>
+    <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:ct</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:name</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_consumer_version_tag_names'>consumer_version_tag_names</span>
+  <span class='rbrace'>}</span><span class='comma'>,</span> <span class='lbrace'>{</span>
+    <span class='label'>table_alias:</span> <span class='symbol'>:ct</span>
+  <span class='rbrace'>}</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="join_consumer_versions-instance_method">
+  
+    #<strong>join_consumer_versions</strong>(table_alias = :cv, extra_join_criteria = {}, &amp;block)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+271
+272
+273
+274
+275
+276</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 271</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_join_consumer_versions'>join_consumer_versions</span><span class='lparen'>(</span><span class='id identifier rubyid_table_alias'>table_alias</span> <span class='op'>=</span> <span class='symbol'>:cv</span><span class='comma'>,</span> <span class='id identifier rubyid_extra_join_criteria'>extra_join_criteria</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_versions_join'>versions_join</span> <span class='op'>=</span> <span class='lbrace'>{</span>
+    <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:pact_publications</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:consumer_version_id</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='id identifier rubyid_table_alias'>table_alias</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:id</span><span class='rbracket'>]</span>
+  <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_merge'>merge</span><span class='lparen'>(</span><span class='id identifier rubyid_extra_join_criteria'>extra_join_criteria</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='symbol'>:versions</span><span class='comma'>,</span> <span class='id identifier rubyid_versions_join'>versions_join</span><span class='comma'>,</span> <span class='lbrace'>{</span> <span class='label'>table_alias:</span> <span class='id identifier rubyid_table_alias'>table_alias</span> <span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="join_consumers-instance_method">
+  
+    #<strong>join_consumers</strong>(table_alias = :consumers, base_table = :pact_publications, extra_join_criteria = {})  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+302
+303
+304
+305
+306
+307</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 302</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_join_consumers'>join_consumers</span><span class='lparen'>(</span><span class='id identifier rubyid_table_alias'>table_alias</span> <span class='op'>=</span> <span class='symbol'>:consumers</span><span class='comma'>,</span> <span class='id identifier rubyid_base_table'>base_table</span> <span class='op'>=</span> <span class='symbol'>:pact_publications</span><span class='comma'>,</span> <span class='id identifier rubyid_extra_join_criteria'>extra_join_criteria</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_consumer_join'>consumer_join</span> <span class='op'>=</span> <span class='lbrace'>{</span>
+    <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='id identifier rubyid_base_table'>base_table</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:consumer_id</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='id identifier rubyid_table_alias'>table_alias</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:id</span><span class='rbracket'>]</span>
+  <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_merge'>merge</span><span class='lparen'>(</span><span class='id identifier rubyid_extra_join_criteria'>extra_join_criteria</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='symbol'>:pacticipants</span><span class='comma'>,</span> <span class='id identifier rubyid_consumer_join'>consumer_join</span><span class='comma'>,</span> <span class='lbrace'>{</span> <span class='label'>table_alias:</span> <span class='id identifier rubyid_table_alias'>table_alias</span> <span class='rbrace'>}</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="join_pact_versions-instance_method">
+  
+    #<strong>join_pact_versions</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+309
+310
+311</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 309</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_join_pact_versions'>join_pact_versions</span>
+  <span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='symbol'>:pact_versions</span><span class='comma'>,</span> <span class='lbrace'>{</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:pact_publications</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:pact_version_id</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:pact_versions</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:id</span><span class='rbracket'>]</span> <span class='rbrace'>}</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="join_providers-instance_method">
+  
+    #<strong>join_providers</strong>(table_alias = :providers, base_table = :pact_publications, extra_join_criteria = {})  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+295
+296
+297
+298
+299
+300</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 295</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_join_providers'>join_providers</span><span class='lparen'>(</span><span class='id identifier rubyid_table_alias'>table_alias</span> <span class='op'>=</span> <span class='symbol'>:providers</span><span class='comma'>,</span> <span class='id identifier rubyid_base_table'>base_table</span> <span class='op'>=</span> <span class='symbol'>:pact_publications</span><span class='comma'>,</span> <span class='id identifier rubyid_extra_join_criteria'>extra_join_criteria</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_provider_join'>provider_join</span> <span class='op'>=</span> <span class='lbrace'>{</span>
+    <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='id identifier rubyid_base_table'>base_table</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:provider_id</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='id identifier rubyid_table_alias'>table_alias</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:id</span><span class='rbracket'>]</span>
+  <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_merge'>merge</span><span class='lparen'>(</span><span class='id identifier rubyid_extra_join_criteria'>extra_join_criteria</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='symbol'>:pacticipants</span><span class='comma'>,</span> <span class='id identifier rubyid_provider_join'>provider_join</span><span class='comma'>,</span> <span class='lbrace'>{</span> <span class='label'>table_alias:</span> <span class='id identifier rubyid_table_alias'>table_alias</span> <span class='rbrace'>}</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="latest-instance_method">
+  
+    #<strong>latest</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+381
+382
+383</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 381</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_latest'>latest</span>
+  <span class='id identifier rubyid_order'>order</span><span class='lparen'>(</span><span class='symbol'>:consumer_version_order</span><span class='comma'>,</span> <span class='symbol'>:revision_number</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_last'>last</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="latest_by_consumer_branch-instance_method">
+  
+    #<strong>latest_by_consumer_branch</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 60</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_latest_by_consumer_branch'>latest_by_consumer_branch</span>
+  <span class='id identifier rubyid_branch_versions_join'>branch_versions_join</span> <span class='op'>=</span> <span class='lbrace'>{</span>
+    <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:pact_publications</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:consumer_version_id</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:branch_versions</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:version_id</span><span class='rbracket'>]</span>
+  <span class='rbrace'>}</span>
+
+  <span class='id identifier rubyid_branches_join'>branches_join</span> <span class='op'>=</span> <span class='lbrace'>{</span>
+    <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:branch_versions</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:branch_id</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:branches</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:id</span><span class='rbracket'>]</span>
+  <span class='rbrace'>}</span>
+
+  <span class='id identifier rubyid_max_orders'>max_orders</span> <span class='op'>=</span> <span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='symbol'>:branch_versions</span><span class='comma'>,</span> <span class='id identifier rubyid_branch_versions_join'>branch_versions_join</span><span class='rparen'>)</span>
+                <span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='symbol'>:branches</span><span class='comma'>,</span> <span class='id identifier rubyid_branches_join'>branches_join</span><span class='rparen'>)</span>
+                <span class='period'>.</span><span class='id identifier rubyid_select_group'>select_group</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:pact_publications</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:consumer_id</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:pact_publications</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:provider_id</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:branches</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:name</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_as'>as</span><span class='lparen'>(</span><span class='symbol'>:branch_name</span><span class='rparen'>)</span><span class='rparen'>)</span>
+                <span class='period'>.</span><span class='id identifier rubyid_select_append'>select_append</span><span class='lbrace'>{</span> <span class='id identifier rubyid_max'>max</span><span class='lparen'>(</span><span class='id identifier rubyid_consumer_version_order'>consumer_version_order</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_as'>as</span><span class='lparen'>(</span><span class='id identifier rubyid_latest_consumer_version_order'>latest_consumer_version_order</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+
+  <span class='id identifier rubyid_max_join'>max_join</span> <span class='op'>=</span> <span class='lbrace'>{</span>
+    <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:max_orders</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:consumer_id</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:pact_publications</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:consumer_id</span><span class='rbracket'>]</span><span class='comma'>,</span>
+    <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:max_orders</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:provider_id</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:pact_publications</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:provider_id</span><span class='rbracket'>]</span><span class='comma'>,</span>
+    <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:max_orders</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:latest_consumer_version_order</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:pact_publications</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:consumer_version_order</span><span class='rbracket'>]</span>
+  <span class='rbrace'>}</span>
+
+  <span class='id identifier rubyid_base_query'>base_query</span> <span class='op'>=</span> <span class='kw'>self</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_no_columns_selected?'>no_columns_selected?</span>
+    <span class='id identifier rubyid_base_query'>base_query</span> <span class='op'>=</span> <span class='id identifier rubyid_base_query'>base_query</span><span class='period'>.</span><span class='id identifier rubyid_select_all_qualified'>select_all_qualified</span><span class='period'>.</span><span class='id identifier rubyid_select_append'>select_append</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:max_orders</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:branch_name</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_as'>as</span><span class='lparen'>(</span><span class='symbol'>:branch_name</span><span class='rparen'>)</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_base_query'>base_query</span>
+    <span class='period'>.</span><span class='id identifier rubyid_remove_overridden_revisions'>remove_overridden_revisions</span>
+    <span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='id identifier rubyid_max_orders'>max_orders</span><span class='comma'>,</span> <span class='id identifier rubyid_max_join'>max_join</span><span class='comma'>,</span> <span class='lbrace'>{</span> <span class='label'>table_alias:</span> <span class='symbol'>:max_orders</span> <span class='rbrace'>}</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="latest_by_consumer_tag-instance_method">
+  
+    #<strong>latest_by_consumer_tag</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>The latest pact publication for each tag This uses the old logic of “the latest pact for a version that has a tag” (which always returns a pact) rather than “the pact for the latest version with a tag” Need to see about updating this.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 148</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_latest_by_consumer_tag'>latest_by_consumer_tag</span>
+  <span class='id identifier rubyid_tags_join'>tags_join</span> <span class='op'>=</span> <span class='lbrace'>{</span>
+    <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:pact_publications</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:consumer_version_id</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:tags</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:version_id</span><span class='rbracket'>]</span><span class='comma'>,</span>
+  <span class='rbrace'>}</span>
+
+  <span class='id identifier rubyid_max_orders'>max_orders</span> <span class='op'>=</span> <span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='symbol'>:tags</span><span class='comma'>,</span> <span class='id identifier rubyid_tags_join'>tags_join</span><span class='rparen'>)</span>
+                <span class='period'>.</span><span class='id identifier rubyid_select_group'>select_group</span><span class='lparen'>(</span><span class='symbol'>:consumer_id</span><span class='comma'>,</span> <span class='symbol'>:provider_id</span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:tags</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:name</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_as'>as</span><span class='lparen'>(</span><span class='symbol'>:tag_name</span><span class='rparen'>)</span><span class='rparen'>)</span>
+                <span class='period'>.</span><span class='id identifier rubyid_select_append'>select_append</span><span class='lbrace'>{</span> <span class='id identifier rubyid_max'>max</span><span class='lparen'>(</span><span class='id identifier rubyid_consumer_version_order'>consumer_version_order</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_as'>as</span><span class='lparen'>(</span><span class='id identifier rubyid_latest_consumer_version_order'>latest_consumer_version_order</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+
+  <span class='id identifier rubyid_max_join'>max_join</span> <span class='op'>=</span> <span class='lbrace'>{</span>
+    <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:max_orders</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:consumer_id</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:pact_publications</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:consumer_id</span><span class='rbracket'>]</span><span class='comma'>,</span>
+    <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:max_orders</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:provider_id</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:pact_publications</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:provider_id</span><span class='rbracket'>]</span><span class='comma'>,</span>
+    <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:max_orders</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:latest_consumer_version_order</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:pact_publications</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:consumer_version_order</span><span class='rbracket'>]</span>
+  <span class='rbrace'>}</span>
+
+  <span class='id identifier rubyid_base_query'>base_query</span> <span class='op'>=</span> <span class='kw'>self</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_no_columns_selected?'>no_columns_selected?</span>
+    <span class='id identifier rubyid_base_query'>base_query</span> <span class='op'>=</span> <span class='id identifier rubyid_base_query'>base_query</span><span class='period'>.</span><span class='id identifier rubyid_select_all_qualified'>select_all_qualified</span><span class='period'>.</span><span class='id identifier rubyid_select_append'>select_append</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:max_orders</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:tag_name</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_base_query'>base_query</span>
+    <span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='id identifier rubyid_max_orders'>max_orders</span><span class='comma'>,</span> <span class='id identifier rubyid_max_join'>max_join</span><span class='comma'>,</span> <span class='lbrace'>{</span> <span class='label'>table_alias:</span> <span class='symbol'>:max_orders</span> <span class='rbrace'>}</span><span class='rparen'>)</span>
+    <span class='period'>.</span><span class='id identifier rubyid_remove_overridden_revisions_from_complete_query'>remove_overridden_revisions_from_complete_query</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="latest_by_consumer_version_order-instance_method">
+  
+    #<strong>latest_by_consumer_version_order</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+365
+366
+367</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 365</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_latest_by_consumer_version_order'>latest_by_consumer_version_order</span>
+  <span class='id identifier rubyid_reverse_order'>reverse_order</span><span class='lparen'>(</span><span class='symbol'>:consumer_version_order</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_limit'>limit</span><span class='lparen'>(</span><span class='int'>1</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="latest_for_consumer_branch-instance_method">
+  
+    #<strong>latest_for_consumer_branch</strong>(branch_name)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 114</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_latest_for_consumer_branch'>latest_for_consumer_branch</span><span class='lparen'>(</span><span class='id identifier rubyid_branch_name'>branch_name</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_branch_versions_join'>branch_versions_join</span> <span class='op'>=</span> <span class='lbrace'>{</span>
+    <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:pact_publications</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:consumer_version_id</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:branch_versions</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:version_id</span><span class='rbracket'>]</span>
+  <span class='rbrace'>}</span>
+
+  <span class='id identifier rubyid_branches_join'>branches_join</span> <span class='op'>=</span> <span class='lbrace'>{</span>
+    <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:branch_versions</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:branch_id</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:branches</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:id</span><span class='rbracket'>]</span><span class='comma'>,</span>
+    <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:branches</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:name</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_branch_name'>branch_name</span>
+  <span class='rbrace'>}</span>
+
+  <span class='id identifier rubyid_max_orders'>max_orders</span> <span class='op'>=</span> <span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='symbol'>:branch_versions</span><span class='comma'>,</span> <span class='id identifier rubyid_branch_versions_join'>branch_versions_join</span><span class='rparen'>)</span>
+                <span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='symbol'>:branches</span><span class='comma'>,</span> <span class='id identifier rubyid_branches_join'>branches_join</span><span class='rparen'>)</span>
+                <span class='period'>.</span><span class='id identifier rubyid_select_group'>select_group</span><span class='lparen'>(</span><span class='symbol'>:consumer_id</span><span class='comma'>,</span> <span class='symbol'>:provider_id</span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:branches</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:name</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_as'>as</span><span class='lparen'>(</span><span class='symbol'>:branch_name</span><span class='rparen'>)</span><span class='rparen'>)</span>
+                <span class='period'>.</span><span class='id identifier rubyid_select_append'>select_append</span><span class='lbrace'>{</span> <span class='id identifier rubyid_max'>max</span><span class='lparen'>(</span><span class='id identifier rubyid_consumer_version_order'>consumer_version_order</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_as'>as</span><span class='lparen'>(</span><span class='id identifier rubyid_latest_consumer_version_order'>latest_consumer_version_order</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+
+  <span class='id identifier rubyid_max_join'>max_join</span> <span class='op'>=</span> <span class='lbrace'>{</span>
+    <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:max_orders</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:consumer_id</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:pact_publications</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:consumer_id</span><span class='rbracket'>]</span><span class='comma'>,</span>
+    <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:max_orders</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:provider_id</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:pact_publications</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:provider_id</span><span class='rbracket'>]</span><span class='comma'>,</span>
+    <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:max_orders</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:latest_consumer_version_order</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:pact_publications</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:consumer_version_order</span><span class='rbracket'>]</span>
+  <span class='rbrace'>}</span>
+
+  <span class='id identifier rubyid_base_query'>base_query</span> <span class='op'>=</span> <span class='kw'>self</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_no_columns_selected?'>no_columns_selected?</span>
+    <span class='id identifier rubyid_base_query'>base_query</span> <span class='op'>=</span> <span class='id identifier rubyid_base_query'>base_query</span><span class='period'>.</span><span class='id identifier rubyid_select_all_qualified'>select_all_qualified</span><span class='period'>.</span><span class='id identifier rubyid_select_append'>select_append</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:max_orders</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:branch_name</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_as'>as</span><span class='lparen'>(</span><span class='symbol'>:branch_name</span><span class='rparen'>)</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+  <span class='id identifier rubyid_base_query'>base_query</span>
+    <span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='id identifier rubyid_max_orders'>max_orders</span><span class='comma'>,</span> <span class='id identifier rubyid_max_join'>max_join</span><span class='comma'>,</span> <span class='lbrace'>{</span> <span class='label'>table_alias:</span> <span class='symbol'>:max_orders</span> <span class='rbrace'>}</span><span class='rparen'>)</span>
+    <span class='period'>.</span><span class='id identifier rubyid_remove_overridden_revisions_from_complete_query'>remove_overridden_revisions_from_complete_query</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="latest_for_consumer_tag-instance_method">
+  
+    #<strong>latest_for_consumer_tag</strong>(tag_name)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>This uses the old logic of “the latest pact for a version that has a tag” (which always returns a pact) rather than “the pact for the latest version with a tag” Need to see about updating this.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 176</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_latest_for_consumer_tag'>latest_for_consumer_tag</span><span class='lparen'>(</span><span class='id identifier rubyid_tag_name'>tag_name</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_tags_join'>tags_join</span> <span class='op'>=</span> <span class='lbrace'>{</span>
+    <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:pact_publications</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:consumer_version_id</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:tags</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:version_id</span><span class='rbracket'>]</span><span class='comma'>,</span>
+    <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:tags</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:name</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_tag_name'>tag_name</span>
+  <span class='rbrace'>}</span>
+
+  <span class='id identifier rubyid_max_orders'>max_orders</span> <span class='op'>=</span> <span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='symbol'>:tags</span><span class='comma'>,</span> <span class='id identifier rubyid_tags_join'>tags_join</span><span class='rparen'>)</span>
+                <span class='period'>.</span><span class='id identifier rubyid_select_group'>select_group</span><span class='lparen'>(</span><span class='symbol'>:consumer_id</span><span class='comma'>,</span> <span class='symbol'>:provider_id</span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:tags</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:name</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_as'>as</span><span class='lparen'>(</span><span class='symbol'>:tag_name</span><span class='rparen'>)</span><span class='rparen'>)</span>
+                <span class='period'>.</span><span class='id identifier rubyid_select_append'>select_append</span><span class='lbrace'>{</span> <span class='id identifier rubyid_max'>max</span><span class='lparen'>(</span><span class='id identifier rubyid_consumer_version_order'>consumer_version_order</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_as'>as</span><span class='lparen'>(</span><span class='id identifier rubyid_latest_consumer_version_order'>latest_consumer_version_order</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+
+
+  <span class='id identifier rubyid_max_join'>max_join</span> <span class='op'>=</span> <span class='lbrace'>{</span>
+    <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:max_orders</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:consumer_id</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:pact_publications</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:consumer_id</span><span class='rbracket'>]</span><span class='comma'>,</span>
+    <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:max_orders</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:provider_id</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:pact_publications</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:provider_id</span><span class='rbracket'>]</span><span class='comma'>,</span>
+    <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:max_orders</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:latest_consumer_version_order</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:pact_publications</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:consumer_version_order</span><span class='rbracket'>]</span>
+  <span class='rbrace'>}</span>
+
+  <span class='id identifier rubyid_base_query'>base_query</span> <span class='op'>=</span> <span class='kw'>self</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_no_columns_selected?'>no_columns_selected?</span>
+    <span class='id identifier rubyid_base_query'>base_query</span> <span class='op'>=</span> <span class='id identifier rubyid_base_query'>base_query</span><span class='period'>.</span><span class='id identifier rubyid_select_all_qualified'>select_all_qualified</span><span class='period'>.</span><span class='id identifier rubyid_select_append'>select_append</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:max_orders</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:tag_name</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_base_query'>base_query</span>
+    <span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='id identifier rubyid_max_orders'>max_orders</span><span class='comma'>,</span> <span class='id identifier rubyid_max_join'>max_join</span><span class='comma'>,</span> <span class='lbrace'>{</span> <span class='label'>table_alias:</span> <span class='symbol'>:max_orders</span> <span class='rbrace'>}</span><span class='rparen'>)</span>
+    <span class='period'>.</span><span class='id identifier rubyid_remove_overridden_revisions_from_complete_query'>remove_overridden_revisions_from_complete_query</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="order_by_consumer_name-instance_method">
+  
+    #<strong>order_by_consumer_name</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+369
+370
+371</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 369</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_order_by_consumer_name'>order_by_consumer_name</span>
+  <span class='id identifier rubyid_order_append_ignore_case'>order_append_ignore_case</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:consumers</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:name</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="order_by_consumer_version_order-instance_method">
+  
+    #<strong>order_by_consumer_version_order</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+373
+374
+375</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 373</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_order_by_consumer_version_order'>order_by_consumer_version_order</span>
+  <span class='id identifier rubyid_order_append'>order_append</span><span class='lparen'>(</span><span class='symbol'>:consumer_version_order</span><span class='comma'>,</span> <span class='symbol'>:revision_number</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="overall_latest-instance_method">
+  
+    #<strong>overall_latest</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 90</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_overall_latest'>overall_latest</span>
+  <span class='id identifier rubyid_self_join'>self_join</span> <span class='op'>=</span> <span class='lbrace'>{</span>
+    <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:pact_publications</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:consumer_id</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:pp2</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:consumer_id</span><span class='rbracket'>]</span><span class='comma'>,</span>
+    <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:pact_publications</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:provider_id</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:pp2</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:provider_id</span><span class='rbracket'>]</span><span class='comma'>,</span>
+    <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:pact_publications</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:consumer_version_order</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:pp2</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:max_consumer_version_order</span><span class='rbracket'>]</span>
+  <span class='rbrace'>}</span>
+
+  <span class='id identifier rubyid_base_query'>base_query</span> <span class='op'>=</span> <span class='kw'>self</span>
+  <span class='id identifier rubyid_base_query'>base_query</span> <span class='op'>=</span> <span class='id identifier rubyid_base_query'>base_query</span><span class='period'>.</span><span class='id identifier rubyid_select_all_qualified'>select_all_qualified</span> <span class='kw'>if</span> <span class='id identifier rubyid_no_columns_selected?'>no_columns_selected?</span>
+
+  <span class='id identifier rubyid_base_query'>base_query</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span>
+    <span class='id identifier rubyid_base_query'>base_query</span><span class='period'>.</span><span class='id identifier rubyid_select_group'>select_group</span><span class='lparen'>(</span><span class='symbol'>:consumer_id</span><span class='comma'>,</span> <span class='symbol'>:provider_id</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_select_append'>select_append</span><span class='lbrace'>{</span> <span class='id identifier rubyid_max'>max</span><span class='lparen'>(</span><span class='symbol'>:consumer_version_order</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_as'>as</span><span class='lparen'>(</span><span class='symbol'>:max_consumer_version_order</span><span class='rparen'>)</span> <span class='rbrace'>}</span><span class='comma'>,</span>
+    <span class='id identifier rubyid_self_join'>self_join</span><span class='comma'>,</span>
+    <span class='label'>table_alias:</span> <span class='symbol'>:pp2</span>
+  <span class='rparen'>)</span>
+  <span class='period'>.</span><span class='id identifier rubyid_remove_overridden_revisions_from_complete_query'>remove_overridden_revisions_from_complete_query</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="overall_latest_for_consumer_id_and_provider_id-instance_method">
+  
+    #<strong>overall_latest_for_consumer_id_and_provider_id</strong>(consumer_id, provider_id)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+108
+109
+110
+111
+112</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 108</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_overall_latest_for_consumer_id_and_provider_id'>overall_latest_for_consumer_id_and_provider_id</span><span class='lparen'>(</span><span class='id identifier rubyid_consumer_id'>consumer_id</span><span class='comma'>,</span> <span class='id identifier rubyid_provider_id'>provider_id</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_for_consumer_id_and_provider_id'>for_consumer_id_and_provider_id</span><span class='lparen'>(</span><span class='id identifier rubyid_consumer_id'>consumer_id</span><span class='comma'>,</span> <span class='id identifier rubyid_provider_id'>provider_id</span><span class='rparen'>)</span>
+    <span class='period'>.</span><span class='id identifier rubyid_order'>order</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='period'>.</span><span class='id identifier rubyid_desc'>desc</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:pact_publications</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:consumer_version_order</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='period'>.</span><span class='id identifier rubyid_desc'>desc</span><span class='lparen'>(</span><span class='symbol'>:revision_number</span><span class='rparen'>)</span><span class='rparen'>)</span>
+    <span class='period'>.</span><span class='id identifier rubyid_limit'>limit</span><span class='lparen'>(</span><span class='int'>1</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="provider_name_like-instance_method">
+  
+    #<strong>provider_name_like</strong>(name)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+341
+342
+343</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 341</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_provider_name_like'>provider_name_like</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='id identifier rubyid_name_like'>name_like</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:providers</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:name</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="remove_overridden_revisions-instance_method">
+  
+    #<strong>remove_overridden_revisions</strong>(pact_publications_alias = :pact_publications)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+255
+256
+257
+258
+259</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 255</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_remove_overridden_revisions'>remove_overridden_revisions</span><span class='lparen'>(</span><span class='id identifier rubyid_pact_publications_alias'>pact_publications_alias</span> <span class='op'>=</span> <span class='symbol'>:pact_publications</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_base'>base</span> <span class='op'>=</span> <span class='kw'>self</span>
+  <span class='id identifier rubyid_base'>base</span> <span class='op'>=</span> <span class='id identifier rubyid_base'>base</span><span class='period'>.</span><span class='id identifier rubyid_select_all_qualified'>select_all_qualified</span> <span class='kw'>if</span> <span class='id identifier rubyid_no_columns_selected?'>no_columns_selected?</span>
+  <span class='id identifier rubyid_base'>base</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='symbol'>:latest_pact_publication_ids_for_consumer_versions</span><span class='comma'>,</span> <span class='lbrace'>{</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:lp</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:pact_publication_id</span><span class='rbracket'>]</span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='id identifier rubyid_pact_publications_alias'>pact_publications_alias</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:id</span><span class='rbracket'>]</span> <span class='rbrace'>}</span><span class='comma'>,</span> <span class='lbrace'>{</span> <span class='label'>table_alias:</span> <span class='symbol'>:lp</span><span class='rbrace'>}</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="remove_overridden_revisions_from_complete_query-instance_method">
+  
+    #<strong>remove_overridden_revisions_from_complete_query</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+261
+262
+263
+264
+265</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 261</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_remove_overridden_revisions_from_complete_query'>remove_overridden_revisions_from_complete_query</span>
+  <span class='id identifier rubyid_from_self'>from_self</span><span class='lparen'>(</span><span class='label'>alias:</span> <span class='symbol'>:pact_publications</span><span class='rparen'>)</span>
+    <span class='period'>.</span><span class='id identifier rubyid_select'>select</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:pact_publications</span><span class='rbracket'>]</span><span class='period'>.</span><span class='op'>*</span><span class='rparen'>)</span>
+    <span class='period'>.</span><span class='id identifier rubyid_remove_overridden_revisions'>remove_overridden_revisions</span><span class='lparen'>(</span><span class='symbol'>:pact_publications</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="tag-instance_method">
+  
+    #<strong>tag</strong>(tag_name)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+322
+323
+324
+325</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 322</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_tag'>tag</span> <span class='id identifier rubyid_tag_name'>tag_name</span>
+  <span class='id identifier rubyid_filter'>filter</span> <span class='op'>=</span> <span class='id identifier rubyid_name_like'>name_like</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='period'>.</span><span class='id identifier rubyid_qualify'>qualify</span><span class='lparen'>(</span><span class='symbol'>:tags</span><span class='comma'>,</span> <span class='symbol'>:name</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='id identifier rubyid_tag_name'>tag_name</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='symbol'>:tags</span><span class='comma'>,</span> <span class='lbrace'>{</span><span class='label'>version_id:</span> <span class='symbol'>:consumer_version_id</span><span class='rbrace'>}</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='id identifier rubyid_filter'>filter</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="untagged-instance_method">
+  
+    #<strong>untagged</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+30
+31
+32
+33</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 30</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_untagged'>untagged</span>
+  <span class='id identifier rubyid_left_outer_join'>left_outer_join</span><span class='lparen'>(</span><span class='symbol'>:tags</span><span class='comma'>,</span> <span class='lbrace'>{</span> <span class='label'>version_id:</span> <span class='symbol'>:consumer_version_id</span> <span class='rbrace'>}</span><span class='rparen'>)</span>
+    <span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='period'>.</span><span class='id identifier rubyid_qualify'>qualify</span><span class='lparen'>(</span><span class='symbol'>:tags</span><span class='comma'>,</span> <span class='symbol'>:name</span><span class='rparen'>)</span> <span class='op'>=&gt;</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="verified_before_date-instance_method">
+  
+    #<strong>verified_before_date</strong>(date)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+247
+248
+249</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 247</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_verified_before_date'>verified_before_date</span><span class='lparen'>(</span><span class='id identifier rubyid_date'>date</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_where'>where</span> <span class='lbrace'>{</span> <span class='const'><span class='object_link'><a href="../../Sequel.html" title="Sequel (module)">Sequel</a></span></span><span class='lbracket'>[</span><span class='symbol'>:verifications</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:execution_date</span><span class='rbracket'>]</span> <span class='op'>&lt;</span> <span class='id identifier rubyid_date'>date</span> <span class='rbrace'>}</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="where_consumer_if_set-instance_method">
+  
+    #<strong>where_consumer_if_set</strong>(consumer)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+385
+386
+387
+388
+389
+390
+391</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/pacts/pact_publication_dataset_module.rb', line 385</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_where_consumer_if_set'>where_consumer_if_set</span><span class='lparen'>(</span><span class='id identifier rubyid_consumer'>consumer</span><span class='rparen'>)</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_consumer'>consumer</span>
+    <span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>consumer:</span> <span class='id identifier rubyid_consumer'>consumer</span><span class='rparen'>)</span>
+  <span class='kw'>else</span>
+    <span class='kw'>self</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Tue Mar 22 17:40:12 2022 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.27 (ruby-2.7.5).
+</div>
+
+    </div>
+  </body>
+</html>

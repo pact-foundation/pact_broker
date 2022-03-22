@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Module: PactBroker::Logging
+  
+    &mdash; Documentation by YARD 0.9.27
+  
+</title>
+
+  <link rel="stylesheet" href="../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "PactBroker::Logging";
+  relpath = '../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../_index.html">Index (L)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../PactBroker.html" title="PactBroker (module)">PactBroker</a></span></span>
+     &raquo; 
+    <span class="title">Logging</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Module: PactBroker::Logging
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+
+  
+  
+  
+  
+  
+
+  
+  <dl>
+    <dt>Included in:</dt>
+    <dd><span class='object_link'><a href="../DB.html" title="DB (module)">DB</a></span>, <span class='object_link'><a href="../PactBroker.html" title="PactBroker (module)">PactBroker</a></span>, <span class='object_link'><a href="Api/Middleware/Configuration.html" title="PactBroker::Api::Middleware::Configuration (class)">Api::Middleware::Configuration</a></span>, <span class='object_link'><a href="Api/Middleware/HttpDebugLogs.html" title="PactBroker::Api::Middleware::HttpDebugLogs (class)">Api::Middleware::HttpDebugLogs</a></span>, <span class='object_link'><a href="Api/PactBrokerUrls.html" title="PactBroker::Api::PactBrokerUrls (module)">Api::PactBrokerUrls</a></span>, <span class='object_link'><a href="Api/Renderers/HtmlPactRenderer.html" title="PactBroker::Api::Renderers::HtmlPactRenderer (class)">Api::Renderers::HtmlPactRenderer</a></span>, <span class='object_link'><a href="Api/Resources/BaseResource.html" title="PactBroker::Api::Resources::BaseResource (class)">Api::Resources::BaseResource</a></span>, <span class='object_link'><a href="Api/Resources/ErrorHandler.html" title="PactBroker::Api::Resources::ErrorHandler (class)">Api::Resources::ErrorHandler</a></span>, <span class='object_link'><a href="Api/Resources/ErrorResponseBodyGenerator.html" title="PactBroker::Api::Resources::ErrorResponseBodyGenerator (class)">Api::Resources::ErrorResponseBodyGenerator</a></span>, <span class='object_link'><a href="App.html" title="PactBroker::App (class)">App</a></span>, <span class='object_link'><a href="Badges/Service.html" title="PactBroker::Badges::Service (module)">Badges::Service</a></span>, <span class='object_link'><a href="Certificates/Service.html" title="PactBroker::Certificates::Service (module)">Certificates::Service</a></span>, <span class='object_link'><a href="Certificates/Service.html" title="PactBroker::Certificates::Service (module)">Certificates::Service</a></span>, <span class='object_link'><a href="Config/Load.html" title="PactBroker::Config::Load (class)">Config::Load</a></span>, <span class='object_link'><a href="Config/Save.html" title="PactBroker::Config::Save (class)">Config::Save</a></span>, <span class='object_link'><a href="Contracts/Service.html" title="PactBroker::Contracts::Service (module)">Contracts::Service</a></span>, <span class='object_link'><a href="DB/Clean.html" title="PactBroker::DB::Clean (class)">DB::Clean</a></span>, <span class='object_link'><a href="DB/DataMigrations/SetPacticipantMainBranch.html" title="PactBroker::DB::DataMigrations::SetPacticipantMainBranch (class)">DB::DataMigrations::SetPacticipantMainBranch</a></span>, <span class='object_link'><a href="Deployments/DeployedVersionService.html" title="PactBroker::Deployments::DeployedVersionService (class)">Deployments::DeployedVersionService</a></span>, <span class='object_link'><a href="Diagnostic/Resources/Dependencies.html" title="PactBroker::Diagnostic::Resources::Dependencies (class)">Diagnostic::Resources::Dependencies</a></span>, <span class='object_link'><a href="Domain/OrderVersions.html" title="PactBroker::Domain::OrderVersions (class)">Domain::OrderVersions</a></span>, <span class='object_link'><a href="Domain/Webhook.html" title="PactBroker::Domain::Webhook (class)">Domain::Webhook</a></span>, <span class='object_link'><a href="Domain/WebhookRequest.html" title="PactBroker::Domain::WebhookRequest (class)">Domain::WebhookRequest</a></span>, <span class='object_link'><a href="Errors.html" title="PactBroker::Errors (module)">Errors</a></span>, <span class='object_link'><a href="Errors/ErrorLogger.html" title="PactBroker::Errors::ErrorLogger (class)">Errors::ErrorLogger</a></span>, <span class='object_link'><a href="Index/Service.html" title="PactBroker::Index::Service (class)">Index::Service</a></span>, <span class='object_link'><a href="Integrations/Service.html" title="PactBroker::Integrations::Service (class)">Integrations::Service</a></span>, <span class='object_link'><a href="Matrix/DeploymentStatusSummary.html" title="PactBroker::Matrix::DeploymentStatusSummary (class)">Matrix::DeploymentStatusSummary</a></span>, <span class='object_link'><a href="Matrix/Repository.html" title="PactBroker::Matrix::Repository (class)">Matrix::Repository</a></span>, <span class='object_link'><a href="Matrix/Service.html" title="PactBroker::Matrix::Service (module)">Matrix::Service</a></span>, <span class='object_link'><a href="Pacticipants/Service.html" title="PactBroker::Pacticipants::Service (class)">Pacticipants::Service</a></span>, <span class='object_link'><a href="Pacts/PactsForVerificationRepository.html" title="PactBroker::Pacts::PactsForVerificationRepository (class)">Pacts::PactsForVerificationRepository</a></span>, <span class='object_link'><a href="Pacts/Repository.html" title="PactBroker::Pacts::Repository (class)">Pacts::Repository</a></span>, <span class='object_link'><a href="Pacts/Service.html" title="PactBroker::Pacts::Service (module)">Pacts::Service</a></span>, <span class='object_link'><a href="Tags/Service.html" title="PactBroker::Tags::Service (module)">Tags::Service</a></span>, <span class='object_link'><a href="Verifications/Service.html" title="PactBroker::Verifications::Service (module)">Verifications::Service</a></span>, <span class='object_link'><a href="Versions/Repository.html" title="PactBroker::Versions::Repository (class)">Versions::Repository</a></span>, <span class='object_link'><a href="Versions/Service.html" title="PactBroker::Versions::Service (class)">Versions::Service</a></span>, <span class='object_link'><a href="Webhooks/EventListener.html" title="PactBroker::Webhooks::EventListener (class)">Webhooks::EventListener</a></span>, <span class='object_link'><a href="Webhooks/Job.html" title="PactBroker::Webhooks::Job (class)">Webhooks::Job</a></span>, <span class='object_link'><a href="Webhooks/Repository.html" title="PactBroker::Webhooks::Repository (class)">Webhooks::Repository</a></span>, <span class='object_link'><a href="Webhooks/Service.html" title="PactBroker::Webhooks::Service (module)">Webhooks::Service</a></span>, <span class='object_link'><a href="Webhooks/TriggerService.html" title="PactBroker::Webhooks::TriggerService (module)">Webhooks::TriggerService</a></span>, <span class='object_link'><a href="Webhooks/WebhookRequestLogger.html" title="PactBroker::Webhooks::WebhookRequestLogger (class)">Webhooks::WebhookRequestLogger</a></span>, <span class='object_link'><a href="Webhooks/WebhookRequestTemplate.html" title="PactBroker::Webhooks::WebhookRequestTemplate (class)">Webhooks::WebhookRequestTemplate</a></span></dd>
+  </dl>
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/pact_broker/logging.rb<span class="defines">,<br />
+  lib/pact_broker/logging/default_formatter.rb</span>
+</dd>
+  </dl>
+  
+</div>
+
+<h2>Defined Under Namespace</h2>
+<p class="children">
+  
+    
+  
+    
+      <strong class="classes">Classes:</strong> <span class='object_link'><a href="Logging/DefaultFormatter.html" title="PactBroker::Logging::DefaultFormatter (class)">DefaultFormatter</a></span>
+    
+  
+</p>
+
+
+
+
+
+
+
+  
+    <h2>
+      Class Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#included-class_method" title="included (class method)">.<strong>included</strong>(base)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+    </ul>
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#log_error-instance_method" title="#log_error (instance method)">#<strong>log_error</strong>(e, description = nil)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#log_with_tag-instance_method" title="#log_with_tag (instance method)">#<strong>log_with_tag</strong>(tag)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+
+  <div id="class_method_details" class="method_details_list">
+    <h2>Class Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="included-class_method">
+  
+    .<strong>included</strong>(base)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/logging.rb', line 8</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_included'>included</span><span class='lparen'>(</span><span class='id identifier rubyid_base'>base</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_base'>base</span><span class='period'>.</span><span class='id identifier rubyid_extend'>extend</span> <span class='kw'>self</span>
+  <span class='id identifier rubyid_base'>base</span><span class='period'>.</span><span class='id identifier rubyid_extend'>extend</span> <span class='const'><span class='object_link'><a href="../SemanticLogger.html" title="SemanticLogger (module)">SemanticLogger</a></span></span><span class='op'>::</span><span class='const'>Loggable</span><span class='op'>::</span><span class='const'>ClassMethods</span>
+  <span class='id identifier rubyid_base'>base</span><span class='period'>.</span><span class='id identifier rubyid_class_eval'>class_eval</span> <span class='kw'>do</span>
+    <span class='comment'># Returns [SemanticLogger::Logger] class level logger
+</span>    <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_logger'>logger</span>
+      <span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>pact_broker/configuration</span><span class='tstring_end'>&quot;</span></span>
+      <span class='ivar'>@logger</span> <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="../PactBroker.html" title="PactBroker (module)">PactBroker</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configuration'><span class='object_link'><a href="../PactBroker.html#configuration-class_method" title="PactBroker.configuration (method)">configuration</a></span></span><span class='period'>.</span><span class='id identifier rubyid_custom_logger'>custom_logger</span> <span class='op'>||</span> <span class='const'><span class='object_link'><a href="../SemanticLogger.html" title="SemanticLogger (module)">SemanticLogger</a></span></span><span class='lbracket'>[</span><span class='kw'>self</span><span class='rbracket'>]</span>
+    <span class='kw'>end</span>
+
+    <span class='comment'># Replace instance class level logger
+</span>    <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_logger='>logger=</span><span class='lparen'>(</span><span class='id identifier rubyid_logger'>logger</span><span class='rparen'>)</span>
+      <span class='ivar'>@logger</span> <span class='op'>=</span> <span class='id identifier rubyid_logger'>logger</span>
+    <span class='kw'>end</span>
+
+    <span class='comment'># Returns [SemanticLogger::Logger] instance level logger
+</span>    <span class='kw'>def</span> <span class='id identifier rubyid_logger'>logger</span>
+      <span class='ivar'>@logger</span> <span class='op'>||=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_logger'>logger</span>
+    <span class='kw'>end</span>
+
+    <span class='comment'># Replace instance level logger
+</span>    <span class='kw'>def</span> <span class='id identifier rubyid_logger='>logger=</span><span class='lparen'>(</span><span class='id identifier rubyid_logger'>logger</span><span class='rparen'>)</span>
+      <span class='ivar'>@logger</span> <span class='op'>=</span> <span class='id identifier rubyid_logger'>logger</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="log_error-instance_method">
+  
+    #<strong>log_error</strong>(e, description = nil)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/logging.rb', line 45</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_log_error'>log_error</span> <span class='id identifier rubyid_e'>e</span><span class='comma'>,</span> <span class='id identifier rubyid_description'>description</span> <span class='op'>=</span> <span class='kw'>nil</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_instance_of?'>instance_of?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../SemanticLogger.html" title="SemanticLogger (module)">SemanticLogger</a></span></span><span class='op'>::</span><span class='const'>Logger</span><span class='rparen'>)</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_description'>description</span>
+      <span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_error'>error</span><span class='lparen'>(</span><span class='id identifier rubyid_description'>description</span><span class='comma'>,</span> <span class='id identifier rubyid_e'>e</span><span class='rparen'>)</span>
+    <span class='kw'>else</span>
+      <span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_error'>error</span><span class='lparen'>(</span><span class='id identifier rubyid_e'>e</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid_message'>message</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_e'>e</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='embexpr_end'>}</span><span class='tstring_content'> </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_e'>e</span><span class='period'>.</span><span class='id identifier rubyid_message'>message</span><span class='embexpr_end'>}</span><span class='tstring_content'>\n</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_e'>e</span><span class='period'>.</span><span class='id identifier rubyid_backtrace'>backtrace</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>\n</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+    <span class='id identifier rubyid_message'>message</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_description'>description</span><span class='embexpr_end'>}</span><span class='tstring_content'> - </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_message'>message</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>if</span> <span class='id identifier rubyid_description'>description</span>
+    <span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_error'>error</span> <span class='id identifier rubyid_message'>message</span>
+  <span class='kw'>end</span>
+  <span class='kw'>unless</span> <span class='const'><span class='object_link'><a href="../PactBroker.html" title="PactBroker (module)">PactBroker</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configuration'><span class='object_link'><a href="../PactBroker.html#configuration-class_method" title="PactBroker.configuration (method)">configuration</a></span></span><span class='period'>.</span><span class='id identifier rubyid_hide_pactflow_messages'>hide_pactflow_messages</span>
+    <span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_info'>info</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>\n\n</span><span class='embexpr_beg'>#{</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>*</span><span class='tstring_end'>&#39;</span></span> <span class='op'>*</span> <span class='int'>80</span><span class='embexpr_end'>}</span><span class='tstring_content'>\n\nPrefer it was someone else&#39;s job to deal with this error? Check out https://pactflow.io/oss for a hardened, fully supported SaaS version of the Pact Broker with an improved UI  + more.\n\n</span><span class='embexpr_beg'>#{</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>*</span><span class='tstring_end'>&#39;</span></span> <span class='op'>*</span> <span class='int'>80</span><span class='embexpr_end'>}</span><span class='tstring_content'>\n</span><span class='tstring_end'>&quot;</span></span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="log_with_tag-instance_method">
+  
+    #<strong>log_with_tag</strong>(tag)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+35
+36
+37
+38
+39
+40
+41
+42
+43</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/pact_broker/logging.rb', line 35</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_log_with_tag'>log_with_tag</span><span class='lparen'>(</span><span class='id identifier rubyid_tag'>tag</span><span class='rparen'>)</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:tagged</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_tagged'>tagged</span><span class='lparen'>(</span><span class='id identifier rubyid_tag'>tag</span><span class='rparen'>)</span> <span class='kw'>do</span>
+      <span class='kw'>yield</span>
+    <span class='kw'>end</span>
+  <span class='kw'>else</span>
+    <span class='kw'>yield</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Tue Mar 22 17:40:10 2022 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.27 (ruby-2.7.5).
+</div>
+
+    </div>
+  </body>
+</html>
