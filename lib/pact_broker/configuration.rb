@@ -55,6 +55,8 @@ module PactBroker
       config.version_parser = PactBroker::Versions::ParseSemanticVersion
       config.sha_generator = PactBroker::Pacts::GenerateSha
       config.example_data_seeder = lambda do
+        # Do the require in the lambda, not at the top of the file, because we need
+        # the database connection to be made before loading any Sequel::Model classes.
         require "pact_broker/db/seed_example_data"
         PactBroker::DB::SeedExampleData.call
       end
