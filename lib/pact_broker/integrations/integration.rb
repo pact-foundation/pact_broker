@@ -31,10 +31,8 @@ module PactBroker
                                           .overall_latest
 
         latest_pact_publications_query.all.each do | pact |
-          eo_opts[:rows].each do | integration |
-            eo_opts[:id_map][[pact.consumer_id, pact.provider_id]]&.each do | integration |
-              integration.associations[:latest_pact] = pact
-            end
+          eo_opts[:id_map][[pact.consumer_id, pact.provider_id]]&.each do | integration |
+            integration.associations[:latest_pact] = pact
           end
         end
       end
