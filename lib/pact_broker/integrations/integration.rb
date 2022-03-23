@@ -21,12 +21,18 @@ module PactBroker
           integration.associations[:latest_pact] = nil
         end
 
+
         # Would prefer to be able to eager load only the fields specified in the original Integrations
         # query, but we don't seem to have that information in this context.
-        # We may not need all these assocations eager loaded.
-        PactBroker::Pacts::PactPublication.eager_for_domain_with_content.overall_latest.each do | pact |
+        # Need the latest verification for the verification status in the index response.
+        latest_pact_publications_query = PactBroker::Pacts::PactPublication
+                                          .eager_for_domain_with_content
+                                          .eager(pact_version: :latest_verification)
+                                          .overall_latest
+
+        latest_pact_publications_query.all.each do | pact |
           eo_opts[:rows].each do | integration |
-            if integration.consumer_id == pact.consumer_id && integration.provider_id == pact.provider_id
+            eo_opts[:id_map][[pact.consumer_id, pact.provider_id]]&.each do | integration |
               integration.associations[:latest_pact] = pact
             end
           end
@@ -36,8 +42,11 @@ module PactBroker
       one_to_one(:latest_pact, class: "PactBroker::Pacts::PactPublication", :key => [:consumer_id, :provider_id], primary_key: [:consumer_id, :provider_id], :eager_loader=> LATEST_PACT_EAGER_LOADER) do | _ds |
         # Would prefer to be able to eager load only the fields specified in the original Integrations
         # query, but we don't seem to have that information in this context.
-        # We may not need all these assocations eager loaded.
-        PactBroker::Pacts::PactPublication.eager_for_domain_with_content.overall_latest_for_consumer_id_and_provider_id(consumer_id, provider_id)
+        # Need the latest verification for the verification status in the index response.
+        PactBroker::Pacts::PactPublication
+          .eager_for_domain_with_content
+          .eager(pact_version: :latest_verification)
+          .overall_latest_for_consumer_id_and_provider_id(consumer_id, provider_id)
       end
 
       # When viewing the index, every webhook in the database will match at least one of the rows, so
@@ -71,6 +80,7 @@ module PactBroker
         end
       end
 
+      # TODO make this the verification status for the latest from main branch
       def verification_status_for_latest_pact
         @verification_status_for_latest_pact ||= PactBroker::Verifications::PseudoBranchStatus.new(latest_pact, latest_pact&.latest_verification)
       end

@@ -191,7 +191,7 @@ module PactBroker
 
         context "eager loading" do
           it "sets the head_pact_publications_for_tags" do
-            all = PactPublication.eager(:consumer, :tags, :head_pact_publications_for_tags).order(:id).all_allowing_lazy_load
+            all = PactPublication.eager(:provider, :consumer, :tags, :head_pact_publications_for_tags).order(:id).all_allowing_lazy_load
             expect(all.first.associations[:head_pact_publications_for_tags].first.consumer_version.number).to eq "2"
             expect(all.first.associations[:head_pact_publications_for_tags].last.consumer_version.number).to eq "1"
           end
@@ -426,7 +426,7 @@ module PactBroker
 
         context "when chained" do
           it "works" do
-            all = PactPublication.for_provider(td.find_pacticipant("Bar")).latest_for_consumer_tag("main").all
+            all = PactPublication.for_provider(td.find_pacticipant("Bar")).latest_for_consumer_tag("main").all_allowing_lazy_load
             expect(all.first.provider.name).to eq "Bar"
           end
         end

@@ -114,7 +114,7 @@ module PactBroker
 
         context "when chained" do
           it "works" do
-            all = PactPublication.for_provider(td.find_pacticipant("Bar")).latest_for_consumer_branch("main").all
+            all = PactPublication.for_provider(td.find_pacticipant("Bar")).latest_for_consumer_branch("main").all_allowing_lazy_load
             expect(all.first.provider.name).to eq "Bar"
           end
         end
@@ -285,7 +285,7 @@ module PactBroker
 
         context "when chained" do
           it "works" do
-            all = PactPublication.for_provider(td.find_pacticipant("Bar")).latest_for_consumer_tag("main").all
+            all = PactPublication.for_provider(td.find_pacticipant("Bar")).latest_for_consumer_tag("main").all_allowing_lazy_load
             expect(all.first.provider.name).to eq "Bar"
           end
         end
@@ -351,7 +351,7 @@ module PactBroker
 
         context "when chained" do
           it "works" do
-            all = PactPublication.for_provider(td.find_pacticipant("Bar")).latest_for_consumer_tag("main").all
+            all = PactPublication.for_provider(td.find_pacticipant("Bar")).latest_for_consumer_tag("main").all_allowing_lazy_load
             expect(all.first.provider.name).to eq "Bar"
           end
         end

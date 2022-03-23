@@ -31,8 +31,8 @@ module PactBroker
         end
 
         it "has a relationship to the latest verification via the latest pact" do
-          integration = Integration.eager(latest_pact: :latest_verification).order(Sequel.desc(:id)).all.first
-          expect(integration.latest_pact.latest_verification.provider_version_number).to eq "4"
+          integration = Integration.eager(:latest_pact).order(Sequel.desc(:id)).all.first
+          expect(integration.associations[:latest_pact].latest_verification.provider_version_number).to eq "4"
         end
 
         it "has a verification status" do
@@ -41,7 +41,7 @@ module PactBroker
 
         it "has a latest verification - this may not be the same as the latest verification for the latest pact" do
           integration = Integration.eager(:latest_verification).order(Sequel.desc(:id)).all.first
-          expect(integration.latest_verification.provider_version_number).to eq "4"
+          expect(integration.associations[:latest_verification].provider_version_number).to eq "4"
         end
 
         describe "latest_pact_or_verification_publication_date" do

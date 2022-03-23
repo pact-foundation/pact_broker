@@ -49,8 +49,8 @@ module PactBroker
 
         context "lazy loading" do
           it "lazy loads" do
-            expect(PactPublication.order(:id).all.first.pact_version.latest_verification.provider_version_number).to eq "3"
-            expect(PactPublication.order(:id).all.last.pact_version.latest_verification.provider_version_number).to eq "7"
+            expect(PactPublication.order(:id).all_allowing_lazy_load.first.pact_version.latest_verification.provider_version_number).to eq "3"
+            expect(PactPublication.order(:id).all_allowing_lazy_load.last.pact_version.latest_verification.provider_version_number).to eq "7"
           end
         end
 
@@ -81,8 +81,8 @@ module PactBroker
 
         context "lazy loading" do
           it "lazy loads" do
-            expect(PactPublication.order(:id).all.first.pact_version.latest_main_branch_verification).to have_attributes(provider_version_number: "3", number: 4)
-            expect(PactPublication.order(:id).all.last.pact_version.latest_main_branch_verification).to be_nil
+            expect(PactPublication.order(:id).all_allowing_lazy_load.first.pact_version.latest_main_branch_verification).to have_attributes(provider_version_number: "3", number: 4)
+            expect(PactPublication.order(:id).all_allowing_lazy_load.last.pact_version.latest_main_branch_verification).to be_nil
           end
         end
 
@@ -91,7 +91,7 @@ module PactBroker
           let(:pact_version_2) { PactVersion.eager(:latest_main_branch_verification).order(:id).all.last }
 
           it "eager loads" do
-            expect(PactPublication.order(:id).all.first.pact_version.latest_main_branch_verification).to have_attributes(provider_version_number: "3", number: 4)
+            expect(pact_version_1.associations[:latest_main_branch_verification]).to have_attributes(provider_version_number: "3", number: 4)
             expect(pact_version_2.associations[:latest_main_branch_verification]).to be_nil
           end
         end

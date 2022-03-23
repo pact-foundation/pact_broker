@@ -23,7 +23,7 @@ module PactBroker
         :provider,
         :consumer,
         :consumer_version,
-        pact_version: :latest_verification
+        :pact_version
       ]
 
       def find(provider_name, consumer_version_selectors)
@@ -162,16 +162,14 @@ module PactBroker
 
       def find_pacts_for_which_the_latest_version_for_the_fallback_tag_is_required(provider_name, selectors)
         selectors.collect do | selector |
-          query = scope_for(PactPublication).for_provider_name(provider_name).for_latest_consumer_versions_with_tag(selector.fallback_tag)
+          query = scope_for(PactPublication).eager_for_domain_with_content.for_provider_name(provider_name).for_latest_consumer_versions_with_tag(selector.fallback_tag)
           query = query.for_consumer_name(selector.consumer) if selector.consumer
-          query.all
-            .collect do | latest_tagged_pact_publication |
-              pact_publication = unscoped(PactPublication).find(id: latest_tagged_pact_publication.id)
-              SelectedPact.new(
-                pact_publication.to_domain,
-                Selectors.new(selector.resolve_for_fallback(pact_publication.consumer_version))
-              )
-            end
+          query.all.collect do | pact_publication |
+            SelectedPact.new(
+              pact_publication.to_domain,
+              Selectors.new(selector.resolve_for_fallback(pact_publication.consumer_version))
+            )
+          end
         end.flatten
       end
 
@@ -300,9 +298,7 @@ module PactBroker
 
       def collect_consumer_name_and_version_number(pact_publications_query)
         pact_publications = pact_publications_query
-                              .eager(:provider)
-                              .eager(:consumer)
-                              .eager(:consumer_version)
+                              .eager(:consumer, :consumer_version)
                               .order(:consumer_version_order)
                               .all_forbidding_lazy_load
                               .sort

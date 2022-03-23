@@ -26,7 +26,7 @@ module PactBroker
         scope_for(PactBroker::Integrations::Integration)
           .eager(:consumer)
           .eager(:provider)
-          .eager(latest_pact: [:latest_verification, :pact_version])
+          .eager(:latest_pact) # latest_pact eager loader is custom, can't take any more options
           .eager(:latest_verification)
           .all
           .sort { | a, b| Integration.compare_by_last_action_date(a, b) }
