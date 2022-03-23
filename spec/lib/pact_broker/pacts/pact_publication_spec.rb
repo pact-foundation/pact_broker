@@ -184,6 +184,7 @@ module PactBroker
 
         context "lazy loading" do
           it "sets the head_pact_publications_for_tags" do
+            pact_publication.head_pact_publications_for_tags.each(&:allow_lazy_load)
             expect(pact_publication.head_pact_publications_for_tags.first.consumer_version.number).to eq "2"
             expect(pact_publication.head_pact_publications_for_tags.last.consumer_version.number).to eq "1"
           end
@@ -192,6 +193,7 @@ module PactBroker
         context "eager loading" do
           it "sets the head_pact_publications_for_tags" do
             all = PactPublication.eager(:provider, :consumer, :tags, :head_pact_publications_for_tags).order(:id).all_allowing_lazy_load
+            all.first.associations[:head_pact_publications_for_tags].each(&:allow_lazy_load)
             expect(all.first.associations[:head_pact_publications_for_tags].first.consumer_version.number).to eq "2"
             expect(all.first.associations[:head_pact_publications_for_tags].last.consumer_version.number).to eq "1"
           end
@@ -210,7 +212,7 @@ module PactBroker
             .create_pact
         end
 
-        subject { PactPublication.created_after(Date.new(2020, 1, 2)).all }
+        subject { PactPublication.created_after(Date.new(2020, 1, 2)).all_allowing_lazy_load }
 
         its(:size) { is_expected.to eq 1 }
 
@@ -435,7 +437,7 @@ module PactBroker
       describe "#successfully_verified_by_provider_branch_when_not_wip" do
         let(:bar) { td.find_pacticipant("Bar") }
 
-        subject { PactPublication.successfully_verified_by_provider_branch_when_not_wip(bar.id, "main").all }
+        subject { PactPublication.successfully_verified_by_provider_branch_when_not_wip(bar.id, "main").all_allowing_lazy_load }
 
         context "PactPublication" do
           before do
@@ -455,7 +457,7 @@ module PactBroker
 
 
         context "with chained scopes" do
-          subject { PactPublication.latest_by_consumer_branch.successfully_verified_by_provider_branch_when_not_wip(bar.id, "provider-main").all }
+          subject { PactPublication.latest_by_consumer_branch.successfully_verified_by_provider_branch_when_not_wip(bar.id, "provider-main").all_allowing_lazy_load }
 
           context "when there are no latest branch pacts that have been successfully verified by the specified provider branch" do
             before do
@@ -508,7 +510,7 @@ module PactBroker
                 .create_verification(provider_version: "2", success: true, branch: "provider-main", number: "2")
             end
 
-            subject { PactPublication.latest_by_consumer_tag.successfully_verified_by_provider_branch_when_not_wip(bar.id, "provider-main").all }
+            subject { PactPublication.latest_by_consumer_tag.successfully_verified_by_provider_branch_when_not_wip(bar.id, "provider-main").all_allowing_lazy_load }
 
             its(:size) { is_expected.to eq 1 }
 

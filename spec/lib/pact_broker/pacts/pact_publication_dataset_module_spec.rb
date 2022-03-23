@@ -33,7 +33,7 @@ module PactBroker
             .create_pact
         end
 
-        subject { PactPublication.latest_by_consumer_branch.all }
+        subject { PactPublication.latest_by_consumer_branch.all_allowing_lazy_load }
 
         let(:foo) { PactBroker::Domain::Pacticipant.where(name: "Foo").single_record }
         let(:bar) { PactBroker::Domain::Pacticipant.where(name: "Bar").single_record }
@@ -55,7 +55,7 @@ module PactBroker
         end
 
         context "chained with created after" do
-          subject { PactPublication.created_after(DateTime.new(2020, 1, 3)).latest_by_consumer_branch.all }
+          subject { PactPublication.created_after(DateTime.new(2020, 1, 3)).latest_by_consumer_branch.all_allowing_lazy_load }
 
           its(:size) { is_expected.to eq 3 }
 
@@ -140,7 +140,7 @@ module PactBroker
             .create_consumer_version("8", tag_names: ["main"], comment: "No pact")
         end
 
-        subject { PactPublication.latest_by_consumer_tag.all }
+        subject { PactPublication.latest_by_consumer_tag.all_allowing_lazy_load }
 
         let(:foo) { PactBroker::Domain::Pacticipant.where(name: "Foo").single_record }
         let(:bar) { PactBroker::Domain::Pacticipant.where(name: "Bar").single_record }
@@ -190,20 +190,20 @@ module PactBroker
         subject { PactPublication.overall_latest }
 
         it "returns the latest by consumer/provider" do
-          all = subject.all.sort_by{ | pact_publication | pact_publication.consumer_version.order }
+          all = subject.all_allowing_lazy_load.sort_by{ | pact_publication | pact_publication.consumer_version.order }
           expect(all.size).to eq 2
           expect(all.first.revision_number).to eq 2
         end
 
         it "does not return extra columns" do
-          expect(subject.all.first.values.keys.sort).to eq PactPublication.columns.sort
+          expect(subject.all_allowing_lazy_load.first.values.keys.sort).to eq PactPublication.columns.sort
         end
 
         context "when columns are already selected" do
           subject { PactPublication.select(Sequel[:pact_publications][:id]).overall_latest }
 
           it "does not override them" do
-            expect(subject.all.first.values.keys).to eq [:id]
+            expect(subject.all_allowing_lazy_load.first.values.keys).to eq [:id]
           end
         end
 
@@ -360,7 +360,7 @@ module PactBroker
       describe "#successfully_verified_by_provider_branch_when_not_wip" do
         let(:bar) { td.find_pacticipant("Bar") }
 
-        subject { PactPublication.successfully_verified_by_provider_branch_when_not_wip(bar.id, "main").all }
+        subject { PactPublication.successfully_verified_by_provider_branch_when_not_wip(bar.id, "main").all_allowing_lazy_load }
 
         context "PactPublication" do
           before do
@@ -384,7 +384,7 @@ module PactBroker
 
 
         context "with chained scopes" do
-          subject { PactPublication.latest_by_consumer_branch.successfully_verified_by_provider_branch_when_not_wip(bar.id, "provider-main").all }
+          subject { PactPublication.latest_by_consumer_branch.successfully_verified_by_provider_branch_when_not_wip(bar.id, "provider-main").all_allowing_lazy_load }
 
           context "when there are no latest branch pacts that have been successfully verified by the specified provider branch" do
             before do
@@ -437,7 +437,7 @@ module PactBroker
                 .create_verification(provider_version: "2", success: true, branch: "provider-main", number: "2")
             end
 
-            subject { PactPublication.latest_by_consumer_tag.successfully_verified_by_provider_branch_when_not_wip(bar.id, "provider-main").all }
+            subject { PactPublication.latest_by_consumer_tag.successfully_verified_by_provider_branch_when_not_wip(bar.id, "provider-main").all_allowing_lazy_load }
 
             its(:size) { is_expected.to eq 1 }
 
