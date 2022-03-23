@@ -117,7 +117,6 @@ module PactBroker
 
       def find_all_pact_versions_between consumer_name, options
         find_all_database_versions_between(consumer_name, options)
-          .eager(:tags, :consumer)
           .reverse_order(:consumer_version_order)
           .all
           .collect(&:to_domain)
@@ -144,7 +143,7 @@ module PactBroker
       def find_latest_pacts_for_provider provider_name, tag = nil
         query = scope_for(PactPublication)
                   .for_provider_name(provider_name)
-                  .eager(:consumer)
+                  .eager_for_domain_with_content
 
         if tag
           query = query.latest_for_consumer_tag(tag)
@@ -277,7 +276,7 @@ module PactBroker
 
       def find_all_revisions consumer_name, consumer_version_number, provider_name
         scope_for(PactPublication)
-          .eager(:tags, :consumer)
+          .eager_for_domain_with_content
           .for_provider_name(provider_name)
           .for_consumer_name_and_maybe_version_number(consumer_name, consumer_version_number)
           .order_by_consumer_version_order
@@ -289,7 +288,6 @@ module PactBroker
         query = scope_for(PactPublication)
             .eager_for_domain_with_content
             .remove_overridden_revisions
-            .eager(:tags, :consumer)
             .for_consumer_name(pact.consumer.name)
             .for_provider_name(pact.provider.name)
 
@@ -308,7 +306,7 @@ module PactBroker
 
       def find_next_pact pact
         scope_for(PactPublication)
-          .eager(:tags)
+          .eager_for_domain_with_content
           .for_consumer_name(pact.consumer.name)
           .for_provider_name(pact.provider.name)
           .remove_overridden_revisions
@@ -346,7 +344,7 @@ module PactBroker
       def find_previous_distinct_pact_by_sha pact
         pact_version = PactVersion.for_pact_domain(pact)
         scope_for(PactPublication)
-          .eager(:tags)
+          .eager_for_domain_with_content
           .for_consumer_name(pact.consumer.name)
           .for_provider_name(pact.provider.name)
           .consumer_version_order_before(pact.consumer_version.order)
@@ -381,6 +379,7 @@ module PactBroker
         provider_name = options.fetch(:and)
 
         query = scope_for(PactPublication)
+          .eager_for_domain_with_content
           .for_consumer_name(consumer_name)
           .for_provider_name(provider_name)
           .remove_overridden_revisions
