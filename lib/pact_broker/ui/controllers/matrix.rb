@@ -46,19 +46,22 @@ module PactBroker
         end
 
         get "/provider/:provider_name/consumer/:consumer_name" do
-          selectors = [ PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: params[:consumer_name]), PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: params[:provider_name]) ]
-          options = {latestby: "cvpv", limit: 100}
+          selectors = [
+                        PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: params[:consumer_name]),
+                        PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: params[:provider_name])
+                      ]
+          options = { latestby: "cvpv", limit: 100 }
           lines = matrix_service.find(selectors, options)
           lines = PactBroker::UI::ViewDomain::MatrixLines.new(lines, base_url: base_url)
-          locals = {
-            lines: lines,
-            consumer_name: params[:consumer_name],
-            provider_name: params[:provider_name],
-            selectors: create_selector_objects(selectors),
-            options: create_options_model(options),
-            badge_url: nil,
-            base_url: base_url
-          }
+          locals =  {
+                      lines: lines,
+                      consumer_name: params[:consumer_name],
+                      provider_name: params[:provider_name],
+                      selectors: create_selector_objects(selectors),
+                      options: create_options_model(options),
+                      badge_url: nil,
+                      base_url: base_url
+                    }
           haml :'matrix/show', { locals: locals, layout: :'layouts/main', escape_html: true }
         end
       end
