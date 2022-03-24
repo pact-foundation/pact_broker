@@ -38,14 +38,8 @@ module DB
     con.extension(:connection_validator)
     con.extension(:pagination)
     con.extension(:statement_timeout)
+    con.extension(:any_not_empty)
     #con.extension(:caller_logging)
-    con.extend_datasets do
-      # rubocop: disable Lint/NestedMethodDefinition
-      def any?
-        !empty?
-      end
-      # rubocop: enable Lint/NestedMethodDefinition
-    end
     con.timezone = :utc
     con.run("SET sql_mode='STRICT_TRANS_TABLES';") if db_credentials[:adapter].to_s =~ /mysql/
     con

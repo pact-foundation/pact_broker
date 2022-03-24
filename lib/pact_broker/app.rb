@@ -134,17 +134,11 @@ module PactBroker
       # Keep this configuration in sync with lib/db.rb
       configuration.database_connection ||= PactBroker.create_database_connection(configuration.database_configuration, configuration.logger)
       PactBroker::DB.connection = configuration.database_connection
-      PactBroker::DB.connection.extend_datasets do
-        # rubocop: disable Lint/NestedMethodDefinition
-        def any?
-          !empty?
-        end
-        # rubocop: enable Lint/NestedMethodDefinition
-      end
       PactBroker::DB.validate_connection_config if configuration.validate_database_connection_config
       PactBroker::DB.set_mysql_strict_mode_if_mysql
       PactBroker::DB.connection.extension(:pagination)
       PactBroker::DB.connection.extension(:statement_timeout)
+      PactBroker::DB.connection.extension(:any_not_empty)
       PactBroker::DB.connection.timezone = :utc
       Sequel.datetime_class = DateTime
       Sequel.database_timezone = :utc # Store all dates in UTC, assume any date without a TZ is UTC
