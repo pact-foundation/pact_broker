@@ -14,11 +14,11 @@ require "pact_broker/domain/pacticipant"
 require "pact_broker/deployments/environment"
 require "pact_broker/deployments/deployed_version"
 require "pact_broker/deployments/released_version"
-require "pact_broker/matrix/row"
-require "pact_broker/matrix/head_row"
 require "pact_broker/versions/branch"
 require "pact_broker/versions/branch_version"
 require "pact_broker/versions/branch_head"
+require "pact_broker/matrix/quick_row"
+require "pact_broker/matrix/every_row"
 
 module PactBroker
   INTEGRATIONS_TABLES = [

@@ -118,8 +118,8 @@ module PactBroker
 
       def matrix_count
         begin
-          PactBroker::Matrix::Row.db.with_statement_timeout(PactBroker.configuration.metrics_sql_statement_timeout) do
-            PactBroker::Matrix::Row.count
+          PactBroker::Matrix::EveryRow.db.with_statement_timeout(PactBroker.configuration.metrics_sql_statement_timeout) do
+            PactBroker::Matrix::EveryRow.default_scope.count
           end
         rescue Sequel::DatabaseError => _ex
           -1

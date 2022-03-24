@@ -1,9 +1,7 @@
 require "pact_broker/logging"
 require "pact_broker/repositories/helpers"
-require "pact_broker/matrix/row"
 require "pact_broker/matrix/quick_row"
 require "pact_broker/matrix/every_row"
-require "pact_broker/matrix/head_row"
 require "pact_broker/error"
 require "pact_broker/matrix/query_results"
 require "pact_broker/matrix/integration"
@@ -24,7 +22,8 @@ module PactBroker
 
       # TODO move latest verification logic in to database
 
-      TP_COLS = PactBroker::Matrix::Row::TP_COLS
+      # Used when using table_print to output query results
+      TP_COLS = [ :consumer_version_number, :pact_revision_number, :provider_version_number, :verification_number]
 
       GROUP_BY_PROVIDER_VERSION_NUMBER = [:consumer_name, :consumer_version_number, :provider_name, :provider_version_number]
       GROUP_BY_PROVIDER = [:consumer_name, :consumer_version_number, :provider_name]

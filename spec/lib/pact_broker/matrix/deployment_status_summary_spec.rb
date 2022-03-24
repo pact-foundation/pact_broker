@@ -1,5 +1,5 @@
 require "pact_broker/matrix/deployment_status_summary"
-require "pact_broker/matrix/row"
+require "pact_broker/matrix/quick_row"
 require "pact_broker/matrix/query_results"
 require "pact_broker/matrix/integration"
 require "pact_broker/matrix/resolved_selector"
@@ -20,7 +20,7 @@ module PactBroker
         let(:rows) { [row_1, row_2] }
         # Foo => Bar
         let(:row_1) do
-          double(Row,
+          double(QuickRow,
             consumer: foo,
             provider: bar,
             consumer_version: foo_version,
@@ -38,7 +38,7 @@ module PactBroker
 
         # Foo => Baz
         let(:row_2) do
-          double(Row,
+          double(QuickRow,
             consumer: foo,
             provider: baz,
             consumer_version: foo_version,

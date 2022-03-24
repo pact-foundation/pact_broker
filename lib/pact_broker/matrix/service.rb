@@ -1,6 +1,5 @@
 require "pact_broker/logging"
 require "pact_broker/repositories"
-require "pact_broker/matrix/row"
 require "pact_broker/matrix/deployment_status_summary"
 require "pact_broker/matrix/query_results_with_deployment_status_summary"
 require "pact_broker/messages"
