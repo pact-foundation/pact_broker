@@ -252,6 +252,8 @@ groups:
           Regular expressions should start and end with a `/` to differentiate them from Strings.
           Note that backslashes need to be escaped with a second backslash when setting via an environment variable.
           Please read the [Webhook whitelists section](https://docs.pact.io/pact_broker/configuration/features#webhooks) of the Pact Broker configuration documentation to understand how the whitelist is used.
+        environment_variable_format: A space separated list.
+        yaml_format: A YAML list.
         default_value:
         examples:
           - github.com
@@ -265,14 +267,33 @@ groups:
 
           Each certificate configuration item accepts a chain of certificates in PEM format - there may be multiple 'BEGIN CERTIFICATE' and 'END CERTIFICATE' in the content of each item.
 
-          When setting the content, use the syntax "content: |-" followed by a new line, and then the contents of the certificate
-          chain in PEM format, indented by 2 more characters.
-
-          When setting the path, the full path to the certificate file in PEM format must be specified.
-
           The certificate configuration is not validated on startup. If any of the configured certificates cannot be loaded during the execution of a webhook, an error
           will be logged, and they will be ignored. You can check if the configuration is working by testing the execution of
           a webhook that connects to the server with the self signed certificate by following these instructions https://docs.pact.io/pact_broker/webhooks/debugging_webhooks#testing-webhook-execution
+
+          When setting the content in the YAML file, use the syntax "content: |-" followed by a new line, and then the contents of the certificate
+          chain in PEM format, indented by 2 more characters.
+
+          When setting the path, the full path to the certificate file in PEM format must be specified. When using Docker, you must ensure the
+          certificate file is [mounted into the container](https://docs.docker.com/storage/volumes/).
+
+          *NOTE: USING ENVIRONMENT VARIABLES TO SET THE WEBHOOK CERTIFICATES IS NOT SUPPORTED.*
+
+          YAML Example:
+
+          ```yaml
+          webhook_certificates:
+            - description: "An example self signed certificate with content"
+              content: |-
+                -----BEGIN CERTIFICATE-----
+                MIIDZDCCAkygAwIBAgIBATANBgkqhkiG9w0BAQsFADBCMRMwEQYKCZImiZPyLGQB
+                <REST OF CERTIFICATE>
+                jHT1Ty2CglM=
+                -----END CERTIFICATE-----
+            - description: "An example self signed certificate with a path"
+              path: /full/path/to/the/cert.pem
+
+          ```
         supported_versions: From v2.90.0
       disable_ssl_verification:
         description: "If set to true, SSL verification will be disabled for the HTTP requests made by the webhooks"
