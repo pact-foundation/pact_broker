@@ -33,7 +33,8 @@ module PactBroker
         end
 
         def to_text
-          decorator_class(:matrix_text_decorator).new(results).to_text(decorator_options)
+          response.body = decorator_class(:matrix_text_decorator).new(results).to_text(decorator_options)
+          results.deployable? ? 200 : 400
         end
 
         def policy_name

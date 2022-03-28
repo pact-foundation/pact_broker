@@ -32,11 +32,6 @@ module PactBroker
           :'matrix::can_i_deploy'
         end
 
-        def to_text
-          response.body = decorator_class(:matrix_text_decorator).new(results).to_text(decorator_options)
-          results.deployable? ? 200 : 400
-        end
-
         private
 
         def query_schema

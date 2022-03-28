@@ -50,6 +50,11 @@ module PactBroker
           decorator_class(:matrix_decorator).new(results).to_json(decorator_options)
         end
 
+        def to_text
+          response.body = decorator_class(:matrix_text_decorator).new(results).to_text(decorator_options)
+          results.deployable? ? 200 : 400
+        end
+
         def results
           @results ||= matrix_service.can_i_deploy(selectors, options)
         end
