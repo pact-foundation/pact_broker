@@ -13,7 +13,8 @@ module PactBroker
           allow(PactBroker::Api::Decorators::MatrixDecorator).to receive(:new).and_return(decorator)
         end
 
-        let(:results) { double("results") }
+        let(:results) { double("results", deployable?: deployable) }
+        let(:deployable) { true }
         let(:pacticipant) { double("pacticipant") }
         let(:decorator) { instance_double("PactBroker::Api::Decorators::MatrixDecorator", to_json: "response_body") }
         let(:matrix_service) { class_double("PactBroker::Matrix::Service").as_stubbed_const }
@@ -25,8 +26,9 @@ module PactBroker
             to: "prod"
           }
         end
+        let(:accept) { "application/hal+json" }
 
-        subject { get("/can-i-deploy", query, { "HTTP_ACCEPT" => "application/hal+json"}) }
+        subject { get("/can-i-deploy", query, { "HTTP_ACCEPT" => accept }) }
 
         context "with the wrong query" do
           let(:query) { {} }
@@ -43,6 +45,29 @@ module PactBroker
           it "returns a 400" do
             expect(subject.status).to eq 400
             expect(JSON.parse(subject.body)["errors"]["pacticipant"].first).to match(/Foo.*found/)
+          end
+        end
+
+        context "when Accept is text/plain" do
+          before do
+            allow(PactBroker::Api::Decorators::MatrixTextDecorator).to receive(:new).and_return(text_decorator)
+          end
+
+          let(:text_decorator) { instance_double("PactBroker::Api::Decorators::MatrixTextDecorator", to_text: "response_body") }
+          let(:accept) { "text/plain" }
+
+          it "returns text" do
+            expect(subject.headers["Content-Type"]).to include "text/plain"
+          end
+
+          context "when the version is deployable" do
+            its(:status) { is_expected.to eq 200 }
+          end
+
+          context "when the version is not deployable" do
+            let(:deployable) { false }
+
+            its(:status) { is_expected.to eq 400 }
           end
         end
       end

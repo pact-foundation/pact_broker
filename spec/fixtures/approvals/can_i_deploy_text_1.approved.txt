@@ -1,0 +1,8 @@
+CONSUMER | C.VERSION | PROVIDER | P.VERSION | SUCCESS? | RESULT#
+---------|-----------|----------|-----------|----------|--------
+Consumer | 1.0.0     | Provider | 4.5.6     | true     | 1      
+Consumer | 1.0.0     | Provider | ???       | ???      |        
+
+VERIFICATION RESULTS
+--------------------
+1. http://example.org/pacts/provider/Provider/consumer/Consumer/pact-version/1234/metadata/Y3ZuPTEuMC4w/verification-results/1 (success)

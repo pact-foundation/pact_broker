@@ -9,6 +9,13 @@ module PactBroker
       class CanIDeploy < Matrix
         include PactBroker::Messages
 
+        def content_types_provided
+          [
+            ["application/hal+json", :to_json],
+            ["text/plain", :to_text]
+          ]
+        end
+
         def malformed_request?
           if (errors = query_schema.call(query_params)).any?
             set_json_validation_error_messages(errors)
@@ -23,6 +30,11 @@ module PactBroker
 
         def policy_name
           :'matrix::can_i_deploy'
+        end
+
+        def to_text
+          response.body = decorator_class(:matrix_text_decorator).new(results).to_text(decorator_options)
+          results.deployable? ? 200 : 400
         end
 
         private

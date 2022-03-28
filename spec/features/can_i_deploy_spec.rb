@@ -13,12 +13,41 @@ RSpec.describe "can i deploy" do
   end
 
   let(:response_body) { JSON.parse(subject.body, symbolize_names: true) }
+  let(:accept_content_type) { "application/hal+json" }
 
-  subject { get("/can-i-deploy", query, { "HTTP_ACCEPT" => "application/hal+json"}) }
+  subject { get("/can-i-deploy", query, { "HTTP_ACCEPT" => accept_content_type }) }
 
   it "returns the matrix response" do
     expect(subject).to be_a_hal_json_success_response
     expect(response_body[:matrix]).to be_instance_of(Array)
+  end
+
+  context "with an environment" do
+    before do
+      td.create_environment("test")
+    end
+
+    let(:query) do
+      {
+        pacticipant: "Foo",
+        version: "1.2.3",
+        environment: "test"
+      }
+    end
+
+    it "returns the matrix response" do
+      expect(subject).to be_a_hal_json_success_response
+      expect(response_body[:matrix]).to be_instance_of(Array)
+    end
+  end
+
+  context "with text/plain" do
+    let(:accept_content_type) { "text/plain" }
+
+    it "return text output" do
+      expect(subject.headers["Content-Type"]).to include "text/plain"
+      expect(subject.body).to include "CONSUMER |"
+    end
   end
 
   context "using the URL format for tags" do
