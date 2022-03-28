@@ -25,7 +25,7 @@ module PactBroker
         # base_url raises a not implemented error
         def log_configuration(logger)
           source_info = to_source_trace
-          (self.class.config_attributes - [:base_url]).collect(&:to_s).each_with_object({})do | (key, details), new_hash |
+          (self.class.config_attributes - [:base_url]).collect(&:to_s).each_with_object({})do | key, new_hash |
             new_hash[key] = {
               value: self.send(key.to_sym),
               source: source_info.dig(key, :source) || {:type=>:defaults}
