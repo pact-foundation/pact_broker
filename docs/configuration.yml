@@ -277,8 +277,6 @@ groups:
           When setting the path, the full path to the certificate file in PEM format must be specified. When using Docker, you must ensure the
           certificate file is [mounted into the container](https://docs.docker.com/storage/volumes/).
 
-          *NOTE: USING ENVIRONMENT VARIABLES TO SET THE WEBHOOK CERTIFICATES IS NOT SUPPORTED.*
-
           YAML Example:
 
           ```yaml
@@ -291,10 +289,23 @@ groups:
                 jHT1Ty2CglM=
                 -----END CERTIFICATE-----
             - description: "An example self signed certificate with a path"
-              path: /full/path/to/the/cert.pem
+              path: "/full/path/to/the/cert.pem"
 
           ```
-        supported_versions: From v2.90.0
+
+          Environment variable example:
+
+          ```shell
+          PACT_BROKER_WEBHOOK_CERTIFICATES__0__LABEL="An example self signed certificate with content"
+          PACT_BROKER_WEBHOOK_CERTIFICATES__0__CONTENT="-----BEGIN CERTIFICATE-----
+                MIIDZDCCAkygAwIBAgIBATANBgkqhkiG9w0BAQsFADBCMRMwEQYKCZImiZPyLGQB
+                <REST OF CERTIFICATE>
+                jHT1Ty2CglM=
+                -----END CERTIFICATE-----"
+          PACT_BROKER_WEBHOOK_CERTIFICATES__1__LABEL="An example self signed certificate with a path"
+          PACT_BROKER_WEBHOOK_CERTIFICATES__1__PATH="/full/path/to/the/cert.pem"
+          ```
+        supported_versions: From v2.90.0 for YAML and 2.97.0 for environment variables.
       disable_ssl_verification:
         description: "If set to true, SSL verification will be disabled for the HTTP requests made by the webhooks"
         default_value: false

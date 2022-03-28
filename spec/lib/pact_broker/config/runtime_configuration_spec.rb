@@ -66,6 +66,18 @@ module PactBroker
 
         its(:base_urls) { is_expected.to eq %w[bar wiffle foo blah] }
       end
+
+      describe "webhook_certificates" do
+        context "when setting using environment variables with indexes eg PACT_BROKER_WEBHOOK_CERTIFICATES__0__LABEL" do
+          subject do
+            runtime_configuration = RuntimeConfiguration.new
+            runtime_configuration.webhook_certificates = { "0" => { "description" => "cert1", "content" => "abc" }, "1" => { "description" => "cert1", "content" => "abc" } }
+            runtime_configuration
+          end
+
+          its(:webhook_certificates) { is_expected.to eq [{ description: "cert1", content: "abc" }, { description: "cert1", content: "abc" }] }
+        end
+      end
     end
   end
 end

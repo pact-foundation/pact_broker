@@ -24,12 +24,17 @@ module PactBroker
       module InstanceMethods
         # base_url raises a not implemented error
         def log_configuration(logger)
-          to_source_trace.without("base_url").each_with_object({})do | (key, details), new_hash |
-            new_hash[key] = details.merge(value: self.send(key.to_sym))
+          source_info = to_source_trace
+          (self.class.config_attributes - [:base_url]).collect(&:to_s).each_with_object({})do | (key, details), new_hash |
+            new_hash[key] = {
+              value: self.send(key.to_sym),
+              source: source_info.dig(key, :source) || {:type=>:defaults}
+            }
           end.sort_by { |key, _| key }.each { |key, value| log_config_inner(key, value, logger) }
         end
 
         def log_config_inner(key, value, logger)
+          # TODO fix the source display for webhook_certificates set by environment variables
           if !value.has_key? :value
             value.sort_by { |inner_key, _| inner_key }.each { |inner_key, inner_value| log_config_inner("#{key}.#{inner_key}", inner_value, logger) }
           elsif self.class.sensitive_value?(key)

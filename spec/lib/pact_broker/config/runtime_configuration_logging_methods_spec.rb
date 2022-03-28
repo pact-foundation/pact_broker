@@ -18,6 +18,10 @@ module PactBroker
         expect(subject).to include "database_url=protocol://username:*****@host/database"
       end
 
+      it "logs values that don't have an initial default, but get set afterward" do
+        expect(subject).to include "webhook_certificates=[] source={:type=>:defaults}"
+      end
+
       context "with a database URL with no password" do
         let(:initial_values) { { database_password: "foo", database_url: "sqlite:///pact_broker.sqlite3" } }
 

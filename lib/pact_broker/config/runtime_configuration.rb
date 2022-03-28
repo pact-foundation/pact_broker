@@ -52,9 +52,12 @@ module PactBroker
         webhook_scheme_whitelist: ["https"],
         webhook_host_whitelist: [],
         disable_ssl_verification: false,
-        webhook_certificates: [],
-        user_agent: "Pact Broker v#{PactBroker::VERSION}",
+        user_agent: "Pact Broker v#{PactBroker::VERSION}"
       )
+      # no default, if you set it to [] or nil, then anyway config blows up when it tries to merge in the
+      # numerically indexed hash from the environment variables.
+      attr_config :webhook_certificates
+      on_load :set_webhook_attribute_defaults
 
       # resource attributes
       attr_config(
@@ -178,8 +181,14 @@ module PactBroker
       def webhook_certificates= webhook_certificates
         if webhook_certificates.is_a?(Array)
           super(webhook_certificates.collect(&:symbolize_keys))
+        elsif webhook_certificates.is_a?(Hash)
+          if all_keys_are_number_strings?(webhook_certificates)
+            super(convert_hash_with_number_string_keys_to_array(webhook_certificates).collect(&:symbolize_keys))
+          else
+            raise_validation_error("webhook_certificates must be an array, or a hash where each key is an integer in string format.")
+          end
         elsif !webhook_certificates.nil?
-          raise_validation_error("webhook_certificates must be an array")
+          raise_validation_error("webhook_certificates cannot be set using a #{webhook_certificates.class}")
         end
       end
 
@@ -207,6 +216,14 @@ module PactBroker
 
       def raise_validation_error(msg)
         raise PactBroker::ConfigurationError, msg
+      end
+
+      def set_webhook_attribute_defaults
+        # can't set a default on this, or anyway config blows up when trying to merge the
+        # hash from the env vars into an array/nil.
+        if webhook_certificates.nil?
+          self.webhook_certificates = []
+        end
       end
     end
   end
