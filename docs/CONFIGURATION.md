@@ -157,7 +157,7 @@ To disable noisy SQL query logging when the application `log_level` is set to `d
 
 **Environment variable name:** `PACT_BROKER_SQL_LOG_LEVEL`<br/>
 **YAML configuration key name:** `sql_log_level`<br/>
-**Default:** `debug`<br/>
+**Default:** From 2.99+, the default is `none`. In previous versions, the default is `debug`.<br/>
 **Allowed values:** `none`, `debug`, `info`, `warn`, `error`, `fatal`<br/>
 
 ### sql_log_warn_duration

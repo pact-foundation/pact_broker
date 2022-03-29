@@ -97,7 +97,7 @@ groups:
           The log level that will be used when the SQL query statements are logged.
 
           To disable noisy SQL query logging when the application `log_level` is set to `debug` for other reasons, use the value `none`.
-        default_value: debug
+        default_description: From 2.99+, the default is `none`. In previous versions, the default is `debug`.
         allowed_values:
           - none
           - debug

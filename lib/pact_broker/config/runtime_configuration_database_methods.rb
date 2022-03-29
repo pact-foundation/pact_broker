@@ -16,7 +16,7 @@ module PactBroker
             database_port: nil,
             database_url: nil,
             database_sslmode: nil,
-            sql_log_level: :debug,
+            sql_log_level: :none,
             sql_log_warn_duration: 5,
             sql_enable_caller_logging: false,
             database_max_connections: nil,
