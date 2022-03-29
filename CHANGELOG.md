@@ -1,3 +1,10 @@
+<a name="v2.98.0"></a>
+### v2.98.0 (2022-03-29)
+
+#### Features
+
+* support debug logging of entire request and response	 ([42eb4a17](/../../commit/42eb4a17))
+
 <a name="v2.97.0"></a>
 ### v2.97.0 (2022-03-29)
 
