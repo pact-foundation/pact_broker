@@ -82,7 +82,7 @@ module PactBroker
           private :postgres?
 
           def driver_options
-            if postgres?
+            if postgres? && database_statement_timeout
               { options: "-c statement_timeout=#{database_statement_timeout}s" }
             end
           end
