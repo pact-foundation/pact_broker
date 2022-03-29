@@ -14,7 +14,7 @@ module PactBroker
         let(:app) { HttpDebugLogs.new(target_app) }
         let(:logger) { double("logger", debug: nil) }
 
-        subject { post("/", { foo: "bar" }.to_json, { "HTTP_ACCEPT" => "foo" }) }
+        subject { post("/", { foo: "bar" }.to_json, { "HTTP_ACCEPT" => "application/json" }) }
 
         it "returns the response" do
           expect(subject.status).to eq 200
@@ -23,7 +23,7 @@ module PactBroker
         end
 
         it "logs the rack env" do
-          expect(logger).to receive(:debug).with("env", payload: hash_including({ "rack.input" => { "foo" => "bar" }, "HTTP_ACCEPT" => "foo" }))
+          expect(logger).to receive(:debug).with("env", payload: hash_including({ "rack.input" => { "foo" => "bar" }, "HTTP_ACCEPT" => "application/json" }))
           subject
         end
 
@@ -31,6 +31,15 @@ module PactBroker
           expected_payload = { "status" => 200, "headers" => { "Content-Type" => "text/plain" }, "body" => ["response body"] }
           expect(logger).to receive(:debug).with("response", payload: hash_including(expected_payload))
           subject
+        end
+
+        context "when the request is not for the API" do
+          subject { get("/", nil, { "HTTP_ACCEPT" => "text/html" }) }
+
+          it "is not logged" do
+            expect(logger).to_not receive(:debug)
+            subject
+          end
         end
       end
     end
