@@ -34,6 +34,7 @@ groups:
         description: |-
           Enable this setting to print the entire request and response to the logs at debug level. Used for troubleshooting issues.
           Do not leave this on permanently, as it will have performance and security issues.
+          Ensure the application [`log_level`](#log_level) is set to `debug` when this setting is enabled.
         default_value: false
         allowed_values:
           - true

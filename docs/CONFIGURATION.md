@@ -57,6 +57,7 @@ While the default is `file` for the Ruby application, it is set to `stdout` on t
 
 Enable this setting to print the entire request and response to the logs at debug level. Used for troubleshooting issues.
 Do not leave this on permanently, as it will have performance and security issues.
+Ensure the application [`log_level`](#log_level) is set to `debug` when this setting is enabled.
 
 **Supported versions:** From v2.98.0<br/>
 **Environment variable name:** `PACT_BROKER_HTTP_DEBUG_LOGGING_ENABLED`<br/>
