@@ -29,6 +29,7 @@ require "pact_broker/api/middleware/configuration"
 require "pact_broker/api/middleware/basic_auth"
 require "pact_broker/config/basic_auth_configuration"
 require "pact_broker/api/authorization/resource_access_policy"
+require "pact_broker/api/middleware/http_debug_logs"
 
 module PactBroker
 
@@ -174,6 +175,7 @@ module PactBroker
     end
 
     def configure_middleware
+      @app_builder.use PactBroker::Api::Middleware::HttpDebugLogs if configuration.http_debug_logging_enabled
       configure_basic_auth
       configure_rack_protection
       @app_builder.use Rack::PactBroker::InvalidUriProtection

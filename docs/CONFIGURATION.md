@@ -53,6 +53,17 @@ While the default is `file` for the Ruby application, it is set to `stdout` on t
 **Default:** `file`<br/>
 **Allowed values:** `stdout`, `file`<br/>
 
+### http_debug_logging_enabled
+
+Enable this setting to print the entire request and response to the logs at debug level. Used for troubleshooting issues.
+Do not leave this on permanently, as it will have performance and security issues.
+
+**Supported versions:** From v2.98.0<br/>
+**Environment variable name:** `PACT_BROKER_HTTP_DEBUG_LOGGING_ENABLED`<br/>
+**YAML configuration key name:** `http_debug_logging_enabled`<br/>
+**Default:** `false`<br/>
+**Allowed values:** `true`, `false`<br/>
+
 ### hide_pactflow_messages
 
 Set to `true` to hide the messages in the logs about Pactflow
@@ -422,8 +433,6 @@ chain in PEM format, indented by 2 more characters.
 When setting the path, the full path to the certificate file in PEM format must be specified. When using Docker, you must ensure the
 certificate file is [mounted into the container](https://docs.docker.com/storage/volumes/).
 
-*NOTE: USING ENVIRONMENT VARIABLES TO SET THE WEBHOOK CERTIFICATES IS NOT SUPPORTED.*
-
 YAML Example:
 
 ```yaml
@@ -436,11 +445,24 @@ webhook_certificates:
       jHT1Ty2CglM=
       -----END CERTIFICATE-----
   - description: "An example self signed certificate with a path"
-    path: /full/path/to/the/cert.pem
+    path: "/full/path/to/the/cert.pem"
 
 ```
 
-**Supported versions:** From v2.90.0<br/>
+Environment variable example:
+
+```shell
+PACT_BROKER_WEBHOOK_CERTIFICATES__0__LABEL="An example self signed certificate with content"
+PACT_BROKER_WEBHOOK_CERTIFICATES__0__CONTENT="-----BEGIN CERTIFICATE-----
+      MIIDZDCCAkygAwIBAgIBATANBgkqhkiG9w0BAQsFADBCMRMwEQYKCZImiZPyLGQB
+      <REST OF CERTIFICATE>
+      jHT1Ty2CglM=
+      -----END CERTIFICATE-----"
+PACT_BROKER_WEBHOOK_CERTIFICATES__1__LABEL="An example self signed certificate with a path"
+PACT_BROKER_WEBHOOK_CERTIFICATES__1__PATH="/full/path/to/the/cert.pem"
+```
+
+**Supported versions:** From v2.90.0 for YAML and 2.97.0 for environment variables.<br/>
 **Environment variable name:** `PACT_BROKER_WEBHOOK_CERTIFICATES`<br/>
 **YAML configuration key name:** `webhook_certificates`<br/>
 

@@ -30,6 +30,15 @@ groups:
         allowed_values:
           - stdout
           - file
+      http_debug_logging_enabled:
+        description: |-
+          Enable this setting to print the entire request and response to the logs at debug level. Used for troubleshooting issues.
+          Do not leave this on permanently, as it will have performance and security issues.
+        default_value: false
+        allowed_values:
+          - true
+          - false
+        supported_versions: From v2.98.0
       hide_pactflow_messages:
         description: "Set to `true` to hide the messages in the logs about Pactflow"
         default_value: true
