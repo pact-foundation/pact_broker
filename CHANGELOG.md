@@ -1,3 +1,15 @@
+<a name="v2.97.0"></a>
+### v2.97.0 (2022-03-29)
+
+#### Features
+
+* **webhook certificates**
+  * support setting webhook certificates using environment variables	 ([82c7a7e5](/../../commit/82c7a7e5))
+
+#### Bug Fixes
+
+* do not set postgres connection driver options if database_statement_timeout is nil	 ([adec4b00](/../../commit/adec4b00))
+
 <a name="v2.96.0"></a>
 ### v2.96.0 (2022-03-21)
 
