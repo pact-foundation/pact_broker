@@ -111,7 +111,37 @@ module PactBroker
           .limit(1)
       end
 
+      # Return the pacts (if they exist) for the branch heads.
+      # This uses the new logic of finding the branch head and returning any associated pacts,
+      # rather than the old logic of returning the pact for the latest version
+      # on the branch that had a pact.
+      def for_branch_heads(branch_name)
+        branch_head_join = {
+          Sequel[:pact_publications][:consumer_version_id] => Sequel[:branch_heads][:version_id],
+        }
+
+        base_query = self
+        if no_columns_selected?
+          base_query = base_query.select_all_qualified.select_append(Sequel[:branch_heads][:branch_name].as(:branch_name))
+        end
+
+        base_query
+          .join(:branch_heads, branch_head_join) do
+            name_like(Sequel[:branch_heads][:branch_name], branch_name)
+          end
+          .remove_overridden_revisions_from_complete_query
+      end
+
       def latest_for_consumer_branch(branch_name)
+        # Keep this flag for a little whle in case we need to disable the new logic
+        if PactBroker.feature_enabled?(:disable_use_branch_heads_for_latest_branch_pacts, true)
+          old_latest_for_consumer_branch(branch_name)
+        else
+          for_branch_heads(branch_name)
+        end
+      end
+
+      def old_latest_for_consumer_branch(branch_name)
         branch_versions_join = {
           Sequel[:pact_publications][:consumer_version_id] => Sequel[:branch_versions][:version_id]
         }

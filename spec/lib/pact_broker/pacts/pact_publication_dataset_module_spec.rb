@@ -104,6 +104,28 @@ module PactBroker
           expect(subject.first.values.keys.sort).to eq (PactPublication.columns + [:branch_name]).sort
         end
 
+        context "when there is no pact for the branch head" do
+          before do
+            td.create_consumer_version("12", branch: "main")
+          end
+
+          it "does not return a pact" do
+            all = subject.all_allowing_lazy_load
+            expect(all.size).to eq 1
+          end
+
+          context "when the new logic is disabled" do
+            before do
+              allow(PactBroker). to receive(:feature_enabled?).with(:disable_use_branch_heads_for_latest_branch_pacts, true).and_return(true)
+            end
+
+            it "does return a pact for the branch" do
+              all = subject.all_allowing_lazy_load
+              expect(all.size).to eq 2
+            end
+          end
+        end
+
         context "when columns are already selected" do
           subject { PactPublication.select(Sequel[:pact_publications][:id]).latest_for_consumer_branch("main") }
 
