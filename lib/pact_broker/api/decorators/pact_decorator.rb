@@ -110,7 +110,7 @@ module PactBroker
         link :'pb:diff-previous-distinct' do | options |
           {
             title: "Diff with previous distinct version of this pact",
-            href: previous_distinct_diff_url(represented, options.fetch(:base_url))
+            href: previous_distinct_diff_url(represented, options[:metadata], options.fetch(:base_url))
 
           }
         end

@@ -1,4 +1,4 @@
-require "spec/support/test_data_builder"
+require "pact_broker/api/pact_broker_urls"
 
 describe "Get diff between versions" do
 
@@ -6,7 +6,7 @@ describe "Get diff between versions" do
 
   let(:last_response_body) { subject.body }
 
-  subject { get path; last_response }
+  subject { get(path) }
 
   let(:pact_content_version_1) do
     hash = load_json_fixture("consumer-provider.json")
@@ -17,8 +17,7 @@ describe "Get diff between versions" do
   let(:pact_content_version_3) { pact_content_version_2 }
 
   before do
-    TestDataBuilder.new
-      .create_consumer("Consumer")
+    td.create_consumer("Consumer")
       .create_provider("Provider")
       .create_consumer_version("1")
       .create_pact(json_content: pact_content_version_1)
@@ -29,7 +28,6 @@ describe "Get diff between versions" do
   end
 
   context "when the versions exist" do
-
     it "returns a 200 text response" do
       expect(subject.headers["Content-Type"]).to eq "text/plain;charset=utf-8"
     end
@@ -38,16 +36,35 @@ describe "Get diff between versions" do
       expect(last_response_body).to include('"method": "post"')
       expect(last_response_body).to include('"method": "get"')
     end
-
   end
 
   context "when either version does not exist" do
-
     let(:path) { "/pacts/provider/Provider/consumer/Consumer/versions/1/diff/previous-distinct" }
 
     it "returns a 404 response" do
       expect(subject).to be_a_404_response
     end
+  end
 
+  context "when the URL includes the metadata" do
+    let(:metadata) do
+      {
+        "s" => [ { "b" => "main", "l" => true, "cv" => pact.consumer_version.id } ]
+      }
+    end
+    let(:pact) { td.and_return(:pact) }
+
+    let(:path) { PactBroker::Api::PactBrokerUrls.previous_distinct_diff_url(pact, metadata, "") }
+
+    context "when the versions exist" do
+      it "returns a 200 text response" do
+        expect(subject.headers["Content-Type"]).to eq "text/plain;charset=utf-8"
+      end
+
+      it "returns the JSON representation of the diff" do
+        expect(last_response_body).to include('"method": "post"')
+        expect(last_response_body).to include('"method": "get"')
+      end
+    end
   end
 end

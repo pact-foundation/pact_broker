@@ -68,6 +68,9 @@ module PactBroker
         "#{pactigration_base_url(base_url, pact)}/pact-version/#{pact.pact_version_sha}/metadata/#{encode_metadata(build_metadata_for_consumer_version_number(pact.consumer_version_number))}"
       end
 
+      # @param [PactBroker::Domain::Pact] pact
+      # @param [Hash] metadata created by PactBroker::Pacts::Metadata
+      # @param [String] base_url
       def pact_version_url_with_metadata pact, metadata, base_url = ""
         if metadata && metadata.any?
           "#{pact_version_url(pact, base_url)}/metadata/#{encode_metadata(metadata)}"
@@ -135,8 +138,8 @@ module PactBroker
         "#{base_url}/dashboard/provider/#{url_encode(provider_name)}/consumer/#{url_encode(consumer_name)}"
       end
 
-      def previous_distinct_diff_url pact, base_url
-        pact_url(base_url, pact) + "/diff/previous-distinct"
+      def previous_distinct_diff_url(pact, metadata, base_url = "")
+        pact_version_url_with_metadata(pact, metadata, base_url) + "/diff/previous-distinct"
       end
 
       def templated_diff_url pact, base_url = ""

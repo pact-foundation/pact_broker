@@ -1,11 +1,14 @@
 require "pact_broker/api/resources/base_resource"
 require "pact_broker/pacts/pact_params"
 require "pact_broker/pacts/diff"
+require "pact_broker/api/resources/metadata_resource_methods"
 
 module PactBroker
   module Api
     module Resources
       class PactContentDiff < BaseResource
+        include MetadataResourceMethods
+
         def content_types_provided
           [["text/plain", :to_text]]
         end
@@ -25,10 +28,6 @@ module PactBroker
 
         def pact
           @pact ||= pact_service.find_pact(pact_params)
-        end
-
-        def pact_params
-          @pact_params ||= PactBroker::Pacts::PactParams.from_path_info identifier_from_path
         end
 
         def policy_name
