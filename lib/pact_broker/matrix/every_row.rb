@@ -17,15 +17,19 @@ module PactBroker
         Sequel[:p][:created_at].as(:consumer_version_created_at),
         Sequel[:p][:id].as(:pact_order)
       ]
+
       VERIFICATION_COLUMNS = [
         Sequel[:v][:id].as(:verification_id),
         Sequel[:v][:provider_version_id],
         Sequel[:v][:created_at].as(:provider_version_created_at)
       ]
 
+      JOINED_VERIFICATION_COLUMNS = [:id, :pact_version_id, :provider_id, :provider_version_id, :created_at]
+
       ALL_COLUMNS = PACT_COLUMNS + VERIFICATION_COLUMNS
 
       SELECT_ALL_COLUMN_ARGS = [:select_all_columns] + ALL_COLUMNS
+
       dataset_module do
         select(*SELECT_ALL_COLUMN_ARGS)
 
@@ -33,9 +37,23 @@ module PactBroker
           left_outer_join(:verifications, P_V_JOIN, { table_alias: :v } )
         end
 
+        def inner_join_verifications
+          join(:verifications, P_V_JOIN, { table_alias: :v } )
+        end
+
+        def inner_join_verifications_matching_one_selector_provider_or_provider_version(query_ids)
+          verifications = db[:verifications]
+            .select(*JOINED_VERIFICATION_COLUMNS)
+            .where {
+              QueryBuilder.provider_or_provider_version_matches(query_ids)
+            }
+
+          join(verifications, P_V_JOIN, { table_alias: :v } )
+        end
+
         def verifications_for(query_ids)
           db[:verifications]
-            .select(:id, :pact_version_id, :provider_id, :provider_version_id, :created_at)
+            .select(*JOINED_VERIFICATION_COLUMNS)
             .where {
               Sequel.&(
                 QueryBuilder.consumer_in_pacticipant_ids(query_ids),

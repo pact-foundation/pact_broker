@@ -45,6 +45,15 @@ module PactBroker
         Sequel[:v][:verification_id],
         Sequel[:v][:created_at].as(:provider_version_created_at)
       ]
+
+      JOINED_VERIFICATION_COLUMNS = [
+        :verification_id,
+        :provider_version_id,
+        :pact_version_id,
+        :provider_id,
+        :created_at
+      ]
+
       LAST_ACTION_DATE = Sequel.lit("CASE WHEN (provider_version_created_at IS NOT NULL AND provider_version_created_at > consumer_version_created_at) THEN provider_version_created_at ELSE consumer_version_created_at END").as(:last_action_date)
 
       ALL_COLUMNS = PACT_COLUMNS + VERIFICATION_COLUMNS
@@ -146,10 +155,15 @@ module PactBroker
         # When we have one selector, we need to join ALL the verifications to find out
         # what integrations exist
         def matching_one_selector(selectors)
-          join_verifications
+          query_ids = QueryIds.from_selectors(selectors)
+          rows_where_selector_matches_consumer_cols = join_verifications
             .where {
-              QueryBuilder.consumer_or_consumer_version_or_provider_or_provider_or_provider_version_match(QueryIds.from_selectors(selectors), :p, :v)
+              QueryBuilder.consumer_or_consumer_version_matches(query_ids, :p)
             }
+
+          rows_where_selector_matches_provider_cols = inner_join_verifications_matching_one_selector_provider_or_provider_version(query_ids)
+
+          rows_where_selector_matches_consumer_cols.union(rows_where_selector_matches_provider_cols)
         end
 
         def pacticipant_ids_matching_one_selector_optimised(selectors)
@@ -229,9 +243,19 @@ module PactBroker
           left_outer_join(verifications_for(query_ids), LP_LV_JOIN, { table_alias: :v } )
         end
 
+        def inner_join_verifications_matching_one_selector_provider_or_provider_version(query_ids)
+          verifications = db[LV]
+            .select(*JOINED_VERIFICATION_COLUMNS)
+            .where {
+              QueryBuilder.provider_or_provider_version_matches(query_ids)
+            }
+
+          join(verifications, LP_LV_JOIN, { table_alias: :v } )
+        end
+
         def verifications_for(query_ids)
           db[LV]
-            .select(:verification_id, :provider_version_id, :pact_version_id, :provider_id, :created_at)
+            .select(*JOINED_VERIFICATION_COLUMNS)
             .where {
               Sequel.&(
                 QueryBuilder.consumer_in_pacticipant_ids(query_ids),
