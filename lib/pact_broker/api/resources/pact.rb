@@ -94,14 +94,6 @@ module PactBroker
           :'pacts::pact'
         end
 
-        def policy_pacticipant
-          if resource_exists?
-            consumer
-          else
-            nil
-          end
-        end
-
         private
 
         def pact

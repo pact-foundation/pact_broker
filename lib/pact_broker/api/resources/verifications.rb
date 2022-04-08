@@ -62,10 +62,6 @@ module PactBroker
           :'verifications::verifications'
         end
 
-        def policy_pacticipant
-          provider
-        end
-
         private
 
         def pact

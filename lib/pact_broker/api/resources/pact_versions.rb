@@ -34,10 +34,6 @@ module PactBroker
         def policy_name
           :'pacts::pacts'
         end
-
-        def policy_pacticipant
-          consumer
-        end
       end
     end
   end
