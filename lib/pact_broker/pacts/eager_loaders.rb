@@ -32,7 +32,10 @@ module PactBroker
 
           pact_publications.each do | pact_publication |
             pact_publication.consumer_version_tags.collect(&:name).sort.each do | tag_name |
-              pact_publication.associations[:head_pact_publications_for_tags] << head_pact_publications_by_tag[tag_name]
+              # Not sure how this can ever be nil, but a PF error suggests that it has happend. Maybe a timing issue?
+              if head_pact_publications_by_tag[tag_name]
+                pact_publication.associations[:head_pact_publications_for_tags] << head_pact_publications_by_tag[tag_name]
+              end
             end
           end
         end
