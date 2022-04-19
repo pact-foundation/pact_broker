@@ -1,0 +1,501 @@
+[
+      {
+      "path": "/",
+            "allowed_methods": ["GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::Index",
+                  "location": "lib/pact_broker/api/resources/index.rb"
+      },
+      {
+      "path": "/can-i-deploy",
+            "allowed_methods": ["GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::CanIDeploy",
+                  "location": "lib/pact_broker/api/resources/can_i_deploy.rb"
+      },
+      {
+      "path": "/contracts/publish",
+            "allowed_methods": ["POST", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::PublishContracts",
+                  "location": "lib/pact_broker/api/resources/publish_contracts.rb"
+      },
+      {
+      "path": "/dashboard",
+            "allowed_methods": ["GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::Dashboard",
+                  "location": "lib/pact_broker/api/resources/dashboard.rb"
+      },
+      {
+      "path": "/dashboard/provider/:provider_name/consumer/:consumer_name",
+            "allowed_methods": ["GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::Dashboard",
+                  "location": "lib/pact_broker/api/resources/dashboard.rb"
+      },
+      {
+      "path": "/deployed-versions/:uuid",
+            "allowed_methods": ["GET", "PATCH", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::DeployedVersion",
+                  "location": "lib/pact_broker/api/resources/deployed_version.rb"
+      },
+      {
+      "path": "/environments",
+            "allowed_methods": ["GET", "POST", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::Environments",
+                  "location": "lib/pact_broker/api/resources/environments.rb"
+      },
+      {
+      "path": "/environments/:environment_uuid",
+            "allowed_methods": ["GET", "PUT", "DELETE", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::Environment",
+                  "location": "lib/pact_broker/api/resources/environment.rb"
+      },
+      {
+      "path": "/environments/:environment_uuid/deployed-versions/currently-deployed",
+            "allowed_methods": ["GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::CurrentlyDeployedVersionsForEnvironment",
+                  "location": "lib/pact_broker/api/resources/currently_deployed_versions_for_environment.rb"
+      },
+      {
+      "path": "/environments/:environment_uuid/released-versions/currently-supported",
+            "allowed_methods": ["GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::CurrentlySupportedVersionsForEnvironment",
+                  "location": "lib/pact_broker/api/resources/currently_supported_versions_for_environment.rb"
+      },
+      {
+      "path": "/groups/:pacticipant_name",
+            "allowed_methods": ["GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::Group",
+                  "location": "lib/pact_broker/api/resources/group.rb"
+      },
+      {
+      "path": "/integrations",
+            "allowed_methods": ["GET", "OPTIONS", "DELETE"],
+            "class": "PactBroker::Api::Resources::Integrations",
+                  "location": "lib/pact_broker/api/resources/integrations.rb"
+      },
+      {
+      "path": "/integrations/provider/:provider_name/consumer/:consumer_name",
+            "allowed_methods": ["OPTIONS", "DELETE"],
+            "class": "PactBroker::Api::Resources::Integration",
+                  "location": "lib/pact_broker/api/resources/integration.rb"
+      },
+      {
+      "path": "/matrix",
+            "allowed_methods": ["GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::Matrix",
+                  "location": "lib/pact_broker/api/resources/matrix.rb"
+      },
+      {
+      "path": "/matrix/provider/:provider_name/consumer/:consumer_name",
+            "allowed_methods": ["GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::MatrixForConsumerAndProvider",
+                  "location": "lib/pact_broker/api/resources/matrix_for_consumer_and_provider.rb"
+      },
+      {
+      "path": "/matrix/provider/:provider_name/latest/:provider_tag/consumer/:consumer_name/latest/:tag/badge",
+            "allowed_methods": ["GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::MatrixBadge",
+                  "location": "lib/pact_broker/api/resources/matrix_badge.rb"
+      },
+      {
+      "path": "/metrics",
+            "allowed_methods": ["GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::Metrics",
+                  "location": "lib/pact_broker/api/resources/metrics.rb"
+      },
+      {
+      "path": "/pact/provider/:provider_name/consumer/:consumer_name/latest",
+            "allowed_methods": ["GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::LatestPact",
+                  "location": "lib/pact_broker/api/resources/latest_pact.rb"
+      },
+      {
+      "path": "/pact/provider/:provider_name/consumer/:consumer_name/version/:consumer_version_number",
+            "allowed_methods": ["GET", "PUT", "DELETE", "PATCH", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::Pact",
+                  "location": "lib/pact_broker/api/resources/pact.rb"
+      },
+      {
+      "path": "/pacticipants",
+            "allowed_methods": ["GET", "POST", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::Pacticipants",
+                  "location": "lib/pact_broker/api/resources/pacticipants.rb"
+      },
+      {
+      "path": "/pacticipants/:pacticipant_name",
+            "allowed_methods": ["GET", "PUT", "PATCH", "DELETE", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::Pacticipant",
+                  "location": "lib/pact_broker/api/resources/pacticipant.rb"
+      },
+      {
+      "path": "/pacticipants/:pacticipant_name/branches/:branch_name/latest-version/can-i-deploy/to-environment/:environment_name",
+            "allowed_methods": ["GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::CanIDeployPacticipantVersionByBranchToEnvironment",
+                  "location": "lib/pact_broker/api/resources/can_i_deploy_pacticipant_version_by_branch_to_environment.rb"
+      },
+      {
+      "path": "/pacticipants/:pacticipant_name/branches/:branch_name/latest-version/can-i-deploy/to-environment/:environment_name/badge",
+            "allowed_methods": ["GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::CanIDeployPacticipantVersionByBranchToEnvironmentBadge",
+                  "location": "lib/pact_broker/api/resources/can_i_deploy_pacticipant_version_by_branch_to_environment_badge.rb"
+      },
+      {
+      "path": "/pacticipants/:pacticipant_name/branches/:branch_name/versions/:version_number",
+            "allowed_methods": ["GET", "PUT", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::BranchVersion",
+                  "location": "lib/pact_broker/api/resources/branch_version.rb"
+      },
+      {
+      "path": "/pacticipants/:pacticipant_name/labels/:label_name",
+            "allowed_methods": ["GET", "PUT", "DELETE", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::Label",
+                  "location": "lib/pact_broker/api/resources/label.rb"
+      },
+      {
+      "path": "/pacticipants/:pacticipant_name/latest-version",
+            "allowed_methods": ["GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::LatestVersion",
+                  "location": "lib/pact_broker/api/resources/latest_version.rb"
+      },
+      {
+      "path": "/pacticipants/:pacticipant_name/latest-version/:tag",
+            "allowed_methods": ["GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::LatestVersion",
+                  "location": "lib/pact_broker/api/resources/latest_version.rb"
+      },
+      {
+      "path": "/pacticipants/:pacticipant_name/latest-version/:tag/can-i-deploy/to/:to",
+            "allowed_methods": ["GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::CanIDeployPacticipantVersionByTagToTag",
+                  "location": "lib/pact_broker/api/resources/can_i_deploy_pacticipant_version_by_tag_to_tag.rb"
+      },
+      {
+      "path": "/pacticipants/:pacticipant_name/latest-version/:tag/can-i-deploy/to/:to/badge",
+            "allowed_methods": ["GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::CanIDeployPacticipantVersionByTagToTagBadge",
+                  "location": "lib/pact_broker/api/resources/can_i_deploy_pacticipant_version_by_tag_to_tag_badge.rb"
+      },
+      {
+      "path": "/pacticipants/:pacticipant_name/versions",
+            "allowed_methods": ["GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::Versions",
+                  "location": "lib/pact_broker/api/resources/versions.rb"
+      },
+      {
+      "path": "/pacticipants/:pacticipant_name/versions/:pacticipant_version_number",
+            "allowed_methods": ["GET", "PUT", "PATCH", "DELETE", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::Version",
+                  "location": "lib/pact_broker/api/resources/version.rb"
+      },
+      {
+      "path": "/pacticipants/:pacticipant_name/versions/:pacticipant_version_number/deployed-versions/environment/:environment_uuid",
+            "allowed_methods": ["GET", "POST", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::DeployedVersionsForVersionAndEnvironment",
+                  "location": "lib/pact_broker/api/resources/deployed_versions_for_version_and_environment.rb"
+      },
+      {
+      "path": "/pacticipants/:pacticipant_name/versions/:pacticipant_version_number/released-versions/environment/:environment_uuid",
+            "allowed_methods": ["GET", "POST", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::ReleasedVersionsForVersionAndEnvironment",
+                  "location": "lib/pact_broker/api/resources/released_versions_for_version_and_environment.rb"
+      },
+      {
+      "path": "/pacticipants/:pacticipant_name/versions/:pacticipant_version_number/tags/:tag_name",
+            "allowed_methods": ["GET", "PUT", "DELETE", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::Tag",
+                  "location": "lib/pact_broker/api/resources/tag.rb"
+      },
+      {
+      "path": "/pacticipants/label/:label_name",
+            "allowed_methods": ["GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::PacticipantsForLabel",
+                  "location": "lib/pact_broker/api/resources/pacticipants_for_label.rb"
+      },
+      {
+      "path": "/pacts/latest",
+            "allowed_methods": ["GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::LatestPacts",
+                  "location": "lib/pact_broker/api/resources/latest_pacts.rb"
+      },
+      {
+      "path": "/pacts/provider/:provider_name",
+            "allowed_methods": ["GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::ProviderPacts",
+                  "location": "lib/pact_broker/api/resources/provider_pacts.rb"
+      },
+      {
+      "path": "/pacts/provider/:provider_name/consumer/:consumer_name/branch/:branch_name",
+            "allowed_methods": ["DELETE", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::PactVersionsForBranch",
+                  "location": "lib/pact_broker/api/resources/pact_versions_for_branch.rb"
+      },
+      {
+      "path": "/pacts/provider/:provider_name/consumer/:consumer_name/latest",
+            "allowed_methods": ["GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::LatestPact",
+                  "location": "lib/pact_broker/api/resources/latest_pact.rb"
+      },
+      {
+      "path": "/pacts/provider/:provider_name/consumer/:consumer_name/latest-untagged",
+            "allowed_methods": ["GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::LatestPact",
+                  "location": "lib/pact_broker/api/resources/latest_pact.rb"
+      },
+      {
+      "path": "/pacts/provider/:provider_name/consumer/:consumer_name/latest-untagged/badge",
+            "allowed_methods": ["GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::Badge",
+                  "location": "lib/pact_broker/api/resources/badge.rb"
+      },
+      {
+      "path": "/pacts/provider/:provider_name/consumer/:consumer_name/latest/:tag",
+            "allowed_methods": ["GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::LatestPact",
+                  "location": "lib/pact_broker/api/resources/latest_pact.rb"
+      },
+      {
+      "path": "/pacts/provider/:provider_name/consumer/:consumer_name/latest/:tag/badge",
+            "allowed_methods": ["GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::Badge",
+                  "location": "lib/pact_broker/api/resources/badge.rb"
+      },
+      {
+      "path": "/pacts/provider/:provider_name/consumer/:consumer_name/latest/:tag/verification-results/latest",
+            "allowed_methods": ["GET", "OPTIONS", "DELETE"],
+            "class": "PactBroker::Api::Resources::LatestVerificationForLatestPact",
+                  "location": "lib/pact_broker/api/resources/latest_verification_for_latest_pact.rb"
+      },
+      {
+      "path": "/pacts/provider/:provider_name/consumer/:consumer_name/latest/badge",
+            "allowed_methods": ["GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::Badge",
+                  "location": "lib/pact_broker/api/resources/badge.rb"
+      },
+      {
+      "path": "/pacts/provider/:provider_name/consumer/:consumer_name/latest/verification-results/latest",
+            "allowed_methods": ["GET", "OPTIONS", "DELETE"],
+            "class": "PactBroker::Api::Resources::LatestVerificationForLatestPact",
+                  "location": "lib/pact_broker/api/resources/latest_verification_for_latest_pact.rb"
+      },
+      {
+      "path": "/pacts/provider/:provider_name/consumer/:consumer_name/pact-version/:pact_version_sha",
+            "allowed_methods": ["GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::PactVersion",
+                  "location": "lib/pact_broker/api/resources/pact_version.rb"
+      },
+      {
+      "path": "/pacts/provider/:provider_name/consumer/:consumer_name/pact-version/:pact_version_sha/diff/pact-version/:comparison_pact_version_sha",
+            "allowed_methods": ["GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::PactContentDiff",
+                  "location": "lib/pact_broker/api/resources/pact_content_diff.rb"
+      },
+      {
+      "path": "/pacts/provider/:provider_name/consumer/:consumer_name/pact-version/:pact_version_sha/metadata/:metadata",
+            "allowed_methods": ["GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::PactVersion",
+                  "location": "lib/pact_broker/api/resources/pact_version.rb"
+      },
+      {
+      "path": "/pacts/provider/:provider_name/consumer/:consumer_name/pact-version/:pact_version_sha/metadata/:metadata/verification-results",
+            "allowed_methods": ["POST", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::Verifications",
+                  "location": "lib/pact_broker/api/resources/verifications.rb"
+      },
+      {
+      "path": "/pacts/provider/:provider_name/consumer/:consumer_name/pact-version/:pact_version_sha/metadata/:metadata/verification-results/:verification_number",
+            "allowed_methods": ["GET", "OPTIONS", "DELETE"],
+            "class": "PactBroker::Api::Resources::Verification",
+                  "location": "lib/pact_broker/api/resources/verification.rb"
+      },
+      {
+      "path": "/pacts/provider/:provider_name/consumer/:consumer_name/pact-version/:pact_version_sha/verification-results",
+            "allowed_methods": ["POST", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::Verifications",
+                  "location": "lib/pact_broker/api/resources/verifications.rb"
+      },
+      {
+      "path": "/pacts/provider/:provider_name/consumer/:consumer_name/pact-version/:pact_version_sha/verification-results/:verification_number",
+            "allowed_methods": ["GET", "OPTIONS", "DELETE"],
+            "class": "PactBroker::Api::Resources::Verification",
+                  "location": "lib/pact_broker/api/resources/verification.rb"
+      },
+      {
+      "path": "/pacts/provider/:provider_name/consumer/:consumer_name/pact-version/:pact_version_sha/verification-results/:verification_number/triggered-webhooks",
+            "allowed_methods": ["GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::VerificationTriggeredWebhooks",
+                  "location": "lib/pact_broker/api/resources/verification_triggered_webhooks.rb"
+      },
+      {
+      "path": "/pacts/provider/:provider_name/consumer/:consumer_name/pact-version/:pact_version_sha/verification-results/latest",
+            "allowed_methods": ["GET", "OPTIONS", "DELETE"],
+            "class": "PactBroker::Api::Resources::LatestVerificationForPact",
+                  "location": "lib/pact_broker/api/resources/latest_verification_for_pact.rb"
+      },
+      {
+      "path": "/pacts/provider/:provider_name/consumer/:consumer_name/tag/:tag",
+            "allowed_methods": ["GET", "DELETE", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::TaggedPactVersions",
+                  "location": "lib/pact_broker/api/resources/tagged_pact_versions.rb"
+      },
+      {
+      "path": "/pacts/provider/:provider_name/consumer/:consumer_name/version/:consumer_version_number",
+            "allowed_methods": ["GET", "PUT", "DELETE", "PATCH", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::Pact",
+                  "location": "lib/pact_broker/api/resources/pact.rb"
+      },
+      {
+      "path": "/pacts/provider/:provider_name/consumer/:consumer_name/version/:consumer_version_number/diff/previous-distinct",
+            "allowed_methods": ["GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::PactContentDiff",
+                  "location": "lib/pact_broker/api/resources/pact_content_diff.rb"
+      },
+      {
+      "path": "/pacts/provider/:provider_name/consumer/:consumer_name/version/:consumer_version_number/diff/version/:comparison_consumer_version",
+            "allowed_methods": ["GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::PactContentDiff",
+                  "location": "lib/pact_broker/api/resources/pact_content_diff.rb"
+      },
+      {
+      "path": "/pacts/provider/:provider_name/consumer/:consumer_name/version/:consumer_version_number/previous-distinct",
+            "allowed_methods": ["GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::PreviousDistinctPactVersion",
+                  "location": "lib/pact_broker/api/resources/previous_distinct_pact_version.rb"
+      },
+      {
+      "path": "/pacts/provider/:provider_name/consumer/:consumer_name/version/:consumer_version_number/triggered-webhooks",
+            "allowed_methods": ["GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::PactTriggeredWebhooks",
+                  "location": "lib/pact_broker/api/resources/pact_triggered_webhooks.rb"
+      },
+      {
+      "path": "/pacts/provider/:provider_name/consumer/:consumer_name/version/:consumer_version_number/verification-results/latest",
+            "allowed_methods": ["GET", "OPTIONS", "DELETE"],
+            "class": "PactBroker::Api::Resources::LatestVerificationForPact",
+                  "location": "lib/pact_broker/api/resources/latest_verification_for_pact.rb"
+      },
+      {
+      "path": "/pacts/provider/:provider_name/consumer/:consumer_name/versions",
+            "allowed_methods": ["GET", "DELETE", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::PactVersions",
+                  "location": "lib/pact_broker/api/resources/pact_versions.rb"
+      },
+      {
+      "path": "/pacts/provider/:provider_name/consumer/:consumer_name/versions/:consumer_version_number",
+            "allowed_methods": ["GET", "PUT", "DELETE", "PATCH", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::Pact",
+                  "location": "lib/pact_broker/api/resources/pact.rb"
+      },
+      {
+      "path": "/pacts/provider/:provider_name/consumer/:consumer_name/webhooks",
+            "allowed_methods": ["POST", "GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::PactWebhooks",
+                  "location": "lib/pact_broker/api/resources/pact_webhooks.rb"
+      },
+      {
+      "path": "/pacts/provider/:provider_name/consumer/:consumer_name/webhooks/status",
+            "allowed_methods": ["GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::PactWebhooksStatus",
+                  "location": "lib/pact_broker/api/resources/pact_webhooks_status.rb"
+      },
+      {
+      "path": "/pacts/provider/:provider_name/for-verification",
+            "allowed_methods": ["GET", "POST", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::ProviderPactsForVerification",
+                  "location": "lib/pact_broker/api/resources/provider_pacts_for_verification.rb"
+      },
+      {
+      "path": "/pacts/provider/:provider_name/latest",
+            "allowed_methods": ["GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::LatestProviderPacts",
+                  "location": "lib/pact_broker/api/resources/latest_provider_pacts.rb"
+      },
+      {
+      "path": "/pacts/provider/:provider_name/latest/:tag",
+            "allowed_methods": ["GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::LatestProviderPacts",
+                  "location": "lib/pact_broker/api/resources/latest_provider_pacts.rb"
+      },
+      {
+      "path": "/pacts/provider/:provider_name/tag/:tag",
+            "allowed_methods": ["GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::ProviderPacts",
+                  "location": "lib/pact_broker/api/resources/provider_pacts.rb"
+      },
+      {
+      "path": "/relationships",
+            "allowed_methods": ["GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::Relationships",
+                  "location": "lib/pact_broker/api/resources/relationships.rb"
+      },
+      {
+      "path": "/released-versions/:uuid",
+            "allowed_methods": ["GET", "PATCH", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::ReleasedVersion",
+                  "location": "lib/pact_broker/api/resources/released_version.rb"
+      },
+      {
+      "path": "/test/error",
+            "allowed_methods": ["GET", "POST", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::ErrorTest",
+                  "location": "lib/pact_broker/api/resources/error_test.rb"
+      },
+      {
+      "path": "/trace/:*",
+            "allowed_methods": ["GET", "HEAD"],
+            "class": "Webmachine::Trace::TraceResource",
+                  "location": "../../../.rvm/gems/ruby-2.7.3/gems/webmachine-1.6.0/lib/webmachine/trace/trace_resource.rb"
+      },
+      {
+      "path": "/triggered-webhooks/:uuid/logs",
+            "allowed_methods": ["GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::TriggeredWebhookLogs",
+                  "location": "lib/pact_broker/api/resources/triggered_webhook_logs.rb"
+      },
+      {
+      "path": "/verification-results/consumer/:consumer_name/version/:consumer_version_number/latest",
+            "allowed_methods": ["GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::LatestVerificationsForConsumerVersion",
+                  "location": "lib/pact_broker/api/resources/latest_verifications_for_consumer_version.rb"
+      },
+      {
+      "path": "/webhooks",
+            "allowed_methods": ["GET", "POST", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::AllWebhooks",
+                  "location": "lib/pact_broker/api/resources/all_webhooks.rb"
+      },
+      {
+      "path": "/webhooks/:uuid",
+            "allowed_methods": ["GET", "PUT", "DELETE", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::Webhook",
+                  "location": "lib/pact_broker/api/resources/webhook.rb"
+      },
+      {
+      "path": "/webhooks/:uuid/execute",
+            "allowed_methods": ["POST", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::WebhookExecution",
+                  "location": "lib/pact_broker/api/resources/webhook_execution.rb"
+      },
+      {
+      "path": "/webhooks/consumer/:consumer_name",
+            "allowed_methods": ["POST", "GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::PacticipantWebhooks",
+                  "location": "lib/pact_broker/api/resources/pacticipant_webhooks.rb"
+      },
+      {
+      "path": "/webhooks/execute",
+            "allowed_methods": ["POST", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::WebhookExecution",
+                  "location": "lib/pact_broker/api/resources/webhook_execution.rb"
+      },
+      {
+      "path": "/webhooks/provider/:provider_name",
+            "allowed_methods": ["POST", "GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::PacticipantWebhooks",
+                  "location": "lib/pact_broker/api/resources/pacticipant_webhooks.rb"
+      },
+      {
+      "path": "/webhooks/provider/:provider_name/consumer/:consumer_name",
+            "allowed_methods": ["POST", "GET", "OPTIONS"],
+            "class": "PactBroker::Api::Resources::PacticipantWebhooks",
+                  "location": "lib/pact_broker/api/resources/pacticipant_webhooks.rb"
+      }
+      ]
+      

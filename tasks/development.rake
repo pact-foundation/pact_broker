@@ -40,13 +40,15 @@ task :'pact_broker:routes', [:search_term] do | _t, args |
     require "webmachine/describe_routes"
 
     routes = Webmachine::DescribeRoutes.call([PactBroker::API.application], search_term: search_term)
-
+    puts "["
     routes.each do | route |
-      puts ""
-      puts "#{route[:path]}"
-      puts "      allowed_methods: #{route[:allowed_methods].join(", ")}"
-      puts "      class: #{route[:resource_class]}"
-      puts "            location: #{route[:resource_class_location]}"
+      puts "{"
+      puts "\"path\": \"#{route[:path]}\","
+      puts "      \"allowed_methods\": [\"#{route[:allowed_methods].join("\", \"")}\"],"
+      puts "      \"class\": \"#{route[:resource_class]}\","
+      puts "            \"location\": \"#{route[:resource_class_location]}\""
+      puts "},"
     end
+    puts "]"
   end
 end

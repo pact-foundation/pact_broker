@@ -1,0 +1,589 @@
+openapi: '3.0.3'
+
+info:
+  version: "0.0.1"
+  title: "pact test"
+
+paths:
+  /:
+    get:
+      summary: PactBroker::Api::Resources::Index
+      operationId: /
+      responses:
+        default:
+          description: PactBroker::Api::Resources::Index
+  /can-i-deploy:
+    get:
+      summary: PactBroker::Api::Resources::CanIDeploy
+      operationId: /can-i-deploy
+      responses:
+        default:
+          description: PactBroker::Api::Resources::CanIDeploy
+  /contracts/publish:
+    get:
+      summary: PactBroker::Api::Resources::PublishContracts
+      operationId: /contracts/publish
+      responses:
+        default:
+          description: PactBroker::Api::Resources::PublishContracts
+  /dashboard:
+    get:
+      summary: PactBroker::Api::Resources::Dashboard
+      operationId: /dashboard
+      responses:
+        default:
+          description: PactBroker::Api::Resources::Dashboard
+  /dashboard/provider/:provider_name/consumer/:consumer_name:
+    get:
+      summary: PactBroker::Api::Resources::Dashboard
+      operationId: /dashboard/provider/:provider_name/consumer/:consumer_name
+      responses:
+        default:
+          description: PactBroker::Api::Resources::Dashboard
+  /deployed-versions/:uuid:
+    get:
+      summary: PactBroker::Api::Resources::DeployedVersion
+      operationId: /deployed-versions/:uuid
+      responses:
+        default:
+          description: PactBroker::Api::Resources::DeployedVersion
+  /environments:
+    get:
+      summary: PactBroker::Api::Resources::Environments
+      operationId: /environments
+      responses:
+        default:
+          description: PactBroker::Api::Resources::Environments
+  /environments/:environment_uuid:
+    get:
+      summary: PactBroker::Api::Resources::Environment
+      operationId: /environments/:environment_uuid
+      responses:
+        default:
+          description: PactBroker::Api::Resources::Environment
+  /environments/:environment_uuid/deployed-versions/currently-deployed:
+    get:
+      summary: PactBroker::Api::Resources::CurrentlyDeployedVersionsForEnvironment
+      operationId: /environments/:environment_uuid/deployed-versions/currently-deployed
+      responses:
+        default:
+          description: PactBroker::Api::Resources::CurrentlyDeployedVersionsForEnvironment
+  /environments/:environment_uuid/released-versions/currently-supported:
+    get:
+      summary: PactBroker::Api::Resources::CurrentlySupportedVersionsForEnvironment
+      operationId: /environments/:environment_uuid/released-versions/currently-supported
+      responses:
+        default:
+          description: PactBroker::Api::Resources::CurrentlySupportedVersionsForEnvironment
+  /groups/:pacticipant_name:
+    get:
+      summary: PactBroker::Api::Resources::Group
+      operationId: /groups/:pacticipant_name
+      responses:
+        default:
+          description: PactBroker::Api::Resources::Group
+  /integrations:
+    get:
+      summary: PactBroker::Api::Resources::Integrations
+      operationId: /integrations
+      responses:
+        default:
+          description: PactBroker::Api::Resources::Integrations
+  /integrations/provider/:provider_name/consumer/:consumer_name:
+    get:
+      summary: PactBroker::Api::Resources::Integration
+      operationId: /integrations/provider/:provider_name/consumer/:consumer_name
+      responses:
+        default:
+          description: PactBroker::Api::Resources::Integration
+  /matrix:
+    get:
+      summary: PactBroker::Api::Resources::Matrix
+      operationId: /matrix
+      responses:
+        default:
+          description: PactBroker::Api::Resources::Matrix
+  /matrix/provider/:provider_name/consumer/:consumer_name:
+    get:
+      summary: PactBroker::Api::Resources::MatrixForConsumerAndProvider
+      operationId: /matrix/provider/:provider_name/consumer/:consumer_name
+      responses:
+        default:
+          description: PactBroker::Api::Resources::MatrixForConsumerAndProvider
+  /matrix/provider/:provider_name/latest/:provider_tag/consumer/:consumer_name/latest/:tag/badge:
+    get:
+      summary: PactBroker::Api::Resources::MatrixBadge
+      operationId: /matrix/provider/:provider_name/latest/:provider_tag/consumer/:consumer_name/latest/:tag/badge
+      responses:
+        default:
+          description: PactBroker::Api::Resources::MatrixBadge
+  /metrics:
+    get:
+      summary: PactBroker::Api::Resources::Metrics
+      operationId: /metrics
+      responses:
+        default:
+          description: PactBroker::Api::Resources::Metrics
+  /pact/provider/:provider_name/consumer/:consumer_name/latest:
+    get:
+      summary: PactBroker::Api::Resources::LatestPact
+      operationId: /pact/provider/:provider_name/consumer/:consumer_name/latest
+      responses:
+        default:
+          description: PactBroker::Api::Resources::LatestPact
+  /pact/provider/:provider_name/consumer/:consumer_name/version/:consumer_version_number:
+    get:
+      summary: PactBroker::Api::Resources::Pact
+      operationId: /pact/provider/:provider_name/consumer/:consumer_name/version/:consumer_version_number
+      responses:
+        default:
+          description: PactBroker::Api::Resources::Pact
+  /pacticipants:
+    get:
+      summary: PactBroker::Api::Resources::Pacticipants
+      operationId: /pacticipants
+      responses:
+        default:
+          description: PactBroker::Api::Resources::Pacticipants
+  /pacticipants/:pacticipant_name:
+    get:
+      summary: PactBroker::Api::Resources::Pacticipant
+      operationId: /pacticipants/:pacticipant_name
+      responses:
+        default:
+          description: PactBroker::Api::Resources::Pacticipant
+  /pacticipants/:pacticipant_name/branches/:branch_name/latest-version/can-i-deploy/to-environment/:environment_name:
+    get:
+      summary: PactBroker::Api::Resources::CanIDeployPacticipantVersionByBranchToEnvironment
+      operationId: /pacticipants/:pacticipant_name/branches/:branch_name/latest-version/can-i-deploy/to-environment/:environment_name
+      responses:
+        default:
+          description: PactBroker::Api::Resources::CanIDeployPacticipantVersionByBranchToEnvironment
+  /pacticipants/:pacticipant_name/branches/:branch_name/latest-version/can-i-deploy/to-environment/:environment_name/badge:
+    get:
+      summary: PactBroker::Api::Resources::CanIDeployPacticipantVersionByBranchToEnvironmentBadge
+      operationId: /pacticipants/:pacticipant_name/branches/:branch_name/latest-version/can-i-deploy/to-environment/:environment_name/badge
+      responses:
+        default:
+          description: PactBroker::Api::Resources::CanIDeployPacticipantVersionByBranchToEnvironmentBadge
+  /pacticipants/:pacticipant_name/branches/:branch_name/versions/:version_number:
+    get:
+      summary: PactBroker::Api::Resources::BranchVersion
+      operationId: /pacticipants/:pacticipant_name/branches/:branch_name/versions/:version_number
+      responses:
+        default:
+          description: PactBroker::Api::Resources::BranchVersion
+  /pacticipants/:pacticipant_name/labels/:label_name:
+    get:
+      summary: PactBroker::Api::Resources::Label
+      operationId: /pacticipants/:pacticipant_name/labels/:label_name
+      responses:
+        default:
+          description: PactBroker::Api::Resources::Label
+  /pacticipants/:pacticipant_name/latest-version:
+    get:
+      summary: PactBroker::Api::Resources::LatestVersion
+      operationId: /pacticipants/:pacticipant_name/latest-version
+      responses:
+        default:
+          description: PactBroker::Api::Resources::LatestVersion
+  /pacticipants/:pacticipant_name/latest-version/:tag:
+    get:
+      summary: PactBroker::Api::Resources::LatestVersion
+      operationId: /pacticipants/:pacticipant_name/latest-version/:tag
+      responses:
+        default:
+          description: PactBroker::Api::Resources::LatestVersion
+  /pacticipants/:pacticipant_name/latest-version/:tag/can-i-deploy/to/:to:
+    get:
+      summary: PactBroker::Api::Resources::CanIDeployPacticipantVersionByTagToTag
+      operationId: /pacticipants/:pacticipant_name/latest-version/:tag/can-i-deploy/to/:to
+      responses:
+        default:
+          description: PactBroker::Api::Resources::CanIDeployPacticipantVersionByTagToTag
+  /pacticipants/:pacticipant_name/latest-version/:tag/can-i-deploy/to/:to/badge:
+    get:
+      summary: PactBroker::Api::Resources::CanIDeployPacticipantVersionByTagToTagBadge
+      operationId: /pacticipants/:pacticipant_name/latest-version/:tag/can-i-deploy/to/:to/badge
+      responses:
+        default:
+          description: PactBroker::Api::Resources::CanIDeployPacticipantVersionByTagToTagBadge
+  /pacticipants/:pacticipant_name/versions:
+    get:
+      summary: PactBroker::Api::Resources::Versions
+      operationId: /pacticipants/:pacticipant_name/versions
+      responses:
+        default:
+          description: PactBroker::Api::Resources::Versions
+  /pacticipants/:pacticipant_name/versions/:pacticipant_version_number:
+    get:
+      summary: PactBroker::Api::Resources::Version
+      operationId: /pacticipants/:pacticipant_name/versions/:pacticipant_version_number
+      responses:
+        default:
+          description: PactBroker::Api::Resources::Version
+  /pacticipants/:pacticipant_name/versions/:pacticipant_version_number/deployed-versions/environment/:environment_uuid:
+    get:
+      summary: PactBroker::Api::Resources::DeployedVersionsForVersionAndEnvironment
+      operationId: /pacticipants/:pacticipant_name/versions/:pacticipant_version_number/deployed-versions/environment/:environment_uuid
+      responses:
+        default:
+          description: PactBroker::Api::Resources::DeployedVersionsForVersionAndEnvironment
+  /pacticipants/:pacticipant_name/versions/:pacticipant_version_number/released-versions/environment/:environment_uuid:
+    get:
+      summary: PactBroker::Api::Resources::ReleasedVersionsForVersionAndEnvironment
+      operationId: /pacticipants/:pacticipant_name/versions/:pacticipant_version_number/released-versions/environment/:environment_uuid
+      responses:
+        default:
+          description: PactBroker::Api::Resources::ReleasedVersionsForVersionAndEnvironment
+  /pacticipants/:pacticipant_name/versions/:pacticipant_version_number/tags/:tag_name:
+    get:
+      summary: PactBroker::Api::Resources::Tag
+      operationId: /pacticipants/:pacticipant_name/versions/:pacticipant_version_number/tags/:tag_name
+      responses:
+        default:
+          description: PactBroker::Api::Resources::Tag
+  /pacticipants/label/:label_name:
+    get:
+      summary: PactBroker::Api::Resources::PacticipantsForLabel
+      operationId: /pacticipants/label/:label_name
+      responses:
+        default:
+          description: PactBroker::Api::Resources::PacticipantsForLabel
+  /pacts/latest:
+    get:
+      summary: PactBroker::Api::Resources::LatestPacts
+      operationId: /pacts/latest
+      responses:
+        default:
+          description: PactBroker::Api::Resources::LatestPacts
+  /pacts/provider/:provider_name:
+    get:
+      summary: PactBroker::Api::Resources::ProviderPacts
+      operationId: /pacts/provider/:provider_name
+      responses:
+        default:
+          description: PactBroker::Api::Resources::ProviderPacts
+  /pacts/provider/:provider_name/consumer/:consumer_name/branch/:branch_name:
+    get:
+      summary: PactBroker::Api::Resources::PactVersionsForBranch
+      operationId: /pacts/provider/:provider_name/consumer/:consumer_name/branch/:branch_name
+      responses:
+        default:
+          description: PactBroker::Api::Resources::PactVersionsForBranch
+  /pacts/provider/:provider_name/consumer/:consumer_name/latest:
+    get:
+      summary: PactBroker::Api::Resources::LatestPact
+      operationId: /pacts/provider/:provider_name/consumer/:consumer_name/latest
+      responses:
+        default:
+          description: PactBroker::Api::Resources::LatestPact
+  /pacts/provider/:provider_name/consumer/:consumer_name/latest-untagged:
+    get:
+      summary: PactBroker::Api::Resources::LatestPact
+      operationId: /pacts/provider/:provider_name/consumer/:consumer_name/latest-untagged
+      responses:
+        default:
+          description: PactBroker::Api::Resources::LatestPact
+  /pacts/provider/:provider_name/consumer/:consumer_name/latest-untagged/badge:
+    get:
+      summary: PactBroker::Api::Resources::Badge
+      operationId: /pacts/provider/:provider_name/consumer/:consumer_name/latest-untagged/badge
+      responses:
+        default:
+          description: PactBroker::Api::Resources::Badge
+  /pacts/provider/:provider_name/consumer/:consumer_name/latest/:tag:
+    get:
+      summary: PactBroker::Api::Resources::LatestPact
+      operationId: /pacts/provider/:provider_name/consumer/:consumer_name/latest/:tag
+      responses:
+        default:
+          description: PactBroker::Api::Resources::LatestPact
+  /pacts/provider/:provider_name/consumer/:consumer_name/latest/:tag/badge:
+    get:
+      summary: PactBroker::Api::Resources::Badge
+      operationId: /pacts/provider/:provider_name/consumer/:consumer_name/latest/:tag/badge
+      responses:
+        default:
+          description: PactBroker::Api::Resources::Badge
+  /pacts/provider/:provider_name/consumer/:consumer_name/latest/:tag/verification-results/latest:
+    get:
+      summary: PactBroker::Api::Resources::LatestVerificationForLatestPact
+      operationId: /pacts/provider/:provider_name/consumer/:consumer_name/latest/:tag/verification-results/latest
+      responses:
+        default:
+          description: PactBroker::Api::Resources::LatestVerificationForLatestPact
+  /pacts/provider/:provider_name/consumer/:consumer_name/latest/badge:
+    get:
+      summary: PactBroker::Api::Resources::Badge
+      operationId: /pacts/provider/:provider_name/consumer/:consumer_name/latest/badge
+      responses:
+        default:
+          description: PactBroker::Api::Resources::Badge
+  /pacts/provider/:provider_name/consumer/:consumer_name/latest/verification-results/latest:
+    get:
+      summary: PactBroker::Api::Resources::LatestVerificationForLatestPact
+      operationId: /pacts/provider/:provider_name/consumer/:consumer_name/latest/verification-results/latest
+      responses:
+        default:
+          description: PactBroker::Api::Resources::LatestVerificationForLatestPact
+  /pacts/provider/:provider_name/consumer/:consumer_name/pact-version/:pact_version_sha:
+    get:
+      summary: PactBroker::Api::Resources::PactVersion
+      operationId: /pacts/provider/:provider_name/consumer/:consumer_name/pact-version/:pact_version_sha
+      responses:
+        default:
+          description: PactBroker::Api::Resources::PactVersion
+  /pacts/provider/:provider_name/consumer/:consumer_name/pact-version/:pact_version_sha/diff/pact-version/:comparison_pact_version_sha:
+    get:
+      summary: PactBroker::Api::Resources::PactContentDiff
+      operationId: /pacts/provider/:provider_name/consumer/:consumer_name/pact-version/:pact_version_sha/diff/pact-version/:comparison_pact_version_sha
+      responses:
+        default:
+          description: PactBroker::Api::Resources::PactContentDiff
+  /pacts/provider/:provider_name/consumer/:consumer_name/pact-version/:pact_version_sha/metadata/:metadata:
+    get:
+      summary: PactBroker::Api::Resources::PactVersion
+      operationId: /pacts/provider/:provider_name/consumer/:consumer_name/pact-version/:pact_version_sha/metadata/:metadata
+      responses:
+        default:
+          description: PactBroker::Api::Resources::PactVersion
+  /pacts/provider/:provider_name/consumer/:consumer_name/pact-version/:pact_version_sha/metadata/:metadata/verification-results:
+    get:
+      summary: PactBroker::Api::Resources::Verifications
+      operationId: /pacts/provider/:provider_name/consumer/:consumer_name/pact-version/:pact_version_sha/metadata/:metadata/verification-results
+      responses:
+        default:
+          description: PactBroker::Api::Resources::Verifications
+  /pacts/provider/:provider_name/consumer/:consumer_name/pact-version/:pact_version_sha/metadata/:metadata/verification-results/:verification_number:
+    get:
+      summary: PactBroker::Api::Resources::Verification
+      operationId: /pacts/provider/:provider_name/consumer/:consumer_name/pact-version/:pact_version_sha/metadata/:metadata/verification-results/:verification_number
+      responses:
+        default:
+          description: PactBroker::Api::Resources::Verification
+  /pacts/provider/:provider_name/consumer/:consumer_name/pact-version/:pact_version_sha/verification-results:
+    get:
+      summary: PactBroker::Api::Resources::Verifications
+      operationId: /pacts/provider/:provider_name/consumer/:consumer_name/pact-version/:pact_version_sha/verification-results
+      responses:
+        default:
+          description: PactBroker::Api::Resources::Verifications
+  /pacts/provider/:provider_name/consumer/:consumer_name/pact-version/:pact_version_sha/verification-results/:verification_number:
+    get:
+      summary: PactBroker::Api::Resources::Verification
+      operationId: /pacts/provider/:provider_name/consumer/:consumer_name/pact-version/:pact_version_sha/verification-results/:verification_number
+      responses:
+        default:
+          description: PactBroker::Api::Resources::Verification
+  /pacts/provider/:provider_name/consumer/:consumer_name/pact-version/:pact_version_sha/verification-results/:verification_number/triggered-webhooks:
+    get:
+      summary: PactBroker::Api::Resources::VerificationTriggeredWebhooks
+      operationId: /pacts/provider/:provider_name/consumer/:consumer_name/pact-version/:pact_version_sha/verification-results/:verification_number/triggered-webhooks
+      responses:
+        default:
+          description: PactBroker::Api::Resources::VerificationTriggeredWebhooks
+  /pacts/provider/:provider_name/consumer/:consumer_name/pact-version/:pact_version_sha/verification-results/latest:
+    get:
+      summary: PactBroker::Api::Resources::LatestVerificationForPact
+      operationId: /pacts/provider/:provider_name/consumer/:consumer_name/pact-version/:pact_version_sha/verification-results/latest
+      responses:
+        default:
+          description: PactBroker::Api::Resources::LatestVerificationForPact
+  /pacts/provider/:provider_name/consumer/:consumer_name/tag/:tag:
+    get:
+      summary: PactBroker::Api::Resources::TaggedPactVersions
+      operationId: /pacts/provider/:provider_name/consumer/:consumer_name/tag/:tag
+      responses:
+        default:
+          description: PactBroker::Api::Resources::TaggedPactVersions
+  /pacts/provider/:provider_name/consumer/:consumer_name/version/:consumer_version_number:
+    get:
+      summary: PactBroker::Api::Resources::Pact
+      operationId: /pacts/provider/:provider_name/consumer/:consumer_name/version/:consumer_version_number
+      responses:
+        default:
+          description: PactBroker::Api::Resources::Pact
+  /pacts/provider/:provider_name/consumer/:consumer_name/version/:consumer_version_number/diff/previous-distinct:
+    get:
+      summary: PactBroker::Api::Resources::PactContentDiff
+      operationId: /pacts/provider/:provider_name/consumer/:consumer_name/version/:consumer_version_number/diff/previous-distinct
+      responses:
+        default:
+          description: PactBroker::Api::Resources::PactContentDiff
+  /pacts/provider/:provider_name/consumer/:consumer_name/version/:consumer_version_number/diff/version/:comparison_consumer_version:
+    get:
+      summary: PactBroker::Api::Resources::PactContentDiff
+      operationId: /pacts/provider/:provider_name/consumer/:consumer_name/version/:consumer_version_number/diff/version/:comparison_consumer_version
+      responses:
+        default:
+          description: PactBroker::Api::Resources::PactContentDiff
+  /pacts/provider/:provider_name/consumer/:consumer_name/version/:consumer_version_number/previous-distinct:
+    get:
+      summary: PactBroker::Api::Resources::PreviousDistinctPactVersion
+      operationId: /pacts/provider/:provider_name/consumer/:consumer_name/version/:consumer_version_number/previous-distinct
+      responses:
+        default:
+          description: PactBroker::Api::Resources::PreviousDistinctPactVersion
+  /pacts/provider/:provider_name/consumer/:consumer_name/version/:consumer_version_number/triggered-webhooks:
+    get:
+      summary: PactBroker::Api::Resources::PactTriggeredWebhooks
+      operationId: /pacts/provider/:provider_name/consumer/:consumer_name/version/:consumer_version_number/triggered-webhooks
+      responses:
+        default:
+          description: PactBroker::Api::Resources::PactTriggeredWebhooks
+  /pacts/provider/:provider_name/consumer/:consumer_name/version/:consumer_version_number/verification-results/latest:
+    get:
+      summary: PactBroker::Api::Resources::LatestVerificationForPact
+      operationId: /pacts/provider/:provider_name/consumer/:consumer_name/version/:consumer_version_number/verification-results/latest
+      responses:
+        default:
+          description: PactBroker::Api::Resources::LatestVerificationForPact
+  /pacts/provider/:provider_name/consumer/:consumer_name/versions:
+    get:
+      summary: PactBroker::Api::Resources::PactVersions
+      operationId: /pacts/provider/:provider_name/consumer/:consumer_name/versions
+      responses:
+        default:
+          description: PactBroker::Api::Resources::PactVersions
+  /pacts/provider/:provider_name/consumer/:consumer_name/versions/:consumer_version_number:
+    get:
+      summary: PactBroker::Api::Resources::Pact
+      operationId: /pacts/provider/:provider_name/consumer/:consumer_name/versions/:consumer_version_number
+      responses:
+        default:
+          description: PactBroker::Api::Resources::Pact
+  /pacts/provider/:provider_name/consumer/:consumer_name/webhooks:
+    get:
+      summary: PactBroker::Api::Resources::PactWebhooks
+      operationId: /pacts/provider/:provider_name/consumer/:consumer_name/webhooks
+      responses:
+        default:
+          description: PactBroker::Api::Resources::PactWebhooks
+  /pacts/provider/:provider_name/consumer/:consumer_name/webhooks/status:
+    get:
+      summary: PactBroker::Api::Resources::PactWebhooksStatus
+      operationId: /pacts/provider/:provider_name/consumer/:consumer_name/webhooks/status
+      responses:
+        default:
+          description: PactBroker::Api::Resources::PactWebhooksStatus
+  /pacts/provider/:provider_name/for-verification:
+    get:
+      summary: PactBroker::Api::Resources::ProviderPactsForVerification
+      operationId: /pacts/provider/:provider_name/for-verification
+      responses:
+        default:
+          description: PactBroker::Api::Resources::ProviderPactsForVerification
+  /pacts/provider/:provider_name/latest:
+    get:
+      summary: PactBroker::Api::Resources::LatestProviderPacts
+      operationId: /pacts/provider/:provider_name/latest
+      responses:
+        default:
+          description: PactBroker::Api::Resources::LatestProviderPacts
+  /pacts/provider/:provider_name/latest/:tag:
+    get:
+      summary: PactBroker::Api::Resources::LatestProviderPacts
+      operationId: /pacts/provider/:provider_name/latest/:tag
+      responses:
+        default:
+          description: PactBroker::Api::Resources::LatestProviderPacts
+  /pacts/provider/:provider_name/tag/:tag:
+    get:
+      summary: PactBroker::Api::Resources::ProviderPacts
+      operationId: /pacts/provider/:provider_name/tag/:tag
+      responses:
+        default:
+          description: PactBroker::Api::Resources::ProviderPacts
+  /relationships:
+    get:
+      summary: PactBroker::Api::Resources::Relationships
+      operationId: /relationships
+      responses:
+        default:
+          description: PactBroker::Api::Resources::Relationships
+  /released-versions/:uuid:
+    get:
+      summary: PactBroker::Api::Resources::ReleasedVersion
+      operationId: /released-versions/:uuid
+      responses:
+        default:
+          description: PactBroker::Api::Resources::ReleasedVersion
+  /test/error:
+    get:
+      summary: PactBroker::Api::Resources::ErrorTest
+      operationId: /test/error
+      responses:
+        default:
+          description: PactBroker::Api::Resources::ErrorTest
+  /trace/:*:
+    get:
+      summary: Webmachine::Trace::TraceResource
+      operationId: /trace/:*
+      responses:
+        default:
+          description: Webmachine::Trace::TraceResource
+  /triggered-webhooks/:uuid/logs:
+    get:
+      summary: PactBroker::Api::Resources::TriggeredWebhookLogs
+      operationId: /triggered-webhooks/:uuid/logs
+      responses:
+        default:
+          description: PactBroker::Api::Resources::TriggeredWebhookLogs
+  /verification-results/consumer/:consumer_name/version/:consumer_version_number/latest:
+    get:
+      summary: PactBroker::Api::Resources::LatestVerificationsForConsumerVersion
+      operationId: /verification-results/consumer/:consumer_name/version/:consumer_version_number/latest
+      responses:
+        default:
+          description: PactBroker::Api::Resources::LatestVerificationsForConsumerVersion
+  /webhooks:
+    get:
+      summary: PactBroker::Api::Resources::AllWebhooks
+      operationId: /webhooks
+      responses:
+        default:
+          description: PactBroker::Api::Resources::AllWebhooks
+  /webhooks/:uuid:
+    get:
+      summary: PactBroker::Api::Resources::Webhook
+      operationId: /webhooks/:uuid
+      responses:
+        default:
+          description: PactBroker::Api::Resources::Webhook
+  /webhooks/:uuid/execute:
+    get:
+      summary: PactBroker::Api::Resources::WebhookExecution
+      operationId: /webhooks/:uuid/execute
+      responses:
+        default:
+          description: PactBroker::Api::Resources::WebhookExecution
+  /webhooks/consumer/:consumer_name:
+    get:
+      summary: PactBroker::Api::Resources::PacticipantWebhooks
+      operationId: /webhooks/consumer/:consumer_name
+      responses:
+        default:
+          description: PactBroker::Api::Resources::PacticipantWebhooks
+  /webhooks/execute:
+    get:
+      summary: PactBroker::Api::Resources::WebhookExecution
+      operationId: /webhooks/execute
+      responses:
+        default:
+          description: PactBroker::Api::Resources::WebhookExecution
+  /webhooks/provider/:provider_name:
+    get:
+      summary: PactBroker::Api::Resources::PacticipantWebhooks
+      operationId: /webhooks/provider/:provider_name
+      responses:
+        default:
+          description: PactBroker::Api::Resources::PacticipantWebhooks
+  /webhooks/provider/:provider_name/consumer/:consumer_name:
+    get:
+      summary: PactBroker::Api::Resources::PacticipantWebhooks
+      operationId: /webhooks/provider/:provider_name/consumer/:consumer_name
+      responses:
+        default:
+          description: PactBroker::Api::Resources::PacticipantWebhooks
+
