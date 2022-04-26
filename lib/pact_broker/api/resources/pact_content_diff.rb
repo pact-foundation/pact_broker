@@ -24,7 +24,7 @@ module PactBroker
             output = PactBroker::Pacts::Diff.new.process pact_params.merge(base_url: base_url), comparison_pact_params, raw: false
             response.body = output
           end
-        rescue Timeout::Error => e
+        rescue Timeout::Error
           408
         end
 
