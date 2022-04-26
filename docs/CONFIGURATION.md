@@ -655,6 +655,15 @@ with a unique version number.
 **Allowed values:** `true`, `false`<br/>
 **More information:** https://docs.pact.io/versioning<br/>
 
+### pact_content_diff_timeout
+
+The maximum amount of time in seconds to attempt to generate the diff between two pacts before aborting the request. This is required due to performance issues in the underlying diff generation code.
+
+**Supported versions:** From 2.99.0<br/>
+**Environment variable name:** `PACT_BROKER_PACT_CONTENT_DIFF_TIMEOUT`<br/>
+**YAML configuration key name:** `pact_content_diff_timeout`<br/>
+**Default:** `15`<br/>
+
 <br/>
 
 ## Miscellaneous
