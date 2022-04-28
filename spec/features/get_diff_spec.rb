@@ -1,12 +1,10 @@
 require "spec/support/test_data_builder"
 
 describe "Get diff between versions" do
-
   let(:path) { "/pacts/provider/Provider/consumer/Consumer/version/3/diff/previous-distinct" }
-
   let(:last_response_body) { subject.body }
 
-  subject { get path; last_response }
+  subject { get(path) }
 
   let(:pact_content_version_1) do
     hash = load_json_fixture("consumer-provider.json")
@@ -42,12 +40,10 @@ describe "Get diff between versions" do
   end
 
   context "when either version does not exist" do
-
     let(:path) { "/pacts/provider/Provider/consumer/Consumer/versions/1/diff/previous-distinct" }
 
     it "returns a 404 response" do
       expect(subject).to be_a_404_response
     end
-
   end
 end

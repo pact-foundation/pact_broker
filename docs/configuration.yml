@@ -453,6 +453,11 @@ groups:
           - true
           - false
         more_info: https://docs.pact.io/versioning
+      pact_content_diff_timeout:
+        description: |-
+          The maximum amount of time in seconds to attempt to generate the diff between two pacts before aborting the request. This is required due to performance issues in the underlying diff generation code.
+        default_value: 15
+        supported_versions: From 2.99.0
   - title: Miscellaneous
     vars:
       features:

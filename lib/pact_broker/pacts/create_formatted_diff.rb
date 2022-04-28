@@ -19,6 +19,7 @@ module PactBroker
         end
 
         difference = diff(previous_pact_hash, pact_hash)
+
         Pact::Matchers::UnixDiffFormatter.call(difference, colour: false, include_explanation: false)
       end
     end

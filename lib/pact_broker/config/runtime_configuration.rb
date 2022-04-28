@@ -71,7 +71,8 @@ module PactBroker
         badge_provider_mode: :redirect,
         enable_public_badge_access: false,
         shields_io_base_url: "https://img.shields.io",
-        use_case_sensitive_resource_names: true
+        use_case_sensitive_resource_names: true,
+        pact_content_diff_timeout: 15
       )
 
       # domain attributes

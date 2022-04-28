@@ -1,6 +1,7 @@
 require "pact_broker/api/resources/base_resource"
 require "pact_broker/pacts/pact_params"
 require "pact_broker/pacts/diff"
+require "timeout"
 
 module PactBroker
   module Api
@@ -19,8 +20,12 @@ module PactBroker
         end
 
         def to_text
-          output = PactBroker::Pacts::Diff.new.process pact_params.merge(base_url: base_url), comparison_pact_params, raw: false
-          response.body = output
+          Timeout::timeout(PactBroker.configuration.pact_content_diff_timeout) do
+            output = PactBroker::Pacts::Diff.new.process pact_params.merge(base_url: base_url), comparison_pact_params, raw: false
+            response.body = output
+          end
+        rescue Timeout::Error
+          408
         end
 
         def pact
