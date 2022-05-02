@@ -11,6 +11,14 @@ require "pact_broker/pacts/pact_publication"
 require "pact_broker/tags/tag_with_latest_flag"
 require "pact_broker/matrix/query_ids"
 
+# The PactBroker::Matrix::QuickRow represents a row in the table that is created when
+# the consumer versions are joined to the provider versions via the pacts and verifications tables,
+# aka "The Matrix". The difference between this class and the EveryRow class is that
+# the EveryRow class includes results for overridden pact verisons and verifications (used only when there is no latestby
+# set in the matrix query), where as the QuickRow class does not.
+# It is called the QuickRow because the initial implementation was called the Row, and this is an optimised
+# version. It needs to be renamed back to Row now that the old Row class has been deleted.
+
 # The difference between `join_verifications_for` and `join_verifications` is that
 # the left outer join is done on a pre-filtered dataset in `join_verifications_for`,
 # so that we get a row with null verification fields for a pact that has been verified
@@ -19,6 +27,7 @@ require "pact_broker/matrix/query_ids"
 
 module PactBroker
   module Matrix
+    # TODO rename this to just Row
     # rubocop: disable Metrics/ClassLength
     class QuickRow < Sequel::Model(Sequel.as(:latest_pact_publication_ids_for_consumer_versions, :p))
 
