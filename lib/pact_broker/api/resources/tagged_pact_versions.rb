@@ -36,7 +36,7 @@ module PactBroker
         end
 
         def policy_name
-          :'pacts::pacts'
+          :'pacts::pact_versions'
         end
       end
     end

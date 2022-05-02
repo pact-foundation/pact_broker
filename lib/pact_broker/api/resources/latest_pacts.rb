@@ -22,7 +22,7 @@ module PactBroker
         end
 
         def policy_name
-          :'pacts::pacts'
+          :'pacts::latest_pacts'
         end
       end
     end
