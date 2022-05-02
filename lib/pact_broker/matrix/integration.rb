@@ -1,9 +1,9 @@
-
 # Represents the integration relationship between a consumer and a provider in the context
 # of a matrix or can-i-deploy query.
-# If the required flag is set, then one of the pacticipants (consumers) specified in the HTTP query
-# requires the provider. It would not be required if a provider was specified, and it had an
-# integration with a consumer.
+# If the required flag is set, then one of the pacticipants specified in the matrix query
+# is a consumer and it requires the provider to be already deployed. An integration would not be required if a provider
+# was specified, and it had an integration with a consumer, but that consumer wasn't deployed yet.
+#
 
 module PactBroker
   module Matrix
@@ -11,7 +11,7 @@ module PactBroker
 
       attr_reader :consumer_name, :consumer_id, :provider_name, :provider_id
 
-      def initialize consumer_id, consumer_name, provider_id, provider_name, required
+      def initialize(consumer_id, consumer_name, provider_id, provider_name, required)
         @consumer_id = consumer_id
         @consumer_name = consumer_name
         @provider_id = provider_id

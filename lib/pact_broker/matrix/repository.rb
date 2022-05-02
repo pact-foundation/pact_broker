@@ -123,6 +123,8 @@ module PactBroker
         end
       end
 
+      # Why does the consumer equivalent of this method use the QuickRow distinct_integrations_for_selector_as_consumer
+      # while this method uses the Integration?
       def integrations_where_specified_selector_is_provider(resolved_specified_selectors)
         integrations_involving_specified_providers = PactBroker::Integrations::Integration
                                                       .where(provider_id: resolved_specified_selectors.collect(&:pacticipant_id))
