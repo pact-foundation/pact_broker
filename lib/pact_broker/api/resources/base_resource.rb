@@ -152,6 +152,10 @@ module PactBroker
           @request_body ||= request.body.to_s
         end
 
+        def any_request_body?
+          request_body && request_body.size > 0
+        end
+
         def consumer_name
           identifier_from_path[:consumer_name]
         end
