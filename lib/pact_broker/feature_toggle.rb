@@ -20,6 +20,6 @@ module PactBroker
   end
 
   def self.feature_enabled?(feature, ignore_env = false)
-    FeatureToggle.enabled?(feature, ignore_env)
+    PactBroker.configuration.feature_toggle_thingy.call(feature)
   end
 end

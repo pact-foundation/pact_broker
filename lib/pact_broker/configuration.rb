@@ -27,6 +27,7 @@ module PactBroker
 
     attr_accessor :database_connection
     attr_accessor :example_data_seeder
+    attr_accessor :feature_toggle_thingy
     attr_accessor :html_pact_renderer, :version_parser, :sha_generator
     attr_accessor :content_security_policy, :hal_browser_content_security_policy_overrides
     attr_accessor :api_error_reporters
@@ -77,6 +78,11 @@ module PactBroker
       }
       config.policy_builder = -> (object) { DefaultPolicy.new(nil, object) }
       config.policy_scope_builder = -> (scope) { scope }
+
+      config.feature_toggle_thingy = lambda do | feature, ignore_env = false |
+        require "pact_broker/feature_toggle"
+        PactBroker::FeatureToggle.enabled?(feature, ignore_env)
+      end
       config
     end
 
