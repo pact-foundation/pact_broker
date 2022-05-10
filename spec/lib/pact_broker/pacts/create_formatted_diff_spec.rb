@@ -1,12 +1,23 @@
-require "spec_helper"
 require "pact_broker/pacts/create_formatted_diff"
-require "pact_broker/pacts/repository"
+require "pact_broker/project_root"
+require 'flamegraph'
 
 module PactBroker
   module Pacts
     describe CreateFormattedDiff do
-      describe ".call" do
 
+      it "" do
+        content_1 = File.read(PactBroker.project_root.join("b17279757b28c9319366bb129e3eb75bc1c2fe95.json"))
+        content_2 = File.read(PactBroker.project_root.join("c31600ae411a29d136acb1e98d6d91841f70f3e6.json"))
+        Flamegraph.generate("bethtemp.html") do
+          CreateFormattedDiff.call(
+            content_1,
+            content_2
+          )
+        end
+      end
+
+      describe ".call" do
         let(:pact_content_version_1) do
           hash = load_json_fixture("consumer-provider.json")
           hash["interactions"].first["request"]["method"] = "post"
