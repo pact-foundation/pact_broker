@@ -133,12 +133,7 @@ module PactBroker
       end
 
       def latest_for_consumer_branch(branch_name)
-        # Keep this flag for a little whle in case we need to disable the new logic
-        if PactBroker.feature_enabled?(:disable_use_branch_heads_for_latest_branch_pacts, true)
-          old_latest_for_consumer_branch(branch_name)
-        else
-          for_branch_heads(branch_name)
-        end
+        for_branch_heads(branch_name)
       end
 
       def old_latest_for_consumer_branch(branch_name)

@@ -113,17 +113,6 @@ module PactBroker
             all = subject.all_allowing_lazy_load
             expect(all.size).to eq 1
           end
-
-          context "when the new logic is disabled" do
-            before do
-              allow(PactBroker). to receive(:feature_enabled?).with(:disable_use_branch_heads_for_latest_branch_pacts, true).and_return(true)
-            end
-
-            it "does return a pact for the branch" do
-              all = subject.all_allowing_lazy_load
-              expect(all.size).to eq 2
-            end
-          end
         end
 
         context "when columns are already selected" do
