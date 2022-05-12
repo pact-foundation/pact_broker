@@ -82,7 +82,7 @@ module PactBroker
           available_environments = version_body["_links"]["pb:record-deployment"].collect{ | relation | relation["name"]}.join
           puts "Environment with name #{environment_name} not found. Available environments: #{available_environments}"
         else
-          client.post(environment_relation["href"], { replacedPreviousDeployedVersion: true }).tap { |response| check_for_error(response) }
+          client.post(environment_relation["href"]).tap { |response| check_for_error(response) }
         end
 
         separate
@@ -93,7 +93,7 @@ module PactBroker
         puts "Recording release of #{pacticipant} version #{version} to #{environment_name}"
         version_body = client.get("/pacticipants/#{encode(pacticipant)}/versions/#{encode(version)}").tap { |response| check_for_error(response) }.body
         environment_relation = version_body["_links"]["pb:record-release"].find { |relation| relation["name"] == environment_name }
-        client.post(environment_relation["href"], { replacedPreviousDeployedVersion: true }).tap { |response| check_for_error(response) }
+        client.post(environment_relation["href"]).tap { |response| check_for_error(response) }
         separate
         self
       end
