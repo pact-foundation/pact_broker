@@ -188,10 +188,6 @@ Lint/BinaryOperatorWithIdenticalOperands:
   Description: 'Checks for comparison of something with itself.'
   Enabled: true
 
-Lint/UselessElseWithoutRescue:
-  Description: 'Checks for useless `else` in `begin..end` without `rescue`.'
-  Enabled: true
-
 Lint/UselessSetterCall:
   Description: 'Checks for useless setter call to a local variable.'
   Enabled: true
