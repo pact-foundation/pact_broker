@@ -6,7 +6,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title><%= pacticipant_name %></title>
+<title><%= escape_html(pacticipant_name) %></title>
 <link rel='shortcut icon' href='<%= base_url %>/favicon.ico' type='image/x-icon'/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="">
@@ -69,7 +69,7 @@ svg{
         Main branch:
       </div>
       <div class="col col-md-6">
-        <%= pacticipant.main_branch %>
+        <%= escape_html(pacticipant.main_branch) %>
       </div>
     </div>
     <div class="row">
