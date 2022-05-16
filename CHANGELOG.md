@@ -1,3 +1,27 @@
+<a name="v2.99.0"></a>
+### v2.99.0 (2022-05-13)
+
+#### Features
+
+* remove disable_use_branch_heads_for_latest_branch_pacts feature toggle	 ([5c6f1766](/../../commit/5c6f1766))
+* remove new_wip_calculation feature toggle	 ([add6cb08](/../../commit/add6cb08))
+* timeout long running pact content diff requests (#555)	 ([88abb2cf](/../../commit/88abb2cf))
+* change sql_log_level default from debug to none	 ([9f7aed46](/../../commit/9f7aed46))
+
+#### Bug Fixes
+
+* **ui**
+  * fix unescaped pacticipant name and main branch in details and network pages	 ([b8b1d306](/../../commit/b8b1d306))
+
+* return a 400 when invalid JSON is used to create a version	 ([9af2cfaf](/../../commit/9af2cfaf))
+* only log API requests/responses, not web assets, when http_debug_logging_enabled is true	 ([1f232c08](/../../commit/1f232c08))
+
+* **matrix**
+  * fix performance issue when querying matrix with one selector	 ([3a08d128](/../../commit/3a08d128))
+
+* **pacts for verification**
+  * return the pacts for the branch heads when using the branch selector	 ([6dac495e](/../../commit/6dac495e))
+
 <a name="v2.98.0"></a>
 ### v2.98.0 (2022-03-29)
 
