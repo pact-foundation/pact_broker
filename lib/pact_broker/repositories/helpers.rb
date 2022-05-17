@@ -55,6 +55,19 @@ module PactBroker
         select_append(Sequel[model.table_name].*)
       end
 
+      # @param [Symbol] max_column the name of the column of which to calculate the maxiumum
+      # @param [Array<Symbol>] group_by_columns the names of the columns by which to group
+      def max_group_by(max_column, group_by_columns, &extra_criteria_block)
+        maximums_base_query = extra_criteria_block ? extra_criteria_block.call(self) : self
+        maximums = maximums_base_query.select_group(*group_by_columns).select_append(Sequel.function(:max, max_column).as(:max_value))
+
+        max_join = group_by_columns.each_with_object({ Sequel[:maximums][:max_value] => max_column }) do | column_name, joins |
+          joins[Sequel[:maximums][column_name]] = column_name
+        end
+
+        join(maximums, max_join, table_alias: :maximums)
+      end
+
       def select_for_subquery column
         if mysql? #stoopid mysql doesn't allow you to modify datasets with subqueries
           column_name = column.respond_to?(:alias) ? column.alias : column

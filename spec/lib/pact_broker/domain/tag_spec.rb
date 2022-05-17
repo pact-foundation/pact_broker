@@ -3,6 +3,28 @@ require "pact_broker/domain/tag"
 module PactBroker
   module Domain
     describe Tag do
+      describe "#latest_tags_for_pacticipant_ids_and_tag_names" do
+        before do
+          td.create_consumer("bar")
+            .create_consumer_version("1", tag_names: ["dev", "prod"])
+            .create_consumer("foo")
+            .create_consumer_version("1", tag_names: ["dev", "prod"])
+            .create_consumer_version("2", tag_names: ["dev"])
+            .create_consumer_version("3")
+        end
+
+        let(:foo) { td.find_pacticipant("foo") }
+        let(:foo_version_1) { td.find_version("foo", "1") }
+        let(:foo_version_2) { td.find_version("foo", "2") }
+
+        subject { Tag.latest_tags_for_pacticipant_ids_and_tag_names([foo.id], ["dev", "prod"]).order(:name).all }
+
+        it "returns the latest tag grouped by pacticipant id and tag name" do
+          expect(subject.size).to eq 2
+          expect(subject.first).to have_attributes(version_id: foo_version_2.id, pacticipant_id: foo.id)
+          expect(subject.last).to have_attributes(version_id: foo_version_1.id, pacticipant_id: foo.id)
+        end
+      end
 
       describe "#latest_tags_for_pacticipant_ids" do
         before do

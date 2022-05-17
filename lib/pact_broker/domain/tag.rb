@@ -39,53 +39,28 @@ module PactBroker
         end
 
         def latest_tags
-          self_join = {
-            Sequel[:tags][:pacticipant_id] => Sequel[:tags_2][:pacticipant_id],
-            Sequel[:tags][:name] => Sequel[:tags_2][:name]
-          }
-
-          PactBroker::Domain::Tag
+          Tag
             .select_all_qualified
-            .left_join(:tags, self_join, { table_alias: :tags_2 }) do
-              Sequel[:tags_2][:version_order] > Sequel[:tags][:version_order]
-            end
-            .where(Sequel[:tags_2][:name] => nil)
+            .max_group_by(:version_order, [:pacticipant_id, :name])
         end
 
         # Does NOT care about whether or not there is a pact publication
         # for the version
         def latest_tags_for_pacticipant_ids(pacticipant_ids)
-          self_join = {
-            Sequel[:tags][:pacticipant_id] => Sequel[:tags_2][:pacticipant_id],
-            Sequel[:tags][:name] => Sequel[:tags_2][:name],
-            Sequel[:tags_2][:pacticipant_id] => pacticipant_ids,
-          }
-
           Tag
             .select_all_qualified
-            .left_join(:tags, self_join, { table_alias: :tags_2 }) do
-              Sequel[:tags_2][:version_order] > Sequel[:tags][:version_order]
+            .max_group_by(:version_order, [:pacticipant_id, :name]) do | ds |
+              ds.where(Sequel[:tags][:pacticipant_id] => pacticipant_ids)
             end
-            .where(Sequel[:tags_2][:name] => nil)
-            .where(Sequel[:tags][:pacticipant_id] => pacticipant_ids)
         end
 
         def latest_tags_for_pacticipant_ids_and_tag_names(pacticipant_ids, tag_names)
-          self_join = {
-            Sequel[:tags][:pacticipant_id] => Sequel[:tags_2][:pacticipant_id],
-            Sequel[:tags][:name] => Sequel[:tags_2][:name],
-            Sequel[:tags_2][:pacticipant_id] => pacticipant_ids,
-            Sequel[:tags_2][:name] => tag_names
-          }
-
           Tag
             .select_all_qualified
-            .left_join(:tags, self_join, { table_alias: :tags_2 }) do
-              Sequel[:tags_2][:version_order] > Sequel[:tags][:version_order]
+            .max_group_by(:version_order, [:pacticipant_id, :name]) do | ds |
+              ds.where(Sequel[:tags][:name] => tag_names)
+                .where(Sequel[:tags][:pacticipant_id] => pacticipant_ids)
             end
-            .where(Sequel[:tags_2][:name] => nil)
-            .where(Sequel[:tags][:pacticipant_id] => pacticipant_ids)
-            .where(Sequel[:tags][:name] => tag_names)
         end
 
         # ignores tags that don't have a pact publication
@@ -110,6 +85,7 @@ module PactBroker
             .join(lp, versions_pact_publications_join)
         end
 
+        # TODO convert this to use max and join
         def head_tags_for_pact_publication(pact_publication)
           Tag.where(version_id: pact_publication.consumer_version_id).all.select do | tag |
             tag_pp_join = {
