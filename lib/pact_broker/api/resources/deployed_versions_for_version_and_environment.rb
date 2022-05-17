@@ -40,11 +40,7 @@ module PactBroker
         end
 
         def policy_name
-          :'versions::deployed_version'
-        end
-
-        def policy_record
-          environment
+          :'versions::deployed_versions'
         end
 
         private

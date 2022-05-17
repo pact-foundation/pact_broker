@@ -45,7 +45,7 @@ module PactBroker
         end
 
         def policy_name
-          :'versions::released_version'
+          :'versions::released_versions'
         end
 
         def policy_record

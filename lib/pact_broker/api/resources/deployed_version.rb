@@ -58,11 +58,17 @@ module PactBroker
         end
 
         def policy_name
-          :'versions::version'
+          :'versions::deployed_version'
+        end
+
+        def policy_record_context
+          {
+            pacticipant: deployed_version&.pacticipant
+          }
         end
 
         def policy_record
-          deployed_version&.version
+          deployed_version&.environment
         end
 
         private
