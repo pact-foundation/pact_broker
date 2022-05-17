@@ -1,5 +1,6 @@
 require "pact_broker/api/decorators/reason_decorator"
 require "pact_broker/matrix/reason"
+require "pact_broker/matrix/resolved_selector"
 
 module PactBroker
   module Api
@@ -87,6 +88,13 @@ module PactBroker
             let(:reason) { PactBroker::Matrix::SelectorWithoutPacticipantVersionNumberSpecified.new }
 
             its(:to_s) { is_expected.to start_with "WARN: It is recommended to specify the version number" }
+          end
+
+          context "when the reason is PactBroker::Matrix::SpecifiedVersionDoesNotExist" do
+            let(:reason) { PactBroker::Matrix::SpecifiedVersionDoesNotExist.new(selector) }
+            let(:selector) { instance_double("PactBroker::Matrix::ResolvedSelector", version_does_not_exist_description: "version_does_not_exist_description") }
+
+            its(:to_s) { is_expected.to eq "version_does_not_exist_description" }
           end
         end
       end

@@ -30,7 +30,7 @@ module PactBroker
           when PactBroker::Matrix::PactNotVerifiedByRequiredProviderVersion
             "There is no verified pact between #{reason.consumer_selector.description} and #{reason.provider_selector.description}"
           when PactBroker::Matrix::SpecifiedVersionDoesNotExist
-            version_does_not_exist_description(reason.selector)
+            reason.selector.version_does_not_exist_description
           when PactBroker::Matrix::VerificationFailed
             "The verification for the pact between #{reason.consumer_selector.description} and #{reason.provider_selector.description} failed"
           when PactBroker::Matrix::NoDependenciesMissing
@@ -50,20 +50,6 @@ module PactBroker
             "WARN: It is recommended to specify the environment into which you are deploying. Without the environment, this result will not be reliable."
           else
             reason
-          end
-        end
-
-        def version_does_not_exist_description selector
-          if selector.version_does_not_exist?
-            if selector.tag
-              "No version with tag #{selector.tag} exists for #{selector.pacticipant_name}"
-            elsif selector.pacticipant_version_number
-              "No pacts or verifications have been published for version #{selector.pacticipant_version_number} of #{selector.pacticipant_name}"
-            else
-              "No pacts or verifications have been published for #{selector.pacticipant_name}"
-            end
-          else
-            ""
           end
         end
 

@@ -99,6 +99,7 @@ module PactBroker
         self[:tag]
       end
 
+      # @return [String] the name of the branch
       def branch
         self[:branch]
       end
@@ -208,6 +209,24 @@ module PactBroker
         end
       end
       # rubocop: enable Metrics/CyclomaticComplexity
+
+      def version_does_not_exist_description
+        if version_does_not_exist?
+          if tag
+            "No version with tag #{tag} exists for #{pacticipant_name}"
+          elsif branch
+            "No version of #{pacticipant_name} from branch #{branch} exists"
+          elsif environment_name
+            "No version of #{pacticipant_name} is currently recorded as deployed or released in environment #{environment_name}"
+          elsif pacticipant_version_number
+            "No pacts or verifications have been published for version #{pacticipant_version_number} of #{pacticipant_name}"
+          else
+            "No pacts or verifications have been published for #{pacticipant_name}"
+          end
+        else
+          ""
+        end
+      end
     end
   end
 end
