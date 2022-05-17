@@ -72,6 +72,8 @@ module PactBroker
       SELECT_ALL_COLUMN_ARGS = [:select_all_columns] + ALL_COLUMNS
       SELECT_PACTICIPANT_IDS_ARGS = [:select_pacticipant_ids, Sequel[:p][:consumer_id], Sequel[:p][:provider_id]]
 
+      EAGER_LOADED_RELATIONSHIPS_FOR_VERSION = { current_deployed_versions: :environment, current_supported_released_versions: :environment, branch_versions: [:branch_head, :version, branch: :pacticipant] }
+
       associate(:many_to_one, :pact_publication, :class => "PactBroker::Pacts::PactPublication", :key => :pact_publication_id, :primary_key => :id)
       associate(:many_to_one, :provider, :class => "PactBroker::Domain::Pacticipant", :key => :provider_id, :primary_key => :id)
       associate(:many_to_one, :consumer, :class => "PactBroker::Domain::Pacticipant", :key => :consumer_id, :primary_key => :id)
@@ -141,6 +143,7 @@ module PactBroker
           order(Sequel.desc(:consumer_version_created_at), Sequel.desc(:pact_order))
         end
 
+        # eager load tags?
         def eager_all_the_things
           eager(
             :consumer,
@@ -148,8 +151,8 @@ module PactBroker
             :verification,
             :pact_publication,
             :pact_version,
-            consumer_version: { current_deployed_versions: :environment, current_supported_released_versions: :environment, branch_versions: [:branch_head, :version, branch: :pacticipant] },
-            provider_version: { current_deployed_versions: :environment, current_supported_released_versions: :environment, branch_versions: [:branch_head, :version, branch: :pacticipant] },
+            consumer_version: EAGER_LOADED_RELATIONSHIPS_FOR_VERSION,
+            provider_version: EAGER_LOADED_RELATIONSHIPS_FOR_VERSION,
             consumer_version_tags: { version: :pacticipant },
             provider_version_tags: { version: :pacticipant }
           )
