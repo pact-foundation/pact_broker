@@ -87,6 +87,7 @@ en:
         environment_name_must_be_unique: Another environment with name '%{name}' already exists.
         cannot_specify_tag_and_environment: Cannot specify both a 'to' tag and an environment.
         cannot_specify_latest_and_environment: Cannot specify both latest=true and an environment.
+        cannot_specify_more_than_one_destination_identifier: Cannot specify more than one of tag, environment and mainBranch.
         environment_with_name_not_found: "Environment with name '%{name}' does not exist"
         cannot_modify_version_branch: "The branch for a pacticipant version cannot be changed once set (currently '%{old_branch}', proposed value '%{new_branch}'). Your pact publication/verification publication configurations may be in conflict with each other if you are seeing this error. If the current branch value is incorrect, you must delete the pacticipant version resource at %{version_url} and publish the pacts/verification results again with a consistent branch name."
         invalid_content_for_content_type: "The content could not be parsed as %{content_type}"

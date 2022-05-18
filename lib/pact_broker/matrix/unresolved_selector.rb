@@ -11,7 +11,7 @@ module PactBroker
 
       # TODO rename branch to branch_name
       def self.from_hash(hash)
-        new(hash.symbolize_keys.snakecase_keys.slice(:pacticipant_name, :pacticipant_version_number, :latest, :tag, :branch, :environment_name))
+        new(hash.symbolize_keys.snakecase_keys.slice(:pacticipant_name, :pacticipant_version_number, :latest, :tag, :branch, :environment_name, :main_branch))
       end
 
       def pacticipant_name
@@ -42,6 +42,11 @@ module PactBroker
         self[:branch]
       end
 
+      # @return [Boolean]
+      def main_branch
+        self[:main_branch]
+      end
+
       def environment_name
         self[:environment_name]
       end
@@ -56,6 +61,11 @@ module PactBroker
 
       def branch= branch
         self[:branch] = branch
+      end
+
+      # @param [Boolean] main_branch
+      def main_branch= main_branch
+        self[:main_branch] = main_branch
       end
 
       def environment_name= environment_name
