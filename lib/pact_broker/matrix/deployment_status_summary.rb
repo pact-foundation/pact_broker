@@ -170,16 +170,6 @@ module PactBroker
         end.flatten
       end
 
-      def selectors_without_a_version_for(integration)
-        selectors_with_non_existing_versions.select do | selector |
-          integration.involves_pacticipant_with_name?(selector.pacticipant_name)
-        end
-      end
-
-      def selectors_with_non_existing_versions
-        @selectors_with_non_existing_versions ||= resolved_selectors.select(&:latest_tagged_version_that_does_not_exist?)
-      end
-
       def missing_specified_version_reasons(selectors)
         selectors.collect(&:version_does_not_exist_description)
       end

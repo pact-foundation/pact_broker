@@ -98,7 +98,7 @@ module PactBroker
           end
 
           it "returns an error message" do
-            expect(subject.last).to include "Cannot specify both"
+            expect(subject.last).to include "Cannot specify more than"
           end
         end
 
@@ -114,6 +114,36 @@ module PactBroker
 
           it "returns an error message" do
             expect(subject.last).to include "Cannot specify both latest"
+          end
+        end
+
+        context "when both main_branch=true and an environment are specified" do
+          let(:selectors) { [] }
+
+          let(:options) do
+            {
+              main_branch: true,
+              environment_name: "prod"
+            }
+          end
+
+          it "returns an error message" do
+            expect(subject.last).to include "Cannot specify more than"
+          end
+        end
+
+        context "when both main_branch=true and a tag are specified" do
+          let(:selectors) { [] }
+
+          let(:options) do
+            {
+              main_branch: true,
+              tag: "prod"
+            }
+          end
+
+          it "returns an error message" do
+            expect(subject.last).to include "Cannot specify more than"
           end
         end
 

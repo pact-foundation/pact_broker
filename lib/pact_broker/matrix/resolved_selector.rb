@@ -46,6 +46,7 @@ module PactBroker
           latest: original_selector[:latest],
           tag: original_selector[:tag],
           branch: original_selector[:branch],
+          main_branch: original_selector[:main_branch],
           environment_name: original_selector[:environment_name],
           type: type,
           ignore: ignore,
@@ -64,6 +65,7 @@ module PactBroker
           latest: original_selector[:latest],
           tag: original_selector[:tag],
           branch: original_selector[:branch],
+          main_branch: original_selector[:main_branch],
           environment_name: original_selector[:environment_name],
           type: type,
           ignore: ignore,
@@ -104,6 +106,11 @@ module PactBroker
         self[:branch]
       end
 
+      # @return [Boolean]
+      def main_branch
+        self[:main_branch]
+      end
+
       def environment_name
         self[:environment_name]
       end
@@ -117,7 +124,7 @@ module PactBroker
       end
 
       def only_pacticipant_name_specified?
-        !!pacticipant_name && !branch && !tag && !latest? && !pacticipant_version_number
+        !!pacticipant_name && !branch && !tag && !latest? && !pacticipant_version_number && !main_branch
       end
 
       def latest_tagged?
@@ -126,6 +133,10 @@ module PactBroker
 
       def latest_from_branch?
         latest? && branch
+      end
+
+      def latest_from_main_branch?
+        latest? && main_branch
       end
 
       def pacticipant_or_version_does_not_exist?
@@ -138,10 +149,6 @@ module PactBroker
 
       def version_does_not_exist?
         !version_exists?
-      end
-
-      def latest_tagged_version_that_does_not_exist?
-        version_does_not_exist? && latest_tagged?
       end
 
       def specified_version_that_does_not_exist?

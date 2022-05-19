@@ -190,6 +190,7 @@ module PactBroker
 
           it "selects the consumer versions that are the latest for their branches" do
             expect(version_numbers).to eq %w{2 5}
+            expect(subject.first.values[:branch_name]).to eq "main"
           end
         end
 
@@ -209,6 +210,7 @@ module PactBroker
 
           it "selects the consumer versions that are the latest for their branches" do
             expect(version_numbers).to eq %w{1 2 4 5}
+            expect(subject.first.values[:branch_name]).to eq "main"
           end
         end
 
@@ -333,6 +335,7 @@ module PactBroker
 
           it "returns the versions with the matching branch" do
             expect(version_numbers).to eq %w{1 3 10}
+            expect(subject.first.values[:branch_name]).to eq "main"
           end
         end
 
@@ -350,6 +353,7 @@ module PactBroker
 
           it "returns the latest versions for each matching branch" do
             expect(version_numbers).to eq %w{3 10}
+            expect(subject.first.values[:branch_name]).to eq "main"
           end
         end
       end
