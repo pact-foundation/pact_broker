@@ -45,7 +45,7 @@ module PactBroker
           pacticipant_version_number: version.number,
           latest: original_selector[:latest],
           tag: original_selector[:tag],
-          branch: original_selector[:branch],
+          branch: original_selector[:branch] || (original_selector[:main_branch] ? version&.values[:branch_name] : nil),
           main_branch: original_selector[:main_branch],
           environment_name: original_selector[:environment_name],
           type: type,
@@ -107,7 +107,7 @@ module PactBroker
       end
 
       # @return [Boolean]
-      def main_branch
+      def main_branch?
         self[:main_branch]
       end
 
@@ -136,7 +136,7 @@ module PactBroker
       end
 
       def latest_from_main_branch?
-        latest? && main_branch
+        latest? && main_branch?
       end
 
       def pacticipant_or_version_does_not_exist?
@@ -188,10 +188,19 @@ module PactBroker
           "the latest version of #{pacticipant_name} with tag #{tag} (#{pacticipant_version_number})"
         elsif latest_tagged?
           "the latest version of #{pacticipant_name} with tag #{tag} (no such version exists)"
+        elsif main_branch? && pacticipant_version_number.nil?
+          "a version of #{pacticipant_name} from the main branch (no such version exists)"
+        elsif latest_from_main_branch? && pacticipant_version_number.nil?
+          "the latest version of #{pacticipant_name} from the main branch (no such verison exists)"
         elsif latest_from_branch? && pacticipant_version_number
           "the latest version of #{pacticipant_name} from branch #{branch} (#{pacticipant_version_number})"
         elsif latest_from_branch?
           "the latest version of #{pacticipant_name} from branch #{branch} (no such version exists)"
+        elsif branch && pacticipant_version_number
+          prefix = one_of_many? ? "one of the versions " : "the version "
+          prefix + "of #{pacticipant_name} from branch #{branch} (#{pacticipant_version_number})"
+        elsif branch
+          "a version of #{pacticipant_name} from branch #{branch} (no such version exists)"
         elsif latest? && pacticipant_version_number
           "the latest version of #{pacticipant_name} (#{pacticipant_version_number})"
         elsif latest?
@@ -223,6 +232,8 @@ module PactBroker
             "No version with tag #{tag} exists for #{pacticipant_name}"
           elsif branch
             "No version of #{pacticipant_name} from branch #{branch} exists"
+          elsif main_branch?
+              "No version of #{pacticipant_name} from the main branch exists"
           elsif environment_name
             "No version of #{pacticipant_name} is currently recorded as deployed or released in environment #{environment_name}"
           elsif pacticipant_version_number

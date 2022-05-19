@@ -44,11 +44,21 @@ module PactBroker
             expect(subject.sort).to eq ["Foo1 Bar2", "Foo1 Baz11"]
           end
 
+          it "sets the resolved branch name" do
+            expect(rows.resolved_selectors.find{ |s| s.pacticipant_name == "Bar" }.branch).to eq "develop"
+            expect(rows.resolved_selectors.find{ |s| s.pacticipant_name == "Baz" }.branch).to eq "main"
+          end
+
           context "deploying a consumer with all versions of the provider's main branches (this doesn't even make sense)" do
             let(:options) { { main_branch: true } }
 
             it "returns the rows between the consumer and the latest version of each provider's main branch" do
               expect(subject.sort).to eq ["Foo1 Bar1", "Foo1 Bar2", "Foo1 Baz10", "Foo1 Baz11"]
+            end
+
+            it "sets the resolved branch names" do
+              expect(rows.resolved_selectors.select{ |s| s.pacticipant_name == "Bar" }.collect(&:branch).uniq).to eq ["develop"]
+              expect(rows.resolved_selectors.select{ |s| s.pacticipant_name == "Baz" }.collect(&:branch).uniq).to eq ["main"]
             end
           end
         end
@@ -82,11 +92,21 @@ module PactBroker
             expect(subject.sort).to eq ["Beep2 Bar1", "Foo2 Bar1"]
           end
 
+          it "sets the resolved branch name" do
+            expect(rows.resolved_selectors.find{ |s| s.pacticipant_name == "Beep" }.branch).to eq "main"
+            expect(rows.resolved_selectors.find{ |s| s.pacticipant_name == "Foo" }.branch).to eq "develop"
+          end
+
           context "deploying a provider with all versions of the consumer's main branches (this doesn't even make sense)" do
             let(:options) { { main_branch: true } }
 
             it "returns the rows between the provider and the consumer's main branches" do
               expect(subject.sort).to eq ["Beep1 Bar1", "Beep2 Bar1", "Foo1 Bar1", "Foo2 Bar1"]
+            end
+
+            it "sets the resolved branch names" do
+              expect(rows.resolved_selectors.select{ |s| s.pacticipant_name == "Beep" }.collect(&:branch).uniq).to eq ["main"]
+              expect(rows.resolved_selectors.select{ |s| s.pacticipant_name == "Foo" }.collect(&:branch).uniq).to eq ["develop"]
             end
           end
         end
