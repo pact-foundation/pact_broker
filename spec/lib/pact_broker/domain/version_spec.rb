@@ -158,19 +158,23 @@ module PactBroker
           end
         end
 
-        context "when selecting all versions with a branch" do
+        context "when selecting all versions that are the latest from a branch" do
           before do
             td.create_consumer("Foo")
+              .create_consumer_version("0", branch: "main")
               .create_consumer_version("1", branch: "main")
+              .create_consumer_version("1", branch: "feat/x")
               .create_consumer_version("2")
               .create_consumer("Bar")
               .create_consumer_version("3", branch: "main")
+              .create_consumer_version("4", branch: "main")
           end
 
           let(:selector) { PactBroker::DB::Clean::Selector.new(branch: true, latest: true) }
 
-          it "selects the consumer versions that are the latest for their branches" do
-            expect(version_numbers).to eq %w{1 3}
+          it "selects the consumer versions that are the latest for their branches, but does not specify which branch they belong to, as it might be multiple, and we don't want a version row for each branch" do
+            expect(version_numbers).to eq %w{1 4}
+            expect(subject.collect{ |v| v.values[:branch_name] }).to eq [nil, nil]
           end
         end
 
@@ -188,9 +192,10 @@ module PactBroker
 
           let(:selector) { PactBroker::DB::Clean::Selector.new(main_branch: true, latest: true) }
 
-          it "selects the consumer versions that are the latest for their branches" do
+          it "selects the versions that are the latest for their branches" do
             expect(version_numbers).to eq %w{2 5}
-            expect(subject.first.values[:branch_name]).to eq "main"
+            expect(subject.find{ |v| v.pacticipant.name == "Bar" }.values[:branch_name]).to eq "develop"
+            expect(subject.find{ |v| v.pacticipant.name == "Foo" }.values[:branch_name]).to eq "main"
           end
         end
 
@@ -208,9 +213,10 @@ module PactBroker
 
           let(:selector) { PactBroker::DB::Clean::Selector.new(main_branch: true) }
 
-          it "selects the consumer versions that are the latest for their branches" do
+          it "selects the versions for the main branches" do
             expect(version_numbers).to eq %w{1 2 4 5}
-            expect(subject.first.values[:branch_name]).to eq "main"
+            expect(subject.select{ |v| v.pacticipant.name == "Bar" }.collect{ |v| v.values[:branch_name] }.uniq).to eq ["develop"]
+            expect(subject.select{ |v| v.pacticipant.name == "Foo" }.collect{ |v| v.values[:branch_name] }.uniq).to eq ["main"]
           end
         end
 
