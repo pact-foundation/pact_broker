@@ -187,5 +187,11 @@
     "reasons": [
       "PactBroker::Matrix::NoDependenciesMissing"
     ]
+  },
+  "PactBroker::Matrix::Service find when an unresolved selector resolves to more than one resolved selector (ie. all tags) identifies the correct selector for a failing row": {
+    "deployable": false,
+    "reasons": [
+      "PactBroker::Matrix::VerificationFailed"
+    ]
   }
 }

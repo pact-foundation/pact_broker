@@ -192,13 +192,28 @@ module PactBroker
         PactNotEverVerifiedByProvider.new(*selectors_for(row))
       end
 
-      def selector_for(pacticipant_name)
-        resolved_selectors.find{ | s| s.pacticipant_name == pacticipant_name } ||
-          dummy_selectors.find{ | s| s.pacticipant_name == pacticipant_name }
+      # Find the resolved version selector that caused the matrix row with the
+      # specified pacticipant name and version number to be returned in the query.
+      #
+      # @return [PactBroker::Matrix::ResolvedSelector]
+      def selector_for(pacticipant_name, pacticipant_version_number)
+        found = resolved_selectors.select{ | s| s.pacticipant_name == pacticipant_name }
+
+        if found.size == 1
+          found.first
+        elsif pacticipant_version_number
+          found.find{ |s| s.pacticipant_version_number == pacticipant_version_number } || dummy_selector_for(pacticipant_name)
+        else
+          dummy_selector_for(pacticipant_name)
+        end
       end
 
       def selectors_for(row)
-        [selector_for(row.consumer_name), selector_for(row.provider_name)]
+        [selector_for(row.consumer_name, row.consumer_version_number), selector_for(row.provider_name, row.provider_version_number)]
+      end
+
+      def dummy_selector_for(pacticipant_name)
+        dummy_selectors.select{ | s| s.pacticipant_name == pacticipant_name }
       end
 
       # When the user has not specified a version of the provider (eg no 'latest' and/or 'tag', which means 'all versions')
@@ -232,7 +247,7 @@ module PactBroker
         considered_rows.select(&:success).collect do | row |
           begin
             if row.verification.interactions_missing_test_results.any? && !row.verification.all_interactions_missing_test_results?
-              InteractionsMissingVerifications.new(selector_for(row.consumer_name), selector_for(row.provider_name), row.verification.interactions_missing_test_results)
+              InteractionsMissingVerifications.new(selector_for(row.consumer_name, row.consumer_version_number), selector_for(row.provider_name, row.provider_version_number), row.verification.interactions_missing_test_results)
             end
           rescue StandardError => e
             logger.warn("Error determining if there were missing interaction verifications", e)

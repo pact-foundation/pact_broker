@@ -561,6 +561,26 @@ module PactBroker
             expect(subject.deployment_status_summary).to be_deployable
           end
         end
+
+        describe "when an unresolved selector resolves to more than one resolved selector (ie. all tags)" do
+          before do
+            td.publish_pact(consumer_name: "foo", provider_name: "bar", consumer_version_number: "1")
+              .create_verification(provider_version: "1", success: true, tag_names: ["prod"])
+              .create_verification(provider_version: "2", number: "2", success: false, tag_names: ["prod"])
+          end
+
+          let(:selectors) do
+            [
+              UnresolvedSelector.new(pacticipant_name: "foo", pacticipant_version_number: "1")
+            ]
+          end
+
+          let(:options) { { latestby: "cvp", tag: "prod" } }
+
+          it "identifies the correct selector for a failing row" do
+            expect(subject.deployment_status_summary.reasons.first.provider_selector.pacticipant_version_number).to eq "2"
+          end
+        end
       end
     end
   end
