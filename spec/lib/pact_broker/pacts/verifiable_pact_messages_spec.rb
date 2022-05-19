@@ -99,12 +99,12 @@ module PactBroker
           let(:pending) { true }
           let(:pending_provider_tags) { %w[dev] }
 
-          its(:inclusion_reason) { is_expected.to include "The pact at http://pact is being verified because it is a 'work in progress' pact (ie. it is the pact for the latest version of Foo tagged with 'feat-x' and is still in pending state)."}
+          its(:inclusion_reason) { is_expected.to include "The pact at http://pact is being verified because it is a 'work in progress' pact (ie. it is the pact for the latest version of Foo tagged with 'feat-x' and it has not yet been successfully verified by a version of Bar with tag 'dev' when the pact's application version was explicitly specified in the consumer version selectors). Read more at https://docs.pact.io/go/wip"}
 
           context "when the pact is a WIP pact for a consumer branch" do
             let(:selectors) { Selectors.create_for_latest_of_each_branch(%w[feat-x feat-y]).resolve(consumer_version) }
 
-            its(:inclusion_reason) { is_expected.to include "The pact at http://pact is being verified because it is a 'work in progress' pact (ie. it is the pact for the latest versions of Foo from branches 'feat-x' and 'feat-y' (both have the same content) and is still in pending state)."}
+            its(:inclusion_reason) { is_expected.to include "The pact at http://pact is being verified because it is a 'work in progress' pact (ie. it is the pact for the latest versions of Foo from branches 'feat-x' and 'feat-y' (both have the same content)"}
           end
 
           context "when the pact is a WIP pact for a consumer branch and consumer rags" do
@@ -217,7 +217,7 @@ module PactBroker
           end
         end
 
-        context "when the pact is pending" do
+        context "when the pact is pending but not wip" do
           let(:pending) { true }
 
           context "when there are no non_pending_provider_tags or a provider_branch" do
@@ -245,6 +245,32 @@ module PactBroker
             let(:pending_provider_tags) { %w[dev feat-x feat-y] }
 
             its(:pending_reason) { is_expected.to include "'dev', 'feat-x' and 'feat-y'" }
+          end
+        end
+
+        context "when the pact is pending and is wip" do
+          let(:pending) { true }
+          let(:wip) { true }
+
+          context "when there are no non_pending_provider_tags or a provider_branch" do
+            its(:pending_reason) { is_expected.to include "This pact is in pending state for this version of Bar because it was included as a 'work in progress' pact. If this verification fails, it will not cause the overall build to fail." }
+          end
+
+          context "when there is a provider_branch" do
+            let(:provider_branch) { "main" }
+            its(:pending_reason) { is_expected.to include "This pact is in pending state for this version of Bar because it was included as a 'work in progress' pact. If this verification fails, it will not cause the overall build to fail." }
+          end
+
+          context "when there is 1 pending_provider_tag" do
+            let(:pending_provider_tags) { %w[dev] }
+
+            its(:pending_reason) { is_expected.to include "This pact is in pending state for this version of Bar because it was included as a 'work in progress' pact. If this verification fails, it will not cause the overall build to fail." }
+          end
+
+          context "when there are 2 pending_provider_tags" do
+            let(:pending_provider_tags) { %w[dev feat-x] }
+
+            its(:pending_reason) { is_expected.to include "This pact is in pending state for this version of Bar because it was included as a 'work in progress' pact. If this verification fails, it will not cause the overall build to fail." }
           end
         end
       end

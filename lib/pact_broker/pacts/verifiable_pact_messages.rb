@@ -31,7 +31,7 @@ module PactBroker
         version_text = head_consumer_tags.size == 1 || branches.size == 1 ? "version" : "versions"
         if wip?
           # WIP pacts will always have tags, because it is part of the definition of being a WIP pact
-          "The pact at #{pact_version_url} is being verified because it is a 'work in progress' pact (ie. it is the pact for the latest #{version_text} of #{consumer_name} #{joined_head_consumer_tags_and_branches} and is still in pending state). #{READ_MORE_WIP}"
+          "The pact at #{pact_version_url} is being verified because it is a 'work in progress' pact (ie. it is the pact for the latest #{version_text} of #{consumer_name} #{joined_head_consumer_tags_and_branches} and it has not yet been successfully verified by #{pending_provider_branch_or_tags_description("a")} when the pact's application version was explicitly specified in the consumer version selectors). #{READ_MORE_WIP}".tap { |it| puts it }
         else
           criteria_or_criterion = selectors.size > 1 ? "criteria" : "criterion"
           version_or_versions = pluralize("the consumer version", selectors.size)
@@ -40,7 +40,9 @@ module PactBroker
       end
 
       def pending_reason
-        if pending?
+        if pending? && wip?
+          "This pact is in pending state for this version of #{provider_name} because it was included as a 'work in progress' pact. If this verification fails, it will not cause the overall build to fail. #{READ_MORE_PENDING}"
+        elsif pending?
           "This pact is in pending state for this version of #{provider_name} because a successful verification result for #{pending_provider_branch_or_tags_description("a")} has not yet been published. If this verification fails, it will not cause the overall build to fail. #{READ_MORE_PENDING}"
         else
           "This pact has previously been successfully verified by #{non_pending_provider_branch_or_tags_description}. If this verification fails, it will fail the build. #{READ_MORE_PENDING}"
