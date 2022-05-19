@@ -208,12 +208,16 @@ module PactBroker
         end
       end
 
-      def selectors_for(row)
-        [selector_for(row.consumer_name, row.consumer_version_number), selector_for(row.provider_name, row.provider_version_number)]
+      def selectors_for(row_or_integration)
+        if row_or_integration.respond_to?(:consumer_version_number)
+          [selector_for(row_or_integration.consumer_name, row_or_integration.consumer_version_number), selector_for(row_or_integration.provider_name, row_or_integration.provider_version_number)]
+        else
+          [selector_for(row_or_integration.consumer_name, nil), selector_for(row_or_integration.provider_name, nil)]
+        end
       end
 
       def dummy_selector_for(pacticipant_name)
-        dummy_selectors.select{ | s| s.pacticipant_name == pacticipant_name }
+        dummy_selectors.find{ | s| s.pacticipant_name == pacticipant_name }
       end
 
       # When the user has not specified a version of the provider (eg no 'latest' and/or 'tag', which means 'all versions')
