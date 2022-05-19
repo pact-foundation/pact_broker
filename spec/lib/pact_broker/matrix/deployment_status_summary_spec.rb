@@ -248,6 +248,7 @@ module PactBroker
               latest: nil,
               tag: nil,
               branch: nil,
+              main_branch: nil,
               environment_name: nil,
               type: :inferred,
               ignore: false,

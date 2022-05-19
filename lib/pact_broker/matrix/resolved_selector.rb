@@ -124,7 +124,7 @@ module PactBroker
       end
 
       def only_pacticipant_name_specified?
-        !!pacticipant_name && !branch && !tag && !latest? && !pacticipant_version_number && !main_branch
+        !!pacticipant_name && !branch && !tag && !latest? && !pacticipant_version_number && !main_branch?
       end
 
       def latest_tagged?
