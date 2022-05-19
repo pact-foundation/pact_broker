@@ -262,10 +262,9 @@ module PactBroker
       end
 
       # The user has specified --to TAG or --to-environment ENVIRONMENT in the CLI
-      # (or nothing, which to defaults to "with the latest version of the other integrated applications")
-      # The branch isn't implemented in the CLI yet (March 2022), but the API supports it.
+      # (or nothing, which to defaults to latest=true - "with the latest version of the other integrated applications")
       def infer_selectors_for_integrations?(options)
-        options[:latest] || options[:tag] || options[:branch] || options[:environment_name]
+        options[:latest] || options[:tag] || options[:branch] || options[:environment_name] || options[:main_branch]
       end
 
       # When only one selector is specified, (eg. checking to see if Foo version 2 can be deployed to prod),
@@ -282,6 +281,7 @@ module PactBroker
           selector = UnresolvedSelector.new(pacticipant_name: pacticipant_name)
           selector.tag = options[:tag] if options[:tag]
           selector.branch = options[:branch] if options[:branch]
+          selector.main_branch = options[:main_branch] if options[:main_branch]
           selector.latest = options[:latest] if options[:latest]
           selector.environment_name = options[:environment_name] if options[:environment_name]
           selector
