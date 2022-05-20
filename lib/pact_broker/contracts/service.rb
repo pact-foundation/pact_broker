@@ -77,19 +77,13 @@ module PactBroker
       def add_pacticipant_conflict_notices(notices, parsed_contracts, base_url)
         if PactBroker.configuration.check_for_potential_duplicate_pacticipant_names
           duplicate_pacticipant_messages = pacticipant_service.messages_for_potential_duplicate_pacticipants(parsed_contracts.pacticipant_names, base_url)
-          add_pacticipant_conflict_notice(notices, duplicate_pacticipant_messages)
+          duplicate_pacticipant_messages.each do | message_text |
+            notices << Notice.error(message_text)
+          end
         end
       end
 
-      private :add_pact_conflict_notices
-
-      def add_pacticipant_conflict_notice(notices, messages)
-        messages.each do | message_text |
-          notices << Notice.error(message_text)
-        end
-      end
-
-      private :add_pact_conflict_notice
+      private :add_pacticipant_conflict_notices
 
       def create_version(parsed_contracts)
         version_params = {
