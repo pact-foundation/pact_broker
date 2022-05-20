@@ -89,9 +89,11 @@ module PactBroker
         self[:max_age]
       end
 
+      # rubocop: disable Metrics/CyclomaticComplexity
       def all_for_pacticipant?
         !!pacticipant_name && !pacticipant_version_number && !tag && !branch && !latest && !environment_name && !max_age && !main_branch
       end
+      # rubocop: enable Metrics/CyclomaticComplexity
 
       def latest_for_pacticipant_and_tag?
         !!(pacticipant_name && tag && latest)

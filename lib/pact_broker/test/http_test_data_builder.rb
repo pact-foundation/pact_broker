@@ -309,7 +309,7 @@ module PactBroker
         self
       end
 
-      def can_i_deploy(pacticipant:, version:, to: nil, to_environment: nil, with_main_branches: nil)
+      def can_i_deploy(pacticipant:, version:, to: nil, to_environment: nil)
         can_i_deploy_response = client.get("can-i-deploy", { pacticipant: pacticipant, version: version, to: to, environment: to_environment}.compact ).tap { |response| check_for_error(response) }
         can = !!(can_i_deploy_response.body["summary"] || {})["deployable"]
         puts "can-i-deploy #{pacticipant} version #{version} to #{to || to_environment}: #{can ? 'yes' : 'no'}"

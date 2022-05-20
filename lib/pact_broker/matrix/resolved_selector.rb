@@ -182,7 +182,7 @@ module PactBroker
         !ignore?
       end
 
-      # rubocop: disable Metrics/CyclomaticComplexity
+      # rubocop: disable Metrics/CyclomaticComplexity, Metrics/MethodLength
       def description
         if latest_tagged? && pacticipant_version_number
           "the latest version of #{pacticipant_name} with tag #{tag} (#{pacticipant_version_number})"
@@ -224,7 +224,7 @@ module PactBroker
           "any version of #{pacticipant_name}"
         end
       end
-      # rubocop: enable Metrics/CyclomaticComplexity
+      # rubocop: enable Metrics/CyclomaticComplexity, Metrics/MethodLength
 
       def version_does_not_exist_description
         if version_does_not_exist?
@@ -233,7 +233,7 @@ module PactBroker
           elsif branch
             "No version of #{pacticipant_name} from branch #{branch} exists"
           elsif main_branch?
-              "No version of #{pacticipant_name} from the main branch exists"
+            "No version of #{pacticipant_name} from the main branch exists"
           elsif environment_name
             "No version of #{pacticipant_name} is currently recorded as deployed or released in environment #{environment_name}"
           elsif pacticipant_version_number
