@@ -10,13 +10,14 @@ module PactBroker
       extend PactBroker::Repositories
       extend PactBroker::Services
       include PactBroker::Logging
+      extend PactBroker::Messages
 
       def self.messages_for_potential_duplicate_pacticipants(pacticipant_names, base_url)
         messages = []
         pacticipant_names.each do | name |
           potential_duplicate_pacticipants = find_potential_duplicate_pacticipants(name)
           if potential_duplicate_pacticipants.any?
-            messages << Messages.potential_duplicate_pacticipant_message(name, potential_duplicate_pacticipants, base_url)
+            messages << potential_duplicate_pacticipant_message(name, potential_duplicate_pacticipants, base_url)
           end
         end
         messages
@@ -97,6 +98,15 @@ module PactBroker
         else
           pacticipant
         end
+      end
+
+      private_class_method def self.potential_duplicate_pacticipant_message(new_name, potential_duplicate_pacticipants, base_url)
+        existing_names = potential_duplicate_pacticipants.
+          collect{ | p | "* #{p.name}"  }.join("\n")
+        message("errors.duplicate_pacticipant",
+          new_name: new_name,
+          existing_names: existing_names,
+          base_url: base_url)
       end
     end
   end

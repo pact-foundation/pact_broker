@@ -43,19 +43,26 @@ module PactBroker
         )
       end
 
-      def conflict_notices(parsed_contracts)
+      def conflict_notices(parsed_contracts, base_url: )
         notices = []
+        add_pact_conflict_notices(notices, parsed_contracts)
+        add_pacticipant_conflict_notices(notices, parsed_contracts, base_url)
+        notices
+      end
+
+      def add_pact_conflict_notices(notices, parsed_contracts)
         parsed_contracts.contracts.collect do | contract_to_publish |
           pact_params = create_pact_params(parsed_contracts, contract_to_publish)
           existing_pact = pact_service.find_pact(pact_params)
           if existing_pact && pact_service.disallowed_modification?(existing_pact, contract_to_publish.decoded_content)
-            add_conflict_notice(notices, parsed_contracts, contract_to_publish, existing_pact.json_content, contract_to_publish.decoded_content)
+            add_pact_conflict_notice(notices, parsed_contracts, contract_to_publish, existing_pact.json_content, contract_to_publish.decoded_content)
           end
         end
-        notices
       end
 
-      def add_conflict_notice(notices, parsed_contracts, contract_to_publish, existing_json_content, new_json_content)
+      private :add_pact_conflict_notices
+
+      def add_pact_conflict_notice(notices, parsed_contracts, contract_to_publish, existing_json_content, new_json_content)
         message_params = {
           consumer_name: contract_to_publish.provider_name,
           consumer_version_number: parsed_contracts.pacticipant_version_number,
@@ -65,7 +72,24 @@ module PactBroker
         notices << Notice.info(PactBroker::Pacts::CreateFormattedDiff.call(new_json_content, existing_json_content))
       end
 
-      private :add_conflict_notice
+      private :add_pact_conflict_notice
+
+      def add_pacticipant_conflict_notices(notices, parsed_contracts, base_url)
+        if PactBroker.configuration.check_for_potential_duplicate_pacticipant_names
+          duplicate_pacticipant_messages = pacticipant_service.messages_for_potential_duplicate_pacticipants(parsed_contracts.pacticipant_names, base_url)
+          add_pacticipant_conflict_notice(notices, duplicate_pacticipant_messages)
+        end
+      end
+
+      private :add_pact_conflict_notices
+
+      def add_pacticipant_conflict_notice(notices, messages)
+        messages.each do | message_text |
+          notices << Notice.error(message_text)
+        end
+      end
+
+      private :add_pact_conflict_notice
 
       def create_version(parsed_contracts)
         version_params = {

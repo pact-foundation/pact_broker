@@ -6,6 +6,10 @@ module PactBroker
         new(pacticipant_name, pacticipant_version_number, tags, branch, build_url, contracts)
       end
       # rubocop: enable Metrics/ParameterLists
+
+      def pacticipant_names
+        contracts.flat_map(&:pacticipant_names).uniq
+      end
     end
   end
 end

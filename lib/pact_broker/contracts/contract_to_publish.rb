@@ -14,6 +14,10 @@ module PactBroker
       def merge?
         on_conflict == "merge"
       end
+
+      def pacticipant_names
+        [consumer_name, provider_name]
+      end
     end
   end
 end

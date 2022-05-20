@@ -23,15 +23,6 @@ module PactBroker
       message("errors.validation." + key, options)
     end
 
-    def potential_duplicate_pacticipant_message new_name, potential_duplicate_pacticipants, base_url
-      existing_names = potential_duplicate_pacticipants.
-        collect{ | p | "* #{p.name}"  }.join("\n")
-      message("errors.duplicate_pacticipant",
-        new_name: new_name,
-        existing_names: existing_names,
-        create_pacticipant_url: pacticipants_url(base_url))
-    end
-
     def pluralize(word, count)
       if count == 1
         word
@@ -42,12 +33,6 @@ module PactBroker
           word + "s"
         end
       end
-    end
-
-    private
-
-    def pacticipants_url base_url
-      PactBroker::Api::PactBrokerUrls.pacticipants_url base_url
     end
   end
 end
