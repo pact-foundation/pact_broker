@@ -197,7 +197,7 @@ module PactBroker
           it { is_expected.to be_empty }
         end
 
-        it "passes in the pacticipant names" do
+        it "checks if there are potential duplicate pacticipants" do
           expect(pacticipant_service).to receive(:messages_for_potential_duplicate_pacticipants).with(["Foo", "Bar"], "base_url")
           subject
         end
