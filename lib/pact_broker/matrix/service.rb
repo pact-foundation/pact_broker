@@ -87,8 +87,10 @@ module PactBroker
           error_messages << "Please provide 1 or more version selectors."
         end
 
-        if options[:tag]&.not_blank? && options[:environment_name]&.not_blank?
-          error_messages << message("errors.validation.cannot_specify_tag_and_environment")
+        destination_identifiers = [options[:tag], options[:environment_name], options[:main_branch]&.to_s].compact
+
+        if destination_identifiers.size > 1
+          error_messages << message("errors.validation.cannot_specify_more_than_one_destination_identifier")
         end
 
         if options[:latest] && options[:environment_name]&.not_blank?

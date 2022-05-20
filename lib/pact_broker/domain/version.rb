@@ -141,10 +141,12 @@ module PactBroker
             where(id: PactBroker::Versions::BranchVersion.select(:version_id))
           else
             matching_branch_ids = PactBroker::Versions::Branch.select(:id).where(name: branch_name)
-            matching_branch_version_ids = PactBroker::Versions::BranchVersion
-                                            .select(:version_id)
+            branch_version_ids = PactBroker::Versions::BranchVersion
+                                            .select(:version_id, :branch_name)
                                             .where(branch_id: matching_branch_ids)
-            where(id: matching_branch_version_ids)
+            select_append(:branch_name)
+              .join(branch_version_ids, { Sequel[first_source_alias][:id] => Sequel[:bv][:version_id] }, { table_alias: :bv})
+
           end
         end
 
@@ -152,18 +154,22 @@ module PactBroker
           if branch_name == true
             where(id: PactBroker::Versions::BranchHead.select(:version_id))
           else
-            where(id: PactBroker::Versions::BranchHead.select(:version_id).where(branch_name: branch_name))
+            branch_heads = PactBroker::Versions::BranchHead.select(:version_id, :branch_name).where(branch_name: branch_name)
+            select_append(:branch_name)
+              .join(branch_heads, { Sequel[first_source_alias][:id] => Sequel[:bh][:version_id] }, { table_alias: :bh })
           end
         end
 
 
         def for_main_branches
-          matching_branch_version_ids = PactBroker::Versions::BranchVersion
-                                          .select(:version_id)
+          branch_version_ids = PactBroker::Versions::BranchVersion
+                                          .select(:version_id, :branch_name)
                                           .join(:pacticipants, { Sequel[:branch_versions][:pacticipant_id] => Sequel[:pacticipants][:id] })
                                           .join(:branches, { Sequel[:branches][:id] => Sequel[:branch_versions][:branch_id], Sequel[:branches][:name] => Sequel[:pacticipants][:main_branch] })
 
-          where(id: matching_branch_version_ids)
+          select_append(Sequel[:bv][:branch_name])
+            .join(branch_version_ids, { Sequel[first_source_alias][:id] => Sequel[:bv][:version_id]  }, table_alias: :bv)
+
         end
 
         def latest_for_main_branches
@@ -171,11 +177,13 @@ module PactBroker
             Sequel[:branch_heads][:pacticipant_id] => Sequel[:pacticipants][:id],
             Sequel[:branch_heads][:branch_name] => Sequel[:pacticipants][:main_branch]
           }
-          matching_branch_version_ids = PactBroker::Versions::BranchHead
-                                          .select(:version_id)
+          branch_head_version_ids = PactBroker::Versions::BranchHead
+                                          .select(:version_id, :branch_name)
                                           .join(:pacticipants, pacticipants_join)
 
-          where(id: matching_branch_version_ids)
+          select_append(Sequel[:bh][:branch_name])
+            .join(branch_head_version_ids, { Sequel[first_source_alias][:id] => Sequel[:bh][:version_id]  }, table_alias: :bh)
+
         end
 
         def where_number(number)

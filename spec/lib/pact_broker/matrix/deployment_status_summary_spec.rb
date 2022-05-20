@@ -248,6 +248,7 @@ module PactBroker
               latest: nil,
               tag: nil,
               branch: nil,
+              main_branch: nil,
               environment_name: nil,
               type: :inferred,
               ignore: false,
@@ -289,10 +290,52 @@ module PactBroker
           its(:reasons) { is_expected.to include SelectorWithoutPacticipantVersionNumberSpecified.new }
         end
 
-        context "when there is no to tag or environment specified" do
+        context "when there is no to tag or environment specified and there was only one specified selector" do
+          let(:resolved_selectors) do
+            [
+              ResolvedSelector.new(
+                pacticipant_id: foo.id,
+                pacticipant_name: foo.name,
+                pacticipant_version_number: foo_version.number,
+                pacticipant_version_id: foo_version.id,
+                type: :specified
+              ),
+              ResolvedSelector.new(
+                pacticipant_id: bar.id,
+                pacticipant_name: bar.name,
+                pacticipant_version_number: bar_version.number,
+                pacticipant_version_id: bar_version.id,
+                type: :inferred
+              )
+            ]
+          end
+
           let(:options) { { } }
 
           its(:reasons) { is_expected.to include NoEnvironmentSpecified.new }
+
+          context "when there were multiple selectors specified" do
+            let(:resolved_selectors) do
+              [
+                ResolvedSelector.new(
+                  pacticipant_id: foo.id,
+                  pacticipant_name: foo.name,
+                  pacticipant_version_number: foo_version.number,
+                  pacticipant_version_id: foo_version.id,
+                  type: :specified
+                ),
+                ResolvedSelector.new(
+                  pacticipant_id: bar.id,
+                  pacticipant_name: bar.name,
+                  pacticipant_version_number: bar_version.number,
+                  pacticipant_version_id: bar_version.id,
+                  type: :specified
+                )
+              ]
+            end
+
+            its(:reasons) { is_expected.to_not include NoEnvironmentSpecified.new }
+          end
         end
       end
     end

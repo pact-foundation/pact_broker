@@ -62,7 +62,7 @@ module PactBroker
       def bad_practice_warnings
         warnings = []
 
-        if no_to_tag_or_environment_specified?
+        if resolved_selectors.count(&:specified?) == 1 && no_to_tag_or_branch_or_environment_specified?
           warnings << NoEnvironmentSpecified.new
         end
 
@@ -91,8 +91,8 @@ module PactBroker
           .any?
       end
 
-      def no_to_tag_or_environment_specified?
-        !(query_results.options[:tag] || query_results.options[:environment_name])
+      def no_to_tag_or_branch_or_environment_specified?
+        !(query_results.options[:tag] || query_results.options[:environment_name] || query_results.options[:main_branch])
       end
 
       def considered_specified_selectors_that_do_not_exist
@@ -168,16 +168,6 @@ module PactBroker
         required_integrations_without_a_row.collect do | integration |
           pact_not_verified_by_required_provider_version(integration)
         end.flatten
-      end
-
-      def selectors_without_a_version_for(integration)
-        selectors_with_non_existing_versions.select do | selector |
-          integration.involves_pacticipant_with_name?(selector.pacticipant_name)
-        end
-      end
-
-      def selectors_with_non_existing_versions
-        @selectors_with_non_existing_versions ||= resolved_selectors.select(&:latest_tagged_version_that_does_not_exist?)
       end
 
       def missing_specified_version_reasons(selectors)

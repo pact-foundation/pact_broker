@@ -323,6 +323,20 @@ module PactBroker
         self
       end
 
+      def can_i_merge(pacticipant:, version:)
+        can_i_merge_response = client.get("matrix", { q: [pacticipant: pacticipant, version: version], latestby: "cvp", mainBranch: true, latest: true }.compact ).tap { |response| check_for_error(response) }
+        can = !!(can_i_merge_response.body["summary"] || {})["deployable"]
+        puts "can-i-merge #{pacticipant} version #{version}: #{can ? 'yes' : 'no'}"
+        summary = can_i_merge_response.body["summary"]
+        verification_result_urls = (can_i_merge_response.body["matrix"] || []).collect do | row |
+          row.dig("verificationResult", "_links", "self", "href")
+        end.compact
+        summary.merge!("verification_result_urls" => verification_result_urls)
+        puts summary.to_yaml
+        separate
+        self
+      end
+
       def delete_integration(consumer:, provider:)
         puts "Deleting all data for the integration between #{consumer} and #{provider}"
         client.delete("integrations/provider/#{encode(provider)}/consumer/#{encode(consumer)}").tap { |response| check_for_error(response) }
