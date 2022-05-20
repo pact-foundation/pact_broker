@@ -96,7 +96,7 @@ en:
         invalid_limit: The limit must be 1 or greater.
       duplicate_pacticipant: |
         This is the first time a pact has been published for "%{new_name}".
-        The name "%{new_name}" is very similar to the following existing consumers/providers:
+        The name "%{new_name}" is very similar to the following existing pacticipants:
         %{existing_names}
         If you meant to specify one of the above names, please correct the pact configuration, and re-publish the pact.
         If the pact is intended to be for a new consumer or provider, please manually create "%{new_name}" using the following command from the Pact Broker CLI, and then re-publish the pact:
