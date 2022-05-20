@@ -109,7 +109,6 @@
   "PactBroker::Matrix::Service find when two applications have pacts with each other (nureva use case) when both application versions are specified explictly does not allow the two apps to be deployed together": {
     "deployable": null,
     "reasons": [
-      "PactBroker::Matrix::NoEnvironmentSpecified",
       "PactBroker::Matrix::PactNotEverVerifiedByProvider"
     ]
   },
@@ -151,7 +150,6 @@
   "PactBroker::Matrix::Service find specifying a provider which has multiple prod versions of one consumer (explicit) and a single version of another (inferred) without inferred selectors is deployable": {
     "deployable": true,
     "reasons": [
-      "PactBroker::Matrix::NoEnvironmentSpecified",
       "PactBroker::Matrix::SelectorWithoutPacticipantVersionNumberSpecified",
       "PactBroker::Matrix::Successful"
     ]
@@ -159,7 +157,6 @@
   "PactBroker::Matrix::Service find when there is a consumer with two providers, and only one of them has a verification, and the consumer and the verified provider are explicitly specified allows the consumer to be deployed": {
     "deployable": true,
     "reasons": [
-      "PactBroker::Matrix::NoEnvironmentSpecified",
       "PactBroker::Matrix::SelectorWithoutPacticipantVersionNumberSpecified",
       "PactBroker::Matrix::Successful"
     ]
