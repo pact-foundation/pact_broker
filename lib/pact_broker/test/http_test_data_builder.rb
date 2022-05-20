@@ -309,12 +309,26 @@ module PactBroker
         self
       end
 
-      def can_i_deploy(pacticipant:, version:, to: nil, to_environment: nil)
+      def can_i_deploy(pacticipant:, version:, to: nil, to_environment: nil, with_main_branches: nil)
         can_i_deploy_response = client.get("can-i-deploy", { pacticipant: pacticipant, version: version, to: to, environment: to_environment}.compact ).tap { |response| check_for_error(response) }
         can = !!(can_i_deploy_response.body["summary"] || {})["deployable"]
         puts "can-i-deploy #{pacticipant} version #{version} to #{to || to_environment}: #{can ? 'yes' : 'no'}"
         summary = can_i_deploy_response.body["summary"]
         verification_result_urls = (can_i_deploy_response.body["matrix"] || []).collect do | row |
+          row.dig("verificationResult", "_links", "self", "href")
+        end.compact
+        summary.merge!("verification_result_urls" => verification_result_urls)
+        puts summary.to_yaml
+        separate
+        self
+      end
+
+      def can_i_merge(pacticipant:, version:)
+        can_i_merge_response = client.get("matrix", { q: [pacticipant: pacticipant, version: version], latestby: "cvp", mainBranch: true, latest: true }.compact ).tap { |response| check_for_error(response) }
+        can = !!(can_i_merge_response.body["summary"] || {})["deployable"]
+        puts "can-i-merge #{pacticipant} version #{version}: #{can ? 'yes' : 'no'}"
+        summary = can_i_merge_response.body["summary"]
+        verification_result_urls = (can_i_merge_response.body["matrix"] || []).collect do | row |
           row.dig("verificationResult", "_links", "self", "href")
         end.compact
         summary.merge!("verification_result_urls" => verification_result_urls)
