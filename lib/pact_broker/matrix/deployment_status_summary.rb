@@ -62,7 +62,7 @@ module PactBroker
       def bad_practice_warnings
         warnings = []
 
-        if no_to_tag_or_environment_specified?
+        if resolved_selectors.count(&:specified?) == 1 && no_to_tag_or_branch_or_environment_specified?
           warnings << NoEnvironmentSpecified.new
         end
 
@@ -91,8 +91,8 @@ module PactBroker
           .any?
       end
 
-      def no_to_tag_or_environment_specified?
-        !(query_results.options[:tag] || query_results.options[:environment_name])
+      def no_to_tag_or_branch_or_environment_specified?
+        !(query_results.options[:tag] || query_results.options[:environment_name] || query_results.options[:main_branch])
       end
 
       def considered_specified_selectors_that_do_not_exist
