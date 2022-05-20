@@ -1,7 +1,6 @@
 module PactBroker
   module Api
     module Resources
-
       module PacticipantResourceMethods
 
         def potential_duplicate_pacticipants? pacticipant_names

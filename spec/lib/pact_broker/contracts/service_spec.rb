@@ -126,6 +126,15 @@ module PactBroker
       end
 
       describe "#conflict_errors" do
+        before do
+          allow(Service).to receive(:pacticipant_service).and_return(pacticipant_service)
+          allow(pacticipant_service).to receive(:messages_for_potential_duplicate_pacticipants).and_return(duplicate_pacticipant_messages)
+          allow(PactBroker.configuration).to receive(:check_for_potential_duplicate_pacticipant_names).and_return(true)
+        end
+
+        let(:pacticipant_service) { class_double("PactBroker::Pacticipants::Service").as_stubbed_const }
+        let(:duplicate_pacticipant_messages) { [] }
+
         let(:contracts_to_publish) do
           ContractsToPublish.from_hash(
             pacticipant_name: "Foo",
@@ -152,7 +161,7 @@ module PactBroker
         let(:contract_hash) { { consumer: { name: "Foo" }, provider: { name: "Bar" }, interactions: [{a: "b"}] } }
         let(:decoded_contract) { contract_hash.to_json }
 
-        subject { Service.conflict_notices(contracts_to_publish) }
+        subject { Service.conflict_notices(contracts_to_publish, base_url: "base_url") }
 
         context "when a pact already exists" do
           before do
@@ -186,6 +195,19 @@ module PactBroker
 
         context "when no pacts exist" do
           it { is_expected.to be_empty }
+        end
+
+        it "checks if there are potential duplicate pacticipants" do
+          expect(pacticipant_service).to receive(:messages_for_potential_duplicate_pacticipants).with(["Foo", "Bar"], "base_url")
+          subject
+        end
+
+        context "when there are potential duplicate pacticipants" do
+          let(:duplicate_pacticipant_messages) { ["some message" ] }
+
+          it "returns the messages as error notices" do
+            expect(subject).to contain_exactly(have_attributes(type: "error", text: "some message"))
+          end
         end
       end
     end

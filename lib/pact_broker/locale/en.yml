@@ -96,12 +96,14 @@ en:
         invalid_limit: The limit must be 1 or greater.
       duplicate_pacticipant: |
         This is the first time a pact has been published for "%{new_name}".
-        The name "%{new_name}" is very similar to the following existing consumers/providers:
+        The name "%{new_name}" is very similar to the following existing pacticipants:
         %{existing_names}
         If you meant to specify one of the above names, please correct the pact configuration, and re-publish the pact.
-        If the pact is intended to be for a new consumer or provider, please manually create "%{new_name}" using the following command, and then re-publish the pact:
-        $ curl -v -XPOST -H "Content-Type: application/json" -d "{\"name\": \"%{new_name}\"}" %{create_pacticipant_url}
-        If the pact broker requires basic authentication, add '-u <username:password>' to the command.
+        If the pact is intended to be for a new consumer or provider, please manually create "%{new_name}" using the following command from the Pact Broker CLI, and then re-publish the pact:
+
+        pact-broker create-or-update-pacticipant --name "%{new_name}" --broker-base-url %{base_url}
+
+        For information on the Pact Broker CLI see https://docs.pact.io/go/pbc-cli
         To disable this check, set `check_for_potential_duplicate_pacticipant_names` to false in the configuration.
       new_line_in_url_path: URL path cannot contain a new line character.
       tab_in_url_path: URL path cannot contain a tab character.

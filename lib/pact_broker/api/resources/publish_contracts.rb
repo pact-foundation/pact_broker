@@ -100,7 +100,7 @@ module PactBroker
         end
 
         def conflict_notices
-          @conflict_notices ||= contract_service.conflict_notices(parsed_contracts)
+          @conflict_notices ||= contract_service.conflict_notices(parsed_contracts, base_url: base_url)
         end
 
         def base64_decode(content)
