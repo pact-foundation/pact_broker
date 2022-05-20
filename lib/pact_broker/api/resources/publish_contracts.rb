@@ -3,14 +3,12 @@ require "pact_broker/api/resources/webhook_execution_methods"
 require "pact_broker/contracts/contracts_to_publish"
 require "pact_broker/api/contracts/publish_contracts_schema"
 require "pact_broker/pacts/parse"
-require "pact_broker/api/resources/pacticipant_resource_methods"
 
 module PactBroker
   module Api
     module Resources
       class PublishContracts < BaseResource
         include WebhookExecutionMethods
-        include PacticipantResourceMethods
 
         def content_types_provided
           [["application/hal+json", :to_json]]
