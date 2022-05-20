@@ -70,18 +70,21 @@
             %input{name: 'q[]latest', value: 'true', hidden: true, class: 'latest-flag'}
 
 
-      - if options.latest || options.tag
+      %input{name: 'latest', value: options.latest.to_s, hidden: true }
+      %input{name: 'mainBranch', value: options.mainBranch.to_s, hidden: true}
+
+      - if options.tag
         .selector
           %label{for: 'to'}
             = options.latest ? 'To (tag)' : 'With all (tagged)'
           %input{name: 'tag', id: 'to', value: options.tag }
-          %input{name: 'latest', value: options.latest.to_s, hidden: true}
 
       - if options.environment_name
         .selector
           %label{for: 'environment'}
             To environment
           %input{name: 'environment', id: 'environment', value: options.environment_name }
+
 
       %div.top-of-group.form-check
         %input{type: 'radio', name: "latestby", class: 'form-check-input', value: '', id: 'all_rows', checked: options.all_rows_checked}
