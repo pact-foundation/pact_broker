@@ -1,3 +1,24 @@
+<a name="v2.100.0"></a>
+### v2.100.0 (2022-05-20)
+
+#### Features
+
+* check for potential duplicate pacticipants in publish contracts endpoint (#558)	 ([ed714f03](/../../commit/ed714f03))
+* add support for "can i merge" matrix query	 ([bb108ed2](/../../commit/bb108ed2))
+* remove inefficient skynet query for tags	 ([bdc2599c](/../../commit/bdc2599c))
+* update text for matrix version description when no version is in an enviroment	 ([3eb5581d](/../../commit/3eb5581d))
+
+* **pacts for verification**
+  * update wip and pending descriptions for wip pacts	 ([b06d4477](/../../commit/b06d4477))
+
+* **matrix**
+  * add support for selectors specified by branch and environment name when reporting that a version does not exist	 ([07ff8044](/../../commit/07ff8044))
+
+#### Bug Fixes
+
+* **matrix**
+  * identify the correct failed version when a selector resolves to multiple versions	 ([11e7dc1c](/../../commit/11e7dc1c))
+
 <a name="v2.99.0"></a>
 ### v2.99.0 (2022-05-13)
 
