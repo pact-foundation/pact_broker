@@ -19,7 +19,7 @@ module PactBroker
 
         def from_json
           unless tag
-            @tag = tag_service.create identifier_from_path
+            @tag = tag_service.create(identifier_from_path)
             # Make it return a 201 by setting the Location header
             response.headers["Location"] = tag_url(base_url, tag)
           end
@@ -36,11 +36,11 @@ module PactBroker
         end
 
         def tag
-          @tag ||= tag_service.find identifier_from_path
+          @tag ||= tag_service.find(identifier_from_path)
         end
 
         def delete_resource
-          tag_service.delete identifier_from_path
+          tag_service.delete(identifier_from_path)
           true
         end
 
