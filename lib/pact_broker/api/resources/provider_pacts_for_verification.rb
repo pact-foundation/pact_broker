@@ -11,6 +11,10 @@ module PactBroker
       class ProviderPactsForVerification < ProviderPacts
         using PactBroker::HashRefinements
 
+        def content_types_provided
+          [["application/hal+json", :to_json]]
+        end
+
         def allowed_methods
           ["GET", "POST", "OPTIONS"]
         end

@@ -13,10 +13,6 @@ module PactBroker
         include WebhookResourceMethods
         include WebhookExecutionMethods
 
-        def content_types_accepted
-          [["application/json"]]
-        end
-
         def content_types_provided
           [["application/hal+json"]]
         end

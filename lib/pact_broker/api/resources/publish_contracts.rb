@@ -11,11 +11,7 @@ module PactBroker
         include WebhookExecutionMethods
 
         def content_types_provided
-          [["application/hal+json", :to_json]]
-        end
-
-        def content_types_accepted
-          [["application/json"]]
+          [["application/hal+json"]]
         end
 
         def allowed_methods
@@ -23,16 +19,20 @@ module PactBroker
         end
 
         def malformed_request?
-          super || (request.post? && validation_errors_for_schema?)
+          super || (request.post? && content_type_json? && validation_errors_for_schema?)
         end
 
         def process_post
-          if conflict_notices.any?
-            set_conflict_response
-            409
+          if content_type_json?
+            if conflict_notices.any?
+              set_conflict_response
+              409
+            else
+              publish_contracts
+              true
+            end
           else
-            publish_contracts
-            true
+            415
           end
         end
 

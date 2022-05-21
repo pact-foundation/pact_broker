@@ -78,7 +78,8 @@ RSpec.describe "the consumer version relations in the pact version resource" do
 
     let(:rack_headers) do
       {
-        "HTTP_ACCEPT" => "application/hal+json"
+        "HTTP_ACCEPT" => "application/hal+json",
+        "CONTENT_TYPE" => "application/json"
       }
     end
 
