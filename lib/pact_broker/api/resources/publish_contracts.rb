@@ -23,11 +23,7 @@ module PactBroker
         end
 
         def malformed_request?
-          if request.post?
-            invalid_json? || validation_errors_for_schema?
-          else
-            false
-          end
+          super || (request.post? && validation_errors_for_schema?)
         end
 
         def process_post

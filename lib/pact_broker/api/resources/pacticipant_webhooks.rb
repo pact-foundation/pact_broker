@@ -27,10 +27,7 @@ module PactBroker
         end
 
         def malformed_request?
-          if request.post?
-            return invalid_json? || webhook_validation_errors?(webhook)
-          end
-          false
+          super || (request.post? && webhook_validation_errors?(webhook))
         end
 
         def create_path

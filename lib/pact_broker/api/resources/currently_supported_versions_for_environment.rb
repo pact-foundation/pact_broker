@@ -8,10 +8,6 @@ module PactBroker
       class CurrentlySupportedVersionsForEnvironment < BaseResource
         using PactBroker::StringRefinements
 
-        def content_types_accepted
-          [["application/json", :from_json]]
-        end
-
         def content_types_provided
           [["application/hal+json", :to_json]]
         end

@@ -26,11 +26,7 @@ module PactBroker
         end
 
         def malformed_request?
-          if request.patch? || request.put?
-            invalid_json? || validation_errors_for_schema?
-          else
-            false
-          end
+          super || ((request.patch? || request.really_put?) && validation_errors_for_schema?)
         end
 
         def from_json

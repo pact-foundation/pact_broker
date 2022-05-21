@@ -25,14 +25,6 @@ module PactBroker
           !!version
         end
 
-        def malformed_request?
-          if request.put? && any_request_body?
-            invalid_json?
-          else
-            false
-          end
-        end
-
         def from_json
           if request.really_put?
             handle_request do

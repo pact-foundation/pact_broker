@@ -42,12 +42,9 @@ module PactBroker
           potential_duplicate_pacticipants?(pact_params.pacticipant_names) || merge_conflict || disallowed_modification?
         end
 
+
         def malformed_request?
-          if request.patch? || request.put?
-            invalid_json? || contract_validation_errors?(Contracts::PutPactParamsContract.new(pact_params), pact_params)
-          else
-            false
-          end
+          super || ((request.patch? || request.really_put?) && contract_validation_errors?(Contracts::PutPactParamsContract.new(pact_params), pact_params))
         end
 
         def resource_exists?

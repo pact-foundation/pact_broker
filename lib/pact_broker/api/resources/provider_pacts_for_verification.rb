@@ -20,12 +20,7 @@ module PactBroker
         end
 
         def malformed_request?
-          if (errors = query_schema.call(query)).any?
-            set_json_validation_error_messages(errors)
-            true
-          else
-            false
-          end
+          super || ((request.get? || request.post?) && schema_validation_errors?)
         end
 
         def process_post
@@ -95,6 +90,15 @@ module PactBroker
 
         def nested_query
           @nested_query ||= Rack::Utils.parse_nested_query(request.uri.query)
+        end
+
+        def schema_validation_errors?
+          if (errors = query_schema.call(query)).any?
+            set_json_validation_error_messages(errors)
+            true
+          else
+            false
+          end
         end
       end
     end

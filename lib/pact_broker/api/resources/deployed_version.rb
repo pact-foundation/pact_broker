@@ -8,11 +8,6 @@ module PactBroker
       class DeployedVersion < BaseResource
         include PactBroker::Messages
 
-        def initialize
-          super
-          @currently_deployed_param = params(default: {})[:currentlyDeployed]
-        end
-
         def content_types_provided
           [
             ["application/hal+json", :to_json]
@@ -31,14 +26,6 @@ module PactBroker
 
         def resource_exists?
           !!deployed_version
-        end
-
-        def malformed_request?
-          if request.patch?
-            return invalid_json?
-          else
-            false
-          end
         end
 
         def to_json
@@ -73,7 +60,14 @@ module PactBroker
 
         private
 
-        attr_reader :currently_deployed_param
+        # can't use ||= with a potentially nil value
+        def currently_deployed_param
+          if defined?(@currently_deployed_param)
+            @currently_deployed_param
+          else
+            @currently_deployed_param = params(default: {})[:currentlyDeployed]
+          end
+        end
 
         def process_currently_deployed_param
           if currently_deployed_param == false

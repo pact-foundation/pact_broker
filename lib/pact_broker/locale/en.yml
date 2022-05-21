@@ -105,6 +105,7 @@ en:
         To disable this check, set `check_for_potential_duplicate_pacticipant_names` to false in the configuration.
       new_line_in_url_path: URL path cannot contain a new line character.
       tab_in_url_path: URL path cannot contain a tab character.
+      non_utf_8_char_in_request_body: "Request body has a non UTF-8 character at char %{char_number} and cannot be parsed as JSON. Fragment preceding invalid character is: '%{fragment}'"
 
       "400":
         title: 400 Malformed Request

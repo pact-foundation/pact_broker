@@ -75,7 +75,7 @@ module PactBroker::Api
           end
 
           it "returns an error message" do
-            expect(JSON.parse(response.body)["error"]).to match(/Error parsing JSON/)
+            expect(JSON.parse(response.body)["error"]).to match(/JSON/)
           end
         end
 
