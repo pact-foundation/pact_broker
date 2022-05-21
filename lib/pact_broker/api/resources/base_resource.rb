@@ -15,6 +15,7 @@ module PactBroker
   module Api
     module Resources
       class InvalidJsonError < PactBroker::Error ; end
+      class NonUTF8CharacterFound < PactBroker::Error ; end
 
       class BaseResource < Webmachine::Resource
         include PactBroker::Services
@@ -37,6 +38,10 @@ module PactBroker
 
         def known_methods
           super + ["PATCH"]
+        end
+
+        def malformed_request?
+          content_type_is_json_but_invalid_json_provided?
         end
 
         def finish_request
@@ -125,17 +130,32 @@ module PactBroker
           else
             @params_with_string_keys ||= JSON.parse(request_body, { symbolize_names: false }.merge(PACT_PARSING_OPTIONS)) #Not load! Otherwise it will try to load Ruby classes.
           end
-        rescue JSON::JSONError => e
-          raise InvalidJsonError.new("Error parsing JSON - #{e.message}")
+        rescue StandardError => e
+          fragment = fragment_before_invalid_utf_8_char
+
+          if fragment
+            raise NonUTF8CharacterFound.new(message("errors.non_utf_8_char_in_request_body", char_number: fragment.length + 1, fragment: fragment))
+          else
+            raise InvalidJsonError.new(e.message)
+          end
         end
         # rubocop: enable Metrics/CyclomaticComplexity
+
+        def fragment_before_invalid_utf_8_char
+          request_body.each_char.with_index do | char, index |
+            if !char.valid_encoding?
+              return index < 100 ? request_body[0...index] : request_body[index-100...index]
+            end
+          end
+          nil
+        end
 
         def params_with_string_keys
           params(symbolize_names: false)
         end
 
         def pact_params
-          @pact_params ||= PactBroker::Pacts::PactParams.from_request request, identifier_from_path
+          @pact_params ||= PactBroker::Pacts::PactParams.from_request(request, identifier_from_path)
         end
 
         def set_json_error_message message
@@ -192,9 +212,12 @@ module PactBroker
           begin
             params
             false
+          rescue NonUTF8CharacterFound => e
+            set_json_error_message(e.message)
+            response.headers["Content-Type"] = "application/hal+json;charset=utf-8"
+            true
           rescue StandardError => e
-            logger.info "Error parsing JSON #{e} - #{request_body}"
-            set_json_error_message "Error parsing JSON - #{e.message}"
+            set_json_error_message("#{e.cause ? e.cause.class.name : e.class.name} - #{e.message}")
             response.headers["Content-Type"] = "application/hal+json;charset=utf-8"
             true
           end
@@ -278,6 +301,10 @@ module PactBroker
 
         def malformed_request_for_json_with_schema?(schema_to_use = schema, params_to_validate = params)
           invalid_json? || validation_errors_for_schema?(schema_to_use, params_to_validate)
+        end
+
+        def content_type_is_json_but_invalid_json_provided?
+          request.content_type&.include?("json") && any_request_body? && invalid_json?
         end
       end
     end

@@ -34,15 +34,7 @@ module PactBroker
         end
 
         def malformed_request?
-          if request.post?
-            return true if invalid_json?
-            errors = verification_service.errors(params)
-            if !errors.empty?
-              set_json_validation_error_messages(errors.messages)
-              return true
-            end
-          end
-          false
+          super || (request.post? && any_validation_errors?)
         end
 
         def create_path
@@ -90,6 +82,12 @@ module PactBroker
 
         def verification_params
           params(symbolize_names: false).merge("wip" => wip?, "pending" => pending?)
+        end
+
+        def any_validation_errors?
+          errors = verification_service.errors(params)
+          set_json_validation_error_messages(errors.messages) if !errors.empty?
+          !errors.empty?
         end
       end
     end

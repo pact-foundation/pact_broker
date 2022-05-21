@@ -22,11 +22,7 @@ module PactBroker
         end
 
         def malformed_request?
-          if request.put? && environment
-            invalid_json? || validation_errors_for_schema?(schema, params.merge(uuid: uuid))
-          else
-            false
-          end
+          super || (request.put? && environment && validation_errors_for_schema?(schema, params.merge(uuid: uuid)))
         end
 
         def from_json

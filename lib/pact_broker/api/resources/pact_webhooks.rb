@@ -25,10 +25,7 @@ module PactBroker
         end
 
         def malformed_request?
-          if request.post?
-            return invalid_json? || validation_errors?(webhook)
-          end
-          false
+          super || (request.post? && validation_errors?(webhook))
         end
 
         def validation_errors? webhook

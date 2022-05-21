@@ -8,11 +8,6 @@ module PactBroker
       class ReleasedVersion < BaseResource
         include PactBroker::Messages
 
-        def initialize
-          super
-          @currently_supported_param = params(default: {})[:currentlySupported]
-        end
-
         def content_types_provided
           [["application/hal+json", :to_json]]
         end
@@ -63,7 +58,14 @@ module PactBroker
 
         private
 
-        attr_reader :currently_supported_param
+        # can't use ||= with a potentially nil value
+        def currently_supported_param
+          if defined?(@currently_deployed_param)
+            @currently_supported_param
+          else
+            @currently_supported_param = params(default: {})[:currentlySupported]
+          end
+        end
 
         def process_currently_supported_param
           if currently_supported_param == false

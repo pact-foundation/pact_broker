@@ -191,7 +191,8 @@ module PactBroker
             allow(path_info).to receive(:[]).with(:application_context).and_return(application_context)
           end
           let(:application_context) { PactBroker::ApplicationContext.default_application_context(before_resource: before_resource, after_resource: after_resource) }
-          let(:request) { double("request", uri: URI("http://example.org"), path_info: path_info, body: "{}").as_null_object }
+          let(:request) { double("request", uri: URI("http://example.org"), path_info: path_info, body: body).as_null_object }
+          let(:body) { "{}" }
           let(:path_info) { { pacticipant_name: "foo", pacticipant_version_number: "1" } }
           let(:response) { double("response").as_null_object }
           let(:resource) { resource_class.new(request, response) }
@@ -216,6 +217,25 @@ module PactBroker
 
           it "has a policy_name method" do
             expect(resource).to respond_to(:policy_name)
+          end
+
+          describe "malformed_request?" do
+            context "an invalid UTF-8 character is used in the request body" do
+              before do
+                allow(request).to receive(:put?).and_return(true)
+                allow(request).to receive(:really_put?).and_return(true)
+                allow(request).to receive(:post?).and_return(true)
+                allow(request).to receive(:patch?).and_return(true)
+              end
+
+              let(:body) { "ABCDEFG\x8FDEF" }
+
+              it "returns true when it accepts a content type that includes json" do
+                if resource.content_types_accepted.collect(&:first).any?{ |ct| ct.include?("json") }
+                  expect(resource.malformed_request?).to eq true
+                end
+              end
+            end
           end
         end
       end
