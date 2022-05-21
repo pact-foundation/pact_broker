@@ -101,6 +101,23 @@ module PactBroker
               expect(JSON.parse(subject.body)["errors"]).to have_key("providerVersionTags")
             end
           end
+
+          context "with the wrong content type" do
+            let(:request_headers) do
+              {
+                "CONTENT_TYPE" => "text/plain",
+                "HTTP_ACCEPT" => "application/hal+json"
+              }
+            end
+
+            let(:request_body) do
+              "foo bar"
+            end
+
+            subject { post(path, request_body, request_headers) }
+
+            its(:status) { is_expected.to eq 415 }
+          end
         end
 
         it "uses the correct options for the decorator" do

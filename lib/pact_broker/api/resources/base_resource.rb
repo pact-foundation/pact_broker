@@ -304,7 +304,11 @@ module PactBroker
         end
 
         def content_type_is_json_but_invalid_json_provided?
-          request.content_type&.include?("json") && any_request_body? && invalid_json?
+          content_type_json? && any_request_body? && invalid_json?
+        end
+
+        def content_type_json?
+          request.content_type&.include?("json")
         end
       end
     end

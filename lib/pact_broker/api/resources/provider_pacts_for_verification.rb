@@ -15,17 +15,17 @@ module PactBroker
           ["GET", "POST", "OPTIONS"]
         end
 
-        def content_types_accepted
-          [["application/json"]]
-        end
-
         def malformed_request?
-          super || ((request.get? || request.post?) && schema_validation_errors?)
+          super || ((request.get? || (request.post? && content_type_json?)) && schema_validation_errors?)
         end
 
         def process_post
-          response.body = to_json
-          true
+          if content_type_json?
+            response.body = to_json
+            true
+          else
+            415
+          end
         end
 
         def read_methods
