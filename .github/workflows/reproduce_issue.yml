@@ -9,6 +9,9 @@ on:
       - 'issue/**'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   run:
     runs-on: "ubuntu-latest"
