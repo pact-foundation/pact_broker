@@ -213,11 +213,14 @@ module PactBroker
             params
             false
           rescue NonUTF8CharacterFound => e
+            logger.info(e.message) # Don't use the default SemanticLogger error logging method because it will try and print out the cause which will contain non UTF-8 chars in the message
             set_json_error_message(e.message)
             response.headers["Content-Type"] = "application/hal+json;charset=utf-8"
             true
           rescue StandardError => e
-            set_json_error_message("#{e.cause ? e.cause.class.name : e.class.name} - #{e.message}")
+            message = "#{e.cause ? e.cause.class.name : e.class.name} - #{e.message}"
+            logger.info(message)
+            set_json_error_message(message)
             response.headers["Content-Type"] = "application/hal+json;charset=utf-8"
             true
           end
