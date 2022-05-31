@@ -48,7 +48,7 @@ Example: This data structure represents the way a user might specify "I want to 
 
 `consumerVersionSelectors.tag`: the tag name(s) of the consumer versions to get the pacts for. *This field is still supported but it is recommended to use the `branch` in preference now.*
 
-`consumerVersionSelectors.fallbackTag`: the name of the tag to fallback to if the specified `tag` does not exist. This is useful when the consumer and provider use matching branch names to coordinate the development of new features. *This field is still supported but it is recommended to use the `fallbackBranch` in preference now.*
+`consumerVersionSelectors.fallbackTag`: the name of the tag to fallback to if the specified `tag` does not exist. This is useful when the consumer and provider use matching branch names to coordinate the development of new features. *This field is still supported but it is recommended to use two separate selectors - one with the main branch name and one with the feature branch name.*
 
 `providerVersionBranch`: the repository branch name for the provider application version that will be published with the verification results. This is used by the Broker to determine whether or not a particular pact is in pending state or not.
 
