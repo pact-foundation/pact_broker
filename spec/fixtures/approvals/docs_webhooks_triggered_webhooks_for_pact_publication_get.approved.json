@@ -28,12 +28,12 @@
             "triggeredAt": "2021-09-01T00:07:21+00:00",
             "_links": {
               "pb:logs": {
-                "href": "http://example.org/triggered-webhooks/6cd5cc48-db3c-4a4c-a36d-e9bedeb9d91e/logs",
+                "href": "https://pact-broker/triggered-webhooks/6cd5cc48-db3c-4a4c-a36d-e9bedeb9d91e/logs",
                 "title": "Webhook execution logs",
                 "name": "POST example.org"
               },
               "pb:webhook": {
-                "href": "http://example.org/webhooks/d2181b32-8b03-4daf-8cc0-d9168b2f6fac",
+                "href": "https://pact-broker/webhooks/d2181b32-8b03-4daf-8cc0-d9168b2f6fac",
                 "title": "Webhook",
                 "name": "POST example.org"
               }

@@ -43,7 +43,7 @@ module PactBroker
         method: http_method,
         path_template: path_template,
         path: path,
-        headers: rack_env_to_http_headers(rack_headers),
+        headers: rack_env_to_http_headers(rack_headers.reject{ |k, _| k.start_with?("pactbroker") }),
         body: http_params.is_a?(String) ? JSON.parse(http_params) : nil
       }.compact
 

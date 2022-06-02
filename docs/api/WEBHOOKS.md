@@ -33,7 +33,7 @@ Body:
   "enabled": true,
   "request": {
     "method": "POST",
-    "url": "https://example.org/example",
+    "url": "https://example.org/webhook",
     "headers": {
       "Content-Type": "application/json"
     },
@@ -50,29 +50,29 @@ Body:
   "_links": {
     "self": {
       "title": "an example webhook",
-      "href": "http://example.org/webhooks/d2181b32-8b03-4daf-8cc0-d9168b2f6fac"
+      "href": "https://pact-broker/webhooks/d2181b32-8b03-4daf-8cc0-d9168b2f6fac"
     },
     "pb:execute": {
       "title": "Test the execution of the webhook with the latest matching pact or verification by sending a POST request to this URL",
-      "href": "http://example.org/webhooks/d2181b32-8b03-4daf-8cc0-d9168b2f6fac/execute"
+      "href": "https://pact-broker/webhooks/d2181b32-8b03-4daf-8cc0-d9168b2f6fac/execute"
     },
     "pb:consumer": {
       "title": "Consumer",
       "name": "Foo",
-      "href": "http://example.org/pacticipants/Foo"
+      "href": "https://pact-broker/pacticipants/Foo"
     },
     "pb:provider": {
       "title": "Provider",
       "name": "Bar",
-      "href": "http://example.org/pacticipants/Bar"
+      "href": "https://pact-broker/pacticipants/Bar"
     },
     "pb:pact-webhooks": {
       "title": "All webhooks for consumer Foo and provider Bar",
-      "href": "http://example.org/webhooks/provider/Bar/consumer/Foo"
+      "href": "https://pact-broker/webhooks/provider/Bar/consumer/Foo"
     },
     "pb:webhooks": {
       "title": "All webhooks",
-      "href": "http://example.org/webhooks"
+      "href": "https://pact-broker/webhooks"
     }
   }
 }
@@ -142,15 +142,15 @@ Body:
   "_links": {
     "self": {
       "title": "an example webhook",
-      "href": "http://example.org/webhooks/d2181b32-8b03-4daf-8cc0-d9168b2f6fac"
+      "href": "https://pact-broker/webhooks/d2181b32-8b03-4daf-8cc0-d9168b2f6fac"
     },
     "pb:execute": {
       "title": "Test the execution of the webhook with the latest matching pact or verification by sending a POST request to this URL",
-      "href": "http://example.org/webhooks/d2181b32-8b03-4daf-8cc0-d9168b2f6fac/execute"
+      "href": "https://pact-broker/webhooks/d2181b32-8b03-4daf-8cc0-d9168b2f6fac/execute"
     },
     "pb:webhooks": {
       "title": "All webhooks",
-      "href": "http://example.org/webhooks"
+      "href": "https://pact-broker/webhooks"
     }
   }
 }
@@ -191,13 +191,13 @@ Body:
       {
         "title": "A webhook for the pact between Foo and Bar",
         "name": "an example webhook",
-        "href": "http://example.org/webhooks/d2181b32-8b03-4daf-8cc0-d9168b2f6fac"
+        "href": "https://pact-broker/webhooks/d2181b32-8b03-4daf-8cc0-d9168b2f6fac"
       }
     ],
     "curies": [
       {
         "name": "pb",
-        "href": "http://example.org/doc/webhooks-{rel}",
+        "href": "https://pact-broker/doc/webhooks-{rel}",
         "templated": true
       }
     ]
@@ -240,7 +240,7 @@ Body:
 #### Response
 
 Status: `201`<br/>
-Headers: `{"Content-Type":"application/hal+json;charset=utf-8","Location":"http://example.org/webhooks/dCGCl-Ba3PqEFJ_iE9mJkQ"}`<br/>
+Headers: `{"Content-Type":"application/hal+json;charset=utf-8","Location":"https://pact-broker/webhooks/dCGCl-Ba3PqEFJ_iE9mJkQ"}`<br/>
 Body:
 
 ```
@@ -269,15 +269,15 @@ Body:
   "_links": {
     "self": {
       "title": "an example webhook",
-      "href": "http://example.org/webhooks/dCGCl-Ba3PqEFJ_iE9mJkQ"
+      "href": "https://pact-broker/webhooks/dCGCl-Ba3PqEFJ_iE9mJkQ"
     },
     "pb:execute": {
       "title": "Test the execution of the webhook with the latest matching pact or verification by sending a POST request to this URL",
-      "href": "http://example.org/webhooks/dCGCl-Ba3PqEFJ_iE9mJkQ/execute"
+      "href": "https://pact-broker/webhooks/dCGCl-Ba3PqEFJ_iE9mJkQ/execute"
     },
     "pb:webhooks": {
       "title": "All webhooks",
-      "href": "http://example.org/webhooks"
+      "href": "https://pact-broker/webhooks"
     }
   }
 }
@@ -320,7 +320,7 @@ Body:
     "curies": [
       {
         "name": "pb",
-        "href": "http://example.org/doc/webhooks-{rel}",
+        "href": "https://pact-broker/doc/webhooks-{rel}",
         "templated": true
       }
     ]
@@ -365,7 +365,7 @@ Body:
     "curies": [
       {
         "name": "pb",
-        "href": "http://example.org/doc/webhooks-{rel}",
+        "href": "https://pact-broker/doc/webhooks-{rel}",
         "templated": true
       }
     ]
@@ -408,13 +408,13 @@ Body:
       {
         "title": "A webhook for the pact between Foo and Bar",
         "name": "an example webhook",
-        "href": "http://example.org/webhooks/d2181b32-8b03-4daf-8cc0-d9168b2f6fac"
+        "href": "https://pact-broker/webhooks/d2181b32-8b03-4daf-8cc0-d9168b2f6fac"
       }
     ],
     "curies": [
       {
         "name": "pb",
-        "href": "http://example.org/doc/webhooks-{rel}",
+        "href": "https://pact-broker/doc/webhooks-{rel}",
         "templated": true
       }
     ]
@@ -457,13 +457,13 @@ Body:
       {
         "title": "A webhook for the pact between Foo and Bar",
         "name": "an example webhook",
-        "href": "http://example.org/webhooks/d2181b32-8b03-4daf-8cc0-d9168b2f6fac"
+        "href": "https://pact-broker/webhooks/d2181b32-8b03-4daf-8cc0-d9168b2f6fac"
       }
     ],
     "curies": [
       {
         "name": "pb",
-        "href": "http://example.org/doc/webhooks-{rel}",
+        "href": "https://pact-broker/doc/webhooks-{rel}",
         "templated": true
       }
     ]
@@ -510,12 +510,12 @@ Body:
         "triggeredAt": "2021-09-01T00:07:21+00:00",
         "_links": {
           "pb:logs": {
-            "href": "http://example.org/triggered-webhooks/6cd5cc48-db3c-4a4c-a36d-e9bedeb9d91e/logs",
+            "href": "https://pact-broker/triggered-webhooks/6cd5cc48-db3c-4a4c-a36d-e9bedeb9d91e/logs",
             "title": "Webhook execution logs",
             "name": "POST example.org"
           },
           "pb:webhook": {
-            "href": "http://example.org/webhooks/d2181b32-8b03-4daf-8cc0-d9168b2f6fac",
+            "href": "https://pact-broker/webhooks/d2181b32-8b03-4daf-8cc0-d9168b2f6fac",
             "title": "Webhook",
             "name": "POST example.org"
           }
@@ -533,20 +533,20 @@ Body:
     ],
     "pb:pact-webhooks": {
       "title": "Webhooks for the pact between Foo and Bar",
-      "href": "http://example.org/pacts/provider/Bar/consumer/Foo/webhooks"
+      "href": "https://pact-broker/pacts/provider/Bar/consumer/Foo/webhooks"
     },
     "pb:pact-version": {
-      "href": "http://example.org/pacts/provider/Bar/consumer/Foo/version/2",
+      "href": "https://pact-broker/pacts/provider/Bar/consumer/Foo/version/2",
       "title": "Pact",
       "name": "Pact between Foo (2) and Bar"
     },
     "pb:consumer": {
-      "href": "http://example.org/pacticipants/Foo",
+      "href": "https://pact-broker/pacticipants/Foo",
       "title": "Consumer",
       "name": "Foo"
     },
     "pb:provider": {
-      "href": "http://example.org/pacticipants/Bar",
+      "href": "https://pact-broker/pacticipants/Bar",
       "title": "Provider",
       "name": "Bar"
     }
@@ -579,13 +579,13 @@ Body:
   "request": {
     "headers": {
       "accept": "*/*",
-      "user-agent": "Pact Broker v2.87.0",
+      "user-agent": "Pact Broker",
       "content-type": "application/json"
     },
     "body": {
-      "pactUrl": "http://example.org/pacts/provider/Bar/consumer/Foo/pact-version/3e193ecb37ad04b43ce974a38352c704b2e0ed6b/metadata/Y3ZuPTImdz10cnVl"
+      "pactUrl": "https://pact-broker/pacts/provider/Bar/consumer/Foo/pact-version/3e193ecb37ad04b43ce974a38352c704b2e0ed6b/metadata/3e193ecb37ad04b43ce974a38352c704b2e0ed6b"
     },
-    "url": "/example"
+    "url": "/webhook"
   },
   "response": {
     "status": 200,
@@ -593,7 +593,7 @@ Body:
     },
     "body": ""
   },
-  "logs": "[2021-09-01T10:07:21Z] DEBUG: Webhook context {\"base_url\":\"http://example.org\",\"event_name\":\"test\"}\n[2021-09-01T10:07:21Z] INFO: HTTP/1.1 POST https://example.org/example\n[2021-09-01T10:07:21Z] INFO: accept: */*\n[2021-09-01T10:07:21Z] INFO: user-agent: Pact Broker v2.87.0\n[2021-09-01T10:07:21Z] INFO: content-type: application/json\n[2021-09-01T10:07:21Z] INFO: {\"pactUrl\":\"http://example.org/pacts/provider/Bar/consumer/Foo/pact-version/3e193ecb37ad04b43ce974a38352c704b2e0ed6b/metadata/Y3ZuPTImdz10cnVl\"}\n[2021-09-01T10:07:21Z] INFO: HTTP/1.0 200 \n[2021-09-01T10:07:21Z] INFO: \n",
+  "logs": "[2021-09-01T10:07:21Z] DEBUG: Webhook context {\"base_url\":\"https://pact-broker\",\"event_name\":\"test\"}\n[2021-09-01T10:07:21Z] INFO: HTTP/1.1 POST https://example.org/webhook\n[2021-09-01T10:07:21Z] INFO: accept: */*\n[2021-09-01T10:07:21Z] INFO: user-agent: Pact Broker\n[2021-09-01T10:07:21Z] INFO: content-type: application/json\n[2021-09-01T10:07:21Z] INFO: {\"pactUrl\":\"https://pact-broker/pacts/provider/Bar/consumer/Foo/pact-version/3e193ecb37ad04b43ce974a38352c704b2e0ed6b/metadata/3e193ecb37ad04b43ce974a38352c704b2e0ed6b\"}\n[2021-09-01T10:07:21Z] INFO: HTTP/1.0 200 \n[2021-09-01T10:07:21Z] INFO: \n",
   "success": true,
   "_links": {
   }
@@ -649,11 +649,11 @@ Body:
   "request": {
     "headers": {
       "accept": "application/json",
-      "user-agent": "Pact Broker v2.87.0",
+      "user-agent": "Pact Broker",
       "authorization": "**********"
     },
     "body": {
-      "pactUrl": "http://example.org/pacts/provider/Bar/consumer/Foo/pact-version/3e193ecb37ad04b43ce974a38352c704b2e0ed6b/metadata/Y3ZuPTImdz10cnVl"
+      "pactUrl": "https://pact-broker/pacts/provider/Bar/consumer/Foo/pact-version/3e193ecb37ad04b43ce974a38352c704b2e0ed6b/metadata/3e193ecb37ad04b43ce974a38352c704b2e0ed6b"
     },
     "url": "/example"
   },
@@ -663,7 +663,7 @@ Body:
     },
     "body": ""
   },
-  "logs": "[2021-09-01T10:07:21Z] DEBUG: Webhook context {\"base_url\":\"http://example.org\",\"event_name\":\"test\"}\n[2021-09-01T10:07:21Z] INFO: HTTP/1.1 POST https://example.org/example\n[2021-09-01T10:07:21Z] INFO: accept: application/json\n[2021-09-01T10:07:21Z] INFO: user-agent: Pact Broker v2.87.0\n[2021-09-01T10:07:21Z] INFO: authorization: **********\n[2021-09-01T10:07:21Z] INFO: {\"pactUrl\":\"http://example.org/pacts/provider/Bar/consumer/Foo/pact-version/3e193ecb37ad04b43ce974a38352c704b2e0ed6b/metadata/Y3ZuPTImdz10cnVl\"}\n[2021-09-01T10:07:21Z] INFO: HTTP/1.0 200 \n[2021-09-01T10:07:21Z] INFO: \n",
+  "logs": "[2021-09-01T10:07:21Z] DEBUG: Webhook context {\"base_url\":\"https://pact-broker\",\"event_name\":\"test\"}\n[2021-09-01T10:07:21Z] INFO: HTTP/1.1 POST https://example.org/example\n[2021-09-01T10:07:21Z] INFO: accept: application/json\n[2021-09-01T10:07:21Z] INFO: user-agent: Pact Broker\n[2021-09-01T10:07:21Z] INFO: authorization: **********\n[2021-09-01T10:07:21Z] INFO: {\"pactUrl\":\"https://pact-broker/pacts/provider/Bar/consumer/Foo/pact-version/3e193ecb37ad04b43ce974a38352c704b2e0ed6b/metadata/3e193ecb37ad04b43ce974a38352c704b2e0ed6b\"}\n[2021-09-01T10:07:21Z] INFO: HTTP/1.0 200 \n[2021-09-01T10:07:21Z] INFO: \n",
   "success": true,
   "_links": {
   }
@@ -704,12 +704,12 @@ Body:
         "triggeredAt": "2021-09-01T00:07:21+00:00",
         "_links": {
           "pb:logs": {
-            "href": "http://example.org/triggered-webhooks/6cd5cc48-db3c-4a4c-a36d-e9bedeb9d91e/logs",
+            "href": "https://pact-broker/triggered-webhooks/6cd5cc48-db3c-4a4c-a36d-e9bedeb9d91e/logs",
             "title": "Webhook execution logs",
             "name": "POST example.org"
           },
           "pb:webhook": {
-            "href": "http://example.org/webhooks/d2181b32-8b03-4daf-8cc0-d9168b2f6fac",
+            "href": "https://pact-broker/webhooks/d2181b32-8b03-4daf-8cc0-d9168b2f6fac",
             "title": "Webhook",
             "name": "POST example.org"
           }

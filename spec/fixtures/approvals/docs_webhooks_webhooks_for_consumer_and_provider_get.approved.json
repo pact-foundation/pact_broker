@@ -29,13 +29,13 @@
           {
             "title": "A webhook for the pact between Foo and Bar",
             "name": "an example webhook",
-            "href": "http://example.org/webhooks/d2181b32-8b03-4daf-8cc0-d9168b2f6fac"
+            "href": "https://pact-broker/webhooks/d2181b32-8b03-4daf-8cc0-d9168b2f6fac"
           }
         ],
         "curies": [
           {
             "name": "pb",
-            "href": "http://example.org/doc/webhooks-{rel}",
+            "href": "https://pact-broker/doc/webhooks-{rel}",
             "templated": true
           }
         ]

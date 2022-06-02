@@ -8,9 +8,13 @@ WEBHOOK_ROUTES_REQURING_A_DOCUMENTATION_TEST = PactBroker.routes
       .reject { | route | WEBHOOKS_NO_DOCUMENTATION.include?(route.path) }
 
 # Fails on Github Actions
-RSpec.describe "webhook routes", skip: true do
+RSpec.describe "webhook routes" do
   before do
     Timecop.freeze(Time.new(2021, 9, 1, 10, 7, 21))
+    allow(PactBroker.configuration).to receive(:user_agent).and_return("Pact Broker")
+    allow(PactBroker.configuration).to receive(:base_urls).and_return(["http://pact-broker"])
+    # Need to hardcode this because it depends on the database id.
+    allow(PactBroker::Api::PactBrokerUrls).to receive(:encode_metadata).and_return("3e193ecb37ad04b43ce974a38352c704b2e0ed6b")
     td.create_consumer("Foo")
       .create_provider("Bar")
       .create_consumer_version("2")
@@ -18,7 +22,7 @@ RSpec.describe "webhook routes", skip: true do
       .create_verification(provider_version: "3")
       .create_webhook(
         uuid: "d2181b32-8b03-4daf-8cc0-d9168b2f6fac",
-        url: "https://example.org/example",
+        url: "https://example.org/webhook",
         description: "an example webhook",
         body: webhook_body
       )
@@ -94,7 +98,8 @@ RSpec.describe "webhook routes", skip: true do
 
   let(:rack_headers) do
     {
-      "ACCEPT" => "application/hal+json"
+      "ACCEPT" => "application/hal+json",
+      "pactbroker.base_url" => "https://pact-broker"
     }
   end
 
@@ -133,7 +138,8 @@ RSpec.describe "webhook routes", skip: true do
     let(:rack_headers) do
       {
         "CONTENT_TYPE" => "application/json",
-        "ACCEPT" => "application/hal+json"
+        "ACCEPT" => "application/hal+json",
+        "pactbroker.base_url" => "https://pact-broker"
       }
     end
 
@@ -148,7 +154,8 @@ RSpec.describe "webhook routes", skip: true do
       let(:rack_headers) do
         {
           "CONTENT_TYPE" => "application/json",
-          "ACCEPT" => "application/hal+json"
+          "ACCEPT" => "application/hal+json",
+          "pactbroker.base_url" => "https://pact-broker"
         }
       end
 

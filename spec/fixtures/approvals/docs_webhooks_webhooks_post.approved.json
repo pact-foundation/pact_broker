@@ -35,7 +35,7 @@
     "status": 201,
     "headers": {
       "Content-Type": "application/hal+json;charset=utf-8",
-      "Location": "http://example.org/webhooks/dCGCl-Ba3PqEFJ_iE9mJkQ"
+      "Location": "https://pact-broker/webhooks/dCGCl-Ba3PqEFJ_iE9mJkQ"
     },
     "body": {
       "uuid": "dCGCl-Ba3PqEFJ_iE9mJkQ",
@@ -62,15 +62,15 @@
       "_links": {
         "self": {
           "title": "an example webhook",
-          "href": "http://example.org/webhooks/dCGCl-Ba3PqEFJ_iE9mJkQ"
+          "href": "https://pact-broker/webhooks/dCGCl-Ba3PqEFJ_iE9mJkQ"
         },
         "pb:execute": {
           "title": "Test the execution of the webhook with the latest matching pact or verification by sending a POST request to this URL",
-          "href": "http://example.org/webhooks/dCGCl-Ba3PqEFJ_iE9mJkQ/execute"
+          "href": "https://pact-broker/webhooks/dCGCl-Ba3PqEFJ_iE9mJkQ/execute"
         },
         "pb:webhooks": {
           "title": "All webhooks",
-          "href": "http://example.org/webhooks"
+          "href": "https://pact-broker/webhooks"
         }
       }
     }

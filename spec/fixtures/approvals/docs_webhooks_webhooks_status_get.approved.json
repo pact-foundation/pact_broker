@@ -33,12 +33,12 @@
             "triggeredAt": "2021-09-01T00:07:21+00:00",
             "_links": {
               "pb:logs": {
-                "href": "http://example.org/triggered-webhooks/6cd5cc48-db3c-4a4c-a36d-e9bedeb9d91e/logs",
+                "href": "https://pact-broker/triggered-webhooks/6cd5cc48-db3c-4a4c-a36d-e9bedeb9d91e/logs",
                 "title": "Webhook execution logs",
                 "name": "POST example.org"
               },
               "pb:webhook": {
-                "href": "http://example.org/webhooks/d2181b32-8b03-4daf-8cc0-d9168b2f6fac",
+                "href": "https://pact-broker/webhooks/d2181b32-8b03-4daf-8cc0-d9168b2f6fac",
                 "title": "Webhook",
                 "name": "POST example.org"
               }
@@ -56,20 +56,20 @@
         ],
         "pb:pact-webhooks": {
           "title": "Webhooks for the pact between Foo and Bar",
-          "href": "http://example.org/pacts/provider/Bar/consumer/Foo/webhooks"
+          "href": "https://pact-broker/pacts/provider/Bar/consumer/Foo/webhooks"
         },
         "pb:pact-version": {
-          "href": "http://example.org/pacts/provider/Bar/consumer/Foo/version/2",
+          "href": "https://pact-broker/pacts/provider/Bar/consumer/Foo/version/2",
           "title": "Pact",
           "name": "Pact between Foo (2) and Bar"
         },
         "pb:consumer": {
-          "href": "http://example.org/pacticipants/Foo",
+          "href": "https://pact-broker/pacticipants/Foo",
           "title": "Consumer",
           "name": "Foo"
         },
         "pb:provider": {
-          "href": "http://example.org/pacticipants/Bar",
+          "href": "https://pact-broker/pacticipants/Bar",
           "title": "Provider",
           "name": "Bar"
         }

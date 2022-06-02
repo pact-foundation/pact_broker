@@ -40,11 +40,11 @@
       "request": {
         "headers": {
           "accept": "application/json",
-          "user-agent": "Pact Broker v2.87.0",
+          "user-agent": "Pact Broker",
           "authorization": "**********"
         },
         "body": {
-          "pactUrl": "http://example.org/pacts/provider/Bar/consumer/Foo/pact-version/3e193ecb37ad04b43ce974a38352c704b2e0ed6b/metadata/Y3ZuPTImdz10cnVl"
+          "pactUrl": "https://pact-broker/pacts/provider/Bar/consumer/Foo/pact-version/3e193ecb37ad04b43ce974a38352c704b2e0ed6b/metadata/3e193ecb37ad04b43ce974a38352c704b2e0ed6b"
         },
         "url": "/example"
       },
@@ -54,7 +54,7 @@
         },
         "body": ""
       },
-      "logs": "[2021-09-01T10:07:21Z] DEBUG: Webhook context {\"base_url\":\"http://example.org\",\"event_name\":\"test\"}\n[2021-09-01T10:07:21Z] INFO: HTTP/1.1 POST https://example.org/example\n[2021-09-01T10:07:21Z] INFO: accept: application/json\n[2021-09-01T10:07:21Z] INFO: user-agent: Pact Broker v2.87.0\n[2021-09-01T10:07:21Z] INFO: authorization: **********\n[2021-09-01T10:07:21Z] INFO: {\"pactUrl\":\"http://example.org/pacts/provider/Bar/consumer/Foo/pact-version/3e193ecb37ad04b43ce974a38352c704b2e0ed6b/metadata/Y3ZuPTImdz10cnVl\"}\n[2021-09-01T10:07:21Z] INFO: HTTP/1.0 200 \n[2021-09-01T10:07:21Z] INFO: \n",
+      "logs": "[2021-09-01T10:07:21Z] DEBUG: Webhook context {\"base_url\":\"https://pact-broker\",\"event_name\":\"test\"}\n[2021-09-01T10:07:21Z] INFO: HTTP/1.1 POST https://example.org/example\n[2021-09-01T10:07:21Z] INFO: accept: application/json\n[2021-09-01T10:07:21Z] INFO: user-agent: Pact Broker\n[2021-09-01T10:07:21Z] INFO: authorization: **********\n[2021-09-01T10:07:21Z] INFO: {\"pactUrl\":\"https://pact-broker/pacts/provider/Bar/consumer/Foo/pact-version/3e193ecb37ad04b43ce974a38352c704b2e0ed6b/metadata/3e193ecb37ad04b43ce974a38352c704b2e0ed6b\"}\n[2021-09-01T10:07:21Z] INFO: HTTP/1.0 200 \n[2021-09-01T10:07:21Z] INFO: \n",
       "success": true,
       "_links": {
       }

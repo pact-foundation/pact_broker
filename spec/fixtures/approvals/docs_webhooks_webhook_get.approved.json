@@ -27,7 +27,7 @@
       "enabled": true,
       "request": {
         "method": "POST",
-        "url": "https://example.org/example",
+        "url": "https://example.org/webhook",
         "headers": {
           "Content-Type": "application/json"
         },
@@ -44,29 +44,29 @@
       "_links": {
         "self": {
           "title": "an example webhook",
-          "href": "http://example.org/webhooks/d2181b32-8b03-4daf-8cc0-d9168b2f6fac"
+          "href": "https://pact-broker/webhooks/d2181b32-8b03-4daf-8cc0-d9168b2f6fac"
         },
         "pb:execute": {
           "title": "Test the execution of the webhook with the latest matching pact or verification by sending a POST request to this URL",
-          "href": "http://example.org/webhooks/d2181b32-8b03-4daf-8cc0-d9168b2f6fac/execute"
+          "href": "https://pact-broker/webhooks/d2181b32-8b03-4daf-8cc0-d9168b2f6fac/execute"
         },
         "pb:consumer": {
           "title": "Consumer",
           "name": "Foo",
-          "href": "http://example.org/pacticipants/Foo"
+          "href": "https://pact-broker/pacticipants/Foo"
         },
         "pb:provider": {
           "title": "Provider",
           "name": "Bar",
-          "href": "http://example.org/pacticipants/Bar"
+          "href": "https://pact-broker/pacticipants/Bar"
         },
         "pb:pact-webhooks": {
           "title": "All webhooks for consumer Foo and provider Bar",
-          "href": "http://example.org/webhooks/provider/Bar/consumer/Foo"
+          "href": "https://pact-broker/webhooks/provider/Bar/consumer/Foo"
         },
         "pb:webhooks": {
           "title": "All webhooks",
-          "href": "http://example.org/webhooks"
+          "href": "https://pact-broker/webhooks"
         }
       }
     }
