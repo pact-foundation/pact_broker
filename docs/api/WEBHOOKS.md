@@ -536,9 +536,9 @@ Body:
       "href": "https://pact-broker/pacts/provider/Bar/consumer/Foo/webhooks"
     },
     "pb:pact-version": {
-      "href": "https://pact-broker/pacts/provider/Bar/consumer/Foo/version/2",
+      "href": "https://pact-broker/pacts/provider/Bar/consumer/Foo/version/3e1f00a04",
       "title": "Pact",
-      "name": "Pact between Foo (2) and Bar"
+      "name": "Pact between Foo (3e1f00a04) and Bar"
     },
     "pb:consumer": {
       "href": "https://pact-broker/pacticipants/Foo",
@@ -719,8 +719,8 @@ Body:
   },
   "_links": {
     "self": {
-      "title": "Webhooks triggered by the publication of the pact between Foo (2) and Bar",
-      "href": "http://example.org/pacts/provider/Bar/consumer/Foo/version/2/triggered-webhooks"
+      "title": "Webhooks triggered by the publication of the pact between Foo (3e1f00a04) and Bar",
+      "href": "http://example.org/pacts/provider/Bar/consumer/Foo/version/3e1f00a04/triggered-webhooks"
     }
   }
 }

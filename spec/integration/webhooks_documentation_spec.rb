@@ -17,9 +17,9 @@ RSpec.describe "webhook routes" do
     allow(PactBroker::Api::PactBrokerUrls).to receive(:encode_metadata).and_return("3e193ecb37ad04b43ce974a38352c704b2e0ed6b")
     td.create_consumer("Foo")
       .create_provider("Bar")
-      .create_consumer_version("2")
+      .create_consumer_version("3e1f00a04")
       .create_pact(json_content: { integrations: [] }.to_json )
-      .create_verification(provider_version: "3")
+      .create_verification(provider_version: "950e7a154")
       .create_webhook(
         uuid: "d2181b32-8b03-4daf-8cc0-d9168b2f6fac",
         url: "https://example.org/webhook",
@@ -83,8 +83,8 @@ RSpec.describe "webhook routes" do
       pact_version_sha: pact_version_sha,
       provider_name: "Bar",
       consumer_name: "Foo",
-      consumer_version_number: "2",
-      provider_version_number: "3",
+      consumer_version_number: "3e1f00a04",
+      provider_version_number: "950e7a154",
       trigger_uuid: triggered_webhook_uuid,
       verification_number: "1"
     }

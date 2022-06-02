@@ -5,7 +5,7 @@
   "request": {
     "method": "GET",
     "path_template": "/pacts/provider/:provider_name/consumer/:consumer_name/version/:consumer_version_number/triggered-webhooks",
-    "path": "/pacts/provider/Bar/consumer/Foo/version/2/triggered-webhooks",
+    "path": "/pacts/provider/Bar/consumer/Foo/version/3e1f00a04/triggered-webhooks",
     "headers": {
       "Accept": "application/hal+json"
     }
@@ -43,8 +43,8 @@
       },
       "_links": {
         "self": {
-          "title": "Webhooks triggered by the publication of the pact between Foo (2) and Bar",
-          "href": "http://example.org/pacts/provider/Bar/consumer/Foo/version/2/triggered-webhooks"
+          "title": "Webhooks triggered by the publication of the pact between Foo (3e1f00a04) and Bar",
+          "href": "http://example.org/pacts/provider/Bar/consumer/Foo/version/3e1f00a04/triggered-webhooks"
         }
       }
     }

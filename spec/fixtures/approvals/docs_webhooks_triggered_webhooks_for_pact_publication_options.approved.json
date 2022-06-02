@@ -5,7 +5,7 @@
   "request": {
     "method": "OPTIONS",
     "path_template": "/pacts/provider/:provider_name/consumer/:consumer_name/version/:consumer_version_number/triggered-webhooks",
-    "path": "/pacts/provider/Bar/consumer/Foo/version/2/triggered-webhooks",
+    "path": "/pacts/provider/Bar/consumer/Foo/version/3e1f00a04/triggered-webhooks",
     "headers": {
       "Accept": "application/hal+json"
     }
