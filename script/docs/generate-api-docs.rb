@@ -113,5 +113,6 @@ examples_by_category.each do | category, category_examples |
 #{docs.join("\n")}
 "
 
+  puts "Generated #{file_name}"
   File.open(file_name, "w") { |file| file << contents }
 end

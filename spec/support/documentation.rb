@@ -1,6 +1,5 @@
 module PactBroker
   module Documentation
-
     def remove_deprecated_links(thing)
       case thing
       when Hash then remove_deprecated_links_from_hash(thing)
@@ -33,11 +32,11 @@ module PactBroker
     end
 
     def expected_interaction(response, order)
-      expectated_body = response.headers["Content-Type"]&.include?("json") && response.body && response.body != "" ? remove_deprecated_links(JSON.parse(response.body)) : response.body
+      response_body = response.headers["Content-Type"]&.include?("json") && response.body && response.body != "" ? remove_deprecated_links(JSON.parse(response.body)) : response.body
       expected_response = {
         status: response.status,
         headers: determinate_headers(response.headers),
-        body: expectated_body
+        body: response_body
       }
       request = {
         method: http_method,

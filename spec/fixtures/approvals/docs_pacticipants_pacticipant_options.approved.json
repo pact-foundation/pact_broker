@@ -1,0 +1,20 @@
+{
+  "category": "Pacticipants",
+  "name": "Pacticipant",
+  "order": 5,
+  "request": {
+    "method": "OPTIONS",
+    "path_template": "/pacticipants/:pacticipant_name",
+    "path": "/pacticipants/foo",
+    "headers": {
+      "Accept": "application/hal+json"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Access-Control-Allow-Methods": "GET, PUT, PATCH, DELETE, OPTIONS"
+    },
+    "body": ""
+  }
+}
