@@ -28,7 +28,7 @@ module DB
   def self.connect db_credentials
     # Keep this conifiguration in sync with lib/pact_broker/app.rb#configure_database_connection
     Sequel.datetime_class = DateTime
-    if ENV["DEBUG"] == "true" && ENV["PACT_BROKER_SQL_LOG_LEVEL"] != "none"
+    if ENV["DEBUG"] == "true" && ENV["PACT_BROKER_SQL_LOG_LEVEL"] && ENV["PACT_BROKER_SQL_LOG_LEVEL"] != "none"
       logger = Logger.new($stdout)
     end
     if db_credentials.fetch("adapter") == "sqlite"
