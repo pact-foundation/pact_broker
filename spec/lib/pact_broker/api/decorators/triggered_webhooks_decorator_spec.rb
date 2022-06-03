@@ -6,7 +6,7 @@ module PactBroker
     module Decorators
       describe TriggeredWebhooksDecorator do
         let(:triggered_webhook) do
-          instance_double(PactBroker::Webhooks::TriggeredWebhook).as_null_object
+          instance_double(PactBroker::Webhooks::TriggeredWebhook, created_at: DateTime.new).as_null_object
         end
         let(:decorator) { TriggeredWebhooksDecorator.new([triggered_webhook]) }
         let(:user_options) { { resource_title: "Title", resource_url: "http://url" } }
