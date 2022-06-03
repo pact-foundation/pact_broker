@@ -63,6 +63,7 @@ module PactBroker
         subject { Repository.new.replace("Bar", OpenStruct.new(main_branch: "bar", repository_url: "new_url")) }
 
         it "replaces the pacticipant" do
+          expect(subject.name).to eq "Bar"
           expect(subject.main_branch).to eq "bar"
           expect(subject.repository_namespace).to eq nil
           expect(subject.display_name).to eq "display_name"

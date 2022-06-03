@@ -67,8 +67,9 @@ module PactBroker
         pacticipant.save
       end
 
-      def replace(_pacticipant_name, open_struct_pacticipant)
+      def replace(pacticipant_name, open_struct_pacticipant)
         PactBroker::Domain::Pacticipant.new(
+          name: pacticipant_name,
           display_name: open_struct_pacticipant.display_name,
           repository_url: open_struct_pacticipant.repository_url,
           repository_name: open_struct_pacticipant.repository_name,
