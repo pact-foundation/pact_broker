@@ -75,7 +75,7 @@ module PactBroker
           repository_name: open_struct_pacticipant.repository_name,
           repository_namespace: open_struct_pacticipant.repository_namespace,
           main_branch: open_struct_pacticipant.main_branch
-        ).save
+        ).upsert
       end
 
       def delete(pacticipant)

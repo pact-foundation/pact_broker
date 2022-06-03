@@ -44,6 +44,7 @@ module PactBroker
       using PactBroker::StringRefinements
 
       plugin :insert_ignore, identifying_columns: [:name]
+      plugin :upsert, identifying_columns: [:name]
       plugin :timestamps, update_on_create: true
 
       set_primary_key :id

@@ -62,6 +62,10 @@ module PactBroker
 
         subject { Repository.new.replace("Bar", OpenStruct.new(main_branch: "bar", repository_url: "new_url")) }
 
+        it "does not create a new record" do
+          expect { subject }.to_not change { PactBroker::Domain::Pacticipant.count }
+        end
+
         it "replaces the pacticipant" do
           expect(subject.name).to eq "Bar"
           expect(subject.main_branch).to eq "bar"
