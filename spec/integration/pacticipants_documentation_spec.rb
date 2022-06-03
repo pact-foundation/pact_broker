@@ -88,7 +88,9 @@ RSpec.describe "pacticipant routes" do
   let(:fixture) { expected_interaction(subject, PACTICIPANT_TESTED_DOCUMENTATION_PATHS.size) }
 
   def remove_deprecated_keys(interaction)
-    interaction[:response][:body]["_embedded"].delete("latest-version")
+    if interaction.dig(:response, :body).is_a?(Hash)
+      interaction.dig(:response, :body, "_embedded")&.delete("latest-version")
+    end
     interaction
   end
 
@@ -100,9 +102,6 @@ RSpec.describe "pacticipant routes" do
   end
 
   shared_examples "supports GET" do
-
-    let(:fixture) { remove_deprecated_keys(expected_interaction(subject, PACTICIPANT_TESTED_DOCUMENTATION_PATHS.size)) }
-
     its(:status) { is_expected.to eq 200 }
     include_examples "request"
   end
@@ -149,6 +148,8 @@ RSpec.describe "pacticipant routes" do
 
 
   describe "Pacticipant" do
+    let(:fixture) { remove_deprecated_keys(expected_interaction(subject, PACTICIPANT_TESTED_DOCUMENTATION_PATHS.size)) }
+
     let(:path_template) { "/pacticipants/:pacticipant_name" }
 
     let(:pacticipant_hash) do

@@ -32,6 +32,16 @@
       "mainBranch": "main",
       "createdAt": "2021-09-01T00:07:21+00:00",
       "_embedded": {
+        "latestVersion": {
+          "number": "3e1f00a04",
+          "_links": {
+            "self": {
+              "title": "Version",
+              "name": "3e1f00a04",
+              "href": "https://pact-broker/pacticipants/foo/versions/3e1f00a04"
+            }
+          }
+        },
         "labels": [
 
         ]

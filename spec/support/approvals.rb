@@ -23,7 +23,7 @@ def print_diff(exception)
   if File.exist?(received_file) && File.exist?(approved_file)
     received_hash = JSON.parse(File.read(received_file))
     approved_hash = JSON.parse(File.read(approved_file))
-    diff = Pact::Matchers.diff(approved_hash, received_hash)
+    diff = Pact::Matchers.diff(approved_hash, received_hash, allow_unexpected_keys: false)
     puts Pact::Matchers::UnixDiffFormatter.call(diff)
   end
 end
