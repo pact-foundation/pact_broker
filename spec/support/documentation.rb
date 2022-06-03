@@ -31,7 +31,7 @@ module PactBroker
       end
     end
 
-    def expected_interaction(response, order)
+    def expected_interaction(response, order, comments = nil)
       response_body = response.headers["Content-Type"]&.include?("json") && response.body && response.body != "" ? remove_deprecated_links(JSON.parse(response.body)) : response.body
       expected_response = {
         status: response.status,
@@ -49,10 +49,11 @@ module PactBroker
       {
         category: category,
         name: pact_broker_example_name,
+        comments: comments,
         order: order,
         request: request,
         response: expected_response
-      }
+      }.compact
     end
 
   end

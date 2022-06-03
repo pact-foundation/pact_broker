@@ -1,14 +1,14 @@
 {
   "category": "Pacticipants",
   "name": "Pacticipant",
-  "comments": "PUT replaces the entire resource with the specified body, so missing properties will effectively be nulled. Embedded properties (eg. versions) will not be affected.",
-  "order": 3,
+  "comments": "PATCH with the Content-Type application/merge-patch+json merges the pacticipant's existing properties with those from the request body. Embedded properties (eg. versions) will not be affected.",
+  "order": 5,
   "request": {
-    "method": "PUT",
+    "method": "PATCH",
     "path_template": "/pacticipants/:pacticipant_name",
     "path": "/pacticipants/foo",
     "headers": {
-      "Content-Type": "application/json",
+      "Content-Type": "application/merge-patch+json",
       "Accept": "application/hal+json"
     },
     "body": {

@@ -75,6 +75,8 @@ RSpec.describe "pacticipant routes" do
     build_path(path_template, parameter_values, custom_parameter_values)
   end
 
+  let(:comments) { nil }
+
   let(:approval_request_example_name) do
     build_approval_name(category, pact_broker_example_name, http_method)
   end
@@ -85,7 +87,7 @@ RSpec.describe "pacticipant routes" do
 
   subject { send(http_method.downcase, path, http_params, rack_headers) }
 
-  let(:fixture) { expected_interaction(subject, PACTICIPANT_TESTED_DOCUMENTATION_PATHS.size) }
+  let(:fixture) { expected_interaction(subject, PACTICIPANT_TESTED_DOCUMENTATION_PATHS.size, comments) }
 
   def remove_deprecated_keys(interaction)
     if interaction.dig(:response, :body).is_a?(Hash)
@@ -148,7 +150,7 @@ RSpec.describe "pacticipant routes" do
 
 
   describe "Pacticipant" do
-    let(:fixture) { remove_deprecated_keys(expected_interaction(subject, PACTICIPANT_TESTED_DOCUMENTATION_PATHS.size)) }
+    let(:fixture) { remove_deprecated_keys(expected_interaction(subject, PACTICIPANT_TESTED_DOCUMENTATION_PATHS.size, comments)) }
 
     let(:path_template) { "/pacticipants/:pacticipant_name" }
 
@@ -167,8 +169,27 @@ RSpec.describe "pacticipant routes" do
     end
 
     describe "PUT" do
+      let(:comments) { "PUT replaces the entire resource with the specified body, so missing properties will effectively be nulled. Embedded properties (eg. versions) will not be affected." }
+
       let(:http_params) { pacticipant_hash.to_json }
       include_examples "supports PUT"
+    end
+
+    describe "PATCH" do
+      let(:comments) { "PATCH with the Content-Type application/merge-patch+json merges the pacticipant's existing properties with those from the request body. Embedded properties (eg. versions) will not be affected." }
+      let(:http_method) { "PATCH" }
+      let(:rack_headers) do
+        {
+          "CONTENT_TYPE" => "application/merge-patch+json",
+          "ACCEPT" => "application/hal+json",
+          "pactbroker.base_url" => "https://pact-broker"
+        }
+      end
+      let(:http_params) { pacticipant_hash.to_json }
+
+      its(:status) { is_expected.to be_between(200, 201) }
+
+      include_examples "request"
     end
 
 

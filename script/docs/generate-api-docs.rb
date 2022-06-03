@@ -63,9 +63,11 @@ def generate_example_markdown(hash)
 "
   end
 
+  comments = hash[:comments] ? "\n" + hash[:comments] + "\n" : ""
+
 "
 ### #{hash[:request][:method]}
-
+#{comments}
 #### Request
 
 Headers: `#{hash[:request][:headers]&.to_json}`<br/>

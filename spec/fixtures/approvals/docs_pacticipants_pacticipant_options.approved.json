@@ -1,7 +1,7 @@
 {
   "category": "Pacticipants",
   "name": "Pacticipant",
-  "order": 5,
+  "order": 7,
   "request": {
     "method": "OPTIONS",
     "path_template": "/pacticipants/:pacticipant_name",
