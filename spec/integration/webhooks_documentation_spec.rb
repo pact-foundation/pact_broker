@@ -1,4 +1,5 @@
 require "timecop"
+require "tzinfo"
 
 WEBHOOK_TESTED_DOCUMENTATION_PATHS = []
 WEBHOOKS_NO_DOCUMENTATION = %w[
@@ -10,7 +11,7 @@ WEBHOOK_ROUTES_REQURING_A_DOCUMENTATION_TEST = PactBroker.routes
 # Fails on Github Actions
 RSpec.describe "webhook routes" do
   before do
-    Timecop.freeze(Time.new(2021, 9, 1, 10, 7, 21))
+    Timecop.freeze(Time.new(2021, 9, 1, 10, 7, 21, TZInfo::Timezone.get("Australia/Melbourne")))
     allow(PactBroker.configuration).to receive(:user_agent).and_return("Pact Broker")
     allow(PactBroker.configuration).to receive(:base_urls).and_return(["http://pact-broker"])
     # Need to hardcode this because it depends on the database id.
