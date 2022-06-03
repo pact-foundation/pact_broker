@@ -31,7 +31,7 @@ module PactBroker
         version_text = head_consumer_tags.size == 1 || branches.size == 1 ? "version" : "versions"
         if wip?
           # WIP pacts will always have tags, because it is part of the definition of being a WIP pact
-          "The pact at #{pact_version_url} is being verified because it is a 'work in progress' pact (ie. it is the pact for the latest #{version_text} of #{consumer_name} #{joined_head_consumer_tags_and_branches} and it has not yet been successfully verified by #{pending_provider_branch_or_tags_description("a")} when the pact's application version was explicitly specified in the consumer version selectors). #{READ_MORE_WIP}".tap { |it| puts it }
+          "The pact at #{pact_version_url} is being verified because it is a 'work in progress' pact (ie. it is the pact for the latest #{version_text} of #{consumer_name} #{joined_head_consumer_tags_and_branches} and it has not yet been successfully verified by #{pending_provider_branch_or_tags_description("a")} when the pact's application version was explicitly specified in the consumer version selectors). #{READ_MORE_WIP}"
         else
           criteria_or_criterion = selectors.size > 1 ? "criteria" : "criterion"
           version_or_versions = pluralize("the consumer version", selectors.size)
