@@ -10,8 +10,7 @@ module PactBroker
         property :number_of_attempts_remaining, as: :attemptsRemaining
         property :trigger_type, as: :triggerType
         property :event_name, as: :eventName
-
-        property :created_at, as: :triggeredAt
+        property :created_at, as: :triggeredAt, getter: lambda { |_|  FormatDateTime.call(created_at) }, writeable: false
 
         link :'pb:logs' do | context |
           {
