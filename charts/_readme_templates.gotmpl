@@ -1,0 +1,52 @@
+{{ template "chart.header" . }}
+{{ template "chart.deprecationWarning" . }}
+
+{{ template "chart.badgesSection" . }}
+
+{{ template "chart.description" . }}
+
+{{ template "chart.homepageLine" . }}
+
+{{ template "chart.maintainersSection" . }}
+
+{{ template "chart.sourcesSection" . }}
+
+{{ template "chart.requirementsSection" . }}
+
+{{ template "chart.valuesSection" . }}
+
+
+## Configuration and Installation Details
+
+### Configuring Chart PostgreSQL
+
+With the Pact Broker Helm Chart, it bundles together the Pact Broker and a Bitnami PostgreSQL database - this can be enabled by switching `postgresql.enabled` to true (it is `true` by default). If switched on, the Helm Chart, on deployment, will automatically deploy a PostgreSQL instance and configure it with the credentials you specify. There are multiple ways of doing this that will be detailed below.
+
+#### Automatic Database Credential Creation
+This is the easiest of the configuration options. Here, the credentials for both the Admin and Database user will be automatically generated and put into a Kubernetes secret. This then will be automatically used by the Pact Broker. For this, ensure the following happens:
+  - Keep `postgresql.auth.existingSecret` & `postgresql.auth.password` empty.
+
+#### Specifying Password for PostgreSQL to Use
+Here, you can specify the password that you want PostgreSQL to use for it's Database User (The user that the Pact Broker will use to connect to the database). For this, ensure the following happens:
+  - Keep the `postgresql.auth.existingSecret` empty.
+  - Set the `postgresql.auth.password` to the value that you want the User password to be.
+  > **_NOTE:_** Be careful and mindful that the value you provide here is done in a secure way.
+
+#### Specifying Existing Secret for PostgreSQL to Use
+Here, you can specify an existing Kubernetes secret that you have created that contains the Password that you want PostgreSQL to use. The secret has to be in the same namespace as where you are deploying the Helm Chart. For this, ensure the following happens:
+  - Create the Kubernetes secret with the Password inside.
+  - Set `postgresql.auth.existingSecret` to the name of the Secret
+  - PostgreSQL by default will look for the relevant Password keys that are set by default here `postgresql.auth.secretKeys`. So make sure that the Keys in the Secret match the default `secretKeys` values. More information [here](https://artifacthub.io/packages/helm/bitnami/postgresql)
+  - For example, if you want PostgreSQL to use an existing Secret called `my-user-secret` that has the User password that you want to use inside it. Make sure that you create a Key inside that secret called `user-password` (this key can be found here `postgresql.auth.secretKeys.userPasswordKey`). i.e. `user-password=Password123`.
+
+### Configuring External Database
+If you want to use an external database with your Pact Broker, switch the `externalDatabase.enabled` flag to true and the `postgresql.enabled` to false.
+
+The configuring of the `externalDatabase.config.host`, `externalDatabase.config.port`, `externalDatabase.config.adapter` and `externalDatabase.config.databaseName` should be pretty straight forward. The credential configuration however has two methods of configuration.
+
+#### Specify Credentials via Values
+Configure the Pact Broker by using the username credential that you configure via the `externalDatabase.config.auth.username` value and the password via the `externalDatabase.config.auth.password` value.
+  > **_NOTE:_** Be careful and mindful that the values you provide here is done in a secure way.
+
+#### Specify Credentials via Secret
+Configure the Pact Broker to use an existing Secret to retrieve the user password as a means to connect to the database. Ensure that the Kubernetes Secret has the password in the `user-password` field and ensure that you have set `externalDatabase.config.auth.existingSecret` value to the name of the secret. To configure the username, you can use the `username` value.

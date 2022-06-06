@@ -1,0 +1,128 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "chart.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "chart.name" . }}
+    helm.sh/chart: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.broker.replicaCount }}
+  selector: 
+    matchLabels:
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/name: {{ include "chart.name" . }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "chart.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        {{- with .Values.broker.labels }}
+        {{ toYaml . | trim | indent 8 }}
+        {{- end }}
+      {{- if .Values.broker.annotations }}
+      annotations:
+        {{- with .Values.broker.annotations }}
+        {{ toYaml . | trim | indent 8 }}
+        {{- end }}
+      {{- end }}
+    spec:
+      {{- if .Values.image.pullSecrets }}
+      imagePullSecrets:
+      {{- range .Values.image.pullSecrets }}
+        - name: {{ . }}
+      {{- end }}
+      {{- end }}
+      {{- if .Values.broker.podSecurityContext.enabled }}
+      securityContext: {{- omit .Values.broker.podSecurityContext "enabled" | toYaml | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ template "chart.fullname" . }}
+          image: {{ template "broker.image" . }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.broker.containerSecurityContext.enabled }}
+          securityContext: {{- omit .Values.broker.containerSecurityContext "enabled" | toYaml | nindent 12 }}
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.broker.containerPorts.http }}
+              protocol: TCP
+            - name: https
+              containerPort: {{ .Values.broker.containerPorts.https }}
+              protocol: TCP
+          env:
+            - name: PACT_BROKER_PUBLIC_HEARTBEAT
+              value: {{ .Values.broker.config.basicAuth.publicHeartbeat | quote }}
+            - name: PACT_BROKER_PORT
+              value: {{ .Values.broker.containerPorts.http | quote }}
+            - name: PACT_BROKER_DISABLE_SSL_VERIFICATION
+              value: {{ .Values.broker.config.disable_ssl | quote }}
+            - name: PACT_BROKER_DATABASE_ADAPTER
+              value: {{ include "broker.databaseAdapter" . }}
+            - name: PACT_BROKER_DATABASE_HOST
+              value: {{ include "broker.databaseHost" . }}
+            - name: PACT_BROKER_DATABASE_PORT
+              value: {{ include "broker.databasePort" . }}
+            - name: PACT_BROKER_DATABASE_NAME
+              value: {{ include "broker.databaseName" . }}
+            - name: PACT_BROKER_DATABASE_USERNAME     
+              value: {{ include "broker.databaseUser" . }}
+            - name: PACT_BROKER_DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "broker.databaseSecretName" . }}
+                  key: {{ include "broker.databaseSecretKey" . }}
+            - name: PACT_BROKER_BASIC_AUTH_USERNAME
+              {{- if .Values.broker.config.basicAuth.writeUser.username }}
+              value: {{ .Values.broker.config.basicAuth.writeUser.username }}
+              {{- else }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.broker.config.basicAuth.writeUser.existingSecret }}
+                  key: {{ .Values.broker.config.basicAuth.writeUser.existingSecretUsernameKey }}
+              {{- end }}
+            - name: PACT_BROKER_BASIC_AUTH_PASSWORD
+              {{- if .Values.broker.config.basicAuth.writeUser.password }}
+              value: {{ .Values.broker.config.basicAuth.writeUser.password }}
+              {{- else }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.broker.config.basicAuth.writeUser.existingSecret }}
+                  key: {{ .Values.broker.config.basicAuth.writeUser.existingSecretPasswordKey }}
+              {{- end }}
+            - name: PACT_BROKER_BASIC_AUTH_READ_ONLY_USERNAME
+              {{- if .Values.broker.config.basicAuth.readUser.username }}
+              value: {{ .Values.broker.config.basicAuth.readUser.username }}
+              {{- else }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.broker.config.basicAuth.readUser.existingSecret }}
+                  key: {{ .Values.broker.config.basicAuth.readUser.existingSecretUsernameKey }}
+              {{- end }}
+            - name: PACT_BROKER_BASIC_AUTH_READ_ONLY_PASSWORD
+              {{- if .Values.broker.config.basicAuth.readUser.password }}
+              value: {{ .Values.broker.config.basicAuth.readUser.password }}
+              {{- else }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.broker.config.basicAuth.readUser.existingSecret }}
+                  key: {{ .Values.broker.config.basicAuth.readUser.existingSecretPasswordKey }}
+              {{- end }}
+            - name: PACT_BROKER_ALLOW_PUBLIC_READ
+              value: {{ .Values.broker.config.basicAuth.allowPublicRead | quote }}
+            - name: PACT_BROKER_ENABLE_PUBLIC_BADGE_ACCESS
+              value: {{ .Values.broker.config.basicAuth.enablePublicBadgeAccess | quote }}
+          resources:
+            {{- toYaml .Values.broker.resources | nindent 12 }}
+          {{- if .Values.broker.livenessProbe.enabled }}
+          livenessProbe: {{- omit .Values.broker.livenessProbe "enabled" | toYaml | nindent 12 }}
+            httpGet:
+              path: /diagnostic/status/heartbeat
+              port: http
+          {{- end }}
+          {{- if .Values.broker.readinessProbe.enabled }}
+          readinessProbe: {{- omit .Values.broker.readinessProbe "enabled" | toYaml | nindent 12 }}
+            httpGet:
+              path: /diagnostic/status/heartbeat
+              port: http
+          {{- end }}

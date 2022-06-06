@@ -1,0 +1,306 @@
+# -- Pact Broker image information
+image:
+
+  # -- Pact Broker image registry
+  registry: docker.io
+
+  # -- Pact Broker image repository
+  repository: pactfoundation/pact-broker
+
+  # -- Pact Broker image tag (immutable tags are recommended)
+  tag: 2.100.0.1
+
+  # -- Specify a imagePullPolicy
+  # Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
+  # more info [here](https://kubernetes.io/docs/user-guide/images/#pre-pulling-images)
+  #
+  pullPolicy: IfNotPresent
+
+  # -- Array of imagePullSecrets to allow pulling the Pact Broker image from private registries.
+  # PS: Secret's must exist in the namespace to which you deploy the Pact Broker.
+  # more info [here](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/) 
+  #
+  # Example:
+  #   pullSecrets:
+  #    - mySecretName
+  #
+  pullSecrets: []
+
+# -- Broker configuration
+#
+broker:
+
+  # -- Additional labels that can be added to the Broker deployment
+  labels: {}
+
+  # -- Additional annotations that can be added to the Broker deployment
+  annotations: {}
+
+  # -- Number of Pact Broker replicas to deploy
+  replicaCount: 1
+
+  # -- Container port configuration 
+  containerPorts:
+
+    # -- http port 
+    http: 9292
+
+    # -- http port 
+    https: 8443
+
+  # -- Pact Broker pods' [SecurityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod)
+  podSecurityContext:
+
+    # -- Enable Pact Broker pods' Security Context
+    enabled: true
+
+    # -- Set Pact Broker pod's Security Context fsGroup
+    fsGroup: 1001
+
+  # -- Pact Broker containers' [Security Context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container)
+  containerSecurityContext:
+
+    # -- Enable Pact Broker containers' Security Context
+    enabled: true
+
+    # -- Set Pact Broker container's Security Context runAsUser
+    runAsUser: 1001
+
+    # -- Set Pact Broker container's Security Context runAsNonRoot
+    runAsNonRoot: true
+
+  # -- Pact Broker Config
+  config:
+
+    # -- If set to true, SSL verification will be disabled for the HTTP requests made by the webhooks
+    disable_ssl: false
+
+    # -- Pact Broker Basic Authentication
+    basicAuth:
+
+      # -- Set to true if you want the heartbeat endpoint to be publically accessible.
+      # This will have to be true if you have enabled basic auth. 
+      publicHeartbeat: true
+
+      # -- Pact Broker Basic Authentication Credentials For Write user
+      writeUser:
+
+        # -- Usermame for write access to the Pact Broker
+        username: "admin"
+
+        # -- Password for write access to the Pact Broker
+        password: "admin"
+
+        # -- Name of an existing Kubernetes secret containing credentials to access the Pact Broker
+        existingSecret: ""
+
+        # -- The key to which holds the value of the username within the existingSecret
+        existingSecretUsernameKey: ""
+
+        # -- The key to which holds the value of the password within the existingSecret
+        existingSecretPasswordKey: ""
+
+      # -- Pact Broker Basic Authentication Credentials For Read user
+      readUser:
+
+        # -- Usermame for read access to the Pact Broker
+        username: "admin"
+
+        # -- Password for read access to the Pact Broker
+        password: "admin"
+
+        # -- Name of an existing Kubernetes secret containing credentials to access the Pact Broker
+        existingSecret: ""
+
+        # -- The key to which holds the value of the username within the existingSecret
+        existingSecretUsernameKey: ""
+
+        # -- The key to which holds the value of the password within the existingSecret
+        existingSecretPasswordKey: ""
+
+      # -- Set to true if you want public read access, but still require credentials for writing.
+      #
+      allowPublicRead: false
+
+
+      # -- Set this to true to allow status badges to be embedded in README files without requiring a hardcoded password.
+      enablePublicBadgeAccess: false
+  
+  # -- Pact Broker [resource requests and limits](https://kubernetes.io/docs/user-guide/compute-resources/)
+  resources:
+
+    # -- The resources limits for the Pact Broker containers
+    limits:
+      memory: 1024Mi
+      cpu: 2500m
+    
+    # -- The requested resources for the Pact Broker containers
+    requests:
+      memory: 512Mi
+      cpu: 100m
+
+  # -- Pact Broker [Liveness Probe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes) 
+  livenessProbe:
+
+    # -- Enable livenessProbe on Pact Broker containers
+    enabled: true
+
+    # -- Initial delay seconds for livenessProbe
+    initialDelaySeconds: 300
+
+    # -- Period seconds for livenessProbe
+    periodSeconds: 1
+
+    # -- Timeout seconds for livenessProbe
+    timeoutSeconds: 5
+
+    # -- Failure threshold for livenessProbe
+    failureThreshold: 3
+
+    # -- Success threshold for livenessProbe
+    successThreshold: 1
+
+  # -- Pact Broker [Readiness Probe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes) 
+  readinessProbe:
+
+    # -- Enable readinessProbe on Pact Broker containers
+    enabled: true
+
+    # -- Initial delay seconds for readinessProbe
+    initialDelaySeconds: 30
+
+    # -- Period seconds for readinessProbe
+    periodSeconds: 10
+
+    # -- Timeout seconds for readinessProbe
+    timeoutSeconds: 1
+
+    # -- Failure threshold for readinessProbe
+    failureThreshold: 3
+
+    # -- Success threshold for readinessProbe
+    successThreshold: 1
+
+# -- Service configuration
+service:
+
+  # -- Kubernetes service type
+  #
+  type: "ClusterIP"
+
+  # -- Service port configuration
+  ports:
+
+    # -- Pact service HTTP port
+    http: 80
+
+    # -- Pact service HTTPS port
+    https: 443
+
+  # -- Service [NodePort configuration](https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport)
+  nodePorts:
+
+    # -- http nodePort
+    http: ""
+
+    # -- https nodePort
+    https: ""
+
+  # -- Pact Broker service clusterIP
+  clusterIP: ""
+
+  # -- Pact Broker Service [loadBalancerIP](https://kubernetes.io/docs/user-guide/services/#type-loadbalancer)
+  loadBalancerIP: ""
+
+# -- PostgreSQL [chart configuration](https://github.com/bitnami/charts/blob/master/bitnami/postgresql/values.yaml)
+postgresql:
+
+  # -- Switch to enable or disable the PostgreSQL helm chart
+  enabled: true
+
+  # -- The authentication details of the Postgres database
+  auth:
+
+    # -- Name for a custom user to create
+    username: bn_broker
+
+    # -- Password for the custom user to create
+    password: ""
+
+    # -- Name for a custom database to create
+    database: bitnami_broker
+    
+    # -- Name of existing secret to use for PostgreSQL credentials
+    existingSecret: ""
+
+    # -- The secret keys Postgres will look for to retrieve the relevant password
+    secretKeys:
+
+      # -- The key in which Postgres well look for, for the admin password, in the existing Secret
+      adminPasswordKey: admin-password
+
+      # -- The key in which Postgres well look for, for the user password, in the existing Secret
+      userPasswordKey: user-password
+
+      # -- The key in which Postgres well look for, for the replication password, in the existing Secret
+      replicationPasswordKey: replication-password
+  
+  # -- PostgreSQL architecture (`standalone` or `replication`)
+  architecture: standalone
+
+# -- External database configuration
+externalDatabase:
+
+  # -- Switch to enable or disable the externalDatabase connection
+  enabled: false
+
+  # -- 
+  config:
+
+    # -- Database host
+    host: ""
+
+    # -- Database port number
+    port: ""
+
+    # -- Database engine to use.
+    # Only allowed values are `postgres` or `sqlite`. More info [here](https://docs.pact.io/pact_broker/docker_images/pactfoundation#getting-started)
+    adapter: "" 
+
+    # -- External database name
+    databaseName: ""
+
+    # -- External database auth details that the Pact Broker will use to connect
+    auth:
+
+      # -- Non-root username for the Pact Broker
+      username: ""
+
+      # -- Password for the non-root username for the Pact Broker
+      password: ""
+
+      # -- Name of an existing Kubernetes secret containing the database credentials
+      existingSecret: ""
+
+      # -- The key to which the password will be stored under within existing secret.
+      existingSecretPasswordKey: "user-password"
+
+# -- Service Account Configuration
+serviceAccount:
+
+
+  # -- Enable the creation of a ServiceAccount for Pact Broker pods
+  create: true
+
+  # -- Name of the created ServiceAccount
+  # If not set and `serviceAccount.create` is true, a name is generated
+  name: broker-sa
+
+  # -- Additional custom labels to the service ServiceAccount.
+  labels: {}
+
+  # -- Additional custom annotations for the ServiceAccount.
+  annotations: {}
+
+  # -- Auto-mount the service account token in the pod
+  automountServiceAccountToken: true
