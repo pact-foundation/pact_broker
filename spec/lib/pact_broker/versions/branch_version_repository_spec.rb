@@ -76,6 +76,53 @@ module PactBroker
           end
         end
       end
+
+      describe "delete_branch_version" do
+        subject { BranchVersionRepository.new.delete_branch_version(branch_version) }
+
+        context "when the branch version was not the branch head" do
+          before do
+            td.create_consumer("foo")
+              .create_consumer_version("1", branch: "main")
+              .create_consumer_version("2", branch: "main")
+          end
+
+          let(:branch_version) { BranchVersion.first }
+
+          subject { BranchVersionRepository.new.delete_branch_version(BranchVersion.first) }
+
+          it "does not update the branch head" do
+            expect { subject }.to_not change { BranchHead.first.version_id }
+          end
+        end
+
+        context "when the branch version was the branch head" do
+          before do
+            td.create_consumer("foo")
+              .create_consumer_version("1", branch: "main")
+              .create_consumer_version("2", branch: "main")
+          end
+
+          let(:branch_version) { BranchVersion.last }
+
+          it "does updates the branch head" do
+            expect { subject }.to change { BranchHead.first.version_id }
+          end
+        end
+
+        context "when the branch version was the last for its branch" do
+          before do
+            td.create_consumer("foo")
+              .create_consumer_version("1", branch: "main")
+          end
+
+          let(:branch_version) { BranchVersion.first }
+
+          it "does not create a new branch head" do
+            expect { subject }.to change { BranchHead.count }.by(-1)
+          end
+        end
+      end
     end
   end
 end

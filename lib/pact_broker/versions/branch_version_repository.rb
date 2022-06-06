@@ -17,9 +17,20 @@ module PactBroker
       end
 
       # Deletes a branch version - that is, removes a version from a branch.
+      # Updates the branch head if the deleted branch version was the latest for the branch.
+      #
       # @param [PactBroker::Versions::BranchVersion] the branch version to delete
       def delete_branch_version(branch_version)
-        branch_version.delete
+        latest = branch_version.latest?
+        branch = branch_version.latest? ? branch_version.branch : nil
+        deleted = branch_version.delete
+        if latest
+          new_head_branch_version = BranchVersion.find_latest_for_branch(branch)
+          if new_head_branch_version
+            PactBroker::Versions::BranchHead.new(branch: branch, branch_version: new_head_branch_version).upsert
+          end
+        end
+        deleted
       end
 
       private
