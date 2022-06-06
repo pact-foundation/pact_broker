@@ -59,12 +59,12 @@ module PactBroker
           repository_name: params[:repository_name],
           repository_namespace: params[:repository_namespace],
           main_branch: params[:main_branch]
-        ).insert_ignore
+        ).insert_ignore.refresh
       end
 
       def update(pacticipant_name, pacticipant)
         pacticipant.name = pacticipant_name
-        pacticipant.save
+        pacticipant.save.refresh
       end
 
       def replace(pacticipant_name, open_struct_pacticipant)
