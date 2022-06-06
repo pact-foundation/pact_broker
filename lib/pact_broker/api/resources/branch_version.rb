@@ -14,7 +14,7 @@ module PactBroker
         end
 
         def allowed_methods
-          ["GET", "PUT", "OPTIONS"]
+          ["GET", "PUT", "DELETE", "OPTIONS"]
         end
 
         def resource_exists?
@@ -23,6 +23,11 @@ module PactBroker
 
         def to_json
           decorator_class(:branch_version_decorator).new(branch_version).to_json(decorator_options)
+        end
+
+        def delete_resource
+          branch_service.delete_branch_version(branch_version)
+          true
         end
 
         def from_json

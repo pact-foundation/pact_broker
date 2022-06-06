@@ -16,6 +16,12 @@ module PactBroker
         branch_version
       end
 
+      # Deletes a branch version - that is, removes a version from a branch.
+      # @param [PactBroker::Versions::BranchVersion] the branch version to delete
+      def delete_branch_version(branch_version)
+        branch_version.delete
+      end
+
       private
 
       def find_or_create_branch(pacticipant, branch_name)

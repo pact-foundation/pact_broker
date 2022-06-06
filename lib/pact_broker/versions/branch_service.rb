@@ -1,11 +1,18 @@
 require "pact_broker/logging"
 require "pact_broker/repositories"
 require "pact_broker/messages"
+require "forwardable"
 
 module PactBroker
   module Versions
     class BranchService
       extend PactBroker::Repositories
+
+      class << self
+        extend Forwardable
+        delegate [:delete_branch_version] => :branch_version_repository
+      end
+
 
       def self.find_branch_version(pacticipant_name:, branch_name:, version_number:, **)
         BranchVersion.where(
