@@ -43,6 +43,10 @@ module PactBroker
           :'versions::deployed_versions'
         end
 
+        def policy_record
+          environment
+        end
+
         private
 
         attr_reader :deployed_version, :existing_deployed_version
