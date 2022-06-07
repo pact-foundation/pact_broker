@@ -5,11 +5,6 @@ module PactBroker
   module Api
     module Resources
       class ReleasedVersionsForVersionAndEnvironment < BaseResource
-        def initialize
-          super
-          @existing_released_version = version && environment && released_version_service.find_released_version_for_version_and_environment(version, environment)
-        end
-
         def content_types_accepted
           [["application/json", :from_json]]
         end
@@ -35,6 +30,7 @@ module PactBroker
         end
 
         def from_json
+          existing_released_version # make sure we have this before we update the database
           @released_version = released_version_service.create_or_update(next_released_version_uuid, version, environment)
           response.body = decorator_class(:released_version_decorator).new(released_version).to_json(decorator_options)
           true
@@ -62,6 +58,14 @@ module PactBroker
         private
 
         attr_reader :released_version, :existing_released_version
+
+        def existing_released_version
+          if defined?(@existing_released_version)
+            @existing_released_version
+          else
+            @existing_released_version = version && environment && released_version_service.find_released_version_for_version_and_environment(version, environment)
+          end
+        end
 
         def version
           @version ||= version_service.find_by_pacticipant_name_and_number(identifier_from_path)
