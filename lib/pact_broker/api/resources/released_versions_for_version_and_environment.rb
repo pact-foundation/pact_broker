@@ -57,7 +57,7 @@ module PactBroker
 
         private
 
-        attr_reader :released_version, :existing_released_version
+        attr_reader :released_version
 
         def existing_released_version
           if defined?(@existing_released_version)

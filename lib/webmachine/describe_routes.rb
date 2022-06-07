@@ -39,7 +39,7 @@ module Webmachine
 
         dummy_request = Webmachine::Adapters::Rack::RackRequest.new(http_method, "/", Webmachine::Headers["host" => "example.org"], nil, {}, {}, { "REQUEST_METHOD" => http_method })
         dummy_request.path_info = path_info
-        dummy_resource = resource_class.new(dummy_request, Webmachine::Response.new)
+        resource_class.new(dummy_request, Webmachine::Response.new)
       end
     end
 
