@@ -572,6 +572,26 @@ module PactBroker
          }.to_json
       end
 
+      def fixed_json_content(consumer_name, provider_name, differentiator)
+        {
+          "consumer" => {
+             "name" => consumer_name
+           },
+           "provider" => {
+             "name" => provider_name
+           },
+           "interactions" => [{
+              "request" => {
+                "method" => "GET",
+                "path" => "/things/#{differentiator}"
+              },
+              "response" => {
+                "status" => 200
+              }
+           }],
+         }.to_json
+      end
+
       private
 
       def create_pacticipant_version(version_number, pacticipant, params = {})

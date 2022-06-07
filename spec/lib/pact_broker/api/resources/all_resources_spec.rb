@@ -45,6 +45,10 @@ module PactBroker
             expect(resource).to respond_to(:policy_name)
           end
 
+          it "has a policy_record method" do
+            expect(resource).to respond_to(:policy_record)
+          end
+
           describe "malformed_request?" do
             context "an invalid UTF-8 character is used in the request body" do
               before do
