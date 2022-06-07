@@ -1,3 +1,4 @@
+# Need to change this to use the path because there are resources with the same resource_name (pact_publications, verification_results and verification_result)
 requests_which_are_exected_to_have_no_policy_record:
   - publish_contracts POST
   - index GET

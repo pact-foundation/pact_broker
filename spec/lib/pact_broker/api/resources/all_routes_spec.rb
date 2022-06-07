@@ -31,6 +31,17 @@ POTENTIAL_PARAMS = {
 
 REQUESTS_WHICH_ARE_EXECTED_TO_HAVE_NO_POLICY_RECORD = YAML.safe_load(File.read("spec/support/all_routes_spec_support.yml"))["requests_which_are_exected_to_have_no_policy_record"]
 
+RSpec.describe "all the routes" do
+  it "has a name for every route" do
+    expect(PactBroker.routes.reject(&:resource_name)).to eq []
+  end
+
+  it "has a unique name (except for the ones that don't which we can't change now because it would ruin the PF metrics)" do
+    dupliates =  PactBroker.routes.collect(&:resource_name).group_by(&:itself).select { | _, values | values.size > 1 }.keys
+    expect(dupliates).to eq(["pact_publication", "verification_results", "verification_result"])
+  end
+end
+
 PactBroker.routes.each do | pact_broker_route |
   describe "#{pact_broker_route.path} (#{pact_broker_route.resource_name})" do
     pact_broker_route.allowed_methods.each do | allowed_method |
