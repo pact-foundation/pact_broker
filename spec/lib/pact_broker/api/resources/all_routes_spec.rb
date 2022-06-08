@@ -64,7 +64,7 @@ PactBroker.routes.each do | pact_broker_route |
           end
 
           it "has a policy record object" do
-            dummy_resource = pact_broker_route.build_resource(allowed_method, PactBroker::ApplicationContext.default_application_context, POTENTIAL_PARAMS)
+            dummy_resource = pact_broker_route.build_resource({ "REQUEST_METHOD" => allowed_method }, PactBroker::ApplicationContext.default_application_context, POTENTIAL_PARAMS)
             expect(dummy_resource.policy_record).to_not be nil
           end
         end

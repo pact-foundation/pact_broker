@@ -29,15 +29,30 @@ module Webmachine
         path_spec.select { | component | component.is_a?(Symbol) }
       end
 
-      def build_resource(http_method, application_context, potential_params)
-        path_params = route_param_names.each_with_object({}){ | name, new_params | new_params[name] = potential_params[name] }
+      # Creates a Webmachine Resource for the given route for use in tests.
+      # @param [Hash] env the rack env from which to build the request
+      # @param [PactBroker::ApplicationContext] application_context the application context
+      # @param [Hash] path_param_values concrete parameter values from which to construct the path
+      # @return [Webmachine::Resource] the webmachine resource for the request
+      def build_resource(env, application_context, path_param_values)
+        path = "/" + path_spec.collect{ | part | part.is_a?(Symbol) ? (path_param_values[part] || "missing-param") : part }.join("/")
 
+        path_params = route_param_names.each_with_object({}){ | name, new_params | new_params[name] = path_param_values[name] }
         path_info = {
           application_context: application_context,
           resource_name: resource_name
         }.merge(path_params)
 
-        dummy_request = Webmachine::Adapters::Rack::RackRequest.new(http_method, "/", Webmachine::Headers["host" => "example.org"], nil, {}, {}, { "REQUEST_METHOD" => http_method })
+        rack_req = ::Rack::Request.new({ "REQUEST_METHOD" => "GET", "rack.input" => StringIO.new("") }.merge(env) )
+        dummy_request = Webmachine::Adapters::Rack::RackRequest.new(
+          rack_req.env["REQUEST_METHOD"],
+          path,
+          Webmachine::Headers.from_cgi({"HTTP_HOST" => "example.org"}.merge(env)),
+          Webmachine::Adapters::Rack::RequestBody.new(rack_req),
+          {},
+          {},
+          rack_req.env
+        )
         dummy_request.path_info = path_info
         resource_class.new(dummy_request, Webmachine::Response.new)
       end
