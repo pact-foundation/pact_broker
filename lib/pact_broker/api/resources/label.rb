@@ -17,6 +17,10 @@ module PactBroker
           ["GET", "PUT", "DELETE", "OPTIONS"]
         end
 
+        def put_can_create?
+          true
+        end
+
         def from_json
           unless label
             @label = label_service.create(identifier_from_path)

@@ -22,6 +22,10 @@ module PactBroker
           ["GET", "PUT", "DELETE", "OPTIONS"]
         end
 
+        def put_can_create?
+          true
+        end
+
         def resource_exists?
           !!webhook
         end

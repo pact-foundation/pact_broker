@@ -313,6 +313,12 @@ module PactBroker
         def content_type_json?
           request.content_type&.include?("json")
         end
+
+        # Not a Webmachine method. This is used by security policy code to identify whether
+        # a PUT to a non existing resource can create a new object.
+        def put_can_create?
+          false
+        end
       end
     end
   end

@@ -21,6 +21,10 @@ module PactBroker
           ["GET", "PUT", "PATCH", "DELETE", "OPTIONS"]
         end
 
+        def put_can_create?
+          false
+        end
+
         def known_methods
           super + ["PATCH"]
         end
@@ -29,6 +33,7 @@ module PactBroker
           super || ((request.patch? || request.really_put?) && validation_errors_for_schema?)
         end
 
+        # PUT or PATCH with content-type application/json
         def from_json
           if pacticipant
             @pacticipant = update_existing_pacticipant
