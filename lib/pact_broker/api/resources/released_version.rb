@@ -22,6 +22,10 @@ module PactBroker
           ["GET", "PATCH", "OPTIONS"]
         end
 
+        def patch_can_create?
+          false
+        end
+
         def resource_exists?
           !!released_version
         end

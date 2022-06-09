@@ -25,6 +25,10 @@ module PactBroker
           false
         end
 
+        def patch_can_create?
+          true
+        end
+
         def known_methods
           super + ["PATCH"]
         end
@@ -48,6 +52,7 @@ module PactBroker
           response.body = to_json
         end
 
+        # PUT or PATCH with content-type application/merge-patch+json
         def from_merge_patch_json
           if request.patch?
             from_json

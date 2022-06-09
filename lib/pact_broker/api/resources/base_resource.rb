@@ -319,6 +319,12 @@ module PactBroker
         def put_can_create?
           false
         end
+
+        # Not a Webmachine method. This is used by security policy code to identify whether
+        # a PATCH to a non existing resource can create a new object.
+        def patch_can_create?
+          false
+        end
       end
     end
   end

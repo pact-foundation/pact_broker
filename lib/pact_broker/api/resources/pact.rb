@@ -40,6 +40,10 @@ module PactBroker
           true
         end
 
+        def patch_can_create?
+          true
+        end
+
         def is_conflict?
           merge_conflict = request.patch? && resource_exists? && Pacts::Merger.conflict?(pact.json_content, pact_params.json_content)
 
