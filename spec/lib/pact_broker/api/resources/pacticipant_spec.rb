@@ -9,7 +9,7 @@ module PactBroker::Api
           allow(PactBroker::Pacticipants::Service).to receive(:find_pacticipant_by_name).and_return(pacticpant)
         end
 
-        let(:pacticpant) { double('pacticipant') }
+        let(:pacticpant) { double("pacticipant") }
         let(:path) { "/pacticipants/foo" }
         let(:headers) { {"CONTENT_TYPE" => "application/json"} }
         let(:response_body) { JSON.parse(last_response.body, symbolize_names: true)}
