@@ -26,6 +26,10 @@ module PactBroker
           super || (request.post? && validation_errors_for_schema?)
         end
 
+        def request_body_required?
+          request.post?
+        end
+
         def post_is_create?
           true
         end

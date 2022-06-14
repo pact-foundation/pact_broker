@@ -29,7 +29,7 @@ describe "Creating a pacticipant" do
     expect(last_response.headers["Content-Type"]).to eq "application/hal+json;charset=utf-8"
   end
 
-  it "returns the newly created webhook" do
+  it "returns the newly created pacticipant" do
     subject
     expect(response_body).to include pacticipant_hash
   end

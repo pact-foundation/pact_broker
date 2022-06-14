@@ -34,6 +34,15 @@ module PactBroker
             end
           end
 
+          context "with an empty body" do
+            let(:request_body) { "" }
+
+            it "returns a 400" do
+              subject
+              expect(last_response.status).to eq 400
+            end
+          end
+
           context "when the model is invalid" do
             let(:errors) { { "some" => ["errors"] } }
 

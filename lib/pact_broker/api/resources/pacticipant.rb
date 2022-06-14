@@ -34,7 +34,7 @@ module PactBroker
         end
 
         def malformed_request?
-          super || ((request.patch? || request.really_put?) && validation_errors_for_schema?)
+          super || ((request.patch? || request.really_put?) && any_request_body? && validation_errors_for_schema?)
         end
 
         # PUT or PATCH with content-type application/json

@@ -4,14 +4,47 @@ require "pact_broker/api/resources/pacticipant"
 module PactBroker::Api
   module Resources
     describe Pacticipant do
+      describe "PUT" do
+        before do
+          allow(PactBroker::Pacticipants::Service).to receive(:find_pacticipant_by_name).and_return(pacticpant)
+        end
+
+        let(:pacticpant) { double('pacticipant') }
+        let(:path) { "/pacticipants/foo" }
+        let(:headers) { {"CONTENT_TYPE" => "application/json"} }
+        let(:response_body) { JSON.parse(last_response.body, symbolize_names: true)}
+
+        subject { put(path, "", headers) }
+
+        context "with an empty body" do
+          its(:status) { is_expected.to eq 200 }
+        end
+      end
+
+      describe "PATCH" do
+        before do
+          allow(PactBroker::Pacticipants::Service).to receive(:find_pacticipant_by_name).and_return(pacticpant)
+        end
+
+        let(:pacticpant) { nil }
+        let(:path) { "/pacticipants/foo" }
+        let(:headers) { {"CONTENT_TYPE" => "application/merge-patch+json"} }
+        let(:response_body) { JSON.parse(last_response.body, symbolize_names: true)}
+
+        subject { patch(path, "", headers) }
+
+        context "with an empty body" do
+          its(:status) { is_expected.to eq 201 }
+        end
+      end
+
       describe "DELETE" do
-
-        let(:pacticpant) { double("pacticpant") }
-
         before do
           allow(PactBroker::Pacticipants::Service).to receive(:delete)
           allow(PactBroker::Pacticipants::Service).to receive(:find_pacticipant_by_name).and_return(pacticpant)
         end
+
+        let(:pacticpant) { double("pacticpant") }
 
         subject { delete("/pacticipants/Some%20Service" ) }
 

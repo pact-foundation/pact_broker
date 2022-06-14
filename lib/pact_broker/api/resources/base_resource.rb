@@ -306,20 +306,27 @@ module PactBroker
           invalid_json? || validation_errors_for_schema?(schema_to_use, params_to_validate)
         end
 
+        # Ensure we have valid JSON if a JSON body is required OR if a body has been provided
         def content_type_is_json_but_invalid_json_provided?
-          content_type_json? && any_request_body? && invalid_json?
+          content_type_json? && ((request_body_required? || any_request_body?) && invalid_json?)
         end
 
         def content_type_json?
           request.content_type&.include?("json")
         end
 
+        def request_body_required?
+          false
+        end
+
+        # TODO rename to put_to_create_supported, otherwise it sounds like it's a policy issue
         # Not a Webmachine method. This is used by security policy code to identify whether
         # a PUT to a non existing resource can create a new object.
         def put_can_create?
           false
         end
 
+        # TODO rename to patch_to_create_supported, otherwise it sounds like it's a policy issue
         # Not a Webmachine method. This is used by security policy code to identify whether
         # a PATCH to a non existing resource can create a new object.
         def patch_can_create?

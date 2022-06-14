@@ -106,12 +106,19 @@ module PactBroker
           let(:deployed_version_service) { class_double("PactBroker::Deployments::DeployedVersionService").as_stubbed_const }
           let(:tag_url) { "http://example.org/tag/url"}
           let(:create_deployed_versions_for_tags) { false }
+          let(:request_body) { nil }
 
-          subject { put("/pacticipants/Condor/versions/1.3.0/tags/prod", nil, "CONTENT_LENGTH" => "0", "CONTENT_TYPE" => "application/json") }
+          subject { put("/pacticipants/Condor/versions/1.3.0/tags/prod", request_body, "CONTENT_LENGTH" => "0", "CONTENT_TYPE" => "application/json") }
 
           it "returns a success response" do
             subject
             expect(last_response).to be_successful
+          end
+
+          context "with a malformed JSON body" do
+            let(:request_body) { "{" }
+
+            its(:status) { is_expected.to eq 400 }
           end
 
           context "when the tag already exists" do

@@ -36,6 +36,10 @@ module PactBroker
           ["GET", "PUT", "DELETE", "PATCH", "OPTIONS"]
         end
 
+        def request_body_required?
+          request.put? || request.patch?
+        end
+
         def put_can_create?
           true
         end

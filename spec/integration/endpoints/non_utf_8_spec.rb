@@ -38,3 +38,17 @@ RSpec.describe "a request to publish a pact with invalid JSON" do
     expect(JSON.parse(subject.body)).to eq("error" => "JSON::ParserError - 859: unexpected token at '{'")
   end
 end
+
+RSpec.describe "a request to publish a pact with an empty body" do
+  let(:pact_content) do
+    ""
+  end
+
+  subject { put("/pacts/provider/Bar/consumer/Foo/version/2", pact_content, { "CONTENT_TYPE" => "application/json"}) }
+
+  its(:status) { is_expected.to eq 400 }
+
+  it "returns an error message" do
+    expect(JSON.parse(subject.body)).to eq("error" => "JSON::ParserError - 859: unexpected token at ''")
+  end
+end
