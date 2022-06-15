@@ -33,4 +33,10 @@ describe "Creating a pacticipant" do
     subject
     expect(response_body).to include pacticipant_hash
   end
+
+  context "with an empty JSON document" do
+    let(:pacticipant_hash) { {} }
+
+    its(:status) { is_expected.to eq 400 }
+  end
 end

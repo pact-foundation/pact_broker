@@ -2,7 +2,7 @@ require "pact_broker/api/resources/base_resource"
 require "pact_broker/api/decorators/pacticipant_decorator"
 require "pact_broker/domain/pacticipant"
 require "pact_broker/hash_refinements"
-require "pact_broker/api/contracts/pacticipant_schema"
+require "pact_broker/api/contracts/pacticipant_create_schema"
 
 module PactBroker
   module Api
@@ -66,7 +66,7 @@ module PactBroker
         private
 
         def schema
-          PactBroker::Api::Contracts::PacticipantSchema
+          PactBroker::Api::Contracts::PacticipantCreateSchema
         end
 
         def pacticipants
