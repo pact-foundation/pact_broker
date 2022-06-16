@@ -15,7 +15,7 @@ module PactBroker
           let(:parsed_model) { OpenStruct.new(name: "New Consumer") }
           let(:decorator) { instance_double(decorator_class, to_json: response_json, from_json: parsed_model) }
           let(:response_json) { {some: "json"}.to_json }
-          let(:schema) { PactBroker::Api::Contracts::PacticipantSchema }
+          let(:schema) { PactBroker::Api::Contracts::PacticipantCreateSchema }
 
           before do
             allow(PactBroker::Pacticipants::Service).to receive(:create).and_return(created_model)
