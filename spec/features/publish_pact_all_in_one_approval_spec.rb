@@ -59,6 +59,7 @@ RSpec.describe "publishing a pact using the all in one endpoint" do
   context "when a verification already exists for the consumer/provider" do
     before do
       td.create_pact_with_verification("Foo", "1", "Bar", "2")
+      allow(PactBroker.configuration).to receive(:allow_dangerous_contract_modification).and_return(true)
     end
 
     it { Approvals.verify(fixture, :name => "publish_contract_verification_already_exists", format: :json) }
