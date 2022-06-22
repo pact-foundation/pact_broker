@@ -447,7 +447,7 @@ groups:
           Whether or not to allow the pact content for an existing consumer version to be modified. It is strongly recommended that this is set to false,
           as allowing modification makes the results of can-i-deploy unreliable. When this is set to false as recommended, each commit must publish pacts
           with a unique version number.
-        default_description: For new installations of v2.82.0 and later, this defaults to `false`.
+        default_description: For new installations of v2.102 and later, this defaults to `false` (the recommended value). Previous installations will have the default value of `true` (not recommended).
         supported_versions: From v2.82.0
         allowed_values:
           - true

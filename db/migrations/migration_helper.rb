@@ -3,6 +3,12 @@ module PactBroker
 
     extend self
 
+    def for_upgrades_of_existing_installations
+      if from(:integrations).count > 0
+        yield
+      end
+    end
+
     def large_text_type
       if postgres?
         :text

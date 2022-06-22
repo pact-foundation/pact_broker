@@ -651,7 +651,7 @@ with a unique version number.
 **Supported versions:** From v2.82.0<br/>
 **Environment variable name:** `PACT_BROKER_ALLOW_DANGEROUS_CONTRACT_MODIFICATION`<br/>
 **YAML configuration key name:** `allow_dangerous_contract_modification`<br/>
-**Default:** For new installations of v2.82.0 and later, this defaults to `false`.<br/>
+**Default:** For new installations of v2.102 and later, this defaults to `false` (the recommended value). Previous installations will have the default value of `true` (not recommended).<br/>
 **Allowed values:** `true`, `false`<br/>
 **More information:** https://docs.pact.io/versioning<br/>
 
