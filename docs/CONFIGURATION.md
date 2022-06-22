@@ -648,6 +648,8 @@ Whether or not to allow the pact content for an existing consumer version to be 
 as allowing modification makes the results of can-i-deploy unreliable. When this is set to false as recommended, each commit must publish pacts
 with a unique version number.
 
+If modification of an existing contract is attempted when the value is set to `false`, an HTTP 409 status will be returned.
+
 **Supported versions:** From v2.82.0<br/>
 **Environment variable name:** `PACT_BROKER_ALLOW_DANGEROUS_CONTRACT_MODIFICATION`<br/>
 **YAML configuration key name:** `allow_dangerous_contract_modification`<br/>
