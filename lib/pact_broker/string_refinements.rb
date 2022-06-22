@@ -4,6 +4,10 @@ module PactBroker
       def blank?
         true
       end
+
+      def present?
+        false
+      end
     end
 
     refine Numeric do
@@ -13,6 +17,10 @@ module PactBroker
     end
 
     refine String do
+      def present?
+        !blank?
+      end
+
       def not_blank?
         !blank?
       end

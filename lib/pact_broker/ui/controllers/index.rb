@@ -1,5 +1,6 @@
 require "pact_broker/ui/controllers/base_controller"
 require "pact_broker/ui/view_models/index_items"
+require "pact_broker/string_refinements"
 require "haml"
 
 module PactBroker
@@ -7,6 +8,7 @@ module PactBroker
     module Controllers
       class Index < Base
         include PactBroker::Services
+        using PactBroker::StringRefinements
 
         get "/" do
           set_headers
@@ -27,7 +29,7 @@ module PactBroker
 
           index_items = index_service.find_index_items(options)
 
-          if index_items.blank? && !search.blank?
+          if index_items.empty? && !search.blank?
             error_messages << "No pacticipants found matching: \"#{search}\""
           end
 
