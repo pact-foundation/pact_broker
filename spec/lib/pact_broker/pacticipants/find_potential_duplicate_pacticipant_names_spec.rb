@@ -1,4 +1,3 @@
-require "spec_helper"
 require "pact_broker/pacticipants/find_potential_duplicate_pacticipant_names"
 
 module PactBroker

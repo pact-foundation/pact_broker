@@ -5,12 +5,12 @@ module PactBroker
     class FindPotentialDuplicatePacticipantNames
       attr_reader :new_name, :existing_names
 
-      def initialize new_name, existing_names
+      def initialize(new_name, existing_names)
         @new_name = new_name
         @existing_names = existing_names
       end
 
-      def self.call new_name, existing_names
+      def self.call(new_name, existing_names)
         new(new_name, existing_names).call
       end
 
@@ -22,7 +22,7 @@ module PactBroker
         end
       end
 
-      def clean name
+      def clean(name)
         self.class.split(name).collect{|w| w.chomp("s") } - ["api", "provider", "service"]
       end
 
