@@ -6,8 +6,8 @@ $LOAD_PATH  << "."
 
 require "sequel"
 
-load "lib/db.rb"
-require "tasks/database"
+require "support/test_db"
+require "support/test_database"
 require "pact_broker/db"
 PactBroker::DB.connection = PactBroker::Database.database = TestDB.connection_for_test_database
 PactBroker::DB::Migrate.call(PactBroker::DB.connection)

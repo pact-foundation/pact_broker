@@ -1,6 +1,5 @@
-require "spec_helper"
 require "pact_broker/app"
-require "test_db"
+require "support/test_db"
 
 module PactBroker
   describe App do

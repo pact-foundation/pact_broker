@@ -21,7 +21,7 @@ namespace :db do
   task :env => ["bundler:setup"] do
     # Require RACK_ENV to be set for tasks that will be called in production
     raise "Please specify RACK_ENV" unless ENV["RACK_ENV"]
-    require File.dirname(__FILE__) + "/database.rb"
+    require File.dirname(__FILE__) + "/../spec/support/test_database.rb"
   end
 
   task :create do
@@ -104,7 +104,7 @@ namespace :db do
       raise "Need to set INSTALL_PG=true" unless ENV["INSTALL_PG"] == "true"
       ENV["RACK_ENV"] = "test"
       ENV["DATABASE_ADAPTER"] = "docker_postgres"
-      load "tasks/database.rb"
+      require "support/test_database.rb"
       PactBroker::Database.wait_for_database
       PactBroker::Database.migrate
       load "tasks/database/annotate.rb"

@@ -1,4 +1,4 @@
-require "tasks/database"
+require "support/test_database"
 require "rack/pact_broker/database_transaction"
 
 module Rack

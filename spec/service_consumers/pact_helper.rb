@@ -2,8 +2,8 @@ $: << File.expand_path("../../../", __FILE__)
 
 require "spec/support/simplecov"
 require "pact/provider/rspec"
-require "test_db"
-require "tasks/database"
+require "support/test_db"
+require "support/test_database"
 require "pact_broker/db"
 require "pact_broker/configuration"
 PactBroker::DB.connection = PactBroker::Database.database = ::TestDB.connection_for_test_database

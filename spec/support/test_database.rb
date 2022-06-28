@@ -4,8 +4,8 @@ require "pact_broker/db/version"
 require "pact_broker/db"
 require "sequel"
 require "yaml"
-require "test_db"
-require_relative "database/table_dependency_calculator"
+require_relative "test_db"
+require "pact_broker/db/table_dependency_calculator"
 
 Sequel.extension :migration
 
@@ -120,7 +120,7 @@ module PactBroker
     private
 
     def ordered_tables
-      TableDependencyCalculator.call(database)
+      PactBroker::DB::TableDependencyCalculator.call(database)
     end
 
     def ensure_not_production
