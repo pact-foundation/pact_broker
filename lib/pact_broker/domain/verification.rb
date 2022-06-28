@@ -274,5 +274,6 @@ end
 #  verifications_pact_version_id_fkey | (pact_version_id) REFERENCES pact_versions(id)
 #  verifications_provider_id_fkey     | (provider_id) REFERENCES pacticipants(id)
 # Referenced By:
-#  latest_verification_id_for_pact_version_and_provider_version | latest_v_id_for_pv_and_pv_verification_id_fk | (verification_id) REFERENCES verifications(id) ON DELETE CASCADE
-#  triggered_webhooks                                           | triggered_webhooks_verification_id_fkey      | (verification_id) REFERENCES verifications(id)
+#  latest_verification_id_for_pact_version_and_provider_version | latest_v_id_for_pv_and_pv_verification_id_fk               | (verification_id) REFERENCES verifications(id) ON DELETE CASCADE
+#  pact_version_provider_tag_successful_verifications           | pact_version_provider_tag_successful_verifications_v_id_fk | (verification_id) REFERENCES verifications(id) ON DELETE SET NULL
+#  triggered_webhooks                                           | triggered_webhooks_verification_id_fkey                    | (verification_id) REFERENCES verifications(id)
