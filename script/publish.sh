@@ -13,16 +13,10 @@ escaped_consumer=$(echo $consumer | ruby -e "require 'uri'; puts URI.encode(ARGF
 escaped_provider=$(echo $provider | ruby -e "require 'uri'; puts URI.encode(ARGF.read.strip)")
 echo $consumer $provider
 
-curl -v -XPUT \
-  -H "Content-Length: 0" \
-  -H "Content-Type: application/json" \
-  http://localhost:9292/pacticipants/${escaped_consumer}/versions/${consumer_version}/tags/dev
-
-
 body=$(cat script/foo-bar.json | sed "s/Foo/${consumer}/" | sed "s/Bar/${provider}/")
 tmpfile=$(mktemp)
 echo $body > $tmpfile
-curl -v -XPUT \-H "Content-Type: application/json" \
+curl -v -XPOST \-H "Content-Type: application/json" \
 -d@$tmpfile \
-http://127.0.0.1:9292/pacts/provider/${escaped_provider}/consumer/${escaped_consumer}/version/${consumer_version}
+http://127.0.0.1:9292/contracts/publish
 echo ""

@@ -62,6 +62,17 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: script/test/run-rake-on-docker-compose-mysql.sh
+  postgres-on-docker:
+    if: "!contains(github.event.head_commit.message, '[ci-skip]')"
+    runs-on: "ubuntu-latest"
+    continue-on-error: true # experimental
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby_version: ["2.7"]
+    steps:
+      - uses: actions/checkout@v2
+      - run: script/test/run-rake-on-docker-compose-postgres.sh
   rubocop:
     if: "!contains(github.event.head_commit.message, '[ci-skip]')"
     runs-on: "ubuntu-latest"
