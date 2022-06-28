@@ -2,11 +2,11 @@ $: << File.expand_path("../../../", __FILE__)
 
 require "spec/support/simplecov"
 require "pact/provider/rspec"
-require "db"
+require "test_db"
 require "tasks/database"
 require "pact_broker/db"
 require "pact_broker/configuration"
-PactBroker::DB.connection = PactBroker::Database.database = ::DB.connection_for_test_database
+PactBroker::DB.connection = PactBroker::Database.database = ::TestDB.connection_for_test_database
 PactBroker.configuration.seed_example_data = false
 require "spec/support/database_cleaner"
 require "pact_broker"
@@ -20,7 +20,7 @@ end
 
 PactBroker.configuration.base_urls = ["http://example.org"]
 
-pact_broker = PactBroker::App.new { |c| c.database_connection = DB.connection_for_test_database }
+pact_broker = PactBroker::App.new { |c| c.database_connection = TestDB.connection_for_test_database }
 app_to_verify = HalRelationProxyApp.new(pact_broker)
 
 module Rack

@@ -9,7 +9,7 @@ require "sequel"
 load "lib/db.rb"
 require "tasks/database"
 require "pact_broker/db"
-PactBroker::DB.connection = PactBroker::Database.database = DB.connection_for_test_database
+PactBroker::DB.connection = PactBroker::Database.database = TestDB.connection_for_test_database
 PactBroker::DB::Migrate.call(PactBroker::DB.connection)
 require "approvals"
 require "rack/test"

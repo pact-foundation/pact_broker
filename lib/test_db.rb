@@ -6,7 +6,7 @@ require "erb"
 require "pact_broker/project_root"
 require "fileutils"
 
-module DB
+module TestDB
   include PactBroker::Logging
   ##
   # Sequel by default does not test connections in its connection pool before

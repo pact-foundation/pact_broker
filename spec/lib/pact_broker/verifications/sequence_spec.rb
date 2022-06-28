@@ -4,7 +4,7 @@ module PactBroker
   module Verifications
     describe Sequence do
       describe "#next_val", migration: true do
-        context "for proper databases with proper sequences", skip: !::DB.postgres? do
+        context "for proper databases with proper sequences", skip: !::TestDB.postgres? do
           it "increments the value each time" do
             PactBroker::Database.migrate
             expect(Sequence.next_val).to eq 200
@@ -29,7 +29,7 @@ module PactBroker
           end
         end
 
-        context "for databases without sequences", skip: ::DB.postgres? do
+        context "for databases without sequences", skip: ::TestDB.postgres? do
           before do
             PactBroker::Database.migrate
           end
