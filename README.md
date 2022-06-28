@@ -114,7 +114,17 @@ Use the HAL browser to view documentation as you browse.
 
 ### To have a play around on your local machine
 
-* Install Ruby and Bundler (check the automated tests to find the most recent version of Ruby and Bundler that are supported)
+#### Using Docker Compose
+
+Download a copy of the [example Docker Compose file](https://github.com/pact-foundation/pact-broker-docker/blob/master/docker-compose.yml) from the Pact Broker Docker repository and run:
+
+`docker compose up`
+
+Then open a browser at [http://localhost:9292](http://localhost:9292).
+
+#### Using Ruby
+
+* Install Ruby 2.7 and Bundler (check the automated tests to find the most recent version of Ruby and Bundler that are supported)
     * Windows users: get a Rails/Ruby installer from [RailsInstaller](http://railsinstaller.org/) and run it
     * unix users just use your package manager
 * Run `git clone git@github.com:pact-foundation/pact_broker.git && cd pact_broker/example`
@@ -144,8 +154,8 @@ You can use the [Pact Broker Docker image][docker] or [Terraform on AWS][terrafo
   * To ensure you're on a supported version of the database that you choose, check the [travis.yml][travisyml] file to see which versions we're currently running our tests against.
   * MySQL was supported for the native Ruby application until around 2021, but the official `pactfoundation/pact-broker` Docker image does not support it. New features will not be optimised for MySQL, and some new features may not even be supported on it (eg. the database clean feature).
 * You'll find a sample database creation script in the [example/config.ru](https://github.com/pact-foundation/pact_broker/blob/master/example/config.ru).
-* Install ruby 2.7 or later and the latest version of bundler (if you've come this far, I'm assuming you know how to do both of these. Did I mention there was a [Docker][docker] image?)
-* Copy the [pact\_broker](https://github.com/DiUS/pact_broker-docker/tree/master/pact_broker) directory from the Pact Broker Docker project. This will have the recommended settings for database connections, logging, basic auth etc. Note that the Docker image uses Phusion Passenger as the web application server in front of the Pact Broker Ruby application, which is the recommended set up.
+* Install ruby 2.7 and the latest version of bundler (if you've come this far, I'm assuming you know how to do both of these. Did I mention there was a [Docker][docker] image?)
+* Copy the [pact\_broker](https://github.com/DiUS/pact_broker-docker/tree/master/pact_broker) directory from the Pact Broker Docker project. This will have the recommended settings for database connections, logging, basic auth etc. Note that the Docker image uses Phusion Passenger as the web application server in front of the Pact Broker Ruby application, which is the recommended set up if you are not using a containerized solution.
 * Modify the config.ru and Gemfile as desired (eg. choose database driver gem, set your database credentials. Use the "pg" gem for Postgres)
   * example Sequel configuration for postgres `{ adapter: "postgres", database: "pact_broker", username: 'pact_broker', password: 'pact_broker', :encoding => 'utf8' }`
 * Please ensure you use `encoding: 'utf8'` in your Sequel options to avoid encoding issues.
@@ -169,7 +179,7 @@ The Pact Broker follows the [semantic versioning](https://semver.org/) scheme.
 [terraform]: https://github.com/nadnerb/terraform-pact-broker
 [pactflow]: https://pactflow.io/?utm_source=github&utm_campaign=pact_broker_usage
 [wiki]: https://github.com/pact-foundation/pact_broker/wiki
-[reverse-proxy-docs]: https://github.com/pact-foundation/pact_broker/wiki/Configuration#running-the-broker-behind-a-reverse-proxy
+[reverse-proxy-docs]: https://docs.pact.io/pact_broker/configuration/features#running-the-broker-behind-a-reverse-proxy
 [stackoverflow]: http://stackoverflow.com/questions/tagged/pact-broker
 [twitter]: https://twitter.com/pact_up
 [slack]: https://slack.pact.io/
