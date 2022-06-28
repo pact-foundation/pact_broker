@@ -21,29 +21,7 @@ jobs:
       - run: "bundle install"
       - name: Tests
         run: "bundle exec rake ci"
-    steps:
-      - uses: actions/checkout@v3
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ matrix.ruby_version }}
-      - run: "bundle install"
-        env:
-          INSTALL_PG: "true"
-      - run: "bundle exec rake ci"
-        env:
-          DATABASE_ADAPTER: github_actions_postgres
-          INSTALL_PG: "true"
-  mysql:
-    if: "!contains(github.event.head_commit.message, '[ci-skip]')"
-    runs-on: "ubuntu-latest"
-    strategy:
-      fail-fast: false
-      matrix:
-        ruby_version: ["2.7"]
-    steps:
-      - uses: actions/checkout@v3
-      - run: script/test/run-rake-on-docker-compose-mysql.sh
-  postgres-on-docker:
+  postgres:
     if: "!contains(github.event.head_commit.message, '[ci-skip]')"
     runs-on: "ubuntu-latest"
     strategy:
@@ -55,6 +33,16 @@ jobs:
       - run: script/test/run-rake-on-docker-compose-postgres.sh
         env:
           POSTGRES_DOCKER_IMAGE_TAG: ${{ matrix.postgres_docker_image_tag }}
+  mysql:
+    if: "!contains(github.event.head_commit.message, '[ci-skip]')"
+    runs-on: "ubuntu-latest"
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby_version: ["2.7"]
+    steps:
+      - uses: actions/checkout@v3
+      - run: script/test/run-rake-on-docker-compose-mysql.sh
   rubocop:
     if: "!contains(github.event.head_commit.message, '[ci-skip]')"
     runs-on: "ubuntu-latest"
