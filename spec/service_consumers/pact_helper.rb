@@ -5,6 +5,7 @@ require "pact/provider/rspec"
 require "db"
 require "tasks/database"
 require "pact_broker/db"
+require "pact_broker/configuration"
 PactBroker::DB.connection = PactBroker::Database.database = ::DB.connection_for_test_database
 PactBroker.configuration.seed_example_data = false
 require "spec/support/database_cleaner"
