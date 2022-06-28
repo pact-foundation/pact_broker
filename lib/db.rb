@@ -48,7 +48,22 @@ module DB
   def self.connection_for_env env
     config = configuration_for_env(env)
     logger.info "Connecting to #{env} #{config['adapter']} database #{config['database']}."
-    connect config
+    connect(config)
+  end
+
+  def self.connection_from_database_url_env_var
+    if ENV["PACT_BROKER_TEST_DATABASE_URL"] && ENV["PACT_BROKER_TEST_DATABASE_URL"] != ""
+      uri = URI(ENV["PACT_BROKER_TEST_DATABASE_URL"])
+      config = {
+        "adapter" => uri.scheme,
+        "user" => uri.user,
+        "password" => uri.password,
+        "host" => uri.host,
+        "database" => uri.path.sub(/^\//, ""),
+        "port" => uri.port&.to_i
+      }.compact
+      connect(config)
+    end
   end
 
   def self.configuration_for_env env
@@ -69,7 +84,11 @@ module DB
     !!(PACT_BROKER_DB.adapter_scheme.to_s =~ /postgres/)
   end
 
-  PACT_BROKER_DB ||= connection_for_env ENV.fetch("RACK_ENV")
+  def self.create_connection_for_test_database
+    connection_from_database_url_env_var || connection_for_env(ENV.fetch("RACK_ENV"))
+  end
+
+  PACT_BROKER_DB ||= create_connection_for_test_database
 
   def self.health_check
     PACT_BROKER_DB.synchronize do |c|

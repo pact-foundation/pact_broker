@@ -101,7 +101,7 @@ module PactBroker
     def database
       @@database ||= begin
         require "db"
-        ::DB.connection_for_env env
+        ::DB.create_connection_for_test_database
       end
     end
 
