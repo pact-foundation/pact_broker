@@ -12,36 +12,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby_version: ["2.7"]
+        ruby_version: ["2.6", "2.7"]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby_version }}
       - run: "bundle install"
       - name: Tests
         run: "bundle exec rake ci"
-  postgres:
-    if: "!contains(github.event.head_commit.message, '[ci-skip]')"
-    runs-on: "ubuntu-latest"
-    strategy:
-      fail-fast: false
-      matrix:
-        ruby_version: ["2.6", "2.7"]
-    services:
-      postgres:
-        image: postgres
-        env:
-          POSTGRES_PASSWORD: postgres
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby_version }}
@@ -60,24 +41,25 @@ jobs:
       matrix:
         ruby_version: ["2.7"]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - run: script/test/run-rake-on-docker-compose-mysql.sh
   postgres-on-docker:
     if: "!contains(github.event.head_commit.message, '[ci-skip]')"
     runs-on: "ubuntu-latest"
-    continue-on-error: true # experimental
     strategy:
       fail-fast: false
       matrix:
-        ruby_version: ["2.7"]
+        postgres_docker_image_tag: ["14", "9.6"]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - run: script/test/run-rake-on-docker-compose-postgres.sh
+        env:
+          POSTGRES_DOCKER_IMAGE_TAG: ${{ matrix.postgres_docker_image_tag }}
   rubocop:
     if: "!contains(github.event.head_commit.message, '[ci-skip]')"
     runs-on: "ubuntu-latest"
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: "2.7"
@@ -87,7 +69,7 @@ jobs:
     if: "!contains(github.event.head_commit.message, '[ci-skip]')"
     runs-on: "ubuntu-latest"
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: "2.7"
@@ -100,7 +82,7 @@ jobs:
     if: "!contains(github.event.head_commit.message, '[ci-skip]')"
     runs-on: "ubuntu-latest"
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: "2.7"

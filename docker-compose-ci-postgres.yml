@@ -2,7 +2,7 @@ version: "3"
 
 services:
   postgres:
-    image: postgres:${POSTGRES_DOCKER_TAG:-latest}
+    image: postgres:${POSTGRES_DOCKER_IMAGE_TAG:-latest}
     logging:
         driver: none
     healthcheck:
