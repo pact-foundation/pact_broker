@@ -51,21 +51,6 @@ module DB
     connect(config)
   end
 
-  def self.connection_from_database_url_env_var
-    if ENV["PACT_BROKER_TEST_DATABASE_URL"] && ENV["PACT_BROKER_TEST_DATABASE_URL"] != ""
-      uri = URI(ENV["PACT_BROKER_TEST_DATABASE_URL"])
-      config = {
-        "adapter" => uri.scheme,
-        "user" => uri.user,
-        "password" => uri.password,
-        "host" => uri.host,
-        "database" => uri.path.sub(/^\//, ""),
-        "port" => uri.port&.to_i
-      }.compact
-      connect(config)
-    end
-  end
-
   def self.configuration_for_env env
     database_yml = PactBroker.project_root.join("config","database.yml")
     config = YAML.load(ERB.new(File.read(database_yml)).result)
@@ -92,7 +77,7 @@ module DB
     @test_database_configuration ||= begin
                                       if ENV["PACT_BROKER_TEST_DATABASE_URL"] && ENV["PACT_BROKER_TEST_DATABASE_URL"] != ""
                                         uri = URI(ENV["PACT_BROKER_TEST_DATABASE_URL"])
-                                        config = {
+                                        {
                                           "adapter" => uri.scheme,
                                           "user" => uri.user,
                                           "password" => uri.password,
