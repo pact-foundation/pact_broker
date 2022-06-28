@@ -3,6 +3,8 @@ version: "3"
 services:
   postgres:
     image: postgres:${POSTGRES_DOCKER_TAG:-latest}
+    logging:
+        driver: none
     healthcheck:
       test: psql postgres --command "select 1" -U postgres
     environment:
