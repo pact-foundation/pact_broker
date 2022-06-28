@@ -73,26 +73,36 @@ module DB
   end
 
   def self.sqlite?
-    !!(PACT_BROKER_DB.adapter_scheme.to_s =~ /sqlite/)
+    !!(test_database_configuration["adapter"] =~ /sqlite/)
   end
 
   def self.mysql?
-    !!(PACT_BROKER_DB.adapter_scheme.to_s =~ /mysql/)
+    !!(test_database_configuration["adapter"] =~ /mysql/)
   end
 
   def self.postgres?
-    !!(PACT_BROKER_DB.adapter_scheme.to_s =~ /postgres/)
+    !!(test_database_configuration["adapter"] =~ /postgres/)
   end
 
-  def self.create_connection_for_test_database
-    connection_from_database_url_env_var || connection_for_env(ENV.fetch("RACK_ENV"))
+  def self.connection_for_test_database
+    @connection_for_test_database ||= connect(test_database_configuration)
   end
 
-  PACT_BROKER_DB ||= create_connection_for_test_database
-
-  def self.health_check
-    PACT_BROKER_DB.synchronize do |c|
-      PACT_BROKER_DB.valid_connection? c
-    end
+  def self.test_database_configuration
+    @test_database_configuration ||= begin
+                                      if ENV["PACT_BROKER_TEST_DATABASE_URL"] && ENV["PACT_BROKER_TEST_DATABASE_URL"] != ""
+                                        uri = URI(ENV["PACT_BROKER_TEST_DATABASE_URL"])
+                                        config = {
+                                          "adapter" => uri.scheme,
+                                          "user" => uri.user,
+                                          "password" => uri.password,
+                                          "host" => uri.host,
+                                          "database" => uri.path.sub(/^\//, ""),
+                                          "port" => uri.port&.to_i
+                                        }.compact
+                                      else
+                                        configuration_for_env(ENV.fetch("RACK_ENV"))
+                                      end
+                                    end
   end
 end

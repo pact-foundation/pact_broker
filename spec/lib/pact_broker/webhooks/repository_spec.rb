@@ -1,4 +1,3 @@
-require "spec_helper"
 require "pact_broker/webhooks/repository"
 
 module PactBroker
@@ -26,8 +25,8 @@ module PactBroker
       let(:webhook_consumer) { Domain::WebhookPacticipant.new(name: consumer.name) }
       let(:webhook_provider) { Domain::WebhookPacticipant.new(name: provider.name) }
       let(:uuid) { "the-uuid" }
-      let(:created_webhook_record) { ::DB::PACT_BROKER_DB[:webhooks].order(:id).last }
-      let(:created_events) { ::DB::PACT_BROKER_DB[:webhook_events].where(webhook_id: created_webhook_record[:id]).order(:name).all }
+      let(:created_webhook_record) { PactBroker::Webhooks::Webhook.db[:webhooks].order(:id).last }
+      let(:created_events) { PactBroker::Webhooks::Webhook.db[:webhook_events].where(webhook_id: created_webhook_record[:id]).order(:name).all }
       let(:expected_webhook_record) do
         {
           uuid: "the-uuid",
@@ -79,7 +78,7 @@ module PactBroker
         subject { Repository.new.delete_by_uuid(uuid) }
 
         it "deletes the webhook" do
-          expect { subject }.to change { ::DB::PACT_BROKER_DB[:webhooks].where(uuid: uuid).count }.by(-1)
+          expect { subject }.to change { PactBroker::Webhooks::Webhook.db[:webhooks].where(uuid: uuid).count }.by(-1)
         end
       end
 

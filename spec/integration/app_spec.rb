@@ -17,7 +17,7 @@ module PactBroker
       PactBroker::App.new do | config |
         config.auto_migrate_db = false
         config.use_hal_browser = hal_browser_enabled
-        config.database_connection = ::DB::PACT_BROKER_DB
+        config.database_connection = ::DB.connection_for_test_database
         config.enable_diagnostic_endpoints = enable_diagnostic_endpoints
       end
     end

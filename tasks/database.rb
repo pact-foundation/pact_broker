@@ -4,6 +4,7 @@ require "pact_broker/db/version"
 require "pact_broker/db"
 require "sequel"
 require "yaml"
+require "db"
 require_relative "database/table_dependency_calculator"
 
 Sequel.extension :migration
@@ -100,8 +101,7 @@ module PactBroker
 
     def database
       @@database ||= begin
-        require "db"
-        ::DB.create_connection_for_test_database
+        ::DB.connection_for_test_database
       end
     end
 
@@ -128,11 +128,11 @@ module PactBroker
     end
 
     def psql?
-      adapter =~ /postgres/
+      ::DB.postgres?
     end
 
     def sqlite?
-      adapter == "sqlite"
+      ::DB.sqlite?
     end
 
     def migrations_dir
@@ -140,18 +140,11 @@ module PactBroker
     end
 
     def database_file_path
-      configuration_for_env(env)["database"]
+      ::DB.test_database_configuration["database"]
     end
 
     def adapter
-      configuration_for_env(env)["adapter"]
-    end
-
-    def configuration_for_env env
-      database_yml = PactBroker.project_root.join("config","database.yml")
-      config = YAML.load(ERB.new(File.read(database_yml)).result)
-      adapter = ENV.fetch("DATABASE_ADAPTER","default")
-      config.fetch(env)[adapter]
+      ::DB.test_database_configuration["adapter"]
     end
 
     def env
