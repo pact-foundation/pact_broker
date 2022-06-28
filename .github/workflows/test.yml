@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby_version: ["2.6", "2.7"]
+        ruby_version: ["2.7"]
     steps:
       - uses: actions/checkout@v3
       - uses: ruby/setup-ruby@v1
@@ -36,10 +36,6 @@ jobs:
   mysql:
     if: "!contains(github.event.head_commit.message, '[ci-skip]')"
     runs-on: "ubuntu-latest"
-    strategy:
-      fail-fast: false
-      matrix:
-        ruby_version: ["2.7"]
     steps:
       - uses: actions/checkout@v3
       - run: script/test/run-rake-on-docker-compose-mysql.sh
