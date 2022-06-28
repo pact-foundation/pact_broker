@@ -104,7 +104,7 @@ namespace :db do
       raise "Need to set INSTALL_PG=true" unless ENV["INSTALL_PG"] == "true"
       ENV["RACK_ENV"] = "test"
       ENV["DATABASE_ADAPTER"] = "docker_postgres"
-      require "support/test_database.rb"
+      load "#{__dir__}/../spec/support/test_database.rb"
       PactBroker::Database.wait_for_database
       PactBroker::Database.migrate
       load "tasks/database/annotate.rb"
