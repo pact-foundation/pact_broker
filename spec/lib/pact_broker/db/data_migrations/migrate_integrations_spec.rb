@@ -5,7 +5,7 @@ module PactBroker
     module DataMigrations
       describe MigrateIntegrations, migration: true do
         before do
-          PactBroker::Database.migrate
+          PactBroker::TestDatabase.migrate
           td.create_pact_with_hierarchy("Foo1", "1", "Bar1")
             .create_pact_with_hierarchy("Foo2", "1", "Bar2")
           PactBroker::Integrations::Integration.where(consumer_id: td.consumer.id, provider_id: td.provider.id).delete

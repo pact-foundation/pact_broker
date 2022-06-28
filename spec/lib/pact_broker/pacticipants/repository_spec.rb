@@ -134,7 +134,7 @@ module PactBroker
             end
           end
 
-          context "with case sensitivity turned off and multiple records found", skip: TestDB.mysql?  do
+          context "with case sensitivity turned off and multiple records found", skip: PactBroker::TestDatabase.mysql?  do
             # Can't be created in MySQL - duplicate record
             before do
               td.create_pacticipant("Foo-bar")

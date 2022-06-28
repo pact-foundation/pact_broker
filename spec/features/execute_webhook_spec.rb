@@ -66,13 +66,13 @@ describe "Execute a webhook" do
     end
 
     before do
-      PactBroker::Database.truncate
+      PactBroker::TestDatabase.truncate
       td.create_pact_with_hierarchy("Some Consumer", "1", "Some Provider")
         .create_webhook(method: "POST")
     end
 
     after do
-      PactBroker::Database.truncate
+      PactBroker::TestDatabase.truncate
     end
 
     subject { post(path) }

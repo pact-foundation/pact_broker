@@ -4,34 +4,34 @@ module PactBroker
   module Verifications
     describe Sequence do
       describe "#next_val", migration: true do
-        context "for proper databases with proper sequences", skip: !::TestDB.postgres? do
+        context "for proper databases with proper sequences", skip: !::PactBroker::TestDatabase.postgres? do
           it "increments the value each time" do
-            PactBroker::Database.migrate
+            PactBroker::TestDatabase.migrate
             expect(Sequence.next_val).to eq 200
             expect(Sequence.next_val).to eq 201
           end
 
           it "can rollback without duplicating a sequence number" do
-            PactBroker::Database.migrate
+            PactBroker::TestDatabase.migrate
             row = database.from(:verification_sequence_number).select(:value).limit(1).first
             expect(row[:value]).to eq 100
             Sequence.next_val
-            PactBroker::Database.migrate(20201006)
+            PactBroker::TestDatabase.migrate(20201006)
             row = database.from(:verification_sequence_number).select(:value).limit(1).first
             expect(row[:value]).to eq 301
           end
 
           it "can deal with there not being an existing value in the verification_sequence_number table" do
-            PactBroker::Database.migrate(20201006)
+            PactBroker::TestDatabase.migrate(20201006)
             database.from(:verification_sequence_number).delete
-            PactBroker::Database.migrate
+            PactBroker::TestDatabase.migrate
             expect(Sequence.next_val).to eq 1
           end
         end
 
-        context "for databases without sequences", skip: ::TestDB.postgres? do
+        context "for databases without sequences", skip: ::PactBroker::TestDatabase.postgres? do
           before do
-            PactBroker::Database.migrate
+            PactBroker::TestDatabase.migrate
           end
 
           context "when there is a row in the verification_sequence_number table" do

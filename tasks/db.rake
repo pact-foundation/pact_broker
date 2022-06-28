@@ -50,7 +50,7 @@ namespace :db do
   namespace :drop do
     desc 'Delete the dev/test database - uses RACK_ENV, defaulting to "development"'
     task :default => "db:env" do
-      PactBroker::Database.delete_database_file
+      PactBroker::TestDatabase.delete_database_file
     end
 
     task :postgres do
@@ -64,19 +64,19 @@ namespace :db do
 
   desc "Print current schema version"
   task :version => "db:env" do
-    puts "Schema Version: #{PactBroker::Database.version}"
+    puts "Schema Version: #{PactBroker::TestDatabase.version}"
   end
 
   desc "Migrate the Database"
   task :migrate, [:target] => "db:env" do |_t, args|
     target = args[:target] ? args[:target].to_i : nil
-    PactBroker::Database.migrate(target)
+    PactBroker::TestDatabase.migrate(target)
   end
 
   desc "Rollback database to specified version"
   task :rollback, [:target] => "db:env" do |_t, args|
     args.with_defaults(target: 0)
-    PactBroker::Database.migrate(args[:target].to_i)
+    PactBroker::TestDatabase.migrate(args[:target].to_i)
   end
 
   desc 'Prepare the test database for running specs - RACK_ENV will be hardcoded to "test"'
@@ -87,12 +87,12 @@ namespace :db do
 
   desc 'Delete the dev/test database - uses RACK_ENV, defaulting to "development"'
   task "delete" => "db:env" do
-    PactBroker::Database.delete_database_file
+    PactBroker::TestDatabase.delete_database_file
   end
 
   # Private: Ensure the dev/test database directory exists
   task "prepare_dir" => "db:env" do
-    PactBroker::Database.ensure_database_dir_exists
+    PactBroker::TestDatabase.ensure_database_dir_exists
   end
 
   desc "Annotate the Sequel domain classes with schema information.
@@ -105,8 +105,7 @@ namespace :db do
       ENV["RACK_ENV"] = "test"
       ENV["DATABASE_ADAPTER"] = "docker_postgres"
       load "#{__dir__}/../spec/support/test_database.rb"
-      PactBroker::Database.wait_for_database
-      PactBroker::Database.migrate
+      PactBroker::TestDatabase.migrate
       load "tasks/database/annotate.rb"
       require "pact_broker/db"
       PactBroker::Annotate.call
@@ -124,7 +123,7 @@ namespace :db do
   end
 
   # task :create => 'db:env' do
-  #   PactBroker::Database.create
+  #   PactBroker::TestDatabase.create
   # end
 
   # Private

@@ -1,6 +1,6 @@
 describe "creating triggered webhooks from webhook executions (migrate 36-41)", migration: true do
   before do
-    PactBroker::Database.migrate(36)
+    PactBroker::TestDatabase.migrate(36)
   end
 
   let(:before_now) { DateTime.new(2016, 1, 1) }
@@ -60,7 +60,7 @@ describe "creating triggered webhooks from webhook executions (migrate 36-41)", 
     })
   end
 
-  subject { PactBroker::Database.migrate(41) }
+  subject { PactBroker::TestDatabase.migrate(41) }
 
   context "when a pact_publication can be found" do
     before do
@@ -94,7 +94,7 @@ describe "creating triggered webhooks from webhook executions (migrate 36-41)", 
     context "migrating backwards" do
       it "deletes the triggered_webhooks again" do
         subject
-        PactBroker::Database.migrate(40)
+        PactBroker::TestDatabase.migrate(40)
         expect(database[:triggered_webhooks].count).to eq 0
       end
     end

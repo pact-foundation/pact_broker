@@ -6,11 +6,11 @@ module Rack
     describe DatabaseTransaction, no_db_clean: true do
 
       before do
-        ::PactBroker::Database.truncate
+        ::PactBroker::TestDatabase.truncate
       end
 
       after do
-        ::PactBroker::Database.truncate
+        ::PactBroker::TestDatabase.truncate
       end
 
       let(:headers) { {} }

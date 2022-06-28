@@ -1,6 +1,6 @@
 describe "using pact publications (migrate 31-32)", migration: true do
   before do
-    PactBroker::Database.migrate(33)
+    PactBroker::TestDatabase.migrate(33)
   end
 
   let(:now) { DateTime.new(2017, 1, 1) }
@@ -20,7 +20,7 @@ describe "using pact publications (migrate 31-32)", migration: true do
   let!(:pact_version_3_revision_1) { create(:pact_publications, {consumer_version_id: consumer_version_3[:id], provider_id: provider_2[:id], pact_version_id: pact_version_content_2[:id], created_at: now, revision_number: 1}) }
 
   subject do
-    PactBroker::Database.migrate(34)
+    PactBroker::TestDatabase.migrate(34)
     database.schema(:latest_pact_publication_revision_numbers, reload: true)
   end
 

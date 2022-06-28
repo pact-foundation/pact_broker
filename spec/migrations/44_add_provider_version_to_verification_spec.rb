@@ -1,6 +1,6 @@
 describe "add provider version relationship to verification (migrate 42-44)", migration: true do
   before do
-    PactBroker::Database.migrate(42)
+    PactBroker::TestDatabase.migrate(42)
   end
 
   let(:now) { DateTime.new(2018, 2, 2) }
@@ -28,7 +28,7 @@ describe "add provider version relationship to verification (migrate 42-44)", mi
     })
   end
 
-  subject { PactBroker::Database.migrate(46) }
+  subject { PactBroker::TestDatabase.migrate(46) }
 
   it "creates a version object" do
     expect { subject }.to change { database[:versions].count }.by(1)

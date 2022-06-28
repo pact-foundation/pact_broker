@@ -8,7 +8,7 @@ module PactBroker
 
         describe ".call" do
           before(:all) do
-            PactBroker::Database.migrate(20190509)
+            PactBroker::TestDatabase.migrate(20190509)
           end
 
           let(:now) { DateTime.new(2018, 2, 2) }

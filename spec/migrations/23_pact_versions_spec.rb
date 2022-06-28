@@ -2,7 +2,7 @@ require "pact_broker/webhooks/execution_configuration"
 
 describe "migrate to pact versions (migrate 22-31)", migration: true do
   before do
-    PactBroker::Database.migrate(22)
+    PactBroker::TestDatabase.migrate(22)
   end
 
   let(:now) { DateTime.new(2017, 1, 1) }
@@ -15,7 +15,7 @@ describe "migrate to pact versions (migrate 22-31)", migration: true do
   let!(:pact_1) { create(:pacts, {version_id: consumer_version_1[:id], provider_id: provider[:id], pact_version_content_sha: "1234", created_at: now, updated_at: pact_updated_at}) }
   let!(:pact_2) { create(:pacts, {version_id: consumer_version_2[:id], provider_id: provider[:id], pact_version_content_sha: "1234", created_at: now, updated_at: pact_updated_at}) }
 
-  subject { PactBroker::Database.migrate }
+  subject { PactBroker::TestDatabase.migrate }
 
   it "keeps the same number of pacts" do
     subject

@@ -6,7 +6,7 @@ module PactBroker
       describe MigrateWebhookHeaders, migration: true do
         describe ".call" do
           before do
-            PactBroker::Database.migrate(20190602)
+            PactBroker::TestDatabase.migrate(20190602)
             webhook_header_1
             webhook_header_2
             webhook_header_3

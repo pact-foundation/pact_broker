@@ -272,7 +272,7 @@ RSpec.describe "the lifecycle of a WIP pact" do
 
           # ANOTHER PROVIDER BUILD on a different new feature branch
           # fetch pacts to verify
-          sleep 1 if ::TestDB.mysql?
+          sleep 1 if ::PactBroker::TestDatabase.mysql?
           pacts_for_verification_response = get_pacts_for_verification(build_pacts_for_verification_request_body("feat-2", "master"))
           expect(wip_pacts_from(pacts_for_verification_response).size).to eq 1
         end
@@ -329,7 +329,7 @@ RSpec.describe "the lifecycle of a WIP pact" do
           pact_response = get_pact(pact_url)
           verification_results_url = verification_results_url_from(pact_response)
           publish_verification_results("1", "master", verification_results_url, true)
-          sleep 1 if ::TestDB.mysql?
+          sleep 1 if ::PactBroker::TestDatabase.mysql?
 
           # CONSUMER BUILD - feature branch
           publish_pact_with_feature_tag
@@ -368,7 +368,7 @@ RSpec.describe "the lifecycle of a WIP pact" do
           pact_response = get_pact(pact_url)
           verification_results_url = verification_results_url_from(pact_response)
           publish_verification_results("2", "feat-y", verification_results_url, true)
-          sleep 1 if ::TestDB.mysql? # time resolution is lower on MySQL, need to make sure the next pacts are created after the above provider version
+          sleep 1 if ::PactBroker::TestDatabase.mysql? # time resolution is lower on MySQL, need to make sure the next pacts are created after the above provider version
 
           # CONSUMER BUILD - feature branch again
           # republish same pact content with new version

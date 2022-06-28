@@ -11,6 +11,6 @@ module MigrationHelpers
   end
 
   def database
-    @database ||= PactBroker::Database.database
+    @database ||= PactBroker::TestDatabase.database
   end
 end

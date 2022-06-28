@@ -1,6 +1,6 @@
 describe "migrate to pact versions (migrate 22-24)", migration: true do
   before do
-    PactBroker::Database.migrate(22)
+    PactBroker::TestDatabase.migrate(22)
   end
 
   let(:now) { DateTime.new(2017, 1, 1) }
@@ -13,7 +13,7 @@ describe "migrate to pact versions (migrate 22-24)", migration: true do
 
   let!(:pact_version_content_orphan) { create(:pact_version_contents, {content: {some: "json"}.to_json, sha: "4567", created_at: now, updated_at: now}, :sha) }
 
-  subject { PactBroker::Database.migrate(34) }
+  subject { PactBroker::TestDatabase.migrate(34) }
 
   it "deletes orphan pact_versions" do
     subject

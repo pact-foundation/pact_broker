@@ -314,12 +314,12 @@ module PactBroker
       let(:response_body_json) { JSON.parse(subject.body) }
 
       before do
-        PactBroker::Database.truncate
+        PactBroker::TestDatabase.truncate
         allow_any_instance_of(PactBroker::Pacts::Repository).to receive(:create).and_raise("an error")
       end
 
       after do
-        PactBroker::Database.truncate
+        PactBroker::TestDatabase.truncate
       end
 
       subject { put path, pact_content, { "CONTENT_TYPE" => "application/json" }; last_response  }

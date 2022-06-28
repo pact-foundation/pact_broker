@@ -71,7 +71,7 @@ describe "Get provider pacts for verification" do
       subject { post(path, request_body.to_json, request_headers) }
 
       # The metadata is different when the database IDs are different
-      it "matches the expected body", skip: !TestDB.sqlite? do
+      it "matches the expected body", skip: !PactBroker::TestDatabase.sqlite? do
         Approvals.verify(fixture, :name => "get_provider_pacts_for_verification", format: :json)
       end
 

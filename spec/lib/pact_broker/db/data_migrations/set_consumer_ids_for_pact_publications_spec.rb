@@ -6,7 +6,7 @@ module PactBroker
       describe SetConsumerIdsForPactPublications, migration: true do
         describe ".call" do
           before do
-            PactBroker::Database.migrate(20180615)
+            PactBroker::TestDatabase.migrate(20180615)
           end
 
           let(:now) { DateTime.new(2018, 2, 2) }

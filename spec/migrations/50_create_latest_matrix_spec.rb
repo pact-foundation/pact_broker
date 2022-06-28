@@ -1,6 +1,6 @@
 describe "create latest matrix (latest pact revision/latest verification for provider version)", migration: true do
   before do
-    PactBroker::Database.migrate(20180129)
+    PactBroker::TestDatabase.migrate(20180129)
   end
 
   def shorten_row row

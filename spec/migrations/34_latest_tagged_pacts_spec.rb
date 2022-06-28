@@ -1,6 +1,6 @@
 describe "using pact publications (migrate 31-32)", migration: true do
   before do
-    PactBroker::Database.migrate(34)
+    PactBroker::TestDatabase.migrate(34)
   end
 
   let(:now) { DateTime.new(2017, 1, 1) }

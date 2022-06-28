@@ -2,7 +2,7 @@ describe "latest tagged matrix", migration: true do
   let(:td) { TestDataBuilder.new }
 
   before do
-    PactBroker::Database.migrate
+    PactBroker::TestDatabase.migrate
   end
 
   subject { database[:head_matrix].all }

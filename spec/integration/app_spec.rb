@@ -1,10 +1,10 @@
 require "pact_broker/app"
-require "support/test_db"
+require "support/test_database"
 
 module PactBroker
   describe App do
     before do
-      TestDataBuilder.new.create_pact_with_hierarchy("Some Consumer", "1.0", "Some Provider").and_return(:pact)
+      td.create_pact_with_hierarchy("Some Consumer", "1.0", "Some Provider").and_return(:pact)
     end
 
     let(:hal_browser_enabled) { true }
@@ -16,7 +16,7 @@ module PactBroker
       PactBroker::App.new do | config |
         config.auto_migrate_db = false
         config.use_hal_browser = hal_browser_enabled
-        config.database_connection = ::TestDB.connection_for_test_database
+        config.database_connection = ::PactBroker::TestDatabase.connection_for_test_database
         config.enable_diagnostic_endpoints = enable_diagnostic_endpoints
       end
     end

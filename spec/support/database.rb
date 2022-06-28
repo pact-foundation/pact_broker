@@ -1,11 +1,10 @@
-require "support/test_db"
 require "support/test_database"
 require "pact_broker/db"
-raise "Wrong environment!!! Don't run this script!! ENV['RACK_ENV'] is #{ENV['RACK_ENV']} and RACK_ENV is #{RACK_ENV}" if ENV["RACK_ENV"] != "test"
-PactBroker::DB.connection = PactBroker::Database.database = ::TestDB.connection_for_test_database
+
+PactBroker::DB.connection = PactBroker::TestDatabase.database = ::PactBroker::TestDatabase.connection_for_test_database
 
 if !PactBroker::DB.is_current?(PactBroker::DB.connection)
-  PactBroker::Database.migrate
+  PactBroker::TestDatabase.migrate
 end
 
 require "pact_broker/pacts/pact_publication"

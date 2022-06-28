@@ -1,6 +1,6 @@
 describe "creating triggered webhooks from webhook executions (migrate 36-41)", migration: true do
   before do
-    PactBroker::Database.migrate(41)
+    PactBroker::TestDatabase.migrate(41)
   end
 
   let(:before_now) { DateTime.new(2016, 1, 1) }
@@ -86,7 +86,7 @@ describe "creating triggered webhooks from webhook executions (migrate 36-41)", 
     })
   end
 
-  subject { PactBroker::Database.migrate(42) }
+  subject { PactBroker::TestDatabase.migrate(42) }
 
   it "deletes the orphan triggered webhooks" do
     expect { subject }.to change { database[:triggered_webhooks].count }.by(-1)

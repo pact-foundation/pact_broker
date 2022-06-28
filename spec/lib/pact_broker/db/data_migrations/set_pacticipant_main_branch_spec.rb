@@ -6,7 +6,7 @@ module PactBroker
       describe SetPacticipantMainBranch, data_migration: true  do
         describe ".call" do
           before(:all) do
-            PactBroker::Database.migrate(20210529)
+            PactBroker::TestDatabase.migrate(20210529)
           end
 
           let(:now) { DateTime.new(2018, 2, 2) }
