@@ -27,7 +27,6 @@ describe "Publishing a pact" do
   end
 
   context "when a pact for this consumer version does exist" do
-
     before do
       td.create_pact_with_hierarchy("A Consumer", "1.2.3", "A Provider").and_return(:pact)
       allow(PactBroker.configuration).to receive(:allow_dangerous_contract_modification).and_return(allow_dangerous_contract_modification)
@@ -56,7 +55,14 @@ describe "Publishing a pact" do
 
       its(:status) { is_expected.to eq 409 }
       its(:body) { is_expected.to include "Cannot change the content of the pact for A Consumer version 1.2.3" }
+
+      context "with an empty body" do
+        let(:pact_content) { "" }
+
+        its(:status) { is_expected.to eq 400 }
+      end
     end
+
   end
 
   context "when the pacticipant names in the path do not match those in the pact" do
