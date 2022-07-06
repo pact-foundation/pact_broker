@@ -8,7 +8,6 @@ module PactBroker
 
         property :number
         if PactBroker.feature_enabled?(:branches)
-          property :branch
           property :build_url
         end
 

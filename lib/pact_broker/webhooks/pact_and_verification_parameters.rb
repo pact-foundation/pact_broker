@@ -173,7 +173,7 @@ module PactBroker
         if webhook_context.key?(:provider_version_branch)
           webhook_context[:provider_version_branch] || ""
         else
-          verification&.provider_version&.branch || ""
+          verification&.provider_version&.branch_names&.last || ""
         end
       end
 

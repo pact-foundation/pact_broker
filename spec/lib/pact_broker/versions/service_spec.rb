@@ -25,7 +25,7 @@ module PactBroker
 
             it "does not set the branch" do
               subject
-              expect(td.find_version(pacticipant_name, version_number).branch).to be_nil
+              expect(td.find_version(pacticipant_name, version_number).branch_names).to be_empty
             end
           end
 
@@ -51,7 +51,7 @@ module PactBroker
 
             it "does not set the branch" do
               subject
-              expect(td.find_version(pacticipant_name, version_number).branch).to be_nil
+              expect(td.find_version(pacticipant_name, version_number).branch_names).to be_empty
             end
           end
 
@@ -71,7 +71,7 @@ module PactBroker
 
             it "does not set the branch" do
               subject
-              expect(td.find_version(pacticipant_name, version_number).branch).to be_nil
+              expect(td.find_version(pacticipant_name, version_number).branch_names).to be_empty
             end
           end
 

@@ -286,6 +286,7 @@ module PactBroker
               "githubVerificationStatus" => "${pactbroker.githubVerificationStatus}",
               "providerVersionNumber" => "${pactbroker.providerVersionNumber}",
               "providerVersionTags" => "${pactbroker.providerVersionTags}",
+              "providerVersionBranch" => "${pactbroker.providerVersionBranch}",
               "canIMerge" => "${pactbroker.providerMainBranchGithubVerificationStatus}"
             }
           }

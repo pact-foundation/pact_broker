@@ -330,6 +330,14 @@ module PactBroker
       def tag_names
         tags.collect(&:name)
       end
+
+      def branch
+        raise NotImplementedError
+      end
+
+      def branch= branch
+        raise NotImplementedError
+      end
     end
   end
 end
