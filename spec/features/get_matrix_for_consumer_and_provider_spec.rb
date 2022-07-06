@@ -19,4 +19,10 @@ describe "Get matrix for consumer and provider" do
     expect(last_response_body[:matrix][0][:pact]).to be_instance_of(Hash)
     expect(last_response_body[:matrix][0][:verificationResult]).to be_instance_of(Hash)
   end
+
+  context "with invalid options" do
+    subject { get(path, { limit: 0 }) }
+
+    its(:status) { is_expected.to eq 400 }
+  end
 end

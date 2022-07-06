@@ -23,6 +23,16 @@ module PactBroker
           consumer && provider
         end
 
+        def malformed_request?
+          error_messages = matrix_service.validate_options(options)
+          if error_messages.any?
+            set_json_validation_error_messages error_messages
+            true
+          else
+            false
+          end
+        end
+
         def to_json
           decorator_class(:matrix_decorator).new(results).to_json(decorator_options)
         end

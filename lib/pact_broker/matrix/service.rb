@@ -73,6 +73,17 @@ module PactBroker
           end
         end
 
+        if selectors.size == 0
+          error_messages << "Please provide 1 or more version selectors."
+        end
+
+        error_messages + validate_options(options)
+      end
+      # rubocop: enable Metrics/CyclomaticComplexity, Metrics/MethodLength
+
+      def validate_options(options = {})
+        error_messages = []
+
         options.fetch(:ignore_selectors, []).each do | s |
           if s[:pacticipant_name].nil?
             error_messages << "Please specify the pacticipant name to ignore"
@@ -81,10 +92,6 @@ module PactBroker
               error_messages << "A version number and latest flag cannot both be specified for #{s[:pacticipant_name]} to ignore"
             end
           end
-        end
-
-        if selectors.size == 0
-          error_messages << "Please provide 1 or more version selectors."
         end
 
         destination_identifiers = [options[:tag], options[:environment_name], options[:main_branch]&.to_s].compact
@@ -107,7 +114,6 @@ module PactBroker
 
         error_messages
       end
-      # rubocop: enable Metrics/CyclomaticComplexity, Metrics/MethodLength
     end
   end
 end
