@@ -52,7 +52,7 @@ module PactBroker
         end
       end
 
-      # rubocop: disable Metrics/CyclomaticComplexity, Metrics/MethodLength
+      # rubocop: disable Metrics/CyclomaticComplexity
       def validate_selectors selectors, options = {}
         error_messages = []
 
@@ -79,8 +79,9 @@ module PactBroker
 
         error_messages + validate_options(options)
       end
-      # rubocop: enable Metrics/CyclomaticComplexity, Metrics/MethodLength
+      # rubocop: enable Metrics/CyclomaticComplexity
 
+      # rubocop: disable Metrics/CyclomaticComplexity
       def validate_options(options = {})
         error_messages = []
 
@@ -114,6 +115,7 @@ module PactBroker
 
         error_messages
       end
+      # rubocop: enable Metrics/CyclomaticComplexity
     end
   end
 end
