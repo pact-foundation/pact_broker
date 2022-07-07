@@ -1,3 +1,17 @@
+<a name="v2.102.0"></a>
+### v2.102.0 (2022-07-07)
+
+#### Features
+
+* default allow_dangerous_contract_modification to false for new installations	 ([85a89951](/../../commit/85a89951))
+
+#### Bug Fixes
+
+* add missing provider version branch parameter to webhook requests	 ([262dae44](/../../commit/262dae44))
+* clean up pacticipants with no names	 ([0aff250d](/../../commit/0aff250d))
+* update string refinements with blank? and present?	 ([8373f88f](/../../commit/8373f88f))
+* update validation for creating pacticipants to return a 400 when name is missing	 ([fcb02aa6](/../../commit/fcb02aa6))
+
 <a name="v2.101.0"></a>
 ### v2.101.0 (2022-06-07)
 
