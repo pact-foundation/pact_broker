@@ -4,6 +4,7 @@ require "pact_broker/domain/index_item"
 require "pact_broker/repositories/helpers"
 require "pact_broker/index/page"
 require "pact_broker/verifications/latest_verification_for_consumer_version_tag"
+require "pact_broker/string_refinements"
 
 module PactBroker
   module Index
@@ -11,6 +12,7 @@ module PactBroker
       extend PactBroker::Repositories
       extend PactBroker::Services
       extend PactBroker::Logging
+      using PactBroker::StringRefinements
 
       DEFAULT_PAGE_SIZE = 30
       DEFAULT_PAGE_NUMBER = 1

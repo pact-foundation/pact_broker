@@ -23,10 +23,9 @@
                 = provider_name
 
 
-    - unless errors.blank?
-      - errors.each do | error |
-        %div.alert.alert-danger
-          = error
+    - errors.each do | error |
+      %div.alert.alert-danger
+        = error
 
     - if consumer && provider
       %form

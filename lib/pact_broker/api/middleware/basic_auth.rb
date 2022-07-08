@@ -1,11 +1,13 @@
 require "rack"
 require "pact_broker/hash_refinements"
+require "pact_broker/string_refinements"
 
 module PactBroker
   module Api
     module Middleware
       class BasicAuth
         using PactBroker::HashRefinements
+        using PactBroker::StringRefinements
 
         def initialize(app, write_credentials, read_credentials, policy)
           @app = app

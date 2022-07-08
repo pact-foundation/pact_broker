@@ -2,15 +2,14 @@
   != render :haml, :'index/_css_and_js', :layout => false
   .container
     != render :haml, :'index/_navbar', :layout => false, locals: {tag_toggle: false, base_url: base_url}
-    - if index_items.empty? && search.blank?
+    - if index_items.empty? && blank?(search)
       != render :haml, :'index/_getting-started', :layout => false
     %h1.page-header
       Pacts
 
-    - unless errors.blank?
-      - errors.each do | error |
-        %div.alert.alert-danger
-          = error
+    - errors.each do | error |
+      %div.alert.alert-danger
+        = error
 
     %form{action: "#{base_url}"}
       .field

@@ -5,6 +5,7 @@ require "pact_broker/ui/controllers/matrix"
 require "pact_broker/ui/controllers/can_i_deploy"
 require "pact_broker/ui/controllers/error_test"
 require "pact_broker/ui/controllers/dashboard"
+require "pact_broker/ui/helpers/haml_helpers"
 require "pact_broker/doc/controllers/app"
 
 module PactBroker
