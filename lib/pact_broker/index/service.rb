@@ -184,7 +184,7 @@ module PactBroker
           ))
 
           # Return early if there is no pacticipant matches the input name
-          return base.paginate(options[:page_number] || DEFAULT_PAGE_NUMBER, options[:page_size] || DEFAULT_PAGE_SIZE) if pacticipant_ids.blank?
+          return base.paginate(options[:page_number] || DEFAULT_PAGE_NUMBER, options[:page_size] || DEFAULT_PAGE_SIZE) if pacticipant_ids.empty?
         end
 
         ids_query = if options[:view]
