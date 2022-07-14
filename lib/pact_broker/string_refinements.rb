@@ -1,5 +1,25 @@
 module PactBroker
   module StringRefinements
+    refine TrueClass do
+      def blank?
+        false
+      end
+
+      def present?
+        true
+      end
+    end
+
+    refine FalseClass do
+      def blank?
+        false
+      end
+
+      def present?
+        true
+      end
+    end
+
     refine NilClass do
       def blank?
         true
