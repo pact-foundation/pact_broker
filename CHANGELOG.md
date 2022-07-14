@@ -1,3 +1,10 @@
+<a name="v2.102.2"></a>
+### v2.102.2 (2022-07-14)
+
+#### Bug Fixes
+
+* add blank? refinement for TrueClass and FalseClass	 ([05bb3bed](/../../commit/05bb3bed))
+
 <a name="v2.102.1"></a>
 ### v2.102.1 (2022-07-08)
 
