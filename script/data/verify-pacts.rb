@@ -14,7 +14,7 @@ begin
     .publish_pact(consumer: "some-consumer", consumer_version: "2", provider: "some-provider", content_id: "111", branch: "feat/x")
     .get_pacts_for_verification(
       provider_version_branch: "feat/x",
-      consumer_version_selectors: [{ matchingBranch: true }]
+      consumer_version_selectors: [{ mainBranch: true }]
     )
     .verify_pact(
       index: 0,
