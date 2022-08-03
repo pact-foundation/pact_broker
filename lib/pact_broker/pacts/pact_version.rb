@@ -29,7 +29,8 @@ module PactBroker
         dataset: LATEST_MAIN_BRANCH_VERIFICATION,
         key: :pact_version_id,
         primary_key: :id,
-        eager_block: lambda { | ds | ds.from_provider_main_branch.latest_by_pact_version }
+        eager_block: lambda { | ds | ds.from_provider_main_branch.latest_by_pact_version },
+        allow_eager: true
       )
 
       one_to_one(:latest_verification,
@@ -37,7 +38,8 @@ module PactBroker
         read_only: true,
         dataset: LATEST_VERIFICATION_DATASET,
         key: :pact_version_id, primary_key: :id,
-        eager_block: lambda { | ds | ds.latest_by_pact_version }
+        eager_block: lambda { | ds | ds.latest_by_pact_version },
+        allow_eager: true
       )
 
       # do not eager load this - it won't work because of the limit(1)
