@@ -1,5 +1,4 @@
 require "faraday"
-require "faraday_middleware"
 require "logger"
 require "erb"
 require "yaml"

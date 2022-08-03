@@ -4,7 +4,6 @@ require "bundler/inline"
 gemfile do
   source "https://rubygems.org"
   gem "faraday"
-  gem "faraday_middleware"
 end
 
 begin
