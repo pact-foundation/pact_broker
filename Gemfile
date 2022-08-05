@@ -30,6 +30,7 @@ group :test do
   gem "docker-api", "~>1.34"
   gem "approvals", ">=0.0.24", "<1.0.0"
   gem "tzinfo", "~>2.0"
+  gem "faraday-retry", "~>2.0"
 end
 
 if ENV["INSTALL_MYSQL"] == "true"
