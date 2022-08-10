@@ -141,7 +141,7 @@ module PactBroker
         self
       end
 
-      def publish_pact(consumer: last_consumer_name, consumer_version:, provider: last_provider_name, content_id:, tag: nil, branch: nil)
+      def publish_pact_the_old_way(consumer: last_consumer_name, consumer_version:, provider: last_provider_name, content_id:, tag: nil, branch: nil)
         @last_consumer_name = consumer
         @last_provider_name = provider
         @last_consumer_version_number = consumer_version
@@ -160,6 +160,8 @@ module PactBroker
         separate
         self
       end
+
+      alias_method :publish_pact, :publish_pact_the_old_way
 
       def get_pacts_for_verification(provider: last_provider_name, provider_version_tag: nil, provider_version_branch: nil, consumer_version_selectors: nil, enable_pending: nil, include_wip_pacts_since: nil)
         @last_provider_name = provider
@@ -261,6 +263,10 @@ module PactBroker
 
       def create_global_webhook_for_contract_changed(uuid: nil, url: "https://postman-echo.com/post", body: nil)
         create_global_webhook_for_event(uuid: uuid, url: url, body: body, event_name: "contract_content_changed")
+      end
+
+      def create_global_webhook_for_contract_requiring_verification_published(uuid: nil, url: "https://postman-echo.com/post", body: nil)
+        create_global_webhook_for_event(uuid: uuid, url: url, body: body, event_name: "contract_requiring_verification_published")
       end
 
       def create_global_webhook_for_anything_published(uuid: nil, url: "https://postman-echo.com/post")

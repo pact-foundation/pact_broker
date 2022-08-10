@@ -10,7 +10,7 @@ begin
     .delete_integration(consumer: "foo-consumer", provider: "bar-provider")
     .create_environment(name: "test")
     .create_environment(name: "prod", production: true)
-    .publish_pact(consumer: "foo-consumer", consumer_version: "1", provider: "bar-provider", content_id: "111", tag: "main")
+    .publish_pact_the_old_way(consumer: "foo-consumer", consumer_version: "1", provider: "bar-provider", content_id: "111", tag: "main")
     .get_pacts_for_verification(
       enable_pending: true,
       provider_version_tag: "main",

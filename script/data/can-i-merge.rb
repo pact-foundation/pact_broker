@@ -1,4 +1,10 @@
-#!/usr/bin/env ruby
+require "bundler/inline"
+
+gemfile do
+  source "https://rubygems.org"
+  gem "faraday"
+end
+
 begin
 
   $LOAD_PATH << "#{Dir.pwd}/lib"
@@ -10,7 +16,7 @@ begin
     .delete_pacticipant("Bar")
     .create_pacticipant("Foo", main_branch: "main")
     .create_pacticipant("Bar", main_branch: "main")
-    .publish_pact(consumer: "Foo", consumer_version: "1", provider: "Bar", content_id: "111", branch: "feat/x")
+    .publish_pact_the_old_way(consumer: "Foo", consumer_version: "1", provider: "Bar", content_id: "111", branch: "feat/x")
     .get_pacts_for_verification(provider_version_branch: "main")
     .verify_pact(provider_version_branch: "main", provider_version: "1", success: false)
     .verify_pact(provider_version_branch: "main", provider_version: "2", success: false)

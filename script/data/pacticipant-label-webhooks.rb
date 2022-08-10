@@ -18,8 +18,8 @@ begin
       event_name: ["contract_published", "provider_verification_published"],
       consumer: {label: "the_label"}
     )
-    .publish_pact(consumer: "Foo", consumer_version: "1", provider: "Bar", content_id: "111", tag: "main")
-    .publish_pact(consumer: "Baz", consumer_version: "1", provider: "Bar", content_id: "122", tag: "main")
+    .publish_pact_the_old_way(consumer: "Foo", consumer_version: "1", provider: "Bar", content_id: "111", tag: "main")
+    .publish_pact_the_old_way(consumer: "Baz", consumer_version: "1", provider: "Bar", content_id: "122", tag: "main")
     .get_pacts_for_verification(
       enable_pending: true,
       provider_version_tag: "main",

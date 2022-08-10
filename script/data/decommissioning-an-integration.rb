@@ -18,7 +18,7 @@ begin
     .delete_pacticipant("some-provider")
     .create_pacticipant("some-consumer")
     .create_pacticipant("some-provider")
-    .publish_pact(consumer: "some-consumer", consumer_version: "1", provider: "some-provider", content_id: "111", branch: "main")
+    .publish_pact_the_old_way(consumer: "some-consumer", consumer_version: "1", provider: "some-provider", content_id: "111", branch: "main")
     .get_pacts_for_verification(
       provider_version_branch: "main",
       consumer_version_selectors: [{ branch: "main" }]

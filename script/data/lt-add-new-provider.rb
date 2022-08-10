@@ -12,7 +12,7 @@ begin
   td = PactBroker::Test::HttpTestDataBuilder.new(base_url)
   td.delete_pacticipant(CONSUMER_NAME)
     .delete_pacticipant(PROVIDER_NAME)
-    .publish_pact(consumer: CONSUMER_NAME, consumer_version: "1", provider: PROVIDER_NAME, content_id: "111", tag: "c1-p1-pact")
+    .publish_pact_the_old_way(consumer: CONSUMER_NAME, consumer_version: "1", provider: PROVIDER_NAME, content_id: "111", tag: "c1-p1-pact")
     .get_pacts_for_verification(
       provider: PROVIDER_NAME,
       consumer_version_selectors: [{ tag: "c1-p1-pact", latest: true }]
@@ -27,7 +27,7 @@ begin
     .create_tag(pacticipant: PROVIDER_NAME, version: "1", tag: "env:test") # deploy p1
     .can_i_deploy(pacticipant: CONSUMER_NAME, version: "1", to: "env:test")
     .create_tag(pacticipant: CONSUMER_NAME, version: "1", tag: "env:test") # deploy c1
-    .publish_pact(consumer: CONSUMER_NAME, consumer_version: "2", provider: PROVIDER_2_NAME, content_id: "222", tag: "c1-p2-pact")
+    .publish_pact_the_old_way(consumer: CONSUMER_NAME, consumer_version: "2", provider: PROVIDER_2_NAME, content_id: "222", tag: "c1-p2-pact")
     .get_pacts_for_verification(
       provider: PROVIDER_2_NAME,
       consumer_version_selectors: [{ tag: "c1-p2-pact", latest: true }]

@@ -17,7 +17,7 @@ begin
     .record_deployment(pacticipant: "NewWebhookTestProvider", version: "1", environment_name: "test")
     .record_deployment(pacticipant: "NewWebhookTestProvider", version: "1", environment_name: "prod")
     .create_version(pacticipant: "NewWebhookTestProvider", version: "2", branch: "main")
-    .publish_pact(consumer: "NewWebhookTestConsumer", consumer_version: "1", provider: "NewWebhookTestProvider", content_id: "111")
+    .publish_pact_the_old_way(consumer: "NewWebhookTestConsumer", consumer_version: "1", provider: "NewWebhookTestProvider", content_id: "111")
 
 rescue StandardError => e
   puts "#{e.class} #{e.message}"

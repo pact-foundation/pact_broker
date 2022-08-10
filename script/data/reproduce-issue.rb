@@ -28,7 +28,7 @@ begin
     .delete_pacticipant("foo-consumer-2")
     .delete_pacticipant("bar-provider-1")
     .delete_pacticipant("bar-provider-2")
-    .publish_pact(consumer: "foo-consumer-1", consumer_version: "1", provider: "bar-provider-1", content_id: "111", branch: "feat/x")
+    .publish_pact_the_old_way(consumer: "foo-consumer-1", consumer_version: "1", provider: "bar-provider-1", content_id: "111", branch: "feat/x")
     .get_pacts_for_verification(
       enable_pending: true,
       provider_version_branch: "main",
@@ -41,7 +41,7 @@ begin
       provider_version: "1",
       success: true
     )
-    .publish_pact(consumer: "foo-consumer-2", consumer_version: "1", provider: "bar-provider-1", content_id: "112", branch: "feat/y")
+    .publish_pact_the_old_way(consumer: "foo-consumer-2", consumer_version: "1", provider: "bar-provider-1", content_id: "112", branch: "feat/y")
     .get_pacts_for_verification(
       enable_pending: true,
       provider_version_branch: "main",
@@ -54,7 +54,7 @@ begin
       provider_version: "1",
       success: true
     )
-    .publish_pact(consumer: "foo-consumer-2", consumer_version: "2", provider: "bar-provider-2", content_id: "113", branch: "feat/z")
+    .publish_pact_the_old_way(consumer: "foo-consumer-2", consumer_version: "2", provider: "bar-provider-2", content_id: "113", branch: "feat/z")
     .get_pacts_for_verification(
       enable_pending: true,
       provider_version_branch: "main",
