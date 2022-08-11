@@ -238,11 +238,12 @@ module PactBroker
           "eventName" => "${pactbroker.eventName}",
           "consumerName" => "${pactbroker.consumerName}",
           "consumerVersionNumber" => "${pactbroker.consumerVersionNumber}",
-          "providerVersionBranch" => "${pactbroker.providerVersionBranch}",
+          "consumerVersionTags" => "${pactbroker.consumerVersionTags}",
+          "consumerVersionBranch" => "${pactbroker.consumerVersionBranch}",
           "providerName" => "${pactbroker.providerName}",
           "providerVersionNumber" => "${pactbroker.providerVersionNumber}",
+          "providerVersionBranch" => "${pactbroker.providerVersionBranch}",
           "providerVersionDescriptions" => "${pactbroker.providerVersionDescriptions}",
-          "consumerVersionBranch" => "${pactbroker.consumerVersionBranch}",
         }
         request_body = {
           "consumer" => consumer,

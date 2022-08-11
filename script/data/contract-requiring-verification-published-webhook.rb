@@ -15,7 +15,7 @@ begin
     .create_pacticipant(CONSUMER_NAME)
     .create_pacticipant(PROVIDER_NAME)
     .create_global_webhook_for_contract_requiring_verification_published(uuid: "7a5da39c-8e50-4cc9-ae16-dfa5be043e8c")
-    .publish_contract(consumer: CONSUMER_NAME, consumer_version: "1", provider: PROVIDER_NAME, content_id: "111", branch: "main")
+    .publish_contract(consumer: CONSUMER_NAME, consumer_version: "1", provider: PROVIDER_NAME, content_id: "111", tag: "main")
     .get_pacts_for_verification(
       provider: PROVIDER_NAME,
       provider_version_branch: "main",
@@ -27,7 +27,7 @@ begin
       provider_version: "1",
       success: true
     )
-    .publish_contract(consumer: CONSUMER_NAME, consumer_version: "2", provider: PROVIDER_NAME, content_id: "222", branch: "main")
+    .publish_contract(consumer: CONSUMER_NAME, consumer_version: "2", provider: PROVIDER_NAME, content_id: "222", tag: "main")
 
 
 rescue StandardError => e
