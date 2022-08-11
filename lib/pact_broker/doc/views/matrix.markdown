@@ -6,7 +6,6 @@ This resource returns the "cartesian join" of every pact publication and every v
 
 If you need to use this API, consider calling the `/can-i-deploy` resource instead, as it provides an interface that is easier to understand.
 
-
 ## Matrix selectors and options
 
 Selectors are the way we specify which pacticipants and versions we want to view the matrix for. The best way to understand them is to imagine that we start with a Matrix table that contains the pacts/verification results for every consumer and provider in the Pact Broker.
