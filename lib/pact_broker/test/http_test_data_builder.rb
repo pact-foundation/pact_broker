@@ -228,6 +228,7 @@ module PactBroker
         create_webhook_for_event(**kwargs)
       end
 
+      # rubocop: disable Metrics/MethodLength
       def create_webhook_for_event(uuid: nil, url: "https://postman-echo.com/post", body: nil, provider: nil, consumer: nil, event_name:)
         require "securerandom"
         webhook_prefix = "global " if provider.nil? && consumer.nil?
@@ -261,6 +262,7 @@ module PactBroker
         separate
         self
       end
+      # rubocop: enable Metrics/MethodLength
 
       def create_global_webhook_for_contract_changed(uuid: nil, url: "https://postman-echo.com/post", body: nil)
         create_global_webhook_for_event(uuid: uuid, url: url, body: body, event_name: "contract_content_changed")
