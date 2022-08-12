@@ -19,7 +19,7 @@ Gem::Specification.new do |gem|
   gem.files         = begin
                         if Dir.exist?(".git")
                           Dir.chdir(File.expand_path(__dir__)) do
-                            include_patterns = %w[lib/**/* db/**/* docs/**/*.md public/**/* vendor/**/* README.md CHANGELOG.md Gemfile pact_broker.gemspec]
+                            include_patterns = %w[lib/**/* db/**/* docs/**/*.md public/**/* vendor/**/* LICENSE.txt README.md CHANGELOG.md Gemfile pact_broker.gemspec]
                             exclude_patterns = %w[db/test/**/*]
                             include_list = include_patterns.flat_map{ | pattern | Dir.glob(pattern) } - exclude_patterns.flat_map{ | pattern | Dir.glob(pattern) }
 
