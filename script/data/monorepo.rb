@@ -11,8 +11,8 @@ begin
   base_url = ENV["PACT_BROKER_BASE_URL"] || "http://localhost:9292"
 
 
-  consumer_1 = "monorepo-consumer-1"
-  consumer_2 = "monorepo-consumer-2"
+  consumer_1 = "monorepo-app-1"
+  consumer_2 = "monorepo-app-2"
   provider_1 = "provider-1"
   provider_2 = "provider-2"
 
@@ -45,17 +45,17 @@ rescue StandardError => e
   exit 1
 end
 
-# pact-broker can-i-deploy --pacticipant monorepo-consumer-1 --version 1 --pacticipant monorepo-consumer-2 --version 1 --to-environment production
+# pact-broker can-i-deploy --pacticipant monorepo-app-1 --version 1 --pacticipant monorepo-app-2 --version 1 --to-environment production
 # Computer says no ¯_(ツ)_/¯
 #
 # CONSUMER            | C.VERSION | PROVIDER   | P.VERSION | SUCCESS? | RESULT#
 # --------------------|-----------|------------|-----------|----------|--------
-# monorepo-consumer-1 | 1         | provider-1 | 1         | false    | 1
-# monorepo-consumer-2 | 1         | provider-2 | 1         | true     | 2
+# monorepo-app-1 | 1         | provider-1 | 1         | false    | 1
+# monorepo-app-2 | 1         | provider-2 | 1         | true     | 2
 #
 # VERIFICATION RESULTS
 # --------------------
-# 1. http://localhost:9292/pacts/provider/provider-1/consumer/monorepo-consumer-1/pact-version/6e0b1c114e7b8a4775ff584af54bac734408e31a/metadata/Y3ZuPTE/verification-results/109 (failure)
-# 2. http://localhost:9292/pacts/provider/provider-2/consumer/monorepo-consumer-2/pact-version/dd1edab05d6a9f4ff7dc4f17dbf3ea585c8220cb/metadata/Y3ZuPTE/verification-results/110 (success)
+# 1. http://localhost:9292/pacts/provider/provider-1/consumer/monorepo-app-1/pact-version/6e0b1c114e7b8a4775ff584af54bac734408e31a/metadata/Y3ZuPTE/verification-results/109 (failure)
+# 2. http://localhost:9292/pacts/provider/provider-2/consumer/monorepo-app-2/pact-version/dd1edab05d6a9f4ff7dc4f17dbf3ea585c8220cb/metadata/Y3ZuPTE/verification-results/110 (success)
 #
-# The verification for the pact between version 1 of monorepo-consumer-1 and the version of provider-1 currently deployed or released to production (1) failed
+# The verification for the pact between version 1 of monorepo-app-1 and the version of provider-1 currently deployed or released to production (1) failed
