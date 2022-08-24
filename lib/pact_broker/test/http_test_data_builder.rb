@@ -161,6 +161,17 @@ module PactBroker
         self
       end
 
+      def publish_contract_and_verify(consumer:, provider:, consumer_version:, content_id: nil, consumer_branch: "main", provider_version:, provider_branch: "main", success: true)
+        publish_contract(consumer: consumer, provider: provider, consumer_version: consumer_version, content_id: content_id || SecureRandom.rand.to_s, branch: consumer_branch)
+          .get_pacts_for_verification(provider: provider, consumer_version_selectors: [ { branch: consumer_branch }])
+          .verify_pact(
+            provider: provider,
+            provider_version_branch: provider_branch,
+            provider_version: provider_version,
+            success: success
+          )
+      end
+
       alias_method :publish_pact, :publish_pact_the_old_way
 
       def get_pacts_for_verification(provider: last_provider_name, provider_version_tag: nil, provider_version_branch: nil, consumer_version_selectors: nil, enable_pending: nil, include_wip_pacts_since: nil)
