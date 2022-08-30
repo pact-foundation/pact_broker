@@ -1,96 +1,96 @@
 module PactBroker
   module Services
 
-    FACTORIES = {}
+    SERVICE_FACTORIES = {}
 
     extend self
 
     def register_service(name, &block)
-      FACTORIES[name] = block
+      SERVICE_FACTORIES[name] = block
     end
 
-    def get(name)
-      FACTORIES[name].call
+    def get_service(name)
+      SERVICE_FACTORIES[name].call
     end
 
     def index_service
-      get(:index_service)
+      get_service(:index_service)
     end
 
     def pact_service
-      get(:pact_service)
+      get_service(:pact_service)
     end
 
     def pacticipant_service
-      get(:pacticipant_service)
+      get_service(:pacticipant_service)
     end
 
     def tag_service
-      get(:tag_service)
+      get_service(:tag_service)
     end
 
     def label_service
-      get(:label_service)
+      get_service(:label_service)
     end
 
     def group_service
-      get(:group_service)
+      get_service(:group_service)
     end
 
     def webhook_service
-      get(:webhook_service)
+      get_service(:webhook_service)
     end
 
     def version_service
-      get(:version_service)
+      get_service(:version_service)
     end
 
     def verification_service
-      get(:verification_service)
+      get_service(:verification_service)
     end
 
     def badge_service
-      get(:badge_service)
+      get_service(:badge_service)
     end
 
     def matrix_service
-      get(:matrix_service)
+      get_service(:matrix_service)
     end
 
     def certificate_service
-      get(:certificate_service)
+      get_service(:certificate_service)
     end
 
     def integration_service
-      get(:integration_service)
+      get_service(:integration_service)
     end
 
     def webhook_trigger_service
-      get(:webhook_trigger_service)
+      get_service(:webhook_trigger_service)
     end
 
     def metrics_service
-      get(:metrics_service)
+      get_service(:metrics_service)
     end
 
     def environment_service
-      get(:environment_service)
+      get_service(:environment_service)
     end
 
     def deployed_version_service
-      get(:deployed_version_service)
+      get_service(:deployed_version_service)
     end
 
     def released_version_service
-      get(:released_version_service)
+      get_service(:released_version_service)
     end
 
     def contract_service
-      get(:contract_service)
+      get_service(:contract_service)
     end
 
     def branch_service
-      get(:branch_service)
+      get_service(:branch_service)
     end
 
     # rubocop: disable Metrics/MethodLength
