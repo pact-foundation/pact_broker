@@ -16,11 +16,15 @@ module PactBroker
         end
 
         def to_json
-          raise PactBroker::TestError.new("Don't panic. This is a test API error.")
+          raise PactBroker::TestError.new("Don't panic. This is a test API error. #{Time.now.strftime("%Y-%m-%dT%H:%M:%S.000%:z")}")
         end
 
         def process_post
-          raise PactBroker::TestError.new("Don't panic. This is a test API error.")
+          begin
+            raise "This is the cause test error"
+          rescue
+            raise PactBroker::TestError.new("Don't panic. This is a test API error. #{Time.now.strftime("%Y-%m-%dT%H:%M:%S.000%:z")}")
+          end
         end
 
         def policy_name
