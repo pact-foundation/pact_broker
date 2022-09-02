@@ -50,7 +50,6 @@ Gem::Specification.new do |gem|
   gem.license       = "MIT"
 
   #gem.add_runtime_dependency 'pact'
-  gem.add_runtime_dependency "httparty", "~> 0.14"
   gem.add_runtime_dependency "json", "~> 2.3"
   gem.add_runtime_dependency "roar", "~> 1.1"
   gem.add_runtime_dependency "reform", "~> 2.3.3"
