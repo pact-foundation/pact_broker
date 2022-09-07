@@ -1,6 +1,9 @@
 name: Tests for Ruby 3.0 - these are hardcoded to succeed so every commit doesn't look like it's failing
 
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
