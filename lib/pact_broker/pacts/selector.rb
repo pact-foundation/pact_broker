@@ -29,7 +29,9 @@ module PactBroker
       # verifiable_pact_messages, so don't need the "for_consumer" sub category
       # rubocop: disable Metrics/CyclomaticComplexity
       def type
-        if latest_for_branch?
+        if latest_for_main_branch?
+          :latest_for_main_branch
+        elsif latest_for_branch?
           :latest_for_branch
         elsif matching_branch?
           :matching_branch

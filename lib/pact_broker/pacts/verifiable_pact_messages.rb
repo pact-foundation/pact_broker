@@ -252,6 +252,8 @@ module PactBroker
           else
             "latest with tag #{selector.tag}"
           end
+        elsif selector.latest_for_main_branch?
+          "latest from main branch"
         elsif selector.latest_for_branch?
           if selector.fallback_branch?
             "latest from branch #{selector.fallback_branch}"
