@@ -16,6 +16,7 @@ require "pact_broker/pacts/selectors"
 require "pact_broker/feature_toggle"
 require "pact_broker/pacts/pacts_for_verification_repository"
 require "pact_broker/pacts/content"
+require "pact_broker/policies"
 
 module PactBroker
   module Pacts
