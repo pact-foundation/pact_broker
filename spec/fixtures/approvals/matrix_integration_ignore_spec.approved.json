@@ -51,28 +51,24 @@
   "PactBroker::Matrix::Service find when deploying a consumer and ignoring a provider when the consumer and provider have been specified deployment_status_summary is expected to be deployable": {
     "deployable": true,
     "reasons": [
-      "PactBroker::Matrix::NoDependenciesMissing",
-      "PactBroker::Matrix::SelectorWithoutPacticipantVersionNumberSpecified"
+      "PactBroker::Matrix::NoDependenciesMissing"
     ]
   },
   "PactBroker::Matrix::Service find when deploying a consumer and ignoring a provider when the consumer and provider have been specified without any ignore selectors deployment_status_summary is expected not to be deployable": {
     "deployable": false,
     "reasons": [
-      "PactBroker::Matrix::SelectorWithoutPacticipantVersionNumberSpecified",
       "PactBroker::Matrix::VerificationFailed"
     ]
   },
   "PactBroker::Matrix::Service find when deploying a consumer and ignoring a provider when the consumer and provider have been specified and the provider version specified does not exist deployment_status_summary is expected to be deployable": {
     "deployable": true,
     "reasons": [
-      "PactBroker::Matrix::NoDependenciesMissing",
-      "PactBroker::Matrix::SelectorWithoutPacticipantVersionNumberSpecified"
+      "PactBroker::Matrix::NoDependenciesMissing"
     ]
   },
   "PactBroker::Matrix::Service find when deploying a consumer and ignoring a provider when the consumer and provider have been specified and the provider version specified does not exist without any ignore selectors deployment_status_summary is expected not to be deployable": {
     "deployable": false,
     "reasons": [
-      "PactBroker::Matrix::SelectorWithoutPacticipantVersionNumberSpecified",
       "PactBroker::Matrix::SpecifiedVersionDoesNotExist"
     ]
   },

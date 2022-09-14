@@ -122,42 +122,36 @@
   "PactBroker::Matrix::Service find specifying a provider which has multiple prod versions of one consumer (explicit) and a single version of another (inferred) with inferred selectors determines the number of integrations": {
     "deployable": null,
     "reasons": [
-      "PactBroker::Matrix::PactNotEverVerifiedByProvider",
-      "PactBroker::Matrix::SelectorWithoutPacticipantVersionNumberSpecified"
+      "PactBroker::Matrix::PactNotEverVerifiedByProvider"
     ]
   },
   "PactBroker::Matrix::Service find specifying a provider which has multiple prod versions of one consumer (explicit) and a single version of another (inferred) with inferred selectors finds all prod versions of Foo": {
     "deployable": null,
     "reasons": [
-      "PactBroker::Matrix::PactNotEverVerifiedByProvider",
-      "PactBroker::Matrix::SelectorWithoutPacticipantVersionNumberSpecified"
+      "PactBroker::Matrix::PactNotEverVerifiedByProvider"
     ]
   },
   "PactBroker::Matrix::Service find specifying a provider which has multiple prod versions of one consumer (explicit) and a single version of another (inferred) with inferred selectors finds the single prod version of Cat": {
     "deployable": null,
     "reasons": [
-      "PactBroker::Matrix::PactNotEverVerifiedByProvider",
-      "PactBroker::Matrix::SelectorWithoutPacticipantVersionNumberSpecified"
+      "PactBroker::Matrix::PactNotEverVerifiedByProvider"
     ]
   },
   "PactBroker::Matrix::Service find specifying a provider which has multiple prod versions of one consumer (explicit) and a single version of another (inferred) with inferred selectors is not deployable because of the missing verification for Cat v20": {
     "deployable": null,
     "reasons": [
-      "PactBroker::Matrix::PactNotEverVerifiedByProvider",
-      "PactBroker::Matrix::SelectorWithoutPacticipantVersionNumberSpecified"
+      "PactBroker::Matrix::PactNotEverVerifiedByProvider"
     ]
   },
   "PactBroker::Matrix::Service find specifying a provider which has multiple prod versions of one consumer (explicit) and a single version of another (inferred) without inferred selectors is deployable": {
     "deployable": true,
     "reasons": [
-      "PactBroker::Matrix::SelectorWithoutPacticipantVersionNumberSpecified",
       "PactBroker::Matrix::Successful"
     ]
   },
   "PactBroker::Matrix::Service find when there is a consumer with two providers, and only one of them has a verification, and the consumer and the verified provider are explicitly specified allows the consumer to be deployed": {
     "deployable": true,
     "reasons": [
-      "PactBroker::Matrix::SelectorWithoutPacticipantVersionNumberSpecified",
       "PactBroker::Matrix::Successful"
     ]
   },
