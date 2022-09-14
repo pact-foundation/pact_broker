@@ -75,11 +75,15 @@ module PactBroker
 
       def selector_without_pacticipant_version_number_specified?
         # If only the pacticipant name is specified, it can't be a can-i-deploy query, must be a matrix UI query
-        resolved_selectors
-          .select(&:specified?)
-          .reject(&:only_pacticipant_name_specified?)
-          .reject(&:pacticipant_version_specified_in_original_selector?)
-          .any?
+        if resolved_selectors.select(&:specified?).reject(&:only_pacticipant_name_specified?).any?
+          # There should be at least one selector with a version number specified
+          resolved_selectors
+            .select(&:specified?)
+            .select(&:pacticipant_version_specified_in_original_selector?)
+            .empty?
+        else
+          false
+        end
       end
 
 

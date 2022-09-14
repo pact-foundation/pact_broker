@@ -273,7 +273,7 @@ module PactBroker
           its(:reasons) { is_expected.to eq [IgnoreSelectorDoesNotExist.new(resolved_ignore_selectors.first), PactBroker::Matrix::Successful.new] }
         end
 
-        context "when there is a selector without a specified pacticipant version number" do
+        context "when there are no specified selectors with a pacticipant version number" do
           let(:resolved_selectors) do
             [
               ResolvedSelector.new(
@@ -288,6 +288,31 @@ module PactBroker
           end
 
           its(:reasons) { is_expected.to include SelectorWithoutPacticipantVersionNumberSpecified.new }
+        end
+
+        context "when there are only pacticipant names specified" do
+          let(:resolved_selectors) do
+            [
+              ResolvedSelector.new(
+                pacticipant_id: foo.id,
+                pacticipant_name: foo.name,
+                pacticipant_version_number: nil,
+                pacticipant_version_id: nil,
+                type: :specified,
+                original_selector: { pacticipant_name: foo.name }
+              ),
+              ResolvedSelector.new(
+                pacticipant_id: bar.id,
+                pacticipant_name: bar.name,
+                pacticipant_version_number: nil,
+                pacticipant_version_id: nil,
+                type: :specified,
+                original_selector: { pacticipant_name: bar.name }
+              )
+            ]
+          end
+
+          its(:reasons) { is_expected.to_not include SelectorWithoutPacticipantVersionNumberSpecified.new }
         end
 
         context "when there is no to tag or environment specified and there was only one specified selector" do
