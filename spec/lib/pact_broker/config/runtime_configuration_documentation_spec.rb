@@ -10,6 +10,8 @@ module PactBroker
         :warning_error_class_names,
         :log_configuration_on_startup,
         :use_rack_protection,
+        :rack_protection_use,
+        :rack_protection_except,
         :use_case_sensitive_resource_names,
         :order_versions_by_date,
         :base_equality_only_on_content_that_affects_verification_results,

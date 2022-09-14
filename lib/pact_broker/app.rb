@@ -217,7 +217,14 @@ module PactBroker
 
     def configure_rack_protection
       if configuration.use_rack_protection
-        @app_builder.use Rack::Protection, except: [:path_traversal, :remote_token, :session_hijacking, :http_origin]
+        rack_protection_options = {
+          logger: logger,
+          use: configuration.rack_protection_use,
+          except: configuration.rack_protection_except
+        }.compact
+
+        logger.info("Configuring Rack::Protection", payload: rack_protection_options)
+        @app_builder.use Rack::Protection, rack_protection_options
 
         is_hal_browser = ->(env) { env["PATH_INFO"] == "/hal-browser/browser.html" }
         not_hal_browser = ->(env) { env["PATH_INFO"] != "/hal-browser/browser.html" }

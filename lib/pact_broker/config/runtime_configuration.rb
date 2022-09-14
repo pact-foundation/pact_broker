@@ -68,6 +68,8 @@ module PactBroker
         use_hal_browser: true,
         enable_diagnostic_endpoints: true,
         use_rack_protection: true,
+        rack_protection_use: nil,
+        rack_protection_except: [:path_traversal, :remote_token, :session_hijacking, :http_origin], # Beth: not sure why these are disabled
         badge_provider_mode: :redirect,
         enable_public_badge_access: false,
         shields_io_base_url: "https://img.shields.io",
@@ -178,6 +180,14 @@ module PactBroker
 
       def features= features
         super(value_to_string_array(features, "features").collect(&:downcase))
+      end
+
+      def rack_protection_use= rack_protection_use
+        super(value_to_string_array(rack_protection_use, "rack_protection_use")&.collect(&:to_sym))
+      end
+
+      def rack_protection_except= rack_protection_except
+        super(value_to_string_array(rack_protection_except, "rack_protection_except")&.collect(&:to_sym))
       end
 
       def webhook_certificates= webhook_certificates
