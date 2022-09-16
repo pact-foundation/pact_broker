@@ -1,3 +1,3 @@
 module PactBroker
-  VERSION = "2.102.2"
+  VERSION = "2.103.0"
 end

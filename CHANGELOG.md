@@ -1,3 +1,17 @@
+<a name="v2.103.0"></a>
+### v2.103.0 (2022-09-14)
+
+#### Features
+
+* allow rack protection use and except options to be configured	 ([f44db585](/../../commit/f44db585))
+
+* **can-i-deploy**
+  * only warn about missing version numbers if there are no selectors with a version number	 ([ac4e1e73](/../../commit/ac4e1e73))
+
+#### Bug Fixes
+
+* correctly identify database version when schema_migrations table is empty	 ([dcb59203](/../../commit/dcb59203))
+
 <a name="v2.102.2"></a>
 ### v2.102.2 (2022-07-14)
 
