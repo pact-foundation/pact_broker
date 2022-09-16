@@ -106,7 +106,6 @@ module PactBroker
 
     def logger_from_runtime_configuration
       @logger_from_runtime_configuration ||= begin
-        runtime_configuration.validate_logging_attributes!
         SemanticLogger.default_level = runtime_configuration.log_level
         if runtime_configuration.log_stream == :file
           path = runtime_configuration.log_dir + "/pact_broker.log"
