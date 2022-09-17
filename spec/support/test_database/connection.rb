@@ -47,14 +47,14 @@ module PactBroker
     def self.connect(db_credentials)
       # Keep this conifiguration in sync with lib/pact_broker/app.rb#configure_database_connection
       Sequel.datetime_class = DateTime
-      if ENV["DEBUG"] == "true" && ENV["PACT_BROKER_SQL_LOG_LEVEL"] && ENV["PACT_BROKER_SQL_LOG_LEVEL"] != "none"
-        logger = Logger.new($stdout)
+      if ENV["DEBUG"] == "true"
+        logger = PactBroker.logger
       end
       if db_credentials.fetch("adapter") == "sqlite"
         FileUtils.mkdir_p(File.dirname(db_credentials.fetch("database")))
       end
       PactBroker.logger.info "Connecting to #{db_credentials['adapter']} database #{db_credentials['database']}."
-      con = Sequel.connect(db_credentials.merge(:logger => logger, :pool_class => Sequel::ThreadedConnectionPool, :encoding => "utf8"))
+      con = Sequel.connect(db_credentials.merge(:logger => logger, :pool_class => Sequel::ThreadedConnectionPool, :encoding => "utf8", sql_log_level: ENV.fetch("PACT_BROKER_SQL_LOG_LEVEL", "trace")&.to_sym))
       con.extension(:connection_validator)
       con.extension(:pagination)
       con.extension(:statement_timeout)
