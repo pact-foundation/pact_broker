@@ -1,3 +1,10 @@
+<a name="v2.104.0"></a>
+### v2.104.0 (2022-09-17)
+
+#### Features
+
+* ignore deleted webhooks when calculating the latest triggered webhook status	 ([c3105dcb](/../../commit/c3105dcb))
+
 <a name="v2.103.0"></a>
 ### v2.103.0 (2022-09-14)
 
