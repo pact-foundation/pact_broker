@@ -86,14 +86,34 @@ module PactBroker
             .create_provider("Bar")
             .create_consumer_version
             .create_pact
-            .create_global_webhook
-            .create_triggered_webhook
+            .create_webhook
+            .create_triggered_webhook(uuid: "1")
+            .create_webhook_execution
+            .create_triggered_webhook(uuid: "2")
+            .create_webhook_execution
+            .create_consumer("NotFoo")
+            .create_provider("NotBar")
+            .create_consumer_version
+            .create_pact
+            .create_webhook
+            .create_triggered_webhook(uuid: "3")
+            .create_webhook_execution
+            .create_triggered_webhook(uuid: "4")
             .create_webhook_execution
         end
 
-        it "returns a list of triggered webhooks" do
-          integrations = Integration.eager(:latest_triggered_webhooks).order(Sequel.desc(:id)).all
-          expect(integrations.first.latest_triggered_webhooks.count).to eq 1
+        context "lazy loading" do
+          it "returns a list of triggered webhooks" do
+            integrations = Integration.order(Sequel.desc(:id)).all
+            expect(integrations.first.latest_triggered_webhooks.count).to eq 1
+          end
+        end
+
+        context "eager loading" do
+          it "returns a list of triggered webhooks" do
+            integrations = Integration.eager(:latest_triggered_webhooks).order(Sequel.desc(:id)).all
+            expect(integrations.first.associations[:latest_triggered_webhooks].count).to eq 1
+          end
         end
       end
 

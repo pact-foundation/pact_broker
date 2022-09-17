@@ -45,6 +45,13 @@ module PactBroker
         def not_run
           where(status: STATUS_NOT_RUN)
         end
+
+        # Return the dataset for the latest triggered webhooks grouped by
+        # consumer, provider, webhook and event.
+        # Excludes the deleted webhooks
+        def latest_triggered_webhooks
+          exclude(webhook_id: nil).max_group_by(:id, [:consumer_id, :provider_id, :webhook_uuid, :event_name]).order(:id)
+        end
       end
 
       associate(:one_to_many, :webhook_executions, :class => "PactBroker::Webhooks::Execution", :key => :triggered_webhook_id, :primary_key => :id, :order => :id)

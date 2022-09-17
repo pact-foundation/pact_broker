@@ -12,7 +12,14 @@ module PactBroker
       associate(:many_to_one, :consumer, :class => "PactBroker::Domain::Pacticipant", :key => :consumer_id, :primary_key => :id)
       associate(:many_to_one, :provider, :class => "PactBroker::Domain::Pacticipant", :key => :provider_id, :primary_key => :id)
       associate(:one_to_one, :latest_verification, :class => "PactBroker::Verifications::LatestVerificationForConsumerAndProvider", key: [:consumer_id, :provider_id], primary_key: [:consumer_id, :provider_id])
-      associate(:one_to_many, :latest_triggered_webhooks, :class => "PactBroker::Webhooks::LatestTriggeredWebhook", key: [:consumer_id, :provider_id], primary_key: [:consumer_id, :provider_id])
+
+      one_to_many(:latest_triggered_webhooks,
+        :class => PactBroker::Webhooks::TriggeredWebhook,
+        key: [:consumer_id, :provider_id],
+        allow_eager: true,
+        primary_key: [:consumer_id, :provider_id]) do | ds |
+          ds.latest_triggered_webhooks
+        end
 
       # When viewing the index, every latest_pact in the database will match at least one of the rows, so
       # it makes sense to load the entire table and match each pact to the appropriate row.

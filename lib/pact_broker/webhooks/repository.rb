@@ -159,9 +159,9 @@ module PactBroker
 
       def find_latest_triggered_webhooks consumer, provider
         # policy already applied to pact
-        deliberately_unscoped(LatestTriggeredWebhook)
+        deliberately_unscoped(TriggeredWebhook)
           .where(consumer: consumer, provider: provider)
-          .order(:id)
+          .latest_triggered_webhooks
           .all
       end
 
