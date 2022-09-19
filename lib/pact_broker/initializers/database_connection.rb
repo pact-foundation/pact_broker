@@ -4,7 +4,7 @@ require "fileutils"
 
 module PactBroker
   def self.create_database_connection(config, logger = nil)
-    logger&.info "Connecting to database:", payload: "#{config.merge(password: "*****")}"
+    logger&.info("Connecting to database:", config.merge(password: "*****"))
 
     sequel_config = config.dup
     max_retries = sequel_config.delete(:connect_max_retries) || 0

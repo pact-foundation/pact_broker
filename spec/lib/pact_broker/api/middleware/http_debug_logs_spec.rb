@@ -23,13 +23,13 @@ module PactBroker
         end
 
         it "logs the rack env" do
-          expect(logger).to receive(:debug).with("env", payload: hash_including({ "rack.input" => { "foo" => "bar" }, "HTTP_ACCEPT" => "application/json" }))
+          expect(logger).to receive(:debug).with("env", hash_including({ "rack.input" => { "foo" => "bar" }, "HTTP_ACCEPT" => "application/json" }))
           subject
         end
 
         it "logs the response" do
           expected_payload = { "status" => 200, "headers" => { "Content-Type" => "text/plain" }, "body" => ["response body"] }
-          expect(logger).to receive(:debug).with("response", payload: hash_including(expected_payload))
+          expect(logger).to receive(:debug).with("response", hash_including(expected_payload))
           subject
         end
 

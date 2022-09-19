@@ -23,9 +23,9 @@ module PactBroker
 
           if main_branch_name
             connection[:pacticipants].where(id: pacticipant_row[:id], main_branch: nil).update(main_branch: main_branch_name)
-            logger.info("Setting main branch for pacticipant", payload: { branch: main_branch_name, pacticipant_name: pacticipant_row[:name] })
+            logger.info("Setting main branch for pacticipant", branch: main_branch_name, pacticipant_name: pacticipant_row[:name])
           else
-            logger.info("Cannot determine main branch for pacticipant", payload: { branch: nil, pacticipant_name: pacticipant_row[:name] })
+            logger.info("Cannot determine main branch for pacticipant", branch: nil, pacticipant_name: pacticipant_row[:name])
           end
         end
 

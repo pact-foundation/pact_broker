@@ -94,7 +94,7 @@ module PactBroker
       end
 
       if logger.debug?
-        logger.debug("Overridding runtime configuration", payload: { overrides: valid_overrides, ignoring: invalid_overrides })
+        logger.debug("Overridding runtime configuration", overrides: valid_overrides, ignoring: invalid_overrides)
       end
 
       valid_overrides.each do | key, value |

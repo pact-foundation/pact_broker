@@ -46,7 +46,7 @@ module PactBroker
       end
 
       def output string, payload = {}
-        logger ? logger.info(string, payload: payload) : puts("#{string} #{payload.to_json}")
+        logger ? logger.info(string, payload) : puts("#{string} #{payload.to_json}")
       end
     end
   end

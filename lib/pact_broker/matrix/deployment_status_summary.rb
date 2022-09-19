@@ -161,7 +161,7 @@ module PactBroker
       end
 
       def log_required_integrations_without_a_row_occurred integrations
-        logger.info("required_integrations_without_a_row returned non empty", payload: { integrations: integrations, considered_rows: considered_rows })
+        logger.info("required_integrations_without_a_row returned non empty", integrations: integrations, considered_rows: considered_rows)
       end
 
       def row_exists_for_integration(integration)

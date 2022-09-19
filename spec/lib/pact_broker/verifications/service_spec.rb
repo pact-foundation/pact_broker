@@ -46,7 +46,7 @@ module PactBroker
         let(:create_verification) { subject.create 3, params, selected_pacts, event_context }
 
         it "logs the creation" do
-          expect(logger).to receive(:info).with(/.*verification.*3/, payload: hash_including("providerApplicationVersion"=>"4.5.6", "success"=>true, "wip"=>true, "pending" => is_pending))
+          expect(logger).to receive(:info).with(/.*verification.*3/, hash_including("providerApplicationVersion"=>"4.5.6", "success"=>true, "wip"=>true, "pending" => is_pending))
           create_verification
         end
 

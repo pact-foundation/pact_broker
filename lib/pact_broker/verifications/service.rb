@@ -33,7 +33,7 @@ module PactBroker
       # verified_pacts is an array of SelectedPact objects
       def create next_verification_number, params, verified_pacts, event_context
         first_verified_pact = verified_pacts.first
-        logger.info "Creating verification #{next_verification_number} for pact_version_sha=#{first_verified_pact.pact_version_sha}", payload: params.reject{ |k,_| k == "testResults"}
+        logger.info("Creating verification #{next_verification_number} for pact_version_sha=#{first_verified_pact.pact_version_sha}", params.without("testResults"))
         verification = PactBroker::Domain::Verification.new
         provider_version_number = params.fetch("providerApplicationVersion")
         PactBroker::Api::Decorators::VerificationDecorator.new(verification).from_hash(params)

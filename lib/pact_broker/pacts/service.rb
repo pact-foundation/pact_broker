@@ -43,7 +43,7 @@ module PactBroker
       end
 
       def delete params
-        logger.info "Deleting pact version", payload: params
+        logger.info("Deleting pact version", params)
         pacts = pact_repository.find_all_revisions(params[:consumer_name], params[:consumer_version_number], params[:provider_name])
         webhook_service.delete_all_webhook_related_objects_by_pact_publication_ids(pacts.collect(&:id))
         pact_repository.delete(params)
@@ -156,8 +156,8 @@ module PactBroker
 
       # Overwriting an existing pact with the same consumer/provider/consumer version number
       def create_pact_revision params, existing_pact
-        logger.info "Updating existing pact publication", payload: params.without(:json_content)
-        logger.debug "Content #{params[:json_content]}"
+        logger.info("Updating existing pact publication", params.without(:json_content))
+        logger.debug("Content #{params[:json_content]}")
         pact_version_sha = generate_sha(params[:json_content])
         json_content = add_interaction_ids(params[:json_content])
         update_params = { pact_version_sha: pact_version_sha, json_content: json_content }
@@ -185,8 +185,8 @@ module PactBroker
 
       # When no publication for the given consumer/provider/consumer version number exists
       def create_pact params, version, provider
-        logger.info "Creating new pact publication", payload: params.without(:json_content)
-        logger.debug "Content #{params[:json_content]}"
+        logger.info("Creating new pact publication", params.without(:json_content))
+        logger.debug("Content #{params[:json_content]}")
         pact_version_sha = generate_sha(params[:json_content])
         json_content = add_interaction_ids(params[:json_content])
         pact = pact_repository.create(

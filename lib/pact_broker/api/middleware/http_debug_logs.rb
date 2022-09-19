@@ -21,9 +21,9 @@ module PactBroker
             env_to_log = env.reject { | header, _ | header.start_with?(*EXCLUDE_HEADERS) }
             env_to_log["rack.session"] = env["rack.session"].to_hash if env["rack.session"]
             env_to_log["rack.input"] = request_body(env) if env["rack.input"]
-            logger.debug("env", payload: env_to_log)
+            logger.debug("env", env_to_log)
             status, headers, body = @app.call(env)
-            logger.debug("response", payload: { "status" => status, "headers" => headers, "body" => body })
+            logger.debug("response", "status" => status, "headers" => headers, "body" => body)
             [status, headers, body]
           else
             @app.call(env)

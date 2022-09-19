@@ -139,7 +139,7 @@ module PactBroker
         selectors = selector_for_latest_main_version_or_overall_latest(provider)
         selectors << Selector.for_currently_deployed
         selectors << Selector.for_currently_supported
-        logger.debug("Default selectors", payload: selectors)
+        logger.debug("Default selectors", selectors)
         selectors
       end
 
@@ -319,7 +319,7 @@ module PactBroker
       def log_pact_publications(message, pact_publications_query)
         pact_publication_descriptions = collect_consumer_name_and_version_number(pact_publications_query)
         if pact_publication_descriptions.any?
-          logger.debug("#{message}", payload: pact_publication_descriptions)
+          logger.debug("#{message}", pact_publication_descriptions)
         else
           logger.debug("#{message} (none)")
         end
