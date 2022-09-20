@@ -223,7 +223,7 @@ module PactBroker
           except: configuration.rack_protection_except
         }.compact
 
-        logger.info("Configuring Rack::Protection", payload: rack_protection_options)
+        logger.info("Configuring Rack::Protection", rack_protection_options)
         @app_builder.use Rack::Protection, rack_protection_options
 
         is_hal_browser = ->(env) { env["PATH_INFO"] == "/hal-browser/browser.html" }
