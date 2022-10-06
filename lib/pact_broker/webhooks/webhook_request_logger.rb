@@ -51,7 +51,7 @@ module PactBroker
       end
 
       def log_request(webhook_request)
-        http_request = HttpRequestWithRedactedHeaders.new(webhook_request.http_request)
+        http_request = options[:redact_sensitive_data] ? HttpRequestWithRedactedHeaders.new(webhook_request.http_request) : webhook_request.http_request
         logger.info "Making webhook #{webhook_request.uuid} request #{http_request.method.upcase} URI=#{webhook_request.url} (headers and body in debug logs)"
         logger.debug "Webhook #{webhook_request.uuid} request headers=#{http_request.to_hash}"
         logger.debug "Webhook #{webhook_request.uuid} request body=#{http_request.body}"

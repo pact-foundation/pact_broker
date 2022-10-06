@@ -265,7 +265,9 @@ module PactBroker
           "request" => {
             "method" => "POST",
             "url" => url,
-            "body" => body || default_body
+            "body" => body || default_body,
+            "username" => "user",
+            "password" => "pass"
           }
         }.compact
         path = "webhooks/#{uuid}"
@@ -297,6 +299,8 @@ module PactBroker
             "method" => "POST",
             "url" => url,
             "headers" => { "Content-Type" => "application/json"},
+            "username" => "user",
+            "password" => "pass",
             "body" => {
               "eventName" => "${pactbroker.eventName}",
               "consumerVersionNumber" => "${pactbroker.consumerVersionNumber}",

@@ -18,7 +18,8 @@ module PactBroker
         :semver_formats,
         :seed_example_data,
         :use_first_tag_as_branch_time_limit,
-        :validate_database_connection_config
+        :validate_database_connection_config,
+        :webhook_redact_sensitive_data
       ]
 
       (ATTRIBUTES - DELIBERATELY_UNDOCUMENTED_ATTRIBUTES).each do | attribute_name |

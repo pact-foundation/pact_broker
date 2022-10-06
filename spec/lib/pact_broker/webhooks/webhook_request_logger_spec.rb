@@ -16,7 +16,8 @@ module PactBroker
 
       let(:logger) { double("logger").as_null_object }
       let(:uuid) { "uuid" }
-      let(:options) { { failure_log_message: "oops", show_response: show_response, http_code_success: [200] } }
+      let(:options) { { failure_log_message: "oops", show_response: show_response, http_code_success: [200], redact_sensitive_data: redact_sensitive_data } }
+      let(:redact_sensitive_data) { true }
       let(:show_response) { true }
       let(:username) { nil }
       let(:password) { nil }
@@ -143,6 +144,14 @@ module PactBroker
 
           it "logs the Authorization header with a starred value" do
             expect(logs).to include "authorization: **********"
+          end
+
+          context "when redact_sensitive_data is false" do
+            let(:redact_sensitive_data) { false }
+
+            it "logs the real value of the Authorization header" do
+              expect(logs).to include "authorization: foo"
+            end
           end
         end
 

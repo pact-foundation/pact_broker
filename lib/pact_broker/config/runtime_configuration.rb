@@ -52,6 +52,7 @@ module PactBroker
         webhook_http_code_success: [200, 201, 202, 203, 204, 205, 206],
         webhook_scheme_whitelist: ["https"],
         webhook_host_whitelist: [],
+        webhook_redact_sensitive_data: true,
         disable_ssl_verification: false,
         user_agent: "Pact Broker v#{PactBroker::VERSION}"
       )
