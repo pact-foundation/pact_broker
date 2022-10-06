@@ -26,6 +26,7 @@ module PactBroker
         :pact_version
       ]
 
+      # @return [VerifiablePact] an array of VerifiablePact objects
       def find(provider_name, consumer_version_selectors)
         selected_pacts = find_pacts_by_selector(provider_name, consumer_version_selectors)
         selected_pacts = selected_pacts + find_pacts_for_fallback_tags(selected_pacts, provider_name, consumer_version_selectors)
@@ -43,7 +44,7 @@ module PactBroker
       # provider tags they are pending for.
       # Don't include pact publications that were created before the provider tag was first used
       # (that is, before the provider's git branch was created).
-      def find_wip provider_name, provider_version_branch, provider_tags_names, specified_pact_version_shas, options = {}
+      def find_wip(provider_name, provider_version_branch, provider_tags_names, explicitly_specified_verifiable_pacts, options = {})
         # TODO not sure about this
         if provider_tags_names.empty? && provider_version_branch == nil
           log_debug_for_wip do
@@ -53,7 +54,7 @@ module PactBroker
         end
 
         if provider_version_branch
-          return find_wip_pact_versions_for_provider_by_provider_branch(provider_name, provider_version_branch, specified_pact_version_shas, options)
+          return find_wip_pact_versions_for_provider_by_provider_branch(provider_name, provider_version_branch, explicitly_specified_verifiable_pacts, options)
         end
 
         provider = pacticipant_repository.find_by_name(provider_name)
@@ -63,7 +64,7 @@ module PactBroker
           provider,
           provider_tags_names,
           wip_start_date,
-          specified_pact_version_shas,
+          explicitly_specified_verifiable_pacts,
           :latest_by_consumer_tag
         )
 
@@ -71,7 +72,7 @@ module PactBroker
           provider,
           provider_tags_names,
           wip_start_date,
-          specified_pact_version_shas,
+          explicitly_specified_verifiable_pacts,
           :latest_by_consumer_branch
         )
 
@@ -193,11 +194,11 @@ module PactBroker
       end
 
       # TODO ? find the WIP pacts by consumer branch
-      def find_wip_pact_versions_for_provider_by_provider_tags(provider, provider_tags_names, wip_start_date, specified_pact_version_shas, pact_publication_scope)
+      def find_wip_pact_versions_for_provider_by_provider_tags(provider, provider_tags_names, wip_start_date, explicitly_specified_verifiable_pacts, pact_publication_scope)
         potential_wip_pacts_by_consumer_tag_query = PactPublication.for_provider(provider).created_after(wip_start_date).send(pact_publication_scope)
 
         log_debug_for_wip do
-          log_pact_publications("Potential WIP pacts for provider tag(s) #{provider_tags_names.join(", ")} created after #{wip_start_date} by #{pact_publication_scope}", potential_wip_pacts_by_consumer_tag_query)
+          log_pact_publications_from_query("Potential WIP pacts for provider tag(s) #{provider_tags_names.join(", ")} created after #{wip_start_date} by #{pact_publication_scope}", potential_wip_pacts_by_consumer_tag_query)
         end
 
         tag_to_pact_publications = provider_tags_names.each_with_object({}) do | provider_tag_name, tag_to_pact_publication |
@@ -205,7 +206,7 @@ module PactBroker
             potential_wip_pacts_by_consumer_tag_query,
             provider,
             provider_tag_name,
-            specified_pact_version_shas
+            explicitly_specified_verifiable_pacts
           )
         end
 
@@ -225,7 +226,7 @@ module PactBroker
         end
       end
 
-      def find_wip_pact_versions_for_provider_by_provider_branch(provider_name, provider_version_branch, specified_pact_version_shas, options)
+      def find_wip_pact_versions_for_provider_by_provider_branch(provider_name, provider_version_branch, explicitly_specified_verifiable_pacts, options)
         provider = pacticipant_repository.find_by_name(provider_name)
         wip_start_date = options.fetch(:include_wip_pacts_since)
 
@@ -233,22 +234,22 @@ module PactBroker
         potential_wip_by_consumer_tag = PactPublication.for_provider(provider).created_after(wip_start_date).latest_by_consumer_tag
 
         log_debug_for_wip do
-          log_pact_publications("Potential WIP pacts for provider branch #{provider_version_branch} created after #{wip_start_date} by consumer branch", potential_wip_by_consumer_branch)
-          log_pact_publications("Potential WIP pacts for provider branch #{provider_version_branch} created after #{wip_start_date} by consumer tag", potential_wip_by_consumer_tag)
+          log_pact_publications_from_query("Potential WIP pacts for provider branch #{provider_version_branch} created after #{wip_start_date} by consumer branch", potential_wip_by_consumer_branch)
+          log_pact_publications_from_query("Potential WIP pacts for provider branch #{provider_version_branch} created after #{wip_start_date} by consumer tag", potential_wip_by_consumer_tag)
         end
 
         wip_pact_publications_by_branch = remove_non_wip_for_branch(
           potential_wip_by_consumer_branch,
           provider,
           provider_version_branch,
-          specified_pact_version_shas
+          explicitly_specified_verifiable_pacts
         )
 
         wip_pact_publications_by_tag = remove_non_wip_for_branch(
           potential_wip_by_consumer_tag,
           provider,
           provider_version_branch,
-          specified_pact_version_shas
+          explicitly_specified_verifiable_pacts
         )
 
         verifiable_pacts = (wip_pact_publications_by_branch + wip_pact_publications_by_tag).collect do | pact_publication |
@@ -259,55 +260,62 @@ module PactBroker
         deduplicate_verifiable_pacts(verifiable_pacts).sort
       end
 
-      def remove_non_wip_for_branch(pact_publications_query, provider, provider_version_branch, specified_pact_version_shas)
-        specified_explicitly = pact_publications_query.for_pact_version_sha(specified_pact_version_shas)
+      def remove_non_wip_for_branch(pact_publications_query, provider, provider_version_branch, explicitly_specified_verifiable_pacts)
+        specified_explicitly = pact_publications_query.for_pact_version_sha(explicitly_specified_verifiable_pacts)
         verified_by_this_branch = pact_publications_query.successfully_verified_by_provider_branch_when_not_wip(provider.id, provider_version_branch)
         verified_by_other_branch = pact_publications_query.successfully_verified_by_provider_another_branch_before_this_branch_first_created(provider.id, provider_version_branch)
 
         log_debug_for_wip do
-          log_pact_publications("Ignoring pacts explicitly specified in the selectors", specified_explicitly)
-          log_pact_publications("Ignoring pacts successfully verified by this provider branch when not WIP", verified_by_this_branch)
-          log_pact_publications("Ignoring pacts successfully verified by another provider branch when not WIP", verified_by_other_branch)
+          log_pact_publications("Ignoring pacts explicitly specified in the selectors", explicitly_specified_verifiable_pacts)
+          log_pact_publications_from_query("Ignoring pacts successfully verified by this provider branch when not WIP", verified_by_this_branch)
+          log_pact_publications_from_query("Ignoring pacts successfully verified by another provider branch when not WIP", verified_by_other_branch)
         end
 
-        PactPublication.subtract(
-          pact_publications_query.eager(*PUBLICATION_ASSOCIATIONS_FOR_EAGER_LOAD).all,
-          specified_explicitly.all,
-          verified_by_this_branch.all,
-          verified_by_other_branch.all
-        )
+        remove_explicitly_specified_verifiable_pacts(PactPublication.subtract(
+            pact_publications_query.eager(*PUBLICATION_ASSOCIATIONS_FOR_EAGER_LOAD).all,
+            verified_by_this_branch.all,
+            verified_by_other_branch.all),
+          explicitly_specified_verifiable_pacts)
       end
 
-      def remove_non_wip_for_tag(pact_publications_query, provider, tag, specified_pact_version_shas)
-        specified_explicitly = pact_publications_query.for_pact_version_sha(specified_pact_version_shas)
+      def remove_non_wip_for_tag(pact_publications_query, provider, tag, explicitly_specified_verifiable_pacts)
         verified_by_this_tag = pact_publications_query.successfully_verified_by_provider_tag_when_not_wip(tag)
         verified_by_another_tag = pact_publications_query.successfully_verified_by_provider_another_tag_before_this_tag_first_created(provider.id, tag)
 
         log_debug_for_wip do
-          log_pact_publications("Ignoring pacts explicitly specified in the selectors", specified_explicitly)
-          log_pact_publications("Ignoring pacts successfully verified by this provider tag when not WIP", verified_by_this_tag)
-          log_pact_publications("Ignoring pacts successfully verified by another provider tag when not WIP", verified_by_another_tag)
+          log_pact_publications("Ignoring pacts explicitly specified in the selectors", explicitly_specified_verifiable_pacts)
+          log_pact_publications_from_query("Ignoring pacts successfully verified by this provider tag when not WIP", verified_by_this_tag)
+          log_pact_publications_from_query("Ignoring pacts successfully verified by another provider tag when not WIP", verified_by_another_tag)
         end
 
-        PactPublication.subtract(
-          pact_publications_query.eager(*PUBLICATION_ASSOCIATIONS_FOR_EAGER_LOAD).all,
-          specified_explicitly.all,
-          verified_by_this_tag.all,
-          verified_by_another_tag.all)
+        remove_explicitly_specified_verifiable_pacts(
+          PactPublication.subtract(
+            pact_publications_query.eager(*PUBLICATION_ASSOCIATIONS_FOR_EAGER_LOAD).all,
+            verified_by_this_tag.all,
+            verified_by_another_tag.all),
+          explicitly_specified_verifiable_pacts)
       end
 
-      def collect_consumer_name_and_version_number(pact_publications_query)
-        pact_publications = pact_publications_query
-                              .eager(:consumer, :consumer_version)
-                              .order(:consumer_version_order)
-                              .all_forbidding_lazy_load
-                              .sort
+      def remove_explicitly_specified_verifiable_pacts(pact_publications, explicitly_specified_verifiable_pacts)
+        pact_publications.reject do | pact_publication |
+          explicitly_specified_verifiable_pacts.find{ | explict_pact |
+            explict_pact.consumer.id == pact_publication.consumer_id &&
+              explict_pact.provider.id == pact_publication.provider_id &&
+              explict_pact.pact_version_sha == pact_publication.pact_version_sha
+          }
+        end
+      end
 
+      def collect_consumer_name_and_version_number(pact_publications)
         pact_publications.collect do |p|
-          suffix =  if p.values[:tag_name]
-                      " (tag #{p.values[:tag_name]})"
-                    elsif p.values[:branch_name]
-                      " (branch #{p.values[:branch_name]})"
+          suffix =  if p.respond_to?(:values)
+                      if p.values[:tag_name]
+                        " (tag #{p.values[:tag_name]})"
+                      elsif p.values[:branch_name]
+                        " (branch #{p.values[:branch_name]})"
+                      else
+                        ""
+                      end
                     else
                       ""
                     end
@@ -316,8 +324,30 @@ module PactBroker
         end
       end
 
-      def log_pact_publications(message, pact_publications_query)
-        pact_publication_descriptions = collect_consumer_name_and_version_number(pact_publications_query)
+      def collect_consumer_name_and_version_number_for_query(pact_publications_query)
+        collect_consumer_name_and_version_number()
+      end
+
+      def with_sorted_eager_fields(pact_publications_query)
+        pact_publications_query
+          .eager(:provider)
+          .eager(:consumer, :consumer_version)
+          .order(:consumer_version_order)
+          .all_forbidding_lazy_load
+          .sort
+      end
+
+      def log_pact_publications_from_query(message, pact_publications_query)
+        pact_publication_descriptions = collect_consumer_name_and_version_number(with_sorted_eager_fields(pact_publications_query))
+        if pact_publication_descriptions.any?
+          logger.debug("#{message}", pact_publication_descriptions)
+        else
+          logger.debug("#{message} (none)")
+        end
+      end
+
+      def log_pact_publications(message, pact_publications)
+        pact_publication_descriptions = collect_consumer_name_and_version_number(pact_publications)
         if pact_publication_descriptions.any?
           logger.debug("#{message}", pact_publication_descriptions)
         else
