@@ -158,8 +158,8 @@ module PactBroker
         PactsForVerificationRepository.new.find(provider_name, consumer_version_selectors)
       end
 
-      def find_wip_pact_versions_for_provider provider_name, provider_version_branch, provider_tags_names, specified_pact_version_shas, options = {}
-        PactsForVerificationRepository.new.find_wip(provider_name, provider_version_branch, provider_tags_names, specified_pact_version_shas, options)
+      def find_wip_pact_versions_for_provider provider_name, provider_version_branch, provider_tags_names, explicitly_specified_verifiable_pacts, options = {}
+        PactsForVerificationRepository.new.find_wip(provider_name, provider_version_branch, provider_tags_names, explicitly_specified_verifiable_pacts, options)
       end
 
       def find_pact_versions_for_provider provider_name, tag = nil
