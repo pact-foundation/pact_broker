@@ -261,7 +261,6 @@ module PactBroker
       end
 
       def remove_non_wip_for_branch(pact_publications_query, provider, provider_version_branch, explicitly_specified_verifiable_pacts)
-        specified_explicitly = pact_publications_query.for_pact_version_sha(explicitly_specified_verifiable_pacts)
         verified_by_this_branch = pact_publications_query.successfully_verified_by_provider_branch_when_not_wip(provider.id, provider_version_branch)
         verified_by_other_branch = pact_publications_query.successfully_verified_by_provider_another_branch_before_this_branch_first_created(provider.id, provider_version_branch)
 
