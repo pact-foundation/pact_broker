@@ -12,6 +12,7 @@ require "pact_broker/repositories/scopes"
 
 module PactBroker
   module Pacts
+    # rubocop: disable Metrics/ClassLength
     class PactsForVerificationRepository
       include PactBroker::Logging
       include PactBroker::Repositories
@@ -323,10 +324,6 @@ module PactBroker
         end
       end
 
-      def collect_consumer_name_and_version_number_for_query(pact_publications_query)
-        collect_consumer_name_and_version_number()
-      end
-
       def with_sorted_eager_fields(pact_publications_query)
         pact_publications_query
           .eager(:provider)
@@ -362,5 +359,6 @@ module PactBroker
         end
       end
     end
+    # rubocop: enable Metrics/ClassLength
   end
 end
