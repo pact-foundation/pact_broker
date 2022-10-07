@@ -265,7 +265,9 @@ module PactBroker
           "request" => {
             "method" => "POST",
             "url" => url,
-            "body" => body || default_body
+            "body" => body || default_body,
+            "username" => "user",
+            "password" => "pass"
           }
         }.compact
         path = "webhooks/#{uuid}"
@@ -286,32 +288,9 @@ module PactBroker
       def create_global_webhook_for_anything_published(uuid: nil, url: "https://postman-echo.com/post")
         puts "Creating global webhook for contract changed event with uuid #{uuid}"
         uuid ||= SecureRandom.uuid
-        request_body = {
-          "description" => "A webhook for all consumers and providers",
-          "events" => [{
-            "name" => "contract_published"
-          },{
-            "name" => "provider_verification_published"
-          }],
-          "request" => {
-            "method" => "POST",
-            "url" => url,
-            "headers" => { "Content-Type" => "application/json"},
-            "body" => {
-              "eventName" => "${pactbroker.eventName}",
-              "consumerVersionNumber" => "${pactbroker.consumerVersionNumber}",
-              "consumerVersionTags" => "${pactbroker.consumerVersionTags}",
-              "consumerVersionBranch" => "${pactbroker.consumerVersionBranch}",
-              "githubVerificationStatus" => "${pactbroker.githubVerificationStatus}",
-              "providerVersionNumber" => "${pactbroker.providerVersionNumber}",
-              "providerVersionTags" => "${pactbroker.providerVersionTags}",
-              "providerVersionBranch" => "${pactbroker.providerVersionBranch}",
-              "canIMerge" => "${pactbroker.providerMainBranchGithubVerificationStatus}"
-            }
-          }
-        }
+
         path = "webhooks/#{uuid}"
-        client.put(path, request_body.to_json).tap { |response| check_for_error(response) }
+        client.put(path, webhook_body_with_all_parameters(url).to_json).tap { |response| check_for_error(response) }
         separate
         self
       end
@@ -437,6 +416,35 @@ module PactBroker
           puts response.status
           puts response.body
         end
+      end
+
+      def webhook_body_with_all_parameters(url)
+        {
+          "description" => "A webhook for all consumers and providers",
+          "events" => [{
+            "name" => "contract_published"
+          },{
+            "name" => "provider_verification_published"
+          }],
+          "request" => {
+            "method" => "POST",
+            "url" => url,
+            "headers" => { "Content-Type" => "application/json"},
+            "username" => "user",
+            "password" => "pass",
+            "body" => {
+              "eventName" => "${pactbroker.eventName}",
+              "consumerVersionNumber" => "${pactbroker.consumerVersionNumber}",
+              "consumerVersionTags" => "${pactbroker.consumerVersionTags}",
+              "consumerVersionBranch" => "${pactbroker.consumerVersionBranch}",
+              "githubVerificationStatus" => "${pactbroker.githubVerificationStatus}",
+              "providerVersionNumber" => "${pactbroker.providerVersionNumber}",
+              "providerVersionTags" => "${pactbroker.providerVersionTags}",
+              "providerVersionBranch" => "${pactbroker.providerVersionBranch}",
+              "canIMerge" => "${pactbroker.providerMainBranchGithubVerificationStatus}"
+            }
+          }
+        }
       end
     end
   end

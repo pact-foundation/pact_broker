@@ -12,6 +12,7 @@ begin
     .delete_pacticipant("bar-provider")
     .create_pacticipant("foo-consumer")
     .create_pacticipant("bar-provider")
+    .create_version(pacticipant: "bar-provider", branch: "main", version: "1")
     .publish_pact_the_old_way(consumer: "foo-consumer", consumer_version: "1", provider: "bar-provider", content_id: "111", tag: "main")
     .get_pacts_for_verification(
       provider: "bar-provider",

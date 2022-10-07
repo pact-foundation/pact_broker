@@ -25,6 +25,10 @@ module PactBroker
         with_updated_attribute(logging_options: { failure_log_message: value })
       end
 
+      def with_redact_sensitive_data(value)
+        with_updated_attribute(logging_options: { redact_sensitive_data: value })
+      end
+
       def with_retry_schedule(value)
         with_updated_attribute(retry_schedule: value)
       end
