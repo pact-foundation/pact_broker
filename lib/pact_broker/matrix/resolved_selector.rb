@@ -211,9 +211,9 @@ module PactBroker
           "a version of #{pacticipant_name} with tag #{tag} (no such version exists)"
         elsif environment_name && pacticipant_version_number
           prefix = one_of_many? ? "one of the versions" : "the version"
-          "#{prefix} of #{pacticipant_name} currently deployed or released to #{environment_name} (#{pacticipant_version_number})"
+          "#{prefix} of #{pacticipant_name} currently in #{environment_name} (#{pacticipant_version_number})"
         elsif environment_name
-          "a version of #{pacticipant_name} currently deployed or released to #{environment_name} (no version is currently recorded as deployed/released in this environment)"
+          "a version of #{pacticipant_name} currently in #{environment_name} (no version is currently recorded as deployed/released in this environment)"
         elsif pacticipant_version_number && version_does_not_exist?
           "version #{pacticipant_version_number} of #{pacticipant_name} (no such version exists)"
         elsif pacticipant_version_number
