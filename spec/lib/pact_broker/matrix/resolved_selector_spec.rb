@@ -71,7 +71,7 @@ module PactBroker
           context "when it was specified by environment" do
             let(:environment_name) { "test" }
 
-            its(:description) { is_expected.to eq "the version of Foo currently deployed or released to test (123)" }
+            its(:description) { is_expected.to eq "the version of Foo currently in test (123)" }
           end
 
           context "when it was specified by version number" do
@@ -165,7 +165,7 @@ module PactBroker
           context "when it was specified by environment" do
             let(:environment_name) { "test" }
 
-            its(:description) { is_expected.to eq "a version of Foo currently deployed or released to test (no version is currently recorded as deployed/released in this environment)" }
+            its(:description) { is_expected.to eq "a version of Foo currently in test (no version is currently recorded as deployed/released in this environment)" }
             its(:version_does_not_exist_description) { is_expected.to eq "No version of Foo is currently recorded as deployed or released in environment test" }
           end
 
