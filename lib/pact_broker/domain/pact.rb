@@ -94,7 +94,13 @@ module PactBroker
         provider_version_tags - tags_with_successful_verifications_from_that_branch - tags_with_previous_successful_verifications_from_other_branches
       end
 
-      def pending?
+      # @param [String] branch_name the name of the provider branch that will be verifying the pacts
+      # @return Boolean whether or not the pact is in pending state (ie. the build should not fail if the verification fails)
+      def pending_for_provider_branch?(branch_name)
+        pact_version.pending_for_provider_branch?(branch_name)
+      end
+
+      def pending_for_any_provider_branch?
         !pact_version.verified_successfully_by_any_provider_version?
       end
 

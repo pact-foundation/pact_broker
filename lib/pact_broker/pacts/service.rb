@@ -122,7 +122,7 @@ module PactBroker
           .find_for_verification(provider_name, consumer_version_selectors)
           .collect do | selected_pact |
             # Todo move this into the repository
-            squash_pacts_for_verification(provider_version_tags, selected_pact, options[:include_pending_status])
+            squash_pacts_for_verification(provider_version_tags, provider_version_branch, selected_pact, options[:include_pending_status])
           end
 
         verifiable_wip_pacts =  if options[:include_wip_pacts_since]
