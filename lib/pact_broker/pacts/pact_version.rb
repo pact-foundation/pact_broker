@@ -184,9 +184,6 @@ module PactBroker
           Sequel[:verifications][:pact_version_id] => Sequel[:pact_versions][:id],
           Sequel[:verifications][:success] => true
         }
-        tags_join = {
-          Sequel[:tags][:version_id] => Sequel[:versions][:id],
-        }
         query = PactVersion.where(Sequel[:pact_versions][:id] => id)
           .join(:verifications, verifications_join)
           .join(:branch_versions, Sequel[:branch_versions][:version_id] => Sequel[:verifications][:provider_version_id]) do
