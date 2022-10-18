@@ -280,7 +280,8 @@ module PactBroker
 
         context "when there is a successful verification from before the first provider version with the specified tag was created" do
           before do
-            td.create_pact_with_hierarchy("Foo", "1", "Bar")
+            td.set_now(Date.today - 7)
+              .create_pact_with_hierarchy("Foo", "1", "Bar")
               .create_verification(provider_version: "20", tag_names: ["dev"], success: true)
               .add_day
               .create_verification(provider_version: "21", tag_names: ["feat-new-branch"], number: 2, success: false)
@@ -293,7 +294,8 @@ module PactBroker
 
         context "when there is a successful verification from after the first provider version with the specified tag was created" do
           before do
-            td.create_pact_with_hierarchy("Foo", "1", "Bar")
+            td.set_now(Date.today - 7)
+              .create_pact_with_hierarchy("Foo", "1", "Bar")
               .create_verification(provider_version: "21", tag_names: ["feat-new-branch"], number: 2, success: false)
               .add_day
               .create_verification(provider_version: "20", tag_names: ["dev"], success: true)
@@ -306,7 +308,6 @@ module PactBroker
       end
 
       describe "#verified_successfully_by_any_provider_version?" do
-
         let(:pact_version) { PactVersion.last }
 
         subject { pact_version.verified_successfully_by_any_provider_version? }
@@ -334,6 +335,113 @@ module PactBroker
           before do
             td.create_pact_with_hierarchy("Foo", "1", "Bar")
           end
+
+          it { is_expected.to be false }
+        end
+      end
+
+      describe "any_successful_verifications_from_provider_branch?" do
+        before do
+          td.create_pact_with_hierarchy("Foo", "1", "Bar")
+            .create_verification(provider_version: "1", branch: "main", success: true)
+            .create_verification(provider_version: "2", branch: "main", success: false, number: 2)
+            .create_verification(provider_version: "3", branch: "feat/a", success: false, number: 3)
+        end
+
+        subject { PactVersion.last.any_successful_verifications_from_provider_branch?(branch_name) }
+
+        let(:branch_name) { "main" }
+
+        context "when there is a successful verification from the specified branch and a failed one" do
+          it { is_expected.to be true }
+        end
+
+        context "when there are not any verifications from the specified branch" do
+          let(:branch_name) { "feat/b" }
+
+          it { is_expected.to be false }
+        end
+
+        context "when there are only failed verifications from the specified branch" do
+          let(:branch_name) { "feat/a" }
+
+          it { is_expected.to be false }
+        end
+      end
+
+      describe "any_successful_verifications_from_another_branch_from_before_this_branch_created?" do
+        let(:pact_version) { PactVersion.last }
+
+        subject { pact_version.any_successful_verifications_from_another_branch_from_before_this_branch_created?(branch_name) }
+
+        context "when the provider version branch specified does not exist yet but there are previous successful verifications from another branch" do
+          before do
+            td.create_pact_with_hierarchy("Foo", "1", "Bar")
+              .create_verification(provider_version: "20", branch: "dev", success: true)
+              .create_verification(provider_version: "21", number: 2)
+          end
+
+          let(:branch_name) { "feat-new-branch" }
+
+          it { is_expected.to be true }
+        end
+
+        context "when there is a successful verification from before the specified branch was created" do
+          before do
+            td.set_now(Date.today - 7)
+              .create_pact_with_hierarchy("Foo", "1", "Bar")
+              .create_verification(provider_version: "20", branch: "dev", success: true)
+              .add_day
+              .create_verification(provider_version: "21", branch: "feat-new-branch", number: 2, success: false)
+          end
+
+          let(:branch_name) { "feat-new-branch" }
+
+          it { is_expected.to be true }
+        end
+
+        context "when there is a successful verification from after the branch was created" do
+          before do
+            td.set_now(Date.today - 7)
+              .create_pact_with_hierarchy("Foo", "1", "Bar")
+              .create_verification(provider_version: "21", branch: "feat-new-branch", number: 2, success: false)
+              .add_day
+              .create_verification(provider_version: "20", branch: "dev", success: true)
+          end
+
+          let(:branch_name) { "feat-new-branch" }
+
+          it { is_expected.to be false }
+        end
+      end
+
+      describe "pending_for_provider_branch?" do
+        before do
+          td.create_pact_with_hierarchy("Foo", "1", "Bar")
+        end
+
+        let(:pact_version) { PactVersion.last }
+
+        subject { pact_version.pending_for_provider_branch?("main") }
+
+        context "with no successful verification from the specified branch" do
+          it { is_expected.to be true }
+        end
+
+        context "with a successful verification from the specified branch" do
+          before do
+            td.create_verification(provider_version: "1", branch: "main")
+          end
+
+          it { is_expected.to be false }
+        end
+
+        context "when there is a successful verification from before the specified branch was created" do
+          before do
+            td.create_verification(provider_version: "20", branch: "other-branch", success: true)
+          end
+
+          let(:branch_name) { "feat-new-branch" }
 
           it { is_expected.to be false }
         end

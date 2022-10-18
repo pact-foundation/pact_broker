@@ -80,6 +80,14 @@ module PactBroker
           }
           join(:tags, tags_join)
         end
+
+        def join_branch_versions_for_branch_name_to_verifications(branch_name)
+          branch_versions_join = {
+            Sequel[:branch_versions][:version_id] => Sequel[:verifications][:provider_version_id],
+            Sequel[:branch_versions][:branch_name] => branch_name
+          }
+          join(:branch_versions, branch_versions_join)
+        end
       end
 
       def name
@@ -104,6 +112,10 @@ module PactBroker
 
       def latest_consumer_version_number
         latest_consumer_version.number
+      end
+
+      def pending_for_provider_branch?(branch_name)
+        !any_successful_verifications_from_provider_branch?(branch_name) && !any_successful_verifications_from_another_branch_from_before_this_branch_created?(branch_name)
       end
 
       def select_provider_tags_with_successful_verifications_from_another_branch_from_before_this_branch_created(tags)
@@ -156,6 +168,33 @@ module PactBroker
             interactions_count: content_object.interactions&.count || 0
           )
         end
+      end
+
+      def any_successful_verifications_from_provider_branch?(branch_name)
+        PactVersion.where(Sequel[:pact_versions][:id] => id)
+          .join_successful_verifications
+          .join_branch_versions_for_branch_name_to_verifications(branch_name)
+          .any?
+      end
+
+      def any_successful_verifications_from_another_branch_from_before_this_branch_created?(branch_name)
+        branch = PactBroker::Versions::Branch.where(pacticipant_id: provider_id, name: branch_name).single_record
+
+        verifications_join = {
+          Sequel[:verifications][:pact_version_id] => Sequel[:pact_versions][:id],
+          Sequel[:verifications][:success] => true
+        }
+        query = PactVersion.where(Sequel[:pact_versions][:id] => id)
+          .join(:verifications, verifications_join)
+          .join(:branch_versions, Sequel[:branch_versions][:version_id] => Sequel[:verifications][:provider_version_id]) do
+            Sequel.lit("branch_versions.branch_name != ?", branch_name)
+          end
+
+        if branch
+          query = query.where { Sequel[:verifications][:created_at] < branch.created_at }
+        end
+
+        query.any?
       end
     end
   end
