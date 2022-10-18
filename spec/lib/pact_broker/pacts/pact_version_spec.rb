@@ -280,7 +280,8 @@ module PactBroker
 
         context "when there is a successful verification from before the first provider version with the specified tag was created" do
           before do
-            td.create_pact_with_hierarchy("Foo", "1", "Bar")
+            td.set_now(Date.today - 7)
+              .create_pact_with_hierarchy("Foo", "1", "Bar")
               .create_verification(provider_version: "20", tag_names: ["dev"], success: true)
               .add_day
               .create_verification(provider_version: "21", tag_names: ["feat-new-branch"], number: 2, success: false)
@@ -293,7 +294,8 @@ module PactBroker
 
         context "when there is a successful verification from after the first provider version with the specified tag was created" do
           before do
-            td.create_pact_with_hierarchy("Foo", "1", "Bar")
+            td.set_now(Date.today - 7)
+              .create_pact_with_hierarchy("Foo", "1", "Bar")
               .create_verification(provider_version: "21", tag_names: ["feat-new-branch"], number: 2, success: false)
               .add_day
               .create_verification(provider_version: "20", tag_names: ["dev"], success: true)

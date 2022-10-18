@@ -399,7 +399,7 @@ module PactBroker
         verification = PactBroker::Domain::Verification.new(parameters)
         pact_version = PactBroker::Pacts::Repository.new.find_pact_version(@consumer, @provider, pact.pact_version_sha)
         @provider_version = version_repository.find_by_pacticipant_id_and_number_or_create(provider.id, provider_version_number)
-        PactBroker::Versions::BranchVersionRepository.new.add_branch(@provider_version, branch) if branch
+        branch_version = PactBroker::Versions::BranchVersionRepository.new.add_branch(@provider_version, branch) if branch
 
         if tag_names.any?
           tag_names.each do | tag_name |
@@ -409,6 +409,16 @@ module PactBroker
         end
 
         @verification = PactBroker::Verifications::Repository.new.create(verification, provider_version_number, pact_version)
+
+
+        if branch
+          set_created_at_if_set(parameters[:created_at], :branch_versions, id: branch_version.id)
+
+          # if the branch has just been created...
+          if branch_version.branch.branch_versions.size == 1
+            set_created_at_if_set(parameters[:created_at], :branches, id: branch_version.branch.id)
+          end
+        end
 
         set_created_at_if_set(parameters[:created_at], :verifications, id: @verification.id)
         set_created_at_if_set(parameters[:created_at], :versions, id: @provider_version.id)

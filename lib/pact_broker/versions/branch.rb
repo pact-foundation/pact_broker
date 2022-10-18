@@ -8,6 +8,7 @@ module PactBroker
       plugin :insert_ignore, identifying_columns: [:name, :pacticipant_id]
 
       associate(:many_to_one, :pacticipant, :class => "PactBroker::Domain::Pacticipant", :key => :pacticipant_id, :primary_key => :id)
+      associate(:one_to_many, :branch_versions, :class => "PactBroker::Versions::BranchVersion", :key => :branch_id, :primary_key => :id)
 
       dataset_module do
         include PactBroker::Repositories::Helpers
