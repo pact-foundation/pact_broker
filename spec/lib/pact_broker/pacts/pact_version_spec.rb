@@ -306,7 +306,6 @@ module PactBroker
       end
 
       describe "#verified_successfully_by_any_provider_version?" do
-
         let(:pact_version) { PactVersion.last }
 
         subject { pact_version.verified_successfully_by_any_provider_version? }
@@ -387,7 +386,8 @@ module PactBroker
 
         context "when there is a successful verification from before the specified branch was created" do
           before do
-            td.create_pact_with_hierarchy("Foo", "1", "Bar")
+            td.set_now(Date.today - 7)
+              .create_pact_with_hierarchy("Foo", "1", "Bar")
               .create_verification(provider_version: "20", branch: "dev", success: true)
               .add_day
               .create_verification(provider_version: "21", branch: "feat-new-branch", number: 2, success: false)
@@ -400,7 +400,8 @@ module PactBroker
 
         context "when there is a successful verification from after the branch was created" do
           before do
-            td.create_pact_with_hierarchy("Foo", "1", "Bar")
+            td.set_now(Date.today - 7)
+              .create_pact_with_hierarchy("Foo", "1", "Bar")
               .create_verification(provider_version: "21", branch: "feat-new-branch", number: 2, success: false)
               .add_day
               .create_verification(provider_version: "20", branch: "dev", success: true)
