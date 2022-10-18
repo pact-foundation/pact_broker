@@ -85,6 +85,7 @@ en:
         invalid_webhook_uuid: The UUID can only contain the characters A-Z, a-z, 0-9, _ and -, and must be 16 or more characters.
         pacticipant_not_found: No pacticipant with name '%{name}' found
         environment_name_must_be_unique: Another environment with name '%{name}' already exists.
+        must_specify_environment_or_tag: Must specify either an environment or a 'to' tag.
         cannot_specify_tag_and_environment: Cannot specify both a 'to' tag and an environment.
         cannot_specify_latest_and_environment: Cannot specify both latest=true and an environment.
         cannot_specify_more_than_one_destination_identifier: Cannot specify more than one of tag, environment and mainBranch.

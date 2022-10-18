@@ -35,6 +35,21 @@ module PactBroker
           it { is_expected.to_not be_empty }
         end
 
+        context "with neither a to tag or an environment specified" do
+          before do
+            allow(PactBroker::Deployments::EnvironmentService).to receive(:find_by_name).and_return(double("environment"))
+          end
+
+          let(:params) do
+            {
+              pacticipant: "foo",
+              version: "1"
+            }
+          end
+
+          it { is_expected.to_not be_empty }
+        end
+
         context "when the environment does exist" do
           before do
             allow(PactBroker::Deployments::EnvironmentService).to receive(:find_by_name).and_return(double("environment"))

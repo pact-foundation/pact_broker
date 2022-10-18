@@ -2,12 +2,14 @@ require "dry-validation"
 require "pact_broker/messages"
 require "pact_broker/api/contracts/dry_validation_predicates"
 require "pact_broker/project_root"
+require "pact_broker/string_refinements"
 
 module PactBroker
   module Api
     module Contracts
       class CanIDeployQuerySchema
         extend PactBroker::Messages
+        using PactBroker::StringRefinements
 
         SCHEMA = Dry::Validation.Schema do
           configure do
@@ -25,6 +27,10 @@ module PactBroker
           if params[:to] && params[:environment]
             result[:to] ||= []
             result[:to] << message("errors.validation.cannot_specify_tag_and_environment")
+          end
+          if params[:to].blank? && params[:environment].blank?
+            result[:environment] ||= []
+            result[:environment] << message("errors.validation.must_specify_environment_or_tag")
           end
           result
         end
