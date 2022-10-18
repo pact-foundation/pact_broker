@@ -401,30 +401,11 @@ module PactBroker
         @provider_version = version_repository.find_by_pacticipant_id_and_number_or_create(provider.id, provider_version_number)
         branch_version = PactBroker::Versions::BranchVersionRepository.new.add_branch(@provider_version, branch) if branch
 
-        if tag_names.any?
-          tag_names.each do | tag_name |
-            PactBroker::Domain::Tag.new(name: tag_name, version: @provider_version, version_order: @provider_version.order).insert_ignore
-            set_created_at_if_set(parameters[:created_at], :tags, version_id: @provider_version.id, name: tag_name)
-          end
-        end
+        set_created_at_for_provider_tags(parameters, tag_names)
 
         @verification = PactBroker::Verifications::Repository.new.create(verification, provider_version_number, pact_version)
 
-
-        if branch
-          set_created_at_if_set(parameters[:created_at], :branch_versions, id: branch_version.id)
-
-          # if the branch has just been created...
-          if branch_version.branch.branch_versions.size == 1
-            set_created_at_if_set(parameters[:created_at], :branches, id: branch_version.branch.id)
-          end
-        end
-
-        set_created_at_if_set(parameters[:created_at], :verifications, id: @verification.id)
-        set_created_at_if_set(parameters[:created_at], :versions, id: @provider_version.id)
-        set_created_at_if_set(parameters[:created_at], :latest_verification_id_for_pact_version_and_provider_version, pact_version_id: pact_version_id, provider_version_id: @provider_version.id)
-        set_created_at_if_set(parameters[:created_at], :pact_version_provider_tag_successful_verifications, { verification_id: @verification.id }, :execution_date)
-
+        set_created_at_for_verification_resources(parameters, pact_version.id, branch, branch_version)
         self
       end
 
@@ -683,6 +664,31 @@ module PactBroker
         elsif label
           [nil, Domain::WebhookPacticipant.new(label: label)]
         end
+      end
+
+      def set_created_at_for_provider_tags(parameters, tag_names)
+        if tag_names.any?
+          tag_names.each do | tag_name |
+            PactBroker::Domain::Tag.new(name: tag_name, version: @provider_version, version_order: @provider_version.order).insert_ignore
+            set_created_at_if_set(parameters[:created_at], :tags, version_id: @provider_version.id, name: tag_name)
+          end
+        end
+      end
+
+      def set_created_at_for_verification_resources(parameters, pact_version_id, branch, branch_version)
+        if branch
+          set_created_at_if_set(parameters[:created_at], :branch_versions, id: branch_version.id)
+
+          # if the branch has just been created...
+          if branch_version.branch.branch_versions.size == 1
+            set_created_at_if_set(parameters[:created_at], :branches, id: branch_version.branch.id)
+          end
+        end
+
+        set_created_at_if_set(parameters[:created_at], :verifications, id: @verification.id)
+        set_created_at_if_set(parameters[:created_at], :versions, id: @provider_version.id)
+        set_created_at_if_set(parameters[:created_at], :latest_verification_id_for_pact_version_and_provider_version, pact_version_id: pact_version_id, provider_version_id: @provider_version.id)
+        set_created_at_if_set(parameters[:created_at], :pact_version_provider_tag_successful_verifications, { verification_id: @verification.id }, :execution_date)
       end
     end
   end
