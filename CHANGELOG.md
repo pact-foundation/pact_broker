@@ -1,3 +1,21 @@
+<a name="v2.105.0"></a>
+### v2.105.0 (2022-10-19)
+
+#### Features
+
+* update wording of version description for version in environment	 ([d122fa68](/../../commit/d122fa68))
+
+* **webhooks**
+  * allow auth headers to be logged for debugging purposes (#575)	 ([102b1930](/../../commit/102b1930))
+
+#### Bug Fixes
+
+* add validation to ensure an environment or to tag is specified for the /can-i-deploy endpoint	 ([e9d772eb](/../../commit/e9d772eb))
+* implement pending logic for provider branches	 ([7cdf1a7c](/../../commit/7cdf1a7c))
+
+* **wip pacts**
+  * fix performance issue encountered when removing explicitly specified pacts from the list of potential WIP pacts (#573)	 ([757f0301](/../../commit/757f0301))
+
 <a name="v2.104.0"></a>
 ### v2.104.0 (2022-09-17)
 
