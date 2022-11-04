@@ -372,6 +372,18 @@ module PactBroker
               expect(subject.errors[:enabled]).to eq ["cannot have a template parameter in the host"]
             end
           end
+
+          context "with a dodgey method" do
+            let(:json) do
+              valid_webhook_with do |hash|
+                hash["request"]["method"] = "Post%0d%0a"
+              end
+            end
+
+            it "contains an error" do
+              expect(subject.errors[:"request.http_method"]).to eq ["is not a recognised HTTP method"]
+            end
+          end
         end
       end
     end

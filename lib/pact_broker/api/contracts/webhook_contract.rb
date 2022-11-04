@@ -130,6 +130,8 @@ module PactBroker
 
               def valid_method?(http_method)
                 Net::HTTP.const_defined?(http_method.capitalize)
+              rescue StandardError
+                false
               end
 
               def valid_url?(url)
