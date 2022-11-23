@@ -38,9 +38,15 @@ module PactBroker
 
       def find_all_pacticipant_versions_in_reverse_order name, pagination_options = nil
         pacticipant = pacticipant_repository.find_by_name!(name)
-        query = PactBroker::Domain::Version.where(pacticipant: pacticipant).reverse_order(:order)
+        query = PactBroker::Domain::Version
+                  .where(pacticipant: pacticipant)
+                  .eager(:pacticipant)
+                  .eager(branch_versions: [:version, :branch_head, { branch: :pacticipant }])
+                  .eager(tags: :head_tag)
+                  .eager(:pact_publications)
+                  .reverse_order(:order)
         query = query.paginate(pagination_options[:page_number], pagination_options[:page_size]) if pagination_options
-        query
+        query.all
       end
 
       def find_by_name_or_create name
