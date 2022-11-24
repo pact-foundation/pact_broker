@@ -3,6 +3,7 @@ require "pact_broker/domain/verification"
 require "pact_broker/verifications/sequence"
 require "pact_broker/verifications/latest_verification_id_for_pact_version_and_provider_version"
 require "pact_broker/verifications/pact_version_provider_tag_successful_verification"
+require "pact_broker/repositories/scopes"
 
 module PactBroker
   module Verifications
@@ -10,6 +11,7 @@ module PactBroker
 
       include PactBroker::Repositories::Helpers
       include PactBroker::Repositories
+      include PactBroker::Repositories::Scopes
 
       # Ideally this would just be a sequence, but Sqlite and MySQL don't support sequences
       # in the way we need to use them ie. determining what the next number will be before we
@@ -33,7 +35,7 @@ module PactBroker
       end
 
       def delete(verification_id)
-        PactBroker::Domain::Verification.where(id: verification_id).delete
+        scope_for(PactBroker::Domain::Verification).where(id: verification_id).delete
       end
 
       def update_latest_verification_id verification
@@ -62,8 +64,9 @@ module PactBroker
         end
       end
 
+      # policy should be applied in resource
       def find consumer_name, provider_name, pact_version_sha, verification_number
-        PactBroker::Domain::Verification
+        unscoped(PactBroker::Domain::Verification)
           .select_all_qualified
           .join(:all_pact_publications, pact_version_id: :pact_version_id)
           .consumer(consumer_name)
@@ -73,19 +76,19 @@ module PactBroker
       end
 
       def find_latest_for_pact(pact)
-        PactBroker::Pacts::PactPublication.where(id: pact.id).single_record.latest_verification
+        scope_for(PactBroker::Pacts::PactPublication).where(id: pact.id).single_record.latest_verification
       end
 
       def find_latest_from_main_branch_for_pact(pact)
-        PactBroker::Pacts::PactPublication.where(id: pact.id).single_record.latest_main_branch_verification
+        scope_for(PactBroker::Pacts::PactPublication).where(id: pact.id).single_record.latest_main_branch_verification
       end
 
       def any_verifications?(consumer, provider)
-        PactBroker::Domain::Verification.where(consumer_id: consumer.id, provider_id: provider.id).any?
+        scope_for(PactBroker::Domain::Verification).where(consumer_id: consumer.id, provider_id: provider.id).any?
       end
 
       def search_for_latest consumer_name, provider_name
-        query = PactBroker::Domain::Verification.select_all_qualified
+        query = scope_for(PactBroker::Domain::Verification).select_all_qualified
         query = query.for_consumer_name(consumer_name) if consumer_name
         query = query.for_provider_name(provider_name) if provider_name
         query.reverse(:execution_date, :id).first
@@ -94,7 +97,7 @@ module PactBroker
       def find_latest_verifications_for_consumer_version consumer_name, consumer_version_number
         # Use remove_verifications_for_overridden_consumer_versions because we don't
         # want verifications for shadowed revisions as it would be misleading.
-        PactBroker::Domain::Verification
+        scope_for(PactBroker::Domain::Verification)
           .select_all_qualified
           .remove_verifications_for_overridden_consumer_versions
           .for_consumer_name_and_consumer_version_number(consumer_name, consumer_version_number)
@@ -115,7 +118,7 @@ module PactBroker
           Sequel[:lp][:consumer_id] => consumer.id,
           Sequel[:lp][:provider_id] => provider.id
         }
-        query = PactBroker::Domain::Verification
+        query = scope_for(PactBroker::Domain::Verification)
           .select_all_qualified
           .join(:latest_verification_ids_for_pact_versions, { Sequel[:verifications][:id] => Sequel[:lv][:latest_verification_id] }, { table_alias: :lv })
           .join(:latest_pact_publication_ids_for_consumer_versions, join_cols, { table_alias: :lp })
@@ -140,7 +143,7 @@ module PactBroker
         consumer_tag_filter = PactBroker::Repositories::Helpers.name_like(Sequel.qualify(:consumer_tags, :name), consumer_version_tag)
         provider_tag_filter = PactBroker::Repositories::Helpers.name_like(Sequel.qualify(:provider_tags, :name), provider_version_tag)
 
-        query = PactBroker::Domain::Verification
+        query = scope_for(PactBroker::Domain::Verification)
           .select_all_qualified
           .join(:versions, { Sequel[:provider_versions][:id] => Sequel[view_name][:provider_version_id] }, { table_alias: :provider_versions })
           .join(:latest_verification_id_for_pact_version_and_provider_version, { Sequel[:lv][:verification_id] => Sequel[view_name][:id] }, { table_alias: :lv })
@@ -160,13 +163,13 @@ module PactBroker
       end
 
       def delete_by_provider_version_id version_id
-        PactBroker::Domain::Verification.where(provider_version_id: version_id).delete
+        scope_for(PactBroker::Domain::Verification).where(provider_version_id: version_id).delete
       end
 
       def delete_all_verifications_between(consumer_name, options)
         consumer = pacticipant_repository.find_by_name!(consumer_name)
         provider = pacticipant_repository.find_by_name!(options.fetch(:and))
-        PactBroker::Domain::Verification.where(provider: provider, consumer: consumer).delete
+        scope_for(PactBroker::Domain::Verification).where(provider: provider, consumer: consumer).delete
       end
     end
   end

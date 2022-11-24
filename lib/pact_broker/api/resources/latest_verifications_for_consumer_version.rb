@@ -27,7 +27,7 @@ module PactBroker
         end
 
         def policy_name
-          :'verifications::verifications'
+          :'pacticipants::pacticipant'
         end
 
         private
