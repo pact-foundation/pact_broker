@@ -195,7 +195,7 @@
               .tag-parent{"title": tag.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
                 %a{href: tag.url}
                   .tag.badge.badge-primary
-                    = "tag:" + ellipsisize(tag.name)
+                    = "tag: " + ellipsisize(tag.name)
             - line.other_provider_version_tags.each do | tag |
               .tag-parent{"title": tag.tooltip, "data-toggle": "tooltip", "data-placement": "right"}
                 %a{href: tag.url}
