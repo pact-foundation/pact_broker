@@ -1,4 +1,5 @@
 require "webmachine/adapters/rack_mapped"
+require "webmachine/application_monkey_patch"
 require "pact_broker/db/models"
 require "pact_broker/api/resources"
 require "pact_broker/api/decorators"
@@ -140,10 +141,7 @@ module PactBroker
       end
     end
 
-    # naughty, but better than setting each route manually
-    pact_api.routes.each do | route |
-      route.instance_variable_get(:@bindings)[:application_context] = application_context
-    end
+    pact_api.application_context = application_context
 
     pact_api.configure do |config|
       config.adapter = :RackMapped
