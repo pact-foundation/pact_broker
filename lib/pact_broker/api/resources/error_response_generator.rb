@@ -46,7 +46,7 @@ module PactBroker
         end
 
         private_class_method def self.problem_json_response_body(message, env)
-          PactBroker::Api::Decorators::RuntimeErrorProblemJSONDecorator.new(message).to_hash(user_options: { base_url: env["pactbroker.base_url" ]} )
+          PactBroker::Api::Decorators::RuntimeErrorProblemJSONDecorator.new(message).to_hash(user_options: { base_url: env["pactbroker.base_url" ] })
         end
 
         private_class_method def self.obfuscated_error_message(error_reference)
