@@ -20,7 +20,6 @@ require "rack/pact_broker/ui_request_filter"
 require "rack/pact_broker/ui_authentication"
 require "rack/pact_broker/configurable_make_it_later"
 require "rack/pact_broker/no_auth"
-require "rack/pact_broker/convert_404_to_hal"
 require "rack/pact_broker/reset_thread_data"
 require "rack/pact_broker/add_vary_header"
 require "rack/pact_broker/use_when"
@@ -256,7 +255,6 @@ module PactBroker
       api_apps.unshift(@custom_api) if @custom_api
       builder = ::Rack::Builder.new
       builder.use @make_it_later_api_auth
-      builder.use Rack::PactBroker::Convert404ToHal
       builder.use Rack::PactBroker::DatabaseTransaction, configuration.database_connection
       builder.run Rack::Cascade.new(api_apps, [404])
       builder

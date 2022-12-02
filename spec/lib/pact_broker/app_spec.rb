@@ -337,7 +337,7 @@ module PactBroker
       end
 
       it "returns a JSON body" do
-        expect(subject.body).to eq ""
+        expect(subject.body).to eq "{\"error\":\"The requested document was not found on this server.\"}"
       end
 
       it "returns a 404" do
