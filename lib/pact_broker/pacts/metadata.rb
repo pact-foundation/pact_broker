@@ -60,6 +60,7 @@ module PactBroker
             "w" => true
           }
         else
+
           # TODO support deployed and released
           {
             "s" => verifiable_pact.selectors.collect do | selector |

@@ -10,6 +10,7 @@ require "pact_broker/pacts/pact_params"
 require "pact_broker/api/resources/authentication"
 require "pact_broker/api/resources/authorization"
 require "pact_broker/errors"
+require "pact_broker/api/resources/error_handling_methods"
 
 module PactBroker
   module Api
@@ -22,6 +23,7 @@ module PactBroker
         include PactBroker::Api::PactBrokerUrls
         include PactBroker::Api::Resources::Authentication
         include PactBroker::Api::Resources::Authorization
+        include PactBroker::Api::Resources::ErrorHandlingMethods
 
         include PactBroker::Logging
 
@@ -111,15 +113,6 @@ module PactBroker
           { user_options: decorator_context(options) }
         end
 
-        def handle_exception(error)
-          error_reference = PactBroker::Errors.generate_error_reference
-          application_context.error_logger.call(error, error_reference, request.env)
-          if PactBroker::Errors.reportable_error?(error)
-            PactBroker::Errors.report(error, error_reference, request.env)
-          end
-          response.body = application_context.error_response_body_generator.call(error, error_reference, request.env)
-        end
-
         # rubocop: disable Metrics/CyclomaticComplexity
         def params(options = {})
           return options[:default] if options.key?(:default) && request_body.empty?
@@ -156,16 +149,6 @@ module PactBroker
 
         def pact_params
           @pact_params ||= PactBroker::Pacts::PactParams.from_request(request, identifier_from_path)
-        end
-
-        def set_json_error_message message
-          response.headers["Content-Type"] = "application/hal+json;charset=utf-8"
-          response.body = { error: message }.to_json
-        end
-
-        def set_json_validation_error_messages errors
-          response.headers["Content-Type"] = "application/hal+json;charset=utf-8"
-          response.body = { errors: errors }.to_json
         end
 
         def request_body
@@ -215,13 +198,13 @@ module PactBroker
           rescue NonUTF8CharacterFound => e
             logger.info(e.message) # Don't use the default SemanticLogger error logging method because it will try and print out the cause which will contain non UTF-8 chars in the message
             set_json_error_message(e.message)
-            response.headers["Content-Type"] = "application/hal+json;charset=utf-8"
+            response.headers["Content-Type"] = error_response_content_type
             true
           rescue StandardError => e
             message = "#{e.cause ? e.cause.class.name : e.class.name} - #{e.message}"
             logger.info(message)
             set_json_error_message(message)
-            response.headers["Content-Type"] = "application/hal+json;charset=utf-8"
+            response.headers["Content-Type"] = error_response_content_type
             true
           end
         end
@@ -244,7 +227,9 @@ module PactBroker
 
         def find_pacticipant name, role
           pacticipant_service.find_pacticipant_by_name(name).tap do | pacticipant |
-            set_json_error_message("No #{role} with name '#{name}' found") if pacticipant.nil?
+            if pacticipant.nil?
+              set_json_error_message("No #{role} with name '#{name}' found", title: "Not found", type: "not_found", status: 404)
+            end
           end
         end
 

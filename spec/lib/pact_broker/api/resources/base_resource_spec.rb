@@ -1,10 +1,23 @@
 require "pact_broker/api/resources/base_resource"
 require "pact_broker/application_context"
+require "webmachine/application_monkey_patch"
 
 module PactBroker
   module Api
     module Resources
       describe BaseResource do
+
+        class TestResource < BaseResource
+          def allowed_methods
+            ["POST"]
+          end
+
+          def process_post
+            raise "This is a test error"
+          end
+        end
+
+
         before do
           allow(env).to receive(:[]).with("pactbroker.base_url").and_return(nil)
         end
@@ -169,11 +182,11 @@ module PactBroker
               end
             end
           end
-        end
 
-        context "with no resource_authorizer configured" do
-          it "returns false" do
-            expect(resource.forbidden?).to eq false
+          context "with no resource_authorizer configured" do
+            it "returns false" do
+              expect(resource.forbidden?).to eq false
+            end
           end
         end
       end
