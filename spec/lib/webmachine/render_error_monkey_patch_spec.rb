@@ -13,8 +13,8 @@ module Webmachine
       expect(JSON.parse(subject.body)).to eq "error" => "The requested document was not found on this server."
     end
 
-    it "returns a hal+json content-type" do
-      expect(subject.headers["Content-Type"]).to eq "application/hal+json;charset=utf-8"
+    it "returns a json content-type" do
+      expect(subject.headers["Content-Type"]).to eq "application/json;charset=utf-8"
     end
 
     context "when the Accept header contains application/problem+json" do

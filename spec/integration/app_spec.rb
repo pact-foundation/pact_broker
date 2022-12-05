@@ -92,7 +92,7 @@ module PactBroker
 
         it "returns a 404" do
           expect(subject.status).to eq 404
-          expect(subject.headers["Content-Type"]).to include "application/hal+json"
+          expect(subject.headers["Content-Type"]).to include "application/json"
         end
       end
 
