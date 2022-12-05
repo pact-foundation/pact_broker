@@ -35,7 +35,7 @@ RSpec.describe "a request to publish a pact with invalid JSON" do
   its(:status) { is_expected.to eq 400 }
 
   it "returns an error message" do
-    expect(JSON.parse(subject.body)).to eq("error" => "JSON::ParserError - 859: unexpected token at '{'")
+    expect(JSON.parse(subject.body)["error"]).to match(/JSON::ParserError.*unexpected token at '{'/)
   end
 end
 
@@ -49,6 +49,6 @@ RSpec.describe "a request to publish a pact with an empty body" do
   its(:status) { is_expected.to eq 400 }
 
   it "returns an error message" do
-    expect(JSON.parse(subject.body)).to eq("error" => "JSON::ParserError - 859: unexpected token at ''")
+    expect(JSON.parse(subject.body)["error"]).to match(/JSON::ParserError.*unexpected token at ''/)
   end
 end
