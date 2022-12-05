@@ -2,9 +2,13 @@ require "delegate"
 
 module PactBroker
   module Pacts
+
     class SelectedPact < SimpleDelegator
       attr_reader :pact, :selectors
 
+      # @param pact [PactBroker::Domain::Pact]
+      # @param selectors [PactBroker::Pacts::Selectors<PactBroker::Pacts::Selector::ResolvedSelector>] the Selectors object
+      #                  containing the ResolvedSelector objects that caused the pact to be selected.
       def initialize(pact, selectors)
         super(pact)
         @pact = pact
