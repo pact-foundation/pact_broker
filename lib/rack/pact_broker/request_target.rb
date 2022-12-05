@@ -7,7 +7,7 @@ module Rack
       extend self
 
       WEB_ASSET_EXTENSIONS = %w[.js .woff .woff2 .css .png .html .map .ttf .ico].freeze
-      API_CONTENT_TYPES = %w[application/hal+json application/json text/csv application/yaml text/plain].freeze
+      API_CONTENT_TYPES = %w[application/hal+json application/problem+json application/json text/csv application/yaml text/plain].freeze
 
       def request_for_ui?(env)
         !(request_for_api?(env))

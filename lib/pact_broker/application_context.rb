@@ -3,7 +3,7 @@ require "pact_broker/api/contracts/configuration"
 require "pact_broker/api/decorators/decorator_context_creator"
 require "pact_broker/webhooks/execution_configuration_creator"
 require "pact_broker/errors/error_logger"
-require "pact_broker/api/resources/error_response_body_generator"
+require "pact_broker/api/resources/error_response_generator"
 
 module PactBroker
   class ApplicationContext
@@ -15,7 +15,7 @@ module PactBroker
                 :before_resource,
                 :after_resource,
                 :error_logger,
-                :error_response_body_generator
+                :error_response_generator
 
     def initialize(params = {})
       params_with_defaults = {
@@ -24,7 +24,7 @@ module PactBroker
         decorator_context_creator: PactBroker::Api::Decorators::DecoratorContextCreator,
         webhook_execution_configuration_creator: PactBroker::Webhooks::ExecutionConfigurationCreator,
         error_logger: PactBroker::Errors::ErrorLogger,
-        error_response_body_generator: PactBroker::Api::Resources::ErrorResponseBodyGenerator
+        error_response_generator: PactBroker::Api::Resources::ErrorResponseGenerator
       }.merge(params)
 
       @decorator_configuration = params_with_defaults[:decorator_configuration]
@@ -35,7 +35,7 @@ module PactBroker
       @before_resource = params_with_defaults[:before_resource]
       @after_resource = params_with_defaults[:after_resource]
       @error_logger = params_with_defaults[:error_logger]
-      @error_response_body_generator = params_with_defaults[:error_response_body_generator]
+      @error_response_generator = params_with_defaults[:error_response_generator]
 
     end
 

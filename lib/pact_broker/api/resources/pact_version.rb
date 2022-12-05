@@ -11,7 +11,7 @@ module PactBroker
           ["GET", "OPTIONS"]
         end
 
-        def decorator_options(options)
+        def decorator_options(options = {})
           super(options.merge(consumer_versions: consumer_versions_from_metadata&.reverse))
         end
       end

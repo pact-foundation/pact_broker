@@ -1,9 +1,9 @@
-require "pact_broker/api/resources/error_response_body_generator"
+require "pact_broker/api/resources/error_response_generator"
 
 module PactBroker
   module Api
     module Resources
-      describe ErrorResponseBodyGenerator do
+      describe ErrorResponseGenerator do
         describe ".call" do
           before do
             allow(error).to receive(:backtrace).and_return(["backtrace"])
@@ -11,10 +11,30 @@ module PactBroker
           let(:error) { StandardError.new("test error") }
           let(:error_reference) { "bYWfnyWPlf" }
 
-          subject { JSON.parse(ErrorResponseBodyGenerator.call(error, error_reference)) }
+          let(:headers_and_body) { ErrorResponseGenerator.call(error, error_reference, rack_env) }
+          let(:rack_env) { { "pactbroker.base_url" => "http://example.org" } }
+          let(:headers) { headers_and_body.first }
+
+          subject { JSON.parse(headers_and_body.last) }
+
+          it "returns headers" do
+            expect(headers).to eq("Content-Type" => "application/hal+json;charset=utf-8")
+          end
 
           it "includes an error reference" do
             expect(subject["error"]).to include "reference" => "bYWfnyWPlf"
+          end
+
+          context "when the Accept header includes application/problem+json" do
+            let(:rack_env) { { "HTTP_ACCEPT" => "application/hal+json, application/problem+json", "pactbroker.base_url" => "http://example.org" } }
+
+            it "returns headers" do
+              expect(headers).to eq("Content-Type" => "application/problem+json;charset=utf-8")
+            end
+
+            it "returns a problem JSON body" do
+              expect(subject).to include("title" => "Server error", "type" => "http://example.org/problems/server_error")
+            end
           end
 
           context "when show_backtrace_in_error_response? is true" do
