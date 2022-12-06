@@ -92,7 +92,7 @@ module PactBroker
 
         it "returns a 404" do
           expect(subject.status).to eq 404
-          expect(subject.headers["Content-Type"]).to include "text/html"
+          expect(subject.headers["Content-Type"]).to include "application/json"
         end
       end
 
@@ -128,7 +128,6 @@ module PactBroker
           expect(subject.headers["Content-Type"]).to eq "text/csv;charset=utf-8"
         end
       end
-
     end
 
     context "when the Accept header is */* (default curl)" do
@@ -149,7 +148,7 @@ module PactBroker
     context "when no Accept header is specified" do
       let(:env) { {} }
 
-      subject { get path, "", env; last_response }
+      subject { get path, "", env }
 
       describe "a request for root" do
         let(:path) { "/" }
@@ -198,7 +197,7 @@ module PactBroker
     describe "when a resource identifier contains a slash" do
       let(:path) { "/pacticipants/Foo/versions/1.2.3/tags/feat%2Fbar" }
 
-      subject { put path, nil, {"CONTENT_TYPE" => "application/json"}; last_response }
+      subject { put(path, nil, {"CONTENT_TYPE" => "application/json"}) }
 
       it "returns a success status" do
         expect(subject.status).to eq 201

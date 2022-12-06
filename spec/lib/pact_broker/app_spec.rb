@@ -333,11 +333,11 @@ module PactBroker
       subject { get("/does/not/exist", nil, { "CONTENT_TYPE" => "application/hal+json" })  }
 
       it "returns a Content-Type of application/hal+json" do
-        expect(subject.headers["Content-Type"]).to eq "application/hal+json;charset=utf-8"
+        expect(subject.headers["Content-Type"]).to eq "application/json;charset=utf-8"
       end
 
       it "returns a JSON body" do
-        expect(subject.body).to eq ""
+        expect(subject.body).to eq "{\"error\":\"The requested document was not found on this server.\"}"
       end
 
       it "returns a 404" do

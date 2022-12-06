@@ -59,6 +59,10 @@ module PactBroker
         .downcase
       end
 
+      def dasherize
+        snakecase.tr("_", "-")
+      end
+
       # ripped from rubyworks/facets, thank you
       def camelcase(*separators)
         case separators.first
