@@ -21,11 +21,12 @@ module PactBroker
                 "title" => "Validation errors",
                 "type" => "http://example.org/problems/validation-error",
                 "status" => 400,
+                "instance" => "/",
 
                 "errors" => [
                   {
                     "type" => "http://example.org/problems/invalid-body-property-value",
-                    "instance" => "/contract/content",
+                    "pointer" => "/contract/content",
                     "title" => "Validation error",
                     "detail" => "this is some error text",
                     "status" => 400
@@ -49,11 +50,12 @@ module PactBroker
                 "title" => "Validation errors",
                 "type" => "http://example.org/problems/validation-error",
                 "status" => 400,
+                "instance" => "/",
 
                 "errors" => [
                   {
                     "type" => "http://example.org/problems/invalid-body-property-value",
-                    "instance" => "/contract/content/1",
+                    "pointer" => "/contract/content/1",
                     "title" => "Validation error",
                     "detail" => "this is some error text",
                     "status" => 400
@@ -75,18 +77,16 @@ module PactBroker
                 "title" => "Validation errors",
                 "type" => "http://example.org/problems/validation-error",
                 "status" => 400,
-
+                "instance" => "/",
                 "errors" => [
                   {
                     "type" => "http://example.org/problems/invalid-body-property-value",
-                    "instance" => "",
                     "title" => "Validation error",
                     "detail" => "error 1",
                     "status" => 400
                   },
                   {
                     "type" => "http://example.org/problems/invalid-body-property-value",
-                    "instance" => "",
                     "title" => "Validation error",
                     "detail" => "error 2",
                     "status" => 400
@@ -108,11 +108,11 @@ module PactBroker
                 "title" => "Validation errors",
                 "type" => "http://example.org/problems/validation-error",
                 "status" => 400,
+                "instance" => "/",
 
                 "errors" => [
                   {
                     "type" => "http://example.org/problems/invalid-body-property-value",
-                    "instance" => "",
                     "title" => "Validation error",
                     "detail" => "error 1",
                     "status" => 400

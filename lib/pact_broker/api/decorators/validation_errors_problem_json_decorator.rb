@@ -1,10 +1,13 @@
 # Formats a nested Hash of errors as it comes out of the Dry Validation library
 # into application/problem+json format.
+require "pact_broker/string_refinements"
 
 module PactBroker
   module Api
     module Decorators
       class ValidationErrorsProblemJSONDecorator
+        using PactBroker::StringRefinements
+
 
         # @param errors [Hash]
         def initialize(errors)
@@ -19,6 +22,7 @@ module PactBroker
             "title" => "Validation errors",
             "type" => "#{decorator_options.dig(:user_options, :base_url)}/problems/validation-error",
             "status" => 400,
+            "instance" => "/",
             "errors" => error_list
           }
         end
@@ -32,6 +36,10 @@ module PactBroker
 
         attr_reader :errors
 
+        # The path is meant to be implemented using JSON Pointer, but this will probably do for now.
+        # As per https://gregsdennis.github.io/Manatee.Json/usage/pointer.html
+        # the only things that need to be escaped are "~" and "/", which are unlikely to be used
+        # in a key name. You get what you deserve if you've done that.
         def walk_errors(object, list, path, base_url)
           if object.is_a?(Hash)
             object.each { | key, value | walk_errors(value, list, "#{path}/#{key}", base_url) }
@@ -43,13 +51,14 @@ module PactBroker
         end
 
         def append_error(list, message, path, base_url)
-          list << {
+          error = {
             "type" => "#{base_url}/problems/invalid-body-property-value",
             "title" => "Validation error",
             "detail" => message,
-            "instance" => path,
             "status" => 400
           }
+          error["pointer"] = path if path.present?
+          list << error
         end
       end
     end
