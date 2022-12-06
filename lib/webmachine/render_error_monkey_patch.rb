@@ -38,7 +38,7 @@ module Webmachine
     if problem_json_error_content_type?(request)
       "application/problem+json;charset=utf-8"
     else
-      "application/hal+json;charset=utf-8"
+      "application/json;charset=utf-8"
     end
   end
 
