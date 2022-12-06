@@ -6,6 +6,10 @@ require "pact_broker/string_refinements"
 module Webmachine
   using PactBroker::StringRefinements
 
+  class << self
+    alias_method :original_render_error, :render_error
+  end
+
   # Renders a standard error message body for the response. The
   # standard messages are defined in localization files.
   # @param [Integer] code the response status code
@@ -14,6 +18,14 @@ module Webmachine
   # @param [Hash] options keys to override the defaults when rendering
   #     the response body
   def self.render_error(code, req, res, options={})
+    if text_html_error_content_type?(req)
+      Webmachine.original_render_error(code, req, res, options)
+    else
+      render_error_for_api(code, req, res, options)
+    end
+  end
+
+  def self.render_error_for_api(code, req, res, options)
     res.code = code
     unless res.body
       title, message = t(["errors.#{code}.title", "errors.#{code}.message"],
@@ -30,6 +42,10 @@ module Webmachine
     ensure_date_header(res)
   end
 
+  def self.text_html_error_content_type?(request)
+    request.headers["Accept"]&.include?("text/html")
+  end
+
   def self.problem_json_error_content_type?(request)
     request.headers["Accept"]&.include?("application/problem+json")
   end
@@ -37,6 +53,8 @@ module Webmachine
   def self.error_response_content_type(request)
     if problem_json_error_content_type?(request)
       "application/problem+json;charset=utf-8"
+    elsif text_html_error_content_type?(request)
+      "text/html;charset=utf-8"
     else
       "application/json;charset=utf-8"
     end
@@ -45,6 +63,8 @@ module Webmachine
   def self.error_response_body(detail, title, type, status, request)
     if problem_json_error_content_type?(request)
       PactBroker::Api::Decorators::CustomErrorProblemJSONDecorator.new(detail: detail, title: title, type: type, status: status).to_json
+    elsif text_html_error_content_type?(request)
+
     else
       { error: detail }.to_json
     end
