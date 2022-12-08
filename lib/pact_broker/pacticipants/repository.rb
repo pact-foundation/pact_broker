@@ -26,26 +26,14 @@ module PactBroker
         PactBroker::Domain::Pacticipant.where(id: id).single_record
       end
 
-      def find_all
-        find
+      def find_all(pagination_options = nil)
+        find(pagination_options)
       end
 
-      def find options = {}
+      def find options = {}, pagination_options
         query = PactBroker::Domain::Pacticipant.select_all_qualified
         query = query.label(options[:label_name]) if options[:label_name]
-        query.order_ignore_case(Sequel[:pacticipants][:name]).eager(:labels).eager(:latest_version).all
-      end
-
-      def find_all_pacticipant_versions_in_reverse_order name, pagination_options = nil
-        pacticipant = pacticipant_repository.find_by_name!(name)
-        query = PactBroker::Domain::Version
-                  .where(pacticipant: pacticipant)
-                  .eager(:pacticipant)
-                  .eager(branch_versions: [:version, :branch_head, { branch: :pacticipant }])
-                  .eager(tags: :head_tag)
-                  .eager(:pact_publications)
-                  .reverse_order(:order)
-        query.all_with_pagination_options(pagination_options)
+        query.order_ignore_case(Sequel[:pacticipants][:name]).eager(:labels).eager(:latest_version).all_with_pagination_options(pagination_options)
       end
 
       def find_by_name_or_create name
