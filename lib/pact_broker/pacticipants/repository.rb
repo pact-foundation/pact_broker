@@ -45,8 +45,7 @@ module PactBroker
                   .eager(tags: :head_tag)
                   .eager(:pact_publications)
                   .reverse_order(:order)
-        query = query.paginate(pagination_options[:page_number], pagination_options[:page_size]) if pagination_options
-        query.all
+        query.all_with_pagination_options(pagination_options)
       end
 
       def find_by_name_or_create name

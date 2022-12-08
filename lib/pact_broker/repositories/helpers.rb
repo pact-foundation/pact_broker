@@ -1,3 +1,5 @@
+require "pact_broker/repositories/page"
+
 Sequel.extension :escaped_like
 
 module PactBroker
@@ -5,6 +7,15 @@ module PactBroker
     module Helpers
 
       extend self
+
+      def all_with_pagination_options(pagination_options)
+        if pagination_options
+          query = paginate(pagination_options[:page_number], pagination_options[:page_size])
+          Page.new(query.all, query)
+        else
+          all
+        end
+      end
 
       def all_forbidding_lazy_load
         all.each{ | row | row.forbid_lazy_load if row.respond_to?(:forbid_lazy_load) }

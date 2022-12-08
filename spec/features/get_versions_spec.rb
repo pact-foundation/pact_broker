@@ -8,8 +8,7 @@ describe "Get versions" do
 
   context "when the pacticipant exists" do
     before do
-      TestDataBuilder.new
-        .create_consumer("Consumer")
+      td.create_consumer("Consumer")
         .create_consumer_version("1.0.0")
         .create_consumer_version("1.0.1")
     end
@@ -27,6 +26,10 @@ describe "Get versions" do
 
       it "paginates the response" do
         expect(last_response_body[:_links][:"versions"].size).to eq 1
+      end
+
+      it "includes the pagination relations" do
+        expect(last_response_body[:_links]).to have_key(:next)
       end
     end
   end
