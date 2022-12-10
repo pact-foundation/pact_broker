@@ -11,6 +11,7 @@ require "pact_broker/api/resources/authentication"
 require "pact_broker/api/resources/authorization"
 require "pact_broker/errors"
 require "pact_broker/api/resources/error_handling_methods"
+require "pact_broker/api/contracts/utf_8_validation"
 
 module PactBroker
   module Api
@@ -24,6 +25,7 @@ module PactBroker
         include PactBroker::Api::Resources::Authentication
         include PactBroker::Api::Resources::Authorization
         include PactBroker::Api::Resources::ErrorHandlingMethods
+        include PactBroker::Api::Contracts::UTF8Validation
 
         include PactBroker::Logging
 
@@ -124,24 +126,9 @@ module PactBroker
             @params_with_string_keys ||= JSON.parse(request_body, { symbolize_names: false }.merge(PACT_PARSING_OPTIONS)) #Not load! Otherwise it will try to load Ruby classes.
           end
         rescue StandardError => e
-          fragment = fragment_before_invalid_utf_8_char
-
-          if fragment
-            raise NonUTF8CharacterFound.new(message("errors.non_utf_8_char_in_request_body", char_number: fragment.length + 1, fragment: fragment))
-          else
-            raise InvalidJsonError.new(e.message)
-          end
+          raise InvalidJsonError.new(e.message)
         end
         # rubocop: enable Metrics/CyclomaticComplexity
-
-        def fragment_before_invalid_utf_8_char
-          request_body.each_char.with_index do | char, index |
-            if !char.valid_encoding?
-              return index < 100 ? request_body[0...index] : request_body[index-100...index]
-            end
-          end
-          nil
-        end
 
         def params_with_string_keys
           params(symbolize_names: false)
@@ -193,13 +180,17 @@ module PactBroker
 
         def invalid_json?
           begin
-            params
-            false
-          rescue NonUTF8CharacterFound => e
-            logger.info(e.message) # Don't use the default SemanticLogger error logging method because it will try and print out the cause which will contain non UTF-8 chars in the message
-            set_json_error_message(e.message)
-            response.headers["Content-Type"] = error_response_content_type
-            true
+            char_number, fragment = fragment_before_invalid_utf_8_char(request_body)
+            if char_number
+              error_message = message("errors.non_utf_8_char_in_request_body", char_number: char_number, fragment: fragment)
+              logger.info(error_message)
+              set_json_error_message(error_message)
+              response.headers["Content-Type"] = error_response_content_type
+              true
+            else
+              params
+              false
+            end
           rescue StandardError => e
             message = "#{e.cause ? e.cause.class.name : e.class.name} - #{e.message}"
             logger.info(message)

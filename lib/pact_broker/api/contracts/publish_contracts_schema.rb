@@ -2,6 +2,7 @@ require "dry-validation"
 require "pact_broker/api/contracts/dry_validation_workarounds"
 require "pact_broker/api/contracts/dry_validation_predicates"
 require "pact_broker/messages"
+require "pact_broker/api/contracts/utf_8_validation"
 
 module PactBroker
   module Api
@@ -10,6 +11,10 @@ module PactBroker
         extend DryValidationWorkarounds
         using PactBroker::HashRefinements
         extend PactBroker::Messages
+
+        class << self
+          include PactBroker::Api::Contracts::UTF8Validation
+        end
 
         SCHEMA = Dry::Validation.Schema do
           configure do
@@ -83,6 +88,14 @@ module PactBroker
           if contract[:decodedContent].nil?
             add_contract_error(:content, message("errors.base64?", scope: nil), i, errors)
           end
+
+          if contract[:decodedContent]
+            char_number, fragment = fragment_before_invalid_utf_8_char(contract[:decodedContent])
+            if char_number
+              error_message = message("errors.non_utf_8_char_in_contract", char_number: char_number, fragment: fragment)
+              add_contract_error(:content, error_message, i, errors)
+            end
+          end
         end
 
         def self.validate_content_matches_content_type(contract, i, errors)
@@ -90,7 +103,6 @@ module PactBroker
             add_contract_error(:content, validation_message("invalid_content_for_content_type", { content_type: contract[:contentType]}), i, errors)
           end
         end
-
 
         def self.add_contract_error(field, message, i, errors)
           errors[:contracts] ||= {}

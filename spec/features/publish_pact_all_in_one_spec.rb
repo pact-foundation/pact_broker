@@ -40,6 +40,12 @@ RSpec.describe "publishing a pact using the all in one endpoint" do
     it { is_expected.to be_a_json_error_response("missing") }
   end
 
+  context "with a contract that contains a non utf-8 char" do
+    let(:contract) { "{\"key\": \"ABCDEFG\x8FDEF\" }" }
+
+    its(:status) { is_expected.to eq 400 }
+  end
+
   context "with a conflicting pact" do
     before do
       allow(PactBroker.configuration).to receive(:allow_dangerous_contract_modification).and_return(false)

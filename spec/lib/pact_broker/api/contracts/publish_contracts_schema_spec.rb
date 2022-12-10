@@ -121,6 +121,16 @@ module PactBroker
             expect(subject[:contracts]).to include "specification is missing at index 0"
           end
         end
+
+        context "when there is a non UTF-8 character in the base64 decoded contract" do
+          let(:encoded_contract) { Base64.strict_encode64(decoded_content) }
+          let(:decoded_content) { "{\"key\": \"ABCDEFG\x8FDEF\" }" }
+          let(:decoded_parsed_content) { PactBroker::Pacts::Parse.call(decoded_content) }
+
+          it "returns an error" do
+            expect(subject[:contracts].first).to include "UTF-8 character at char 17"
+          end
+        end
       end
     end
   end
