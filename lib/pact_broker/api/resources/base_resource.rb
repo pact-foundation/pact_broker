@@ -120,11 +120,17 @@ module PactBroker
           return options[:default] if options.key?(:default) && request_body.empty?
 
           symbolize_names = !options.key?(:symbolize_names) || options[:symbolize_names]
-          if symbolize_names
+          parsed_params = if symbolize_names
             @params_with_symbol_keys ||= JSON.parse(request_body, { symbolize_names: true }.merge(PACT_PARSING_OPTIONS)) #Not load! Otherwise it will try to load Ruby classes.
           else
             @params_with_string_keys ||= JSON.parse(request_body, { symbolize_names: false }.merge(PACT_PARSING_OPTIONS)) #Not load! Otherwise it will try to load Ruby classes.
           end
+
+          if !parsed_params.is_a?(Hash) && !parsed_params.is_a?(Array)
+            raise "Expected JSON Object in request body but found #{parsed_params.class.name}"
+          end
+
+          parsed_params
         rescue StandardError => e
           raise InvalidJsonError.new(e.message)
         end
