@@ -27,7 +27,7 @@ module PactBroker
       end
 
       def find_all(pagination_options = nil)
-        find(pagination_options)
+        find({:pagination_options => pagination_options})
       end
 
       def find options = {}
