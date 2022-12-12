@@ -1,11 +1,16 @@
 require "pact_broker/api/resources/base_resource"
 require "pact_broker/configuration"
 require "pact_broker/api/decorators/versions_decorator"
+require "pact"
+require "pact_broker/api/resources/pagination_methods"
+
 
 module PactBroker
   module Api
     module Resources
       class Versions < BaseResource
+        include PaginationMethods
+
         def content_types_provided
           [["application/hal+json", :to_json]]
         end
