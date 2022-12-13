@@ -48,8 +48,8 @@ module PactBroker
         pacticipant_repository.find_by_id(id)
       end
 
-      def self.find(options)
-        pacticipant_repository.find(options)
+      def self.find(options, pagination_options = nil)
+        pacticipant_repository.find(options, pagination_options)
       end
 
       def self.find_pacticipant_repository_url_by_pacticipant_name(name)

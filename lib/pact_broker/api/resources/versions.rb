@@ -1,7 +1,6 @@
 require "pact_broker/api/resources/base_resource"
 require "pact_broker/configuration"
 require "pact_broker/api/decorators/versions_decorator"
-require "pact"
 require "pact_broker/api/resources/pagination_methods"
 
 
@@ -28,7 +27,7 @@ module PactBroker
         end
 
         def versions
-          @versions ||= version_service.find_all_pacticipant_versions_in_reverse_order(pacticipant_name, pagination_options)
+          @versions ||= version_service.find_all_pacticipant_versions_in_reverse_order(pacticipant_name, pagination_options(request))
         end
 
         def policy_name

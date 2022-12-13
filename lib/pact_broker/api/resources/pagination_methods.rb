@@ -2,11 +2,15 @@ module PactBroker
   module Api
     module Resources
       module PaginationMethods
-        def pagination_options
-          {
-            page_number: request.query["pageNumber"]&.to_i || 1,
-            page_size: request.query["pageSize"]&.to_i || 100
-          }
+        def pagination_options(request)
+          if request.query["pageNumber"] || request.query["pageSize"]
+            {
+              page_number: request.query["pageNumber"]&.to_i || 1,
+              page_size: request.query["pageSize"]&.to_i || 100
+            }
+          else
+            nil
+          end
         end
       end
     end

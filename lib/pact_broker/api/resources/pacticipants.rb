@@ -47,7 +47,7 @@ module PactBroker
         end
 
         def to_json
-          generate_json(pacticipant_service.find_all_pacticipants(pagination_options))
+          generate_json(pacticipant_service.find_all_pacticipants(pagination_options(request)))
         end
 
         def generate_json pacticipants

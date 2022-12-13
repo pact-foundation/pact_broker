@@ -4,16 +4,15 @@ describe "Get pacticipants" do
   let(:response_body_hash) { JSON.parse(subject.body, symbolize_names: true) }
   let(:expected_response_body) { {name: "Foo"} }
 
-  subject { get path; last_response }
+  subject { get(path) }
 
-  context "when the pacts exist" do
+  context "when pacts exist" do
 
     before do
-      TestDataBuilder.new
-                     .create_pacticipant("Foo")
-                     .create_label("ios")
-                     .create_pacticipant("Bar")
-                     .create_label("android")
+      td.create_pacticipant("Foo")
+        .create_label("ios")
+        .create_pacticipant("Bar")
+        .create_label("android")
     end
 
     it "returns a 200 OK" do
