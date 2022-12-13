@@ -65,6 +65,31 @@ module PactBroker
             end
           end
 
+          context "when a JSON string value is provided" do
+            let(:body_string) { "".to_json }
+
+            it "raises an error, but maybe change this later if this should be allowed currently no resources accept strings" do
+              expect { subject.params }.to raise_error InvalidJsonError
+            end
+          end
+
+          context "when a JSON number value is provided" do
+            let(:body_string) { 1.to_json }
+
+            it "raises an error, but maybe change this later if this should be allowed currently no resources accept numbers" do
+              expect { subject.params }.to raise_error InvalidJsonError
+            end
+          end
+
+          context "when a JSON array value is provided" do
+            let(:body_string) { [].to_json }
+
+            it "allows this only because, for historical reasons, the pact publishing endpoint allows publishing contracts as arrays" do
+              # possibly from when the very very first pact format was just an array of interactions, with no top level object
+              expect(subject.params).to eq []
+            end
+          end
+
           context "when symbolize_names is not set" do
             it "symbolizes the names" do
               expect(subject.params.keys).to eq [:foo]
