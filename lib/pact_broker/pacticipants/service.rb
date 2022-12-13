@@ -32,8 +32,8 @@ module PactBroker
           } .collect{ | name | pacticipant_repository.find_by_name(name) }
       end
 
-      def self.find_all_pacticipants
-        pacticipant_repository.find_all
+      def self.find_all_pacticipants(pagination_options)
+        pacticipant_repository.find_all(pagination_options)
       end
 
       def self.find_pacticipant_by_name(name)
@@ -48,12 +48,8 @@ module PactBroker
         pacticipant_repository.find_by_id(id)
       end
 
-      def self.find(options)
-        pacticipant_repository.find options
-      end
-
-      def self.find_all_pacticipant_versions_in_reverse_order(name, pagination_options = nil)
-        pacticipant_repository.find_all_pacticipant_versions_in_reverse_order(name, pagination_options)
+      def self.find(options, pagination_options = nil)
+        pacticipant_repository.find(options, pagination_options)
       end
 
       def self.find_pacticipant_repository_url_by_pacticipant_name(name)

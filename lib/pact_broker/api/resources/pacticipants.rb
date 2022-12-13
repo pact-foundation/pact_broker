@@ -3,12 +3,15 @@ require "pact_broker/api/decorators/pacticipant_decorator"
 require "pact_broker/domain/pacticipant"
 require "pact_broker/hash_refinements"
 require "pact_broker/api/contracts/pacticipant_create_schema"
+require "pact_broker/api/resources/pagination_methods"
 
 module PactBroker
   module Api
     module Resources
       class Pacticipants < BaseResource
         using PactBroker::HashRefinements
+        include PaginationMethods
+
 
         def content_types_provided
           [["application/hal+json", :to_json]]
@@ -44,7 +47,7 @@ module PactBroker
         end
 
         def to_json
-          generate_json(pacticipant_service.find_all_pacticipants)
+          generate_json(pacticipant_service.find_all_pacticipants(pagination_options))
         end
 
         def generate_json pacticipants

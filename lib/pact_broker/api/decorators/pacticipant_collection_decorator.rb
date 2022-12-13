@@ -1,6 +1,7 @@
 require "roar/json/hal"
 require "pact_broker/api/pact_broker_urls"
 require_relative "embedded_version_decorator"
+require_relative "pagination_links"
 require "pact_broker/domain/pacticipant"
 require "pact_broker/api/decorators/pacticipant_decorator"
 
@@ -10,6 +11,8 @@ module PactBroker
       class PacticipantCollectionDecorator < BaseDecorator
 
         collection :entries, :as => :pacticipants, :class => PactBroker::Domain::Pacticipant, :extend => PactBroker::Api::Decorators::PacticipantDecorator, embedded: true
+
+        include PaginationLinks
 
         link :self do | options |
           pacticipants_url options[:base_url]
