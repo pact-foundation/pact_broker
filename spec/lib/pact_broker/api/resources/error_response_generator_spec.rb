@@ -7,6 +7,7 @@ module PactBroker
         describe ".call" do
           before do
             allow(error).to receive(:backtrace).and_return(["backtrace"])
+            allow(PactBroker.configuration).to receive(:show_backtrace_in_error_response?).and_return(false)
           end
           let(:error) { StandardError.new("test error") }
           let(:error_reference) { "bYWfnyWPlf" }
@@ -33,7 +34,11 @@ module PactBroker
             end
 
             it "returns a problem JSON body" do
-              expect(subject).to include("title" => "Server error", "type" => "http://example.org/problems/server_error")
+              expect(subject).to include(
+                "title" => "Server error",
+                "type" => "http://example.org/problems/server_error",
+                "detail" => "An error has occurred. The details have been logged with the reference bYWfnyWPlf"
+              )
             end
           end
 
