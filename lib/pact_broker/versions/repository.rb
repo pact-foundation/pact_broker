@@ -59,7 +59,7 @@ module PactBroker
           .single_record
       end
 
-      def find_all_pacticipant_versions_in_reverse_order name, pagination_options = nil
+      def find_all_pacticipant_versions_in_reverse_order name, pagination_options = {}
         pacticipant = pacticipant_repository.find_by_name!(name)
         query = PactBroker::Domain::Version
                   .where(pacticipant: pacticipant)

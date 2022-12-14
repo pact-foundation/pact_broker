@@ -26,11 +26,11 @@ module PactBroker
         PactBroker::Domain::Pacticipant.where(id: id).single_record
       end
 
-      def find_all(pagination_options = nil)
+      def find_all(pagination_options = {})
         find({}, pagination_options)
       end
 
-      def find(options = {}, pagination_options = nil)
+      def find(options = {}, pagination_options = {})
         query = PactBroker::Domain::Pacticipant.select_all_qualified
         query = query.label(options[:label_name]) if options[:label_name]
         query.order_ignore_case(Sequel[:pacticipants][:name]).eager(:labels).eager(:latest_version).all_with_pagination_options(pagination_options)

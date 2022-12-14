@@ -26,7 +26,7 @@ module PactBroker
         version_repository.find_latest_by_pacticipant_name_and_branch_name(pacticipant_name, branch_name)
       end
 
-      def self.find_all_pacticipant_versions_in_reverse_order(name, pagination_options = nil)
+      def self.find_all_pacticipant_versions_in_reverse_order(name, pagination_options = {})
         version_repository.find_all_pacticipant_versions_in_reverse_order(name, pagination_options)
       end
 

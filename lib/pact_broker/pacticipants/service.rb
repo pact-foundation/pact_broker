@@ -32,7 +32,7 @@ module PactBroker
           } .collect{ | name | pacticipant_repository.find_by_name(name) }
       end
 
-      def self.find_all_pacticipants(pagination_options)
+      def self.find_all_pacticipants(pagination_options = {})
         pacticipant_repository.find_all(pagination_options)
       end
 
@@ -48,7 +48,7 @@ module PactBroker
         pacticipant_repository.find_by_id(id)
       end
 
-      def self.find(options, pagination_options = nil)
+      def self.find(options, pagination_options = {})
         pacticipant_repository.find(options, pagination_options)
       end
 
