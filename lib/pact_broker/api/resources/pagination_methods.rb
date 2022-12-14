@@ -9,7 +9,7 @@ module PactBroker
               page_size: request.query["pageSize"]&.to_i || 100
             }
           else
-            nil
+            {}
           end
         end
       end

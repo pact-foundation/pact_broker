@@ -9,7 +9,7 @@ module PactBroker
       extend self
 
       def all_with_pagination_options(pagination_options)
-        if pagination_options
+        if pagination_options&.any?
           query = paginate(pagination_options[:page_number], pagination_options[:page_size])
           Page.new(query.all, query)
         else
