@@ -191,7 +191,6 @@ module PactBroker
               error_message = message("errors.non_utf_8_char_in_request_body", char_number: char_number, fragment: fragment)
               logger.info(error_message)
               set_json_error_message(error_message)
-              response.headers["Content-Type"] = error_response_content_type
               true
             else
               params
@@ -201,7 +200,6 @@ module PactBroker
             message = "#{e.cause ? e.cause.class.name : e.class.name} - #{e.message}"
             logger.info(message)
             set_json_error_message(message)
-            response.headers["Content-Type"] = error_response_content_type
             true
           end
         end
