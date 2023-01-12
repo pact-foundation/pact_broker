@@ -21,6 +21,10 @@ describe "Get versions" do
       expect(last_response_body[:_links][:"versions"].size).to eq 2
     end
 
+    it "does not to contain page details" do
+      expect(last_response_body).not_to have_key(:page)
+    end
+
     context "with pagination options" do
       subject { get(path, { "pageSize" => "1", "pageNumber" => "1" }) }
 
@@ -30,6 +34,10 @@ describe "Get versions" do
 
       it "includes the pagination relations" do
         expect(last_response_body[:_links]).to have_key(:next)
+      end
+
+      it "includes the page section" do
+        expect(last_response_body).to have_key(:page)
       end
     end
   end
