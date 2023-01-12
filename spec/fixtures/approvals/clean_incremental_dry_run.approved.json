@@ -13,8 +13,8 @@
       },
       {
         "selector": {
-          "tag": "dev",
-          "latest": true
+          "latest": true,
+          "tag": "dev"
         },
         "count": 1
       }

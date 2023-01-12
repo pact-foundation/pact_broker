@@ -50,7 +50,9 @@ module PactBroker
 
           end
 
-          let(:options) { { keep: [all_prod_selector, latest_dev_selector], limit: limit, dry_run: dry_run } }
+          let(:keep_selectors) { [all_prod_selector, latest_dev_selector] }
+
+          let(:options) { { keep: keep_selectors, limit: limit, dry_run: dry_run } }
 
           it "does not delete the consumer versions specified" do
             expect(PactBroker::Domain::Version.where(number: "1").count).to be 1
@@ -68,6 +70,14 @@ module PactBroker
             expect(PactBroker::Domain::Version.where(number: "5").count).to be 1
             expect(PactBroker::Domain::Version.where(number: "6").count).to be 0
             expect(PactBroker::Domain::Version.where(number: "7").count).to be 1
+          end
+
+          context "with the default selectors" do
+            let(:options) { {} }
+
+            it "doesn't blow up" do
+              subject
+            end
           end
 
           context "when dry_run: true" do
