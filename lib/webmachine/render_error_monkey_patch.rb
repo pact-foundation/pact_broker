@@ -63,8 +63,6 @@ module Webmachine
   def self.error_response_body(detail, title, type, status, request)
     if problem_json_error_content_type?(request)
       PactBroker::Api::Decorators::CustomErrorProblemJSONDecorator.new(detail: detail, title: title, type: type, status: status).to_json
-    elsif text_html_error_content_type?(request)
-
     else
       { error: detail }.to_json
     end
