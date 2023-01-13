@@ -68,10 +68,12 @@ module PactBroker
 
       def add_defaults_to_keep_selectors
         if keep_version_selectors.none?(&:currently_deployed?)
+          output("Automatically adding #{ { deployed: true} } to keep version selectors")
           keep_version_selectors << PactBroker::DB::Clean::Selector.new(deployed: true)
         end
 
         if keep_version_selectors.none?(&:currently_supported?)
+          output("Automatically adding #{ { released: true} } to keep version selectors")
           keep_version_selectors <<  PactBroker::DB::Clean::Selector.new(released: true)
         end
       end
