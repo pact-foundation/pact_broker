@@ -20,7 +20,7 @@ def print_diff(exception)
   parts = exception.message.split('"')
   received_file = parts[1]
   approved_file = parts[3]
-  if File.exist?(received_file) && File.exist?(approved_file)
+  if File.exist?(received_file) && File.exist?(approved_file) && File.end_with?(".json")
     received_hash = JSON.parse(File.read(received_file))
     approved_hash = JSON.parse(File.read(approved_file))
     diff = Pact::Matchers.diff(approved_hash, received_hash, allow_unexpected_keys: false)
