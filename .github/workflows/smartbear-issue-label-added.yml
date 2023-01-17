@@ -1,4 +1,4 @@
-name: Issue Label Added
+name: SmartBear Supported Issue Label Added
 
 on:
   issues:
