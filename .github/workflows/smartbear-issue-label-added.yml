@@ -9,3 +9,4 @@ jobs:
   call-workflow:
     uses: pact-foundation/.github/.github/workflows/smartbear-issue-label-added.yml@master
     secrets: inherit
+    env: inherit
