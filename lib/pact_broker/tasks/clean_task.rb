@@ -73,7 +73,7 @@ module PactBroker
         end
 
         if keep_version_selectors.none?(&:currently_supported?)
-          output("Automatically adding #{ { released: true} } to keep version selectors")
+          output("Automatically adding #{ { released: true } } to keep version selectors")
           keep_version_selectors <<  PactBroker::DB::Clean::Selector.new(released: true)
         end
       end
