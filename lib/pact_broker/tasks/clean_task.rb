@@ -44,7 +44,7 @@ module PactBroker
                 raise PactBroker::Error.new("You must specify which versions to keep")
               else
                 add_defaults_to_keep_selectors
-                output "#{prefix}Deleting oldest #{version_deletion_limit} versions, keeping versions that match the configured selectors", keep_version_selectors
+                output "#{prefix}Deleting oldest #{version_deletion_limit} versions, keeping versions that match the configured selectors", keep_version_selectors.collect(&:to_hash)
               end
 
               start_time = Time.now
@@ -68,13 +68,15 @@ module PactBroker
 
       def add_defaults_to_keep_selectors
         if keep_version_selectors.none?(&:currently_deployed?)
-          output("Automatically adding #{ { deployed: true} } to keep version selectors")
-          keep_version_selectors << PactBroker::DB::Clean::Selector.new(deployed: true)
+          selector = PactBroker::DB::Clean::Selector.new(deployed: true)
+          output("Automatically adding #{selector.to_hash} to keep version selectors")
+          keep_version_selectors << selector
         end
 
         if keep_version_selectors.none?(&:currently_supported?)
-          output("Automatically adding #{ { released: true } } to keep version selectors")
-          keep_version_selectors <<  PactBroker::DB::Clean::Selector.new(released: true)
+          selector = PactBroker::DB::Clean::Selector.new(released: true)
+          output("Automatically adding #{ selector.to_hash } to keep version selectors")
+          keep_version_selectors << selector
         end
       end
     end
