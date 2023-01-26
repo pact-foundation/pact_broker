@@ -10,7 +10,7 @@ The Pact Broker is an application for sharing of consumer driven contracts and v
 <a href="https://pactflow.io/?utm_source=github&utm_campaign=pact_broker_intro"><img src="docs/images/Pactflow logo - black small.png"></a>
 <br/>
 
-You can try out a Pact Broker for free at <a href="https://pactflow.io/?utm_source=github&utm_campaign=pact_broker_intro"/>pactflow.io</a>. Built by a group of core Pact maintainers, Pactflow is a fork of the OSS Pact Broker with extra goodies like an improved UI, field level verification results and federated login.
+You can try out a Pact Broker for free at <a href="https://pactflow.io/?utm_source=github&utm_campaign=pact_broker_intro"/>pactflow.io</a>. Built by a group of core Pact maintainers, PactFlow is a fork of the OSS Pact Broker with extra goodies like an improved UI, field level verification results and federated login.
 
 **Why do I need a Pact Broker?**
 

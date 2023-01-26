@@ -18,7 +18,7 @@ module PactBroker
       DEFAULT_PAGE_NUMBER = 1
 
       # This method provides data for both the OSS server side rendered index (with and without tags)
-      # and the Pactflow UI. It really needs to be broken into to separate methods, as it's getting too messy
+      # and the PactFlow UI. It really needs to be broken into to separate methods, as it's getting too messy
       # supporting both
 
       def self.pact_publication_scope

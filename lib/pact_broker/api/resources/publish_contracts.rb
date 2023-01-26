@@ -40,7 +40,7 @@ module PactBroker
           :'contracts::contracts'
         end
 
-        # for Pactflow
+        # for PactFlow
         def policy_record
           @policy_record ||= pacticipant_service.find_pacticipant_by_name(parsed_contracts.pacticipant_name)
         end
