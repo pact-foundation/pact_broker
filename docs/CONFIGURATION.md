@@ -67,7 +67,7 @@ Ensure the application [`log_level`](#log_level) is set to `debug` when this set
 
 ### hide_pactflow_messages
 
-Set to `true` to hide the messages in the logs about Pactflow
+Set to `true` to hide the messages in the logs about PactFlow
 
 **Environment variable name:** `PACT_BROKER_HIDE_PACTFLOW_MESSAGES`<br/>
 **YAML configuration key name:** `hide_pactflow_messages`<br/>

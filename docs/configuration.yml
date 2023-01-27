@@ -41,7 +41,7 @@ groups:
           - false
         supported_versions: From v2.98.0
       hide_pactflow_messages:
-        description: "Set to `true` to hide the messages in the logs about Pactflow"
+        description: "Set to `true` to hide the messages in the logs about PactFlow"
         default_value: true
         allowed_values:
           - true
