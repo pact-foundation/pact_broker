@@ -1,29 +1,60 @@
 # Developer Documentation
 
+# Table of Contents
+
+1. [Technology](#technology)
+2. [File Structure](#file-structure)
+3. [Domain and Database Design](#domain-and-database-design)
+4. [Adding a Resource](#adding-a-resource)
+5. [Writing Database Migrations](#writing-data-migrations)
+
+## Technology
+
+* [Ruby](https://www.ruby-lang.org/en/) - The application is written in Ruby
+* [Rack](https://github.com/rack/rack) - This repo is a Rack application
+* [Webmachine-ruby](https://github.com/webmachine/webmachine-ruby) - A toolkit for writing APIs
+* [Sequel](https://github.com/jeremyevans/sequel) - Ruby Gem for writing Sequel to interface with the DB layer
+
 ## File structure
 
-* Application code - [lib](lib)
-  * The aggregated application (API, UI, middleware, HAL Browser, diagnostic endpoints etc) - [lib/pact_broker/app.rb](lib/pact_broker/app.rb)
-  * API - [lib/pact_broker/api](lib/pact_broker/api)
-    * Routes - [lib/pact_broker/api.rb](lib/pact_broker/api.rb)
-    * HTTP Resources - [lib/pact_broker/api/resources](lib/pact_broker/api/resources) These handle the HTTP requests.
-    * Decorators - [lib/pact_broker/api/decorators](lib/pact_broker/api/decorators) These parse the request bodies and render the response bodies.
-    * Contracts - [lib/pact_broker/api/contracts](lib/pact_broker/api/contracts) These validate incoming API requests.
-  * UI - [lib/pact_broker/ui](lib/pact_broker/ui)
-    * Routes - [lib/pact_broker/ui/app.rb](lib/pact_broker/ui/app.rb)
-    * Controllers - [lib/pact_broker/ui/controllers](lib/pact_broker/ui/controllers) These handle the HTTP requests.
-    * Views - [lib/pact_broker/ui/views](lib/pact_broker/ui/views) These render the view using HAML
-    * View models - [lib/pact_broker/ui/view_models](lib/pact_broker/ui/view_models) These expose the domain model data in a way that is suited to rendering in a view.
-  * Domain - Domain classes were intially created in [lib/pact_broker/domain](lib/pact_broker/domain) but are now put in their own modules. The ones left here just haven't been migrated yet. The module name is the plural of the domain class name. eg `lib/pact_broker/widgets/widget.rb`.
-  * Services and Repositories - in the module with the name of their domain concept. eg `lib/pact_broker/widgets/service.rb` and `lib/pact_broker/widgets/repository.rb`
-  * Standalone "function as class" classes go into the module they relate to. This pattern is used when there is some significant stateless logic that we want to
-* Database migrations - [db/migrations](db/migrations)
+The back-end is a Rack application which uses Webmachine-ruby to create API endpoints and define how they can be used.
 
+The UI in this repo is used for the OSS pact-broker.
+
+### Application code - [lib](lib)
+
+* The aggregated application (API, UI, middleware, HAL Browser, diagnostic endpoints etc)
+  - [lib/pact_broker/app.rb](lib/pact_broker/app.rb)
+* API - [lib/pact_broker/api](lib/pact_broker/api)
+  * Routes - [lib/pact_broker/api.rb](lib/pact_broker/api.rb)
+  * HTTP Resources - [lib/pact_broker/api/resources](lib/pact_broker/api/resources) These handle the HTTP
+    requests.
+  * Decorators - [lib/pact_broker/api/decorators](lib/pact_broker/api/decorators) These parse the request bodies
+    and render the response bodies.
+  * Contracts - [lib/pact_broker/api/contracts](lib/pact_broker/api/contracts) These validate incoming API
+    requests.
+* Domain - Domain classes were intially created in [lib/pact_broker/domain](lib/pact_broker/domain) but are now put
+  in their own modules. The ones left here just haven't been migrated yet. The module name is the plural of the
+  domain class name. eg `lib/pact_broker/widgets/widget.rb`.
+* Services and Repositories - in the module with the name of their domain concept.
+  eg `lib/pact_broker/widgets/service.rb` and `lib/pact_broker/widgets/repository.rb`
+* Standalone "function as class" classes go into the module they relate to. This pattern is used when there is some
+  significant stateless logic that we want to
+* Database migrations - [db/migrations](db/migrations)
 * Tests - `spec`
   * Isolated tests (mostly) - `spec/lib`
   * Contract tests - `spec/service_consumers`
   * High level API functional tests - `spec/features`
   * Migration tests - `spec/migrations`
+
+### PactBroker UI
+
+* UI - [lib/pact_broker/ui](lib/pact_broker/ui)
+  * Routes - [lib/pact_broker/ui/app.rb](lib/pact_broker/ui/app.rb)
+  * Controllers - [lib/pact_broker/ui/controllers](lib/pact_broker/ui/controllers) These handle the HTTP requests.
+  * Views - [lib/pact_broker/ui/views](lib/pact_broker/ui/views) These render the view using HAML
+  * View models - [lib/pact_broker/ui/view_models](lib/pact_broker/ui/view_models) These expose the domain model
+    data in a way that is suited to rendering in a view.
 
 ## Domain and database design
 
@@ -123,39 +154,88 @@ In the beginning, I made a lot of Sequel models based on views that pulled in th
 
 ### Useful to know stuff
 
-* The supported database types are Postgres (recommended), MySQL (sigh) and Sqlite (just for testing, not recommended for production). Check the travis.yml file for the supported database versions.
-* Any migration that uses the "order" column has to be defined using the Sequel DSL rather than pure SQL, because the word "order" is a key word, and it has to be escaped correctly and differently on each database (Postgres, MySQL, Sqlite).
+* The supported database types are Postgres (recommended), MySQL (sigh) and Sqlite (just for testing, not recommended
+  for production). Check the travis.yml file for the supported database versions.
+* Any migration that uses the "order" column has to be defined using the Sequel DSL rather than pure SQL, because the
+  word "order" is a key word, and it has to be escaped correctly and differently on each database (Postgres, MySQL,
+  Sqlite).
 
-## Adding a resource
+## Adding a Resource
 
-* In `spec/features` add a new high level spec that executes the endpoint you're going to write. Don't worry if you're not sure exactly what it's going to look like yet - you can come back and change it as you go. Have a look at the other specs in the directory for the type of assertions that should be made. Basic rule of thumb is to check the http status code, and do a light touch of assertions on the body.
-* Create a new directory for the classes that relate to your new resource. eg For a "Foo" resource, create `lib/pact_broker/foos`
-* Create a new migration in `db/migrations` that creates the underlying database table.
-* Create a new database model for the resource that extends from Sequel::Model. eg `lib/pact_broker/foos/foo.rb`
-* Create a decorator in `spec/lib/pact_broker/api/decorators/` that will map to and from the representation that will be used in the HTTP request and response.
+Adding a resource is how new API endpoints can be added using Webmachine. The resource accepts (or rejects) HTTP
+requests (GET, POST,
+etc) and returns a payload with the requested response body.
+
+### How To:
+
+1. Start by adding a new high level feature spec in  `spec/features` that executes the new endpoint.
+   The Basic rule of thumb is to check the http status code, and do a light touch of assertions on the body. See other
+   tests in this file for reference.
+
+
+2. Create a new directory for the classes that relate to your new resource. eg For a "Foo" resource,
+   create `lib/pact_broker/foos`
+
+
+3. Create a new migration in `db/migrations` that creates the underlying database table. Include an `up` and `down`
+   section
+
+
+4. Create a new database model for the resource that extends from Sequel::Model. eg `lib/pact_broker/foos/foo.rb`
+
+
+5. Create a decorator in `spec/lib/pact_broker/api/decorators/` that will map to and from the representation that will
+   be used in the HTTP request and response.
   * Write a spec for the decorator.
-* You may need to create a contract to validate the request. This is kind of broken while I upgrade to the latest dry-validation library. See Beth for more details.
-* Add the HTTP resource in `lib/pact_broker/api/resources/`. It should extend from `BaseResource`.
+
+
+6. Validation: Endpoints that have a request body or query params need to include validation. Validation is added via
+   creating a `contract` which responds to a `call` method and returns errors. This should be used as part of
+   the `malformed_request?` method. We use the dry-validation library where possible but are overdue a version upgrade.
+
+7. Add the HTTP resource in `lib/pact_broker/api/resources/`. It should extend from `BaseResource` (itself an extension
+   of Webmachine::Resource).
   * Write a spec for the resource, stubbing out the behaviour you expect from your service.
-* Add the route to `lib/pact_broker/api.rb`
-* Create a service that has the methods that you need for the resource. eg. `lib/pact_broker/foos/service.rb`
+
+8. Add the route to `lib/pact_broker/api.rb`
+
+
+9. Create a service that has the methods that you need for the resource. eg. `lib/pact_broker/foos/service.rb`
   * Add the new service to `lib/pact_broker/services.rb`
   * Write a spec for the service, stubbing out the behaviour you expect from your repository.
-* Create a repository eg. `lib/pact_broker/foos/repository.rb`.
+
+
+10. Create a repository eg. `lib/pact_broker/foos/repository.rb`.
   * Add the new repository to `lib/pact_broker/repositories.rb`.
   * Write a spec for the repository.
-* Go back and make the original feature spec pass.
-* Profit.
+
+
+11. Go back and make the original feature spec pass.
+
+
+12. If there are consumer Pact tests for this API add provider states as required.
+
+
+13. Profit (optional).
 
 ## Writing Data migrations
 
-The same database may be used by multiple application instances to support highly available set ups and no downtime deployments. This can lead to the situation where the database migrations have been applied, but new data is written to the database by old application code, which may lead to some columns not being populated. The mitigation to this problem is to run the *data* migrations only each time an application instance starts up. This ensures that that any data inserted into the database by a previous version of the application are migrated. This is done automatically in the `PactBroker::App` class.
+The same database may be used by multiple application instances to support highly available set ups and no downtime
+deployments. This can lead to the situation where the database migrations have been applied, but new data is written to
+the database by old application code, which may lead to some columns not being populated. The mitigation to this problem
+is to run the *data* migrations only each time an application instance starts up. This ensures that that any data
+inserted into the database by a previous version of the application are migrated. This is done automatically in
+the `PactBroker::App` class.
 
 If you write a schema migration that then requires a data migration to populate or update any columns:
 
 * Create a data migrations class in `lib/pact_broker/db/data_migrations`, copying the existing pattern.
 * Add a call to the new class at the end of `lib/pact_broker/db/migrate_data.rb`
-* Make sure you check for the existance of the required columns, because you don't know which version of the database might be running with this code.
-* Add a null check (eg. `db[:my_table].where(my_column: nil).update(...)`) where appropriate to make sure that the data migration doesn't run more than once.
-* Don't use any Sequel Models, as this will run before the model classes are loaded, and migrations should never depend on Models because models change as the schema migrations are applied.
-* Create a migration file in `db/migrations` that calls the data migration (eg. like `db/migrations/20190603_migrate_webhook_headers.rb`)
+* Make sure you check for the existance of the required columns, because you don't know which version of the database
+  might be running with this code.
+* Add a null check (eg. `db[:my_table].where(my_column: nil).update(...)`) where appropriate to make sure that the data
+  migration doesn't run more than once.
+* Don't use any Sequel Models, as this will run before the model classes are loaded, and migrations should never depend
+  on Models because models change as the schema migrations are applied.
+* Create a migration file in `db/migrations` that calls the data migration (eg.
+  like `db/migrations/20190603_migrate_webhook_headers.rb`)
