@@ -1,3 +1,35 @@
+<a name="v2.106.0"></a>
+### v2.106.0 (2023-01-31)
+
+#### Features
+
+* add consumer_version_id index to latest_pact_publication_ids_for_consumer_versions	 ([b75ca5ee](/../../commit/b75ca5ee))
+* improve the performance of the incremental clean queries	 ([c3a07c79](/../../commit/c3a07c79))
+* add index to provider_version_id column in latest_verification_id_for_pact_version_and_provider_version	 ([0e1c43dd](/../../commit/0e1c43dd))
+* Pacticipant pagination (#585)	 ([f1a9be20](/../../commit/f1a9be20))
+* do not allow JSON request bodies that are not Objects or Arrays	 ([3d917286](/../../commit/3d917286))
+* add index for verification_id in pact_version_provider_tag_successful_verifications table	 ([b82a773a](/../../commit/b82a773a))
+* monkey patch Webmachine render_error method to support problem+json (#584)	 ([508f7ce2](/../../commit/508f7ce2))
+* support problem+json for error messages (#583)	 ([92957ebb](/../../commit/92957ebb))
+* add index to provider_version_id column in verifications table	 ([aac33725](/../../commit/aac33725))
+
+* **clean**
+  * log automatically added selectors	 ([135c1c0e](/../../commit/135c1c0e))
+
+#### Bug Fixes
+
+* check that request body does not contain any invalid UTF-8 characters before JSON parsing	 ([0a08d644](/../../commit/0a08d644))
+
+* **versions**
+  * add missing next and previous relations to paginated response	 ([3b46847e](/../../commit/3b46847e))
+  * eager load associations for versions endpoint	 ([2a57dc42](/../../commit/2a57dc42))
+
+* **ui**
+  * no space after `tag:` (#581)	 ([1b9ebdfe](/../../commit/1b9ebdfe))
+
+* **webhooks**
+  * correctly validate HTTP method when the given method is not a valid class name	 ([6da5a4f3](/../../commit/6da5a4f3))
+
 <a name="v2.105.0"></a>
 ### v2.105.0 (2022-10-19)
 
