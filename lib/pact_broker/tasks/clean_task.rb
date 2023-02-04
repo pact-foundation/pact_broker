@@ -35,6 +35,7 @@ module PactBroker
               require "pact_broker/error"
               require "yaml"
               require "benchmark"
+              require "sequel/postgres_advisory_lock"
 
               raise PactBroker::Error.new("You must specify the version_deletion_limit") unless version_deletion_limit
 
@@ -47,16 +48,25 @@ module PactBroker
                 output "#{prefix}Deleting oldest #{version_deletion_limit} versions, keeping versions that match the configured selectors", keep_version_selectors.collect(&:to_hash)
               end
 
+              database_lock = Sequel::PostgresAdvisoryLock.new(database_connection, :clean)
               start_time = Time.now
-              results = PactBroker::DB::CleanIncremental.call(database_connection,
-                keep: keep_version_selectors,
-                limit: version_deletion_limit,
-                logger: logger,
-                dry_run: dry_run
-              )
-              end_time = Time.now
-              elapsed_seconds = (end_time - start_time).to_i
-              output "Results (#{elapsed_seconds} seconds)", results
+
+              database_lock.with_lock do
+                sleep 5
+                results = PactBroker::DB::CleanIncremental.call(database_connection,
+                  keep: keep_version_selectors,
+                  limit: version_deletion_limit,
+                  logger: logger,
+                  dry_run: dry_run
+                )
+                end_time = Time.now
+                elapsed_seconds = (end_time - start_time).to_i
+                output "Results (#{elapsed_seconds} seconds)", results
+              end
+
+              if !database_lock.lock_obtained?
+                output "Did not execute clean as another process is currently cleaning"
+              end
             end
           end
         end
