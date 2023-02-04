@@ -49,19 +49,9 @@ module PactBroker
               end
 
               database_lock = Sequel::PostgresAdvisoryLock.new(database_connection, :clean)
-              start_time = Time.now
-
+              
               database_lock.with_lock do
-                sleep 5
-                results = PactBroker::DB::CleanIncremental.call(database_connection,
-                  keep: keep_version_selectors,
-                  limit: version_deletion_limit,
-                  logger: logger,
-                  dry_run: dry_run
-                )
-                end_time = Time.now
-                elapsed_seconds = (end_time - start_time).to_i
-                output "Results (#{elapsed_seconds} seconds)", results
+                execute_clean
               end
 
               if !database_lock.lock_obtained?
@@ -70,6 +60,19 @@ module PactBroker
             end
           end
         end
+      end
+
+      def execute_clean
+        start_time = Time.now
+        results = PactBroker::DB::CleanIncremental.call(database_connection,
+          keep: keep_version_selectors,
+          limit: version_deletion_limit,
+          logger: logger,
+          dry_run: dry_run
+        )
+        end_time = Time.now
+        elapsed_seconds = (end_time - start_time).to_i
+        output "Results (#{elapsed_seconds} seconds)", results
       end
 
       def output string, payload = {}
