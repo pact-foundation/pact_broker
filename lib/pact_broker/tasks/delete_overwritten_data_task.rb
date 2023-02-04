@@ -22,24 +22,11 @@ module PactBroker
               require "sequel/postgres_advisory_lock"
 
               instance_eval(&block)
-              options = {}
-
-              prefix = dry_run ? "[DRY RUN] " : ""
-
-              if max_age
-                options[:max_age] = max_age
-                output "#{prefix}Deleting overwritten pact publications and verifications older than #{max_age} days"
-              else
-                output "#{prefix}Deleting overwritten pact publications and verifications"
-              end
-
-              options[:limit] = deletion_limit if deletion_limit
-              options[:dry_run] = dry_run
 
               database_lock = Sequel::PostgresAdvisoryLock.new(database_connection, :clean)
 
               database_lock.with_lock do
-                execute_delete(options)
+                execute_delete
               end
 
               if !database_lock.lock_obtained?
@@ -50,7 +37,21 @@ module PactBroker
         end
       end
 
-      def execute_delete(options)
+      def execute_delete
+        options = {}
+
+        prefix = dry_run ? "[DRY RUN] " : ""
+
+        if max_age
+          options[:max_age] = max_age
+          output "#{prefix}Deleting overwritten pact publications and verifications older than #{max_age} days"
+        else
+          output "#{prefix}Deleting overwritten pact publications and verifications"
+        end
+
+        options[:limit] = deletion_limit if deletion_limit
+        options[:dry_run] = dry_run
+
         start_time = Time.now
         results = PactBroker::DB::DeleteOverwrittenData.call(database_connection, options)
         end_time = Time.now

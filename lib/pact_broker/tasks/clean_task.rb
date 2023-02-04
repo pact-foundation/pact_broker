@@ -39,13 +39,8 @@ module PactBroker
 
               raise PactBroker::Error.new("You must specify the version_deletion_limit") unless version_deletion_limit
 
-              prefix = dry_run ? "[DRY RUN] " : ""
-
               if keep_version_selectors.nil? || keep_version_selectors.empty?
                 raise PactBroker::Error.new("You must specify which versions to keep")
-              else
-                add_defaults_to_keep_selectors
-                output "#{prefix}Deleting oldest #{version_deletion_limit} versions, keeping versions that match the configured selectors", keep_version_selectors.collect(&:to_hash)
               end
 
               database_lock = Sequel::PostgresAdvisoryLock.new(database_connection, :clean)
@@ -63,6 +58,10 @@ module PactBroker
       end
 
       def execute_clean
+        add_defaults_to_keep_selectors
+        prefix = dry_run ? "[DRY RUN] " : ""
+        output "#{prefix}Deleting oldest #{version_deletion_limit} versions, keeping versions that match the configured selectors", keep_version_selectors.collect(&:to_hash)
+
         start_time = Time.now
         results = PactBroker::DB::CleanIncremental.call(database_connection,
           keep: keep_version_selectors,
