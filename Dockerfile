@@ -1,4 +1,4 @@
-FROM ruby:2.7.6-alpine3.15
+FROM ruby:2.7.7-alpine3.16
 
 WORKDIR /home
 
@@ -34,7 +34,7 @@ COPY pact_broker.gemspec /home/pact_broker.gemspec
 COPY lib/pact_broker/version.rb /home/lib/pact_broker/version.rb
 COPY .gitignore /home/.gitignore
 
-RUN gem install bundler -v '~>2.0.0' \
+RUN gem install bundler -v '~>2.4' \
     && bundle install --jobs 3 --retry 3
 
 RUN echo '#!/bin/sh' >> /usr/local/bin/start
