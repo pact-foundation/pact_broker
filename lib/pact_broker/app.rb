@@ -108,7 +108,7 @@ module PactBroker
         if PactBroker::DB.is_current?(configuration.database_connection, migration_options)
           logger.info "Skipping database migrations as the latest migration has already been applied"
         else
-          lock = Sequel::PostgresAdvisoryLock.new(configuration.database_connection, :migrate)
+          lock = Sequel::PostgresAdvisoryLock.new(configuration.database_connection, :migrate, :pg_advisory_lock)
           lock.with_lock do
             logger.info "Migrating database schema"
             PactBroker::DB.run_migrations configuration.database_connection, migration_options
