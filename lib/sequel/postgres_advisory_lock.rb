@@ -27,7 +27,7 @@ module Sequel
     end
 
     def postgres?
-      @database_connection.adapter_scheme.to_s == "postgres"
+      @database_connection.adapter_scheme.to_s =~ /postgres/
     end
   end
 end
