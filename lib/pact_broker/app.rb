@@ -101,22 +101,28 @@ module PactBroker
 
     def prepare_database
       logger.info "Database schema version is #{PactBroker::DB.version(configuration.database_connection)}"
+      lock = Sequel::PostgresAdvisoryLock.new(configuration.database_connection, :migrate, :pg_advisory_lock)
       if configuration.auto_migrate_db
-        migration_options = { allow_missing_migration_files: configuration.allow_missing_migration_files }
-        if PactBroker::DB.is_current?(configuration.database_connection, migration_options)
-          logger.info "Skipping database migrations as the latest migration has already been applied"
-        else
-          logger.info "Migrating database schema"
-          PactBroker::DB.run_migrations configuration.database_connection, migration_options
-          logger.info "Database schema version is now #{PactBroker::DB.version(configuration.database_connection)}"
+        lock.with_lock do
+          migration_options = { allow_missing_migration_files: configuration.allow_missing_migration_files }
+
+          if PactBroker::DB.is_current?(configuration.database_connection, migration_options)
+            logger.info "Skipping database migrations as the latest migration has already been applied"
+          else
+            logger.info "Migrating database schema"
+            PactBroker::DB.run_migrations configuration.database_connection, migration_options
+            logger.info "Database schema version is now #{PactBroker::DB.version(configuration.database_connection)}"
+          end
         end
       else
         logger.info "Skipping database schema migrations as database auto migrate is disabled"
       end
 
       if configuration.auto_migrate_db_data
-        logger.info "Migrating data"
-        PactBroker::DB.run_data_migrations configuration.database_connection
+        lock.with_lock do
+          logger.info "Migrating data"
+          PactBroker::DB.run_data_migrations configuration.database_connection
+        end
       else
         logger.info "Skipping data migrations"
       end
