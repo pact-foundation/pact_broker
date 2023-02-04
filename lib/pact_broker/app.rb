@@ -29,6 +29,7 @@ require "pact_broker/api/middleware/basic_auth"
 require "pact_broker/config/basic_auth_configuration"
 require "pact_broker/api/authorization/resource_access_policy"
 require "pact_broker/api/middleware/http_debug_logs"
+require "sequel/postgres_advisory_lock"
 
 module PactBroker
 
@@ -107,8 +108,12 @@ module PactBroker
         if PactBroker::DB.is_current?(configuration.database_connection, migration_options)
           logger.info "Skipping database migrations as the latest migration has already been applied"
         else
-          logger.info "Migrating database schema"
-          PactBroker::DB.run_migrations configuration.database_connection, migration_options
+          lock = Sequel::PostgresAdvisoryLock.new(configuration.database_connection, :migrate)
+          lock.with_lock do
+            logger.info "Migrating database schema"
+            PactBroker::DB.run_migrations configuration.database_connection, migration_options
+          end
+          
           logger.info "Database schema version is now #{PactBroker::DB.version(configuration.database_connection)}"
         end
       else
