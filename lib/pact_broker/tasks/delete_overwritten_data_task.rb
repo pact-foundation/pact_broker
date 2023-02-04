@@ -19,6 +19,7 @@ module PactBroker
             task :delete_overwritten_data do | _t, _args |
               require "pact_broker/db/delete_overwritten_data"
               require "yaml"
+              require "sequel/postgres_advisory_lock"
 
               instance_eval(&block)
               options = {}
@@ -35,14 +36,26 @@ module PactBroker
               options[:limit] = deletion_limit if deletion_limit
               options[:dry_run] = dry_run
 
-              start_time = Time.now
-              results = PactBroker::DB::DeleteOverwrittenData.call(database_connection, options)
-              end_time = Time.now
-              elapsed_seconds = (end_time - start_time).to_i
-              output "Results (#{elapsed_seconds} seconds)", results
+              database_lock = Sequel::PostgresAdvisoryLock.new(database_connection, :clean)
+
+              database_lock.with_lock do
+                execute_delete(options)
+              end
+
+              if !database_lock.lock_obtained?
+                output "Did not execute deletion of overwritten data as another process is currently deleting"
+              end
             end
           end
         end
+      end
+
+      def execute_delete(options)
+        start_time = Time.now
+        results = PactBroker::DB::DeleteOverwrittenData.call(database_connection, options)
+        end_time = Time.now
+        elapsed_seconds = (end_time - start_time).to_i
+        output "Results (#{elapsed_seconds} seconds)", results
       end
 
       def output string, payload = {}
