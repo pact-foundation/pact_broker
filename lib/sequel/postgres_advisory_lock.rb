@@ -7,7 +7,9 @@ module Sequel
       @lock_obtained = false
       if postgres?
         @database_connection.extension :pg_advisory_lock
-        @database_connection.register_advisory_lock(@name, @type)
+        unless @database_connection.registered_advisory_locks.key?(@name)
+          @database_connection.register_advisory_lock(@name, @type)
+        end
       end
     end
 
