@@ -3,15 +3,31 @@ require "logger"
 require "erb"
 require "yaml"
 require "base64"
+require "securerandom"
 
 module PactBroker
   module Test
     class HttpTestDataBuilder
 
+      class SetRequestId < Faraday::Middleware
+        def initialize(app, correlation_id)
+          super(app)
+          @correlation_id = correlation_id
+        end
+
+        def on_request(env)
+          request_id = "#{@correlation_id}-#{Time.now.to_f.to_s[7... -1]}"
+          env.request_headers["X-Request-Id"] = request_id
+        end
+      end
+
       attr_reader :client, :last_consumer_name, :last_provider_name, :last_consumer_version_number, :last_provider_version_number, :last_provider_version_tag, :last_provider_version_branch
 
       def initialize(pact_broker_base_url, auth = {})
+        @correlation_id = SecureRandom.hex(10)
+
         @client = Faraday.new(url: pact_broker_base_url) do |faraday|
+          faraday.use SetRequestId, @correlation_id
           faraday.request :json
           faraday.response :json, :content_type => /\bjson$/
           if ENV["DEBUG"] == "true"
@@ -27,6 +43,11 @@ module PactBroker
 
       def sleep(seconds = 0.5)
         Kernel.sleep(seconds)
+        self
+      end
+
+      def print_correlation_id
+        puts "Correlation ID is #{@correlation_id}"
         self
       end
 
