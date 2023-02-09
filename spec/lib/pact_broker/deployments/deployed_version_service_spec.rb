@@ -45,7 +45,7 @@ module PactBroker
 
           let(:listener) { double("listener") }
 
-          it "broadcasts an event with the deployed_version in the params" do
+          it "broadcasts an event with the deployed_version in the params (used by pf)" do
             expect(listener).to receive(:deployed_version_created) do | params |
               expect(params[:deployed_version].environment).to_not be nil
               expect(params[:deployed_version].version).to_not be nil
