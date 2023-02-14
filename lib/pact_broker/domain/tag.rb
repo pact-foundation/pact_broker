@@ -5,6 +5,8 @@ require "pact_broker/tags/eager_loaders"
 module PactBroker
   module Domain
     class Tag < Sequel::Model
+      set_primary_key([:name, :version_id])
+
       plugin :timestamps, update_on_create: true
       plugin :insert_ignore, identifying_columns: [:name, :version_id]
 

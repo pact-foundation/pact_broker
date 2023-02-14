@@ -4,6 +4,7 @@ require "pact_broker/repositories/helpers"
 module PactBroker
   module Versions
     class BranchVersion < Sequel::Model(:branch_versions)
+      set_primary_key :id
       plugin :timestamps, update_on_create: true
       plugin :insert_ignore, identifying_columns: [:branch_id, :version_id]
       plugin :upsert, identifying_columns: [:branch_id, :version_id]

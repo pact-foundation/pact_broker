@@ -1,6 +1,7 @@
 module PactBroker
   module Certificates
     class Certificate < Sequel::Model
+      set_primary_key :id
     end
 
     Certificate.plugin :timestamps, update_on_create: true

@@ -24,10 +24,11 @@ module PactBroker
     VERSION_COLUMNS = [:id, :number, :repository_ref, :pacticipant_id, :order, :created_at, :updated_at, :build_url]
 
     class Version < Sequel::Model(Sequel::Model.db[:versions].select(*VERSION_COLUMNS.collect{ | column | Sequel.qualify(:versions, column) }))
+      set_primary_key :id
+
       plugin :timestamps, update_on_create: true
       plugin :upsert, { identifying_columns: [:pacticipant_id, :number], ignore_columns_on_update: [:id, :created_at, :order] }
 
-      set_primary_key :id
       one_to_many :pact_publications, order: :revision_number, class: "PactBroker::Pacts::PactPublication", key: :consumer_version_id
       associate(:many_to_one, :pacticipant, :class => "PactBroker::Domain::Pacticipant", :key => :pacticipant_id, :primary_key => :id)
       one_to_many :tags, :reciprocal => :version, order: :created_at

@@ -4,6 +4,7 @@ require "pact_broker/repositories/helpers"
 module PactBroker
   module Versions
     class Branch < Sequel::Model(:branches)
+      set_primary_key :id
       plugin :timestamps, update_on_create: true
       plugin :insert_ignore, identifying_columns: [:name, :pacticipant_id]
 

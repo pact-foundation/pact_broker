@@ -5,6 +5,7 @@ require "pact_broker/domain/verification"
 module PactBroker
   module Verifications
     class PactVersionProviderTagSuccessfulVerification < Sequel::Model
+      set_primary_key :id
       plugin :insert_ignore, identifying_columns: [:pact_version_id, :provider_version_tag_name, :wip]
     end
   end

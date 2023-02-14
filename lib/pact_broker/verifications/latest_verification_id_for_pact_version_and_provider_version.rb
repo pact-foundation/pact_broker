@@ -3,8 +3,8 @@ require "pact_broker/domain/verification"
 module PactBroker
   module Verifications
     class LatestVerificationIdForPactVersionAndProviderVersion < Sequel::Model(:latest_verification_id_for_pact_version_and_provider_version)
-      unrestrict_primary_key
       set_primary_key [:pact_version_id, :provider_version_id]
+      unrestrict_primary_key
 
       plugin :upsert, identifying_columns: [:pact_version_id, :provider_version_id]
 
