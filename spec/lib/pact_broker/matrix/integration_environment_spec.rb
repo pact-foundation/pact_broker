@@ -1,23 +1,20 @@
 require "pact_broker/matrix/service"
+require "support/matrix_test_support"
 
 module PactBroker
   module Matrix
     describe Service do
       describe "find with environments" do
         include MatrixQueryContentForApproval
+        include PactBroker::MatrixTestSupport
 
         ENVIRONMENT_APPROVALS = {}
 
         subject { Service.can_i_deploy(selectors, options) }
 
-        # Useful for eyeballing the messages to make sure they read nicely
-        # after do
-        #   require 'pact_broker/api/decorators/reason_decorator'
-        #   subject.deployment_status_summary.reasons.each do | reason |
-        #     puts reason
-        #     puts PactBroker::Api::Decorators::ReasonDecorator.new(reason).to_s
-        #   end
-        # end
+        after do
+          print_matrix_results(subject) if ENV["DEBUG"] == "true"
+        end
 
         after do | example |
           ENVIRONMENT_APPROVALS[example.full_description] = matrix_query_content_for_approval(subject)

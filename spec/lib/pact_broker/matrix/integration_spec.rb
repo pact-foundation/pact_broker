@@ -1,29 +1,19 @@
 require "pact_broker/matrix/service"
+require "support/matrix_test_support"
 
 module PactBroker
   module Matrix
     describe Service do
       describe "find" do
         include MatrixQueryContentForApproval
+        include PactBroker::MatrixTestSupport
 
         INTEGRATION_APPROVALS = {}
 
         subject { Service.can_i_deploy(selectors, options) }
 
-        # Useful for eyeballing the messages to make sure they read nicely
         after do
-          if ENV["DEBUG"] == "true"
-            require "pact_broker/api/decorators/reason_decorator"
-
-            subject.considered_rows.each do | row |
-              puts [row.consumer_name, row.consumer_version_number, row.provider_name, row.provider_version_number].join(" ")
-            end
-
-            subject.deployment_status_summary.reasons.each do | reason |
-              puts reason
-              puts PactBroker::Api::Decorators::ReasonDecorator.new(reason).to_s
-            end
-          end
+          print_matrix_results(subject) if ENV["DEBUG"] == "true"
         end
 
         after do | example |
