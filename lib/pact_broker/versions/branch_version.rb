@@ -39,6 +39,11 @@ module PactBroker
       def pacticipant
         branch.pacticipant
       end
+
+      # For Pactflow
+      def number_of_versions_from_head
+        @number_of_versions_from_head ||= BranchVersion.where(branch_id: branch_id).where(Sequel.lit("version_order > ?", version_order) ).count
+      end
     end
   end
 end

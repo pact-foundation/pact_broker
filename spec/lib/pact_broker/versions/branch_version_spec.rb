@@ -22,6 +22,19 @@ module PactBroker
           its(:latest?) { is_expected.to be false }
         end
       end
+
+      describe "number_of_versions_from_head" do
+        before do
+          td.create_consumer("Foo")
+            .create_consumer_version("2", branch: "foo")
+            .create_consumer_version("3", branch: "foo")
+            .create_consumer_version("4", branch: "bar")
+        end
+
+        subject { PactBroker::Versions::BranchVersion.first }
+
+        its(:number_of_versions_from_head) { is_expected.to eq 1 }
+      end
     end
   end
 end
