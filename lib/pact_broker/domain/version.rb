@@ -27,6 +27,7 @@ module PactBroker
       set_primary_key :id
 
       plugin :timestamps, update_on_create: true
+      plugin :age
       plugin :upsert, { identifying_columns: [:pacticipant_id, :number], ignore_columns_on_update: [:id, :created_at, :order] }
 
       one_to_many :pact_publications, order: :revision_number, class: "PactBroker::Pacts::PactPublication", key: :consumer_version_id
