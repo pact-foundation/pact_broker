@@ -1,11 +1,16 @@
+require "pact_broker/hash_refinements"
+
 # A selector with the pacticipant id, name, version number, and version id set
 # This is created from either specified or inferred data, based on the user's query
 # eg.
 # can-i-deploy --pacticipant Foo --version 1 (this is a specified selector)
 #              --to prod (this is used to create inferred selectors)
+
 module PactBroker
   module Matrix
     class ResolvedSelector < Hash
+
+      using PactBroker::HashRefinements
 
       # A version ID of -1 will not match any rows, which is what we want to ensure that
       # no matrix rows are returned for a version that does not exist.
@@ -124,7 +129,7 @@ module PactBroker
       end
 
       def only_pacticipant_name_specified?
-        !!pacticipant_name && !branch && !tag && !latest? && !pacticipant_version_number && !main_branch?
+        !!pacticipant_name && self[:original_selector].without(:pacticipant_name).none?{ |_key, value| value }
       end
 
       def latest_tagged?

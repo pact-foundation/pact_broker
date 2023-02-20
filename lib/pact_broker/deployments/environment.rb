@@ -5,6 +5,8 @@ require "sequel/plugins/serialization"
 module PactBroker
   module Deployments
     class Environment < Sequel::Model
+      set_primary_key :id
+
       OPEN_STRUCT_TO_JSON = lambda { | open_struct | Sequel.object_to_json(open_struct.collect(&:to_h)) }
       JSON_TO_OPEN_STRUCT = lambda { | json | Sequel.parse_json(json).collect{ | hash| OpenStruct.new(hash) } }
       plugin :upsert, identifying_columns: [:uuid]

@@ -1,6 +1,7 @@
 module PactBroker
   module Config
     class Setting < Sequel::Model(:config)
+      set_primary_key :id
 
       def set_value_from(object)
         self.type = Setting.get_db_type(object)

@@ -4,6 +4,8 @@ require "pact_broker/repositories/helpers"
 module PactBroker
   module Deployments
     class ReleasedVersion < Sequel::Model
+      set_primary_key :id
+
       many_to_one :pacticipant, :class => "PactBroker::Domain::Pacticipant", :key => :pacticipant_id, :primary_key => :id
       many_to_one :version, :class => "PactBroker::Domain::Version", :key => :version_id, :primary_key => :id
       many_to_one :environment, :class => "PactBroker::Deployments::Environment", :key => :environment_id, :primary_key => :id

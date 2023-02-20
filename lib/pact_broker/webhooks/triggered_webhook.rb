@@ -10,6 +10,7 @@ module PactBroker
   module Webhooks
     class TriggeredWebhook < Sequel::Model(:triggered_webhooks)
       using PactBroker::HashRefinements
+      set_primary_key :id
       plugin :timestamps, update_on_create: true
       plugin :serialization, :json, :event_context
 

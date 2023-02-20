@@ -12,7 +12,7 @@ module PactBroker
         :logs,
         Sequel[:webhook_executions][:created_at])
       )
-
+      set_primary_key :id
       plugin :timestamps
 
       dataset_module do

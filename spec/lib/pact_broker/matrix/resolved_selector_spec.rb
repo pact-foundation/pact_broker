@@ -34,12 +34,18 @@ module PactBroker
           let(:one_of_many) { false }
           let(:version_values) { {} }
 
-          its(:description) { is_expected.to eq "version 123 of Foo" }
+          context "when it was specified by version number" do
+            let(:pacticipant_version_number) { "123" }
+
+            its(:description) { is_expected.to eq "version 123 of Foo" }
+            its(:only_pacticipant_name_specified?) { is_expected.to be false }
+          end
 
           context "when it was specified by tag" do
             let(:tag) { "dev" }
 
             its(:description) { is_expected.to eq "a version of Foo with tag dev (123)" }
+            its(:only_pacticipant_name_specified?) { is_expected.to be false }
           end
 
           context "when it was specified by tag and latest" do
@@ -47,6 +53,7 @@ module PactBroker
             let(:latest) { true }
 
             its(:description) { is_expected.to eq "the latest version of Foo with tag dev (123)" }
+            its(:only_pacticipant_name_specified?) { is_expected.to be false }
           end
 
           context "when it was specified by branch" do
@@ -58,6 +65,7 @@ module PactBroker
               let(:one_of_many) { true }
 
               its(:description) { is_expected.to eq "one of the versions of Foo from branch main (123)" }
+              its(:only_pacticipant_name_specified?) { is_expected.to be false }
             end
           end
 
@@ -66,18 +74,21 @@ module PactBroker
             let(:latest) { true }
 
             its(:description) { is_expected.to eq "the latest version of Foo from branch main (123)" }
+            its(:only_pacticipant_name_specified?) { is_expected.to be false }
           end
 
           context "when it was specified by environment" do
             let(:environment_name) { "test" }
 
             its(:description) { is_expected.to eq "the version of Foo currently in test (123)" }
+            its(:only_pacticipant_name_specified?) { is_expected.to be false }
           end
 
           context "when it was specified by version number" do
             let(:pacticipant_version_number) { "123" }
 
             its(:description) { is_expected.to eq "version 123 of Foo" }
+            its(:only_pacticipant_name_specified?) { is_expected.to be false }
           end
 
           context "when specified by main_branch" do
@@ -91,6 +102,7 @@ module PactBroker
               let(:one_of_many) { true }
 
               its(:description) { is_expected.to eq "one of the versions of Foo from branch develop (123)" }
+              its(:only_pacticipant_name_specified?) { is_expected.to be false }
             end
           end
 
@@ -100,6 +112,16 @@ module PactBroker
             let(:version_values) { { branch_name: "develop" } }
 
             its(:description) { is_expected.to eq "the latest version of Foo from branch develop (123)" }
+            its(:only_pacticipant_name_specified?) { is_expected.to be false }
+          end
+
+          context "when it was specified by pacticipant name only" do
+            let(:subject) do
+              PactBroker::Matrix::ResolvedSelector.for_pacticipant(pacticipant, original_selector, :specified, false)
+            end
+
+            its(:description) { is_expected.to eq "any version of Foo" }
+            its(:only_pacticipant_name_specified?) { is_expected.to be true }
           end
         end
 

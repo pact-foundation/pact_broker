@@ -1,10 +1,12 @@
 require "pact_broker/deployments/released_version"
 require "pact_broker/repositories/scopes"
+require "pact_broker/events/publisher"
 
 module PactBroker
   module Deployments
     class ReleasedVersionService
       extend PactBroker::Repositories::Scopes
+      extend PactBroker::Events::Publisher
 
       def self.next_uuid
         SecureRandom.uuid
@@ -25,6 +27,8 @@ module PactBroker
         # error when marking an existing row as supported again IRL.
         ReleasedVersion.where(id: released_version.id).set_currently_supported
         released_version.refresh
+        broadcast(:released_version_created, { released_version: released_version })
+        released_version
       end
 
       def self.find_currently_supported_versions_for_environment(environment, pacticipant_name: nil, pacticipant_version_number: nil)

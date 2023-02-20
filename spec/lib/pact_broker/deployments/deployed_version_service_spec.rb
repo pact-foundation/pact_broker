@@ -1,9 +1,10 @@
 require "pact_broker/deployments/deployed_version_service"
+require "pact_broker/events/subscriber"
 
 module PactBroker
   module Deployments
     describe DeployedVersionService do
-      describe ".create" do
+      describe ".find_or_create" do
         before do
           td.create_environment("test")
             .create_consumer("foo")
@@ -34,6 +35,26 @@ module PactBroker
             DeployedVersionService.find_or_create("4321", version_2, environment, nil)
             deployed_version_3 = DeployedVersionService.find_or_create("4545", version_1, environment, nil)
             expect(deployed_version_1.uuid).to_not eq deployed_version_3.uuid
+          end
+        end
+
+        context "with an event listener" do
+          before do
+            allow(listener).to receive(:deployed_version_created)
+          end
+
+          let(:listener) { double("listener") }
+
+          it "broadcasts an event with the deployed_version in the params (used by pf)" do
+            expect(listener).to receive(:deployed_version_created) do | params |
+              expect(params[:deployed_version].environment).to_not be nil
+              expect(params[:deployed_version].version).to_not be nil
+              expect(params[:deployed_version].pacticipant).to_not be nil
+            end
+
+            PactBroker::Events.subscribe(listener) do
+              DeployedVersionService.find_or_create("1234", version, environment, nil)
+            end
           end
         end
       end

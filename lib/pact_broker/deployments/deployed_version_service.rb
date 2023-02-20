@@ -1,5 +1,6 @@
 require "pact_broker/deployments/deployed_version"
 require "pact_broker/repositories/scopes"
+require "pact_broker/events/publisher"
 
 module PactBroker
   module Deployments
@@ -7,6 +8,7 @@ module PactBroker
       include PactBroker::Logging
       extend PactBroker::Repositories::Scopes
       extend PactBroker::Services
+      extend PactBroker::Events::Publisher
 
       def self.next_uuid
         SecureRandom.uuid
@@ -22,7 +24,7 @@ module PactBroker
           deployed_version
         else
           record_previous_version_undeployed(version.pacticipant, environment, target)
-          DeployedVersion.create(
+          deployed_version = DeployedVersion.create(
             uuid: uuid,
             version: version,
             pacticipant_id: version.pacticipant_id,
@@ -30,6 +32,8 @@ module PactBroker
             target: target,
             auto_created: auto_created
           )
+          broadcast(:deployed_version_created, { deployed_version: deployed_version })
+          deployed_version
         end
       end
 

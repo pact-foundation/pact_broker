@@ -4,6 +4,7 @@ require "pact_broker/repositories/helpers"
 module PactBroker
   module Webhooks
     class WebhookEvent < Sequel::Model
+      set_primary_key :id
       plugin :timestamps, update_on_create: true
 
       CONTRACT_PUBLISHED = "contract_published"

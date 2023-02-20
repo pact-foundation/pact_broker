@@ -7,6 +7,7 @@ module PactBroker
   module Pacts
     class PactVersion < Sequel::Model(:pact_versions)
       include PactVersionAssociationLoaders
+      set_primary_key :id
 
       plugin :timestamps
       plugin :upsert, identifying_columns: [:consumer_id, :provider_id, :sha]

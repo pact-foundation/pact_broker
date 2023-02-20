@@ -4,9 +4,10 @@ require "pact_broker/repositories/helpers"
 module PactBroker
   module Versions
     class BranchHead < Sequel::Model
-      plugin :upsert, identifying_columns: [:branch_id]
       set_primary_key :branch_id
       unrestrict_primary_key
+
+      plugin :upsert, identifying_columns: [:branch_id]
 
       associate(:many_to_one, :branch, :class => "PactBroker::Versions::Branch", :key => :branch_id, :primary_key => :id)
       associate(:many_to_one, :branch_version, :class => "PactBroker::Versions::BranchVersion", :key => :branch_version_id, :primary_key => :id)

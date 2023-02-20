@@ -50,7 +50,7 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: "2.7"
-      - run: "bundle install"
+          bundler-cache: true
       - run: "bundle exec rubocop"
   pact-verify:
     if: "!contains(github.event.head_commit.message, '[ci-skip]')"
@@ -60,7 +60,7 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: "2.7"
-      - run: "bundle install"
+          bundler-cache: true
       - name: Verify pacts
         run: "GIT_SHA=${GITHUB_SHA} GIT_BRANCH=${GITHUB_REF##*/} bundle exec rake pact:verify"
         env:
@@ -73,6 +73,6 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: "2.7"
-      - run: "bundle install"
+          bundler-cache: true
       - name: Audit
         run: "bundle exec rake bundle:audit"

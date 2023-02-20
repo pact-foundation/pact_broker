@@ -323,14 +323,16 @@ module PactBroker
                 pacticipant_name: foo.name,
                 pacticipant_version_number: foo_version.number,
                 pacticipant_version_id: foo_version.id,
-                type: :specified
+                type: :specified,
+                original_selector: {}
               ),
               ResolvedSelector.new(
                 pacticipant_id: bar.id,
                 pacticipant_name: bar.name,
                 pacticipant_version_number: bar_version.number,
                 pacticipant_version_id: bar_version.id,
-                type: :inferred
+                type: :inferred,
+                original_selector: {}
               )
             ]
           end
@@ -347,14 +349,16 @@ module PactBroker
                   pacticipant_name: foo.name,
                   pacticipant_version_number: foo_version.number,
                   pacticipant_version_id: foo_version.id,
-                  type: :specified
+                  type: :specified,
+                  original_selector: {}
                 ),
                 ResolvedSelector.new(
                   pacticipant_id: bar.id,
                   pacticipant_name: bar.name,
                   pacticipant_version_number: bar_version.number,
                   pacticipant_version_id: bar_version.id,
-                  type: :specified
+                  type: :specified,
+                  original_selector: {}
                 )
               ]
             end
