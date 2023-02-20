@@ -53,17 +53,19 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency "json", "~> 2.3"
   gem.add_runtime_dependency "roar", "~> 1.1"
   gem.add_runtime_dependency "reform", "~> 2.3.3"
-  gem.add_runtime_dependency "dry-validation", "~> 0.10.5"
+  gem.add_runtime_dependency "dry-validation", "~> 0.13.3"
   # if dry-container is not locked, get this error:
   # An error occurred while loading spec_helper.
   # Failure/Error: require "reform/form/dry"
   # NoMethodError:
   #   undefined method `call' for nil:NilClass
   # # /Users/beth.skurrie/.gem/ruby/2.7.5/gems/dry-container-0.10.0/lib/dry/container/mixin.rb:151:in `register'
-  gem.add_runtime_dependency "dry-container", "0.8.0"
+  gem.add_runtime_dependency "dry-container", "~> 0.8.0"
   # /usr/local/bundle/gems/dry-validation-0.10.7/lib/dry/validation/schema/class_interface.rb:7:in `<module:Validation>' [dry-configurable] default value as positional argument to settings is deprecated and will be removed in the next major version
-  # Provide a `default:` keyword argument instead
-  gem.add_runtime_dependency "dry-configurable", "0.12.1"
+  gem.add_runtime_dependency "dry-configurable", "~> 0.12.1"
+  # gem.add_runtime_dependency "dry-types", "~> 0.10.3" # https://travis-ci.org/pact-foundation/pact_broker/jobs/249448621
+  # gem.add_runtime_dependency "dry-logic", "0.4.2" # Later version cases ArgumentError: wrong number of arguments
+
   gem.add_runtime_dependency "sequel", "~> 5.28"
   gem.add_runtime_dependency "webmachine", "1.6.0"
   gem.add_runtime_dependency "semver2", "~> 3.4.2"
@@ -75,8 +77,6 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency "haml", "~>5.0"
   gem.add_runtime_dependency "sucker_punch", "~>2.0"
   gem.add_runtime_dependency "rack-protection", ">= 2.0.8.1", "< 3.0"
-  gem.add_runtime_dependency "dry-types", "~> 0.10.3" # https://travis-ci.org/pact-foundation/pact_broker/jobs/249448621
-  gem.add_runtime_dependency "dry-logic", "0.4.2" # Later version cases ArgumentError: wrong number of arguments
   gem.add_runtime_dependency "table_print", "~> 1.5"
   gem.add_runtime_dependency "semantic_logger", "~> 4.11"
   gem.add_runtime_dependency "sanitize", "~> 6.0"
