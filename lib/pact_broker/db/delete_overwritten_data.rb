@@ -32,13 +32,19 @@ module PactBroker
         kept_counts[:pact_versions] = db[:pact_versions].count
         kept_counts[:triggered_webhooks] = db[:triggered_webhooks].count
 
+        # TODO swap the hierarchy around so it matches the clean task
+
         if dry_run?
           to_keep = deleted_counts.keys.each_with_object({}) do | table_name, new_counts |
             new_counts[table_name] = kept_counts[table_name] - deleted_counts[table_name]
           end
-          { toDelete: deleted_counts, toKeep: to_keep }
+          deleted_counts.each_with_object({}) do | (key, value), new_hash |
+            new_hash[key] = { toDelete: value, toKeep: to_keep[key] }
+          end
         else
-          { deleted: deleted_counts, kept: kept_counts }
+          deleted_counts.each_with_object({}) do | (key, value), new_hash |
+            new_hash[key] = { deleted: value, kept: kept_counts[key] }
+          end
         end
       end
 

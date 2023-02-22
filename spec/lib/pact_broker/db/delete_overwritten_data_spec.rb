@@ -25,8 +25,7 @@ module PactBroker
           end
 
           it "returns a report" do
-            expect(subject[:deleted][:pact_publications]).to eq 1
-            expect(subject[:kept][:pact_publications]).to eq 1
+            expect(subject[:pact_publications]).to eq(deleted: 1, kept: 1)
           end
 
           context "when dry_run is true" do
@@ -34,6 +33,10 @@ module PactBroker
 
             it "does not delete anything" do
               expect { subject }.to_not change{ db[:pact_publications].count }
+            end
+
+            it "returns a report" do
+              expect(subject[:pact_publications]).to eq(toDelete: 1, toKeep: 1)
             end
           end
         end
@@ -56,8 +59,8 @@ module PactBroker
           end
 
           it "returns a report" do
-            expect(subject[:deleted][:verification_results]).to eq 1
-            expect(subject[:kept][:verification_results]).to eq 1
+            expect(subject[:verification_results][:deleted]).to eq 1
+            expect(subject[:verification_results][:kept]).to eq 1
           end
         end
 
@@ -75,8 +78,7 @@ module PactBroker
           end
 
           it "returns a report" do
-            expect(subject[:deleted][:pact_versions]).to eq 1
-            expect(subject[:kept][:pact_versions]).to eq 2
+            expect(subject[:pact_versions]).to eq(deleted: 1, kept: 2)
           end
 
           context "when dry_run is true" do
@@ -139,11 +141,19 @@ module PactBroker
             expect { subject }.to change { PactBroker::Webhooks::TriggeredWebhook.count }.by(-2)
           end
 
+          it "returns a report" do
+            expect(subject[:triggered_webhooks]).to eq(deleted: 2, kept: 2)
+          end
+
           context "when dry_run is true" do
             let(:dry_run) { true }
 
             it "does not delete anything" do
               expect { subject }.to_not change{ PactBroker::Webhooks::TriggeredWebhook.count }
+            end
+
+            it "returns a report" do
+              expect(subject[:triggered_webhooks]).to eq(toDelete: 2, toKeep: 2)
             end
           end
 
