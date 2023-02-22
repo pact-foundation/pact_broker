@@ -146,14 +146,12 @@ module PactBroker
 
           let(:options) { { keep: [ { max_age: 5 }, { max_age: 15, branch: "main" }  ] } }
 
+          let(:initial_versions) { [["1", "main"], ["2", "feat/foo"], ["3", "main"], ["4", "feat/foo"]] }
+          let(:final_versions) { [["3", "main"], ["4", "feat/foo"]] }
+          let(:versions_query) { PactBroker::Domain::Version.join(:branch_versions, { version_id: :id }).order(:order) }
+
           it "applies the max age correctly by branch" do
-            expect { subject }.to change {
-              PactBroker::Domain::Version.join(:branch_versions, { version_id: :id })
-                .order(:order)
-                .select_map([:number, :branch_name])
-             }
-             .from([["1", "main"], ["2", "feat/foo"], ["3", "main"], ["4", "feat/foo"]])
-             .to([["3", "main"], ["4", "feat/foo"]])
+            expect { subject }.to change { versions_query.select_map([:number, :branch_name]) }.from(initial_versions).to(final_versions)
           end
         end
       end
