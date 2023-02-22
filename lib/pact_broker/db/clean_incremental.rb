@@ -83,7 +83,7 @@ module PactBroker
       end
 
       def version_ids_to_keep
-        @version_ids_to_keep ||=  keep.collect { |selector| PactBroker::Domain::Version.select(:id).for_selector(selector) }.reduce(&:union)
+        @version_ids_to_keep ||=  keep.collect { |selector| PactBroker::Domain::Version.for_selector(selector).select(:id) }.reduce(&:union)
       end
 
       def current_counts
