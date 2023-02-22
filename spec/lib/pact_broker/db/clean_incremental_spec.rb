@@ -1,5 +1,6 @@
 require "pact_broker/db/clean_incremental"
 require "pact_broker/matrix/unresolved_selector"
+require "timecop"
 
 module PactBroker
   module DB
@@ -128,6 +129,31 @@ module PactBroker
 
           it "deletes them" do
             expect { subject }.to change { PactBroker::Pacts::PactVersion.count }.by(-1)
+          end
+        end
+
+        context "when there is a selector with a branch and a max age, and a selector with a max age only" do
+          before do
+            Timecop.freeze(Date.today - 20) do
+              td.publish_pact(consumer_name: "Foo", provider_name: "Bar", consumer_version_number: "1", branch: "main")
+              td.publish_pact(consumer_name: "Foo", provider_name: "Bar", consumer_version_number: "2", branch: "feat/foo")
+            end
+            Timecop.freeze(Date.today - 10) do
+              td.publish_pact(consumer_name: "Foo", provider_name: "Bar", consumer_version_number: "3", branch: "main")
+            end
+            td.publish_pact(consumer_name: "Foo", provider_name: "Bar", consumer_version_number: "4", branch: "feat/foo")
+          end
+
+          let(:options) { { keep: [ { max_age: 5 }, { max_age: 15, branch: "main" }  ] } }
+
+          it "applies the max age correctly by branch" do
+            expect { subject }.to change {
+              PactBroker::Domain::Version.join(:branch_versions, { version_id: :id })
+                .order(:order)
+                .select_map([:number, :branch_name])
+             }
+             .from([["1", "main"], ["2", "feat/foo"], ["3", "main"], ["4", "feat/foo"]])
+             .to([["3", "main"], ["4", "feat/foo"]])
           end
         end
       end
