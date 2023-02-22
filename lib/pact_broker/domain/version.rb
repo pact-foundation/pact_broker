@@ -43,6 +43,7 @@ module PactBroker
       end
 
       one_to_many :deployed_versions, class: "PactBroker::Deployments::DeployedVersion", key: :version_id, primary_key: :id, order: [:created_at, :id]
+      one_to_many :released_versions, class: "PactBroker::Deployments::ReleasedVersion", key: :version_id, primary_key: :id, order: [:created_at, :id]
 
       many_to_one :latest_version_for_pacticipant, read_only: true, key: :id,
         class: Version,
