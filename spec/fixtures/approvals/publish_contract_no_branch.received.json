@@ -1,0 +1,38 @@
+{
+  "request": {
+    "path": "/contracts/publish",
+    "headers": {
+      "Content-Type": "application/json",
+      "Accept": "application/hal+json"
+    },
+    "body": {
+      "pacticipantName": "Foo",
+      "pacticipantVersionNumber": "1",
+      "branch": null,
+      "tags": [
+        "a",
+        "b"
+      ],
+      "buildUrl": "http://ci/builds/1234",
+      "contracts": [
+        {
+          "consumerName": "Foo",
+          "providerName": "Bar",
+          "specification": "pact",
+          "contentType": "application/json",
+          "content": "eyJjb25zdW1lciI6eyJuYW1lIjoiRm9vIn0sInByb3ZpZGVyIjp7Im5hbWUiOiJCYXIifSwiaW50ZXJhY3Rpb25zIjpbXX0=",
+          "onConflict": "overwrite"
+        }
+      ]
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "Content-Type": "application/hal+json;charset=utf-8"
+    },
+    "body": {
+      "errors": "#<Dry::Validation::MessageSet:0x0000556d33172000>"
+    }
+  }
+}

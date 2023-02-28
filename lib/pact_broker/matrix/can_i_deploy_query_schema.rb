@@ -1,6 +1,7 @@
 require "dry-validation"
+require "dry/schema"
 require "pact_broker/messages"
-require "pact_broker/api/contracts/dry_validation_predicates"
+require "pact_broker/api/contracts/dry_validation_macros"
 require "pact_broker/project_root"
 require "pact_broker/string_refinements"
 
@@ -11,15 +12,21 @@ module PactBroker
         extend PactBroker::Messages
         using PactBroker::StringRefinements
 
-        SCHEMA = Dry::Validation.Schema do
-          configure do
-            predicates(DryValidationPredicates)
-            config.messages_file = PactBroker.project_root.join("lib", "pact_broker", "locale", "en.yml")
+        SCHEMA = Dry::Validation::Contract.build do
+          schema do
+            configure do
+              config.messages.load_paths << PactBroker.project_root.join("lib", "pact_broker", "locale", "en.yml")
+            end
+            required(:pacticipant).filled(:str?)
+            required(:version).filled(:str?)
+            optional(:to).filled(:str?)
+            optional(:environment).filled(:str?)
           end
-          required(:pacticipant).filled(:str?)
-          required(:version).filled(:str?)
-          optional(:to).filled(:str?)
-          optional(:environment).filled(:str?, :environment_with_name_exists?)
+
+          rule(:environment) do
+            key.failure(:environment_with_name_exists?) if key? &&
+              !DryValidationPredicates.environment_with_name_exists?(value)
+          end
         end
 
         def self.call(params)

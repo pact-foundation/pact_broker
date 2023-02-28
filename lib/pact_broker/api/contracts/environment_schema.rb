@@ -1,6 +1,6 @@
 require "dry-validation"
 require "pact_broker/api/contracts/dry_validation_workarounds"
-require "pact_broker/api/contracts/dry_validation_predicates"
+require "pact_broker/api/contracts/dry_validation_macros"
 require "pact_broker/messages"
 
 module PactBroker
@@ -10,21 +10,32 @@ module PactBroker
         extend DryValidationWorkarounds
         extend PactBroker::Messages
         using PactBroker::HashRefinements
+        using DryValidationMacros
 
-        SCHEMA = Dry::Validation.Schema do
-          configure do
-            predicates(DryValidationPredicates)
-            config.messages_file = File.expand_path("../../../locale/en.yml", __FILE__)
-          end
-          required(:name).filled(:str?, :single_line?, :no_spaces?)
-          optional(:displayName).maybe(:str?, :single_line?)
-          required(:production).filled(included_in?: [true, false])
-          optional(:contacts).each do
-            schema do
-              required(:name).filled(:str?, :single_line?)
-              optional(:details).schema do
+        SCHEMA = Dry::Validation::Contract.build do
+          schema do
+            configure do
+              config.messages.load_paths << File.expand_path("../../../locale/en.yml", __FILE__)
+            end
+            required(:name).filled(:str?)
+            optional(:displayName).maybe(:str?)
+            required(:production).filled(included_in?: [true, false])
+            optional(:contacts).each do
+              schema do
+                required(:name).filled(:str?)
+                optional(:details).schema do
+                end
               end
             end
+          end
+
+          rule(:name) do
+            key.failure(:single_line?) unless DryValidationPredicates.single_line?(value)
+            key.failure(:no_spaces?) unless DryValidationPredicates.no_spaces?(value)
+          end
+          rule(:displayName).validate(:single_line?)
+          rule(:contacts).each do
+            key(:name).failure(:single_line?) unless DryValidationPredicates.single_line?(value[:name])
           end
         end
 

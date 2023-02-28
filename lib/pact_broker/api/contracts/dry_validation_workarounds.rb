@@ -21,7 +21,7 @@ module PactBroker
         end
 
         def flatten_indexed_messages(messages)
-          if messages.values.any?{ | value | is_indexed_structure?(value) }
+          if messages.any?{ | value | is_indexed_structure?(value) }
             messages.each_with_object({}) do | (key, value), new_messages |
               new_messages[key] = is_indexed_structure?(value) ? flatten_array_of_hashes(value) : value
             end

@@ -50,7 +50,7 @@ module PactBroker
       def execute pact, verification, event_context, options
         logger.info "Executing #{self} event_context=#{event_context}"
         template_params = template_parameters(pact, verification, event_context, options)
-        webhook_request = request.build(template_params, options.slice(:user_agent, :disable_ssl_verification, :cert_store))
+        webhook_request = request.build(template_params, **options.slice(:user_agent, :disable_ssl_verification, :cert_store))
         http_response, error = execute_request(webhook_request)
         success = success?(http_response, options)
         http_request = webhook_request.http_request

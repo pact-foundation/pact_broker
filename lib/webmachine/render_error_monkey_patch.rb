@@ -1,5 +1,6 @@
 require "webmachine/errors"
 require "pact_broker/string_refinements"
+require 'i18n'
 
 # Monkey patches the render_error method so that it returns hal+json or problem+json instead of text/html
 

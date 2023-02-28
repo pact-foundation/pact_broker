@@ -49,7 +49,7 @@ module PactBroker
         private
 
         def branch_version
-          @branch_version ||= branch_service.find_branch_version(identifier_from_path)
+          @branch_version ||= branch_service.find_branch_version(**identifier_from_path)
         end
       end
     end

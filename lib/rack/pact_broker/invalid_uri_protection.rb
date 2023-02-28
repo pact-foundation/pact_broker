@@ -45,7 +45,7 @@ module Rack
       end
 
       def validate(uri)
-        decoded_path = URI.decode(uri.path)
+        decoded_path = CGI.unescape(uri.path)
         if decoded_path.include?("\n")
           message("errors.new_line_in_url_path")
         elsif decoded_path.include?("\t")

@@ -130,9 +130,6 @@ en:
   datetime:
     distance_in_words:
       half_a_minute: "half a minute"
-      less_than_x_minutes:
-        one: "less than 1 minute"
-        other: "less than %{count} minutes"
       less_than_x_seconds:
         one:   "less than 1 second"
         other: "less than %{count} seconds"
@@ -166,3 +163,22 @@ en:
       almost_x_years:
         one:   "almost 1 year"
         other: "almost %{count} years"
+
+  # dry_validation rules look for messages here
+  dry_validation:
+    errors:
+      not_blank?: "can't be blank"
+      single_line?: "cannot contain multiple lines"
+      valid_url?: "is not a valid URL eg. http://example.org"
+      environment_with_name_exists?: "with name '%{:value}' does not exist"
+      name_in_path_matches_name_in_pact?: "does not match %{:name} name in path ('%{:name_in_pact}')."
+      webhook_consumer_name_and_label: "consumer label was specified but not the consumer name"
+      webhook_provider_name_and_label: "provider label was specified but not the provider name"
+      valid_method?: "is not a recognised HTTP method"
+      allowed_webhook_method?: "is not an allowed HTTP method for webhooks"
+      non_templated_host?: "cannot have a template parameter in the host"
+      allowed_webhook_scheme?: "is not an allowed HTTP scheme for webhooks"
+      pacticipant_exists?: "does not match an existing pacticipant"
+      valid_version_number?: "Version number '%{:value}' cannot be parsed to a version number. The expected format (unless this configuration has been overridden) is a semantic version. eg. 1.3.0 or 2.0.4.rc1"
+      valid_consumer_version_number?: "Consumer version number '%{:value}' cannot be parsed to a version number. The expected format (unless this configuration has been overridden) is a semantic version. eg. 1.3.0 or 2.0.4.rc1"
+      allowed_webhook_host?: "is not an allowed host for webhooks"

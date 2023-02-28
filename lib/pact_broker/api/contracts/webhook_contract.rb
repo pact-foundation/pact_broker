@@ -3,11 +3,89 @@ require "pact_broker/webhooks/check_host_whitelist"
 require "pact_broker/webhooks/render"
 require "pact_broker/pacticipants/service"
 require "pact_broker/webhooks/webhook_event"
+require "dry/validation"
 
 module PactBroker
   module Api
     module Contracts
       class WebhookContract < BaseContract
+
+        def self.host_whitelist
+          PactBroker.configuration.webhook_host_whitelist
+        end
+
+        def self.parse_uri(uri_string, placeholder = "placeholder")
+          URI(PactBroker::Webhooks::Render.render_with_placeholder(uri_string, placeholder))
+        end
+
+        def self.valid_method?(http_method)
+          Net::HTTP.const_defined?(http_method.capitalize)
+        rescue StandardError
+          false
+        end
+
+        def self.allowed_webhook_method?(http_method)
+          PactBroker.configuration.webhook_http_method_whitelist.any? do | allowed_method |
+            http_method.downcase == allowed_method.downcase
+          end
+        end
+
+        def self.valid_url?(url)
+          uri = WebhookContract.parse_uri(url)
+          uri.scheme && uri.host
+        rescue URI::InvalidURIError, ArgumentError
+          nil
+        end
+
+        def self.allowed_webhook_scheme?(url)
+          scheme = WebhookContract.parse_uri(url).scheme
+          PactBroker.configuration.webhook_scheme_whitelist.any? do | allowed_scheme |
+            scheme && scheme.downcase == allowed_scheme.downcase
+          end
+        rescue URI::InvalidURIError, ArgumentError
+          nil
+        end
+
+        def self.allowed_webhook_host?(url)
+          if valid_url?(url) && host_whitelist.any?
+            PactBroker::Webhooks::CheckHostWhitelist.call(WebhookContract.parse_uri(url).host,
+                                                          WebhookContract.host_whitelist).any?
+          else
+            true
+          end
+        end
+
+        def self.non_templated_host?(url)
+          valid_url?(url) && parse_uri(url).host == WebhookContract.parse_uri(url, "differentplaceholder").host
+        end
+
+        ::Dry::Validation.register_macro(:valid_method?) do
+          key.failure(:valid_method?) unless WebhookContract.valid_method?(value)
+        end
+
+        ::Dry::Validation.register_macro(:allowed_webhook_method?) do
+          key.failure(:allowed_webhook_method?) unless WebhookContract.allowed_webhook_method?(value)
+        end
+
+        ::Dry::Validation.register_macro(:valid_url?) do
+          key.failure(:valid_url?) unless WebhookContract.valid_url?(value)
+        end
+
+        ::Dry::Validation.register_macro(:allowed_webhook_scheme?) do
+          key.failure(:allowed_webhook_scheme?) unless key? && WebhookContract.allowed_webhook_scheme?(value)
+        end
+
+        ::Dry::Validation.register_macro(:allowed_webhook_host?) do
+          key.failure(:allowed_webhook_host?) unless WebhookContract.allowed_webhook_host?(value)
+        end
+
+        ::Dry::Validation.register_macro(:non_templated_host?) do
+          key.failure(:non_templated_host?) unless WebhookContract.non_templated_host?(value)
+        end
+
+        ::Dry::Validation.register_macro(:pacticipant_exists?) do
+          key.failure(:pacticipant_exists?) unless !!PactBroker::Pacticipants::Service.find_pacticipant_by_name(value)
+        end
 
         def validate(*)
           result = super
@@ -28,14 +106,16 @@ module PactBroker
         end
 
         validation do
-          configure do
-            config.messages_file = File.expand_path("../../../locale/en.yml", __FILE__)
-          end
+          schema do
+            configure do
+              config.messages.load_paths << File.expand_path("../../../locale/en.yml", __FILE__)
+            end
 
-          optional(:consumer)
-          optional(:provider)
-          required(:request).filled
-          optional(:events).maybe(min_size?: 1)
+            optional(:consumer)
+            optional(:provider)
+            required(:request).filled
+            optional(:events).maybe(min_size?: 1)
+          end
         end
 
         property :consumer do
@@ -43,25 +123,27 @@ module PactBroker
           property :label
 
           validation do
-            configure do
-              config.messages_file = File.expand_path("../../../locale/en.yml", __FILE__)
-
-              def pacticipant_exists?(name)
-                !!PactBroker::Pacticipants::Service.find_pacticipant_by_name(name)
+            schema do
+              configure do
+                config.messages.load_paths << File.expand_path("../../../locale/en.yml", __FILE__)
               end
+
+              optional(:name)
+                .maybe(:str?)
+                # .when(:none?) { value(:label).filled? }
+
+              optional(:label)
+                .maybe(:str?)
+                # .when(:none?) { value(:name).filled? }
             end
 
-            optional(:name)
-              .maybe(:pacticipant_exists?)
-              .when(:none?) { value(:label).filled? }
-
-            optional(:label)
-              .maybe(:str?)
-              .when(:none?) { value(:name).filled? }
-
-            rule(label: [:name, :label]) do |name, label|
-              (name.filled? & label.filled?) > label.none?
+            rule(:name, :label) do
+              # Original:
+              # (name.filled? & label.filled?) > label.none?
+              # assuming this means you can provider neither, both or just the name
+              key.failure(:webhook_consumer_name_and_label) if key?(:label) && !key?(:name)
             end
+            rule(:name).validate(:pacticipant_exists?)
           end
         end
 
@@ -70,25 +152,27 @@ module PactBroker
           property :label
 
           validation do
-            configure do
-              config.messages_file = File.expand_path("../../../locale/en.yml", __FILE__)
-
-              def pacticipant_exists?(name)
-                !!PactBroker::Pacticipants::Service.find_pacticipant_by_name(name)
+            schema do
+              configure do
+                config.messages.load_paths << File.expand_path("../../../locale/en.yml", __FILE__)
               end
+
+              optional(:name)
+                .maybe(:str?)
+                # .when(:none?) { value(:label).filled? }
+
+              optional(:label)
+                .maybe(:str?)
+                # .when(:none?) { value(:name).filled? }
             end
 
-            optional(:name)
-              .maybe(:pacticipant_exists?)
-              .when(:none?) { value(:label).filled? }
-
-            optional(:label)
-              .maybe(:str?)
-              .when(:none?) { value(:name).filled? }
-
-            rule(label: [:name, :label]) do |name, label|
-              (name.filled? & label.filled?) > label.none?
+            rule(:name, :label) do
+              # Original:
+              # (name.filled? & label.filled?) > label.none?
+              # assuming this means you can provider neither, both or just the name
+              key.failure(:webhook_provider_name_and_label) if key?(:label) && !key?(:name)
             end
+            rule(:name).validate(:pacticipant_exists?)
           end
         end
 
@@ -97,86 +181,45 @@ module PactBroker
           property :http_method
 
           validation do
-            configure do
-              config.messages_file = File.expand_path("../../../locale/en.yml", __FILE__)
+            schema do
+              configure do
+                config.messages.load_paths << File.expand_path("../../../locale/en.yml", __FILE__)
 
-              def self.messages
-                super.merge(
-                  en: {
-                    errors: {
-                      allowed_webhook_method?: http_method_error_message,
-                      allowed_webhook_scheme?: scheme_error_message,
-                      allowed_webhook_host?: host_error_message
+                def self.messages
+                  super.merge(
+                    en: {
+                      errors: {
+                        allowed_webhook_method?: http_method_error_message,
+                        allowed_webhook_scheme?: scheme_error_message,
+                        allowed_webhook_host?: host_error_message
+                      }
                     }
-                  }
-                )
-              end
+                  )
+                end
 
-              def self.http_method_error_message
-                if PactBroker.configuration.webhook_http_method_whitelist.size == 1
-                  "must be #{PactBroker.configuration.webhook_http_method_whitelist.first}. See /doc/webhooks#whitelist for more information."
-                else
-                  "must be one of #{PactBroker.configuration.webhook_http_method_whitelist.join(", ")}. See /doc/webhooks#whitelist for more information."
+                def self.http_method_error_message
+                  if PactBroker.configuration.webhook_http_method_whitelist.size == 1
+                    "must be #{PactBroker.configuration.webhook_http_method_whitelist.first}. See /doc/webhooks#whitelist for more information."
+                  else
+                    "must be one of #{PactBroker.configuration.webhook_http_method_whitelist.join(", ")}. See /doc/webhooks#whitelist for more information."
+                  end
+                end
+
+                def self.scheme_error_message
+                  "scheme must be #{PactBroker.configuration.webhook_scheme_whitelist.join(", ")}. See /doc/webhooks#whitelist for more information."
+                end
+
+                def self.host_error_message
+                  "host must be in the whitelist #{PactBroker.configuration.webhook_host_whitelist.join(",")}. See /doc/webhooks#whitelist for more information."
                 end
               end
 
-              def self.scheme_error_message
-                "scheme must be #{PactBroker.configuration.webhook_scheme_whitelist.join(", ")}. See /doc/webhooks#whitelist for more information."
-              end
-
-              def self.host_error_message
-                "host must be in the whitelist #{PactBroker.configuration.webhook_host_whitelist.join(",")}. See /doc/webhooks#whitelist for more information."
-              end
-
-              def valid_method?(http_method)
-                Net::HTTP.const_defined?(http_method.capitalize)
-              rescue StandardError
-                false
-              end
-
-              def valid_url?(url)
-                uri = parse_uri(url)
-                uri.scheme && uri.host
-              rescue URI::InvalidURIError, ArgumentError
-                nil
-              end
-
-              def allowed_webhook_method?(http_method)
-                PactBroker.configuration.webhook_http_method_whitelist.any? do | allowed_method |
-                  http_method.downcase == allowed_method.downcase
-                end
-              end
-
-              def allowed_webhook_scheme?(url)
-                scheme = parse_uri(url).scheme
-                PactBroker.configuration.webhook_scheme_whitelist.any? do | allowed_scheme |
-                  scheme.downcase == allowed_scheme.downcase
-                end
-              end
-
-              def allowed_webhook_host?(url)
-                if host_whitelist.any?
-                  PactBroker::Webhooks::CheckHostWhitelist.call(parse_uri(url).host, host_whitelist).any?
-                else
-                  true
-                end
-              end
-
-              def non_templated_host?(url)
-                parse_uri(url).host == parse_uri(url, "differentplaceholder").host
-              end
-
-              def host_whitelist
-                PactBroker.configuration.webhook_host_whitelist
-              end
-
-              def parse_uri(uri_string, placeholder = "placeholder")
-                URI(PactBroker::Webhooks::Render.render_with_placeholder(uri_string, placeholder))
-              end
+              required(:http_method).filled(:str?)
+              required(:url).filled(:str?)
             end
 
-            required(:http_method).filled(:valid_method?, :allowed_webhook_method?)
-            required(:url).filled(:valid_url?, :allowed_webhook_scheme?, :allowed_webhook_host?, :non_templated_host?)
+            rule(:http_method).validate(:valid_method?, :allowed_webhook_method?)
+            rule(:url).validate(:valid_url?, :allowed_webhook_scheme?, :allowed_webhook_host?, :non_templated_host?)
           end
         end
 
@@ -184,7 +227,9 @@ module PactBroker
           property :name
 
           validation do
-            required(:name).filled(included_in?: PactBroker::Webhooks::WebhookEvent::EVENT_NAMES)
+            schema do
+              required(:name).filled(included_in?: PactBroker::Webhooks::WebhookEvent::EVENT_NAMES)
+            end
           end
         end
       end

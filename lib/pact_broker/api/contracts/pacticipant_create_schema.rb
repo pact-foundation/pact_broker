@@ -8,12 +8,17 @@ module PactBroker
         extend PactBroker::Messages
         using PactBroker::HashRefinements
 
-        SCHEMA = Dry::Validation.Schema do
-          configure do
-            predicates(DryValidationPredicates)
-            config.messages_file = File.expand_path("../../../locale/en.yml", __FILE__)
+        SCHEMA = Dry::Validation::Contract.build do
+          schema do
+            configure do
+              config.messages.load_paths << File.expand_path("../../../locale/en.yml", __FILE__)
+            end
+            required(:name).filled(:str?)
           end
-          required(:name).filled(:str?, :single_line?)
+
+          rule(:name) do
+            key.failure(:single_line?) unless DryValidationPredicates.single_line?(value)
+          end
         end
 
         def self.call(params_with_string_keys)

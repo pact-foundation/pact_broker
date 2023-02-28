@@ -71,7 +71,7 @@ module PactBroker
         def identifier_from_path
           @identifier_from_path ||= request.path_info.each_with_object({}) do | (key, value), hash|
             if value.is_a?(String)
-              hash[key] = URI.decode(value)
+              hash[key] = CGI.unescape(value)
             elsif value.is_a?(Symbol) || value.is_a?(Numeric)
               hash[key] = value
             end

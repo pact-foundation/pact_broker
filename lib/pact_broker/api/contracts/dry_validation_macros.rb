@@ -31,6 +31,14 @@ module PactBroker
           !!PactBroker::Deployments::EnvironmentService.find_by_name(value)
         end
       end
+
+      module DryValidationMacros
+        Dry::Validation.register_macro(:single_line?) do
+          if value && value.is_a?(String) && value.include?("\n")
+            key.failure(:single_line?)
+          end
+        end
+      end
     end
   end
 end

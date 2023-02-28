@@ -2,7 +2,7 @@ require "dry-validation"
 require "pact_broker/hash_refinements"
 require "pact_broker/string_refinements"
 require "pact_broker/api/contracts/dry_validation_workarounds"
-require "pact_broker/api/contracts/dry_validation_predicates"
+require "pact_broker/api/contracts/dry_validation_macros"
 require "pact_broker/messages"
 
 module PactBroker
@@ -19,40 +19,47 @@ module PactBroker
         ENVIRONMENT_KEYS = [:environment, :deployed, :released, :deployedOrReleased]
         ALL_KEYS = BRANCH_KEYS + ENVIRONMENT_KEYS
 
-        SCHEMA = Dry::Validation.Schema do
-          configure do
-            predicates(DryValidationPredicates)
-            config.messages_file = File.expand_path("../../../locale/en.yml", __FILE__)
-          end
-          optional(:providerVersionTags).maybe(:array?)
-          optional(:consumerVersionSelectors).each do
-            schema do
-              # configure do
-              #   def self.messages
-              #     super.merge(en: { errors: { fallbackTagMustBeForLatest: 'can only be set if latest=true' }})
-              #   end
-              # end
-
-              optional(:mainBranch).filled(included_in?: [true])
-              optional(:tag).filled(:str?)
-              optional(:branch).filled(:str?)
-              optional(:matchingBranch).filled(included_in?: [true])
-              optional(:latest).filled(included_in?: [true, false])
-              optional(:fallbackTag).filled(:str?)
-              optional(:fallbackBranch).filled(:str?)
-              optional(:consumer).filled(:str?, :not_blank?)
-              optional(:deployed).filled(included_in?: [true])
-              optional(:released).filled(included_in?: [true])
-              optional(:deployedOrReleased).filled(included_in?: [true])
-              optional(:environment).filled(:str?, :environment_with_name_exists?)
-
-              # rule(fallbackTagMustBeForLatest: [:fallbackTag, :latest]) do | fallback_tag, latest |
-              #   fallback_tag.filled?.then(latest.eql?(true))
-              # end
+        SCHEMA = Dry::Validation::Contract.build do
+          schema do
+            configure do
+              config.messages.load_paths << File.expand_path("../../../locale/en.yml", __FILE__)
             end
+            optional(:providerVersionTags).maybe(:array?)
+            optional(:consumerVersionSelectors).each do
+              schema do
+                # configure do
+                #   def self.messages
+                #     super.merge(en: { errors: { fallbackTagMustBeForLatest: 'can only be set if latest=true' }})
+                #   end
+                # end
+
+                optional(:mainBranch).filled(included_in?: [true])
+                optional(:tag).filled(:str?)
+                optional(:branch).filled(:str?)
+                optional(:matchingBranch).filled(included_in?: [true])
+                optional(:latest).filled(included_in?: [true, false])
+                optional(:fallbackTag).filled(:str?)
+                optional(:fallbackBranch).filled(:str?)
+                optional(:consumer).filled(:str?)
+                optional(:deployed).filled(included_in?: [true])
+                optional(:released).filled(included_in?: [true])
+                optional(:deployedOrReleased).filled(included_in?: [true])
+                optional(:environment).filled(:str?)
+
+                # rule(fallbackTagMustBeForLatest: [:fallbackTag, :latest]) do | fallback_tag, latest |
+                #   fallback_tag.filled?.then(latest.eql?(true))
+                # end
+              end
+            end
+            optional(:includePendingStatus).filled(included_in?: [true, false])
+            optional(:includeWipPactsSince).filled(:date?)
           end
-          optional(:includePendingStatus).filled(included_in?: [true, false])
-          optional(:includeWipPactsSince).filled(:date?)
+
+          rule(:consumerVersionSelectors).each do
+            key(:consumer).failure(:not_blank?) unless DryValidationPredicates.not_blank?(value[:consumer])
+            key(:environment).failure(:environment_with_name_exists?) unless
+              DryValidationPredicates.environment_with_name_exists?(value)
+          end
         end
 
         def self.call(params)

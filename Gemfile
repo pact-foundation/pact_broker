@@ -6,6 +6,7 @@ gem "rake", "~>12.3.3"
 gem "sqlite3", "~>1.3"
 gem "conventional-changelog", "~>1.3"
 gem "bump", "~> 0.5"
+gem "webmachine", git: "https://github.com/webmachine/webmachine-ruby.git", ref: "2470ae6"
 
 group :development do
   gem "pry-byebug"

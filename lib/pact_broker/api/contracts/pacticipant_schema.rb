@@ -1,6 +1,6 @@
 require "dry-validation"
 require "pact_broker/api/contracts/dry_validation_workarounds"
-require "pact_broker/api/contracts/dry_validation_predicates"
+require "pact_broker/api/contracts/dry_validation_macros"
 require "pact_broker/messages"
 
 module PactBroker
@@ -11,17 +11,43 @@ module PactBroker
         extend PactBroker::Messages
         using PactBroker::HashRefinements
 
-        SCHEMA = Dry::Validation.Schema do
-          configure do
-            predicates(DryValidationPredicates)
-            config.messages_file = File.expand_path("../../../locale/en.yml", __FILE__)
+        SCHEMA = Dry::Validation::Contract.build do
+          schema do
+            configure do
+              config.messages.load_paths << File.expand_path("../../../locale/en.yml", __FILE__)
+            end
+            optional(:name).filled(:str?)
+            optional(:displayName).maybe(:str?)
+            optional(:mainBranch).maybe(:str?)
+            optional(:repositoryUrl).maybe(:str?)
+            optional(:repositoryName).maybe(:str?)
+            optional(:repositoryNamespace).maybe(:str?)
           end
-          optional(:name).filled(:str?, :single_line?)
-          optional(:displayName).maybe(:str?, :single_line?, :not_blank?)
-          optional(:mainBranch).maybe(:str?, :single_line?, :no_spaces?)
-          optional(:repositoryUrl).maybe(:str?, :single_line?)
-          optional(:repositoryName).maybe(:str?, :single_line?)
-          optional(:repositoryNamespace).maybe(:str?, :single_line?)
+
+          rule(:name) do
+            key.failure(:single_line?) if key? && !DryValidationPredicates.single_line?(value)
+          end
+          rule(:displayName) do
+            if value
+              key.failure(:single_line?) unless DryValidationPredicates.single_line?(value)
+              key.failure(:not_blank?) unless DryValidationPredicates.not_blank?(value)
+            end
+          end
+          rule(:mainBranch) do
+            if value
+              key.failure(:single_line?) unless DryValidationPredicates.single_line?(value)
+              key.failure(:no_spaces?) unless DryValidationPredicates.no_spaces?(value)
+            end
+          end
+          rule(:repositoryUrl) do
+            key.failure(:single_line?) if key? && !DryValidationPredicates.single_line?(value)
+          end
+          rule(:repositoryName) do
+            key.failure(:single_line?) if key? && !DryValidationPredicates.single_line?(value)
+          end
+          rule(:repositoryNamespace) do
+            key.failure(:single_line?) if key? && !DryValidationPredicates.single_line?(value)
+          end
         end
 
         def self.call(params_with_string_keys)

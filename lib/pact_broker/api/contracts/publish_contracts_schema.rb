@@ -1,6 +1,6 @@
 require "dry-validation"
 require "pact_broker/api/contracts/dry_validation_workarounds"
-require "pact_broker/api/contracts/dry_validation_predicates"
+require "pact_broker/api/contracts/dry_validation_macros"
 require "pact_broker/messages"
 require "pact_broker/api/contracts/utf_8_validation"
 
@@ -16,30 +16,60 @@ module PactBroker
           include PactBroker::Api::Contracts::UTF8Validation
         end
 
-        SCHEMA = Dry::Validation.Schema do
-          configure do
-            predicates(DryValidationPredicates)
-            config.messages_file = File.expand_path("../../../locale/en.yml", __FILE__)
+        SCHEMA = Dry::Validation::Contract.build do
+          schema do
+            configure do
+              config.messages.load_paths << File.expand_path("../../../locale/en.yml", __FILE__)
+            end
+
+            required(:pacticipantName).filled(:str?)
+            required(:pacticipantVersionNumber).filled(:str?)
+            optional(:tags).each(:str?)
+            optional(:branch).maybe(:str?)
+            optional(:buildUrl).maybe(:str?)
+
+            required(:contracts).array(:hash) do
+              required(:consumerName).filled(:str?)
+              required(:providerName).filled(:str?)
+              required(:content).filled(:str?)
+              required(:contentType).filled(included_in?: ["application/json"])
+              required(:specification).filled(included_in?: ["pact"])
+              optional(:onConflict).filled(included_in?:["overwrite", "merge"])
+            end
           end
 
-          required(:pacticipantName).filled(:str?, :not_blank?)
-          required(:pacticipantVersionNumber).filled(:not_blank?, :single_line?)
-          optional(:tags).each(:not_blank?, :single_line?)
-          optional(:branch).maybe(:not_blank?, :single_line?)
-          optional(:buildUrl).maybe(:single_line?)
-
-          required(:contracts).each do
-            required(:consumerName).filled(:str?, :not_blank?)
-            required(:providerName).filled(:str?, :not_blank?)
-            required(:content).filled(:str?)
-            required(:contentType).filled(included_in?: ["application/json"])
-            required(:specification).filled(included_in?: ["pact"])
-            optional(:onConflict).filled(included_in?:["overwrite", "merge"])
+          rule(:pacticipantName) do
+            key.failure(:not_blank?) unless DryValidationPredicates.not_blank?(value)
+          end
+          rule(:pacticipantVersionNumber) do
+            key.failure(:not_blank?) unless DryValidationPredicates.not_blank?(value)
+            key.failure(:single_line?) unless DryValidationPredicates.single_line?(value)
+          end
+          rule(:tags).each do
+            key.failure(:not_blank?) unless DryValidationPredicates.not_blank?(value)
+            key.failure(:single_line?) unless DryValidationPredicates.single_line?(value)
+          end
+          rule(:branch) do
+            if key?
+              key.failure(:not_blank?) unless DryValidationPredicates.not_blank?(value)
+              key.failure(:single_line?) unless DryValidationPredicates.single_line?(value)
+            end
+          end
+          rule(:buildUrl) do
+            key.failure(:single_line?) if key? && !DryValidationPredicates.single_line?(value)
+          end
+          rule(:contracts).each do
+            key(:consumerName).failure(:not_blank?) unless DryValidationPredicates.not_blank?(value[:consumerName])
+            key(:providerName).failure(:not_blank?) unless DryValidationPredicates.not_blank?(value[:providerName])
           end
         end
 
         def self.call(params)
           dry_results = SCHEMA.call(params&.symbolize_keys).messages(full: true)
+
+          # puts dry_results.inspect
+          # #<Dry::Validation::MessageSet messages=[#<Dry::Schema::Message text="must be filled" path=[:contracts, 0, :contentType] predicate=:filled? input=nil>, #<Dry::Schema::Hint text="must be one of: application/json" path=[:contracts, 0, :contentType] predicate=:included_in? input=nil>] options={:source=>[#<Dry::Schema::Message text="must be filled" path=[:contracts, 0, :contentType] predicate=:filled? input=nil>, #<Dry::Schema::Hint text="must be one of: application/json" path=[:contracts, 0, :contentType] predicate=:included_in? input=nil>], :hints=>false, :full=>true}>
+
           dry_results.then do | results |
             add_cross_field_validation_errors(params&.symbolize_keys, results)
           end.then do | results |
